@@ -17,6 +17,8 @@ class Gh(GoPackage):
 
     license("MIT")
 
+    version("2.92.0", sha256="ad18928ce4e2695d7fc1adefa0f5e0496e570a430016cee4c22d7bf87e5d9c1d")
+    version("2.90.0", sha256="87a6a3b3df1155e9d253ec6ae273d9e018773498b7ce7570f896a7cb75b64e39")
     version("2.89.0", sha256="bc9c11f75e4aeb7e1f0bd5f543a3edabb8958655025f8cdc3d9bbe14435a7441")
     version("2.79.0", sha256="2408f3f5d69ea7efde1f174ee058ca011b8ab24e583178c6f090f3e91767bda4")
     version("2.76.2", sha256="6aee5afebdabd33f4c5e8604a9b7fa55e5bbac2a5cd36101cc221c990320c8b3")
@@ -56,6 +58,7 @@ class Gh(GoPackage):
 
     conflicts("platform=darwin", when="@2.28.0")
 
+    depends_on("go@1.26:", type="build", when="@2.92.0:")
     depends_on("go@1.26.1:", type="build", when="@2.89.0:")
     depends_on("go@1.24:", type="build", when="@2.74.2:")
     depends_on("go@1.23:", type="build", when="@2.66:")

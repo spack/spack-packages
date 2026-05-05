@@ -828,8 +828,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             lapack_blas = spec["lapack"].libs + spec["blas"].libs
             options += [
                 # LAPACK_OPT is not used
-                "LAPACK_LIB=%s"
-                % ld_flags_from_library_list(lapack_blas)
+                "LAPACK_LIB=%s" % ld_flags_from_library_list(lapack_blas)
             ]
 
         if "+superlu-dist" in spec:

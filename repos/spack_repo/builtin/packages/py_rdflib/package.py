@@ -24,6 +24,7 @@ class PyRdflib(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("7.6.0", sha256="6c831288d5e4a5a7ece85d0ccde9877d512a3d0f02d7c06455d00d6d0ea379df")
     version("7.2.1", sha256="cf9b7fa25234e8925da8b1fb09700f8349b5f0f100e785fb4260e737308292ac")
     version("7.0.0", sha256="9995eb8569428059b8c1affd26b25eac510d64f5043d9ce8c84e0d0036e995ae")
     version("6.3.2", sha256="72af591ff704f4caacea7ecc0c5a9056b8553e0489dd4f35a9bc52dbd41522e0")

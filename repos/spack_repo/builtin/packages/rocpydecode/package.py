@@ -17,6 +17,7 @@ class Rocpydecode(CMakePackage):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
+    version("7.2.1", sha256="68736587beff68ab10e591b80c02804b104a16f54b0f3069a8a01e364171be35")
     version("7.2.0", sha256="e91a48734df8d4ce769b8979f2a1350a86705d38035c29618dff674471c9d026")
     version("7.1.1", sha256="8946730b6159350b896f9704b3ed485fa376e502d9b68f0cef68d09ab8260fab")
     version("7.1.0", sha256="7e9feeb0dd7d975f04364730cdf2b194d8e8d6bcc62aa983bc99509d9c6366d1")
@@ -55,11 +56,12 @@ class Rocpydecode(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
     ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
         depends_on(f"rocjpeg@{ver}", when=f"@{ver}")
 
     def patch(self):
