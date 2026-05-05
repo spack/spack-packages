@@ -29,7 +29,11 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
     version("2.4.7", sha256="04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8")
     version("2.4.6", sha256="e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type=("build", "test"))
+    depends_on("cxx", type=("build", "test"), when="^cxx")
+    depends_on("fortran", type=("build", "test"), when="^fortran")
+    depends_on("java", type=("build", "test"), when="^java")
+
 
     depends_on("m4@1.4.6:", type="build")
 
@@ -111,12 +115,11 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
         )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        """Wrapper until spack has a real implementation of setup_test_environment()"""
-        if self.run_tests:
-            self.setup_test_environment(env)
-
-    def setup_test_environment(self, env: EnvironmentModifications):
-        """When Fortran is not provided, a few tests need to be skipped"""
+        # When Fortran is not provided, a few tests need to be skipped
+        # - https://fossies.org/linux/libtool/ChangeLog
+        # -- 17776 2005-07-30 Peter Ekberg peda@lysator.liu.se
+        # -- 17778 * m4/libtool.m4 (_LT_PROG_F77): Set it up so that saying F77=no
+        # -- 17779 to configure disables the fortran tests in the testsuite.
         if (not hasattr(self.compiler, "f77")) or (self.compiler.f77 is None):
             env.set("F77", "no")
         if (not hasattr(self.compiler, "fc")) or (self.compiler.fc is None):
