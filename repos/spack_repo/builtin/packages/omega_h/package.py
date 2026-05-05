@@ -67,7 +67,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=True, description="Use Teuchos and Kokkos")
+    variant("trilinos", default=False, description="Use Teuchos and Kokkos")
     variant(
         "exodus",
         default=False,
@@ -90,9 +90,10 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
     depends_on("trilinos +kokkos", when="+trilinos")
-    depends_on("trilinos +exodus", when="+exodus")
     depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos@4.3.00:", when="@:11.0.0-scorec+kokkos")
     depends_on("zlib-api", when="+zlib")
+    depends_on("seacas@:2024-8-15~x11~tests~fortran", when="+exodus")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
@@ -112,8 +113,6 @@ class OmegaH(CMakePackage, CudaPackage):
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
-
-    conflicts("+exodus", when="~trilinos", msg="exodus requires trilinos to be enabled")
 
     def patch(self):
         if "@:9.34.8" in self.spec:
