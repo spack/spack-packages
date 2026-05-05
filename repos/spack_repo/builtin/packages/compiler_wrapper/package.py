@@ -5,8 +5,8 @@ import pathlib
 import shutil
 import sys
 
-from spack_repo.builtin.build_systems.nmake import NMakePackage, NMakeBuilder
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
@@ -97,7 +97,7 @@ class EnvironmentSetup:
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        
+
         _var_list = []
         if dependent_spec.has_virtual_dependency("c"):
             _var_list.append(("c", "cc", "CC", "SPACK_CC"))
@@ -193,7 +193,6 @@ class EnvironmentSetup:
 
 
 class GenericBuilder(GenericBuilder, EnvironmentSetup):
-
     def install(self, pkg, spec, prefix):
         cc_script = pathlib.Path(self.stage.source_path) / "cc.sh"
         bin_dir = pkg.bin_dir()
@@ -277,7 +276,6 @@ class GenericBuilder(GenericBuilder, EnvironmentSetup):
         fj_dir.mkdir(exist_ok=True)
         (fj_dir / "FCC").symlink_to(installed_script)
 
-        
 
 class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
     install_targets = ["install"]
@@ -294,7 +292,6 @@ class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
         for name in ("link", "ftn", "fc", "f95", "f90", "f77", "cpp", "c99", "c89", "c++"):
             (bin_dir / name).symlink_to(bin_dir / "cl.exe")
 
-
         for subdir, name in (
             ("case-insensitive", "CC.exe"),
             ("intel", "ifort.exe"),
@@ -303,6 +300,3 @@ class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
         ):
             (bin_dir / subdir).mkdir(exist_ok=True)
             (bin_dir / subdir / name).symlink_to(bin_dir / "cl.exe")
-
-
-        
