@@ -354,8 +354,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mumps+mpi~int64+metis+parmetis+openmp", when="+mumps+metis+openmp")
     depends_on("scalapack", when="+mumps")
     depends_on("mkl", when="+mkl-pardiso")
-    # issue with detecting MKL sparse support in configuration
-    conflicts("^intel-oneapi-mkl@2026.0:", msg="PETSc does not support MKL 2026.0 and later")
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
     depends_on("libx11", when="+X")
@@ -653,6 +651,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         if "+mkl-pardiso" in spec:
             options.append("--with-mkl_pardiso-dir=%s" % spec["mkl"].prefix)
+
+        # See https://github.com/spack/spack-packages/pull/4651
+        if spec.satisfies("^intel-oneapi-mkl@2026.0:"):
+            options.append("--with-mkl_sparse=0")
+            options.append("--with-mkl_sparse_optimize=0")
 
         # For the moment, HPDDM does not work as a dependency
         # using download instead
