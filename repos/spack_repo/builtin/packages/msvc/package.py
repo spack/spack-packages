@@ -275,8 +275,10 @@ class Msvc(Package, CompilerPackage):
         assert self.spec.external, (
             "MSVC is external only, please report this bug to the Spack maintainers"
         )
-
-        return self.spec.extra_attributes.get("compilers", {}).get("ld", None)
+        ld = self.spec.extra_attributes.get("compilers", {}).get("ld", None)
+        if not ld:
+            ld = os.path.join(os.path.dirname(self.cc), "link.exe")
+        return ld
 
 
 class CmdCall:
