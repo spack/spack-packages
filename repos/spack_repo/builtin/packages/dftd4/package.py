@@ -12,7 +12,7 @@ from spack.package import *
 class Dftd4(MesonPackage, CMakePackage):
     """Generally Applicable Atomic-Charge Dependent London Dispersion Correction"""
 
-    homepage = "https://www.chemie.uni-bonn.de/pctc/mulliken-center/software/dftd4"
+    homepage = "https://dftd4.readthedocs.io/en/latest"
     url = "https://github.com/dftd4/dftd4/releases/download/v0.0.0/dftd4-0.0.0.tar.xz"
     git = "https://github.com/dftd4/dftd4.git"
 
@@ -23,6 +23,7 @@ class Dftd4(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("4.1.0", sha256="a61bc0c8e8a7db5302ef4f4f1ebc834bb9dcf2896b0e2af746f25a0d4177d8d0")
     version("4.0.2", sha256="ed4a6a3ba0a89b8d6825bf11724dee647fd8ee6272e7822e0cbd9847994eb872")
     version("4.0.1", sha256="d3781763390c349794d70663e4e54e368d19a5869c98fe939b32e9069432201b")
     version("4.0.0", sha256="401e49893d98a1da82896998a6345b62f709683cbb19d9cbbe10564b9fc353e4")
