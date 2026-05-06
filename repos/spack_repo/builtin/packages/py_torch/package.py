@@ -375,7 +375,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         sha256="91d0470cc05f5f0f775f32b70f174af74f5607162852ba1bcdd81381cd735f24",
         when="@2.9:2.10.0",
     )
-    
+
     # https://github.com/pytorch/pytorch/issues/160092
     patch(
         "https://github.com/pytorch/pytorch/commit/231c72240d80091f099c95e326d3600cba866eee.patch?full_index=1",
