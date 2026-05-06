@@ -27,7 +27,7 @@ class Matlab(Package):
     homepage = "https://www.mathworks.com/products/matlab.html"
     manual_download = True
 
-    license("LicenseRef-MathWorks-Proprietary")
+    license("LicenseRef-MathWorks-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

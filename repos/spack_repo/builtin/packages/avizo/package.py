@@ -22,7 +22,7 @@ class Avizo(Package):
 
     manual_download = True
 
-    license("LicenseRef-Thermofisher-Proprietary")
+    license("LicenseRef-Thermofisher-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

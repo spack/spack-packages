@@ -21,7 +21,7 @@ class Cplex(Package):
 
     maintainers("robgics")
 
-    license("LicenseRef-IBM-Proprietary")
+    license("LicenseRef-IBM-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

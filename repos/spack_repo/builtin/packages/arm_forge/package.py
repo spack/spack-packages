@@ -21,7 +21,7 @@ class ArmForge(Package):
 
     maintainers("NickRF")
 
-    license("LicenseRef-ARM-Proprietary")
+    license("LicenseRef-ARM-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

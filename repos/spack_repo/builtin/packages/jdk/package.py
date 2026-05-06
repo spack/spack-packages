@@ -19,7 +19,7 @@ class Jdk(Package):
 
     maintainers("justintoo")
 
-    license("LicenseRef-Oracle-Proprietary")
+    license("LicenseRef-Oracle-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

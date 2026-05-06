@@ -63,7 +63,7 @@ class NvidiaNsightSystems(Package):
 
     maintainers("scothalverson")
 
-    license("NVIDIA Software License Agreement")
+    license("NVIDIA Software License Agreement", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

@@ -23,7 +23,7 @@ class Mathematica(Package):
     url = "file://{0}/Mathematica_12.0.0_LINUX.sh".format(os.getcwd())
     manual_download = True
 
-    license("LicenseRef-Wolfram-Proprietary")
+    license("LicenseRef-Wolfram-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

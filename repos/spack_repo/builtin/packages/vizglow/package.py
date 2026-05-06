@@ -23,7 +23,7 @@ class Vizglow(Package):
     homepage = "https://esgeetech.com/products/vizglow-plasma-modeling/"
     manual_download = True
 
-    license("LicenseRef-LamResearch-Proprietary")
+    license("LicenseRef-LamResearch-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

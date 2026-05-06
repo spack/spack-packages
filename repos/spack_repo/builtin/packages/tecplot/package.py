@@ -20,7 +20,7 @@ class Tecplot(Package):
 
     maintainers("LRWeber")
 
-    license("LicenseRef-Tecplot-Proprietary")
+    license("LicenseRef-Tecplot-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 

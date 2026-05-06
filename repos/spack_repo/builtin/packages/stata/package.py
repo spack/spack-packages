@@ -30,7 +30,7 @@ class Stata(Package):
     manual_download = True
     # url      = "stata"
 
-    license("LicenseRef-Stata-Proprietary")
+    license("LicenseRef-Stata-Proprietary", checked_by="alecbcs")
 
     redistribute(source=False, binary=False)
 
