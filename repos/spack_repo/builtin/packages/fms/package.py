@@ -20,6 +20,9 @@ class Fms(CMakePackage):
     license("LGPL-3.0-or-later")
 
     maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett", "rem1776", "climbfuji")
+    version("2026.01.01", sha256="1c8eb6d8b189342d335f785470f82b672105c85e7e3af58aaf1faf0b554d7035")
+    version("2026.01", sha256="aa481afbd4df3d09e42114a74ec5dc21bb85644335fbea378f48d0c1f22866d0")
+    version("2025.04", sha256="d9d91a8594c65d9d51928a9f4f4ec6ffaaa0d1d00a752ca32f2ea1f91a70d3f0")
     version("2025.03", sha256="17bdbac86bd3b1e5c1c3a5496c1495e8badcd5f671c659b17921532c990f014c")
     version(
         "2025.02.01", sha256="a481a0d49cf4ca06476849600c2da41fb25053e930a8fabe2add09c3d2fbee9c"
@@ -70,6 +73,13 @@ class Fms(CMakePackage):
     )
     version(
         "2020.04.01", sha256="2c409242de7dea0cf29f8dbf7495698b6bcac1eeb5c4599a728bdea172ffe37c"
+    )
+
+    # disable building unit tests during a normal build
+    patch(
+        "cmake-build-tests-option.patch",
+        sha256="4c02a3a19849002f5d47f72500e4b2f68ca8510acd4c9e3c09c9f5391525a4a2",
+        when="@2025.04",
     )
 
     # https://github.com/NOAA-GFDL/FMS/issues/1417
