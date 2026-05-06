@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class PartonsNuma(CMakePackage):
-    """Numerical analysis routinesi for the PARTONS project."""
+    """Numerical analysis routines for the PARTONS project."""
 
     homepage = "https://3d-partons.github.io/partons"
     url = "https://github.com/3d-partons/numa/archive/refs/tags/v5.0.0.tar.gz"
