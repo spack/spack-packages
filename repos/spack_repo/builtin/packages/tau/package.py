@@ -432,7 +432,12 @@ class Tau(Package):
                 else:
                     options.append("-force_new_l0")
                     if spec.satisfies("@2.35.1:"):
-                        options.append("-intel_iga_lib=%s" % spec["intel-oneapi-compilers"].prefix.debugger.latest.opt.debugger.lib)
+                        options.append(
+                            "-intel_iga_lib=%s"
+                            % spec[
+                                "intel-oneapi-compilers"
+                            ].prefix.debugger.latest.opt.debugger.lib
+                        )
 
         if "+opencl" in spec:
             options.append("-opencl")
