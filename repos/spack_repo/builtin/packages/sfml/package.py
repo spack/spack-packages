@@ -11,7 +11,7 @@ class Sfml(CMakePackage):
     """SFML is a simple, fast, cross-platform and object-oriented
     multimedia API. It provides access to windowing, graphics,
     audio and network. It is written in C++ and has bindings for
-    various languages such as C, .Net, Ruby, Python."""
+    various languages such as C, .NET, Ruby, Python."""
 
     homepage = "https://www.sfml-dev.org/"
     url = "https://github.com/SFML/SFML/archive/refs/tags/3.1.0.tar.gz"
