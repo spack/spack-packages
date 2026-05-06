@@ -84,7 +84,6 @@ class Castep(CMakePackage, MakefilePackage):
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     @property
     def build_targets(self):
         spec = self.spec
@@ -108,7 +107,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
-
     def edit(self, pkg, spec, prefix):
         if spec.satisfies("%gcc"):
             if self.spec.satisfies("@21:21"):

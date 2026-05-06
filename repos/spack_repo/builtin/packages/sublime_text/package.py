@@ -12,10 +12,11 @@ class SublimeText(Package):
     prose."""
 
     homepage = "https://www.sublimetext.com/"
-    url = "https://download.sublimetext.com/sublime_text_build_4152_x64.tar.xz"
+    url = "https://download.sublimetext.com/sublime_text_build_4200_x64.tar.xz"
 
     maintainers("LRWeber")
 
+    version("4.4200", sha256="36f69c551ad18ee46002be4d9c523fe545d93b67fea67beea731e724044b469f")
     version("4.4152", sha256="6ede3c83519959897041c6506e850753c19962603b71bd9f73a625ae1e4d3554")
     version("4.4143", sha256="7de862c38d19367414117110328dded754ac709fed54c8cc5cb0737c894c073c")
     version(
@@ -43,11 +44,7 @@ class SublimeText(Package):
     depends_on("libxau", type="run", when="@:3.2.2")
 
     def url_for_version(self, version):
-        if version[0] == 2:
-            return "https://download.sublimetext.com/Sublime%20Text%20{0}%20x64.tar.bz2".format(
-                version
-            )
-        elif version[0] == 3:
+        if version[0] == 3:
             return (
                 "https://download.sublimetext.com/sublime_text_{0}_build_{1}_x64.tar.bz2".format(
                     version[0], version[-1]

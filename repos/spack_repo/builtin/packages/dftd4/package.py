@@ -42,6 +42,8 @@ class Dftd4(MesonPackage, CMakePackage):
         when="build_system=meson",
         description="Build Python extension module",
     )
+    with when("build_system=cmake"):
+        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -88,4 +90,7 @@ class MesonBuilder(meson.MesonBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OPENMP", "openmp")]
+        return [
+            self.define_from_variant("WITH_OPENMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]

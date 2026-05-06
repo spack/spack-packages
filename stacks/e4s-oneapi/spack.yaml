@@ -59,6 +59,11 @@ spack:
     # externals
     mpi:
       require: intel-oneapi-mpi
+    oneapi-igc:
+      buildable: false
+      externals:
+      - spec: oneapi-igc@1.0.10409
+        prefix: /usr
 
   specs:
   # CPU Specs:
@@ -222,7 +227,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
   cdash:
     build-group: E4S OneAPI
