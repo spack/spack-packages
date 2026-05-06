@@ -44,7 +44,7 @@ class Albany(CMakePackage):
     depends_on("mpi")
     depends_on(
         "trilinos"
-        "~superlu-dist+isorropia+tempus+rythmos+teko+intrepid+intrepid2"
+        "~superlu-dist+tempus+teko+intrepid2"
         "+minitensor+phalanx+nox+piro+rol+shards+stk"
         "@master"
     )
