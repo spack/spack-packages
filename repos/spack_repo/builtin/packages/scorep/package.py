@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
-from spack.aliases import BUILTIN_TO_LEGACY_COMPILER
 from spack.package import *
 
 
