@@ -19,6 +19,10 @@ class Jdk(Package):
 
     maintainers("justintoo")
 
+    license("LicenseRef-Oracle-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version(
         "21.0.2",
         sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f",
