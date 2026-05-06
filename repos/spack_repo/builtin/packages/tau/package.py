@@ -214,6 +214,7 @@ class Tau(Package):
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("dyninst@12.3.0:", when="+dyninst")
     depends_on("julia@1.6:", when="+julia")
+    depends_on("intel-oneapi-compilers", when="@2.35.2: +level_zero ~force-legacy-l0")
 
     conflicts(
         "+julia",
@@ -430,6 +431,8 @@ class Tau(Package):
                     options.append("-force_legacy_l0")
                 else:
                     options.append("-force_new_l0")
+                    if spec.satisfies("@2.35.1:"):
+                        options.append("-intel_iga_lib=%s" % spec["intel-oneapi-compilers"].prefix.debugger.latest.opt.debugger.lib)
 
         if "+opencl" in spec:
             options.append("-opencl")
