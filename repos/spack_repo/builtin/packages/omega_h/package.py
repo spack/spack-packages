@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.1.0-scorec",
+        commit="9254be597e6460df497724e11b466485c37e94ff",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "11.0.0-scorec",
         commit="fbe1cc131fb1b5ac840129ecd8bd7b42ab244000",
         git="https://github.com/SCOREC/omega_h.git",
@@ -67,7 +72,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=False, description="Use SEACASExodus from trilinos")
+    variant("trilinos", default=False, description="Use Kokkos and SEACASExodus from trilinos")
     variant(
         "exodus",
         default=False,
@@ -89,11 +94,15 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh", when="+examples")
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
-    depends_on("trilinos +kokkos", when="+trilinos")
+    depends_on("trilinos +kokkos+exodus", when="+trilinos")
+    depends_on("trilinos +kokkos+exodus", when="@:11.0.0-scorec+exodus")
     depends_on("kokkos", when="+kokkos")
-    depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:11.0.0-scorec+kokkos")
+    depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:+kokkos")
     depends_on("zlib-api", when="+zlib")
-    depends_on("seacas@:2024-8-15~x11~tests~fortran", when="+exodus")
+    depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
+
+    conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
+    conflicts("+trilinos", when="@11.1.0-scorec:+exodus", msg="Use SEACASExodus directly or via Trilinos, not both")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
