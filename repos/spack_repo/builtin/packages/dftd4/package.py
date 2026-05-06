@@ -69,7 +69,9 @@ class Dftd4(MesonPackage, CMakePackage):
     extends("python", when="+python")
 
     def url_for_version(self, version):
-        if version <= Version("3.6.0") or (version >= Version("4.0.0") and version <= Version("4.1.0")):
+        if version <= Version("3.6.0") or (
+            version >= Version("4.0.0") and version <= Version("4.1.0")
+        ):
             return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}-source.tar.xz"
         return super().url_for_version(version)
 
