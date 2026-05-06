@@ -10,7 +10,7 @@ from spack.package import *
 class Partons(CMakePackage):
     """PARTONS is a software framework dedicated to the phenomenology
     of 3D hadron structure, in particular Generalized Parton Distributions
-    (GPDs) and Tranverse Momentum Dependent (TMDs) parton distribution
+    (GPDs) and Transverse Momentum Dependent (TMDs) parton distribution
     functions."""
 
     homepage = "https://3d-partons.github.io/partons/"
