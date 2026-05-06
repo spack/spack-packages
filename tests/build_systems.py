@@ -5,7 +5,6 @@
 import os
 import pathlib
 import platform
-import re
 import shutil
 
 import pytest
