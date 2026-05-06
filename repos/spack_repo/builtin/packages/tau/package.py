@@ -29,6 +29,7 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
+    version("2.35.2", sha256="130c28a35caf3e394344c91ec67130d1a203c8e070ba88dbad5073bc977491b5")
     version("2.35.1", sha256="fee7c0ae49c370c23489b7c14b312af4611bb06cdb212464a2b0798721e9811f")
     version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")
     version("2.34.1", sha256="0e90726372fa1b6f726eb62b0840350070a00215144853ee07a852a99458c619")
@@ -213,6 +214,7 @@ class Tau(Package):
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("dyninst@12.3.0:", when="+dyninst")
     depends_on("julia@1.6:", when="+julia")
+    depends_on("intel-oneapi-compilers", when="@2.35.2: +level_zero ~force-legacy-l0")
 
     conflicts(
         "+julia",
@@ -429,6 +431,13 @@ class Tau(Package):
                     options.append("-force_legacy_l0")
                 else:
                     options.append("-force_new_l0")
+                    if spec.satisfies("@2.35.2:"):
+                        options.append(
+                            "-intel_iga_lib=%s"
+                            % spec[
+                                "intel-oneapi-compilers"
+                            ].prefix.debugger.latest.opt.debugger.lib
+                        )
 
         if "+opencl" in spec:
             options.append("-opencl")
