@@ -431,7 +431,7 @@ class Tau(Package):
                     options.append("-force_legacy_l0")
                 else:
                     options.append("-force_new_l0")
-                    if spec.satisfies("@2.35.1:"):
+                    if spec.satisfies("@2.35.2:"):
                         options.append(
                             "-intel_iga_lib=%s"
                             % spec[
