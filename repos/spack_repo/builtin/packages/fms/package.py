@@ -77,9 +77,14 @@ class Fms(CMakePackage):
 
     # disable building unit tests during a normal build
     patch(
-        "cmake-build-tests-option.patch",
+        "cmake-build-tests-option-2025.04.patch",
         sha256="4c02a3a19849002f5d47f72500e4b2f68ca8510acd4c9e3c09c9f5391525a4a2",
         when="@2025.04",
+    )
+    patch(
+        "cmake-build-tests-option-2026.01.patch",
+        sha256="eb043f992942224e3f8fc8dae22f4e53294ecadad83dd80a031c3d4465b7e4b8",
+        when="@2026.01",
     )
 
     # https://github.com/NOAA-GFDL/FMS/issues/1417
