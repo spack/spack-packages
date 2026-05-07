@@ -21,6 +21,8 @@ class PyPyarrow(PythonPackage):
 
     license("Apache-2.0")
 
+    version("24.0.0", sha256="85fe721a14dd823aca09127acbb06c3ca723efbd436c004f16bca601b04dcc83")
+    version("23.0.1", sha256="b8c5873e33440b2bc2f4a79d2b47017a89c5a24116c055625e6f2ee50523f019")
     version("19.0.1", sha256="3bf266b485df66a400f282ac0b6d1b500b9d2ae73314a153dbe97d6d5cc8a99e")
     version("16.1.0", sha256="15fbb22ea96d11f0b5768504a3f961edab25eaf4197c341720c4a387f6c60315")
     version("15.0.2", sha256="9c9bc803cb3b7bfacc1e96ffbfd923601065d9d3f911179d81e72d99fd74a3d9")
@@ -85,6 +87,8 @@ class PyPyarrow(PythonPackage):
         "@15.0.2",
         "@16.1.0",
         "@19.0.1",
+        "@23.0.1",
+        "@24.0.0",
     )
     for v in arrow_versions:
         depends_on("arrow+python" + v, when=v)
