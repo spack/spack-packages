@@ -1,8 +1,8 @@
-# Copyright 2013-2024 Lawrence Livermore National Security, LLC and other
-# Spack Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
@@ -25,6 +25,8 @@ class Maxbin(MakefilePackage):
     depends_on("fraggenescan", type=("build", "run"))
     depends_on("hmmer@3", type=("build", "run"))
     depends_on("idba", type=("build", "run"))
+
+    depends_on("cxx", type="build")
 
     build_directory = "src"
 
