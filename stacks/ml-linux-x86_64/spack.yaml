@@ -137,7 +137,7 @@ spack:
             - +rocm
             - ~distributed
             - amdgpu_target=gfx90a
-            - ~flash_attention
+            - +flash_attention
             - "%c,cxx=gcc"
 
   ci:
