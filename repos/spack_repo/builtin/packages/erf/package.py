@@ -121,11 +121,7 @@ class Erf(CMakePackage, CudaPackage):
 
             # Rewrite spdlog SSH URL to HTTPS so it works without SSH keys
             if os.path.exists(gitmodules):
-                with open(gitmodules, "r") as f:
-                    content = f.read()
-                content = re.sub(r"git@github\.com:", "https://github.com/", content)
-                with open(gitmodules, "w") as f:
-                    f.write(content)
+                filter_file("git@github.com:", "https://github.com/", gitmodules, string=True)
 
             # Fetch spdlog submodule (nested under ekat, can't be fetched
             # from top-level .gitmodules)
