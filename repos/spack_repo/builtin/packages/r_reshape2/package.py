@@ -17,6 +17,7 @@ class RReshape2(RPackage):
 
     license("MIT")
 
+    version("1.4.5", sha256="0ead5acd0153e5073b3c24e8e782982a4eab3aaa768ba17700d796fb13b68cef")
     version("1.4.4", sha256="d88dcf9e2530fa9695fc57d0c78adfc5e361305fe8919fe09410b17da5ca12d8")
     version("1.4.3", sha256="8aff94c935e75032344b52407593392ddd4e16a88bb206984340c816d42c710e")
     version("1.4.2", sha256="6d3783610379be4c5676d9236cf66276a166b5b96c18f2759e9b219758959b6b")
@@ -24,7 +25,9 @@ class RReshape2(RPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("r@3.1:", type=("build", "run"), when="@1.4.3:")
-    depends_on("r-plyr@1.8.1:", type=("build", "run"))
-    depends_on("r-rcpp", type=("build", "run"))
-    depends_on("r-stringr", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.1:", when="@1.4.3:")
+
+        depends_on("r-plyr@1.8.1:")
+        depends_on("r-rcpp")
+        depends_on("r-stringr")
