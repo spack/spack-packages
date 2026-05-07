@@ -30,6 +30,7 @@ class RocmOpencl(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="b09539ef53a775c03352f9843f3a346e4f2ad3941c1954e953d352e4984ee708")
@@ -109,6 +110,7 @@ class RocmOpencl(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -134,7 +136,7 @@ class RocmOpencl(CMakePackage):
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
 
     @property
