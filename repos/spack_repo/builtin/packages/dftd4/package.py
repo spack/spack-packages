@@ -13,7 +13,7 @@ class Dftd4(MesonPackage, CMakePackage):
     """Generally Applicable Atomic-Charge Dependent London Dispersion Correction"""
 
     homepage = "https://dftd4.readthedocs.io/en/latest"
-    url = "https://github.com/dftd4/dftd4/releases/download/v0.0.0/dftd4-0.0.0.tar.xz"
+    url = "https://github.com/dftd4/dftd4/releases/download/v0.0.0/dftd4-0.0.0-source.tar.xz"
     git = "https://github.com/dftd4/dftd4.git"
 
     maintainers("awvwgk")
@@ -23,13 +23,25 @@ class Dftd4(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
-    version("4.2.0", sha256="467e024071510ad82b862c66c383c2ebc164fc1140e15dfc79f48d2f999fd184")
-    version("4.1.1", sha256="c8e6388d7d7d748dbcf91117f35aa50108492d4fd2266d60782cf85a16651887")
+    version(
+        "4.2.0",
+        sha256="467e024071510ad82b862c66c383c2ebc164fc1140e15dfc79f48d2f999fd184",
+        url="https://github.com/dftd4/dftd4/releases/download/v4.2.0/dftd4-4.2.0.tar.xz",
+    )
+    version(
+        "4.1.1",
+        sha256="c8e6388d7d7d748dbcf91117f35aa50108492d4fd2266d60782cf85a16651887",
+        url="https://github.com/dftd4/dftd4/releases/download/v4.1.1/dftd4-4.1.1.tar.xz",
+    )
     version("4.1.0", sha256="a61bc0c8e8a7db5302ef4f4f1ebc834bb9dcf2896b0e2af746f25a0d4177d8d0")
     version("4.0.2", sha256="ed4a6a3ba0a89b8d6825bf11724dee647fd8ee6272e7822e0cbd9847994eb872")
     version("4.0.1", sha256="d3781763390c349794d70663e4e54e368d19a5869c98fe939b32e9069432201b")
     version("4.0.0", sha256="401e49893d98a1da82896998a6345b62f709683cbb19d9cbbe10564b9fc353e4")
-    version("3.7.0", sha256="4e8749df6852bf863d5d1831780a2d30e9ac4afcfebbbfe5f6a6a73d06d6c6ee")
+    version(
+        "3.7.0",
+        sha256="4e8749df6852bf863d5d1831780a2d30e9ac4afcfebbbfe5f6a6a73d06d6c6ee",
+        url="https://github.com/dftd4/dftd4/releases/download/v3.7.0/dftd4-3.7.0.tar.xz",
+    )
     version("3.6.0", sha256="56b3b4650853a34347d3d56c93d7596ecbe2208c4a14dbd027959fd4a009679d")
     version("3.5.0", sha256="d2bab992b5ef999fd13fec8eb1da9e9e8d94b8727a2e624d176086197a00a46f")
     version("3.4.0", sha256="24fcb225cdd5c292ac26f7d3204ee3c4024174adb5272eeda9ae7bc57113ec8d")
@@ -67,13 +79,6 @@ class Dftd4(MesonPackage, CMakePackage):
     depends_on("mctc-lib@0.3", when="@:3.8")
     depends_on("multicharge@0.3", when="@:3.8")
     extends("python", when="+python")
-
-    def url_for_version(self, version):
-        if version <= Version("3.6.0") or (
-            version >= Version("4.0.0") and version <= Version("4.1.0")
-        ):
-            return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}-source.tar.xz"
-        return super().url_for_version(version)
 
 
 class MesonBuilder(meson.MesonBuilder):
