@@ -44,4 +44,6 @@ class REdger(RPackage):
     depends_on("r-limma@3.41.5:", type=("build", "run"), when="@3.32.1:")
     depends_on("r-limma@3.63.6:", type=("build", "run"), when="@4.8.2:")
     depends_on("r-locfit", type=("build", "run"))
-    depends_on("r-rcpp", type=("build", "run"), when="@3.20.9:")
+
+    # Historical
+    depends_on("r-rcpp", type=("build", "run"), when="@3.20.9:4.3.10")
