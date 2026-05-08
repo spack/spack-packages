@@ -9,7 +9,7 @@ spack:
   - ../../.ci/gitlab/
 
   specs:
-  - "vtk@9: +mpi"
+  # - "vtk@9: +mpi"
   - "boost"
   - "paraview@:5.13.1+mpi+qt"
   - "py-numpy ^netlib-lapack"
