@@ -47,8 +47,10 @@ class Syclomatic(CMakePackage):
 
     variant(
         "targets",
-        default="X86,NVPTX",
-        description="LLVM targets to build (semicolon- or comma-separated)",
+        default=("X86", "NVPTX"),
+        values=str,
+        multi=True,
+        description="LLVM targets to build",
     )
 
     # The CMakeLists.txt lives under the llvm/ subdirectory of the repo.
@@ -56,7 +58,7 @@ class Syclomatic(CMakePackage):
     install_targets = ["install-c2s"]
 
     def cmake_args(self):
-        targets = self.spec.variants["targets"].value.replace(",", ";")
+        targets = ";".join(self.spec.variants["targets"].value)
         return [
             self.define("LLVM_ENABLE_PROJECTS", "clang"),
             self.define("LLVM_TARGETS_TO_BUILD", targets),
