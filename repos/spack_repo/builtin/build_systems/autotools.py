@@ -143,6 +143,7 @@ class AutotoolsBuilder(BuilderWithDefaults):
         "configure_abs_path",
         "build_directory",
         "autoreconf_search_path_args",
+        "inject_build_host_triplets",
     )
 
     #: Whether to update ``libtool`` (e.g. for Arm/Clang/Fujitsu/NVHPC compilers)
@@ -168,6 +169,11 @@ class AutotoolsBuilder(BuilderWithDefaults):
     #: If False deletes all the .la files in the prefix folder after the installation.
     #: If True instead it installs them.
     install_libtool_archives = False
+
+    #: If True, injects ``--build`` and ``--host`` triplets into configure arguments to trick
+    #: autotools into cross-compilation mode, making builds reproducible and deterministic.
+    #: Set to False in a package to opt out.
+    inject_build_host_triplets: bool = True
 
     @property
     def patch_config_files(self) -> bool:
@@ -586,6 +592,40 @@ To resolve this problem, please try the following:
         """
         return []
 
+    def _build_host_args(self) -> List[str]:
+        """Return ``--build`` and ``--host`` triplets to pass to configure.
+
+        These trick autotools into cross-compilation mode even when building natively, which makes
+        builds deterministic by preventing configure from probing the host system. The ``--build``
+        triplet identifies the actual machine; ``--host`` uses ``spack`` as the vendor field to
+        keep the two distinct.
+        """
+        if not self.inject_build_host_triplets:
+            return []
+
+        arch = str(self.spec.target.family)
+        platform = self.spec.platform
+
+        if platform == "linux":
+            if self.spec.satisfies("%[virtuals=libc] glibc"):
+                suffix = "gnu"
+            elif self.spec.satisfies("%[virtuals=libc] musl"):
+                suffix = "musl"
+            else:
+                return []
+            build_triplet = f"{arch}-pc-linux-{suffix}"
+            host_triplet = f"{arch}-spack-linux-{suffix}"
+        elif platform == "darwin":
+            build_triplet = f"{arch}-apple-darwin"
+            host_triplet = f"{arch}-spack-darwin"
+        elif platform == "freebsd":
+            build_triplet = f"{arch}-pc-freebsd"
+            host_triplet = f"{arch}-spack-freebsd"
+        else:
+            return []
+
+        return [f"--build={build_triplet}", f"--host={host_triplet}"]
+
     def autoreconf(self, pkg: AutotoolsPackage, spec: Spec, prefix: Prefix) -> None:
         """Not needed usually, configure should be already there"""
 
@@ -618,6 +658,7 @@ To resolve this problem, please try the following:
         appropriately set prefix.
         """
         options = getattr(self.pkg, "configure_flag_args", [])
+        options += self._build_host_args()
         options += ["--prefix={0}".format(prefix)]
         options += self.configure_args()
 
