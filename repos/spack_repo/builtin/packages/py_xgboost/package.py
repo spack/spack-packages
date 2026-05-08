@@ -70,6 +70,7 @@ class PyXgboost(PythonPackage):
             depends_on("py-graphviz")
             depends_on("py-matplotlib")
 
+    # Hard-coded to search lib directory, add lib64 for certain distros
     patch("add-lib64-1.patch", when="@1")
     patch("add-lib64-2.patch", when="@2:")
 
