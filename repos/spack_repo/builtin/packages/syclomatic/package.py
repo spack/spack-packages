@@ -21,7 +21,7 @@ class Syclomatic(CMakePackage):
     license("Apache-2.0 WITH LLVM-exception")
 
     requires(
-        "os=linux",
+        "platform=linux",
         msg="Upstream SYCLomatic works on Linux and Windows, but the spack "
         "package is only available on Linux",
     )
