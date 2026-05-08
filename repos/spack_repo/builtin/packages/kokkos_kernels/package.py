@@ -228,6 +228,10 @@ class KokkosKernels(CMakePackage, CudaPackage):
             ),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
+        if spec.satisfies("^kokkos+pic"):
+            options.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", True))
+        if spec.satisfies("^kokkos+rocm+hip_relocatable_device_code"):
+            options.append(self.define("HIP_RELOCATABLE_DEVICE_CODE", True))
 
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
         if spec.satisfies("^kokkos+rocm") and not (

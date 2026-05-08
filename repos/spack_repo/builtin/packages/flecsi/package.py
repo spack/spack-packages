@@ -69,8 +69,8 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("parmetis@4.0.3:", when="@:2.3.1")
     depends_on("boost@1.79.0: +program_options +stacktrace")
 
-    depends_on("cmake@3.19:")
-    depends_on("cmake@3.23:", when="@2.3:")
+    depends_on("cmake@3.19:", type="build")
+    depends_on("cmake@3.23:", when="@2.3:", type="build")
     depends_on("boost +atomic +filesystem +regex +system", when="@:2.2.1")
     depends_on("kokkos", when="+kokkos @2.3:")
     depends_on("kokkos", when="@2.4:")
