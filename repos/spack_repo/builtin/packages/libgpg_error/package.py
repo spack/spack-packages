@@ -13,9 +13,6 @@ class LibgpgError(AutotoolsPackage):
     homepage = "https://www.gnupg.org/related_software/libgpg-error/index.en.html"
     url = "https://gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-1.37.tar.bz2"
 
-    # Cross-compile issues related to generated lock-obj-pub header.
-    inject_build_host_triplets = False
-
     maintainers("alalazo")
 
     license("GPL-2.0-or-later AND LGPL-2.1-or-later")
