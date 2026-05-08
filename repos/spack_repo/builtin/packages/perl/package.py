@@ -51,6 +51,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         depends_on("berkeley-db")
         depends_on("bzip2")
         depends_on("zlib-api")
+        depends_on("less", type="run")
 
     conflicts("%msvc@:19.29.30136")
     conflicts("%nvhpc@:20.11")

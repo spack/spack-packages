@@ -24,6 +24,7 @@ class NodeJs(Package):
     license("Unicode-TOU")
 
     # Current (latest features) - odd major number
+    version("25.9.0", sha256="d55d77187039d4cd85c732f76838f44e3be552054473459dfa9cc0eb611ea664")
     version("25.2.1", sha256="1cbbdb66f99e0c41937eb8763c57e622eab43006742dc4d0856270b17215e376")
     version(
         "23.11.1",
@@ -53,12 +54,15 @@ class NodeJs(Package):
 
     # LTS (recommended for most users) - even major number
     version(
-        "24.13.0",
-        sha256="54cb58921b4ce2831c6690ee823a3d39cfbf2b75f4e556c4c2bde90f3d8fd1ca",
+        "24.14.1",
+        sha256="8298cf1f5774093ca819f41b8dd392fd2cff058688b4d5c8805026352e2d31b3",
         preferred=True,
     )
+    version("24.13.0", sha256="54cb58921b4ce2831c6690ee823a3d39cfbf2b75f4e556c4c2bde90f3d8fd1ca")
     version("24.2.0", sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929")
+    version("22.22.2", sha256="f4b9606f33aef725a77b6292460102b48b80902571a8bb94cd769837ee0577df")
     version("22.16.0", sha256="108f250ff79cc103b464b3ef41fa60f4866e4e6c962117171adaac7325ebdab2")
+    version("20.20.2", sha256="8cb85a81f75169eb811f7b2512cf17a646826430debbe016a7461f31e286fdef")
     version("20.18.3", sha256="eba088fa562735140b283c7bb33f53e026ccd5febe68c52c5737ef6e577ec874")
     version("20.18.2", sha256="cf3ef49fafbfee3cdcd936a0d6031341b73bfa6b26a484ea0a4936c26d24b829")
     version("20.18.1", sha256="5bad8ced873eef3b32e7daee703156bce9224920ac6044f4232f5393df0628b8")
@@ -117,6 +121,7 @@ class NodeJs(Package):
 
     # python requirements are based according to
     # https://github.com/spack/spack/pull/47942#discussion_r1875624177
+    # https://github.com/nodejs/node/blob/vX.Y.Z/configure
     depends_on("python", type="build")
     depends_on("python@:3.9", when="@14.14.0:14.18.1", type="build")
     depends_on("python@:3.10", when="@14.18.2:14.21.3", type="build")
@@ -130,12 +135,15 @@ class NodeJs(Package):
     depends_on("python@:3.10", when="@19.0.0:19.0.1", type="build")
     depends_on("python@:3.11", when="@19.1.0:20.10.0", type="build")
     depends_on("python@:3.12", when="@20.11.0:20.15.1", type="build")
-    depends_on("python@:3.13", when="@20.16.0:20.18.3", type="build")
+    depends_on("python@:3.13", when="@20.16.0:20.20.0", type="build")
+    depends_on("python@:3.14", when="@20.20.1:20.20.2", type="build")
     depends_on("python@:3.11", when="@21.0.0:21.1.0", type="build")
     depends_on("python@:3.12", when="@21.2.0:22.2.0", type="build")
-    depends_on("python@:3.13", when="@22.3.0:22.16.0", type="build")
+    depends_on("python@:3.13", when="@22.3.0:22.22.0", type="build")
+    depends_on("python@:3.14", when="@22.22.1:22.22.2", type="build")
     depends_on("python@3.8:3.13", when="@23", type="build")
-    depends_on("python@3.9:3.13", when="@24", type="build")
+    depends_on("python@3.9:3.13", when="@24.0.0:24.13.0", type="build")
+    depends_on("python@3.9:3.14", when="@24.13.1:24.15.0", type="build")
     depends_on("python@3.9:3.14", when="@25", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
@@ -155,6 +163,9 @@ class NodeJs(Package):
     conflicts("%apple-clang@:11", when="@21:")
     conflicts("%apple-clang@:10", when="@16:")
     conflicts("%apple-clang@:9", when="@13:")
+
+    # https://github.com/nodejs/node/pull/56740
+    conflicts("%gcc@15:", when="@20:20.18,22:22.13")
 
     phases = ["configure", "build", "install"]
 
