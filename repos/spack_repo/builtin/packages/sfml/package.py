@@ -36,10 +36,12 @@ class Sfml(CMakePackage):
     variant("network", default=True, description="Build the network module")
 
     conflicts("+window", msg="The window module requires UDev, which is not in spack")
-    conflicts("+graphics", msg="The window module requires UDev, which is not in spack")
+    conflicts("+graphics", msg="The graphics module requires UDev, which is not in spack")
+    conflicts("+audio", msg="The audio module requires OpenAL, which is not in spack")
 
     def cmake_args(self):
         args = [
+            self.define("SFML_USE_SYSTEM_DEPS", True),
             self.define_from_variant("SFML_BUILD_WINDOW", "window"),
             self.define_from_variant("SFML_BUILD_GRAPHICS", "graphics"),
             self.define_from_variant("SFML_BUILD_AUDIO", "audio"),
