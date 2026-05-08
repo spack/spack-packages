@@ -27,6 +27,7 @@ class ComposableKernel(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="e1174a4b6faa12ef31dac0324547fd49aca09fee380bd89ecd49a44bb34b72cc")
     version("7.1.0", sha256="03c7fffcad2aed373486315266fdf9dd400a280d383b543ff48ebd3acb3f985f")
@@ -74,6 +75,7 @@ class ComposableKernel(CMakePackage):
     generator("ninja")
 
     for ver in [
+        "7.2.1",
         "7.2.0",
         "7.1.1",
         "7.1.0",
@@ -132,7 +134,9 @@ class ComposableKernel(CMakePackage):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.run_tests:
             args.append(self.define("BUILD_TESTING", "ON"))
-        elif self.spec.satisfies("@:6.1"):
+        else:
+            args.append(self.define("BUILD_TESTING", "OFF"))
+        if self.spec.satisfies("@:6.1"):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))

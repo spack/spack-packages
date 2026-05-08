@@ -43,6 +43,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+    version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
     version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
     version("7.1.0", sha256="87f5532b8b653bd18541cdf6e59923cbd340b300d8ec5046d3e4288d9e5195c0")
@@ -208,7 +209,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         )
 
     for d_version, d_shasum in [
-        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+        ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638"),
+        ("7.2.1", "201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f"),
     ]:
         resource(
             name="rocm-systems",
@@ -222,6 +224,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
         ("7.1.1", "b02e7a2b38c408067f3713ff47fe620059a8fe5f47110ab343116448625b7448"),
         ("7.2.0", "b003b608df470d88ad0a636581e134b05b8aee586b0332c545280e6c6366d121"),
+        ("7.2.1", "eb243267e341581a340c0fd3d9cd8439fa27205e8c5be4ae9452636d222cc928"),
     ]:
         resource(
             name="spirv-llvm-translator",
@@ -377,6 +380,21 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
+
+        # CMake args passed just to runtimes
+        runtime_cmake_args = [self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True)]
+
+        # When building runtimes, just-built clang has to know where GCC is.
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        if gcc_install_dir_flag:
+            runtime_cmake_args.extend(
+                [
+                    self.define("CMAKE_C_FLAGS", gcc_install_dir_flag),
+                    self.define("CMAKE_CXX_FLAGS", gcc_install_dir_flag),
+                ]
+            )
+
+        args.append(self.define("RUNTIMES_CMAKE_ARGS", runtime_cmake_args))
         return args
 
     compiler_languages = ["c", "cxx", "fortran"]
@@ -443,6 +461,15 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 os.path.join(self.prefix, "amdgcn"),
             )
 
+        cfg_files = ["clang.cfg", "clang++.cfg"]
+        if self.spec.satisfies("@7:"):
+            cfg_files.append("flang.cfg")
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        if gcc_install_dir_flag:
+            for cfg in cfg_files:
+                with open(os.path.join(self.prefix.bin, cfg), "w") as f:
+                    print(gcc_install_dir_flag, file=f)
+
     # Required for enabling asan on dependent packages
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
@@ -460,3 +487,15 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "amdflang")
+
+
+def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
+    """Get the --gcc-install-dir=... flag, so that clang does not do a system scan for GCC."""
+    if not spec.satisfies("%gcc"):
+        return None
+    gcc = Executable(compiler.cc)
+    libgcc_path = gcc("-print-file-name=libgcc.a", output=str, fail_on_error=False).strip()
+    if not os.path.isabs(libgcc_path):
+        return None
+    libgcc_dir = os.path.dirname(libgcc_path)
+    return f"--gcc-install-dir={libgcc_dir}" if os.path.exists(libgcc_dir) else None

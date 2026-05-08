@@ -107,7 +107,7 @@ class CachedCMakeBuilder(CMakeBuilder):
         spec = self.pkg.spec
 
         # Fortran compiler is optional
-        if "FC" in os.environ:
+        if "FC" in os.environ and self.spec.satisfies("%fortran"):
             spack_fc_entry = cmake_cache_path("CMAKE_Fortran_COMPILER", os.environ["FC"])
             system_fc_entry = cmake_cache_path(
                 "CMAKE_Fortran_COMPILER", self.spec["fortran"].package.fortran

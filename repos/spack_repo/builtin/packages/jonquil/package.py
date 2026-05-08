@@ -27,16 +27,20 @@ class Jonquil(MesonPackage, CMakePackage):
     version("0.2.0", sha256="68448be7f399942e15a05ed7a149cc226a8ee81a8ce66cd68a2d01d9fc86527e")
     version("0.1.0", sha256="0c8854da047306cad357143fe56f7afe3d323d89aa7383b6614b2b587f580044")
 
+    with when("build_system=cmake"):
+        variant("shared", default=True, description="Build shared libraries")
+
     depends_on("fortran", type="build")
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")
 
-    depends_on("toml-f@0.4:")
+    for build_system in ["cmake", "meson"]:
+        depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
     depends_on("pkgconfig", type="build")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return []
+        return [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
 
 
 class MesonBuilder(meson.MesonBuilder):

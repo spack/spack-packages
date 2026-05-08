@@ -24,6 +24,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.25.1", sha256="d9d9518110aea1f8f5444985cc1a95273ab140cdbcd2c2038c6309a3b611abb4")
+    version("3.25.0", sha256="dc1c018c16bd9dcf40596959875725edb4ba8b854a0b67bbce62a0d4be1bd3be")
+    version("3.24.6", sha256="d6ad14652996b0e0d3da51068eec902118057f275de867e8cf258ffd64d90a7d")
     version("3.24.5", sha256="b538efa53ebfa5c7a1c3ac9783a57852a74ce4fb436f0ee4802564503c67269f")
     version("3.24.4", sha256="772bb47638f8335e4a5982c48947af250e58061100a817c9e1e2fdc50de2ce95")
     version("3.24.3", sha256="dde6f6ef2c5ef8c473a831d56a2e3192b5304c50c4cc5ded7f296ef6d86aaf13")
@@ -648,6 +651,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         if "+mkl-pardiso" in spec:
             options.append("--with-mkl_pardiso-dir=%s" % spec["mkl"].prefix)
+
+        # See https://github.com/spack/spack-packages/pull/4651
+        if spec.satisfies("^intel-oneapi-mkl@2026.0:"):
+            options.append("--with-mkl_sparse=0")
+            options.append("--with-mkl_sparse_optimize=0")
 
         # For the moment, HPDDM does not work as a dependency
         # using download instead

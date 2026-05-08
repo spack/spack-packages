@@ -24,6 +24,8 @@ class MctcLib(MesonPackage, CMakePackage):
 
     version("main", branch="main")
 
+    version("0.5.1", sha256="a93ea3e50a1950745df01601bfd672d485f0367660f7076dbe73e422e7d4e2ac")
+    version("0.5.0", sha256="afd0dd4e40c3441432f077e14112962273ccc25abb00db05d7559fec3b0f1505")
     version("0.4.2", sha256="ce1e962c79d871d3705be590aef44f07ca296843b85e164307290f8324769406")
     version("0.4.1", sha256="57fe4610c4fa21d0b797f88b68481c7be1e7d291daa12063caed51bee779b88a")
     version("0.4.0", sha256="43f6988fc5a2c8d2d8397c6ef8d55f745c9869dd94a7dc9c099a0e1b7f423e40")
@@ -33,6 +35,8 @@ class MctcLib(MesonPackage, CMakePackage):
 
     variant("json", default=False, description="Enable support for JSON")
     variant("openmp", default=False, description="Enable OpenMP support")
+    with when("build_system=cmake"):
+        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")  # generated
 
@@ -42,7 +46,9 @@ class MctcLib(MesonPackage, CMakePackage):
 
     for build_system in ["cmake", "meson"]:
         depends_on(f"jonquil build_system={build_system}", when=f"build_system={build_system}")
-        depends_on("toml-f", when="@0.4.2:+json")
+        depends_on(
+            f"toml-f build_system={build_system}", when=f"@0.4.2:+json build_system={build_system}"
+        )
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -50,6 +56,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         return [
             self.define_from_variant("WITH_JSON", "json"),
             self.define_from_variant("WITH_OpenMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
 
 

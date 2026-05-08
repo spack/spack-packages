@@ -570,6 +570,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     patch("mfem-4.7.patch", when="@4.7.0")
     patch("mfem-4.7-sundials-7.patch", when="@4.7.0+sundials ^sundials@7:")
     patch("mfem-4.8-nvcc-c++17.patch", when="@4.8.0+cuda")
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/mfem/mfem/pull/5215.diff?full_index=1",
+        when="@4.8.0:4.9.0 +petsc ^petsc@3.25.0:",
+        sha256="51221b44f83c36042b0b126569591f29a706aae139f0f0d14035c357411f25ae",
+    )
 
     # Backport fix for potential leak (redundant allocation) in
     # FiniteElement::GetDofToQuad. PR: https://github.com/mfem/mfem/pull/5155
@@ -823,8 +828,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             lapack_blas = spec["lapack"].libs + spec["blas"].libs
             options += [
                 # LAPACK_OPT is not used
-                "LAPACK_LIB=%s"
-                % ld_flags_from_library_list(lapack_blas)
+                "LAPACK_LIB=%s" % ld_flags_from_library_list(lapack_blas)
             ]
 
         if "+superlu-dist" in spec:

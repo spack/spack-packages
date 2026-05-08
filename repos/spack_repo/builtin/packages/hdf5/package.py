@@ -39,6 +39,12 @@ class Hdf5(CMakePackage):
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
+    version(
+        "2.1.0",
+        sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+    )
+
     # Odd versions are considered experimental releases
     # Even versions are maintenance versions
     version(
@@ -199,6 +205,13 @@ class Hdf5(CMakePackage):
     # See https://github.com/HDFGroup/hdf5/issues/2906#issue-1697749645
     conflicts(
         "+fortran", when="@1.13.3:^cmake@:3.22", msg="cmake_minimum_required is not set correctly."
+    )
+
+    # https://github.com/HDFGroup/hdf5/pull/6267
+    patch(
+        "https://github.com/HDFGroup/hdf5/commit/84e5adf753cdd97a807df2da6338bb0e0cdf9862.patch?full_index=1",
+        sha256="cf8056ec86e01aaf384bef3aecc11dc111a3f11bd83e80d1156af7f939328135",
+        when="@2.1.0",
     )
 
     # HDF5 searches for zlib CMake config files before it falls back to
@@ -531,7 +544,8 @@ class Hdf5(CMakePackage):
             self.define("HDF5_BUILD_EXAMPLES", False),
             self.define(
                 "BUILD_TESTING",
-                self.run_tests or
+                self.run_tests
+                or
                 # Version 1.8.22 fails to build the tools when shared libraries
                 # are enabled but the tests are disabled.
                 spec.satisfies("@1.8.22+shared+tools"),

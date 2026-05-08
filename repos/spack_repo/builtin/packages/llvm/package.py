@@ -52,7 +52,11 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     version("main", branch="main")
 
+    # Note: remember to update `provides("libllvm")` according to major versions listed
+
     # Latest stable
+    version("22.1.3", sha256="7e144bd6da8177757434cc0dfd1476122f143413df379c6d6cf03843512b5a9e")
+    version("22.1.2", sha256="a252efd7a4a268d2cc5145b17adcaa82757fdee1d06d748b4c24137807710ecb")
     version("22.1.1", sha256="c48878550911a8a8993a749e6118446082656768e62b26456ac7d39c4422b409")
     version("22.1.0", sha256="933765a1c2cd518d95a9033a92d88d7109a79aefa4609247c31f28b8bc8dd96e")
 
@@ -266,24 +270,26 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
 
-    provides("libllvm@20", when="@20.0.0:20")
-    provides("libllvm@19", when="@19.0.0:19")
-    provides("libllvm@18", when="@18.0.0:18")
-    provides("libllvm@17", when="@17.0.0:17")
-    provides("libllvm@16", when="@16.0.0:16")
-    provides("libllvm@15", when="@15.0.0:15")
-    provides("libllvm@14", when="@14.0.0:14")
-    provides("libllvm@13", when="@13.0.0:13")
-    provides("libllvm@12", when="@12.0.0:12")
-    provides("libllvm@11", when="@11.0.0:11")
-    provides("libllvm@10", when="@10.0.0:10")
-    provides("libllvm@9", when="@9.0.0:9")
-    provides("libllvm@8", when="@8.0.0:8")
-    provides("libllvm@7", when="@7.0.0:7")
-    provides("libllvm@6", when="@6.0.0:6")
-    provides("libllvm@5", when="@5.0.0:5")
-    provides("libllvm@4", when="@4.0.0:4")
-    provides("libllvm@3", when="@3.0.0:3")
+    provides("libllvm@22", when="@22")
+    provides("libllvm@21", when="@21")
+    provides("libllvm@20", when="@20")
+    provides("libllvm@19", when="@19")
+    provides("libllvm@18", when="@18")
+    provides("libllvm@17", when="@17")
+    provides("libllvm@16", when="@16")
+    provides("libllvm@15", when="@15")
+    provides("libllvm@14", when="@14")
+    provides("libllvm@13", when="@13")
+    provides("libllvm@12", when="@12")
+    provides("libllvm@11", when="@11")
+    provides("libllvm@10", when="@10")
+    provides("libllvm@9", when="@9")
+    provides("libllvm@8", when="@8")
+    provides("libllvm@7", when="@7")
+    provides("libllvm@6", when="@6")
+    provides("libllvm@5", when="@5")
+    provides("libllvm@4", when="@4")
+    provides("libllvm@3", when="@3")
 
     provides("c", "cxx", when="+clang")
     provides("fortran", when="+flang")

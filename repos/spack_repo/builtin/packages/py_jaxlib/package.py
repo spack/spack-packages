@@ -49,6 +49,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.10.0", sha256="12ae17617d1346e2f98cfc48c1a000adc7389784eb119e8108a22dfd57cbb8c3")
+    version("0.9.2", sha256="9e67faaa74be4539e397fe61317568545f9ea325ddf1f7f534929d508786f29e")
     version("0.9.1", sha256="1bdae0c3311165437461e9afe05b76de2adb9ce86b557b4bd270b0ec411ff27d")
     version("0.9.0", sha256="8525c72ac7ea01851297df5b25ca4622c65299c265c87dfe78420bb29e7b1bb3")
     version("0.8.3", sha256="fad6506b91b761842263dc6a9691ecc4f584b313a214ed6c89b6e5d899a69a3d")
@@ -159,6 +161,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("python@:3.12", when="+rocm")
 
         # jaxlib/setup.py
+        depends_on("py-scipy@1.14:", when="@0.10:")
         depends_on("py-scipy@1.13:", when="@0.7.2:")
         depends_on("py-scipy@1.12:", when="@0.6.2:")
         depends_on("py-scipy@1.11.1:", when="@0.5:")
@@ -277,7 +280,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             for libdir in libs.directories:
                 env.append_path("LD_LIBRARY_PATH", libdir)
 
-            env.set("XLA_FLAGS", f'--xla_gpu_cuda_data_dir={self.spec["cuda"].prefix}')
+            env.set("XLA_FLAGS", f"--xla_gpu_cuda_data_dir={self.spec['cuda'].prefix}")
 
     def install(self, spec, prefix):
         # https://jax.readthedocs.io/en/latest/developer.html
