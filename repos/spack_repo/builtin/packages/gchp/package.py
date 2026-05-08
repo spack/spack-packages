@@ -69,8 +69,7 @@ class Gchp(CMakePackage):
     depends_on("udunits@2", when="@14.7:")
     depends_on("mpi@3")
     depends_on("netcdf-fortran")
-    depends_on("cmake@3.13:", when="@:14.6")
-    depends_on("cmake@3.24:", when="@14.7:")
+    depends_on("cmake@3.24:")
     depends_on("libfabric", when="+ofi")
     depends_on("m4")
 
