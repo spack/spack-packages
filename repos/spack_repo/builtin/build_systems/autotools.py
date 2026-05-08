@@ -613,14 +613,11 @@ To resolve this problem, please try the following:
                 suffix = "musl"
             else:
                 return []
-            build_triplet = f"{arch}-pc-linux-{suffix}"
-            host_triplet = f"{arch}-spack-linux-{suffix}"
+            build_triplet = f"{arch}-spack-linux-{suffix}"
+            host_triplet = f"{arch}-pc-linux-{suffix}"
         elif platform == "darwin":
-            build_triplet = f"{arch}-apple-darwin"
-            host_triplet = f"{arch}-spack-darwin"
-        elif platform == "freebsd":
-            build_triplet = f"{arch}-pc-freebsd"
-            host_triplet = f"{arch}-spack-freebsd"
+            build_triplet = f"{arch}-spack-darwin"
+            host_triplet = f"{arch}-apple-darwin"
         else:
             return []
 
