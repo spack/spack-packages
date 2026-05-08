@@ -37,7 +37,9 @@ class Sfml(CMakePackage):
 
     conflicts("+window", msg="The window module requires UDev, which is not in spack")
     conflicts("+graphics", msg="The graphics module requires UDev, which is not in spack")
-    conflicts("+audio", msg="The audio module requires OpenAL, which is not in spack")
+    conflicts(
+        "+audio", msg="The audio module requires OpenAL, Vorbis, FLAC, which are not in spack"
+    )
 
     def cmake_args(self):
         args = [
