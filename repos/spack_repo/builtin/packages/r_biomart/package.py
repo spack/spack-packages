@@ -44,6 +44,7 @@ class RBiomart(RPackage):
         depends_on("r-annotationdbi")
         depends_on("r-biocfilecache", when="@2.46.2:")
         depends_on("r-httr2", when="@2.66.2:")
+        depends_on("r-curl", when="@2.66.2:")
         depends_on("r-progress", when="@2.34.2:")
         depends_on("r-stringr", when="@2.34.2:")
         depends_on("r-xml2", when="@2.46.2:")
