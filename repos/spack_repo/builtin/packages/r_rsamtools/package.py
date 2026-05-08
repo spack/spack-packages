@@ -84,6 +84,8 @@ class RRsamtools(RPackage):
     # this is not a listed dependency but is needed
     depends_on("curl")
     depends_on("zlib-api")
+    depends_on("xz")
+    depends_on("bzip2")
 
     conflicts("r@4.5.0:", when="@:2.23")
 
