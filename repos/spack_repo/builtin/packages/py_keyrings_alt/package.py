@@ -30,10 +30,3 @@ class PyKeyringsAlt(PythonPackage):
 
     depends_on("py-jaraco-classes", when="@4.1.2:", type=("build", "run"))
     depends_on("py-jaraco-context", when="@5.0.1:", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("5.0.2"):
-            name = "keyrings_alt"
-        else:
-            name = "keyrings.alt"
-        return f"https://files.pythonhosted.org/packages/source/k/keyrings.alt/{name}-{version}.tar.gz"

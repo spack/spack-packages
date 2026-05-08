@@ -56,13 +56,3 @@ class PyPathos(PythonPackage):
     depends_on("py-dill@0.3.5.1:", type=("build", "run"), when="@0.2.9:")
     depends_on("py-dill@0.3.4:", type=("build", "run"), when="@0.2.8:")
     depends_on("py-dill@0.2.9:", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = self.url.rsplit("/", 1)[0]
-        if Version("0.2.8") > version >= Version("0.2.2"):
-            url += "/pathos-{0}.tar.gz"
-        else:
-            url += "/pathos-{0}.zip"
-
-        url = url.format(version)
-        return url

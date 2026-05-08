@@ -32,10 +32,3 @@ class PyBabel(PythonPackage):
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-pytz@2015.7:", when="@2.12: ^python@:3.8", type=("build", "run"))
     depends_on("py-pytz@2015.7:", when="@:2.10", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/B/Babel/{}-{}.tar.gz"
-        name = "Babel"
-        if version >= Version("2.15"):
-            name = name.lower()
-        return url.format(name, version)

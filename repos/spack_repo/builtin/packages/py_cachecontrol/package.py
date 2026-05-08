@@ -35,11 +35,3 @@ class PyCachecontrol(PythonPackage):
     depends_on("py-filelock@3.8.0:", when="@0.13:+filecache", type=("build", "run"))
     depends_on("py-lockfile@0.9:", when="@0.12+filecache", type=("build", "run"))
     depends_on("py-redis@2.10.5:", when="+redis", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cachecontrol/{0}-{1}.tar.gz"
-        if version <= Version("0.13.0"):
-            letter = "CacheControl"
-        else:
-            letter = "cachecontrol"
-        return url.format(letter, version)

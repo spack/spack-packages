@@ -22,13 +22,3 @@ class PyAccessiblePygments(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"), when="@0.0.5:")
     depends_on("py-pygments@1.5:", type=("build", "run"))
     depends_on("py-setuptools", type=("build"))
-
-    def url_for_version(self, version):
-        url = (
-            "https://pypi.org/packages/source/a/accessible-pygments/accessible{}pygments-{}.tar.gz"
-        )
-        if version < Version("0.0.5"):
-            separator = "-"
-        else:
-            separator = "_"
-        return url.format(separator, version)

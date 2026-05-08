@@ -38,11 +38,3 @@ class PyMarkdownItPy(PythonPackage):
     depends_on("py-setuptools", when="@:2.0", type="build")
     depends_on("py-attrs@19:21", when="@:2.0", type=("build", "run"))
     depends_on("py-typing-extensions@3.7.4:", when="@:2 ^python@:3.7", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/m/markdown-it-py/{}-{}.tar.gz"
-        if version >= Version("4"):
-            name = "markdown_it_py"
-        else:
-            name = "markdown-it-py"
-        return url.format(name, version)

@@ -59,11 +59,3 @@ class PyLightningUqBox(PythonPackage):
             depends_on("py-omegaconf@2.3:")
             depends_on("py-jsonargparse@4.28:+signatures")
             depends_on("py-ruff@0.2:")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/l/lightning-uq-box/{}-{}.tar.gz"
-        if version >= Version("0.2.0"):
-            name = "lightning_uq_box"
-        else:
-            name = "lightning-uq-box"
-        return url.format(name, version)

@@ -42,11 +42,3 @@ class PyLightningUtilities(PythonPackage):
         depends_on("py-fire", when="@0.3.0")
         # https://github.com/Lightning-AI/utilities/pull/473
         depends_on("py-setuptools@:81", when="@:0.15.2")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/l/lightning-utilities/{}-{}.tar.gz"
-        if version >= Version("0.11.3"):
-            name = "lightning_utilities"
-        else:
-            name = "lightning-utilities"
-        return url.format(name, version)

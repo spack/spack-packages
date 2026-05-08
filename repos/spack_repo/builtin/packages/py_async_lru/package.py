@@ -26,11 +26,3 @@ class PyAsyncLru(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     depends_on("py-typing-extensions@4:", when="@2: ^python@:3.10", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/a/{0}/{0}-{1}.tar.gz"
-        if version >= Version("2.0.5") or version <= Version("1.0.2"):
-            name = "async_lru"
-        else:
-            name = "async-lru"
-        return url.format(name, version)

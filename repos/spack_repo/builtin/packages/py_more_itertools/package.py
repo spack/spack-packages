@@ -39,10 +39,3 @@ class PyMoreItertools(PythonPackage):
     # Historical dependencies
     depends_on("py-setuptools", when="@:8.12.0", type="build")
     depends_on("py-six@1.0.0:1", when="@:5", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("10.7.0"):
-            name = "more_itertools"
-        else:
-            name = "more-itertools"
-        return f"https://files.pythonhosted.org/packages/source/m/more-itertools/{name}-{version}.tar.gz"

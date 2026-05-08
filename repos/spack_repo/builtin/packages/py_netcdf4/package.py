@@ -81,14 +81,6 @@ class PyNetcdf4(PythonPackage):
         when="@1.6:1.6.5 %gcc@14:",
     )
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/n/netCDF4/{}-{}.tar.gz"
-        if version >= Version("1.7"):
-            name = "netcdf4"
-        else:
-            name = "netCDF4"
-        return url.format(name, version)
-
     def flag_handler(self, name, flags):
         if name == "cflags":
             if self.spec.satisfies("%oneapi") or self.spec.satisfies("%apple-clang@15:"):

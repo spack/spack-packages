@@ -23,12 +23,3 @@ class PyJupyterLsp(PythonPackage):
 
     depends_on("py-jupyter-server@1.1.2:", type=("build", "run"))
     depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("2.2.6"):
-            name = "jupyter_lsp"
-        else:
-            name = "jupyter-lsp"
-        return (
-            f"https://files.pythonhosted.org/packages/source/j/jupyter-lsp/{name}-{version}.tar.gz"
-        )

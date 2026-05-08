@@ -212,7 +212,10 @@ def _homepage(cls: "PythonPackage") -> Optional[str]:
 
 def _url(cls: "PythonPackage") -> Optional[str]:
     if cls.pypi:
-        return f"https://files.pythonhosted.org/packages/source/{cls.pypi[0]}/{cls.pypi}"
+        package_name = cls.pypi.split("/")[0]
+        normalised_pypi = re.sub(r"[-_.]+", "-", package_name).lower()
+        package_extension = cls.pypi.split("-")[-1]
+        return f"https://files.pythonhosted.org/packages/source/{normalised_pypi[0]}/{normalised_pypi}/{normalised_pypi}-{package_extension}"
     return None
 
 

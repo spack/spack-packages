@@ -145,14 +145,6 @@ class PyCartopy(PythonPackage):
 
     patch("proj6.patch", when="@0.17.0")
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/C/Cartopy/{}-{}.tar.gz"
-        if version >= Version("0.24"):
-            name = "cartopy"
-        else:
-            name = "Cartopy"
-        return url.format(name, version)
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Needed for `spack install --test=root py-cartopy`
         library_dirs = []

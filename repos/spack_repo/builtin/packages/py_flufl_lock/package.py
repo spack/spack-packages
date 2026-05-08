@@ -28,11 +28,3 @@ class PyFluflLock(PythonPackage):
     depends_on("py-atpublic", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
     depends_on("py-typing-extensions", when="@:5.0.4^python@:3.7", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://pypi.io/packages/source/f/flufl.lock/{0}-{1}.tar.gz"
-        if version >= Version("8"):
-            filename = "flufl_lock"
-        else:
-            filename = "flufl.lock"
-        return url.format(filename, version)

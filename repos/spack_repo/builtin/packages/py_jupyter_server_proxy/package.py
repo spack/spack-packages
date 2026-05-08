@@ -41,10 +41,3 @@ class PyJupyterServerProxy(PythonPackage):
     # Historical dependencies
     depends_on("py-jupyter-packaging@0.7.9:0.7", type="build", when="@:3")
     depends_on("py-setuptools@40.8.0:", type="build", when="@:3")
-
-    def url_for_version(self, version):
-        if version >= Version("3.2.3"):
-            name = "jupyter_server_proxy"
-        else:
-            name = "jupyter-server-proxy"
-        return f"https://files.pythonhosted.org/packages/source/j/jupyter-server-proxy/{name}-{version}.tar.gz"

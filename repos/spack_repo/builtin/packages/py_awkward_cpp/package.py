@@ -57,9 +57,3 @@ class PyAwkwardCpp(PythonPackage):
 
     # https://github.com/scikit-hep/awkward/issues/3132#issuecomment-2136042870
     conflicts("%gcc@14:", when="@:33")
-
-    def url_for_version(self, version):
-        if version <= Version("35"):
-            return super().url_for_version(version).replace("_", "-")
-        else:
-            return super().url_for_version(version)

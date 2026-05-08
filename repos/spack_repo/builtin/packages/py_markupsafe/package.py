@@ -43,12 +43,3 @@ class PyMarkupsafe(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("python@3.9:", when="@3:")
         depends_on("python@3.7:", when="@2:")
-
-    def url_for_version(self, version):
-        if version >= Version("3.0.0"):
-            name = "markupsafe"
-        else:
-            name = "MarkupSafe"
-        return (
-            f"https://files.pythonhosted.org/packages/source/M/MarkupSafe/{name}-{version}.tar.gz"
-        )

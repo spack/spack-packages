@@ -84,10 +84,3 @@ class PyMetpy(PythonPackage):
         depends_on("py-scipy@1.0:", type=("build", "run"))
         depends_on("py-traitlets@4.3.0:", type=("build", "run"))
         depends_on("py-xarray@0.14.1:", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version > Version("1.6.2"):
-            return super().url_for_version(version)
-
-        url = "https://files.pythonhosted.org/packages/source/m/MetPy/MetPy-{0}.tar.gz"
-        return url.format(version.dotted)

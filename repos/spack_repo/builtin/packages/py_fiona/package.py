@@ -65,11 +65,3 @@ class PyFiona(PythonPackage):
         depends_on("py-setuptools", when="@:1.9.1,1.9.5")
         depends_on("py-six", when="@1.9.4:1.9")
         depends_on("py-six@1.7:", when="@:1.8")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/{0}/{0}iona/{0}iona-{1}.tar.gz"
-        if version >= Version("1.9.5"):
-            letter = "f"
-        else:
-            letter = "F"
-        return url.format(letter, version)

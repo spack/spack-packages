@@ -35,10 +35,3 @@ class PyMako(PythonPackage):
 
     # Historical dependencies
     depends_on("py-importlib-metadata", when="@1.2.2: ^python@:3.7", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("1.3.6"):
-            name = "mako"
-        else:
-            name = "Mako"
-        return f"https://files.pythonhosted.org/packages/source/M/Mako/{name}-{version}.tar.gz"
