@@ -63,6 +63,7 @@ class REnsembldb(RPackage):
 
         depends_on("r-biobase")
 
+        depends_on("r-seqinfo", when="@2.34:")
         depends_on("r-genomeinfodb")
         depends_on("r-genomeinfodb@1.45.5:", when="@2.34:")
 
