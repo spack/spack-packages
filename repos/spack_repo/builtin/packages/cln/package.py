@@ -42,6 +42,7 @@ class Cln(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("autoconf", type="build")
+    depends_on("autoconf-archive", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
@@ -52,9 +53,9 @@ class Cln(AutotoolsPackage):
     depends_on("gettext", type="build")
 
     def autoreconf(self, spec, prefix):
-        autoreconf_args = ["-i"]
+        autoreconf_args = ["-i", "-f"]
 
-        aclocal_pkg_list = ["gettext"]
+        aclocal_pkg_list = ["gettext", "autoconf-archive"]
         aclocal_path = os.path.join("share", "aclocal")
 
         for pkg in aclocal_pkg_list:
