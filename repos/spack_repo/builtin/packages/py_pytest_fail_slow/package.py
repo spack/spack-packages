@@ -28,10 +28,3 @@ class PyPytestFailSlow(PythonPackage):
 
     # Historical dependencies
     depends_on("py-setuptools@46.4:", type="build", when="@:0.4")
-
-    def url_for_version(self, version):
-        if version >= Version("0.5.0"):
-            name = "pytest_fail_slow"
-        else:
-            name = "pytest-fail-slow"
-        return f"https://files.pythonhosted.org/packages/source/p/{name}/{name}-{version}.tar.gz"

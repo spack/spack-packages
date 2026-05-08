@@ -48,10 +48,3 @@ class PyPythonGitlab(PythonPackage):
         # Historical dependencies
         depends_on("py-typing-extensions@4:", when="@3.14:3 ^python@:3.7")
         depends_on("py-six", when="@:1")
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@4.5:"):
-            name = "python_gitlab"
-        else:
-            name = "python-gitlab"
-        return f"https://files.pythonhosted.org/packages/source/p/{name}/{name}-{version}.tar.gz"

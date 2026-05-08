@@ -32,13 +32,6 @@ class PyRtree(PythonPackage):
     depends_on("libspatialindex@1.8.5:")
     depends_on("py-numpy", when="@1.4:", type="test")
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/R/Rtree/{}-{}.tar.gz"
-        name = "Rtree"
-        if version >= Version("1.3.0"):
-            name = name.lower()
-        return url.format(name, version)
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("SPATIALINDEX_C_LIBRARY", self.spec["libspatialindex"].libs[0])
 

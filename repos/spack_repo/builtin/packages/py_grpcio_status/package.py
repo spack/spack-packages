@@ -28,11 +28,3 @@ class PyGrpcioStatus(PythonPackage):
         for grpcio in ("1.75.0", "1.62.2", "1.60.1", "1.56.2"):
             depends_on(f"py-grpcio@{grpcio}:", when=f"@{grpcio}")
         depends_on("py-googleapis-common-protos@1.5.5:")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/grpcio_status/{}-{}.tar.gz"
-        if version >= Version("63"):
-            name = "grpcio_status"
-        else:
-            name = "grpcio-status"
-        return url.format(name, version)

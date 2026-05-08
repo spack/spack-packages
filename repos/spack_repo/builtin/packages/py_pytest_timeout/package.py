@@ -26,10 +26,3 @@ class PyPytestTimeout(PythonPackage):
     depends_on("py-pytest@7:", when="@2.3:", type=("build", "run"))
     depends_on("py-pytest@5:", when="@2:", type=("build", "run"))
     depends_on("py-pytest@3.6.0:", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("2.4"):
-            name = "pytest_timeout"
-        else:
-            name = "pytest-timeout"
-        return f"https://files.pythonhosted.org/packages/source/p/pytest-timeout/{name}-{version}.tar.gz"

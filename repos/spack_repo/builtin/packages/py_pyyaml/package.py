@@ -59,14 +59,6 @@ class PyPyyaml(PythonPackage):
     conflicts("^python@3.13:", when="@:6.0.1")
     conflicts("^python@3.14:", when="@:6.0.2")
 
-    # With pyyaml 6.0.2, the tarfile changed from PyYAML-6.0.1.tar.gz to pyyaml-6.0.2.tar.gz
-    def url_for_version(self, version):
-        if version >= Version("6.0.2"):
-            url = "https://pypi.io/packages/source/p/pyyaml/pyyaml-{0}.tar.gz"
-        else:
-            url = "https://pypi.io/packages/source/P/PyYAML/PyYAML-{0}.tar.gz"
-        return url.format(version.dotted)
-
     @property
     def import_modules(self):
         modules = ["yaml"]

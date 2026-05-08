@@ -37,8 +37,3 @@ class PyPydap(PythonPackage):
     depends_on("py-docopt", type=("build", "run"), when="@:3.4")
     depends_on("py-six@1.4.0:", type=("build", "run"), when="@:3.4")
 
-    def url_for_version(self, version):
-        if version < Version("3.5"):
-            return f"https://files.pythonhosted.org/packages/source/P/Pydap/Pydap-{version}.tar.gz"
-
-        return super().url_for_version(version)

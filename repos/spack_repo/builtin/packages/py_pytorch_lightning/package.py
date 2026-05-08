@@ -130,11 +130,3 @@ class PyPytorchLightning(PythonPackage):
     conflicts("^py-torch~distributed", when="@1.8.0")
     # https://github.com/Lightning-AI/lightning/issues/10348
     conflicts("^py-torch~distributed", when="@1.5.0:1.5.2")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/pytorch-lightning/{}-{}.tar.gz"
-        if version >= Version("2.5"):
-            name = "pytorch_lightning"
-        else:
-            name = "pytorch-lightning"
-        return url.format(name, version)

@@ -42,10 +42,3 @@ class PyCharsetNormalizer(PythonPackage):
         depends_on("python@3.6:3.11", when="@2.1:3.0")
         depends_on("python@3.5:3.11", when="@2.0.11:2.0.12")
         depends_on("python@3.5:3.10", when="@1.3.5:2.0.10")
-
-    def url_for_version(self, version):
-        if version >= Version("3.4.0"):
-            url = "https://files.pythonhosted.org/packages/source/c/charset_normalizer/charset_normalizer-{0}.tar.gz"
-        else:
-            url = "https://files.pythonhosted.org/packages/source/c/charset-normalizer/charset-normalizer-{0}.tar.gz"
-        return url.format(version)

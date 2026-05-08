@@ -25,12 +25,3 @@ class PyPyqt6Sip(PythonPackage):
 
     depends_on("py-setuptools@75.8.1:", type="build", when="@13.10.2:")
     depends_on("py-setuptools@30.3:", type="build")
-
-    def url_for_version(self, version):
-        if version >= Version("13.9.1"):
-            name = "pyqt6_sip"
-        else:
-            name = "PyQt6_sip"
-        return (
-            f"https://files.pythonhosted.org/packages/source/P/PyQt6-sip/{name}-{version}.tar.gz"
-        )

@@ -32,12 +32,6 @@ class PyPyglet(PythonPackage):
     depends_on("pil", type=("build", "run"), when="@2.0: platform=linux")
     depends_on("pulseaudio", type=("build", "run"), when="@2.0: platform=linux")
 
-    def url_for_version(self, version):
-        if version <= Version("1.4.2"):
-            return (
-                f"https://files.pythonhosted.org/packages/source/p/pyglet/pyglet-{version}.tar.gz"
-            )
-
     @when("@2.0.9:2.0.10")
     def patch(self):
         # 2.0.9 and 2.0.10 had a broken pyproject.toml in their PyPI zipfile

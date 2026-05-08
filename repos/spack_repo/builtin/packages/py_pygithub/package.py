@@ -49,7 +49,3 @@ class PyPygithub(PythonPackage):
     depends_on("py-typing-extensions@4:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-urllib3@1.26.0:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-deprecated", type=("build", "run"), when="@:2.1.1")
-
-    def url_for_version(self, version):
-        name = "pygithub" if version >= Version("2.4") else "PyGithub"
-        return f"https://files.pythonhosted.org/packages/source/{name[0]}/{name}/{name}-{version}.tar.gz"

@@ -43,15 +43,3 @@ class PyConfigspace(PythonPackage):
     depends_on("py-scipy", when="@0.4.21:")
     depends_on("py-typing-extensions", when="@0.6.0:")
     depends_on("py-more-itertools", when="@0.6.1:")
-
-    def url_for_version(self, version):
-        new_url = (
-            "https://files.pythonhosted.org/packages/source/c/configspace/configspace-{0}.tar.gz"
-        )
-        old_url = (
-            "https://files.pythonhosted.org/packages/source/C/ConfigSpace/ConfigSpace-{0}.tar.gz"
-        )
-        if version >= Version("1.0.0"):
-            return new_url.format(version)
-        else:
-            return old_url.format(version)

@@ -47,11 +47,3 @@ class PyPythonLspServer(PythonPackage):
         depends_on("py-black", when="@1.13: formatter=black")
         depends_on("py-ruff", when="@1.13: formatter=ruff")
         depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/"
-        if self.spec.satisfies("@1.13:"):
-            url += "python_lsp_server/python_lsp_server-{0}.tar.gz"
-        else:
-            url += "python-lsp-server/python-lsp-server-{0}.tar.gz"
-        return url.format(version)

@@ -35,10 +35,3 @@ class PyPytestCov(PythonPackage):
 
     # Historical dependencies
     depends_on("py-setuptools", type="build", when="@:4.1")
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@6.1:"):
-            name = "pytest_cov"
-        else:
-            name = "pytest-cov"
-        return f"https://files.pythonhosted.org/packages/source/p/{name}/{name}-{version}.tar.gz"

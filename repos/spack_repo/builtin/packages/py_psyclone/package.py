@@ -71,11 +71,6 @@ class PyPsyclone(PythonPackage):
     depends_on("py-pytest-xdist", type="test")
     depends_on("py-pytest", type="test")
 
-    def url_for_version(self, version):
-        # As of version 3.0.0, the name of the tarball on pypi is all lowercase.
-        name = "psyclone" if version >= Version("3.0.0") else "PSyclone"
-        return f"https://files.pythonhosted.org/packages/source/P/PSyclone/{name}-{version}.tar.gz"
-
     # Test
     @run_after("install")
     @on_package_attributes(run_tests=True)

@@ -76,14 +76,6 @@ class PyDaskMl(PythonPackage):
 
     conflicts("+docs", when="target=aarch64: %gcc")
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/d/dask-ml/dask{0}ml-{1}.tar.gz"
-        if version > Version("2024.4.3"):
-            sep = "_"
-        else:
-            sep = "-"
-        return url.format(sep, version)
-
     @run_after("install")
     def install_docs(self):
         if "+docs" in self.spec:

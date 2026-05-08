@@ -40,11 +40,3 @@ class PyRuamelYamlClib(PythonPackage):
             if self.spec.satisfies("%oneapi") or self.spec.satisfies("%apple-clang@15:"):
                 flags.append("-Wno-error=incompatible-function-pointer-types")
         return (flags, None, None)
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/r/ruamel.yaml.clib/{}-{}.tar.gz"
-        if version >= Version("0.2.15"):
-            name = "ruamel_yaml_clib"
-        else:
-            name = "ruamel.yaml.clib"
-        return url.format(name, version)

@@ -30,12 +30,3 @@ class PyPyqt5Sip(PythonPackage):
         sha256="82a326749b145b30eda3f0040cd7099c4c06a57a5e9626687b0a983de1ebfc3e",
         when="@12.12:12.13 %gcc@14:",
     )
-
-    def url_for_version(self, version):
-        if version >= Version("12.17.0"):
-            name = "pyqt5-sip"
-        else:
-            name = "PyQt5-sip"
-        return (
-            f"https://files.pythonhosted.org/packages/source/P/PyQt5-sip/{name}-{version}.tar.gz"
-        )

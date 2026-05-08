@@ -41,10 +41,3 @@ class PyPyopenssl(PythonPackage):
         depends_on("py-six@1.5.2:", when="@:19")
 
     conflicts("^py-cryptography@40:40.0.1", when="@23.2:")
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@24.2:"):
-            name = "pyopenssl"
-        else:
-            name = "pyOpenSSL"
-        return f"https://files.pythonhosted.org/packages/source/{name[0]}/{name}/{name}-{version}.tar.gz"

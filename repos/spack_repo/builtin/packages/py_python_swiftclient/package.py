@@ -38,9 +38,3 @@ class PyPythonSwiftclient(PythonPackage):
     depends_on("py-python-keystoneclient@0.7.0:", when="+keystone", type=("build", "run"))
 
     depends_on("py-six@1.9:", type=("build", "run"), when="@:3")
-
-    def url_for_version(self, version):
-        if version < Version("4.7.0"):
-            return f"https://files.pythonhosted.org/packages/source/p/python-swiftclient/python-swiftclient-{version}.tar.gz"
-        else:
-            return f"https://files.pythonhosted.org/packages/source/p/python-swiftclient/python_swiftclient-{version}.tar.gz"

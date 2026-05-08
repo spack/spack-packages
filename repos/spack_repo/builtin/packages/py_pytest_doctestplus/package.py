@@ -30,11 +30,3 @@ class PyPytestDoctestplus(PythonPackage):
 
     depends_on("py-pytest@4.6:", type=("build", "run"))
     depends_on("py-packaging@17:", when="@0.10:", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
-        if version >= Version("1.3.0"):
-            name = "pytest_doctestplus"
-        else:
-            name = "pytest-doctestplus"
-        return url.format(name, version)

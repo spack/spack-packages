@@ -27,10 +27,3 @@ class PyPyqtBuilder(PythonPackage):
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-sip@6.7:6", when="@1.15:", type=("build", "run"))
     depends_on("py-sip@6.3:6", type=("build", "run"))
-
-    def url_for_version(self, version):
-        if version >= Version("1.16.1"):
-            name = "pyqt_builder"
-        else:
-            name = "PyQt-builder"
-        return f"https://files.pythonhosted.org/packages/source/P/PyQt-builder/{name}-{version}.tar.gz"

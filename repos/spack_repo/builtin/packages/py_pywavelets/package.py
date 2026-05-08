@@ -41,12 +41,3 @@ class PyPywavelets(PythonPackage):
 
     # Historical dependencies
     depends_on("py-setuptools@:64", type="build", when="@:1.4")
-
-    def url_for_version(self, version):
-        if version >= Version("1.5"):
-            name = "pywavelets"
-        else:
-            name = "PyWavelets"
-        return (
-            f"https://files.pythonhosted.org/packages/source/P/PyWavelets/{name}-{version}.tar.gz"
-        )

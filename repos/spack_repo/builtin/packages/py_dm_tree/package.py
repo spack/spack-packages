@@ -63,12 +63,6 @@ class PyDmTree(PythonPackage):
     def clean(self):
         remove_linked_tree(PyDmTree.tmp_path)
 
-    def url_for_version(self, version):
-        if version <= Version("0.1.8"):
-            return super().url_for_version(version).replace("_", "-")
-        else:
-            return super().url_for_version(version)
-
     def patch(self):
         PyDmTree.tmp_path = tempfile.mkdtemp(prefix="spack")
         env["TEST_TMPDIR"] = PyDmTree.tmp_path

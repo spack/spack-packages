@@ -29,9 +29,3 @@ class PyPyprojectMetadata(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-packaging@23.2:", when="@0.10:")
         depends_on("py-packaging@19:")
-
-    def url_for_version(self, version):
-        if version >= Version("0.8.0"):
-            return f"https://files.pythonhosted.org/packages/source/p/pyproject_metadata/pyproject_metadata-{version}.tar.gz"
-        else:
-            return f"https://files.pythonhosted.org/packages/source/p/pyproject-metadata/pyproject-metadata-{version}.tar.gz"

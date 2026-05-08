@@ -41,11 +41,3 @@ class PyQuart(PythonPackage):
 
     # Historical dependencies
     depends_on("py-toml", type=("build", "run"), when="@:0.17")
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/q/quart/{}-{}.tar.gz"
-        if self.spec.satisfies("@:0.18.3"):
-            name = "Quart"
-        else:
-            name = "quart"
-        return url.format(name, version)

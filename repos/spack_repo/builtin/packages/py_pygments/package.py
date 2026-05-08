@@ -55,10 +55,3 @@ class PyPygments(PythonPackage):
     # Historical dependencies
     depends_on("py-setuptools@61:", when="@2.15:2.16", type=("build", "run"))
     depends_on("py-setuptools", when="@:2.14", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/P/Pygments/{}-{}.tar.gz"
-        name = "Pygments"
-        if version >= Version("2.17"):
-            name = name.lower()
-        return url.format(name, version)

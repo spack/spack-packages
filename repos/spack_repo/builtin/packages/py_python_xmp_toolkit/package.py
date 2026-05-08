@@ -33,10 +33,3 @@ class PyPythonXmpToolkit(PythonPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("LD_LIBRARY_PATH", self.spec["exempi"].prefix.lib)
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@2.1:"):
-            name = "python_xmp_toolkit"
-        else:
-            name = "python-xmp-toolkit"
-        return f"https://files.pythonhosted.org/packages/source/{name[0]}/{name}/{name}-{version}.tar.gz"

@@ -37,11 +37,3 @@ class PyCwlUtils(PythonPackage):
     depends_on("py-schema-salad@8.8.20250205075315:8", when="@0.32:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.18", when="@0.30:", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.37 ^python@:3.9", type=("build", "run"))
-
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cwl-utils/cwl{}utils-{}.tar.gz"
-        if version >= Version("0.34"):
-            sep = "_"
-        else:
-            sep = "-"
-        return url.format(sep, version)

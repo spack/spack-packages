@@ -26,10 +26,3 @@ class PyPythonJsonLogger(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-typing-extensions", type="build", when="@3.1: ^python@:3.9")
-
-    def url_for_version(self, version):
-        if self.spec.satisfies("@3.1:"):
-            name = "python_json_logger"
-        else:
-            name = "python-json-logger"
-        return f"https://files.pythonhosted.org/packages/source/p/{name}/{name}-{version}.tar.gz"

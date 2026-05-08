@@ -51,13 +51,6 @@ class PyPyqt6(SIPPackage):
     # README
     depends_on("qt-base@6+gui+accessibility")
 
-    def url_for_version(self, version):
-        if version >= Version("6.8.1"):
-            name = "pyqt6"
-        else:
-            name = "PyQt6"
-        return f"https://files.pythonhosted.org/packages/source/P/PyQt6/{name}-{version}.tar.gz"
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Detected system locale encoding (US-ASCII, locale "C") is not UTF-8.
         # Qt shall use a UTF-8 locale ("UTF-8") instead. If this causes problems,
