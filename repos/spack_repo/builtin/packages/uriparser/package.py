@@ -17,6 +17,10 @@ class Uriparser(CMakePackage):
     license("BSD-3-Clause")
 
     version(
+        "1.0.2",
+        sha256="963554c32d40fb6cba5644f1ba63e6dd7a182b2948bd71ee448c532f53b07f1e",
+    )
+    version(
         "1.0.1",
         sha256="5a3b7c491a1e9033d86b9c00a947bafc46407187938578daf799a4155cb7c88a",
     )
