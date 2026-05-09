@@ -20,11 +20,12 @@ class Uriparser(CMakePackage):
         "1.0.2",
         sha256="963554c32d40fb6cba5644f1ba63e6dd7a182b2948bd71ee448c532f53b07f1e",
     )
+    # deprecate all releases before 1.0.2 because of various security issues
     version(
         "1.0.1",
         sha256="5a3b7c491a1e9033d86b9c00a947bafc46407187938578daf799a4155cb7c88a",
+        deprecated=True,
     )
-    # deprecate all releases before 1.0.1 because of various security issues
     version(
         "0.9.7",
         sha256="11553b2abd2b5728a6c88e35ab08e807d0a0f23c44920df937778ce8cc4d40ff",
