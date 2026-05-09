@@ -43,6 +43,7 @@ spack:
             c: /opt/rocm/lib/llvm/bin/amdclang
             cxx: /opt/rocm/lib/llvm/bin/amdclang++
             fortran: /opt/rocm/lib/llvm/bin/amdflang
+            hip: /opt/rocm/lib/llvm/bin/amdclang++
     gcc:
       externals:
       - spec: gcc@13.3.0 languages:='c,c++,fortran'
