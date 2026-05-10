@@ -341,8 +341,9 @@ class Geant4(CMakePackage):
                 if v in variants:
                     # Inform Geant4 whether this optional dataset is in use
                     # so that it's exported to Geant4_DATASET_DESCRIPTIONS
-                    options.append(self.define("GEANT4_INSTALL_DATASETS_" +
-                                               v.upper(), variants[v].value))
+                    options.append(
+                        self.define("GEANT4_INSTALL_DATASETS_" + v.upper(), variants[v].value)
+                    )
 
         # Vecgeom
         if spec.satisfies("+vecgeom"):
