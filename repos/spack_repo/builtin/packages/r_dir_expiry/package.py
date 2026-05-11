@@ -17,6 +17,7 @@ class RDirExpiry(RPackage):
 
     bioc = "dir.expiry"
 
-    version("1.8.0", commit="271f76cb2e8565817400e85fcc2c595923af4af6")
+    with default_args(get_full_repo=True):
+        version("1.8.0", commit="271f76cb2e8565817400e85fcc2c595923af4af6")
 
     depends_on("r-filelock", type=("build", "run"))

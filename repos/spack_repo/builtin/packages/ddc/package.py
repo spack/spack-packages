@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.14.0", sha256="8c239cea877cf52c3334de6d5c5d248eac85e6df27b9476047fd7ff3f78b85b5")
     version("0.13.0", sha256="6b93a532896d9f5342b477a2bcf85f05d242c8d7b0331580a62e50a9bf155bad")
     version("0.12.0", sha256="30a464b00d712ce7264835cc162b63797185667fea3f4c9457d7dfff0a2bc0cc")
     version("0.11.0", sha256="c3ee616cc6cbbf417dade247cd49805b1a5422b4ac3539cb954f608b8ea27cf4")

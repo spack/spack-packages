@@ -20,6 +20,10 @@ class Tecplot(Package):
 
     maintainers("LRWeber")
 
+    license("LicenseRef-Tecplot-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version(
         "2025r2",
         sha256="2deba2be44fed96935ec07111459b2d4d22b51bcf321de32a8d0dc7460359e3d",
