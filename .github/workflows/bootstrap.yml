@@ -8,6 +8,10 @@ on:
       - develop
       - releases/**
     paths:
+      # CI
+      - '.ci/**'
+      - '.github/**'
+      # Build Systems
       - 'repos/spack_repo/builtin/build_systems/**'
       # Clingo
       - 'repos/spack_repo/builtin/packages/clingo/**'
