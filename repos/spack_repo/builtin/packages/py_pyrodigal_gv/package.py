@@ -9,7 +9,8 @@ from spack.package import *
 
 
 class PyPyrodigalGv(PythonPackage):
-    """A Pyrodigal extension to predict genes in giant viruses and viruses with alternative genetic code."""
+    """A Pyrodigal extension to predict genes in giant viruses and 
+    viruses with alternative genetic code."""
 
     homepage = "https://github.com/althonos/pyrodigal-gv"
     pypi = "pyrodigal_gv/pyrodigal_gv-0.3.2.tar.gz"
