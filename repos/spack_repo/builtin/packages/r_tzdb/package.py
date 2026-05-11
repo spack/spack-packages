@@ -33,6 +33,7 @@ class RTzdb(RPackage):
     depends_on("cxx", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("r@4.0.0:", when="@0.5.0:")
         depends_on("r@3.5.0:", when="@0.4.0:")
         depends_on("r@3.4.0:", when="@0.3.0:")
         depends_on("r@3.3:")
