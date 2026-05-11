@@ -85,6 +85,7 @@ class GoBuilder(BuilderWithDefaults):
 
     @property
     def std_ldflags(self) -> List[str]:
+        # Pass ldflags -s = --strip-all and -w = --no-warnings by default
         return ["-s", "-w"]
 
     @property
@@ -94,7 +95,6 @@ class GoBuilder(BuilderWithDefaults):
     @property
     def std_build_args(self):
         """Arguments for ``go build``."""
-        # Pass ldflags -s = --strip-all and -w = --no-warnings by default
         return [
             "-p",
             str(self.pkg.module.make_jobs),
