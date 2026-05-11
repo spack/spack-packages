@@ -61,7 +61,7 @@ class Pelican(GoPackage):
         args[args.index("-tags") + 1] = "forceposix,server"
         args[args.index("-o") + 1] = "pelican-server"
         with working_dir(self.build_directory):
-            which("go")("build", *args)
+            self.module.go("build", *args)
 
     @run_after("install", when="+server")
     def install_server(self):
