@@ -433,22 +433,26 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def force_autoreconf(self):
         return any(self.spec.satisfies(s) for s in self.pkg._force_autoreconf_when)
 
-    @property
-    def build_targets(self):
-        # Starting version 4.8.0, the library includes C++ source files. None of those files is
-        # compiled in any configuration that we currently support. However, Automake still chooses
-        # the C++ compiler for linking, which leads to overlinking to the standard C++ library.
-        # To avoid that, we run make with an extra argument, which overrides the linker command.
-        # This way, the C++ compiler is never called, and the linking is done with the default
-        # command that runs the C compiler.
-        if self.spec.satisfies("@4.8.0:"):
-            return ["CXXLINK=${LINK}"]
-        return []
-
     @when("@4.6.3:")
     def autoreconf(self, pkg, spec, prefix):
         if not os.path.exists(self.configure_abs_path):
             Executable("./bootstrap")()
+
+    @run_before("autoreconf")
+    def filter_stdcxx(self):
+        # Starting version 4.8.0, the library includes C++ source files. None of those files is
+        # compiled in any configuration that we currently support. The C++ compiler is also never
+        # called for the compilation and linking (e.g. libnczarr.la, which is linked with
+        # --tag=CXX, is a convenience library and therefore is created with AR, not CXX). However,
+        # the Automake files are implemented to append -lstdc++ to the list of linker flags even
+        # when unnecessary, which we fix with the following patching:
+        if self.spec.satisfies("@4.8.0:"):
+            # Patch Makefile.in files to cover the case when autoreconf if skipped:
+            filenames = find(self.configure_directory, "Makefile.in", recursive=True)
+            # Patch the Automake include file to cover the case when autoreconf is run:
+            filenames.append(join_path(self.configure_directory, "lib_flags.am"))
+            with keep_modification_time(*filenames):
+                filter_file("-lstdc++", "", *filenames, string=True)
 
     def configure_args(self):
         config_args = [
