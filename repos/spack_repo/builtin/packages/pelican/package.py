@@ -24,6 +24,8 @@ class Pelican(GoPackage):
 
     variant("server", default=False, description="Also build the pelican-server binary")
 
+    depends_on("go@1.25:", type="build")
+
     @run_before("build")
     def create_frontend_placeholder(self):
         # web_ui/ui.go uses //go:embed frontend/out/*, which requires at least one
