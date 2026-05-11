@@ -26,7 +26,7 @@ class Pelican(GoPackage):
 
     depends_on("go@1.25:", type="build")
 
-    @run_before("build")
+    @run_before("build", when="@:7.24")
     def create_frontend_placeholder(self):
         # web_ui/ui.go uses //go:embed frontend/out/*, which requires at least one
         # file to exist. Releases prior to v7.25 did not commit this placeholder,
