@@ -132,16 +132,6 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     variant("symbol_suffix", default="none", description="Set a symbol suffix")
 
-    # We add a variant to allow setting of NUM_THREADS as on some machines, 512 might be
-    # too small. But we default to 512 as per OpenBLAS maintainer higher numbers
-    # will only lead to unnecessary memory usage and potential bottlenecks
-    # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
-    variant(
-        "max_num_threads",
-        default="512",
-        description="Set the default number of threads for OpenBLAS",
-    )
-
     variant("locking", default=True, description="Build with thread safety")
     variant(
         "threads",
@@ -150,6 +140,18 @@ class Openblas(CMakePackage, MakefilePackage):
         values=("pthreads", "openmp", "none"),
         multi=False,
     )
+
+    # We add a variant to allow setting of NUM_THREADS as on some machines, 512 might be
+    # too small. But we default to 512 as per OpenBLAS maintainer higher numbers
+    # will only lead to unnecessary memory usage and potential bottlenecks
+    # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
+    for _when_condition in ("threads=openmp", "threads=pthreads"):
+        variant(
+            "max_num_threads",
+            default="512",
+            description="Set the default number of threads for OpenBLAS",
+            when=_when_condition,
+        )
 
     # virtual dependency
     provides("blas", "lapack")
