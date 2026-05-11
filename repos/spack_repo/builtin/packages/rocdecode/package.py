@@ -6,12 +6,12 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocdecode(CMakePackage):
+class Rocdecode(ROCmLibrary, CMakePackage):
     """rocDecode is a high performance video decode SDK for AMD hardware"""
 
     homepage = "https://github.com/ROCm/rocDecode"
@@ -97,33 +97,6 @@ class Rocdecode(CMakePackage):
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"rocm-(\d+\.\d+\.\d+)", lib)
-        if match:
-            return match.group(1)
-        return cls.version_from_rocm_version_h(lib)
-
-    @classmethod
-    def version_from_rocm_version_h(cls, lib):
-        """Get ROCm version from <ROCM_PATH>/include/rocm-core/rocm_version.h"""
-        libdir = os.path.dirname(os.path.abspath(lib))
-        rocm_prefix = os.path.dirname(libdir)
-        header = join_path(rocm_prefix, "include", "rocm-core", "rocm_version.h")
-        if not os.path.isfile(header):
-            return None
-        try:
-            with open(header, encoding="utf-8", errors="replace") as f:
-                text = f.read()
-        except OSError:
-            return None
-        major_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MAJOR\s+(\d+)", text, re.MULTILINE)
-        minor_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MINOR\s+(\d+)", text, re.MULTILINE)
-        patch_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_PATCH\s+(\d+)", text, re.MULTILINE)
-        if not major_m or not minor_m or not patch_m:
-            return None
-        return "{0}.{1}.{2}".format(major_m.group(1), minor_m.group(1), patch_m.group(1))
 
     def patch(self):
         if self.spec.satisfies("@:7.0"):
