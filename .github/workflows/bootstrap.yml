@@ -192,4 +192,4 @@ jobs:
           spack debug report
           spack -d bootstrap now --dev
           source .ci/env
-          spack -d style -b ${SPACK_CHECKOUT_VERSION} -t black
+          spack -d style -b ${SPACK_CHECKOUT_VERSION} -t ruff-format
