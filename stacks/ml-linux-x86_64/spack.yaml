@@ -113,9 +113,7 @@ spack:
     - $jax_specs
     - matrix:
       - [$keras_specs]
-      exclude:
-      - py-keras backend=torch
-      - torch_specs
+    - $torch_specs
     - $scikit_learn_specs
     - $tensorboard_specs
     - $tensorflow_specs
