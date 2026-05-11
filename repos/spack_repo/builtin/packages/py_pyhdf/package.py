@@ -39,7 +39,7 @@ class PyPyhdf(PythonPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            if self.spec.satisfies("%gcc@14:"):
+            if self.spec.satisfies("%gcc@14:") or self.spec.satisfies("%oneapi@2026:"):
                 flags.append("-Wno-error=incompatible-pointer-types")
                 flags.append("-Wno-error=discarded-qualifiers")
         return (flags, None, None)

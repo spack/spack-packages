@@ -320,8 +320,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
-    depends_on("magma+cuda", when="+magma+cuda")
-    depends_on("magma+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/178065
+    depends_on("magma@:2.9+cuda", when="+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
@@ -367,6 +368,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-astunparse", when="@1.13:2.8")
 
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
+
+    # https://github.com/pytorch/pytorch/issues/172630 (GCC-14.2 ICE for aarch64)
+    patch(
+        "https://github.com/pytorch/pytorch/commit/8fd509399e25cb4b265dff663d3f777406001f2e.patch?full_index=1",
+        sha256="91d0470cc05f5f0f775f32b70f174af74f5607162852ba1bcdd81381cd735f24",
+        when="@2.9:2.10.0",
+    )
 
     # https://github.com/pytorch/pytorch/issues/160092
     patch(

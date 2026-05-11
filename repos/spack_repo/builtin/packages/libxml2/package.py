@@ -22,6 +22,8 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     maintainers("AlexanderRichert-NOAA")
 
+    executables = ["xml2-config"]
+
     def url_for_version(self, version):
         if version >= Version("2.9.13"):
             url = "https://download.gnome.org/sources/libxml2/{0}/libxml2-{1}.tar.xz"
@@ -74,6 +76,12 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     build_system(
         conditional("nmake", when="platform=windows"), "cmake", "autotools", default="autotools"
     )
+
+    @classmethod
+    def determine_version(cls, exe):
+        # Output from --version is just the version, nothing else
+        output = Executable(exe)("--version", output=str)
+        return output.strip()
 
     def flag_handler(self, name, flags):
         if name == "cflags" and self.spec.satisfies("+pic"):

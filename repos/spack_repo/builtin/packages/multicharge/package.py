@@ -30,6 +30,9 @@ class Multicharge(CMakePackage, MesonPackage):
 
     variant("openmp", default=True, description="Enable OpenMP support")
 
+    with when("build_system=cmake"):
+        variant("shared", default=True, description="Build shared libraries")
+
     depends_on("c", type="build")
     depends_on("fortran", type="build")
     depends_on("lapack")
@@ -47,7 +50,10 @@ class Multicharge(CMakePackage, MesonPackage):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]
         return args
 
 

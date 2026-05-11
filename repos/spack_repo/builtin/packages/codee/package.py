@@ -28,6 +28,8 @@ class Codee(Package):
 
     maintainers("climbfuji")
 
+    version("2026.1.2", sha256="527ae2735f18b5ccdfc0997f8c255eda3bb647c865d0b9160591931d4c357bfc")
+    version("2026.1.1", sha256="7c8c5e243758ab957faba647d9bdfe6af254acd089ab2a96994970e8fc1122c6")
     version("2026.1", sha256="087b99fdb6114592941d0abdd7915809d5431c7ac361b81f3a23c4b231d41027")
     version("2025.4.7", sha256="febd58bbf20cf59e26f3f39cf3d68e8226b5e194ae27a93acea6d60bce450472")
     version("2025.4.6", sha256="39985b33b42621c17c4b79e37267fa8528de6702dfcde6bc330e114f25575f98")

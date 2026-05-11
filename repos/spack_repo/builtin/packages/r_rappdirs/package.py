@@ -18,10 +18,13 @@ class RRappdirs(RPackage):
 
     license("MIT")
 
+    version("0.3.4", sha256="2320ebc9ef3b1a32a1e63f94a6ce2c1c34d66782221a6531e786804f681abc66")
     version("0.3.3", sha256="49959f65b45b0b189a2792d6c1339bef59674ecae92f8c2ed9f26ff9e488c184")
     version("0.3.1", sha256="2fd891ec16d28862f65bb57e4a78f77a597930abb59380e757afd8b6c6d3264a")
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r@2.14:", type=("build", "run"))
-    depends_on("r@3.2:", type=("build", "run"), when="@0.3.2:")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.1:", when="@0.3.4:")
+        depends_on("r@3.2:", when="@0.3.2:")
+        depends_on("r@2.14:")
