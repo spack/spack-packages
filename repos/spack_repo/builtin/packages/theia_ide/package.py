@@ -22,7 +22,7 @@ class TheiaIde(Package):
     version(
         "1.59.1",
         sha256="f3e4fdb76aa0d5a4f034d9fe8889e8c798425d8c0a452688277002b7f09ea7d0",
-        deprecated=True
+        deprecated=True,
     )
 
     conflicts("platform=darwin", msg="Currently only packaged for Linux")
