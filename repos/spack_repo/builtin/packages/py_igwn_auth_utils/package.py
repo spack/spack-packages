@@ -28,4 +28,4 @@ class PyIgwnAuthUtils(PythonPackage):
         depends_on("py-cryptography@44.0.1:")
         depends_on("py-requests@2.32:")
         depends_on("py-safe-netrc@1:")
-        depends_on("py-scitokens@1.8")
+        depends_on("py-scitokens@1.8:")
