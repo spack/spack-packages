@@ -36,10 +36,7 @@ class Pelican(GoPackage):
         mkdirp(out_dir)
         touch(join_path(out_dir, "placeholder"))
 
-    @property
-    def build_directory(self):
-        # The main package entrypoint is in the cmd/ subdirectory
-        return join_path(self.stage.source_path, "cmd")
+    build_directory = "cmd"
 
     @property
     def build_args(self):
