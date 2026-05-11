@@ -746,7 +746,6 @@ with '-Wl,-commons,use_dylibs' and without
 
         # @:4 does not depend on prrte and used orte
         with when("@5"):
-
             # When an external PMIx is used, also an external PRRTE should be used
             # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
             depends_on("prrte")
