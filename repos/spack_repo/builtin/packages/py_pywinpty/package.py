@@ -20,7 +20,9 @@ class PyPywinpty(PythonPackage):
 
     version("3.0.3", sha256="523441dc34d231fb361b4b00f8c99d3f16de02f5005fd544a0183112bcc22412")
 
-    with default_args(type="build"):
+    requires("platform=windows")
+
+    with default_args(type=("build", "run")):
         depends_on("python@3.9:", type="build")
 
     with default_args(type="build"):
