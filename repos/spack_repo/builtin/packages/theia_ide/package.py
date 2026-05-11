@@ -18,7 +18,12 @@ class TheiaIde(Package):
 
     license("MIT", checked_by="RobertMaaskant")
 
-    version("1.59.1", sha256="f3e4fdb76aa0d5a4f034d9fe8889e8c798425d8c0a452688277002b7f09ea7d0")
+    version("1.70.200", sha256="c110f7e13b465fe78cd89e251554729ba6135fa735ff5dbd0dcd7d5e7fb623c5")
+    version(
+        "1.59.1",
+        sha256="f3e4fdb76aa0d5a4f034d9fe8889e8c798425d8c0a452688277002b7f09ea7d0",
+        deprecated=True
+    )
 
     conflicts("platform=darwin", msg="Currently only packaged for Linux")
     conflicts("platform=windows", msg="Currently only packaged for Linux")
@@ -38,7 +43,8 @@ class TheiaIde(Package):
         depends_on("pkgconfig")
         depends_on("xproto")
 
-        depends_on("npm@10.8.2:")
+        depends_on("npm@10.8.2:", when="@1.59.1")
+        depends_on("npm@10.9.7:", when="@1.70.200")
         depends_on("yarn@1.7.0:1")
 
         # required by node-gyp ^9.0.0: https://github.com/eclipse-theia/theia/blob/v1.59.0/package.json#L45
@@ -47,8 +53,13 @@ class TheiaIde(Package):
 
     with default_args(type="run"):
         depends_on("git@2.11.0:")
+
         # https://github.com/microsoft/vscode/blob/1.98.2/.nvmrc
-        depends_on("node-js@20.18.2:20")
+        depends_on("node-js@20.18.2:20", when="@1.59.1")
+        # https://github.com/microsoft/vscode/blob/1.119.0/.nvmrc
+        depends_on("node-js@22.22.1:22", when="@1.70.200")
+
+        depends_on("zlib-ng")
 
     def install(self, spec, prefix):
         yarn = which("yarn", required=True)
