@@ -473,8 +473,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             with open(os.path.join(self.prefix.bin, "rocm.cfg"), "w") as f:
                 print("-Wl,--enable-new-dtags", file=f)
                 print("-frtlib-add-rpath", file=f)
-
-        if self.spec.satisfies("@7:"):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "a") as f:
                     print("@rocm.cfg", file=f)
