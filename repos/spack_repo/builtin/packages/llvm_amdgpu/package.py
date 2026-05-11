@@ -464,19 +464,23 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         if self.spec.satisfies("@7:"):
             cfg_files.append("flang.cfg")
         gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
-        for cfg in cfg_files:
-            with open(os.path.join(self.prefix.bin, cfg), "w") as f:
-                print(gcc_install_dir_flag, file=f)
 
         if self.spec.satisfies("@7:"):
             with open(os.path.join(self.prefix.bin, "rocm.cfg"), "w") as f:
                 print("-Wl,--enable-new-dtags", file=f)
                 print("-frtlib-add-rpath", file=f)
 
-        if self.spec.satisfies("@7:"):
-            for cfg in cfg_files:
-                with open(os.path.join(self.prefix.bin, cfg), "a") as f:
-                    print("@rocm.cfg", file=f)
+        for cfg in cfg_files:
+            lines = []
+            if gcc_install_dir_flag:
+                lines.append(gcc_install_dir_flag)
+            if self.spec.satisfies("@7:"):
+                lines.append("@rocm.cfg")
+            if not lines:
+                continue
+            with open(os.path.join(self.prefix.bin, cfg), "w") as f:
+                for line in lines:
+                    print(line, file=f)
 
     # Required for enabling asan on dependent packages
     def setup_dependent_build_environment(
