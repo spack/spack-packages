@@ -89,7 +89,7 @@ default:
           - .ci/gitlab/*
           - repos/spack_repo/*
           - stacks/$SPACK_CI_STACK_NAME/*
-        compare_to: develop
+        compare_to: HEAD~1
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
