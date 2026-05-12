@@ -61,7 +61,7 @@ class CompilerWrapper(Package):
             )
             return
 
-        cc_script = pathlib.Path(self.stage.source_path) / "cc.sh"
+        cc_script = pathlib.PurePath(__file__).parent / "cc.sh"
         bin_dir = self.bin_dir()
 
         # Copy the script
