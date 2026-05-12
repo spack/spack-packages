@@ -28,6 +28,7 @@ class Openblas(CMakePackage, MakefilePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("0.3.33", sha256="6761af1d9f5d353ab4f0b7497be2643313b36c8f31caec0144bfef198e71e6ab")
     version("0.3.32", sha256="f8a1138e01fddca9e4c29f9684fd570ba39dedc9ca76055e1425d5d4b1a4a766")
     version("0.3.30", sha256="27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
     version("0.3.29", sha256="38240eee1b29e2bde47ebb5d61160207dc68668a54cac62c076bb5032013b1eb")
@@ -138,6 +139,18 @@ class Openblas(CMakePackage, MakefilePackage):
         values=("pthreads", "openmp", "none"),
         multi=False,
     )
+
+    # We add a variant to allow setting of NUM_THREADS as on some machines, 512 might be
+    # too small. But we default to 512 as per OpenBLAS maintainer higher numbers
+    # will only lead to unnecessary memory usage and potential bottlenecks
+    # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
+    for _when_condition in ("threads=openmp", "threads=pthreads"):
+        variant(
+            "max_num_threads",
+            default="512",
+            description="Set the default number of threads for OpenBLAS",
+            when=_when_condition,
+        )
 
     # virtual dependency
     provides("blas", "lapack")
@@ -616,7 +629,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
-            make_defs.append("NUM_THREADS=512")
+            max_num_threads = self.spec.variants["max_num_threads"].value
+            make_defs.append("NUM_THREADS={0}".format(max_num_threads))
 
         # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
         # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214

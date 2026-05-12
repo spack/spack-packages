@@ -670,7 +670,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
             else:
                 entries.append("# %s not built\n" % dep.upper())
 
-        if spec.satisfies("+umpire") and spec.satisfies("^camp"):
+        if (spec.satisfies("+raja") or spec.satisfies("+umpire")) and spec.satisfies("^camp"):
             dep_dir = get_spec_path(spec, "camp", path_replacements)
             entries.append(cmake_cache_path("CAMP_DIR", dep_dir))
 
