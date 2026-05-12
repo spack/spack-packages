@@ -29,7 +29,7 @@ class PyPythonDateutil(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools@24.3:")
-        depends_on("py-setuptools-scm@:7", when="@2.9.0.post0:")
+        depends_on("py-setuptools-scm@:7", when="@2.7:")
         depends_on("py-wheel", when="@2.8.0:")
 
     with default_args(type=("build", "run")):
