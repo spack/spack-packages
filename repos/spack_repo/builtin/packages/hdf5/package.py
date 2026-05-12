@@ -44,7 +44,7 @@ class Hdf5(CMakePackage):
     version(
         "2.1.1",
         sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b",
-        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1.tar.gz",
         preferred=True,
     )
     version(
