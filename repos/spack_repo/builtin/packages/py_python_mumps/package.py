@@ -53,7 +53,7 @@ class PyPythonMumps(PythonPackage):
     def setup_build_environment(self, env):
         env.set("CC", self.compiler.cc)
         env.set("CXX", self.compiler.cxx)
-        
+
     @run_before("install")
     def setup_meson(self) -> None:
         """Running meson setup before building the package"""
