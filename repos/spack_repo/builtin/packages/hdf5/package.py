@@ -18,11 +18,11 @@ class Hdf5(CMakePackage):
     flexible and efficient I/O and for high volume and complex data.
     """
 
-    homepage = "https://support.hdfgroup.org"
-    url = "https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz"
+    homepage = "https://www.hdfgroup.org/solutions/hdf5/"
+    url = "https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1.tar.gz"
 
     git = "https://github.com/HDFGroup/hdf5.git"
-    maintainers("lrknox", "brtnfld", "byrnHDF", "gheber", "hyoklee", "lkurz")
+    maintainers("lrknox", "brtnfld", "gheber", "hyoklee", "lkurz")
 
     tags = ["e4s", "windows"]
     executables = ["^h5cc$", "^h5pcc$"]
@@ -39,19 +39,23 @@ class Hdf5(CMakePackage):
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
+    # Beginning with version 2.0.0, the versioning policy follows the MAJOR.MINOR.PATCH
+    # Semantic Versioning Specification. (See https://semver.org/)
+    version(
+        "2.1.1",
+        sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+        preferred=True,
+    )
     version(
         "2.1.0",
         sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
         url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
     )
-
-    # Odd versions are considered experimental releases
-    # Even versions are maintenance versions
     version(
         "1.14.6",
         sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b",
         url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
-        preferred=True,
     )
     version(
         "1.14.5",
@@ -344,8 +348,12 @@ class Hdf5(CMakePackage):
         )
 
     def url_for_version(self, version):
-        url = "https://support.hdfgroup.org/archive/support/ftp/HDF5/releases/hdf5-{0}/hdf5-{1}/src/hdf5-{1}.tar.gz"
-        return url.format(version.up_to(2), version)
+        if version >= Version("2.0.0"):
+            return f"https://github.com/HDFGroup/hdf5/releases/download/{version}/hdf5-{version}.tar.gz"
+        elif version >= Version("1.14.0"):
+            return f"https://support.hdfgroup.org/releases/hdf5/v{version.up_to_2.underscored}/v{version.underscored}/downloads/hdf5-{version}.tar.gz"
+        else:
+            return f"https://support.hdfgroup.org/archive/support/ftp/HDF5/releases/hdf5-{version.up_to_2}/hdf5-{version}/src/hdf5-{version}.tar.gz"
 
     def flag_handler(self, name, flags):
         spec = self.spec
