@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Transferbench(CMakePackage):
+class Transferbench(ROCmLibrary, CMakePackage):
     """TransferBench is a utility capable of benchmarking simultaneous copies between
     user-specified devices (CPUs/GPUs)"""
 
@@ -15,6 +16,8 @@ class Transferbench(CMakePackage):
     url = "https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-6.4.0.tar.gz"
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["TransferBench"]
+
     tags = ["rocm"]
 
     license("MIT")

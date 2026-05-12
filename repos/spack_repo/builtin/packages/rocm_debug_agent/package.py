@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmDebugAgent(CMakePackage):
+class RocmDebugAgent(ROCmLibrary, CMakePackage):
     """Radeon Open Compute (ROCm) debug agent"""
 
     homepage = "https://github.com/ROCm/rocr_debug_agent"
@@ -105,15 +104,6 @@ class RocmDebugAgent(CMakePackage):
     # https://github.com/ROCm/rocr_debug_agent/pull/4
     patch("0001-Drop-overly-strict-Werror-flag.patch")
     patch("0002-add-hip-architecture.patch", when="@:6.3")
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            return "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        return None
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
