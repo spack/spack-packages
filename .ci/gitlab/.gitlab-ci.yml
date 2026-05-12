@@ -87,7 +87,7 @@ default:
         paths:
           - .ci/env
           - .ci/gitlab/*
-          - repos/spack_repo/builtin/packages/*
+          - repos/spack_repo/*
           - stacks/$SPACK_CI_STACK_NAME/*
         compare_to: develop
 
