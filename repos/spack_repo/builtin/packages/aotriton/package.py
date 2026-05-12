@@ -61,7 +61,7 @@ class Aotriton(CMakePackage):
 
     # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
     depends_on("aotriton-llvm@0.10", when="@0.10b:")
-    depends_on("aotriton-llvm@0.9", when="@0.9b")
+    depends_on("aotriton-llvm@0.9", when="@0.9b:0.9.2b")
     depends_on("aotriton-llvm@0.8", when="@0.8b")
 
     conflicts("^openssl@3.3.0")
