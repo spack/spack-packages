@@ -27,7 +27,7 @@ class Metabat(CMakePackage):
     depends_on("cmake", type="build")
 
     depends_on(
-        "boost@1.55:1.84+program_options+filesystem+system+graph+serialization+iostreams\
+        "boost@1.55:1.82+program_options+filesystem+system+graph+serialization+iostreams\
                 cxxstd=11",
         type=("build", "run"),
     )
@@ -39,7 +39,10 @@ class Metabat(CMakePackage):
         filter_file(r"(autoconf)", r"autoreconf -i && \1", join_path("cmake", "htslib.cmake"))
         filter_file(
             "./configure",
-            f"./configure --host={self.spec.build_spec.target.family.name}-linux-gnu",
+            (
+                f"./configure --host={self.spec.build_spec.target.family.name}-linux-gnu"
+                f" --without-libdeflate "
+            ),
             join_path("cmake", "htslib.cmake"),
         )
 
