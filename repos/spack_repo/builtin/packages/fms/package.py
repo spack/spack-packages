@@ -113,13 +113,13 @@ class Fms(CMakePackage):
         sha256="6c085485919d493c350d1692ea0b6b403fca1246c0c4bde3b50b44a08d887694",
         when="@2024.02",
     )
-
+    # mixed precision and 64 bit real option are basically the same, only difference is in the built library name
     variant(
         "precision",
-        values=("32", "64"),
-        description="Build a version of the library with default 32 or 64 bit reals or both",
-        default="32",
-        multi=True,
+        values=any_combination_of("32", "64", "mixed").with_default("mixed"),
+        description=("Specifies the default real size used during compilation. FMS supports mixed precision" +
+                    " (32 and 64 kind reals) in most interfaces regardless of the option used"),
+        when="@2025.04:",
     )
     conflicts(
         "precision=32,64",
