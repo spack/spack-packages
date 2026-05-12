@@ -19,6 +19,7 @@ class RR6(RPackage):
 
     cran = "R6"
 
+    version("2.6.1", sha256="59c6eba8b1b912eb7e104f65053235604be853425ee67c152ac4e86a1f2073b4")
     version("2.5.1", sha256="8d92bd29c2ed7bf15f2778618ffe4a95556193d21d8431a7f75e7e5fc102bf48")
     version("2.5.0", sha256="aec1af9626ec532cb883b544bf9eff4cb2d89c343c7ce0fa31761ec5a7882e02")
     version("2.4.0", sha256="70be110174fbf5f5304049b186a6f9c05b77bfaec6d8caf980fcef5da6e0abce")
@@ -26,4 +27,6 @@ class RR6(RPackage):
     version("2.2.0", sha256="7d7bddc4303fafa99954182ccad938166d681499d4e9ae7001d21b0fd60d25c7")
     version("2.1.2", sha256="1bfbb14d9da85b5f8eb865aa6355b2c71c9f86b71f616bfe5a28939b62484d79")
 
-    depends_on("r@3.0:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.6:", when="@2.6:")
+        depends_on("r@3.0:")

@@ -29,6 +29,7 @@ class RFuture(RPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.70.0", sha256="0141056909ec2e9f8901ea611930d8a892ec83533855e965b819b694be999017")
     version("1.34.0", sha256="5839d4fd1f8beb1b18b27a7c50c1eb2bb5d80acd926b1bce9323637c8b2dfa5d")
     version("1.32.0", sha256="d5bb74512d069745184dd580a36449dc0b50d95b1cbbbc1605db82de596f2f76")
     version("1.29.0", sha256="856d1fd51d2f998c6572490c49fdcc27e5f3e0c1ade75eecdbf64a2cd0954373")
@@ -40,18 +41,26 @@ class RFuture(RPackage):
     version("1.21.0", sha256="909e6602068eba543a6d2e464b911123cc29efdb600a7000eff0e5624ff0d12d")
     version("1.14.0", sha256="0a535010d97a01b21aaf9d863603e44359335e273019c1e1980bbb5b2917dbcb")
 
-    depends_on("r-digest", type=("build", "run"))
-    depends_on("r-globals@0.12.4:", type=("build", "run"))
-    depends_on("r-globals@0.13.1:", type=("build", "run"), when="@1.21.0:")
-    depends_on("r-globals@0.14.0:", type=("build", "run"), when="@1.22.0:")
-    depends_on("r-globals@0.15.0:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-globals@0.16.0:", type=("build", "run"), when="@1.28.0:")
-    depends_on("r-globals@0.16.1:", type=("build", "run"), when="@1.29.0:")
-    depends_on("r-listenv@0.7.0:", type=("build", "run"))
-    depends_on("r-listenv@0.8.0:", type=("build", "run"), when="@1.21.0:")
-    depends_on("r-parallelly@1.21.0:", type=("build", "run"), when="@1.21.0:")
-    depends_on("r-parallelly@1.26.1:", type=("build", "run"), when="@1.22.0:")
-    depends_on("r-parallelly@1.30.0:", type=("build", "run"), when="@1.24.0:")
-    depends_on("r-parallelly@1.32.1:", type=("build", "run"), when="@1.28.0:")
-    depends_on("r-parallelly@1.34.0:", type=("build", "run"), when="@1.32.0:")
-    depends_on("r-parallelly@1.38.0:", type=("build", "run"), when="@1.34.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2:", when="@1.40:")
+
+        depends_on("r-digest")
+
+        depends_on("r-globals@0.18.0:", when="@1.49.0:")
+        depends_on("r-globals@0.16.1:", when="@1.29.0:")
+        depends_on("r-globals@0.16.0:", when="@1.28.0:")
+        depends_on("r-globals@0.15.0:", when="@1.26.1:")
+        depends_on("r-globals@0.14.0:", when="@1.22.0:")
+        depends_on("r-globals@0.13.1:", when="@1.21.0:")
+        depends_on("r-globals@0.12.4:")
+
+        depends_on("r-listenv@0.8.0:", when="@1.21.0:")
+        depends_on("r-listenv@0.7.0:")
+
+        depends_on("r-parallelly@1.44.0:", when="@1.49.0:")
+        depends_on("r-parallelly@1.38.0:", when="@1.34.0:")
+        depends_on("r-parallelly@1.34.0:", when="@1.32.0:")
+        depends_on("r-parallelly@1.32.1:", when="@1.28.0:")
+        depends_on("r-parallelly@1.30.0:", when="@1.24.0:")
+        depends_on("r-parallelly@1.26.1:", when="@1.22.0:")
+        depends_on("r-parallelly@1.21.0:", when="@1.21.0:")

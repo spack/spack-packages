@@ -785,12 +785,12 @@ class Cuda(Package):
         description="Allow unsupported host compiler and CUDA version combinations",
     )
 
-    # depends on libxml2.so.2
-    depends_on("libxml2@:2.13", when="@10.1.243:")
+    # depended on libxml2.so.2, known unused for 12.0+ (maybe unused for 11)
+    depends_on("libxml2@:2.13", when="@10.1.243:11")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
-    depends_on("ncurses abi=5", type="run", when="@:11.3.99+dev")
+    depends_on("ncurses abi=5", type="run", when="@:11.3")
 
     depends_on("gzip", type="build")
     depends_on("coreutils", type="build")
@@ -810,7 +810,7 @@ class Cuda(Package):
             # CUDA 9 has a fix for this, but CUDA 8 and lower don't.
             env.append_path("PERL5LIB", self.stage.source_path)
 
-        if self.spec.satisfies("@10.1.243:"):
+        if self.spec.satisfies("^libxml2"):
             libxml2_home = self.spec["libxml2"].prefix
             env.set("LIBXML2HOME", libxml2_home)
             env.append_path("LD_LIBRARY_PATH", libxml2_home.lib)
