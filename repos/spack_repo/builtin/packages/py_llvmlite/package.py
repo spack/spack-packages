@@ -61,6 +61,10 @@ class PyLlvmlite(PythonPackage):
     depends_on("llvm@14", when="@0.41:0.43")
     depends_on("llvm@11:14", when="@0.40")
     depends_on("llvm@11", when="@0.37:0.39")
+    # When the spec has both llvm@20 and hwloc+rocm (e.g. llvm build-depends on hwloc),
+    # hwloc with older rocm versions conflicts with llvm@20 while linking.
+    # Hence adding hwloc~rocm dependency for llvmlite@0.45:.
+    depends_on("hwloc ~rocm", when="@0.45:")
     for t in [
         "arm:",
         "ppc:",
