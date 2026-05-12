@@ -99,9 +99,7 @@ def main():
             timeout=30,
         )
         if diff_resp.status_code != 200:
-            raise Exception(
-                f"Failed to get PR diff [{diff_resp.status_code}]: {diff_resp.text}"
-            )
+            raise Exception(f"Failed to get PR diff [{diff_resp.status_code}]: {diff_resp.text}")
 
         diff_text = diff_resp.text
         deleted_versions = set(VERSION_LINE.findall(diff_text.replace("\n+", "\n ")))
