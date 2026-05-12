@@ -17,11 +17,7 @@ class Sratoolkit(Package):
 
     maintainers("robqiao")
 
-    version(
-        "3.4.1",
-        sha256="f4850a32975596ca0755d928b166ecb0095918284ea992fba10f1acb3fcff64d",
-        url="https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.4.1/sratoolkit.3.4.1-alma_linux64.tar.gz",
-    )
+    version("3.4.1", sha256="f4850a32975596ca0755d928b166ecb0095918284ea992fba10f1acb3fcff64d")
     version("3.0.0", sha256="89d11fc284e32d38b6639c551df6d658075cd268913f8ba2af65026e4a161dfe")
     version("2.10.9", sha256="2c849b4b9865737ff17732e3befa70718616ce31cac98e8a61b1c5ed5a6514c5")
     version("2.10.7", sha256="b3f319974f0c7a318554d6383a13dd30f7d447533d92b6fd3bd057d3524e0140")
