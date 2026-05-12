@@ -24,6 +24,8 @@ class PyPythonMumps(PythonPackage):
 
     # build dependencies
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         depends_on("meson@1.8:")
         depends_on("ninja")
         depends_on("py-meson-python@0.18:")
@@ -48,6 +50,10 @@ class PyPythonMumps(PythonPackage):
 
     patch("patch_meson_build.patch")
 
+    def setup_build_environment(self, env):
+        env.set("CC", self.compiler.cc)
+        env.set("CXX", self.compiler.cxx)
+        
     @run_before("install")
     def setup_meson(self) -> None:
         """Running meson setup before building the package"""
