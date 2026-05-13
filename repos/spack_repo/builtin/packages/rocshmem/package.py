@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocshmem(CMakePackage):
+class Rocshmem(ROCmLibrary, CMakePackage):
     """rocSHMEM intra-kernel networking runtime for AMD dGPUs on the ROCm platform."""
 
     homepage = "https://github.com/ROCm/rocSHMEM"
@@ -15,6 +16,7 @@ class Rocshmem(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocshmem"]
 
     license("MIT")
 

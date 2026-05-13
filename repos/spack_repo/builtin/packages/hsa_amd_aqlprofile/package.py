@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -17,6 +18,7 @@ class HsaAmdAqlprofile(CMakePackage):
     git = "https://github.com/ROCm/rocm-systems"
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libhsa-amd-aqlprofile64"]
 
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
@@ -44,3 +46,17 @@ class HsaAmdAqlprofile(CMakePackage):
             return "."
         else:
             return "projects/aqlprofile"
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+            major = int(ver.split(".")[0])
+            if major < 7:
+                ver = None
+        else:
+            ver = None
+        return ver

@@ -17,16 +17,17 @@ class RPhyloseq(RPackage):
 
     license("LiLiQ-R-1.1")
 
-    version("1.44.0", commit="03b74f7d7aa866f5f9a84c7368da57b7a168967e")
-    version("1.42.0", commit="de6be71fe9902bdfe7791163acb7b67d238424dc")
-    version("1.40.0", commit="20bb27d5e6e0d4368978a15671b829990b1f4568")
-    version("1.38.0", commit="1e2409a6ed3c23e308275098c2dc9fdba9d5e5f6")
-    version("1.34.0", commit="cbed93ead5528fe9024d646c597dab9fc95952d3")
-    version("1.28.0", commit="a86ed1e0a650fdf80bee5a0a5a82aaa5a276178d")
-    version("1.26.1", commit="a084072bc9e057b90adfbd59e27db2a1ecee151c")
-    version("1.24.2", commit="829992f88c79de48bb8749678624e2bbd3b66645")
-    version("1.22.3", commit="c695323f2963636d16acda9f05a583bd58e31344")
-    version("1.20.0", commit="107d1d5e3437a6e33982c06a548d3cc91df2a7e0")
+    with default_args(get_full_repo=True):
+        version("1.44.0", commit="03b74f7d7aa866f5f9a84c7368da57b7a168967e")
+        version("1.42.0", commit="de6be71fe9902bdfe7791163acb7b67d238424dc")
+        version("1.40.0", commit="20bb27d5e6e0d4368978a15671b829990b1f4568")
+        version("1.38.0", commit="1e2409a6ed3c23e308275098c2dc9fdba9d5e5f6")
+        version("1.34.0", commit="cbed93ead5528fe9024d646c597dab9fc95952d3")
+        version("1.28.0", commit="a86ed1e0a650fdf80bee5a0a5a82aaa5a276178d")
+        version("1.26.1", commit="a084072bc9e057b90adfbd59e27db2a1ecee151c")
+        version("1.24.2", commit="829992f88c79de48bb8749678624e2bbd3b66645")
+        version("1.22.3", commit="c695323f2963636d16acda9f05a583bd58e31344")
+        version("1.20.0", commit="107d1d5e3437a6e33982c06a548d3cc91df2a7e0")
 
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.22.3")

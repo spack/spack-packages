@@ -652,6 +652,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+mkl-pardiso" in spec:
             options.append("--with-mkl_pardiso-dir=%s" % spec["mkl"].prefix)
 
+        # See https://github.com/spack/spack-packages/pull/4651
+        if spec.satisfies("^intel-oneapi-mkl@2026.0:"):
+            options.append("--with-mkl_sparse=0")
+            options.append("--with-mkl_sparse_optimize=0")
+
         # For the moment, HPDDM does not work as a dependency
         # using download instead
         if "+hpddm" in spec:

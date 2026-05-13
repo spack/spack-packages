@@ -91,6 +91,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2.2:2.5",
         sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
     )
+    patch(
+        "https://github.com/chapel-lang/chapel/pull/28795.patch?full_index=1",
+        when="@2.8",
+        sha256="050ec846beaf836b026b23524f613b3eac8e74a11b8d86768a74fa4f07cc610c",
+    )
 
     launcher_names = (
         "amudprun",
@@ -517,7 +522,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "https://github.com/chapel-lang/chapel/issues/27273",
         )
 
-        conflicts("cuda@12.9:")  # deprecation warnings otherwise
+        conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
 
     # ROCm conflicts and dependencies
     with when("+rocm"):
