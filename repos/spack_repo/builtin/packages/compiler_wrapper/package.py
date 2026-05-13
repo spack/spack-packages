@@ -38,6 +38,7 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
+        version("1.1.0", sha256="f39154a42c122e19db7244f86e9f3435be87dda402f5ded5b886fe10d7bd0cc7")
         version(
             "1.0",
             sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9",
@@ -173,6 +174,10 @@ class CompilerWrapper(Package):
 
             compiler = getattr(compiler_pkg, attr_name)
             env.set(spack_var_name, compiler)
+
+            # -frandom-seed= is needed for deterministic builds with GCC
+            if compiler_pkg.name == "gcc" and self.spec.satisfies("@1.1:"):
+                env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
 
             if language not in compiler_pkg.compiler_wrapper_link_paths:
                 continue
