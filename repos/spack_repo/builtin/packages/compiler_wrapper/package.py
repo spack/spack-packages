@@ -27,7 +27,7 @@ class CompilerWrapper(Package):
     """
 
     homepage = "https://github.com/spack/spack"
-    url = f"file:///{pathlib.PurePath(__file__).parent}/cc.sh"
+    url = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
@@ -40,8 +40,7 @@ class CompilerWrapper(Package):
     if sys.platform != "win32":
         version(
             "1.0",
-            sha256="c7b816479554fd32f677db15ceec6627b91c86074a5d65498688afcbe2796188",
-            expand=False,
+            sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9",
         )
     else:
         version("1.0")
