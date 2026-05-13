@@ -27,7 +27,7 @@ class Sratoolkit(Package):
 
     def url_for_version(self, version):
         url = "https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/{0}/sratoolkit.{0}-{1}_linux64.tar.gz"
-        if self.spec.satisfies("@:3.0.0"):
+        if version <= Version("3.0.0"):
             dist = "centos"
         else:
             dist = "alma"
