@@ -18,7 +18,7 @@ class KynemaFmb(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/kynema/kynema-fmb.git"
     git = "https://github.com/kynema/kynema-fmb.git"
 
-    maintainers("faisal-bhuiyan", "ddement", "deslaughter")
+    maintainers("jrood-nrel")
 
     version("main", branch="main")
 
