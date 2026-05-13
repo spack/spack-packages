@@ -18,13 +18,16 @@ class Dock(Package):
 
     homepage = "http://dock.compbio.ucsf.edu/DOCK_6/index.htm"
     url = "https://github.com/docking-org/dock6/archive/refs/tags/v6.13.1.tar.gz"
-    license("BSD-3-Clause", checked_by="snehring")
+
     maintainers("snehring")
+
+    license("BSD-3-Clause", checked_by="snehring")
 
     with when("@=6.9"):
         manual_download = True
 
     version("6.13.1", sha256="1bfe7ff777e60af6bff785dc74f9f7d1b0403c518c34ce4d1e6db98ac0865db1")
+
     # I don't think you can actually get 6.9 anymore since they moved to github
     version(
         "6.9",
