@@ -12,7 +12,10 @@ class Lielab(CMakePackage):
     manifolds, and various functions and algorithms on these spaces."""
 
     homepage = "https://github.com/sandialabs/Lielab"
+    url = "https://github.com/sandialabs/Lielab/archive/refs/tags/v0.5.2.tar.gz"
+    
     maintainers("msparapa")
+    
     license("MIT")
 
     version("0.5.2", sha256="d98ddf93fa317165891b69944c5ffab48c3955fd7c1c9428b06a0452f8fca453")
