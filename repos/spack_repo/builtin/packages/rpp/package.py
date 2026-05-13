@@ -2,15 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
 
-class Rpp(CMakePackage):
+class Rpp(ROCmLibrary, CMakePackage):
     """Radeon Performance Primitives (RPP) library is a comprehensive high-
     performance computer vision library for AMD (CPU and GPU) with HIP
     and OPENCL back-ends"""
@@ -21,6 +20,8 @@ class Rpp(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
+    libraries = ["librpp"]
+
     license("MIT")
 
     def url_for_version(self, version):

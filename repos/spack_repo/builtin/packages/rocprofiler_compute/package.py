@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocprofilerCompute(CMakePackage):
+class RocprofilerCompute(ROCmLibrary, CMakePackage):
     """Advanced Profiling and Analytics for AMD Hardware"""
 
     homepage = "https://github.com/ROCm/rocm-systems"
@@ -15,6 +16,8 @@ class RocprofilerCompute(CMakePackage):
 
     tags = ["rocm"]
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["rocprof-compute"]
+
     license("MIT")
 
     def url_for_version(self, version):

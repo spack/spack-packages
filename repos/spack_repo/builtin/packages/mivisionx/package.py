@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Mivisionx(CMakePackage):
+class Mivisionx(ROCmLibrary, CMakePackage):
     """MIVisionX toolkit is a set of comprehensive computer
     vision and machine intelligence libraries, utilities, and
     applications bundled into a single toolkit."""
@@ -18,6 +18,8 @@ class Mivisionx(CMakePackage):
     url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.3.tar.gz"
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libopenvx", "libvxu"]
+
     tags = ["rocm"]
 
     license("MIT")

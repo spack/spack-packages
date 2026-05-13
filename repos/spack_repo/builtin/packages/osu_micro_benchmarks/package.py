@@ -101,7 +101,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if "+cuda" in self.spec:
-            env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib64.stubs)
+            env.prepend_path("LIBRARY_PATH", self.spec["cuda"].prefix.lib64.stubs)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         mpidir = join_path(self.prefix.libexec, "osu-micro-benchmarks", "mpi")

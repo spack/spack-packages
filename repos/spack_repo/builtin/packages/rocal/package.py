@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocal(CMakePackage):
+class Rocal(ROCmLibrary, CMakePackage):
     """The AMD rocAL is designed to efficiently decode and process images and videos from a variety
     of storage formats and modify them through a processing graph programmable by the user."""
 
@@ -17,6 +17,7 @@ class Rocal(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocal"]
 
     license("MIT")
     version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")

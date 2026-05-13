@@ -13,6 +13,7 @@ class Libxext(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXext"
     xorg_mirror_path = "lib/libXext-1.3.3.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXext.git"
 
     license("MIT")
 

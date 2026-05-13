@@ -5,11 +5,12 @@
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmValidationSuite(CMakePackage):
+class RocmValidationSuite(ROCmLibrary, CMakePackage):
     """The ROCm Validation Suite (RVS) is a system administrators
     and cluster manager's tool for detecting and troubleshooting
     common problems affecting AMD GPU(s) running in a high-performance
@@ -24,6 +25,7 @@ class RocmValidationSuite(CMakePackage):
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["rvs"]
 
     version("7.2.3", sha256="363009b394350a2ae1d8debe7092c96ab5aa2b183487aed6834580979e969c8c")
     version("7.2.1", sha256="737c30e9ded3b9b70b85973aca49cf98015eff890eb8bb81c940f04f1079b7c9")

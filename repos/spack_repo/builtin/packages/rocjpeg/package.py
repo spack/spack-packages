@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocjpeg(CMakePackage):
+class Rocjpeg(ROCmLibrary, CMakePackage):
     """rocJPEG is a high-performance jpeg decode SDK for decoding jpeg images
     using a hardware-accelerated jpeg decoder on AMD's GPUs."""
 
@@ -18,6 +18,7 @@ class Rocjpeg(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocjpeg"]
 
     license("MIT")
     version("7.2.3", sha256="0aafd0468bc79575ad3bb5f51c02a1dd1a696db87c8ce4151eeaf8573cb35ade")

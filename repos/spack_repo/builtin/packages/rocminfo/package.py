@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocminfo(CMakePackage):
+class Rocminfo(ROCmLibrary, CMakePackage):
     """Radeon Open Compute (ROCm) Runtime rocminfo tool"""
 
     homepage = "https://github.com/ROCm/rocminfo"
@@ -16,6 +16,7 @@ class Rocminfo(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "haampie")
+    executables = ["rocminfo"]
 
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
