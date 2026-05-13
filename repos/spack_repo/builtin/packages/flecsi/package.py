@@ -96,13 +96,13 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("graphviz@2.49.0:", when="+graphviz @2.3:")
 
     # FleCSI documentation dependencies
-    depends_on("py-sphinx", when="+doc")
-    depends_on("py-sphinx-rtd-theme@:2", when="+doc")
-    depends_on("py-recommonmark", when="@:2.2 +doc")
-    depends_on("doxygen", when="+doc")
-    depends_on("graphviz", when="+doc")
-    depends_on("texlive", when="@2.4.1: +doc")
-    depends_on("pdf2svg", when="@2.4.1: +doc")
+    depends_on("py-sphinx", when="+doc", type="build")
+    depends_on("py-sphinx-rtd-theme@:2", when="+doc", type="build")
+    depends_on("py-recommonmark", when="@:2.2 +doc", type="build")
+    depends_on("doxygen", when="+doc", type="build")
+    depends_on("graphviz", when="+doc", type="build")
+    depends_on("texlive", when="@2.4.1: +doc", type="build")
+    depends_on("pdf2svg", when="@2.4.1: +doc", type="build")
 
     # Propagate cuda_arch requirement to dependencies
     for _flag in CudaPackage.cuda_arch_values:
