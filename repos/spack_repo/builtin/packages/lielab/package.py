@@ -21,8 +21,6 @@ class Lielab(CMakePackage):
     version("0.5.2", sha256="d98ddf93fa317165891b69944c5ffab48c3955fd7c1c9428b06a0452f8fca453")
     version("0.5.1", sha256="5a7545a675f630418634d9827e8db5035949bf8ae165f17600c03bf5a6da35af")
 
-    def url_for_version(self, version):
-        return f"https://github.com/sandialabs/Lielab/archive/refs/tags/v{version}.tar.gz"
 
     depends_on("cxx", type="build")
     depends_on("cmake@3.23:", type="build")
