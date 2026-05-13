@@ -16,11 +16,12 @@ class RBiostrings(RPackage):
 
     bioc = "Biostrings"
 
-    version("2.76.0", commit="2e04124cda03d509d857df228153a45c89840284")
-    version("2.68.0", commit="f28b7838fb8321a9956506b3d2f4af2740bca124")
-    version("2.66.0", commit="3470ca7da798971e2c3a595d8dc8d0d86f14dc53")
-    version("2.64.1", commit="ffe263e958463bd1edb5d5d9316cfd89905be53c")
-    version("2.64.0", commit="c7ad3c7af607bc8fe4a5e1c37f09e6c9bf70b4f6")
+    with default_args(get_full_repo=True):
+        version("2.76.0", commit="2e04124cda03d509d857df228153a45c89840284")
+        version("2.68.0", commit="f28b7838fb8321a9956506b3d2f4af2740bca124")
+        version("2.66.0", commit="3470ca7da798971e2c3a595d8dc8d0d86f14dc53")
+        version("2.64.1", commit="ffe263e958463bd1edb5d5d9316cfd89905be53c")
+        version("2.64.0", commit="c7ad3c7af607bc8fe4a5e1c37f09e6c9bf70b4f6")
 
     depends_on("c", type="build")  # generated
 

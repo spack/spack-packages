@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class HipifyClang(CMakePackage):
+class HipifyClang(ROCmLibrary, CMakePackage):
     """hipify-clang is a clang-based tool for translation CUDA
     sources into HIP sources"""
 
@@ -88,12 +87,6 @@ class HipifyClang(CMakePackage):
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
-
-    @classmethod
-    def determine_version(cls, exe):
-        output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r"HIP version (\S+)", output)
-        return match.group(1) if match else "None"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The installer puts the binaries directly into the prefix

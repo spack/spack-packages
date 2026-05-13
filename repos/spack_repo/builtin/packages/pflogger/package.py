@@ -23,6 +23,7 @@ class Pflogger(CMakePackage):
     version("develop", branch="develop")
     version("main", branch="main")
 
+    version("1.18.1", sha256="e88bb22bc1212bdbfade87bc16ec3ba8306540ef66cd99f201633f86043c3f89")
     version("1.18.0", sha256="e4ccd77b4fbe49396f0659c2f3a82622ed7a3ad3d89574fda6783fc8cf6d6b3e")
     version("1.17.0", sha256="44dd57fd63a9036dc3ca0dee6847042468e5f39f776188a1d140847005e4f828")
     version("1.16.1", sha256="82ae8d008dda3984e12df3e92a61486a8f5c0b87182d54087f1d004ecc141fff")
