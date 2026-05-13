@@ -19,7 +19,7 @@ class Freefem(AutotoolsPackage):
     url = "https://github.com/FreeFem/FreeFem-sources/archive/refs/tags/v4.16.tar.gz"
     git = "https://github.com/FreeFem/FreeFem-sources.git"
 
-    maintainers("corentin-dev")
+    maintainers("mohd-afeef-badri")
 
     license("LGPL-3.0-only", checked_by="mohd-afeef-badri")
 
