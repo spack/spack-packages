@@ -21,14 +21,6 @@ class Lielab(CMakePackage):
     version("0.5.2", sha256="d98ddf93fa317165891b69944c5ffab48c3955fd7c1c9428b06a0452f8fca453")
     version("0.5.1", sha256="5a7545a675f630418634d9827e8db5035949bf8ae165f17600c03bf5a6da35af")
 
-
-    depends_on("cxx", type="build")
-    depends_on("cmake@3.23:", type="build")
-    depends_on("eigen@5.0.0:6.0.0", type="build")
-    depends_on("fmt@12.1.0:", type="build", when="@0.5.2:")
-
-    conflicts("%gcc@:10.2")  # Fails on 8.5, works on 10.3.
-
     variant("pic", default=True, description="Position independent code (-fPIC)")
     variant(
         "cxxstd",
@@ -40,11 +32,19 @@ class Lielab(CMakePackage):
     )
     variant("with_assertions", default=True, description="Build with assertions included.")
 
+    depends_on("cxx", type="build")
+    depends_on("cmake@3.23:", type="build")
+    depends_on("eigen@5.0.0:6.0.0", type="build")
+    depends_on("fmt@12.1.0:", type="build", when="@0.5.2:")
+
+    conflicts("%gcc@:10.2")  # Fails on 8.5, works on 10.3.
+
     def cmake_args(self):
         args = []
-        args.append("-DLIELAB_INSTALL_LIBRARY=TRUE")
-        args.append("-DLIELAB_BUILD_TESTS=FALSE")
-        args.append("-DLIELAB_BUILD_PYTHON=FALSE")
+        args.append(self.define("LIELAB_INSTALL_LIBRARY", True))
+        args.append(self.define("LIELAB_BUILD_TESTS", False))
+        args.append(self.define("LIELAB_BUILD_PYTHON", False))
+        
         args.append(self.define_from_variant("LIELAB_WITH_ASSERTIONS", "with_assertions"))
 
         args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
