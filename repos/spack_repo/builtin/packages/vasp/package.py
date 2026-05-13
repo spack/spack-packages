@@ -71,7 +71,7 @@ class Vasp(MakefilePackage, CudaPackage):
         "%gcc@:8", msg="GFortran before 9.x does not support all features needed to build VASP"
     )
     requires("%nvhpc", when="+cuda", msg="vasp requires nvhpc to build the openacc build")
-    #intel mkl/mpi conflicts with ilp64, which is a default behaviour
+    # intel mkl/mpi conflicts with ilp64, which is a default behaviour
     requires("^intel-oneapi-mkl~ilp64", when="^intel-oneapi-mkl")
     requires("^intel-oneapi-mpi~ilp64", when="^intel-oneapi-mpi")
     # the mpi compiler wrappers in nvhpc assume nvhpc is the underlying compiler, seemingly
@@ -117,7 +117,7 @@ class Vasp(MakefilePackage, CudaPackage):
                 include_string += "_omp"
             make_include = join_path("arch", include_string)
         # oneapi
-        elif spec.satisfies('%oneapi'):
+        elif spec.satisfies("%oneapi"):
             include_string += "oneapi"
             if spec.satisfies("+openmp"):
                 include_string += "_omp"
