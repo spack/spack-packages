@@ -41,52 +41,21 @@ class Hdf5(CMakePackage):
 
     # Beginning with version 2.0.0, the versioning policy follows the MAJOR.MINOR.PATCH
     # Semantic Versioning Specification. (See https://semver.org/)
-    version(
-        "2.1.1",
-        sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b",
-        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1.tar.gz",
-        preferred=True,
-    )
-    version(
-        "2.1.0",
-        sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
-        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
-    )
-    version(
-        "1.14.6",
-        sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_6/downloads/hdf5-1.14.6.tar.gz",
-    )
-    version(
-        "1.14.5",
-        sha256="ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_5/downloads/hdf5-1.14.5.tar.gz",
-    )
-    version(
-        "1.14.4-3",
-        sha256="019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_4/downloads/hdf5-1.14.4-3.tar.gz",
-    )
-    version(
-        "1.14.3",
-        sha256="09cdb287aa7a89148c1638dd20891fdbae08102cf433ef128fd345338aa237c7",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_3/downloads/hdf5-1.14.3.tar.gz",
-    )
-    version(
-        "1.14.2",
-        sha256="1c342e634008284a8c2794c8e7608e2eaf26d01d445fb3dfd7f33cb2fb51ac53",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_2/downloads/hdf5-1.14.2.tar.gz",
-    )
-    version(
-        "1.14.1-2",
-        sha256="cbe93f275d5231df28ced9549253793e40cd2b555e3d288df09d7b89a9967b07",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_1/downloads/hdf5-1.14.1-2.tar.gz",
-    )
-    version(
-        "1.14.0",
-        sha256="a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4",
-        url="https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_0/downloads/hdf5-1.14.0.tar.gz",
-    )
+    # Download URL for versions 1.14.1 and above: 
+    #   https://github.com/HDFGroup/hdf5/releases...  (see url_for_version function)
+    version("2.1.1", sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b")
+    version("2.1.0", sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964")
+    version("2.0.0", sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed")
+    version("1.14.6", sha256="e4defbac30f50d64e1556374aa49e574417c9e72c6b1de7a4ff88c4b1bea6e9b")
+    version("1.14.5", sha256="ec2e13c52e60f9a01491bb3158cb3778c985697131fc6a342262d32a26e58e44")
+    version("1.14.4-3", sha256="019ac451d9e1cf89c0482ba2a06f07a46166caf23f60fea5ef3c37724a318e03")
+    version("1.14.3", sha256="09cdb287aa7a89148c1638dd20891fdbae08102cf433ef128fd345338aa237c7")
+    version("1.14.2", sha256="1c342e634008284a8c2794c8e7608e2eaf26d01d445fb3dfd7f33cb2fb51ac53")
+    version("1.14.1-2", sha256="cbe93f275d5231df28ced9549253793e40cd2b555e3d288df09d7b89a9967b07")
+    # Download URL for version 1.14.0: https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_0...
+    version("1.14.0", sha256="a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
+    # Download URL for versions below 1.14.0:  
+    #   https://support.hdfgroup.org/archive/support/ftp/HDF5/releases...
     version("1.12.3", sha256="c15adf34647918dd48150ea1bd9dffd3b32a3aec5298991d56048cc3d39b4f6f")
     version("1.12.2", sha256="2a89af03d56ce7502dcae18232c241281ad1773561ec00c0f0e8ee2463910f14")
     version("1.12.1", sha256="79c66ff67e666665369396e9c90b32e238e501f345afd2234186bfb8331081ca")
@@ -348,7 +317,7 @@ class Hdf5(CMakePackage):
         )
 
     def url_for_version(self, version):
-        if version >= Version("2.0.0"):
+        if version >= Version("1.14.1"):
             return f"https://github.com/HDFGroup/hdf5/releases/download/{version}/hdf5-{version}.tar.gz"
         elif version >= Version("1.14.0"):
             return f"https://support.hdfgroup.org/releases/hdf5/v{version.up_to_2.underscored}/v{version.underscored}/downloads/hdf5-{version}.tar.gz"
