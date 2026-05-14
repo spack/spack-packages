@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmBandwidthTest(CMakePackage):
+class RocmBandwidthTest(ROCmLibrary, CMakePackage):
     """Test to measure PciE bandwidth on ROCm platforms"""
 
     homepage = "https://github.com/ROCm/rocm_bandwidth_test"
@@ -17,6 +17,7 @@ class RocmBandwidthTest(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["rocm-bandwidth-test"]
     version(
         "7.2.1",
         git="https://github.com/ROCm/rocm_bandwidth_test",

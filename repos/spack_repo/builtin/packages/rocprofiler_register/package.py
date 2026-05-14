@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocprofilerRegister(CMakePackage):
+class RocprofilerRegister(ROCmLibrary, CMakePackage):
     """The rocprofiler-register library is a helper library that coordinates
     the modification of the intercept API table(s) of the HSA/HIP/ROCTx runtime
     libraries by the ROCprofiler (v2) library"""
@@ -17,6 +18,7 @@ class RocprofilerRegister(CMakePackage):
 
     tags = ["rocm"]
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocprofiler-register"]
     license("MIT")
 
     def url_for_version(self, version):

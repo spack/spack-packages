@@ -3,12 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocdecode(CMakePackage):
+class Rocdecode(ROCmLibrary, CMakePackage):
     """rocDecode is a high performance video decode SDK for AMD hardware"""
 
     homepage = "https://github.com/ROCm/rocDecode"
@@ -18,6 +18,7 @@ class Rocdecode(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocdecode"]
 
     license("MIT")
     version("7.2.1", sha256="59e162fcc472aefcf68cfe28b50316612572ca9f1256696537282f703310abaa")
