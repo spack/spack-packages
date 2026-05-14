@@ -11,11 +11,28 @@ spack:
     # ROOT fails downloads frequently
     url_fetch_method: curl --continue-at - --retry 3 --retry-all-errors
 
+  definitions:
+  - cuda_specs: []
+  - when: env.get('SPACK_CI_TARGET') == 'x86_64_v3'
+    cuda_specs:
+    #- acts +cuda +traccc cuda_arch=80
+    #- celeritas +cuda ~openmp +vecgeom cuda_arch=80 +covfie
+    - root +cuda +cudnn +tmva-gpu
+    - vecgeom +cuda cuda_arch=80
+  - rocm_specs: []
+  - when: env.get('SPACK_CI_TARGET') == 'x86_64_v3'
+    rocm_specs:
+    - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+
   packages:
     all:
-      target: ["aarch64"]
       require:
-      - target=aarch64
+      - &target-x86
+        spec: target=x86_64_v3
+        when: "target=x86_64_v3:"
+      - &target-aarch64
+        spec: target=aarch64
+        when: "target=aarch64:"
       providers:
         blas: [openblas]
         mpi: [mpich]
@@ -33,41 +50,50 @@ spack:
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     celeritas:
       require:
       - +geant4 +hepmc3 +root +shared cxxstd=20
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     geant4:
       require:
       - +opengl +qt +threads +x11
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     hip:
       require:
       - '@5.7.1 +rocm'
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     py-iminuit:
       require:
       - '@2.22:'
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     py-numpy:
       require:
       - '@1.26:'
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     rivet:
       require:
       - hepmc=3
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     root:
       require:
       - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +opengl +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran ~vc +vdt ~veccore +webgui +x +xml +xrootd # cxxstd=20
       # note: root cxxstd=20 not concretizable within sherpa
       # ~vc ~veccore since PCM integration broken with runtime_cxxmodules=ON
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
     vecgeom:
       require:
       - +gdml +geant4 +root +shared cxxstd=20
-      - target=aarch64
+      - *target-x86
+      - *target-aarch64
 
     # Mark geant4 data as external to prevent wasting bandwidth on GB-scale files
     geant4-data:
@@ -155,14 +181,8 @@ spack:
   - xrootd +davix +http +krb5 +python +readline +scitokens-cpp
   - yoda +hdf5 +highfive
 
-  # CUDA
-  #- acts +cuda +traccc cuda_arch=80
-  #- celeritas +cuda ~openmp +vecgeom cuda_arch=80 +covfie
-  #- root +cuda +cudnn +tmva-gpu
-  #- vecgeom +cuda cuda_arch=80
-
-  # ROCm
-  #- celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+  - $cuda_specs
+  - $rocm_specs
 
   ci:
     pipeline-gen:

@@ -657,7 +657,7 @@ ml-darwin-aarch64-mps-build:
 ########################################
 .hep-x86_64_v3:
   variables:
-    SPACK_CI_STACK_NAME: hep-x86_64_v3
+    SPACK_CI_STACK_NAME: hep
 
 hep-x86_64_v3-generate:
   extends: [ ".hep-x86_64_v3", ".generate-x86_64"]
@@ -668,7 +668,7 @@ hep-x86_64_v3-build:
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/hep-x86_64_v3/cloud-ci-pipeline.yml
+      - artifact: jobs_scratch_dir/hep/cloud-ci-pipeline.yml
         job: hep-x86_64_v3-generate
   needs:
     - artifacts: True
@@ -679,7 +679,7 @@ hep-x86_64_v3-build:
 ########################################
 .hep-aarch64:
   variables:
-    SPACK_CI_STACK_NAME: hep-aarch64
+    SPACK_CI_STACK_NAME: hep
 
 hep-aarch64-generate:
   extends: [ ".hep-aarch64", ".generate-aarch64"]
@@ -690,7 +690,7 @@ hep-aarch64-build:
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/hep-aarch64/cloud-ci-pipeline.yml
+      - artifact: jobs_scratch_dir/hep/cloud-ci-pipeline.yml
         job: hep-aarch64-generate
   needs:
     - artifacts: True
