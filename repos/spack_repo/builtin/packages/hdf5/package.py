@@ -41,7 +41,7 @@ class Hdf5(CMakePackage):
 
     # Beginning with version 2.0.0, the versioning policy follows the MAJOR.MINOR.PATCH
     # Semantic Versioning Specification. (See https://semver.org/)
-    # Download URL for versions 1.14.1 and above: 
+    # Download URL for versions 1.14.1 and above:
     #   https://github.com/HDFGroup/hdf5/releases...  (see url_for_version function)
     version("2.1.1", sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b")
     version("2.1.0", sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964")
@@ -54,7 +54,7 @@ class Hdf5(CMakePackage):
     version("1.14.1-2", sha256="cbe93f275d5231df28ced9549253793e40cd2b555e3d288df09d7b89a9967b07")
     # Download URL for version 1.14.0: https://support.hdfgroup.org/releases/hdf5/v1_14/v1_14_0...
     version("1.14.0", sha256="a571cc83efda62e1a51a0a912dd916d01895801c5025af91669484a1575a6ef4")
-    # Download URL for versions below 1.14.0:  
+    # Download URL for versions below 1.14.0:
     #   https://support.hdfgroup.org/archive/support/ftp/HDF5/releases...
     version("1.12.3", sha256="c15adf34647918dd48150ea1bd9dffd3b32a3aec5298991d56048cc3d39b4f6f")
     version("1.12.2", sha256="2a89af03d56ce7502dcae18232c241281ad1773561ec00c0f0e8ee2463910f14")
