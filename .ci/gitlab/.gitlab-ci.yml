@@ -657,22 +657,44 @@ ml-darwin-aarch64-mps-build:
 ########################################
 .hep:
   variables:
-    SPACK_CI_STACK_NAME: hep
+    SPACK_CI_STACK_NAME: hep-x86_64_v3
 
-hep-generate:
+hep-x86_64_v3-generate:
   extends: [ ".hep", ".generate-x86_64"]
   image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
-hep-build:
+hep-x86_64_v3-build:
   extends: [ ".hep", ".build" ]
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/hep/cloud-ci-pipeline.yml
-        job: hep-generate
+      - artifact: jobs_scratch_dir/hep-x86_64_v3/cloud-ci-pipeline.yml
+        job: hep-x86_64_v3-generate
   needs:
     - artifacts: True
-      job: hep-generate
+      job: hep-x86_64_v3-generate
+
+########################################
+# High Energy Physics (HEP) - Linux aarch64 (CPU)
+########################################
+.hep:
+  variables:
+    SPACK_CI_STACK_NAME: hep-aarch64
+
+hep-aarch64-generate:
+  extends: [ ".hep", ".generate-aarch64"]
+  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+
+hep-aarch64-build:
+  extends: [ ".hep", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/hep-aarch64/cloud-ci-pipeline.yml
+        job: hep-aarch64-generate
+  needs:
+    - artifacts: True
+      job: hep-aarch64-generate
 
 #####################
 # AWS ParallelCluster
