@@ -17,10 +17,10 @@ spack:
       require:
       - &target-x86
         spec: target=x86_64_v3
-        when: arch.satisfies('target=x86_64_v3:')
+        when: "target=x86_64_v3:"
       - &target-aarch64
         spec: target=aarch64
-        when: arch.satisfies('target=aarch64:')
+        when: "target=aarch64:"
       providers:
         blas: [openblas]
         mpi: [mpich]
