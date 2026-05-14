@@ -65,6 +65,8 @@ spack:
     geant4-data:
       buildable: false
       externals:
+      - spec: geant4-data@11.4.0
+        prefix: /usr
       - spec: geant4-data@11.3.0
         prefix: /usr
       - spec: geant4-data@11.2.2
