@@ -46,6 +46,14 @@ default:
     PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
     OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
 
+.package_on_change: &package_on_change
+    paths:
+      - .ci/env
+      - .ci/gitlab/*
+      - repos/spack_repo/*
+      - stacks/$SPACK_CI_STACK_NAME/*
+    compare_to: HEAD~1
+
   ########################################
 # Job templates
 ########################################
@@ -83,13 +91,7 @@ default:
       variables:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
-      changes:
-        paths:
-          - .ci/env
-          - .ci/gitlab/*
-          - repos/spack_repo/*
-          - stacks/$SPACK_CI_STACK_NAME/*
-        compare_to: HEAD~1
+      changes: *package_on_change
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
@@ -256,6 +258,15 @@ dotenv:
   - cat env
 
 force_pipeline_status:
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
+      changes: *package_on_change
+      when: never
+    - if: $CI_PROJECT_NAME == "spack"
+      when: never
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
+      when: always
+    - when: never
   stage: generate
   tags: ["spack", "service_noop"]
   retry: 0
