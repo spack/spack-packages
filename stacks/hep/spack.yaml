@@ -23,6 +23,10 @@ spack:
   - when: env.get('SPACK_CI_TARGET') == 'x86_64_v3'
     rocm_specs:
     - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+  - x86_64_v3_only_specs: []
+  - when: env.get('SPACK_CI_TARGET') == 'x86_64_v3'
+    x86_64_v3_only_specs:
+    - feynhiggs  # configure script Fortran-C linking test fails on aarch64; upstream is x86-only
 
   packages:
     all:
@@ -129,7 +133,6 @@ spack:
   - edm4hep
   - evtgen +hepmc3 +photos +pythia8 +sherpa +tauola
   - fastjet plugins=all
-  - feynhiggs
   - fjcontrib
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
@@ -183,6 +186,8 @@ spack:
 
   - $cuda_specs
   - $rocm_specs
+
+  - $x86_64_v3_only_specs
 
   ci:
     pipeline-gen:
