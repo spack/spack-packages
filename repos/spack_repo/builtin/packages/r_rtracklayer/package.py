@@ -19,17 +19,18 @@ class RRtracklayer(RPackage):
 
     bioc = "rtracklayer"
 
-    version("1.60.0", commit="de35bc03116fc7ad30f0e425b41715c3cb2e783b")
-    version("1.58.0", commit="54a74972c08775fdf1e83e6e22cd0b8fad677fc1")
-    version("1.56.1", commit="4c6d2201fcb102d471bd88f4f51cc34317669955")
-    version("1.56.0", commit="1d70f7dc464ad87a1fde61588cd9ae0cb86b6e86")
-    version("1.54.0", commit="04cdd75521a8364e67a49d7352500dd4a3e83c55")
-    version("1.50.0", commit="d2e61f72ff5d5a94c2c487ba108a37f23bfcc1e6")
-    version("1.44.4", commit="aec96e85daf53b5c5eb2e89250d2755352be4de3")
-    version("1.42.2", commit="76702f671faea736807d54aeecfbadcd152d94c5")
-    version("1.40.6", commit="ba9a6e711504a702147383bc7abfcc36eb304df7")
-    version("1.38.3", commit="f20db703c09dc7e808c09e9b78c15aec9e546248")
-    version("1.36.6", commit="8c0ac7230f94e0c5a981acbb178c8de70e968131")
+    with default_args(get_full_repo=True):
+        version("1.60.0", commit="de35bc03116fc7ad30f0e425b41715c3cb2e783b")
+        version("1.58.0", commit="54a74972c08775fdf1e83e6e22cd0b8fad677fc1")
+        version("1.56.1", commit="4c6d2201fcb102d471bd88f4f51cc34317669955")
+        version("1.56.0", commit="1d70f7dc464ad87a1fde61588cd9ae0cb86b6e86")
+        version("1.54.0", commit="04cdd75521a8364e67a49d7352500dd4a3e83c55")
+        version("1.50.0", commit="d2e61f72ff5d5a94c2c487ba108a37f23bfcc1e6")
+        version("1.44.4", commit="aec96e85daf53b5c5eb2e89250d2755352be4de3")
+        version("1.42.2", commit="76702f671faea736807d54aeecfbadcd152d94c5")
+        version("1.40.6", commit="ba9a6e711504a702147383bc7abfcc36eb304df7")
+        version("1.38.3", commit="f20db703c09dc7e808c09e9b78c15aec9e546248")
+        version("1.36.6", commit="8c0ac7230f94e0c5a981acbb178c8de70e968131")
 
     depends_on("c", type="build")  # generated
 

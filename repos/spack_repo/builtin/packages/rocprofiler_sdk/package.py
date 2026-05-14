@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import itertools
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -38,6 +39,7 @@ class RocprofilerSdk(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["rocprofv3"]
 
     license("MIT")
     version(
@@ -240,3 +242,9 @@ class RocprofilerSdk(CMakePackage):
                 env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-amd-aqlprofile"].prefix.lib)
             else:
                 env.prepend_path("LD_LIBRARY_PATH", self.spec["aqlprofile"].prefix.lib)
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.search(r"rocm_version: (\d+\.\d+\.\d+)", output)
+        return match.group(1) if match else None

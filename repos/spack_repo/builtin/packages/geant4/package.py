@@ -336,6 +336,14 @@ class Geant4(CMakePackage):
         options.append(self.define("GEANT4_INSTALL_DATA", False))
         if spec.satisfies("+data"):
             options.append(self.define("GEANT4_INSTALL_DATADIR", self.datadir))
+            variants = self.spec["geant4-data"].variants
+            for v in ["tendl", "nudexlib", "urrpt"]:
+                if v in variants:
+                    # Inform Geant4 whether this optional dataset is in use
+                    # so that it's exported to Geant4_DATASET_DESCRIPTIONS
+                    options.append(
+                        self.define("GEANT4_INSTALL_DATASETS_" + v.upper(), variants[v].value)
+                    )
 
         # Vecgeom
         if spec.satisfies("+vecgeom"):

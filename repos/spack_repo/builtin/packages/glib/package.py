@@ -230,10 +230,13 @@ class MesonBuilder(meson.MesonBuilder):
 
     def meson_args(self):
         args = []
-        if self.spec.satisfies("+introspection"):
-            args.append("-Dintrospection=enabled")
-        else:
-            args.append("-Dintrospection=disabled")
+
+        if self.spec.satisfies("@2.79:"):
+            if self.spec.satisfies("+introspection"):
+                args.append("-Dintrospection=enabled")
+            else:
+                args.append("-Dintrospection=disabled")
+
         if self.spec.satisfies("@2.63.5:"):
             if self.spec.satisfies("+libmount"):
                 args.append("-Dlibmount=enabled")
@@ -264,8 +267,6 @@ class MesonBuilder(meson.MesonBuilder):
             args.append("-Dsysprof=disabled")
 
         # arguments for older versions
-        if self.spec.satisfies("@:2.72"):
-            args.append("-Dgettext=external")
         if self.spec.satisfies("@:2.74"):
             if self.spec["iconv"].name == "libiconv":
                 if self.spec.satisfies("@2.61.0:"):

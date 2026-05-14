@@ -30,6 +30,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("2.12.1", sha256="71edd8f721448311852122fca8d83ae497b43846e5bfcdfd275dc06bb7f3d0c5")
     version("2.12.0", sha256="c59aeb75f3ea9949c4ae2d597115536ee593dedb50592784917ba8d29c8a3b34")
     version("2.11.0", sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf")
     version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")

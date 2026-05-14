@@ -5,12 +5,12 @@
 import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocal(CMakePackage):
+class Rocal(ROCmLibrary, CMakePackage):
     """The AMD rocAL is designed to efficiently decode and process images and videos from a variety
     of storage formats and modify them through a processing graph programmable by the user."""
 
@@ -19,6 +19,7 @@ class Rocal(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocal"]
 
     license("MIT")
     version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")

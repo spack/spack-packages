@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class ComposableKernel(CMakePackage):
+class ComposableKernel(ROCmLibrary, CMakePackage):
     """Composable Kernel: Performance Portable Programming Model
     for Machine Learning Tensor Operators."""
 
@@ -18,6 +17,7 @@ class ComposableKernel(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
+    libraries = ["libdevice_contraction_operations.a", "libdevice_conv_operations.a"]
     license("MIT")
 
     def url_for_version(self, version):
@@ -134,7 +134,9 @@ class ComposableKernel(CMakePackage):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.run_tests:
             args.append(self.define("BUILD_TESTING", "ON"))
-        elif self.spec.satisfies("@:6.1"):
+        else:
+            args.append(self.define("BUILD_TESTING", "OFF"))
+        if self.spec.satisfies("@:6.1"):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))

@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmGdb(AutotoolsPackage):
+class RocmGdb(ROCmLibrary, AutotoolsPackage):
     """This is ROCmgdb, the ROCm source-level debugger for Linux,
     based on GDB, the GNU source-level debugger."""
 
@@ -122,13 +121,3 @@ class RocmGdb(AutotoolsPackage):
             "--disable-gprofng",
         ]
         return options
-
-    @classmethod
-    def determine_version(cls, exe):
-        output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r"rocm-rel-(\d+)\.(\d+)", output)
-        if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
-        else:
-            ver = None
-        return ver

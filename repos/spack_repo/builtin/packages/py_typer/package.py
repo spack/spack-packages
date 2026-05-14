@@ -24,8 +24,8 @@ class PyTyper(PythonPackage):
     with when("@0.12.5:"):
         depends_on("python@3.7:", type=("build", "run"))
         depends_on("py-pdm-backend", type="build")
-        depends_on("py-click@8:", type=("build", "run"))
-
+        depends_on("py-click@8:8.1.8", when="@:0.23.2", type=("build", "run"))
+        depends_on("py-click@8.2.1:", when="@0.23.2:", type=("build", "run"))
         depends_on("py-shellingham@1.3:", type=("build", "run"))
         depends_on("py-rich@10.11:", type=("build", "run"))
 

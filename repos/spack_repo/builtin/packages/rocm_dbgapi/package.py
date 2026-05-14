@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmDbgapi(CMakePackage):
+class RocmDbgapi(ROCmLibrary, CMakePackage):
     """The AMD Debugger API is a library that provides all the support
     necessary for a debugger and other tools to perform low level
     control of the execution and inspection of execution state of
@@ -92,15 +91,6 @@ class RocmDbgapi(CMakePackage):
         depends_on(f"hsa-rocr-dev@{ver}", type="build", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type=("build", "link"), when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            return "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        return None
 
     def patch(self):
         filter_file(

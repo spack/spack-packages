@@ -19,6 +19,7 @@ class PyProtobuf(PythonPackage):
     pypi = "protobuf/protobuf-3.11.0.tar.gz"
 
     version("6.32.1", sha256="ee2469e4a021474ab9baafea6cd070e5bf27c7d29433504ddea1a4ee5850f68d")
+    version("5.28.3", sha256="64badbc49180a5e401f373f9ce7ab1d18b63f7dd4a9cdc43c92b9f0b481cef7b")
     version("5.28.2", sha256="59379674ff119717404f7454647913787034f03fe7049cbef1d74a97bb4593f0")
     version("5.27.5", sha256="7fa81bc550201144a32f4478659da06e0b2ebe4d5303aacce9a202a1c3d5178d")
     version("5.26.1", sha256="8ca2a1d97c290ec7b16e4e5dff2e5ae150cc1582f55b5ab300d45cb0dfa90e51")
