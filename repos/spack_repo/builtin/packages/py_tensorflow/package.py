@@ -570,6 +570,9 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
 
+        # Avoid vendoring protobuf
+        env.set("TF_SYSTEM_LIBS", "com_google_protobuf")
+
         # Please specify the location of python
         env.set("PYTHON_BIN_PATH", python.path)
 
