@@ -15,7 +15,12 @@ spack:
     all:
       target: ["x86_64_v3"]
       require:
-      - target=x86_64_v3
+      - &target-x86
+        spec: target=x86_64_v3
+        when: arch.satisfies('target=x86_64_v3:')
+      - &target-aarch64
+        spec: target=aarch64
+        when: arch.satisfies('target=aarch64:')
       providers:
         blas: [openblas]
         mpi: [mpich]
@@ -33,7 +38,8 @@ spack:
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
-      - target=x86_64_v3
+      - *target-x86
+      - *target-aarch64
     celeritas:
       require:
       - +geant4 +hepmc3 +root +shared cxxstd=20
