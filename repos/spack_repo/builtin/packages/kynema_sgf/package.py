@@ -9,13 +9,13 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
-    """AMR-Wind is a massively parallel, block-structured adaptive-mesh,
-    incompressible flow sover for wind turbine and wind farm simulations."""
+class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
+    """Kynema-SGF is a massively parallel, block-structured adaptive-mesh,
+    incompressible flow solver for the Kynema project."""
 
-    homepage = "https://github.com/Exawind/amr-wind"
-    url = "https://github.com/Exawind/amr-wind/archive/refs/tags/v1.3.0.tar.gz"
-    git = "https://github.com/Exawind/amr-wind.git"
+    homepage = "https://github.com/Kynema/kynema-sgf"
+    url = "https://github.com/Kynema/kynema-sgf/archive/refs/tags/v1.3.0.tar.gz"
+    git = "https://github.com/Kynema/kynema-sgf.git"
 
     maintainers("jrood-nrel")
 
@@ -24,6 +24,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause")
 
+    version("main", branch="main")
     version("3.9.1", tag="v3.9.1", commit="c41e3a727ad7ad9fe14df33c2db565b4248dc7ed")
     version("3.9.0", tag="v3.9.0", commit="6c15368dc93d749fb0c3b216b0ccccaab6907251")
     version("3.8.1", tag="v3.8.1", commit="464ce0891979dbef9972c5b868facee1c974779d")
@@ -58,7 +59,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="Enable MPI support")
     variant("netcdf", default=False, description="Enable NetCDF support")
     variant("openfast", default=False, description="Enable OpenFAST integration")
-    variant("kynema", default=False, description="Enable Kynema integration")
+    variant("kynema-fmb", default=False, description="Enable Kynema integration")
     variant("openmp", default=False, description="Enable OpenMP for CPU builds")
     variant("shared", default=True, description="Build shared libraries")
     variant("tests", default=True, description="Activate regression tests")
@@ -99,7 +100,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("openfast+cxx@3.5:4.0", when="@:3.5 +openfast")
     depends_on("openfast+cxx@3.5.0:3.5.9,4.1:", when="@3.6: +openfast")
     depends_on("openfast+netcdf", when="+openfast+netcdf")
-    depends_on("kynema", when="+kynema")
+    depends_on("kynema-fmb", when="+kynema-fmb")
     depends_on("helics@:3.3.2", when="+helics")
     depends_on("helics@:3.3.2+mpi", when="+helics+mpi")
     depends_on("fftw", when="@2.1: +waves2amr")
@@ -150,9 +151,9 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             "helics",
             "umpire",
             "sycl",
-            "kynema",
+            "kynema-fmb",
         ]
-        args = [self.define_from_variant("AMR_WIND_ENABLE_%s" % v.upper(), v) for v in vs]
+        args = [self.define_from_variant("KYNEMA_SGF_ENABLE_%s" % v.upper(), v) for v in vs]
 
         args += [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
 
@@ -162,8 +163,8 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             args.append(define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
         if spec.satisfies("+hdf5"):
-            args.append(define("AMR_WIND_ENABLE_HDF5", True))
-            args.append(define("AMR_WIND_ENABLE_HDF5_ZFP", True))
+            args.append(define("KYNEMA_SGF_ENABLE_HDF5", True))
+            args.append(define("KYNEMA_SGF_ENABLE_HDF5_ZFP", True))
             # Help AMReX understand if HDF5 is parallel or not.
             # Building HDF5 with CMake as Spack does, causes this inspection to break.
             args.append(define("HDF5_IS_PARALLEL", spec.satisfies("+mpi")))
@@ -183,7 +184,7 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             args.append(define("HELICS_DIR", spec["helics"].prefix))
 
         if spec.satisfies("+waves2amr"):
-            args.append(self.define_from_variant("AMR_WIND_ENABLE_W2A", "waves2amr"))
+            args.append(self.define_from_variant("KYNEMA_SGF_ENABLE_W2A", "waves2amr"))
             args.append(define("FFTW_DIR", spec["fftw"].prefix))
 
         if spec.satisfies("+fft"):
@@ -201,6 +202,6 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
             )
 
         if spec.satisfies("+openfast"):
-            args.append(define("AMR_WIND_OPENFAST_VERSION", spec["openfast"].version))
+            args.append(define("KYNEMA_SGF_OPENFAST_VERSION", spec["openfast"].version))
 
         return args

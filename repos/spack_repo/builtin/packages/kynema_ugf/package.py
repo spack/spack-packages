@@ -16,18 +16,19 @@ def _parse_float(val):
         return False
 
 
-class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
-    """Nalu-Wind: Wind energy focused variant of Nalu."""
+class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
+    """Kynema-UGF: Unstructured fluid dynamics solver in the Kynema project."""
 
-    homepage = "https://nalu-wind.readthedocs.io"
-    git = "https://github.com/exawind/nalu-wind.git"
-    url = "https://github.com/Exawind/nalu-wind/archive/refs/tags/v2.0.0.tar.gz"
+    homepage = "https://kynema-ugf.readthedocs.io"
+    git = "https://github.com/kynema/kynema-ugf.git"
+    url = "https://github.com/kynema/kynema-ugf/archive/refs/tags/v2.0.0.tar.gz"
 
     maintainers("jrood-nrel")
 
     tags = ["ecp", "ecp-apps"]
     submodules = True
 
+    version("main", branch="main")
     version("2.5.0", tag="v2.5.0", commit="2382077a7112a1aeb90f850994eb92d76abe0434")
     version("2.4.0", tag="v2.4.0", commit="85c06c5264fd8689002dc0ea32cbb74b2bff1668")
     version("2.3.0", tag="v2.3.0", commit="94cea346455f6841c8ce28d54c6d894bbf5e9a0a")
@@ -50,6 +51,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
         values=_parse_float,
         description="Relative tolerance for regression tests",
     )
+    variant("kynema-fmb", default=False, description="Compile with Kynema-FMB structural solver")
     variant("openfast", default=False, description="Compile with OpenFAST support")
     variant("tioga", default=False, description="Compile with Tioga support")
     variant("hypre", default=True, description="Compile with Hypre support")
@@ -71,6 +73,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi")
     depends_on("yaml-cpp@0.6.0:0.7.0")
+    depends_on("kynema-fmb", when="+kynema-fmb")
     depends_on("openfast@4.0.2:+cxx+netcdf", when="+openfast")
     depends_on("openfast@4.1.1:", when="@2.4.0:+openfast")
     depends_on("trilinos@15.1.1", when="@=2.1.0")
@@ -116,7 +119,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts(
         "~hypre~trilinos-solvers",
-        msg="nalu-wind: Must enable at least one of the linear-solvers: hypre or trilinos-solvers",
+        msg="kynema-ugf: Must enable one of the linear-solvers: hypre or trilinos-solvers",
     )
     conflicts(
         "+shared",
@@ -174,6 +177,7 @@ class NaluWind(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_BOOST", "boost"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("ENABLE_OPENFAST", "openfast"),
+            self.define_from_variant("ENABLE_KYNEMA_FMB_SIXDOF", "kynema-fmb"),
             self.define_from_variant("ENABLE_TIOGA", "tioga"),
             self.define_from_variant("ENABLE_HYPRE", "hypre"),
             self.define_from_variant("ENABLE_TRILINOS_SOLVERS", "trilinos-solvers"),
