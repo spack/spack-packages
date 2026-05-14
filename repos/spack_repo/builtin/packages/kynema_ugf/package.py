@@ -119,7 +119,7 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts(
         "~hypre~trilinos-solvers",
-        msg="kynema-ugf: Must enable at least one of the linear-solvers: hypre or trilinos-solvers",
+        msg="kynema-ugf: Must enable one of the linear-solvers: hypre or trilinos-solvers",
     )
     conflicts(
         "+shared",

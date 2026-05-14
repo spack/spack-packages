@@ -45,7 +45,6 @@ class Tioga(CMakePackage):
         tag="v1.0.0",
         commit="d1f0ceb5db5cffecc3197a904fbf4d539d87e6a1",
     )
-    version("master", branch="master")
 
     variant("shared", default=sys.platform != "darwin", description="Build shared libraries")
     variant("pic", default=True, description="Position independent code")
