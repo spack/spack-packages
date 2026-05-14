@@ -15,13 +15,21 @@ spack:
     all:
       target: ["aarch64"]
       require:
-      - "%gcc"
       - target=aarch64
       providers:
         blas: [openblas]
         mpi: [mpich]
         tbb: [intel-tbb]
       variants: +mpi
+    c:
+      require:
+      - gcc
+    cxx:
+      require:
+      - gcc
+    fortran:
+      require:
+      - gcc
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
