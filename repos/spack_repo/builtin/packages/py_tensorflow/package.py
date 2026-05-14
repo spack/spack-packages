@@ -548,6 +548,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         when="@2.16.1-rocm-enhanced +rocm",
     )
     patch("set_jit_true.patch", when="@2.18.0-rocm-enhanced: +rocm")
+
+    # Add missing targets to the system protobuf BUILD file so that TF can use
+    # the system protobuf instead of the vendored one (TF issue #60667).
+    # Guarded to @2.18:2.19 because the BUILD file structure was only analysed
+    # for those versions; other versions may require different fixes.
+    patch("system-protobuf-well-known-types.patch", when="@2.18:2.19")
+
     phases = ["configure", "build", "install"]
 
     def flag_handler(self, name, flags):
@@ -570,8 +577,9 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
 
-        # Avoid vendoring protobuf
-        env.set("TF_SYSTEM_LIBS", "com_google_protobuf")
+        # Avoid vendoring protobuf; only tested/analysed for @2.18:2.19
+        if spec.satisfies("@2.18:2.19"):
+            env.set("TF_SYSTEM_LIBS", "com_google_protobuf")
 
         # Please specify the location of python
         env.set("PYTHON_BIN_PATH", python.path)
@@ -918,6 +926,16 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         filter_file("build:opt --copt=-march=native", "", ".tf_configure.bazelrc")
         filter_file("build:opt --host_copt=-march=native", "", ".tf_configure.bazelrc")
+
+        # Provide the system protobuf include path for the link_proto_files genrule
+        # in third_party/systemlibs/protobuf.BUILD (used when TF_SYSTEM_LIBS includes
+        # com_google_protobuf). The genrule uses $(PROTOBUF_INCLUDE_PATH) as a Bazel
+        # make-variable set via --define.
+        if spec.satisfies("@2.18:2.19"):
+            with open(".tf_configure.bazelrc", mode="a") as f:
+                f.write(
+                    f"build --define=PROTOBUF_INCLUDE_PATH={spec['protobuf'].prefix.include}\n"
+                )
 
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install
