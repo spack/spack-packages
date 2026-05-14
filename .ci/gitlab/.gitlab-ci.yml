@@ -114,6 +114,7 @@ default:
     - spack config add -f "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
     - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir"
     - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+    - spack solve --show all > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/solve.out"
     - spack
       config blame > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
     - spack -v  --color=always
