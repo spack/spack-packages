@@ -111,7 +111,9 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
             args.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
             args.append(self.define("KYNEMA_DRIVER_ENABLE_CUDA", True))
-            args.append(self.define("KYNEMA_DRIVER_CUDA_ARCH", self.spec.variants["cuda_arch"].value))
+            args.append(
+                self.define("KYNEMA_DRIVER_CUDA_ARCH", self.spec.variants["cuda_arch"].value)
+            )
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
 
         if spec.satisfies("+rocm"):

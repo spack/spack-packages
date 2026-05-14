@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
+
 from spack.package import *
 
 
 class Kynema(BundlePackage):
-    """Kynema is a suite of general purpose fluid dynamics 
+    """Kynema is a suite of general purpose fluid dynamics
     simulation codes for coupling structured and unstructured
     grids with overset. It also includes a flexible multi-body
     solver"""
