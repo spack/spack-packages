@@ -655,16 +655,16 @@ ml-darwin-aarch64-mps-build:
 ########################################
 # High Energy Physics (HEP) - Linux x86_64 (CPU)
 ########################################
-.hep:
+.hep-x86_64_v3:
   variables:
     SPACK_CI_STACK_NAME: hep-x86_64_v3
 
 hep-x86_64_v3-generate:
-  extends: [ ".hep", ".generate-x86_64"]
+  extends: [ ".hep-x86_64_v3", ".generate-x86_64"]
   image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
 hep-x86_64_v3-build:
-  extends: [ ".hep", ".build" ]
+  extends: [ ".hep-x86_64_v3", ".build" ]
   trigger:
     << : *trigger_build
     include:
@@ -677,16 +677,16 @@ hep-x86_64_v3-build:
 ########################################
 # High Energy Physics (HEP) - Linux aarch64 (CPU)
 ########################################
-.hep:
+.hep-aarch64:
   variables:
     SPACK_CI_STACK_NAME: hep-aarch64
 
 hep-aarch64-generate:
-  extends: [ ".hep", ".generate-aarch64"]
+  extends: [ ".hep-aarch64", ".generate-aarch64"]
   image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
 
 hep-aarch64-build:
-  extends: [ ".hep", ".build" ]
+  extends: [ ".hep-aarch64", ".build" ]
   trigger:
     << : *trigger_build
     include:
