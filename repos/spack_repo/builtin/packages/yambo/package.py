@@ -19,6 +19,7 @@ class Yambo(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("5.3.0", sha256="97b6867c28af6ea690bb02446745e817adcedf95bcd568f132ef3510abbb1cfe")
     version("5.2.4", sha256="7c3f2602389fc29a0d8570c2fe85fe3768d390cfcbb2d371e83e75c6c951d5fc")
     version("5.1.1", sha256="c85036ca60507e627c47b6c6aee8241830349e88110e1ce9132ef03ab2c4e9f6")
 
@@ -101,7 +102,7 @@ class Yambo(AutotoolsPackage):
         expand=False,
     )
     resource(
-        when="@5.2",
+        when="@5.2:5.3",
         name="iotk",
         url="https://github.com/yambo-code/yambo-libraries/raw/0bb3a9c5d57fbad5a22ea2bb2e9c9e2fc04a7381/external/iotk-y1.2.2.tar.gz",
         sha256="64af6a4b98f3b62fcec603e4e1b00ef994f95a0efa53ab6593ebcfe6de1739ef",
