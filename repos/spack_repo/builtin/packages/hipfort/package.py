@@ -21,6 +21,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libhipfort-amdgcn.a", "libhipfort-nvptx.a"]
 
+    version("7.2.3", sha256="21cb7049a1696a3f91666e5dcae184c496846c26618da3263affb7659fa659f5")
     version("7.2.1", sha256="a908ed8a3f871581e55166fdbfdd24ab97d1a5ff91573b552ed3cae89607c298")
     version("7.2.0", sha256="0e59a7fd503ed4a76db89b3c679658108d3f0a7e6730ecfb7555087b203805c8")
     version("7.1.1", sha256="4e1e1aafc6eec9cabed3c90777591a15b033b8f9a58cacbaadf92cc21fcd896f")
@@ -81,6 +82,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", type="build", when=f"@{ver}")
 

@@ -43,6 +43,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+
+    version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
     version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
@@ -211,6 +213,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     for d_version, d_shasum in [
         ("7.2.0", "728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638"),
         ("7.2.1", "201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f"),
+        ("7.2.3", "e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b"),
     ]:
         resource(
             name="rocm-systems",
@@ -225,6 +228,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("7.1.1", "b02e7a2b38c408067f3713ff47fe620059a8fe5f47110ab343116448625b7448"),
         ("7.2.0", "b003b608df470d88ad0a636581e134b05b8aee586b0332c545280e6c6366d121"),
         ("7.2.1", "eb243267e341581a340c0fd3d9cd8439fa27205e8c5be4ae9452636d222cc928"),
+        ("7.2.3", "37390b3123249b84192e1db51688b0e9d7b2b893e73a0dae721fc5f6d16e9a29"),
     ]:
         resource(
             name="spirv-llvm-translator",

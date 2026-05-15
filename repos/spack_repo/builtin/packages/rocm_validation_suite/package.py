@@ -27,6 +27,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     executables = ["rvs"]
 
+    version("7.2.3", sha256="363009b394350a2ae1d8debe7092c96ab5aa2b183487aed6834580979e969c8c")
     version("7.2.1", sha256="737c30e9ded3b9b70b85973aca49cf98015eff890eb8bb81c940f04f1079b7c9")
     version("7.2.0", sha256="d4c7252104431542fb748afd2e17eb9d86ad87f490b19a3fa343721222d67910")
     version("7.1.1", sha256="eecce5e1597f2da152feffe6ac6aec9234a686f10591c58995e1120d601f3128")
@@ -145,6 +146,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -168,6 +170,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -187,13 +190,14 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     def patch(self):

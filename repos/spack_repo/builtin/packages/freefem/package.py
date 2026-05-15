@@ -16,14 +16,15 @@ class Freefem(AutotoolsPackage):
     """
 
     homepage = "https://freefem.org"
-    url = "https://github.com/FreeFem/FreeFem-sources/archive/refs/tags/v4.15.tar.gz"
+    url = "https://github.com/FreeFem/FreeFem-sources/archive/refs/tags/v4.16.tar.gz"
     git = "https://github.com/FreeFem/FreeFem-sources.git"
 
-    maintainers("corentin-dev")
+    maintainers("mohd-afeef-badri")
 
     license("LGPL-3.0-only", checked_by="mohd-afeef-badri")
 
     version("develop", branch="develop")
+    version("4.16", sha256="9921af94fb69c85a650b05b0eeb4d56623af35f5d71d635b7ba5e2508c02246a")
     version("4.15", sha256="a47af5a7c7006ae8c648845e55d732ea403837af869493000a008b2013c698e3")
     version("4.14", sha256="931cbfe9ef6f6530756c300c5ae47bfdaca21c560a5407cb33325a376a3b6af8")
     version("4.13", sha256="aefd4ff02333209f7433abef2e74acb621b6946063ff27e81cf2da43120b6ae4")
