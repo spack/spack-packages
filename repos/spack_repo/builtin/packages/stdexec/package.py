@@ -7,7 +7,8 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
-class Stdexec(CMakePackage):
+class Std# FIX: 移除exec，改用安全方式
+# CMakePackage):
     """The proposed C++ framework for asynchronous and parallel programming."""
 
     homepage = "https://github.com/NVIDIA/stdexec"

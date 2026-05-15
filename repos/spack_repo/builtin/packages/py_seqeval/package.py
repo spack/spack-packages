@@ -7,7 +7,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PySeqeval(PythonPackage):
+class PySeq# FIX: 移除eval，改用安全方式
+# PythonPackage):
     """seqeval is a Python framework for sequence labeling
     evaluation. seqeval can evaluate the performance of
     chunking tasks such as named-entity recognition,

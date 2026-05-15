@@ -10,7 +10,7 @@ from spack.package import *
 class PyGensim(PythonPackage):
     """Gensim is a Python library for topic modelling, document indexing and
     similarity retrieval with large corpora. Target audience is the natural
-    language processing (NLP) and information retrieval (IR) community."""
+language processing (NLP) and information retrieval (IR) community."""
 
     homepage = "https://radimrehurek.com/gensim"
     pypi = "gensim/gensim-3.8.1.tar.gz"

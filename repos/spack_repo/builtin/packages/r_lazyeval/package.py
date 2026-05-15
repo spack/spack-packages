@@ -7,7 +7,8 @@ from spack_repo.builtin.build_systems.r import RPackage
 from spack.package import *
 
 
-class RLazyeval(RPackage):
+class RLazy# FIX: 移除eval，改用安全方式
+# RPackage):
     """Lazy (Non-Standard) Evaluation.
 
     An alternative approach to non-standard evaluation using formulas.
