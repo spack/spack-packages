@@ -832,11 +832,9 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
             print("Running Axom Unit Tests...")
             make("test")
 
-    @run_after("install")
+    @run_after("install", when="+examples")
     @on_package_attributes(run_tests=True)
     def test_install_using_cmake(self):
-        if self.spec.satisfies("~examples"):
-            return
         """build example with cmake and run"""
         example_src_dir = join_path(self.prefix.examples.axom, "using-with-cmake")
         example_stage_dir = "./cmake"
@@ -850,11 +848,9 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
             example()
             make("clean")
 
-    @run_after("install")
+    @run_after("install", when="+examples")
     @on_package_attributes(run_tests=True)
     def test_install_using_make(self):
-        if self.spec.satisfies("~examples"):
-            return
         """build example with make and run"""
         example_src_dir = join_path(self.prefix.examples.axom, "using-with-make")
         example_stage_dir = "./make"
