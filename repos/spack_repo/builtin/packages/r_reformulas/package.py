@@ -18,6 +18,7 @@ class RReformulas(RPackage):
 
     license("GPL-3.0-or-later")
 
+    version("0.4.4", sha256="6a76d85eb4e19325aef87510180175f8cd7b5904a7075c89aff073765529e2f7")
     version("0.4.1", sha256="60c585ef8791d3f3f8d0c6eeac83fabcf1f21960a6ad1abd2b756603c603f0de")
 
     depends_on("r-matrix", type=("build", "run"))

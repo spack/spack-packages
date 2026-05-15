@@ -329,6 +329,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             depends_on("viskores +vtktypes +64bitids +doubleprecision", when=f"{vk_variant}")
             depends_on("viskores +fpic", when=f"+shared {vk_variant}")
 
+        with when("+fides"):
+            depends_on("fides@1.3:")
+            depends_on("fides +mpi", when="+mpi")
+
         with when("+cuda"):
             # Kokkos vs Viskores Native CUDA is intentionally left configurable
             depends_on("viskores +cuda")
@@ -480,6 +484,17 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7593
     patch("paraview-cdireader-lazy.patch", when="@:6.0 +cdi")
+
+    # Fix for linking external Fides library
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13130
+    patch("vtk-external-fides-pv61.patch", working_dir="VTK", when="@6.0:6.1")
+
+    # Fixes for linking external Viskores library
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13094
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13127
+    patch("vtk-fine-grained-viskores-targets-pv61.patch", working_dir="VTK", when="@6.0:6.1")
+    patch("vtk-consolidate-viskores-wrapping-pv60.patch", working_dir="VTK", when="@6.0")
+    patch("vtk-consolidate-viskores-wrapping-pv61.patch", working_dir="VTK", when="@6.1")
 
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223

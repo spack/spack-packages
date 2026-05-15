@@ -116,6 +116,7 @@ default:
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
+    when: always
     paths:
       - "${CI_PROJECT_DIR}/jobs_scratch_dir"
       - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
@@ -359,7 +360,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]

@@ -20,6 +20,7 @@ class RRstantools(RPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.6.0", sha256="6fe4d8f48e42bb48a0d65aedf017b4e1a919a29e3431301cc0295f7777a7f837")
     version("2.4.0", sha256="bff72ca2f0352c6c5d2868823e286fdb73a6ead74508a4124cbcb222c83b4faa")
     version("2.3.1", sha256="82d4f2e884ffc894463bd37765606d5a9bef2ee631758840ec58636acdca6975")
     version("2.2.0", sha256="cb810baeb90c67668361b666c6862df9917aff6aaec63d2c3a485f28407c4eb7")
@@ -28,8 +29,10 @@ class RRstantools(RPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("r+X", type=("build", "run"))
-    depends_on("r-desc", type=("build", "run"), when="@2.1.1:")
-    depends_on("r-rcpp@0.12.16:", type=("build", "run"), when="@2.1.1:")
-    depends_on("r-rcppparallel@5.0.1:", type=("build", "run"), when="@2.1.1:")
-    depends_on("pandoc", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("r+X")
+        depends_on("r-desc", when="@2.1.1:")
+        depends_on("r-rcpp@0.12.16:", when="@2.1.1:")
+        depends_on("r-rcppparallel@5.0.1:", when="@2.1.1:")
+
+    depends_on("pandoc")

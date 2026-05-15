@@ -169,7 +169,6 @@ spack:
   - flecsi
   - flit
   - flux-core
-  - fortrilinos
   - fpm
   - gasnet
   - libgeopm
@@ -377,6 +376,7 @@ spack:
     #- hpctoolkit +rocm
     # - tau +mpi +rocm +syscall           # tau: has issue with `spack env depfile` build
 
+
     # ROCM 90a
     - adios2 +kokkos
     - amrex
@@ -403,7 +403,7 @@ spack:
     - sundials
     - superlu-dist
     - tasmanian ~openmp
-    - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack ~ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
+    - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
     - umpire
     - upcxx
     # INCLUDED IN ECP DAV ROCM
