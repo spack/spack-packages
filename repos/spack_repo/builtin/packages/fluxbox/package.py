@@ -14,7 +14,7 @@ class Fluxbox(AutotoolsPackage):
     to make an easy, and extremely fast, desktop experience.
     """
 
-    homepage = "http://fluxbox.org/"
+    homepage = "https://fluxbox.org/"
     url = "http://sourceforge.net/projects/fluxbox/files/fluxbox/1.3.7/fluxbox-1.3.7.tar.gz"
 
     license("MIT")

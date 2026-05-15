@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocprofilerCompute(CMakePackage):
+class RocprofilerCompute(ROCmLibrary, CMakePackage):
     """Advanced Profiling and Analytics for AMD Hardware"""
 
     homepage = "https://github.com/ROCm/rocm-systems"
@@ -15,6 +16,8 @@ class RocprofilerCompute(CMakePackage):
 
     tags = ["rocm"]
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["rocprof-compute"]
+
     license("MIT")
 
     def url_for_version(self, version):
@@ -24,6 +27,7 @@ class RocprofilerCompute(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="cf5d577edc1bed185f9c424868ec42952ccd2f9c2679e6daeb3bc788536cf182")
     version("7.1.0", sha256="11a65dac6e4099b4f2bb438320ef8206bb130a8a31bba52e90b594cdc235969b")
@@ -51,6 +55,7 @@ class RocprofilerCompute(CMakePackage):
     depends_on("py-plotille")
     depends_on("py-dash-svg", type=("build", "run"))
     depends_on("py-dash", type=("build", "run"))
+    depends_on("py-dash@3:", type=("build", "run"), when="@7.0:")
     depends_on("py-dash-bootstrap-components", type=("build", "run"))
     depends_on("py-textual", when="@7.0:")
     depends_on("py-textual-plotext", when="@7.0:")

@@ -32,6 +32,18 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
     version("main", branch="main", submodules=True)
     version(
+        "2025.12.1",
+        tag="v2025.12.1",
+        commit="e3c6197dfa8f1c9ac61635c26775c333411bdcd5",
+        submodules=True,
+    )
+    version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="f2ad263e08db89327ceccaa9a6c1e994b6d24e67",
+        submodules=True,
+    )
+    version(
         "2025.03.0",
         tag="v2025.03.0",
         commit="b66b9d7a1c6826037fed991492bc3ea1893d86ac",
@@ -112,6 +124,7 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("blt")
+    depends_on("blt@0.7.1:", type="build", when="@2025.12.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.07.0:")
     depends_on("blt@0.5.3", type="build", when="@2023.06")
@@ -121,6 +134,7 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("blt@0.4.0:", type="build", when="@0.8.0:")
     depends_on("blt@0.3.0:", type="build", when="@:0.7.0")
 
+    depends_on("cmake@3.24:", when="@2025.12.0:", type="build")
     depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
     depends_on("cmake@3.23:", when="@0.12.0:2023.06.0 +rocm", type="build")
     depends_on("cmake@3.20:", when="@0.12.0:2023.06.0", type="build")

@@ -25,6 +25,10 @@ class Truchas(CMakePackage):
     maintainers("pbrady", "zjibben")
 
     version("develop", branch="master")
+    version("26.04", sha256="0e77ca76904e39d5dd54c96db5da95047375b86642fe089e97bc4098042114f6")
+    version("26.02", sha256="0e9c0faf9478b534c7c83eb31292ba238e10b73cf892f0b6bca2ef9b6f5100b8")
+    version("25.12", sha256="6ba1e6f4195b37057ac7dcf19fb9f7a7a86ae449c2c271b8c7e72ce5f0009366")
+    version("25.11", sha256="9f7ecf16a3f054fd1addb10282858b039b078cede26170501dfa08e9323dfbeb")
     version("25.10", sha256="0d797a3517c7f2183409fd9c8c2e2c7fefba9cae16f86cd81f8a67e79b6daede")
     version("24.07", sha256="42a2e2edfaa157786bd801e889477f08c6d168690a123a8bfa6d86c222bc54e6")
     version("24.06", sha256="648c5c3f3c3c72fd359de91713af5feed1c1580268489c079511fa5ac2428519")
@@ -66,6 +70,7 @@ class Truchas(CMakePackage):
     depends_on("scorpio")
     depends_on("hdf5@1.14:", when="@24.06:")
     depends_on("hdf5@1.10", when="@:24.05")
+    depends_on("fvtkhdf@0.6.0: +shared ~mpi_f08", when="@26.04:")
     depends_on("netcdf-c@4.9:", when="@24.06:")
     depends_on("netcdf-c@4.8", when="@:24.05")
     depends_on("petaca@25.06: +shared", when="@25.10:")

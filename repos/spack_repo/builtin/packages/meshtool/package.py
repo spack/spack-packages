@@ -19,6 +19,7 @@ class Meshtool(MakefilePackage):
     # Version to use with openCARP releases
     # It is possible that different openCARP releases rely on the same
     # meshtool version
+    version("oc19.0", commit="d6ab63fa6915995b203f4f6b278ed0c853ad15fa")
     version("oc18.1", commit="d6ab63fa6915995b203f4f6b278ed0c853ad15fa")
     version("oc18.0", commit="d6ab63fa6915995b203f4f6b278ed0c853ad15fa")
     version("oc17.0", commit="d6ab63fa6915995b203f4f6b278ed0c853ad15fa")

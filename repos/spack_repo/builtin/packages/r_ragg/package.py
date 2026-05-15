@@ -19,6 +19,7 @@ class RRagg(RPackage):
 
     license("MIT")
 
+    version("1.5.2", sha256="1dad21034a403e84a835c90260a1d9d8dc43c8d100f7fe63dd01d5e928b28f16")
     version("1.3.2", sha256="8037a45209fdd50acf101208af8e832b840a11ad4201cf7fb480de432e6b6931")
     version("1.2.5", sha256="936f4d75e0e01cdeefb9f57d121cdd7812d0de5a9e1a3a8315f92ce1c84da8f9")
     version("1.2.4", sha256="c547e5636a2eefaa0021a0d50fad1e813c2ce976ec0c9c3f796d38a110680dcd")
@@ -29,10 +30,12 @@ class RRagg(RPackage):
 
     depends_on("r-systemfonts@1.0.3:", type=("build", "run"))
     depends_on("r-textshaping@0.3.0:", type=("build", "run"))
+
     depends_on("freetype")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("jpeg")
+    depends_on("libwebp+libwebpmux", when="@1.5:")
 
     def flag_handler(self, name, flags):
         # Freetype 2.13.3 broke the public interface by switching char/unsigned char:

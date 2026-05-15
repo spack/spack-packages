@@ -69,6 +69,11 @@ class Grpc(CMakePackage):
 
     depends_on("protobuf")
     depends_on("protobuf@3.22:", when="@1.55:")
+    # older versions require the removed header file <google/protobuf/compiler/php/php_generator.h>
+    depends_on("protobuf@:33", when="@:1.71")
+    # https://github.com/grpc/grpc/commit/dfdda9eb9d308640ea6947f3ad16c86d7b89d7fd
+    depends_on("protobuf@:29", when="@:1.68")
+
     depends_on("openssl")
     depends_on("zlib-api")
     depends_on("c-ares")
@@ -105,3 +110,27 @@ class Grpc(CMakePackage):
         if self.spec.satisfies("@1.33.1:"):
             args.append("-DgRPC_RE2_PROVIDER:String=package")
         return args
+
+    def patch(self):
+        # GCC 13+ and Clang 15+ removed implicit transitive includes (e.g. <string>,
+        # <cstdint>, <limits>, <algorithm>). Inject them into the portability header
+        if self.spec.satisfies("%gcc@13:") or self.spec.satisfies("%clang@15:"):
+            filter_file(
+                r"(#define GRPC_SUPPORT_PORT_PLATFORM_H)",
+                r"\1"
+                "\n// Added by Spack: fix missing transitive includes for GCC 13+ / Clang 15+\n"
+                "#if defined(__cplusplus)\n"
+                "#include <algorithm>\n"
+                "#include <cstdint>\n"
+                "#include <limits>\n"
+                "#include <string>\n"
+                "#endif\n",
+                join_path(self.stage.source_path, "include/grpc/support/port_platform.h"),
+            )
+
+        # glob.cc uses std::min/std::max but omits <algorithm>
+        filter_file(
+            r'(#include "absl/strings/string_view.h")',
+            '#include <algorithm>\n#include "absl/strings/string_view.h"',
+            join_path(self.stage.source_path, "src/core/util/glob.cc"),
+        )

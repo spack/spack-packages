@@ -20,6 +20,9 @@ class RRdpack(RPackage):
 
     cran = "Rdpack"
 
+    license("GPL-2.0-or-later AND GPL-3.0-or-later")
+
+    version("2.6.6", sha256="b4e19d22bd5a2ec79cdb08ba209e79c66ea16dbc2fd2e7db8bca46412651cbdb")
     version("2.6.1", sha256="39626397c4ab1706bfdc53433dbaa0a6cb691dcba68173945b5a9eb041acf945")
     version("2.4", sha256="7652add12b30fcba1f3a12493a089a4166079e78c47b95802a98595a3ff53581")
     version("2.3", sha256="c45e1ab8352b92ce03f26ece1f4db3716959fca2af9e826d5bd3c76b2151f7c5")
@@ -27,8 +30,12 @@ class RRdpack(RPackage):
     version("2.1", sha256="26e094fe3c077fb2a99e95c5bd94015a5f993a4a5f5d217829b4872ff004bfce")
     version("0.11-0", sha256="8fb449c80fbe931cdce51f728fb03a1978009ccce66fd6b9edacdc6ff4118d85")
 
-    depends_on("r@2.15.0:", type=("build", "run"))
-    depends_on("r-rbibutils@1.3:", type=("build", "run"), when="@2.1:")
+    with default_args(type=("build", "run")):
+        depends_on("r@2.15.0:")
 
-    depends_on("r-bibtex@0.4.0:", type=("build", "run"), when="@:0.11-0")
-    depends_on("r-gbrd", type=("build", "run"), when="@:2.1")
+        depends_on("r-rbibutils@2.4.1:", when="@2.6.5:")
+        depends_on("r-rbibutils@1.3:", when="@2.1:")
+
+        # Historical dependencies
+        depends_on("r-bibtex@0.4.0:", when="@:0.11-0")
+        depends_on("r-gbrd", when="@:2.1")

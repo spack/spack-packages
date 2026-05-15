@@ -16,6 +16,7 @@ class PySqlalchemy(PythonPackage):
 
     license("MIT")
 
+    version("2.0.49", sha256="d15950a57a210e36dd4cec1aac22787e2a4d57ba9318233e2ef8b2daf9ff2d5f")
     version("2.0.43", sha256="788bfcef6787a7764169cfe9859fe425bf44559619e1d9f56f5bddf2ebf6f417")
     version("2.0.19", sha256="77a14fa20264af73ddcdb1e2b9c5a829b8cc6b8304d0f093271980e36c200a3f")
     version("1.4.54", sha256="4470fbed088c35dc20b78a39aaf4ae54fe81790c783b3264872a0224f437c31a")
@@ -37,28 +38,30 @@ class PySqlalchemy(PythonPackage):
         values=any_combination_of("mysql", "postgresql", "pymysql"),
     )
 
-    depends_on("py-setuptools@61:", when="@2.0.33:", type="build")
-    depends_on("py-setuptools@47:", when="@2:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.24:", when="@2:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@61:", when="@2.0.33:")
+        depends_on("py-setuptools@47:", when="@2:")
+        depends_on("py-setuptools")
+        depends_on("py-cython@0.29.24:", when="@2:")
 
-    depends_on("py-importlib-metadata", when="@1.4.0: ^python@:3.7", type=("build", "run"))
-    depends_on("py-greenlet@1:", when="@2.0.40: ^python@:3.13", type=("build", "run"))
-    depends_on("py-greenlet", when="@1.4.0: ^python@:3.13", type=("build", "run"))
-    depends_on("py-typing-extensions@4.6.0:", when="@2.0.25:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.2.0:", when="@2:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-importlib-metadata", when="@1.4.0: ^python@:3.7")
+        depends_on("py-greenlet@1:", when="@2.0.40:")
+        depends_on("py-greenlet", when="@1.4.0:")
+        depends_on("py-typing-extensions@4.6.0:", when="@2.0.25:")
+        depends_on("py-typing-extensions@4.2.0:", when="@2:")
+
+        # >=1.4.0
+        depends_on("py-mysqlclient@1.4:", when="backend=mysql @1.4:")
+        depends_on("py-psycopg2@2.7:", when="backend=postgresql @1.4:")
+        depends_on("py-pymysql", when="backend=pymysql @1.4:")
+
+        # < 1.4.0
+        depends_on("py-mysqlclient", when="backend=mysql @:1.3")
+        depends_on("py-pymysql", when="backend=pymysql @:1.3")
+        depends_on("py-psycopg2", when="backend=postgresql @:1.3")
 
     conflicts("^py-greenlet@0.4.17", when="@1.4.0:2.0.30 ^python@:3.13")
-
-    # >=1.4.0
-    depends_on("py-mysqlclient@1.4:", when="backend=mysql @1.4:", type=("build", "run"))
-    depends_on("py-psycopg2@2.7:", when="backend=postgresql @1.4:", type=("build", "run"))
-    depends_on("py-pymysql", when="backend=pymysql @1.4:", type=("build", "run"))
-
-    # < 1.4.0
-    depends_on("py-mysqlclient", when="backend=mysql @:1.3", type=("build", "run"))
-    depends_on("py-pymysql", when="backend=pymysql @:1.3", type=("build", "run"))
-    depends_on("py-psycopg2", when="backend=postgresql @:1.3", type=("build", "run"))
 
     def url_for_version(self, version):
         if self.spec.satisfies("@2.0.33:"):

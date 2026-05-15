@@ -26,7 +26,6 @@ class Ed(AutotoolsPackage, GNUMirrorPackage):
     parallel = False
 
     def configure_args(self):
-
         args = []
 
         args.append(f"CC={spack_cc}")
