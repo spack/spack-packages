@@ -2,15 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Migraphx(CMakePackage):
+class Migraphx(ROCmLibrary, CMakePackage):
     """AMD's graph optimization engine."""
 
     homepage = "https://github.com/ROCm/AMDMIGraphX"
@@ -22,6 +20,7 @@ class Migraphx(CMakePackage):
     libraries = ["libmigraphx"]
 
     license("MIT")
+    version("7.2.3", sha256="25d491d83fe84c6c071305a71100f77b393b35ae5c9eeec277c68986378f6abc")
     version("7.2.1", sha256="611e4646f11fe559946275a6c79f1aaabe0a5c7cb95a42b28e724ba29f4c753a")
     version("7.2.0", sha256="085ea6fcf6197b20fed60917194ca622e5d2c1705237fe063563f988494a8b3d")
     version("7.1.1", sha256="beb9cbf4475d979e8431a983ee0ae8a9f5b75bb24699b7b8dfa2753db9822c4d")
@@ -118,6 +117,7 @@ class Migraphx(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -144,6 +144,7 @@ class Migraphx(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
@@ -156,17 +157,6 @@ class Migraphx(CMakePackage):
         CMake based on current spec
         """
         return [self.define("Python_INCLUDE_DIR", self["python"].config_vars["include"])]
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            ver = "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        else:
-            ver = None
-        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

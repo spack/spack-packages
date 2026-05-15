@@ -26,6 +26,7 @@ class RNloptr(RPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("2.2.1", sha256="76ba40750b475c8b1ad6a86c9e05f0c1746af16d965235ff9293953920aed7f4")
     version("2.1.1", sha256="4cdaf55dfdeb090119f2c2ca77f617962524654da4511bacd650f62bb6dad8ea")
     version("2.0.3", sha256="7b26ac1246fd1bd890817b0c3a145456c11aec98458b8518de863650b99616d7")
     version("2.0.0", sha256="65ca3149cfc9ba15ac10a91f34b5d86b20f5fd693f44e3edf3e392402911619a")

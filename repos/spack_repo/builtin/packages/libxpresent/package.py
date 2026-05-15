@@ -14,11 +14,13 @@ class Libxpresent(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXpresent/"
     xorg_mirror_path = "lib/libXpresent-1.0.0.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXpresent.git"
 
     license("MIT")
 
     maintainers("wdconinc")
 
+    version("1.0.2", sha256="e98a211e51d8b9381d16b24a57cecb926a23e743b9e0b1ffc3e870206b7dee1a")
     version("1.0.1", sha256="8ebf8567a8f6afe5a64275a2ecfd4c84e957970c27299d964350f60be9f3541d")
     version("1.0.0", sha256="92f1bdfb67ae2ffcdb25ad72c02cac5e4912dc9bc792858240df1d7f105946fa")
 

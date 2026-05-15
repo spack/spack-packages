@@ -1,0 +1,345 @@
+From 9f09ea924e0f69fdbf4b504c99c4283a7daf3252 Mon Sep 17 00:00:00 2001
+From: Kenneth Moreland <morelandkd@ornl.gov>
+Date: Mon, 13 Apr 2026 11:35:34 -0400
+Subject: [PATCH] Consolidate configuration of Viskores device code
+
+When compiling Viskores device code, extra CMake configuration must
+be done to set the appropriate language and linking options. The
+previous setup was repeated several times through the code and contained
+lots of obsolete configuration. This change consolidates and cleans up
+the configuration.
+
+This also fixes an issue where flags for the device compiler could be
+given to the standard C++ compiler, which might not support the same
+flags.
+---
+ Accelerators/Vtkm/Core/CMakeLists.txt         | 32 +------------------
+ .../Vtkm/Core/Testing/Cxx/CMakeLists.txt      | 28 ----------------
+ .../Vtkm/Core/vtkmlib/vtkmInitializer.cxx     |  3 --
+ Accelerators/Vtkm/DataModel/CMakeLists.txt    | 29 +----------------
+ .../Vtkm/DataModel/Testing/Cxx/CMakeLists.txt | 28 ----------------
+ Accelerators/Vtkm/Filters/CMakeLists.txt      | 26 +--------------
+ .../Vtkm/Filters/Testing/Cxx/CMakeLists.txt   | 25 ---------------
+ IO/CatalystConduit/CMakeLists.txt             | 19 ++---------
+ ThirdParty/viskores/CMakeLists.txt            | 17 +++++++++-
+ 9 files changed, 21 insertions(+), 186 deletions(-)
+
+diff --git a/Accelerators/Vtkm/Core/CMakeLists.txt b/Accelerators/Vtkm/Core/CMakeLists.txt
+index 0501715be03..3e863bc7b4c 100644
+--- a/Accelerators/Vtkm/Core/CMakeLists.txt
++++ b/Accelerators/Vtkm/Core/CMakeLists.txt
+@@ -37,37 +37,7 @@ vtk_module_set_property(VTK::AcceleratorsVTKmCore
+   VALUE     viskores_pool)
+ 
+ _vtk_module_real_target(vtkm_accel_target VTK::AcceleratorsVTKmCore)
+-viskores_add_target_information(${vtkm_accel_target}
+-                            DROP_UNUSED_SYMBOLS
+-                            EXTENDS_VISKORES
+-                            MODIFY_CUDA_FLAGS
+-                            DEVICE_SOURCES ${sources})
+-
+-list(TRANSFORM nowrap_classes APPEND ".cxx" OUTPUT_VARIABLE device_sources)
+-if(VTK_USE_KOKKOS)
+-  add_compile_definitions(VTK_USE_KOKKOS)
+-endif()
+-if (TARGET VTK::vtkviskores_cuda)
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-  set_source_files_properties(${device_sources} PROPERTIES LANGUAGE CUDA)
+-  vtk_module_set_properties(VTK::AcceleratorsVTKmCore CUDA_SEPARABLE_COMPILATION ON)
+-
+-  find_package(CUDAToolkit REQUIRED)
+-  vtk_module_link(VTK::AcceleratorsVTKmCore PRIVATE CUDA::cudart)
+-
+-elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+-  set_source_files_properties(${device_sources} PROPERTIES LANGUAGE CUDA)
+-  kokkos_compilation(SOURCE ${device_sources})
+-
+-elseif (TARGET VTK::vtkviskores_kokkos_hip)
+-  set_source_files_properties(${device_sources} PROPERTIES LANGUAGE HIP)
+-  kokkos_compilation(SOURCE ${device_sources})
+-
+-endif ()
++vtk_add_viskores_device_target_information(${vtkm_accel_target})
+ 
+ if (MSVC)
+   set(msvc_warning_flags
+diff --git a/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
+index 1a32f156a73..c0c04adee7e 100644
+--- a/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
+@@ -6,32 +6,4 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmCoreCxxTests tests
+   TestVTKMImplicitDataArray.cxx,NO_VALID
+   )
+ 
+-if (TARGET VTK::vtkviskores_cuda OR TARGET VTK::vtkviskores_kokkos_cuda)
+-  foreach(src IN LISTS tests)
+-    string(REPLACE "," ";" src ${src})
+-    list(GET src 0 src)
+-
+-    set_source_files_properties(${src} PROPERTIES LANGUAGE CUDA)
+-  endforeach()
+-
+-  #the tests aren't scoped as a child directory of vtkAcceleratorsVTKmCore
+-  #so we need to redo this logic
+-  viskores_get_cuda_flags(CMAKE_CUDA_FLAGS)
+-
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-endif()
+-
+ vtk_test_cxx_executable(vtkAcceleratorsVTKmCoreCxxTests tests)
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  # When cuda is enabled VTK::AcceleratorsVTKmCore is built statically but with fpic
+-  # enabled so the tests are also built with fpic enabled
+-  set_target_properties(vtkAcceleratorsVTKmCoreCxxTests PROPERTIES
+-    CUDA_ARCHITECTURES OFF
+-    POSITION_INDEPENDENT_CODE ON
+-    )
+-endif()
+diff --git a/Accelerators/Vtkm/Core/vtkmlib/vtkmInitializer.cxx b/Accelerators/Vtkm/Core/vtkmlib/vtkmInitializer.cxx
+index 6cecef3bb9f..33d787e38b2 100644
+--- a/Accelerators/Vtkm/Core/vtkmlib/vtkmInitializer.cxx
++++ b/Accelerators/Vtkm/Core/vtkmlib/vtkmInitializer.cxx
+@@ -9,8 +9,6 @@
+ VTK_ABI_NAMESPACE_BEGIN
+ void InitializeVTKm()
+ {
+-// Kokkos enabled devices needs to be initialized
+-#ifdef VTK_USE_KOKKOS
+   static bool isInitialized{ false };
+   if (!isInitialized)
+   {
+@@ -19,7 +17,6 @@ void InitializeVTKm()
+     viskores::cont::Initialize(argc, const_cast<char**>(argv));
+     isInitialized = true;
+   }
+-#endif
+ }
+ 
+ vtkmInitializer::vtkmInitializer()
+diff --git a/Accelerators/Vtkm/DataModel/CMakeLists.txt b/Accelerators/Vtkm/DataModel/CMakeLists.txt
+index b653c230133..6a71610f4d5 100644
+--- a/Accelerators/Vtkm/DataModel/CMakeLists.txt
++++ b/Accelerators/Vtkm/DataModel/CMakeLists.txt
+@@ -43,34 +43,7 @@ vtk_module_set_property(VTK::AcceleratorsVTKmDataModel
+   PROPERTY  JOB_POOL_COMPILE
+   VALUE     viskores_pool)
+ _vtk_module_real_target(vtkm_accel_target VTK::AcceleratorsVTKmDataModel)
+-viskores_add_target_information(${vtkm_accel_target}
+-                            EXTENDS_VISKORES
+-                            MODIFY_CUDA_FLAGS
+-                            DEVICE_SOURCES ${sources})
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-
+-  list(TRANSFORM nowrap_classes APPEND ".cxx" OUTPUT_VARIABLE nowrap_sources)
+-  set(cuda_impl ${nowrap_sources} vtkmDataSet.cxx)
+-  set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+-
+-  vtk_module_set_properties(VTK::AcceleratorsVTKmDataModel CUDA_SEPARABLE_COMPILATION ON)
+-
+-  vtk_module_compile_options(VTK::AcceleratorsVTKmDataModel
+-    PUBLIC $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=extra_semicolon>)
+-
+-elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+-  list(TRANSFORM nowrap_classes APPEND ".cxx" OUTPUT_VARIABLE nowrap_sources)
+-  set(cuda_impl ${nowrap_sources} vtkmDataSet.cxx)
+-  set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+-  kokkos_compilation(SOURCE ${cuda_impl})
+-
+-endif()
++vtk_add_viskores_device_target_information(${vtkm_accel_target})
+ 
+ if (MSVC)
+   set(msvc_warning_flags
+diff --git a/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
+index a105aaa49ea..fdf8bc45806 100644
+--- a/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
+@@ -15,34 +15,6 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmDataModelCxxTests tests
+   TestVTKMDataSet.cxx,NO_VALID
+   )
+ 
+-if (TARGET VTK::vtkviskores_cuda)
+-  foreach(src IN LISTS tests)
+-    string(REPLACE "," ";" src ${src})
+-    list(GET src 0 src)
+-
+-    set_source_files_properties(${src} PROPERTIES LANGUAGE CUDA)
+-  endforeach()
+-
+-  #the tests aren't scoped as a child directory of vtkAcceleratorsVTKmDataModel
+-  #so we need to redo this logic
+-  viskores_get_cuda_flags(CMAKE_CUDA_FLAGS)
+-
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-endif()
+-
+ vtk_test_cxx_executable(vtkAcceleratorsVTKmDataModelCxxTests tests
+   RENDERING_FACTORY
+   )
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  # When cuda is enabled VTK::AcceleratorsVTKmDataModel is built statically but with fpic
+-  # enabled so the tests are also built with fpic enabled
+-  set_target_properties(vtkAcceleratorsVTKmDataModelCxxTests PROPERTIES
+-    CUDA_ARCHITECTURES OFF
+-    POSITION_INDEPENDENT_CODE ON
+-    )
+-endif()
+diff --git a/Accelerators/Vtkm/Filters/CMakeLists.txt b/Accelerators/Vtkm/Filters/CMakeLists.txt
+index 4eb9989da51..c24edd94be7 100644
+--- a/Accelerators/Vtkm/Filters/CMakeLists.txt
++++ b/Accelerators/Vtkm/Filters/CMakeLists.txt
+@@ -109,31 +109,7 @@ vtk_module_definitions(VTK::AcceleratorsVTKmFilters
+   PUBLIC "VTK_ENABLE_VISKORES_OVERRIDES=$<BOOL:${VTK_ENABLE_VISKORES_OVERRIDES}>")
+ 
+ _vtk_module_real_target(vtkm_accel_target VTK::AcceleratorsVTKmFilters)
+-viskores_add_target_information(${vtkm_accel_target}
+-                            EXTENDS_VISKORES
+-                            MODIFY_CUDA_FLAGS
+-                            DEVICE_SOURCES ${sources})
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-
+-  list(TRANSFORM classes APPEND ".cxx" OUTPUT_VARIABLE cuda_impl)
+-  set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+-  vtk_module_set_properties(VTK::AcceleratorsVTKmFilters CUDA_SEPARABLE_COMPILATION ON)
+-
+-  vtk_module_compile_options(VTK::AcceleratorsVTKmFilters
+-    PUBLIC $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=extra_semicolon>)
+-elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+-
+-  list(TRANSFORM classes APPEND ".cxx" OUTPUT_VARIABLE cuda_impl)
+-  set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+-  kokkos_compilation(SOURCE ${cuda_impl})
+-
+-endif()
++vtk_add_viskores_device_target_information(${vtkm_accel_target})
+ 
+ if (MSVC)
+   set(msvc_warning_flags
+diff --git a/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
+index d72f0bd7ffe..6f6ec073cb7 100644
+--- a/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
+@@ -28,32 +28,7 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmFiltersCxxTests tests
+   TestVTKMWarpVector.cxx,NO_SERDES
+   )
+ 
+-if (TARGET VTK::vtkviskores_cuda)
+-  foreach(src IN LISTS tests)
+-    string(REPLACE "," ";" src ${src})
+-    list(GET src 0 src)
+-
+-    set_source_files_properties(${src} PROPERTIES LANGUAGE CUDA)
+-  endforeach()
+-
+-  #the tests aren't scoped as a child directory of vtkAcceleratorsVTKmFilters
+-  #so we need to redo this logic
+-  viskores_get_cuda_flags(CMAKE_CUDA_FLAGS)
+-
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-
+-endif()
+-
+ 
+ vtk_test_cxx_executable(vtkAcceleratorsVTKmFiltersCxxTests tests
+   RENDERING_FACTORY
+   )
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  set_target_properties(vtkAcceleratorsVTKmFiltersCxxTests PROPERTIES
+-    CUDA_ARCHITECTURES OFF)
+-endif()
+diff --git a/IO/CatalystConduit/CMakeLists.txt b/IO/CatalystConduit/CMakeLists.txt
+index 91d60f1638c..d1d6049279a 100644
+--- a/IO/CatalystConduit/CMakeLists.txt
++++ b/IO/CatalystConduit/CMakeLists.txt
+@@ -16,23 +16,8 @@ vtk_module_add_module(VTK::IOCatalystConduit
+   CLASSES ${classes}
+   PRIVATE_CLASSES ${private_classes})
+ 
+-
+-if (TARGET VTK::vtkviskores_cuda)
+-  # Temporarily suppress "has address taken but no possible call to it" warnings,
+-  # until we figure out its implications.
+-  # We are disabling all warnings as nvlink has no known way to suppress
+-  # individual warning types.
+-  string(APPEND CMAKE_CUDA_FLAGS " -Xnvlink -w")
+-
+-  set_source_files_properties(${classes_cuda} PROPERTIES LANGUAGE CUDA)
+-
+-  vtk_module_set_properties(VTK::IOCatalystConduit
+-    CUDA_SEPARABLE_COMPILATION ON)
+-
+-  vtk_module_compile_options(VTK::IOCatalystConduit
+-    PUBLIC $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=extra_semicolon>)
+-endif ()
+-
++_vtk_module_real_target(vtkm_accel_target VTK::IOCatalystConduit)
++vtk_add_viskores_device_target_information(${vtkm_accel_target})
+ 
+ vtk_add_test_mangling(VTK::IOCatalystConduit)
+ add_subdirectory(Catalyst)
+diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
+index bbe1b38bce0..6ddb9104b3b 100644
+--- a/ThirdParty/viskores/CMakeLists.txt
++++ b/ThirdParty/viskores/CMakeLists.txt
+@@ -24,7 +24,7 @@ vtk_module_third_party(
+     STANDARD_INCLUDE_DIRS
+   EXTERNAL
+     PACKAGE Viskores
+-    TARGETS viskores::cont viskores::cont_testing viskores::filter viskores::worklet
++    TARGETS viskores::cont viskores::cont_testing viskores::filter
+     VERSION       "1.1.0"
+     STANDARD_INCLUDE_DIRS)
+ 
+@@ -55,3 +55,19 @@ foreach (viskores_target IN LISTS viskores_specific_targets)
+   _vtk_module_install("vtkviskores_${viskores_target}")
+   add_library("VTK::vtkviskores_${viskores_target}" ALIAS "vtkviskores_${viskores_target}")
+ endforeach ()
++
++# If a VTK library contains Viskores worklets or other Viskores device code, the files must be
++# declared as the proper language and the library must link to VTK::vtkviskores_worklet. This
++# function sets this up. Use this function by giving it the name of a target.
++function(vtk_add_viskores_device_target_information target)
++  target_link_libraries(${target} PRIVATE VTK::vtkviskores_worklet)
++  get_target_property(sources ${target} SOURCES)
++  list(FILTER sources INCLUDE REGEX "\\.(cpp|cxx|cc|C)$")
++  if(TARGET VTK::vtkviskores_cuda OR TARGET VTK::vtkviskores_kokkos_cuda)
++    set_source_files_properties(${sources} PROPERTIES LANGUAGE CUDA)
++  endif()
++  if(TARGET VTK::vtkviskores_kokkos_hip)
++    set_source_files_properties(${sources} PROPERTIES LANGUAGE HIP)
++    kokkos_compilation(SOURCE ${sources})
++  endif()
++endfunction()
+-- 
+GitLab
