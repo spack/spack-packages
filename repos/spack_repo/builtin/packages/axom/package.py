@@ -854,7 +854,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     @on_package_attributes(run_tests=True)
     def test_install_using_make(self):
         if self.spec.satisfies("~examples"):
-            return        
+            return
         """build example with make and run"""
         example_src_dir = join_path(self.prefix.examples.axom, "using-with-make")
         example_stage_dir = "./make"
