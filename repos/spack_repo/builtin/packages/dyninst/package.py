@@ -71,6 +71,12 @@ class Dyninst(CMakePackage):
     depends_on("tbb")
     requires("^[virtuals=tbb] intel-tbb@2019.9:", when="@13.0.0:")
 
+    patch(
+        "https://github.com/dyninst/dyninst/commit/e03567db37547f9a848f68f5a0e2c58d2aa17fe9.patch",
+        when="@:13.0.0 %tbb@2021.1:",
+        sha256="7312b0ade8123b48340a9064c5b5e84e8e89e4135628f1024b0b853b019c6446",
+    )
+
     with when("@13.0.0:"):
         depends_on("cmake@3.14.0:", type="build")
         conflicts("cmake@3.19.0")
