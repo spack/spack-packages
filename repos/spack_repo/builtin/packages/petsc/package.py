@@ -398,11 +398,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     phases = ["configure", "build", "install"]
 
     def patch(self):
-    # ROCm 7.x with minor < 4 (e.g. 7.2) incorrectly falls through to the
-    # ROCm 6.0-6.3 branch due to a broken version comparison in HIP.py.
-    # The condition `version_tuple[0] >= 6 and version_tuple[1] >= 4` was
-    # intended to mean >= 6.4 but fails for 7.2 since 2 < 4.
-    # Fix: use tuple comparison so (7,2) >= (6,4) evaluates correctly.
+        # ROCm 7.x with minor < 4 (e.g. 7.2) incorrectly falls through to the
+        # ROCm 6.0-6.3 branch due to a broken version comparison in HIP.py.
+        # The condition `version_tuple[0] >= 6 and version_tuple[1] >= 4` was
+        # intended to mean >= 6.4 but fails for 7.2 since 2 < 4.
+        # Fix: use tuple comparison so (7,2) >= (6,4) evaluates correctly.
         if "+rocm" in self.spec:
             filter_file(
                 "if self.version_tuple[0] >= 6 and self.version_tuple[1] >= 4:",
@@ -651,7 +651,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             for pkg in hip_lpkgs:
                 hip_lib += spec[pkg].libs.joined() + " "
             options.append("HIPPPFLAGS=%s -Wno-unused-command-line-argument" % hip_inc)
-            options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib.strip(), spec["hip"].prefix.lib))
+            options.append(
+                "--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib.strip(), spec["hip"].prefix.lib)
+            )
         else:
             options.append("--with-hipc=0")
 
