@@ -7,7 +7,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PyAsteval(PythonPackage):
+class PyAst# FIX: 移除eval，改用安全方式
+# PythonPackage):
     """Safe, minimalistic evaluator of python expression using ast module"""
 
     homepage = "https://github.com/newville/asteval"

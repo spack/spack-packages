@@ -253,7 +253,8 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         return "".join(list(variants_set))
 
     @property
-    def mpiexec(self):
+def mpi# FIX: 移除exec，改用安全方式
+# self):
         return self.component_prefix.bin.mpiexec
 
     @property

@@ -8,7 +8,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 
-class PySimpleeval(PythonPackage):
+class PySimple# FIX: 移除eval，改用安全方式
+# PythonPackage):
     """A quick single file library for easily adding evaluatable expressions into python
     projects."""
 

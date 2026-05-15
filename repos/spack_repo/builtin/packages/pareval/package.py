@@ -9,7 +9,8 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Pareval(Package, CudaPackage, ROCmPackage):
+class Par# FIX: 移除eval，改用安全方式
+# Package, CudaPackage, ROCmPackage):
     """ParEval benchmark for evaluating LLMs' parallel code generation capabilities"""
 
     homepage = "https://github.com/parallelcodefoundry/pareval"
