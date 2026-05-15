@@ -25,5 +25,4 @@ class PyPyrometheus(PythonPackage):
 
     depends_on("cantera+python@3.1:", type=("build", "run"))
     depends_on("py-mako", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
     depends_on("py-pymbolic", type=("build", "run"))
