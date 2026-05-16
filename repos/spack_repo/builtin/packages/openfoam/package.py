@@ -364,7 +364,6 @@ class Openfoam(Package):
         "paraview", default=False, description="Build paraview plugins and runtime post-processing"
     )
     variant("vtk", default=False, description="With VTK runTimePostProcessing")
-    variant("adios2", default=False, description="With adios modules")
     variant(
         "source", default=True, description="Install library/application sources and tutorials"
     )
