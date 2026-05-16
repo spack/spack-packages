@@ -16,6 +16,10 @@ class Libpciaccess(AutotoolsPackage, XorgPackage):
 
     license("X11")
 
+    maintainers("CodingYayaToure")
+
+    version("0.18.1", sha256="a395317730e0e8d5e71419d4d1256a89e32c2fa793607b63c4d0fb497ae34602")
+    version("0.18", sha256="724d548c403ca16cdf6e3ea95591361b9746f7e7d1d10de70478d454f5dd1f0f")
     version("0.17", sha256="bf6985a77d2ecb00e2c79da3edfb26b909178ffca3f2e9d14ed0620259ab733b")
     version("0.16", sha256="84413553994aef0070cf420050aa5c0a51b1956b404920e21b81e96db6a61a27")
     version("0.13.5", sha256="fe26ec788732b4ef60b550f2d3fa51c605d27f646e18ecec878f061807a3526e")
