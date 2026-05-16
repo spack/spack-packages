@@ -667,8 +667,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                         "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
                     ]
                 )
-                if spec.satisfies("%cce"):
-                    cmake_args.append("-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF")
+                # OpenFOAM catalyst requires VTK_PYTHON_OPTIONAL_LINK=OFF, see e.g.
+                # https://discourse.paraview.org/t/undefined-symbol-pyexc-valueerror/5494
+                cmake_args.append("-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF")
             else:  # @5.7:
                 cmake_args.extend(
                     [
