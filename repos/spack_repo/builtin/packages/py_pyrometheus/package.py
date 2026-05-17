@@ -18,6 +18,7 @@ class PyPyrometheus(PythonPackage):
 
     license("MIT")
 
+    version("main", branch="main")
     version("1.0.7", sha256="fd8e1f95868121ea541bbed94657645f5d636a265be5bfd92bebdf38124b5b28")
 
     depends_on("python@3.9:", type=("build", "run"))
