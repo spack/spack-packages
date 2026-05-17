@@ -62,12 +62,7 @@ class PyPyside6(PythonPackage):
         if additional_includes:
             filter_file(
                 "=${shiboken_include_dirs}",
-                ":".join(
-                    [
-                        "=${shiboken_include_dirs}",
-                        *additional_includes
-                    ]
-                ),
+                ":".join(["=${shiboken_include_dirs}", *additional_includes]),
                 "sources/pyside6/cmake/Macros/PySideModules.cmake",
                 string=True,
             )
@@ -88,8 +83,8 @@ class PyPyside6(PythonPackage):
             "--parallel={0}".format(make_jobs),
             "--ignore-git",
             # if you want to debug build problems, uncomment this
-            #"--verbose-build",
-            #"--log-level=verbose",
+            # "--verbose-build",
+            # "--log-level=verbose",
             "--qtpaths={0}".format(spec["qt-base"].prefix.bin.qtpaths),
         ]
 
@@ -102,4 +97,3 @@ class PyPyside6(PythonPackage):
 
     def install(self, spec, prefix):
         python("setup.py", "install", "--prefix=" + prefix, *self.install_options(spec, prefix))
-
