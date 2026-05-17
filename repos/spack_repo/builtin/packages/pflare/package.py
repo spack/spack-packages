@@ -14,7 +14,7 @@ class Pflare(MakefilePackage):
     """Library with parallel iterative methods for asymmetric linear systems built on PETSc."""
 
     homepage = "https://github.com/PFLAREProject/PFLARE"
-    url = "https://github.com/PFLAREProject/PFLARE/archive/refs/tags/v1.24.10.tar.gz"
+    url = "https://github.com/PFLAREProject/PFLARE/archive/refs/tags/v1.26.0.tar.gz"
     git = "https://github.com/PFLAREProject/PFLARE.git"
 
     # Add a list of GitHub accounts to
@@ -22,14 +22,16 @@ class Pflare(MakefilePackage):
     maintainers("stevendargaville")
     license("MIT", checked_by="stevendargaville")
 
+    version("main", branch="main")
     version(
-        "1.25.0",
-        sha256="befb361b39c7601a8ca6f148369313f5755b238d5f6a4cbf91b19b23c93e8952",
+        "1.26.0",
+        sha256="442cecd0414932bcefe9af72d90baf80997fb1673f1926bad5cbf1cbcf2eec65",
         preferred=True,
     )
+    version("1.25.1", sha256="54f26bd604679b9b9010d157c1e32aad05d1a3610632d75c742419e659001903")
+    version("1.25.0", sha256="befb361b39c7601a8ca6f148369313f5755b238d5f6a4cbf91b19b23c93e8952")
     version("1.24.11", sha256="8bcbee9e58ac3b2627dfbe78ebfac375192fb97d87337b40962d2730935ea1ce")
     version("1.24.10", sha256="1d51ea420413d9959ea1a8a9499a663487672f08107838eaa6be11eab1e6fc2a")
-    version("main", branch="main")
 
     # Optionally build the python bindings
     variant("python", default=False, description="Enable PFLARE Python bindings via petsc4py")
@@ -46,12 +48,14 @@ class Pflare(MakefilePackage):
     depends_on("parmetis")
 
     # PETSc version dependencies
-    depends_on("petsc@3.24.1:", when="@1.25.0:")
+    depends_on("petsc@main", when="@main")
+    depends_on("petsc@3.25.0:", when="@1.26.0:")
+    depends_on("petsc@3.24.1:3.24.6", when="@1.25.0:1.25.1")
     depends_on("petsc@3.23.1:3.23.7", when="@:1.24.11")
     # Bugs in 3.24.0 fixed in:
     #  https://gitlab.com/petsc/petsc/-/merge_requests/8768
     #  https://gitlab.com/petsc/petsc/-/merge_requests/8713
-    conflicts("^petsc@3.24.0", msg="PETSc 3.24.0 has a known bugs in routines used by PFLARE")
+    conflicts("^petsc@3.24.0", msg="PETSc 3.24.0 has known bugs in routines used by PFLARE")
 
     # Optional Python dependencies (needed at build/run time by python/setup.py)
     depends_on("python", when="+python", type=("build", "run"))
@@ -82,7 +86,7 @@ class Pflare(MakefilePackage):
 
     # No need to override PYTHON/PYTHONPATH here; use Spack’s python wrapper via PATH
     def setup_build_environment(self, env):
-        if "+python" in self.spec:
+        if self.spec.satisfies("+python"):
             # Keep user site-packages out of the build
             env.set("PYTHONNOUSERSITE", "1")
 
@@ -106,7 +110,7 @@ class Pflare(MakefilePackage):
         ):
             # The Makefile has a `build_tests_check` target that builds the library and tests
             make("build_tests_check", parallel=True)
-            if "+python" in spec:
+            if spec.satisfies("+python"):
                 # Use the python wrapper provided by Spack’s build env
                 py = which("python")  # resolves to .../python-venv-*/bin/python
                 make("python", f"PYTHON={py.path}", parallel=True)
@@ -115,7 +119,7 @@ class Pflare(MakefilePackage):
     # ~~~~~~~~~~~~~~~
     def install(self, spec, prefix):
         args = [f"PREFIX={prefix}"]
-        if "+python" in spec:
+        if spec.satisfies("+python"):
             pyver = spec["python"].version.up_to(2)
             args.append(f"PYVER={pyver}")
         make("install", *args)
@@ -123,11 +127,13 @@ class Pflare(MakefilePackage):
     # ~~~~~~~~~~~~~~~
     # Let dependents query include and link flags
     # ~~~~~~~~~~~~~~~
+    @property
     def headers(self):
         # Expose the whole include tree (Fortran .mod and C headers)
         hdrs = find_headers("*", self.prefix.include, recursive=True)
         return hdrs
 
+    @property
     def libs(self):
         libs = find_libraries("libpflare", self.prefix.lib, shared=True, recursive=False)
         if not libs:
@@ -157,7 +163,7 @@ class Pflare(MakefilePackage):
         env.append_flags("FFLAGS", f"-I{self.prefix.include}")  # Fortran .mod includes
         env.append_flags("LDFLAGS", f"-L{self.prefix.lib} -Wl,-rpath,{self.prefix.lib}")
 
-        if "+python" in self.spec:
+        if self.spec.satisfies("+python"):
             pyver = self.spec["python"].version.up_to(2)
             pydir = join_path(self.prefix.lib, f"python{pyver}", "site-packages")
             env.prepend_path("PYTHONPATH", pydir)
@@ -179,7 +185,7 @@ class Pflare(MakefilePackage):
     @run_after("install")
     def smoke_test_with_run_env(self):
         # Only when +python and tests requested
-        if "+python" not in self.spec or not self.run_tests:
+        if not self.spec.satisfies("+python") or not self.run_tests:
             return
 
         run_env = EnvironmentModifications()
