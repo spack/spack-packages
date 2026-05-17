@@ -13,9 +13,9 @@ class Lielab(CMakePackage):
 
     homepage = "https://github.com/sandialabs/Lielab"
     url = "https://github.com/sandialabs/Lielab/archive/refs/tags/v0.5.2.tar.gz"
-    
+
     maintainers("msparapa")
-    
+
     license("MIT")
 
     version("0.5.2", sha256="d98ddf93fa317165891b69944c5ffab48c3955fd7c1c9428b06a0452f8fca453")
@@ -44,7 +44,7 @@ class Lielab(CMakePackage):
         args.append(self.define("LIELAB_INSTALL_LIBRARY", True))
         args.append(self.define("LIELAB_BUILD_TESTS", False))
         args.append(self.define("LIELAB_BUILD_PYTHON", False))
-        
+
         args.append(self.define_from_variant("LIELAB_WITH_ASSERTIONS", "with_assertions"))
 
         args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
