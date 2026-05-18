@@ -79,26 +79,3 @@ class Cosimio(CMakePackage):
             self.define_from_variant("CO_SIM_IO_STRICT_COMPILER", "strict"),
         ]
         return args
-
-    # -------------------------------------------------------------------------
-    # Linker flags - pull in libgfortran when using Fortran bindings with GCC
-    # or Clang (which delegates Fortran compilation to gfortran).
-    # -------------------------------------------------------------------------
-    def flag_handler(self, name, flags):
-        spec = self.spec
-        if name == "ldflags":
-            if "+fortran" in spec and spec.compiler.name in ["gcc", "clang", "apple-clang"]:
-                fc = Executable(self.compiler.fc)
-                libgfortran = fc(
-                    "--print-file-name",
-                    "libgfortran." + shared_library_suffix(self.spec),
-                    output=str,
-                ).strip()
-                # If print-file-name echoed the bare name back, the shared
-                # library was not found - fall back to the static archive.
-                if libgfortran == "libgfortran." + shared_library_suffix(self.spec):
-                    libgfortran = fc("--print-file-name", "libgfortran.a", output=str).strip()
-                # -L<libdir> -lgfortran is required on macOS
-                # https://github.com/spack/spack/pull/25823#issuecomment-917231118
-                flags.append("-L{0} -lgfortran".format(os.path.dirname(libgfortran)))
-        return (flags, None, None)
