@@ -20,6 +20,8 @@ class PyPyside6(PythonPackage):
 
     variant("tools", default=False, description="Include wrappers for qt-tools")
     variant("qt3d", default=False, description="Include wrappers for qt-3d")
+    variant("svg", default=False, description="Include wrappers for QtSvg")
+    variant("declarative", default=False, description="Include wrappers for QtQuick")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -41,12 +43,14 @@ class PyPyside6(PythonPackage):
     depends_on("py-numpy@2.2.0:", type="build")
     depends_on("py-mypy@1.15.0:", type="build")
 
-    # can also build without opengl but generates warnings. network and accessibility seem required.
-    depends_on("qt-base@6.11: +network +accessibility +opengl")
-    # can also build without tools but generates warnings...
+    # required dependencies, enable more features (e.g., QtOpenGL with qt-base +opengl)
+    depends_on("qt-base@6.11: +network +accessibility")
+
+    # optional dependencies
     depends_on("qt-tools@6.11:", when="+tools")
-    # can also build without qt-3d
     depends_on("qt-3d@6.11:", when="+qt3d")
+    depends_on("qt-declarative@6.11:", when="+declarative")
+    depends_on("qt-svg@6.11:", when="+svg")
 
     # suggested llvm version for building on https://doc.qt.io/qtforpython-6/building_from_source/linux.html
     depends_on("llvm@20.1.3: +clang", type="build")
@@ -59,6 +63,12 @@ class PyPyside6(PythonPackage):
             additional_includes += [self.spec["qt-tools"].prefix.include]
         if "+qt3d" in self.spec:
             additional_includes += [self.spec["qt-3d"].prefix.include]
+        if "+declarative" in self.spec:
+            additional_includes += [self.spec["qt-declarative"].prefix.include]
+            # not sure if needed
+            additional_includes += [self.spec["qt-shadertools"].prefix.include]
+        if "+svg" in self.spec:
+            additional_includes += [self.spec["qt-svg"].prefix.include]
         if additional_includes:
             filter_file(
                 "=${shiboken_include_dirs}",
