@@ -7,6 +7,7 @@
 from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
+
 class PyPycgns(PythonPackage):
     """PyCGNS package provides Python bindings for the CGNS library."""
 
@@ -14,7 +15,7 @@ class PyPycgns(PythonPackage):
 
     pypi = "pyCGNS/pycgns-6.3.5.tar.gz"
 
-    #maintainers("williampiat3","MicK7")
+    # maintainers("williampiat3","MicK7")
 
     version(
         "6.3.5",
