@@ -21,6 +21,8 @@ class Numactl(AutotoolsPackage):
 
     license("LGPL-2.1-only")
 
+    maintainers("CodingYayaToure")
+
     version("2.0.19", sha256="8b84ffdebfa0d730fb2fc71bb7ec96bb2d38bf76fb67246fde416a68e04125e4")
     version("2.0.18", sha256="8cd6c13f3096e9c2293c1d732f56e2aa37a7ada1a98deed3fac7bd6da1aaaaf6")
     version("2.0.17", sha256="af22829cda8b5bdee3d280e61291697bbd3f9bd372afdf119c9348b88369d40b")
