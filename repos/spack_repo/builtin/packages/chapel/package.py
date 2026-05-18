@@ -91,11 +91,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2.2:2.5",
         sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
     )
-    patch(
-        "https://github.com/chapel-lang/chapel/pull/28795.patch?full_index=1",
-        when="@2.8",
-        sha256="050ec846beaf836b026b23524f613b3eac8e74a11b8d86768a74fa4f07cc610c",
-    )
+    # Fix CUDA 12.9 deprecation warnings
+    with when("@2.8"):
+        patch(
+            "https://github.com/chapel-lang/chapel/pull/28795.patch?full_index=1",
+            sha256="050ec846beaf836b026b23524f613b3eac8e74a11b8d86768a74fa4f07cc610c",
+        )
+        patch(
+            "https://github.com/chapel-lang/chapel/commit/ab76ba2fe8cedb238be25f58ecc09a7ea7002d1d.patch?full_index=1",
+            sha256="61c65175ff62a6a7e912e7a0e353bb58849fd9eb35e1dd92957e1d74ff6ae2ed",
+        )
 
     launcher_names = (
         "amudprun",

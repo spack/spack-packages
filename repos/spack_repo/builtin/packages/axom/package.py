@@ -187,7 +187,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     # Libraries
     # Forward variants to Conduit
     with when("+conduit"):
-        for _var in ["hdf5", "mpi", "python"]:
+        for _var in ["hdf5", "mpi"]:
             depends_on("conduit+{0}".format(_var), when="+{0}".format(_var))
             depends_on("conduit~{0}".format(_var), when="~{0}".format(_var))
         depends_on("conduit+fortran", when="+fortran")

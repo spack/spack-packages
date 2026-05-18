@@ -42,6 +42,12 @@ class RocprofilerSdk(CMakePackage):
 
     license("MIT")
     version(
+        "7.2.3",
+        tag="rocm-7.2.3",
+        commit="c2d94761153e1033a91744842dfc66eddd631fde",
+        submodules=submodules,
+    )
+    version(
         "7.2.1",
         tag="rocm-7.2.1",
         commit="e1a6bc5663304b9c586b3254b8920f2981057804",
@@ -169,7 +175,7 @@ class RocprofilerSdk(CMakePackage):
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -188,6 +194,7 @@ class RocprofilerSdk(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
@@ -206,6 +213,7 @@ class RocprofilerSdk(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")

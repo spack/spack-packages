@@ -45,7 +45,9 @@ class Libvdwxc(AutotoolsPackage):
         spec = self.spec
 
         args = [
-            "--with-fftw3={0}".format(self["fftw"].prefix),  # make sure that fftw path is given
+            "--with-fftw3={0}".format(
+                self["fftw-api"].prefix
+            ),  # make sure that fftw path is given
             "--{0}-pfft".format("with" if self.spec.satisfies("+pfft") else "without"),
             "MPICC=",  # make sure both variables are always unset
             "MPIFC=",  # otherwise the configure scripts complains
