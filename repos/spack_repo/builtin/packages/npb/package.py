@@ -108,7 +108,8 @@ class Npb(MakefilePackage):
     conflicts(
         "implementation=serial",
         when="@3.4:",
-        msg="The serial version of NPB is not included in this distribution. Please use the OMP version instead or download a previous version from NPB3.3.1.",
+        msg="The serial version of NPB is not supported from version 3.4."
+        "Use implementation=openmp or use a prior version."
     )
 
     @property
