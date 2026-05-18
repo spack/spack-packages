@@ -20,6 +20,7 @@ class PyBiopython(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.86", sha256="93a50b586a4d2cec68ab2f99d03ef583c5761d8fba5535cb8e81da781d0d92ff")
     version("1.85", sha256="5dafab74059de4e78f49f6b5684eddae6e7ce46f09cfa059c1d1339e8b1ea0a6")
     version("1.84", sha256="60fbe6f996e8a6866a42698c17e552127d99a9aab3259d6249fbaabd0e0cc7b4")
     version("1.83", sha256="78e6bfb78de63034037afd35fe77cb6e0a9e5b62706becf78a7d922b16ed83f7")
@@ -33,6 +34,7 @@ class PyBiopython(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.10", type=("build", "run"), when="@1.86:")
     depends_on("python@3.9:", type=("build", "run"), when="@1.84:")
     depends_on("python@3.8:", type=("build", "run"), when="@1.83:")
     depends_on("python@3.6:", type=("build", "run"), when="@1.77:")

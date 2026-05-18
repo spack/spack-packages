@@ -119,7 +119,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         "gfx942",
         "gfx950",
     )
-    amd_msg = f"""DBCSR supports these AMD gpu targets:  {', '.join(dbcsr_amdgpu_targets)}.
+    amd_msg = f"""DBCSR supports these AMD gpu targets:  {", ".join(dbcsr_amdgpu_targets)}.
                   Set amdgpu_target explicitly to one of the supported targets"""
 
     for arch in ROCmPackage.amdgpu_targets:

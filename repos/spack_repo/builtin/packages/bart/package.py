@@ -64,9 +64,9 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
 
         elif self.spec.satisfies("^[virtuals=blas] intel-oneapi-mkl"):
             env.set("MKL", "1")
-            env.set("MKL_BASE", spec["mkl"].prefix.mkl)
+            env.set("MKL_BASE", self.spec["mkl"].prefix.mkl)
         else:
-            env.set("BLAS_BASE", spec["blas"].prefix)
+            env.set("BLAS_BASE", self.spec["blas"].prefix)
 
         if self.spec.satisfies("@:0.7.00"):
             if "^netlib-lapack+lapacke" not in self.spec:
@@ -75,7 +75,7 @@ class Bart(MakefilePackage, CudaPackage, PythonExtension):
         if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
             env.set("CUDA", "1")
-            env.set("CUDA_BASE", spec["cuda"].prefix)
+            env.set("CUDA_BASE", self.spec["cuda"].prefix)
             env.set("GPUARCH_FLAGS", " ".join(self.cuda_flags(cuda_arch)))
 
     def install(self, spec, prefix):

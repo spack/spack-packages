@@ -4,7 +4,7 @@
 
 import itertools
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
@@ -35,6 +35,8 @@ class Rocwmma(CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="5a3c22ba75bf8473dc4a008fbff365d0666fc5a49c54e742f7ed4444a2b2d431")
     version("7.1.0", sha256="96bed5cd6f2d3334cfbd4a9e6dab132cc2ec60150409712661dc69e774427707")
@@ -72,13 +74,14 @@ class Rocwmma(CMakePackage):
         values=("Release", "Debug", "RelWithDebInfo"),
         description="CMake build type",
     )
-
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.16:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
+
+    generator("ninja")
 
     for ver in [
         "5.7.0",
@@ -104,6 +107,8 @@ class Rocwmma(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)
@@ -142,7 +147,8 @@ class Rocwmma(CMakePackage):
 
     patch("0001-add-rocm-smi-lib-path-for-building-tests.patch", when="@:6.3")
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4")
-    patch("0004-add-rocm-smi-link-dir.patch", when="@7.2")
+    patch("0003-Fix-libomp.so-and-libamdhip64.so-not-found-error.patch", when="@7.1")
+    patch("0003-Fix-libopenmp.so-and-libamdhip64.so-not-found-error-7.2.patch", when="@7.2")
 
     @property
     def root_cmakelists_dir(self):
@@ -164,17 +170,18 @@ class Rocwmma(CMakePackage):
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
             self.define("ROCM_SMI_DIR", self.spec["rocm-smi-lib"].prefix),
         ]
-        args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
-        if self.spec.satisfies("@:7.1"):
+        if self.spec.satisfies("@:7.0"):
+            args.extend(["-DOpenMP_CXX_FLAGS=-fopenmp=libomp", "-DOpenMP_CXX_LIB_NAMES=libomp"])
             args.append(
                 f"-DOpenMP_libomp_LIBRARY={self.spec['rocm-openmp-extras'].prefix}/lib/libomp.so"
             )
-        else:
-            args.append(f"-DOpenMP_libomp_LIBRARY={self.spec['llvm-amdgpu'].prefix}/lib/libomp.so")
         tgt = self.spec.variants["amdgpu_target"]
         if "auto" not in tgt:
             if self.spec.satisfies("@7.1:"):
                 args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
             else:
                 args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+
+        if self.spec.satisfies("@:7.1"):
+            args.append(self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", "ON"))
         return args

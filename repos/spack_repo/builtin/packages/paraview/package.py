@@ -64,11 +64,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("master", branch="master", submodules=True)
-    version(
-        "6.0.0",
-        sha256="0ee07ae6377e5e97766aebf858eb9758668a52df041f319e7c975037a63bf189",
-        preferred=True,
-    )
+    version("6.1.0", sha256="4e9d882874b2a161f3338a6644a5d8bc63748f0d7846f4690701b86a8a821dfc")
+    version("6.0.1", sha256="5e56ac7af5e925b3cfd3fab82470933cbabc7e8fda87e14af64f995d6064eb06")
+    version("6.0.0", sha256="0ee07ae6377e5e97766aebf858eb9758668a52df041f319e7c975037a63bf189")
     version("5.13.3", sha256="3bd31bb56e07aa2af2a379895745bbc430c565518a363d935f2efc35b076df09")
     version("5.12.1", sha256="927f880c13deb6dde4172f4727d2b66f5576e15237b35778344f5dd1ddec863e")
     version("5.11.2", sha256="5c5d2f922f30d91feefc43b4a729015dbb1459f54c938896c123d2ac289c7a1e")
@@ -316,6 +314,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             depends_on("qt-svg")
             depends_on("libxslt")
 
+        depends_on("scnlib")
+
         # ParaView@6: and later will depend on OSMesa as a fallback for
         # OpenGL.
         # The search order for GL is:
@@ -328,6 +328,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         for vk_variant in viskores_dependency_variants:
             depends_on("viskores +vtktypes +64bitids +doubleprecision", when=f"{vk_variant}")
             depends_on("viskores +fpic", when=f"+shared {vk_variant}")
+
+        with when("+fides"):
+            depends_on("fides@1.3:")
+            depends_on("fides +mpi", when="+mpi")
 
         with when("+cuda"):
             # Kokkos vs Viskores Native CUDA is intentionally left configurable
@@ -481,6 +485,17 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     # https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7593
     patch("paraview-cdireader-lazy.patch", when="@:6.0 +cdi")
 
+    # Fix for linking external Fides library
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13130
+    patch("vtk-external-fides-pv61.patch", working_dir="VTK", when="@6.0:6.1")
+
+    # Fixes for linking external Viskores library
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13094
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/13127
+    patch("vtk-fine-grained-viskores-targets-pv61.patch", working_dir="VTK", when="@6.0:6.1")
+    patch("vtk-consolidate-viskores-wrapping-pv60.patch", working_dir="VTK", when="@6.0")
+    patch("vtk-consolidate-viskores-wrapping-pv61.patch", working_dir="VTK", when="@6.1")
+
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223
     conflicts("generator=ninja", when="%xl")
@@ -596,28 +611,23 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 return on
             return off
 
-        def use_x11():
-            """Return false if osmesa or egl are requested"""
-            if (
-                spec.satisfies("^[virtuals=gl] osmesa")
-                or spec.satisfies("^[virtuals=gl] egl")
-                or spec.satisfies("platform=windows")
-            ):
-                return "OFF"
-            return "ON"
-
-        rendering = variant_bool("+opengl2", "OpenGL2", "OpenGL")
         includes = variant_bool("+development_files")
 
         cmake_args = [
-            "-DVTK_OPENGL_HAS_OSMESA:BOOL=%s" % variant_bool("^[virtuals=gl] osmesa"),
-            "-DVTK_USE_X:BOOL=%s" % use_x11(),
             "-DPARAVIEW_INSTALL_DEVELOPMENT_FILES:BOOL=%s" % includes,
             "-DBUILD_TESTING:BOOL=OFF",
             "-DOpenGL_GL_PREFERENCE:STRING=LEGACY",
+            self.define_from_variant("VTK_USE_X", "x"),
             self.define_from_variant("PARAVIEW_ENABLE_VISITBRIDGE", "visitbridge"),
             self.define_from_variant("VISIT_BUILD_READER_Silo", "visitbridge"),
         ]
+
+        if spec.satisfies("@:5"):
+            cmake_args.append(
+                "-DVTK_OPENGL_HAS_OSMESA:BOOL=%s" % variant_bool("^[virtuals=gl] osmesa")
+            )
+        else:
+            cmake_args.append(self.define_from_variant("VTK_OPENGL_HAS_OSMESA", "osmesa_fallback"))
 
         if spec.satisfies("^[virtuals=gl] egl"):
             cmake_args.append("-DVTK_OPENGL_HAS_EGL:BOOL=ON")
@@ -673,6 +683,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
         else:
+            rendering = variant_bool("+opengl2", "OpenGL2", "OpenGL")
             cmake_args.extend(
                 [
                     "-DPARAVIEW_BUILD_EXAMPLES:BOOL=%s" % variant_bool("+examples"),

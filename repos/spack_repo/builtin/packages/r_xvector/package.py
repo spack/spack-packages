@@ -16,16 +16,17 @@ class RXvector(RPackage):
 
     bioc = "XVector"
 
-    version("0.40.0", commit="875b4b4469e125737bee42362e7a3c75edd642f1")
-    version("0.38.0", commit="8cad08446091dcc7cd759e880c0f3e47228278dd")
-    version("0.36.0", commit="ff6f818ff4357eb9bf00654de9e0f508a5285408")
-    version("0.34.0", commit="06adb25ac51c707b90fb8e0637fa06df237a863c")
-    version("0.30.0", commit="985e963e0b1c3ff004dd0b07ad7c9ff7ed853ec0")
-    version("0.24.0", commit="e5109cb2687724b9fddddf296c07a82bae4c551d")
-    version("0.22.0", commit="b5e107a5fd719e18374eb836eb498b529afa4473")
-    version("0.20.0", commit="a83a7ea01f6a710f0ba7d9fb021cfa795b291cb4")
-    version("0.18.0", commit="27acf47282c9880b54d04dff46c1e50f0c87fa6b")
-    version("0.16.0", commit="54615888e1a559da4a81de33e934fc0f1c3ad99f")
+    with default_args(get_full_repo=True):
+        version("0.40.0", commit="875b4b4469e125737bee42362e7a3c75edd642f1")
+        version("0.38.0", commit="8cad08446091dcc7cd759e880c0f3e47228278dd")
+        version("0.36.0", commit="ff6f818ff4357eb9bf00654de9e0f508a5285408")
+        version("0.34.0", commit="06adb25ac51c707b90fb8e0637fa06df237a863c")
+        version("0.30.0", commit="985e963e0b1c3ff004dd0b07ad7c9ff7ed853ec0")
+        version("0.24.0", commit="e5109cb2687724b9fddddf296c07a82bae4c551d")
+        version("0.22.0", commit="b5e107a5fd719e18374eb836eb498b529afa4473")
+        version("0.20.0", commit="a83a7ea01f6a710f0ba7d9fb021cfa795b291cb4")
+        version("0.18.0", commit="27acf47282c9880b54d04dff46c1e50f0c87fa6b")
+        version("0.16.0", commit="54615888e1a559da4a81de33e934fc0f1c3ad99f")
 
     depends_on("c", type="build")  # generated
 

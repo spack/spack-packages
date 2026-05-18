@@ -36,9 +36,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
-    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
+    version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
 
     # Previous stable series releases
+    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
     version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
@@ -244,9 +245,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     depends_on("diffutils", type="build")
     depends_on("iconv", when="platform=darwin")
     depends_on("gnat", when="languages=ada")
-    # For binutils we use `link` because we don't rely on `PATH`, but on the
-    # automatic `-B` flag
-    depends_on("binutils+gas+ld+plugins~libiberty", when="+binutils", type=("build", "link"))
+    depends_on(
+        "binutils+gas+ld+plugins~libiberty", when="+binutils", type=("build", "link", "run")
+    )
     depends_on("mold", when="+mold")
     depends_on("zip", type="build", when="languages=java")
 
@@ -423,14 +424,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
     # is in fact needed for that version (see GCC commit description). Older versions
     # have not been checked or tested.
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
-        sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
-        when="@15:15.2",
-    )
-    patch("fixincludes-gcc-13-14.patch", when="@13:14")
-    patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
-    patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
+    # This patchset conflicts with Iain's Darwin patches and is not needed on Darwin
+    with when("platform=linux"):
+        patch(
+            "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+            sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+            when="@15:15.2",
+        )
+        patch("fixincludes-gcc-13-14.patch", when="@13:14")
+        patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+        patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
 
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem
@@ -468,8 +471,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # aarch64-darwin support from Iain Sandoe's branch
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
-            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
-            sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
+            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
+            sha256="d74542461b22ae2d23533323e01861f4c66d252345c51682740f521a74412500",
             when="@14.2.0",
         )
         patch(

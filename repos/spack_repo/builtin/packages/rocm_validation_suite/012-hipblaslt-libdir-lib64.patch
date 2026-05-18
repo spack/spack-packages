@@ -1,0 +1,17 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b8f6c83..d54ff1a 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -86,7 +86,11 @@ find_package (hipblaslt)
+ if(hipblaslt_FOUND)
+   message(STATUS "hipblaslt found")
+   set(HIPBLASLT_INC_DIR ${hipblaslt_INCLUDE_DIR} )
+-  get_filename_component(HIPBLASLT_LIB_DIR "${HIPBLASLT_INC_DIR}/../lib" ABSOLUTE)
++  if(EXISTS "${HIPBLASLT_INC_DIR}/../lib64")
++   get_filename_component(HIPBLASLT_LIB_DIR "${HIPBLASLT_INC_DIR}/../lib64" ABSOLUTE)
++  else()
++   get_filename_component(HIPBLASLT_LIB_DIR "${HIPBLASLT_INC_DIR}/../lib" ABSOLUTE)
++  endif()
+ else() #If HIPBLASLT not found
+   message(FATAL_ERROR "hipblaslt not found !!! Install hipblaslt to proceed ...")
+ endif(hipblaslt_FOUND)

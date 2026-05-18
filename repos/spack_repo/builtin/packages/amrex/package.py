@@ -29,6 +29,8 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.05", sha256="70ec8f0e6917388b3d91a7c470648f6ce11a99096810420f1054ed98a041e315")
+    version("26.04", sha256="b09c99d37989b980bba622695b5a9aec267f2430d79683683064c27de7a1776a")
     version("26.03", sha256="7139b8bb423a4311e8990bee6cb06b86a81de439363f35a3f29c808a93a003ca")
     version("26.02", sha256="7627f0bac4f8025b555b6c7c7a26e2d4db4e7a7fda660b77b272ffe40749b7b2")
     version("26.01", sha256="b26c8d36b3941881bb5db683147f94d5a48f9bcedfa4bcf65a36acb6f0710bcb")
@@ -226,7 +228,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cuda@9.0.0:", when="@:22.04")
         depends_on("cuda@10.0.0:", when="@22.05:")
         depends_on("cuda@11.0.0:", when="@22.12:")
+        depends_on("cuda@12.2:", when="@26.05:")
         depends_on("cuda@:12", when="@:25.09")  # enforce cuda < 13 before 25.10
+    depends_on("hip@6.0:", when="@26.05: +rocm")
     depends_on("python@2.7:", type="build", when="@:20.04")
     depends_on("cmake@3.5:", type="build", when="@:18.10")
     depends_on("cmake@3.13:", type="build", when="@18.11:19.03")
@@ -253,6 +257,8 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     # see https://github.com/spack/spack/issues/22310
     conflicts("%gcc@8.1.0:8.3.0", when="@21.03")
     conflicts("%gcc@8.1.0:8.2.0", when="@21.01:21.02")
+    conflicts("%gcc@:10", when="@25.06:", msg="AMReX 25.06+ requires GCC 11 or newer")
+    conflicts("%clang@:13", when="@25.06:", msg="AMReX 25.06+ requires Clang 14 or newer")
 
     # Check options compatibility
     conflicts(
@@ -318,6 +324,9 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     conflicts(
         "+sycl", when="@:21.05", msg="For SYCL support, AMReX version 21.06 and newer suggested."
     )
+
+    # Fix release number in amrex-v26.04
+    patch("amrex-26.04-changelog.patch", when="@26.04")
 
     def url_for_version(self, version):
         if version >= Version("20.05"):
