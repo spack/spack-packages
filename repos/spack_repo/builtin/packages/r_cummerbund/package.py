@@ -16,7 +16,8 @@ class RCummerbund(RPackage):
 
     license("Artistic-2.0")
 
-    version("2.51.0", commit="e87a6c2090fef5b06f4b6234d46fc217978157e5")
+    with default_args(get_full_repo=True):
+        version("2.51.0", commit="e87a6c2090fef5b06f4b6234d46fc217978157e5")
 
     with default_args(type=("build", "run")):
         depends_on("r@2.7:")

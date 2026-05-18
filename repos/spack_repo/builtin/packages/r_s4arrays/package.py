@@ -18,7 +18,8 @@ class RS4arrays(RPackage):
 
     bioc = "S4Arrays"
 
-    version("1.10.1", commit="a4cccbaab0d12176db3670665f0ca6c23bb900be")
+    with default_args(get_full_repo=True):
+        version("1.10.1", commit="a4cccbaab0d12176db3670665f0ca6c23bb900be")
 
     depends_on("c", type="build")
 

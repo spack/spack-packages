@@ -22,7 +22,8 @@ class RSparsearray(RPackage):
 
     license("Artistic-2.0")
 
-    version("1.10.10", commit="ae957c5c70aacacb712d2449d9edeab2362c7904")
+    with default_args(get_full_repo=True):
+        version("1.10.10", commit="ae957c5c70aacacb712d2449d9edeab2362c7904")
 
     depends_on("c", type="build")
 

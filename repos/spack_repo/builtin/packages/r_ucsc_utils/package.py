@@ -18,7 +18,8 @@ class RUcscUtils(RPackage):
 
     license("Artistic-2.0")
 
-    version("1.6.1", commit="625d5544d0de9cb47ea67364136efc1535c67682")
+    with default_args(get_full_repo=True):
+        version("1.6.1", commit="625d5544d0de9cb47ea67364136efc1535c67682")
 
     depends_on("c", type="build")
 

@@ -21,7 +21,8 @@ class RSeqinfo(RPackage):
 
     license("Artistic-2.0")
 
-    version("1.0.0", commit="9fc5a613b84efd096416b9810ed62ceef79522cb")
+    with default_args(get_full_repo=True):
+        version("1.0.0", commit="9fc5a613b84efd096416b9810ed62ceef79522cb")
 
     with default_args(type=("build", "run")):
         depends_on("r-biocgenerics")

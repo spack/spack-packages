@@ -23,7 +23,8 @@ class RCigarillo(RPackage):
 
     license("Artistic-2.0")
 
-    version("1.0.0", commit="8775adf6c85995de7c778f0a0b4311c9c6a82068")
+    with default_args(get_full_repo=True):
+        version("1.0.0", commit="8775adf6c85995de7c778f0a0b4311c9c6a82068")
 
     depends_on("c", type="build")
 
