@@ -24,11 +24,12 @@ class Cosimio(CMakePackage):
 
     homepage = "https://github.com/KratosMultiphysics/CoSimIO"
     git = "https://github.com/KratosMultiphysics/CoSimIO.git"
-    url = "https://github.com/KratosMultiphysics/CoSimIO/archive/refs/tags/v4.3.0.tar.gz"
+    url = "https://github.com/KratosMultiphysics/CoSimIO/archive/refs/tags/v4.3.1.tar.gz"
 
     maintainers("loumalouomega", "philbucher", "pooyan-dadvand")
 
     version("master", branch="master")
+    version("4.3.1", sha256="9e57839175c06a3d2e8694f95f718707ae465867958ef3bc6b554f775915082b")
     version("4.3.0", sha256="108a8c0b042f0eb307984accaecb2b6fc1407afd0bd4b36a4c5a98470a757a66")
     version("4.2.0", sha256="0c7e96d689b016eefd86781c0a55ce2383088cd2612aadc9697a839a0fa8d2b3")
     version("4.1.0", sha256="de02c526835d021c851dbbc1f95e4c929b10d0daccbabc80bcdc7503343678fc")
