@@ -109,7 +109,7 @@ class Npb(MakefilePackage):
         "implementation=serial",
         when="@3.4:",
         msg="The serial version of NPB is not supported from version 3.4."
-        "Use implementation=openmp or use a prior version."
+        "Use implementation=openmp or use a prior version.",
     )
 
     @property
