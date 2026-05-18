@@ -21,6 +21,7 @@ class Rocdecode(ROCmLibrary, CMakePackage):
     libraries = ["librocdecode"]
 
     license("MIT")
+    version("7.2.3", sha256="058ad6046a2c24e2610a87c4eefaebf62e4f94e5fcd10c42fd6d1863835fe593")
     version("7.2.1", sha256="59e162fcc472aefcf68cfe28b50316612572ca9f1256696537282f703310abaa")
     version("7.2.0", sha256="70c3828364a289098123111aa27d37bab7238065b6ee8ceae35810ad4842bf0a")
     version("7.1.1", sha256="76e7a27eb49b262ed68c2c8f13a20aba8700113087bc58068c396979e6051596")
@@ -76,6 +77,7 @@ class Rocdecode(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -90,6 +92,7 @@ class Rocdecode(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 

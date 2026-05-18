@@ -25,6 +25,7 @@ class Rocminfo(ROCmLibrary, CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="a1ff6d08e0c7ff653bb323964ff2badf6aa1d75aeb2d69248599b0133370fa7e")
@@ -95,6 +96,7 @@ class Rocminfo(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
