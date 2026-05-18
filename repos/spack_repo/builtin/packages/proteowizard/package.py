@@ -13,10 +13,22 @@ class Proteowizard(Package):
     """ProteoWizard: A set of software libraries and tools for rapid development of mass
     spectrometry and proteomic data analysis software."""
 
-    homepage = "https://proteowizard.sourceforge.io/"
+    homepage = "https://proteowizard.sourceforge.io"
     git = "https://github.com/ProteoWizard/pwiz.git"
 
-    version("3.0.26102-0783ec5", commit="0783ec56810626af7888a80d7b32fb3e47d02d52")
+    # 17.05.2026
+    version(
+        "3.0.26136-56ef25d",
+        url="http://github.com/ProteoWizard/pwiz/tarball/56ef25de24d72f23a3b247ce53abacb25f2f0886",
+        sha256="5141427765444a934130e4e63c2f02cd17235b1676da829e96ef75bab4107710",
+    )
+
+    # 13.04.2026
+    version(
+        "3.0.26102-0783ec5",
+        url="http://github.com/ProteoWizard/pwiz/tarball/0783ec56810626af7888a80d7b32fb3e47d02d52",
+        sha256="8ed54d324d1d30db074046cfa017dd94ed40437007f51bd1b06d715042bf8f5c",
+    )
 
     license("Apache-2.0")
 
