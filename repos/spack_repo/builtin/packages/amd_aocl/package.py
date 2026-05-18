@@ -21,7 +21,7 @@ class AmdAocl(BundlePackage):
     https://www.amd.com/en/developer/aocl/eula/aocl-4-1-eula.html
     """
 
-    homepage = "https://developer.amd.com/amd-aocl/"
+    homepage = "https://www.amd.com/en/developer/aocl.html"
 
     maintainers("amd-toolchain-support")
 
