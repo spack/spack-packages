@@ -1,8 +1,10 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import pathlib
 import platform
 import re
+import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -16,8 +18,6 @@ class RustBootstrap(Package):
     url = "https://static.rust-lang.org/dist/rust-1.65.0-aarch64-apple-darwin.tar.gz"
 
     maintainers("alecbcs")
-
-    skip_version_audit = ["platform=windows"]
 
     # List binary rust releases for multiple operating systems and architectures.
     # These binary versions are not intended to stay up-to-date. Instead we
@@ -34,6 +34,11 @@ class RustBootstrap(Package):
                 "aarch64": "c812028423c3d7dd7ba99f66101e9e1aa3f66eab44a1285f41c363825d49dca4",
                 "powerpc64le": "e2fe00a3c91f21c52947ebf96b4da016c9def5ccfedd1c335f30746db58bbf35",
             },
+            "windows": {
+                "x86_64": "1e579d5e6d3995b9445943035307f4c765bb3d51aaa0ff7babb5a7a796eab337",
+                "aarch64": "4ea28bdfa4726acc0eaed488f8b8b2b9bc97c7991acc1418d9fad3f37ada7f87",
+                "powerpc64le": "4d3f42ccc7fef9513189f31c81ac758c3f0d0945785f0a5bc4aed4661beae11c",
+            },
         },
         "1.86.0": {
             "darwin": {
@@ -44,6 +49,11 @@ class RustBootstrap(Package):
                 "x86_64": "f6a8c0d8b8a8a737c40eee78abe286a3cbe984d96b63de9ae83443360e3264bf",
                 "aarch64": "460058cd78f06875721427a42a5ce6a8b8ef2c0c3225fccfae149d9345572ff4",
                 "powerpc64le": "9b104428e2b0377dbdb9dc094eb4d9f4893ada0b80d2b315f0c4ea2135ed9007",
+            },
+            "windows": {
+                "x86_64": "655a0764e10badc37333581d884377f0daafcb93fb5145c88da28d78503bf26d",
+                "aarch64": "f334b334ccbae93a5c9ffdfe0999a5505bf54b38317c8cabcceb5490897ab1fd",
+                "powerpc64le": "5fb62bd1d99a3085d7ccc01b94a5844e1f34f8cefc41915e7a3dcc2d8a89959e",
             },
         },
         "1.85.0": {
@@ -56,6 +66,11 @@ class RustBootstrap(Package):
                 "aarch64": "0306c30bee00469fbec4b07bb04ea0308c096454354c3dc96a92b729f1c2acd1",
                 "powerpc64le": "d0761bf0e1786a46dddfe60cc9397b899f680b86e6aebd7ca16b2a70a9dd631b",
             },
+            "windows": {
+                "x86_64": "2d8c78d5130a87015f29c8584577d0a4b0da6331a7e90073d45d471c92127c27",
+                "aarch64": "21d2b288d7f5c6de442de19d69894e997aeb4fa0b657f75a15c6fccd4eae149b",
+                "powerpc64le": "80e947ad5fe10d397ec90cde1e6d1446b873ff549f042dd30d5f636289ba1388",
+            },
         },
         "1.82.0": {
             "darwin": {
@@ -67,6 +82,11 @@ class RustBootstrap(Package):
                 "aarch64": "d7db04fce65b5f73282941f3f1df5893be9810af17eb7c65b2e614461fe31a48",
                 "powerpc64le": "44f3a1e70be33f91927ae8d89a11843a79b8b6124d62a9ddd9030a5275ebc923",
             },
+            "windows": {
+                "x86_64": "b5fac89899343fbc1b8438ff87b77cddaed90a75873db7b01f2c197a26ec9d52",
+                "aarch64": "2f2c4b504fb341fe09407befcb614f041eb45d3795b011322b8bb42674b3c4ea",
+                "powerpc64le": "d5dd1fbac7e4aa289f8604b3a8e6bc9fc0cbf4174d0f258d87a950fa379e5fbc",
+            },
         },
         "1.81.0": {
             "darwin": {
@@ -77,6 +97,11 @@ class RustBootstrap(Package):
                 "x86_64": "4ca7c24e573dae2f382d8d266babfddc307155e1a0a4025f3bc11db58a6cab3e",
                 "aarch64": "ef4da9c1ecd56bbbb36f42793524cce3062e6a823ae22cb679a945c075c7755b",
                 "powerpc64le": "bf98b27de08a2fd5a2202a2b621b02bfde2a6fde397df2a735d018aeffcdc5e2",
+            },
+            "windows": {
+                "x86_64": "73110d77b2349c0be7b2b2054066d31981ea13011125fcc04bccf3316140cd56",
+                "aarch64": "7092abcc35c15064025a7fc9da07062efb604c7dfc004c63b56b84b68dc9c728",
+                "powerpc64le": "13fb490d0d17fb612b353a2fcd7b381fa7f4de7c144e72c9fef094ec3b9003d7",
             },
         },
         "1.78.0": {
@@ -171,7 +196,7 @@ class RustBootstrap(Package):
 
     # Convert operating system names into the format used for Rust
     # download server.
-    rust_os = {"darwin": "apple-darwin", "linux": "unknown-linux-gnu"}
+    rust_os = {"darwin": "apple-darwin", "linux": "unknown-linux-gnu", "windows": "pc-windows-msvc"}
 
     # Determine system os and architecture/target.
     os = platform.system().lower()
@@ -195,7 +220,7 @@ class RustBootstrap(Package):
     depends_on("patchelf@0.13:", when="platform=linux", type="build")
 
     def url_for_version(self, version):
-        if self.os not in ("linux", "darwin"):
+        if self.os not in ("linux", "darwin", "windows"):
             return None
 
         # Allow maintainers to checksum multiple architectures via
@@ -222,6 +247,12 @@ class RustBootstrap(Package):
             patchelf("--add-rpath", ":".join(rpaths), binary)
 
     def install(self, spec, prefix):
-        install_script = Executable("./install.sh")
-        install_args = [f"--prefix={prefix}", "--without=rust-docs"]
-        install_script(" ".join(install_args))
+        if sys.platform == "win32":
+            builder_file = pathlib.Path(__file__).parent / "rust_bootstrap_installer.ps1"
+            Executable("powershell.exe")("-ExecutionPolicy", "Bypass", "-File", str(builder_file),
+                                 "-SrcDir", self.stage.source_path,
+                                 "-DestPrefix", prefix)
+        else:
+            install_script = Executable("./install.sh")
+            install_args = [f"--prefix={prefix}", "--without=rust-docs"]
+            install_script(" ".join(install_args))
