@@ -6,6 +6,7 @@ import os
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiPackage
 from spack_repo.builtin.packages.gcc_runtime.package import get_elf_libraries
+from spack_repo.builtin.packages.intel_oneapi_compilers.package import versions as oneapi_versions
 
 from spack.package import *
 
@@ -22,7 +23,15 @@ class IntelOneapiRuntime(Package):
 
     tags = ["runtime"]
 
-    depends_on("intel-oneapi-compilers", type="build")
+    for v in oneapi_versions:
+        version(v["version"])
+
+    for v in oneapi_versions:
+        depends_on(
+            f"intel-oneapi-compilers@={v['version']}",
+            when=f"@={v['version']}",
+            type="build",
+        )
     depends_on("patchelf", when="^intel-oneapi-compilers +fix_rt_linkage", type="build")
     depends_on("gcc-runtime", type="link")
 
