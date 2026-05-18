@@ -56,23 +56,13 @@ class Cosimio(CMakePackage):
     depends_on("mpi", when="+mpi")
 
     # Python bindings
-    depends_on("python@3.6:", when="+python", type=("build", "link", "run"))
-    # pybind11 is vendored under external_libraries/ but the system copy is
-    # preferred to avoid duplicating toolchain state.
-    depends_on("py-pybind11", when="+python", type="build")
+    with when("+python"):
+        depends_on("python@3.6:", type=("build", "link", "run"))
+        # pybind11 is vendored under external_libraries/ but the system copy is
+        # preferred to avoid duplicating toolchain state.
+        depends_on("py-pybind11", type="build")
 
-    extends("python", when="+python")
-
-    # -------------------------------------------------------------------------
-    # Build-environment setup
-    # -------------------------------------------------------------------------
-    def setup_build_environment(self, env):
-        spec = self.spec
-        if "+mpi" in spec:
-            env.set("CC", spec["mpi"].mpicc)
-            env.set("CXX", spec["mpi"].mpicxx)
-            if "+fortran" in spec:
-                env.set("FC", spec["mpi"].mpifc)
+        extends("python")
 
     # -------------------------------------------------------------------------
     # CMake arguments
