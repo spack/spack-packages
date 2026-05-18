@@ -611,28 +611,23 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 return on
             return off
 
-        def use_x11():
-            """Return false if osmesa or egl are requested"""
-            if (
-                spec.satisfies("^[virtuals=gl] osmesa")
-                or spec.satisfies("^[virtuals=gl] egl")
-                or spec.satisfies("platform=windows")
-            ):
-                return "OFF"
-            return "ON"
-
-        rendering = variant_bool("+opengl2", "OpenGL2", "OpenGL")
         includes = variant_bool("+development_files")
 
         cmake_args = [
-            "-DVTK_OPENGL_HAS_OSMESA:BOOL=%s" % variant_bool("^[virtuals=gl] osmesa"),
-            "-DVTK_USE_X:BOOL=%s" % use_x11(),
             "-DPARAVIEW_INSTALL_DEVELOPMENT_FILES:BOOL=%s" % includes,
             "-DBUILD_TESTING:BOOL=OFF",
             "-DOpenGL_GL_PREFERENCE:STRING=LEGACY",
+            self.define_from_variant("VTK_USE_X", "x"),
             self.define_from_variant("PARAVIEW_ENABLE_VISITBRIDGE", "visitbridge"),
             self.define_from_variant("VISIT_BUILD_READER_Silo", "visitbridge"),
         ]
+
+        if spec.satisfies("@:5"):
+            cmake_args.append(
+                "-DVTK_OPENGL_HAS_OSMESA:BOOL=%s" % variant_bool("^[virtuals=gl] osmesa")
+            )
+        else:
+            cmake_args.append(self.define_from_variant("VTK_OPENGL_HAS_OSMESA", "osmesa_fallback"))
 
         if spec.satisfies("^[virtuals=gl] egl"):
             cmake_args.append("-DVTK_OPENGL_HAS_EGL:BOOL=ON")
@@ -688,6 +683,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
         else:
+            rendering = variant_bool("+opengl2", "OpenGL2", "OpenGL")
             cmake_args.extend(
                 [
                     "-DPARAVIEW_BUILD_EXAMPLES:BOOL=%s" % variant_bool("+examples"),
