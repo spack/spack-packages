@@ -196,7 +196,11 @@ class RustBootstrap(Package):
 
     # Convert operating system names into the format used for Rust
     # download server.
-    rust_os = {"darwin": "apple-darwin", "linux": "unknown-linux-gnu", "windows": "pc-windows-msvc"}
+    rust_os = {
+        "darwin": "apple-darwin",
+        "linux": "unknown-linux-gnu",
+        "windows": "pc-windows-msvc",
+    }
 
     # Determine system os and architecture/target.
     os = platform.system().lower()
@@ -249,9 +253,16 @@ class RustBootstrap(Package):
     def install(self, spec, prefix):
         if sys.platform == "win32":
             builder_file = pathlib.Path(__file__).parent / "rust_bootstrap_installer.ps1"
-            Executable("powershell.exe")("-ExecutionPolicy", "Bypass", "-File", str(builder_file),
-                                 "-SrcDir", self.stage.source_path,
-                                 "-DestPrefix", prefix)
+            Executable("powershell.exe")(
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(builder_file),
+                "-SrcDir",
+                self.stage.source_path,
+                "-DestPrefix",
+                prefix,
+            )
         else:
             install_script = Executable("./install.sh")
             install_args = [f"--prefix={prefix}", "--without=rust-docs"]
