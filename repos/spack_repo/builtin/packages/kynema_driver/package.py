@@ -23,11 +23,6 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
-    version("2.1.0", tag="v2.1.0", commit="b726a1128f02edb72f504130830d44622710225a")
-    version("2.0.0", tag="v2.0.0", commit="d25aa549c7cbd9d6213541cd4b046bd9c0c54652")
-    version("1.2.0", tag="v1.2.0", commit="4c49c7775c580b6bd2556e6c00fd13c08737d5eb")
-    version("1.1.0", tag="v1.1.0", commit="c8823f19fc8d19ea051df0ff68780e56981a7f94")
-    version("1.0.0", tag="v1.0.0", commit="85718893d2510c8a2e8c8e94c768ce6a67f94703")
 
     variant("kynema_sgf_gpu", default=False, description="Enable Kynema-SGF on the GPU")
     variant("kynema_ugf_gpu", default=False, description="Enable Kynema-UGF on the GPU")
@@ -76,11 +71,6 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     depends_on("kynema-ugf+gpu-aware-mpi", when="+gpu-aware-mpi")
     depends_on("kynema-sgf+gpu-aware-mpi", when="+gpu-aware-mpi")
-    depends_on("kynema-ugf@2.3:", when="@2:")
-    depends_on("kynema-sgf@3.5:", when="@2:")
-    depends_on("kynema-ugf@2.0.0:", when="@1.0.0:")
-    depends_on("kynema-sgf@0.9.0:", when="@1.0.0:")
-    depends_on("tioga@1.0.0:", when="@1.0.0:")
 
     with when("~kynema_sgf_gpu~kynema_ugf_gpu"):
         conflicts("+cuda")
