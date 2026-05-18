@@ -3,8 +3,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -53,10 +51,10 @@ class Cosimio(CMakePackage):
     # compiler wrappers so CMake can find `CC`, `CXX`, and `FC` when the
     # corresponding language APIs are enabled.
     with when("~mpi"):
-        depends_on("c", type="build")           # Ensures C is set to a valid compiler if C API is enabled
-        depends_on("cxx", type="build")         # Ensures CXX is set to a valid compiler if C++ API is enabled
+        depends_on("c", type="build")  # Ensures C compiler is available
+        depends_on("cxx", type="build")  # Ensures CXX compiler is available
     with when("~mpi +fortran"):
-        depends_on("fortran", type="build")     # Ensures FC is set to a valid compiler if Fortran API is enabled
+        depends_on("fortran", type="build")  # Ensures Fortran compiler is available
 
     # -------------------------------------------------------------------------
     # Dependencies
