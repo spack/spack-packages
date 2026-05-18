@@ -29,7 +29,8 @@ class Qt3d(QtPackage):
 
     depends_on("gl", type=("build", "link"))
     depends_on("glu", type=("build", "link"))
-    depends_on("assimp", type=("build", "link"))
+    # unfortunately, the build process does not seem to pick up this external assimp
+    #depends_on("assimp", type=("build", "link"))
 
     for _v in QtBase.versions:
         v = str(_v)
