@@ -15,6 +15,7 @@ class RBiocgenerics(RPackage):
     bioc = "BiocGenerics"
 
     with default_args(get_full_repo=True):
+        version("0.56.0", commit="16cf16df6e7c4a0f76e959bf858c5c0990543522")
         version("0.46.0", commit="a90f0c5976a24417e47e009ba602fc98515ac9ab")
         version("0.44.0", commit="d7cd9c19958bd8d4573d980494188fa15ab16e45")
         version("0.42.0", commit="3582d47b836387afc08157f3d6a5013fd64334ed")
@@ -29,3 +30,4 @@ class RBiocgenerics(RPackage):
 
     depends_on("r@3.6.0:", type=("build", "run"), when="@0.30.0:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@0.36.0:")
+    depends_on("r-generics", type=("build", "run"), when="@0.56.0:")
