@@ -72,7 +72,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("21.1.2", sha256="eced3dd78186621f4df8a1accbcd1ecf2ee399571e62d052c21e9bf363af2166")
     version("21.1.1", sha256="5f048351ee63050d7fa45b6a1160768fb222a8d306a89e1344515ef7a4bcd278")
     version("21.1.0", sha256="fba0618cf8de48ec05880c446edd756a2669157eab9d29949e971c77da10275f")
+    version("21.1.0-rc-triton-v3.4.0", commit="8957e64a20fc7f4277565c6cfe3e555c119783ce")
 
+    version("21.1.0-rc-triton-v3.3.1", commit="a66376b0dc3b2ea8a84fda26faca287980986f78")
+
+    version("20.1.0-rc-triton-v3.2.0", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
+    
     version("20.1.8", sha256="a6cbad9b2243b17e87795817cfff2107d113543a12486586f8a055a2bb044963")
     version("20.1.7", sha256="91865189d0ca30ca81b7f7af637aca745b6eeeba97c5dfb0ab7d79a1d9659289")
     version("20.1.6", sha256="afa487c401613f5e4a35935b2abfb5d07e6ebfa20df32787e34a5c7e97c6ea4b")
