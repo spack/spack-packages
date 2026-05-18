@@ -109,7 +109,6 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         """Set environment variables used to control the build"""
         if self.spec.satisfies("%clang"):
             env.set("TRITON_BUILD_WITH_CLANG_LLD", "True")
-
         env.set("TRITON_OFFLINE_BUILD", "True")
         env.set("LLVM_SYSPATH", self.spec["llvm"].prefix)
         env.set("JSON_SYSPATH", self.spec["nlohmann-json"].prefix)
@@ -129,6 +128,17 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         # the directory itself is created later, after staging is complete.
         env.set("TRITON_CUPTI_INCLUDE_PATH", os.path.join(self.stage.path, "cuda-include"))
         env.set("TRITON_CUPTI_LIB_PATH", os.path.join(str(cuda), "extras", "CUPTI", "lib64"))
+
+        # Force Spack's compilers.  Triton's setup.py runs CMake under the
+        # hood and LLVM's exported CMake config can override the compiler to
+        # the clang that LLVM was built with.  TRITON_APPEND_CMAKE_ARGS is
+        # appended last to the cmake invocation (see setup.py) and therefore
+        # takes precedence.
+        env.set("TRITON_APPEND_CMAKE_ARGS",
+                f"-DCMAKE_C_COMPILER={self.compiler.cc} "
+                f"-DCMAKE_CXX_COMPILER={self.compiler.cxx} "
+                f"-DCMAKE_LINKER_TYPE=DEFAULT "
+                f"-DZLIB_ROOT={self.spec['zlib-api'].prefix}")
 
     @property
     def build_directory(self):
