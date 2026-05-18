@@ -21,6 +21,8 @@ class Ww3(CMakePackage):
 
     # Development version - use with: spack install ww3@develop
     version("develop", branch="develop")
+    version("6.07.1-390-g3e591453", commit="3e591453c9d95bb837f87b578e10f79f9c5f0952")
+    version("7.14.cfcd089", commit="cfcd089f1647d378f20665783bbef70519e78bfa")
 
     # WW3 configuration variants
     variant(
