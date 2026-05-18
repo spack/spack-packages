@@ -61,10 +61,12 @@ class Kentutils(MakefilePackage):
     conflicts("mariadb-c-client")
 
     # MySQL pointer/integer conversion issue (https://github.com/ucscGenomeBrowser/kent/pull/87)
-    patch("fix-mysql-options-gcc13.patch", when="%gcc@13: ^mysql")
+    patch("fix-mysql-options-gcc13.patch", when="%gcc@13.0:13.2 ^mysql")
     # MySQL build flags from `mysql_config` are not compatible with Spack's method of building
     # and includes zlib when it's not needed/available, leading to a linking failure.
     patch("mysql-zlib-workaround.patch", when="%gcc ^mysql")
+    # straw.cpp uses uint16_t/uint64_t without including <cstdint>, which GCC 13+ requires
+    patch("fix-straw-cstdint.patch", when="%gcc@13:")
 
     def flag_handler(self, name, flags):
         if name == "cflags":
@@ -121,7 +123,7 @@ class Kentutils(MakefilePackage):
     # Packages that link to kentlib (and potential, htslib) often have
     # idiosyncratic ways of setting up their includes and linker paths.
     # Having these paths available will make things cleaner downstream.
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         setattr(module, "kentutils_include_dir", self.prefix.inc)
         setattr(module, "kentutils_lib_dir", self.lib_dir)
         setattr(module, "kentutils_htslib_include_dir", self.htslib_include_dir)

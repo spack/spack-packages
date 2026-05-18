@@ -17,6 +17,7 @@ class PyMditPyPlugins(PythonPackage):
 
     license("MIT")
 
+    version("0.5.0", sha256="f4918cb50119f50446560513a8e311d574ff6aaed72606ddae6d35716fe809c6")
     version("0.4.2", sha256="5f2cd1fdb606ddf152d37ec30e46101a60512bc0e5fa1a7002c36647b09e26b5")
     version("0.3.5", sha256="eee0adc7195e5827e17e02d2a258a2ba159944a0748f59c5099a4a27f78fcf6a")
     version("0.3.1", sha256="3fc13298497d6e04fe96efdd41281bfe7622152f9caa1815ea99b5c893de9441")
@@ -34,6 +35,7 @@ class PyMditPyPlugins(PythonPackage):
     depends_on("py-setuptools", when="@:0.2", type="build")
     depends_on("py-flit-core@3.4:3", when="@0.3:", type="build")
 
-    depends_on("py-markdown-it-py@1.0:1", when="@:0.2", type=("build", "run"))
-    depends_on("py-markdown-it-py@1.0:2", when="@0.3", type=("build", "run"))
-    depends_on("py-markdown-it-py@1.0:3", when="@0.4:", type=("build", "run"))
+    depends_on("py-markdown-it-py@1:1", when="@0.2", type=("build", "run"))
+    depends_on("py-markdown-it-py@1:2", when="@0.3", type=("build", "run"))
+    depends_on("py-markdown-it-py@1:3", when="@0.4", type=("build", "run"))
+    depends_on("py-markdown-it-py@2:4", when="@0.5", type=("build", "run"))

@@ -55,6 +55,26 @@ class NlohmannJson(CMakePackage):
     conflicts("%gcc@:4.8", when="@:3.2.9")
     conflicts("%intel@:16")
 
+    def patch(self):
+        if self.spec.satisfies("@3.11.0:3.12.0"):
+            # Ensure no TU-local entities for C++20 modules
+            # (https://github.com/nlohmann/json/pull/4764)
+            for f in [
+                "include/nlohmann/detail/input/binary_reader.hpp",
+                "single_include/nlohmann/json.hpp",
+            ]:
+                filter_file(
+                    "static inline bool little_endianness",
+                    "inline bool little_endianness",
+                    f,
+                    string=True,
+                )
+            for f in [
+                "include/nlohmann/detail/string_escape.hpp",
+                "single_include/nlohmann/json.hpp",
+            ]:
+                filter_file("static void unescape", "inline void unescape", f, string=True)
+
     def cmake_args(self):
         return [
             self.define_from_variant("JSON_MultipleHeaders", "multiple_headers"),

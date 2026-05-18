@@ -24,6 +24,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.25.1", sha256="d9d9518110aea1f8f5444985cc1a95273ab140cdbcd2c2038c6309a3b611abb4")
+    version("3.25.0", sha256="dc1c018c16bd9dcf40596959875725edb4ba8b854a0b67bbce62a0d4be1bd3be")
+    version("3.24.6", sha256="d6ad14652996b0e0d3da51068eec902118057f275de867e8cf258ffd64d90a7d")
+    version("3.24.5", sha256="b538efa53ebfa5c7a1c3ac9783a57852a74ce4fb436f0ee4802564503c67269f")
+    version("3.24.4", sha256="772bb47638f8335e4a5982c48947af250e58061100a817c9e1e2fdc50de2ce95")
+    version("3.24.3", sha256="dde6f6ef2c5ef8c473a831d56a2e3192b5304c50c4cc5ded7f296ef6d86aaf13")
+    version("3.24.2", sha256="105c77cbc7361c078e013448bcad2c57ce8081377e5a8e49b3cc213f1a0a4a63")
     version("3.24.1", sha256="d77f3fd5187a72ce5b68a056aa8fcccd37b6dc7a388991d1d8fa0bde32b0abc8")
     version("3.24.0", sha256="cc9063d80cae3ca87dd34586a92bac49613818a0689d9eac1bd91a799c5d0983")
     version("3.23.7", sha256="f4fb2bad8c80319e723987868e87d8384f2ae2162e07917d4c41d6e467b1d254")
@@ -102,32 +109,33 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("debug", default=False, description="Compile in debug mode")
     variant("sycl", default=False, description="Enable sycl build")
 
-    variant("metis", default=True, description="Activates support for metis and parmetis")
+    variant("metis", default=False, description="Activates support for metis and parmetis")
     variant(
         "ptscotch", default=False, description="Activates support for PTScotch (only parallel)"
     )
-    variant("hdf5", default=True, description="Activates support for HDF5 (only parallel)")
-    variant("hypre", default=True, description="Activates support for Hypre (only parallel)")
+    variant("hdf5", default=False, description="Activates support for HDF5 (only parallel)")
+    variant("hypre", default=False, description="Activates support for Hypre (only parallel)")
     variant("hpddm", default=False, description="Activates support for HPDDM (only parallel)")
     variant("mmg", default=False, description="Activates support for MMG")
     variant("parmmg", default=False, description="Activates support for ParMMG (only parallel)")
     variant("tetgen", default=False, description="Activates support for Tetgen")
+    variant("ml", default=False, description="Activates support for ML")
     variant("zoltan", default=False, description="Activates support for Zoltan")
+    variant(
+        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
+    )
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
     variant(
         "superlu-dist",
-        default=True,
+        default=False,
         when="+fortran",
         description="Activates support for superlu-dist (only parallel)",
     )
     variant("strumpack", default=False, description="Activates support for Strumpack")
     variant(
         "scalapack", default=False, when="+fortran", description="Activates support for Scalapack"
-    )
-    variant(
-        "trilinos", default=False, description="Activates support for Trilinos (only parallel)"
     )
     variant("mkl-pardiso", default=False, description="Activates support for MKL Pardiso")
     variant("int64", default=False, description="Compile with 64bit indices")
@@ -152,9 +160,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("mpfr", default=False, description="Activates support for MPFR")
     variant("moab", default=False, description="Acivates support for MOAB (only parallel)")
     variant("random123", default=False, description="Activates support for Random123")
-    variant(
-        "exodusii", default=False, description="Activates support for ExodusII (only parallel)"
-    )
     variant("cgns", default=False, description="Activates support for CGNS (only parallel)")
     variant("memkind", default=False, description="Activates support for Memkind")
     variant(
@@ -218,9 +223,16 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             when="@3.20.2:3.20.4 ^hipsparse@6.0",
         )
 
+    # segmentedmempool.hpp(178): error: expression must be a modifiable lvalue
+    # https://gitlab.com/petsc/petsc/-/merge_requests/8152
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
+    patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
+
     # These require +mpi
     mpi_msg = "Requires +mpi"
     conflicts("+cgns", when="~mpi", msg=mpi_msg)
+    conflicts("+ml", when="~mpi", msg=mpi_msg)
+    conflicts("+zoltan", when="~mpi", msg=mpi_msg)
     conflicts("+exodusii", when="~mpi", msg=mpi_msg)
     conflicts("+fftw", when="~mpi", msg=mpi_msg)
     conflicts("+hdf5", when="~mpi", msg=mpi_msg)
@@ -232,7 +244,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
-    conflicts("+trilinos", when="~mpi", msg=mpi_msg)
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -302,6 +313,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("zlib-api", when="+hdf5")
     depends_on("zlib-api", when="+libpng")
     depends_on("zlib-api", when="+p4est")
+    depends_on("zlib-api", when="+exodusii")
     depends_on("parmetis+int64", when="+metis+mpi+int64")
     depends_on("parmetis~int64", when="+metis+mpi~int64")
     depends_on("valgrind", when="+valgrind")
@@ -309,19 +321,23 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mmg", when="+parmmg")
     depends_on("parmmg", when="+parmmg")
     depends_on("tetgen+pic", when="+tetgen")
-    depends_on("zoltan", when="+zoltan")
+    depends_on("trilinos+mpi+ml", when="+ml+mpi")
+    depends_on("trilinos+mpi+zoltan", when="+zoltan+mpi")
+    depends_on("trilinos+mpi+exodus", when="+exodusii+mpi")
 
     depends_on("hypre+fortran", when="+hypre+fortran")
     depends_on("hypre~fortran", when="+hypre~fortran")
     depends_on("hypre+complex", when="+hypre+complex")
     depends_on("hypre~complex", when="+hypre~complex")
-    depends_on("hypre+int64", when="+hypre+int64")
+    depends_on("hypre+mixedint+cuda", when="+hypre+int64+cuda")
+    depends_on("hypre+mixedint+rocm", when="+hypre+int64+rocm")
+    depends_on("hypre+mixedint", when="+hypre+int64")
     depends_on("hypre~int64", when="+hypre~int64")
-    depends_on("hypre+mpi~internal-superlu", when="+hypre")
+    depends_on("hypre+mpi", when="+hypre")
     depends_on("hypre@2.14:2.22.0", when="@3.14:3.15+hypre")
     depends_on("hypre@2.14:2.28.0", when="@3.16:3.19+hypre")
-    depends_on("hypre@2.14:", when="@3.20+hypre")
-    depends_on("hypre@2.32:", when="@3.22:+hypre")
+    depends_on("hypre@2.21:", when="@3.20:3.21+hypre")
+    depends_on("hypre@2.31:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
@@ -337,8 +353,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("mumps+mpi~int64~metis~parmetis+openmp", when="+mumps~metis+openmp")
     depends_on("mumps+mpi~int64+metis+parmetis+openmp", when="+mumps+metis+openmp")
     depends_on("scalapack", when="+mumps")
-    depends_on("trilinos@12.6.2:+mpi", when="@3.7.0:+trilinos+mpi")
-    depends_on("trilinos@develop+mpi", when="@main+trilinos+mpi")
     depends_on("mkl", when="+mkl-pardiso")
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
@@ -348,7 +362,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("jpeg", when="+jpeg")
     depends_on("libpng", when="+libpng")
     depends_on("giflib", when="+giflib")
-    depends_on("exodusii+mpi", when="+exodusii+mpi")
     depends_on("netcdf-c+mpi", when="+exodusii+mpi")
     depends_on("parallel-netcdf", when="+exodusii+mpi")
     depends_on("random123", when="+random123")
@@ -495,10 +508,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
-        if "trilinos" in spec:
-            if spec.satisfies("^trilinos+boost"):
-                options.append("--with-boost=1")
-
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -541,7 +550,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hdf5" + hdf5libs, "hdf5", True, True),
             ("zlib-api", "zlib", True, True),
             "mumps",
-            ("trilinos", "trilinos", False, False),
             ("fftw:mpi", "fftw", True, True),
             ("valgrind", "valgrind", False, False),
             "gmp",
@@ -552,7 +560,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("parallel-netcdf", "pnetcdf", True, True),
             ("moab", "moab", False, False),
             ("random123", "random123", False, False),
-            ("exodusii", "exodusii", False, False),
             "cgns",
             "memkind",
             "p4est",
@@ -565,7 +572,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             "mmg",
             "parmmg",
             ("tetgen", "tetgen", False, False),
-            "zoltan",
+            ("ml", "trilinos", False, False),
+            ("zoltan", "trilinos", False, False),
+            ("exodusii", "trilinos", False, False),
         ):
             # Cannot check `library in spec` because of transitive deps
             # Cannot check variants because parmetis keys on +metis
@@ -616,11 +625,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 options.append("--with-hip-arch={0}".format(hip_arch[0]))
             hip_pkgs = ["hipsparse", "hipblas", "hipsolver", "rocsparse", "rocsolver", "rocblas"]
             hip_ipkgs = hip_pkgs + ["rocthrust", "rocprim", "rocm-core"]
-            hip_lpkgs = hip_pkgs
+            hip_lpkgs = hip_pkgs + ["rocrand"]
             if spec.satisfies("^rocrand@5.1:"):
                 hip_ipkgs.extend(["rocrand"])
-            else:
-                hip_lpkgs.extend(["rocrand"])
             if spec.satisfies("^hipblas-common"):
                 hip_ipkgs.extend(["hipblas-common"])
             hip_inc = ""
@@ -644,6 +651,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         if "+mkl-pardiso" in spec:
             options.append("--with-mkl_pardiso-dir=%s" % spec["mkl"].prefix)
+
+        # See https://github.com/spack/spack-packages/pull/4651
+        if spec.satisfies("^intel-oneapi-mkl@2026.0:"):
+            options.append("--with-mkl_sparse=0")
+            options.append("--with-mkl_sparse_optimize=0")
 
         # For the moment, HPDDM does not work as a dependency
         # using download instead
@@ -733,17 +745,19 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         env["PETSC_DIR"] = self.prefix
         env["PETSC_ARCH"] = ""
         if "+mpi" in spec:
-            runexe = which(spec["mpi"].prefix.bin.mpiexec)
+            runexe = which(spec["mpi"].prefix.bin.mpiexec, required=True)
             runopt = ["-n", "4"]
         else:
-            runexe = which(join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"))
+            runexe = which(
+                join_path(self.prefix.lib.petsc.bin, "petsc-mpiexec.uni"), required=True
+            )
             runopt = ["-n", "1"]
         return runexe, runopt
 
     def test_ex50(self):
         """build and run ex50 to solve Poisson equation in 2D"""
         # solve Poisson equation in 2D to make sure nothing is broken:
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -769,7 +783,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+cuda" not in self.spec:
             raise SkipTest("Package must be built with +cuda")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.ksp.ksp.tutorials
@@ -796,7 +810,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+kokkos" not in self.spec:
             raise SkipTest("Package must be built with +kokkos")
 
-        make = which("make")
+        make = which("make", required=True)
         runexe, runopts = self.get_runner()
 
         w_dir = self.test_suite.current_test_cache_dir.src.snes.tutorials

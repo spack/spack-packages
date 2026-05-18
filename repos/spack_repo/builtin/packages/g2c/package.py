@@ -19,6 +19,8 @@ class G2c(CMakePackage):
     maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett")
 
     version("develop", branch="develop")
+    version("2.3.0", sha256="8520a24c066500cfd0d07a05c6b7b0cb92383d1a4737cf6e79d9f4919c8e79ab")
+    version("2.2.0", sha256="cf0ac8f75aed662ccc64f4c44fbe46a70307bc27cbe95417fdfb6caf75245457")
     version("2.1.0", sha256="74e3ef381f0339dc181bc3afaa54c98f76257508375ff664d243d76825006605")
     version("2.0.0", sha256="39c23bf1219c60101548c8525e3a879c84119558f768081779d404a8caf4cec9")
     version("1.9.0", sha256="5554276e18bdcddf387a08c2dd23f9da310c6598905df6a2a244516c22ded9aa")

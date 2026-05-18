@@ -13,9 +13,14 @@ class PyPreCommit(PythonPackage):
 
     homepage = "https://github.com/pre-commit/pre-commit"
     pypi = "pre_commit/pre_commit-1.20.0.tar.gz"
+    maintainers("sethrj")
 
     license("MIT")
 
+    version("4.6.0", sha256="718d2208cef53fdc38206e40524a6d4d9576d103eb16f0fec11c875e7716e9d9")
+    version("4.5.1", sha256="eb545fcff725875197837263e977ea257a402056661f09dae08e4b149b030a61")
+    version("4.4.0", sha256="f0233ebab440e9f17cabbb558706eb173d19ace965c68cdce2c081042b4fab15")
+    version("4.3.0", sha256="499fe450cc9d42e9d58e606262795ecb64dd05438943c62b66f6a8673da30b16")
     version("4.2.0", sha256="601283b9757afd87d40c4c4a9b2b5de9637a8ea02eaff7adc2d0fb4e04841146")
     version("4.1.0", sha256="ae3f018575a588e30dfddfab9a05448bfbd6b73d78709617b5a2b853549716d4")
     version("4.0.1", sha256="80905ac375958c0444c65e9cebebd948b3cdb518f335a091a670a89d652139d2")
@@ -30,6 +35,7 @@ class PyPreCommit(PythonPackage):
     version("2.10.1", sha256="399baf78f13f4de82a29b649afd74bef2c4e28eb4f021661fc7f29246e8c7a3a")
     version("1.20.0", sha256="9f152687127ec90642a2cc3e4d9e1e6240c4eb153615cb02aa1ad41d331cbb6e")
 
+    depends_on("python@3.10:", when="@4.4:", type=("build", "run"))
     depends_on("python@3.9:", when="@3.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@3:", type=("build", "run"))
     depends_on("python@3.7:", when="@2.20.0:", type=("build", "run"))

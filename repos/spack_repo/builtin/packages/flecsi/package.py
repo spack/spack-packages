@@ -67,16 +67,16 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl+mpi", when="+hdf5")
     depends_on("metis@5.1.0:", when="@:2.3.1")
     depends_on("parmetis@4.0.3:", when="@:2.3.1")
-    depends_on("boost@1.79.0: cxxstd=17 +program_options +stacktrace")
+    depends_on("boost@1.79.0: +program_options +stacktrace")
 
-    depends_on("cmake@3.19:")
-    depends_on("cmake@3.23:", when="@2.3:")
+    depends_on("cmake@3.19:", type="build")
+    depends_on("cmake@3.23:", when="@2.3:", type="build")
     depends_on("boost +atomic +filesystem +regex +system", when="@:2.2.1")
-    depends_on("kokkos@3.2.00:", when="+kokkos")
-    depends_on("kokkos@3.7:", when="+kokkos @2.3:")
-    depends_on("kokkos@3.7:", when="@2.4:")
+    depends_on("kokkos", when="+kokkos @2.3:")
+    depends_on("kokkos", when="@2.4:")
     depends_on("kokkos +cuda", when="+kokkos +cuda")
-    requires("^kokkos +cuda_constexpr +cuda_lambda", when="^kokkos +cuda")
+    requires("^kokkos +cuda_lambda", when="^kokkos@:4 +cuda")
+    requires("^kokkos +cuda_constexpr", when="^kokkos +cuda")
     depends_on("kokkos +rocm", when="+kokkos +rocm")
     depends_on("kokkos +openmp", when="+kokkos +openmp")
     requires("+openmp", when="@:2.3 ^kokkos +openmp")
@@ -89,20 +89,20 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("legion+cuda", when="backend=legion ^kokkos+cuda")
     depends_on("legion+rocm", when="backend=legion ^kokkos+rocm")
     depends_on("hdf5@1.10.7:", when="backend=legion +hdf5")
-    depends_on("hpx@1.10.0: cxxstd=17 malloc=system", when="backend=hpx")
+    depends_on("hpx@1.10.0: malloc=system", when="backend=hpx")
     depends_on("mpi")
     depends_on("mpich@3.4.1:", when="^[virtuals=mpi] mpich")
     depends_on("openmpi@4.1.0:", when="^[virtuals=mpi] openmpi")
     depends_on("graphviz@2.49.0:", when="+graphviz @2.3:")
 
     # FleCSI documentation dependencies
-    depends_on("py-sphinx", when="+doc")
-    depends_on("py-sphinx-rtd-theme", when="+doc")
-    depends_on("py-recommonmark", when="@:2.2 +doc")
-    depends_on("doxygen", when="+doc")
-    depends_on("graphviz", when="+doc")
-    depends_on("texlive", when="@2.4.1: +doc")
-    depends_on("pdf2svg", when="@2.4.1: +doc")
+    depends_on("py-sphinx", when="+doc", type="build")
+    depends_on("py-sphinx-rtd-theme@:2", when="+doc", type="build")
+    depends_on("py-recommonmark", when="@:2.2 +doc", type="build")
+    depends_on("doxygen", when="+doc", type="build")
+    depends_on("graphviz", when="+doc", type="build")
+    depends_on("texlive", when="@2.4.1: +doc", type="build")
+    depends_on("pdf2svg", when="@2.4.1: +doc", type="build")
 
     # Propagate cuda_arch requirement to dependencies
     for _flag in CudaPackage.cuda_arch_values:
@@ -125,6 +125,10 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+hdf5", when="backend=hpx", msg="HPX backend doesn't support HDF5")
     conflicts("^hpx networking=none", when="backend=hpx")
 
+    for cxxstd in ("11", "14"):
+        conflicts(f"^boost cxxstd={cxxstd}")
+        conflicts(f"^hpx cxxstd={cxxstd}", when="backend=hpx")
+
     def cmake_args(self):
         spec = self.spec
         options = [
@@ -140,13 +144,15 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_DOCUMENTATION", "doc"),
         ]
 
-        if self.spec.satisfies("^kokkos +rocm"):
+        if self.spec.satisfies("^kokkos +rocm") and not self.spec.satisfies(
+            "^kokkos %cxx=llvm-amdgpu"
+        ):
             options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
             if self.spec.satisfies("backend=legion"):
                 # CMake pulled in via find_package(Legion) won't work without this
                 options.append(self.define("HIP_PATH", "{0}/hip".format(spec["hip"].prefix)))
-        elif self.spec.satisfies("^kokkos"):
+        elif self.spec.satisfies("^kokkos +cuda"):
             options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
 
         return options

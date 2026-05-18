@@ -11,14 +11,15 @@ class PyDarshan(PythonPackage):
     """Python utilities to interact with Darshan log records of HPC applications."""
 
     homepage = "https://www.mcs.anl.gov/research/projects/darshan"
-    pypi = "darshan/darshan-3.4.0.1.tar.gz"
+    pypi = "darshan/darshan-3.5.0.tar.gz"
 
-    maintainers("jeanbez", "carns")
+    maintainers("jeanbez", "carns", "wkliao")
 
     tags = ["e4s"]
 
     # NOTE: don't forget to update the version array further down that sets the appropriate
     #       darshan-util dependency
+    version("3.5.0", sha256="4b2214bd715d261a7d37e54a5aedd6b38b9990aaee61bb55d741cb795b728020")
     version("3.4.7.0", sha256="e4e37c2707c5526a865bf4813b248ae4c327664538772e95c946f3b0079dc347")
     version("3.4.6.0", sha256="a105ec5c9bcd4a20469470ca51db8016336ede34a1c33f4488d1ba263a73c378")
     version("3.4.5.0", sha256="1419e246b2383d3e71da14942d6579a86fb298bf6dbbc3f507accefa614c6e50")
@@ -53,12 +54,12 @@ class PyDarshan(PythonPackage):
     # py-darshan depends on specific darshan-util versions corresponding
     # to the first 3 parts of the py-darshan version string
     # (i.e., py-darshan@3.4.3.0 requires darshan-util@3.4.3, etc.)
-    for v in ["3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.4.4", "3.4.5", "3.4.6", "3.4.7"]:
+    for v in ["3.4.0", "3.4.1", "3.4.2", "3.4.3", "3.4.4", "3.4.5", "3.4.6", "3.4.7", "3.5.0"]:
         depends_on(f"darshan-util@{v}", when=f"@{v}", type=("build", "run"))
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def install_test(self):
         with working_dir("./darshan/tests"):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest()

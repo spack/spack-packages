@@ -48,6 +48,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
 
     license("BSD-3-Clause")
 
+    version("5.2", sha256="fb5fe5128f718050c9911443fcf7ed91b60538a40d57084ed0124bb91afabb9b")
     version("5.1", sha256="25524ba78b5952303369fa0859d217e44071144fd122a9dc3f72ed0bd73e3b2d")
     version("5.0", sha256="3bee3712459a8c5bd728a521d8a4c8f46735730bf35d48c878d2fc45fc000918")
     version("4.2", sha256="93a433c169528ffba74a99df0ba3ce3d5b1fab9bf06ce8d2fd72ee84768ed84c")
@@ -91,6 +92,9 @@ class Amdlibflame(CMakePackage, LibflameBase):
     patch("cray-compiler-wrapper.patch", when="@:3.0.0", level=1)
     patch("supermat.patch", when="@4.0:4.1", level=1)
     patch("libflame-pkgconfig.patch", when="@4.2")
+    # Apply amdlibflame@5.2 patch to fix necessary ifdef guards to check
+    # for Zen4 kernel availability
+    patch("zen3_build_fix.patch", when="@5.2", level=1)
 
     provides("flame@5.2", when="@2:")
 
@@ -101,7 +105,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
     depends_on("python+pythoncmd", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 
-    for vers in ["4.1", "4.2", "5.0", "5.1"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 

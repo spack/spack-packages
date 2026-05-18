@@ -21,11 +21,13 @@ class Libmesh(AutotoolsPackage):
 
     version("master", branch="master", submodules=True)
 
+    version("1.8.4", sha256="2f904d27b763670df74e410de8e7d3e73fb17d52d06e57b32f42e44fd61cd1e6")
     version("1.7.6", sha256="65093cc97227193241f78647ec2f04a1852437f40d3d1c49285c6ff712cd0bc8")
     version("1.7.5", sha256="03a50cb471e7724a46623f0892cf77152f969d9ba89f8fcebd20bdc0845aab83")
     version("1.7.4", sha256="0d603aacd2761292dff61ff7ce59d9fddd8691133f0219f7d1576bd4626b77b2")
     version("1.7.3", sha256="fe0bec45a083ddd9e87dc51ab7e68039f3859e7ef0c4a87e76e562b172b6f739")
     version("1.7.1", sha256="0387d62773cf92356eb128ba92f767e56c298d78f4b97446e68bf288da1eb6b4")
+    version("1.5.3", sha256="836d5e1de00436a02d8986f2e73b16171167569f062c706080a902c565e9d514")
     version("1.4.1", sha256="67eb7d5a9c954d891ca1386b70f138333a87a141d9c44213449ca6be69a66414")
     version("1.4.0", sha256="62d7fce89096c950d1b38908484856ea63df57754b64cde6582e7ac407c8c81d")
     version("1.3.1", sha256="638cf30d05c249315760f16cbae4804964db8857a04d5e640f37617bef17ab0f")
@@ -43,7 +45,9 @@ class Libmesh(AutotoolsPackage):
     variant(
         "exodusii", default=False, description="Compile with the bundled ExodusII output library"
     )
-    variant("vtk", default=False, description="Compile with  VTK input/output library")
+    variant(
+        "vtk", default=False, when="+mpi", description="Compile with  VTK input/output library"
+    )
     variant(
         "fparser",
         default=False,
@@ -126,6 +130,7 @@ class Libmesh(AutotoolsPackage):
         multi=False,
     )
     variant("shared", default=True, description="Enables the build of shared libraries")
+    variant("poly2tri", default=False, description="Enable poly2tri library support")
 
     conflicts(
         "+metaphysicl",
@@ -138,6 +143,7 @@ class Libmesh(AutotoolsPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    depends_on("m4", type="build")
 
     depends_on("boost", when="+boost")
 
@@ -156,7 +162,7 @@ class Libmesh(AutotoolsPackage):
     depends_on("slepc", when="+slepc")
     depends_on("petsc", when="+petsc")
     depends_on("tbb", when="threads=tbb")
-    depends_on("vtk", when="+vtk")
+    depends_on("vtk+mpi", when="+vtk")
 
     def configure_args(self):
         options = []
@@ -224,8 +230,8 @@ class Libmesh(AutotoolsPackage):
             options.append("--enable-netcdf=no")
 
         if self.spec.satisfies("+vtk"):
-            options.append("--enable-vtk")
-            options.append("--with-vtk=%s" % self.spec["vtk"].prefix)
+            options.append("--enable-vtk-required")
+            options.append(f"VTK_DIR={self.spec['vtk'].prefix}")
         else:
             options.append("--disable-vtk")
 
@@ -274,7 +280,7 @@ class Libmesh(AutotoolsPackage):
             options.append("--disable-metis")
 
         if self.spec.satisfies("+petsc") or self.spec.satisfies("+slepc"):
-            options.append("--enable-petsc=yes")
+            options.append("--enable-petsc-required")
             options.append("PETSC_DIR=%s" % self.spec["petsc"].prefix)
         else:
             options.append("--enable-petsc=no")
@@ -324,6 +330,8 @@ class Libmesh(AutotoolsPackage):
             options.append("--with-tbb=%s" % self.spec["tbb"].prefix)
         else:
             options.append("--enable-tbb=no")
+
+        options += self.enable_or_disable("poly2tri")
 
         return options
 

@@ -84,3 +84,17 @@ class Re2(CMakePackage):
         if abseil:
             args.append(self.define("CMAKE_CXX_STANDARD", abseil[0].variants["cxxstd"].value))
         return args
+
+
+def patch(self):
+    # GCC 13+ and Clang 15+ removed many implicit header includes (like <cstring>).
+    # We only apply this if the header doesn't already exist to avoid conflicts.
+    if self.spec.satisfies("%gcc@13:") or self.spec.satisfies("%clang@15:"):
+        # Check if the fix is already there (for future-proofing)
+        prog_h = join_path(self.stage.source_path, "re2/prog.h")
+        if not any("<cstring>" in line for line in open(prog_h)):
+            filter_file(
+                r'#include "re2/sparse_set.h"',
+                '#include "re2/sparse_set.h"\n#include <cstring>',
+                "re2/prog.h",
+            )

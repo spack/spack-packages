@@ -23,6 +23,26 @@ from spack.package import *
 #    format returned by platform.system() and 'arch' by platform.machine()
 
 _versions = {
+    "13.1.1": {
+        "Linux-aarch64": (
+            "8adcd5d4b3e1e70f7420959b97514c0c97ec729da248d54902174c4d229bfd2c",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.1/local_installers/cuda_13.1.1_590.48.01_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "24ff323723722781436804b392a48f691cb40de9808095d3e2192d0db6dfb8e4",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.1/local_installers/cuda_13.1.1_590.48.01_linux.run",
+        ),
+    },
+    "13.1.0": {
+        "Linux-aarch64": (
+            "06cda49a7031b1c99f784237be5c852619379cbba9555036045044b9ddc99240",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_590.44.01_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "6b4fdf2694b3d7afbc526f26412b4cf4f050b202324455053307310f53b323a7",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.0/local_installers/cuda_13.1.0_590.44.01_linux.run",
+        ),
+    },
     "13.0.2": {
         "Linux-aarch64": (
             "93ab4c77ae2bc0f1f600ef48ccd3ff25a3203a6a6161a84511a33cbf5b5621fc",
@@ -765,11 +785,15 @@ class Cuda(Package):
         description="Allow unsupported host compiler and CUDA version combinations",
     )
 
-    depends_on("libxml2", when="@10.1.243:")
+    # depended on libxml2.so.2, known unused for 12.0+ (maybe unused for 11)
+    depends_on("libxml2@:2.13", when="@10.1.243:11")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
-    depends_on("ncurses abi=5", type="run", when="@:11.3.99+dev")
+    depends_on("ncurses abi=5", type="run", when="@:11.3")
+
+    depends_on("gzip", type="build")
+    depends_on("coreutils", type="build")
 
     provides("opencl@:1.2", when="@7:")
     provides("opencl@:1.1", when="@:6")
@@ -786,7 +810,7 @@ class Cuda(Package):
             # CUDA 9 has a fix for this, but CUDA 8 and lower don't.
             env.append_path("PERL5LIB", self.stage.source_path)
 
-        if self.spec.satisfies("@10.1.243:"):
+        if self.spec.satisfies("^libxml2"):
             libxml2_home = self.spec["libxml2"].prefix
             env.set("LIBXML2HOME", libxml2_home)
             env.append_path("LD_LIBRARY_PATH", libxml2_home.lib)
@@ -840,7 +864,7 @@ class Cuda(Package):
             os.makedirs(os.path.join(prefix, "src"))
             symlink(includedir, os.path.join(prefix, "include"))
 
-        install_shell = which("sh")
+        install_shell = which("sh", required=True)
 
         if self.spec.satisfies("@:8.0.61"):
             # Perl 5.26 removed current directory from module search path.

@@ -56,14 +56,32 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851")
-    version("3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f")
-    version("3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b")
-    version("3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182")
-    version("3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec")
+    version("3.14.4", sha256="b4c059d5895f030e7df9663894ce3732bfa1b32cd3ab2883980266a45ce3cb3b")
+    version("3.13.13", sha256="f9cde7b0e2ec8165d7326e2a0f59ea2686ce9d0c617dbbb3d66a7e54d31b74b9")
+    version("3.12.13", sha256="0816c4761c97ecdb3f50a3924de0a93fd78cb63ee8e6c04201ddfaedca500b0b")
+    version("3.11.15", sha256="f4de1b10bd6c70cbb9fa1cd71fc5038b832747a74ee59d599c69ce4846defb50")
+    version("3.10.20", sha256="4ff5fd4c5bab803b935019f3e31d7219cebd6f870d00389cea53b88bbe935d1a")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.3", sha256="d7fe130d0501ae047ca318fa92aa642603ab6f217901015a1df6ce650d5470cd"
+        )
+        version(
+            "3.14.2", sha256="c609e078adab90e2c6bacb6afafacd5eaf60cd94cf670f1e159565725fcd448d"
+        )
+        version(
+            "3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851"
+        )
+        version(
+            "3.13.12", sha256="12e7cb170ad2d1a69aee96a1cc7fc8de5b1e97a2bdac51683a3db016ec9a2996"
+        )
+        version(
+            "3.13.11", sha256="03cfedbe06ce21bc44ce09245e091a77f2fee9ec9be5c52069048a181300b202"
+        )
+        version(
+            "3.13.8", sha256="06108fe96f4089b7d9e0096cb4ca9c81ddcd5135f779a7de94cf59abcaa4b53f"
+        )
         version(
             "3.13.7", sha256="6c9d80839cfa20024f34d9a6dd31ae2a9cd97ff5e980e969209746037a5153b2"
         )
@@ -86,6 +104,9 @@ class Python(Package):
             "3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4"
         )
         version(
+            "3.12.12", sha256="487c908ddf4097a1b9ba859f25fe46d22ccaabfb335880faac305ac62bffb79b"
+        )
+        version(
             "3.12.11", sha256="7b8d59af8216044d2313de8120bfc2cc00a9bd2e542f15795e1d616c51faf3d6"
         )
         version(
@@ -98,10 +119,16 @@ class Python(Package):
             "3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623"
         )
         version(
+            "3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182"
+        )
+        version(
             "3.11.13", sha256="0f1a22f4dfd34595a29cf69ee7ea73b9eff8b1cc89d7ab29b3ab0ec04179dad8"
         )
         version(
             "3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed"
+        )
+        version(
+            "3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec"
         )
         version(
             "3.10.18", sha256="1b19ab802518eb36a851f5ddef571862c7a31ece533109a99df6d5af0a1ceb99"
@@ -144,6 +171,8 @@ class Python(Package):
     )
 
     variant("shared", default=True, description="Enable shared libraries")
+    variant("static", default=False, description="Enable static libraries")
+    variant("tests", default=False, description="Build and install tests")
     variant("pic", default=True, description="Produce position-independent code (for shared libs)")
     variant(
         "optimizations",
@@ -173,6 +202,12 @@ class Python(Package):
     variant("tix", default=False, description="Build Tix module", when="+tkinter")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=linux")
     variant("crypt", default=True, description="Build crypt module", when="@:3.12 platform=darwin")
+    variant(
+        "freethreading",
+        default=False,
+        description="Removes the Global Interpreter Lock",
+        when="@3.13:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -181,7 +216,8 @@ class Python(Package):
         depends_on("gmake", type="build")
         depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
-        depends_on("gettext ~libxml2", when="~libxml2")
+        depends_on("iconv", when="~libxml2")
+        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv]gettext")
 
         # Optional dependencies
         # See detect_modules() in setup.py for details
@@ -292,6 +328,14 @@ class Python(Package):
                 break
         else:
             variants += "~pythoncmd"
+
+        if Version(version_str) >= Version("3.13"):
+            for exe in exes:
+                if exe.endswith("t"):
+                    variants += "+freethreading"
+                    break
+            else:
+                variants += "~freethreading"
 
         for module in [
             "readline",
@@ -589,6 +633,11 @@ class Python(Package):
             else:
                 config_args.append("--with-lto")
             config_args.append("--with-computed-gotos")
+            # Revisit --tail-call-interp when GCC 16 comes out
+            # https://github.com/python/cpython/issues/128563#issuecomment-3501715689
+            if spec.satisfies("@3.14:"):
+                if spec.satisfies("%c=clang@19:") or spec.satisfies("%c=apple-clang@17:"):
+                    config_args.append("--with-tail-call-interp")
 
         if spec.satisfies("@3.7 %intel"):
             config_args.append("--with-icc={0}".format(spack_cc))
@@ -602,6 +651,12 @@ class Python(Package):
             config_args.append("--enable-shared")
         else:
             config_args.append("--disable-shared")
+
+        if "~static" in spec:
+            config_args.append("--without-static-libpython")
+
+        if "~tests" in spec:
+            config_args.append("--disable-test-modules")
 
         config_args.append("--without-ensurepip")
 
@@ -639,6 +694,13 @@ class Python(Package):
                     ),
                 ]
             )
+
+        if "+freethreading" in spec:
+            config_args.append("--disable-gil")
+
+        # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
+        if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
+            config_args.append("py_cv_module__tkinter=n/a")
 
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
@@ -837,12 +899,18 @@ class Python(Package):
         # installed python, several different commands could be located
         # in the same directory. Be as specific as possible. Search for:
         #
-        # * python3.11
+        # * python3.14t
+        # * python3.14
         # * python3
         # * python
         #
-        # in that order if using python@3.11.0, for example.
-        suffixes = [self.spec.version.up_to(2), self.spec.version.up_to(1), ""]
+        # in that order if using python@3.14.0, for example.
+        suffixes = [
+            str(self.spec.version.up_to(2)) + "t",
+            str(self.spec.version.up_to(2)),
+            str(self.spec.version.up_to(1)),
+            "",
+        ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
         root = self.prefix.bin if sys.platform != "win32" else self.prefix
@@ -1284,6 +1352,16 @@ print(json.dumps(config))
         module.python_include = join_path(dependent_spec.prefix, self.include)
         module.python_platlib = join_path(dependent_spec.prefix, self.platlib)
         module.python_purelib = join_path(dependent_spec.prefix, self.purelib)
+
+    def dependent_cmake_args(self, dependent_spec: Spec) -> List[str]:
+        # pkg.spec["python"] can re-direct to python-venv if pkg extends python
+        # ref. https://github.com/spack/spack/pull/40773
+        python_executable = dependent_spec["python"].command.path
+        return [
+            f"-DPYTHON_EXECUTABLE:PATH={python_executable}",
+            f"-DPython_EXECUTABLE:PATH={python_executable}",
+            f"-DPython3_EXECUTABLE:PATH={python_executable}",
+        ]
 
     def add_files_to_view(self, view, merge_map, skip_if_exists=True):
         """Make the view a virtual environment if it isn't one already.

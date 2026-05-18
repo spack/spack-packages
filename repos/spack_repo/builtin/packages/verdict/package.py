@@ -23,6 +23,9 @@ class Verdict(CMakePackage):
     version("1.4.2", sha256="225c8c5318f4b02e7215cefa61b5dc3f99e05147ad3fefe6ee5a3ee5b828964b")
     version("1.4.1", sha256="26fa583265cb2ced2e9b30ed26260f6c9f89c3296221d96ccd5e7bfeec219de7")
 
+    variant("pic", default=False, description="Build position independent code")
+    variant("shared", default=False, description="Build shared libraries")
+
     variant("doc", default=False, description="install documentation with library")
     variant(
         "mangle",
@@ -37,6 +40,8 @@ class Verdict(CMakePackage):
 
     def cmake_args(self):
         args = [
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("VERDICT_BUILD_DOCS", "doc"),
             self.define_from_variant("VERDICT_MANGLE", "mangle"),
             self.define_from_variant("VERDICT_ENABLE_TESTING", "test"),

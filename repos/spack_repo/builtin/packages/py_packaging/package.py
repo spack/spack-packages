@@ -15,6 +15,9 @@ class PyPackaging(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("26.2", sha256="ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661")
+    version("26.1", sha256="f042152b681c4bfac5cae2742a55e103d27ab2ec0f3d88037136b6bfe7c9c5de")
+    version("26.0", sha256="00243ae351a257117b6a241061796684b084ed1c516a08c48a3f7e147a9d80b4")
     version("25.0", sha256="d443872c98d677bf60f6a1f2f8c1cb748e8fe762d2bf9d3148b5599295b0fc4f")
     version("24.2", sha256="c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f")
     version("24.1", sha256="026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002")
@@ -30,6 +33,7 @@ class PyPackaging(PythonPackage):
     version("17.1", sha256="f019b770dd64e585a99714f1fd5e01c7a8f11b45635aa953fd41c689a657375b")
     version("16.8", sha256="5d50835fdf0a7edf0b55e311b7c887786504efea1177abd7e69329a8e5ea619e")
 
+    depends_on("py-flit-core@3.12:", when="@26:", type="build")
     depends_on("py-flit-core@3.3:", when="@22:", type="build")
 
     # Needed to bootstrap Spack correctly on Python 3.6 (rhel8 platform-python)

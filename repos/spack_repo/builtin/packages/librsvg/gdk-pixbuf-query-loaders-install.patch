@@ -1,0 +1,22 @@
+diff --git a/gdk-pixbuf-loader/meson.build b/gdk-pixbuf-loader/meson.build
+index 6fa10a68b..ff0ef46b4 100644
+--- a/gdk-pixbuf-loader/meson.build
++++ b/gdk-pixbuf-loader/meson.build
+@@ -36,13 +36,11 @@ pixbuf_thumbnailer = configure_file(
+   install_dir: get_option('datadir') / 'thumbnailers'
+ )
+ 
+-if meson.can_run_host_binaries()
+-  gdk_pixbuf_query_loaders = find_program(pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_query_loaders', default_value: 'gdk-pixbuf-query-loaders'))
+-endif
++gdk_pixbuf_query_loaders = find_program(pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_query_loaders', default_value: 'gdk-pixbuf-query-loaders'))
+ 
+ pixbufloader_svg_install_args = [
+   '--gdk-pixbuf-moduledir',
+   pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_moduledir', pkgconfig_define: ['prefix', prefix]),
+-  pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_query_loaders', pkgconfig_define: ['prefix', prefix]),
++  gdk_pixbuf_query_loaders.path(),
+   pixbuf_dep.get_variable(pkgconfig: 'gdk_pixbuf_cache_file', pkgconfig_define: ['prefix', prefix])
+ ]
+
+ 

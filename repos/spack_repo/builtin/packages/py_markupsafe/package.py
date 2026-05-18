@@ -19,6 +19,7 @@ class PyMarkupsafe(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.3", sha256="722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698")
     version("3.0.2", sha256="ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0")
     version("2.1.5", sha256="d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b")
     version("2.1.3", sha256="af598ed32d6ae86f1b747b82783958b1a4ab8f617b06fe68795c7f026abbdcad")
@@ -32,12 +33,16 @@ class PyMarkupsafe(PythonPackage):
     version("0.20", sha256="f6cf3bd233f9ea6147b21c7c02cac24e5363570ce4fd6be11dab9f499ed6a7d8")
     version("0.19", sha256="62fcc5d641df8b5ad271ebbd6b77a19cd92eceba1e1a990de4e96c867789f037")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
 
-    depends_on("python@3.9:", type=("build", "run"), when="@3:")
-    depends_on("python@3.7:", type=("build", "run"), when="@2:")
-    depends_on("py-setuptools@70.1:", type="build", when="@3:")
-    depends_on("py-setuptools", type="build")
+        depends_on("py-setuptools@77:", when="@3.0.3:")
+        depends_on("py-setuptools@70.1:", when="@3:")
+        depends_on("py-setuptools")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@3:")
+        depends_on("python@3.7:", when="@2:")
 
     def url_for_version(self, version):
         if version >= Version("3.0.0"):

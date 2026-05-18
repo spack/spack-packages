@@ -1,0 +1,142 @@
+diff --git a/trng/yarn2.hpp b/trng/yarn2.hpp
+index 54b244a..6b901d5 100644
+--- a/trng/yarn2.hpp
++++ b/trng/yarn2.hpp
+@@ -50,7 +50,7 @@ namespace trng {
+   class yarn2 {
+   public:
+     // Uniform random number generator concept
+-    using result_type = int32_t;
++    using result_type = uint32_t;
+     TRNG_CUDA_ENABLE
+     result_type operator()();
+ 
+@@ -194,13 +194,13 @@ namespace trng {
+ #endif
+     if (s > 1) {
+       jump(n + 1ull);
+-      const int32_t q0{S.r[0]};
++      const int32_t q0{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q1{S.r[0]};
++      const int32_t q1{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q2{S.r[0]};
++      const int32_t q2{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q3{S.r[0]};
++      const int32_t q3{static_cast<int32_t>(S.r[0])};
+       int32_t a[2], b[4];
+       a[0] = q2;
+       b[0] = q1;
+@@ -209,10 +209,10 @@ namespace trng {
+       b[2] = q2;
+       b[3] = q1;
+       int_math::gauss<2>(b, a, modulus);
+-      P.a[0] = a[0];
+-      P.a[1] = a[1];
+-      S.r[0] = q1;
+-      S.r[1] = q0;
++      P.a[0] = static_cast<result_type>(a[0]);
++      P.a[1] = static_cast<result_type>(a[1]);
++      S.r[0] = static_cast<result_type>(q1);
++      S.r[1] = static_cast<result_type>(q0);
+       for (int i{0}; i < 2; ++i)
+         backward();
+     }
+@@ -220,7 +220,7 @@ namespace trng {
+ 
+   TRNG_CUDA_ENABLE
+   inline void yarn2::jump2(unsigned int s) {
+-    result_type b[4], c[4]{};
++    int32_t b[4], c[4]{};
+     b[0] = P.a[0];
+     b[1] = P.a[1];
+     b[2] = 1;
+@@ -232,8 +232,8 @@ namespace trng {
+         break;
+       int_math::matrix_mult<2>(c, c, b, modulus);
+     }
+-    const result_type r[2]{S.r[0], S.r[1]};
+-    result_type d[2];
++    const int32_t r[2]{static_cast<int32_t>(S.r[0]), static_cast<int32_t>(S.r[1])};
++    int32_t d[2];
+     if ((s & 1u) == 0)
+       int_math::matrix_vec_mult<2>(b, r, d, modulus);
+     else
+diff --git a/trng/yarn3.hpp b/trng/yarn3.hpp
+index 9e50dac..20b4ba7 100644
+--- a/trng/yarn3.hpp
++++ b/trng/yarn3.hpp
+@@ -50,7 +50,7 @@ namespace trng {
+   class yarn3 {
+   public:
+     // Uniform random number generator concept
+-    using result_type = int32_t;
++    using result_type = uint32_t;
+     TRNG_CUDA_ENABLE
+     result_type operator()();
+ 
+@@ -199,17 +199,17 @@ namespace trng {
+ #endif
+     if (s > 1) {
+       jump(n + 1ull);
+-      const int32_t q0{S.r[0]};
++      const int32_t q0{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q1{S.r[0]};
++      const int32_t q1{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q2{S.r[0]};
++      const int32_t q2{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q3{S.r[0]};
++      const int32_t q3{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q4{S.r[0]};
++      const int32_t q4{static_cast<int32_t>(S.r[0])};
+       jump(s);
+-      const int32_t q5{S.r[0]};
++      const int32_t q5{static_cast<int32_t>(S.r[0])};
+       int32_t a[3], b[9];
+       a[0] = q3;
+       b[0] = q2;
+@@ -224,12 +224,12 @@ namespace trng {
+       b[7] = q3;
+       b[8] = q2;
+       int_math::gauss<3>(b, a, modulus);
+-      P.a[0] = a[0];
+-      P.a[1] = a[1];
+-      P.a[2] = a[2];
+-      S.r[0] = q2;
+-      S.r[1] = q1;
+-      S.r[2] = q0;
++      P.a[0] = static_cast<result_type>(a[0]);
++      P.a[1] = static_cast<result_type>(a[1]);
++      P.a[2] = static_cast<result_type>(a[2]);
++      S.r[0] = static_cast<result_type>(q2);
++      S.r[1] = static_cast<result_type>(q1);
++      S.r[2] = static_cast<result_type>(q0);
+       for (int i{0}; i < 3; ++i)
+         backward();
+     }
+@@ -237,7 +237,7 @@ namespace trng {
+ 
+   TRNG_CUDA_ENABLE
+   inline void yarn3::jump2(unsigned int s) {
+-    result_type b[9], c[9]{};
++    int32_t b[9], c[9]{};
+     b[0] = P.a[0];
+     b[1] = P.a[1];
+     b[2] = P.a[2];
+@@ -254,8 +254,8 @@ namespace trng {
+         break;
+       int_math::matrix_mult<3>(c, c, b, modulus);
+     }
+-    const result_type r[3]{S.r[0], S.r[1], S.r[2]};
+-    result_type d[3];
++    const int32_t r[3]{static_cast<int32_t>(S.r[0]), static_cast<int32_t>(S.r[1]), static_cast<int32_t>(S.r[2])};
++    int32_t d[3];
+     if ((s & 1u) == 0)
+       int_math::matrix_vec_mult<3>(b, r, d, modulus);
+     else

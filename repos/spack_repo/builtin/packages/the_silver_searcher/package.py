@@ -26,3 +26,8 @@ class TheSilverSearcher(AutotoolsPackage):
     depends_on("xz")
     depends_on("zlib-api")
     depends_on("pkgconfig", type="build")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags" and self.spec.satisfies("%c=gcc"):
+            flags.append("-fcommon")
+        return (None, None, flags)

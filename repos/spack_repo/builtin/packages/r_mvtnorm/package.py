@@ -17,6 +17,7 @@ class RMvtnorm(RPackage):
 
     license("GPL-2.0-only")
 
+    version("1.3-7", sha256="c393e96e204bd7838dbfa60969c6b35ac472e60cb002b6eff922bca767fe8e90")
     version("1.3-3", sha256="e20e7f534bc89b9258ad63d508aabed60f3bd504a7532a33e6ea230ca8fa4171")
     version("1.2-6", sha256="c4dedc3c296ed8e5fd2faecdba6de302bca1dd2e96b84fd846c47a54286acd31")
     version("1.1-3", sha256="ff4e302139ba631280fc9c4a2ab168596bfd09e17a805974199b043697c02448")

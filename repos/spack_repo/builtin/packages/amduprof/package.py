@@ -23,6 +23,11 @@ class Amduprof(Package):
     maintainers("amd-toolchain-support")
 
     version(
+        "5.2.606",
+        sha256="d5856a6640f6c673941dcb6e42f72b589d656ba40d2ba03ff1215611b2830f11",
+        url="file://{0}/AMDuProf_Linux_x64_5.2.606.tar.bz2".format(os.getcwd()),
+    )
+    version(
         "5.1.701",
         sha256="8fd83170170883a6617391609545dffd557d6ca4a8f8f00a7a8a2d6cdee08189",
         url="file://{0}/AMDuProf_Linux_x64_5.1.701.tar.bz2".format(os.getcwd()),

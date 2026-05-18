@@ -20,6 +20,7 @@ class Parallelio(CMakePackage):
 
     license("Apache-2.0")
 
+    version("2.6.8", sha256="ed6c92129b8a5e2d77587fd9656abc0aa7cf82a26a5ad21f8c6a9a79afa2c301")
     version("2.6.6", sha256="e32e018a521d38c9424940c7cfa7e9b1931b605f3511ee7ab3a718b69faeeb04")
     version("2.6.5", sha256="6ae51aa3f76e597a3a840a292ae14eca21359b1a4ea75e476a93aa2088c0677a")
     version("2.6.4", sha256="cba53e4ca62ff76195b6f76374fbd1530fba18649c975ae2628ddec7fe55fb31")
@@ -71,12 +72,14 @@ class Parallelio(CMakePackage):
         git="https://github.com/PARALLELIO/genf90.git",
         tag="genf90_200608",
         commit="4816965ba946731352bad195b7d946a5fe682ff5",
+        placement="genf90",
     )
     resource(
         name="CMake_Fortran_utils",
         git="https://github.com/CESM-Development/CMake_Fortran_utils.git",
         tag="CMake_Fortran_utils_150308",
         commit="c2572f19d671c35a4cca26911a55ef78b3ba2829",
+        placement="CMake_Fortran_utils",
     )
 
     # Allow argument mismatch in gfortran versions > 10 for mpi library compatibility

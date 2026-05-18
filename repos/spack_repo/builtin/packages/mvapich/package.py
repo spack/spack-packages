@@ -37,9 +37,9 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     provides("mpi@:4.1")
 
     variant("wrapperrpath", default=True, description="Enable wrapper rpath")
-    variant("debug", default=False, description="Enable debug info and error messages at run-time")
-
-    variant("cuda", default=False, description="Enable CUDA extension")
+    variant("debug", default=False, description="Enable debug info at run-time")
+    variant("errs", default=False, description="Enable error messages at run-time")
+    variant("fast", default=True, description="Enable compiler optimizations")
 
     variant("regcache", default=True, description="Enable memory registration cache")
 
@@ -97,7 +97,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("libpciaccess", when=(sys.platform != "darwin"))
     depends_on("libxml2")
-    depends_on("cuda", when="+cuda")
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
     depends_on("ucx", when="netmod=ucx")
@@ -200,21 +199,16 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--disable-silent-rules",
             "--disable-new-dtags",
             "--enable-fortran=all",
+            "--disable-cuda",
+            "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
-            "--with-ch3-rank-bits={0}".format(spec.variants["ch3_rank_bits"].value),
             "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
         ]
 
         args.extend(self.enable_or_disable("alloca"))
-        if not spec.satisfies("pmi_version=none"):
-            args.append("--with-pmi=" + spec.variants["pmi_version"].value)
-        if "pmi_version=pmix" in spec:
-            args.append("--with-pmix={0}".format(spec["pmix"].prefix))
-
         if "+debug" in self.spec:
             args.extend(
                 [
-                    "--disable-fast",
                     "--enable-error-checking=runtime",
                     "--enable-error-messages=all",
                     # Permits debugging with TotalView
@@ -222,14 +216,12 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
                     "--enable-debuginfo",
                 ]
             )
+        if "+errs" in self.spec:
+            args.extend(["--enable-error-checking=runtime", "--enable-error-messages=all"])
+        if "+fast" in self.spec:
+            args.append("--enable-fast=opt")
         else:
-            args.append("--enable-fast=all")
-
-        if "+cuda" in self.spec:
-            args.extend(["--enable-cuda", "--with-cuda={0}".format(spec["cuda"].prefix)])
-        else:
-            args.append("--disable-cuda")
-
+            args.append("--enable-fast=none")
         if "+regcache" in self.spec:
             args.append("--enable-registration-cache")
         else:

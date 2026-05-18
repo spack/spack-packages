@@ -16,7 +16,7 @@ class Xios(Package):
     homepage = "https://forge.ipsl.jussieu.fr/ioserver/wiki"
     version(
         "2.6",
-        revision=2714,
+        revision="2714",
         svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.6",
     )
 
@@ -147,9 +147,7 @@ OASIS_LIB=""
 %CPP            {CC} -E
 %FPP            {CC} -E -P -x c
 %MAKE           make
-""".format(
-                **param
-            )
+""".format(**param)
         elif spec.satisfies("%cce"):
             # In the CC compiler prior to cce/8.3.7,
             # optimisation must be reduced to avoid a bug,
@@ -181,9 +179,7 @@ OASIS_LIB=""
 %CPP            cpp
 %FPP            cpp -P -CC
 %MAKE           gmake
-""".format(
-                **param
-            )
+""".format(**param)
         else:
             raise InstallError("Unsupported compiler.")
 

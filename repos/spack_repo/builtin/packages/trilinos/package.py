@@ -31,7 +31,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     A unique design feature of Trilinos is its focus on packages.
     """
 
-    homepage = "https://trilinos.org/"
+    homepage = "https://trilinos.github.io"
     url = "https://github.com/trilinos/Trilinos/archive/refs/tags/trilinos-release-12-12-1.tar.gz"
     git = "https://github.com/trilinos/Trilinos.git"
 
@@ -53,6 +53,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("17.0.0", sha256="7afa68fc6bf1dfdcd0c07f7b61055b03509e62cee1a835d570201b46aa440a6b")
+    version("16.2.0", sha256="543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418")
     version("16.1.0", sha256="e9651c88f581049457036cfc01b527a9d3903c257338eeeab942befd7452f23a")
     version("16.0.0", sha256="46bfc40419ed2aa2db38c144fb8e61d4aa8170eaa654a88d833ba6b92903f309")
     version("15.1.1", sha256="2108d633d2208ed261d09b2d6b2fbae7a9cdc455dd963c9c94412d38d8aaefe4")
@@ -95,7 +97,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("cuda_rdc", default=False, description="Turn on RDC for CUDA build")
     variant("rocm_rdc", default=False, description="Turn on RDC for ROCm build")
     variant(
-        "cxxstd", default="14", description="C++ standard", values=["11", "14", "17"], multi=False
+        "cxxstd",
+        default="20",
+        description="C++ standard",
+        values=["11", "14", "17", "20"],
+        multi=False,
     )
     variant("debug", default=False, description="Enable runtime safety and debug checks")
     variant(
@@ -131,6 +137,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # TPLs (alphabet order)
     variant("adios2", default=False, description="Enable ADIOS2")
     variant("boost", default=False, description="Compile with Boost")
+    variant("cusparse", default=False, description="Enable cuSPARSE support")
     variant("hdf5", default=False, description="Compile with HDF5")
     variant("hypre", default=False, description="Compile with Hypre preconditioner")
     variant("mpi", default=True, description="Compile with MPI parallelism")
@@ -285,6 +292,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("+dtk")
         conflicts("+ifpack2")
         conflicts("+muelu")
+        conflicts("+shylu")
         conflicts("+teko")
         conflicts("+zoltan2")
 
@@ -334,6 +342,26 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+minitensor", when="~boost")
     conflicts("+phalanx", when="~sacado")
     conflicts("+stokhos", when="~kokkos")
+    conflicts("+muelu", when="@17: ~ifpack2")
+
+    conflicts("+rocm~rocm_rdc", when="@:16 +stk")
+    conflicts("+rocm~rocm_rdc", when="@17: +stk ^hip@:6.2")
+    # rocm@7 conflicts with cxxstd=20 per https://github.com/llvm/llvm-project/issues/184856
+    # this conflict can be updated once https://github.com/llvm/llvm-project/pull/184894
+    # makes it into hip
+    conflicts("cxxstd=20", when="+rocm ^hip@7:")
+
+    # TRIbits dependencies only relied on by testing are invoked regardless,
+    # whether +test or ~test. see https://github.com/TriBITSPub/TriBITS/issues/56
+    with when("~gtest"):
+        conflicts("+minitensor")
+        conflicts("+rol")
+        conflicts("+stk")
+    # this does alleviate needing: conflicts("+test", when="@17: ~gtest")
+    # see https://github.com/spack/spack-packages/pull/3361 for explanation
+
+    # stk tests require +exodus
+    conflicts("~exodus", when="+stk+test")
 
     # Only allow DTK with Trilinos 12.14, 12.18
     conflicts("+dtk", when="~boost")
@@ -361,10 +389,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+adios2", when="@:12.14.1")
     conflicts("cxxstd=11", when="@13.2:")
     conflicts("cxxstd=14", when="@14:")
-    conflicts("cxxstd=17", when="@:12")
+    conflicts("cxxstd=17", when="@:12,17:")
+    conflicts("cxxstd=20", when="@:16")
     conflicts("cxxstd=11", when="+wrapper ^cuda@6.5.14")
     conflicts("cxxstd=14", when="+wrapper ^cuda@6.5.14:8.0.61")
     conflicts("cxxstd=17", when="+wrapper ^cuda@6.5.14:10.2.89")
+    conflicts("cxxstd=20", when="+wrapper ^cuda@:11")
 
     # Multi-value gotype only applies to trilinos through 12.14
     conflicts("gotype=all", when="@12.15:")
@@ -376,6 +406,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         msg="trilinos~wrapper+cuda can only be built with the Clang compiler",
     )
     conflicts("+cuda_rdc", when="~cuda")
+    conflicts("+cusparse", when="~cuda")
     conflicts("+rocm_rdc", when="~rocm")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="%clang")
@@ -418,17 +449,21 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos~rocm", when="~rocm")
         depends_on("kokkos+wrapper", when="+wrapper")
         depends_on("kokkos~wrapper", when="~wrapper")
-        depends_on("kokkos+cuda_relocatable_device_code~shared", when="+cuda_rdc")
-        depends_on("kokkos+hip_relocatable_device_code~shared", when="+rocm_rdc")
-        depends_on("kokkos-kernels~shared", when="+cuda_rdc")
-        depends_on("kokkos-kernels~shared", when="+rocm_rdc")
+        depends_on("kokkos+pic", when="+shared")
+        depends_on("kokkos+cuda_relocatable_device_code", when="+cuda_rdc")
+        depends_on("kokkos+hip_relocatable_device_code", when="+rocm_rdc")
+        depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=4.7.01", when="@master:")
+        depends_on("kokkos@=5.0.2", when="@master:")
+        depends_on("kokkos@=5.0.2", when="@17.0")
+        depends_on("kokkos@=4.7.01", when="@16.2")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=4.7.01", when="@master:")
+        depends_on("kokkos-kernels@=5.0.2", when="@master:")
+        depends_on("kokkos-kernels@=5.0.2", when="@17.0")
+        depends_on("kokkos-kernels@=4.7.01", when="@16.2")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")
@@ -447,10 +482,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost+graph+math+exception+stacktrace", when="+boost")
     depends_on("boost+graph+math+exception+stacktrace", when="@:13.4.0 +stk")
     depends_on("cgns", when="+exodus")
+    depends_on("cmake@3.27:", type="build", when="@17.0.0:")
     depends_on("cmake@3.23:", type="build", when="@14.0.0:")
+    depends_on("googletest", when="@17: +gtest")
     depends_on("hdf5+hl", when="+hdf5")
     for plat in ["darwin", "linux"]:
-        depends_on("hypre~internal-superlu~int64", when="+hypre platform=%s" % plat)
+        depends_on("hypre~int64", when="+hypre platform=%s" % plat)
     depends_on("hypre-cmake~int64", when="+hypre platform=windows")
     depends_on("kokkos-nvcc-wrapper", when="+wrapper")
     depends_on("lapack")
@@ -541,7 +578,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     patch("13.4.1-kokkoskernel-patch2296.patch", when="@13.4.1 %oneapi@2025:")
 
     # https://github.com/kokkos/kokkos-kernels/pull/2296
-    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14 %oneapi@2025:")
+    patch("14-14.2-kokkoskernel-patch2296.patch", when="@14:15 %oneapi@2025:")
 
     # https://github.com/trilinos/Trilinos/pull/11676
     patch("13.4.1-14-patch11676.patch", when="@13.4.1:14.0 %oneapi@2025:")
@@ -555,6 +592,21 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/trilinos/Trilinos/issues/13916 and
     # https://github.com/trilinos/Trilinos/pull/13921
     patch("16-1-0-stk-size_t.patch", when="@=16.1.0 +stk")
+
+    # https://github.com/spack/spack-packages/pull/2931#issuecomment-3756434768
+    patch("16-2-stk_destructor_kokkos_decoration.patch", when="@=16.2.0 +stk")
+
+    # https://github.com/spack/spack-packages/pull/3361
+    patch(
+        "https://github.com/trilinos/Trilinos/commit/b36622c86f3adfef3ec4cf6e40f9645099e11a18.patch?full_index=1",
+        sha256="7a07f769aedf6433e440e0ce666c66d2721bfa8b99b18d8e3e95e1303878778d",
+        when="@=17.0.0 +stk",
+    )
+    patch(
+        "https://github.com/trilinos/Trilinos/commit/cb633c33a7d77667ca71a537c6ecf3a322a69b33.patch?full_index=1",
+        sha256="0536a8d412ac38c3d3cf25ff9a5d22916ff6ba439cf52e59e6bd1b2815b8681e",
+        when="@=17.0.0 +stk",
+    )
 
     def flag_handler(self, name, flags):
         spec = self.spec
@@ -589,11 +641,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 flags.append("-Wl,-undefined,dynamic_lookup")
 
             # Fortran lib (assumes clang is built with gfortran!)
-            if spec.satisfies("+fortran") and (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name",
@@ -734,6 +782,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define("BUILD_TESTING", True))
         else:
             options.append(define_trilinos_enable("TESTS", False))
+            if "+stk" in spec:
+                options.append(define_trilinos_enable("STKUnit_test_utils", False))
+                options.append(define_trilinos_enable("STKUnit_tests", False))
+                options.append(define_trilinos_enable("STKDoc_tests", False))
+                options.append(define_trilinos_enable("STKIntegration_tests", False))
+                options.append(define_trilinos_enable("STKPerformance_tests", False))
+                options.append(define_trilinos_enable("STKNGP_TEST", False))
 
         if spec.version >= Version("13"):
             options.append(define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
@@ -764,7 +819,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 define_trilinos_enable("Epetra"),
                 define_trilinos_enable("EpetraExt"),
                 define_trilinos_enable("FEI", False),
-                define_trilinos_enable("Gtest"),
                 define_trilinos_enable("Ifpack"),
                 define_trilinos_enable("Ifpack2"),
                 define_trilinos_enable("Intrepid"),
@@ -905,6 +959,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             ("ADIOS2", "adios2", "adios2"),
             ("Boost", "boost", "boost"),
             ("CUDA", "cuda", "cuda"),
+            ("CUSPARSE", "cusparse", "cuda"),
             ("HDF5", "hdf5", "hdf5"),
             ("HYPRE", "hypre", "hypre"),
             ("MUMPS", "mumps", "mumps"),
@@ -979,6 +1034,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 ]
             )
 
+        if spec.satisfies("@17: +gtest"):
+            options.append(define_tpl_enable("gtest", True))
+            options.append(define("GTEST_ROOT", spec["googletest"].prefix))
+        else:
+            options.append(define_trilinos_enable("Gtest"))
+
         if spec.satisfies("^superlu-dist@4.0:"):
             options.extend([define("HAVE_SUPERLUDIST_LUSTRUCTINIT_2ARG", True)])
 
@@ -1041,7 +1102,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         # ################# Kokkos ######################
 
         if "+kokkos" in spec:
-            arch = Kokkos.get_microarch(spec.target)
+            arch = Kokkos.get_microarch(spec.target, spec["kokkos"] if "kokkos" in spec else None)
             if arch:
                 options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
@@ -1064,7 +1125,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 arch_map = Kokkos.spack_cuda_arch_map
                 options.extend(
-                    define("Kokkos_ARCH_" + arch_map[arch].upper(), True)
+                    define("Kokkos_ARCH_" + arch_map[arch][0].upper(), True)
                     for arch in spec.variants["cuda_arch"].value
                 )
 
@@ -1081,7 +1142,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 amdgpu_arch_map = Kokkos.amdgpu_arch_map
                 for amd_target in spec.variants["amdgpu_target"].value:
                     try:
-                        arch = amdgpu_arch_map[amd_target]
+                        arch = amdgpu_arch_map[amd_target][0]
                     except KeyError:
                         pass
                     else:

@@ -15,6 +15,7 @@ class PyFuncy(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.0", sha256="3963315d59d41c6f30c04bc910e10ab50a3ac4a225868bfa96feed133df075cb")
     version("1.15", sha256="65b746fed572b392d886810a98d56939c6e0d545abb750527a717c21ced21008")
     version("1.14", sha256="75ee84c3b446f92e68a857c2267b15a1b49c631c9d5a87a5f063cd2d6761a5c4")
 

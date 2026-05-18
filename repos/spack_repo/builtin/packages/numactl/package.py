@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -13,10 +15,13 @@ class Numactl(AutotoolsPackage):
     homepage = "https://github.com/numactl/numactl"
     url = "https://github.com/numactl/numactl/archive/v2.0.11.tar.gz"
 
+    executables = [r"^numactl$"]
+
     force_autoreconf = True
 
     license("LGPL-2.1-only")
 
+    version("2.0.19", sha256="8b84ffdebfa0d730fb2fc71bb7ec96bb2d38bf76fb67246fde416a68e04125e4")
     version("2.0.18", sha256="8cd6c13f3096e9c2293c1d732f56e2aa37a7ada1a98deed3fac7bd6da1aaaaf6")
     version("2.0.17", sha256="af22829cda8b5bdee3d280e61291697bbd3f9bd372afdf119c9348b88369d40b")
     version("2.0.16", sha256="a35c3bdb3efab5c65927e0de5703227760b1101f5e27ab741d8f32b3d5f0a44c")
@@ -45,6 +50,12 @@ class Numactl(AutotoolsPackage):
 
     # Numerous errors when trying to build on darwin
     conflicts("platform=darwin")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.match(r"(\S+)", output)
+        return match.group(1) if match else None
 
     def autoreconf(self, spec, prefix):
         Executable("./autogen.sh")()

@@ -14,14 +14,25 @@ class Rocfft(CMakePackage):
     """Radeon Open Compute FFT library"""
 
     homepage = "https://github.com/ROCm/rocFFT/"
-    git = "https://github.com/ROCm/rocFFT.git"
-    url = "https://github.com/ROCm/rocfft/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["librocfft"]
-
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocFFT/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="047e4e93e0b12869bf42136b5eb683df3a1635b01a58bbb25c8861df291ab285")
+    version("7.1.0", sha256="8cd4fcca0b8b730135f76bb34f95965348b1809061af65ff6bfbd4ad2ac85e0d")
     version("7.0.2", sha256="05ccbdcb9d2860c72ff9665670aac44286aaaeabd4fb4e9530e7f4f1b5b01c71")
     version("7.0.0", sha256="d0fb29b9ff90f603045cbe0f2f2d5db6fb9ff5d4d667d304565b80a62c1ed767")
     version("6.4.3", sha256="9ccd198ab1ec1b729992d00fbe5f9e3955ed77690974d8bd1b713539b6c21c7e")
@@ -73,7 +84,7 @@ class Rocfft(CMakePackage):
     depends_on("googletest@1.10.0:", type="test")
     depends_on("fftw@3.3.8:", type="test")
     depends_on("boost@1.64.0: +program_options", type="test")
-    depends_on("rocm-openmp-extras", type="test")
+    depends_on("rocm-openmp-extras", type="test", when="@:7.1")
     depends_on("hiprand", type="test")
     depends_on("rocrand", type="test")
 
@@ -98,6 +109,11 @@ class Rocfft(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -118,6 +134,13 @@ class Rocfft(CMakePackage):
         sha256="bac7873185ac60f2aaa50e278f0b8d52b4d79d586bf7f52db1da33559569ba54",
         when="@6.0.0",
     )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocfft"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)
@@ -156,7 +179,10 @@ class Rocfft(CMakePackage):
         tgt = self.spec.variants["amdgpu_target"]
 
         if "auto" not in tgt:
-            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # See https://github.com/ROCm/rocFFT/issues/322
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):

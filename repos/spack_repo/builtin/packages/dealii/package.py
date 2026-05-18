@@ -260,7 +260,8 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("symengine@0.6:", when="@9.2:+symengine")
     depends_on("tbb", when="+threads")
     # do not require +rol to make concretization of xsdk possible
-    depends_on("trilinos+amesos+aztec+epetra+ifpack+ml+muelu+sacado", when="+trilinos")
+    # Trilinos no longer has epetra from 17 onward
+    depends_on("trilinos+amesos+aztec+epetra+ifpack+ml+muelu+sacado@:16", when="+trilinos")
     depends_on("trilinos~hypre", when="+trilinos+int64")
     for _arch in CudaPackage.cuda_arch_values:
         arch_str = f"+cuda cuda_arch={_arch}"
@@ -498,8 +499,7 @@ class Dealii(CMakePackage, CudaPackage):
 
         # Enforce the specified C++ standard
         if spec.variants["cxxstd"].value != "default":
-            cxxstd = spec.variants["cxxstd"].value
-            cxx_flags.extend(["-std=c++{0}".format(cxxstd)])
+            options.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         # Performance
         # Set recommended flags for maximum (matrix-free) performance, see

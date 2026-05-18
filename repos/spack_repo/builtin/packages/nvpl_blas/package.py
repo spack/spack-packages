@@ -40,11 +40,10 @@ class NvplBlas(Package):
     )
 
     requires("target=armv8.2a:", msg="Any CPU with Arm-v8.2a+ microarch")
+    requires("platform=linux", msg="Precompiled binary requires Linux")
 
     conflicts("%gcc@:7")
     conflicts("%clang@:13")
-
-    conflicts("threads=openmp", when="%clang")
 
     def url_for_version(self, version):
         url = "https://developer.download.nvidia.com/compute/nvpl/redist/nvpl_blas/linux-sbsa/nvpl_blas-linux-sbsa-{0}-archive.tar.xz"

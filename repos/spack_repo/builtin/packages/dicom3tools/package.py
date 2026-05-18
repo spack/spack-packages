@@ -71,7 +71,7 @@ class Dicom3tools(MakefilePackage):
                 "config/generic.cf",
             )
 
-        imake = which("imake")
+        imake = which("imake", required=True)
         imake("-I./config", "-DDefaultUIDRoot={0}".format(uid_root))
         make("World")
 

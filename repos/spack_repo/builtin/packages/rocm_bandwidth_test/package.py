@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmBandwidthTest(CMakePackage):
+class RocmBandwidthTest(ROCmLibrary, CMakePackage):
     """Test to measure PciE bandwidth on ROCm platforms"""
 
     homepage = "https://github.com/ROCm/rocm_bandwidth_test"
@@ -17,6 +17,42 @@ class RocmBandwidthTest(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["rocm-bandwidth-test"]
+    version(
+        "7.2.3",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.2.3",
+        commit="06dd9df114855ed2dc38cd731ad214066a62d6da",
+        submodules=True,
+    )
+    version(
+        "7.2.1",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.2.1",
+        commit="06dd9df114855ed2dc38cd731ad214066a62d6da",
+        submodules=True,
+    )
+    version(
+        "7.2.0",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.2.0",
+        commit="06dd9df114855ed2dc38cd731ad214066a62d6da",
+        submodules=True,
+    )
+    version(
+        "7.1.1",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.1.1",
+        commit="bba00e25cc49f8cda357cfe0439f0e01ba8839bb",
+        submodules=True,
+    )
+    version(
+        "7.1.0",
+        git="https://github.com/ROCm/rocm_bandwidth_test",
+        tag="rocm-7.1.0",
+        commit="9f0a001fa5cfcbe6ecdf2e96fd91eacb371a8a1e",
+        submodules=True,
+    )
     version(
         "7.0.2",
         git="https://github.com/ROCm/rocm_bandwidth_test",
@@ -92,21 +128,26 @@ class RocmBandwidthTest(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver} +rocm", when=f"@{ver}")
 
     patch("add_numa_hsa.patch", when="@7.0.0")
-    patch("modify_hsa_include.patch", when="@7.0.2")
+    patch("modify_hsa_include.patch", when="@7.0.2:")
 
     # https://github.com/ROCm/rocm_bandwidth_test/issues/131
     # install doesnt honour CMAKE_INSTALL_PREFIX
     patch("change_install_path.patch", when="@7.0.0")
-    patch("change_install_path_7.0.2.patch", when="@7.0.2")
+    patch("change_install_path_7.0.2.patch", when="@7.0.2:")
 
     @property
     def build_targets(self):

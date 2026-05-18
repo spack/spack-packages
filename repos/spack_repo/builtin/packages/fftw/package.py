@@ -78,7 +78,7 @@ class FftwBase(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         if spec.satisfies("+pfft_patches"):
-            autoreconf = which("autoreconf")
+            autoreconf = which("autoreconf", required=True)
             autoreconf("-ifv")
 
     @property
@@ -106,6 +106,13 @@ class FftwBase(AutotoolsPackage):
         options = ["--prefix={0}".format(prefix), "--enable-threads"]
         options.extend(self.enable_or_disable("shared"))
 
+        # On Apple Arm machines, force to use aarch64 rather than arm
+        # to check for NEON due to logic in configure.
+        if self.spec.satisfies("platform=darwin target=m1:"):
+            uname = Executable("uname")
+            uname_r = uname("-r", output=str)
+            options.append("--build=aarch64-apple-darwin{0}".format(uname_r))
+
         if not self.compiler.f77 or not self.compiler.fc:
             options.append("--disable-fortran")
         if spec.satisfies("@:2"):
@@ -121,11 +128,18 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies("+mpi"):
             options.append("--enable-mpi")
 
+        if spec.satisfies("target=aarch64:"):
+            options.append("--enable-armv8-cntvct-el0")
+
         # Specific SIMD support.
         # all precisions
-        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx"]
+        simd_features = ["sse2", "avx", "avx2", "avx512", "avx-128-fma", "kcvi", "vsx", "asimd"]
         # float only
         float_simd_features = ["altivec", "sse", "neon"]
+
+        # armv8 introduced asimd to replace neon feature
+        if "asimd" in spec.target:
+            float_simd_features.remove("neon")
 
         # Workaround NVIDIA/PGI compiler bug when avx512 is enabled
         if spec.satisfies("%nvhpc"):
@@ -142,10 +156,21 @@ class FftwBase(AutotoolsPackage):
         if spec.satisfies("%nvhpc") and "neon" in simd_features:
             simd_features.remove("neon")
 
+        # GCC on apple silicon does not support Neon intrinsics
+        if (
+            spec.satisfies("platform=darwin target=aarch64: %gcc")
+            and "neon" in float_simd_features
+        ):
+            float_simd_features.remove("neon")
+
         simd_options = []
         for feature in simd_features:
             msg = "--enable-{0}" if feature in spec.target else "--disable-{0}"
-            simd_options.append(msg.format(feature))
+            feature_opt = feature
+            # CPU feature is asimd but neon used in option.
+            if feature == "asimd":
+                feature_opt = "neon"
+            simd_options.append(msg.format(feature_opt))
 
         # If no features are found, enable the generic ones
         if not any(f in spec.target for f in simd_features + float_simd_features):
@@ -215,6 +240,7 @@ class Fftw(FftwBase):
 
     license("GPL-2.0-or-later")
 
+    version("3.3.11", sha256="5630c24cdeb33b131612f7eb4b1a9934234754f9f388ff8617458d0be6f239a1")
     version("3.3.10", sha256="56c932549852cddcfafdab3820b0200c7742675be92179e59e6215b340e26467")
     version("3.3.9", sha256="bf2c7ce40b04ae811af714deb512510cc2c17b9ab9d6ddcf49fe4487eea7af3d")
     version("3.3.8", sha256="6113262f6e92c5bd474f2875fa1b01054c4ad5040f6b0da7c03c98821d9ae303")
@@ -244,7 +270,7 @@ class Fftw(FftwBase):
     patch(
         "https://github.com/FFTW/fftw3/commit/f69fef7aa546d4477a2a3fd7f13fa8b2f6c54af7.patch?full_index=1",
         sha256="872cff9a7d346e91a108ffd3540bfcebeb8cf86c7f40f6b31fd07a80267cbf53",
-        when="@3.3.7:",
+        when="@3.3.7:3.3.10",
     )
     patch("pfft-3.3.5.patch", when="@3.3.5:3.3.8+pfft_patches", level=0)
     patch("pfft-3.3.4.patch", when="@3.3.4+pfft_patches", level=0)
