@@ -17,6 +17,7 @@ class Mcl(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("22-282", sha256="291f35837b6e852743bd87e499c5a46936125dcdf334f7747af92e88ac902183")
     version("14-137", sha256="b5786897a8a8ca119eb355a5630806a4da72ea84243dba85b19a86f14757b497")
 
     @when("%gcc@10:")
@@ -27,6 +28,9 @@ class Mcl(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("perl", type="run")
+
+    # 22-282 and later depend on cimfomfa
+    depends_on("cimfomfa", when="@22-282:")
 
     variant("blast", default=False, description="Build bio-informatics tools.")
 
