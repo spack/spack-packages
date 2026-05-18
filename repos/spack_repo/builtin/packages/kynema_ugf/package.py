@@ -69,7 +69,7 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("openfast@4.1.1:+cxx+netcdf", when="+openfast")
     depends_on("hypre@2.30.0: ~int64+mpi~superlu-dist", when="+hypre")
     depends_on(
-        "trilinos@16:+exodus+tpetra+zoltan+stk~superlu-dist+hdf5+shards~hypre+gtest "
+        "trilinos@16:+exodus+tpetra+zoltan+stk~superlu-dist+hdf5+shards~hypre+gtest+test "
         "gotype=long cxxstd=17"
     )
     depends_on("trilinos~cuda~wrapper", when="~cuda")
@@ -82,8 +82,6 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("boost +filesystem +iostreams cxxstd=14", when="+boost")
     depends_on("hypre+gpu-aware-mpi", when="+gpu-aware-mpi")
     depends_on("hypre+umpire", when="+umpire")
-    # indirect dependency needed to make original concretizer work
-    #depends_on("netcdf-c+parallel-netcdf")
 
     for _arch in CudaPackage.cuda_arch_values:
         depends_on(
