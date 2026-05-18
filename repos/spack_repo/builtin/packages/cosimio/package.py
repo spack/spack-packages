@@ -55,8 +55,8 @@ class Cosimio(CMakePackage):
     with when("~mpi"):
         depends_on("c", type="build")           # Ensures C is set to a valid compiler if C API is enabled
         depends_on("cxx", type="build")         # Ensures CXX is set to a valid compiler if C++ API is enabled
-        if "+fortran" in spec:
-            depends_on("fortran", type="build") # Ensures FC is set to a valid compiler if Fortran API is enabled
+    with when("~mpi +fortran"):
+        depends_on("fortran", type="build")     # Ensures FC is set to a valid compiler if Fortran API is enabled
 
     # -------------------------------------------------------------------------
     # Dependencies
