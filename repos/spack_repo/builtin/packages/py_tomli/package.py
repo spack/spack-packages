@@ -20,13 +20,16 @@ class PyTomli(PythonPackage):
 
     license("MIT")
 
+    version("2.4.1", sha256="7c7e1a961a0b2f2472c1ac5b69affa0ae1132c39adcb67aba98568702b9cc23f")
     version("2.0.1", sha256="de526c12914f0c550d15924c62d72abc48d6fe7364aa87328337a31007fe8a4f")
     version("1.2.2", sha256="c6ce0015eb38820eaf32b5db832dbc26deb3dd427bd5f6556cf0acac2c214fee")
     version("1.2.1", sha256="a5b75cb6f3968abb47af1b40c1819dc519ea82bcc065776a866e8d74c5ca9442")
 
     # https://github.com/hukkin/tomli/blob/2.0.1/pyproject.toml#L2
     depends_on("py-flit-core@3.2:3", type="build")
+    depends_on("py-flit-core@3.12:3", type="build")
 
     # https://github.com/hukkin/tomli/blob/2.0.1/pyproject.toml#L13
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("python@3.7:", type=("build", "run"), when="@2.0.1:")
+    depends_on("python@3.8:", type=("build", "run"), when="@2.4.1:")
