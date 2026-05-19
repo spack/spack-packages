@@ -15,7 +15,7 @@ class Albany(CMakePackage):
     including fluid mechanics, solid mechanics (elasticity and plasticity),
     ice-sheet flow, quantum device modeling, and many other applications."""
 
-    homepage = "https://gahansen.github.io/Albany"
+    homepage = "https://sandialabs.github.io/Albany/"
     git = "https://github.com/gahansen/Albany.git"
 
     maintainers("gahansen")
