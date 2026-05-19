@@ -48,6 +48,12 @@ class Zsh(AutotoolsPackage):
 
     patch("pointer-types.patch", when="@5.6.2:")
 
+    def flag_handler(self, name, flags):
+        if name=="cflags" and self.spec.satisfies('%llvm@10:') or self.spec.satisfies("%apple-clang@12:"):
+            flags.append("-Wno-implicit-function-declaration")
+            flags.append("-Wno-implicit-int")
+        return self.env_flags(name, flags)
+
     def configure_args(self):
         args = []
 
@@ -59,6 +65,7 @@ class Zsh(AutotoolsPackage):
             # enable etc dir under install prefix
             mkdirp(self.prefix.etc)
             args.append("--enable-etcdir={0}".format(self.prefix.etc))
+
 
         return args
 
