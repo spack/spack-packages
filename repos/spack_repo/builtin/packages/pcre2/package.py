@@ -50,6 +50,7 @@ class Pcre2(AutotoolsPackage, CMakePackage):
     with when("build_system=cmake"):
         depends_on("zlib")
         depends_on("bzip2")
+        depends_on("cmake@3.15:", type="build")
 
     @property
     def libs(self):
