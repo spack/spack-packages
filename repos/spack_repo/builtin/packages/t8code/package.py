@@ -24,8 +24,12 @@ class T8code(AutotoolsPackage, CMakePackage):
     license("GPL-2.0-or-later", checked_by="melven")
 
     version("4.0.0", sha256="668536f82730a23fc6fd96ff13e64762b6b0890d04e99a7a38d66341332d5770")
-    version("2.0.0", sha256="b83f6c204cdb663cec7e0c1059406afc4c06df236b71d7b190fb698bec44c1e0", deprecated=True,
-            url = "https://github.com/DLR-AMR/t8code/releases/download/v2.0.0/t8-2.0.0.tar.gz")
+    version(
+        "2.0.0",
+        sha256="b83f6c204cdb663cec7e0c1059406afc4c06df236b71d7b190fb698bec44c1e0",
+        deprecated=True,
+        url="https://github.com/DLR-AMR/t8code/releases/download/v2.0.0/t8-2.0.0.tar.gz",
+    )
 
     variant("mpi", default=True, description="Enable MPI parallel code")
     variant("vtk", default=False, description="Enable vtk-dependent code")
@@ -44,7 +48,9 @@ class T8code(AutotoolsPackage, CMakePackage):
     depends_on("netcdf-c+mpi", when="+netcdf+mpi")
     depends_on("metis", when="+metis")
 
-    build_system(conditional("cmake", when="@4:"), conditional("autotools", when="@:2"), default="cmake")
+    build_system(
+        conditional("cmake", when="@4:"), conditional("autotools", when="@:2"), default="cmake"
+    )
 
     # Per default, t8code uses hardcoded zlib library from vtk package
     # The configure command is overwritten to choose the integrated spack package
