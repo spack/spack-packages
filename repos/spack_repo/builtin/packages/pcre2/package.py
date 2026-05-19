@@ -16,13 +16,13 @@ class Pcre2(AutotoolsPackage, CMakePackage):
 
     homepage = "https://www.pcre.org"
     url = "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.39/pcre2-10.39.tar.bz2"
+    submodules = True
 
     license("BSD-3-Clause AND PCRE2-exception", when="@10:", checked_by="wdconinc")
 
     version(
         "10.47",
         sha256="47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7",
-        submodules=True,
     )
     version("10.44", sha256="d34f02e113cf7193a1ebf2770d3ac527088d485d4e047ed10e5d217c6ef5de96")
     version("10.43", sha256="e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb")
