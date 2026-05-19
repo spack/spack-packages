@@ -739,6 +739,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 [
                     "-DPARAVIEW_%s_PYTHON:BOOL=ON" % py_use_opt,
                     "-D%s_PYTHON_VERSION:STRING=%d" % (py_ver_opt, py_ver_val),
+                    "-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF",
                 ]
             )
             if spec.satisfies("@:5.6"):
