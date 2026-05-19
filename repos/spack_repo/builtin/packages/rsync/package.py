@@ -13,10 +13,13 @@ class Rsync(AutotoolsPackage):
     """An open source utility that provides fast incremental file transfer."""
 
     homepage = "https://rsync.samba.org"
-    url = "https://download.samba.org/pub/rsync/src/rsync-3.3.0.tar.gz"
+    url = "https://download.samba.org/pub/rsync/src/rsync-3.4.2.tar.gz"
 
     license("GPL-3.0-or-later")
 
+    executables = ["^rsync$"]
+
+    version("3.4.2", sha256="ff10aa2c151cd4b2dbbe6135126dbc854046113d2dfb49572a348233267eb315")
     version("3.4.1", sha256="2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52")
     version("3.4.0", sha256="8e942f95a44226a012fe822faffa6c7fc38c34047add3a0c941e9bc8b8b93aa4")
 
@@ -30,8 +33,6 @@ class Rsync(AutotoolsPackage):
     depends_on("lz4", when="@3.2:")
 
     conflicts("%nvhpc")
-
-    executables = ["^rsync$"]
 
     @classmethod
     def determine_version(cls, exe):

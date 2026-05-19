@@ -21,6 +21,10 @@ class Cplex(Package):
 
     maintainers("robgics")
 
+    license("LicenseRef-IBM-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version(
         "12.10.0",
         sha256="cd530eb9c6d446bd18b5dc5a3d61070bfad92c3efd6565d2d8e31a2acfb496f7",

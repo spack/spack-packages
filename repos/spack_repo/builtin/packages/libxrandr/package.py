@@ -13,11 +13,13 @@ class Libxrandr(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXrandr"
     xorg_mirror_path = "lib/libXrandr-1.5.0.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXrandr.git"
 
     license("MIT")
 
     maintainers("wdconinc")
 
+    version("1.5.5", sha256="23faedab4675890ba579b8103399132a139527306b18b500c6fe28e090e2a056")
     version("1.5.4", sha256="c72c94dc3373512ceb67f578952c5d10915b38cc9ebb0fd176a49857b8048e22")
     version("1.5.3", sha256="3ad316c1781fe2fe22574b819e81f0eff087a8560377f521ba932238b41b251f")
     version("1.5.0", sha256="1b594a149e6b124aab7149446f2fd886461e2935eca8dca43fe83a70cf8ec451")
