@@ -62,8 +62,8 @@ class Gchp(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("esmf@8.0.1", when="@:13")
-    depends_on("esmf@8.0.0:", when="@14.0:14.0")
-    depends_on("esmf@8.1.0:", when="@14.1:14.1")
+    depends_on("esmf@8.0.0:", when="@14.0")
+    depends_on("esmf@8.1.0:", when="@14.1")
     depends_on("esmf@8.4.2:", when="@14.2:14.6")
     depends_on("esmf@8.6.1:", when="@14.7:")
     depends_on("udunits@2", when="@14.7:")
