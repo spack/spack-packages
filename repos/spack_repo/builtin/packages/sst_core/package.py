@@ -88,7 +88,7 @@ class SstCore(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build")
 
-    depends_on("python@:3.11", type=("build", "run", "link"))
+    depends_on("python@3.9:", type=("build", "run", "link"))
     depends_on("mpi", when="+pdes_mpi")
     depends_on("zoltan", when="+zoltan")
     depends_on("hdf5 +cxx", when="+hdf5")

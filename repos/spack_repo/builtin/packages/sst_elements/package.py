@@ -70,7 +70,7 @@ class SstElements(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("python@:3.11", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("sst-core")
     depends_on("sst-core@develop", when="@develop")
     depends_on("sst-core@master", when="@master")
