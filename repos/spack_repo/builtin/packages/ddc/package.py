@@ -119,9 +119,6 @@ class Ddc(CMakePackage):
         msg="DDC relies on relocatable device code",
     )
 
-    def url_for_version(self, version):
-        return f"https://github.com/CExA-project/ddc/archive/refs/tags/v{version}.tar.gz"
-
     def cmake_args(self):
         args = [
             self.define("DDC_BUILD_EXAMPLES", False),
