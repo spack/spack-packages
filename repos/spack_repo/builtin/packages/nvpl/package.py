@@ -18,7 +18,9 @@ class Nvpl(Package):
 
     maintainers("rbberger")
 
-    license("UNKNOWN")
+    redistribute(source=False, binary=False)
+
+    license("NVIDIA Software License Agreement")
 
     version("25.11", sha256="2b4588ff0bd5bd7d2db9dc86e03195a2e15521e7fbc7616d4df97d1b2e8c2d65")
 
