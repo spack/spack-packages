@@ -114,6 +114,11 @@ class RustBootstrap(Package):
                 "aarch64": "131eda738cd977fff2c912e5838e8e9b9c260ecddc1247c0fe5473bf09c594af",
                 "powerpc64le": "c5aedb12c552daa18072e386697205fb7b91cef1e8791fe6fb74834723851388",
             },
+            "windows": {
+                "x86_64": "16bbc1a670b2c88e53d6ff64adc9e10af09e6c90b4628ad122827f1edd8b00fb",
+                "aarch64": "c49ebc1431f2cfec615a6c2594dcaf3a28cf704802c0f1c0058f231749872ab9",
+                "powerpc64le": "3056dc08e41a55acba63682f8b3dd2199a199c52193720595b669147aad4f9aa",
+            },
         },
         "1.76.0": {
             "darwin": {
@@ -124,6 +129,11 @@ class RustBootstrap(Package):
                 "x86_64": "9d589d2036b503cc45ecc94992d616fb3deec074deb36cacc2f5c212408f7399",
                 "aarch64": "2e8313421e8fb673efdf356cdfdd4bc16516f2610d4f6faa01327983104c05a0",
                 "powerpc64le": "44b3494675284d26b04747a824dc974e32fd8fd46fc0aa06a7c8ebe851332d2c",
+            },
+            "windows": {
+                "x86_64": "cc908e1f0625aae0da5f4a35c390828947887929af694029fc3ccdf4cc66b0dd",
+                "aarch64": "9a88f3c87f2ef31a30b41820652c95e990df332e5d3c6fc7dd4d279879b3862d",
+                "powerpc64le": "e256bd6a78f5de83eb064f30ed4c16d9e2a65a9a0830b64f80a411e6fb9d560f",
             },
         },
         "1.75.0": {
@@ -136,6 +146,11 @@ class RustBootstrap(Package):
                 "aarch64": "30828cd904fcfb47f1ac43627c7033c903889ea4aca538f53dcafbb3744a9a73",
                 "powerpc64le": "2599cdfea5860b4efbceb7bca69845a96ac1c96aa50cf8261151e82280b397a0",
             },
+            "windows": {
+                "x86_64": "46fb351d1c33fe501375e3f742fbc98500b12eb2a4f7af6dc203b9be69f1f906",
+                "aarch64": "0c15a32201ba29e868bd424b05944a27921d66f68de1035fac405d117b493397",
+                "powerpc64le": "954b28a01cd3cd2bb853aa12879d6233e4486c100b6f9a432796b223bf40946d",
+            },
         },
         "1.73.0": {
             "darwin": {
@@ -146,6 +161,11 @@ class RustBootstrap(Package):
                 "x86_64": "aa4cf0b7e66a9f5b7c623d4b340bb1ac2864a5f2c2b981f39f796245dc84f2cb",
                 "aarch64": "e54d7d886ba413ae573151f668e76ea537f9a44406d3d29598269a4a536d12f6",
                 "powerpc64le": "8fa215ee3e274fb64364e7084613bc570369488fa22cf5bc8e0fe6dc810fe2b9",
+            },
+            "windows": {
+                "x86_64": "d6b0db0acc5ffef638ffb7bfc0497381ffa41d5935a1115230c34db6c6f1ab20",
+                "aarch64": "ea36179b1da415d8c4756885b698b5ba14e77c092bf7bfff5e7fdfbc899ffd78",
+                "powerpc64le": "985dcae82e154e662d78a03df637339b679120bb92acd34401e9d33c5b1156dc",
             },
         },
         "1.70.0": {
@@ -158,6 +178,11 @@ class RustBootstrap(Package):
                 "aarch64": "3aa012fc4d9d5f17ca30af41f87e1c2aacdac46b51adc5213e7614797c6fd24c",
                 "powerpc64le": "ba8cb5e3078b1bc7c6b27ab53cfa3af14001728db9a047d0bdf29b8f05a4db34",
             },
+            "windows": {
+                "x86_64": "02a9c4d98ea58e7554c144f1bc946138cdc5614af71d3fc21f0a717a0367599b",
+                "aarch64": "73702c0cc681bfe2467e45d56d139855566ea25e8350d8a634881af7f0fa3b06",
+                "powerpc64le": "c8abd64db09bea0dac3617061e7de69b01f3ce2b74a2ae7b282d8b132f75f8c0",
+            },
         },
         "1.65.0": {
             "darwin": {
@@ -169,6 +194,11 @@ class RustBootstrap(Package):
                 "aarch64": "f406136010e6a1cdce3fb6573506f00d23858af49dd20a46723c3fa5257b7796",
                 "powerpc64le": "3f1d0d5bb13213348dc65e373f8c412fc0a12ee55abc1c864f7e0300932fc687",
             },
+            "windows": {
+                "x86_64": "da1f8476596485b69fc4d90fb08c876f1c69f4e23914252b8a2b3c330e3c5466",
+                "aarch64": "21f53c976882a98bd810b24b001c0774dc6787bab0cfa2f3be2055fc9fd8ffdd",
+                "powerpc64le": "05798ebf45bf65dfcff449c583c3650f6d7c1f3d2b70ab0172c9ac0d161f69d0",
+            },
         },
         "1.60.0": {
             "darwin": {
@@ -179,6 +209,11 @@ class RustBootstrap(Package):
                 "x86_64": "b8a4c3959367d053825e31f90a5eb86418eb0d80cacda52bfa80b078e18150d5",
                 "aarch64": "99c419c2f35d4324446481c39402c7baecd7a8baed7edca9f8d6bbd33c05550c",
                 "powerpc64le": "80125e90285b214c2b1f56ab86a09c8509aa17aec9d7127960a86a7008e8f7de",
+            },
+            "windows": {
+                "x86_64": "eddb8fcf2cfd5a20c87a93465dee0dd7e0ffda7cd8b09bf9c681cde65293d0e2",
+                "aarch64": "ff51997246590c396dafb16864a69563e1d845e1c7f26c21092c6d81986a0b18",
+                "powerpc64le": "1e7ce754838dff6e565c9172f750e49f87f6550dfc9d8a480d747dbfb602da74",
             },
         },
     }
