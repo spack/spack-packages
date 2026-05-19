@@ -21,6 +21,7 @@ class SstElements(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("16.0.0", sha256="e0f72777df2d0619bd529334994132d919bd0cdc8f1e84bcbc4200564482258f")
     version("15.1.0", sha256="e7162bb8719341230217dd5ab9d36bb9529ed9ce3d206ca74948044290080c93")
     version("15.0.0", sha256="98f7fbd4bce16f639616edb889fb3c6667b50899273114854e77fcdb26bcddd6")
     version("14.1.0", sha256="433994065810d3afee4e355173e781cd76171043cce8835bbc40887672a33350")

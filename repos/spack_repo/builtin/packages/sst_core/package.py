@@ -21,6 +21,7 @@ class SstCore(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("16.0.0", sha256="20733d6334bc80dd8cf5695d1eb3bd32ada80dcf3151695b8dbdbbac28ead616")
     version("15.1.2", sha256="21aabfddb80c7aaf65e562894e0542bdb871bbc630362c3cef579d949c456f33")
     version("15.1.1", sha256="651cf5ee1438a5128aea2ad8b518c5437a1637dce357cbcbdd58681fa749222f")
     version("15.1.0", sha256="ec3d9e733bcf99283b526cfb4a853787d303a8d55b2a42d5102b0f4f4a4feb81")
