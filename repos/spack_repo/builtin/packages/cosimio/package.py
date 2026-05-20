@@ -45,6 +45,94 @@ class Cosimio(CMakePackage):
     variant("strict", default=False, description="Enable strict compiler warnings")
 
     # -------------------------------------------------------------------------
+    # Conflicts
+    # -------------------------------------------------------------------------
+    # The Fortran interface is built on top of the C interface.
+    conflicts("+fortran", when="~c", msg="+fortran requires +c (the Fortran API wraps the C API)")
+
+    # -------------------------------------------------------------------------
+    # Patches
+    # -------------------------------------------------------------------------
+    def patch(self):
+        """Fix Fortran wrapper for gfortran 11+ compatibility (releases <= 4.3.1).
+
+        Two bugs exist in co_sim_io/fortran/co_sim_io.f90:
+
+        1. Fixed-form continuation: FUNCTION declarations spanning two lines use
+           a column-6 ``&`` on the continuation line (fixed-form style), but
+           gfortran compiles ``.f90`` as free-form where ``&`` must be at the
+           **end** of the continued line.  Fix: add trailing ``&`` to the
+           FUNCTION declaration line.
+
+        2. Missing ``USE, INTRINSIC :: ISO_C_BINDING`` and ``IMPORT`` inside 15
+           INTERFACE block function declarations. gfortran 11+ hard-errors on
+           this; gfortran <=10 silently accepted it.
+        """
+        if not self.spec.satisfies("@:4.3.1 +fortran"):
+            return
+
+        fortran_file = join_path(
+            self.stage.source_path, "co_sim_io", "fortran", "co_sim_io.f90"
+        )
+
+        # BIND C name -> types to IMPORT in that interface block.
+        fixes = {
+            "CoSimIO_ImportData_fortran": "CoSimIO_Info",
+            "CoSimIO_Element_GetNodeByIndex": "CoSimIO_Node, CoSimIO_Element",
+            "CoSimIO_ModelPart_NumberOfNodes": "CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_NumberOfLocalNodes": "CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_NumberOfGhostNodes": "CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_NumberOfElements": "CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetNodeByIndex": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetLocalNodeByIndex": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetGhostNodeByIndex": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetNodeById": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetElementByIndex": "CoSimIO_Element, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_GetElementById": "CoSimIO_Element, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_CreateNewNode": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_CreateNewGhostNode": "CoSimIO_Node, CoSimIO_ModelPart",
+            "CoSimIO_ModelPart_CreateNewElement": (
+                "CoSimIO_Element, CoSimIO_ModelPart, CoSimIO_ElementType"
+            ),
+        }
+
+        with open(fortran_file) as f:
+            lines = f.readlines()
+
+        out = []
+        i = 0
+        while i < len(lines):
+            line = lines[i]
+            out.append(line)
+
+            # Detect a BIND continuation line: starts (after whitespace) with &
+            # and contains one of our target BIND(C, NAME=...) patterns.
+            stripped = line.lstrip()
+            if stripped.startswith("&") and 'BIND(C, NAME="' in line:
+                bind_name = next(
+                    (n for n in fixes if 'BIND(C, NAME="' + n + '")' in line), None
+                )
+                if bind_name is not None:
+                    # Fix 1: ensure the preceding FUNCTION line ends with & so
+                    # that this is a valid free-form continuation.  If it already
+                    # ends with & (idempotent re-run), skip.
+                    if len(out) >= 2 and not out[-2].rstrip().endswith("&"):
+                        out[-2] = out[-2].rstrip("\n").rstrip() + " &\n"
+
+                    # Fix 2: inject USE/IMPORT after the BIND line if absent.
+                    j = i + 1
+                    while j < len(lines) and lines[j].strip() == "":
+                        j += 1
+                    if j < len(lines) and "USE, INTRINSIC" not in lines[j]:
+                        out.append("                  USE, INTRINSIC :: ISO_C_BINDING\n")
+                        out.append("                  IMPORT " + fixes[bind_name] + "\n")
+
+            i += 1
+
+        with open(fortran_file, "w") as f:
+            f.writelines(out)
+
+    # -------------------------------------------------------------------------
     # Compilers
     # -------------------------------------------------------------------------
     # When building without MPI (`~mpi`), ensure Spack provides valid
@@ -53,7 +141,8 @@ class Cosimio(CMakePackage):
     with when("~mpi"):
         depends_on("c", type="build")  # Ensures C compiler is available
         depends_on("cxx", type="build")  # Ensures CXX compiler is available
-    with when("~mpi +fortran"):
+    # +fortran needs a Fortran compiler regardless of MPI
+    with when("+fortran"):
         depends_on("fortran", type="build")  # Ensures Fortran compiler is available
 
     # -------------------------------------------------------------------------
@@ -88,4 +177,13 @@ class Cosimio(CMakePackage):
             self.define_from_variant("CO_SIM_IO_BUILD_MPI", "mpi"),
             self.define_from_variant("CO_SIM_IO_STRICT_COMPILER", "strict"),
         ]
+
+        # The top-level CMakeLists declares `LANGUAGES CXX C` (no Fortran).
+        # cmake_add_fortran_subdirectory() searches for a Fortran compiler at
+        # configure time; without an explicit hint it may not find Spack's FC
+        # wrapper.  Passing CMAKE_Fortran_COMPILER directly fixes this for all
+        # compilers, including gfortran 10+.
+        if "+fortran" in self.spec:
+            args.append(self.define("CMAKE_Fortran_COMPILER", self.compiler.fc))
+
         return args
