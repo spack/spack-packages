@@ -775,11 +775,12 @@ class Cuda(Package):
     # cuda-12.8 libcusolver.so requires log2f@GLIBC_2.27
     conflicts("glibc@:2.26", when="@12.8:")
 
-    conflicts("glibc@2.42:",
+    conflicts(
+        "glibc@2.42:",
         when="@:13.0",
         msg="Incomptaible exception specification of some C23 functions (cospi, "
-                  "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
-                  "cuda@13.1."
+        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
+        "cuda@13.1.",
     )
 
     variant(
