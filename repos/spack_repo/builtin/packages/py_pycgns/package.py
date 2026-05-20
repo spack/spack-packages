@@ -32,7 +32,7 @@ class PyPycgns(PythonPackage):
     # run dependencies
     with default_args(type=("build", "run")):
         depends_on("python@3.10:")
-        depends_on("py-numpy@1.23:")
+        depends_on("py-numpy@2:")
         depends_on("hdf5~mpi+hl")
 
     def setup_build_environment(self, env):
