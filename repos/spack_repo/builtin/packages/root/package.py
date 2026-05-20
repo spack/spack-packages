@@ -239,7 +239,7 @@ class Root(CMakePackage):
     variant("python", default=True, description="Enable Python ROOT bindings")
     variant("qt5", when="@:6.34", default=False, description="Enable Qt5 web-based display")
     variant("qt6", default=False, description="Enable Qt6 web-based display")
-    variant("r", default=False, description="Enable R ROOT bindings")
+    variant("r", default=False, description="Enable R ROOT bindings", when="@:6.40")
     variant("rpath", default=True, description="Enable RPATH", when="@:6.40")
     conflicts(
         "~rpath", when="@6.38:", msg="RPATHs are always applied if operating systems supports it"
@@ -292,10 +292,18 @@ class Root(CMakePackage):
         description="Build the TPython class to run Python code from C++",
     )
     variant("unuran", default=True, description="Use UNURAN for random number generation")
-    variant("vc", default=False, description="Enable Vc for adding new types for SIMD programming", when="@:6.40")
+    variant(
+        "vc",
+        default=False,
+        description="Enable Vc for adding new types for SIMD programming",
+        when="@:6.40",
+    )
     variant("vdt", default=True, description="Enable set of fast and vectorisable math functions")
     variant(
-        "veccore", default=False, description="Enable support for VecCore SIMD abstraction library", when="@:6.40"
+        "veccore",
+        default=False,
+        description="Enable support for VecCore SIMD abstraction library",
+        when="@:6.40",
     )
     variant(
         "webgui", default=True, description="Enable web-based UI components of ROOT", when="+root7"
@@ -409,7 +417,7 @@ class Root(CMakePackage):
     depends_on("postgresql", when="+postgres")
     depends_on("pythia6+root", when="+pythia6")
     depends_on("pythia8", when="+pythia8")
-    depends_on("r", when="+r", type=("build", "run"), when="@:6.40")
+    depends_on("r", when="+r", type=("build", "run"))
     depends_on("r-rcpp", when="+r", type=("build", "run"))
     depends_on("r-rcpp@:1.0.12", when="+r @:6.32.02", type=("build", "run"))
     depends_on("r-rinside", when="+r", type=("build", "run"))
