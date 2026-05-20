@@ -18,6 +18,8 @@ class PyPythonMumps(PythonPackage):
 
     maintainers("williampiat3", "akhmerov")
 
+    license("BSD-2-Clause")
+
     version("0.0.6", sha256="58c33104f77c448e127e9e6da316f71dfb1a17719ecf022634669d513306b1fa")
 
     variant("mpi", default=True, description="Whether to have MPI support on python-mumps or not")
