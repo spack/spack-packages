@@ -21,7 +21,10 @@ class PyAccessiblePygments(PythonPackage):
 
     depends_on("python@3.9:", type=("build", "run"), when="@0.0.5:")
     depends_on("py-pygments@1.5:", type=("build", "run"))
-    depends_on("py-setuptools", type=("build"))
+    depends_on("py-setuptools", type="build", when="@:0.0.4")
+    depends_on("py-hatchling", type="build", when="@0.0.5:")
+    depends_on("py-hatch-fancy-pypi-readme", type="build", when="@0.0.5:")
+    depends_on("py-hatch-vcs", type="build", when="@0.0.5:")
 
     def url_for_version(self, version):
         url = (
