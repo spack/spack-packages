@@ -97,7 +97,7 @@ class SstCore(AutotoolsPackage):
     depends_on("ncurses", when="+curses", type=("build", "link"))
 
     with when("@develop,master,14.0.0"):
-        depends_on("autoconf@1.68:", type="build")
+        depends_on("autoconf@2.69:", type="build")
         depends_on("automake@1.11.1:", type="build")
         depends_on("libtool@1.2.4:", type="build")
         depends_on("m4", type="build")

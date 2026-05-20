@@ -95,7 +95,7 @@ class SstElements(AutotoolsPackage):
     depends_on("mpi", when="+ariel_mpi")
 
     for version_name in ("master", "develop"):
-        depends_on("autoconf@1.68:", type="build", when="@{}".format(version_name))
+        depends_on("autoconf@2.69:", type="build", when="@{}".format(version_name))
         depends_on("automake@1.11.1:", type="build", when="@{}".format(version_name))
         depends_on("libtool@1.2.4:", type="build", when="@{}".format(version_name))
         depends_on("m4", type="build", when="@{}".format(version_name))
