@@ -1,4 +1,4 @@
-#Copyright Spack Project Developers. See COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -23,7 +23,7 @@ class Arbor(CMakePackage, CudaPackage):
     version(
         "0.12.2",
         sha256="406ece35f288b9ae500338a2b11df87eb9666829b4a42f38c350c9a1d8ab5b29",
-        url="https://github.com/arbor-sim/arbor/releases/download/v0.12.2/arbor-v0.12.2-full.tar.gz"
+        url="https://github.com/arbor-sim/arbor/releases/download/v0.12.2/arbor-v0.12.2-full.tar.gz",
     )
     version(
         "0.12.1",
