@@ -14,7 +14,7 @@ class PyPycgns(PythonPackage):
 
     pypi = "pyCGNS/pycgns-6.3.5.tar.gz"
 
-    # maintainers("williampiat3","MicK7")
+    maintainers("williampiat3")
 
     version(
         "6.3.5",
