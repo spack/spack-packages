@@ -18,7 +18,7 @@ class PyOptuna(PythonPackage):
     homepage = "https://optuna.org/"
     pypi = "optuna/optuna-3.2.0.tar.gz"
 
-    maintainers("elliottslaughter", "eugeneswalker")
+    maintainers("eugeneswalker")
 
     license("MIT")
 
