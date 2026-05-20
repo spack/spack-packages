@@ -75,7 +75,7 @@ class SstElements(AutotoolsPackage):
     depends_on("sst-core@develop", when="@develop")
     depends_on("sst-core@master", when="@master")
 
-    depends_on("intel-pin", when="+pin")
+    depends_on("intel-pin@:3", when="+pin")
     depends_on("dramsim2@2:", when="+dramsim2")
     depends_on("dramsim3@master", when="+dramsim3")
     depends_on("sst-dumpi@master", when="+dumpi")
