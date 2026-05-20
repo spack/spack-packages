@@ -29,7 +29,7 @@ class Vacuumms(CMakePackage):
 
     # This is the main branch, for the latest functionality
     version("develop", branch="develop")
-    version("1.3.0", sha256="ba192599e441f948cbd4d096cc4a9563fd42c6d1d41c7820ce0d37532adc2b61")
+    version("1.3.0", tag="1.3.0")
     variant("test", default=True, description="enable CMake testing")
     variant("tiff", default=True, description="Build TIFF utilities")
     variant("cuda", default=False, description="Build CUDA applications and utilities")
