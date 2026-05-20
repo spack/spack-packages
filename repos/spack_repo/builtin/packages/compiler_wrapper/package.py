@@ -36,7 +36,6 @@ class CompilerWrapper(Package, NMakePackage):
     url_win = "https://github.com/spack/msvc-wrapper/archive/refs/tags/v0.1.0.tar.gz"
     git_win = "https://github.com/spack/msvc-wrapper.git"
 
-
     homepage = homepage_win if IS_WINDOWS else homepage_nix
     url = url_win if IS_WINDOWS else url_nix
     if IS_WINDOWS:
