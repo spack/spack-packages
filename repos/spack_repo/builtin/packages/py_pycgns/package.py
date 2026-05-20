@@ -26,8 +26,8 @@ class PyPycgns(PythonPackage):
     # build dependencies
     with default_args(type="build"):
         depends_on("c")
-        depends_on("py-meson-python@0.18:")
-        depends_on("py-cython@3.1.1:")
+        depends_on("py-meson-python@0.15:")
+        depends_on("py-cython@3.0.6:")
         depends_on("pkgconfig")
     # run dependencies
     with default_args(type=("build", "run")):
