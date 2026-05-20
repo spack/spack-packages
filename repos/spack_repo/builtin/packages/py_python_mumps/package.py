@@ -16,7 +16,7 @@ class PyPythonMumps(PythonPackage):
     homepage = "https://gitlab.kwant-project.org/kwant/python-mumps"
     pypi = "python-mumps/python_mumps-0.0.6.tar.gz"
 
-    maintainers = ["williampiat3"]
+    maintainers("williampiat3","akhmerov")
 
     version("0.0.6", sha256="58c33104f77c448e127e9e6da316f71dfb1a17719ecf022634669d513306b1fa")
 
