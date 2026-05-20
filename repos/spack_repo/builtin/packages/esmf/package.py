@@ -469,7 +469,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
     ) -> None:
         env.set("ESMFMKFILE", os.path.join(self.prefix.lib, "esmf.mk"))
         if self.spec.satisfies("@8:"):
-            env.append_path("CMAKE_PREFIX_PATH", self.prefix.cmake)
+            env.append_path("CMAKE_MODULE_PATH", self.prefix.cmake)
 
     def install(self, pkg, spec, prefix):
         make("install")
