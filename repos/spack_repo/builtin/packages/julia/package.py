@@ -254,14 +254,16 @@ class Julia(MakefilePackage):
     depends_on("binutils", type="build")  # for readelf
 
     depends_on("blas")  # note: for now openblas is fixed...
-    depends_on("curl tls=mbedtls +nghttp2 +libssh2")
+    depends_on("curl tls=openssl +nghttp2 +libssh2", when="@1.12:")
+    depends_on("curl tls=mbedtls +nghttp2 +libssh2", when="@:1.11")
     depends_on("dsfmt@2.2.4:")  # apparently 2.2.3->2.2.4 breaks API
     depends_on("gmp")
     depends_on("lapack")  # note: for now openblas is fixed...
     depends_on("libblastrampoline")
     depends_on("libgit2")
-    depends_on("libssh2 crypto=mbedtls")
-    depends_on("mbedtls libs=shared")
+    depends_on("libssh2 crypto=openssl", when="@1.12:")
+    depends_on("libssh2 crypto=mbedtls", when="@:1.11")
+    depends_on("mbedtls libs=shared", when="@:1.11")
     depends_on("mpfr")
     depends_on("nghttp2")
     depends_on("openblas +ilp64 symbol_suffix=64_")
