@@ -119,7 +119,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("+cuda cuda_arch=none")
 
     patch(
-        "https://patch-diff.githubusercontent.com/raw/cupy/cupy/pull/9022.patch",
+        "https://patch-diff.githubusercontent.com/raw/cupy/cupy/pull/9022.patch?full_index=1",
         sha256="bc96ea317748e42f7651d9f3b97f8db224081f627bcfcb6cc48c2ca139143441",
         when="@13.4 ^rocm-core@6.3",
     )
