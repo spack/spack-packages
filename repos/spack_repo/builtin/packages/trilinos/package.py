@@ -326,6 +326,15 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         conflicts("~mpi")
         conflicts("~stk")
 
+    # ShyLU_DD/core dependended on these libraries and was included with +shylu up until v17.0
+    with when("@:16 +shylu"):
+        conflicts("~amesos")
+        conflicts("~aztec")
+        conflicts("~belos")
+        conflicts("~epetra")
+        conflicts("~ifpack")
+        conflicts("~isorropia")
+
     # Panzer is not gen-2 library
     with when("+panzer"):
         conflicts("~intrepid2")
