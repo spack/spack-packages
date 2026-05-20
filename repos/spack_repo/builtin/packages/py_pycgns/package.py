@@ -16,6 +16,8 @@ class PyPycgns(PythonPackage):
 
     maintainers("williampiat3")
 
+    license("LGPL-2.1-only")
+
     version(
         "6.3.5",
         sha256="0414362305e7831c5719ccedfbec2c477bd345a6ff426d2a0601de727c5d74c3",
