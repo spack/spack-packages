@@ -71,9 +71,7 @@ class Cosimio(CMakePackage):
         if not self.spec.satisfies("@:4.3.1 +fortran"):
             return
 
-        fortran_file = join_path(
-            self.stage.source_path, "co_sim_io", "fortran", "co_sim_io.f90"
-        )
+        fortran_file = join_path(self.stage.source_path, "co_sim_io", "fortran", "co_sim_io.f90")
 
         # BIND C name -> types to IMPORT in that interface block.
         fixes = {
@@ -109,9 +107,7 @@ class Cosimio(CMakePackage):
             # and contains one of our target BIND(C, NAME=...) patterns.
             stripped = line.lstrip()
             if stripped.startswith("&") and 'BIND(C, NAME="' in line:
-                bind_name = next(
-                    (n for n in fixes if 'BIND(C, NAME="' + n + '")' in line), None
-                )
+                bind_name = next((n for n in fixes if 'BIND(C, NAME="' + n + '")' in line), None)
                 if bind_name is not None:
                     # Fix 1: ensure the preceding FUNCTION line ends with & so
                     # that this is a valid free-form continuation.  If it already
