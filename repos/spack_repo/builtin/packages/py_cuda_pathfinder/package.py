@@ -28,7 +28,8 @@ class PyCudaPathfinder(PythonPackage):
     """Pathfinder for CUDA components"""
 
     homepage = "https://nvidia.github.io/cuda-python/cuda-pathfinder"
-    pypi = "cuda-pathfinder/cuda_pathfinder-1.3.3-py3-none-any.whl"
+    url = "https://files.pythonhosted.org/packages/py3/c/cuda-pathfinder/cuda_pathfinder-1.3.3-py3-none-any.whl"
+    list_url = "https://pypi.org/project/cuda-pathfinder"
 
     license("Apache-2.0")
 
