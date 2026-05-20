@@ -114,6 +114,10 @@ class SstElements(AutotoolsPackage):
     )
     requires("+pin", when="+ariel_mpi", msg="Building Ariel requires pin")
 
+    with when("^mpi=openmpi"):
+        # < 4 is untested and 5 doesn't pass tests due to reference outputs
+        depends_on("openmpi@4")
+
     # force out-of-source builds
     build_directory = "spack-build"
 
