@@ -35,7 +35,7 @@ class PyPlaid(PythonPackage):
         depends_on("py-pyyaml@6:")
         depends_on("py-pycgns@6:")  # only 6.3 is available on spack
         depends_on("py-zarr@3.1:")
-        depends_on("py-scikit-learn@1.4")
+        depends_on("py-scikit-learn@1.4:")
         depends_on("py-datasets@2.18:4")
         depends_on("py-numpy@1.26:2")
         depends_on("py-matplotlib@3.8:")
