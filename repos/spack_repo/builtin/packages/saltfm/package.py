@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class SaltFm(CMakePackage):
-    """SALT-FM: A next generation LLVM-based Source Analysis Toolkit for performance 
+    """SALT-FM: A next generation LLVM-based Source Analysis Toolkit for performance
     instrumentation of HPC applications"""
 
     homepage = "https://github.com/ParaToolsInc/SALT-FM"
