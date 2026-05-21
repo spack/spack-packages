@@ -59,7 +59,7 @@ class CompilerWrapper(Package, NMakePackage):
         # version("develop", branch="main")
         version("0.1.2", commit="8faa607813f3a9997d5549ba79f571649ab93913")
 
-    # depends_on("msvc", when="platform=windows", type="build")
+    depends_on("msvc", when="platform=windows", type="build")
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
