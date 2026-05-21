@@ -24,8 +24,8 @@ class Saltfm(CMakePackage):
     version("0.4.1", sha256="fe251f28cd44eeb71640b03d01d6201c935485b4794ba7bc2d92e7988a13d237")
     version("0.4.0", sha256="3c322326f0dfaa9f00f283d4d9be8c8fb991d1f081aca1c86451ceb92f2c9c4f")
 
-    version("0.3.0", sha256="7df4c060c292ed625d4c1cc8c0e794cd4380a263df63693b648b3c8e0cf51ccf")
-    version("0.2.0", sha256="55c80f9d0591752b1e5b40e924718dc28f928ee0a3c7008adec3feab1280c57f")
+    version("0.3.0", sha256="a80661ff5ca1cfdcab44deb42142c2aaf3cac0c366ac54639a7069e1cd67b4bd")
+    version("0.2.0", sha256="3a4f9be700b31e4fb4627154642d334f83579ffcfdeb47d92c0f87e4bdc75ccf")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
