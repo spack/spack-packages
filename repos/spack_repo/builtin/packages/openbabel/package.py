@@ -38,7 +38,8 @@ class Openbabel(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("python", type=("build", "run"), when="+python")
+    # Pin because distutils was removed in 3.12
+    depends_on("python@:3.11", type=("build", "run"), when="+python")
     depends_on("cmake@3.1:", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("swig@2.0:", type="build", when="+python")
