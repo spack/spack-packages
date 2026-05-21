@@ -19,6 +19,7 @@ class PyLightning(PythonPackage):
     maintainers("adamjstewart")
 
     version("master", branch="master")
+    version("2.6.4", sha256="79a4eaf3db09e88485d0589abb6aa1beedde81e4e52536b1ddbb4478cda22235")
     version("2.6.1", sha256="859104b98c61add6fe60d0c623abf749baf25f2950a66ebdfb4bd18aa7decba9")
     version("2.6.0", sha256="881841716b59c1837ae0c562c2e64fea9bcf49ef9de3867bd1f868557ec23d04")
     version("2.5.6", sha256="57b6abe87080895bc237fb7f36b7b4abaa2793760cbca00e3907e56607e0ed27")
