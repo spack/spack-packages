@@ -178,6 +178,8 @@ class Esmf(MakefilePackage, PythonExtension):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ESMFMKFILE", os.path.join(self.prefix.lib, "esmf.mk"))
+        if self.spec.satisfies("@8:"):
+            env.append_path("CMAKE_MODULE_PATH", self.prefix.cmake)
 
 
 class PythonPipBuilder(python.PythonPipBuilder):
