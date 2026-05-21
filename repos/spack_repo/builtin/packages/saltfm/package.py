@@ -30,7 +30,9 @@ class SaltFm(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("c", type="build")
 
-    variant("flang", default=True, description="Build the Flang frontend plugin for Fortran support")
+    variant(
+        "flang", default=True, description="Build the Flang frontend plugin for Fortran support"
+    )
 
     depends_on("cmake@3.23:", type="build")
 
