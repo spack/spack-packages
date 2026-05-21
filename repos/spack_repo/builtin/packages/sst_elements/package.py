@@ -66,9 +66,8 @@ class SstElements(AutotoolsPackage):
     variant("otf2", default=False, description="Build with OTF2")
     variant("ariel_mpi", default=False, description="Build Ariel with MPI Support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("sst-core")
