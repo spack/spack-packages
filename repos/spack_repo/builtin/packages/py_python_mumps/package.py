@@ -47,8 +47,9 @@ class PyPythonMumps(PythonPackage):
     depends_on("py-pytest", type="test")
 
     # External solver
-    depends_on("mumps+float+complex+double+metis+scotch+pkgconfig", when="+mpi")
-    depends_on("mumps~mpi+float+complex+double+metis+scotch+pkgconfig", when="~mpi")
+    depends_on("mumps+float+complex+double+metis+scotch+pkgconfig")
+    depends_on("mumps+mpi", when="+mpi")
+    depends_on("mumps~mpi", when="~mpi")
 
     patch("patch_meson_build.patch")
 
