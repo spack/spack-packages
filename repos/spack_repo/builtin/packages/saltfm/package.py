@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack.package import *
 
 
-class SaltFm(CMakePackage):
+class Saltfm(CMakePackage):
     """SALT-FM: A next generation LLVM-based Source Analysis Toolkit for performance
     instrumentation of HPC applications"""
 
