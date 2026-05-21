@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class PyPlaid(PythonPackage):
-    """A package that implements a data model tailored for AI and ML in the context of physics problems"""
+    """A package that implements a data model tailored for AI and ML
+    in the context of physics problems
+    """
 
     homepage = "https://github.com/PLAID-lib/plaid"
     pypi = "pyplaid/pyplaid-0.1.15.tar.gz"
