@@ -33,61 +33,61 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
         "2.0.0",
         tag="v2.0.0",
         commit="d80d9a00914c096121832c6bb778d83b0b40c3c9",
-        submodules=submodules
+        submodules=submodules,
     )
     version(
         "1.6.0",
         commit="159cd173572280ac0f6f094a71dcc3ebeeb34076",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.5.1",
         commit="84e9faf9d9dad8d851075eba26038338d90e6d3a",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.5.0",
         commit="227f49573a28bdd234be5500b3733be78a958f15",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.4.1",
         commit="ea607c685444b5f345bfdc9a59c345f0f30adde2",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.4.0",
         commit="4f4c3fdb40b52ace2d6ba000e7f24b340ec8e886",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.3.0",
         commit="58b039d746a6eac8e84b0afc01354cd58caec485",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.1.2",
         commit="db3bb16e19c09e01402071623258dae4d13e5133",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.1.1",
         commit="0e0a3f27604876749d47c06ec71daaca4b270df9",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "1.1.0",
         commit="dc8dd85544ff1b55a64a3cbbbdf12b8a0c6fdaf6",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version("1.0.0", commit="230d7df2f384f68b952a1ea03aad41431eaad283", deprecated=True)
     version("0.99.2", commit="56961641f50827b3aa4c14524f2f978dc48b9ce5", deprecated=True)
@@ -98,13 +98,13 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
         "snapshot.5-18-2022",
         commit="3eb58335db71bb72341153a7867eb607402067ca",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
     version(
         "kpp2",
         commit="1da764d80a2db793f4c43ca50e50981f7ed3880a",
         submodules=submodules,
-        deprecated=True
+        deprecated=True,
     )
 
     # Programming model options
