@@ -67,6 +67,8 @@ class SstMacro(AutotoolsPackage):
     # Allow mismatch between core dependency version and current macro version.
     depends_on("sst-core", when="+core")
     depends_on("gettext")
+    # configure shows this as an optional dependency which is incorrect.
+    depends_on("python@3")
 
     variant("pdes_threads", default=True, description="Enable thread-parallel PDES simulation")
     variant("pdes_mpi", default=False, description="Enable distributed PDES simulation")
@@ -129,5 +131,9 @@ class SstMacro(AutotoolsPackage):
             env["CXX"] = spec["mpi"].mpicxx
             env["F77"] = spec["mpi"].mpif77
             env["FC"] = spec["mpi"].mpifc
+
+        args.append(f"--with-python={spec['python'].command.path}")
+        # Not python-config in order to match search precedence of sst-core
+        args.append(f"--with-python-config={spec['python'].prefix.bin.join('python3-config')}")
 
         return args
