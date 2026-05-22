@@ -60,6 +60,46 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("^openssl@3.3.0")
 
     @run_before("install")
+    def patch_llvm_target_libraries(self):
+        """Ensure libtriton.so links all LLVM target libraries.
+
+        Triton's llvm.cc calls llvm::InitializeAllTargetInfos() and similar
+        "initialize all" functions.  These are header-only functions that
+        expand at compile time to init calls for every LLVM target that was
+        built.  However, Triton's CMakeLists.txt only links AMDGPU, NVPTX,
+        and the host-arch codegen/asm libraries, leaving symbols from other
+        targets (e.g. AArch64 on x86) unresolved at runtime.
+
+        We use filter_file to patch CMakeLists.txt, adding the missing
+        target libraries right after LLVMAMDGPUAsmParser in the
+        TRITON_LIBRARIES list.
+        """
+        llvm_prefix = self.spec["llvm"].prefix
+        llvm_config = Executable(os.path.join(str(llvm_prefix), "bin", "llvm-config"))
+        targets_built = llvm_config("--targets-built", output=str).strip().split()
+
+        # Build cmake list entries for all targets' codegen and asm parser libs,
+        # but only include libraries that actually exist (e.g. NVPTX has no
+        # AsmParser).
+        llvm_libdir = llvm_config("--libdir", output=str).strip()
+        extra_lines = []
+        for t in targets_built:
+            for component in ("CodeGen", "AsmParser"):
+                libname = f"LLVM{t}{component}"
+                # Check if the static library exists
+                if os.path.exists(os.path.join(llvm_libdir, f"lib{libname}.a")):
+                    extra_lines.append(f"    {libname}")
+
+        replacement = "    LLVMAMDGPUAsmParser\n" + "\n".join(extra_lines)
+
+        filter_file(
+            "    LLVMAMDGPUAsmParser",
+            replacement,
+            join_path(self.stage.source_path, "CMakeLists.txt"),
+            string=True,
+        )
+
+    @run_before("install")
     def create_cuda_include_dir(self):
         """Create a merged include directory with both CUDA and CUPTI headers.
 
