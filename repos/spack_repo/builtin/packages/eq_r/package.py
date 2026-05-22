@@ -15,7 +15,7 @@ class EqR(AutotoolsPackage):
     Installs EQ/R.
     """
 
-    homepage = "http://emews.org"
+    homepage = "https://emews.org"
     url = "https://github.com/emews/EQ-R/archive/1.0.tar.gz"
     git = "https://github.com/emews/EQ-R.git"
 

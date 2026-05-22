@@ -349,6 +349,11 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         env.set("ZLIB_INCLUDE", spec["zlib-api"].prefix.include)
         env.set("ZLIB_LIB", spec["zlib-api"].libs.directories[0])
 
+        # Setting TZ=UTC is a critical step for reproducibility, since it forces the environment
+        # into a consistent, offset-free timezone before the configuration tests begin
+        # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=791362
+        env.set("TZ", "UTC")
+
     @run_after("install")
     def filter_config_dot_pm(self):
         """Run after install so that Config.pm records the compiler that Spack
