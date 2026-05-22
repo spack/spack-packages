@@ -156,8 +156,8 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cuda", when="+cuda")
     depends_on("raja", when="+raja")
     depends_on("umpire", when="+raja")
-    depends_on("spdlog", when="@develop+logging")
-    depends_on("fmt", when="@develop+logging")
+    depends_on("spdlog", when="@2.0:+logging")
+    depends_on("fmt", when="@2.0:+logging")
     depends_on("cmake@3.18:", type="build")
 
     # Profiling
@@ -200,7 +200,7 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hiop@0.5.1:", when="@1.1.0:+hiop")
     depends_on("hiop@0.5.3:", when="@1.3.0:+hiop")
     depends_on("hiop@0.7.0:1.0.0", when="@1.5.0:1.6.0+hiop")
-    depends_on("hiop@1.0.1:", when="@develop:+hiop")
+    depends_on("hiop@1.0.1:", when="@2.0:+hiop")
 
     depends_on("hiop~mpi", when="+hiop~mpi")
     depends_on("hiop+mpi", when="+hiop+mpi")
