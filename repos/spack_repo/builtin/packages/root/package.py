@@ -388,6 +388,7 @@ class Root(CMakePackage):
     depends_on("python@2.7:", when="+python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
+    depends_on("py-numpy", type=("build", "run"), when="+tmva-sofie @6.40:")
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")
