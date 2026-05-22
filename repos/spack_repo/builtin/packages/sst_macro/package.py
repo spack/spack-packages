@@ -59,6 +59,8 @@ class SstMacro(AutotoolsPackage):
         depends_on("libtool@2.2.6:", type="build", when="@{}".format(version_name))
         depends_on("m4", type="build", when="@{}".format(version_name))
 
+    depends_on("grep", type="build")
+    depends_on("sed", type="build")
     depends_on("binutils", type="build")
     depends_on("zlib-api", type=("build", "link"))
     depends_on("otf2", when="+otf2")
