@@ -32,7 +32,7 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     version(
         "2.0.0",
         tag="v2.0.0",
-        sha256="f55c3266f17f31ee1f3ef105089d50f992b4d770721bfa24267bb65cc4170b69",
+        commit="d80d9a00914c096121832c6bb778d83b0b40c3c9",
         submodules=submodules
     )
     version(
