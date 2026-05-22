@@ -29,26 +29,83 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ornl/ExaGO.git"
     maintainers("ryandanehy", "cameronrutherford", "pelesh")
 
-    version("1.6.0", commit="159cd173572280ac0f6f094a71dcc3ebeeb34076", submodules=submodules)
-    version("1.5.1", commit="84e9faf9d9dad8d851075eba26038338d90e6d3a", submodules=submodules)
-    version("1.5.0", commit="227f49573a28bdd234be5500b3733be78a958f15", submodules=submodules)
-    version("1.4.1", commit="ea607c685444b5f345bfdc9a59c345f0f30adde2", submodules=submodules)
-    version("1.4.0", commit="4f4c3fdb40b52ace2d6ba000e7f24b340ec8e886", submodules=submodules)
-    version("1.3.0", commit="58b039d746a6eac8e84b0afc01354cd58caec485", submodules=submodules)
-    version("1.1.2", commit="db3bb16e19c09e01402071623258dae4d13e5133", submodules=submodules)
-    version("1.1.1", commit="0e0a3f27604876749d47c06ec71daaca4b270df9", submodules=submodules)
-    version("1.1.0", commit="dc8dd85544ff1b55a64a3cbbbdf12b8a0c6fdaf6", submodules=submodules)
-    version("1.0.0", commit="230d7df2f384f68b952a1ea03aad41431eaad283")
-    version("0.99.2", commit="56961641f50827b3aa4c14524f2f978dc48b9ce5")
-    version("0.99.1", commit="0ae426c76651ba5a9dbcaeb95f18d1b8ba961690")
+    version(
+        "2.0.0",
+        tag="v2.0.0",
+        sha256="f55c3266f17f31ee1f3ef105089d50f992b4d770721bfa24267bb65cc4170b69",
+        submodules=submodules
+    )
+    version(
+        "1.6.0",
+        commit="159cd173572280ac0f6f094a71dcc3ebeeb34076",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.5.1",
+        commit="84e9faf9d9dad8d851075eba26038338d90e6d3a",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.5.0",
+        commit="227f49573a28bdd234be5500b3733be78a958f15",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.4.1",
+        commit="ea607c685444b5f345bfdc9a59c345f0f30adde2",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.4.0",
+        commit="4f4c3fdb40b52ace2d6ba000e7f24b340ec8e886",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.3.0",
+        commit="58b039d746a6eac8e84b0afc01354cd58caec485",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.1.2",
+        commit="db3bb16e19c09e01402071623258dae4d13e5133",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.1.1",
+        commit="0e0a3f27604876749d47c06ec71daaca4b270df9",
+        submodules=submodules,
+        deprecated=True
+    )
+    version(
+        "1.1.0",
+        commit="dc8dd85544ff1b55a64a3cbbbdf12b8a0c6fdaf6",
+        submodules=submodules,
+        deprecated=True
+    )
+    version("1.0.0", commit="230d7df2f384f68b952a1ea03aad41431eaad283", deprecated=True)
+    version("0.99.2", commit="56961641f50827b3aa4c14524f2f978dc48b9ce5", deprecated=True)
+    version("0.99.1", commit="0ae426c76651ba5a9dbcaeb95f18d1b8ba961690", deprecated=True)
     version("main", branch="main", submodules=submodules)
     version("develop", branch="develop", submodules=submodules)
     version(
         "snapshot.5-18-2022",
         commit="3eb58335db71bb72341153a7867eb607402067ca",
         submodules=submodules,
+        deprecated=True
     )
-    version("kpp2", commit="1da764d80a2db793f4c43ca50e50981f7ed3880a", submodules=submodules)
+    version(
+        "kpp2",
+        commit="1da764d80a2db793f4c43ca50e50981f7ed3880a",
+        submodules=submodules,
+        deprecated=True
+    )
 
     # Programming model options
     variant("mpi", default=True, description="Enable/Disable MPI")
@@ -157,12 +214,17 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     # This is no longer a requirement in RAJA > 0.14
     depends_on("umpire+cuda~shared", when="+raja+cuda ^raja@:0.14")
 
-    # PETSc dependency logic
+    # PETSc version dependency logic
     depends_on("petsc@3.13:3.14", when="@:1.2")
     depends_on("petsc@3.16", when="@1.3:1.4")
     depends_on("petsc@3.18:3.19", when="@1.5")
-    depends_on("petsc@3.19:", when="@1.6:")
+    depends_on("petsc@3.19:3.23", when="@1.6")
+    depends_on("petsc@3.24:", when="@develop")
     depends_on("petsc~mpi", when="~mpi")
+
+    # Ipopt versiondependency logic
+    depends_on("ipopt@3.12", when="@:1.6")
+    depends_on("ipopt@3.14:", when="@develop")
 
     # cuda_arch and amdgpu_target dependency logic
     for arch in CudaPackage.cuda_arch_values:
