@@ -32,6 +32,7 @@ class PyPlaid(PythonPackage):
 
     # Run deps
     with default_args(type=("run")):
+        depends_on("py-tqdm@4.60:4")
         depends_on("py-pyyaml@6:")
         depends_on("py-pycgns@6:")  # only 6.3 is available on spack
         depends_on("py-zarr@3.1:")
