@@ -338,7 +338,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.0-1772831027
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.3-1778518886
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
