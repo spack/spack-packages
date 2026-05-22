@@ -28,7 +28,7 @@ class PyPlaid(PythonPackage):
 
     # Build and run deps
     with default_args(type=("build", "run")):
-        depends_on("python@:3.13")
+        depends_on("python@3.11:3.13")
 
     # Run deps
     with default_args(type=("run")):
