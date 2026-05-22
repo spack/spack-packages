@@ -149,23 +149,19 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     # Package options (alphabet order)
     variant("adelus", default=False, description="Compile with Adelus")
-    variant("amesos", default=True, description="Compile with Amesos")
     variant("amesos2", default=True, description="Compile with Amesos2")
     variant("anasazi", default=True, description="Compile with Anasazi")
-    variant("aztec", default=True, description="Compile with Aztec")
     variant("belos", default=True, description="Compile with Belos")
     variant("chaco", default=False, description="Compile with Chaco from SEACAS")
-    variant("epetra", default=True, description="Compile with Epetra")
-    variant("epetraext", default=True, description="Compile with EpetraExt")
     variant("exodus", default=False, description="Compile with Exodus from SEACAS")
-    variant("ifpack", default=True, description="Compile with Ifpack")
     variant("ifpack2", default=True, description="Compile with Ifpack2")
-    variant("intrepid", default=False, description="Enable Intrepid")
     variant("intrepid2", default=False, description="Enable Intrepid2")
-    variant("isorropia", default=False, description="Compile with Isorropia")
-    variant("gtest", default=False, description="Build vendored Googletest")
+    variant(
+        "gtest",
+        default=False,
+        description="Build vendored Googletest (uses external Googletest for @17:)",
+    )
     variant("kokkos", default=True, description="Compile with Kokkos")
-    variant("ml", default=True, description="Compile with ML")
     variant("minitensor", default=False, description="Compile with MiniTensor")
     variant("muelu", default=True, description="Compile with Muelu")
     variant("nox", default=False, description="Compile with NOX")
@@ -174,7 +170,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("piro", default=False, description="Compile with Piro")
     variant("phalanx", default=False, description="Compile with Phalanx")
     variant("rol", default=False, description="Compile with ROL")
-    variant("rythmos", default=False, description="Compile with Rythmos")
     variant("sacado", default=True, description="Compile with Sacado")
     variant("stk", default=False, description="Compile with STK")
     variant("shards", default=False, description="Compile with Shards")
@@ -192,17 +187,38 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     # Internal package options (alphabetical order)
     variant("basker", default=False, description="Compile with the Basker solver in Amesos2")
-    variant("epetraextbtf", default=False, description="Compile with BTF in EpetraExt")
-    variant(
-        "epetraextexperimental",
-        default=False,
-        description="Compile with experimental in EpetraExt",
-    )
-    variant(
-        "epetraextgraphreorderings",
-        default=False,
-        description="Compile with graph reorderings in EpetraExt",
-    )
+
+    # Deprecated packages as of v17.0.0, remove when no earlier versions are supported
+    with when("@:16"):
+        variant("amesos", default=True, description="Compile with Amesos")
+        variant("aztec", default=True, description="Compile with Aztec")
+        variant("epetra", default=True, description="Compile with Epetra")
+        variant("epetraext", default=True, description="Compile with EpetraExt")
+        variant("ifpack", default=True, description="Compile with Ifpack")
+        variant("intrepid", default=False, description="Enable Intrepid")
+        variant("isorropia", default=False, description="Compile with Isorropia")
+        variant("ml", default=True, description="Compile with ML")
+        variant(
+            "epetraextbtf",
+            default=False,
+            description="Compile with BTF in EpetraExt",
+            when="@:16",
+        )
+        variant(
+            "epetraextexperimental",
+            default=False,
+            description="Compile with experimental in EpetraExt",
+            when="@:16",
+        )
+        variant(
+            "epetraextgraphreorderings",
+            default=False,
+            description="Compile with graph reorderings in EpetraExt",
+            when="@:16",
+        )
+
+    # Deprecated as of v15.0.0, remove when no earlier versions are supported
+    variant("rythmos", default=False, description="Compile with Rythmos", when="@:14")
 
     # External package options
     variant("dtk", default=False, description="Enable DataTransferKit (deprecated)")
@@ -309,6 +325,15 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     with when("+scorec"):
         conflicts("~mpi")
         conflicts("~stk")
+
+    # ShyLU_DD/core dependended on these libraries and was included with +shylu up until v17.0
+    with when("@:16 +shylu"):
+        conflicts("~amesos")
+        conflicts("~aztec")
+        conflicts("~belos")
+        conflicts("~epetra")
+        conflicts("~ifpack")
+        conflicts("~isorropia")
 
     # Panzer is not gen-2 library
     with when("+panzer"):
