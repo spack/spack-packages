@@ -219,12 +219,12 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("petsc@3.16", when="@1.3:1.4")
     depends_on("petsc@3.18:3.19", when="@1.5")
     depends_on("petsc@3.19:3.23", when="@1.6")
-    depends_on("petsc@3.24:", when="@develop")
+    depends_on("petsc@3.24:", when="@2.0:")
     depends_on("petsc~mpi", when="~mpi")
 
     # Ipopt versiondependency logic
     depends_on("ipopt@3.12", when="@:1.6")
-    depends_on("ipopt@3.14:", when="@develop")
+    depends_on("ipopt@3.14:", when="@2.0:")
 
     # cuda_arch and amdgpu_target dependency logic
     for arch in CudaPackage.cuda_arch_values:
