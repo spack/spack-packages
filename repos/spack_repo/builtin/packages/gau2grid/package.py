@@ -22,6 +22,7 @@ class Gau2grid(CMakePackage):
 
     version("master", branch="master")
     version("2.0.8", sha256="c5f445344a465c1d9afc6516544dc4a2fba588af7ba0f1ac1a6b538260f0cd96")
+    version("2.0.9", sha256="7879bdddf3a52cd2a051086215977822bbe8d1af927fcf5b4fb0256a38b8a76c")
 
     depends_on("cmake@3.12:", type="build")
     depends_on("ninja@1.10:", type="build")
