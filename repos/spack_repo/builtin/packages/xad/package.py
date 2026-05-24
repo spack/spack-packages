@@ -1,3 +1,7 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -15,9 +19,6 @@ class Xad(CMakePackage):
 
     version("2.1.0", sha256="110729586b1a097c9e4a7ec34c48e60f3aec7ec61ef192a417ce0774cc32be43")
 
-    depends_on("c", type="build")
+    depends_on("cmake@3.15:", type="build")
     depends_on("cxx", type="build")
-
-    def cmake_args(self):
-        args = []
-        return args
+    depends_on("c", type="build")
