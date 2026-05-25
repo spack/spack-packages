@@ -29,7 +29,10 @@ class PyPythonDateutil(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools@24.3:")
-        depends_on("py-setuptools-scm@:7", when="@2.7:")
+
+        # the pyproject.toml is pinned to <8 for python 2.x support, but >7 is fine to use
+        # https://github.com/dateutil/dateutil/pull/1346#issuecomment-1978841433
+        depends_on("py-setuptools-scm", when="@2.7:")
         depends_on("py-wheel", when="@2.8.0:")
 
     with default_args(type=("build", "run")):
