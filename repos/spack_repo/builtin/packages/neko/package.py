@@ -64,8 +64,8 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def configure_args(self):
         args = []
-        args.append("--with-blas={0}".format(self.spec["blas"].libs.joined(";")))
-        args.append("--with-lapack={0}".format(self.spec["lapack"].libs.joined(";")))
+        args.append("--with-blas={0}".format(self.spec["blas"].libs.ld_flags))
+        args.append("--with-lapack={0}".format(self.spec["lapack"].libs.ld_flags))
         args += self.with_or_without("parmetis", variant="parmetis", activation_value="prefix")
         args += self.with_or_without("metis", variant="parmetis", activation_value="prefix")
         args += self.with_or_without("libxsmm", variant="xsmm")
