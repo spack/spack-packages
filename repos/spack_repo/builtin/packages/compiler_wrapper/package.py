@@ -57,7 +57,7 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         # version("develop", branch="main")
-        version("1.0", commit="f5a25f8712b111bae3eab9e54cd892045268cd0e")
+        version("1.0", commit="69b19d84419b944fa2cd3077333fc9c9817dc1be")
 
     depends_on("msvc", when="platform=windows", type="build")
 
@@ -285,7 +285,7 @@ class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
     def install(self, pkg, spec, prefix):
         bin_dir = pkg.bin_dir()
         opts = self.std_nmake_args
-        opts.append(self.define("PREFIX", f'"{str(bin_dir)}"'))
+        opts.append(self.define("PREFIX", str(bin_dir)))
         with working_dir(self.build_directory):
             nmake(*opts, *self.install_targets, ignore_quotes=self.ignore_quotes)
 
