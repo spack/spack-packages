@@ -34,7 +34,7 @@ class Yambo(AutotoolsPackage,CudaPackage):
     version('5.2.3', sha256='a6168d1fa820af857ac51217bd6ad26dda4cc89c07e035bd7dc230038ae1ab9c')
     version('5.2.2', sha256='2ddd6356830ce9302e304b7627cff3aa973846cf893f91742b4390d0b53d63d4')
     version('5.2.1', sha256='0ac362854313927d75bbf87be98ff58447f3805f79724c38dc79df07f03a7046')
-    version('5.2.0', sha256='eb41e83df716eb87261cf130ffe7f930e7dc2e123343d47b73d5a3c69fea7316')
+    version('5.2.0', sha256='88fd6de5c9be49b8af89a2634b3c2da6db5a614eff8e19a7ec5c48ef12bafc8b')
     version('5.1.4', sha256='f2dfa1b4cb6a28bd54efb56a9333f51e6da9bd248d92ca3f6e945cb9ac9fe82c')
     version('5.1.3', sha256='eb12297990030e785a58db6b9c9f0e34809eb2f095082e0aeca89eeaaf14ff37')
     version('5.1.2', sha256='9625d8a96bd9a3ff3713ebe53228d5ac9be0a98adecbe2a2bad67234c0e26a2e')

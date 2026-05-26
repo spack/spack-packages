@@ -26,7 +26,7 @@ class Devicexlib(AutotoolsPackage,CudaPackage,ROCmPackage):
     version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
     version("0.8.6", sha256="36e6222bc59cf0ed7268cc3652a3661887109f7fe072cefe06884dcd6de2407d")
     version("0.8.5", sha256="498d5c6804e697123d382d9dd35dedeb4b64228704f84711877c842b851d37df")
-    version("0.8.4", sha256="d1b1432300dfd4dfcb31703e873ad68f3b33b492c596d0b8c668ff38c2cc3b5e")
+    version("0.8.4", sha256="6c50bb6d51a26429f17c9bbb00e81b279ed7f731b2a73f4689b7b30a8e30f115")
     version("0.8.3", sha256="3d2d4264df8c57da2791b0f94def52d789d67c6fe7ad5960f96c96dfc6c25cb2")
     version("0.8.2", sha256="c184de73f424e9437e352eb0e35716514348a7cd88ebac3ad7a52c66c4e4ba9c")
 
