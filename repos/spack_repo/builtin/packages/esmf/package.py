@@ -432,9 +432,9 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @run_after("install")
     def post_install(self):
-        # Only copy the raw source cmake tree for legacy v8 installations.
-        # The v9.0+ build generates standard ESMFConfig.cmake for lib/cmake/ESMF/
-        if self.spec.satisfies("@8"):
+        # Only copy the raw source cmake tree for legacy v8.0 - v8.6 installations.
+        # Newer versions handle this inside ESMF's native install target.
+        if self.spec.satisfies("@8:8.6"):
             install_tree("cmake", self.prefix.cmake)
 
         # Several applications using ESMF are affected by CMake
