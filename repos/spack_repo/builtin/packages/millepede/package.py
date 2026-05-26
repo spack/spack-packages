@@ -24,7 +24,6 @@ class Millepede(MakefilePackage, CMakePackage):
     license("LGPL-2.0-only")
 
     version("main", branch="main")
-
     version("05-01-03", sha256="18f707a1b372f07420e26969f503518b6dd067642f5eab45f05728aa7ff742ec")
     version("05-01-02", sha256="fd7991487682e8b28cac6a036b905fedc19ec0ac9e26fd85e2514b22a75e3343")
     version("05-01-01", sha256="b6a316e4b1ebf93cbf72ddd57a157e09f4446e4677352ef288748731ac2c0297")
