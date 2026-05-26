@@ -36,7 +36,11 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-    variant("openmp", default=False, description="Enable OpenMP support")
+    variant(
+        "openmp",
+        default=False,
+        description="Enable OpenMP support",
+    )
 
     variant(
         "openmp5",
@@ -91,7 +95,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             when="%nvhpc",
             description=(
                 'Specify the CUDA runtime version, e.g. "11.8", only if you '
-                "want the secondary version installed with the NVHPC SDK."
+                'want the secondary version installed with the NVHPC SDK.'
             ),
         )
 
