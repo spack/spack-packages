@@ -285,7 +285,7 @@ class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
     def install(self, pkg, spec, prefix):
         bin_dir = pkg.bin_dir()
         opts = self.std_nmake_args
-        opts.append(self.define("PREFIX", str(bin_dir)))
+        opts.append(self.define("PREFIX", f'"{str(bin_dir)}"'))
         with working_dir(self.build_directory):
             nmake(*opts, *self.install_targets, ignore_quotes=self.ignore_quotes)
 
