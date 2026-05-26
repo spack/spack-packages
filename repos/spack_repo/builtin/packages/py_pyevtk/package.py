@@ -11,7 +11,7 @@ class PyPyevtk(PythonPackage):
     """EVTK (Export VTK) package allows exporting data to binary VTK files for visualization
     and data analysis."""
 
-    homepage = "https://github.com/paulo-herrera/PyEVTK"
+    homepage = "https://github.com/pyscience-projects/pyevtk"
     pypi = "pyevtk/pyevtk-1.6.0.tar.gz"
 
     license("MIT", checked_by="tpadioleau")
