@@ -24,7 +24,7 @@ class PyF90wrap(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("py-meson-python@0.12:", type="build")
+    depends_on("py-meson-python@0.12:", type="build", when="@0.2.12:")
 
     # TODO errors with python 3.6 due to UnicodeDecodeError
     depends_on("python@3.9:", type=("build", "run"), when="@0.3:")
