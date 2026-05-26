@@ -38,15 +38,16 @@ class Openbabel(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("python", type=("build", "run"), when="+python")
+    # Pin because distutils was removed in 3.12
+    depends_on("python@:3.11", type=("build", "run"), when="+python")
     depends_on("cmake@3.1:", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("swig@2.0:", type="build", when="+python")
 
-    depends_on("boost +filesystem +iostreams +test")
+    depends_on("boost +program_options +filesystem +iostreams +system +test")
     depends_on("cairo", when="+cairo")  # required to support PNG depiction
     depends_on("pango", when="+cairo")  # custom cairo requires custom pango
-    depends_on("eigen@3.0:")  # required if using the language bindings
+    depends_on("eigen@3")  # required if using the language bindings
     depends_on("libxml2")  # required to read/write CML files, XML formats
     depends_on("zlib-api")  # required to support reading gzipped files
     depends_on("rapidjson")  # required to support JSON
