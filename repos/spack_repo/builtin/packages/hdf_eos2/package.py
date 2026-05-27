@@ -121,8 +121,7 @@ class HdfEos2(AutotoolsPackage):
         filter_file("\\$CC -show &> /dev/null", "true", "configure")
         filter_file("CC=./\\$SZIP_CC", "", "configure")
 
-    @run_before("autoreconf")
-    @when("@3.0")
+    @run_before("autoreconf", when=@3.0)
     def fix_gctp_linking(self):
         # In hdf-eos2 3.0, the GCTP library (bundled in gctp/src/libGctp.la)
         # is built but never linked into libhdfeos. The source tarball ships
