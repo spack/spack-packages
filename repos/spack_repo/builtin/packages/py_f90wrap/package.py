@@ -29,6 +29,6 @@ class PyF90wrap(PythonPackage):
     # TODO errors with python 3.6 due to UnicodeDecodeError
     depends_on("python@3.9:", type=("build", "run"), when="@0.3:")
     depends_on("python@3.6:", type=("build", "run"))
-    depends_on("py-setuptools", type="build", when="@:0.2")
+    depends_on("py-setuptools", type="build", when="@:0.2.11")
     depends_on("py-numpy@2:", type=("build", "run"), when="@0.3:")
     depends_on("py-numpy@1.3:", type=("build", "run"))
