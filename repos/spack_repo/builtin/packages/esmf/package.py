@@ -432,8 +432,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @run_after("install")
     def post_install(self):
-        if self.spec.satisfies("@8:"):
+        # Only copy the raw source cmake tree for legacy v8.0 - v8.6 installations.
+        # Newer versions handle this inside ESMF's native install target.
+        if self.spec.satisfies("@8:8.6"):
             install_tree("cmake", self.prefix.cmake)
+
         # Several applications using ESMF are affected by CMake
         # capitalization issue. The following fix allows all apps
         # to use as-is. Note that since the macOS file system is
@@ -443,8 +446,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
                     symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
-        # https://github.com/esmf-org/esmf/issues/497
-        filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
+
+        # Pre v9 problem with explicit MPI C++ binding link dependency
+        if self.spec.satisfies("@:8"):
+            # https://github.com/esmf-org/esmf/issues/497
+            filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
     def check(self):
         make("check", parallel=False)

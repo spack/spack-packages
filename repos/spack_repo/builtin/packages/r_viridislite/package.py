@@ -20,6 +20,9 @@ class RViridislite(RPackage):
 
     cran = "viridisLite"
 
+    license("MIT")
+
+    version("0.4.3", sha256="433be9bde66234dc76301fb4ffbbc9fc74bab5c14f4548d8ef2fc0065e121ef5")
     version("0.4.2", sha256="893f111d31deccd2cc959bc9db7ba2ce9020a2dd1b9c1c009587e449c4cce1a1")
     version("0.4.1", sha256="a896db1ccae5fc1a8b3764d02f24cef74ef7a8341cf9f3401c4efe799870ea97")
     version("0.4.0", sha256="849955dc8ad9bc52bdc50ed4867fd92a510696fc8294e6971efa018437c83c6a")
