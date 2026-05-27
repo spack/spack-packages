@@ -21,6 +21,7 @@ class PyAiohttp(PythonPackage):
     license("Apache-2.0", when="@:3.12")
 
     version("3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1")
+    version("3.13.3", sha256="a949eee43d3782f2daae4f4a2819b2cb9b0c5d3b7f7a927067cc84dafdbb9f88")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2025-69230/
         # https://www.cvedetails.com/cve/CVE-2025-69229/
@@ -61,6 +62,9 @@ class PyAiohttp(PythonPackage):
         depends_on("pkgconfig", when="@3.12:")
         depends_on("py-setuptools@67:", when="@3.13.1:")
         depends_on("py-setuptools@46.4:")
+
+    depends_on("python@3.9:", when="@3.11:", type=("build", "run"))
+    depends_on("python@3.8:", when="@3.9:", type=("build", "run"))
 
     with default_args(type=("build", "run")):
         depends_on("py-aiohappyeyeballs@2.5:", when="@3.12:")

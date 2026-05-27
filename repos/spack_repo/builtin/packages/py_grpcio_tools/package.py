@@ -13,6 +13,7 @@ class PyGrpcioTools(PythonPackage):
     homepage = "https://grpc.io/"
     pypi = "grpcio-tools/grpcio-tools-1.42.0.tar.gz"
 
+    version("1.78.0", sha256="4b0dd86560274316e155d925158276f8564508193088bc43e20d3f5dff956b2b")
     version("1.62.2", sha256="5fd5e1582b678e6b941ee5f5809340be5e0724691df5299aae8226640f94e18f")
     version("1.56.2", sha256="82af2f4040084141a732f0ef1ecf3f14fdf629923d74d850415e4d09a077e77a")
     version("1.48.2", sha256="8902a035708555cddbd61b5467cea127484362decc52de03f061a1a520fe90cd")
@@ -23,21 +24,37 @@ class PyGrpcioTools(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@3.9:", when="@1.71.0:", type=("build", "run"))
     depends_on("python@3.6:", type=("build", "run"))
+    depends_on("py-setuptools@77.0.1:", when="@1.78.0:", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-protobuf@3.12.0:3", when="@1.48.1:", type=("build", "run"))
-    depends_on("py-protobuf@3.5.0.post1:3", type=("build", "run"))
+    # https://github.com/grpc/grpc/blob/v1.73.1/tools/distrib/python/grpcio_tools/setup.py
+    depends_on("py-protobuf@6.31.1:6", when="@1.74.0:", type=("build", "run"))
+    depends_on("py-protobuf@4.21.6:4", when="@1.50:1.62", type=("build", "run"))
+    depends_on("py-protobuf@3.12.0:3", when="@1.46:1.48", type=("build", "run"))
+    depends_on("py-protobuf@3.5.0.post1:3", when="@:1.45", type=("build", "run"))
+    # https://github.com/grpc/grpc/blob/v1.78.0/tools/distrib/python/grpcio_tools/grpc_version.py
+    depends_on("py-grpcio@1.78.0:", when="@1.78.0:", type=("build", "run"))
     depends_on("py-grpcio@1.62.2:", when="@1.62.2:", type=("build", "run"))
     depends_on("py-grpcio@1.56.2:", when="@1.56.2:", type=("build", "run"))
     depends_on("py-grpcio@1.48.2:", when="@1.48.2:", type=("build", "run"))
     depends_on("py-grpcio@1.48.1:", when="@1.48.1:", type=("build", "run"))
     depends_on("py-grpcio@1.42.0:", when="@1.42.0:", type=("build", "run"))
     depends_on("py-grpcio@1.39.0:", when="@1.39.0:1.41", type=("build", "run"))
+    depends_on("py-cython@3.1.1:", when="@1.78.0:", type="build")
     depends_on("py-cython@0.23:", type="build")
     depends_on("openssl")
     depends_on("zlib-api")
     depends_on("c-ares")
     depends_on("re2+shared")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/g/grpcio_tools/grpcio{0}tools-{1}.tar.gz"
+        if version > Version("1.62.0"):
+            sep = "_"
+        else:
+            sep = "-"
+        return url.format(sep, version)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("GRPC_PYTHON_BUILD_WITH_CYTHON", "True")
