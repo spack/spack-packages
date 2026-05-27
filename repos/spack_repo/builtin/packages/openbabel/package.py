@@ -56,6 +56,7 @@ class Openbabel(CMakePackage):
     depends_on("rapidjson")  # required to support JSON
     depends_on("libsm")
     depends_on("uuid")
+    depends_on("wxwidgets", when="+gui")
 
     depends_on("maeparser", when="+maeparser")
     depends_on("coordgen", when="+coordgen")
@@ -68,6 +69,9 @@ class Openbabel(CMakePackage):
 
     # https://github.com/openbabel/openbabel/pull/2493
     patch("cmake-time.patch", when="@3.1.1")
+
+    # https://github.com/openbabel/openbabel/pull/2964
+    patch("2964-optional-wxwidgets.patch", when="@:3.2.0")
 
     def cmake_args(self):
         spec = self.spec
