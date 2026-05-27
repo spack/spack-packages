@@ -183,7 +183,7 @@ class HdfEos2(AutotoolsPackage):
                     "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int"
                 )
 
-    @run_before("configure")
+    @run_before("configure", when=@3.0)
     def unset_h4cc_for_configure(self):
         # CC=h4cc causes autoconf's cross-compile detection to fail on macOS
         # because h4cc produces binaries using hardcoded paths that can't run
