@@ -58,6 +58,10 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "26.01.1": {
+        "deb": ("97bea9a6b873d7fbbe0f85150ff32fdc1d08cb3bd012ab79e687a595eb90141f"),
+        "rpm": ("c1206132a02e9ddd476862e63c97f7a3cfe79281788db1d107cd5aa7287c7c8a"),
+    },
     "26.01": {
         "deb": ("cc55ab4120a5416fa1e90f98e3007b722a066aac5e445b629e2d3006abe3eadb"),
         "rpm": ("314728809e279743e37be5ac475c2647f3ab902a5be0735bd318c1dd53a9a064"),
