@@ -1,5 +1,4 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
-#
+# Copyright Spack Project Developers. See COPYRIGHT file for details.  #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
@@ -36,9 +35,14 @@ class Genesis(AutotoolsPackage, CudaPackage):
     variant("single", default=False, description="Enable single precision.")
     variant("mixed",  default=False, description="Enable mixed precision.", when="@2.0.0:")
     variant("hmdisk", default=False, description="Enable huge molecule on hard disk.")
-    
+
+    # Fix NVTX include path for CUDA 12 on Arm sbsa-linux platforms
+    # (e.g., GH200). nvToolsExt.h is located under
+    # targets/sbsa-linux/include/nvtx3.
     patch("fix-nvtx-include.patch", when="+cuda")
     patch("fix-nvtx-include.patch", when="+gpu")
+    # The original configure logic only supports Fujitsu cross-compilation targets.
+    # This patch enables native Fujitsu compiler builds on A64FX systems.
     patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
     patch("fj_compiler_2.1.4.patch", when="@2.1.4: %fj")
 
@@ -114,20 +118,20 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     def test(self):
         import os
-    
+
         os.environ["OMP_NUM_THREADS"] = "1"
-    
+
         exe_name = self.spec["python"].command.path
         test_name = join_path(
             self.install_test_root, "tests", "regression_test", "test.py"
         )
         bin_name = join_path(self.prefix.bin, "spdyn")
-    
+
         mpirun = self.spec["mpi"].mpirun
-    
+
         opts = [
             test_name,
             f"{mpirun} -np 8 {bin_name}",
         ]
-    
+
         self.run_test(exe_name, options=opts, expected="Passed  61 / 61")

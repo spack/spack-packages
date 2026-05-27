@@ -1,0 +1,23 @@
+--- a/configure.ac     	2026-03-26 10:19:00.000000000 +0900
++++ b/configure.ac	2026-03-26 10:19:50.000000000 +0900
+@@ -761,6 +761,20 @@
+ 
+ # NVCCFLAG
+   NVCCFLAG="-c -g -O3 ${GENCODEFLAG} --ftz=false --prec-div=true --prec-sqrt=true --fmad=true"
++
++  if test "x${CUDA_HOME}" != x; then
++    if test -d "${CUDA_HOME}/targets/sbsa-linux/include/nvtx3"; then
++      NVCCFLAG="${NVCCFLAG} -I${CUDA_HOME}/targets/sbsa-linux/include/nvtx3"
++    elif test -d "${CUDA_HOME}/include/nvtx3"; then
++      NVCCFLAG="${NVCCFLAG} -I${CUDA_HOME}/include/nvtx3"
++    fi
++  elif test "x${CUDA_PATH}" != x; then
++    if test -d "${CUDA_PATH}/targets/sbsa-linux/include/nvtx3"; then
++      NVCCFLAG="${NVCCFLAG} -I${CUDA_PATH}/targets/sbsa-linux/include/nvtx3"
++    elif test -d "${CUDA_PATH}/include/nvtx3"; then
++      NVCCFLAG="${NVCCFLAG} -I${CUDA_PATH}/include/nvtx3"
++    fi
++  fi
+   AC_SUBST(NVCCFLAG)
+ fi
+ 
