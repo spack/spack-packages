@@ -685,8 +685,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         cmake_defs = [
             self.define("TARGET", "GENERIC"),
-            # ensure MACOSX_RPATH is set
-            self.define("CMAKE_POLICY_DEFAULT_CMP0042", "NEW"),
         ]
 
         if self.spec.satisfies("+dynamic_dispatch"):
