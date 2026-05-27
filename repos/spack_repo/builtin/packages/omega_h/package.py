@@ -102,7 +102,11 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
 
     conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
-    conflicts("+trilinos", when="@11.1.0-scorec:+exodus", msg="Use SEACASExodus directly or via Trilinos, not both")
+    conflicts(
+        "+trilinos",
+        when="@11.1.0-scorec:+exodus",
+        msg="Use SEACASExodus directly or via Trilinos, not both",
+    )
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
