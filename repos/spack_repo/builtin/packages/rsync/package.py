@@ -19,6 +19,7 @@ class Rsync(AutotoolsPackage):
 
     executables = ["^rsync$"]
 
+    version("3.4.3", sha256="c72e63ca3021cbc80ba86ec30102773f4c5631fbc492b52e773b3958f82a53d3")
     version("3.4.2", sha256="ff10aa2c151cd4b2dbbe6135126dbc854046113d2dfb49572a348233267eb315")
     version("3.4.1", sha256="2924bcb3a1ed8b551fc101f740b9f0fe0a202b115027647cf69850d65fd88c52")
     version("3.4.0", sha256="8e942f95a44226a012fe822faffa6c7fc38c34047add3a0c941e9bc8b8b93aa4")
