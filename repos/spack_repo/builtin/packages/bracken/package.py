@@ -28,10 +28,9 @@ class Bracken(Package):
     depends_on("python", type="run")
     depends_on("kraken2", type="run")
 
+    parallel = False
+    
     def install(self, spec, prefix):
-        # Avoid parallel build issues
-        env.pop("MAKEFLAGS", None)
-
         # Create install directories
         mkdirp(prefix.bin)
         mkdirp(join_path(prefix.bin, "src"))
@@ -42,7 +41,7 @@ class Bracken(Package):
 
         # Run installer to build kmer2read_distr
         installer = Executable("./install_bracken.sh")
-        installer()
+        installer(self.stage.source_path)
 
         # Install primary executables
         install("bracken", prefix.bin)
