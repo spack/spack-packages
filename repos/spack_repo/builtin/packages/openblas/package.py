@@ -451,15 +451,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # List of arguments returned by this function
         args = []
 
-        # List of available architectures, and possible aliases
+        # List of available spack architectures
         openblas_arch = set(
             ["alpha", "arm", "ia64", "mips", "mips64", "power", "riscv64", "sparc", "zarch"]
         )
+        # List of openblas architectures (key) with archspec/spack name (value)
         openblas_arch_map = {
             "amd64": "x86_64",
             "powerpc64": "power",
             "i386": "x86",
-            "aarch64": "arm64",
+            "arm64": "aarch64",
         }
         openblas_arch.update(openblas_arch_map.keys())
         openblas_arch.update(openblas_arch_map.values())
