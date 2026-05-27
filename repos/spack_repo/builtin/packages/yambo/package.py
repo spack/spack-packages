@@ -4,6 +4,7 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+
 from spack.package import *
 
 
@@ -273,13 +274,10 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def filter_oneapi(self):
         spec = self.spec
 
-        if (
-            ("%oneapi" in spec or "%intel-oneapi-compilers" in spec)
-            and "@5.0.0:5.2.99" in spec
-        ):
+        if ("%oneapi" in spec or "%intel-oneapi-compilers" in spec) and "@5.0.0:5.2.99" in spec:
             filter_file("*ifort*", "*ifx*", "configure", string=True)
             filter_file("2021", "2023", "configure")
-            filter_file("FC=\"$(fc)\"", "FC=mpiifort", "lib/iotk/Makefile.loc", string=True)
+            filter_file('FC="$(fc)"', "FC=mpiifort", "lib/iotk/Makefile.loc", string=True)
             filter_file(
                 "#include <stdlib.h>",
                 "#if defined _ypp || defined _a2y || defined _p2y || "

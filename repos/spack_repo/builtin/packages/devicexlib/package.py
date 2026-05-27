@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
 from spack.package import *
 
 
@@ -23,7 +24,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers = ["nicspalla"]
 
-    version('develop', branch='develop')
+    version("develop", branch="develop")
 
     version("0.9.1", sha256="900fe8b0849d451e7c541d00a1b92c723e0969bae47ebcabd295e14ebcc17d1e")
     version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
@@ -95,7 +96,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             when="%nvhpc",
             description=(
                 'Specify the CUDA runtime version, e.g. "11.8", only if you '
-                'want the secondary version installed with the NVHPC SDK.'
+                "want the secondary version installed with the NVHPC SDK."
             ),
         )
 
@@ -119,10 +120,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             "%cce",
             "%gcc@10:+nvptx",
             policy="one_of",
-            msg=(
-                "OpenMP offloading is available only with GCC, oneAPI, "
-                "or Cray compilers"
-            ),
+            msg=("OpenMP offloading is available only with GCC, oneAPI, or Cray compilers"),
         )
 
     depends_on("blas")
@@ -219,9 +217,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append(f"--with-cuda-cc={cuda_arch}")
 
             if spec.variants["cuda_rt"].value != "none":
-                args.append(
-                    f"--with-cuda-runtime={spec.variants['cuda_rt'].value}"
-                )
+                args.append(f"--with-cuda-runtime={spec.variants['cuda_rt'].value}")
 
             if "%nvhpc" not in spec:
                 args.append(f"--with-cuda-path={spec['cuda'].home}")
