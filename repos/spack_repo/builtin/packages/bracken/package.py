@@ -29,7 +29,7 @@ class Bracken(Package):
     depends_on("kraken2", type="run")
 
     parallel = False
-    
+
     def install(self, spec, prefix):
         # Create install directories
         mkdirp(prefix.bin)
