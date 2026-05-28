@@ -1014,14 +1014,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         guess = Executable("./config.guess")
         targetguess = guess(output=str).rstrip("\n")
 
-        options = getattr(self, "configure_flag_args", [])
-        options += ["--prefix={0}".format(prefix)]
-
-        options += [
-            "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
-            "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
-        ]
-
         self.copy_nvptx_tools()
 
         self.link_newlib()
