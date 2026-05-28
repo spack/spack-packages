@@ -4,6 +4,7 @@
 
 import itertools
 import os
+import pathlib
 import sys
 
 from spack_repo.builtin.build_systems import autotools, cmake
@@ -416,11 +417,15 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             base_cmake_args.extend(
                 [
                     self.define("ENABLE_PLUGIN_INSTALL", True),
-                    self.define("NETCDF_WITH_PLUGIN_DIR", self.prefix.plugins),
+                    self.define(
+                        "NETCDF_WITH_PLUGIN_DIR", pathlib.Path(self.prefix.plugins).as_posix()
+                    ),
                 ]
             )
         elif self.spec.satisfies("@4.9.0:+shared"):
-            base_cmake_args.append(self.define("PLUGIN_INSTALL_DIR", self.prefix.plugins))
+            base_cmake_args.append(
+                self.define("PLUGIN_INSTALL_DIR", pathlib.Path(self.prefix.plugins).as_posix())
+            )
         return base_cmake_args
 
     @run_after("install")
