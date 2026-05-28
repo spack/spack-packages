@@ -120,7 +120,6 @@ class Regenie(CMakePackage):
 
         # Avoid using vendored dependencies distribued with bgen
         if satisfies("~bgen-bundled-deps"):
-
             # zstd and sqlite can be replaced with subsitutions
             for dep, lib_name, old_lib, old_inc in [
                 ("zstd", "zstd", "zstd-1.1.0", "zstd-1.1.0/lib"),
@@ -154,7 +153,7 @@ class Regenie(CMakePackage):
                 ' HINTS "${BGEN_PATH}/build/3rd_party/boost_1_55_0" REQUIRED)'
             )
             boost_pkg = (
-                f"find_package(Boost {boost_vers}" f" COMPONENTS {' '.join(boost_comps)} REQUIRED)"
+                f"find_package(Boost {boost_vers} COMPONENTS {' '.join(boost_comps)} REQUIRED)"
             )
             for find, replace in [
                 (boost_lib, boost_pkg),

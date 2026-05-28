@@ -18,11 +18,36 @@ class Expat(AutotoolsPackage, CMakePackage):
     url = "https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2"
 
     license("MIT")
-    version("2.7.4", sha256="e6af11b01e32e5ef64906a5cca8809eabc4beb7ff2f9a0e6aabbd42e825135d0")
-    version("2.7.3", sha256="59c31441fec9a66205307749eccfee551055f2d792f329f18d97099e919a3b2f")
-    version("2.7.2", sha256="976f6c2d358953c22398d64cd93790ba5abc62e02a1bbc204a3a264adea149b8")
-    # deprecate all releases before 2.7.2 because of security issues,
-    # the latest being https://nvd.nist.gov/vuln/detail/CVE-2025-59375
+    version(
+        "2.8.1",
+        sha256="f5833dd2e1cd7739ec9182804a1a29c4f0cc7c2f26b633d3a2188b7766a88ecb",
+    )
+    # deprecate all releases before 2.8.1 because of various security issues
+    version(
+        "2.8.0",
+        sha256="586494499ac3ad46d87f3beda7b1f770c1c8026a9b60e151593f8b29089a52ca",
+        deprecated=True,
+    )
+    version(
+        "2.7.5",
+        sha256="386a423d40580f1e392e8b512b7635cac5083fe0631961e74e036b0a7a830d77",
+        deprecated=True,
+    )
+    version(
+        "2.7.4",
+        sha256="e6af11b01e32e5ef64906a5cca8809eabc4beb7ff2f9a0e6aabbd42e825135d0",
+        deprecated=True,
+    )
+    version(
+        "2.7.3",
+        sha256="59c31441fec9a66205307749eccfee551055f2d792f329f18d97099e919a3b2f",
+        deprecated=True,
+    )
+    version(
+        "2.7.2",
+        sha256="976f6c2d358953c22398d64cd93790ba5abc62e02a1bbc204a3a264adea149b8",
+        deprecated=True,
+    )
     version(
         "2.7.1",
         sha256="45c98ae1e9b5127325d25186cf8c511fa814078e9efeae7987a574b482b79b3d",

@@ -96,15 +96,15 @@ class Kynema(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         options = [
-            self.define_from_variant("Kynema_ENABLE_TESTS", "tests"),
-            self.define_from_variant("Kynema_ENABLE_OPENFAST_ADI", "adi"),
-            self.define_from_variant("Kynema_ENABLE_ROSCO_CONTROLLER", "rosco"),
-            self.define_from_variant("Kynema_ENABLE_KLU", "klu"),
-            self.define_from_variant("Kynema_ENABLE_UMFPACK", "umfpack"),
-            self.define_from_variant("Kynema_ENABLE_SUPERLU", "superlu"),
-            self.define_from_variant("Kynema_ENABLE_SUPERLU_MT", "superlu-mt"),
-            self.define_from_variant("Kynema_ENABLE_MKL", "mkl"),
-            self.define_from_variant("Kynema_ENABLE_CUSOLVERSP", "cusolversp"),
-            self.define_from_variant("Kynema_ENABLE_CUDSS", "cudss"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_TESTS", "tests"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_OPENFAST_ADI", "adi"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_ROSCO_CONTROLLER", "rosco"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_KLU", "klu"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_UMFPACK", "umfpack"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_SUPERLU", "superlu"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_SUPERLU_MT", "superlu-mt"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_MKL", "mkl"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_CUSOLVERSP", "cusolversp"),
+            self.define_from_variant("KYNEMA_FMB_ENABLE_CUDSS", "cudss"),
         ]
         return options

@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.12.0", tag="v2.12.0", commit="0d62256a2b23365f8e1604297eb23a6545102aa8")
     version("2.11.0", tag="v2.11.0", commit="70d99e998b4955e0049d13a98d77ae1b14db1f45")
     version("2.10.0", tag="v2.10.0", commit="449b1768410104d3ed79d3bcfe4ba1d65c7f22c0")
     with default_args(deprecated=True):
@@ -204,7 +205,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
-        depends_on("py-setuptools@70.1:", when="@2.10:")
+        depends_on("py-setuptools@70.1:81", when="@2.10:")
         depends_on("py-setuptools@70.1:79", when="@2.9:")
         depends_on("py-setuptools@62.3:79", when="@2.8")
         depends_on("py-setuptools@:79", when="@:2.7")
@@ -285,8 +286,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
-        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
-        depends_on("py-pybind11@:3.0.1")
         depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")
@@ -296,6 +295,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-pybind11@2.10.0:", when="@1.13:1")
         depends_on("py-pybind11@2.6.2:", when="@1.8:1.12")
         depends_on("py-pybind11@2.3.0:", when="@:1.7")
+        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
+        depends_on("py-pybind11@:3.0.1", when="@:2.11")
     depends_on("sleef@3.8", when="@2.8:")
     depends_on("sleef@3.7.0_2024-12-06", when="@2.7")
     depends_on("sleef@3.6.0_2024-03-20", when="@2.4:2.6")
@@ -306,6 +307,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
         # cmake/public/cuda.cmake
+        depends_on("cuda@12.6:", when="@2.12:+cuda")
         depends_on("cuda@12:", when="@2.9:+cuda")
         depends_on("cuda@11:", when="@2.4:+cuda")
         # https://github.com/pytorch/pytorch/issues/122169
@@ -320,8 +322,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
     depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
     depends_on("nccl", when="+nccl+cuda")
-    depends_on("magma+cuda", when="+magma+cuda")
-    depends_on("magma+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/178065
+    depends_on("magma@:2.9+cuda", when="+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
@@ -367,6 +370,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-astunparse", when="@1.13:2.8")
 
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
+
+    # https://github.com/pytorch/pytorch/issues/172630 (GCC-14.2 ICE for aarch64)
+    patch(
+        "https://github.com/pytorch/pytorch/commit/8fd509399e25cb4b265dff663d3f777406001f2e.patch?full_index=1",
+        sha256="91d0470cc05f5f0f775f32b70f174af74f5607162852ba1bcdd81381cd735f24",
+        when="@2.9:2.10.0",
+    )
 
     # https://github.com/pytorch/pytorch/issues/160092
     patch(

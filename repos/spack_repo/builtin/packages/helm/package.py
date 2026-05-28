@@ -17,6 +17,7 @@ class Helm(GoPackage):
 
     license("Apache-2.0")
 
+    version("4.1.4", sha256="cc365ae17de9bd856972198f9c372f9fd2146852434ade3b3c96303b564cdb15")
     version("4.1.3", sha256="a336010d2a5bebc0588995cfda20919c47b20c9f8ed3e4ada9241684854bbf9f")
 
     depends_on("go@1.25:", type="build", when="@4.1:")

@@ -37,9 +37,9 @@ spack:
       variants: threads=openmp
       require: 'cppflags="-O1" target=x86_64_v3 %oneapi'
     trilinos:
-      variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
-        +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
-        +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
+      variants: +amesos2 +anasazi +belos +boost
+        +ifpack2 +intrepid2 +kokkos +minitensor +muelu
+        +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos
         +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     xz:
       variants: +pic
@@ -59,6 +59,11 @@ spack:
     # externals
     mpi:
       require: intel-oneapi-mpi
+    oneapi-igc:
+      buildable: false
+      externals:
+      - spec: oneapi-igc@1.0.10409
+        prefix: /usr
 
   specs:
   # CPU Specs:
@@ -90,7 +95,6 @@ spack:
   - flecsi
   - flit
   - flux-core
-  - fortrilinos
   - gasnet
   - ginkgo
   - globalarrays
@@ -162,7 +166,7 @@ spack:
   - sz3
   - tasmanian
   - tau +mpi +python +syscall
-  - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+  - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
   - turbine
   - umap
   - umpire
@@ -222,7 +226,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
   cdash:
     build-group: E4S OneAPI
