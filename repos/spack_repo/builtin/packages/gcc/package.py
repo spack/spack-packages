@@ -399,6 +399,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # NVPTX build disables bootstrap
         conflicts("+bootstrap")
 
+    # Graphite loop optimizations cause bootstrap comparison failures
+    conflicts("+graphite +bootstrap")
+
     # Binutils can't build ld on macOS
     conflicts("+binutils", when="platform=darwin")
 
