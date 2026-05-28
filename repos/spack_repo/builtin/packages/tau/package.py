@@ -207,7 +207,7 @@ class Tau(Package):
     depends_on("hip", when="+rocprofiler-sdk")
     depends_on("elfutils", when="+rocprofiler-sdk")
     depends_on("comgr", when="+rocprofiler-sdk")
-    depends_on("salt", when="+salt", type="run")
+    depends_on("saltfm", when="+salt", type="run")
     depends_on("hip", when="@2.34: +roctracer")
     depends_on("java", type="run")  # for paraprof
     depends_on("oneapi-level-zero", when="+level_zero")
