@@ -17,6 +17,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     Python. CuPy uses CUDA-related libraries including cuBLAS,
     cuDNN, cuRand, cuSolver, cuSPARSE, cuFFT and NCCL to make
     full use of the GPU architecture."""
+
     # TODO: CuPy bundles some dependencies in `third_party` (cccl, dlpack, jitify, xsf). These
     #  should be modeled as explicit dependencies.
 
