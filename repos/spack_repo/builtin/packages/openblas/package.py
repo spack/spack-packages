@@ -21,7 +21,7 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     git = "https://github.com/OpenMathLib/OpenBLAS.git"
 
-    maintainers("mathomp4")
+    maintainers("mathomp4", "sethrj")
 
     libraries = ["libopenblas", "openblas"]
 
