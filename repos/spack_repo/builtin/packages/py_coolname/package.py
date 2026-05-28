@@ -15,4 +15,5 @@ class PyCoolname(PythonPackage):
 
     version("2.2.0", sha256="6c5d5731759104479e7ca195a9b64f7900ac5bead40183c09323c7d0be9e75c7")
 
+    depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
