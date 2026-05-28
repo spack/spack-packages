@@ -70,8 +70,11 @@ class Openbabel(CMakePackage):
     # https://github.com/openbabel/openbabel/pull/2493
     patch("cmake-time.patch", when="@3.1.1")
 
-    # https://github.com/openbabel/openbabel/pull/2964
-    patch("2964-optional-wxwidgets.patch", when="@:3.2.0")
+    patch(
+        "https://github.com/openbabel/openbabel/pull/2964.patch?full_index=1",
+        sha256="0ada5d204487440dbb283995f8a6e04652def929b3cdaf7d71e801d6d31f1244",
+        when="@:3.2.0",
+    )
 
     def cmake_args(self):
         spec = self.spec
