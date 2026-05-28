@@ -1026,7 +1026,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         self.link_newlib()
 
-        # self.build_directory = 'spack-build-nvptx'
         with working_dir("spack-build-nvptx", create=True):
             options = [
                 "--prefix={0}".format(prefix),
@@ -1161,10 +1160,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         Should be use only if self.spec.satisfies("@12: languages=d")
         """
         # Detect GCC package in the directory of the GCC compiler
-        # or in the $PATH if self.compiler.cc is not an absolute path:
+        # or in the $PATH if self["c"].cc is not an absolute path:
         from spack.detection import by_path  # TODO: remove use of private Spack API
 
-        compiler_dir = os.path.dirname(self.compiler.cc)
+        compiler_dir = os.path.dirname(self["c"].cc)
         detected_packages = by_path(
             [self.name], path_hints=([compiler_dir] if os.path.isdir(compiler_dir) else None)
         )
@@ -1180,7 +1179,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         if candidate_specs:
             # We now need to filter specs that match the compiler version:
-            compiler_spec = Spec(repr(self.compiler.spec))
+            compiler_spec = self["c"].spec
 
             # First, try to filter specs that satisfy the compiler spec:
             new_candidate_specs = list(
@@ -1211,7 +1210,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                     error_nl, self.spec.format("{name}{@version} {variants.languages}")
                 ),
             )
-        elif len(candidate_specs) == 0:
+        elif len(candidate_specs) == 1:
             return candidate_specs[0].extra_attributes["compilers"]["d"]
         else:
             # It is rather unlikely to end up here but let us try to resolve the ambiguity:
@@ -1224,7 +1223,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             else:
                 raise InstallError(
                     "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
-                        self.compiler.spec
+                        self["c"].spec
                     ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,
