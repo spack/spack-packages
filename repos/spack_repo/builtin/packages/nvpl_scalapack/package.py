@@ -32,6 +32,7 @@ class NvplScalapack(Package):
 
     variant("ilp64", default=False, description="Force 64-bit Fortran native integers")
 
+    depends_on("c", type="build")  # for enforcing compiler restrictions
     depends_on("nvpl-blas +ilp64", when="+ilp64")
     depends_on("nvpl-blas ~ilp64", when="~ilp64")
     depends_on("nvpl-lapack +ilp64", when="+ilp64")
