@@ -20,4 +20,4 @@ class PyExceptiongroup(PythonPackage):
 
     depends_on("py-flit-scm", type="build")
 
-    depends_on("py-typing-extensions@4.6:", when="@1.3: ^python@:3.11", type=("build", "run"))
+    depends_on("py-typing-extensions@4.6:", when="@1.3: ^python@:3.12", type=("build", "run"))
