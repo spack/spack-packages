@@ -33,7 +33,7 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     variant("openmp", default=True, description="Enable OpenMP.")
     variant("single", default=False, description="Enable single precision.")
-    variant("mixed",  default=False, description="Enable mixed precision.", when="@2.0.0:")
+    variant("mixed", default=False, description="Enable mixed precision.", when="@2.0.0:")
     variant("hmdisk", default=False, description="Enable huge molecule on hard disk.")
 
     # Fix NVTX include path for CUDA 12 on Arm sbsa-linux platforms
@@ -122,16 +122,11 @@ class Genesis(AutotoolsPackage, CudaPackage):
         os.environ["OMP_NUM_THREADS"] = "1"
 
         exe_name = self.spec["python"].command.path
-        test_name = join_path(
-            self.install_test_root, "tests", "regression_test", "test.py"
-        )
+        test_name = join_path(self.install_test_root, "tests", "regression_test", "test.py")
         bin_name = join_path(self.prefix.bin, "spdyn")
 
         mpirun = self.spec["mpi"].mpirun
 
-        opts = [
-            test_name,
-            f"{mpirun} -np 8 {bin_name}",
-        ]
+        opts = [test_name, f"{mpirun} -np 8 {bin_name}"]
 
         self.run_test(exe_name, options=opts, expected="Passed  61 / 61")
