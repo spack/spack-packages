@@ -45,6 +45,8 @@ class NvplLapack(Package):
         multi=False,
     )
 
+    depends_on("c", type="build")  # for enforcing compiler restrictions
+
     requires("target=armv8.2a:", msg="Any CPU with Arm-v8.2a+ microarch")
 
     # propagate variants for depends_on("nvpl-blas")
