@@ -129,8 +129,14 @@ class Grpc(CMakePackage):
             )
 
         # glob.cc uses std::min/std::max but omits <algorithm>
+        # File location changed in grpc 1.67.0+
+        if self.spec.satisfies("@1.67:"):
+            glob_path = join_path(self.stage.source_path, "src/core/lib/gprpp/glob.cc")
+        else:
+            glob_path = join_path(self.stage.source_path, "src/core/util/glob.cc")
+
         filter_file(
             r'(#include "absl/strings/string_view.h")',
             '#include <algorithm>\n#include "absl/strings/string_view.h"',
-            join_path(self.stage.source_path, "src/core/util/glob.cc"),
+            glob_path,
         )
