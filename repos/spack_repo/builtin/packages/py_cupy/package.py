@@ -25,6 +25,7 @@ class PyCupy(PythonPackage, CudaPackage, ROCmPackage):
     git = "https://github.com/cupy/cupy.git"
     submodules = True
 
+    version("main", branch="main")
     version("14.0.1", sha256="4b673ab2d8b2329abe7ae0a7ae6159656044a8eecca56cf0b834b7c907063205")
     version("14.0.0", sha256="615a7dfbe699729785fa9ef0789de05ec1c278b8c3b675460ad19c8808802995")
     version("13.6.0", sha256="3cba30ae3dd32b5d5c6536e710cb98015227cd4ba83c46b3f1825a7ae55b6667")
