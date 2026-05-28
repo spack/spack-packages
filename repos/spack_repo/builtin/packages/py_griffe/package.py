@@ -23,7 +23,8 @@ class PyGriffe(PythonPackage):
 
     depends_on("python@3.10:", when="@1.15:", type=("build", "run"))
     depends_on("python@3.7:", type=("build", "run"))
-    depends_on("py-pdm-backend", type="build")
+    depends_on("py-pdm-backend", when="@0.26:", type="build")
+    depends_on("py-pdm-pep517", when="@:0.25", type="build")
 
     depends_on("py-colorama@0.4:", type=("build", "run"), when="@1.15.0:")
     depends_on("py-cached-property", type=("build", "run"), when="^python@:3.7")
