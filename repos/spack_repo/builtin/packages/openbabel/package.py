@@ -28,7 +28,7 @@ class Openbabel(CMakePackage):
     version("2.4.0", tag="openbabel-2-4-0", commit="087f33320e6796f39e6a1da04f4de7ec46bec4af")
 
     variant("python", default=True, description="Build Python bindings")
-    variant("gui", default=True, description="Build with GUI")
+    variant("gui", default=False, description="Build with GUI")
     variant("cairo", default=True, description="Build with Cairo (PNG output support)")
     variant("openmp", default=False, description="Build with OpenMP")
     variant("maeparser", default=False, description="Built with MAE parser")
