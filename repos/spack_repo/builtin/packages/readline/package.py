@@ -77,6 +77,13 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
             sha256=checksum,
         )
 
+    def configure_args(self):
+        # The wcwidth_broken test is a runtime check that requires an installed en_US.UTF-8 locale.
+        # In minimal environments that's lacking, resulting in a false positive, leading to
+        # non-deterministic builds. The test was meant to work around bugs in ancient libc and is
+        # no longer relevant.
+        return ["bash_cv_wcwidth_broken=no"]
+
     def build(self, spec, prefix):
         make("SHLIB_LIBS=" + spec["ncurses:wide"].libs.ld_flags)
 

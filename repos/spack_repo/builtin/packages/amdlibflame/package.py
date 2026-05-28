@@ -92,6 +92,9 @@ class Amdlibflame(CMakePackage, LibflameBase):
     patch("cray-compiler-wrapper.patch", when="@:3.0.0", level=1)
     patch("supermat.patch", when="@4.0:4.1", level=1)
     patch("libflame-pkgconfig.patch", when="@4.2")
+    # Apply amdlibflame@5.2 patch to fix necessary ifdef guards to check
+    # for Zen4 kernel availability
+    patch("zen3_build_fix.patch", when="@5.2", level=1)
 
     provides("flame@5.2", when="@2:")
 

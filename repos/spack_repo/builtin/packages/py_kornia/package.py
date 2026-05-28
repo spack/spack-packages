@@ -24,6 +24,7 @@ class PyKornia(PythonPackage):
         "adamjstewart",
     )
 
+    version("0.8.3", sha256="c06887374eaf39fb614a77ca054383e6cc2092cb7225e45437111b4984d0f866")
     version("0.8.2", sha256="5411b2ce0dd909d1608016308cd68faeef90f88c47f47e8ecd40553fd4d8b937")
     version("0.8.1", sha256="9ce5a54a11df661794934a293f89f8b8d49e83dd09b0b9419f6082ab07afe433")
     version("0.8.0", sha256="a0ffc31106e8d777a8df693572ad5ea11f7236b8bc1d452754f5e57de012ea9a")
@@ -47,11 +48,12 @@ class PyKornia(PythonPackage):
     version("0.5.10", sha256="428b4b934a2ba7360cc6cba051ed8fd96c2d0f66611fdca0834e82845f14f65d")
 
     with default_args(type="build"):
-        depends_on("py-setuptools@61.2:", when="@0.6.11:")
-        depends_on("py-setuptools")
+        depends_on("py-hatchling", when="@0.8.3:")
 
         # Historical dependencies
         depends_on("py-pytest-runner", when="@:0.6.10")
+        depends_on("py-setuptools@61.2:", when="@0.6.11:0.8.2")
+        depends_on("py-setuptools", when="@:0.6.10")
 
     with default_args(type=("build", "run")):
         depends_on("py-kornia-rs@0.1.9:", when="@0.8.1:")

@@ -67,6 +67,8 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("fftw@3.3.8:", when="+fftw", type=("build", "run"))
     depends_on("intel-oneapi-mkl", when="+mkl", type=("build", "run"))
+    # mkl renamed dfti.hpp to dft.hpp in 2026.0, which breaks heffte@2.4.1 and earlier
+    conflicts("^intel-oneapi-mkl@2026.0:", when="@:2.4.1")
     depends_on("cuda@8.0:", when="+cuda", type=("build", "run"))
     depends_on("hip@3.8.0:", when="+rocm", type=("build", "run"))
     depends_on("rocfft@3.8.0:", when="+rocm", type=("build", "run"))

@@ -335,6 +335,9 @@ class Aqlprofile(Package):
             ver = "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
+            major = int(ver.split(".")[0])
+            if major >= 7:
+                ver = None
         else:
             ver = None
         return ver
