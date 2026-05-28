@@ -1020,13 +1020,13 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         with working_dir("spack-build-nvptx", create=True):
             options = [
-                "--prefix={0}".format(prefix),
-                "--enable-languages={0}".format(",".join(spec.variants["languages"].value)),
-                "--with-mpfr={0}".format(spec["mpfr"].prefix),
-                "--with-gmp={0}".format(spec["gmp"].prefix),
+                f"--prefix={prefix}",
+                f"--enable-languages={','.join(spec.variants['languages'].value)}",
+                f"--with-mpfr={spec['mpfr'].prefix}",
+                f"--with-gmp={spec['gmp'].prefix}",
                 "--target=nvptx-none",
-                "--with-build-time-tools={0}".format(join_path(prefix, "nvptx-none", "bin")),
-                "--enable-as-accelerator-for={0}".format(targetguess),
+                f"--with-build-time-tools={join_path(prefix, 'nvptx-none', 'bin')}",
+                f"--enable-as-accelerator-for={targetguess}",
                 "--disable-sjlj-exceptions",
                 "--enable-newlib-io-long-long",
             ]
