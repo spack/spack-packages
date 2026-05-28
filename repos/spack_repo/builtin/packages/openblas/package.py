@@ -131,7 +131,7 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     variant("symbol_suffix", default="none", description="Set a symbol suffix")
 
-    variant("locking", default=True, description="Build with thread safety")
+    variant("locking", default=True, when="@0.3.7:", description="Build with thread safety")
     variant(
         "threads",
         default="none",
