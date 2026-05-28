@@ -43,7 +43,14 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
     license("Apache-2.0")
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.tar.gz"
+        return url.format(version)
 
+    version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
@@ -139,6 +146,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         sha256="b4774ca19b030890d7b276d12c446400ccf8bc3aa724c7f2e9a73531a7400d69",
         when="@6",
     )
+    patch("002-Add-rpath-to-hiprt.patch", when="@7.0:7.2")
+    patch("002-Add-rpath-to-hiprt-7.13.patch", when="@7.13:")
+    # irocr: include intrin headers before namespace rocr
+    # https://github.com/ROCm/rocm-systems/pull/5615
+    patch("003-fix-rocr-namespace.patch", when="@7.13:")
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
     # Patch from https://github.com/llvm/llvm-project/pull/80071
@@ -221,6 +233,17 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             sha256=d_shasum,
             when=f"@{d_version}",
         )
+    # TheRock therock-7.13 release (rocm-systems super-repo)
+    for d_version, d_shasum in [
+        ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url="https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
 
     for d_version, d_shasum in [
         ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
@@ -232,6 +255,19 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         resource(
             name="spirv-llvm-translator",
             url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="llvm/projects",
+            placement="spirv-llvm-translator",
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.13", "22836583c72d40493517ee6932db487256958d3da9afa5b666d046e48477fcc6"),
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/therock-{d_version}.tar.gz",
             sha256=d_shasum,
             expand=True,
             destination="llvm/projects",

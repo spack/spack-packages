@@ -17,13 +17,22 @@ class Hip(CMakePackage):
 
     homepage = "https://github.com/ROCm/HIP"
     git = "https://github.com/ROCm/HIP.git"
-    url = "https://github.com/ROCm/HIP/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libamdhip64"]
 
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/HIP/archive/rocm-6.4.3.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
+        return url.format(version)
+
+
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e6ab65cb2a236eee0e1f2738457367dffc3ce1e8dfb050ac22b7712e35aa896e")
     version("7.2.1", sha256="40a27fc18d08ea4f28b5e0990d38a3fec10ff491a2d5adb647b3faa5016873de")
     version("7.2.0", sha256="4a22fcd0baf8df47d2e234f887f5bc03d522ce78928f82d1b0669a55897c4205")
@@ -121,6 +130,7 @@ class Hip(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -153,6 +163,7 @@ class Hip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -175,6 +186,7 @@ class Hip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -244,6 +256,17 @@ class Hip(CMakePackage):
             expand=True,
             destination="",
             placement="rocm-systems",
+            when=f"@{d_version}",
+        )
+    # TheRock therock-7.13 release (rocm-systems super-repo)
+    for d_version, d_shasum in [
+        ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url="https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{d_version}.tar.gz",
+            sha256=d_shasum,
             when=f"@{d_version}",
         )
 
@@ -534,8 +557,9 @@ class Hip(CMakePackage):
                 string=True,
             )
         perl = self.spec["perl"].command
-        with working_dir(f"{clr_dir}/hipamd/bin"):
-            filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
+        if self.spec.satisfies("@:7.2"):
+            with working_dir(f"{clr_dir}/hipamd/bin"):
+                filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
         if self.spec.satisfies("@5.7"):
             with working_dir("hipcc/bin"):
                 filter_shebang("hipconfig")
@@ -599,11 +623,25 @@ class Hip(CMakePackage):
                 hipnv_path = f"{self.stage.source_path}/rocm-systems/projects/hipother/hipnv"
             args.append(self.define("HIPNV_DIR", hipnv_path))
 
-        args.append(self.define("HIP_COMMON_DIR", self.stage.source_path))
+        # For version 7.13.0, the source structure is different (rocm-systems super-repo)
+        if self.spec.satisfies("@7.13.0:"):
+            hip_common_dir = self.stage.source_path + "/rocm-systems/projects/hip"
+            rocclr_path = self.stage.source_path + "/rocm-systems/projects/clr/rocclr"
+            opencl_path = self.stage.source_path + "/rocm-systems/projects/clr/opencl"
+        elif self.spec.satisfies("@7.2:"):
+            hip_common_dir = self.stage.source_path
+            rocclr_path = self.stage.source_path + "/rocm-systems/rocclr"
+            opencl_path = self.stage.source_path + "/rocm-systems/opencl"
+        else:
+            hip_common_dir = self.stage.source_path
+            rocclr_path = self.stage.source_path + "/clr/rocclr"
+            opencl_path = self.stage.source_path + "/clr/opencl"
+
+        args.append(self.define("HIP_COMMON_DIR", hip_common_dir))
         args.append(self.define("HIP_CATCH_TEST", "OFF"))
         args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-        args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/clr/rocclr"))
-        args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
+        args.append(self.define("ROCCLR_PATH", rocclr_path))
+        args.append(self.define("AMD_OPENCL_PATH", opencl_path))
         args.append(self.define("CLR_BUILD_HIP", True))
         args.append(self.define("CLR_BUILD_OCL", False))
         if self.spec.satisfies("@5.7"):

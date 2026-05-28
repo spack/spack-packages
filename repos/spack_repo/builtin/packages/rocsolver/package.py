@@ -25,8 +25,10 @@ class Rocsolver(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
+        elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.13.tar.gz"
         return url.format(version)
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -50,6 +52,7 @@ class Rocsolver(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -112,6 +115,7 @@ class Rocsolver(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")

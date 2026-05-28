@@ -14,13 +14,21 @@ class HipifyClang(ROCmLibrary, CMakePackage):
 
     homepage = "https://github.com/ROCm/HIPIFY"
     git = "https://github.com/ROCm/HIPIFY.git"
-    url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     executables = ["hipify-perl"]
 
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.3.tar.gz"
+        else:
+            url = "https://github.com/ROCm/HIPIFY/archive/refs/tags/therock-7.13.tar.gz"
+        return url.format(version)
+
+    version("7.13.0", sha256="3fd97715dee4e21042472f8137dde8d1b5cd0573ff8eae1663ca407b843588b3")
     version("7.2.3", sha256="5d0adbdffa866f3ca3e94da8ac92304dc97272dcd9c3440b15943fc0bc7c8ad8")
     version("7.2.1", sha256="1d5504a69024491c582e224445df4c917b0b5ee3b0830c0909119eca97b70e9f")
     version("7.2.0", sha256="ddea52cc4b624f5a48413cc390d0308c9b889d9dd6699077f4cfb7d014417a9f")
@@ -86,6 +94,7 @@ class HipifyClang(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

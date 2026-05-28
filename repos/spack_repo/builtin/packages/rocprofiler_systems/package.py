@@ -28,7 +28,13 @@ class RocprofilerSystems(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocm-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
+        return url.format(version)
+
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
 
@@ -36,6 +42,12 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
 
+    version(
+        "7.13.0",
+        tag="therock-7.13",
+        commit="87ba4fafbdc5ffcb78476751645d7ad88e74abb1",
+        submodules=submodules,
+    )
     version(
         "7.2.3",
         tag="rocm-7.2.3",
@@ -249,6 +261,7 @@ class RocprofilerSystems(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -264,10 +277,11 @@ class RocprofilerSystems(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
         ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst

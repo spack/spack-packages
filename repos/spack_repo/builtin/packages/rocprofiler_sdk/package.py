@@ -33,7 +33,12 @@ class RocprofilerSdk(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-sdk"
     git = "https://github.com/ROCm/rocm-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
+        return url.format(version)
 
     tags = ["rocm"]
 
@@ -41,6 +46,12 @@ class RocprofilerSdk(CMakePackage):
     executables = ["rocprofv3"]
 
     license("MIT")
+    version(
+        "7.13.0",
+        tag="therock-7.13",
+        commit="87ba4fafbdc5ffcb78476751645d7ad88e74abb1",
+        submodules=submodules,
+    )
     version(
         "7.2.3",
         tag="rocm-7.2.3",
@@ -175,7 +186,7 @@ class RocprofilerSdk(CMakePackage):
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -195,6 +206,7 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
@@ -218,10 +230,11 @@ class RocprofilerSdk(CMakePackage):
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
+    depends_on(f"rocdecode@7.2.3 amdgpu_target={tgt}", when=f"@7.13 amdgpu_target={tgt}")
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
         sha256="05a71386d12d7fc98a40c025dc65a804556e01f381d1101ea244f35f29edd3d8",
-        when="@7.2:",
+        when="@7.2",
     )
 
     @property

@@ -31,10 +31,13 @@ class Rocwmma(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocWMMA/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
+        elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.13.tar.gz"
         return url.format(version)
 
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -109,6 +112,7 @@ class Rocwmma(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on("rocm-cmake@%s:" % ver, type="build", when="@" + ver)
         depends_on("llvm-amdgpu@" + ver, type="build", when="@" + ver)
@@ -149,6 +153,7 @@ class Rocwmma(CMakePackage):
     patch("0002-use-find-package-rocm-smi.patch", when="@6.4")
     patch("0003-Fix-libomp.so-and-libamdhip64.so-not-found-error.patch", when="@7.1")
     patch("0003-Fix-libopenmp.so-and-libamdhip64.so-not-found-error-7.2.patch", when="@7.2")
+    patch("0003-Fix-libopenmp.so-and-libamdhip64.so-not-found-error-7.13.patch", when="@7.13")
 
     @property
     def root_cmakelists_dir(self):
@@ -164,7 +169,7 @@ class Rocwmma(CMakePackage):
         args = [
             self.define("ROCWMMA_BUILD_TESTS", "ON"),
             self.define("ROCWMMA_BUILD_VALIDATION_TESTS", "ON"),
-            self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "ON"),
+            self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "OFF"),
             self.define("ROCWMMA_BUILD_SAMPLES", "ON"),
             self.define("ROCWMMA_BUILD_DOCS", "OFF"),
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
