@@ -775,6 +775,14 @@ class Cuda(Package):
     # cuda-12.8 libcusolver.so requires log2f@GLIBC_2.27
     conflicts("glibc@:2.26", when="@12.8:")
 
+    conflicts(
+        "glibc@2.42:",
+        when="@:13.0",
+        msg="Incompatible exception specification of some C23 functions (cospi, "
+        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
+        "cuda@13.1.",
+    )
+
     variant(
         "dev", default=False, description="Enable development dependencies, i.e to use cuda-gdb"
     )
@@ -785,8 +793,8 @@ class Cuda(Package):
         description="Allow unsupported host compiler and CUDA version combinations",
     )
 
-    # depended on libxml2.so.2, known unused for 12.0+ (maybe unused for 11)
-    depends_on("libxml2@:2.13", when="@10.1.243:11")
+    # `cuda_installer` binary contained in run script depends on libxml2.so.2
+    depends_on("libxml2@:2.13", when="@10.1.243:", type="build")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
