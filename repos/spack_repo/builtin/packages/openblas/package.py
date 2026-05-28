@@ -131,7 +131,7 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     variant("symbol_suffix", default="none", description="Set a symbol suffix")
 
-    variant("locking", default=True, when="@0.3.7:", description="Build with thread safety")
+    variant("locking", default=True, description="Build with thread safety")
     variant(
         "threads",
         default="none",
@@ -451,16 +451,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # List of arguments returned by this function
         args = []
 
-        # List of available spack architectures
+        # List of available architectures, and possible aliases
         openblas_arch = set(
             ["alpha", "arm", "ia64", "mips", "mips64", "power", "riscv64", "sparc", "zarch"]
         )
-        # List of openblas architectures (key) with archspec/spack name (value)
         openblas_arch_map = {
             "amd64": "x86_64",
             "powerpc64": "power",
             "i386": "x86",
-            "arm64": "aarch64",
+            "aarch64": "arm64",
         }
         openblas_arch.update(openblas_arch_map.keys())
         openblas_arch.update(openblas_arch_map.values())
@@ -496,7 +495,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # match for the requested one. Allow OpenBLAS to determine
             # an optimized kernel at run time, including older CPUs, while
             # forcing it not to add flags for the current host compiler.
-            # FIXME: this is redundant with the dynamic_dispatch variant
             args.append("DYNAMIC_ARCH=1")
             if self.spec.version >= Version("0.3.12"):
                 # These are necessary to prevent OpenBLAS from targeting the
@@ -548,10 +546,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # $SPACK_ROOT/lib/spack/env/<compiler> have symlinks with reasonable
         # names and hack them inside lib/spack/spack/compilers/<compiler>.py
         make_defs = ["CC={0}".format(spack_cc)]
-        if self.spec.satisfies("~fortran"):
-            make_defs.append("NOFORTRAN=1")
-        else:
-            make_defs.append("FC={0}".format(spack_fc))
+        if "~fortran" not in self.spec:
+            make_defs += ["FC={0}".format(spack_fc)]
 
         # force OpenBLAS to use externally defined parallel build
         if self.spec.version < Version("0.3"):
@@ -578,7 +574,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 make_defs.append("NO_AVX512=1")
 
         if self.spec.satisfies("+dynamic_dispatch"):
-            make_defs.append("DYNAMIC_ARCH=1")
+            make_defs += ["DYNAMIC_ARCH=1"]
+
+        # Fortran-free compilation
+        if "~fortran" in self.spec:
+            make_defs += ["NOFORTRAN=1"]
 
         if "~shared" in self.spec:
             if "+pic" in self.spec:
@@ -687,6 +687,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         cmake_defs = [
             self.define("TARGET", "GENERIC"),
+            # ensure MACOSX_RPATH is set
+            self.define("CMAKE_POLICY_DEFAULT_CMP0042", "NEW"),
         ]
 
         if self.spec.satisfies("+dynamic_dispatch"):
