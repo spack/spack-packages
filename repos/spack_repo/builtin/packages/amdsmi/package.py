@@ -25,8 +25,10 @@ class Amdsmi(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
-        else:
+        if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
         return url.format(version)
 
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
