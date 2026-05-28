@@ -33,6 +33,7 @@ class RocprofilerSdk(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocprofiler-sdk"
     git = "https://github.com/ROCm/rocm-systems.git"
+
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"

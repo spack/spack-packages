@@ -23,9 +23,10 @@ class Hipdnn(CMakePackage):
     libraries = ["libmiopen_legacy_plugin", "libhipdnn_backend"]
 
     license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
-             url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-{0}.tar.gz"
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.13.tar.gz"
         return url.format(version)

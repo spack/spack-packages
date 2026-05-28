@@ -207,7 +207,6 @@ class MiopenHip(CMakePackage):
         "7.2.1",
         "7.2.3",
     ]:
-
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
     depends_on("rocmlir@7.2.3", when="@7.13.0")
 

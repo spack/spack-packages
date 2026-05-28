@@ -87,8 +87,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
         # to prevent git submodule initialization
         if self.spec.satisfies("@7.2:"):
             pyyaml_vendor_path = join_path(
-                self.stage.source_path,
-                "projects/rocprofiler-compute/src/vendored/pyyaml/lib/yaml"
+                self.stage.source_path, "projects/rocprofiler-compute/src/vendored/pyyaml/lib/yaml"
             )
             mkdirp(pyyaml_vendor_path)
             # Create a dummy __init__.py to make it a valid Python package
