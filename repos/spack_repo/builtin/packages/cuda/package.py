@@ -778,7 +778,7 @@ class Cuda(Package):
     conflicts(
         "glibc@2.42:",
         when="@:13.0",
-        msg="Incomptaible exception specification of some C23 functions (cospi, "
+        msg="Incompatible exception specification of some C23 functions (cospi, "
         "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
         "cuda@13.1.",
     )
