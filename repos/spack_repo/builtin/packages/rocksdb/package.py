@@ -17,6 +17,7 @@ class Rocksdb(MakefilePackage):
     license("Apache-2.0 OR GPL-2.0-only")
 
     version("master", git=git, branch="master", submodules=True)
+    version("11.1.1", sha256="63f11183fe40725a0e89a9e392f2c86c94b90064f1d95f5173a02cfe40de13f7")
     version("10.10.1", sha256="df2ff348f3fac8578fd4b727eee7267aaf90cd403c99b55e898d1db63fa8cff5")
     version("10.4.2", sha256="afccfab496556904900afacf7d99887f1d50cb893e5d2288bd502db233adacac")
     version("9.4.0", sha256="1f829976aa24b8ba432e156f52c9e0f0bd89c46dc0cc5a9a628ea70571c1551c")
