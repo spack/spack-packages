@@ -20,14 +20,21 @@ class NvplFft(Package):
         "/nvpl_fft/linux-sbsa/nvpl_fft-linux-sbsa-0.1.0-archive.tar.xz"
     )
 
-    license("UNKNOWN")
+    redistribute(source=False, binary=False)
 
+    license("NVIDIA Software License Agreement")
+
+    version("0.5.0", sha256="fc53bf42124b0e395230109cea5c325fd6963b8797bdd98aa127cb402e92e813")
+    version("0.4.2.1", sha256="ebb9d98abc23ddee5c492e0bbf2c534570a38d7df1863a0630da2c6d7f5cca3d")
+    version("0.4.1", sha256="b7d114a795841f28109fcc1508a6848b33ab779bef01bacf143d3ea47a0fd0a1")
     version("0.4.0.1", sha256="e0309f28a98a5f920919a9c6a766b89b507907bde66e665e0a239005c6942781")
     version("0.3.0", sha256="e20791b77fa705e5a4f7aa5dada39b2a41e898189e0e60e680576128d532269b")
     version("0.2.0.2", sha256="264343405aad6aca451bf8bd0988b6217b2bb17fd8f99394b83e04d9ab2f7f91")
     version("0.1.0", sha256="0344f8e15e5b40f4d552f7013fe04a32e54a092cc3ebede51ddfce74b44c6e7d")
 
     provides("fftw-api@3")
+
+    depends_on("c", type="build")  # for enforcing compiler restrictions
 
     requires("target=armv8.2a:", msg="Any CPU with Arm-v8.2a+ microarch")
 
