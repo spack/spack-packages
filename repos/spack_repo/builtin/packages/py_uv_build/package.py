@@ -13,6 +13,8 @@ class PyUvBuild(PythonPackage):
     homepage = "https://github.com/astral-sh/uv"
     pypi = "uv_build/uv_build-0.8.2.tar.gz"
 
+    license("Apache-2.0 OR MIT")
+
     tags = ["build-tools"]
 
     version("0.11.6", sha256="3ca25d4fca52e0598084fab352a4cafe737043f5682e3cb654164f033ba6d736")
