@@ -15,6 +15,7 @@ class PyBoto3(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.43.17", sha256="8cf48babdd52ff0e2d891dc661143780b361d3776a3be06cd719da0696995074")
     version("1.42.85", sha256="1cd3dcbfaba85c6071ba9397c1804b6a94a1a97031b8f1993fdba27c0c5d6eba")
     version("1.40.64", sha256="b92d6961c352f2bb8710c9892557d4b0e11258b70967d4e740e1c97375bcd779")
     version("1.34.162", sha256="873f8f5d2f6f85f1018cbb0535b03cceddc7b655b61f66a0a56995238804f41f")
@@ -37,7 +38,8 @@ class PyBoto3(PythonPackage):
     version("1.9.253", sha256="d93f1774c4bc66e02acdda2067291acb9e228a035435753cb75f83ad2904cbe3")
     version("1.9.169", sha256="9d8bd0ca309b01265793b7e8d7b88c1df439737d77c8725988f0277bbf58d169")
 
-    depends_on("python@3.9:", when="@1.38:", type=("build", "run"))
+    depends_on("python@3.10:", when="@1.43:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.38:1.42", type=("build", "run"))
     depends_on("python@3.7:", when="@1.26:", type=("build", "run"))
     depends_on("python@3.6:", when="@1.18:", type=("build", "run"))
     depends_on("python@2.7:2.8,3.6:", when="@1.17:", type=("build", "run"))
@@ -45,6 +47,7 @@ class PyBoto3(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("py-botocore@1.43.17:1.43", when="@1.43.17")
         depends_on("py-botocore@1.42.85:1.42", when="@1.42.85")
         depends_on("py-botocore@1.40.64:1.40", when="@1.40.64")
         depends_on("py-botocore@1.34.162:1.34", when="@1.34.162")
@@ -65,7 +68,8 @@ class PyBoto3(PythonPackage):
         depends_on("py-jmespath@0.7.1:1")
         depends_on("py-jmespath@0.7.1:0", when="@:1.20")
 
-        depends_on("py-s3transfer@0.16", when="@1.42:")
+        depends_on("py-s3transfer@0.18", when="@1.43:")
+        depends_on("py-s3transfer@0.16", when="@1.42:1.42")
         depends_on("py-s3transfer@0.14", when="@1.40.27:1.41.0")
         depends_on("py-s3transfer@0.10", when="@1.34.6:1.35")
         depends_on("py-s3transfer@0.9", when="@1.34:1.34.5")
