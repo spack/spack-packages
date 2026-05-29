@@ -22,6 +22,7 @@ class Givaro(AutotoolsPackage):
 
     license("CECILL-B", checked_by="d-torrance")
 
+    version("4.2.2", sha256="53e9fb290deb0e20799c62d250d65c2226013d60b4cebe6b0b54c73000cb8fff")
     version("4.2.1", sha256="feefb7445842ceb756f8bb13900d975b530551e488a2ae174bda7b636251de43")
 
     depends_on("cxx", type="build")
