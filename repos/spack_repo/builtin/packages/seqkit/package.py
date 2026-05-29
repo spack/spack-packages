@@ -2,16 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems import go
 from spack_repo.builtin.build_systems.go import GoPackage
 
 from spack.package import *
-
-
-class GoBuilder(go.GoBuilder):
-    @property
-    def build_directory(self):
-        return join_path(self.pkg.stage.source_path, "seqkit")
 
 
 class Seqkit(GoPackage):
@@ -30,3 +23,5 @@ class Seqkit(GoPackage):
     version("2.4.0", sha256="c319f3d5feb7c99309e654042432959f01bbc5f7e4c71f55dc9854df46c73c7f")
 
     depends_on("go@1.17:", type="build")
+
+    build_directory = "seqkit"

@@ -35,21 +35,10 @@ class Trivy(GoPackage):
 
     build_directory = "cmd/trivy"
 
-    # Required to correctly set the version
-    # https://github.com/aquasecurity/trivy/blob/v0.61.0/goreleaser.yml#L11
     @property
-    def build_args(self):
-        extra_ldflags = [f"-X 'github.com/aquasecurity/trivy/pkg/version/app.ver=v{self.version}'"]
-
-        args = super().build_args
-
-        if "-ldflags" in args:
-            ldflags_index = args.index("-ldflags") + 1
-            args[ldflags_index] = args[ldflags_index] + " " + " ".join(extra_ldflags)
-        else:
-            args.extend(["-ldflags", " ".join(extra_ldflags)])
-
-        return args
+    def ldflags(self):
+        version_path = go("list", "../../pkg/version/app", output=str).strip()
+        return [f"-X {version_path}.ver=v{self.spec.version}"]
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@0.67.0:"):

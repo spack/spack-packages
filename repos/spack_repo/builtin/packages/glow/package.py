@@ -43,16 +43,8 @@ class Glow(GoPackage):
     depends_on("go@1.13:")
 
     @property
-    def build_args(self):
-        return [
-            "-p",
-            str(make_jobs),
-            "-modcacherw",
-            "-ldflags",
-            f"-s -w -X main.Version={self.version}",
-            "-o",
-            f"{self.name}",
-        ]
+    def ldflags(self):
+        return [f"-X main.Version={self.spec.version}"]
 
     @run_after("install")
     def install_completions(self):

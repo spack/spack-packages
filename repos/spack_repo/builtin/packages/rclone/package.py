@@ -59,6 +59,11 @@ class Rclone(GoPackage):
     depends_on("go@1.17:", type="build", when="@1.58:")
     depends_on("go@1.14:", type="build")
 
+    @property
+    def ldflags(self):
+        version_path = go("list", "./fs", output=str).strip()
+        return [f"-X {version_path}.Version={self.spec.version}"]
+
     @run_after("install")
     def install_completions(self):
         rclone = Executable(self.prefix.bin.rclone)
