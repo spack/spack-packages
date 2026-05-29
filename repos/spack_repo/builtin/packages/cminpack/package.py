@@ -25,7 +25,7 @@ class Cminpack(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-    depends_on("cxx", type="build") #Fixes issue #5012
+    depends_on("cxx", type="build")  # Fixes issue #5012
 
     depends_on("blas", when="+blas")
 
