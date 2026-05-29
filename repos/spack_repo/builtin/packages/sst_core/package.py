@@ -21,6 +21,7 @@ class SstCore(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("16.0.0", sha256="20733d6334bc80dd8cf5695d1eb3bd32ada80dcf3151695b8dbdbbac28ead616")
     version("15.1.2", sha256="21aabfddb80c7aaf65e562894e0542bdb871bbc630362c3cef579d949c456f33")
     version("15.1.1", sha256="651cf5ee1438a5128aea2ad8b518c5437a1637dce357cbcbdd58681fa749222f")
     version("15.1.0", sha256="ec3d9e733bcf99283b526cfb4a853787d303a8d55b2a42d5102b0f4f4a4feb81")
@@ -87,7 +88,7 @@ class SstCore(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build")
 
-    depends_on("python@:3.11", type=("build", "run", "link"))
+    depends_on("python@3.9:", type=("build", "run", "link"))
     depends_on("mpi", when="+pdes_mpi")
     depends_on("zoltan", when="+zoltan")
     depends_on("hdf5 +cxx", when="+hdf5")
@@ -96,7 +97,7 @@ class SstCore(AutotoolsPackage):
     depends_on("ncurses", when="+curses", type=("build", "link"))
 
     with when("@develop,master,14.0.0"):
-        depends_on("autoconf@1.68:", type="build")
+        depends_on("autoconf@2.69:", type="build")
         depends_on("automake@1.11.1:", type="build")
         depends_on("libtool@1.2.4:", type="build")
         depends_on("m4", type="build")
@@ -104,6 +105,10 @@ class SstCore(AutotoolsPackage):
     # Backport of https://github.com/sstsimulator/sst-core/pull/1110
     with when("@14.0.0"):
         patch("1110-ncurses_detection.patch", level=0)
+
+    with when("^mpi=openmpi"):
+        # < 4 is untested and 5 doesn't pass tests due to reference outputs
+        depends_on("openmpi@4")
 
     # force out-of-source builds
     build_directory = "spack-build"
