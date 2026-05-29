@@ -17,7 +17,7 @@ class PyOpentelemetrySemanticConventions(PythonPackage):
     version("0.62b0", sha256="cbfb3c8fc259575cf68a6e1b94083cc35adc4a6b06e8cf431efa0d62606c0097")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-hatchling", type=("build", "run"))
+    depends_on("py-hatchling", type="build")
 
     depends_on("py-opentelemetry-api@1.41.0", type=("build", "run"))
     depends_on("py-typing-extensions@4.5:", type=("build", "run"))

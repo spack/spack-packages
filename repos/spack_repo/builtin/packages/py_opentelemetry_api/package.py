@@ -18,7 +18,7 @@ class PyOpentelemetryApi(PythonPackage):
     version("1.39.1", sha256="fbde8c80e1b937a2c61f20347e91c0c18a1940cecf012d62e65a7caf08967c9c")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-hatchling", type=("build", "run"))
+    depends_on("py-hatchling", type="build")
 
     depends_on("py-typing-extensions@4.5:", type=("build", "run"))
     depends_on("py-importlib-metadata@6:8.7", type=("build", "run"))

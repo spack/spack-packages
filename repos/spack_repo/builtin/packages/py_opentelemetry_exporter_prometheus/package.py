@@ -17,7 +17,7 @@ class PyOpentelemetryExporterPrometheus(PythonPackage):
     version("0.62b0", sha256="4d1106566a9b3e8dff028e69e9f2dc90723e6b431c900ff8c72982fcf11dbae5")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-hatchling", type=("build", "run"))
+    depends_on("py-hatchling", type="build")
 
     depends_on("py-opentelemetry-api@1.12:1", type=("build", "run"))
     depends_on("py-opentelemetry-sdk@1.41:1", type=("build", "run"))

@@ -17,7 +17,7 @@ class PyOpentelemetryInstrumentation(PythonPackage):
     version("0.62b0", sha256="aa1b0b9ab2e1722c2a8a5384fb016fc28d30bba51826676c8036074790d2861e")
 
     depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-hatchling", type=("build", "run"))
+    depends_on("py-hatchling", type="build")
 
     depends_on("py-packaging@18:", type=("build", "run"))
     depends_on("py-wrapt@1:2", type=("build", "run"))
