@@ -199,7 +199,8 @@ class Singularityce(SingularityBase):
     maintainers("alalazo")
     version("master", branch="master")
 
-    version("4.3.3", sha256="cd0bef984270040b71bf43e517ff08e92e9cb474b71286e7274d8e5348e3ff7d")
+    version("4.3.7", sha256="fc3f96281e6f19b91c9831693bb7a2106e694b6fd25cba731a4a62b5d55c0cf4")
+    version("4.3.3", sha256="3b1517179f697293d1f09f75eadc43d25c92be132c279369c1096142ce9194be")
     version("4.1.0", sha256="119667f18e76a750b7d4f8612d7878c18a824ee171852795019aa68875244813")
     version("4.0.3", sha256="b3789c9113edcac62032ce67cd1815cab74da6c33c96da20e523ffb54cdcedf3")
     version("3.11.5", sha256="5acfbb4a109d9c63a25c230e263f07c1e83f6c726007fbcd97a533f03d33a86a")
