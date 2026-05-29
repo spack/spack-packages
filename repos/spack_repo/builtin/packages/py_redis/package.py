@@ -27,12 +27,18 @@ class PyRedis(PythonPackage):
         description="Support for hiredis which speeds up parsing of multi bulk replies",
     )
 
-    depends_on("py-hatchling", when="@6:", type="build")
-    depends_on("py-setuptools", when="@:5", type="build")
-    depends_on("py-importlib-metadata@1:", when="@4: ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@4: ^python@:3.7", type=("build", "run"))
-    depends_on("py-async-timeout@4.0.3:", when="@5.0.3: ^python@:3.11.2", type=("build", "run"))
-    depends_on("py-async-timeout@4.0.2:", when="@4:", type=("build", "run"))
+    depends_on("py-hatchling", type="build", when="@6:")
+    depends_on("py-setuptools", type="build", when="@:5")
 
-    depends_on("py-hiredis@1:", when="@4: +hiredis", type=("build", "run"))
-    depends_on("py-hiredis@0.1.3:", when="+hiredis", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@7.1.0:")
+        depends_on("python@3.8:", when="@5.1.0:")
+        depends_on("python")
+
+        depends_on("py-importlib-metadata@1:", when="@4: ^python@:3.7")
+        depends_on("py-typing-extensions", when="@4: ^python@:3.7")
+        depends_on("py-async-timeout@4.0.3:", when="@5.0.3: ^python@:3.11.2")
+        depends_on("py-async-timeout@4.0.2:", when="@4:")
+
+        depends_on("py-hiredis@1:", when="@4: +hiredis")
+        depends_on("py-hiredis@0.1.3:", when="+hiredis")
