@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, define
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
@@ -297,79 +297,77 @@ class Geant4(CMakePackage):
 
         # Core options
         options = [
-            define("GEANT4_USE_SYSTEM_CLHEP", True),
-            define("GEANT4_USE_SYSTEM_EXPAT", True),
-            define("GEANT4_USE_SYSTEM_ZLIB", True),
-            define("GEANT4_USE_G3TOG4", True),
-            define("GEANT4_USE_GDML", True),
-            define("XERCESC_ROOT_DIR", spec["xerces-c"].prefix),
+            self.define("GEANT4_USE_SYSTEM_CLHEP", True),
+            self.define("GEANT4_USE_SYSTEM_EXPAT", True),
+            self.define("GEANT4_USE_SYSTEM_ZLIB", True),
+            self.define("GEANT4_USE_G3TOG4", True),
+            self.define("GEANT4_USE_GDML", True),
+            self.define("XERCESC_ROOT_DIR", spec["xerces-c"].prefix),
         ]
-        def append_variant(cmake_var: str, variant: str):
-            options.append(self.define_from_variant(cmake_var, variant))
 
         # Use the correct C++ standard option for the requested version
         if spec.version >= Version("11.0"):
-            append_variant("CMAKE_CXX_STANDARD", "cxxstd")
+            options.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
         elif spec.version >= Version("10.3"):
-            append_variant("GEANT4_BUILD_CXXSTD", "cxxstd")
+            options.append(self.define_from_variant("GEANT4_BUILD_CXXSTD", "cxxstd"))
         else:
             cxxstd = spec.variants["cxxstd"].value
-            options.append(define("GEANT4_BUILD_CXXSTD", f"c++{cxxstd}"))
+            options.append(self.define("GEANT4_BUILD_CXXSTD", f"c++{cxxstd}"))
 
         if spec.version >= Version("10.6"):
             # When building a downstream library/app outside of Spack, make
             # sure that Geant4's dependencies are found
-            options.append(define("GEANT4_INSTALL_PACKAGE_CACHE", True))
+            options.append(self.define("GEANT4_INSTALL_PACKAGE_CACHE", True))
 
         # Multithreading
-        append_variant("GEANT4_BUILD_MULTITHREADED", "threads")
-        append_variant("GEANT4_USE_TBB", "tbb")
+        options.append(self.define_from_variant("GEANT4_BUILD_MULTITHREADED", "threads"))
+        options.append(self.define_from_variant("GEANT4_USE_TBB", "tbb"))
 
         if spec.satisfies("+threads"):
             # Locked at global-dynamic to allow use cases that load the
             # geant4 libs at application runtime
-            options.append(define("GEANT4_BUILD_TLS_MODEL", "global-dynamic"))
+            options.append(self.define("GEANT4_BUILD_TLS_MODEL", "global-dynamic"))
 
         # Profiling
-        append_variant("GEANT4_USE_TIMEMORY", "timemory")
+        options.append(self.define_from_variant("GEANT4_USE_TIMEMORY", "timemory"))
 
         # Never install the data with geant4, but point to the dependent
         # geant4-data's install directory to correctly set up the
         # Geant4Config.cmake values for Geant4_DATASETS .
-        options.append(define("GEANT4_INSTALL_DATA", False))
+        options.append(self.define("GEANT4_INSTALL_DATA", False))
         if spec.satisfies("+data"):
-            options.append(define("GEANT4_INSTALL_DATADIR", self.datadir))
+            options.append(self.define("GEANT4_INSTALL_DATADIR", self.datadir))
             variants = self.spec["geant4-data"].variants
             for v in ["tendl", "nudexlib", "urrpt"]:
                 if v in variants:
                     # Inform Geant4 whether this optional dataset is in use
                     # so that it's exported to Geant4_DATASET_DESCRIPTIONS
                     options.append(
-                        define("GEANT4_INSTALL_DATASETS_" + v.upper(), variants[v].value)
+                        self.define("GEANT4_INSTALL_DATASETS_" + v.upper(), variants[v].value)
                     )
 
         # Vecgeom
-        append_variant("GEANT4_USE_USOLIDS", "vecgeom")
+        options.append(self.define_from_variant("GEANT4_USE_USOLIDS", "vecgeom"))
         if spec.satisfies("+vecgeom"):
-            options.append(define("USolids_DIR", spec["vecgeom"].prefix.lib.CMake.USolids))
+            options.append(self.define("USolids_DIR", spec["vecgeom"].prefix.lib.CMake.USolids))
 
         # Visualization options
         if spec.satisfies("+x11 +opengl"):
-            options.append(define("GEANT4_USE_OPENGL_X11", True))
+            options.append(self.define("GEANT4_USE_OPENGL_X11", True))
         if spec.satisfies("platform=windows"):
-            append_variant("GEANT4_USE_OPENGL_WIN32", "opengl")
-        append_variant("GEANT4_USE_XM", "motif")
-        append_variant("GEANT4_USE_RAYTRACER_X11", "x11")
+            options.append(self.define_from_variant("GEANT4_USE_OPENGL_WIN32", "opengl"))
+        options.append(self.define_from_variant("GEANT4_USE_XM", "motif"))
+        options.append(self.define_from_variant("GEANT4_USE_RAYTRACER_X11", "x11"))
 
-        append_variant("GEANT4_USE_QT", "qt")
+        options.append(self.define_from_variant("GEANT4_USE_QT", "qt"))
         if spec.satisfies("+qt"):
             if spec.satisfies("^[virtuals=qmake] qt-base"):
-                options.append(define("GEANT4_USE_QT_QT6", True))
-            options.append(define("QT_QMAKE_EXECUTABLE", spec["qmake"].prefix.bin.qmake))
+                options.append(self.define("GEANT4_USE_QT_QT6", True))
+            options.append(self.define("QT_QMAKE_EXECUTABLE", spec["qmake"].prefix.bin.qmake))
 
-        append_variant("GEANT4_USE_HDF5", "hdf5")
-        append_variant("GEANT4_USE_VTK", "vtk")
-        append_variant("GEANT4_USE_PYTHON", "python")
+        options.append(self.define_from_variant("GEANT4_USE_HDF5", "hdf5"))
+        options.append(self.define_from_variant("GEANT4_USE_VTK", "vtk"))
+        options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
 
         return options
 
