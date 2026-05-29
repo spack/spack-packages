@@ -18,6 +18,7 @@ class PyMne(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.12.1", sha256="244f844057f28a4da2509039dba637832ffb65f678ca76fc667312c493b12044")
     version("1.12.0", sha256="29ff8331ba58626b5ce361dee66c0de5e331a0fd8217ac7543fb552ce667f522")
     version("1.11.0", sha256="0a89b8fc44133b81218a35cdcba74ad0f8ae2e265136249b365b9ce04864c688")
     version("1.10.2", sha256="e83610ed3fa86086c7b2006e978e2ec39d9ebc8d72e2777fde64c68674ec561f")
