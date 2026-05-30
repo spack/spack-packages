@@ -24,7 +24,7 @@ class PyLangchainCore(PythonPackage):
         depends_on("py-langsmith@0.3.45:0")
         depends_on("py-tenacity@8.1:9")
         depends_on("py-jsonpatch@1.33:1")
-        depends_on("py-pyyaml@3.5:6")
+        depends_on("py-pyyaml@5.3:6")
         depends_on("py-typing-extensions@4.7:4")
         depends_on("py-packaging@23.2:")
         depends_on("py-pydantic@2.7.4:2")
