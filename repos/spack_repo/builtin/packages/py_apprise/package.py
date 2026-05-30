@@ -16,6 +16,8 @@ class PyApprise(PythonPackage):
 
     version("1.9.6", sha256="4206be9cb5694a3d08dd8e0393bbb9b36212ac3a7769c2633620055e75c6caef")
 
+    license("BSD-2-Clause")
+
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@69:", type="build")
 
