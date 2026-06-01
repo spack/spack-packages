@@ -25,9 +25,7 @@ class Rpp(ROCmLibrary, CMakePackage):
     license("MIT")
 
     def url_for_version(self, version):
-        if version >= Version("7.13"):
-            url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
-        elif version >= Version("5.7.0"):
+        if version >= Version("5.7.0"):
             url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"

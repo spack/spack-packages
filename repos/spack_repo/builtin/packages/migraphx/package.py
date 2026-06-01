@@ -20,6 +20,8 @@ class Migraphx(ROCmLibrary, CMakePackage):
     libraries = ["libmigraphx"]
 
     license("MIT")
+
+    version("7.13.0", branch="release/rocm-rel-7.13")
     version("7.2.3", sha256="25d491d83fe84c6c071305a71100f77b393b35ae5c9eeec277c68986378f6abc")
     version("7.2.1", sha256="611e4646f11fe559946275a6c79f1aaabe0a5c7cb95a42b28e724ba29f4c753a")
     version("7.2.0", sha256="085ea6fcf6197b20fed60917194ca622e5d2c1705237fe063563f988494a8b3d")
@@ -77,7 +79,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         sha256="410d0fd49f5f65089cd4f540c530c85896708b4fd94c67d15c2c279158aea85d",
         when="@6.0",
     )
-    patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:")
+    patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:7.2")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("protobuf", type="link")
@@ -118,6 +120,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -145,6 +148,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
