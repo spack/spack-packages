@@ -230,9 +230,7 @@ class Mivisionx(ROCmLibrary, CMakePackage):
                 depends_on(
                     f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
                 )
-                depends_on(
-                    f"rpp@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-                )
+                depends_on(f"rpp@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on("python@3.5:", type="build")
