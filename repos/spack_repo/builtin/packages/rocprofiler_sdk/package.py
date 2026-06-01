@@ -50,7 +50,7 @@ class RocprofilerSdk(CMakePackage):
     version(
         "7.13.0",
         tag="therock-7.13",
-        commit="79e85e1468f96a867108043c953e9547c13b4c5e",
+        commit="87ba4fafbdc5ffcb78476751645d7ad88e74abb1",
         submodules=submodules,
     )
     version(

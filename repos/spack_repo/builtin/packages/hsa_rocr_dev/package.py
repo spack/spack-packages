@@ -23,10 +23,8 @@ class HsaRocrDev(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"
-        elif version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         else:
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
