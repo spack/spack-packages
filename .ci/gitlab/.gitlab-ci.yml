@@ -49,9 +49,9 @@ default:
 .package_on_change: &package_on_change
     paths:
       - .ci/env
-      - .ci/gitlab/*
-      - repos/spack_repo/*
-      - stacks/$SPACK_CI_STACK_NAME/*
+      - .ci/gitlab/**/*
+      - repos/spack_repo/**/*
+      - stacks/$SPACK_CI_STACK_NAME/**/*
     compare_to: HEAD~1
 
   ########################################
