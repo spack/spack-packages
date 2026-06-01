@@ -322,7 +322,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         # * the system rendering default (WGL/AGL/GLX)
         # * EGL
         # * OSMesa (guarenteed to exist and work on all systems)
-        depends_on("osmesa", type=("run"), when="+osmesa_fallback")
+        depends_on("osmesa", type=("link", "run"), when="+osmesa_fallback")
 
         # Depend on Viskores when it is needed
         for vk_variant in viskores_dependency_variants:
