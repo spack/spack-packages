@@ -38,9 +38,9 @@ class T8code(autotools.AutotoolsPackage, cmake.CMakePackage):
 
     variant("mpi", default=True, description="Enable MPI parallel code")
     variant("vtk", default=False, description="Enable vtk-dependent code")
-    variant("petsc", default=False, description="Enable PETSc-dependent code")
+    variant("petsc", when="build_system=autotools", default=False, description="Enable PETSc-dependent code")
     variant("netcdf", default=False, description="Enable NetCDF-dependent code")
-    variant("metis", default=False, description="Enable metis-dependent code")
+    variant("metis", when="build_system=autotools", default=False, description="Enable metis-dependent code")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
