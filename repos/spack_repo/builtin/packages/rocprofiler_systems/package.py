@@ -45,8 +45,8 @@ class RocprofilerSystems(CMakePackage):
 
     version(
         "7.13.0",
+        git="https://github.com/ROCm/rocm-systems.git",
         tag="therock-7.13",
-        commit="79e85e1468f96a867108043c953e9547c13b4c5e",
         submodules=submodules,
     )
     version(
@@ -196,7 +196,18 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
-    variant("internal-dyninst", default=False, description="build internal dyninst")
+    variant(
+        "internal-dyninst",
+        default=False,
+        when="@:7.2",
+        description="build internal dyninst",
+    )
+    variant(
+        "internal-dyninst",
+        default=True,
+        when="@7.13:",
+        description="build internal dyninst",
+    )
     variant("internal-tbb", default=False, description="build internal tbb")
 
     conflicts("%rocmcc", when="+internal-tbb")
@@ -327,6 +338,9 @@ class RocprofilerSystems(CMakePackage):
             self.define_from_variant("ROCPROFSYS_STRIP_LIBRARIES", "strip"),
             self.define_from_variant("ROCPROFSYS_INSTALL_PERFETTO_TOOLS", "perfetto_tools"),
             self.define("ElfUtils_ROOT_DIR", spec["elfutils"].prefix),
+            # Force use of system Boost to avoid target conflicts with Dyninst
+            self.define("Boost_NO_BOOST_CMAKE", True),
+            self.define("Boost_USE_DEBUG_RUNTIME", False),
             # timemory arguments
             self.define("TIMEMORY_BUILD_CALIPER", False),
             self.define_from_variant("TIMEMORY_USE_TAU", "tau"),

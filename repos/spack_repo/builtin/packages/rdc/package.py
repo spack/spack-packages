@@ -140,8 +140,6 @@ class Rdc(CMakePackage):
     ]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
-    depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
-
     def patch(self):
         if self.spec.satisfies("@:6.1"):
             filter_file(r"\${ROCM_DIR}/rocm_smi", "${ROCM_SMI_DIR}", "CMakeLists.txt")

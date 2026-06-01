@@ -47,10 +47,11 @@ class RocprofilerSdk(CMakePackage):
     executables = ["rocprofv3"]
 
     license("MIT")
+
     version(
         "7.13.0",
+        git="https://github.com/ROCm/rocm-systems.git",
         tag="therock-7.13",
-        commit="79e85e1468f96a867108043c953e9547c13b4c5e",
         submodules=submodules,
     )
     version(
