@@ -47,7 +47,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
         else:
-            url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.tar.gz"
+            url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-7.13.tar.gz"
         return url.format(version)
 
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
