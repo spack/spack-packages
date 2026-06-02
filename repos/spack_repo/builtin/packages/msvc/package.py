@@ -140,6 +140,9 @@ class Msvc(Package, CompilerPackage):
             else:
                 env.set_path(env_var, int_env[env_var].split(os.pathsep))
 
+    def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec: Spec) -> None:
+        self.setup_dependent_build_environment(env=env, dependent_spec=dependent_spec)
+
     def init_msvc(self):
         # To use the MSVC compilers, VCVARS must be invoked
         # VCVARS is located at a fixed location, referencable
