@@ -14,14 +14,13 @@ class Pprof(GoPackage):
     git = "https://github.com/google/pprof.git"
 
     maintainers("mcmehrtens")
+
     license("Apache-2.0", checked_by="mcmehrtens")
+
+    sanity_check_is_file = ["bin/pprof"]
 
     # pprof doesn't have tagged releases
     version("main", branch="main", get_full_repo=True)
-
-    # pprof's go.mod requires go 1.24; Go supports the two most recent
-    # major releases, so this will need updating with new Go releases.
-    depends_on("go@1.24:", type="build")
 
     variant(
         "graphviz",
@@ -29,8 +28,8 @@ class Pprof(GoPackage):
         description="Enable graphic visualization of profiles (SVG, PDF, etc.)",
     )
 
-    depends_on("graphviz", type="run", when="+graphviz")
+    # pprof's go.mod requires go 1.24; Go supports the two most recent
+    # major releases, so this will need updating with new Go releases.
+    depends_on("go@1.24:", type="build")
 
-    @property
-    def sanity_check_is_file(self):
-        return [join_path("bin", "pprof")]
+    depends_on("graphviz", type="run", when="+graphviz")

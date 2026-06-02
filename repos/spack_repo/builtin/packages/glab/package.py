@@ -66,18 +66,8 @@ class Glab(GoPackage):
     # Required to correctly set the version
     # https://gitlab.com/gitlab-org/cli/-/blob/v1.55.0/Makefile?ref_type=tags#L44
     @property
-    def build_args(self):
-        extra_ldflags = [f"-X 'main.version=v{self.version}'"]
-
-        args = super().build_args
-
-        if "-ldflags" in args:
-            ldflags_index = args.index("-ldflags") + 1
-            args[ldflags_index] = args[ldflags_index] + " " + " ".join(extra_ldflags)
-        else:
-            args.extend(["-ldflags", " ".join(extra_ldflags)])
-
-        return args
+    def ldflags(self):
+        return [f"-X main.version=v{self.spec.version}"]
 
     @run_after("install")
     def install_completions(self):

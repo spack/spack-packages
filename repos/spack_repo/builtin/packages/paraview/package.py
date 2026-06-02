@@ -322,7 +322,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         # * the system rendering default (WGL/AGL/GLX)
         # * EGL
         # * OSMesa (guarenteed to exist and work on all systems)
-        depends_on("osmesa", type=("run"), when="+osmesa_fallback")
+        depends_on("osmesa", type=("link", "run"), when="+osmesa_fallback")
 
         # Depend on Viskores when it is needed
         for vk_variant in viskores_dependency_variants:
@@ -662,8 +662,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                         "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
                     ]
                 )
-                if spec.satisfies("%cce"):
-                    cmake_args.append("-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF")
             else:  # @5.7:
                 cmake_args.extend(
                     [
@@ -734,6 +732,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 [
                     "-DPARAVIEW_%s_PYTHON:BOOL=ON" % py_use_opt,
                     "-D%s_PYTHON_VERSION:STRING=%d" % (py_ver_opt, py_ver_val),
+                    "-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF",
                 ]
             )
             if spec.satisfies("@:5.6"):

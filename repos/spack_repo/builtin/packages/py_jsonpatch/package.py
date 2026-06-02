@@ -15,6 +15,7 @@ class PyJsonpatch(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.33", sha256="9fcd4009c41e6d12348b4a0ff2563ba56a2923a7dfee731d004e212e1ee5030c")
     version("1.23", sha256="49f29cab70e9068db3b1dc6b656cbe2ee4edf7dfe9bf5a0055f17a4b6804a4b9")
 
     depends_on("py-setuptools", type="build")
