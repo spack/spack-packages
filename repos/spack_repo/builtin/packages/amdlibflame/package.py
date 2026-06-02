@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 # ----------------------------------------------------------------------------\
 
+import os
+
 from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.packages.libflame.package import LibflameBase
 
 from spack.package import *
 
-import os
 
 class Amdlibflame(CMakePackage, LibflameBase):
     """libFLAME (AMD Optimized version) is a portable library for
@@ -121,9 +122,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
         # When both shared and static are built, prefer shared libraries.
         # When only one type is built, return that type.
         shared = self.spec.satisfies("+shared")
-        return find_libraries(
-            "libflame", root=self.prefix, shared=shared, recursive=True
-        )
+        return find_libraries("libflame", root=self.prefix, shared=shared, recursive=True)
 
     @property
     def libs(self):
@@ -131,9 +130,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
         # When both shared and static are built, prefer shared libraries.
         # When only one type is built, return that type.
         shared = self.spec.satisfies("+shared")
-        return find_libraries(
-            "libflame", root=self.prefix, shared=shared, recursive=True
-        )
+        return find_libraries("libflame", root=self.prefix, shared=shared, recursive=True)
 
     def flag_handler(self, name, flags):
         if name == "cflags":
