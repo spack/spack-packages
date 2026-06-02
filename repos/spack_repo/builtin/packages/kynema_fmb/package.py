@@ -65,7 +65,6 @@ class KynemaFmb(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("netcdf-c@4.9:")
     depends_on("yaml-cpp@0.6:")
-    depends_on("kokkos-kernels")
     depends_on("lapack")
     depends_on("eigen")
 

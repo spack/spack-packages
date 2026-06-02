@@ -69,8 +69,8 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("openfast@4.1.1:+cxx+netcdf", when="+openfast")
     depends_on("hypre@2.30.0: ~int64+mpi~superlu-dist", when="+hypre")
     depends_on(
-        "trilinos@16:+exodus+tpetra+zoltan+stk~superlu-dist+hdf5+shards~hypre+gtest+test "
-        "gotype=long cxxstd=17"
+        "trilinos@17:+exodus+tpetra+zoltan+stk~superlu-dist+hdf5+shards~hypre+gtest+test "
+        "gotype=long cxxstd=20"
     )
     depends_on("trilinos~cuda~wrapper", when="~cuda")
     depends_on("tioga@1.0.0:", when="+tioga")
