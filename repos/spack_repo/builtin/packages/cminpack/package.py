@@ -23,8 +23,9 @@ class Cminpack(CMakePackage):
     variant("shared", default=False, description="Build shared libraries")
     variant("blas", default=True, description="Compile with BLAS")
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("blas", when="+blas")
 
