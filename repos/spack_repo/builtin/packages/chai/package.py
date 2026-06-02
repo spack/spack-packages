@@ -155,7 +155,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="17",
-        values=("11", "14", "17", "20", "23"),
+        values=("11", "14", "17", "20"),
         description="C++ standard to build with",
     )
 
@@ -224,7 +224,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             )
 
     with when("+raja"):
-        for std in ("11", "14", "17", "20", "23"):
+        for std in ("11", "14", "17", "20"):
             depends_on(f"raja cxxstd={std}", when=f"cxxstd={std}")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+openmp", when="+openmp")
