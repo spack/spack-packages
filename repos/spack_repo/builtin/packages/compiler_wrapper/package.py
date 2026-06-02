@@ -57,7 +57,7 @@ class CompilerWrapper(Package, NMakePackage):
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         # version("develop", branch="main")
-        version("1.0", commit="1fa40545bf9d012948ad36124da73325ff906afa")
+        version("1.0", commit="7b41382bcb5f8782344a319d95eaf29d2758a904")
 
     depends_on("msvc", when="platform=windows", type=("build", "run"))
 
