@@ -193,8 +193,7 @@ class Tau(Package):
     depends_on("libunwind libs=static +pic", when="libunwind=static")
     depends_on("libunwind libs=shared", when="libunwind=shared")
     depends_on("mpi", when="+mpi", type=("build", "run", "link"))
-    # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
-    depends_on("cuda@:12.8", when="+cuda")
+    depends_on("cuda", when="+cuda")
     depends_on("gasnet", when="+gasnet")
     depends_on("adios2", when="+adios2")
     depends_on("sqlite", when="+sqlite")
@@ -209,7 +208,7 @@ class Tau(Package):
     depends_on("hip", when="+rocprofiler-sdk")
     depends_on("elfutils", when="+rocprofiler-sdk")
     depends_on("comgr", when="+rocprofiler-sdk")
-    depends_on("salt", when="+salt", type="run")
+    depends_on("saltfm", when="+salt", type="run")
     depends_on("hip", when="@2.34: +roctracer")
     depends_on("java", type="run")  # for paraprof
     depends_on("oneapi-level-zero", when="+level_zero")

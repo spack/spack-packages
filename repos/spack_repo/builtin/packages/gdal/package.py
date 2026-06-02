@@ -31,6 +31,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.13.0", sha256="1c537dd2f4d66f05534ae419bc2af495c2204ce13bb266c8cbd867dd6705f0c7")
     version("3.12.4", sha256="813094498c17522ac42821a5ea1ea783d8326c0adf286cce86a949038bd09198")
     version("3.12.3", sha256="398a5a32ee6e75040598a7f8e895126a8225118317f272d715867c844f932848")
     version("3.12.2", sha256="21c5e0f91974383b4c5692b7103650f176f2f54f1b0d449787f444b89881e9b4")
@@ -42,6 +43,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.11.2", sha256="bda41b7cf12f05995a00106ae0db1b784d9c307953d81c76d351c7dbeb121aeb")
     version("3.11.1", sha256="21341b39a960295bd3194bcc5f119f773229b4701cd752499fbd850f3cc160fd")
     version("3.11.0", sha256="ba1a17a74428bfd5c789ce293f59b6a3d8bfabab747431c33331ac0ac579ea71")
+    version("3.10.3", sha256="335a8d2c7567d783563d3fed37e8b58d72d9c1723f6fd1d8c299fe4c0d936781")
     version("3.10.2", sha256="67b4e08acd1cc4b6bd67b97d580be5a8118b586ad6a426b09d5853898deeada5")
     version("3.10.1", sha256="9211eac72b53f5f85d23cf6d83ee20245c6d818733405024e71f2af41e5c5f91")
     version("3.10.0", sha256="af821a3bcf68cf085724c21c9b53605fd451d83af3c8854d8bf194638eb734a8")
@@ -136,6 +138,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     variant("geos", default=True, description="Required for geometry processing operations in OGR")
     variant("gif", default=False, description="Required for GIF driver")
     variant("grass", default=False, when="@:3.4", description="Required for GRASS driver")
+    variant("grok", default=False, when="@3.13:", description="Required for JP2Grok driver")
     variant("gta", default=False, description="Required for GTA driver")
     variant("heif", default=False, when="@3.2:", description="Required for HEIF driver")
     variant("hdf4", default=False, description="Required for HDF4 driver")
@@ -158,7 +161,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     variant(
         "libxml2", default=False, description="Required for XML validation in many OGR drivers"
     )
-    variant("luratech", default=False, description="Required for JP2Lura driver")
+    variant("luratech", default=False, when="@:3.10", description="Required for JP2Lura driver")
     variant("lz4", default=False, when="@3.4:", description="Required for Zarr driver")
     variant("mdb", default=False, when="@:3.4", description="Required for MDB driver")
     variant("mongocxx", default=False, description="Required for MongoDBv3 driver")
@@ -193,11 +196,16 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
         when="build_system=cmake",
         description="Required for SAP HANA driver",
     )
-    variant("ogdi", default=False, description="Required for OGDI driver")
+    variant("ogdi", default=False, when="@:3.10", description="Required for OGDI driver")
     variant(
         "opencad", default=False, when="build_system=cmake", description="Required for CAD driver"
     )
-    variant("opencl", default=False, description="Required to accelerate warping computations")
+    variant(
+        "opencl",
+        default=False,
+        when="@:3.10",
+        description="Required to accelerate warping computations",
+    )
     variant("opendrive", default=False, when="@3.10:", description="Required for XODR driver")
     variant("openexr", default=False, when="@3.1:", description="Required for EXR driver")
     variant("openjpeg", default=False, description="Required for JP2OpenJPEG driver")
@@ -230,7 +238,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     )
     variant("rasdaman", default=False, when="@:3.6", description="Required for Rasdaman driver")
     variant("rasterlite2", default=False, description="Required for RasterLite2 driver")
-    variant("rdb", default=False, when="@3.1:", description="Required for RDB driver")
+    variant("rdb", default=False, when="@3.1:3.10", description="Required for RDB driver")
     variant("sde", default=False, when="@:3.1", description="Required for SDE driver")
     variant("sfcgal", default=False, description="Provides 3D geometry operations")
     variant("spatialite", default=False, description="Required for SQLite and GPKG drivers")
@@ -308,6 +316,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("geos@3.1:", when="+geos")
     depends_on("giflib", when="+gif")
     depends_on("grass@5.7:", when="+grass")
+    # depends_on("grok@20.2:", when="+grok")
     depends_on("libgta", when="+gta")
     depends_on("libheif@1.1:", when="+heif")
     depends_on("hdf", when="+hdf4")
@@ -367,6 +376,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     with when("+poppler"):
         depends_on("poppler@0.86:", when="@3.9:")
         depends_on("poppler@0.24:")
+        depends_on("poppler@:26.04", when="@:3.12.4")
         depends_on("poppler@:26.03", when="@:3.12.3")
         depends_on("poppler@:26.01", when="@:3.12.2")
         depends_on("poppler@:26.00", when="@:3.12.1")
@@ -525,7 +535,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
-        # https://gdal.org/build_hints.html
+        # https://gdal.org/en/stable/development/building_from_source.html
         args = [
             # Only use Spack-installed dependencies
             self.define("GDAL_USE_EXTERNAL_LIBS", False),

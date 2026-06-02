@@ -18,6 +18,7 @@ class Bdftopcf(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/util/bdftopcf"
     xorg_mirror_path = "util/bdftopcf-1.0.5.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/util/bdftopcf.git"
 
     license("MIT")
 
