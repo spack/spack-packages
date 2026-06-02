@@ -145,7 +145,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "use_vtkm",
         default="default",
-        when="@5.3.0:5.13",
+        when="@5:5",
         multi=False,
         values=("default", "on", "off"),
         description="Build VTK-m with ParaView."
@@ -155,8 +155,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("~hdf5", when="+visitbridge")
     conflicts("+fides", when="~adios2", msg="Fides needs ADIOS2")
-    conflicts("+fides", when="@:5 use_vtkm=off", msg="Fides needs VTK-m")
-    conflicts("+fides", when="@:5 use_vtkm=default", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@5:5 use_vtkm=off", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@5:5 use_vtkm=default", msg="Fides needs VTK-m")
     conflicts("+openpmd", when="~adios2 ~hdf5", msg="openPMD needs ADIOS2 and/or HDF5")
     conflicts("~shared", when="+cuda")
     conflicts("+cuda", when="use_vtkm=off")
@@ -164,7 +164,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="use_vtkm=off")
     # Legacy rendering dropped in 5.5
     # See commit: https://gitlab.kitware.com/paraview/paraview/-/commit/798d328c
-    conflicts("~opengl2", when="@5.5:5")
+    conflicts("~opengl2", when="@5:5")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -175,9 +175,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     extends("python", when="+python")
 
-    # VTK < 8.2.1 can't handle Python 3.8
-    # This affects Paraview <= 5.7 (VTK 8.2.0)
-    # https://gitlab.kitware.com/vtk/vtk/-/issues/17670
     depends_on("python@3:", when="+python", type=("build", "run"))
 
     depends_on("py-numpy", when="+python", type=("build", "run"))
@@ -217,10 +214,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     with when("@:5"):
         with when("+qt"):
             # https://discourse.paraview.org/t/paraview-5-9-and-minimum-recommended-qt-version/5333
-            depends_on("qt@5.12:5", when="@5.9:5.13")
+            depends_on("qt@5.12:5", when="@5:5.13")
             depends_on("qt+sql")
-            depends_on("qt+opengl", when="@5.3.0:5 +opengl2")
-            depends_on("qt~opengl", when="@5.3.0:5 ~opengl2")
+            depends_on("qt+opengl", when="@5:5 +opengl2")
+            depends_on("qt~opengl", when="@5:5 ~opengl2")
             # Headless rendering not supported with Qt
             conflicts("osmesa")
             conflicts("egl")
@@ -331,14 +328,14 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
-    depends_on("netcdf-c@:4.9.2", when="@:5.13")
+    depends_on("netcdf-c@:4.9.2", when="@5:5.13")
     depends_on("pegtl@2.8.3")
     depends_on("protobuf@3.4:")
     # protobuf requires newer abseil-cpp, which in turn requires C++14,
-    # but paraview uses C++11 by default. Use for 5.8+ until ParaView updates
+    # but paraview uses C++11 by default. Use until ParaView updates
     # its C++ standard level.
-    depends_on("protobuf@3.4:21", when="@5.8:%gcc")
-    depends_on("protobuf@3.4:21", when="@5.8:%clang")
+    depends_on("protobuf@3.4:21", when="%gcc")
+    depends_on("protobuf@3.4:21", when="%clang")
     depends_on("protobuf@3.4:21", when="@5.11:")
     depends_on("protobuf@3.4:21", when="@master")
     depends_on("libxml2")
@@ -367,16 +364,16 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("proj@8.1.0", when="@5.11:")
 
     # Patches to vendored VTK-m are needed for forward compat with CUDA 12 (mr 2972 and 3259)
-    depends_on("cuda@:11", when="@5.3:5.12 +cuda")
+    depends_on("cuda@:11", when="@5:5.12 +cuda")
 
     # Fix IOADIOS2 module to work with kits
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/8653
-    patch("vtk-adios2-module-no-kit.patch", when="@:5.11")
+    patch("vtk-adios2-module-no-kit.patch", when="@5:5.11")
 
     # Patch for paraview 5.8: ^hdf5@1.13.2:
     # Even with ~hdf5, hdf5 is part of the dependency tree due to netcdf-c
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
-    patch("vtk-xdmf2-hdf51.13.2.patch", when="@5.8:5.11.0")
+    patch("vtk-xdmf2-hdf51.13.2.patch", when="@5.11.0")
     # a patch with the same name is also applied to vtk
     # the two patches are the same but for the path to the files they patch
     patch("vtk_alias_hdf5.patch")
@@ -518,6 +515,18 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("PARAVIEW_BUILD_PAGOSA_ADAPTOR", "pagosa"),
             self.define_from_variant("PARAVIEW_BUILD_PLUGIN_EyeDomeLighting", "eyedomelighting"),
             self.define_from_variant("PARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX", "nvindex"),
+            "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
+            "-DPARAVIEW_BUILD_EDITION:STRING=%s" % spec.variants["build_edition"].value.upper(),
+            "-DPARAVIEW_USE_QT:BOOL=%s" % variant_bool("+qt"),
+            "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
+            self.define_from_variant("PARAVIEW_ENABLE_EXAMPLES", "examples"),
+            self.define("VTK_MODULE_USE_EXTERNAL_ParaView_cgns", False),
+            self.define("VTK_MODULE_USE_EXTERNAL_VTK_gl2ps", False),
+            self.define("VTK_MODULE_USE_EXTERNAL_VTK_libharu", False),
+            self.define("VTK_MODULE_USE_EXTERNAL_VTK_utf8", False),
         ]
 
         if spec.satisfies("@:5"):
@@ -537,35 +546,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@5.11:"):
             cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
 
-        cmake_args.extend(
-            [
-                "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
-                "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
-                "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
-                "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
-            ]
-        )
-
-        cmake_args.extend(
-            [
-                "-DPARAVIEW_BUILD_EDITION:STRING=%s"
-                % spec.variants["build_edition"].value.upper(),
-                "-DPARAVIEW_USE_QT:BOOL=%s" % variant_bool("+qt"),
-                "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
-            ]
-        )
         if spec.satisfies("%cce"):
             cmake_args.append("-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF")
-
-        cmake_args.extend(
-            [
-                self.define_from_variant("PARAVIEW_ENABLE_EXAMPLES", "examples"),
-                self.define("VTK_MODULE_USE_EXTERNAL_ParaView_cgns", "OFF"),
-                self.define("VTK_MODULE_USE_EXTERNAL_VTK_gl2ps", "OFF"),
-                self.define("VTK_MODULE_USE_EXTERNAL_VTK_libharu", "OFF"),
-                self.define("VTK_MODULE_USE_EXTERNAL_VTK_utf8", "OFF"),
-            ]
-        )
 
         if "+adios2" in spec:
             cmake_args.extend(["-DPARAVIEW_ENABLE_ADIOS2:BOOL=ON"])
@@ -598,7 +580,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                     "-DPARAVIEW_PYTHON_VERSION:STRING=3",
                 ]
             )
-
         else:
             cmake_args.append("-DPARAVIEW_ENABLE_PYTHON:BOOL=OFF")
 
@@ -665,11 +646,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
         if "+tbb" in spec:
             cmake_args.append("-DVTK_SMP_IMPLEMENTATION_TYPE=TBB")
-
-        # Hide git from Paraview so it will not use `git describe`
-        # to find its own version number
-        if spec.satisfies("@5.4.0:5.4.1"):
-            cmake_args.extend(["-DGIT_EXECUTABLE=FALSE"])
 
         # A bug that has been found in vtk causes an error for
         # intel builds for version 5.6.  This should be revisited

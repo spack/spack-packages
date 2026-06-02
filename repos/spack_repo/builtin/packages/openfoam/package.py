@@ -360,7 +360,7 @@ class Openfoam(Package):
         "paraview",
         default=False,
         description="Build paraview plugins and runtime post-processing",
-        when="@1706:"
+        when="@1706:",
     )
     variant("vtk", default=False, description="With VTK runTimePostProcessing")
     variant(

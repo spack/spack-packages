@@ -38,7 +38,9 @@ class Sensei(CMakePackage):
 
     variant("shared", default=True, description="Enables shared libraries")
     variant("ascent", default=False, description="Build with ParaView-Catalyst support")
-    variant("catalyst", default=False, description="Build with ParaView-Catalyst support", when="@5:")
+    variant(
+        "catalyst", default=False, description="Build with ParaView-Catalyst support", when="@5:"
+    )
     variant("libsim", default=False, description="Build with VisIt-Libsim support")
     variant("vtkio", default=False, description="Enable adaptors to write to VTK XML format")
     variant("adios2", default=False, description="Enable ADIOS2 adaptors and endpoints")
