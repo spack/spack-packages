@@ -512,6 +512,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     patch("vtk-consolidate-viskores-wrapping-pv60.patch", working_dir="VTK", when="@6.0")
     patch("vtk-consolidate-viskores-wrapping-pv61.patch", working_dir="VTK", when="@6.1")
 
+    # https://gitlab.kitware.com/paraview/paraview/-/merge_requests/7793
+    patch("paraview_strict_build_edition.patch", when="@5.11")
+
     generator("ninja", "make", default="ninja")
     # https://gitlab.kitware.com/paraview/paraview/-/issues/21223
     conflicts("generator=ninja", when="%xl")
