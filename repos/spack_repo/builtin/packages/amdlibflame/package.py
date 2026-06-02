@@ -76,7 +76,8 @@ class Amdlibflame(CMakePackage, LibflameBase):
     variant("tracing", default="False", description="Enable AOCL DTL Tracing")
 
     # Override the 'static' variant defined in LibflameBase: for CMake builds of amdlibflame,
-    # default this variant to False so that only shared libraries are built unless explicitly requested.
+    # default this variant to False so that only shared libraries are built unless explicitly
+    # requested.
     variant("static", default=False, when="@4.2:", description="Build static library")
 
     # Build system
