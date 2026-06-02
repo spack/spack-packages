@@ -340,6 +340,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         "please use a newer release.",
     )
 
+    depends_on("cuda@12:", when="+cuda")
     conflicts(
         "^cuda@13:",
         when="@:2025.12.2 +cuda",
