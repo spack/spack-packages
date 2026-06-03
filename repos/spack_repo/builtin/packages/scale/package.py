@@ -40,6 +40,7 @@ class Scale(MakefilePackage):
     depends_on("parallel-netcdf")
 
     patch("fj-own_compiler.patch", when="%fj")
+    patch("gcc-own_compiler.patch", when="%gcc")
 
     parallel = False
 
