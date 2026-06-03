@@ -118,7 +118,7 @@ class Fms(CMakePackage):
     variant(
         "precision",
         values=any_combination_of("32", "64", "mixed").with_default("mixed"),
-        description=("Specifies the default real size used during compilation. FMS supports mixed" +
+        description=("Specifies the default real size used during compilation. FMS supports mixed"+
                      " precision (32 and 64 kind reals) in most interfaces regardless of the" +
                      " option used"),
         when="@2025.04:",
