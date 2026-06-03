@@ -141,7 +141,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
     for tpl in ("blas", "mkl"):
         depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
-    depends_on(f"kokkos@{self.spec.version}", when=f"@{self.spec.version}")
     depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")
@@ -186,6 +185,10 @@ class KokkosKernels(CMakePackage, CudaPackage):
     # sanity check
     sanity_check_is_file = [join_path("include", "KokkosKernels_config.h")]
     sanity_check_is_dir = ["include"]
+
+    def __init__(self,spec):
+        super().__init__(spec)
+        depends_on(f"kokkos@{spec.version}", when=f"@{spec.version}")
 
     def cmake_args(self):
         spec = self.spec
