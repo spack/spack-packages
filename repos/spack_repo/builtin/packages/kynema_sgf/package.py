@@ -46,6 +46,7 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
         "waves2amr", default=False, description="Enable Waves2AMR support for ocean wave input"
     )
     variant("fft", default=False, description="Enable FFT support for MAC projection")
+    variant("single-precision", default=False, description="Use single precision")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -66,6 +67,7 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("ascent~mpi", when="+ascent~mpi")
     depends_on("ascent+mpi", when="+ascent+mpi")
     depends_on("netcdf-c", when="+netcdf")
+    depends_on("netcdf-c+mpi", when="+netcdf+mpi")
     depends_on("py-netcdf4", when="+netcdf")
     depends_on("py-numpy@2:", when="+netcdf")
     depends_on("py-matplotlib", when="+masa")
@@ -77,9 +79,11 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("helics@:3.3.2+mpi", when="+helics+mpi")
     depends_on("fftw", when="+waves2amr")
     depends_on("fftw", when="+fft")
-
     depends_on("rocrand", when="+rocm")
     depends_on("rocprim", when="+rocm")
+
+    requires("+mpi", when="+kynema-fmb")
+    requires("+mpi", when="+openfast")
 
     for arch in CudaPackage.cuda_arch_values:
         depends_on("hypre+cuda cuda_arch=%s" % arch, when="+cuda+hypre cuda_arch=%s" % arch)
@@ -172,5 +176,8 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+openfast"):
             args.append(define("KYNEMA_SGF_OPENFAST_VERSION", spec["openfast"].version))
+
+        if spec.satisfies("+single-precision"):
+            args.append(define("KYNEMA_SGF_PRECISION", "SINGLE"))
 
         return args
