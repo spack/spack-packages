@@ -206,6 +206,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         args = [
             define("onnxruntime_ENABLE_PYTHON", True),
             define("onnxruntime_BUILD_SHARED_LIB", True),
+            define("onnxruntime_BUILD_UNIT_TESTS", self.run_tests),
             define_from_variant("onnxruntime_USE_CUDA", "cuda"),
             define("onnxruntime_BUILD_CSHARP", False),
             define("onnxruntime_USE_TVM", False),

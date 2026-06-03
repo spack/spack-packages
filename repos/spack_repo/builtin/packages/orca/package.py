@@ -89,7 +89,8 @@ class Orca(Package):
         orca_arch = "linux_x86-64"
         if platform.system() == "Linux" and platform.machine() == "aarch64":
             orca_arch = "linux_arm64"
-        url = f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_shared_openmpi{openmpi_version}{'_avx2' if 'avx2' in features else ''}.tar.xz"
+        feat = "_avx2" if "avx2" in features else ""
+        url = f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_shared_openmpi{openmpi_version}{feat}.tar.xz"
 
         if self.spec.satisfies("@=avx2-6.0.0"):
             url = f"file://{os.getcwd()}/orca_{ver_underscored}_{orca_arch}_avx2_shared_openmpi{openmpi_version}.tar.xz"

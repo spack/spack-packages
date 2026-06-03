@@ -78,7 +78,7 @@ class Fzf(GoPackage):
         super().setup_build_environment(env)
 
         # Set required environment variables for non-git builds
-        env.set("FZF_VERSION", self.spec.version)
+        env.set("FZF_VERSION", self.spec.version.string)
         env.set("FZF_REVISION", "tarball")
 
     @run_after("install")
