@@ -86,6 +86,32 @@ class Hipdnn(CMakePackage):
                 "projects/hipdnn/cmake/ClangToolChain.cmake",
                 string=True,
             )
+        # Disable clang-tidy checks for version 7.13.0
+        if self.spec.satisfies("@7.13.0:"):
+            filter_file(
+                "include(cmake/ClangTidy.cmake)",
+                "# include(cmake/ClangTidy.cmake)",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "add_clang_tidy_custom_target()",
+                "# add_clang_tidy_custom_target()",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend_private)",
+                "# clang_tidy_check(hipdnn_backend_private)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend)",
+                "# clang_tidy_check(hipdnn_backend)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
+                string=True,
+            )
 
     @classmethod
     def determine_version(cls, lib):
