@@ -43,7 +43,7 @@ class KokkosComm(CMakePackage):
         args = [
             self.define("KokkosComm_ENABLE_MPI", "mpi"),
             self.define("KokkosComm_ENABLE_NCCL", "nccl"),
-            self.define("KokkosComm_ENABLE_TESTS", True),
+            self.define("KokkosComm_ENABLE_TESTS", True),  # To be removed, for test
         ]
 
         if self.spec.satisfies("^kokkos+rocm") and not (
