@@ -191,6 +191,8 @@ class EnvironmentSetup:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
 
         env.set("SPACK_CONTEXT_ROOT", dependent_spec.package.stage.source_path)
+        if IS_WINDOWS:
+            env.set("SPACK_DEBUG_WRAPPER", "ON")
 
 
 class GenericBuilder(GenericBuilder, EnvironmentSetup):
