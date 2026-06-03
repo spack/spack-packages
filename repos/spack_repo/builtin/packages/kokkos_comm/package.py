@@ -19,17 +19,20 @@ class KokkosComm(CMakePackage):
 
     version("0.1.0", sha256="59f4b953a795adb62f306e0861c7e69ee60c8cd2a6f1bd58eb4623b9ab774d45")
 
+    variant("mpi", description="Enable MPI backend", default=True)
 
-    depends_on("cxx", type=("build", "link",))
+    depends_on("cxx")
+    depends_on("c", when="+mpi")
     depends_on("cmake@3.22:3", type="build")
 
     depends_on("kokkos@4.7:")
 
-    depends_on("mpi")
+    depends_on("mpi@3:", when="+mpi")
     
     def cmake_args(self):
         args = [
-            self.define("KokkosComm_ENABLE_MPI", True),
+            self.define("KokkosComm_ENABLE_MPI", "mpi"),
+            self.define("KokkosComm_ENABLE_TESTS", True),
         ]
 
         if self.spec.satisfies("^kokkos+rocm") and not (
