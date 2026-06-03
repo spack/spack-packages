@@ -127,6 +127,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/ginkgo-project/ginkgo/pull/1926
     conflicts("^cuda@13:", when="@:1.10.0 +cuda")
 
+    # https://github.com/ginkgo-project/ginkgo/pull/2002
+    conflicts("^cuda@13.2:", when="@1.11.0 +cuda")
+
     # error due to change in warpSize constant definition in ROCm 7.0 prior to v.1.11.0
     # https://github.com/ginkgo-project/ginkgo/pull/1954
     conflicts("^hip@7:", when="@:1.10.0 +rocm")

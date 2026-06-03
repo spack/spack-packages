@@ -746,7 +746,6 @@ with '-Wl,-commons,use_dylibs' and without
 
         # @:4 does not depend on prrte and used orte
         with when("@5"):
-
             # When an external PMIx is used, also an external PRRTE should be used
             # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
             depends_on("prrte")
@@ -1147,7 +1146,12 @@ with '-Wl,-commons,use_dylibs' and without
 
     def configure_args(self):
         spec = self.spec
-        config_args = ["--enable-shared", "--disable-silent-rules", "--disable-sphinx"]
+        config_args = [
+            "--enable-shared",
+            "--disable-silent-rules",
+            "--disable-sphinx",
+            "--disable-dependency-tracking",
+        ]
 
         # Work around incompatibility with new apple-clang linker
         # https://github.com/open-mpi/ompi/issues/12427
@@ -1340,7 +1344,7 @@ with '-Wl,-commons,use_dylibs' and without
         #       if spec.satisfies("@5.0.0:") and spec.satisfies("%oneapi"):
         #           config_args.append("--disable-io-romio")
 
-        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html :
+        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html:
         # Key Features in Intel C++ Compiler Classic 2021.7
         #
         # The Intel C++ Classic Compiler is deprecated and an additional

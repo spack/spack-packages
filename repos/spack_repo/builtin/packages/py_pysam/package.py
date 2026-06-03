@@ -27,10 +27,11 @@ class PyPysam(PythonPackage):
     version("0.7.7", sha256="c9f3018482eec99ee199dda3fdef2aa7424dde6574672a4c0d209a10985755cc")
 
     depends_on("c", type="build")  # generated
-
     depends_on("python@3.8:", type=("build", "run"))
-
-    depends_on("py-setuptools@59.0:", when="@0.21:", type="build")
+    # pysam requires pkg-resources which is removed from setuptools in
+    # version 82.0.0
+    depends_on("py-setuptools@:80", when="@:0.23", type="build")
+    depends_on("py-setuptools@59:", when="@0.21:", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.29.12:3", when="@0.23.3:", type="build")
     depends_on("py-cython@0.29.30:2", when="@0.21", type="build")

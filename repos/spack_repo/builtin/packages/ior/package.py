@@ -29,6 +29,7 @@ class Ior(AutotoolsPackage):
     variant("hdf5", default=False, description="support IO with HDF5 backend")
     variant("ncmpi", default=False, description="support IO with NCMPI backend")
     variant("lustre", default=False, description="support configurable Lustre striping values")
+    variant("aio", default=False, description="support AIO backend API", when="@4:")
 
     depends_on("c", type="build")  # generated
 
@@ -36,10 +37,12 @@ class Ior(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
+    depends_on("pkgconf", type="build", when="@4.0.0:")
     depends_on("mpi")
     depends_on("hdf5+mpi", when="+hdf5")
     depends_on("parallel-netcdf", when="+ncmpi")
     depends_on("lustre", when="+lustre")
+    depends_on("libaio", when="+aio")
 
     # The build for 3.2.0 fails if hdf5 is enabled
     # See https://github.com/hpc/ior/pull/124
@@ -54,7 +57,7 @@ class Ior(AutotoolsPackage):
     patch(
         "https://github.com/glennklockwood/ior/commit/e49476be64d4100c2da662ea415f327348b3d11d.patch?full_index=1",
         sha256="ee3527023ef70ea9aee2e6208f8be7126d5a48f26c587deed3d6238b4f848a06",
-        when="+lustre",
+        when="+lustre @:3",
     )
 
     @run_before("autoreconf")
@@ -82,5 +85,10 @@ class Ior(AutotoolsPackage):
             config_args.append("--with-lustre")
         else:
             config_args.append("--without-lustre")
+
+        if spec.satisfies("+aio"):
+            config_args.append("--with-aio")
+        else:
+            config_args.append("--without-aio")
 
         return config_args
