@@ -12,11 +12,13 @@ class KokkosComm(CMakePackage):
 
     homepage = "https://github.com/kokkos/kokkos-comm"
     url = "https://github.com/kokkos/kokkos-comm/archive/refs/tags/v0.1.0.tar.gz"
+    git = "https://github.com/kokkos/kokkos-comm.git"
 
     maintainers("cedricchevalier19", "dssgabriel", "cwpearson")
 
     license("Apache-2.0 WITH LLVM-exception", checked_by="cedricchevalier19")
 
+    version("develop", branch="develop")
     version("0.1.0", sha256="59f4b953a795adb62f306e0861c7e69ee60c8cd2a6f1bd58eb4623b9ab774d45")
 
     variant("mpi", description="Enable MPI backend", default=True)
