@@ -188,7 +188,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
 
     def __init__(self,spec):
         super().__init__(spec)
-        depends_on(f"kokkos@{spec.version}", when=f"@{spec.version}")
+        depends_on(f"kokkos@{self.spec.version}", when=f"@{self.spec.version}")
 
     def cmake_args(self):
         spec = self.spec
