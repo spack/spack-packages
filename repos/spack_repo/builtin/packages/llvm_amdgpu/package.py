@@ -240,7 +240,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         resource(
             name="rocm-systems",
             placement="rocm-systems",
-            url="https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{d_version}.tar.gz",
+            url=f"https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{d_version}.tar.gz",
             sha256=d_shasum,
             when=f"@{d_version}",
         )
