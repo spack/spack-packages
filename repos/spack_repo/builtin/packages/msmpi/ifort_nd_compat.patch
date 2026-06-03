@@ -37,7 +37,7 @@ index 24bd29d..319153d 100644
 +      <Fort_Flags>/D _WIN64=1 /D _AMD64_=1 /D AMD64=1</Fort_Flags>
      </PropertyGroup>
 -    <Exec Command="$(GFORTRAN_BIN)\gfortran.exe -I$(MPI_INC_ROOT) -c %(ForCompile.Identity) $(Fort_Flags)  -o $(O)\%(ForCompile.FileName).obj" />
-+    <Exec Command="$(IFORT_BIN)\ifx.exe /I"$(MPI_INC_ROOT)" /c %(ForCompile.Identity) $(Fort_Flags) /names:lowercase /assume:nounderscore /o $(O)\%(ForCompile.FileName).obj" />
++    <Exec Command="$(IFORT_BIN)\ifx.exe /I&quot;$(MPI_INC_ROOT)&quot; /c %(ForCompile.Identity) $(Fort_Flags) /names:lowercase /assume:nounderscore /o $(O)\%(ForCompile.FileName).obj" />
      <ItemGroup>
        <Lib Condition="'$(ConfigurationType)'=='StaticLibrary'" Include="@(ForCompile->'$(O)\%(Filename).obj')" />
      </ItemGroup>
