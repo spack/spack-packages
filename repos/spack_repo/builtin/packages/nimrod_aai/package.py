@@ -59,7 +59,7 @@ class NimrodAai(CMakePackage):
     depends_on("fortran", type="build")
 
     depends_on("cmake", type="build")
-    depends_on("hdf5+fortran~mpi")
+    depends_on("hdf5+fortran")
     depends_on("cudss", when="+cudss")
     with when("+ginkgo"):
         depends_on("ginkgo~mpi")
