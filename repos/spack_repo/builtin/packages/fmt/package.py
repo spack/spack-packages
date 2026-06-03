@@ -153,3 +153,13 @@ class Fmt(CMakePackage):
         args.append(self.define("FMT_TEST", self.run_tests))
 
         return args
+
+    @property
+    def libs(self):
+        # Debug builds provide libfmtd instead of libfmt
+        return find_libraries(
+            ["libfmt", "libfmtd"],
+            root=self.home,
+            recursive=True,
+            shared=self.spec.satisfies("+shared"),
+        )
