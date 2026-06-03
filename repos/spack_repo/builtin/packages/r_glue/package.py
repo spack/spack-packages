@@ -20,6 +20,7 @@ class RGlue(RPackage):
 
     license("MIT")
 
+    version("1.8.0", sha256="c86f364ba899b8662f5da3e1a75f43ae081ab04e0d51171d052356e7ee4b72a0")
     version("1.7.0", sha256="1af51b51f52c1aeb3bfe9349f55896dd78b5542ffdd5654e432e4d646e4a86dc")
     version("1.6.2", sha256="9da518f12be584c90e75fe8e07f711ee3f6fc0d03d817f72c25dc0f66499fdbf")
     version("1.6.1", sha256="318c2f9544f1204216009f512793c44d6bbe178ff2012f56fa5ffb5e1da978db")

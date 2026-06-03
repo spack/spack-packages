@@ -32,7 +32,7 @@ class Mstore(MesonPackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build")
 
-    depends_on("meson@0.57.1:", type="build")  # mesonbuild/meson#8377
+    depends_on("meson@0.57.1:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("pkgconfig", type="build")
 
     for build_system in ["cmake", "meson"]:

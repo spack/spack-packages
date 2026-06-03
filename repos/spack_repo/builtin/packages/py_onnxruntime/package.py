@@ -50,10 +50,14 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
 
-    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:")
-    # Needs absl/strings/has_absl_stringify.h
-    # cxxstd=20 may also work, but cxxstd=14 does not
-    depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:1.19.2")
+    with when("@1.17:"):
+        # Needs absl/strings/has_absl_stringify.h
+        # cxxstd=20 may also work, but cxxstd=14 does not
+        depends_on("abseil-cpp@20240116.0: cxxstd=17")
+        depends_on("abseil-cpp@20240722.0:", when="@1.20:")
+
+        # abseil 20250814+ lacks absl::low_level_hash: https://github.com/microsoft/onnxruntime/issues/25815
+        depends_on("abseil-cpp@:20250512")
 
     extends("python")
     depends_on("python", type=("build", "run"))
@@ -202,6 +206,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         args = [
             define("onnxruntime_ENABLE_PYTHON", True),
             define("onnxruntime_BUILD_SHARED_LIB", True),
+            define("onnxruntime_BUILD_UNIT_TESTS", self.run_tests),
             define_from_variant("onnxruntime_USE_CUDA", "cuda"),
             define("onnxruntime_BUILD_CSHARP", False),
             define("onnxruntime_USE_TVM", False),
