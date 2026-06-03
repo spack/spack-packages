@@ -100,7 +100,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant("fortran", default=False, description="Enable Fortran support")
     variant("mpi", default=True, description="Enable MPI support")
     variant("qt", default=False, description="Enable Qt (gui) support")
-    variant("opengl2", default=True, description="Enable OpenGL2 backend", when="@5:5")
+    variant("opengl2", default=True, description="Enable OpenGL2 backend", when="@5")
     variant("osmesa_fallback", default=False, description="Enable OpenGL2 backend", when="@6:")
     variant("x", default=True, description="Enable X11 support")
     variant("examples", default=False, description="Build examples")
@@ -145,7 +145,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "use_vtkm",
         default="default",
-        when="@5:5",
+        when="@5",
         multi=False,
         values=("default", "on", "off"),
         description="Build VTK-m with ParaView."
@@ -155,8 +155,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("~hdf5", when="+visitbridge")
     conflicts("+fides", when="~adios2", msg="Fides needs ADIOS2")
-    conflicts("+fides", when="@5:5 use_vtkm=off", msg="Fides needs VTK-m")
-    conflicts("+fides", when="@5:5 use_vtkm=default", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@5 use_vtkm=off", msg="Fides needs VTK-m")
+    conflicts("+fides", when="@5 use_vtkm=default", msg="Fides needs VTK-m")
     conflicts("+openpmd", when="~adios2 ~hdf5", msg="openPMD needs ADIOS2 and/or HDF5")
     conflicts("~shared", when="+cuda")
     conflicts("+cuda", when="use_vtkm=off")
@@ -164,7 +164,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="use_vtkm=off")
     # Legacy rendering dropped in 5.5
     # See commit: https://gitlab.kitware.com/paraview/paraview/-/commit/798d328c
-    conflicts("~opengl2", when="@5:5")
+    conflicts("~opengl2", when="@5")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -206,18 +206,18 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libx11")
         depends_on("libxcursor")
         # When Qt and X are enabled, GLX is required in the runtime
-        requires("^[virtuals=gl] glx", when="@:5")
+        requires("^[virtuals=gl] glx", when="@5")
         depends_on("glx", when="@6:", type=("run"))
 
-    # ParaView@:5 support Qt5 and requires a GL provider to be known at
+    # ParaView@5 support Qt5 and requires a GL provider to be known at
     # build/link time.
-    with when("@:5"):
+    with when("@5"):
         with when("+qt"):
             # https://discourse.paraview.org/t/paraview-5-9-and-minimum-recommended-qt-version/5333
-            depends_on("qt@5.12:5", when="@5:5.13")
+            depends_on("qt@5.12:5", when="@5")
             depends_on("qt+sql")
-            depends_on("qt+opengl", when="@5:5 +opengl2")
-            depends_on("qt~opengl", when="@5:5 ~opengl2")
+            depends_on("qt+opengl", when="@5 +opengl2")
+            depends_on("qt~opengl", when="@5 ~opengl2")
             # Headless rendering not supported with Qt
             conflicts("osmesa")
             conflicts("egl")
@@ -328,7 +328,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=darwin")
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=freebsd")
     depends_on("netcdf-c+parallel-netcdf", when="+mpi platform=linux")
-    depends_on("netcdf-c@:4.9.2", when="@5:5.13")
+    depends_on("netcdf-c@:4.9.2", when="@5")
     depends_on("pegtl@2.8.3")
     depends_on("protobuf@3.4:")
     # protobuf requires newer abseil-cpp, which in turn requires C++14,
@@ -496,18 +496,22 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         """Populate cmake arguments for ParaView."""
         spec = self.spec
 
-        def variant_bool(feature, on="ON", off="OFF"):
-            """Ternary for spec variant to ON/OFF string"""
-            if spec.satisfies(feature):
-                return on
-            return off
-
-        includes = variant_bool("+development_files")
+        build_edition = spec.variants["build_edition"].value.upper()
 
         cmake_args = [
-            "-DPARAVIEW_INSTALL_DEVELOPMENT_FILES:BOOL=%s" % includes,
             "-DBUILD_TESTING:BOOL=OFF",
             "-DOpenGL_GL_PREFERENCE:STRING=LEGACY",
+            "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_ParaView_cgns:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_gl2ps:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_libharu:BOOL=OFF",
+            "-DVTK_MODULE_USE_EXTERNAL_VTK_utf8:BOOL=OFF",
+            "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
+            f"-DPARAVIEW_BUILD_EDITION:STRING={build_edition}",
+            self.define_from_variant("PARAVIEW_INSTALL_DEVELOPMENT_FILES", "development_files"),
             self.define_from_variant("VTK_USE_X", "x"),
             self.define_from_variant("PARAVIEW_ENABLE_VISITBRIDGE", "visitbridge"),
             self.define_from_variant("VISIT_BUILD_READER_Silo", "visitbridge"),
@@ -515,30 +519,37 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("PARAVIEW_BUILD_PAGOSA_ADAPTOR", "pagosa"),
             self.define_from_variant("PARAVIEW_BUILD_PLUGIN_EyeDomeLighting", "eyedomelighting"),
             self.define_from_variant("PARAVIEW_PLUGIN_ENABLE_pvNVIDIAIndeX", "nvindex"),
-            "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
-            "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
-            "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
-            "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
-            "-DPARAVIEW_BUILD_EDITION:STRING=%s" % spec.variants["build_edition"].value.upper(),
-            "-DPARAVIEW_USE_QT:BOOL=%s" % variant_bool("+qt"),
-            "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
+            self.define_from_variant("PARAVIEW_USE_QT", "qt"),
             self.define_from_variant("PARAVIEW_ENABLE_EXAMPLES", "examples"),
-            self.define("VTK_MODULE_USE_EXTERNAL_ParaView_cgns", False),
-            self.define("VTK_MODULE_USE_EXTERNAL_VTK_gl2ps", False),
-            self.define("VTK_MODULE_USE_EXTERNAL_VTK_libharu", False),
-            self.define("VTK_MODULE_USE_EXTERNAL_VTK_utf8", False),
+            self.define_from_variant("PARAVIEW_ENABLE_ADIOS2", "adios2"),
+            self.define_from_variant("PARAVIEW_ENABLE_FIDES", "fides"),
+            self.define_from_variant("PARAVIEW_USE_FORTRAN", "fortran"),
+            self.define_from_variant("PARAVIEW_USE_CUDA", "cuda"),
+            self.define_from_variant("PARAVIEW_USE_MPI", "mpi"),
+            self.define_from_variant("PARAVIEW_BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("PARAVIEW_ENABLE_RAYTRACING", "raytracing"),
+            # Currently only support OSPRay ray tracing
+            self.define_from_variant("VTK_ENABLE_OSPRAY", "raytracing"),
+            self.define_from_variant("VTKOSPRAY_ENABLE_DENOISER", "raytracing"),
+            # CDI
+            self.define_from_variant("PARAVIEW_PLUGIN_ENABLE_CDIReader", "cdi"),
+            self.define_from_variant("PARAVIEW_PLUGIN_AUTOLOAD_CDIReader", "cdi"),
         ]
 
-        if spec.satisfies("@:5"):
-            cmake_args.append(
-                "-DVTK_OPENGL_HAS_OSMESA:BOOL=%s" % variant_bool("^[virtuals=gl] osmesa")
-            )
+        # Configure OSMesa
+        if spec.satisfies("@5"):
+            if spec.satisfies("^[virtuals=gl] osmesa"):
+                cmake_args.append("-DVTK_OPENGL_HAS_OSMESA:BOOL=ON")
+            else:
+                cmake_args.append("-DVTK_OPENGL_HAS_OSMESA:BOOL=OFF")
         else:
             cmake_args.append(self.define_from_variant("VTK_OPENGL_HAS_OSMESA", "osmesa_fallback"))
 
+        # Configure EGL
         if spec.satisfies("^[virtuals=gl] egl"):
             cmake_args.append("-DVTK_OPENGL_HAS_EGL:BOOL=ON")
 
+        # Disable patched externals
         if spec.satisfies("@5.12:"):
             cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_fast_float:BOOL=OFF")
             cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_token:BOOL=OFF")
@@ -548,12 +559,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("%cce"):
             cmake_args.append("-DVTK_PYTHON_OPTIONAL_LINK:BOOL=OFF")
-
-        if "+adios2" in spec:
-            cmake_args.extend(["-DPARAVIEW_ENABLE_ADIOS2:BOOL=ON"])
-
-        if "+fides" in spec:
-            cmake_args.append("-DPARAVIEW_ENABLE_FIDES:BOOL=ON")
 
         # The assumed qt version changed to QT5 (as of paraview 5.2.1),
         # so explicitly specify which QT major version is actually being used
@@ -568,9 +573,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 # Windows does not currently support Qt Quick
                 cmake_args.append("-DVTK_MODULE_ENABLE_VTK_GUISupportQtQuick:STRING=NO")
 
-        if "+fortran" in spec:
-            cmake_args.append("-DPARAVIEW_USE_FORTRAN:BOOL=ON")
-
         # CMake flags for python have changed with newer ParaView versions
         # Make sure Spack uses the right cmake flags
         if "+python" in spec:
@@ -583,7 +585,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         else:
             cmake_args.append("-DPARAVIEW_ENABLE_PYTHON:BOOL=OFF")
 
-        cmake_args.append("-DPARAVIEW_USE_MPI:BOOL=%s" % variant_bool("+mpi"))
         if "+mpi" in spec:
             mpi_args = ["-DMPIEXEC:FILEPATH=%s/bin/mpiexec" % spec["mpi"].prefix]
             if not sys.platform == "win32":
@@ -596,10 +597,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 )
             cmake_args.extend(mpi_args)
 
-        cmake_args.append("-DPARAVIEW_BUILD_SHARED_LIBS:BOOL=%s" % variant_bool("+shared"))
-
         # VTK-m used in ParaView in 5.x
-        if spec.satisfies("@:5") and spec.variants["use_vtkm"].value != "default":
+        if spec.satisfies("@5") and spec.variants["use_vtkm"].value != "default":
             cmake_args.append(
                 "-DPARAVIEW_USE_VTKM:BOOL=%s" % spec.variants["use_vtkm"].value.upper()
             )
@@ -615,10 +614,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             else:
                 cmake_args.append("-DPARAVIEW_USE_VISKORES:BOOL=OFF")
 
-        cmake_args.append("-DPARAVIEW_USE_CUDA:BOOL=%s" % variant_bool("+cuda"))
-
         # VTK-m expects cuda_arch to be the arch name vs. the arch version.
-        if spec.satisfies("@:5 +cuda"):
+        if spec.satisfies("@5 +cuda"):
             if spec["cmake"].satisfies("@3.18:"):
                 cmake_args.append(
                     self.define(
@@ -664,9 +661,9 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
         # Configure ROCM/Kokkos
         if spec.satisfies("@5.11:5"):
-            cmake_args.append("-DPARAVIEW_USE_HIP:BOOL=%s" % variant_bool("+rocm"))
+            cmake_args.append(self.define_from_variant("PARAVIEW_USE_HIP", "rocm"))
         elif spec.satisfies("@6:"):
-            cmake_args.append("-DPARAVIEW_USE_KOKKOS:BOOL=%s" % variant_bool("+rocm"))
+            cmake_args.append(self.define_from_variant("PARAVIEW_USE_KOKKOS", "rocm"))
 
         if "+rocm" in spec:
             if spec.satisfies("@6:"):
@@ -687,15 +684,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if "+libcatalyst" in spec:
             cmake_args.append("-DVTK_MODULE_ENABLE_ParaView_InSitu=YES")
             cmake_args.append("-DPARAVIEW_ENABLE_CATALYST=YES")
-
-        cmake_args.append(self.define_from_variant("PARAVIEW_ENABLE_RAYTRACING", "raytracing"))
-        # Currently only support OSPRay ray tracing
-        cmake_args.append(self.define_from_variant("VTK_ENABLE_OSPRAY", "raytracing"))
-        cmake_args.append(self.define_from_variant("VTKOSPRAY_ENABLE_DENOISER", "raytracing"))
-
-        # CDI
-        cmake_args.append(self.define_from_variant("PARAVIEW_PLUGIN_ENABLE_CDIReader", "cdi"))
-        cmake_args.append(self.define_from_variant("PARAVIEW_PLUGIN_AUTOLOAD_CDIReader", "cdi"))
 
         return cmake_args
 
