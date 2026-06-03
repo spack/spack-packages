@@ -70,7 +70,7 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hypre@2.30.0: ~int64+mpi~superlu-dist", when="+hypre")
     depends_on(
         "trilinos@17:+exodus+gtest+hdf5~hypre+mpi+shards+stk~superlu-dist+test+tpetra+zoltan "
-        "gotype=long cxxstd=20"
+        "gotype=long"
     )
     depends_on("trilinos~cuda~wrapper", when="~cuda")
     depends_on("tioga@1.0.0:", when="+tioga")
@@ -79,7 +79,7 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("trilinos-catalyst-ioss-adapter", when="+catalyst")
     depends_on("fftw+mpi", when="+fftw")
     depends_on("nccmp")
-    depends_on("boost +filesystem +iostreams cxxstd=14", when="+boost")
+    depends_on("boost +filesystem +iostreams", when="+boost")
     depends_on("hypre+gpu-aware-mpi", when="+gpu-aware-mpi")
     depends_on("hypre+umpire", when="+umpire")
 
