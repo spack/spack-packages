@@ -109,7 +109,7 @@ class Hiop(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/llnl/hiop/commit/1d50896dd8df0a7c853e998e6814566d8.patch?full_index=1",
         sha256="e73daa7f15863cb3c9dfad9509d46984ad1943506a7a5e04183817eba6d14aed",
-        when="@1.2.0,
+        when="@1.2.0",
     )
 
     depends_on("c", type="build")
