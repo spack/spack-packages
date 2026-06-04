@@ -222,6 +222,9 @@ class Tau(Package):
 
     conflicts("+comm", when="@:2.34 +python", msg="Bug in +comm with +python up to @2.34")
 
+    # header changes require upstream to add explicit includes
+    conflicts("cuda@13.2:", when="@:2.35.1 +cuda")
+
     # Elf only required from 2.28.1 on
     conflicts("+elf", when="@:2.28.0")
     conflicts("+libdwarf", when="@:2.28.0")
