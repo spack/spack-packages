@@ -30,6 +30,7 @@ class Gnutls(AutotoolsPackage):
 
     # Version definitions
     version("master", branch="master")
+    version("3.8.13", sha256="ffed8ec1bf09c2426d4f14aae377de4753b53e537d685e604e99a8b16ca9c97e")
     version("3.8.12", sha256="a7b341421bfd459acf7a374ca4af3b9e06608dcd7bd792b2bf470bea012b8e51")
     version("3.8.10", sha256="db7fab7cce791e7727ebbef2334301c821d79a550ec55c9ef096b610b03eb6b7")
     version("3.8.9", sha256="69e113d802d1670c4d5ac1b99040b1f2d5c7c05daec5003813c049b5184820ed")
