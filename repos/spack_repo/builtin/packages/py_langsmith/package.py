@@ -39,7 +39,6 @@ class PyLangsmith(PythonPackage):
     depends_on("py-requests-toolbelt@1:", type=("build", "run"), when="@0.1.130:")
     depends_on("py-zstandard@0.23:", type=("build", "run"), when="@0.2.5:")
     depends_on("py-packaging@23.2:", type=("build", "run"), when="@0.3.11:")
-    depends_on("py-packaging@23.2:", type=("build", "run"), when="@0.3.11:")
     depends_on("py-uuid-utils@0.12:0", type=("build", "run"), when="@0.4.53:")
     depends_on("py-xxhash@3:", type=("build", "run"), when="@0.6.7:")
     depends_on("py-websockets@15:", type=("build", "run"), when="@0.8.6:")
