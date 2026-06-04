@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import glob as _glob
+import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -125,6 +127,19 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         if self.spec.satisfies("+asan"):
             self.asan_on(env)
 
+    def patch(self):
+        if self.spec.satisfies("@7.2:"):
+            # Replace bare 'atomic' in target_link_libraries with
+            # ${ATOMIC_LIBRARY}, which we set via cmake_args to point
+            # to Spack's gcc-runtime libatomic.so.
+            base = join_path(self.stage.source_path, "projects", "roctracer")
+            for subdir in ("src", "test"):
+                filter_file(
+                    r"\batomic\b",
+                    "${ATOMIC_LIBRARY}",
+                    join_path(base, subdir, "CMakeLists.txt"),
+                )
+
     def cmake_args(self):
         args = [
             self.define("HIP_VDI", "1"),
@@ -133,6 +148,18 @@ class RoctracerDev(CMakePackage, ROCmPackage):
             self.define("CMAKE_POSITION_INDEPENDENT_CODE", True),
             self.define("HIP_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++"),
         ]
+        if self.spec.satisfies("@7.2:"):
+            # Point ATOMIC_LIBRARY at Spack's gcc-runtime libatomic.
+            # gcc-runtime only ships versioned SOs (libatomic.so.1), not
+            # the unversioned dev symlink, so we glob for what exists.
+            gcc_lib = str(self.spec["gcc-runtime"].prefix.lib)
+            atomic_libs = sorted(
+                f
+                for f in _glob.glob(join_path(gcc_lib, "libatomic.so*"))
+                if os.path.exists(f)
+            )
+            if atomic_libs:
+                args.append(self.define("ATOMIC_LIBRARY", atomic_libs[0]))
         if self.spec.satisfies("@6.0:"):
             args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         if self.spec.satisfies("@6.2:"):
