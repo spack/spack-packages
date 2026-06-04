@@ -131,7 +131,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/pghysels/STRUMPACK/commit/e08ec96e8514d3b8e374fd436eae5e1590a2c254.patch?full_index=1",
         sha256="db741166d26768f77a97651e628a75cc9d7894ad5613f20450a494bb3cb08bb0",
-        when="+cuda ^cuda@13.2:",
+        when="@8.0.0 +cuda ^cuda@13.2:",
     )
 
     def cmake_args(self):
