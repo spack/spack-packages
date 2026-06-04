@@ -127,11 +127,10 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
             "sycl",
         ]
 
-        args = [
-            self.define_from_variant("KYNEMA_SGF_ENABLE_%s" % v.upper(), v) for v in vs,
-            self.define_from_variant("KYNEMA_SGF_ENABLE_KYNEMA_FMB", "kynema-fmb"),
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-        ]
+        args = [self.define_from_variant("KYNEMA_SGF_ENABLE_%s" % v.upper(), v) for v in vs]
+
+        args.append(self.define_from_variant("KYNEMA_SGF_ENABLE_KYNEMA_FMB", "kynema-fmb"))
+        args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         if spec.satisfies("+mpi"):
             args.append(define("MPI_HOME", spec["mpi"].prefix))
