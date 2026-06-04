@@ -3,17 +3,19 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class PyVllm(PythonPackage):
+class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
     """A high-throughput and memory-efficient inference and serving engine for LLMs."""
 
     homepage = "https://vllm.ai/"
     pypi = "vllm/vllm-0.16.0.tar.gz"
-    
+
     maintainers("thomas-bouvier")
 
     version("0.16.0", sha256="1f684bb31fbef59d862e2fe666e23a41f1d39d93f86215ce1ce1db89a8f5665b")
@@ -27,6 +29,17 @@ class PyVllm(PythonPackage):
 
     conflicts("+cuda+rocm")
 
+    conflicts(
+        "cuda_arch=none",
+        when="+cuda",
+        msg="Must specify CUDA compute capabilities of your GPU, see "
+        "https://developer.nvidia.com/cuda-gpus",
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("numactl", type="build")
+
     depends_on("python@3.10:3.13", type=("build", "run"))
     depends_on("py-setuptools@77.0.3:80", type="build")
     depends_on("py-setuptools-scm@8:", type="build")
@@ -35,12 +48,19 @@ class PyVllm(PythonPackage):
     depends_on("ninja", type="build")
     depends_on("py-jinja2", type="build")
     depends_on("py-grpcio-tools", type="build")
-    # Script use_existing_torch.py strips the PyTorch version
-    depends_on("py-torch", type="build")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("numactl", type="build")
+    # PyTorch is imported at build time to read metadata
+    depends_on("py-torch@2.10.0", when="@0.16.0 ~cuda~rocm", type="build")
+
+    depends_on("py-torch~cuda~rocm", when="~cuda~rocm", type="build")
+
+    with when("+cuda"):
+        # Propagate CUDA target to cutlass for +cuda
+        for cuda_arch in CudaPackage.cuda_arch_values:
+            depends_on("py-torch@2.9.1", when="@0.16.0 +cuda cuda_arch=%s" % cuda_arch, type="build")
+            depends_on(
+                "cutlass cuda_arch=%s" % cuda_arch, when="+cuda cuda_arch=%s" % cuda_arch
+            )
 
     # Common deps https://github.com/vllm-project/vllm/blob/v0.15.1/requirements/common.txt
     depends_on("py-regex", type=("build", "run"))
@@ -104,12 +124,21 @@ class PyVllm(PythonPackage):
         depends_on("hip")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Override version to avoid setuptools_scm requiring a git repo
+        # and to bypass get_vllm_version() device-detection logic
+        env.set("VLLM_VERSION_OVERRIDE", str(self.spec.version))
+
         if self.spec.satisfies("+cuda"):
+            env.set("VLLM_TARGET_DEVICE", "cuda")
             env.set("CUDA_HOME", self.spec["cuda"].prefix)
+            env.set("VLLM_CUTLASS_SRC_DIR", self.spec["cutlass"])
         elif self.spec.satisfies("+rocm"):
+            env.set("VLLM_TARGET_DEVICE", "rocm")
             env.set("ROCM_HOME", self.spec["rocm"].prefix)
+        else:
+            env.set("VLLM_TARGET_DEVICE", "cpu")
 
         numa_inc = self.spec["numactl"].prefix.include
         numa_lib = self.spec["numactl"].prefix.lib
         env.append_flags("CXXFLAGS", f"-I{numa_inc}")
-        env.append_flags("LDFLAGS", f"-L{numa_lib}")    
+        env.append_flags("LDFLAGS", f"-L{numa_lib}")
