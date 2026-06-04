@@ -152,12 +152,9 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
             self.define("Trilinos_DIR", spec["trilinos"].prefix),
             self.define("YAML_DIR", spec["yaml-cpp"].prefix),
-            self.define("CMAKE_CXX_STANDARD", "17"),
-            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("ENABLE_CUDA", "cuda"),
             self.define_from_variant("ENABLE_WIND_UTILS", "wind-utils"),
             self.define_from_variant("ENABLE_BOOST", "boost"),
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("ENABLE_OPENFAST", "openfast"),
             self.define_from_variant("ENABLE_KYNEMA_FMB_SIXDOF", "kynema-fmb"),
             self.define_from_variant("ENABLE_TIOGA", "tioga"),
@@ -167,6 +164,8 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_FFTW", "fftw"),
             self.define_from_variant("ENABLE_UMPIRE", "umpire"),
             self.define_from_variant("ENABLE_TESTS", "tests"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
 
         if spec.satisfies("+openfast"):
@@ -206,9 +205,6 @@ class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("ENABLE_ROCM", True))
             targets = spec.variants["amdgpu_target"].value
             args.append(self.define("GPU_TARGETS", ";".join(str(x) for x in targets)))
-
-        if "darwin" in spec.architecture:
-            args.append(self.define("CMAKE_MACOSX_RPATH", "ON"))
 
         return args
 

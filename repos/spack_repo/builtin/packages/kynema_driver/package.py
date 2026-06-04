@@ -29,6 +29,7 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
     variant("sycl", default=False, description="Enable SYCL backend for Kynema-SGF")
     variant("gpu-aware-mpi", default=False, description="gpu-aware-mpi")
     variant("kynema-fmb", default=False, description="Couple with Kynema-FMB structural solver")
+    variant("pic", default=True, description="Enable position independent code")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -96,6 +97,8 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
 
         args = [self.define("MPI_HOME", spec["mpi"].prefix)]
+
+        args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
 
         if spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))

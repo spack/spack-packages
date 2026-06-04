@@ -34,6 +34,7 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
     variant("openfast", default=False, description="Enable OpenFAST integration")
     variant("kynema-fmb", default=False, description="Enable Kynema integration")
     variant("openmp", default=False, description="Enable OpenMP for CPU builds")
+    variant("pic", default=True, description="Position independent code")
     variant("shared", default=True, description="Build shared libraries")
     variant("tests", default=True, description="Activate regression tests")
     variant("tiny_profile", default=False, description="Activate tiny profile")
@@ -126,9 +127,11 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
             "sycl",
         ]
 
-        args = [self.define_from_variant("KYNEMA_SGF_ENABLE_%s" % v.upper(), v) for v in vs]
-        args += [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
-        args += [self.define_from_variant("KYNEMA_SGF_ENABLE_KYNEMA_FMB", "kynema-fmb")]
+        args = [
+            self.define_from_variant("KYNEMA_SGF_ENABLE_%s" % v.upper(), v) for v in vs,
+            self.define_from_variant("KYNEMA_SGF_ENABLE_KYNEMA_FMB", "kynema-fmb"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]
 
         if spec.satisfies("+mpi"):
             args.append(define("MPI_HOME", spec["mpi"].prefix))
@@ -136,8 +139,8 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
             args.append(define("MPI_C_COMPILER", spec["mpi"].mpicc))
 
         if spec.satisfies("+hdf5"):
-            args.append(define("KYNEMA_SGF_ENABLE_HDF5", True))
-            args.append(define("KYNEMA_SGF_ENABLE_HDF5_ZFP", True))
+            args.append(self.define_from_variant("KYNEMA_SGF_ENABLE_HDF5", "hdf5"))
+            args.append(self.define_from_variant("KYNEMA_SGF_ENABLE_HDF5_ZFP", "hdf5"))
             # Help AMReX understand if HDF5 is parallel or not.
             # Building HDF5 with CMake as Spack does, causes this inspection to break.
             args.append(define("HDF5_IS_PARALLEL", spec.satisfies("+mpi")))

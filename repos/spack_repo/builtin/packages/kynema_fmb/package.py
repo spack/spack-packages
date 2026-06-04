@@ -28,6 +28,7 @@ class KynemaFmb(CMakePackage, CudaPackage, ROCmPackage):
     variant("adi", default=False, description="Build the OpenFAST ADI external project")
     variant("rosco", default=False, description="Build the ROSCO controller external project")
     variant("klu", default=True, description="Build with support for the KLU sparse direct solver")
+    variant("pic", default=True, description="Position independent code")
     variant(
         "umfpack",
         default=False,
@@ -68,8 +69,8 @@ class KynemaFmb(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
     depends_on("eigen")
 
-    depends_on("kokkos@4.6:")
-    depends_on("kokkos-kernels@4.6:")
+    depends_on("kokkos@5:")
+    depends_on("kokkos-kernels@5:")
 
     depends_on("kokkos+cuda+wrapper", when="+cuda")
     depends_on("kokkos+rocm", when="+rocm")
@@ -105,5 +106,6 @@ class KynemaFmb(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("KYNEMA_FMB_ENABLE_MKL", "mkl"),
             self.define_from_variant("KYNEMA_FMB_ENABLE_CUSOLVERSP", "cusolversp"),
             self.define_from_variant("KYNEMA_FMB_ENABLE_CUDSS", "cudss"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         return options
