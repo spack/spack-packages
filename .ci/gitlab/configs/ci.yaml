@@ -16,10 +16,10 @@ ci:
         - spack compiler list
       - - mkdir -p ${SPACK_ARTIFACTS_ROOT}/user_data
         # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
-      - - k=$CI_GPG_KEY_ROOT/e4s.gpg; [[ -r $k ]] && spack gpg trust $k
+      - - k=$CI_GPG_KEY_ROOT/e4s.gpg; [[ -r $k ]] && spack gpg trust -y $k
         # UO runners mount intermediate ci public key (verification), AWS runners mount public/private (signing/verification)
-        - k=$CI_GPG_KEY_ROOT/intermediate_ci_signing_key.gpg; [[ -r $k ]] && spack gpg trust $k
-        - k=$CI_GPG_KEY_ROOT/spack_public_key.gpg; [[ -r $k ]] && spack gpg trust $k
+        - k=$CI_GPG_KEY_ROOT/intermediate_ci_signing_key.gpg; [[ -r $k ]] && spack gpg trust -y $k
+        - k=$CI_GPG_KEY_ROOT/spack_public_key.gpg; [[ -r $k ]] && spack gpg trust -y $k
       script::
       - - if [ -n "$SPACK_EXTRA_MIRROR" ]; then spack mirror add local "${SPACK_EXTRA_MIRROR}/${SPACK_CI_STACK_NAME}"; fi
         - spack config blame mirrors
@@ -72,7 +72,7 @@ ci:
         - |+
           for keyfile in $( find /tmp/public_keys -type f );
           do
-            spack gpg trust $keyfile
+            spack gpg trust -y $keyfile
           done
         - spack gpg publish --update-index --mirror-url ${SPACK_BUILDCACHE_DESTINATION}
       id_tokens:
@@ -94,7 +94,7 @@ ci:
         - echo Copying environment specs from ${SPACK_COPY_ONLY_SOURCE} to ${SPACK_COPY_ONLY_DESTINATION}
         - spack buildcache sync "${SPACK_COPY_ONLY_SOURCE}" "${SPACK_COPY_ONLY_DESTINATION}"
         - curl -fLsS https://spack.github.io/keys/spack-public-binary-key.pub -o /tmp/spack-public-binary-key.pub
-        - spack gpg trust /tmp/spack-public-binary-key.pub
+        - spack gpg trust -y /tmp/spack-public-binary-key.pub
         - spack gpg publish --mirror-url "${SPACK_COPY_ONLY_DESTINATION}"
         - spack buildcache update-index --keys "${SPACK_COPY_ONLY_DESTINATION}"
       when: "always"
