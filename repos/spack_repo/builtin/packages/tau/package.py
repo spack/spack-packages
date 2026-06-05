@@ -29,7 +29,7 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
-    version("2.35.2", sha256="130c28a35caf3e394344c91ec67130d1a203c8e070ba88dbad5073bc977491b5")
+    version("2.35.2", sha256="e3dfe11fc71198c2e43d9ad6b238c00711a30a071f48a7ba52b4a81bea694659")
     version("2.35.1", sha256="fee7c0ae49c370c23489b7c14b312af4611bb06cdb212464a2b0798721e9811f")
     version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")
     version("2.34.1", sha256="0e90726372fa1b6f726eb62b0840350070a00215144853ee07a852a99458c619")
@@ -270,7 +270,7 @@ class Tau(Package):
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
     patch("tau-rocm-disable-rocprofiler-default.patch", when="@2.34.0 +rocm")
-    patch("cuptipc.patch", when="@2.35: +cuda")
+    patch("cuptipc.patch", when="@2.34.1:2.35.1 +cuda")
 
     filter_compiler_wrappers("Makefile", relative_root="include")
     filter_compiler_wrappers("Makefile.tau*", relative_root="lib")
