@@ -31,15 +31,5 @@ class Velero(GoPackage):
     # Required to correctly set the version
     # Based on https://github.com/velero-io/velero/blob/v1.18.0/Dockerfile#L35
     @property
-    def build_args(self):
-        ldflags = [f"-X 'github.com/vmware-tanzu/velero/pkg/buildinfo.Version=v{self.version}'"]
-
-        args = super().build_args
-
-        if "-ldflags" in args:
-            ldflags_index = args.index("-ldflags") + 1
-            args[ldflags_index] = args[ldflags_index] + " " + " ".join(ldflags)
-        else:
-            args.extend(["-ldflags", " ".join(ldflags)])
-
-        return args
+    def ldflags(self):
+        return [f"-X 'github.com/vmware-tanzu/velero/pkg/buildinfo.Version=v{self.spec.version}'"]
