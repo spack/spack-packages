@@ -15,6 +15,7 @@ class PyOrjson(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.11.5", sha256="82393ab47b4fe44ffd0a7659fa9cfaacc717eb617c93cde83795f14af5c2e9d5")
     version("3.11.1", sha256="48d82770a5fd88778063604c566f9c7c71820270c9cc9338d25147cbf34afd96")
     version("3.10.18", sha256="e8da3947d92123eda795b68228cafe2724815621fe35e8e320a9e9593a4bcd53")
     version("3.10.3", sha256="2b166507acae7ba2f7c315dcf185a9111ad5e992ac81f2d507aac39193c2c818")
@@ -28,6 +29,8 @@ class PyOrjson(PythonPackage):
         depends_on("python@:3.12")
 
     with default_args(type="build"):
+        with when("@3.10.14:"):
+            depends_on("rust@1.82:")
         with when("@3.9:"):
             depends_on("rust@1.72:")
             depends_on("python@3.8:")

@@ -91,6 +91,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@2.2:2.5",
         sha256="1e49e48eb838c38db5b81ca4859e566067a61d537269e35a6a356edb76d3c86b",
     )
+    # Fix CUDA 12.9 deprecation warnings
+    with when("@2.8"):
+        patch(
+            "https://github.com/chapel-lang/chapel/pull/28795.patch?full_index=1",
+            sha256="050ec846beaf836b026b23524f613b3eac8e74a11b8d86768a74fa4f07cc610c",
+        )
+        patch(
+            "https://github.com/chapel-lang/chapel/commit/ab76ba2fe8cedb238be25f58ecc09a7ea7002d1d.patch?full_index=1",
+            sha256="61c65175ff62a6a7e912e7a0e353bb58849fd9eb35e1dd92957e1d74ff6ae2ed",
+        )
 
     launcher_names = (
         "amudprun",
@@ -171,6 +181,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "darwin",
         "hpe-apollo",
         "hpe-cray-ex",
+        "hpe-cray-xd",
         "linux32",
         "linux64",
         "netbsd32",
@@ -199,6 +210,15 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         default="none",
         description="Build Chapel with multi-locale support",
         values=("gasnet", "none", "ofi", "ugni"),
+    )
+
+    variant(
+        "comm_ofi_oob",
+        values=("sockets", "mpi", "pmi2", "unset"),
+        default="unset",
+        description="Select out-of-band support (CHPL_COMM_OFI_OOB)",
+        multi=False,
+        when="@2.2: comm=ofi",
     )
 
     variant(
@@ -436,6 +456,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_ATOMICS",
         "CHPL_AUX_FILESYS",
         "CHPL_COMM",
+        "CHPL_COMM_OFI_OOB",
         "CHPL_COMM_SUBSTRATE",
         "CHPL_CUDA_PATH",
         "CHPL_DEVELOPER",
@@ -506,7 +527,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "https://github.com/chapel-lang/chapel/issues/27273",
         )
 
-        conflicts("cuda@12.9:")  # deprecation warnings otherwise
+        conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
 
     # ROCm conflicts and dependencies
     with when("+rocm"):
@@ -594,6 +615,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         msg="Python bindings require building with LLVM, see "
         "https://chapel-lang.org/docs/tools/chapel-py/chapel-py.html#installation",
     )
+
+    for target in ["host", "target"]:
+        conflicts(
+            f"{target}_platform=hpe-cray-xd",
+            when="@:2.4",
+            msg="Platform hpe-cray-xd requires Chapel 2.5.0 or later",
+        )
 
     # Add dependencies
     depends_on("c", type="build")  # generated

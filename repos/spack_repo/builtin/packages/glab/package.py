@@ -17,6 +17,7 @@ class Glab(GoPackage):
 
     license("MIT")
 
+    version("1.92.1", sha256="5c45ee23929932249e6bf04c117a2257511db5459227bf24c6748ac063308160")
     version("1.61.0", sha256="dde7aa48adfa79c88fd76e362ebf16ebf1901b9aaed0c76b3eae0bf874709483")
     version("1.59.2", sha256="d14bdbcfc39410caa2c9011fad4929f4c123ff2a5f14f7b4b87d792b11a7cd19")
     version("1.58.0", sha256="6c41765ffbb8adbe210fe44f759db89cdafe4b98cdd692be2986b7454fc476c5")
@@ -43,6 +44,7 @@ class Glab(GoPackage):
     version("1.20.0", sha256="6beb0186fa50d0dea3b05fcfe6e4bc1f9be0c07aa5fa15b37ca2047b16980412")
 
     with default_args(type="build"):
+        depends_on("go@1.26.1:", when="@1.92.1:")
         depends_on("go@1.24.4:", when="@1.60.1:")
         depends_on("go@1.24.3:", when="@1.58:")
         depends_on("go@1.24.2:", when="@1.56:")
@@ -64,18 +66,8 @@ class Glab(GoPackage):
     # Required to correctly set the version
     # https://gitlab.com/gitlab-org/cli/-/blob/v1.55.0/Makefile?ref_type=tags#L44
     @property
-    def build_args(self):
-        extra_ldflags = [f"-X 'main.version=v{self.version}'"]
-
-        args = super().build_args
-
-        if "-ldflags" in args:
-            ldflags_index = args.index("-ldflags") + 1
-            args[ldflags_index] = args[ldflags_index] + " " + " ".join(extra_ldflags)
-        else:
-            args.extend(["-ldflags", " ".join(extra_ldflags)])
-
-        return args
+    def ldflags(self):
+        return [f"-X main.version=v{self.spec.version}"]
 
     @run_after("install")
     def install_completions(self):

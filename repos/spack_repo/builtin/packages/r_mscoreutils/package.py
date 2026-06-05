@@ -20,10 +20,11 @@ class RMscoreutils(RPackage):
 
     bioc = "MsCoreUtils"
 
-    version("1.12.0", commit="14a3fdb2fecca41ef0acb67bc8356227a1491c56")
-    version("1.10.0", commit="742c0c7143b1c32f75cc96b555e9f8cd265096c9")
-    version("1.8.0", commit="8b7e2c31009276aad0b418ba5cdfc94d03e1973e")
-    version("1.6.0", commit="9ed95b2d20dacaa83567fadd04349c81db9127ef")
+    with default_args(get_full_repo=True):
+        version("1.12.0", commit="14a3fdb2fecca41ef0acb67bc8356227a1491c56")
+        version("1.10.0", commit="742c0c7143b1c32f75cc96b555e9f8cd265096c9")
+        version("1.8.0", commit="8b7e2c31009276aad0b418ba5cdfc94d03e1973e")
+        version("1.6.0", commit="9ed95b2d20dacaa83567fadd04349c81db9127ef")
 
     depends_on("c", type="build")  # generated
 

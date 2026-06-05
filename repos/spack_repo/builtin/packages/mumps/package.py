@@ -19,6 +19,7 @@ class Mumps(Package):
 
     maintainers("jcortial-safran")
 
+    version("5.9.0", sha256="02c6efdb91749ec0f82351d40f3f860547272a1eb1d899126a4265b4d6bcc4ca")
     version("5.8.2", sha256="eb515aa688e6dbab414bb6e889ff4c8b23f1691a843c68da5230a33ac4db7039")
     version("5.8.1", sha256="e91b6dcd93597a34c0d433b862cf303835e1ea05f12af073b06c32f652f3edd8")
     version("5.8.0", sha256="d762eb8b1d9843a0993b8cfc137d043d04c7c51877ad37c94560433a474340a0")
@@ -65,6 +66,7 @@ class Mumps(Package):
         description="Allow BLAS calls in OpenMP regions "
         + "(warning: might not be supported by all multithread BLAS)",
     )
+    variant("pkgconfig", default=False, description="Create unofficial pkgconfig files")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -174,15 +176,17 @@ class Mumps(Package):
             )
 
             orderings.append("-Dmetis")
-
+        if "+pkgconfig" in self.spec:
+            # Keeping orderings in case we have to create pkg_config files
+            self.orderings = orderings
         makefile_conf.append("ORDERINGSF = %s" % (" ".join(orderings)))
 
         # Determine which compiler suite we are using
         using_gcc = self.compiler.name == "gcc"
         using_nvhpc = self.compiler.name == "nvhpc"
-        using_intel = self.compiler.name == "intel"
-        using_oneapi = self.compiler.name == "oneapi"
-        using_xl = self.compiler.name in ["xl", "xl_r"]
+        using_intel = self.compiler.name in ("intel", "intel-oneapi-compilers-classic")
+        using_oneapi = self.compiler.name in ("oneapi", "intel-oneapi-compilers")
+        using_xl = self.compiler.name in ("xl", "xl_r")
         using_fj = self.compiler.name == "fj"
 
         # The llvm compiler suite does not contain a Fortran compiler by
@@ -259,6 +263,13 @@ class Mumps(Package):
         # check so we trust that the user knows what he/she is doing.
         if "+blr_mt" in self.spec:
             optf.append("-DBLR_MT")
+
+        # Intel and oneAPI Fortran compilers link for_main.o which provides
+        # its own main(). This conflicts with the C examples' main(), causing
+        # "multiple definition of `main'" errors. The -nofor-main flag
+        # prevents this.
+        if using_intel or using_oneapi:
+            optl.append("-nofor-main")
 
         makefile_conf.extend(
             [
@@ -432,6 +443,56 @@ class Mumps(Package):
                     if "+complex" in spec:
                         zsimpletest = Executable("./zsimpletest")
                         zsimpletest(input="input_simpletest_cmplx")
+
+    @run_after("install", when="+pkgconfig")
+    def create_pkgconfig(self):
+        """Create unofficial pkgconfig files for mumps libraries"""
+        libdir = join_path(self.prefix, "lib")
+        pkg_path = join_path(libdir, "pkgconfig")
+        mkdirp(pkg_path)
+        precision_desc = {
+            "s": "single",
+            "d": "double",
+            "c": "complex single",
+            "z": "complex double",
+        }
+        orderings = [ordering[2:] for ordering in self.orderings]
+        if len(orderings) > 1:
+            ord_desc = "with the following orderings available: "
+            ord_desc += ", ".join(orderings[:-1])
+            ord_desc += f" and {orderings[-1]}"
+        else:
+            ord_desc = f"with the {orderings[0]} ordering available"
+
+        if "+mpi" in self.spec:
+            parallel_desc = "parallel"
+        else:
+            parallel_desc = "sequential"
+        for char in "zscd":
+            if (
+                ("+float" in self.spec and char == "s")
+                or ("+double" in self.spec and char == "d")
+                or ("+complex" in self.spec and "+float" in self.spec and char == "c")
+                or ("+complex" in self.spec and "+double" in self.spec and char == "z")
+            ):
+                with open(join_path(pkg_path, f"{char}mumps.pc"), "w") as f:
+                    desc = f"The {parallel_desc} {precision_desc[char]} MUMPS library {ord_desc}"
+                    f.write(
+                        "\n".join(
+                            [
+                                f"prefix={self.prefix}",
+                                "exec_prefix=${prefix}",
+                                "includedir=${prefix}/include",
+                                "libdir=${exec_prefix}/lib",
+                                "",
+                                f"Name: {char}mumps",
+                                f"Description: {desc}",
+                                f"Version: {self.version}",
+                                "Cflags: -I${includedir}",
+                                f"Libs: -L${{libdir}} -l{char}mumps",
+                            ]
+                        )
+                    )
 
     @property
     def libs(self):

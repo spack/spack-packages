@@ -14,8 +14,11 @@ class Isl(AutotoolsPackage):
     homepage = "https://libisl.sourceforge.io/"
     url = "https://libisl.sourceforge.io/isl-0.21.tar.bz2"
 
+    maintainers("alalazo")
+
     license("MIT")
 
+    version("0.27", sha256="626335529331f7c89fec493de929e2e92fb3d8cc860fc7af554e0518ee0029ee")
     version("0.26", sha256="5eac8664e9d67be6bd0bee5085d6840b8baf738c06814df47eaf4166d9776436")
     version("0.25", sha256="4305c54d4eebc4bf3ce365af85f04984ef5aa97a52e01128445e26da5b1f467a")
     version("0.24", sha256="fcf78dd9656c10eb8cf9fbd5f59a0b6b01386205fe1934b3b287a0a1898145c0")

@@ -39,8 +39,7 @@ class Amg4psblas(AutotoolsPackage):
     variant(
         "cuda",
         default=False,
-        description="Activate CUDA support, requires a CUDA-capable psblas with right"
-        "cudacc flags",
+        description="Activate CUDA support, requires a CUDA-capable psblas with rightcudacc flags",
     )
     variant("openmp", default=False, description="Activate OpenMP support")
     # Additional configure options

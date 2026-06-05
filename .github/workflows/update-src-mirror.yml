@@ -1,0 +1,67 @@
+name: update-src-mirror
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  id-token: write  # Required for AWS OIDC authentication
+  contents: read
+
+jobs:
+  update-mirror:
+    if: github.repository == 'spack/spack-packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@df4cb1c069e1874edd31b4311f1884172cec0e10  # v6.0.3
+        with:
+          # Depth 2 is required for this check
+          fetch-depth: 2
+
+      - name: Checkout Spack
+        uses: ./.github/actions/checkout-spack
+        with:
+          fetch-depth: 1
+
+      - name: Create source mirror
+        id: create-mirror
+        run: |
+          source spack-core/share/spack/setup-env.sh
+
+          # Create source mirror for changed specs
+          SPECS=$(spack repo show-version-updates \
+            --no-manual-packages \
+            --only-redistributable \
+            --no-git-versions \
+            builtin \
+            "${{ github.event.before }}" \
+            "${{ github.event.after }}")
+
+          if [ -z "$SPECS" ]; then
+            echo "No specs to mirror"
+            echo "new-specs=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "Creating mirror for:"
+          echo "$SPECS"
+          spack -c concretizer:unify:false mirror create -d src-mirror $SPECS
+          echo "new-specs=true" >> $GITHUB_OUTPUT
+
+      - name: Configure AWS credentials
+        if: steps.create-mirror.outputs.new-specs == 'true'
+        uses: aws-actions/configure-aws-credentials@e7f100cf4c008499ea8adda475de1042d6975c7b  # v6.2.0
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Upload to S3
+        if: steps.create-mirror.outputs.new-specs == 'true'
+        run: |
+          aws s3 cp src-mirror/_source-cache s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/ \
+            --no-overwrite \
+            --recursive \
+            --no-progress
+          echo "Successfully uploaded source mirror to S3"
