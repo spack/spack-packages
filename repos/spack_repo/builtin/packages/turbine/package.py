@@ -12,10 +12,11 @@ class Turbine(AutotoolsPackage):
     """Turbine: The Swift/T runtime"""
 
     homepage = "http://swift-lang.org/Swift-T"
-    url = "https://swift-lang.github.io/swift-t-downloads/spack/turbine-1.3.0.tar.gz"
+    url = "https://swift-lang.github.io/swift-t-downloads/spack/turbine-1.5.1.tar.gz"
     git = "https://github.com/swift-lang/swift-t.git"
 
     version("master", branch="master")
+    version("1.5.1", sha256="67485207b7d9eef1b942453e0be2bd956001ddf2cec556ab09079613f4e86d9b")
     version("1.3.0", sha256="9709e5dada91a7dce958a7967d6ff2bd39ccc9e7da62d05a875324b5089da393")
     version("1.2.3", sha256="a3156c7e0b39e166da3de8892f55fa5d535b0c99c87a9add067c801098fe51ba")
 
@@ -61,14 +62,9 @@ class Turbine(AutotoolsPackage):
         args = [
             "--with-c-utils=" + self.spec["exmcutils"].prefix,
             "--with-adlb=" + self.spec["adlbx"].prefix,
-            "--with-tcl=" + self.spec["tcl"].prefix,
+            "--with-tcl=" + self.spec["tcl"].prefix + "/lib",
             "--disable-static-pkg",
         ]
-
-        if self.spec.satisfies("^intel-oneapi-mpi"):
-            args.append("--with-mpi=" + self["intel-oneapi-mpi"].component_prefix)
-        else:
-            args.append("--with-mpi=" + self.spec["mpi"].prefix)
 
         if "+hdf5" in self.spec:
             args.append("--with-hdf5=ON")
