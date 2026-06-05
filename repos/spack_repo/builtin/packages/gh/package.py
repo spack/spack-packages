@@ -69,11 +69,12 @@ class Gh(GoPackage):
     depends_on("go@1.18:", type="build", when="@2.10:")
     depends_on("go@1.16:", type="build")
 
+    build_directory = "cmd/gh"
+
     @property
-    def build_args(self):
-        args = super().build_args
-        args.extend(["-trimpath", "./cmd/gh"])
-        return args
+    def ldflags(self):
+        version_path = go("list", "../../internal/build", output=str).strip()
+        return [f"-X {version_path}.Version={self.spec.version}"]
 
     @property
     def check_args(self):

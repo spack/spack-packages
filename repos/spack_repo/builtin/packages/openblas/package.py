@@ -166,7 +166,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # https://github.com/OpenMathLib/OpenBLAS/pull/5796
     patch(
         "https://github.com/OpenMathLib/OpenBLAS/commit/88705a932831c0de1ed136b461c6c239802828b2.diff?full_index=1",
-        when="@0.3.32",
+        when="@0.3.32:0.3.33",
         sha256="723ddc1553b6d27ff89d96985f7732695935c0d4d8df766987702689bdb750ac",
     )
 
