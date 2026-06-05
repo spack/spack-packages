@@ -51,6 +51,9 @@ class TheiaIde(Package):
         # https://github.com/nodejs/node-gyp/tree/v9.0.0?tab=readme-ov-file#on-unix
         depends_on("python@3.7:3.10")
 
+    with default_args(type=("build", "link")):
+        depends_on("zlib-api")
+
     with default_args(type="run"):
         depends_on("git@2.11.0:")
 
@@ -59,7 +62,6 @@ class TheiaIde(Package):
         # https://github.com/microsoft/vscode/blob/1.119.0/.nvmrc
         depends_on("node-js@22.22.1:22", when="@1.70.200")
 
-        depends_on("zlib-ng")
 
     def install(self, spec, prefix):
         yarn = which("yarn", required=True)
