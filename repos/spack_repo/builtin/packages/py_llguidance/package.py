@@ -17,6 +17,6 @@ class PyLlguidance(PythonPackage):
     version("1.3.0", sha256="861249afd51dc325646834462ea827e57a5c2b2042e108e6aae7059fdad9104d")
     
     depends_on("python@3.10:", type=("build", "run"), when="@1.4.0:")
-    depends_on("python@3.9", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
     depends_on("rust@1.87:", type="build")
