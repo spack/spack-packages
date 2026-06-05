@@ -107,13 +107,13 @@ class SalmonTddft(CMakePackage, CudaPackage):
                     ]
                 )
         if "%nvhpc" in spec:
+            toolchain = "nvhpc-openmp"
             if "+openacc" in spec:
+                toolchain = "nvhpc-openacc"
                 if "+cuda" in spec:
-                    args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openacc-cuda"))
-                else:
-                    args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openacc"))
-            else:
-                args.append(define("CMAKE_TOOLCHAIN_FILE", "nvhpc-openmp"))
+                    toolchain = "nvhpc-openacc-cuda"
+            args.append(define("CMAKE_TOOLCHAIN_FILE", toolchain))
+
         elif "%fj" in spec:  # TODO add toolchain files if necessary
             args.append(self.define("CMAKE_Fortran_MODDIR_FLAG", "-M"))
 
