@@ -51,8 +51,7 @@ class TheiaIde(Package):
         # https://github.com/nodejs/node-gyp/tree/v9.0.0?tab=readme-ov-file#on-unix
         depends_on("python@3.7:3.10")
 
-    with default_args(type=("build", "link")):
-        depends_on("zlib-api")
+    depends_on("zlib-api")
 
     with default_args(type="run"):
         depends_on("git@2.11.0:")
