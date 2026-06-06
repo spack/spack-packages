@@ -61,7 +61,6 @@ class TheiaIde(Package):
         # https://github.com/microsoft/vscode/blob/1.119.0/.nvmrc
         depends_on("node-js@22.22.1:22", when="@1.70.200")
 
-
     def install(self, spec, prefix):
         yarn = which("yarn", required=True)
         yarn()
