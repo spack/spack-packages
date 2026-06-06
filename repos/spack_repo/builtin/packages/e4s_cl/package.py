@@ -23,6 +23,7 @@ class E4sCl(PythonPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("1.0.9", sha256="60a06417a98b7760e3d2ad911a6259eb516b28cd334a03cc84bb8c6d41ba1240")
     version("1.0.8", sha256="b2bdb042db5f3106cc0a4c79781d03299828f9839a3903d1559c2c4a3e20a67c")
     version("1.0.5", commit="33b659e80a5b47a6b3e730e9eb67d1431b112587")
     version("1.0.4", commit="9781a62af20f951e3c2c19a522f4fc16d20a256e")
