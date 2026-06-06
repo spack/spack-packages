@@ -22,17 +22,15 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
     url = "https://gitlab.com/max-centre/components/devicexlib/-/archive/0.9.0/devicexlib-0.9.0.tar.gz"
     git = "https://gitlab.com/max-centre/components/devicexlib"
 
-    maintainers = ["nicspalla"]
+    license("MIT")
+    maintainers("nicspalla")
 
     version("develop", branch="develop")
-
     version("0.9.1", sha256="900fe8b0849d451e7c541d00a1b92c723e0969bae47ebcabd295e14ebcc17d1e")
-    version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
-    version("0.8.6", sha256="36e6222bc59cf0ed7268cc3652a3661887109f7fe072cefe06884dcd6de2407d")
-    version("0.8.5", sha256="498d5c6804e697123d382d9dd35dedeb4b64228704f84711877c842b851d37df")
-    version("0.8.4", sha256="6c50bb6d51a26429f17c9bbb00e81b279ed7f731b2a73f4689b7b30a8e30f115")
-    version("0.8.3", sha256="3d2d4264df8c57da2791b0f94def52d789d67c6fe7ad5960f96c96dfc6c25cb2")
-    version("0.8.2", sha256="c184de73f424e9437e352eb0e35716514348a7cd88ebac3ad7a52c66c4e4ba9c")
+    with default_args(deprecated=True):
+        version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
+        version("0.8.6", sha256="36e6222bc59cf0ed7268cc3652a3661887109f7fe072cefe06884dcd6de2407d")
+        version("0.8.5", sha256="498d5c6804e697123d382d9dd35dedeb4b64228704f84711877c842b851d37df")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -148,9 +146,6 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
         msg="CUDA runtime version is required",
     )
 
-    def enable_or_disable_openmp(self, activated):
-        return "--enable-openmp" if activated else "--disable-openmp"
-
     def enable_or_disable_cuda(self, activated):
         return "--enable-cublas=yes" if activated else "--enable-cublas=no"
 
@@ -204,10 +199,7 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.append("--enable-openmp5")
 
         # BLAS
-        if "^nvhpc+blas" in spec:
-            args.append("--with-blas-libs=-lblas")
-        else:
-            args.append(f"--with-blas-libs={spec['blas'].libs}")
+        args.append(f"--with-blas-libs={spec['blas'].libs}")
 
         # CUDA
         args.extend(self.enable_or_disable("cuda"))

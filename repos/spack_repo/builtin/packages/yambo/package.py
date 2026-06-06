@@ -22,29 +22,33 @@ class Yambo(AutotoolsPackage, CudaPackage):
     url = "https://github.com/yambo-code/yambo/archive/5.3.0.tar.gz"
     git = "https://github.com/yambo-code/yambo.git"
 
-    maintainers = ["nicspalla"]
+    maintainers("nicspalla", "LydDeb")
+
+    license("GPL-2.0-or-later")
 
     version("5.3.0", sha256="97b6867c28af6ea690bb02446745e817adcedf95bcd568f132ef3510abbb1cfe")
     version("5.2.4", sha256="7c3f2602389fc29a0d8570c2fe85fe3768d390cfcbb2d371e83e75c6c951d5fc")
-    version("5.2.3", sha256="a6168d1fa820af857ac51217bd6ad26dda4cc89c07e035bd7dc230038ae1ab9c")
-    version("5.2.2", sha256="2ddd6356830ce9302e304b7627cff3aa973846cf893f91742b4390d0b53d63d4")
-    version("5.2.1", sha256="0ac362854313927d75bbf87be98ff58447f3805f79724c38dc79df07f03a7046")
-    version("5.2.0", sha256="88fd6de5c9be49b8af89a2634b3c2da6db5a614eff8e19a7ec5c48ef12bafc8b")
     version("5.1.4", sha256="f2dfa1b4cb6a28bd54efb56a9333f51e6da9bd248d92ca3f6e945cb9ac9fe82c")
-    version("5.1.3", sha256="eb12297990030e785a58db6b9c9f0e34809eb2f095082e0aeca89eeaaf14ff37")
-    version("5.1.2", sha256="9625d8a96bd9a3ff3713ebe53228d5ac9be0a98adecbe2a2bad67234c0e26a2e")
-    version("5.1.1", sha256="c85036ca60507e627c47b6c6aee8241830349e88110e1ce9132ef03ab2c4e9f6")
-    version("5.0.4", sha256="1841ded51cc31a4293fa79252d7ce893d998acea7ccc836e321c3edba19eae8a")
-    version("5.0.3", sha256="7a5a5f3939bdb6438a3f41a3d26fff0ea6f77339e4daf6a5d850cf2a51da4414")
-    version("5.0.2", sha256="a2cc0f880dd915b47efa0d5dd88cb94edffbebaff37a252183efb9e23dbd3fab")
-    version("5.0.1", sha256="bbdbd08f7219d575a0f479ff05dac1f1a7b25f7e20f2165abf1b2cf28aedae92")
-    version("5.0.0", sha256="b1cbc0b3805538f892b2b8691901c4cc794e75e056a4bd9ad9cf585899cf0aa9")
-    version("4.5.3", sha256="04f89b5445d35443325c071784376c7b5c25cc900d1fdcc92971a441f8c05985")
-    version("4.5.2", sha256="0b4f8b82c1d37fce472228bdffb6f6f44b86104d170677a5d55e77a2db832cf0")
-    version("4.5.1", sha256="6ef202535e38f334a69bd75bd24ff8403b0a4c6b8c60a28b69d4b1c5808aeff5")
-    version("4.5.0", sha256="c68b2c79acc31b3d48e7edb46e4049c1108d60feee80bf4fcdc4afe4b12b6928")
-    version("4.4.1", sha256="2daf80f394a861301a9bbad559aaf58de283ce60395c9875e9f7d7fa57fcf16d")
-    version("4.3.3", sha256="790fa1147044c7f33f0e8d336ccb48089b48d5b894c956779f543e0c7e77de19")
+
+    with default_args(deprecated=True):
+        version("5.2.3", sha256="a6168d1fa820af857ac51217bd6ad26dda4cc89c07e035bd7dc230038ae1ab9c")
+        version("5.2.2", sha256="2ddd6356830ce9302e304b7627cff3aa973846cf893f91742b4390d0b53d63d4")
+        version("5.2.1", sha256="0ac362854313927d75bbf87be98ff58447f3805f79724c38dc79df07f03a7046")
+        version("5.2.0", sha256="88fd6de5c9be49b8af89a2634b3c2da6db5a614eff8e19a7ec5c48ef12bafc8b")
+        version("5.1.3", sha256="eb12297990030e785a58db6b9c9f0e34809eb2f095082e0aeca89eeaaf14ff37")
+        version("5.1.2", sha256="9625d8a96bd9a3ff3713ebe53228d5ac9be0a98adecbe2a2bad67234c0e26a2e")
+        version("5.1.1", sha256="c85036ca60507e627c47b6c6aee8241830349e88110e1ce9132ef03ab2c4e9f6")
+        version("5.0.4", sha256="1841ded51cc31a4293fa79252d7ce893d998acea7ccc836e321c3edba19eae8a")
+        version("5.0.3", sha256="7a5a5f3939bdb6438a3f41a3d26fff0ea6f77339e4daf6a5d850cf2a51da4414")
+        version("5.0.2", sha256="a2cc0f880dd915b47efa0d5dd88cb94edffbebaff37a252183efb9e23dbd3fab")
+        version("5.0.1", sha256="bbdbd08f7219d575a0f479ff05dac1f1a7b25f7e20f2165abf1b2cf28aedae92")
+        version("5.0.0", sha256="b1cbc0b3805538f892b2b8691901c4cc794e75e056a4bd9ad9cf585899cf0aa9")
+        version("4.5.3", sha256="04f89b5445d35443325c071784376c7b5c25cc900d1fdcc92971a441f8c05985")
+        version("4.5.2", sha256="0b4f8b82c1d37fce472228bdffb6f6f44b86104d170677a5d55e77a2db832cf0")
+        version("4.5.1", sha256="6ef202535e38f334a69bd75bd24ff8403b0a4c6b8c60a28b69d4b1c5808aeff5")
+        version("4.5.0", sha256="c68b2c79acc31b3d48e7edb46e4049c1108d60feee80bf4fcdc4afe4b12b6928")
+        version("4.4.1", sha256="2daf80f394a861301a9bbad559aaf58de283ce60395c9875e9f7d7fa57fcf16d")
+        version("4.3.3", sha256="790fa1147044c7f33f0e8d336ccb48089b48d5b894c956779f543e0c7e77de19")
 
     # See https://github.com/yambo-code/yambo-devel/issues/643
     patch(
@@ -152,7 +156,8 @@ class Yambo(AutotoolsPackage, CudaPackage):
         conflicts("%oneapi", msg="CUDA Fortran available only with NV or PGI compilers")
 
     with when("@5.3.0:"):
-        depends_on("devicexlib@0.8.6: ~cuda-fortran~openacc~openmp5", when="~cuda-fortran")
+        depends_on("devicexlib@0.8.6: ~cuda-fortran~openacc~openmp5~openmp", when="~cuda-fortran~openmp")
+        depends_on("devicexlib@0.8.6: ~cuda-fortran~openacc~openmp5+openmp", when="~cuda-fortran+openmp")
         depends_on("devicexlib@0.8.6: +cuda-fortran+cuda", when="+cuda-fortran+cuda")
 
     with when("+openmp"):
