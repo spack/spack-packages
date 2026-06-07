@@ -24,28 +24,66 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="develop")
-    version("2.9.1", sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59")
-    version("2.9.0", sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6")
-    version("2.8.0", sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96")
-    version("2.7.0", sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6")
-    version("2.6.0", sha256="c67b02ff9abc7c1f529af446a9f01f3ef9e5b0574f220259128da8d5ca7e9dc6")
-    version("2.5.0", sha256="91fda9b2502e5d0a2a6cdd5a73ef096253cc7e75bd01ba5189a4726ad86aef08")
-    version("2.4.1", sha256="b3d5ae62ca582b72707a2c932e8074a4f2f61d61085d97bd374213c70b8dbdcf")
-    version("2.4.0", sha256="cf2b774328c9a30677501f49b79955841bd08915a7ca53c8533bfdf14a8f9bd4")
-    version("2.3.0", sha256="f750de586cffa66852b646f7f85eb831eeb64fa2d25ce50ed10e1df016dd3364")
-    version("2.2.0", sha256="245b0382ddc7b80f85af8288f75bd03d56ec51cdfb6968acb4931529b35173ec")
-    version("2.1.0", sha256="9e58fd998f224632f356e479d18b5032570d00d87b86736b6a6ac2d03f8d4b3c")
-    version("2.0.1", sha256="61d5531b661e1dab043353a1d67939ddcde3893d3dc7b0ab3d05074d448b485c")
+    version(
+        "2.9.1",
+        sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59",
+    )
+    version(
+        "2.9.0",
+        sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6",
+    )
+    version(
+        "2.8.0",
+        sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96",
+    )
+    version(
+        "2.7.0",
+        sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6",
+    )
+    version(
+        "2.6.0",
+        sha256="c67b02ff9abc7c1f529af446a9f01f3ef9e5b0574f220259128da8d5ca7e9dc6",
+    )
+    version(
+        "2.5.0",
+        sha256="91fda9b2502e5d0a2a6cdd5a73ef096253cc7e75bd01ba5189a4726ad86aef08",
+    )
+    version(
+        "2.4.1",
+        sha256="b3d5ae62ca582b72707a2c932e8074a4f2f61d61085d97bd374213c70b8dbdcf",
+    )
+    version(
+        "2.4.0",
+        sha256="cf2b774328c9a30677501f49b79955841bd08915a7ca53c8533bfdf14a8f9bd4",
+    )
+    version(
+        "2.3.0",
+        sha256="f750de586cffa66852b646f7f85eb831eeb64fa2d25ce50ed10e1df016dd3364",
+    )
+    version(
+        "2.2.0",
+        sha256="245b0382ddc7b80f85af8288f75bd03d56ec51cdfb6968acb4931529b35173ec",
+    )
+    version(
+        "2.1.0",
+        sha256="9e58fd998f224632f356e479d18b5032570d00d87b86736b6a6ac2d03f8d4b3c",
+    )
+    version(
+        "2.0.1",
+        sha256="61d5531b661e1dab043353a1d67939ddcde3893d3dc7b0ab3d05074d448b485c",
+    )
 
     variant("tests", default=False, description="Build DBCSR unit tests")
-    variant("tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2")
+    variant(
+        "tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2"
+    )
     variant("mpi", default=True, description="Compile with MPI")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("shared", default=True, description="Build shared library")
     variant(
         "smm",
-        default="libxsmm",
-        values=("libxsmm", "blas"),
+        default="blas",
+        values=("libxsmm", "blas", "libxs"),
         description="Library for small matrix multiplications",
     )
     variant(
@@ -62,7 +100,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("mpi_f08", default=False, when="@2.6:", description="Use mpi F08 module")
 
-    variant("g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP")
+    variant(
+        "g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP"
+    )
     conflicts("+g2g", when="~cuda ~rocm", msg="GPU-aware MPI requires +cuda or +rocm")
 
     depends_on("c", type="build")  # generated
@@ -92,7 +132,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("opencl", when="+opencl")
     opencl_loader_header_version = "2022.10.24"
     depends_on(f"opencl-c-headers@{opencl_loader_header_version}:", when="+opencl")
-    requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl")
+    requires(
+        f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl"
+    )
 
     # All examples require MPI
     conflicts("+examples", when="~mpi", msg="Examples require MPI")
@@ -138,8 +180,14 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^openblas threads=pthreads", when="+openmp")
     conflicts("^openblas threads=none", when="+openmp")
 
-    # OpenCL backend implementation relies on LIBXSMM
-    requires("smm=libxsmm", when="+opencl")
+    # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
+    # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
+    # hard dependency of libxstream in that configuration. This is reflected in
+    # libxstream package.py.
+
+    depends_on("libxstream@main", when="@2.9.2: +opencl")
+    depends_on("libxs@main", when="@2.9.2: +opencl")
+    depends_on("libxs@main", when="@2.9.2: smm=libxs")
 
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:
@@ -157,12 +205,20 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         for directory, subdirectory, files in os.walk(os.getcwd()):
             for i in files:
                 file_path = os.path.join(directory, i)
-                filter_file("USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path)
-                filter_file("USE ISO_FORTRAN_ENV", "USE,INTRINSIC :: ISO_FORTRAN_ENV", file_path)
+                filter_file(
+                    "USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path
+                )
+                filter_file(
+                    "USE ISO_FORTRAN_ENV", "USE,INTRINSIC :: ISO_FORTRAN_ENV", file_path
+                )
                 filter_file("USE omp_lib", "USE,INTRINSIC :: omp_lib", file_path)
                 filter_file("USE OMP_LIB", "USE,INTRINSIC :: OMP_LIB", file_path)
-                filter_file("USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path)
-                filter_file("USE iso_fortran_env", "USE,INTRINSIC :: iso_fortran_env", file_path)
+                filter_file(
+                    "USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path
+                )
+                filter_file(
+                    "USE iso_fortran_env", "USE,INTRINSIC :: iso_fortran_env", file_path
+                )
 
     def cmake_args(self):
         spec = self.spec
@@ -173,8 +229,17 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         if "+rocm" in spec and len(spec.variants["amdgpu_target"].value) > 1:
             raise InstallError("DBCSR supports only one amdgpu_arch at a time")
 
-        args = [
-            "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
+        if "smm=libxs" in spec:
+            args += [
+                "-DUSE_LIBXS=ON",
+            ]
+
+        if "@:2.9.1" in spec:
+            args += [
+                "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
+            ]
+
+        args += [
             self.define_from_variant("USE_MPI", "mpi"),
             self.define_from_variant("USE_OPENMP", "openmp"),
             # C API needs MPI

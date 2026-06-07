@@ -2,27 +2,54 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.generic import Package
+
+from spack_repo.builtin.build_systems import cmake, makefile
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
 
-class Libxstream(Package):
+class Libxstream(MakefilePackage, CMakePackage):
     """LIBXSTREAM is a library to work with streams, events, and code regions
     that are able to run asynchronous while preserving the usual stream
     conditions."""
 
+    build_system(
+        conditional("cmake", when="@main"),
+        conditional("makefile", when="@0.9.0"),
+        default="cmake",
+    )
+
     homepage = "https://github.com/hfp/libxstream"
     url = "https://github.com/hfp/libxstream/archive/0.9.0.tar.gz"
+    git = "https://github.com/hfp/libxstream.git"
+
+    maintainers("mtaillefumier")
 
     license("BSD-3-Clause")
 
-    version("0.9.0", sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473")
+    version(
+        "0.9.0",
+        sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473",
+    )
+    version("main", branch="main")
+
+    generator("ninja")
+
+    variant("shared", default=True, description="Build shared libraries")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("gmake", type="build")
+    depends_on("fortran", type="build")  # generated
+    depends_on("gmake", type="build", when="@0.9.0")
 
+    depends_on("opencl")
+    depends_on("libxs", when="@main")
+    depends_on("libxs+shared", when="+shared")
+
+
+class MakefileBuilder(makefile.MakefileBuilder):
     def patch(self):
         kwargs = {"ignore_absent": False, "backup": True, "string": True}
         makefile = FileFilter("Makefile.inc")
@@ -36,3 +63,9 @@ class Libxstream(Package):
         install_tree("lib", prefix.lib)
         install_tree("include", prefix.include)
         install_tree("documentation", prefix.share + "/libxstream/doc/")
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        args = [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
+        return args
