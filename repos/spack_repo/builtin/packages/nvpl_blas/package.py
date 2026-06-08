@@ -21,8 +21,12 @@ class NvplBlas(Package):
 
     maintainers("albestro", "rasolca")
 
-    license("UNKNOWN")
+    redistribute(source=False, binary=False)
 
+    license("NVIDIA Software License Agreement")
+
+    version("0.5.0.1", sha256="c51fc9cc908cca7c6aa39e72c492c2bfcc9472b542b109b6bcfa5d143f9d780e")
+    version("0.4.1.1", sha256="57704e2e211999c899bca26346b946b881b609554914245131b390410f7b93e8")
     version("0.4.0.1", sha256="6655898327ed36afd0242719075447058c3c89640b5b9bbfeb5af4dd5c101174")
     version("0.3.0", sha256="b51cb199a440c1e8673d3d845d395950c9a9020d4e83af2655eb96c23c6ec90d")
     version("0.2.0.1", sha256="ba29f6a9d3831b6ae5c9265b4d124c13b9b9e0faea025359b02b41ad230975c2")
