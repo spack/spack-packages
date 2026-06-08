@@ -8,6 +8,7 @@ from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
+import os
 
 class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     """Samples for CUDA Developers which demonstrates features in CUDA
@@ -17,14 +18,16 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     git = "https://github.com/NVIDIA/cuda-samples.git"
     url = "https://github.com/NVIDIA/cuda-samples/archive/refs/tags/v13.0.tar.gz"
 
-    maintainers("guanyuming-he")
+    # Not sure if I can take the responsibility;
+    # I just added it since running benchmarks on HPC need it now.
+    #maintainers("guanyuming-he")
 
     # The license is custom:
     # https://github.com/NVIDIA/cuda-samples?tab=License-1-ov-file
     license("NVIDIA Software License Agreement", checked_by="guanyuming-he")
 
     # Update this as CUDA is updated in Spack.
-    # Can use spack checksum cuda-samples
+    # Can execute `spack checksum cuda-samples`
     _ver_map = {
         "13.3": "fab59f405d6c0b87395ce6fc1d46d3f559c380c9a2704ab14d6dc0d3ce1cff16",
         "13.2update": "057e68d22bd02e41d60c9826e7622ac1b88de0f1dbe25ed49bd995f768306f9d",
@@ -41,10 +44,14 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         version(v, sha256=h)
         depends_on("cuda@"+v, when="@"+v)
 
-    variant("cuda", default=True, description="build using CUDA (required)")
+    # Don't need this variant now as CUDA is always required.
+    #variant("cuda", default=True, description="build using CUDA (required)")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    # Do not declare these dependencies unless default compiler fails to work.
+    # They may pull up unexpected compilers instead of the preferred compiler
+    # by Spack.
+    #depends_on("c", type="build")
+    #depends_on("cxx", type="build")
 
     # cuda-samples changed build systems starting with 12.8
     build_system(
@@ -56,7 +63,10 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # After the change to CMake, the build defaults to all GPU arches
     # supported by the NVCC it depends on
     conflicts("cuda_arch=none", when="@:12.5+cuda", 
-           msg="Please specify cuda_arch as variant for installation.")
+        msg="Please specify cuda_arch as variant for installation.\n"
+            "You can query it with \n"
+            "nvidia-smi --query-gpu=name,compute_cap --format=csv"
+    )
 
     @when("@:12.5")
     def setup_build_environment(self, env):
@@ -72,13 +82,30 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # CMAKE_INSTALL_PREFIX dir, so this copies them
     @when("@12.8:")
     def install(self, spec, prefix):
-        short_hash = spec.prefix.split("-")[-1][0:7]
-        shutil.copytree("../spack-build-" + short_hash + "/Samples", 
-                  prefix + "/bin/")
+        mkdir(prefix.bin)
+        install_tree(
+            os.path.join(self.stage.source_path, "Samples"),
+            prefix.bin
+        )
+        # Don't forget to install the common files!
+        mkdir(prefix.common)
+        install_tree(
+            os.path.join(self.stage.source_path, "Common"),
+            prefix.common
+        )
+        
 
     # Similar to the CMake version, the Make version doesn't have an install
     # phase but instead just creates binaries in a `bin` folder under the build
     # directory
     @when("@:12.5")
     def install(self, spec, prefix):
-        shutil.copytree("./bin/", prefix + "/bin/")
+        mkdir(prefix.bin)
+        install_tree("bin", prefix.bin)
+        # Don't forget to install the common files!
+        mkdir(prefix.common)
+        install_tree(
+            os.path.join(self.stage.source_path, "Common"),
+            prefix.common
+        )
+        
