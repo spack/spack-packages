@@ -4,6 +4,7 @@
 
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack.error import InstallError
 
 from spack.package import *
 
@@ -29,16 +30,29 @@ class Rodinia(MakefilePackage, CudaPackage):
 
     def edit(self, spec, prefix):
         # set cuda paths
+
+        cuda_prefix = self.spec["cuda"].prefix
+        cuda_arch = self.spec.variants["cuda_arch"].value[0]
+        if cuda_arch == "none":
+            raise InstallError(
+                "Rodinia requires a valid cuda_arch.\n"
+                "Please include this variant cuda_arch=... in your install\n"
+                "command.\n"
+                "You can query it with \n"
+                "nvidia-smi --query-gpu=name,compute_cap --format=csv"
+            )
+
+
         filter_file(
             "CUDA_DIR = /usr/local/cuda",
-            "CUDA_DIR = {0}".format(self.spec["cuda"].prefix),
+            "CUDA_DIR = {0}".format(cuda_prefix),
             "common/make.config",
             string=True,
         )
 
         filter_file(
             "SDK_DIR = /usr/local/cuda-5.5/samples/",
-            "SDK_DIR = {0}/samples".format(self.spec["cuda"].prefix),
+            "SDK_DIR = {0}/samples".format(cuda_prefix),
             "common/make.config",
             string=True,
         )
@@ -46,7 +60,7 @@ class Rodinia(MakefilePackage, CudaPackage):
         # set cuda arch flags in various makefiles
         filter_file(
             "compute_20",
-            "compute_{0}".format(spec.variants["cuda_arch"].value[0]),
+            "compute_{0}".format(cuda_arch),
             "cuda/cfd/Makefile",
             string=True,
         )
@@ -62,7 +76,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 
         for makefile in makefiles:
             filter_file(
-                "sm_[0-9]+", "sm_{0}".format(spec.variants["cuda_arch"].value[0]), makefile
+                "sm_[0-9]+", "sm_{0}".format(cuda_arch), makefile
             )
 
         # fix broken makefile rule
@@ -79,3 +93,4 @@ class Rodinia(MakefilePackage, CudaPackage):
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         install_tree("bin/linux/cuda", prefix.bin)
+
