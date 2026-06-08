@@ -23,6 +23,8 @@ class Dyninst(CMakePackage):
     license("LGPL-2.1-or-later")
 
     version("master", branch="master")
+    version("13.0.1", url="http://www.cs.uoregon.edu/research/paracomp/tau/tauprofile/dist/dyninst-13.0.1.tar.gz",
+            sha256="e1d1e0fb3c013634a538a8cd8ed95f06d39b21a617525ecd8a07f2947a1c73cf")
     version("13.0.0", sha256="1bc48d26478b677a6c090c25586a447507bd1b4cf88d369bd61820005ce1be39")
     version("12.3.0", sha256="956b0378d2badb765a7e677c0b66c0b8b8cacca7631222bfe7a27b369abf7dd4")
     version("12.2.1", sha256="c304af3c6191e92acd27350fd9b7b02899767a0e38abb3a08a378abe01d1ef01")
