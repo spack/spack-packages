@@ -33,7 +33,7 @@ class Mille(CMakePackage):
         default="20",
         values=_cxxstd_values,
         multi=False,
-        description="Use the specified C++ standard when building."
+        description="Use the specified C++ standard when building.",
     )
 
     depends_on("c", type="build")
