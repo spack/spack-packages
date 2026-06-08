@@ -38,6 +38,8 @@ class Xolotl(CMakePackage, CudaPackage):
     conflicts("+openmp", when="+cuda", msg="Can't use both OpenMP and CUDA")
 
     depends_on("petsc ~fortran +kokkos")
+    depends_on("kokkos@4.4", when="@3.1.0")
+    depends_on("kokkos-kernels@4.4", when="@3.1.0")
     depends_on("petsc +int64", when="+int64")
     depends_on("petsc +openmp", when="+openmp")
 
