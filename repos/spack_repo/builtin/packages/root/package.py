@@ -302,6 +302,11 @@ class Root(CMakePackage):
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
     variant("xrootd", default=False, description="Build xrootd file server and its client")
+    variant(
+        "builtin_llvm",
+        default=True,
+        description="Use ROOT's bundled copy of LLVM (but bundled clang is always used)",
+    )
 
     # ###################### Compiler variants ########################
 
@@ -419,6 +424,12 @@ class Root(CMakePackage):
     depends_on("libxml2", when="+xml")
     depends_on("xrootd", when="+xrootd")
 
+    # External LLVM (used when ~builtin_llvm).  ROOT bundles its own patched Clang
+    # (interpreter/llvm-project/clang) and builds it against the external LLVM, so
+    # vanilla LLVM is sufficient here.  ROOT's patches to llvm-project only touch
+    # clang/, not the LLVM core.
+    depends_on("llvm@20.1.0:20.1", when="@6.36: ~builtin_llvm")
+
     depends_on("googletest", when="@6.28.00:", type="test")
 
     # ###################### Conflicts ######################
@@ -426,6 +437,22 @@ class Root(CMakePackage):
     # I was unable to build root with any Intel compiler
     # See https://sft.its.cern.ch/jira/browse/ROOT-7517
     conflicts("%intel")
+
+    # External LLVM is only supported for ROOT 6.36+ (requires LLVM 20.1.x).
+    # Older ROOT versions have different LLVM major requirements that have not
+    # been mapped to spack dependencies yet.
+    conflicts(
+        "~builtin_llvm",
+        when="@:6.35",
+        msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
+    )
+    # In order to avoid adding newer versions with incorrect LLVM versions,
+    # newer versions are explicitly added as conflicts as well.
+    conflicts(
+        "~builtin_llvm",
+        when="@6.39:",
+        msg="External LLVM support for ROOT 6.39+ has not been validated",
+    )
 
     # GCC 15 support was added in 6.34.04
     conflicts("%gcc@15:", when="@:6.34.02")
@@ -630,6 +657,7 @@ class Root(CMakePackage):
         options += [
             define("builtin_cfitsio", False),
             define("builtin_civetweb", False),
+            define("builtin_clang", True),  # use builtin_clang even when ~builtin_llvm
             define("builtin_davix", False),
             define("builtin_fftw3", False),
             define("builtin_freetype", False),
@@ -638,7 +666,7 @@ class Root(CMakePackage):
             define("builtin_gl2ps", False),
             define("builtin_glew", False),
             define("builtin_gsl", False),
-            define("builtin_llvm", True),
+            define_from_variant("builtin_llvm"),
             define("builtin_lz4", False),
             define("builtin_lzma", False),
             define("builtin_nlohmannjson", False),

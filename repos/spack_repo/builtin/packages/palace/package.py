@@ -411,6 +411,8 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                 # Add Fortran libraries
                 if "gfortran" in self.compiler.fc:
                     strumpack_libs += ";gfortran"
+                elif "ifx" in self.compiler.fc:
+                    strumpack_libs += ";ifport;ifcore"
 
                 args.append(self.define("STRUMPACK_REQUIRED_LIBRARIES", strumpack_libs))
             if self.spec.satisfies("+superlu-dist"):

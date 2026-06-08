@@ -22,15 +22,18 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+# Ref should always be the merge-base to avoid picking up extra files
+ref=$(git merge-base $ref HEAD)
+
 if ! python_files > /dev/null; then
   info "skipping style checks: no Python files changed"
   exit 0
 fi
-[ -d "spack-core" ] ||  die "no 'spack-core' dir found: should be a clone of 'spack/spack'"
 python_files | xargs -0 printf "%s\n"
 info "running ruff format"
-ruff format $format_flags || error=1
+python_files | xargs -0 -n 100 ruff format $format_flags || error=1
 info "running ruff check"
-ruff check $check_flags || error=1
+python_files | xargs -0 -n 100 ruff check $check_flags || error=1
 [ "$error" = "1" ] && die "style checks failed"
 info "style checks passed"

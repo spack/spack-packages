@@ -24,6 +24,7 @@ class RaxmlNg(CMakePackage):
 
     license("AGPL-3.0-only")
 
+    version("2.0.1", submodules=True, commit="a7d61b56d2e0e6e263e4686bcbd0017659b37711")
     version("2.0.0", submodules=True, commit="e995a54dda83e440ee15e890093c5b2718787043")
     version("1.2.2", submodules=True, commit="805318cef87bd5d67064efa299b5d1cf948367fd")
     version("1.2.1", submodules=True, commit="af74065fa2e03d4eb3efd83881bd50926d07e234")
