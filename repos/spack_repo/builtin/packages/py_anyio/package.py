@@ -25,6 +25,10 @@ class PyAnyio(PythonPackage):
     version("3.3.4", sha256="67da67b5b21f96b9d3d65daa6ea99f5d5282cb09f50eb4456f8fb51dffefc3ff")
     version("3.2.1", sha256="07968db9fa7c1ca5435a133dc62f988d84ef78e1d9b22814a59d1c62618afbc5")
 
+    depends_on("python@3.8:", when="@4:")
+    depends_on("python@3.9:", when="@4.6:")
+    depends_on("python@3.10:", when="@4.13:")
+
     with default_args(type="build"):
         depends_on("py-setuptools@77:", when="@4.12:")
         depends_on("py-setuptools@64:", when="@3.7:")
