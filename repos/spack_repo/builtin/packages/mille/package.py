@@ -12,7 +12,7 @@ class Mille(CMakePackage):
     and supported by the GeneralBrokenLines track fitter."""
 
     homepage = "https://gitlab.desy.de/millepede/mille"
-    url = "https://gitlab.desy.de/millepede/mille/-/archive/V01-00-00/mille-V01-00-00.tar.gz"
+    url = "https://gitlab.desy.de/millepede/mille/-/archive/V01-00-05/mille-V01-00-05.tar.gz"
     git = "https://gitlab.desy.de/millepede/mille.git"
 
     license("LGPL-2.0-only", checked_by="paulgessinger")
