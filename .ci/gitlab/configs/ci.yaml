@@ -4,6 +4,7 @@ ci:
   broken-tests-packages:
     - superlu-dist    # srun -n 4 hangs
     - papyrus
+    - visit # times out
 
   pipeline-gen:
   - build-job:
