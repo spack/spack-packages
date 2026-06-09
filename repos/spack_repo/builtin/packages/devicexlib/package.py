@@ -27,10 +27,8 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version("0.9.1", sha256="900fe8b0849d451e7c541d00a1b92c723e0969bae47ebcabd295e14ebcc17d1e")
-    with default_args(deprecated=True):
-        version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
-        version("0.8.6", sha256="36e6222bc59cf0ed7268cc3652a3661887109f7fe072cefe06884dcd6de2407d")
-        version("0.8.5", sha256="498d5c6804e697123d382d9dd35dedeb4b64228704f84711877c842b851d37df")
+    version("0.9.0", sha256="77c57a31381a69a2eb2a77138b131a553c96aff03ca934c88b8a6d8434b39460")
+    version("0.8.6", sha256="36e6222bc59cf0ed7268cc3652a3661887109f7fe072cefe06884dcd6de2407d")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -86,18 +84,6 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
             description="Enable OpenACC DEBUG macro",
         )
 
-    with when("+cuda"):
-        variant(
-            "cuda_rt",
-            values=str,
-            default="none",
-            when="%nvhpc",
-            description=(
-                'Specify the CUDA runtime version, e.g. "11.8", only if you '
-                "want the secondary version installed with the NVHPC SDK."
-            ),
-        )
-
     with when("+cuda-fortran"):
         requires(
             "%nvhpc",
@@ -122,7 +108,6 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
         )
 
     depends_on("blas")
-
     depends_on("intel-oneapi-mkl", when="+mkl")
 
     with when("+openmp"):
@@ -138,12 +123,6 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
         "cuda_arch=none",
         when="+cuda-fortran",
         msg="CUDA architecture is required",
-    )
-
-    conflicts(
-        "cuda_rt=none",
-        when="@:0.8.5 +cuda",
-        msg="CUDA runtime version is required",
     )
 
     def enable_or_disable_cuda(self, activated):
@@ -207,12 +186,6 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
         if "+cuda" in spec:
             cuda_arch = spec.variants["cuda_arch"].value[0]
             args.append(f"--with-cuda-cc={cuda_arch}")
-
-            if spec.variants["cuda_rt"].value != "none":
-                args.append(f"--with-cuda-runtime={spec.variants['cuda_rt'].value}")
-
-            if "%nvhpc" not in spec:
-                args.append(f"--with-cuda-path={spec['cuda'].home}")
 
         # ROCm
         args.extend(self.enable_or_disable("rocm"))
