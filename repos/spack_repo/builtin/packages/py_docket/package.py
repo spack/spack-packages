@@ -11,7 +11,7 @@ class PyDocket(PythonPackage):
     """A distributed background task system for Python functions."""
 
     homepage = "https://github.com/chrisguidry/docket"
-    pypi = "pydocket/pydocket-0.16.2.tar.gz"
+    pypi = "pydocket/pydocket-0.16.6.tar.gz"
 
     license("MIT")
 
@@ -21,7 +21,7 @@ class PyDocket(PythonPackage):
     depends_on("py-hatchling", type="build")
 
     depends_on("py-cloudpickle@3.1.1:", type=("build", "run"))
-    depends_on("py-exceptiongroup@1.2:", when="^python@3.10:", type=("build", "run"))
+    depends_on("py-exceptiongroup@1.2:", when="^python@:3.10", type=("build", "run"))
     depends_on("py-fakeredis@2.32.1: +lua", type=("build", "run"))
     depends_on("py-opentelemetry-api@1.33.0:", type=("build", "run"))
     depends_on("py-opentelemetry-exporter-prometheus@0.60b0:", type=("build", "run"))
