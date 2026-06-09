@@ -78,6 +78,9 @@ class Yambo(AutotoolsPackage, CudaPackage):
     variant("sc", default=False, description="Compile Self-consistent project executables")
     variant("nl", default=False, description="Compile Non-linear optics executables")
 
+    conflicts("%oneapi", when="@:5.2.4",
+              msg="oneapi compilation supported only from version 5.3.0")
+
     with when("+mpi"):
         variant(
             "scalapack",
@@ -112,7 +115,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
         depends_on("slepc~arpack")
         depends_on("slepc~cuda", when="@:5.2.0")
     conflicts("+slepc", when="@:5.1.4 %nvhpc",
-              msg="SLEPc support not available with this combination of version and compiler.")
+              msg="SLEPc support not available with this version of Yambo and nvhpc compiler.")
 
 
     depends_on("fftw-api@3")
@@ -137,9 +140,8 @@ class Yambo(AutotoolsPackage, CudaPackage):
 
     with when("+cuda"):
         conflicts("@:4.5.3", msg="CUDA Fortran available only from version 5.0.0")
-        conflicts("%gcc", msg="CUDA Fortran available only with NV or PGI compilers")
-        conflicts("%intel", msg="CUDA Fortran available only with NV or PGI compilers")
-        conflicts("%oneapi", msg="CUDA Fortran available only with NV or PGI compilers")
+        requires("%nvhpc",
+                 msg="CUDA-Fortran support available only with NVIDIA compilers")
 
     with when("@5.3.0:"):
         depends_on("devicexlib ~cuda-fortran~openacc~openmp5~openmp", when="~cuda~openmp")
@@ -262,23 +264,6 @@ class Yambo(AutotoolsPackage, CudaPackage):
             )
 
     @run_before("configure")
-    def filter_oneapi(self):
-        spec = self.spec
-
-        if ("%oneapi" in spec or "%intel-oneapi-compilers" in spec) and "@5.0.0:5.2.99" in spec:
-            filter_file("*ifort*", "*ifx*", "configure", string=True)
-            filter_file("2021", "2023", "configure")
-            filter_file('FC="$(fc)"', "FC=mpiifort", "lib/iotk/Makefile.loc", string=True)
-            filter_file(
-                "#include <stdlib.h>",
-                "#if defined _ypp || defined _a2y || defined _p2y || "
-                "defined _c2y || defined _e2y || defined _eph2y\n"
-                " #include <yambo_driver.h>\n#endif",
-                "lib/yambo/Ydriver/src/main/options_maker.c",
-                string=True,
-            )
-
-    @run_before("configure")
     def filter_time(self):
         spec = self.spec
 
@@ -342,55 +327,20 @@ class Yambo(AutotoolsPackage, CudaPackage):
         if "%fortran=oneapi" in spec:
             env.set("FPP", "ifx -E -free -P")
 
-#        if "+mpi" in spec:
-#            if spec["mpi"].name == "openmpi":
-#                env.set("MPICC", "mpicc")
-#                env.set("MPICXX", "mpicxx")
-#                env.set("MPIF77", "mpif77")
-#                env.set("MPIFC", "mpif90")
-#
-#            if spec["mpi"].name == "fujitsu-mpi":
-#                env.set("MPICC", "mpicc")
-#                env.set("MPICXX", "mpicxx")
-#                env.set("MPIF77", "mpifort")
-#                env.set("MPIFC", "mpifort")
-#
-#        if "%nvhpc" in spec:
-#            env.set("FC", "nvfortran")
-#            env.set("CPP", "cpp -E -P")
-#            env.set("FPP", "nvfortran -Mpreprocess -E")
-#            env.set("F90SUFFIX", ".f90")
-#            env.unset("CUDA_HOME")
-#
-#        if "%intel" in spec:
-#            env.set("FPP", "ifort -E -free -P")
-#            env.set("FC", "ifort")
-#            env.set("F77", "ifort")
-#            env.set("CC", "icc")
-#            env.set("CPP", "icc -E -ansi")
-#
-#            if "+mpi" in spec and "intel" in spec["mpi"].name:
-#                env.set("MPICC", "mpiicc")
-#                env.set("MPICXX", "mpiicpc")
-#                env.set("MPIF77", "mpiifort")
-#                env.set("MPIFC", "mpiifort")
-#
-#        if "%oneapi" in spec:
-#            env.set("FC", "ifx")
-#            env.set("F77", "ifx")
-#            env.set("CC", "icx")
-#            env.set("FPP", "ifx -E -free -P")
-#            env.set("CPP", "icx -E -ansi")
-#
-#            if "+mpi" in spec and "intel" in spec["mpi"].name:
-#                if "^intel-oneapi-mpi@2021.10.0" in spec:
-#                    env.set("MPICC", "mpiicc -cc=icx")
-#                    env.set("MPIF77", "mpiifort -fc=ifx")
-#                    env.set("MPIFC", "mpiifort -fc=ifx")
-#                else:
-#                    env.set("MPICC", "mpiicx")
-#                    env.set("MPIF77", "mpiifx")
-#                    env.set("MPIFC", "mpiifx")
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc") and self.spec.satisfies("@:5.1.4"):
+                flags.extend([
+                    "-Wno-error=implicit-function-declaration",
+                    "-Wno-error=deprecated-declarations",
+                ])
+        if name == "fcflags":
+            if self.spec.satisfies("%gcc@9:") and self.spec.satisfies("@:4.5.3"):
+                flags.extend([
+                    "-fallow-argument-mismatch",
+                ])
+    
+        return (flags, None, None)
 
     def configure_args(self):
         spec = self.spec
@@ -402,9 +352,6 @@ class Yambo(AutotoolsPackage, CudaPackage):
             "--enable-keep-src",
             f"--prefix={self.stage.source_path}",
         ]
-
-        if "@:4.5.3" in spec and "%gcc@9.0.0:" in spec:
-            args.append("FCFLAGS=-fallow-argument-mismatch")
 
         args.extend(self.enable_or_disable("dp"))
         args.extend(self.enable_or_disable("time"))
@@ -424,7 +371,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
         if "mkl" in spec or "intel-oneapi-mkl" in spec:
             mkl_line = f"-L{env['MKLROOT']}/lib/intel64 "
 
-            if "%intel-oneapi-compilers" in spec or "%oneapi" in spec or "%intel" in spec:
+            if "%oneapi" in spec or "%intel" in spec:
                 comp = "intel"
             elif "%gcc" in spec:
                 comp = "gcc"

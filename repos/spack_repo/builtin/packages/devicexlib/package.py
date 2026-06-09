@@ -137,20 +137,10 @@ class Devicexlib(AutotoolsPackage, CudaPackage, ROCmPackage):
     def setup_build_environment(self, env):
         spec = self.spec
 
-        if "%nvhpc" in spec:
-            env.set("CC", "nvc")
-            env.set("FC", "nvfortran")
-            env.set("F90", "nvfortran")
+        if "%c=nvhpc" in spec:
             env.set("CPP", "cpp -E")
+        if "%fortran=nvhpc" in spec:
             env.set("FPP", "nvfortran -Mpreprocess -E")
-            env.set("F90SUFFIX", ".f90")
-
-        if "%gcc" in spec:
-            env.set("CC", "gcc")
-            env.set("FC", "gfortran")
-            env.set("F90", "gfortran")
-            env.set("CPP", "gcc -E -P")
-            env.set("FPP", "gfortran -E -P")
             env.set("F90SUFFIX", ".f90")
 
     def configure_args(self):
