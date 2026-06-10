@@ -77,6 +77,23 @@ class PySetuptools(Package, PythonExtension):
 
     depends_on("py-pip", type="build")
 
+    # https://github.com/pypa/setuptools/blob/v71.0.0/NEWS.rst
+    #
+    # Now setuptools declares its own dependencies in the core extra.
+    # Dependencies are still vendored for bootstrapping purposes,
+    # but setuptools will prefer installed dependencies if present.
+    conflicts("py-packaging@:24.1", when="@75.4.0:")
+    conflicts("py-packaging@:23", when="@71:")
+    conflicts("py-ordered-set@:3.1.0", when="@71:")
+    conflicts("py-more_itertools@:8.7", when="@71:")
+    # conflicts("py-jaraco.text@:3.6", when="@71:")
+    conflicts("py-importlib-resources@:5.10.1", when="@71:75.3")
+    conflicts("py-importlib-metadata:5", when="@71:")
+    conflicts("py-tomli@:2.0.0", when="@71:")
+    conflicts("py-wheel@:0.45.0", when="@77:")
+    conflicts("py-wheel@:0.42", when="@71:")
+    conflicts("py-platformdirs@:2.6.1"," when="@71:")
+
     conflicts(
         "^python@:3.9 ^py-pip@25:",
         when="@:75.1.0",
