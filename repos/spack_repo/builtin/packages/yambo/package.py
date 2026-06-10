@@ -339,7 +339,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
                 flags.extend([
                     "-fallow-argument-mismatch",
                 ])
-    
+
         return (flags, None, None)
 
     def configure_args(self):
