@@ -81,46 +81,71 @@ class AoclCompression(CMakePackage, MakefilePackage):
     depends_on("cmake@3.22:", when="build_system=cmake @:5.0", type="build")
     depends_on("cmake@3.26:", when="build_system=cmake @5.1:5.2", type="build")
 
-    class CMakeBuilder(CMakeBuilder):
-        def cmake_args(self):
-            """Runs ``cmake`` in the build directory"""
-            spec = self.spec
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        """Runs ``cmake`` in the build directory"""
+        spec = self.spec
+        args = []
 
-            args.append("-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value))
-            return args
+        args = [
+            self.define_from_variant("AOCL_ENABLE_THREADS", "openmp"),
+            self.define_from_variant("ENABLE_FAST_MATH", "enable_fast_math"),
+            "-DLZ4_FRAME_FORMAT_SUPPORT=ON",
+            "-DAOCL_LZ4HC_DISABLE_PATTERN_ANALYSIS=ON",
+        ]
+        if spec.satisfies("~shared"):
+            args.append("-DBUILD_STATIC_LIBS=ON")
+        if spec.satisfies("~zlib"):
+            args.append("-DAOCL_EXCLUDE_ZLIB=ON")
+        if spec.satisfies("~bzip2"):
+            args.append("-DAOCL_EXCLUDE_BZIP2=ON")
+        if spec.satisfies("~snappy"):
+            args.append("-DAOCL_EXCLUDE_SNAPPY=ON")
+        if spec.satisfies("~zstd"):
+            args.append("-DAOCL_EXCLUDE_ZSTD=ON")
+        if spec.satisfies("~lzma"):
+            args.append("-DAOCL_EXCLUDE_LZMA=ON")
+        if spec.satisfies("~lz4"):
+            args.append("-DAOCL_EXCLUDE_LZ4=ON")
+        if spec.satisfies("~lz4hc"):
+            args.append("-DAOCL_EXCLUDE_LZ4HC=ON")
 
-    class MakefileBuilder(MakefileBuilder):
-        def _make_options(self, spec):
-            """Shared Make variable list used by both build and install phases."""
-            options = [
-                "LZ4_FRAME_FORMAT_SUPPORT=1",
-                "AOCL_LZ4HC_DISABLE_PATTERN_ANALYSIS=1",
-                "AOCL_ENABLE_THREADS={0}".format("1" if spec.satisfies("+openmp") else "0"),
-                "ENABLE_FAST_MATH={0}".format("1" if spec.satisfies("+enable_fast_math") else "0"),
-            ]
-            if spec.satisfies("~shared"):
-                options.append("BUILD_STATIC_LIBS=1")
-            if spec.satisfies("~zlib"):
-                options.append("AOCL_EXCLUDE_ZLIB=1")
-            if spec.satisfies("~bzip2"):
-                options.append("AOCL_EXCLUDE_BZIP2=1")
-            if spec.satisfies("~snappy"):
-                options.append("AOCL_EXCLUDE_SNAPPY=1")
-            if spec.satisfies("~zstd"):
-                options.append("AOCL_EXCLUDE_ZSTD=1")
-            if spec.satisfies("~lzma"):
-                options.append("AOCL_EXCLUDE_LZMA=1")
-            if spec.satisfies("~lz4"):
-                options.append("AOCL_EXCLUDE_LZ4=1")
-            if spec.satisfies("~lz4hc"):
-                options.append("AOCL_EXCLUDE_LZ4HC=1")
-            decompress_fast = spec.variants["decompress_fast"].value
-            if decompress_fast != "OFF":
-                options.append("AOCL_DECOMPRESS_FAST={0}".format(decompress_fast))
-            return options
 
-        def build(self, pkg, spec, prefix):
-            make(*self._make_options(spec))
+        args.append("-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value))
+        return args
 
-        def install(self, pkg, spec, prefix):
-            make("install", "PREFIX={0}".format(prefix), *self._make_options(spec))
+class MakefileBuilder(MakefileBuilder):
+    def _make_options(self, spec):
+        """Shared Make variable list used by both build and install phases."""
+        options = [
+            "LZ4_FRAME_FORMAT_SUPPORT=1",
+            "AOCL_LZ4HC_DISABLE_PATTERN_ANALYSIS=1",
+            "AOCL_ENABLE_THREADS={0}".format("1" if spec.satisfies("+openmp") else "0"),
+            "ENABLE_FAST_MATH={0}".format("1" if spec.satisfies("+enable_fast_math") else "0"),
+        ]
+        if spec.satisfies("~shared"):
+            options.append("BUILD_STATIC_LIBS=1")
+        if spec.satisfies("~zlib"):
+            options.append("AOCL_EXCLUDE_ZLIB=1")
+        if spec.satisfies("~bzip2"):
+            options.append("AOCL_EXCLUDE_BZIP2=1")
+        if spec.satisfies("~snappy"):
+            options.append("AOCL_EXCLUDE_SNAPPY=1")
+        if spec.satisfies("~zstd"):
+            options.append("AOCL_EXCLUDE_ZSTD=1")
+        if spec.satisfies("~lzma"):
+            options.append("AOCL_EXCLUDE_LZMA=1")
+        if spec.satisfies("~lz4"):
+            options.append("AOCL_EXCLUDE_LZ4=1")
+        if spec.satisfies("~lz4hc"):
+            options.append("AOCL_EXCLUDE_LZ4HC=1")
+        decompress_fast = spec.variants["decompress_fast"].value
+        if decompress_fast != "OFF":
+            options.append("AOCL_DECOMPRESS_FAST={0}".format(decompress_fast))
+        return options
+
+    def build(self, pkg, spec, prefix):
+        make(*self._make_options(spec))
+
+    def install(self, pkg, spec, prefix):
+        make("install", "PREFIX={0}".format(prefix), *self._make_options(spec))
