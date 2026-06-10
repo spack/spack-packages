@@ -180,7 +180,7 @@ class HdfEos2(AutotoolsPackage):
                 or self.spec.satisfies("%gcc@14:")
             ):
                 env.set(
-                    "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int"
+                    "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int -std=gnu17"
                 )
 
     @run_before("configure", when="@3.0")
