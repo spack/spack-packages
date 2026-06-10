@@ -180,16 +180,10 @@ class Nektar(CMakePackage):
         if "+python" in spec:
             python = which("python")
             if spec.satisfies("@master") or spec.satisfies("@5.6.0:"):
-                python_build_directory = os.path.join(
-                    self.build_directory, "python"
-                )
+                python_build_directory = os.path.join(self.build_directory, "python")
             else:
                 python_build_directory = self.build_directory
-            print(
-                "Installing Python bindings using "
-                + python_build_directory
-                + "/setup.py"
-            )
+            print("Installing Python bindings using " + python_build_directory + "/setup.py")
             with filesystem.working_dir(python_build_directory):
                 python("setup.py", "install", "--prefix", prefix)
 
