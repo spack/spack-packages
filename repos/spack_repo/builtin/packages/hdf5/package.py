@@ -775,7 +775,14 @@ int main(int argc, char **argv) {{
 
             cc = Executable(os.environ["CC"])
             cc(*(["-c", "check.c"] + spec["hdf5"].headers.cpp_flags.split()))
-            cc(*(["-o", "check", "check.o"] + spec["hdf5"].libs.ld_flags.split()))
+            ld_flags = spec["hdf5"].libs.ld_flags.split()
+            if spec.satisfies("~shared"):
+                # Static builds require explicit linking
+                ld_flags += spec["zlib-api"].libs.ld_flags.split()
+                if spec.satisfies("+mpi"):
+                    ld_flags += spec["mpi"].libs.ld_flags.split()
+                ld_flags += ["-lm"]
+            cc(*(["-o", "check", "check.o"] + ld_flags))
             try:
                 check = Executable("./check")
                 output = check(output=str)
