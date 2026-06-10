@@ -20,9 +20,18 @@ class PyCylcRose(PythonPackage):
 
     # Versions 1.4.2 and 1.5.1 are available at PyPI, but not at the URL that is considered
     # canonical by Spack - https://github.com/spack/spack/issues/48479
-    version("1.5.1", commit="8232e48ff3a80bf04d7a0738e85a049ef4201a28")
-    version("1.4.2", commit="8deda0480afed8cf92cfdf7938fc78d0aaf0c0e4")
-    version("1.3.0", sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88")
+    version(
+        "1.5.1",
+        sha256="280449bc8d2bc0426468b13c0f0602e8ca231c690ece5444af5bd55f6be60284",
+        url="https://files.pythonhosted.org/packages/source/c/cylc-rose/cylc_rose-1.5.1.tar.gz",
+    )
+    version(
+        "1.4.2",
+        sha256="d215e2b58fabde66a82f131088b8a3e5add7fab82b226a0b7aa3cc2079ff62e9",
+        url="https://files.pythonhosted.org/packages/source/c/cylc-rose/cylc_rose-1.4.2.tar.gz",
+        deprecated=True,
+    )
+    version("1.3.0", sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88", deprecated=True)
 
     depends_on("py-setuptools", type="build")
     depends_on("py-metomi-isodatetime", type=("build", "run"))
