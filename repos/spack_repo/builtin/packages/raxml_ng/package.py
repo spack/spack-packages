@@ -21,6 +21,7 @@ class RaxmlNg(CMakePackage):
     homepage = "https://github.com/amkozlov/raxml-ng/wiki"
     url = "https://github.com/amkozlov/raxml-ng/archive/2.0.0.tar.gz"
     git = "https://github.com/amkozlov/raxml-ng.git"
+
     maintainers("stelzch")
 
     license("AGPL-3.0-only")
