@@ -698,6 +698,7 @@ with '-Wl,-commons,use_dylibs' and without
 
     depends_on("perl", type="build")
     depends_on("pkgconfig", type="build")
+    depends_on("file", type="build")
     # Based on https://docs.open-mpi.org/en/v5.0.x/developers/prerequisites.html#flex
     depends_on("flex@2.5.4:", type="build", when="@main")
 
