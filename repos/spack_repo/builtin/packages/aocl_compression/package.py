@@ -81,6 +81,7 @@ class AoclCompression(CMakePackage, MakefilePackage):
     depends_on("cmake@3.22:", when="build_system=cmake @:5.0", type="build")
     depends_on("cmake@3.26:", when="build_system=cmake @5.1:5.2", type="build")
 
+
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
         """Runs ``cmake`` in the build directory"""
@@ -110,9 +111,9 @@ class CMakeBuilder(CMakeBuilder):
         if spec.satisfies("~lz4hc"):
             args.append("-DAOCL_EXCLUDE_LZ4HC=ON")
 
-
         args.append("-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value))
         return args
+
 
 class MakefileBuilder(MakefileBuilder):
     def _make_options(self, spec):
