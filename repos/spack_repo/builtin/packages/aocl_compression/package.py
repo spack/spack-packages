@@ -51,6 +51,8 @@ class AoclCompression(CMakePackage, MakefilePackage):
     version("5.0", sha256="50bfb2c4a4738b96ed6d45627062b17bb9d0e1787c7d83ead2841da520327fa4")
     version("4.2", sha256="a18b3e7f64a8105c1500dda7b4c343e974b5e26bfe3dd838a1c1acf82a969c6f")
 
+    build_system("cmake", conditional("makefile", when="@5.3:"), default="cmake")
+
     variant("shared", default=True, description="Build shared library")
     variant("zlib", default=True, description="Build zlib library")
     variant("bzip2", default=True, description="Build bzip2 library")
@@ -79,37 +81,10 @@ class AoclCompression(CMakePackage, MakefilePackage):
     depends_on("cmake@3.22:", when="build_system=cmake @:5.0", type="build")
     depends_on("cmake@3.26:", when="build_system=cmake @5.1:5.2", type="build")
 
-    build_system(
-        conditional("cmake", when="@:5.2"),
-        conditional("makefile", when="@5.3:"),
-        default="cmake",
-    )
-
     class CMakeBuilder(CMakeBuilder):
         def cmake_args(self):
+            """Runs ``cmake`` in the build directory"""
             spec = self.spec
-            args = [
-                self.define_from_variant("AOCL_ENABLE_THREADS", "openmp"),
-                self.define_from_variant("ENABLE_FAST_MATH", "enable_fast_math"),
-                "-DLZ4_FRAME_FORMAT_SUPPORT=ON",
-                "-DAOCL_LZ4HC_DISABLE_PATTERN_ANALYSIS=ON",
-            ]
-            if spec.satisfies("~shared"):
-                args.append("-DBUILD_STATIC_LIBS=ON")
-            if spec.satisfies("~zlib"):
-                args.append("-DAOCL_EXCLUDE_ZLIB=ON")
-            if spec.satisfies("~bzip2"):
-                args.append("-DAOCL_EXCLUDE_BZIP2=ON")
-            if spec.satisfies("~snappy"):
-                args.append("-DAOCL_EXCLUDE_SNAPPY=ON")
-            if spec.satisfies("~zstd"):
-                args.append("-DAOCL_EXCLUDE_ZSTD=ON")
-            if spec.satisfies("~lzma"):
-                args.append("-DAOCL_EXCLUDE_LZMA=ON")
-            if spec.satisfies("~lz4"):
-                args.append("-DAOCL_EXCLUDE_LZ4=ON")
-            if spec.satisfies("~lz4hc"):
-                args.append("-DAOCL_EXCLUDE_LZ4HC=ON")
 
             args.append("-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value))
             return args
