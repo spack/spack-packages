@@ -314,15 +314,11 @@ To resolve this problem, please try the following:
 
     @run_before("configure")
     def _patch_usr_bin_file(self) -> None:
-        """On NixOS file is not available in /usr/bin/file. Patch configure
-        scripts to use file from path."""
-
-        if self.spec.os.startswith("nixos"):
-            x = FileFilter(
-                *filter(is_exe, find(self.build_directory, "configure", recursive=True))
-            )
-            with keep_modification_time(*x.filenames):
-                x.filter(regex="/usr/bin/file", repl="file", string=True)
+        """Patch configure scripts to use file from PATH instead of the
+        hardcoded /usr/bin/file baked in by libtool's AC_PATH_PROG."""
+        x = FileFilter(*filter(is_exe, find(self.build_directory, "configure", recursive=True)))
+        with keep_modification_time(*x.filenames):
+            x.filter(regex="/usr/bin/file", repl="file", string=True)
 
     @run_before("configure")
     def _set_autotools_environment_variables(self) -> None:
