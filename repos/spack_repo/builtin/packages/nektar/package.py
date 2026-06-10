@@ -4,9 +4,10 @@
 
 import os
 
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.llnl.util import filesystem
 from spack.package import *
-from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 
 class Nektar(CMakePackage):
