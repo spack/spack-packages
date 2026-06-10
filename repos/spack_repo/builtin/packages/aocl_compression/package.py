@@ -111,9 +111,7 @@ class AoclCompression(CMakePackage, MakefilePackage):
             if spec.satisfies("~lz4hc"):
                 args.append("-DAOCL_EXCLUDE_LZ4HC=ON")
 
-            args.append(
-                "-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value)
-            )
+            args.append("-DAOCL_DECOMPRESS_FAST={}".format(spec.variants["decompress_fast"].value))
             return args
 
     class MakefileBuilder(MakefileBuilder):

@@ -4,7 +4,8 @@
 
 import os
 
-from spack_repo.builtin.packages.blis.package import BlisBase, _targets as blis_targets
+from spack_repo.builtin.packages.blis.package import BlisBase
+from spack_repo.builtin.packages.blis.package import _targets as blis_targets
 
 from spack.package import *
 

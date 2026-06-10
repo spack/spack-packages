@@ -64,7 +64,7 @@ class Amdlibm(SConsPackage, CMakePackage):
     depends_on("scons@3.1.2:4.8.1", type=("build"))
     depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
     depends_on("mpfr", type=("link"))
-    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2","5.3"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 
