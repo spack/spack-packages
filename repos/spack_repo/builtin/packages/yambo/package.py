@@ -78,8 +78,9 @@ class Yambo(AutotoolsPackage, CudaPackage):
     variant("sc", default=False, description="Compile Self-consistent project executables")
     variant("nl", default=False, description="Compile Non-linear optics executables")
 
-    conflicts("%oneapi", when="@:5.2.4",
-              msg="oneapi compilation supported only from version 5.3.0")
+    conflicts(
+        "%oneapi", when="@:5.2.4", msg="oneapi compilation supported only from version 5.3.0"
+    )
 
     with when("+mpi"):
         variant(
@@ -114,9 +115,11 @@ class Yambo(AutotoolsPackage, CudaPackage):
         depends_on("petsc@:3.22", when="@:5.3.0")
         depends_on("slepc~arpack")
         depends_on("slepc~cuda", when="@:5.2.0")
-    conflicts("+slepc", when="@:5.1.4 %nvhpc",
-              msg="SLEPc support not available with this version of Yambo and nvhpc compiler.")
-
+    conflicts(
+        "+slepc",
+        when="@:5.1.4 %nvhpc",
+        msg="SLEPc support not available with this version of Yambo and nvhpc compiler.",
+    )
 
     depends_on("fftw-api@3")
     depends_on("fftw+mpi", when="+mpi ^[virtuals=fftw-api] fftw")
@@ -130,7 +133,6 @@ class Yambo(AutotoolsPackage, CudaPackage):
         depends_on("hdf5+fortran+hl~mpi")
         depends_on("netcdf-c~mpi")
 
-    # depends_on("hdf5@:1.12.3", when="@:5.2.99")
     depends_on("netcdf-fortran")
 
     conflicts("hdf5+mpi", when="@:4.4.0", msg="Parallel I/O available from version 4.4.1")
@@ -140,8 +142,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
 
     with when("+cuda"):
         conflicts("@:4.5.3", msg="CUDA Fortran available only from version 5.0.0")
-        requires("%nvhpc",
-                 msg="CUDA-Fortran support available only with NVIDIA compilers")
+        requires("%nvhpc", msg="CUDA-Fortran support available only with NVIDIA compilers")
 
     with when("@5.3.0:"):
         depends_on("devicexlib ~cuda-fortran~openacc~openmp5~openmp", when="~cuda~openmp")
@@ -330,15 +331,19 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def flag_handler(self, name, flags):
         if name == "cflags":
             if self.spec.satisfies("%gcc") and self.spec.satisfies("@:5.1.4"):
-                flags.extend([
-                    "-Wno-error=implicit-function-declaration",
-                    "-Wno-error=deprecated-declarations",
-                ])
+                flags.extend(
+                    [
+                        "-Wno-error=implicit-function-declaration",
+                        "-Wno-error=deprecated-declarations",
+                    ]
+                )
         if name == "fcflags":
             if self.spec.satisfies("%gcc@9:") and self.spec.satisfies("@:4.5.3"):
-                flags.extend([
-                    "-fallow-argument-mismatch",
-                ])
+                flags.extend(
+                    [
+                        "-fallow-argument-mismatch",
+                    ]
+                )
 
         return (flags, None, None)
 
