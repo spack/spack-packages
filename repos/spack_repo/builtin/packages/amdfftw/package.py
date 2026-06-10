@@ -173,7 +173,6 @@ class Amdfftw(FftwBase):
 
         # Dynamic dispatcher builds a single portable optimized library
         # that can execute on different x86 CPU architectures.
-        # It is supported for GCC compiler and Linux based systems only.
         if spec.satisfies("+amd-dynamic-dispatcher"):
             options.append("--enable-dynamic-dispatcher")
 
