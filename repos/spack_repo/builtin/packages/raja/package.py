@@ -267,6 +267,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
 
     depends_on("blt", type="build")
+    # TODO(smith84): Edit the following line after the June 2026 RAJA suite release
+    depends_on("blt@0.7.2:", type="build", when="@develop")
     depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
@@ -278,12 +280,15 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("blt@0.4.0:0.4.1", type="build", when="@0.13.0")
     depends_on("blt@0.3.6:0.4.1", type="build", when="@:0.12.0")
     conflicts("^blt@:0.3.6", when="+rocm")
+    conflicts("^blt@:0.7.1", when="+cuda ^cuda@13:", msg="CUDA 13+ requires BLT 0.7.2 or newer")
 
     depends_on("camp")
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
-    depends_on("camp@2025.12:", when="@2025.12:")
+    # TODO(johnbowen42): Remove the following line after the June 2026 RAJA suite release
+    depends_on("camp@main commit=e75ab64c029aa27c80593715cb2a3ccad7453c8c", when="@develop")
+    depends_on("camp@2025.12", when="@2025.12.0:2025.12.2")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
     depends_on("camp@2024.07", when="@2024.07")
@@ -335,8 +340,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         "please use a newer release.",
     )
 
-    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
-    conflicts("^cuda@13:", when="+cuda")
+    depends_on("cuda@12:", when="+cuda")
+    conflicts(
+        "^cuda@13:",
+        when="@:2025.12.2 +cuda",
+        msg="RAJA versions up to and including 2025.12.2 do not support CUDA 13+",
+    )
 
     def _get_sys_type(self, spec):
         sys_type = spec.architecture
@@ -577,6 +586,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def check_build(self):
+        """Run RAJA's unit test target after build when tests are enabled."""
         with working_dir(self.build_directory):
             print("Running RAJA Unit Tests...")
             make("test")
@@ -600,29 +610,33 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
                     rf"set\({key}.*\)", f'set({key} "{value}" CACHE PATH "")', path, **kwargs
                 )
 
-    def _using_with_cmake_source_dir(self):
-        if self.test_suite:
-            return join_path(self.test_suite.current_test_cache_dir, self.using_with_cmake_dir)
-        return join_path(self.prefix.examples.RAJA, "using-with-cmake")
-
     @run_after("install")
     def setup_install_tests(self):
-        """Cache sources needed by standalone `spack test run`."""
+        """Install and cache standalone test sources, using staged or build outputs when available."""
+        
         cache_extra_test_sources(self, [self.examples_src_dir])
 
-        cached_using_with_cmake = join_path(install_test_root(self), self.using_with_cmake_dir)
-        shutil.rmtree(cached_using_with_cmake, ignore_errors=True)
-        install_tree(self._using_with_cmake_source_dir(), cached_using_with_cmake)
-        self._rewrite_host_config(join_path(cached_using_with_cmake, "host-config.cmake"))
+        src_dir = join_path(self.stage.source_path, "test", "install", "using-with-cmake")
+        dst_dir = join_path(install_test_root(self), self.using_with_cmake_dir)
 
-    @run_after("install")
-    @on_package_attributes(run_tests=True)
-    def test_check_install(self):
-        """build example with cmake and run"""
-        example_src_dir = self._using_with_cmake_source_dir()
-        example_stage_dir = "./using-with-cmake"
-        if not os.path.exists(example_stage_dir):
-            shutil.copytree(example_src_dir, example_stage_dir)
+        if os.path.exists(src_dir):
+            shutil.rmtree(dst_dir, ignore_errors=True)
+            install_tree(src_dir, dst_dir)
+            self._rewrite_host_config(join_path(dst_dir, "host-config.cmake"))
+
+        src_dir = join_path(self.build_directory, "examples", "using-with-cmake")
+        dst_dir = join_path(install_test_root(self), self.using_with_cmake_dir)
+
+        if os.path.exists(src_dir):
+            install_tree(src_dir, dst_dir)
+            self._rewrite_host_config(join_path(dst_dir, "host-config.cmake"))
+        else:
+            tty.msg(f"Can't install host-config.cmake\n")
+
+    def _run_common_check_install(self, test_dir):
+        """Verify that the using-with-cmake example can build against the installed RAJA package."""
+        
+        example_stage_dir = join_path(test_dir, "examples", "using-with-cmake")
         with working_dir(join_path(example_stage_dir, "build"), create=True):
             host_config = join_path("../", "host-config.cmake")
             if not os.path.exists(host_config):
@@ -635,6 +649,25 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             example = Executable("./using-with-cmake")
             example()
             make_exe("clean")
+            
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def check_install(self):
+        """Installation-time verification that the using-with-cmake example can build against the installed RAJA package."""
+        
+        src_dir=join_path(install_test_root(self))
+        dst_dir=join_path(self.stage.path, "spack-test")
+
+        if os.path.exists(src_dir):
+            install_tree(src_dir, dst_dir)
+            self._run_common_check_install(dst_dir)
+        else:
+            raise SkipTest(f"examples directory not found, cannot build example")
+
+    def test_check_install(self):
+        """Stand-alone verification that the using-with-cmake example can build against the installed RAJA package."""
+        
+        self._run_common_check_install(self.test_suite.current_test_cache_dir)
 
     def _write_example_cmakelists(self, path, exe, source):
         with open(path, "w", encoding="utf-8") as f:
@@ -660,7 +693,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             )
 
     def build_and_run_example(self, exe, expected):
-        """run and check outputs of the example"""
+        """Build an example from the cached test sources and verify its output."""
+        
         examples_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
         build_dir = join_path(examples_dir, f"build-{exe}")
         with working_dir(build_dir, create=True):
@@ -682,10 +716,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             make_exe("clean")
 
     def test_daxpy(self):
-        """check daxpy tutorial"""
+        """Check daxpy tutorial"""
         self.build_and_run_example("tut_daxpy", [r"daxpy", r"result -- PASS"])
 
     # TODO: this test seems to hang or take a long time?
+    # SGS 2026-05-22: Did not see hangs/long execution times on LC systems or Redhat workstation; clarify with Cody where this was occuring.
     # def test_matrix_multiply(self):
     #     """check batched matrix multiple tutorial"""
     #     self.build_and_run_example(
@@ -693,7 +728,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     #     )
 
     def test_launch_basic(self):
-        """check basic raja::launch tutorial"""
+        """Check basic raja::launch tutorial."""
         if "+cuda" in self.spec or "+rocm" in self.spec:
             self.build_and_run_example(
                 "tut_launch_basic", [r"Running RAJA-Teams", r"result -- PASS"]
@@ -702,11 +737,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest("CUDA or ROCm support is required to run this example")
 
     def test_halo_exchange(self):
-        """check halo exchange tutorial"""
+        """Check halo exchange tutorial."""
         self.build_and_run_example(
             "tut_halo-exchange", [r"RAJA halo exchange example", r"result -- PASS"]
         )
 
     def test_wave_equation(self):
-        """check wave equation"""
+        """Check wave equation."""
         self.build_and_run_example("wave-eqn", [r"Max Error = 2", r"Evolved solution to time"])
