@@ -22,9 +22,17 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # I just added it since running benchmarks on HPC need it now.
     #maintainers("guanyuming-he")
 
-    # The license is custom:
-    # https://github.com/NVIDIA/cuda-samples?tab=License-1-ov-file
-    license("NVIDIA Software License Agreement", checked_by="guanyuming-he")
+    # This is a proprietary license. See 
+    # https://spack.readthedocs.io/en/latest/
+    # packaging_guide_creation.html#proprietary-software
+    license_required = True
+    license_comment = "#"
+    license_files = ["LICENSE"]
+    license_vars = []
+    license_url = (
+        "https://www.nvidia.com/en-us/agreements/"
+        "enterprise-software/nvidia-software-license-agreement/"
+    )
 
     # Update this as CUDA is updated in Spack.
     # Can execute `spack checksum cuda-samples`

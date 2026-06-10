@@ -1,0 +1,128 @@
+diff --git a/cuda/backprop/backprop.c b/cuda/backprop/backprop.c
+index 9e02c55..0c6b95f 100755
+--- a/cuda/backprop/backprop.c
++++ b/cuda/backprop/backprop.c
+@@ -12,6 +12,9 @@
+ #include <stdlib.h>
+ #include "backprop.h"
+ #include <math.h>
++
++#include <unistd.h>
++#include <fcntl.h>
+ //#define OPEN
+ 
+ #define ABS(x)          (((x) > 0.0) ? (x) : (-(x)))
+@@ -89,7 +92,7 @@ int m, n;
+ }
+ 
+ 
+-bpnn_randomize_weights(w, m, n)
++void bpnn_randomize_weights(w, m, n)
+ float **w;
+ int m, n;
+ {
+@@ -103,7 +106,7 @@ int m, n;
+   }
+ }
+ 
+-bpnn_randomize_row(w, m)
++void bpnn_randomize_row(w, m)
+ float *w;
+ int m;
+ {
+@@ -115,7 +118,7 @@ int m;
+ }
+ 
+ 
+-bpnn_zero_weights(w, m, n)
++void bpnn_zero_weights(w, m, n)
+ float **w;
+ int m, n;
+ {
+@@ -129,7 +132,7 @@ int m, n;
+ }
+ 
+ 
+-void bpnn_initialize(seed)
++void bpnn_initialize(int seed)
+ {
+   printf("Random number generator seed: %d\n", seed);
+   srand(seed);
+@@ -304,6 +307,7 @@ int nh, no;
+ 
+ void bpnn_adjust_weights(delta, ndelta, ly, nly, w, oldw)
+ float *delta, *ly, **w, **oldw;
++int ndelta;
+ {
+   float new_dw;
+   int k, j;
+diff --git a/cuda/backprop/facetrain.c b/cuda/backprop/facetrain.c
+index 00fb734..393aa6b 100755
+--- a/cuda/backprop/facetrain.c
++++ b/cuda/backprop/facetrain.c
+@@ -11,7 +11,10 @@ extern void exit();
+ 
+ int layer_size = 0;
+ 
+-backprop_face()
++void load(BPNN *net);
++void bpnn_train_cuda(BPNN *net, float *eo, float *eh);
++
++void backprop_face()
+ {
+   BPNN *net;
+   int i;
+diff --git a/cuda/backprop/imagenet.c b/cuda/backprop/imagenet.c
+index 255b0d5..2181fc9 100755
+--- a/cuda/backprop/imagenet.c
++++ b/cuda/backprop/imagenet.c
+@@ -5,7 +5,7 @@
+ 
+ extern layer_size;
+ 
+-load(net)
++void load(net)
+ BPNN *net;
+ {
+   float *units;
+diff --git a/cuda/kmeans/cluster.c b/cuda/kmeans/cluster.c
+index 8dd35a8..6b98611 100755
+--- a/cuda/kmeans/cluster.c
++++ b/cuda/kmeans/cluster.c
+@@ -78,6 +78,21 @@
+ extern double wtime(void);
+ float	min_rmse_ref = FLT_MAX;			/* reference min_rmse value */
+ 
++void allocateMemory(int npoints, int nfeatures, int nclusters, float
++		**features);
++void deallocateMemory();
++int	// delta -- had problems when return value was of float type
++kmeansCuda(float  **feature,				/* in: [npoints][nfeatures] */
++           int      nfeatures,				/* number of attributes for each point */
++           int      npoints,				/* number of data points */
++           int      nclusters,				/* number of clusters */
++           int     *membership,				/* which cluster the point belongs to */
++		   float  **clusters,				/* coordinates of cluster centers */
++		   int     *new_centers_len,		/* number of elements in each cluster */
++           float  **new_centers				/* sum of elements in each cluster */
++		   );
++
++
+ /*---< cluster() >-----------------------------------------------------------*/
+ int cluster(int      npoints,				/* number of data points */
+             int      nfeatures,				/* number of attributes for each point */
+diff --git a/cuda/kmeans/kmeans.c b/cuda/kmeans/kmeans.c
+index 5776a23..79c44e5 100755
+--- a/cuda/kmeans/kmeans.c
++++ b/cuda/kmeans/kmeans.c
+@@ -75,6 +75,7 @@
+ #include <string.h>
+ #include <limits.h>
+ #include <math.h>
++#include <unistd.h>
+ #include <fcntl.h>
+ #include <omp.h>
+ #include "kmeans.h"
+-- 
+2.47.3
+
