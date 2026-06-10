@@ -8,6 +8,7 @@ from spack.error import InstallError
 
 from spack.package import *
 
+import os
 
 class Rodinia(MakefilePackage, CudaPackage):
     """Rodinia: Accelerating Compute-Intensive Applications with
@@ -33,6 +34,12 @@ class Rodinia(MakefilePackage, CudaPackage):
     )
 
     build_targets = ["CUDA"]
+
+    # Patch a lot of changes that are hard to implement 
+    # here via filter.
+    patch("initial.patch")
+    patch("backprop-lavaMD.patch")
+    patch("pic.patch")
 
     def edit(self, spec, prefix):
         # set cuda paths
@@ -102,6 +109,7 @@ class Rodinia(MakefilePackage, CudaPackage):
             "cuda/nw/Makefile",
             "cuda/cfd/Makefile",
             "cuda/particlefilter/Makefile",
+            "cuda/lavaMD/makefile",
         ]
 
         for makefile in makefiles:
@@ -113,6 +121,11 @@ class Rodinia(MakefilePackage, CudaPackage):
             filter_file(
                 r"/common/inc", "/common", makefile
             )
+            # Disable PIE, for all that do no use CC_FLAGS from common.mk
+            filter_file(
+                r"^CC_FLAGS =", "CC_FLAGS = -fPIC", makefile
+            )
+
 
         # fix broken makefile rule
         filter_file("%.o: %.[ch]", "%.o: %.c", "cuda/kmeans/Makefile", string=True)
@@ -124,6 +137,39 @@ class Rodinia(MakefilePackage, CudaPackage):
             "cuda/mummergpu/src/suffix-tree.cpp",
             string=True,
         )
+
+        if self.spec.satisfies("%cuda@12.0:"):
+            for cuda_dir, _, files in os.walk(
+                join_path(self.stage.source_path, "cuda")
+            ):
+                for fp in files:
+                    # The old cudaThreadSynchronize is deprecated.
+                    # Replace that with the new cudaDeviceSynchronize.
+                    filter_file(
+                        "cudaThreadSynchronize", "cudaDeviceSynchronize",
+                        os.path.join(cuda_dir, fp)
+                    )
+                    # Change various old names to new names
+                    filter_file(
+                        r"deviceProp\.\s*deviceOverlap",
+                        "(deviceProp.asyncEngineCount > 0)",
+                        os.path.join(cuda_dir, fp)
+                    )
+                    filter_file(
+                        r"deviceProp\.\s*clockRate",
+                        "9999", # removed
+                        os.path.join(cuda_dir, fp)
+                    )
+            
+            # Temporarily disable kmeans as the textures need
+            # to be ported to new API.
+            filter_file(
+                "cd cuda/kmeans",
+                "#cd cuda/kmeans",
+                "Makefile"
+            )
+
+    
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
