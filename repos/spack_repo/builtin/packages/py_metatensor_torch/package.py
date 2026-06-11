@@ -56,7 +56,7 @@ class PyMetatensorTorch(PythonPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
-    
+
     @when("@:0.8")
     @run_after("install")
     def workaround(self):
