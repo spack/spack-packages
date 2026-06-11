@@ -19,6 +19,7 @@ class Uv(CargoPackage):
     maintainers("mcmehrtens")
     license("Apache-2.0 OR MIT", checked_by="mcmehrtens", when="@0.0.5:")
 
+    version("0.11.21", sha256="12316609d3cd474a67d9b7e08991db7ec19390395ba03f56e79d39c6afbb723a")
     version("0.11.20", sha256="18146330b729dded1cbccc739eb15f9d4750dd226913afa00f2638dd5dfa4e48")
     version("0.11.19", sha256="316a5fb9fca079064265a8007979e0057b68317b6a6693e15554d3d9112cce9c")
 
