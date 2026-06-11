@@ -119,6 +119,7 @@ class CompilerWrapper(Package):
             ("rocmcc", "amdclang"),
             ("rocmcc", "amdclang++"),
             ("rocmcc", "amdflang"),
+            ("rocmcc", "hipcc"),
             ("xl", "xlc"),
             ("xl", "xlc++"),
             ("xl", "xlf"),
