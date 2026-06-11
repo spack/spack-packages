@@ -31,6 +31,7 @@ class Rpp(ROCmLibrary, CMakePackage):
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="348c08e5079e5f68403570e593d4c2f72e4bdaafdd38a0e57725353a16b6a66e")
     version("7.2.1", sha256="5132d89449fcb94940414d157f5a21b2de9ac4a63237235d96cabca882baf503")
     version("7.2.0", sha256="9240e325cd5adf7aa9842851d638394a25d3a784a6a206e8e96d7ae4d59b8d35")
     version("7.1.1", sha256="3a13444acc86d307ff559b0282f11ec57ae5c89dec52a2f9f85e3757d9e66e35")
@@ -200,6 +201,7 @@ class Rpp(ROCmLibrary, CMakePackage):
                 "7.1.1",
                 "7.2.0",
                 "7.2.1",
+                "7.2.3",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):

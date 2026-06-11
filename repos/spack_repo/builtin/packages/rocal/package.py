@@ -20,6 +20,7 @@ class Rocal(ROCmLibrary, CMakePackage):
     libraries = ["librocal"]
 
     license("MIT")
+    version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")
     version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")
     version("7.2.0", sha256="0de82b955229ed3883e237f0ffd23b4052aa78a1308873185662ab46ca01e711")
     version("7.1.1", sha256="e1ce21471a3f91eb26245daf0720e8ac52c95a382cbc6918b90cc1721c881f5f")
@@ -72,6 +73,7 @@ class Rocal(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"mivisionx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")

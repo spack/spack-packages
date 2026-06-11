@@ -1,0 +1,27 @@
+diff --color=auto -Naur a/setup.py b/setup.py
+--- a/setup.py	2026-05-08 12:09:37
++++ b/setup.py	2026-05-08 12:14:02
+@@ -245,9 +245,10 @@
+         if USER_OPTIONS['use-system-libxgboost'][2] != 0:
+             self.logger.info('Using system libxgboost.')
+             lib_path = os.path.join(sys.prefix, 'lib')
++            lib64_path = os.path.join(sys.prefix, 'lib64')
+             msg = 'use-system-libxgboost is specified, but ' + lib_name() + \
+-                ' is not found in: ' + lib_path
+-            assert os.path.exists(os.path.join(lib_path, lib_name())), msg
++                ' is not found in ' + lib_path + ' or ' + lib64_path
++            assert os.path.exists(os.path.join(lib_path, lib_name())) or os.path.exists(os.path.join(lib64_path, lib_name())), msg
+             return []
+ 
+         lib_dir = os.path.join(self.install_dir, 'xgboost', 'lib')
+diff --color=auto -Naur a/xgboost/libpath.py b/xgboost/libpath.py
+--- a/xgboost/libpath.py	2026-05-08 12:09:37
++++ b/xgboost/libpath.py	2026-05-08 12:15:15
+@@ -28,6 +28,7 @@
+         # use libxgboost from a system prefix, if available.  This should be the last
+         # option.
+         os.path.join(sys.prefix, 'lib'),
++        os.path.join(sys.prefix, 'lib64'),
+     ]
+ 
+     if sys.platform == 'win32':

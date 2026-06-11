@@ -23,6 +23,9 @@ class Dftd4(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("4.2.0", sha256="467e024071510ad82b862c66c383c2ebc164fc1140e15dfc79f48d2f999fd184")
+    version("4.1.1", sha256="c8e6388d7d7d748dbcf91117f35aa50108492d4fd2266d60782cf85a16651887")
+    version("4.1.0", sha256="344aafa9e994a08186c95bf4421d70aeb493fd9f8038726fc2782dd3f892c3a9")
     version("4.0.2", sha256="ed4a6a3ba0a89b8d6825bf11724dee647fd8ee6272e7822e0cbd9847994eb872")
     version("4.0.1", sha256="d3781763390c349794d70663e4e54e368d19a5869c98fe939b32e9069432201b")
     version("4.0.0", sha256="401e49893d98a1da82896998a6345b62f709683cbb19d9cbbe10564b9fc353e4")
@@ -61,12 +64,12 @@ class Dftd4(MesonPackage, CMakePackage):
         depends_on(f"mctc-lib build_system={build_system}", when=f"build_system={build_system}")
         depends_on(f"multicharge build_system={build_system}", when=f"build_system={build_system}")
 
-    depends_on("mctc-lib@0.3", when="@:3.8")
-    depends_on("multicharge@0.3", when="@:3.8")
+    depends_on("mctc-lib@0.3", when="@:3.7")
+    depends_on("multicharge@0.3", when="@:3.7")
     extends("python", when="+python")
 
     def url_for_version(self, version):
-        if version <= Version("3.6.0") or version >= Version("4.0.0"):
+        if version < Version("4.1.0") and version != Version("3.7.0"):
             return f"https://github.com/dftd4/dftd4/releases/download/v{version}/dftd4-{version}-source.tar.xz"
         return super().url_for_version(version)
 

@@ -28,6 +28,7 @@ class Comgr(CMakePackage):
             url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
     version("7.1.1", sha256="d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e")
@@ -64,6 +65,8 @@ class Comgr(CMakePackage):
     depends_on("zlib-api", type="link")
     depends_on("z3", type="link")
     depends_on("ncurses", type="link")
+    depends_on("python@3:", when="@6.4:")
+
     requires("%c,cxx=llvm-amdgpu", when="%c")
 
     for ver in [
@@ -91,6 +94,7 @@ class Comgr(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         # in reality this should be a link type dep, but libLLVM is linked statically,
         # and just requiring llvm-amdgpu as a compiler suffices for now.

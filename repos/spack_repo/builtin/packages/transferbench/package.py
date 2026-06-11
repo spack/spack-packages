@@ -22,6 +22,7 @@ class Transferbench(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+    version("7.2.3", sha256="e36fb3943359f38c15a27bb692a91d669186005b70ea7d877af6a6580fc2c790")
     version("7.2.1", sha256="ff0dd90869eff77e00bb748149bcfa359d9c7d503c438f4bb64a88a7e39cbc3d")
     version("7.2.0", sha256="4be9d66044827d7b1950b4fd7ce50913d0926822e88e3441f472ca6a62086a15")
     version("7.1.1", sha256="a02afb6130990ae3a980bb512a7d414e009801d24fce56c6f66b449d61dae9e0")
@@ -55,6 +56,7 @@ class Transferbench(ROCmLibrary, CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")

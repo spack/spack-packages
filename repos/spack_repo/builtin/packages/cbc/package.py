@@ -17,16 +17,21 @@ class Cbc(AutotoolsPackage):
 
     license("EPL-2.0")
 
+    version("2.10.13", sha256="62fde44dcf6f3d05c5cd291d7435cdd1b7e8acd3c78ec481dd39fe49cbc40399")
     version("2.10.11", sha256="1fb591dd88336fdaf096b8e42e46111e41671a5eb85d4ee36e45baff1678bd33")
     version("2.10.9", sha256="96d02593b01fd1460d421f002734384e4eb1e93ebe1fb3570dc2b7600f20a27e")
     version("2.10.8", sha256="8525abb541ee1b8e6ff03b00411b66e98bbc58f95be1aefd49d2bca571be2eaf")
     version("2.10.5", sha256="cc44c1950ff4615e7791d7e03ea34318ca001d3cac6dc3f7f5ee392459ce6719")
+    version("2.9.10", sha256="4fc4c3dbb57a6d14f6676159c814b1a921736a16c6052ec777a23e2663f2cbaf")
+    version("2.9.6", sha256="f0a14f7efed6fff9a3bec702e1b8a660570f2ebe064d9187a151b52479e3fe62")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("pkgconfig", type="build")
 
     depends_on("coinutils")
     depends_on("osi")
+    depends_on("clp")
     depends_on("cgl")
 
     build_directory = "spack-build"

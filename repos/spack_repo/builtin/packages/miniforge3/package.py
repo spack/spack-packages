@@ -10,6 +10,10 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    "26.1.1-3": {
+        "Linux-x86_64": ("b25b828b702df4dd2a6d24d4eb56cfa912471dd8e3342cde2c3d86fe3dc2d870",),
+        "Linux-aarch64": ("83280e4ee71a5bd547d6b318f96e9ababe1054911ff6cc2b8801ce5493fe67e5",),
+    },
     "25.3.0-3": {
         "Linux-x86_64": ("1b57f8cb991982063f79b56176881093abb1dc76d73fda32102afde60585b5a1",),
         "Linux-aarch64": ("ac89f17b0eec4e98d38a53d1ae688e0f22c77d8ea5b5f008c2455e90ef095339",),
@@ -32,6 +36,12 @@ _versions = {
 }
 
 
+def _should_deprecate_version(version: str) -> bool:
+    major_version_to_deprecate = 20
+    major_version = int(version.split(".")[0])
+    return major_version < major_version_to_deprecate
+
+
 class Miniforge3(Package):
     """Miniforge3 is a minimal installer for conda and mamba specific to conda-forge."""
 
@@ -45,7 +55,7 @@ class Miniforge3(Package):
         key = f"{platform.system()}-{platform.machine()}"
         pkg = packages.get(key)
         if pkg:
-            version(ver, sha256=pkg[0], expand=False)
+            version(ver, sha256=pkg[0], expand=False, deprecated=_should_deprecate_version(ver))
 
     variant("mamba", default=True, description="Enable mamba support.")
 
@@ -82,3 +92,17 @@ class Miniforge3(Package):
         if "+mamba" in self.spec:
             filename = self.prefix.etc.join("profile.d").join("mamba.sh")
             env.extend(EnvironmentModifications.from_sourcing_file(filename))
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def check_install(self):
+        """Check the spack install of miniforge3."""
+
+        with working_dir(self.stage.source_path):
+            conda = Executable(self.prefix.bin.conda)
+            output = conda("--version", output=str.split)
+            assert "conda " in output
+
+            if "+mamba" in self.spec:
+                mamba = Executable(self.prefix.bin.mamba)
+                mamba("--version")

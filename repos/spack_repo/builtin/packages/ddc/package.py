@@ -56,14 +56,11 @@ class Ddc(CMakePackage):
         depends_on("kokkos-fft@0.3:")
         depends_on("kokkos-fft@:1")
         depends_on("kokkos-fft@:0", when="@:0.10")
-        for variant, backend in [
-            ("~openmp", "host_backend=fftw-serial"),
-            ("+openmp", "host_backend=fftw-openmp"),
-            ("+cuda", "device_backend=cufft"),
-            ("+rocm", "device_backend=hipfft"),
-            ("+sycl", "device_backend=onemkl"),
-        ]:
-            depends_on(f"kokkos-fft {backend}", when=f"^kokkos {variant}")
+        depends_on("kokkos-fft host_backend=fftw-serial", when="^kokkos ~openmp")
+        depends_on("kokkos-fft host_backend=fftw-openmp", when="^kokkos +openmp")
+        depends_on("kokkos-fft device_backend=cufft", when="^kokkos +cuda")
+        depends_on("kokkos-fft device_backend=hipfft", when="^kokkos +rocm")
+        depends_on("kokkos-fft device_backend=onemkl", when="^kokkos +sycl")
 
     with when("+splines"):
         depends_on("ginkgo@1.8:")
@@ -76,17 +73,17 @@ class Ddc(CMakePackage):
 
         for arch in CudaPackage.cuda_arch_values:
             with when(f"^kokkos +cuda cuda_arch={arch}"):
-                requires(f"^ginkgo +cuda cuda_arch={arch}")
-                requires(f"^kokkos-kernels +cuda cuda_arch={arch}")
+                depends_on(f"ginkgo +cuda cuda_arch={arch}")
+                depends_on(f"kokkos-kernels +cuda cuda_arch={arch}")
 
         for target in ROCmPackage.amdgpu_targets:
-            requires(
-                f"^ginkgo +rocm amdgpu_target={target}",
+            depends_on(
+                f"ginkgo +rocm amdgpu_target={target}",
                 when=f"^kokkos +rocm amdgpu_target={target}",
             )
 
-        requires("^ginkgo +sycl", when="^kokkos +sycl")
-        requires("^ginkgo +openmp", when="^kokkos +openmp")
+        depends_on("ginkgo +sycl", when="^kokkos +sycl")
+        depends_on("ginkgo +openmp", when="^kokkos +openmp")
 
     with when("+pdi"):
         depends_on("pdi@1.10.1:", when="@0.11:")
@@ -99,14 +96,17 @@ class Ddc(CMakePackage):
         depends_on("pdiplugin-user-code@1.6:", type=("build", "test"), when="+pdi")
         depends_on("pdiplugin-user-code@:1", type=("build", "test"), when="+pdi")
 
-    conflicts(
-        "^kokkos@4.5.0", msg="DDC is not compatible with the embedded mdspan of Kokkos 4.5.0."
-    )
+    conflicts("^kokkos@4.5.0", msg="Incompatible with the embedded mdspan of Kokkos")
 
     requires(
-        "^kokkos +cuda_relocatable_device_code +cuda_constexpr",
+        "^kokkos +cuda_constexpr",
         when="^kokkos +cuda",
-        msg="DDC relies on relocatable device code and the constexpr support of nvcc",
+        msg="DDC relies on the constexpr support of nvcc",
+    )
+    requires(
+        "^kokkos +cuda_relocatable_device_code",
+        when="^kokkos +cuda",
+        msg="DDC relies on relocatable device code",
     )
     requires(
         "^kokkos +hip_relocatable_device_code",
@@ -118,9 +118,6 @@ class Ddc(CMakePackage):
         when="^kokkos +sycl",
         msg="DDC relies on relocatable device code",
     )
-
-    def url_for_version(self, version):
-        return f"https://github.com/CExA-project/ddc/archive/refs/tags/v{version}.tar.gz"
 
     def cmake_args(self):
         args = [
@@ -135,10 +132,10 @@ class Ddc(CMakePackage):
             self.define_from_variant("DDC_BUILD_DOUBLE_PRECISION", "double_precision"),
         ]
 
-        if "+fft" in self.spec:
+        if self.spec.satisfies("+fft"):
             args.append(self.define("DDC_KokkosFFT_DEPENDENCY_POLICY", "INSTALLED"))
 
-        if "+splines" in self.spec:
+        if self.spec.satisfies("+splines"):
             args.append(self.define("DDC_KokkosKernels_DEPENDENCY_POLICY", "INSTALLED"))
 
             lapack_provider = self.spec["lapack"]
@@ -155,7 +152,7 @@ class Ddc(CMakePackage):
                     ]
                 )
 
-        if "+tests" in self.spec:
+        if self.spec.satisfies("+tests"):
             args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
 
         if self.spec.satisfies("^kokkos+rocm"):

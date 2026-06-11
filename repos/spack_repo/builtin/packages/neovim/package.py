@@ -16,10 +16,15 @@ class Neovim(CMakePackage):
 
     maintainers("albestro", "trws")
 
-    license("Apache-2.0 AND Vim")
+    license("Apache-2.0 AND Vim", checked_by="mcmehrtens", when="@0.1.0:")
 
     version("master", branch="master")
     version("stable", tag="stable")
+    version("0.12.3", sha256="36a6c66bfbba5d96fa512110aecddb981148a4d013b5ecd01a42877c49855a41")
+    version("0.12.2", sha256="ef9f58da7d687ed4d1dad9715542bf0dabdeedbfe8089e2ce17fff21b920a268")
+    version("0.12.1", sha256="41898a5073631bc8fd9ac43476b811c05fb3b88ffb043d4fbb9e75e478457336")
+    version("0.12.0", sha256="76b4875fc1a4805a807a9fa53ff0c8fb081620137a40fb879b32436e375aeb65")
+    version("0.11.7", sha256="b550b0e4cd2a0f9558bc6b278d27e47b528f7684efa2a46def438fcd64ee9822")
     version("0.11.6", sha256="d1c8e3f484ed1e231fd5f48f53b7345b628e52263d5eef489bb8b73ca8d90fca")
     version("0.11.5", sha256="c63450dfb42bb0115cd5e959f81c77989e1c8fd020d5e3f1e6d897154ce8b771")
     version("0.11.4", sha256="83cf9543bedab8bec8c11cd50ccd9a4bf1570420a914b9a28f83ad100ca6d524")
@@ -67,7 +72,7 @@ class Neovim(CMakePackage):
     depends_on("cmake@3.0:", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("gettext")
-    depends_on("gperf", type="link")
+    depends_on("gperf", type="link", when="@:0.7")
     depends_on("jemalloc", type="link", when="platform=linux")
     depends_on("lua-lpeg")
     depends_on("lua-mpack", when="@:0.10")
@@ -83,7 +88,7 @@ class Neovim(CMakePackage):
     # versions
     with when("@0.6:"):
         depends_on("cmake@3.10:", type="build")
-        depends_on("gperf@3.1:", type="link")
+        depends_on("gperf@3.1:", type="link", when="@:0.7")
         conflicts("^libiconv@:1.14")
         depends_on("libtermkey@0.22:", type="link", when="@:0.9")
         depends_on("libvterm@0.1.4:", type="link", when="@:0.10")
@@ -103,7 +108,8 @@ class Neovim(CMakePackage):
         depends_on("tree-sitter@0.20.9", when="@0.10")
     with when("@0.11:"):
         depends_on("cmake@3.16:", type="build")
-        depends_on("utf8proc@2.10.0", type="link")
+        depends_on("utf8proc@2.10.0:", type="link")
+        depends_on("tree-sitter@0.25:", type="link")
 
     # Support for `libvterm@0.2:` has been added in neovim@0.8.0
     # term: Add support for libvterm >= 0.2 (https://github.com/neovim/neovim/releases/tag/v0.8.0)
@@ -113,7 +119,7 @@ class Neovim(CMakePackage):
     # ts_parser_timeout_micros and ts_parser_set_timeout_micros not anymore in API
     # https://github.com/neovim/neovim/pull/33141
     # https://github.com/tree-sitter/tree-sitter/pull/4814
-    conflicts("tree-sitter@0.26:", when="@:0.11.6")
+    conflicts("tree-sitter@0.26:", when="@:0.11")
 
     @when("^lua")
     def cmake_args(self):

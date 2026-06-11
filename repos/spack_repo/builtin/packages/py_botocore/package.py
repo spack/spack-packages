@@ -15,6 +15,7 @@ class PyBotocore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.43.17", sha256="27f4ecb80cf1e5be70415fc4a4d3db3907d41ef8178c9df822364f275427d375")
     version("1.42.85", sha256="2ee61f80b7724a143e16d0a85408ef5fa20b99dce7a3c8ec5d25cc8dced164c1")
     version("1.40.64", sha256="a13af4009f6912eafe32108f6fa584fb26e24375149836c2bcaaaaec9a7a9e58")
     version("1.34.162", sha256="adc23be4fb99ad31961236342b7cbf3c0bfc62532cd02852196032e8c0d682f3")
@@ -44,7 +45,8 @@ class PyBotocore(PythonPackage):
     version("1.12.253", sha256="3baf129118575602ada9926f5166d82d02273c250d0feb313fc270944b27c48b")
     version("1.12.169", sha256="25b44c3253b5ed1c9093efb57ffca440c5099a2d62fa793e8b6c52e72f54b01e")
 
-    depends_on("python@3.9:", when="@1.38:", type=("build", "run"))
+    depends_on("python@3.10:", when="@1.43:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.38:1.42", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):

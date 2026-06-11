@@ -207,7 +207,7 @@ class Tau(Package):
     depends_on("hip", when="+rocprofiler-sdk")
     depends_on("elfutils", when="+rocprofiler-sdk")
     depends_on("comgr", when="+rocprofiler-sdk")
-    depends_on("salt", when="+salt", type="run")
+    depends_on("saltfm", when="+salt", type="run")
     depends_on("hip", when="@2.34: +roctracer")
     depends_on("java", type="run")  # for paraprof
     depends_on("oneapi-level-zero", when="+level_zero")
@@ -221,6 +221,9 @@ class Tau(Package):
     )
 
     conflicts("+comm", when="@:2.34 +python", msg="Bug in +comm with +python up to @2.34")
+
+    # header changes require upstream to add explicit includes
+    conflicts("^cuda@13.2:", when="@:2.35.1 +cuda")
 
     # Elf only required from 2.28.1 on
     conflicts("+elf", when="@:2.28.0")
