@@ -31,7 +31,11 @@ class PyCylcRose(PythonPackage):
         url="https://files.pythonhosted.org/packages/source/c/cylc-rose/cylc_rose-1.4.2.tar.gz",
         deprecated=True,
     )
-    version("1.3.0", sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88", deprecated=True)
+    version(
+        "1.3.0",
+        sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88",
+        deprecated=True,
+    )
 
     depends_on("py-setuptools", type="build")
     depends_on("py-metomi-isodatetime", type=("build", "run"))

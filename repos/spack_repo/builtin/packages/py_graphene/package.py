@@ -18,7 +18,11 @@ class PyGraphene(PythonPackage):
     license("MIT")
 
     version("3.4.3", sha256="2a3786948ce75fe7e078443d37f609cbe5bb36ad8d6b828740ad3b95ed1a0aaa")
-    version("2.1.9", sha256="b9f2850e064eebfee9a3ef4a1f8aa0742848d97652173ab44c82cc8a62b9ed93", deprecated=True)
+    version(
+        "2.1.9",
+        sha256="b9f2850e064eebfee9a3ef4a1f8aa0742848d97652173ab44c82cc8a62b9ed93",
+        deprecated=True,
+    )
 
     depends_on("py-setuptools", type="build")
     depends_on("py-graphql-core@3.1:3.2", type=("build", "run"), when="@3")
