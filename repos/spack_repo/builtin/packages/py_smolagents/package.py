@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PySmolagents(PythonPackage):
-    """A barebones library for agents. Agents write python code to call tools or orchestrate other agents."""
+    """A barebones library for agents. Agents write python code to call tools or orchestrate
+    other agents."""
 
     homepage = "https://huggingface.co/docs/smolagents"
     pypi = "smolagents/smolagents-1.26.0.tar.gz"
