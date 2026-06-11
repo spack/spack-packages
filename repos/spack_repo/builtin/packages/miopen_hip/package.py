@@ -206,7 +206,6 @@ class MiopenHip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
-        "7.13.0",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
@@ -295,4 +294,6 @@ class MiopenHip(CMakePackage):
                     f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler",
                 )
             )
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
         return args

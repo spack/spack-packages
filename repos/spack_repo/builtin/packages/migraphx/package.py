@@ -130,6 +130,24 @@ class Migraphx(ROCmLibrary, CMakePackage):
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     for ver in [
         "6.3.0",
@@ -149,7 +167,6 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
     ]:
-        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -195,6 +212,8 @@ class Migraphx(ROCmLibrary, CMakePackage):
             )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("PROTOBUF_INCLUDE_DIR", self.spec["protobuf"].prefix.include))
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

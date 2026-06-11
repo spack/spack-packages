@@ -26,7 +26,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     version(
         "7.13.0",
         url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/heads/release/rvs-1.4.x.tar.gz",
-        sha256="30717a3b0b6a688dd063beceefa0cd16b87a776766cad8c22fdc02a0864b58bc",
+        sha256="d774c1021751e29da33ec73883ac32553693e22cf6ab93aa335aa30f00c13b32",
     )
 
     license("MIT")
