@@ -21,6 +21,7 @@ class Yarn(Package):
 
     license("BSD-2-Clause")
 
+    version("4.16.0", sha256="51a55a9e12727d359908109f28492392d9f7e3975698034c7521ebe0019e0ce7")
     version("4.13.0", sha256="7ce8fd253740ea62980bca49b32bfc044810e09362cc46a4192673be9541a772")
     version("4.10.3", sha256="5494c77f7c7ea067f7c58456f61af458a684802e5bb25631659b7612d14e6c84")
     version("4.9.2", sha256="cbcd6ab876407c0999eceb74bcdac29ae47a544339bc99b17fcbe67901ede9b3")
