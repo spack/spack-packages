@@ -11,23 +11,15 @@ class PyCylcUiserver(PythonPackage):
     """Cylc UI Server."""
 
     homepage = "https://github.com/cylc/cylc-uiserver/"
-    pypi = "cylc-uiserver/cylc-uiserver-1.9.1.tar.gz"
+    pypi = "cylc-uiserver/cylc_uiserver-1.9.1.tar.gz"
     git = "https://github.com/cylc/cylc-uiserver.git"
 
     maintainers("climbfuji")
 
     license("GPL-3.0-or-later")
 
-    version(
-        "1.9.1",
-        sha256="106551a19cbd5de85e8a59a549e1846598ee37e22171bd127a1676dccacc2792",
-        url="https://files.pythonhosted.org/packages/source/c/cylc-uiserver/cylc_uiserver-1.9.1.tar.gz",
-    )
-    version(
-        "1.7.1",
-        sha256="a841437b43873e198ffad0a496ee95efb14a6fd8eadb0b9182827ebac24dfdc7",
-        url="https://files.pythonhosted.org/packages/source/c/cylc-uiserver/cylc_uiserver-1.7.1.tar.gz",
-    )
+    version("1.9.1", sha256="106551a19cbd5de85e8a59a549e1846598ee37e22171bd127a1676dccacc2792")
+    version("1.7.1", sha256="a841437b43873e198ffad0a496ee95efb14a6fd8eadb0b9182827ebac24dfdc7")
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("python@3.12:", when="@1.8:", type=("build", "run"))
