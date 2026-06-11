@@ -17,6 +17,7 @@ class PyMetatrain(PythonPackage):
 
     license("BSD-3-Clause", checked_by="RMeli")
 
+    version("2026.2.1", sha256="e9a59d399e86fc53215604bbdb9e3afb602b6cd3f71365d03c5779ab67c965cd")
     version("2026.2", sha256="ca3078d269189113585e5296166f8d2d8a2a6d5a1fe0aa8e3bcd88afe9b8a487")
     version("2026.1", sha256="a86e2eb8d63e4a3c667ff783eb68f1a1dce6b2f204820d4bc7fabbbb165508df")
     version("2025.12", sha256="d0634934cc33d23189a9ef99f8c27e2e81cdfc248cf110d8df6c48255cb78765")

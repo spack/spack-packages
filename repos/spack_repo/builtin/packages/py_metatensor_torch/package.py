@@ -9,6 +9,9 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.9.2": "e01202d5b480b093c1457c12da111a68cc8428280e53f975894062b551cd87bf",
+    "0.9.1": "a924baf2146e597b6dd32eef425bc0f02598a542c0eae37872721b663fc458ec",
+    "0.9.0": "9b5fe7262d91498ca69096d325688f4d3101c62050c0bf2064b5e448f3789fb8",
     "0.8.4": "0b2e158e8b31f12735bf2db391257296a5ef0b802512f2d2db8e0c5ee028a192",
     "0.8.3": "9b0907f0969bd2139a6ab3614d81faebc7abca102df4127cba9f0521e2e1437d",
     "0.8.2": "60a81ccb5bda11ee173abfecd02a5d126d2788732b2ebb4d701ba0c82c7331a1",
@@ -37,7 +40,8 @@ class PyMetatensorTorch(PythonPackage):
     # setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"), when="@0.7.6")
-    depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.8.0:")
+    depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.8.0:0.8")
+    depends_on("py-metatensor-core@0.2", type=("build", "run"), when="@0.9.0:")
 
     # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))
@@ -52,7 +56,8 @@ class PyMetatensorTorch(PythonPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("METATENSOR_TORCH_PYTHON_USE_EXTERNAL_LIB", "ON")
-
+    
+    @when("@:0.8")
     @run_after("install")
     def workaround(self):
         """

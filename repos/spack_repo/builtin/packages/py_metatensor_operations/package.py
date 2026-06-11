@@ -18,6 +18,7 @@ class PyMetatensorOperations(PythonPackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.5.0", sha256="e1cb0a8c358842e94ac3680fa9ec6f7a006cb519b6950ed1bb7001a209087cfc")
     version("0.4.0", sha256="5eefca88c92479a2b9d1125ee53e31cacca539e220c2ad2c91bff2223c3609d5")
     version("0.3.4", sha256="448c155e5d4ac7ad7bdf56a6d0883f641622d54d4357f50b2149b2cb2ad8d66a")
 
@@ -28,4 +29,5 @@ class PyMetatensorOperations(PythonPackage):
     depends_on("py-packaging@23:", type="build")
     # setup.py
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"), when="@0.3.4")
-    depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.4.0:")
+    depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.4.0:0.4")
+    depends_on("py-metatensor-core@0.2.0:0.2", type=("build", "run"), when="@0.5.0:")
