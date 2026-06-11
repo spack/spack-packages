@@ -154,6 +154,11 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
     patch("Fix_python_install_24.patch", when="@24")
     patch("Fix_python_install_23.patch", when="@23")
 
+    # Patches the cmake install step for libxc's mod files.
+    with when("+libxc"):
+        patch("castep_cmake_libxc523.patch", when="@24")
+        patch("castep_cmake_libxc522.patch", when="@23")
+
     sanity_check_is_file = [join_path("bin", "castep.mpi")]
 
     @property
