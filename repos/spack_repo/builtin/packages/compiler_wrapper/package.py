@@ -39,7 +39,7 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
-        version("1.2.0", commit="080bdfba890edc1b4411f0fd4b9d33b87037d87f")
+        version("1.2.0", commit="2b8ef4ef537cb2dece32f88d571b128220bd824a")
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
@@ -119,7 +119,7 @@ class CompilerWrapper(Package):
             ("rocmcc", "amdclang"),
             ("rocmcc", "amdclang++"),
             ("rocmcc", "amdflang"),
-            ("rocmcc", "hipcc"),
+            ("rocmcc", "spackhip"),
             ("xl", "xlc"),
             ("xl", "xlc++"),
             ("xl", "xlf"),
