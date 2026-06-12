@@ -19,6 +19,8 @@ class Lfortran(CMakePackage):
 
     # The build process uses 'git describe --tags' to get the package version
     version("main", branch="main", get_full_repo=True)
+    version("0.63.0", sha256="e5ad61bc0571ec572dec542913858a9d9a6142ae5023ffc9517e1b0dc15da98c")
+    version("0.62.0", sha256="6b34221fa85ab2e3f102a73bcbf59125318f637bbb64da34fe1200425eed4788")
     version("0.61.0", sha256="e832c1d76c371da7a7e11ef9e7b686d9047788136dcfb20093da5dc165fcd20f")
     version("0.54.0", sha256="a46c44f8398ed0d14ca051a08982a3001642449c06a3be1c30944c3e027bbf51")
     version("0.49.0", sha256="a9225fd33d34ce786f72a964a1179579caff62dd176a6a1477d2594fecdc7cd6")
