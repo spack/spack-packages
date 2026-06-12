@@ -45,20 +45,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     version("2.8.0", sha256="5af3d950e616989133955c2430bd09bcf6bad3a04cf62317b401eaf6e7c2d479")
     version("2.7.1", sha256="c8e237fd51f49d8a62a0660db12b72ea5067512aa7970f3fcf80b70e3f87ca3e")
 
-    # There's not really any consistency about how static and shared libs are
-    # implemented across spack.  What we're trying to support is specifically three
-    # library build types:
-    #   shared (which is implicitly w/ pic)
-    #     Implemented by +shared +pic
-    #   static w/o pic
-    #     Implemented by ~shared ~pic
-    #   static w/ pic
-    #     Implemented by ~shared +pic
-    # shared w/o pic is not a valid configuration because shared libraries are Position
-    # Independent # Code by design.  We're not inherently tied to this approach and can
-    # change how we're supporting differnt library types in the package at anytime if
-    # spack decides on a standardized way of doing it across packages
-    variant("shared", default=True, when="+pic", description="Build shared libraries")
+    variant("pic", default=True, description="Build pic-enabled static libraries")
+    variant("shared", default=True, description="Build shared libraries")
 
     # Features
     variant("mpi", default=True, description="Enable MPI")
@@ -108,6 +96,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("sycl", default=False, when="@2.10:", description="Enable SYCL support")
     variant("python", default=False, description="Enable the Python bindings")
     variant("fortran", default=True, description="Enable the Fortran bindings")
+
+    conflicts("+shared", when="~pic")
 
     # Requires mature C++11 implementations
     conflicts("%gcc@:4.7")
@@ -167,12 +157,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     for _platform in ["linux", "darwin"]:
         depends_on("pkgconfig", type="build", when=f"platform={_platform}")
-        variant(
-            "pic",
-            default=False,
-            description="Build pic-enabled static libraries",
-            when=f"platform={_platform}",
-        )
         # libffi and libfabric and not currently supported on Windows
         # see Paraview's superbuild handling of libfabric at
         # https://gitlab.kitware.com/paraview/paraview-superbuild/-/blob/master/projects/adios2.cmake#L3
