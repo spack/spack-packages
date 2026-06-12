@@ -63,7 +63,11 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
-    version("2.9.0", sha256="d91ececfc070f0e94c979dd08cdd3f6da84db4ee48fe06f3187ad259ea9553e7", url="https://chapel-lang.org/tmp/chapel-2.9.0.tar.gz")
+    version(
+        "2.9.0",
+        sha256="d91ececfc070f0e94c979dd08cdd3f6da84db4ee48fe06f3187ad259ea9553e7",
+        url="https://chapel-lang.org/tmp/chapel-2.9.0.tar.gz",
+    )
     version("2.8.0", sha256="80e8c3018e33e49674c7a2542e062547ea41d64d6595edb3b799e90c88f963f8")
     version("2.7.0", sha256="5e3269babdae334c80fc3f25114698fdfe53e84ea06626af22d2b54eeb75bee6")
 
@@ -514,7 +518,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # CUDA conflicts and dependencies
     with when("+cuda"):
         conflicts("llvm=none", msg="Cuda support requires building with LLVM")
-
 
         depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
         depends_on("llvm@22:", when="llvm=spack ^cuda@13:")
