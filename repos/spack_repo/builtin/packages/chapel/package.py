@@ -540,13 +540,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         with when("@:2.7"):
             depends_on("hsa-rocr-dev@6.0:6.2")
             depends_on("hip@6.0:6.2")
-        with when("@2.8:"):
-            # ROCm 6.4 is specifically prohibited. Although Chapel allows it
-            # (see https://github.com/chapel-lang/chapel/pull/28220), the
-            # support is untested; being stricter here to reduce the amount of
-            # variables in getting the Spack package to work.
+        # ROCm 6.4 is specifically prohibited. Although Chapel allows it
+        # (see https://github.com/chapel-lang/chapel/pull/28220), the
+        # support is untested; being stricter here to reduce the amount of
+        # variables in getting the Spack package to work.
+        with when("@2.8"):
             depends_on("hsa-rocr-dev@6.0:6.3,7")
             depends_on("hip@6.0:6.3,7")
+        with when("@2.9:"):
+            depends_on("hsa-rocr-dev@6.3,7")
+            depends_on("hip@6.3,7")
 
         # Chapel requires using the (patched) bundled LLVM for some versions
         # of ROCm.
@@ -556,15 +559,26 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         with when("^hsa-rocr-dev@6.0:6.2"):
             requires("llvm=bundled", msg="Chapel ROCm 6.0-6.2 support requires llvm=bundled")
         with when("^hsa-rocr-dev@6.3:6"):
-            # For 6.3-6.x, either bundled LLVM or system LLVM >= 21 is allowed.
-            depends_on("llvm@21:", when="llvm=spack")
+            with when("@2.8"):
+                # Either (bundled LLVM) or (system LLVM == 21) is allowed.
+                depends_on("llvm@21", when="llvm=spack")
+            with when("@2.9"):
+                # Bundled or system LLVM >= 21 allowed
+                depends_on("llvm@21:", when="llvm=spack")
         with when("^hsa-rocr-dev@7"):
-            # For 7.x, we require LLVM >= 21, and as of release 2.8 the bundled
-            # LLVM is 19, so effectively we require _system_ LLVM >= 21.
-            # TODO: Modify this constraint and message when Chapel releases
-            # with a bundled LLVM >= 21.
+            # For 7.x, we require LLVM >= 21.
+            # In release 2.8, the bundled LLVM is 19, and the greatest LLVM
+            # version supported is 21, so effectively we require _system_ LLVM
+            # == 21.
+            # In release 2.9, we support up to LLVM 22, but we've encountered
+            # some unresolved issues in testing ROCm 7 with LLVM 22, so still
+            # require LLVM 21 here. Since in 2.9 the bundled LLVM is 22,
+            # require system LLVM 21 in this case as well.
+
+            # TODO: Modify this constraint and message when Chapel releases with
+            # good ROCm 7 support with LLVM >= 22.
             requires("llvm=spack", msg="Chapel ROCm 7 support currently requires llvm=spack")
-            depends_on("llvm@21:")
+            depends_on("llvm@21")
 
         # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
         # provides %rocmcc, which we don't want to use.
