@@ -83,7 +83,6 @@ class HsaRocrDev(CMakePackage):
         when="@7.13:",
     )
 
-
     for ver in [
         "5.7.0",
         "5.7.1",
