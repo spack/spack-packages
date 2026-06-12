@@ -18,6 +18,7 @@ class Rocshmem(ROCmLibrary, CMakePackage):
     libraries = ["librocshmem"]
 
     license("MIT")
+
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-6.4.0.tar.gz"
