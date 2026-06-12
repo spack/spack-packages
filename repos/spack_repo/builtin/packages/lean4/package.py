@@ -22,7 +22,7 @@ class Lean4(CMakePackage):
 
     maintainers("wdconinc")
 
-    license("Apache-2.0", checked_by="wdoninc")
+    license("Apache-2.0", checked_by="wdconinc")
 
     version("4.30.0", sha256="c11edd040d77be85865e41b4a37a77d14f824c07d8642434eb3561163f2afa5d")
 
