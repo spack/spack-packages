@@ -83,3 +83,9 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     def libs(self):
         shared = self.spec.satisfies("libs=shared")
         return find_libraries(["libiconv"], root=self.prefix, recursive=True, shared=shared)
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        super().setup_build_environment(env)
+
+        if self.spec.satisfies("@1.18 %intel"):
+            env.append_flags("CFLAGS", "-std=c11")
