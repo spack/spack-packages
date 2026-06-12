@@ -12,7 +12,10 @@ class PySmolagents(PythonPackage):
     other agents."""
 
     homepage = "https://huggingface.co/docs/smolagents"
+    git = "https://github.com/huggingface/smolagents.git"
     pypi = "smolagents/smolagents-1.26.0.tar.gz"
+
+    license("Apache-2.0")
 
     maintainers("thomas-bouvier")
 
