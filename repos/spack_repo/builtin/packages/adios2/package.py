@@ -102,6 +102,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("xrootd", default=True, description="Enable the XRootD")
+    variant("encryption", default=True, when="@2.9:", description="Enable encryption operators")
 
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
@@ -204,6 +205,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("sz3", when="+sz3")
     depends_on("mgard@compat-2022-11-18:", when="+mgard")
     depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
+    depends_on("libsodium@1.0.4:", when="@2.9: +encryption")
 
     extends("python", when="+python")
     depends_on("python", when="+python", type=("build", "run"))
@@ -320,6 +322,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),
             from_variant("ADIOS2_USE_LIBPRESSIO", "libpressio"),
+            from_variant("ADIOS2_USE_Sodium", "encryption"),
             self.define("ADIOS2_USE_CUDA", self.spec.satisfies("+cuda ~kokkos")),
             self.define("ADIOS2_USE_Kokkos", self.spec.satisfies("+kokkos")),
             self.define("Kokkos_ENABLE_CUDA", self.spec.satisfies("+cuda +kokkos")),
@@ -358,6 +361,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         # hip support
         if spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
+
+        if spec.satisfies("@2.12: +encryption"):
+            args.append(CMakeBuilder.define("ADIOS2_USE_SealKeygen", True))
 
         if spec.satisfies("+python"):
             py_libdir = join_path(
