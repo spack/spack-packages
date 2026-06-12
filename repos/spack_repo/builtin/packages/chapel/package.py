@@ -516,6 +516,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("llvm=none", msg="Cuda support requires building with LLVM")
 
         depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
+        depends_on("llvm@22:", when="llvm=spack ^cuda@13:")
         requires(
             "^llvm targets=all",
             msg="llvm=spack +cuda requires LLVM support the nvptx target",
@@ -529,6 +530,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         )
 
         conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
+        conflicts("cuda@13:", when="@:2.8")
 
     # ROCm conflicts and dependencies
     with when("+rocm"):
@@ -674,7 +676,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # but many of these are ALSO run-time dependencies of the executable
     # application built by that Chapel compiler from user-provided sources.
     with default_args(type=("build", "link", "run", "test")):
-        depends_on("cuda@11:12", when="+cuda")
+        depends_on("cuda@11:13", when="+cuda")
         depends_on("gmp", when="gmp=spack")
         depends_on("hwloc", when="hwloc=spack")
         depends_on("libfabric", when="libfabric=spack")
