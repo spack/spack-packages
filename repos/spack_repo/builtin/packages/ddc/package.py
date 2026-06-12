@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.15.0", sha256="1bcb7eda695e7e37bb37dd7ea40adcb614c2cfe71b2890201424b05c48fce331")
     version("0.14.0", sha256="8c239cea877cf52c3334de6d5c5d248eac85e6df27b9476047fd7ff3f78b85b5")
     version("0.13.0", sha256="6b93a532896d9f5342b477a2bcf85f05d242c8d7b0331580a62e50a9bf155bad")
     version("0.12.0", sha256="30a464b00d712ce7264835cc162b63797185667fea3f4c9457d7dfff0a2bc0cc")
@@ -95,6 +96,10 @@ class Ddc(CMakePackage):
         depends_on("googletest@:1 +gmock")
         depends_on("pdiplugin-user-code@1.6:", type=("build", "test"), when="+pdi")
         depends_on("pdiplugin-user-code@:1", type=("build", "test"), when="+pdi")
+        depends_on("py-numpy@1.24:", when="@0.15:")
+        depends_on("py-numpy@:2", when="@0.15:")
+        depends_on("py-pytest@8.4:", when="@0.15:")
+        depends_on("py-pytest@:9", when="@0.15:")
 
     conflicts("^kokkos@4.5.0", msg="Incompatible with the embedded mdspan of Kokkos")
 
