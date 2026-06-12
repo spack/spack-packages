@@ -607,7 +607,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
+  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
