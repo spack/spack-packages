@@ -77,7 +77,12 @@ class HsaRocrDev(CMakePackage):
     depends_on("libdrm", when="@6.3:")
     # irocr: include intrin headers before namespace rocr
     # https://github.com/ROCm/rocm-systems/pull/5615
-    patch("003-fix-rocr-namespace.patch", when="@7.13:")
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/5d97b21c2b486716a32472143ad44ea74fbfdd41.patch?full_index=1",
+        sha256="562509320bcf363ae4e8979f4b669c683f8407d11900b349d6cd1a999ec0b11b",
+        when="@7.13:"
+    )
+
 
     for ver in [
         "5.7.0",

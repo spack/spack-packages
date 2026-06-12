@@ -150,7 +150,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     patch("002-Add-rpath-to-hiprt-7.13.patch", when="@7.13:")
     # irocr: include intrin headers before namespace rocr
     # https://github.com/ROCm/rocm-systems/pull/5615
-    patch("003-fix-rocr-namespace.patch", when="@7.13:")
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/5d97b21c2b486716a32472143ad44ea74fbfdd41.patch?full_index=1",
+        sha256="562509320bcf363ae4e8979f4b669c683f8407d11900b349d6cd1a999ec0b11b",
+        working_dir="rocm-systems",
+        when="@7.13:"
+    )
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
     # Patch from https://github.com/llvm/llvm-project/pull/80071
