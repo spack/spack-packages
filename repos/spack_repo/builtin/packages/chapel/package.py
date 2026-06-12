@@ -644,7 +644,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         depends_on("llvm@11:19", when="@2.3:2.4")
         depends_on("llvm@11:20", when="@2.5")
         depends_on("llvm@14:20", when="@2.6:2.7")
-        depends_on("llvm@14:21", when="@2.8:")
+        depends_on("llvm@14:21", when="@2.8")
+        depends_on("llvm@14:22", when="@2.9:")
 
     # This is because certain systems have binutils installed as a system package
     # but do not include the headers. Spack incorrectly supplies those external
