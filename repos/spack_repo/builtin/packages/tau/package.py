@@ -285,7 +285,7 @@ class Tau(Package):
         if "+dyninst" in spec and self.spec.satisfies("@2.32.1:2.35.2"):
             tbb = spec["intel-tbb"]
             if tbb.satisfies("@2021.1:"):
-                useropt.append("-DDYNINST_TBB_HAS_VERSION_H")        
+                useropt.append("-DDYNINST_TBB_HAS_VERSION_H")
 
         ##########
         # Selecting a compiler with TAU configure is quite tricky:
