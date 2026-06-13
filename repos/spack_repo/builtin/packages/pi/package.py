@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class Pi(Package):
-    """Pi is a coding agent CLI with read, bash, edit, and write tools for AI-assisted development."""
+    """
+    Pi is a coding agent CLI with read, bash, edit, and write tools for AI-assisted development.
+    """
 
     homepage = "https://pi.dev"
     url = "https://github.com/earendil-works/pi/archive/refs/tags/v0.79.1.tar.gz"
