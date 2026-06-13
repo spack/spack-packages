@@ -13,12 +13,14 @@ class Pi(Package):
     """
 
     homepage = "https://pi.dev"
-    url = "https://github.com/earendil-works/pi/archive/refs/tags/v0.79.1.tar.gz"
+    url = "https://github.com/earendil-works/pi/archive/refs/tags/v0.79.2.tar.gz"
     supplier = "earendil"
 
     maintainers("alecbcs")
 
     license("MIT", checked_by="alecbcs")
+
+    sanity_check_is_file = ["bin/pi"]
 
     version("0.79.2", sha256="e3e28b40ca6db9f53bcb9ee07b56c789ce535e7ba4e4442ed2fce5d66b3623f3")
 
