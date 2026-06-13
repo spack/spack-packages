@@ -20,10 +20,10 @@ class Pi(Package):
 
     license("MIT", checked_by="alecbcs")
 
-    version("0.79.1", sha256="6e3a0c61dca8ec8a07cc027b6213fd1e0530e64411cae1e2cac550e9fa8cfac5")
+    version("0.79.2", sha256="e3e28b40ca6db9f53bcb9ee07b56c789ce535e7ba4e4442ed2fce5d66b3623f3")
 
     depends_on("node-js@22.19.0:", type=("build", "link", "run"))
-    depends_on("npm", type="build")
+    depends_on("npm", type=("build", "run"))
 
     phases = ["build", "install"]
 
