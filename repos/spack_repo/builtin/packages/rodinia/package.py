@@ -26,8 +26,11 @@ class Rodinia(MakefilePackage, CudaPackage):
 	depends_on("gl")
 	depends_on("glu")
 
-	depends_on("c")
-	depends_on("cxx")
+	# Make it possible for us to specify compiler version with,
+	# for example, %gcc@12.4.0, so that we can use an older compiler
+	# for the old stype C/C++ code.
+	depends_on("c", type="build")
+	depends_on("cxx", type="build")
 
 	# Allows these to be disabled, since they use removed CUDA syntax for
 	# many things than some simple edits here can fix.
@@ -51,6 +54,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 	patch("backprop-lavaMD.patch")
 	# No need to do this now, as make clean is run.
 	#patch("pie.patch")
+	patch("kmeans.patch")
 
 	def edit(self, spec, prefix):
 		# set cuda paths
@@ -184,7 +188,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 					)
 			
 			# Temporarily disable these, if variant=False, as the many CUDA
-			# features here need to be ported to new API.
+			# features here need to be ported to the new API.
 			if (self.spec.satisfies("-kmeans")):
 				filter_file(
 					"cd cuda/kmeans",
