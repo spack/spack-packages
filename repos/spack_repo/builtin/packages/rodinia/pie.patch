@@ -6,7 +6,7 @@ index 4a5d800..9dc7b6b 100644
  	-Wcast-align \
  	-Wreturn-type \
  	-Wno-unused-function \
-+	-fPIC \
++	-fPIE \
  	$(SPACE)
  
  CWARN_FLAGS := $(CXXWARN_FLAGS) \
@@ -15,7 +15,7 @@ index 4a5d800..9dc7b6b 100644
  
  # Common flags
 -COMMONFLAGS += $(INCLUDES) -DUNIX
-+COMMONFLAGS += $(INCLUDES) -DUNIX -fPIC
++COMMONFLAGS += $(INCLUDES) -DUNIX -fPIE
  
  # Debug/release configuration
  ifeq ($(dbg),1)
