@@ -55,6 +55,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 	# No need to do this now, as make clean is run.
 	#patch("pie.patch")
 	patch("kmeans.patch")
+	patch("leukocyte.patch")
 
 	def edit(self, spec, prefix):
 		# set cuda paths
@@ -163,7 +164,17 @@ class Rodinia(MakefilePackage, CudaPackage):
 			"cuda/mummergpu/src/suffix-tree.cpp",
 			string=True,
 		)
+		
+		# Leukocyte cannot be built parallely, since
+		# it has so many recipes invoking ar on the same file.
+		# Try grep -rn "ru meschach.a" . inside cuda/leukocyte.
+		filter_file(
+			"cd cuda/leukocyte;  		make",
+			"cd cuda/leukocyte;  		make -j1",
+			"Makefile"
+		)
 
+		# Fix outdated CUDA syntax.
 		if self.spec.satisfies("%cuda@12.0:"):
 			for cuda_dir, _, files in os.walk(
 				join_path(self.stage.source_path, "cuda")
