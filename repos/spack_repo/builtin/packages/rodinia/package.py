@@ -29,7 +29,12 @@ class Rodinia(MakefilePackage, CudaPackage):
 	depends_on("c")
 	depends_on("cxx")
 
+	# Allows these to be disabled, since they use removed CUDA syntax for
+	# many things than some simple edits here can fix.
 	variant("kmeans", default=False, description="enable kmeans")
+	variant("leukocyte", default=False, description="enable leukocyte")
+	variant("mummergpu", default=False, description="enable mummergpu")
+	variant("hybridsort", default=False, description="enable hybridsort")
 
 	conflicts("~cuda")
 	conflicts("cuda_arch=none",
@@ -85,38 +90,48 @@ class Rodinia(MakefilePackage, CudaPackage):
 			string=True,
 		)
 
-		# Produced by find . -type f -name "Makefile"
+		# Produced by find ./cuda -type f -iname "Makefile"
 		makefiles = [
-			"cuda/srad/srad_v2/Makefile",
-			"cuda/srad/Makefile",
-			"cuda/myocyte/Makefile",
-			"cuda/mummergpu/Makefile",
-			"cuda/mummergpu/src/Makefile",
 			"cuda/backprop/Makefile",
-			"cuda/nn/Makefile",
-			"cuda/gaussian/Makefile",
-			"cuda/lud/tools/Makefile",
-			"cuda/lud/base/Makefile",
-			"cuda/lud/Makefile",
-			"cuda/lud/cuda/Makefile",
-			"cuda/huffman/Makefile",
-			"cuda/hotspot3D/Makefile",
-			"cuda/kmeans/Makefile",
-			"cuda/hotspot/Makefile",
-			"cuda/leukocyte/CUDA/Makefile",
-			"cuda/leukocyte/Makefile",
-			"cuda/heartwall/Makefile",
-			"cuda/bfs/Makefile",
-			"cuda/hybridsort/Makefile",
 			"cuda/pathfinder/Makefile",
-			"cuda/streamcluster/Makefile",
-			"cuda/b+tree/Makefile",
+			"cuda/mummergpu/src/Makefile",
+			"cuda/mummergpu/Makefile",
 			"cuda/dwt2d/Makefile",
+			"cuda/b+tree/Makefile",
+			"cuda/srad/Makefile",
+			"cuda/srad/srad_v1/makefile",
+			"cuda/srad/srad_v2/Makefile",
 			"cuda/nw/Makefile",
+			"cuda/bfs/Makefile",
+			"cuda/heartwall/AVI/makefile",
+			"cuda/heartwall/Makefile",
+			"cuda/kmeans/Makefile",
 			"cuda/cfd/Makefile",
+			"cuda/leukocyte/Makefile",
+			"cuda/leukocyte/CUDA/Makefile",
+			"cuda/leukocyte/meschach_lib/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/MicroSoft/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/SGI/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/Cray/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/OS2/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/GCC/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/SPARC/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/Linux/makefile",
+			"cuda/leukocyte/meschach_lib/MACHINES/RS6000/makefile",
+			"cuda/hybridsort/Makefile",
+			"cuda/hotspot3D/Makefile",
+			"cuda/streamcluster/Makefile",
+			"cuda/lud/cuda/Makefile",
+			"cuda/lud/Makefile",
+			"cuda/lud/base/Makefile",
+			"cuda/lud/tools/Makefile",
+			"cuda/myocyte/Makefile",
+			"cuda/nn/Makefile",
 			"cuda/particlefilter/Makefile",
-			# this first letter is lowercase.
 			"cuda/lavaMD/makefile",
+			"cuda/gaussian/Makefile",
+			"cuda/hotspot/Makefile",
+			"cuda/huffman/Makefile",
 		]
 
 		for makefile in makefiles:
@@ -168,12 +183,30 @@ class Rodinia(MakefilePackage, CudaPackage):
 						os.path.join(cuda_dir, fp)
 					)
 			
-			# Temporarily disable kmeans as the textures need
-			# to be ported to new API.
+			# Temporarily disable these, if variant=False, as the many CUDA
+			# features here need to be ported to new API.
 			if (self.spec.satisfies("-kmeans")):
 				filter_file(
 					"cd cuda/kmeans",
 					"#cd cuda/kmeans",
+					"Makefile"
+				)
+			if (self.spec.satisfies("-leukocyte")):
+				filter_file(
+					"cd cuda/leukocyte",
+					"#cd cuda/leukocyte",
+					"Makefile"
+				)
+			if (self.spec.satisfies("-mummergpu")):
+				filter_file(
+					"cd cuda/mummergpu",
+					"#cd cuda/mummergpu",
+					"Makefile"
+				)
+			if (self.spec.satisfies("-hybridsort")):
+				filter_file(
+					"cd cuda/hybridsort",
+					"#cd cuda/hybridsort",
 					"Makefile"
 				)
 
