@@ -29,9 +29,7 @@ class Geant4DataPackage(Package):
         assert isinstance(self.g4dirname, str)
         return join_path(s.prefix.share, "data", f"{self.g4dirname}{s.version}")
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
         assert isinstance(self.g4envvar, str)
         env.set(self.g4envvar, self.datadir)
 
