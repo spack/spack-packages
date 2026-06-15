@@ -24,7 +24,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 	depends_on("freeglut")
 	depends_on("glew")
 	depends_on("gl")
-	depends_on("glu")
+	depends_on("mesa-glu")
 
 	# Make it possible for us to specify compiler version with,
 	# for example, %gcc@12.4.0, so that we can use an older compiler
