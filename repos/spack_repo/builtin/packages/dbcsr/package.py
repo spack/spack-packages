@@ -215,17 +215,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         if "+rocm" in spec and len(spec.variants["amdgpu_target"].value) > 1:
             raise InstallError("DBCSR supports only one amdgpu_arch at a time")
 
-        if "smm=libxs" in spec:
-            args += [
-                "-DUSE_LIBXS=ON",
-            ]
-
-        if "@:2.9.1" in spec:
-            args += [
-                "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
-            ]
-
-        args += [
+        args = [
             self.define_from_variant("USE_MPI", "mpi"),
             self.define_from_variant("USE_OPENMP", "openmp"),
             # C API needs MPI
@@ -235,6 +225,16 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("WITH_G2G", "g2g"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
+
+        if "smm=libxs" in spec:
+            args += [
+                "-DUSE_LIBXS=ON",
+            ]
+
+        if "@:2.9.1" in spec:
+            args += [
+                "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
+            ]
 
         lapack, blas = spec["lapack"], spec["blas"]
         if blas.name != "intel-oneapi-mkl":
