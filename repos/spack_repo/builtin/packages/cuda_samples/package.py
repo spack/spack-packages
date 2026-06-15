@@ -55,8 +55,12 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # Don't need this variant now as CUDA is always required.
     #variant("cuda", default=True, description="build using CUDA (required)")
 
-	# Allows one to specify the compilers to use. Please do specify it
-	# explicitly if the default is ambiguous.
+    # Don't know why it could build before without depending on it with gcc 14,
+    # but now it can't with gcc 12.
+    depends_on("mesa-glu")
+
+    # Allows one to specify the compilers to use. Please do specify it
+    # explicitly if the default is ambiguous.
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -77,12 +81,20 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     @when("@:12.5")
     def setup_build_environment(self, env):
+        glu = self.spec["mesa-glu"]
+        env.append_flags("CPPFLAGS", f"-I{glu.prefix.include}")
+        env.append_flags("LDFLAGS", f"-L{glu.prefix.lib}")
         env.set("CUDA_PATH", self.spec["cuda"].prefix)
         env.set("SMS", self.spec.variants["cuda_arch"].value[0])
 
     @when("@12.8:")
     def cmake_args(self):
-        args = ["-DCUDAToolkit_ROOT=" + self.spec["cuda"].prefix]
+        glu = self.spec["mesa-glu"]
+        args = [
+            "-DCUDAToolkit_ROOT=" + self.spec["cuda"].prefix,
+            self.define("GLU_INCLUDE_DIR", glu.prefix.include),
+            self.define("GLU_LIBRARY", glu.libs[0]),
+        ]
         return args
 
     # cuda-samples doesn't actually install the samples in the
