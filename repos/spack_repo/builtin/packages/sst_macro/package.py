@@ -22,6 +22,7 @@ class SstMacro(AutotoolsPackage):
 
     maintainers("berquist", "jmlapre")
 
+    version("16.0.0", sha256="4d8c45b0a103b173d2efc7c692a2aad06bcec19d8bec20bc835261a7aabead3a")
     version("15.1.0", sha256="6ec4e2e79993672329063bb2e4b70f5b0f1317f7bdd46e9898a46d346d8b3a1d")
     version("15.0.0", sha256="ce4bdb28b1500f2fd6875e3ff7a630e24ae381b58c72ae24a5157181d9546d53")
     version("14.1.0", sha256="241f42f5c460b0e7462592a7f412bda9c9de19ad7a4b62c22f35be4093b57014")
@@ -47,16 +48,19 @@ class SstMacro(AutotoolsPackage):
     version("master", branch="master")
     version("develop", branch="devel")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    # This can go away when the DUMPI package is depended on explicitly.
+    depends_on("fortran", type="build")
 
     for version_name in ("master", "develop"):
         depends_on("autoconf@1.68:", type="build", when="@{}".format(version_name))
         depends_on("automake@1.11.1:", type="build", when="@{}".format(version_name))
-        depends_on("libtool@1.2.4:", type="build", when="@{}".format(version_name))
+        depends_on("libtool@2.2.6:", type="build", when="@{}".format(version_name))
         depends_on("m4", type="build", when="@{}".format(version_name))
 
+    depends_on("grep", type="build")
+    depends_on("sed", type="build")
     depends_on("binutils", type="build")
     depends_on("zlib-api", type=("build", "link"))
     depends_on("otf2", when="+otf2")
@@ -65,6 +69,8 @@ class SstMacro(AutotoolsPackage):
     # Allow mismatch between core dependency version and current macro version.
     depends_on("sst-core", when="+core")
     depends_on("gettext")
+    # configure shows this as an optional dependency which is incorrect.
+    depends_on("python@3")
 
     variant("pdes_threads", default=True, description="Enable thread-parallel PDES simulation")
     variant("pdes_mpi", default=False, description="Enable distributed PDES simulation")
@@ -127,5 +133,9 @@ class SstMacro(AutotoolsPackage):
             env["CXX"] = spec["mpi"].mpicxx
             env["F77"] = spec["mpi"].mpif77
             env["FC"] = spec["mpi"].mpifc
+
+        args.append(f"--with-python={spec['python'].command.path}")
+        # Not python-config in order to match search precedence of sst-core
+        args.append(f"--with-python-config={spec['python'].prefix.bin.join('python3-config')}")
 
         return args
