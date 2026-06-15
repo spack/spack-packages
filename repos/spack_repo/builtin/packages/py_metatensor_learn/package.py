@@ -33,4 +33,3 @@ class PyMetatensorLearn(PythonPackage):
     depends_on("py-metatensor-operations@0.5", type=("build", "run"), when="@0.5")
     depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.4")
     depends_on("py-metatensor-core@0.2", type=("build", "run"), when="@0.5")
-
