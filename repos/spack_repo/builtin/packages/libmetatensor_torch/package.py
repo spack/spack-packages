@@ -17,7 +17,7 @@ class LibmetatensorTorch(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
-    version("0.9.2", sha256="036a9397f0deb5e89b3b6a36820fd8aef8c5e296d604eaefcfd14012f9972357")
+    # 0.9.2 was yanked: broken logic for device checks
     version("0.9.1", sha256="fa21ae9f5111f3b40479e51ed55152154fc2c6eb30f38d9de6adad53938d0444")
     version("0.9.0", sha256="4e31c235447b6bc14c7703c640e2f35409813c2f159a32b8d23386ad4a5abd57")
     version("0.8.4", sha256="7d6d7610008840bee8ccfdca23579bcfb3050ef00b32b59451d7f4765c854f2f")
