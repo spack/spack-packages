@@ -33,6 +33,9 @@ spack:
       - "@5.11: ~qt ^[virtuals=gl] osmesa"
       - 'target=x86_64_v3'
 
+    kokkos-kernels:
+      require:
+      - "+rocm"
     llvm-amdgpu:
       buildable: false
       externals:

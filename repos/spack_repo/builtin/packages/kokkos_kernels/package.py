@@ -7,7 +7,7 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack.package import *
 
 
-class KokkosKernels(CMakePackage, CudaPackage):
+class KokkosKernels(CMakePackage, CudaPackage, ROCmPackage):
     """Kokkos Kernels provides math kernels, often BLAS or LAPACK
     for small matrices, that can be used in larger Kokkos parallel routines"""
 
