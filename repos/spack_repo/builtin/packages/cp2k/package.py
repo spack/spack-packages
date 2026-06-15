@@ -261,6 +261,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="+sirius",
     )
 
+    variant("gauxc", 
+            default=False,
+            description="Enable gauxc support",
+            when="@2026.2:")
+
     conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
@@ -318,6 +323,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
     depends_on("pkgconfig", type="build")
+
+    depends_on("gauxc", when="+gauxc")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
@@ -1260,6 +1267,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_TBLITE", "tblite"),
             self.define_from_variant("CMAKE_BUILD_SHARED", "shared"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define_from_variant("CP2K_USE_GAUXC", "gauxc"),
         ]
 
         if spec.satisfies("+sirius"):
