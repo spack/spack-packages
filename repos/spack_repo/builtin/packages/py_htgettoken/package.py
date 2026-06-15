@@ -23,13 +23,10 @@ class PyHtgettoken(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.6", sha256="d553d40b8b1ad794d4fa36e4a88e4c6343f12bc4498b3143d297d1c60d1877b4")
     version("2.0-2", sha256="80b1b15cc4957f9d1cb5e71a1fbdc5d0ac82de46a888aeb7fa503b1465978b13")
-    # The following versions refer to setuptools-buildable commits after 1.16;
-    # they are special reproducible version numbers from `git describe`
-    version("1.16-33-g3788bb4", commit="3788bb4733e5e8f856cee51566df9a36cbfe097d")
-    version("1.16-20-g8b72f48", commit="8b72f4800ef99923dac99dbe0756a26266a27886")
-
-    # Older versions do not have a python build system
+    version("1.16-33-g3788bb4", commit="3788bb4733e5e8f856cee51566df9a36cbfe097d", deprecated=True)
+    version("1.16-20-g8b72f48", commit="8b72f4800ef99923dac99dbe0756a26266a27886", deprecated=True)
 
     depends_on("py-setuptools@30.3:", type="build")
 

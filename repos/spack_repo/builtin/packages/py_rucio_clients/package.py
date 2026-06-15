@@ -12,11 +12,14 @@ class PyRucioClients(PythonPackage):
 
     homepage = "https://rucio.cern.ch/"
     pypi = "rucio_clients/rucio_clients-35.4.0.tar.gz"
+    git = "https://github.com/rucio/rucio.git"
 
     maintainers("wdconinc")
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("39.4.0", sha256="00e0a7d6f891d492c0e910eea0cdfe0b94ac4e899c3d7a2fa296228c4dfffb9b")
+    version("38.5.3", sha256="7457d8d91e4b33bc760495974bc160b2e823f217f5cfaa98034e9bd644d8950b")
     version("38.0.0", sha256="d49f912f2f98870cab2227e0464129ba0954e99b975d0225126cca1b9d9c983c")
     version("37.3.0", sha256="b4bca8d451bc34528797ca188884a0c8b5ddfef2d32803765e6333455879f819")
     version(
@@ -37,28 +40,41 @@ class PyRucioClients(PythonPackage):
     variant("argcomplete", default=False, description="Enable bash tab completion for argparse")
     variant("dumper", default=False, description="Enable file type identification using libmagic")
 
-    # requirements/requirements.client.txt
+    # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@78.1.0:", type="build", when="@39:")
+    depends_on("py-wheel@0.45.1:", type="build", when="@39:")
+    depends_on("py-packaging", type="build", when="@39:")
+
+    # requirements/requirements.client.txt
     depends_on("py-requests@2.32.2:", type=("build", "run"), when="@:36")
     depends_on("py-urllib3@1.26.18:", type=("build", "run"), when="@:36")
     depends_on("py-requests@2.32.3:", type=("build", "run"), when="@37:")
     depends_on("py-urllib3@2.3.0:", type=("build", "run"), when="@37:")
+    depends_on("py-requests@2.32.5:", type=("build", "run"), when="@39:")
+    depends_on("py-urllib3@2.5.0:", type=("build", "run"), when="@39:")
     depends_on("py-dogpile-cache@1.2.2:", type=("build", "run"))
     depends_on("py-tabulate@0.9.0:", type=("build", "run"))
     depends_on("py-jsonschema@4.20.0:", type=("build", "run"), when="@:36")
     depends_on("py-jsonschema@4.23.0:", type=("build", "run"), when="@37:")
+    depends_on("py-jsonschema@4.25.1:", type=("build", "run"), when="@39:")
     depends_on("py-packaging@24.1:", type=("build", "run"), when="@36:")
     depends_on("py-packaging@24.2:", type=("build", "run"), when="@37:")
+    depends_on("py-packaging@25.0:", type=("build", "run"), when="@39:")
     depends_on("py-rich@13.7.1:", type=("build", "run"), when="@36:")
     depends_on("py-rich@13.9.4:", type=("build", "run"), when="@37:")
+    depends_on("py-rich@14.2.0:", type=("build", "run"), when="@39:")
     depends_on("py-typing-extensions@4.12.2:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.14.0:", type=("build", "run"), when="@38:")
+    depends_on("py-typing-extensions@4.14.0:", type=("build", "run"), when="@37:")
+    depends_on("py-typing-extensions@4.15.0:", type=("build", "run"), when="@39:")
     depends_on("py-click@8.1.7:", type=("build", "run"), when="@37:")
+    depends_on("py-click@8.3.0:", type=("build", "run"), when="@39:")
 
     with when("+ssh"):
         depends_on("py-paramiko@3.4.0:", when="@:36")
         depends_on("py-paramiko@3.5.1:", when="@37:")
+        depends_on("py-paramiko@4.0.0:", when="@39:")
 
     with when("+kerberos"):
         depends_on("py-kerberos@1.3.1:")
@@ -69,10 +85,12 @@ class PyRucioClients(PythonPackage):
     with when("+swift"):
         depends_on("py-python-swiftclient@4.4.0:", when="@:36")
         depends_on("py-python-swiftclient@4.7.0:", when="@37:")
+        depends_on("py-python-swiftclient@4.8.0:", when="@39:")
 
     with when("+argcomplete"):
         depends_on("py-argcomplete@3.1.6:", when="@:36")
         depends_on("py-argcomplete@3.5.3:", when="@37:")
+        depends_on("py-argcomplete@3.6.3:", when="@39:")
 
     with when("+dumper"):
         depends_on("py-python-magic@0.4.27:")
