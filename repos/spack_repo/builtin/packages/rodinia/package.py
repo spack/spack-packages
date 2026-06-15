@@ -36,10 +36,10 @@ class Rodinia(MakefilePackage, CudaPackage):
 	# many things than some simple edits here can fix.
 	# Now, they ARE FIXED by the patches.
 	# Only disable them if you don't want the patches.
-	variant("kmeans", default=False, description="enable kmeans")
-	variant("leukocyte", default=False, description="enable leukocyte")
-	variant("mummergpu", default=False, description="enable mummergpu")
-	variant("hybridsort", default=False, description="enable hybridsort")
+	variant("kmeans", default=True, description="enable kmeans")
+	variant("leukocyte", default=True, description="enable leukocyte")
+	variant("mummergpu", default=True, description="enable mummergpu")
+	variant("hybridsort", default=True, description="enable hybridsort")
 
 	conflicts("~cuda")
 	conflicts("cuda_arch=none",
@@ -59,6 +59,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 	patch("kmeans.patch")
 	patch("leukocyte.patch")
 	patch("mummergpu.patch")
+	patch("hybridsort.patch")
 
 	def edit(self, spec, prefix):
 		# set cuda paths

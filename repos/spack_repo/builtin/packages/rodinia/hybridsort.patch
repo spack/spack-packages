@@ -1,0 +1,222 @@
+diff --git a/cuda/hybridsort/bucketsort.cu b/cuda/hybridsort/bucketsort.cu
+index 8a36ee8..7a31af0 100755
+--- a/cuda/hybridsort/bucketsort.cu
++++ b/cuda/hybridsort/bucketsort.cu
+@@ -103,7 +103,20 @@ void bucketSort(float *d_input, float *d_output, int listsize,
+ 	///////////////////////////////////////////////////////////////////////////
+ 	checkCudaErrors(cudaMemcpy(l_pivotpoints, pivotPoints, (DIVISIONS)*sizeof(int), cudaMemcpyHostToDevice)); 
+ 	checkCudaErrors(cudaMemset((void *) d_offsets, 0, DIVISIONS * sizeof(int))); 
+-	checkCudaErrors(cudaBindTexture(0, texPivot, l_pivotpoints, DIVISIONS * sizeof(int))); 
++	cudaChannelFormatDesc chanDesc =
++	   cudaCreateChannelDesc(32,0,0,0, cudaChannelFormatKindFloat);
++	cudaResourceDesc resDesc = {};
++	resDesc.resType = cudaResourceTypeLinear;
++	resDesc.res.linear.devPtr = (void*)(l_pivotpoints);
++	resDesc.res.linear.desc = chanDesc;
++	resDesc.res.linear.sizeInBytes = DIVISIONS * sizeof(int);
++	cudaTextureDesc texDesc = {};
++	texDesc.addressMode[0] = cudaAddressModeClamp;
++	texDesc.filterMode = cudaFilterModePoint;
++	texDesc.readMode = cudaReadModeElementType;
++	texDesc.normalizedCoords = 0;
++	checkCudaErrors(cudaCreateTextureObject(&texPivot, &resDesc, &texDesc, NULL));
++	//checkCudaErrors(cudaBindTexture(0, texPivot, l_pivotpoints, DIVISIONS * sizeof(int))); 
+ 	// Setup block and grid
+     dim3 threads(BUCKET_THREAD_N, 1);
+ 	int blocks = ((listsize - 1) / (threads.x * BUCKET_BAND)) + 1; 
+diff --git a/cuda/hybridsort/bucketsort_kernel.cu b/cuda/hybridsort/bucketsort_kernel.cu
+index 5b2a8aa..0f26717 100755
+--- a/cuda/hybridsort/bucketsort_kernel.cu
++++ b/cuda/hybridsort/bucketsort_kernel.cu
+@@ -13,7 +13,8 @@
+ #define BUCKET_BLOCK_MEMORY		(DIVISIONS * BUCKET_WARP_N)
+ #define BUCKET_BAND				128
+ 
+-texture<float, 1, cudaReadModeElementType> texPivot; 
++__device__ cudaTextureObject_t texPivot = 0; 
++//texture<float, 1, cudaReadModeElementType> texPivot; 
+ 
+ __device__ int addOffset(volatile unsigned int *s_offset, unsigned int data, unsigned int threadTag){
+     unsigned int count;
+@@ -45,11 +46,11 @@ bucketcount( float *input, int *indice, unsigned int *d_prefixoffsets, int size)
+ 
+ 		int idx  = DIVISIONS/2 - 1; 
+ 		int jump = DIVISIONS/4; 
+-		float piv = tex1Dfetch(texPivot, idx); //s_pivotpoints[idx]; 
++		float piv = tex1D<float>(texPivot, idx); //s_pivotpoints[idx]; 
+ 
+ 		while(jump >= 1){
+ 			idx = (elem < piv) ? (idx - jump) : (idx + jump);
+-			piv = tex1Dfetch(texPivot, idx); //s_pivotpoints[idx]; 
++			piv = tex1D<float>(texPivot, idx); //s_pivotpoints[idx]; 
+ 			jump /= 2; 
+ 		}
+ 		idx = (elem < piv) ? idx : (idx + 1); 
+diff --git a/cuda/hybridsort/helper_cuda.h b/cuda/hybridsort/helper_cuda.h
+index 5da94de..6b1c9f5 100644
+--- a/cuda/hybridsort/helper_cuda.h
++++ b/cuda/hybridsort/helper_cuda.h
+@@ -872,8 +872,10 @@ inline int gpuDeviceInit(int devID)
+ 
+     cudaDeviceProp deviceProp;
+     checkCudaErrors(cudaGetDeviceProperties(&deviceProp, devID));
++	int computeMode;
++	cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, devID);
+ 
+-    if (deviceProp.computeMode == cudaComputeModeProhibited)
++    if (computeMode == cudaComputeModeProhibited)
+     {
+         fprintf(stderr, "Error: device is running in <Compute Mode Prohibited>, no threads can use ::cudaSetDevice().\n");
+         return -1;
+@@ -916,7 +918,9 @@ inline int gpuGetMaxGflopsDeviceId()
+         cudaGetDeviceProperties(&deviceProp, current_device);
+ 
+         // If this GPU is not running on Compute Mode prohibited, then we can add it to the list
+-        if (deviceProp.computeMode != cudaComputeModeProhibited)
++		int computeMode;
++		cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, current_device);
++        if (computeMode != cudaComputeModeProhibited)
+         {
+             if (deviceProp.major > 0 && deviceProp.major < 9999)
+             {
+@@ -935,7 +939,9 @@ inline int gpuGetMaxGflopsDeviceId()
+         cudaGetDeviceProperties(&deviceProp, current_device);
+ 
+         // If this GPU is not running on Compute Mode prohibited, then we can add it to the list
+-        if (deviceProp.computeMode != cudaComputeModeProhibited)
++		int computeMode;
++		cudaDeviceGetAttribute(&computeMode, cudaDevAttrComputeMode, current_device);
++        if (computeMode != cudaComputeModeProhibited)
+         {
+             if (deviceProp.major == 9999 && deviceProp.minor == 9999)
+             {
+diff --git a/cuda/hybridsort/mergesort.cu b/cuda/hybridsort/mergesort.cu
+index be3d88b..6d5b531 100755
+--- a/cuda/hybridsort/mergesort.cu
++++ b/cuda/hybridsort/mergesort.cu
+@@ -34,10 +34,10 @@ float4* runMergeSort(int listsize, int divisions,
+ 
+ 	// Setup texture
+ 	cudaChannelFormatDesc channelDesc = cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindFloat);
+-	tex.addressMode[0] = cudaAddressModeWrap;
+-	tex.addressMode[1] = cudaAddressModeWrap;
+-	tex.filterMode = cudaFilterModePoint;
+-	tex.normalized = false;
++	//tex.addressMode[0] = cudaAddressModeWrap;
++	//tex.addressMode[1] = cudaAddressModeWrap;
++	//tex.filterMode = cudaFilterModePoint;
++	//tex.normalized = false;
+ 
+ 	////////////////////////////////////////////////////////////////////////////
+ 	// First sort all float4 elements internally
+@@ -50,8 +50,21 @@ float4* runMergeSort(int listsize, int divisions,
+ 	dim3 threads(THREADS, 1);
+ 	int blocks = ((listsize/4)%THREADS == 0) ? (listsize/4)/THREADS : (listsize/4)/THREADS + 1; 
+ 	dim3 grid(blocks, 1);
+-	cudaBindTexture(0,tex, d_origList, channelDesc, listsize*sizeof(float)); 
+-	mergeSortFirst<<< grid, threads >>>(d_resultList, listsize);
++	//cudaBindTexture(0,tex, d_origList, channelDesc, listsize*sizeof(float)); 
++	cudaTextureObject_t tex_outloop = 0;
++	cudaResourceDesc resDesc = {};
++	resDesc.resType = cudaResourceTypeLinear;
++	resDesc.res.linear.devPtr = (void*)(d_origList);
++	resDesc.res.linear.desc = channelDesc;
++	resDesc.res.linear.sizeInBytes = listsize*sizeof(float);
++	cudaTextureDesc texDesc = {};
++	texDesc.addressMode[0] = cudaAddressModeWrap;
++	texDesc.addressMode[1] = cudaAddressModeWrap;
++	texDesc.filterMode = cudaFilterModePoint;
++	texDesc.readMode = cudaReadModeElementType;
++	texDesc.normalizedCoords = false;
++	cudaCreateTextureObject(&tex_outloop, &resDesc, &texDesc, NULL);
++	mergeSortFirst<<< grid, threads >>>(tex_outloop, d_resultList, listsize);
+ 
+ 	////////////////////////////////////////////////////////////////////////////
+ 	// Then, go level by level
+@@ -82,8 +95,11 @@ float4* runMergeSort(int listsize, int divisions,
+ 		float4 *tempList = d_origList; 
+ 		d_origList = d_resultList; 
+ 		d_resultList = tempList; 
+-		cudaBindTexture(0,tex, d_origList, channelDesc, listsize*sizeof(float)); 
+-		mergeSortPass <<< grid, threads >>>(d_resultList, nrElems, threadsPerDiv); 
++		cudaTextureObject_t tex = 0;
++		//cudaBindTexture(0,tex, d_origList, channelDesc, listsize*sizeof(float)); 
++		cudaCreateTextureObject(&tex, &resDesc, &texDesc, NULL);
++
++		mergeSortPass <<< grid, threads >>>(tex, d_resultList, nrElems, threadsPerDiv); 
+ 		nrElems *= 2; 
+ 		floatsperthread = (nrElems*4); 
+ 		if(threadsPerDiv == 1) break; 
+diff --git a/cuda/hybridsort/mergesort_kernel.cu b/cuda/hybridsort/mergesort_kernel.cu
+index 1cb2a80..899958e 100755
+--- a/cuda/hybridsort/mergesort_kernel.cu
++++ b/cuda/hybridsort/mergesort_kernel.cu
+@@ -4,8 +4,11 @@
+ #include <stdio.h>
+ 
+ // declare texture reference for 1D float texture
+-texture<float4, 1, cudaReadModeElementType> tex;
+-texture<float, 1, cudaReadModeElementType> txt; 
++// declare in place
++//cudaTextureObject_t tex = 0;
++//cudaTextureObject_t txt = 0;
++//texture<float4, 1, cudaReadModeElementType> tex;
++//texture<float, 1, cudaReadModeElementType> txt; 
+ 
+ __device__ float4 sortElem(float4 r) {
+ 	float4 nr;
+@@ -52,20 +55,20 @@ __constant__ int finalStartAddr[DIVISIONS + 1];
+ __constant__ int nullElems[DIVISIONS]; 
+ 
+ __global__ void
+-mergeSortFirst(float4 *result, int listsize) 
++mergeSortFirst(cudaTextureObject_t tex, float4 *result, int listsize) 
+ {
+     // Block index
+     int bx = blockIdx.x;
+     // Thread index
+     //int tx = threadIdx.x;
+ 		if(bx*blockDim.x + threadIdx.x < listsize/4){
+-			float4 r = tex1Dfetch(tex, (int)(bx*blockDim.x + threadIdx.x));
++			float4 r = tex1D<float4>(tex, (int)(bx*blockDim.x + threadIdx.x));
+ 			result[bx * blockDim.x + threadIdx.x] = sortElem(r); 
+ 		}
+ }
+ 
+ __global__ void
+-mergeSortPass(float4 *result, int nrElems, int threadsPerDiv) 
++mergeSortPass(cudaTextureObject_t tex, float4 *result, int nrElems, int threadsPerDiv) 
+ {
+ 	int tid = (blockIdx.x * blockDim.x) + threadIdx.x; 
+ 	// The division to work on
+@@ -83,7 +86,7 @@ mergeSortPass(float4 *result, int nrElems, int threadsPerDiv)
+ 	if(Bstart >= constStartAddr[division + 1]){
+ 		for(int i=0; i<(constStartAddr[division + 1] - Astart); i++)
+ 		{
+-			resStart[i] = tex1Dfetch(tex, Astart + i); 
++			resStart[i] = tex1D<float4>(tex, Astart + i); 
+ 		}
+ 		return; 
+ 	}
+@@ -92,8 +95,8 @@ mergeSortPass(float4 *result, int nrElems, int threadsPerDiv)
+ 	int bidx = 0; 
+ 	int outidx = 0; 
+ 	float4 a, b;
+-	a = tex1Dfetch(tex, Astart + aidx);  
+-	b = tex1Dfetch(tex, Bstart + bidx); 
++	a = tex1D<float4>(tex, Astart + aidx);  
++	b = tex1D<float4>(tex, Bstart + bidx); 
+ 	
+ 	while(true)//aidx < nrElems/2)// || (bidx < nrElems/2  && (Bstart + bidx < constEndAddr[division])))
+ 	{
+@@ -101,8 +104,8 @@ mergeSortPass(float4 *result, int nrElems, int threadsPerDiv)
+ 		 * For some reason, it's faster to do the texture fetches here than
+ 		 * after the merge
+ 		 */
+-		float4 nextA = tex1Dfetch(tex, Astart + aidx + 1); 
+-		float4 nextB = tex1Dfetch(tex, Bstart + bidx + 1); 
++		float4 nextA = tex1D<float4>(tex, Astart + aidx + 1); 
++		float4 nextB = tex1D<float4>(tex, Bstart + bidx + 1); 
+ 
+ 		float4 na = getLowest(a,b); 
+ 		float4 nb = getHighest(a,b); 
