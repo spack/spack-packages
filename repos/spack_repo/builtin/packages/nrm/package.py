@@ -18,7 +18,7 @@ class Nrm(PythonPackage):
     depends_on("py-six", type=("build", "run"))
     depends_on("py-pyzmq@17.1.2:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-tornado@5.1.1", type=("build", "run"))
+    depends_on("py-tornado@5.1.1:", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-jsonschema@2.6.0:", type=("build", "run"))
     depends_on("py-warlock", type=("build", "run"))
