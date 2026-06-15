@@ -25,12 +25,16 @@ class Noahmp(CMakePackage):
 
     version("5.2.1", sha256="4c9d4c6ebb2ccf707317933d704fe6f6d764f56a72aff1a7b35164e4ec80b4ed")
     version("5.2.0", sha256="3930250a4459859fbeb5583939fa680d84567764b4272fdb65dcb2f8836439fb")
+    version("5.1.1", sha256="d3a2a2429b3edb32366e2810e7bc401cc925e6112708407023eef970deaa6bd6")
+    version("5.1.0", sha256="45e1dd87eeffb56125a397fe82106185d989104ea9c1172d907b318c4aca7493")
 
     # Noah-MP has no top-level build system: it is meant to be compiled inside a
     # host model. The drivers/erf tree is the only one that provides a
-    # standalone, installable CMake project (with install/export rules from
-    # v5.2.0 on), so it is used as the build root here. The resulting library
+    # standalone, installable CMake project (added with install/export rules in
+    # v5.1.0), so it is used as the build root here. The resulting library
     # bundles the shared physics (src/, utility/) with the ERF coupling layer.
+    # Earlier releases (5.0.0 and the 3.x series) lack drivers/erf entirely and
+    # cannot be built this way.
     root_cmakelists_dir = "drivers/erf"
 
     variant("shared", default=True, description="Build a shared library")
