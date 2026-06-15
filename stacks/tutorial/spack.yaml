@@ -14,9 +14,9 @@ spack:
   specs:
   - group: compiler
     specs:
-    - gcc@12 ~binutils
+    - gcc@16 build_type=Release +profiled +strip
 
-  - group: "gcc@11 specs"
+  - group: "gcc@15 specs"
     specs:
     - zlib-ng@2.2.4
     - zlib-ng@2.0.7
@@ -29,19 +29,19 @@ spack:
     - trilinos ^openmpi
     - trilinos +hdf5 ^hdf5+hl+mpi ^mpich
     - mpileaks
-    - lmod@8.7.18
+    - lmod@8.7.67
     - environment-modules
     - macsio@1.1+scr ^scr@2.0.0~fortran ^silo~fortran ^hdf5~fortran
-    - julia@1.9 ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
+    # - julia ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
     - vim
     override:
       packages:
         c:
-          prefer: [gcc@11]
+          prefer: [gcc@15]
         cxx:
-          prefer: [gcc@11]
+          prefer: [gcc@15]
         fortran:
-          prefer: [gcc@11]
+          prefer: [gcc@15]
 
   - group: scalapacks
     needs: [compiler]
@@ -55,16 +55,16 @@ spack:
     override:
       packages:
         c:
-          prefer: [gcc@12]
+          prefer: [gcc@16]
         cxx:
-          prefer: [gcc@12]
+          prefer: [gcc@16]
         fortran:
-          prefer: [gcc@12]
+          prefer: [gcc@16]
   # Miscellaneous specs use the default group
-  - zlib-ng@2.2.4%gcc@10
-  - matrix:
-    - [ zlib-ng@2.2.4, tcl ^zlib-ng@2.0.7 ]
-    - [ '%clang@14' ]
+  # - zlib-ng@2.2.4%gcc@10
+  #- matrix:
+  #  - [ zlib-ng@2.2.4, tcl ^zlib-ng@2.0.7 ]
+  #  - [ '%clang@14' ]
 
   concretizer:
     unify: false
@@ -73,7 +73,7 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/tutorial-ubuntu-22.04:v2023-10-30
+          name: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
           entrypoint: ['']
 
   cdash:
