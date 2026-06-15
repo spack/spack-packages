@@ -173,7 +173,7 @@ class Rodinia(MakefilePackage, CudaPackage):
         # it has so many recipes invoking ar on the same file.
         # Try grep -rn "ru meschach.a" . inside cuda/leukocyte.
         filter_file(
-            "cd cuda/leukocyte;          make",
+            r"cd cuda/leukocyte;\s+make",
             "cd cuda/leukocyte;          make -j1",
             "Makefile"
         )
@@ -239,4 +239,6 @@ class Rodinia(MakefilePackage, CudaPackage):
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         install_tree("bin/linux/cuda", prefix.bin)
+        # make data available as well.
+        install_tree("data", prefix.data)
 
