@@ -261,10 +261,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="+sirius",
     )
 
-    variant("gauxc", 
-            default=False,
-            description="Enable gauxc support",
-            when="@2026.2:")
+    variant("gauxc", default=False, description="Enable gauxc support", when="@2026.2:")
 
     conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
