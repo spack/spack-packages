@@ -5,8 +5,48 @@
 import os
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
+from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
+
+
+class Geant4DataPackage(Package):
+    """Base class to be used by each dependency in Geant4Data"""
+
+    #: URL to parent directory for dataset downloads
+    datasets_url = "https://geant4-data.web.cern.ch/geant4-data/datasets"
+
+    #: Directory name inside 'share' (e.g., G4EMLOW) before version is appended
+    g4dirname: Optional[str] = None
+
+    #: G4-prefixed environment variable (e.g., G4LEDATA)
+    g4envvar: Optional[str] = None
+
+    @property
+    def datadir(self):
+        """Data directory at :file:`share/data/{g4dirname}{version}`"""
+        s = self.spec
+        assert isinstance(self.g4dirname, str)
+        return join_path(s.prefix.share, "data", f"{self.g4dirname}{s.version}")
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        assert isinstance(self.g4envvar, str)
+        env.set(self.g4envvar, self.datadir)
+
+    def url_for_version(self, version):
+        """Default version string.
+
+        Some data directories need to override this due to an extra "G4" being needed.
+        """
+        return f"{self.datasets_url}/{self.g4dirname}.{version}.tar.gz"
+
+    def install(self, spec, prefix):
+        """Install by copying to the data prefix."""
+        datadir = self.datadir
+        mkdirp(datadir)
+        install_tree(self.stage.source_path, datadir)
 
 
 class Geant4Data(BundlePackage):
@@ -235,11 +275,12 @@ class Geant4Data(BundlePackage):
     def install(self, spec, prefix):
         with working_dir(self.datadir, create=True):
             for s in spec.dependencies():
-                if not s.name.startswith("g4"):
+                if not isinstance(s.package, Geant4DataPackage):
+                    if s.name.startswith("g4"):
+                        raise InstallError(
+                            f"Data dependency `{s.name}` must be a Geant4DataPackage"
+                        )
                     continue
 
-                if not hasattr(s.package, "g4datasetname"):
-                    raise InstallError(f"Dependency `{s.name}` does not expose `g4datasetname`")
-
-                d = "{0}/data/{1}".format(s.prefix.share, s.package.g4datasetname)
+                d = s.package.datadir
                 symlink(d, os.path.basename(d))

@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4photonevaporation(Package):
+class G4photonevaporation(Geant4DataPackage):
     """Geant4 data for photon evaporation"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4PhotonEvaporation.4.3.2.tar.gz"
+    url = Geant4DataPackage.datasets_url + "/G4PhotonEvaporation.4.3.2.tar.gz"
 
     tags = ["hep"]
 
@@ -28,25 +28,14 @@ class G4photonevaporation(Package):
     version("4.3.2", sha256="d4641a6fe1c645ab2a7ecee09c34e5ea584fb10d63d2838248bfc487d34207c7")
     version("3.0", sha256="c76a843672eca21110e97a274a6b5cd9a58b66f35235301c8e1b162926e0e7cb")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4LEVELGAMMADATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4LEVELGAMMADATA", install_path)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "PhotonEvaporation"
 
     def url_for_version(self, version):
         """Handle version string."""
-        return (
-            "http://geant4-data.web.cern.ch/geant4-data/datasets/G4PhotonEvaporation.%s.tar.gz"
-            % version
-        )
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "PhotonEvaporation{0}".format(spec.version)
+        datasets_url = Geant4DataPackage.datasets_url
+        prefix = "G4"
+        return f"{datasets_url}/{prefix}{self.g4dirname}.{version}.tar.gz"

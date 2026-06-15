@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4ndl(Package):
+class G4ndl(Geant4DataPackage):
     """Geant4 Neutron data files with thermal cross sections"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4NDL.4.5.tar.gz"
+    url = Geant4DataPackage.datasets_url + "/G4NDL.4.5.tar.gz"
 
     tags = ["hep"]
 
@@ -24,22 +24,8 @@ class G4ndl(Package):
     version("4.5", sha256="cba928a520a788f2bc8229c7ef57f83d0934bb0c6a18c31ef05ef4865edcdf8e")
     version("4.4", sha256="e9fe8800566a83ccaf9b5229a1fa1d2cd24530bbd2e9fcb96eb6b5b117233071")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4NEUTRONHPDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4NEUTRONHPDATA", install_path)
-
-    def url_for_version(self, version):
-        """Handle version string."""
-        return "http://geant4-data.web.cern.ch/geant4-data/datasets/G4NDL.%s.tar.gz" % version
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "G4NDL{0}".format(spec.version)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "G4NDL"

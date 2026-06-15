@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4channeling(Package):
+class G4channeling(Geant4DataPackage):
     """Geant4 data for solid state crystal channeling"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4CHANNELING.1.0.tar.gz"
+    url = Geant4DataPackage.datasets_url + "/G4CHANNELING.1.0.tar.gz"
 
     tags = ["hep"]
 
@@ -22,21 +22,8 @@ class G4channeling(Package):
     version("2.0", sha256="662159288644e07b79d7fe091efbebba52b59546b3dc6f5d285b976ad12f2d06")
     version("1.0", sha256="203e3c69984ca09acd181a1d31a9b0efafad4bc12e6c608f0b05e695120d67f2")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4CHANNELINGDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4CHANNELINGDATA", install_path)
-
-    def url_for_version(self, version):
-        """Handle version string."""
-        return f"http://geant4-data.web.cern.ch/geant4-data/datasets/G4CHANNELING.{version}.tar.gz"
-
-    @property
-    def g4datasetname(self):
-        return f"G4CHANNELING{self.spec.version}"
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "G4CHANNELING"

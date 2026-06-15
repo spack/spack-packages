@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4emlow(Package):
+class G4emlow(Geant4DataPackage):
     """Geant4 data files for low energy electromagnetic processes."""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4EMLOW.6.50.tar.gz"
+    url = Geant4DataPackage.datasets_url + "/G4EMLOW.6.50.tar.gz"
 
     tags = ["hep"]
 
@@ -34,22 +34,8 @@ class G4emlow(Package):
     version("6.50", sha256="c97be73fece5fb4f73c43e11c146b43f651c6991edd0edf8619c9452f8ab1236")
     version("6.35", sha256="1564045a0acad344c8d432cd48c2c3bb2e051a81ab3099a84e0f56ba0fe82cec")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4LEDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4LEDATA", install_path)
-
-    def url_for_version(self, version):
-        """Handle version string."""
-        return "https://geant4-data.web.cern.ch/geant4-data/datasets/G4EMLOW.%s.tar.gz" % version
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "G4EMLOW{0}".format(spec.version)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "G4EMLOW"
