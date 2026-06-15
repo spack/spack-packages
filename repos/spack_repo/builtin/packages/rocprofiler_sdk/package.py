@@ -228,11 +228,11 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
-    depends_on(f"rocdecode@7.2.3 amdgpu_target={tgt}", when=f"@7.13 amdgpu_target={tgt}")
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
         sha256="05a71386d12d7fc98a40c025dc65a804556e01f381d1101ea244f35f29edd3d8",
