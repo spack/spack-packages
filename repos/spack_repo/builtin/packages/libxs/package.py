@@ -17,7 +17,9 @@ class Libxs(CMakePackage):
     maintainers("hfp", "mkrack", "mtaillefumier")
 
     homepage = "hhttps://libxs.readthedocs.io/en/latest"
-    url = "https://github.com/hfp/libxs/archiv/libxs-ab416130f8c9f7edb8c1bf3d3abaf402f61d0fe0.tar.gz"
+    url = (
+        "https://github.com/hfp/libxs/archiv/libxs-ab416130f8c9f7edb8c1bf3d3abaf402f61d0fe0.tar.gz"
+    )
     git = "https://github.com/hfp/libxs.git"
 
     license("BSD-3-Clause", checked_by="mkrack")
@@ -27,9 +29,7 @@ class Libxs(CMakePackage):
 
     variant("fortran", default=False, description="Build Fortran module interface")
     variant("pic", default=True, description="Build position independent code")
-    variant(
-        "shared", default=False, description="Build shared libraries (otherwise static)"
-    )
+    variant("shared", default=False, description="Build shared libraries (otherwise static)")
     variant("libxsmm", default=False, description="Enable libxsmm dependency")
 
     depends_on("cmake@3.13:", type="build")

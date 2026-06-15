@@ -74,9 +74,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("tests", default=False, description="Build DBCSR unit tests")
-    variant(
-        "tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2"
-    )
+    variant("tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2")
     variant("mpi", default=True, description="Compile with MPI")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("shared", default=True, description="Build shared library")
@@ -100,9 +98,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("mpi_f08", default=False, when="@2.6:", description="Use mpi F08 module")
 
-    variant(
-        "g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP"
-    )
+    variant("g2g", default=False, when="@:2.8", description="GPU-aware MPI with CUDA/HIP")
     conflicts("+g2g", when="~cuda ~rocm", msg="GPU-aware MPI requires +cuda or +rocm")
 
     depends_on("c", type="build")  # generated
@@ -132,9 +128,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("opencl", when="+opencl")
     opencl_loader_header_version = "2022.10.24"
     depends_on(f"opencl-c-headers@{opencl_loader_header_version}:", when="+opencl")
-    requires(
-        f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl"
-    )
+    requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl")
 
     # All examples require MPI
     conflicts("+examples", when="~mpi", msg="Examples require MPI")
@@ -205,20 +199,12 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         for directory, subdirectory, files in os.walk(os.getcwd()):
             for i in files:
                 file_path = os.path.join(directory, i)
-                filter_file(
-                    "USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path
-                )
-                filter_file(
-                    "USE ISO_FORTRAN_ENV", "USE,INTRINSIC :: ISO_FORTRAN_ENV", file_path
-                )
+                filter_file("USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path)
+                filter_file("USE ISO_FORTRAN_ENV", "USE,INTRINSIC :: ISO_FORTRAN_ENV", file_path)
                 filter_file("USE omp_lib", "USE,INTRINSIC :: omp_lib", file_path)
                 filter_file("USE OMP_LIB", "USE,INTRINSIC :: OMP_LIB", file_path)
-                filter_file(
-                    "USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path
-                )
-                filter_file(
-                    "USE iso_fortran_env", "USE,INTRINSIC :: iso_fortran_env", file_path
-                )
+                filter_file("USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path)
+                filter_file("USE iso_fortran_env", "USE,INTRINSIC :: iso_fortran_env", file_path)
 
     def cmake_args(self):
         spec = self.spec

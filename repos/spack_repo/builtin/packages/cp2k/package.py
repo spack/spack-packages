@@ -91,18 +91,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         "2022.1",
         sha256="2c34f1a7972973c62d471cd35856f444f11ab22f2ff930f6ead20f3454fd228b",
     )
-    version(
-        "9.1", sha256="fedb4c684a98ad857cd49b69a3ae51a73f85a9c36e9cb63e3b02320c74454ce6"
-    )
-    version(
-        "8.2", sha256="2e24768720efed1a5a4a58e83e2aca502cd8b95544c21695eb0de71ed652f20a"
-    )
-    version(
-        "8.1", sha256="7f37aead120730234a60b2989d0547ae5e5498d93b1e9b5eb548c041ee8e7772"
-    )
-    version(
-        "7.1", sha256="ccd711a09a426145440e666310dd01cc5772ab103493c4ae6a3470898cd0addb"
-    )
+    version("9.1", sha256="fedb4c684a98ad857cd49b69a3ae51a73f85a9c36e9cb63e3b02320c74454ce6")
+    version("8.2", sha256="2e24768720efed1a5a4a58e83e2aca502cd8b95544c21695eb0de71ed652f20a")
+    version("8.1", sha256="7f37aead120730234a60b2989d0547ae5e5498d93b1e9b5eb548c041ee8e7772")
+    version("7.1", sha256="ccd711a09a426145440e666310dd01cc5772ab103493c4ae6a3470898cd0addb")
     version("master", branch="master", submodules=True)
 
     generator("ninja")
@@ -127,9 +119,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         default=True,
         description="Use libint, required for HFX (and possibly others)",
     )
-    variant(
-        "libxc", default=True, description="Support additional functionals via libxc"
-    )
+    variant("libxc", default=True, description="Support additional functionals via libxc")
     variant(
         "pexsi",
         default=False,
@@ -177,9 +167,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="@2026.2: build_system=cmake",
     )
     variant("quip", default=False, when="@:2025.2", description="Enable quip support")
-    variant(
-        "dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support"
-    )
+    variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
     variant(
         "smeagol",
@@ -187,12 +175,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable libsmeagol support",
         when="@2025.2:",
     )
-    variant(
-        "dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:"
-    )
-    variant(
-        "grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:"
-    )
+    variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
+    variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
     variant(
         "grid_gpu",
         default=False,
@@ -263,9 +247,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="+sirius",
     )
     variant("deepmd", default=False, description="Enable DeepMD-kit support")
-    variant(
-        "tblite", default=False, description="Enable tblite support", when="@2025.2:"
-    )
+    variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
     variant(
         "nlcg",
         default=False,
@@ -353,9 +335,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
             "intel-oneapi-mkl+gfortran threads=openmp",
             when="^[virtuals=blas] intel-oneapi-mkl %gcc",
         )
-        depends_on(
-            "intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl"
-        )
+        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         # The Cray compiler wrappers will automatically add libsci_mp with
         # -fopenmp. Since CP2K unconditionally links blas/lapack/scalapack
         # we have to be consistent.
@@ -410,9 +390,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mpi@3:", when="@2023.1:")
         depends_on("scalapack")
         depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
-        depends_on(
-            "intel-oneapi-mkl +cluster", when="^[virtuals=scalapack] intel-oneapi-mkl"
-        )
+        depends_on("intel-oneapi-mkl +cluster", when="^[virtuals=scalapack] intel-oneapi-mkl")
         conflicts("~mpi_f08", when="^mpich@4.1:")
 
     with when("+cosma"):
@@ -541,9 +519,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         msg="Please use AOCC 4.0+ that better support modern Fortran features CP2K requires",
     )
 
-    conflicts(
-        "~openmp", when="@8:", msg="Building without OpenMP is not supported in CP2K 8+"
-    )
+    conflicts("~openmp", when="@8:", msg="Building without OpenMP is not supported in CP2K 8+")
 
     # We only support specific cuda_archs for which we have parameter files
     # for optimal kernels. Note that we don't override the cuda_archs property
@@ -648,9 +624,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
             for directory, subdirectory, files in os.walk(os.getcwd()):
                 for i in files:
                     file_path = os.path.join(directory, i)
-                    filter_file(
-                        "USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path
-                    )
+                    filter_file("USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path)
                     filter_file(
                         "USE ISO_FORTRAN_ENV",
                         "USE,INTRINSIC :: ISO_FORTRAN_ENV",
@@ -658,9 +632,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
                     )
                     filter_file("USE omp_lib", "USE,INTRINSIC :: omp_lib", file_path)
                     filter_file("USE OMP_LIB", "USE,INTRINSIC :: OMP_LIB", file_path)
-                    filter_file(
-                        "USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path
-                    )
+                    filter_file("USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path)
                     filter_file(
                         "USE iso_fortran_env",
                         "USE,INTRINSIC :: iso_fortran_env",
@@ -812,12 +784,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             fcflags.append("-I" + join_path(spec["pexsi"].prefix, "fortran"))
             libs += [
                 join_path(spec["pexsi"].libs.directories[0], "libpexsi.a"),
-                join_path(
-                    spec["superlu-dist"].libs.directories[0], "libsuperlu_dist.a"
-                ),
-                join_path(
-                    spec["parmetis"].libs.directories[0], f"libparmetis.{dso_suffix}"
-                ),
+                join_path(spec["superlu-dist"].libs.directories[0], "libsuperlu_dist.a"),
+                join_path(spec["parmetis"].libs.directories[0], f"libparmetis.{dso_suffix}"),
                 join_path(spec["metis"].libs.directories[0], f"libmetis.{dso_suffix}"),
             ]
 
@@ -904,9 +872,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     "-D__USE_CP2K_TRACE",
                 ]
             )
-            fcflags.extend(
-                ["-free", "-fpp", "-diag-disable 8290,8291,10010,10212,11060"]
-            )
+            fcflags.extend(["-free", "-fpp", "-diag-disable 8290,8291,10010,10212,11060"])
 
         # FFTW, LAPACK, BLAS
         lapack = spec["lapack"].libs
@@ -933,18 +899,12 @@ class MakefileBuilder(makefile.MakefileBuilder):
             cppflags.extend(["-D__parallel", "-D__SCALAPACK"])
 
             if spec["mpi"].name == "intel-oneapi-mpi":
-                mpi = [
-                    join_path(spec["intel-oneapi-mpi"].libs.directories[0], "libmpi.so")
-                ]
+                mpi = [join_path(spec["intel-oneapi-mpi"].libs.directories[0], "libmpi.so")]
             else:
                 mpi = spec["mpi:cxx"].libs
 
             if spec["scalapack"].name == "intel-oneapi-mkl":
-                mpi_impl = (
-                    "openmpi"
-                    if spec["mpi"].name in ["openmpi", "hpcx-mpi"]
-                    else "intelmpi"
-                )
+                mpi_impl = "openmpi" if spec["mpi"].name in ["openmpi", "hpcx-mpi"] else "intelmpi"
                 scalapack = [
                     join_path(
                         spec["intel-oneapi-mkl"].libs.directories[0],
@@ -968,9 +928,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
             if spec.satisfies("^wannier90"):
                 cppflags.append("-D__WANNIER90")
-                wannier = join_path(
-                    spec["wannier90"].libs.directories[0], "libwannier.a"
-                )
+                wannier = join_path(spec["wannier90"].libs.directories[0], "libwannier.a")
                 libs.append(wannier)
 
         gpuver = ""
@@ -1039,9 +997,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             gpuver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
 
         if spec.satisfies("smm=libsmm"):
-            lib_dir = join_path(
-                "lib", self.makefile_architecture, self.makefile_version
-            )
+            lib_dir = join_path("lib", self.makefile_architecture, self.makefile_version)
             mkdirp(lib_dir)
             try:
                 copy(env["LIBSMM_PATH"], join_path(lib_dir, "libsmm.a"))
@@ -1078,9 +1034,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 mkf.write("include {0}\n".format(self.pkg["plumed"].plumed_inc))
 
             mkf.write("\n# COMPILER, LINKER, TOOLS\n\n")
-            mkf.write(
-                "FC  = {0}\nCC  = {1}\nCXX = {2}\nLD  = {3}\n".format(fc, cc, cxx, fc)
-            )
+            mkf.write("FC  = {0}\nCC  = {1}\nCXX = {2}\nLD  = {3}\n".format(fc, cc, cxx, fc))
 
             if spec.satisfies("%intel"):
                 intel_bin_dir = ancestor(pkg.compiler.cc)
@@ -1176,9 +1130,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @property
     def makefile(self):
-        makefile_basename = ".".join(
-            [self.makefile_architecture, self.makefile_version]
-        )
+        makefile_basename = ".".join([self.makefile_architecture, self.makefile_version])
         return join_path("arch", makefile_basename)
 
     @property
@@ -1220,9 +1172,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         to generate and override entire libcp2k.pc.
         """
         pkgconfig_file = join_path(self.prefix.lib.pkgconfig, "libcp2k.pc")
-        filter_file(
-            r"(^includedir=).*", r"\1{0}".format(self.prefix.include), pkgconfig_file
-        )
+        filter_file(r"(^includedir=).*", r"\1{0}".format(self.prefix.include), pkgconfig_file)
         filter_file(r"(^libdir=).*", r"\1{0}".format(self.prefix.lib), pkgconfig_file)
 
         with open(pkgconfig_file, "r+") as handle:
@@ -1233,9 +1183,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             content += " " + self.spec["fftw-api"].libs.ld_flags
 
             fftw = self.spec["fftw-api"]
-            if fftw.name in ["fftw", "amdfftw", "cray-fftw"] and fftw.satisfies(
-                "+openmp"
-            ):
+            if fftw.name in ["fftw", "amdfftw", "cray-fftw"] and fftw.satisfies("+openmp"):
                 content += " -lfftw3_omp"
 
             content += "\n"
@@ -1253,9 +1201,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
 
         if spec.satisfies("+cuda"):
-            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies(
-                "cuda_arch=none"
-            ):
+            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
                 raise InstallError("CP2K supports only one cuda_arch at a time.")
             else:
                 gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
@@ -1379,9 +1325,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_BLAS_FOUND", True),
                     self.define("CP2K_BLAS_LINK_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_SCALAPACK_FOUND", True),
-                    self.define(
-                        "CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include
-                    ),
+                    self.define("CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include),
                     self.define("CP2K_BLAS_VENDOR", "CUSTOM"),
                     self.define("CP2K_SCALAPACK_VENDOR", "GENERIC"),
                     self.define(
