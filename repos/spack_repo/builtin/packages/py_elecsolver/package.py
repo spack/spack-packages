@@ -19,7 +19,7 @@ class PyElecsolver(PythonPackage):
     version("2.0.1", sha256="126b02e90e01405109ddd52255a43015d5e0e634945c46baa13c6d41d0e4e05e")
 
     with default_args(type="build"):
-        depends_on("py-setuptools")
+        depends_on("py-setuptools@:80")
     # Python dependencies
     with default_args(type=("run")):
         depends_on("python@3.9:")
