@@ -55,11 +55,10 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # Don't need this variant now as CUDA is always required.
     #variant("cuda", default=True, description="build using CUDA (required)")
 
-    # Do not declare these dependencies unless default compiler fails to work.
-    # They may pull up unexpected compilers instead of the preferred compiler
-    # by Spack.
-    #depends_on("c", type="build")
-    #depends_on("cxx", type="build")
+	# Allows one to specify the compilers to use. Please do specify it
+	# explicitly if the default is ambiguous.
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # cuda-samples changed build systems starting with 12.8
     build_system(
