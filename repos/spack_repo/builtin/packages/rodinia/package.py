@@ -28,12 +28,14 @@ class Rodinia(MakefilePackage, CudaPackage):
 
 	# Make it possible for us to specify compiler version with,
 	# for example, %gcc@12.4.0, so that we can use an older compiler
-	# for the old stype C/C++ code.
+	# for the old style C/C++ code.
 	depends_on("c", type="build")
 	depends_on("cxx", type="build")
 
 	# Allows these to be disabled, since they use removed CUDA syntax for
 	# many things than some simple edits here can fix.
+	# Now, they ARE FIXED by the patches.
+	# Only disable them if you don't want the patches.
 	variant("kmeans", default=False, description="enable kmeans")
 	variant("leukocyte", default=False, description="enable leukocyte")
 	variant("mummergpu", default=False, description="enable mummergpu")
@@ -56,6 +58,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 	#patch("pie.patch")
 	patch("kmeans.patch")
 	patch("leukocyte.patch")
+	patch("mummergpu.patch")
 
 	def edit(self, spec, prefix):
 		# set cuda paths
@@ -174,7 +177,8 @@ class Rodinia(MakefilePackage, CudaPackage):
 			"Makefile"
 		)
 
-		# Fix outdated CUDA syntax.
+		# Fix outdated CUDA syntax that can be easily fixed without applying
+		# patches.
 		if self.spec.satisfies("%cuda@12.0:"):
 			for cuda_dir, _, files in os.walk(
 				join_path(self.stage.source_path, "cuda")
@@ -198,8 +202,7 @@ class Rodinia(MakefilePackage, CudaPackage):
 						os.path.join(cuda_dir, fp)
 					)
 			
-			# Temporarily disable these, if variant=False, as the many CUDA
-			# features here need to be ported to the new API.
+			# Allow these to be disabled by variants.
 			if (self.spec.satisfies("-kmeans")):
 				filter_file(
 					"cd cuda/kmeans",
