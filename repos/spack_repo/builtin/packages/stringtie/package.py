@@ -16,6 +16,7 @@ class Stringtie(MakefilePackage):
 
     license("MIT")
 
+    version("3.0.3", sha256="cb473760912a7a23b09232171902b57a973ca791510c526a7a60f23616008ec8")
     version("3.0.0", sha256="c8d66f7c76965df112de4d5fe24f558a63b4e72b3b2286b9172b13aa8f0aa9f5")
     version("2.2.1", sha256="19592aa37e293f4dcd684a4c6e0a1439ee34876d9f22944fb4edceba8c09631b")
     version("1.3.4d", sha256="0134c0adc264efd31a1df4301b33bfcf3b3fe96bd3990ce3df90819bad9af968")
