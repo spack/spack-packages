@@ -439,6 +439,36 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # Assumes build-time globals have been set already
         return spack_cxx
 
+    def get_clang_rt_library(self):
+        """Find the clang runtime library for ROCm with relocatable device code.
+
+        Returns the path to libclang_rt.builtins-x86_64.a by running
+        amdclang++ --print-resource-dir and searching for the library.
+        """
+        import llnl.util.filesystem as fs
+
+        # Get the amdclang++ compiler
+        amdclang = join_path(self.spec["hip"].prefix.bin, "amdclang++")
+
+        # Run amdclang++ --print-resource-dir to get the resource directory
+        try:
+            output = Executable(amdclang)("--print-resource-dir", output=str, error=str)
+            resource_dir = output.strip()
+
+            # Search for libclang_rt.builtins* under the resource directory
+            clang_rt_lib = fs.find_first(resource_dir, "libclang_rt.builtins*")
+
+            if clang_rt_lib:
+                return clang_rt_lib
+            else:
+                raise RuntimeError(
+                    f"Could not find libclang_rt.builtins* in {resource_dir}"
+                )
+        except Exception as e:
+            raise RuntimeError(
+                f"Failed to determine clang runtime library path: {e}"
+            )
+
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
@@ -576,6 +606,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # TODO deprecation v4: remove
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
+
+        # Set CLANG_RT_LIBRARY for ROCm with relocatable device code
+        if spec.satisfies("+rocm+hip_relocatable_device_code"):
+            clang_rt_lib = self.get_clang_rt_library()
+            options.append(self.define("CLANG_RT_LIBRARY", clang_rt_lib))
 
         # Remove duplicate options
         return dedupe(options)
