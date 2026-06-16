@@ -46,7 +46,6 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
 
     depends_on("python@3.8:")
     depends_on("py-pip", type="run")
-    depends_on("rocprofiler-sdk", when="@7.13:")
     depends_on("py-astunparse@1.6.2", type=("build", "run"))  # wants exact version
     depends_on("py-colorlover", type=("build", "run"))
     depends_on("py-pyyaml")
@@ -65,7 +64,31 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
     depends_on("py-textual", when="@7.0:")
     depends_on("py-textual-plotext", when="@7.0:")
     depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
-    depends_on("py-textual-fspicker@0.4.3:", when="@7.2:")
+    depends_on("py-textual-fspicker@0.4.3:", when="@7.1:")
+    for ver in [
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+    ]:
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "7.13.0",
+    ]:
+        depends_on("rocprofiler-sdk", when=f"@{ver}")
 
     @property
     def root_cmakelists_dir(self):
@@ -73,6 +96,13 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
             return "."
         else:
             return "projects/rocprofiler-compute"
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("@:7.0"):
+            env.set("CXX", self.spec["hip"].hipcc)
+        else:
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
 
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]

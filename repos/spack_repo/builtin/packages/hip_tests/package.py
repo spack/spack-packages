@@ -54,7 +54,7 @@ class HipTests(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("cmake", type="run")
-    depends_on("py-pyyaml", type="build")
+    depends_on("py-pyyaml", type="build", when="@7.13:")
 
     for ver in [
         "6.1.0",
