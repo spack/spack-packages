@@ -15,6 +15,8 @@ class PyPrefect(PythonPackage):
     homepage = "https://www.prefect.io/"
     pypi = "prefect/prefect-3.6.10.tar.gz"
 
+    license("Apache-2.0")
+
     version("3.6.10", sha256="b300aecdb26fde32f34c6689d29a2f9782fdcbe54107460470ba6097201e3179")
 
     depends_on("python@3.10:", type=("build", "run"))
