@@ -17,6 +17,7 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.19", sha256="88dd96a8c0464eca144fc791ae60cd31cd8ee78321e67397e25fc095c4a19aa6")
     version("1.18", sha256="3b08f5f4f9b4eb82f151a7040bfd6fe6c6fb922efe4b1659c66ea933276965e8")
     version("1.17", sha256="8f74213b56238c85a50a5329f77e06198771e70dd9a739779f4c02f65d971313")
     version("1.16", sha256="e6a1b1b589654277ee790cce3734f07876ac4ccfaecbee8afa0b649cf529cc04")
