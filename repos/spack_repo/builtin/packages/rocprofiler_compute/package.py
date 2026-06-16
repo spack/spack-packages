@@ -46,7 +46,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
 
     depends_on("python@3.8:")
     depends_on("py-pip", type="run")
-    depends_on("rocprofiler-sdk", when="@7.0:")
+    depends_on("rocprofiler-sdk", when="@7.13:")
     depends_on("py-astunparse@1.6.2", type=("build", "run"))  # wants exact version
     depends_on("py-colorlover", type=("build", "run"))
     depends_on("py-pyyaml")
