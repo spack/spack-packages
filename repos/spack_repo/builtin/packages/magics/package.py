@@ -110,6 +110,8 @@ class Magics(CMakePackage):
 
     def cmake_args(self):
         args = ["-DENABLE_ODB=OFF", "-DENABLE_SPOT=OFF", "-DENABLE_ECCODES=ON"]
+        if self.spec.satisfies("%gcc@14:"):
+            args.append("-DCMAKE_C_FLAGS=-Wno-error=incompatible-pointer-types")
 
         # magics@4.2.4:4.3.1 cannot be built without netcdf
         if "+netcdf" in self.spec or self.spec.satisfies("@4.1.0:4.3.1"):
