@@ -26,7 +26,8 @@ class RocmOpencl(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"
-        if version <= Version("7.2.3"):
+            return url.format(version)
+        elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
             return url.format(version)
         else:

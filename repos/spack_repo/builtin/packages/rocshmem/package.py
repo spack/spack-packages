@@ -22,7 +22,7 @@ class Rocshmem(ROCmLibrary, CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-6.4.0.tar.gz"
-
+            return url
         else:
             # For versions >= 7.13, use therock-{major}.{minor} tag format
             url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
