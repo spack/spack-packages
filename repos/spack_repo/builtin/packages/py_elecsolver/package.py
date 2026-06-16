@@ -28,3 +28,9 @@ class PyElecsolver(PythonPackage):
     # Optional/test deps
     depends_on("py-pytest", type="test")
     depends_on("py-python-mumps", type="test")
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def install_test(self):
+        with working_dir(self.stage.source_path):
+            python("-m", "pytest", "tests")
