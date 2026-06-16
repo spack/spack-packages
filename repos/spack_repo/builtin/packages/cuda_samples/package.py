@@ -58,6 +58,14 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # Don't know why it could build before without depending on it with gcc 14,
     # but now it can't with gcc 12.
     depends_on("mesa-glu")
+    # Cuda samples could build without each of the following, but some samples will be
+    # unavailable then.
+    variant("freeglut", default=False, description="build with freeglut.")
+    depends_on("freeglut", when="+freeglut")
+    # Can't do this now. Otherwise, spack will complain about
+    # internal_error("something depends_on a non-node")
+    #variant("freeimage", default=True, description="build with freeimage.")
+    #depends_on("freeimage", when="+freeimage")
 
     # Allows one to specify the compilers to use. Please do specify it
     # explicitly if the default is ambiguous.
@@ -84,6 +92,14 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         glu = self.spec["mesa-glu"]
         env.append_flags("CPPFLAGS", f"-I{glu.prefix.include}")
         env.append_flags("LDFLAGS", f"-L{glu.prefix.lib}")
+        if (self.spec.satisfies("+freeglut")):
+            freeglut = self.spec["freeglut"]
+            env.append_flags("CPPFLAGS", f"-I{freeglut.prefix.include}")
+            env.append_flags("CPPFLAGS", f"-I{freeglut.prefix.include}")
+        if (self.spec.satisfies("+freeimage")):
+            freeimg = self.spec["freeimage"]
+            env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
+            env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
         env.set("CUDA_PATH", self.spec["cuda"].prefix)
         env.set("SMS", self.spec.variants["cuda_arch"].value[0])
 
@@ -95,6 +111,18 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
         ]
+        if (self.spec.satisfies("+freeglut")):
+            freeglut = self.spec["freeglut"]
+            args += [
+                self.define("GLUT_INCLUDE_DIR", freeglut.prefix.include),
+                self.define("GLUT_freeglut_LIBRARY", freeglut.libs[0]),
+            ]
+        if (self.spec.satisfies("+freeimage")):
+            freeimg = self.spec["freeimage"]
+            args += [
+                self.define("FreeImage_INCLUDE_DIR", freeimg.prefix.include),
+                self.define("FreeImage_LIBRARY", freeimg.libs[0]),
+            ]
         return args
 
     # cuda-samples doesn't actually install the samples in the
@@ -103,7 +131,7 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         install_tree(
-            os.path.join(self.stage.source_path, "Samples"),
+            os.path.join(self.build_directory, "Samples"),
             prefix.bin
         )
         # Don't forget to install the common files!
@@ -120,7 +148,10 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     @when("@:12.5")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
-        install_tree("bin", prefix.bin)
+        install_tree(
+            os.path.join(self.build_directory, "bin"), 
+            prefix.bin
+        )
         # Don't forget to install the common files!
         mkdir(prefix.common)
         install_tree(
