@@ -24,6 +24,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         conditional("autotools", when="@:2.9"),
         conditional("meson", when="@3:"),
         conditional("cmake", when="@10:"),
+        # TODO: CMake is considered "community-supported" -- this should be noted somehow...
         default="meson" if not IS_WINDOWS else "cmake",
     )
 
@@ -34,6 +35,7 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
 
     maintainers("AlexanderRichert-NOAA")
 
+    version("13.2.1", sha256="6695da3eb7e1be0aa3092fe4d81433a33b47f4519259c759d729e3a9a55c1429")
     version("11.5.1", sha256="972a60a8d274d49e70361da6920c3a73dfb0fb4387f6c6811906a47ba634d8a1")
     version("11.4.1", sha256="7aafab93115eb56cdc9a931ab7d19ff60d7f2937b599d140f17236f374e32698")
     version("11.3.3", sha256="e1fbca6b32a91ae91ecd9eb2ca8d47a5bfe2b1cb2e54855ab7a0b464919ef358")
@@ -71,6 +73,9 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         deprecated=True,
     )
 
+    version("main", branch="main")
+    version("12.3.2", tag="12.3.2", commit="b42511e071162fe76102f613a6ccc009726c99af")
+
     variant("graphite2", default=False, description="enable support for graphite2 font engine")
     variant(
         "coretext",
@@ -78,7 +83,32 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         when="platform=darwin",
         description="Enable CoreText shaper backend on macOS",
     )
-    variant("shared", default=True, when="build_system=cmake", description="Build shared harfbuzz")
+    variant("shared", default=True, description="Build shared harfbuzz")
+    variant("freetype", default=True, description="Build against freetype as a dependency.")
+    variant("cairo", default=True, description="Build against cairo.")
+
+    variant("glib", default=True, description="Build against glib.")
+    conflicts("+glib", when="platform=windows")
+
+    variant("gobject", default=False,
+            when="+glib",
+            description="Enable GObject introspection")
+    conflicts("+gobject", when="platform=windows")
+
+    variant(
+        "utils",
+        default=False,
+        when="+gobject",
+        description="Build harfbuzz utils",
+    )
+    conflicts("+utils", when="platform=windows")
+
+    variant("pkg-config", default=True,
+            description="Use pkg-config for deps.")
+    conflicts("+pkg-config", when="platform=windows")
+
+    variant("zlib", default=True,
+            description="Build support for zlib.")
 
     with when("build_system=cmake"):
         with when("platform=windows"):
@@ -106,29 +136,21 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
         depends_on("meson@0.60:", when="@11.1:")
         depends_on("meson@0.55:", when="@3.2.1:")
         depends_on("meson@0.52:")
-        # harfbuzz's Meson only supports autotools based
-        # freetype
-        depends_on("freetype build_system=autotools")
-        depends_on("cairo build_system=meson")
 
-    for plat in ["linux", "darwin", "freebsd"]:
-        with when(f"platform={plat}"):
-            variant("gobject", default=False, description="Enable GObject introspection")
-            variant(
-                "utils",
-                default=False,
-                when="build_system=cmake",
-                description="Build harfbuzz utils",
-            )
-            depends_on("pkgconfig", type="build")
-            depends_on("glib")
-            depends_on("gobject-introspection")
-            depends_on("cairo+pdf+ft")
+    depends_on("freetype@2.10: harfbuzz=dynamic", when="+freetype")
+    requires("^freetype+zlib", when="+freetype+zlib")
+    depends_on("cairo+pdf", when="+cairo")
+    requires("^cairo+ft", when="+cairo+freetype")
+    requires("^cairo+zlib", when="+cairo+zlib")
+    depends_on("pkg-config", type="build", when="+pkg-config")
+    requires("+pkg-config", when="build_system=meson")
+    depends_on("glib", when="+glib")
+    depends_on("gobject-introspection", when="+gobject")
+    requires("+gobject ^cairo+gobject", when="+cairo+glib")
 
     depends_on("icu4c")
-    depends_on("freetype")
-    depends_on("zlib-api")
-    depends_on("graphite2", when="+graphite2")
+    depends_on("zlib-api", when="+zlib")
+    depends_on("graphite2@1.2:", when="+graphite2")
 
     conflicts("%intel", msg="harfbuzz-2.3.1 does not build with the Intel compiler")
 
@@ -166,20 +188,18 @@ class SetupEnvironment:
 
 class MesonBuilder(meson.MesonBuilder, SetupEnvironment):
     def meson_args(self):
-        graphite2 = "enabled" if self.pkg.spec.satisfies("+graphite2") else "disabled"
-        coretext = "enabled" if self.pkg.spec.satisfies("+coretext") else "disabled"
-        introspection = "enabled" if self.pkg.spec.satisfies("+gobject") else "disabled"
-        config_args = [
+        return [
             # disable building of gtk-doc files following #9885 and #9771
-            "-Ddocs=disabled",
-            "-Dfreetype=enabled",
-            f"-Dgraphite2={graphite2}",
-            f"-Dcoretext={coretext}",
-            f"-Dintrospection={introspection}",
+            self.define("docs", False),
+            self.enable_from_variant("zlib"),
+            self.enable_from_variant("freetype"),
+            self.enable_from_variant("cairo"),
+            self.enable_from_variant("glib"),
+            self.enable_from_variant("gobject"),
+            self.enable_from_variant("introspection", "gobject"),
+            self.enable_from_variant("graphite2"),
+            self.enable_from_variant("coretext"),
         ]
-        if IS_WINDOWS:
-            config_args.extend(["-Dcairo=disabled", "-Dglib=disabled"])
-        return config_args
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
@@ -202,21 +222,18 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
 
 class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
     def cmake_args(self):
-        use_gobject = self.spec.satisfies("+gobject")
-        args = [
+        return [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define("HB_HAVE_FREETYPE", True),
+            self.define_from_variant("HB_HAVE_FREETYPE", "freetype"),
             self.define("HB_HAVE_ICU", True),
             self.define_from_variant("HB_HAVE_GRAPHITE2", "graphite2"),
             self.define_from_variant("HB_HAVE_UNISCRIBE", "uniscribe"),
             self.define_from_variant("HB_HAVE_GDI", "gdi"),
             self.define_from_variant("HB_HAVE_DIRECTWRITE", "directwrite"),
             self.define_from_variant("HB_HAVE_CORETEXT", "coretext"),
-            self.define("HB_HAVE_GLIB", use_gobject),
-            self.define("HB_HAVE_CAIRO", use_gobject),
-            self.define("HB_BUILD_UTILS", use_gobject and self.spec.satisfies("+utils")),
-            self.define("HB_HAVE_GOBJECT", use_gobject),
-            self.define("HB_HAVE_INTROSPECTION", use_gobject),
+            self.define_from_variant("HB_HAVE_GLIB", "glib"),
+            self.define_from_variant("HB_HAVE_CAIRO", "cairo"),
+            self.define_from_variant("HB_BUILD_UTILS", "utils"),
+            self.define_from_variant("HB_HAVE_GOBJECT", "gobject"),
+            self.define_from_variant("HB_HAVE_INTROSPECTION", "gobject"),
         ]
-
-        return args

@@ -4,11 +4,12 @@
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
+from spack_repo.builtin.build_systems.meson import MesonBuilder, MesonPackage
 
 from spack.package import *
 
 
-class Freetype(AutotoolsPackage, CMakePackage):
+class Freetype(AutotoolsPackage, CMakePackage, MesonPackage):
     """FreeType is a freely available software library to render fonts.
     It is written in C, designed to be small, efficient, highly customizable,
     and portable while capable of producing high-quality output (glyph images)
@@ -16,12 +17,14 @@ class Freetype(AutotoolsPackage, CMakePackage):
 
     homepage = "https://www.freetype.org/index.html"
     url = "https://download.savannah.gnu.org/releases/freetype/freetype-2.10.1.tar.gz"
-    list_url = "https://download.savannah.gnu.org/releases/freetype/freetype-old/"
+    list_url = "https://download.savannah.gnu.org/releases/freetype/"
+    git = "https://gitlab.freedesktop.org/freetype/freetype.git"
 
     maintainers("michaelkuhn")
 
     license("FTL OR GPL-2.0-or-later")
 
+    version("2.14.3", sha256="e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1")
     version("2.14.2", sha256="752c2671f85c54a84b7f0dd2b5cd26b6b741117033886ffbc5ac89a68464b848")
     version("2.14.1", sha256="174d9e53402e1bf9ec7277e22ec199ba3e55a6be2c0740cb18c0ee9850fc8c34")
     version("2.14.0", sha256="73819bbf34c84f18b89ebbd35107d3ae92c604ff7336cd09ff1452930c2dcb9c")
@@ -43,26 +46,66 @@ class Freetype(AutotoolsPackage, CMakePackage):
     version("2.6.1", sha256="0a3c7dfbda6da1e8fce29232e8e96d987ababbbf71ebc8c75659e4132c367014")
     version("2.5.3", sha256="41217f800d3f40d78ef4eb99d6a35fd85235b64f81bc56e4812d7672fca7b806")
 
+    version("master", branch="master")
+    version("2.10.3", tag="VER-2-10-3", commit="337670af0a1e94df3718c6467ca544ecb0282731")
+
     # CMake build does not install freetype-config, which is needed by most packages
-    build_system("cmake", "autotools", default="autotools")
+    build_system("cmake", "autotools", conditional("meson", when="@2.11:"),
+                 default="autotools")
+
+    variant("freetype-config", default=True,
+            when="@2.9.1: build_system=autotools",
+            description="Build the 'freetype-config' binary.")
+    variant("bzip2", default=True,
+            description="Build with bzip2 support.")
+    variant("png", default=True,
+            description="Build with png support.")
+    variant("zlib", default=False,
+            description="Build with zlib support.")
+    # Harrowing issue: https://github.com/harfbuzz/harfbuzz/issues/2524.
+    variant("harfbuzz", default="no",
+            values=("dynamic", "yes", "no"),
+            description="Build with harfbuzz support.\n"
+            "If 'dynamic' is selected, harfbuzz will be accessed with dlopen().")
+    variant("brotli", default=False,
+            description="Build with brotli support.")
+    variant("svg", default=False,
+            description="Build with svg support.")
 
     depends_on("c", type="build")  # generated
 
-    depends_on("bzip2")
-    depends_on("libpng")
-    for plat in ["linux", "darwin"]:
-        depends_on("pkgconfig", type="build", when="platform=%s" % plat)
+    depends_on("bzip2", when="+bzip2")
+    depends_on("libpng", when="+png")
+    depends_on("zlib-api", when="+zlib")
+    depends_on("harfbuzz", when="harfbuzz=yes")
+    # depends_on("harfbuzz@10:+shared", when="harfbuzz=dynamic", type="run")
+    depends_on("brotli", when="+brotli")
+    depends_on("librsvg", when="+svg")
+
+    depends_on("pkgconfig", type="build")
+
+    with when("build_system=autotools"):
+        with default_args(type="build"):
+            depends_on("automake@1.10.1:")
+            depends_on("libtool@2.2.4:")
+            depends_on("autoconf@2.62:")
+            depends_on("m4")
+            depends_on("gmake")
+        variant("shared", default=True, description="Build shared libraries")
+        variant("pic", default=True, description="Enable position-independent code (PIC)")
+        requires("+pic", when="+shared")
+    with when("build_system=cmake"):
+        depends_on("cmake@3.12:3.31", type="build")
+        variant("shared", default=True, description="Build shared libraries")
+        variant("pic", default=True, description="Enable position-independent code (PIC)")
+        requires("+pic", when="+shared")
+    depends_on("meson@0.55:", type="build", when="build_system=meson")
 
     conflicts(
         "%intel",
         when="@2.8:2.10.2",
         msg="freetype-2.8 to 2.10.2 cannot be built with icc (does not support __builtin_shuffle)",
     )
-
-    variant("shared", default=True, description="Build shared libraries")
-    variant("pic", default=True, description="Enable position-independent code (PIC)")
-
-    requires("+pic", when="+shared build_system=autotools")
 
     patch("windows.patch", when="@2.9.1")
 
@@ -85,28 +128,72 @@ class AutotoolsBuilder(AutotoolsBuilder):
     build_directory = "builds/unix"
 
     def configure_args(self):
-        args = [
-            "--with-brotli=no",
-            "--with-bzip2=yes",
-            "--with-harfbuzz=no",
-            "--with-png=yes",
-            "--with-zlib=no",
-        ]
-        if self.spec.satisfies("@2.9.1:"):
+        args = []
+        if '+freetype-config' in self.spec:
             args.append("--enable-freetype-config")
+        args.append('--enable-year2038')
         args.extend(self.enable_or_disable("shared"))
         args.extend(self.with_or_without("pic"))
+        args.extend(self.with_or_without("brotli"))
+        args.extend(self.with_or_without("bzip2"))
+        harfbuzz_dep = self.spec.variants["harfbuzz"].value
+        if harfbuzz_dep == "dynamic":
+            args.append("--with-harfbuzz=dynamic")
+        elif harfbuzz_dep == "yes":
+            args.append("--with-harfbuzz=yes")
+        else:
+            assert harfbuzz_dep == "no", harfbuzz_dep
+            args.append("--without-harfbuzz")
+        args.extend(self.with_or_without("png"))
+        args.extend(self.with_or_without("zlib"))
+        args.extend(self.with_or_without("librsvg", variant="svg"))
         return args
 
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
-        return [
-            self.define("FT_DISABLE_ZLIB", True),
-            self.define("FT_DISABLE_BROTLI", True),
-            self.define("FT_DISABLE_HARFBUZZ", True),
-            self.define("FT_REQUIRE_PNG", True),
-            self.define("FT_REQUIRE_BZIP2", True),
+        args = [
+            self.define_from_variant("FT_REQUIRE_BROTLI", "brotli"),
+            self.define_from_variant("FT_REQUIRE_BZIP2", "bzip2"),
+            self.define_from_variant("FT_REQUIRE_PNG", "png"),
+            self.define_from_variant("FT_REQUIRE_ZLIB", "zlib"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define("FT_ENABLE_ERROR_STRINGS", True),
         ]
+        if '~brotli' in self.spec:
+            args.append(self.define("FT_DISABLE_BROTLI", True))
+        if '~bzip2' in self.spec:
+            args.append(self.define("FT_DISABLE_BZIP2", True))
+        if '~png' in self.spec:
+            args.append(self.define("FT_DISABLE_PNG", True))
+        if '~zlib' in self.spec:
+            args.append(self.define("FT_DISABLE_ZLIB", True),)
+        harfbuzz_dep = self.spec.variants["harfbuzz"].value
+        if harfbuzz_dep == "dynamic":
+            args.append(self.define("FT_DYNAMIC_HARFBUZZ", True))
+        elif harfbuzz_dep == "yes":
+            args.append(self.define("FT_REQUIRE_HARFBUZZ", True))
+        else:
+            assert harfbuzz_dep == "no", harfbuzz_dep
+            args.append(self.define("FT_DISABLE_HARFBUZZ", True))
+        return args
+
+class MesonBuilder(MesonBuilder):
+    def meson_args(self):
+        args = [
+            self.enable_from_variant("brotli"),
+            self.enable_from_variant("bzip2"),
+            self.enable_from_variant("png"),
+            self.enable_from_variant("zlib"),
+            self.define("error_strings", True),
+        ]
+        harfbuzz_dep = self.spec.variants["harfbuzz"].value
+        if harfbuzz_dep == "dynamic":
+            args.append(self.define("harfbuzz", "dynamic"))
+        elif harfbuzz_dep == "yes":
+            args.append(self.define("harfbuzz", True))
+        else:
+            assert harfbuzz_dep == "no", harfbuzz_dep
+            args.append(self.define("harfbuzz", False))
+        return args
