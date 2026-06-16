@@ -27,9 +27,11 @@ class Rccl(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rccl/archive/rocm-6.4.3.tar.gz"
+            return url.format(version)
         else:
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="0cb83b3a0552d8b38b05c182753c68dd15432d99769da6aead889e30f14367d7")

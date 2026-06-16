@@ -24,8 +24,9 @@ class Rocshmem(ROCmLibrary, CMakePackage):
             url = "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-6.4.0.tar.gz"
 
         else:
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="ed409d703ccc7bc07baf1e7e046c322441b2a5e83b95e4acf0ea2bd2585e71e2")

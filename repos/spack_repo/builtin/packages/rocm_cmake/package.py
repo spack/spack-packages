@@ -24,9 +24,11 @@ class RocmCmake(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-cmake/archive/rocm-6.4.2.tar.gz"
+            return url.format(version)
         else:
-            url = "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     version("7.13.0", sha256="bd024d6cd61d6ab09c9b2369bb26baf1fb956a929757abdf672a458edb94e2ae")
     version("7.2.3", sha256="069dc6405efc252d690e905dddb18b385691011cbc3fe142f0dd4f7a598211d7")

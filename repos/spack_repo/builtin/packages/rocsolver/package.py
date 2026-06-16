@@ -25,11 +25,14 @@ class Rocsolver(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocSOLVER/archive/refs/tags/rocm-{0}.tar.gz"
+            return url.format(version)
         elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+            return url.format(version)
         else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -41,7 +44,8 @@ class Rocsolver(CMakePackage):
     )
     variant(
         "optimal",
-        default=True,
+
+    default=True,
         description="This option improves performance at the cost of increased binary "
         "size and compile time by adding specialized kernels "
         "for small matrix sizes",

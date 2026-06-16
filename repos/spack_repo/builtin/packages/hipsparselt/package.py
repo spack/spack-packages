@@ -29,11 +29,14 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     def url_for_version(self, version):
         if version <= Version("7.0.2"):
             url = "https://github.com/ROCm/hipsparselt/archive/refs/tags/rocm-{0}.tar.gz"
+            return url.format(version)
         elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+            return url.format(version)
         else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")

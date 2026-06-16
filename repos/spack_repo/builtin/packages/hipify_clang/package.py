@@ -24,9 +24,11 @@ class HipifyClang(ROCmLibrary, CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/HIPIFY/archive/rocm-6.4.3.tar.gz"
+            return url.format(version)
         else:
-            url = "https://github.com/ROCm/HIPIFY/archive/refs/tags/therock-7.13.tar.gz"
-        return url.format(version)
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/HIPIFY/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
     version("7.13.0", sha256="3fd97715dee4e21042472f8137dde8d1b5cd0573ff8eae1663ca407b843588b3")
     version("7.2.3", sha256="5d0adbdffa866f3ca3e94da8ac92304dc97272dcd9c3440b15943fc0bc7c8ad8")
