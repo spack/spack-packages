@@ -514,7 +514,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             spack_microarches.append(kokkos_microarch_name)
 
         if spec.satisfies("+rocm"):
-            options.append(f"-DROCM_PATH={spec['hip'].prefix}")
             amdgpu_target = spec.variants["amdgpu_target"].value
             if amdgpu_target != "none":
                 if amdgpu_target in self.amdgpu_arch_map:
