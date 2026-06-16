@@ -44,8 +44,7 @@ class Rocsolver(CMakePackage):
     )
     variant(
         "optimal",
-
-    default=True,
+        default=True,
         description="This option improves performance at the cost of increased binary "
         "size and compile time by adding specialized kernels "
         "for small matrix sizes",
