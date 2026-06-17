@@ -694,7 +694,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         """)
 
         with open(path, "w", encoding="utf-8") as f:
-                f.write(cmake_contents)
+            f.write(cmake_contents)
 
     def build_and_run_example(self, exe, expected):
         """Build an example from the cached test sources and verify its output."""
