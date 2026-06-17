@@ -613,7 +613,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     @run_after("install")
     def setup_install_tests(self):
         """Install and cache standalone test sources, using staged or build outputs when available."""
-        
+
         cache_extra_test_sources(self, [self.examples_src_dir])
 
         src_dir = join_path(self.stage.source_path, "test", "install", "using-with-cmake")
@@ -631,11 +631,11 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             install_tree(src_dir, dst_dir)
             self._rewrite_host_config(join_path(dst_dir, "host-config.cmake"))
         else:
-            tty.msg(f"Can't install host-config.cmake\n")
+            tty.msg("Can't install host-config.cmake\n")
 
     def _run_common_check_install(self, test_dir):
         """Verify that the using-with-cmake example can build against the installed RAJA package."""
-        
+
         example_stage_dir = join_path(test_dir, "examples", "using-with-cmake")
         with working_dir(join_path(example_stage_dir, "build"), create=True):
             host_config = join_path("../", "host-config.cmake")
@@ -649,24 +649,24 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             example = Executable("./using-with-cmake")
             example()
             make_exe("clean")
-            
+
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def check_install(self):
         """Installation-time verification that the using-with-cmake example can build against the installed RAJA package."""
-        
-        src_dir=join_path(install_test_root(self))
-        dst_dir=join_path(self.stage.path, "spack-test")
+
+        src_dir = join_path(install_test_root(self))
+        dst_dir = join_path(self.stage.path, "spack-test")
 
         if os.path.exists(src_dir):
             install_tree(src_dir, dst_dir)
             self._run_common_check_install(dst_dir)
         else:
-            raise SkipTest(f"examples directory not found, cannot build example")
+            raise SkipTest("examples directory not found, cannot build example")
 
     def test_check_install(self):
         """Stand-alone verification that the using-with-cmake example can build against the installed RAJA package."""
-        
+
         self._run_common_check_install(self.test_suite.current_test_cache_dir)
 
     def _write_example_cmakelists(self, path, exe, source):
@@ -694,7 +694,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def build_and_run_example(self, exe, expected):
         """Build an example from the cached test sources and verify its output."""
-        
+
         examples_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
         build_dir = join_path(examples_dir, f"build-{exe}")
         with working_dir(build_dir, create=True):
