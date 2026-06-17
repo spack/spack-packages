@@ -67,7 +67,7 @@ class Ucc(AutotoolsPackage, CudaPackage, ROCmPackage):
         if "+cuda" in self.spec:
             if self.spec.variants["cuda_arch"].values != ("none",):
                 gencode_args = self.cuda_flags(self.spec.variants["cuda_arch"].values)
-                args.append(f"--with-nvcc-gencode='{' '.join(gencode_args)}'")
+                args.append(f"--with-nvcc-gencode={' '.join(gencode_args)}")
 
         if self.spec.satisfies("+rocm"):
             cppflags = " ".join(
