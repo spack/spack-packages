@@ -461,13 +461,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             if clang_rt_lib:
                 return clang_rt_lib
             else:
-                raise RuntimeError(
-                    f"Could not find libclang_rt.builtins* in {resource_dir}"
-                )
+                raise RuntimeError(f"Could not find libclang_rt.builtins* in {resource_dir}")
         except Exception as e:
-            raise RuntimeError(
-                f"Failed to determine clang runtime library path: {e}"
-            )
+            raise RuntimeError(f"Failed to determine clang runtime library path: {e}")
 
     def cmake_args(self):
         spec = self.spec
