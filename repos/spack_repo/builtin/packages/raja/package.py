@@ -6,6 +6,7 @@ import os
 import re
 import shutil
 import socket
+from textwrap import dedent
 
 from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakePackage,
@@ -612,7 +613,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     @run_after("install")
     def setup_install_tests(self):
-        """Install and cache standalone test sources, using staged or build outputs when available."""
+        """Install and cache standalone test sources, using staged or build outputs
+        when available."""
 
         cache_extra_test_sources(self, [self.examples_src_dir])
 
@@ -634,7 +636,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             tty.msg("Can't install host-config.cmake\n")
 
     def _run_common_check_install(self, test_dir):
-        """Verify that the using-with-cmake example can build against the installed RAJA package."""
+        """Verify that the using-with-cmake example can build against the installed
+        RAJA package."""
 
         example_stage_dir = join_path(test_dir, "examples", "using-with-cmake")
         with working_dir(join_path(example_stage_dir, "build"), create=True):
@@ -653,7 +656,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def check_install(self):
-        """Installation-time verification that the using-with-cmake example can build against the installed RAJA package."""
+        """Installation-time verification that the using-with-cmake example can build against the
+        installed RAJA package."""
 
         src_dir = join_path(install_test_root(self))
         dst_dir = join_path(self.stage.path, "spack-test")
@@ -665,32 +669,32 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest("examples directory not found, cannot build example")
 
     def test_check_install(self):
-        """Stand-alone verification that the using-with-cmake example can build against the installed RAJA package."""
+        """Stand-alone verification that the using-with-cmake example can build against the
+        installed RAJA package."""
 
         self._run_common_check_install(self.test_suite.current_test_cache_dir)
 
     def _write_example_cmakelists(self, path, exe, source):
+        cmake_contents = dedent(f"""\
+        cmake_minimum_required(VERSION 3.23)
+        project(raja_package_test LANGUAGES CXX)
+
+        if(NOT DEFINED RAJA_DIR OR NOT EXISTS
+           ${{RAJA_DIR}}/lib/cmake/raja/raja-config.cmake)
+          message(FATAL_ERROR "Missing required 'RAJA_DIR' variable pointing to
+          an installed RAJA")
+        endif()
+
+        find_package(RAJA REQUIRED
+                     NO_DEFAULT_PATH
+                     PATHS ${{RAJA_DIR}}/lib/cmake/raja)
+
+        add_executable({exe} ../{source})
+        target_link_libraries({exe} RAJA)
+        """)
+
         with open(path, "w", encoding="utf-8") as f:
-            f.write(
-                "\n".join(
-                    [
-                        "cmake_minimum_required(VERSION 3.23)",
-                        "project(raja_package_test LANGUAGES CXX)",
-                        "",
-                        "if(NOT DEFINED RAJA_DIR OR NOT EXISTS ${RAJA_DIR}/lib/cmake/raja/raja-config.cmake)",
-                        "  message(FATAL_ERROR \"Missing required 'RAJA_DIR' variable pointing to an installed RAJA\")",
-                        "endif()",
-                        "",
-                        "find_package(RAJA REQUIRED",
-                        "             NO_DEFAULT_PATH",
-                        "             PATHS ${RAJA_DIR}/lib/cmake/raja)",
-                        "",
-                        f"add_executable({exe} ../{source})",
-                        f"target_link_libraries({exe} RAJA)",
-                        "",
-                    ]
-                )
-            )
+                f.write(cmake_contents)
 
     def build_and_run_example(self, exe, expected):
         """Build an example from the cached test sources and verify its output."""
@@ -720,7 +724,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         self.build_and_run_example("tut_daxpy", [r"daxpy", r"result -- PASS"])
 
     # TODO: this test seems to hang or take a long time?
-    # SGS 2026-05-22: Did not see hangs/long execution times on LC systems or Redhat workstation; clarify with Cody where this was occuring.
+    # SGS 2026-05-22: Did not see hangs/long execution times on LC systems or Redhat workstation
+    #                 clarify with Cody where this was occuring.
     # def test_matrix_multiply(self):
     #     """check batched matrix multiple tutorial"""
     #     self.build_and_run_example(
