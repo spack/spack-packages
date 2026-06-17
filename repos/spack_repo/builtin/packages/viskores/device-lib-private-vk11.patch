@@ -1,0 +1,907 @@
+diff --git a/CMake/ViskoresWrappers.cmake b/CMake/ViskoresWrappers.cmake
+index e24068914..e5c53ea9e 100644
+--- a/CMake/ViskoresWrappers.cmake
++++ b/CMake/ViskoresWrappers.cmake
+@@ -438,17 +438,31 @@ function(viskores_add_target_information uses_viskores_target)
+     endif()
+   endforeach()
+ 
++  foreach(target IN LISTS targets)
++    target_compile_definitions(${target} PRIVATE VISKORES_IS_VISKORES_TARGET)
++  endforeach()
++
+   if(Viskores_TI_DROP_UNUSED_SYMBOLS)
+     foreach(target IN LISTS targets)
+       viskores_add_drop_unused_function_flags(${target})
+     endforeach()
+   endif()
+ 
+-  if(TARGET viskores_cuda OR TARGET viskores::cuda OR TARGET viskores_kokkos_cuda OR TARGET viskores::kokkos_cuda)
+-    set_source_files_properties(${Viskores_TI_DEVICE_SOURCES} PROPERTIES LANGUAGE "CUDA")
+-  elseif(TARGET viskores_kokkos_hip OR TARGET viskores::kokkos_hip)
+-    set_source_files_properties(${Viskores_TI_DEVICE_SOURCES} PROPERTIES LANGUAGE "HIP")
+-    kokkos_compilation(SOURCE ${Viskores_TI_DEVICE_SOURCES})
++  if(Viskores_TI_DEVICE_SOURCES)
++    foreach(target IN LISTS targets)
++      target_link_libraries(${target} 
++        PRIVATE $<TARGET_NAME_IF_EXISTS:viskores_exec>  $<TARGET_NAME_IF_EXISTS:viskores::viskores_exec>)
++    endforeach()
++
++    set_property(SOURCE ${Viskores_TI_DEVICE_SOURCES}
++      APPEND PROPERTY COMPILE_DEFINITIONS VISKORES_IS_DEVICE_SOURCE)
++
++    if(TARGET viskores_cuda OR TARGET viskores::cuda OR TARGET viskores_kokkos_cuda OR TARGET viskores::kokkos_cuda)
++      set_source_files_properties(${Viskores_TI_DEVICE_SOURCES} PROPERTIES LANGUAGE "CUDA")
++    elseif(TARGET viskores_kokkos_hip OR TARGET viskores::kokkos_hip)
++      set_source_files_properties(${Viskores_TI_DEVICE_SOURCES} PROPERTIES LANGUAGE "HIP")
++      kokkos_compilation(SOURCE ${Viskores_TI_DEVICE_SOURCES})
++    endif()
+   endif()
+ endfunction()
+ 
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 6f0838151..52cb9f274 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -420,6 +420,27 @@ if (TARGET viskoresdiympi_nompi)
+   set(lib_args "${lib_args} \\
+     -lviskoresdiympi_nompi")
+ endif()
++# Also add depended device libraries
++macro(_viskores_add_imported_lib_to_list target_name)
++  if(TARGET ${target_name})
++    foreach(prop in IMPORTED_LOCATION_RELEASE IMPORTED_LOCATION IMPORTED_LOCATION_DEBUG)
++      get_target_property(libfile ${target_name} ${prop})
++      if(libfile)
++        set(lib_args "${lib_args} \\\n    ${libfile}")
++        return()
++      endif()
++    endforeach()
++  endif()
++endmacro()
++_viskores_add_imported_lib_to_list(Kokkos::kokkos)
++_viskores_add_imported_lib_to_list(TBB::tbb)
++_viskores_add_imported_lib_to_list(OpenMP::OpenMP_CXX)
++if(Viskores_ENABLE_CUDA OR TARGET viskores_kokkos_cuda)
++  find_package(CUDAToolkit)
++  _viskores_add_imported_lib_to_list(CUDA::cudart)
++  _viskores_add_imported_lib_to_list(CUDA::cudart_static)
++  _viskores_add_imported_lib_to_list(CUDA::cuda_driver)
++endif()
+ 
+ configure_file(${Viskores_SOURCE_DIR}/config/viskores_config.mk.in
+   ${Viskores_BINARY_DIR}/config/viskores_config.mk @ONLY)
+diff --git a/docs/Modules.md b/docs/Modules.md
+index 1262752e5..6361dea38 100644
+--- a/docs/Modules.md
++++ b/docs/Modules.md
+@@ -119,9 +119,10 @@ GROUPS
+   FiltersCommon
+   Filters
+ DEPENDS
+-  viskores_worklet
+   viskores_filter_core
+   viskores_filter_clean_grid
++PRIVATE_DEPENDS
++  viskores_worklet
+ TEST_DEPENDS
+   viskores_filter_clean_grid
+   viskores_filter_entity_extraction
+diff --git a/docs/changelog/device-lib-private.md b/docs/changelog/device-lib-private.md
+new file mode 100644
+index 000000000..ad2bf5956
+--- /dev/null
++++ b/docs/changelog/device-lib-private.md
+@@ -0,0 +1,7 @@
++## Made the device library private
++
++Viskores no longer makes the device libraries public on its exported
++`viskores::cont` target. Previously, the device libraries were linked to
++`viskores::cont` as `PUBLIC`, which means that pretty much anything that used
++Viskores also brought in any compiler flags for the device. This sometimes
++forced downstream code to use a device compiler when it did not need to.
+diff --git a/docs/users-guide/viskores.module b/docs/users-guide/viskores.module
+index 348d9fc24..c794c7baa 100644
+--- a/docs/users-guide/viskores.module
++++ b/docs/users-guide/viskores.module
+@@ -13,3 +13,4 @@ TEST_DEPENDS
+   viskores_filter_geometry_refinement
+   viskores_filter_mesh_info
+   viskores_rendering
++  viskores_worklet
+diff --git a/examples/contour_tree_augmented/CMakeLists.txt b/examples/contour_tree_augmented/CMakeLists.txt
+index 70315d3cc..192586f9f 100644
+--- a/examples/contour_tree_augmented/CMakeLists.txt
++++ b/examples/contour_tree_augmented/CMakeLists.txt
+@@ -72,7 +72,7 @@ endif()
+ # Serial
+ ####################################
+ add_executable(ContourTree_Augmented ContourTreeApp.cxx)
+-target_link_libraries(ContourTree_Augmented viskores::filter_scalar_topology viskores::io)
++target_link_libraries(ContourTree_Augmented PUBLIC viskores::filter_scalar_topology viskores::io viskores::worklet)
+ viskores_add_target_information(ContourTree_Augmented
+                             DROP_UNUSED_SYMBOLS MODIFY_CUDA_FLAGS
+                             DEVICE_SOURCES ContourTreeApp.cxx)
+@@ -92,7 +92,7 @@ endif()
+ ####################################
+ if (Viskores_ENABLE_MPI)
+   add_executable(ContourTree_Augmented_MPI ContourTreeApp.cxx)
+-  target_link_libraries(ContourTree_Augmented_MPI viskores::filter_scalar_topology viskores::io MPI::MPI_CXX)
++  target_link_libraries(ContourTree_Augmented_MPI viskores::filter_scalar_topology viskores::io viskores::worklet MPI::MPI_CXX)
+   viskores_add_target_information(ContourTree_Augmented_MPI
+                               MODIFY_CUDA_FLAGS
+                               DEVICE_SOURCES ContourTreeApp.cxx)
+diff --git a/examples/cosmotools/CMakeLists.txt b/examples/cosmotools/CMakeLists.txt
+index 1885b8876..969a50914 100644
+--- a/examples/cosmotools/CMakeLists.txt
++++ b/examples/cosmotools/CMakeLists.txt
+@@ -23,8 +23,8 @@ find_package(Viskores REQUIRED QUIET)
+ 
+ add_executable(CosmoCenterFinder CosmoCenterFinder.cxx)
+ add_executable(CosmoHaloFinder CosmoHaloFinder.cxx)
+-target_link_libraries(CosmoCenterFinder PRIVATE viskores::filter_core)
+-target_link_libraries(CosmoHaloFinder PRIVATE viskores::filter_core)
++target_link_libraries(CosmoCenterFinder PRIVATE viskores::filter_core viskores::worklet)
++target_link_libraries(CosmoHaloFinder PRIVATE viskores::filter_core viskores::worklet)
+ 
+ viskores_add_target_information(CosmoCenterFinder CosmoHaloFinder
+                             DROP_UNUSED_SYMBOLS
+diff --git a/examples/hello_worklet/CMakeLists.txt b/examples/hello_worklet/CMakeLists.txt
+index 37a213823..e93782a47 100644
+--- a/examples/hello_worklet/CMakeLists.txt
++++ b/examples/hello_worklet/CMakeLists.txt
+@@ -23,7 +23,8 @@ find_package(Viskores REQUIRED QUIET)
+ 
+ if(TARGET viskores::io)
+   add_executable(HelloWorklet HelloWorklet.cxx)
+-  target_link_libraries(HelloWorklet PRIVATE viskores::filter_core viskores::io)
++  target_link_libraries(HelloWorklet
++    PRIVATE viskores::filter_core viskores::worklet viskores::io)
+ 
+   viskores_add_target_information(HelloWorklet
+     DROP_UNUSED_SYMBOLS
+diff --git a/examples/logistic_map/CMakeLists.txt b/examples/logistic_map/CMakeLists.txt
+index fb33c5c7c..c9f2861a2 100644
+--- a/examples/logistic_map/CMakeLists.txt
++++ b/examples/logistic_map/CMakeLists.txt
+@@ -22,7 +22,7 @@ find_package(Viskores REQUIRED QUIET)
+ 
+ if(TARGET viskores::io)
+   add_executable(LogisticMap LogisticMap.cxx)
+-  target_link_libraries(LogisticMap PRIVATE viskores::io)
++  target_link_libraries(LogisticMap PRIVATE viskores::io viskores::worklet)
+ 
+   viskores_add_target_information(LogisticMap
+     DROP_UNUSED_SYMBOLS
+diff --git a/examples/multi_backend/CMakeLists.txt b/examples/multi_backend/CMakeLists.txt
+index 093be9076..e7600b7ff 100644
+--- a/examples/multi_backend/CMakeLists.txt
++++ b/examples/multi_backend/CMakeLists.txt
+@@ -36,7 +36,7 @@ set(srcs
+ 
+ if(TARGET viskores::filter_vector_analysis)
+   add_executable(MultiBackend ${srcs} ${headers})
+-  target_link_libraries(MultiBackend PRIVATE viskores::filter_vector_analysis Threads::Threads)
++  target_link_libraries(MultiBackend PRIVATE viskores::filter_vector_analysis viskores::worklet Threads::Threads)
+   viskores_add_target_information(MultiBackend
+     DROP_UNUSED_SYMBOLS
+     MODIFY_CUDA_FLAGS
+diff --git a/examples/polyline_archimedean_helix/CMakeLists.txt b/examples/polyline_archimedean_helix/CMakeLists.txt
+index 6005cd980..62de07727 100644
+--- a/examples/polyline_archimedean_helix/CMakeLists.txt
++++ b/examples/polyline_archimedean_helix/CMakeLists.txt
+@@ -20,16 +20,7 @@ project(PolyLineArchimedeanHelix CXX)
+ 
+ find_package(Viskores REQUIRED QUIET)
+ 
+-if (TARGET viskores::rendering)
+-  # TODO: This example should be changed from using the Tube worklet to using
+-  # the Tube filter (in the viskores::filter_geometry_refinement library). Then
+-  # compiling it would no longer require a device compiler and the example
+-  # would generally be simpler.
++if (TARGET viskores::rendering AND TARGET viskores::filter_geometry_refinement)
+   add_executable(PolyLineArchimedeanHelix PolyLineArchimedeanHelix.cxx)
+-  target_link_libraries(PolyLineArchimedeanHelix PRIVATE viskores::rendering)
+-  viskores_add_target_information(PolyLineArchimedeanHelix
+-    DROP_UNUSED_SYMBOLS
+-    MODIFY_CUDA_FLAGS
+-    DEVICE_SOURCES PolyLineArchimedeanHelix.cxx
+-    )
++  target_link_libraries(PolyLineArchimedeanHelix PRIVATE viskores::rendering viskores::filter_geometry_refinement)
+ endif()
+diff --git a/examples/polyline_archimedean_helix/PolyLineArchimedeanHelix.cxx b/examples/polyline_archimedean_helix/PolyLineArchimedeanHelix.cxx
+index 86d75d230..1893e4395 100644
+--- a/examples/polyline_archimedean_helix/PolyLineArchimedeanHelix.cxx
++++ b/examples/polyline_archimedean_helix/PolyLineArchimedeanHelix.cxx
+@@ -18,7 +18,7 @@
+ 
+ #include <complex>
+ #include <viskores/cont/DataSetBuilderExplicit.h>
+-#include <viskores/filter/geometry_refinement/worklet/Tube.h>
++#include <viskores/filter/geometry_refinement/Tube.h>
+ #include <viskores/io/VTKDataSetWriter.h>
+ 
+ #include <viskores/cont/ColorTable.h>
+@@ -66,25 +66,11 @@ void TubeThatSpiral(viskores::FloatDefault radius,
+ 
+   viskores::cont::DataSet ds = dsb.Create();
+ 
+-  viskores::worklet::Tube tubeWorklet(
+-    /*capEnds = */ true,
+-    /* how smooth the cylinder is; infinitely smooth as n->infty */ numSides,
+-    radius);
+-
+-  // You added lines, but you need to extend it to a tube.
+-  // This generates a new pointset, and new cell set.
+-  viskores::cont::ArrayHandle<viskores::Vec3f> tubePoints;
+-  viskores::cont::CellSetSingleType<> tubeCells;
+-  tubeWorklet.Run(ds.GetCoordinateSystem()
+-                    .GetData()
+-                    .AsArrayHandle<viskores::cont::ArrayHandle<viskores::Vec3f>>(),
+-                  ds.GetCellSet(),
+-                  tubePoints,
+-                  tubeCells);
+-
+-  viskores::cont::DataSet tubeDataset;
+-  tubeDataset.AddCoordinateSystem(viskores::cont::CoordinateSystem("coords", tubePoints));
+-  tubeDataset.SetCellSet(tubeCells);
++  viskores::filter::geometry_refinement::Tube tubeFilter;
++  tubeFilter.SetCapping(true);
++  tubeFilter.SetNumberOfSides(numSides);
++  tubeFilter.SetRadius(radius);
++  viskores::cont::DataSet tubeDataset = tubeFilter.Execute(ds);
+ 
+   viskores::Bounds coordsBounds = tubeDataset.GetCoordinateSystem().GetBounds();
+ 
+@@ -110,7 +96,7 @@ void TubeThatSpiral(viskores::FloatDefault radius,
+   viskores::rendering::Color bg(0.2f, 0.2f, 0.2f, 1.0f);
+ 
+ 
+-  std::vector<viskores::FloatDefault> v(static_cast<std::size_t>(tubePoints.GetNumberOfValues()));
++  std::vector<viskores::FloatDefault> v(static_cast<std::size_t>(tubeDataset.GetNumberOfPoints()));
+   // The first value is a cap:
+   v[0] = 0;
+   for (viskores::Id i = 1; i < viskores::Id(v.size()); i += numSides)
+diff --git a/examples/redistribute_points/CMakeLists.txt b/examples/redistribute_points/CMakeLists.txt
+index 65a79b424..5b116cbc3 100644
+--- a/examples/redistribute_points/CMakeLists.txt
++++ b/examples/redistribute_points/CMakeLists.txt
+@@ -23,7 +23,7 @@ find_package(Viskores REQUIRED QUIET)
+ 
+ if(TARGET viskores::io AND TARGET viskores::filter_entity_extraction)
+   add_executable(RedistributePoints RedistributePoints.cxx RedistributePoints.h main.cxx)
+-  target_link_libraries(RedistributePoints PRIVATE viskores::io viskores::filter_entity_extraction)
++  target_link_libraries(RedistributePoints PRIVATE viskores::io viskores::filter_entity_extraction viskores::worklet)
+   viskores_add_target_information(RedistributePoints
+     DROP_UNUSED_SYMBOLS
+     MODIFY_CUDA_FLAGS
+diff --git a/tutorial/CMakeLists.txt b/tutorial/CMakeLists.txt
+index 6ed90c34b..e205aad9c 100644
+--- a/tutorial/CMakeLists.txt
++++ b/tutorial/CMakeLists.txt
+@@ -51,19 +51,19 @@ if (Viskores_ENABLE_TUTORIALS)
+ endif()
+ 
+ add_executable(io io.cxx)
+-target_link_libraries(io viskores::io)
++target_link_libraries(io PRIVATE viskores::io)
+ 
+ add_executable(contour contour.cxx)
+-target_link_libraries(contour viskores::filter_core viskores::filter_contour viskores::io)
++target_link_libraries(contour PRIVATE viskores::filter_core viskores::filter_contour viskores::io)
+ 
+ add_executable(contour_two_fields contour_two_fields.cxx)
+-target_link_libraries(contour_two_fields viskores::filter_core viskores::filter_contour viskores::io)
++target_link_libraries(contour_two_fields PRIVATE viskores::filter_core viskores::filter_contour viskores::io)
+ 
+ add_executable(two_filters two_filters.cxx)
+-target_link_libraries(two_filters viskores::filter_core viskores::filter_contour viskores::io)
++target_link_libraries(two_filters PRIVATE viskores::filter_core viskores::filter_contour viskores::io)
+ 
+ add_executable(mag_grad mag_grad.cxx)
+-target_link_libraries(mag_grad viskores::filter_core viskores::filter_vector_analysis viskores::io)
++target_link_libraries(mag_grad PRIVATE viskores::filter_core viskores::filter_vector_analysis viskores::io viskores::worklet)
+ # Because mag_grad.cxx creates a worklet with code that
+ # runs on a GPU, it needs additional information.
+ viskores_add_target_information(mag_grad
+@@ -72,23 +72,23 @@ viskores_add_target_information(mag_grad
+ 
+ if (Viskores_ENABLE_RENDERING)
+   add_executable(rendering rendering.cxx)
+-  target_link_libraries(rendering viskores::io viskores::rendering)
++  target_link_libraries(rendering PRIVATE viskores::io viskores::rendering)
+ endif ()
+ 
+ add_executable(error_handling error_handling.cxx)
+-target_link_libraries(error_handling viskores::filter_core viskores::filter_contour viskores::io)
++target_link_libraries(error_handling PRIVATE viskores::filter_core viskores::filter_contour viskores::io)
+ 
+ add_executable(logging logging.cxx)
+-target_link_libraries(logging viskores::io)
++target_link_libraries(logging PRIVATE viskores::io)
+ 
+ add_executable(point_to_cell point_to_cell.cxx)
+-target_link_libraries(point_to_cell viskores::worklet viskores::filter_core viskores::io)
++target_link_libraries(point_to_cell PRIVATE viskores::worklet viskores::filter_core viskores::io)
+ viskores_add_target_information(point_to_cell
+   DROP_UNUSED_SYMBOLS MODIFY_CUDA_FLAGS
+   DEVICE_SOURCES point_to_cell.cxx)
+ 
+ add_executable(extract_edges extract_edges.cxx)
+-target_link_libraries(extract_edges viskores::cont viskores::filter_core viskores::filter_contour viskores::worklet viskores::io)
++target_link_libraries(extract_edges PRIVATE viskores::cont viskores::filter_core viskores::filter_contour viskores::worklet viskores::io)
+ viskores_add_target_information(extract_edges
+   DROP_UNUSED_SYMBOLS MODIFY_CUDA_FLAGS
+   DEVICE_SOURCES extract_edges.cxx)
+diff --git a/viskores/cont/AtomicArray.h b/viskores/cont/AtomicArray.h
+index 6a17d1d4c..6996a070a 100644
+--- a/viskores/cont/AtomicArray.h
++++ b/viskores/cont/AtomicArray.h
+@@ -21,7 +21,7 @@
+ #include <viskores/List.h>
+ #include <viskores/StaticAssert.h>
+ #include <viskores/cont/ArrayHandle.h>
+-#include <viskores/cont/DeviceAdapter.h>
++#include <viskores/cont/DeviceAdapterTag.h>
+ #include <viskores/cont/ExecutionObjectBase.h>
+ #include <viskores/exec/AtomicArrayExecutionObject.h>
+ 
+diff --git a/viskores/cont/CMakeLists.txt b/viskores/cont/CMakeLists.txt
+index 76df7b491..babe63cb1 100644
+--- a/viskores/cont/CMakeLists.txt
++++ b/viskores/cont/CMakeLists.txt
+@@ -307,19 +307,5 @@ target_sources(viskores_cont
+ add_subdirectory(internal)
+ add_subdirectory(arg)
+ 
+-set(backends )
+-if(TARGET viskores_tbb)
+-  list(APPEND backends viskores_tbb)
+-endif()
+-if(TARGET viskores_cuda)
+-  list(APPEND backends viskores_cuda)
+-endif()
+-if(TARGET viskores_openmp)
+-  list(APPEND backends viskores_openmp)
+-endif()
+-if(TARGET viskores_kokkos)
+-  list(APPEND backends viskores_kokkos)
+-endif()
+-
+-target_link_libraries(viskores_cont PUBLIC viskores_compiler_flags ${backends})
++target_link_libraries(viskores_cont PUBLIC viskores_compiler_flags)
+ target_link_libraries(viskores_cont PUBLIC Threads::Threads)
+diff --git a/viskores/cont/DataSetBuilderRectilinear.h b/viskores/cont/DataSetBuilderRectilinear.h
+index 82404469a..85f6be85d 100644
+--- a/viskores/cont/DataSetBuilderRectilinear.h
++++ b/viskores/cont/DataSetBuilderRectilinear.h
+@@ -23,7 +23,6 @@
+ #include <viskores/cont/ArrayPortalToIterators.h>
+ #include <viskores/cont/CoordinateSystem.h>
+ #include <viskores/cont/DataSet.h>
+-#include <viskores/cont/serial/DeviceAdapterSerial.h>
+ 
+ namespace viskores
+ {
+diff --git a/viskores/cont/DeviceAdapter.h b/viskores/cont/DeviceAdapter.h
+index 077f37bcc..7c97b0983 100644
+--- a/viskores/cont/DeviceAdapter.h
++++ b/viskores/cont/DeviceAdapter.h
+@@ -22,6 +22,15 @@
+ // order in which the sub-files are loaded.  (But the compile should still
+ // succeed if the order is changed.)  Turn off formatting to keep the order.
+ 
++#if defined(VISKORES_IS_VISKORES_TARGET) && !defined(VISKORES_NO_ERROR_ON_MIXED_CUDA_CXX_TAG)
++#ifndef VISKORES_IS_DEVICE_SOURCE
++#error Source file is including device code but not marked as a device source.
++#endif
++#ifndef VISKORES_DEVICE_LINKED
++#error Including device code without linking device libraries.
++#endif
++#endif
++
+ // clang-format off
+ #include <viskores/cont/cuda/DeviceAdapterCuda.h>
+ #include <viskores/cont/kokkos/DeviceAdapterKokkos.h>
+diff --git a/viskores/cont/Initialize.cxx b/viskores/cont/Initialize.cxx
+index 12fef4352..074bdc54e 100644
+--- a/viskores/cont/Initialize.cxx
++++ b/viskores/cont/Initialize.cxx
+@@ -216,12 +216,6 @@ InitializeResult Initialize(int& argc, char* argv[], InitializeOptions opts)
+       exit(1);
+     }
+ 
+-    if (options[opt::OptionIndex::HELP])
+-    {
+-      std::cerr << config.Usage;
+-      exit(0);
+-    }
+-
+     // The RuntimeDeviceConfiguration must be completed before calling GetRuntimeDeviceTracker()
+     // for all the devices. This is because GetRuntimeDeviceTracker will construct a given
+     // device's DeviceAdapterRuntimeDetector to determine if it exists and this constructor may
+@@ -234,6 +228,12 @@ InitializeResult Initialize(int& argc, char* argv[], InitializeOptions opts)
+         viskores::cont::DeviceAdapterTagAny{}, runtimeDeviceOptions, argc, argv);
+     }
+ 
++    if (options[opt::OptionIndex::HELP])
++    {
++      std::cerr << config.Usage;
++      exit(0);
++    }
++
+     // Check for device on command line.
+     if (options[opt::OptionIndex::DEVICE])
+     {
+diff --git a/viskores/cont/cuda/testing/CMakeLists.txt b/viskores/cont/cuda/testing/CMakeLists.txt
+index cb5c872db..a63a4e9b7 100644
+--- a/viskores/cont/cuda/testing/CMakeLists.txt
++++ b/viskores/cont/cuda/testing/CMakeLists.txt
+@@ -24,4 +24,9 @@ set(unit_tests
+   UnitTestCudaRuntimeDeviceConfiguration.cu
+   )
+ 
+-viskores_unit_tests(SOURCES ${unit_tests} LABEL "CUDA" LIBRARIES viskores_worklet BACKEND cuda)
++viskores_unit_tests(
++  LABEL "CUDA"
++  LIBRARIES viskores_worklet
++  BACKEND cuda
++  DEVICE_SOURCES ${unit_tests}
++  )
+diff --git a/viskores/cont/cuda/viskores.module b/viskores/cont/cuda/viskores.module
+index 8b847cef2..c9a09716a 100644
+--- a/viskores/cont/cuda/viskores.module
++++ b/viskores/cont/cuda/viskores.module
+@@ -4,6 +4,7 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++  viskores_exec
+ TEST_DEPENDS
+   viskores_worklet
+   viskores_cuda
+diff --git a/viskores/cont/kokkos/testing/CMakeLists.txt b/viskores/cont/kokkos/testing/CMakeLists.txt
+index 38fc97ee8..a12b2b0fb 100644
+--- a/viskores/cont/kokkos/testing/CMakeLists.txt
++++ b/viskores/cont/kokkos/testing/CMakeLists.txt
+@@ -21,7 +21,11 @@ set(unit_tests
+   UnitTestKokkosRuntimeDeviceConfiguration.cxx
+   )
+ 
+-viskores_unit_tests(SOURCES ${unit_tests} LABEL "KOKKOS" LIBRARIES viskores_worklet BACKEND kokkos)
++viskores_unit_tests(DEVICE_SOURCES ${unit_tests}
++  LABEL "KOKKOS"
++  LIBRARIES viskores_worklet
++  BACKEND kokkos
++  )
+ 
+ if (TARGET viskores_kokkos_cuda)
+   set_source_files_properties(${unit_tests} PROPERTIES LANGUAGE CUDA)
+diff --git a/viskores/cont/kokkos/viskores.module b/viskores/cont/kokkos/viskores.module
+index b1a75e1a3..b25074bd0 100644
+--- a/viskores/cont/kokkos/viskores.module
++++ b/viskores/cont/kokkos/viskores.module
+@@ -4,6 +4,7 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++  viskores_exec
+ TEST_DEPENDS
+   viskores_worklet
+   viskores_kokkos
+diff --git a/viskores/cont/openmp/testing/CMakeLists.txt b/viskores/cont/openmp/testing/CMakeLists.txt
+index e07da5ea4..fb8f2f52b 100644
+--- a/viskores/cont/openmp/testing/CMakeLists.txt
++++ b/viskores/cont/openmp/testing/CMakeLists.txt
+@@ -21,7 +21,7 @@ set(unit_tests
+   UnitTestOpenMPRuntimeDeviceConfiguration.cxx
+   )
+ 
+-viskores_unit_tests(SOURCES ${unit_tests}
++viskores_unit_tests(DEVICE_SOURCES ${unit_tests}
+                 LABEL "OPENMP"
+                 DEFINES VISKORES_NO_ERROR_ON_MIXED_CUDA_CXX_TAG
+                 LIBRARIES viskores_worklet
+diff --git a/viskores/cont/openmp/viskores.module b/viskores/cont/openmp/viskores.module
+index 5a6899e2c..e2beb6378 100644
+--- a/viskores/cont/openmp/viskores.module
++++ b/viskores/cont/openmp/viskores.module
+@@ -4,6 +4,7 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++  viskores_exec
+ TEST_DEPENDS
+   viskores_worklet
+   viskores_openmp
+diff --git a/viskores/cont/serial/testing/CMakeLists.txt b/viskores/cont/serial/testing/CMakeLists.txt
+index 946737026..3e1ea972c 100644
+--- a/viskores/cont/serial/testing/CMakeLists.txt
++++ b/viskores/cont/serial/testing/CMakeLists.txt
+@@ -20,7 +20,7 @@ set(unit_tests
+   UnitTestSerialDeviceAdapter.cxx
+   )
+ 
+-viskores_unit_tests(SOURCES ${unit_tests}
++viskores_unit_tests(DEVICE_SOURCES ${unit_tests}
+                 LABEL "SERIAL"
+                 DEFINES VISKORES_NO_ERROR_ON_MIXED_CUDA_CXX_TAG
+                 LIBRARIES viskores_worklet
+diff --git a/viskores/cont/tbb/testing/CMakeLists.txt b/viskores/cont/tbb/testing/CMakeLists.txt
+index 670aa2b78..9b4753858 100644
+--- a/viskores/cont/tbb/testing/CMakeLists.txt
++++ b/viskores/cont/tbb/testing/CMakeLists.txt
+@@ -21,7 +21,7 @@ set(unit_tests
+   UnitTestTBBRuntimeDeviceConfiguration.cxx
+   )
+ 
+-viskores_unit_tests(SOURCES ${unit_tests}
++viskores_unit_tests(DEVICE_SOURCES ${unit_tests}
+                 LABEL "TBB"
+                 DEFINES VISKORES_NO_ERROR_ON_MIXED_CUDA_CXX_TAG
+                 LIBRARIES viskores_worklet
+diff --git a/viskores/cont/tbb/viskores.module b/viskores/cont/tbb/viskores.module
+index 7d3fcf695..3e745b830 100644
+--- a/viskores/cont/tbb/viskores.module
++++ b/viskores/cont/tbb/viskores.module
+@@ -4,6 +4,7 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++  viskores_exec
+ TEST_DEPENDS
+   viskores_worklet
+   viskores_tbb
+diff --git a/viskores/cont/testing/CMakeLists.txt b/viskores/cont/testing/CMakeLists.txt
+index f1e70774d..ceab109a7 100644
+--- a/viskores/cont/testing/CMakeLists.txt
++++ b/viskores/cont/testing/CMakeLists.txt
+@@ -40,7 +40,6 @@ set(unit_tests
+   UnitTestArraySetValues.cxx
+   UnitTestBuffer.cxx
+   UnitTestComputeRange.cxx
+-  UnitTestControlSignatureTag.cxx
+   UnitTestContTesting.cxx
+   UnitTestDataSetBuilderCurvilinear.cxx
+   UnitTestDataSetBuilderExplicit.cxx
+@@ -50,7 +49,6 @@ set(unit_tests
+   UnitTestDataSetExplicit.cxx
+   UnitTestDataSetRectilinear.cxx
+   UnitTestDataSetUniform.cxx
+-  UnitTestDeviceAdapterAlgorithmGeneral.cxx
+   UnitTestDeviceSelectOnThreads.cxx
+   UnitTestError.cxx
+   UnitTestFieldRangeCompute.cxx
+@@ -72,7 +70,6 @@ set(unit_tests
+   UnitTestTypeCheckArray.cxx
+   UnitTestTypeCheckCellSet.cxx
+   UnitTestTypeCheckExecObject.cxx
+-  UnitTestTypeCheckKeys.cxx
+   UnitTestUnknownArrayHandle.cxx
+   UnitTestUnknownCellSet.cxx
+   )
+@@ -114,9 +111,11 @@ set(unit_tests_device
+   UnitTestCellSetExplicit.cxx
+   UnitTestCellSetPermutation.cxx
+   UnitTestColorTable.cxx
++  UnitTestControlSignatureTag.cxx
+   UnitTestDataSetPermutation.cxx
+   UnitTestDataSetSingleType.cxx
+   UnitTestDeviceAdapterAlgorithmDependency.cxx
++  UnitTestDeviceAdapterAlgorithmGeneral.cxx
+   UnitTestHints.cxx
+   UnitTestImplicitFunction.cxx
+   UnitTestParticleArrayCopy.cxx
+@@ -127,6 +126,7 @@ set(unit_tests_device
+   UnitTestTransportCellSetIn.cxx
+   UnitTestTransportExecObject.cxx
+   UnitTestTransportWholeArray.cxx
++  UnitTestTypeCheckKeys.cxx
+   )
+ if(TARGET viskores_filter_field_conversion)
+   list(APPEND unit_tests_device
+diff --git a/viskores/cont/testing/TestingDeviceAdapter.h b/viskores/cont/testing/TestingDeviceAdapter.h
+index 3859488b1..cd1865371 100644
+--- a/viskores/cont/testing/TestingDeviceAdapter.h
++++ b/viskores/cont/testing/TestingDeviceAdapter.h
+@@ -1265,17 +1265,17 @@ private:
+ 
+     //the output of reduce and scan inclusive should be the same
+     std::cout << "  Reduce with initial value of 0." << std::endl;
+-    viskores::Id reduce_sum = Algorithm::Reduce(array, 0);
++    viskores::Id reduce_sum = Algorithm::Reduce(array, viskores::Id(0));
+     std::cout << "  Reduce with initial value." << std::endl;
+     viskores::Id reduce_sum_with_intial_value = Algorithm::Reduce(array, viskores::Id(ARRAY_SIZE));
+     std::cout << "  Inclusive scan to check" << std::endl;
+     viskores::Id inclusive_sum = Algorithm::ScanInclusive(array, array);
+     std::cout << "  Reduce with 1 value." << std::endl;
+     array.Allocate(1, viskores::CopyFlag::On);
+-    viskores::Id reduce_sum_one_value = Algorithm::Reduce(array, 0);
++    viskores::Id reduce_sum_one_value = Algorithm::Reduce(array, viskores::Id(0));
+     std::cout << "  Reduce with 0 values." << std::endl;
+     array.Allocate(0);
+-    viskores::Id reduce_sum_no_values = Algorithm::Reduce(array, 0);
++    viskores::Id reduce_sum_no_values = Algorithm::Reduce(array, viskores::Id(0));
+     VISKORES_TEST_ASSERT(reduce_sum == OFFSET * ARRAY_SIZE, "Got bad sum from Reduce");
+     VISKORES_TEST_ASSERT(reduce_sum_with_intial_value == reduce_sum + ARRAY_SIZE,
+                          "Got bad sum from Reduce with initial value");
+diff --git a/viskores/cont/viskores.module b/viskores/cont/viskores.module
+index 0c41ecc4a..c72d84eb1 100644
+--- a/viskores/cont/viskores.module
++++ b/viskores/cont/viskores.module
+@@ -6,6 +6,8 @@ DEPENDS
+   viskores_optionparser
+   viskores_diy
+   viskores_lcl
++PRIVATE_DEPENDS
++  viskores_exec
+ OPTIONAL_DEPENDS
+   viskores_loguru
+ TEST_OPTIONAL_DEPENDS
+@@ -13,3 +15,5 @@ TEST_OPTIONAL_DEPENDS
+   viskores_filter_field_conversion
+ TEST_DEPENDS
+   viskores_source
++  viskores_filter_resampling
++  viskores_worklet
+diff --git a/viskores/exec/AtomicArrayExecutionObject.h b/viskores/exec/AtomicArrayExecutionObject.h
+index 4e7fb9993..0fb5f61c5 100644
+--- a/viskores/exec/AtomicArrayExecutionObject.h
++++ b/viskores/exec/AtomicArrayExecutionObject.h
+@@ -21,7 +21,7 @@
+ #include <viskores/Atomic.h>
+ #include <viskores/List.h>
+ #include <viskores/cont/ArrayHandle.h>
+-#include <viskores/cont/DeviceAdapter.h>
++#include <viskores/cont/DeviceAdapterTag.h>
+ 
+ #include <type_traits>
+ 
+diff --git a/viskores/exec/CMakeLists.txt b/viskores/exec/CMakeLists.txt
+index 5acd83b3d..e4e18653e 100644
+--- a/viskores/exec/CMakeLists.txt
++++ b/viskores/exec/CMakeLists.txt
+@@ -56,3 +56,22 @@ add_subdirectory(arg)
+ viskores_declare_headers(${headers}
+                     ${header_impls}
+                     )
++
++set(backends )
++if(TARGET viskores_tbb)
++  list(APPEND backends viskores_tbb)
++endif()
++if(TARGET viskores_cuda)
++  list(APPEND backends viskores_cuda)
++endif()
++if(TARGET viskores_openmp)
++  list(APPEND backends viskores_openmp)
++endif()
++if(TARGET viskores_kokkos)
++  list(APPEND backends viskores_kokkos)
++endif()
++
++add_library(viskores_exec INTERFACE)
++target_link_libraries(viskores_exec INTERFACE ${backends})
++target_compile_definitions(viskores_exec INTERFACE VISKORES_DEVICE_LINKED)
++install(TARGETS viskores_exec EXPORT ${Viskores_EXPORT_NAME})
+diff --git a/viskores/exec/serial/viskores.module b/viskores/exec/serial/viskores.module
+index 2f29d4da8..89ac43b6b 100644
+--- a/viskores/exec/serial/viskores.module
++++ b/viskores/exec/serial/viskores.module
+@@ -4,3 +4,5 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_exec
++TEST_DEPENDS
++  viskores_exec
+diff --git a/viskores/exec/tbb/viskores.module b/viskores/exec/tbb/viskores.module
+index 62d908526..725c72b1a 100644
+--- a/viskores/exec/tbb/viskores.module
++++ b/viskores/exec/tbb/viskores.module
+@@ -6,3 +6,4 @@ DEPENDS
+   viskores_exec
+ TEST_DEPENDS
+   viskores_tbb
++  viskores_exec
+diff --git a/viskores/filter/connected_components/CMakeLists.txt b/viskores/filter/connected_components/CMakeLists.txt
+index 6fc1e20da..ff4c0fece 100644
+--- a/viskores/filter/connected_components/CMakeLists.txt
++++ b/viskores/filter/connected_components/CMakeLists.txt
+@@ -31,7 +31,6 @@ viskores_library(
+   USE_VISKORES_JOB_POOL
+ )
+ 
+-target_link_libraries(viskores_filter_connected_components PRIVATE viskores_worklet PUBLIC viskores_filter_core)
+ target_link_libraries(viskores_filter PUBLIC INTERFACE viskores_filter_connected_components)
+ 
+ add_subdirectory(worklet)
+diff --git a/viskores/filter/connected_components/viskores.module b/viskores/filter/connected_components/viskores.module
+index 607e03a70..2f1d14f47 100644
+--- a/viskores/filter/connected_components/viskores.module
++++ b/viskores/filter/connected_components/viskores.module
+@@ -10,3 +10,4 @@ TEST_DEPENDS
+   viskores_filter_contour
+   viskores_filter_connected_components
+   viskores_source
++  viskores_worklet
+diff --git a/viskores/filter/contour/viskores.module b/viskores/filter/contour/viskores.module
+index f5b5dc1ce..25cc41019 100644
+--- a/viskores/filter/contour/viskores.module
++++ b/viskores/filter/contour/viskores.module
+@@ -17,6 +17,7 @@ TEST_DEPENDS
+   viskores_filter_geometry_refinement
+   viskores_io
+   viskores_source
++  viskores_worklet
+ TEST_OPTIONAL_DEPENDS
+   viskores_rendering_testing
+   viskores_rendering
+diff --git a/viskores/filter/density_estimate/viskores.module b/viskores/filter/density_estimate/viskores.module
+index 2d77f6580..cc0c8d6a2 100644
+--- a/viskores/filter/density_estimate/viskores.module
++++ b/viskores/filter/density_estimate/viskores.module
+@@ -12,3 +12,4 @@ OPTIONAL_DEPENDS
+ TEST_DEPENDS
+   viskores_filter_density_estimate
+   viskores_source
++  viskores_worklet
+diff --git a/viskores/filter/field_transform/CMakeLists.txt b/viskores/filter/field_transform/CMakeLists.txt
+index 5b28a5a7e..a0120bb96 100644
+--- a/viskores/filter/field_transform/CMakeLists.txt
++++ b/viskores/filter/field_transform/CMakeLists.txt
+@@ -52,7 +52,6 @@ viskores_library(
+   USE_VISKORES_JOB_POOL
+ )
+ 
+-target_link_libraries(viskores_filter_field_transform PUBLIC viskores_worklet viskores_filter_core)
+ target_link_libraries(viskores_filter PUBLIC INTERFACE viskores_filter_field_transform)
+ 
+ add_subdirectory(worklet)
+diff --git a/viskores/filter/flow/viskores.module b/viskores/filter/flow/viskores.module
+index a2be1f1b4..aafc3d993 100644
+--- a/viskores/filter/flow/viskores.module
++++ b/viskores/filter/flow/viskores.module
+@@ -13,6 +13,7 @@ TEST_DEPENDS
+   viskores_filter_mesh_info
+   viskores_filter_flow
+   viskores_io
++  viskores_worklet
+ TEST_OPTIONAL_DEPENDS
+   viskores_rendering_testing
+   MPI::MPI_CXX
+diff --git a/viskores/filter/geometry_refinement/CMakeLists.txt b/viskores/filter/geometry_refinement/CMakeLists.txt
+index f1c84b5dd..8f748cda7 100644
+--- a/viskores/filter/geometry_refinement/CMakeLists.txt
++++ b/viskores/filter/geometry_refinement/CMakeLists.txt
+@@ -42,7 +42,6 @@ viskores_library(
+   USE_VISKORES_JOB_POOL
+ )
+ 
+-target_link_libraries(viskores_filter_geometry_refinement PUBLIC viskores_worklet viskores_filter_core)
+ target_link_libraries(viskores_filter PUBLIC INTERFACE viskores_filter_geometry_refinement)
+ 
+ add_subdirectory(worklet)
+diff --git a/viskores/filter/multi_block/viskores.module b/viskores/filter/multi_block/viskores.module
+index ba4668657..7bda54e6c 100644
+--- a/viskores/filter/multi_block/viskores.module
++++ b/viskores/filter/multi_block/viskores.module
+@@ -11,3 +11,4 @@ TEST_DEPENDS
+   viskores_rendering
+   viskores_rendering_testing
+   viskores_filter_geometry_refinement
++  viskores_worklet
+diff --git a/viskores/filter/resampling/viskores.module b/viskores/filter/resampling/viskores.module
+index f914bcbaa..83f503a9b 100644
+--- a/viskores/filter/resampling/viskores.module
++++ b/viskores/filter/resampling/viskores.module
+@@ -10,3 +10,4 @@ PRIVATE_DEPENDS
+   viskores_worklet
+ TEST_DEPENDS
+   viskores_filter_clean_grid
++  viskores_worklet
+diff --git a/viskores/filter/scalar_topology/CMakeLists.txt b/viskores/filter/scalar_topology/CMakeLists.txt
+index 8c5d57ea2..3a8d87c1d 100644
+--- a/viskores/filter/scalar_topology/CMakeLists.txt
++++ b/viskores/filter/scalar_topology/CMakeLists.txt
+@@ -48,7 +48,6 @@ viskores_library(
+   USE_VISKORES_JOB_POOL
+ )
+ 
+-target_link_libraries(viskores_filter_scalar_topology PUBLIC viskores_worklet viskores_filter_core)
+ if (Viskores_ENABLE_MPI)
+   target_link_libraries(viskores_filter_scalar_topology PUBLIC MPI::MPI_CXX)
+ endif ()
+diff --git a/viskores/filter/scalar_topology/viskores.module b/viskores/filter/scalar_topology/viskores.module
+index 6c44a1813..0a1fa98e0 100644
+--- a/viskores/filter/scalar_topology/viskores.module
++++ b/viskores/filter/scalar_topology/viskores.module
+@@ -4,6 +4,9 @@ GROUPS
+   Filters
+ DEPENDS
+   viskores_filter_core
++PRIVATE_DEPENDS
++  viskores_worklet
+ TEST_DEPENDS
+   viskores_io
+   viskores_source
++  viskores_worklet
+diff --git a/viskores/filter/viskores.module b/viskores/filter/viskores.module
+index 2ad7d069d..d50329908 100644
+--- a/viskores/filter/viskores.module
++++ b/viskores/filter/viskores.module
+@@ -4,11 +4,13 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++PRIVATE_DEPENDS
+   viskores_worklet
+ TEST_DEPENDS
+   viskores_filter
+   viskores_io
+   viskores_source
++  viskores_worklet
+ TEST_OPTIONAL_DEPENDS
+   viskores_rendering
+   viskores_rendering_testing
+diff --git a/viskores/rendering/viskores.module b/viskores/rendering/viskores.module
+index 9caad9698..5a62fd648 100644
+--- a/viskores/rendering/viskores.module
++++ b/viskores/rendering/viskores.module
+@@ -6,6 +6,8 @@ DEPENDS
+   viskores_filter_image_processing
+   viskores_filter_entity_extraction
+   viskores_io
++PRIVATE_DEPENDS
++  viskores_worklet
+ TEST_DEPENDS
+   viskores_rendering_testing
+   viskores_source
+diff --git a/viskores/source/viskores.module b/viskores/source/viskores.module
+index 54dcd76ba..d981696f7 100644
+--- a/viskores/source/viskores.module
++++ b/viskores/source/viskores.module
+@@ -6,6 +6,8 @@ DEPENDS
+   viskores_cont
+   viskores_filter_field_conversion
+   viskores_filter_multi_block
++PRIVATE_DEPENDS
++  viskores_exec
+ TEST_DEPENDS
+   viskores_filter_contour
+ TEST_OPTIONAL_DEPENDS
+diff --git a/viskores/viskores.module b/viskores/viskores.module
+index ec514fe30..86176cf63 100644
+--- a/viskores/viskores.module
++++ b/viskores/viskores.module
+@@ -2,3 +2,5 @@ NAME
+   viskores
+ GROUPS
+   Core
++TEST_DEPENDS
++  viskores_worklet
+diff --git a/viskores/worklet/internal/DispatcherBase.h b/viskores/worklet/internal/DispatcherBase.h
+index 3c1b1d242..bc7ce332d 100644
+--- a/viskores/worklet/internal/DispatcherBase.h
++++ b/viskores/worklet/internal/DispatcherBase.h
+@@ -25,7 +25,9 @@
+ #include <viskores/internal/Invocation.h>
+ 
+ #include <viskores/cont/CastAndCall.h>
++#include <viskores/cont/DeviceAdapter.h>
+ #include <viskores/cont/ErrorBadType.h>
++#include <viskores/cont/ErrorExecution.h>
+ #include <viskores/cont/Logging.h>
+ #include <viskores/cont/TryExecute.h>
+ 
+diff --git a/viskores/worklet/viskores.module b/viskores/worklet/viskores.module
+index 4ff5c89c0..3aeff8134 100644
+--- a/viskores/worklet/viskores.module
++++ b/viskores/worklet/viskores.module
+@@ -4,6 +4,7 @@ GROUPS
+   Core
+ DEPENDS
+   viskores_cont
++  viskores_exec
+ TEST_DEPENDS
+   viskores_source
+   viskores_worklet

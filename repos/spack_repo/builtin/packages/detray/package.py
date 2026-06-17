@@ -21,6 +21,8 @@ class Detray(CMakePackage):
 
     license("MPL-2.0", checked_by="stephenswat")
 
+    version("1.0.1", sha256="6ba1b5ab140a81d2eb825658703bda992715f52e3a202995660a984fc68ac507")
+    version("1.0.0", sha256="d47301b153089370975fa6a21b8ae7548baa37f44e1474e3b7b79e87923b5123")
     version("0.112.0", sha256="9782791ac9101ec3e4b4e7587e728baa5708a1149f4ae775796173da2666f19b")
     version("0.111.0", sha256="676a8b42b5dccabaa63de12c0ff8bcbf77b06f0b0f0ba78fd021be114e74d40a")
     version("0.110.0", sha256="32e29b010d703fc7c718d3cc687ac2cd95115bdf63c764bde35cc95a5f1a89d0")
@@ -121,6 +123,7 @@ class Detray(CMakePackage):
                         f"acts-algebra-plugins cxxstd={_v.value}",
                         when=f"cxxstd={_v.value} {_v.when}",
                     )
+    depends_on("python@3:", when="@1.0:", type="build")
 
     depends_on("actsvg +meta")
     depends_on("actsvg @0.4.57:", when="@0.100:")
