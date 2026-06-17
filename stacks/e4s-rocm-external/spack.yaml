@@ -35,7 +35,7 @@ spack:
 
     kokkos-kernels:
       require:
-      - "+rocm"
+      - "+rocm amdgpu_target=gfx90a"
     llvm-amdgpu:
       buildable: false
       externals:
