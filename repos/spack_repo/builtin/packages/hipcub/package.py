@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -106,7 +108,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver} +cuda", when=f"+cuda @{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
                 f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
@@ -138,7 +140,7 @@ class Hipcub(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip))
         if self.spec.satisfies("@:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
-        if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
-
+        if self.spec.satisfies("+rocm"):
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

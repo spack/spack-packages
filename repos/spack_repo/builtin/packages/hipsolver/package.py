@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import os
 import re
 
@@ -122,12 +123,13 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "7.2.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
-
-    for tgt in ROCmPackage.amdgpu_targets:
-        depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-        depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
@@ -182,6 +184,7 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib
         args.append(self.define("SUITE_SPARSE_LIBDIR", libloc))
-        if "auto" not in self.spec.variants["amdgpu_target"]:
-            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+        if self.spec.satisfies("+rocm"):
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
