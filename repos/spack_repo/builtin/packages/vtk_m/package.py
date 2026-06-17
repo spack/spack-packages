@@ -98,7 +98,7 @@ class VtkM(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("%gcc@:4.10", msg="vtk-m requires gcc >= 5. Please install a newer version")
     conflicts("%gcc@11:", when="@:1.5.2", msg="DIY has a issue building with gcc 11")
 
-    # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 regarding CUDA 13
+    # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 for CUDA 13
     depends_on("cuda@10.1.0:12.9", when="+cuda_native")
     depends_on("tbb", when="+tbb")
     depends_on("mpi", when="+mpi")

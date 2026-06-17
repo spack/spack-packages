@@ -19,10 +19,14 @@ class RLmertest(RPackage):
 
     cran = "lmerTest"
 
+    version("3.2-1", sha256="a0c5e6958940824fe09fc595383548e65ff08d3e363f4940e84a51084c025968")
     version("3.1-3", sha256="35aa75e9f5f2871398ff56a482b013e6828135ef04916ced7d1d7e35257ea8fd")
 
-    depends_on("r@3.2.5:", type=("build", "run"))
-    depends_on("r-lme4@1.1-10:", type=("build", "run"))
-    depends_on("r-numderiv", type=("build", "run"))
-    depends_on("r-mass", type=("build", "run"))
-    depends_on("r-ggplot2", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2.5:")
+
+        depends_on("r-lme4@1.1-10:")
+        depends_on("r-numderiv")
+        depends_on("r-mass")
+        depends_on("r-ggplot2")
+        depends_on("r-reformulas", when="@3.2:")

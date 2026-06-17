@@ -63,7 +63,6 @@ class Tfel(CMakePackage):
     version("3.0.16", sha256="3e03778ee3514304b008d40c0f7ec5c22a9ec56bc7d26d84d81ae3a32709e8e3")
 
     with default_args(deprecated=True):
-
         version("5.0.1", sha256="820b2f9d54e237b2c2d9d6f06aaf7d4a1d3f34fb373e6549bee4fd8b55ecfad1")
         version("5.0.0", sha256="fe1ec39eba7f23571c2b0c773dab1cc274fee4512c5b2f2fc54b231da4502e87")
         version("4.2.3", sha256="a4f636ff9aeb6146a2d4f4bfd261092d6aa6c89be1ca725cefa8c02a5ec5183a")

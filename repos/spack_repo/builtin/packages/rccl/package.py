@@ -23,6 +23,7 @@ class Rccl(CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librccl"]
+    version("7.2.3", sha256="0cb83b3a0552d8b38b05c182753c68dd15432d99769da6aead889e30f14367d7")
     version("7.2.1", sha256="a373bcfe03cf2243a97536860a81940998c36a0b324d9e10830e3cd2c3f8b523")
     version("7.2.0", sha256="c884d730711e433b9df88af3cdf003eeeb3df6d98e93a09475f760a2aa017078")
     version("7.1.1", sha256="eaa60bcf62feb3198553f2bcf6dcbfdfcecd0fdfabda41f1dae7d3f15fadbd68")
@@ -141,6 +142,7 @@ class Rccl(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -160,6 +162,7 @@ class Rccl(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
