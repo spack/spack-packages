@@ -97,14 +97,14 @@ class Texlive(AutotoolsPackage):
     variant("src", default=False, description="Install the source files")
     variant("dvipng", default=False, description="Build the dvipng program")
     variant("metapost", default=False, description="Build MetaPost programs")
-    variant("x", default=False, description="Build X11 programs such as xdvik and xpdfopen")
+    variant("x", default=False, description="Build X11 programs like xdvik and xpdfopen")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("pkgconfig", type="build")
 
-    depends_on("cairo~X", when="+metapost")
+    depends_on("cairo", when="+metapost")
     depends_on("freetype")
     depends_on("gmp", when="+metapost")
     depends_on("harfbuzz+graphite2")
@@ -114,35 +114,31 @@ class Texlive(AutotoolsPackage):
     depends_on("libpng")
     depends_on("libxaw", when="+x")
     depends_on("libxt", when="+x")
+    depends_on("lua-lpeg", when="@20240312:")
     depends_on("mpfr@4:", when="+metapost")
     depends_on("perl")
     depends_on("pixman", when="+metapost")
-    depends_on("poppler@:0.83", when="@:2019")
     depends_on("poppler", when="@:2020")
+    depends_on("poppler@:0.83", when="@:2019")
     depends_on("teckit")
     depends_on("zlib-api")
     depends_on("zziplib")
-    depends_on("lua-lpeg", when="@20240312:")
 
     build_directory = "spack-build"
 
     def tex_arch(self):
-        return "{0}-{1}".format(platform.machine(), platform.system().lower())
+        return f"{platform.machine()}-{platform.system().lower()}"
 
     def configure_args(self):
         args = [
-            "--bindir={0}".format(join_path(self.prefix.bin, self.tex_arch())),
-            "--disable-dvipng",
+            f"--bindir={join_path(self.prefix.bin, self.tex_arch())}",
             "--disable-dvisvgm",
             "--disable-missing",
-            "--disable-mp",
-            "--disable-pmp",
             "--disable-native-texlive-build",
             "--disable-static",
-            "--disable-upmp",
             "--enable-shared",
             "--with-banner-add= - Spack",
-            "--dataroot={0}".format(self.prefix),
+            f"--dataroot={self.prefix}",
             "--with-system-freetype2",
             "--with-system-graphite2",
             "--with-system-harfbuzz",
@@ -156,20 +152,27 @@ class Texlive(AutotoolsPackage):
         ]
 
         if self.spec.satisfies("+dvipng"):
-            args.remove("--disable-dvipng")
             args.append("--with-system-gd")
+        else:
+            args.append("--disable-dvipng")
 
         if self.spec.satisfies("+metapost"):
-            for flag in ("--disable-mp", "--disable-pmp", "--disable-upmp"):
-                args.remove(flag)
-            for flag in (
-                "--with-system-cairo",
-                "--with-system-gmp",
-                "--with-system-mpfr",
-                "--with-system-pixman",
-            ):
-                if flag not in args:
-                    args.append(flag)
+            args.extend(
+                [
+                    "--with-system-cairo",
+                    "--with-system-gmp",
+                    "--with-system-mpfr",
+                    "--with-system-pixman",
+                ]
+            )
+        else:
+            args.extend(
+                [
+                    "--disable-mp",
+                    "--disable-pmp",
+                    "--disable-upmp",
+                ]
+            )
 
         if self.spec.satisfies("+x"):
             args.append("--with-xdvi-x-toolkit=xaw")
@@ -186,8 +189,8 @@ class Texlive(AutotoolsPackage):
         with working_dir("spack-build"):
             make("texlinks")
 
-        skip_docs = "~doc" in self.spec
-        skip_sources = "~src" in self.spec
+        skip_docs = self.spec.satisfies("~doc")
+        skip_sources = self.spec.satisfies("~src")
 
         def ignore(path):
             parts = path.split(os.sep)
@@ -197,7 +200,7 @@ class Texlive(AutotoolsPackage):
             section = parts[1]
             return (skip_docs and section == "doc") or (skip_sources and section == "source")
 
-        copy_tree("texlive-{0}-texmf".format(self.version.string), self.prefix, ignore=ignore)
+        copy_tree(f"texlive-{self.version.string}-texmf", self.prefix, ignore=ignore)
 
         # Create and run setup utilities
         fmtutil_sys = Executable(join_path(self.prefix.bin, self.tex_arch(), "fmtutil-sys"))
