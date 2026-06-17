@@ -99,8 +99,6 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
         return (flags, None, None)
 
     def configure_args(self):
-        spec = self.spec
-
         config_args = ["--with-curses"]
 
         return config_args
