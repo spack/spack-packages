@@ -23,14 +23,6 @@ class PyCylcRose(PythonPackage):
         version("1.4.2", sha256="d215e2b58fabde66a82f131088b8a3e5add7fab82b226a0b7aa3cc2079ff62e9")
         version("1.3.0", sha256="017072b69d7a50fa6d309a911d2428743b07c095f308529b36b1b787ebe7ab88")
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cylc-rose/{0}-{1}.tar.gz"
-        if version >= Version("1.4"):
-            prefix = "cylc_rose"
-        else:
-            prefix = "cylc-rose"
-        return url.format(prefix, version)
-
     depends_on("py-setuptools", type="build")
     depends_on("py-metomi-isodatetime", type=("build", "run"))
     depends_on("py-jinja2", type=("build", "run"))
@@ -48,3 +40,11 @@ class PyCylcRose(PythonPackage):
         depends_on("py-metomi-rose@2.4", type=("build", "run"))
         depends_on("py-cylc-flow@8.4", type=("build", "run"))
         depends_on("py-ansimarkup", type=("build", "run"))
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/c/cylc-rose/{0}-{1}.tar.gz"
+        if version >= Version("1.4"):
+            prefix = "cylc_rose"
+        else:
+            prefix = "cylc-rose"
+        return url.format(prefix, version)

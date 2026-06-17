@@ -27,14 +27,6 @@ class PyCylcFlow(PythonPackage):
         version("8.2.0", sha256="cbe35e0d72d1ca36f28a4cebe9b9040a3445a74253bc94051a3c906cf179ded0")
         version("8.1.4", sha256="d1835ac18f6f24f3115c56b2bc821185484e834a86b12fd0033ff7e4dc3c1f63")
 
-    def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cylc-flow/{0}-{1}.tar.gz"
-        if version >= Version("8.3"):
-            prefix = "cylc_flow"
-        else:
-            prefix = "cylc-flow"
-        return url.format(prefix, version)
-
     depends_on("python@3.12:", type=("build", "run"), when="@8.6:")
     depends_on("py-setuptools@49:66,68:", type=("build", "run"), when="@:8.2")
 
@@ -71,3 +63,11 @@ class PyCylcFlow(PythonPackage):
 
     # Undocumented dependency, but needed for 8.4
     depends_on("py-typing-extensions", type="run", when="@8.4")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/c/cylc-flow/{0}-{1}.tar.gz"
+        if version >= Version("8.3"):
+            prefix = "cylc_flow"
+        else:
+            prefix = "cylc-flow"
+        return url.format(prefix, version)
