@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.packages.kokkos.package import Kokkos
 
 from spack.package import *
 
@@ -142,31 +143,6 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
-    depends_on("kokkos@develop", when="@develop")
-    depends_on("kokkos@5.1.1", when="@5.1.1")
-    depends_on("kokkos@5.1.0", when="@5.1.0")
-    depends_on("kokkos@5.0.2", when="@5.0.2")
-    depends_on("kokkos@5.0.1", when="@5.0.1")
-    depends_on("kokkos@5.0.0", when="@5.0.0")
-    depends_on("kokkos@4.7.03", when="@4.7.03")
-    depends_on("kokkos@4.7.02", when="@4.7.02")
-    depends_on("kokkos@4.7.01", when="@4.7.01")
-    depends_on("kokkos@4.7.00", when="@4.7.00")
-    depends_on("kokkos@4.6.02", when="@4.6.02")
-    depends_on("kokkos@4.6.01", when="@4.6.01")
-    depends_on("kokkos@4.6.00", when="@4.6.00")
-    depends_on("kokkos@4.5.01", when="@4.5.01")
-    depends_on("kokkos@4.5.00", when="@4.5.00")
-    depends_on("kokkos@4.4.01", when="@4.4.01")
-    depends_on("kokkos@4.4.00", when="@4.4.00")
-    depends_on("kokkos@4.3.01", when="@4.3.01")
-    depends_on("kokkos@4.3.00", when="@4.3.00")
-    depends_on("kokkos@4.2.01", when="@4.2.01")
-    depends_on("kokkos@4.2.00", when="@4.2.00")
-    depends_on("kokkos@4.1.00", when="@4.1.00")
-    depends_on("kokkos@4.0.01", when="@4.0.01")
-    depends_on("kokkos@4.0.00", when="@4.0.00")
-    depends_on("kokkos@3.7.02", when="@3.7.02")
     depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")
@@ -180,6 +156,9 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+threads", when="+threads")
     depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
+
+    for v in Kokkos.versions:
+        depends_on(f"kokkos@{v}", when=f"@{v}")
 
     tpls = {
         # variant name   #deflt   #spack name  #root var name  #supporting versions  #docstring
