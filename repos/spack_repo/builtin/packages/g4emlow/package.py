@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4emlow(Geant4DataPackage):
+class G4emlow(Package, Geant4DataPackage):
     """Geant4 data files for low energy electromagnetic processes."""
 
     homepage = "https://geant4.web.cern.ch"

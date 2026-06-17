@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4ndl(Geant4DataPackage):
+class G4ndl(Package, Geant4DataPackage):
     """Geant4 Neutron data files with thermal cross sections"""
 
     homepage = "https://geant4.web.cern.ch"

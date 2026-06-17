@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4channeling(Geant4DataPackage):
+class G4channeling(Package, Geant4DataPackage):
     """Geant4 data for solid state crystal channeling"""
 
     homepage = "https://geant4.web.cern.ch"

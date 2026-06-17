@@ -5,12 +5,12 @@
 import os
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
-from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
+from spack.package import PackageBase
 
 
-class Geant4DataPackage(Package):
+class Geant4DataPackage(PackageBase):
     """Base class to be used by each dependency in Geant4Data"""
 
     #: URL to parent directory for dataset downloads
@@ -26,11 +26,11 @@ class Geant4DataPackage(Package):
     def datadir(self):
         """Data directory at :file:`share/data/{g4dirname}{version}`"""
         s = self.spec
-        assert isinstance(self.g4dirname, str)
+        self._ensure_g4dirname_is_set_or_raise()
         return join_path(s.prefix.share, "data", f"{self.g4dirname}{s.version}")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        assert isinstance(self.g4envvar, str)
+        self._ensure_g4envvar_is_set_or_raise()
         env.set(self.g4envvar, self.datadir)
 
     def url_for_version(self, version):
@@ -45,6 +45,17 @@ class Geant4DataPackage(Package):
         datadir = self.datadir
         mkdirp(datadir)
         install_tree(self.stage.source_path, datadir)
+
+    def _ensure_g4dirname_is_set_or_raise(self):
+        self.validate_or_raise_attr("g4dirname")
+
+    def _ensure_g4envvar_is_set_or_raise(self):
+        self.validate_or_raise_attr("g4envvar")
+
+    def validate_or_raise_attr(self, attr):
+        if getattr(self, attr) is None:
+            cls = type(self)
+            raise AttributeError(f"{cls.__name__} must define a `{attr}` attribute [none defined]")
 
 
 class Geant4Data(BundlePackage):

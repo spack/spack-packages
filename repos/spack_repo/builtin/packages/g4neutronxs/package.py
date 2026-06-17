@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4neutronxs(Geant4DataPackage):
+class G4neutronxs(Package, Geant4DataPackage):
     """Geant4 data for evaluated neutron cross-sections on natural composition
     of elements"""
 

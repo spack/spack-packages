@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4particlexs(Geant4DataPackage):
+class G4particlexs(Package, Geant4DataPackage):
     """Geant4 data for evaluated particle cross-sections on
     natural composition of elements"""
 

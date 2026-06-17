@@ -8,7 +8,7 @@ from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 from spack.package import *
 
 
-class G4photonevaporation(Geant4DataPackage):
+class G4photonevaporation(Package, Geant4DataPackage):
     """Geant4 data for photon evaporation"""
 
     homepage = "https://geant4.web.cern.ch"
