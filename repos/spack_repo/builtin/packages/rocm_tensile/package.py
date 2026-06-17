@@ -172,3 +172,5 @@ class RocmTensile(CMakePackage):
         with working_dir(self.build_directory):
             install_tree("./client", prefix.client)
             install_tree("./lib", prefix.lib)
+        with working_dir(self.stage.source_path):
+            install_tree("./Tensile", prefix.Tensile)

@@ -158,6 +158,7 @@ class Rocblas(CMakePackage):
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", type="build", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
+        depends_on(f"rocm-tensile@{ver}", type="build", when=f"@{ver} +tensile")
 
     for ver in [
         "6.3.0",
@@ -206,38 +207,10 @@ class Rocblas(CMakePackage):
         depends_on("py-pip", type="build")
         depends_on("py-joblib", type="build")
         depends_on("procps", type="build")
-
-    for t_version, t_commit in [
-        ("@5.7.0", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
-        ("@5.7.1", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
-        ("@6.0.0", "17df881bde80fc20f997dfb290f4bb4b0e05a7e9"),
-        ("@6.0.2", "17df881bde80fc20f997dfb290f4bb4b0e05a7e9"),
-        ("@6.1.0", "2b55ccf58712f67b3df0ca53b0445f094fcb96b2"),
-        ("@6.1.1", "2b55ccf58712f67b3df0ca53b0445f094fcb96b2"),
-        ("@6.1.2", "2b55ccf58712f67b3df0ca53b0445f094fcb96b2"),
-        ("@6.2.0", "dbc2062dced66e4cbee8e0591d76e0a1588a4c70"),
-        ("@6.2.1", "dbc2062dced66e4cbee8e0591d76e0a1588a4c70"),
-        ("@6.2.4", "81ae9537671627fe541332c0a5d953bfd6af71d6"),
-        ("@6.3.0", "aca95d1743c243dd0dd0c8b924608bc915ce1ae7"),
-        ("@6.3.1", "aca95d1743c243dd0dd0c8b924608bc915ce1ae7"),
-        ("@6.3.2", "aca95d1743c243dd0dd0c8b924608bc915ce1ae7"),
-        ("@6.3.3", "aca95d1743c243dd0dd0c8b924608bc915ce1ae7"),
-        ("@6.4.0", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
-        ("@6.4.1", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
-        ("@6.4.2", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
-        ("@6.4.3", "be49885fce2a61b600ae4593f1c2d00c8b4fa11e"),
-        ("@7.0.0", "cca3c8136aa812109629e6291ce9f0ca846b68d3"),
-        ("@7.0.2", "63c27e505cb532ff8e568d737bfdbd9e1d024665"),
-        ("@7.1.0", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
-        ("@7.1.1", "0c8314da90fee8cf3b16dcb1bbc75bc1266e123f"),
-    ]:
-        resource(
-            name="Tensile",
-            git="https://github.com/ROCm/Tensile.git",
-            commit=t_commit,
-            placement="Tensile",
-            when=f"{t_version} +tensile",
-        )
+        depends_on("py-rich", type="build")
+        depends_on("py-markdown-it-py", type="build")
+        depends_on("py-pygments", type="build")
+        depends_on("py-mdurl", type="build")
 
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
@@ -319,14 +292,13 @@ class Rocblas(CMakePackage):
                 self.define("BUILD_WITH_TENSILE_HOST", "@3.7.0:" in self.spec),
                 self.define("Tensile_LIBRARY_FORMAT", "msgpack"),
             ]
-            if self.spec.satisfies("@:7.1"):
-                tensile_path = join_path(self.stage.source_path, "Tensile")
-                args.append(self.define("Tensile_TEST_LOCAL_PATH", tensile_path))
             # Restrict the number of jobs Tensile can spawn.
             # If we don't specify otherwise, Tensile creates a job per available core,
             # and that consumes a lot of system memory.
             # https://github.com/ROCm/Tensile/blob/93e10678a0ced7843d9332b80bc17ebf9a166e8e/Tensile/Parallel.py#L38
             args.append(self.define("Tensile_CPU_THREADS", min(16, make_jobs)))
+            args.append(self.define("BUILD_WITH_PIP", "OFF"))
+            args.append(self.define("Tensile_ROOT", self.spec["rocm-tensile"].prefix.Tensile))
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
             if self.spec.satisfies("@7.1:"):
