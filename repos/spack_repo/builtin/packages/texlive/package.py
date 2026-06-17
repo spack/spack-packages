@@ -97,7 +97,7 @@ class Texlive(AutotoolsPackage):
     variant("src", default=False, description="Install the source files")
     variant("dvipng", default=False, description="Build the dvipng program")
     variant("metapost", default=False, description="Build MetaPost programs")
-    variant("x", default=False, description="Build X11 programs like xdvik and xpdfopen")
+    variant("X", default=False, description="Build X11 programs like xdvik and xpdfopen")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -112,8 +112,8 @@ class Texlive(AutotoolsPackage):
     depends_on("libgd", when="+dvipng")
     depends_on("libpaper")
     depends_on("libpng")
-    depends_on("libxaw", when="+x")
-    depends_on("libxt", when="+x")
+    depends_on("libxaw", when="+X")
+    depends_on("libxt", when="+X")
     depends_on("lua-lpeg", when="@20240312:")
     depends_on("mpfr@4:", when="+metapost")
     depends_on("perl")
@@ -174,7 +174,7 @@ class Texlive(AutotoolsPackage):
                 ]
             )
 
-        if self.spec.satisfies("+x"):
+        if self.spec.satisfies("+X"):
             args.append("--with-xdvi-x-toolkit=xaw")
         else:
             args.append("--without-x")
