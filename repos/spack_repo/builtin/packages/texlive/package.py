@@ -93,26 +93,30 @@ class Texlive(AutotoolsPackage):
             when="@{0}".format(release["version"]),
         )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    variant("doc", default=False, description="Install the documentation files")
+    variant("src", default=False, description="Install the source files")
+    variant("dvipng", default=False, description="Build the dvipng program")
+    variant("metapost", default=False, description="Build MetaPost programs")
+    variant("x", default=False, description="Build X11 programs such as xdvik and xpdfopen")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("pkgconfig", type="build")
 
-    depends_on("cairo+X")
+    depends_on("cairo~X", when="+metapost")
     depends_on("freetype")
-    depends_on("ghostscript")
-    depends_on("gmp")
+    depends_on("gmp", when="+metapost")
     depends_on("harfbuzz+graphite2")
     depends_on("icu4c")
-    depends_on("libgd")
+    depends_on("libgd", when="+dvipng")
     depends_on("libpaper")
     depends_on("libpng")
-    depends_on("libxaw")
-    depends_on("libxt")
-    depends_on("mpfr@4:")
+    depends_on("libxaw", when="+x")
+    depends_on("libxt", when="+x")
+    depends_on("mpfr@4:", when="+metapost")
     depends_on("perl")
-    depends_on("pixman")
+    depends_on("pixman", when="+metapost")
     depends_on("poppler@:0.83", when="@:2019")
     depends_on("poppler", when="@:2020")
     depends_on("teckit")
@@ -122,38 +126,55 @@ class Texlive(AutotoolsPackage):
 
     build_directory = "spack-build"
 
-    variant("doc", default=False, description="Install the documentation files")
-    variant("src", default=False, description="Install the source files")
-
     def tex_arch(self):
-        tex_arch = "{0}-{1}".format(platform.machine(), platform.system().lower())
-        return tex_arch
+        return "{0}-{1}".format(platform.machine(), platform.system().lower())
 
     def configure_args(self):
         args = [
             "--bindir={0}".format(join_path(self.prefix.bin, self.tex_arch())),
+            "--disable-dvipng",
             "--disable-dvisvgm",
+            "--disable-missing",
+            "--disable-mp",
+            "--disable-pmp",
             "--disable-native-texlive-build",
             "--disable-static",
+            "--disable-upmp",
             "--enable-shared",
             "--with-banner-add= - Spack",
             "--dataroot={0}".format(self.prefix),
-            "--with-system-cairo",
             "--with-system-freetype2",
-            "--with-system-gd",
-            "--with-system-gmp",
             "--with-system-graphite2",
             "--with-system-harfbuzz",
             "--with-system-icu",
             "--with-system-libpaper",
             "--with-system-libpng",
-            "--with-system-mpfr",
-            "--with-system-pixman",
             "--with-system-poppler",
             "--with-system-teckit",
             "--with-system-zlib",
             "--with-system-zziplib",
         ]
+
+        if self.spec.satisfies("+dvipng"):
+            args.remove("--disable-dvipng")
+            args.append("--with-system-gd")
+
+        if self.spec.satisfies("+metapost"):
+            for flag in ("--disable-mp", "--disable-pmp", "--disable-upmp"):
+                args.remove(flag)
+            for flag in (
+                "--with-system-cairo",
+                "--with-system-gmp",
+                "--with-system-mpfr",
+                "--with-system-pixman",
+            ):
+                if flag not in args:
+                    args.append(flag)
+
+        if self.spec.satisfies("+x"):
+            args.append("--with-xdvi-x-toolkit=xaw")
+        else:
+            args.append("--without-x")
 
         return args
 
@@ -165,16 +186,16 @@ class Texlive(AutotoolsPackage):
         with working_dir("spack-build"):
             make("texlinks")
 
-        ignore_doc = "~doc" in self.spec
-        ignore_src = "~src" in self.spec
+        skip_docs = "~doc" in self.spec
+        skip_sources = "~src" in self.spec
 
-        ignore = lambda f: (
-            len(f.split(os.sep)) > 1
-            and (
-                (ignore_doc and f.split(os.sep)[1] == "doc")
-                or (ignore_src and f.split(os.sep)[1] == "source")
-            )
-        )
+        def ignore(path):
+            parts = path.split(os.sep)
+            if len(parts) <= 1:
+                return False
+
+            section = parts[1]
+            return (skip_docs and section == "doc") or (skip_sources and section == "source")
 
         copy_tree("texlive-{0}-texmf".format(self.version.string), self.prefix, ignore=ignore)
 
@@ -182,6 +203,13 @@ class Texlive(AutotoolsPackage):
         fmtutil_sys = Executable(join_path(self.prefix.bin, self.tex_arch(), "fmtutil-sys"))
         mktexlsr = Executable(join_path(self.prefix.bin, self.tex_arch(), "mktexlsr"))
         mktexlsr()
+        if self.spec.satisfies("@20260301"):
+            filter_file(
+                "hilatex hitex language.dat -etex -ltx hilatex.ini",
+                "# hilatex hitex language.dat -etex -ltx hilatex.ini",
+                join_path(self.prefix, "texmf-dist", "web2c", "fmtutil.cnf"),
+                string=True,
+            )
         fmtutil_sys("--all")
         if self.spec.satisfies("@:2023"):
             mtxrun = Executable(join_path(self.prefix.bin, self.tex_arch(), "mtxrun"))
@@ -193,6 +221,11 @@ class Texlive(AutotoolsPackage):
             chmod("+x", mtxrun_lua)
             mtxrun = Executable(mtxrun_lua)
         mtxrun("--generate")
+
+    def flag_handler(self, name, flags):
+        if name == "cxxflags" and self.spec.satisfies("@20240312:"):
+            flags.append(self.compiler.cxx17_flag)
+        return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PATH", join_path(self.prefix.bin, self.tex_arch()))
