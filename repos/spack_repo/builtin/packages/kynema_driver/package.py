@@ -9,11 +9,11 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Exawind(CMakePackage, CudaPackage, ROCmPackage):
-    """Multi-application driver for Exawind project."""
+class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
+    """Multi-application driver for Kynema project."""
 
-    homepage = "https://github.com/Exawind/exawind-driver"
-    git = "https://github.com/Exawind/exawind-driver.git"
+    homepage = "https://github.com/Kynema/kynema-driver"
+    git = "https://github.com/Kynema/kynema-driver.git"
 
     maintainers("jrood-nrel")
 
@@ -22,16 +22,14 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0")
 
-    version("2.1.0", tag="v2.1.0", commit="b726a1128f02edb72f504130830d44622710225a")
-    version("2.0.0", tag="v2.0.0", commit="d25aa549c7cbd9d6213541cd4b046bd9c0c54652")
-    version("1.2.0", tag="v1.2.0", commit="4c49c7775c580b6bd2556e6c00fd13c08737d5eb")
-    version("1.1.0", tag="v1.1.0", commit="c8823f19fc8d19ea051df0ff68780e56981a7f94")
-    version("1.0.0", tag="v1.0.0", commit="85718893d2510c8a2e8c8e94c768ce6a67f94703")
+    version("main", branch="main")
 
-    variant("amr_wind_gpu", default=False, description="Enable AMR-Wind on the GPU")
-    variant("nalu_wind_gpu", default=False, description="Enable Nalu-Wind on the GPU")
-    variant("sycl", default=False, description="Enable SYCL backend for AMR-Wind")
+    variant("kynema_sgf_gpu", default=False, description="Enable Kynema-SGF on the GPU")
+    variant("kynema_ugf_gpu", default=False, description="Enable Kynema-UGF on the GPU")
+    variant("sycl", default=False, description="Enable SYCL backend for Kynema-SGF")
     variant("gpu-aware-mpi", default=False, description="gpu-aware-mpi")
+    variant("kynema-fmb", default=False, description="Couple with Kynema-FMB structural solver")
+    variant("pic", default=True, description="Enable position independent code")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -39,62 +37,58 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
 
     for arch in CudaPackage.cuda_arch_values:
         depends_on(
-            "amr-wind+cuda cuda_arch=%s" % arch, when="+amr_wind_gpu+cuda cuda_arch=%s" % arch
+            "kynema-sgf+cuda cuda_arch=%s" % arch, when="+kynema_sgf_gpu+cuda cuda_arch=%s" % arch
         )
         depends_on(
-            "nalu-wind+cuda cuda_arch=%s" % arch, when="+nalu_wind_gpu+cuda cuda_arch=%s" % arch
+            "kynema-ugf+cuda cuda_arch=%s" % arch, when="+kynema_ugf_gpu+cuda cuda_arch=%s" % arch
         )
         depends_on(
-            "trilinos+cuda cuda_arch=%s" % arch, when="+nalu_wind_gpu+cuda cuda_arch=%s" % arch
+            "trilinos+cuda cuda_arch=%s" % arch, when="+kynema_ugf_gpu+cuda cuda_arch=%s" % arch
         )
 
     for arch in ROCmPackage.amdgpu_targets:
         depends_on(
-            "amr-wind+rocm amdgpu_target=%s" % arch,
-            when="+amr_wind_gpu+rocm amdgpu_target=%s" % arch,
+            "kynema-sgf+rocm amdgpu_target=%s" % arch,
+            when="+kynema_sgf_gpu+rocm amdgpu_target=%s" % arch,
         )
         depends_on(
-            "nalu-wind+rocm amdgpu_target=%s" % arch,
-            when="+nalu_wind_gpu+rocm amdgpu_target=%s" % arch,
+            "kynema-ugf+rocm amdgpu_target=%s" % arch,
+            when="+kynema_ugf_gpu+rocm amdgpu_target=%s" % arch,
         )
         depends_on(
             "trilinos+rocm amdgpu_target=%s" % arch,
-            when="+nalu_wind_gpu+rocm amdgpu_target=%s" % arch,
+            when="+kynema_ugf_gpu+rocm amdgpu_target=%s" % arch,
         )
 
-    depends_on("nalu-wind+hypre+openfast+tioga")
-    depends_on("amr-wind+netcdf+mpi+tiny_profile")
+    depends_on("kynema-ugf+hypre+openfast+tioga")
+    depends_on("kynema-sgf+netcdf+mpi+tiny_profile")
     depends_on("trilinos")
     depends_on("yaml-cpp@0.6:")
     depends_on("tioga~nodegid")
     depends_on("openfast+cxx@2.6.0:")
-    depends_on("amr-wind+sycl", when="+amr_wind_gpu+sycl")
+    depends_on("kynema-ugf+kynema-fmb", when="+kynema-fmb")
+    depends_on("kynema-sgf+sycl", when="+kynema_sgf_gpu+sycl")
     depends_on("kokkos-nvcc-wrapper", type="build", when="+cuda")
     depends_on("mpi")
-    depends_on("nalu-wind+gpu-aware-mpi", when="+gpu-aware-mpi")
-    depends_on("amr-wind+gpu-aware-mpi", when="+gpu-aware-mpi")
-    depends_on("nalu-wind@2.3:", when="@2:")
-    depends_on("amr-wind@3.5:", when="@2:")
-    depends_on("nalu-wind@2.0.0:", when="@1.0.0:")
-    depends_on("amr-wind@0.9.0:", when="@1.0.0:")
-    depends_on("tioga@1.0.0:", when="@1.0.0:")
+    depends_on("kynema-ugf+gpu-aware-mpi", when="+gpu-aware-mpi")
+    depends_on("kynema-sgf+gpu-aware-mpi", when="+gpu-aware-mpi")
 
-    with when("~amr_wind_gpu~nalu_wind_gpu"):
+    with when("~kynema_sgf_gpu~kynema_ugf_gpu"):
         conflicts("+cuda")
         conflicts("+rocm")
         conflicts("+sycl")
-    with when("~nalu_wind_gpu"):
-        conflicts("^nalu-wind+cuda")
-        conflicts("^nalu-wind+rocm")
-    with when("~amr_wind_gpu"):
-        conflicts("^amr-wind+cuda")
-        conflicts("^amr-wind+rocm")
-        conflicts("^amr-wind+sycl")
-    conflicts("+amr_wind_gpu", when="~cuda~rocm~sycl")
-    conflicts("+nalu_wind_gpu", when="~cuda~rocm")
-    conflicts("+nalu_wind_gpu", when="+sycl")
-    conflicts("^amr-wind+hypre", when="~amr_wind_gpu+nalu_wind_gpu")
-    conflicts("^amr-wind+hypre", when="+amr_wind_gpu~nalu_wind_gpu")
+    with when("~kynema_ugf_gpu"):
+        conflicts("^kynema-ugf+cuda")
+        conflicts("^kynema-ugf+rocm")
+    with when("~kynema_sgf_gpu"):
+        conflicts("^kynema-sgf+cuda")
+        conflicts("^kynema-sgf+rocm")
+        conflicts("^kynema-sgf+sycl")
+    conflicts("+kynema_sgf_gpu", when="~cuda~rocm~sycl")
+    conflicts("+kynema_ugf_gpu", when="~cuda~rocm")
+    conflicts("+kynema_ugf_gpu", when="+sycl")
+    conflicts("^kynema-sgf+hypre", when="~kynema_sgf_gpu+kynema_ugf_gpu")
+    conflicts("^kynema-sgf+hypre", when="+kynema_sgf_gpu~kynema_ugf_gpu")
     conflicts("+sycl", when="+cuda")
     conflicts("+rocm", when="+cuda")
     conflicts("+sycl", when="+rocm")
@@ -104,31 +98,35 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
 
         args = [self.define("MPI_HOME", spec["mpi"].prefix)]
 
+        args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
+
         if spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
             args.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
-            args.append(self.define("EXAWIND_ENABLE_CUDA", True))
+            args.append(self.define("KYNEMA_DRIVER_ENABLE_CUDA", True))
+            args.append(
+                self.define("KYNEMA_DRIVER_CUDA_ARCH", self.spec.variants["cuda_arch"].value)
+            )
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
-            args.append(self.define("EXAWIND_CUDA_ARCH", self.spec.variants["cuda_arch"].value))
 
         if spec.satisfies("+rocm"):
             targets = self.spec.variants["amdgpu_target"].value
-            args.append(self.define("EXAWIND_ENABLE_ROCM", True))
+            args.append(self.define("KYNEMA_DRIVER_ENABLE_ROCM", True))
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             # Optimization to only build one specific target architecture:
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", ";".join(str(x) for x in targets)))
             args.append(self.define("AMDGPU_TARGETS", ";".join(str(x) for x in targets)))
             args.append(self.define("GPU_TARGETS", ";".join(str(x) for x in targets)))
 
-        if spec.satisfies("^amr-wind+hdf5"):
+        if spec.satisfies("^kynema-sgf+hdf5"):
             args.append(self.define("H5Z_ZFP_USE_STATIC_LIBS", True))
 
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.append_flags("CXXFLAGS", "-DUSE_STK_SIMD_NONE")
-        if self.spec.satisfies("+rocm+amr_wind_gpu~nalu_wind_gpu"):
-            # Manually turn off device self.defines to solve Kokkos issues in Nalu-Wind headers
+        if self.spec.satisfies("+rocm+kynema_sgf_gpu~kynema_ugf_gpu"):
+            # Manually turn off device self.defines to solve Kokkos issues in Kynema-UGF headers
             env.append_flags("CXXFLAGS", "-U__HIP_DEVICE_COMPILE__ -DDESUL_HIP_RDC")
         if self.spec.satisfies("+cuda"):
             env.set("OMPI_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)

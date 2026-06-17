@@ -32,7 +32,7 @@ spack:
     - lmod@8.7.67
     - environment-modules
     - macsio@1.1+scr ^scr@2.0.0~fortran ^silo~fortran ^hdf5~fortran
-    # - julia ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
+    - julia ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
     - vim
     override:
       packages:
