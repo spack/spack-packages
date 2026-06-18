@@ -29,12 +29,12 @@ class PyLangsmith(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"), when="@0.4.38:")
     depends_on("python@3.8.1:", type=("build", "run"))
     depends_on("py-hatchling", type="build", when="@0.4.10:")
-    depends_on("py-poetry-core", type="build", when="@:0.4.9")
     depends_on("py-pydantic@2", type=("build", "run"), when="@0.6:")
     depends_on("py-pydantic@1:2", type=("build", "run"), when="@0.1.81:")
-    depends_on("py-pydantic@1", type=("build", "run"), when="@:0.1.1")
     depends_on("py-requests@2:", type=("build", "run"), when="@0.4.10:")
-    depends_on("py-orjson@3.9.14:", type=("build", "run"), when="@0.1.81:")
+    depends_on("py-requests@2", type=("build", "run"))
+    depends_on("py-orjson@3.9.14:", type=("build", "run"), when="@0.4.10:")
+    depends_on("py-orjson@3.9.14:3", type=("build", "run"), when="@0.1.81:0.4.9")
     depends_on("py-httpx@0.23:0", type=("build", "run"), when="@0.1.100:")
     depends_on("py-requests-toolbelt@1:", type=("build", "run"), when="@0.1.130:")
     depends_on("py-zstandard@0.23:", type=("build", "run"), when="@0.2.5:")
@@ -42,3 +42,7 @@ class PyLangsmith(PythonPackage):
     depends_on("py-uuid-utils@0.12:0", type=("build", "run"), when="@0.4.53:")
     depends_on("py-xxhash@3:", type=("build", "run"), when="@0.6.7:")
     depends_on("py-websockets@15:", type=("build", "run"), when="@0.8.6:")
+
+    # Historical dependencies
+    depends_on("py-poetry-core", type="build", when="@:0.4.9")
+    depends_on("py-pydantic@1", type=("build", "run"), when="@:0.1.1")
