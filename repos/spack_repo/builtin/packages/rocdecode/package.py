@@ -21,7 +21,6 @@ class Rocdecode(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
-
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.4.3.tar.gz"

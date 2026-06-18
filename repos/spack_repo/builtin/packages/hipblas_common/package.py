@@ -18,7 +18,6 @@ class HipblasCommon(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     license("MIT")
 
-
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/hipBLAS-common/archive/refs/tags/rocm-{0}.tar.gz"

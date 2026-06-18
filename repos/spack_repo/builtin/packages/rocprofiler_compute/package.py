@@ -20,7 +20,6 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
-
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/rocprofiler-compute/archive/rocm-{0}.tar.gz"
