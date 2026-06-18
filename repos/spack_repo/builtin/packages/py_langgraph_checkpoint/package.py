@@ -13,6 +13,8 @@ class PyLanggraphCheckpoint(PythonPackage):
     homepage = "https://docs.langchain.com/oss/python/langgraph/overview"
     pypi = "langgraph_checkpoint/langgraph_checkpoint-4.1.1.tar.gz"
 
+    license("MIT")
+
     version("4.1.1", sha256="6c2bdb530c91f91d7d9c1bd100925d0fc4f498d418c17f3587d1526279482a25")
 
     depends_on("py-hatchling", type="build")

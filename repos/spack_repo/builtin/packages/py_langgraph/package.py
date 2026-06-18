@@ -13,6 +13,8 @@ class PyLanggraph(PythonPackage):
     homepage = "https://docs.langchain.com/oss/python/langgraph/overview"
     pypi = "langgraph/langgraph-1.2.2.tar.gz"
 
+    license("MIT")
+
     version("1.2.2", sha256="f54a98458976b3ff0774683867df125fb52d8dbedeb2441d0b0656a51331cee5")
 
     depends_on("py-hatchling", type="build")

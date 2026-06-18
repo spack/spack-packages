@@ -13,6 +13,8 @@ class PyLanggraphSdk(PythonPackage):
     homepage = "https://docs.langchain.com/oss/python/langgraph/overview"
     pypi = "langgraph_sdk/langgraph_sdk-0.4.0.tar.gz"
 
+    license("MIT")
+
     version("0.4.0", sha256="fd84612d215d6dca11cdfc8c0835df2910c7e51a0b0150b950fc7a928c76a2eb")
     version("0.3.15", sha256="29e805003d2c6e296823dd71992610976fd0428cefaa8b3304fd91f2247037de")
 

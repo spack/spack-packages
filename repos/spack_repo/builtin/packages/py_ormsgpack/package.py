@@ -13,9 +13,9 @@ class PyOrmsgpack(PythonPackage):
     homepage = "https://github.com/ormsgpack/ormsgpack"
     pypi = "ormsgpack/ormsgpack-1.12.2.tar.gz"
 
-    version("1.12.2", sha256="944a2233640273bee67521795a73cf1e959538e0dfb7ac635505010455e53b33")
-
     license("Apache-2.0 OR MIT")
+
+    version("1.12.2", sha256="944a2233640273bee67521795a73cf1e959538e0dfb7ac635505010455e53b33")
 
     depends_on("py-maturin@1", type="build")
     depends_on("rust@1.81:", type="build")

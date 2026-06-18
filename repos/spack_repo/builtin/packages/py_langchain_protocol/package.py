@@ -13,6 +13,8 @@ class PyLangchainProtocol(PythonPackage):
     homepage = "https://github.com/langchain-ai/agent-protocol/tree/main/streaming"
     pypi = "langchain_protocol/langchain_protocol-0.0.16.tar.gz"
 
+    license("MIT")
+
     version("0.0.16", sha256="806c7cdd951b1c4f692fa40fce60821ff0f221d4360e27673ddf2c2b99c2b7ff")
 
     depends_on("py-hatchling", type="build")

@@ -13,6 +13,8 @@ class PyLanggraphPrebuilt(PythonPackage):
     homepage = "https://docs.langchain.com/oss/python/langgraph/overview"
     pypi = "langgraph_prebuilt/langgraph_prebuilt-1.1.0.tar.gz"
 
+    license("MIT")
+
     version("1.1.0", sha256="3c579cf6eed2d17f9c157c2d0fcaddcd8688524e7022d3b22b37a3bf4589d528")
 
     depends_on("py-hatchling", type="build")
