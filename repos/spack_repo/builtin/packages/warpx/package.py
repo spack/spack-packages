@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.04.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.05.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,6 +26,7 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.05", sha256="4cbbbaa444b96252b9f7e2cacd6329ac5b287595f8aa34052f6dc5c16ac34595")
     version("26.04", sha256="484175b83b7752c2de1d947b181f2e1406d27dda95b4f51dbf7fcbc78c5a4bc4")
     version("26.03", sha256="7f857a2189dc9bf428825f2c17e74c6404d73e616a59d2f94d8d3692acb5d26d")
     version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
@@ -34,7 +35,16 @@ class Warpx(CMakePackage, PythonExtension):
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["develop", "26.04", "26.03", "26.01", "25.12", "25.11", "25.04"]:
+    for v in [
+        "develop",
+        "26.05",
+        "26.04",
+        "26.03",
+        "26.01",
+        "25.12",
+        "25.11",
+        "25.04",
+    ]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
