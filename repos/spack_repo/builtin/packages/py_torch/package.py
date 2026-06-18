@@ -601,6 +601,22 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
+        if os.path.exists("cmake/EnvVarForwarding.cmake"):
+            # Ensure NNPACK can consume PYTHON_SIX_SOURCE_DIR set in Spack env.
+            filter_file(
+                "  PYTHON_LIB_REL_PATH\n)",
+                "  PYTHON_LIB_REL_PATH\n  PYTHON_SIX_SOURCE_DIR\n)",
+                "cmake/EnvVarForwarding.cmake",
+                string=True,
+            )
+        if os.path.exists("cmake/External/nnpack.cmake"):
+            # Make NNPACK pick up the variable directly from the process env.
+            filter_file(
+                "  set(PYTHON_PEACHPY_SOURCE_DIR \"${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy\" CACHE STRING \"PeachPy (Python package) source directory\")",
+                "  set(PYTHON_PEACHPY_SOURCE_DIR \"${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy\" CACHE STRING \"PeachPy (Python package) source directory\")\n  if(NOT DEFINED PYTHON_SIX_SOURCE_DIR AND DEFINED ENV{PYTHON_SIX_SOURCE_DIR})\n    set(PYTHON_SIX_SOURCE_DIR \"$ENV{PYTHON_SIX_SOURCE_DIR}\" CACHE STRING \"six (Python package) source directory\")\n  endif()",
+                "cmake/External/nnpack.cmake",
+                string=True,
+            )
         if self.spec.satisfies("@2.1:2.7+rocm"):
             filter_file(
                 "${ROCM_INCLUDE_DIRS}/rocm-core/rocm_version.h",
@@ -743,6 +759,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         # cmake/External/nnpack.cmake
         enable_or_disable("nnpack")
+        if "+nnpack" in self.spec and "py-six" in self.spec:
+            # NNPACK/PeachPy wires this path into PYTHONPATH for codegen.
+            # Point it at Spack's installed py-six to avoid network fetches.
+            py_mm = str(self.spec["python"].version.up_to(2))
+            env.set(
+                "PYTHON_SIX_SOURCE_DIR",
+                join_path(self.spec["py-six"].prefix, "lib", "python{0}".format(py_mm), "site-packages"),
+            )
 
         enable_or_disable("numa")
         if "+numa" in self.spec:
