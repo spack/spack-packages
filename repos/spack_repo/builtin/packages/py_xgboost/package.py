@@ -34,7 +34,6 @@ class PyXgboost(PythonPackage):
     )
     variant("dask", default=False, description="Enables Dask extensions for distributed training.")
     variant("plotting", default=False, description="Enables tree and importance plotting.")
-    patch("add-lib64.patch", when="@2:")
 
     for ver in ["1.3.3", "1.5.2", "1.6.1", "1.6.2", "1.7.6", "2.1.0", "2.1.1"]:
         depends_on("xgboost@" + ver, when="@" + ver)
@@ -70,6 +69,10 @@ class PyXgboost(PythonPackage):
         with when("+plotting"):
             depends_on("py-graphviz")
             depends_on("py-matplotlib")
+
+    # Hard-coded to search lib directory, add lib64 for certain distros
+    patch("add-lib64-1.patch", when="@1")
+    patch("add-lib64-2.patch", when="@2:")
 
     def patch(self):
         # Hard-coded to search for system libxgboost in the Python installation prefix

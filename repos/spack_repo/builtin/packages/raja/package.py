@@ -216,6 +216,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@2024.02.1:2024.02.99 %oneapi@2025:",
     )
 
+    patch("tile-iterator-comparison-fix-2024.02.patch", when="@2024.02.0:2024.02.2")
+
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
