@@ -207,9 +207,7 @@ class Totalview(Package):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path(
             "PATH",
-            join_path(
-                self.prefix, "toolworks", "totalview.{0}".format(self.version), "bin"
-            ),
+            join_path(self.prefix, "toolworks", "totalview.{0}".format(self.version), "bin"),
         )
         env.prepend_path(
             "TVROOT",
@@ -230,9 +228,7 @@ class Totalview(Package):
         elif spec.target.family == "ppc64le":
             arg_list.extend(["-platform", "linux-powerle"])
         else:
-            raise InstallError(
-                "Architecture {0} not permitted!".format(spec.target.family)
-            )
+            raise InstallError("Architecture {0} not permitted!".format(spec.target.family))
 
         install_cmd.exe.extend(arg_list)
 
