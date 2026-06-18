@@ -75,7 +75,9 @@ class Rocrand(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.10.2:", type="build")

@@ -16,6 +16,7 @@ class Rocpydecode(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+
     libraries = ["rocpydecode.cpython", "rocpyjpegdecode.cpython"]
 
     version("7.2.3", sha256="b0c4abd1b1811b6950f76c698a855d0bae2e6694ce37e44ee8a172098a3b4aad")
@@ -36,6 +37,9 @@ class Rocpydecode(CMakePackage):
     version("6.2.4", sha256="9cdb8bdc65b54b2c02d6c950dd34cd702ec50d903aa4d252d1eb1f8cae8c0afb")
     version("6.2.1", sha256="34c595cfe40ad74fcec2f52e7cc7be3ad8c8334030b0e98eb36305b6f63edc0d")
     version("6.2.0", sha256="e465254cd3e96bbb59208e90293d7c6b7744b0fbcd928ef278ec568c83e63ff3")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("py-pybind11")
     depends_on("ffmpeg@4.4:6")

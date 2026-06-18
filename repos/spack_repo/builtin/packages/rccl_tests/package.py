@@ -25,8 +25,10 @@ class RcclTests(CMakePackage):
 
     variant("mpi", default=True, description="with MPI support")
 
-    depends_on("cxx", type="build")
     requires("%cxx=llvm-amdgpu", msg="rccl-tests builds only with llvm-amdgpu")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("hip")
     depends_on("rccl")

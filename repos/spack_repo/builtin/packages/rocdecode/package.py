@@ -21,6 +21,7 @@ class Rocdecode(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.4.3.tar.gz"
@@ -61,6 +62,9 @@ class Rocdecode(ROCmLibrary, CMakePackage):
         values=auto_or_any_combination_of(*amdgpu_targets),
         sticky=True,
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("libva", type="build", when="@6.2:")
     depends_on("libdrm", type="build", when="@6.4:")

@@ -37,6 +37,8 @@ class Rocjpeg(ROCmLibrary, CMakePackage):
     version("6.3.1", sha256="f4913cbc63e11b9b418d33b0f9ba0fec0aa00b23285090acfd435e1ba1c21e42")
     version("6.3.0", sha256="2623b8f8bb61cb418d00c695e8ff0bc5979e1bb2d61d6c327a27d676c89e89cb")
 
+
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     for ver in [

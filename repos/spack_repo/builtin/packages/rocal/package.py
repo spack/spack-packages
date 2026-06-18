@@ -20,6 +20,7 @@ class Rocal(ROCmLibrary, CMakePackage):
     libraries = ["librocal"]
 
     license("MIT")
+
     version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")
     version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")
     version("7.2.0", sha256="0de82b955229ed3883e237f0ffd23b4052aa78a1308873185662ab46ca01e711")
@@ -47,6 +48,9 @@ class Rocal(ROCmLibrary, CMakePackage):
         values=auto_or_any_combination_of(*amdgpu_targets),
         sticky=True,
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", when="@6.2.0")
     depends_on("libjpeg-turbo@3.0.2:", when="@6.2.1:")

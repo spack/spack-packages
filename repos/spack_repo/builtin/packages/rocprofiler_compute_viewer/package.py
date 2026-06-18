@@ -24,6 +24,8 @@ class RocprofilerComputeViewer(CMakePackage):
 
     version("0.1.6", sha256="22de1dfb0dd2ac38cb67825f6477f13e271a8fea1cd91fa3d429f8f36a93992b")
 
+
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("qt@5:6", type=("build", "link"))

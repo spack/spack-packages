@@ -67,6 +67,8 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
         description="set gpu targets",
     )
 
+
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("python", type="build")

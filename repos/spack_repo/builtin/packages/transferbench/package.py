@@ -38,7 +38,9 @@ class Transferbench(ROCmLibrary, CMakePackage):
     version("6.3.1", sha256="611fb858d4a2cb48fb8942b1a85c54ab3212fb74952327757f673551e0c507c0")
     version("6.3.0", sha256="1b67f7ac96a44ab20a02e45a94046a0991b46b84efbd9f9639b864189214ded1")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
+
     depends_on("numactl")
 
     for ver in [
