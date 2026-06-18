@@ -68,6 +68,9 @@ class RocmCore(CMakePackage):
     conflicts("+asan", when="os=centos8")
 
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")  # generated
+
     for ver in [
         "6.1.0",
         "6.1.1",
@@ -92,9 +95,6 @@ class RocmCore(CMakePackage):
         "7.2.3",
         "7.13.0",
     ]:
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
-
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
     @classmethod
