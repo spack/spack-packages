@@ -24,6 +24,8 @@ class Mille(CMakePackage):
     version("01-00-02", sha256="bb232672003a8f13f848635e49a261acb79de26634e4ba76347358f209b5de05")
     version("01-00-00", sha256="ae4bf37de8d835aa8adc2960bb795a2080233a4c8af3d4b55adf395e20df0f3e")
 
+    requires("%gcc", msg="Mille hardcodes gcc/g++/gfortran", when="@:01-00-03")
+
     variant("zlib", default=True, description="Enable zlib support")
     variant("root", default=False, description="Enable ROOT support")
 
