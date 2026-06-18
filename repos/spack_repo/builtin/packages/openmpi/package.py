@@ -518,6 +518,23 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     # https://github.com/open-mpi/ompi/commit/aa5577441ff1ab7f97f8b63e442b37457c7bd997
     patch("add_string.patch", when="@5.0.1:5.0.8 +rocm")
 
+    # GCC 16: drop __opal_attribute_always_inline__ from mca_part_persist_start
+    # to fix "inlining failed in call to always_inline: recursive inlining" error
+    # https://github.com/open-mpi/ompi/issues/13721
+    patch(
+        "https://github.com/open-mpi/ompi/commit/aa024ac73d624611cfe3af6f541b5d28dedf07bb.patch?full_index=1",
+        sha256="646eb1a7382d628eb821715ca69fc5467a9a25aaddfe8290dbce008536dbfaa0",
+        when="@5.0.0:",
+    )
+
+    # GCC 16: fix excessive brace initialization in memheap_base_frame.c
+    # https://github.com/open-mpi/ompi/issues/13757
+    patch(
+        "https://github.com/open-mpi/ompi/commit/b878c7d974dae767246ad20ef9124a331d0f59a4.patch?full_index=1",
+        sha256="1dcebafdb310203f3b62456a5ba67e1a21ad3a88aaf40326734885d7b0d776f9",
+        when="@5.0.0: +openshmem",
+    )
+
     FABRICS = (
         "psm",
         "psm2",

@@ -1,6 +1,7 @@
 stages: [ "generate", "build" ]
 
 variables:
+  SPACK_CI_GENERATE: "generate"
   SPACK_DISABLE_LOCAL_CONFIG: "1"
   SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
@@ -607,7 +608,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
+  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
