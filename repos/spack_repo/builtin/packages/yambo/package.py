@@ -50,17 +50,20 @@ class Yambo(AutotoolsPackage, CudaPackage):
         version("4.4.1", sha256="2daf80f394a861301a9bbad559aaf58de283ce60395c9875e9f7d7fa57fcf16d")
         version("4.3.3", sha256="790fa1147044c7f33f0e8d336ccb48089b48d5b894c956779f543e0c7e77de19")
 
-    # See https://github.com/yambo-code/yambo-devel/issues/643
     patch(
         "s_psi.patch",
-        sha256="981a0783a9a2c21a89faa358eaf277213837ed712c936152842f8cf7620f52cd",
+        sha256="44e6a2850143976fccb6a79f68d77267473f26ddd4846a1c5b92a58c02d92b39",
         when="@:5.1.99 %gcc@12.0.0:",
     )
-    # See https://github.com/yambo-code/yambo/issues/190
     patch(
         "cuda_runtime.patch",
-        sha256="bfd5ade95ef5ca9502c7ad1b375e4517fbf77a32bf97041fd580bb36304fd755",
+        sha256="2f4d07a02929d9d866e5c5bf537e18ff3605089147035929e029fcdc3a933b0c",
         when="@5.3.0+cuda",
+    )
+    patch(
+        "yambo-5-petsc-slepc-3.23.patch",
+        sha256="5361808d4aef593c9728a1ae172978a17c3546d94cd837f2beffa32e8da460b4",
+        when="@5.3.0",
     )
 
     depends_on("c", type="build")
@@ -112,7 +115,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
         depends_on("petsc~double", when="~dp")
         depends_on("petsc~cuda", when="@:5.2.0")
         depends_on("petsc@:3.20", when="@:5.2.4")
-        depends_on("petsc@:3.22", when="@:5.3.0")
+        depends_on("petsc@:3.24", when="@5.3.0")
         depends_on("slepc~arpack")
         depends_on("slepc~cuda", when="@:5.2.0")
     conflicts(

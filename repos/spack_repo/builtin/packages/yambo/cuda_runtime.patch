@@ -1,3 +1,5 @@
+Compilation with NVHPC and an external CUDA toolkit
+See https://github.com/yambo-code/yambo/issues/190
 --- a/configure
 +++ b/configure
 @@ -1860,7 +1860,8 @@ Optional Packages:

@@ -1,3 +1,5 @@
+Compilation issue with gfortran 12 or higher
+See https://github.com/yambo-code/yambo-devel/issues/643
 --- a/lib/qe_pseudo/s_psi.F
 +++ b/lib/qe_pseudo/s_psi.F
 @@ -94,7 +94,12 @@
