@@ -49,6 +49,8 @@ class HipblasCommon(CMakePackage):
     version("6.3.1", sha256="512e652483b5580713eca14db3fa633d0441cd7c02cdb0d26e631ea605b9231b")
     version("6.3.0", sha256="240bb1b0f2e6632447e34deae967df259af1eec085470e58a6d0aa040c8530b0")
 
+    depends_on("cxx", type="build")
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
