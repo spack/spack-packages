@@ -745,9 +745,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             py_mm = str(self.spec["python"].version.up_to(2))
             env.set(
                 "PYTHON_SIX_SOURCE_DIR",
-                join_path(
-                    self.spec["py-six"].prefix, "lib", "python{0}".format(py_mm), "site-packages"
-                ),
+                self["py-six"].module.python_purelib,
             )
 
         enable_or_disable("numa")
