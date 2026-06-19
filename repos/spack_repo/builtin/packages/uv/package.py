@@ -5,11 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class Uv(CargoPackage):
+class Uv(PythonPackage, CargoPackage):
     """An extremely fast Python package and project manager, written in Rust."""
 
     homepage = "https://docs.astral.sh/uv/"
@@ -27,19 +28,37 @@ class Uv(CargoPackage):
 
     executables = ["^uv$"]
 
+    # PythonPackage builds via maturin and preserves the `python -m uv` entry point;
+    # CargoPackage builds the bare Rust binary as an alternative
+    build_system("python_pip", "cargo", default="python_pip")
+
     variant(
         "performance",
         default=True,
         description="Build with the high-performance jemalloc/mimalloc memory allocator",
+        when="build_system=cargo",
     )
 
+    # Both build systems compile the Rust sources (maturin shells out to cargo),
+    # and the bundled `-sys` crates need a C compiler
     depends_on("rust@1.94:", type="build")
-    # C compiler needed for Cargo dependencies
     depends_on("c", type="build")
-    # tikv-jemalloc-sys builds bundled jemalloc with `./configure && make`
-    depends_on("gmake", type="build", when="+performance")
 
-    build_directory = "crates/uv"
+    with when("build_system=python_pip"):
+        depends_on("py-maturin@1", type="build")
+        # tikv-jemalloc-sys builds bundled jemalloc with `./configure && make`
+        depends_on("gmake", type="build")
+
+    with when("build_system=cargo"):
+        depends_on("gmake", type="build", when="+performance")
+
+    @property
+    def build_directory(self):
+        # The maturin manifest at the repo root drives the Python build; the bare
+        # Cargo build targets the `uv` binary crate directly.
+        if self.spec.satisfies("build_system=cargo"):
+            return "crates/uv"
+        return self.stage.source_path
 
     @property
     def build_args(self):
