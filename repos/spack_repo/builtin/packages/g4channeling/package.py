@@ -12,7 +12,6 @@ class G4channeling(Package, Geant4DataPackage):
     """Geant4 data for solid state crystal channeling"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4CHANNELING.1.0.tar.gz"
 
     tags = ["hep"]
 

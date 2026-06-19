@@ -12,7 +12,6 @@ class G4tendl(Geant4DataPackage):
     """Optional Geant4 data for incident particles."""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4TENDL.1.3.tar.gz"
 
     tags = ["hep"]
 

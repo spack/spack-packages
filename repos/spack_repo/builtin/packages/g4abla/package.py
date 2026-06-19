@@ -13,7 +13,6 @@ class G4abla(Package, Geant4DataPackage):
     """Geant4 data for nuclear shell effects in INCL/ABLA hadronic mode"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4ABLA.3.0.tar.gz"
 
     tags = ["hep"]
 

@@ -12,7 +12,6 @@ class G4saiddata(Geant4DataPackage):
     """Geant4 data from evaluated cross-sections in SAID data-base"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4SAIDDATA.1.1.tar.gz"
 
     tags = ["hep"]
 

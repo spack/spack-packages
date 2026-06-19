@@ -12,7 +12,6 @@ class G4radioactivedecay(Geant4DataPackage):
     """Geant4 data files for radio-active decay hadronic processes"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4RadioactiveDecay.5.1.1.tar.gz"
 
     tags = ["hep"]
 

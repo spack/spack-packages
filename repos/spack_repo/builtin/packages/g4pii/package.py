@@ -12,7 +12,6 @@ class G4pii(Geant4DataPackage):
     """Geant4 data for shell ionisation cross-sections"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4PII.1.3.tar.gz"
 
     tags = ["hep"]
 

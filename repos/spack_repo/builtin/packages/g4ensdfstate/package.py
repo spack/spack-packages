@@ -12,7 +12,6 @@ class G4ensdfstate(Package, Geant4DataPackage):
     """Geant4 data for nuclides properties"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4ENSDFSTATE.2.1.tar.gz"
 
     tags = ["hep"]
 

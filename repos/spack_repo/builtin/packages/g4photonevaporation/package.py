@@ -12,7 +12,6 @@ class G4photonevaporation(Package, Geant4DataPackage):
     """Geant4 data for photon evaporation"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4PhotonEvaporation.4.3.2.tar.gz"
 
     tags = ["hep"]
 

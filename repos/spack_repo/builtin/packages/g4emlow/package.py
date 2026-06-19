@@ -12,7 +12,6 @@ class G4emlow(Package, Geant4DataPackage):
     """Geant4 data files for low energy electromagnetic processes."""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4EMLOW.6.50.tar.gz"
 
     tags = ["hep"]
 

@@ -10,11 +10,18 @@ from spack.package import *
 from spack.package import PackageBase
 
 
+def _url(cls: "Geant4DataPackage") -> Optional[str]:
+    if cls.g4dirname:
+        return f"{cls.datasets_url}/{cls.g4dirname}.1.0.tar.gz"
+    return None
+
+
 class Geant4DataPackage(PackageBase):
     """Base class to be used by each dependency in Geant4Data"""
 
     #: URL to parent directory for dataset downloads
     datasets_url = "https://geant4-data.web.cern.ch/geant4-data/datasets"
+    url: ClassProperty[Optional[str]] = classproperty(_url)
 
     #: Directory name inside 'share' (e.g., G4EMLOW) before version is appended
     g4dirname: Optional[str] = None
@@ -33,13 +40,6 @@ class Geant4DataPackage(PackageBase):
         self._ensure_g4envvar_is_set_or_raise()
         env.set(self.g4envvar, self.datadir)
 
-    def url_for_version(self, version):
-        """Default version string.
-
-        Some data directories need to override this due to an extra "G4" being needed.
-        """
-        return f"{self.datasets_url}/{self.g4dirname}.{version}.tar.gz"
-
     def install(self, spec, prefix):
         """Install by copying to the data prefix."""
         datadir = self.datadir
@@ -51,6 +51,16 @@ class Geant4DataPackage(PackageBase):
 
     def _ensure_g4envvar_is_set_or_raise(self):
         self.validate_or_raise_attr("g4envvar")
+
+    def url_for_version(self, version):
+        """Default version string.
+
+        This override of ``url`` is necessary for most of the G4 packages, since
+        ``data/G4FOO.1.2.3.tar.gz`` is parsed as version ``4FOO.1.2.3``.
+
+        This method is overridden by some subclasses.
+        """
+        return f"{self.datasets_url}/{self.g4dirname}.{version}.tar.gz"
 
     def validate_or_raise_attr(self, attr):
         if getattr(self, attr) is None:

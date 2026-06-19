@@ -12,7 +12,6 @@ class G4ndl(Package, Geant4DataPackage):
     """Geant4 Neutron data files with thermal cross sections"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4NDL.4.5.tar.gz"
 
     tags = ["hep"]
 

@@ -13,7 +13,6 @@ class G4incl(Package, Geant4DataPackage):
     composition of elements"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4INCL.1.0.tar.gz"
 
     tags = ["hep"]
 

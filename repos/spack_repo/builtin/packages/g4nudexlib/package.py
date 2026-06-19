@@ -13,7 +13,6 @@ class G4nudexlib(Package, Geant4DataPackage):
     natural composition of elements"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4NUDEXLIB.1.0.tar.gz"
 
     tags = ["hep"]
 

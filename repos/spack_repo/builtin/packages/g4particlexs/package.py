@@ -13,7 +13,6 @@ class G4particlexs(Package, Geant4DataPackage):
     natural composition of elements"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4PARTICLEXS.2.1.tar.gz"
 
     tags = ["hep"]
 

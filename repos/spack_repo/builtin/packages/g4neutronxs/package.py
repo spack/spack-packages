@@ -13,7 +13,6 @@ class G4neutronxs(Package, Geant4DataPackage):
     of elements"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = Geant4DataPackage.datasets_url + "/G4NEUTRONXS.1.4.tar.gz"
 
     tags = ["hep"]
 
