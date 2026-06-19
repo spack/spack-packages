@@ -86,7 +86,7 @@ class PyTorchvision(PythonPackage):
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
-        depends_on("py-torch@2.12.1", when="@0.21.1")
+        depends_on("py-torch@2.12.1", when="@0.27.1")
         depends_on("py-torch@2.12.0", when="@0.27.0")
         depends_on("py-torch@2.11.0", when="@0.26.0")
         depends_on("py-torch@2.10.0", when="@0.25.0")
