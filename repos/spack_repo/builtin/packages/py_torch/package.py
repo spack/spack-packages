@@ -374,15 +374,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # https://github.com/pytorch/pytorch/issues/172630 (GCC-14.2 ICE for aarch64)
     patch(
-        "https://github.com/pytorch/pytorch/commit/8fd509399e25cb4b265dff663d3f777406001f2e.patch?full_index=1",
-        sha256="91d0470cc05f5f0f775f32b70f174af74f5607162852ba1bcdd81381cd735f24",
+        "pytorch-pytorch-8fd509399e25cb4b265dff663d3f777406001f2e.patch",
         when="@2.9:2.10.0",
     )
 
     # https://github.com/pytorch/pytorch/issues/160092
     patch(
-        "https://github.com/pytorch/pytorch/commit/231c72240d80091f099c95e326d3600cba866eee.patch?full_index=1",
-        sha256="5e56556a5698e6c43d0e7e9e3da6d7d819a4886bcd717e7b8e22ec08414a0b66",
+        "pytorch-pytorch-231c72240d80091f099c95e326d3600cba866eee.patch",
         when="@2.8.0",
     )
 
@@ -391,30 +389,26 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # https://github.com/pytorch/pytorch/issues/151316
     patch(
-        "https://github.com/pytorch/pytorch/commit/331423e5c24170b218e743b3392acbad4480340d.patch?full_index=1",
-        sha256="493cde279804346e13cf21862fddc48040a4d7da65d4e5d3de5f717a15e0aa62",
+        "pytorch-pytorch-331423e5c24170b218e743b3392acbad4480340d.patch",
         when="@2.7.0",
     )
     patch("apple_clang_17.patch", when="@1.12:2.6")
 
     # https://github.com/pytorch/pytorch/issues/146239
     patch(
-        "https://github.com/pytorch/pytorch/commit/93da9952a77f59cb29a2d599362ba9c7ba22eaec.patch?full_index=1",
-        sha256="e5a030aae1603a9b57f9e9995902544da7087502fe60261698780f0cb8e5fb7b",
+        "pytorch-pytorch-93da9952a77f59cb29a2d599362ba9c7ba22eaec.patch",
         when="@2.6:2.8",
     )
 
     # Fixes 'FindBLAS.cmake' error: unknown command check_function_exists
     patch(
-        "https://github.com/pytorch/pytorch/commit/8d91bfd9654589c41b3bbb589bcb0bf95443c53e.patch?full_index=1",
-        sha256="2c9e0c8986c388f38288dacfb3208b457b2eec340963b8c8c8779e9f487adc07",
+        "pytorch-pytorch-8d91bfd9654589c41b3bbb589bcb0bf95443c53e.patch",
         when="@:2.6",
     )
 
     # https://github.com/pytorch/pytorch/issues/90448
     patch(
-        "https://github.com/pytorch/pytorch/commit/9a18968253e28ba8d8bdf646731087000c7876b7.patch?full_index=1",
-        sha256="b4f299f6751e03fcf5d9a318541156edbc49c00e8a9c78785031e438e38f5533",
+        "pytorch-pytorch-9a18968253e28ba8d8bdf646731087000c7876b7.patch",
         when="@1.10:2.0",
     )
 
@@ -422,21 +416,18 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # https://github.com/pytorch/pytorch/issues/60328
     patch(
         "59220.patch",
-        sha256="6d5717267f901e8ee493dfacd08734d9bcc48ad29a76ca9ef702368e96bee675",
         when="@:1.11",
     )
 
     # Fixes build on older systems with glibc <2.12
     patch(
-        "https://github.com/pytorch/pytorch/commit/13c975684a220ec096216ec6468ccd0dc90ff50a.patch?full_index=1",
-        sha256="a999e9376a69bbb8620ab358b485d1529c8e1c23a09ca34c5d287f6b77d2f5d9",
+        "pytorch-pytorch-13c975684a220ec096216ec6468ccd0dc90ff50a.patch",
         when="@:1.8.1",
     )
 
     # https://github.com/pytorch/pytorch/issues/70297
     patch(
-        "https://github.com/google/breakpad/commit/605c51ed96ad44b34c457bbca320e74e194c317e.patch?full_index=1",
-        sha256="694d83db3a2147d543357f22ba5c8d5683d0ed43e693d42bca8f24ec50080f98",
+        "google-breakpad-605c51ed96ad44b34c457bbca320e74e194c317e.patch",
         when="+breakpad",
         working_dir="third_party/breakpad",
     )
@@ -457,15 +448,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # prevents pytorch from potentially using system version of config.h
     # and instead prioritize the CK submodule's version
     patch(
-        "https://github.com/pytorch/pytorch/commit/38e81a53324146d445a81eb8f80bccebe623eb35.patch?full_index=1",
-        sha256="ef05dfff1502963b87679295c07d5f2bd452879708f7124274cc549ed67cd587",
+        "pytorch-pytorch-38e81a53324146d445a81eb8f80bccebe623eb35.patch",
         when="@2.6:2.7+rocm",
     )
 
     # Fixes build failure from py-torch version 1.5 to 2.2 with rocm
     patch(
-        "https://github.com/ROCm/pytorch/commit/bac5378c734e74b5d58b8e82f9dbaa1454cfa5bd.patch?full_index=1",
-        sha256="f0a64e6347e67ec84286994f1ac5e77dba7fa6992c5f083e70a4e2765a86c0c6",
+        "ROCm-pytorch-bac5378c734e74b5d58b8e82f9dbaa1454cfa5bd.patch",
         when="@1.5:2.2 +rocm",
     )
     # to detect openmp settings used by Fujitsu compiler.
@@ -481,8 +470,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Fix compilation of +distributed~tensorpipe
     # https://github.com/pytorch/pytorch/issues/68002
     patch(
-        "https://github.com/pytorch/pytorch/commit/c075f0f633fa0136e68f0a455b5b74d7b500865c.patch?full_index=1",
-        sha256="41271e494a3a60a65a8dd45ac053d1a6e4e4d5b42c2dac589ac67524f61ac41e",
+        "pytorch-pytorch-c075f0f633fa0136e68f0a455b5b74d7b500865c.patch",
         when="@1.10.0+distributed~tensorpipe",
     )
 
@@ -490,69 +478,57 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # 01xx patches are specific to open-ce, we only include 03xx patches used in meta.yaml
     # https://github.com/open-ce/pytorch-feedstock
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.10/recipe/0302-cpp-extension.patch",
-        sha256="ecb3973fa7d0f4c8f8ae40433f3ca5622d730a7b16f6cb63325d1e95baff8aa2",
+        "open-ce-open-ce-v1.7.4-pytorch-1.10-0302-cpp-extension.patch",
         when="@1.10:1.11 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.10/recipe/0311-PR66085-Remove-unused-dump-method-from-VSX-vec256-methods.patch",
-        sha256="f05db59f3def4c4215db7142d81029c73fe330c660492159b66d65ca5001f4d1",
+        "open-ce-open-ce-v1.7.4-pytorch-1.10-0311-PR66085-Remove-unused-dump-method-from-VSX-vec256-methods.patch",
         when="@1.10 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.10/recipe/0312-PR67331-Dummpy-VSX-bfloat16-implementation.patch",
-        sha256="860b64afa85f5e6647ebc3c91d5a0bb258784770900c9302c3599c98d5cff1ee",
+        "open-ce-open-ce-v1.7.4-pytorch-1.10-0312-PR67331-Dummpy-VSX-bfloat16-implementation.patch",
         when="@1.10 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.10/recipe/0313-add-missing-vsx-dispatch.patch",
-        sha256="7393c2bc0b6d41ecc813c829a1e517bee864686652e91f174cb7bcdfb10ba451",
+        "open-ce-open-ce-v1.7.4-pytorch-1.10-0313-add-missing-vsx-dispatch.patch",
         when="@1.10 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.10/recipe/0314-fix-nullpointer-error.patch",
-        sha256="b9cff8966f316f58514c66a403b7a6786be3cdb252f1380a6b91c722686a4097",
+        "open-ce-open-ce-v1.7.4-pytorch-1.10-0314-fix-nullpointer-error.patch",
         when="@1.10 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.7.4/pytorch-1.12/recipe/0302-cpp-extension.patch",
-        sha256="2fac519cca8997f074c263505657ff867e7ba2d6637fc8bda99c70a99be0442a",
+        "open-ce-open-ce-v1.7.4-pytorch-1.12-0302-cpp-extension.patch",
         when="@1.12 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.8.0/pytorch-1.13/recipe/0302-cpp-extension.patch",
-        sha256="a54db63640b90e5833cc1099c0935572f5297d2d8625f62f01ac1fda79ed4569",
+        "open-ce-open-ce-v1.8.0-pytorch-1.13-0302-cpp-extension.patch",
         when="@1.13 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.9.0/pytorch-2.0/recipe/0309-fallback-to-cpu_kernel-with-VSX.patch",
-        sha256="27f41c8d6cb61e69e761be62f03dc1ce023cbca34926e3ba559996821a7ce726",
+        "open-ce-open-ce-v1.9.0-pytorch-2.0-0309-fallback-to-cpu_kernel-with-VSX.patch",
         when="@2.0 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.9.0/pytorch-2.0/recipe/0310-PR100149.patch",
-        sha256="1adbd38a9cc1611f1caaa325614695f4349d9ffd236332e0d8f0de5a3880f4dd",
+        "open-ce-open-ce-v1.9.0-pytorch-2.0-0310-PR100149.patch",
         when="@2.0 arch=ppc64le:",
     )
     patch(
-        "https://github.com/open-ce/pytorch-feedstock/raw/open-ce-v1.10.0/pytorch-2.0/recipe/0311-PR104956.patch",
-        sha256="be27c906924a21be198a3ea6c459739a1daa8b8b89045af339dafa4cd6f90d6c",
+        "open-ce-open-ce-v1.10.0-pytorch-2.0-0311-PR104956.patch",
         when="@2.0 arch=ppc64le:",
     )
     conflicts("arch=ppc64le:", when="@:1.9")
 
     # Cherry-pick a patch to allow earlier versions of PyTorch to work with CUDA 11.4
     patch(
-        "https://github.com/pytorch/pytorch/commit/c74c0c571880df886474be297c556562e95c00e0.patch?full_index=1",
-        sha256="8ff7d285e52e4718bad1ca01ceb3bb6471d7828329036bb94222717fcaa237da",
+        "pytorch-pytorch-c74c0c571880df886474be297c556562e95c00e0.patch",
         when="@:1.9.1 ^cuda@11.4.100:",
     )
 
     # PyTorch does not build with GCC 12 (fixed in 2.0)
     # See: https://github.com/pytorch/pytorch/issues/77614
     patch(
-        "https://github.com/facebookincubator/gloo/commit/4a5e339b764261d20fc409071dc7a8b8989aa195.patch?full_index=1",
-        sha256="dc8b3a9bea4693f32d6850ea2ce6ce75e1778538bfba464b50efca92bac425e3",
+        "facebookincubator-gloo-4a5e339b764261d20fc409071dc7a8b8989aa195.patch",
         when="@:1 %gcc@12:",
         working_dir="third_party/gloo",
     )
@@ -560,8 +536,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # PyTorch does not build on Linux >=6.0.3 (fixed in master)
     # See: https://github.com/facebookincubator/gloo/issues/345
     patch(
-        "https://github.com/facebookincubator/gloo/commit/10909297fedab0a680799211a299203e53515032.patch?full_index=1",
-        sha256="8e6e9a44e0533ba4303a95a651b1934e5d73632cab08cc7d5a9435e1e64aa424",
+        "facebookincubator-gloo-10909297fedab0a680799211a299203e53515032.patch",
         when="@:1",
         working_dir="third_party/gloo",
     )
@@ -569,27 +544,23 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Some missing includes
     # See: https://github.com/pytorch/pytorch/pull/100036
     patch(
-        "https://github.com/pytorch/pytorch/commit/9d99d8879cb8a7a5ec94b04e933305b8d24ad6ac.patch?full_index=1",
-        sha256="8c3a5b22d0dbda2ee45cfc2ae1da446fc20898e498003579490d4efe9241f9ee",
+        "pytorch-pytorch-9d99d8879cb8a7a5ec94b04e933305b8d24ad6ac.patch",
         when="@2.0.0:2.0.1",
     )
     # See: https://github.com/pytorch/pytorch/pull/100049
     patch(
-        "https://github.com/pytorch/pytorch/commit/aaa3eb059a0294cc01c71f8e74abcebc33404e17.patch?full_index=1",
-        sha256="8dcbc5cd24b4c0e4a051e2161700b485c6c598b66347e7e90a263d9319c76374",
+        "pytorch-pytorch-aaa3eb059a0294cc01c71f8e74abcebc33404e17.patch",
         when="@2.0.0:2.0.1",
     )
 
     # Use correct OpenBLAS include path under prefix
     patch(
-        "https://github.com/pytorch/pytorch/commit/21d77bcf808d076f81b5e885a8ce6ca20a08dbed.patch?full_index=1",
-        sha256="c61a6bd8cb9f021bfa122945a332cec223a2c7c6843ac911f9dc23e6facfb0ac",
+        "pytorch-pytorch-21d77bcf808d076f81b5e885a8ce6ca20a08dbed.patch",
         when="@:2.1",
     )
 
     patch(
-        "https://github.com/pytorch/FBGEMM/commit/da01a59556fec9776733bf20aea8fe8fb29cdd3d.patch?full_index=1",
-        sha256="97d8bd43f8cd8bb203dab3480d609c08499224acaca9915f2bdeb23c62350fb1",
+        "pytorch-FBGEMM-da01a59556fec9776733bf20aea8fe8fb29cdd3d.patch",
         when="@2.0.1 +fbgemm",
         working_dir="third_party/fbgemm",
     )

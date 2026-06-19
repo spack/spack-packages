@@ -1,0 +1,62 @@
+From bac5378c734e74b5d58b8e82f9dbaa1454cfa5bd Mon Sep 17 00:00:00 2001
+From: Renjith Ravindran <Renjith.RavindranKannath@amd.com>
+Date: Mon, 5 Aug 2024 23:27:22 -0700
+Subject: [PATCH] Pytorch 2.2 build with kineto on rocm in spack
+
+---
+ caffe2/CMakeLists.txt            | 4 ++++
+ cmake/Dependencies.cmake         | 2 ++
+ modules/detectron/CMakeLists.txt | 5 +++++
+ 3 files changed, 11 insertions(+)
+
+diff --git a/caffe2/CMakeLists.txt b/caffe2/CMakeLists.txt
+index 2e9d9ac53a6702eb793ed78074ce8a6a459ce643..7713b515160ae750c6b34dff647f66ec39000a1c 100644
+--- a/caffe2/CMakeLists.txt
++++ b/caffe2/CMakeLists.txt
+@@ -1327,6 +1327,10 @@ if(USE_ROCM)
+     /opt/rocm/hcc/include
+     /opt/rocm/rocblas/include
+     /opt/rocm/hipsparse/include
++    $ENV{THRUST_PATH}/include
++    $ENV{ROCPRIM_PATH}/include
++    $ENV{HIPCUB_PATH}/include
++    $ENV{ROCRAND_PATH}/include
+     )
+   if(USE_FLASH_ATTENTION)
+     target_compile_definitions(torch_hip PRIVATE USE_FLASH_ATTENTION)
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+index 2d213baaabe1605ca35f95df262e80313ab224a9..400f84cf5cfc2534468521bf696f1ebe24db72e0 100644
+--- a/cmake/Dependencies.cmake
++++ b/cmake/Dependencies.cmake
+@@ -622,6 +622,7 @@ if(USE_XNNPACK AND NOT USE_SYSTEM_XNNPACK)
+   if(NOT TARGET XNNPACK)
+     set(XNNPACK_LIBRARY_TYPE "static" CACHE STRING "")
+     set(XNNPACK_BUILD_BENCHMARKS OFF CACHE BOOL "")
++    set(XNNPACK_USE_SYSTEM_LIBS  ON CACHE BOOL "")
+     set(XNNPACK_BUILD_TESTS OFF CACHE BOOL "")
+ 
+     # Disable ARM BF16 and FP16 vector for now; unused and causes build failures because
+@@ -1884,6 +1885,7 @@ if(USE_KINETO)
+     set(LIBKINETO_NOROCTRACER ON CACHE STRING "" FORCE)
+   else()
+     set(LIBKINETO_NOROCTRACER OFF CACHE STRING "")
++    set(ROCTRACER_INCLUDE_DIR "$ENV{ROCTRACER_PATH}/include/roctracer")
+     message(STATUS "Using Kineto with Roctracer support")
+   endif()
+ 
+diff --git a/modules/detectron/CMakeLists.txt b/modules/detectron/CMakeLists.txt
+index 7c9a2d7ff4f4a36bdd266b90744f11d1ad2e3663..7f97fd7b6e142ba59e1c29f0f5d53767bddd46e5 100644
+--- a/modules/detectron/CMakeLists.txt
++++ b/modules/detectron/CMakeLists.txt
+@@ -34,6 +34,11 @@ if(BUILD_CAFFE2_OPS)
+     if(USE_MKLDNN)
+       target_link_libraries(caffe2_detectron_ops_hip PRIVATE caffe2::mkldnn)
+     endif()
++    target_include_directories(caffe2_detectron_ops_hip PRIVATE
++	                       $ENV{THRUST_PATH}/include
++			       $ENV{ROCPRIM_PATH}/include
++			       $ENV{HIPCUB_PATH}/include
++			       $ENV{ROCRAND_PATH}/include)
+     target_link_libraries(caffe2_detectron_ops_hip PRIVATE torch)
+     install(TARGETS caffe2_detectron_ops_hip DESTINATION lib)
+   elseif(NOT IOS_PLATFORM)

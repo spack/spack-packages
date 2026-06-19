@@ -1,0 +1,24 @@
+diff --git a/torch/_inductor/codecache.py b/torch/_inductor/codecache.py
+index a37ebeee368..833eb0cf210 100644
+--- a/torch/_inductor/codecache.py
++++ b/torch/_inductor/codecache.py
+@@ -7,6 +7,7 @@ import json
+ import logging
+ import multiprocessing
+ import os
++import platform
+ import re
+ import shutil
+ import signal
+@@ -378,7 +379,10 @@ def optimization_flags():
+         # Also, `-march=native` is unrecognized option on M1
+         base_flags += " -Xclang -fopenmp"
+     else:
+-        base_flags += " -march=native -fopenmp"
++        if platform.machine() == "ppc64le":
++            base_flags += " -mcpu=native -fopenmp"
++        else:
++            base_flags += " -march=native -fopenmp"
+     return base_flags
+ 
+ 

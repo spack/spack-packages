@@ -1,0 +1,33 @@
+From da01a59556fec9776733bf20aea8fe8fb29cdd3d Mon Sep 17 00:00:00 2001
+From: Alfredo Tupone <tupone@gentoo.org>
+Date: Tue, 14 Mar 2023 19:39:40 -0700
+Subject: [PATCH] include cstdint (#1640)
+
+Summary:
+fix build with gcc-13
+
+Pull Request resolved: https://github.com/pytorch/FBGEMM/pull/1640
+
+Reviewed By: shintaro-iwasaki
+
+Differential Revision: D44044422
+
+Pulled By: q10
+
+fbshipit-source-id: 692ec9c34f4aaf726294a2b643fbceabf8159033
+---
+ include/fbgemm/UtilsAvx2.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/fbgemm/UtilsAvx2.h b/include/fbgemm/UtilsAvx2.h
+index a1af6078a8ec45186273276049ff69f1df2e714a..4fb1220eba0c736935bd519f490045758046c7d9 100644
+--- a/include/fbgemm/UtilsAvx2.h
++++ b/include/fbgemm/UtilsAvx2.h
+@@ -8,6 +8,7 @@
+ // This file defines common utilities used in code compiled with avx2/avx512
+ // flags.
+ 
++#include <cstdint>
+ #include <string>
+ 
+ namespace fbgemm {

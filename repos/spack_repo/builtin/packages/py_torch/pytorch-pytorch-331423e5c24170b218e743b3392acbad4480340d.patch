@@ -1,0 +1,42 @@
+From 331423e5c24170b218e743b3392acbad4480340d Mon Sep 17 00:00:00 2001
+From: Nikita Shulga <2453524+malfet@users.noreply.github.com>
+Date: Tue, 15 Apr 2025 22:18:06 +0000
+Subject: [PATCH] Fix tensorpipe compilation with clang-17 (#151344)
+
+By suppressing `missing-template-arg-list-after-template-kw` warning, which seems to be required to compile Google's libnop, which is in a semi-abandoned state now
+```
+In file included from /Users/malfet/git/pytorch/pytorch/third_party/tensorpipe/third_party/libnop/include/nop/base/variant.h:21:
+/Users/malfet/git/pytorch/pytorch/third_party/tensorpipe/third_party/libnop/include/nop/types/variant.h:241:30: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]
+  241 |     index_ = value_.template Construct(std::forward<Args>(args)...);
+      |                              ^
+/Users/malfet/git/pytorch/pytorch/third_party/tensorpipe/third_party/libnop/include/nop/types/variant.h:258:26: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]
+  258 |     if (!value_.template Assign(TypeTag<T>{}, index_, std::forward<U>(value))) {
+      |                          ^
+/Users/malfet/git/pytorch/pytorch/third_party/tensorpipe/third_party/libnop/include/nop/types/variant.h:265:26: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]
+  265 |     if (!value_.template Assign(index_, std::forward<T>(value))) {
+      |                          ^
+3 errors generated.
+```
+
+Fixes https://github.com/pytorch/pytorch/issues/151316
+
+Pull Request resolved: https://github.com/pytorch/pytorch/pull/151344
+Approved by: https://github.com/ZainRizvi, https://github.com/seemethere
+---
+ cmake/Dependencies.cmake | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/cmake/Dependencies.cmake b/cmake/Dependencies.cmake
+index 36853f48e31f0e41197b41a15f1a250e3b778979..12cb6f5714c7a68773147ba170cf0bc3a9b00822 100644
+--- a/cmake/Dependencies.cmake
++++ b/cmake/Dependencies.cmake
+@@ -1177,6 +1177,9 @@ if(USE_DISTRIBUTED AND USE_TENSORPIPE)
+       set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+     endif()
+     add_subdirectory(${PROJECT_SOURCE_DIR}/third_party/tensorpipe)
++    # Suppress warning to unblock libnop comiplation by clang-17
++    # See https://github.com/pytorch/pytorch/issues/151316
++    target_compile_options_if_supported(tensorpipe -Wno-missing-template-arg-list-after-template-kw)
+     if(CMAKE_VERSION VERSION_GREATER_EQUAL "4.0.0")
+       unset(CMAKE_POLICY_VERSION_MINIMUM)
+     endif()

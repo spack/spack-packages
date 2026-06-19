@@ -1,0 +1,62 @@
+From 894a0a37a9a70e93d4cad38d805953eef8513fc9 Mon Sep 17 00:00:00 2001
+From: Deepali Chourasia <deepch23@in.ibm.com>
+Date: Thu, 6 Apr 2023 11:04:49 +0000
+Subject: [PATCH] fallback to cpu_kernel with VSX
+
+---
+ aten/src/ATen/native/cpu/BinaryOpsKernel.cpp | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
+
+diff --git a/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp b/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp
+index a9e8cf2243f..fd4ee115e38 100644
+--- a/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp
++++ b/aten/src/ATen/native/cpu/BinaryOpsKernel.cpp
+@@ -312,6 +312,14 @@ void bitwise_xor_kernel(TensorIteratorBase& iter) {
+ }
+ 
+ void lshift_kernel(TensorIteratorBase& iter) {
++#if defined(__VSX__)  || defined(CPU_CAPABILITY_VSX)
++  AT_DISPATCH_INTEGRAL_TYPES(iter.dtype(), "lshift_cpu", [&]() {
++    cpu_kernel(iter,
++      [](scalar_t a, scalar_t b) -> scalar_t {
++        return static_cast<std::make_unsigned_t<scalar_t>>(a) << b;
++    });
++  });
++#else
+   AT_DISPATCH_INTEGRAL_TYPES(iter.dtype(), "lshift_cpu", [&]() {
+     cpu_kernel_vec(iter,
+         [](scalar_t a, scalar_t b) -> scalar_t {
+@@ -321,6 +329,7 @@ void lshift_kernel(TensorIteratorBase& iter) {
+             return a << b;
+         });
+   });
++#endif
+ }
+ 
+ void logical_and_kernel(TensorIterator& iter) {
+@@ -381,6 +390,14 @@ void logical_xor_kernel(TensorIterator& iter) {
+ }
+ 
+ void rshift_kernel(TensorIteratorBase& iter) {
++#if defined(__VSX__)  || defined(CPU_CAPABILITY_VSX)
++  AT_DISPATCH_INTEGRAL_TYPES(iter.dtype(), "rshift_cpu", [&]() {
++    cpu_kernel(iter,
++      [](scalar_t a, scalar_t b) -> scalar_t {
++        return a >> b;
++      });
++  });
++#else
+   AT_DISPATCH_INTEGRAL_TYPES(iter.dtype(), "rshift_cpu", [&]() {
+     cpu_kernel_vec(iter,
+         [](scalar_t a, scalar_t b) -> scalar_t {
+@@ -390,6 +407,7 @@ void rshift_kernel(TensorIteratorBase& iter) {
+           return a >> b;
+         });
+   });
++#endif
+ }
+ 
+ void lt_kernel(TensorIteratorBase& iter) {
+-- 
+2.34.1
+

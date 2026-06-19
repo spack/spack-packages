@@ -1,0 +1,42 @@
+From 13c975684a220ec096216ec6468ccd0dc90ff50a Mon Sep 17 00:00:00 2001
+From: Maxim Belkin <maxim.belkin@gmail.com>
+Date: Fri, 21 May 2021 10:25:18 -0700
+Subject: [PATCH] c10/util/thread_name.cpp: pthread_setname_np requires Glibc
+ 2.12 (#55063)
+
+Summary:
+`pthread_setname_np` requires Glibc 2.12. The patch reproduces what numactl does: https://github.com/numactl/numactl/blob/93867c59b0bb29470873a427dc7f06ebaf305221/syscall.c#L132-L136
+
+Related to issue https://github.com/pytorch/pytorch/issues/23482 and the `pthread_setname_np.patch` patch that adamjstewart shared.
+
+Pull Request resolved: https://github.com/pytorch/pytorch/pull/55063
+
+Reviewed By: soulitzer
+
+Differential Revision: D28577146
+
+Pulled By: malfet
+
+fbshipit-source-id: 85867b6f04795b1ae7bd46dbbc501cfd0ec9f163
+---
+ c10/util/thread_name.cpp | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/c10/util/thread_name.cpp b/c10/util/thread_name.cpp
+index c503df112492bebf562beab984dd8042feace224..27cbb98de8943267708c248566621215d56609ad 100644
+--- a/c10/util/thread_name.cpp
++++ b/c10/util/thread_name.cpp
+@@ -2,7 +2,12 @@
+ 
+ #include <algorithm>
+ 
+-#if defined(__GLIBC__) && !defined(__APPLE__) && !defined(__ANDROID__)
++#ifndef __GLIBC_PREREQ
++#define __GLIBC_PREREQ(x, y) 0
++#endif
++
++#if defined(__GLIBC__) && __GLIBC_PREREQ(2, 12) && !defined(__APPLE__) && \
++    !defined(__ANDROID__)
+ #define C10_HAS_PTHREAD_SETNAME_NP
+ #endif
+ 

@@ -1,0 +1,36 @@
+From 10909297fedab0a680799211a299203e53515032 Mon Sep 17 00:00:00 2001
+From: Mo Zhou <lumin@debian.org>
+Date: Tue, 17 Jan 2023 14:42:56 -0800
+Subject: [PATCH] Reorder structure for compatibility with linux-6.0 (#346)
+
+Summary:
+Fixes: https://github.com/facebookincubator/gloo/issues/345
+See also: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1022319
+
+Pull Request resolved: https://github.com/facebookincubator/gloo/pull/346
+
+Reviewed By: wz337, wanchaol
+
+Differential Revision: D42553412
+
+Pulled By: fduwjj
+
+fbshipit-source-id: c0132a4b5cf577f4fd957227d091a6417c78ba0b
+---
+ gloo/common/linux.cc | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/gloo/common/linux.cc b/gloo/common/linux.cc
+index c5e6c887be9879c61de93fd980a85d2b9eb77711..423de67b06967ccf720ee3dfc52397fcfe7a91ea 100644
+--- a/gloo/common/linux.cc
++++ b/gloo/common/linux.cc
+@@ -193,8 +193,8 @@ static int getInterfaceSpeedGLinkSettings(int sock, struct ifreq* ifr) {
+ #if LINUX_VERSION_CODE >= KERNEL_VERSION(4,6,0)
+   constexpr auto link_mode_data_nwords = 3 * 127;
+   struct {
+-    struct ethtool_link_settings req;
+     __u32 link_mode_data[link_mode_data_nwords];
++    struct ethtool_link_settings req;
+   } ecmd;
+   int rv;
+ 

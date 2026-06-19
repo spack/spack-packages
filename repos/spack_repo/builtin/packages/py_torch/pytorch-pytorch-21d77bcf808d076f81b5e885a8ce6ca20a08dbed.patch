@@ -1,0 +1,25 @@
+From 21d77bcf808d076f81b5e885a8ce6ca20a08dbed Mon Sep 17 00:00:00 2001
+From: Alin Pahontu <alin_pahontu@yahoo.com>
+Date: Wed, 4 Oct 2023 21:56:32 +0000
+Subject: [PATCH] added path to correct directory containing headers (#110063)
+
+After make install the headers are placed in include/openblas/ folder instead of include/ folder. Updated FindOpenBLAS.cmake to make that change clear.
+
+Pull Request resolved: https://github.com/pytorch/pytorch/pull/110063
+Approved by: https://github.com/Blackhex, https://github.com/kit1980
+---
+ cmake/Modules/FindOpenBLAS.cmake | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cmake/Modules/FindOpenBLAS.cmake b/cmake/Modules/FindOpenBLAS.cmake
+index c909ace0a1763ac094211c78e5ab3b25af935800..69d8227aea53ffcf244db3b9f159bd201062091b 100644
+--- a/cmake/Modules/FindOpenBLAS.cmake
++++ b/cmake/Modules/FindOpenBLAS.cmake
+@@ -11,6 +11,7 @@ SET(Open_BLAS_INCLUDE_SEARCH_PATHS
+   /opt/OpenBLAS/include
+   $ENV{OpenBLAS_HOME}
+   $ENV{OpenBLAS_HOME}/include
++  $ENV{OpenBLAS_HOME}/include/openblas
+ )
+ 
+ SET(Open_BLAS_LIB_SEARCH_PATHS

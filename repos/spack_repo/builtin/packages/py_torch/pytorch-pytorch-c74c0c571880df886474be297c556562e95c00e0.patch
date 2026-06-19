@@ -1,0 +1,35 @@
+From c74c0c571880df886474be297c556562e95c00e0 Mon Sep 17 00:00:00 2001
+From: Xiao Wang <24860335+xwang233@users.noreply.github.com>
+Date: Tue, 6 Jul 2021 12:43:40 -0700
+Subject: [PATCH] add thrust/host_vector.h header for cuda 11.4 build (#61004)
+
+Summary:
+needed for cuda 11.4 build
+
+Close https://github.com/pytorch/pytorch/issues/61011
+
+Pull Request resolved: https://github.com/pytorch/pytorch/pull/61004
+
+Reviewed By: ngimel
+
+Differential Revision: D29523896
+
+Pulled By: malfet
+
+fbshipit-source-id: acb11bdd19c0cc240696be21e5c492f8976fea65
+---
+ caffe2/utils/math_gpu.cu | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/caffe2/utils/math_gpu.cu b/caffe2/utils/math_gpu.cu
+index 088417c75a8bbf80528b9cd248450cfe31fbea45..d66b402f4a1a9dc1936eb93a1f211929525b194f 100644
+--- a/caffe2/utils/math_gpu.cu
++++ b/caffe2/utils/math_gpu.cu
+@@ -10,6 +10,7 @@
+ #include <cub/block/block_reduce.cuh>
+ #include <cub/cub.cuh>
+ 
++#include <thrust/host_vector.h>
+ #include <thrust/device_vector.h>
+ #include <thrust/functional.h>
+ 

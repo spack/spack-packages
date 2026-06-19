@@ -1,0 +1,29 @@
+From 9d99d8879cb8a7a5ec94b04e933305b8d24ad6ac Mon Sep 17 00:00:00 2001
+From: mikey dagitses <pytorch@dagits.es>
+Date: Wed, 26 Apr 2023 03:59:16 +0000
+Subject: [PATCH] add missing include on <stdexcept> from Registry.h (#100036)
+
+add missing include on <stdexcept> from Registry.h
+
+Summary: This throws std::runtime_error in the header.
+
+Test Plan: Rely on CI.
+
+Pull Request resolved: https://github.com/pytorch/pytorch/pull/100036
+Approved by: https://github.com/Skylion007
+---
+ c10/util/Registry.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/c10/util/Registry.h b/c10/util/Registry.h
+index 29daa6a02353fd6daeec91a0c91f49dd77a99b5d..dac1ec69384c0f46dbe18f7d33575eeb72a55eb3 100644
+--- a/c10/util/Registry.h
++++ b/c10/util/Registry.h
+@@ -15,6 +15,7 @@
+ #include <functional>
+ #include <memory>
+ #include <mutex>
++#include <stdexcept>
+ #include <string>
+ #include <unordered_map>
+ #include <vector>
