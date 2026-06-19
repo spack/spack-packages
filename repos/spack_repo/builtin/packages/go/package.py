@@ -39,8 +39,9 @@ class Go(Package):
 
     maintainers("alecbcs")
 
-    license("BSD-3-Clause")
+    license("BSD-3-Clause", checked_by="mcmehrtens")
 
+    version("1.27rc1", sha256="338f51f557c6db1235a3eeb89a0936af6f4e0d4116291ef3b8e41186bc655334")
     version("1.26.4", sha256="4f668a32fbfc1132e6a881fb968c2f1dada631492a339211735fbb255a42602d")
     version("1.26.3", sha256="1c646875d0aa8799133184ed57cf79ff24bdefe8c8820470602a9d3d6d9192b8")
     version("1.26.2", sha256="2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b")
