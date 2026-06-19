@@ -771,7 +771,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         if "+nnpack" in self.spec and "py-six" in self.spec:
             # NNPACK/PeachPy wires this path into PYTHONPATH for codegen.
             # Point it at Spack's installed py-six to avoid network fetches.
-            py_mm = str(self.spec["python"].version.up_to(2))
             env.set(
                 "PYTHON_SIX_SOURCE_DIR",
                 self["py-six"].module.python_purelib,
