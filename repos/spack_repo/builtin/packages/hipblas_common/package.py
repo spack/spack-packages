@@ -24,6 +24,7 @@ class HipblasCommon(CMakePackage):
         else:
             url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
         return url.format(version)
+
     # if rocm-cmake is not installed it pulls from the web
     # needed for air-gapped environments
     depends_on("rocm-cmake", type="build")
