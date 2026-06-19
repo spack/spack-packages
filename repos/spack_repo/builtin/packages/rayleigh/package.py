@@ -60,6 +60,7 @@ class Rayleigh(MakefilePackage):
 
             if spec.satisfies("^openblas"):
                 args.append("--openblas")
+                args.append("--with-blas={}".format(spec["openblas"].prefix))
             elif not spec.satisfies("^cray-libsci"):
                 args.append("--with-lapack={}".format(spec["lapack"].prefix))
                 args.append("--with-blas={}".format(spec["blas"].prefix))
