@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+from typing import Optional
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 
 from spack.package import *
-from spack.package import PackageBase
+from spack.package import ClassProperty, PackageBase, classproperty, install_tree, mkdirp
 
 
 def _url(cls: "Geant4DataPackage") -> Optional[str]:
