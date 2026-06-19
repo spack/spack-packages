@@ -47,9 +47,6 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
     version("6.3.3", sha256="0f563874f71b593cbdcdf0eea58b08c7437f1abf807f0886a3a30afa9e7f4953")
     version("6.3.2", sha256="317f19acfa6e6780923e6c8144c3c223b523c382588df528b6df001fae38d13d")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     depends_on("python@3.8:")
     depends_on("py-pip", type="run")
     depends_on("py-astunparse@1.6.2", type=("build", "run"))  # wants exact version

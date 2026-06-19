@@ -62,9 +62,6 @@ class Rocdecode(ROCmLibrary, CMakePackage):
         sticky=True,
     )
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     depends_on("libva", type="build", when="@6.2:")
     depends_on("libdrm", type="build", when="@6.4:")
     depends_on("ffmpeg", when="@7.0:")

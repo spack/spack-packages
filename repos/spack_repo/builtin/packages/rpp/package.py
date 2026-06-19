@@ -155,9 +155,7 @@ class Rpp(ROCmLibrary, CMakePackage):
                 string=True,
             )
 
-    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
-
     depends_on("cmake@3.5:", type="build")
     depends_on("pkgconfig", type="build")
     depends_on(Boost.with_default_variants)

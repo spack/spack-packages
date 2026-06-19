@@ -83,7 +83,6 @@ class Hipfft(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("~cuda ~rocm", msg="CUDA or ROCm support is required")
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.5:", type="build")
