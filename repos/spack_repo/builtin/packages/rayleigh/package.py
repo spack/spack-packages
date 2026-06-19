@@ -20,6 +20,7 @@ class Rayleigh(MakefilePackage):
     maintainers("tukss")
 
     version("main", branch="main")
+    version("1.3.0", sha256="1a436f995edb12aa572ed67ea48f46eb5acc23981fe5fdca2363f8fced8b52ac")
     version("1.2.0", sha256="e90acf18d47f6066fa68fd7b16c70ad9781a00be9e97467e9a388773e21e9e09")
     version("1.1.0", sha256="93fbbdbde6088807638e4dcbd4d622203fd4753c1831bab2cb8eaeca5cba45c3")
     version("1.0.1", sha256="9c9e3b0b180f32a889f158e2ea2967f4ac2bb2124f5d264f230efb8c8f19ea36")
