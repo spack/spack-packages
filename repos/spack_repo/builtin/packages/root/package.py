@@ -388,7 +388,7 @@ class Root(CMakePackage):
     # Python
     depends_on("python@2.7:", when="+python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
-    conflicts("python +freethreading", when="@6.40.00", msg="v6.40.00 requires GIL")
+    conflicts("^python +freethreading", when="@6.40.00", msg="v6.40.00 requires GIL")
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
     depends_on("py-numpy", type=("build", "run"), when="+tmva-sofie @6.40:")
 
