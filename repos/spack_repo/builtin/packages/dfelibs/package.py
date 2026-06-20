@@ -17,8 +17,13 @@ class Dfelibs(CMakePackage):
 
     license("MIT", checked_by="stephenswat")
 
-    version("20231012", sha256="7127069858c2e3ce663e66f45e3f7e02ede8bbca23d90f6c89f43f5b05c44dcb")
-    version("20211029", sha256="65b8d536b06b550e38822905dea06d193beb703fe0e4442791f43dc087c5cbfb")
+    with default_args(deprecated=True):
+        version(
+            "20231012", sha256="7127069858c2e3ce663e66f45e3f7e02ede8bbca23d90f6c89f43f5b05c44dcb"
+        )
+        version(
+            "20211029", sha256="65b8d536b06b550e38822905dea06d193beb703fe0e4442791f43dc087c5cbfb"
+        )
 
     depends_on("cxx", type="build")  # generated
 
