@@ -114,6 +114,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libdrm", when="@7.1:")
     depends_on("libelf", when="@7.1:")
     depends_on("xxd", when="@7.1:")
+    depends_on("spirv-headers", when="@7.2:", type="build")
 
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
@@ -381,6 +382,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON")
             spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
             args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
+            args.append(
+                self.define(
+                    "LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR",
+                    self.spec["spirv-headers"].prefix,
+                )
+            )
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
 
