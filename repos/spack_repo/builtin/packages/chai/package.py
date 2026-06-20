@@ -152,6 +152,12 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("examples", default=True, description="Build examples.")
     variant("openmp", default=False, description="Build using OpenMP")
     variant("disable_rm", default=False, description="Make ManagedArray a thin wrapper")
+    variant(
+        "cxxstd",
+        default="17",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
 
     # TODO: figure out gtest dependency and then set this default True
     # and remove the +tests conflict below.
@@ -162,6 +168,9 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
         multi=False,
         description="Tests to run",
     )
+
+    conflicts("cxxstd=11", when="@2022.03.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -215,6 +224,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             )
 
     with when("+raja"):
+        for std in ("11", "14", "17", "20"):
+            depends_on(f"raja cxxstd={std}", when=f"cxxstd={std}")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja@2025.12:", when="@2025.12.0:")
@@ -352,6 +363,10 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         return entries
 
+    @property
+    def cxx_std(self):
+        return self.spec.variants["cxxstd"].value
+
     def initconfig_package_entries(self):
         spec = self.spec
         entries = []
@@ -383,6 +398,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_string("CMAKE_BUILD_TYPE", spec.variants["build_type"].value))
         entries.append(cmake_cache_option("BUILD_SHARED_LIBS", spec.satisfies("+shared")))
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         # Generic options that have a prefixed equivalent in CHAI CMake
         entries.append(cmake_cache_option("ENABLE_OPENMP", spec.satisfies("+openmp")))
