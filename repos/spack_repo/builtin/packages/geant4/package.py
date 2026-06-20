@@ -197,6 +197,7 @@ class Geant4(CMakePackage):
     depends_on("libxmu", when="+x11")
     depends_on("motif", when="+motif")
     with when("+qt"):
+        depends_on("gl")
         depends_on("qmake")
         with when("^[virtuals=qmake] qt-base"):
             depends_on("qt-base +accessibility +gui +opengl")
