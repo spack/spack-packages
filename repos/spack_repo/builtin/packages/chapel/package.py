@@ -483,6 +483,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_LLVM_SUPPORT",
         "CHPL_LLVM_VERSION",
         "CHPL_LOCALE_MODEL",
+        "CHPL_MAKE",
         "CHPL_MAKE_THIRD_PARTY",
         "CHPL_MEM",
         "CHPL_RE2",
@@ -803,6 +804,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             self.setup_if_not_unset(env, "CHPL_" + v.upper(), str(self.spec.variants[v].value))
         self.setup_chpl_compilers(env)
         self.setup_chpl_platform(env)
+
+        # Ensure that Chapel consistently uses the GNU Make selected by Spack
+        env.set("CHPL_MAKE", self.spec["gmake"].prefix.bin.make)
 
         # TODO: a function to set defaults for things where we removed variants
         # We'll set to GPU later if +rocm or +cuda requested
