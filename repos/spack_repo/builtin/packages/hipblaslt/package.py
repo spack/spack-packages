@@ -124,6 +124,7 @@ class Hipblaslt(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
@@ -175,6 +176,7 @@ class Hipblaslt(CMakePackage):
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")
     depends_on("py-msgpack", when="@7.1:")
+    depends_on("spdlog", when="@7.1:")
 
     # Sets the proper for clang++ and clang-offload-blunder.
     # Also adds hipblas and msgpack include directories
@@ -340,6 +342,17 @@ class Hipblaslt(CMakePackage):
             )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
+            args.append(self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"))
+            args.append(self.define("spdlog_ROOT", self.spec["spdlog"].prefix))
+            args.append(
+                self.define("spdlog_DIR", self.spec["spdlog"].prefix.lib.cmake.spdlog)
+            )
+            args.append(
+                self.define(
+                    "FETCHCONTENT_SOURCE_DIR_ROCMCMAKEBUILDTOOLS",
+                    self.spec["rocm-cmake"].prefix,
+                )
+            )
             args.append(
                 self.define(
                     "TENSILELITE_OFFLOADBUNDLER",
