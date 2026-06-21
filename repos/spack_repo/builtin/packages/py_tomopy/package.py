@@ -41,7 +41,7 @@ class PyTomopy(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-pyfftw", type=("build", "run"), when="@1.0:1.9")
     depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@:80.9.0", type=("build", "run"))
     depends_on("py-h5py", type=("build", "run"))
     depends_on("py-six", type=("build", "run"))
     depends_on("py-pywavelets", type=("build", "run"))
