@@ -95,9 +95,9 @@ class Go(Package):
     depends_on("grep", type="build")
     depends_on("sed", type="build")
 
-    depends_on("go-or-gccgo-bootstrap@1.24:", type="build", when="@1.26:")
-    depends_on("go-or-gccgo-bootstrap@1.22:", type="build", when="@1.24:")
-    depends_on("go-or-gccgo-bootstrap@1.20:", type="build", when="@1.22:")
+    depends_on("go-or-gccgo-bootstrap@1.24.6:", type="build", when="@1.26:")
+    depends_on("go-or-gccgo-bootstrap@1.22.6:", type="build", when="@1.24:")
+    depends_on("go-or-gccgo-bootstrap@1.20.6:", type="build", when="@1.22:")
     depends_on("go-or-gccgo-bootstrap", type="build")
 
     phases = ["build", "install"]
