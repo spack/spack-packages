@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4tendl(Geant4DataPackage):
+class G4tendl(Package, Geant4DataPackage):
     """Optional Geant4 data for incident particles."""
 
     homepage = "https://geant4.web.cern.ch"
