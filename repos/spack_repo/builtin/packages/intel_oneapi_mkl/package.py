@@ -208,6 +208,45 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
         msg="MKL with OpenMP threading requires GCC, clang, or Intel compilers",
     )
 
+    # Several MKL libraries have explicit SYCL dependencies for their GPU support,
+    # so declare a variant to model that accurately.
+    variant(
+        "sycl",
+        default=False,
+        when="@2021:",
+        description="Use SYCL support - requires oneAPI SYCL runtime from matching compiler",
+    )
+    # Let spack work out that a dependency on the oneAPI runtime is required
+    depends_on("sycl", when="+sycl")
+    # Ensure the solver can't try hipSYCL
+    conflicts("hipsycl", when="+sycl")
+    # For a downstream package to depend on this one and link to shared
+    # objects from MKL that depend on SYCL, the linker must be able to find
+    # the libsycl.so that came from the compiler that originally built MKL.
+    # This mapping ensures the spack solver can only choose
+    # compatible MKL and compiler (and thus runtime) versions. Up to at least
+    # 2026.0, that mapping is one-to-one, i.e MKL requires the compiler that
+    # was in the same oneAPI release, but this may change when the SYCL ABI
+    # stabilizes.
+    requires("%oneapi@2025.3", when="@2025.3 +sycl")
+    requires("%oneapi@2025.2", when="@2025.2 +sycl")
+    requires("%oneapi@2025.1", when="@2025.1 +sycl")
+    requires("%oneapi@2025.0", when="@2025.0 +sycl")
+    requires("%oneapi@2024.2", when="@2024.2 +sycl")
+    requires("%oneapi@2024.1", when="@2024.1 +sycl")
+    requires("%oneapi@2024.0", when="@2024.0 +sycl")
+    requires("%oneapi@2023.2", when="@2023.2 +sycl")
+    requires("%oneapi@2023.1", when="@2023.1 +sycl")
+    requires("%oneapi@2023.0", when="@2023.0 +sycl")
+    requires("%oneapi@2022.2", when="@2022.2 +sycl")
+    requires("%oneapi@2022.1", when="@2022.1 +sycl")
+    requires("%oneapi@2022.0", when="@2022.0 +sycl")
+    requires("%oneapi@2021.4", when="@2021.4 +sycl")
+    requires("%oneapi@2021.3", when="@2021.3 +sycl")
+    requires("%oneapi@2021.2", when="@2021.2 +sycl")
+    requires("%oneapi@2021.1", when="@2021.1 +sycl")
+    requires("%oneapi@2021.0", when="@2021.0 +sycl")
+
     depends_on("tbb", when="threads=tbb")
     # cluster libraries need mpi
     depends_on("mpi", when="+cluster")
