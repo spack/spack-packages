@@ -53,9 +53,6 @@ class PyScipy(PythonPackage):
     version("1.7.1", sha256="6b47d5fa7ea651054362561a28b1ccc8da9368a39514c1bbf6c0977a1c376764")
     version("1.7.0", sha256="998c5e6ea649489302de2c0bc026ed34284f531df89d2bdc8df3a0d44d165739")
 
-    # SciPy 1.18 introduces a new experimental option to build without Fortran compilers
-    variant("fortran", default=True, description="Build with Fortran", when="@1.18:")
-
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
         depends_on("python@3.12:3.14", when="@1.18:")
@@ -73,8 +70,7 @@ class PyScipy(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
         depends_on("cxx")
-        depends_on("fortran", when="@1.18: +fortran")
-        depends_on("fortran", when="@:1.17")
+        depends_on("fortran", when="@:1.18")
 
         # Required to use --config-settings
         depends_on("py-pip@23.1:", when="@1.9:")
@@ -156,7 +152,7 @@ class PyScipy(PythonPackage):
     conflicts("%gcc@:4.7", when="@:1.9", msg="SciPy requires GCC >= 4.8")
     conflicts("%apple-clang@:14", when="@1.16:", msg="SciPy requires clang >= 15.0")
     conflicts("%apple-clang@:11", when="@1.14:", msg="SciPy requires clang >= 12.0")
-    conflicts("%apple-clang@:9", when="@1.10:", msg="SciPy requires Apple Clang >= 10")
+    conflicts("%apple-clang@:9", when="@1.10:", msg="SciPy requires clang >= 10.0")
     conflicts(
         "%msvc@:19.19",
         when="@1.10:",
@@ -176,7 +172,7 @@ class PyScipy(PythonPackage):
     # https://github.com/mesonbuild/meson/pull/10909#issuecomment-1282241479
     # Intel OneAPI ifx claims to support -fvisibility, but this does not work.
     # Meson adds this flag for all Python extensions which include Fortran code.
-    conflicts("%oneapi@:2023.0", when="@1.9:")
+    conflicts("%oneapi@:2023.0", when="@1.9:1.18")
     # Unknown build error, version ranges may be incorrect
     conflicts("%oneapi@2024:", when="@:1.8")
 
@@ -249,8 +245,6 @@ class PyScipy(PythonPackage):
                 fortran_std = "none"
 
             settings["setup-args"]["-Dfortran_std"] = fortran_std
-        else:
-            settings["setup-args"]["-D_without-fortran"] = True
 
         return settings
 
