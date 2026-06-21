@@ -71,6 +71,11 @@ class Papi(AutotoolsPackage, ROCmPackage):
     # The PAPI configure option "--with-shlib-tools" is deprecated
     # and therefore not implemented here
 
+    variant("disable_cpu", default=False, when="@7.2:", description="Disable the CPU components")
+    variant("disable_perf_event", default=False, when="@7.2:", description="Disable the perf_event component")
+    variant("disable_perf_event_uncore", default=False, when="@7.2:", description="Disable the perf_event_uncore component")
+    variant("with_sysdetect", default="none", when="@7.2:", values=("no", "yes"), multi=False, description="Build the sysdetect component, the default is yes")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
@@ -187,6 +192,18 @@ class Papi(AutotoolsPackage, ROCmPackage):
 
         if "+debug" in spec:
             options.append("--with-debug=yes")
+
+        if "+disable_cpu" in spec:
+            options.append("--disable-cpu")
+
+        if "+disable_perf_event" in spec:
+            options.append("--disable-perf-event")
+
+        if "+disable_perf_event_uncore" in spec:
+            options.append("--disable-perf-event-uncore")
+
+        if spec.variants["with_sysdetect"].value != "none":
+            options.append("--with-sysdetect={0}".format(spec.variants["with_sysdetect"].value))
 
         if self.run_tests:
             options.append("--with-tests=ctests")
