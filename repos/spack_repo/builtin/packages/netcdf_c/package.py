@@ -269,7 +269,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     # the comments in the configure script and its implementation). The check that led to the
     # failure was removed in version 4.8.1 (https://github.com/Unidata/netcdf-c/pull/2044). To
     # keep it simple, we require HDF5 1.10.x or older:
-    depends_on("hdf5@:1.10", when="@4.8.0")
+    # depends_on("hdf5@:1.10", when="@4.8.0")
 
     with when("+byterange"):
         # HDF5 implements H5allocate_memory starting version 1.8.15:
@@ -534,10 +534,18 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             config_args.append("CC={0}".format(self.spec["mpi"].mpicc))
 
         # In general, we rely on the compiler wrapper to inject the required CPPFLAGS and LDFLAGS.
-        # However, the injected LDFLAGS are invisible for the configure script and are added
+        # However, the injected flags are invisible for the configure script and are added
         # neither to the pkg-config nor to the nc-config files. Therefore, we generate LDFLAGS
-        # based on the contents of the following list and pass them to the configure script:
+        # based on the contents of the following list and pass them to the configure script.
+        # CPPFLAGS is also needed when CC is an MPI wrapper instead of Spack's compiler wrapper,
+        # otherwise configure may pick up system HDF5 headers while linking to Spack's HDF5 libs.
+        include_search_dirs = []
         lib_search_dirs = []
+
+        def append_include_dir(spec):
+            include_dir = spec.prefix.include
+            if os.path.isdir(include_dir):
+                include_search_dirs.append(include_dir)
 
         # In general, we rely on the configure script to generate the required linker flags in the
         # right order. However, the configure script does not know and does not check for several
@@ -546,10 +554,12 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         extra_libs = []
 
         if "+parallel-netcdf" in self.spec:
+            append_include_dir(self.spec["parallel-netcdf"])
             lib_search_dirs.extend(self.spec["parallel-netcdf"].libs.directories)
 
         if "+hdf4" in self.spec:
             hdf = self.spec["hdf"]
+            append_include_dir(hdf)
             lib_search_dirs.extend(hdf.libs.directories)
             # The configure script triggers unavoidable overlinking to jpeg:
             lib_search_dirs.extend(hdf["jpeg"].libs.directories)
@@ -563,6 +573,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
                 extra_libs.append(hdf["zlib-api"].libs)
 
         hdf5 = self.spec["hdf5:hl"]
+        append_include_dir(hdf5)
         lib_search_dirs.extend(hdf5.libs.directories)
         if "~shared" in hdf5:
             if "+szip" in hdf5:
@@ -644,6 +655,11 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
             config_args.append("ac_cv_prog_NC_M4=false")
 
         lib_search_dirs.extend(d for libs in extra_libs for d in libs.directories)
+        include_search_dirs = filter_system_paths(dedupe(include_search_dirs))
+        config_args.append(
+            "CPPFLAGS={0}".format(" ".join("-I{0}".format(d) for d in include_search_dirs))
+        )
+
         # Remove duplicates and system prefixes:
         lib_search_dirs = filter_system_paths(dedupe(lib_search_dirs))
         config_args.append(
