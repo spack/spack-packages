@@ -193,11 +193,8 @@ class PyScipy(PythonPackage):
     def archive_files(self):
         return [join_path(self.stage.source_path, "build", "meson-logs", "meson-log.txt")]
 
-    @run_before("install")
+    @run_before("install", when="@:1.8")
     def set_fortran_compiler(self):
-        if "fortran" not in self.spec:
-            return
-
         if self.spec.satisfies("%fj"):
             with open("setup.cfg", "w") as f:
                 f.write("[config_fc]\n")
