@@ -1,8 +1,10 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import pathlib
 import platform
 import re
+import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -16,8 +18,6 @@ class RustBootstrap(Package):
     url = "https://static.rust-lang.org/dist/rust-1.65.0-aarch64-apple-darwin.tar.gz"
 
     maintainers("alecbcs")
-
-    skip_version_audit = ["platform=windows"]
 
     # List binary rust releases for multiple operating systems and architectures.
     # These binary versions are not intended to stay up-to-date. Instead we
@@ -45,6 +45,11 @@ class RustBootstrap(Package):
                 "aarch64": "c812028423c3d7dd7ba99f66101e9e1aa3f66eab44a1285f41c363825d49dca4",
                 "powerpc64le": "e2fe00a3c91f21c52947ebf96b4da016c9def5ccfedd1c335f30746db58bbf35",
             },
+            "windows": {
+                "x86_64": "1e579d5e6d3995b9445943035307f4c765bb3d51aaa0ff7babb5a7a796eab337",
+                "aarch64": "4ea28bdfa4726acc0eaed488f8b8b2b9bc97c7991acc1418d9fad3f37ada7f87",
+                "powerpc64le": "4d3f42ccc7fef9513189f31c81ac758c3f0d0945785f0a5bc4aed4661beae11c",
+            },
         },
         "1.86.0": {
             "darwin": {
@@ -55,6 +60,11 @@ class RustBootstrap(Package):
                 "x86_64": "f6a8c0d8b8a8a737c40eee78abe286a3cbe984d96b63de9ae83443360e3264bf",
                 "aarch64": "460058cd78f06875721427a42a5ce6a8b8ef2c0c3225fccfae149d9345572ff4",
                 "powerpc64le": "9b104428e2b0377dbdb9dc094eb4d9f4893ada0b80d2b315f0c4ea2135ed9007",
+            },
+            "windows": {
+                "x86_64": "655a0764e10badc37333581d884377f0daafcb93fb5145c88da28d78503bf26d",
+                "aarch64": "f334b334ccbae93a5c9ffdfe0999a5505bf54b38317c8cabcceb5490897ab1fd",
+                "powerpc64le": "5fb62bd1d99a3085d7ccc01b94a5844e1f34f8cefc41915e7a3dcc2d8a89959e",
             },
         },
         "1.85.0": {
@@ -67,6 +77,11 @@ class RustBootstrap(Package):
                 "aarch64": "0306c30bee00469fbec4b07bb04ea0308c096454354c3dc96a92b729f1c2acd1",
                 "powerpc64le": "d0761bf0e1786a46dddfe60cc9397b899f680b86e6aebd7ca16b2a70a9dd631b",
             },
+            "windows": {
+                "x86_64": "2d8c78d5130a87015f29c8584577d0a4b0da6331a7e90073d45d471c92127c27",
+                "aarch64": "21d2b288d7f5c6de442de19d69894e997aeb4fa0b657f75a15c6fccd4eae149b",
+                "powerpc64le": "80e947ad5fe10d397ec90cde1e6d1446b873ff549f042dd30d5f636289ba1388",
+            },
         },
         "1.82.0": {
             "darwin": {
@@ -77,6 +92,11 @@ class RustBootstrap(Package):
                 "x86_64": "0265c08ae997c4de965048a244605fb1f24a600bbe35047b811c638b8fcf676b",
                 "aarch64": "d7db04fce65b5f73282941f3f1df5893be9810af17eb7c65b2e614461fe31a48",
                 "powerpc64le": "44f3a1e70be33f91927ae8d89a11843a79b8b6124d62a9ddd9030a5275ebc923",
+            },
+            "windows": {
+                "x86_64": "b5fac89899343fbc1b8438ff87b77cddaed90a75873db7b01f2c197a26ec9d52",
+                "aarch64": "2f2c4b504fb341fe09407befcb614f041eb45d3795b011322b8bb42674b3c4ea",
+                "powerpc64le": "d5dd1fbac7e4aa289f8604b3a8e6bc9fc0cbf4174d0f258d87a950fa379e5fbc",
             },
         },
         "1.81.0": {
@@ -89,6 +109,11 @@ class RustBootstrap(Package):
                 "aarch64": "ef4da9c1ecd56bbbb36f42793524cce3062e6a823ae22cb679a945c075c7755b",
                 "powerpc64le": "bf98b27de08a2fd5a2202a2b621b02bfde2a6fde397df2a735d018aeffcdc5e2",
             },
+            "windows": {
+                "x86_64": "73110d77b2349c0be7b2b2054066d31981ea13011125fcc04bccf3316140cd56",
+                "aarch64": "7092abcc35c15064025a7fc9da07062efb604c7dfc004c63b56b84b68dc9c728",
+                "powerpc64le": "13fb490d0d17fb612b353a2fcd7b381fa7f4de7c144e72c9fef094ec3b9003d7",
+            },
         },
         "1.78.0": {
             "darwin": {
@@ -99,6 +124,11 @@ class RustBootstrap(Package):
                 "x86_64": "1307747915e8bd925f4d5396ab2ae3d8d9c7fad564afbc358c081683d0f22e87",
                 "aarch64": "131eda738cd977fff2c912e5838e8e9b9c260ecddc1247c0fe5473bf09c594af",
                 "powerpc64le": "c5aedb12c552daa18072e386697205fb7b91cef1e8791fe6fb74834723851388",
+            },
+            "windows": {
+                "x86_64": "16bbc1a670b2c88e53d6ff64adc9e10af09e6c90b4628ad122827f1edd8b00fb",
+                "aarch64": "c49ebc1431f2cfec615a6c2594dcaf3a28cf704802c0f1c0058f231749872ab9",
+                "powerpc64le": "3056dc08e41a55acba63682f8b3dd2199a199c52193720595b669147aad4f9aa",
             },
         },
         "1.76.0": {
@@ -111,6 +141,11 @@ class RustBootstrap(Package):
                 "aarch64": "2e8313421e8fb673efdf356cdfdd4bc16516f2610d4f6faa01327983104c05a0",
                 "powerpc64le": "44b3494675284d26b04747a824dc974e32fd8fd46fc0aa06a7c8ebe851332d2c",
             },
+            "windows": {
+                "x86_64": "cc908e1f0625aae0da5f4a35c390828947887929af694029fc3ccdf4cc66b0dd",
+                "aarch64": "9a88f3c87f2ef31a30b41820652c95e990df332e5d3c6fc7dd4d279879b3862d",
+                "powerpc64le": "e256bd6a78f5de83eb064f30ed4c16d9e2a65a9a0830b64f80a411e6fb9d560f",
+            },
         },
         "1.75.0": {
             "darwin": {
@@ -121,6 +156,11 @@ class RustBootstrap(Package):
                 "x86_64": "473978b6f8ff216389f9e89315211c6b683cf95a966196e7914b46e8cf0d74f6",
                 "aarch64": "30828cd904fcfb47f1ac43627c7033c903889ea4aca538f53dcafbb3744a9a73",
                 "powerpc64le": "2599cdfea5860b4efbceb7bca69845a96ac1c96aa50cf8261151e82280b397a0",
+            },
+            "windows": {
+                "x86_64": "46fb351d1c33fe501375e3f742fbc98500b12eb2a4f7af6dc203b9be69f1f906",
+                "aarch64": "0c15a32201ba29e868bd424b05944a27921d66f68de1035fac405d117b493397",
+                "powerpc64le": "954b28a01cd3cd2bb853aa12879d6233e4486c100b6f9a432796b223bf40946d",
             },
         },
         "1.73.0": {
@@ -133,6 +173,11 @@ class RustBootstrap(Package):
                 "aarch64": "e54d7d886ba413ae573151f668e76ea537f9a44406d3d29598269a4a536d12f6",
                 "powerpc64le": "8fa215ee3e274fb64364e7084613bc570369488fa22cf5bc8e0fe6dc810fe2b9",
             },
+            "windows": {
+                "x86_64": "d6b0db0acc5ffef638ffb7bfc0497381ffa41d5935a1115230c34db6c6f1ab20",
+                "aarch64": "ea36179b1da415d8c4756885b698b5ba14e77c092bf7bfff5e7fdfbc899ffd78",
+                "powerpc64le": "985dcae82e154e662d78a03df637339b679120bb92acd34401e9d33c5b1156dc",
+            },
         },
         "1.70.0": {
             "darwin": {
@@ -143,6 +188,11 @@ class RustBootstrap(Package):
                 "x86_64": "8499c0b034dd881cd9a880c44021632422a28dc23d7a81ca0a97b04652245982",
                 "aarch64": "3aa012fc4d9d5f17ca30af41f87e1c2aacdac46b51adc5213e7614797c6fd24c",
                 "powerpc64le": "ba8cb5e3078b1bc7c6b27ab53cfa3af14001728db9a047d0bdf29b8f05a4db34",
+            },
+            "windows": {
+                "x86_64": "02a9c4d98ea58e7554c144f1bc946138cdc5614af71d3fc21f0a717a0367599b",
+                "aarch64": "73702c0cc681bfe2467e45d56d139855566ea25e8350d8a634881af7f0fa3b06",
+                "powerpc64le": "c8abd64db09bea0dac3617061e7de69b01f3ce2b74a2ae7b282d8b132f75f8c0",
             },
         },
         "1.65.0": {
@@ -155,6 +205,11 @@ class RustBootstrap(Package):
                 "aarch64": "f406136010e6a1cdce3fb6573506f00d23858af49dd20a46723c3fa5257b7796",
                 "powerpc64le": "3f1d0d5bb13213348dc65e373f8c412fc0a12ee55abc1c864f7e0300932fc687",
             },
+            "windows": {
+                "x86_64": "da1f8476596485b69fc4d90fb08c876f1c69f4e23914252b8a2b3c330e3c5466",
+                "aarch64": "21f53c976882a98bd810b24b001c0774dc6787bab0cfa2f3be2055fc9fd8ffdd",
+                "powerpc64le": "05798ebf45bf65dfcff449c583c3650f6d7c1f3d2b70ab0172c9ac0d161f69d0",
+            },
         },
         "1.60.0": {
             "darwin": {
@@ -165,6 +220,11 @@ class RustBootstrap(Package):
                 "x86_64": "b8a4c3959367d053825e31f90a5eb86418eb0d80cacda52bfa80b078e18150d5",
                 "aarch64": "99c419c2f35d4324446481c39402c7baecd7a8baed7edca9f8d6bbd33c05550c",
                 "powerpc64le": "80125e90285b214c2b1f56ab86a09c8509aa17aec9d7127960a86a7008e8f7de",
+            },
+            "windows": {
+                "x86_64": "eddb8fcf2cfd5a20c87a93465dee0dd7e0ffda7cd8b09bf9c681cde65293d0e2",
+                "aarch64": "ff51997246590c396dafb16864a69563e1d845e1c7f26c21092c6d81986a0b18",
+                "powerpc64le": "1e7ce754838dff6e565c9172f750e49f87f6550dfc9d8a480d747dbfb602da74",
             },
         },
     }
@@ -182,7 +242,11 @@ class RustBootstrap(Package):
 
     # Convert operating system names into the format used for Rust
     # download server.
-    rust_os = {"darwin": "apple-darwin", "linux": "unknown-linux-gnu"}
+    rust_os = {
+        "darwin": "apple-darwin",
+        "linux": "unknown-linux-gnu",
+        "windows": "pc-windows-msvc",
+    }
 
     # Determine system os and architecture/target.
     os = platform.system().lower()
@@ -206,7 +270,7 @@ class RustBootstrap(Package):
     depends_on("patchelf@0.13:", when="platform=linux", type="build")
 
     def url_for_version(self, version):
-        if self.os not in ("linux", "darwin"):
+        if self.os not in ("linux", "darwin", "windows"):
             return None
 
         # Allow maintainers to checksum multiple architectures via
@@ -234,6 +298,19 @@ class RustBootstrap(Package):
             patchelf("--add-rpath", ":".join(rpaths), binary)
 
     def install(self, spec, prefix):
-        install_script = Executable("./install.sh")
-        install_args = [f"--prefix={prefix}", "--without=rust-docs"]
-        install_script(" ".join(install_args))
+        if sys.platform == "win32":
+            builder_file = pathlib.Path(__file__).parent / "rust_bootstrap_installer.ps1"
+            Executable("powershell.exe")(
+                "-ExecutionPolicy",
+                "Bypass",
+                "-File",
+                str(builder_file),
+                "-SrcDir",
+                self.stage.source_path,
+                "-DestPrefix",
+                prefix,
+            )
+        else:
+            install_script = Executable("./install.sh")
+            install_args = [f"--prefix={prefix}", "--without=rust-docs"]
+            install_script(" ".join(install_args))
