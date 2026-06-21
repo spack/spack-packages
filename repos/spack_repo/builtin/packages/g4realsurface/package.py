@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4realsurface(Geant4DataPackage):
+class G4realsurface(Package, Geant4DataPackage):
     """Geant4 data for measured optical surface reflectance"""
 
     homepage = "https://geant4.web.cern.ch"
