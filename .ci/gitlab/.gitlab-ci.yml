@@ -12,9 +12,9 @@ variables:
   # SPACK_CI_DISABLE_STACKS:
   #   value: /^.*(cray).*$/
   #   expand: false
-  # SPACK_CI_ENABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
+  SPACK_CI_ENABLE_STACKS:
+    value: /^.*(windows).*$/
+    expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -229,7 +229,7 @@ default:
     - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
     - $ErrorActionPreference=$ErrorActionOld
 
-  tags: ["spack", "public", "medium", "x86_64-win"]
+  tags: ["spack", "public", "medium", "x86_64-win-uo-frank"]
   image: {
     name: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61",
     entrypoint: [""]
