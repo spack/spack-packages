@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4urrpt(Geant4DataPackage):
+class G4urrpt(Package, Geant4DataPackage):
     """Geant4 data for evaluated particle cross-sections on
     natural composition of elements"""
 
