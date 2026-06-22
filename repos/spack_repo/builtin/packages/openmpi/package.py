@@ -1235,6 +1235,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.append("--with-libevent=internal")
         elif spec.satisfies("%libevent"):
             config_args.append(f"--with-libevent={spec['libevent'].prefix}")
+            config_args.append(f"--with-libevent-libdir={spec['libevent'].libs.directories[0]}")
 
         # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
