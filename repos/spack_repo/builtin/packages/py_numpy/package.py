@@ -159,7 +159,7 @@ class PyNumpy(PythonPackage):
     # Add Fujitsu Fortran compiler
     patch("add_fj_compiler.patch", when="@1.19.3:1.19.5%fj")
 
-    patch("check_executables.patch", when="@1.20.0:")
+    patch("check_executables.patch", when="@1.20.0:2.4")
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
 
     # Fix atomic_load const issue
