@@ -20,3 +20,9 @@ class PyGitpython(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-gitdb@4.0.1:4", type=("build", "run"))
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/G/GitPython/GitPython-{}.tar.gz"
+        if version > Version("3.1.43"):
+            url = url.lower()
+        return url.format(version)
