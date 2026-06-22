@@ -54,7 +54,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     variant("magma", default=False, description="Use helper methods from the UTK MAGMA library")
     variant("python", default=False, description="Install the Python bindings")
     variant("fortran", default=False, description="Install the Fortran modules")
-    variant("benchmarks", default=False, description="Build and install the heFFTe benchmarks")
+    variant("benchmarks", default=False, description="Install the heFFTe benchmarks")
 
     depends_on("python@3.0:", when="+python", type=("build", "run"))
     depends_on("py-mpi4py", when="+python", type=("build", "run"))
@@ -101,7 +101,6 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_MAGMA", "magma"),
             self.define_from_variant("Heffte_ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
-            self.define_from_variant("Heffte_ENABLE_BENCHMARKS", "benchmarks"),
         ]
 
         if self.spec.satisfies("+cuda") and self.spec.satisfies("@:2.3.0"):
