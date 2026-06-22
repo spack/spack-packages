@@ -17,19 +17,20 @@ class AstGrep(CargoPackage):
     git = "https://github.com/ast-grep/ast-grep.git"
     supplier = "Organization: ast-grep"
 
-    # Match only ast-grep, not its sg alias: shadow-utils installs an
-    # unrelated `sg` binary on most Linux systems
     executables = ["^ast-grep$"]
 
     maintainers("mcmehrtens")
 
-    license("MIT", checked_by="mcmehrtens", when="@0.1:")
+    license("MIT", checked_by="mcmehrtens")
 
     version("main", branch="main")
+    version("0.44.0", sha256="1cc8d5d6a759c6d99c676bcec09fbf1fc72e023804e54480146fd62b300fce95")
     version("0.43.0", sha256="1fb6c32a5ae96254d54df7c4358f664e5c6bebdd7754c8b9a3a7db079fe4d525")
 
+    # https://github.com/ast-grep/ast-grep/blob/0.44.0/Cargo.toml#L20
+    depends_on("rust@1.85:", type="build", when="@0.44:")
     # https://github.com/ast-grep/ast-grep/blob/0.43.0/Cargo.toml#L20
-    depends_on("rust@1.79:", type="build", when="@0.43:")
+    depends_on("rust@1.79:", type="build", when="@0.43")
 
     # The default "builtin-parser" feature pulls in tree-sitter-* grammar
     # crates, whose build.rs each compile C parsers via the cc crate:
@@ -37,11 +38,8 @@ class AstGrep(CargoPackage):
     # e.g. https://docs.rs/crate/tree-sitter-rust/0.24.2/source/bindings/rust/build.rs
     depends_on("c", type="build", when="@0.43:")
 
-    # The root Cargo.toml is a workspace-only manifest; the CLI package
-    # (and its ast-grep/sg bins) lives in crates/cli
     build_directory = "crates/cli"
 
-    # `cargo install` ignores Cargo.lock unless --locked is passed
     build_args = ["--locked"]
 
     @classmethod
