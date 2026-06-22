@@ -21,6 +21,7 @@ class Oomph(CMakePackage):
     license("BSD-3-Clause", checked_by="msimberg")
 
     version("main", branch="main")
+    version("0.5.1", sha256="98fd0356555835354b30250e62b0ea25d6b959a54486548e8c8f4caba31d5210")
     version("0.5.0", sha256="4c79ff50d14efcde7ce4d14122714efb16443ccff437ab60973cf1db1032fc3d")
 
     depends_on("c", type="build")
