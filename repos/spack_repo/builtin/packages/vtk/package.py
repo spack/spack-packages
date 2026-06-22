@@ -25,11 +25,8 @@ class Vtk(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "9.5.1",
-        sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
-        preferred=True,
-    )
+    version("9.6.0", sha256="d77d180694faafdc816578b9a53651f6790e799615811bfbb91018661a3bb8f2")
+    version("9.5.1", sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
@@ -110,7 +107,8 @@ class Vtk(CMakePackage):
 
     # Based on PyPI wheel availability
     with when("+python"), default_args(type=("build", "link", "run")):
-        extends("python@:3.13")
+        extends("python@:3.14")
+        extends("python@:3.13", when="@:9.5")
         extends("python@:3.12", when="@:9.3")
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
@@ -186,13 +184,15 @@ class Vtk(CMakePackage):
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
     depends_on("hdf5@1.10:", when="@9.1:")
+    depends_on("hdf5@1.14.6:", when="@9.6:")
     depends_on("jpeg")
     depends_on("jsoncpp")
     depends_on("libxml2")
     depends_on("lz4")
-    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
-    depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
-    depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-c@:4.9.3", when="io=exodusii")
+    depends_on("netcdf-c@:4.9.3~mpi", when="io=netcdf ~mpi")
+    depends_on("netcdf-c@:4.9.3+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
@@ -221,8 +221,10 @@ class Vtk(CMakePackage):
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
         depends_on("seacas@2024-06-27", when="@9.4:")
+        depends_on("seacas@2025-08-28", when="@9.6:")
 
     depends_on("nlohmann-json", when="@9.2:")
+    depends_on("scnlib", when="@9.5:")
 
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"
@@ -351,6 +353,7 @@ class Vtk(CMakePackage):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
             )
+            cmake_args.append(self.define("VTK_USE_MPI", "YES"))
 
         if spec.satisfies("raytracing=ospray"):
             cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_RenderingRayTracing", "YES"))
@@ -387,7 +390,23 @@ class Vtk(CMakePackage):
                     f"-DHDF5_ROOT={spec['hdf5'].prefix}",
                 ]
             )
-            cmake_args.append(self.define_from_variant("VTK_USE_MPI", "mpi"))
+            if spec.satisfies("@9.1:"):
+                cmake_args.extend(
+                    [
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
+                        # uses an unreleased version of fmt
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
+                    ]
+                )
+            if spec.satisfies("@9.2:"):
+                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
+            if spec.satisfies("@9.5:"):
+                cmake_args.extend(
+                    [
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF",
+                        "-DVTK_MODULE_USE_EXTERNAL_VTK_scn:BOOL=ON",
+                    ]
+                )
 
         if spec.satisfies("@9.1:"):
             cmake_args.extend(
