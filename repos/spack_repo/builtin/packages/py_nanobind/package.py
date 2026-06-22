@@ -38,11 +38,11 @@ class PyNanobind(PythonPackage):
     )
     version(
         "2.10.2",
-        sha256="66d2c6fea9541401551b0ca6df674758bb769cf4939b11c1bcd73774c1dcc760",
+        sha256="08509910ce6d1fadeed69cb0880d4d4fcb77739c6af9bd8fb4419391a3ca4c6b",
     )
     version(
         "2.10.1",
-        sha256="66d2c6fea9541401551b0ca6df674758bb769cf4939b11c1bcd73774cdcc760",
+        sha256="66d2c6fea9541401551b0ca6df674758bb769cf4939b11c1bcd73774c1dcc760",
     )
     version(
         "2.9.2",
