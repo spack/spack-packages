@@ -20,6 +20,7 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://openmm.org/"
     url = "https://github.com/openmm/openmm/archive/7.4.1.tar.gz"
 
+    version("8.5.2", sha256="c059133288e2d747ad12b7e265aad1636190e3b6cf858fb0637fe703b556ccb8")
     version("8.5.1", sha256="16b2c2a4ce959be223ba4cc00dcb22a5d84ae3fb8c3948643632f6bda1ce6944")
     version("8.5.0", sha256="7e55c9399244731a4beebfe7fb72ecae2bbd02d14ff12b7544280584b9ca952f")
     version("8.1.1", sha256="347ad9f04dd88a673f7871127d9f23a75caf2c1a460a3f21f3328a24dc6547d0")
