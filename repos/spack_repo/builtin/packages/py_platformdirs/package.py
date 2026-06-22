@@ -17,6 +17,7 @@ class PyPlatformdirs(PythonPackage):
 
     license("MIT")
 
+    version("4.10.0", sha256="31e761a6a0ca04faf7353ea759bdba55652be214725111e5aac52dfa29d4bef7")
     version("4.9.6", sha256="3bfa75b0ad0db84096ae777218481852c0ebc6c727b3168c1b9e0118e458cf0a")
     version("4.4.0", sha256="ca753cf4d81dc309bc67b0ea38fd15dc97bc30ce419a7f58d13eb3bf14c4febf")
     version("3.10.0", sha256="b45696dab2d7cc691a3226759c0d3b00c47c8b6e293d96f6436f733303f77f6d")

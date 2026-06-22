@@ -1,0 +1,215 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+from spack.package import *
+
+
+def _parse_float(val):
+    try:
+        return float(val) > 0.0
+    except ValueError:
+        return False
+
+
+class KynemaUgf(CMakePackage, CudaPackage, ROCmPackage):
+    """Kynema-UGF: Unstructured fluid dynamics solver in the Kynema project."""
+
+    homepage = "https://kynema-ugf.readthedocs.io"
+    git = "https://github.com/kynema/kynema-ugf.git"
+    url = "https://github.com/kynema/kynema-ugf/archive/refs/tags/v2.0.0.tar.gz"
+
+    maintainers("jrood-nrel")
+
+    tags = ["ecp", "ecp-apps"]
+    submodules = True
+
+    version("main", branch="main")
+
+    variant("pic", default=True, description="Position independent code")
+    variant(
+        "abs_tol",
+        default="1.0e-15",
+        values=_parse_float,
+        description="Absolute tolerance for regression tests",
+    )
+    variant(
+        "rel_tol",
+        default="1.0e-12",
+        values=_parse_float,
+        description="Relative tolerance for regression tests",
+    )
+    variant("kynema-fmb", default=False, description="Compile with Kynema-FMB structural solver")
+    variant("openfast", default=False, description="Compile with OpenFAST support")
+    variant("tioga", default=False, description="Compile with Tioga support")
+    variant("hypre", default=True, description="Compile with Hypre support")
+    variant("trilinos-solvers", default=False, description="Compile with Trilinos Solvers support")
+    variant("catalyst", default=False, description="Compile with Catalyst support")
+    variant("shared", default=True, description="Build shared libraries")
+    variant("fftw", default=False, description="Compile with FFTW support")
+    variant("boost", default=False, description="Enable Boost integration")
+    variant("gpu-aware-mpi", default=False, description="gpu-aware-mpi")
+    variant("wind-utils", default=False, description="Build wind-utils")
+    variant("umpire", default=False, description="Enable Umpire")
+    variant(
+        "tests", default=False, description="Enable regression tests and clone the mesh submodule"
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+openfast")
+
+    depends_on("mpi")
+    depends_on("yaml-cpp@0.6.0:0.7.0")
+    depends_on("kynema-fmb", when="+kynema-fmb")
+    depends_on("openfast@4.1.1:+cxx+netcdf", when="+openfast")
+    depends_on("hypre@2.30.0: ~int64+mpi~superlu-dist", when="+hypre")
+    depends_on(
+        "trilinos@17:+exodus+gtest+hdf5~hypre+mpi+shards+stk~superlu-dist+test+tpetra+zoltan "
+        "gotype=long"
+    )
+    depends_on("trilinos~cuda~wrapper", when="~cuda")
+    depends_on("tioga@1.0.0:", when="+tioga")
+    depends_on("trilinos+muelu+belos+amesos2+ifpack2~shared", when="+trilinos-solvers")
+    depends_on("kokkos-nvcc-wrapper", type="build", when="+cuda")
+    depends_on("trilinos-catalyst-ioss-adapter", when="+catalyst")
+    depends_on("fftw+mpi", when="+fftw")
+    depends_on("nccmp")
+    depends_on("boost +filesystem +iostreams", when="+boost")
+    depends_on("hypre+gpu-aware-mpi", when="+gpu-aware-mpi")
+    depends_on("hypre+umpire", when="+umpire")
+
+    for _arch in CudaPackage.cuda_arch_values:
+        depends_on(
+            "trilinos~shared+cuda+cuda_rdc+wrapper cuda_arch={0}".format(_arch),
+            when="+cuda cuda_arch={0}".format(_arch),
+        )
+        depends_on(
+            "hypre+cuda cuda_arch={0}".format(_arch),
+            when="+hypre+cuda cuda_arch={0}".format(_arch),
+        )
+    for _arch in ROCmPackage.amdgpu_targets:
+        depends_on(
+            "trilinos~shared+rocm+rocm_rdc amdgpu_target={0}".format(_arch),
+            when="+rocm amdgpu_target={0}".format(_arch),
+        )
+        depends_on(
+            "hypre+rocm amdgpu_target={0}".format(_arch),
+            when="+hypre+rocm amdgpu_target={0}".format(_arch),
+        )
+
+    conflicts(
+        "~hypre~trilinos-solvers",
+        msg="kynema-ugf: Must enable one of the linear-solvers: hypre or trilinos-solvers",
+    )
+    conflicts(
+        "+shared",
+        when="+cuda",
+        msg="invalid device functions are generated with shared libs and cuda",
+    )
+    conflicts(
+        "+shared",
+        when="+rocm",
+        msg="invalid device functions are generated with shared libs and rocm",
+    )
+    conflicts("+cuda", when="+rocm")
+    conflicts("+rocm", when="+cuda")
+    conflicts("^hypre+cuda", when="~cuda")
+    conflicts("^hypre+rocm", when="~rocm")
+    conflicts("^hypre+sycl")
+    conflicts("^trilinos+cuda", when="~cuda")
+    conflicts("^trilinos+rocm", when="~rocm")
+    conflicts("+shared", when="+trilinos-solvers")
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        spec = self.spec
+        if spec.satisfies("+cuda") or spec.satisfies("+rocm"):
+            env.set("CUDA_LAUNCH_BLOCKING", "1")
+            env.set("CUDA_MANAGED_FORCE_DEVICE_ALLOC", "1")
+            env.set("HIP_LAUNCH_BLOCKING", "1")
+            env.set("HIP_MANAGED_FORCE_DEVICE_ALLOC", "1")
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        spec = self.spec
+        env.append_flags("CXXFLAGS", "-DUSE_STK_SIMD_NONE")
+        if spec.satisfies("+cuda"):
+            env.set("OMPI_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            env.set("MPICH_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+            env.set("MPICXX_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+        if spec.satisfies("+rocm"):
+            env.append_flags("CXXFLAGS", "-fgpu-rdc")
+
+    def cmake_args(self):
+        spec = self.spec
+
+        args = [
+            self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
+            self.define("Trilinos_DIR", spec["trilinos"].prefix),
+            self.define("YAML_DIR", spec["yaml-cpp"].prefix),
+            self.define_from_variant("ENABLE_CUDA", "cuda"),
+            self.define_from_variant("ENABLE_WIND_UTILS", "wind-utils"),
+            self.define_from_variant("ENABLE_BOOST", "boost"),
+            self.define_from_variant("ENABLE_OPENFAST", "openfast"),
+            self.define_from_variant("ENABLE_KYNEMA_FMB_SIXDOF", "kynema-fmb"),
+            self.define_from_variant("ENABLE_TIOGA", "tioga"),
+            self.define_from_variant("ENABLE_HYPRE", "hypre"),
+            self.define_from_variant("ENABLE_TRILINOS_SOLVERS", "trilinos-solvers"),
+            self.define_from_variant("ENABLE_PARAVIEW_CATALYST", "catalyst"),
+            self.define_from_variant("ENABLE_FFTW", "fftw"),
+            self.define_from_variant("ENABLE_UMPIRE", "umpire"),
+            self.define_from_variant("ENABLE_TESTS", "tests"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]
+
+        if spec.satisfies("+openfast"):
+            args.append(self.define("OpenFAST_DIR", spec["openfast"].prefix))
+            args.append(self.define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc))
+
+        if spec.satisfies("+tioga"):
+            args.append(self.define("TIOGA_DIR", spec["tioga"].prefix))
+
+        if spec.satisfies("+hypre"):
+            args.append(self.define("HYPRE_DIR", spec["hypre"].prefix))
+
+        if spec.satisfies("+catalyst"):
+            args.append(
+                self.define(
+                    "PARAVIEW_CATALYST_INSTALL_PATH", spec["trilinos-catalyst-ioss-adapter"].prefix
+                )
+            )
+
+        if spec.satisfies("+fftw"):
+            args.append(self.define("FFTW_DIR", spec["fftw"].prefix))
+
+        args.append(self.define("ENABLE_TESTS", self.run_tests))
+        if self.run_tests:
+            args.extend(
+                [
+                    self.define("TEST_TOLERANCE", spec.variants["abs_tol"].value),
+                    self.define("TEST_REL_TOL", spec.variants["rel_tol"].value),
+                ]
+            )
+
+        if spec.satisfies("+umpire"):
+            args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
+
+        if spec.satisfies("+rocm"):
+            args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
+            args.append(self.define("ENABLE_ROCM", True))
+            targets = spec.variants["amdgpu_target"].value
+            args.append(self.define("GPU_TARGETS", ";".join(str(x) for x in targets)))
+
+        return args
+
+    @run_before("cmake")
+    def add_submodules(self):
+        if self.run_tests or self.spec.satisfies("+wind-utils"):
+            git = which("git", required=True)
+            git("submodule", "update", "--init", "--recursive")
