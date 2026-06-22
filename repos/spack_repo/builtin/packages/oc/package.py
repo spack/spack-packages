@@ -35,11 +35,9 @@ class Oc(GoPackage):
 
     @property
     def build_args(self):
-        args = super().build_args
         tags = ["include_gcs", "include_oss", "containers_image_openpgp"]
 
         if self.spec.satisfies("+gssapi"):
             tags.append("gssapi")
 
-        args.extend(["-tags", " ".join(tags)])
-        return args
+        return ["-tags", " ".join(tags)]

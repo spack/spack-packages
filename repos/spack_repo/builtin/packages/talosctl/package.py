@@ -19,8 +19,10 @@ class Talosctl(GoPackage):
 
     license("MPL-2.0", checked_by="RobertMaaskant")
 
+    version("1.13.3", sha256="f0f42d68db52cec6f5e6f4da3994f7f4c9dca700e05b690184ea588251f92aca")
     version("1.12.6", sha256="bfae01fe1db88cadde1502c552f5bae673524f4dc3512fd99e001c85a86b4515")
 
+    depends_on("go@1.26.3:", type="build", when="@1.13.1:")
     depends_on("go@1.25.5:", type="build", when="@1.12.6:")
 
     build_directory = "cmd/talosctl"

@@ -15,6 +15,7 @@ class PyPythonDiscovery(PythonPackage):
 
     license("MIT")
 
+    version("1.4.0", sha256="eb8bc7daad3c226c147e45bb4e970a1feb1bf4048ee178e6db59e197b8010ce3")
     version("1.2.2", sha256="876e9c57139eb757cb5878cbdd9ae5379e5d96266c99ef731119e04fffe533bb")
     version("1.2.1", sha256="180c4d114bff1c32462537eac5d6a332b768242b76b69c0259c7d14b1b680c9e")
 
