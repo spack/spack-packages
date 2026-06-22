@@ -25,7 +25,7 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
     version(
         "2.0.0",
         tag="2.0.0",
-        commit="6bc7fb70529ab7a0586ed54c58c1506de8c0f3c1",
+        commit="ec35bc4ba311c2fe3e89573d4e2318347ae8fadd",
     )
 
     patch("use-external-dependencies.patch", when="@2.0.0")
