@@ -7,6 +7,8 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+import os
+
 
 class PyOnnx(PythonPackage):
     """Open Neural Network Exchange (ONNX) is an open ecosystem that
@@ -129,3 +131,6 @@ class PyOnnx(PythonPackage):
         env.set(
             "CMAKE_BUILD_DIR", join_path(self.stage.path, f"spack-build-{self.spec.dag_hash(7)}")
         )
+        purelib = self.spec["python"].package.purelib
+        nanobind_site_packages = os.path.join(self.spec["py-nanobind"].prefix, purelib)
+        env.append_path("CMAKE_PREFIX_PATH", f"{nanobind_site_packages}/nanobind/cmake")
