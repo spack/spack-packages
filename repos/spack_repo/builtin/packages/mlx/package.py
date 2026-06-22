@@ -45,6 +45,7 @@ class Mlx(CMakePackage, CudaPackage):
     variant("metal_jit", default=False, description="Use JIT compilation for Metal kernels")
 
     depends_on("metal-cpp", type="build", when="+metal")
+    depends_on("metal-cpp@26.4", type="build", when="@0.31.2 +metal")
 
     # Dependencies for Python bindings
     depends_on("python@3.8:", type=("build", "run"), when="+python")
@@ -76,6 +77,14 @@ class Mlx(CMakePackage, CudaPackage):
             self.define_from_variant("MLX_BUILD_SAFETENSORS", "safetensors"),
             self.define_from_variant("MLX_METAL_JIT", "metal_jit"),
         ]
+
+        if spec.satisfies("%c,cxx=apple-clang"):
+            args.extend(
+                [
+                    self.define("CMAKE_C_COMPILER", self.compiler.cc),
+                    self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
+                ]
+            )
 
         if spec.satisfies("+metal"):
             args.append(f"-DFETCHCONTENT_SOURCE_DIR_METAL_CPP={spec['metal-cpp'].prefix.include}")
