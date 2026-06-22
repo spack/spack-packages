@@ -144,6 +144,8 @@ class KokkosKernels(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
+    depends_on("kokkos~shared", when="~shared")
+    depends_on("kokkos+shared", when="+shared")
     depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")

@@ -31,10 +31,10 @@ include:
   - path: configs/cray-sles
     when: '"sles" in os and env.get("CRAYPE_VERSION")'
 
-  - path: configs/cray-rhel/x86_64_v3
-    when: '"rhel" in os and env.get("CRAYPE_VERSION")'
-  - path: configs/cray-rhel/
-    when: '"rhel" in os and env.get("CRAYPE_VERSION")'
+  #- path: configs/cray-rhel/x86_64_v3
+  #  when: '"rhel" in os and env.get("CRAYPE_VERSION")'
+  #- path: configs/cray-rhel/
+  #  when: '"rhel" in os and env.get("CRAYPE_VERSION")'
 
   # === Linux/Cray ===
   # Configs basis for linux and cray
