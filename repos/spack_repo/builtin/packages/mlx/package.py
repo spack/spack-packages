@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -44,22 +46,23 @@ class Mlx(CMakePackage, CudaPackage):
     variant("safetensors", default=True, description="Include support for safetensors format")
     variant("metal_jit", default=False, description="Use JIT compilation for Metal kernels")
 
+    extends("python", when="+python")
+
     depends_on("metal-cpp", type="build", when="+metal")
     depends_on("metal-cpp@26.4", type="build", when="@0.31.2 +metal")
 
-    # Dependencies for Python bindings
     depends_on("python@3.8:", type=("build", "run"), when="+python")
     depends_on("py-numpy", type=("build", "run"), when="+python")
     depends_on("py-pybind11", type="build", when="+python")
 
-    # CUDA dependencies
     depends_on("cuda@11:", type=("build", "run"), when="+cuda")
 
-    # Platform conflicts
     conflicts("~metal~cpu~cuda", msg="At least one backend (metal, cpu, or cuda) must be enabled")
     conflicts("+metal", when="platform=linux", msg="Metal backend is only available on macOS")
     conflicts("+metal", when="platform=windows", msg="Metal backend is only available on macOS")
     conflicts("+cuda", when="platform=darwin", msg="CUDA backend is not available on macOS")
+
+    requires("+shared", when="+python", msg="Python bindings require shared libraries")
 
     def cmake_args(self):
         spec = self.spec
@@ -91,9 +94,38 @@ class Mlx(CMakePackage, CudaPackage):
 
         if spec.satisfies("+python"):
             args.append(self.define("MLX_BUILD_PYTHON_STUBS", True))
+            python_platlib = join_path(self.stage.source_path, "python_install")
+            args.append(self.define("MLX_PYTHON_BINDINGS_OUTPUT_DIRECTORY", python_platlib))
 
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(cuda_arch)))
 
         return args
+
+    @run_after("install")
+    def install_python_package(self):
+        if not self.spec.satisfies("+python"):
+            return
+
+        python_spec = self.spec["python"]
+        site_packages = join_path(
+            self.prefix.lib, f"python{python_spec.version.up_to(2)}", "site-packages"
+        )
+
+        mlx_package_dir = join_path(site_packages, "mlx")
+        mkdirp(mlx_package_dir)
+
+        python_src = join_path(self.stage.source_path, "python", "mlx")
+        if os.path.exists(python_src):
+            install_tree(python_src, mlx_package_dir)
+
+        python_platlib = join_path(self.stage.source_path, "python_install")
+        if os.path.exists(python_platlib):
+            # Find and copy the core extension
+            for root, dirs, files in os.walk(python_platlib):
+                for f in files:
+                    if f.startswith("core") and (f.endswith(".so") or f.endswith(".pyd")):
+                        src = join_path(root, f)
+                        dst = join_path(mlx_package_dir, f)
+                        install(src, dst)
