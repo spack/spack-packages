@@ -30,15 +30,15 @@ class PyNanobind(PythonPackage):
     )
     version(
         "2.12.0",
-        sha256="0ae77c1a88f27153fa57045e00f7b0a7b06b1cd3df942e95a34b38c5d0a5bee",
+        sha256="0ae77c1a88f27153fa57045ee00f7b0a7b06b1cd3df942e95a34b38c5d0a5bee",
     )
     version(
         "2.11.0",
-        sha256="6d98d063c1dbbd05a2d903e59be398bfcff9d59c54fbbc9d4488960485d40d0",
+        sha256="6d98d063c61dbbd05a2d903e59be398bfcff9d59c54fbbc9d4488960485d40d0",
     )
     version(
         "2.10.2",
-        sha256="08509910ce6d1fadeed69cb0880d4d4fcb77739c6af9bd8fb4419391a3ca4c6b",
+        sha256="66d2c6fea9541401551b0ca6df674758bb769cf4939b11c1bcd73774c1dcc760",
     )
     version(
         "2.10.1",
@@ -46,39 +46,39 @@ class PyNanobind(PythonPackage):
     )
     version(
         "2.9.2",
-        sha256="7608472de99d375759814cab3e2c94aba3f9ec80e62cfef8ced495ca5c27d6e",
+        sha256="e7608472de99d375759814cab3e2c94aba3f9ec80e62cfef8ced495ca5c27d6e",
     )
     version(
         "2.9.1",
-        sha256="8e0f084176bfc4904159475b92d4b6552b781ed7b66f21708f4b4715be01895",
+        sha256="8e0f084176bfc4904159475b92d4b6552b781ed7b66f21708f4b471c5be01895",
     )
     version(
         "2.9.0",
-        sha256="c8d5154c4f44a52cccbc18fdb824c69ce55ee97a2f52e80116b65ef7ca34fd8",
+        sha256="c8d5154c4f44a52cccbc18fdb824c6e9ce55ee97a2f52e80116b65ef7ca34fd8",
     )
     version(
         "2.8.0",
-        sha256="94e7b6aa1d7dff9566eddc15252aba94fdadbf67a99a169bfab34b708427cd8",
+        sha256="94e7bf6aa1d7dff9566eddc15252aba94fdadbf67a99a169bfab34b708427cd8",
     )
     version(
         "2.7.0",
-        sha256="f9f1b160580c50dcf37b6495a0fd5ec61dc0d95dae5f8004f87dd9ad7eb4b34",
+        sha256="f9f1b160580c50dcf37b6495a0fd5ec61dc0d95dae5f8004f87dd9ad7eb46b34",
     )
     version(
         "2.6.1",
-        sha256="e05c6816a844aa699e46408add3bff8c743f9fd3d38eafa307a73633fddf94e",
+        sha256="e05c6816a844aa699e46408add3bff8c743af9fd3d38eafa307a73633fddf94e",
     )
     version(
         "2.5.0",
-        sha256="cc8412e94acffa20a369191382bcdbbfbfb302e475e87cacff9516d51023a15",
+        sha256="cc8412e94acffa20a369191382bcdbb6fbfb302e475e87cacff9516d51023a15",
     )
     version(
         "2.4.0",
-        sha256="a0392de5f58881085b2ac8bfe8e53f74285aa4868b1472bfaf76cfb414e1c96",
+        sha256="a0392dee5f58881085b2ac8bfe8e53f74285aa4868b1472bfaf76cfb414e1c96",
     )
     version(
         "2.2.0",
-        sha256="53fa7a6227bddecaa4a0710e0b8dc18fad4c8ded7a0a31d6eddcf68009eadc03",
+        sha256="53fa7a6227bddecaa4a0710e0b8dc18fad4c8ded7a0a31d6eddcf68009ead603",
     )
     version(
         "2.1.0", tag="v2.1.0", commit="9641bb7151f04120013b812789b3ebdfa7e7324f", submodules=True
