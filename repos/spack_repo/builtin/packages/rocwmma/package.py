@@ -172,7 +172,6 @@ class Rocwmma(CMakePackage):
         args = [
             self.define("ROCWMMA_BUILD_TESTS", "ON"),
             self.define("ROCWMMA_BUILD_VALIDATION_TESTS", "ON"),
-            self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "OFF"),
             self.define("ROCWMMA_BUILD_SAMPLES", "ON"),
             self.define("ROCWMMA_BUILD_DOCS", "OFF"),
             self.define("ROCWMMA_BUILD_ASSEMBLY", "OFF"),
@@ -192,4 +191,9 @@ class Rocwmma(CMakePackage):
 
         if self.spec.satisfies("@:7.1"):
             args.append(self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", "ON"))
+        if self.spec.satisfies("@:7.2.3"):
+            args.append(self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "ON")),
+        else:
+            # to be enabled later
+            args.append(self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "OFF")),
         return args

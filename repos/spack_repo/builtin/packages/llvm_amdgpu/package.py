@@ -106,7 +106,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("libllvm@18", when="@6.2:6.3")
     provides("libllvm@19", when="@6.4")
     provides("libllvm@20", when="@7.0:7.1")
-    provides("libllvm@22", when="@7.2")
+    provides("libllvm@22", when="@7.2:7.13")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -346,8 +346,13 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 )
             else:
                 args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
+                # Determine LLVM version: 20 for @7.0:7.1, 22 for @7.2:
+                llvm_version = "22" if self.spec.satisfies("@7.2:") else "20"
                 args.append(
-                    self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn")
+                    self.define(
+                        "ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC",
+                        f"lib/clang/{llvm_version}/lib/amdgcn",
+                    )
                 )
 
         if self.spec.satisfies("+llvm_dylib"):

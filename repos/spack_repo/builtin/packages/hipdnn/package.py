@@ -25,7 +25,7 @@ class Hipdnn(CMakePackage):
     license("MIT")
 
     def url_for_version(self, version):
-        if version <= Version("7.1.1"):
+        if version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-{0}.tar.gz"
             return url.format(version)
         else:
