@@ -16,6 +16,7 @@ class Libraqm(MesonPackage):
 
     license("MIT")
 
+    version("0.10.5", sha256="563053e724892a7b037913110ea2daef50ad575d4fa9f7c368ae1e4515f5e856")
     version("0.9.0", sha256="9ed6fdf41da6391fc9bf7038662cbe412c330aa6eb22b19704af2258e448107c")
 
     variant(
@@ -26,7 +27,7 @@ class Libraqm(MesonPackage):
         multi=False,
     )
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("freetype")
     depends_on("harfbuzz")

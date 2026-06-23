@@ -36,12 +36,16 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
+    version("6.36.10", sha256="8ccbfbca9d05016c8c324dd61c25a1091ae61847fb9404298652b83bf0cd3be0")
+    version("6.36.08", sha256="1678fd272cf3172d7ba602e2786ec659bd3ca28b38f0471005d456d968ef55a1")
     version("6.36.06", sha256="62f9d38d2f2ed3d46653529c98e8cbc9b8866776494eb40ba0c23e2f46b681c4")
     version("6.36.04", sha256="cc6367d8f563c6d49ca34c09d0b53cb0f41a528db6f86af111fd76744cda4596")
     version("6.36.02", sha256="510d677b33ac7ca48aa0d712bdb88d835a1ff6a374ef86f1a1e168fa279eb470")
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
     # Supported LTS release series (note: more recent STS releases may be further down)
+    version("6.32.22", sha256="4745ef6763cf2dd72a798785055a14c55c0a74a1b3a939f562f63d605fd57cfd")
     version("6.32.20", sha256="c4a9936d55adea8b5b20db9be2e356d95a0d97c9e78a92cd6494b7294838d261")
     version("6.32.18", sha256="0b7d18b209e2a34e611e7cb2e6b82b6559fd86d64d1a7e8bf65cd13059839956")
     version("6.32.16", sha256="1b9afc6730aa727722cc60d44a403f7a39b7226086181827bc4cabd0bea4c568")
@@ -56,12 +60,16 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
+    version("6.38.06", sha256="104efe8668215fc5ceb818afbf050410f0994694baba2d40f6ac640e15ef8738")
     version("6.38.04", sha256="1ca561d03b3addae00cb76af57f8c75d3c229e8bd6939bdd408ec33fda9d3487")
     version("6.38.02", sha256="77d34d2bca0ea720acfd43798bcb5d09a28584013b4d0a2910823c867d4bfa42")
     version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
 
     # 6.34 (through 2025-06-30)
     with default_args(deprecated=True):
+        version(
+            "6.34.10", sha256="d91aa27fde29b257b347af1750b0c5c51487eb7d4b1767f4df33b4d789b7b313"
+        )
         version(
             "6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8"
         )
@@ -299,6 +307,11 @@ class Root(CMakePackage):
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
     variant("xrootd", default=False, description="Build xrootd file server and its client")
+    variant(
+        "builtin_llvm",
+        default=True,
+        description="Use ROOT's bundled copy of LLVM (but bundled clang is always used)",
+    )
 
     # ###################### Compiler variants ########################
 
@@ -374,6 +387,7 @@ class Root(CMakePackage):
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")
+    requires("^openblas ~ilp64 symbol_suffix=none", when="^[virtuals=blas] openblas")
     depends_on("cuda", when="+tmva-gpu")
     depends_on("protobuf@3:", when="+tmva-sofie")
 
@@ -415,6 +429,12 @@ class Root(CMakePackage):
     depends_on("libxml2", when="+xml")
     depends_on("xrootd", when="+xrootd")
 
+    # External LLVM (used when ~builtin_llvm).  ROOT bundles its own patched Clang
+    # (interpreter/llvm-project/clang) and builds it against the external LLVM, so
+    # vanilla LLVM is sufficient here.  ROOT's patches to llvm-project only touch
+    # clang/, not the LLVM core.
+    depends_on("llvm@20.1.0:20.1", when="@6.36: ~builtin_llvm")
+
     depends_on("googletest", when="@6.28.00:", type="test")
 
     # ###################### Conflicts ######################
@@ -422,6 +442,22 @@ class Root(CMakePackage):
     # I was unable to build root with any Intel compiler
     # See https://sft.its.cern.ch/jira/browse/ROOT-7517
     conflicts("%intel")
+
+    # External LLVM is only supported for ROOT 6.36+ (requires LLVM 20.1.x).
+    # Older ROOT versions have different LLVM major requirements that have not
+    # been mapped to spack dependencies yet.
+    conflicts(
+        "~builtin_llvm",
+        when="@:6.35",
+        msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
+    )
+    # In order to avoid adding newer versions with incorrect LLVM versions,
+    # newer versions are explicitly added as conflicts as well.
+    conflicts(
+        "~builtin_llvm",
+        when="@6.39:",
+        msg="External LLVM support for ROOT 6.39+ has not been validated",
+    )
 
     # GCC 15 support was added in 6.34.04
     conflicts("%gcc@15:", when="@:6.34.02")
@@ -626,6 +662,7 @@ class Root(CMakePackage):
         options += [
             define("builtin_cfitsio", False),
             define("builtin_civetweb", False),
+            define("builtin_clang", True),  # use builtin_clang even when ~builtin_llvm
             define("builtin_davix", False),
             define("builtin_fftw3", False),
             define("builtin_freetype", False),
@@ -634,7 +671,7 @@ class Root(CMakePackage):
             define("builtin_gl2ps", False),
             define("builtin_glew", False),
             define("builtin_gsl", False),
-            define("builtin_llvm", True),
+            define_from_variant("builtin_llvm"),
             define("builtin_lz4", False),
             define("builtin_lzma", False),
             define("builtin_nlohmannjson", False),

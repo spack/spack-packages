@@ -50,6 +50,9 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("46.3.0", commit="4f0e5d8ce158728ff275a733b720d087065563bd")
+    version("46.2.0", commit="fcecf616be7ddd240700f65a1508f21811ee4167")
+    version("46.1.0", commit="d6d17c9c2b28a54141477438d63176a8af2d3c76")
     version("46.0.0", commit="a28f778b767fb8fcf9eba5675aecc71e28e30d50")
     version("45.5.0", commit="1fe226214174c4b18b8d3a77c44a7d09de9c2e47")
     version("45.4.0", commit="64ff294699e240c6935b18606be7c4b2ea213d6d")
@@ -149,7 +152,7 @@ class Acts(CMakePackage, CudaPackage):
     requires("+svg", when="+traccc")
     requires("+json", when="+traccc")
 
-    variant("mille", default=False, description="Build the Mille plugin")
+    variant("mille", default=False, description="Build the Mille plugin", when="@45.4.0:")
 
     # Variants that only affect Acts examples for now
     variant(
@@ -158,6 +161,7 @@ class Acts(CMakePackage, CudaPackage):
     variant(
         "hepmc3", default=False, description="Build the HepMC3-based examples", when="+examples"
     )
+    requires("+hepmc3", when="@41: +examples")
     variant(
         "pythia8", default=False, description="Build the Pythia8-based examples", when="+examples"
     )

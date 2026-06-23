@@ -216,6 +216,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         when="@2024.02.1:2024.02.99 %oneapi@2025:",
     )
 
+    patch("tile-iterator-comparison-fix-2024.02.patch", when="@2024.02.0:2024.02.2")
+
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
@@ -252,12 +254,13 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "cxxstd",
-        default="17",
+        default="20",
         values=("11", "14", "17", "20"),
         description="C++ standard to build with",
     )
     conflicts("cxxstd=11", when="@0.14.0:")
     conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("cxxstd=17", when="@2026.03.0:")
     conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")
@@ -280,6 +283,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
+    # TODO(johnbowen42): Remove the following line after the June 2026 RAJA suite release
+    depends_on("camp@main commit=e75ab64c029aa27c80593715cb2a3ccad7453c8c", when="@develop")
     depends_on("camp@2025.12:", when="@2025.12:")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")

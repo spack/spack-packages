@@ -53,11 +53,12 @@ class PyPyarrow(PythonPackage):
         depends_on("pkgconfig")
 
         # pyproject.toml, setup.py
-        depends_on("py-cython@0.29.31:", when="@14:")
-        depends_on("py-cython@0.29.31:2", when="@12:13")
-        depends_on("py-cython@0.29.22:2", when="@8:11")
-        depends_on("py-cython@0.29:2", when="@0.15:7")
-        depends_on("py-cython@:2", when="@:0.14")
+        depends_on("py-cython@0.29.31:", when="@12:")
+        depends_on("py-cython@0.29.22:", when="@8:")
+        depends_on("py-cython@0.29:", when="@0.15:")
+        # https://github.com/cython/cython/commit/4d8a3c9701ec78d08cd7923e3936d191d036f0e9
+        depends_on("py-cython@:3.0", when="@:16")
+        depends_on("py-cython@:2", when="@:13")
         depends_on("py-setuptools-scm@8:+toml", when="@17:")
         depends_on("py-setuptools-scm", when="@16")
         depends_on("py-setuptools-scm@:7", when="@0.15:15")
