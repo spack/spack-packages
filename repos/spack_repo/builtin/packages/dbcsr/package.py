@@ -180,7 +180,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     # libxstream package.py.
 
     depends_on("libxstream@20260622", when="@2.9.2: +opencl")
-    depends_on("libxs@2060608", when="@2.9.2: +opencl")
+    depends_on("libxs@20260608", when="@2.9.2: +opencl")
     depends_on("libxs@20260608", when="@2.9.2: smm=libxs")
 
     with when("+mpi"):
