@@ -11,7 +11,7 @@ class PyNumkong(PythonPackage):
     """Portable mixed-precision math, linear algebra, and retrieval kernels."""
 
     homepage = "https://github.com/ashvardanian/NumKong"
-    pypi = "numkong/numkong-7.7.0.tar.gz"   
+    pypi = "numkong/numkong-7.7.0.tar.gz"
 
     license("Apache-2.0")
 
@@ -23,5 +23,3 @@ class PyNumkong(PythonPackage):
 
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("py-setuptools@42:", type="build")
-
-    import_modules = ["numkong"]

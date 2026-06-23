@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
+
 class PyAlbumentationsx(PythonPackage):
     """Fast image augmentation library for deep learning and computer vision."""
 
@@ -21,9 +22,14 @@ class PyAlbumentationsx(PythonPackage):
 
     depends_on("py-albucore@0.1.6:", type=("build", "run"))
     depends_on("py-numpy@1.24.4:", type=("build", "run"))
+
+
+    # Albucore imports cv2.INTER_CUBIC at runtime, which is provided by OpenCV imgproc.
+    # AlbumentationsX imports cv2.INPAINT_TELEA at runtime, which is provided by OpenCV photo.
+    depends_on("opencv@4.9.0:+python3+imgproc+photo", type=("build", "run"))
+
     depends_on("py-pydantic@2.12.4:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
+
     depends_on("py-scipy@1.10:1", type=("build", "run"))
     depends_on("py-typing-extensions@4.9.0:", type=("build", "run"))
-
-    import_modules = ["albumentations"]
