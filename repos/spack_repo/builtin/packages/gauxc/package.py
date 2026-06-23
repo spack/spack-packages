@@ -32,7 +32,12 @@ class Gauxc(CMakePackage, CudaPackage):
     version("1.1", sha256="17de077fb23e44d03b0ed14dcd8117c01e5b3431fbefa2352d751639ada7f91c")
 
     variant("c", default=True, description="Build with C API support", when="@1.2.dev2: ~master")
-    variant("fortran", default=True, description="Build with Fortran support", when="@dev20260608 ~master")
+    variant(
+        "fortran",
+        default=True,
+        description="Build with Fortran support",
+        when="@dev20260608 ~master",
+    )
     variant("host", default=True, description="Build with host integrator")
     variant("cuda", default=False, description="Build with CUDA support")
     variant("hip", default=False, description="Build with HIP support")
