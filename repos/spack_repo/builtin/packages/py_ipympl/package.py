@@ -16,6 +16,7 @@ class PyIpympl(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.10.0", sha256="eda69602a010af2a42e8ebd069b0ee0dbe8df7fc69d7c1e8b99fece0a2fe613f")
     version("0.9.4", sha256="cfb53c5b4fcbcee6d18f095eecfc6c6c474303d5b744e72cc66e7a2804708907")
 
     with default_args(type="build"):
@@ -24,13 +25,17 @@ class PyIpympl(PythonPackage):
         depends_on("py-hatch-nodejs-version@0.3.2:")
 
     with default_args(type=("build", "run")):
-        depends_on("py-ipython@:8")
-        depends_on("py-ipython-genutils")
+        depends_on("py-ipython@:9", when="@0.9.7:")
+        depends_on("py-ipython@:8", when="@:0.9.6")
         depends_on("py-ipywidgets@7.6:8")
-        depends_on("py-matplotlib@3.4:3")
+        depends_on("py-matplotlib@3.5:3", when="@0.9.6:")
+        depends_on("py-matplotlib@3.4:3", when="@:0.9.5")
         depends_on("py-numpy")
         depends_on("pil")
         depends_on("py-traitlets@:5")
 
         # Necessary for jupyter extension env vars
         depends_on("py-jupyter-core")
+
+        # Historical dependencies
+        depends_on("py-ipython-genutils", when="@:0.9.5")
