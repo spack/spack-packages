@@ -293,7 +293,8 @@ class Hipblaslt(CMakePackage):
         if self.spec.satisfies("@7.1:"):
             filter_file(
                 "if(ROCROLLER_ENABLE_YAML_CPP)\n    if(ROCROLLER_ENABLE_FETCH)",
-                "if(ROCROLLER_ENABLE_YAML_CPP)\n    find_package(yaml-cpp 0.8.0 QUIET)\n    if(NOT yaml-cpp_FOUND AND ROCROLLER_ENABLE_FETCH)",
+                "if(ROCROLLER_ENABLE_YAML_CPP)\n    find_package(yaml-cpp 0.8.0 QUIET)\n  "+\
+                "  if(NOT yaml-cpp_FOUND AND ROCROLLER_ENABLE_FETCH)",
                 "shared/rocroller/CMakeLists.txt",
                 string=True,
             )
