@@ -179,9 +179,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     # hard dependency of libxstream in that configuration. This is reflected in
     # libxstream package.py.
 
-    depends_on("libxstream@main", when="@2.9.2: +opencl")
-    depends_on("libxs@main", when="@2.9.2: +opencl")
-    depends_on("libxs@main", when="@2.9.2: smm=libxs")
+    depends_on("libxstream@20260622", when="@2.9.2: +opencl")
+    depends_on("libxs@2060608", when="@2.9.2: +opencl")
+    depends_on("libxs@20260608", when="@2.9.2: smm=libxs")
 
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:

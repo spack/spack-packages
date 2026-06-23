@@ -26,6 +26,7 @@ class Libxs(CMakePackage):
 
     version("main", branch="main")
     version("20260605", commit="ab416130f8c9f7edb8c1bf3d3abaf402f61d0fe0")
+    version("20260608", commit="eccf0e623af8b4c394cb2e60e602d52cb5b65be9")
 
     variant("fortran", default=False, description="Build Fortran module interface")
     variant("pic", default=True, description="Build position independent code")

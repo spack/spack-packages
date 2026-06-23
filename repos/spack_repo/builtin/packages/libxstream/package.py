@@ -17,7 +17,7 @@ class Libxstream(MakefilePackage, CMakePackage):
 
     build_system(
         conditional("cmake", when="@1:"),
-        conditional("makefile", when="@0.9.0"),
+        conditional("makefile", when="@0.9.0:0.9.1"),
         default="cmake",
     )
 
@@ -34,7 +34,7 @@ class Libxstream(MakefilePackage, CMakePackage):
         sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473",
     )
     version("main", branch="main")
-
+    version("20260622", commit="64913491c84ce7244b5cd585302d35934277c47f")
     generator("ninja")
 
     variant("shared", default=True, description="Build shared libraries")
@@ -42,7 +42,7 @@ class Libxstream(MakefilePackage, CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-    depends_on("gmake", type="build", when="@0.9.0")
+    depends_on("gmake", type="build", when="@0.9.0:0.9.1")
 
     depends_on("opencl")
     depends_on("libxs", when="@1:")
