@@ -45,6 +45,7 @@ class Root(CMakePackage):
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
     # Supported LTS release series (note: more recent STS releases may be further down)
+    version("6.32.22", sha256="4745ef6763cf2dd72a798785055a14c55c0a74a1b3a939f562f63d605fd57cfd")
     version("6.32.20", sha256="c4a9936d55adea8b5b20db9be2e356d95a0d97c9e78a92cd6494b7294838d261")
     version("6.32.18", sha256="0b7d18b209e2a34e611e7cb2e6b82b6559fd86d64d1a7e8bf65cd13059839956")
     version("6.32.16", sha256="1b9afc6730aa727722cc60d44a403f7a39b7226086181827bc4cabd0bea4c568")
@@ -59,12 +60,16 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
+    version("6.38.06", sha256="104efe8668215fc5ceb818afbf050410f0994694baba2d40f6ac640e15ef8738")
     version("6.38.04", sha256="1ca561d03b3addae00cb76af57f8c75d3c229e8bd6939bdd408ec33fda9d3487")
     version("6.38.02", sha256="77d34d2bca0ea720acfd43798bcb5d09a28584013b4d0a2910823c867d4bfa42")
     version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
 
     # 6.34 (through 2025-06-30)
     with default_args(deprecated=True):
+        version(
+            "6.34.10", sha256="d91aa27fde29b257b347af1750b0c5c51487eb7d4b1767f4df33b4d789b7b313"
+        )
         version(
             "6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8"
         )

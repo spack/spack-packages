@@ -23,7 +23,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ornladios/ADIOS2.git"
     test_requires_compiler = True
 
-    maintainers("ax3l", "vicentebolea", "williamfgc")
+    maintainers("ax3l", "vicentebolea", "williamfgc", "eisenhauer")
 
     tags = ["e4s"]
 
