@@ -18,6 +18,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
 
     keep_werror = "all"
 
+    version("3.18.2", sha256="55a97cfd8661a9b42ff0123b44af52cac49feaec36987f4d968c046f93b42e1d")
     version("3.16.2", sha256="1bc306be1a1f4f6c8965fbdd79c9ccca021fdc4b277d501483a711cbd7dbcd6c")
     version("3.11.0", sha256="25a00226d2d449c15b2f08467d6d5ebbb2a428260c4ab773721c32adbc6da072")
     version("3.10.5", sha256="e73f75e58da59a0e333d337c105093c496c0fd7356ef3a5a540f560697c9c4e6")
@@ -81,7 +82,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     patch(
         "https://src.fedoraproject.org/rpms/fuse3/raw/0519b7bf17c4dd1b31ee704d49f8ed94aa5ba6ab/f/fuse3-gcc11.patch",
         sha256="3ad6719d2393b46615b5787e71778917a7a6aaa189ba3c3e0fc16d110a8414ec",
-        when="@3: %gcc@11:",
+        when="@3:3.10.4 %gcc@11:",
     )
 
     patch(

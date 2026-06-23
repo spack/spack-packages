@@ -63,7 +63,7 @@ class Hugo(GoPackage):
 
     @property
     def build_args(self):
-        args = super().build_args
+        args = []
         if self.spec.satisfies("+extended"):
             args.extend(["--tags", "extended"])
 
