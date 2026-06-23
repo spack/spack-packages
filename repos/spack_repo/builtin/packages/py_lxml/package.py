@@ -64,3 +64,10 @@ class PyLxml(PythonPackage):
     depends_on("py-cython@3.0.9:", type="build", when="@5.1.1:")
     depends_on("py-cython@3.0.8:", type="build", when="@5:")
     depends_on("py-cython@0.29.7:", type="build")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@:5") and (self.spec.satisfies("%gcc@14:") or self.spec.satisfies("%oneapi@2026:")):
+                flags.append("-Wno-error=incompatible-pointer-types")
+        return (flags, None, None)
+
