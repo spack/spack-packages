@@ -148,8 +148,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         sha256="b4774ca19b030890d7b276d12c446400ccf8bc3aa724c7f2e9a73531a7400d69",
         when="@6",
     )
-    patch("002-Add-rpath-to-hiprt.patch", when="@7.0:7.2")
-    patch("002-Add-rpath-to-hiprt-7.13.patch", when="@7.13:")
     # irocr: include intrin headers before namespace rocr
     # https://github.com/ROCm/rocm-systems/pull/5615
     patch(
