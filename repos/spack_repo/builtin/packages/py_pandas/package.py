@@ -91,6 +91,7 @@ class PyPandas(PythonPackage):
         depends_on("py-versioneer+toml", when="@2:")
 
         # Historical dependencies
+        depends_on("py-setuptools@:81", when="@:2.1.4")
         depends_on("py-setuptools@61:", when="@2.0")
         depends_on("py-setuptools@51:", when="@1.3.2:1")
         depends_on("py-setuptools@38.6:", when="@1.3.0:1.3.1")

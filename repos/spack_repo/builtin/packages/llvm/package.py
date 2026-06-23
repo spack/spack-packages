@@ -369,8 +369,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
-    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
-    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -489,6 +487,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         sha256="c6ca6b925f150e8644ce756023797b7f94c9619c62507231f979edab1c09af78",
         when="@6:13",
     )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/7e44305041d96b064c197216b931ae3917a34ac1.patch?full_index=1",
+        sha256="8459dc31d2dbda4fbd89e5cfe80bc184573de30137b8a2b371c1d702eb75f304",
+        when="@13:18",
+    )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/8f39502b85d34998752193e85f36c408d3c99248.patch?full_index=1",
+        sha256="8b07b12cb9c6c5b571163a68d2f044fd7ce33fb8b3b646d4c5bd6dac4a9fc6c2",
+        when="@12:18",
+    )
+    patch("cstdint-1.patch", when="@18")
+    patch("cstdint-2.patch", when="@11:18")
+
     # fix building of older versions of llvm with newer versions of glibc
     for compiler_rt_as in ["project", "runtime"]:
         with when("compiler-rt={0}".format(compiler_rt_as)):

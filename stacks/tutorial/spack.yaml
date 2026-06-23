@@ -20,9 +20,12 @@ spack:
     specs:
     - zlib-ng@2.2.4
     - zlib-ng@2.0.7
-    - zlib-ng@2.0.7 cflags=-O3
+    - zlib-ng +ipo
+    - zlib-ng build_type=Debug
+    - zlib-ng %clang
     - tcl ^zlib-ng@2.2.4
-    - tcl ^zlib-ng@2.0.7 cflags=-O3
+    - tcl ^zlib-ng@2.0.7 %clang
+    - tcl ^zlib-ng %gcc@14
     - hdf5+mpi^openmpi
     - hdf5~mpi
     - hdf5+hl+mpi ^mpich
@@ -32,7 +35,7 @@ spack:
     - lmod@8.7.67
     - environment-modules
     - macsio@1.1+scr ^scr@2.0.0~fortran ^silo~fortran ^hdf5~fortran
-    # - julia ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
+    - julia ^llvm ~clang ~gold ~lldb ~lua ~polly compiler-rt=none libcxx=none libunwind=none targets=x86 ^openblas threads=openmp
     - vim
     override:
       packages:
