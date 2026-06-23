@@ -29,8 +29,9 @@ class Hoppet(AutotoolsPackage, CMakePackage):
     version("2.0.1", sha256="c95a47a4d9cdf241126614ab3f330e84a2ede7288eb3599bf2fef6b80be98030")
     version("1.2.0", sha256="6e00eb56a4f922d03dfceba7b389a3aaf51f277afa46d7b634d661e0797e8898")
 
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.15:", type="build")
