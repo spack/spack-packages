@@ -67,7 +67,8 @@ class PyLxml(PythonPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            if self.spec.satisfies("@:5") and (self.spec.satisfies("%gcc@14:") or self.spec.satisfies("%oneapi@2026:")):
+            if self.spec.satisfies("@:5") and (
+                self.spec.satisfies("%gcc@14:") or self.spec.satisfies("%oneapi@2026:")
+            ):
                 flags.append("-Wno-error=incompatible-pointer-types")
         return (flags, None, None)
-
