@@ -27,7 +27,24 @@ class HipblasCommon(CMakePackage):
 
     # if rocm-cmake is not installed it pulls from the web
     # needed for air-gapped environments
-    depends_on("rocm-cmake", type="build")
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
