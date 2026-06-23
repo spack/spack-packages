@@ -18,7 +18,6 @@ class Rccl(CMakePackage):
 
     homepage = "https://github.com/ROCm/rccl"
     git = "https://github.com/ROCm/rccl.git"
-    url = "https://github.com/ROCm/rccl/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
@@ -26,7 +25,7 @@ class Rccl(CMakePackage):
 
     def url_for_version(self, version):
         if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rccl/archive/rocm-6.4.3.tar.gz"
+            url = "https://github.com/ROCm/rccl/archive/rocm-{0}.tar.gz"
             return url.format(version)
         else:
             # For versions >= 7.13, use therock-{major}.{minor} tag format
