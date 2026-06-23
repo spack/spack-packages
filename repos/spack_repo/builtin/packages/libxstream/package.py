@@ -16,7 +16,7 @@ class Libxstream(MakefilePackage, CMakePackage):
     conditions."""
 
     build_system(
-        conditional("cmake", when="@main"),
+        conditional("cmake", when="@1:"),
         conditional("makefile", when="@0.9.0"),
         default="cmake",
     )
@@ -38,14 +38,14 @@ class Libxstream(MakefilePackage, CMakePackage):
     generator("ninja")
 
     variant("shared", default=True, description="Build shared libraries")
-
+    variant("pic", default=True, description="Enable position independent code")
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("gmake", type="build", when="@0.9.0")
 
     depends_on("opencl")
-    depends_on("libxs", when="@main")
+    depends_on("libxs", when="@1:")
     depends_on("libxs+shared", when="+shared")
 
 
@@ -67,5 +67,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+        ]
         return args
