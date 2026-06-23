@@ -256,6 +256,10 @@ class R(AutotoolsPackage):
         env.set("MAKEFLAGS", "-j{0}".format(make_jobs))
         env.set("R_HOME", join_path(self.prefix, "rlib", "R"))
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Standardize the timezone for the builds
+        env.set("TZ", "UTC")
+
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
