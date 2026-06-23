@@ -19,6 +19,7 @@ class Just(CargoPackage):
     license("CC0-1.0", checked_by="Dando18")
 
     version("master", branch="master")
+    version("1.54.0", sha256="53d288296054876d4d9fb76b0f947c3f2a805969bfa19ec79108da44e70cd93e")
     version("1.53.0", sha256="9742f15ea4e6afd4bf9b8fecd0c5ef61904d3d187f24675601fdfbace885a4c3")
     version("1.52.0", sha256="cd869b45801f1434d26c05df7ca999b7b56c7d1d57fb1211cdfd2526ec28f130")
     version("1.50.0", sha256="cca015e07739a1c26c6fc459f7d46e1e36ce0f7613114eddedd8cd3af55a10b7")
