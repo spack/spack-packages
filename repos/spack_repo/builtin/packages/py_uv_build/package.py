@@ -23,4 +23,4 @@ class PyUvBuild(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
 
-    depends("bzip2")
+    depends_on("bzip2")
