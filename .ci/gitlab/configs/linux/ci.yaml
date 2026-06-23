@@ -13,6 +13,8 @@ ci:
       - wrf
       build-job:
         tags: [ "spack", "huge" ]
+        # 24h for long ROCm/ML rebuilds; GitLab project/runner max must allow this
+        timeout: 1440 minutes
         variables:
           CI_JOB_SIZE: huge
           SPACK_BUILD_JOBS: "12"
