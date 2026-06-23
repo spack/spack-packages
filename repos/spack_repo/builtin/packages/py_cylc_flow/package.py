@@ -51,7 +51,8 @@ class PyCylcFlow(PythonPackage):
 
     depends_on("py-importlib-metadata", type=("build", "run"), when="@:8.2 ^python@:3.7")
     depends_on("py-importlib-metadata@5:", type=("build", "run"), when="@8.3:8.5 ^python@:3.11")
-    depends_on("py-urwid@2:2.6.1,2.6.4:2", type=("build", "run"))
+    depends_on("py-urwid@2:2.6.1,2.6.4:2", type=("build", "run"), when="@:8.4")
+    depends_on("py-urwid@2.2:2.6.1,2.6.4:2", type=("build", "run"), when="@8.5:")
     depends_on("py-rx", type=("build", "run"), when="@:8.4")
     depends_on("py-promise", type=("build", "run"), when="@:8.4")
     depends_on("py-tomli@2:", type=("build", "run"), when="^python@:3.10")
