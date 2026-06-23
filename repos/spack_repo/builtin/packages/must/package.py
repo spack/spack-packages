@@ -16,10 +16,15 @@ class Must(CMakePackage):
     or do not manifest on a certain system or MPI implementation."""
 
     homepage = "https://www.i12.rwth-aachen.de/go/id/nrbe"
-    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.8.0-rc1.tar.gz"
+    url = "https://hpc.rwth-aachen.de/must/files/MUST-v1.9.0.tar.gz"
 
     maintainers("jgalarowicz", "dmont")
 
+    version("1.11.2", sha256="934d41dcf379df65c68853646344736a85d58ecc93e8fc4fe9c4077b2eca9ccb")
+    version("1.11.1", sha256="46a3e56691e818df92471865bf5affe1635f9cba3fb364ed8ce7a19c36c1caca")
+    version("1.11.0", sha256="9ebe0022b2bf6a6d39af52c8a363058777ce31838971123d5a51a193bcdfcae3")
+    version("1.10.0", sha256="fd8a1152f5b7b97f19c62ca0c7875953c6e3a8f5e16502adacd1de0cd3402d25")
+    version("1.9.2", sha256="b2c71e9b7bc86b74469acffd8b523acc91f6a6bd2c48f3b91383d074d673b929")
     version("1.9.0", sha256="24998f4ca6bce718d69347de90798600f2385c21266c2d1dd39a87dd8bd1fba4")
     version("1.8.0", sha256="9754fefd2e4c8cba812f8b56a5dd929bc84aa599b2509305e1eb8518be0a8a39")
     version("1.7.2", sha256="616c54b7487923959df126ac4b47ae8c611717d679fe7ec29f57a89bf0e2e0d0")
@@ -28,7 +33,7 @@ class Must(CMakePackage):
     variant("tsan", default=True, description="Enable thread sanitizer")
     variant("graphviz", default=False, description="Use to generate graphs")
     variant("stackwalker", default=False, description="Unwind with stackwalker")
-    variant("backward", default=True, description="Unwind with backward-cpp")
+    variant("backward", default=True, description="Unwind with backward-cpp", when="@1.8:")
     variant("typeart", default=False, description="Enable TypeArt build")
 
     # Don't enable stackwalker, backward simultaneously
@@ -37,7 +42,7 @@ class Must(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", type="build")
 
     depends_on("cmake@3.9:")
     depends_on("python@3.1.5:", type=("build", "link", "run"))
@@ -57,47 +62,17 @@ class Must(CMakePackage):
             make("prebuilds")
             make("install-prebuilds")
 
-    #
-    # Set up the arguments to cmake for the build of must
-    #
     def cmake_args(self):
         spec = self.spec
-
-        # Add in paths for finding package config files that tell us
-        # where to find these packages
-        cmake_args = ["-DCMAKE_VERBOSE_MAKEFILE=ON", "-DCMAKE_BUILD_TYPE=Release"]
-
-        # check to see if the testing variant is enabled
-        if spec.satisfies("+test"):
-            cmake_args.extend(["-DENABLE TESTS=On"])
-
-        # check to see if the TypeArt variant is enabled
-        if spec.satisfies("+typeart"):
-            cmake_args.extend(["-DENABLE TYPEART=On"])
-
-        # check to see if the Thread Sanitizer variant is enabled
-        if spec.satisfies("+tsan"):
-            cmake_args.extend(["-DENABLE TSAN=On"])
-        else:
-            # if the Thread Sanitizer variant is disabled
-            # send corresponding cmake argument to the cmake command
-            if spec.satisfies("~tsan"):
-                cmake_args.extend(["-DENABLE TSAN=Off"])
-
-        # Since MUST version 1.8, MUST is configured with
-        # backward-cpp support enabled by default. To install
-        # MUST without backward-cpp support, the CMake variable
-        # -DUSE BACKWARD=Off must be explicitly set during the
-        # configuration of MUST
-        if spec.satisfies("~backward"):
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
+        args = [
+            self.define_from_variant("ENABLE_TESTS", "test"),
+            self.define_from_variant("ENABLE_TYPEART", "typeart"),
+            self.define_from_variant("ENABLE_TSAN", "tsan"),
+            self.define_from_variant("USE_BACKWARD", "backward"),
+        ]
 
         if spec.satisfies("+stackwalker"):
-            cmake_args.extend(["-DUSE CALLPATH=On"])
-            cmake_args.extend(["-DSTACKWALKER INSTALL PREFIX=%s" % spec["dyninst"].prefix])
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
-        else:
-            if spec.satisfies("+backward"):
-                cmake_args.extend(["-DUSE BACKWARD=On"])
+            args.append(self.define("USE_CALLPATH", True))
+            args.append(self.define("STACKWALKER_INSTALL_PREFIX", spec["dyninst"].prefix))
 
-        return cmake_args
+        return args
