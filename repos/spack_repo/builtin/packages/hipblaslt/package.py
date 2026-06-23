@@ -176,8 +176,8 @@ class Hipblaslt(CMakePackage):
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")
     depends_on("py-msgpack", when="@7.1:")
-    depends_on("spdlog", when="@7.1:")
     depends_on("py-nanobind", when="@7.1:")
+    depends_on("spdlog", when="@7.1:")
 
     resource(
         name="libdivide",
@@ -292,11 +292,11 @@ class Hipblaslt(CMakePackage):
                 )
         if self.spec.satisfies("@7.1:"):
             filter_file(
-                    "if(ROCROLLER_ENABLE_YAML_CPP)\n    if(ROCROLLER_ENABLE_FETCH)",
-                    "if(ROCROLLER_ENABLE_YAML_CPP)\n    find_package(yaml-cpp 0.8.0 QUIET)\n    if(NOT yaml-cpp_FOUND AND ROCROLLER_ENABLE_FETCH)",
-                    "shared/rocroller/CMakeLists.txt",
-                    string=True,
-                )
+                "if(ROCROLLER_ENABLE_YAML_CPP)\n    if(ROCROLLER_ENABLE_FETCH)",
+                "if(ROCROLLER_ENABLE_YAML_CPP)\n    find_package(yaml-cpp 0.8.0 QUIET)\n    if(NOT yaml-cpp_FOUND AND ROCROLLER_ENABLE_FETCH)",
+                "shared/rocroller/CMakeLists.txt",
+                string=True,
+            )
             yaml_path = os.path.join(self.spec["py-pyyaml"].prefix, purelib)
             packaging_path = os.path.join(self.spec["py-packaging"].prefix, purelib)
             msgpack_path = os.path.join(self.spec["py-msgpack"].prefix, purelib)
@@ -368,7 +368,7 @@ class Hipblaslt(CMakePackage):
             args.append(self.define("HIPBLASLT_ENABLE_CLIENT", self.run_tests))
             args.append(self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"))
             args.append(self.define("ROCROLLER_ENABLE_FETCH", "OFF"))
-            args.append(self.define("ROCROLLER_ENABLE_YAML_CPP", "OFF"))
+            args.append(self.define("ROCROLLER_ENABLE_YAML_CPP", "ON"))
             args.append(self.define("ROCROLLER_ENABLE_LLVM", "ON"))
             libdivide_source = join_path(self.stage.source_path, "deps", "libdivide")
             yaml_cpp_source = join_path(self.stage.source_path, "deps", "yaml_cpp")
@@ -376,15 +376,9 @@ class Hipblaslt(CMakePackage):
             args.append(self.define("FETCHCONTENT_SOURCE_DIR_libdivide", libdivide_source))
             args.append(self.define("FETCHCONTENT_SOURCE_DIR_YAML_CPP", yaml_cpp_source))
             args.append(self.define("FETCHCONTENT_SOURCE_DIR_yaml_cpp", yaml_cpp_source))
-            args.append(
-                self.define(
-                    "yaml-cpp_DIR", join_path(self.spec["yaml-cpp"].prefix, "lib", "cmake", "yaml-cpp")
-                )
-            )
+            args.append(self.define("yaml-cpp_DIR", yaml_cpp_source))
             args.append(self.define("spdlog_ROOT", self.spec["spdlog"].prefix))
-            args.append(
-                self.define("spdlog_DIR", self.spec["spdlog"].prefix.lib.cmake.spdlog)
-            )
+            args.append(self.define("spdlog_DIR", self.spec["spdlog"].prefix.lib.cmake.spdlog))
             args.append(
                 self.define(
                     "FETCHCONTENT_SOURCE_DIR_ROCMCMAKEBUILDTOOLS",
