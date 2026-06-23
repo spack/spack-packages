@@ -39,7 +39,9 @@ class KokkosFft(CMakePackage):
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
-    depends_on("cmake@3.22:3", type="build")
+    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@:4", type="build", when="@:1")
+    depends_on("cmake@:3", type="build", when="@:0")
 
     depends_on("kokkos +complex_align")
     depends_on("kokkos@4.7:", when="@1.1:")
@@ -59,7 +61,10 @@ class KokkosFft(CMakePackage):
     depends_on("fftw@3.3:3 ~mpi precision=float,double")
     requires("^fftw +openmp", when="host_backend=fftw-openmp")
     depends_on("cuda@11:12", when="device_backend=cufft")
-    depends_on("hipfft@5.3:6", when="device_backend=hipfft")
+    with when("device_backend=hipfft"):
+        depends_on("hipfft@5.3:")
+        depends_on("hipfft@:7", when="@:1")
+        depends_on("hipfft@:6", when="@:0")
     depends_on("intel-oneapi-mkl@2023:2025", when="device_backend=onemkl")
 
     def cmake_args(self):
