@@ -205,7 +205,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def build_targets(self):
         spec = self.spec
 
-        if "+ph" in spec and "+rt" in spec and "+sc" in spec and "+nl" in spec:
+        if spec.satisfies("+ph", "+rt", "+sc", "+nl"):
             return ["all"]
 
         targets = ["core"]
