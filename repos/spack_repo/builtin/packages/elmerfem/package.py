@@ -19,6 +19,9 @@ class Elmerfem(CMakePackage):
 
     version("ice", branch="elmerice")
     version("devel", branch="devel")
+    version("26.2.1", sha256="2271444cabdc9ae6185df961d939359062d43b1940ac9a7463a2b8adf7e0009b")
+    version("26.2", sha256="def442937d69234f7e1b36e902a7fcd2a428d671e62f0275bf05aeef7ebbcade")
+    version("26.1", sha256="8a7371d92d820331b71428d0219119a68a514eca29848d4c3a420e701677cf2f")
     version("9.0", sha256="08c5bf261e87ff37456c1aa0372db3c83efabe4473ea3ea0b8ec66f5944d1aa0")
     version("8.4", sha256="cc3ce807d76798361592cc14952cdc3db1ad8f9bac038017514033ce9badc5b3")
 
