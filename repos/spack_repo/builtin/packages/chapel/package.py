@@ -534,7 +534,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             depends_on("cuda@11:12")
             conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
         with when("@2.9:"):
-            depends_on("cuda@11:13")
+            depends_on("cuda@11:13.0")
 
     # ROCm conflicts and dependencies
     with when("+rocm"):
