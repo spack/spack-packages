@@ -288,7 +288,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
     @run_before("configure")
     def filter_makev1(self):
         spec = self.spec
-        if "@:5.1.4" in spec:
+        if spec.sattisfies("@:5.1.4"):
             filter_file(
                 "$(MAKE) $(MAKEFLAGS) -f Makefile.loc all ;",
                 "$(MAKE) -f Makefile.loc $(MAKEFLAGS) all ;",
