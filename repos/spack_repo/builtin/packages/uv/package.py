@@ -20,6 +20,7 @@ class Uv(PythonPackage, CargoPackage):
     maintainers("mcmehrtens", "johnwparent", "adamjstewart")
     license("Apache-2.0 OR MIT", checked_by="mcmehrtens")
 
+    version("0.11.24", sha256="0f1700c98068b9238544102fb9c4106352201f844b935b74947acd8cdb13b568")
     version("0.11.23", sha256="8bbb236ae5ab7fc72261d600f79f8efd0e306acb130669371d7c11db5eb6747b")
     version("0.11.22", sha256="315cb03d1b293bc78ac6a8c1124cf4be6877509ae75a1ee25dc120ff292338b4")
     version("0.11.21", sha256="12316609d3cd474a67d9b7e08991db7ec19390395ba03f56e79d39c6afbb723a")
