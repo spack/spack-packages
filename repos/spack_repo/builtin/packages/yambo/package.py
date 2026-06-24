@@ -271,7 +271,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def filter_time(self):
         spec = self.spec
 
-        if "+time" in spec and "@5.0.0:" in spec:
+        if spec.satisfies("@5.0.0: +time"):
             filter_file(
                 "total_time(i_c)<600.",
                 "total_time(i_c)<604800.",
