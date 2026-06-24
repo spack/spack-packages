@@ -28,7 +28,7 @@ class PyPyside6(PythonPackage):
 
     # see https://wiki.qt.io/Qt_for_Python#Python_compatibility_matrix
     depends_on("python@3.10:3.14", type=("build", "run"))
-    conflicts("python+freethreading")
+    conflicts("^python+freethreading")
 
     depends_on("cmake@3.22:", type="build")
     depends_on("ninja", type="build")
