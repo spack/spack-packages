@@ -36,6 +36,8 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.40.02", sha256="f631eebee3dbea128f1415f4b784f5e83637a2b431193bce75f10385f71efc56")
+    version("6.40.00", sha256="676f8fde8926ce05902be7f44ce7d492a4a2060022fcab0e3d1c44f6dc0fbde8")
     version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
     version("6.36.10", sha256="8ccbfbca9d05016c8c324dd61c25a1091ae61847fb9404298652b83bf0cd3be0")
     version("6.36.08", sha256="1678fd272cf3172d7ba602e2786ec659bd3ca28b38f0471005d456d968ef55a1")
@@ -243,8 +245,8 @@ class Root(CMakePackage):
     variant("python", default=True, description="Enable Python ROOT bindings")
     variant("qt5", when="@:6.34", default=False, description="Enable Qt5 web-based display")
     variant("qt6", default=False, description="Enable Qt6 web-based display")
-    variant("r", default=False, description="Enable R ROOT bindings")
-    variant("rpath", default=True, description="Enable RPATH")
+    variant("r", default=False, description="Enable R ROOT bindings", when="@:6.40")
+    variant("rpath", default=True, description="Enable RPATH", when="@:6.40")
     conflicts(
         "~rpath", when="@6.38:", msg="RPATHs are always applied if operating systems supports it"
     )
@@ -296,10 +298,18 @@ class Root(CMakePackage):
         description="Build the TPython class to run Python code from C++",
     )
     variant("unuran", default=True, description="Use UNURAN for random number generation")
-    variant("vc", default=False, description="Enable Vc for adding new types for SIMD programming")
+    variant(
+        "vc",
+        default=False,
+        description="Enable Vc for adding new types for SIMD programming",
+        when="@:6.40",
+    )
     variant("vdt", default=True, description="Enable set of fast and vectorisable math functions")
     variant(
-        "veccore", default=False, description="Enable support for VecCore SIMD abstraction library"
+        "veccore",
+        default=False,
+        description="Enable support for VecCore SIMD abstraction library",
+        when="@:6.40",
     )
     variant(
         "webgui", default=True, description="Enable web-based UI components of ROOT", when="+root7"
@@ -383,7 +393,9 @@ class Root(CMakePackage):
     # Python
     depends_on("python@2.7:", when="+python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
+    conflicts("^python +freethreading", when="@6.40.00", msg="v6.40.00 requires GIL")
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
+    depends_on("py-numpy", type=("build", "run"), when="+tmva-sofie @6.40:")
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")
