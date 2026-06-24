@@ -31,13 +31,10 @@ class Gauxc(CMakePackage, CudaPackage):
     )
     version("1.1", sha256="17de077fb23e44d03b0ed14dcd8117c01e5b3431fbefa2352d751639ada7f91c")
 
-    variant("c", default=True, description="Build with C API support", when="@1.2.dev2: ~master")
-    variant(
-        "fortran",
-        default=True,
-        description="Build with Fortran support",
-        when="@dev20260608 ~master",
-    )
+    variant("c", default=True, description="Build with C API support", when="@master")
+    variant("c", default=True, description="Build with C API support", when="@1.2.dev2")
+    variant("c", default=True, description="Build with C API support", when="@dev20260608")
+    variant("fortran", default=True, description="Build with Fortran support", when="@dev20260608")
     variant("host", default=True, description="Build with host integrator")
     variant("cuda", default=False, description="Build with CUDA support")
     variant("hip", default=False, description="Build with HIP support")
@@ -52,6 +49,7 @@ class Gauxc(CMakePackage, CudaPackage):
     variant("magma", default=False, description="Build with MAGMA linear algebra support")
     variant("nccl", default=False, description="Build with NCCL collectives")
     variant("cutlass", default=False, description="Build with CUTLASS linear algebra support")
+    variant("pic", default=True, description="Build position independent code")
 
     conflicts("+magma", when="~cuda ~hip", msg="MAGMA requires CUDA or HIP")
     conflicts("+nccl", when="~cuda", msg="NCCL requires CUDA")
@@ -113,6 +111,7 @@ class Gauxc(CMakePackage, CudaPackage):
             self.define("GAUXC_ENABLE_MAGMA", spec.satisfies("+magma")),
             self.define("GAUXC_ENABLE_NCCL", spec.satisfies("+nccl")),
             self.define("GAUXC_ENABLE_CUTLASS", spec.satisfies("+cutlass")),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         if spec.satisfies("+cuda"):
             args.append(self.define_cuda_architectures(self))
