@@ -319,16 +319,16 @@ class Yambo(AutotoolsPackage, CudaPackage):
 
         if spec.satisfies("%c=nvhpc"):
             env.set("CPP", "cpp -E -P")
-        if "%fortran=nvhpc" in spec:
+        if spec.satisfies("%fortran=nvhpc"):
             env.set("FPP", "nvfortran -Mpreprocess -E")
             env.set("F90SUFFIX", ".f90")
-        if "%c=intel" in spec:
+        if spec.satisfies("%c=intel"):
             env.set("CPP", "icc -E -ansi")
-        if "%fortran=intel" in spec:
+        if spec.satisfies("%fortran=intel"):
             env.set("FPP", "ifort -E -free -P")
-        if "%c=oneapi" in spec:
+        if spec.satisfies("%c=oneapi"):
             env.set("CPP", "icx -E -ansi")
-        if "%fortran=oneapi" in spec:
+        if spec.satisfies("%fortran=oneapi"):
             env.set("FPP", "ifx -E -free -P")
 
     def flag_handler(self, name, flags):
@@ -376,10 +376,10 @@ class Yambo(AutotoolsPackage, CudaPackage):
             "nvhpc_thr": "-lmkl_intel_lp64 -lmkl_pgi_thread -lmkl_core -pgf90libs -mp",
         }
 
-        if "mkl" in spec or "intel-oneapi-mkl" in spec:
+        if spec.satisfies("^intel-oneapi-mkl"):
             mkl_line = f"-L{env['MKLROOT']}/lib/intel64 "
 
-            if "%oneapi" in spec or "%intel" in spec:
+            if spec.satisfies("%oneapi") or spec.satisfies("%intel"):
                 comp = "intel"
             elif spec.satisfies("%gcc"):
                 comp = "gcc"
@@ -412,7 +412,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
         if spec.satisfies("+scalapack"):
             args.append("--enable-par-linalg")
 
-            if ("mkl" in spec or "intel-oneapi-mkl" in spec) and "netlib-scalapack" not in spec:
+            if spec.satisfies("^intel-oneapi-mkl") and not spec.satisfies("^netlib-scalapack"):
                 args.extend(
                     [
                         f"--with-blacs-libs=-L{env['MKLROOT']}/lib/intel64 "
@@ -446,17 +446,17 @@ class Yambo(AutotoolsPackage, CudaPackage):
             ]
         )
 
-        if "@4.4.0:" in spec:
+        if spec.satisfies("@4.4.0:"):
             args.extend(self.enable_or_disable("parallel_io"))
 
         args.append(f"--with-libxc-path={spec['libxc'].prefix}")
 
-        if "@5.3.0:" in spec:
+        if spec.satisfies("@5.3.0:"):
             args.append(f"--with-devxlib-path={spec['devicexlib'].home}")
 
-        if "+cuda" in spec:
+        if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value[0]
-            if "@5.3.0:" in spec:
+            if spec.satisfies("@5.3.0:"):
                 args.append("--enable-cuda-fortran")
                 args.append(f"--with-cuda-cc={cuda_arch}")
             else:
