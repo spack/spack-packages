@@ -5,11 +5,12 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Rmgdft(CMakePackage, CudaPackage):
+class Rmgdft(CMakePackage, CudaPackage, ROCmPackage):
     """RMGDFT is a high performance real-space density functional code
     designed for large scale electronic structure calculations."""
 
@@ -57,6 +58,7 @@ class Rmgdft(CMakePackage, CudaPackage):
     conflicts("%gcc@:4", when="@3.6.0:", msg=compiler_warning14)
     conflicts("%intel@:17", when="@3.6.0:", msg=compiler_warning14)
     conflicts("%llvm@:3.4", when="@3.6.0:", msg=compiler_warning14)
+    conflicts("+cuda", when="+rocm", msg="RMGDFT supports only one GPU backend at a time")
 
     # RMGDFT 5.0.0 requires C++17 and increase the minimum gcc to 8
     compiler_warning17 = "RMGDFT 5.0.0 or later requires a compiler with support for C++17"
@@ -74,7 +76,11 @@ class Rmgdft(CMakePackage, CudaPackage):
     depends_on("hdf5")
     depends_on("cuda", when="+cuda")
     with when("+rocm"):
+        depends_on("rocm-core")
+        depends_on("hip")
         depends_on("hipblas")
+        depends_on("hipsolver")
+        depends_on("rocblas")
         depends_on("rocfft")
         depends_on("rocsolver")
 
@@ -89,7 +95,7 @@ class Rmgdft(CMakePackage, CudaPackage):
     @property
     def build_targets(self):
         spec = self.spec
-        if "+cuda" in spec:
+        if "+cuda" in spec or "+rocm" in spec:
             targets = ["rmg-gpu"]
             if "+local_orbitals" in spec:
                 targets.append("rmg-on-gpu")
@@ -116,6 +122,11 @@ class Rmgdft(CMakePackage, CudaPackage):
             cuda_arch = cuda_arch_list[0]
             if cuda_arch != "none":
                 args.append("-DCUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
+        if "+rocm" in spec:
+            args.append("-DRMG_HIP_ENABLED=1")
+            args.append(self.define("HIP_PATH", spec["hip"].prefix))
+            args.append(self.define("ROCM_ROOT", spec["rocm-core"].prefix))
+            args.append(self.define("ROCM_PATH", spec["rocm-core"].prefix))
         return args
 
     def install(self, spec, prefix):
@@ -124,7 +135,7 @@ class Rmgdft(CMakePackage, CudaPackage):
         mkdirp(prefix.share.tests.RMG)
 
         with working_dir(self.build_directory):
-            if "+cuda" in spec:
+            if "+cuda" in spec or "+rocm" in spec:
                 install("rmg-gpu", prefix.bin)
                 if "+local_orbitals" in spec:
                     install("rmg-on-gpu", prefix.bin)
