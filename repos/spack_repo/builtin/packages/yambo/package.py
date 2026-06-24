@@ -386,7 +386,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
             elif "%nvhpc" in spec:
                 comp = "nvhpc"
 
-            if "+openmp" in spec:
+            if spec.satisfies("+openmp"):
                 comp += "_thr"
 
             mkl_line += mkl_lines[comp]
