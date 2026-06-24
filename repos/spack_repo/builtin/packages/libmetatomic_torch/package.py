@@ -17,6 +17,9 @@ class LibmetatomicTorch(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.1.14", sha256="f2fcdb67b4d43482bfd45722496cf7babef0e6ccb6f71b436532e60e4882b7b5")
+    version("0.1.13", sha256="ca521613d81eb380d8ce17a48ee640867e11c00b5041dd28eaf31dd9d8b3f9c8")
+    version("0.1.12", sha256="d9e587c7ce3d9d6338ed5f6da119e2a3b29698381886f36a53603523c0499542")
     version("0.1.11", sha256="cd500ab1371fb1d284b9ae514e7feaa205eca231437dd2d527fbf3852e673eef")
     version("0.1.10", sha256="c75b1a58fcc37ccef942d2457bfaa98d32a6b985202dec3d90e2b86d5bf66ecf")
     # 0.1.9 is skipped because it is partially broken
@@ -32,7 +35,8 @@ class LibmetatomicTorch(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cxx", type="build")
     depends_on("c", type="build")
-    depends_on("libmetatensor-torch@0.8.0:0.8", when="@0.1.4:")
+    depends_on("libmetatensor-torch@0.9.0:0.9", when="@0.1.12:")
+    depends_on("libmetatensor-torch@0.8.0:0.8", when="@0.1.4:0.1.11")
     depends_on("libmetatensor-torch@0.7.6:0.7", when="@0.1.3")
     depends_on("py-torch@2.3.0:", when="@0.1.9:")
     depends_on("py-torch@2.1.0:")

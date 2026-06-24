@@ -7,6 +7,9 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.1.14": "ff3ac303df55afec90f14f993916236ac317bf09a0bff3111715504db0c93287",
+    "0.1.13": "04fe298e96e8e8da24bd0e0a82d537783317b2eda969959872efe2fd880a3693",
+    "0.1.12": "a93e165f907500618f3b42c0c7c5c2e954a446347227001a80cbda293ea22f11",
     "0.1.11": "540171dd03de84cb11b46a750bf016eb57dca756b5adf0383cefffbc9117e95f",
     "0.1.10": "a221154d789d7c03ba2e06da9653301fb1954f92d9c2608e8c19fd33dde84d2d",
     # 0.1.9 is skipped because it is partially broken
@@ -38,15 +41,19 @@ class PyMetatomicTorch(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"), when="@0.1.6:")
     # python/metatomic_torch/setup.py
     depends_on("py-torch@2.1:", type=("build", "run"))
-    depends_on("py-vesin", type=("build", "run"))
-    depends_on("py-vesin@0.5.1:", type=("build", "run"), when="@0.1.10:")
-    depends_on("py-metatensor-torch@0.8.0:0.8", type=("build", "run"), when="@0.1.4:")
+    depends_on("py-torch@2.3:", type=("build", "run"), when="@0.1.9:")
+    depends_on("py-vesin", type=("build", "run"), when="@:0.1.11")
+    depends_on("py-vesin@0.5.1:", type=("build", "run"), when="@0.1.10:0.1.11")
+    depends_on("py-metatensor-torch@0.9.0:0.9", type=("build", "run"), when="@0.1.12:")
+    depends_on("py-metatensor-torch@0.8.0:0.8", type=("build", "run"), when="@0.1.4:0.1.11")
     depends_on("py-metatensor-torch@0.7.0:0.7", type=("build", "run"), when="@0.1.3")
-    depends_on("py-metatensor-operations@0.4.0:0.4", type=("build", "run"), when="@0.1.6:")
+    depends_on("py-metatensor-operations@0.5.0:0.5", type=("build", "run"), when="@0.1.12:")
+    depends_on("py-metatensor-operations@0.4.0:0.4", type=("build", "run"), when="@0.1.6:0.1.11")
     depends_on("py-metatensor-operations@0.3.0:0.3", type=("build", "run"), when="@:0.1.5")
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
+    depends_on("py-packaging@26:", type="build", when="@0.1.12:")
     # CMakeLists.txt
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@0.1.5:")
