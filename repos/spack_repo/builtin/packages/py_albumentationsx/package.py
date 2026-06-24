@@ -20,7 +20,7 @@ class PyAlbumentationsx(PythonPackage):
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-hatchling", type="build")
 
-    depends_on("py-albucore@0.1.6:", type=("build", "run"))
+    depends_on("py-albucore@0.1.6", type=("build", "run"))
     depends_on("py-numpy@1.24.4:", type=("build", "run"))
 
 
@@ -31,5 +31,5 @@ class PyAlbumentationsx(PythonPackage):
     depends_on("py-pydantic@2.12.4:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
 
-    depends_on("py-scipy@1.10:1", type=("build", "run"))
+    depends_on("py-scipy@1.10:", type=("build", "run"))
     depends_on("py-typing-extensions@4.9.0:", type=("build", "run"))
