@@ -429,7 +429,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
                     ]
                 )
 
-        if "+slepc" in spec:
+        if spec.satisfies("+slepc"):
             args.extend(
                 [
                     "--enable-slepc-linalg",
