@@ -52,12 +52,14 @@ class PyPyside6(PythonPackage):
     depends_on("qt-declarative@6.11:", when="+declarative")
     depends_on("qt-svg@6.11:", when="+svg")
 
-    # suggested llvm version for building on https://doc.qt.io/qtforpython-6/building_from_source/linux.html
+    # suggested llvm version for building
+    # on https://doc.qt.io/qtforpython-6/building_from_source/linux.html
     depends_on("llvm@20.1.3: +clang", type="build")
 
     def patch(self):
 
-        # shiboken include paths: misses non-qt-base paths (QtUiTools in qt-tools and Qt3D... in qt-3d)
+        # shiboken include paths: misses non-qt-base paths
+        # (QtUiTools in qt-tools and Qt3D... in qt-3d)
         additional_includes = []
         if "+tools" in self.spec:
             additional_includes += [self.spec["qt-tools"].prefix.include]
@@ -80,7 +82,9 @@ class PyPyside6(PythonPackage):
         # the --rpath flag below seems broken for linux
         filter_file(
             "pyside_build.update_rpath(executables)",
-            "pyside_build.update_rpath(executables + pyside_build.package_libraries(destination_dir))",
+            "pyside_build.update_rpath( \
+                    executables + pyside_build.package_libraries(destination_dir) \
+                    )",
             "build_scripts/platforms/unix.py",
             string=True,
         )
