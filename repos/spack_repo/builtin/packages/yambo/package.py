@@ -241,7 +241,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def filter_linking_issue(self):
         spec = self.spec
 
-        if "@5.1.2:" in spec and "%intel-oneapi-compilers" in spec:
+        if spec.satisfies("@5.1.2: %intel-oneapi-compilers"):
             filter_file(
                 'libs="-lint_modules $libs $llocal $lPLA $lIO $lextlibs -lm"',
                 r'libs="-lint_modules $libs $llocal $lSL $lPLA $lIO $lextlibs -lm"',
