@@ -44,6 +44,14 @@ jobs:
           GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
           LABELS_CONFIG: .github/labels.yml
 
+      - name: Rename PR
+        run: |
+          python3 .github/workflows/bin/spack-pr-renamer.py
+        env:
+          GH_PR_NUMBER: ${{ github.event.number }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
+
       - name: Tag Maintainers on PR
         run: |
           . spack-core/share/spack/setup-env.sh
