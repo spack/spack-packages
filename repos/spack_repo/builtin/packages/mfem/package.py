@@ -885,11 +885,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 scalapack_lib_dir = scalapack.prefix.lib
                 if not os.path.exists(scalapack_lib_dir):
                     scalapack_lib_dir = scalapack.prefix.lib64
-                sp_lib += [
-                    ld_flags_from_dirs(
-                        [scalapack_lib_dir], ["scalapack"]
-                    )
-                ]
+                sp_lib += [ld_flags_from_dirs([scalapack_lib_dir], ["scalapack"])]
             elif "^scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
                 sp_opt += [scalapack.headers.cpp_flags]
