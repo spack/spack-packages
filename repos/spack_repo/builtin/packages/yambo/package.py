@@ -381,7 +381,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
 
             if "%oneapi" in spec or "%intel" in spec:
                 comp = "intel"
-            elif "%gcc" in spec:
+            elif spec.satisfies("%gcc"):
                 comp = "gcc"
             elif spec.satisfies("%nvhpc"):
                 comp = "nvhpc"
