@@ -179,7 +179,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
         url="https://github.com/yambo-code/yambo-libraries/raw/master/external/Ydriver-1.1.0.tar.gz",
         sha256="6c316d613f5a41ddd15efad7ba97e4712f87d7e56c073ba5458caf424afcb97a",
         placement={"Ydriver-1.1.0.tar.gz": "lib/archive/Ydriver-1.1.0.tar.gz"},
-        when="@5.1.0:5.1.99",
+        when="@5.1",
         expand=False,
     )
     resource(
