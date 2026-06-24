@@ -317,7 +317,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
     def setup_build_environment(self, env):
         spec = self.spec
 
-        if "%c=nvhpc" in spec:
+        if spec.satisfies("%c=nvhpc"):
             env.set("CPP", "cpp -E -P")
         if "%fortran=nvhpc" in spec:
             env.set("FPP", "nvfortran -Mpreprocess -E")
