@@ -409,7 +409,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
                 ]
             )
 
-        if "+scalapack" in spec:
+        if spec.satisfies("+scalapack"):
             args.append("--enable-par-linalg")
 
             if ("mkl" in spec or "intel-oneapi-mkl" in spec) and "netlib-scalapack" not in spec:
