@@ -29,6 +29,7 @@ class Libxsmm(MakefilePackage):
     version("main-2023-11", commit="0d9be905527ba575c14ca5d3b4c9673916c868b2")
     version("main", branch="main")
     version("1.17-cp2k", commit="6f883620f58afdeebab28039fc9cf580e76a5ec6")
+    version("1.17-pyfr", commit="5424ec5e122172ec263ef0cc6473d44b8be16fb2")
     version(
         "1.17",
         sha256="8b642127880e92e8a75400125307724635ecdf4020ca4481e5efe7640451bb92",
