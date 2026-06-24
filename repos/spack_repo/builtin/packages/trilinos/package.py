@@ -53,7 +53,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("17.1.1", sha256="482bb76c9a993767a9e649261462f70620254a631d34fb089482d8474dfb2766")
     version("17.0.0", sha256="7afa68fc6bf1dfdcd0c07f7b61055b03509e62cee1a835d570201b46aa440a6b")
+    version("16.2.1", sha256="c68a9d28fc9e7b06f33804c1f5e998234820878c21ae075649483b56992cea05")
     version("16.2.0", sha256="543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418")
     version("16.1.0", sha256="e9651c88f581049457036cfc01b527a9d3903c257338eeeab942befd7452f23a")
     version("16.0.0", sha256="46bfc40419ed2aa2db38c144fb8e61d4aa8170eaa654a88d833ba6b92903f309")
@@ -149,23 +151,19 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     # Package options (alphabet order)
     variant("adelus", default=False, description="Compile with Adelus")
-    variant("amesos", default=True, description="Compile with Amesos")
     variant("amesos2", default=True, description="Compile with Amesos2")
     variant("anasazi", default=True, description="Compile with Anasazi")
-    variant("aztec", default=True, description="Compile with Aztec")
     variant("belos", default=True, description="Compile with Belos")
     variant("chaco", default=False, description="Compile with Chaco from SEACAS")
-    variant("epetra", default=True, description="Compile with Epetra")
-    variant("epetraext", default=True, description="Compile with EpetraExt")
     variant("exodus", default=False, description="Compile with Exodus from SEACAS")
-    variant("ifpack", default=True, description="Compile with Ifpack")
     variant("ifpack2", default=True, description="Compile with Ifpack2")
-    variant("intrepid", default=False, description="Enable Intrepid")
     variant("intrepid2", default=False, description="Enable Intrepid2")
-    variant("isorropia", default=False, description="Compile with Isorropia")
-    variant("gtest", default=False, description="Build vendored Googletest")
+    variant(
+        "gtest",
+        default=False,
+        description="Build vendored Googletest (uses external Googletest for @17:)",
+    )
     variant("kokkos", default=True, description="Compile with Kokkos")
-    variant("ml", default=True, description="Compile with ML")
     variant("minitensor", default=False, description="Compile with MiniTensor")
     variant("muelu", default=True, description="Compile with Muelu")
     variant("nox", default=False, description="Compile with NOX")
@@ -174,7 +172,6 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     variant("piro", default=False, description="Compile with Piro")
     variant("phalanx", default=False, description="Compile with Phalanx")
     variant("rol", default=False, description="Compile with ROL")
-    variant("rythmos", default=False, description="Compile with Rythmos")
     variant("sacado", default=True, description="Compile with Sacado")
     variant("stk", default=False, description="Compile with STK")
     variant("shards", default=False, description="Compile with Shards")
@@ -192,17 +189,38 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     # Internal package options (alphabetical order)
     variant("basker", default=False, description="Compile with the Basker solver in Amesos2")
-    variant("epetraextbtf", default=False, description="Compile with BTF in EpetraExt")
-    variant(
-        "epetraextexperimental",
-        default=False,
-        description="Compile with experimental in EpetraExt",
-    )
-    variant(
-        "epetraextgraphreorderings",
-        default=False,
-        description="Compile with graph reorderings in EpetraExt",
-    )
+
+    # Deprecated packages as of v17.0.0, remove when no earlier versions are supported
+    with when("@:16"):
+        variant("amesos", default=True, description="Compile with Amesos")
+        variant("aztec", default=True, description="Compile with Aztec")
+        variant("epetra", default=True, description="Compile with Epetra")
+        variant("epetraext", default=True, description="Compile with EpetraExt")
+        variant("ifpack", default=True, description="Compile with Ifpack")
+        variant("intrepid", default=False, description="Enable Intrepid")
+        variant("isorropia", default=False, description="Compile with Isorropia")
+        variant("ml", default=True, description="Compile with ML")
+        variant(
+            "epetraextbtf",
+            default=False,
+            description="Compile with BTF in EpetraExt",
+            when="@:16",
+        )
+        variant(
+            "epetraextexperimental",
+            default=False,
+            description="Compile with experimental in EpetraExt",
+            when="@:16",
+        )
+        variant(
+            "epetraextgraphreorderings",
+            default=False,
+            description="Compile with graph reorderings in EpetraExt",
+            when="@:16",
+        )
+
+    # Deprecated as of v15.0.0, remove when no earlier versions are supported
+    variant("rythmos", default=False, description="Compile with Rythmos", when="@:14")
 
     # External package options
     variant("dtk", default=False, description="Enable DataTransferKit (deprecated)")
@@ -309,6 +327,15 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     with when("+scorec"):
         conflicts("~mpi")
         conflicts("~stk")
+
+    # ShyLU_DD/core dependended on these libraries and was included with +shylu up until v17.0
+    with when("@:16 +shylu"):
+        conflicts("~amesos")
+        conflicts("~aztec")
+        conflicts("~belos")
+        conflicts("~epetra")
+        conflicts("~ifpack")
+        conflicts("~isorropia")
 
     # Panzer is not gen-2 library
     with when("+panzer"):
@@ -454,16 +481,20 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos+hip_relocatable_device_code", when="+rocm_rdc")
         depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=5.0.2", when="@master:")
+        depends_on("kokkos@=5.1.1", when="@master:")
+        depends_on("kokkos@=5.1.1", when="@17.1")
         depends_on("kokkos@=5.0.2", when="@17.0")
-        depends_on("kokkos@=4.7.01", when="@16.2")
+        depends_on("kokkos@=4.7.04", when="@16.2.1")
+        depends_on("kokkos@=4.7.01", when="@16.2.0")
         depends_on("kokkos@=4.5.01", when="@16.1")
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=5.0.2", when="@master:")
+        depends_on("kokkos-kernels@=5.1.1", when="@master:")
+        depends_on("kokkos-kernels@=5.1.1", when="@17.1")
         depends_on("kokkos-kernels@=5.0.2", when="@17.0")
-        depends_on("kokkos-kernels@=4.7.01", when="@16.2")
+        depends_on("kokkos-kernels@=4.7.04", when="@16.2.1")
+        depends_on("kokkos-kernels@=4.7.01", when="@16.2.0")
         depends_on("kokkos-kernels@=4.5.01", when="@16.1")
         depends_on("kokkos-kernels@=4.3.01", when="@16.0")
         depends_on("kokkos-kernels@=4.2.01", when="@15.1:15")

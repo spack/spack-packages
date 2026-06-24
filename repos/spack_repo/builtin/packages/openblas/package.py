@@ -21,7 +21,7 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     git = "https://github.com/OpenMathLib/OpenBLAS.git"
 
-    maintainers("mathomp4")
+    maintainers("mathomp4", "sethrj")
 
     libraries = ["libopenblas", "openblas"]
 
@@ -166,7 +166,7 @@ class Openblas(CMakePackage, MakefilePackage):
     # https://github.com/OpenMathLib/OpenBLAS/pull/5796
     patch(
         "https://github.com/OpenMathLib/OpenBLAS/commit/88705a932831c0de1ed136b461c6c239802828b2.diff?full_index=1",
-        when="@0.3.32",
+        when="@0.3.32:0.3.33",
         sha256="723ddc1553b6d27ff89d96985f7732695935c0d4d8df766987702689bdb750ac",
     )
 
@@ -555,8 +555,23 @@ class MakefileBuilder(makefile.MakefileBuilder):
         else:
             make_defs.append("MAKE_NB_JOBS=0")  # flag provided by OpenBLAS
 
-        # Add target and architecture flags
-        make_defs += self._microarch_target_args()
+        if self.spec.satisfies("target=m1:"):
+            # Use custom simplified target for macOS ARM procesors:
+            # GENERIC target results in SIGILL
+            make_defs += [
+                "TARGET=VORTEX",
+                "NO_SVE=1",
+            ]
+        else:
+            # Try to intelligently add target and architecture flags
+            make_defs += self._microarch_target_args()
+
+            # Prevent errors in `as` assembler from newer instructions
+            if self.spec.satisfies("%gcc@:4.8.4"):
+                make_defs.append("NO_AVX2=1")
+
+            if not self.spec.satisfies("target=x86_64_v4:"):
+                make_defs.append("NO_AVX512=1")
 
         if self.spec.satisfies("+dynamic_dispatch"):
             make_defs += ["DYNAMIC_ARCH=1"]
@@ -608,10 +623,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("+fortran%clang"):
             make_defs.append("TIMER=INT_CPU_TIME")
 
-        # Prevent errors in `as` assembler from newer instructions
-        if self.spec.satisfies("%gcc@:4.8.4"):
-            make_defs.append("NO_AVX2=1")
-
         # Fujitsu Compiler dose not add  Fortran runtime in rpath.
         if self.spec.satisfies("%fj"):
             make_defs.append("LDFLAGS=-lfj90i -lfj90f -lfjsrcinfo -lelf")
@@ -624,18 +635,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("+bignuma"):
             make_defs.append("BIGNUMA=1")
 
-        if not self.spec.satisfies("target=x86_64_v4:"):
-            make_defs.append("NO_AVX512=1")
-
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
             max_num_threads = self.spec.variants["max_num_threads"].value
             make_defs.append("NUM_THREADS={0}".format(max_num_threads))
-
-        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
-        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
-        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
-            make_defs.append("NO_SVE=1")
 
         return make_defs
 

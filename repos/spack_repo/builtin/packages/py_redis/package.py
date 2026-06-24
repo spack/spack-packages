@@ -15,6 +15,7 @@ class PyRedis(PythonPackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="b1cc3cfa5a2cb9c2ab3ba700864fb0ad75617b41f01352ce5779dabf6d5f9c3c")
     version("4.5.1", sha256="1eec3741cda408d3a5f84b78d089c8b8d895f21b3b050988351e925faf202864")
     version("3.5.3", sha256="0e7e0cfca8660dea8b7d5cd8c4f6c5e29e11f31158c0b0ae91a397f00e5a05a2")
     version("3.5.0", sha256="7378105cd8ea20c4edc49f028581e830c01ad5f00be851def0f4bc616a83cd89")
@@ -26,10 +27,18 @@ class PyRedis(PythonPackage):
         description="Support for hiredis which speeds up parsing of multi bulk replies",
     )
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-importlib-metadata@1:", when="@4: ^python@:3.7", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@4: ^python@:3.7", type=("build", "run"))
-    depends_on("py-async-timeout@4.0.2:", when="@4:", type=("build", "run"))
+    depends_on("py-hatchling", type="build", when="@6:")
+    depends_on("py-setuptools", type="build", when="@:5")
 
-    depends_on("py-hiredis@1:", when="@4: +hiredis", type=("build", "run"))
-    depends_on("py-hiredis@0.1.3:", when="+hiredis", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@7.1.0:")
+        depends_on("python@3.8:", when="@5.1.0:")
+        depends_on("python")
+
+        depends_on("py-importlib-metadata@1:", when="@4: ^python@:3.7")
+        depends_on("py-typing-extensions", when="@4: ^python@:3.7")
+        depends_on("py-async-timeout@4.0.3:", when="@5.0.3: ^python@:3.11.2")
+        depends_on("py-async-timeout@4.0.2:", when="@4:")
+
+        depends_on("py-hiredis@1:", when="@4: +hiredis")
+        depends_on("py-hiredis@0.1.3:", when="+hiredis")

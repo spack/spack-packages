@@ -567,6 +567,4 @@ def glibc_compatibility():
     if spack.platforms.real_host().name != "linux":
         return
 
-    spack.solver.core.using_libc_compatibility = lambda: True
-    spack.solver.runtimes.using_libc_compatibility = spack.solver.core.using_libc_compatibility
-    spack.solver.asp.using_libc_compatibility = spack.solver.core.using_libc_compatibility
+    spack.platforms.using_libc_compatibility = lambda: True

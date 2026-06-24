@@ -20,9 +20,11 @@ class FenicsUfcx(CMakePackage):
     license("Unlicense")
 
     version("main", branch="main", no_cache=True)
+    version("0.11.0", sha256="7df1c086c0398b72343a5f047c7e6aa17ea05f1ba123e3e0ca858d6a133b13bd")
     version("0.10.0", sha256="fa27e2dc68988cbf9aca537eb5a58483f75cc719c1a383713b7f8cca49844ff9")
     version("0.9.0", sha256="afa517272a3d2249f513cb711c50b77cf8368dd0b8f5ea4b759142229204a448")
-    version("0.8.0", sha256="8a854782dbd119ec1c23c4522a2134d5281e7f1bd2f37d64489f75da055282e3")
+    with default_args(deprecated=True):
+        version("0.8.0", sha256="8a854782dbd119ec1c23c4522a2134d5281e7f1bd2f37d64489f75da055282e3")
 
     depends_on("cmake@3.19:", type="build")
     depends_on("c", type="build")
