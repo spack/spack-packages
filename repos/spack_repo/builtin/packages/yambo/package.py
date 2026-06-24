@@ -214,7 +214,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
             targets.append("ph-project")
         if spec.satisfies("+rt"):
             targets.append("rt-project")
-        if "+sc" in spec:
+        if spec.satisfies("+sc"):
             targets.append("sc-project")
         if "+nl" in spec:
             targets.append("nl-project")
