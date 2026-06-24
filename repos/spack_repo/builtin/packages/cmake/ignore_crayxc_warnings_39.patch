@@ -1,15 +1,15 @@
 diff --git a/Source/Checks/cm_cxx_features.cmake b/Source/Checks/cm_cxx_features.cmake
-index c16286c7fd..fc31371dc1 100644
+index 3b08025798..f80aa4076f 100644
 --- a/Source/Checks/cm_cxx_features.cmake
 +++ b/Source/Checks/cm_cxx_features.cmake
-@@ -21,6 +21,10 @@ function(cm_check_cxx_feature name)
-     set(check_output "${OUTPUT}")
+@@ -16,6 +16,10 @@ function(cm_check_cxx_feature name)
+       )
      # Filter out MSBuild output that looks like a warning.
-     string(REGEX REPLACE " +0 Warning\\(s\\)" "" check_output "${check_output}")
+     string(REGEX REPLACE " +0 Warning\\(s\\)" "" check_output "${OUTPUT}")
 +    # Filter out libhugetlbfs warnings
 +    string(REGEX REPLACE "[^\n]*libhugetlbfs [^\n]*: WARNING[^\n]*" "" check_output "${check_output}")
 +    # Filter out icpc warnings
 +    string(REGEX REPLACE "[^\n]*icpc: command line warning #10121: overriding [^\n]*" "" check_output "${check_output}")
-     # Filter out warnings caused by user flags.
-     string(REGEX REPLACE "[^\n]*warning:[^\n]*-Winvalid-command-line-argument[^\n]*" "" check_output "${check_output}")
-     # Filter out warnings caused by local configuration.
+     # If using the feature causes warnings, treat it as broken/unavailable.
+     if(check_output MATCHES "[Ww]arning")
+       set(CMake_HAVE_CXX_${FEATURE} OFF CACHE INTERNAL "TRY_COMPILE" FORCE)

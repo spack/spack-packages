@@ -1,0 +1,19 @@
+diff --git a/Source/Checks/cm_cxx_features.cmake b/Source/Checks/cm_cxx_features.cmake
+index 80c9f3b7a7..9e8c4dcc68 100644
+--- a/Source/Checks/cm_cxx_features.cmake
++++ b/Source/Checks/cm_cxx_features.cmake
+@@ -9,8 +9,13 @@ function(cm_check_cxx_feature name)
+       CMAKE_FLAGS -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+       OUTPUT_VARIABLE OUTPUT
+       )
++    set(check_output "${OUTPUT}")
++    # Filter out libhugetlbfs warnings
++    string(REGEX REPLACE "[^\n]*libhugetlbfs [^\n]*: WARNING[^\n]*" "" check_output "${check_output}")
++    # Filter out icpc warnings
++    string(REGEX REPLACE "[^\n]*icpc: command line warning #10121: overriding [^\n]*" "" check_output "${check_output}")
+     # If using the feature causes warnings, treat it as broken/unavailable.
+-    if(OUTPUT MATCHES "warning")
++    if(check_output MATCHES "[Ww]arning")
+       set(CMake_HAVE_CXX_${FEATURE} OFF CACHE INTERNAL "TRY_COMPILE" FORCE)
+     endif()
+     if(CMake_HAVE_CXX_${FEATURE})
