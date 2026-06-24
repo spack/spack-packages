@@ -383,7 +383,7 @@ class Yambo(AutotoolsPackage, CudaPackage):
                 comp = "intel"
             elif "%gcc" in spec:
                 comp = "gcc"
-            elif "%nvhpc" in spec:
+            elif spec.satisfies("%nvhpc"):
                 comp = "nvhpc"
 
             if spec.satisfies("+openmp"):
