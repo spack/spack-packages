@@ -197,8 +197,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
     variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
 
-    conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
-
     with when("+cuda"):
         variant(
             "cuda_arch_35_k20x",
@@ -246,6 +244,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
+    depends_on("deepmdkit", when="+deepmd")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
 
