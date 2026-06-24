@@ -62,12 +62,18 @@ class Amdsmi(CMakePackage):
     depends_on("py-virtualenv")
     depends_on("pkgconfig")
     depends_on("libdrm")
+
+    # https://github.com/ROCm/amdsmi/issues/167
+    depends_on("libdrm@:2.4.124", when="@:7.2")
+
     depends_on("py-pyyaml")
     patch(
         "https://github.com/ROCm/amdsmi/commit/2858e51b4e8ff124ed67e23e0cd131e8b2140fae.patch?full_index=1",
         sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
         when="@6.2",
     )
+    depends_on("googletest@1.11:")
+    depends_on("googletest@1.14:", when="@6:")
 
     @property
     def root_cmakelists_dir(self):
@@ -80,6 +86,8 @@ class Amdsmi(CMakePackage):
         args = []
         args.append(self.define("BUILD_TESTS", "ON"))
         args.append("-DCMAKE_INSTALL_LIBDIR=lib")
+        # TODO enable and add esmi_ib_library as a resource
+        args.append(self.define("ENABLE_ESMI_LIB", "OFF"))
         return args
 
     @classmethod
