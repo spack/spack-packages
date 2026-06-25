@@ -23,6 +23,10 @@ class Mathematica(Package):
     url = "file://{0}/Mathematica_12.0.0_LINUX.sh".format(os.getcwd())
     manual_download = True
 
+    license("LicenseRef-Wolfram-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version(
         "13.0.1",
         sha256="3672a920c1b4af1afd480733f6d67665baf8258757dfe59a6ed6d7440cf26dba",
@@ -56,7 +60,7 @@ class Mathematica(Package):
         # Backup .spack because Mathematica moves it but never restores it
         copy_tree(join_path(prefix, ".spack"), join_path(self.stage.path, ".spack"))
 
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh(
             self.stage.archive_file,
             "--",
@@ -70,7 +74,7 @@ class Mathematica(Package):
         # does not symlink it
         ws_link_path = os.path.join(prefix.bin, "wolframscript")
         if not os.path.exists(ws_link_path):
-            ln = which("ln")
+            ln = which("ln", required=True)
             ws_path = os.path.join(prefix, "Executables", "wolframscript")
             ln("-s", ws_path, ws_link_path)
 

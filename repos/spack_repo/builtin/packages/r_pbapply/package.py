@@ -20,6 +20,7 @@ class RPbapply(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.7-4", sha256="6a5c7110a6bf13735374d3b2e75b32ec0e0f0276ad95e928d2c802b53ff1302d")
     version("1.7-2", sha256="aeed8c8c308c7e3827daf10b01b8ed4b88c1d68cea57d72d67c600c0ce0dae13")
     version("1.7-0", sha256="64b8e931e0a09031c20b66173ce80a646043b8f135d329bc86226a11c6b706c0")
     version("1.5-0", sha256="effdfee286e5ba9534dc2ac3cee96590a37f5cd2af28c836d00c25ca9f070a55")

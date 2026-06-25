@@ -57,6 +57,13 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="master")
 
     version(
+        "4.9.0",
+        sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
+        url="https://bit.ly/mfem-4-9",
+        extension="tar.gz",
+    )
+
+    version(
         "4.8.0",
         sha256="49bd2a076b0d87863092cb55f8524b5292d9afb2e48c19f80222ada367819016",
         url="https://bit.ly/mfem-4-8",
@@ -257,44 +264,64 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
         description="C++ language standard",
     )
 
-    conflicts("+shared", when="@:3.3.2")
     conflicts("~static~shared")
     # CMake only handles one build mode at a time
     conflicts("+shared+static", when="build_system=cmake")
     conflicts("~threadsafe", when="@:3+openmp")
     requires("+threadsafe", when="+openmp")
 
-    conflicts("+cuda", when="@:3")
-    conflicts("+rocm", when="@:4.1")
     conflicts("+cuda+rocm")
-    conflicts("+netcdf", when="@:3.1")
-    conflicts("+superlu-dist", when="@:3.1")
-    # STRUMPACK support was added in mfem v3.3.2, however, here we allow only
-    # strumpack v3+ support for which is available starting with mfem v4.0:
-    conflicts("+strumpack", when="@:3")
-    conflicts("+gnutls", when="@:3.1")
-    conflicts("+zlib", when="@:3.2")
-    conflicts("+mpfr", when="@:3.2")
-    conflicts("+petsc", when="@:3.2")
-    conflicts("+slepc", when="@:4.1")
-    conflicts("+sundials", when="@:3.2")
-    conflicts("+pumi", when="@:3.3.2")
-    conflicts("+gslib", when="@:4.0")
-    conflicts("timer=mac", when="@:3.3.0")
-    conflicts("timer=mpi", when="@:3.3.0")
-    conflicts("~metis+mpi", when="@:3.3.0")
-    conflicts("+metis~mpi", when="@:3.3.0")
-    conflicts("+conduit", when="@:3.3.2")
-    conflicts("+occa", when="mfem@:3")
-    conflicts("+raja", when="mfem@:3")
-    conflicts("+libceed", when="mfem@:4.0")
-    conflicts("+umpire", when="mfem@:4.0")
-    conflicts("+amgx", when="mfem@:4.1")
     conflicts("+amgx", when="~cuda")
     conflicts("+mpi~cuda ^hypre+cuda")
-    conflicts("+mpi ^hypre+cuda", when="@:4.2")
     conflicts("+mpi~rocm ^hypre+rocm")
-    conflicts("+mpi ^hypre+rocm", when="@:4.3")
+
+    with when("@:3"):
+        conflicts("+cuda")
+        # STRUMPACK support was added in mfem v3.3.2, however, here we allow only
+        # strumpack v3+ support for which is available starting with mfem v4.0:
+        conflicts("+strumpack")
+        conflicts("+occa")
+        conflicts("+raja")
+
+    with when("@:3.1"):
+        conflicts("+netcdf")
+        conflicts("+superlu-dist")
+        conflicts("+gnutls")
+
+    with when("@:3.2"):
+        conflicts("+zlib")
+        conflicts("+mpfr")
+        conflicts("+petsc")
+        conflicts("+sundials")
+
+    with when("@:3.3.0"):
+        conflicts("timer=mac")
+        conflicts("timer=mpi")
+        conflicts("~metis+mpi")
+        conflicts("+metis~mpi")
+
+    with when("@:3.3.2"):
+        conflicts("+shared")
+        conflicts("+pumi")
+        conflicts("+conduit")
+
+    with when("@:4.0"):
+        conflicts("+gslib")
+        conflicts("+libceed")
+        conflicts("+umpire")
+
+    with when("@:4.1"):
+        conflicts("+rocm")
+        conflicts("+amgx")
+        conflicts("+slepc")
+
+    with when("@:4.2"):
+        conflicts("+mpi ^hypre+cuda")
+
+    with when("@:4.3"):
+        conflicts("+mpi ^hypre+rocm")
+        # See https://github.com/mfem/mfem/issues/2957
+        conflicts("^mpich@4:", when="+mpi")
 
     conflicts("+superlu-dist", when="~mpi")
     conflicts("+strumpack", when="~mpi")
@@ -303,9 +330,6 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+pumi", when="~mpi")
     conflicts("timer=mpi", when="~mpi")
     conflicts("+mumps", when="~mpi")
-
-    # See https://github.com/mfem/mfem/issues/2957
-    conflicts("^mpich@4:", when="@:4.3+mpi")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
@@ -316,6 +340,7 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("hipsparse", when="@4.4.0:+rocm")
     depends_on("hipblas", when="@4.8.0:+rocm")
+    depends_on("hipcub", when="@4.9.0:+rocm")
 
     with when("+mpi"):
         depends_on("hypre")
@@ -337,14 +362,14 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("blas", when="+lapack")
     depends_on("lapack@3.0:", when="+lapack")
 
-    depends_on("sundials@2.7.0:", when="@3.3.2:+sundials~mpi")
-    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:+sundials+mpi")
+    depends_on("sundials@2.7.0:", when="@3.3.2:4.0+sundials~mpi")
+    depends_on("sundials@2.7.0:+mpi+hypre", when="@3.3.2:4.0+sundials+mpi")
     depends_on("sundials@5.0.0:5", when="@4.1.0:4.4+sundials~mpi")
     depends_on("sundials@5.0.0:5+mpi+hypre", when="@4.1.0:4.4+sundials+mpi")
     depends_on("sundials@5.0.0:6.7.0", when="@4.5.0:4.6+sundials~mpi")
     depends_on("sundials@5.0.0:6.7.0+mpi+hypre", when="@4.5.0:4.6+sundials+mpi")
     depends_on("sundials@5.0.0:", when="@4.7.0:+sundials~mpi")
-    depends_on("sundials@5.0.0:+mpi+hypre", when="@4.7.0:+sundials+mpi")
+    depends_on("sundials@5.0.0:+mpi", when="@4.7.0:+sundials+mpi")
     conflicts("cxxstd=11", when="^sundials@6.4.0:")
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
@@ -447,11 +472,11 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     # The MFEM 4.0.0 SuperLU interface fails when using hypre@2.16.0 and
     # superlu-dist@6.1.1. See https://github.com/mfem/mfem/issues/983.
     # This issue was resolved in v4.1.
-    conflicts("+superlu-dist", when="mfem@:4.0 ^hypre@2.16.0: ^superlu-dist@6:")
+    conflicts("+superlu-dist", when="@:4.0 ^hypre@2.16.0: ^superlu-dist@6:")
     # The STRUMPACK v3 interface in MFEM seems to be broken as of MFEM v4.1
     # when using hypre version >= 2.16.0.
     # This issue is resolved in v4.2.
-    conflicts("+strumpack", when="mfem@4.0.0:4.1 ^hypre@2.16.0:")
+    conflicts("+strumpack", when="@4.0.0:4.1 ^hypre@2.16.0:")
     conflicts("+strumpack ^strumpack+cuda", when="~cuda")
 
     depends_on("occa@1.0.8:", when="@:4.1+occa")
@@ -558,6 +583,18 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     patch("mfem-4.7.patch", when="@4.7.0")
     patch("mfem-4.7-sundials-7.patch", when="@4.7.0+sundials ^sundials@7:")
     patch("mfem-4.8-nvcc-c++17.patch", when="@4.8.0+cuda")
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/mfem/mfem/pull/5215.diff?full_index=1",
+        when="@4.8.0:4.9.0 +petsc ^petsc@3.25.0:",
+        sha256="51221b44f83c36042b0b126569591f29a706aae139f0f0d14035c357411f25ae",
+    )
+
+    # Backport fix for potential leak (redundant allocation) in
+    # FiniteElement::GetDofToQuad. PR: https://github.com/mfem/mfem/pull/5155
+    # The PR introduces compilation errors for GCC with OpenMP, so a second
+    # patch is applied on top of it to fix that.
+    # PR: https://github.com/mfem/mfem/pull/5224
+    patch("mfem-4.9.patch", when="@4.9.0")
 
     @property
     def suitesparse_components(self):
@@ -793,7 +830,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             if using_nvcc:
                 cxxstd_flag = "-std=c++" + cxxstd
             else:
-                cxxstd_flag = getattr(self.pkg.compiler, "cxx" + cxxstd + "_flag")
+                cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
 
@@ -853,14 +890,17 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
         if "~static" in spec:
             options += ["STATIC=NO"]
         if "+shared" in spec:
-            options += ["SHARED=YES", "PICFLAG=%s" % (xcompiler + self.pkg.compiler.cxx_pic_flag)]
+            options += ["SHARED=YES", f"PICFLAG={xcompiler + self['cxx'].pic_flag}"]
 
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
             hypre = spec["hypre"]
+            all_hypre_headers = hypre.headers
             all_hypre_libs = hypre.libs
             if "+lapack" in hypre:
                 all_hypre_libs += hypre["lapack"].libs + hypre["blas"].libs
+            if "+umpire" in hypre:
+                all_hypre_headers += hypre["umpire"].headers
 
             hypre_gpu_libs = ""
             if "+cuda" in hypre:
@@ -871,14 +911,14 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
                     hypre_rocm_libs += hypre["rocsparse"].libs
                 if "^rocrand" in hypre:
                     hypre_rocm_libs += hypre["rocrand"].libs
-                if hypre.satisfies("@2.39.0:"):
+                if hypre.satisfies("@2.29.0:"):
                     if "^rocsolver" in hypre:
                         hypre_rocm_libs += hypre["rocsolver"].libs
                     if "^rocblas" in hypre:
                         hypre_rocm_libs += hypre["rocblas"].libs
                 hypre_gpu_libs = " " + ld_flags_from_library_list(hypre_rocm_libs)
             options += [
-                "HYPRE_OPT=-I%s" % hypre.prefix.include,
+                "HYPRE_OPT=%s" % all_hypre_headers.cpp_flags,
                 "HYPRE_LIB=%s%s" % (ld_flags_from_library_list(all_hypre_libs), hypre_gpu_libs),
             ]
 
@@ -892,8 +932,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             lapack_blas = spec["lapack"].libs + spec["blas"].libs
             options += [
                 # LAPACK_OPT is not used
-                "LAPACK_LIB=%s"
-                % ld_flags_from_library_list(lapack_blas)
+                "LAPACK_LIB=%s" % ld_flags_from_library_list(lapack_blas)
             ]
 
         if "+superlu-dist" in spec:
@@ -938,8 +977,8 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
                 # The "+openmp" in the spec means strumpack will TRY to find
                 # OpenMP; if not found, we should not add any flags -- how do
                 # we figure out if strumpack found OpenMP?
-                if not spec.satisfies("%apple-clang"):
-                    sp_opt += [xcompiler + pkg.compiler.openmp_flag]
+                if not self.spec.satisfies("%apple-clang"):
+                    sp_opt += [xcompiler + self["cxx"].openmp_flag]
             if "^parmetis" in strumpack:
                 parmetis = strumpack["parmetis"]
                 sp_opt += [parmetis.headers.cpp_flags]
@@ -1061,7 +1100,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             ]
 
         if "+zlib" in spec:
-            if "@:3.3.2" in spec:
+            if spec.satisfies("@:3.3.2"):
                 options += ["ZLIB_DIR=%s" % spec["zlib-api"].prefix]
             else:
                 options += [
@@ -1094,7 +1133,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             ]
 
         if "+openmp" in spec:
-            options += ["OPENMP_OPT=%s" % (xcompiler + pkg.compiler.openmp_flag)]
+            options += ["OPENMP_OPT=%s" % (xcompiler + self["cxx"].openmp_flag)]
 
         if "+cuda" in spec:
             if using_nvcc:
@@ -1154,6 +1193,9 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
                 hipblas = spec["hipblas"]
                 hip_headers += self.all_headers(hipblas)
                 hip_libs += hipblas.libs
+            if "^hipcub" in spec:  # hipcub is needed @4.9.0:+rocm
+                hipcub = spec["hipcub"]
+                hip_headers += self.all_headers(hipcub)
             if "%cce" in spec:
                 # We assume the proper Cray CCE module (cce) is loaded:
                 proc = str(spec.target.family)
@@ -1241,6 +1283,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             umpire_libs = umpire.libs
             if "^camp" in umpire:
                 umpire_opts += umpire["camp"].headers
+                umpire_libs += umpire["camp"].libs
             if "^fmt" in umpire:
                 umpire_opts += umpire["fmt"].headers
                 umpire_libs += umpire["fmt"].libs
@@ -1342,7 +1385,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             mumps_opt = ["-I%s" % mumps.prefix.include]
             if "+openmp" in mumps:
                 if not self.spec.satisfies("%apple-clang"):
-                    mumps_opt += [xcompiler + compiler.openmp_flag]
+                    mumps_opt += [xcompiler + self["cxx"].openmp_flag]
             options += [
                 "MUMPS_OPT=%s" % " ".join(mumps_opt),
                 "MUMPS_LIB=%s" % ld_flags_from_library_list(mumps.libs),
@@ -1390,7 +1433,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
                 # Replace the definition of MFEM_INC_DIR with '$(MFEM_DIR)' for
                 # miniapps that include directly headers like
                 # "general/forall.hpp" and to avoid mixing source-tree and
-                # install-tree headers that use '#prgma once'.
+                # install-tree headers that use '#pragma once'.
                 filter_file("(MFEM_INC_DIR.*)=.*$", "\\1= $(MFEM_DIR)", "config.mk")
                 shutil.copystat("config.mk.orig", "config.mk")
                 # TODO: miniapps linking to libmfem-common.* will not work.
@@ -1422,10 +1465,10 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
         test_exe = "ex10p" if ("+mpi" in self.spec) else "ex10"
 
         with working_dir(test_dir):
-            make = which("make")
-            make(f"CONFIG_MK={self.config_mk}", test_exe, "parallel=False")
+            make = which("make", required=True)
+            make(f"CONFIG_MK={self.config_mk}", test_exe, parallel=False)
 
-            ex10 = which(test_exe)
+            ex10 = which(test_exe, required=True)
             ex10("--mesh", mesh)
 
     # this patch is only needed for mfem 4.1, where a few

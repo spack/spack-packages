@@ -16,6 +16,7 @@ class PyNbconvert(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("7.17.1", sha256="34d0d0a7e73ce3cbab6c5aae8f4f468797280b01fd8bd2ca746da8569eddd7d2")
     version("7.16.6", sha256="576a7e37c6480da7b8465eefa66c17844243816ce1ccc372633c6b71c3c0f582")
     version("7.16.4", sha256="86ca91ba266b0a448dc96fa6c5b9d98affabde2867b363258703536807f9f7f4")
     version("7.16.3", sha256="a6733b78ce3d47c3f85e504998495b07e6ea9cf9bf6ec1c98dda63ec6ad19142")
@@ -36,6 +37,7 @@ class PyNbconvert(PythonPackage):
 
     variant("serve", default=True, description="Include a webserver")
 
+    depends_on("python@3.9:", when="@7.17:", type=("build", "run"))
     depends_on("python@3.8:", when="@7.7:", type=("build", "run"))
     depends_on("python@3.7:", when="@6.2.0:", type=("build", "run"))
     depends_on("py-hatchling@1.5:", when="@7.14:", type="build")

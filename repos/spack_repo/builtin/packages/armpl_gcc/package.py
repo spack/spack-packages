@@ -58,6 +58,14 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "26.01.1": {
+        "deb": ("97bea9a6b873d7fbbe0f85150ff32fdc1d08cb3bd012ab79e687a595eb90141f"),
+        "rpm": ("c1206132a02e9ddd476862e63c97f7a3cfe79281788db1d107cd5aa7287c7c8a"),
+    },
+    "26.01": {
+        "deb": ("cc55ab4120a5416fa1e90f98e3007b722a066aac5e445b629e2d3006abe3eadb"),
+        "rpm": ("314728809e279743e37be5ac475c2647f3ab902a5be0735bd318c1dd53a9a064"),
+    },
     "25.07": {
         "deb": ("28a0cdf84b1f8e61d1d1ea484f4e2ecf645f7d916bb002ed34d46f6eb2e41345"),
         "rpm": ("274d6f22b2f6c62cd72db4f64a91189159102aea87e6ae951ce92bcff230133b"),
@@ -403,6 +411,7 @@ class ArmplGcc(Package):
 
     conflicts("%msvc", msg="Not compatible with MSVC compiler.")
 
+    variant("examples", default=True, description="Build and run ArmPL examples after install")
     variant("ilp64", default=False, description="use ilp64 specific Armpl library")
     variant("shared", default=True, description="enable shared libs")
     variant(
@@ -417,16 +426,16 @@ class ArmplGcc(Package):
     provides("lapack")
     provides("fftw-api@3")
 
-    depends_on("c", type="build")
-    depends_on("fortran", type="build")
-    requires("^[virtuals=c,fortran] gcc", msg="armpl-gcc is only compatible with the GCC compiler")
-
-    depends_on("gmake", type="build")
+    with when("+examples"):
+        depends_on("c", type="build")
+        depends_on("fortran", type="build")
+        depends_on("gmake", type="build")
+        requires("%c,fortran=gcc", msg="armpl-gcc examples require GCC toolchain")
 
     # Run the installer with the desired install directory
     def install(self, spec, prefix):
         if spec.platform == "darwin":
-            hdiutil = which("hdiutil")
+            hdiutil = which("hdiutil", required=True)
             # Mount image
             mountpoint = os.path.join(self.stage.path, "mount")
             if spec.satisfies("@:23"):
@@ -476,13 +485,16 @@ class ArmplGcc(Package):
             recursive=True,
         )
 
-        # Link the same libraries as the gcc used for Arm PL
-        armpl_libs += find_libraries(
-            ["libgomp", "libm"],
-            root=self["gcc"].prefix,
-            shared=self.spec.satisfies("+shared"),
-            recursive=True,
-        )
+        # Link the same libraries as the gcc used for Arm PL, but only when
+        # building/running examples. Avoid injecting GCC runtimes by default
+        # to keep non-GCC toolchains (e.g., ATfL) conflict-free.
+        if self.spec.satisfies("+examples"):
+            armpl_libs += find_libraries(
+                ["libgomp", "libm"],
+                root=self["gcc"].prefix,
+                shared=self.spec.satisfies("+shared"),
+                recursive=True,
+            )
 
         return armpl_libs
 
@@ -519,8 +531,13 @@ class ArmplGcc(Package):
             env.prepend_path("DYLD_LIBRARY_PATH", join_path(armpl_dir, "lib"))
         else:
             env.prepend_path("LD_LIBRARY_PATH", join_path(armpl_dir, "lib"))
+        if self.spec.satisfies("@:22"):
+            # pkgconfig directory is not in standard ("lib", "lib64", "share") location
+            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "pkgconfig"))
+        else:
+            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "lib/pkgconfig"))
 
-    @run_after("install")
+    @run_after("install", when="+examples")
     def check_install(self):
         armpl_dir = get_armpl_prefix(self.spec)
         suffix = get_armpl_suffix(self.spec)
@@ -547,9 +564,4 @@ class ArmplGcc(Package):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        armpl_dir = get_armpl_prefix(self.spec)
-        if self.spec.satisfies("@:22"):
-            # pkgconfig directory is not in standard ("lib", "lib64", "share") location
-            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "pkgconfig"))
-        else:
-            env.append_path("PKG_CONFIG_PATH", join_path(armpl_dir, "lib/pkgconfig"))
+        self.setup_run_environment(env)

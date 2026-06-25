@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 import re
-import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -53,14 +52,27 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     version("main", branch="main")
 
+    # Note: remember to update `provides("libllvm")` according to major versions listed
+
     # Latest stable
+    version("22.1.5", sha256="263e99bd0b590664a886b0332037ff060e108f4e7b0310b7c8277208858f867d")
+    version("22.1.4", sha256="e813bf8da34ec2b7c108c4067937380fa7d5a04a13f4fe13555dbe388482d69f")
+    version("22.1.3", sha256="7e144bd6da8177757434cc0dfd1476122f143413df379c6d6cf03843512b5a9e")
+    version("22.1.2", sha256="a252efd7a4a268d2cc5145b17adcaa82757fdee1d06d748b4c24137807710ecb")
+    version("22.1.1", sha256="c48878550911a8a8993a749e6118446082656768e62b26456ac7d39c4422b409")
+    version("22.1.0", sha256="933765a1c2cd518d95a9033a92d88d7109a79aefa4609247c31f28b8bc8dd96e")
+
+    # Previous stable series releases
+    version("21.1.8", sha256="7ba3f2a8d8fda88be18a31d011e8195d3b7f87f9fa92b20c94cba2d7f65b0e3f")
+    version("21.1.7", sha256="9ee167cdf8f6b5221d6b02dbe9a664cf8c6fee70fab071aaa4a3889c7c265258")
+    version("21.1.6", sha256="2380973eb435b48bd70881939da3629069009a851c81676dfb211a1b068d72a6")
+    version("21.1.5", sha256="297b35033b84da7c1214b05f901e154c1d7febe8fe51ecdbf27b0d0f9531902f")
     version("21.1.4", sha256="3a0921d78be74302cb054da1dad59e706814d8fed3a6ac9b532e935825a0715c")
     version("21.1.3", sha256="5bc91fe86bafebc64189465faca1ff35626dcb1b8539a14ae2ec07834c3e8e95")
     version("21.1.2", sha256="eced3dd78186621f4df8a1accbcd1ecf2ee399571e62d052c21e9bf363af2166")
     version("21.1.1", sha256="5f048351ee63050d7fa45b6a1160768fb222a8d306a89e1344515ef7a4bcd278")
     version("21.1.0", sha256="fba0618cf8de48ec05880c446edd756a2669157eab9d29949e971c77da10275f")
 
-    # Previous stable series releases
     version("20.1.8", sha256="a6cbad9b2243b17e87795817cfff2107d113543a12486586f8a055a2bb044963")
     version("20.1.7", sha256="91865189d0ca30ca81b7f7af637aca745b6eeeba97c5dfb0ab7d79a1d9659289")
     version("20.1.6", sha256="afa487c401613f5e4a35935b2abfb5d07e6ebfa20df32787e34a5c7e97c6ea4b")
@@ -70,29 +82,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("20.1.2", sha256="9ee597456405ddf4809bcf66a4765137a68a85361347ca2a4bb13d9176e932ab")
     version("20.1.1", sha256="edde69aa3e48a3892a8f01332ff79cfb6179151b42503c4ba77d2cd408b013bf")
     version("20.1.0", sha256="08bc382733777dda3c96259e3732ff96c1df98d0470c4f85b163274eae687f4f")
-
-    with default_args(deprecated=True):
-        version(
-            "19.1.6", sha256="f07fdcbb27b2b67aa95e5ddadf45406b33228481c250e65175066d36536a1ee2"
-        )
-        version(
-            "19.1.5", sha256="e2204b9903cd9d7ee833a2f56a18bef40a33df4793e31cc090906b32cbd8a1f5"
-        )
-        version(
-            "19.1.4", sha256="010e1fd3cabee8799bd2f8a6fbc68f28207494f315cf9da7057a2820f79fd531"
-        )
-        version(
-            "19.1.3", sha256="e5106e2bef341b3f5e41340e4b6c6a58259f4021ad801acf14e88f1a84567b05"
-        )
-        version(
-            "19.1.2", sha256="622cb6c5e95a3bb7e9876c4696a65671f235bd836cfd0c096b272f6c2ada41e7"
-        )
-        version(
-            "19.1.1", sha256="115dfd98a353d05bffdab3f80db22f159da48aca0124e8c416f437adcd54b77f"
-        )
-        version(
-            "19.1.0", sha256="0a08341036ca99a106786f50f9c5cb3fbe458b3b74cab6089fd368d0edb2edfe"
-        )
 
     # Final releases of previous versions
     version("19.1.7", sha256="59abea1c22e64933fad4de1671a61cdb934098793c7a31b333ff58dc41bff36c")
@@ -190,8 +179,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "gold",
-        default=(sys.platform != "darwin"),
-        description="Add support for LTO with the gold linker plugin",
+        default=False,
+        description="Add support for LTO with the gold linker plugin (deprecated)",
     )
     variant("split_dwarf", default=False, description="Build with split dwarf information")
     variant(
@@ -207,7 +196,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     )
     variant(
         "targets",
-        default="all",
+        default="aarch64,amdgpu,nvptx,x86",
         description=(
             "What targets to build. Spack's target family is always added "
             "(e.g. X86 is automatically enabled when targeting znver2)."
@@ -283,24 +272,26 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
 
-    provides("libllvm@20", when="@20.0.0:20")
-    provides("libllvm@19", when="@19.0.0:19")
-    provides("libllvm@18", when="@18.0.0:18")
-    provides("libllvm@17", when="@17.0.0:17")
-    provides("libllvm@16", when="@16.0.0:16")
-    provides("libllvm@15", when="@15.0.0:15")
-    provides("libllvm@14", when="@14.0.0:14")
-    provides("libllvm@13", when="@13.0.0:13")
-    provides("libllvm@12", when="@12.0.0:12")
-    provides("libllvm@11", when="@11.0.0:11")
-    provides("libllvm@10", when="@10.0.0:10")
-    provides("libllvm@9", when="@9.0.0:9")
-    provides("libllvm@8", when="@8.0.0:8")
-    provides("libllvm@7", when="@7.0.0:7")
-    provides("libllvm@6", when="@6.0.0:6")
-    provides("libllvm@5", when="@5.0.0:5")
-    provides("libllvm@4", when="@4.0.0:4")
-    provides("libllvm@3", when="@3.0.0:3")
+    provides("libllvm@22", when="@22")
+    provides("libllvm@21", when="@21")
+    provides("libllvm@20", when="@20")
+    provides("libllvm@19", when="@19")
+    provides("libllvm@18", when="@18")
+    provides("libllvm@17", when="@17")
+    provides("libllvm@16", when="@16")
+    provides("libllvm@15", when="@15")
+    provides("libllvm@14", when="@14")
+    provides("libllvm@13", when="@13")
+    provides("libllvm@12", when="@12")
+    provides("libllvm@11", when="@11")
+    provides("libllvm@10", when="@10")
+    provides("libllvm@9", when="@9")
+    provides("libllvm@8", when="@8")
+    provides("libllvm@7", when="@7")
+    provides("libllvm@6", when="@6")
+    provides("libllvm@5", when="@5")
+    provides("libllvm@4", when="@4")
+    provides("libllvm@3", when="@3")
 
     provides("c", "cxx", when="+clang")
     provides("fortran", when="+flang")
@@ -378,8 +369,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
-    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
-    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -498,6 +487,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         sha256="c6ca6b925f150e8644ce756023797b7f94c9619c62507231f979edab1c09af78",
         when="@6:13",
     )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/7e44305041d96b064c197216b931ae3917a34ac1.patch?full_index=1",
+        sha256="8459dc31d2dbda4fbd89e5cfe80bc184573de30137b8a2b371c1d702eb75f304",
+        when="@13:18",
+    )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/8f39502b85d34998752193e85f36c408d3c99248.patch?full_index=1",
+        sha256="8b07b12cb9c6c5b571163a68d2f044fd7ce33fb8b3b646d4c5bd6dac4a9fc6c2",
+        when="@12:18",
+    )
+    patch("cstdint-1.patch", when="@18")
+    patch("cstdint-2.patch", when="@11:18")
+
     # fix building of older versions of llvm with newer versions of glibc
     for compiler_rt_as in ["project", "runtime"]:
         with when("compiler-rt={0}".format(compiler_rt_as)):
@@ -661,6 +663,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         when="@21.1.0:21.1.4",
     )
 
+    # https://github.com/llvm/llvm-project/issues/183884
+    patch(
+        "https://github.com/llvm/llvm-project/commit/1e5cc368ba48f984fc5c85e8e421b19fc8cc33a1.patch?full_index=1",
+        sha256="293519af96c3e65947e3738eddf8d6e9b9dac6ff867fb6024e80fefd5c7ad56b",
+        when="@22.1.0",
+    )
+
     @when("@14:17")
     def patch(self):
         # https://github.com/llvm/llvm-project/pull/69458
@@ -708,6 +717,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             if "Apple" in output:
                 return None
             if "AMD" in output:
+                return None
+            if "Arm Toolchain for Linux" in output:
                 return None
             match = re.search(cls.compiler_version_regex, output)
             if match:
@@ -848,7 +859,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     @run_before("cmake")
     def codesign_check(self):
         if self.spec.satisfies("+code_signing"):
-            codesign = which("codesign")
+            codesign = which("codesign", required=True)
             mkdir("tmp")
             llvm_check_file = join_path("tmp", "llvm_check")
             copy("/usr/bin/false", llvm_check_file)

@@ -54,16 +54,17 @@ class Simgrid(CMakePackage):
         sha256="4fdff0a8e4c81f8edf6f7eedfa32e19748abe688d156ea9240178c558c8bad33",
         url="https://github.com/simgrid/simgrid/releases/download/v3_22/SimGrid-3.22.tar.gz",
     )
-    version(
-        "3.21",
-        sha256="d2a6e9021016dd39a2b6f8d5d18c8223f6885746c5269550d19ba29c47c0c6a0",
-        url="https://github.com/simgrid/simgrid/releases/download/v3_21/SimGrid-3.21.tar.gz",
-    )
-    version(
-        "3.20",
-        sha256="4d4757eb45d87cf18d990d589c31d223b0ea8cf6fcd8c94fca4d38162193cef6",
-        url="https://github.com/simgrid/simgrid/releases/download/v3.20/SimGrid-3.20.tar.gz",
-    )
+    with default_args(deprecated=True):
+        version(
+            "3.21",
+            sha256="d2a6e9021016dd39a2b6f8d5d18c8223f6885746c5269550d19ba29c47c0c6a0",
+            url="https://github.com/simgrid/simgrid/releases/download/v3_21/SimGrid-3.21.tar.gz",
+        )
+        version(
+            "3.20",
+            sha256="4d4757eb45d87cf18d990d589c31d223b0ea8cf6fcd8c94fca4d38162193cef6",
+            url="https://github.com/simgrid/simgrid/releases/download/v3.20/SimGrid-3.20.tar.gz",
+        )
 
     version("develop", branch="master")
 
@@ -72,10 +73,12 @@ class Simgrid(CMakePackage):
     variant("examples", default=False, description="Install examples")
     variant("mc", default=False, description="Model checker")
     variant("msg", default=False, description="Enables the old MSG interface")
+    variant("python", default=False, description="Enables the Python bindings")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    extends("python", when="+python")  # generated
 
     # does not build correctly with some old compilers -> rely on packages
     depends_on("boost@:1.69.0", when="@:3.21")
@@ -90,7 +93,14 @@ class Simgrid(CMakePackage):
 
     conflicts("+msg", when="@3.34:", msg="MSG was removed from SimGrid v3.33.")
 
-    def setup_dependent_package(self, module, dep_spec):
+    # fix compilation with GCC 14 for v3.34
+    patch(
+        "https://github.com/simgrid/simgrid/commit/e4ecb51dcdf597fb02340d7855dafd0da9bd9018.patch?full_index=1",
+        sha256="80cbe0eed635ff1864f0c2945763c8561b86c08c0c2b60d2ee5a57e1659ccc3d",
+        when="@3.34",
+    )
+
+    def setup_dependent_package(self, module, dependent_spec):
         if self.spec.satisfies("+smpi"):
             self.spec.smpicc = join_path(self.prefix.bin, "smpicc")
             self.spec.smpicxx = join_path(self.prefix.bin, "smpicxx")
@@ -99,7 +109,7 @@ class Simgrid(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        args = [self.define_from_variant("enable_python", "python")]
 
         if not spec.satisfies("+doc"):
             args.append("-Denable_documentation=OFF")

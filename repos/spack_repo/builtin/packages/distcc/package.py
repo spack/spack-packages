@@ -26,7 +26,7 @@ class Distcc(AutotoolsPackage):
     depends_on("libiberty")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

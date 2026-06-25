@@ -33,6 +33,13 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2026.0.stable", branch="release/2026.0")
+    version("2026.0.1", tag="2026.0.1", commit="fc620c4751e6e233725620b2f22b1bcaa07c967f")
+    version("2026.0.0", tag="2026.0.0", commit="7134ddc4bc68b0c7a92f31d1268bdd01e177efc0")
+    version("2025.1.stable", branch="release/2025.1")
+    version("2025.1.2", tag="2025.1.2", commit="b2f42a93d7f40a20398d35905d8d54a4568cb52e")
+    version("2025.1.1", tag="2025.1.1", commit="a1ffae9da0e7da042c70e6ed592db35286e4483d")
+    version("2025.1.0", tag="2025.1.0", commit="9f9bdf0885ffc28ab51251bc5359485ff75d2a21")
     version("2025.0.stable", branch="release/2025.0")
     version("2025.0.1", tag="2025.0.1", commit="ed42fab06e0c4be41fba510f151a5ae153fbd5e5")
     version("2024.01.stable", branch="release/2024.01")
@@ -134,6 +141,8 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("rocm-openmp-extras", when="%llvm-amdgpu", type="build")
+
     with when("@2024.01: build_system=autotools"):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
@@ -192,13 +201,17 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
 
     depends_on("py-docutils", type="build", when="@2025:")
-    depends_on("py-sphinx@6:8", type="build", when="+docs")
-    depends_on("py-myst-parser@3:4", type="build", when="+docs")
-    depends_on("py-sphinx-book-theme@1", type="build", when="+docs")
+    depends_on("py-sphinx@6:", type="build", when="+docs")
+    depends_on("py-sphinx@6:8", type="build", when="@2025.0 +docs")
+    depends_on("py-myst-parser@3:", type="build", when="+docs")
+    depends_on("py-myst-parser@3:4", type="build", when="@2025.0 +docs")
+    depends_on("py-sphinx-book-theme@1:", type="build", when="+docs")
+    depends_on("py-sphinx-book-theme@1", type="build", when="@2025.0 +docs")
 
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("oneapi-igc", when="+gtpin")
+    depends_on("oneapi-igc", when="@2026: +level_zero")
     depends_on("intel-gtpin", when="+gtpin")
     depends_on("opencl-c-headers", when="+opencl")
 
@@ -224,13 +237,17 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         depends_on("roctracer-dev@4.5:", type=("build", "run"), when="+rocm")
         depends_on("rocprofiler-dev@4.5:", type=("build", "run"), when="+rocm")
 
-    with when("@2025:"):
+    with when("@2025:2025.0"):
         # The consideration above is no longer needed as of 2025.0.0, we use libdl and
         # similar tricks to avoid rpath conflicts.
         depends_on("hip@4.5:", when="+rocm")
         depends_on("hsa-rocr-dev@4.5:", when="+rocm")
         depends_on("roctracer-dev@4.5:", when="+rocm")
         depends_on("rocprofiler-dev@4.5:", when="+rocm")
+
+    with when("@2025.1:"):
+        depends_on("rocprofiler-sdk@6.2:", when="+rocm")
+        depends_on("hip@6.2:", type="test", when="+rocm")
 
     conflicts("%gcc@:7", when="@2022.10:", msg="hpctoolkit requires gnu gcc 8.x or later")
     conflicts("%gcc@:6", when="@2021.00:2022.06", msg="hpctoolkit requires gnu gcc 7.x or later")
@@ -281,6 +298,13 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         sha256="ac486278726620ef932c48aef41d5aab6ba0359b5b1eced651724237877f445b",
     )
 
+    # Fix +docs build for 2025.0.x versions before the fix was merged
+    patch(
+        "https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/1395.diff",
+        when="@2025.0:2025.0.1 +docs",
+        sha256="7954f9286e707832595bb31b19137ea9d5c7e3ef801cb9a69d2e1d78d383fdab",
+    )
+
     # Fix a bug where make would mistakenly overwrite hpcrun-fmt.h.
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/merge_requests/751
     @when("@:2022")
@@ -310,15 +334,15 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         cxx = Executable(self["cxx"].cxx)
         cxx(self.test_suite.current_test_data_dir.join("sort.cpp"), "-o", exe)
 
-        hpcrun = which("hpcrun")
+        hpcrun = which("hpcrun", required=True)
         meas = "tst-sort.m"
         hpcrun("-e", "REALTIME@5000", "-t", "-o", meas, "./" + exe)
 
-        hpcstruct = which("hpcstruct")
+        hpcstruct = which("hpcstruct", required=True)
         struct = "tst-sort.hpcstruct"
         hpcstruct("-j", "4", "--time", "-o", struct, "./" + exe)
 
-        hpcprof = which("hpcprof")
+        hpcprof = which("hpcprof", required=True)
         db = "tst-sort.d"
         hpcprof("-S", struct, "-o", db, meas)
 

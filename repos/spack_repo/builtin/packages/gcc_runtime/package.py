@@ -68,7 +68,7 @@ class GccRuntime(Package):
             return
 
         for path, name in libraries:
-            install(path, os.path.join(prefix.lib, name))
+            install(path, os.path.join(prefix.lib, os.path.basename(name)))
 
         if spec.platform in ("linux", "freebsd"):
             _drop_libgfortran_zlib(prefix.lib)

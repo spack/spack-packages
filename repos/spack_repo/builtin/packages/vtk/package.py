@@ -41,6 +41,11 @@ class Vtk(CMakePackage):
     version("9.0.0", sha256="15def4e6f84d72f82386617fe595ec124dda3cbd13ea19a0dcd91583197d8715")
 
     with default_args(deprecated=True):
+        # Keep the newest version of VTK-8 for compatibility with other packages in the repo
+        # LIGGGHTS
+        # SENSEI@3:
+        # VisIt@:3.3
+
         # v8.2.1a is a compatability version of VTK to allow VisIt to build in CI and contains
         # patches that were not tested by VTK CI or for a VTK release
         # - Python 3.8 compatability
@@ -51,14 +56,6 @@ class Vtk(CMakePackage):
             sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb",
         )
         version("8.2.0", sha256="34c3dc775261be5e45a8049155f7228b6bd668106c72a3c435d95730d17d57bb")
-        version("8.1.2", sha256="0995fb36857dd76ccfb8bb07350c214d9f9099e80b1e66b4a8909311f24ff0db")
-        version("8.1.1", sha256="71a09b4340f0a9c58559fe946dc745ab68a866cf20636a41d97b6046cb736324")
-        version("8.1.0", sha256="6e269f07b64fb13774f5925161fb4e1f379f4e6a0131c8408c555f6b58ef3cb7")
-        version("8.0.1", sha256="49107352923dea6de05a7b4c3906aaf98ef39c91ad81c383136e768dcf304069")
-        version("7.1.0", sha256="5f3ea001204d4f714be972a810a62c0f2277fbb9d8d2f8df39562988ca37497a")
-        version("7.0.0", sha256="78a990a15ead79cdc752e86b83cfab7dbf5b7ef51ba409db02570dbdd9ec32c3")
-        version("6.3.0", sha256="92a493354c5fa66bea73b5fc014154af5d9f3f6cee8d20a826f4cd5d4b0e8a5e")
-        version("6.1.0", sha256="bd7df10a479606d529a8b71f466c44a2bdd11fd534c62ce0aa44fad91883fa34")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -94,18 +91,12 @@ class Vtk(CMakePackage):
 
     # Fix missing standard includes that lead to build errors on newer compilers
     # Patch for <limits>
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c.diff",
-        when="@9:9.0",
-        sha256="0546696bd02f3a99fccb9b7c49533377bf8179df16d901cefe5abf251173716d",
-    )
+    # https://gitlab.kitware.com/vtk/vtk/-/commit/e066c3f4fbbfe7470c6207db0fc3f3952db633c
+    patch("vtk_9_include_missing_limits.patch", when="@9:9.0")
     # Patch for <cstdint>
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18782
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
-        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
-        when="@9.1:9.2",
-    )
+
+    patch("vtk_9_1_2_improve_cstdint_includes.patch", when="@9.1:9.2")
 
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
@@ -116,10 +107,6 @@ class Vtk(CMakePackage):
     conflicts("^osmesa", when="+qt")
 
     conflicts("%gcc@13", when="@9.2")
-
-    # VTK 8 vendors a heavily outdated version of CMake's GenerateExportHeader module, which
-    # has a bogus version check for GCC/Intel version to early exit. This drops the early exit.
-    patch("vtk-bogus-compiler-check.patch", when="@7.1:8")
 
     # Based on PyPI wheel availability
     with when("+python"), default_args(type=("build", "link", "run")):
@@ -132,28 +119,12 @@ class Vtk(CMakePackage):
     # We need mpi4py if buidling python wrappers and using MPI
     depends_on("py-mpi4py", when="+python+mpi", type="run")
 
-    # python3.7 compatibility patch backported from upstream
-    # https://gitlab.kitware.com/vtk/vtk/commit/706f1b397df09a27ab8981ab9464547028d0c322
-    patch("python3.7-const-char.patch", when="@7.0.0:8.1.1 ^python@3.7:")
-
     # Broken downstream FindMPI
     patch("vtkm-findmpi-downstream.patch", when="@9.0.0")
-
-    for plat in ["linux", "darwin", "freebsd"]:
-        # use internal FindHDF5
-        patch("internal_findHDF5.patch", when=f"@:8 platform={plat}")
 
     # Fix IOADIOS2 module to work with kits
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/8653
     patch("vtk-adios2-module-no-kit.patch", when="@9:9.0.3")
-
-    # Python 3.8 compatibility for VTK 8.2
-    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/6269
-    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/6275
-    patch("vtk82_python38.patch", when="@8.2.1a")
-
-    # Fix link error in exodusII
-    patch("vtk-8.2-exodusII-gcc11.patch", when="@8.2.1a")
 
     # The use of the OpenGL2 backend requires at least OpenGL Core Profile
     # version 3.2 or higher.
@@ -161,9 +132,7 @@ class Vtk(CMakePackage):
     depends_on("gl@1.2:", when="~opengl2")
 
     depends_on("xz")
-    patch("vtk_find_liblzma.patch", when="@8.2")
-    patch("vtk_movie_link_ogg.patch", when="@8.2")
-    patch("vtk_use_sqlite_name_vtk_expects.patch", when="@8.2")
+
     patch("vtk_proj_include_no_strict.patch", when="@9: platform=windows")
     # allow proj to be detected via a CMake produced export config file
     # failing that, falls back on standard library detection
@@ -224,21 +193,18 @@ class Vtk(CMakePackage):
     depends_on("netcdf-c@:4.9.2", when="io=exodusii")
     depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
     depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
-    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
-    depends_on("eigen@:3", when="@8.2.0:")
-    depends_on("double-conversion", when="@8.2.0:")
-    depends_on("sqlite", when="@8.2.0:")
-    depends_on("pugixml", when="@8.3.0:")
+    depends_on("eigen@:3")
+    depends_on("double-conversion")
+    depends_on("sqlite")
+    depends_on("pugixml", when="@9:")
     depends_on("libogg")
     depends_on("libtheora")
     depends_on("utf8cpp", when="@9:")
-    depends_on("gl2ps", when="@8.1:")
     depends_on("gl2ps@1.4.1:", when="@9:")
-    # "8.2.1a" uses an internal proj so this special cases 8.2.1a
-    depends_on("proj@4:7", when="@:8.2.0, 9:9.1")
+    depends_on("proj@4:7", when="@9:9.1")
     depends_on("proj@8:", when="@9.2:")
     depends_on("cgns@4.1.1:+mpi", when="@9.1: io=cgns +mpi")
     depends_on("cgns@4.1.1:~mpi", when="@9.1: io=cgns ~mpi")
@@ -258,36 +224,18 @@ class Vtk(CMakePackage):
 
     depends_on("nlohmann-json", when="@9.2:")
 
-    # For finding Fujitsu-MPI wrapper commands
-    patch("find_fujitsu_mpi.patch", when="@:8.2.0%fj")
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"
     # See https://gitlab.kitware.com/vtk/vtk/-/issues/18033
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/uploads/c6fa799a1a028b8f8a728a40d26d3fec/vtk-freetype-2.10.3-replace-FT_CALLBACK_DEF.patch",
-        sha256="eefda851f844e8a1dfb4ebd8a9ff92d2b78efc57f205774052c5f4c049cc886a",
-        when="@:9.0.1 ^freetype@2.10.3:",
-    )
+    patch("vtk_freetype_2.10.3_replace_FT_CALLBACK_DEF.patch", when="@:9.0.1 ^freetype@2.10.3:")
 
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
-        sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
-        when="@9.1",
-    )
+    patch("vtk_module_skip_argless_target_calls.patch", when="@9.1")
 
     # SEACAS >= 2024-06-27 needs c++17 which is already required in VTK master.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/00afe3ae0def6c2d0a6f7cb497c8d55874127820.diff",
-        sha256="1e5fb55b14ba6455a1891d27aa4a0506f47e3155014af06f97633ae1ef6e9cc2",
-        when="@9.4",
-    )
+    patch("vtk_minimum_version_cpp_17.patch", when="@9.4")
 
     # Needed to build VTK with external SEACAS.
-    patch(
-        "https://gitlab.kitware.com/vtk/vtk/-/commit/e98526813691e527fff7d5df6a1641ae36c0cf4f.diff",
-        sha256="174930dde06828ead84c68b1a192202766f6297a60f0c54eef6cab2605a466ef",
-        when="@9.4",
-    )
+    patch("vtk_ioss_transform_2d_elem_block_to_3d.patch", when="@9.4")
 
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     #  incorrect member accesses fixed in 9.4
@@ -299,6 +247,30 @@ class Vtk(CMakePackage):
     # regardless of compiler
     # https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=280893
     patch("vtk_clang19_size_t.patch", when="@9.2:9.4.2")
+
+    # Patchs for VTK-8
+    # VTK 8 vendors a heavily outdated version of CMake's GenerateExportHeader module, which
+    # has a bogus version check for GCC/Intel version to early exit. This drops the early exit.
+    patch("vtk-bogus-compiler-check.patch", when="@7.1:8")
+
+    for plat in ["linux", "darwin", "freebsd"]:
+        # use internal FindHDF5
+        patch("internal_findHDF5.patch", when=f"@:8 platform={plat}")
+
+    patch("vtk_find_liblzma.patch", when="@8.2")
+    patch("vtk_movie_link_ogg.patch", when="@8.2")
+    patch("vtk_use_sqlite_name_vtk_expects.patch", when="@8.2")
+
+    # For finding Fujitsu-MPI wrapper commands
+    patch("find_fujitsu_mpi.patch", when="@:8.2.0%fj")
+
+    # Python 3.8 compatibility for VTK 8.2
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/6269
+    # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/6275
+    patch("vtk82_python38.patch", when="@8.2.1a")
+
+    # Fix link error in exodusII
+    patch("vtk-8.2-exodusII-gcc11.patch", when="@8.2.1a")
 
     def patch(self):
         if self.spec.satisfies("@9.2: io=ioss"):
@@ -325,7 +297,7 @@ class Vtk(CMakePackage):
         if self.spec.satisfies("@9.1:"):
             env.append_flags("CFLAGS", "-DH5_USE_110_API")
             env.append_flags("CXXFLAGS", "-DH5_USE_110_API")
-        elif self.spec.satisfies("@8:"):
+        else:
             env.append_flags("CFLAGS", "-DH5_USE_18_API")
             env.append_flags("CXXFLAGS", "-DH5_USE_18_API")
 
@@ -392,8 +364,6 @@ class Vtk(CMakePackage):
 
         # Disable wrappers for other languages.
         cmake_args.append("-DVTK_WRAP_JAVA=OFF")
-        if spec.satisfies("@:8.1"):
-            cmake_args.append("-DVTK_WRAP_TCL=OFF")
 
         # In general, we disable use of VTK "ThirdParty" libs, preferring
         # spack-built versions whenever possible but there are exceptions.
@@ -403,6 +373,9 @@ class Vtk(CMakePackage):
             )
             if spec.satisfies("@:8.0"):
                 cmake_args.append("-DVTK_USE_SYSTEM_GL2PS=OFF")
+
+            if "+mpi" in spec:
+                cmake_args.extend(["-DVTK_Group_MPI:BOOL=ON", "-DVTK_USE_SYSTEM_DIY2:BOOL=OFF"])
         else:
             cmake_args.extend(
                 [
@@ -414,37 +387,20 @@ class Vtk(CMakePackage):
                     f"-DHDF5_ROOT={spec['hdf5'].prefix}",
                 ]
             )
-            if spec.satisfies("@9.1:"):
-                cmake_args.extend(
-                    [
-                        "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
-                        # uses an unreleased version of fmt
-                        "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
-                    ]
-                )
-            if spec.satisfies("@9.2:"):
-                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
-            if spec.satisfies("@9.5:"):
-                cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF")
+            cmake_args.append(self.define_from_variant("VTK_USE_MPI", "mpi"))
 
-        # Some variable names have changed
-        if spec.satisfies("@8.2.0"):
-            cmake_args.append("-DVTK_USE_SYSTEM_PUGIXML:BOOL=OFF")
-        elif spec.satisfies("@:8.1"):
+        if spec.satisfies("@9.1:"):
             cmake_args.extend(
                 [
-                    "-DVTK_USE_SYSTEM_LIBPROJ4:BOOL=OFF",
-                    f"-DNETCDF_CXX_ROOT={spec['netcdf-cxx'].prefix}",
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
+                    # uses an unreleased version of fmt
+                    "-DVTK_MODULE_USE_EXTERNAL_VTK_fmt:BOOL=OFF",
                 ]
             )
-
-        if "+mpi" in spec:
-            if spec.satisfies("@:8.2.0"):
-                cmake_args.extend(["-DVTK_Group_MPI:BOOL=ON", "-DVTK_USE_SYSTEM_DIY2:BOOL=OFF"])
-            else:
-                cmake_args.extend(["-DVTK_USE_MPI=ON"])
-        else:
-            cmake_args.append("-DVTK_USE_MPI=OFF")
+        if spec.satisfies("@9.2:"):
+            cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_verdict:BOOL=OFF")
+        if spec.satisfies("@9.5:"):
+            cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_vtkviskores:BOOL=OFF")
 
         if spec.satisfies("io=ffmpeg"):
             if spec.satisfies("@:8"):
@@ -455,10 +411,10 @@ class Vtk(CMakePackage):
         # Enable/Disable wrappers for Python.
         if "+python" in spec:
             cmake_args.append("-DVTK_WRAP_PYTHON=ON")
+            if spec.satisfies("@9:"):
+                cmake_args.append("-DVTK_PYTHON_VERSION=3")
             if "+mpi" in spec and spec.satisfies("@:8"):
                 cmake_args.append("-DVTK_USE_SYSTEM_MPI4PY:BOOL=ON")
-            if spec.satisfies("@9.0.0: ^python@3:"):
-                cmake_args.append("-DVTK_PYTHON_VERSION=3")
         else:
             cmake_args.append("-DVTK_WRAP_PYTHON=OFF")
 
@@ -466,14 +422,13 @@ class Vtk(CMakePackage):
             cmake_args.extend(["-DCMAKE_MACOSX_RPATH=ON"])
 
         if "+qt" in spec:
-            qt_ver = spec["qt"].version.up_to(1)
-            qt_bin = spec["qt"].prefix.bin
-            qmake_exe = os.path.join(qt_bin, "qmake")
-
             # https://github.com/martijnkoopman/Qt-VTK-viewer/blob/master/doc/Build-VTK.md
             # The content of the above link changes over time with versions.
             # Older commits have information on VTK-8.
             if spec.satisfies("@:8"):
+                qt_ver = spec["qt"].version.up_to(1)
+                qt_bin = spec["qt"].prefix.bin
+                qmake_exe = os.path.join(qt_bin, "qmake")
                 cmake_args.extend(
                     [
                         f"-DVTK_QT_VERSION:STRING={qt_ver}",
@@ -493,21 +448,12 @@ class Vtk(CMakePackage):
             # VTK to build with qt~webkit versions (see the documentation for
             # more info: http://www.vtk.org/Wiki/VTK/Tutorials/QtSetup).
             if "~webkit" in spec["qt"]:
-                if spec.satisfies("@:8"):
-                    cmake_args.extend(
-                        [
-                            "-DVTK_Group_Qt:BOOL=OFF",
-                            "-DModule_vtkGUISupportQt:BOOL=ON",
-                            "-DModule_vtkGUISupportQtOpenGL:BOOL=ON",
-                        ]
-                    )
-                else:
-                    cmake_args.extend(
-                        [
-                            "-DVTK_GROUP_ENABLE_Qt:STRING=NO",
-                            "-DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES",
-                        ]
-                    )
+                cmake_args.extend(
+                    [
+                        "-DVTK_GROUP_ENABLE_Qt:STRING=NO",
+                        "-DVTK_MODULE_ENABLE_VTK_GUISupportQt:STRING=YES",
+                    ]
+                )
 
         if spec.satisfies("io=xdmf"):
             if spec.satisfies("^cmake@3.12:"):
@@ -564,10 +510,6 @@ class Vtk(CMakePackage):
 
         else:
             cmake_args.append("-DVTK_OPENGL_HAS_OSMESA:BOOL=OFF")
-            if spec.satisfies("@:7.9.9"):
-                # This option is gone in VTK 8.1.2
-                cmake_args.append("-DOpenGL_GL_PREFERENCE:STRING=LEGACY")
-
             if "platform=darwin" in spec:
                 cmake_args.extend(["-DVTK_USE_X:BOOL=OFF", "-DVTK_USE_COCOA:BOOL=ON"])
 
@@ -619,6 +561,7 @@ class Vtk(CMakePackage):
             cmake_args.extend(
                 [f"-DCMAKE_C_FLAGS={compile_flags}", f"-DCMAKE_CXX_FLAGS={compile_flags}"]
             )
+
         if spec.satisfies("@:8"):
             vtk_example_arg = "BUILD_EXAMPLES"
         else:

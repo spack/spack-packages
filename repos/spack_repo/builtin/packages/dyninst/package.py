@@ -71,6 +71,12 @@ class Dyninst(CMakePackage):
     depends_on("tbb")
     requires("^[virtuals=tbb] intel-tbb@2019.9:", when="@13.0.0:")
 
+    patch(
+        "https://github.com/dyninst/dyninst/commit/e03567db37547f9a848f68f5a0e2c58d2aa17fe9.patch?full_index=1",
+        when="@:13.0.0 %tbb@2021.1:",
+        sha256="db3ede99643346b1beb9a2f7849e7aba3d36204093b97752c2bc0ec7e9e79290",
+    )
+
     with when("@13.0.0:"):
         depends_on("cmake@3.14.0:", type="build")
         conflicts("cmake@3.19.0")
@@ -83,6 +89,8 @@ class Dyninst(CMakePackage):
         when="@10.0.0:12.2.0",
         sha256="0064d8d51bd01bd0035e1ebc49276f627ce6366d4524c92cf47d3c09b0031f96",
     )
+    # missing <cstdint> include
+    patch("include_cstdint.patch", when="@13.0.0")
 
     requires("%gcc", when="@:12", msg="dyninst builds only with GCC")
 
@@ -112,7 +120,7 @@ class Dyninst(CMakePackage):
 
     def test_ptls(self):
         """Run parseThat on /bin/ls to rewrite with basic instrumentation"""
-        parseThat = which(self.prefix.bin.parseThat)
+        parseThat = which(self.prefix.bin.parseThat, required=True)
         os.environ["DYNINSTAPI_RT_LIB"] = join_path(self.prefix.lib, "libdyninstAPI_RT.so")
         parseThat(
             "--binary-edit={0:s}".format(join_path(self.test_suite.stage, "ls.rewritten")),

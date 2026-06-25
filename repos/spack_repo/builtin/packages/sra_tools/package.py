@@ -14,6 +14,7 @@ class SraTools(CMakePackage):
     homepage = "https://github.com/ncbi/sra-tools"
     git = "https://github.com/ncbi/sra-tools.git"
 
+    version("3.3.0", tag="3.3.0", commit="a7fff20b1a8c1dcf1586dd1a32460b9d2dfb9392")
     version("3.0.3", tag="3.0.3", commit="01f0aa21bb20b84c68ea34404d43da680811e27a")
     version("3.0.0", tag="3.0.0", commit="bd2053a1049e64207e75f4395fd1be7f1572a5aa")
 
@@ -25,15 +26,26 @@ class SraTools(CMakePackage):
     depends_on("libxml2")
     depends_on("ncbi-vdb")
     depends_on("ncbi-vdb@3.0.2:", when="@3.0.3:")
+    depends_on("ncbi-vdb@3.3.0:", when="@3.3.0:")
+
+    variant("internal", default=False, description="Build internal tools", when="@3.0.1:")
+    variant("loaders", default=False, description="Build loaders", when="@3.0.1:")
+    variant("test", default=False, description="Build test tools", when="@3.0.1:")
 
     # The CMakeLists.txt  file set the path to ${TARGDIR}/obj but the code
     # actually uses ${TARGDIR}.
-    patch("ngs-java.patch")
+    patch("ngs-java.patch", when="@:3.0.3")
+
+    # Escape CMAKE_PREFIX_PATH, allow compilation w/o ncbi-vdb being in same directory
+    patch("path.patch", when="@3.1.1:")
 
     def cmake_args(self):
         args = [
             self.define("VDB_INCDIR", format(self.spec["ncbi-vdb"].prefix) + "/include"),
             self.define("VDB_LIBDIR", format(self.spec["ncbi-vdb"].prefix) + "/lib64"),
             self.define("VDB_BINDIR", format(self.spec["ncbi-vdb"].prefix)),
+            self.define_from_variant("BUILD_TOOLS_INTERNAL", "internal"),
+            self.define_from_variant("BUILD_TOOLS_LOADERS", "loaders"),
+            self.define_from_variant("BUILD_TOOLS_TEST_TOOLS", "test"),
         ]
         return args

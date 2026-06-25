@@ -32,11 +32,8 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("release", branch="release")
-    version(
-        "1.1.0",
-        sha256="24eb77decff0370789594a8064060d64b51ba0b9ae9d78c882daada4d8f19a20",
-        preferred=True,
-    )
+    version("1.1.1", sha256="2a6c7a9e036d1756f4f8a6a835a4cee91452197a22ddce755672370ccc296605")
+    version("1.1.0", sha256="24eb77decff0370789594a8064060d64b51ba0b9ae9d78c882daada4d8f19a20")
     version("1.0.0", sha256="5bff5bbd747b7662bb4630889960371d06fcc5e5a962d974a898d1883f196eba")
     variant("shared", default=True, description="build shared libs")
     variant("doubleprecision", default=True, description="enable double precision")
@@ -94,7 +91,7 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
             when="+kokkos +rocm amdgpu_target=%s" % amdgpu_value,
         )
 
-    depends_on("hip@3.7:", when="+rocm")
+    depends_on("hip@5.2:", when="+rocm")
     # CUDA thrust is already include in the CUDA pkg
     depends_on("rocthrust", when="+kokkos+rocm ^cmake@3.24:")
 
@@ -110,6 +107,10 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+sycl", when="~kokkos", msg="Viskores does not support SYCL without Kokkos")
     conflicts("+cuda~cuda_native~kokkos", msg="Cannot have +cuda without a cuda device")
     conflicts("+cuda", when="cuda_arch=none", msg="viskores +cuda requires that cuda_arch be set")
+
+    # https://github.com/Viskores/viskores/pull/161
+    # Must use patch file because PR has conflicts with 1.1 release.
+    patch("device-lib-private-vk11.patch", when="@1.1")
 
     def cmake_args(self):
         spec = self.spec

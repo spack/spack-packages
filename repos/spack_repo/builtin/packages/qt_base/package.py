@@ -39,6 +39,8 @@ class QtPackage(CMakePackage):
     # Default dependencies for all qt-* components
     generator("ninja")
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.19:", when="@6.8.1:", type="build")
+    depends_on("cmake@3.22:", when="@6.9.0:", type="build")
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("python", type="build")
 
@@ -54,6 +56,16 @@ class QtPackage(CMakePackage):
                 if os.path.isdir(dep):
                     if dep in vendor_deps_to_remove:
                         shutil.rmtree(dep)
+
+    @staticmethod
+    def _qt_feature_flag(feature):
+        return f"FEATURE_{feature}"
+
+    def define_qt_feature_from_variant(self, feature, variant=None):
+        return self.define_from_variant(QtPackage._qt_feature_flag(feature), variant or feature)
+
+    def define_qt_feature(self, feature, value=None):
+        return self.define(QtPackage._qt_feature_flag(feature), value)
 
     def cmake_args(self):
         # Start with upstream cmake_args
@@ -148,6 +160,8 @@ class QtBase(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.11.1", sha256="e20852bd45cdef5da5175f3634e285e03e2be7ca437f3d2b7e1a2af7321bca7a")
+    version("6.10.2", sha256="95271bc1f32db239723f597ab1899e624e3b22a16678b88520dee51ad5035faa")
     version("6.10.1", sha256="088c248d7dfbcba1e60fc4fa7a46406c6c638687cd3dbd412cdd13fc21198df9")
     version("6.10.0", sha256="6bc0cab63e70ef9634825de47790409079e00da77bad18d036b7ab83c5618346")
     version("6.9.3", sha256="4b31f7501613a45a2ad26f30b09127287edf525387865754e5edd5ba4f8c4b32")
@@ -218,7 +232,8 @@ class QtBase(QtPackage):
         depends_on("libdrm")
         depends_on("at-spi2-core", when="+accessibility")
     depends_on("dbus", when="+dbus")
-    depends_on("gl", when="+opengl")
+    depends_on("gl", when="+opengl", type=("build", "link"))
+    depends_on("glu", when="+opengl", type=("build", "link"))
     depends_on("sqlite", when="+sql")
 
     with when("+gui"):
@@ -242,7 +257,7 @@ class QtBase(QtPackage):
     with when("+network"):
         depends_on("openssl")
         with when("platform=linux"):
-            depends_on("libproxy")
+            depends_on("libproxy", type=("link", "run"))
 
     # Qt6 requires newer compilers: see https://github.com/spack/spack/issues/34418
     conflicts("%gcc@:7")
@@ -284,35 +299,24 @@ class QtBase(QtPackage):
 
         args = super().cmake_args()
 
-        def define(cmake_var, value):
-            args.append(self.define(cmake_var, value))
-
-        def define_from_variant(cmake_var, variant=None):
-            result = self.define_from_variant(cmake_var, variant)
-            if result:
-                # Not a conditional variant
-                args.append(result)
-
-        def define_feature(key, variant=None):
-            if variant is None:
-                variant = key
-            define_from_variant("FEATURE_" + key, variant)
-
-        define_from_variant("BUILD_SHARED_LIBS", "shared")
-        define("FEATURE_optimize_size", spec.satisfies("build_type=MinSizeRel"))
-
         # Top-level features
-        define_feature("accessibility")
-        # concurrent: default to on
-        define_feature("dbus")
-        define_feature("framework")
-        define_feature("gui")
-        define_feature("network")  # note: private feature
-        # testlib: default to on
-        # thread: default to on
-        define_feature("widgets")  # note: private feature
-        define_feature("sql")  # note: private feature
-        # xml: default to on
+        args.extend(
+            [
+                self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+                self.define_qt_feature("optimize_size", spec.satisfies("build_type=MinSizeRel")),
+                self.define_qt_feature_from_variant("accessibility"),
+                # concurrent: default to on
+                self.define_qt_feature_from_variant("dbus"),
+                self.define_qt_feature_from_variant("framework"),
+                self.define_qt_feature_from_variant("gui"),
+                self.define_qt_feature_from_variant("network"),  # note: private feature
+                # testlib: default to on
+                # thread: default to on
+                self.define_qt_feature_from_variant("widgets"),  # note: private feature
+                self.define_qt_feature_from_variant("sql"),  # note: private feature
+                # xml: default to on
+            ]
+        )
 
         # Extra FEATURE_ toggles
         features = []
@@ -323,8 +327,10 @@ class QtBase(QtPackage):
             if sys.platform == "linux":
                 features.append("libproxy")
         for k in features:
-            define("FEATURE_" + k, True)
+            args.append(self.define_qt_feature(k, True))
 
+        # Disable EGL feature to avoid implicit EGL detection
+        args.append(self.define("FEATURE_egl", "no"))
         if "~opengl" in spec:
             args.append(self.define("INPUT_opengl", "no"))
 
@@ -333,7 +339,7 @@ class QtBase(QtPackage):
         if "+sql" in spec:
             sys_inputs.append("sqlite")
         for k in sys_inputs:
-            define("INPUT_" + k, "system")
+            args.append(self.define("INPUT_" + k, "system"))
 
         # FEATURE_system_* arguments: on/off
         sys_features = [
@@ -356,7 +362,7 @@ class QtBase(QtPackage):
         if "+network" in spec:
             sys_features += [("proxies", True)]
         for k, v in sys_features:
-            define("FEATURE_system_" + k, v)
+            args.append(self.define_qt_feature(f"system_{k}", v))
 
         return args
 

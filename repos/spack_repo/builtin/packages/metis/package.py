@@ -250,7 +250,7 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
     def check(self):
         # On some systems, the installed binaries for METIS cannot
         # be executed without first being read.
-        ls = which("ls")
+        ls = which("ls", required=True)
         ls("-a", "-l", self.prefix.bin)
 
         graphchk = Executable(join_path(self.prefix.bin, "graphchk"))

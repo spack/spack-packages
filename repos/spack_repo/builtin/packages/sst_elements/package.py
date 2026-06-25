@@ -15,12 +15,14 @@ class SstElements(AutotoolsPackage):
 
     homepage = "https://github.com/sstsimulator"
     git = "https://github.com/sstsimulator/sst-elements.git"
-    url = "https://github.com/sstsimulator/sst-elements/releases/download/v15.0.0_Final/sstelements-15.0.0.tar.gz"
+    url = "https://github.com/sstsimulator/sst-elements/releases/download/v15.1.0_Final/sstelements-15.1.0.tar.gz"
 
     maintainers("berquist", "jmlapre", "naromero77")
 
     license("BSD-3-Clause")
 
+    version("16.0.0", sha256="e0f72777df2d0619bd529334994132d919bd0cdc8f1e84bcbc4200564482258f")
+    version("15.1.0", sha256="e7162bb8719341230217dd5ab9d36bb9529ed9ce3d206ca74948044290080c93")
     version("15.0.0", sha256="98f7fbd4bce16f639616edb889fb3c6667b50899273114854e77fcdb26bcddd6")
     version("14.1.0", sha256="433994065810d3afee4e355173e781cd76171043cce8835bbc40887672a33350")
     version("14.0.0", sha256="68eab77febdd0138a497249d854e1cb0c3a67b1c56c4d51f1fe35df12dcd1b9c")
@@ -64,16 +66,15 @@ class SstElements(AutotoolsPackage):
     variant("otf2", default=False, description="Build with OTF2")
     variant("ariel_mpi", default=False, description="Build Ariel with MPI Support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("python@:3.11", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
     depends_on("sst-core")
     depends_on("sst-core@develop", when="@develop")
     depends_on("sst-core@master", when="@master")
 
-    depends_on("intel-pin", when="+pin")
+    depends_on("intel-pin@:3", when="+pin")
     depends_on("dramsim2@2:", when="+dramsim2")
     depends_on("dramsim3@master", when="+dramsim3")
     depends_on("sst-dumpi@master", when="+dumpi")
@@ -93,7 +94,7 @@ class SstElements(AutotoolsPackage):
     depends_on("mpi", when="+ariel_mpi")
 
     for version_name in ("master", "develop"):
-        depends_on("autoconf@1.68:", type="build", when="@{}".format(version_name))
+        depends_on("autoconf@2.69:", type="build", when="@{}".format(version_name))
         depends_on("automake@1.11.1:", type="build", when="@{}".format(version_name))
         depends_on("libtool@1.2.4:", type="build", when="@{}".format(version_name))
         depends_on("m4", type="build", when="@{}".format(version_name))
@@ -112,12 +113,16 @@ class SstElements(AutotoolsPackage):
     )
     requires("+pin", when="+ariel_mpi", msg="Building Ariel requires pin")
 
+    with when("^mpi=openmpi"):
+        # < 4 is untested and 5 doesn't pass tests due to reference outputs
+        depends_on("openmpi@4")
+
     # force out-of-source builds
     build_directory = "spack-build"
 
     @when("@develop,master")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):

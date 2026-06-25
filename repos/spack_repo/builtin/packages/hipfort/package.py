@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Hipfort(CMakePackage):
+class Hipfort(ROCmLibrary, CMakePackage):
     """Radeon Open Compute Parallel Primitives Library"""
 
     homepage = "https://github.com/ROCm/hipfort"
@@ -18,6 +19,13 @@ class Hipfort(CMakePackage):
     license("MIT")
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libhipfort-amdgcn.a", "libhipfort-nvptx.a"]
+
+    version("7.2.3", sha256="21cb7049a1696a3f91666e5dcae184c496846c26618da3263affb7659fa659f5")
+    version("7.2.1", sha256="a908ed8a3f871581e55166fdbfdd24ab97d1a5ff91573b552ed3cae89607c298")
+    version("7.2.0", sha256="0e59a7fd503ed4a76db89b3c679658108d3f0a7e6730ecfb7555087b203805c8")
+    version("7.1.1", sha256="4e1e1aafc6eec9cabed3c90777591a15b033b8f9a58cacbaadf92cc21fcd896f")
+    version("7.1.0", sha256="b4e74b92919e59cbccbc0baf611f49d50e7d160d2fda86e6eb2aed78ff20f89c")
     version("7.0.2", sha256="25de35f1d261f82a6022b0eb0322167398971bde3d48483f8936f3341b510ab2")
     version("7.0.0", sha256="7b6f7033ec4b73934bd1b04a396f9e920eac5f5a2c17d06fc2a74aeb38b2f27f")
     version("6.4.3", sha256="6cfd4f704ee4f156d15afa30b8e029a4af336a6cb60fe4f6ca6fb85c86a266bd")
@@ -70,6 +78,11 @@ class Hipfort(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", type="build", when=f"@{ver}")
 

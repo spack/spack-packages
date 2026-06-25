@@ -21,16 +21,17 @@ class RYapsa(RPackage):
 
     license("GPL-3.0-or-later")
 
-    version("1.26.0", commit="eab6bbd7a44e1368c7827e4717439de445303868")
-    version("1.24.0", commit="68d1c9c71af3ade4a44237ec2d3003688378f898")
-    version("1.22.0", commit="55c2886874f154c737264ce6843089bf3565fa57")
-    version("1.20.1", commit="6c3f437911859df6f6e4a9af5571c3a5aafbffb2")
-    version("1.16.0", commit="f344cdb81bb886c633f9325f811912fb59d58eb1")
-    version("1.10.0", commit="06af18e424868eb0f0be6c80e90cbab1eabf3d73")
-    version("1.8.0", commit="402f3f7774fdf8afc7883579ad651c26df0f8fdb")
-    version("1.6.0", commit="2455d272b076835ddb36ad21c01ef15af66abc36")
-    version("1.4.0", commit="6f24150a0689d5215983975ece96c8c205923c72")
-    version("1.2.0", commit="320809b69e470e30a777a383f8341f93064ec24d")
+    with default_args(get_full_repo=True):
+        version("1.26.0", commit="eab6bbd7a44e1368c7827e4717439de445303868")
+        version("1.24.0", commit="68d1c9c71af3ade4a44237ec2d3003688378f898")
+        version("1.22.0", commit="55c2886874f154c737264ce6843089bf3565fa57")
+        version("1.20.1", commit="6c3f437911859df6f6e4a9af5571c3a5aafbffb2")
+        version("1.16.0", commit="f344cdb81bb886c633f9325f811912fb59d58eb1")
+        version("1.10.0", commit="06af18e424868eb0f0be6c80e90cbab1eabf3d73")
+        version("1.8.0", commit="402f3f7774fdf8afc7883579ad651c26df0f8fdb")
+        version("1.6.0", commit="2455d272b076835ddb36ad21c01ef15af66abc36")
+        version("1.4.0", commit="6f24150a0689d5215983975ece96c8c205923c72")
+        version("1.2.0", commit="320809b69e470e30a777a383f8341f93064ec24d")
 
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@1.16.0:")

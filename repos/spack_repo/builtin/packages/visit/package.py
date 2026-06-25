@@ -191,6 +191,7 @@ class Visit(CMakePackage):
     depends_on("conduit~mpi", when="+conduit~mpi")
 
     depends_on("mfem@4.4:", when="+mfem")
+    depends_on("mfem@:4.8", when="@:3.4.1+mfem")  # mfem v4.9 requires c++17
     depends_on("mfem+shared+exceptions+fms+conduit", when="+mfem")
     depends_on("libfms@0.2:", when="+mfem")
     conflicts("^mfem build_system=cmake")
@@ -422,3 +423,29 @@ class Visit(CMakePackage):
 
     # see https://github.com/visit-dav/visit/issues/20055
     unresolved_libraries = ["*"]
+
+    def test_smoke_test(self):
+        """Test visit -cli"""
+        spec = self.spec
+
+        if "~python" in spec:
+            raise SkipTest("Package must be installed with +python")
+
+        visit_cmd = Executable(spec["visit"].prefix.bin.visit)
+        testdir = "smoke_test_build"
+        with working_dir(testdir, create=True):
+            script_file_path = "script_file.py"
+            with open(script_file_path, "w") as f:
+                f.write(
+                    """
+                    from visit import *
+                    if "AddPlot" in dir():
+                         print("VisIt Success")
+                    """
+                )
+            visit_cmd("-cli", "-nowin", "-s", "{script_file_path}")
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def build_test(self):
+        self.test_smoke_test()

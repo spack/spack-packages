@@ -19,7 +19,7 @@ class Tau(Package):
     Java, Python.
     """
 
-    maintainers("wspear", "eugeneswalker", "khuck", "sameershende")
+    maintainers("wspear", "eugeneswalker", "sameershende")
     homepage = "https://www.cs.uoregon.edu/research/tau"
     url = "https://www.cs.uoregon.edu/research/tau/tau_releases/tau-2.30.tar.gz"
     git = "https://github.com/UO-OACISS/tau2"
@@ -29,6 +29,8 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
+    version("2.35.2", sha256="e3dfe11fc71198c2e43d9ad6b238c00711a30a071f48a7ba52b4a81bea694659")
+    version("2.35.1", sha256="fee7c0ae49c370c23489b7c14b312af4611bb06cdb212464a2b0798721e9811f")
     version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")
     version("2.34.1", sha256="0e90726372fa1b6f726eb62b0840350070a00215144853ee07a852a99458c619")
     version("2.34", sha256="229ab425e0532e635a0be76d60b8aa613adf7596d15a9ced0b87e7f243bb2132")
@@ -65,6 +67,7 @@ class Tau(Package):
     darwin_default = not _is_darwin
     libunwind_darwin_default = "none" if _is_darwin else "shared"
 
+    variant("julia", default=False, description="Activate Julia support", when="@2.35.1:")
     variant("scorep", default=False, description="Activates SCOREP support")
     variant("openmp", default=False, description="Use OpenMP threads")
     variant("pthreads", default=True, description="Use POSIX threads")
@@ -190,8 +193,7 @@ class Tau(Package):
     depends_on("libunwind libs=static +pic", when="libunwind=static")
     depends_on("libunwind libs=shared", when="libunwind=shared")
     depends_on("mpi", when="+mpi", type=("build", "run", "link"))
-    # Legacy nvtx is only supported until cuda@12.8, newer cuda only provides nvtx3.
-    depends_on("cuda@:12.8", when="+cuda")
+    depends_on("cuda", when="+cuda")
     depends_on("gasnet", when="+gasnet")
     depends_on("adios2", when="+adios2")
     depends_on("sqlite", when="+sqlite")
@@ -206,13 +208,24 @@ class Tau(Package):
     depends_on("hip", when="+rocprofiler-sdk")
     depends_on("elfutils", when="+rocprofiler-sdk")
     depends_on("comgr", when="+rocprofiler-sdk")
-    depends_on("salt", when="+salt", type="run")
+    depends_on("saltfm", when="+salt", type="run")
     depends_on("hip", when="@2.34: +roctracer")
     depends_on("java", type="run")  # for paraprof
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("dyninst@12.3.0:", when="+dyninst")
+    depends_on("julia@1.6:", when="+julia")
+    depends_on("intel-oneapi-compilers", when="@2.35.2: +level_zero ~force-legacy-l0")
+
+    conflicts(
+        "+julia",
+        when="~pthreads ~ittnotify",
+        msg="Julia support requires +pthreads and +ittnotify",
+    )
 
     conflicts("+comm", when="@:2.34 +python", msg="Bug in +comm with +python up to @2.34")
+
+    # header changes require upstream to add explicit includes
+    conflicts("^cuda@13.2:", when="@:2.35.1 +cuda")
 
     # Elf only required from 2.28.1 on
     conflicts("+elf", when="@:2.28.0")
@@ -224,6 +237,7 @@ class Tau(Package):
     conflicts("+dyninst", when="@:2.32.1")
     conflicts("+disable-no-pie", when="@:2.33.2")
     patch("unwind.patch", when="@2.29.0")
+    patch("pycuda.patch", when="@2.33:2.35.0")
 
     conflicts("+rocprofiler", when="+rocprofv2", msg="Use either rocprofiler or rocprofv2")
     conflicts(
@@ -259,6 +273,7 @@ class Tau(Package):
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
     patch("tau-rocm-disable-rocprofiler-default.patch", when="@2.34.0 +rocm")
+    patch("cuptipc.patch", when="@2.34.1:2.35.1 +cuda")
 
     filter_compiler_wrappers("Makefile", relative_root="include")
     filter_compiler_wrappers("Makefile.tau*", relative_root="lib")
@@ -269,6 +284,11 @@ class Tau(Package):
 
         if self.spec.satisfies("%oneapi"):
             useropt.append("-Wno-error=implicit-function-declaration")
+
+        if "+dyninst" in spec and self.spec.satisfies("@2.32.1:2.35.2"):
+            tbb = spec["intel-tbb"]
+            if tbb.satisfies("@2021.1:"):
+                useropt.append("-DDYNINST_TBB_HAS_VERSION_H")
 
         ##########
         # Selecting a compiler with TAU configure is quite tricky:
@@ -318,6 +338,9 @@ class Tau(Package):
         # written script (nothing related to autotools).  As such it has
         # a few #peculiarities# that make this build quite hackish.
         options = ["-prefix=%s" % prefix]
+
+        if "+julia" in spec:
+            options.append("-julia")
 
         if "+craycnl" in spec:
             options.append("-arch=craycnl")
@@ -417,6 +440,13 @@ class Tau(Package):
                     options.append("-force_legacy_l0")
                 else:
                     options.append("-force_new_l0")
+                    if spec.satisfies("@2.35.2:"):
+                        options.append(
+                            "-intel_iga_lib=%s"
+                            % spec[
+                                "intel-oneapi-compilers"
+                            ].prefix.debugger.latest.opt.debugger.lib
+                        )
 
         if "+opencl" in spec:
             options.append("-opencl")
@@ -581,13 +611,13 @@ class Tau(Package):
             cache_extra_test_sources(self, self.python_test)
 
     def _run_python_test(self, test_name, purpose, work_dir):
-        tau_python = which(self.prefix.bin.tau_python)
+        tau_python = which(self.prefix.bin.tau_python, required=True)
         tau_py_inter = "-tau-python-interpreter=" + self.spec["python"].prefix.bin.python
-        pprof = which(self.prefix.bin.pprof)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             if "+mpi" in self.spec:
                 flag = "mpi"
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun(
                     "-np",
                     "4",
@@ -603,13 +633,13 @@ class Tau(Package):
             pprof()
 
     def _run_default_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./matmult")
             else:
                 flags = ["-T", "serial"]
@@ -617,13 +647,13 @@ class Tau(Package):
             pprof()
 
     def _run_ompt_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi", "-ompt"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./mandel")
             else:
                 flags = ["-T", "serial", "-ompt"]
@@ -631,13 +661,13 @@ class Tau(Package):
             pprof()
 
     def _run_rocm_test(self, test_name, purpose, work_dir):
-        tau_exec = which(self.prefix.bin.tau_exec)
-        pprof = which(self.prefix.bin.pprof)
+        tau_exec = which(self.prefix.bin.tau_exec, required=True)
+        pprof = which(self.prefix.bin.pprof, required=True)
         with test_part(self, f"{test_name}", purpose, work_dir):
             make("all")
             if "+mpi" in self.spec:
                 flags = ["-T", "mpi", "-rocm"]
-                mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+                mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
                 mpirun("-np", "4", self.prefix.bin.tau_exec, *flags, "./gpu-stream-hip")
             else:
                 flags = ["-T", "serial", "-rocm"]

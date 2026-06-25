@@ -47,7 +47,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
-    cxxstds = ("11", "14", "17", "20")
+    cxxstds = ("11", "14", "17", "20", "23")
     variant(
         "cxxstd",
         default="17",

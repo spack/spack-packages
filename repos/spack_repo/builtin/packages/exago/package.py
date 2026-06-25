@@ -11,63 +11,108 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
+def submodules(package):
+    submodules = []
+    submodules.append("tpl/pybind11")
+    submodules.append("tpl/spdlog")
+    submodules.append("tpl/toml11")
+
+    return submodules
+
+
 class Exago(CMakePackage, CudaPackage, ROCmPackage):
     """ExaGO is a package for solving large-scale power grid optimization
     problems on parallel and distributed architectures, particularly targeted
     for exascale machines."""
 
-    homepage = "https://github.com/pnnl/ExaGO"
-    git = "https://github.com/pnnl/ExaGO.git"
+    homepage = "https://github.com/ornl/ExaGO"
+    git = "https://github.com/ornl/ExaGO.git"
     maintainers("ryandanehy", "cameronrutherford", "pelesh")
 
     version(
-        "1.6.0", tag="v1.6.0", commit="159cd173572280ac0f6f094a71dcc3ebeeb34076", submodules=True
+        "2.0.0",
+        tag="v2.0.0",
+        commit="d80d9a00914c096121832c6bb778d83b0b40c3c9",
+        submodules=submodules,
     )
     version(
-        "1.5.1", tag="v1.5.1", commit="84e9faf9d9dad8d851075eba26038338d90e6d3a", submodules=True
+        "1.6.0",
+        commit="159cd173572280ac0f6f094a71dcc3ebeeb34076",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.5.0", tag="v1.5.0", commit="227f49573a28bdd234be5500b3733be78a958f15", submodules=True
+        "1.5.1",
+        commit="84e9faf9d9dad8d851075eba26038338d90e6d3a",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.4.1", tag="v1.4.1", commit="ea607c685444b5f345bfdc9a59c345f0f30adde2", submodules=True
+        "1.5.0",
+        commit="227f49573a28bdd234be5500b3733be78a958f15",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.4.0", tag="v1.4.0", commit="4f4c3fdb40b52ace2d6ba000e7f24b340ec8e886", submodules=True
+        "1.4.1",
+        commit="ea607c685444b5f345bfdc9a59c345f0f30adde2",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.3.0", tag="v1.3.0", commit="58b039d746a6eac8e84b0afc01354cd58caec485", submodules=True
+        "1.4.0",
+        commit="4f4c3fdb40b52ace2d6ba000e7f24b340ec8e886",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.2.0", tag="v1.2.0", commit="255a214ec747b7bdde7a6d8151c083067b4d0907", submodules=True
+        "1.3.0",
+        commit="58b039d746a6eac8e84b0afc01354cd58caec485",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.1.2", tag="v1.1.2", commit="db3bb16e19c09e01402071623258dae4d13e5133", submodules=True
+        "1.1.2",
+        commit="db3bb16e19c09e01402071623258dae4d13e5133",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.1.1", tag="v1.1.1", commit="0e0a3f27604876749d47c06ec71daaca4b270df9", submodules=True
+        "1.1.1",
+        commit="0e0a3f27604876749d47c06ec71daaca4b270df9",
+        submodules=submodules,
+        deprecated=True,
     )
     version(
-        "1.1.0", tag="v1.1.0", commit="dc8dd85544ff1b55a64a3cbbbdf12b8a0c6fdaf6", submodules=True
+        "1.1.0",
+        commit="dc8dd85544ff1b55a64a3cbbbdf12b8a0c6fdaf6",
+        submodules=submodules,
+        deprecated=True,
     )
-    version("1.0.0", tag="v1.0.0", commit="230d7df2f384f68b952a1ea03aad41431eaad283")
-    version("0.99.2", tag="v0.99.2", commit="56961641f50827b3aa4c14524f2f978dc48b9ce5")
-    version("0.99.1", tag="v0.99.1", commit="0ae426c76651ba5a9dbcaeb95f18d1b8ba961690")
-    version("main", branch="main", submodules=True)
-    version("develop", branch="develop", submodules=True)
+    version("1.0.0", commit="230d7df2f384f68b952a1ea03aad41431eaad283", deprecated=True)
+    version("0.99.2", commit="56961641f50827b3aa4c14524f2f978dc48b9ce5", deprecated=True)
+    version("0.99.1", commit="0ae426c76651ba5a9dbcaeb95f18d1b8ba961690", deprecated=True)
+    version("main", branch="main", submodules=submodules)
+    version("develop", branch="develop", submodules=submodules)
     version(
         "snapshot.5-18-2022",
-        tag="5-18-2022-snapshot",
         commit="3eb58335db71bb72341153a7867eb607402067ca",
-        submodules=True,
+        submodules=submodules,
+        deprecated=True,
     )
-    version("kpp2", tag="kpp2", commit="1da764d80a2db793f4c43ca50e50981f7ed3880a", submodules=True)
+    version(
+        "kpp2",
+        commit="1da764d80a2db793f4c43ca50e50981f7ed3880a",
+        submodules=submodules,
+        deprecated=True,
+    )
 
-    # Progrmming model options
+    # Programming model options
     variant("mpi", default=True, description="Enable/Disable MPI")
     variant("raja", default=False, description="Enable/Disable RAJA")
     variant("python", default=True, when="@1.4:", description="Enable/Disable Python bindings")
     variant("logging", default=True, description="Enable/Disable spdlog based logging")
+    variant("testing", default=True, description="Enable/Disable testing")
 
     conflicts(
         "+python", when="+ipopt+rocm", msg="Python bindings require -fPIC with Ipopt for rocm."
@@ -107,10 +152,12 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("pkgconfig", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
-    depends_on("ipopt~mumps", when="+ipopt")
+    depends_on("ipopt", when="+ipopt")
     depends_on("cuda", when="+cuda")
     depends_on("raja", when="+raja")
     depends_on("umpire", when="+raja")
+    depends_on("spdlog", when="@2.0:+logging")
+    depends_on("fmt", when="@2.0:+logging")
     depends_on("cmake@3.18:", type="build")
 
     # Profiling
@@ -153,30 +200,33 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hiop@0.5.1:", when="@1.1.0:+hiop")
     depends_on("hiop@0.5.3:", when="@1.3.0:+hiop")
     depends_on("hiop@0.7.0:1.0.0", when="@1.5.0:1.6.0+hiop")
-    depends_on("hiop@1.0.1:", when="@develop:+hiop")
+    depends_on("hiop@1.0.1:", when="@2.0:+hiop")
 
     depends_on("hiop~mpi", when="+hiop~mpi")
     depends_on("hiop+mpi", when="+hiop+mpi")
+    depends_on("hiop+raja", when="+hiop+raja")
 
     # RAJA dependency logic
     # ExaGO will support +raja~hiop in the future
-    depends_on("hiop+raja", when="+hiop+raja")
-    # This is duplicated from HiOp
-    # RAJA > 0.14 and Umpire > 6.0 require c++ std 14
-    # We are working on supporting newer Umpire/RAJA versions
-    depends_on("raja@0.14.0:0.14 +shared", when="@1.1.0:+raja")
-    depends_on("umpire@6.0.0:6", when="@1.1.0:+raja")
-    depends_on("camp@0.2.3:0.2", when="@1.1.0:+raja")
+    depends_on("raja", when="+raja")
+    depends_on("umpire", when="+raja")
+
     # This is no longer a requirement in RAJA > 0.14
     depends_on("umpire+cuda~shared", when="+raja+cuda ^raja@:0.14")
 
+    # PETSc version dependency logic
     depends_on("petsc@3.13:3.14", when="@:1.2")
     depends_on("petsc@3.16", when="@1.3:1.4")
     depends_on("petsc@3.18:3.19", when="@1.5")
-    depends_on("petsc@3.19:", when="@1.6:")
-
+    depends_on("petsc@3.19:3.23", when="@1.6")
+    depends_on("petsc@3.24:", when="@2.0:")
     depends_on("petsc~mpi", when="~mpi")
 
+    # Ipopt versiondependency logic
+    depends_on("ipopt@3.12", when="@:1.6")
+    depends_on("ipopt@3.14:", when="@2.0:")
+
+    # cuda_arch and amdgpu_target dependency logic
     for arch in CudaPackage.cuda_arch_values:
         cuda_dep = "+cuda cuda_arch={0}".format(arch)
         depends_on("hiop {0}".format(cuda_dep), when=cuda_dep)
@@ -224,7 +274,7 @@ class Exago(CMakePackage, CudaPackage, ROCmPackage):
             [
                 self.define("EXAGO_ENABLE_GPU", "+cuda" in spec or "+rocm" in spec),
                 self.define("PETSC_DIR", spec["petsc"].prefix),
-                self.define("EXAGO_RUN_TESTS", self.run_tests),
+                self.define_from_variant("EXAGO_RUN_TESTS", "testing"),
                 self.define("LAPACK_LIBRARIES", spec["lapack"].libs + spec["blas"].libs),
                 self.define_from_variant("EXAGO_ENABLE_CUDA", "cuda"),
                 self.define_from_variant("EXAGO_ENABLE_HIP", "rocm"),

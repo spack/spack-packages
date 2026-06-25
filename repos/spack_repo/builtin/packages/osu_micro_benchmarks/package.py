@@ -23,6 +23,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
+    version("7.5.2", sha256="618de3d0b1122f73a9229177d2da1e5cd62e431190580cb915f2605849cbbbdc")
     version("7.5.1", sha256="160d0d5e3c3cb022520ecb247e9875bb0973b1d3cadccd6c17624f8407c52e22")
     version("7.5", sha256="1cf84ac5419456202757a757c5f9a4f5c6ecd05c65783c7976421cfd6020b3b3")
     version("7.4", sha256="1edd0c2efa61999409bfb28740a7f39689a5b42b1a1b4c66d1656e5637f7cefc")
@@ -70,15 +71,15 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         if "+cuda" in spec:
             config_args.extend(["--enable-cuda", "--with-cuda=%s" % spec["cuda"].prefix])
             if spec.satisfies("+xccl"):
-                config_args.extend(["--enable-ncclomb", "--with-nccl=%s" % spec["cuda"].prefix])
+                config_args.extend(["--enable-ncclomb", "--with-nccl=%s" % spec["nccl"].prefix])
             cuda_arch = spec.variants["cuda_arch"].value
             if "none" not in cuda_arch:
                 config_args.append("NVCCFLAGS=" + " ".join(self.cuda_flags(cuda_arch)))
 
         if "+rocm" in spec:
-            config_args.extend(["--enable-rocm", "--with-rocm=%s" % spec["hip"].prefix])
+            config_args.extend(["--with-rocm=%s" % spec["hip"].prefix])
             if spec.satisfies("+xccl"):
-                config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["hip"].prefix])
+                config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["rccl"].prefix])
             rocm_arch = spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
                 config_args.append("HCC_AMDGPU_TARGET=" + self.hip_flags(rocm_arch))
@@ -97,6 +98,10 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
         if not sys.platform == "darwin":
             config_args.append("LDFLAGS=-lrt")
         return config_args
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if "+cuda" in self.spec:
+            env.prepend_path("LIBRARY_PATH", self.spec["cuda"].prefix.lib64.stubs)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         mpidir = join_path(self.prefix.libexec, "osu-micro-benchmarks", "mpi")

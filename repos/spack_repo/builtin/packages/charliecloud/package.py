@@ -12,7 +12,7 @@ class Charliecloud(AutotoolsPackage):
 
     maintainers("j-ogas", "reidpr", "loshak")
     homepage = "https://charliecloud.io/"
-    url = "https://gitlab.com/charliecloud/charliecloud/-/archive/v0.42/main-v0.42.tar.gz"
+    url = "https://gitlab.com/charliecloud/charliecloud/-/package_files/290882913/download"
     git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
@@ -20,6 +20,18 @@ class Charliecloud(AutotoolsPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version(
+        "0.44",
+        sha256="2a01ecbb6cb2cfe0495338484fdba1ea63e44a48caff0d77ddd602f9e12177cf",
+        url="https://gitlab.com/charliecloud/charliecloud/-/package_files/290882913/download",
+        extension="tar.gz",
+    )
+    version(
+        "0.43",
+        sha256="540c8d1ac5d6194116abd96f12fad5d3079f82e9fbceca2704e5ecadb3e04299",
+        url="https://gitlab.com/charliecloud/charliecloud/-/package_files/256549905/download",
+        extension="tar.gz",
+    )
     version("0.42", sha256="be98c025f58336a7b6e6d79804ef89dd489c5dcc5ad8faccb551ea0065dcd13a")
     version("0.41", sha256="065cc50f8b7893f8a0e28d9d06e2e3640d0d8139d10ad59fe941aea1e33dfdc6")
     version("0.40", sha256="dcad81136d1fed905be6e573a7bf191ea655ae7827f7980bbe6559942f2affdd")
@@ -96,7 +108,7 @@ class Charliecloud(AutotoolsPackage):
         return self.spec.satisfies("@0.39:")
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")
 
     def configure_args(self):
         args = ["--with-python=/usr/bin/env python3"]

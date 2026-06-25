@@ -26,20 +26,38 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
-    version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
-    version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
-    version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
-    version("9.6p1", sha256="910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c")
-    version("9.5p1", sha256="f026e7b79ba7fb540f75182af96dc8a8f1db395f922bbc9f6ca603672686086b")
-    version("9.4p1", sha256="3608fd9088db2163ceb3e600c85ab79d0de3d221e59192ea1923e23263866a85")
-    version("9.3p1", sha256="e9baba7701a76a51f3d85a62c383a3c9dcd97fa900b859bc7db114c1868af8a8")
+    version("10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2026-35414/
+        # https://www.cvedetails.com/cve/CVE-2026-35387/
+        # https://www.cvedetails.com/cve/CVE-2026-35386/
+        # https://www.cvedetails.com/cve/CVE-2026-35385/
+        version(
+            "10.2p1", sha256="ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2"
+        )
+        # https://www.cvedetails.com/cve/CVE-2025-32728/
+        # https://www.cvedetails.com/cve/CVE-2025-26466/
+        # https://www.cvedetails.com/cve/CVE-2025-26465/
+        version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
+        # https://www.cvedetails.com/cve/CVE-2024-6387/
+        version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
+        # https://www.cvedetails.com/cve/CVE-2024-39894/
+        version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
+        version("9.6p1", sha256="910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c")
+        # https://www.cvedetails.com/cve/CVE-2023-51385/
+        # https://www.cvedetails.com/cve/CVE-2023-51384/
+        # https://www.cvedetails.com/cve/CVE-2023-48795/
+        version("9.5p1", sha256="f026e7b79ba7fb540f75182af96dc8a8f1db395f922bbc9f6ca603672686086b")
+        version("9.4p1", sha256="3608fd9088db2163ceb3e600c85ab79d0de3d221e59192ea1923e23263866a85")
+        # https://www.cvedetails.com/cve/CVE-2023-38408/
+        version("9.3p1", sha256="e9baba7701a76a51f3d85a62c383a3c9dcd97fa900b859bc7db114c1868af8a8")
 
     variant(
         "gssapi", default=True, description="Enable authentication via Kerberos through GSSAPI"
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("krb5+shared", when="+gssapi")
     depends_on("openssl")
@@ -65,7 +83,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/1860b0a745f1fe726900974845d1b0dd3c3398d6/openssh/patch-sandbox-darwin.c-apple-sandbox-named-external.diff",
         sha256="d886b98f99fd27e3157b02b5b57f3fb49f43fd33806195970d4567f12be66e71",
-        when="platform=darwin",
+        when="@:9 platform=darwin",
     )
 
     # https://github.com/Homebrew/homebrew-core/blob/7aabdeb30506be9b01708793ae553502c115dfc8/Formula/o/openssh.rb#L48-L52C6
@@ -78,7 +96,7 @@ class Openssh(AutotoolsPackage):
     patch(
         "https://raw.githubusercontent.com/Homebrew/patches/aa6c71920318f97370d74f2303d6aea387fb68e4/openssh/patch-sshd.c-apple-sandbox-named-external.diff",
         sha256="3f06fc03bcbbf3e6ba6360ef93edd2301f73efcd8069e516245aea7c4fb21279",
-        when="@9.8p1: platform=darwin",
+        when="@9.8p1:9 platform=darwin",
     )
 
     @classmethod

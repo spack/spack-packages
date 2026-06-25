@@ -30,6 +30,12 @@ class Yosys(MakefilePackage):
 
     version("master", branch="master")
 
+    version("0.66", commit="86f2ddebce7e98ce7cacc27e8a5c14cb53b51b51", submodules=True)
+    version("0.65", commit="b85cad634782fafac275e5f540c056bfacb2b5d2", submodules=True)
+    version("0.64", commit="6d2c445aebd37261d0e33ed4d90d09fd1a7bf618", submodules=True)
+    version("0.63", commit="70a11c6bf0e8dd669f56c7da3587f78b405138e2", submodules=True)
+    version("0.62", commit="7326bb7d6641500ecb285c291a54a662cb1e76cf", submodules=True)
+    version("0.61", commit="5ae48ee25f298f7b3c8c0de30bd2f85a94133031", submodules=True)
     version("0.60", commit="5bafeb77dc71e054fa331ab9efa613e6fb0a1c49", submodules=True)
     version("0.59.1", commit="26b51148a80ea546481cf4f0516be97e4ba251cc", submodules=True)
     version("0.59", commit="03eb2206d7b8a830dd32d0e1673986318111a4c3", submodules=True)

@@ -114,7 +114,7 @@ class Rpm(AutotoolsPackage):
     conflicts("~lua", when="@4.17:")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh", "--noconfigure")
 
     def configure_args(self):

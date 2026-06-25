@@ -15,12 +15,16 @@ class SstCore(AutotoolsPackage):
 
     homepage = "https://github.com/sstsimulator"
     git = "https://github.com/sstsimulator/sst-core.git"
-    url = "https://github.com/sstsimulator/sst-core/releases/download/v15.0.0_Final/sstcore-15.0.0.tar.gz"
+    url = "https://github.com/sstsimulator/sst-core/releases/download/v15.1.0_Final/sstcore-15.1.0.tar.gz"
 
     maintainers("berquist", "jmlapre", "naromero77")
 
     license("BSD-3-Clause")
 
+    version("16.0.0", sha256="20733d6334bc80dd8cf5695d1eb3bd32ada80dcf3151695b8dbdbbac28ead616")
+    version("15.1.2", sha256="21aabfddb80c7aaf65e562894e0542bdb871bbc630362c3cef579d949c456f33")
+    version("15.1.1", sha256="651cf5ee1438a5128aea2ad8b518c5437a1637dce357cbcbdd58681fa749222f")
+    version("15.1.0", sha256="ec3d9e733bcf99283b526cfb4a853787d303a8d55b2a42d5102b0f4f4a4feb81")
     version("15.0.0", sha256="ca2875fb36be069e34b10fd9b0ad756dd4c707795f824346aff9523a56f3840c")
     version("14.1.0", sha256="9d17c37d1ebdff8d8eb10ab0084eb901c78a7c5a76db15189e3d7fc318fd6f9d")
     version("14.0.0", sha256="fadc7ee99472ff3ac5d4b3f3e507123e32bd9fb89c4c6b48fbd2dca8aeb8b8d6")
@@ -84,7 +88,7 @@ class SstCore(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build")
 
-    depends_on("python@:3.11", type=("build", "run", "link"))
+    depends_on("python@3.9:", type=("build", "run", "link"))
     depends_on("mpi", when="+pdes_mpi")
     depends_on("zoltan", when="+zoltan")
     depends_on("hdf5 +cxx", when="+hdf5")
@@ -93,7 +97,7 @@ class SstCore(AutotoolsPackage):
     depends_on("ncurses", when="+curses", type=("build", "link"))
 
     with when("@develop,master,14.0.0"):
-        depends_on("autoconf@1.68:", type="build")
+        depends_on("autoconf@2.69:", type="build")
         depends_on("automake@1.11.1:", type="build")
         depends_on("libtool@1.2.4:", type="build")
         depends_on("m4", type="build")
@@ -101,6 +105,10 @@ class SstCore(AutotoolsPackage):
     # Backport of https://github.com/sstsimulator/sst-core/pull/1110
     with when("@14.0.0"):
         patch("1110-ncurses_detection.patch", level=0)
+
+    with when("^mpi=openmpi"):
+        # < 4 is untested and 5 doesn't pass tests due to reference outputs
+        depends_on("openmpi@4")
 
     # force out-of-source builds
     build_directory = "spack-build"
@@ -110,7 +118,7 @@ class SstCore(AutotoolsPackage):
     # that cannot be easily circumvented with `touch`.
     @when("@develop,master,14.0.0")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen.sh")
 
     def configure_args(self):
@@ -126,10 +134,6 @@ class SstCore(AutotoolsPackage):
 
         if self.spec.satisfies("+pdes_mpi"):
             args.append("--enable-mpi")
-            env["CC"] = self.spec["mpi"].mpicc
-            env["CXX"] = self.spec["mpi"].mpicxx
-            env["F77"] = self.spec["mpi"].mpif77
-            env["FC"] = self.spec["mpi"].mpifc
         else:
             args.append("--disable-mpi")
 

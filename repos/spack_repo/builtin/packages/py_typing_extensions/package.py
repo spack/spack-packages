@@ -18,11 +18,13 @@ class PyTypingExtensions(PythonPackage):
 
     license("0BSD AND PSF-2.0")
 
+    version("4.15.0", sha256="0cea48d173cc12fa28ecabc3b837ea3cf6f38c6d1136f85cbaaf598984861466")
     version("4.14.1", sha256="38b39f4aeeab64884ce9f74c94263ef78f3c22467c8724005483154c26648d36")
     version("4.14.0", sha256="8676b788e32f02ab42d9e7c61324048ae4c6d844a399eebace3d4979d75ceef4")
     version("4.13.2", sha256="e6c81219bd689f51865d9e372991c540bda33a0379d5573cddb9a3a23f7caaef")
     version("4.12.2", sha256="1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8")
     version("4.8.0", sha256="df8e4339e9cb77357558cbdbceca33c303714cf861d1eef15e1070055ae8b7ef")
+    version("4.7.1", sha256="b75ddc264f0ba5615db7ba217daeb99701ad295353c45f9e95963337ceeeffb2")
     version("4.6.3", sha256="d91d5919357fe7f681a9f2b5b4cb2a5f1ef0a1e9f59c4d8ff0d3491e05c0ffd5")
     version("4.5.0", sha256="5cb5f4a79139d699607b3ef622a1dedafa84e115ab0024e0d9c044a9479ca7cb")
     version("4.3.0", sha256="e6d2677a32f47fc7eb2795db1dd15c1f34eff616bcaf2cfb5e997f854fa1c4a6")
