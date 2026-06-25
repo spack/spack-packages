@@ -352,6 +352,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("hiprand")
         depends_on("hipsolver")
         depends_on("rocm-core")
+        depends_on("amdsmi")
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
