@@ -244,9 +244,15 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
-    depends_on("deepmdkit", when="+deepmd")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
+
+    conflicts(
+        "+deepmd",
+        when="build_system=makefile",
+        msg="DeepMD only is only available with CMake",
+    )
+    depends_on("deepmdkit", when="+deepmd")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
