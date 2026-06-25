@@ -15,7 +15,10 @@ class PySchemaSalad(PythonPackage):
     pypi = "schema-salad/schema_salad-8.7.20241021092521.tar.gz"
 
     license("Apache-2.0")
-    version("8.9.20260417192335", sha256="5ad4599231dcf7ae8ae2fc841a677db9c120544b36a6d6347ae87875b2c1b083")
+    version(
+        "8.9.20260417192335",
+        sha256="5ad4599231dcf7ae8ae2fc841a677db9c120544b36a6d6347ae87875b2c1b083",
+    )
     version(
         "8.8.20250205075315",
         sha256="444a45509fb048347e0ec205b2af6390f0bb145f7183716ba6af2f75a22b8bdd",
@@ -60,7 +63,9 @@ class PySchemaSalad(PythonPackage):
     depends_on("py-mypy@1.15.0", when="@8.8.20250205075315", type="build")
     depends_on("py-mypy@1.20.1", when="@8.9.20260417192335", type="build")
     depends_on("py-black@19.10b0:", type="build")
-    depends_on("py-black@19.10b0:24.10", when="@8.7.20241021092521:8.8.20250205075315", type="build")
+    depends_on(
+        "py-black@19.10b0:24.10", when="@8.7.20241021092521:8.8.20250205075315", type="build"
+    )
     depends_on("py-black@19.10b0:26.3", type="build", when="@8.9.20260417192335:")
     depends_on("py-types-pkg-resources", when="@:8.4.20231117150958", type="build")
     depends_on("py-types-requests", type="build")
