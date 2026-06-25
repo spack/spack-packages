@@ -1,0 +1,18 @@
+{
+  "$schema": "https://raw.githubusercontent.com/devcontainers/spec/refs/heads/main/schemas/devContainer.base.schema.json",
+  "image": "ghcr.io/spack/ubuntu-noble:develop",
+  "mounts": [
+    {
+      "type": "volume",
+      "source": "spack-installs",
+      "target": "/opt/spack/opt/spack"
+    }
+  ],
+  "onCreateCommand": {
+    "setup-spack-bashrc": "echo '. /opt/spack/share/spack/setup-env.sh' >> /root/.bashrc",
+    "setup-spack-profile": "echo '. /opt/spack/share/spack/setup-env.sh' >> /etc/profile",
+    "add-workspace-as-repo": "/opt/spack/bin/spack repo add --scope site ${containerWorkspaceFolder}/repos/spack_repo/builtin",
+    "compile-for-generic-arch": "/opt/spack/bin/spack config --scope site add \"concretizer:targets:granularity:generic\"",
+    "stage-in-var-tmp": "/opt/spack/bin/spack config --scope site add \"config:build_stage:/var/tmp/spack-stage\""
+  }
+}

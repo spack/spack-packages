@@ -21,6 +21,7 @@ class RCli(RPackage):
 
     license("MIT")
 
+    version("3.6.6", sha256="b2b58d6dd82f5798b335e39c00591686a01fd3e94399ef898e146173e36f18f9")
     version("3.6.3", sha256="4295085f11221c54b1dd2b1d39a675a85dfd9f900294297567e1d36f65ac4841")
     version("3.6.1", sha256="be3006cec7e67f9ae25e21b4658c4bec680038c2ef7467df5f14da3311a05e36")
     version("3.4.1", sha256="1c585efbfd8b8685c66fac34bcb60f28c351691bb4b9931df214e6e47fd9744e")
@@ -37,11 +38,13 @@ class RCli(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@2.10:", type=("build", "run"))
-    depends_on("r@3.4:", type=("build", "run"), when="@3.3.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.4:", when="@3.3.0:")
+        depends_on("r@2.10:")
 
-    depends_on("r-assertthat", type=("build", "run"), when="@:2.3")
-    depends_on("r-crayon@1.3.4:", type=("build", "run"), when="@:2.2")
-    depends_on("r-fansi", type=("build", "run"), when="@2:2.2")
-    depends_on("r-glue", type=("build", "run"), when="@2:3.4.1")
-    depends_on("r-glue@1.6.0:", type=("build", "run"), when="@3.3.0")
+        # Historical dependencies
+        depends_on("r-assertthat", when="@:2.3")
+        depends_on("r-crayon@1.3.4:", when="@:2.2")
+        depends_on("r-fansi", when="@2:2.2")
+        depends_on("r-glue@1.6.0:", when="@3.3.0")
+        depends_on("r-glue", when="@2:3.4.1")

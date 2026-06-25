@@ -18,6 +18,7 @@ class Dorado(CMakePackage, CudaPackage):
 
     maintainers("snehring")
 
+    version("1.4.0", commit="ba44a0132a6fc54ffa790add140ebf6006a5a994", submodules=True)
     version("1.2.0", commit="f9443bb8695f075dadc60bf4d1d92d8fd4361668", submodules=True)
     version("1.1.1", commit="e72f14925cd435fff823ebf244ce2195b135a863", submodules=True)
     version("1.0.2", commit="c758d2f6b01db2993282b4705f75d0cd53af43b8", submodules=True)

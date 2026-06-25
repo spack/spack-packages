@@ -36,12 +36,18 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.40.02", sha256="f631eebee3dbea128f1415f4b784f5e83637a2b431193bce75f10385f71efc56")
+    version("6.40.00", sha256="676f8fde8926ce05902be7f44ce7d492a4a2060022fcab0e3d1c44f6dc0fbde8")
+    version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
+    version("6.36.10", sha256="8ccbfbca9d05016c8c324dd61c25a1091ae61847fb9404298652b83bf0cd3be0")
+    version("6.36.08", sha256="1678fd272cf3172d7ba602e2786ec659bd3ca28b38f0471005d456d968ef55a1")
     version("6.36.06", sha256="62f9d38d2f2ed3d46653529c98e8cbc9b8866776494eb40ba0c23e2f46b681c4")
     version("6.36.04", sha256="cc6367d8f563c6d49ca34c09d0b53cb0f41a528db6f86af111fd76744cda4596")
     version("6.36.02", sha256="510d677b33ac7ca48aa0d712bdb88d835a1ff6a374ef86f1a1e168fa279eb470")
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
     # Supported LTS release series (note: more recent STS releases may be further down)
+    version("6.32.22", sha256="4745ef6763cf2dd72a798785055a14c55c0a74a1b3a939f562f63d605fd57cfd")
     version("6.32.20", sha256="c4a9936d55adea8b5b20db9be2e356d95a0d97c9e78a92cd6494b7294838d261")
     version("6.32.18", sha256="0b7d18b209e2a34e611e7cb2e6b82b6559fd86d64d1a7e8bf65cd13059839956")
     version("6.32.16", sha256="1b9afc6730aa727722cc60d44a403f7a39b7226086181827bc4cabd0bea4c568")
@@ -56,12 +62,16 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
+    version("6.38.06", sha256="104efe8668215fc5ceb818afbf050410f0994694baba2d40f6ac640e15ef8738")
     version("6.38.04", sha256="1ca561d03b3addae00cb76af57f8c75d3c229e8bd6939bdd408ec33fda9d3487")
     version("6.38.02", sha256="77d34d2bca0ea720acfd43798bcb5d09a28584013b4d0a2910823c867d4bfa42")
     version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
 
     # 6.34 (through 2025-06-30)
     with default_args(deprecated=True):
+        version(
+            "6.34.10", sha256="d91aa27fde29b257b347af1750b0c5c51487eb7d4b1767f4df33b4d789b7b313"
+        )
         version(
             "6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8"
         )
@@ -119,38 +129,12 @@ class Root(CMakePackage):
     # Widely used patch (CMS, FNAL) to increase the size of static
     # buffers used to improve the operation of TString.
     patch("format-stringbuf-size.patch", level=0)
-    # Some ROOT versions did not honor the option to avoid building an
-    # internal version of unuran, _cf_
-    # https://github.com/root-project/ROOT/commit/3e60764f133218b6938e5aa4986de760e8f058d9.
-    patch("honor-unuran-switch.patch", level=1, when="@6.08.06:6.13")
-    # 6.16.00 fails to handle particular build option combinations, _cf_
-    # https://github.com/root-project/ROOT/commit/e0ae0483985d90a71a6cabd10d3622dfd1c15611.
-    patch("root7-webgui.patch", level=1, when="@6.16.00")
-    # Missing includes in libcpp_string_view.h
-    patch(
-        "https://github.com/root-project/root/commit/a15e883277e51303a61baa3e6890f46b5bb4bfd7.patch?full_index=1",
-        sha256="12f4b5d47cca85871160b6772f2e0ebcf49de4e3294414411477f1ef44dd2e5b",
-        when="@6.22:6.22.08",
-    )
-    # 6.26.00:6.26.06 can fail with empty string COMPILE_DEFINITIONS, which this patch
-    # protects against
-    patch(
-        "https://github.com/root-project/root/commit/08ab7e03061e551647d707637957252d121f9c39.patch?full_index=1",
-        sha256="943e361c85f133d252e35200b59ee3c260a5e74edecb8ea37a362b580bef81d1",
-        when="@6.26:6.26.06",
-    )
-    # 6.26.00:6.26.06 fails for recent nlohmann-json single headers versions
-    patch(
-        "https://github.com/root-project/root/commit/26247b68b3aabad4aea5362bc5a8988103ce8038.patch?full_index=1",
-        sha256="8337fda2a964682422a11f32cd385104054e3ad112ec234be3f2bd88cea08fd9",
-        when="@6.26:6.26.06 +root7 ^nlohmann-json@3.11:",
-    )
     # Support recent versions of protobuf with their own CMake config
     # (provided the CMake being used supports targets), _cf_
     # https://github.com/root-project/root/commit/f6cfe3bdab544e5f7fd49514562147ebd5d67d7c
     patch("protobuf-config.patch", level=0, when="@:6.30.02 ^protobuf ^cmake@3.9:")
 
-    patch("webgui.patch", level=0, when="@6.26.00:6.26.10,6.28.00:6.28.08,6.30.00 +webgui")
+    patch("webgui.patch", level=0, when="@6.28.00:6.28.08,6.30.00 +webgui")
 
     # Back-ported patches fixing segfault in weighted likelihood fits
     patch(
@@ -179,12 +163,6 @@ class Root(CMakePackage):
     )
 
     if _is_macos:
-        # Resolve non-standard use of uint, _cf_
-        # https://sft.its.cern.ch/jira/browse/ROOT-7886.
-        patch("math_uint.patch", when="@6.06.02")
-        # Resolve circular dependency, _cf_
-        # https://sft.its.cern.ch/jira/browse/ROOT-8226.
-        patch("root6-60606-mathmore.patch", when="@6.06.06")
         # Fix macOS build when cocoa is disabled:
         patch(
             "https://github.com/root-project/root/commit/ebcda91aa14a359f06fa1c50690d5be9e4c98b94.patch?full_index=1",
@@ -210,15 +188,13 @@ class Root(CMakePackage):
 
     variant("aqua", default=_is_macos, description="Enable native macOS (Cocoa) interface")
     variant("arrow", default=False, description="Enable Arrow interface")
-    variant("cuda", when="@6.08.00:", default=False, description="Enable CUDA support")
-    variant("cudnn", when="@6.20.02:", default=False, description="Enable cuDNN support")
+    variant("cuda", default=False, description="Enable CUDA support")
+    variant("cudnn", default=False, description="Enable cuDNN support")
     # C++ module support in ROOT seemingly not currently working in macOS,
     # will lead to build errors if turned on
     # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
-    variant("cxxmodules", when="@6.16:", default=not _is_macos, description="Enable C++ modules")
-    variant(
-        "daos", default=False, description="Enable RNTuple support for DAOS storage", when="@6.26:"
-    )
+    variant("cxxmodules", default=not _is_macos, description="Enable C++ modules")
+    variant("daos", default=False, description="Enable RNTuple support for DAOS storage")
     variant("davix", default=True, description="Compile with external Davix")
     variant("dcache", default=False, description="Enable support for dCache")
     variant("emacs", default=False, description="Enable Emacs support")
@@ -248,12 +224,6 @@ class Root(CMakePackage):
         description="Enable using the jemalloc allocator (deprecated in 6.28)",
     )
     variant("math", default=True, description="Build the new libMathMore extended math library")
-    variant(
-        "memstat",
-        when="@:6.17",
-        default=False,
-        description="Enable a memory stats utility to detect memory leaks",
-    )
     # Minuit must not be installed as a dependency of root
     # otherwise it crashes with the internal minuit library
     variant("minuit", default=True, description="Automatically search for support libraries")
@@ -273,11 +243,10 @@ class Root(CMakePackage):
     variant("pythia6", when="@:6.30", default=False, description="Enable pythia6 support")
     variant("pythia8", default=False, description="Enable pythia8 support")
     variant("python", default=True, description="Enable Python ROOT bindings")
-    variant("qt4", when="@:6.17", default=False, description="Enable Qt4 graphics backend")
-    variant("qt5", when="@6.12:6.34", default=False, description="Enable Qt5 web-based display")
-    variant("qt6", when="@6.26:", default=False, description="Enable Qt6 web-based display")
-    variant("r", default=False, description="Enable R ROOT bindings")
-    variant("rpath", default=True, description="Enable RPATH")
+    variant("qt5", when="@:6.34", default=False, description="Enable Qt5 web-based display")
+    variant("qt6", default=False, description="Enable Qt6 web-based display")
+    variant("r", default=False, description="Enable R ROOT bindings", when="@:6.40")
+    variant("rpath", default=True, description="Enable RPATH", when="@:6.40")
     conflicts(
         "~rpath", when="@6.38:", msg="RPATHs are always applied if operating systems supports it"
     )
@@ -297,7 +266,6 @@ class Root(CMakePackage):
     variant("tmva", default=False, description="Build TMVA multi variate analysis library")
     variant(
         "tmva-cpu",
-        when="@6.15.02:",
         default=True,
         description="Build TMVA with CPU support for deep learning (requires BLAS)",
     )
@@ -309,19 +277,16 @@ class Root(CMakePackage):
     )
     variant(
         "tmva-gpu",
-        when="@6.15.02:",
         default=False,
         description="Build TMVA with GPU support for deep learning (requires CUDA)",
     )
     variant(
         "tmva-pymva",
-        when="@6.17.02:",
         default=False,
         description="Enable support for Python in TMVA (requires numpy)",
     )
     variant(
         "tmva-sofie",
-        when="@6.25.02:",
         default=False,
         description="Build TMVA with support for sofie - "
         "fast inference code generation (requires protobuf 3)",
@@ -333,21 +298,29 @@ class Root(CMakePackage):
         description="Build the TPython class to run Python code from C++",
     )
     variant("unuran", default=True, description="Use UNURAN for random number generation")
-    variant("vc", default=False, description="Enable Vc for adding new types for SIMD programming")
+    variant(
+        "vc",
+        default=False,
+        description="Enable Vc for adding new types for SIMD programming",
+        when="@:6.40",
+    )
     variant("vdt", default=True, description="Enable set of fast and vectorisable math functions")
     variant(
-        "veccore", default=False, description="Enable support for VecCore SIMD abstraction library"
+        "veccore",
+        default=False,
+        description="Enable support for VecCore SIMD abstraction library",
+        when="@:6.40",
     )
     variant(
         "webgui", default=True, description="Enable web-based UI components of ROOT", when="+root7"
     )
     variant("x", default=(not _is_macos), description="Enable set of graphical options")
     variant("xml", default=True, description="Enable XML parser interface")
+    variant("xrootd", default=False, description="Build xrootd file server and its client")
     variant(
-        "xrootd",
-        default=False,
-        description="Build xrootd file server and its client",
-        when="@6.23:",
+        "builtin_llvm",
+        default=True,
+        description="Use ROOT's bundled copy of LLVM (but bundled clang is always used)",
     )
 
     # ###################### Compiler variants ########################
@@ -366,9 +339,8 @@ class Root(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
 
-    depends_on("cmake@3.9:", type="build", when="@6.18.00:")
-    depends_on("cmake@3.16:", type="build", when="@6.26.00:")
-    depends_on("cmake@3.19:", type="build", when="@6.28.00: platform=darwin")
+    depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.19:", type="build", when="platform=darwin")
     depends_on("cmake@3.20:", type="build", when="@6.34.00:")
     depends_on("pkgconfig", type="build")
 
@@ -382,16 +354,15 @@ class Root(CMakePackage):
     depends_on("jpeg")
     depends_on("libice")
     depends_on("libpng")
-    depends_on("lz4", when="@6.13.02:")  # See cmake_args, below.
+    depends_on("lz4")  # See cmake_args, below.
     depends_on("ncurses")
-    depends_on("nlohmann-json", when="@6.24:")
-    depends_on("nlohmann-json@:3.10", when="@6.24:6.26.07")
+    depends_on("nlohmann-json")
     depends_on("pcre", when="@:6.33")
     depends_on("pcre2", when="@6.34:")
-    depends_on("xxhash", when="@6.13.02:")  # See cmake_args, below.
+    depends_on("xxhash")  # See cmake_args, below.
     depends_on("xz")
     depends_on("zlib-api")
-    depends_on("zstd", when="@6.20:")
+    depends_on("zstd")
 
     # X-Graphics
     depends_on("libx11", when="+x")
@@ -412,28 +383,23 @@ class Root(CMakePackage):
     depends_on("libglx", when="+opengl+x")
 
     # Qt
-    with when("+qt4"):
-        conflicts("+qt5", msg="+qt? options are mutually exclusive")
-        conflicts("+qt6", msg="+qt? options are mutually exclusive")
-        depends_on("qt@4.0.0:4")
     with when("+qt5"):
-        conflicts("+qt4", msg="+qt? options are mutually exclusive")
         conflicts("+qt6", msg="+qt? options are mutually exclusive")
         depends_on("qt@5.0.0:5")
     with when("+qt6"):
-        conflicts("+qt4", msg="+qt? options are mutually exclusive")
         conflicts("+qt5", msg="+qt? options are mutually exclusive")
         depends_on("qt-base +accessibility +gui")
 
     # Python
     depends_on("python@2.7:", when="+python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
+    conflicts("^python +freethreading", when="@6.40.00", msg="v6.40.00 requires GIL")
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
-    # See: https://sft.its.cern.ch/jira/browse/ROOT-10626
-    depends_on("py-numpy", type=("build", "run"), when="@6.20.00:6.20.05 +python")
+    depends_on("py-numpy", type=("build", "run"), when="+tmva-sofie @6.40:")
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")
+    requires("^openblas ~ilp64 symbol_suffix=none", when="^[virtuals=blas] openblas")
     depends_on("cuda", when="+tmva-gpu")
     depends_on("protobuf@3:", when="+tmva-sofie")
 
@@ -468,14 +434,18 @@ class Root(CMakePackage):
     depends_on("sqlite", when="+sqlite")
     depends_on("tbb", when="+tbb")
     depends_on("unuran", when="+unuran")
-    depends_on("vc@1.0:", when="@6.07.04: +vc")
-    depends_on("vc@1.3.0:", when="@6.09.02: +vc")
+    depends_on("vc@1.3.0:", when="+vc")
     depends_on("vc@1.4.4:", when="@6.29.02: +vc")
     depends_on("vdt", when="+vdt")
-    depends_on("veccore@0.4.0:", when="@6.09.04: +veccore")
-    depends_on("veccore@0.4.2:", when="@6.11.02: +veccore")
+    depends_on("veccore@0.4.2:", when="+veccore")
     depends_on("libxml2", when="+xml")
     depends_on("xrootd", when="+xrootd")
+
+    # External LLVM (used when ~builtin_llvm).  ROOT bundles its own patched Clang
+    # (interpreter/llvm-project/clang) and builds it against the external LLVM, so
+    # vanilla LLVM is sufficient here.  ROOT's patches to llvm-project only touch
+    # clang/, not the LLVM core.
+    depends_on("llvm@20.1.0:20.1", when="@6.36: ~builtin_llvm")
 
     depends_on("googletest", when="@6.28.00:", type="test")
 
@@ -484,6 +454,22 @@ class Root(CMakePackage):
     # I was unable to build root with any Intel compiler
     # See https://sft.its.cern.ch/jira/browse/ROOT-7517
     conflicts("%intel")
+
+    # External LLVM is only supported for ROOT 6.36+ (requires LLVM 20.1.x).
+    # Older ROOT versions have different LLVM major requirements that have not
+    # been mapped to spack dependencies yet.
+    conflicts(
+        "~builtin_llvm",
+        when="@:6.35",
+        msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
+    )
+    # In order to avoid adding newer versions with incorrect LLVM versions,
+    # newer versions are explicitly added as conflicts as well.
+    conflicts(
+        "~builtin_llvm",
+        when="@6.39:",
+        msg="External LLVM support for ROOT 6.39+ has not been validated",
+    )
 
     # GCC 15 support was added in 6.34.04
     conflicts("%gcc@15:", when="@:6.34.02")
@@ -504,8 +490,7 @@ class Root(CMakePackage):
     conflicts("+tmva-pymva", when="~tmva", msg="root+tmva-pymva requires TMVA")
     conflicts("+tmva-sofie", when="~tmva", msg="root+tmva-sofie requires TMVA")
     conflicts("~http", when="+webgui", msg="root+webgui requires HTTP")
-    conflicts("cxxstd=11", when="+root7", msg="root7 requires at least C++14")
-    conflicts("cxxstd=11", when="@6.25.02:", msg="This version of root requires at least C++14")
+    conflicts("cxxstd=11", msg="ROOT requires at least C++14")
     conflicts("cxxstd=14", when="@6.30.00:", msg="This version of root requires at least C++17")
     conflicts(
         "cxxstd=20", when="@:6.28.02", msg="C++20 support requires root version at least 6.28.04"
@@ -650,7 +635,6 @@ class Root(CMakePackage):
             # Faster downloads
             dashed = version.dashed
             return f"https://github.com/root-project/root/releases/download/v{dashed}/root_v{dotted}.source.tar.gz"
-        return url.format(version.underscored)
 
     def cmake_args(self):
         define = self.define
@@ -690,6 +674,7 @@ class Root(CMakePackage):
         options += [
             define("builtin_cfitsio", False),
             define("builtin_civetweb", False),
+            define("builtin_clang", True),  # use builtin_clang even when ~builtin_llvm
             define("builtin_davix", False),
             define("builtin_fftw3", False),
             define("builtin_freetype", False),
@@ -698,8 +683,8 @@ class Root(CMakePackage):
             define("builtin_gl2ps", False),
             define("builtin_glew", False),
             define("builtin_gsl", False),
-            define("builtin_llvm", True),
-            define("builtin_lz4", self.spec.satisfies("@6.12.02:6.12")),
+            define_from_variant("builtin_llvm"),
+            define("builtin_lz4", False),
             define("builtin_lzma", False),
             define("builtin_nlohmannjson", False),
             define("builtin_openssl", False),
@@ -710,7 +695,7 @@ class Root(CMakePackage):
             define("builtin_vdt", False),
             define("builtin_veccore", False),
             define("builtin_xrootd", False),
-            define("builtin_xxhash", self.spec.satisfies("@6.12.02:6.12")),
+            define("builtin_xxhash", False),
             define("builtin_zlib", False),
         ]
 
@@ -765,7 +750,6 @@ class Root(CMakePackage):
             define("krb5", False),
             define("ldap", False),
             define_from_variant("mathmore", "math"),
-            define_from_variant("memstat"),  # See conflicts
             define("minimal", False),
             define_from_variant("minuit"),
             define_from_variant("mlp"),
@@ -774,8 +758,6 @@ class Root(CMakePackage):
             define_from_variant("oracle"),
             define_from_variant("pythia6"),
             define_from_variant("pythia8"),
-            define_from_variant("qt", "qt4"),  # See conflicts
-            define_from_variant("qtgsi", "qt4"),  # See conflicts
             define_from_variant("r"),
             define("rfio", False),
             define_from_variant("roofit"),
@@ -801,30 +783,19 @@ class Root(CMakePackage):
             define_from_variant("xrootd"),
         ]
 
-        if self.spec.satisfies("@6.08.00:"):
-            options.append(define_from_variant("cuda"))
+        options.append(define_from_variant("cuda"))
 
         # Necessary due to name change of variant (webui->webgui)
         # https://github.com/root-project/root/commit/d631c542909f2f793ca7b06abc622e292dfc4934
-        if self.spec.satisfies("@6.18.00:"):
-            options.append(define_from_variant("webgui", "webgui"))
+        options.append(define_from_variant("webgui", "webgui"))
 
         # Some special features
-        if self.spec.satisfies("@6.15.02:"):
-            options.append(define_from_variant("tmva-cpu"))
-            options.append(define_from_variant("tmva-gpu"))
-
-        if self.spec.satisfies("@6.17.02:"):
-            options.append(define_from_variant("tmva-pymva"))
-
-        if self.spec.satisfies("@6.20.02:"):
-            options.append(define_from_variant("cudnn"))
-            options.append(define_from_variant("pyroot", "python"))
-        else:
-            options.append(define_from_variant("python"))
-
-        if self.spec.satisfies("@6.25.02:"):
-            options.append(define_from_variant("tmva-sofie"))
+        options.append(define_from_variant("tmva-cpu"))
+        options.append(define_from_variant("tmva-gpu"))
+        options.append(define_from_variant("tmva-pymva"))
+        options.append(define_from_variant("cudnn"))
+        options.append(define_from_variant("pyroot", "python"))
+        options.append(define_from_variant("tmva-sofie"))
 
         if self.spec.satisfies("@:6.30"):
             options.append(define_from_variant("minuit2", "minuit"))
@@ -852,11 +823,7 @@ class Root(CMakePackage):
             cflags = "-D__builtin_unreachable=__builtin_trap"
             options.extend([define("CMAKE_C_FLAGS", cflags), define("CMAKE_CXX_FLAGS", cflags)])
 
-        # Method for selecting C++ standard depends on ROOT version
-        if self.spec.satisfies("@6.18.00:"):
-            options.append(define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
-        else:
-            options.append(define("cxx" + self.spec.variants["cxxstd"].value, True))
+        options.append(define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         if "+x+opengl" in self.spec:
             ftgl_prefix = self.spec["ftgl"].prefix
@@ -893,8 +860,7 @@ class Root(CMakePackage):
 
         # With that done, let's go fixing those deps
         if "+x" in spec:
-            if spec.satisfies("@6.22:"):
-                add_include_path("xextproto")
+            add_include_path("xextproto")
             add_include_path("fontconfig")
             add_include_path("libx11")
             add_include_path("xproto")

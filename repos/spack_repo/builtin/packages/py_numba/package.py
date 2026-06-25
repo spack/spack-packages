@@ -22,6 +22,8 @@ class PyNumba(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.65.1", sha256="19357146c32fe9ed25059ab915e8465fb13951cf6b0aace3826b76886373ab23")
+    version("0.64.0", sha256="95e7300af648baa3308127b1955b52ce6d11889d16e8cfe637b4f85d2fca52b1")
     version("0.63.0", sha256="27e525ce6f9f727c4f61e89b9d453d4a7d0aabbbf110278988334f43cbd70fdc")
     version("0.62.1", sha256="7b774242aa890e34c21200a1fc62e5b5757d5286267e71103257f4e2af0d5161")
     version(
@@ -61,6 +63,7 @@ class PyNumba(PythonPackage):
         # Use min_numpy_run_version, not min_numpy_build_version
         # min_numpy_build_version may be higher to ensure backwards-compatibility of wheels,
         # but this doesn't matter for Spack which always guarantees compatibility
+        depends_on("py-numpy@1.22:2.4", when="@0.64:")
         depends_on("py-numpy@1.22:2.3", when="@0.62:")
         depends_on("py-numpy@1.24:2.2", when="@0.61.1:0.61.2")
         depends_on("py-numpy@1.24:2.1", when="@0.61.0")
@@ -73,7 +76,8 @@ class PyNumba(PythonPackage):
         depends_on("py-numpy@1.18:1.21", when="@0.55.0:0.55.1")
         depends_on("py-numpy@1.17:1.20", when="@0.54")
 
-        depends_on("py-llvmlite@0.46", when="@0.63")
+        depends_on("py-llvmlite@0.47", when="@0.65")
+        depends_on("py-llvmlite@0.46", when="@0.63,0.64")
         depends_on("py-llvmlite@0.45", when="@0.62")
         depends_on("py-llvmlite@0.44", when="@0.61")
         depends_on("py-llvmlite@0.43", when="@0.60")

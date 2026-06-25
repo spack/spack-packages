@@ -19,6 +19,7 @@ class Samtools(Package):
 
     license("MIT")
 
+    version("1.23.1", sha256="32266198a4bc6a6df395d8526688c9697d9c8e472f888c749fdde2e08ea88dd2")
     version("1.21", sha256="05724b083a6b6f0305fcae5243a056cc36cf826309c3cb9347a6b89ee3fc5ada")
     version("1.19.2", sha256="71f60499668e4c08e7d745fbff24c15cc8a0977abab1acd5d2bb419bdb065e96")
     version("1.19", sha256="fa6b3b18e20851b6f3cb55afaf3205d02fcb79dae3b849fcf52e8fc10ff08b83")
@@ -56,6 +57,7 @@ class Samtools(Package):
     depends_on("python", type="run")
 
     # htslib became standalone @1.3.1, must use corresponding version
+    depends_on("htslib@1.23.1", when="@1.23.1")
     depends_on("htslib@1.21", when="@1.21")
     depends_on("htslib@1.19.1", when="@1.19.2")
     depends_on("htslib@1.19", when="@1.19")
@@ -78,26 +80,23 @@ class Samtools(Package):
     depends_on("htslib@1.3.1", when="@1.3.1")
 
     def install(self, spec, prefix):
-        if "+termlib" in spec["ncurses"]:
-            curses_lib = "-lncursesw -ltinfow"
-        else:
-            curses_lib = "-lncursesw"
+        curses_lib = self.spec["ncurses"].libs.link_flags
 
         if self.spec.version >= Version("1.3.1"):
             configure(
-                "--prefix={0}".format(prefix),
-                "--with-htslib={0}".format(self.spec["htslib"].prefix),
+                f"--prefix={prefix}",
+                f"--with-htslib={self.spec['htslib'].prefix}",
                 "--with-ncurses",
-                "CURSES_LIB={0}".format(curses_lib),
+                f"CURSES_LIB={curses_lib}",
             )
             make()
             make("install")
         else:
-            make("prefix={0}".format(prefix), "LIBCURSES={0}".format(curses_lib))
+            make(f"prefix={prefix}", f"LIBCURSES={curses_lib}")
             if self.spec.version == Version("0.1.8"):
-                make("prefix={0}".format(prefix))
+                make(f"prefix={prefix}")
             else:
-                make("prefix={0}".format(prefix), "install")
+                make(f"prefix={prefix}", "install")
 
         # Install dev headers and libs for legacy apps depending on them
         # per https://github.com/samtools/samtools/releases/tag/1.14

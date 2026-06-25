@@ -3,6 +3,8 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 # ----------------------------------------------------------------------------\
 
+import os
+
 from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.packages.libflame.package import LibflameBase
@@ -48,6 +50,7 @@ class Amdlibflame(CMakePackage, LibflameBase):
 
     license("BSD-3-Clause")
 
+    version("5.3", sha256="ecb74c879b4d6bb33e159300304a9b48206d2c2b546dceb7d097b339eb127b9c")
     version("5.2", sha256="fb5fe5128f718050c9911443fcf7ed91b60538a40d57084ed0124bb91afabb9b")
     version("5.1", sha256="25524ba78b5952303369fa0859d217e44071144fd122a9dc3f72ed0bd73e3b2d")
     version("5.0", sha256="3bee3712459a8c5bd728a521d8a4c8f46735730bf35d48c878d2fc45fc000918")
@@ -73,6 +76,11 @@ class Amdlibflame(CMakePackage, LibflameBase):
     variant("logging", default="False", description="Enable AOCL DTL Logging")
     variant("tracing", default="False", description="Enable AOCL DTL Tracing")
 
+    # Override the 'static' variant defined in LibflameBase: for CMake builds of amdlibflame,
+    # default this variant to False so that only shared libraries are built unless explicitly
+    # requested.
+    variant("static", default=False, when="@4.2:", description="Build static library")
+
     # Build system
     build_system(
         conditional("cmake", when="@4.2:"), conditional("autotools", when="@:4.1"), default="cmake"
@@ -87,11 +95,15 @@ class Amdlibflame(CMakePackage, LibflameBase):
     conflicts("threads=pthreads", msg="pthread is not supported")
     conflicts("threads=openmp", when="@:3", msg="openmp is not supported by amdlibflame < 4.0")
     requires("target=x86_64:", msg="AMD libflame available only on x86_64")
+    conflicts("~shared~static", msg="At least one library type (shared or static) must be built")
 
     patch("aocc-2.2.0.patch", when="@:2", level=1)
     patch("cray-compiler-wrapper.patch", when="@:3.0.0", level=1)
     patch("supermat.patch", when="@4.0:4.1", level=1)
     patch("libflame-pkgconfig.patch", when="@4.2")
+    # Apply amdlibflame@5.2 patch to fix necessary ifdef guards to check
+    # for Zen4 kernel availability
+    patch("zen3_build_fix.patch", when="@5.2", level=1)
 
     provides("flame@5.2", when="@2:")
 
@@ -102,23 +114,25 @@ class Amdlibflame(CMakePackage, LibflameBase):
     depends_on("python+pythoncmd", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 
-    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 
     @property
     def lapack_libs(self):
         """find lapack_libs function"""
-        return find_libraries(
-            "libflame", root=self.prefix, shared="+shared" in self.spec, recursive=True
-        )
+        # When both shared and static are built, prefer shared libraries.
+        # When only one type is built, return that type.
+        shared = self.spec.satisfies("+shared")
+        return find_libraries("libflame", root=self.prefix, shared=shared, recursive=True)
 
     @property
     def libs(self):
         """find libflame libs function"""
-        return find_libraries(
-            "libflame", root=self.prefix, shared="+shared" in self.spec, recursive=True
-        )
+        # When both shared and static are built, prefer shared libraries.
+        # When only one type is built, return that type.
+        shared = self.spec.satisfies("+shared")
+        return find_libraries("libflame", root=self.prefix, shared=shared, recursive=True)
 
     def flag_handler(self, name, flags):
         if name == "cflags":
@@ -172,9 +186,59 @@ class CMakeBuilder(cmake.CMakeBuilder):
         else:
             args.append(self.define("LF_ISA_CONFIG", spec.variants["vectorization"].value))
 
+        # Note: When both +shared +static are requested, we use a two-pass build strategy.
+        # The first build is for shared libraries (handled here), and the second build
+        # (for static libraries) is handled in a separate build directory in the install() method.
         args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         return args
+
+    def install(self, pkg, spec, prefix):
+        """Install method with support for building both shared and static libraries.
+
+        When both +shared and +static variants are enabled, this performs a two-pass build:
+        1. First pass: Build and install shared libraries (using the standard build directory)
+        2. Second pass: Build and install static libraries in a separate build directory
+
+        Both builds install to the same prefix. The static build happens after the shared
+        build to ensure no conflicts, as static libraries (.a) and shared libraries (.so)
+        have different file extensions and can coexist in the same directory.
+        """
+        # First build/install: shared libraries (if +shared) or static (if only +static)
+        super().install(pkg, spec, prefix)
+
+        # Second build/install: static libraries (only if both +shared and +static)
+        if spec.satisfies("+shared +static"):
+            # Build static libraries in a separate build directory
+            build_dir_parent = os.path.dirname(self.build_directory)
+            build_dir_name = os.path.basename(self.build_directory)
+            static_build_dir = os.path.join(build_dir_parent, build_dir_name + "-static")
+
+            with working_dir(static_build_dir, create=True):
+                # Configure for static libraries
+                static_args = self.cmake_args()
+                # Replace BUILD_SHARED_LIBS setting to build static libraries
+                static_args = [arg for arg in static_args if "BUILD_SHARED_LIBS" not in arg]
+                static_args.append(self.define("BUILD_SHARED_LIBS", False))
+
+                # Combine standard cmake args with static-specific args
+                options = self.std_cmake_args + static_args
+                options.append(os.path.abspath(self.root_cmakelists_dir))
+
+                # Run cmake configuration
+                pkg.module.cmake(*options)
+
+                # Build static libraries
+                if self.generator == "Unix Makefiles":
+                    pkg.module.make(*self.build_targets)
+                elif self.generator == "Ninja":
+                    pkg.module.ninja(*self.build_targets)
+
+                # Install static libraries to the same prefix
+                if self.generator == "Unix Makefiles":
+                    pkg.module.make(*self.install_targets)
+                elif self.generator == "Ninja":
+                    pkg.module.ninja(*self.install_targets)
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):

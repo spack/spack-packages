@@ -19,6 +19,7 @@ class PyAse(PythonPackage):
 
     maintainers("alikhamze")
 
+    version("3.28.0", sha256="74fe77ca38bf78070e24cd283f5d25be129bad6503fd26619008548518144732")
     version("3.27.0", sha256="92ada752d6866a61d2d27e0e6a4fd5b8cd86f59ca79a58f1d2fe29d7099153dc")
     version("3.26.0", sha256="a071a355775b0a8062d23e9266e9d811b19d9f6d9ec5215e8032f7d93dc65075")
     version("3.25.0", sha256="374cf8ca9fe588f05d6e856da3c9c17ef262dc968027b231d449334140c962c2")

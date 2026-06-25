@@ -1,0 +1,101 @@
+diff --git a/src/base/flamec/blis/2/bl1_gemv.c b/src/base/flamec/blis/2/bl1_gemv.c
+index 2fe328266..a18d08352 100644
+--- a/src/base/flamec/blis/2/bl1_gemv.c
++++ b/src/base/flamec/blis/2/bl1_gemv.c
+@@ -9,7 +9,7 @@
+ */
+ 
+ /*
+-*     Modifications Copyright (c) 2023 Advanced Micro Devices, Inc.  All rights reserved.
++*     Modifications Copyright (c) 2023-2026 Advanced Micro Devices, Inc.  All rights reserved.
+ */
+ #include "blis1.h"
+ #include "FLA_f2c.h"
+@@ -442,7 +442,7 @@ void bl1_dgemv_blas( trans1_t transa, integer m, integer n, double* alpha, doubl
+ 	             *beta,
+ 	             y, incy );
+ #else
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+     /* Use direct single threaded BLIS kernel */
+ 	aocl_fla_init();
+     if ( FLA_IS_MIN_ARCH_ID( FLA_ARCH_AVX512 ) && incx > 0 && incy > 0 )
+diff --git a/src/map/lapack2flamec/f2c/c/dlarf.c b/src/map/lapack2flamec/f2c/c/dlarf.c
+index fc0138588..2b6f7aabb 100644
+--- a/src/map/lapack2flamec/f2c/c/dlarf.c
++++ b/src/map/lapack2flamec/f2c/c/dlarf.c
+@@ -4,7 +4,7 @@
+  standard place, with -lf2c -lm -- in that order, at the end of the command line, as in cc *.o -lf2c
+  -lm Source for libf2c is in /netlib/f2c/libf2c.zip, e.g., http://www.netlib.org/f2c/libf2c.zip */
+ /*
+- *     Modifications Copyright (c) 2024-2025 Advanced Micro Devices, Inc.  All rights reserved.
++ *     Modifications Copyright (c) 2024-2026 Advanced Micro Devices, Inc.  All rights reserved.
+  */
+ #include "FLA_f2c.h" /* Table of constant values */
+ #if FLA_ENABLE_AOCL_BLAS
+@@ -295,7 +295,7 @@ void dlarf_(char *side, integer *m, integer *n, doublereal *v, integer *incv, do
+                 {
+                     /* Process in a single call */
+                     /* w(1:lastc,1) := C(1:lastv,1:lastc)**T * v(1:lastv,1) */
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                     if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512) && *incv > 0)
+                     {
+                         /* Use direct single threaded BLIS kernel */
+@@ -376,7 +376,7 @@ void dlarf_(char *side, integer *m, integer *n, doublereal *v, integer *incv, do
+             else
+             {
+                 /* w(1:lastc,1) := C(1:lastc,1:lastv) * v(1:lastv,1) */
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                 aocl_fla_init();
+                 if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512) && *incv > 0)
+                 {
+diff --git a/src/map/lapack2flamec/f2c/c/dlarft.c b/src/map/lapack2flamec/f2c/c/dlarft.c
+index 4b2666a7a..f82ddaf99 100644
+--- a/src/map/lapack2flamec/f2c/c/dlarft.c
++++ b/src/map/lapack2flamec/f2c/c/dlarft.c
+@@ -13,7 +13,6 @@
+ 
+ static integer c__1 = 1;
+ static doublereal c_b6 = 1.;
+-static doublereal c_b0 = 0.;
+ /* > \brief \b DLARFT forms the triangular factor T of a block reflector H = I - vtvH */
+ /* =========== DOCUMENTATION =========== */
+ /* Online html documentation available at */
+@@ -278,7 +277,7 @@ void dlarft_(char *direct, char *storev, integer *n, integer *k, doublereal *v,
+                     i__2 = j - i__;
+                     i__3 = i__ - 1;
+                     d__1 = -tau[i__];
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                     if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512))
+                     {
+                         bli_dgemv_t_zen4_int(BLIS_CONJUGATE, BLIS_NO_CONJUGATE, i__2, i__3, &d__1,
+@@ -315,7 +314,7 @@ void dlarft_(char *direct, char *storev, integer *n, integer *k, doublereal *v,
+                     i__2 = i__ - 1;
+                     i__3 = j - i__;
+                     d__1 = -tau[i__];
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                     if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512) && *ldv > 0)
+                     {
+                         bli_dgemv_n_zen4_int_40x2_st(BLIS_NO_TRANSPOSE, BLIS_NO_CONJUGATE, i__2,
+@@ -387,7 +386,7 @@ void dlarft_(char *direct, char *storev, integer *n, integer *k, doublereal *v,
+                         i__1 = *n - *k + i__ - j;
+                         i__2 = *k - i__;
+                         d__1 = -tau[i__];
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                         if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512))
+                         {
+                             bli_dgemv_t_zen4_int(BLIS_CONJUGATE, BLIS_NO_CONJUGATE, i__1, i__2,
+@@ -424,7 +423,7 @@ void dlarft_(char *direct, char *storev, integer *n, integer *k, doublereal *v,
+                         i__1 = *k - i__;
+                         i__2 = *n - *k + i__ - j;
+                         d__1 = -tau[i__];
+-#if FLA_ENABLE_AOCL_BLAS
++#if FLA_ENABLE_AOCL_BLAS && defined(BLIS_KERNELS_ZEN4)
+                         if(FLA_IS_MIN_ARCH_ID(FLA_ARCH_AVX512) && *ldv > 0)
+                         {
+                             bli_dgemv_n_zen4_int_40x2_st(BLIS_NO_TRANSPOSE, BLIS_NO_CONJUGATE, i__1,

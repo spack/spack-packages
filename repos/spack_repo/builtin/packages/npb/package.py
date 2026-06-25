@@ -35,6 +35,7 @@ class Npb(MakefilePackage):
 
     version("3.3.1", sha256="4a8ea679b1df69f583c544c47198b3c26a50ec2bb6f8f69aef66c04c9a747d2d")
     version("3.4.1", sha256="f3a43467da6e84a829ea869156d3ea86c17932136bb413a4b6dab23018a28881")
+    version("3.4.3", sha256="a97c03d7e87ab826fba79c754415a13632c5273877abad270c85201db0f86aeb")
 
     # Valid Benchmark Names
     valid_names = (
@@ -103,6 +104,13 @@ class Npb(MakefilePackage):
 
     # Cannot be built in parallel
     parallel = False
+
+    conflicts(
+        "implementation=serial",
+        when="@3.4:",
+        msg="The serial version of NPB is not supported from version 3.4."
+        "Use implementation=openmp or use a prior version.",
+    )
 
     @property
     def build_directory(self):

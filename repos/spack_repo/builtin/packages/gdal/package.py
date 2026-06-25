@@ -31,6 +31,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.13.1", sha256="7398fb132753140740fac4f099f0dbe49d1ad074c4162290c308e067c46b7f92")
+    version("3.13.0", sha256="1c537dd2f4d66f05534ae419bc2af495c2204ce13bb266c8cbd867dd6705f0c7")
+    version("3.12.4", sha256="813094498c17522ac42821a5ea1ea783d8326c0adf286cce86a949038bd09198")
+    version("3.12.3", sha256="398a5a32ee6e75040598a7f8e895126a8225118317f272d715867c844f932848")
     version("3.12.2", sha256="21c5e0f91974383b4c5692b7103650f176f2f54f1b0d449787f444b89881e9b4")
     version("3.12.1", sha256="2a4fd3170ff81def93db60f7f61f2842a2ae7ad0335e4ed4ba305252f05835de")
     version("3.12.0", sha256="428c19fff818bbb4136766cfee86fae2eebd3620806aa40af21844f4f0b2dbcf")
@@ -40,6 +44,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.11.2", sha256="bda41b7cf12f05995a00106ae0db1b784d9c307953d81c76d351c7dbeb121aeb")
     version("3.11.1", sha256="21341b39a960295bd3194bcc5f119f773229b4701cd752499fbd850f3cc160fd")
     version("3.11.0", sha256="ba1a17a74428bfd5c789ce293f59b6a3d8bfabab747431c33331ac0ac579ea71")
+    version("3.10.3", sha256="335a8d2c7567d783563d3fed37e8b58d72d9c1723f6fd1d8c299fe4c0d936781")
     version("3.10.2", sha256="67b4e08acd1cc4b6bd67b97d580be5a8118b586ad6a426b09d5853898deeada5")
     version("3.10.1", sha256="9211eac72b53f5f85d23cf6d83ee20245c6d818733405024e71f2af41e5c5f91")
     version("3.10.0", sha256="af821a3bcf68cf085724c21c9b53605fd451d83af3c8854d8bf194638eb734a8")
@@ -69,11 +74,13 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.4.3", sha256="02a27b35899e1c4c3bcb6007da900128ddd7e8ab7cd6ccfecf338a301eadad5a")
     version("3.4.2", sha256="16baf03dfccf9e3f72bb2e15cd2d5b3f4be0437cdff8a785bceab0c7be557335")
     version("3.4.1", sha256="332f053516ca45101ef0f7fa96309b64242688a8024780a5d93be0230e42173d")
-    version("3.4.0", sha256="ac7bd2bb9436f3fc38bc7309704672980f82d64b4d57627d27849259b8f71d5c")
-    version("3.3.3", sha256="1e8fc8b19c77238c7f4c27857d04857b65d8b7e8050d3aac256d70fa48a21e76")
-    version("3.3.2", sha256="630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3")
-    version("3.3.1", sha256="48ab00b77d49f08cf66c60ccce55abb6455c3079f545e60c90ee7ce857bccb70")
-    version("3.3.0", sha256="190c8f4b56afc767f43836b2a5cd53cc52ee7fdc25eb78c6079c5a244e28efa7")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2021-45943/
+        version("3.4.0", sha256="ac7bd2bb9436f3fc38bc7309704672980f82d64b4d57627d27849259b8f71d5c")
+        version("3.3.3", sha256="1e8fc8b19c77238c7f4c27857d04857b65d8b7e8050d3aac256d70fa48a21e76")
+        version("3.3.2", sha256="630e34141cf398c3078d7d8f08bb44e804c65bbf09807b3610dcbfbc37115cc3")
+        version("3.3.1", sha256="48ab00b77d49f08cf66c60ccce55abb6455c3079f545e60c90ee7ce857bccb70")
+        version("3.3.0", sha256="190c8f4b56afc767f43836b2a5cd53cc52ee7fdc25eb78c6079c5a244e28efa7")
     version("3.2.3", sha256="d9ec8458fe97fd02bf36379e7f63eaafce1005eeb60e329ed25bb2d2a17a796f")
     version("3.2.2", sha256="a7e1e414e5c405af48982bf4724a3da64a05770254f2ce8affb5f58a7604ca57")
     version("3.2.1", sha256="6c588b58fcb63ff3f288eb9f02d76791c0955ba9210d98c3abd879c770ae28ea")
@@ -86,8 +93,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     version("3.0.4", sha256="5569a4daa1abcbba47a9d535172fc335194d9214fdb96cd0f139bb57329ae277")
     version("3.0.3", sha256="e20add5802265159366f197a8bb354899e1693eab8dbba2208de14a457566109")
     version("3.0.2", sha256="c3765371ce391715c8f28bd6defbc70b57aa43341f6e94605f04fe3c92468983")
-    version("3.0.1", sha256="45b4ae25dbd87282d589eca76481c426f72132d7a599556470d5c38263b09266")
-    version("3.0.0", sha256="ad316fa052d94d9606e90b20a514b92b2dd64e3142dfdbd8f10981a5fcd5c43e")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2019-17545/
+        version("3.0.1", sha256="45b4ae25dbd87282d589eca76481c426f72132d7a599556470d5c38263b09266")
+        version("3.0.0", sha256="ad316fa052d94d9606e90b20a514b92b2dd64e3142dfdbd8f10981a5fcd5c43e")
 
     # Optional dependencies
     # https://gdal.org/en/stable/development/building_from_source.html
@@ -130,6 +139,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     variant("geos", default=True, description="Required for geometry processing operations in OGR")
     variant("gif", default=False, description="Required for GIF driver")
     variant("grass", default=False, when="@:3.4", description="Required for GRASS driver")
+    variant("grok", default=False, when="@3.13:", description="Required for JP2Grok driver")
     variant("gta", default=False, description="Required for GTA driver")
     variant("heif", default=False, when="@3.2:", description="Required for HEIF driver")
     variant("hdf4", default=False, description="Required for HDF4 driver")
@@ -152,7 +162,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     variant(
         "libxml2", default=False, description="Required for XML validation in many OGR drivers"
     )
-    variant("luratech", default=False, description="Required for JP2Lura driver")
+    variant("luratech", default=False, when="@:3.10", description="Required for JP2Lura driver")
     variant("lz4", default=False, when="@3.4:", description="Required for Zarr driver")
     variant("mdb", default=False, when="@:3.4", description="Required for MDB driver")
     variant("mongocxx", default=False, description="Required for MongoDBv3 driver")
@@ -187,11 +197,16 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
         when="build_system=cmake",
         description="Required for SAP HANA driver",
     )
-    variant("ogdi", default=False, description="Required for OGDI driver")
+    variant("ogdi", default=False, when="@:3.10", description="Required for OGDI driver")
     variant(
         "opencad", default=False, when="build_system=cmake", description="Required for CAD driver"
     )
-    variant("opencl", default=False, description="Required to accelerate warping computations")
+    variant(
+        "opencl",
+        default=False,
+        when="@:3.10",
+        description="Required to accelerate warping computations",
+    )
     variant("opendrive", default=False, when="@3.10:", description="Required for XODR driver")
     variant("openexr", default=False, when="@3.1:", description="Required for EXR driver")
     variant("openjpeg", default=False, description="Required for JP2OpenJPEG driver")
@@ -224,7 +239,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     )
     variant("rasdaman", default=False, when="@:3.6", description="Required for Rasdaman driver")
     variant("rasterlite2", default=False, description="Required for RasterLite2 driver")
-    variant("rdb", default=False, when="@3.1:", description="Required for RDB driver")
+    variant("rdb", default=False, when="@3.1:3.10", description="Required for RDB driver")
     variant("sde", default=False, when="@:3.1", description="Required for SDE driver")
     variant("sfcgal", default=False, description="Provides 3D geometry operations")
     variant("spatialite", default=False, description="Required for SQLite and GPKG drivers")
@@ -302,6 +317,8 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("geos@3.1:", when="+geos")
     depends_on("giflib", when="+gif")
     depends_on("grass@5.7:", when="+grass")
+    # depends_on("grok@20.3.2:", when="@3.13.1:+grok")
+    # depends_on("grok@20.2:", when="+grok")
     depends_on("libgta", when="+gta")
     depends_on("libheif@1.1:", when="+heif")
     depends_on("hdf", when="+hdf4")
@@ -358,13 +375,17 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("libpng@1.6:", when="@3.9:+png")
     depends_on("libpng", when="+png")
     # depends_on('podofo', when='+podofo')
-    depends_on("poppler@0.86:", when="@3.9:+poppler")
-    depends_on("poppler@0.24:", when="+poppler")
-    depends_on("poppler@:21", when="@:3.4.1+poppler")
-    depends_on("poppler@:25.01", when="@:3.10.1+poppler")
-    depends_on("poppler@:25.09", when="@:3.11.4+poppler")
-    depends_on("poppler@:26.00", when="@:3.12.1+poppler")
-    depends_on("poppler", when="+poppler")
+    with when("+poppler"):
+        depends_on("poppler@0.86:", when="@3.9:")
+        depends_on("poppler@0.24:")
+        depends_on("poppler@:26.05", when="@:3.13.0")
+        depends_on("poppler@:26.04", when="@:3.12.4")
+        depends_on("poppler@:26.03", when="@:3.12.3")
+        depends_on("poppler@:26.01", when="@:3.12.2")
+        depends_on("poppler@:26.00", when="@:3.12.1")
+        depends_on("poppler@:25.09", when="@:3.11.4")
+        depends_on("poppler@:25.01", when="@:3.10.1")
+        depends_on("poppler@:21", when="@:3.4.1")
     depends_on("postgresql", when="+postgresql")
     depends_on("qhull", when="+qhull")
     depends_on("qhull@2015:", when="@3.5:+qhull")
@@ -517,7 +538,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
-        # https://gdal.org/build_hints.html
+        # https://gdal.org/en/stable/development/building_from_source.html
         args = [
             # Only use Spack-installed dependencies
             self.define("GDAL_USE_EXTERNAL_LIBS", False),

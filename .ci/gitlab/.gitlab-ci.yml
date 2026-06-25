@@ -9,9 +9,12 @@ variables:
   # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
   PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
   PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
-  SPACK_CI_DISABLE_STACKS:
-    value: /^.*(cray).*$/
-    expand: false
+  # SPACK_CI_DISABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
+  # SPACK_CI_ENABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -42,6 +45,14 @@ default:
     PR_TARGET_REF_NAME: "develop"
     PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
     OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
+
+.package_on_change: &package_on_change
+    paths:
+      - .ci/env
+      - .ci/gitlab/**/*
+      - repos/spack_repo/**/*
+      - stacks/$SPACK_CI_STACK_NAME/**/*
+    compare_to: HEAD~1
 
   ########################################
 # Job templates
@@ -80,6 +91,7 @@ default:
       variables:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
+      changes: *package_on_change
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
@@ -113,6 +125,7 @@ default:
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
+    when: always
     paths:
       - "${CI_PROJECT_DIR}/jobs_scratch_dir"
       - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
@@ -120,6 +133,7 @@ default:
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
   variables:
+    SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
     KUBERNETES_CPU_REQUEST: 8000m
     KUBERNETES_MEMORY_REQUEST: 16G
@@ -245,6 +259,30 @@ dotenv:
   - python3 write_dotenv.py .ci/env
   - cat env
 
+force_pipeline_status:
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
+      changes: *package_on_change
+      when: never
+    - if: $CI_PROJECT_NAME == "spack"
+      when: never
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
+      when: always
+    - when: never
+  stage: generate
+  tags: ["spack", "service_noop"]
+  retry: 0
+  allow_failure: true
+  image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
+  variables:
+    CI_OIDC_REQUIRED: 0
+    GIT_STRATEGY: "none"
+    CI_JOB_SIZE: "small"
+    KUBERNETES_CPU_REQUEST: "100m"
+    KUBERNETES_MEMORY_REQUEST: "5M"
+  script:
+  - echo "This job is a placeholder job to ensure a pipeline status is posted even if no jobs are run"
+
 ########################################
 # TEMPLATE FOR ADDING ANOTHER PIPELINE
 ########################################
@@ -334,7 +372,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v6.4.3-1760790880
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.3-1778518886
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
@@ -356,7 +394,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
@@ -570,7 +608,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
+  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -671,12 +709,12 @@ hep-build:
     - artifacts: True
       job: hep-generate
 
-########################################
+#####################
 # AWS ParallelCluster
-########################################
+#####################
 
 .aws-pcluster-generate:
-  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:v2024-10-07", "entrypoint": [""] }
+  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10", "entrypoint": [""] }
 
 # X86_64_V4 (one pipeline per target)
 .aws-pcluster-x86_64_v4:
@@ -685,18 +723,6 @@ hep-build:
 
 aws-pcluster-x86_64_v4-generate:
   extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
-  before_script:
-    # TODO: Move this to the container next time it is rebuilt
-    - - uname -a || true
-      - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-      - nproc || true
-      - cat /proc/loadavg || true
-      - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - *clone_spack
-      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-      - spack arch
-    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-x86_64_v3/gcc-7.3.1/binutils-2.37-qvccg7zpskturysmr4bzbsfrx34kvazo/bin:$PATH
-      - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-x86_64_v4-build:
   extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
@@ -717,18 +743,6 @@ aws-pcluster-x86_64_v4-build:
 aws-pcluster-neoverse_v1-generate:
   # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
   extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
-  before_script:
-    # TODO: Move this to the container next time it is rebuilt
-    - - uname -a || true
-      - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-      - nproc || true
-      - cat /proc/loadavg || true
-      - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - *clone_spack
-      - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-      - spack arch
-    - - export PATH=/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh/linux-amzn2-aarch64/gcc-7.3.1/binutils-2.37-2yxz3xsjfmesxujxtlrgcctxlyilynmp/bin:$PATH
-      - spack -c "config:install_tree:root:/home/software/spack/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeholder__/__spack_path_placeh" reindex
 
 aws-pcluster-neoverse_v1-build:
   extends: [  ".aws-pcluster-neoverse_v1", ".build" ]

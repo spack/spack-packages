@@ -24,7 +24,8 @@ class AmrWind(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause")
 
-    version("main", branch="main")
+    version("3.9.1", tag="v3.9.1", commit="c41e3a727ad7ad9fe14df33c2db565b4248dc7ed")
+    version("3.9.0", tag="v3.9.0", commit="6c15368dc93d749fb0c3b216b0ccccaab6907251")
     version("3.8.1", tag="v3.8.1", commit="464ce0891979dbef9972c5b868facee1c974779d")
     version("3.8.0", tag="v3.8.0", commit="35d63755ce213caedc1c1e96e93e9a4bfe5bffc3")
     version("3.7.0", tag="v3.7.0", commit="243e620c263761d34b3ef54694cfd3f787321c24")
