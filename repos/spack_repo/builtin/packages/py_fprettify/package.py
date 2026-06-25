@@ -20,3 +20,5 @@ class PyFprettify(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-configargparse", type=("build", "run"))
+
+    patch("fprettify370_pr176.patch", when="@0.3.7")
