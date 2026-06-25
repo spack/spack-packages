@@ -313,7 +313,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("blas")
     depends_on("lapack")
 
-    depends_on("libxs@20260608:", when="smm=libxs")
+    depends_on("libxs@1:+fortran", when="smm=libxs")
 
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
@@ -359,8 +359,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
         # OpenCL backend implementation relies on LIBXS starting from 2026.2
         # and master (June 10 2026)
-        requires("libxs@20260608:", when="@2026.2:")
-        requires("libxstream@20260622:", when="@2026.2:")
+        requires("libxs@1:+fortran", when="@2026.2:")
+        requires("libxstream@1:", when="@2026.2:")
 
     with when("+libint"):
         depends_on("pkgconfig", type="build", when="@7.0:")
@@ -1199,7 +1199,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
-        args = []
 
         if spec.satisfies("+opencl"):
             args += [self.define("CP2K_USE_ACCEL", "OPENCL")]

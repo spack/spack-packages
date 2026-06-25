@@ -18,7 +18,7 @@ class Libxs(CMakePackage):
 
     homepage = "hhttps://libxs.readthedocs.io/en/latest"
     url = (
-        "https://github.com/hfp/libxs/archiv/libxs-ab416130f8c9f7edb8c1bf3d3abaf402f61d0fe0.tar.gz"
+        "https://github.com/hfp/libxs/archive/refs/tags/1.0.tar.gz"
     )
     git = "https://github.com/hfp/libxs.git"
 
@@ -26,9 +26,9 @@ class Libxs(CMakePackage):
 
     version("main", branch="main")
     version("20260605", commit="ab416130f8c9f7edb8c1bf3d3abaf402f61d0fe0")
-    version("20260608", commit="eccf0e623af8b4c394cb2e60e602d52cb5b65be9")
+    version("1.0.0", sha256="b26654a9d7d41e7281a785d3674626c2484c92e7fc698e166639c8e78b2b18ee")
 
-    variant("fortran", default=False, description="Build Fortran module interface")
+    variant("fortran", default=True, description="Build Fortran module interface")
     variant("pic", default=True, description="Build position independent code")
     variant("shared", default=False, description="Build shared libraries (otherwise static)")
     variant("libxsmm", default=False, description="Enable libxsmm dependency")

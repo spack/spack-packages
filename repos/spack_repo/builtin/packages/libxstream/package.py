@@ -22,7 +22,7 @@ class Libxstream(MakefilePackage, CMakePackage):
     )
 
     homepage = "https://github.com/hfp/libxstream"
-    url = "https://github.com/hfp/libxstream/archive/0.9.0.tar.gz"
+    url = "https://github.com/hfp/libxstream/archive/refs/tags/1.0.0.tar.gz"
     git = "https://github.com/hfp/libxstream.git"
 
     maintainers("mtaillefumier")
@@ -34,7 +34,11 @@ class Libxstream(MakefilePackage, CMakePackage):
         sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473",
     )
     version("main", branch="main")
-    version("20260622", commit="64913491c84ce7244b5cd585302d35934277c47f")
+    version("1.0.0", sha256="44a2823b12eb58b5eaf97649244b93dcf921597ceabc718053cd28e5f59260e3")
+    version("0.9.1", sha256="c6d349183180107cd67cfc579d0fd926fa3661afcce37368f8b3340fff0908f6")
+    version("0.9.0", sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473")
+
+
     generator("ninja")
 
     variant("shared", default=True, description="Build shared libraries")
@@ -45,8 +49,8 @@ class Libxstream(MakefilePackage, CMakePackage):
     depends_on("gmake", type="build", when="@0.9.0:0.9.1")
 
     depends_on("opencl")
-    depends_on("libxs", when="@1:")
-    depends_on("libxs+shared", when="+shared")
+    depends_on("libxs@1:", when="@1:")
+    depends_on("libxs@1:+shared", when="+shared")
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
