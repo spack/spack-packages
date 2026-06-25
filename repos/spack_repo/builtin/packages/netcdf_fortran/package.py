@@ -4,7 +4,6 @@
 
 import glob
 import os
-import sys
 from shutil import Error, copyfile
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
