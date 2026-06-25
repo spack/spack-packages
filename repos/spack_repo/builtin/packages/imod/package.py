@@ -48,6 +48,11 @@ class Imod(MakefilePackage, CudaPackage):
 
         configure = Executable("./setup")
         configure_args = ["-inst", prefix]  # Set up prefix
+        # Try to help the setup script pick the desired compiler
+        if spec.satisfies("%gcc"):
+            configure_args.extend(["-compiler", "gnu"])
+        elif spec.satisfies("%intel"):
+            configure_args.extend(["-compiler", "intel"])
         configure(*configure_args)
 
         if self.spec.satisfies("+cuda"):
