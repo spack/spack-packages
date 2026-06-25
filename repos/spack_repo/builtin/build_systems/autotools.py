@@ -4,7 +4,6 @@
 import os
 import stat
 import subprocess
-import sys
 from typing import Callable, List, Optional, Set, Tuple, Union
 
 from spack.package import (
