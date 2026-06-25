@@ -371,9 +371,11 @@ class Eccodes(CMakePackage):
         if self.spec.satisfies("+aec"):
             # Prevent overriding by environment variables AEC_DIR and AEC_PATH:
             args.append(self.define("AEC_DIR", self.spec["libaec"].prefix))
-            # eccodes 2.46+ defaults ENABLE_USE_SHARED_LIB_AEC=ON; set based on whether libaec has shared libs
+            # set ENABLE_USE_SHARED_LIB_AEC based on libaec's specs; used since eccodes 2.46
             if self.spec.satisfies("@2.46:"):
-                args.append(self.define("ENABLE_USE_SHARED_LIB_AEC", "+shared" in self.spec["libaec"]))
+                args.append(
+                    self.define("ENABLE_USE_SHARED_LIB_AEC", "+shared" in self.spec["libaec"])
+                )
 
         return args
 
