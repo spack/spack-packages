@@ -16,14 +16,13 @@ class GithubCopilot(Package):
     GitHub workflow."""
 
     homepage = "https://github.com/github/copilot-cli"
-    url = "https://registry.npmjs.org/@github/copilot/-/copilot-0.0.354.tgz"
+    url = "https://registry.npmjs.org/@github/copilot/-/copilot-1.0.65.tgz"
     git = "https://github.com/github/copilot-cli.git"
 
     maintainers("wdconinc")
-    license("GitHub-Pre-Release")
+    license("LicenseRef-GitHub-Copilot-CLI-License")
 
-    version("1.0.8", sha256="f79beacc52e08291d8c1a8a03efb73afe1e9e1842d075b6a381f9563950c0cd4")
-    version("0.0.354", sha256="cc61ad9201c75b0ba3442d32861ddba876cd7cd780c94fc64e5fab50c51c0bcb")
+    version("1.0.65", sha256="8e7e2537a2d9b2a8d251dcef9aa4449ce60925015c45cd9ca5768a130e65cad5")
 
     depends_on("node-js@22:", type=("build", "run"))
     depends_on("npm@10:", type="build")
