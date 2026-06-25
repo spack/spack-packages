@@ -33,10 +33,11 @@ class Sparse(MakefilePackage):
     def edit(self, spec, prefix):
         with working_dir("./src"):
             makefile = FileFilter("Makefile")
-            cflags_override = f"CFLAGS = -O2 {self.compiler.c99_flag}"
-            if "+pic" in self.spec:
-                cflags_override += f" {self.compiler.cc_pic_flag}"
-            makefile.filter("CFLAGS = .*", cflags_override)
+            makefile.filter(
+                "CFLAGS = .*",
+                f"CFLAGS = -O2 {self.compiler.c99_flag} "
+                + (self.compiler.cc_pic_flag if spec.satisfies("+pic") else ""),                
+            )
             makefile.filter("CC = .*", "CC = {0}".format(spack_cc))
             makefile.filter("LIBRARY = .*", "LIBRARY = ../lib/libsparse.a")
 
