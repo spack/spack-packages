@@ -108,7 +108,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     )
     variant("nccl", default=True, description="Use NCCL", when="+cuda platform=linux")
     variant("nccl", default=True, description="Use NCCL", when="@:2.10 +rocm platform=linux")
-    variant("nccl", default=False, description="Disable NCCL from 2.11 on rocm", when="@2.11: +rocm platform=linux")
+    variant(
+        "nccl",
+        default=False,
+        description="Disable NCCL from 2.11 on rocm",
+        when="@2.11: +rocm platform=linux",
+    )
     # Requires AVX2: https://discuss.pytorch.org/t/107518
     variant("nnpack", default=True, description="Use NNPACK", when="target=x86_64_v3:")
     variant("numa", default=True, description="Use NUMA", when="platform=linux")
