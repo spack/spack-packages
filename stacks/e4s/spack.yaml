@@ -438,7 +438,19 @@ spack:
           prefer:
           - +rocm amdgpu_target=gfx90a ~cuda
           - ~superlu-dist
-
+        c::
+          prefer:
+          - gcc
+        cxx::
+          prefer:
+          - gcc
+        fortran::
+          prefer:
+          - gcc
+    needs: [hip-compiler]
+  - group: hip-compiler
+    specs:
+    - llvm-amdgpu
   ci:
     pipeline-gen:
     - build-job:
