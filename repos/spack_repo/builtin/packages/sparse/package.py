@@ -22,6 +22,7 @@ class Sparse(MakefilePackage):
 
     variant("pic", default=True, description="Build with position independent code")
 
+    # Remove implicit usage of time() for newer compilers
     patch(
         "spTest_time_patch.patch",
         sha256="e10ee8e790bfbc198ba065bf3f9b4b4526b61997dfc238c922c8e5c429043657",
