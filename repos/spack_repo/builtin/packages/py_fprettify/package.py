@@ -21,4 +21,5 @@ class PyFprettify(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-configargparse", type=("build", "run"))
 
+    # https://github.com/fortran-lang/fprettify/pull/176
     patch("fprettify370_pr176.patch", when="@0.3.7")
