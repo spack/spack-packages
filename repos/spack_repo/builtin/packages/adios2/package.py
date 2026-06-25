@@ -76,7 +76,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("sz3", default=True, when="@2.12:", description="Enable SZ3 compression")
     variant("mgard", default=not IS_WINDOWS, when="@2.8:", description="Enable MGARD compression")
 
-    # Rransport engines
+    # Transport engines
     variant("sst", default=True, description="Enable the SST staging engine")
     variant(
         "dataman",
@@ -102,6 +102,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("xrootd", default=True, description="Enable the XRootD")
+
+    # Encryption libraries
+    variant("sodium", default=False, description="Enable encryption/decryption through libsodium")
 
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
@@ -204,6 +207,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("sz3", when="+sz3")
     depends_on("mgard@compat-2022-11-18:", when="+mgard")
     depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
+
+    depends_on("libsodium", when="+sodium")
 
     extends("python", when="+python")
     depends_on("python", when="+python", type=("build", "run"))
@@ -312,6 +317,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_MPI", "mpi"),
             from_variant("ADIOS2_USE_PNG", "png"),
             from_variant("ADIOS2_USE_Python", "python"),
+            from_variant("ADIOS2_USE_Sodium", "sodium"),
             from_variant("ADIOS2_USE_SSC", "ssc"),
             from_variant("ADIOS2_USE_SST", "sst"),
             from_variant("ADIOS2_USE_SZ3", "sz3"),
