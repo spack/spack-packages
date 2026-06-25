@@ -96,7 +96,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("rocm", default=False, description="Use ROCm")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
-    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8:")
+    variant("kineto", default=True, description="Use Kineto profiling library", when="@1.8:2.10")
+    variant("kineto", default=False, description="Disable Kineto from 2.11 on rocm", when="@2.11:")
     variant("magma", default=not is_darwin, description="Use MAGMA", when="+cuda")
     variant("metal", default=is_darwin, description="Use Metal for Caffe2 iOS build")
     variant(
@@ -106,7 +107,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         when="@1.12: platform=darwin",
     )
     variant("nccl", default=True, description="Use NCCL", when="+cuda platform=linux")
-    variant("nccl", default=True, description="Use NCCL", when="+rocm platform=linux")
+    variant("nccl", default=True, description="Use NCCL", when="@:2.10 +rocm platform=linux")
+    variant("nccl", default=False, description="Disable NCCL from 2.11 on rocm", when="@2.11: +rocm platform=linux")
     # Requires AVX2: https://discuss.pytorch.org/t/107518
     variant("nnpack", default=True, description="Use NNPACK", when="target=x86_64_v3:")
     variant("numa", default=True, description="Use NUMA", when="platform=linux")
@@ -143,6 +145,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     conflicts("+gloo+rocm")
     conflicts("+rocm", when="@2.3", msg="Rocm doesn't support py-torch 2.3 release")
     conflicts("+rocm", when="@2.4", msg="Rocm doesn't support py-torch 2.4 release")
+    conflicts("+rocm", when="@2.8", msg="Rocm doesn't support py-torch 2.8 release")
     conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
     conflicts("+breakpad", when="target=ppc64:")
     conflicts("+breakpad", when="target=ppc64le:")
@@ -331,7 +334,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("valgrind", when="+valgrind")
     with when("+rocm"):
         depends_on("hsa-rocr-dev")
-        depends_on("hip")
+        depends_on("hip@7.0:", when="@2.9:")
+        depends_on("hip@:6.4", when="@:2.7")
         depends_on("rccl", when="+nccl")
         depends_on("rocprim")
         depends_on("hipcub")
@@ -346,11 +350,17 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
+        depends_on("composable-kernel")
+        depends_on("hipblaslt")
+        # Ensure hipblaslt version for 2.9+
+        depends_on("hipblaslt@7.0:", when="@2.9:")
         depends_on("rocminfo")
-        depends_on("aotriton@0.8.1b", when="@2.5:2.6")
-        depends_on("aotriton@0.9.1b", when="@2.7:")
-        depends_on("composable-kernel@:6.3.2", when="@2.5")
-        depends_on("composable-kernel@6.3.2:", when="@2.6:")
+        depends_on("hipsparselt@7.0:", when="@2.9:")
+        depends_on("aotriton@0.8b", when="@2.5:2.6")
+        depends_on("aotriton@0.9.2b", when="@2.7")
+        depends_on("aotriton@0.10b", when="@2.8:2.10")
+        depends_on("aotriton@0.11b", when="@2.11:")
+
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
     depends_on("ucx", when="+ucc")
@@ -601,6 +611,17 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
+        if self.spec.satisfies("@2.5:+rocm"):
+            filter_file(
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)",
+                "find_library(ROCM_ROCTX_LIB roctx64 HINTS ${ROCM_PATH}/lib)\n"
+                "if(DEFINED ENV{ROCTRACER_INCLUDE_DIR})\n"
+                "  set(ROCTRACER_INCLUDE_DIR $ENV{ROCTRACER_INCLUDE_DIR} CACHE PATH "
+                '"Roctracer include directory" FORCE)\n'
+                "endif()",
+                "cmake/public/LoadHIP.cmake",
+                string=True,
+            )
         if self.spec.satisfies("@2.1:2.7+rocm"):
             filter_file(
                 "${ROCM_INCLUDE_DIRS}/rocm-core/rocm_version.h",
@@ -698,6 +719,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         enable_or_disable("rocm")
         if "+rocm" in self.spec:
+            # So libtorch_hip.so and dependents find ROCm/runtime libs at runtime and
+            # during binary cache relocation (avoids "=> not found" for e.g.
+            # libamdhip64.so.6, libhsa-runtime64.so.1).
+            for lib_dir in [self.spec["hip"].prefix.lib, self.spec["hsa-rocr-dev"].prefix.lib]:
+                env.append_flags("LDFLAGS", "-Wl,-rpath," + lib_dir)
             env.set("PYTORCH_ROCM_ARCH", ";".join(self.spec.variants["amdgpu_target"].value))
             env.set("HSA_PATH", self.spec["hsa-rocr-dev"].prefix)
             env.set("ROCBLAS_PATH", self.spec["rocblas"].prefix)
@@ -718,6 +744,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("@2.5:"):
                 env.set("TORCHINDUCTOR_CK_DIR", self.spec["composable-kernel"].prefix)
                 env.set("AOTRITON_INSTALLED_PREFIX", self.spec["aotriton"].prefix)
+                env.prepend_path("CPATH", self.spec["aotriton"].prefix.include)
             if self.spec.satisfies("^hip@5.2.0:"):
                 env.set("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)
 
@@ -834,6 +861,22 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.torch_cuda_arch_list(env)
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
+
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
+            # PyTorch headers (e.g. c10/util/complex.h) include <thrust/complex.h>;
+            # dependents need rocthrust include so HIP device builds can find it.
+            env.set("THRUST_PATH", self.spec["rocthrust"].prefix)
+            env.prepend_path("CPATH", self.spec["rocthrust"].prefix.include)
+
+    def setup_dependent_run_environment(self, env, dependent_spec):
+        """So dependents (e.g. py-torch-nvidia-apex, py-torchaudio) can find
+        libamdhip64.so when importing torch or running code that uses ROCm."""
+        if "+rocm" in self.spec:
+            env.prepend_path("LD_LIBRARY_PATH", self.spec["hip"].prefix.lib)
 
     @run_before("install")
     def build_amd(self):
