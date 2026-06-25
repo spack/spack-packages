@@ -1,0 +1,47 @@
+From: Bernhard Kaindl <bernhardkaindl7@gmail.com>
+Subject: [PATCH 1/2] bazel-8.7.0: Add SPACK_INCLUDE_DIRS patch
+--- a/BUILD
++++ b/BUILD
+@@ -88,6 +88,7 @@ genrule(
+         "//third_party:grpc-java-12222.patch",
+         "//third_party:rules_graalvm_fix.patch",
+         "//third_party:rules_graalvm_unicode.patch",
++        "//third_party:rules_cc_spack_include_dirs.patch",
+     ],
+     outs = ["MODULE.bazel.lock.dist"],
+     cmd = " && ".join([
+--- a/MODULE.bazel
++++ b/MODULE.bazel
+@@ -75,6 +75,14 @@ single_version_override(
+     ],
+ )
+
++# Add SPACK_INCLUDE_DIRS support to rules_cc for spack package manager integration
++single_version_override(
++    module_name = "rules_cc",
++    patch_strip = 1,
++    patches = ["//third_party:rules_cc_spack_include_dirs.patch"],
++    version = "0.1.1",
++)
++
+ # Remove once the following PRs are available in a grpc-java release.
+ #   https://github.com/grpc/grpc-java/pull/12207
+ #   https://github.com/grpc/grpc-java/pull/12222
+--- /dev/null
++++ b/third_party/rules_cc_spack_include_dirs.patch
+@@ -0,0 +1,15 @@
++--- a/cc/private/toolchain/unix_cc_configure.bzl
+++++ b/cc/private/toolchain/unix_cc_configure.bzl
++@@ -136,7 +136,12 @@
++     if print_resource_dir_supported:
++         resource_dir = repository_ctx.execute(
++             [cc, "-print-resource-dir"] + additional_flags,
++         ).stdout.strip() + "/share"
++         inc_directories.append(_prepare_include_path(repository_ctx, resource_dir))
++ 
+++    if "SPACK_INCLUDE_DIRS" in repository_ctx.os.environ:
+++        for path in repository_ctx.os.environ["SPACK_INCLUDE_DIRS"].split(":"):
+++            if path:
+++                inc_directories.append(_prepare_include_path(repository_ctx, path))
+++
++     return inc_directories
