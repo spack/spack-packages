@@ -17,6 +17,8 @@ class Libssh2(AutotoolsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
+    maintainers("CodingYayaToure")
+
     version("1.11.1", sha256="d9ec76cbe34db98eec3539fe2c899d26b0c837cb3eb466a56b0f109cabf658f7")
 
     build_system("autotools", "cmake", default="autotools")
