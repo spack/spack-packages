@@ -31,8 +31,7 @@ class Mummer(Package):
         """Fix mummerplot's use of defined on hashes (deprecated
         since perl@5.10, made illegal in perl@5.20."""
 
-        kwargs = {"string": True}
-        filter_file("defined (%", "(%", "scripts/mummerplot.pl", **kwargs)
+        filter_file("defined (%", "(%", "scripts/mummerplot.pl", string=True)
 
     def install(self, spec, prefix):
         if self.run_tests:

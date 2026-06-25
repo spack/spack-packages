@@ -51,19 +51,17 @@ class Bowtie2(MakefilePackage):
     conflicts("@2.4.1", when="target=aarch64:")
 
     def edit(self, spec, prefix):
-        kwargs = {"ignore_absent": True, "backup": False, "string": False}
-
         match = "^#!/usr/bin/env perl"
         perl = spec["perl"].command
         substitute = "#!{perl}".format(perl=perl)
         files = ["bowtie2"]
-        filter_file(match, substitute, *files, **kwargs)
+        filter_file(match, substitute, *files, ignore_absent=True)
 
         match = "^#!/usr/bin/env python.*"
         python = spec["python"].command
         substitute = "#!{python}".format(python=python)
         files = ["bowtie2-build", "bowtie2-inspect"]
-        filter_file(match, substitute, *files, **kwargs)
+        filter_file(match, substitute, *files, ignore_absent=True)
 
         if self.spec.satisfies("@2.4.0:2.4.2 target=aarch64:") or self.spec.satisfies(
             "@2.4.0:2.4.2 target=ppc64le:"
@@ -72,7 +70,7 @@ class Bowtie2(MakefilePackage):
             simdepath = spec["simde"].prefix.include
             substitute = "-I{simdepath}".format(simdepath=simdepath)
             files = ["Makefile"]
-            filter_file(match, substitute, *files, **kwargs)
+            filter_file(match, substitute, *files, ignore_absent=True)
 
     @property
     def build_targets(self):

@@ -37,8 +37,6 @@ class Scalpel(MakefilePackage, SourceforgePackage):
         """
 
         with working_dir(self.stage.source_path):
-            kwargs = {"ignore_absent": True, "backup": False, "string": False}
-
             match = "^#!/usr/bin/env perl"
             perl = self.spec["perl"].command
             substitute = "#!{perl}".format(perl=perl)
@@ -49,7 +47,7 @@ class Scalpel(MakefilePackage, SourceforgePackage):
                 "FindVariants.pl",
                 "FindSomatic.pl",
             ]
-            filter_file(match, substitute, *files, **kwargs)
+            filter_file(match, substitute, *files, ignore_absent=True)
 
     # Scalpel doesn't actually *have* an install step.  The authors
     # expect you to unpack the tarball, build it in the resulting
