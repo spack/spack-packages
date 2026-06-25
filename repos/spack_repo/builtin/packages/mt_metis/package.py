@@ -25,6 +25,8 @@ class MtMetis(CMakePackage):
 
     variant("shared", default=True, description="Enable build of shared libraries")
 
+    variant("int64",default=False,description="Use index type of 64 bit")
+    variant("pic",default=False,description="Build with position-independent-code")
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -34,6 +36,11 @@ class MtMetis(CMakePackage):
             self.define("WILDRIVER_PATH", "wildriver"),
             self.define("METIS_PATH", "metis"),
             self.define_from_variant("SHARED", "shared"),
+            self.define_from_variant("BIGEDGES","64bit"),
+            self.define_from_variant("BIGVERTICES","64bit"),
+            self.define_from_variant("BIGWEIGHTS","64bit"),
+            self.define_from_variant("BIGPARTITIONS","64bit"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic")
         ]
         return cmake_args
 
