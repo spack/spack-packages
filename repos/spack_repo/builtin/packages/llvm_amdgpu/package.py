@@ -402,10 +402,11 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         args.append(self.define("RUNTIMES_CMAKE_ARGS", runtime_cmake_args))
         return args
 
-    compiler_languages = ["c", "cxx", "fortran"]
+    compiler_languages = ["c", "cxx", "fortran", "hip-lang"]
     c_names = ["amdclang"]
     cxx_names = ["amdclang++"]
     fortran_names = ["amdflang"]
+    hip_lang_names = ["amdclang++"]
     compiler_version_argument = "--version"
     compiler_version_regex = r"roc-(\d+[._]\d+[._]\d+)"
     installed_dir_regex = r"InstalledDir:\s*(.+)"
