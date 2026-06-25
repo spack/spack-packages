@@ -31,7 +31,7 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("fortran", type="build")
     depends_on("java@17:")
 
-    depends_on("qt@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
+    depends_on("qt+opengl@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
     depends_on("cuda", when="+cuda")
     depends_on("libtiff@4:")
     depends_on("fftw@3:", when="+fftw")
