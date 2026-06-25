@@ -36,7 +36,7 @@ class Sparse(MakefilePackage):
             makefile.filter(
                 "CFLAGS = .*",
                 f"CFLAGS = -O2 {self.compiler.c99_flag} "
-                + (self.compiler.cc_pic_flag if spec.satisfies("+pic") else ""),                
+                + (self.compiler.cc_pic_flag if spec.satisfies("+pic") else ""),
             )
             makefile.filter("CC = .*", "CC = {0}".format(spack_cc))
             makefile.filter("LIBRARY = .*", "LIBRARY = ../lib/libsparse.a")
