@@ -42,6 +42,10 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("python", type=("run"))
 
     def edit(self, spec, prefix):
+        # Ensure that Spack-provided tcsh is used
+        csh = join_path(spec["tcsh"].prefix.bin, "csh")
+        filter_file("#!/bin/csh", f"#!{csh}", "setup", "manpages/convert", "packMacApps")
+
         configure = Executable("./setup")
         configure_args = ["-inst", prefix]  # Set up prefix
         configure(*configure_args)
