@@ -296,6 +296,8 @@ class Seacas(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)
+        if self.spec.satisfies("+legacy"):
+            env.set("ACCESS", self.prefix)
 
     def cmake_args(self):
         spec = self.spec
