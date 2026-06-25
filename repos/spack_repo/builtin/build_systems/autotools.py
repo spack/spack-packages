@@ -529,7 +529,7 @@ To resolve this problem, please try the following:
                 stop_at=stop_at,
             )
 
-            if sys.platform == "darwin":
+            if self.spec.satisfies("platform=darwin"):
                 # Libtool has a check for nagfor on darwin systems, but it does not
                 # recognize NAG behind the compiler wrappers, so fix that check:
                 x.filter(
