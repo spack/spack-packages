@@ -534,6 +534,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             depends_on("cuda@11:12")
             conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
         with when("@2.9:"):
+            # cuda@13.1: explicitly disallowed due to https://github.com/NVIDIA/cccl/issues/7896
             depends_on("cuda@11:13.0")
 
     # ROCm conflicts and dependencies
