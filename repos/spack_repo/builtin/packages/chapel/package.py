@@ -515,6 +515,10 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # CUDA conflicts and dependencies
     with when("+cuda"):
         conflicts("llvm=none", msg="Cuda support requires building with LLVM")
+        # Allow using any compilers CUDA considers unsupported, to be able to
+        # use recent LLVMs; we will explicitly restrict to using version
+        # combinations that Chapel docs state are supported.
+        depends_on("cuda +allow-unsupported-compilers")
 
         depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
         depends_on("llvm@22:", when="llvm=spack ^cuda@13:")
