@@ -97,11 +97,11 @@ class NetcdfFortran(AutotoolsPackage):
                 # files with lowercase names.
                 flags.append("-ef")
             elif self.spec.satisfies("%fortran=nag platform=darwin"):
-                    # The MacOS file system is case-insensitive. NAG therefore treats .F90
-                    # files as .f90 files, and so doesn't run them through its
-                    # preprocessor. So add -fpp to force NAG to run the preprocessor on
-                    # all Fortran files.
-                    flags.append("-fpp")
+                # The MacOS file system is case-insensitive. NAG therefore treats .F90
+                # files as .f90 files, and so doesn't run them through its
+                # preprocessor. So add -fpp to force NAG to run the preprocessor on
+                # all Fortran files.
+                flags.append("-fpp")
 
         # Note that cflags and fflags should be added by the compiler wrapper
         # and not on the command line to avoid overriding the default
