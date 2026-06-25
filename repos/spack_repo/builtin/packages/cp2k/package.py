@@ -250,7 +250,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     conflicts(
         "+deepmd",
         when="build_system=makefile",
-        msg="DeepMD only is only available with CMake",
+        msg="DeepMD is only available with CMake (in Spack)",
     )
     depends_on("deepmdkit", when="+deepmd")
 
