@@ -23,7 +23,7 @@ class PyUrwid(PythonPackage):
 
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@61:", type="build", when="@2.6:")
-    depends_on("py-setuptools-scm@7:", type="build", when="@2.6:")
+    depends_on("py-setuptools-scm@7:+toml", type="build", when="@2.6:")
     depends_on("py-wheel", type="build", when="@2.6:")
 
     depends_on("py-typing-extensions", type="run", when="@2.6:")
