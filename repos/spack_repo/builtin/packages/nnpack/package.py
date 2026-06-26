@@ -46,42 +46,42 @@ class Nnpack(CMakePackage):
     resource(
         name="peachpy",
         git="https://github.com/Maratyszcza/PeachPy.git",
-        branch="master",
+        commit="349e8f836142b2ed0efeb6bb99b1b715d87202e9",
         destination="deps",
         placement="peachpy",
     )
     resource(
         name="cpuinfo",
-        git="https://github.com/Maratyszcza/cpuinfo.git",
-        branch="master",
+        git="https://github.com/pytorch/cpuinfo.git",
+        commit="315d03cacc51bfabe316057b0d3466e13bce88a0",
         destination="deps",
         placement="cpuinfo",
     )
     resource(
         name="fp16",
         git="https://github.com/Maratyszcza/FP16.git",
-        branch="master",
+        commit="782eea126dc5c755827be751a099eb01826175cf",
         destination="deps",
         placement="fp16",
     )
     resource(
         name="fxdiv",
         git="https://github.com/Maratyszcza/FXdiv.git",
-        branch="master",
+        commit="63058eff77e11aa15bf531df5dd34395ec3017c8",
         destination="deps",
         placement="fxdiv",
     )
     resource(
         name="psimd",
         git="https://github.com/Maratyszcza/psimd.git",
-        branch="master",
+        commit="072586a71b55b7f8c584153d223e95687148a900",
         destination="deps",
         placement="psimd",
     )
     resource(
         name="pthreadpool",
         git="https://github.com/Maratyszcza/pthreadpool.git",
-        branch="master",
+        commit="560c60d342a76076f0557a3946924c6478470044",
         destination="deps",
         placement="pthreadpool",
     )
