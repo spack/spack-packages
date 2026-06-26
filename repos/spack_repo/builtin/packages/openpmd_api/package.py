@@ -82,7 +82,7 @@ class OpenpmdApi(CMakePackage):
         depends_on("adios2@2.5.0: ~mpi", when="~mpi")
         depends_on("adios2@2.5.0: +mpi", when="+mpi")
     with when("+python"):
-        depends_on("py-@2.6.2:", type="link")
+        depends_on("py-pybind11@2.6.2:", type="link")
         depends_on("py-pybind11@2.13.0:", type="link", when="@0.16.0:")
         depends_on("py-pybind11@:3.0.1", type="link", when="@:0.17.0")
         depends_on("py-pybind11@3:", type="link", when="@0.17.0:")
