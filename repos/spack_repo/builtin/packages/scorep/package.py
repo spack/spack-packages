@@ -16,6 +16,7 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
+    version("10.0", sha256="1e96fe2414bfc9eb868619501a5f62943b554eb1358628610e8e9e01036dacf2")
     version("9.4", sha256="bea58d8c47a7512eca0a5858179377f3f0861f30eafb342a29aa97c05de8f623")
     version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
@@ -67,6 +68,9 @@ class Scorep(AutotoolsPackage):
     depends_on("cxx", type=("build", "run"))
     depends_on("fortran", type=("build", "run"), when="+fortran")
 
+    # SCOREP 10
+    depends_on("otf2@3.2:", when="@10:")
+
     # SCOREP 9
     depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
     depends_on("otf2@3.1:", when="@9:")
@@ -90,16 +94,25 @@ class Scorep(AutotoolsPackage):
 
     # Conditional dependencies for variants
     depends_on("mpi@2.2:", type=("build", "run"), when="+mpi")
-    depends_on("mpi", type=("build", "run"), when="+mpi")
     depends_on("papi", when="+papi")
     depends_on("pdt", when="+pdt")
     depends_on("llvm", when="+unwind")
     depends_on("libunwind", when="+unwind")
+    # Older CUDA support progressively gets phased out
+    # Expect 13+ to be the requirement for Score-P 11
+    # due to the user defined activity records.
+    # --wrwilliams JUN26
+    depends_on("cuda@11.6:", when="@10.0+cuda")
     depends_on("cuda@7:", when="@8.0:+cuda")
     depends_on("cuda", when="+cuda")
     depends_on("hip@4.2:", when="+hip")
-    depends_on("rocprofiler-dev", when="+hip")
-    depends_on("rocm-smi-lib", when="+hip")
+    # Score-P 10 introduces rocprofiler-sdk based instrumentation
+    # Technically there is a major version of overlap but as this
+    # has not been a variant, I'm just cutting over now.
+    # --wrwilliams JUN2026
+    depends_on("rocprofiler-dev", when="@:9+hip")
+    depends_on("rocm-smi-lib", when="@:9+hip")
+    depends_on("rocprofiler-sdk", when="@10:+hip")
 
     # Score-P requires a case-sensitive file system, and therefore
     # does not work on macOS
