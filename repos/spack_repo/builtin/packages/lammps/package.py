@@ -627,7 +627,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         if spec.satisfies("%aocc"):
             if spec.satisfies("+intel"):
                 cxx_flags = (
-                    "-O3 -fno-math-errno -fno-unroll-loops "
+                    "-O3 -m64 -ffast-math -fno-math-errno -fno-unroll-loops "
                     "-fveclib=AMDLIBM -muse-unaligned-vector-move"
                 )
                 if spec.satisfies("%aocc@4.1:4.2"):
@@ -636,9 +636,15 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                         " -mllvm -enable-masked-gather-sequence=false"
                     )
                 elif spec.satisfies("%aocc@5.0:"):
-                    cxx_flags += " -mllvm -enable-aggressive-gather"
+                    if spec.satisfies("%aocc@5.1:"):
+                        cxx_flags += " -mllvm -enable-vector-gathers"
+                    else:
+                        cxx_flags += " -mllvm -enable-aggressive-gather"
                     if spec.target >= "zen5":
-                        cxx_flags += " -fenable-restrict-based-lv"
+                        cxx_flags += (
+                            " -fenable-restrict-based-lv"
+                            " -mllvm -vectorizer-maximize-bandwidth=true"
+                        )
 
                 # add -fopenmp-simd if OpenMP not already turned on
                 if spec.satisfies("~openmp"):
