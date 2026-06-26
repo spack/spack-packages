@@ -17,5 +17,5 @@ class PyMsgspec(PythonPackage):
     version("0.20.0", sha256="692349e588fde322875f8d3025ac01689fead5901e7fb18d6870a44519d62a29")
 
     depends_on("python@3.10:", type=("build", "run"))
-    depends_on("py-setuptools@80:", type="build")
+    depends_on("py-setuptools", type="build")  # todo(thomas-bouvier): should depend on py-setuptools@80: but it breaks concretization
     depends_on("py-setuptools-scm@8:", type="build")
