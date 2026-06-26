@@ -30,7 +30,6 @@ class Genesis(AutotoolsPackage, CudaPackage):
     version("2.0.2", sha256="8e80d7a1601bf6b12adf3e4ddcbec55aee27a3431784fbc0a46c784eb092f230")
     version("2.0.0", sha256="87f097754cb36b1d532ca4952843e60b5115d1eb28e6c2c0fee77c8c720bd958")
 
-
     variant("openmp", default=True, description="Enable OpenMP.")
     variant("single", default=False, description="Enable single precision.")
     variant("mixed", default=False, description="Enable mixed precision.", when="@2.0.0:")
@@ -55,7 +54,6 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     depends_on("mpi", type=("build", "run"))
     depends_on("lapack")
-
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
