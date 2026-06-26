@@ -270,7 +270,8 @@ class Openloops(Package):
                 spack_env.append(k)
 
         spack_env = " ".join(spack_env)
-        is_intel = self.spec.satisfies("%intel")
+        is_clang = self.spec.satisfies("%fortran=clang")
+        is_intel = self.spec.satisfies("%fortran=intel")
         njobs = self.spec.variants["num_jobs"].value
 
         with open("openloops.cfg", "w") as f:
@@ -281,15 +282,15 @@ class Openloops(Package):
             f.write("cc = {0}\n".format(env["SPACK_CC"]))
             f.write("cxx = {0}\n".format(env["SPACK_CXX"]))
             f.write("fortran_compiler = {0}\n".format(env["SPACK_FC"]))
-            if self.spec.satisfies("@1.3.1") and not is_intel:
+            if self.spec.satisfies("@1.3.1") and not is_intel and not is_clang:
                 f.write("gfortran_f_flags = -ffree-line-length-none\n")
-            if self.spec.satisfies("@2.1.1") and not is_intel:
+            if self.spec.satisfies("@2.1.1") and not is_intel and not is_clang:
                 f.write("gfortran_f_flags = -ffree-line-length-none " + "-fdollar-ok ")
                 if self.spec.target.family == "aarch64":
                     f.write("-mcmodel=small\n")
                 else:
                     f.write("-mcmodel=medium\n")
-            if self.spec.satisfies("@2.1.2:") and not is_intel:
+            if self.spec.satisfies("@2.1.2:") and not is_intel and not is_clang:
                 f.write("gfortran_f_flags = -ffree-line-length-none " + "-fdollar-ok\n")
                 if self.spec.target.family == "aarch64":
                     f.write("cmodel = small\n")
