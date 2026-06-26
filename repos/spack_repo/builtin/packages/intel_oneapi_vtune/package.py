@@ -39,6 +39,7 @@ class IntelOneapiVtune(IntelOneApiLibraryPackageWithSdk):
         "2025.10.1",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/c80944e2-5eb4-42fa-9a94-3a198c0d5595/intel-vtune-2025.10.1.16_offline.sh",
         sha256="8ca8e7bb4a9bb630d63a14b068226ae839522c710aee81b82943962439777294",
+        expand=False,
     )
     version(
         "2025.8.1",

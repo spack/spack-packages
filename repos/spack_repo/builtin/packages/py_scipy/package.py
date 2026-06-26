@@ -19,6 +19,7 @@ class PyScipy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.18.0", sha256="67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378")
     version("1.17.1", sha256="95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0")
     version("1.17.0", sha256="2591060c8e648d8b96439e111ac41fd8342fdeff1876be2e19dea3fe8930454e")
     version("1.16.3", sha256="01e87659402762f43bd2fee13370553a17ada367d42e7487800bf2916535aecb")
@@ -52,13 +53,10 @@ class PyScipy(PythonPackage):
     version("1.7.1", sha256="6b47d5fa7ea651054362561a28b1ccc8da9368a39514c1bbf6c0977a1c376764")
     version("1.7.0", sha256="998c5e6ea649489302de2c0bc026ed34284f531df89d2bdc8df3a0d44d165739")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
-
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.11:3.14", when="@1.16.1:")
+        depends_on("python@3.12:3.14", when="@1.18:")
+        depends_on("python@3.11:3.14", when="@1.16.1:1.17")
         depends_on("python@3.11:3.13", when="@1.16.0")
         depends_on("python@3.10:3.13", when="@1.14.1:1.15")
         depends_on("python@3.10:3.12", when="@1.14.0")
@@ -70,10 +68,18 @@ class PyScipy(PythonPackage):
 
     # Build dependencies (do not include upper bound unless known issues)
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("fortran", when="@:1.18")
+
+        # Required to use --config-settings
+        depends_on("py-pip@23.1:", when="@1.9:")
+
         # from meson.build
         depends_on("meson@1.5:", when="@1.15:")
         depends_on("meson@1.1:", when="@1.11:")
         depends_on("meson@0.64:")
+
         # from pyproject.toml
         depends_on("py-meson-python@0.15:", when="@1.12:")
         depends_on("py-meson-python@0.12.1:", when="@1.11:")
@@ -81,6 +87,7 @@ class PyScipy(PythonPackage):
         depends_on("py-meson-python@0.9:", when="@1.9.2:")
         depends_on("py-meson-python@0.8.1:", when="@1.9.1:")
         depends_on("py-meson-python@0.7:", when="@1.9:")
+        depends_on("py-cython@3.2.0:", when="@1.18:")
         depends_on("py-cython@3.0.8:", when="@1.13:")
         depends_on("py-cython@0.29.35:", when="@1.12")
         depends_on("py-cython@0.29.35:2", when="@1.11")
@@ -93,6 +100,7 @@ class PyScipy(PythonPackage):
             depends_on("py-pybind11@2.10.4:", when="@1.11:")
             depends_on("py-pybind11@2.10.1:", when="@1.10:")
             depends_on("py-pybind11@2.4.3:", when="@1.5:")
+        depends_on("py-pythran@0.18.1:", when="@1.18:")
         depends_on("py-pythran@0.14:", when="@1.13:")
         depends_on("py-pythran@0.15:", when="@1.12")
         depends_on("py-pythran@0.12:", when="@1.10:")
@@ -101,9 +109,16 @@ class PyScipy(PythonPackage):
         depends_on("py-pythran@0.9.11:", when="@1.7:")
         depends_on("pkgconfig", when="@1.9:")
 
+        # Historical dependencies
+        depends_on("meson", when="@1.9.0:1.9.1")
+        depends_on("py-setuptools", when="@:1.8")
+        depends_on("py-setuptools@:59", when="@1.8")
+        depends_on("py-setuptools@:57", when="@1.7")
+
     # Run dependencies
     with default_args(type=("build", "link", "run")):
-        depends_on("py-numpy@1.26.4:2.6", when="@1.17:")
+        depends_on("py-numpy@2.0:2.7", when="@1.18:")
+        depends_on("py-numpy@1.26.4:2.6", when="@1.17")
         depends_on("py-numpy@1.25.2:2.5", when="@1.16")
         depends_on("py-numpy@1.23.5:2.4", when="@1.15")
         depends_on("py-numpy@1.23.5:2.2", when="@1.14")
@@ -121,29 +136,23 @@ class PyScipy(PythonPackage):
         depends_on("py-pooch")
         depends_on("py-hypothesis@6.30:")
 
-    # Required to use --config-settings
-    depends_on("py-pip@23.1:", when="@1.9:", type="build")
-
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#other-libraries
     depends_on("lapack@3.7.1:", when="@1.9:")
     depends_on("lapack@3.4.1:")
     depends_on("lapack")
     depends_on("blas")
-    conflicts("^openblas +ilp64", msg="SciPy requires a blas library with lp64 symbols")
-
-    # Historical dependencies
-    with default_args(type="build"):
-        depends_on("meson", when="@1.9.0:1.9.1")
-        depends_on("py-setuptools", when="@:1.8")
-        depends_on("py-setuptools@:59", when="@1.8")
-        depends_on("py-setuptools@:57", when="@1.7")
+    conflicts(
+        "^openblas +ilp64", when="@:1.17", msg="SciPy requires a blas library with lp64 symbols"
+    )
 
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
-    conflicts("%gcc@:7", when="@1.10:", msg="SciPy 1.10-1.13 requires GCC >= 8.0")
-    conflicts("%gcc@:9.0", when="@1.14:", msg="SciPy 1.14: requires GCC >= 9.1")
+    conflicts("%gcc@:9.0", when="@1.14:", msg="SciPy requires GCC >= 9.1")
+    conflicts("%gcc@:7", when="@1.10:", msg="SciPy requires GCC >= 8.0")
     conflicts("%gcc@:4.7", when="@:1.9", msg="SciPy requires GCC >= 4.8")
-    conflicts("%apple-clang@:9", when="@1.10:", msg="SciPy requires Apple Clang >= 10")
+    conflicts("%apple-clang@:14", when="@1.16:", msg="SciPy requires clang >= 15.0")
+    conflicts("%apple-clang@:11", when="@1.14:", msg="SciPy requires clang >= 12.0")
+    conflicts("%apple-clang@:9", when="@1.10:", msg="SciPy requires clang >= 10.0")
     conflicts(
         "%msvc@:19.19",
         when="@1.10:",
@@ -163,7 +172,7 @@ class PyScipy(PythonPackage):
     # https://github.com/mesonbuild/meson/pull/10909#issuecomment-1282241479
     # Intel OneAPI ifx claims to support -fvisibility, but this does not work.
     # Meson adds this flag for all Python extensions which include Fortran code.
-    conflicts("%oneapi@:2023.0", when="@1.9:")
+    conflicts("%oneapi@:2023.0", when="@1.9:1.18")
     # Unknown build error, version ranges may be incorrect
     conflicts("%oneapi@2024:", when="@:1.8")
 
@@ -184,7 +193,7 @@ class PyScipy(PythonPackage):
     def archive_files(self):
         return [join_path(self.stage.source_path, "build", "meson-logs", "meson-log.txt")]
 
-    @run_before("install")
+    @run_before("install", when="@:1.8")
     def set_fortran_compiler(self):
         if self.spec.satisfies("%fj"):
             with open("setup.cfg", "w") as f:
@@ -202,7 +211,8 @@ class PyScipy(PythonPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # https://github.com/scipy/scipy/issues/9080
-        env.set("F90", spack_fc)
+        if "fortran" in self.spec:
+            env.set("F90", spack_fc)
 
         # https://github.com/scipy/scipy/issues/14935
         if self.spec.satisfies("%intel ^py-pythran"):
@@ -214,27 +224,26 @@ class PyScipy(PythonPackage):
 
     @when("@1.9:")
     def config_settings(self, spec, prefix):
-        blas, lapack, use_ilp64 = self["py-numpy"].blas_lapack_pkg_config()
+        blas, lapack, _ = self["py-numpy"].blas_lapack_pkg_config()
 
-        if use_ilp64:
-            tty.warn("SciPy does not support ILP64 currently! Using LP64 libraries instead!")
-            blas = blas.replace("ilp64", "lp64")
-            lapack = lapack.replace("ilp64", "lp64")
-
-        if spec.satisfies("%aocc") or spec.satisfies("%clang@18:"):
-            fortran_std = "none"
-        else:
-            fortran_std = "legacy"
-
-        return {
+        settings = {
             "builddir": "build",
             "setup-args": {
-                # http://scipy.github.io/devdocs/building/blas_lapack.html
-                "-Dfortran_std": fortran_std,
+                # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,
                 "-Dlapack": lapack,
             },
         }
+
+        if "fortran" in self.spec:
+            if spec.satisfies("%gcc"):
+                fortran_std = "legacy"
+            else:
+                fortran_std = "none"
+
+            settings["setup-args"]["-Dfortran_std"] = fortran_std
+
+        return settings
 
     @run_before("install", when="@:1.8")
     def set_blas_lapack(self):

@@ -20,8 +20,19 @@ class PyAiohttp(PythonPackage):
     license("Apache-2.0 AND MIT", when="@3.13:")
     license("Apache-2.0", when="@:3.12")
 
-    version("3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1")
+    version("3.14.1", sha256="307f2cff90a764d329e77040603fa032db89c5c24fdad50c4c15334cba744035")
     with default_args(deprecated=True):
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-xcgm-r5h9-7989
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-g3cq-j2xw-wf74
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-63hw-fmq6-xxg2
+        version(
+            "3.14.0", sha256="2882de819734c715fd1b9c11c97e09fa020d14438203d1d354d8ed1702791c9b"
+        )
+        # https://www.cve.org/CVERecord?id=CVE-2026-47265
+        # https://www.cve.org/CVERecord?id=CVE-2026-34993
+        version(
+            "3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-69230/
         # https://www.cvedetails.com/cve/CVE-2025-69229/
         # https://www.cvedetails.com/cve/CVE-2025-69228/
