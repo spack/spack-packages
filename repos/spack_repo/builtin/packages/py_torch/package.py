@@ -605,7 +605,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # The peachpy CMake module sets the variable PYTHON_SIX_SOURCE_DIR,
         # but NNPACK does not forward that variable to its submodules.
         # The following two patches make NNPACK use the variable set in the Spack environment.
-        if os.path.exists("cmake/EnvVarForwarding.cmake"):
+        if self.spec.satisfies("+nnpack"):
             # Ensure NNPACK can consume PYTHON_SIX_SOURCE_DIR set in Spack env.
             filter_file(
                 "  PYTHON_LIB_REL_PATH\n)",
@@ -613,16 +613,24 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 "cmake/EnvVarForwarding.cmake",
                 string=True,
             )
-        if os.path.exists("cmake/External/nnpack.cmake"):
             # Make NNPACK pick up the variable directly from the process env.
+            nnpack_peachpy_line = (
+                '  set(PYTHON_PEACHPY_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy" '
+                + 'CACHE STRING "PeachPy (Python package) source directory")'
+            )
+            nnpack_peachpy_with_six = "\n".join(
+                [
+                    nnpack_peachpy_line,
+                    "  if(NOT DEFINED PYTHON_SIX_SOURCE_DIR "
+                    "AND DEFINED ENV{PYTHON_SIX_SOURCE_DIR})",
+                    '    set(PYTHON_SIX_SOURCE_DIR "$ENV{PYTHON_SIX_SOURCE_DIR}" '
+                    'CACHE STRING "six (Python package) source directory")',
+                    "  endif()",
+                ]
+            )
             filter_file(
-                '  set(PYTHON_PEACHPY_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy" '
-                + 'CACHE STRING "PeachPy (Python package) source directory")',
-                '  set(PYTHON_PEACHPY_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy" '
-                + 'CACHE STRING "PeachPy (Python package) source directory")\n'
-                "  if(NOT DEFINED PYTHON_SIX_SOURCE_DIR AND DEFINED ENV{PYTHON_SIX_SOURCE_DIR})\n"
-                + '    set(PYTHON_SIX_SOURCE_DIR "$ENV{PYTHON_SIX_SOURCE_DIR}" CACHE STRING "six '
-                + '(Python package) source directory")\n  endif()',
+                nnpack_peachpy_line,
+                nnpack_peachpy_with_six,
                 "cmake/External/nnpack.cmake",
                 string=True,
             )
