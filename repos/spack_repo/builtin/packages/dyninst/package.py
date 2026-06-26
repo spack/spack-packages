@@ -68,6 +68,11 @@ class Dyninst(CMakePackage):
         conflicts("^intel-tbb@2021.1:")
         conflicts("^intel-oneapi-tbb@2021.1:")
 
+    # See: https://github.com/dyninst/dyninst/pull/2304
+    with when("@:13"):
+        conflicts("^intel-tbb@2023:")
+        conflicts("^intel-oneapi-tbb@2023:")
+
     depends_on("tbb")
     requires("^[virtuals=tbb] intel-tbb@2019.9:", when="@13.0.0:")
 
