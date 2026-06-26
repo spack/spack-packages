@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.12.1", tag="v2.12.1", commit="7269437d655783a26cba32aa88195b741ff496aa")
     version("2.12.0", tag="v2.12.0", commit="0d62256a2b23365f8e1604297eb23a6545102aa8")
     version("2.11.0", tag="v2.11.0", commit="70d99e998b4955e0049d13a98d77ae1b14db1f45")
     version("2.10.0", tag="v2.10.0", commit="449b1768410104d3ed79d3bcfe4ba1d65c7f22c0")
