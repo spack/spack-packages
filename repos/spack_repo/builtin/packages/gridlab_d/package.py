@@ -2,14 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class GridlabD(AutotoolsPackage):
+class GridlabD(CMakePackage):
     """
-    Autotools package for Gridlab-D, a new power distribution system simulation
+    CMake package for Gridlab-D, a new power distribution system simulation
     and analysis tool that provides valuable information to users who design
     and operate distribution systems, and to utilities that wish to take
     advantage of the latest energy technologies. Gridlab-D is a flexible
@@ -23,7 +23,7 @@ class GridlabD(AutotoolsPackage):
     maintainers("0t1s1", "yee29", "afisher1")
 
     # Using only develop as other branches and releases did not build properly.
-    version("develop", branch="develop")
+    version("develop", branch="develop", submodules=True)
 
     variant("mysql", default=False, description="Enable MySQL support for Gridlab-D.")
     variant("helics", default=False, description="Enable Helics support for Gridlab-D.")
@@ -32,25 +32,32 @@ class GridlabD(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
+    depends_on("cmake@3.10:", type="build")
     depends_on("xerces-c")
     depends_on("superlu-mt")
     depends_on("helics", when="+helics")
+    depends_on("mysql", when="+mysql")
 
-    def configure_args(self):
+    def cmake_args(self):
         args = []
 
-        if self.spec.satisfies("+helics"):
-            # Taken from
-            # https://github.com/GMLC-TDC/HELICS-Tutorial/tree/master/setup
-            args.append("--with-helics=" + self.spec["helics"].prefix)
-            args.append("CFLAGS=-g -O0 -w")
-            args.append("CXXFLAGS=-g -O0 -w -std=c++14")
-            args.append("LDFLAGS=-g -O0 -w")
-            args.append("--with-xerces=" + self.spec["xerces-c"].prefix)
+        args.append("-DCMAKE_CXX_FLAGS=-fpermissive")
+
+        # HELICS
+        if "+helics" in self.spec:
+            args.append("-DGLD_USE_HELICS=ON")
+            args.append("-DBUILD_CXX_SHARED_LIB=ON")
+            args.append("-DGLD_HELICS_DIR=" + self.spec["helics"].prefix)
+            args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
+        else:
+            args.append("-DGLD_USE_HELICS=OFF")
+
+        # MySQL
+        if "+mysql" in self.spec:
+            args.append("-DGLD_USE_MYSQL=ON")
+            args.append("-DGLD_MYSQL_DIR=" + self.spec["mysql"].prefix)
+        else:
+            args.append("-DGLD_USE_MYSQL=OFF")
 
         return args
 
