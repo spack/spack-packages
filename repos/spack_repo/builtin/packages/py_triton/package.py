@@ -63,41 +63,49 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
     def patch_llvm_target_libraries(self):
         """Ensure libtriton.so links all LLVM target libraries.
 
-        Triton's llvm.cc calls llvm::InitializeAllTargetInfos() and similar
-        "initialize all" functions.  These are header-only functions that
-        expand at compile time to init calls for every LLVM target that was
-        built.  However, Triton's CMakeLists.txt only links AMDGPU, NVPTX,
-        and the host-arch codegen/asm libraries, leaving symbols from other
-        targets (e.g. AArch64 on x86) unresolved at runtime.
+        Triton's llvm.cc calls llvm::InitializeAllTargetInfos(),
+        InitializeAllTargets(), InitializeAllTargetMCs(), etc. These
+        header-only macros expand at compile time to direct calls for every
+        LLVM target that was built. Triton's CMakeLists.txt only links
+        AMDGPU, NVPTX, and host-arch libs, leaving symbols like
+        LLVMInitializeAArch64TargetMC unresolved at runtime.
 
-        We use filter_file to patch CMakeLists.txt, adding the missing
-        target libraries right after LLVMAMDGPUAsmParser in the
-        TRITON_LIBRARIES list.
+        We patch CMakeLists.txt to add all per-target component libraries.
         """
         llvm_prefix = self.spec["llvm"].prefix
         llvm_config = Executable(os.path.join(str(llvm_prefix), "bin", "llvm-config"))
         targets_built = llvm_config("--targets-built", output=str).strip().split()
-
-        # Build cmake list entries for all targets' codegen and asm parser libs,
-        # but only include libraries that actually exist (e.g. NVPTX has no
-        # AsmParser).
         llvm_libdir = llvm_config("--libdir", output=str).strip()
-        extra_lines = []
+
+        # Build list of all target libs that exist
+        extra_libs = []
         for t in targets_built:
-            for component in ("CodeGen", "AsmParser"):
+            for component in ("CodeGen", "AsmParser", "Desc", "Info", "Disassembler"):
                 libname = f"LLVM{t}{component}"
-                # Check if the static library exists
                 if os.path.exists(os.path.join(llvm_libdir, f"lib{libname}.a")):
-                    extra_lines.append(f"    {libname}")
+                    extra_libs.append(libname)
 
-        replacement = "    LLVMAMDGPUAsmParser\n" + "\n".join(extra_lines)
+        # Read the CMakeLists.txt and insert the extra libraries
+        cmake_file = join_path(self.stage.source_path, "CMakeLists.txt")
+        with open(cmake_file, "r") as f:
+            content = f.read()
 
-        filter_file(
-            "    LLVMAMDGPUAsmParser",
-            replacement,
-            join_path(self.stage.source_path, "CMakeLists.txt"),
-            string=True,
-        )
+        # Find "LLVMAMDGPUAsmParser" and append extra libs after it
+        anchor = "LLVMAMDGPUAsmParser"
+        if anchor not in content:
+            tty.warn(f"Anchor '{anchor}' not found in CMakeLists.txt, skipping LLVM target patch")
+            return
+
+        # Build the replacement: original anchor + all extra libs on new lines
+        extra_lines = "\n".join(f"    {lib}" for lib in extra_libs)
+        replacement = f"{anchor}\n{extra_lines}"
+
+        new_content = content.replace(anchor, replacement, 1)
+
+        with open(cmake_file, "w") as f:
+            f.write(new_content)
+
+        tty.msg(f"Patched CMakeLists.txt with {len(extra_libs)} extra LLVM target libraries")
 
     @run_before("install")
     def create_cuda_include_dir(self):
