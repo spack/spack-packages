@@ -55,18 +55,9 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     depends_on("mpi", type=("build", "run"))
     depends_on("lapack")
-<<<<<<< HEAD
-    depends_on("c", type="build")
-    depends_on("fortran", type="build")
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
-=======
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
->>>>>>> 6b622f1392 (Fix for autoreconf in genseis)
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
