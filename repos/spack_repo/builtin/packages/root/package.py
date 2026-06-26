@@ -36,6 +36,8 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.40.02", sha256="f631eebee3dbea128f1415f4b784f5e83637a2b431193bce75f10385f71efc56")
+    version("6.40.00", sha256="676f8fde8926ce05902be7f44ce7d492a4a2060022fcab0e3d1c44f6dc0fbde8")
     version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
     version("6.36.10", sha256="8ccbfbca9d05016c8c324dd61c25a1091ae61847fb9404298652b83bf0cd3be0")
     version("6.36.08", sha256="1678fd272cf3172d7ba602e2786ec659bd3ca28b38f0471005d456d968ef55a1")
@@ -45,6 +47,7 @@ class Root(CMakePackage):
     version("6.36.00", sha256="94afc8def92842679a130a27521be66e2abdaa37620888e61d828a43fc4b01a2")
 
     # Supported LTS release series (note: more recent STS releases may be further down)
+    version("6.32.22", sha256="4745ef6763cf2dd72a798785055a14c55c0a74a1b3a939f562f63d605fd57cfd")
     version("6.32.20", sha256="c4a9936d55adea8b5b20db9be2e356d95a0d97c9e78a92cd6494b7294838d261")
     version("6.32.18", sha256="0b7d18b209e2a34e611e7cb2e6b82b6559fd86d64d1a7e8bf65cd13059839956")
     version("6.32.16", sha256="1b9afc6730aa727722cc60d44a403f7a39b7226086181827bc4cabd0bea4c568")
@@ -59,12 +62,16 @@ class Root(CMakePackage):
 
     # Supported STS release series
     # 6.38 (through 2026-06-30)
+    version("6.38.06", sha256="104efe8668215fc5ceb818afbf050410f0994694baba2d40f6ac640e15ef8738")
     version("6.38.04", sha256="1ca561d03b3addae00cb76af57f8c75d3c229e8bd6939bdd408ec33fda9d3487")
     version("6.38.02", sha256="77d34d2bca0ea720acfd43798bcb5d09a28584013b4d0a2910823c867d4bfa42")
     version("6.38.00", sha256="a4429422c460f832cde514a580dd202b1d3c96e8919c24363c3d42f8cf5accdc")
 
     # 6.34 (through 2025-06-30)
     with default_args(deprecated=True):
+        version(
+            "6.34.10", sha256="d91aa27fde29b257b347af1750b0c5c51487eb7d4b1767f4df33b4d789b7b313"
+        )
         version(
             "6.34.08", sha256="806045b156de03fe8f5661a670eab877f2e4d2da6c234dc3e31e98e2d7d96fe8"
         )
@@ -238,8 +245,8 @@ class Root(CMakePackage):
     variant("python", default=True, description="Enable Python ROOT bindings")
     variant("qt5", when="@:6.34", default=False, description="Enable Qt5 web-based display")
     variant("qt6", default=False, description="Enable Qt6 web-based display")
-    variant("r", default=False, description="Enable R ROOT bindings")
-    variant("rpath", default=True, description="Enable RPATH")
+    variant("r", default=False, description="Enable R ROOT bindings", when="@:6.40")
+    variant("rpath", default=True, description="Enable RPATH", when="@:6.40")
     conflicts(
         "~rpath", when="@6.38:", msg="RPATHs are always applied if operating systems supports it"
     )
@@ -291,10 +298,18 @@ class Root(CMakePackage):
         description="Build the TPython class to run Python code from C++",
     )
     variant("unuran", default=True, description="Use UNURAN for random number generation")
-    variant("vc", default=False, description="Enable Vc for adding new types for SIMD programming")
+    variant(
+        "vc",
+        default=False,
+        description="Enable Vc for adding new types for SIMD programming",
+        when="@:6.40",
+    )
     variant("vdt", default=True, description="Enable set of fast and vectorisable math functions")
     variant(
-        "veccore", default=False, description="Enable support for VecCore SIMD abstraction library"
+        "veccore",
+        default=False,
+        description="Enable support for VecCore SIMD abstraction library",
+        when="@:6.40",
     )
     variant(
         "webgui", default=True, description="Enable web-based UI components of ROOT", when="+root7"
@@ -378,7 +393,9 @@ class Root(CMakePackage):
     # Python
     depends_on("python@2.7:", when="+python", type=("build", "run"))
     depends_on("python@3.8:", when="@6.34.00: +python", type=("build", "run"))
+    conflicts("^python +freethreading", when="@6.40.00", msg="v6.40.00 requires GIL")
     depends_on("py-numpy", type=("build", "run"), when="+tmva-pymva")
+    depends_on("py-numpy", type=("build", "run"), when="+tmva-sofie @6.40:")
 
     # TMVA
     depends_on("blas", when="+tmva-cpu")

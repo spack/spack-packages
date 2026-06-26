@@ -56,7 +56,7 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.14.4", sha256="b4c059d5895f030e7df9663894ce3732bfa1b32cd3ab2883980266a45ce3cb3b")
+    version("3.14.5", sha256="9c22bfe9939a6c5418fc74b289a5f1cc41859ae82ac6b163016b5844bd0a86bc")
     version("3.13.13", sha256="f9cde7b0e2ec8165d7326e2a0f59ea2686ce9d0c617dbbb3d66a7e54d31b74b9")
     version("3.12.13", sha256="0816c4761c97ecdb3f50a3924de0a93fd78cb63ee8e6c04201ddfaedca500b0b")
     version("3.11.15", sha256="f4de1b10bd6c70cbb9fa1cd71fc5038b832747a74ee59d599c69ce4846defb50")
@@ -64,6 +64,9 @@ class Python(Package):
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.4", sha256="b4c059d5895f030e7df9663894ce3732bfa1b32cd3ab2883980266a45ce3cb3b"
+        )
         version(
             "3.14.3", sha256="d7fe130d0501ae047ca318fa92aa642603ab6f217901015a1df6ce650d5470cd"
         )
