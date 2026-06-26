@@ -1,0 +1,35 @@
+--- a/M2/configure
++++ b/M2/configure
+@@ -14165,7 +14165,7 @@ then gfan_version=`gfan _version | head -2 | tail -1 | sed 's/gfan//'`
+                      -e 's/[^0-9]//g'`
+ 
+ 
+-  ax_compare_version_B=`echo "0.8" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
++  ax_compare_version_B=`echo "0.6" | sed -e 's/\([0-9]*\)/Z\1Z/g' \
+                      -e 's/Z\([0-9]\)Z/Z0\1Z/g' \
+                      -e 's/Z\([0-9][0-9]\)Z/Z0\1Z/g' \
+                      -e 's/Z\([0-9][0-9][0-9]\)Z/Z0\1Z/g' \
+@@ -14181,8 +14181,8 @@ x$ax_compare_version_B" | sed 's/^ *//' | sort -r | sed "s/x${ax_compare_version
+     { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+ printf "%s\n" "yes" >&6; }
+            FILE_PREREQS="$FILE_PREREQS `command -v gfan`"
+-    else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes, but < 0.8, will build" >&5
+-printf "%s\n" "yes, but < 0.8, will build" >&6; }
++    else { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes, but < 0.6, will build" >&5
++printf "%s\n" "yes, but < 0.6, will build" >&6; }
+            BUILD_gfan=yes
+   fi
+ 
+--- a/M2/Macaulay2/packages/gfanInterface.m2
++++ b/M2/Macaulay2/packages/gfanInterface.m2
+@@ -1013,9 +1013,7 @@
+ 	if gfanProgram === null then
+ 	    gfanProgram = findProgram("gfan", "gfan --help",
+ 		Verbose => gfanVerbose,
+-		-- version 0.8 is required (the 0.6.2 series predates several
+-		-- features used here and is no longer supported upstream)
+-		MinimumVersion => ("0.8",
++		MinimumVersion => ("0.6",
+ 		    "gfan _version | head -2 | tail -1 | sed 's/gfan//'"));
+ 	tmpFile := gfanMakeTemporaryFile data;
+ 
