@@ -24,6 +24,11 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     version("0.93.1", sha256="95a93d0063ac8857b9be12c1aca24f5b2eef9dd4ffe8cf3f6b552a4dd54b940f")
     version("develop", branch="develop")
 
+    variant("testing", default=True, description="Enable unit and integration tests")
+    variant("analytical", default=True, description="Enable analytical tests")
+    variant("grackle", default=False, description="Enable radiative cooling with GRACKLE")
+    variant("disks", default=False, description="Enable disk physics and propagator")
+
     variant("hdf5", default=True, description="Enable support for HDF5 I/O")
     variant("gpu_aware_mpi", default=True, description="GPU aware MPI")
 
@@ -64,6 +69,11 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
         args = [
             self.define_from_variant("SPH_EXA_WITH_" + hdf5lib, "hdf5"),
+            self.define_from_variant("BUILD_TESTING", "testing"),
+            self.define_from_variant("BUILD_ANALYTICAL", "analytical"),
+            self.define_from_variant("SPH_EXA_WITH_GRACKLE", "grackle"),
+            self.define_from_variant("SPH_EXA_WITH_DISKS", "disks"),
+            self.define_from_variant("SPH_EXA_WITH_H5HUT", "hdf5"),
             self.define_from_variant("SPH_EXA_WITH_CUDA", "cuda"),
             self.define_from_variant("RYOANJI_WITH_CUDA", "cuda"),
             self.define_from_variant("CSTONE_WITH_CUDA", "cuda"),
@@ -71,6 +81,8 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("RYOANJI_WITH_HIP", "rocm"),
             self.define_from_variant("CSTONE_WITH_HIP", "rocm"),
         ]
+        # args.append('-DCMAKE_C_COMPILER=mpicc')
+        # args.append('-DCMAKE_CXX_COMPILER=mpicxx')
 
         if spec.satisfies("+rocm") or spec.satisfies("+cuda"):
             args.append(self.define_from_variant("CSTONE_WITH_GPU_AWARE_MPI", "gpu_aware_mpi"))
