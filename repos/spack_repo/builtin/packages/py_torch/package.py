@@ -594,6 +594,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         working_dir="third_party/fbgemm",
     )
 
+    # Make Pytorch build work in air gapped environments (without internet access)
+    # This forwards six source folder path to NNPACK which forwards it to PeachPy
+    patch("air_gapped_nnpack_cmake.patch", when="2.12")
+    patch("air_gapped_nnpack_cmake_older.patch", when="2.5:2.11")
+
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
         filter_file(
@@ -601,39 +606,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             "torch_global_deps PROPERTIES LINKER_LANGUAGE CXX",
             "caffe2/CMakeLists.txt",
         )
-        # NNPACK needs to be able to find the six package, which is a dependency of peachpy.
-        # The peachpy CMake module sets the variable PYTHON_SIX_SOURCE_DIR,
-        # but NNPACK does not forward that variable to its submodules.
-        # The following two patches make NNPACK use the variable set in the Spack environment.
-        if self.spec.satisfies("+nnpack"):
-            # Ensure NNPACK can consume PYTHON_SIX_SOURCE_DIR set in Spack env.
-            filter_file(
-                "  PYTHON_LIB_REL_PATH\n)",
-                "  PYTHON_LIB_REL_PATH\n  PYTHON_SIX_SOURCE_DIR\n)",
-                "cmake/EnvVarForwarding.cmake",
-                string=True,
-            )
-            # Make NNPACK pick up the variable directly from the process env.
-            nnpack_peachpy_line = (
-                '  set(PYTHON_PEACHPY_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy" '
-                + 'CACHE STRING "PeachPy (Python package) source directory")'
-            )
-            nnpack_peachpy_with_six = "\n".join(
-                [
-                    nnpack_peachpy_line,
-                    "  if(NOT DEFINED PYTHON_SIX_SOURCE_DIR "
-                    "AND DEFINED ENV{PYTHON_SIX_SOURCE_DIR})",
-                    '    set(PYTHON_SIX_SOURCE_DIR "$ENV{PYTHON_SIX_SOURCE_DIR}" '
-                    'CACHE STRING "six (Python package) source directory")',
-                    "  endif()",
-                ]
-            )
-            filter_file(
-                nnpack_peachpy_line,
-                nnpack_peachpy_with_six,
-                "cmake/External/nnpack.cmake",
-                string=True,
-            )
         if self.spec.satisfies("@2.1:2.7+rocm"):
             filter_file(
                 "${ROCM_INCLUDE_DIRS}/rocm-core/rocm_version.h",
