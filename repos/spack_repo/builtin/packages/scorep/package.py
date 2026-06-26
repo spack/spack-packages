@@ -143,11 +143,7 @@ class Scorep(AutotoolsPackage):
         cname = self.clean_compiler(spec.compiler.name)
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
 
-        if self.version >= Version("4.0"):
-            config_args.append("--with-cubew=%s" % spec["cubew"].prefix.bin)
-            config_args.append("--with-cubelib=%s" % spec["cubelib"].prefix.bin)
-        else:
-            config_args.append("--with-cube=%s" % spec["cube"].prefix.bin)
+        config_args.append("--with-cube=%s" % spec["cube"].prefix.bin)
 
         if "+papi" in spec:
             config_args.append("--with-papi-header=%s" % spec["papi"].prefix.include)
