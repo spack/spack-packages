@@ -16,6 +16,7 @@ class RVariantannotation(RPackage):
     bioc = "VariantAnnotation"
 
     with default_args(get_full_repo=True):
+        version("1.56.0", commit="dc8ecd11b893fdebfa561bca78205d909ce354a3")
         version("1.46.0", commit="80d43e024bead5afd48cb86910ba4670d8d37424")
         version("1.44.0", commit="2e7e0a3b7c1918c0d64170dc7c173a636d3764f4")
         version("1.42.1", commit="d1121696c76c189d6b4df9914806bf585a495845")
@@ -29,47 +30,77 @@ class RVariantannotation(RPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r@2.8.0:", type=("build", "run"))
-    depends_on("r@4.0.0:", type=("build", "run"), when="@1.40.0:")
-    depends_on("r-biocgenerics@0.15.3:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.40.0:")
-    depends_on("r-matrixgenerics", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-genomeinfodb@1.11.4:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-genomicranges@1.27.6:", type=("build", "run"))
-    depends_on("r-genomicranges@1.31.8:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-genomicranges@1.41.5:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-summarizedexperiment@1.5.3:", type=("build", "run"))
-    depends_on("r-summarizedexperiment@1.19.5:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-rsamtools@1.23.10:", type=("build", "run"))
-    depends_on("r-rsamtools@1.31.2:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-rsamtools@1.33.6:", type=("build", "run"), when="@1.28.13:")
-    depends_on("r-rsamtools@1.99.0:", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-dbi", type=("build", "run"))
-    depends_on("r-zlibbioc", type=("build", "run"))
-    depends_on("r-biobase", type=("build", "run"))
-    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.24:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-iranges@2.3.25:", type=("build", "run"))
-    depends_on("r-iranges@2.13.13:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-xvector@0.5.6:", type=("build", "run"))
-    depends_on("r-xvector@0.19.7:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-xvector@0.29.2:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-biostrings@2.33.5:", type=("build", "run"))
-    depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-biostrings@2.57.2:", type=("build", "run"), when="@1.36.0:")
-    depends_on("r-annotationdbi@1.27.9:", type=("build", "run"))
-    depends_on("r-rtracklayer@1.25.16:", type=("build", "run"))
-    depends_on("r-rtracklayer@1.39.7:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-bsgenome@1.37.6:", type=("build", "run"))
-    depends_on("r-bsgenome@1.47.3:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-genomicfeatures@1.27.4:", type=("build", "run"))
-    depends_on("r-genomicfeatures@1.31.3:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-rhtslib", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-rhtslib@1.99.3:", type=("build", "run"), when="@1.44.0:")
-    depends_on("gmake", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("r@2.8.0:")
+        depends_on("r@4.0.0:", when="@1.40.0:")
+
+        depends_on("r-biocgenerics@0.15.3:")
+        depends_on("r-biocgenerics@0.37.0:", when="@1.40.0:")
+
+        depends_on("r-matrixgenerics", when="@1.36.0:")
+
+        depends_on("r-seqinfo", when="@1.56:")
+
+        depends_on("r-genomicranges@1.27.6:")
+        depends_on("r-genomicranges@1.31.8:", when="@1.26.1:")
+        depends_on("r-genomicranges@1.41.5:", when="@1.36.0:")
+        depends_on("r-genomicranges@1.61.1:", when="@1.56:")
+
+        depends_on("r-summarizedexperiment@1.5.3:")
+        depends_on("r-summarizedexperiment@1.19.5:", when="@1.36.0:")
+        depends_on("r-summarizedexperiment@1.39.1:", when="@1.56:")
+
+        depends_on("r-rsamtools@1.23.10:")
+        depends_on("r-rsamtools@1.31.2:", when="@1.26.1:")
+        depends_on("r-rsamtools@1.33.6:", when="@1.28.13:")
+        depends_on("r-rsamtools@1.99.0:", when="@1.30.1:")
+        depends_on("r-rsamtools@2.25.1:", when="@1.56:")
+
+        depends_on("r-dbi")
+
+        depends_on("r-biobase")
+
+        depends_on("r-s4vectors@0.13.13:")
+        depends_on("r-s4vectors@0.17.24:", when="@1.26.1:")
+        depends_on("r-s4vectors@0.27.12:", when="@1.36.0:")
+
+        depends_on("r-iranges@2.3.25:")
+        depends_on("r-iranges@2.13.13:", when="@1.26.1:")
+        depends_on("r-iranges@2.23.9:", when="@1.36.0:")
+
+        depends_on("r-xvector@0.5.6:")
+        depends_on("r-xvector@0.19.7:", when="@1.26.1:")
+        depends_on("r-xvector@0.29.2:", when="@1.36.0:")
+
+        depends_on("r-biostrings@2.33.5:")
+        depends_on("r-biostrings@2.47.6:", when="@1.26.1:")
+        depends_on("r-biostrings@2.57.2:", when="@1.36.0:")
+        depends_on("r-biostrings@2.77.2:", when="@1.56:")
+
+        depends_on("r-annotationdbi@1.27.9:")
+
+        depends_on("r-rtracklayer@1.25.16:")
+        depends_on("r-rtracklayer@1.39.7:", when="@1.26.1:")
+        depends_on("r-rtracklayer@1.69.1:", when="@1.56:")
+
+        depends_on("r-bsgenome@1.37.6:")
+        depends_on("r-bsgenome@1.47.3:", when="@1.26.1:")
+        depends_on("r-bsgenome@1.77.1:", when="@1.56:")
+
+        depends_on("r-genomicfeatures@1.27.4:")
+        depends_on("r-genomicfeatures@1.31.3:", when="@1.26.1:")
+        depends_on("r-genomicfeatures@1.61.4:", when="@1.56:")
+
+        depends_on("r-curl", when="@1.56:")
+
+        depends_on("gmake", type="build")
+
+        # Historical
+        depends_on("r-genomeinfodb@1.11.4:", when="@:1.46.0")
+        depends_on("r-genomeinfodb@1.15.2:", when="@1.26.1:1.46.0")
+        depends_on("r-zlibbioc", when="@:1.46.0")
+        depends_on("r-rhtslib", when="@1.30.1:1.46.0")
+        depends_on("r-rhtslib@1.99.3:", when="@1.44.0:1.46.0")
 
     # Not listed but needed
     depends_on("curl")

@@ -22,6 +22,7 @@ class RGviz(RPackage):
     license("Artistic-2.0")
 
     with default_args(get_full_repo=True):
+        version("1.54.0", commit="05ebfa65e0577fde5e4a41c26b85fce263e84788")
         version("1.44.0", commit="e70aaa7dd27df8482ee854395475a87ec2121279")
         version("1.42.0", commit="4eddb688bca3fdeb65fd536d653d7ba7f7976121")
         version("1.40.1", commit="d21843710cd05135353de5cd4ce4d35cdd333b7c")
@@ -33,30 +34,62 @@ class RGviz(RPackage):
         version("1.22.3", commit="2238079d0a7017c474f010acb35d98ee7cc1c5d1")
         version("1.20.0", commit="299b8255e1b03932cebe287c3690d58c88f5ba5c")
 
-    depends_on("r@2.10.0:", type=("build", "run"))
-    depends_on("r@4.0:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r@4.1:", type=("build", "run"), when="@1.38.3:")
-    depends_on("r@4.2:", type=("build", "run"), when="@1.40.1:")
-    depends_on("r@4.3:", type=("build", "run"), when="@1.44.0:")
-    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
-    depends_on("r-iranges@1.99.18:", type=("build", "run"))
-    depends_on("r-genomicranges@1.17.20:", type=("build", "run"))
-    depends_on("r-xvector@0.5.7:", type=("build", "run"))
-    depends_on("r-rtracklayer@1.25.13:", type=("build", "run"))
-    depends_on("r-lattice", type=("build", "run"))
-    depends_on("r-rcolorbrewer", type=("build", "run"))
-    depends_on("r-biomart@2.11.0:", type=("build", "run"))
-    depends_on("r-annotationdbi@1.27.5:", type=("build", "run"))
-    depends_on("r-biobase@2.15.3:", type=("build", "run"))
-    depends_on("r-genomicfeatures@1.17.22:", type=("build", "run"))
-    depends_on("r-ensembldb@2.11.3:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r-bsgenome@1.33.1:", type=("build", "run"))
-    depends_on("r-biostrings@2.33.11:", type=("build", "run"))
-    depends_on("r-biovizbase@1.13.8:", type=("build", "run"))
-    depends_on("r-rsamtools@1.17.28:", type=("build", "run"))
-    depends_on("r-latticeextra@0.6-26:", type=("build", "run"))
-    depends_on("r-matrixstats@0.8.14:", type=("build", "run"))
-    depends_on("r-genomicalignments@1.1.16:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.1.3:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.11.3:", type=("build", "run"))
-    depends_on("r-digest@0.6.8:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@2.10.0:")
+        depends_on("r@4.0:", when="@1.34.0:")
+        depends_on("r@4.1:", when="@1.38.3:")
+        depends_on("r@4.2:", when="@1.40.1:")
+        depends_on("r@4.3:", when="@1.44.0:")
+
+        depends_on("r-s4vectors@0.9.25:")
+
+        depends_on("r-iranges@1.99.18:")
+
+        depends_on("r-genomicranges@1.17.20:")
+        depends_on("r-genomicranges@1.61.1:", when="@1.54:")
+
+        depends_on("r-xvector@0.5.7:")
+
+        depends_on("r-rtracklayer@1.25.13:")
+        depends_on("r-rtracklayer@1.69.1:", when="@1.54:")
+
+        depends_on("r-lattice")
+
+        depends_on("r-rcolorbrewer")
+
+        depends_on("r-biomart@2.11.0:")
+
+        depends_on("r-annotationdbi@1.27.5:")
+
+        depends_on("r-biobase@2.15.3:")
+
+        depends_on("r-genomicfeatures@1.17.22:")
+        depends_on("r-genomicfeatures@1.61.4:", when="@1.54:")
+
+        depends_on("r-ensembldb@2.11.3:", when="@1.34.0:")
+
+        depends_on("r-bsgenome@1.33.1:")
+        depends_on("r-bsgenome@1.77.1:", when="@1.54:")
+
+        depends_on("r-biostrings@2.33.11:")
+        depends_on("r-biostrings@2.77.2:", when="@1.54:")
+
+        depends_on("r-biovizbase@1.13.8:")
+
+        depends_on("r-rsamtools@1.17.28:")
+        depends_on("r-rsamtools@2.25.1:", when="@1.54:")
+
+        depends_on("r-latticeextra@0.6-26:")
+
+        depends_on("r-matrixstats@0.8.14:")
+
+        depends_on("r-genomicalignments@1.1.16:")
+        depends_on("r-genomicalignments@1.45.1:", when="@1.54:")
+
+        depends_on("r-seqinfo", when="@1.54:")
+
+        depends_on("r-genomeinfodb@1.1.3:")
+
+        depends_on("r-biocgenerics@0.11.3:")
+
+        depends_on("r-digest@0.6.8:")

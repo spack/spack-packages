@@ -18,7 +18,10 @@ class RGenomeinfodb(RPackage):
 
     bioc = "GenomeInfoDb"
 
+    license("Artistic-2.0")
+
     with default_args(get_full_repo=True):
+        version("1.46.2", commit="149c9caca06d2572b64b8b8119ddb622e72b8edb")
         version("1.36.0", commit="c380bb93a5480b48e0efbf6d107cefc10d574438")
         version("1.34.3", commit="ea6f131f1d1ee61535d6733ce76fabf3c62185fc")
         version("1.32.4", commit="69df6a5a10027fecf6a6d1c8298f3f686b990d8f")
@@ -31,14 +34,27 @@ class RGenomeinfodb(RPackage):
         version("1.14.0", commit="4978308a57d887b764cc4ce83724ca1758f580f6")
         version("1.12.3", commit="2deef3f0571b7f622483257bc22d2509ab5a0369")
 
-    depends_on("r@3.1:", type=("build", "run"))
-    depends_on("r@4.0.0:", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.16.0:")
-    depends_on("r-s4vectors@0.25.12:", type=("build", "run"), when="@1.26.2:")
-    depends_on("r-iranges@1.99.26:", type=("build", "run"))
-    depends_on("r-iranges@2.13.12:", type=("build", "run"), when="@1.16.0:")
-    depends_on("r-rcurl", type=("build", "run"))
-    depends_on("r-genomeinfodbdata", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.1:")
+        depends_on("r@4.0.0:", when="@1.30.1:")
+
+        depends_on("r-biocgenerics@0.13.8:")
+        depends_on("r-biocgenerics@0.37.0:", when="@1.30.1:")
+        depends_on("r-biocgenerics@0.53.2:", when="@1.46.2:")
+
+        depends_on("r-s4vectors@0.9.25:")
+        depends_on("r-s4vectors@0.17.25:", when="@1.16.0:")
+        depends_on("r-s4vectors@0.25.12:", when="@1.26.2:")
+        depends_on("r-s4vectors@0.47.6:", when="@1.46.2:")
+
+        depends_on("r-iranges@1.99.26:")
+        depends_on("r-iranges@2.13.12:", when="@1.16.0:")
+        depends_on("r-iranges@2.41.1:", when="@1.46.2:")
+
+        depends_on("r-seqinfo@0.99.2:", when="@1.46.2:")
+
+        depends_on("r-ucsc-utils", when="@1.46.2:")
+
+        # Historical
+        depends_on("r-rcurl", when="@:1.36.0")
+        depends_on("r-genomeinfodbdata", when="@:1.36.0")

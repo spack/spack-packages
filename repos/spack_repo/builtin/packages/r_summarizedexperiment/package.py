@@ -18,6 +18,7 @@ class RSummarizedexperiment(RPackage):
     bioc = "SummarizedExperiment"
 
     with default_args(get_full_repo=True):
+        version("1.40.0", commit="469a2deab30b904252870c5b569b353fe1a49227")
         version("1.30.0", commit="a2843fbced9fc345c9061b2e52244f3263326e2e")
         version("1.28.0", commit="ba55dac12224f0aafe8f52f1397611b5efb41626")
         version("1.26.1", commit="c8cbd3b4f0fa1d686c4d7ce5b8614a24c74b2074")
@@ -30,28 +31,46 @@ class RSummarizedexperiment(RPackage):
         version("1.8.1", commit="9d8a29aa9c78bbc7dcc6472537e13fc0d11dc1f7")
         version("1.6.5", commit="ec69cd5cfbccaef148a9f6abdfb3e22e888695d0")
 
-    depends_on("r@3.2:", type=("build", "run"))
-    depends_on("r@4.0.0:", type=("build", "run"), when="@1.24.0:")
-    depends_on("r-matrixgenerics@1.1.3:", type=("build", "run"))
-    depends_on("r-genomicranges@1.27.22:", type=("build", "run"))
-    depends_on("r-genomicranges@1.29.14:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-genomicranges@1.31.17:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-genomicranges@1.33.6:", type=("build", "run"), when="@1.12.0:")
-    depends_on("r-genomicranges@1.41.5:", type=("build", "run"), when="@1.20.0:")
-    depends_on("r-biobase", type=("build", "run"))
-    depends_on("r-matrix", type=("build", "run"))
-    depends_on("r-biocgenerics@0.15.3:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.24.0:")
-    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.20.0:")
-    depends_on("r-s4vectors@0.33.7:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-iranges@2.7.2:", type=("build", "run"))
-    depends_on("r-iranges@2.11.17:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-iranges@2.13.16:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.20.0:")
-    depends_on("r-genomeinfodb@1.11.4:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-delayedarray@0.1.9:", type=("build", "run"))
-    depends_on("r-delayedarray@0.3.20:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-delayedarray@0.15.10:", type=("build", "run"), when="@1.20.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2:")
+        depends_on("r@4.0.0:", when="@1.24.0:")
+
+        depends_on("r-matrixgenerics@1.1.3:")
+
+        depends_on("r-genomicranges@1.27.22:")
+        depends_on("r-genomicranges@1.29.14:", when="@1.8.1:")
+        depends_on("r-genomicranges@1.31.17:", when="@1.10.1:")
+        depends_on("r-genomicranges@1.33.6:", when="@1.12.0:")
+        depends_on("r-genomicranges@1.41.5:", when="@1.20.0:")
+        depends_on("r-genomicranges@1.61.4:", when="@1.40:")
+
+        depends_on("r-biobase")
+
+        depends_on("r-matrix")
+
+        depends_on("r-biocgenerics@0.15.3:")
+        depends_on("r-biocgenerics@0.37.0:", when="@1.24.0:")
+        depends_on("r-biocgenerics@0.51.3:", when="@1.40:")
+
+        depends_on("r-s4vectors@0.13.13:")
+        depends_on("r-s4vectors@0.17.25:", when="@1.10.1:")
+        depends_on("r-s4vectors@0.27.12:", when="@1.20.0:")
+        depends_on("r-s4vectors@0.33.7:", when="@1.26.1:")
+
+        depends_on("r-iranges@2.7.2:")
+        depends_on("r-iranges@2.11.17:", when="@1.8.1:")
+        depends_on("r-iranges@2.13.16:", when="@1.10.1:")
+        depends_on("r-iranges@2.23.9:", when="@1.20.0:")
+
+        depends_on("r-seqinfo", when="@1.40:")
+
+        depends_on("r-s4arrays@1.1.1:", when="@1.40:")
+
+        depends_on("r-delayedarray@0.1.9:")
+        depends_on("r-delayedarray@0.3.20:", when="@1.8.1:")
+        depends_on("r-delayedarray@0.15.10:", when="@1.20.0:")
+        depends_on("r-delayedarray@0.31.12:", when="@1.40:")
+
+        # Historical
+        depends_on("r-genomeinfodb@1.11.4:", when="@:1.30.0")
+        depends_on("r-genomeinfodb@1.13.1:", when="@1.8.1:1.30.0")

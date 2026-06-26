@@ -16,6 +16,7 @@ class RBsgenome(RPackage):
     bioc = "BSgenome"
 
     with default_args(get_full_repo=True):
+        version("1.78.0", commit="8f40a3174a00d1d2bed3b8184189aa96d23019c6")
         version("1.68.0", commit="c546020750e900377fbdeae015a01a96d5962d09")
         version("1.66.1", commit="d1efdfa8e7242bc0f54cc1c3a9583ea555c924f6")
         version("1.64.0", commit="59cdebde613e9702985c003f699f4aea2b0f0e7b")
@@ -27,25 +28,46 @@ class RBsgenome(RPackage):
         version("1.46.0", commit="bdfbd6d09820993585b8231ddea5e11c99008dc5")
         version("1.44.2", commit="105b00588a758d5ec7c347a7dff2756aea4516a0")
 
-    depends_on("r@2.8.0:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
-    depends_on("r-s4vectors@0.9.36:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.28:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-iranges@2.1.33:", type=("build", "run"))
-    depends_on("r-iranges@2.11.16:", type=("build", "run"), when="@1.46.0:")
-    depends_on("r-iranges@2.13.16:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-genomeinfodb@1.11.4:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.46.0:")
-    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-genomeinfodb@1.25.6:", type=("build", "run"), when="@1.58.0:")
-    depends_on("r-genomicranges@1.27.6:", type=("build", "run"))
-    depends_on("r-genomicranges@1.29.14:", type=("build", "run"), when="@1.46.0:")
-    depends_on("r-genomicranges@1.31.10:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-biostrings@2.35.3:", type=("build", "run"))
-    depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-rtracklayer@1.25.8:", type=("build", "run"))
-    depends_on("r-rtracklayer@1.39.7:", type=("build", "run"), when="@1.48.0:")
-    depends_on("r-matrixstats", type=("build", "run"), when="@1.58.0:")
-    depends_on("r-xvector", type=("build", "run"))
-    depends_on("r-xvector@0.29.3:", type=("build", "run"), when="@1.58.0:")
-    depends_on("r-rsamtools", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@2.8.0:")
+
+        depends_on("r-biocgenerics@0.13.8:")
+
+        depends_on("r-s4vectors@0.9.36:")
+        depends_on("r-s4vectors@0.17.28:", when="@1.48.0:")
+        depends_on("r-s4vectors@0.47.6:", when="@1.78:")
+
+        depends_on("r-iranges@2.1.33:")
+        depends_on("r-iranges@2.11.16:", when="@1.46.0:")
+        depends_on("r-iranges@2.13.16:", when="@1.48.0:")
+
+        depends_on("r-seqinfo", when="@1.78:")
+
+        depends_on("r-genomicranges@1.27.6:")
+        depends_on("r-genomicranges@1.29.14:", when="@1.46.0:")
+        depends_on("r-genomicranges@1.31.10:", when="@1.48.0:")
+        depends_on("r-genomicranges@1.61.1:", when="@1.78:")
+
+        depends_on("r-biostrings@2.35.3:")
+        depends_on("r-biostrings@2.47.6:", when="@1.48.0:")
+        depends_on("r-biostrings@2.77.2:", when="@1.78:")
+
+        depends_on("r-biocio", when="@1.78:")
+
+        depends_on("r-rtracklayer@1.25.8:")
+        depends_on("r-rtracklayer@1.39.7:", when="@1.48.0:")
+        depends_on("r-rtracklayer@1.69.1:", when="@1.78:")
+
+        depends_on("r-matrixstats", when="@1.58.0:")
+
+        depends_on("r-xvector")
+        depends_on("r-xvector@0.29.3:", when="@1.58.0:")
+
+        depends_on("r-rsamtools")
+        depends_on("r-rsamtools@2.25.1:", when="@1.78:")
+
+        # Historical
+        depends_on("r-genomeinfodb@1.11.4:", when="@:1.68.0")
+        depends_on("r-genomeinfodb@1.13.1:", when="@1.46.0:1.68.0")
+        depends_on("r-genomeinfodb@1.15.2:", when="@1.48.0:1.68.0")
+        depends_on("r-genomeinfodb@1.25.6:", when="@1.58.0:1.68.0")
