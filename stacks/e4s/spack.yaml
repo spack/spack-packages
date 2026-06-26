@@ -378,34 +378,34 @@ spack:
 
 
     # ROCM 90a
-    - adios2 +kokkos
-    - amrex
-    - arborx
+    - adios2 +kokkos +rocm
+    - amrex +rocm
+    - arborx +rocm
     - cabana
     # Can't build one of its dependencies (py-llvmlite)
     # - caliper
-    - chai
+    - chai +rocm
     - ecp-data-vis-sdk ~paraview +vtkm # +paraview: CMake Error at VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/CMakeLists.txt:272 (find_package): Could not find a package configuration file provided by "rocthrust" with any of the following names: rocthrustConfig.cmake rocthrust-config.cmake
     - gasnet
     - ginkgo
     - heffte
     - hpx
-    - hypre
-    - kokkos
-    - lammps
+    - hypre +rocm
+    - kokkos +rocm
+    - lammps +rocm
     - legion
     - libceed
     - magma ~cuda
-    - mfem
+    - mfem +rocm
     - raja ~openmp
     - slate
     - strumpack ~slate
     - sundials
     - superlu-dist
     - tasmanian ~openmp
-    - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
-    - umpire
-    - upcxx
+    - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long +rocm
+    - umpire +rocm
+    - upcxx +rocm
     # INCLUDED IN ECP DAV ROCM
     # - hdf5
     # - hdf5-vol-async
@@ -413,7 +413,7 @@ spack:
     # - hdf5-vol-log
     # - libcatalyst
     # - paraview # paraview: CMake Error at VTK/ThirdParty/vtkm/vtkvtkm/vtk-m/CMakeLists.txt:272 (find_package): Could not find a package configuration file provided by "rocthrust" with any of the following names: rocthrustConfig.cmake rocthrust-config.cmake
-    - vtk-m ~openmp  # vtk-m: https://github.com/spack/spack/issues/40268
+    - vtk-m +rocm ~openmp  # vtk-m: https://github.com/spack/spack/issues/40268
     # --
     # - chapel         # chapel: lld: error: undefined symbol: llvm.amdgcn.readfirstlane.i32
     # - exago +mpi +python +raja +hiop ~ipopt cxxflags="-Wno-error=non-pod-varargs" ^hiop ~sparse +mpi +raja # hiop: CMake Error at cmake/FindHiopHipLibraries.cmake:23 (find_package); By not providing "Findhipfft.cmake" in CMAKE_MODULE_PATH this project has asked CMake to find a package configuration file provided by "hipfft", but CMake did not find one.
