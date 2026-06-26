@@ -33,6 +33,11 @@ class Scorep(AutotoolsPackage):
         when="@7:8.4 +gcc-plugin",
         sha256="d20b3046ba6a89ad9c106bcf372bceb1bd9ab780d4c7dd9e7373f0099b92d933",
     )
+    # Can be replaced with a gitlab ref once 10.1 is out
+    patch(
+        "fix-intel-mpi-linker-error.patch",
+        when="@10.0 +mpi"
+        )
 
     # Variants
     variant("mpi", default=True, description="Enable MPI support")
