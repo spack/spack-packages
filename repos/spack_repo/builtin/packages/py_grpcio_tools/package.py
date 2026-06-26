@@ -13,6 +13,11 @@ class PyGrpcioTools(PythonPackage):
     homepage = "https://grpc.io/"
     pypi = "grpcio-tools/grpcio-tools-1.42.0.tar.gz"
 
+    version(
+        "1.81.1",
+        sha256="a22a3870180927fdd84e2b27d079ef5b7f5f8c6110181b6736afc17a463481f1",
+        url="https://files.pythonhosted.org/packages/83/b3/1c5951352d6777fd7f99a0ccee04617fdfd8a5dbf2918a1f58c8b2b280b8/grpcio_tools-1.81.1.tar.gz"
+    )
     version("1.62.2", sha256="5fd5e1582b678e6b941ee5f5809340be5e0724691df5299aae8226640f94e18f")
     version("1.56.2", sha256="82af2f4040084141a732f0ef1ecf3f14fdf629923d74d850415e4d09a077e77a")
     version("1.48.2", sha256="8902a035708555cddbd61b5467cea127484362decc52de03f061a1a520fe90cd")
@@ -27,6 +32,7 @@ class PyGrpcioTools(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-protobuf@3.12.0:3", when="@1.48.1:", type=("build", "run"))
     depends_on("py-protobuf@3.5.0.post1:3", type=("build", "run"))
+    depends_on("py-grpcio@1.81.1:", when="@1.81.1:", type=("build", "run"))
     depends_on("py-grpcio@1.62.2:", when="@1.62.2:", type=("build", "run"))
     depends_on("py-grpcio@1.56.2:", when="@1.56.2:", type=("build", "run"))
     depends_on("py-grpcio@1.48.2:", when="@1.48.2:", type=("build", "run"))
