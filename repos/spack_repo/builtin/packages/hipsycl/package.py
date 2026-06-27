@@ -43,7 +43,8 @@ class Hipsycl(CMakePackage, ROCmPackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("boost +filesystem", when="@:0.8")
-    depends_on("boost@1.67.0:1.69.0 +filesystem +fiber +context cxxstd=17", when="@0.9.1:")
+    depends_on("boost@1.67.0:1.69.0 +filesystem +fiber +context cxxstd=17", when="@0.9.1:0.9.4")
+    depends_on("boost@1.67.0: +filesystem +fiber +context cxxstd=17", when="@23.10.0:")
     depends_on("python@3:")
     depends_on("llvm@8: +clang", when="~cuda")
     depends_on("llvm@9: +clang", when="+cuda")
