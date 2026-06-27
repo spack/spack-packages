@@ -20,6 +20,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
     url = "https://www.openssl.org/source/openssl-1.1.1d.tar.gz"
     list_url = "https://www.openssl.org/source/old/"
     list_depth = 1
+    git = "https://github.com/openssl/openssl"
 
     maintainers("AlexanderRichert-NOAA")
 
@@ -28,6 +29,12 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
     executables = ["openssl"]
 
     license("Apache-2.0")
+
+    version("4.0.1", sha256="2db3f3a0d6ea4b59e1f094ace2c8cd536dffb87cdc39084c5afa1e6f7f37dd09")
+
+    version("4.0.0-tag", tag="openssl-4.0.0",
+            commit="11b7b6ea3b65a584e1d31408ed1bdb139465cffd")
+    version("develop", branch="master")
 
     version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
     version("3.5.5", sha256="b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89")

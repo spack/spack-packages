@@ -70,7 +70,9 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     # people/projects to install their own sets of perl modules.  Not
     # having it in core increases the "energy of activation" for doing
     # things cleanly.
-    variant("cpanm", default=True, description="Optionally install cpanm with the core packages.")
+    variant("cpanm", default=True,
+            description="[deprecated] Optionally install cpanm with the core packages.",
+            when="@:5.40")
     variant("shared", default=True, description="Build a shared libperl.so library")
     variant("threads", default=True, description="Build perl with threads support")
     variant("open", default=True, description="Support open.pm")
