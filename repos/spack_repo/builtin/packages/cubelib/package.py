@@ -44,7 +44,6 @@ class Cubelib(AutotoolsPackage):
             return renames[compiler]
         return compiler
 
-
     def configure_args(self):
         configure_args = ["--enable-shared"]
         configure_args.append("--with-frontend-zlib=%s" % self.spec["zlib-api"].prefix.lib)
