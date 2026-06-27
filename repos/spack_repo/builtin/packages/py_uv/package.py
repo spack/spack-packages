@@ -8,9 +8,7 @@ from spack.package import *
 
 
 class PyUv(PythonPackage):
-    """An extremely fast Python package and project manager, written in Rust.
-
-    The py-uv Spack package has been deprecated in favor of the uv Spack package."""
+    """An extremely fast Python package and project manager, written in Rust."""
 
     homepage = "https://github.com/astral-sh/uv"
     pypi = "uv/uv-0.10.1.tar.gz"
@@ -18,13 +16,9 @@ class PyUv(PythonPackage):
     license("Apache-2.0 OR MIT")
     maintainers("adamjstewart")
 
+    version("0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b")
+    version("0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d")
     with default_args(deprecated=True):
-        version(
-            "0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b"
-        )
-        version(
-            "0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d"
-        )
         # https://www.cvedetails.com/cve/CVE-2025-13327/
         version(
             "0.7.22", sha256="f5cf159907d594e33433f14737d1ee843dc8799edfcf57b5b8c0f282d1117051"
