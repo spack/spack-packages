@@ -13,9 +13,17 @@ class Re2c(AutotoolsPackage, CMakePackage):
 
     homepage = "https://re2c.org/index.html"
     url = "https://github.com/skvadrik/re2c/releases/download/1.2.1/re2c-1.2.1.tar.xz"
+    git = "https://github.com/skvadrik/re2c.git"
+
     tags = ["windows"]
 
     license("Public-Domain")
+
+    version("4.5.1", sha256="ffea067c11aa668bcb42885be6e6cd000302000b7747d2bb213299ec66b7864e")
+
+    version("4.5-git", tag="4.5",
+            commit="3e3b91d75a1bf972152c2c335839bb2ad9a19392")
+    version("develop", branch="master")
 
     version("4.4", sha256="6b6b865924447ef992d5db4e52fb9307e5f65f26edd43efa91395da810f4280a")
     version("3.1", sha256="0ac299ad359e3f512b06a99397d025cfff81d3be34464ded0656f8a96676c029")

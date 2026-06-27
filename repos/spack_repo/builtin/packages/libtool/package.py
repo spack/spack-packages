@@ -112,7 +112,7 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
         env.set("LIBTOOLIZE", self.spec.prefix.bin.libtoolize)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        self._setup_dependent_env(env)
+        self._setup_exe_env_vars(env)
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec,
