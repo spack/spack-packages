@@ -34,5 +34,5 @@ class Hyperqueue(Package):
     depends_on("rust@1.59:")
 
     def install(self, spec, prefix):
-        cargo = which("cargo")
+        cargo = which("cargo", required=True)
         cargo("install", "--root", prefix, "--path", "crates/hyperqueue")

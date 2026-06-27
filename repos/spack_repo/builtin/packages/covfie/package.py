@@ -23,6 +23,8 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     license("MPL-2.0")
 
     version("main", branch="main")
+    version("0.15.6", sha256="ed22408f981692398408ffe04ff8e6230c022288552a83dbc2ad34b96003a84e")
+    version("0.15.5", sha256="1b2b34e3a968f24a2c1adb495bff5b8f943c0f72c729c199d8881cb4d0fc2dc0")
     version("0.15.4", sha256="9a69f57c4a48acefedc7e8bc2cb38f688584a0535d79bb7eab9c0cc5c8c7290c")
     version("0.15.3", sha256="72da1147c44731caf9163f3931de78d7605a44f056f22a2f6ea024ad02a1ba71")
     version("0.15.2", sha256="6eff65e05118d3007c689e3529a62bb1674348ac1b0f0f32afd953c62d1b8890")
@@ -41,12 +43,16 @@ class Covfie(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.21:", type="build", when="@0.11:")
     depends_on("cmake@3.18:", type="build")
 
+    # requirements for examples
+    depends_on("boost@1.71: +log +program_options", type="test")
+
     def cmake_args(self):
         args = [
             self.define("COVFIE_PLATFORM_CPU", True),
             self.define_from_variant("COVFIE_PLATFORM_CUDA", "cuda"),
             self.define_from_variant("COVFIE_PLATFORM_HIP", "rocm"),
             self.define("COVFIE_QUIET", True),
+            self.define("COVFIE_BUILD_EXAMPLES", self.run_tests),
             self.define("COVFIE_BUILD_TESTS", self.run_tests),
         ]
 

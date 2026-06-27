@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocal(CMakePackage):
+class Rocal(ROCmLibrary, CMakePackage):
     """The AMD rocAL is designed to efficiently decode and process images and videos from a variety
     of storage formats and modify them through a processing graph programmable by the user."""
 
@@ -16,8 +17,12 @@ class Rocal(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocal"]
 
     license("MIT")
+    version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")
+    version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")
+    version("7.2.0", sha256="0de82b955229ed3883e237f0ffd23b4052aa78a1308873185662ab46ca01e711")
     version("7.1.1", sha256="e1ce21471a3f91eb26245daf0720e8ac52c95a382cbc6918b90cc1721c881f5f")
     version("7.1.0", sha256="670ef46f6b39311cdba7752069fd831c9146c88636a9c185dfa10cdc304b9682")
     version("7.0.2", sha256="ae9cde0d4bd4bb1d32899ac7f47679ec1b5ff5719dc91206f1911b4957b3f115")
@@ -33,6 +38,15 @@ class Rocal(CMakePackage):
     version("6.2.4", sha256="630813669e75a8ee179b89f489101931a26f7a7ee486fcbe1b0e3cb1803c582c")
     version("6.2.1", sha256="77d3e63e02afaee6f1ee1d877d88b48c6ea66a0afca96a1313d0f1c4f8e86b2a")
     version("6.2.0", sha256="c7c265375a40d4478a628258378726c252caac424f974456d488fce43890e157")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", when="@6.2.0")
     depends_on("libjpeg-turbo@3.0.2:", when="@6.2.1:")
@@ -57,8 +71,12 @@ class Rocal(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
-        depends_on(f"mivisionx@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"mivisionx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rpp@{ver}", when=f"@{ver}")
 
@@ -157,6 +175,8 @@ class Rocal(CMakePackage):
             # force rocAL to use Spack installed python
             args.append(self.define("PYTHON_VERSION_SUGGESTED", self.spec["python"].version))
             args.append(self.define("Python3_ROOT_DIR", self.spec["python"].prefix))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     def check(self):

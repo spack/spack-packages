@@ -25,6 +25,9 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.25.1", sha256="906ddbe15a20774c23ddcdf13a5054889d00a26c3c37463447ee593c757d03ee")
+    version("3.25.0", sha256="ba2d1cd42d637a7577cab63b0f9e910921fdd60db58290dd1041d60152655f78")
+    version("3.24.3", sha256="3f13421f3fcd68fd720a143088506e0f91e24243844703997597eee793225452")
     version("3.24.2", sha256="6f1f7e45b9bbd15631562f193284832ae4e9655eb3af7f1ba59bdf8bdaefb638")
     version("3.24.1", sha256="b07e1c335eb620dfc50a2b8d4fb12db03c6929ae624f0338ff8acf879a072abf")
     version("3.24.0", sha256="6e2d14c98aa9138ac698a2a04a7c6a9f9569988f570b2cfbe4935d32364cb4e9")
@@ -62,7 +65,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     version("3.14.1", sha256="cc78a15e34d26b3e6dde003d4a30064e595225f6185c1975bbd460cb5edd99c7")
     version("3.14.0", sha256="37f8bb270169d1d3f5d43756ac8929d56204e596bd7a78a7daff707513472e46")
 
-    variant("arpack", default=True, description="Enables Arpack wrappers")
+    variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
 
@@ -77,6 +80,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     # Cannot mix release and development versions of SLEPc and PETSc:
     depends_on("petsc@main", when="@main")
     for ver in [
+        "3.25",
         "3.24",
         "3.23",
         "3.22",
@@ -98,7 +102,9 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         rocm_dep = "+rocm amdgpu_target={0}".format(arch)
         depends_on("petsc {0}".format(rocm_dep), when=rocm_dep)
 
-    # Arpack can not be used with 64bit integers.
+    # arpack-ng does not have an int64 variant that can enabled explicitly.
+    conflicts("+arpack", when="^petsc+int64")
+    # BLOPEX can not be used with 64bit integers.
     conflicts("+blopex", when="^petsc+int64")
     # HPDDM cannot be used in both PETSc and SLEPc prior to 3.19.0
     conflicts("+hpddm", when="@:3.18 ^petsc+hpddm")
@@ -215,10 +221,10 @@ class Slepc(Package, CudaPackage, ROCmPackage):
             join_path(test_dir, f"{test_exe}.c"),
         ]
 
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         with working_dir(test_dir):
             cc(*options)
 
-            hello = which(test_exe)
+            hello = which(test_exe, required=True)
             out = hello(output=str.split, error=str.split)
             assert "Hello world" in out

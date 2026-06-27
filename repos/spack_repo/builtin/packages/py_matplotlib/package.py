@@ -24,9 +24,12 @@ class PyMatplotlib(PythonPackage):
         "mpl_toolkits.mplot3d.tests",
     ]
 
-    license("Apache-2.0")
+    license("PSF-2.0")
     maintainers("adamjstewart", "rgommers")
 
+    version("3.11.0", sha256="68c0c7be01b30dcca3638934f7f591df73401235cbdbf0d1ab1c71e7db7f8b57")
+    version("3.10.9", sha256="fd66508e8c6877d98e586654b608a0456db8d7e8a546eb1e2600efd957302358")
+    version("3.10.8", sha256="2299372c19d56bcd35cf05a2738308758d32b9eaed2371898d8f5bd33f084aa3")
     version("3.10.7", sha256="a06ba7e2a2ef9131c79c49e63dad355d2d878413a0376c1727c8b9335ff731c7")
     version("3.10.6", sha256="ec01b645840dd1996df21ee37f208cd8ba57644779fa20464010638013d3203c")
     version("3.10.5", sha256="352ed6ccfb7998a00881692f38b4ca083c691d3e275b4145423704c34c909076")
@@ -144,9 +147,15 @@ class PyMatplotlib(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # This is required for the gcc lto wrapper which calls gmake
+    # Without this the spack installer doesn't know what to pass
+    # when building with the gnu jobserver
+    depends_on("gmake", type="build", when="%gcc")
+
     # https://matplotlib.org/stable/install/dependencies.html
     # Runtime dependencies
     # Mandatory dependencies
+    depends_on("python@3.11:", when="@3.11:", type=("build", "link", "run"))
     depends_on("python@3.10:", when="@3.10:", type=("build", "link", "run"))
     depends_on("python@3.9:", when="@3.8:", type=("build", "link", "run"))
     depends_on("python@3.8:", when="@3.6:", type=("build", "link", "run"))
@@ -160,6 +169,7 @@ class PyMatplotlib(PythonPackage):
     depends_on("py-fonttools@4.22:", when="@3.5:", type=("build", "run"))
     depends_on("py-kiwisolver@1.3.1:", when="@3.8.1:", type=("build", "run"))
     depends_on("py-kiwisolver@1.0.1:", type=("build", "run"))
+    depends_on("py-numpy@1.25:", when="@3.11:", type=("build", "link", "run"))
     depends_on("py-numpy@1.23:", when="@3.9:", type=("build", "link", "run"))
     depends_on("py-numpy@1.21:", when="@3.8", type=("build", "link", "run"))
     depends_on("py-numpy@1.20:", when="@3.7", type=("build", "link", "run"))
@@ -172,6 +182,7 @@ class PyMatplotlib(PythonPackage):
     depends_on("py-numpy@:1", when="@:3.8.3", type=("build", "link", "run"))
     depends_on("py-packaging@20:", when="@3.6:", type=("build", "run"))
     depends_on("py-packaging", when="@3.5:", type=("build", "run"))
+    depends_on("pil@9:", when="@3.11:", type=("build", "run"))
     depends_on("pil@8:", when="@3.8.1:", type=("build", "run"))
     depends_on("pil@6.2:", when="@3.3:", type=("build", "run"))
     depends_on("py-pyparsing@3:", when="@3.10.7:", type=("build", "run"))
@@ -181,7 +192,6 @@ class PyMatplotlib(PythonPackage):
     depends_on("py-pyparsing@2.0.3,2.0.5:2.1.1,2.1.3:2.1.5,2.1.7:", type=("build", "run"))
     depends_on("py-python-dateutil@2.7:", when="@3.4:", type=("build", "run"))
     depends_on("py-python-dateutil@2.1:", type=("build", "run"))
-    depends_on("py-importlib-resources@3.2:", when="@3.7: ^python@:3.9", type=("build", "run"))
 
     # Optional dependencies
     # Backends
@@ -240,7 +250,9 @@ class PyMatplotlib(PythonPackage):
     depends_on("pkgconfig", type="build")
 
     # C libraries
+    # extern/meson.build
     depends_on("freetype@2.3: build_system=autotools")
+    depends_on("libraqm@0.10.4:", when="@3.11:")
     depends_on("qhull@2020.2:", when="@3.4:")
     # starting from qhull 2020.2 libqhull.so on which py-matplotlib@3.3 versions
     # rely on does not exist anymore, only libqhull_r.so
@@ -249,15 +261,18 @@ class PyMatplotlib(PythonPackage):
 
     # Dependencies for building matplotlib
     # Setup dependencies
-    depends_on("py-meson-python@0.13.1:0.16", when="@3.9:", type="build")
+    depends_on("py-meson-python@0.13.2:", when="@3.11:", type="build")
+    depends_on("py-meson-python@0.13.1:", when="@3.9:", type="build")
     depends_on("ninja@1.8.2:", when="@3.9:", type="build")
     depends_on("py-pybind11@2.13.2:", when="@3.10:", type=("build", "link"))
     depends_on("py-pybind11@2.6:", when="@3.7:", type=("build", "link"))
     depends_on("py-setuptools-scm@7:", when="@3.6:", type="build")
     depends_on("py-setuptools-scm@4:6", when="@3.5", type="build")
+    conflicts("py-meson-python@0.17")
 
     # Historical dependencies
     depends_on("py-certifi@2020.6.20:", when="@3.3.1:3.8", type="build")
+    depends_on("py-importlib-resources@3.2:", when="@3.7: ^python@:3.9", type=("build", "run"))
     depends_on("py-setuptools@64:", when="@3.8.1:3.8", type="build")
     depends_on("py-setuptools@42:", when="@3.8.0", type="build")
     depends_on("py-setuptools@42:", when="@3.7.2:3.7", type=("build", "run"))
@@ -297,17 +312,22 @@ class PyMatplotlib(PythonPackage):
 
     @when("@3.9:")
     def config_settings(self, spec, prefix):
-        return {
+        settings = {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 "-Dsystem-freetype": True,
                 "-Dsystem-qhull": True,
+                "-Dmacosx": self.spec.satisfies("backend=macosx"),
                 "-DrcParams-backend": spec.variants["backend"].value,
                 # Avoids error where link time opt is used for compile but not link
                 "-Db_lto": not (self.spec.satisfies("%clang") or self.spec.satisfies("%oneapi")),
             },
         }
+
+        if self.spec.satisfies("@3.11:"):
+            settings["setup-args"]["-Dsystem-libraqm"] = True
+
+        return settings
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

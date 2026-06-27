@@ -30,8 +30,10 @@ class CmakeClient(CMakePackage):
     )
     variant("single", description="", default="blue", values=("blue", "red", "green"), multi=False)
     variant("truthy", description="", default=True)
+    variant("cmake_hints", description="", default=False)
 
     depends_on("c", type="build")
+    depends_on("cmake-hints", when="+cmake_hints")
 
     callback_counter = 0
 
@@ -110,7 +112,7 @@ class CmakeClient(CMakePackage):
         check(cmake is not None, "No cmake was in environment!")
 
         # check that which('cmake') returns the right one.
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
         print(cmake)
         print(cmake.exe)
         check(

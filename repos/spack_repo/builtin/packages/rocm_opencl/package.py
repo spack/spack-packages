@@ -17,13 +17,22 @@ class RocmOpencl(CMakePackage):
     homepage = "https://github.com/ROCm/clr"
     url = "https://github.com/ROCm/clr/archive/refs/tags/rocm-6.4.3.tar.gz"
     git = "https://github.com/ROCm/clr.git"
-    tags = ["rocm"]
 
+    tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libamdocl64"]
-
     license("MIT")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="b09539ef53a775c03352f9843f3a346e4f2ad3941c1954e953d352e4984ee708")
     version("7.1.0", sha256="d53ee72dd430c934a53b1fe5c798ac34c53e8826589f8f9f214419512059ad2d")
     version("7.0.2", sha256="b49b1ccbf86ef78f4da5ff13ec3ee94f6133c55db3a95b823577b0808db5f2f1")
@@ -99,6 +108,9 @@ class RocmOpencl(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -124,8 +136,15 @@ class RocmOpencl(CMakePackage):
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/clr"
+        else:
+            return "."
 
     @classmethod
     def determine_version(cls, lib):
@@ -185,7 +204,7 @@ class RocmOpencl(CMakePackage):
 
         os.environ["LD_LIBRARY_PATH"] += os.pathsep + join_path(self.prefix, test_dir)
 
-        ocltst = which(join_path(self.prefix, test_dir, "ocltst"))
+        ocltst = which(join_path(self.prefix, test_dir, "ocltst"), required=True)
         with test_part(self, "test_ocltst_runtime", purpose="check runtime"):
             ocltst("-m", "liboclruntime.so", "-A", "oclruntime.exclude")
 

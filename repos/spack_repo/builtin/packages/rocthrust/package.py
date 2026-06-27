@@ -15,12 +15,21 @@ class Rocthrust(CMakePackage):
     library works on HIP/ROCm platforms"""
 
     homepage = "https://github.com/ROCm/rocThrust"
-    git = "https://github.com/ROCm/rocThrust.git"
-    url = "https://github.com/ROCm/rocThrust/archive/rocm-6.1.0.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
 
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocThrust/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="995f9498402f207d04aac1edeb845abea295f6f132151ae1e04a6f0d0dc5edf5")
     version("7.1.0", sha256="12b83d4e06b72019d213c2627da32a8d913b0d8acf7d89a9d2ef81e42143456d")
     version("7.0.2", sha256="931b7db032e1a9d4bc571be03a8c0f1880957851527a53a71ca38e7d6a2fc695")
@@ -85,10 +94,20 @@ class Rocthrust(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocthrust"
+        else:
+            return "."
 
     def check(self):
         with working_dir(self.build_directory):

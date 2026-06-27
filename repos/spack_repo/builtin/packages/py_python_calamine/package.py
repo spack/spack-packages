@@ -19,3 +19,4 @@ class PyPythonCalamine(PythonPackage):
     version("0.1.7", sha256="57199dc84522001bdefd0e87e6c50c5a88bf3425dbc3d8fb52c0dec77c218ba2")
 
     depends_on("py-maturin@1", type="build")
+    depends_on("rust", type="build")

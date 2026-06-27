@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmDebugAgent(CMakePackage):
+class RocmDebugAgent(ROCmLibrary, CMakePackage):
     """Radeon Open Compute (ROCm) debug agent"""
 
     homepage = "https://github.com/ROCm/rocr_debug_agent"
@@ -20,6 +19,9 @@ class RocmDebugAgent(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-debug-agent"]
 
+    version("7.2.3", sha256="b67bde5b700300c6468eb55b24a480b29d66da8fe1ec2c0d4fe0e6c9a0660441")
+    version("7.2.1", sha256="7dfd3363e07fcec65fb8f66c442e0cd601621cb5e086f311205ac3e65c9f9b6c")
+    version("7.2.0", sha256="42b7e7afe16913e67b7af1358ddbe7772bff1ffe61f4d60960062288b6287c2c")
     version("7.1.1", sha256="2e8ab39ab68fe6eccaa9494b984faa7fb7edfb12e3f7e1b38dfe146e5b914d10")
     version("7.1.0", sha256="21224ffe5019f1e2a160cad587b0448e550954accce9fd051a915c3f95b54e5b")
     version("7.0.2", sha256="72ef89af0ec15edf43a99a3e76a420d501fa0871825c9baecd9dff1fc4d021dd")
@@ -92,6 +94,9 @@ class RocmDebugAgent(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocm-dbgapi@{ver}", when=f"@{ver}")
@@ -101,15 +106,6 @@ class RocmDebugAgent(CMakePackage):
     # https://github.com/ROCm/rocr_debug_agent/pull/4
     patch("0001-Drop-overly-strict-Werror-flag.patch")
     patch("0002-add-hip-architecture.patch", when="@:6.3")
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            return "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        return None
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")

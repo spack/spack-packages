@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Transferbench(CMakePackage):
+class Transferbench(ROCmLibrary, CMakePackage):
     """TransferBench is a utility capable of benchmarking simultaneous copies between
     user-specified devices (CPUs/GPUs)"""
 
@@ -15,10 +16,15 @@ class Transferbench(CMakePackage):
     url = "https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-6.4.0.tar.gz"
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    executables = ["TransferBench"]
+
     tags = ["rocm"]
 
     license("MIT")
 
+    version("7.2.3", sha256="e36fb3943359f38c15a27bb692a91d669186005b70ea7d877af6a6580fc2c790")
+    version("7.2.1", sha256="ff0dd90869eff77e00bb748149bcfa359d9c7d503c438f4bb64a88a7e39cbc3d")
+    version("7.2.0", sha256="4be9d66044827d7b1950b4fd7ce50913d0926822e88e3441f472ca6a62086a15")
     version("7.1.1", sha256="a02afb6130990ae3a980bb512a7d414e009801d24fce56c6f66b449d61dae9e0")
     version("7.1.0", sha256="9d7386abeea5ec290b4299684a0ec810d5241a40f7bb1482e794285baa1a4805")
     version("7.0.2", sha256="f4afbc00029bce5345f06786d6adab9619c1852f919f7750fd602537d5403d60")
@@ -48,6 +54,9 @@ class Transferbench(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")

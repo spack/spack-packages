@@ -17,13 +17,22 @@ class HsaRocrDev(CMakePackage):
     Linux HSA Runtime for Boltzmann (ROCm) platforms."""
 
     homepage = "https://github.com/ROCm/ROCR-Runtime"
-    git = "https://github.com/ROCm/ROCR-Runtime.git"
-    url = "https://github.com/ROCm/ROCR-Runtime/archive/rocm-6.2.4.tar.gz"
+    git = "https://github.com/ROCm/rocm-systems.git"
     tags = ["rocm"]
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="4c5b58afa1e11461954bd005a10ebf29941c120f1d6a7863954597f5eacfc605")
     version("7.1.0", sha256="383fa8e1776c3ee527cdddc9f9ac6f7134c3fcd8758eae9be8bd3a8b7fdca9b1")
     version("7.0.2", sha256="9c2020f7a42d60fe9775865ab58464078007926a3b01f1ca8128557c89e7a566")
@@ -102,6 +111,9 @@ class HsaRocrDev(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
@@ -119,12 +131,17 @@ class HsaRocrDev(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@6.3:"):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocr-runtime"
+        elif self.spec.satisfies("@6.3:"):
             return "."
         else:
             return "src"

@@ -34,6 +34,7 @@ class AoclDa(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("5.3", sha256="d74a51017f2a22238f972e1b4432e63a8a09488ee95228a817e44437437ae049")
     version("5.2", sha256="faaa250de44d0b7d15a75b26121d457ac895b5cddd87ae1d81882a685ca81eb9")
     version("5.1", sha256="93cdb789c948bf750e531f95618bae4370d53eddc88960744ff02c9acbfe9ef5")
     version("5.0", sha256="3458adc7be39c78a08232c887f32838633149df0a69ccea024327c3edc5a5c1d")
@@ -128,7 +129,7 @@ class AoclDa(CMakePackage):
     @on_package_attributes(run_tests=True)
     def test_python(self):
         """Perform smoke tests on the installed package."""
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         envmod = EnvironmentModifications()
         envmod.append_path("PYTHONPATH", join_path(self.prefix, "python_package"))
         pytest.add_default_envmod(envmod)

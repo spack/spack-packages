@@ -21,6 +21,7 @@ class PyScikitLearn(PythonPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("1.9.0", sha256="8833266989d3a5110178a9fae30783675460724d0e1efb13b14901d2c660c557")
     version("1.8.0", sha256="9bccbb3b40e3de10351f8f5068e105d0f4083b1a65fa07b6634fbc401a6287fd")
     version("1.7.2", sha256="20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda")
     version("1.7.1", sha256="24b3f1e976a4665aa74ee0fcaac2b8fccc6ae77c8e07ab25da3ba6d3292b9802")
@@ -30,24 +31,33 @@ class PyScikitLearn(PythonPackage):
     version("1.5.2", sha256="b4237ed7b3fdd0a4882792e68ef2545d5baa50aca3bb45aa7df468138ad8f94d")
     version("1.5.1", sha256="0ea5d40c0e3951df445721927448755d3fe1d80833b0b7308ebff5d2a45e6414")
     version("1.5.0", sha256="789e3db01c750ed6d496fa2db7d50637857b451e57bcae863bff707c1247bef7")
-    version("1.4.2", sha256="daa1c471d95bad080c6e44b4946c9390a4842adc3082572c20e4f8884e39e959")
-    version("1.4.0", sha256="d4373c984eba20e393216edd51a3e3eede56cbe93d4247516d205643c3b93121")
-    version("1.3.2", sha256="a2f54c76accc15a34bfb9066e6c7a56c1e7235dda5762b990792330b52ccfb05")
-    version("1.3.1", sha256="1a231cced3ee3fa04756b4a7ab532dc9417acd581a330adff5f2c01ac2831fcf")
-    version("1.3.0", sha256="8be549886f5eda46436b6e555b0e4873b4f10aa21c07df45c4bc1735afbccd7a")
-    version("1.2.2", sha256="8429aea30ec24e7a8c7ed8a3fa6213adf3814a6efbea09e16e0a0c71e1a1a3d7")
-    version("1.2.1", sha256="fbf8a5c893c9b4b99bcc7ed8fb3e8500957a113f4101860386d06635520f7cfb")
-    version("1.2.0", sha256="680b65b3caee469541385d2ca5b03ff70408f6c618c583948312f0d2125df680")
-    version("1.1.3", sha256="bef51978a51ec19977700fe7b86aecea49c825884f3811756b74a3b152bb4e35")
-    version("1.1.2", sha256="7c22d1305b16f08d57751a4ea36071e2215efb4c09cb79183faa4e8e82a3dbf8")
-    version("1.1.1", sha256="3e77b71e8e644f86c8b5be7f1c285ef597de4c384961389ee3e9ca36c445b256")
-    version("1.1.0", sha256="80f9904f5b1356adfc32406725dd94c8cc9c8d265047d98390033a6c238cbb29")
-    version("1.0.2", sha256="b5870959a5484b614f26d31ca4c17524b1b0317522199dc985c3b4256e030767")
-    version("1.0.1", sha256="ac2ca9dbb754d61cfe1c83ba8483498ef951d29b93ec09d6f002847f210a99da")
-    version("1.0", sha256="776800194e757cd212b47cd05907e0eb67a554ad333fe76776060dbb729e3427")
-    version("0.24.2", sha256="d14701a12417930392cd3898e9646cf5670c190b933625ebe7511b1f7d7b8736")
-    version("0.24.1", sha256="a0334a1802e64d656022c3bfab56a73fbd6bf4b1298343f3688af2151810bbdf")
-    version("0.24.0", sha256="076369634ee72b5a5941440661e2f306ff4ac30903802dc52031c7e9199ac640")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2024-5206/
+        version("1.4.2", sha256="daa1c471d95bad080c6e44b4946c9390a4842adc3082572c20e4f8884e39e959")
+        version("1.4.0", sha256="d4373c984eba20e393216edd51a3e3eede56cbe93d4247516d205643c3b93121")
+        version("1.3.2", sha256="a2f54c76accc15a34bfb9066e6c7a56c1e7235dda5762b990792330b52ccfb05")
+        version("1.3.1", sha256="1a231cced3ee3fa04756b4a7ab532dc9417acd581a330adff5f2c01ac2831fcf")
+        version("1.3.0", sha256="8be549886f5eda46436b6e555b0e4873b4f10aa21c07df45c4bc1735afbccd7a")
+        version("1.2.2", sha256="8429aea30ec24e7a8c7ed8a3fa6213adf3814a6efbea09e16e0a0c71e1a1a3d7")
+        version("1.2.1", sha256="fbf8a5c893c9b4b99bcc7ed8fb3e8500957a113f4101860386d06635520f7cfb")
+        version("1.2.0", sha256="680b65b3caee469541385d2ca5b03ff70408f6c618c583948312f0d2125df680")
+        version("1.1.3", sha256="bef51978a51ec19977700fe7b86aecea49c825884f3811756b74a3b152bb4e35")
+        version("1.1.2", sha256="7c22d1305b16f08d57751a4ea36071e2215efb4c09cb79183faa4e8e82a3dbf8")
+        version("1.1.1", sha256="3e77b71e8e644f86c8b5be7f1c285ef597de4c384961389ee3e9ca36c445b256")
+        version("1.1.0", sha256="80f9904f5b1356adfc32406725dd94c8cc9c8d265047d98390033a6c238cbb29")
+        version("1.0.2", sha256="b5870959a5484b614f26d31ca4c17524b1b0317522199dc985c3b4256e030767")
+        version("1.0.1", sha256="ac2ca9dbb754d61cfe1c83ba8483498ef951d29b93ec09d6f002847f210a99da")
+        # https://www.cvedetails.com/cve/CVE-2020-28975/
+        version("1.0", sha256="776800194e757cd212b47cd05907e0eb67a554ad333fe76776060dbb729e3427")
+        version(
+            "0.24.2", sha256="d14701a12417930392cd3898e9646cf5670c190b933625ebe7511b1f7d7b8736"
+        )
+        version(
+            "0.24.1", sha256="a0334a1802e64d656022c3bfab56a73fbd6bf4b1298343f3688af2151810bbdf"
+        )
+        version(
+            "0.24.0", sha256="076369634ee72b5a5941440661e2f306ff4ac30903802dc52031c7e9199ac640"
+        )
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
@@ -78,11 +88,14 @@ class PyScikitLearn(PythonPackage):
         depends_on("py-scipy@1.3.2:", when="@1.1:")
         depends_on("py-scipy@1.1.0:", when="@1.0:")
         depends_on("py-scipy@0.19.1:", when="@0.23:")
+        depends_on("py-joblib@1.4:", when="@1.9:")
         depends_on("py-joblib@1.3:", when="@1.8:")
         depends_on("py-joblib@1.2:", when="@1.4:")
         depends_on("py-joblib@1.1.1:", when="@1.2:")
         depends_on("py-joblib@1:", when="@1.1:")
         depends_on("py-joblib@0.11:")
+        depends_on("py-narwhals@2.0.1:", when="@1.9:")
+        depends_on("py-threadpoolctl@3.5:", when="@1.9:")
         depends_on("py-threadpoolctl@3.2:", when="@1.8:")
         depends_on("py-threadpoolctl@3.1:", when="@1.5:")
         depends_on("py-threadpoolctl@2.0:", when="@0.23:")
@@ -119,8 +132,9 @@ class PyScikitLearn(PythonPackage):
         return url.format(name, version)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # Enable parallel builds of the sklearn backend
-        env.append_flags("SKLEARN_BUILD_PARALLEL", str(make_jobs))
+        if self.spec.satisfies("@:1.4"):
+            # Enable parallel builds for the pre py-meson-python build system
+            env.append_flags("SKLEARN_BUILD_PARALLEL", str(make_jobs))
 
         # https://scikit-learn.org/stable/developers/advanced_installation.html#macos
         if self.spec.satisfies("%apple-clang"):

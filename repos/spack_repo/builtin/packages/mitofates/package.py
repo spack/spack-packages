@@ -43,7 +43,7 @@ class Mitofates(Package):
     def install(self, spec, prefix):
         install_tree("bin", prefix.bin)
         install("MitoFates.pl", prefix)
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", join_path(prefix, "MitoFates.pl"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

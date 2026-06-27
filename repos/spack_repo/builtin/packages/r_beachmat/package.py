@@ -18,15 +18,16 @@ class RBeachmat(RPackage):
 
     bioc = "beachmat"
 
-    version("2.16.0", commit="4cc8e50dcae767a2ef84ffc7a581ea182f05f300")
-    version("2.14.0", commit="5a4b85f4a22f3447f12d03157ab95de73f6137c6")
-    version("2.12.0", commit="3e6af145bdcdf0a0b722d8256ba1a38b8a36b2f5")
-    version("2.10.0", commit="b7cc532d4a5b26d9073135cc9945258ea08e5079")
-    version("2.6.4", commit="7d9dc6379017d723dda3e8dc9fd1f6de7fd33cdb")
-    version("2.0.0", commit="2bdac6ce7b636fd16f78641a0bcc2181670107ab")
-    version("1.4.0", commit="e3b7a21cae0080d077a0d40e35d1d148f088720a")
-    version("1.2.1", commit="ebae81772045a314e568c2f7d73ea3b27e7bf7d8")
-    version("1.0.2", commit="6bd57b91d6428ac916f46572d685d3cb01a757f7")
+    with default_args(get_full_repo=True):
+        version("2.16.0", commit="4cc8e50dcae767a2ef84ffc7a581ea182f05f300")
+        version("2.14.0", commit="5a4b85f4a22f3447f12d03157ab95de73f6137c6")
+        version("2.12.0", commit="3e6af145bdcdf0a0b722d8256ba1a38b8a36b2f5")
+        version("2.10.0", commit="b7cc532d4a5b26d9073135cc9945258ea08e5079")
+        version("2.6.4", commit="7d9dc6379017d723dda3e8dc9fd1f6de7fd33cdb")
+        version("2.0.0", commit="2bdac6ce7b636fd16f78641a0bcc2181670107ab")
+        version("1.4.0", commit="e3b7a21cae0080d077a0d40e35d1d148f088720a")
+        version("1.2.1", commit="ebae81772045a314e568c2f7d73ea3b27e7bf7d8")
+        version("1.0.2", commit="6bd57b91d6428ac916f46572d685d3cb01a757f7")
 
     depends_on("cxx", type="build")  # generated
 

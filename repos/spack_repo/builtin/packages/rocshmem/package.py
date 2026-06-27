@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocshmem(CMakePackage):
+class Rocshmem(ROCmLibrary, CMakePackage):
     """rocSHMEM intra-kernel networking runtime for AMD dGPUs on the ROCm platform."""
 
     homepage = "https://github.com/ROCm/rocSHMEM"
@@ -15,9 +16,13 @@ class Rocshmem(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocshmem"]
 
     license("MIT")
 
+    version("7.2.3", sha256="ed409d703ccc7bc07baf1e7e046c322441b2a5e83b95e4acf0ea2bd2585e71e2")
+    version("7.2.1", sha256="03484b56547b8a5905cec34707e59105d23e4576f0b87c3bb6abb052f58bd0ae")
+    version("7.2.0", sha256="22c6851287e635bfa1bf0b23b98d6142440b3ab366d15e2203da362c1497341d")
     version("7.1.1", sha256="610018ac57b5b56954da3ae0d6b5a64fb72fc3228f2e69085c4cd61f901820a8")
     version("7.1.0", sha256="6092bd05976e73262cbb7f48dc55718db389100ad1b36e3baa01db401f0ca222")
     version("7.0.2", sha256="63f5bb31e969c0d38f331e992e7cfd130802a8f66cec9d1fc6bfa73b282ed06a")
@@ -30,13 +35,25 @@ class Rocshmem(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in [
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocthrust@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     depends_on("ucx@1.17: +rocm")

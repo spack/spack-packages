@@ -12,14 +12,14 @@ class Libvdwxc(AutotoolsPackage):
     """Portable C library of density functionals with van der Waals
     interactions for density functional theory"""
 
-    maintainers = "mtaillefumier"
     homepage = "https://libvdwxc.gitlab.io/libvdwxc/"
     url = "https://launchpad.net/libvdwxc/stable/0.5.0/+download/libvdwxc-0.5.0.tar.gz"
     git = "https://gitlab.com/libvdwxc/libvdwxc"
 
     license("GPL-3.0-or-later")
+    maintainers("mtaillefumier")
 
-    version("master", branch="master", submodules="False")
+    version("master", branch="master", submodules=False)
     version("0.5.0", sha256="29fb70efd58aff51524d2172a87e8f88e760b696b0ddb9aa5878432bdffa3c2f")
     version("0.4.0", sha256="3524feb5bb2be86b4688f71653502146b181e66f3f75b8bdaf23dd1ae4a56b33")
 
@@ -45,7 +45,9 @@ class Libvdwxc(AutotoolsPackage):
         spec = self.spec
 
         args = [
-            "--with-fftw3={0}".format(self["fftw"].prefix),  # make sure that fftw path is given
+            "--with-fftw3={0}".format(
+                self["fftw-api"].prefix
+            ),  # make sure that fftw path is given
             "--{0}-pfft".format("with" if self.spec.satisfies("+pfft") else "without"),
             "MPICC=",  # make sure both variables are always unset
             "MPIFC=",  # otherwise the configure scripts complains

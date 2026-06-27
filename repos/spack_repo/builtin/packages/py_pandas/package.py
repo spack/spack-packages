@@ -23,6 +23,9 @@ class PyPandas(PythonPackage):
 
     tags = ["e4s"]
 
+    version("3.0.3", sha256="696a4a00a2a2a35d4e5deb3fc946641b96c944f02230e4f76137fe35d806c4fc")
+    version("3.0.2", sha256="f4753e73e34c8d83221ba58f232433fca2748be8b18dbca02d242ed153945043")
+    version("3.0.1", sha256="4186a699674af418f655dbd420ed87f50d56b4cd6603784279d9eef6627823c8")
     version("3.0.0", sha256="0facf7e87d38f721f0af46fe70d97373a37701b1c09f7ed7aeeb292ade5c050f")
     version("2.3.3", sha256="e05e1af93b977f7eafa636d043f9f94c7ee3ac81af99c13508215942e64c993b")
     version("2.3.2", sha256="ab7b58f8f82706890924ccdfb5f48002b83d2b5a3845976a9fb705d36c34dcdb")
@@ -78,6 +81,7 @@ class PyPandas(PythonPackage):
         depends_on("py-meson-python@0.13.1:", when="@2.1:")
         depends_on("meson@1.2.1:", when="@2.1.1:")
         depends_on("meson@1.0.1:", when="@2.1.0")
+        depends_on("py-cython@3.1.0:", when="@3.0.2:")
         depends_on("py-cython@3.0.5:3", when="@2.2:")
         depends_on("py-cython@0.29.33:2", when="@2.0:2.1")
         depends_on("py-cython@0.29.32:2", when="@1.4.4:1")
@@ -87,6 +91,7 @@ class PyPandas(PythonPackage):
         depends_on("py-versioneer+toml", when="@2:")
 
         # Historical dependencies
+        depends_on("py-setuptools@:81", when="@:2.1.4")
         depends_on("py-setuptools@61:", when="@2.0")
         depends_on("py-setuptools@51:", when="@1.3.2:1")
         depends_on("py-setuptools@38.6:", when="@1.3.0:1.3.1")

@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class HipifyClang(CMakePackage):
+class HipifyClang(ROCmLibrary, CMakePackage):
     """hipify-clang is a clang-based tool for translation CUDA
     sources into HIP sources"""
 
@@ -22,6 +21,9 @@ class HipifyClang(CMakePackage):
     executables = ["hipify-perl"]
 
     license("MIT")
+    version("7.2.3", sha256="5d0adbdffa866f3ca3e94da8ac92304dc97272dcd9c3440b15943fc0bc7c8ad8")
+    version("7.2.1", sha256="1d5504a69024491c582e224445df4c917b0b5ee3b0830c0909119eca97b70e9f")
+    version("7.2.0", sha256="ddea52cc4b624f5a48413cc390d0308c9b889d9dd6699077f4cfb7d014417a9f")
     version("7.1.1", sha256="abb80ecc0ea82fd847a95a9c2dd1d182990a7a495f1eab6126e7c5e9dc8b68a7")
     version("7.1.0", sha256="9fb4e739f116b5a5b8c437808c71c6c1f31dd6184c9be21d67d4b8bf1d91b4f2")
     version("7.0.2", sha256="d6e78b025c2cb36f9470d1ec572adc8abc7f2c79bb9a5e21cf46fabd305c4b9c")
@@ -81,15 +83,12 @@ class HipifyClang(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
-
-    @classmethod
-    def determine_version(cls, exe):
-        output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r"HIP version (\S+)", output)
-        return match.group(1) if match else "None"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The installer puts the binaries directly into the prefix

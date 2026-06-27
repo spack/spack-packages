@@ -11,18 +11,21 @@ class Glew(CMakePackage):
 
     homepage = "https://glew.sourceforge.net/"
     url = "https://github.com/nigels-com/glew/releases/download/glew-2.1.0/glew-2.1.0.tgz"
+    git = "https://github.com/nigels-com/glew.git"
     root_cmakelists_dir = "build/cmake"
 
     maintainers("biddisco")
 
     license("GPL-2.0-or-later")
 
+    version("2.3.1", sha256="b64790f94b926acd7e8f84c5d6000a86cb43967bd1e688b03089079799c9e889")
     version("2.2.0", sha256="d4fc82893cfb00109578d0a1a2337fb8ca335b3ceccf97b97e5cc7f08e4353e1")
     version("2.1.0", sha256="04de91e7e6763039bc11940095cd9c7f880baba82196a7765f727ac05a993c95")
     version("2.0.0", sha256="c572c30a4e64689c342ba1624130ac98936d7af90c3103f9ce12b8a0c5736764")
 
     depends_on("c", type="build")  # generated
 
+    depends_on("cmake@3.16:", type="build", when="@2.3:")
     depends_on("gl")
     depends_on("libx11", when="^[virtuals=gl] glx")
     depends_on("xproto", when="^[virtuals=gl] glx")
@@ -32,19 +35,25 @@ class Glew(CMakePackage):
     patch("remove-pkgconfig-glu-dep.patch")
     # Define APIENTRY in osmesa build if not defined, see
     # https://github.com/nigels-com/glew/pull/407
-    patch("mesa-24.0.0-osmesa.patch", when="^mesa@24.0.0:")
+    patch("mesa-24.0.0-osmesa.patch", when="@:2.2 ^mesa@24.0.0:")
 
     def cmake_args(self):
         spec = self.spec
+
+        # glew 2.3.0+ explicitly uses OPENGL_opengl_LIBRARY and OPENGL_glx_LIBRARY
+        # in CMakeLists.txt, so we must set them to empty string instead of "IGNORE"
+        # to avoid linker errors. Earlier versions don't use these variables directly.
+        ignore_value = "" if spec.satisfies("@2.3.0:") else "IGNORE"
+
         args = [
             self.define("BUILD_UTILS", True),
             self.define("GLEW_REGAL", False),
             self.define("GLEW_EGL", spec.satisfies("^[virtuals=gl] egl")),
             self.define("OPENGL_INCLUDE_DIR", spec["gl"].headers.directories[0]),
             self.define("OPENGL_gl_LIBRARY", spec["gl"].libs[0]),
-            self.define("OPENGL_opengl_LIBRARY", "IGNORE"),
-            self.define("OPENGL_glx_LIBRARY", "IGNORE"),
-            self.define("OPENGL_glu_LIBRARY", "IGNORE"),
+            self.define("OPENGL_opengl_LIBRARY", ignore_value),
+            self.define("OPENGL_glx_LIBRARY", ignore_value),
+            self.define("OPENGL_glu_LIBRARY", ignore_value),
             self.define("GLEW_OSMESA", spec.satisfies("^[virtuals=gl] osmesa")),
         ]
         if spec.satisfies("^[virtuals=gl] egl"):
@@ -52,7 +61,7 @@ class Glew(CMakePackage):
                 self.define("OPENGL_egl_LIBRARY", [spec["egl"].libs[0], spec["egl"].libs[1]])
             )
         else:
-            args.append(self.define("OPENGL_egl_LIBRARY", "IGNORE"))
+            args.append(self.define("OPENGL_egl_LIBRARY", ignore_value))
 
         return args
 

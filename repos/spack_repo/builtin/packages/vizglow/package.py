@@ -23,6 +23,10 @@ class Vizglow(Package):
     homepage = "https://esgeetech.com/products/vizglow-plasma-modeling/"
     manual_download = True
 
+    license("LicenseRef-LamResearch-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version(
         "2.2alpha20",
         md5="2bef890c66f3a44aaf96f7c96788c89e",
@@ -82,7 +86,7 @@ class Vizglow(Package):
 
         installer = glob.glob("VizGlow*Install")[0]
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", installer)
 
         installer = Executable(installer)

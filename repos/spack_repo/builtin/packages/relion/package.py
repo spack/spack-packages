@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import glob
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -22,13 +24,6 @@ class Relion(CMakePackage, CudaPackage):
     license("GPL-2.0-only")
 
     version("5.0.1", sha256="3253230cd4b3d9633a5cac906937039b9971eb9430c3e2d838473777fb811f4c")
-    # The 5.0.0 has a few bugs causing it not to fully function in Spack
-    version(
-        "5.0.0",
-        sha256="800ad0c0aa778cbf584fcf8986976645f2b25d677a80f168e5397975b9db6e47",
-        deprecated=True,
-    )
-
     version("4.0.1", sha256="7e0d56fd4068c99f943dc309ae533131d33870392b53a7c7aae7f65774f667be")
     version("4.0.0", sha256="0987e684e9d2dfd630f1ad26a6847493fe9fcd829ec251d8bc471d11701d51dd")
 
@@ -51,6 +46,12 @@ class Relion(CMakePackage, CudaPackage):
     variant("cuda", default=True, description="enable compute on gpu")
     variant("double", default=True, description="double precision (cpu) code")
     variant("double-gpu", default=False, description="double precision gpu")
+    variant(
+        "python",
+        default=True,
+        description="Include py-relion Python tools (torch, napari, etc.)",
+        when="@5:",
+    )
 
     # if built with purpose=cluster then relion will link to gpfs libraries
     # if that's not desirable then use purpose=desktop
@@ -86,6 +87,12 @@ class Relion(CMakePackage, CudaPackage):
         default=False,
         description="Have external motioncor2 available in addition to Relion builtin",
     )
+    variant(
+        "ghostscript",
+        default=True,
+        description="Use ghostscript for merging EPS diagnostic plots into PDF logfiles",
+        when="@4:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -108,18 +115,22 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("ctffind@:4", type="run")
     depends_on("motioncor2", type="run", when="+external_motioncor2")
 
-    depends_on("ghostscript", type="run", when="@4:")
+    # ghostscript is only needed at runtime for merging EPS diagnostic plots
+    # into PDF logfiles. Relion gracefully degrades when gs is missing
+    # (creates empty placeholder PDFs, individual EPS files are still produced).
+    depends_on("ghostscript", type="run", when="+ghostscript")
     depends_on("pbzip2", type="run", when="@5:")
     depends_on("xz", type="run", when="@5:")
     depends_on("zstd", type="run", when="@5:")
 
+    # py-relion is now gated behind +python variant
     for arch in CudaPackage.cuda_arch_values:
         depends_on(
             f"py-relion@5.0.1 +cuda cuda_arch={arch}",
             type=("build", "run"),
-            when=f"@5.0.1 +cuda cuda_arch={arch}",
+            when=f"@5.0.1 +python +cuda cuda_arch={arch}",
         )
-    depends_on("py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 ~cuda")
+    depends_on("py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 +python ~cuda")
 
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
     patch(
@@ -162,7 +173,11 @@ class Relion(CMakePackage, CudaPackage):
             args.append("-DCUDA=OFF")
 
         if self.spec.satisfies("@5:"):
-            args.append(f"-DPYTHON_EXE_PATH={self.spec['python'].command.path}")
+            if self.spec.satisfies("+python"):
+                args.append(f"-DPYTHON_EXE_PATH={self.spec['python'].command.path}")
+            else:
+                # /does-not-exist prevents CMake from auto-discovering Conda Python
+                args.append("-DPYTHON_EXE_PATH=/does-not-exist")
             args.append("-DFETCH_WEIGHTS=OFF")
 
         return args
@@ -190,6 +205,19 @@ class Relion(CMakePackage, CudaPackage):
                 r'\1 "{0}"'.format(join_path(self.spec["motioncor2"].prefix.bin, "MotionCor2")),
                 join_path("src", "pipeline_jobs.h"),
             )
+
+    @run_after("install")
+    def stub_python_scripts(self):
+        """When ~python, replace relion_python_* scripts with a clear error stub."""
+        if self.spec.satisfies("@5: ~python"):
+            stub = (
+                "#!/usr/bin/env bash\n\n"
+                'echo "This build of RELION does not support Python commands."\n'
+                "exit 1\n"
+            )
+            for path in glob.glob(join_path(self.prefix.bin, "relion_python_*")):
+                with open(path, "w") as f:
+                    f.write(stub)
 
     def setup_run_environment(self, env):
         env.set("RELION_CTFFIND_EXECUTABLE", self.spec["ctffind"].prefix.bin.ctffind)

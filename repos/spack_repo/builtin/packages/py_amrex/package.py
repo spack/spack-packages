@@ -14,7 +14,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     """AMReX Python Bindings with pybind11"""
 
     homepage = "https://amrex-codes.github.io/amrex/"
-    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/26.02.tar.gz"
+    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/26.06.tar.gz"
     git = "https://github.com/AMReX-Codes/pyamrex.git"
 
     maintainers("ax3l", "EZoni", "atmyers", "sayerhs", "WeiqunZhang")
@@ -24,13 +24,28 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.06", sha256="990526a64378066bf9a53a6268731c03cc4e12cf59804a1695447d9336e251d5")
+    version("26.05", sha256="f61a4384b46feeffd095d56b1e636f49410aa74a5fbdbfec10a3f568aa1b0e24")
+    version("26.04", sha256="0d17f27ca7463b9983a987629ea2c18e06a8e4d98b2b8c6affb7aacfe340690d")
+    version("26.03", sha256="d6490ba75d3b9c71bbb73a15417d3238a0c0408e8ce63e3987c08ca85402c44b")
     version("26.02", sha256="a31cfe3fcd1ab4d80e7997fd888fb290c571050d22281eaa9b349c2ed74ec7bb")
     version("26.01", sha256="6df3717456d08b9af8537bea55f3a05b71667a42b4944ef9f8e9e56273559f4b")
     version("25.12", sha256="f47271d2b559650a8af02564f889e6b5792536fedf374fb54fb1d1edfa4052eb")
     version("25.11", sha256="87de39f435ba6d03bc69adb9cbcc7679da65ef0e4d6dcd60ab654a68220cbc1f")
     version("25.04", sha256="2c765d581f21170ea26a5eb50bdd2c9151d2dbed9f1002dc25e62f38ed6220c0")
 
-    for v in ["25.04", "25.11", "25.12", "26.01", "26.02", "develop"]:
+    for v in [
+        "develop",
+        "26.06",
+        "26.05",
+        "26.04",
+        "26.03",
+        "26.02",
+        "26.01",
+        "25.12",
+        "25.11",
+        "25.04",
+    ]:
         depends_on(f"amrex@{v}", when=f"@{v}", type=("build", "link"))
 
     variant(
@@ -51,8 +66,9 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         description="Real precision (double/single)",
         values=("single", "double"),
     )
-    variant("tiny_profile", default=False, description="Enable tiny profiling")
+    variant("simd", default=False, description="Enable SIMD support", when="@25.09:")
     variant("sycl", default=False, description="Enable SYCL backend")
+    variant("tiny_profile", default=False, description="Enable tiny profiling")
 
     extends("python")
 
@@ -62,6 +78,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     depends_on("cmake@3.24:", type="build")
     depends_on("pkgconfig", type="build")  # amrex +fft
     depends_on("python@3.9:", type=("build", "run"))
+    depends_on("python@3.11:", type=("build", "run"), when="@26.03:")
     depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
     depends_on("py-numpy@1.15:", type=("build", "run"))
     depends_on("py-packaging@23:", type="build")
@@ -69,7 +86,9 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     depends_on("py-setuptools@42:", type="build")
     depends_on("py-pybind11@2.12.0:", type=("build", "link"))
     depends_on("py-pybind11@3.0.1:", type=("build", "link"), when="@25.08:")
+    depends_on("py-pybind11@3.0.2:", type=("build", "link"), when="@26.03:")
     depends_on("py-wheel@0.40:", type="build")
+    depends_on("vir-simd", type="build", when="+simd")
 
     # AMReX options
     #   required variants
@@ -101,6 +120,10 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         # todo: how to forward amdgpu_target?
     with when("~rocm"):
         depends_on("amrex ~rocm")
+    with when("+simd"):
+        depends_on("amrex +simd")
+    with when("~simd"):
+        depends_on("amrex ~simd")
     with when("+sycl"):
         depends_on("amrex +sycl")
     with when("~sycl"):
@@ -129,7 +152,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
 
     def check(self):
         """Checks after the build phase"""
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         pytest(join_path(self.stage.source_path, self.tests_src_dir))
 
     @run_after("install")
@@ -142,7 +165,5 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
         """Perform smoke tests on the installed package."""
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.tests_src_dir)
         with working_dir(test_dir):
-            pytest = which("pytest")
-            # TODO: Remove once test dependencies made available
-            assert pytest is not None, "Make sure a suitable 'pytest' is in your path"
+            pytest = which("pytest", required=True)
             pytest()

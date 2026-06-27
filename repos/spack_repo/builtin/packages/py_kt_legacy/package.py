@@ -17,6 +17,7 @@ class PyKtLegacy(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.0.5", sha256="dbbade58f12c6a6da6062f4b045a6395a8d4195815e3e064bc3e609b69c8a26c")
     version("1.0.4", sha256="a94112e42a50e7cc3aad31f3287aa384c23555ea1432c55b5823852e09e706cf")
 
     depends_on("py-setuptools", type="build")

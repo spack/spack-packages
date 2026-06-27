@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Mivisionx(CMakePackage):
+class Mivisionx(ROCmLibrary, CMakePackage):
     """MIVisionX toolkit is a set of comprehensive computer
     vision and machine intelligence libraries, utilities, and
     applications bundled into a single toolkit."""
@@ -17,9 +18,14 @@ class Mivisionx(CMakePackage):
     url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.3.tar.gz"
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libopenvx", "libvxu"]
+
     tags = ["rocm"]
 
     license("MIT")
+    version("7.2.3", sha256="91d0cccdd5d9590dabfdfd60e4e5704359594c392d7bc6bcfb2ff2a7321269cf")
+    version("7.2.1", sha256="cedcb0bcbbe6b8636a36cac0ec3bf9e80da9e24653a8602b6e4f4f3d4d3caff2")
+    version("7.2.0", sha256="188dc225d0813f172521e5a2129af5d917ab9e6616488520c0ef27468cc6d89b")
     version("7.1.1", sha256="7a7bd6ccb67e2b858526667decea938cc80c72d6279e7f6d9f3c0bb89ef823d7")
     version("7.1.0", sha256="2fba3aeb970df06f95d465cc2dd5ba5096ec47966e26f2a4544a719e78d43e37")
     version("7.0.2", sha256="ae4f230890f0ddaf0be5ea9a891843312e44c86bd8697c7e663cea142722c4de")
@@ -42,6 +48,15 @@ class Mivisionx(CMakePackage):
     version("6.0.0", sha256="01324a12f21ea0e29a4d7d7c60498ba9231723569fedcdd90f28ddffb5e0570e")
     version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
     version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     # Adding variant HIP which HIP as default.
 
@@ -200,11 +215,19 @@ class Mivisionx(CMakePackage):
             "7.0.2",
             "7.1.0",
             "7.1.1",
+            "7.2.0",
+            "7.2.1",
+            "7.2.3",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-            depends_on(f"migraphx@{ver}", when=f"@{ver}")
-            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+            for tgt in ROCmPackage.amdgpu_targets:
+                depends_on(
+                    f"migraphx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+                )
+                depends_on(
+                    f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+                )
             depends_on(f"rpp@{ver}", when=f"@{ver}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -255,6 +278,8 @@ class Mivisionx(CMakePackage):
                     "TurboJpeg_LIBRARIES_DIRS", "{0}/lib64".format(spec["libjpeg-turbo"].prefix)
                 )
             )
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     @run_after("install")

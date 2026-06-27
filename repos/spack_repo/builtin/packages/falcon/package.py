@@ -24,9 +24,9 @@ class Falcon(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("py-setuptools", type="run")
+    depends_on("py-setuptools@:81", type=("build", "run"))
     depends_on("py-pypeflow", type="run")
-    depends_on("py-networkx@1.7:1.10", type=["build", "run"])
+    depends_on("py-networkx@1.7:1.10", type=("build", "run"))
     depends_on("pacbio-dazz-db", type="run")
     depends_on("pacbio-daligner", type="run")
     depends_on("pacbio-dextractor", type="run")
@@ -35,3 +35,6 @@ class Falcon(PythonPackage):
     # Python version 3 and later should return
     # a value of PyObject type. [-Wreturn-type]
     patch("Py_None.patch", when="^python@3:")
+
+    def patch(self):
+        filter_file(r"^(    local_version = ).*$", rf"\1'.{self.version.dotted}'", "setup.py")

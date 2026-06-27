@@ -31,6 +31,12 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
     # Prefer the latest stable release
 
     version(
+        "5.0.0",
+        sha256="23170011b09f10916782245ad5975567d5f76ae0db8602f5d2cda889186753c2",
+        url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/5.0.0/mvapich-plus-installer.sh",
+        expand=False,
+    )
+    version(
         "4.1",
         sha256="891b98563216222bd12171ec9ace4a831eef73094f3705a4635bb6104cdfb465",
         url="https://mvapich.cse.ohio-state.edu/download/mvapich/plus/4.1/mvapich-plus-installer.sh",
@@ -136,7 +142,7 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("^cuda"):
             gpu = "cuda"
             gpu_ver = str(spec["cuda"].version)[:4]
-        elif spec.satisfies("+rocm"):
+        elif spec.satisfies("+rocm") or spec.satisfies("^hip"):
             gpu = "rocm"
             gpu_ver = spec["hip"].version
             if spec.satisfies("+apu"):
@@ -151,10 +157,10 @@ class MvapichPlus(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("process_managers=slurm"):
             slurm = ".slurm"
         rpm = f"mvapich-plus-{mvp_ver}-{gpu}{gpu_ver}.{rhel}.ofed{ofed}.{netmod}.{comp}\
-{slurm}{apu}-4.1-1.{el}.x86_64.rpm"
+{slurm}{apu}-{mvp_ver}-1.{el}.x86_64.rpm"
 
-        install_shell = which("bash")
-        io = which("rpm2cpio").path
+        install_shell = which("bash", required=True)
+        io = which("rpm2cpio", required=True).path
         arguments = [
             runfile,  # the install script
             "--prefix=%s" % prefix,  # Where to install

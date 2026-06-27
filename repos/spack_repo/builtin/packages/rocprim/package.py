@@ -12,13 +12,22 @@ class Rocprim(CMakePackage):
     """Radeon Open Compute Parallel Primitives Library"""
 
     homepage = "https://github.com/ROCm/rocPRIM"
-    git = "https://github.com/ROCm/rocPRIM.git"
-    url = "https://github.com/ROCm/rocPRIM/archive/rocm-6.4.3.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
+    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     license("MIT")
 
-    maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocPRIM/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="a96a1e7113f8bdd82475d7d44e1827264850865920884521f20081fecdf1972c")
     version("7.1.0", sha256="97f190a84d03ed64d8db85fe9b1aece669cc216214052231f16be29e9ba1d3f9")
     version("7.0.2", sha256="bde28c7d08b46ba46d9ab13496d0d63353e4eae0e7e884167c10bccc9ebcb933")
@@ -85,12 +94,22 @@ class Rocprim(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocprim"
+        else:
+            return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CXX", self.spec["hip"].hipcc)

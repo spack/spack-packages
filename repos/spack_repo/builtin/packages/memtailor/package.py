@@ -24,6 +24,8 @@ class Memtailor(AutotoolsPackage):
 
     license("BSD-3-Clause", checked_by="d-torrance")
 
+    version("1.4", sha256="4d5baebf701b04b44201b75831f451305b572a5bc39235a94567ad4e59ad6cdc")
+    version("1.3", sha256="10f0c016e67912be1711a54b18c54d7024c8bfcaf0f279e11187402994150a20")
     version("1.2", sha256="86cd8f888d23f53256937b47cebe8430daeb8146ca9816c4d3aef0fc5ebc702b")
     version("1.1", sha256="ce0dc2e5befd1e1f65c99510bc68ddc5b60f13066eac12ec5ce4e1da822e44eb")
     version("1.0.2025.05.13", commit="07c84a6852212495182ec32c3bdb589579e342b5")

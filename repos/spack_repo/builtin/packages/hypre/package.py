@@ -187,6 +187,9 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("superlu-dist", when="+superlu-dist+mpi")
     depends_on("caliper", when="+caliper")
     conflicts("+gptune", when="~mpi")
+    conflicts(
+        "+lapack", when="+int64", msg="64-bit integers + external lapack work only with +mixedint"
+    )
 
     # Patch to build shared libraries on Darwin does not apply to
     # versions before 2.13.0
@@ -213,6 +216,8 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         conflicts("cxxstd=14", when="^cuda@13:")
         depends_on("cuda@:11", when="@:2.28.0")
         conflicts("^cuda@13:", when="@:2")
+        # https://github.com/hypre-space/hypre/pull/1487
+        conflicts("^cuda@13.2:", when="@:3.1.0")
         for pkg, sm_ in product(gpu_pkgs, CudaPackage.cuda_arch_values):
             requires(f"^{pkg} cuda_arch={sm_}", when=f"+{pkg} cuda_arch={sm_}")
 
@@ -290,7 +295,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
         # build and run cached examples
         with working_dir(self._cached_tests_work_dir):
-            make = which("make")
+            make = which("make", required=True)
             make("bigint")
 
             for name in ["ex5big", "ex15big"]:
@@ -350,9 +355,14 @@ class CMakeBuilder(CMakeBuilder):
         )
         args.append(self.define("HYPRE_ENABLE_MIXED_PRECISION", spec.satisfies("precision=mixed")))
 
-        # External BLAS/LAPACK when +lapack (Note +lapack works for blas as well)
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_BLAS", "lapack"))
-        args.append(self.define_from_variant("HYPRE_ENABLE_HYPRE_LAPACK", "lapack"))
+        # External BLAS/LAPACK when +lapack: disable internal BLAS/LAPACK and
+        # pass external library paths. HYPRE_ENABLE_HYPRE_BLAS=ON means "use
+        # internal BLAS"
+        args.append(self.define("HYPRE_ENABLE_HYPRE_BLAS", spec.satisfies("~lapack")))
+        args.append(self.define("HYPRE_ENABLE_HYPRE_LAPACK", spec.satisfies("~lapack")))
+        if spec.satisfies("+lapack"):
+            args.append(self.define("TPL_BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
+            args.append(self.define("TPL_LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
 
         # GPU backends
         args.append(self.define_from_variant("HYPRE_ENABLE_CUDA", "cuda"))

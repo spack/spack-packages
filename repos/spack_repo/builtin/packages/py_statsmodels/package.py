@@ -21,6 +21,7 @@ class PyStatsmodels(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.14.6", sha256="4d17873d3e607d398b85126cd4ed7aad89e4e9d89fc744cdab1af3189a996c2a")
     version("0.14.5", sha256="de260e58cccfd2ceddf835b55a357233d6ca853a1aa4f90f7553a52cc71c6ddf")
     version("0.14.1", sha256="2260efdc1ef89f39c670a0bd8151b1d0843567781bcafec6cda0534eb47a94f6")
 
@@ -70,5 +71,5 @@ class PyStatsmodels(PythonPackage):
     def build_test(self):
         dirs = glob.glob("build/lib*")  # There can be only one...
         with working_dir(dirs[0]):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest("statsmodels")

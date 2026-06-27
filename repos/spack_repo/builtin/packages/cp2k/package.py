@@ -65,7 +65,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     version("8.2", sha256="2e24768720efed1a5a4a58e83e2aca502cd8b95544c21695eb0de71ed652f20a")
     version("8.1", sha256="7f37aead120730234a60b2989d0547ae5e5498d93b1e9b5eb548c041ee8e7772")
     version("7.1", sha256="ccd711a09a426145440e666310dd01cc5772ab103493c4ae6a3470898cd0addb")
-    version("master", branch="master", submodules="True")
+    version("master", branch="master", submodules=True)
 
     generator("ninja")
 
@@ -190,14 +190,17 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable green X support",
         when="@2025.2: build_system=cmake",
     )
+    variant(
+        "deepmd",
+        default=False,
+        description="Enable DeepMD-kit support",
+        when="@2024.2: build_system=cmake",
+    )
 
     variant("vdwxc", default=False, description="Enable VDW support in SIRIUS.", when="+sirius")
-    variant("deepmd", default=False, description="Enable DeepMD-kit support")
     variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
     variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
     variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
-
-    conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
         variant(
@@ -248,6 +251,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
+    depends_on("deepmdkit", when="+deepmd")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
@@ -563,7 +567,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
 class MakefileBuilder(makefile.MakefileBuilder):
     def edit(self, pkg, spec, prefix):
-        pkgconf = which("pkg-config")
+        pkgconf = which("pkg-config", required=True)
 
         fftw = spec["fftw-api:openmp" if "+openmp" in spec else "fftw-api"]
         fftw_header_dir = fftw.headers.directories[0]

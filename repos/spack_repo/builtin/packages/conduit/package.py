@@ -5,9 +5,13 @@
 import glob
 import os
 import shutil
-import socket
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cached_cmake import (
+    CachedCMakePackage,
+    cmake_cache_option,
+    cmake_cache_path,
+    cmake_cache_string,
+)
 
 from spack.package import *
 
@@ -26,7 +30,7 @@ def cmake_cache_entry(name, value, vtype=None, force=False):
     return 'set({0} "{1}" CACHE {2} ""{3})\n\n'.format(name, value, vtype, force_str)
 
 
-class Conduit(CMakePackage):
+class Conduit(CachedCMakePackage):
     """Conduit is an open source project from Lawrence Livermore National
     Laboratory that provides an intuitive model for describing hierarchical
     scientific data in C++, C, Fortran, and Python. It is used for data
@@ -38,12 +42,15 @@ class Conduit(CMakePackage):
     tags = ["radiuss", "e4s"]
 
     license("BSD-3-Clause")
+    test_requires_compiler = True
 
     version("develop", branch="develop", submodules=True)
     # note: the main branch in conduit was renamed to develop, this next entry
     # is to bridge any spack dependencies that are still using the name master
     version("master", branch="develop", submodules=True)
     # note: 2021-05-05 latest tagged release is now preferred instead of develop
+    version("0.9.7", sha256="e207016e453dd360b2d9a5a1245e53a9aa26ed83fdfb02cc08fc7bfed664f923")
+    version("0.9.6", sha256="370780082f095ebcb5c43067b650c78325088df726488dc5c6d414e7037c847d")
     version("0.9.5", sha256="d93294efbf0936da5a27941e13486aa1a04a74a59285786a2303eed19a24265a")
     version("0.9.4", sha256="c9edfb2ff09890084313ad9c2d83bfb7c10e70b696980762d1ae1488f9f08e6c")
     version("0.9.3", sha256="2968fa8df6e6c43800c019a008ef064ee9995dc2ff448b72dc5017c188a2e6d4")
@@ -250,30 +257,141 @@ class Conduit(CMakePackage):
                 v, v
             )
 
-    ####################################################################
-    # Note: cmake, build, and install stages are handled by CMakePackage
-    ####################################################################
+    ##############################
+    # Init compiler config entries
+    ##############################
+    def initconfig_compiler_entries(self):
+        spec = self.spec
+        entries = super().initconfig_compiler_entries()
+        f_compiler = getattr(self.compiler, "fc", None)
+        cpp_compiler = getattr(self.compiler, "cxx", "")
+        rpaths = list(self.compiler.extra_rpaths)
 
-    # provide cmake args (pass host config as cmake cache file)
+        #  Note: This is not needed if we add `extra_rpaths` to this compiler spec case
+        if (f_compiler is not None) and ("gfortran" in f_compiler) and ("clang" in cpp_compiler):
+            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
+            for _libpath in [libdir, libdir + "64"]:
+                if os.path.exists(_libpath):
+                    rpaths.append(_libpath)
+
+        linkerflags = ""
+        for rpath in rpaths:
+            linkerflags += "-Wl,-rpath,{} ".format(rpath)
+        entries.append(
+            cmake_cache_string(
+                "CMAKE_EXE_LINKER_FLAGS", "${CMAKE_EXE_LINKER_FLAGS} " + linkerflags, force=True
+            )
+        )
+        if spec.satisfies("+shared"):
+            entries.append(
+                cmake_cache_string(
+                    "CMAKE_SHARED_LINKER_FLAGS",
+                    "${CMAKE_SHARED_LINKER_FLAGS} " + linkerflags,
+                    force=True,
+                )
+            )
+
+        if spec.satisfies("%cce"):
+            entries.append(
+                cmake_cache_string("CMAKE_Fortran_FLAGS", "${CMAKE_Fortran_FLAGS} -ef", force=True)
+            )
+
+        sys_type = os.environ.get("SYS_TYPE", str(spec.architecture))
+        on_blueos = "blueos" in sys_type
+
+        # extra fun for blueos
+        if on_blueos and "+fortran" in spec and (f_compiler is not None) and ("xlf" in f_compiler):
+            flags = "-WF,-C! -qxlf2003=polymorphic"
+            entries.append(cmake_cache_string("BLT_FORTRAN_FLAGS", flags))
+            # Grab lib directory for the current fortran compiler
+            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
+            rpaths = "-Wl,-rpath,{0} -Wl,-rpath,{0}64".format(libdir)
+
+            flags = "${BLT_EXE_LINKER_FLAGS} -lstdc++ " + rpaths
+            entries.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags))
+            if spec.satisfies("+shared"):
+                flags = "${CMAKE_SHARED_LINKER_FLAGS} " + rpaths
+                entries.append(cmake_cache_string("CMAKE_SHARED_LINKER_FLAGS", flags, force=True))
+        return entries
+
+    #########################
+    # Init mpi config entries
+    #########################
+    def initconfig_mpi_entries(self):
+        spec = self.spec
+        entries = super().initconfig_mpi_entries()
+        entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
+        if spec.satisfies("+mpi"):
+            entries.append(cmake_cache_option("ENABLE_FIND_MPI", spec.satisfies("+blt_find_mpi")))
+        return entries
+
+    ######################################
+    # Init package-specific config entries
+    ######################################
+    def initconfig_package_entries(self):
+        spec = self.spec
+        entries = super().initconfig_package_entries()
+
+        entries.append(cmake_cache_path("BLT_SOURCE_DIR", spec["blt"].prefix))
+
+        entries.append(cmake_cache_option("BUILD_SHARED_LIBS", spec.satisfies("+shared")))
+        entries.append(cmake_cache_option("ENABLE_EXAMPLES", spec.satisfies("+examples")))
+        entries.append(cmake_cache_option("ENABLE_UTILS", spec.satisfies("+utilities")))
+        entries.append(cmake_cache_option("ENABLE_FORTRAN", spec.satisfies("+fortran")))
+        entries.append(cmake_cache_option("ENABLE_PYTHON", spec.satisfies("+python")))
+
+        if spec.satisfies("+python"):
+            entries.append(cmake_cache_path("PYTHON_EXECUTABLE", spec["python"].command.path))
+            try:
+                entries.append(cmake_cache_path("PYTHON_MODULE_INSTALL_PREFIX", python_platlib))
+            except NameError:
+                pass
+
+        enable_docs = False
+        if spec.satisfies("+doc"):
+            if spec.satisfies("+python"):
+                enable_docs = True
+                sphinx_build_exe = join_path(spec["py-sphinx"].prefix.bin, "sphinx-build")
+                entries.append(cmake_cache_path("SPHINX_EXECUTABLE", sphinx_build_exe))
+            if spec.satisfies("+doxygen"):
+                doxygen_exe = spec["doxygen"].command.path
+                entries.append(cmake_cache_path("DOXYGEN_EXECUTABLE", doxygen_exe))
+        entries.append(cmake_cache_option("ENABLE_DOCS", enable_docs))
+
+        entries.append(cmake_cache_option("ENABLE_TESTS", spec.satisfies("+test")))
+
+        if spec.satisfies("+hdf5"):
+            entries.append(cmake_cache_path("HDF5_DIR", spec["hdf5"].prefix))
+            if spec.satisfies("^zlib-api"):
+                # HDF5 depends on zlib
+                entries.append(cmake_cache_path("ZLIB_DIR", spec["zlib-api"].prefix))
+        if spec.satisfies("+silo"):
+            entries.append(cmake_cache_path("SILO_DIR", spec["silo"].prefix))
+        if spec.satisfies("+adios"):
+            entries.append(cmake_cache_path("ADIOS_DIR", spec["adios"].prefix))
+        if spec.satisfies("+zfp"):
+            entries.append(cmake_cache_path("ZFP_DIR", spec["zfp"].prefix))
+        if spec.satisfies("+hdf5+zfp"):
+            entries.append(cmake_cache_path("H5ZZFP_DIR", spec["h5z-zfp"].prefix))
+        if spec.satisfies("+parmetis"):
+            entries.append(cmake_cache_path("PARMETIS_DIR", spec["parmetis"].prefix))
+            entries.append(cmake_cache_path("METIS_DIR", spec["metis"].prefix))
+        if spec.satisfies("+caliper"):
+            entries.append(cmake_cache_path("CALIPER_DIR", spec["caliper"].prefix))
+            entries.append(cmake_cache_path("ADIAK_DIR", spec["adiak"].prefix))
+
+        return entries
+
+    # cmake args handled by CachedCMakePackage
     def cmake_args(self):
-        host_config = self._get_host_config_path(self.spec)
-        options = []
-        options.extend(["-C", host_config])
-        return options
+        return []
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
     def build_test(self):
         with working_dir(self.build_directory):
-            print("Running Conduit Unit Tests...")
+            tty.msg("Running Conduit Unit Tests...")
             make("test")
-
-    # Copy the generated host-config to install directory for downstream use
-    @run_before("install")
-    def copy_host_config(self):
-        src = self._get_host_config_path(self.spec)
-        dst = join_path(self.spec.prefix, os.path.basename(src))
-        copy(src, dst)
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
@@ -302,342 +420,3 @@ class Conduit(CMakePackage):
             make("CONDUIT_DIR={0}".format(install_prefix))
             example = Executable("./conduit_example")
             example()
-
-    def _get_host_config_path(self, spec):
-        sys_type = spec.architecture
-        # if on llnl systems, we can use the SYS_TYPE
-        if "SYS_TYPE" in env:
-            sys_type = env["SYS_TYPE"]
-
-        compiler_str = f"{self['c'].name}-{self['c'].version}"
-        host_config_path = (
-            f"{socket.gethostname()}-{sys_type}-{compiler_str}-conduit-{spec.dag_hash()}.cmake"
-        )
-        dest_dir = self.stage.source_path
-        host_config_path = os.path.abspath(join_path(dest_dir, host_config_path))
-        return host_config_path
-
-    @run_before("cmake")
-    def hostconfig(self):
-        """
-        This method creates a 'host-config' file that specifies
-        all of the options used to configure and build conduit.
-
-        For more details about 'host-config' files see:
-            http://software.llnl.gov/conduit/building.html
-        """
-        spec = self.spec
-        if not os.path.isdir(spec.prefix):
-            os.mkdir(spec.prefix)
-
-        #######################
-        # Compiler Info
-        #######################
-        c_compiler = env["SPACK_CC"]
-        cpp_compiler = env["SPACK_CXX"]
-        if spec.satisfies("+fortran"):
-            f_compiler = env["SPACK_FC"]
-        else:
-            f_compiler = None
-
-        #######################################################################
-        # Directly fetch the names of the actual compilers to create a
-        # 'host config' file that works outside of the spack install env.
-        #######################################################################
-
-        sys_type = spec.architecture
-        # if on llnl systems, we can use the SYS_TYPE
-        if "SYS_TYPE" in env:
-            sys_type = env["SYS_TYPE"]
-
-        # are we on a specific machine
-        on_blueos = "blueos" in sys_type
-
-        ##############################################
-        # Find and record what CMake is used
-        ##############################################
-
-        cmake_exe = spec["cmake"].command.path
-
-        # get hostconfig name
-        host_cfg_fname = self._get_host_config_path(spec)
-
-        cfg = open(host_cfg_fname, "w")
-        cfg.write("##################################\n")
-        cfg.write("# spack generated host-config\n")
-        cfg.write("##################################\n")
-        cfg.write("# {0}-{1}\n".format(sys_type, spec.compiler))
-        cfg.write("##################################\n\n")
-
-        # Include path to cmake for reference
-        cfg.write("# cmake from spack \n")
-        cfg.write("# cmake executable path: %s\n\n" % cmake_exe)
-
-        #######################
-        # Compiler Settings
-        #######################
-
-        cfg.write("#######\n")
-        cfg.write("# using %s compiler spec\n" % spec.compiler)
-        cfg.write("#######\n\n")
-        cfg.write("# c compiler used by spack\n")
-        cfg.write(cmake_cache_entry("CMAKE_C_COMPILER", c_compiler))
-        cfg.write("# cpp compiler used by spack\n")
-        cfg.write(cmake_cache_entry("CMAKE_CXX_COMPILER", cpp_compiler))
-
-        cfg.write("# fortran compiler used by spack\n")
-        if spec.satisfies("+fortran"):
-            cfg.write(cmake_cache_entry("ENABLE_FORTRAN", "ON"))
-            cfg.write(cmake_cache_entry("CMAKE_Fortran_COMPILER", f_compiler))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_FORTRAN", "OFF"))
-
-        if spec.satisfies("+shared"):
-            cfg.write(cmake_cache_entry("BUILD_SHARED_LIBS", "ON"))
-        else:
-            cfg.write(cmake_cache_entry("BUILD_SHARED_LIBS", "OFF"))
-
-        # use global spack compiler flags
-        cppflags = " ".join(spec.compiler_flags["cppflags"])
-        if cppflags:
-            # avoid always ending up with ' ' with no flags defined
-            cppflags += " "
-        cflags = cppflags + " ".join(spec.compiler_flags["cflags"])
-        if cflags:
-            cfg.write(cmake_cache_entry("CMAKE_C_FLAGS", cflags))
-        cxxflags = cppflags + " ".join(spec.compiler_flags["cxxflags"])
-        if cxxflags:
-            cfg.write(cmake_cache_entry("CMAKE_CXX_FLAGS", cxxflags))
-        fflags = " ".join(spec.compiler_flags["fflags"])
-        if self.spec.satisfies("%cce"):
-            fflags += " -ef"
-        if fflags:
-            cfg.write(cmake_cache_entry("CMAKE_Fortran_FLAGS", fflags))
-
-        # Add various rpath linker flags
-        rpaths = []
-        if self.compiler.extra_rpaths:
-            rpaths += self.compiler.extra_rpaths
-
-        # Note: This is not needed if we add `extra_rpaths` to this compiler spec case
-        if (f_compiler is not None) and ("gfortran" in f_compiler) and ("clang" in cpp_compiler):
-            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
-            for _libpath in [libdir, libdir + "64"]:
-                if os.path.exists(_libpath):
-                    rpaths.append(_libpath)
-
-        linkerflags = ""
-        for rpath in rpaths:
-            linkerflags += "-Wl,-rpath,{} ".format(rpath)
-        cfg.write(cmake_cache_entry("CMAKE_EXE_LINKER_FLAGS", linkerflags))
-        if spec.satisfies("+shared"):
-            cfg.write(cmake_cache_entry("CMAKE_SHARED_LINKER_FLAGS", linkerflags))
-
-        #######################
-        # BLT
-        #######################
-        cfg.write(cmake_cache_entry("BLT_SOURCE_DIR", spec["blt"].prefix))
-
-        #######################
-        # Examples/Utilities
-        #######################
-        if spec.satisfies("+examples"):
-            cfg.write(cmake_cache_entry("ENABLE_EXAMPLES", "ON"))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_EXAMPLES", "OFF"))
-
-        if spec.satisfies("+utilities"):
-            cfg.write(cmake_cache_entry("ENABLE_UTILS", "ON"))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_UTILS", "OFF"))
-
-        #######################
-        # Unit Tests
-        #######################
-        if spec.satisfies("+test"):
-            cfg.write(cmake_cache_entry("ENABLE_TESTS", "ON"))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_TESTS", "OFF"))
-
-        # extra fun for blueos
-        if on_blueos and "+fortran" in spec and (f_compiler is not None) and ("xlf" in f_compiler):
-            # Fix missing std linker flag in xlc compiler
-            flags = "-WF,-C! -qxlf2003=polymorphic"
-            cfg.write(cmake_cache_entry("BLT_FORTRAN_FLAGS", flags))
-            # Grab lib directory for the current fortran compiler
-            libdir = os.path.join(os.path.dirname(os.path.dirname(f_compiler)), "lib")
-            rpaths = "-Wl,-rpath,{0} -Wl,-rpath,{0}64".format(libdir)
-
-            flags = "${BLT_EXE_LINKER_FLAGS} -lstdc++ " + rpaths
-            cfg.write(cmake_cache_entry("BLT_EXE_LINKER_FLAGS", flags))
-            if spec.satisfies("+shared"):
-                flags = "${CMAKE_SHARED_LINKER_FLAGS} " + rpaths
-                cfg.write(cmake_cache_entry("CMAKE_SHARED_LINKER_FLAGS", flags, force=True))
-
-        #######################
-        # Python
-        #######################
-
-        cfg.write("# Python Support\n")
-
-        if spec.satisfies("+python"):
-            cfg.write("# Enable python module builds\n")
-            cfg.write(cmake_cache_entry("ENABLE_PYTHON", "ON"))
-            cfg.write("# python from spack \n")
-            cfg.write(cmake_cache_entry("PYTHON_EXECUTABLE", python.path))
-            try:
-                cfg.write("# python module install dir\n")
-                cfg.write(cmake_cache_entry("PYTHON_MODULE_INSTALL_PREFIX", python_platlib))
-            except NameError:
-                # spack's  won't exist in a subclass
-                pass
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_PYTHON", "OFF"))
-
-        if spec.satisfies("+doc"):
-            if spec.satisfies("+python"):
-                cfg.write(cmake_cache_entry("ENABLE_DOCS", "ON"))
-
-                cfg.write("# sphinx from spack \n")
-                sphinx_build_exe = join_path(spec["py-sphinx"].prefix.bin, "sphinx-build")
-                cfg.write(cmake_cache_entry("SPHINX_EXECUTABLE", sphinx_build_exe))
-            if spec.satisfies("+doxygen"):
-                cfg.write("# doxygen from uberenv\n")
-                doxygen_exe = spec["doxygen"].command.path
-                cfg.write(cmake_cache_entry("DOXYGEN_EXECUTABLE", doxygen_exe))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_DOCS", "OFF"))
-
-        #######################
-        # MPI
-        #######################
-
-        cfg.write("# MPI Support\n")
-
-        if spec.satisfies("+mpi"):
-            mpicc_path = spec["mpi"].mpicc
-            mpicxx_path = spec["mpi"].mpicxx
-            mpifc_path = spec["mpi"].mpifc if "+fortran" in spec else None
-            # if we are using compiler wrappers on cray systems
-            # use those for mpi wrappers, b/c  spec['mpi'].mpicxx
-            # etc make return the spack compiler wrappers
-            # which can trip up mpi detection in CMake 3.14
-            if spec["mpi"].mpicc == spack_cc:
-                mpicc_path = c_compiler
-                mpicxx_path = cpp_compiler
-                mpifc_path = f_compiler
-            cfg.write(cmake_cache_entry("ENABLE_MPI", "ON"))
-            cfg.write(cmake_cache_entry("MPI_C_COMPILER", mpicc_path))
-            cfg.write(cmake_cache_entry("MPI_CXX_COMPILER", mpicxx_path))
-            if spec.satisfies("+blt_find_mpi"):
-                cfg.write(cmake_cache_entry("ENABLE_FIND_MPI", "ON"))
-            else:
-                cfg.write(cmake_cache_entry("ENABLE_FIND_MPI", "OFF"))
-            if spec.satisfies("+fortran"):
-                cfg.write(cmake_cache_entry("MPI_Fortran_COMPILER", mpifc_path))
-
-            mpiexe_bin = join_path(spec["mpi"].prefix.bin, "mpiexec")
-            if os.path.isfile(mpiexe_bin):
-                # starting with cmake 3.10, FindMPI expects MPIEXEC_EXECUTABLE
-                # vs the older versions which expect MPIEXEC
-                if self.spec["cmake"].satisfies("@3.10:"):
-                    cfg.write(cmake_cache_entry("MPIEXEC_EXECUTABLE", mpiexe_bin))
-                else:
-                    cfg.write(cmake_cache_entry("MPIEXEC", mpiexe_bin))
-        else:
-            cfg.write(cmake_cache_entry("ENABLE_MPI", "OFF"))
-
-        #######################
-        # ZFP
-        #######################
-        cfg.write("# zfp from spack \n")
-        if spec.satisfies("+zfp"):
-            cfg.write(cmake_cache_entry("ZFP_DIR", spec["zfp"].prefix))
-        else:
-            cfg.write("# zfp not built by spack \n")
-
-        #######################
-        # Caliper
-        #######################
-        cfg.write("# caliper from spack \n")
-        if spec.satisfies("+caliper"):
-            cfg.write(cmake_cache_entry("CALIPER_DIR", spec["caliper"].prefix))
-            cfg.write(cmake_cache_entry("ADIAK_DIR", spec["adiak"].prefix))
-        else:
-            cfg.write("# caliper not built by spack \n")
-
-        #######################################################################
-        # I/O Packages
-        #######################################################################
-
-        cfg.write("# I/O Packages\n\n")
-
-        #######################
-        # HDF5
-        #######################
-
-        cfg.write("# hdf5 from spack \n")
-
-        if spec.satisfies("+hdf5"):
-            cfg.write(cmake_cache_entry("HDF5_DIR", spec["hdf5"].prefix))
-            if spec.satisfies("^zlib-api"):
-                # HDF5 depends on zlib
-                cfg.write(cmake_cache_entry("ZLIB_DIR", spec["zlib-api"].prefix))
-        else:
-            cfg.write("# hdf5 not built by spack \n")
-
-        #######################
-        # h5z-zfp
-        #######################
-
-        cfg.write("# h5z-zfp from spack \n")
-
-        if spec.satisfies("+hdf5+zfp"):
-            cfg.write(cmake_cache_entry("H5ZZFP_DIR", spec["h5z-zfp"].prefix))
-        else:
-            cfg.write("# h5z-zfp not built by spack \n")
-
-        #######################
-        # Silo
-        #######################
-
-        cfg.write("# silo from spack \n")
-
-        if spec.satisfies("+silo"):
-            cfg.write(cmake_cache_entry("SILO_DIR", spec["silo"].prefix))
-        else:
-            cfg.write("# silo not built by spack \n")
-
-        #######################
-        # ADIOS
-        #######################
-
-        cfg.write("# ADIOS from spack \n")
-
-        if spec.satisfies("+adios"):
-            cfg.write(cmake_cache_entry("ADIOS_DIR", spec["adios"].prefix))
-        else:
-            cfg.write("# adios not built by spack \n")
-
-        #######################
-        # Parmetis
-        #######################
-
-        cfg.write("# parmetis from spack \n")
-
-        if spec.satisfies("+parmetis"):
-            cfg.write(cmake_cache_entry("METIS_DIR", spec["metis"].prefix))
-            cfg.write(cmake_cache_entry("PARMETIS_DIR", spec["parmetis"].prefix))
-        else:
-            cfg.write("# parmetis not built by spack \n")
-
-        #######################
-        # Finish host-config
-        #######################
-        cfg.write("##################################\n")
-        cfg.write("# end spack generated host-config\n")
-        cfg.write("##################################\n")
-        cfg.close()
-
-        host_cfg_fname = os.path.abspath(host_cfg_fname)
-        tty.info("spack generated conduit host-config file: " + host_cfg_fname)

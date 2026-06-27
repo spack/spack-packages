@@ -14,6 +14,17 @@ from spack.package import *
 
 versions = [
     {
+        "version": "2026.0.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e2f4cda3-8891-4d0e-bf60-00d19c4e3e27/intel-dpcpp-cpp-compiler-2026.0.0.564_offline.sh",
+            "sha256": "4a40e1919aaf5e473290d1bdbff98a41ee0ee69baef3f5ed7040c34a94344bb8",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/176ca159-bee8-44f2-9164-db26f95de382/intel-fortran-compiler-2026.0.0.573_offline.sh",
+            "sha256": "f98ea7e1c1b397440dfd34c347c1567924b478c56e7a3b6a3a1628c8f48ad70b",
+        },
+    },
+    {
         "version": "2025.3.2",
         "cpp": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0d61d48a-4fe8-4cb2-bd9d-94d2c19c6227/intel-dpcpp-cpp-compiler-2025.3.2.26_offline.sh",
@@ -22,39 +33,6 @@ versions = [
         "ftn": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/3e53d136-2870-4836-adb1-892b558fa34a/intel-fortran-compiler-2025.3.2.25_offline.sh",
             "sha256": "c64d20d70a277b1249d2ba9221be7245a843f3988df9076b4456619fe5929278",
-        },
-    },
-    {
-        "version": "2025.3.1",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/5adfc398-db78-488c-b98f-78461b3c5760/intel-dpcpp-cpp-compiler-2025.3.1.16_offline.sh",
-            "sha256": "b0e8920fa390302133b0e92784389ae383806d8414c48ae8b9e2f2ed1ad72471",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/724303ca-6927-4327-a560-e0aabb55b010/intel-fortran-compiler-2025.3.1.16_offline.sh",
-            "sha256": "13138cca7df96469d7f707428de6e2cf23a98a49ac01ea0b80c7623c0f474d43",
-        },
-    },
-    {
-        "version": "2025.3.0",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/44809add-596f-4484-9cd1-cc032460e241/intel-dpcpp-cpp-compiler-2025.3.0.322_offline.sh",
-            "sha256": "a85dc98ac76d16522d387cf62dc3b712b863779cb74520d8e37ea282ea02ef63",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b3aa3ab5-c79d-4af4-8801-983ef00b90fd/intel-fortran-compiler-2025.3.0.325_offline.sh",
-            "sha256": "ede518607ce625051321989c843af9cebdbdc9ab07c8dbb2f011463e4e18678b",
-        },
-    },
-    {
-        "version": "2025.2.2",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/95aea65e-ead3-402f-838c-53d9f7bbaf3c/intel-dpcpp-cpp-compiler-2025.2.2.10_offline.sh",
-            "sha256": "f143aa4df3ce4add7efb795ae53482120407009607bc8924fb25b9325b5ed39f",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/05fdb0f1-5c91-4bdc-af11-cf7afe0c02fe/intel-fortran-compiler-2025.2.2.10_offline.sh",
-            "sha256": "8ddd51baab30e3370ab41ce2ad38d4c3a1455d2354715ccc7392d4b655ba6bc9",
         },
     },
     {
@@ -470,6 +448,12 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
     variant("amd", default=False, description="Install AMD plugin for OneAPI")
     conflicts("@:2022.2.1", when="+amd", msg="Codeplay AMD plugin requires newer release")
 
+    variant(
+        "fix_rt_linkage",
+        default=False,
+        description="Fix unresolved symbols from libc/libm in runtime libraries libirc/libimf",
+    )
+
     depends_on("gcc languages=c,c++", type="run")
 
     for v in versions:
@@ -625,7 +609,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             return
 
         # 2024 fixed all but these 2
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         if self.spec.satisfies("@2024:"):
             patchelf.add_default_arg("--set-rpath", self.component_prefix.lib)
             patchelf(self.component_prefix.bin.join("sycl-post-link"))
@@ -757,6 +741,18 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         pkg("intel-oneapi-runtime").requires(
             f"@{spec.versions}", when=f"%[deptypes=build] {spec.name}@{spec.versions}"
         )
+
+        # If the compiler depends on gcc@X.Y, the runtime must depend on gcc-runtime@X.Y
+        if spec.satisfies("%gcc"):
+            try:
+                gcc = spec["gcc"]
+                pkg("intel-oneapi-runtime").requires(
+                    f"@{spec.versions} %gcc-runtime@{gcc.version}",
+                    when=f"%[deptypes=build] {spec.name}/{spec.dag_hash()}",
+                )
+            except (RuntimeError, KeyError):
+                # Externals may not have gcc as a dependency, but still satisfy %gcc
+                pass
 
         # If a node used %intel-oneapi-runtime@X.Y its dependencies must use @:X.Y
         # (technically @:X is broader than ... <= @=X but this should work in practice)

@@ -34,6 +34,7 @@ class Amdscalapack(ScalapackBase):
 
     license("BSD-3-Clause-Open-MPI")
 
+    version("5.3", sha256="2bd0ef1d8bbd9990a8bc7b33ad7c32db788f39b9730b110d15737837111eacff")
     version("5.2", sha256="ff01f0f39c9e6d44fa493e1c68d9862d2600f425e9caaec1fe5179c10debf1d9")
     version("5.1", sha256="92f6f6b2081e27731c8b9e96c742203777cc7f2a848b96ca7511f4d259142b37")
     version("5.0", sha256="a33cf16c51cfd65c7acb5fbdb8884a5c147cdefea73931b07863c56d54f812cc")
@@ -63,7 +64,7 @@ class Amdscalapack(ScalapackBase):
             filter_file("-cpp", "", "CMakeLists.txt")
         # remove the C-style comments in header file that cause issues with flang
         if self.spec.satisfies("@4.2: %clang@18:"):
-            which("sed")(
+            which("sed", required=True)(
                 "-i",
                 "1,23d",
                 join_path(self.stage.source_path, "FRAMEWORK", "SL_Context_fortran_include.h"),

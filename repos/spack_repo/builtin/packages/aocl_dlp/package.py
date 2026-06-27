@@ -21,6 +21,7 @@ class AoclDlp(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("5.3", sha256="103607ba75a84f623d8ad1a2164ea100a0ce925f75c9dfdb65933cf3982ecb29")
     version("5.2", sha256="1eec26eeaf427cb2377ec21415ddce6e1bc62d4eab8ec51630a9c02711019c1c")
 
     # Feature toggles mapping directly to AOCL-DLP CMake options
@@ -41,6 +42,7 @@ class AoclDlp(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.26:", type="build")
+    depends_on("numactl", when="+benchmarks")
 
     def cmake_args(self):
         spec = self.spec

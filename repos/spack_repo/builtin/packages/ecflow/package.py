@@ -27,9 +27,16 @@ class Ecflow(CMakePackage):
     version("5.11.4", sha256="4836a876277c9a65a47a3dc87cae116c3009699f8a25bab4e3afabf160bcf212")
     version("5.8.4", sha256="bc628556f8458c269a309e4c3b8d5a807fae7dfd415e27416fe9a3f544f88951")
     version("5.8.3", sha256="1d890008414017da578dbd5a95cb1b4d599f01d5a3bb3e0297fe94a87fbd81a6")
-    version("4.13.0", sha256="c743896e0ec1d705edd2abf2ee5a47f4b6f7b1818d8c159b521bdff50a403e39")
-    version("4.12.0", sha256="566b797e8d78e3eb93946b923ef540ac61f50d4a17c9203d263c4fd5c39ab1d1")
-    version("4.11.1", sha256="b3bcc1255939f87b9ba18d802940e08c0cf6379ca6aeec1fef7bd169b0085d6c")
+    with default_args(deprecated=True):
+        version(
+            "4.13.0", sha256="c743896e0ec1d705edd2abf2ee5a47f4b6f7b1818d8c159b521bdff50a403e39"
+        )
+        version(
+            "4.12.0", sha256="566b797e8d78e3eb93946b923ef540ac61f50d4a17c9203d263c4fd5c39ab1d1"
+        )
+        version(
+            "4.11.1", sha256="b3bcc1255939f87b9ba18d802940e08c0cf6379ca6aeec1fef7bd169b0085d6c"
+        )
 
     variant("ssl", default=True, description="Enable SSL")
     variant(
@@ -125,7 +132,7 @@ class Ecflow(CMakePackage):
 
     @when("+ssl ^openssl~shared")
     def patch(self):
-        pkgconf = which("pkg-config")
+        pkgconf = which("pkg-config", required=True)
         liblist_l = pkgconf("--libs-only-l", "--static", "openssl", output=str).split()
         liblist = " ".join([ll.replace("-l", "") for ll in liblist_l])
         for sdir in ["Client", "Server"]:

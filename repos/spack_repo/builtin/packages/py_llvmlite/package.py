@@ -16,6 +16,7 @@ class PyLlvmlite(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.47.0", sha256="62031ce968ec74e95092184d4b0e857e444f8fdff0b8f9213707699570c33ccc")
     version("0.46.0", sha256="227c9fd6d09dce2783c18b754b7cd9d9b3b3515210c46acc2d3c5badd9870ceb")
     version("0.45.1", sha256="09430bb9d0bb58fc45a45a57c7eae912850bedc095cd0810a57de109c69e1c32")
     version(
@@ -42,6 +43,9 @@ class PyLlvmlite(PythonPackage):
         depends_on("cmake")
         depends_on("binutils", when="platform=linux")
         depends_on("py-setuptools")
+
+        # https://github.com/numba/llvmlite/pull/1400
+        depends_on("py-setuptools@:80", when="@:0.46")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):

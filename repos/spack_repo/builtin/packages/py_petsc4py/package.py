@@ -21,6 +21,11 @@ class PyPetsc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.25.2", sha256="dc1bcd7ccb367e9f76dcf6dd83a9c74426049003d3debc5a748618816b3d27bb")
+    version("3.25.1", sha256="2cddfe810dd975988e350f821a15e657e88b7fc796c091b54040921ba2f6dce3")
+    version("3.25.0", sha256="8eafd133adbb22a6b7cd963f5eb03f86d959b832c7e5843704caba29b79c5659")
+    version("3.24.6", sha256="1b9594c9aabcd76eaf6092086d8b3f0f2e6c71e3c6088b41dde40fdaf776812a")
+    version("3.24.5", sha256="fd2eabafb9b683b964ab0517cfe2d1c42077cfae408dbdaf1560691be73d833e")
     version("3.24.4", sha256="21280b81aa536ff46176374b8f8a71b4d9fe061b1e8f2eef78f498473ae80a3b")
     version("3.24.3", sha256="62ed68d87fb3485b0b2fb2e9158b88dc56e64cce6bdc511d7f4630741218e868")
     version("3.24.2", sha256="965a4ea86ad718838126bb714f80cb11fd59825bba66048af7e6a2f5e7ade22c")
@@ -109,10 +114,25 @@ class PyPetsc4py(PythonPackage):
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-mpi4py", when="+mpi", type=("build", "run"))
 
+    # https://gitlab.com/petsc/petsc/-/merge_requests/9016
+    depends_on("py-setuptools@:80", when="@:3.24.4", type="build")
+
     depends_on("petsc+mpi", when="+mpi")
     depends_on("petsc~mpi", when="~mpi")
     depends_on("petsc@main", when="@main")
-    for ver in ["3.24", "3.23", "3.22", "3.21", "3.20", "3.19", "3.18", "3.17", "3.16", "3.15"]:
+    for ver in [
+        "3.25",
+        "3.24",
+        "3.23",
+        "3.22",
+        "3.21",
+        "3.20",
+        "3.19",
+        "3.18",
+        "3.17",
+        "3.16",
+        "3.15",
+    ]:
         depends_on(f"petsc@{ver}", when=f"@{ver}")
     depends_on("petsc@3.14.2:3.14", when="@3.14.1:3.14")
     depends_on("petsc@3.14.0:3.14.1", when="@3.14.0")

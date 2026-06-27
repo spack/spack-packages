@@ -15,7 +15,8 @@ from spack.package import *
 
 class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     """The GNU Compiler Collection includes front ends for C, C++, Objective-C,
-    Fortran, Ada, and Go, as well as libraries for these languages."""
+    Fortran, Ada, and Go, as well as libraries for these languages.
+    """
 
     homepage = "https://gcc.gnu.org"
     gnu_mirror_path = "gcc/gcc-9.2.0/gcc-9.2.0.tar.xz"
@@ -36,9 +37,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
-    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
+    version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
 
     # Previous stable series releases
+    version("15.3.0", sha256="fa59c1beef8995f27c4d71c1df227587189315d3e6faff1bb4306e61b0c530eb")
+    version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
     version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
@@ -63,9 +66,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("4.6.4", sha256="35af16afa0b67af9b8eb15cafb76d2bc5f568540552522f5dc2c88dd45d977e8")
     version("4.5.4", sha256="eef3f0456db8c3d992cbb51d5d32558190bc14f3bc19383dd93acc27acc6befc")
 
-    # Used in the tutorial
-    version("12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b")
-
     # Deprecated older non-final releases
     with default_args(deprecated=True):
         version(
@@ -84,6 +84,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         version(
             "12.4.0", sha256="704f652604ccbccb14bdabf3478c9511c89788b12cb3bbffded37341916a9175"
+        )
+        version(
+            "12.3.0", sha256="949a5d4f99e786421a93b532b22ffab5578de7321369975b91aec97adfda8c3b"
         )
         version(
             "12.2.0", sha256="e549cf9cf3594a00e27b6589d4322d70e0720cdd213f39beb4181e06926230ff"
@@ -204,30 +207,34 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     )
     variant("libsanitizer", default=True, description="Use libsanitizer")
 
+    # See https://gcc.gnu.org/install/prerequisites.html
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-
-    depends_on("flex", type="build", when="@master")
-
-    # https://gcc.gnu.org/install/prerequisites.html
-    depends_on("gmp@4.3.2:")
     # mawk is not sufficient for go support
     depends_on("gawk@3.1.5:", type="build")
     depends_on("texinfo@4.7:", type="build")
     depends_on("libtool", type="build")
-    # dependencies required for git versions
-    depends_on("m4@1.4.6:", when="@master", type="build")
-    depends_on("automake@1.15.1:", when="@master", type="build")
-    depends_on("autoconf@2.69:", when="@master", type="build")
 
     depends_on("gmake@3.80:", type="build")
     depends_on("perl@5", type="build")
+    depends_on("diffutils", type="build")
+
+    with when("@master"):
+        depends_on("flex", type="build")
+        # dependencies required for git versions
+        depends_on("m4@1.4.6:", type="build")
+        depends_on("automake@1.15.1:", type="build")
+        depends_on("autoconf@2.69:", type="build")
+
+    depends_on("gmp@4.3.2:")
 
     # GCC 7.3 does not compile with newer releases on some platforms, see
     #   https://github.com/spack/spack/issues/6902#issuecomment-433030376
     depends_on("mpfr@2.4.2:3.1.6", when="@:9.9")
     depends_on("mpfr@3.1.0:", when="@10:")
     depends_on("mpc@1.0.1:", when="@4.5:")
+
     # Already released GCC versions do not support any newer version of ISL
     #   GCC 5.4 https://github.com/spack/spack/issues/6902#issuecomment-433072097
     #   GCC 7.3 https://github.com/spack/spack/issues/6902#issuecomment-433030376
@@ -241,7 +248,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     depends_on("zlib-api", when="@6:")
     depends_on("zstd", when="@10:")
-    depends_on("diffutils", type="build")
     depends_on("iconv", when="platform=darwin")
     depends_on("gnat", when="languages=ada")
     depends_on(
@@ -258,11 +264,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # depends_on('cloog')
 
     # https://gcc.gnu.org/install/test.html
-    depends_on("dejagnu@1.4.4", type="test")
-    depends_on("expect", type="test")
-    depends_on("tcl", type="test")
-    depends_on("autogen@5.5.4:", type="test")
-    depends_on("guile@1.4.1:", type="test")
+    with default_args(type="test"):
+        depends_on("dejagnu@1.4.4")
+        depends_on("expect")
+        depends_on("tcl")
+        depends_on("autogen@5.5.4:")
+        depends_on("guile@1.4.1:")
 
     # See https://go.dev/doc/install/gccgo#Releases
     with when("languages=go"):
@@ -393,6 +400,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # NVPTX build disables bootstrap
         conflicts("+bootstrap")
 
+    # Graphite loop optimizations cause bootstrap comparison failures
+    conflicts("+graphite +bootstrap")
+
     # Binutils can't build ld on macOS
     conflicts("+binutils", when="platform=darwin")
 
@@ -423,14 +433,16 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     # has been backported. The patch is not applied to GCC 11 since the "fixinclude"
     # is in fact needed for that version (see GCC commit description). Older versions
     # have not been checked or tested.
-    patch(
-        "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
-        sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
-        when="@15:15.2",
-    )
-    patch("fixincludes-gcc-13-14.patch", when="@13:14")
-    patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
-    patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
+    # This patchset conflicts with Iain's Darwin patches and is not needed on Darwin
+    with when("platform=linux"):
+        patch(
+            "https://github.com/gcc-mirror/gcc/commit/ea2798892de373b14f9fc7ae8a0d820eaddca98c.patch?full_index=1",
+            sha256="0999dbf856725566373f25a6f192a3520ea036db8e1f31928aae9750e6e38be7",
+            when="@15:15.2",
+        )
+        patch("fixincludes-gcc-13-14.patch", when="@13:14")
+        patch("fixincludes-gcc-12.4.patch", when="@12.4:12")
+        patch("fixincludes-gcc-12.1.patch", when="@12:12.3")
 
     if sys.platform == "darwin":
         # Fix parallel build on APFS filesystem
@@ -468,8 +480,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # aarch64-darwin support from Iain Sandoe's branch
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
         patch(
-            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..a495b2dded281beeafec91074e4e82a5a3df8104.patch?full_index=1",
-            sha256="838cf070bec5468340018bf003f714f6340c562b878f3244303d2b7ba9949ccd",
+            "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
+            sha256="d74542461b22ae2d23533323e01861f4c66d252345c51682740f521a74412500",
             when="@14.2.0",
         )
         patch(
@@ -999,40 +1011,23 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # run configure/make/make(install) for the nvptx-none target
     # before running the host compiler phases
-    @run_before("configure")
+    @run_before("configure", when="+nvptx")
     def nvptx_install(self):
-        spec = self.spec
-        prefix = self.prefix
-
-        if not spec.satisfies("+nvptx"):
-            return
+        self.copy_nvptx_tools()
+        self.link_newlib()
 
         # config.guess returns the host triple, e.g. "x86_64-pc-linux-gnu"
         guess = Executable("./config.guess")
         targetguess = guess(output=str).rstrip("\n")
-
-        options = getattr(self, "configure_flag_args", [])
-        options += ["--prefix={0}".format(prefix)]
-
-        options += [
-            "--with-cuda-driver-include={0}".format(spec["cuda"].prefix.include),
-            "--with-cuda-driver-lib={0}".format(spec["cuda"].libs.directories[0]),
-        ]
-
-        self.copy_nvptx_tools()
-
-        self.link_newlib()
-
-        # self.build_directory = 'spack-build-nvptx'
         with working_dir("spack-build-nvptx", create=True):
             options = [
-                "--prefix={0}".format(prefix),
-                "--enable-languages={0}".format(",".join(spec.variants["languages"].value)),
-                "--with-mpfr={0}".format(spec["mpfr"].prefix),
-                "--with-gmp={0}".format(spec["gmp"].prefix),
+                f"--prefix={self.prefix}",
+                f"--enable-languages={','.join(self.spec.variants['languages'].value)}",
+                f"--with-mpfr={self.spec['mpfr'].prefix}",
+                f"--with-gmp={self.spec['gmp'].prefix}",
                 "--target=nvptx-none",
-                "--with-build-time-tools={0}".format(join_path(prefix, "nvptx-none", "bin")),
-                "--enable-as-accelerator-for={0}".format(targetguess),
+                f"--with-build-time-tools={join_path(self.prefix, 'nvptx-none', 'bin')}",
+                f"--enable-as-accelerator-for={targetguess}",
                 "--disable-sjlj-exceptions",
                 "--enable-newlib-io-long-long",
             ]
@@ -1158,10 +1153,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         Should be use only if self.spec.satisfies("@12: languages=d")
         """
         # Detect GCC package in the directory of the GCC compiler
-        # or in the $PATH if self.compiler.cc is not an absolute path:
+        # or in the $PATH if self["c"].cc is not an absolute path:
         from spack.detection import by_path  # TODO: remove use of private Spack API
 
-        compiler_dir = os.path.dirname(self.compiler.cc)
+        compiler_dir = os.path.dirname(self["c"].cc)
         detected_packages = by_path(
             [self.name], path_hints=([compiler_dir] if os.path.isdir(compiler_dir) else None)
         )
@@ -1177,7 +1172,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         if candidate_specs:
             # We now need to filter specs that match the compiler version:
-            compiler_spec = Spec(repr(self.compiler.spec))
+            compiler_spec = self["c"].spec
 
             # First, try to filter specs that satisfy the compiler spec:
             new_candidate_specs = list(
@@ -1208,7 +1203,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                     error_nl, self.spec.format("{name}{@version} {variants.languages}")
                 ),
             )
-        elif len(candidate_specs) == 0:
+        elif len(candidate_specs) == 1:
             return candidate_specs[0].extra_attributes["compilers"]["d"]
         else:
             # It is rather unlikely to end up here but let us try to resolve the ambiguity:
@@ -1221,7 +1216,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             else:
                 raise InstallError(
                     "Cannot resolve ambiguity when detecting GDC that belongs to %{0}".format(
-                        self.compiler.spec
+                        self["c"].spec
                     ),
                     long_msg="The candidates are:{0}{0}{1}{0}".format(
                         error_nl,

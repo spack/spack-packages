@@ -19,17 +19,17 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           ref: develop # DO NOT CHANGE
 
-      - uses: actions/create-github-app-token@29824e69f54612133e76f7eaac726eef6c875baf
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
         id: generate-spackbot-token
         with:
-          app-id: ${{ secrets.SPACKBOT_TRIAGE_APP_ID }}
+          client-id: ${{ secrets.SPACKBOT_TRIAGE_CLIENT_ID }}
           private-key: ${{ secrets.SPACKBOT_TRIAGE_PRIVATE_KEY }}
 
-      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
       - uses: ./.github/actions/checkout-spack
 
       - name: Install Python dependencies

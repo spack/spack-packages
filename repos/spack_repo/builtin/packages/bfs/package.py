@@ -19,9 +19,9 @@ class Bfs(MakefilePackage):
 
     license("0BSD")
 
-    sanity_check_is_file = ["bin/bfs"]
-
     version("main", branch="main")
+    version("4.1.3", sha256="64ed282aa3a1e05f10c9888943857cb1b0fb783e12ffd15500249383f13ea5b6")
+    version("4.1.2", sha256="4dc9846bbd23acdad4bafb279416b4a60aee98829ab6c5a1380006ab28894f3d")
     version("4.1", sha256="7a2ccafc87803b6c42009019e0786cb1307f492c2d61d2fcb0be5dcfdd0049da")
     version("4.0.6", sha256="446a0a1a5bcbf8d026aab2b0f70f3d99c08e5fe18d3c564a8b7d9acde0792112")
     version("4.0.5", sha256="f7d9ebff00d9a010a5d6cc9b7bf1933095d7e5c0b11a8ec48c96c7ed8f993e5f")
@@ -43,16 +43,27 @@ class Bfs(MakefilePackage):
     depends_on("libcap", when="platform=linux")
     depends_on("liburing@2.4:", when="platform=linux @3.1:")
 
+    # Sanity checks
+    sanity_check_is_file = ["bin/bfs"]
+    sanity_check_is_dir = ["share/man/man1"]
+
     @run_before("build", when="@4:")
     def configure(self):
+        """Configure for version 4.0 and later."""
         args = ["--enable-release", f"--prefix={self.prefix}"]
 
         configure_exe = Executable("./configure")
         configure_exe(*args)
 
-    def install(self, spec, prefix):
-        """Install the package."""
-        if spec.satisfies("@:3"):
-            make("install", f"PREFIX={prefix}")
-        else:
-            make("install")
+    @property
+    def install_targets(self):
+        """Return install targets based on version."""
+        if self.spec.satisfies("@:3"):
+            return ["install", f"PREFIX={self.prefix}"]
+        return ["install"]
+
+    def test_version(self):
+        """Check bfs can run and report its version."""
+        bfs = which(self.prefix.bin.bfs)
+        out = bfs("--version", output=str.split, error=str.split)
+        assert str(self.spec.version) in out

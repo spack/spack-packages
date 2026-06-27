@@ -8,6 +8,10 @@ on:
       - develop
       - releases/**
     paths:
+      # CI
+      - '.ci/**'
+      - '.github/**'
+      # Build Systems
       - 'repos/spack_repo/builtin/build_systems/**'
       # Clingo
       - 'repos/spack_repo/builtin/packages/clingo/**'
@@ -22,13 +26,11 @@ on:
       # Dev dependencies
       - 'repos/spack_repo/builtin/packages/python/**'
       - 'repos/spack_repo/builtin/packages/python-venv/**'
-      - 'repos/spack_repo/builtin/packages/py-wheel/**'
-      - 'repos/spack_repo/builtin/packages/py-setuptools/**'
-      - 'repos/spack_repo/builtin/packages/py-black/**'
-      - 'repos/spack_repo/builtin/packages/py-pytest/**'
-      - 'repos/spack_repo/builtin/packages/py-flake8/**'
-      - 'repos/spack_repo/builtin/packages/py-isort/**'
       - 'repos/spack_repo/builtin/packages/py-mypy/**'
+      - 'repos/spack_repo/builtin/packages/py-pytest/**'
+      - 'repos/spack_repo/builtin/packages/py-ruff/**'
+      - 'repos/spack_repo/builtin/packages/py-setuptools/**'
+      - 'repos/spack_repo/builtin/packages/py-wheel/**'
 
   schedule:
     # nightly at 5:16 AM
@@ -64,7 +66,7 @@ jobs:
               make patch unzip which xz python3 python3-devel tree \
               cmake bison
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack
@@ -91,10 +93,10 @@ jobs:
         run: |
           brew install bison tree
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: "3.12"
       - uses: ./.github/actions/checkout-spack
@@ -124,7 +126,7 @@ jobs:
             sudo rm $(command -v gpg gpg2 patchelf)
           done
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack
@@ -143,10 +145,10 @@ jobs:
     runs-on: "windows-latest"
     steps:
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
-      - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1  # v6.3.0
         with:
           python-version: "3.12"
       # TODO: Check why this is needed here and not in spack/spack
@@ -182,7 +184,7 @@ jobs:
               bzip2 curl file gcc-c++ gcc gcc-gfortran git gnupg2 gzip \
               make patch tcl unzip which xz
       - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  # v7.0.0
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack
@@ -194,4 +196,4 @@ jobs:
           spack debug report
           spack -d bootstrap now --dev
           source .ci/env
-          spack -d style -b ${SPACK_CHECKOUT_VERSION} -t black
+          spack -d style -b ${SPACK_CHECKOUT_VERSION} -t ruff-format

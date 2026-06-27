@@ -58,7 +58,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Use MPI")
     variant(
-        "openmp", default=True, description="Enable thread parallellism via tasking with OpenMP"
+        "openmp", default=True, description="Enable thread parallelism via tasking with OpenMP"
     )
     variant("parmetis", default=True, description="Enable use of ParMetis")
     variant("scotch", default=False, description="Enable use of Scotch")
@@ -79,7 +79,9 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
-    depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
+    for blas in ("openblas", "amdblis", "blis"):
+        depends_on(f"{blas} threads=openmp", when=f"+openmp ^[virtuals=blas] {blas}")
+        depends_on(f"{blas} threads=none", when=f"~openmp ^[virtuals=blas] {blas}")
     depends_on("scalapack", when="+mpi")
     depends_on("metis")
     depends_on("parmetis", when="+parmetis")
@@ -124,6 +126,13 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/pghysels/STRUMPACK/commit/e4b110b2d823c51a90575b77ec1531c699097a9f
     patch("strumpack-7.0.1-mpich-hipcc.patch", when="@7.0.1 +rocm ^mpich")
+
+    # https://github.com/pghysels/STRUMPACK/pull/142
+    patch(
+        "https://github.com/pghysels/STRUMPACK/commit/e08ec96e8514d3b8e374fd436eae5e1590a2c254.patch?full_index=1",
+        sha256="db741166d26768f77a97651e628a75cc9d7894ad5613f20450a494bb3cb08bb0",
+        when="@8.0.0 +cuda ^cuda@13.2:",
+    )
 
     def cmake_args(self):
         spec = self.spec
@@ -228,11 +237,11 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             cmake = self.spec["cmake"].command
             cmake(*opts)
 
-            make = which("make")
+            make = which("make", required=True)
             make(test_prog)
 
             with set_env(OMP_NUM_THREADS="1"):
-                exe = which(test_cmd)
+                exe = which(test_cmd, required=True)
                 test_args = pre_args + [join_path("..", self.test_data_dir, "pde900.mtx")]
                 exe(*test_args)
 

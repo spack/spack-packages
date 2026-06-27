@@ -18,6 +18,7 @@ class PyFastdownload(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.0.7", sha256="20507edb8e89406a1fbd7775e6e2a3d81a4dd633dd506b0e9cf0e1613e831d6a")
     version("0.0.5", sha256="64e67af30690fa98ae1c8a1b52495769842f723565239a5430208ad05585af18")
 
     depends_on("python@3.6:", type=("build", "run"))

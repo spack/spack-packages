@@ -16,7 +16,11 @@ class Rocpydecode(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["rocpydecode.cpython", "rocpyjpegdecode.cpython"]
 
+    version("7.2.3", sha256="b0c4abd1b1811b6950f76c698a855d0bae2e6694ce37e44ee8a172098a3b4aad")
+    version("7.2.1", sha256="68736587beff68ab10e591b80c02804b104a16f54b0f3069a8a01e364171be35")
+    version("7.2.0", sha256="e91a48734df8d4ce769b8979f2a1350a86705d38035c29618dff674471c9d026")
     version("7.1.1", sha256="8946730b6159350b896f9704b3ed485fa376e502d9b68f0cef68d09ab8260fab")
     version("7.1.0", sha256="7e9feeb0dd7d975f04364730cdf2b194d8e8d6bcc62aa983bc99509d9c6366d1")
     version("7.0.2", sha256="fa8215316966198086ff24c1ba7646e69d105b8bd1df1f90b829a6ca3b8f383e")
@@ -53,11 +57,14 @@ class Rocpydecode(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
         depends_on(f"rocjpeg@{ver}", when=f"@{ver}")
 
     def patch(self):

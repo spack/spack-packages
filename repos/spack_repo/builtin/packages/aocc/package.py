@@ -36,6 +36,11 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
     maintainers("amd-toolchain-support")
 
     version(
+        ver="5.2.0",
+        sha256="f98af7e2ae8801dd4ba443520653acb739536a86c2a1caf096310c3cfd554ca0",
+        url="https://download.amd.com/developer/eula/aocc/aocc-5-2/aocc-compiler-5.2.0.tar",
+    )
+    version(
         ver="5.1.0",
         sha256="3ccb56e399c66e10d437feb24b73552bc560210f7606d2609c06a7ef35d22c69",
         url="https://download.amd.com/developer/eula/aocc/aocc-5-1/aocc-compiler-5.1.0.tar",
@@ -44,7 +49,6 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
         ver="5.0.0",
         sha256="966fac2d2c759e9de6e969c10ada7a7b306c113f7f1e07ea376829ec86380daa",
         url="https://download.amd.com/developer/eula/aocc/aocc-5-0/aocc-compiler-5.0.0.tar",
-        preferred=True,
     )
     version(
         ver="4.2.0",
@@ -131,7 +135,7 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
         if self.spec.satisfies("@:5 %gcc") and self.compiler.prefix != "/usr":
             # help flang{1,2} find libquadmath
             libdir = self._libquadmath_dir()
-            patchelf = which("patchelf")
+            patchelf = which("patchelf", required=True)
             patchelf.add_default_arg("--set-rpath", libdir)
             patchelf(join_path(self.prefix.bin, "flang1"))
             patchelf(join_path(self.prefix.bin, "flang2"))

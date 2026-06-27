@@ -20,6 +20,20 @@ class Pfunit(CMakePackage):
 
     maintainers("mathomp4", "tclune")
 
+    license("NASA-1.3", checked_by="mathomp4", when="@:4.16")
+    license("Apache-2.0", checked_by="mathomp4", when="@4.17:")
+
+    version("4.19.0", sha256="ec84e2e17d79598d782edc5468e7ebfe392ccf5aff9170a15c10f0b52f9f62b4")
+    version("4.18.2", sha256="d2bdc52372e42d8f0e27d06325c73ce0133b886d207cb5efb6d7fc6f0b536f48")
+    version("4.18.1", sha256="34654ac27c3498333210cac480d6319d3d8c0230057fd0974f3e3c4d656b8cd9")
+    version("4.18.0", sha256="e1beb32e95f487423720b85bbb8314f46af5321f3ed0d06cf0122bc479ecb812")
+    version("4.17.1", sha256="de3d3a9d097762e41763035b1e8f39edfce7606c7ccda01839ca6331580ef38c")
+    # There was a mistake in the 4.16.0 release. Mark as deprecated.
+    version(
+        "4.16.0",
+        sha256="314381ff08dc99e87a4da5862501053d112babaf73244b1c04b77065d3fd3091",
+        deprecated=True,
+    )
     version("4.15.0", sha256="8c9cb7f7275802c5169b16dd511209b15ccde3a0e2fb3ed9007a0ab9acf4abb1")
     version("4.14.0", sha256="3f5fcc79cf5f12ed08eb8e49aff23e0826243b14d4b2b2efee91ce823ac1749d")
     version("4.13.0", sha256="f4f894faea5cc591f05e071a2bb16ddf613c3c22f88a6dc3b8149f5c4f159548")

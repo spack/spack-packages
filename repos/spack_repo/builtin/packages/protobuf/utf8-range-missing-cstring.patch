@@ -1,0 +1,12 @@
+diff --git a/third_party/utf8_range/utf8_validity.cc b/third_party/utf8_range/utf8_validity.cc
+index 9e94576..b1cdc66 100644
+--- a/third_party/utf8_range/utf8_validity.cc
++++ b/third_party/utf8_range/utf8_validity.cc
+@@ -19,6 +19,7 @@
+ 
+ #include <cstddef>
+ #include <cstdint>
++#include <cstring>
+ 
+ #include "absl/strings/ascii.h"
+ #include "absl/strings/string_view.h"

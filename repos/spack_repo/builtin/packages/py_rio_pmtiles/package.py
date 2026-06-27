@@ -17,6 +17,7 @@ class PyRioPmtiles(PythonPackage):
 
     license("BSD-3-Clause", checked_by="Chrismarsh")
 
+    version("1.2.0", sha256="b1ca2264afab0b37d62631976b25ef1cc611d62502ef1b8e3d2b584007763f83")
     version("1.0.3", sha256="bd4c1bc94c292cdc6d06f0d50837ce18fa2e6e49f4811fa0f58588735bd65f26")
 
     depends_on("py-setuptools", type="build")

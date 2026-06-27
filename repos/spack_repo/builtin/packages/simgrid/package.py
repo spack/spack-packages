@@ -54,16 +54,17 @@ class Simgrid(CMakePackage):
         sha256="4fdff0a8e4c81f8edf6f7eedfa32e19748abe688d156ea9240178c558c8bad33",
         url="https://github.com/simgrid/simgrid/releases/download/v3_22/SimGrid-3.22.tar.gz",
     )
-    version(
-        "3.21",
-        sha256="d2a6e9021016dd39a2b6f8d5d18c8223f6885746c5269550d19ba29c47c0c6a0",
-        url="https://github.com/simgrid/simgrid/releases/download/v3_21/SimGrid-3.21.tar.gz",
-    )
-    version(
-        "3.20",
-        sha256="4d4757eb45d87cf18d990d589c31d223b0ea8cf6fcd8c94fca4d38162193cef6",
-        url="https://github.com/simgrid/simgrid/releases/download/v3.20/SimGrid-3.20.tar.gz",
-    )
+    with default_args(deprecated=True):
+        version(
+            "3.21",
+            sha256="d2a6e9021016dd39a2b6f8d5d18c8223f6885746c5269550d19ba29c47c0c6a0",
+            url="https://github.com/simgrid/simgrid/releases/download/v3_21/SimGrid-3.21.tar.gz",
+        )
+        version(
+            "3.20",
+            sha256="4d4757eb45d87cf18d990d589c31d223b0ea8cf6fcd8c94fca4d38162193cef6",
+            url="https://github.com/simgrid/simgrid/releases/download/v3.20/SimGrid-3.20.tar.gz",
+        )
 
     version("develop", branch="master")
 
@@ -99,7 +100,7 @@ class Simgrid(CMakePackage):
         when="@3.34",
     )
 
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         if self.spec.satisfies("+smpi"):
             self.spec.smpicc = join_path(self.prefix.bin, "smpicc")
             self.spec.smpicxx = join_path(self.prefix.bin, "smpicxx")

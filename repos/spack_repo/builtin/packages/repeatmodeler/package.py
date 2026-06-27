@@ -20,12 +20,6 @@ class Repeatmodeler(Package):
 
     version("2.0.7", sha256="2873697a885e7115bf5e940cf880f47de17efb7a200ec2d3a1627d5a689f7a8f")
     version("2.0.4", sha256="94aad46cc70911d48de3001836fc3165adb95b2b282b5c53ab0d1da98c27a6b6")
-    version(
-        "1.0.11",
-        sha256="7ff0d588b40f9ad5ce78876f3ab8d2332a20f5128f6357413f741bb7fa172193",
-        url="https://www.repeatmasker.org/RepeatModeler/RepeatModeler-open-1.0.11.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("perl", type=("build", "run"))
     depends_on("perl-json", type=("build", "run"))
@@ -142,7 +136,7 @@ class Repeatmodeler(Package):
             f.write("\n".join(config_answers))
 
         with open(config_filename, "r") as f:
-            perl = which("perl")
+            perl = which("perl", required=True)
             perl("configure", input=f)
 
         install_tree(".", prefix.bin)

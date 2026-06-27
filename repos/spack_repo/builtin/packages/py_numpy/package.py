@@ -20,9 +20,13 @@ class PyNumpy(PythonPackage):
 
     maintainers("adamjstewart", "rgommers")
 
-    license("BSD-3-Clause")
+    license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
+    version("2.4.5", sha256="ca670567a5683b7c1670ec03e0ddd5862e10934e92a70751d68d7b7b74ca7f9f")
+    version("2.4.4", sha256="2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0")
+    version("2.4.3", sha256="483a201202b73495f00dbc83796c6ae63137a9bdade074f7648b3e32613412dd")
     version("2.4.2", sha256="659a6107e31a83c4e33f763942275fd278b21d095094044eb35569e86a21ddae")
     version("2.4.1", sha256="a1ceafc5042451a858231588a104093474c6a5c57dcc724841f5c888d237d690")
     version("2.4.0", sha256="6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934")
@@ -127,7 +131,7 @@ class PyNumpy(PythonPackage):
     with default_args(type="build"):
         depends_on("py-pyproject-metadata@0.7.1:", when="@1.26.0:1.26.3")
         depends_on("py-tomli@1:", when="@1.26.0:1.26.3 ^python@:3.10")
-        depends_on("py-setuptools@60:", when="@1.26.0:1.26.3 ^python@3.12:")
+        depends_on("py-setuptools@60:67", when="@1.26.0:1.26.3 ^python@3.12:")
         depends_on("py-colorama", when="@1.26.0:1.26.3 platform=windows")
         depends_on("ninja@1.8.2:", when="@1.26.0:1.26.3")
         depends_on("pkgconfig", when="@1.26.0:1.26.3")
@@ -300,8 +304,17 @@ class PyNumpy(PythonPackage):
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
 
-        if spec["blas"].name in ["blis", "amdblis"]:
+        if spec["blas"].name == "blis":
             blas = "blis"
+
+        # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when threading is enabled
+        if spec["blas"].name == "amdblis":
+            blas = "blis"
+            if spec["amdblis"].satisfies("@5.1:") and (
+                spec["amdblis"].satisfies("threads=openmp")
+                or spec["amdblis"].satisfies("threads=pthreads")
+            ):
+                blas = "blis-mt"
 
         if spec["blas"].name == "cray-libsci":
             blas = "libsci"
@@ -337,7 +350,6 @@ class PyNumpy(PythonPackage):
 
         settings = {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,

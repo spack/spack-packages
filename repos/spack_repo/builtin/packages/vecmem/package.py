@@ -19,6 +19,9 @@ class Vecmem(CMakePackage, CudaPackage):
 
     license("MPL-2.0-no-copyleft-exception")
 
+    version("1.25.0", sha256="a1dd195e154ed23a0e50c52e22fb9f986fc65cd99860020fc47a292f597fa88d")
+    version("1.24.0", sha256="f13ba18b923d2f6da3dc8a20b76152f7ebf4420fbebb12684e7215d178780029")
+    version("1.23.0", sha256="eee612fe5276d5852ccbfad1feda4b4f00391791479e08934d70cd437f376df9")
     version("1.22.0", sha256="478ae60f5a64650cadb955f7fd4bb3c0b02658dd6821077a0724e58bb745cc66")
     version("1.21.0", sha256="a6e30da7dcb9a792eb0f2c0ceb821f52cf867c9745a65468b2ce6f026b23a49d")
     version("1.20.0", sha256="73c817b2a1a0961e357a2ca204ad610c8892b2697a6af2b1d794d0760a1009bf")
@@ -69,6 +72,13 @@ class Vecmem(CMakePackage, CudaPackage):
     version("0.3.0", sha256="4e7851ab46fee925800405c5ae18e99b62644d624d3544277a522a06fb812dbf")
     version("0.2.0", sha256="33aea135989684e325cb097e455ff0f9d1a9e85ff32f671e3b3ed6cc036176ac")
     version("0.1.0", sha256="19e24e3262aa113cd4242e7b94e2de34a4b362e78553730a358f64351c6a0a01")
+
+    # CPack fix after hip -> sycl, https://github.com/acts-project/vecmem/pull/354
+    patch(
+        "https://github.com/acts-project/vecmem/commit/f3f09938b05706522d23314d0863bb7ee78c2a21.patch?full_index=1",
+        sha256="41fc7cbd4fc83c4abf6be0f781a6110a63073cc088e1970fb66abcf3b6eab6ea",
+        when="@1.23.0",
+    )
 
     variant("hip", default=False, description="Build the vecmem::hip library")
     variant("sycl", default=False, description="Build the vecmem::sycl library")

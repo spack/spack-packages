@@ -18,12 +18,19 @@ class Rocsparse(CMakePackage):
     language and optimized for AMD's latest discrete GPUs."""
 
     homepage = "https://github.com/ROCm/rocSPARSE"
-    git = "https://github.com/ROCm/rocSPARSE.git"
-    url = "https://github.com/ROCm/rocSPARSE/archive/rocm-6.2.4.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocsparse"]
+    license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/rocSPARSE/archive/refs/tags/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
+        return url.format(version)
 
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
@@ -40,8 +47,9 @@ class Rocsparse(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    license("MIT")
-
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="420321039b1471a67318a9bccce749ed2293e4aa4615ef9d1b74ed4e03977ee0")
     version("7.1.0", sha256="cdad45e7b23e91a9107e512d9205ef58dcdfaea506b6e5fce3701a2b6e96952c")
     version("7.0.2", sha256="26dd7df3c470f877d0f9ab15dccdac1915a3939e2ab9e00a83342c6edf289c8a")
@@ -94,10 +102,18 @@ class Rocsparse(CMakePackage):
         "7.0.2",
         "7.1.0",
         "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        depends_on(f"rocprim@{ver}", when=f"@{ver}")
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+
+    for ver in ["7.2.0", "7.2.1", "7.2.3"]:
+        for tgt in ROCmPackage.amdgpu_targets:
+            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     depends_on("googletest@1.11.0:", when="+test")
     depends_on("python@3:", type="build", when="+test")
@@ -248,6 +264,13 @@ class Rocsparse(CMakePackage):
             sha256="2ac9dc0d8d38cbf4a62089c74e53aea87edbb3f0b553b77b27c70df70e1d17d5",
             destination="mtx",
         )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/rocsparse"
+        else:
+            return "."
 
     @run_after("build")
     def check_build(self):
