@@ -2,19 +2,25 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
+
+from spack_repo.builtin.build_systems.cargo import CargoPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class PyUv(PythonPackage):
+class PyUv(PythonPackage, CargoPackage):
     """An extremely fast Python package and project manager, written in Rust."""
 
     homepage = "https://github.com/astral-sh/uv"
     pypi = "uv/uv-0.10.1.tar.gz"
+    supplier = "Organization: Astral"
 
-    license("Apache-2.0 OR MIT")
-    maintainers("adamjstewart")
+    license("Apache-2.0 OR MIT", checked_by="mcmehrtens")
+    maintainers("adamjstewart", "mcmehrtens")
+
+    executables = ["^uv$"]
 
     version("0.11.25", sha256="458e731778e7b5cc870710397859c23e766703e7bc0695f23b3eb15080745ba6")
     version("0.11.24", sha256="8602a1b6300a3a948afacc62e1cb933c8394c27966db85ed7e29483300b69dc4")
@@ -60,14 +66,18 @@ class PyUv(PythonPackage):
             "0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c"
         )
 
-    with default_args(type="build"):
-        depends_on("gmake")
-        depends_on("py-maturin@1")
-        # maturin builds against the Python interpreter; every release sets
-        # requires-python = ">=3.8" in pyproject.toml
-        depends_on("python@3.8:")
+    # PythonPackage builds via maturin and preserves the `python -m uv` entry
+    # point; CargoPackage builds the bare Rust binary as an alternative
+    build_system("python_pip", "cargo", default="python_pip")
 
-        # from Cargo.toml
+    # Both build systems compile the Rust sources (maturin shells out to cargo),
+    # and the bundled `-sys` crates need a C compiler
+    depends_on("c", type="build")
+    # the bundled jemalloc allocator builds its C sources with `./configure && make`
+    depends_on("gmake", type="build")
+
+    with default_args(type="build"):
+        # Minimum Rust toolchain, from Cargo.toml
         depends_on("rust@1.94:", when="@0.11.18:")
         depends_on("rust@1.93:", when="@0.11.8:")
         depends_on("rust@1.92:", when="@0.10.10:")
@@ -81,11 +91,44 @@ class PyUv(PythonPackage):
         depends_on("rust@1.83:", when="@0.5.9:")
         depends_on("rust@1.81:")
 
-        # Historical dependencies
-        depends_on("cmake", when="@:0.6.3")
+    with when("build_system=python_pip"):
+        with default_args(type="build"):
+            depends_on("py-maturin@1")
+            # maturin builds against the Python interpreter; every release sets
+            # requires-python = ">=3.8" in pyproject.toml
+            depends_on("python@3.8:")
+
+            # Historical dependencies
+            depends_on("cmake", when="@:0.6.3")
 
     @when("@:0.6.3")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CMAKE", self.spec["cmake"].prefix.bin.cmake)
 
-    executables = ["^uv$"]
+    @property
+    def build_directory(self):
+        # The maturin manifest at the repo root drives the Python build; the
+        # bare Cargo build targets the `uv` binary crate directly.
+        if self.spec.satisfies("build_system=cargo"):
+            return "crates/uv"
+        return self.stage.source_path
+
+    @property
+    def build_args(self):
+        # uv's `default` feature set bundles `test-defaults` (integration tests
+        # against live crates.io/PyPI/Git/R2); drop it via --no-default-features
+        # and re-enable only the two release features we want
+        features = "uv-distribution/static,performance"
+        return ["--locked", "--no-default-features", "--features", features]
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("--version", output=str, error=str)
+        match = re.match(r"uv (\S+)", output)
+        return match.group(1) if match else None
+
+    def test_version(self):
+        """Verify uv executable outputs version"""
+        uv = Executable(self.prefix.bin.uv)
+        out = uv("--version", output=str, error=str)
+        assert self.spec.version.string in out
