@@ -15,11 +15,18 @@ class TreeSitter(MakefilePackage):
 
     homepage = "https://tree-sitter.github.io/tree-sitter/"
     url = "https://github.com/tree-sitter/tree-sitter/archive/refs/tags/v0.20.1.tar.gz"
+    supplier = "Organization: tree-sitter"
 
     maintainers("albestro")
 
-    license("MIT")
+    license("MIT", checked_by="mcmehrtens", when="@0.14:")
 
+    version("0.26.9", sha256="8e14780500933f43d86662fcaa1b0ce99ebe9c220f4680bc929dce09a0e0cfc6")
+    version("0.26.8", sha256="e6826b7533ec3a885aba598377a6d20b5a6321ff3db76968e960c2352d3a5077")
+    version("0.26.7", sha256="4343107ad1097a35e106092b79e5dd87027142c6fba5e4486b1d1d44d5499f84")
+    version("0.26.6", sha256="b4218185a48a791d4022ab3969709e271a70a0253e94792abbcf18d7fcf4291c")
+    version("0.26.5", sha256="8e012493b2103e0471d3aba8048b73bc1a3138132974e2fd8bfb89a63e62f478")
+    version("0.26.4", sha256="08932434d4cf8472a63579253937c302dd97765c65febd59631860905fd3cbf7")
     version("0.26.3", sha256="7f4a7cf0a2cd217444063fe2a4d800bc9d21ed609badc2ac20c0841d67166550")
     version("0.26.2", sha256="3cda4166a049fc736326941d6f20783b698518b0f80d8735c7754a6b2d173d9a")
     version("0.25.3", sha256="862fac52653bc7bc9d2cd0630483e6bdf3d02bcd23da956ca32663c4798a93e3")
@@ -54,7 +61,14 @@ class TreeSitter(MakefilePackage):
     depends_on("c", type="build")
 
     with when("+cli"):
-        depends_on("rust", type="build", when="+cli")
+        depends_on("rust", type="build")
+
+        # minimum rust versions from `rust-version` in the upstream Cargo.toml
+        depends_on("rust@1.84:", type="build", when="@0.26:")
+        depends_on("rust@1.82:", type="build", when="@0.25")
+        depends_on("rust@1.74.1:", type="build", when="@0.22:0.24")
+        depends_on("rust@1.70:", type="build", when="@0.21")
+        depends_on("rust@1.65:", type="build", when="@0.20.8:0.20")
 
         # tree-sitter-cli needs a c compiler and a javascript runtime
         # https://tree-sitter.github.io/tree-sitter/creating-parsers/1-getting-started.html#dependencies
@@ -71,22 +85,17 @@ class TreeSitter(MakefilePackage):
         when="@0.26:0.26.3",
     )
 
-    def setup_build_environment(self, env):
-        env.set("PREFIX", self.prefix)
-
+    def flag_handler(self, name, flags):
         # Starting from 0.25 endianness is taken into account using system headers
         #   https://github.com/tree-sitter/tree-sitter/pull/3740
         # but GLIBC provides them according to some defines that changed over time.
         #   https://www.sourceware.org/glibc/wiki/Release/2.20#Deprecation_of__BSD_SOURCE_and__SVID_SOURCE_feature_macros
-        if self.spec.satisfies("@0.25 ^glibc@:2.19"):
-            env.append_flags("CFLAGS", "-D_BSD_SOURCE")
+        if name == "cflags" and self.spec.satisfies("@0.25 ^glibc@:2.19"):
+            flags.append("-D_BSD_SOURCE")
+        return (flags, None, None)
 
-    def build(self, spec, prefix):
-        super().build(spec, prefix)
-
-        if spec.satisfies("+cli"):
-            cargo = Executable("cargo")
-            cargo("build")
+    def setup_build_environment(self, env):
+        env.set("PREFIX", self.prefix)
 
     def install(self, spec, prefix):
         super().install(spec, prefix)
@@ -98,4 +107,4 @@ class TreeSitter(MakefilePackage):
             else:
                 crate_cli_path = "cli"
 
-            cargo("install", "--root", prefix, "--path", crate_cli_path)
+            cargo("install", "--locked", "--root", prefix, "--path", crate_cli_path)
