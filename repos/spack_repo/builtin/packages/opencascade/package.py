@@ -180,6 +180,9 @@ class Opencascade(CMakePackage):
 
         # Specify which 3rd party features to build
         args += use_3rdparty("tcl")
+        tcl_libs = spec["tcl"].libs
+        args.append(self.define("3RDPARTY_TCL_LIBRARY_DIR", tcl_libs.directories[0]))
+        args.append(self.define("3RDPARTY_TCL_LIBRARY", tcl_libs[0]))
         args += use_3rdparty("tk")
         args += use_3rdparty("ffmpeg")
         args += use_3rdparty("freeimage")
