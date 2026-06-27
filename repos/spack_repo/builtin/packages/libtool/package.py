@@ -88,6 +88,8 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
         match = re.search(r"\(GNU libtool\)\s+(\S+)", output)
         return match.group(1) if match else None
 
+    # FIXME: this needs to be whenever the fetch strategy is git--this will require a new ASP
+    #        directive!
     @when("@develop")
     def autoreconf(self, spec, prefix):
         Executable("./bootstrap")()
@@ -105,9 +107,22 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
             filter_file("-fno-builtin", "-Mnobuiltin", "configure")
             filter_file("-fno-builtin", "-Mnobuiltin", "libltdl/configure")
 
+    def _setup_exe_env_vars(self, env: EnvironmentModifications) -> None:
+        env.set("LIBTOOL", self.spec.prefix.bin.libtool)
+        env.set("LIBTOOLIZE", self.spec.prefix.bin.libtoolize)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_exe_env_vars(env)
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
+        self._setup_exe_env_vars(env)
         env.append_path("ACLOCAL_PATH", self.prefix.share.aclocal)
 
     def setup_dependent_package(self, module, dependent_spec):

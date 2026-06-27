@@ -108,6 +108,23 @@ class Gmake(Package, GNUMirrorPackage):
             jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
         )
 
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
+        env.set("MAKE", self.spec.prefix.bin.make)
+        env.unset("MAKEFLAGS")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
     @property
     def libs(self):
         return LibraryList([])
