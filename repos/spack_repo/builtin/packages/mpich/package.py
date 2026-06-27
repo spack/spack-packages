@@ -491,12 +491,10 @@ supported, and netmod is ignored if device is ch3:sock.""",
         return results
 
     def flag_handler(self, name, flags):
-        if name == "fflags":
+        if name == "fflags" and "fortran" in self.spec:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1795817
             # https://github.com/spack/spack/issues/17934
-            # TODO: we should add the flag depending on the real Fortran compiler spec and not the
-            #  toolchain spec, which might be mixed.
-            if any(self.spec.satisfies(s) for s in ["%gcc@10:", "%apple-clang@11:", "%clang@11:"]):
+            if any(self.spec["fortran"].satisfies(s) for s in ["gcc@10:", "llvm@11:19.1.7"]):
                 # Note that the flag is not needed to build the package starting version 4.1
                 # (see https://github.com/pmodels/mpich/pull/5840) but we keep adding the flag here
                 # to avoid its presence in the MPI compiler wrappers.
