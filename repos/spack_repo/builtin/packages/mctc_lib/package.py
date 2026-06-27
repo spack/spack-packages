@@ -24,6 +24,7 @@ class MctcLib(MesonPackage, CMakePackage):
 
     version("main", branch="main")
 
+    version("0.5.2", sha256="a82c92deee73ee00d5ded3bb13f59677b0c543a272f488125a364a62ef943fb9")
     version("0.5.1", sha256="a93ea3e50a1950745df01601bfd672d485f0367660f7076dbe73e422e7d4e2ac")
     version("0.5.0", sha256="afd0dd4e40c3441432f077e14112962273ccc25abb00db05d7559fec3b0f1505")
     version("0.4.2", sha256="ce1e962c79d871d3705be590aef44f07ca296843b85e164307290f8324769406")
@@ -45,7 +46,9 @@ class MctcLib(MesonPackage, CMakePackage):
     depends_on("pkgconfig", type="build")
 
     for build_system in ["cmake", "meson"]:
-        depends_on(f"jonquil build_system={build_system}", when=f"build_system={build_system}")
+        depends_on(
+            f"jonquil build_system={build_system}", when=f"@0.4.2:+json build_system={build_system}"
+        )
         depends_on(
             f"toml-f build_system={build_system}", when=f"@0.4.2:+json build_system={build_system}"
         )

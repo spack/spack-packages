@@ -18,7 +18,7 @@ class Dftd4(MesonPackage, CMakePackage):
 
     maintainers("awvwgk")
 
-    license("LGPL-3.0-only")
+    license("LGPL-3.0-or-later")
 
     build_system("cmake", "meson", default="meson")
 
@@ -58,6 +58,8 @@ class Dftd4(MesonPackage, CMakePackage):
     depends_on("pkgconfig", type="build")
 
     depends_on("py-cffi", when="+python")
+    depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
 
     for build_system in ["cmake", "meson"]:

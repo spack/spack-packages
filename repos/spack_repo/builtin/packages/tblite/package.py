@@ -30,12 +30,17 @@ class Tblite(CMakePackage, MesonPackage):
 
     variant("openmp", default=True, description="Use OpenMP parallelisation")
     variant("python", default=False, description="Build Python extension module")
+    variant("trexio", default=False, description="Enable TREXIO support", when="@0.6.0:")
+    variant("hdf5", default=False, description="Enable HDF5 support", when="@0.6.0:")
+    # variant("ddx", default=False, description="Enable DDX support", when="@0.6.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
     depends_on("blas")
     depends_on("lapack")
+    depends_on("trexio", when="+trexio")
+    depends_on("hdf5", when="+hdf5")
 
     for build_system in ["cmake", "meson"]:
         depends_on(
@@ -52,6 +57,7 @@ class Tblite(CMakePackage, MesonPackage):
     depends_on("pkgconfig", type="build")
     depends_on("py-cffi", when="+python")
     depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
 
     extends("python", when="+python")
@@ -67,13 +73,27 @@ class MesonBuilder(meson.MesonBuilder):
         elif lapack != "openblas":
             lapack = "auto"
 
-        return [
+        args = [
             "-Dlapack={0}".format(lapack),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
+        if self.spec.satisfies("@0.6.0:"):
+            args += [
+                "-Dtrexio={0}".format(str("+trexio" in self.spec).lower()),
+                "-Dhdf5={0}".format(str("+hdf5" in self.spec).lower()),
+                "-Dddx=false",
+            ]
+        return args
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [self.define_from_variant("WITH_OpenMP", "openmp")]
+        if self.spec.satisfies("@0.6.0:"):
+            args += [
+                self.define_from_variant("TBLITE_WITH_TREXIO", "trexio"),
+                self.define_from_variant("TBLITE_WITH_HDF5", "hdf5"),
+                self.define("TBLITE_WITH_DDX", False),
+            ]
+        return args

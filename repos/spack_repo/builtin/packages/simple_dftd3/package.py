@@ -39,12 +39,19 @@ class SimpleDftd3(MesonPackage, CMakePackage):
     version("0.5.1", sha256="3d775608bf85cd389385a84ea5586ede57215ff9cff646480552ca835a9de9ca")
 
     variant("openmp", default=True, description="Use OpenMP parallelisation")
-    variant("python", default=False, description="Build Python extension module")
+    variant(
+        "python",
+        default=False,
+        when="build_system=meson",
+        description="Build Python extension module",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("meson@0.57.1:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("py-cffi", when="+python")
+    depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
     depends_on("pkgconfig", type="build")
     depends_on("blas")
