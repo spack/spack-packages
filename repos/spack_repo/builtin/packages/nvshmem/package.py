@@ -158,7 +158,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "+shmem" in self.spec:
             config.append(self.define("SHMEM_HOME", self.spec["shmem"].prefix))
 
-        if "+python" in self.spec:
+        if self.spec.satisfies("+python"):
             py = self.spec["python"]
             # Python interpreter for CMake’s FindPython3
             config.append(self.define("Python3_EXECUTABLE", py.command.path))
