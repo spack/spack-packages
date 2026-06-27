@@ -30,9 +30,9 @@ class Tblite(CMakePackage, MesonPackage):
 
     variant("openmp", default=True, description="Use OpenMP parallelisation")
     variant("python", default=False, description="Build Python extension module")
-    variant("trexio", default=False, description="Enable TREXIO support", when="@0.6.0:")
-    variant("hdf5", default=False, description="Enable HDF5 support", when="@0.6.0:")
-    # variant("ddx", default=False, description="Enable DDX support", when="@0.6.0:")
+    variant("trexio", default=False, description="Enable TREXIO support", when="@0.7.0:")
+    variant("hdf5", default=False, description="Enable HDF5 support", when="@0.7.0:")
+    # variant("ddx", default=False, description="Enable DDX support", when="@0.7.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -41,6 +41,7 @@ class Tblite(CMakePackage, MesonPackage):
     depends_on("lapack")
     depends_on("trexio", when="+trexio")
     depends_on("hdf5", when="+hdf5")
+    # depends_on("ddx", when="+ddx")
 
     for build_system in ["cmake", "meson"]:
         depends_on(
@@ -78,7 +79,7 @@ class MesonBuilder(meson.MesonBuilder):
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
-        if self.spec.satisfies("@0.6.0:"):
+        if self.spec.satisfies("@0.7.0:"):
             args += [
                 "-Dtrexio={0}".format("enabled" if "+trexio" in self.spec else "disabled"),
                 "-Dhdf5={0}".format("enabled" if "+hdf5" in self.spec else "disabled"),
@@ -90,7 +91,7 @@ class MesonBuilder(meson.MesonBuilder):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         args = [self.define_from_variant("WITH_OpenMP", "openmp")]
-        if self.spec.satisfies("@0.6.0:"):
+        if self.spec.satisfies("@0.7.0:"):
             args += [
                 self.define_from_variant("TBLITE_WITH_TREXIO", "trexio"),
                 self.define_from_variant("TBLITE_WITH_HDF5", "hdf5"),
