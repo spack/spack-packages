@@ -30,6 +30,7 @@ class PyGraphqlCore(PythonPackage):
     depends_on("py-poetry-core@1", when="@3:3.1", type="build")
     depends_on("py-setuptools@59:80", when="@3", type="build")
     depends_on("py-setuptools", when="@2", type="build")
+    depends_on("py-typing-extensions@4.7:4", type=("build", "run"), when="@3.2: ^python@:3.9")
     depends_on("py-six@1.10.0:", type=("build", "run"), when="@2.3.2")
     depends_on("py-promise@2.3:2", type=("build", "run"), when="@2.3.2")
     depends_on("py-rx@1.6:1", type=("build", "run"), when="@2.3.2")

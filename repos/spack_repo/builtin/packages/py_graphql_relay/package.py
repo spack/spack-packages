@@ -23,6 +23,8 @@ class PyGraphqlRelay(PythonPackage):
     depends_on("python@3.6:3", type=("build", "run"))
     depends_on("py-poetry-core@1", when="@3", type="build")
     depends_on("py-setuptools", type="build")
+    # 3.2.0 wants @59:69, but works fine with @59:80 (matches py-graphql-core@3)
+    depends_on("py-setuptools@59:80", when="@3", type="build")
     depends_on("py-graphql-core@2.2:2", type=("build", "run"), when="@2")
     depends_on("py-graphql-core@3.2", type=("build", "run"), when="@3")
     depends_on("py-typing-extensions@4.1:4", type=("build", "run"), when="@3 ^python@:3.7")
