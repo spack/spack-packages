@@ -262,6 +262,7 @@ class MesonBuilder(meson.MesonBuilder):
             args.append("-Dselinux=false")
         args.append("-Dgtk_doc=false")
         args.append("-Dlibelf=enabled")
+        args.append("-Dsysprof=disabled")
 
         # https://github.com/GNOME/glib/commit/fa13c41da7fb03a710bfd8840cae4bb57cf14829
         if self.spec.satisfies("@2.65.1:"):
