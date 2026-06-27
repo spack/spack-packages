@@ -39,8 +39,7 @@ class TomlF(MesonPackage, CMakePackage):
         variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")  # generated
-    depends_on("meson@0.57.2:", type="build", when="build_system=meson")
-    depends_on("meson@0.60.0:", type="build", when="build_system=meson @0.5.1:")
+    depends_on("meson@0.60.0:", type="build", when="build_system=meson")
 
     depends_on("pkgconfig", type="build")
 

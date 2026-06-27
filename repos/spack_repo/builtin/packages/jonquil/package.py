@@ -33,8 +33,7 @@ class Jonquil(MesonPackage, CMakePackage):
         variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")
-    depends_on("meson@0.57.2:", type="build", when="build_system=meson")
-    depends_on("meson@0.60.0:", type="build", when="build_system=meson @0.3.1:")
+    depends_on("meson@0.60.0:", type="build", when="build_system=meson")
 
     for build_system in ["cmake", "meson"]:
         depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
