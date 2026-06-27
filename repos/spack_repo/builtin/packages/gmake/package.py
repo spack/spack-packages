@@ -108,6 +108,8 @@ class Gmake(Package, GNUMirrorPackage):
             jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
         )
 
+    # FIXME: these env vars are propagated through to the spack build, messing up the
+    #        build environment. i believe `spack dev-build` may be broken.
     def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
         env.set("MAKE", self.spec.prefix.bin.make)
         env.unset("MAKEFLAGS")
