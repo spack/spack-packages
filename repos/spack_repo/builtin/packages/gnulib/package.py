@@ -25,7 +25,7 @@ class Gnulib(Package):
     docstring_has_extended_text = True
 
     homepage = "https://savannah.gnu.org/projects/gnulib"
-    git = "https://git.savannah.gnu.org/git/gnulib.git"
+    git = "https://https.git.savannah.gnu.org/git/gnulib.git"
 
     tags = ["core-packages"]
     maintainers("cosmicexplorer")
@@ -58,6 +58,7 @@ class Gnulib(Package):
     license("GPL-3.0-or-later")
     # https://www.gnu.org/software/gnulib/manual/gnulib.html#Gnulib-licensing-1
 
+    version("202601", branch="stable-202601")
     version("master", branch="master")
     version("2026-03-24", commit="b75134c814c38876f04029ffc3fae4e90035dc34")
 

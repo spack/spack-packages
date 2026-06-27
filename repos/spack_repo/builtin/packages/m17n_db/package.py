@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+
 from spack.package import *
 
 class M17nDb(AutotoolsPackage):
@@ -22,5 +24,3 @@ class M17nDb(AutotoolsPackage):
     version("1.8.10", sha256="31024e0513533448b9b31ea3294d35a6426e6690eb44628680731aa955c0c16c")
     version("1.8.4", sha256="b72cf4daa57518bad1582d5c8008908494580d3f1c7164d429809068623b6751")
     version("master", branch="master")
-
-    def c

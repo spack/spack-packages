@@ -35,6 +35,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     provides("fortran", when="languages=fortran")
 
     version("master", branch="master")
+    version("16.1.0-git", tag="releases/gcc-16.1.0",
+            commit="6afcc4f6da931eb93f3ab001a0dd9650ea71d1ea")
 
     # Latest stable
     version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
