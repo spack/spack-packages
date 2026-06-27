@@ -16,6 +16,25 @@ class PyUv(PythonPackage):
     license("Apache-2.0 OR MIT")
     maintainers("adamjstewart")
 
+    version("0.11.25", sha256="458e731778e7b5cc870710397859c23e766703e7bc0695f23b3eb15080745ba6")
+    version("0.11.24", sha256="8602a1b6300a3a948afacc62e1cb933c8394c27966db85ed7e29483300b69dc4")
+    version("0.11.23", sha256="f2476dda35866ea3ded3a5905759da2d32dfac36dfd5b3428191a99a8ce15b02")
+    version("0.11.22", sha256="32e31cb70bada3ad03d99614ead365cd36b2ac9455a6fc232f6d50b619a964e1")
+    version("0.11.21", sha256="083882c73373a16de4c136d54e3386a52388dead5048a07505e25578b157182f")
+    version("0.11.20", sha256="a246f30931cbc93d0a39d0cfc75be045fddd45773a734ddf8afa869aabc46c63")
+    version("0.11.19", sha256="f56f5bf853626a30423052d7ee00bf5cc940a08347d6ee7ede96862d084054a5")
+    version("0.11.18", sha256="61f2bc99898383f9bf04e24b984e42e19cde378dd79192935ca21d75563368a8")
+    version("0.11.17", sha256="1d1be74deec997db1dda05a7e67541c904d65cbfd72e455d3c0a2a1e4bf2cddf")
+    version("0.11.16", sha256="4b435fcb0af8f34833dcc1903a8a223856437efd0d515c2160a2871def221238")
+    version("0.11.15", sha256="755f959ec6a2fd8ccb6ee76ad90ab759d2eb1f4797444078645dd1ee4bca92d6")
+    version("0.11.14", sha256="0ea006a117b586b2681b6dfd9703a540d2ad2a136ec0f48d272767e599cc3dfb")
+    version("0.11.13", sha256="c30889b6a4417f94a0315371ec5bf8af151f062406ad3fb4b2cbf13d645d825c")
+    version("0.11.12", sha256="2d85d1fe06bafddf9632ec5c8ac24f86bd6eb7ec21e650be8c3565b600b502c9")
+    version("0.11.11", sha256="2ba46a912a1775957c579a1a42c8c8b480418502326b72427b1cad972c8f659f")
+    version("0.11.10", sha256="9b3a2ce56c4a22065462473acee0b729140370650974de4e781a5273f49371fa")
+    version("0.11.9", sha256="43edb4b3eb43a9780f9232110dfbcc0bed9367ce5b24d37a315817d3faf3c913")
+    version("0.11.8", sha256="bb2cf302b8503629aab6f0090a05551e6f8cfc2d687ca059cad7ec9e11214335")
+    version("0.11.7", sha256="46d971489b00bdb27e0aa715e4a5cd4ef2c28ea5b6ef78f2b67bf861eb44b405")
     version("0.11.6", sha256="e3b21b7e80024c95ff339fcd147ac6fc3dd98d3613c9d45d3a1f4fd1057f127b")
     version("0.10.1", sha256="c89e7fd708fb3474332d6fc54beb2ea48313ebdc82c6931df92a884fcb636d9d")
     with default_args(deprecated=True):
@@ -44,8 +63,13 @@ class PyUv(PythonPackage):
     with default_args(type="build"):
         depends_on("gmake")
         depends_on("py-maturin@1")
+        # maturin builds against the Python interpreter; every release sets
+        # requires-python = ">=3.8" in pyproject.toml
+        depends_on("python@3.8:")
 
         # from Cargo.toml
+        depends_on("rust@1.94:", when="@0.11.18:")
+        depends_on("rust@1.93:", when="@0.11.8:")
         depends_on("rust@1.92:", when="@0.10.10:")
         depends_on("rust@1.91:", when="@0.9.27:")
         depends_on("rust@1.89:", when="@0.9.8:")
