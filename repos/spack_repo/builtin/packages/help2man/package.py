@@ -26,3 +26,19 @@ class Help2man(AutotoolsPackage, GNUMirrorPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("perl", type=("build", "run"))
+
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
+        env.set("HELP2MAN", self.spec.prefix.bin.help2man)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)

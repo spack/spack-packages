@@ -19,6 +19,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     homepage = "https://www.perl.org"
     # URL must remain http:// so Spack can bootstrap curl
     url = "http://www.cpan.org/src/5.0/perl-5.34.0.tar.gz"
+    git = "https://github.com/Perl/perl5.git"
     tags = ["windows", "build-tools"]
 
     maintainers("LydDeb")
@@ -33,6 +34,11 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     # see https://www.cpan.org/src/README.html for
     # explanation of version numbering scheme
 
+    version("develop", branch="blead")
+    version("5.43.11-git", tag="v5.43.11",
+            commit="674c7948a01b4f0904c48c36785b132b1168f1a7")
+
+    version("5.43.10", sha256="204a95d68232f51cdee674c2e1d733cce4abdb7d642e7cfd649c2535571ba903")
     # Maintenance releases (even numbers)
     version("5.42.0", sha256="e093ef184d7f9a1b9797e2465296f55510adb6dab8842b0c3ed53329663096dc")
     version("5.40.2", sha256="10d4647cfbb543a7f9ae3e5f6851ec49305232ea7621aed24c7cfbb0bef4b70d")
@@ -70,6 +76,9 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     variant("open", default=True, description="Support open.pm")
     variant("opcode", default=True, description="Support Opcode.pm")
 
+    # FIXME: What is this mysterious resource dependency?????? ??????/
+    #        it's broken, anyway....
+    # i'm pretty sure perl comes with a built-in cpanm???
     resource(
         name="cpanm",
         url="http://search.cpan.org/CPAN/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7042.tar.gz",
@@ -218,7 +227,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
             config_args.append("-Dusethreads")
 
         # Development versions have an odd second component
-        if spec.version[1] % 2 == 1:
+        if spec.version.isdevelop() or (spec.version[1] % 2 == 1):
             config_args.append("-Dusedevel")
 
         return config_args
@@ -307,6 +316,12 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
             env.prepend_path("PERL5LIB", perl_lib_path)
         if sys.platform == "win32":
             env.append_path("PATH", self.prefix.bin)
+        # Set $PERL
+        env.set("PERL", self.spec.prefix.bin.perl)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Set $PERL
+        env.set("PERL", self.spec.prefix.bin.perl)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

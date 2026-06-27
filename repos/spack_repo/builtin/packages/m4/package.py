@@ -16,10 +16,15 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     homepage = "https://www.gnu.org/software/m4/m4.html"
     gnu_mirror_path = "m4/m4-1.4.18.tar.gz"
+    git = "git://git.sv.gnu.org/m4"
 
     license("GPL-3.0-or-later")
 
     maintainers("CodingYayaToure")
+
+    version("1.4.21-git", tag="v1.4.21",
+            commit="fe2f13ab9ab9b3e712c6529f0b2a49a81feb6ce2")
+    version("develop", branch="branch-1.4")
 
     version("1.4.21", sha256="38ae59f7a30bf9c108193cc5c25fbb06014f21e230c7ede2eff614f7b7c37ed8")
     version("1.4.20", sha256="6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef")
@@ -73,11 +78,22 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         sha256="5c4071ae35e6ecf7f683ad714558a0030f21cc2b0673dde2ca6ca753cd0dbb2e",
     )
 
+    depends_on("gnulib", when="@develop")
+
     build_directory = "spack-build"
 
     tags = ["build-tools"]
 
     executables = ["^g?m4$"]
+
+    @when("@develop")
+    def autoreconf(self, spec, prefix):
+        Executable("./bootstrap")(
+            f"--gnulib-srcdir={spec['gnulib'].prefix}",
+            "--skip-git",
+            "--skip-po",
+            "--verbose",
+        )
 
     @when("@1.4.19")
     def patch(self):
@@ -95,13 +111,21 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         match = re.search(r"GNU M4\)?\s+(\S+)", output)
         return match.group(1) if match else None
 
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
         # Inform autom4te if it wasn't built correctly (some external
         # installations such as homebrew). See
         # https://www.gnu.org/software/autoconf/manual/autoconf-2.67/html_node/autom4te-Invocation.html
         env.set("M4", self.prefix.bin.m4)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        self._setup_dependent_env(env)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # The default optimization level for icx/icpx is "-O2",
@@ -111,7 +135,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
             env.append_flags("CFLAGS", "-O0")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("M4", self.prefix.bin.m4)
+        self._setup_dependent_env(env)
 
     def configure_args(self):
         spec = self.spec
