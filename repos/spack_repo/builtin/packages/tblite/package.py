@@ -80,8 +80,8 @@ class MesonBuilder(meson.MesonBuilder):
         ]
         if self.spec.satisfies("@0.6.0:"):
             args += [
-                "-Dtrexio={0}".format(str("+trexio" in self.spec).lower()),
-                "-Dhdf5={0}".format(str("+hdf5" in self.spec).lower()),
+                "-Dtrexio={0}".format("enabled" if "+trexio" in self.spec else "disabled"),
+                "-Dhdf5={0}".format("enabled" if "+hdf5" in self.spec else "disabled"),
                 "-Dddx=false",
             ]
         return args
