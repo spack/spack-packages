@@ -47,7 +47,8 @@ class MctcLib(MesonPackage, CMakePackage):
 
     for build_system in ["cmake", "meson"]:
         depends_on(
-            f"jonquil build_system={build_system}", when=f"@0.4.2:+json build_system={build_system}"
+            f"jonquil build_system={build_system}",
+            when=f"@0.4.2:+json build_system={build_system}",
         )
         depends_on(
             f"toml-f build_system={build_system}", when=f"@0.4.2:+json build_system={build_system}"
