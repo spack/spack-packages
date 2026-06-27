@@ -36,14 +36,15 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
     docstring_uses_rich_text = True
     docstring_has_extended_text = True
 
-    git = "https://git.savannah.gnu.org/git/libtool.git"
+    git = "https://https.agit.savannah.gnu.org/git/libtool.git"
     homepage = "https://www.gnu.org/software/libtool/"
     gnu_mirror_path = "libtool/libtool-2.4.6.tar.gz"
 
     license("LGPL-2.0-or-later AND GPL-2.0-or-later")
 
-    version("develop", branch="master", submodules=True)
-
+    version("2.6.1-git", tag="v2.6.1",
+            commit="79de7bb71bc0a1167f4c4ae8bd897976a0ff2b51")
+    version("master", branch="master", submodules=True)
     version("2.6.0", sha256="80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880")
     version("2.5.4", sha256="da8ebb2ce4dcf46b90098daf962cffa68f4b4f62ea60f798d0ef12929ede6adf")
     version("2.4.7", sha256="04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8")
@@ -63,6 +64,8 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
         depends_on("autoconf@2.62:", type="test")
         depends_on("automake", type="test")
 
+    # FIXME: this needs to be whenever the fetch strategy is git--this will require a new ASP
+    #        directive!
     with when("@develop"):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
