@@ -74,11 +74,8 @@ class PySetuptools(Package, PythonExtension):
 
         # https://github.com/pypa/setuptools/issues/3661
         depends_on("python@:3.11", when="@:67")
-        depends_on("python@:3.13", when="@:80")
 
     depends_on("py-pip", type="build")
-    # setuptools@80: ships _distutils which imports jaraco.functools.splat (added in 4.0)
-    depends_on("py-jaraco-functools@4:", when="@80:", type=("build", "run"))
 
     conflicts(
         "^python@:3.9 ^py-pip@25:",
