@@ -76,13 +76,14 @@ class PyUv(PythonPackage, CargoPackage):
         default="python_pip",
     )
 
-    # Both build systems compile the Rust sources (maturin shells out to cargo),
-    # and the bundled `-sys` crates need a C compiler
-    depends_on("c", type="build")
-    # the bundled jemalloc allocator builds its C sources with `./configure && make`
-    depends_on("gmake", type="build")
-
     with default_args(type="build"):
+        # Both build systems compile the Rust sources (maturin shells out to cargo),
+        # and the bundled `-sys` crates need a C compiler
+        depends_on("c")
+
+        # the bundled jemalloc allocator builds its C sources with `./configure && make`
+        depends_on("gmake")
+
         # Minimum Rust toolchain, from Cargo.toml
         depends_on("rust@1.94:", when="@0.11.18:")
         depends_on("rust@1.93:", when="@0.11.8:")
