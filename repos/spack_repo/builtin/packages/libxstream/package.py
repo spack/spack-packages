@@ -29,10 +29,6 @@ class Libxstream(MakefilePackage, CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "0.9.0",
-        sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473",
-    )
     version("main", branch="main")
     version("1.0.0", sha256="44a2823b12eb58b5eaf97649244b93dcf921597ceabc718053cd28e5f59260e3")
     version("0.9.1", sha256="c6d349183180107cd67cfc579d0fd926fa3661afcce37368f8b3340fff0908f6")

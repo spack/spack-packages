@@ -506,7 +506,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
         depends_on("dbcsr@:2.9.1 smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
-        depends_on("dbcsr@2.9.2: smm=libxs", when="@2026.2: smm=libxs")
+        depends_on("dbcsr@2.10: smm=libxs", when="@2026.2: smm=libxs")
 
     with when("@2022: +rocm"):
         depends_on("hipblas")
