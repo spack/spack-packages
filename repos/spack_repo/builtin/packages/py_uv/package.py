@@ -99,11 +99,12 @@ class PyUv(PythonPackage, CargoPackage):
         depends_on("rust@1.81:")
 
     with when("build_system=python_pip"):
+        # maturin builds against the Python interpreter; every release sets
+        # requires-python = ">=3.8" in pyproject.toml
+        depends_on("python@3.8:", type=("build", "run"))
+
         with default_args(type="build"):
             depends_on("py-maturin@1")
-            # maturin builds against the Python interpreter; every release sets
-            # requires-python = ">=3.8" in pyproject.toml
-            depends_on("python@3.8:")
 
             # Historical dependencies
             depends_on("cmake", when="@:0.6.3")
