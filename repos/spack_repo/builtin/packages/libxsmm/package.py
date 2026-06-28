@@ -5,12 +5,14 @@
 import os
 from glob import glob
 
+from spack_repo.builtin.build_systems import cmake, makefile
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
 
-class Libxsmm(MakefilePackage):
+class Libxsmm(CMakePackage, MakefilePackage):
     """Library for specialized dense
     and sparse matrix operations,
     and deep learning primitives."""
@@ -23,9 +25,10 @@ class Libxsmm(MakefilePackage):
 
     license("BSD-3-Clause")
 
-    # 2.0 release is planned for Jan / Feb 2024. This commit from main is added
-    # as a stable version that supports other targets than x86. Remove this
-    # after 2.0 release.
+    build_system("makefile", "cmake", default="makefile")
+
+    # This commit from main is added as a stable version that supports other targets than x86.
+    # Remove this after 2.0 release.
     version("main-2023-11", commit="0d9be905527ba575c14ca5d3b4c9673916c868b2")
     version("main", branch="main")
     version("1.17-cp2k", commit="6f883620f58afdeebab28039fc9cf580e76a5ec6")
@@ -68,25 +71,29 @@ class Libxsmm(MakefilePackage):
     version("1.4.1", sha256="c19be118694c9b4e9a61ef4205b1e1a7e0c400c07f9bce65ae430d2dc2be5fe1")
     version("1.4", sha256="cf483a370d802bd8800c06a12d14d2b4406a745c8a0b2c8722ccc992d0cd72dd")
 
-    variant("shared", default=False, description="With shared libraries (and static libraries).")
-    variant("debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized.")
-    variant(
-        "header-only", default=False, when="@1.6.2:", description="With header-only installation"
-    )
-    variant("generator", default=False, description="With generator executable(s)")
-    variant(
-        "blas",
-        default="default",
-        multi=False,
-        description="Control behavior of BLAS calls",
-        values=("default", "0", "1", "2"),
-    )
-    variant(
-        "large_jit_buffer",
-        default=False,
-        when="@1.17:",
-        description="Max. JIT buffer size increased to 256 KiB",
-    )
+    variant("shared", default=False, description="Build shared libraries")
+
+    # These switches are implemented by the GNU Make build only. Do not
+    # expose them for CMake, where they would otherwise be silently ignored.
+    with when("build_system=makefile"):
+        variant("debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized.")
+        variant(
+            "header-only", default=False, when="@1.6.2:", description="With header-only installation"
+        )
+        variant("generator", default=False, description="With generator executable(s)")
+        variant(
+            "blas",
+            default="default",
+            multi=False,
+            description="Control behavior of BLAS calls",
+            values=("default", "0", "1", "2"),
+        )
+        variant(
+            "large_jit_buffer",
+            default=False,
+            when="@1.17:",
+            description="Max. JIT buffer size increased to 256 KiB",
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -94,10 +101,19 @@ class Libxsmm(MakefilePackage):
 
     depends_on("python", type="build")
 
-    # A recent `as` is needed to compile libxmss until version 1.17
-    # (<https://github.com/spack/spack/issues/28404>), but not afterwards
-    # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
-    depends_on("binutils+ld+gas@2.33:", type="build")
+    depends_on("cmake@3.13:", type="build", when="build_system=cmake")
+
+    with when("build_system=makefile"):
+        # A recent `as` is needed to compile libxsmm until version 1.17
+        # (<https://github.com/spack/spack/issues/28404>), but not afterwards
+        # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
+        depends_on("binutils+ld+gas@2.33:", type="build")
+
+    # CMake support is introduced with 2.0. Keep it available for the moving
+    # development branch, but prevent selection for the older fixed sources.
+    conflicts("build_system=cmake", when="@:1.17")
+    conflicts("build_system=cmake", when="@1.17-cp2k")
+    conflicts("build_system=cmake", when="@main-2023-11")
 
     # Version 2.0 supports both x86_64 and aarch64
     requires("target=x86_64:", "target=aarch64:")
@@ -112,7 +128,14 @@ class Libxsmm(MakefilePackage):
             )
         return result
 
-    def build(self, spec, prefix):
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        return [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
+
+
+class MakefileBuilder(makefile.MakefileBuilder):
+    def build(self, pkg, spec, prefix):
         # include symbols by default
         make_args = [
             "CC={0}".format(spack_cc),
@@ -146,7 +169,7 @@ class Libxsmm(MakefilePackage):
         # builds static libraries by default
         make(*make_args)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         install_tree("include", prefix.include)
 
         # move pkg-config files to their right place
