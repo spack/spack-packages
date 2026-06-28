@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
+from spack_repo.builtin.build_systems import cargo, python
 from spack_repo.builtin.build_systems.cargo import CargoPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
@@ -109,26 +111,6 @@ class PyUv(PythonPackage, CargoPackage):
             # Historical dependencies
             depends_on("cmake", when="@:0.6.3")
 
-    @when("@:0.6.3")
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CMAKE", self.spec["cmake"].prefix.bin.cmake)
-
-    @property
-    def build_directory(self):
-        # The maturin manifest at the repo root drives the Python build; the
-        # bare Cargo build targets the `uv` binary crate directly.
-        if self.spec.satisfies("build_system=cargo"):
-            return "crates/uv"
-        return self.stage.source_path
-
-    @property
-    def build_args(self):
-        # uv's `default` feature set bundles `test-defaults` (integration tests
-        # against live crates.io/PyPI/Git/R2); drop it via --no-default-features
-        # and re-enable only the two release features we want
-        features = "uv-distribution/static,performance"
-        return ["--locked", "--no-default-features", "--features", features]
-
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
@@ -136,7 +118,7 @@ class PyUv(PythonPackage, CargoPackage):
         return match.group(1) if match else None
 
     def test_imports(self):
-        """import the uv module (python_pip build only)"""
+        """import the uv module"""
         if self.spec.satisfies("build_system=python_pip"):
             super().test_imports()
 
@@ -145,3 +127,26 @@ class PyUv(PythonPackage, CargoPackage):
         uv = Executable(self.prefix.bin.uv)
         out = uv("--version", output=str, error=str)
         assert self.spec.version.string in out
+
+
+class PythonPipBuilder(python.PythonPipBuilder):
+    @when("@:0.6.3")
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # uv @:0.6.3 bundles a `-sys` crate whose build script compiles C via
+        # CMake; point that crate's `cmake` helper at Spack's cmake instead of
+        # relying on it being found on PATH
+        env.set("CMAKE", self.spec["cmake"].prefix.bin.cmake)
+
+
+class CargoBuilder(cargo.CargoBuilder):
+    @property
+    def build_directory(self):
+        return os.path.join(self.pkg.stage.source_path, "crates", "uv")
+
+    @property
+    def build_args(self):
+        # uv's `default` feature set bundles `test-defaults` (integration tests
+        # against live crates.io/PyPI/Git/R2); drop it via --no-default-features
+        # and re-enable only the two release features we want
+        features = "uv-distribution/static,performance"
+        return ["--locked", "--no-default-features", "--features", features]
