@@ -29,8 +29,7 @@ class Jonquil(MesonPackage, CMakePackage):
     version("0.2.0", sha256="68448be7f399942e15a05ed7a149cc226a8ee81a8ce66cd68a2d01d9fc86527e")
     version("0.1.0", sha256="0c8854da047306cad357143fe56f7afe3d323d89aa7383b6614b2b587f580044")
 
-    with when("build_system=cmake"):
-        variant("shared", default=True, description="Build shared libraries")
+    variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")
     depends_on("meson@0.60.0:", type="build", when="build_system=meson")
@@ -47,4 +46,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
-        return []
+        return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
+        ]

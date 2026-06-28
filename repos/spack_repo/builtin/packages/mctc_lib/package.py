@@ -34,10 +34,9 @@ class MctcLib(MesonPackage, CMakePackage):
     version("0.3.1", sha256="a5032a0bbbbacc952037c5215b71aa6b438767a84bafb60fda25ba43c8835513")
     version("0.3.0", sha256="81f3edbf322e6e28e621730a796278498b84af0f221f785c537a315312059bf0")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("json", default=False, description="Enable support for JSON")
     variant("openmp", default=False, description="Enable OpenMP support")
-    with when("build_system=cmake"):
-        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("fortran", type="build")  # generated
 
@@ -67,6 +66,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Djson={0}".format("enabled" if "+json" in self.spec else "disabled"),
             "-Dopenmp={0}".format("true" if "+openmp" in self.spec else "false"),
         ]

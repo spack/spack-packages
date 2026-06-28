@@ -28,6 +28,7 @@ class Tblite(CMakePackage, MesonPackage):
 
     build_system("cmake", "meson", default="meson")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
     variant("python", default=False, description="Build Python extension module")
     variant("trexio", default=False, description="Enable TREXIO support", when="@0.7.0:")
@@ -75,6 +76,7 @@ class MesonBuilder(meson.MesonBuilder):
             lapack = "auto"
 
         args = [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dlapack={0}".format(lapack),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
@@ -90,7 +92,10 @@ class MesonBuilder(meson.MesonBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+        ]
         if self.spec.satisfies("@0.7.0:"):
             args += [
                 self.define_from_variant("TBLITE_WITH_TREXIO", "trexio"),
