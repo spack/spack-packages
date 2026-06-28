@@ -1238,7 +1238,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("CP2K_USE_GAUXC", "gauxc"),
         ]
-        
+
         if spec.satisfies("+opencl"):
             args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
 
@@ -1266,8 +1266,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_USE_ACCEL", "HIP"),
                     self.define("CP2K_WITH_GPU", gpu_ver),
                 ]
-
-        
 
         if spec.satisfies("+sirius"):
             args += [

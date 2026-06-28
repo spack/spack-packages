@@ -17,9 +17,7 @@ class Libxs(CMakePackage):
     maintainers("hfp", "mkrack", "mtaillefumier")
 
     homepage = "hhttps://libxs.readthedocs.io/en/latest"
-    url = (
-        "https://github.com/hfp/libxs/archive/refs/tags/1.0.tar.gz"
-    )
+    url = "https://github.com/hfp/libxs/archive/refs/tags/1.0.tar.gz"
     git = "https://github.com/hfp/libxs.git"
 
     license("BSD-3-Clause", checked_by="mkrack")

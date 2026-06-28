@@ -34,7 +34,6 @@ class Libxstream(MakefilePackage, CMakePackage):
     version("0.9.1", sha256="c6d349183180107cd67cfc579d0fd926fa3661afcce37368f8b3340fff0908f6")
     version("0.9.0", sha256="03365f23b337533b8e5a049a24bc5a91c0f1539dd042ca5312abccc8f713b473")
 
-
     generator("ninja")
 
     variant("shared", default=True, description="Build shared libraries")
