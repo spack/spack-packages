@@ -67,8 +67,14 @@ class PyUv(PythonPackage, CargoPackage):
         )
 
     # PythonPackage builds via maturin and preserves the `python -m uv` entry
-    # point; CargoPackage builds the bare Rust binary as an alternative
-    build_system("python_pip", "cargo", default="python_pip")
+    # point; CargoPackage builds the bare Rust binary as an alternative. The
+    # cargo build needs the `uv-distribution/static` feature, which is absent
+    # before 0.7.5, so the cargo build system is only offered for @0.7.5:.
+    build_system(
+        "python_pip",
+        conditional("cargo", when="@0.7.5:"),
+        default="python_pip",
+    )
 
     # Both build systems compile the Rust sources (maturin shells out to cargo),
     # and the bundled `-sys` crates need a C compiler
@@ -127,8 +133,13 @@ class PyUv(PythonPackage, CargoPackage):
         match = re.match(r"uv (\S+)", output)
         return match.group(1) if match else None
 
+    def test_imports(self):
+        """import the uv module (python_pip build only)"""
+        if self.spec.satisfies("build_system=python_pip"):
+            super().test_imports()
+
     def test_version(self):
-        """Verify uv executable outputs version"""
+        """verify uv executable outputs version"""
         uv = Executable(self.prefix.bin.uv)
         out = uv("--version", output=str, error=str)
         assert self.spec.version.string in out
