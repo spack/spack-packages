@@ -323,11 +323,11 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
     depends_on("deepmdkit", when="+deepmd")
-    
+
     depends_on("gauxc+fortran", when="+gauxc")
     depends_on("gauxc+fortran+mpi", when="+gauxc+mpi")
     depends_on("gauxc+pic", when="+pic")
-    
+
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):

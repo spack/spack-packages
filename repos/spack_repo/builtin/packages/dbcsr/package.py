@@ -25,7 +25,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version(
-        "2.10.0", 
+        "2.10.0",
         sha256="3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
     )
     version(
