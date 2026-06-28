@@ -557,12 +557,12 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     # ROCm already emits an error if +rocm amdgpu_target=none is given
 
-    with when("@:2026.1:+cuda"):
+    with when("@:2026.1 +cuda"):
         for arch in CudaPackage.cuda_arch_values:
             if arch not in supported_cuda_arch_list:
                 conflicts("+cuda", when="cuda_arch={0}".format(arch), msg=cuda_msg)
 
-    with when("@:2026.1:+rocm"):
+    with when("@:2026.1 +rocm"):
         for arch in ROCmPackage.amdgpu_targets:
             if arch not in supported_rocm_arch_list:
                 conflicts("+rocm", when="amdgpu_target={0}".format(arch), msg=rocm_msg)
