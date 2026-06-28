@@ -39,6 +39,7 @@ class KokkosFft(CMakePackage):
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
+    depends_on("hip-lang", type="build", when="device_backend=hipfft")
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@:4", type="build", when="@:1")
     depends_on("cmake@:3", type="build", when="@:0")
