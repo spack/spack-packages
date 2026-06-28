@@ -24,6 +24,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="develop")
+    version("2.10.0", 
+            sha256="3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9"
+            )
     version(
         "2.9.1",
         sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59",
@@ -179,9 +182,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     # hard dependency of libxstream in that configuration. This is reflected in
     # libxstream package.py.
 
-    depends_on("libxstream@1:", when="@2.9.2: +opencl")
-    depends_on("libxs@1:+fortran", when="@2.9.2: +opencl")
-    depends_on("libxs@1:+fortran", when="@2.9.2: smm=libxs")
+    depends_on("libxstream@1:", when="@2.10: +opencl")
+    depends_on("libxs@1:+fortran", when="@2.10: +opencl")
+    depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
 
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:
