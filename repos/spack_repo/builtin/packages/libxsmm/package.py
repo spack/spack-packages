@@ -76,9 +76,14 @@ class Libxsmm(CMakePackage, MakefilePackage):
     # These switches are implemented by the GNU Make build only. Do not
     # expose them for CMake, where they would otherwise be silently ignored.
     with when("build_system=makefile"):
-        variant("debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized.")
         variant(
-            "header-only", default=False, when="@1.6.2:", description="With header-only installation"
+            "debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized."
+        )
+        variant(
+            "header-only",
+            default=False,
+            when="@1.6.2:",
+            description="With header-only installation",
         )
         variant("generator", default=False, description="With generator executable(s)")
         variant(
