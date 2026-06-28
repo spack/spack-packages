@@ -530,15 +530,15 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("~openmp", when="@8:", msg="Building without OpenMP is not supported in CP2K 8+")
 
-    # Warning: This mechanism is specific to dbcsr and should remain in place 
-    # for older versions of cp2k that uses the Makefile build system. Since 2026.1 
-    # CP2K does not build dbcsr anymore and the current cuda / hip code should 
+    # Warning: This mechanism is specific to dbcsr and should remain in place
+    # for older versions of cp2k that uses the Makefile build system. Since 2026.1
+    # CP2K does not build dbcsr anymore and the current cuda / hip code should
     # work on any architectures starting at 60 for CUDA and gfx906 for ROCM
 
-    # For any version of cp2k prior to 2026.1, we only support specific cuda_archs 
-    # for which we have parameter files for optimal kernels. Note that we don't 
-    # override the cuda_archs property from the parent class, since the parent 
-    # class defines constraints for all versions. Instead just mark all unsupported 
+    # For any version of cp2k prior to 2026.1, we only support specific cuda_archs
+    # for which we have parameter files for optimal kernels. Note that we don't
+    # override the cuda_archs property from the parent class, since the parent
+    # class defines constraints for all versions. Instead just mark all unsupported
     # cuda archs as conflicting.
 
     supported_cuda_arch_list = ("35", "37", "60", "70", "80", "90")
@@ -1268,23 +1268,28 @@ class CMakeBuilder(cmake.CMakeBuilder):
             if spec.satisfies(":@2026.1"):
                 args += [self.define("CP2K_WITH_GPU", gpu_ver)]
             else:
-                args += [self.define("-DCMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value[0]),
-                         ]
+                args += [
+                    self.define("-DCMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value[0]),
+                ]
 
         if spec.satisfies("+rocm"):
             if len(spec.variants["amdgpu_target"].value) > 1:
                 raise InstallError("CP2K supports only one amdgpu_target at a time.")
-            
+
             args += [
-                    self.define("CP2K_USE_ACCEL", "HIP"),
-                    ]
+                self.define("CP2K_USE_ACCEL", "HIP"),
+            ]
 
             if spec.satisties("@:2026.1"):
                 gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
-                args += [self.define("CP2K_WITH_GPU", gpu_ver),
+                args += [
+                    self.define("CP2K_WITH_GPU", gpu_ver),
                 ]
             else:
-                args += [self.define("CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value[0]),
+                args += [
+                    self.define(
+                        "CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value[0]
+                    ),
                 ]
 
         if spec.satisfies("+sirius"):
