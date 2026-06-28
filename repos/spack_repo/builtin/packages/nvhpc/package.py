@@ -507,7 +507,7 @@ class Nvhpc(Package, CompilerPackage):
 
     homepage = "https://developer.nvidia.com/hpc-sdk"
 
-    maintainers("samcmill")
+    maintainers("cparrott73")
     tags = ["e4s", "compiler"]
 
     skip_version_audit = ["platform=darwin", "platform=windows"]

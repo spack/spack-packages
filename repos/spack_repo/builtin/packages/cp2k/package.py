@@ -239,6 +239,12 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable green X support",
         when="@2025.2: build_system=cmake",
     )
+    variant(
+        "deepmd",
+        default=False,
+        description="Enable DeepMD-kit support",
+        when="@2024.2: build_system=cmake",
+    )
 
     variant(
         "vdwxc",
@@ -246,7 +252,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable VDW support in SIRIUS.",
         when="+sirius",
     )
-    variant("deepmd", default=False, description="Enable DeepMD-kit support")
     variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
     variant(
         "nlcg",
@@ -262,8 +267,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("gauxc", default=False, description="Enable gauxc support", when="@2026.2:")
-
-    conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
         variant(
@@ -319,10 +322,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
-    depends_on("pkgconfig", type="build")
-
+    depends_on("deepmdkit", when="+deepmd")
     depends_on("gauxc", when="+gauxc")
-
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):
@@ -1200,35 +1201,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
 
-        if spec.satisfies("+opencl"):
-            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
-
-        if spec.satisfies("+cuda"):
-            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
-                raise InstallError("CP2K supports only one cuda_arch at a time.")
-            else:
-                gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
-                if spec.satisfies("+hip_backend_cuda"):
-                    args += [
-                        self.define("CP2K_USE_ACCEL", "HIP"),
-                        self.define("CMAKE_HIP_PLATFORM", "nvidia"),
-                    ]
-                else:
-                    args += [self.define("CP2K_USE_ACCEL", "CUDA")]
-
-                args += [self.define("CP2K_WITH_GPU", gpu_ver)]
-
-        if spec.satisfies("+rocm"):
-            if len(spec.variants["amdgpu_target"].value) > 1:
-                raise InstallError("CP2K supports only one amdgpu_target at a time.")
-            else:
-                gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
-                args += [
-                    self.define("CP2K_USE_ACCEL", "HIP"),
-                    self.define("CP2K_WITH_GPU", gpu_ver),
-                ]
-
-        args += [
+        args = [
             "-DCP2K_USE_FFTW3=ON",
             self.define_from_variant("CP2K_USE_MPI", "mpi"),
             self.define_from_variant("CP2K_ENABLE_REGTESTS", "enable_regtests"),
@@ -1265,6 +1238,36 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("CP2K_USE_GAUXC", "gauxc"),
         ]
+        
+        if spec.satisfies("+opencl"):
+            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
+
+        if spec.satisfies("+cuda"):
+            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
+                raise InstallError("CP2K supports only one cuda_arch at a time.")
+            else:
+                gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
+                if spec.satisfies("+hip_backend_cuda"):
+                    args += [
+                        self.define("CP2K_USE_ACCEL", "HIP"),
+                        self.define("CMAKE_HIP_PLATFORM", "nvidia"),
+                    ]
+                else:
+                    args += [self.define("CP2K_USE_ACCEL", "CUDA")]
+
+                args += [self.define("CP2K_WITH_GPU", gpu_ver)]
+
+        if spec.satisfies("+rocm"):
+            if len(spec.variants["amdgpu_target"].value) > 1:
+                raise InstallError("CP2K supports only one amdgpu_target at a time.")
+            else:
+                gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
+                args += [
+                    self.define("CP2K_USE_ACCEL", "HIP"),
+                    self.define("CP2K_WITH_GPU", gpu_ver),
+                ]
+
+        
 
         if spec.satisfies("+sirius"):
             args += [
