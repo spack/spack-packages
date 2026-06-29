@@ -28,7 +28,7 @@ class PyWrapt(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
 
-        depends_on("py-setuptools@62:", when="@2.1:")
+        depends_on("py-setuptools@77:", when="@2.1:")
         depends_on("py-setuptools@38.3:")
 
     with default_args(type=("build", "run")):
