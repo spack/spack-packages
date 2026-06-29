@@ -60,11 +60,8 @@ class PyGrpcioTools(PythonPackage):
 
     def url_for_version(self, version):
         if version >= Version("1.63.0"):
-            return (
-                "https://files.pythonhosted.org/packages/source/g/"
-                f"grpcio-tools/grpcio_tools-{version}.tar.gz"
-            )
-    return super().url_for_version(version)
+            return f"https://files.pythonhosted.org/packages/source/g/grpcio-tools/grpcio_tools-{version}.tar.gz"
+        return super().url_for_version(version)
     
     def patch(self):
         if self.spec.satisfies("%fj"):
