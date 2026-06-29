@@ -1,0 +1,78 @@
+{
+  "6.9.3": {
+    "Darwin-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/fe/15/1fa71e44d3b345b9eca82d38cf7e6d7505168b978fe98b3610c0e25d8c0e/pyside6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl",
+        "sha256": "6fd9fbbc14e2a5707df611bfacbf3f71283c637b8a29b28708801eeb28bfcb69"
+      }
+    },
+    "Darwin-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/fe/15/1fa71e44d3b345b9eca82d38cf7e6d7505168b978fe98b3610c0e25d8c0e/pyside6-6.9.3-cp39-abi3-macosx_12_0_universal2.whl",
+        "sha256": "6fd9fbbc14e2a5707df611bfacbf3f71283c637b8a29b28708801eeb28bfcb69"
+      }
+    },
+    "Linux-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/34/0e/1e9841cc46196c55ac3eac0b8e08044a88cc70c8cc29e9dc1e33b2ced2b7/pyside6-6.9.3-cp39-abi3-manylinux_2_28_x86_64.whl",
+        "sha256": "6485aebec8eba4e55d1ec1cebe68ca1413589880cc8ccd8a49acae852ec6cfb3"
+      }
+    },
+    "Linux-aarch64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/3d/6b/6aeb7124a5c08ac537776d7d0be1011cf22ccfc6f95cf901fe1eb1a16e91/pyside6-6.9.3-cp39-abi3-manylinux_2_39_aarch64.whl",
+        "sha256": "8f4ff61b24a64153373b68a96339bd765fc010d02c4d98d0f6dba2a6c9686e11"
+      }
+    },
+    "Windows-amd64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/6e/29/4eb0ab29ee7d60da4c5fefdb514c22ae3c91c3f855f46608cfbe23816518/pyside6-6.9.3-cp39-abi3-win_amd64.whl",
+        "sha256": "71b41b9ebd1c044c3777f2b32278d3919f07bda4f15c504bc165b643bc3cec01"
+      }
+    },
+    "Windows-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/3f/c2/b936d50974a14846ccb883cbce0034ec431e1013af7f2aa29d3746a1565f/pyside6-6.9.3-cp39-abi3-win_arm64.whl",
+        "sha256": "33fb70addd02e1adaa45573485c431bca43cf12bb7b2596535b824ff169138ce"
+      }
+    }
+  },
+  "6.10.2": {
+    "Darwin-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/35/0f/5736889fc850794623692cb369e295a994175e51295fa52134626f486296/pyside6-6.10.2-cp39-abi3-macosx_13_0_universal2.whl",
+        "sha256": "4b084293caa7845d0064aaf6af258e0f7caae03a14a33537d0a552131afddaf0"
+      }
+    },
+    "Darwin-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/35/0f/5736889fc850794623692cb369e295a994175e51295fa52134626f486296/pyside6-6.10.2-cp39-abi3-macosx_13_0_universal2.whl",
+        "sha256": "4b084293caa7845d0064aaf6af258e0f7caae03a14a33537d0a552131afddaf0"
+      }
+    },
+    "Linux-x86_64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/35/d3/ab5cd2fac3d34469c7376e0cd18eec92905dbe44748c70bda7699a2a7206/pyside6-6.10.2-cp39-abi3-manylinux_2_34_x86_64.whl",
+        "sha256": "1b89ce8558d4b4f35b85bff1db90d680912e4d3ce9e79ff804d6fef1d1a151ef"
+      }
+    },
+    "Linux-aarch64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/ea/8c/55bbd50c138c8dc12edc9f25e9d94760a33e574905468e98dff399094baa/pyside6-6.10.2-cp39-abi3-manylinux_2_39_aarch64.whl",
+        "sha256": "0439f5e9b10ebe6177981bac9e219096ec970ac6ec215bef055279802ba50601"
+      }
+    },
+    "Windows-amd64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/4f/d4/673b8112b4a260377f760be835c4e357163fdaf68a56a1aec59aeb8e584b/pyside6-6.10.2-cp39-abi3-win_amd64.whl",
+        "sha256": "032bad6b18a17fcbf4dddd0397f49b07f8aae7f1a45b7e4de7037bf7fd6e0edf"
+      }
+    },
+    "Windows-arm64": {
+      "cp39": {
+        "url": "https://files.pythonhosted.org/packages/14/95/bda648fcccf61fe58cb417284716ae30acdddd44f7d4cbad6eea4ccaa872/pyside6-6.10.2-cp39-abi3-win_arm64.whl",
+        "sha256": "65a59ad0bc92525639e3268d590948ce07a80ee97b55e7a9200db41d493cac31"
+      }
+    }
+  }
+}
