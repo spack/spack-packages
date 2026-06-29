@@ -67,7 +67,6 @@ class HipTensor(CMakePackage, ROCmPackage):
             "the values 'auto' and 'none' are mutually exclusive with any of the other values"
         )
         .with_non_feature_values("auto", "none"),
-        sticky=True,
     )
 
     depends_on("c", type="build")
