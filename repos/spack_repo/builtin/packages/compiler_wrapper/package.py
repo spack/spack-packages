@@ -6,11 +6,14 @@ import shutil
 import sys
 
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
+IS_WINDOWS = sys.platform == "win32"
 
-class CompilerWrapper(Package):
+
+class CompilerWrapper(Package, NMakePackage):
     """Spack compiler wrapper script.
 
     Compiler commands go through this compiler wrapper in Spack builds.
@@ -26,40 +29,176 @@ class CompilerWrapper(Package):
     3. It provides a mechanism to inject flags from specs
     """
 
-    homepage = "https://github.com/spack/spack"
-    url = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
+    homepage_nix = "https://github.com/spack/spack"
+    url_nix = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
+
+    homepage_win = "https://github.com/spack/msvc-wrapper"
+    url_win = "https://github.com/spack/msvc-wrapper/archive/refs/tags/v0.1.0.tar.gz"
+    git_win = "https://github.com/spack/msvc-wrapper.git"
+
+    homepage = homepage_win if IS_WINDOWS else homepage_nix
+    url = url_win if IS_WINDOWS else url_nix
+    if IS_WINDOWS:
+        git = git_win
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
     tags = ["runtime"]
 
-    maintainers("haampie")
+    maintainers("haampie", "johnwparent")
 
     license("Apache-2.0 OR MIT")
 
-    if sys.platform != "win32":
+    default_builder = "nmake" if IS_WINDOWS else "generic"
+    build_system("generic", conditional("nmake", when="platform=windows"), default=default_builder)
+
+    if not IS_WINDOWS:
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
-        version("1.0")
-        has_code = False
+        # version("develop", branch="main")
+        version("1.0", commit="7da5bd26e6e083f4a4d96204f1486e072edd3059")
+
+    depends_on("msvc", when="platform=windows", type=("build", "run"))
 
     def bin_dir(self) -> pathlib.Path:
         # This adds an extra "spack" subdir, so that the script and symlinks don't get
         # their way to the default view
         return pathlib.Path(str(self.prefix)) / "libexec" / "spack"
 
-    def install(self, spec, prefix):
-        if sys.platform == "win32":
-            placeholder = self.bin_dir() / "placeholder-wrapper"
-            placeholder.parent.mkdir(parents=True)
-            placeholder.write_text(
-                "This file is a placeholder for the compiler wrapper on Windows."
-            )
+    def setup_dependent_package(self, module, dependent_spec):
+        def _spack_compiler_attribute(*, language: str) -> str:
+            compiler_pkg = dependent_spec[language].package
+            return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
+
+        if dependent_spec.has_virtual_dependency("c"):
+            setattr(module, "spack_cc", _spack_compiler_attribute(language="c"))
+
+        if dependent_spec.has_virtual_dependency("cxx"):
+            setattr(module, "spack_cxx", _spack_compiler_attribute(language="cxx"))
+
+        if dependent_spec.has_virtual_dependency("fortran"):
+            setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
+            setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
+
+    @property
+    def disable_new_dtags(self) -> str:
+        if self.spec.satisfies("platform=darwin"):
+            return ""
+        return "--disable-new-dtags"
+
+    @property
+    def enable_new_dtags(self) -> str:
+        if self.spec.satisfies("platform=darwin"):
+            return ""
+        return "--enable-new-dtags"
+
+
+class EnvironmentSetup:
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+
+        _var_list = []
+        if dependent_spec.has_virtual_dependency("c"):
+            _var_list.append(("c", "cc", "CC", "SPACK_CC"))
+
+        if dependent_spec.has_virtual_dependency("cxx"):
+            _var_list.append(("cxx", "cxx", "CXX", "SPACK_CXX"))
+
+        if dependent_spec.has_virtual_dependency("fortran"):
+            _var_list.append(("fortran", "fortran", "F77", "SPACK_F77"))
+            _var_list.append(("fortran", "fortran", "FC", "SPACK_FC"))
+        # The package is not used as a compiler, so skip this setup
+        if not _var_list:
             return
 
+        bin_dir = self.pkg.bin_dir()
+        implicit_rpaths, env_paths = [], []
+        extra_rpaths = []
+        for language, attr_name, wrapper_var_name, spack_var_name in _var_list:
+            compiler_pkg = dependent_spec[language].package
+            if not hasattr(compiler_pkg, attr_name):
+                continue
+
+            compiler = getattr(compiler_pkg, attr_name)
+            env.set(spack_var_name, compiler)
+
+            if hasattr(compiler_pkg, "ld"):
+                env.set("SPACK_LD", compiler_pkg.ld)
+
+            # -frandom-seed= is needed for deterministic builds with GCC
+            if compiler_pkg.name == "gcc" and self.spec.satisfies("@1.1:"):
+                env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
+
+            if language not in compiler_pkg.compiler_wrapper_link_paths:
+                continue
+
+            wrapper_path = bin_dir / compiler_pkg.compiler_wrapper_link_paths.get(language)
+
+            env.set(wrapper_var_name, str(wrapper_path))
+            env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
+
+            isa_arg = microarchitecture_flags(dependent_spec, language)
+
+            if isa_arg:
+                env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
+
+            # Add spack build environment path with compiler wrappers first in
+            # the path. We add the compiler wrapper path, which includes default
+            # wrappers (cc, c++, f77, f90), AND a subdirectory containing
+            # compiler-specific symlinks.  The latter ensures that builds that
+            # are sensitive to the *name* of the compiler see the right name when
+            # we're building with the wrappers.
+            #
+            # Conflicts on case-insensitive systems (like "CC" and "cc") are
+            # handled by putting one in the <bin_dir>/case-insensitive
+            # directory.  Add that to the path too.
+            compiler_specific_dir = (
+                bin_dir / compiler_pkg.compiler_wrapper_link_paths[language]
+            ).parent
+
+            for item in [bin_dir, compiler_specific_dir]:
+                env_paths.append(item)
+                ci = item / "case-insensitive"
+                if ci.is_dir():
+                    env_paths.append(ci)
+
+            env.set(f"SPACK_{wrapper_var_name}_LINKER_ARG", compiler_pkg.linker_arg)
+
+            # Check if this compiler has implicit rpaths
+            implicit_rpaths.extend(CompilerPropertyDetector(compiler_pkg.spec).implicit_rpaths())
+
+            # Add extra rpaths, if they are defined in an external spec
+            extra_rpaths.extend(
+                getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
+            )
+
+        if implicit_rpaths:
+            # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,
+            # the compiler used in ccld mode will account for rpaths from other compilers too.
+            implicit_rpaths = dedupe(implicit_rpaths)
+            env.set("SPACK_COMPILER_IMPLICIT_RPATHS", ":".join(implicit_rpaths))
+
+        if extra_rpaths:
+            extra_rpaths = dedupe(extra_rpaths)
+            env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
+
+        env.set("SPACK_ENABLE_NEW_DTAGS", self.pkg.enable_new_dtags)
+        env.set("SPACK_DISABLE_NEW_DTAGS", self.pkg.disable_new_dtags)
+
+        for item in env_paths:
+            env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
+
+        env.set("SPACK_CONTEXT_ROOT", dependent_spec.package.stage.source_path)
+        if IS_WINDOWS:
+            env.set("SPACK_DEBUG_WRAPPER", "ON")
+
+
+class GenericBuilder(GenericBuilder, EnvironmentSetup):
+    def install(self, pkg, spec, prefix):
         cc_script = pathlib.Path(self.stage.source_path) / "cc.sh"
-        bin_dir = self.bin_dir()
+        bin_dir = pkg.bin_dir()
 
         # Copy the script
         bin_dir.mkdir(parents=True)
@@ -140,134 +279,27 @@ class CompilerWrapper(Package):
         fj_dir.mkdir(exist_ok=True)
         (fj_dir / "FCC").symlink_to(installed_script)
 
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        if sys.platform == "win32":
-            return
 
-        _var_list = []
-        if dependent_spec.has_virtual_dependency("c"):
-            _var_list.append(("c", "cc", "CC", "SPACK_CC"))
+class NMakeBuilder(NMakeBuilder, EnvironmentSetup):
+    install_targets = ["install"]
+    build_targets = ["cl.exe"]
 
-        if dependent_spec.has_virtual_dependency("cxx"):
-            _var_list.append(("cxx", "cxx", "CXX", "SPACK_CXX"))
+    def install(self, pkg, spec, prefix):
+        bin_dir = pkg.bin_dir()
+        opts = self.std_nmake_args
+        opts.append(self.define("PREFIX", str(bin_dir)))
+        with working_dir(self.build_directory):
+            nmake(*opts, *self.install_targets, ignore_quotes=self.ignore_quotes)
 
-        if dependent_spec.has_virtual_dependency("fortran"):
-            _var_list.append(("fortran", "fortran", "F77", "SPACK_F77"))
-            _var_list.append(("fortran", "fortran", "FC", "SPACK_FC"))
+        # Create links to use the script under different names
+        for name in ("link", "ftn", "fc", "f95", "f90", "f77", "cpp", "c99", "c89", "c++"):
+            (bin_dir / name).symlink_to(bin_dir / "cl.exe")
 
-        # The package is not used as a compiler, so skip this setup
-        if not _var_list:
-            return
-
-        bin_dir = self.bin_dir()
-        implicit_rpaths, env_paths = [], []
-        extra_rpaths = []
-        for language, attr_name, wrapper_var_name, spack_var_name in _var_list:
-            compiler_pkg = dependent_spec[language].package
-            if not hasattr(compiler_pkg, attr_name):
-                continue
-
-            compiler = getattr(compiler_pkg, attr_name)
-            env.set(spack_var_name, compiler)
-
-            # -frandom-seed= is needed for deterministic builds with GCC
-            if compiler_pkg.name == "gcc" and self.spec.satisfies("@1.1:"):
-                env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
-
-            if language not in compiler_pkg.compiler_wrapper_link_paths:
-                continue
-
-            wrapper_path = bin_dir / compiler_pkg.compiler_wrapper_link_paths.get(language)
-
-            env.set(wrapper_var_name, str(wrapper_path))
-            env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
-
-            isa_arg = microarchitecture_flags(dependent_spec, language)
-
-            if isa_arg:
-                env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
-
-            # Add spack build environment path with compiler wrappers first in
-            # the path. We add the compiler wrapper path, which includes default
-            # wrappers (cc, c++, f77, f90), AND a subdirectory containing
-            # compiler-specific symlinks.  The latter ensures that builds that
-            # are sensitive to the *name* of the compiler see the right name when
-            # we're building with the wrappers.
-            #
-            # Conflicts on case-insensitive systems (like "CC" and "cc") are
-            # handled by putting one in the <bin_dir>/case-insensitive
-            # directory.  Add that to the path too.
-            compiler_specific_dir = (
-                bin_dir / compiler_pkg.compiler_wrapper_link_paths[language]
-            ).parent
-
-            for item in [bin_dir, compiler_specific_dir]:
-                env_paths.append(item)
-                ci = item / "case-insensitive"
-                if ci.is_dir():
-                    env_paths.append(ci)
-
-            env.set(f"SPACK_{wrapper_var_name}_LINKER_ARG", compiler_pkg.linker_arg)
-
-            # Check if this compiler has implicit rpaths
-            implicit_rpaths.extend(CompilerPropertyDetector(compiler_pkg.spec).implicit_rpaths())
-
-            # Add extra rpaths, if they are defined in an external spec
-            extra_rpaths.extend(
-                getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
-            )
-
-        if implicit_rpaths:
-            # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,
-            # the compiler used in ccld mode will account for rpaths from other compilers too.
-            implicit_rpaths = dedupe(implicit_rpaths)
-            env.set("SPACK_COMPILER_IMPLICIT_RPATHS", ":".join(implicit_rpaths))
-
-        if extra_rpaths:
-            extra_rpaths = dedupe(extra_rpaths)
-            env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
-
-        env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)
-        env.set("SPACK_DISABLE_NEW_DTAGS", self.disable_new_dtags)
-
-        for item in env_paths:
-            env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
-
-    def setup_dependent_package(self, module, dependent_spec):
-        def _spack_compiler_attribute(*, language: str) -> str:
-            compiler_pkg = dependent_spec[language].package
-            if sys.platform != "win32":
-                # On non-Windows we return the appropriate path to the compiler wrapper
-                return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
-
-            # On Windows we return the real compiler
-            if language == "c":
-                return compiler_pkg.cc
-            elif language == "cxx":
-                return compiler_pkg.cxx
-            elif language == "fortran":
-                return compiler_pkg.fortran
-
-        if dependent_spec.has_virtual_dependency("c"):
-            setattr(module, "spack_cc", _spack_compiler_attribute(language="c"))
-
-        if dependent_spec.has_virtual_dependency("cxx"):
-            setattr(module, "spack_cxx", _spack_compiler_attribute(language="cxx"))
-
-        if dependent_spec.has_virtual_dependency("fortran"):
-            setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
-            setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
-
-    @property
-    def disable_new_dtags(self) -> str:
-        if self.spec.satisfies("platform=darwin"):
-            return ""
-        return "--disable-new-dtags"
-
-    @property
-    def enable_new_dtags(self) -> str:
-        if self.spec.satisfies("platform=darwin"):
-            return ""
-        return "--enable-new-dtags"
+        for subdir, name in (
+            ("case-insensitive", "CC.exe"),
+            ("intel", "ifort.exe"),
+            ("oneapi", "ifx.exe"),
+            ("msvc", "cl.exe"),
+        ):
+            (bin_dir / subdir).mkdir(exist_ok=True)
+            (bin_dir / subdir / name).symlink_to(bin_dir / "cl.exe")
