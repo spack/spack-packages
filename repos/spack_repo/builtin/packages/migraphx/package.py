@@ -2,6 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
@@ -122,7 +125,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
@@ -147,7 +150,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.3",
     ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 

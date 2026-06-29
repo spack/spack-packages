@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -107,12 +108,12 @@ class Rocsparse(CMakePackage):
         "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
     for ver in ["7.2.0", "7.2.1", "7.2.3"]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     depends_on("googletest@1.11.0:", when="+test")
