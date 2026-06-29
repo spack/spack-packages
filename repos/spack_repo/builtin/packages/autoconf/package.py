@@ -15,9 +15,18 @@ class Autoconf(AutotoolsPackage, GNUMirrorPackage):
 
     homepage = "https://www.gnu.org/software/autoconf/"
     gnu_mirror_path = "autoconf/autoconf-2.69.tar.gz"
+    git = "git://git.sv.gnu.org/autoconf"
 
     license("GPL-3.0-or-later WITH Autoconf-exception-3.0", when="@2.62:", checked_by="tgamblin")
     license("GPL-2.0-or-later WITH Autoconf-exception-2.0", when="@:2.59", checked_by="tgamblin")
+
+    version("2.73", sha256="259ddfa3bddc799cfb81489cc0f17dfdf1bd6d1505dda53c0f45ff60d6a4f9a7")
+
+    version("2.73-git", tag="v2.73",
+            commit="44d712a26b0e14931bf2df57e2c9b80a2747dfce")
+    version("develop", branch="master")
+    version("2.70-git", tag="v2.70",
+            commit="97fbc5c184acc6fa591ad094eae86917f03459fa")
 
     version("2.72", sha256="afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e")
     version("2.71", sha256="431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c")
@@ -52,11 +61,14 @@ class Autoconf(AutotoolsPackage, GNUMirrorPackage):
         when="@2.62:2.69 ^perl@5.17:",
     )
 
-    # Note: m4 is not a pure build-time dependency of autoconf. m4 is
-    # needed when autoconf runs, not only when autoconf is built.
-    depends_on("m4@1.4.8:", type=("build", "run"), when="@2.72:")
-    depends_on("m4@1.4.6:", type=("build", "run"), when="@:2.71")
-    depends_on("perl", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("automake")
+        # depends_on("help2man")
+        depends_on("make")
+    with default_args(type=("build", "run")):
+        depends_on("m4@1.4.6:")
+        depends_on("m4@1.4.8:", when="@2.72:")
+        depends_on("perl")
 
     build_directory = "spack-build"
 
@@ -77,6 +89,12 @@ class Autoconf(AutotoolsPackage, GNUMirrorPackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"\(GNU Autoconf\)\s+(\S+)", output)
         return match.group(1) if match else None
+
+    # FIXME: this needs to be whenever the fetch strategy is git--this will require a new ASP
+    #        directive!
+    @when("@develop")
+    def autoreconf(self, spec, prefix):
+        Executable("./bootstrap")("--verbose" "--force")
 
     def patch(self):
         # The full perl shebang might be too long; we have to fix this here
@@ -136,3 +154,21 @@ class Autoconf(AutotoolsPackage, GNUMirrorPackage):
         ]
         for name in executables:
             setattr(module, name, self._make_executable(name))
+
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
+        env.set("AUTOCONF", self.spec.prefix.bin.autoconf)
+        env.set("AUTOHEADER", self.spec.prefix.bin.autoheader)
+        env.set("AUTOM4TE", self.spec.prefix.bin.autom4te)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)

@@ -18,8 +18,15 @@ class Gmake(Package, GNUMirrorPackage):
     homepage = "https://www.gnu.org/software/make/"
     gnu_mirror_path = "make/make-4.2.1.tar.gz"
     maintainers("haampie")
+    git = "https://https.git.savannah.gnu.org/git/make.git"
 
     license("GPL-3.0-only")
+
+    provides("make")
+
+    version("develop", branch="master")
+    version("4.4.1-git", tag="4.4.1", commit="d66a65ad5a0e31b287f53930b0f09e31801f1613")
+    version("4.4-git", tag="4.4", commit="ed493f6c9116cc217b99c2cfa6a95f15803235a2")
 
     # Stable releases
     version("4.4.1", sha256="dd16fb1d67bfab79a72f5e8390735c49e3e8e70b4945a15ab1f81ddb78658fb3")
@@ -67,12 +74,15 @@ class Gmake(Package, GNUMirrorPackage):
         return match.group(1) if match else None
 
     def configure_args(self):
-        return [
+        args = [
             "--with-guile" if self.spec.satisfies("+guile") else "--without-guile",
             "--disable-nls",
             # configure needs make to enable dependency tracking, disable explicitly
             "--disable-dependency-tracking",
         ]
+        if self.spec.version >= Version("4.4"):
+            args.append("--enable-year2038")
+        return args
 
     def install(self, spec, prefix):
         configure = Executable(join_path(self.stage.source_path, "configure"))
@@ -97,6 +107,23 @@ class Gmake(Package, GNUMirrorPackage):
             self.spec.prefix.bin.make,
             jobs=determine_number_of_jobs(parallel=dependent_spec.package.parallel),
         )
+
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
+        env.set("MAKE", self.spec.prefix.bin.make)
+        env.unset("MAKEFLAGS")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
 
     @property
     def libs(self):

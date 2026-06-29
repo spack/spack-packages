@@ -317,6 +317,7 @@ To resolve this problem, please try the following:
         """On NixOS file is not available in /usr/bin/file. Patch configure
         scripts to use file from path."""
 
+        # This doesn't appear to be necessary anymore? Or ever?
         if self.spec.os.startswith("nixos"):
             x = FileFilter(
                 *filter(is_exe, find(self.build_directory, "configure", recursive=True))

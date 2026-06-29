@@ -11,20 +11,41 @@ from spack.package import *
 
 
 class Libtool(AutotoolsPackage, GNUMirrorPackage):
-    """libtool -- library building part of autotools."""
+    """GNU Libtool is a script and file format that hides the complexity of using shared libraries
+    behind a consistent, portable interface.
 
+    In particular, libtool addresses portability concerns regarding shared libraries across
+    operating systems, each of which maintain strongly-held and highly-variant ideas of what
+    a library is. This ecosystem has thus far failed to develop a regulatory mechanism that
+    incentivizes reconciling this variance through standard extensions and modification points to
+    achieve consistent semantics for maintainers and users.
+
+    This leaves the lowest-common denominator for any attempt to unify these distinctions as the
+    portable shell script: and this is the interface employed by libtool.
+
+    An important corollary is that the libtool format also supports static libraries, and therefore
+    does not impose the decision of static or dynamic linking behavior until the maintainer or
+    downstream user generates their final export artifact.
+    Without this crucial capability, build systems for C and C++ often tend to impose
+    @/m{significant duplication} of labor and code to support both generating output for both
+    linking modes.
+
+    Libtool instead @_y{codifies} those distinctions into its artifact structure, and thereby makes
+    build processes easier to audit and maintain over time.
+    """
+    docstring_uses_rich_text = True
+    docstring_has_extended_text = True
+
+    git = "https://https.agit.savannah.gnu.org/git/libtool.git"
     homepage = "https://www.gnu.org/software/libtool/"
     gnu_mirror_path = "libtool/libtool-2.4.6.tar.gz"
 
     license("LGPL-2.0-or-later AND GPL-2.0-or-later")
 
-    version(
-        "develop",
-        git="https://git.savannah.gnu.org/git/libtool.git",
-        branch="master",
-        submodules=True,
-    )
-
+    version("2.6.1-git", tag="v2.6.1",
+            commit="79de7bb71bc0a1167f4c4ae8bd897976a0ff2b51")
+    version("master", branch="master", submodules=True)
+    version("2.6.0", sha256="80c3fe2ae1062abf56456f52518bd670f9ec3917b7f85e152b347ac6b6faf880")
     version("2.5.4", sha256="da8ebb2ce4dcf46b90098daf962cffa68f4b4f62ea60f798d0ef12929ede6adf")
     version("2.4.7", sha256="04e96c2404ea70c590c546eba4202a4e12722c640016c12b9b2f1ce3d481e9a8")
     version("2.4.6", sha256="e3bd4d5d3d025a36c21dd6af7ea818a2afcd4dfc1ea5a17b39d7854bcd0c06e3")
@@ -39,10 +60,12 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
     depends_on("findutils", type=("build", "run"))
     depends_on("file", type=("build", "run"))
 
-    with when("@2.4.6"):
+    with when("@2.4.6:"):
         depends_on("autoconf@2.62:", type="test")
         depends_on("automake", type="test")
 
+    # FIXME: this needs to be whenever the fetch strategy is git--this will require a new ASP
+    #        directive!
     with when("@develop"):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
@@ -65,6 +88,8 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
         match = re.search(r"\(GNU libtool\)\s+(\S+)", output)
         return match.group(1) if match else None
 
+    # FIXME: this needs to be whenever the fetch strategy is git--this will require a new ASP
+    #        directive!
     @when("@develop")
     def autoreconf(self, spec, prefix):
         Executable("./bootstrap")()
@@ -82,9 +107,22 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
             filter_file("-fno-builtin", "-Mnobuiltin", "configure")
             filter_file("-fno-builtin", "-Mnobuiltin", "libltdl/configure")
 
+    def _setup_exe_env_vars(self, env: EnvironmentModifications) -> None:
+        env.set("LIBTOOL", self.spec.prefix.bin.libtool)
+        env.set("LIBTOOLIZE", self.spec.prefix.bin.libtoolize)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_exe_env_vars(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_exe_env_vars(env)
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
+        self._setup_exe_env_vars(env)
         env.append_path("ACLOCAL_PATH", self.prefix.share.aclocal)
 
     def setup_dependent_package(self, module, dependent_spec):

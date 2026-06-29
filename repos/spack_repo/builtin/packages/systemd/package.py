@@ -24,6 +24,8 @@ class Systemd(MesonPackage):
 
     depends_on("c", type="build")  # generated
 
+    provides("libudev", when="@251:")
+
     depends_on("meson@0.60.0:", type="build")
     depends_on("ninja", type="build")
     depends_on("py-jinja2", type="build")

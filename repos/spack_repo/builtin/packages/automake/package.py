@@ -15,12 +15,17 @@ class Automake(AutotoolsPackage, GNUMirrorPackage):
 
     homepage = "https://www.gnu.org/software/automake/"
     gnu_mirror_path = "automake/automake-1.15.tar.gz"
+    git = "https://https.git.savannah.gnu.org/git/automake.git"
 
-    executables = ["^automake$"]
+    executables = ["^(automake|aclocal)$"]
 
     tags = ["build-tools"]
 
     license("GPL-2.0-or-later")
+
+    version("1.18-git", tag="v1.18",
+            commit="f00e7a046bcbec6a23f8663508f6a12a9fc0299a")
+    version("develop", branch="master")
 
     version("1.18.1", sha256="63e585246d0fc8772dffdee0724f2f988146d1a3f1c756a3dc5cfbefa3c01915")
     version("1.16.5", sha256="07bd24ad08a64bc17250ce09ec56e921d6343903943e99ccf63bbf0705e34605")
@@ -34,8 +39,11 @@ class Automake(AutotoolsPackage, GNUMirrorPackage):
     version("1.11.6", sha256="53dbf1945401c43f4ce19c1971baecdbf8bc32e0f37fa3f49fe7b6992d0d2030")
 
     depends_on("c", type="build")
-    depends_on("autoconf@2.65:", type="build", when="@1.13.4:")
-    depends_on("autoconf@2.62:", type="build")
+
+    with default_args(type="build"):
+        depends_on("autoconf@2.62:")
+        depends_on("autoconf@2.65:", when="@1.13.4:")
+
     depends_on("perl+threads", type=("build", "run"))
 
     build_directory = "spack-build"
@@ -45,6 +53,10 @@ class Automake(AutotoolsPackage, GNUMirrorPackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"GNU automake\)\s+(\S+)", output)
         return match.group(1) if match else None
+
+    @when("@develop")
+    def autoreconf(self, spec, prefix):
+        Executable("./bootstrap")()
 
     def patch(self):
         # The full perl shebang might be too long
@@ -71,3 +83,20 @@ class Automake(AutotoolsPackage, GNUMirrorPackage):
         executables = ["aclocal", "automake"]
         for name in executables:
             setattr(module, name, self._make_executable(name))
+
+    def _setup_dependent_env(self, env: EnvironmentModifications) -> None:
+        env.set("AUTOMAKE", self.spec.prefix.bin.automake)
+        env.set("ACLOCAL", self.spec.prefix.bin.aclocal)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)
+
+    def setup_dependent_run_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec,
+    ) -> None:
+        self._setup_dependent_env(env)

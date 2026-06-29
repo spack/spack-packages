@@ -12,9 +12,9 @@ from spack.package import *
 class Cairo(AutotoolsPackage, MesonPackage):
     """Cairo is a 2D graphics library with support for multiple output
     devices."""
-
     homepage = "https://www.cairographics.org/"
     url = "https://www.cairographics.org/releases/cairo-1.16.0.tar.xz"
+    git = "git://anongit.freedesktop.org/git/cairo"
 
     license("LGPL-2.1-or-later OR MPL-1.1", checked_by="tgamblin")
 
@@ -36,17 +36,24 @@ class Cairo(AutotoolsPackage, MesonPackage):
     version("1.14.8", sha256="d1f2d98ae9a4111564f6de4e013d639cf77155baf2556582295a0f00a9bc5e20")
     version("1.14.0", sha256="2cf5f81432e77ea4359af9dcd0f4faf37d015934501391c311bfd2d19a0134b7")
 
-    # 1.17.4 is the last autotools based version. From 1.18.0 onward it is meson only
+    version("master", branch="master")
+    version("1.17.8", tag="1.17.8", commit="c3b672634f0635af1ad0ffa8c15b34fc7c1035cf")
+    version("last-autotools", commit="7471a323a70203e983b88e7561a4c95d653f875f")
+    version("1.17.6", tag="1.17.6", commit="b43e7c6f3cf7855e16170a06d3a9c7234c60ca94")
+
+    # 1.17.6 is the last autotools based version. From 1.18.0 onward it is meson only.
+    # NB: There are references to versions such as 1.17.9 in the git commit messages.
+    #     This is unfortunate, since they don't exist.
     build_system(
-        conditional("meson", when="@1.18.0:"),
-        conditional("autotools", when="@:1.17.4"),
+        conditional("meson", when="@1.17.4:"),
+        conditional("autotools", when="@:1.17.6"),
         default="meson",
     )
 
     variant("X", default=False, description="Build with X11 support")
     variant("gobject", default=False, description="Enable cairo's gobject functions feature")
 
-    variant("svg", default=True, description="Enable cairo's SVG functions feature")
+    variant("svg", default=True, description="Enable cairo's SVG functions feature", when="+png")
     variant("png", default=True, description="Enable cairo's PNG functions feature")
 
     # doesn't exist @1.17.8: but kept as compatibility
@@ -55,53 +62,47 @@ class Cairo(AutotoolsPackage, MesonPackage):
     variant("ft", default=True, description="Enable cairo's FreeType font backend feature")
     variant("fc", default=True, description="Enable cairo's Fontconfig font backend feature")
 
+    variant(
+        "zlib",
+        default=True,
+        description="Enable cairo's script, ps, pdf, xml functions feature",
+    )
+
+    # seems to be an older cairo limitation as cairo@1.18.2 seems to build fine against libpng
+    # FIXME: "seems to be?"
+    conflicts("+png", when="@:1.17 platform=darwin",
+              msg="This conflict is not explained. Please file an issue.")
+
     # variants and build system depends for the autotools builds
     with when("build_system=autotools"):
         variant("pic", default=True, description="Enable position-independent code (PIC)")
-
-        # seems to be an older cairo limitation as cairo@1.18.2 seems to build fine against libpng
-        conflicts("+png", when="platform=darwin")
-        conflicts("+svg", when="platform=darwin")
 
         # meson build already defines these and maps them to args
         # variant("shared", default=True, description="Build shared libraries")
         variant("shared", default=True, description="Build shared libraries")
         conflicts("+shared~pic")
 
-        depends_on("automake", type="build")
-        depends_on("autoconf", type="build")
-        depends_on("libtool", type="build")
-        depends_on("m4", type="build")
-        depends_on("which", type="build")
+        with default_args(type="build"):
+            depends_on("automake")
+            depends_on("autoconf")
+            depends_on("libtool")
+            depends_on("m4")
+            depends_on("which")
 
     # variants and build system depends for the autotools builds
     # these names follow those listed here
     # https://gitlab.freedesktop.org/cairo/cairo/-/blob/1.18.2/meson_options.txt
     with when("build_system=meson"):
         variant("dwrite", default=False, description="Microsoft Windows DWrite font backend")
-        variant(
-            "zlib",
-            default=True,
-            description="Enable cairo's script, ps, pdf, xml functions feature",
-        )
 
         variant("quartz", default=False, description="Enable cairo's Quartz functions feature")
         variant("tee", default=False, description="Enable cairo's tee functions feature")
-
-        # meson seems to have assumptions about what is enabled/disabled
-        # so this protects against incompatible combinations
-        requires(
-            "+zlib+ft+fc+png+pdf",
-            "~zlib~ft~fc~png~pdf",
-            policy="one_of",
-            msg="these variants must be activated, or deactivated, together",
-        )
 
         # https://gitlab.freedesktop.org/cairo/cairo/-/blob/1.18.2/meson.build?ref_type=tags#L2
         depends_on("meson@1.3.0:", type="build")
 
     # both autotools and meson need this for auto discovery of depends
-    depends_on("pkgconfig", type="build")
+    depends_on("pkg-config", type="build")
 
     # non build system specific dependencies
     depends_on("c", type="build")  # generated
@@ -109,9 +110,10 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
     depends_on("freetype", when="+ft")
     depends_on("libpng", when="+png")
-    depends_on("glib")
+    depends_on("glib", when="+gobject")
     depends_on("pixman@0.36.0:", when="@1.17.2:")
     depends_on("fontconfig@2.10.91:", when="+fc")
+    depends_on("zlib-api", when="+zlib")
 
     # non build system specific depends
     # versions that use (the new) meson build
@@ -147,32 +149,22 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-    def enable_or_disable(self, feature_name, variant=None):
-        if variant is None:
-            variant = feature_name
-        return (
-            f"-D{feature_name}=enabled"
-            if self.spec.satisfies(f"+{variant}")
-            else f"-D{feature_name}=disabled"
-        )
-
     def meson_args(self):
-        args = [
-            self.enable_or_disable("dwrite"),
-            self.enable_or_disable("fontconfig", variant="ft"),
-            self.enable_or_disable("freetype", variant="fc"),
-            self.enable_or_disable("png"),
-            self.enable_or_disable("quartz"),
-            self.enable_or_disable("tee"),
-            self.enable_or_disable("xcb"),
-            self.enable_or_disable("xlib", variant="X"),
-            self.enable_or_disable("xlib-xcb", variant="X"),
-            self.enable_or_disable("zlib"),
-            self.enable_or_disable("glib", variant="gobject"),
-            "-Dspectre=disabled",
-            "-Dsymbol-lookup=disabled",
+        return [
+            self.enable_from_variant("dwrite"),
+            self.enable_from_variant("fontconfig", variant="ft"),
+            self.enable_from_variant("freetype", variant="fc"),
+            self.enable_from_variant("png"),
+            self.enable_from_variant("quartz"),
+            self.enable_from_variant("tee"),
+            self.enable_from_variant("xcb", variant="X"),
+            self.enable_from_variant("xlib", variant="X"),
+            self.enable_from_variant("xlib-xcb", variant="X"),
+            self.enable_from_variant("zlib"),
+            self.enable_from_variant("glib", variant="gobject"),
+            self.define("spectre", False),
+            self.define("symbol-lookup", False),
         ]
-        return args
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
@@ -205,6 +197,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         return args
 
+    # FIXME: link?
     def check(self):
         """The checks are only for the cairo devs: They write others shouldn't bother"""
         pass
