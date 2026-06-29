@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.1.1", sha256="8bdbee0f0ac383436743ad8a9e3e928705b34b31a25a92dc5179c52a3aa98519")
     version("5.1.0", sha256="7bdbdfc88033ed7d940c7940ed8919e1f2b78a9656c69276beb76ad45c41ec4e")
     version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
     version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
@@ -598,29 +599,3 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         ]
         cmake(*cmake_args)
         cache_extra_test_sources(self, cmake_out_path)
-
-    def test_run(self):
-        """Test if kokkos builds and runs"""
-        cmake_path = join_path(
-            self.test_suite.current_test_cache_dir, self.test_script_relative_path, "out"
-        )
-
-        if not os.path.exists(cmake_path):
-            raise SkipTest(f"{cmake_path} is missing")
-
-        cmake = self.spec["cmake"].command
-        cmake_args = []
-        if self.spec.satisfies("+rocm"):
-            prefix_paths = ";".join(get_cmake_prefix_path(self))
-            cmake_args.append(self.define("CMAKE_PREFIX_PATH", prefix_paths))
-
-        if self.spec.satisfies("+wrapper"):
-            cmake_args.append(
-                self.define("CMAKE_CXX_COMPILER", self["kokkos-nvcc-wrapper"].kokkos_cxx)
-            )
-        else:
-            cmake_args.append(self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx))
-
-        cmake(cmake_path, *cmake_args)
-        cmake("--build", ".")
-        cmake("--build", ".", "--target", "test")

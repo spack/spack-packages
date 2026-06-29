@@ -1,0 +1,10 @@
+--- a/kent/src/hg/lib/straw/straw.cpp
++++ b/kent/src/hg/lib/straw/straw.cpp
+@@ -21,6 +21,7 @@
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+ */
++#include <cstdint>
+ #include <cstring>
+ #include <iostream>
+ #include <fstream>

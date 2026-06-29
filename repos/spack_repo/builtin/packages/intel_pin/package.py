@@ -18,6 +18,21 @@ class IntelPin(Package):
     license("MIT")
 
     version(
+        "4.2",
+        sha256="194a2cec51678203452ece0d9e8cbb1819eb6e1221f0341091c49248f384d869",
+        url="https://software.intel.com/sites/landingpage/pintool/downloads/pin-external-4.2-99776-g21d818fa2-gcc-linux.tar.gz",
+    )
+    version(
+        "4.1",
+        sha256="e2c5037d23752aa5fc6ee4cfeee080f8b45ba5cbe7104b2384db32573daf7e25",
+        url="https://software.intel.com/sites/landingpage/pintool/downloads/pin-external-4.1-99687-gd9b8f822c-gcc-linux.tar.gz",
+    )
+    version(
+        "4.0",
+        sha256="2d371e2b62c3e01d885fbe32dc2c28a5b01917c61e2303c1e5bd768cfa104fd8",
+        url="https://software.intel.com/sites/landingpage/pintool/downloads/pin-external-4.0-99633-g5ca9893f2-gcc-linux.tar.gz",
+    )
+    version(
         "3.31",
         sha256="82216144e3df768f0203b671ff48605314f13266903eb42dac01b91310eba956",
         url="https://software.intel.com/sites/landingpage/pintool/downloads/pin-external-3.31-98869-gfa6f126a8-gcc-linux.tar.gz",
@@ -133,8 +148,7 @@ class IntelPin(Package):
         url="https://software.intel.com/sites/landingpage/pintool/downloads/pin-2.14-71313-gcc.4.4.7-linux.tar.gz",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    conflicts("gcc@15:", when="@:3", msg="Pin v3 does not work with GCC 15 or newer")
 
     def install(self, spec, prefix):
         install_tree(".", prefix)
