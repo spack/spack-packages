@@ -472,6 +472,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # make sure LLVM prefers binutils prefix over system default
+                    if self.spec.satisfies("^binutils"):
+                        print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
 
         if self.spec.satisfies("@7:"):
             with open(os.path.join(self.prefix.bin, "rocm.cfg"), "w") as f:

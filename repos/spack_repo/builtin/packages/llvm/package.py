@@ -360,6 +360,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # gold support, required for some features
     depends_on("binutils+gold+ld+plugins+headers", when="+gold")
 
+    # if gcc was built with newer binutils than the system default, we need the
+    # same for our own build
+    depends_on(
+        "binutils+gas+ld+plugins~libiberty", type=("build", "link", "run"), when="%gcc+binutils"
+    )
+
     # Older LLVM do not build with newer compilers, and vice versa
     with when("@16:"):
         conflicts("%gcc@:7.0")
@@ -915,6 +921,18 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             env.set("FC", join_path(self.spec.prefix.bin, "flang"))
             env.set("F77", join_path(self.spec.prefix.bin, "flang"))
 
+    @classmethod
+    def runtime_constraints(cls, *, spec, pkg):
+        if spec.satisfies("%gcc"):
+            gcc = spec["gcc"]
+            for language in ("c", "cxx", "fortran"):
+                pkg("*").depends_on(
+                    f"gcc-runtime@{gcc.version}:",
+                    when=f"%[deptypes=build virtuals={language}] {spec.name}/{spec.dag_hash()}",
+                    type="link",
+                    description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
+                )
+
     root_cmakelists_dir = "llvm"
 
     def cmake_args(self):
@@ -1227,6 +1245,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # make sure LLVM prefers binutils prefix over system default
+                    if self.spec.satisfies("^binutils"):
+                        print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
 
     def llvm_config(self, *args, result=None, **kwargs):
         lc = Executable(self.prefix.bin.join("llvm-config"))
