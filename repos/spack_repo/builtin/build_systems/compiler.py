@@ -136,7 +136,7 @@ class CompilerPackage(PackageBase):
         paths = {}
         exes = sorted(exes, reverse=True)
         languages = {
-            lang: getattr(cls, f"{lang}_names")
+            lang: getattr(cls, f"{lang.replace('-', '_')}_names")
             for lang in sorted(cls.compiler_languages, key=len, reverse=True)
         }
         for exe in exes:
