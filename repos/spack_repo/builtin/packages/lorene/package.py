@@ -40,6 +40,7 @@ class Lorene(MakefilePackage):
     depends_on("gsl")
     depends_on("lapack")
     depends_on("pgplot")
+    depends_on("cvs", type="build")
 
     parallel = False
 
