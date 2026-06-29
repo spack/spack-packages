@@ -57,7 +57,6 @@ class Vecgeom(CMakePackage, CudaPackage):
         "1.2.11",
         url="https://gitlab.cern.ch/-/project/981/uploads/f2a483a4a073fac560714280e0e223ec/VecGeom-v1.2.11.tar.gz",
         sha256="0e251b0c6d79401e49cd2137a32b499ce3857045683d1fc8b6cd3b527247a3ef",
-        preferred=True,
     )
     version(
         "1.2.10",
