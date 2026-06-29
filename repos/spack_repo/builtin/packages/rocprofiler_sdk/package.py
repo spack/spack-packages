@@ -222,7 +222,7 @@ class RocprofilerSdk(CMakePackage):
         name="otf2",
         destination="deps",
         placement="otf2",
-        url=f"https://rocm-third-party-deps.s3.us-east-2.amazonaws.com/otf2-3.0.3.tar.gz",
+        url="https://rocm-third-party-deps.s3.us-east-2.amazonaws.com/otf2-3.0.3.tar.gz",
         sha256="18a3905f7917340387e3edc8e5766f31ab1af41f4ecc5665da6c769ca21c4ee8",
     )
 

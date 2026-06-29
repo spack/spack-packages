@@ -276,7 +276,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             self.define("MSGPACK_DIR", self.spec["msgpack-c"].prefix),
             self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
             self.define("BUILD_SHARED_LIBS", "ON"),
-            self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS")
+            self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"),
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
