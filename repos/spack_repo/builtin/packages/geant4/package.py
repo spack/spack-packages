@@ -75,8 +75,8 @@ class Geant4(CMakePackage):
     variant("threads", default=True, description="Build with multithreading")
     variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.7:")
     variant("opengl", default=False, description="Optional OpenGL support")
-    variant("x11", default=False, description="Optional X11 support")
-    variant("motif", default=False, description="Optional motif support")
+    variant("x11", default=False, when="platform=linux", description="Optional X11 support")
+    variant("motif", default=False, when="+x11", description="Optional motif support")
     variant("qt", default=False, description="Enable Qt support")
     variant("hdf5", default=False, description="Enable HDF5 support", when="@10.4:")
     variant("python", default=False, description="Enable Python bindings", when="@10.6.2:11.0")
@@ -205,6 +205,7 @@ class Geant4(CMakePackage):
             depends_on("qt@5.9:", when="@11.2:11.3")
     conflicts("@11.4: ^[virtuals=qmake] qt", msg="Qt5 not supported in 11.4 and later")
     conflicts("@:11.1 ^[virtuals=qmake] qt-base", msg="Qt6 not supported before 11.2")
+    conflicts("+opengl", when="platform=darwin", msg="OpenGL requires Linux or Windows")
 
     # CMAKE PROBLEMS #
     # As released, 10.0.4 has inconsistently capitalised filenames
@@ -346,32 +347,27 @@ class Geant4(CMakePackage):
                     )
 
         # Vecgeom
+        options.append(self.define_from_variant("GEANT4_USE_USOLIDS", "vecgeom"))
         if spec.satisfies("+vecgeom"):
-            options.append(self.define("GEANT4_USE_USOLIDS", True))
             options.append(self.define("USolids_DIR", spec["vecgeom"].prefix.lib.CMake.USolids))
 
         # Visualization options
-        if "platform=darwin" not in spec:
-            if spec.satisfies("+x11 +opengl"):
-                options.append(self.define("GEANT4_USE_OPENGL_X11", True))
-            if spec.satisfies("+motif +opengl"):
-                options.append(self.define("GEANT4_USE_XM", True))
-            if spec.satisfies("+x11"):
-                options.append(self.define("GEANT4_USE_RAYTRACER_X11", True))
+        if spec.satisfies("+x11 +opengl"):
+            options.append(self.define("GEANT4_USE_OPENGL_X11", True))
+        if spec.satisfies("platform=windows"):
+            options.append(self.define_from_variant("GEANT4_USE_OPENGL_WIN32", "opengl"))
+        options.append(self.define_from_variant("GEANT4_USE_XM", "motif"))
+        options.append(self.define_from_variant("GEANT4_USE_RAYTRACER_X11", "x11"))
 
+        options.append(self.define_from_variant("GEANT4_USE_QT", "qt"))
         if spec.satisfies("+qt"):
-            options.append(self.define("GEANT4_USE_QT", True))
             if spec.satisfies("^[virtuals=qmake] qt-base"):
                 options.append(self.define("GEANT4_USE_QT_QT6", True))
             options.append(self.define("QT_QMAKE_EXECUTABLE", spec["qmake"].prefix.bin.qmake))
 
         options.append(self.define_from_variant("GEANT4_USE_HDF5", "hdf5"))
-
         options.append(self.define_from_variant("GEANT4_USE_VTK", "vtk"))
-
-        # Python
-        if spec.version > Version("10.6.1"):
-            options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
+        options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
 
         return options
 
