@@ -44,7 +44,7 @@ class Amgx(CMakePackage, CudaPackage):
     depends_on("mkl", when="+mkl")
     depends_on("magma", when="+magma")
 
-    conflicts("^cuda@12.9:", when="@:2.3.0") # Older versions do not support CUDA 12.9+
+    conflicts("^cuda@12.9:", when="@:2.3.0")  # Older versions do not support CUDA 12.9+
 
     def cmake_args(self):
         args = []
