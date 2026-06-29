@@ -27,7 +27,7 @@ class KokkosComm(CMakePackage):
     # Mandatory dependencies
     depends_on("cxx")
     depends_on("c", when="+mpi")
-    depends_on("cmake@3.22:3", type="build")
+    depends_on("cmake@3.25:", type="build")
 
     depends_on("kokkos@4.7:")
 
