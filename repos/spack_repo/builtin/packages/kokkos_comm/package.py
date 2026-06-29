@@ -41,8 +41,8 @@ class KokkosComm(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define("KokkosComm_ENABLE_MPI", "mpi"),
-            self.define("KokkosComm_ENABLE_NCCL", "nccl"),
+            self.define_from_variant("KokkosComm_ENABLE_MPI", "mpi"),
+            self.define_from_variant("KokkosComm_ENABLE_NCCL", "nccl"),
             self.define("KokkosComm_ENABLE_TESTS", True),  # To be removed, for test
         ]
 
