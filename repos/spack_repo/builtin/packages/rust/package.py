@@ -40,6 +40,10 @@ class Rust(Package):
     # Stable versions.
     version("1.96.0", sha256="b99ce16cdf0ecfc761b585ac84d131b46733465a02f8ecd0ff2de9713c62ee09")
     version("1.92.0", sha256="9e0d2ca75c7e275fdc758255bf4b03afb3d65d1543602746907c933b6901c3b8")
+    version("1.91.0", sha256="327f528151753013f0a2b2c7f48955a033d718f269a4bc586314d675d0d43e8a")
+    version("1.90.0", sha256="799a9f9cba4ed5351e071048bcf6b5560755d9009648def33a407dd4961f9b7e")
+    version("1.89.0", sha256="2576f9f440dd99b0151bd28f59aa0ac6102d5c4f3ed4ef8a810c8dd05057250d")
+    version("1.88.0", sha256="3a97544434848ae3d193d1d6bc83d6f24cb85c261ad95f955fde47ec64cfcfbe")
     version("1.86.0", sha256="022a27286df67900a044d227d9db69d4732ec3d833e4ffc259c4425ed71eed80")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
     version("1.83.0", sha256="722d773bd4eab2d828d7dd35b59f0b017ddf9a97ee2b46c1b7f7fac5c8841c6e")
@@ -91,6 +95,10 @@ class Rust(Package):
     # Stable version dependencies
     depends_on("rust-bootstrap@1.95:1.96", type="build", when="@1.96")
     depends_on("rust-bootstrap@1.91:1.92", type="build", when="@1.92")
+    depends_on("rust-bootstrap@1.90:1.91", type="build", when="@1.91")
+    depends_on("rust-bootstrap@1.89:1.90", type="build", when="@1.90")
+    depends_on("rust-bootstrap@1.88:1.89", type="build", when="@1.89")
+    depends_on("rust-bootstrap@1.87:1.88", type="build", when="@1.88")
     depends_on("rust-bootstrap@1.85:1.86", type="build", when="@1.86")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
     depends_on("rust-bootstrap@1.82:1.83", type="build", when="@1.83")
