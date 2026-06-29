@@ -43,20 +43,23 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 6f0838151..52cb9f274 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -420,6 +420,27 @@ if (TARGET viskoresdiympi_nompi)
+@@ -420,6 +420,30 @@ if (TARGET viskoresdiympi_nompi)
    set(lib_args "${lib_args} \\
      -lviskoresdiympi_nompi")
  endif()
 +# Also add depended device libraries
 +macro(_viskores_add_imported_lib_to_list target_name)
 +  if(TARGET ${target_name})
-+    foreach(prop in IMPORTED_LOCATION_RELEASE IMPORTED_LOCATION IMPORTED_LOCATION_DEBUG)
-+      get_target_property(libfile ${target_name} ${prop})
-+      if(libfile)
-+        set(lib_args "${lib_args} \\\n    ${libfile}")
-+        return()
-+      endif()
-+    endforeach()
++    get_target_property(target_type ${target_name} TYPE)
++    if(NOT ${target_type} STREQUAL "INTERFACE_LIBRARY")
++      foreach(prop in IMPORTED_LOCATION_RELEASE IMPORTED_LOCATION IMPORTED_LOCATION_DEBUG)
++        get_target_property(libfile ${target_name} ${prop})
++        if(libfile)
++          set(lib_args "${lib_args} \\\n    ${libfile}")
++          break()
++        endif()
++      endforeach()
++    endif()
 +  endif()
 +endmacro()
 +_viskores_add_imported_lib_to_list(Kokkos::kokkos)
