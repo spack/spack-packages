@@ -28,14 +28,21 @@ class Tblite(CMakePackage, MesonPackage):
 
     build_system("cmake", "meson", default="meson")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
     variant("python", default=False, description="Build Python extension module")
+    variant("trexio", default=False, description="Enable TREXIO support", when="@0.7.0:")
+    variant("hdf5", default=False, description="Enable HDF5 support", when="@0.7.0:")
+    # variant("ddx", default=False, description="Enable DDX support", when="@0.7.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
     depends_on("blas")
     depends_on("lapack")
+    depends_on("trexio", when="+trexio")
+    depends_on("hdf5", when="+hdf5")
+    # depends_on("ddx", when="+ddx")
 
     for build_system in ["cmake", "meson"]:
         depends_on(
@@ -52,6 +59,7 @@ class Tblite(CMakePackage, MesonPackage):
     depends_on("pkgconfig", type="build")
     depends_on("py-cffi", when="+python")
     depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
 
     extends("python", when="+python")
@@ -67,13 +75,31 @@ class MesonBuilder(meson.MesonBuilder):
         elif lapack != "openblas":
             lapack = "auto"
 
-        return [
+        args = [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dlapack={0}".format(lapack),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
+        if self.spec.satisfies("@0.7.0:"):
+            args += [
+                "-Dtrexio={0}".format("enabled" if "+trexio" in self.spec else "disabled"),
+                "-Dhdf5={0}".format("enabled" if "+hdf5" in self.spec else "disabled"),
+                "-Dddx=false",
+            ]
+        return args
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+        ]
+        if self.spec.satisfies("@0.7.0:"):
+            args += [
+                self.define_from_variant("TBLITE_WITH_TREXIO", "trexio"),
+                self.define_from_variant("TBLITE_WITH_HDF5", "hdf5"),
+                self.define("TBLITE_WITH_DDX", False),
+            ]
+        return args

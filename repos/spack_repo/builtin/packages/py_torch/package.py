@@ -610,6 +610,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         working_dir="third_party/fbgemm",
     )
 
+    # Make Pytorch build work in air gapped environments (without internet access)
+    # This forwards six source folder path to NNPACK which forwards it to PeachPy
+    patch("air_gapped_nnpack_cmake.patch", when="@2.12")
+    patch("air_gapped_nnpack_cmake_older.patch", when="@2.5:2.11")
+
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
         filter_file(
@@ -776,6 +781,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         # cmake/External/nnpack.cmake
         enable_or_disable("nnpack")
+        if "+nnpack" in self.spec and "py-six" in self.spec:
+            # NNPACK/PeachPy wires this path into PYTHONPATH for codegen.
+            # Point it at Spack's installed py-six to avoid network fetches.
+            env.set(
+                "PYTHON_SIX_SOURCE_DIR",
+                self["py-six"].module.python_purelib,
+            )
 
         enable_or_disable("numa")
         if "+numa" in self.spec:
