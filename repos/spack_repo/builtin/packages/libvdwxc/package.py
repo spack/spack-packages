@@ -33,7 +33,7 @@ class Libvdwxc(AutotoolsPackage):
     depends_on("mpi@2:", when="+mpi")
     depends_on("pfft", when="+pfft")
 
-    depends_on("autoconf", type="build", when="@master")
+    depends_on("autoconf@2.71:", type="build", when="@master")
     depends_on("automake", type="build", when="@master")
     depends_on("libtool", type="build", when="@master")
 

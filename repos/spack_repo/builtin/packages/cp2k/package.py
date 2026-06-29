@@ -132,6 +132,8 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("quip", default=False, when="@:2025.2", description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
+    variant("mpi_f08", default=True, description="Use MPI F08 module", when="+mpi ^cray-mpich@9:")
+    variant("mpi_f08", default=True, description="Use MPI F08 module", when="+mpi ^mpich@4.1:")
     variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
     variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
     variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
