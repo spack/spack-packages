@@ -62,7 +62,7 @@ class PyGrpcioTools(PythonPackage):
         if version >= Version("1.63.0"):
             return f"https://files.pythonhosted.org/packages/source/g/grpcio-tools/grpcio_tools-{version}.tar.gz"
         return super().url_for_version(version)
-    
+
     def patch(self):
         if self.spec.satisfies("%fj"):
             filter_file("-std=gnu99", "", "setup.py")
