@@ -1,0 +1,13 @@
+diff --git a/tools/setup_helpers/cmake.py b/tools/setup_helpers/cmake.py
+index 02ab011..0a61f65 100644
+--- a/tools/setup_helpers/cmake.py
++++ b/tools/setup_helpers/cmake.py
+@@ -293,6 +293,8 @@ class CMake:
+                     "TORCH_XPU_ARCH_LIST",
+                     "TRACING_BASED",
+                     "PYTHON_LIB_REL_PATH",
++                    "XNNPACK_ENABLE_ARM_SME",
++                    "XNNPACK_ENABLE_ARM_SME2",
+                 )
+             }
+         )

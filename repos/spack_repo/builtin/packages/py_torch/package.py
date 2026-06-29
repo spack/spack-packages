@@ -478,6 +478,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("fj-ssl2_1.8.patch", when="@1.8^fujitsu-ssl2")
     patch("fj-ssl2_1.6-1.7.patch", when="@1.6:1.7^fujitsu-ssl2")
 
+    # Disable XNNPACK SME on A64FX
+    patch("disable-arm-sme-kernels-on-a64fx.patch", when="target=a64fx")
+
     # Fix compilation of +distributed~tensorpipe
     # https://github.com/pytorch/pytorch/issues/68002
     patch(
@@ -843,6 +846,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("BUILD_CUSTOM_PROTOBUF", "ON")
         else:
             env.set("BUILD_CUSTOM_PROTOBUF", "OFF")
+
+        # Disable XNNPACK SME and KleidiAI on A64FX
+        if self.spec.satisfies("target=a64fx"):
+            env.set("XNNPACK_ENABLE_ARM_SME", "OFF")
+            env.set("XNNPACK_ENABLE_ARM_SME2", "OFF")
+            env.set("USE_KLEIDIAI", "OFF")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         self.torch_cuda_arch_list(env)
