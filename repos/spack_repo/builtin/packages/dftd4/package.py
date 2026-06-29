@@ -18,7 +18,7 @@ class Dftd4(MesonPackage, CMakePackage):
 
     maintainers("awvwgk")
 
-    license("LGPL-3.0-only")
+    license("LGPL-3.0-or-later")
 
     build_system("cmake", "meson", default="meson")
 
@@ -38,6 +38,7 @@ class Dftd4(MesonPackage, CMakePackage):
     version("3.1.0", sha256="b652aa7cbf8d087c91bcf80f2d5801459ecf89c5d4176ebb39e963ee740ed54b")
     version("3.0.0", sha256="a7539d68d48d851bf37b79e37ea907c9da5eee908d0aa58a0a7dc15f04f8bc35")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
     variant(
         "python",
@@ -45,8 +46,6 @@ class Dftd4(MesonPackage, CMakePackage):
         when="build_system=meson",
         description="Build Python extension module",
     )
-    with when("build_system=cmake"):
-        variant("shared", default=True, description="Build shared libraries")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -58,6 +57,8 @@ class Dftd4(MesonPackage, CMakePackage):
     depends_on("pkgconfig", type="build")
 
     depends_on("py-cffi", when="+python")
+    depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
 
     for build_system in ["cmake", "meson"]:
@@ -85,6 +86,7 @@ class MesonBuilder(meson.MesonBuilder):
             lapack = "auto"
 
         return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dlapack={0}".format(lapack),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
