@@ -447,19 +447,20 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         """
         import llnl.util.filesystem as fs
 
-        # Get the amdclang++ compiler
-        amdclang = join_path(self.spec["hip"].prefix.bin, "amdclang++")
+        amdclang = join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++")
 
-        # Run amdclang++ --print-resource-dir to get the resource directory
         try:
             output = Executable(amdclang)("--print-resource-dir", output=str, error=str)
             resource_dir = output.strip()
 
             # Search for libclang_rt.builtins* under the resource directory
-            clang_rt_lib = fs.find_first(resource_dir, "libclang_rt.builtins*")
+            clang_rt_libs = fs.find(resource_dir, "libclang_rt.builtins*")
 
-            if clang_rt_lib:
-                return clang_rt_lib
+            if clang_rt_libs:
+                x86_64libs = list(x for x in clang_rt_libs if "x86_64" in x)
+                if x86_64libs:
+                    return list(sorted(x86_64libs))[0]
+                return list(sorted(clang_rt_libs))[0]
             else:
                 raise RuntimeError(f"Could not find libclang_rt.builtins* in {resource_dir}")
         except Exception as e:
