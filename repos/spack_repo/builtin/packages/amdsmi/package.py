@@ -67,13 +67,45 @@ class Amdsmi(CMakePackage):
     depends_on("libdrm@:2.4.124", when="@:7.2")
 
     depends_on("py-pyyaml")
+
+    depends_on("googletest@1.14:", when="@6.4:")
+    depends_on("googletest@1.16:", when="@7.2:")
+
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="projects/amdsmi/esmi_ib_library",
+        when="@7.2:",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="esmi_ib_library",
+        when="@7.0:7.1",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.1.2",
+        commit="a8ea3019061419fae9dabdb93786ae278957b0be",
+        placement="esmi_ib_library",
+        when="@6.4",
+    )
+
     patch(
         "https://github.com/ROCm/amdsmi/commit/2858e51b4e8ff124ed67e23e0cd131e8b2140fae.patch?full_index=1",
         sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
         when="@6.2",
     )
-    depends_on("googletest@1.11:")
-    depends_on("googletest@1.14:", when="@6:")
+    patch(
+        "https://github.com/ROCm/amdsmi/commit/9b8c6fc4e2236d4d43831e1fabf5b0550738d735.patch?full_index=1",
+        sha256="091499873b52aae42ae09e1a30ab5742db4a5a66bf3f03c1914a65724688ac97",
+        when="@6.4:7.1",
+    )
 
     @property
     def root_cmakelists_dir(self):
@@ -86,8 +118,6 @@ class Amdsmi(CMakePackage):
         args = []
         args.append(self.define("BUILD_TESTS", "ON"))
         args.append("-DCMAKE_INSTALL_LIBDIR=lib")
-        # TODO enable and add esmi_ib_library as a resource
-        args.append(self.define("ENABLE_ESMI_LIB", "OFF"))
         return args
 
     @classmethod

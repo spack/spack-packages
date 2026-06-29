@@ -170,6 +170,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")
     depends_on("py-msgpack", when="@7.1:")
+    depends_on("py-nanobind", when="@7.1:")
 
     for t_version, t_commit in [
         ("7.0.2", "7fc3631478ce7887f3cfdba3adb149240ac539db"),
@@ -275,6 +276,7 @@ class Hipsparselt(CMakePackage, ROCmPackage):
             self.define("MSGPACK_DIR", self.spec["msgpack-c"].prefix),
             self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
             self.define("BUILD_SHARED_LIBS", "ON"),
+            self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS")
         ]
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
