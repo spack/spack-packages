@@ -16,6 +16,7 @@ class PyPolars(PythonPackage):
     license("MIT")
     maintainers("Chrismarsh")
 
+    version("1.39.3", sha256="2e016c7f3e8d14fa777ef86fe0477cec6c67023a20ba4c94d6e8431eefe4a63c")
     version("1.29.0", sha256="d2acb71fce1ff0ea76db5f648abd91a7a6c460fafabce9a2e8175184efa00d02")
     version("0.20.5", sha256="fa4abc22cee024b5872961ddcd8a13a0a76150df345e21ce4308c2b1a36b47aa")
 

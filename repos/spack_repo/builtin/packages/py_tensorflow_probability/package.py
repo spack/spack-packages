@@ -34,10 +34,12 @@ class PyTensorflowProbability(Package):
     version("0.20.0", sha256="f0fb9a1f88a36a8f57d4d9cce4f9bf8dfacb6fc7778751729fe3c3067e5a1363")
     version("0.19.0", sha256="b32d2ae211ec727df9791b501839619f5389134bd6d4fe951570f500b0e75f55")
     version("0.18.0", sha256="f4852c0fea9117333ccb868f7a2ca75aecf5dd765dc39fd4ee5f8ab6fe87e909")
+    version("0.12.2", sha256="a17fbb55599862d934dc3632424a9bb4ca527795e711adfeb5f5e0a63e908a2a")
 
     extends("python@3.9:", when="@0.22:")
     extends("python@3.8:", when="@0.20:0.21")
     extends("python@3.7:", when="@0.13:0.19")
+    extends("python@3.6:", when="@0.12:")
     depends_on("py-pip", type="build")
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools", type="build")
@@ -76,6 +78,7 @@ class PyTensorflowProbability(Package):
         depends_on("py-jax@0.4.14:0.4", when="@0.21", type=("build", "run"))
         depends_on("py-jax@0.4.8:0.4", when="@0.20", type=("build", "run"))
         depends_on("py-jax@0.3.25:3", when="@0.19", type=("build", "run"))
+        depends_on("py-jax@:0.2.11", when="@0.12", type=("build", "run"))
 
     depends_on(
         "py-tensorflow@2.10:2", when="@0.18", type=("build", "run")

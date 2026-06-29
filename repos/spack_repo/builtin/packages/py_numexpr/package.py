@@ -37,7 +37,12 @@ class PyNumexpr(PythonPackage):
         depends_on("py-setuptools@77:", when="@2.12:")
         depends_on("py-setuptools")
 
-        depends_on("py-numpy@2:", when="@2.10.2:")
+    depends_on("py-numpy@1.23:", when="@2.10.2:", type=("build", "run"))
+    depends_on("py-numpy@1.13.3:1.25", type=("build", "run"), when="@2.8.3:2.9")
+    # https://github.com/pydata/numexpr/issues/397
+    depends_on("py-numpy@1.7:1.22", type=("build", "run"), when="@:2.7")
+    # https://github.com/pydata/numexpr/pull/478
+    depends_on("py-numpy@:1", when="@:2.9", type=("build", "run"))
 
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@2.11:")
