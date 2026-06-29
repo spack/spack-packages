@@ -25,14 +25,15 @@ class RAbaenrichment(RPackage):
 
     bioc = "ABAEnrichment"
 
-    version("1.26.0", commit="33df9e162aec07e2aae92cc058cbfb33720ba4b4")
-    version("1.24.0", commit="5d20752263ae8f18ea5f5a6cfbdd5921a0f236d7")
-    version("1.20.0", commit="608433a0b07e6dd99915dc536a038d960f1be1d5")
-    version("1.14.1", commit="e1ebfb5de816b924af16675a5ba9ed1a6b527b23")
-    version("1.12.0", commit="1320e932deafd71d67c7a6f758d15b00d6d7f7d7")
-    version("1.10.0", commit="15f33ccb694a91d2d2067c937682c4bc952def6c")
-    version("1.8.0", commit="cb8155ee9a04fb55b2a2e8c23df7c0be15bb2624")
-    version("1.6.0", commit="d2a0467dcb7aa6e103e3b83dccd6510b0e142ac1")
+    with default_args(get_full_repo=True):
+        version("1.26.0", commit="33df9e162aec07e2aae92cc058cbfb33720ba4b4")
+        version("1.24.0", commit="5d20752263ae8f18ea5f5a6cfbdd5921a0f236d7")
+        version("1.20.0", commit="608433a0b07e6dd99915dc536a038d960f1be1d5")
+        version("1.14.1", commit="e1ebfb5de816b924af16675a5ba9ed1a6b527b23")
+        version("1.12.0", commit="1320e932deafd71d67c7a6f758d15b00d6d7f7d7")
+        version("1.10.0", commit="15f33ccb694a91d2d2067c937682c4bc952def6c")
+        version("1.8.0", commit="cb8155ee9a04fb55b2a2e8c23df7c0be15bb2624")
+        version("1.6.0", commit="d2a0467dcb7aa6e103e3b83dccd6510b0e142ac1")
 
     depends_on("cxx", type="build")  # generated
 

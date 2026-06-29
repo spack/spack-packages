@@ -2,9 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-import os
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
@@ -23,7 +20,7 @@ class Prrte(AutotoolsPackage):
 
     license("BSD-3-Clause-Open-MPI")
 
-    version("develop", branch="master")
+    version("develop", branch="master", no_cache=True, submodules=True)
     version("4.1.0", sha256="285ad62b670075708b9fcfe14c54baa599733bc274d10502a82e8eebba0b7c70")
     version("4.0.0", sha256="3c2ec961e0ba0c99128c7bf3545f4789d55a85a70ce958e868ae5e3db6ed4de4")
     version("3.0.13", sha256="635a546b3d3cfa587f4122bfaa0038df07b56381ffd649e57b089893712fa231")
@@ -45,7 +42,12 @@ class Prrte(AutotoolsPackage):
     version("2.0.0", sha256="9f4abc0b1410e0fa74ed7b00cfea496aa06172e12433c6f2864d11b534becc25")
     version("1.0.0", sha256="a9b3715e059c10ed091bd6e3a0d8896f7752e43ee731abcc95fb962e67132a2d")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+
+    # Python is used to generate the docs and the show-help array,
+    # both of which are included pre-built in tarballs.
+    # https://github.com/openpmix/prrte/issues/2438
+    depends_on("python@3.7:", type="build", when="@develop")
 
     depends_on("pmix")
     depends_on("pmix@6.1:", when="@4.1:")
@@ -66,7 +68,10 @@ class Prrte(AutotoolsPackage):
     depends_on("libtool", type=("build"))
     depends_on("flex", type=("build"))
     depends_on("pkgconfig", type="build")
-    depends_on("python@3.7:", type="build", when="@develop")
+
+    # The shipped configured has an expectation on automake version leading to either
+    # system automake use or configure failure
+    force_autoreconf = True
 
     # https://github.com/openpmix/openpmix/blob/master/docs/installing-pmix/configure-cli-options/runtime.rst
     SCHEDULERS = ("alps", "lsf", "tm", "slurm", "sge")
@@ -81,9 +86,18 @@ class Prrte(AutotoolsPackage):
     depends_on("slurm", when="schedulers=slurm")
 
     # fixes a segfault in v4.1.0 for some Apple ARM architectures
+    # https://github.com/openpmix/prrte/pull/2417
     patch(
-        "https://patch-diff.githubusercontent.com/raw/openpmix/prrte/pull/2417.patch?full_index=1",
-        sha256="971e9beffac4cf32c842248a0f030babfd87203e252bfda9f750a010c58105ab",
+        "https://github.com/openpmix/prrte/commit/378c61c1d8eff9858a7774c869fbd332c48711a8.patch?full_index=1",
+        sha256="64faa1acb89eddea096307a2658b11ccdaf85dc8c870fed4b3f8670329706a4f",
+        when="@4.1.0",
+    )
+
+    # Improve hetero node handling
+    # https://github.com/openpmix/prrte/pull/2430
+    patch(
+        "https://github.com/openpmix/prrte/commit/a6b09c9c3fb84838b056c31e802b5f79ac4e8d6b.patch?full_index=1",
+        sha256="91b28f5c701c8543b4807a29e9b5154b9d7e62f5d3a1e3036dadf1a9b5b0ca65",
         when="@4.1.0",
     )
 
@@ -95,9 +109,6 @@ class Prrte(AutotoolsPackage):
             return super().url_for_version(version)
 
     def autoreconf(self, spec, prefix):
-        # If configure exists nothing needs to be done
-        if os.path.exists(self.configure_abs_path):
-            return
         with working_dir(self.configure_directory):
             perl = spec["perl"].command
             perl("autogen.pl")
@@ -127,9 +138,18 @@ class Prrte(AutotoolsPackage):
             config_args.append("--with-sge")
 
         if spec.satisfies("schedulers=tm"):
-            config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
+            if spec.satisfies("@develop"):
+                # https://github.com/openpmix/prrte/pull/2434
+                config_args.append(f"--with-pbs={self.spec['pbs'].prefix}")
+            else:
+                config_args.append(f"--with-tm={self.spec['pbs'].prefix}")
 
         if spec.satisfies("schedulers=slurm"):
             config_args.append("--with-slurm")
 
         return config_args
+
+    # ensure prrte prefix is set so that the FQP of mpirun is not required
+    # ref: https://github.com/openpmix/prrte/issues/2426#issuecomment-4261910023
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.set("PRTE_PREFIX", self.spec.prefix)

@@ -17,6 +17,7 @@ class Fides(CMakePackage):
     maintainers("caitlinross", "dpugmire")
 
     version("master", branch="master")
+    version("1.3.0", sha256="1ba00efd68a1dde418dbc774b19b6c6a02d56c0ee696bdcaeb8c9e54697c6ae0")
     version("1.2.0", sha256="12be939d75c765dab9241f9ed2b64af01cce2b10281de402f64fb685e6ccd7df")
     version("1.1.0", sha256="40d2e08b8d5cfdfc809eae6ed2ae0731108ce3b1383485f4934a5ec8aaa9425e")
     version("1.0.0", sha256="c355fdb4ca3790c1fa9a4491a0d294b8f883b6946c540ad9e5633c9fd8c8c3aa")

@@ -15,7 +15,10 @@ class AspellBuilder(AutotoolsBuilder):
     """
 
     def configure(
-        self, pkg: "AspellDictPackage", spec: Spec, prefix: Prefix  # type: ignore[override]
+        self,
+        pkg: "AspellDictPackage",
+        spec: Spec,
+        prefix: Prefix,  # type: ignore[override]
     ):
         aspell = spec["aspell"].prefix.bin.aspell
         prezip = spec["aspell"].prefix.bin.prezip
