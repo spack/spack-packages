@@ -51,6 +51,12 @@ class Mmseqs2(CMakePackage, CudaPackage):
         level=1,
     )
 
+    @when("@18-8cc5c+cuda")
+    def patch(self):
+        filter_file(
+            r'^(#include "GpuUtil.h")', "\\1\n#include <thread>\n", "src/util/gpuserver.cpp"
+        )
+
     # apple-clang will build with +openmp with llvm-openmp as a dependency
     # however when running with real data, it threw segmentation faults
     conflicts("%apple-clang", when="+openmp")
