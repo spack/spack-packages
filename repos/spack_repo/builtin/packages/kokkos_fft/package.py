@@ -32,7 +32,7 @@ class KokkosFft(CMakePackage):
     variant(
         "device_backend",
         default="none",
-        values=("none", "cufft", "hipfft", "onemkl"),
+        values=("none", "cufft", "hipfft", "onemkl", "rocfft"),
         multi=False,
         description="Enable device backend",
     )
@@ -55,6 +55,7 @@ class KokkosFft(CMakePackage):
     requires("^kokkos +openmp", when="host_backend=fftw-openmp")
     requires("^kokkos +cuda +wrapper", when="device_backend=cufft")
     requires("^kokkos +rocm", when="device_backend=hipfft")
+    requires("^kokkos +rocm", when="device_backend=rocfft")
     requires("^kokkos +sycl", when="device_backend=onemkl")
     depends_on("googletest@1.15:1", when="+tests")
 
@@ -65,6 +66,10 @@ class KokkosFft(CMakePackage):
         depends_on("hipfft@5.3:")
         depends_on("hipfft@:7", when="@:1")
         depends_on("hipfft@:6", when="@:0")
+    with when("device_backend=rocfft"):
+        depends_on("rocfft@5.3:")
+        depends_on("rocfft@:7", when="@:1")
+        depends_on("rocfft@:6", when="@:0")
     depends_on("intel-oneapi-mkl@2023:2025", when="device_backend=onemkl")
 
     def cmake_args(self):
@@ -81,6 +86,7 @@ class KokkosFft(CMakePackage):
             ),
             self.define("KokkosFFT_ENABLE_CUFFT", self.spec.satisfies("device_backend=cufft")),
             self.define("KokkosFFT_ENABLE_HIPFFT", self.spec.satisfies("device_backend=hipfft")),
+            self.define("KokkosFFT_ENABLE_ROCFFT", self.spec.satisfies("device_backend=rocfft")),
             self.define("KokkosFFT_ENABLE_ONEMKL", self.spec.satisfies("device_backend=onemkl")),
         ]
 
