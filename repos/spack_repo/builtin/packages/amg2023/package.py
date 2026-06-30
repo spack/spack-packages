@@ -19,7 +19,7 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     tags = ["benchmark"]
     homepage = "https://github.com/LLNL/AMG2023"
     git = "https://github.com/LLNL/AMG2023.git"
-    
+
     maintainers("liruipeng")
 
     license("Apache-2.0")
@@ -34,7 +34,7 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     # the executable with the C++ linker. Both language dependencies are needed
     # so Spack's compiler wrappers set CC/CXX and linker wrapper arguments.
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build”)
+    depends_on("cxx", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("hypre+mpi", when="+mpi")
