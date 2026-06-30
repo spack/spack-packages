@@ -19,6 +19,7 @@ class Flint(AutotoolsPackage):
     license("LGPL-2.1-or-later")
 
     version("main", branch="main")
+    version("3.6.0", sha256="b95e2c7792f5eea4a1c8d2d42c4098434756832e57a094b295eb5dfdc9b4c36b")
     version("3.5.0", sha256="3982f385f00610a944e0152eb0a29893b2366fa640e8f5f3076c47564cf7e2a6")
     version("3.4.0", sha256="9497679804dead926e3affeb8d4c58739d1c7684d60c2c12827550d28e454a33")
     version("3.1.2", sha256="fdb3a431a37464834acff3bdc145f4fe8d0f951dd5327c4c6f93f4cbac5c2700")
