@@ -143,7 +143,6 @@ class RocmTensile(CMakePackage):
             self.define_from_variant("TENSILE_USE_OPENMP", "openmp"),
             self.define("BUILD_WITH_TENSILE_HOST", True),
             self.define("Tensile_LIBRARY_FORMAT", "msgpack"),
-            self.define("TENSILE_USE_OPENMP", True),
         ]
 
         if self.spec.satisfies("^cmake@3.21.0:"):
