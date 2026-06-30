@@ -266,6 +266,9 @@ class CompilerWrapper(Package):
             setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
             setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
 
+        if dependent_spec.has_virtual_dependency("hip-lang"):
+            setattr(module, "spack_hipcxx", _spack_compiler_attribute(language="hip-lang"))
+
     @property
     def disable_new_dtags(self) -> str:
         if self.spec.satisfies("platform=darwin"):
