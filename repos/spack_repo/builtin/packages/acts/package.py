@@ -216,7 +216,6 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("geant4", when="+geant4")
     depends_on("geomodel @6.3.0: +geomodelg4", when="+geomodel")
     depends_on("geomodel @6.8.0:", when="@43.1: +geomodel ")
-    depends_on("git-lfs", when="@12.0.0:")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")
