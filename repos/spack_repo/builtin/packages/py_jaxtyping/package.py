@@ -15,15 +15,19 @@ class PyJaxtyping(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.3.9", sha256="f8c02d1b623d5f1b6665d4f3ddaec675d70004f16a792102c2fc51264190951d")
     version("0.2.33", sha256="9a9cfccae4fe05114b9fb27a5ea5440be4971a5a075bbd0526f6dd7d2730f83e")
     version("0.2.19", sha256="21ff4c3caec6781cadfe980b019dde856c1011e17d11dfe8589298040056325a")
 
     depends_on("py-hatchling", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@0.3.8:")
         depends_on("python@3.9:3", when="@0.2.33:")
         depends_on("python@3.8:3", when="@0.2.19")
-        depends_on("py-typeguard@2.13.3", when="@0.2.33:")
+        depends_on("py-wadler-lindig@0.1.3:", when="@0.2.37:")
+        depends_on("py-typing-extensions", when="@0.2.36^python@:3.9")
+        depends_on("py-typeguard@2.13.3", when="@0.2.33:0.2.34")
         depends_on("py-typeguard@2.13.3:", when="@0.2.19")
 
         # Historical dependencies
