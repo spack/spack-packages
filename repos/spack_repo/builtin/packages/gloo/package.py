@@ -62,6 +62,14 @@ class Gloo(CMakePackage, CudaPackage):
     depends_on("cmake@2.8.12:", type="build")
     depends_on("libuv", when="platform=windows")
 
+    def patch(self):
+        if self.compiler.name == "gcc" and self.compiler.version >= Version("14.0.0"):
+            filter_file(
+                'gloo_list_append_if_unique\(GLOO_NVCC_FLAGS "-std=c\+\+11"\)',
+                'gloo_list_append_if_unique(GLOO_NVCC_FLAGS "-std=c++14")',
+                "cmake/Cuda.cmake",
+            )
+
     def cmake_args(self):
         return [
             self.define_from_variant("GLOO_USE_TORCH_DTYPES", "cuda"),
