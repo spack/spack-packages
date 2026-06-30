@@ -19,6 +19,8 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     tags = ["benchmark"]
     homepage = "https://github.com/LLNL/AMG2023"
     git = "https://github.com/LLNL/AMG2023.git"
+    
+    maintainers("liruipeng")
 
     license("Apache-2.0")
 
