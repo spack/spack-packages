@@ -24,14 +24,14 @@ class Jdk(Package):
     redistribute(source=False, binary=False)
 
     version(
-        "21.0.2",
-        sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f",
+        "21.0.11",
+        sha256="e1c25a83f9e2e374c93e0c29cc3d98a947621ae0fefa4a8d932951eb160c47c3",
         url="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz",
     )
     version(
-        "17.0.10",
-        sha256="e4fb2df9a32a876afb0a6e17f54c594c2780e18badfa2e8fc99bc2656b0a57b1",
-        url="https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz",
+        "17.0.12",
+        sha256="311f1448312ecab391fe2a1b2ac140d6e1c7aea6fbf08416b466a58874f2b40f",
+        url="https://download.oracle.com/java/17/archive/jdk-17.0.12_linux-x64_bin.tar.gz",
     )
 
     provides("java@21", when="@21")
