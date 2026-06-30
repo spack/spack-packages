@@ -363,7 +363,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
         requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
         # OpenCL backend implementation relies on LIBXS starting from 2026.2
-        # and master (June 10 2026)
         requires("libxs@1:+fortran", when="@2026.2:")
         requires("libxstream@1:", when="@2026.2:")
 
