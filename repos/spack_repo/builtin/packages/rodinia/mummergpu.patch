@@ -1,0 +1,526 @@
+diff --git a/cuda/mummergpu/src/Makefile b/cuda/mummergpu/src/Makefile
+index a567bad..8ac71b9 100755
+--- a/cuda/mummergpu/src/Makefile
++++ b/cuda/mummergpu/src/Makefile
+@@ -1,7 +1,7 @@
+ include ../../../common/make.config
+ 
+ all: mummergpu
+-.SUFFIXES : .cu .cu_dbg_o .c_dbg_o .cpp_dbg_o .cu_rel_o .c_rel_o .cpp_rel_o .cubin
++.SUFFIXES : .cu .cu_dbg.o .c_dbg.o .cpp_dbg.o .cu_rel.o .c_rel.o .cpp_rel.o .cubin .o
+ 
+ include ../experiments/test_rule.mk
+ 
+@@ -11,7 +11,7 @@ CUDA_INSTALL_PATH := $(CUDA_DIR)
+ NVCC       := $(CUDA_INSTALL_PATH)/bin/nvcc 
+ CXX        := g++ -fopenmp $(PROFILE)
+ CC         := gcc 
+-LINK       := g++ -fopenmp -m64 -fPIC $(PROFILE)
++LINK       := $(NVCC) -Xcompiler -fopenmp -Xcompiler -m64 -Xcompiler -fPIC -L ../lib $(PROFILE)
+ 
+ # Add source files here
+ STATIC_LIB := libmummergpu.a
+@@ -38,7 +38,7 @@ BINNAME    ?= mummergpu
+ INCLUDES  += -I. -I$(CUDA_INSTALL_PATH)/include 
+ 
+ # Libs
+-LIB       := -L$(CUDA_LIB_DIR) -L$(LIBDIR) -lcuda -lcudart -lGL -lGLU ${LIB}
++LIB       := -lcuda -lGL -lGLU ${LIB}
+ 
+ # Warning flags
+ CXXWARN_FLAGS := \
+@@ -105,16 +105,16 @@ CFLAGS    += $(COMMONFLAGS)
+ 
+ OBJDIR := $(ROOTOBJDIR)/$(BINSUBDIR)
+ 
+-#.c.c_$(APPEND)_o:
+-$(OBJDIR)/%.c_o : $(SRCDIR)%.c
++#.c.c_$(APPEND).o:
++$(OBJDIR)/%.c.o : $(SRCDIR)%.c
+ 	$(CC) $(CFLAGS) -o $@ -c $<
+ 
+-#.cpp.cpp_$(APPEND)_o:
+-$(OBJDIR)/%.cpp_o : $(SRCDIR)%.cpp
++#.cpp.cpp_$(APPEND).o:
++$(OBJDIR)/%.cpp.o : $(SRCDIR)%.cpp
+ 	$(CXX) $(CXXFLAGS) -o $@ -c $<
+ 
+-#.cu.cu_$(APPEND)_o:
+-$(OBJDIR)/%.cu_o : $(SRCDIR)%.cu
++#.cu.cu_$(APPEND).o:
++$(OBJDIR)/%.cu.o : $(SRCDIR)%.cu
+ 	$(NVCC) -o $@ -c $< $(NVCCFLAGS)
+ 
+ #.cu.cubin
+@@ -131,16 +131,16 @@ makedirectories:
+ 	@mkdir -p $(BINDIR)
+ 
+ LIBOBJS= \
+-    $(OBJDIR)/mummergpu_gold.cpp_o \
+-    $(OBJDIR)/suffix-tree.cpp_o \
+-    $(OBJDIR)/PoolMalloc.cpp_o \
+-    $(OBJDIR)/mummergpu.cu_o \
++    $(OBJDIR)/mummergpu_gold.cpp.o \
++    $(OBJDIR)/suffix-tree.cpp.o \
++    $(OBJDIR)/PoolMalloc.cpp.o \
++    $(OBJDIR)/mummergpu.cu.o \
+ 
+ $(LIBDIR)/libmummergpu$(LIBSUFFIX).a: $(LIBOBJS)
+ 	ar qv $@ $(LIBOBJS)
+ 
+ BINOBJS= \
+-    $(OBJDIR)/mummergpu_main.cpp_o
++    $(OBJDIR)/mummergpu_main.cpp.o
+ 
+ $(BINDIR)/mummergpu: makedirectories $(LIBDIR)/libmummergpu$(LIBSUFFIX).a $(BINOBJS)
+ 	$(LINK) -o $(BINDIR)/$(BINNAME)  $(BINOBJS) -lmummergpu$(LIBSUFFIX) $(LIB) 
+diff --git a/cuda/mummergpu/src/mummergpu.cu b/cuda/mummergpu/src/mummergpu.cu
+index 4b0f191..de61aa7 100755
+--- a/cuda/mummergpu/src/mummergpu.cu
++++ b/cuda/mummergpu/src/mummergpu.cu
+@@ -76,13 +76,17 @@ void trap_dbg()
+ } while (0)
+ 
+ unsigned int num_bind_tex_calls = 0;
+-#define BIND_TEX(offset, tex, arr, desc, len) do {							 \
+-	CUDA_SAFE_CALL(cudaBindTexture(offset, tex, arr, desc, len));			 \
+-	++num_bind_tex_calls;													 \
+-} while(0)
+-
+-#define BIND_TEX_ARRAY(tex, arr, desc) do {							 		 \
+-	CUDA_SAFE_CALL(cudaBindTextureToArray(tex, arr, desc));					 \
++//#define BIND_TEX(offset, tex, arr, desc, len) do {							 \
++//	CUDA_SAFE_CALL(cudaBindTexture(offset, tex, arr, desc, len));			 \
++//	++num_bind_tex_calls;													 \
++//} while(0)
++//
++//#define BIND_TEX_ARRAY(tex, arr, desc) do {							 		 \
++//	CUDA_SAFE_CALL(cudaBindTextureToArray(tex, arr, desc));					 \
++//	++num_bind_tex_calls;													 \
++//} while(0)
++#define CREATE_TEX_OBJ(tex, resDesc, texDesc) do {							 		 \
++	CUDA_SAFE_CALL(cudaCreateTextureObject(tex, resDesc, texDesc, NULL));					 \
+ 	++num_bind_tex_calls;													 \
+ } while(0)
+ 
+@@ -125,7 +129,7 @@ void createTreeTexture(const char * filename,
+                        PixelOfNode** nodeTexture, 
+ 					   PixelOfChildren** childrenTexture,
+                        unsigned int* width, 
+-                       unsigned int* node_height,
++unsigned int* node_height,
+                        unsigned int* children_height,
+ 					   AuxiliaryNodeData** aux_data,
+ 					   int* num_match_coords,
+@@ -500,12 +504,24 @@ void loadReferenceTexture(MatchContext* ctx)
+                                           numrows*ref->pitch,
+                                           cudaMemcpyHostToDevice));
+                                           
+-        reftex.addressMode[0] = cudaAddressModeClamp;
+-        reftex.addressMode[1] = cudaAddressModeClamp;
+-        reftex.filterMode = cudaFilterModePoint;
+-        reftex.normalized = false;
+-        
+-		BIND_TEX_ARRAY(reftex, (cudaArray*)ref->d_ref_array, refTextureDesc);
++
++        //reftex.addressMode[0] = cudaAddressModeClamp;
++        //reftex.addressMode[1] = cudaAddressModeClamp;
++        //reftex.filterMode = cudaFilterModePoint;
++        //reftex.normalized = false;
++		//BIND_TEX_ARRAY(reftex, (cudaArray*)ref->d_ref_array, refTextureDesc);
++		// Specify texture
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeArray;
++		//resDesc.res.array.desc = refTextureDesc;
++		resDesc.res.array.array = (cudaArray*)ref->d_ref_array;
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.addressMode[1] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&reftex, &resDesc, &texDesc);
+ 
+         ctx->ref->bytes_on_board += numrows * ref->pitch;
+ #else
+@@ -516,12 +532,23 @@ void loadReferenceTexture(MatchContext* ctx)
+ 									ref->len, 
+ 									cudaMemcpyHostToDevice) );
+ 									
+-		reftex.addressMode[0] = cudaAddressModeClamp;
+-		reftex.filterMode = cudaFilterModePoint;
+-		reftex.normalized = false;    // access with normalized texture coordinates
++		//reftex.addressMode[0] = cudaAddressModeClamp;
++		//reftex.filterMode = cudaFilterModePoint;
++		//reftex.normalized = false;    // access with normalized texture coordinates
++		//BIND_TEX(0, reftex, (void*)(ref->d_ref_array), refDesc, ref->len);
+ 		cudaChannelFormatDesc refDesc =
+            cudaCreateChannelDesc(8,0,0,0, cudaChannelFormatKindUnsigned);
+-		BIND_TEX(0, reftex, (void*)(ref->d_ref_array), refDesc, ref->len);
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeLinear;
++		resDesc.res.linear.devPtr = (void*)(ref->d_ref_array);
++		resDesc.res.linear.desc = refDesc;
++		resDesc.res.linear.sizeInBytes = ref->len;
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&reftex, &resDesc, &texDesc);
+ 
+         ctx->ref->bytes_on_board += ref->len;
+ #endif
+@@ -567,7 +594,8 @@ void loadReferenceTexture(MatchContext* ctx)
+ void unloadReferenceString(Reference* ref)
+ {
+ #if REFTEX
+-   CUDA_SAFE_CALL(cudaUnbindTexture( reftex ) );
++	//CUDA_SAFE_CALL(cudaUnbindTexture( reftex ) );
++	CUDA_SAFE_CALL(cudaDestroyTextureObject( reftex ) );
+ #endif
+ 
+ #if REORDER_REF && REFTEX
+@@ -586,7 +614,8 @@ void unloadReferenceTree(MatchContext* ctx)
+ #if REORDER_TREE
+    // Unload nodetex
+ 	#if NODETEX
+-	   CUDA_SAFE_CALL(cudaUnbindTexture( nodetex ) );
++	   //CUDA_SAFE_CALL(cudaUnbindTexture( nodetex ) );
++	   CUDA_SAFE_CALL(cudaDestroyTextureObject( nodetex ) );
+ 	   CUDA_SAFE_CALL(cudaFreeArray((cudaArray*)(ref->d_node_tex_array)));
+ 	#else
+ 		CUDA_SAFE_CALL(cudaFree(ref->d_node_tex_array));
+@@ -597,7 +626,8 @@ void unloadReferenceTree(MatchContext* ctx)
+     if (ref->d_children_tex_array)
+     {
+ 	#if CHILDTEX
+-	   CUDA_SAFE_CALL(cudaUnbindTexture( childrentex ) );
++	   //CUDA_SAFE_CALL(cudaUnbindTexture( childrentex ) );
++	   CUDA_SAFE_CALL(cudaDestroyTextureObject( childrentex ) );
+ 	   CUDA_SAFE_CALL(cudaFreeArray((cudaArray*)(ref->d_children_tex_array)));
+ 	#else
+ 		CUDA_SAFE_CALL(cudaFree(ref->d_children_tex_array));
+@@ -608,7 +638,8 @@ void unloadReferenceTree(MatchContext* ctx)
+ #else
+ 
+ 	#if NODETEX
+-	   CUDA_SAFE_CALL(cudaUnbindTexture( nodetex ) );
++	   //CUDA_SAFE_CALL(cudaUnbindTexture( nodetex ) );
++	   CUDA_SAFE_CALL(cudaDestroyTextureObject( nodetex ) );
+ 	#endif
+ 		CUDA_SAFE_CALL(cudaFree(ref->d_node_tex_array));
+ 	
+@@ -618,7 +649,8 @@ void unloadReferenceTree(MatchContext* ctx)
+        if (ref->d_children_tex_array)
+        {
+ 	#if CHILDTEX
+-	   CUDA_SAFE_CALL(cudaUnbindTexture( childrentex ) );
++	   //CUDA_SAFE_CALL(cudaUnbindTexture( childrentex ) );
++	   CUDA_SAFE_CALL(cudaDestroyTextureObject( childrentex ) );
+ 	#endif
+ 
+ 	CUDA_SAFE_CALL(cudaFree(ref->d_children_tex_array));
+@@ -676,13 +708,23 @@ void loadReference(MatchContext* ctx) {
+                                            ref->tex_width * ref->tex_node_height * sizeof(PixelOfNode),
+                                            cudaMemcpyHostToDevice));
+ 
+-        nodetex.addressMode[0] = cudaAddressModeClamp;
+-        nodetex.addressMode[1] = cudaAddressModeClamp;
+-        nodetex.filterMode = cudaFilterModePoint;
+-        nodetex.normalized = false;    // access with normalized texture coordinates
+-        
+-        BIND_TEX_ARRAY(nodetex, (cudaArray*)ref->d_node_tex_array, 
+-					nodeTextureDesc);
++        //nodetex.addressMode[0] = cudaAddressModeClamp;
++        //nodetex.addressMode[1] = cudaAddressModeClamp;
++        //nodetex.filterMode = cudaFilterModePoint;
++        //nodetex.normalized = false;    // access with normalized texture coordinates
++        //BIND_TEX_ARRAY(nodetex, (cudaArray*)ref->d_node_tex_array, 
++		//			nodeTextureDesc);
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeArray;
++		resDesc.res.array.array = (cudaArray*)ref->d_node_tex_array;
++		//resDesc.res.array.desc = nodeTextureDesc;
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.addressMode[1] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&nodetex, &resDesc, &texDesc);
+ #else
+ 		size_t nodepitch;
+ 		
+@@ -717,13 +759,24 @@ void loadReference(MatchContext* ctx) {
+                                           ref->tex_width * ref->tex_children_height * sizeof(PixelOfChildren),
+                                           cudaMemcpyHostToDevice));
+                                           
+-        childrentex.addressMode[0] = cudaAddressModeClamp;
+-        childrentex.addressMode[1] = cudaAddressModeClamp;
+-        childrentex.filterMode = cudaFilterModePoint;
+-        childrentex.normalized = false;    // access with normalized texture coordinates
++        //childrentex.addressMode[0] = cudaAddressModeClamp;
++        //childrentex.addressMode[1] = cudaAddressModeClamp;
++        //childrentex.filterMode = cudaFilterModePoint;
++        //childrentex.normalized = false;    // access with normalized texture coordinates
++        //BIND_TEX_ARRAY(childrentex, (cudaArray*)(ref->d_children_tex_array),
++		//			childrenTextureDesc);
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeArray;
++		resDesc.res.array.array = (cudaArray*)ref->d_children_tex_array;
++		//resDesc.res.array.desc = childrenTextureDesc;
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.addressMode[1] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&childrentex, &resDesc, &texDesc);
+         
+-        BIND_TEX_ARRAY(childrentex, (cudaArray*)(ref->d_children_tex_array),
+-					childrenTextureDesc);
+ #else
+ 		size_t childpitch;
+ 
+@@ -775,12 +828,26 @@ void loadReference(MatchContext* ctx) {
+ #if NODETEX  
+         cudaChannelFormatDesc nodeTextureDesc =
+             cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindUnsigned);
+-        nodetex.addressMode[0] = cudaAddressModeClamp;
+-        nodetex.filterMode = cudaFilterModePoint;
+-        nodetex.normalized = false;    // access with normalized texture coordinates
++        //nodetex.addressMode[0] = cudaAddressModeClamp;
++        //nodetex.filterMode = cudaFilterModePoint;
++        //nodetex.normalized = false;    // access with normalized texture coordinates
++        //BIND_TEX(0, nodetex, (void*)(ref->d_node_tex_array), nodeTextureDesc, 
++		//			ref->tex_node_height* sizeof(PixelOfNode));
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeLinear;
++		resDesc.res.linear.devPtr = ref->d_node_tex_array;
++		resDesc.res.linear.desc = nodeTextureDesc;
++		resDesc.res.linear.sizeInBytes = ref->tex_node_height * sizeof(PixelOfNode);
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&nodetex, &resDesc, &texDesc);
++        
++#else
++		size_t childpitch;
+         
+-        BIND_TEX(0, nodetex, (void*)(ref->d_node_tex_array), nodeTextureDesc, 
+-					ref->tex_node_height* sizeof(PixelOfNode));
+ #endif
+ 		if (ref->tex_children_height)
+ 		{
+@@ -795,12 +862,25 @@ void loadReference(MatchContext* ctx) {
+ #if CHILDTEX  
+ 	        cudaChannelFormatDesc childTextureDesc =
+ 	            cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindUnsigned);
+-	        childrentex.addressMode[0] = cudaAddressModeClamp;
+-	        childrentex.filterMode = cudaFilterModePoint;
+-	        childrentex.normalized = false;    // access with normalized texture coordinates
+-
+-	        BIND_TEX(0, childrentex, (void*)(ref->d_children_tex_array), 
+-						childTextureDesc, ref->tex_children_height* sizeof(PixelOfChildren));
++	        //childrentex.addressMode[0] = cudaAddressModeClamp;
++	        //childrentex.filterMode = cudaFilterModePoint;
++	        //childrentex.normalized = false;    // access with normalized texture coordinates
++
++	        //BIND_TEX(0, childrentex, (void*)(ref->d_children_tex_array), 
++			//			childTextureDesc, ref->tex_children_height* sizeof(PixelOfChildren));
++			cudaResourceDesc resDesc = {};
++			resDesc.resType = cudaResourceTypeLinear;
++			resDesc.res.linear.devPtr = ref->d_children_tex_array;
++			resDesc.res.linear.desc = childTextureDesc;
++			resDesc.res.linear.sizeInBytes = ref->tex_children_height * sizeof(PixelOfChildren);
++			cudaTextureDesc texDesc = {};
++			texDesc.addressMode[0] = cudaAddressModeClamp;
++			texDesc.filterMode = cudaFilterModePoint;
++			texDesc.readMode = cudaReadModeElementType;
++			texDesc.normalizedCoords = 0;
++			CREATE_TEX_OBJ(&childrentex, &resDesc, &texDesc);
++			
++			
+ #endif
+         }
+ 
+@@ -926,13 +1006,26 @@ void loadQueries(MatchContext* ctx)
+                                    cudaMemcpyHostToDevice));
+ 
+ #if QRYTEX
+-		qrytex.addressMode[0] = cudaAddressModeClamp;
+-		qrytex.filterMode = cudaFilterModePoint;
+-		qrytex.normalized = false;    // access with normalized texture coordinates
+ 		cudaChannelFormatDesc qryDesc =
+            cudaCreateChannelDesc(8,0,0,0, cudaChannelFormatKindUnsigned);
+-		BIND_TEX(0, qrytex, (void*)(queries->d_tex_array), qryDesc, 
+-					queries->texlen);
++		//qrytex.addressMode[0] = cudaAddressModeClamp;
++		//qrytex.filterMode = cudaFilterModePoint;
++		//qrytex.normalized = false;    // access with normalized texture coordinates
++		//BIND_TEX(0, qrytex, (void*)(queries->d_tex_array), qryDesc, 
++		//			queries->texlen);
++		cudaResourceDesc resDesc = {};
++		resDesc.resType = cudaResourceTypeLinear;
++		resDesc.res.linear.devPtr = queries->d_tex_array;
++		resDesc.res.linear.desc = qryDesc;
++		resDesc.res.linear.sizeInBytes = queries->texlen;
++		cudaTextureDesc texDesc = {};
++		texDesc.addressMode[0] = cudaAddressModeClamp;
++		texDesc.filterMode = cudaFilterModePoint;
++		texDesc.readMode = cudaReadModeElementType;
++		texDesc.normalizedCoords = 0;
++		CREATE_TEX_OBJ(&qrytex, &resDesc, &texDesc);
++		
++		
+ #endif
+         CUDA_MALLOC((void**) &queries->d_addrs_tex_array,
+                                    numQueries * sizeof(int));
+@@ -1573,7 +1666,7 @@ void getExactAlignments(MatchContext * ctx, ReferencePage * page, bool on_cpu)
+ 
+ 		if (num_bind_tex_calls > 100)
+ 		{
+-        	cudaThreadExit();
++        	cudaDeviceReset();
+ 			num_bind_tex_calls = 0;
+ 			loadReference(ctx);
+ 			loadQueries(ctx);
+@@ -2110,7 +2203,7 @@ int matchQueriesToReferencePage(MatchContext* ctx, ReferencePage* page)
+         destroyQueryBlock(ctx->queries);
+ 		if (num_bind_tex_calls > 100)
+ 		{
+-        	cudaThreadExit();
++        	cudaDeviceReset();
+ 			num_bind_tex_calls = 0;
+ 			loadReference(ctx);
+ 		}
+diff --git a/cuda/mummergpu/src/mummergpu_kernel.cu b/cuda/mummergpu/src/mummergpu_kernel.cu
+index 13bfcb7..198ee17 100755
+--- a/cuda/mummergpu/src/mummergpu_kernel.cu
++++ b/cuda/mummergpu/src/mummergpu_kernel.cu
+@@ -29,7 +29,8 @@
+ #if COALESCED_QUERIES
+ #define GETQCHAR(qrypos) ((queries[((qrypos) >> 2) << 4]) & ((0xFF) << (((qrypos) & 0x00000003)) << 3)) >> ((((qrypos) & 0x00000003 )) << 3)
+ #elif QRYTEX
+-#define GETQCHAR(qrypos) tex1Dfetch(qrytex, qryAddr + qrypos)
++// cudaCreateChannelDesc(8,0,0,0, cudaChannelFormatKindUnsigned);
++#define GETQCHAR(qrypos) tex1D<unsigned char>(qrytex, qryAddr + qrypos)
+ #else
+ #define GETQCHAR(qrypos) queries[qrypos]
+ #endif
+@@ -127,22 +128,25 @@
+ #define SHIFT_QUERIES(queries, qryAddr) queries += qryAddr
+ #endif
+ 
+-#if REORDER_TREE
+-texture<uint4, 2, cudaReadModeElementType> nodetex;
+-texture<uint4, 2, cudaReadModeElementType> childrentex;
+-#else
+-texture<uint4, 1, cudaReadModeElementType> nodetex;
+-texture<uint4, 1, cudaReadModeElementType> childrentex;
+-#endif
+-
+-
+-#if REORDER_REF
+-texture<char, 2, cudaReadModeElementType> reftex;
+-#else
+-texture<char, 1, cudaReadModeElementType> reftex;
+-#endif
+-
+-texture<char, 1, cudaReadModeElementType> qrytex;
++__device__ cudaTextureObject_t nodetex = 0;
++__device__ cudaTextureObject_t childrentex = 0;
++cudaTextureObject_t reftex = 0;
++cudaTextureObject_t qrytex = 0;
++//#if REORDER_TREE
++//texture<uint4, 2, cudaReadModeElementType> nodetex;
++//texture<uint4, 2, cudaReadModeElementType> childrentex;
++//#else
++//texture<uint4, 1, cudaReadModeElementType> nodetex;
++//texture<uint4, 1, cudaReadModeElementType> childrentex;
++//#endif
++//
++//#if REORDER_REF
++//texture<char, 2, cudaReadModeElementType> reftex;
++//#else
++//texture<char, 1, cudaReadModeElementType> reftex;
++//#endif
++//
++//texture<char, 1, cudaReadModeElementType> qrytex;
+ 
+  struct __align__(8) _MatchCoord
+  {
+@@ -316,13 +320,15 @@ __device__ char getRef(int refpos
+     int x = bigx >> 2;
+    
+ 	#if REFTEX
+-		return tex2D(reftex, x, y);
++	// cudaCreateChannelDesc(8, 0, 0, 0, cudaChannelFormatKindSigned);
++		return tex2D<char>(reftex, x, y);
+ 	#else
+ 		return *(ref + 65536 * y + x);
+ 	#endif
+ #else
+ 	#if REFTEX
+-		return tex1Dfetch(reftex, refpos);
++	// cudaCreateChannelDesc(8, 0, 0, 0, cudaChannelFormatKindSigned);
++		return tex1D<char>(reftex, refpos);
+ 	#else
+ 		return ref[refpos];
+ 	#endif
+@@ -372,9 +378,10 @@ __device__ uint4 getNode(unsigned int cur,
+ 
+ #if NODETEX
+ #if REORDER_TREE
+-  return tex2D(nodetex, cur & 0x0000FFFF, (cur & 0xFFFF0000) >> 16);
++	//cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindUnsigned);
++  return tex2D<uint4>(nodetex, cur & 0x0000FFFF, (cur & 0xFFFF0000) >> 16);
+ #else
+-  return tex1Dfetch(nodetex, cur);
++  return tex1D<uint4>(nodetex, cur);
+ #endif
+ 
+ #else
+@@ -415,9 +422,10 @@ __device__ uint4 getChildren(unsigned int cur,
+ 
+ #if CHILDTEX
+ #if REORDER_TREE
+-  return tex2D(childrentex, cur & 0x0000FFFF, (cur & 0xFFFF0000) >> 16);
++  //cudaCreateChannelDesc(32, 32, 32, 32, cudaChannelFormatKindUnsigned);		
++  return tex2D<uint4>(childrentex, cur & 0x0000FFFF, (cur & 0xFFFF0000) >> 16);
+ #else
+-  return tex1Dfetch(childrentex, cur);
++  return tex1D<uint4>(childrentex, cur);
+ #endif
+ #else
+ #if REORDER_TREE
+@@ -925,7 +933,7 @@ mummergpuRCKernel(MatchCoord* match_coords,
+ 		 XPRINTF("Next edge to follow: %c (%d)\n", c, qry_match_len);
+ 
+ 	     _PixelOfChildren children;
+-		 children.data = tex2D(childrentex,cur.x, cur.y);
++		 children.data = tex2D<uint4>(childrentex,cur.x, cur.y);
+ 		 prev = cur;
+ 
+ 		 switch(c)
+@@ -955,7 +963,7 @@ mummergpuRCKernel(MatchCoord* match_coords,
+ 		 }
+ 
+          {
+-		   node.data = tex2D(nodetex, cur.data & 0xFFFF, cur.data >> 16);
++		   node.data = tex2D<uint4>(nodetex, cur.data & 0xFFFF, cur.data >> 16);
+          }
+ 
+ 		 XPRINTF(" Edge coordinates: %d - %d\n", MKI(node.start), MKI(node.end));
+@@ -1027,7 +1035,7 @@ mummergpuRCKernel(MatchCoord* match_coords,
+ 
+       NEXT_SUBSTRING:
+ 
+-      node.data = tex2D(nodetex, prev.x, prev.y);
++      node.data = tex2D<uint4>(nodetex, prev.x, prev.y);
+       cur = node.suffix;
+ 
+       XPRINTF(" following suffix link. mustmatch:%d qry_match_len:%d sl:(%d,%d)\n", 

@@ -1,0 +1,102 @@
+diff --git a/cuda/backprop/Makefile b/cuda/backprop/Makefile
+index a7ed41d..a6812bd 100755
+--- a/cuda/backprop/Makefile
++++ b/cuda/backprop/Makefile
+@@ -22,7 +22,9 @@ endif
+ 
+ 
+ backprop: backprop.o facetrain.o imagenet.o backprop_cuda.o 
+-	$(CC) $(CC_FLAGS) backprop.o facetrain.o imagenet.o backprop_cuda.o -o backprop -L$(CUDA_LIB_DIR) -lcuda -lcudart -lm
++	$(NVCC) $(NVCC_FLAGS) \
++	   	backprop.o facetrain.o imagenet.o backprop_cuda.o -o backprop \
++		-lm -Xlinker -pie
+ 
+ %.o: %.[ch]
+ 	$(CC) $(CC_FLAGS) $< -c
+diff --git a/cuda/backprop/backprop.c b/cuda/backprop/backprop.c
+index 0c6b95f..bb19c08 100755
+--- a/cuda/backprop/backprop.c
++++ b/cuda/backprop/backprop.c
+@@ -307,7 +307,7 @@ int nh, no;
+ 
+ void bpnn_adjust_weights(delta, ndelta, ly, nly, w, oldw)
+ float *delta, *ly, **w, **oldw;
+-int ndelta;
++int ndelta, nly;
+ {
+   float new_dw;
+   int k, j;
+diff --git a/cuda/backprop/imagenet.c b/cuda/backprop/imagenet.c
+index 2181fc9..8319bd3 100755
+--- a/cuda/backprop/imagenet.c
++++ b/cuda/backprop/imagenet.c
+@@ -3,7 +3,7 @@
+ #include <stdlib.h>
+ #include "backprop.h"
+ 
+-extern layer_size;
++extern int layer_size;
+ 
+ void load(net)
+ BPNN *net;
+diff --git a/cuda/lavaMD/main.c b/cuda/lavaMD/main.c
+index b79bc58..6917f3a 100755
+--- a/cuda/lavaMD/main.c
++++ b/cuda/lavaMD/main.c
+@@ -20,6 +20,7 @@
+ #include <stdio.h>					// (in path known to compiler)			needed by printf
+ #include <stdlib.h>					// (in path known to compiler)			needed by malloc
+ #include <stdbool.h>				// (in path known to compiler)			needed by true/false
++#include <string.h>
+ 
+ //======================================================================================================================================================150
+ //	UTILITIES
+diff --git a/cuda/lavaMD/makefile b/cuda/lavaMD/makefile
+index 3944253..3ef2813 100755
+--- a/cuda/lavaMD/makefile
++++ b/cuda/lavaMD/makefile
+@@ -26,14 +26,12 @@ a.out:		main.o \
+ 			./util/num/num.o \
+ 			./util/timer/timer.o \
+ 			./util/device/device.o
+-	$(C_C)	$(KERNEL_DIM) main.o \
++	$(CUD_C)	$(KERNEL_DIM) main.o \
+ 			./kernel/kernel_gpu_cuda_wrapper.o \
+ 			./util/num/num.o \
+ 			./util/timer/timer.o \
+ 			./util/device/device.o \
+-			-lm \
+-			-L/usr/local/cuda/lib64 \
+-			-lcuda -lcudart \
++			-lm -lcuda -Xlinker -pie \
+ 			$(OMP_LIB) \
+ 			-o lavaMD
+ 
+ 
+diff --git a/cuda/lavaMD/util/timer/timer.c b/cuda/lavaMD/util/timer/timer.c
+index c7cc252..28a13e1 100755
+--- a/cuda/lavaMD/util/timer/timer.c
++++ b/cuda/lavaMD/util/timer/timer.c
+@@ -1,3 +1,4 @@
++#include "./timer.h"
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+@@ -11,6 +12,7 @@ extern "C" {
+ //======================================================================================================================================================150
+ 
+ #include <stdlib.h>
++#include <sys/time.h>
+ 
+ //======================================================================================================================================================150
+ //	FUNCTIONS
+diff --git a/cuda/lavaMD/util/timer/timer.h b/cuda/lavaMD/util/timer/timer.h
+index 1744df4..c89ec8a 100755
+--- a/cuda/lavaMD/util/timer/timer.h
++++ b/cuda/lavaMD/util/timer/timer.h
+@@ -1,3 +1,5 @@
++#include <time.h>
++
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
