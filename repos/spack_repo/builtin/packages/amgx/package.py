@@ -21,7 +21,7 @@ class Amgx(CMakePackage, CudaPackage):
     homepage = "https://developer.nvidia.com/amgx"
     url = "https://github.com/nvidia/amgx/archive/v2.1.0.tar.gz"
 
-    maintainers("js947")
+    maintainers("chrisrichardson", "jpdean")
 
     license("BSD-3-Clause")
 
