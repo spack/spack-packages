@@ -140,7 +140,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
             rocm_root = spec["hip"].prefix
             options.append(self.define("ROCM_PATH", rocm_root))
 
-            options.append(self.define("CMAKE_HIP_COMPILER", spack_hipcxx))
+            options.append(self.define("CMAKE_HIP_COMPILER", env["HIPCXX"]))
 
             archs = ";".join(self.spec.variants["amdgpu_target"].value)
             options.append("-DCMAKE_HIP_ARCHITECTURES={0}".format(archs))
