@@ -50,13 +50,27 @@ class Metis(CMakePackage, MakefilePackage):
         variant("gdb", default=False, description="Enable gdb support")
         variant("int64", default=False, description="Use index type of 64 bit")
         variant("real64", default=False, description="Use real type of 64 bit")
+        variant(
+            "petsc_patches",
+            default=False,
+            description="Apply patches from the PETSc fork",
+            when="@=5.1.0",
+        )
+        variant(
+            "gkrand",
+            default=False,
+            description="Use portable deterministic random number generator",
+        )
 
-        # Use the correct path to GKLIB when building out of source
-        patch("gklib_path.patch")
-        # Install both gklib_defs.h and gklib_rename.h
-        patch("install_gklib_defs_rename.patch")
-        # Disable the "misleading indentation" warning when compiling
-        patch("gklib_nomisleadingindentation_warning.patch", when="%gcc@6:")
+        # Build system patches for the official 5.1.0 tarball
+        patch("gklib_path.patch", when="~petsc_patches")
+        patch("install_gklib_defs_rename.patch", when="~petsc_patches")
+        patch("gklib_nomisleadingindentation_warning.patch", when="~petsc_patches %gcc@6:")
+
+        # PETSc fork patches: all fixes from bitbucket.org/petsc/pkg-metis
+        # v5.1.0-p13. Includes kwayfm bounds check, 64-bit RNG fix, TLS,
+        # and build system improvements (replaces the above patches).
+        patch("petsc_patches.patch", when="+petsc_patches")
 
     with when("build_system=makefile"):
         variant("debug", default=False, description="Compile in debug mode")
@@ -66,16 +80,20 @@ class Metis(CMakePackage, MakefilePackage):
             return
 
         source_path = self.stage.source_path
-        metis_header = FileFilter(join_path(source_path, "include", "metis.h"))
 
-        metis_header.filter(
-            r"(\b)(IDXTYPEWIDTH )(\d+)(\b)",
-            r"\1\2{0}\4".format("64" if "+int64" in self.spec else "32"),
-        )
-        metis_header.filter(
-            r"(\b)(REALTYPEWIDTH )(\d+)(\b)",
-            r"\1\2{0}\4".format("64" if "+real64" in self.spec else "32"),
-        )
+        # PETSc fork uses metis.h.in with CMake configure_file for int/real widths.
+        # Only patch metis.h directly for the official tarball.
+        metis_header_path = join_path(source_path, "include", "metis.h")
+        if os.path.exists(metis_header_path) and not self.spec.satisfies("+petsc_patches"):
+            metis_header = FileFilter(metis_header_path)
+            metis_header.filter(
+                r"(\b)(IDXTYPEWIDTH )(\d+)(\b)",
+                r"\1\2{0}\4".format("64" if "+int64" in self.spec else "32"),
+            )
+            metis_header.filter(
+                r"(\b)(REALTYPEWIDTH )(\d+)(\b)",
+                r"\1\2{0}\4".format("64" if "+real64" in self.spec else "32"),
+            )
 
         # Make clang 7.3 happy.
         # Prevents "ld: section __DATA/__thread_bss extends beyond end of file"
@@ -224,6 +242,14 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
             self.define_from_variant("SHARED", "shared"),
             self.define_from_variant("GDB", "gdb"),
         ]
+
+        # PETSc fork uses CMake options for int/real width
+        if self.spec.satisfies("+petsc_patches"):
+            options.append(self.define_from_variant("METIS_USE_LONGINDEX", "int64"))
+            options.append(self.define_from_variant("METIS_USE_DOUBLEPRECISION", "real64"))
+
+        if self.spec.satisfies("+gkrand"):
+            options.append(self.define("GKRAND", 1))
 
         if self.spec.satisfies("~shared"):
             # Remove all RPATH options

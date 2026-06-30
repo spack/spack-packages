@@ -35,12 +35,18 @@ class Parmetis(CMakePackage):
     depends_on("metis+int64", when="+int64")
     depends_on("metis~int64", when="~int64")
 
-    patch("enable_external_metis.patch")
-    # bug fixes from PETSc developers
-    # https://bitbucket.org/petsc/pkg-parmetis/commits/1c1a9fd0f408dc4d42c57f5c3ee6ace411eb222b/raw/
-    patch("pkg-parmetis-1c1a9fd0f408dc4d42c57f5c3ee6ace411eb222b.patch")
-    # https://bitbucket.org/petsc/pkg-parmetis/commits/82409d68aa1d6cbc70740d0f35024aae17f7d5cb/raw/
-    patch("pkg-parmetis-82409d68aa1d6cbc70740d0f35024aae17f7d5cb.patch")
+    variant(
+        "petsc_patches", default=False, when="@=4.0.3", description="Apply all PETSc fork patches"
+    )
+
+    # Default patches for the official tarball
+    patch("enable_external_metis.patch", when="~petsc_patches")
+    patch("pkg-parmetis-1c1a9fd0f408dc4d42c57f5c3ee6ace411eb222b.patch", when="~petsc_patches")
+    patch("pkg-parmetis-82409d68aa1d6cbc70740d0f35024aae17f7d5cb.patch", when="~petsc_patches")
+
+    # All PETSc fork patches from bitbucket.org/petsc/pkg-parmetis v4.0.3-p10.
+    # Replaces the above patches (includes them plus additional fixes).
+    patch("petsc_patches.patch", when="+petsc_patches")
 
     def url_for_version(self, version):
         url = "http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis"
