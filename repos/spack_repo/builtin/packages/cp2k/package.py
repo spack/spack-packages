@@ -1317,8 +1317,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
         else:
             args += ["-DCP2K_USE_LIBXSMM=OFF"]
 
-        # Only master and version starting from 2026.2 support libxs OpenCL
-        # also requires it.
         if spec.satisfies("smm=libxs"):
             args += ["-DCP2K_USE_LIBXS=ON"]
         else:
