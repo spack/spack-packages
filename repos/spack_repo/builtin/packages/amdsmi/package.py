@@ -68,12 +68,6 @@ class Amdsmi(CMakePackage):
         sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
         when="@6.2",
     )
-    # Fix struct redefinition conflict with newer libdrm versions
-    patch(
-        "amdsmi-libdrm-compat.patch",
-        sha256="bb20b8fedb0207d6c1a258af5dc68331463df9b92aa84286efe939fc3e924eb7",
-        when="@7.2:",
-    )
 
     @property
     def root_cmakelists_dir(self):
