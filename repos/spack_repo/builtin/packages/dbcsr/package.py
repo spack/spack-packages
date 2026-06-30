@@ -75,6 +75,9 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("smm=libxsmm"):
         depends_on("libxsmm@1.11:")
+        # DBCSR <= 2.9.1 requires the legacy libxsmmext interface,
+        # which was removed in libxsmm 2.0.
+        depends_on("libxsmm@:1.17-cp2k", when="@:2.9.1")
 
     depends_on("cmake@3.10:", type="build")
     depends_on("cmake@3.12:", type="build", when="@2.1:")
