@@ -192,4 +192,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         else:
             install("README.md", prefix.doc)
             install("LICENSE", prefix.doc)
-        install("version.txt", prefix.doc)
+        if os.path.exists("version.txt"):
+            install("version.txt", prefix.doc)
+        else:
+            install("VERSION", prefix.doc)
