@@ -131,6 +131,12 @@ class RocmSmiLib(CMakePackage):
         sha256="54094b5dbd05b79341e38e95f785dcbb0ba4a5aef4bad19e075ea77470164138",
         when="@6.4.0",
     )
+    # fix error with gcc 14
+    patch(
+        "https://github.com/ROCm/rocm_smi_lib/commit/7fdc6e56c40ed6f02c888dcb1492944a9373ba74.patch?full_index=1",
+        sha256="5568bd495fcebdf1557c05621474fcc6c9928544f83234e1bc20a7d5757e360e",
+        when="@:6.1 %cxx=gcc@14:",
+    )
     patch("0001-add-libdrm-include-dir.patch", when="@6.4")
 
     @property
