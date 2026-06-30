@@ -26,8 +26,14 @@ class RVsn(RPackage):
     bioc = "vsn"
 
     with default_args(get_full_repo=True):
-        version("3.68.0", commit="b8c9cef9730a00a810e8ec08e472b26d0bff5357")
-        version("3.66.0", commit="ddccd6c74ebea426056794c2bfad2dfd02631092")
+        version("3.80.0", commit="6ef8b943d84723ce4b11fa8116ffc1dd22d46195")  # bioc 3.23
+        version("3.78.1", commit="3f3cc16a304aa9930dbca71777f7cb91add9fcc4")  # bioc 3.22
+        version("3.76.0", commit="34cbab4d16e1c5d48ba45ae3c6c4fee2b7c9419c")  # bioc 3.21
+        version("3.74.0", commit="d2b686d3966424e7cc74c68e0603d98841597934")  # bioc 3.20
+        version("3.72.0", commit="c91b4c6608d8c61aa9ebfb4fc7a2532cccf91042")  # bioc 3.19
+        version("3.70.0", commit="a0a0c6d4273e843a20ae6487a3402c852b4915b0")  # bioc 3.18
+        version("3.68.0", commit="b8c9cef9730a00a810e8ec08e472b26d0bff5357")  # bioc 3.17
+        version("3.66.0", commit="ddccd6c74ebea426056794c2bfad2dfd02631092")  # bioc 3.16
         version("3.64.0", commit="1f09f20ee7f81100fb0bf66288c4caf0049b5508")
         version("3.62.0", commit="6ae7f4e07ec1a5a9482cab892d98175983bfcd50")
         version("3.58.0", commit="a451e6ae989623750feacf26d99683a7955adf85")
@@ -37,15 +43,16 @@ class RVsn(RPackage):
         version("3.46.0", commit="7ecfd20452348da27d6fcc052cbff2b9be777792")
         version("3.44.0", commit="e54513fcdd07ccfb8094359e93cef145450f0ee0")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("r@3.0.0:", type=("build", "run"))
-    depends_on("r@3.4.0:", type=("build", "run"), when="@3.46.0:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@3.62.0:")
-    depends_on("r-biobase", type=("build", "run"))
+    depends_on("r@3.4.0:", type=("build", "run"), when="@3.46.0:")
+    depends_on("r@3.0.0:", type=("build", "run"))
+
     depends_on("r-affy", type=("build", "run"))
-    depends_on("r-limma", type=("build", "run"))
-    depends_on("r-lattice", type=("build", "run"))
+    depends_on("r-biobase", type=("build", "run"))
     depends_on("r-ggplot2", type=("build", "run"))
+    depends_on("r-lattice", type=("build", "run"))
+    depends_on("r-limma", type=("build", "run"))
 
     depends_on("r-hexbin", type=("build", "run"), when="@3.44.0:3.52.0")
