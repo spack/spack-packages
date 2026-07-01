@@ -5,35 +5,32 @@
 import os
 from glob import glob
 
+from spack_repo.builtin.build_systems import cmake, makefile
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
 
-class Libxsmm(MakefilePackage):
+class Libxsmm(CMakePackage, MakefilePackage):
     """Library for specialized dense
     and sparse matrix operations,
     and deep learning primitives."""
 
     homepage = "https://github.com/libxsmm/libxsmm"
-    url = "https://github.com/libxsmm/libxsmm/archive/1.17.tar.gz"
+    url = "https://github.com/libxsmm/libxsmm/archive/2.0.0.tar.gz"
     git = "https://github.com/libxsmm/libxsmm.git"
 
     maintainers("hfp")
 
     license("BSD-3-Clause")
 
-    # 2.0 release is planned for Jan / Feb 2024. This commit from main is added
-    # as a stable version that supports other targets than x86. Remove this
-    # after 2.0 release.
-    version("main-2023-11", commit="0d9be905527ba575c14ca5d3b4c9673916c868b2")
+    build_system("makefile", "cmake", default="makefile")
+
     version("main", branch="main")
-    version("1.17-cp2k", commit="6f883620f58afdeebab28039fc9cf580e76a5ec6")
-    version(
-        "1.17",
-        sha256="8b642127880e92e8a75400125307724635ecdf4020ca4481e5efe7640451bb92",
-        preferred=True,
-    )
+    version("2.0.0", sha256="7e532dc5520f864ce6d7f44f3fd50365e3edb23da97dbdc54fd53845d86a290b")
+    version("1.17-cp2k", commit="e0c4a2389afba36c453233ad7de07bd92c715bec")
+    version("1.17", sha256="8b642127880e92e8a75400125307724635ecdf4020ca4481e5efe7640451bb92")
     version("1.16.3", sha256="e491ccadebc5cdcd1fc08b5b4509a0aba4e2c096f53d7880062a66b82a0baf84")
     version("1.16.2", sha256="bdc7554b56b9e0a380fc9c7b4f4394b41be863344858bc633bc9c25835c4c64e")
     version("1.16.1", sha256="93dc7a3ec40401988729ddb2c6ea2294911261f7e6cd979cf061b5c3691d729d")
@@ -68,25 +65,40 @@ class Libxsmm(MakefilePackage):
     version("1.4.1", sha256="c19be118694c9b4e9a61ef4205b1e1a7e0c400c07f9bce65ae430d2dc2be5fe1")
     version("1.4", sha256="cf483a370d802bd8800c06a12d14d2b4406a745c8a0b2c8722ccc992d0cd72dd")
 
-    variant("shared", default=False, description="With shared libraries (and static libraries).")
-    variant("debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized.")
-    variant(
-        "header-only", default=False, when="@1.6.2:", description="With header-only installation"
-    )
-    variant("generator", default=False, description="With generator executable(s)")
-    variant(
-        "blas",
-        default="default",
-        multi=False,
-        description="Control behavior of BLAS calls",
-        values=("default", "0", "1", "2"),
-    )
-    variant(
-        "large_jit_buffer",
-        default=False,
-        when="@1.17:",
-        description="Max. JIT buffer size increased to 256 KiB",
-    )
+    variant("shared", default=False, description="Build shared libraries")
+
+    # These switches are implemented by the GNU Make build only. Do not
+    # expose them for CMake, where they would otherwise be silently ignored.
+    with when("build_system=makefile"):
+        variant(
+            "debug", default=False, description="With call-trace (LIBXSMM_TRACE); unoptimized."
+        )
+        variant(
+            "header-only",
+            default=False,
+            when="@1.6.2:",
+            description="With header-only installation",
+        )
+        variant("generator", default=False, description="With generator executable(s)")
+        variant(
+            "blas",
+            default="default",
+            multi=False,
+            description="Control behavior of BLAS calls",
+            values=("default", "0", "1", "2"),
+        )
+        variant(
+            "large_jit_buffer",
+            default=False,
+            when="@1.17:",
+            description="Max. JIT buffer size increased to 256 KiB",
+        )
+        variant(
+            "wrap",
+            default="0",
+            when="@1.17-cp2k",
+            description="Control interception of BLAS GEMM calls",
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -94,10 +106,18 @@ class Libxsmm(MakefilePackage):
 
     depends_on("python", type="build")
 
-    # A recent `as` is needed to compile libxmss until version 1.17
-    # (<https://github.com/spack/spack/issues/28404>), but not afterwards
-    # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
-    depends_on("binutils+ld+gas@2.33:", type="build")
+    depends_on("cmake@3.13:", type="build", when="build_system=cmake")
+
+    with when("build_system=makefile"):
+        # A recent `as` is needed to compile libxsmm until version 1.17
+        # (<https://github.com/spack/spack/issues/28404>), but not afterwards
+        # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
+        depends_on("binutils+ld+gas@2.33:", type="build")
+
+    # CMake support is introduced with 2.0. Keep it available for the moving
+    # development branch, but prevent selection for the older fixed sources.
+    conflicts("build_system=cmake", when="@:1.17")
+    conflicts("build_system=cmake", when="@1.17-cp2k")
 
     # Version 2.0 supports both x86_64 and aarch64
     requires("target=x86_64:", "target=aarch64:")
@@ -112,7 +132,14 @@ class Libxsmm(MakefilePackage):
             )
         return result
 
-    def build(self, spec, prefix):
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        return [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
+
+
+class MakefileBuilder(makefile.MakefileBuilder):
+    def build(self, pkg, spec, prefix):
         # include symbols by default
         make_args = [
             "CC={0}".format(spack_cc),
@@ -120,10 +147,8 @@ class Libxsmm(MakefilePackage):
             "FC={0}".format(spack_fc),
             "PREFIX=%s" % prefix,
         ]
-        if spec.satisfies("@1.17-cp2k") and spec.target.family == "aarch64":
-            make_args += ["PLATFORM=1"]
-        else:
-            make_args += ["SYM=1"]
+        if spec.satisfies("@1.17-cp2k"):
+            make_args += ["WRAP={0}".format(spec.variants["wrap"].value)]
 
         # JIT (AVX and later) makes MNK, M, N, or K spec. superfluous
         # make_args += ['MNK=1 4 5 6 8 9 13 16 17 22 23 24 26 32']
@@ -146,7 +171,7 @@ class Libxsmm(MakefilePackage):
         # builds static libraries by default
         make(*make_args)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         install_tree("include", prefix.include)
 
         # move pkg-config files to their right place
@@ -171,4 +196,7 @@ class Libxsmm(MakefilePackage):
         else:
             install("README.md", prefix.doc)
             install("LICENSE", prefix.doc)
-        install("version.txt", prefix.doc)
+        if os.path.exists("version.txt"):
+            install("version.txt", prefix.doc)
+        else:
+            install("VERSION", prefix.doc)

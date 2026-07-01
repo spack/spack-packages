@@ -276,6 +276,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # require libxsmm-1.11+ since 1.10 can leak file descriptors in Fortran
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
+        # CP2K <= 2026.1 requires the legacy libxsmmext interface,
+        # which was removed in libxsmm 2.0.
+        depends_on("libxsmm@:1.17-cp2k", when="@:2026.1")
         # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
         depends_on("pkgconfig", type="build")
 
