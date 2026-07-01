@@ -38,7 +38,7 @@ class Admixtools(MakefilePackage):
 
         makefile.filter(
             "override LDLIBS += -lgsl -lopenblas -lm -lnick",
-            "override LDLIBS += -lgsl -lm -lnick " + lapackflags,
+            "override LDLIBS += -lgsl -lm -lnick " + lapackflags, string=True
         )
 
         makefile.filter("TOP=../bin", "TOP=./bin")
