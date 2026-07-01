@@ -17,8 +17,14 @@ class RAffyio(RPackage):
     bioc = "affyio"
 
     with default_args(get_full_repo=True):
-        version("1.70.0", commit="95560567e27088863c64e868a8e5069fc725b8d7")
-        version("1.68.0", commit="33080c5eeb14c0ca40f0d231706af4e0c2c1ef8b")
+        version("1.82.0", commit="5c67e5d7ef5206fb5a86c53c23d7a0fd9c3022f9")  # bioc 3.23
+        version("1.80.0", commit="eb747bb56f812c1c30eba2810d40d399b182b3c6")  # bioc 3.22
+        version("1.78.0", commit="9132e132d38ec0c5d0f9bbd6878d9a13ee0af739")  # bioc 3.21
+        version("1.76.0", commit="ed8b074ada05f3b3eeba3032b1214179e3034a42")  # bioc 3.20
+        version("1.74.0", commit="1d0948e7a76a00da985b9fdd38d36fa0ca85c2af")  # bioc 3.19
+        version("1.72.0", commit="2f97a7e3710e44886b0b732d1c0dbb3165e9b84c")  # bioc 3.18
+        version("1.70.0", commit="95560567e27088863c64e868a8e5069fc725b8d7")  # bioc 3.17
+        version("1.68.0", commit="33080c5eeb14c0ca40f0d231706af4e0c2c1ef8b")  # bioc 3.16
         version("1.66.0", commit="3a0b90704fc46cddd99a72b985a6bdb348f69b50")
         version("1.64.0", commit="aa7ce48f3f4110431f6f488d45961fde4019ffb0")
         version("1.60.0", commit="ee20528b32700e99768da48143d6d45c9a7bbe91")
@@ -28,8 +34,9 @@ class RAffyio(RPackage):
         version("1.48.0", commit="01727a4492c3a0d50453fc91892e04bf5f7fcadb")
         version("1.46.0", commit="977597f2772e08273d86579486f452170566c880")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("r@2.6.0:", type=("build", "run"))
-    depends_on("r-zlibbioc", type=("build", "run"))
     depends_on("zlib-api")
+
+    depends_on("r-zlibbioc", type=("build", "run"), when="@:1.77.0")
