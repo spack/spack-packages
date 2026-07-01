@@ -5,7 +5,7 @@
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmLibrary
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
@@ -22,10 +22,19 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
+    # Version 7.13.0 uses release/rvs-1.4.x branch
+    version(
+        "7.13.0",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/heads/release/rvs-1.4.x.tar.gz",
+        sha256="d774c1021751e29da33ec73883ac32553693e22cf6ab93aa335aa30f00c13b32",
+    )
+
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     executables = ["rvs"]
+
+    rocm_url_map = [(None, "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-{0}.tar.gz")]
 
     version("7.2.3", sha256="363009b394350a2ae1d8debe7092c96ab5aa2b183487aed6834580979e969c8c")
     version("7.2.1", sha256="737c30e9ded3b9b70b85973aca49cf98015eff890eb8bb81c940f04f1079b7c9")
@@ -53,6 +62,20 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     version("5.7.1", sha256="202f2b6e014bbbeec40af5d3ec630c042f09a61087a77bd70715d81044ea4d65")
     version("5.7.0", sha256="f049b7786a220e9b6dfe099f17727dd0d9e41be9e680fe8309eae400cc5536ea")
 
+    # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=disjoint_sets(("auto",), amdgpu_targets)
+        .with_default("auto")
+        .with_error(
+            "the values 'auto' and 'none' are mutually exclusive with any of the other values"
+        )
+        .with_non_feature_values("auto", "none"),
+        sticky=True,
+    )
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
     patch("008-correcting-library-and-include-path-WITHOUT-RVS-BUILD-TESTS.patch", when="@5.7")
@@ -71,8 +94,10 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     )
     patch("010-add-drm-include-path.patch", when="@6.4")
     # https://github.com/ROCm/ROCmValidationSuite/pull/998
-    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:")
+    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:7.2")
+    patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13")
     patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
+    patch("013-add-hiprand-includes-7.13.patch", when="@7.13")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
@@ -80,6 +105,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     depends_on("doxygen", type="build")
     depends_on("libdrm", when="@6.4:")
     depends_on("pciutils+shared", when="@6.4:")
+    depends_on("numactl", when="@7.13:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
@@ -147,6 +173,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -171,6 +198,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -191,14 +219,21 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+
+    for tgt in ROCmPackage.amdgpu_targets:
+        depends_on(f"hipblaslt amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocrand amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"hiprand amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     def patch(self):
         if self.spec.satisfies("@:5.7"):
@@ -216,7 +251,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
             self.define("UT_INC", self.spec["googletest"].prefix.include),
         ]
 
-        if self.spec.satisfies("@6.2.1:6.2.4"):
+        if self.spec.satisfies("@6.2.1:6.2.4") or self.spec.satisfies("@7.13:"):
             args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix))
             args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix))
 

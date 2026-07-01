@@ -6,11 +6,12 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class HsaRocrDev(CMakePackage):
+class HsaRocrDev(ROCmLibrary, CMakePackage):
     """This repository includes the user mode API nterfaces and libraries
     necessary for host applications to launch computer kernels to available
     HSA ROCm kernel agents.AMD Heterogeneous System Architecture HSA -
@@ -20,16 +21,15 @@ class HsaRocrDev(CMakePackage):
     git = "https://github.com/ROCm/rocm-systems.git"
     tags = ["rocm"]
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
@@ -73,6 +73,13 @@ class HsaRocrDev(CMakePackage):
     depends_on("numactl")
     depends_on("pkgconfig")
     depends_on("libdrm", when="@6.3:")
+    # irocr: include intrin headers before namespace rocr
+    # https://github.com/ROCm/rocm-systems/pull/5615
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/5d97b21c2b486716a32472143ad44ea74fbfdd41.patch?full_index=1",
+        sha256="562509320bcf363ae4e8979f4b669c683f8407d11900b349d6cd1a999ec0b11b",
+        when="@7.13:",
+    )
 
     for ver in [
         "5.7.0",
@@ -114,6 +121,7 @@ class HsaRocrDev(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
@@ -134,6 +142,7 @@ class HsaRocrDev(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 

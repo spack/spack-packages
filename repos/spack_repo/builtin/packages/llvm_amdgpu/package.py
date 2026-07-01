@@ -18,7 +18,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     homepage = "https://github.com/ROCm/llvm-project"
     git = "https://github.com/ROCm/llvm-project.git"
-    url = "https://github.com/ROCm/llvm-project/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm", "compiler"]
     executables = [
         r"amdclang",
@@ -44,6 +43,16 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     license("Apache-2.0")
 
+    def url_for_version(self, version):
+        if version <= Version("7.2.3"):
+            url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
+            return url.format(version)
+        else:
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
+
+    version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")
@@ -97,7 +106,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("libllvm@18", when="@6.2:6.3")
     provides("libllvm@19", when="@6.4")
     provides("libllvm@20", when="@7.0:7.1")
-    provides("libllvm@22", when="@7.2")
+    provides("libllvm@22", when="@7.2:7.13")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -138,6 +147,14 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "https://github.com/ROCm/llvm-project/commit/444d1d12bbc0269fed5451fb1a9110a049679ca5.patch?full_index=1",
         sha256="b4774ca19b030890d7b276d12c446400ccf8bc3aa724c7f2e9a73531a7400d69",
         when="@6",
+    )
+    # irocr: include intrin headers before namespace rocr
+    # https://github.com/ROCm/rocm-systems/pull/5615
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/5d97b21c2b486716a32472143ad44ea74fbfdd41.patch?full_index=1",
+        sha256="562509320bcf363ae4e8979f4b669c683f8407d11900b349d6cd1a999ec0b11b",
+        working_dir="rocm-systems",
+        when="@7.13:",
     )
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
@@ -221,6 +238,17 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             sha256=d_shasum,
             when=f"@{d_version}",
         )
+    # TheRock therock-7.13 release (rocm-systems super-repo)
+    for d_version, d_shasum in [
+        ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
+    ]:
+        resource(
+            name="rocm-systems",
+            placement="rocm-systems",
+            url=f"https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{d_version}.tar.gz",
+            sha256=d_shasum,
+            when=f"@{d_version}",
+        )
 
     for d_version, d_shasum in [
         ("7.1.0", "e6ef3e62eb0626765c55084c9de5fd19f9b216b11577e71ef36046c0081f1102"),
@@ -232,6 +260,19 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         resource(
             name="spirv-llvm-translator",
             url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/rocm-{d_version}.tar.gz",
+            sha256=d_shasum,
+            expand=True,
+            destination="llvm/projects",
+            placement="spirv-llvm-translator",
+            when=f"@{d_version}",
+        )
+
+    for d_version, d_shasum in [
+        ("7.13", "22836583c72d40493517ee6932db487256958d3da9afa5b666d046e48477fcc6"),
+    ]:
+        resource(
+            name="spirv-llvm-translator",
+            url=f"https://github.com/ROCm/SPIRV-LLVM-Translator/archive/refs/tags/therock-{d_version}.tar.gz",
             sha256=d_shasum,
             expand=True,
             destination="llvm/projects",
@@ -303,8 +344,13 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                 )
             else:
                 args.append(self.define("ROCM_DEVICE_LIBS_INSTALL_PREFIX_PATH", self.prefix))
+                # Determine LLVM version: 20 for @7.0:7.1, 22 for @7.2:
+                llvm_version = "22" if self.spec.satisfies("@7.2:") else "20"
                 args.append(
-                    self.define("ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC", "lib/clang/20/lib/amdgcn")
+                    self.define(
+                        "ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC",
+                        f"lib/clang/{llvm_version}/lib/amdgcn",
+                    )
                 )
 
         if self.spec.satisfies("+llvm_dylib"):

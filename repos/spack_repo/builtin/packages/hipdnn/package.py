@@ -5,18 +5,17 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Hipdnn(CMakePackage):
+class Hipdnn(ROCmLibrary, CMakePackage):
     """hipDNN is a graph-based deep learning library for AMD GPUs that leverages a flexible
     plugin architecture to provide optimized implementations and utilities
     for various routines"""
 
     homepage = "https://github.com/ROCm/hipDNN"
-    url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-7.1.1.tar.gz"
     git = "https://github.com/ROCm/hipDNN.git"
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
@@ -25,6 +24,11 @@ class Hipdnn(CMakePackage):
 
     license("MIT")
 
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -51,7 +55,7 @@ class Hipdnn(CMakePackage):
     depends_on("spdlog")
     depends_on("googletest")
 
-    for ver in ["7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -77,6 +81,32 @@ class Hipdnn(CMakePackage):
                 r"${ROCM_PATH}${DEFAULT_ROCM_LLVM_ROOT}",
                 self.spec["llvm-amdgpu"].prefix,
                 "projects/hipdnn/cmake/ClangToolChain.cmake",
+                string=True,
+            )
+        # Disable clang-tidy checks for version 7.13.0
+        if self.spec.satisfies("@7.13.0:"):
+            filter_file(
+                "include(cmake/ClangTidy.cmake)",
+                "# include(cmake/ClangTidy.cmake)",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "add_clang_tidy_custom_target()",
+                "# add_clang_tidy_custom_target()",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend_private)",
+                "# clang_tidy_check(hipdnn_backend_private)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend)",
+                "# clang_tidy_check(hipdnn_backend)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
                 string=True,
             )
 

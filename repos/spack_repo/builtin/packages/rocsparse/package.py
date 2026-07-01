@@ -5,12 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocsparse(CMakePackage):
+class Rocsparse(ROCmLibrary, CMakePackage):
     """rocSPARSE exposes a common interface that provides
     Basic Linear Algebra Subroutines for sparse computation
     implemented on top of AMD's Radeon Open eCosystem Platform ROCm runtime
@@ -25,13 +25,11 @@ class Rocsparse(CMakePackage):
     libraries = ["librocsparse"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/rocSPARSE/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocSPARSE/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     amdgpu_targets = ROCmPackage.amdgpu_targets
 
     variant(
@@ -47,6 +45,7 @@ class Rocsparse(CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -105,13 +104,14 @@ class Rocsparse(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocprim@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 

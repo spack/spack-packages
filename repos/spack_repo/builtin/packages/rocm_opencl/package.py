@@ -7,11 +7,12 @@ import re
 import sys
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmOpencl(CMakePackage):
+class RocmOpencl(ROCmLibrary, CMakePackage):
     """OpenCL: Open Computing Language on ROCclr"""
 
     homepage = "https://github.com/ROCm/clr"
@@ -23,13 +24,12 @@ class RocmOpencl(CMakePackage):
     libraries = ["libamdocl64"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/clr/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
@@ -111,6 +111,7 @@ class RocmOpencl(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"comgr@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", type="link", when=f"@{ver}")
@@ -136,7 +137,7 @@ class RocmOpencl(CMakePackage):
     ]:
         depends_on(f"aqlprofile@{ver}", type="link", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", type="link", when=f"@{ver}")
 
     @property
