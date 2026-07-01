@@ -99,10 +99,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
-    # both are set to false to avoid breaking spack CI/CD in the eventuality of
-    # static builds
+    # shared is set set to false to avoid breaking spack CI/CD  static builds
     variant("shared", default=False, description="Enable shared libraries")
-    variant("pic", default=False, description="Enable position independent code")
+    variant("pic", default=True, description="Enable position independent code")
 
     variant("mpi", default=True, description="Enable MPI support")
     variant("openmp", default=True, description="Enable OpenMP support")
