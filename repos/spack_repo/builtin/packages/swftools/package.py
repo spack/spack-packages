@@ -25,6 +25,8 @@ class Swftools(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@:3.8")
+
     patch("configure.patch")
     patch("swfs_Makefile.in.patch")
     patch(
