@@ -80,8 +80,8 @@ class PyUv(PythonPackage, CargoPackage):
     )
 
     with default_args(type="build"):
-        # Both build systems compile the Rust sources (maturin shells out to cargo),
-        # and the bundled `-sys` crates need a C compiler
+        # bundled `-sys` crates (jemalloc et al.) compile C on every release;
+        # the @:0.6.3 CMake crate is handled in the builder below
         depends_on("c")
 
         # the bundled jemalloc allocator builds its C sources with `./configure && make`
@@ -133,9 +133,8 @@ class PyUv(PythonPackage, CargoPackage):
 class PythonPipBuilder(python.PythonPipBuilder):
     @when("@:0.6.3")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # uv @:0.6.3 bundles a `-sys` crate whose build script compiles C via
-        # CMake; point that crate's `cmake` helper at Spack's cmake instead of
-        # relying on it being found on PATH
+        # uv @:0.6.3 bundles a `-sys` crate that compiles C via CMake; point it
+        # at Spack's cmake instead of PATH
         env.set("CMAKE", self.spec["cmake"].prefix.bin.cmake)
 
 
