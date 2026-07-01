@@ -32,6 +32,7 @@ class AlsaLib(AutotoolsPackage):
     patch("python.patch", when="@1.1.4:1.1.5 +python")
 
     depends_on("c", type="build")  # generated
+    depends_on("bzip2", type="build")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
