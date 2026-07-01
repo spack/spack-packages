@@ -6,7 +6,6 @@ import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
-from spack.llnl.util import filesystem
 from spack.package import *
 
 
@@ -185,7 +184,7 @@ class Nektar(CMakePackage):
             else:
                 python_build_directory = self.build_directory
             print("Installing Python bindings using " + python_build_directory + "/setup.py")
-            with filesystem.working_dir(python_build_directory):
+            with working_dir(python_build_directory):
                 python("setup.py", "install", "--prefix", prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
