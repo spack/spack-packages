@@ -24,7 +24,7 @@ class RoctracerDevApi(ROCmLibrary, Package):
     rocm_url_map = [
         ("7.1.1", "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"),
         ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
-        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
