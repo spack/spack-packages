@@ -36,7 +36,7 @@ class Scorep(AutotoolsPackage):
     patch(
         "https://gitlab.com/score-p/scorep/-/commit/6d5534de9746e76a28dd9452c3efaa45890067cd.diff",
         when="@10.0 +mpi",
-        sha256="20946ff71fb226bbe76b4f6dfff6cea127211d58162247d8e0bebba745917e7d"
+        sha256="20946ff71fb226bbe76b4f6dfff6cea127211d58162247d8e0bebba745917e7d",
     )
 
     # Variants
