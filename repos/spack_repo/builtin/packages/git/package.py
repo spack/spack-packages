@@ -188,8 +188,8 @@ class Git(AutotoolsPackage):
         if self.spec.satisfies("~perl"):
             env.append_flags("NO_PERL", "1")
 
-        # Git 2.55 enables Rust support by default. Keep this package's existing
-        # non-Rust build unless/until a Rust variant/dependency is added.
+        # @2.55: enables Rust support by default. Keep this package's build
+        # non Rust for now until we have a better way of bootstrapping Rust.
         if self.spec.satisfies("@2.55:"):
             env.append_flags("NO_RUST", "1")
 
