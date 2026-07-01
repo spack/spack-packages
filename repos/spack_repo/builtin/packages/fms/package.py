@@ -20,6 +20,8 @@ class Fms(CMakePackage):
     license("LGPL-3.0-or-later")
 
     maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett", "rem1776", "climbfuji")
+    version("2026.01", sha256="aa481afbd4df3d09e42114a74ec5dc21bb85644335fbea378f48d0c1f22866d0")
+    version("2025.04", sha256="d9d91a8594c65d9d51928a9f4f4ec6ffaaa0d1d00a752ca32f2ea1f91a70d3f0")
     version("2025.03", sha256="17bdbac86bd3b1e5c1c3a5496c1495e8badcd5f671c659b17921532c990f014c")
     version(
         "2025.02.01", sha256="a481a0d49cf4ca06476849600c2da41fb25053e930a8fabe2add09c3d2fbee9c"
@@ -97,12 +99,33 @@ class Fms(CMakePackage):
         when="@2024.02",
     )
 
+    # When https://github.com/NOAA-GFDL/FMS/pull/1787 is merged, we can uncomment the following
+    # and allow back specified precision variants for 2026.0x and later.
+    # variant(
+    # "precision",
+    # values=any_combination_of("32", "64", "mixed").with_default("mixed"),
+    # description="Build a version of the library with mixed precision ('mixed' or 'none'), or 32 and/or 64 bit reals",
+    # when="@2026.0x:",
+    # )
+
+    variant(
+        "precision",
+        values=("mixed",),
+        description="Build a version of the library with mixed precision (both 32 and 64 bit reals). "
+        "NOTE: This is the only supported precision variant for FMS versions 2025.04 to 2026.01",
+        default="mixed",
+        multi=True,
+        when="@2025.04:2026.01",
+    )
+    # NOTE: For FMS 2025.04 to 2026.01, only mixed precision ('none') is supported.
+    # Since a single variant is no variant, we do not have a precision variant for these versions.
     variant(
         "precision",
         values=("32", "64"),
         description="Build a version of the library with default 32 or 64 bit reals or both",
         default="32",
         multi=True,
+        when="@2022.04:2025.03",
     )
     conflicts(
         "precision=32,64",
