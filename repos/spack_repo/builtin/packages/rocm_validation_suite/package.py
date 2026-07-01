@@ -34,6 +34,8 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     executables = ["rvs"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-{0}.tar.gz")]
+
     version("7.2.3", sha256="363009b394350a2ae1d8debe7092c96ab5aa2b183487aed6834580979e969c8c")
     version("7.2.1", sha256="737c30e9ded3b9b70b85973aca49cf98015eff890eb8bb81c940f04f1079b7c9")
     version("7.2.0", sha256="d4c7252104431542fb748afd2e17eb9d86ad87f490b19a3fa343721222d67910")
