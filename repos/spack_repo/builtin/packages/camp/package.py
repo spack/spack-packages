@@ -139,6 +139,8 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             rocm_root = spec["hip"].prefix
             options.append(self.define("ROCM_PATH", rocm_root))
+            options.append(self.define("ROCM_ROOT", rocm_root))
+            options.append(self.define("CMAKE_HIP_COMPILER_ROCM_ROOT", rocm_root))
 
             options.append(self.define("CMAKE_HIP_COMPILER", env["HIPCXX"]))
 
