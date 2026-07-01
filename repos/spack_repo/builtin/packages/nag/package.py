@@ -105,6 +105,7 @@ class Nag(Package, CompilerPackage):
     # NAG-related directories are injected by nagfor anyway.
     verbose_flag = "-Wl,-v"
 
+    pic_flag = "-PIC"
     openmp_flag = "-openmp"
 
     def _fortran_path(self):

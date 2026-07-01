@@ -76,14 +76,18 @@ class NetcdfFortran(AutotoolsPackage):
     def flag_handler(self, name, flags):
         if name == "cflags":
             if "+pic" in self.spec:
-                flags.append(self.compiler.cc_pic_flag)
+                flags.append(self["c"].pic_flag)
         elif name == "fflags":
             if "+pic" in self.spec:
-                flags.append(self.compiler.f77_pic_flag)
-            if self.spec.satisfies("%fortran=gcc@10:"):
-                # https://github.com/Unidata/netcdf-fortran/issues/212
-                flags.append("-fallow-argument-mismatch")
-            elif self.compiler.name == "cce":
+                flags.append(self["fortran"].pic_flag)
+            if self.spec.satisfies("@:4.5.2"):
+                if self.spec.satisfies("%fortran=gcc@10:"):
+                    # https://github.com/Unidata/netcdf-fortran/issues/212
+                    flags.append("-fallow-argument-mismatch")
+                elif self.spec.satisfies("%fortran=nag"):
+                    # https://github.com/Unidata/netcdf-fortran/issues/218
+                    flags.append("-mismatch_all")
+            if self.spec.satisfies("%fortran=cce"):
                 # Cray compiler generates module files with uppercase names by
                 # default, which is not handled by the makefiles of
                 # NetCDF-Fortran:
@@ -91,6 +95,12 @@ class NetcdfFortran(AutotoolsPackage):
                 # The following flag forces the compiler to produce module
                 # files with lowercase names.
                 flags.append("-ef")
+            elif self.spec.satisfies("%fortran=nag platform=darwin"):
+                # The MacOS file system is case-insensitive. NAG therefore treats .F90
+                # files as .f90 files, and so doesn't run them through its
+                # preprocessor. So add -fpp to force NAG to run the preprocessor on
+                # all Fortran files.
+                flags.append("-fpp")
 
         # Note that cflags and fflags should be added by the compiler wrapper
         # and not on the command line to avoid overriding the default

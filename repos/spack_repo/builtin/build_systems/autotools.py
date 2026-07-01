@@ -528,6 +528,16 @@ To resolve this problem, please try the following:
                 stop_at=stop_at,
             )
 
+            if self.spec.satisfies("platform=darwin"):
+                # Libtool has a check for nagfor on darwin systems, but it does not
+                # recognize NAG behind the compiler wrappers, so fix that check:
+                x.filter(
+                    regex=r"(\s*case\s+)(\$CC)(\s+in\s*)$",
+                    repl='\\1`test "x$with_nag" = xyes && echo nagfor || echo \\2`\\3',
+                    start_at="# On Darwin other compilers",
+                    stop_at="esac",
+                )
+
     @property
     def configure_directory(self) -> str:
         """Return the directory where 'configure' resides."""
