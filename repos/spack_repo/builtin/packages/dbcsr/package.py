@@ -145,10 +145,10 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         opencl_loader_header_version = "2022.10.24"
         depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
         requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
-    # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
-    # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
-    # hard dependency of libxstream in that configuration. This is reflected in
-    # libxstream package.py.
+        # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
+        # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
+        # hard dependency of libxstream in that configuration. This is reflected in
+        # libxstream package.py.
         depends_on("libxstream@1:", when="@2.10:")
         requires("smm=libxs", when="@2.10:")
         requires("smm=libxsmm", when="@:2.9.1")
