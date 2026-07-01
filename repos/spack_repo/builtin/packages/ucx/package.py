@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import re
 import shutil
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -20,6 +21,8 @@ class Ucx(AutotoolsPackage, CudaPackage):
     maintainers("hppritcha")
 
     license("BSD-3-Clause")
+
+    executables = ["^ucx_info$"]
 
     version("master", branch="master", submodules=True)
 
@@ -159,6 +162,131 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     # https://github.com/openucx/ucx/issues/10589
     conflicts("%gcc@15:", when="@:1.18")
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("-v", output=str, error=str)
+        match = re.search(r"# Library version:\s+(\S+)", output)
+        return Version(match.group(1)) if match else None
+
+    @classmethod
+    def determine_variants(cls, exes, version):
+        variants = []
+        for exe in exes:
+            # Get configure flags
+            ver_output = Executable(exe)("-v", output=str, error=str)
+            cfg_match = re.search(r"# Configured with:\s+(.*)", ver_output)
+            cfg = cfg_match.group(1) if cfg_match else ""
+
+            # Get build config defines
+            build_output = Executable(exe)("-b", output=str, error=str)
+            defines = {}
+            for line in build_output.strip().split("\n"):
+                m = re.match(r"#define\s+(\w+)\s+(.*)", line)
+                if m:
+                    defines[m.group(1)] = m.group(2).strip()
+
+            variant_list = []
+
+            # --- Variants from build defines ---
+            define_map = {
+                "thread_multiple": "ENABLE_MT",
+                "assertions": "ENABLE_ASSERT",
+                "debug": "ENABLE_DEBUG_DATA",
+                "parameter_checking": "ENABLE_PARAMS_CHECK",
+            }
+            for variant_name, define_key in define_map.items():
+                if defines.get(define_key) == "1":
+                    variant_list.append(f"+{variant_name}")
+                else:
+                    variant_list.append(f"~{variant_name}")
+
+            # CMA from defines
+            if defines.get("HAVE_CMA") == "1":
+                variant_list.append("+cma")
+            else:
+                variant_list.append("~cma")
+
+            # --- Variants from configure flags ---
+            flag_variants = {
+                "cuda": r"--with-cuda(?!=no)",
+                "rocm": r"--with-rocm(?!=no)",
+                "gdrcopy": r"--with-gdrcopy(?!=no)",
+                "rdmacm": r"--with-rdmacm(?!=no)",
+                "verbs": r"--with-verbs(?!=no)",
+                "knem": r"--with-knem(?!=no)",
+                "xpmem": r"--with-xpmem(?!=no)",
+                "rc": r"--with-rc\b",
+                "ud": r"--with-ud\b",
+                "dc": r"--with-dc\b",
+                "dm": r"--with-dm\b",
+                "java": r"--with-java(?!=no)",
+            }
+
+            for variant_name, pattern in flag_variants.items():
+                without = f"--without-{variant_name}"
+                if re.search(pattern, cfg) and without not in cfg:
+                    variant_list.append(f"+{variant_name}")
+                elif without in cfg:
+                    variant_list.append(f"~{variant_name}")
+
+            # cm variant (only for UCX @:1.10)
+            if version in ver(":1.10"):
+                if (re.search(r"--with-cm\b", cfg) and
+                        "--without-cm" not in cfg):
+                    variant_list.append("+cm")
+                elif "--without-cm" in cfg:
+                    variant_list.append("~cm")
+
+            # MLX5 (flag name changed in v1.18: --with-mlx5-dv → --with-mlx5)
+            if version in ver(":1.17"):
+                if (re.search(r"--with-mlx5-dv(?!=no)", cfg) and
+                        "--without-mlx5-dv" not in cfg):
+                    variant_list.append("+mlx5_dv")
+                else:
+                    variant_list.append("~mlx5_dv")
+            else:
+                if (re.search(r"--with-mlx5(?!=no)", cfg) and
+                        "--without-mlx5" not in cfg):
+                    variant_list.append("+mlx5_dv")
+                else:
+                    variant_list.append("~mlx5_dv")
+
+            # VFS (fuse3) - only for UCX @1.11.0:
+            if version in ver("1.11.0:"):
+                if re.search(r"--with-fuse3(?!=no)", cfg):
+                    variant_list.append("+vfs")
+                elif "--without-fuse3" in cfg:
+                    variant_list.append("~vfs")
+
+            # backtrace_detail (version-specific: --enable-backtrace-detail
+            # → --with-bfd)
+            if version in ver(":1.11"):
+                if re.search(r"--enable-backtrace-detail\b", cfg):
+                    variant_list.append("+backtrace_detail")
+                else:
+                    variant_list.append("~backtrace_detail")
+            else:
+                if re.search(r"--with-bfd(?!=no)", cfg):
+                    variant_list.append("+backtrace_detail")
+                else:
+                    variant_list.append("~backtrace_detail")
+
+            # ib_hw_tm
+            if re.search(r"--with-ib-hw-tm(?!=no)", cfg):
+                variant_list.append("+ib_hw_tm")
+            elif "--without-ib-hw-tm" in cfg:
+                variant_list.append("~ib_hw_tm")
+
+            # logging: detect actual build config
+            # (UCX default=enabled, Spack variant default=False)
+            if "--disable-logging" in cfg:
+                variant_list.append("~logging")
+            else:
+                variant_list.append("+logging")
+
+            variants.append(" ".join(variant_list))
+        return variants
 
     configure_abs_path = "contrib/configure-release"
 
