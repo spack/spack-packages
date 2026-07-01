@@ -19,6 +19,8 @@ class Migraphx(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libmigraphx"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{0}.tar.gz")]
+
     license("MIT")
     version("7.13.0", branch="release/rocm-rel-7.13")
     version("7.2.3", sha256="25d491d83fe84c6c071305a71100f77b393b35ae5c9eeec277c68986378f6abc")
