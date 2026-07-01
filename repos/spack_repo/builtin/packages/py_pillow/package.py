@@ -157,6 +157,7 @@ class PyPillow(PyPillowBase):
     license("MIT-CMU", when="@11:")
     license("HPND", when="@:10")
 
+    version("12.3.0", sha256="3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce")
     version("12.2.0", sha256="a830b1a40919539d07806aa58e1b114df53ddd43213d9c8b75847eee6c0182b5")
     version("12.1.1", sha256="9ad8fa5937ab05218e2b6a4cff30295ad35afd2f83ac592e68c0d871bb0fdbc4")
     with default_args(deprecated=True):
@@ -236,6 +237,7 @@ class PyPillow(PyPillowBase):
     depends_on("c", type="build")
 
     for ver in [
+        "12.3.0",
         "12.2.0",
         "12.1.1",
         "12.1.0",
