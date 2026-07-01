@@ -246,6 +246,10 @@ class Hdf5(CMakePackage):
     # See https://github.com/HDFGroup/hdf5/pull/3837
     patch("hdf5_1_14_3_fpe.patch", when="@1.14.3")
 
+    # Fix Apple linker flags (-current_version and -compatibility_version)
+    # when building with NAG compiler
+    patch("nag_macos_linker.patch", when="@1.12.0:1.14.99 %nag platform=darwin")
+
     # There are known build failures with intel@18.0.1. This issue is
     # discussed and patch is provided at
     # https://software.intel.com/en-us/forums/intel-fortran-compiler-for-linux-and-mac-os-x/topic/747951.
