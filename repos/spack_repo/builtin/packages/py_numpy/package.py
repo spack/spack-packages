@@ -23,6 +23,9 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
+    version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
+    version("2.4.5", sha256="ca670567a5683b7c1670ec03e0ddd5862e10934e92a70751d68d7b7b74ca7f9f")
     version("2.4.4", sha256="2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0")
     version("2.4.3", sha256="483a201202b73495f00dbc83796c6ae63137a9bdade074f7648b3e32613412dd")
     version("2.4.2", sha256="659a6107e31a83c4e33f763942275fd278b21d095094044eb35569e86a21ddae")
@@ -92,7 +95,8 @@ class PyNumpy(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.11:3.14", when="@2.3.2:")
+        depends_on("python@3.12:3.14", when="@2.5:")
+        depends_on("python@3.11:3.14", when="@2.3.2:2.4")
         depends_on("python@3.11:3.13", when="@2.3.0:2.3.1")
         depends_on("python@3.10:3.13", when="@2.1:2.2")
         depends_on("python@3.9:3.12", when="@1.26:2.0")
@@ -155,7 +159,7 @@ class PyNumpy(PythonPackage):
     # Add Fujitsu Fortran compiler
     patch("add_fj_compiler.patch", when="@1.19.3:1.19.5%fj")
 
-    patch("check_executables.patch", when="@1.20.0:")
+    patch("check_executables.patch", when="@1.20.0:2.4")
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
 
     # Fix atomic_load const issue
@@ -201,6 +205,12 @@ class PyNumpy(PythonPackage):
     conflicts("%gcc@:8.3", when="@1.26:", msg="NumPy requires GCC >= 8.4")
     conflicts("%gcc@:6.4", when="@1.23:", msg="NumPy requires GCC >= 6.5")
     conflicts("%gcc@:4.7", msg="NumPy requires GCC >= 4.8")
+    conflicts(
+        "%msvc@:19.34",
+        when="@2.5:",
+        msg="NumPy requires at least vc142 (default with Visual Studio 2019) "
+        "when building with MSVC",
+    )
     conflicts(
         "%msvc@:19.19",
         when="@1.26:",

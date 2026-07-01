@@ -127,7 +127,12 @@ class Charmpp(Package):
     # Fix was suggested in https://github.com/charmplusplus/charm/pull/3646 and the same has
     # been implemented in v8.0.0
     conflicts("%fortran=intel-oneapi-compilers", when="@8: +fortran")
-    conflicts("%fortran=aocc", when="@8: +fortran")
+    conflicts(
+        "%fortran=aocc@:4.2",
+        when="@8: +fortran",
+        msg="Charm++ 8.x +fortran fails to build with AOCC 4.2.0 and earlier; "
+        "use AOCC 5.0+ or charmpp@8: ~fortran",
+    )
 
     # Versions 7.0.0+ use CMake by default when it's available. It's more
     # robust.

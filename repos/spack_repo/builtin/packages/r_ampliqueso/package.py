@@ -15,11 +15,12 @@ class RAmpliqueso(RPackage):
 
     bioc = "ampliQueso"
 
-    version("1.21.0", commit="ed99c5194a452ee299a93e981da2224e4dab5bdd")
-    version("1.20.0", commit="ed064ffe9c5f2b47136e5f0f2e2c4214af4deae8")
-    version("1.18.0", commit="c27fa51094135ef8da52cd2b34a27ec6454abd8e")
-    version("1.16.0", commit="25d2543ff9dedef4f966f999c95cdf87185d3bb3")
-    version("1.14.0", commit="9a4c26ec594171279aba8ab7fe59c4a2ea09b06b")
+    with default_args(get_full_repo=True):
+        version("1.21.0", commit="ed99c5194a452ee299a93e981da2224e4dab5bdd")
+        version("1.20.0", commit="ed064ffe9c5f2b47136e5f0f2e2c4214af4deae8")
+        version("1.18.0", commit="c27fa51094135ef8da52cd2b34a27ec6454abd8e")
+        version("1.16.0", commit="25d2543ff9dedef4f966f999c95cdf87185d3bb3")
+        version("1.14.0", commit="9a4c26ec594171279aba8ab7fe59c4a2ea09b06b")
 
     depends_on("r+X", type=("build", "run"))
     depends_on("r@2.15.0:", type=("build", "run"))

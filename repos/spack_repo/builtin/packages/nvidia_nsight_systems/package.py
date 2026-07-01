@@ -58,10 +58,14 @@ class NvidiaNsightSystems(Package):
 
     homepage = "https://developer.nvidia.com/nsight-systems"
     url = "https://developer.download.nvidia.com/devtools/repos/"
-    maintainers("scothalverson")
-    license("NVIDIA Software License Agreement")
 
     executables = ["^nsys$"]
+
+    maintainers("scothalverson")
+
+    license("NVIDIA Software License Agreement", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
 
     # Used to unpack the source RPM archives.
     depends_on("libarchive programs='bsdtar'", type="build")

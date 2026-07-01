@@ -20,7 +20,7 @@ class Kahip(CMakePackage):
     geared towards efficient partitioning of social networks.
     """
 
-    homepage = "http://algo2.iti.kit.edu/documents/kahip/index.html"
+    homepage = "https://algo2.iti.kit.edu/documents/kahip/index.html"
     url = "https://github.com/KaHIP/KaHIP/archive/v3.14.tar.gz"
     git = "https://github.com/KaHIP/KaHIP.git"
     maintainers("ma595")

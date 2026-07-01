@@ -50,6 +50,12 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("46.8.1", commit="3ded307e142c6ce9e6c1fa205604582ff6aef920")
+    version("46.8.0", commit="59d95bd56db22034219a526e7dff563622cc268d")
+    version("46.7.0", commit="4e95978f8e23f863f9e7c6b219b5100531f4ba41")
+    version("46.6.0", commit="7791df44925fadd1de375c42c41d36a6f82602d4")
+    version("46.5.0", commit="34edd48852f766e1b9d94d3dc996e27476339f1b")
+    version("46.4.0", commit="4f0e5d8ce158728ff275a733b720d087065563bd")
     version("46.3.0", commit="4f0e5d8ce158728ff275a733b720d087065563bd")
     version("46.2.0", commit="fcecf616be7ddd240700f65a1508f21811ee4167")
     version("46.1.0", commit="d6d17c9c2b28a54141477438d63176a8af2d3c76")
@@ -161,6 +167,7 @@ class Acts(CMakePackage, CudaPackage):
     variant(
         "hepmc3", default=False, description="Build the HepMC3-based examples", when="+examples"
     )
+    requires("+hepmc3", when="@41: +examples")
     variant(
         "pythia8", default=False, description="Build the Pythia8-based examples", when="+examples"
     )
@@ -184,19 +191,23 @@ class Acts(CMakePackage, CudaPackage):
         # TODO: This should be when-constrained when the issue is fixed in ACTS.
         depends_on("actsvg@:0.4.56")
     # The version number of algebra plugins was not correct before v0.28.0.
-    depends_on("acts-algebra-plugins @0.28:", when="+traccc")
+    depends_on("acts-algebra-plugins @0.28:", when="+traccc @:46.3.0")
     depends_on("boost @1.71: +filesystem +program_options +test")
     depends_on("boost @1.77:", when="@42:")
     depends_on("boost @1.78:", when="@45:")
     depends_on("cmake @3.14:", type="build")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
+    depends_on("covfie @0.13.0:", when="+traccc @42:")
+    depends_on("covfie @0.15.2:", when="+traccc @44.1:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.26:", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
     depends_on("detray @0.75.3:", when="+traccc")
     depends_on("detray @0.101.0:", when="@42.1: +traccc")
+    depends_on("detray @0.103.0:", when="@44.1: +traccc")
+    depends_on("detray @1.0.1:", when="@46.4: +traccc")
     depends_on("edm4hep @0.7:", when="+edm4hep")
     depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
     depends_on("edm4hep @:0", when="@:44 +edm4hep")
@@ -248,6 +259,8 @@ class Acts(CMakePackage, CudaPackage):
         depends_on("root @6.28:", when="@42:")
 
     depends_on("vecmem@1.17.0:", when="@42: +traccc")
+    depends_on("vecmem@1.21.0:", when="@44.1: +traccc")
+    depends_on("vecmem@1.24.0:", when="@46.4: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:

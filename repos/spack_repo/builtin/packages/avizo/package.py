@@ -22,7 +22,9 @@ class Avizo(Package):
 
     manual_download = True
 
-    license("GPL-3.0")
+    license("LicenseRef-Thermofisher-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
 
     version(
         "2020.1",
