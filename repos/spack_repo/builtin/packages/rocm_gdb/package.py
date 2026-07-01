@@ -21,7 +21,7 @@ class RocmGdb(ROCmLibrary, AutotoolsPackage):
 
     rocm_url_map = [
         ("7.2.3", "https://github.com/ROCm/ROCgdb/archive/rocm-{0}.tar.gz"),
-        (None, "https://github.com/ROCm/ROCgdb/archive/refs/tags/therock-{0}.{1}.tar.gz"),
+        (None, "https://github.com/ROCm/ROCgdb/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
     maintainers("srekolam", "renjithravindrankannath")
 
