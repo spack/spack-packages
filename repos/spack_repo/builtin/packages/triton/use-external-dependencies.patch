@@ -1,0 +1,59 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 0f071bb..97eecec 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD 17) # minimum C++ standard to support Kokkos
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ 
++option(TRITON_USE_EXTERNAL_DEPS "Use externally installed Kokkos and yaml-cpp" OFF)
++
+ message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
+ 
+ # check if MPI is available
+@@ -22,15 +24,41 @@ if(MACHINE STREQUAL Windows)
+   find_package(MPI REQUIRED COMPONENTS CXX)
+ endif()
+ 
+-# add external packages
+-add_subdirectory(${TRITON_SOURCE_DIR}/external)
++if(TRITON_USE_EXTERNAL_DEPS)
++  find_package(Kokkos REQUIRED CONFIG)
++  set(TRITON_KOKKOS_TARGET Kokkos::kokkos)
++
++  if(ENSEMBLE_BUILD)
++    find_package(yaml-cpp REQUIRED CONFIG)
++    if(TARGET yaml-cpp::yaml-cpp)
++      set(TRITON_YAML_CPP_TARGET yaml-cpp::yaml-cpp)
++    elseif(TARGET yaml-cpp)
++      set(TRITON_YAML_CPP_TARGET yaml-cpp)
++    else()
++      message(FATAL_ERROR "yaml-cpp was found, but no CMake target is available")
++    endif()
++  endif()
++
++  find_package(GDAL)
++  if(GDAL_FOUND)
++    set(ENABLE_GDAL ON CACHE INTERNAL "ENABLE_GDAL variable")
++  else()
++    message(WARNING "GDAL is not found. GDAL is disabled.")
++    set(ENABLE_GDAL OFF CACHE INTERNAL "ENABLE_GDAL variable")
++  endif()
++else()
++  # add external packages
++  add_subdirectory(${TRITON_SOURCE_DIR}/external)
++  set(TRITON_KOKKOS_TARGET kokkos)
++  set(TRITON_YAML_CPP_TARGET yaml-cpp)
++endif()
+ 
+ # build triton
+ add_executable(${TRITON_EXECUTABLE} ./src/main.cpp)
+-target_link_libraries(${TRITON_EXECUTABLE} PUBLIC kokkos)
++target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${TRITON_KOKKOS_TARGET})
+ 
+ if (ENSEMBLE_BUILD)
+-  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC yaml-cpp)
++  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${TRITON_YAML_CPP_TARGET})
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENSEMBLE_BUILD")
+ endif()
+ 
