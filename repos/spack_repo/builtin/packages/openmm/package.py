@@ -4,11 +4,12 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Openmm(CMakePackage, CudaPackage):
+class Openmm(CMakePackage, CudaPackage, ROCmPackage):
     """A high performance toolkit for molecular simulation. Use it as
     a library, or as an application. We include extensive language
     bindings for Python, C, C++, and even Fortran. The code is open
@@ -19,6 +20,9 @@ class Openmm(CMakePackage, CudaPackage):
     homepage = "https://openmm.org/"
     url = "https://github.com/openmm/openmm/archive/7.4.1.tar.gz"
 
+    version("8.5.2", sha256="c059133288e2d747ad12b7e265aad1636190e3b6cf858fb0637fe703b556ccb8")
+    version("8.5.1", sha256="16b2c2a4ce959be223ba4cc00dcb22a5d84ae3fb8c3948643632f6bda1ce6944")
+    version("8.5.0", sha256="7e55c9399244731a4beebfe7fb72ecae2bbd02d14ff12b7544280584b9ca952f")
     version("8.1.1", sha256="347ad9f04dd88a673f7871127d9f23a75caf2c1a460a3f21f3328a24dc6547d0")
     version("8.0.0", sha256="dc63d7b47c8bb7b169c409cfd63d909ed0ce1ae114d37c627bf7a4231acf488e")
     version("7.7.0", sha256="51970779b8dc639ea192e9c61c67f70189aa294575acb915e14be1670a586c25")
@@ -29,22 +33,66 @@ class Openmm(CMakePackage, CudaPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
-    install_targets = ["install", "PythonInstall"]
+    variant("python", default=True, description="Build Python bindings")
+    variant("fortran", default=True, description="Build C and Fortran wrappers")
+    variant("opencl", default=False, description="Build with OpenCL")
+    variant("examples", default=False, description="Build example executables")
+    variant("docs", default=False, description="Build API documentation")
+    variant("shared", default=True, description="Build shared libraries")
+    variant("static", default=False, description="Build static libraries")
 
-    depends_on("python@2.7:", type=("build", "run"))
+    conflicts("+rocm", when="@:8.1.1", msg="OpenMM HIP platform was first released in 8.2.0")
+    conflicts("~shared~static", msg="OpenMM must build at least one library type")
+    conflicts("~shared+python", msg="OpenMM Python bindings require shared libraries")
+    conflicts("~shared+fortran", msg="OpenMM C and Fortran wrappers require shared libraries")
+
     depends_on("cmake@3.17:", type="build", when="@7.5.1:")
     depends_on("cmake@3.1:", type="build")
     # https://github.com/openmm/openmm/issues/3317
-    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0")
-    depends_on("doxygen", type="build", when="@7.7:")
-    depends_on("swig", type="build")
+    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+python")
+    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+fortran")
+    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+docs")
+    depends_on("doxygen", type="build", when="@7.7:+python")
+    depends_on("doxygen", type="build", when="@7.7:+fortran")
+    depends_on("doxygen", type="build", when="@7.7:+docs")
+    depends_on("swig", type="build", when="+python")
     depends_on("fftw", when="@:7")
-    depends_on("py-cython", type="build")
-    depends_on("py-numpy", type=("build", "run"))
+    depends_on("python@2.7:", type=("build", "run"), when="@:7+python")
+    depends_on("python@3:", type=("build", "run"), when="@8:+python")
+    depends_on("python@3.10:", type=("build", "run"), when="@8.5:8.5+python")
+    depends_on("python@2.7:", type="build", when="@:7+fortran")
+    depends_on("python@3:", type="build", when="@8:+fortran")
+    depends_on("python@3.10:", type="build", when="@8.5:8.5+fortran")
+    depends_on("python@2.7:", type="build", when="@:7+docs")
+    depends_on("python@3:", type="build", when="@8:+docs")
+    depends_on("python@3.10:", type="build", when="@8.5:8.5+docs")
+    depends_on("py-setuptools", type="build", when="+python")
+    depends_on("py-cython", type="build", when="+python")
+    depends_on("py-numpy", type=("build", "run"), when="+python")
+    depends_on("py-sphinx", type="build", when="+docs")
+    depends_on("py-breathe", type="build", when="+docs")
+    depends_on("py-jinja2", type="build", when="+docs+python")
     depends_on("cuda", when="+cuda", type=("build", "link", "run"))
-    extends("python")
+    depends_on("hip +rocm", when="+rocm", type=("build", "link", "run"))
+    depends_on("opencl", when="+opencl", type=("build", "link", "run"))
+    extends("python", when="+python")
+
+    @property
+    def install_targets(self):
+        targets = []
+
+        if "+docs" in self.spec:
+            targets.append("C++ApiDocs")
+            if "+python" in self.spec:
+                targets.append("PythonApiDocs")
+
+        targets.append("install")
+
+        if "+python" in self.spec and "+docs" not in self.spec:
+            targets.append("PythonInstall")
+
+        return targets
 
     # Backport <https://github.com/openmm/openmm/pull/3154> to
     # `openmm@7.5.1+cuda`, which is the version currently required by
@@ -56,7 +104,10 @@ class Openmm(CMakePackage, CudaPackage):
     )
 
     def patch(self):
-        install_string = f'set(PYTHON_SETUP_COMMAND "install --prefix={self.prefix}")'
+        install_string = (
+            f'set(PYTHON_SETUP_COMMAND "install --prefix={self.prefix} '
+            '--single-version-externally-managed --root=/")'
+        )
 
         filter_file(
             r"set\(PYTHON_SETUP_COMMAND \"install.*",
@@ -64,30 +115,65 @@ class Openmm(CMakePackage, CudaPackage):
             "wrappers/python/CMakeLists.txt",
         )
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+    @property
+    def python_site_packages(self):
+        python_version = self.spec["python"].version.up_to(2)
+        return join_path(self.prefix.lib, f"python{python_version}", "site-packages")
+
+    def _setup_openmm_environment(self, env: EnvironmentModifications) -> None:
+        env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
+        env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib.plugins)
+        env.set("OPENMM_PLUGIN_DIR", self.prefix.lib.plugins)
+        env.set("OPENMM_INCLUDE_PATH", self.prefix.include)
+        env.set("OPENMM_LIB_PATH", self.prefix.lib)
+        if "+python" in self.spec:
+            env.prepend_path("PYTHONPATH", self.python_site_packages)
+
+    def _setup_cuda_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
         if "+cuda" in spec:
             env.set("OPENMM_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc)
             env.set("CUDA_HOST_COMPILER", self.compiler.cxx)
 
-    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+    def cmake_args(self):
         spec = self.spec
-        if "+cuda" in spec:
-            env.set("OPENMM_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc)
-            env.set("CUDA_HOST_COMPILER", self.compiler.cxx)
+        args = [
+            self.define_from_variant("OPENMM_BUILD_CUDA_LIB", "cuda"),
+            self.define_from_variant("OPENMM_BUILD_HIP_LIB", "rocm"),
+            self.define_from_variant("OPENMM_BUILD_OPENCL_LIB", "opencl"),
+            self.define_from_variant("OPENMM_BUILD_PYTHON_WRAPPERS", "python"),
+            self.define_from_variant("OPENMM_BUILD_C_AND_FORTRAN_WRAPPERS", "fortran"),
+            self.define_from_variant("OPENMM_BUILD_EXAMPLES", "examples"),
+            self.define_from_variant("OPENMM_GENERATE_API_DOCS", "docs"),
+            self.define_from_variant("OPENMM_BUILD_SHARED_LIB", "shared"),
+            self.define_from_variant("OPENMM_BUILD_STATIC_LIB", "static"),
+            self.define("BUILD_TESTING", self.run_tests),
+        ]
+
+        if "+rocm" in spec:
+            args.extend(
+                [
+                    self.define("HIP_DIR", spec["hip"].prefix.lib.cmake.hip),
+                    self.define("HIPRTC_DIR", spec["hip"].prefix.lib.cmake.hiprtc),
+                ]
+            )
+
+        return args
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_openmm_environment(env)
+        self._setup_cuda_environment(env)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._setup_openmm_environment(env)
+        self._setup_cuda_environment(env)
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        spec = self.spec
-        if "+cuda" in spec:
-            env.set("OPENMM_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc)
-            env.set("CUDA_HOST_COMPILER", self.compiler.cxx)
+        self.setup_run_environment(env)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        spec = self.spec
-        if "+cuda" in spec:
-            env.set("OPENMM_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc)
-            env.set("CUDA_HOST_COMPILER", self.compiler.cxx)
+        self.setup_build_environment(env)
