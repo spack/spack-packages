@@ -32,7 +32,7 @@ class PyOpenai(PythonPackage):
         when="@:0",
     )
     variant("embeddings", default=False, description="represents a text string vector", when="@:0")
-    variant("voice", default=False, description="library for proceeding sound", when="@1.68.1:")
+    variant("voice", default=False, description="library for processing sound", when="@1.68.1:")
     variant(
         "aiohttp",
         default=False,
@@ -47,14 +47,14 @@ class PyOpenai(PythonPackage):
     depends_on("py-hatchling@1.26.3", type="build", when="@1:2")
     depends_on("py-hatch-fancy-pypi-readme", type="build", when="@1:2")
     depends_on("py-requests@2.20:", type=("build", "run"), when="@:0")
-    depends_on("py-httpx@0.23.0:0", when="@1:")
-    depends_on("py-pydantic@1.9.0:2", when="@1:")
+    depends_on("py-httpx@0.23.0:0", type=("build", "run"), when="@1:")
+    depends_on("py-pydantic@1.9.0:2", type=("build", "run"), when="@1:")
     depends_on("py-tqdm", type=("build", "run"))
     depends_on("py-tqdm@4:", type=("build", "run"), when="@1.40:")
     depends_on("py-typing-extensions", when="^python@3.7", type=("build", "run"))
     depends_on("py-typing-extensions@4.11:4", type=("build", "run"), when="@1.40:")
-    depends_on("py-anyio@3.5.0:4", when="@1.3.8:")
-    depends_on("py-distro@1.7.0:1", when="@1:")
+    depends_on("py-anyio@3.5.0:4", type=("build", "run"), when="@1.3.8:")
+    depends_on("py-distro@1.7.0:1", type=("build", "run"), when="@1:")
     depends_on("py-sniffio", type=("build", "run"), when="@1:")
     depends_on("py-jiter@0.10:0", type=("build", "run"), when="@2.3.0:")
     depends_on("py-aiohttp", type=("build", "run"), when="@:0")

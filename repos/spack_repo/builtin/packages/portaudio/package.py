@@ -21,8 +21,10 @@ class Portaudio(AutotoolsPackage):
 
     depends_on("c", type="build")
 
-    depends_on("alsa-lib", type="link")
+    depends_on("alsa-lib", type="link", when="platform=linux")
 
     def configure_args(self):
-        args = ["--with-alsa"]
+        args = []
+        if self.spec.satisfies("platform=linux"):
+            args.append("--with-alsa")
         return args

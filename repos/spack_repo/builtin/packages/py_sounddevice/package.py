@@ -23,4 +23,7 @@ class PySounddevice(PythonPackage):
     depends_on("portaudio", type=("link", "run"))
 
     def setup_run_environment(self, env):
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["portaudio"].libs.directories[0])
+        env_var = "LD_LIBRARY_PATH"
+        if self.spec.satisfies("platform=darwin"):
+            env_var = "DYLD_FALLBACK_LIBRARY_PATH"
+        env.prepend_path(env_var, self.spec["portaudio"].libs.directories[0])
