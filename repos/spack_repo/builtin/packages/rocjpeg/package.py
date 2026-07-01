@@ -20,6 +20,8 @@ class Rocjpeg(ROCmLibrary, CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
     libraries = ["librocjpeg"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/rocJPEG/archive/refs/tags/rocm-{0}.tar.gz")]
+
     license("MIT")
     version("7.2.3", sha256="0aafd0468bc79575ad3bb5f51c02a1dd1a696db87c8ce4151eeaf8573cb35ade")
     version("7.2.1", sha256="b1e28958d7e3986856388e98e04995b96601c8664cf325b9d3e3140e0ff0711a")

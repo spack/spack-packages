@@ -19,6 +19,8 @@ class Rocal(ROCmLibrary, CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
     libraries = ["librocal"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-{0}.tar.gz")]
+
     license("MIT")
     version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")
     version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")

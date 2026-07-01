@@ -18,6 +18,8 @@ class Transferbench(ROCmLibrary, CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
     executables = ["TransferBench"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-{0}.tar.gz")]
+
     tags = ["rocm"]
 
     license("MIT")

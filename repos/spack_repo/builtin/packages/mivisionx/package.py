@@ -20,6 +20,8 @@ class Mivisionx(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libopenvx", "libvxu"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/MIVisionX/archive/rocm-{0}.tar.gz")]
+
     tags = ["rocm"]
 
     license("MIT")
