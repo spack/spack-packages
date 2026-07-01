@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack_repo.builtin.packages.kokkos.package import Kokkos
 
 from spack.package import *
 
 
-class KokkosKernels(CMakePackage, CudaPackage):
+class KokkosKernels(CMakePackage, CudaPackage, ROCmPackage):
     """Kokkos Kernels provides math kernels, often BLAS or LAPACK
     for small matrices, that can be used in larger Kokkos parallel routines"""
 
@@ -143,6 +144,8 @@ class KokkosKernels(CMakePackage, CudaPackage):
         depends_on("c", type="build", when=f"+{tpl}")
         depends_on("fortran", type="build", when=f"+{tpl}")
     depends_on("kokkos")
+    depends_on("kokkos~shared", when="~shared")
+    depends_on("kokkos+shared", when="+shared")
     depends_on("kokkos+pic", when="+shared")
     depends_on("kokkos+cuda", when="+execspace_cuda")
     depends_on("kokkos+openmp", when="+execspace_openmp")

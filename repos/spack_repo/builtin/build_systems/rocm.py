@@ -84,6 +84,7 @@ from spack.package import (
     conflicts,
     depends_on,
     join_path,
+    requires,
     variant,
 )
 
@@ -155,9 +156,7 @@ class ROCmPackage(PackageBase):
         when="+rocm",
     )
 
-    depends_on("llvm-amdgpu", type="build", when="+rocm")
-    depends_on("hsa-rocr-dev", when="+rocm")
-    depends_on("hip +rocm", when="+rocm")
+    depends_on("hip-lang", type="build", when="+rocm")
 
     # need amd gpu type for rocm builds
     conflicts("amdgpu_target=none", when="+rocm")
@@ -198,14 +197,14 @@ class ROCmPackage(PackageBase):
 
     # Add compiler minimum versions based on the first release where the
     # processor is included in llvm/lib/Support/TargetParser.cpp
-    depends_on("llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx940")
-    depends_on("llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx941")
-    depends_on("llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx942")
-    depends_on("llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx1036")
-    depends_on("llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1100")
-    depends_on("llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1101")
-    depends_on("llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1102")
-    depends_on("llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1103")
+    requires("%hip-lang=llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx940")
+    requires("%hip-lang=llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx941")
+    requires("%hip-lang=llvm-amdgpu@5.7.0:", when="amdgpu_target=gfx942")
+    requires("%hip-lang=llvm-amdgpu@5.2.0:", when="amdgpu_target=gfx1036")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1100")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1101")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1102")
+    requires("%hip-lang=llvm-amdgpu@5.3.0:", when="amdgpu_target=gfx1103")
 
     # Compiler conflicts
 

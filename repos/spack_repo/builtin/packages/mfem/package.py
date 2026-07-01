@@ -1071,11 +1071,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 hip_headers += hipsparse.headers
                 hip_libs += hipsparse.libs
                 # Note: MFEM's defaults.mk wants to find librocsparse.* in
-                # $(HIP_DIR)/lib, so we set HIP_DIR to be $ROCM_PATH when using
+                # $(HIP_DIR)/lib, so we set HIP_DIR to be hip prefix when using
                 # external HIP, or the prefix of rocsparse (which is a
                 # dependency of hipsparse) when using Spack-built HIP.
                 if spec["hip"].external:
-                    options += ["HIP_DIR=%s" % env["ROCM_PATH"]]
+                    options += ["HIP_DIR=%s" % spec["hip"].prefix]
                 else:
                     options += ["HIP_DIR=%s" % hipsparse["rocsparse"].prefix]
             if "^rocthrust" in spec and not spec["hip"].external:

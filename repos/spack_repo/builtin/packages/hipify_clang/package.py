@@ -60,6 +60,8 @@ class HipifyClang(ROCmLibrary, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     for ver in [
         "5.7.0",
         "5.7.1",

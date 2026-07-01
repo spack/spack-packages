@@ -28,6 +28,7 @@ class CompilerWrapper(Package):
 
     homepage = "https://github.com/spack/spack"
     url = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
+    git = "https://github.com/scheibelp/compiler-wrapper.git"
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
@@ -38,6 +39,7 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
+        version("1.2.0", commit="2b8ef4ef537cb2dece32f88d571b128220bd824a")
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
@@ -117,6 +119,7 @@ class CompilerWrapper(Package):
             ("rocmcc", "amdclang"),
             ("rocmcc", "amdclang++"),
             ("rocmcc", "amdflang"),
+            ("rocmcc", "spackhip"),
             ("xl", "xlc"),
             ("xl", "xlc++"),
             ("xl", "xlf"),
@@ -156,6 +159,9 @@ class CompilerWrapper(Package):
         if dependent_spec.has_virtual_dependency("fortran"):
             _var_list.append(("fortran", "fortran", "F77", "SPACK_F77"))
             _var_list.append(("fortran", "fortran", "FC", "SPACK_FC"))
+
+        if dependent_spec.has_virtual_dependency("hip-lang"):
+            _var_list.append(("hip-lang", "hip", "HIPCXX", "SPACK_HIPCXX"))
 
         # The package is not used as a compiler, so skip this setup
         if not _var_list:
@@ -259,6 +265,9 @@ class CompilerWrapper(Package):
         if dependent_spec.has_virtual_dependency("fortran"):
             setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
             setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
+
+        if dependent_spec.has_virtual_dependency("hip-lang"):
+            setattr(module, "spack_hipcxx", _spack_compiler_attribute(language="hip-lang"))
 
     @property
     def disable_new_dtags(self) -> str:
