@@ -15,7 +15,15 @@ class RPreprocesscore(RPackage):
     bioc = "preprocessCore"
 
     with default_args(get_full_repo=True):
+        version("1.74.0", commit="d5de515d125c057d154a812373caa16423093ef5")  # bioc 3.23
+        version("1.72.0", commit="f8fc99ac2632b1d08ec1bfe3021e3e02fc8c60b7")  # bioc 3.22
+        version("1.70.0", commit="e1bb66460cd9c6413133bece4b3d8cf39d433a34")  # bioc 3.21
+        version("1.68.0", commit="fa0e33e1df4f421f306f71c5494ca6d897a90d6f")  # bioc 3.20
+        version("1.66.0", commit="3d14c98348444402e2178f603034697a98c18474")  # bioc 3.19
+        version("1.64.0", commit="887abd3889707a5d066038b1373c85ead5b0a051")  # bioc 3.18
+        version("1.62.1", commit="a1aecdf202a343e8a827f510125356bddbe8cabd")  # bioc 3.17
         version("1.62.0", commit="a6e3d339bc8204d15db4e750bd98f0313490b658")
+        version("1.60.2", commit="71fbf1df879aa2456e47b619ab91a8d0f35a3aa4")  # bioc 3.16
         version("1.60.0", commit="7f62a7d54776a21ab6c2d3df4668382d531d1ee8")
         version("1.58.0", commit="2995e3e1a8f428a80aee200db42ee44743d893f6")
         version("1.56.0", commit="8f3272219507aa85e0c876fb434dc3b926c22c5d")
@@ -26,4 +34,4 @@ class RPreprocesscore(RPackage):
         version("1.40.0", commit="969bb0e5cbd63d569502ae4e6eaadc1e216646dd")
         version("1.38.1", commit="c58cb4c720eda0f1c733b989b14912093a7c5fbc")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
