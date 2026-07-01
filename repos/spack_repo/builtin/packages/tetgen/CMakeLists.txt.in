@@ -1,0 +1,83 @@
+cmake_minimum_required(VERSION 3.5.0)
+
+project(tetgen VERSION %VERSION% LANGUAGES CXX)
+
+include(CMakePackageConfigHelpers)
+include(GNUInstallDirs)
+
+option(BUILD_EXECUTABLE "Build tetgen executable" OFF)
+option(BUILD_LIBRARY    "Build libtetgen library" ON)
+
+if(BUILD_LIBRARY)
+  add_library(tetgen tetgen.cxx predicates.cxx)
+
+  target_include_directories(tetgen PUBLIC $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
+
+  target_compile_definitions(tetgen PUBLIC -DTETLIBRARY)
+
+  set_target_properties(tetgen
+    PROPERTIES
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+      WINDOWS_EXPORT_ALL_SYMBOLS ON
+  )
+
+  install(
+    TARGETS tetgen
+    EXPORT TetgenExports
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+
+  install(
+    FILES
+      ${CMAKE_SOURCE_DIR}/tetgen.h
+    DESTINATION
+      ${CMAKE_INSTALL_INCLUDEDIR}
+  )
+endif()
+
+if(BUILD_EXECUTABLE)
+  add_executable(tetgen_exec tetgen.cxx predicates.cxx)
+  set_target_properties(tetgen_exec
+    PROPERTIES
+      ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
+      RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
+      OUTPUT_NAME tetgen
+  )
+  install(
+    TARGETS tetgen_exec
+    EXPORT TetgenExports
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  )
+endif()
+
+export(EXPORT TetgenExports NAMESPACE tetgen:: FILE "${CMAKE_BINARY_DIR}/lib/cmake/tetgen-targets.cmake")
+
+write_basic_package_version_file(${CMAKE_BINARY_DIR}/lib/cmake/tetgen-config-version.cmake COMPATIBILITY AnyNewerVersion)
+
+configure_package_config_file(
+  tetgen-config.cmake.in
+  ${CMAKE_BINARY_DIR}/lib/cmake/tetgen-config.cmake
+  INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tetgen/
+)
+
+install(
+  FILES
+    ${CMAKE_BINARY_DIR}/lib/cmake/tetgen-config-version.cmake
+    ${CMAKE_BINARY_DIR}/lib/cmake/tetgen-config.cmake
+  DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/tetgen/
+)
+
+install(
+  EXPORT TetgenExports
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tetgen/
+  FILE tetgen-targets.cmake
+  NAMESPACE tetgen::
+)
