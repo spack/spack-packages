@@ -6,24 +6,34 @@ import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
+from spack.llnl.util import filesystem
 from spack.package import *
 
 
 class Nektar(CMakePackage):
     """Nektar++: Spectral/hp Element Framework"""
 
+    tags = ["fem", "finite-elements"]
+
     homepage = "https://www.nektar.info/"
     git = "https://gitlab.nektar.info/nektar/nektar.git"
 
-    version("5.5.0", commit="4365d5d7156139f238db962deae5eb25e0437d12", preferred=True)
-    version("5.4.0", commit="002bf62648ec667e10524ceb8a98bb1c21804130")
-    version("5.3.0", commit="f286f809cfeb26cb73828c90a689a048898971d2")
+    version("master", branch="master", preferred=True)
 
+    version("5.9.0", tag="v5.9.0", commit="f729cda85b6a206e008fd705af8001cfe6e0d6fb")
+    version("5.8.0", tag="v5.8.0", commit="837223d7a51da426127052d535297d97f413bef7")
+    version("5.7.0", tag="v5.7.0", commit="ebf2aec4f840729ffb2845ead6d462be6f6f341a")
+    version("5.6.0", tag="v5.6.0", commit="bb87ccd8ad00fe0aec9c9e74b812b777186e1691")
+    version("5.5.0", tag="v5.5.0", commit="4365d5d7156139f238db962deae5eb25e0437d12")
+    version("5.4.0", tag="v5.4.0", commit="002bf62648ec667e10524ceb8a98bb1c21804130")
+    version("5.3.0", tag="v5.3.0", commit="f286f809cfeb26cb73828c90a689a048898971d2")
+
+    variant("cwipi", default=False, description="Builds with CWIPI support")
     variant("mpi", default=True, description="Builds with mpi support")
     variant("fftw", default=True, description="Builds with fftw support")
     variant("arpack", default=True, description="Builds with arpack support")
     variant("tinyxml", default=True, description="Builds with external tinyxml support")
-    variant("hdf5", default=True, description="Builds with hdf5 support")
+    variant("hdf5", default=False, description="Builds with hdf5 support")
     variant("scotch", default=False, description="Builds with scotch partitioning support")
     variant("demos", default=False, description="Build demonstration codes")
     variant("python", default=True, description="Enable python support")
@@ -97,8 +107,8 @@ class Nektar(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@2.8.8:", type="build", when="~hdf5")
-    depends_on("cmake@3.2:", type="build", when="+hdf5")
+    depends_on("py-setuptools", when="@master")
+    depends_on("py-setuptools", when="@5.6.0:")
 
     depends_on("blas")
     depends_on("zlib")
@@ -123,9 +133,11 @@ class Nektar(CMakePackage):
     depends_on("hdf5 +mpi +hl", when="+mpi+hdf5")
     depends_on("scotch ~mpi ~metis", when="~mpi+scotch")
     depends_on("scotch +mpi ~metis", when="+mpi+scotch")
+    depends_on("scotch@7: +mpi ~metis", when="@5.6.0: +mpi+scotch")
 
     extends("python@3:", when="+python")
 
+    conflicts("+cwipi", when="~mpi", msg="Nektar requires MPI support to build with CWIPI.")
     conflicts("+hdf5", when="~mpi", msg="Nektar's hdf5 output is for parallel builds only")
 
     def cmake_args(self):
@@ -152,6 +164,7 @@ class Nektar(CMakePackage):
             self.define_from_variant("NEKTAR_SOLVER_SHALLOW_WATER", "shwater_solver"),
             self.define_from_variant("NEKTAR_SOLVER_VORTEXWAVE", "vortexwave_solver"),
             self.define_from_variant("NEKTAR_USE_ARPACK", "arpack"),
+            self.define_from_variant("NEKTAR_USE_CWIPI", "cwipi"),
             self.define_from_variant("NEKTAR_USE_FFTW", "fftw"),
             self.define_from_variant("NEKTAR_USE_HDF5", "hdf5"),
             self.define_from_variant("NEKTAR_USE_MPI", "mpi"),
@@ -166,8 +179,13 @@ class Nektar(CMakePackage):
     def install(self, spec, prefix):
         super(Nektar, self).install(spec, prefix)
         if "+python" in spec:
-            python = which("python", required=True)
-            with working_dir(self.build_directory):
+            python = which("python")
+            if spec.satisfies("@master") or spec.satisfies("@5.6.0:"):
+                python_build_directory = os.path.join(self.build_directory, "python")
+            else:
+                python_build_directory = self.build_directory
+            print("Installing Python bindings using " + python_build_directory + "/setup.py")
+            with filesystem.working_dir(python_build_directory):
                 python("setup.py", "install", "--prefix", prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
