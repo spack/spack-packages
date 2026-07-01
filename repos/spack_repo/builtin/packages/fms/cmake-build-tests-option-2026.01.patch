@@ -1,0 +1,856 @@
+From c4f8115fe719384d7d377e58b52520ed95fad54e Mon Sep 17 00:00:00 2001
+From: rem1776 <Ryan.Mulhall@noaa.gov>
+Date: Thu, 7 May 2026 10:57:25 -0400
+Subject: [PATCH] fix conflicts for 2026.01 cmake patch
+
+---
+ .github/workflows/github_cmake_gnu.yml |   4 +-
+ CMAKE_INSTRUCTIONS.md                  |   1 +
+ CMakeLists.txt                         | 781 +++++++++++++------------
+ 3 files changed, 402 insertions(+), 384 deletions(-)
+
+diff --git a/.github/workflows/github_cmake_gnu.yml b/.github/workflows/github_cmake_gnu.yml
+index 9f8719f0..bd5c076a 100644
+--- a/.github/workflows/github_cmake_gnu.yml
++++ b/.github/workflows/github_cmake_gnu.yml
+@@ -27,7 +27,7 @@ jobs:
+       run: |
+         mkdir build
+         cd build
+-        cmake $CMAKE_FLAGS -DNetCDF_ROOT=/opt/view ..
++        cmake $CMAKE_FLAGS -DOPENMP=on -DUNIT_TESTS=on -DNetCDF_ROOT=/opt/view -DLIBYAML_ROOT=/opt/view ..
+     - name: Build the library
+       run: make -C build
+ 
+@@ -50,6 +50,6 @@ jobs:
+       run: |
+         mkdir build
+         cd build
+-        cmake $CMAKE_FLAGS -DNetCDF_ROOT=/opt/view ..
++        cmake $CMAKE_FLAGS -DOPENMP=on -DUNIT_TESTS=on -DNetCDF_ROOT=/opt/view -DLIBYAML_ROOT=/opt/view ..
+     - name: Build the library
+       run: make -C build
+diff --git a/CMAKE_INSTRUCTIONS.md b/CMAKE_INSTRUCTIONS.md
+index d715a585..62fa08af 100644
+--- a/CMAKE_INSTRUCTIONS.md
++++ b/CMAKE_INSTRUCTIONS.md
+@@ -83,6 +83,7 @@ The following build options are available:
+ -DGFS_PHYS              "Enable compiler definition -DGFS_PHYS"              DEFAULT:OFF
+ -DLARGEFILE             "Enable compiler definition -Duse_LARGEFILE"         DEFAULT:OFF
+ -DWITH_YAML             "Enable compiler definition -Duse_yaml"              DEFAULT:OFF
++-DUNIT_TESTS            "Toggle on build of unit tests"                      DEFAULT:OFF
+ ```
+ 
+ ## 3. Installation structure
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 15b822b6..966ff7a5 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -56,6 +56,8 @@ option(32BIT       "Build 32-bit (r4) FMS library"        OFF)
+ option(64BIT       "Build 64-bit (r8) FMS library"        OFF)
+ option(FPIC        "Build with position independent code" OFF)
+ option(SHARED_LIBS "Build shared/dynamic libraries"       OFF)
++option(OPENACC     "Build FMS with OpenACC support"       OFF)
++option(UNIT_TESTS  "Build FMS tests"                      OFF)
+ 
+ # Options for compiler definitions
+ option(INTERNAL_FILE_NML     "Enable compiler definition -DINTERNAL_FILE_NML"      ON)
+@@ -590,398 +592,413 @@ set(MPI_LAUNCHER "mpirun")
+ # used in the test-lib.sh.in to make it behave differently when parsed by cmake
+ set(USING_CMAKE "true")
+ 
+-# parse and add build info to test script util file
+-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_fms/test-lib.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/test-lib.sh
+-               @ONLY)
+-
+-# build any helper modules that are used by unit tests
+-list(APPEND TEST_MODS_SRC
+-  test_fms/common/test_fms.F90
+-  test_fms/diag_manager/testing_utils.F90
+-  test_fms/fms/test_fms.F90
+-  test_fms/fms2_io/argparse.F90
+-  test_fms/fms2_io/setup.F90
+-  test_fms/mosaic2/write_files.F90
+-  test_fms/mpp/compare_data_checksums.F90
+-  test_fms/mpp/compare_data_checksums_int.F90
+-  test_fms/mpp/fill_halo.F90
+-  test_fms/mpp/test_domains_utility_mod.F90
+-  test_fms/mpp/test_mpp_update_domains_int.F90
+-  test_fms/mpp/test_mpp_update_domains_real.F90
+-  test_fms/mpp/test_mpp_update_domains_ad.F90
+-  test_fms/mpp/test_system_clock.F90)
+-
+-add_library(testLibs "${TEST_MODS_SRC}")
+-target_link_libraries(testLibs FMS::fms)
+-target_compile_definitions(testLibs PRIVATE TEST_MOS_KIND_=r8_kind)
+-target_include_directories(testLibs PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/common/include
+-                                    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                    PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                    PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-set_target_properties(testLibs PROPERTIES Fortran_MODULE_DIRECTORY
+-                                               ${moduleDir})
++if(UNIT_TESTS)
++  # parse and add build info to test script util file
++  configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test_fms/test-lib.sh.in ${CMAKE_CURRENT_SOURCE_DIR}/test-lib.sh
++                @ONLY)
++
++  # build any helper modules that are used by unit tests
++  list(APPEND TEST_MODS_SRC
++    test_fms/common/test_fms.F90
++    test_fms/diag_manager/testing_utils.F90
++    test_fms/fms/test_fms.F90
++    test_fms/fms2_io/argparse.F90
++    test_fms/fms2_io/setup.F90
++    test_fms/mosaic2/write_files.F90
++    test_fms/mpp/compare_data_checksums.F90
++    test_fms/mpp/compare_data_checksums_int.F90
++    test_fms/mpp/fill_halo.F90
++    test_fms/mpp/test_domains_utility_mod.F90
++    test_fms/mpp/test_mpp_update_domains_int.F90
++    test_fms/mpp/test_mpp_update_domains_real.F90
++    test_fms/mpp/test_mpp_update_domains_ad.F90
++    test_fms/mpp/test_system_clock.F90)
++
++  add_library(testLibs "${TEST_MODS_SRC}")
++  target_link_libraries(testLibs ${fmsLibraryName})
++  target_compile_definitions(testLibs PRIVATE TEST_MOS_KIND_=r8_kind)
++  target_include_directories(testLibs PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/common/include
++                                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                      PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                      PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++  set_target_properties(testLibs PROPERTIES Fortran_MODULE_DIRECTORY
++                                                ${moduleDir})
++
++  # add all our test source code
++
++  # this lists all source code that creates a single executable for unit testing (r8 default)
++  list(APPEND TEST_SRC_SINGLE_TARGET
++    test_fms/affinity/test_affinity.F90
++    test_fms/block_control/test_block_control.F90
++    test_fms/coupler/test_gex.F90
++    test_fms/data_override/test_data_override_init.F90
++    test_fms/data_override/test_data_override_ongrid.F90
++    test_fms/diag_manager/test_output_every_freq.F90
++    test_fms/diag_manager/test_dm_weights.F90
++    test_fms/diag_manager/test_diag_manager.F90
++    test_fms/diag_manager/test_diag_manager_time.F90
++    test_fms/diag_manager/test_diag_update_buffer.F90
++    test_fms/diag_manager/test_diag_yaml.F90
++    test_fms/diag_manager/test_diag_ocean.F90
++    test_fms/diag_manager/test_modern_diag.F90
++    test_fms/diag_manager/test_diag_buffer.F90
++    test_fms/diag_manager/test_flexible_time.F90
++    test_fms/diag_manager/test_flush_nc_file.F90
++    test_fms/diag_manager/test_diag_out_yaml.F90
++    test_fms/diag_manager/test_reduction_methods.F90
++    test_fms/diag_manager/testing_utils.F90
++    test_fms/diag_manager/test_diag_diurnal.F90
++    test_fms/diag_manager/check_time_none.F90
++    test_fms/diag_manager/check_time_min.F90
++    test_fms/diag_manager/check_time_max.F90
++    test_fms/diag_manager/check_time_avg.F90
++    test_fms/diag_manager/check_time_diurnal.F90
++    test_fms/diag_manager/check_time_pow.F90
++    test_fms/diag_manager/check_time_rms.F90
++    test_fms/diag_manager/check_time_sum.F90
++    test_fms/diag_manager/test_cell_measures.F90
++    test_fms/diag_manager/check_subregional.F90
++    test_fms/diag_manager/test_var_masks.F90
++    test_fms/diag_manager/check_var_masks.F90
++    test_fms/diag_manager/test_multiple_send_data.F90
++    test_fms/diag_manager/test_prepend_date.F90
++    test_fms/diag_manager/test_diag_multi_file.F90
++    test_fms/diag_manager/test_ens_runs.F90
++    test_fms/diag_manager/test_diag_attribute_add.F90
++    test_fms/diag_manager/check_new_file_freq.F90
++    test_fms/diag_manager/test_zbounds_limits.F90
++    test_fms/diag_manager/test_multiple_zbounds.F90
++    test_fms/drifters/test_cloud_interpolator.F90
++    test_fms/drifters/test_drifters_io.F90
++    test_fms/drifters/test_drifters_input.F90
++    test_fms/drifters/test_drifters_comm.F90
++    test_fms/drifters/test_drifters_core.F90
++    test_fms/drifters/test_quicksort.F90
++    test_fms/drifters/test_drifters.F90
++    test_fms/exchange/test_xgrid.F90
++    test_fms/field_manager/test_field_table_read.F90
++    test_fms/fms2_io/test_get_is_valid.F90
++    test_fms/fms2_io/test_fms2_io.F90
++    test_fms/fms2_io/test_atmosphere_io.F90
++    test_fms/fms2_io/test_io_simple.F90
++    test_fms/fms2_io/setup.F90
++    test_fms/fms2_io/argparse.F90
++    test_fms/fms2_io/test_global_att.F90
++    test_fms/fms2_io/test_io_with_mask.F90
++    test_fms/fms2_io/test_bc_restart.F90
++    test_fms/fms2_io/test_get_mosaic_tile_grid.F90
++    test_fms/fms2_io/test_read_ascii_file.F90
++    test_fms/fms2_io/test_file_appendix.F90
++    test_fms/fms2_io/test_unlimit_compressed.F90
++    test_fms/fms2_io/test_chunksizes.F90
++    test_fms/fms2_io/test_packed_reads.F90
++    test_fms/fms2_io/test_compressed_writes.F90
++    test_fms/fms2_io/test_domain_io.F90
++    test_fms/fms2_io/test_collective_io.F90
++    test_fms/fms2_io/test_generalized_indices.F90
++    test_fms/fms2_io/test_parallel_writes.F90
++    test_fms/fms/test_fms.F90
++    test_fms/interpolator/test_interpolator.F90
++    test_fms/mpp/test_clock_init.F90
++    test_fms/mpp/test_domains_simple.F90
++    test_fms/mpp/test_domains_utility_mod.F90
++    test_fms/mpp/test_global_arrays.F90
++    test_fms/mpp/test_minmax.F90
++    test_fms/mpp/test_mpp_alltoall.F90
++    test_fms/mpp/test_mpp_broadcast.F90
++    test_fms/mpp/test_mpp_chksum.F90
++    test_fms/mpp/test_mpp_clock_begin_end_id.F90
++    test_fms/mpp/test_mpp_domains.F90
++    test_fms/mpp/test_mpp.F90
++    test_fms/mpp/test_mpp_gatscat.F90
++    test_fms/mpp/test_mpp_get_ascii_lines.F90
++    test_fms/mpp/test_mpp_global_field_ug.F90
++    test_fms/mpp/test_mpp_global_sum_ad.F90
++    test_fms/mpp/test_mpp_init_logfile.F90
++    test_fms/mpp/test_mpp_mem_dump.F90
++    test_fms/mpp/test_mpp_memuse.F90
++    test_fms/mpp/test_mpp_memutils_begin_2x.F90
++    test_fms/mpp/test_mpp_memutils_begin_end.F90
++    test_fms/mpp/test_mpp_memutils_end_before_begin.F90
++    test_fms/mpp/test_mpp_nesting.F90
++    test_fms/mpp/test_mpp_npes.F90
++    test_fms/mpp/test_mpp_pe.F90
++    test_fms/mpp/test_mpp_print_memuse_stats_file.F90
++    test_fms/mpp/test_mpp_print_memuse_stats_stderr.F90
++    test_fms/mpp/test_mpp_root_pe.F90
++    test_fms/mpp/test_mpp_sendrecv.F90
++    test_fms/mpp/test_mpp_sum.F90
++    test_fms/mpp/test_mpp_transmit.F90
++    test_fms/mpp/test_mpp_update_domains.F90
++    test_fms/mpp/test_mpp_update_domains_ad.F90
++    test_fms/mpp/test_peset.F90
++    test_fms/mpp/test_mpp_read_ascii_file.F90
++    test_fms/mpp/test_read_input_nml.F90
++    test_fms/mpp/test_redistribute_int.F90
++    test_fms/mpp/test_stderr.F90
++    test_fms/mpp/test_stdin.F90
++    test_fms/mpp/test_stdlog.F90
++    test_fms/mpp/test_stdout.F90
++    test_fms/mpp/test_super_grid.F90
++    test_fms/mpp/test_system_clock.F90
++    test_fms/mpp/test_update_domains_performance.F90
++    test_fms/parser/test_yaml_parser.F90
++    test_fms/parser/check_crashes.F90
++    test_fms/parser/parser_demo.F90
++    test_fms/parser/parser_demo2.F90
++    test_fms/parser/test_output_yaml.F90
++    test_fms/parser/generic_blocks.F90
++    test_fms/string_utils/test_string_utils.F90
++    test_fms/time_manager/test_time_manager.F90
++    test_fms/offloading/test_metadata_transfer.F90
++    test_fms/offloading/test_io_offloading.F90
++    )
++  # list any test sources that are used for two executables (r4 and r8)
++  list(APPEND TEST_SRC_TWO_TARGETS
++    test_fms/astronomy/test_astronomy.F90
++    test_fms/axis_utils/test_axis_utils.F90
++    test_fms/column_diagnostics/test_column_diagnostics.F90
++    test_fms/coupler/test_coupler_2d.F90
++    test_fms/coupler/test_coupler_3d.F90
++    test_fms/coupler/test_coupler_types.F90
++    test_fms/coupler/test_atmos_ocean_fluxes.F90
++    test_fms/data_override/test_data_override.F90
++    test_fms/data_override/test_get_grid_v1.F90
++    test_fms/diag_integral/test_diag_integral.F90
++    test_fms/field_manager/test_field_manager.F90
++    test_fms/horiz_interp/test_horiz_interp.F90
++    test_fms/horiz_interp/test_create_xgrid_order2.F90
++    test_fms/interpolator/test_interpolator2.F90
++    test_fms/monin_obukhov/test_monin_obukhov.F90
++    test_fms/mosaic2/test_mosaic2.F90
++    test_fms/mosaic2/test_grid2.F90
++    test_fms/random_numbers/test_random_numbers.F90
++    test_fms/sat_vapor_pres/test_sat_vapor_pres.F90
++    test_fms/time_interp/test_time_interp.F90
++    test_fms/time_interp/test_time_interp_external.F90
++    test_fms/time_interp/test_time_interp_conservative_hi.F90
++    test_fms/topography/test_topography.F90
++    test_fms/tracer_manager/test_tracer_manager.F90
++    test_fms/tridiagonal/test_tridiagonal.F90
++    )
++  # list any test sources that are used for four executables (r4, r8, i4, and i8)
++  list(APPEND TEST_SRC_FOUR_TARGETS
++    test_fms/mpp/test_mpp_global_field.F90
++    )
+ 
+-# add all our test source code
+-
+-# this lists all source code that creates a single executable for unit testing (r8 default)
+-list(APPEND TEST_SRC_SINGLE_TARGET
+-  test_fms/affinity/test_affinity.F90
+-  test_fms/block_control/test_block_control.F90
+-  test_fms/coupler/test_gex.F90
+-  test_fms/data_override/test_data_override_init.F90
+-  test_fms/data_override/test_data_override_ongrid.F90
+-  test_fms/diag_manager/test_output_every_freq.F90
+-  test_fms/diag_manager/test_dm_weights.F90
+-  test_fms/diag_manager/test_diag_manager.F90
+-  test_fms/diag_manager/test_diag_manager_time.F90
+-  test_fms/diag_manager/test_diag_update_buffer.F90
+-  test_fms/diag_manager/test_diag_yaml.F90
+-  test_fms/diag_manager/test_diag_ocean.F90
+-  test_fms/diag_manager/test_modern_diag.F90
+-  test_fms/diag_manager/test_diag_buffer.F90
+-  test_fms/diag_manager/test_flexible_time.F90
+-  test_fms/diag_manager/test_flush_nc_file.F90
+-  test_fms/diag_manager/test_diag_out_yaml.F90
+-  test_fms/diag_manager/test_reduction_methods.F90
+-  test_fms/diag_manager/testing_utils.F90
+-  test_fms/diag_manager/test_diag_diurnal.F90
+-  test_fms/diag_manager/check_time_none.F90
+-  test_fms/diag_manager/check_time_min.F90
+-  test_fms/diag_manager/check_time_max.F90
+-  test_fms/diag_manager/check_time_avg.F90
+-  test_fms/diag_manager/check_time_diurnal.F90
+-  test_fms/diag_manager/check_time_pow.F90
+-  test_fms/diag_manager/check_time_rms.F90
+-  test_fms/diag_manager/check_time_sum.F90
+-  test_fms/diag_manager/test_cell_measures.F90
+-  test_fms/diag_manager/check_subregional.F90
+-  test_fms/diag_manager/test_var_masks.F90
+-  test_fms/diag_manager/check_var_masks.F90
+-  test_fms/diag_manager/test_multiple_send_data.F90
+-  test_fms/diag_manager/test_prepend_date.F90
+-  test_fms/diag_manager/test_diag_multi_file.F90
+-  test_fms/diag_manager/test_ens_runs.F90
+-  test_fms/diag_manager/test_diag_attribute_add.F90
+-  test_fms/diag_manager/check_new_file_freq.F90
+-  test_fms/diag_manager/test_zbounds_limits.F90
+-  test_fms/diag_manager/test_multiple_zbounds.F90
+-  test_fms/drifters/test_cloud_interpolator.F90
+-  test_fms/drifters/test_drifters_io.F90
+-  test_fms/drifters/test_drifters_input.F90
+-  test_fms/drifters/test_drifters_comm.F90
+-  test_fms/drifters/test_drifters_core.F90
+-  test_fms/drifters/test_quicksort.F90
+-  test_fms/drifters/test_drifters.F90
+-  test_fms/exchange/test_xgrid.F90
+-  test_fms/field_manager/test_field_table_read.F90
+-  test_fms/fms2_io/test_get_is_valid.F90
+-  test_fms/fms2_io/test_fms2_io.F90
+-  test_fms/fms2_io/test_atmosphere_io.F90
+-  test_fms/fms2_io/test_io_simple.F90
+-  test_fms/fms2_io/setup.F90
+-  test_fms/fms2_io/argparse.F90
+-  test_fms/fms2_io/test_global_att.F90
+-  test_fms/fms2_io/test_io_with_mask.F90
+-  test_fms/fms2_io/test_bc_restart.F90
+-  test_fms/fms2_io/test_get_mosaic_tile_grid.F90
+-  test_fms/fms2_io/test_read_ascii_file.F90
+-  test_fms/fms2_io/test_file_appendix.F90
+-  test_fms/fms2_io/test_unlimit_compressed.F90
+-  test_fms/fms2_io/test_chunksizes.F90
+-  test_fms/fms2_io/test_packed_reads.F90
+-  test_fms/fms2_io/test_compressed_writes.F90
+-  test_fms/fms2_io/test_domain_io.F90
+-  test_fms/fms2_io/test_collective_io.F90
+-  test_fms/fms2_io/test_generalized_indices.F90
+-  test_fms/fms/test_fms.F90
+-  test_fms/interpolator/test_interpolator.F90
+-  test_fms/mpp/test_clock_init.F90
+-  test_fms/mpp/test_domains_simple.F90
+-  test_fms/mpp/test_domains_utility_mod.F90
+-  test_fms/mpp/test_global_arrays.F90
+-  test_fms/mpp/test_minmax.F90
+-  test_fms/mpp/test_mpp_alltoall.F90
+-  test_fms/mpp/test_mpp_broadcast.F90
+-  test_fms/mpp/test_mpp_chksum.F90
+-  test_fms/mpp/test_mpp_clock_begin_end_id.F90
+-  test_fms/mpp/test_mpp_domains.F90
+-  test_fms/mpp/test_mpp.F90
+-  test_fms/mpp/test_mpp_gatscat.F90
+-  test_fms/mpp/test_mpp_get_ascii_lines.F90
+-  test_fms/mpp/test_mpp_global_field_ug.F90
+-  test_fms/mpp/test_mpp_global_sum_ad.F90
+-  test_fms/mpp/test_mpp_init_logfile.F90
+-  test_fms/mpp/test_mpp_mem_dump.F90
+-  test_fms/mpp/test_mpp_memuse.F90
+-  test_fms/mpp/test_mpp_memutils_begin_2x.F90
+-  test_fms/mpp/test_mpp_memutils_begin_end.F90
+-  test_fms/mpp/test_mpp_memutils_end_before_begin.F90
+-  test_fms/mpp/test_mpp_nesting.F90
+-  test_fms/mpp/test_mpp_npes.F90
+-  test_fms/mpp/test_mpp_pe.F90
+-  test_fms/mpp/test_mpp_print_memuse_stats_file.F90
+-  test_fms/mpp/test_mpp_print_memuse_stats_stderr.F90
+-  test_fms/mpp/test_mpp_root_pe.F90
+-  test_fms/mpp/test_mpp_sendrecv.F90
+-  test_fms/mpp/test_mpp_sum.F90
+-  test_fms/mpp/test_mpp_transmit.F90
+-  test_fms/mpp/test_mpp_update_domains.F90
+-  test_fms/mpp/test_mpp_update_domains_ad.F90
+-  test_fms/mpp/test_peset.F90
+-  test_fms/mpp/test_mpp_read_ascii_file.F90
+-  test_fms/mpp/test_read_input_nml.F90
+-  test_fms/mpp/test_redistribute_int.F90
+-  test_fms/mpp/test_stderr.F90
+-  test_fms/mpp/test_stdin.F90
+-  test_fms/mpp/test_stdlog.F90
+-  test_fms/mpp/test_stdout.F90
+-  test_fms/mpp/test_super_grid.F90
+-  test_fms/mpp/test_system_clock.F90
+-  test_fms/mpp/test_update_domains_performance.F90
+-  test_fms/parser/test_yaml_parser.F90
+-  test_fms/parser/check_crashes.F90
+-  test_fms/parser/parser_demo.F90
+-  test_fms/parser/parser_demo2.F90
+-  test_fms/parser/test_output_yaml.F90
+-  test_fms/parser/generic_blocks.F90
+-  test_fms/string_utils/test_string_utils.F90
+-  test_fms/time_manager/test_time_manager.F90
+-  )
+-# list any test sources that are used for two executables (r4 and r8)
+-list(APPEND TEST_SRC_TWO_TARGETS
+-  test_fms/astronomy/test_astronomy.F90
+-  test_fms/axis_utils/test_axis_utils.F90
+-  test_fms/column_diagnostics/test_column_diagnostics.F90
+-  test_fms/coupler/test_coupler_2d.F90
+-  test_fms/coupler/test_coupler_3d.F90
+-  test_fms/coupler/test_coupler_types.F90
+-  test_fms/coupler/test_atmos_ocean_fluxes.F90
+-  test_fms/data_override/test_data_override.F90
+-  test_fms/data_override/test_get_grid_v1.F90
+-  test_fms/diag_integral/test_diag_integral.F90
+-  test_fms/field_manager/test_field_manager.F90
+-  test_fms/horiz_interp/test_horiz_interp.F90
+-  test_fms/horiz_interp/test_create_xgrid_order2.F90
+-  test_fms/interpolator/test_interpolator2.F90
+-  test_fms/monin_obukhov/test_monin_obukhov.F90
+-  test_fms/mosaic2/test_mosaic2.F90
+-  test_fms/mosaic2/test_grid2.F90
+-  test_fms/random_numbers/test_random_numbers.F90
+-  test_fms/sat_vapor_pres/test_sat_vapor_pres.F90
+-  test_fms/time_interp/test_time_interp.F90
+-  test_fms/time_interp/test_time_interp_external.F90
+-  test_fms/topography/test_topography.F90
+-  test_fms/tracer_manager/test_tracer_manager.F90
+-  test_fms/tridiagonal/test_tridiagonal.F90
+-  )
+-# list any test sources that are used for four executables (r4, r8, i4, and i8)
+-list(APPEND TEST_SRC_FOUR_TARGETS
+-  test_fms/mpp/test_mpp_global_field.F90
+-  )
+-
+-# add all the test executables and set up linking + compile flags
+-foreach (testFile ${TEST_SRC_SINGLE_TARGET})
+-  get_filename_component (TName ${testFile} NAME_WE)
+-
+-  add_executable(${TName} ${testFile})
+-  target_compile_definitions(${TName} PRIVATE "${r8_defs}")
+-  set_target_properties(${TName} PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName} PUBLIC FMS::fms
+-                                 PRIVATE testLibs
+-                                   )
+-
+-  if(WITH_YAML)
+-    target_link_libraries(${TName} PRIVATE PkgConfig::YAML)
+-  endif()
++  # add all the test executables and set up linking + compile flags
++  foreach (testFile ${TEST_SRC_SINGLE_TARGET})
++
++    get_filename_component (TName ${testFile} NAME_WE)
++    add_executable(${TName} ${testFile})
++    target_link_libraries(${TName} PUBLIC ${fmsLibraryName}
++                                  PRIVATE testLibs)
++    if(32BIT)
++      target_compile_definitions(${TName} PRIVATE "${r4_defs} ${fms_defs}")
++    else()
++      target_compile_definitions(${TName} PRIVATE "${r8_defs} ${fms_defs} ")
++      set_target_properties(${TName} PROPERTIES COMPILE_FLAGS ${r8_flags})
++    endif()
+ 
+-  if(OPENMP)
+-    target_link_libraries(${TName} PRIVATE OpenMP::OpenMP_Fortran)
+-  endif()
++    if(WITH_YAML)
++      target_link_libraries(${TName} PRIVATE PkgConfig::YAML)
++    endif()
+ 
+-  set_target_properties(${TName} PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  target_include_directories(${TName} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-endforeach ()
+-
+-foreach (testFile ${TEST_SRC_TWO_TARGETS})
+-  get_filename_component (TName ${testFile} NAME_WE)
+-
+-  add_executable(${TName}_r8 ${testFile})
+-  target_compile_definitions(${TName}_r8 PRIVATE "${r8_defs}")
+-  set_target_properties(${TName}_r8 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_r8 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  add_executable(${TName}_r4 ${testFile})
+-  target_compile_definitions(${TName}_r4 PRIVATE "${r4_defs}")
+-  # seems counterintuitive but r4 tests use r8 default
+-  # they specify kind values explicitly with the preprocessor where needed (TEST_FMS_KIND_)
+-  set_target_properties(${TName}_r4 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_r4 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  if(WITH_YAML)
+-    target_link_libraries(${TName}_r4 PRIVATE PkgConfig::YAML)
+-    target_link_libraries(${TName}_r8 PRIVATE PkgConfig::YAML)
+-  endif()
++    if(OPENMP)
++      target_link_libraries(${TName} PRIVATE OpenMP::OpenMP_Fortran)
++    endif()
+ 
+-  if(OPENMP)
+-    target_link_libraries(${TName}_r4 PRIVATE OpenMP::OpenMP_Fortran)
+-    target_link_libraries(${TName}_r8 PRIVATE OpenMP::OpenMP_Fortran)
+-  endif()
++    set_target_properties(${TName} PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    target_include_directories(${TName} PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++  endforeach ()
++
++  foreach (testFile ${TEST_SRC_TWO_TARGETS})
++    get_filename_component (TName ${testFile} NAME_WE)
++
++    add_executable(${TName}_r8 ${testFile})
++    target_compile_definitions(${TName}_r8 PRIVATE "${r8_defs} ${fms_defs}")
++    set_target_properties(${TName}_r8 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_r8 PUBLIC ${fmsLibraryName}
++                                      PRIVATE testLibs)
++    add_executable(${TName}_r4 ${testFile})
++    target_compile_definitions(${TName}_r4 PRIVATE "${r4_defs} ${fms_defs}")
++    # seems counterintuitive but r4 tests use r8 default
++    # they specify kind values explicitly with the preprocessor where needed (TEST_FMS_KIND_)
++    set_target_properties(${TName}_r4 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_r4 PUBLIC ${fmsLibraryName}
++                                      PRIVATE testLibs
++                                      )
++
++    if(WITH_YAML)
++      target_link_libraries(${TName}_r4 PRIVATE PkgConfig::YAML)
++      target_link_libraries(${TName}_r8 PRIVATE PkgConfig::YAML)
++    endif()
+ 
+-  set_target_properties(${TName}_r4 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  set_target_properties(${TName}_r8 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  target_include_directories(${TName}_r4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-  target_include_directories(${TName}_r8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-  #set macros used to test mixed precision
+-  target_compile_definitions(${TName}_r8 PRIVATE TEST_FMS_KIND_=r8_kind)
+-  target_compile_definitions(${TName}_r4 PRIVATE TEST_FMS_KIND_=r4_kind)
+-  target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_BC_TYPE_=bc)
+-  target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_BC_TYPE_=bc_r4)
+-  target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_BC_TYPE_=bc)
+-  target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_BC_TYPE_=bc_r4)
+-  target_compile_definitions(${TName}_r8 PRIVATE WRITE_FILES_MOD_=write_files_r8)
+-  target_compile_definitions(${TName}_r4 PRIVATE WRITE_FILES_MOD_=write_files_r4)
+-endforeach ()
+-
+-foreach (testFile ${TEST_SRC_FOUR_TARGETS})
+-  get_filename_component (TName ${testFile} NAME_WE)
+-
+-  add_executable(${TName}_r8 ${testFile})
+-  target_compile_definitions(${TName}_r8 PRIVATE "${r8_defs}")
+-  set_target_properties(${TName}_r8 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_r8 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  add_executable(${TName}_r4 ${testFile})
+-  target_compile_definitions(${TName}_r4 PRIVATE "${r4_defs}")
+-  # seems counterintuitive but r4 tests use r8 default
+-  # they specify kind values explicitly with the preprocessor where needed (TEST_FMS_KIND_)
+-  set_target_properties(${TName}_r4 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_r4 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  add_executable(${TName}_i8 ${testFile})
+-  target_compile_definitions(${TName}_i8 PRIVATE "${r8_defs}")
+-  set_target_properties(${TName}_i8 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_i8 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  add_executable(${TName}_i4 ${testFile})
+-  target_compile_definitions(${TName}_i4 PRIVATE "${r8_defs}")
+-  set_target_properties(${TName}_i4 PROPERTIES COMPILE_FLAGS ${r8_flags})
+-  target_link_libraries(${TName}_i4 PUBLIC FMS::fms
+-                                    PRIVATE testLibs
+-                                    )
+-
+-  if(WITH_YAML)
+-    target_link_libraries(${TName}_r4 PRIVATE yaml ${LIBYAML_LIBRARIES})
+-    target_link_libraries(${TName}_r8 PRIVATE yaml ${LIBYAML_LIBRARIES})
+-    target_link_libraries(${TName}_i4 PRIVATE yaml ${LIBYAML_LIBRARIES})
+-    target_link_libraries(${TName}_i8 PRIVATE yaml ${LIBYAML_LIBRARIES})
+-  endif()
++    if(OPENMP)
++      target_link_libraries(${TName}_r4 PRIVATE OpenMP::OpenMP_Fortran)
++      target_link_libraries(${TName}_r8 PRIVATE OpenMP::OpenMP_Fortran)
++    endif()
+ 
+-  if(OPENMP)
+-    target_link_libraries(${TName}_r4 PRIVATE OpenMP::OpenMP_Fortran)
+-    target_link_libraries(${TName}_r8 PRIVATE OpenMP::OpenMP_Fortran)
+-    target_link_libraries(${TName}_i4 PRIVATE OpenMP::OpenMP_Fortran)
+-    target_link_libraries(${TName}_i8 PRIVATE OpenMP::OpenMP_Fortran)
+-  endif()
++    set_target_properties(${TName}_r4 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    set_target_properties(${TName}_r8 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    target_include_directories(${TName}_r4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    target_include_directories(${TName}_r8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    #set macros used to test mixed precision
++    target_compile_definitions(${TName}_r8 PRIVATE TEST_FMS_KIND_=r8_kind)
++    target_compile_definitions(${TName}_r4 PRIVATE TEST_FMS_KIND_=r4_kind)
++    target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_BC_TYPE_=bc)
++    target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_BC_TYPE_=bc_r4)
++    target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_BC_TYPE_=bc)
++    target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_BC_TYPE_=bc_r4)
++    target_compile_definitions(${TName}_r8 PRIVATE WRITE_FILES_MOD_=write_files_r8)
++    target_compile_definitions(${TName}_r4 PRIVATE WRITE_FILES_MOD_=write_files_r4)
++  endforeach ()
++
++  foreach (testFile ${TEST_SRC_FOUR_TARGETS})
++    get_filename_component (TName ${testFile} NAME_WE)
++
++    add_executable(${TName}_r8 ${testFile})
++    target_compile_definitions(${TName}_r8 PRIVATE "${r8_defs}")
++    set_target_properties(${TName}_r8 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_r8 PUBLIC FMS::fms
++                                      PRIVATE testLibs
++                                      )
++
++    add_executable(${TName}_r4 ${testFile})
++    target_compile_definitions(${TName}_r4 PRIVATE "${r4_defs}")
++    # seems counterintuitive but r4 tests use r8 default
++    # they specify kind values explicitly with the preprocessor where needed (TEST_FMS_KIND_)
++    set_target_properties(${TName}_r4 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_r4 PUBLIC FMS::fms
++                                      PRIVATE testLibs
++                                      )
++
++    add_executable(${TName}_i8 ${testFile})
++    target_compile_definitions(${TName}_i8 PRIVATE "${r8_defs}")
++    set_target_properties(${TName}_i8 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_i8 PUBLIC FMS::fms
++                                      PRIVATE testLibs
++                                      )
++
++    add_executable(${TName}_i4 ${testFile})
++    target_compile_definitions(${TName}_i4 PRIVATE "${r8_defs}")
++    set_target_properties(${TName}_i4 PROPERTIES COMPILE_FLAGS ${r8_flags})
++    target_link_libraries(${TName}_i4 PUBLIC FMS::fms
++                                      PRIVATE testLibs
++                                      )
++
++    if(WITH_YAML)
++      target_link_libraries(${TName}_r4 PRIVATE yaml ${LIBYAML_LIBRARIES})
++      target_link_libraries(${TName}_r8 PRIVATE yaml ${LIBYAML_LIBRARIES})
++      target_link_libraries(${TName}_i4 PRIVATE yaml ${LIBYAML_LIBRARIES})
++      target_link_libraries(${TName}_i8 PRIVATE yaml ${LIBYAML_LIBRARIES})
++    endif()
+ 
+-  set_target_properties(${TName}_r4 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  set_target_properties(${TName}_r8 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  set_target_properties(${TName}_i4 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  set_target_properties(${TName}_i8 PROPERTIES Fortran_MODULE_DIRECTORY
+-                                            ${moduleDir})
+-  target_include_directories(${TName}_r4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-  target_include_directories(${TName}_r8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-  target_include_directories(${TName}_i4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-  target_include_directories(${TName}_i8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
+-                                       PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
+-                                       PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+-
+-  target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_TYPE_=real)
+-  target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_TYPE_=real)
+-  target_compile_definitions(${TName}_i8 PRIVATE FMS_TEST_TYPE_=integer)
+-  target_compile_definitions(${TName}_i4 PRIVATE FMS_TEST_TYPE_=integer)
+-
+-  target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_KIND_=r8_kind)
+-  target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_KIND_=r4_kind)
+-  target_compile_definitions(${TName}_i8 PRIVATE FMS_TEST_KIND_=i8_kind)
+-  target_compile_definitions(${TName}_i4 PRIVATE FMS_TEST_KIND_=i4_kind)
+-endforeach ()
+-
+-# gather all test scripts
+-file(GLOB_RECURSE TEST_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/*/*.sh)
+-# leave out scripts that aren't tests
+-list(FILTER TEST_SCRIPTS EXCLUDE REGEX "check_crashes.*")
+-list(FILTER TEST_SCRIPTS EXCLUDE REGEX "test-lib*")
+-list(FILTER TEST_SCRIPTS EXCLUDE REGEX "tap-driver.*")
+-
+-# add scripts to ctest
+-foreach (testScript ${TEST_SCRIPTS})
+-  get_filename_component(testName ${testScript} NAME_WE)
+-  get_filename_component(testDirNameFull ${testScript} DIRECTORY)
+-  get_filename_component(testDirName ${testDirNameFull} NAME_WE)
+-  add_test(NAME ${testName}
+-           COMMAND ${testScript}
+-           WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+-  # all tests are labeled with directory name
+-  set_property(TEST ${testName} PROPERTY LABELS ${testDirName})
+-  # set an environment variable so the scripts know to skip tests that use libyaml
+-  if(NOT WITH_YAML)
+-    set_tests_properties(${testName} PROPERTIES
+-        ENVIRONMENT "parser_skip=skip"
++    if(OPENMP)
++      target_link_libraries(${TName}_r4 PRIVATE OpenMP::OpenMP_Fortran)
++      target_link_libraries(${TName}_r8 PRIVATE OpenMP::OpenMP_Fortran)
++      target_link_libraries(${TName}_i4 PRIVATE OpenMP::OpenMP_Fortran)
++      target_link_libraries(${TName}_i8 PRIVATE OpenMP::OpenMP_Fortran)
++    endif()
++
++    set_target_properties(${TName}_r4 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    set_target_properties(${TName}_r8 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    set_target_properties(${TName}_i4 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    set_target_properties(${TName}_i8 PROPERTIES Fortran_MODULE_DIRECTORY
++                                              ${moduleDir})
++    target_include_directories(${TName}_r4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    target_include_directories(${TName}_r8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    target_include_directories(${TName}_i4 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++    target_include_directories(${TName}_i8 PRIVATE ${CMAKE_CURRENT_BINARY_DIR}/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/fms/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mpp/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/data_override/include
++                                        PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/mosaic2
++                                        PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
++
++    target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_TYPE_=real)
++    target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_TYPE_=real)
++    target_compile_definitions(${TName}_i8 PRIVATE FMS_TEST_TYPE_=integer)
++    target_compile_definitions(${TName}_i4 PRIVATE FMS_TEST_TYPE_=integer)
++
++    target_compile_definitions(${TName}_r8 PRIVATE FMS_TEST_KIND_=r8_kind)
++    target_compile_definitions(${TName}_r4 PRIVATE FMS_TEST_KIND_=r4_kind)
++    target_compile_definitions(${TName}_i8 PRIVATE FMS_TEST_KIND_=i8_kind)
++    target_compile_definitions(${TName}_i4 PRIVATE FMS_TEST_KIND_=i4_kind)
++  endforeach ()
++
++  # gather all test scripts
++  file(GLOB_RECURSE TEST_SCRIPTS ${CMAKE_CURRENT_SOURCE_DIR}/test_fms/*/*.sh)
++  # leave out scripts that aren't tests
++  list(FILTER TEST_SCRIPTS EXCLUDE REGEX "check_crashes.*")
++  list(FILTER TEST_SCRIPTS EXCLUDE REGEX "test-lib*")
++  list(FILTER TEST_SCRIPTS EXCLUDE REGEX "tap-driver.*")
++
++  # add scripts to ctest
++  foreach (testScript ${TEST_SCRIPTS})
++    get_filename_component(testName ${testScript} NAME_WE)
++    get_filename_component(testDirNameFull ${testScript} DIRECTORY)
++    get_filename_component(testDirName ${testDirNameFull} NAME_WE)
++    add_test(NAME ${testName}
++            COMMAND ${testScript}
++            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
++    # all tests are labeled with directory name
++    set_property(TEST ${testName} PROPERTY LABELS ${testDirName})
++    # set an environment variable so the scripts know to skip tests that use libyaml
++    if(NOT WITH_YAML)
++      set_tests_properties(${testName} PROPERTIES
++          ENVIRONMENT "parser_skip=skip"
++      )
++    endif()
++
++  endforeach()
++
++  # skip parallel netcdf tests if its not enabled in given install
++  IF(NOT NetCDF_PARALLEL)
++    set_tests_properties(test_collective_io PROPERTIES
++        ENVIRONMENT "parallel_skip=skip"
+     )
+   endif()
+-endforeach()
+ 
+-set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
++  set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
++endif(UNIT_TESTS)
+ 
+ ### Package config
+ include(CMakePackageConfigHelpers)
+-- 
+2.45.2
+
