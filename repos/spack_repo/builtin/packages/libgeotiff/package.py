@@ -1,13 +1,13 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
-#
-# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import sys
 
+from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Libgeotiff(AutotoolsPackage):
+class Libgeotiff(CMakePackage, AutotoolsPackage):
     """GeoTIFF represents an effort by over 160 different remote sensing, GIS,
     cartographic, and surveying related companies and organizations to
     establish a TIFF based interchange format for georeferenced raster imagery.
@@ -29,11 +29,14 @@ class Libgeotiff(AutotoolsPackage):
     version("1.4.3", sha256="b8510d9b968b5ee899282cdd5bef13fd02d5a4c19f664553f81e31127bc47265")
     version("1.4.2", sha256="ad87048adb91167b07f34974a8e53e4ec356494c29f1748de95252e8f81a5e6e")
 
+    build_system("autotools", "cmake", default="cmake" if sys.platform == "win32" else "autotools")
+
     variant("zlib", default=True, description="Include zlib support")
     variant("jpeg", default=True, description="Include jpeg support")
     variant("proj", default=True, description="Use PROJ.x library")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("zlib-api", when="+zlib")
     depends_on("jpeg", when="+jpeg")
@@ -59,7 +62,12 @@ class Libgeotiff(AutotoolsPackage):
     # Patch required to fix absolute path issue in unit tests
     # https://github.com/OSGeo/libgeotiff/issues/16
     patch("a76c686441398669422cb728411abd2dec358f7f.patch", level=2, when="@1.5.0:1.5.1")
+    # geo_keyp.h is a public header that includes proj.h, so PROJ must be a PUBLIC
+    # cmake dependency so that downstream targets (utilities, consumers) can find proj.h
+    patch("proj_public_interface.patch", level=2, when="build_system=cmake @1.5:")
 
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         spec = self.spec
 
@@ -79,5 +87,30 @@ class Libgeotiff(AutotoolsPackage):
             args.append("--with-proj={0}".format(spec["proj"].prefix))
         else:
             args.append("--with-proj=no")
+
+        return args
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            "--debug-find-pkg=TIFF",
+            self.define("WITH_TIFF", True),
+            self.define("TIFF_ROOT", self.spec["libtiff"].prefix.lib64.cmake.tiff),
+            self.define_from_variant("WITH_ZLIB", "zlib"),
+            self.define_from_variant("WITH_JPEG", "jpeg"),
+            self.define("BUILD_DOC", False),
+            self.define("BUILD_MAN", False),
+        ]
+
+        if self.spec.satisfies("+proj"):
+            proj = self.spec["proj"]
+            args.append(self.define("PROJ_ROOT", proj.prefix))
+            args.append(self.define("PROJ_LIBRARY", proj.libs[0]))
+
+        if self.spec.satisfies("+jpeg"):
+            jpeg = self.spec["jpeg"]
+            args.append(self.define("JPEG_ROOT", jpeg.prefix))
+            args.append(self.define("JPEG_LIBRARY", jpeg.libs[0]))
 
         return args
