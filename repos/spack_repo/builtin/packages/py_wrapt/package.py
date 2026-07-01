@@ -15,6 +15,7 @@ class PyWrapt(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.1.2", sha256="3996a67eecc2c68fd47b4e3c564405a5777367adfd9b8abb58387b63ee83b21e")
     version("1.17.3", sha256="f66eb08feaa410fe4eebd17f2a2c8e2e46d3476e9f8c783daa8e09e0faa666d0")
     version("1.15.0", sha256="d06730c6aed78cee4126234cf2d071e01b44b915e725a6cb439a879ec9754a3a")
     version("1.14.1", sha256="380a85cf89e0e69b7cfbe2ea9f765f004ff419f34194018a6827ac0e3edfed4d")
@@ -24,7 +25,12 @@ class PyWrapt(PythonPackage):
     version("1.11.1", sha256="4aea003270831cceb8a90ff27c4031da6ead7ec1886023b80ce0dfe0adf61533")
     version("1.10.10", sha256="42160c91b77f1bc64a955890038e02f2f72986c01d462d53cb6cb039b995cdd9")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
 
-    depends_on("python@3.8:", type=("build", "run"), when="@1.17:")
-    depends_on("py-setuptools@38.3:", type="build")
+        depends_on("py-setuptools@62:", when="@2.1:")
+        depends_on("py-setuptools@38.3:")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@2.1:")
+        depends_on("python@3.8:", when="@1.17:")

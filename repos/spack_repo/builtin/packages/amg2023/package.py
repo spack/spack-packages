@@ -20,6 +20,8 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/LLNL/AMG2023"
     git = "https://github.com/LLNL/AMG2023.git"
 
+    maintainers("liruipeng")
+
     license("Apache-2.0")
 
     version("develop", branch="main")
@@ -28,7 +30,11 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("caliper", default=False, description="Enable Caliper monitoring")
 
+    # AMG2023's CMake project starts as C, but later enables CXX and links
+    # the executable with the C++ linker. Both language dependencies are needed
+    # so Spack's compiler wrappers set CC/CXX and linker wrapper arguments.
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("hypre+mpi", when="+mpi")
@@ -48,10 +54,12 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
         cmake_options.append(self.define_from_variant("AMG_WITH_OMP", "openmp"))
         cmake_options.append(self.define("HYPRE_PREFIX", self.spec["hypre"].prefix))
         if self.spec["hypre"].satisfies("+cuda"):
-            cmake_options.append("-DAMG_WITH_CUDA=ON")
+            cmake_options.append(self.define("AMG_WITH_CUDA", True))
+
         if self.spec["hypre"].satisfies("+rocm"):
-            cmake_options.append("-DAMG_WITH_HIP=ON")
+            cmake_options.append(self.define("AMG_WITH_HIP", True))
+
         if self.spec["hypre"].satisfies("+mpi"):
-            cmake_options.append("-DAMG_WITH_MPI=ON")
+            cmake_options.append(self.define("AMG_WITH_MPI", True))
 
         return cmake_options

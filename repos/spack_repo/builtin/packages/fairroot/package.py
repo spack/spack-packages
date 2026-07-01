@@ -13,7 +13,7 @@ class Fairroot(CMakePackage):
     homepage = "http://fairroot.gsi.de"
     url = "https://github.com/FairRootGroup/FairRoot/archive/v18.8.2.tar.gz"
     git = "https://github.com/FairRootGroup/FairRoot.git"
-    maintainers("dennisklein", "fuhlig1", "jezwilkinson")
+    maintainers("fuhlig1", "jezwilkinson")
 
     tags = ["hep"]
     version("develop", branch="dev")

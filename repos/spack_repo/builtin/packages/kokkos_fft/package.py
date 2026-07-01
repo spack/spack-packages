@@ -17,6 +17,7 @@ class KokkosFft(CMakePackage):
 
     license("Apache-2.0 WITH LLVM-exception OR MIT", checked_by="cedricchevalier19")
 
+    version("1.1.0", sha256="71a87f562ad5163a6e6da2979974b3bec1f6482d0a651a17ef882b4bca347782")
     version("1.0.0", sha256="626c8eec4bd0675a13ccbbffccde0984d8b9ded18809ca8223370b51a0bbfc82")
     version("0.4.0", sha256="c51d37b8c06d74bdb2af0fa4e1eae40104c23ae0dae17c795bce55dbda6ab0d6")
     version("0.3.0", sha256="a13c423775afec5f9f79fa9a23dd6001d3d63bae9f4786b1e0cd3ed65b3993a3")
@@ -31,31 +32,44 @@ class KokkosFft(CMakePackage):
     variant(
         "device_backend",
         default="none",
-        values=("none", "cufft", "hipfft", "onemkl"),
+        values=("none", "cufft", "hipfft", "onemkl", "rocfft"),
         multi=False,
         description="Enable device backend",
     )
     variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
-    depends_on("cmake@3.22:3", type="build")
+    depends_on("cmake@3.22:", type="build")
+    depends_on("cmake@:4", type="build", when="@:1")
+    depends_on("cmake@:3", type="build", when="@:0")
 
     depends_on("kokkos +complex_align")
-    depends_on("kokkos@4.4:4", when="@0.3")
-    depends_on("kokkos@4.5:4", when="@0.4")
-    depends_on("kokkos@4.6:5", when="@1.0:")
+    depends_on("kokkos@4.7:", when="@1.1:")
+    depends_on("kokkos@4.6:", when="@1.0:")
+    depends_on("kokkos@4.5:", when="@0.4:")
+    depends_on("kokkos@4.4:")
+    depends_on("kokkos@:5")
+    depends_on("kokkos@:4", when="@:0.4")
     # Kokkos-FFT currently only supports compilation with the Kokkos nvcc wrapper
     requires("^kokkos +serial", when="host_backend=fftw-serial")
     requires("^kokkos +openmp", when="host_backend=fftw-openmp")
     requires("^kokkos +cuda +wrapper", when="device_backend=cufft")
     requires("^kokkos +rocm", when="device_backend=hipfft")
+    requires("^kokkos +rocm", when="device_backend=rocfft")
     requires("^kokkos +sycl", when="device_backend=onemkl")
     depends_on("googletest@1.15:1", when="+tests")
 
     depends_on("fftw@3.3:3 ~mpi precision=float,double")
     requires("^fftw +openmp", when="host_backend=fftw-openmp")
     depends_on("cuda@11:12", when="device_backend=cufft")
-    depends_on("hipfft@5.3:6", when="device_backend=hipfft")
+    with when("device_backend=hipfft"):
+        depends_on("hipfft@5.3:")
+        depends_on("hipfft@:7", when="@:1")
+        depends_on("hipfft@:6", when="@:0")
+    with when("device_backend=rocfft"):
+        depends_on("rocfft@5.3:")
+        depends_on("rocfft@:7", when="@:1")
+        depends_on("rocfft@:6", when="@:0")
     depends_on("intel-oneapi-mkl@2023:2025", when="device_backend=onemkl")
 
     def cmake_args(self):
@@ -72,6 +86,7 @@ class KokkosFft(CMakePackage):
             ),
             self.define("KokkosFFT_ENABLE_CUFFT", self.spec.satisfies("device_backend=cufft")),
             self.define("KokkosFFT_ENABLE_HIPFFT", self.spec.satisfies("device_backend=hipfft")),
+            self.define("KokkosFFT_ENABLE_ROCFFT", self.spec.satisfies("device_backend=rocfft")),
             self.define("KokkosFFT_ENABLE_ONEMKL", self.spec.satisfies("device_backend=onemkl")),
         ]
 

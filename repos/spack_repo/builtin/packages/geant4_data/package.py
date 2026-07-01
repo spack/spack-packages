@@ -3,10 +3,70 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+from typing import Optional
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 
 from spack.package import *
+from spack.package import ClassProperty, PackageBase, classproperty, install_tree, mkdirp
+
+
+def _url(cls: "Geant4DataPackage") -> Optional[str]:
+    if cls.g4dirname:
+        return f"{cls.datasets_url}/{cls.g4dirname}.1.0.tar.gz"
+    return None
+
+
+class Geant4DataPackage(PackageBase):
+    """Base class to be used by each dependency in Geant4Data"""
+
+    #: URL to parent directory for dataset downloads
+    datasets_url = "https://geant4-data.web.cern.ch/geant4-data/datasets"
+    url: ClassProperty[Optional[str]] = classproperty(_url)
+
+    #: Directory name inside 'share' (e.g., G4EMLOW) before version is appended
+    g4dirname: Optional[str] = None
+
+    #: G4-prefixed environment variable (e.g., G4LEDATA)
+    g4envvar: Optional[str] = None
+
+    @property
+    def datadir(self):
+        """Data directory at :file:`share/data/{g4dirname}{version}`"""
+        s = self.spec
+        self._ensure_g4dirname_is_set_or_raise()
+        return join_path(s.prefix.share, "data", f"{self.g4dirname}{s.version}")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        self._ensure_g4envvar_is_set_or_raise()
+        env.set(self.g4envvar, self.datadir)
+
+    def install(self, spec, prefix):
+        """Install by copying to the data prefix."""
+        datadir = self.datadir
+        mkdirp(datadir)
+        install_tree(self.stage.source_path, datadir)
+
+    def _ensure_g4dirname_is_set_or_raise(self):
+        self.validate_or_raise_attr("g4dirname")
+
+    def _ensure_g4envvar_is_set_or_raise(self):
+        self.validate_or_raise_attr("g4envvar")
+
+    def url_for_version(self, version):
+        """Default version string.
+
+        This override of ``url`` is necessary for most of the G4 packages, since
+        ``data/G4FOO.1.2.3.tar.gz`` is parsed as version ``4FOO.1.2.3``.
+
+        This method is overridden by some subclasses.
+        """
+        return f"{self.datasets_url}/{self.g4dirname}.{version}.tar.gz"
+
+    def validate_or_raise_attr(self, attr):
+        if getattr(self, attr) is None:
+            cls = type(self)
+            raise AttributeError(f"{cls.__name__} must define a `{attr}` attribute [none defined]")
 
 
 class Geant4Data(BundlePackage):
@@ -63,7 +123,7 @@ class Geant4Data(BundlePackage):
         "11.3.0:11.3": [
             "g4ndl@4.7.1",
             "g4emlow@8.6.1",
-            "g4photonevaporation@6.1",
+            "g4photonevaporation@=6.1",
             "g4radioactivedecay@6.1.2",
             "g4particlexs@4.1",
             "g4pii@1.3",
@@ -235,11 +295,12 @@ class Geant4Data(BundlePackage):
     def install(self, spec, prefix):
         with working_dir(self.datadir, create=True):
             for s in spec.dependencies():
-                if not s.name.startswith("g4"):
+                if not isinstance(s.package, Geant4DataPackage):
+                    if s.name.startswith("g4"):
+                        raise InstallError(
+                            f"Data dependency `{s.name}` must be a Geant4DataPackage"
+                        )
                     continue
 
-                if not hasattr(s.package, "g4datasetname"):
-                    raise InstallError(f"Dependency `{s.name}` does not expose `g4datasetname`")
-
-                d = "{0}/data/{1}".format(s.prefix.share, s.package.g4datasetname)
+                d = s.package.datadir
                 symlink(d, os.path.basename(d))

@@ -23,6 +23,46 @@ from spack.package import *
 #    format returned by platform.system() and 'arch' by platform.machine()
 
 _versions = {
+    "13.3.0": {
+        "Linux-aarch64": (
+            "94ec4572197b65532dcf3d327460417c6527fa42ded9d5010e06ddb89e878d4c",
+            "https://developer.download.nvidia.com/compute/cuda/13.3.0/local_installers/cuda_13.3.0_610.43.02_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "5f79488b57fe6936bc95a56f9b7e2838ab2f2ee3313b1008942206eebe06352d",
+            "https://developer.download.nvidia.com/compute/cuda/13.3.0/local_installers/cuda_13.3.0_610.43.02_linux.run",
+        ),
+    },
+    "13.2.1": {
+        "Linux-aarch64": (
+            "38560e0c48eba793c883ea1ada6ad4c37b744cb5284034d16fd7ee57f95dda04",
+            "https://developer.download.nvidia.com/compute/cuda/13.2.1/local_installers/cuda_13.2.1_595.58.03_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "5514a3fe7bcea92b25073c7c100c3e64e7961a7e1dbad6955adb8b59806053f0",
+            "https://developer.download.nvidia.com/compute/cuda/13.2.1/local_installers/cuda_13.2.1_595.58.03_linux.run",
+        ),
+    },
+    "13.2.0": {
+        "Linux-aarch64": (
+            "9684ebc64988f71ef1c70846cc9d158fb27950c1355bf37c8795c346346b6a72",
+            "https://developer.download.nvidia.com/compute/cuda/13.2.0/local_installers/cuda_13.2.0_595.45.04_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "c599b651582c8f345ebde7bcf089b7dcfcd8afd7d3ea7f50525698c563a239d7",
+            "https://developer.download.nvidia.com/compute/cuda/13.2.0/local_installers/cuda_13.2.0_595.45.04_linux.run",
+        ),
+    },
+    "13.1.2": {
+        "Linux-aarch64": (
+            "9d3963ce2d0d73e2175530ccb90f604821ab91b45b41dca85a96aeb6d96978c8",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.2/local_installers/cuda_13.1.2_590.48.01_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "ad7d50d49898ea1a24518bb9c0c154f73eef3a1b3de22a05b5e3c907dbac4c1b",
+            "https://developer.download.nvidia.com/compute/cuda/13.1.2/local_installers/cuda_13.1.2_590.48.01_linux.run",
+        ),
+    },
     "13.1.1": {
         "Linux-aarch64": (
             "8adcd5d4b3e1e70f7420959b97514c0c97ec729da248d54902174c4d229bfd2c",
@@ -775,6 +815,14 @@ class Cuda(Package):
     # cuda-12.8 libcusolver.so requires log2f@GLIBC_2.27
     conflicts("glibc@:2.26", when="@12.8:")
 
+    conflicts(
+        "glibc@2.42:",
+        when="@:13.0",
+        msg="Incompatible exception specification of some C23 functions (cospi, "
+        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
+        "cuda@13.1.",
+    )
+
     variant(
         "dev", default=False, description="Enable development dependencies, i.e to use cuda-gdb"
     )
@@ -785,12 +833,16 @@ class Cuda(Package):
         description="Allow unsupported host compiler and CUDA version combinations",
     )
 
-    # depends on libxml2.so.2
-    depends_on("libxml2@:2.13", when="@10.1.243:")
+    # `cuda_installer` binary contained in run script depends on libxml2.so.2
+    # To verify this is true in the future:
+    # 1. stage the installer with `spack stage cuda`
+    # 2. extract the installer exe with `./cuda_*.run --noexec --target {temp dir}`
+    # 3. check links with `readelf -d {temp-dir}/cuda_files/cuda-installer`
+    depends_on("libxml2", when="@10.1.243:", type="build")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
-    depends_on("ncurses abi=5", type="run", when="@:11.3.99+dev")
+    depends_on("ncurses abi=5", type="run", when="@:11.3")
 
     depends_on("gzip", type="build")
     depends_on("coreutils", type="build")
@@ -810,7 +862,7 @@ class Cuda(Package):
             # CUDA 9 has a fix for this, but CUDA 8 and lower don't.
             env.append_path("PERL5LIB", self.stage.source_path)
 
-        if self.spec.satisfies("@10.1.243:"):
+        if self.spec.satisfies("^libxml2"):
             libxml2_home = self.spec["libxml2"].prefix
             env.set("LIBXML2HOME", libxml2_home)
             env.append_path("LD_LIBRARY_PATH", libxml2_home.lib)

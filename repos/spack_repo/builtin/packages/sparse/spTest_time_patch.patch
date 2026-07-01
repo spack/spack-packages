@@ -1,0 +1,24 @@
+diff --git a/src/spTest.c b/src/spTest.c
+index 20ab7cc..9e98134 100644
+--- a/src/spTest.c
++++ b/src/spTest.c
+@@ -28,6 +28,9 @@
+  *  Copyright (c) 1985-2003 by Kenneth S. Kundert
+  */
+
++#include <sys/times.h>
++#include <stdlib.h>
++
+ #ifndef lint
+ static char copyright[] =
+     "Sparse1.4: Copyright (c) 1985-2003 by Kenneth S. Kundert";
+@@ -137,9 +140,9 @@ extern int strcmp(), strncmp(), strlen();
+ double
+ Time()
+ {
+-    struct time {long user, system, childuser, childsystem;} time;
++    struct tms time;
+     (void)times(&time);
+-    return (double)time.user / (double)HZ;
++    return (double)time.tms_utime / (double)HZ;
+ }

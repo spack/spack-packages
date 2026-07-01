@@ -226,6 +226,10 @@ class TestAutotoolsPackage:
         (tmp_path / "env" / "spack.yaml").write_text(
             f"""\
 spack:
+  # temporarily pin to the old installer for this test since the resulting
+  # error messaging has changed. Coordinate with @haampie on a fix.
+  config:
+    installer: old
   specs:
   - 'autotools-config-replacement +patch_config_files +gnuconfig'
   packages:

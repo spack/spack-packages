@@ -20,12 +20,19 @@ class NvplScalapack(Package):
 
     tags = ["e4s"]
 
+    redistribute(source=False, binary=False)
+
+    license("NVIDIA Software License Agreement")
+
+    version("0.2.3", sha256="1afa2a6f2ab0580bff2148cc769e4c03f79a5de622c89699564287dd1a1112cf")
+    version("0.2.2", sha256="20cf6c54a0352f2fb0060e6f5ef6b892c5d07a242f8aab31cd9bbceb58a7bd11")
     version("0.2.1", sha256="dada4d1ecf044d90609b9e62750b383d11be9b22c87e109414bcc07dce3c83c9")
 
     provides("scalapack")
 
     variant("ilp64", default=False, description="Force 64-bit Fortran native integers")
 
+    depends_on("c", type="build")  # for enforcing compiler restrictions
     depends_on("nvpl-blas +ilp64", when="+ilp64")
     depends_on("nvpl-blas ~ilp64", when="~ilp64")
     depends_on("nvpl-lapack +ilp64", when="+ilp64")

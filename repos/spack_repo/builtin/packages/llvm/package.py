@@ -52,7 +52,11 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     version("main", branch="main")
 
+    # Note: remember to update `provides("libllvm")` according to major versions listed
+
     # Latest stable
+    version("22.1.5", sha256="263e99bd0b590664a886b0332037ff060e108f4e7b0310b7c8277208858f867d")
+    version("22.1.4", sha256="e813bf8da34ec2b7c108c4067937380fa7d5a04a13f4fe13555dbe388482d69f")
     version("22.1.3", sha256="7e144bd6da8177757434cc0dfd1476122f143413df379c6d6cf03843512b5a9e")
     version("22.1.2", sha256="a252efd7a4a268d2cc5145b17adcaa82757fdee1d06d748b4c24137807710ecb")
     version("22.1.1", sha256="c48878550911a8a8993a749e6118446082656768e62b26456ac7d39c4422b409")
@@ -268,24 +272,26 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
 
-    provides("libllvm@20", when="@20.0.0:20")
-    provides("libllvm@19", when="@19.0.0:19")
-    provides("libllvm@18", when="@18.0.0:18")
-    provides("libllvm@17", when="@17.0.0:17")
-    provides("libllvm@16", when="@16.0.0:16")
-    provides("libllvm@15", when="@15.0.0:15")
-    provides("libllvm@14", when="@14.0.0:14")
-    provides("libllvm@13", when="@13.0.0:13")
-    provides("libllvm@12", when="@12.0.0:12")
-    provides("libllvm@11", when="@11.0.0:11")
-    provides("libllvm@10", when="@10.0.0:10")
-    provides("libllvm@9", when="@9.0.0:9")
-    provides("libllvm@8", when="@8.0.0:8")
-    provides("libllvm@7", when="@7.0.0:7")
-    provides("libllvm@6", when="@6.0.0:6")
-    provides("libllvm@5", when="@5.0.0:5")
-    provides("libllvm@4", when="@4.0.0:4")
-    provides("libllvm@3", when="@3.0.0:3")
+    provides("libllvm@22", when="@22")
+    provides("libllvm@21", when="@21")
+    provides("libllvm@20", when="@20")
+    provides("libllvm@19", when="@19")
+    provides("libllvm@18", when="@18")
+    provides("libllvm@17", when="@17")
+    provides("libllvm@16", when="@16")
+    provides("libllvm@15", when="@15")
+    provides("libllvm@14", when="@14")
+    provides("libllvm@13", when="@13")
+    provides("libllvm@12", when="@12")
+    provides("libllvm@11", when="@11")
+    provides("libllvm@10", when="@10")
+    provides("libllvm@9", when="@9")
+    provides("libllvm@8", when="@8")
+    provides("libllvm@7", when="@7")
+    provides("libllvm@6", when="@6")
+    provides("libllvm@5", when="@5")
+    provides("libllvm@4", when="@4")
+    provides("libllvm@3", when="@3")
 
     provides("c", "cxx", when="+clang")
     provides("fortran", when="+flang")
@@ -363,8 +369,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
-    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
-    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -483,6 +487,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         sha256="c6ca6b925f150e8644ce756023797b7f94c9619c62507231f979edab1c09af78",
         when="@6:13",
     )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/7e44305041d96b064c197216b931ae3917a34ac1.patch?full_index=1",
+        sha256="8459dc31d2dbda4fbd89e5cfe80bc184573de30137b8a2b371c1d702eb75f304",
+        when="@13:18",
+    )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/8f39502b85d34998752193e85f36c408d3c99248.patch?full_index=1",
+        sha256="8b07b12cb9c6c5b571163a68d2f044fd7ce33fb8b3b646d4c5bd6dac4a9fc6c2",
+        when="@12:18",
+    )
+    patch("cstdint-1.patch", when="@18")
+    patch("cstdint-2.patch", when="@11:18")
+
     # fix building of older versions of llvm with newer versions of glibc
     for compiler_rt_as in ["project", "runtime"]:
         with when("compiler-rt={0}".format(compiler_rt_as)):
@@ -602,9 +619,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     # fix detection of LLDB_PYTHON_EXE_RELATIVE_PATH
     # see https://reviews.llvm.org/D133513
-    # TODO: the patch is not applicable after https://reviews.llvm.org/D141042 but it is not clear
-    #  yet whether we need a version of it for when="@16:"
     patch("D133513.diff", level=0, when="@14:15+lldb+python")
+    patch("lldb_python_exe_relative_path.patch", when="@16:+lldb+python")
 
     # Fix hwloc@:2.3 (Conditionally disable hwloc@2.0 and hwloc@2.4 code)
     patch(
