@@ -18,10 +18,14 @@ class FenicsDolfinx(CMakePackage):
 
     version("main", branch="main", no_cache=True)
     version(
+        "0.11.0.post0", sha256="47c635cb82a99482d23e2e6bca26c31c9b2297bcad1ab5f5c651541caaaec68f"
+    )
+    version(
         "0.10.0.post4", sha256="3f827a88ab52843fbd7a5cc7814ecba165bdec65fd10df05eb031c286e8cd605"
     )
     version("0.9.0", sha256="b266c74360c2590c5745d74768c04568c965b44739becca4cd6b5aa58cdbbbd1")
-    version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
+    with default_args(deprecated=True):
+        version("0.8.0", sha256="acf3104d9ecc0380677a6faf69eabfafc58d0cce43f7777e1307b95701c7cad9")
 
     patch("0.8-boost-filesystem.patch", when="@0.8")
 
@@ -52,12 +56,12 @@ class FenicsDolfinx(CMakePackage):
     depends_on("parmetis", when="partitioners=parmetis")
     depends_on("scotch+mpi", when="partitioners=scotch")
     # 0.9: finds SCOTCH in CMake CONFIG mode, which requires SCOTCH 7.0.1:
-    depends_on("scotch@7.0.1:", when="@0.9:")
+    depends_on("scotch@7.0.1:", when="@0.9: partitioners=scotch")
 
     variant("slepc", default=False, description="SLEPc support")
     variant("adios2", default=False, description="ADIOS2 support")
     variant("petsc", default=False, description="PETSc support")
-    variant("superlu-dist", default=False, description="SuperLU_DIST support", when="@main")
+    variant("superlu-dist", default=False, description="SuperLU_DIST support", when="@0.11:")
 
     conflicts("~petsc", when="+slepc", msg="+slepc requires +petsc")
 
@@ -65,7 +69,8 @@ class FenicsDolfinx(CMakePackage):
     depends_on("cmake@3.19:", when="@:0.8", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("mpi")
-    depends_on("hdf5+mpi")
+    # HDF5Interface.cpp #if H5_VERSION_GE are not precise enough.
+    depends_on("hdf5+mpi@1.12:")
     depends_on("boost@1.70:")
     depends_on("boost@1.70:+timer", when="@:0.9")
     depends_on("pugixml")
@@ -80,9 +85,9 @@ class FenicsDolfinx(CMakePackage):
     depends_on("adios2@2.8.1:", when="@0.9: +adios2")
     depends_on("adios2+mpi", when="+adios2")
 
-    depends_on("superlu-dist", when="+superlu-dist")
+    depends_on("superlu-dist", when="@0.11: +superlu-dist")
 
-    for ver in ("main", "0.10", "0.9", "0.8"):
+    for ver in ("main", "0.11", "0.10", "0.9", "0.8"):
         depends_on(f"fenics-ufcx@{ver}", when=f"@{ver}")
         depends_on(f"fenics-basix@{ver}", when=f"@{ver}")
         depends_on(f"py-fenics-ffcx@{ver}", when=f"@{ver}", type="test")
