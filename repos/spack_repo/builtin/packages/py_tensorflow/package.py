@@ -49,6 +49,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version("2.21.0", sha256="ef3568bb4865d6c1b2564fb5689c19b6b9a5311572cd1f2ff9198636a8520921")
     version(
         "2.20.0-rocm-enhanced",
         sha256="1db75eb24f617ac0b1aea417c294cbdf98ec7ede3cb2957e07c1e9f8eefa8713",
@@ -195,7 +196,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     with default_args(type="build"):
         # Bazel tends to be backwards-compatible within major versions
         # See .bazelversion
-        depends_on("bazel@7.4.1:7", when="@2.20:")
+        depends_on("bazel@7.7.0:7", when="@2.21:")
+        depends_on("bazel@7.4.1:7", when="@2.20")
         depends_on("bazel@6.5.0:6", when="@2.16:2.19")
         depends_on("bazel@6.1.0:6", when="@2.14:2.15")
         depends_on("bazel@5.3.0:5", when="@2.11:2.13")
@@ -250,7 +252,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-opt-einsum@2.3.2:", when="@2.7:")
         depends_on("py-opt-einsum@3.3", when="@2.4:2.6")
         depends_on("py-packaging", when="@2.9:")
-        depends_on("py-protobuf@5.28:", when="@2.20:")
+        depends_on("py-protobuf@6.31.1:7", when="@2.21:")
+        depends_on("py-protobuf@5.28:", when="@2.20")
         depends_on("py-protobuf@3.20.3:4.20,4.21.6:5", when="@2.18:2.19")
         depends_on("py-protobuf@3.20.3:4.20,4.21.6:4", when="@2.12:2.17")
         depends_on("py-protobuf@3.9.2:", when="@2.3:2.11")
@@ -277,7 +280,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             depends_on("py-grpcio@1.37.0:1", when="@2.6")
             depends_on("py-grpcio@1.34", when="@2.5")
 
-        for minor_ver in range(5, 21):
+        for minor_ver in range(5, 21):  # only required until 2.20
             depends_on("py-tensorboard@2.{}".format(minor_ver), when="@2.{}".format(minor_ver))
 
         # TODO: support circular run-time dependencies
@@ -294,7 +297,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-numpy@1.19.2:1.19", when="@2.4:2.6")
         # https://github.com/tensorflow/tensorflow/issues/67291
         depends_on("py-numpy@:1", when="@:2.17")
-        depends_on("py-h5py@3.11:", when="@2.18:")
+        depends_on("py-h5py@3.11:3.14", when="@2.21:")
+        depends_on("py-h5py@3.11:", when="@2.18:2.20")
         depends_on("py-h5py@3.10:", when="@2.16:")
         depends_on("py-h5py@2.9:", when="@2.7:2.15")
         depends_on("py-h5py@3.1", when="@2.5:2.6")
