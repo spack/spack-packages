@@ -11,7 +11,7 @@ class OpenpmdApi(CMakePackage):
     """C++ & Python API for Scientific I/O"""
 
     homepage = "https://www.openPMD.org"
-    url = "https://github.com/openPMD/openPMD-api/archive/0.17.0.tar.gz"
+    url = "https://github.com/openPMD/openPMD-api/archive/0.17.1.tar.gz"
     git = "https://github.com/openPMD/openPMD-api.git"
 
     maintainers("ax3l", "franzpoeschel")
@@ -22,6 +22,7 @@ class OpenpmdApi(CMakePackage):
 
     # C++17 up until here
     version("develop", branch="dev")
+    version("0.17.1", sha256="cd4340dc17b41e4fafd0d2893af23a1bee82d169f2b2ca40d012b79c87c564d8")
     version("0.17.0", sha256="97ff76111f77b06177caa48fa1b5e757967a60a66665f0c13384828d3ae1aa92")
     version("0.16.1", sha256="a029a1779351949f41c1f36d0e75c698e59c5d284f080d5e4c2b8650779d2d58")
     version("0.16.0", sha256="b52222a4ab2511f9e3f6e21af222f57ab4fb6228623024fc5d982066333e104f")
@@ -82,8 +83,9 @@ class OpenpmdApi(CMakePackage):
         depends_on("adios2@2.5.0: +mpi", when="+mpi")
     with when("+python"):
         depends_on("py-pybind11@2.6.2:", type="link")
-        depends_on("py-pybind11@2.13.0:", type="link", when="@0.16.0:")
-        depends_on("py-pybind11@:3.0.1", type="link", when="@:0.17.0")
+        depends_on("py-pybind11@2.13.0:", type="link", when="@0.16:")
+        depends_on("py-pybind11@:3.0.1", type="link", when="@:0.17")
+        depends_on("py-pybind11@3:", type="link", when="@0.17:")
         depends_on("py-numpy@1.15.1:", type=("test", "run"))
         depends_on("py-mpi4py@2.1.0:", when="+mpi", type=("test", "run"))
         with default_args(type=("link", "test", "run")):
