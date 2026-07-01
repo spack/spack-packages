@@ -6,11 +6,12 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class HsaRocrDev(CMakePackage):
+class HsaRocrDev(ROCmLibrary, CMakePackage):
     """This repository includes the user mode API nterfaces and libraries
     necessary for host applications to launch computer kernels to available
     HSA ROCm kernel agents.AMD Heterogeneous System Architecture HSA -
@@ -20,18 +21,11 @@ class HsaRocrDev(CMakePackage):
     git = "https://github.com/ROCm/rocm-systems.git"
     tags = ["rocm"]
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        elif version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/ROCR-Runtime/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libhsa-runtime64"]
 

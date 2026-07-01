@@ -5,7 +5,7 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
@@ -26,23 +26,19 @@ def submodules(package):
     return submodules
 
 
-class RocprofilerSdk(CMakePackage):
-    """ROCProfiler-SDK is AMD’s new and improved tooling infrastructure, providing a
+class RocprofilerSdk(ROCmLibrary, CMakePackage):
+    """ROCProfiler-SDK is AMD's new and improved tooling infrastructure, providing a
     hardware-specific low-level performance analysis interface for profiling and
     tracing GPU compute applications."""
 
     homepage = "https://github.com/ROCm/rocprofiler-sdk"
     git = "https://github.com/ROCm/rocm-systems.git"
 
-    def url_for_version(self, version):
-        if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")

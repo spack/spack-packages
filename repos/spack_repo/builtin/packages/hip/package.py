@@ -6,11 +6,12 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Hip(CMakePackage):
+class Hip(ROCmLibrary, CMakePackage):
     """HIP is a C++ Runtime API and Kernel Language that allows developers to
     create portable applications for AMD and NVIDIA GPUs from
     single source code."""
@@ -24,15 +25,11 @@ class Hip(CMakePackage):
 
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/HIP/archive/rocm-6.4.3.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/HIP/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e6ab65cb2a236eee0e1f2738457367dffc3ce1e8dfb050ac22b7712e35aa896e")
     version("7.2.1", sha256="40a27fc18d08ea4f28b5e0990d38a3fec10ff491a2d5adb647b3faa5016873de")

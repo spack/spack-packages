@@ -19,15 +19,10 @@ class RocmGdb(ROCmLibrary, AutotoolsPackage):
 
     license("LGPL-2.0-or-later")
 
-    def url_for_version(self, version):
-        if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/ROCgdb/archive/rocm-6.4.3.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/ROCgdb/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/ROCgdb/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/ROCgdb/archive/refs/tags/therock-{0}.{1}.tar.gz"),
+    ]
     maintainers("srekolam", "renjithravindrankannath")
 
     version("7.13.0", sha256="979533cc1a207e8a65755224bdc407e443144c40200fd22b324d1a986a646ad1")

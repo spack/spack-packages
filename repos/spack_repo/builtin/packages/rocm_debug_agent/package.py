@@ -18,15 +18,11 @@ class RocmDebugAgent(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["librocm-debug-agent"]
 
-    def url_for_version(self, version):
-        if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocr_debug_agent/archive/rocm-6.2.4.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocr_debug_agent/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="b67bde5b700300c6468eb55b24a480b29d66da8fe1ec2c0d4fe0e6c9a0660441")
     version("7.2.1", sha256="7dfd3363e07fcec65fb8f66c442e0cd601621cb5e086f311205ac3e65c9f9b6c")

@@ -6,12 +6,12 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Hipblaslt(CMakePackage):
+class Hipblaslt(ROCmLibrary, CMakePackage):
     """hipBLASLt is a library that provides general matrix-matrix operations with a flexible API
     and extends functionalities beyond a traditional BLAS library"""
 
@@ -24,18 +24,11 @@ class Hipblaslt(CMakePackage):
 
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.0.2"):
-            url = "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-{0}.tar.gz"
-            return url.format(version)
-        elif version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/hipBLASLt/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")

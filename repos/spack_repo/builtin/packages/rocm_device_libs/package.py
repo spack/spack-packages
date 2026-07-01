@@ -5,10 +5,11 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 from spack.package import *
 
 
-class RocmDeviceLibs(CMakePackage):
+class RocmDeviceLibs(ROCmLibrary, CMakePackage):
     """set of AMD specific device-side language runtime libraries"""
 
     homepage = "https://github.com/ROCm/llvm-project"
@@ -17,18 +18,11 @@ class RocmDeviceLibs(CMakePackage):
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
 
-    def url_for_version(self, version):
-        if version <= Version("6.0.2"):
-            url = "https://github.com/ROCm/ROCm-Device-Libs/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        elif version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/ROCm-Device-Libs/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")

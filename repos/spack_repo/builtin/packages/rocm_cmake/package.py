@@ -5,10 +5,11 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 from spack.package import *
 
 
-class RocmCmake(CMakePackage):
+class RocmCmake(ROCmLibrary, CMakePackage):
     """rocm-cmake provides CMake modules for common build tasks
     in the ROCm software stack"""
 
@@ -21,15 +22,10 @@ class RocmCmake(CMakePackage):
 
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocm-cmake/archive/rocm-6.4.2.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocm-cmake/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     version("7.13.0", sha256="bd024d6cd61d6ab09c9b2369bb26baf1fb956a929757abdf672a458edb94e2ae")
     version("7.2.3", sha256="069dc6405efc252d690e905dddb18b385691011cbc3fe142f0dd4f7a598211d7")
     version("7.2.1", sha256="5eec670557b41516e9e27738d20178122b5b536344f471ab823b308d3c767588")
