@@ -875,6 +875,12 @@ class Cuda(Package):
         env.set("CUDA_HOME", self.prefix)
         env.set("NVHPC_CUDA_HOME", self.prefix)
 
+        # Append --allow-unsupported-compiler in CMake builds
+        # https://cmake.org/cmake/help/latest/envvar/CUDAFLAGS.html
+        if self.spec.satisfies("+allow-unsupported-compilers"):
+            if dependent_spec.satisfies("+cuda build_system=cmake"):
+                env.append_flags("CUDAFLAGS", "--allow-unsupported-compiler")
+
     @property
     def cmake_prefix_paths(self):
         cmake_prefix_paths = [self.prefix]
