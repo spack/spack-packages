@@ -37,6 +37,13 @@ class Xxhash(MakefilePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    variant("pic", default=True, description="Enable position-independent code (PIC)")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags" and self.spec.satisfies("+pic"):
+            flags.append(self.compiler.cc_pic_flag)
+        return (flags, None, None)
+
     @property
     def build_targets(self):
         targets = []
