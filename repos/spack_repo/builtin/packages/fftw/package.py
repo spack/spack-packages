@@ -64,7 +64,7 @@ class FftwBase(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            if self.spec.satisfies("%clang@15:"):
+            if self.spec.satisfies("%clang@15:") or self.spec.satisfies("%gcc@14:"):
                 flags.append("-Wno-error=int-conversion")
 
         return flags, None, None
