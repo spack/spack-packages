@@ -152,6 +152,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("byterange", default=False, description="Enable byte-range I/O")
     variant("jna", default=False, description="Enable JNA support")
     variant("fsync", default=False, description="Enable fsync support")
+    variant("nczarr", default=True, description="Enable NCZarr")
     variant("nczarr_zip", default=False, description="Enable NCZarr zipfile format storage")
     variant("optimize", default=True, description="Enable -O2 for a more optimized lib")
     variant("logging", default=False, description="Enable logging")
@@ -195,10 +196,10 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
             # It is possible to install the package with CMake and without M4 on a non-Windows
             # platform but some of the man files will not be installed in that case (even if they
             # are in the release tarball):
-            depends_on("m4", type="build", when="+doc build_system=cmake")
+            depends_on("m4", type="build", when="build_system=cmake")
             # Apart from the redundant configure-time check, which we suppress below, M4 is not
             # needed when building with Autotools if the man files are in the release tarball:
-            depends_on("m4", type="build", when="@:4.4 +doc build_system=autotools")
+            depends_on("m4", type="build", when="@:4.4 build_system=autotools")
     del __p
 
     depends_on("hdf~netcdf", when="+hdf4")
@@ -381,7 +382,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define(nc + "ENABLE_PARALLEL_TESTS", False),
             self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
-            self.define_from_variant("ENABLE_NCZARR", "nczarr_zip"),
+            self.define_from_variant("ENABLE_NCZARR", "nczarr"),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
         if "+parallel-netcdf" in self.pkg.spec:
@@ -471,7 +472,8 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         # NCZarr was added in version 4.8.0 as an experimental feature and became a supported one
         # in version 4.8.1:
         if self.spec.satisfies("@4.8.1:"):
-            config_args.append("--enable-nczarr")
+            if self.spec.satisfies("+nczarr"):
+                config_args.append("--enable-nczarr")
         elif self.spec.satisfies("@4.8.0"):
             config_args.append("--disable-nczarr")
 
