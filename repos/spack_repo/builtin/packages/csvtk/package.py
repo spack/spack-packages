@@ -20,9 +20,7 @@ class Csvtk(GoPackage):
 
     depends_on("go@1.24:", type="build")
 
-    @property
-    def build_directory(self):
-        return f"{join_path(super().build_directory, self.name)}"
+    build_directory = "csvtk"
 
     @run_after("install")
     def install_completions(self):

@@ -24,6 +24,17 @@ class RustBootstrap(Package):
     # should update these binary releases as bootstrapping requirements are
     # modified by new releases of Rust.
     rust_releases = {
+        "1.96.0": {
+            "darwin": {
+                "x86_64": "63a6d717a5e5392ac43f0a1593e7aabe6128c8685d318cb890603b1688cb3339",
+                "aarch64": "f04a974f3579d3524f6b9bc6490a27c9fb358050e7cd8a641945f30bf24c1dce",
+            },
+            "linux": {
+                "x86_64": "c295047583a56238ea06b43f849f4b877fa12bfd4c7103f8d9a74c94c9c4e108",
+                "aarch64": "371eadcca97062219cbd8593628eb5d2802bc370515d085fedce1b56b2baed57",
+                "powerpc64le": "fea8e9155c69740415f1c96fa8879e61b16238e26cfee62d15f4f93aa83cb8d5",
+            },
+        },
         "1.92.0": {
             "darwin": {
                 "x86_64": "fc6868991e61e9262272effbb8956b23428430f5f4300c1b48eaae3969f8af2a",
@@ -202,15 +213,16 @@ class RustBootstrap(Package):
         # `spack checksum rust-bootstrap@1.70.0-darwin-aarch64`.
         match = re.search(r"(\S+)-(\S+)-(\S+)", str(version))
         if match:
-            version = match.group(1)
+            version = Version(match.group(1))
             os = self.rust_os[match.group(2)]
             target = self.rust_targets[match.group(3)]
         else:
             os = self.rust_os[self.os]
             target = self.target
 
-        url = "https://static.rust-lang.org/dist/rust-{0}-{1}-{2}.tar.gz"
-        return url.format(version, target, os)
+        ext = "gz" if version <= Version("1.92.0") else "xz"
+        url = "https://static.rust-lang.org/dist/rust-{0}-{1}-{2}.tar.{3}"
+        return url.format(version, target, os, ext)
 
     @run_before("install", when="platform=linux")
     def fixup_rpaths(self):

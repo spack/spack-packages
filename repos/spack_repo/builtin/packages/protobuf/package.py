@@ -30,6 +30,7 @@ class Protobuf(CMakePackage):
     #
     # Hence language runtime version has explicted also the protobuf version it is compatible with.
 
+    version("34.1", sha256="a83103b7ed3afaeedee9a212c8f65825444f58144f5e075b73c83f2b4ff27b62")
     version("34.0", sha256="61c47fabb1190e0acb2d47e67f31baac05d9b4ce69d7d1b43f6c83744f83898e")
     version("33.1", sha256="0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97")
     version("33.0", sha256="b6b03fbaa3a90f3d4f2a3fa4ecc41d7cd0326f92fcc920a7843f12206c8d52cd")

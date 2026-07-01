@@ -18,9 +18,24 @@ class Esmf(MakefilePackage, PythonExtension):
     related Earth science applications. The ESMF defines an architecture for
     composing complex, coupled modeling systems and includes data structures
     and utilities for developing individual models.
+
     The National Unified Operational Prediction Capability (NUOPC) Layer
     defines a common model architecture to support interoperable ESMF components.
-    The NUOPC Layer is included with the ESMF package."""
+    The NUOPC Layer is included with the ESMF package.
+
+    ESMX (Earth System Modeling eXecutable) extends this infrastructure by
+    providing a unified, runtime executable layer. It simplifies the deployment
+    of NUOPC-compliant components by allowing users to configure, drive, and
+    execute coupled earth system models dynamically via YAML configuration files,
+    reducing the need to write custom top-level application and driver code.
+    ESMX is included with the ESMF package.
+
+    ESMPy is a Python interface to the ESMF gridding engine. It allows for
+    high-performance, parallel regridding of fields between structured grids,
+    unstructured meshes, and observational data streams directly within Python
+    workflows. This bridges native ESMF capabilities with the broader Python
+    data science ecosystem.
+    ESMPy is included with the ESMF package."""
 
     homepage = "https://earthsystemmodeling.org/"
     url = "https://github.com/esmf-org/esmf/archive/v8.4.1.tar.gz"
@@ -432,8 +447,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
     @run_after("install")
     def post_install(self):
-        if self.spec.satisfies("@8:"):
+        # Only copy the raw source cmake tree for legacy v8.0 - v8.6 installations.
+        # Newer versions handle this inside ESMF's native install target.
+        if self.spec.satisfies("@8:8.6"):
             install_tree("cmake", self.prefix.cmake)
+
         # Several applications using ESMF are affected by CMake
         # capitalization issue. The following fix allows all apps
         # to use as-is. Note that since the macOS file system is
@@ -443,8 +461,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 library_path = os.path.join(self.prefix.lib, "libesmf.%s" % suffix)
                 if os.path.exists(library_path):
                     symlink(library_path, os.path.join(self.prefix.lib, "libESMF.%s" % suffix))
-        # https://github.com/esmf-org/esmf/issues/497
-        filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
+
+        # Pre v9 problem with explicit MPI C++ binding link dependency
+        if self.spec.satisfies("@:8"):
+            # https://github.com/esmf-org/esmf/issues/497
+            filter_file("-lmpi_cxx", "", os.path.join(self.prefix.lib, "esmf.mk"), string=True)
 
     def check(self):
         make("check", parallel=False)

@@ -14,7 +14,7 @@ class Lazygit(GoPackage):
     homepage = "https://github.com/jesseduffield/lazygit"
     url = "https://github.com/jesseduffield/lazygit/archive/refs/tags/v0.40.2.tar.gz"
 
-    maintainers("twrs", "Chrismarsh")
+    maintainers("trws", "Chrismarsh")
 
     license("MIT")
 

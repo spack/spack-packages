@@ -108,6 +108,10 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda~cuda_native~kokkos", msg="Cannot have +cuda without a cuda device")
     conflicts("+cuda", when="cuda_arch=none", msg="viskores +cuda requires that cuda_arch be set")
 
+    # https://github.com/Viskores/viskores/pull/161
+    # Must use patch file because PR has conflicts with 1.1 release.
+    patch("device-lib-private-vk11.patch", when="@1.1")
+
     def cmake_args(self):
         spec = self.spec
         options = []

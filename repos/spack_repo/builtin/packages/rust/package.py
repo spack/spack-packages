@@ -38,6 +38,7 @@ class Rust(Package):
     version("nightly")
 
     # Stable versions.
+    version("1.96.0", sha256="b99ce16cdf0ecfc761b585ac84d131b46733465a02f8ecd0ff2de9713c62ee09")
     version("1.92.0", sha256="9e0d2ca75c7e275fdc758255bf4b03afb3d65d1543602746907c933b6901c3b8")
     version("1.86.0", sha256="022a27286df67900a044d227d9db69d4732ec3d833e4ffc259c4425ed71eed80")
     version("1.85.0", sha256="2f4f3142ffb7c8402139cfa0796e24baaac8b9fd3f96b2deec3b94b4045c6a8a")
@@ -88,6 +89,7 @@ class Rust(Package):
     depends_on("rust-bootstrap@nightly", type="build", when="@nightly")
 
     # Stable version dependencies
+    depends_on("rust-bootstrap@1.95:1.96", type="build", when="@1.96")
     depends_on("rust-bootstrap@1.91:1.92", type="build", when="@1.92")
     depends_on("rust-bootstrap@1.85:1.86", type="build", when="@1.86")
     depends_on("rust-bootstrap@1.84:1.85", type="build", when="@1.85")
@@ -113,6 +115,10 @@ class Rust(Package):
     executables = [r"^rustc(-[\d.]*)?$", r"^cargo(-[\d.]*)?$"]
 
     phases = ["configure", "build", "install"]
+
+    def url_for_version(self, version):
+        ext = "gz" if version <= Version("1.92.0") else "xz"
+        return f"https://static.rust-lang.org/dist/rustc-{version}-src.tar.{ext}"
 
     @classmethod
     def determine_version(csl, exe):

@@ -22,15 +22,8 @@ class Yamlfmt(GoPackage):
     depends_on("go@1.22:", type="build", when="@0.21:")
     depends_on("go@1.21:", type="build")
 
+    build_directory = "cmd/yamlfmt"
+
     @property
-    def build_args(self):
-        return [
-            "-p",
-            str(make_jobs),
-            "-modcacherw",
-            "-ldflags",
-            f"-s -w -X main.version={self.version}",
-            "-o",
-            f"{self.name}",
-            f"{join_path(self.build_directory, 'cmd', self.name)}",
-        ]
+    def ldflags(self):
+        return [f"-X main.version={self.spec.version}"]

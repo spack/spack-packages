@@ -22,6 +22,7 @@ class RocmExamples(CMakePackage):
 
     license("MIT")
 
+    version("7.2.3", sha256="523ed9d130338eb7f2b96005445bac132829bfb649d564df67672e1edce8e27a")
     version("7.2.1", sha256="34457fc665f814ec3a0a5f83edabccc18c293825f0d421b5d9e101b7494da637")
     version("7.2.0", sha256="74c516f08cc0067c85ac5c29f25831a6e74c0cc0f0c07e80798dc827efefbde5")
     version("7.1.1", sha256="7475c4eaca103395ecae93cc5fa51b77884d06ebe990e71383c53a91bc1b089f")
@@ -79,6 +80,7 @@ class RocmExamples(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
@@ -117,6 +119,7 @@ class RocmExamples(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -124,7 +127,7 @@ class RocmExamples(CMakePackage):
                 f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
 
-    for ver in ["7.2.0", "7.2.1"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3"]:
         for tgt in ROCmPackage.amdgpu_targets:
             depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")

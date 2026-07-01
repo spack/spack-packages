@@ -42,7 +42,7 @@ include:
     when: platform == "linux"
 
   # === Per-package resource requests (Only used for Linux on Kubernetes) ===
-  - when: platform == "linux"
+  - when: 'platform == "linux" and env.get("SPACK_CI_GENERATE")'
     git: https://gitlab.spack.io/spack/resource-requests
     branch: main
     paths:

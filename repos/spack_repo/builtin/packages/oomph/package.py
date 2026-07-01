@@ -21,6 +21,7 @@ class Oomph(CMakePackage):
     license("BSD-3-Clause", checked_by="msimberg")
 
     version("main", branch="main")
+    version("0.5.1", sha256="98fd0356555835354b30250e62b0ea25d6b959a54486548e8c8f4caba31d5210")
     version("0.5.0", sha256="4c79ff50d14efcde7ce4d14122714efb16443ccff437ab60973cf1db1032fc3d")
 
     depends_on("c", type="build")
@@ -34,7 +35,7 @@ class Oomph(CMakePackage):
     variant("cuda", default=False, description="Enable CUDA support")
     variant("rocm", default=False, description="Enable ROCm support")
 
-    backends = ("mpi", "ucx", "libfabric")
+    backends = ("mpi", "ucx", "libfabric", "nccl")
     variant(
         "backend", default="mpi", description="Transport backend", values=backends, multi=False
     )
@@ -86,6 +87,9 @@ class Oomph(CMakePackage):
         )
         for provider in libfabric_providers:
             depends_on(f"libfabric fabrics={provider}", when=f"libfabric-provider={provider}")
+
+    requires("@0.6:", when="backend=nccl")
+    depends_on("nccl", when="backend=nccl")
 
     depends_on("mpi")
     depends_on("boost+thread")

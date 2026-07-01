@@ -190,14 +190,17 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable green X support",
         when="@2025.2: build_system=cmake",
     )
+    variant(
+        "deepmd",
+        default=False,
+        description="Enable DeepMD-kit support",
+        when="@2024.2: build_system=cmake",
+    )
 
     variant("vdwxc", default=False, description="Enable VDW support in SIRIUS.", when="+sirius")
-    variant("deepmd", default=False, description="Enable DeepMD-kit support")
     variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
     variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
     variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
-
-    conflicts("+deepmd", msg="DeepMD-kit is not yet available in Spack")
 
     with when("+cuda"):
         variant(
@@ -248,6 +251,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
+    depends_on("deepmdkit", when="+deepmd")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
