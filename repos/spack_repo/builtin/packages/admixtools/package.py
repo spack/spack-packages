@@ -41,6 +41,7 @@ class Admixtools(MakefilePackage):
             "override LDLIBS += -lgsl -lm -lnick " + lapackflags,
         )
 
+        makefile.filter("HOMEL=$(PWD)", "HOMEL=$(CURDIR)", string=True)
         makefile.filter("TOP=../bin", "TOP=./bin")
 
     def install(self, spec, prefix):
