@@ -6,14 +6,15 @@ import os
 import shutil
 import sys
 
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.build_systems.generic import GenericBuilder, Package
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Mfem(Package, CudaPackage, ROCmPackage):
+class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     """Free, lightweight, scalable C++ library for finite element methods."""
 
     tags = ["fem", "finite-elements", "high-order", "amr", "hpc", "radiuss", "e4s"]
@@ -24,6 +25,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     maintainers("v-dobrev", "tzanio", "acfisher", "markcmiller86")
 
     test_requires_compiler = True
+
+    build_system("generic", "cmake", default="generic")
 
     # Recommended mfem builds to test when updating this file: see the shell
     # script 'test_builds.sh' in the same directory as this file.
@@ -209,7 +212,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant("gslib", default=False, description="Enable functionality based on GSLIB")
     variant("mpfr", default=False, description="Enable precise, 1D quadrature rules")
     variant("lapack", default=False, description="Use external blas/lapack routines")
-    variant("debug", default=False, description="Build debug instead of optimized version")
+    # CMake package has build_type variant instead
+    variant(
+        "debug",
+        default=False,
+        description="Build debug instead of optimized version",
+        when="build_system=generic",
+    )
     variant("netcdf", default=False, description="Enable Cubit/Genesis reader")
     variant("conduit", default=False, description="Enable binary data I/O using Conduit")
     variant("zlib", default=True, description="Support zip'd streams for I/O")
@@ -256,6 +265,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     )
 
     conflicts("~static~shared")
+    # CMake only handles one build mode at a time
+    conflicts("+shared+static", when="build_system=cmake")
     conflicts("~threadsafe", when="@:3+openmp")
     requires("+threadsafe", when="+openmp")
 
@@ -321,7 +332,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     conflicts("+mumps", when="~mpi")
 
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
     depends_on("fortran", type="build", when="+strumpack")
+
     depends_on("gmake", type="build")
 
     depends_on("mpi", when="+mpi")
@@ -583,6 +596,104 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # PR: https://github.com/mfem/mfem/pull/5224
     patch("mfem-4.9.patch", when="@4.9.0")
 
+    @property
+    def suitesparse_components(self):
+        """Return the SuiteSparse components needed by MFEM."""
+        ss_comps = "umfpack,cholmod,colamd,amd,camd,ccolamd,suitesparseconfig"
+        if self.spec.satisfies("@3.2:"):
+            ss_comps = "klu,btf," + ss_comps
+        return ss_comps
+
+    @property
+    def sundials_components(self):
+        """Return the SUNDIALS components needed by MFEM."""
+        spec = self.spec
+        sun_comps = "arkode,cvodes,nvecserial,kinsol"
+        if "+mpi" in spec:
+            if spec.satisfies("@4.2:"):
+                sun_comps += ",nvecparallel,nvecmpiplusx"
+            else:
+                sun_comps += ",nvecparhyp,nvecparallel"
+        if "+cuda" in spec and "+cuda" in spec["sundials"]:
+            sun_comps += ",nveccuda"
+        if "+rocm" in spec and "+rocm" in spec["sundials"]:
+            sun_comps += ",nvechip"
+        return sun_comps
+
+    @property
+    def headers(self):
+        """Export the main mfem header, mfem.hpp."""
+        hdrs = HeaderList(find(self.prefix.include, "mfem.hpp", recursive=False))
+        return hdrs or None
+
+    @property
+    def libs(self):
+        """Export the mfem library file."""
+        libs = find_libraries(
+            "libmfem", root=self.prefix.lib, shared=("+shared" in self.spec), recursive=False
+        )
+        return libs or None
+
+    @property
+    def config_mk(self):
+        """Export the location of the config.mk file.
+        This property can be accessed using pkg["mfem"].config_mk
+        """
+        dirs = [self.prefix, self.prefix.share.mfem]
+        for d in dirs:
+            f = join_path(d, "config.mk")
+            if os.access(f, os.R_OK):
+                return FileList(f)
+        return FileList(find(self.prefix, "config.mk", recursive=True))
+
+    @property
+    def test_mk(self):
+        """Export the location of the test.mk file.
+        This property can be accessed using pkg["mfem"].test_mk.
+        In version 3.3.2 and newer, the location of test.mk is also defined
+        inside config.mk, variable MFEM_TEST_MK.
+        """
+        dirs = [self.prefix, self.prefix.share.mfem]
+        for d in dirs:
+            f = join_path(d, "test.mk")
+            if os.access(f, os.R_OK):
+                return FileList(f)
+        return FileList(find(self.prefix, "test.mk", recursive=True))
+
+    @property
+    def xlinker(self):
+        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
+        return "-Wl," if not using_nvcc else "-Xlinker="
+
+
+def str_to_timerid(timer_type):
+    timer_ids = {"auto": "-1", "std": "0", "posix": "2", "mac": "4", "mpi": "6"}
+    return timer_ids[timer_type]
+
+
+class AnyBuilder(BaseBuilder):
+    @run_after("install")
+    def cache_test_sources(self):
+        """Copy the example source files after the package is installed to an
+        install test subdirectory for use during `spack test run`."""
+        # Clean the 'examples' directory -- at least one example is always built
+        # and we do not want to cache executables.
+        make("examples/clean", parallel=False)
+        extra_install_tests = [self.examples_src_dir, self.examples_data_dir]
+        cache_extra_test_sources(self.pkg, extra_install_tests)
+
+
+# without splitting the cache_test_sources into AnyBuilder,
+# cache_extra_test_sources was not available in the GenericBuilder
+# took the idea from the superlu package
+class GenericBuilder(AnyBuilder, GenericBuilder):
+    #
+    # Note: Although MFEM does support CMake configuration, MFEM
+    # development team indicates that vanilla GNU Make is the
+    # preferred mode of configuration of MFEM and the mode most
+    # likely to be up to date in supporting *all* of MFEM's
+    # configuration options. So, don't use CMake
+    #
     phases = ["configure", "build", "install"]
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -595,16 +706,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             env.set("OMPI_CXX", spack_cxx)
             env.set("MPICXX_CXX", spack_cxx)
 
-    #
-    # Note: Although MFEM does support CMake configuration, MFEM
-    # development team indicates that vanilla GNU Make is the
-    # preferred mode of configuration of MFEM and the mode most
-    # likely to be up to date in supporting *all* of MFEM's
-    # configuration options. So, don't use CMake
-    #
     def get_make_config_options(self, spec, prefix):
         def yes_no(varstr):
-            return "YES" if varstr in self.spec else "NO"
+            return "YES" if varstr in spec else "NO"
 
         using_nvcc = "+cuda" in spec and "+enzyme" not in spec
         xcompiler = "" if not using_nvcc else "-Xcompiler="
@@ -699,16 +803,16 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         # Determine C++ standard to use:
         cxxstd = None
-        if self.spec.satisfies("@4.0.0:"):
+        if spec.satisfies("@4.0.0:"):
             cxxstd = "11"
-        if self.spec.satisfies("^raja@2022.03.0:"):
+        if spec.satisfies("^raja@2022.03.0:"):
             cxxstd = "14"
-        if self.spec.satisfies("^umpire@2022.03.0:"):
+        if spec.satisfies("^umpire@2022.03.0:"):
             cxxstd = "14"
-        if self.spec.satisfies("^sundials@6.4.0:"):
+        if spec.satisfies("^sundials@6.4.0:"):
             cxxstd = "14"
         # When rocPRIM is used (e.g. by PETSc + ROCm) we need C++14:
-        if self.spec.satisfies("^rocprim@5.5.0:"):
+        if spec.satisfies("^rocprim@5.5.0:"):
             cxxstd = "14"
         if self.spec.satisfies("^ginkgo@1.4.0:1.8"):
             cxxstd = "14"
@@ -734,8 +838,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         if cxxflags:
             # Add opt/debug flags if they are not present in global cxx flags
-            opt_flag_found = any(f in self["cxx"].opt_flags for f in cxxflags)
-            debug_flag_found = any(f in self["cxx"].debug_flags for f in cxxflags)
+            opt_flag_found = any(f in self.pkg.compiler.opt_flags for f in cxxflags)
+            debug_flag_found = any(f in self.pkg.compiler.debug_flags for f in cxxflags)
 
             if "+debug" in spec:
                 if not debug_flag_found:
@@ -913,14 +1017,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             ]
 
         if "+suite-sparse" in spec:
-            ss_spec = "suite-sparse:" + self.suitesparse_components
+            ss_spec = "suite-sparse:" + self.pkg.suitesparse_components
             options += [
                 "SUITESPARSE_OPT=-I%s" % spec[ss_spec].prefix.include,
                 "SUITESPARSE_LIB=%s" % ld_flags_from_library_list(spec[ss_spec].libs),
             ]
 
         if "+sundials" in spec:
-            sun_spec = "sundials:" + self.sundials_components
+            sun_spec = "sundials:" + self.pkg.sundials_components
             options += [
                 "SUNDIALS_OPT=%s" % spec[sun_spec].headers.cpp_flags,
                 "SUNDIALS_LIB=%s" % ld_flags_from_library_list(spec[sun_spec].libs),
@@ -1188,10 +1292,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 "UMPIRE_LIB=%s" % ld_flags_from_library_list(umpire_libs),
             ]
 
-        timer_ids = {"std": "0", "posix": "2", "mac": "4", "mpi": "6"}
         timer = spec.variants["timer"].value
         if timer != "auto":
-            options += ["MFEM_TIMER_TYPE=%s" % timer_ids[timer]]
+            options += ["MFEM_TIMER_TYPE=%s" % str_to_timerid(timer)]
 
         if "+conduit" in spec:
             conduit = spec["conduit"]
@@ -1293,19 +1396,19 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         return options
 
-    def configure(self, spec, prefix):
+    def configure(self, pkg, spec, prefix):
         options = self.get_make_config_options(spec, prefix)
         make("config", *options, parallel=False)
         make("info", parallel=False)
 
-    def build(self, spec, prefix):
+    def build(self, pkg, spec, prefix):
         make("lib")
 
     @run_after("build")
     def check_or_test(self):
         # Running 'make check' or 'make test' may fail if MFEM_MPIEXEC or
         # MFEM_MPIEXEC_NP are not set appropriately.
-        if not self.run_tests:
+        if not self.pkg.run_tests:
             # check we can build ex1 (~mpi) or ex1p (+mpi).
             make("-C", "examples", "ex1p" if ("+mpi" in self.spec) else "ex1", parallel=False)
             # make('check', parallel=False)
@@ -1313,7 +1416,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             make("all")
             make("test", parallel=False)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         make("install", parallel=False)
 
         # TODO: The way the examples and miniapps are being installed is not
@@ -1351,23 +1454,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     examples_src_dir = "examples"
     examples_data_dir = "data"
 
-    @run_after("install")
-    def cache_test_sources(self):
-        """Copy the example source files after the package is installed to an
-        install test subdirectory for use during `spack test run`."""
-        # Clean the 'examples' directory -- at least one example is always built
-        # and we do not want to cache executables.
-        make("examples/clean", parallel=False)
-        cache_extra_test_sources(self, [self.examples_src_dir, self.examples_data_dir])
-
     def test_ex10(self):
         """build and run ex10(p)"""
         # MFEM has many examples to serve as a suitable smoke check. ex10
         # was chosen arbitrarily among the examples that work both with
         # MPI and without it
-        test_dir = join_path(self.test_suite.current_test_cache_dir, self.examples_src_dir)
+        test_dir = join_path(self.test_suite.current_test_cache_dir, self.pkg.examples_src_dir)
 
-        mesh = join_path("..", self.examples_data_dir, "beam-quad.mesh")
+        mesh = join_path("..", self.pkg.examples_data_dir, "beam-quad.mesh")
         test_exe = "ex10p" if ("+mpi" in self.spec) else "ex10"
 
         with working_dir(test_dir):
@@ -1394,70 +1488,6 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         for f in files_with_bom:
             filter_file(bom, "", f)
 
-    @property
-    def suitesparse_components(self):
-        """Return the SuiteSparse components needed by MFEM."""
-        ss_comps = "umfpack,cholmod,colamd,amd,camd,ccolamd,suitesparseconfig"
-        if self.spec.satisfies("@3.2:"):
-            ss_comps = "klu,btf," + ss_comps
-        return ss_comps
-
-    @property
-    def sundials_components(self):
-        """Return the SUNDIALS components needed by MFEM."""
-        spec = self.spec
-        sun_comps = "arkode,cvodes,nvecserial,kinsol"
-        if "+mpi" in spec:
-            if spec.satisfies("@4.2:"):
-                sun_comps += ",nvecparallel,nvecmpiplusx"
-            else:
-                sun_comps += ",nvecparhyp,nvecparallel"
-        if "+cuda" in spec and "+cuda" in spec["sundials"]:
-            sun_comps += ",nveccuda"
-        if "+rocm" in spec and "+rocm" in spec["sundials"]:
-            sun_comps += ",nvechip"
-        return sun_comps
-
-    @property
-    def headers(self):
-        """Export the main mfem header, mfem.hpp."""
-        hdrs = HeaderList(find(self.prefix.include, "mfem.hpp", recursive=False))
-        return hdrs or None
-
-    @property
-    def libs(self):
-        """Export the mfem library file."""
-        libs = find_libraries(
-            "libmfem", root=self.prefix.lib, shared=("+shared" in self.spec), recursive=False
-        )
-        return libs or None
-
-    @property
-    def config_mk(self):
-        """Export the location of the config.mk file.
-        This property can be accessed using pkg["mfem"].config_mk
-        """
-        dirs = [self.prefix, self.prefix.share.mfem]
-        for d in dirs:
-            f = join_path(d, "config.mk")
-            if os.access(f, os.R_OK):
-                return FileList(f)
-        return FileList(find(self.prefix, "config.mk", recursive=True))
-
-    @property
-    def test_mk(self):
-        """Export the location of the test.mk file.
-        This property can be accessed using pkg["mfem"].test_mk.
-        In version 3.3.2 and newer, the location of test.mk is also defined
-        inside config.mk, variable MFEM_TEST_MK.
-        """
-        dirs = [self.prefix, self.prefix.share.mfem]
-        for d in dirs:
-            f = join_path(d, "test.mk")
-            if os.access(f, os.R_OK):
-                return FileList(f)
-        return FileList(find(self.prefix, "test.mk", recursive=True))
-
     # See also find_system_libraries in lib/spack/llnl/util/filesystem.py
     # where the similar list of paths is used.
     sys_lib_paths = [
@@ -1473,18 +1503,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     def is_sys_lib_path(self, dir):
         return dir in self.sys_lib_paths
 
-    @property
-    def xlinker(self):
-        using_nvcc = "+cuda" in self.spec and "+enzyme" not in self.spec
-        return "-Wl," if not using_nvcc else "-Xlinker="
-
     # Similar to spec[pkg].libs.ld_flags but prepends rpath flags too.
     # Also does not add system library paths as defined by 'sys_lib_paths'
     # above -- this is done to avoid issues like this:
     # https://github.com/mfem/mfem/issues/1088.
     def ld_flags_from_library_list(self, libs_list):
         flags = [
-            "%s-rpath,%s" % (self.xlinker, dir)
+            "%s-rpath,%s" % (self.pkg.xlinker, dir)
             for dir in libs_list.directories
             if not self.is_sys_lib_path(dir)
         ]
@@ -1494,7 +1519,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
     def ld_flags_from_dirs(self, pkg_dirs_list, pkg_libs_list):
         flags = [
-            "%s-rpath,%s" % (self.xlinker, dir)
+            "%s-rpath,%s" % (self.pkg.xlinker, dir)
             for dir in pkg_dirs_list
             if not self.is_sys_lib_path(dir)
         ]
@@ -1510,3 +1535,56 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             except NoHeadersError:
                 pass
         return all_hdrs
+
+
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define_from_variant("MFEM_USE_MPI", "mpi"),
+            self.define_from_variant("MFEM_USE_METIS", "metis"),
+            self.define_from_variant("MFEM_USE_OPENMP", "openmp"),
+            self.define_from_variant("MFEM_USE_OCCA", "occa"),
+            self.define_from_variant("MFEM_USE_RAJA", "raja"),
+            self.define_from_variant("MFEM_USE_CEED", "libceed"),
+            self.define_from_variant("MFEM_USE_UMPIRE", "umpire"),
+            self.define_from_variant("MFEM_USE_AMGX", "amgx"),
+            self.define_from_variant("MFEM_THREAD_SAFE", "threadsafe"),
+            self.define_from_variant("MFEM_USE_SUPERLU", "superlu-dist"),
+            self.define_from_variant("MFEM_USE_STRUMPACK", "strumpack"),
+            self.define_from_variant("MFEM_USE_SUITESPARSE", "suite-sparse"),
+            self.define_from_variant("MFEM_USE_PETSC", "petsc"),
+            self.define_from_variant("MFEM_USE_MUMPS", "mumps"),
+            self.define_from_variant("MFEM_USE_SLEPC", "slepc"),
+            self.define_from_variant("MFEM_USE_SUNDIALS", "sundials"),
+            self.define_from_variant("MFEM_USE_PUMI", "pumi"),
+            self.define_from_variant("MFEM_USE_GSLIB", "gslib"),
+            self.define_from_variant("MFEM_USE_MPFR", "mpfr"),
+            self.define_from_variant("MFEM_USE_LAPACK", "lapack"),
+            self.define_from_variant("MFEM_USE_NETCDF", "netcdf"),
+            self.define_from_variant("MFEM_USE_CONDUIT", "conduit"),
+            self.define_from_variant("MFEM_USE_ZLIB", "zlib"),
+            self.define_from_variant("MFEM_USE_GNUTLS", "gnutls"),
+            self.define_from_variant("MFEM_USE_LIBUNWIND", "libunwind"),
+            self.define_from_variant("MFEM_USE_FMS", "fms"),
+            self.define_from_variant("MFEM_USE_GINKGO", "ginkgo"),
+            self.define_from_variant("MFEM_USE_HIOP", "hiop"),
+            self.define_from_variant("MFEM_ENABLE_EXAMPLES", "examples"),
+            self.define_from_variant("MFEM_ENABLE_MINIAPPS", "miniapps"),
+            self.define_from_variant("MFEM_USE_EXCEPTIONS", "exceptions"),
+            self.define_from_variant("MFEM_PRECISION", "precision"),
+            self.define("MFEM_ENABLE_TESTING", True),
+        ]
+        if "+shared" in self.spec:
+            args.append(self.define("BUILD_SHARED_LIBS", True))
+        else:
+            args.append(self.define("BUILD_SHARED_LIBS", False))
+
+        cxxstd = self.spec.variants["cxxstd"].value
+        if cxxstd != "auto":
+            args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
+
+        timer = self.spec.variants["timer"].value
+        if timer != "auto":
+            args.append(self.define("MFEM_TIMER_TYPE", str_to_timerid(timer)))
+
+        return args
