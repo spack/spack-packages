@@ -106,6 +106,7 @@ class Nag(Package, CompilerPackage):
     verbose_flag = "-Wl,-v"
 
     openmp_flag = "-openmp"
+    pic_flag = "-PIC"
 
     def _fortran_path(self):
         return str(self.spec.prefix.bin.nagfor)
