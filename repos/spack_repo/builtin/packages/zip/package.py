@@ -20,6 +20,7 @@ class Zip(MakefilePackage):
     version("3.0", sha256="f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369")
 
     depends_on("c", type="build")  # generated
+    conflicts("%clang")
 
     depends_on("bzip2")
 
