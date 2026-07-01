@@ -24,6 +24,7 @@ class PyUv(PythonPackage, CargoPackage):
 
     executables = ["^uv$"]
 
+    version("0.11.26", sha256="2a433ece2ace088dd572d8abb0e6bd9a4ecb0e10bc9856447bbb37545f384f29")
     version("0.11.25", sha256="458e731778e7b5cc870710397859c23e766703e7bc0695f23b3eb15080745ba6")
     version("0.11.24", sha256="8602a1b6300a3a948afacc62e1cb933c8394c27966db85ed7e29483300b69dc4")
     version("0.11.23", sha256="f2476dda35866ea3ded3a5905759da2d32dfac36dfd5b3428191a99a8ce15b02")
