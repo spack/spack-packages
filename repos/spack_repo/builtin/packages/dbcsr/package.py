@@ -82,12 +82,22 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     variant("mpi", default=True, description="Compile with MPI")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("shared", default=True, description="Build shared library")
+
+    variant(
+        "smm",
+        default="libxsmm",
+        values=("libxsmm", "blas"),
+        description="Library for small matrix multiplications",
+        when="@:2.9.1",
+    )
     variant(
         "smm",
         default="blas",
-        values=("libxsmm", "blas", "libxs"),
+        values=("blas", "libxs"),
         description="Library for small matrix multiplications",
+        when="@2.10:",
     )
+
     variant(
         "cuda_arch_35_k20x",
         default=False,
@@ -127,12 +137,21 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("python@3.6:", type="build", when="+cuda")
 
     depends_on("hipblas", when="+rocm")
+    depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
-    depends_on("opencl", when="+opencl")
-    opencl_loader_header_version = "2022.10.24"
-    depends_on(f"opencl-c-headers@{opencl_loader_header_version}:", when="+opencl")
-    requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl")
+    with when("+opencl"):
+        depends_on("opencl")
+        opencl_loader_header_version = "2022.10.24"
+        depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
+        requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
+    # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
+    # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
+    # hard dependency of libxstream in that configuration. This is reflected in
+    # libxstream package.py.
+        depends_on("libxstream@1:", when="@2.10:")
+        requires("smm=libxs", when="@2.10:")
+        requires("smm=libxsmm", when="@:2.9.1")
 
     # All examples require MPI
     conflicts("+examples", when="~mpi", msg="Examples require MPI")
@@ -177,15 +196,6 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^intel-oneapi-mkl threads=tbb", when="+openmp")
     conflicts("^openblas threads=pthreads", when="+openmp")
     conflicts("^openblas threads=none", when="+openmp")
-
-    # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
-    # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
-    # hard dependency of libxstream in that configuration. This is reflected in
-    # libxstream package.py.
-
-    depends_on("libxstream@1:", when="@2.10: +opencl")
-    depends_on("libxs@1:+fortran", when="@2.10: +opencl")
-    depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
 
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:

@@ -109,8 +109,16 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "smm",
         default="libxsmm",
-        values=("libxsmm", "libsmm", "blas", "libxs"),
+        values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
+        when="@:2026.1",
+    )
+    variant(
+        "smm",
+        default="blas",
+        values=("libsmm", "blas", "libxs"),
+        description="Library for small matrix multiplications",
+        when="@2026.2:",
     )
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("plumed", default=False, description="Enable PLUMED support")
@@ -324,9 +332,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("trexio", when="+trexio")
     depends_on("deepmdkit", when="+deepmd")
 
-    depends_on("gauxc+fortran", when="+gauxc")
-    depends_on("gauxc+fortran+mpi", when="+gauxc+mpi")
-    depends_on("gauxc+pic", when="+pic")
+    with when("+gauxc"):
+        depends_on("gauxc+fortran")
+        depends_on("gauxc+fortran+mpi", when="+mpi")
+        depends_on("gauxc+pic", when="+pic")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
@@ -350,7 +359,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # we have to be consistent.
         depends_on("cray-libsci+openmp", when="^[virtuals=blas] cray-libsci")
 
-    with when("@:2026.1 smm=libxsmm"):
+    with when("smm=libxsmm"):
         # require libxsmm-1.11+ since 1.10 can leak file descriptors in Fortran
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
@@ -365,6 +374,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # OpenCL backend implementation relies on LIBXS starting from 2026.2
         requires("libxs@1:+fortran", when="@2026.2:")
         requires("libxstream@1:", when="@2026.2:")
+        requires("libxsmm@1.11:", when="@:2026.1")
 
     with when("+libint"):
         depends_on("pkgconfig", type="build", when="@7.0:")
@@ -517,6 +527,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     # The CMake build system and AOCC are not compatible as of AOCC 5
     requires("build_system=makefile", when="%aocc")
+    conflicts("@2026.1:", "aocc")
 
     # CP2K needs compiler specific compilation flags, e.g. optflags
     conflicts("%apple-clang")
@@ -1254,22 +1265,21 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if spec.satisfies("+cuda"):
             if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
                 raise InstallError("CP2K supports only one cuda_arch at a time.")
-            else:
+
+            if spec.satisfies("@:2026.1"):
                 gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
-                if spec.satisfies("+hip_backend_cuda"):
-                    args += [
+            else:
+                args += [
+                    self.define("CMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value[0]),
+                ]
+
+            if spec.satisfies("+hip_backend_cuda"):
+                args += [
                         self.define("CP2K_USE_ACCEL", "HIP"),
                         self.define("CMAKE_HIP_PLATFORM", "nvidia"),
                     ]
-                else:
-                    args += [self.define("CP2K_USE_ACCEL", "CUDA")]
-
-            if spec.satisfies(":@2026.1"):
-                args += [self.define("CP2K_WITH_GPU", gpu_ver)]
             else:
-                args += [
-                    self.define("-DCMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value[0]),
-                ]
+                args += [self.define("CP2K_USE_ACCEL", "CUDA")]
 
         if spec.satisfies("+rocm"):
             if len(spec.variants["amdgpu_target"].value) > 1:
@@ -1279,7 +1289,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 self.define("CP2K_USE_ACCEL", "HIP"),
             ]
 
-            if spec.satisties("@:2026.1"):
+            if spec.satisfies("@:2026.1"):
                 gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
                 args += [
                     self.define("CP2K_WITH_GPU", gpu_ver),

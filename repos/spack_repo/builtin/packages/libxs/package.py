@@ -42,5 +42,6 @@ class Libxs(CMakePackage):
             self.define_from_variant("LIBXS_FORTRAN", "fortran"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("LIBXS_SHARED", "shared"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
         return args
