@@ -89,6 +89,8 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@:2025.01.001",
     )
     patch("hipcc.patch", when="+rocm @2025.01.001:2025.06.001")
+    # Suppress debug output to stderr for non-debug builds
+    patch("elpa-2026.02.001-wantDebug.patch", when="@2026.02.001")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
