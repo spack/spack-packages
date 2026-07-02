@@ -119,7 +119,12 @@ class Prrte(AutotoolsPackage):
 
         # libevent
         config_args.append(f"--with-libevent={spec['libevent'].prefix}")
-        config_args.append(f"--with-libevent-libdir={spec['libevent'].libs.directories[0]}")
+
+        if spec["libevent"].libs.directories:
+            libevent_libdir = spec["libevent"].libs.directories[0]
+        else:
+            libevent_libdir = spec["libevent"].prefix.lib
+        config_args.append(f"--with-libevent-libdir={libevent_libdir}")
         # hwloc
         config_args.append(f"--with-hwloc={spec['hwloc'].prefix}")
         # pmix
