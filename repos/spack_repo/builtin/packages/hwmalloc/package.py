@@ -20,6 +20,7 @@ class Hwmalloc(CMakePackage):
 
     license("BSD-3-Clause", checked_by="msimberg")
 
+    version("0.4.1", sha256="ddf8e343569a4ffd1936b558310c3078f27b504ca0ff98f6aa011c36a79e8ff7")
     version("0.4.0", sha256="1161048e915cf196a86a6241d7354dd56b0e02782000507bab19be5628763ab3")
     version("master", branch="master")
 
