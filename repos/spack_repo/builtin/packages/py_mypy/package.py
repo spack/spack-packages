@@ -19,6 +19,7 @@ class PyMypy(PythonPackage):
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
     version("2.1.0", sha256="81e76ad12c2d804512e9b13240d1588316531bfba07558286078bfbce9613633")
+    version("1.20.1", sha256="6fc3f4ecd52de81648fed1945498bf42fa2993ddfad67c9056df36ae5757f804")
     version("1.19.0", sha256="f6b874ca77f733222641e5c46e4711648c4037ea13646fd0cdc814c2eaec2528")
     version("1.16.0", sha256="84b94283f817e2aa6350a14b4a8fb2a35a53c286f97c9d30f53b63620e7af8ab")
     version("1.15.0", sha256="404534629d51d3efea5c800ee7c42b72a6554d6c400e6a79eafe15d11341fd43")
@@ -97,6 +98,7 @@ class PyMypy(PythonPackage):
         depends_on("py-tomli@1.1:", when="@0.930:0.949")
         depends_on("py-tomli@1.1:2", when="@0.920:0.929")
         depends_on("py-librt@0.11:", when="@2.1:")
+        depends_on("py-librt@0.8.0:", when="@1.20.1:")
         depends_on("py-librt@0.6.2:", when="@1.19:")
         depends_on("py-ast-serialize@0.3:0", when="@2:")
 
