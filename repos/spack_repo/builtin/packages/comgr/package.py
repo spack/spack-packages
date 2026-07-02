@@ -65,6 +65,7 @@ class Comgr(CMakePackage):
     depends_on("zlib-api", type="link")
     depends_on("z3", type="link")
     depends_on("ncurses", type="link")
+    depends_on("python@3:", when="@6.4:")
 
     for ver in [
         "5.7.0",
