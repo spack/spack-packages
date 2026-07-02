@@ -484,7 +484,9 @@ class MesonBuilder(meson.MesonBuilder):
         # Dyninst before master June 2026 pulls in tbbmalloc_proxy,
         # and we don't really want to run both.
         if spec.satisfies("@develop:"):
-            args.append("-Djemalloc=" + ("enabled" if spec.satisfies("^dyninst@master:") else "disabled"))
+            args.append(
+                "-Djemalloc=" + ("enabled" if spec.satisfies("^dyninst@master:") else "disabled")
+            )
 
         return args
 
