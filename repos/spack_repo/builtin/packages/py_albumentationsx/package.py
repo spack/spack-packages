@@ -25,9 +25,7 @@ class PyAlbumentationsx(PythonPackage):
     depends_on("py-albucore@0.1.6", type=("build", "run"))
     depends_on("py-numpy@1.24.4:", type=("build", "run"))
 
-    depends_on(
-        "opencv@4.13.0:+python3+contrib+imgproc+photo", type=("build", "run"), when="+contrib"
-    )
+    depends_on("opencv@4.13.0:+python3+contrib", type=("build", "run"), when="+contrib")
 
     depends_on("py-pydantic@2.12.4:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
