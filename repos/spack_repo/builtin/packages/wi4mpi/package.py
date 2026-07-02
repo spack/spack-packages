@@ -12,27 +12,83 @@ class Wi4mpi(CMakePackage):
     constants and MPI objects from an MPI implementation to another one"""
 
     homepage = "https://github.com/cea-hpc/wi4mpi"
-    url = "https://github.com/cea-hpc/wi4mpi/archive/v3.4.1.tar.gz"
+    url = "https://github.com/wi4mpi/wi4mpi/releases/download/v4.0.1/wi4mpi-4.0.1.tar.gz"
     maintainers("adrien-cotte", "marcjoos-cea")
 
     license("CECILL-B")
 
-    version("4.0.1", sha256="7bbbce936345058e0494e1bcf903e222dd8dc368ad50d69f00d9b5186f5958f2")
-    version("4.0.0", sha256="fcfd1febea92941d95f61b894cfdb8c1d915dd2574308e1f9e58590cc90b554e")
-    version("3.7.1", sha256="1944d012853c7fccd7245d31fbaaff00da71be9e7381350abc4fd3e2e262f927")
-    version("3.7.0", sha256="d7cb73c2d0f070bd20c5b6e159375bd55673eaf9135a60843cc2110d02f2a9dd")
-    version("3.6.5", sha256="400e45a3c611e2d9e7f9514b9b925294674ef8bdbad6e57dc3ed344e9d5852c1")
-    version("3.6.4", sha256="be1732a1aed1e2946873951a344b572f11f2a55cd06c634580a9398b5877e22a")
-    version("3.6.3", sha256="c327babc892cc3c2bdddfacf3011e6fcb7e00a04e814de31f5e707cba3199c5c")
-    version("3.6.2", sha256="4b784d27decfff9cbd29f072ba75bb0f6c471d6edc7f1037df1ab7ccbcceffba")
-    version("3.6.1", sha256="14fbaf8c7ac0b7f350242a90e1be75e9f4bd0196a0d0e326b40be04ca58a2613")
-    version("3.6.0", sha256="06f48bf506643edba51dd04bfdfbaa824363d28549f8eabf002b760ba516227b")
-    version("3.5.0", sha256="36dd3dfed4f0f37bc817204d4810f049e624900b1b32641122f09a183135522f")
-    version("3.4.1", sha256="92bf6738216426069bc07bff19cd7c933e33e397a941ff9f89a639380fab3737")
-    version("3.3.0", sha256="fb7fb3b591144e90b3d688cf844c2246eb185f54e1da6baef857e035ef730d96")
-    version("3.2.2", sha256="23ac69740577d66a68ddd5360670f0a344e3c47a5d146033c63a67e54e56c66f")
-    version("3.2.1", sha256="0d928cb930b6cb1ae648eca241db59812ee0e5c041faf2f57728bbb6ee4e36df")
-    version("3.2.0", sha256="3322f6823dbec1d58a1fcf163b2bcdd7b9cd75dc6c7f78865fc6cb0a91bf6f94")
+    version("4.0.1", sha256="a37374fa9d6f330350d3e42a279038ea9e164ce2e3afd69817126253bd732c05")
+    version("4.0.0", sha256="d2b30680e9ac6449f5af5f3557cd26e8abfe95763d983f71888d17c93783fea9")
+    version(
+        "3.7.1",
+        sha256="1944d012853c7fccd7245d31fbaaff00da71be9e7381350abc4fd3e2e262f927",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.7.1.tar.gz",
+    )
+    version(
+        "3.7.0",
+        sha256="d7cb73c2d0f070bd20c5b6e159375bd55673eaf9135a60843cc2110d02f2a9dd",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.7.0.tar.gz",
+    )
+    version(
+        "3.6.5",
+        sha256="400e45a3c611e2d9e7f9514b9b925294674ef8bdbad6e57dc3ed344e9d5852c1",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.5.tar.gz",
+    )
+    version(
+        "3.6.4",
+        sha256="be1732a1aed1e2946873951a344b572f11f2a55cd06c634580a9398b5877e22a",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.4.tar.gz",
+    )
+    version(
+        "3.6.3",
+        sha256="c327babc892cc3c2bdddfacf3011e6fcb7e00a04e814de31f5e707cba3199c5c",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.3.tar.gz",
+    )
+    version(
+        "3.6.2",
+        sha256="4b784d27decfff9cbd29f072ba75bb0f6c471d6edc7f1037df1ab7ccbcceffba",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.2.tar.gz",
+    )
+    version(
+        "3.6.1",
+        sha256="14fbaf8c7ac0b7f350242a90e1be75e9f4bd0196a0d0e326b40be04ca58a2613",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.1.tar.gz",
+    )
+    version(
+        "3.6.0",
+        sha256="06f48bf506643edba51dd04bfdfbaa824363d28549f8eabf002b760ba516227b",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.6.0.tar.gz",
+    )
+    version(
+        "3.5.0",
+        sha256="36dd3dfed4f0f37bc817204d4810f049e624900b1b32641122f09a183135522f",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.5.0.tar.gz",
+    )
+    version(
+        "3.4.1",
+        sha256="92bf6738216426069bc07bff19cd7c933e33e397a941ff9f89a639380fab3737",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.4.1.tar.gz",
+    )
+    version(
+        "3.3.0",
+        sha256="fb7fb3b591144e90b3d688cf844c2246eb185f54e1da6baef857e035ef730d96",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.3.0.tar.gz",
+    )
+    version(
+        "3.2.2",
+        sha256="23ac69740577d66a68ddd5360670f0a344e3c47a5d146033c63a67e54e56c66f",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.2.2.tar.gz",
+    )
+    version(
+        "3.2.1",
+        sha256="0d928cb930b6cb1ae648eca241db59812ee0e5c041faf2f57728bbb6ee4e36df",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.2.1.tar.gz",
+    )
+    version(
+        "3.2.0",
+        sha256="3322f6823dbec1d58a1fcf163b2bcdd7b9cd75dc6c7f78865fc6cb0a91bf6f94",
+        url="https://github.com/wi4mpi/wi4mpi/archive/refs/tags/v3.2.0.tar.gz",
+    )
 
     variant(
         "build_type",
@@ -45,6 +101,10 @@ class Wi4mpi(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("mpi", when="@:3.5")
+
+    # Since v4.0.0, release archives include pre-generated code in the "build" directory,
+    # so the build_directory must be named "build" (earlier versions also work with this setting)
+    build_directory = "build"
 
     def cmake_args(self):
         if "%gcc" in self.spec:
