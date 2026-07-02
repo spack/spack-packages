@@ -133,6 +133,7 @@ default:
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
   variables:
+    SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
     KUBERNETES_CPU_REQUEST: 8000m
     KUBERNETES_MEMORY_REQUEST: 16G

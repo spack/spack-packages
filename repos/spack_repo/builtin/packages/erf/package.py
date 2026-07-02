@@ -31,6 +31,8 @@ class Erf(CMakePackage, CudaPackage):
 
     license("BSD-3-Clause", checked_by="larenspear")
 
+    version("26.06", tag="26.06", submodules=submodules)
+    version("26.05", tag="26.05", submodules=submodules)
     version("26.04", tag="26.04", submodules=submodules)
     version("26.03", tag="26.03", submodules=submodules)
     version("26.02", tag="26.02", submodules=submodules)

@@ -31,7 +31,7 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("fortran", type="build")
     depends_on("java@17:")
 
-    depends_on("qt@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
+    depends_on("qt+opengl@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
     depends_on("cuda", when="+cuda")
     depends_on("libtiff@4:")
     depends_on("fftw@3:", when="+fftw")
@@ -42,8 +42,17 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("python", type=("run"))
 
     def edit(self, spec, prefix):
+        # Ensure that Spack-provided tcsh is used
+        csh = join_path(spec["tcsh"].prefix.bin, "csh")
+        filter_file("#!/bin/csh", f"#!{csh}", "setup", "manpages/convert", "packMacApps")
+
         configure = Executable("./setup")
         configure_args = ["-inst", prefix]  # Set up prefix
+        # Try to help the setup script pick the desired compiler
+        if spec.satisfies("%gcc"):
+            configure_args.extend(["-compiler", "gnu"])
+        elif spec.satisfies("%intel"):
+            configure_args.extend(["-compiler", "intel"])
         configure(*configure_args)
 
         if self.spec.satisfies("+cuda"):
