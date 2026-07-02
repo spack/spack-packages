@@ -55,8 +55,11 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("boost@1.60: +filesystem +system")
     depends_on("brotli", when="+brotli")
     depends_on("bzip2", when="+bz2")
-    depends_on("cmake@3.2.0:", type="build")
-    depends_on("cmake@3.25.0:", type="build", when="@20:")
+    depends_on("cmake@2.7:", type="build")
+    depends_on("cmake@3.2:", when="@0.17:", type="build")
+    depends_on("cmake@3.5:", when="@11:", type="build")
+    depends_on("cmake@3.16:", when="@13:", type="build")
+    depends_on("cmake@3.25:", when="@20:", type="build")
     depends_on("flatbuffers")
     conflicts("%gcc@14", when="@:15.0.1")  # https://github.com/apache/arrow/issues/40009
     depends_on("llvm@:11 +clang", when="+gandiva @:3", type="build")
