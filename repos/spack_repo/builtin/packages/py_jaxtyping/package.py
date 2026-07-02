@@ -22,7 +22,7 @@ class PyJaxtyping(PythonPackage):
     depends_on("py-hatchling", type="build")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.11:", when="@0.3.8:")
+        depends_on("python@3.11:3", when="@0.3.8:")
         depends_on("python@3.9:3", when="@0.2.33:")
         depends_on("python@3.8:3", when="@0.2.19")
         depends_on("py-wadler-lindig@0.1.3:", when="@0.2.37:")
