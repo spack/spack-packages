@@ -31,6 +31,8 @@ class Gauxc(CMakePackage, CudaPackage):
     version("1.1", sha256="17de077fb23e44d03b0ed14dcd8117c01e5b3431fbefa2352d751639ada7f91c")
 
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
     depends_on("cmake@3.20:", type="build")
     depends_on("ninja@1.10:", type="build")
     depends_on("exchcxx ~cuda", when="~cuda")
@@ -55,6 +57,8 @@ class Gauxc(CMakePackage, CudaPackage):
     variant("c", default=False, description="Build with C support", when="@1.2.dev2")
     variant("fortran", default=False, description="Build with Fortran support", when="@1.2.dev2")
     variant("skala", default=False, description="Build with Skala support", when="@1.2.dev2")
+    variant("shared", default=False, description="Enable shared build")
+    variant("pic", default=False, description="Enable position independent code")
 
     def cmake_args(self):
         args = [
@@ -65,5 +69,7 @@ class Gauxc(CMakePackage, CudaPackage):
             self.define("GAUXC_ENABLE_C", self.spec.satisfies("+c")),
             self.define("GAUXC_ENABLE_FORTRAN", self.spec.satisfies("+fortran")),
             self.define("GAUXC_ENABLE_ONEDFT", self.spec.satisfies("+skala")),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
         return args
