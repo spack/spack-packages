@@ -24,30 +24,80 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version("develop", branch="develop")
-    version("2.9.1", sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59")
-    version("2.9.0", sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6")
-    version("2.8.0", sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96")
-    version("2.7.0", sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6")
-    version("2.6.0", sha256="c67b02ff9abc7c1f529af446a9f01f3ef9e5b0574f220259128da8d5ca7e9dc6")
-    version("2.5.0", sha256="91fda9b2502e5d0a2a6cdd5a73ef096253cc7e75bd01ba5189a4726ad86aef08")
-    version("2.4.1", sha256="b3d5ae62ca582b72707a2c932e8074a4f2f61d61085d97bd374213c70b8dbdcf")
-    version("2.4.0", sha256="cf2b774328c9a30677501f49b79955841bd08915a7ca53c8533bfdf14a8f9bd4")
-    version("2.3.0", sha256="f750de586cffa66852b646f7f85eb831eeb64fa2d25ce50ed10e1df016dd3364")
-    version("2.2.0", sha256="245b0382ddc7b80f85af8288f75bd03d56ec51cdfb6968acb4931529b35173ec")
-    version("2.1.0", sha256="9e58fd998f224632f356e479d18b5032570d00d87b86736b6a6ac2d03f8d4b3c")
-    version("2.0.1", sha256="61d5531b661e1dab043353a1d67939ddcde3893d3dc7b0ab3d05074d448b485c")
+    version(
+        "2.10.0",
+        sha256="3d897220fbb4498215331efad6905eb7744881b4cf04eb5c5fb4db7c48a56ef9",
+    )
+    version(
+        "2.9.1",
+        sha256="fa5a4aeba0a07761511af2c26c779bd811b5ea0ef06a5d94535b6dd7b2e0ce59",
+    )
+    version(
+        "2.9.0",
+        sha256="a04cacd2203bd97a31ac993f9ab84237a48191140bba29efadbc27db544bbcd6",
+    )
+    version(
+        "2.8.0",
+        sha256="d55e4f052f28d1ed0faeaa07557241439243287a184d1fd27f875c8b9ca6bd96",
+    )
+    version(
+        "2.7.0",
+        sha256="25c367b49fb108c5230bcfb127f05fc16deff2bb467f437023dfa6045aff66f6",
+    )
+    version(
+        "2.6.0",
+        sha256="c67b02ff9abc7c1f529af446a9f01f3ef9e5b0574f220259128da8d5ca7e9dc6",
+    )
+    version(
+        "2.5.0",
+        sha256="91fda9b2502e5d0a2a6cdd5a73ef096253cc7e75bd01ba5189a4726ad86aef08",
+    )
+    version(
+        "2.4.1",
+        sha256="b3d5ae62ca582b72707a2c932e8074a4f2f61d61085d97bd374213c70b8dbdcf",
+    )
+    version(
+        "2.4.0",
+        sha256="cf2b774328c9a30677501f49b79955841bd08915a7ca53c8533bfdf14a8f9bd4",
+    )
+    version(
+        "2.3.0",
+        sha256="f750de586cffa66852b646f7f85eb831eeb64fa2d25ce50ed10e1df016dd3364",
+    )
+    version(
+        "2.2.0",
+        sha256="245b0382ddc7b80f85af8288f75bd03d56ec51cdfb6968acb4931529b35173ec",
+    )
+    version(
+        "2.1.0",
+        sha256="9e58fd998f224632f356e479d18b5032570d00d87b86736b6a6ac2d03f8d4b3c",
+    )
+    version(
+        "2.0.1",
+        sha256="61d5531b661e1dab043353a1d67939ddcde3893d3dc7b0ab3d05074d448b485c",
+    )
 
     variant("tests", default=False, description="Build DBCSR unit tests")
     variant("tests", default=True, description="Build DBCSR unit tests", when="@2.1:2.2")
     variant("mpi", default=True, description="Compile with MPI")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("shared", default=True, description="Build shared library")
+
     variant(
         "smm",
         default="libxsmm",
         values=("libxsmm", "blas"),
         description="Library for small matrix multiplications",
+        when="@:2.9.1",
     )
+    variant(
+        "smm",
+        default="blas",
+        values=("blas", "libxs"),
+        description="Library for small matrix multiplications",
+        when="@2.10:",
+    )
+
     variant(
         "cuda_arch_35_k20x",
         default=False,
@@ -87,12 +137,21 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("python@3.6:", type="build", when="+cuda")
 
     depends_on("hipblas", when="+rocm")
+    depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
-    depends_on("opencl", when="+opencl")
-    opencl_loader_header_version = "2022.10.24"
-    depends_on(f"opencl-c-headers@{opencl_loader_header_version}:", when="+opencl")
-    requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:", when="+opencl")
+    with when("+opencl"):
+        depends_on("opencl")
+        opencl_loader_header_version = "2022.10.24"
+        depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
+        requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
+        # OpenCL backend implementation relies on LIBXSMM for version up to 2.9.1
+        # libxstream/libxs afterwards. libxstream and libxs are tied and libxs is
+        # hard dependency of libxstream in that configuration. This is reflected in
+        # libxstream package.py.
+        depends_on("libxstream@1:", when="@2.10:")
+        requires("smm=libxs", when="@2.10:")
+        requires("smm=libxsmm", when="@:2.9.1")
 
     # All examples require MPI
     conflicts("+examples", when="~mpi", msg="Examples require MPI")
@@ -138,9 +197,6 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^openblas threads=pthreads", when="+openmp")
     conflicts("^openblas threads=none", when="+openmp")
 
-    # OpenCL backend implementation relies on LIBXSMM
-    requires("smm=libxsmm", when="+opencl")
-
     with when("+mpi"):
         # When using mpich 4.1 or higher, mpi_f08 has to be used, otherwise:
         # Error: Type mismatch in argument 'baseptr' at (1); passed TYPE(c_ptr)
@@ -174,7 +230,6 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
             raise InstallError("DBCSR supports only one amdgpu_arch at a time")
 
         args = [
-            "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
             self.define_from_variant("USE_MPI", "mpi"),
             self.define_from_variant("USE_OPENMP", "openmp"),
             # C API needs MPI
@@ -184,6 +239,16 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("WITH_G2G", "g2g"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
+
+        if "smm=libxs" in spec:
+            args += [
+                "-DUSE_LIBXS=ON",
+            ]
+
+        if "@:2.9.1" in spec:
+            args += [
+                "-DUSE_SMM=%s" % ("libxsmm" if "smm=libxsmm" in spec else "blas"),
+            ]
 
         lapack, blas = spec["lapack"], spec["blas"]
         if blas.name != "intel-oneapi-mkl":
