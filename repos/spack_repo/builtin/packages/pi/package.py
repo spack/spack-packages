@@ -22,6 +22,7 @@ class Pi(Package):
 
     sanity_check_is_file = ["bin/pi"]
 
+    version("0.80.3", sha256="585ff67a0d63d693dd71415f1dee50c04e4e70f2a1d2a23679805d9d8b5a9250")
     version("0.79.6", sha256="60d255bd9465a7e5ef461ab6ac8529a9d7ad837dca0fafd50af18f1824928772")
 
     depends_on("node-js@22.19.0:", type=("build", "link", "run"))
