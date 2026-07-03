@@ -41,15 +41,50 @@ class Timg(CMakePackage):
 
     license("GPL-2.0-only", checked_by="foglienimatteo")
 
-    version("1.6.3", sha256="59c908867f18c81106385a43065c232e63236e120d5b2596b179ce56340d7b01")
-    version("1.6.2", sha256="a5fb4443f55552d15a8b22b9ca4cb5874eb1a988d3b98fe31d61d19b2c7b9e56", deprecated=True)
-    version("1.6.1", sha256="08147c41ce4cea61b6c494ad746e743b7c4501cfd247bec5134e8ede773bf2af", deprecated=True)
-    version("1.6.0", sha256="9e1b99b4eaed82297ad2ebbde02e3781775e3bba6d3e298d7598be5f4e1c49af", deprecated=True)
-    version("1.5.3", sha256="ddf2fb1fb2376d31957415d278bc34ff0ef574eb69ef96ddcb564c392d2e4c27", deprecated=True)
-    version( "1.5.2", sha256="f0c604e2cab03bbd213b20333a9b90ea1211af730de2b914402e7275111f804e", deprecated=True)
-    version( "1.5.1", sha256="ac8905e4615d964eee6b014b9ff3413160cfc5b73f547e91736bc06c928ac811", deprecated=True)
-    version( "1.5.0", sha256="aa457f401b0517ba814efc62ededa3ab3f4edc1f40fb6048c58d52f01dfd9ba2", deprecated=True)
-    version( "1.4.5", sha256="3c96476ce4ba2af4b9f639c5b59ded77ce1a4511551a04555ded105f14398e01", deprecated=True)
+    version(
+        "1.6.3",
+        sha256="59c908867f18c81106385a43065c232e63236e120d5b2596b179ce56340d7b01",
+    )
+    version(
+        "1.6.2",
+        sha256="a5fb4443f55552d15a8b22b9ca4cb5874eb1a988d3b98fe31d61d19b2c7b9e56",
+        deprecated=True,
+    )
+    version(
+        "1.6.1",
+        sha256="08147c41ce4cea61b6c494ad746e743b7c4501cfd247bec5134e8ede773bf2af",
+        deprecated=True,
+    )
+    version(
+        "1.6.0",
+        sha256="9e1b99b4eaed82297ad2ebbde02e3781775e3bba6d3e298d7598be5f4e1c49af",
+        deprecated=True,
+    )
+    version(
+        "1.5.3",
+        sha256="ddf2fb1fb2376d31957415d278bc34ff0ef574eb69ef96ddcb564c392d2e4c27",
+        deprecated=True,
+    )
+    version(
+        "1.5.2",
+        sha256="f0c604e2cab03bbd213b20333a9b90ea1211af730de2b914402e7275111f804e",
+        deprecated=True,
+    )
+    version(
+        "1.5.1",
+        sha256="ac8905e4615d964eee6b014b9ff3413160cfc5b73f547e91736bc06c928ac811",
+        deprecated=True,
+    )
+    version(
+        "1.5.0",
+        sha256="aa457f401b0517ba814efc62ededa3ab3f4edc1f40fb6048c58d52f01dfd9ba2",
+        deprecated=True,
+    )
+    version(
+        "1.4.5",
+        sha256="3c96476ce4ba2af4b9f639c5b59ded77ce1a4511551a04555ded105f14398e01",
+        deprecated=True,
+    )
 
     # Build dependencies
     depends_on("c", type="build")
@@ -66,14 +101,38 @@ class Timg(CMakePackage):
     # Highly-recommended
     variant("sixel", default=True, description="Output images in Sixel graphics format")
     variant("turbojpeg", default=True, description="Faster JPEG loading")
-    variant( "poppler", default=True, description="High-quality PDF rendering using poppler and cairo" )
-    variant( "rsvg", default=True, description="High-quality SVG renderering using librsvg and cairo" )
+    variant(
+        "poppler",
+        default=True,
+        description="High-quality PDF rendering using poppler and cairo",
+    )
+    variant(
+        "rsvg",
+        default=True,
+        description="High-quality SVG renderering using librsvg and cairo",
+    )
     # Optional
     variant("video", default=False, description="Enable video decoding via FFmpeg")
-    variant("openslide", default=False, description="Enable Openslide support (image format used in scientific applications, rarely used)", )
-    variant("qoi", default=True, description="Enable decoding of Quite Ok Image format QOI, small and simple", )
-    variant("stb", default=False, description="Enable compilation of simpler STB image library directly into binary; fallback for imagemagick", )
-    variant( "videodevice", default=False, description="Enables accessing connected video devices (e.g. your webcam input); requires '+video' variant", )
+    variant(
+        "openslide",
+        default=False,
+        description="Enable Openslide support (image format for scientific applications, rare)",
+    )
+    variant(
+        "qoi",
+        default=True,
+        description="Enable decoding of Quite Ok Image format QOI, small and simple",
+    )
+    variant(
+        "stb",
+        default=False,
+        description="Enable STB image lib compilation directly into binary; imagemagick fallback",
+    )
+    variant(
+        "videodevice",
+        default=False,
+        description="Enable access to connected video devices (e.g. your webcam); needs '+video'",
+    )
     # Variants' dependencies
     depends_on("libsixel", when="+sixel")
     depends_on("libjpeg-turbo", when="+turbojpeg")
