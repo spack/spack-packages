@@ -20,7 +20,7 @@ class PyAlePy(PythonPackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.14:", type="build")
     depends_on("sdl2", type=("build", "link"))
-    depends_on("opencv", type=("build", "link"))
+    depends_on("opencv+imgproc", type=("build", "link"))
 
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-scikit-build-core@0.10:", type="build")
