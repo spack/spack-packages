@@ -16,8 +16,9 @@ class Lazygit(GoPackage):
 
     maintainers("trws", "Chrismarsh")
 
-    license("MIT", checked_by="mcmehrtens", when="@0.1:")
+    license("MIT", checked_by="mcmehrtens")
 
+    version("0.63.0", sha256="56f028ad7700cbe4474e5fb09a617649a82d0963820d38757f61a93b31832610")
     version("0.62.2", sha256="0bd1cdbaf1a584d2eb2fd14f068a8eaaeaeb80d3e2713c72005de9e4feaf6844")
     version("0.62.1", sha256="198602c75c0d971b56088d6d364aaf9b2fd52bcadcb0e6a8548df0ed43e4dac2")
     version("0.62.0", sha256="15f20b97c98a799998bc2d32a9a68674a7ddee8b73735d6d4758fafc854a00cb")
@@ -39,7 +40,7 @@ class Lazygit(GoPackage):
     depends_on("go@1.21:", type="build", when="@0.41:")
     depends_on("go@1.20:", type="build", when="@0.40:")
 
-    # https://github.com/jesseduffield/lazygit/blob/master/pkg/app/app.go#L143
+    # https://github.com/jesseduffield/lazygit/blob/master/pkg/app/app.go#L144
     depends_on("git@2.32:", type="run", when="@0.58.1:")
 
     # https://github.com/jesseduffield/lazygit/blob/v0.52.0/pkg/app/app.go#L151
