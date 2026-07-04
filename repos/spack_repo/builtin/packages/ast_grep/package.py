@@ -24,6 +24,7 @@ class AstGrep(CargoPackage):
     license("MIT", checked_by="mcmehrtens")
 
     version("main", branch="main")
+    version("0.44.1", sha256="a5a1eea64346853f5c911982f332f3e1fb670f18483d805d33686086dcce510f")
     version("0.44.0", sha256="1cc8d5d6a759c6d99c676bcec09fbf1fc72e023804e54480146fd62b300fce95")
     version("0.43.0", sha256="1fb6c32a5ae96254d54df7c4358f664e5c6bebdd7754c8b9a3a7db079fe4d525")
 
@@ -36,7 +37,7 @@ class AstGrep(CargoPackage):
     # crates, whose build.rs each compile C parsers via the cc crate:
     # https://github.com/ast-grep/ast-grep/blob/0.43.0/crates/language/Cargo.toml#L48-L84
     # e.g. https://docs.rs/crate/tree-sitter-rust/0.24.2/source/bindings/rust/build.rs
-    depends_on("c", type="build", when="@0.43:")
+    depends_on("c", type="build")
 
     build_directory = "crates/cli"
 
