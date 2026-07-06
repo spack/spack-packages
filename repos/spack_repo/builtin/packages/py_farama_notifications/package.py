@@ -13,6 +13,8 @@ class PyFaramaNotifications(PythonPackage):
     homepage = "https://github.com/Farama-Foundation/Farama-Notifications"
     pypi = "farama_notifications/farama_notifications-0.0.6.tar.gz"
 
+    license("MIT")
+
     version("0.0.6", sha256="b19acac4bb41d76e59e03394b5dd165f4761c86fa327f56307a35cbee3b60158")
 
     depends_on("py-setuptools@42:", type="build")
