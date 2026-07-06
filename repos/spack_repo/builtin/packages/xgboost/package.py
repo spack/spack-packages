@@ -26,6 +26,7 @@ class Xgboost(CMakePackage, CudaPackage):
     maintainers("adamjstewart")
 
     version("master", branch="master")
+    version("2.1.4", tag="v2.1.4", commit="62e7923619352c4079b24303b367134486b1c84f")
     version("2.1.1", tag="v2.1.1", commit="9c9db1259240bffe9040ed7ca6e3fb2c1bda80e4")
     version("2.1.0", tag="v2.1.0", commit="213ebf7796b757448dfa2cfba532074696fa1524")
     version("1.7.6", tag="v1.7.6", commit="36eb41c960483c8b52b44082663c99e6a0de440a")
@@ -55,7 +56,7 @@ class Xgboost(CMakePackage, CudaPackage):
         # thrust 2.3.1 tuple issues
         depends_on("cuda@:12.3", when="@:1.7")
         # https://github.com/dmlc/xgboost/issues/10555
-        depends_on("cuda@:12.4", when="@:2.1")
+        depends_on("cuda@:12.4", when="@:2.1.3")
 
     depends_on("nccl", when="+nccl")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
