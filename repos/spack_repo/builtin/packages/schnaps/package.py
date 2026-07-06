@@ -155,12 +155,8 @@ class Schnaps(CMakePackage):
             self.define("NATIVE", False),
             # Point CMake FetchContent at the pre-staged (offline) sources.
             # The variable suffix is the upper-cased FetchContent content name.
-            self.define(
-                "FETCHCONTENT_SOURCE_DIR_RTE-RRTMGP", join_path(deps, "rte-rrtmgp")
-            ),
-            self.define(
-                "FETCHCONTENT_SOURCE_DIR_RRTMGP_DATA", join_path(deps, "rrtmgp-data")
-            ),
+            self.define("FETCHCONTENT_SOURCE_DIR_RTE-RRTMGP", join_path(deps, "rte-rrtmgp")),
+            self.define("FETCHCONTENT_SOURCE_DIR_RRTMGP_DATA", join_path(deps, "rrtmgp-data")),
             self.define("FETCHCONTENT_SOURCE_DIR_NOAH_MP", join_path(deps, "noahmp")),
             self.define(
                 "FETCHCONTENT_SOURCE_DIR_ICAR_SUPPORTING_FILES",
