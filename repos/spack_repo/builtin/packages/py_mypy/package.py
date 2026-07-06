@@ -82,12 +82,11 @@ class PyMypy(PythonPackage):
         depends_on("python@3.8:", when="@1.5:")
         depends_on("python@3.7:", when="@0.981:")
 
-        depends_on("py-typing-extensions@4.14:", when="@1.20.2: ^python@3.15:")
-        with when("^python@:3.14"):
-            depends_on("py-typing-extensions@4.6:", when="@1.11:")
-            depends_on("py-typing-extensions@4.1:", when="@1.5:")
-            depends_on("py-typing-extensions@3.10:", when="@0.930:")
-            depends_on("py-typing-extensions@3.7.4:", when="@0.700:")
+        depends_on("py-typing-extensions@4.14:", when="^python@3.15:")
+        depends_on("py-typing-extensions@4.6:", when="@1.11:")
+        depends_on("py-typing-extensions@4.1:", when="@1.5:")
+        depends_on("py-typing-extensions@3.10:", when="@0.930:")
+        depends_on("py-typing-extensions@3.7.4:", when="@0.700:")
 
         depends_on("py-mypy-extensions@1:", when="@1.1:")
         depends_on("py-mypy-extensions@0.4.3:", when="@0.930:1.0")
