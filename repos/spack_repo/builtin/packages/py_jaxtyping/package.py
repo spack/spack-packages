@@ -27,8 +27,7 @@ class PyJaxtyping(PythonPackage):
         depends_on("python@3.8:3", when="@0.2.19")
         depends_on("py-wadler-lindig@0.1.3:", when="@0.2.37:")
         depends_on("py-typing-extensions", when="@0.2.36 ^python@:3.9")
-        depends_on("py-typeguard@2.13.3", when="@0.2.33:0.2.34")
-        depends_on("py-typeguard@2.13.3:", when="@0.2.19")
+        depends_on("py-typeguard@2.13.3", when="@:0.2.34")
 
         # Historical dependencies
         depends_on("py-numpy@1.12:", when="@0.2.19")
