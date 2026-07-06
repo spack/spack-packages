@@ -1,0 +1,48 @@
+Fix GKlib's MSVC fallback definitions of rint() and INFINITY so they
+don't clobber the real ones on modern (Visual Studio 2015+/UCRT) MSVC.
+
+GKlib unconditionally defines `INFINITY` (as `FLT_MAX`, guarded only by
+`#ifndef INFINITY`) and `rint()` whenever `__MSC__` is defined, to make
+up for MSVC versions that lacked them. On current MSVC/UCRT toolchains
+(_MSC_VER >= 1900), <math.h> already defines a proper INFINITY, but
+since gk_arch.h is typically included before <math.h>/<corecrt_math.h>
+pull that definition in, GKlib's `#ifndef INFINITY` fires first and
+shadows it with FLT_MAX (a finite value). When <corecrt_math.h> is
+included later in the same translation unit, its own use of the
+(now-wrong) INFINITY token expands incorrectly and produces a hard
+compile error:
+
+  corecrt_math.h(94): warning C4005: 'INFINITY': macro redefinition
+  corecrt_math.h(566): error C2059: syntax error: '('
+
+Guard both fallbacks behind `_MSC_VER < 1900` so they only kick in on
+the old MSVC versions that actually need them.
+
+--- a/GKlib/gk_arch.h
++++ b/GKlib/gk_arch.h
+@@ -58,14 +58,18 @@
+ #define PTRDIFF_MAX  INT64_MAX
+ #endif
+ 
+-#ifdef __MSC__
+-/* MSC does not have rint() function */
+-#define rint(x) ((int)((x)+0.5))  
++#ifdef _MSC_VER
++  /* MSVC versions before Visual Studio 2015 (UCRT) lacked standard rint() */
++  #if (_MSC_VER < 1900)
++    #define rint(x) ((idx_t)((x)+0.5))
++  #endif
+ 
+-/* MSC does not have INFINITY defined */
+-#ifndef INFINITY
+-#define INFINITY FLT_MAX
+-#endif
++  /* MSVC versions before Visual Studio 2015 lacked the INFINITY macro */
++  #ifndef INFINITY
++    #if (_MSC_VER < 1900)
++      #define INFINITY FLT_MAX
++    #endif
++  #endif
+ #endif
+ 
+ #endif

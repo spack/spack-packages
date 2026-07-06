@@ -45,6 +45,7 @@ class Metis(CMakePackage, MakefilePackage):
     build_system(
         conditional("cmake", when="@5:"), conditional("makefile", when="@:4"), default="cmake"
     )
+    requires("build_system=cmake", when="platform=windows")
     variant("shared", default=True, description="Build shared libraries")
     with when("build_system=cmake"):
         variant("gdb", default=False, description="Enable gdb support")
@@ -57,6 +58,20 @@ class Metis(CMakePackage, MakefilePackage):
         patch("install_gklib_defs_rename.patch")
         # Disable the "misleading indentation" warning when compiling
         patch("gklib_nomisleadingindentation_warning.patch", when="%gcc@6:")
+        # Fix the MSVC/Windows CMake build: enable `install()` (upstream
+        # disables it entirely under MSVC), link the "programs" (gpmetis,
+        # ndmetis, ...) against a private static copy of libmetis instead of
+        # the shared metis.dll (they call internal GKlib/libmetis symbols
+        # that are never part of the public, dllexport'd METIS_API), and
+        # install metis.dll to bin/ instead of lib/ so Spack's automatic
+        # Windows DLL-linkage (which only scans dependents' bin/) can find it.
+        patch("windows_msvc_build.patch")
+        # GKlib's MSVC fallback for INFINITY (#define INFINITY FLT_MAX) isn't
+        # guarded for modern MSVC/UCRT, where <math.h> already defines a real
+        # INFINITY; shadowing it breaks <corecrt_math.h>'s own later use of
+        # the macro (error C2059). Only fall back on MSVC versions that
+        # actually lack INFINITY/rint().
+        patch("windows_msvc_infinity_rint.patch")
 
     with when("build_system=makefile"):
         variant("debug", default=False, description="Compile in debug mode")
