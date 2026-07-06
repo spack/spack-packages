@@ -15,6 +15,7 @@ class PyBotocore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.43.40", sha256="2085a4314cfd2c8bc1d08ab8039f76c92e99278db0d2a0e2437010526d5d5d70")
     version("1.43.17", sha256="27f4ecb80cf1e5be70415fc4a4d3db3907d41ef8178c9df822364f275427d375")
     version("1.42.85", sha256="2ee61f80b7724a143e16d0a85408ef5fa20b99dce7a3c8ec5d25cc8dced164c1")
     version("1.40.64", sha256="a13af4009f6912eafe32108f6fa584fb26e24375149836c2bcaaaaec9a7a9e58")
