@@ -17,9 +17,11 @@ class PyAlePy(PythonPackage):
 
     version("0.12.0", sha256="6030416b6a049d399bf95420ad2fdbf0ea8f83051b502774d27b477a06000dbc")
 
+    variant("sdl", default=True, description="Enable SDL support")
+
     depends_on("cxx", type="build")
     depends_on("cmake@3.14:", type="build")
-    depends_on("sdl2", type=("build", "link"))
+    depends_on("sdl2", type=("build", "link"), when="+sdl")
     depends_on("opencv+imgproc", type=("build", "link"))
 
     depends_on("python@3.10:", type=("build", "run"))
@@ -29,3 +31,19 @@ class PyAlePy(PythonPackage):
 
     depends_on("py-numpy@1.20:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"), when="^python@:3.10")
+
+    def config_settings(self, spec, prefix):
+        sdl = "ON" if spec.satisfies("+sdl") else "OFF"
+
+        return {
+            "cmake.args": ";".join(
+                [
+                    f"-DSDL_SUPPORT={sdl}",
+                    f"-DSDL_DYNLOAD={sdl}",
+                    "-DBUILD_CPP_LIB=OFF",
+                    "-DBUILD_PYTHON_LIB=ON",
+                    "-DBUILD_VECTOR_LIB=ON",
+                    "-DBUILD_VECTOR_XLA_LIB=ON",
+                ]
+            )
+        }
