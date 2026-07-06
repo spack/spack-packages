@@ -53,13 +53,6 @@ class Schnaps(CMakePackage):
     conflicts("%apple-clang", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
     conflicts("%cce", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
 
-    # -- Variants --------------------------------------------------------------
-    variant("assertions", default=True, description="Check logical assertions at runtime")
-    variant(
-        "native",
-        default=True,
-        description="Tune for the build host CPU (-march=native); disable for portable binaries",
-    )
     # GPU (OpenACC) build. Requires the NVHPC/nvfortran compiler; uses the NVHPC SDK's
     # own bundled CUDA / cuFFT / NCCL (do NOT add standalone cuda/nccl deps — see below).
     variant("gpu", default=False, description="Build for GPU: OpenACC + NCCL (requires %nvhpc)")
@@ -158,8 +151,8 @@ class Schnaps(CMakePackage):
             self.define_from_variant("NCCL", "gpu"),
             self.define("FSM", False),
             self.define("SNOWPACK_CPP", False),
-            self.define_from_variant("ASSERTIONS", "assertions"),
-            self.define_from_variant("NATIVE", "native"),
+            self.define("ASSERTIONS", True),
+            self.define("NATIVE", False),
             # Point CMake FetchContent at the pre-staged (offline) sources.
             # The variable suffix is the upper-cased FetchContent content name.
             self.define(
