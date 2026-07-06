@@ -13,6 +13,8 @@ class PyDeisaRay(PythonPackage):
     homepage = "https://github.com/deisa-project/deisa-dask"
     pypi = "deisa_ray/deisa_ray-0.1.7.tar.gz"
 
+    license("MIT")
+
     version("0.1.7", sha256="b2d0d020882a3ee557df2ddbcc33715fedb7dd848e0248591778909b7d133705")
 
     depends_on("py-hatchling", type="build")
