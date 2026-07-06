@@ -91,22 +91,11 @@ class Schnaps(CMakePackage):
     # cuFFT (linear-wind FFT) and NCCL (multi-GPU halo exchange) come from the
     # NVHPC SDK's OWN bundle — SCHNAPS's finders search $NVHPC_ROOT/math_libs and
     # $NVHPC_ROOT/comm_libs/nccl, and nvfortran targets NVHPC's integrated CUDA.
-    # Do NOT add standalone cuda/nccl deps or set CUDA_HOME to a separate CUDA:
-    # nvfortran then tries to target that toolkit and fails ("CUDA version X.Y is
-    # not available in this installation"), which also makes CMake's
-    # find_package(OpenACC) test-compile fail and silently disable OpenACC.
-    # NVHPC_ROOT is passed through from the loaded nvhpc module (see
-    # setup_build_environment).
-    # GPU MPI REQUIREMENT (verified on GPU hardware): the MPI's Fortran layer MUST
-    # be built with nvfortran. SCHNAPS uses the `mpi_f08` module, and Fortran .mod
-    # files are compiler-specific — nvfortran cannot consume a gfortran-built
-    # mpi_f08.mod, and the netcdf-fortran / parallel-netcdf deps themselves fail to
-    # configure against a gfortran MPI when compiled with %nvhpc (config error:
-    # "Invalid MPI Fortran 77 compiler"). Provide an nvfortran MPI —
-    # either have Spack build one:
-    #     spack install schnaps +gpu %nvhpc ^mpich %nvhpc
-    # or point Spack at an NVHPC-built MPI module (the NVHPC SDK bundles one under
-    # comm_libs/mpi). See docs/spack.md in the SCHNAPS repo for the full workflow.
+
+    # GPU MPI REQUIREMENT (verified on GPU hardware, NVHPC 26.3): the MPI must be
+    # built with nvfortran — SCHNAPS `use mpi_f08`, and Fortran .mod files are
+    # compiler-specific, so nvfortran cannot consume a gfortran-built mpi_f08.mod.
+    # register NVHPC's bundled HPC-X OpenMPI as a Spack external (`mpif90 -show` reveals it)
 
     # -- Vendored dependencies that upstream CMake fetches at configure time ---
     # SCHNAPS's CMakeLists / FindSNOWPACK.cmake pull five sources from the
@@ -211,6 +200,12 @@ class Schnaps(CMakePackage):
             if nvhpc_root:
                 env.set("NVHPC_ROOT", nvhpc_root)
 
-    # No install() override needed: SCHNAPS's CMake honors CMAKE_INSTALL_PREFIX
-    # (executable -> <prefix>/bin, run/ support data -> <prefix>/share/schnaps/run),
-    # so the standard CMakePackage install phase should work.
+    # No install() override needed: SCHNAPS's CMake honors CMAKE_INSTALL_PREFIX, so the
+    # standard CMakePackage install phase places:
+    #   <prefix>/bin/SCHNAPS         (CPU build) — or SCHNAPS_gpu for a +gpu build
+    #                                (nvfortran+OpenACC builds get the _gpu suffix).
+    #   <prefix>/share/schnaps/run/  runtime support data the model REQUIRES at run time:
+    #                                NoahmpTable.TBL, mp_support/, rrtmg_support/,
+    #                                rrtmgp_support/. Not found relative to the exe — a
+    #                                run's namelist must point at this dir (or copy it
+    #                                next to the case).
