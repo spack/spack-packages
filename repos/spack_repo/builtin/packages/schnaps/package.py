@@ -46,7 +46,7 @@ class Schnaps(CMakePackage):
     depends_on("fortran", type="build")
 
     # SCHNAPS's CMake hard-errors on any compiler that is not GNU (gfortran) or
-    # NVHPC (nvfortran). This recipe currently packages the CPU (GNU) build only.
+    # NVHPC (nvfortran).
     conflicts("%intel", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
     conflicts("%oneapi", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
     conflicts("%clang", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
@@ -54,7 +54,7 @@ class Schnaps(CMakePackage):
     conflicts("%cce", msg="SCHNAPS supports only GNU (gfortran) or NVHPC (nvfortran)")
 
     # GPU (OpenACC) build. Requires the NVHPC/nvfortran compiler; uses the NVHPC SDK's
-    # own bundled CUDA / cuFFT / NCCL (do NOT add standalone cuda/nccl deps — see below).
+    # own bundled CUDA / cuFFT / NCCL (do NOT add standalone cuda/nccl deps).
     variant("gpu", default=False, description="Build for GPU: OpenACC + NCCL (requires %nvhpc)")
 
     # -- Build tooling ---------------------------------------------------------
@@ -181,9 +181,7 @@ class Schnaps(CMakePackage):
         # GPU: use NVHPC's bundled CUDA / cuFFT / NCCL (mirrors a manual
         # `module load nvhpc` build). Pass NVHPC_ROOT through so SCHNAPS's finders
         # locate cuFFT ($NVHPC_ROOT/math_libs) and NCCL ($NVHPC_ROOT/comm_libs/nccl).
-        # Deliberately do NOT set CUDA_HOME — nvfortran must use its integrated CUDA,
-        # or its GPU codegen (and CMake's OpenACC probe) fails. Requires the nvhpc
-        # module to be loaded when you run `spack install` (which you do for %nvhpc).
+        # Requires the nvhpc module to be loaded when you run `spack install`
         if self.spec.satisfies("+gpu"):
             nvhpc_root = os.environ.get("NVHPC_ROOT")
             if nvhpc_root:
