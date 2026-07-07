@@ -213,7 +213,7 @@ class AnyBuilder(BaseBuilder):
 class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def _iconv_option(self):
         """Special handling for iconv
-        iconv can be vendored from libx and in these cases the assumption of a prefix
+        iconv can be vendored from libc and in these cases the assumption of a prefix
         is not valid. libxml2's build system allows 3 options (yes, no, or a prefix)
         to account for this. When iconv comes from glibc or musl pass 'yes' as the
         build system intends.
