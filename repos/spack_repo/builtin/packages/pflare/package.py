@@ -46,6 +46,7 @@ class Pflare(MakefilePackage):
     depends_on("lapack")
     depends_on("metis")
     depends_on("parmetis")
+    depends_on("petsc+metis")
 
     # PETSc version dependencies
     depends_on("petsc@main", when="@main")
