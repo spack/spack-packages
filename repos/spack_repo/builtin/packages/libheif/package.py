@@ -30,6 +30,6 @@ class Libheif(CMakePackage):
 
     def cmake_args(self):
         args = [
-                self.define_from_variant("WITH_GDK_PIXBUF", "gdk-plugin"),
+            self.define_from_variant("WITH_GDK_PIXBUF", "gdk-plugin"),
         ]
         return args
