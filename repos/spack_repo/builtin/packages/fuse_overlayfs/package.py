@@ -16,6 +16,7 @@ class FuseOverlayfs(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.16", sha256="45968517603389ead067222d234bc8d8ed33e4b4f8ba16216bdd3e6aedcccea9")
     version("1.14", sha256="0779d1ee8fbb6adb48df40e54efa9c608e1d7bbd844800a4c32c110d5fcbe9f2")
     version("1.13", sha256="96d10344921d5796bcba7a38580ae14a53c4e60399bb90b238ac5a10b3bb65b2")
     version("1.10", sha256="4351eaed7cf26a5012c14c6e0fc883ef65a7b5dcc95ba129ce485904106c25a9")
@@ -30,7 +31,7 @@ class FuseOverlayfs(AutotoolsPackage):
     version("1.1.1", sha256="9a1c4221a82059fd9686dd8b519d432bae126c08f9d891fb722bcb51ba4933ec")
     version("1.1.0", sha256="060168c2d5a8c6cc768b4542eba9953b7ff4a31f94bfb2e05b3d1051390838b1")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")

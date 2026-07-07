@@ -15,9 +15,9 @@ class Xpmem(AutotoolsPackage):
     # transferred to a new repository on GitLab: https://gitlab.com/hjelmn/xpmem
     # However, it looks like that the repository on GitHub has a more recent
     # version of the codebase.
-    homepage = "https://github.com/hjelmn/xpmem"
-    url = "https://github.com/hjelmn/xpmem/archive/v2.6.3.tar.gz"
-    git = "https://github.com/hjelmn/xpmem.git"
+    homepage = "https://github.com/hpc/xpmem"
+    url = "https://github.com/hpc/xpmem/archive/v2.6.3.tar.gz"
+    git = "https://github.com/hpc/xpmem.git"
 
     maintainers("skosukhin")
 
@@ -42,13 +42,13 @@ class Xpmem(AutotoolsPackage):
     # Here 2.6.5-36 referes to 2.6.5 version and 36th commit id
     patch("xpmem_v2.6.5-36.patch", when="@2.6.5-36", level=1)
     patch(
-        "https://github.com/hjelmn/xpmem/commit/cbd6e5bd3d2a1d3823c335ddcd3c57b94474f578.patch?full_index=1",
+        "https://github.com/hpc/xpmem/commit/cbd6e5bd3d2a1d3823c335ddcd3c57b94474f578.patch?full_index=1",
         sha256="75299398b6c15546479bfbb8aa972431f58637fe2f0328196a26738bd7148140",
         when="@2.6.5-36",
         level=1,
     )
     patch(
-        "https://github.com/hjelmn/xpmem/commit/7d346aaf1fdfc24d38cebb4ad107b7f5c43769e9.patch?full_index=1",
+        "https://github.com/hpc/xpmem/commit/7d346aaf1fdfc24d38cebb4ad107b7f5c43769e9.patch?full_index=1",
         sha256="6be8c5f33d55c611924d8412253740f6f4b738e6d98e32981fa300d2ccbe99cc",
         when="@2.6.5-36",
         level=1,
@@ -62,7 +62,7 @@ class Xpmem(AutotoolsPackage):
     depends_on("m4", type="build")
 
     # It will become possible to disable the kernel module only starting 2.6.6:
-    # https://github.com/hjelmn/xpmem/pull/24
+    # https://github.com/hpc/xpmem/pull/24
     conflicts("~kernel-module", when="@:2.6.5")
 
     # Ideally, we should list all non-Linux-based platforms here:
@@ -92,7 +92,7 @@ class Xpmem(AutotoolsPackage):
         if self.spec.satisfies("@:2.6.5"):
             fmt = self.spec.format
             # The following arguments will not be needed starting 2.6.6:
-            # https://github.com/hjelmn/xpmem/pull/18
+            # https://github.com/hpc/xpmem/pull/18
             args.extend(
                 [
                     fmt("--with-default-prefix={prefix}"),

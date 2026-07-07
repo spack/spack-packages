@@ -40,3 +40,6 @@ class PyPydftracer(PythonPackage):
         env.set("DFTRACER_INSTALL_DIR", self.prefix)
         env.set("DFTRACER_PYTHON_SITE", python_purelib)
         env.set("DFTRACER_BUILD_DEPENDENCIES", "0")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")

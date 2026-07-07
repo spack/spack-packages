@@ -21,18 +21,20 @@ class RRjava(RPackage):
     version("0.9-11", sha256="c28ae131456a98f4d3498aa8f6eac9d4df48727008dacff1aa561fc883972c69")
     version("0.9-8", sha256="dada5e031414da54eb80b9024d51866c20b92d41d68da65789fe0130bc54bd8a")
 
+    depends_on("c", type="build")
+    depends_on("r+java", type=("build", "run"))
     depends_on("r@2.5:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@1.0-6:")
     depends_on("java@2:")
     depends_on("gmake", type="build")
-
-    # these are not listed as dependencies but are needed
+    # These are not listed as dependencies but are needed
     depends_on("bzip2")
     depends_on("icu4c")
     depends_on("iconv")
     depends_on("pcre2")
     depends_on("xz")
     depends_on("zlib-api")
+    depends_on("zstd", when="^r@4.5:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec

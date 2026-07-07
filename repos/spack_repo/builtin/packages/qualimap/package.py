@@ -23,6 +23,8 @@ class Qualimap(Package):
 
     depends_on("java", type="run")
 
+    conflicts("java@17:")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PATH", prefix)
 

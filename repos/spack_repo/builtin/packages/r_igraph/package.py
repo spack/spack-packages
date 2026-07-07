@@ -29,6 +29,10 @@ class RIgraph(RPackage):
     version("1.1.2", sha256="89b16b41bc77949ea208419e52a18b78b5d418c7fedc52cd47d06a51a6e746ec")
     version("1.0.1", sha256="dc64ed09b8b5f8d66ed4936cde3491974d6bc5178dd259b6eab7ef3936aa5602")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@3.0.2:", type=("build", "run"), when="@1.4.2:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.5.0:")
 

@@ -45,6 +45,8 @@ class Pango(MesonPackage):
     depends_on("meson@0.63:", type="build", when="@1.54:")
     depends_on("pkgconfig", type="build")
     depends_on("harfbuzz")
+    for plat in ["linux", "darwin", "freebsd"]:
+        depends_on("harfbuzz +gobject", when=f"platform={plat}")
     depends_on("harfbuzz+coretext", when="platform=darwin")
     depends_on("cairo+ft+fc")
     # quartz needed even when ~X on the new cairo versions

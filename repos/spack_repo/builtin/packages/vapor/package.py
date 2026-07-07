@@ -97,7 +97,7 @@ class Vapor(CMakePackage):
     # packaged with the source code - need to extract and move
     @run_before("cmake")
     def extract_gte(self):
-        unzip = which("unzip")
+        unzip = which("unzip", required=True)
 
         with working_dir("buildutils"):
             unzip("GTE.zip")

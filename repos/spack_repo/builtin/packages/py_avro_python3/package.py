@@ -17,6 +17,7 @@ class PyAvroPython3(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.10.2", sha256="3b63f24e6b04368c3e4a6f923f484be0230d821aad65ac36108edbff29e9aaab")
     version("1.10.0", sha256="a455c215540b1fceb1823e2a918e94959b54cb363307c97869aa46b5b55bde05")
     version("1.9.1", sha256="daab2cea71b942a1eb57d700d4a729e9d6cd93284d4dd4d65a378b9f958aa0d2")
 

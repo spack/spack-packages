@@ -18,6 +18,7 @@ class Syscalc(MakefilePackage):
         sha256="ac73df0f9f195eb62601fafc2eede3db17a562750f7971616870d6df4abd1b6c",
         url="https://bazaar.launchpad.net/~mgtools/mg5amcnlo/SysCalc/tarball/17",
         extension=".tgz",
+        deprecated=True,
     )
 
     depends_on("cxx", type="build")  # generated

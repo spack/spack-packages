@@ -16,6 +16,7 @@ class PyMistletoe(PythonPackage):
 
     license("MIT")
 
+    version("1.5.1", sha256="c5571ce6ca9cfdc7ce9151c3ae79acb418e067812000907616427197648030a3")
     version("1.2.1", sha256="7d0c1ab3747047d169f9fc4b925d1cba3f5c13eaf0b90c365b72e47e59d00a02")
 
     depends_on("python@3.5:3", type=("build", "run"))

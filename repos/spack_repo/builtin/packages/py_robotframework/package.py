@@ -15,6 +15,7 @@ class PyRobotframework(PythonPackage):
 
     license("Apache-2.0")
 
+    version("7.4.1", sha256="6fa65c2708f0d48dd7a05bea2dc96943d0e39fdac9b3eb7290e780200b2cec57")
     version("7.3.2", sha256="82e8bc68dea843a82e710c9b864535811e62bf6e03d3258d8cbb8c78eac30711")
     version("7.2.2", sha256="4581c3a0da0c655b629aa1b56e6ff69256abdfa7ab26ae49e52c264c61f175b0")
     version("7.1.1", sha256="8abeb82324d6e476297ed7d43d7d89518399c2404a26702cf9cac23548bf8a86")

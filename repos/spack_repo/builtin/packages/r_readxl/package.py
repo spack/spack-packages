@@ -19,6 +19,7 @@ class RReadxl(RPackage):
 
     license("MIT")
 
+    version("1.4.5", sha256="09d70d7bbafbe129ce687b8743dbf6b9d0f201205b30dc515a00b35fcc1bdedf")
     version("1.4.3", sha256="7efebbcdefeb8523633db62b3eeb6ea2e4e81e3d010d8b2adb134011c09a5948")
     version("1.4.2", sha256="387304e2c5be0dca4861ec0232f0d92cc1882b660ca917f8f2a8a4ae858aba11")
     version("1.4.1", sha256="f6bebb7f940fb21baacd60345b7075c77eb1d026466c55e6a36148de680da1fa")
@@ -31,13 +32,14 @@ class RReadxl(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.4:", type=("build", "run"), when="@1.4.0:")
-    depends_on("r@3.5:", type=("build", "run"), when="@1.4.2:")
     depends_on("r@3.6:", type=("build", "run"), when="@1.4.3:")
+    depends_on("r@3.5:", type=("build", "run"), when="@1.4.2:")
+    depends_on("r@3.4:", type=("build", "run"), when="@1.4.0:")
     depends_on("r-cellranger", type=("build", "run"))
-    depends_on("r-tibble@1.3.1:", type=("build", "run"))
     depends_on("r-tibble@2.0.1:", type=("build", "run"), when="@1.4.0:")
+    depends_on("r-tibble@1.3.1:", type=("build", "run"))
     depends_on("r-cpp11@0.4.0:", type=("build", "run"), when="@1.4.0:")
     depends_on("r-progress", type=("build", "run"), when="@1.2.0:")
 
+    # Historical dependencies
     depends_on("r-rcpp@0.12.18:", type=("build", "run"), when="@:1.3.1")

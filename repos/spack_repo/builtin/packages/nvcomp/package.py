@@ -31,7 +31,8 @@ class Nvcomp(CMakePackage, CudaPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cuda")
+    # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 for CUDA 13
+    depends_on("cuda@:12.9")
     conflicts("~cuda")
 
     def cmake_args(self):

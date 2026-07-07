@@ -25,6 +25,8 @@ class Otf2(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
+    depends_on("findutils", type="build")
+
     extends("python")
 
     # `imp` module required

@@ -26,6 +26,11 @@ class MesaGlu(AutotoolsPackage):
     # patch switches all instances of register long to long to fix this.
     patch("register-long.patch")
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ):
+        env.prepend_path("OpenGL_ROOT", self.prefix)
+
     def configure_args(self):
         args = ["--disable-libglvnd"]
 

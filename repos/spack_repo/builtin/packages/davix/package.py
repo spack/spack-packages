@@ -62,8 +62,12 @@ class Davix(CMakePackage):
     variant("thirdparty", default=False, description="Build vendored libraries")
     depends_on("gsoap", when="+thirdparty")
 
-    def url_for_version(self, v):
-        return f"https://github.com/cern-fts/davix/releases/download/R_{v.underscored}/davix-{v}.tar.gz"
+    # soapcpp2 -v (lowercase) reads from stdin instead of exiting; use -V (uppercase)
+    # which prints the version string and exits immediately.
+    patch("fix-gsoap-version-detection.patch", when="+thirdparty")
+
+    def url_for_version(self, version):
+        return f"https://github.com/cern-fts/davix/releases/download/R_{version.underscored}/davix-{version}.tar.gz"
 
     def cmake_args(self):
         return [

@@ -1,0 +1,19 @@
+diff --git a/Libraries/CMakeLists.txt b/Libraries/CMakeLists.txt
+index 8e94f20..0b87266 100644
+--- a/Libraries/CMakeLists.txt
++++ b/Libraries/CMakeLists.txt
+@@ -44,12 +44,12 @@ if(
+     add_subdirectory(hipSOLVER)
+     add_subdirectory(hipSPARSE)
+     add_subdirectory(hipSPARSELt)
+-    add_subdirectory(hipTensor)
++    # add_subdirectory(hipTensor)
+     add_subdirectory(rocALUTION)
+     add_subdirectory(rocBLAS)
+     add_subdirectory(rocFFT)
+     add_subdirectory(rocPRIM)
+-    add_subdirectory(rocProfiler-SDK)
++    # add_subdirectory(rocProfiler-SDK)
+     add_subdirectory(rocRAND)
+     add_subdirectory(rocSOLVER)
+     add_subdirectory(rocSPARSE)

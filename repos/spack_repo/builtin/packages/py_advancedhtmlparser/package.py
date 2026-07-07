@@ -17,6 +17,7 @@ class PyAdvancedhtmlparser(PythonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("9.0.2", sha256="837d17dadaa8eef87bf5773f05b5ddaceb76183b3dc13671e5550adf177f5465")
     version("9.0.1", sha256="1b7f632ca4c61fca50ee896c84112b97915c07d5b25b9527aefe7cbad8458837")
     version("8.1.4", sha256="21a73137026c8ec3248c654a24cc40064196029256cdf71681149f6835e9ed39")
 

@@ -19,7 +19,8 @@ class LibuvJulia(AutotoolsPackage):
     license("CC-BY-4.0")
 
     # julia's libuv fork doesn't tag (all?) releases, so we fix commits.
-    version("1.48.0", commit="ca3a5a431a1c37859b6508e6b2a288092337029a")
+    version("1.48.1rc1", commit="af4172ec713ee986ba1a989b9e33993a07c60c9e")  # used by Julia 1.12
+    version("1.48.0", commit="ca3a5a431a1c37859b6508e6b2a288092337029a")  # used by Julia 1.11
     version("1.44.3", commit="2723e256e952be0b015b3c0086f717c3d365d97e")
     version("1.44.2", commit="e6f0e4900e195c8352f821abe2b3cffc3089547b")
     version("1.44.1", commit="1b2d16477fe1142adea952168d828a066e03ee4c")

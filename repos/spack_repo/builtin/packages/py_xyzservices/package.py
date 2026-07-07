@@ -16,6 +16,7 @@ class PyXyzservices(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2025.11.0", sha256="2fc72b49502b25023fd71e8f532fb4beddbbf0aa124d90ea25dba44f545e17ce")
     version("2023.10.1", sha256="091229269043bc8258042edbedad4fcb44684b0473ede027b5672ad40dc9fa02")
 
     depends_on("python@3.8:", type=("build", "run"))

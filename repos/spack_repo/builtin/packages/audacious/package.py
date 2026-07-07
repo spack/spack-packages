@@ -46,7 +46,7 @@ class Audacious(AutotoolsPackage):
         filter_file("-I m4", search_path_str, "autogen.sh")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def configure_args(self):

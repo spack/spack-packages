@@ -16,6 +16,7 @@ class PyLfpykit(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("0.5.1", sha256="a962029460c8173c4fec3923204e04d64c370b05740b64c2d07efbe29cbe63a6")
     version("0.5", sha256="9a7ae80ad905bb8dd0eeab8517b43c3d5b4fff2b8766c9d5a36320a7a67bd545")
 
     depends_on("py-setuptools", type="build")

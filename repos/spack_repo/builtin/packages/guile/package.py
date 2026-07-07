@@ -13,10 +13,12 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
     the official extension language for the GNU operating system."""
 
     homepage = "https://www.gnu.org/software/guile/"
-    gnu_mirror_path = "guile/guile-2.2.0.tar.gz"
+    gnu_mirror_path = "guile/guile-3.0.11.tar.gz"
 
     license("LGPL-3.0-or-later AND GPL-3.0-or-later")
 
+    version("3.0.11", sha256="3c9c16972a73bb792752f2e4f1cce7212d7638d5494b5f7e8e19f3819dbf3a19")
+    version("3.0.10", sha256="2dbdbc97598b2faf31013564efb48e4fed44131d28e996c26abe8a5b23b56c2a")
     version("2.2.6", sha256="08c0e7487777740b61cdd97949b69e8a5e2997d8c2fe6c7e175819eb18444506")
     version("2.2.5", sha256="c3c7a2f6ae0d8321a240c7ebc532a1d47af8c63214157a73789e2b2305b4c927")
     version("2.2.4", sha256="33b904c0bf4e48e156f3fb1d0e6b0392033bd610c6c9d9a0410c6e0ea96a3e5c")
@@ -28,6 +30,7 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
     version("2.0.11", sha256="e6786c934346fa2e38e46d8d81a622bb1c16d130153523f6129fcd79ef1fb040")
 
     variant("readline", default=True, description="Use the readline library")
+    variant("gmp", default=True, description="Use the GMP library")
     variant(
         "threads",
         default="none",
@@ -35,19 +38,22 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
         multi=False,
         description="Use the thread interface",
     )
+    variant("shared", default=True, description="Build shared library")
 
     depends_on("c", type="build")  # generated
 
     depends_on("bdw-gc@7.0: threads=none", when="threads=none")
     depends_on("bdw-gc@7.0: threads=posix", when="threads=posix")
     depends_on("bdw-gc@7.0: threads=dgux386", when="threads=dgux386")
-    depends_on("gmp@4.2:")
+    depends_on("gmp@4.2:", when="+gmp")
     depends_on("gettext")
     depends_on("libtool@1.5.6:", type="link")  # links to libltdl.so
     depends_on("libunistring@0.9.3:")
     depends_on("libffi")
+    depends_on("libxcrypt", type="link")
     depends_on("readline", when="+readline")
     depends_on("pkgconfig", type="build")
+    depends_on("gperf", when="@3:")
 
     build_directory = "spack-build"
 
@@ -81,5 +87,13 @@ class Guile(AutotoolsPackage, GNUMirrorPackage):
             config_args.append("--with-libreadline-prefix={0}".format(spec["readline"].prefix))
         else:
             config_args.append("--without-libreadline-prefix")
+
+        if not spec.satisfies("+gmp"):
+            config_args.append("--enable-mini-gmp")
+
+        if spec.satisfies("+shared"):
+            config_args.append("--enable-shared")
+        else:
+            config_args.append("--disable-shared")
 
         return config_args

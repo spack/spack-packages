@@ -14,6 +14,7 @@ class PyUserpath(PythonPackage):
     pypi = "userpath/userpath-1.8.0.tar.gz"
 
     license("MIT")
+    version("1.9.2", sha256="6c52288dab069257cc831846d15d48133522455d4677ee69a9781f11dbefd815")
     version("1.9.0", sha256="85e3274543174477c62d5701ed43a3ef1051824a9dd776968adc411e58640dd1")
     version("1.8.0", sha256="04233d2fcfe5cff911c1e4fb7189755640e1524ff87a4b82ab9d6b875fee5787")
     version("1.7.0", sha256="dcd66c5fa9b1a3c12362f309bbb5bc7992bac8af86d17b4e6b1a4b166a11c43f")

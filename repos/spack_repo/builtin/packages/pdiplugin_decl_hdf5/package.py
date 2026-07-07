@@ -35,9 +35,12 @@ class PdipluginDeclHdf5(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
 
+    depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
+    depends_on("hdf5@1.10.7:1 +shared", type=("build", "link", "run"), when="@1.10.0:")
     depends_on("hdf5@1.10.4:1 +shared", type=("build", "link", "run"))
     depends_on("hdf5 +mpi", type=("build", "link", "run"), when="+mpi")
+    depends_on("mpi", when="+mpi")
     for v in Pdi.versions:
         depends_on("pdi@" + str(v), type=("link", "run"), when="@" + str(v))
     depends_on("pkgconfig", type=("build"))

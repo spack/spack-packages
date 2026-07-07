@@ -21,6 +21,7 @@ class PyMetpy(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.7.1", sha256="cdfd8fdab58bc092a1974c016f2ea3a7715ffdf6a4660b28b0de7049328bce75")
     version("1.7.0", sha256="aad7e03dc735cf8bfd870d16aca24920a707152de6caa24dbaf4da695c6f6ae4")
     version("1.6.2", sha256="eb065bac0d7818587fa38fa6c96dfe720d9d15b59af4e4866541894e267476bb")
     version("1.0.1", sha256="16fa9806facc24f31f454b898741ec5639a72ba9d4ff8a19ad0e94629d93cb95")

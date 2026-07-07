@@ -25,6 +25,8 @@ class RPromises(RPackage):
     version("1.1.1", sha256="3718c6eb2c3362cbe89389e613118f783f9977dbf24757f85026e661199c5800")
     version("1.0.1", sha256="c2dbc7734adf009377a41e570dfe0d82afb91335c9d0ca1ef464b9bdcca65558")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-r6", type=("build", "run"))
     depends_on("r-fastmap@1.1.0:", type=("build", "run"), when="@1.2.1:")
     depends_on("r-later", type=("build", "run"))

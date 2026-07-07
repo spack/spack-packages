@@ -19,6 +19,7 @@ class PyPlac(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.4.5", sha256="5f05bf85235c017fcd76c73c8101d4ff8e96beb3dc58b9a37de49cac7de82d14")
     version("1.4.3", sha256="d4cb3387b2113a28aebd509433d0264a4e5d9bb7c1a86db4fbd0a8f11af74eb3")
     version("1.3.5", sha256="38bdd864d0450fb748193aa817b9c458a8f5319fbf97b2261151cfc0a5812090")
     version("1.3.3", sha256="51e332dabc2aed2cd1f038be637d557d116175101535f53eaa7ae854a00f2a74")

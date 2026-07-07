@@ -16,6 +16,7 @@ class Libtasn1(Package, GNUMirrorPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("4.21.0", sha256="1d8a444a223cc5464240777346e125de51d8e6abf0b8bac742ac84609167dc87")
     version("4.19.0", sha256="1613f0ac1cf484d6ec0ce3b8c06d56263cc7242f1c23b30d82d23de345a63f7a")
     version("4.13", sha256="7e528e8c317ddd156230c4e31d082cd13e7ddeb7a54824be82632209550c8cca")
     version("4.12", sha256="6753da2e621257f33f5b051cc114d417e5206a0818fe0b1ecfd6153f70934753")

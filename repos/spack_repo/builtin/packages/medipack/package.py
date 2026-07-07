@@ -33,7 +33,6 @@ class Medipack(CMakePackage):
     )
 
     def install(self, spec, prefix):
-        mkdirp(self.prefix.include)
-        install_tree(join_path(self.stage.source_path, "include"), self.prefix.include)
+        super().install(spec, prefix)
         mkdirp(self.prefix.src)
         install_tree(join_path(self.stage.source_path, "src"), self.prefix.src)

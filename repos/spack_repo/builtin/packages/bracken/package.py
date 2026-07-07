@@ -31,7 +31,7 @@ class Bracken(Package):
     def install(self, spec, prefix):
         mkdirp(prefix.bin.src)
         # installer builds kmer2read_distr in src
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", "./install_bracken.sh")
         installer = Executable("./install_bracken.sh")
         installer(self.stage.source_path)

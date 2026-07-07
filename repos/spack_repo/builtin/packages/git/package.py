@@ -18,6 +18,8 @@ class Git(AutotoolsPackage):
 
     homepage = "https://git-scm.com"
     url = "https://mirrors.edge.kernel.org/pub/software/scm/git/git-2.12.0.tar.gz"
+    git = "https://github.com/git/git.git"
+
     maintainers("jennfshr")
 
     tags = ["build-tools"]
@@ -26,9 +28,22 @@ class Git(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
+    sanity_check_is_file = ["bin/git"]
+
     # Every new git release comes with a corresponding manpage resource:
     # https://www.kernel.org/pub/software/scm/git/git-manpages-{version}.tar.gz
     # https://mirrors.edge.kernel.org/pub/software/scm/git/sha256sums.asc
+    version("master", branch="master")
+    version("2.53.0", sha256="429dc0f5fe5f14109930cdbbb588c5d6ef5b8528910f0d738040744bebdc6275")
+    version("2.52.0", sha256="6880cb1e737e26f81cf7db9957ab2b5bb2aa1490d87619480b860816e0c10c32")
+    version("2.51.2", sha256="9b44c2b337ec838e10aad42439d390963904449710d30c9e7e4ba449f45da98f")
+    version("2.51.1", sha256="b049d79e6a6cb3d81334bf689af6301f4d4c884191dfae65d2bb314a90384831")
+    version("2.51.0", sha256="3d531799d2cf2cac8e294ec6e3229e07bfca60dc6c783fe69e7712738bef7283")
+    version("2.50.1", sha256="522d1635f8b62b484b0ce24993818aad3cab8e11ebb57e196bda38a3140ea915")
+    version("2.50.0", sha256="920f8ca563d16a7d4fdecb44349cbffbc5cb814a8b36c96028463478197050da")
+    version("2.49.1", sha256="84a8383ffc77146133bc128a544450cf8ce5166cbea5056c98033d2f0c454794")
+    version("2.49.0", sha256="f8047f572f665bebeb637fd5f14678f31b3ca5d2ff9a18f20bd925bd48f75d3c")
+    version("2.48.2", sha256="e7f32466e7316431d472b014c344a80e68d92ba6b3aa069f64499bbe605e2383")
     version("2.48.1", sha256="51b4d03b1e311ba673591210f94f24a4c5781453e1eb188822e3d9cdc04c2212")
     version("2.47.2", sha256="a5d26bf7b01b2f0571b5a99300c256e556bd89b2a03088accf7b81bfa4f8f2fd")
     version("2.46.3", sha256="f7ae38b1d2c4724cd9088575da470229b3360903a17b531f2e86967d856ed7ed")
@@ -42,6 +57,16 @@ class Git(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     for _version, _sha256_manpage in {
+        "2.53.0": "4954390466c125e82dce4a978dd1dadda13a916564d908cfdbd319f2e174a8ae",
+        "2.52.0": "14426e66b5a12c188e44f53f89282bc586b34ebc3a22fafa8eb80d0bbe370f10",
+        "2.51.2": "811aa98750c6d5e4c67848c9991f3d0cbe6cb109da5aefaf4a08c1d760533410",
+        "2.51.1": "7c4568091b95af3a52508be4e988da4fbe194f4f410024d6af3f1af3735e3b08",
+        "2.51.0": "c0e5d07f0051454df2cbdfac78e22e961e15ed5b09f10c6e58e315ca303492c2",
+        "2.50.1": "96088c583129c97ed9a2b01771b8b28ad79d9f2997b46786616df3e34b180ee4",
+        "2.50.0": "2e5485302a60c691e7ceb8fd994d80b04fcc9bd92daac050bf063f9a0974cfa6",
+        "2.49.1": "81ec532662884778c5c48ba024e539ea6f00b1d7ae60a7b83fd1b951bfbaae1a",
+        "2.49.0": "b561252841ead1e32d87dbec8f257399ea08f759c98df62c3bafa5a658f2f8ac",
+        "2.48.2": "b7c274da7097844fb87d6dd0f9a2073c801bd856141c8af5ae9e56ba9686d3b3",
         "2.48.1": "88742466926d3d682be5214470ae92b79a68796a9d171d393763a5767de5a581",
         "2.47.2": "8a36a81ee3a031acbfc831a0972d849aa8777926a6c49c76141b0e0e4744dcb3",
         "2.46.3": "5744ca6fd3ef39d0390400a47f2d7208668433af3d599cfbec7bb1c7140efe79",
@@ -71,6 +96,7 @@ class Git(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
     depends_on("curl")
+    depends_on("curl@7.61.0:", when="@2.48:")
     depends_on("expat")
     depends_on("gettext", when="+nls")
     depends_on("iconv")
@@ -78,10 +104,20 @@ class Git(AutotoolsPackage):
     depends_on("openssl")
     depends_on("pcre2")
     depends_on("perl", when="+perl")
+    depends_on("perl@5.26.0:", when="@2.48: +perl")
     depends_on("zlib-api")
     depends_on("openssh", type="run")
     depends_on("tk", type=("build", "link"), when="+tcltk")
     depends_on("diffutils", type="build", when="@2.48:")
+
+    # v2.53.0 made a lot of improvements to the makefile, but caused a bug with the git
+    # osxcredentialhelper sub component
+    # https://lore.kernel.org/git/pull.2046.v4.git.1771551540816.gitgitgadget@gmail.com/
+    patch(
+        "https://github.com/gitgitgadget/git/commit/3e9cc24e68ef311500406ef4d170be30e36e1231.patch?full_index=1",
+        sha256="67fa97142eed2ab2b0e9385b233254adb4bdf4dd42addf966d6ece3fd2a3c294",
+        when="@2.53.0 platform=darwin",
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -102,6 +138,20 @@ class Git(AutotoolsPackage):
     # See the comment in setup_build_environment re EXTLIBS.
     def patch(self):
         filter_file(r"^EXTLIBS =$", "#EXTLIBS =", "Makefile")
+
+        custom_lines = []
+
+        # https://github.com/git/git/commit/cdda67de0316ec29dfc1e290bb7f2154b7b95ee8
+        if self.spec.satisfies("platform=linux"):
+            if self.spec.satisfies("@2.50:"):
+                if self.spec.satisfies("^glibc@:2.24"):
+                    custom_lines.append("CSPRNG_METHOD=")
+                if self.spec.satisfies("^glibc@2.36:"):
+                    custom_lines.append("CSPRNG_METHOD=arc4random")
+
+        with open("config.mak", "w") as config_file:
+            for entry in custom_lines:
+                config_file.write(entry + "\n")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # We use EXTLIBS rather than LDFLAGS so that git's Makefile
@@ -140,24 +190,21 @@ class Git(AutotoolsPackage):
         spec = self.spec
 
         configure_args = [
-            "--with-curl={0}".format(spec["curl"].prefix),
-            "--with-expat={0}".format(spec["expat"].prefix),
-            "--with-openssl={0}".format(spec["openssl"].prefix),
-            "--with-zlib={0}".format(spec["zlib-api"].prefix),
+            f"--with-curl={spec['curl'].prefix}",
+            f"--with-expat={spec['expat'].prefix}",
+            f"--with-openssl={spec['openssl'].prefix}",
+            f"--with-libpcre2={spec['pcre2'].prefix}",
+            f"--with-zlib={spec['zlib-api'].prefix}",
         ]
 
         if self.spec["iconv"].name == "libiconv":
             configure_args.append(f"--with-iconv={self.spec['iconv'].prefix}")
 
         if self.spec.satisfies("+perl"):
-            configure_args.append("--with-perl={0}".format(spec["perl"].command.path))
+            configure_args.append(f"--with-perl={spec['perl'].command.path}")
 
-        if self.spec.satisfies("^pcre"):
-            configure_args.append("--with-libpcre={0}".format(spec["pcre"].prefix))
-        if self.spec.satisfies("^pcre2"):
-            configure_args.append("--with-libpcre2={0}".format(spec["pcre2"].prefix))
         if self.spec.satisfies("+tcltk"):
-            configure_args.append("--with-tcltk={0}".format(self.spec["tk"].prefix.bin.wish))
+            configure_args.append(f"--with-tcltk={self.spec['tk'].prefix.bin.wish}")
         else:
             configure_args.append("--without-tcltk")
 
@@ -229,8 +276,8 @@ class Git(AutotoolsPackage):
     def install_subtree(self):
         if self.spec.satisfies("+subtree"):
             with working_dir("contrib/subtree"):
-                make_args = ["V=1", "prefix={}".format(self.prefix.bin)]
+                make_args = ["V=1", f"prefix={self.prefix.bin}"]
                 make(" ".join(make_args))
-                install_args = ["V=1", "prefix={}".format(self.prefix.bin), "install"]
+                install_args = ["V=1", f"prefix={self.prefix.bin}", "install"]
                 make(" ".join(install_args))
                 install("git-subtree", self.prefix.bin)

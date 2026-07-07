@@ -20,6 +20,11 @@ class Nco(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    version("5.3.9", sha256="705ffa98a78d468cdfaa5858f09213142265120fc26a78249a442ae2fa92ae96")
+    version("5.3.8", sha256="f23b0b95525473d305ab15b96266d1458e3dfa193b9ee701af826913602d473d")
+    version("5.3.7", sha256="f1103219bfddd838b80a326793c165a17f21ec612c9520342e34d556a6d012e5")
+    version("5.3.6", sha256="70d64f461a0d5262274495ee1a9d85735aa3115281fdf01df4f946a919f9f6ae")
+    version("5.3.5", sha256="f2373b68279ff48b5cacf431f6a9f459bae75dc58d76f74cbff0834938aa6224")
     version("5.3.4", sha256="265059157ab4e64e73b6aad96da1e09427ba8a03ed3e2348d0a5deb57cf76006")
     version("5.3.3", sha256="f9185e115e246fe884dcae0804146b56df7257f53de7ba190fea66977ccd5a64")
     version("5.3.2", sha256="645179433e0f54e7e6fefa9fcc74c1866ad55dd69f0fccbc262c550fcc186385")
@@ -83,6 +88,7 @@ class Nco(AutotoolsPackage):
     depends_on("antlr@2.7.7+cxx")  # required for ncap2
     depends_on("gsl")  # desirable for ncap2
     depends_on("udunits")  # allows dimensional unit transformations
+    depends_on("zstd")
 
     depends_on("flex", type="build")
     depends_on("bison", type="build")

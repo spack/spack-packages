@@ -14,8 +14,6 @@ class Toybox(MakefilePackage):
     url = "https://landley.net/toybox/downloads/toybox-0.8.11.tar.gz"
     git = "https://github.com/landley/toybox.git"
 
-    maintainers("Buldram")
-
     license("0BSD", checked_by="Buldram")
 
     version("0.8.12", sha256="ad88a921133ae2231d9f2df875ec0bd42af4429145caea7d7db9e02208a6fd2e")

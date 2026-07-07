@@ -84,7 +84,6 @@ class Castep(CMakePackage, MakefilePackage):
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
-
     @property
     def build_targets(self):
         spec = self.spec
@@ -108,7 +107,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
-
     def edit(self, pkg, spec, prefix):
         if spec.satisfies("%gcc"):
             if self.spec.satisfies("@21:21"):
@@ -121,9 +119,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran9.0.mk")
                 else:
                     platfile = FileFilter("obj/platforms/linux_x86_64_gfortran.mk")
-                dlmakefile.filter(
-                    r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI"
-                )
+                platfile.filter(r"MPIFLAGS = -DMPI", "MPIFLAGS = -fallow-argument-mismatch -DMPI")
                 platfile.filter(r"^\s*FFLAGS_E\s*=.*", "FFLAGS_E = -fallow-argument-mismatch ")
 
             platfile.filter(r"^LD_FLAGS\s=.*$", "LD_FLAGS = $(OPT) -fopenmp")

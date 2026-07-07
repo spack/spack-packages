@@ -1,0 +1,11 @@
+--- a/src/python/Makefile.in	2026-02-19
++++ b/src/python/Makefile.in	2026-02-19
+@@ -36,7 +36,7 @@
+ all-local: build
+ 
+ build: ../libseccomp.la libseccomp.pxd seccomp.pyx setup.py
+-	[ ${srcdir} = ${builddir} ] || cp ${srcdir}/seccomp.pyx ${builddir}
++	test -f ${builddir}/seccomp.pyx || cp ${srcdir}/seccomp.pyx ${builddir}
+ 	${PY_BUILD} && touch build
+ 
+ install-exec-local: build

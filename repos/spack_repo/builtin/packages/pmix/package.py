@@ -39,7 +39,10 @@ class Pmix(AutotoolsPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("master", branch="master", submodules=True)
+    version("6.1.0", sha256="bb9021c8e100a376f5070ecca727f83a29b5f652dfe381793b88daa79a3b98a2")
     version("6.0.0", sha256="bfe969966d0ce82e032739cac286239bd5ad74a831d7adae013284919f125318")
+    version("5.0.10", sha256="78663f6b932589d68e24feaf7f8a948d60be68d91965f3effbacb4cd88cf9a95")
+    version("5.0.9", sha256="38d0667636e35a092e61f97be2dd84481f4cf566bfca11bb73c6b3d5da993b7a")
     version("5.0.8", sha256="bf5f0a341d0ec7f465627a7570f4dcda3b931bc859256428a35f6c72f13462d0")
     version("5.0.7", sha256="b9e6ad482fcdcb58c9b9553ae56956b6d7df875d5605b6ecb96adaff16b2b07a")
     version("5.0.6", sha256="ea51baa0fdee688d54bc9f2c11937671381f00de966233eec6fd88807fb46f83")
@@ -101,7 +104,7 @@ class Pmix(AutotoolsPackage):
         if os.path.exists(self.configure_abs_path):
             return
         # Else bootstrap with autotools
-        perl = which("perl")
+        perl = which("perl", required=True)
         perl("./autogen.pl")
 
     def find_external_lib_path(self, pkg_name, path_match_str=""):

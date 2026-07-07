@@ -1,0 +1,52 @@
+From 761184f5727ae34c4916c921d16fc1b0e5d309af Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?Jos=C3=A9=20=C3=81ngel=20Soler=20Ortiz?=
+ <jose.angel.soler.ortiz@gmail.com>
+Date: Tue, 30 Mar 2021 23:08:38 +0100
+Subject: [PATCH] Add inline to comparison operators in uniform_int_dist.hpp
+ (#22)
+
+* Prevent 'multiple definition of trng::operator!=' errors when including uniform_int_dist.hpp in multiple files
+* fix indentation
+---
+ trng/uniform_int_dist.hpp | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/trng/uniform_int_dist.hpp b/trng/uniform_int_dist.hpp
+index 72cb68f..c228d73 100644
+--- a/trng/uniform_int_dist.hpp
++++ b/trng/uniform_int_dist.hpp
+@@ -138,13 +138,13 @@ namespace trng {
+ 
+   // EqualityComparable concept
+   TRNG_CUDA_ENABLE
+-  bool operator==(const uniform_int_dist::param_type &P1,
+-                  const uniform_int_dist::param_type &P2) {
++  inline bool operator==(const uniform_int_dist::param_type &P1,
++                         const uniform_int_dist::param_type &P2) {
+     return P1.a() == P2.a() and P1.b() == P2.b();
+   }
+   TRNG_CUDA_ENABLE
+-  bool operator!=(const uniform_int_dist::param_type &P1,
+-                  const uniform_int_dist::param_type &P2) {
++  inline bool operator!=(const uniform_int_dist::param_type &P1,
++                         const uniform_int_dist::param_type &P2) {
+     return not(P1 == P2);
+   }
+ 
+@@ -176,11 +176,11 @@ namespace trng {
+ 
+   // EqualityComparable concept
+   TRNG_CUDA_ENABLE
+-  bool operator==(const uniform_int_dist &g1, const uniform_int_dist &g2) {
++  inline bool operator==(const uniform_int_dist &g1, const uniform_int_dist &g2) {
+     return g1.param() == g2.param();
+   }
+   TRNG_CUDA_ENABLE
+-  bool operator!=(const uniform_int_dist &g1, const uniform_int_dist &g2) {
++  inline bool operator!=(const uniform_int_dist &g1, const uniform_int_dist &g2) {
+     return g1.param() != g2.param();
+   }
+ 
+-- 
+2.37.3
+

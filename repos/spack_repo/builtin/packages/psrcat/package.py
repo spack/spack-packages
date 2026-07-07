@@ -20,7 +20,7 @@ class Psrcat(MakefilePackage):
     depends_on("c", type="build")  # generated
 
     def build(self, spec, prefix):
-        makeit = which("./makeit")
+        makeit = which("./makeit", required=True)
         makeit()
 
     def install(self, spec, prefix):
