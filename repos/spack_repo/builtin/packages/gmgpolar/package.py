@@ -28,6 +28,13 @@ class Gmgpolar(CMakePackage):
     depends_on("kokkos@4.4.1:")
     depends_on("kokkos@:5")
 
+    # Fixes missing headers in 2.3.1
+    patch(
+        "https://github.com/SciCompMod/GMGPolar/commit/9356b29a80848c9c88eaa748eb6ce4d8dc67028f.patch?full_index=1",
+        sha256="6f5c48536babcaead6c65866536ec9471f50cfef68eb13d8990628a4d7e05e00",
+        when="@2.3.1",
+    )
+
     def cmake_args(self):
         args = [
             self.define("GMGPOLAR_BUILD_TESTS", False),
