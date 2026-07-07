@@ -13,7 +13,7 @@ class Less(AutotoolsPackage):
     file aswell as forwards."""
 
     homepage = "https://www.greenwoodsoftware.com/less/"
-    url = "https://www.greenwoodsoftware.com/less/less-551.zip"
+    url = "https://www.greenwoodsoftware.com/less/less-692.tar.gz"
     list_url = "https://www.greenwoodsoftware.com/less/download.html"
 
     depends_on("ncurses")
@@ -22,6 +22,7 @@ class Less(AutotoolsPackage):
 
     depends_on("c", type="build")
 
-    version("668", sha256="dbc0de59ea9c50e1e8927e6b077858db3a84954e767909bc599e6e6f602c5717")
-    version("661", sha256="a900e3916738bf8c1a0a2a059810f1c59b8271ac8bb46898c6e921ea6aefd757")
-    version("643", sha256="3bb417c4b909dfcb0adafc371ab87f0b22e8b15f463ec299d156c495fc9aa196")
+    version("692", sha256="61300f603798ecf1d7786570789f0ff3f5a1acf075a6fb9f756837d166e37d14")
+    version("668", sha256="2819f55564d86d542abbecafd82ff61e819a3eec967faa36cd3e68f1596a44b8")
+    version("661", sha256="2b5f0167216e3ef0ffcb0c31c374e287eb035e4e223d5dae315c2783b6e738ed")
+    version("643", sha256="2911b5432c836fa084c8a2e68f6cd6312372c026a58faaa98862731c8b6052e8")

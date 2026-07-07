@@ -15,8 +15,14 @@ class PyPuremagic(PythonPackage):
 
     license("MIT")
 
+    version("2.2.0", sha256="eb4bddf07c177c4b434554b92165b67449f5a51e152b976202d6254498810eef")
     version("1.30", sha256="f9ff7ac157d54e9cf3bff1addfd97233548e75e685282d84ae11e7ffee1614c9")
     version("1.14", sha256="3d5df26cc7ec9aebbf842a09115a2fa85dc59ea6414fa568572c44775d796cbc")
     version("1.10", sha256="6ffea02b80ceec1381f9df513e0120b701a74b6efad92311ea80281c7081b108")
 
-    depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools")
+        depends_on("py-setuptools-scm+toml@6.2:", when="@2:")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@2:")

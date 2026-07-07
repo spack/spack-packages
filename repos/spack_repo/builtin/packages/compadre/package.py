@@ -22,6 +22,7 @@ class Compadre(CMakePackage):
     maintainers("kuberry")
 
     version("master", branch="master")
+    version("1.7.3", sha256="982f918daa5d8ad46145b9fb91ae0c1ecbdc722bc030367cba51901c8fd4c3fe")
     version("1.7.2", sha256="4b7c2944300fd025957be44a1114177dfa0aafcf9e613d830a94e020b2f1751e")
     version(
         "1.6.2",
@@ -109,13 +110,21 @@ class Compadre(CMakePackage):
         kokkos_kernels = spec["kokkos-kernels"]
 
         options = []
-        options.extend(
-            [
-                "-DKokkos_ROOT={0}".format(kokkos.prefix),
-                "-DKokkosKernels_ROOT={0}".format(kokkos_kernels.prefix),
-                "-DCompadre_USE_PYTHON=OFF",
-            ]
-        )
+        if spec.satisfies("@:1.6"):
+            options.extend(
+                [
+                    "-DKokkosCore_PREFIX={0}".format(kokkos.prefix),
+                    "-DKokkosKernels_PREFIX={0}".format(kokkos_kernels.prefix),
+                ]
+            )
+        else:
+            options.extend(
+                [
+                    "-DKokkos_ROOT={0}".format(kokkos.prefix),
+                    "-DKokkosKernels_ROOT={0}".format(kokkos_kernels.prefix),
+                ]
+            )
+        options.append("-DCompadre_USE_PYTHON=OFF")
 
         # Compadre_DEBUG is default OFF and handled from CMAKE_BUILD_TYPE beginning in v1.7.0
         if spec.satisfies("@:1.6"):

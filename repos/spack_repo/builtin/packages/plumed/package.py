@@ -181,6 +181,14 @@ class Plumed(AutotoolsPackage):
 
     parallel = True
 
+    # Filter Spack's compiler wrapper
+    # so that "plumed mklib" works correctly
+    filter_compiler_wrappers(
+        "config.txt",
+        "compile_options.sh",
+        relative_root=join_path("lib", "plumed", "src", "config"),
+    )
+
     def apply_patch(self, other):
         # The name of MD engines differ slightly from the ones used in Spack
         format_strings = collections.defaultdict(lambda: "{0.name}-{0.version}")
@@ -340,7 +348,7 @@ class Plumed(AutotoolsPackage):
         # Custom set of modules
         else:
             # Ensure modules from variants
-            if spec.satisfies("+pytorch") or sepec.satisfies("+metatomic"):
+            if spec.satisfies("+pytorch") or spec.satisfies("+metatomic"):
                 optional_modules += ("pytorch",)
             if spec.satisfies("+libmetatomic"):
                 optional_modules += ("metatomic",)

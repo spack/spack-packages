@@ -17,6 +17,7 @@ class PyPybtex(PythonPackage):
 
     license("MIT")
 
+    version("0.26.1", sha256="2e5543bea424e60e9e42eef70bff597be48649d8f68ba061a7a092b2477d5464")
     version("0.24.0", sha256="818eae35b61733e5c007c3fcd2cfb75ed1bc8b4173c1f70b56cc4c0802d34755")
     version("0.21", sha256="af8a6c7c74954ad305553b118d2757f68bc77c5dd5d5de2cc1fd16db90046000")
 

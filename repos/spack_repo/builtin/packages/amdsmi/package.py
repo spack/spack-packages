@@ -19,7 +19,7 @@ class Amdsmi(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libamd_smi"]
+    executables = ["amd-smi"]
     license("MIT")
 
     def url_for_version(self, version):
@@ -29,6 +29,8 @@ class Amdsmi(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="2a9dfafac9593d3093c3f5fc611682e712f08816414f210344ea7b719c085ff5")
     version("7.1.0", sha256="17ccddf8988a5674edb360b9f3b41bf3d94c6f4ba36cf8d84739c6ccdfc87c50")
@@ -67,17 +69,6 @@ class Amdsmi(CMakePackage):
         when="@6.2",
     )
 
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            ver = "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        else:
-            ver = None
-        return ver
-
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
@@ -90,3 +81,9 @@ class Amdsmi(CMakePackage):
         args.append(self.define("BUILD_TESTS", "ON"))
         args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         return args
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("version", output=str, error=str)
+        match = re.search(r"ROCm version: (\d+\.\d+\.\d+)", output)
+        return match.group(1) if match else None

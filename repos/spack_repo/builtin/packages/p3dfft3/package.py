@@ -55,6 +55,8 @@ class P3dfft3(AutotoolsPackage):
 
         if "%gcc" in self.spec:
             args.append("--enable-gnu")
+            args.append("CFLAGS=-Wno-error=implicit-int")
+            args.append("FCFLAGS=-fallow-argument-mismatch")
 
         if "%intel" in self.spec:
             args.append("--enable-intel")

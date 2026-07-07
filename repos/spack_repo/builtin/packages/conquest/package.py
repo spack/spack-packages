@@ -64,7 +64,9 @@ class Conquest(MakefilePackage):
             return ["Conquest"]
 
     def edit(self, spec, prefix):
-        fflags = "-O3 -fallow-argument-mismatch"
+        fflags = "-O3"
+        if self.spec.satisfies("%gcc@10:"):
+            fflags += " -fallow-argument-mismatch"
         ldflags = ""
 
         if self.spec.satisfies("+openmp"):
@@ -96,6 +98,7 @@ class Conquest(MakefilePackage):
         defs_file.filter(".*BLAS=.*", f"BLAS= {lapack_ld} {blas_ld}")
         defs_file.filter(".*FFT_LIB=.*", f"FFT_LIB={fftw_ld}")
         defs_file.filter(".*XC_LIB=.*", f"XC_LIB={libxc_ld} -lxcf90 -lxc")
+        defs_file.filter("-lscalapack", "")
 
         if self.spec.satisfies("+openmp"):
             defs_file.filter("OMP_DUMMY = DUMMY", "OMP_DUMMY = ")

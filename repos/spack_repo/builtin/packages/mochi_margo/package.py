@@ -25,6 +25,7 @@ class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     )
 
     version("main", branch="main")
+    version("0.23.1", sha256="6db0b11094836e4107e44ed23c94c4c9b4ede21d4d35e425a3d7e40e59437293")
     version("0.23.0", sha256="7c39df5e09da67745ad4df8de81c30c1d9562d8a5ce7f35278bc9c38f2e7dc03")
     version("0.22.1", sha256="4f619e48ec64e5250c45e79095e2687cd5d04008731b0fb3d90264b892bfd017")
     version("0.22.0", sha256="65d9170e517779beea7ce6f251271602bbee98cc434312336d0dcc8496ffed58")

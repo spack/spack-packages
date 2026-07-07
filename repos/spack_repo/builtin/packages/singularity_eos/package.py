@@ -32,6 +32,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.11.1", sha256="2bbec8d1ba98fb3038ecdda0c066b513a5b3dd4cab9b0de4cf6b5a0b4d5ee41f")
     version("1.11.0", sha256="8bee9a40a4c2337d4df2b811a7071f4f5b0e9a50714a30a02b2712db1038bdf7")
     version("1.10.0", sha256="f2b5986d2e7f11b61c4cc1ac3b264adac39e16047f95fac29c60a19a2853f35b")
     version("1.9.2", sha256="4a58782020ad7bff3ea1c0cf55838a3692205770dbe4be39a3df25ba6fae302d")

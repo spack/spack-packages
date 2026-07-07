@@ -75,4 +75,7 @@ class PkgConfig(AutotoolsPackage):
                 config_args.append("CFLAGS=-Wno-error=int-conversion")
                 break
 
+        if spec.satisfies("%gcc@14:"):
+            config_args.append("CFLAGS=-std=gnu17")
+
         return config_args

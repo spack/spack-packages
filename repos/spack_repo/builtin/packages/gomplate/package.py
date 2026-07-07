@@ -24,20 +24,9 @@ class Gomplate(GoPackage):
 
     depends_on("go@1.24.5:", type="build")
 
-    def build(self, spec, prefix):
-        # Retrieve the "path" (in Go namespace parlance) to the version object because
-        # we need to set its Version attribute. This is similar to what is done in the
-        # gomplate Makefile.
-        gomplate_version_path = self.module.go("list", "./version", output=str).strip()
-        with working_dir(f"{join_path(self.build_directory, 'cmd', self.name)}"):
-            # When building, set gomplate's version.Version to the value in the version
-            # object for this package
-            self.module.go(
-                "build",
-                "-p",
-                str(make_jobs),
-                "-ldflags",
-                f"-s -w -X {gomplate_version_path}.Version={self.version}",
-                "-o",
-                f"{join_path(self.build_directory, self.name)}",
-            )
+    build_directory = "cmd/gomplate"
+
+    @property
+    def ldflags(self):
+        version_path = go("list", "../../version", output=str).strip()
+        return [f"-X {version_path}.Version={self.spec.version}"]

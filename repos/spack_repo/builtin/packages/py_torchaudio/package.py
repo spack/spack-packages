@@ -19,6 +19,7 @@ class PyTorchaudio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("2.11.0", tag="v2.11.0", commit="34c52a67e8941bbd8e6adaca0eb0b9eabec11d78")
     version("2.10.0", tag="v2.10.0", commit="27b7ebdebd2d2e4d34a2f5c05b0fb26efbd1da63")
     version("2.9.1", tag="v2.9.1", commit="a224ab24a7f4797f6707051257265e223e12576f")
     version("2.9.0", tag="v2.9.0", commit="eaa9e4e4dd413dca1084116581dc84fad403db3b")
@@ -70,6 +71,7 @@ class PyTorchaudio(PythonPackage):
         depends_on("python@:3.9", when="@0.7.2:0.11")
 
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.11:", when="@2.11.0")
         depends_on("py-torch@2.10:", when="@2.10.0")
         depends_on("py-torch@2.9.1", when="@2.9.1")
         depends_on("py-torch@2.9.0", when="@2.9.0")
@@ -116,10 +118,9 @@ class PyTorchaudio(PythonPackage):
     depends_on("py-pybind11", when="@0.12:", type=("build", "link"))
     depends_on("pkgconfig", type="build")
 
-    # Historical dependencies
-    # prior to 2.1 ffmpeg was vendored
-    depends_on("ffmpeg@:6", when="@2.1:2.8")
-    depends_on("sox", when="@:2.8")
+    # Historical dependencies, vendored before 2.1, optional after 2.8
+    depends_on("ffmpeg@4.4:6", when="@2.1:2.8")
+    depends_on("sox", when="@2.1:2.8")
 
     # https://github.com/pytorch/audio/pull/3811
     patch(

@@ -68,8 +68,19 @@ class Dyninst(CMakePackage):
         conflicts("^intel-tbb@2021.1:")
         conflicts("^intel-oneapi-tbb@2021.1:")
 
+    # See: https://github.com/dyninst/dyninst/pull/2304
+    with when("@:13"):
+        conflicts("^intel-tbb@2023:")
+        conflicts("^intel-oneapi-tbb@2023:")
+
     depends_on("tbb")
     requires("^[virtuals=tbb] intel-tbb@2019.9:", when="@13.0.0:")
+
+    patch(
+        "https://github.com/dyninst/dyninst/commit/e03567db37547f9a848f68f5a0e2c58d2aa17fe9.patch?full_index=1",
+        when="@:13.0.0 %tbb@2021.1:",
+        sha256="db3ede99643346b1beb9a2f7849e7aba3d36204093b97752c2bc0ec7e9e79290",
+    )
 
     with when("@13.0.0:"):
         depends_on("cmake@3.14.0:", type="build")

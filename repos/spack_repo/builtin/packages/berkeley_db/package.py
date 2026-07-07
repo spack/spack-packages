@@ -18,7 +18,8 @@ class BerkeleyDb(AutotoolsPackage):
 
     executables = [r"^db_load$"]  # One should be sufficient
 
-    license("UPL-1.0")
+    license("AGPL-3.0-only OR LicenseRef-Oracle-Proprietary", when="@6.0.20:")
+    license("Sleepycat", when="@:6.0.19", checked_by="alecbcs")
 
     version("18.1.40", sha256="0cecb2ef0c67b166de93732769abdeba0555086d51de1090df325e18ee8da9c8")
     version("6.2.32", sha256="a9c5e2b004a5777aa03510cfe5cd766a4a3b777713406b02809c17c8e0e7a8fb")
