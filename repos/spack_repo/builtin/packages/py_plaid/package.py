@@ -19,7 +19,9 @@ class PyPlaid(PythonPackage):
 
     license("BSD-3-Clause", checked_by="casenave")
 
+    version("1.0.0", sha256="fb0015f08db6ac73d3fe240fb24f2c908421398ecf6251f2cce81c0f15e3714a")
     version("0.1.15", sha256="e596ee155804da31793af0ee8f0e93c5fe629e246cbdca87dcae741a1e1f1205")
+    
 
     # Build deps
     with default_args(type="build"):
