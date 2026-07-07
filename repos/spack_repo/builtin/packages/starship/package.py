@@ -17,6 +17,7 @@ class Starship(CargoPackage):
 
     license("ISC", checked_by="mcmehrtens", when="@0.2.0:")
 
+    version("1.26.0", sha256="8c95e8a6c596b29ac192104eae00dd991e8c8fd66083fd2b34d6b223a5803a59")
     version("1.25.1", sha256="521306b14066ee7e332d998ef5b5b6455fdc6085c52e86b6316a7cdc37bae1d8")
     version("1.25.0", sha256="e77f3c23683eb544f6dae7171e3c80676aefc66329225bdcd58e40846bb6445f")
     version("1.24.2", sha256="b7ab0ef364f527395b46d2fb7f59f9592766b999844325e35f62c8fa4d528795")
