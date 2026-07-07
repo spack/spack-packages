@@ -22,5 +22,6 @@ class PyDonfig(PythonPackage):
     )
 
     depends_on("py-setuptools@62.6:", type="build")
-    depends_on("py-versioneer@0.28: +toml")
+
+    depends_on("py-versioneer@0.28: +toml", type="build")
     depends_on("py-pyyaml", type=("build", "run"))

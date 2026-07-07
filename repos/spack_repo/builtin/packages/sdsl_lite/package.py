@@ -35,7 +35,7 @@ class SdslLite(Package):
         # spack will fail to expand the archive on its own due to a link loop
         # expand it manually here and run the install helper
 
-        tar = which("tar")
+        tar = which("tar", required=True)
         tar("-xvf", self.stage.archive_file)
 
         with working_dir("sdsl-lite-{0}".format(spec.version.dotted)):

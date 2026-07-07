@@ -19,6 +19,10 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
 
     maintainers("etiennemlb", "haampie")
 
+    version("9.1.0")
+    version("9.0.1")
+    version("8.1.32")
+    version("8.1.31")
     version("8.1.30")
     version("8.1.28")
     version("8.1.25")
@@ -42,7 +46,8 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
     # cray-mpich 8.1.7: features MPI compiler wrappers
     variant("wrappers", default=True, when="@8.1.7:", description="enable MPI wrappers")
 
-    provides("mpi@3")
+    provides("mpi@3", when="@:8")
+    provides("mpi@4", when="@9:")
 
     canonical_names = {
         "gcc": "GNU",
@@ -105,11 +110,14 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
         spec = self.spec
         if spec.satisfies("+wrappers"):
             MpichEnvironmentModifications.setup_dependent_package(self, module, dependent_spec)
-        elif spack_cc is not None:
-            spec.mpicc = spack_cc
-            spec.mpicxx = spack_cxx
-            spec.mpifc = spack_fc
-            spec.mpif77 = spack_f77
+        else:
+            if "c" in dependent_spec:
+                spec.mpicc = dependent_spec["c"].package.cc
+            if "cxx" in dependent_spec:
+                spec.mpicxx = dependent_spec["cxx"].package.cxx
+            if "fortran" in dependent_spec:
+                spec.mpifc = dependent_spec["fortran"].package.fortran
+                spec.mpif77 = dependent_spec["fortran"].package.fortran
 
     @property
     def headers(self):

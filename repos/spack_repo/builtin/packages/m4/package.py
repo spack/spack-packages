@@ -19,6 +19,9 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    maintainers("CodingYayaToure")
+
+    version("1.4.21", sha256="38ae59f7a30bf9c108193cc5c25fbb06014f21e230c7ede2eff614f7b7c37ed8")
     version("1.4.20", sha256="6ac4fc31ce440debe63987c2ebbf9d7b6634e67a7c3279257dc7361de8bdb3ef")
     version("1.4.19", sha256="3be4a26d825ffdfda52a56fc43246456989a3630093cced3fbddf4771ee58a70")
     version("1.4.18", sha256="ab2633921a5cd38e48797bf5521ad259bdc4b979078034a3b790d7fec5493fab")
@@ -57,6 +60,18 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("diffutils", type="build")
     depends_on("libsigsegv", when="+sigsegv")
+
+    # Older versions require too many patches for newer compilers
+    with when("@:1.4.18"):
+        conflicts("%gcc@14:", msg="This version is incompatible with gcc@14:")
+        conflicts("%clang@16:", msg="This version is incompatible with clang@16")
+
+    # Fix c++17 '[[nodiscard]]' attribute ordering (fixed in 1.4.20)
+    patch(
+        "nodiscard.patch",
+        when="@1.4.19",
+        sha256="5c4071ae35e6ecf7f683ad714558a0030f21cc2b0673dde2ca6ca753cd0dbb2e",
+    )
 
     build_directory = "spack-build"
 
@@ -116,6 +131,10 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         if spec.satisfies("%intel@:18"):
             args.append("CFLAGS=-no-gcc")
 
+        # Use C11 std to ensure two-arg static_assert (no C23 for Intel Classic)
+        if spec.satisfies("@1.4.10: %intel"):
+            args.append("CFLAGS=-std=c11")
+
         if "+sigsegv" in spec:
             args.append("--with-libsigsegv-prefix={0}".format(spec["libsigsegv"].prefix))
         else:
@@ -130,7 +149,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
 
     def test_version(self):
         """ensure m4 version matches installed spec"""
-        m4 = which(self.prefix.bin.m4)
+        m4 = which(self.prefix.bin.m4, required=True)
         out = m4("--version", output=str.split, error=str.split)
         assert str(self.spec.version) in out
 
@@ -138,7 +157,7 @@ class M4(AutotoolsPackage, GNUMirrorPackage):
         """ensure m4 hello example runs"""
         test_data_dir = self.test_suite.current_test_data_dir
         hello_file = test_data_dir.join("hello.m4")
-        m4 = which(self.prefix.bin.m4)
+        m4 = which(self.prefix.bin.m4, required=True)
         out = m4(hello_file, output=str.split, error=str.split)
 
         expected = get_escaped_text_output(test_data_dir.join("hello.out"))

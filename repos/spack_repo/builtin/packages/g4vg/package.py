@@ -20,6 +20,7 @@ class G4vg(CMakePackage):
 
     version("develop", branch="main", get_full_repo=True)
 
+    version("1.0.6", sha256="81d6b2e79dcf32e4d3886966da2996924efe06f8e36ad5a6200b0bd153f690f5")
     version("1.0.5", sha256="fa44d071aaf95de596f7b22d2062830acd7e154a3bc9d67ad5a306eff64630d2")
     version("1.0.4", sha256="ac38878aedaf9fe628f498290cf4fa6cdd21980b7b83663ce8ef3c8f3ff31cb2")
     version("1.0.3", sha256="6f0920a9ad2e04a701bec636f117d4093be1e50761f091ec507efd078b659bcd")

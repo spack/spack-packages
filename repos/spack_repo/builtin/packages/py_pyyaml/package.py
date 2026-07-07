@@ -23,6 +23,7 @@ class PyPyyaml(PythonPackage):
     # (see url_for_version below). Since "spack checksum" does not use url_for_version,
     # for versions older than 6.0.2, you'll need to use "spack checksum py-pyyaml x.y.z"
     # as we changed the pypi url above to lowercase.
+    version("6.0.3", sha256="d76623373421df22fb4cf8817020cbb7ef15c725b9d5e45f17e189bfc384190f")
     version("6.0.2", sha256="d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e")
     version("6.0.1", sha256="bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43")
     version("6.0", sha256="68fb519c14306fec9720a2a5b45bc9f0c8d1b9c72adf45c37baedfcd949c35a2")
@@ -40,6 +41,9 @@ class PyPyyaml(PythonPackage):
     depends_on("python@2.7,3.5:", type=("build", "link", "run"))
     depends_on("python@3.6:", when="@6:", type=("build", "link", "run"))
     depends_on("libyaml", when="+libyaml", type="link")
+    # setuptools versions are not documented upstream, the when= constraint
+    # should probably be set to a lower version.
+    depends_on("py-setuptools@62:", type="build", when="@6.0.3:")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython", when="@6:+libyaml", type="build")
 
@@ -49,6 +53,11 @@ class PyPyyaml(PythonPackage):
     # https://github.com/yaml/pyyaml/issues/601
     # 6.0.2+ do now support Cython 3 per release notes
     conflicts("^py-cython@3:", when="@:6.0.1")
+
+    # Per pyyaml release notes, support for Python 3.13 was added in 6.0.2
+    # and support for Python 3.14 was added in 6.0.3.
+    conflicts("^python@3.13:", when="@:6.0.1")
+    conflicts("^python@3.14:", when="@:6.0.2")
 
     # With pyyaml 6.0.2, the tarfile changed from PyYAML-6.0.1.tar.gz to pyyaml-6.0.2.tar.gz
     def url_for_version(self, version):
@@ -67,6 +76,14 @@ class PyPyyaml(PythonPackage):
 
         return modules
 
+    @when("^py-pip@23.1:")
+    def config_settings(self, spec, prefix):
+        if "+libyaml" in self.spec:
+            return {"--global-option": "--with-libyaml"}
+        else:
+            return {"--global-option": "--without-libyaml"}
+
+    @when("^py-pip@:23.0")
     def global_options(self, spec, prefix):
         args = []
 
@@ -76,3 +93,9 @@ class PyPyyaml(PythonPackage):
             args.append("--without-libyaml")
 
         return args
+
+    def setup_build_environment(self, env):
+        if "+libyaml" in self.spec:
+            env.append_flags("LDFLAGS", f"-L{self.spec['libyaml'].prefix.lib}")
+            env.append_flags("LDFLAGS", f"-Wl,-rpath,{self.spec['libyaml'].prefix.lib}")
+            env.append_flags("CFLAGS", f"-I{self.spec['libyaml'].prefix.include}")

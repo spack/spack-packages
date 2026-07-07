@@ -22,24 +22,6 @@ class LibnetfilterConntrack(AutotoolsPackage):
     version("1.0.6", sha256="efcc08021284e75f4d96d3581c5155a11f08fd63316b1938cbcb269c87f37feb")
     version("1.0.5", sha256="fc9d7daf43605a73045de203bbfc0bca3e07f72d4ac61bcf656868f48692d73a")
 
-    # Versions that were initially sourced at a third party are now deprecated
-    with default_args(deprecated=True):
-        version(
-            "1.0.4",
-            sha256="68168697b9d6430b7797ddd579e13a2cef06ea15c154dfd14e18be64e035ea6e",
-            url="https://github.com/Distrotech/libnetfilter_conntrack/archive/libnetfilter_conntrack-1.0.4.tar.gz",
-        )
-        version(
-            "1.0.3",
-            sha256="e2129d7c0346c7140355d643da8e3409cbd755689ea889bc0d6dbd557f1b5671",
-            url="https://github.com/Distrotech/libnetfilter_conntrack/archive/libnetfilter_conntrack-1.0.3.tar.gz",
-        )
-        version(
-            "1.0.2",
-            sha256="97f641a2e47053bd87bc817292519d6661e8f84a22d3314724b83b9f5eaddbff",
-            url="https://github.com/Distrotech/libnetfilter_conntrack/archive/libnetfilter_conntrack-1.0.2.tar.gz",
-        )
-
     depends_on("c", type="build")  # generated
 
     depends_on("autoconf", type="build")

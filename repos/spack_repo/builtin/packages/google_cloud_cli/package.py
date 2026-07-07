@@ -8,7 +8,25 @@ from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
+# https://console.cloud.google.com/storage/browser/cloud-sdk-release
 versions = {
+    "544.0.0": {
+        "darwin": {
+            "arm": "7c8517fc6cc5127cc1545038b13994284838f41cbbd3f073dc7f611dd24ccf22",
+            "x86": "6065746cef0cc2f8afc1e840b251cda97c40f1016a3a519c966157680012c3ce",
+            "x86_64": "9e78585f1a972d0f11e3591d4d15dd73ba8a381c7b1b1dea8b3835d6842f1b11",
+        },
+        "linux": {
+            "arm": "0a2c93d98895c91bac2bb2628a0d88dfe537754adf047ec419020de46cc96e8b",
+            "x86": "33779e26bb13fce8bca09baa2f04441080636d3c03aea21b2c55bb1635f32172",
+            "x86_64": "d5663d4574b2b73bc6c848a70d8f315b6a17f14fb31952a069d6509308b9fb11",
+        },
+        "windows": {
+            "arm": "ff6dc9052b8a33f8641dd09e3cd023357f1cb2b09ddeaa8fe07e8e36e683ec30",
+            "x86": "bdbfb60f4c8a3c20625cf9d57ed16c81c99a1a900c9868272ee7cc0cd1dc19f7",
+            "x86_64": "e07f324525338863029b7dde7d8a4edd9ad1d8c99f421b00309e9bccb645ec2f",
+        },
+    },
     "504.0.1": {
         "darwin": {
             "arm": "00485cda52bcb80ae796914304dff59ec609eafe1153474746c5ac3bc576a574",
@@ -69,11 +87,11 @@ class GoogleCloudCli(Package):
 
     depends_on("c", type="build")
 
-    # RELEASE_NOTES
+    # https://docs.cloud.google.com/sdk/docs/release-notes
     with default_args(type=("build", "run")):
-        depends_on("python")
-        depends_on("python@:3.13", when="@500:")
-        depends_on("python@:3.12", when="@456:499")
+        depends_on("python@:3.14")
+        depends_on("python@:3.13", when="@:542")
+        depends_on("python@:3.12", when="@:499")
         depends_on("python@:3.10", when="@:455")
 
     def url_for_version(self, version):

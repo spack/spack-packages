@@ -33,5 +33,5 @@ class Qperf(AutotoolsPackage):
     depends_on("rdma-core", when="+verbs")
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")

@@ -57,9 +57,23 @@ class Scalasca(AutotoolsPackage):
 
         config_args.append("--with-otf2=%s" % spec["otf2"].prefix.bin)
 
-        if self.spec["mpi"].name == "openmpi":
-            config_args.append("--with-mpi=openmpi")
-        elif self.spec.satisfies("^mpich@3:"):
+        # Copied from scorep package recipe; full list of options is:
+        # --with-mpi=(bullxmpi|hp|ibmpoe|intel|intel2|intel3|intelpoe|lam|
+        #             mpibull2|mpich|mpich2|mpich3|openmpi|openmpi3|
+        #             platform|scali|sgimpt|sgimptwrapper|spectrum|sun)
+        if spec.satisfies("^[virtuals=mpi] intel-oneapi-mpi"):
+            config_args.append("--with-mpi=intel3")
+        elif (
+            spec.satisfies("^[virtuals=mpi] mpich")
+            or spec.satisfies("^[virtuals=mpi] mvapich2")
+            or spec.satisfies("^[virtuals=mpi] cray-mpich")
+        ):
             config_args.append("--with-mpi=mpich3")
+        elif spec.satisfies("^[virtuals=mpi] openmpi") or spec.satisfies(
+            "^[virtuals=mpi] hpcx-mpi"
+        ):
+            config_args.append("--with-mpi=openmpi")
+        elif spec.satisfies("~mpi"):
+            config_args.append("--without-mpi")
 
         return config_args

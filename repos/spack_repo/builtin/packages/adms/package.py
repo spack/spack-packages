@@ -33,5 +33,5 @@ class Adms(AutotoolsPackage):
 
     @when("@master")
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./bootstrap.sh")

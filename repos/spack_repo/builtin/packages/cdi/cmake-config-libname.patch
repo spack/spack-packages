@@ -1,0 +1,11 @@
+--- a/src/cmake/cdi/cdi-config.cmake.in 2025-11-17 12:11:39.815703396 +0100
++++ b/src/cmake/cdi/cdi-config.cmake.in 2025-11-17 12:12:10.614797500 +0100
+@@ -15,7 +15,7 @@
+ mark_as_advanced(CDI_INCLUDE_DIRECTORY)
+
+ find_library(CDI_LIBRARY
+-  NAMES cdilib
++  NAMES cdi
+   PATHS "${CDI_ROOT_DIR}/lib"
+   # use following line instead of previous if this file can be configured
+   # PATHS "@libdir@"

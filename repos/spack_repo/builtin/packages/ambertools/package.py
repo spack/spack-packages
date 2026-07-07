@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -13,17 +14,29 @@ class Ambertools(CMakePackage):
     and its components are mostly released under the GNU General Public
     License (GPL). A few components are included that are in the public
     domain or which have other, open-source, licenses. The libsander and
-    libpbsa libraries use the LGPL license."""
+    libpbsa libraries use the LGPL license.
+
+    A manual download is required for AmberTools. Spack will search your current
+    directory for the download files. Alternatively, add the files to a mirror
+    so that Spack can find them. For instructions on how to set up a mirror, see
+    https://spack.readthedocs.io/en/latest/mirrors.html
+    """
 
     homepage = "https://ambermd.org/AmberTools.php"
-    url = "https://ambermd.org/downloads/AmberTools22jlmrcc.tar.bz2"
+    url = f"file://{os.getcwd()}/ambertools25.tar.bz2"
+    manual_download = True
 
     maintainers("d-beltran")
 
-    version("22jlmrcc", sha256="1571d4e0f7d45b2a71dce5999fa875aea8c90ee219eb218d7916bf30ea229121")
-
+    version(
+        "22jlmrcc",
+        sha256="1571d4e0f7d45b2a71dce5999fa875aea8c90ee219eb218d7916bf30ea229121",
+        deprecated=True,
+    )
+    version("25", sha256="ac009b2adeb25ccd2191db28905b867df49240e038dc590f423edf0d84f8a13b")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("flex", type="build")
     depends_on("bison", type="build")
@@ -44,7 +57,8 @@ class Ambertools(CMakePackage):
         type=("build", "run"),
     )
     # Python dependencies
-    depends_on("python@3.8:3.10 +tkinter", type=("build", "run"))
+    depends_on("python@3.8:3.10 +tkinter", when="@22jlmrcc", type=("build", "run"))
+    depends_on("python@3.11:", when="@25:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))

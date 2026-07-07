@@ -15,6 +15,7 @@ class PyGoogleCloudCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.4.1", sha256="9b7749272a812bde58fff28868d0c5e2f585b82f37e09a1f6ed2d4d10f134073")
     version("2.3.2", sha256="b9529ee7047fd8d4bf4a2182de619154240df17fbe60ead399078c1ae152af9a")
     version("1.0.3", sha256="10750207c1a9ad6f6e082d91dbff3920443bdaf1c344a782730489a9efa802f1")
 

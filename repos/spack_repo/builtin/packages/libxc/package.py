@@ -46,6 +46,7 @@ class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("kxc", default=False, when="@5:", description="Build with third derivatives")
     variant("lxc", default=False, when="@5:", description="Build with fourth derivatives")
+    variant("fhc", default=True, when="@5.2:", description="Enforce Fermi hole curvature")
     variant(
         "fortran",
         default=True,
@@ -136,6 +137,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args = []
         args += self.enable_or_disable("shared")
         args += self.enable_or_disable("cuda")
+        args += self.enable_or_disable("fhc")
         if self.spec.satisfies("+kxc"):
             args.append("--enable-kxc")
         if self.spec.satisfies("+lxc"):
@@ -166,6 +168,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("ENABLE_CUDA", "cuda"),
+            self.define("DISABLE_FHC", spec.satisfies("~fhc")),
             self.define("DISABLE_KXC", spec.satisfies("~kxc")),
             self.define("DISABLE_LXC", spec.satisfies("~lxc")),
             self.define("BUILD_TESTING", self.pkg.run_tests),

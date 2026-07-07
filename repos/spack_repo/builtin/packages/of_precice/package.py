@@ -22,6 +22,7 @@ class OfPrecice(Package):
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("1.3.1", sha256="b5af9f9ea92c20141b93bb54d99ef1386a7caced5289f0fb0144955267e2a000")
     version("1.2.3", sha256="e5fbbc633a573cd1a952a98f7f05078a384078a8ea9cd166825148538a23683e")
     version("1.2.2", sha256="9d2d8d372b39c4e672e6311e92545d335c52c8eb3cefea34a794572523583aa5")
     version("1.2.1", sha256="12772ddea1eb0155ebf6d0a2ea4cd9700dbe63a0df016771b39591ae12efad11")
@@ -29,12 +30,16 @@ class OfPrecice(Package):
     version("1.1.0", sha256="c35340b50d1b01978635130da94a876e1fa846c80b62e45204aa727db2ef4983")
     version("1.0.0", sha256="b70e5bdce47328f789f76dc6187604f8568b4a996158b5a6f6c11f111ff10308")
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("openfoam+source")
     depends_on("precice")
     depends_on("yaml-cpp")
     depends_on("pkgconfig", type="build")
+
+    depends_on("precice@:2", when="@:1.2.3")
+    depends_on("precice@3:", when="@1.3.0:")
 
     # General patches
     common = ["change-userdir.sh", "spack-derived-Allwmake"]
@@ -73,9 +78,7 @@ export CPLUS_INCLUDE_PATH
 # Local build (for user appbin, libbin)
 . ./change-userdir.sh $PWD/{user_dir}
 #
-""".format(
-                    precice_dir=spec["precice"].prefix, user_dir=self.build_userdir
-                )
+""".format(precice_dir=spec["precice"].prefix, user_dir=self.build_userdir)
             )
 
     def build(self, spec, prefix):

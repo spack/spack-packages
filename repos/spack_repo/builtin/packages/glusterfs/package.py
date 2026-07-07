@@ -46,5 +46,5 @@ class Glusterfs(AutotoolsPackage):
         return url.format(version.up_to(1), version)
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

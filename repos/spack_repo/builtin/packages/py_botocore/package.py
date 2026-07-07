@@ -13,6 +13,11 @@ class PyBotocore(PythonPackage):
     homepage = "https://github.com/boto/botocore"
     pypi = "botocore/botocore-1.13.44.tar.gz"
 
+    license("Apache-2.0")
+
+    version("1.43.17", sha256="27f4ecb80cf1e5be70415fc4a4d3db3907d41ef8178c9df822364f275427d375")
+    version("1.42.85", sha256="2ee61f80b7724a143e16d0a85408ef5fa20b99dce7a3c8ec5d25cc8dced164c1")
+    version("1.40.64", sha256="a13af4009f6912eafe32108f6fa584fb26e24375149836c2bcaaaaec9a7a9e58")
     version("1.34.162", sha256="adc23be4fb99ad31961236342b7cbf3c0bfc62532cd02852196032e8c0d682f3")
     version("1.34.44", sha256="b0f40c54477e8e0a5c43377a927b8959a86bb8824aaef2d28db7c9c367cdefaa")
     version("1.31.41", sha256="4dad7c5a5e70940de54ebf8de3955450c1f092f43cacff8103819d1e7d5374fa")
@@ -40,19 +45,22 @@ class PyBotocore(PythonPackage):
     version("1.12.253", sha256="3baf129118575602ada9926f5166d82d02273c250d0feb313fc270944b27c48b")
     version("1.12.169", sha256="25b44c3253b5ed1c9093efb57ffca440c5099a2d62fa793e8b6c52e72f54b01e")
 
+    depends_on("python@3.10:", when="@1.43:", type=("build", "run"))
+    depends_on("python@3.9:", when="@1.38:1.42", type=("build", "run"))
     depends_on("py-setuptools", type="build")
-    depends_on("py-jmespath@0.7.1:0", type=("build", "run"), when="@:1.23")
-    depends_on("py-jmespath@0.7.1:1", type=("build", "run"))
-    depends_on("py-docutils@0.10:0.15", type=("build", "run"), when="@:1.17")
-    depends_on("py-python-dateutil@2.1:2", type=("build", "run"))
-    depends_on("py-urllib3@1.20:1.25", type=("build", "run"), when="@:1.14.11")
-    depends_on("py-urllib3@1.20:1.25", type=("build", "run"), when="@1.14.12:1.18")
-    depends_on("py-urllib3@1.25.4:1.25", type=("build", "run"), when="@1.19.0:1.19.15")
-    depends_on("py-urllib3@1.25.4:1.26", type=("build", "run"), when="@1.19.16:1.31.61")
-    depends_on("py-urllib3@1.25.4:1.26", type=("build", "run"), when="@1.31.62: ^python@:3.9")
-    depends_on(
-        "py-urllib3@1.25.4:2.0", type=("build", "run"), when="@1.31.62:1.34.62 ^python@3.10:"
-    )
-    depends_on(
-        "py-urllib3@1.25.4:2.1,2.2.1:2", type=("build", "run"), when="@1.34.63: ^python@3.10:"
-    )
+
+    with default_args(type=("build", "run")):
+        depends_on("py-jmespath@0.7.1:1", when="@1.24:")
+        depends_on("py-jmespath@0.7.1:0", when="@:1.23")
+        depends_on("py-python-dateutil@2.1:2")
+        depends_on("py-urllib3@1.25.4:2", when="@1.34.63: ^python@3.10:")
+        depends_on("py-urllib3@1.25.4:1.26", when="@1.34.63: ^python@:3.9")
+        depends_on("py-urllib3@1.25.4:2.0", when="@1.31.62:1.34.62")
+        depends_on("py-urllib3@1.25.4:1.26", when="@1.19:1.31.61")
+        depends_on("py-urllib3@1.20:1.25", when="@1.14.12:1.18")
+        depends_on("py-urllib3@1.20:1.25", when="@:1.14.11")
+
+        # Historical dependencies
+        depends_on("py-docutils@0.10:0.15", when="@:1.17")
+
+    conflicts("py-urllib3@2.2.0")

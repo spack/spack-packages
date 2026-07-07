@@ -63,7 +63,7 @@ class Podman(Package):
 
     # see https://github.com/containers/podman/issues/22121
     if _is_macos and macos_version() < Version("13"):
-        raise InstallError("podman for macOS requires Ventura or later")
+        conflicts("platform=darwin", msg="podman for macOS requires Ventura or later")
 
     # See <https://github.com/containers/podman/issues/16996> for the
     # respective issue and the suggested patch

@@ -98,7 +98,8 @@ class VtkM(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("%gcc@:4.10", msg="vtk-m requires gcc >= 5. Please install a newer version")
     conflicts("%gcc@11:", when="@:1.5.2", msg="DIY has a issue building with gcc 11")
 
-    depends_on("cuda@10.1.0:", when="+cuda_native")
+    # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 for CUDA 13
+    depends_on("cuda@10.1.0:12.9", when="+cuda_native")
     depends_on("tbb", when="+tbb")
     depends_on("mpi", when="+mpi")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
@@ -106,6 +107,7 @@ class VtkM(CMakePackage, CudaPackage, ROCmPackage):
     # VTK-m uses the default Kokkos backend
     depends_on("kokkos", when="+kokkos")
     depends_on("kokkos@3.7:3.9", when="@2.0 +kokkos")
+    conflicts("^kokkos@5:", when="+kokkos", msg="vtk-m doesn't compile with C++20")
     # VTK-m native CUDA and Kokkos CUDA backends are not compatible
     depends_on("kokkos ~cuda", when="+kokkos +cuda +cuda_native")
     depends_on("kokkos +cuda", when="+kokkos +cuda ~cuda_native")

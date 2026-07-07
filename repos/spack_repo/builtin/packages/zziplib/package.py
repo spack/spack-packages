@@ -18,11 +18,12 @@ class Zziplib(AutotoolsPackage, CMakePackage):
     homepage = "https://github.com/gdraheim/zziplib"
     url = "https://github.com/gdraheim/zziplib/archive/v0.13.69.tar.gz"
 
+    version("0.13.80", sha256="21f40d111c0f7a398cfee3b0a30b20c5d92124b08ea4290055fbfe7bdd53a22c")
     version("0.13.78", sha256="feaeee7c34f18aa27bd3da643cc6a47d04d2c41753a59369d09102d79b9b0a31")
     version("0.13.72", sha256="93ef44bf1f1ea24fc66080426a469df82fa631d13ca3b2e4abaeab89538518dc")
     version("0.13.69", sha256="846246d7cdeee405d8d21e2922c6e97f55f24ecbe3b6dcf5778073a88f120544")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     patch("python2to3.patch", when="@:0.13.69")
 

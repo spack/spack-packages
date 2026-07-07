@@ -15,6 +15,7 @@ class PyPyparsing(PythonPackage):
 
     license("MIT")
 
+    version("3.3.2", sha256="c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc")
     version("3.2.5", sha256="2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6")
     version("3.1.2", sha256="a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad")
     version("3.1.1", sha256="ede28a1a32462f5a9705e07aea48001a08f7cf81a021585011deba701581a0db")

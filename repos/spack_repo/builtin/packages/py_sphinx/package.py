@@ -16,6 +16,17 @@ class PySphinx(PythonPackage):
     license("BSD-2-Clause")
     maintainers("adamjstewart")
 
+    version("9.1.0", sha256="7741722357dd75f8190766926071fed3bdc211c74dd2d7d4df5404da95930ddb")
+    version("9.0.4", sha256="594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3")
+    version("9.0.3", sha256="98ea46e18e3fbfe222c2aebd1988b52fb20afd0dd430f8b7ce06f64d2f53300f")
+    version("9.0.2", sha256="96fe90c40bff08f0a4a05f3a8f637ded4109f442088f896a0c7392973b1df913")
+    version("9.0.1", sha256="c820d856657ce7cd41ce2c097f478ac3d7ddad9779ad83de4f0136a81ff388fd")
+    version("9.0.0", sha256="dc75216d69e00f170cb236eee17e66bcd89c4c2b5fe938ca8532fd7fe5abb23f")
+
+    version("8.3.0", sha256="3bad4314a7fa72ce92344eaaa14c42ddf3177ee6a79c227e4ff8ae07d416f584")
+    version("8.2.3", sha256="398ad29dee7f63a75888314e9424d40f52ce5a6a87ae88e7071e80af296ec348")
+    version("8.2.2", sha256="4579d91485326543df44307ba36ae6150a47fee070e89e99bec3654aac5607b8")
+    version("8.2.1", sha256="e4b932951b9c18b039f73b72e4e63afe967d90408700ec222b981ac24647c01e")
     version("8.2.0", sha256="5b0067853d6e97f3fa87563e3404ebd008fce03525b55b25da90706764da6215")
     version("8.1.3", sha256="43c1911eecb0d3e161ad78611bc905d1ad0e523e4ddc202a58a821773dc4c927")
     version("8.1.2", sha256="b19e24b51d1926567e0bb8f4fbd372e40cb19f1f62bcba91b45c9ee0cdd8874e")
@@ -107,14 +118,19 @@ class PySphinx(PythonPackage):
     version("1.3.1", sha256="1a6e5130c2b42d2de301693c299f78cc4bd3501e78b610c08e45efc70e2b5114")
 
     with default_args(type="build"):
+        depends_on("py-flit-core@3.12:", when="@9:")
+        depends_on("py-flit-core@3.11:", when="@8.2.1:")
         depends_on("py-flit-core@3.10:", when="@8.2:")
         depends_on("py-flit-core@3.7:", when="@5.2:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@9.1:")
         depends_on("python@3.11:", when="@8.2:")
         depends_on("python@3.10:", when="@8:")
         depends_on("python@3.9:", when="@7.2:")
         depends_on("python@3.8:", when="@6:")
+        # https://github.com/sphinx-doc/sphinx/issues/13701
+        depends_on("python@:3.13", when="@:8")
         # https://github.com/sphinx-doc/sphinx/issues/10440
         depends_on("python@:3.12", when="@:6.1")
         depends_on("py-sphinxcontrib-applehelp@1.0.7:", when="@8.1:")
@@ -140,7 +156,9 @@ class PySphinx(PythonPackage):
         depends_on("py-pygments@2.13:", when="@6.0.1:")
         depends_on("py-pygments@2.12:", when="@5.2:")
         depends_on("py-pygments@2:")
-        depends_on("py-docutils@0.20:0.21", when="@7.4:")
+        depends_on("py-docutils@0.21:0.22", when="@9.1:")
+        depends_on("py-docutils@0.20:0.22", when="@9.0")
+        depends_on("py-docutils@0.20:0.21", when="@7.4:8")
         depends_on("py-docutils@0.18.1:0.21", when="@7.3")
         depends_on("py-docutils@0.18.1:0.20", when="@7.0.1:7.2")
         depends_on("py-docutils@0.18.1:0.19", when="@6.2:7.0.0")
@@ -164,7 +182,7 @@ class PySphinx(PythonPackage):
         depends_on("py-requests@2.25:", when="@6:")
         depends_on("py-requests@2.5:", when="@2:")
         depends_on("py-requests@2.4:", when="@1.5.2:")
-        depends_on("py-roman-numerals-py@1:", when="@8.2:")
+        depends_on("py-roman-numerals@1:", when="@9:")
         depends_on("py-packaging@23:", when="@7.4:")
         depends_on("py-packaging@21:", when="@5.2:")
         depends_on("py-packaging", when="@1.7:")
@@ -179,6 +197,7 @@ class PySphinx(PythonPackage):
         depends_on("py-importlib-metadata@6:", when="@7.4: ^python@:3.9")
         depends_on("py-importlib-metadata@4.8:", when="@5.2: ^python@:3.9")
         depends_on("py-importlib-metadata@4.4:", when="@4.4: ^python@:3.9")
+        depends_on("py-roman-numerals-py@1:", when="@8.2:8")
         depends_on("py-setuptools", when="@:4.3")
         depends_on("py-sphinxcontrib-websupport", when="@1.6:1")
         depends_on("py-six@1.5:", when="@:1")

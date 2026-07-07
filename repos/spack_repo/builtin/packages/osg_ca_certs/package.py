@@ -21,11 +21,17 @@ class OsgCaCerts(Package):
 
     releases = [
         {
+            "osg_version": "1.141",
+            "igtf_version": "1.141",
+            "osg_commit": "cfd488b20855b42682eebcce7692ca6e25ae2e86",
+            "igtf_sha256": "956d3cd780a34d96b40b7c1c33f21fd149d1707fb8046a4e62a41e14cb75c572",
+        },
+        {
             "osg_version": "1.119",
             "igtf_version": "1.128",
             "osg_commit": "1f7abbe392e339aae28625a4016bc98d58ad7cab",
             "igtf_sha256": "1385e2206b4088cbad94264e2c252ad431f075f88a427cdee4ed523df95b9ab7",
-        }
+        },
     ]
 
     for release in releases:
@@ -46,6 +52,9 @@ class OsgCaCerts(Package):
         branch="master",
         destination="letsencrypt-certificates-master",
     )
+
+    depends_on("gmake", type="build")
+    depends_on("perl", type="build")
 
     depends_on("openssl")
 

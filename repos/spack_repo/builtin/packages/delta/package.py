@@ -26,7 +26,7 @@ class Delta(Package):
     depends_on("java@8", type=("build", "run"))
 
     def install(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("build/sbt", "compile")
         bash("build/sbt", "package")
         install_tree("target", prefix.target)

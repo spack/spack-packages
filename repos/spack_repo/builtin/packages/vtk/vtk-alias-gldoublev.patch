@@ -1,0 +1,12 @@
+diff --git a/Rendering/GL2PSOpenGL2/vtkOpenGLGL2PSHelperImpl.cxx b/Rendering/GL2PSOpenGL2/vtkOpenGLGL2PSHelperImpl.cxx
+index eece0354e1..e99c67fd08 100644
+--- a/Rendering/GL2PSOpenGL2/vtkOpenGLGL2PSHelperImpl.cxx
++++ b/Rendering/GL2PSOpenGL2/vtkOpenGLGL2PSHelperImpl.cxx
+@@ -21,6 +21,7 @@
+ #include "vtkTextRenderer.h"
+ #include "vtkTransformFeedback.h"
+ 
++#include "vtk_glad.h"
+ #include "vtk_gl2ps.h"
+ 
+ #include <algorithm>

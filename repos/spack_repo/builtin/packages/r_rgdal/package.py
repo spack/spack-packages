@@ -26,6 +26,9 @@ class RRgdal(RPackage):
 
     version("1.6-7", sha256="555cedfdadb05db90b061d4b056f96d8b7010c00ea54bc6c1bbcc7684fadae33")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.5:")
     depends_on("r-sp@1.1-0:", type=("build", "run"))

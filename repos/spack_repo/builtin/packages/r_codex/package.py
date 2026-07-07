@@ -23,12 +23,13 @@ class RCodex(RPackage):
 
     bioc = "CODEX"
 
-    version("1.32.0", commit="83926238fb49b0e95d989612a98356d20e7caf57")
-    version("1.30.0", commit="0694f11be9e0b02ab15047d01db2afce943f92d8")
-    version("1.28.0", commit="c707497bd93aa4a0516fcf3671a64997c28c9f67")
-    version("1.26.0", commit="729fd10bd42d12edcedd65b5a8fb1579e5949718")
-    version("1.22.0", commit="aa0ee4278111a46e0c790312b0526ba07aab22eb")
-    version("1.18.0", commit="9a95cccc7ff3fe587636317e21e39a07dddf80bc")
+    with default_args(get_full_repo=True):
+        version("1.32.0", commit="83926238fb49b0e95d989612a98356d20e7caf57")
+        version("1.30.0", commit="0694f11be9e0b02ab15047d01db2afce943f92d8")
+        version("1.28.0", commit="c707497bd93aa4a0516fcf3671a64997c28c9f67")
+        version("1.26.0", commit="729fd10bd42d12edcedd65b5a8fb1579e5949718")
+        version("1.22.0", commit="aa0ee4278111a46e0c790312b0526ba07aab22eb")
+        version("1.18.0", commit="9a95cccc7ff3fe587636317e21e39a07dddf80bc")
 
     depends_on("r@3.2.3:", type=("build", "run"))
     depends_on("r-rsamtools", type=("build", "run"))

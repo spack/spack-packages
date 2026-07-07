@@ -18,6 +18,10 @@ class Armadillo(CMakePackage):
 
     license("Apache-2.0")
 
+    version("15.2.2", sha256="8ee01cd4da55bc07b7bc7d3cba702ac6e8137d384d7e7185f3f4ae1f0c79704f")
+    version("15.0.3", sha256="9f55ec10f0a91fb6479ab4ed2b37a52445aee917706a238d170b5220c022fe43")
+    version("14.6.3", sha256="ad1e2aa5b90a389ab714e2d00972ce64da42582b17dd89c18935358551e6e205")
+    version("14.4.3", sha256="c3aadd59bdb0ea4339b056f29972f92ee19fdc52f68eb78d32d2e4caf4d80c3a")
     version("14.4.1", sha256="26ce272bfdc8246c278e6f8cfa53777a1efb14ef196e88082fee05da1a463491")
     version("14.4.0", sha256="023242fd59071d98c75fb015fd3293c921132dc39bf46d221d4b059aae8d79f4")
     version("14.2.3", sha256="fc70c3089a8d2bb7f2510588597d4b35b4323f6d4be5db5c17c6dba20ab4a9cc")
@@ -43,10 +47,13 @@ class Armadillo(CMakePackage):
 
     depends_on("cmake@2.8.12:", type="build")
     depends_on("cmake@3.5:", type="build", when="@14:")
+    depends_on("cmake@3.10:", type="build", when="@14.6:")
     depends_on("arpack-ng")  # old arpack causes undefined symbols
     depends_on("blas")
     depends_on("lapack")
-    depends_on("superlu@5.2:5")  # only superlu@5 is supported
+    depends_on("superlu@5.2:5", when="@:14.4")
+    depends_on("superlu@5.2:7", when="@14.6:")
+    depends_on("metis", when="^superlu@6:")
     depends_on("hdf5", when="+hdf5")
 
     # Adds an `#undef linux` to prevent preprocessor expansion of include
@@ -82,16 +89,21 @@ class Armadillo(CMakePackage):
     def cmake_args(self):
         spec = self.spec
 
+        # Build SuperLU library list including static METIS library for versions 6+
+        superlu_libs = spec["superlu"].libs
+        if spec.satisfies("^superlu@6:"):
+            superlu_libs = superlu_libs + spec["metis"].libs
+
         return [
             # ARPACK support
-            self.define("ARPACK_LIBRARY", spec["arpack-ng"].libs.joined(";")),
+            self.define("ARPACK_LIBRARY", spec["arpack-ng"].libs),
             # BLAS support
-            self.define("BLAS_LIBRARY", spec["blas"].libs.joined(";")),
+            self.define("BLAS_LIBRARY", spec["blas"].libs),
             # LAPACK support
-            self.define("LAPACK_LIBRARY", spec["lapack"].libs.joined(";")),
+            self.define("LAPACK_LIBRARY", spec["lapack"].libs),
             # SuperLU support
             self.define("SuperLU_INCLUDE_DIR", spec["superlu"].prefix.include),
-            self.define("SuperLU_LIBRARY", spec["superlu"].libs.joined(";")),
+            self.define("SuperLU_LIBRARY", superlu_libs),
             # HDF5 support
             self.define("DETECT_HDF5", "ON" if spec.satisfies("+hdf5") else "OFF"),
             # disable flexiblas support because armadillo will possibly detect system

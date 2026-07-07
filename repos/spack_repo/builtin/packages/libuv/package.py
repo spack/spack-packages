@@ -101,7 +101,7 @@ class Libuv(CMakePackage, AutotoolsPackage):
     with when("build_system=cmake"):
         # explicitly require ownlibs to indicate we're short
         # circuiting the cmake<->libuv cyclic dependency here
-        depends_on("cmake+ownlibs")
+        depends_on("cmake+ownlibs", type="build")
 
     conflicts(
         "%gcc@:4.8",

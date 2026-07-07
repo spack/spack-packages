@@ -27,6 +27,10 @@ class Matlab(Package):
     homepage = "https://www.mathworks.com/products/matlab.html"
     manual_download = True
 
+    license("LicenseRef-MathWorks-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version("R2019b", sha256="d60787263afb810283b7820c4c8d9cb1f854c7cb80f47e136643fd95bf5fbd59")
     version("R2018b", sha256="8cfcddd3878d3a69371c4e838773bcabf12aaf0362cc2e1ae7e8820845635cac")
     version("R2016b", sha256="a3121057b1905b132e5741de9f7f8350378592d84c5525faf3ec571620a336f2")
@@ -79,7 +83,7 @@ class Matlab(Package):
         # Fix broken link
         with working_dir(self.spec.prefix.bin.glnxa64):
             os.unlink("libSDL2.so")
-            os.symlink("libSDL2-2.0.so.0.2.1", "libSDL2.so")
+            symlink("libSDL2-2.0.so.0.2.1", "libSDL2.so")
 
         # Fix to random exceptions when changing display settings
         # https://www.mathworks.com/matlabcentral/answers/373897-external-monitor-throws-java-exception

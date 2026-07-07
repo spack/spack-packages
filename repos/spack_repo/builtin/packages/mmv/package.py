@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -38,11 +36,11 @@ class Mmv(MakefilePackage):
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         install("mmv", prefix.bin)
-        os.symlink(join_path(prefix.bin, "mmv"), "mad")
-        os.symlink(join_path(prefix.bin, "mmv"), "mcp")
-        os.symlink(join_path(prefix.bin, "mmv"), "mln")
+        symlink(join_path(prefix.bin, "mmv"), "mad")
+        symlink(join_path(prefix.bin, "mmv"), "mcp")
+        symlink(join_path(prefix.bin, "mmv"), "mln")
         mkdirp(prefix.man1)
         install("mmv.1", prefix.man1)
-        os.symlink(join_path(prefix.man1, "mmv.1"), "mad.1")
-        os.symlink(join_path(prefix.man1, "mmv.1"), "mcp.1")
-        os.symlink(join_path(prefix.man1, "mmv.1"), "mln.1")
+        symlink(join_path(prefix.man1, "mmv.1"), "mad.1")
+        symlink(join_path(prefix.man1, "mmv.1"), "mcp.1")
+        symlink(join_path(prefix.man1, "mmv.1"), "mln.1")

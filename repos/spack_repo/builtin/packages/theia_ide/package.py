@@ -35,7 +35,7 @@ class TheiaIde(Package):
         depends_on("libxcb")
         depends_on("libxdmcp")
         depends_on("libxkbfile")
-        depends_on("pkg-config")
+        depends_on("pkgconfig")
         depends_on("xproto")
 
         depends_on("npm@10.8.2:")

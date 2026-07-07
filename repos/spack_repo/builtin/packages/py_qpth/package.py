@@ -15,6 +15,7 @@ class PyQpth(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.0.18", sha256="ade478c6bf5ab60b7f86435c8893812c2c5938083fe8bccd775bb23d613fa3c5")
     version("0.0.15", sha256="99d8ec5a35877c18543875a7d5b7fc9af1fa9a4d4b0888011c1ecf42ad9d521c")
 
     depends_on("python", type=("build", "run"))

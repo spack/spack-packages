@@ -17,6 +17,7 @@ class PyPhylophlan(PythonPackage):
 
     license("MIT")
 
+    version("3.1.1", sha256="67df67b60b5a361ee9354db031608213d3ecfa2f9ec78104cb3e81903a8cc07a")
     version("3.0.3", sha256="d8d0082c95d58d7b11a60c1e2214b35c1a23a65675005f1393e7647d76c6a054")
     version("3.0.2", sha256="c342116662bbfbb49f0665291fc7c0be5a0d04a02a7be2da81de0322eb2256b4")
 

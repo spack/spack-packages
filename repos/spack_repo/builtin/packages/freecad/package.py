@@ -15,11 +15,14 @@ class Freecad(CMakePackage):
 
     homepage = "https://www.freecad.org/"
     url = "https://github.com/FreeCAD/FreeCAD/archive/refs/tags/0.20.2.tar.gz"
+    git = "https://github.com/FreeCAD/FreeCAD"
 
     maintainers("aweits")
 
     license("LGPL-2.0-or-later")
 
+    version("1.0.2", commit="256fc7eff3379911ab5daf88e10182c509aa8052", submodules=True)
+    version("1.0.1", commit="878f0b8c9c72c6f215833a99f2762bc3a3cf2abd", submodules=True)
     version("0.20.2", sha256="46922f3a477e742e1a89cd5346692d63aebb2b67af887b3e463e094a4ae055da")
 
     depends_on("c", type="build")  # generated
@@ -29,7 +32,7 @@ class Freecad(CMakePackage):
     depends_on("opencascade")
     depends_on("xerces-c")
     depends_on("vtk")
-    depends_on("salome-med")
+    depends_on("med")
     depends_on(
         "boost+python+filesystem+date_time+graph+iostreams+program_options+regex+serialization+system+thread"  # noqa: E501
     )

@@ -30,6 +30,9 @@ class Libpfm4(MakefilePackage):
     # Fails to build libpfm4 with intel compiler version 16 and 17
     conflicts("%intel@16:17")
 
+    # Only works on linux, by construction
+    requires("platform=linux")
+
     # Set default optimization level (-O2) if not specified.
     def flag_handler(self, name, flags):
         if name == "cflags":

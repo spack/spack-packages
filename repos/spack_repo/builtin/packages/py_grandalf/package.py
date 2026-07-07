@@ -16,6 +16,7 @@ class PyGrandalf(PythonPackage):
 
     license("EPL-1.0")
 
+    version("0.8", sha256="82d80072e5a1928bc46d94a54d2d92a38f73da0af052efc84ce34b5f4601dfa2")
     version("0.7", sha256="b3112299fe0a9123c088a16bf2f1b541d0d91199b77170a9739b569bd16a828e")
     version("0.6", sha256="928db4b90f7aff01e252a833951086b20d5958c00083411193c794de7bf59df2")
 

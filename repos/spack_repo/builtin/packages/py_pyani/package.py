@@ -19,6 +19,7 @@ class PyPyani(PythonPackage):
 
     license("MIT")
 
+    version("0.2.12", sha256="4f56b217656f53416b333b69495a4ba8cde782e64e475e1481cb2213ce6b9388")
     version("0.2.7", sha256="dbc6c71c46fbbfeced3f8237b84474221268b51170caf044bec8559987a7deb9")
     version("0.2.6", sha256="e9d899bccfefaabe7bfa17d48eef9c713d321d2d15465f7328c8984807c3dd8d")
 

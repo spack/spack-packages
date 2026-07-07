@@ -19,6 +19,7 @@ class RForcats(RPackage):
 
     license("MIT")
 
+    version("1.0.1", sha256="1de46b83b7038a293e612775197b7ffe47bd079cd2385aa7c65e98171bbd3605")
     version("1.0.0", sha256="c5bb157909d92e1e1a427c0dc5cb358ea00a43a14918a9088fa4f6630962254e")
     version("0.5.2", sha256="14a60a43183f82da0fbf42633cee446d21dcbb98a8c37361b5c8061a4da86141")
     version("0.5.1", sha256="c4fb96e874e2bedaa8a1aa32ea22abdee7906d93b5c5c7b42c0894c0c5b6a289")
@@ -27,16 +28,21 @@ class RForcats(RPackage):
     version("0.3.0", sha256="95814610ec18b8a8830eba63751954387f9d21400d6ab40394ed0ff22c0cb657")
     version("0.2.0", sha256="b5bce370422d4c0ec9509249ae645373949bfbe9217cdf50dce2bfbdad9f7cd7")
 
-    depends_on("r@3.1:", type=("build", "run"))
-    depends_on("r@3.2:", type=("build", "run"), when="@0.5.0:")
-    depends_on("r@3.4:", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-cli", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-cli@3.4.0:", type=("build", "run"), when="@1.0.0:")
-    depends_on("r-lifecycle", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-glue", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-magrittr", type=("build", "run"))
-    depends_on("r-rlang", type=("build", "run"), when="@0.4.0:")
-    depends_on("r-rlang@1.0.0:", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-tibble", type=("build", "run"))
-    depends_on("r-ellipsis", type=("build", "run"), when="@0.4.0:0.5.2")
-    depends_on("r-withr", type=("build", "run"), when="@0.5.2:0.5.2")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.1:", when="@1.0.1:")
+        depends_on("r@3.4:", when="@0.5.2:")
+        depends_on("r@3.2:", when="@0.5.0:")
+        depends_on("r@3.1:")
+
+        depends_on("r-cli@3.4.0:", when="@1.0.0:")
+        depends_on("r-cli", when="@0.5.2:")
+        depends_on("r-glue", when="@0.5.2:")
+        depends_on("r-lifecycle", when="@0.5.2:")
+        depends_on("r-magrittr")
+        depends_on("r-rlang@1.0.0:", when="@0.5.2:")
+        depends_on("r-rlang", when="@0.4.0:")
+        depends_on("r-tibble")
+
+        # Historical dependencies
+        depends_on("r-ellipsis", when="@0.4.0:0.5.2")
+        depends_on("r-withr", when="@0.5.2:0.5.2")

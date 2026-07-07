@@ -20,16 +20,23 @@ class Ratel(MakefilePackage, CudaPackage, ROCmPackage):
     license("BSD-2-Clause")
 
     version("develop", branch="main")
+    version("1.0.0", tag="v1.0.0", commit="abf2d34e77e48bd587fe3888a2a1043072ef4e77")
+    version("0.4.0", tag="v0.4.0", commit="72274845c5e50455c2d533ad3a9faeac0059e9bb")
     version("0.3.0", tag="v0.3.0", commit="ca2f3357e10b89fb274626fba104aad30c72774b")
     version("0.2.1", tag="v0.2.1", commit="043b61696a2407205fdfd898681467d1a7ff59e0")
     version("0.1.2", tag="v0.1.2", commit="94ad630bf897d231af7a94bf08257f6067258aae")
 
     depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
 
     # development version
     depends_on("libceed@develop", when="@develop")
     depends_on("petsc@main", when="@develop")
     # released versions
+    depends_on("libceed@develop", when="@1.0.0")
+    depends_on("petsc@3.24.3:3.24", when="@1.0.0")
+    depends_on("libceed@develop", when="@0.4.0")
+    depends_on("petsc@3.23.0:3.23", when="@0.4.0")
     depends_on("libceed@0.12.0:0.12", when="@0.3.0")
     depends_on("petsc@3.20.0:3.20", when="@0.3.0")
     depends_on("libceed@0.11.0:0.11", when="@0.2.1")

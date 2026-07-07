@@ -26,6 +26,8 @@ class RCvxr(RPackage):
     version("1.0-14", sha256="4d027cc2b933720ded4edcc098fde1259992673825abdb109fd84fee4af57cdb")
     version("1.0-11", sha256="e92a9638f35f4909e2a29c3b7106081e3dae7ff88b14bb6466b87fbdc80b972a")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.4.0:", type=("build", "run"))
     depends_on("r-r6", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))

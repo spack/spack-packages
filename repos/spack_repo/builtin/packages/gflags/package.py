@@ -27,4 +27,7 @@ class Gflags(CMakePackage):
     depends_on("cmake@2.8.12:", type="build")
 
     def cmake_args(self):
-        return ["-DBUILD_SHARED_LIBS=ON"]
+        return [
+            self.define("BUILD_SHARED_LIBS", True),
+            self.define("REGISTER_INSTALL_PREFIX", False),
+        ]

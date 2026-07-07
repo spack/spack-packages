@@ -4,7 +4,6 @@
 
 from spack.package import (
     BuilderWithDefaults,
-    EnvironmentModifications,
     PackageBase,
     Prefix,
     Spec,
@@ -89,9 +88,6 @@ class CargoBuilder(BuilderWithDefaults):
     def check_args(self):
         """Argument for ``cargo test`` during check phase"""
         return []
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CARGO_HOME", self.stage.path)
 
     def build(self, pkg: CargoPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``cargo install`` in the source directory"""

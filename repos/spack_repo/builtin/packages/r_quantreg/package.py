@@ -22,6 +22,7 @@ class RQuantreg(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("6.1", sha256="f42292c5ab25a15f39295b93391deafef192fe09eefde563399a64eba7e0169a")
     version("5.98", sha256="a98cb259d8cf563f66a25ae8858794e574dd40de6206816ad61b1ffeb9686a61")
     version("5.95", sha256="4b05a81eceebbd927372cefdc4912dfa70b6dfcd96528489f78e125eb32a96cc")
     version("5.94", sha256="52d585ccb972ed7726b7d083f5635d3e42915847398e00fd6e0f69a5fe1b17c1")
@@ -36,12 +37,16 @@ class RQuantreg(RPackage):
     version("5.29", sha256="bb4638e8f295579afa5c40c4de7266a6ea9221436ba4ca802f94cdb43bf20f25")
     version("5.26", sha256="9d7403f7c5ee219ec155838648401a1c4915a46a74f5774a0f6876c537ef2c87")
 
-    depends_on("r@2.6:", type=("build", "run"))
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
     depends_on("r@3.5:", type=("build", "run"), when="@5.93:")
+    depends_on("r@2.6:", type=("build", "run"))
     depends_on("r-sparsem", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))
     depends_on("r-matrixmodels", type=("build", "run"))
     depends_on("r-survival", type=("build", "run"), when="@5.93:")
     depends_on("r-mass", type=("build", "run"), when="@5.93:")
 
+    # Historical dependencies
     depends_on("r-conquer", type=("build", "run"), when="@5.82:5.86")

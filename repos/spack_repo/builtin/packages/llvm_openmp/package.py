@@ -52,11 +52,12 @@ class LlvmOpenmp(CMakePackage):
     version("9.0.0", sha256="9979eb1133066376cc0be29d1682bc0b0e7fb541075b391061679111ae4d3b5b")
     version("8.0.0", sha256="f7b1705d2f16c4fc23d6531f67d2dd6fb78a077dd346b02fed64f4b8df65c9d5")
 
+    variant("fortran", default=False, description="Build Fortran modules")
     variant("multicompat", default=True, description="Support the GNU OpenMP runtime interface.")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.13.4:", when="@12:", type="build")
     depends_on("cmake@2.8:", type="build")
@@ -85,7 +86,8 @@ class LlvmOpenmp(CMakePackage):
             os.rename(cmake_mod_dir, os.path.join(self.stage.path, "cmake"))
 
     def cmake_args(self):
-        cmake_args = []
+        cmake_args = [self.define_from_variant("LIBOMP_FORTRAN_MODULES", "fortran")]
+
         # Add optional support for both Intel and gcc compilers
         if self.spec.satisfies("+multicompat"):
             cmake_args.append("-DKMP_GOMP_COMPAT=1")

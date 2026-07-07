@@ -23,6 +23,9 @@ class Coinhsl(MesonPackage, AutotoolsPackage):
     that Spack can find it. For instructions on how to set up a
     mirror, see https://spack.readthedocs.io/en/latest/mirrors.html"""
 
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
     build_system(
         conditional("autotools", when="@b:2019.05.21"),
         conditional("meson", when="@2023:,:b"),

@@ -17,6 +17,7 @@ class Scorecard(GoPackage):
 
     license("Apache-2.0", checked_by="alecbcs")
 
+    version("5.3.0", sha256="4fbcb442071d5e463c8d20f8bc8ac52502e874e06a395887469c84335f4b21fb")
     version("5.2.1", sha256="f73d5212de4f67f143258a64664af6906aa7fcad2188b66c3beabd46871e2f62")
 
     @run_after("install")

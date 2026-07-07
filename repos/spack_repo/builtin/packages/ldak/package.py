@@ -18,11 +18,6 @@ class Ldak(Package):
     license("GPL-3.0-only")
 
     version("5.2", sha256="ba3de4eb4f2d664b3c2a54bef2eb66d1a498ac423179e97a5795d010161b1805")
-    version(
-        "5.1",
-        sha256="ae3eb8c2ef31af210e138336fd6edcd0e3a26ea9bae89fd6c0c6ea33e3a1517e",
-        deprecated=True,
-    )
 
     variant("glpk", default=False, description="Use glpk instead of vendored qsopt")
 

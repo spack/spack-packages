@@ -96,7 +96,12 @@ class NetlibLapack(CMakePackage):
 
     variant("shared", default=True, description="Build shared library version")
     variant("pic", default=True, description="Produce position-independent code")
-    variant("external-blas", default=False, description="Build lapack with an external blas")
+    variant(
+        "external-blas",
+        default=False,
+        sticky=True,
+        description="Build lapack with an external blas",
+    )
     variant("lapacke", default=True, description="Activates the build of the LAPACKE C interface")
     variant("xblas", default=False, description="Builds extended precision routines using XBLAS")
 
@@ -201,7 +206,10 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
+        )
 
     @property
     def lapack_libs(self):
@@ -218,7 +226,10 @@ class NetlibLapack(CMakePackage):
         }
         key = tuple(sorted(query_parameters))
         libraries = query2libraries[key]
-        return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
+
+        return find_libraries(
+            libraries, root=self.prefix, shared=shared, runtime=False, recursive=True
+        )
 
     @property
     def headers(self):

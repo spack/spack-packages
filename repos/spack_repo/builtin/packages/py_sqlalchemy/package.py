@@ -11,12 +11,15 @@ class PySqlalchemy(PythonPackage):
     """The Python SQL Toolkit and Object Relational Mapper"""
 
     homepage = "http://www.sqlalchemy.org/"
-    pypi = "SQLAlchemy/SQLAlchemy-1.3.9.tar.gz"
+    pypi = "sqlalchemy/sqlalchemy-2.0.43.tar.gz"
     git = "https://github.com/sqlalchemy/sqlalchemy.git"
 
     license("MIT")
 
+    version("2.0.49", sha256="d15950a57a210e36dd4cec1aac22787e2a4d57ba9318233e2ef8b2daf9ff2d5f")
+    version("2.0.43", sha256="788bfcef6787a7764169cfe9859fe425bf44559619e1d9f56f5bddf2ebf6f417")
     version("2.0.19", sha256="77a14fa20264af73ddcdb1e2b9c5a829b8cc6b8304d0f093271980e36c200a3f")
+    version("1.4.54", sha256="4470fbed088c35dc20b78a39aaf4ae54fe81790c783b3264872a0224f437c31a")
     version("1.4.49", sha256="06ff25cbae30c396c4b7737464f2a7fc37a67b7da409993b182b024cec80aed9")
     version("1.4.45", sha256="fd69850860093a3f69fefe0ab56d041edfdfe18510b53d9a2eaecba2f15fa795")
     version("1.4.44", sha256="2dda5f96719ae89b3ec0f1b79698d86eb9aecb1d54e990abb3fdd92c04b46a90")
@@ -34,22 +37,44 @@ class PySqlalchemy(PythonPackage):
         description="Python modules for database access",
         values=any_combination_of("mysql", "postgresql", "pymysql"),
     )
+    variant(
+        "asyncio",
+        default=False,
+        description="asyncio drivers to interface with the database backend",
+        when="@1.4:",
+    )
 
-    depends_on("py-setuptools@47:", when="@2:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.24:", when="@2:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@61:", when="@2.0.33:")
+        depends_on("py-setuptools@47:", when="@2:")
+        depends_on("py-setuptools")
+        depends_on("py-cython@0.29.24:", when="@2:")
 
-    depends_on("py-importlib-metadata", when="@1.4.0: ^python@:3.7", type=("build", "run"))
-    depends_on("py-greenlet", when="@1.4.0:", type=("build", "run"))
-    conflicts("^py-greenlet@0.4.17", when="@1.4.0:")
-    depends_on("py-typing-extensions@4.2.0", when="@2:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-importlib-metadata", when="@1.4.0: ^python@:3.7")
+        depends_on("py-greenlet@1:", when="@2.0.40:")
+        depends_on("py-greenlet", when="@1.4.0:")
+        depends_on("py-typing-extensions@4.6.0:", when="@2.0.25:")
+        depends_on("py-typing-extensions@4.2.0:", when="@2:")
 
-    # >=1.4.0
-    depends_on("py-mysqlclient@1.4:", when="backend=mysql @1.4:", type=("build", "run"))
-    depends_on("py-psycopg2@2.7:", when="backend=postgresql @1.4:", type=("build", "run"))
-    depends_on("py-pymysql", when="backend=pymysql @1.4:", type=("build", "run"))
+        # >=1.4.0
+        depends_on("py-mysqlclient@1.4:", when="backend=mysql @1.4:")
+        depends_on("py-psycopg2@2.7:", when="backend=postgresql @1.4:")
+        depends_on("py-pymysql", when="backend=pymysql @1.4:")
 
-    # < 1.4.0
-    depends_on("py-mysqlclient", when="backend=mysql @:1.3", type=("build", "run"))
-    depends_on("py-pymysql", when="backend=pymysql @:1.3", type=("build", "run"))
-    depends_on("py-psycopg2", when="backend=postgresql @:1.3", type=("build", "run"))
+        # < 1.4.0
+        depends_on("py-mysqlclient", when="backend=mysql @:1.3")
+        depends_on("py-pymysql", when="backend=pymysql @:1.3")
+        depends_on("py-psycopg2", when="backend=postgresql @:1.3")
+
+    conflicts("^py-greenlet@0.4.17", when="@1.4:2.0.39 ^python@:3.13")
+
+    depends_on("py-greenlet@1:", when="@2.0.40: +asyncio", type=("build", "run"))
+    depends_on("py-greenlet", when="@1.4: +asyncio", type=("build", "run"))
+
+    def url_for_version(self, version):
+        if self.spec.satisfies("@2.0.33:"):
+            name = "sqlalchemy"
+        else:
+            name = "SQLAlchemy"
+        return f"https://files.pythonhosted.org/packages/source/{name[0]}/{name}/{name}-{version}.tar.gz"

@@ -11,7 +11,7 @@ class Dlib(CMakePackage, CudaPackage):
     """toolkit containing machine learning algorithms and tools
     for creating complex software in C++ to solve real world problems"""
 
-    homepage = "http://dlib.net/"
+    homepage = "https://dlib.net/"
     url = "https://github.com/davisking/dlib/archive/v19.19.tar.gz"
     git = "https://github.com/davisking/dlib"
 

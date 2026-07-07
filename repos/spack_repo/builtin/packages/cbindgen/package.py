@@ -14,6 +14,7 @@ class Cbindgen(CargoPackage):
 
     license("MPL", checked_by="teaguesterling")
 
+    version("0.29.0", sha256="6697f449d4a15d814d991249a611af961c97e36d9344c7ced6df35c5c25b40cc")
     version("0.26.0", sha256="b45e1a64875b615702a86ac3084ef69ae32926241cd2b687a30c12474be15105")
     version("0.25.0", sha256="363ac6317a5788de8f2b0104a472a747883d4b9126fa119c681879509dbdbc28")
     version("0.24.3", sha256="5d693ab54acc085b9f2dbafbcf0a1f089737f7e0cb1686fa338c2aaa05dc7705")

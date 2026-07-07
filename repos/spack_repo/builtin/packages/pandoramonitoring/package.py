@@ -21,6 +21,9 @@ class Pandoramonitoring(CMakePackage):
     maintainers("jmcarcell", "wdconinc")
 
     version("master", branch="master")
+    version("4.0.3", sha256="00830b83b99e6da9e9f70b4bfeaebca2a1af6a10fb6dbf8324bc6e9d6f1224e2")
+    version("3.7.0", sha256="3d0ba671bdf9ed408ac410c054e67ad93d46cd8690113f1fd34ab133a1658467")
+    version("3.6.3", sha256="c6859c60b75bf467dcee983085a2613921872aabf914769d4701a0d2ee68bf97")
     version("3.6.0", sha256="5fc9574faa3e90d96e5d2a27dea46b55f844499cf21e39060acb1e4c080dec77")
     version("3.5.0", sha256="274562abb7c797194634d5460a56227444a1de07a240c88ae35ca806abcbaf60")
 
@@ -29,6 +32,7 @@ class Pandoramonitoring(CMakePackage):
 
     depends_on("root@6.18.04: +geom +opengl +x")
     depends_on("pandorasdk")
+    depends_on("pandorasdk@4:", when="@4:")
 
     # https://github.com/PandoraPFA/PandoraMonitoring/pull/13
     @when("@:3.6.0")

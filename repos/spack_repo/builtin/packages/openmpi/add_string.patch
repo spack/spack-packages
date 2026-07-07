@@ -1,0 +1,12 @@
+diff --git a/opal/mca/accelerator/rocm/accelerator_rocm_module.c b/opal/mca/accelerator/rocm/accelerator_rocm_module.c
+index 8f1bb2c..5ef7f09 100644
+--- a/opal/mca/accelerator/rocm/accelerator_rocm_module.c
++++ b/opal/mca/accelerator/rocm/accelerator_rocm_module.c
+@@ -13,6 +13,7 @@
+ #include "opal/mca/accelerator/base/base.h"
+ #include "opal/constants.h"
+ #include "opal/util/output.h"
++#include <string.h>
+ 
+ /* Accelerator API's */
+ static int mca_accelerator_rocm_check_addr(const void *addr, int *dev_id, uint64_t *flags);

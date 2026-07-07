@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.0.0-scorec",
+        commit="fbe1cc131fb1b5ac840129ecd8bd7b42ab244000",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "10.8.6-scorec",
         commit="a730c78e516d7f6cca4f8b4e4e0a5eb8020f9ad9",
         git="https://github.com/SCOREC/omega_h.git",
@@ -63,6 +68,12 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
     variant("trilinos", default=True, description="Use Teuchos and Kokkos")
+    variant(
+        "exodus",
+        default=False,
+        description="Enable use of ExodusII meshes",
+        when="@10.8.6-scorec:",
+    )
     variant("throw", default=False, description="Errors throw exceptions instead of abort")
     variant("examples", default=False, description="Compile examples")
     variant("optimize", default=True, description="Compile C++ with optimization")
@@ -70,6 +81,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("warnings", default=False, description="Compile C++ with warnings")
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
+    variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -78,6 +90,7 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
     depends_on("trilinos +kokkos", when="+trilinos")
+    depends_on("trilinos +exodus", when="+exodus")
     depends_on("kokkos", when="+kokkos")
     depends_on("zlib-api", when="+zlib")
 
@@ -91,11 +104,16 @@ class OmegaH(CMakePackage, CudaPackage):
         # Single, broken CUDA version.
         conflicts("^cuda@11.2", msg="See https://github.com/sandialabs/omega_h/issues/366")
 
+        # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+        conflicts("^cuda@13:")
+
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
+
+    conflicts("+exodus", when="~trilinos", msg="exodus requires trilinos to be enabled")
 
     def patch(self):
         if "@:9.34.8" in self.spec:
@@ -125,19 +143,22 @@ class OmegaH(CMakePackage, CudaPackage):
                 args.append("-DCMAKE_CXX_COMPILER:FILEPATH={0}".format(self.spec["mpi"].mpicxx))
         else:
             args.append("-DOmega_h_USE_MPI:BOOL=OFF")
-        if "+cuda" in self.spec:
-            args.append("-DOmega_h_USE_CUDA:BOOL=ON")
-            cuda_arch_list = self.spec.variants["cuda_arch"].value
-            cuda_arch = cuda_arch_list[0]
-            if cuda_arch != "none":
-                if self.spec.satisfies("@10:"):
-                    args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
-                else:
-                    args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
-        else:
-            args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
+        if self.spec.satisfies("@:10.10.0"):
+            if "+cuda" in self.spec:
+                args.append("-DOmega_h_USE_CUDA:BOOL=ON")
+                cuda_arch_list = self.spec.variants["cuda_arch"].value
+                cuda_arch = cuda_arch_list[0]
+                if cuda_arch != "none":
+                    if self.spec.satisfies("@10:"):
+                        args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
+                    else:
+                        args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
+            else:
+                args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
         if "+trilinos" in self.spec:
             args.append("-DOmega_h_USE_Trilinos:BOOL=ON")
+        if "+exodus" in self.spec:
+            args.append("-DOmega_h_USE_SEACASExodus:BOOL=ON")
         if "+gmsh" in self.spec:
             args.append("-DOmega_h_USE_Gmsh:BOOL=ON")
         if "+kokkos" in self.spec:
@@ -177,14 +198,14 @@ class OmegaH(CMakePackage, CudaPackage):
             raise SkipTest("Package must be installed as version 9.34.1 or later")
 
         with test_part(self, "test_mesh_create", purpose="mesh construction"):
-            exe = which(self.prefix.bin.osh_box)
+            exe = which(self.prefix.bin.osh_box, required=True)
             exe("1", "1", "1", "2", "2", "2", "box.osh")
 
         with test_part(self, "test_mesh_adapt", purpose="mesh adaptation"):
-            exe = which(self.prefix.bin.osh_scale)
+            exe = which(self.prefix.bin.osh_scale, required=True)
             actual = exe("box.osh", "100", "box_100.osh", output=str.split, error=str.split)
             assert "adapting took" in actual
 
         with test_part(self, "test_mesh_convert", purpose="mesh to vtu conversion"):
-            exe = which(self.prefix.bin.osh2vtk)
+            exe = which(self.prefix.bin.osh2vtk, required=True)
             exe("box_100.osh", "box_100_vtk")

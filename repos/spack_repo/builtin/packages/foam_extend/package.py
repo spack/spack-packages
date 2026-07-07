@@ -63,7 +63,6 @@ class FoamExtend(Package):
     # variant('int64', default=False,
     #         description='Compile with 64-bit label')
     variant("float32", default=False, description="Compile with 32-bit scalar (single-precision)")
-    variant("paraview", default=False, description="Build paraview plugins (eg, paraFoam)")
     variant("scotch", default=True, description="With scotch for decomposition")
     variant("ptscotch", default=True, description="With ptscotch for decomposition")
     variant("metis", default=True, description="With metis for decomposition")
@@ -89,7 +88,6 @@ class FoamExtend(Package):
     depends_on("parmetis", when="+parmetis")
     # mgridgen is statically linked
     depends_on("parmgridgen", when="+parmgridgen", type="build")
-    depends_on("paraview@:5.0.1", when="+paraview")
     depends_on("mesquite")
 
     # General patches
@@ -221,7 +219,7 @@ class FoamExtend(Package):
         with working_dir(parent):
             if original != target and not os.path.lexists(target):
                 os.rename(original, target)
-                os.symlink(target, original)
+                symlink(target, original)
                 tty.info("renamed {0} -> {1}".format(original, target))
 
     def patch(self):
@@ -336,18 +334,6 @@ class FoamExtend(Package):
                 "PARMGRIDGEN_INCLUDE_DIR": pkg.include,
             }
 
-        if self.spec.satisfies("+paraview"):
-            self.etc_prefs["paraview"] = {
-                "PARAVIEW_SYSTEM": 1,
-                "PARAVIEW_DIR": spec["paraview"].prefix,
-                "PARAVIEW_BIN_DIR": spec["paraview"].prefix.bin,
-            }
-            self.etc_prefs["qt"] = {
-                "QT_SYSTEM": 1,
-                "QT_DIR": spec["qt"].prefix,
-                "QT_BIN_DIR": spec["qt"].prefix.bin,
-            }
-
         # Write prefs files according to the configuration.
         # Only need prefs.sh for building, but install both for end-users
         write_environ(
@@ -427,7 +413,7 @@ class FoamExtend(Package):
         """Add symlinks into bin/, lib/ (eg, for other applications)"""
         # Make build log visible - it contains OpenFOAM-specific information
         with working_dir(self.projectdir):
-            os.symlink(
+            symlink(
                 join_path(os.path.relpath(self.install_log_path)),
                 join_path("log." + str(self.foam_arch)),
             )

@@ -27,20 +27,11 @@ class LammpsExamplePlugin(CMakePackage):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
-    version(
-        "20240829",
-        sha256="6112e0cc352c3140a4874c7f74db3c0c8e30134024164509ecf3772b305fde2e",
-        preferred=True,
-    )
+    version("20240829", sha256="6112e0cc352c3140a4874c7f74db3c0c8e30134024164509ecf3772b305fde2e")
     version("20240627", sha256="2174a99d266279823a8c57629ee1c21ec357816aefd85f964d9f859fe9222aa5")
     version("20240417", sha256="158b288725c251fd8b30dbcf61749e0d6a042807da92af865a7d3c413efdd8ea")
     version(
         "20240207.1", sha256="3ba62c2a1ed463fceedf313a1c3ea2997994aa102379a8d35b525ea424f56776"
-    )
-    version(
-        "20240207",
-        sha256="d518f32de4eb2681f2543be63926411e72072dd7d67c1670c090b5baabed98ac",
-        deprecated=True,
     )
     version("20231121", sha256="704d8a990874a425bcdfe0245faf13d712231ba23f014a3ebc27bc14398856f1")
     version(

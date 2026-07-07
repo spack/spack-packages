@@ -15,6 +15,7 @@ class PyEerepr(PythonPackage):
 
     license("MIT")
 
+    version("0.1.2", sha256="304dc23c365d6fa7cc3b07bc09cf77b565c19af86733e5deed804fdce16fb51f")
     version("0.1.0", sha256="a3c6f4d94ee19374aea2ff7ae9f2471f06649be5e18f9cb1cced8a00c2c20857")
 
     depends_on("py-hatchling", type="build")

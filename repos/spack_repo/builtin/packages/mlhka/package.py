@@ -21,7 +21,7 @@ class Mlhka(Package):
     depends_on("cxx", type="build")  # generated
 
     def install(self, spec, prefix):
-        cxx = which("c++")
+        cxx = which("c++", required=True)
         cxx("MLHKA_version{0}.cpp".format(self.version), "-o", "MLHKA")
         mkdirp(prefix.bin)
         install("MLHKA", prefix.bin)

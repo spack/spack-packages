@@ -62,8 +62,8 @@ class Archer(CMakePackage):
         test_exe = "parallel-simple"
         test_src = f"{test_exe}.c"
         with working_dir(test_dir):
-            clang = which("clang-archer")
+            clang = which("clang-archer", required=True)
             clang("-o", test_exe, test_src)
 
-            parallel_simple = which(test_exe)
+            parallel_simple = which(test_exe, required=True)
             parallel_simple()

@@ -17,15 +17,6 @@ class LibnetfilterCttimeout(AutotoolsPackage):
 
     version("1.0.1", sha256="0b59da2f3204e1c80cb85d1f6d72285fc07b01a2f5678abf5dccfbbefd650325")
 
-    # Versions that were initially sourced at a third party are now deprecated
-    with default_args(deprecated=True):
-        # This appears to be version 1.0.0
-        version(
-            "1.2-2019Q4",
-            sha256="71cebdf07a578901b160a54199062a4b4cd445e14742e2c7badc0900d8ae56b6",
-            url="https://github.com/vyos/libnetfilter-cttimeout/archive/VyOS_1.2-2019Q4.tar.gz",
-        )
-
     depends_on("c", type="build")  # generated
 
     depends_on("autoconf", type="build")

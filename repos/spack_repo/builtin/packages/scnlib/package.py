@@ -11,12 +11,13 @@ class Scnlib(CMakePackage):
     """scanf for modern C++"""
 
     homepage = "https://scnlib.dev"
-    url = "https://github.com/eliaskosunen/scnlib/archive/refs/tags/v3.0.1.tar.gz"
+    url = "https://github.com/eliaskosunen/scnlib/archive/refs/tags/v4.0.1.tar.gz"
 
     maintainers("pranav-sivaraman")
 
     license("Apache-2.0", checked_by="pranav-sivaraman")
 
+    version("4.0.1", sha256="ece17b26840894cc57a7127138fe4540929adcb297524dec02c490c233ff46a7")
     version("3.0.1", sha256="bc8a668873601d00cce6841c2d0f2c93f836f63f0fbc77997834dea12e951eb1")
 
     variant("shared", default=True, description="Build shared libs")
@@ -37,7 +38,7 @@ class Scnlib(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.16:", type="build")
 
-    depends_on("fast-float@5:")
+    depends_on("fast-float@5:6")
 
     depends_on("boost +regex cxxstd=17", when="regex-backend=Boost")
     depends_on("boost +icu", when="+icu")

@@ -25,6 +25,8 @@ class RPkgcache(RPackage):
     version("2.0.1", sha256="1add648c6f30543cbd5e43369c4d1462248d4caaedfcb588ee7b946a75d42f4f")
     version("1.3.0", sha256="bd5f460a3bee9fc1298cf9f747bc59a6b9fbed90e92454bc6ea6bf82c15b9471")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.1:", type=("build", "run"))
     depends_on("r@3.4:", type=("build", "run"), when="@2.0.2:")
     depends_on("r-callr@2.0.4.9000:", type=("build", "run"))
