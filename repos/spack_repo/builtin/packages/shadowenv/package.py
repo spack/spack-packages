@@ -21,6 +21,7 @@ class Shadowenv(CargoPackage):
 
     license("MIT")
 
+    version("3.5.1", sha256="ff81d1baa7567b7570bb1e842d6a248f2f7c42c56bfa5f4c76beeb450395017c")
     version("3.4.0", sha256="86313a5022a8e897ceb52a51479fa7a921e44cd520cf04d111ba711684791e44")
 
     depends_on("c", type="build")
