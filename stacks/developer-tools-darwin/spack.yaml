@@ -14,7 +14,7 @@ spack:
     reuse: false
   specs:
       # editors
-    - emacs+json~native+treesitter   # TODO +native not supported until gcc builds on darwin
+    - emacs~native+treesitter   # TODO +native not supported until gcc builds on darwin
     - nano
     # - neovim
     - py-pynvim

@@ -22,7 +22,7 @@ class SeqGen(MakefilePackage):
     general purpose simulator that incorporates most of the commonly used (and
     computationally tractable) models of molecular sequence evolution."""
 
-    homepage = "http://tree.bio.ed.ac.uk/software/Seq-Gen/"
+    homepage = "https://tree.bio.ed.ac.uk/software/Seq-Gen/"
     url = "https://github.com/rambaut/Seq-Gen/archive/refs/tags/1.3.4.tar.gz"
 
     version("1.3.4", sha256="092ec2255ce656a02b2c3012c32443c7d8e38c692f165fb155b304ca030cbb59")
