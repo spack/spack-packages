@@ -16,6 +16,7 @@ class PyBrainIndexer(PythonPackage):
 
     maintainers("matz-e")
 
+    version("3.1.1", sha256="114d7ce2d916051a495dd36e81221ee950d0f0cfa4381024a047c69eba43e364")
     version("3.0.0", sha256="23947519df5f87c65781d1776f02e8e17798c40c617399b02e6ecae8e09a0a72")
 
     variant("mpi", default=True, description="Enable MPI parallelism")

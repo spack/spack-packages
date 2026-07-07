@@ -1,0 +1,24 @@
+--- a/arch/Linux-x86_64.hip
++++ b/arch/Linux-x86_64.hip
+@@ -15,12 +15,15 @@ endif
+ ROCMV = $(shell export HIP_PLATFORM=$(PLATFORM); $(HIPDIR)/bin/hipconfig -v | cut -d "." -f 1,2 )
+ 
+ ifeq ($(PLATFORM),amd)
+-    # set HIPARCH targets based on ROCMV
+-    ifeq (1,$(shell echo "$(ROCMV) >= 7.1" | bc))
+-        # We're dropping gfx1030 to avoid a rocPRIM issue for now
+-        HIPARCH = "gfx906,gfx908,gfx90a,gfx942,gfx950"
+-    else
+-        HIPARCH = "gfx906,gfx908,gfx90a,gfx1030"
++    # Allow callers (e.g. package managers) to override HIPARCH.
++    # When not provided, keep the original ROCm-version-based defaults.
++    ifeq ($(HIPARCH),)
++        ifeq (1,$(shell echo "$(ROCMV) >= 7.1" | bc))
++            # We're dropping gfx1030 to avoid a rocPRIM issue for now
++            HIPARCH = "gfx906,gfx908,gfx90a,gfx942,gfx950"
++        else
++            HIPARCH = "gfx906,gfx908,gfx90a,gfx1030"
++        endif
+     endif
+ endif
+ 

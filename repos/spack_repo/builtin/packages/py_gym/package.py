@@ -19,6 +19,7 @@ class PyGym(PythonPackage):
 
     license("MIT")
 
+    version("0.26.2", sha256="e0d882f4b54f0c65f203104c24ab8a38b039f1289986803c7d02cdbe214fbcc4")
     version("0.19.0", sha256="940069b983806e1ccc400fa6d47b4e34e462accf6a4fb0acb0a5e509ad0f502d")
     version("0.18.0", sha256="a0dcd25c1373f3938f4cb4565f74f434fba6faefb73a42d09c9dddd0c08af53e")
 

@@ -13,11 +13,13 @@ class ScitokensCpp(CMakePackage):
 
     homepage = "https://github.com/scitokens/scitokens-cpp"
     url = "https://github.com/scitokens/scitokens-cpp/archive/refs/tags/v0.7.0.tar.gz"
+    git = "https://github.com/scitokens/scitokens-cpp.git"
 
     maintainers("gartung", "greenc-FNAL", "marcmengel", "vitodb")
 
     license("Apache-2.0")
 
+    version("master", branch="master")
     version("1.1.3", sha256="eeaeb06da74cae92bd03d6be4c407e4855db023f409c59540b3143069407be1f")
     version("1.1.2", sha256="07d33cb51a3ccd8460f2acebb15b35393aeccfc70e3554a73c9e5cffed6edb39")
     version("1.1.1", sha256="a9091b888fc778282caf2a6808c86f685d2411557673152d58fe53932a6c7212")
@@ -40,12 +42,13 @@ class ScitokensCpp(CMakePackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("cmake@2.6:")
-    depends_on("cmake@3.10:", when="@0.7.1:")
+    depends_on("cmake@2.6:", type="build")
+    depends_on("cmake@3.10:", type="build", when="@0.7.1:")
     depends_on("openssl")
     depends_on("sqlite")
     depends_on("curl")
     depends_on("jwt-cpp", type="build")
+    depends_on("jwt-cpp@0.7:", type="build", when="@master")
     depends_on("pkgconfig", type="build")
     depends_on("uuid", type="build")
 

@@ -1,0 +1,13 @@
+diff --git a/ThirdParty/ioss/CMakeLists.txt b/ThirdParty/ioss/CMakeLists.txt
+index 3a6348e2c031f82b90b34452b097f46b24456913..764ad351806e721c4602815518de357ef853f761 100644
+--- a/ThirdParty/ioss/CMakeLists.txt
++++ b/ThirdParty/ioss/CMakeLists.txt
+@@ -13,7 +13,7 @@ vtk_module_third_party(
+     STANDARD_INCLUDE_DIRS
+   EXTERNAL
+     PACKAGE SEACASIoss
+-    TARGETS Ioss
++    TARGETS Ioss Ionit
+     USE_VARIABLES SEACASIoss_INCLUDE_DIRS
+     STANDARD_INCLUDE_DIRS)
+ 

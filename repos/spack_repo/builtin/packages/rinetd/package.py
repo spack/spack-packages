@@ -29,5 +29,5 @@ class Rinetd(AutotoolsPackage):
         env.prepend_path("PATH", self.prefix.sbin)
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap")

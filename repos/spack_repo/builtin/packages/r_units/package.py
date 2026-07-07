@@ -23,6 +23,7 @@ class RUnits(RPackage):
 
     license("GPL-2.0-only")
 
+    version("1.0-1", sha256="09ec534a9d4ab7f171809cad1788074452f9b30620d5f54d959d799f5952fbf3")
     version("0.8-5", sha256="d95e80af760b053e10a1e33ce1f0c1280a84e84bd4b1d9c34d1fe9fc153603b1")
     version("0.8-1", sha256="d3e1ba246b4c97205bc3da3cf45d6b5bd5c196b8d421b84b4e94b2090985cd9a")
     version("0.8-0", sha256="9c46fe138e8c1c3d3a51268776412f02d09673656516148cccb71b1071beb21a")
@@ -32,8 +33,15 @@ class RUnits(RPackage):
     version("0.6-2", sha256="5e286775d0712c8e15b6ae3a533d4c4349b0f6410c2d9d897ca519c3d0e5f170")
     version("0.4-6", sha256="db383c9b7ec221a5da29a2ddf4f74f9064c44ea2102ea7e07cc1cc5bb30fa1ef")
 
-    depends_on("r@3.0.2:", type=("build", "run"))
-    depends_on("r-rcpp@0.12.10:", type=("build", "run"))
+    depends_on("cxx", type="build")  # generated
+
     depends_on("udunits", when="@0.6-0:")
 
-    depends_on("r-udunits2@0.13:", type=("build", "run"), when="@:0.5-1")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.0.2:")
+        depends_on("r@3.5.0:", when="@1.0-1:")
+        depends_on("r-rcpp@0.12.10:")
+        depends_on("r-rcpp@1.1.0:", when="@1.0-1:")
+
+        # Historical dependencies
+        depends_on("r-udunits2@0.13:", when="@:0.5-1")

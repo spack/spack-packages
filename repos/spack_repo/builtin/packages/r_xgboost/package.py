@@ -34,6 +34,9 @@ class RXgboost(RPackage):
     version("0.6-4", sha256="9fc51dd1b910c70930357f617d1ac7a74c5056e8847d4188175db27c09f9d1ed")
     version("0.4-4", sha256="b955fc3352fcdc4894178c82fd62fbaf5e099c9d794f1e9daa2dd7b3494b61ff")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@2.10:", type=("build", "run"))
     depends_on("r@2.15.1:", type=("build", "run"), when="@0.6-0:")
     depends_on("r@3.3.0:", type=("build", "run"), when="@0.6-3:")

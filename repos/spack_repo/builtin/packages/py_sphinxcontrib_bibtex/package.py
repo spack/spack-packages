@@ -12,6 +12,7 @@ class PySphinxcontribBibtex(PythonPackage):
 
     pypi = "sphinxcontrib-bibtex/sphinxcontrib-bibtex-0.3.5.tar.gz"
 
+    version("2.6.5", sha256="9b3224dd6fece9268ebd8c905dc0a83ff2f6c54148a9235fe70e9d1e9ff149c0")
     version("2.5.0", sha256="71b42e5db0e2e284f243875326bf9936aa9a763282277d75048826fef5b00eaa")
     version("2.4.2", sha256="65b023ee47f35f1f03ac4d71c824e67c624c7ecac1bb26e83623271a01f9da86")
     version("2.2.1", sha256="00d474092e04b1d941e645cf6c027632a975cd0b9337cf47d379f63a5928f334")
@@ -28,6 +29,7 @@ class PySphinxcontribBibtex(PythonPackage):
     depends_on("py-pybtex@0.17:", type=("build", "run"), when="@:1")
     depends_on("py-pybtex@0.20:", type=("build", "run"), when="@2:2.3")
     depends_on("py-pybtex@0.24:", type=("build", "run"), when="@2.4:")
+    depends_on("py-pybtex@0.25:", type=("build", "run"), when="@2.6.5:")
     depends_on("py-pybtex-docutils@0.2.0:", type=("build", "run"), when="@:1")
     depends_on("py-pybtex-docutils@0.2.2:", type=("build", "run"), when="@2:")
     depends_on("py-pybtex-docutils@1.0.0:", type=("build", "run"), when="@2.2:")
@@ -35,6 +37,17 @@ class PySphinxcontribBibtex(PythonPackage):
     depends_on("py-sphinx@1.0:", type=("build", "run"), when="@:1")
     depends_on("py-sphinx@2.0:", type=("build", "run"), when="@2.0.0:")
     depends_on("py-sphinx@2.1:", type=("build", "run"), when="@2.1.3:")
+    depends_on("py-sphinx@3.5:", type=("build", "run"), when="@2.6.5:")
     depends_on("py-oset@0.1.3:", type=("build", "run"), when="@:2.0.0")
     depends_on("py-docutils@0.8:", type=("build", "run"), when="@2.1.0:")
     depends_on("py-importlib-metadata@3.6:", when="@2.5.0: ^python@:3.9", type=("build", "run"))
+
+    conflicts("^py-docutils@0.18:0.19", when="@2.6.5")
+
+    def url_for_version(self, version):
+        url = "https://pypi.org/packages/source/s/sphinxcontrib-bibtex/sphinxcontrib{}bibtex-{}.tar.gz"
+        if version < Version("2.6.3"):
+            separator = "-"
+        else:
+            separator = "_"
+        return url.format(separator, version)

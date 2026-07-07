@@ -15,6 +15,7 @@ class PyMoreItertools(PythonPackage):
 
     license("MIT")
 
+    version("11.0.2", sha256="392a9e1e362cbc106a2457d37cabf9b36e5e12efd4ebff1654630e76597df804")
     version("10.8.0", sha256="f638ddf8a1a0d134181275fb5d58b086ead7c6a72429ad725c67503f13ba30bd")
     version("9.1.0", sha256="cabaa341ad0389ea83c17a94566a53ae4c9d07349861ecb14dc6d0345cf9ac5d")
     version("8.14.0", sha256="c09443cd3d5438b8dafccd867a6bc1cb0894389e90cb53d227456b0b0bccb750")
@@ -28,6 +29,7 @@ class PyMoreItertools(PythonPackage):
     version("4.1.0", sha256="c9ce7eccdcb901a2c75d326ea134e0886abfbea5f93e91cc95de9507c0816c44")
     version("2.2", sha256="93e62e05c7ad3da1a233def6731e8285156701e3419a5fe279017c429ec67ce0")
 
+    depends_on("python@3.10:", when="@11:", type=("build", "run"))
     depends_on("python@3.9:", when="@10.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@10:", type=("build", "run"))
     depends_on("python@3.7:", when="@9:", type=("build", "run"))

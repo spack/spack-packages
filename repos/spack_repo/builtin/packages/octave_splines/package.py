@@ -16,6 +16,9 @@ class OctaveSplines(OctavePackage, SourceforgePackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.3.5", sha256="af886877797c3a9c8a36ce7d94613c1059f79fab4883429e7b32a3b01e03d7a6")
     version("1.3.3", sha256="0a4bf9544b1fedb4aed4222eff1333928b0e3c903f140822eb857585e0d5919b")
     version("1.3.1", sha256="f9665d780c37aa6a6e17d1f424c49bdeedb89d1192319a4e39c08784122d18f9")
+
+    depends_on("cxx", type="build")  # generated
     extends("octave@3.6.0:")

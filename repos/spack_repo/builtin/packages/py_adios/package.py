@@ -29,18 +29,18 @@ class PyAdios(PythonPackage):
 
     for v in ["1.13.1", "develop"]:
         depends_on(
-            "adios@{0} ~mpi".format(v), when="@{0} ~mpi".format(v), type=["build", "link", "run"]
+            "adios@{0} ~mpi".format(v), when="@{0} ~mpi".format(v), type=("build", "link", "run")
         )
         depends_on(
-            "adios@{0} +mpi".format(v), when="@{0} +mpi".format(v), type=["build", "link", "run"]
+            "adios@{0} +mpi".format(v), when="@{0} +mpi".format(v), type=("build", "link", "run")
         )
 
     # pip silently replaces distutils with setuptools
     depends_on("py-setuptools", type="build")
-    depends_on("py-numpy", type=["build", "run"])
+    depends_on("py-numpy", type=("build", "run"))
     depends_on("mpi", when="+mpi")
-    depends_on("py-mpi4py", type=["run"], when="+mpi")
-    depends_on("py-cython", type=["build"])
+    depends_on("py-mpi4py", type="run", when="+mpi")
+    depends_on("py-cython", type="build")
     depends_on("gmake", type="build")
 
     build_directory = "wrappers/numpy"

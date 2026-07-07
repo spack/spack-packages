@@ -19,6 +19,7 @@ class Bmi(AutotoolsPackage):
     license("LGPL-2.1-or-later")
 
     version("main", branch="main")
+    version("2.8.2", sha256="ac61deafd5e28a74f35e4a4d7005bbdadf98bb56b58a44281c8241d02701cbca")
     version("2.8.1", sha256="28aa4341f0456cf20ee762f712d7c749ab8f864003329f9327c18ea03fc7ffdb")
 
     depends_on("c", type="build")  # generated

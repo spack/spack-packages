@@ -29,6 +29,10 @@ class RBigalgebra(RPackage):
     version("1.0.0", sha256="f186b603bd660be0cc5b7a52c943e23e92fef264f0bc96a8858e38df6cfc4085")
     version("0.8.4.2", sha256="29962468cbfa6416f8628563d5ed8c9f76089190311ff1c618f099ee8d9eea75")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r-bigmemory@4.0.0:", type=("build", "run"))
     depends_on("r-bh", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "run"), when="@1.0.0:")

@@ -15,6 +15,7 @@ class PyNbmake(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.5.5", sha256="239dc868ea13a7c049746e2aba2c229bd0f6cdbc6bfa1d22f4c88638aa4c5f5c")
     version("1.4.3", sha256="9afc46ba05cc22f5a78047a758dca32386c95eaaa41501b25ce108cf733d9622")
     version("1.4.1", sha256="7f602ba5195e80e4f2527944bb06d3b4df0d1520e73ba66126b51132b1f646ea")
     version("1.4", sha256="2d3b97b83a8a378d5d828ad7b5412e509b82ed883662af16533236c909cfa20a")
@@ -35,21 +36,30 @@ class PyNbmake(PythonPackage):
     version("0.6", sha256="20dcec145507eec664d61ab36fa248797de6348e7013c9547028077bc46acde2")
     version("0.5", sha256="da9bf1bbc377c9d1d697f99952834017c39b4983e7e482a038dec705955a8ae9")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-poetry-core@1:", type="build")
-    depends_on("py-pytest@6.1.0:", when="@1.2.1:", type=("build", "run"))
-    depends_on("py-pytest@6.1.0:6", when="@0.10:1.2.0", type=("build", "run"))
-    depends_on("py-pytest@6.1.2:6", when="@:0.9", type=("build", "run"))
-    depends_on("python@3.7.0:3", when="@1.3:", type=("build", "run"))
-    depends_on("python@3.6.1:3", when="@:1.2", type=("build", "run"))
-    depends_on("py-nbclient@0.6.6:0.6", when="@1.3.1:", type=("build", "run"))
-    depends_on("py-nbclient@0.5.13:0.5", when="@1.3.0", type=("build", "run"))
-    depends_on("py-nbclient@0.5.5:0.5", when="@1.2", type=("build", "run"))
-    depends_on("py-nbclient@0.3:0", when="@:1.1", type=("build", "run"))
-    depends_on("py-nbformat@5.0.8:5", type=("build", "run"))
-    depends_on("py-pygments@2.7.3:2", type=("build", "run"))
-    depends_on("py-ipykernel@5.4.0:", when="@0.7:", type=("build", "run"))
-    depends_on("py-ipykernel@5.4.0:5", when="@0.5", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-hatchling", when="@1.5.5:")
 
-    # Historical dependencies
-    depends_on("py-pydantic@1.7.2:1", when="@:1.4.1", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-poetry-core@1:", when="@:1.5.4")
+        depends_on("py-setuptools", when="@:1.5.4")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-pytest@6.1.0:", when="@1.2.1:")
+        depends_on("py-pytest@6.1.0:6", when="@0.10:1.2.0")
+        depends_on("py-pytest@6.1.2:6", when="@:0.9")
+        depends_on("py-nbclient@0.6.6:", when="@1.5.5:")
+        depends_on("py-nbclient@0.6.6:0.6", when="@1.3.1:1.5.4")
+        depends_on("py-nbclient@0.5.13:0.5", when="@1.3.0")
+        depends_on("py-nbclient@0.5.5:0.5", when="@1.2")
+        depends_on("py-nbclient@0.3:0", when="@:1.1")
+        depends_on("py-nbformat@5.0.4:", when="@1.5.5:")
+        depends_on("py-nbformat@5.0.8:5", when="@:1.5.4")
+        depends_on("py-pygments@2.7.3:", when="@1.5.5:")
+        depends_on("py-pygments@2.7.3:2", when="@:1.5.4")
+        depends_on("py-ipykernel@5.4.0:", when="@0.7:")
+        depends_on("py-ipykernel@5.4.0:5", when="@0.5")
+
+        # Historical dependencies
+        depends_on("py-pydantic@1.7.2:1", when="@:1.4.1")
+        # https://github.com/treebeardtech/nbmake/pull/112
+        depends_on("py-setuptools@:81", when="@:1.4.4")

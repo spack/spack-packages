@@ -19,12 +19,14 @@ class Openmc(CMakePackage):
     programming model."""
 
     homepage = "https://docs.openmc.org/"
-    url = "https://github.com/openmc-dev/openmc/tarball/v0.15.0"
+    url = "https://github.com/openmc-dev/openmc/tarball/v0.15.2"
     git = "https://github.com/openmc-dev/openmc.git"
     maintainers("paulromano")
 
     version("develop", branch="develop", submodules=True)
     version("master", branch="master", submodules=True)
+    version("0.15.2", commit="e23760b0264c66fb7bb373aa0596801e5209d920", submodules=True)
+    version("0.15.1", commit="906548db20d4ce3c322e7317992c73b51daeb11d", submodules=True)
     version("0.15.0", commit="55b52b7ef3c9415ce045712132bf31c2a013d8c8", submodules=True)
     version("0.14.0", commit="fa2330103de61a864c958d1a7250f11e5dd91468", submodules=True)
     version("0.13.3", commit="27cb0dc97960fe6d750eb5a93584a9a0ca532ac8", submodules=True)

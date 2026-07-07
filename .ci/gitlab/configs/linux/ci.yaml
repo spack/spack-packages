@@ -4,7 +4,7 @@ ci:
       before_script-:
       # Test package relocation on linux using a modified prefix
       # This is not well supported on MacOS (https://github.com/spack/spack/issues/37162)
-      - - spack config add "config:install_tree:projections:${SPACK_JOB_SPEC_PKG_NAME}:'morepadding/{architecture.platform}-{architecture.target}/{name}-{version}-{hash}'"
+      - - spack config add "config:install_tree:projections:${SPACK_JOB_SPEC_PKG_NAME}/${SPACK_JOB_SPEC_DAG_HASH}:'morepadding/{architecture.platform}-{architecture.target}/{name}-{version}-{hash}'"
   - match_behavior: first
     submapping:
     - match:
@@ -20,6 +20,7 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 48G
 
     - match:
+      - llvm-amdgpu
       - nvhpc
       build-job:
         tags: [ "spack", "huge" ]
@@ -31,6 +32,7 @@ ci:
 
     - match:
       - py-tensorflow
+      - rccl
       build-job:
         tags: [ "spack", "huge" ]
         variables:
@@ -40,8 +42,7 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 32G
 
     - match:
-      - py-jaxlib
-      - py-torchaudio
+      - dealii
       build-job:
         tags: [ "spack", "huge" ]
         variables:
@@ -51,7 +52,7 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 29G
 
     - match:
-      - dealii
+      - py-jaxlib
       build-job:
         tags: [ "spack", "huge" ]
         variables:
@@ -61,7 +62,9 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 26G
 
     - match:
+      - ginkgo
       - llvm
+      - py-torchaudio
       - rocblas
       build-job:
         tags: [ "spack", "huge" ]
@@ -72,7 +75,8 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 21G
 
     - match:
-      - ginkgo
+      - trilinos
+      - vtk-m
       build-job:
         tags: [ "spack", "huge" ]
         variables:
@@ -82,12 +86,12 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 18G
 
     - match:
-      - llvm-amdgpu
+      - acts
+      - cuda
+      - dd4hep
       - openfoam
-      - root
       - rust
       - salmon
-      - trilinos
       build-job:
         tags: [ "spack", "large" ]
         variables:
@@ -97,25 +101,22 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 15G
 
     - match:
-      - acts
       - ascent
-      - axom
       - cistem
-      - cuda
       - dray
       - ecp-data-vis-sdk
-      - hdf5
-      - mfem
+      - kokkos
+      - legion
       - mpich
       - openturns
       - paraview
-      - raja
-      - rocfft
+      - qt
       - relion
       - rocsolver
-      - strumpack
+      - root
       - sundials
-      - vtk
+      - tasmanian
+      - upcxx
       - vtk-h
       build-job:
         tags: [ "spack", "large" ]
@@ -126,10 +127,21 @@ ci:
           KUBERNETES_MEMORY_REQUEST: 12G
 
     - match:
+      - adios2
+      - cabana
+      - camp
       - gaudi
+      - geant4
+      - hipblas
       - hpx
+      - lammps
+      - mesa
+      - py-cinemasci
       - qt-declarative
-      - vtk-m
+      - strumpack
+      - sundials
+      - tau
+      - umpire
       build-job:
         tags: [ "spack", "large" ]
         variables:
@@ -139,10 +151,32 @@ ci:
           KUBERNETES_MEMORY_REQUEST: "9G"
 
     - match:
-      - dd4hep
+      - amrex
+      - axom
+      - blaspp
+      - caliper
+      - chai
+      - ecp-data-vis-sdk
       - gcc
+      - hdf5
+      - heffte
+      - hpctoolkit
+      - hypre
+      - lapackpp
+      - mfem
+      - omega-h
+      - openmpi
+      - parsec
+      - petsc
       - precice
+      - qt-base
+      - raja
       - rivet
+      - rocsparse
+      - superlu-dist
+      - visit
+      - vtk
+      - zfp
       build-job:
         tags: [ "spack", "large" ]
         variables:
@@ -152,9 +186,14 @@ ci:
           KUBERNETES_MEMORY_REQUEST: "8G"
 
     - match:
+      - hwloc
+      - kokkos-kernels
+      - kokkos-nvcc-wrapper
       - lbann
       - magma
-      - qt
+      - papi
+      - rocfft
+      - slepc
       build-job:
         tags: [ "spack", "large" ]
         variables:
@@ -165,9 +204,8 @@ ci:
 
     - match:
       - dyninst
-      - geant4
       - intel-tbb
-      - qt-base
+      - sherpa
       build-job:
         tags: [ "spack", "medium" ]
         variables:
@@ -178,12 +216,8 @@ ci:
 
     - match:
       - cmake
-      - hwloc
-      - kokkos-kernels
       - openblas
-      - rocsparse
       - slate
-      - visit
       build-job:
         tags: [ "spack", "medium" ]
         variables:
@@ -193,12 +227,8 @@ ci:
           KUBERNETES_MEMORY_REQUEST: "5G"
 
     - match:
-      - camp
-      - hipblas
       - oce
       - parallel-netcdf
-      - sherpa
-      - zfp
       build-job:
         tags: [ "spack", "medium" ]
         variables:
@@ -208,51 +238,31 @@ ci:
           KUBERNETES_MEMORY_REQUEST: "3G"
 
     - match:
-      - adios2
-      - amrex
       - archer
       - autoconf-archive
-      - axom
       - blt
       - boost
       - butterflypack
-      - cabana
-      - caliper
       - curl
       - datatransferkit
       - dray
+      - eigen
       - fortrilinos
       - gettext
-      - hdf5
-      - hpctoolkit
       - hydrogen
-      - hypre
-      - kokkos
-      - lammps
-      - legion
       - libxml2
       - libzmq
       - llvm-openmp-ompt
-      - mesa
-      - mfem
       - mvapich2
-      - openmpi
       - openpmd-api
-      - petsc
       - pygmo
       - py-petsc4py
       - py-scipy
-      - raja
       - slurm
       - sqlite
-      - sundials
-      - tasmanian
-      - umpire
-      - vtk
       - vtk-h
       - warpx
       - warpx +python
-      - zfp
       build-job:
         tags: [ "spack", "medium" ]
         variables:
@@ -264,33 +274,21 @@ ci:
     - match:
       - ascent
       - binutils
-      - blaspp
-      - chai
       - conduit
       - double-conversion
-      - ecp-data-vis-sdk
-      - eigen
       - faodel
       - fftw
-      - heffte
-      - lapackpp
       - libtool
       - mpich
       - nasm
-      - omega-h
+      - ninja
       - pagmo2
-      - papi
-      - parsec
       - pegtl
       - pdt
       - plumed
       - pumi
       - py-statsmodels
-      - slepc
       - strumpack
-      - superlu-dist
-      - tau
-      - upcxx
       build-job:
         tags: [ "spack", "medium" ]
         variables:
@@ -300,7 +298,6 @@ ci:
           KUBERNETES_MEMORY_REQUEST: "2G"
 
     - match:
-      - kokkos-nvcc-wrapper
       - netlib-lapack
       build-job:
         tags: [ "spack", "medium" ]
@@ -317,7 +314,6 @@ ci:
       - netlib-scalapack
       - parallelio
       - py-beniget
-      - py-cinemasci
       - py-ipython-genutils
       - py-packaging
       - samrai
@@ -340,7 +336,6 @@ ci:
       - bison
       - blt
       - bzip2
-      - camp
       - curl
       - czmq
       - darshan-util
@@ -389,7 +384,6 @@ ci:
       - metis
       - mpfr
       - ncurses
-      - ninja
       - numactl
       - openjdk
       - openjpeg

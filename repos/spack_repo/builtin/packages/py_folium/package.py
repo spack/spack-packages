@@ -15,6 +15,7 @@ class PyFolium(PythonPackage):
 
     license("MIT")
 
+    version("0.20.0", sha256="a0d78b9d5a36ba7589ca9aedbd433e84e9fcab79cd6ac213adbcff922e454cb9")
     version("0.19.4", sha256="431a655b52a9bf3efda336f2be022103f0106504a0599e7c349efbfd30bafda6")
     version("0.16.0", sha256="2585ee9253dc758d3a365534caa6fb5fa0c244646db4dc5819afc67bbd4daabb")
 

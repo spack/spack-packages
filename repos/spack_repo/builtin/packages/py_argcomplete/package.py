@@ -15,6 +15,7 @@ class PyArgcomplete(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.6.3", sha256="62e8ed4fd6a45864acc8235409461b72c9a28ee785a2011cc5eb78318786c89c")
     version("3.6.2", sha256="d0519b1bc867f5f4f4713c41ad0aba73a4a5f007449716b16f385f2166dc6adf")
     version("3.5.0", sha256="4349400469dccfb7950bb60334a680c58d88699bff6159df61251878dc6bf74b")
     version("3.1.6", sha256="3b1f07d133332547a53c79437527c00be48cca3807b1d4ca5cab1b26313386a6")

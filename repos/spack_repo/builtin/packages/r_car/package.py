@@ -17,6 +17,8 @@ class RCar(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("3.1-5", sha256="27ab23cff7c5c123ffe8a2475b5a3b4d778414a28dde0a59d5cfbbefa08c99fb")
+    version("3.1-3", sha256="59f2c024395995f662a8f64fe807765fc8507f1d2f7a8ab8a1c4f66a63be49bf")
     version("3.1-2", sha256="89263491977ac8e9406b2f4b1638bf06c7ddd1b0e0e3ecda4be61420474674c8")
     version("3.1-1", sha256="8fc55815eed7e46a32b54da9e0bfa4b74a8d082d73d896e3372f2a413b6bd2bc")
     version("3.1-0", sha256="bd52b4eaea46ce828fccd93445301d06ebd265e2ffff796064875a8c0f0aea21")
@@ -29,18 +31,21 @@ class RCar(RPackage):
     version("2.1-4", sha256="fd39cf1750cb560a66623fea3fa9e6a94fc24e3dc36367aff24df7d0743edb28")
     version("2.1-2", sha256="8cc3e57f172c8782a08960b508906d3201596a21f4b6c1dab8d4e59353093652")
 
-    depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@3.0-3:")
+    depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r-cardata@3.0-0:", type=("build", "run"), when="@3.0:")
     depends_on("r-abind", type=("build", "run"), when="@3.0:")
+    depends_on("r-formula", type=("build", "run"), when="@3.1-3:")
     depends_on("r-mass", type=("build", "run"))
     depends_on("r-mgcv", type=("build", "run"))
     depends_on("r-nnet", type=("build", "run"))
     depends_on("r-pbkrtest@0.4-4:", type=("build", "run"))
     depends_on("r-quantreg", type=("build", "run"))
-    depends_on("r-rio", type=("build", "run"), when="@3.0:3.0-11")
-    depends_on("r-lme4", type=("build", "run"), when="@3.0:")
     depends_on("r-lme4@1.1-27.1:", type=("build", "run"), when="@3.0-11:")
+    depends_on("r-lme4", type=("build", "run"), when="@3.0:")
     depends_on("r-nlme", type=("build", "run"), when="@3.0:")
     depends_on("r-scales", type=("build", "run"), when="@3.1-1:")
+
+    # Historical dependencies
+    depends_on("r-rio", type=("build", "run"), when="@3.0:3.0-11")
     depends_on("r-maptools", type=("build", "run"), when="@3.0:3.1-0")

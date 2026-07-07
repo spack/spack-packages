@@ -15,6 +15,7 @@ class PyFastcluster(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.2.6", sha256="aab886efa7b6bba7ac124f4498153d053e5a08b822d2254926b7206cdf5a8aa6")
     version("1.1.26", sha256="a202f44a3b06f5cf9cdba3c67d6c523288922d6e6a1cdf737292f93759aa82f7")
 
     depends_on("cxx", type="build")  # generated

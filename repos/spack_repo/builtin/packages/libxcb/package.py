@@ -28,12 +28,6 @@ class Libxcb(AutotoolsPackage, XorgPackage):
     version("1.16", sha256="4348566aa0fbf196db5e0a576321c65966189210cb51328ea2bb2be39c711d71")
     version("1.15", sha256="cc38744f817cf6814c847e2df37fcb8997357d72fa4bcbc228ae0fe47219a059")
     version("1.14", sha256="a55ed6db98d43469801262d81dc2572ed124edc3db31059d4e9916eb9f844c34")
-    version(
-        "1.13",
-        sha256="0bb3cfd46dbd90066bf4d7de3cad73ec1024c7325a4a0cbf5f4a0d4fa91155fb",
-        url="https://xcb.freedesktop.org/dist/libxcb-1.13.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 
@@ -47,7 +41,6 @@ class Libxcb(AutotoolsPackage, XorgPackage):
     depends_on("xcb-proto@1.16:", when="@1.16", type="build")
     depends_on("xcb-proto@1.15:", when="@1.15", type="build")
     depends_on("xcb-proto@1.14:", when="@1.14", type="build")
-    depends_on("xcb-proto@1.13:", when="@1.13", type="build")
 
     depends_on("python", type="build")
     depends_on("pkgconfig", type="build")

@@ -16,6 +16,7 @@ class PyNptyping(PythonPackage):
 
     license("MIT")
 
+    version("2.5.0", sha256="7f061750bcbda8ce3926fc22c22c372c9cebfdb9b889376c71cb5d911173660d")
     version("2.4.1", sha256="1c1b2b08220d271f3e52dbf2bd9190e4dd15b3c04abfcf7a04ec533d3cc9fdab")
     version("1.4.1", sha256="bbcedb967f8be1302dffdd999eb531b99712c6914078294b4411758d5899b3b6")
     version("1.0.1", sha256="a00e672bfdaddc99aa6b25dd1ae89d7d58d2b76e8ad099bd69577bac2598589f")

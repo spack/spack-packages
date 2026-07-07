@@ -27,6 +27,9 @@ class RSeuratobject(RPackage):
     version("4.1.0", sha256="9ca406cb3bd95c588e1a81c5383e3173a446cc0667142b139ca32685b4b20a05")
     version("4.0.4", sha256="585261b7d2045193accf817a29e2e3356e731f57c554bed37d232fa49784088c")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@4.0.0:", type=("build", "run"))
     depends_on("r@4.1.0:", when="@5.0.2:", type=("build", "run"))
     depends_on("r-future", type=("build", "run"), when="@4.1.0:")

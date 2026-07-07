@@ -36,6 +36,8 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
     # TODO: patches below are not managed by the GNUMirrorPackage base class
     for verstr, num, checksum in [
         ("8.3", "001", "21f0a03106dbe697337cd25c70eb0edbaa2bdb6d595b45f83285cdd35bac84de"),
+        ("8.3", "002", "e27364396ba9f6debf7cbaaf1a669e2b2854241ae07f7eca74ca8a8ba0c97472"),
+        ("8.3", "003", "72dee13601ce38f6746eb15239999a7c56f8e1ff5eb1ec8153a1f213e4acdb29"),
         ("8.2", "001", "bbf97f1ec40a929edab5aa81998c1e2ef435436c597754916e6a5868f273aff7"),
         ("8.2", "002", "e06503822c62f7bc0d9f387d4c78c09e0ce56e53872011363c74786c7cd4c053"),
         ("8.2", "003", "24f587ba46b46ed2b1868ccaf9947504feba154bb8faabd4adaea63ef7e6acb0"),
@@ -76,6 +78,13 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
             when=f"@{ver}",
             sha256=checksum,
         )
+
+    def configure_args(self):
+        # The wcwidth_broken test is a runtime check that requires an installed en_US.UTF-8 locale.
+        # In minimal environments that's lacking, resulting in a false positive, leading to
+        # non-deterministic builds. The test was meant to work around bugs in ancient libc and is
+        # no longer relevant.
+        return ["bash_cv_wcwidth_broken=no"]
 
     def build(self, spec, prefix):
         make("SHLIB_LIBS=" + spec["ncurses:wide"].libs.ld_flags)

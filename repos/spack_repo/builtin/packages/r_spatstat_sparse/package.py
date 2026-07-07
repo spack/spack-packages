@@ -22,6 +22,8 @@ class RSpatstatSparse(RPackage):
     version("2.1-1", sha256="9a35ad69715b767b3ae60b02dce05ccf108fcccdf95bbc8f7d02557bcbde7303")
     version("2.1-0", sha256="0019214418668cba9f01ee5901ed7f4dba9cfee5ff62d5c7e1c914adfbea0e91")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))
     depends_on("r-abind", type=("build", "run"))

@@ -33,6 +33,10 @@ class IntelTbb(CMakePackage, MakefilePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("2023.0.0", sha256="f8767b971ec6aea25dde58ae0f593e94e7aa75a739a86f67967012f69e2199b1")
+    version("2022.3.0", sha256="01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a")
+    version("2022.2.0", sha256="f0f78001c8c8edb4bddc3d4c5ee7428d56ae313254158ad1eec49eced57f6a5b")
+    version("2022.1.0", sha256="ed067603ece0dc832d2881ba5c516625ac2522c665d95f767ef6304e34f961b5")
     version("2022.0.0", sha256="e8e89c9c345415b17b30a2db3095ba9d47647611662073f7fbf54ad48b7f3c2a")
     version("2021.13.0", sha256="3ad5dd08954b39d113dc5b3f8a8dc6dc1fd5250032b7c491eb07aed5c94133e1")
     version("2021.12.0", sha256="c7bb7aa69c254d91b8f0041a71c5bcc3936acb64408a1719aec0b2b7639dd84f")
@@ -110,7 +114,7 @@ class IntelTbb(CMakePackage, MakefilePackage):
     variant(
         "cxxstd",
         default="default",
-        values=("default", "98", "11", "14", "17"),
+        values=("default", "98", "11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building.",
     )
@@ -136,7 +140,7 @@ class IntelTbb(CMakePackage, MakefilePackage):
 
     # Patch and conflicts for GCC 13 support (#1031).
     patch("gcc_13-2021-v2.patch", when="@2021.1:2021.9")
-    conflicts("%gcc@13", when="@:2021.3")
+    conflicts("%gcc@13:", when="@:2021.3")
 
     # Patch cmakeConfig.cmake.in to find the libraries where we install them.
     patch("tbb_cmakeConfig-2019.5.patch", level=0, when="@2019.5:2021.0")
@@ -211,8 +215,13 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
             self.define("TBB_STRICT", False),
             self.define("TBB_TEST", False),
         ]
+
+        if spec.satisfies("@2021.6.0:"):
+            options.append(self.define_from_variant("TBB_ENABLE_IPO", "ipo"))
+
         if spec.variants["cxxstd"].value != "default":
             options.append(self.define("CMAKE_CXX_STANDARD", spec.variants["cxxstd"].value))
+
         return options
 
     @run_after("install")

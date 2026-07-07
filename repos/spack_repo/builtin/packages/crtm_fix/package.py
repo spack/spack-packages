@@ -26,7 +26,11 @@ class CrtmFix(Package):
         "2.4.0.1_emc", sha256="6e4005b780435c8e280d6bfa23808d8f12609dfd72f77717d046d4795cac0457"
     )
     version("2.4.0_emc", sha256="d0f1b2ae2905457f4c3731746892aaa8f6b84ee0691f6228dfbe48917df1e85e")
-    version("2.3.0_emc", sha256="1452af2d1d11d57ef3c57b6b861646541e7042a9b0f3c230f9a82854d7e90924")
+    version(
+        "2.3.0_emc",
+        sha256="1452af2d1d11d57ef3c57b6b861646541e7042a9b0f3c230f9a82854d7e90924",
+        deprecated=True,
+    )
 
     variant("big_endian", default=True, description="Install big_endian fix files")
     variant("little_endian", default=False, description="Install little endian fix files")

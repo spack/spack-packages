@@ -20,6 +20,7 @@ class W3emc(CMakePackage):
     maintainers("AlexanderRichert-NOAA", "Hang-Lei-NOAA", "edwardhartnett")
 
     version("develop", branch="develop")
+    version("2.13.0", sha256="6718345ace4fc32a940bb30ab9477ea114148d9387d4f5821b655b4f10d28696")
     version("2.12.0", sha256="77c0732541ade1deb381f5a208547ccc36e65efa91c8f7021b299b20a6ae0d27")
     version("2.11.0", sha256="53a03d03421c5da699b026ca220512ed494a531b83284693f66d2579d570c43b")
     version("2.10.0", sha256="366b55a0425fc3e729ecb9f3b236250349399fe4c8e19f325500463043fd2f18")
@@ -54,6 +55,7 @@ class W3emc(CMakePackage):
     )
 
     conflicts("+shared +extradeps", msg="Shared library cannot be built with unknown dependencies")
+    conflicts("^[virtuals=fortran] llvm", when="@:2.12", msg="LLVM requires version 2.13 or later")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")

@@ -42,6 +42,7 @@ class N2p2(MakefilePackage):
     depends_on("doxygen", type="build", when="+doc")
     depends_on("texlive", type="build", when="+doc")
     depends_on("py-cython", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
     depends_on("py-breathe", type="build", when="+doc")
     depends_on("py-sphinx", type="build", when="+doc")
     depends_on("py-sphinx-rtd-theme", type="build", when="+doc")
@@ -67,7 +68,7 @@ class N2p2(MakefilePackage):
         blas_libs = self.spec["blas"].libs
         makefile.filter("PROJECT_CC=.*", f"PROJECT_CC={spack_cxx}")
         makefile.filter("PROJECT_MPICC=.*", f"PROJECT_MPICC={self.spec['mpi'].mpicxx}")
-        makefile.filter("PROJECT_CFLAGS=.*", f"PROJECT_CFLAGS={self.compiler.cxx11_flag}")
+        makefile.filter("PROJECT_CFLAGS=.*", f"PROJECT_CFLAGS={self.compiler.cxx14_flag}")
         makefile.filter(
             "PROJECT_LDFLAGS_BLAS.*", f"PROJECT_LDFLAGS_BLAS={blas_libs.ld_flags} -lgsl -lgslcblas"
         )
@@ -113,7 +114,7 @@ class N2p2(MakefilePackage):
         if not os.path.exists(result_check_script):
             raise SkipTest("Required result-check.sh is missing from the repository directory")
 
-        make = which("make")
+        make = which("make", required=True)
         with working_dir(self.test_suite.current_test_cache_dir.test):
             make("clean")
 
@@ -152,5 +153,5 @@ class N2p2(MakefilePackage):
             make("python", parallel=False)
             assert os.path.isfile(python_output), f"{python_output} was not produced"
 
-            result_check = which(result_check_script)
+            result_check = which(result_check_script, required=True)
             result_check(cpp_output, python_output, expected_file)

@@ -21,6 +21,7 @@ class Gperf(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("3.3", sha256="fd87e0aba7e43ae054837afd6cd4db03a3f2693deb3619085e6ed9d8d9604ad8")
     version("3.1", sha256="588546b945bba4b70b6a3a616e80b4ab466e3f33024a352fc2198112cdbb3ae2")
     version("3.0.4", sha256="767112a204407e62dbc3106647cf839ed544f3cf5d0f0523aaa2508623aad63e")
 
@@ -31,6 +32,20 @@ class Gperf(AutotoolsPackage, GNUMirrorPackage):
     # which is necessary to build gperf with recent compilers that default to
     # c++17 where using the register keyword results in a compile-time error.
     # This has no impact on correctness.
-    patch("register.patch")
+    patch("register.patch", when="@:3.1")
+
+    def configure_args(self):
+        args = []
+
+        # Intel oneAPI icx incorrectly marks glibc's error() as noreturn,
+        # causing the gnulib gl_cv_func_working_error configure test to
+        # infinite-loop and consume unbounded memory.
+        # Fix available in icx 2026, but this workaround is needed for
+        # all versions of icx up to 2025.
+        # https://community.intel.com/t5/Intel-oneAPI-DPC-C-Compiler/All-versions-of-icx-miscompile-error-0-resulting-in-segfaults/m-p/1744208
+        if self.spec.satisfies("%oneapi@:2025"):
+            args.append("gl_cv_func_working_error=yes")
+
+        return args
 
     # NOTE: `make check` is known to fail tests

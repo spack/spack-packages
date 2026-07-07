@@ -122,7 +122,7 @@ class Aml(AutotoolsPackage):
 
     def test_check_tutorial(self):
         """Compile and run the tutorial tests as install checks"""
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         cc_options = [
             "-o",
             self.smoke_test,
@@ -136,6 +136,6 @@ class Aml(AutotoolsPackage):
         ]
         cc(*cc_options)
 
-        smoke_test = which(self.smoke_test)
+        smoke_test = which(self.smoke_test, required=True)
         out = smoke_test(output=str.split, error=str.split)
         assert "Hello world" in out

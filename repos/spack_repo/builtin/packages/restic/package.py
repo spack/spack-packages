@@ -17,6 +17,7 @@ class Restic(GoPackage):
 
     license("BSD-2-Clause")
 
+    version("0.18.1", sha256="4b8e2b6cb20e9707e14b9b9d92ddb6f2e913523754e1f123e2e6f3321e67f7ca")
     version("0.18.0", sha256="fc068d7fdd80dd6a968b57128d736b8c6147aa23bcba584c925eb73832f6523e")
     version("0.17.3", sha256="bf0dd73edfae531c24070e2e7833938613f7b179ed165e6b681098edfdf286c8")
     version("0.17.1", sha256="cba3a5759690d11dae4b5620c44f56be17a5688e32c9856776db8a9a93d6d59a")

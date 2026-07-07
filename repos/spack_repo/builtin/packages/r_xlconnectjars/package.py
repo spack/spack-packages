@@ -19,5 +19,6 @@ class RXlconnectjars(RPackage):
     version("0.2-12", sha256="676bf430ec118355142b3ebe8ecdadcd0019f6e9ac17c7b79b770668eace6df2")
     version("0.2-9", sha256="e31dd189f24afad84abb8bd865c2353b0eccee60ac74ce9030b846789248474b")
 
-    depends_on("r-rjava", type=("build", "run"))
+    depends_on("r+java", type=("build", "run"))
     depends_on("java@6:")
+    depends_on("r-rjava", type=("build", "run"))

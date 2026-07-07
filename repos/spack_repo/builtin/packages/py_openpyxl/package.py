@@ -15,6 +15,7 @@ class PyOpenpyxl(PythonPackage):
 
     license("MIT")
 
+    version("3.1.5", sha256="cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050")
     version("3.1.2", sha256="a6f5977418eff3b2d5500d54d9db50c8277a368436f4e4f8ddb1be3422870184")
     version("3.0.7", sha256="6456a3b472e1ef0facb1129f3c6ef00713cebf62e736cd7a75bcc3247432f251")
     version("3.0.3", sha256="547a9fc6aafcf44abe358b89ed4438d077e9d92e4f182c87e2dc294186dc4b64")

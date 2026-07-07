@@ -18,6 +18,8 @@ class Dlpack(CMakePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("1.2", sha256="58284a3b004a48450c958a23b30274527ebaf35a061124bbd4193fffa45efbd6")
+    version("1.1", sha256="2e3b94b55825c240cc58e6721e15b449978cbae21a2a4caa23058b0157ee2fb3")
     version("1.0", sha256="f8cfdcb634ff3cf0e3d9a3426e019e1c6469780a3b0020c9bc4ecc09cf9abcb1")
     version("0.8", sha256="cf965c26a5430ba4cc53d61963f288edddcd77443aa4c85ce722aaf1e2f29513")
     version("0.5", sha256="9209ac194a175aaab4381313891fba047cb173b2bdd15ac934f83f567f9cd514")
@@ -26,5 +28,8 @@ class Dlpack(CMakePackage):
     version("0.2", sha256="419f76ef723d21b72b704b2c4bf718dcd9d2ecd44cd28c8a71798389b7932ae5")
     version("0.1", sha256="c69b06bfe03711e9d9d3f4d3f307d6dfd7e21d4864a053cca26296d5d05c175c")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    depends_on("cmake@3.2:", type="build")
+    depends_on("cmake@3.16:", type="build", when="@1.2:")

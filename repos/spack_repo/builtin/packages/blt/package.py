@@ -24,22 +24,6 @@ def spec_uses_gccname(spec):
 
 
 def llnl_link_helpers(options, spec, compiler):
-    # From local package:
-    if "fortran" in spec:
-        fortran_compilers = ["gfortran", "xlf"]
-        if any(f_comp in compiler.fc for f_comp in fortran_compilers) and (
-            "clang" in compiler.cxx
-        ):
-            # Pass fortran compiler lib as rpath to find missing libstdc++
-            libdir = os.path.join(os.path.dirname(os.path.dirname(compiler.fc)), "lib")
-            flags = ""
-            for _libpath in [libdir, libdir + "64"]:
-                if os.path.exists(_libpath):
-                    flags += " -Wl,-rpath,{0}".format(_libpath)
-            description = "Adds a missing libstdc++ rpath"
-            if flags:
-                options.append(cmake_cache_string("BLT_EXE_LINKER_FLAGS", flags, description))
-
     if "cxx" in spec and spec["cxx"].name == "cce":
         description = "Adds a missing rpath for libraries associated with the fortran compiler"
         # Here is where to find libs that work for fortran
@@ -71,10 +55,7 @@ class Blt(Package):
 
     version("develop", branch="develop")
     version("main", branch="main")
-    # Note: 0.4.0+ contains a breaking change to BLT created targets
-    #  if you export targets this could cause problems in downstream
-    #  projects if not handled properly. More info here:
-    #  https://llnl-blt.readthedocs.io/en/develop/tutorial/exporting_targets.html
+    version("0.7.2", sha256="107f2c1d616bcfc629a11d887f0bb1b602aef1fe5e4580db65e592f23925e23f")
     version("0.7.1", sha256="136765087b78da96dff77dfd6eb9a1238dbfb67da9c7474bc8fb8532fc8ee015")
     version("0.7.0", sha256="df8720a9cba1199d21f1d32649cebb9dddf95aa61bc3ac23f6c8a3c6b6083528")
     version("0.6.2", sha256="84b663162957c1fe0e896ac8e94cbf2b6def4a152ccfa12a293db14fb25191c8")
@@ -85,12 +66,24 @@ class Blt(Package):
     version("0.5.1", sha256="ff7e87eefc48704a0721b66174612b945955adaa0a56aa69dd0473074fa4badf")
     version("0.5.0", sha256="5f680ef922d0e0a7ff1b1a5fc8aa107cd4f543ad888cbc9b12639bea72a6ab1f")
     version("0.4.1", sha256="16cc3e067ddcf48b99358107e5035a17549f52dcc701a35cd18a9d9f536826c1")
+    # Note: 0.4.0+ contains a breaking change to BLT created targets
+    #  if you export targets this could cause problems in downstream
+    #  projects if not handled properly. More info here:
+    #  https://llnl-blt.readthedocs.io/en/develop/tutorial/exporting_targets.html
     version("0.4.0", sha256="f3bc45d28b9b2eb6df43b75d4f6f89a1557d73d012da7b75bac1be0574767193")
     version("0.3.6", sha256="6276317c29e7ff8524fbea47d9288ddb40ac06e9f9da5e878bf9011e2c99bf71")
     version("0.3.5", sha256="68a1c224bb9203461ae6f5ab0ff3c50b4a58dcce6c2d2799489a1811f425fb84")
     version("0.3.0", sha256="bb917a67cb7335d6721c997ba9c5dca70506006d7bba5e0e50033dd0836481a5")
     version("0.2.5", sha256="3a000f60194e47b3e5623cc528cbcaf88f7fea4d9620b3c7446ff6658dc582a5")
     version("0.2.0", sha256="c0cadf1269c2feb189e398a356e3c49170bc832df95e5564e32bdbb1eb0fa1b3")
+
+    # https://github.com/google/googletest/pull/4798
+    # Make BLT compatible with OpenAPI 2025.2
+    patch(
+        "https://github.com/LLNL/blt/commit/5ff55b519fc8d5216b07edaf301e2d2bf328021e.patch?full_index=1",
+        sha256="116702b89d01e022546911fe0b823afa99a6b37a35077055141ad5d480508422",
+        when="@0.7.1",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

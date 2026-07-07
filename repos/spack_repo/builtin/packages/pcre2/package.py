@@ -92,8 +92,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args.append(self.define_from_variant("PCRE2_SUPPORT_JIT", "jit"))
         args.append(self.define_from_variant("PCRE2_STATIC_PIC", "pic"))
         # Don't need to check for on or off, just if the variant is available
-        # If not specified, the build system will build both static and shared
-        # by default, this is in parity with the autotools build, so on
+        # If not specified, the build system will build only static
+        # by default, so we enable shared libs when not on Windows
+        # to be in parity with the autotools build, so on
         # linux and MacOS, the produced binaries are identical, Windows is the
         # only outlier
         if self.spec.satisfies("platform=windows"):
@@ -102,5 +103,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # this is bad practice and a problem on some platforms
             # Enforce mutual exclusivity here
             args.append(self.define("BUILD_STATIC_LIBS", not self.spec.satisfies("+shared")))
+        else:
+            args.append(self.define("BUILD_SHARED_LIBS", True))
 
         return args

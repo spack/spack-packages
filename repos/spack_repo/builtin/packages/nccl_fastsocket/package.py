@@ -20,7 +20,7 @@ class NcclFastsocket(Package):
     depends_on("cxx", type="build")  # generated
 
     depends_on("bazel", type="build")
-    depends_on("nccl", type=["build", "run"])
+    depends_on("nccl", type=("build", "run"))
 
     maintainers("danielahlin")
 

@@ -100,7 +100,7 @@ class Siesta(MakefilePackage, CMakePackage):
         return flags, None, None
 
     def edit(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         if "+cray" in spec:
             netcdff_prefix = os.environ.get("NETCDF_DIR", "")
             hdf5_prefix = os.environ.get("HDF5_DIR", "")
@@ -233,7 +233,7 @@ class Siesta(MakefilePackage, CMakePackage):
             with working_dir("Obj_trans"):
                 make("transiesta", parallel=False)
             with working_dir("Util"):
-                sh = which("sh")
+                sh = which("sh", required=True)
                 sh("build_all.sh")
 
     def install(self, spec, prefix):

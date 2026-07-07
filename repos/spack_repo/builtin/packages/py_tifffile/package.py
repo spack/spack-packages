@@ -15,6 +15,8 @@ class PyTifffile(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2026.4.11", sha256="17758ff0c0d4db385792a083ad3ca51fcb0f4d942642f4d8f8bc1287fdcf17bc")
+    version("2025.10.4", sha256="2e437c16ab211be5bcdc79f71b4907359115f1f83b5d919e7c297c29725d3e38")
     version("2024.8.30", sha256="2c9508fe768962e30f87def61819183fb07692c258cb175b3c114828368485a4")
     version("2023.8.30", sha256="6a8c53b012a286b75d09a1498ab32f202f24cc6270a105b5d5911dc4426f162a")
     version(
@@ -25,14 +27,19 @@ class PyTifffile(PythonPackage):
     version("2020.10.1", sha256="799feeccc91965b69e1288c51a1d1118faec7f40b2eb89ad2979591b85324830")
     version("0.12.1", sha256="802367effe86b0d1e64cb5c2ed886771f677fa63260b945e51a27acccdc08fa1")
 
-    depends_on("python@3.9:", when="@2023.7.18:", type=("build", "run"))
-    depends_on("python@3.8:", when="@2022.2.2:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
-    # py-tifffile@2023.1.23: don't have a lower bound on py-numpy anymore
-    # -> leave it in nonetheless
-    depends_on("py-numpy@1.19.2:", when="@2022.2.2:", type=("build", "run"))
-    depends_on("py-numpy@1.15.1:", when="@2020.10.1:", type=("build", "run"))
-    depends_on("py-numpy@1.8.2:", type=("build", "run"))
-    # https://github.com/cgohlke/tifffile/issues/252
-    depends_on("py-numpy@:1", when="@:2024.4.23", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@2025.5.21:")
+        depends_on("python@3.11:", when="@2025.5.21:")
+        depends_on("python@3.9:", when="@2023.7.18:")
+        depends_on("python@3.8:", when="@2022.2.2:")
+
+        depends_on("py-numpy@2:", when="@2026.4.11:")
+        # py-tifffile@2023.1.23: don't have a lower bound on py-numpy anymore
+        # -> leave it in nonetheless
+        depends_on("py-numpy@1.19.2:", when="@2022.2.2:")
+        depends_on("py-numpy@1.15.1:", when="@2020.10.1:")
+        depends_on("py-numpy@1.8.2:")
+        # https://github.com/cgohlke/tifffile/issues/252
+        depends_on("py-numpy@:1", when="@:2024.4.23")

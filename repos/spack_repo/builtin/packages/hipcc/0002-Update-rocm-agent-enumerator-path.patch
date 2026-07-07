@@ -1,0 +1,13 @@
+diff --git a/amd/hipcc/src/hipBin_amd.h b/amd/hipcc/src/hipBin_amd.h
+index ecea39e07..daef09011 100644
+--- a/amd/hipcc/src/hipBin_amd.h
++++ b/amd/hipcc/src/hipBin_amd.h
+@@ -782,7 +782,7 @@ void HipBinAmd::executeHipCCCmd(vector<string> argv) {
+     } else if (os != windows) {
+       // Else try using rocm_agent_enumerator
+       string ROCM_AGENT_ENUM;
+-      ROCM_AGENT_ENUM = roccmPath + "/bin/rocm_agent_enumerator";
++      ROCM_AGENT_ENUM = string(getenv("ROCMINFO_PATH")) + "/bin/rocm_agent_enumerator";
+       targetsStr = ROCM_AGENT_ENUM +" -t GPU";
+       SystemCmdOut sysOut = hipBinUtilPtr_->exec(targetsStr.c_str());
+       regex toReplace("\n+");

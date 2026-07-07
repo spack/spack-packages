@@ -21,6 +21,7 @@ class RLubridate(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.9.5", sha256="0bc5d10e5a34285d4f9e9c572c058c386b9e1515d8faebc1496b2680138280a8")
     version("1.9.3", sha256="2b6e1406d231b0a14d60b99cc406d159fea5465a5694725ad25343f12cf37fff")
     version("1.9.2", sha256="8976431a4affe989261cbaa5e09cd44bb42a3b16eed59a42c1698da34c6544a7")
     version("1.9.0", sha256="b936041f8a71894ef930cfff61b45833e0dd148b5b16697f4f541d25b31a903a")
@@ -33,12 +34,16 @@ class RLubridate(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@3.0.0:", type=("build", "run"))
-    depends_on("r@3.2:", type=("build", "run"), when="@1.7.9.2:")
-    depends_on("r-generics", type=("build", "run"), when="@1.7.9.2:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2:", when="@1.7.9.2:")
+        depends_on("r@3.0.0:")
 
-    depends_on("r-rcpp@0.12.13:", type=("build", "run"), when="@:1.7")
-    depends_on("r-timechange@0.1.1:", type=("build", "run"), when="@1.9.0:")
-    depends_on("r-stringr", type=("build", "run"), when="@:1.7.4")
-    depends_on("r-cpp11", type=("build", "run"), when="@:1.8.0")
-    depends_on("r-cpp11@0.2.7:", type=("build", "run"), when="@1.8.0")
+        depends_on("r-generics", when="@1.7.9.2:")
+        depends_on("r-timechange@0.4.0:", when="@1.9.5:")
+
+        # Historical dependencies
+        depends_on("r-rcpp@0.12.13:", when="@:1.7")
+        depends_on("r-timechange@0.1.1:", when="@1.9.0:")
+        depends_on("r-stringr", when="@:1.7.4")
+        depends_on("r-cpp11", when="@:1.8.0")
+        depends_on("r-cpp11@0.2.7:", when="@1.8.0")

@@ -4,11 +4,12 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Mmseqs2(CMakePackage):
+class Mmseqs2(CMakePackage, CudaPackage):
     """MMseqs2 (Many-against-Many sequence searching) is a software suite to
     search and cluster huge protein and nucleotide sequence sets"""
 
@@ -17,6 +18,9 @@ class Mmseqs2(CMakePackage):
 
     license("GPL-3.0-only")
 
+    version("18-8cc5c", sha256="3541b67322aee357fd9ca529750d36cb1426aa9bcd1efb2dc916e35219e1a41c")
+    version("17-b804f", sha256="300ebd14bf4e007b339037e5f73d8ff9c4e34f8495204c4a8c59c7672b689db2")
+    version("16-747c6", sha256="faeb6841feb8e028651c2391de1346c55c2091a96520b625525d27b99d07ef1d")
     version("15-6f452", sha256="7115ac5a7e2a49229466806aaa760d00204bb08c870e3c231b00e525c77531dc")
     version("14-7e284", sha256="a15fd59b121073fdcc8b259fc703e5ce4c671d2c56eb5c027749f4bd4c28dfe1")
     version("13-45111", sha256="6444bb682ebf5ced54b2eda7a301fa3e933c2a28b7661f96ef5bdab1d53695a2")
@@ -29,6 +33,15 @@ class Mmseqs2(CMakePackage):
 
     depends_on("zstd")
     depends_on("mpi", when="+mpi")
+    depends_on("cuda", when="@16: +cuda")
+
+    conflicts("@:15 +cuda")
+    conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
+    conflicts(
+        "cmake@3.14:,:4",
+        when="@18-8cc5c",
+        msg="CMake >=3.15 and <4 is required to compile MMseqs2",
+    )
 
     # patch to support building with gcc@13:
     patch(
@@ -51,4 +64,9 @@ class Mmseqs2(CMakePackage):
             args.append("-DREQUIRE_OPENMP=0")
         if "~mpi" in spec:
             args.append("-DHAVE_MPI=0")
+        if spec.satisfies("+cuda"):
+            cuda_arch = spec.variants["cuda_arch"].value
+            args.append("-DENABLE_CUDA=1")
+            args.append("-DCMAKE_CUDA_ARCHITECTURES={0}".format(";".join(cuda_arch)))
+
         return args

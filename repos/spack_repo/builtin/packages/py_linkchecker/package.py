@@ -17,6 +17,7 @@ class PyLinkchecker(PythonPackage):
 
     license("GPL-2.0")
 
+    version("10.6.0", sha256="fb7e8facda7749c2fa5fa5dc241c0adc302da3d31d588964a2570db501aa49e5")
     version("10.5.0", sha256="978b42b803e58b7a8f6ffae1ff88fa7fd1e87b944403b5dc82380dd59f516bb9")
 
     depends_on("python@3.9:", type=("build", "run"))
