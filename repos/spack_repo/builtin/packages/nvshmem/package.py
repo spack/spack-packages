@@ -211,7 +211,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         # Force the python version list to only our interpreter
         script = pjoin(src, "nvshmem4py", "scripts", "find_python_versions.sh")
         with open(script, "w") as f:
-            f.write(f"#!/bin/sh\n# Spack override\n" f'echo "{py_ver}|{py_exec}"\n')
+            f.write(f'#!/bin/sh\n# Spack override\necho "{py_ver}|{py_exec}"\n')
         os.chmod(script, 0o755)
 
         # Restrict CUDA versions to just our major (11 or 12 or 13)
