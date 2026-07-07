@@ -20,5 +20,5 @@ class PyJiter(PythonPackage):
 
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
-    depends_on("rust@1.73:", type=("build", "run"))
-    depends_on("rust@1.83:", type=("build", "run"), when="@0.13:")
+    depends_on("rust@1.73:", type="build")
+    depends_on("rust@1.83:", type="build", when="@0.13:")
