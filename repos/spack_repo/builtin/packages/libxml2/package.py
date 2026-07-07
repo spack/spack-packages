@@ -222,7 +222,7 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         if iconv.name in ("glibc", "musl"):
             return "yes"
         return iconv.prefix
-        
+
     def configure_args(self):
         spec = self.spec
 
