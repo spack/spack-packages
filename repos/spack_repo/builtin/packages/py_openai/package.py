@@ -82,7 +82,7 @@ class PyOpenai(PythonPackage):
 
     with when("+voice"):
         depends_on("py-sounddevice@0.5.1:", type=("build", "run"))
-        depends_on("py-numpy@2.0.2", type=("build", "run"))
+        depends_on("py-numpy@2.0.2:", type=("build", "run"))
 
     with when("+embeddings"):
         depends_on("py-scikit-learn@1.0.2:", type=("build", "run"))
