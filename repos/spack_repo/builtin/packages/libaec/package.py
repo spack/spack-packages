@@ -14,9 +14,9 @@ class Libaec(CMakePackage):
     the SZIP library.
     """
 
-    homepage = "https://gitlab.dkrz.de/k202009/libaec"
-    url = "https://gitlab.dkrz.de/api/v4/projects/k202009%2Flibaec/repository/archive.tar.gz?sha=v1.0.2"
-    list_url = "https://gitlab.dkrz.de/k202009/libaec/tags"
+    homepage = "https://gitlab.dkrz.de/dkrz-sw/libaec"
+    url = "https://gitlab.dkrz.de/api/v4/projects/dkrz-sw%2Flibaec/repository/archive.tar.gz?sha=v1.0.2"
+    list_url = "https://gitlab.dkrz.de/dkrz-sw/libaec/tags"
 
     provides("szip")
 
