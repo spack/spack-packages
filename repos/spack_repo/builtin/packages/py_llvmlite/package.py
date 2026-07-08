@@ -14,6 +14,8 @@ class PyLlvmlite(PythonPackage):
     pypi = "llvmlite/llvmlite-0.23.0.tar.gz"
     git = "https://github.com/numba/llvmlite.git"
 
+    maintainers("mathomp4")
+
     license("BSD-2-Clause")
 
     version("0.48.0", sha256="543b19f9ef8f3c7c60d1468191e4ee1b1537bf9f8a3d56f64c0ddd98de92edd2")

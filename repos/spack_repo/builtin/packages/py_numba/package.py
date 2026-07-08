@@ -20,6 +20,8 @@ class PyNumba(PythonPackage):
 
     skip_modules = ["numba.core.rvsdg_frontend"]
 
+    maintainers("mathomp4")
+
     license("BSD-2-Clause")
 
     version("0.66.0", sha256="b900e63a0e26c05ea9a6d5a3a5a0a177cb64c5011887bf43edb8c3ed2c38d363")
