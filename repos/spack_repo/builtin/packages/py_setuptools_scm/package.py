@@ -14,8 +14,6 @@ class PySetuptoolsScm(PythonPackage):
     pypi = "setuptools_scm/setuptools_scm-4.1.2.tar.gz"
     tags = ["build-tools"]
 
-    maintainers("RobertMaaskant")
-
     license("MIT")
 
     version("9.2.2", sha256="1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57")
