@@ -46,6 +46,28 @@ class RustBootstrap(Package):
                 "powerpc64le": "e2fe00a3c91f21c52947ebf96b4da016c9def5ccfedd1c335f30746db58bbf35",
             },
         },
+        "1.90.0": {
+            "darwin": {
+                "x86_64": "3d1d24e1d4bedb421ca1a16060c21f4d803eaefba585c0b5b5d0b1e56692ef4b",
+                "aarch64": "a11b52e34f5e80cb25d49f7943ae60e0b069b431727a4c09b2c890ceebee3687",
+            },
+            "linux": {
+                "x86_64": "e453bae1c68d02fe2eae065c5452d5731308164cd154154c6ee442d2fa590685",
+                "aarch64": "293f412e3412c3aa3398c78ebbdf898fa08eacad80c85a7332ce1a455504c5fc",
+                "powerpc64le": "4061405099dc0aba379fe7b7a616d320272ef9325114dfa8f106c303f9b5695c",
+            },
+        },
+        "1.88.0": {
+            "darwin": {
+                "x86_64": "b36b0bfac17e0a1f6cc06b9fdc4e2131ad578b4122a67792236b58650ae4c5c8",
+                "aarch64": "dee921b9a41b1c3fbb088ad31dcca3b232de2cb89c268db75f40912eeaa474db",
+            },
+            "linux": {
+                "x86_64": "ad6f0cc845e7fcca17fd451bafd2c04a7bbcb543f8f3ef5bc412fd1fef99ef7b",
+                "aarch64": "dbc75abc31d142eacf15e60d0e51c4f291539974221d217b80786756b0ce1d6b",
+                "powerpc64le": "e1f16b2885237695f3cce7fc2f0128a938fc07462b076cb61bd2f06e5f8baf38",
+            },
+        },
         "1.86.0": {
             "darwin": {
                 "x86_64": "bf8121850b2f6a46566f6c2bbe9fa889b915b1039febf36853ea9d9c4256c67d",
