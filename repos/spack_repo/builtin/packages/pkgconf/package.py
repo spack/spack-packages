@@ -11,6 +11,7 @@ from spack.package import *
 
 IS_WINDOWS = sys.platform == "win32"
 
+
 class Pkgconf(AutotoolsPackage, MesonPackage):
     """pkgconf is a program which helps to configure compiler and linker
     flags for development frameworks. It is similar to pkg-config from
@@ -55,10 +56,10 @@ class Pkgconf(AutotoolsPackage, MesonPackage):
 
     executables = ["^pkgconf$", "^pkg-config$"]
 
+
 class AutotoolsBuilder(AutotoolsBuilder):
     def configure_args(self):
-        args = [
-        ]
+        args = []
         return args
 
 
@@ -68,7 +69,6 @@ class MesonBuilder(MesonBuilder):
             "-Dtests=disabled",
         ]
         return args
-
 
     @classmethod
     def determine_version(cls, exe):
