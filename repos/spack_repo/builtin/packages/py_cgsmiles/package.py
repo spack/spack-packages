@@ -18,7 +18,8 @@ class PyCgsmiles(PythonPackage):
     maintainers("adamwitmer")
 
     version("1.0.0", sha256="83fdb6dadfc4efa065fb8ef66af5d461ec50a629680ba6faf117877f37174aa9")
-    version("cg_smiles_polyply", commit="f53efae4e7dee69e63c51a69cb220e4a5f30b68f")
+    version("1.0.1", sha256="e265f2cbc87e7a406817606c993c14e8c8d530426b39b20eec0a2aff9b593d22")
+    version("1.0.2", sha256="d74a21b5c54139d980ff457946b99a56364294cad46bf6147c0d166a67dfafca")
 
     depends_on("py-networkx@2.0:", type=("build", "run"))
     depends_on("py-setuptools@46.4.0:", type="build")
