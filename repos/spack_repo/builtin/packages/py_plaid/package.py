@@ -41,7 +41,7 @@ class PyPlaid(PythonPackage):
         depends_on("py-zarr@3.1:3")
         depends_on("py-pydantic@2.6:2")
 
-        # numpy constraints per version
+        # numpy constraints per version.
         depends_on("py-numpy@1.26:2", when="@0.1.15")
         depends_on("py-numpy@1:2", when="@1.0.0:")
 
