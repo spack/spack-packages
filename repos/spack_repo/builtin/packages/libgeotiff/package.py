@@ -96,7 +96,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             "--debug-find-pkg=TIFF",
             self.define("WITH_TIFF", True),
-            self.define("TIFF_ROOT", self.spec["libtiff"].prefix.lib64.cmake.tiff),
             self.define_from_variant("WITH_ZLIB", "zlib"),
             self.define_from_variant("WITH_JPEG", "jpeg"),
             self.define("BUILD_DOC", False),
