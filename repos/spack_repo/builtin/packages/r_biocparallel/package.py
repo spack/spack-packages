@@ -18,14 +18,8 @@ class RBiocparallel(RPackage):
 
     with default_args(get_full_repo=True):
         version("1.46.0", commit="a331dfd2695daec754304505bdbd7358eef009fa")  # bioc 3.23
-        version("1.44.0", commit="3d6f2f614a8cb6d052c3c89cb328cc7d454ff565")  # bioc 3.22
         version("1.42.2", commit="dbadae1fcbb3141202376d65c9a1224736c8825c")  # bioc 3.21
-        version("1.40.1", commit="db5b1458c78b3b8f4c3ea71fa4e0930dbf5960f1")  # bioc 3.20
-        version("1.38.0", commit="d180bc0969a0f719e01ba127af45173c5bd8e27f")  # bioc 3.19
-        version("1.36.0", commit="ba4ec2934579d5d1a1e2d0e69d44342221e49013")  # bioc 3.18
-        version("1.34.2", commit="77491b20e0c827e7dc9af56ab58824855ad75430")  # bioc 3.17
         version("1.34.0", commit="f3bbc0a2d38da034c50ca1e4704fc4ee99a2dc9e")
-        version("1.32.6", commit="994f4e72557f4fc47118f9b092ee448d7d5db299")  # bioc 3.16
         version("1.32.1", commit="6c85dbad596a74a6d3022173a4a11c6b81a4a2c2")
         version("1.30.4", commit="1229ebe9f6d8305f9f61e562464f83f9ba86e699")
         version("1.30.2", commit="e7e109f7a94dbfbc50f926be030c7ad8c1a053db")
