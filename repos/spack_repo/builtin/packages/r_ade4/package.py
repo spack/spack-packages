@@ -23,7 +23,6 @@ class RAde4(RPackage):
     license("GPL-2.0-or-later")
 
     version("1.7-24", sha256="59509dcf781b2b69a97e225f53f2f76d0e0d5bfb04c5b6198007c035c4bd6d2a")
-    version("1.7-23", sha256="3092c5a68f68f24fc28387407f43b939862a460635250609f2409e359476677f")
     version("1.7-22", sha256="007df54e83a2a6cb8d6da8006f0aace011e7eaa7744dc5f8230ac2c002b393b4")
     version("1.7-20", sha256="ddc75788b55902f17dabda209eb67c378aa0233767697e00fa3f8fc85e4bad7b")
     version("1.7-19", sha256="c85111881ff93a261ca34a5b5ef313d1c0ff9b84f0b23596bc56cfa696f165ef")
