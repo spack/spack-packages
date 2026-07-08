@@ -8,13 +8,12 @@ from spack.package import *
 
 
 class Libfci(CMakePackage):
-    """libfci is a compact determinant full-CI solver library developed by Gerald Knizia, 2010-2012,
-    and packaged as a small C ABI for active-space embedding workflows. The original standalone driver
-    accepted FCIDUMP-style Hamiltonians. The library interface bypasses file I/O and accepts dense
-    active-space one- and two-electron matrices using CP2K's FCIDUMP conventions. The exported C entry point
-    is libfci_solve. A compatibility wrapper named cp2k_fci_solve is also exported for older CP2K integration
-    experiments.
-    """
+    """libfci is a compact determinant full-CI solver library developed by Gerald Knizia,
+    2010-2012, and packaged as a small C ABI for active-space embedding workflows. The
+    original standalone driver accepted FCIDUMP-style Hamiltonians. The library interface
+    bypasses file I/O and accepts dense active-space one- and two-electron matrices using
+    CP2K's FCIDUMP conventions. The exported C entry point is libfci_solve. A compatibility
+    wrapper named cp2k_fci_solve is also exported for older CP2K integration experiments."""
 
     maintainers("mkrack")
 
