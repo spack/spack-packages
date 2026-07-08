@@ -16,6 +16,7 @@ class Jemalloc(AutotoolsPackage):
 
     license("BSD-2-Clause")
 
+    version("5.3.1", sha256="3826bc80232f22ed5c4662f3034f799ca316e819103bdc7bb99018a421706f92")
     version("5.3.0", sha256="2db82d1e7119df3e71b7640219b6dfe84789bc0537983c3b7ac4f7189aecfeaa")
     version("5.2.1", sha256="34330e5ce276099e2e8950d9335db5a875689a4c6a56751ef3b1d8c537f887f6")
     version("5.2.0", sha256="74be9f44a60d2a99398e706baa921e4efde82bf8fd16e5c0643c375c5851e3b4")
@@ -49,6 +50,14 @@ class Jemalloc(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    # Replace std::__throw_bad_alloc call with standard C++
+    # Ref: https://github.com/jemalloc/jemalloc/pull/2900
+    patch(
+        "https://github.com/jemalloc/jemalloc/commit/1a15fe33a48c52bfe26ea83e49f0d317a47da3ea.patch?full_index=1",
+        sha256="eaa0b462c18cd5428e9f9a4476cbe24fe6cf5f3bd25b43b68ebade74c6efbb42",
+        when="@5.3.1",
+    )
 
     def configure_args(self):
         spec = self.spec
