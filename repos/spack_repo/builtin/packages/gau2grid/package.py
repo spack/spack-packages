@@ -50,10 +50,10 @@ class Gau2grid(CMakePackage):
         spec = self.spec
         args = [
             self.define("MAX_AM", spec.variants["max_am"].value),
-            self.define("ENABLE_XHOST", spec.satisfies("+xhost")),
-            self.define("BUILD_FPIC", spec.satisfies("+pic")),
-            self.define("BUILD_SHARED_LIBS", spec.satisfies("+shared")),
-            self.define("ENABLE_GENERIC", spec.satisfies("+generic")),
-            self.define("DISABLE_PRAGMA", spec.satisfies("+no_pragma")),
+            self.define_from_variant("ENABLE_XHOST", "xhost"),
+            self.define_from_variant("BUILD_FPIC", "pic"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("ENABLE_GENERIC", "generic"),
+            self.define_from_variant("DISABLE_PRAGMA", "no_pragma"),
         ]
         return args
