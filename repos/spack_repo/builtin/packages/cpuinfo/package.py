@@ -20,7 +20,8 @@ class Cpuinfo(CMakePackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
-    version("2025-11-14", commit="f858c30bcb16f8effd5ff46996f0514539e17abc")  # py-torch@2.10:
+    version("2026-04-13", commit="bc3c01e230c6974283e4b89421cfb0e232435589")  # py-torch@2.13:
+    version("2025-11-14", commit="f858c30bcb16f8effd5ff46996f0514539e17abc")  # py-torch@2.10:2.12
     version("2025-03-21", commit="5e3d2445e6a84d9599bee2bf78edbb4d80865e1d")  # py-torch@2.8:2.9
     version("2024-09-26", commit="1e83a2fdd3102f65c6f1fb602c1b320486218a99")  # py-torch@2.6:2.7
     version("2024-09-06", commit="094fc30b9256f54dad5ad23bcbfb5de74781422f")  # py-torch@2.5.1
