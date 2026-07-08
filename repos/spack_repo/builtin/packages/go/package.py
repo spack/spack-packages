@@ -32,20 +32,24 @@ class Go(Package):
     url = "https://go.dev/dl/go1.20.2.src.tar.gz"
     git = "https://go.googlesource.com/go.git"
 
+    supplier = "Organization: Google LLC"
+
     extendable = True
     executables = ["^go$"]
     unresolved_libraries = ["libtiff.so.*"]  # go/src/debug/elf/testdata/libtiffxx.so_
     tags = ["build-tools"]
 
-    maintainers("alecbcs")
+    maintainers("alecbcs", "mcmehrtens")
 
     license("BSD-3-Clause")
 
+    version("1.26.5", sha256="495be4bc87176ac567392e5b4116abd98466d33d7b49d41e764ccc6976b2dc42")
     version("1.26.4", sha256="4f668a32fbfc1132e6a881fb968c2f1dada631492a339211735fbb255a42602d")
     version("1.26.3", sha256="1c646875d0aa8799133184ed57cf79ff24bdefe8c8820470602a9d3d6d9192b8")
     version("1.26.2", sha256="2e91ebb6947a96e9436fb2b3926a8802efe63a6d375dffec4f82aa9dbd6fd43b")
     version("1.26.1", sha256="3172293d04b209dc1144698e7ba13f0477f6ba8c5ffd0be66c20fdbc9785dfbb")
     version("1.26.0", sha256="c9132a8a1f6bd2aa4aad1d74b8231d95274950483a4950657ee6c56e6e817790")
+    version("1.25.12", sha256="f90dcee4bd023fa376374ea0a5a6ebe553537b39c426ffd8c689469b45519932")
     version("1.25.11", sha256="7b4e5b079b3c9bc420373ca68621a296b4d13c10735d4acac4171928d70f5480")
     version("1.25.10", sha256="20cf04a92e5af99748e341bc8996fa28090c9ac98765fa115ec5ddf41d7af41d")
     version("1.25.9", sha256="0ec9ef8ebcea097aac37decae9f09a7218b451cd96be7d6ed513d8e4bcf909cf")
