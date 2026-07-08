@@ -39,8 +39,11 @@ class PyPlaid(PythonPackage):
         depends_on("py-pyyaml@6")
         depends_on("py-pycgns@6.3:6")
         depends_on("py-zarr@3.1:3")
-        depends_on("py-numpy@1.26:2")
         depends_on("py-pydantic@2.6:2")
+
+        # numpy constraints per version
+        depends_on("py-numpy@1.26:2", when="@0.1.15")
+        depends_on("py-numpy@1:2", when="@1.0.0:")
 
         # datasets upper bound widened to <6 in 1.0.0
         depends_on("py-datasets@2.18:4", when="@0.1.15")
@@ -50,10 +53,9 @@ class PyPlaid(PythonPackage):
         depends_on("py-scikit-learn@1.4:1", when="@0.1.15")
         depends_on("py-matplotlib@3.8:3", when="@0.1.15")
 
-    # Optional viewer deps (plaid[viewer]), available since 1.0.0
-    with default_args(type="run"):
+        # optional viewer deps (plaid[viewer]), available since 1.0.0
         with when("+viewer @1.0.0:"):
             depends_on("py-trame@3.6:3")
             depends_on("py-trame-vtk@2.8:2")
             depends_on("py-trame-vuetify@2.7:3")
-            depends_on("vtk@9.6.1:")
+            depends_on("vtk@9.6.1: +python")
