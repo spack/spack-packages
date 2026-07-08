@@ -86,13 +86,6 @@ class Charliecloud(AutotoolsPackage):
         # Require cjson for CDI support
         depends_on("cjson", type="build", when="@0.40:")
 
-    def url_for_version(self, version):
-        if version >= Version("0.39"):
-            url_fmt = "https://gitlab.com/charliecloud/main/-/archive/v{0}/main-v{0}.tar.gz"
-        else:
-            url_fmt = "https://github.com/hpc/charliecloud/releases/download/v{0}/charliecloud-{0}.tar.gz"
-        return url_fmt.format(version)
-
     @property
     def force_autoreconf(self):
         return self.spec.satisfies("@0.39:")
