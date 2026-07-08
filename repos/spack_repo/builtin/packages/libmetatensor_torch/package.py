@@ -17,6 +17,7 @@ class LibmetatensorTorch(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.10.0", sha256="a0a25e061ae4fbf2a563e9fcceed68ac79b4d857e4c9803a1614d301dc3fdfcd")
     # 0.9.2 was yanked: broken logic for device checks
     version("0.9.1", sha256="fa21ae9f5111f3b40479e51ed55152154fc2c6eb30f38d9de6adad53938d0444")
     version("0.9.0", sha256="4e31c235447b6bc14c7703c640e2f35409813c2f159a32b8d23386ad4a5abd57")
@@ -38,4 +39,5 @@ class LibmetatensorTorch(CMakePackage):
     depends_on("libmetatensor@0.1.18:0.1", when="@0.8.3:0.8")
     depends_on("libmetatensor@0.2.0:0.2", when="@0.9.0:")
     depends_on("libmetatensor@0.2.1:0.2", when="@0.9.2:")
+    depends_on("libmetatensor@0.2.2:0.2", when="@0.10::")
     depends_on("py-torch@2.1.0:")

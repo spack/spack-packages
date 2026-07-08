@@ -17,6 +17,8 @@ class Libmetatensor(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.2.3", sha256="61e9f894c7591c81b8aa4794fc48ee0be07264881cc2642bae31654f7da65331")
+    version("0.2.2", sha256="a104512516c8761080075e3ba7c023fcc1bb3430df7c67b25bded359a729e2ff")
     version("0.2.1", sha256="688751cb51900653edf2980bd80a52bbe187dff3c8b05cea9f1a1d3070b1e527")
     version("0.2.0", sha256="809a799b1c8d58b7ede3868d6ebe4123924ba31e4637481f9ca5c8a0ed14be17")
     version("0.1.19", sha256="2d319186057cf6da8fe39cc4f961baccce59c4486223113ce554632ae7765e26")
@@ -29,6 +31,7 @@ class Libmetatensor(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@0.1.18:")
     depends_on("rust@1.74.0:", type="build")
+    depends_on("rust@1.88.0:", when="@0.2.3:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 

@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.10.0": "6381ef2db7d2db609d5b01de313336486150894b9d60ed1e758c67fa21b35a6e",
     # 0.9.2 was yanked: broken logic for device checks
     "0.9.1": "a924baf2146e597b6dd32eef425bc0f02598a542c0eae37872721b663fc458ec",
     "0.9.0": "9b5fe7262d91498ca69096d325688f4d3101c62050c0bf2064b5e448f3789fb8",
