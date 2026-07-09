@@ -177,7 +177,10 @@ class Hipblaslt(CMakePackage):
     depends_on("py-packaging", when="@7.1:")
     depends_on("py-msgpack", when="@7.1:")
     depends_on("py-nanobind", when="@7.1:")
-    depends_on("spdlog", when="@7.1:")
+    # rocroller in ROCm 7.1+ fails to build with fmt 11 (consteval FMT_STRING errors).
+    # Keep spdlog/fmt on a known-compatible pair.
+    depends_on("spdlog@:1.14", when="@7.1:")
+    depends_on("fmt@:10", when="@7.1:")
 
     resource(
         name="libdivide",
