@@ -26,7 +26,8 @@ class PySoupsieve(PythonPackage):
         version("2.8", sha256="e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f")
         version("2.4.1", sha256="89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea")
         version(
-            "2.3.2.post1", sha256="fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"
+            "2.3.2.post1",
+            sha256="fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d",
         )
         version("2.2.1", sha256="052774848f448cf19c7e959adf5566904d525f33a3f8b6ba6f6f8f26ec7de0cc")
         version("1.9.6", sha256="7985bacc98c34923a439967c1a602dc4f1e15f923b6fcf02344184f86cc7efaa")
