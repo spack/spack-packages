@@ -34,7 +34,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("ninja", type="build")
 
-    backends = ("mpi", "ucx", "libfabric")
+    backends = ("mpi", "ucx", "libfabric", "nccl")
     variant(
         "backend", default="mpi", description="Transport backend", values=backends, multi=False
     )
@@ -51,6 +51,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("oomph")
     for backend in backends:
         depends_on(f"oomph backend={backend}", when=f"backend={backend}")
+    requires("@0.8:", when="backend=nccl")
     depends_on("oomph+cuda", when="+cuda")
     depends_on("oomph+rocm", when="+rocm")
     depends_on("oomph~rocm~cuda", when="~rocm~cuda")

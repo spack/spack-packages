@@ -11,7 +11,7 @@ class FairsoftBundle(BundlePackage):
     """Bundle package providing default environment for FAIR software"""
 
     homepage = "https://github.com/FairRootGroup/FairSoft"
-    maintainers("dennisklein", "fuhlig1", "jezwilkinson")
+    maintainers("fuhlig1", "jezwilkinson")
 
     # Releases:
     version("2025-05")

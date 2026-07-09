@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -55,6 +56,19 @@ class HipTensor(CMakePackage, ROCmPackage):
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
+    # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=disjoint_sets(("auto",), amdgpu_targets)
+        .with_default("auto")
+        .with_error(
+            "the values 'auto' and 'none' are mutually exclusive with any of the other values"
+        )
+        .with_non_feature_values("auto", "none"),
+    )
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
@@ -85,7 +99,7 @@ class HipTensor(CMakePackage, ROCmPackage):
         "7.2.1",
         "7.2.3",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
                 f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
             )
