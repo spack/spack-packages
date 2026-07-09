@@ -27,6 +27,7 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.12.6", sha256="5440ad37977af766a075e5cc9c430b66ba958ede69a70ccf308bb7d8e1d69478")
     version("1.12.5", sha256="9e0dee015ef631ce93ddcf8166a8f5f4cae39e923d8f38a54a832091d0475004")
 
     version("1.11.9", sha256="3c73d9612ee5bbd9d73b9eee26937c970bea37f51dc24aa23fd4b232539eb7d8")
@@ -40,6 +41,7 @@ class Julia(MakefilePackage):
     version("1.11.1", sha256="895549f40b21dee66b6380e30811f40d2d938c2baba0750de69c9a183cccd756")
     version("1.11.0", sha256="a938c6b7758a83e817b56db3e542bd85e6d74db75e1381b1ba24cd6e3dc8c566")
 
+    version("1.10.11", sha256="8d6c633967452cb879a671d962f5d4d10027e1f785327764c3163c003c8a44b5")
     version("1.10.10", sha256="b564321e9ee71796f467b3872cdefdccdb97ca26e19ee8106df96f6d24061090")
     version("1.10.9", sha256="780206a73d2274c7e90b38352e27ed851c593a98f566b9bfa5f1b638336e954b")
     version("1.10.8", sha256="8ba5fa4722b2159c4e40d813468b5bd92d9582cba9ed036b577373e7c535cda7")
@@ -252,14 +254,16 @@ class Julia(MakefilePackage):
     depends_on("binutils", type="build")  # for readelf
 
     depends_on("blas")  # note: for now openblas is fixed...
-    depends_on("curl tls=mbedtls +nghttp2 +libssh2")
+    depends_on("curl tls=openssl +nghttp2 +libssh2", when="@1.12:")
+    depends_on("curl tls=mbedtls +nghttp2 +libssh2", when="@:1.11")
     depends_on("dsfmt@2.2.4:")  # apparently 2.2.3->2.2.4 breaks API
     depends_on("gmp")
     depends_on("lapack")  # note: for now openblas is fixed...
     depends_on("libblastrampoline")
     depends_on("libgit2")
-    depends_on("libssh2 crypto=mbedtls")
-    depends_on("mbedtls libs=shared")
+    depends_on("libssh2 crypto=openssl", when="@1.12:")
+    depends_on("libssh2 crypto=mbedtls", when="@:1.11")
+    depends_on("mbedtls libs=shared", when="@:1.11")
     depends_on("mpfr")
     depends_on("nghttp2")
     depends_on("openblas +ilp64 symbol_suffix=64_")
@@ -324,6 +328,43 @@ class Julia(MakefilePackage):
         when="@:1.11 %curl@8.10:",
     )
 
+    # Prevent that JuliaSyntax and TermInfoDB are fetched by the build system
+    resource(
+        url="https://api.github.com/repos/JuliaLang/JuliaSyntax.jl/tarball/4f1731d6ce7c2465fc21ea245110b7a39f34658a",
+        sha256="2aed0b2869031f766889fcec163f529f0d825a7e48c51a16d0e451714db644da",
+        name="juliasyntax",
+        placement="deps-resources/juliasyntax",
+        expand=False,
+        when="@1.10:1.11",
+    )
+
+    resource(
+        url="https://api.github.com/repos/JuliaLang/JuliaSyntax.jl/tarball/de4d1cd21cf13501c65b91c68c2fd5c9aa704e97",
+        sha256="3830e8ec6eecd8773c89caecdc10030f03348dfce2ab889d4ddf6d5f38bbb1f4",
+        name="juliasyntax",
+        placement="deps-resources/juliasyntax",
+        expand=False,
+        when="@1.12.5",
+    )
+
+    resource(
+        url="https://api.github.com/repos/JuliaLang/JuliaSyntax.jl/tarball/29ec5226f7b1ad1bef6db7f447add8c0ff91a1f7",
+        sha256="ae19cfab5036efbc2c6432da57081a897ca13238987269d0cf27ed654b3325aa",
+        name="juliasyntax",
+        placement="deps-resources/juliasyntax",
+        expand=False,
+        when="@1.12.6",
+    )
+
+    resource(
+        url="https://github.com/JuliaBinaryWrappers/TermInfoDB_jll.jl/releases/download/TermInfoDB-v2023.12.9+0/TermInfoDB.v2023.12.9.any.tar.gz",
+        sha256="dabf36cfa936c4616acd41b29533e3529a53292253584e9700fe20bb3dca02d9",
+        name="terminfodb",
+        placement="deps-resources/terminfodb",
+        expand=False,
+        when="@1.11:",
+    )
+
     def patch(self):
         # The system-libwhich-libblastrampoline.patch causes a rebuild of docs as it
         # touches the main Makefile, so we reset the a/m-time to doc/_build's.
@@ -357,16 +398,18 @@ class Julia(MakefilePackage):
             julia_cpu_target = get_best_target(spec.target, "clang", spec["llvm"].version)
 
         libuv = "libuv-julia" if "%libuv-julia" in spec else "libuv"
+        openlibm = spec.variants["openlibm"].value
 
         options = [
-            "prefix:={0}".format(prefix),
-            "MARCH:={0}".format(march),
-            "JULIA_CPU_TARGET:={0}".format(julia_cpu_target),
+            f"prefix:={prefix}",
+            f"MARCH:={march}",
+            f"JULIA_CPU_TARGET:={julia_cpu_target}",
             "USE_BINARYBUILDER:=0",
             "VERBOSE:=1",
             # Spack managed dependencies
             "USE_SYSTEM_BLAS:=1",
             "USE_SYSTEM_CSL:=1",
+            "USE_SYSTEM_NGHTTP2:=1",
             "USE_SYSTEM_CURL:=1",
             "USE_SYSTEM_DSFMT:=1",
             "USE_SYSTEM_GMP:=1",
@@ -390,40 +433,53 @@ class Julia(MakefilePackage):
             "USE_SYSTEM_ZLIB:=1",
             # todo: ilp depends on arch
             "USE_BLAS64:=1",
-            "LIBBLASNAME:={0}".format(libblas),
-            "LIBLAPACKNAME:={0}".format(liblapack),
-            "override LIBUV:={0}".format(spec[libuv].libs.libraries[0]),
-            "override LIBUV_INC:={0}".format(spec[libuv].headers.directories[0]),
+            f"LIBBLASNAME:={libblas}",
+            f"LIBLAPACKNAME:={liblapack}",
+            f"override LIBUV:={spec[libuv].libs.libraries[0]}",
+            f"override LIBUV_INC:={spec[libuv].headers.directories[0]}",
             "override USE_LLVM_SHLIB:=1",
             # make rebuilds a bit faster for now, not sure if this should be kept
-            "JULIA_PRECOMPILE:={0}".format("1" if spec.variants["precompile"].value else "0"),
+            f"JULIA_PRECOMPILE:={'1' if spec.variants['precompile'].value else '0'}",
             # we want to use `patchelf --add-rpath` instead of `patchelf --set-rpath`
             "override PATCHELF_SET_RPATH_ARG:=--add-rpath",  # @1.9:
             # Otherwise, Julia tries to download and build ittapi
             "USE_INTEL_JITEVENTS:=0",  # @1.9:
+            f"USEGCC:={'1' if '%c=gcc' in spec else '0'}",
+            f"USECLANG:={'1' if '%c=llvm' in spec else '0'}",
+            f"override CC:={spack_cc}",
+            f"override CXX:={spack_cxx}",
+            f"override FC:={spack_fc}",
+            f"USE_SYSTEM_LIBM:={'0' if openlibm else '1'}",
+            f"USE_SYSTEM_OPENLIBM:={'1' if openlibm else '0'}",
         ]
-
-        options.append("USEGCC:={}".format("1" if "%c=gcc" in spec else "0"))
-        options.append("USECLANG:={}".format("1" if "%c=llvm" in spec else "0"))
-
-        options.extend(
-            [
-                "override CC:={0}".format(spack_cc),
-                "override CXX:={0}".format(spack_cxx),
-                "override FC:={0}".format(spack_fc),
-            ]
-        )
-
-        # libm or openlibm?
-        if spec.variants["openlibm"].value:
-            options.append("USE_SYSTEM_LIBM=0")
-            options.append("USE_SYSTEM_OPENLIBM=1")
-        else:
-            options.append("USE_SYSTEM_LIBM=1")
-            options.append("USE_SYSTEM_OPENLIBM=0")
 
         with open("Make.user", "w") as f:
             f.write("\n".join(options) + "\n")
+
+    @run_before("build")
+    def populate_srccache(self):
+        srccache = join_path("deps", "srccache")
+        mkdirp(srccache)
+
+        if self.spec.satisfies("@1.10:"):
+            for src in glob.glob(join_path("deps-resources", "juliasyntax", "*")):
+                install(src, join_path(srccache, f"JuliaSyntax-{os.path.basename(src)}.tar.gz"))
+
+        if self.spec.satisfies("@1.11:"):
+            for src in glob.glob(join_path("deps-resources", "terminfodb", "TermInfoDB.v*")):
+                name = os.path.basename(src).replace("TermInfoDB.v", "TermInfoDB-v", 1)
+                install(src, join_path(srccache, name))
+
+        if self.spec.satisfies("@1.12: %openssl certs=mozilla"):
+            pem = join_path(self.spec["openssl"].prefix, "etc", "openssl", "cert.pem")
+            mkdirp(join_path("usr", "share", "julia"))
+            install(pem, join_path("usr", "share", "julia", "cert.pem"))
+
+    @run_after("install", when="@1.12: %openssl certs=mozilla")
+    def install_ca_certs(self):
+        pem = join_path(self.spec["openssl"].prefix, "etc", "openssl", "cert.pem")
+        mkdirp(self.prefix.share.julia)
+        install(pem, self.prefix.share.julia.join("cert.pem"))
 
     @run_before("build", when="@:1.11 %curl@8.10:")
     def patch_downloads_stdlib(self):

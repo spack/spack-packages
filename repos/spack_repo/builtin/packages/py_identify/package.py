@@ -19,12 +19,14 @@ class PyIdentify(PythonPackage):
 
     license("MIT")
 
+    version("2.6.19", sha256="6be5020c38fcb07da56c53733538a3081ea5aa70d36a156f83044bfbf9173842")
     version("2.6.15", sha256="e4f4864b96c6557ef2a1e1c951771838f4edc9df3a72ec7118b338801b11c7bf")
     version("2.5.24", sha256="0aac67d5b4812498056d28a9a512a483f5085cc28640b02b258a59dac34301d4")
     version("2.5.5", sha256="322a5699daecf7c6fd60e68852f36f2ecbb6a36ff6e6e973e0d2bb6fca203ee6")
     version("2.5.3", sha256="887e7b91a1be152b0d46bbf072130235a8117392b9f1828446079a816a05ef44")
     version("1.4.7", sha256="d8919589bd2a5f99c66302fec0ef9027b12ae150b0b0213999ad3f695fc7296e")
 
+    depends_on("python@3.10:", type=("build", "run"), when="@2.6.16:")
     depends_on("python@3.9:", type=("build", "run"), when="@2.6:")
 
     depends_on("py-setuptools", type="build")

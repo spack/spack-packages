@@ -15,6 +15,7 @@ class PyPoetryCore(PythonPackage):
 
     license("MIT")
 
+    version("2.3.2", sha256="20cb71be27b774628da9f384effd9183dfceb53bcef84063248a8672aa47031f")
     version("2.2.0", sha256="b4033b71b99717a942030e074fec7e3082e5fde7a8ed10f02cd2413bdf940b1f")
     version("2.1.2", sha256="f9dbbbd0ebf9755476a1d57f04b30e9aecf71ca9dc2fcd4b17aba92c0002aa04")
     version("1.8.1", sha256="67a76c671da2a70e55047cddda83566035b701f7e463b32a2abfeac6e2a16376")
@@ -28,9 +29,12 @@ class PyPoetryCore(PythonPackage):
     depends_on("c", type="build")  # generated
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:3", when="@2.3:")
         depends_on("python@3.9:3", when="@2:")
         depends_on("python@3.8:3", when="@1.7:")
         depends_on("python@3.7:3", when="@1.1:")
+
+        # Historical dependencies
         depends_on("py-importlib-metadata@1.7:", when="@1.1:1.6 ^python@:3.7")
         depends_on("py-importlib-metadata@1.7:1", when="@:1.0 ^python@:3.7")
 

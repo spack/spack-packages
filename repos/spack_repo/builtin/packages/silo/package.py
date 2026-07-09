@@ -176,7 +176,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     def flag_handler(self, name, flags):
         spec = self.spec
         if name == "ldflags":

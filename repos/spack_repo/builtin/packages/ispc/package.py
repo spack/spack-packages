@@ -28,6 +28,7 @@ class Ispc(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.30.0", sha256="2ccf9791ebe3ae14db7d60f84d860284f6ef704417910a7df3a424e2b8e34d77")
     version("1.24.0", sha256="fac82c8f3f7ece2bc96620cef0b34e10b29462de9349447bcd8c3ba98cfdcd72")
     version("1.23.0", sha256="e268eabed9a9021b4402725ed1c120b8eca776ee4aaf50ddeb0e4adaadda05f9")
     version("1.22.0", sha256="1f115eeed7df5028c19c9b256887949ca88c29c146f641b031d8e080297f5acd")
@@ -58,6 +59,7 @@ class Ispc(CMakePackage):
     depends_on("llvm libcxx=none", when="platform=darwin", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=arm:", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=aarch64:", type="build")
+    depends_on("llvm@18:22", when="@1.30", type="build")
     depends_on("llvm@:18.1", when="@:1.24", type="build")
     depends_on("llvm@:17", when="@:1.23", type="build")
     depends_on("llvm@:15", when="@:1.20", type="build")
@@ -122,7 +124,12 @@ class Ispc(CMakePackage):
         try:
             Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
-            filter_file("bit 32 64", "bit 64", "cmake/GenerateBuiltins.cmake")
+            # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
+            if self.spec.satisfies("@1.25:"):
+                cmake_target_file = "cmake/CommonStdlibBuiltins.cmake"
+            else:
+                cmake_target_file = "cmake/GenerateBuiltins.cmake"
+            filter_file("bit 32 64", "bit 64", cmake_target_file)
 
     def cmake_args(self):
         spec = self.spec

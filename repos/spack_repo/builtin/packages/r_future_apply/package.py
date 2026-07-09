@@ -20,6 +20,7 @@ class RFutureApply(RPackage):
 
     cran = "future.apply"
 
+    version("1.20.2", sha256="30d6b64c93a1c40fc1b07e21503fce811707fc30589145832ce0b8947ce74bdf")
     version("1.11.2", sha256="f4a635b0fa5e0d826d2f8da6bc1fa5bb055e640c29a85c644931d08ab2d81387")
     version("1.10.0", sha256="dee92dd84812fe8c55064c0f0e6d806c0c29848b5a5fc4a7725d6a4b623e94aa")
     version("1.9.1", sha256="4f22ccd5caa62077581c6adc4d35543451e547220270aed3f1abcbaa6a202133")
@@ -28,14 +29,20 @@ class RFutureApply(RPackage):
     version("1.7.0", sha256="2ffa6adb55f239918ce9679b7eac8dcc4bf2e6bed35c9cbedf4bf90d906345db")
     version("1.3.0", sha256="6374eca49bb81e05c013509c8e324cf9c5d023f9f8217b29ce7b7e12025ca371")
 
-    depends_on("r@3.2.0:", type=("build", "run"))
-    depends_on("r-future@1.13.0:", type=("build", "run"))
-    depends_on("r-future@1.17.0:", type=("build", "run"), when="@1.7.0:")
-    depends_on("r-future@1.21.0:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-future@1.22.1:", type=("build", "run"), when="@1.9.0:")
-    depends_on("r-future@1.27.0:", type=("build", "run"), when="@1.9.1:")
-    depends_on("r-future@1.28.0:", type=("build", "run"), when="@1.10.0:")
-    depends_on("r-globals@0.12.4:", type=("build", "run"))
-    depends_on("r-globals@0.12.5:", type=("build", "run"), when="@1.7.0:")
-    depends_on("r-globals@0.14.0:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-globals@0.16.1:", type=("build", "run"), when="@1.9.1:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2.0:")
+
+        depends_on("r-future@1.49.0:", when="@1.20.0:")
+        depends_on("r-future@1.28.0:", when="@1.10.0:")
+        depends_on("r-future@1.27.0:", when="@1.9.1:")
+        depends_on("r-future@1.22.1:", when="@1.9.0:")
+        depends_on("r-future@1.21.0:", when="@1.8.1:")
+        depends_on("r-future@1.17.0:", when="@1.7.0:")
+        depends_on("r-future@1.13.0:")
+
+        # newer versions don't have a versions restriction anymore
+        # -> leave it in nevertheless
+        depends_on("r-globals@0.16.1:", when="@1.9.1:")
+        depends_on("r-globals@0.14.0:", when="@1.8.1:")
+        depends_on("r-globals@0.12.5:", when="@1.7.0:")
+        depends_on("r-globals@0.12.4:")

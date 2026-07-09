@@ -25,6 +25,8 @@ class Iwyu(CMakePackage):
 
     sanity_check_is_file = ["bin/include-what-you-use"]
 
+    version("0.26", sha256="5247c0c9a59df9d14e8aa7408ffec4134c6a4aef12f590929111fbfeac930a08")
+    version("0.25", sha256="be81f9d5498881462465060ddc28b587c01254255c706d397d1a494d69eb5efd")
     version("0.24", sha256="a23421ceff601d3ea215e8fa9292bfa8ca39eb1ac2098dbbedfc6cfe65541c10")
     version("0.23", sha256="0004d5a9169717acf2f481248a5bfc15c7d55ddc2b9cdc7f461b06e93d49c73f")
     version("0.22", sha256="859074b461ea4b8325a73418c207ca33b5e6566b08e6b587eb9164416569a6dd")
@@ -45,6 +47,8 @@ class Iwyu(CMakePackage):
     depends_on("cxx", type="build")
 
     # Required dependencies
+    depends_on("llvm+clang@22", when="@0.26")
+    depends_on("llvm+clang@21", when="@0.25")
     depends_on("llvm+clang@20", when="@0.24")
     depends_on("llvm+clang@19", when="@0.23")
     depends_on("llvm+clang@18", when="@0.22")

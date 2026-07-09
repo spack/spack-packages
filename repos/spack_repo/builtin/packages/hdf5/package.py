@@ -544,7 +544,8 @@ class Hdf5(CMakePackage):
             self.define("HDF5_BUILD_EXAMPLES", False),
             self.define(
                 "BUILD_TESTING",
-                self.run_tests or
+                self.run_tests
+                or
                 # Version 1.8.22 fails to build the tools when shared libraries
                 # are enabled but the tests are disabled.
                 spec.satisfies("@1.8.22+shared+tools"),

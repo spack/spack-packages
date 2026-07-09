@@ -20,6 +20,7 @@ class RBridgesampling(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.2-1", sha256="e85f4fa1d1c226e485b5ffb71b83c6d80d7d6a1083795af3e526b9c87929e998")
     version("1.1-2", sha256="54ecd39aa2e36d4d521d3d36425f9fe56a3f8547df6048c814c5931d790f3e6b")
 
     depends_on("cxx", type="build")  # generated

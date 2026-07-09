@@ -19,12 +19,21 @@ class Libffs(CMakePackage):
     url = "https://github.com/GTkorvo/ffs/archive/v1.1.tar.gz"
     git = "https://github.com/GTkorvo/ffs.git"
 
+    maintainers("eisenhauer", "vicentebolea")
+
     version("develop", branch="master")
-    version("1.5", sha256="e1f3df42eb36fa35c5445887d679e26b7e3c9be697a07cd38e4ae824dbcd8ef8")
-    version("1.1.1", sha256="9c3a82b3357e6ac255b65d4f45003dd270dea3ec0cd7a2aa40b59b3eab4bdb83")
-    version("1.1", sha256="008fd87c5a6cb216cd757b4dc04057fc987b39b7a367623eb4cf0fd32a9fd81e")
+    version("3.2.0", sha256="885578babae52394c3cabb4479b7a87053443d61b1c0975f777a22c3fd104d8c")
+
+    with default_args(deprecated=True):
+        version("1.6.0", sha256="2e5f547d9e4994d4f52fc4615cbf2e51e4aa82480c3624faade88a0e709a9172")
+        version("1.5", sha256="e1f3df42eb36fa35c5445887d679e26b7e3c9be697a07cd38e4ae824dbcd8ef8")
+        version("1.1.1", sha256="9c3a82b3357e6ac255b65d4f45003dd270dea3ec0cd7a2aa40b59b3eab4bdb83")
+        version("1.1", sha256="008fd87c5a6cb216cd757b4dc04057fc987b39b7a367623eb4cf0fd32a9fd81e")
+
+    variant("shared", default=True, when="@3.2:", description="Build shared libraries")
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
 
     depends_on("flex", type="build", when="@:1.4")
     depends_on("bison", type="build", when="@:1.4")
@@ -34,14 +43,15 @@ class Libffs(CMakePackage):
 
     def cmake_args(self):
         args = ["-DTARGET_CNL=1"]
-        if self.spec.satisfies("@1.5:"):
+        if self.spec.satisfies("@3.2:"):
+            args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
+
+        elif self.spec.satisfies("@1.5:"):
             args.append("-DBUILD_SHARED_LIBS=OFF")
         else:
             args.append("-DENABLE_BUILD_STATIC=STATIC")
 
-        if self.run_tests:
-            args.append("-DENABLE_TESTING=0")
-        else:
-            args.append("-DENABLE_TESTING=0")
+        args.append(self.define("ENABLE_TESTING", self.run_tests))
+        args.append("-DCMAKE_POSITION_INDEPENDENT_CODE=TRUE")
 
         return args

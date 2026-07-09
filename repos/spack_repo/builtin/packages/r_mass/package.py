@@ -15,6 +15,9 @@ class RMass(RPackage):
 
     cran = "MASS"
 
+    license("GPL-2.0-only OR GPL-3.0-only")
+
+    version("7.3-65", sha256="b07ef1e3c364ce56269b4a8a7759cc9f87c876554f91293437bb578cfe38172f")
     version("7.3-61", sha256="3144c8bf579dd7b7c47c259728c27f53f53e294e7ed307da434dfd144e800a90")
     version("7.3-59", sha256="454200bec7a52835fbb7f9fe8e01a7aaa728b3ab87b068fc6d900e01c930da5a")
     version("7.3-58.1", sha256="f704e4e2fb131740d023ae1755c925c2e684886a3061b08e26397135f1231420")
@@ -30,7 +33,8 @@ class RMass(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.1.0:", type=("build", "run"))
-    depends_on("r@3.3.0:", type=("build", "run"), when="@7.3-55:")
-    depends_on("r@4.2.0:", type=("build", "run"), when="@7.3-59:")
-    depends_on("r@4.4.0:", type=("build", "run"), when="@7.3-60.1:")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.4.0:", when="@7.3-60.1:")
+        depends_on("r@4.2.0:", when="@7.3-59:")
+        depends_on("r@3.3.0:", when="@7.3-55:")
+        depends_on("r@3.1.0:")

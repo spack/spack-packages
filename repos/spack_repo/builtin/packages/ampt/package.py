@@ -29,12 +29,12 @@ class Ampt(MakefilePackage):
     version(
         "2.26-t9b_atlas",
         sha256="9441b5f77c2ab91a57b291abd4afd12de7968f9cbe9f3cc8dbe60fbf5293ed55",
-        url="http://myweb.ecu.edu/linz/ampt/ampt-v1.26t9b-v2.26t9b.zip",
+        url="https://myweb.ecu.edu/linz/ampt/ampt-v1.26t9b-v2.26t9b.zip",
     )
     version(
         "2.26-t9",
         sha256="9441b5f77c2ab91a57b291abd4afd12de7968f9cbe9f3cc8dbe60fbf5293ed55",
-        url="http://myweb.ecu.edu/linz/ampt/ampt-v1.26t9b-v2.26t9b.zip",
+        url="https://myweb.ecu.edu/linz/ampt/ampt-v1.26t9b-v2.26t9b.zip",
     )
 
     def install(self, spec, prefix):

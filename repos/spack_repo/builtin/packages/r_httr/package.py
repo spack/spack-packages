@@ -18,6 +18,7 @@ class RHttr(RPackage):
 
     license("MIT")
 
+    version("1.4.8", sha256="62acf6759814f0a2923d18904971e16e01d6147419ceb816dac02113fc3e09f8")
     version("1.4.7", sha256="1555e6c2fb67bd38ff11b479f74aa287b2d93f4add487aec53b836ff07de3a3a")
     version("1.4.5", sha256="f93bac7f882b0df099abca47dd5aae3686fb3cd2d3e9926fcd639bcddff76f6c")
     version("1.4.4", sha256="41d82523f3ee260d409a7b5ae4136190cbc5aecbc270b40ed7064f83e7f5435d")
@@ -29,13 +30,17 @@ class RHttr(RPackage):
     version("1.2.1", sha256="e7b90b90ee52c826e152efcfadf98e078fa75b65a6baaeb8fd25eeed2195730e")
     version("1.1.0", sha256="d7c0cdc11b2ded3132544580f52ebe5dad2a426cde1a5029f2cc693b2f195823")
 
-    depends_on("r@3.0.0:", type=("build", "run"))
-    depends_on("r@3.1:", type=("build", "run"), when="@1.4.0:")
-    depends_on("r@3.2:", type=("build", "run"), when="@1.4.1:")
-    depends_on("r@3.5:", type=("build", "run"), when="@1.4.5:")
-    depends_on("r-curl@3.0.0:", type=("build", "run"))
-    depends_on("r-curl@5.0.2:", type=("build", "run"), when="@1.4.7:")
-    depends_on("r-jsonlite", type=("build", "run"))
-    depends_on("r-mime", type=("build", "run"))
-    depends_on("r-openssl@0.8:", type=("build", "run"))
-    depends_on("r-r6", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.6:", when="@1.4.8:")
+        depends_on("r@3.5:", when="@1.4.5:")
+        depends_on("r@3.2:", when="@1.4.1:")
+        depends_on("r@3.1:", when="@1.4.0:")
+        depends_on("r@3.0.0:")
+
+        depends_on("r-curl@5.1.0:", when="@1.4.8:")
+        depends_on("r-curl@5.0.2:", when="@1.4.7:")
+        depends_on("r-curl@3.0.0:")
+        depends_on("r-jsonlite")
+        depends_on("r-mime")
+        depends_on("r-openssl@0.8:")
+        depends_on("r-r6")

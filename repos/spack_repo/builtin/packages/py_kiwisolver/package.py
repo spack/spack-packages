@@ -13,6 +13,7 @@ class PyKiwisolver(PythonPackage):
     homepage = "https://github.com/nucleic/kiwi"
     pypi = "kiwisolver/kiwisolver-1.1.0.tar.gz"
 
+    version("1.5.0", sha256="d4193f3d9dc3f6f79aaed0e5637f45d98850ebf01f7ca20e69457f3e8946b66a")
     version("1.4.8", sha256="23d5f023bdc8c7e54eb65f03ca5d5bb25b601eac4d7f1a042888a1f45237987e")
     version("1.4.7", sha256="9893ff81bd7107f7b685d3017cc6583daadb4fc26e4a888350df530e41980a60")
     version("1.4.6", sha256="3cda29d601445e6aa11f80d90a9b8c2ae501650c55d7ad29829bd44499c9e7e0")
@@ -25,22 +26,24 @@ class PyKiwisolver(PythonPackage):
     version("1.1.0", sha256="53eaed412477c836e1b9522c19858a8557d6e595077830146182225613b11a75")
     version("1.0.1", sha256="ce3be5d520b4d2c3e5eeb4cd2ef62b9b9ab8ac6b6fedbaa0e39cdb6f50644278")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
 
-    depends_on("python@2.7:2.8,3.4:", type=("build", "run"))
-    depends_on("python@3.6:", type=("build", "run"), when="@1.2.0:")
-    depends_on("python@3.7:", type=("build", "run"), when="@1.3.2:")
-    depends_on("python@3.8:", type=("build", "run"), when="@1.4.6:")
-    depends_on("python@3.10:", type=("build", "run"), when="@1.4.8:")
+        depends_on("py-setuptools@61.2:", when="@1.4.4:")
+        depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@3.4.3:+toml", when="@1.4.4:")
+        depends_on("py-cppy@1.3.0:", when="@1.4.8:")
+        depends_on("py-cppy@1.2.0:", when="@1.4.4:")
+        depends_on("py-cppy@1.1.0:", when="@1.2.0:")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@61.2:", when="@1.4.4:", type="build")
-    depends_on("py-setuptools-scm@3.4.3:+toml", when="@1.4.4:", type="build")
-    depends_on("py-cppy@1.1.0:", type="build", when="@1.2.0:")
-    depends_on("py-cppy@1.2.0:", type="build", when="@1.4.4:")
-    depends_on("py-cppy@1.3.0:", type="build", when="@1.4.8:")
-    depends_on("py-typing-extensions", when="@1.4.4: ^python@:3.7", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@1.4.8:")
+        depends_on("python@3.8:", when="@1.4.6:")
+        depends_on("python@3.7:", when="@1.3.2:")
+
+        # Historical dependencies
+        depends_on("py-typing-extensions", when="@1.4.4:1.4.5 ^python@:3.7")
 
     # https://github.com/spack/spack/issues/28522
     # https://github.com/nucleic/kiwi/issues/126
