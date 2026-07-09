@@ -23,6 +23,8 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="msimberg")
 
     version("master", branch="master")
+    version("0.7.0", sha256="12619c69aeba80a9e75a0a9af67561bde8c0928c7fb01abc15e52d44ee84f372")
+    version("0.6.0", sha256="7a9ebeef0f7dcbb2fa44c529f52d2be6cc2bf8a1720d232343b3f5fd071a1e92")
     version("0.5.0", sha256="b2324441c2210783a90e83439e0d5c8e0aa462a7797ebbc6e48a47dfcada4848")
 
     depends_on("c", type="build")
@@ -32,7 +34,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("ninja", type="build")
 
-    backends = ("mpi", "ucx", "libfabric")
+    backends = ("mpi", "ucx", "libfabric", "nccl")
     variant(
         "backend", default="mpi", description="Transport backend", values=backends, multi=False
     )
@@ -49,6 +51,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("oomph")
     for backend in backends:
         depends_on(f"oomph backend={backend}", when=f"backend={backend}")
+    requires("@0.8:", when="backend=nccl")
     depends_on("oomph+cuda", when="+cuda")
     depends_on("oomph+rocm", when="+rocm")
     depends_on("oomph~rocm~cuda", when="~rocm~cuda")
@@ -65,7 +68,8 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
         extends("python")
         depends_on("python@3.7:", type=("build", "run"))
         depends_on("py-pip", type="build")
-        depends_on("py-pybind11", type="build")
+        depends_on("py-pybind11", type="build", when="@:0.5")
+        depends_on("py-nanobind", type="build", when="@0.6:")
         depends_on("py-mpi4py", type=("build", "run"))
         depends_on("py-numpy", type=("build", "run"))
 
@@ -92,7 +96,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
             arch_str = ";".join(spec.variants["cuda_arch"].value)
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
             args.append(self.define("GHEX_USE_GPU", True))
-            args.append(self.define("GHEX_GPU_TYPE", "CUDA"))
+            args.append(self.define("GHEX_GPU_TYPE", "NVIDIA"))
         elif spec.satisfies("+rocm"):
             arch_str = ";".join(spec.variants["amdgpu_target"].value)
             args.append(self.define("CMAKE_HIP_ARCHITECTURES", arch_str))

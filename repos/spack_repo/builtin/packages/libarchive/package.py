@@ -89,7 +89,6 @@ class Libarchive(AutotoolsPackage):
         args = ["--without-libb2"]
         args += self.with_or_without("compression")
         args += self.with_or_without("crypto")
-        args += self.with_or_without("xar")
         args += self.enable_or_disable("programs")
 
         if spec.satisfies("+iconv"):
@@ -99,5 +98,15 @@ class Libarchive(AutotoolsPackage):
                 args.append("--without-libiconv-prefix")
         else:
             args.append("--without-iconv")
+
+        if spec.satisfies("xar=expat"):
+            args.append("--with-expat")
+        else:
+            args.append("--without-expat")
+
+        if spec.satisfies("xar=libxml2"):
+            args.append("--with-xml2")
+        else:
+            args.append("--without-xml2")
 
         return args

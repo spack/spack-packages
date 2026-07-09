@@ -33,6 +33,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20260330", sha256="395f00e166836ac0164793d65ba0d957d79dd0848a79c36fa903855e8b49b7e0")
     version("20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e")
     version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
     version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
@@ -626,7 +627,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         if spec.satisfies("%aocc"):
             if spec.satisfies("+intel"):
                 cxx_flags = (
-                    "-O3 -fno-math-errno -fno-unroll-loops "
+                    "-O3 -m64 -ffast-math -fno-math-errno -fno-unroll-loops "
                     "-fveclib=AMDLIBM -muse-unaligned-vector-move"
                 )
                 if spec.satisfies("%aocc@4.1:4.2"):
@@ -635,9 +636,15 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                         " -mllvm -enable-masked-gather-sequence=false"
                     )
                 elif spec.satisfies("%aocc@5.0:"):
-                    cxx_flags += " -mllvm -enable-aggressive-gather"
+                    if spec.satisfies("%aocc@5.1:"):
+                        cxx_flags += " -mllvm -enable-vector-gathers"
+                    else:
+                        cxx_flags += " -mllvm -enable-aggressive-gather"
                     if spec.target >= "zen5":
-                        cxx_flags += " -fenable-restrict-based-lv"
+                        cxx_flags += (
+                            " -fenable-restrict-based-lv"
+                            " -mllvm -vectorizer-maximize-bandwidth=true"
+                        )
 
                 # add -fopenmp-simd if OpenMP not already turned on
                 if spec.satisfies("~openmp"):

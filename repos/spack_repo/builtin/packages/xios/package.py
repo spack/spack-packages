@@ -147,9 +147,7 @@ OASIS_LIB=""
 %CPP            {CC} -E
 %FPP            {CC} -E -P -x c
 %MAKE           make
-""".format(
-                **param
-            )
+""".format(**param)
         elif spec.satisfies("%cce"):
             # In the CC compiler prior to cce/8.3.7,
             # optimisation must be reduced to avoid a bug,
@@ -181,9 +179,7 @@ OASIS_LIB=""
 %CPP            cpp
 %FPP            cpp -P -CC
 %MAKE           gmake
-""".format(
-                **param
-            )
+""".format(**param)
         else:
             raise InstallError("Unsupported compiler.")
 

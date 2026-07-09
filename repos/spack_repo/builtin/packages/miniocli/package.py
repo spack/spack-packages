@@ -17,6 +17,11 @@ class Miniocli(MakefilePackage):
     license("AGPL-3.0-only")
 
     version(
+        "2025-08-13",
+        sha256="29db22500374169a43951c7cef09daf19e7291ea5ba00ac10f321371b0a35b32",
+        url="https://github.com/minio/mc/archive/refs/tags/RELEASE.2025-08-13T08-35-41Z.tar.gz",
+    )
+    version(
         "2023-06-28",
         sha256="033a80439474595665bdbc3ec72b059dc9e69e99db85fe6820877ad8973a080b",
         url="https://github.com/minio/mc/archive/refs/tags/RELEASE.2023-06-28T21-54-17Z.tar.gz",
@@ -44,6 +49,7 @@ class Miniocli(MakefilePackage):
         url="https://github.com/minio/mc/archive/RELEASE.2022-01-05T23-52-51Z.tar.gz",
     )
 
+    depends_on("go@1.23:", type="build")
     depends_on("go", type="build")
 
     def install(self, spec, prefix):

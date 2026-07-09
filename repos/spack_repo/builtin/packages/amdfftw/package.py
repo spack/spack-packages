@@ -39,6 +39,7 @@ class Amdfftw(FftwBase):
 
     license("GPL-2.0-only")
 
+    version("5.3", sha256="175a426dbbe9ba332416adeead59af364177016c7c3057c597a26c0159c83c43")
     version("5.2", sha256="143c7a936fd197a94551aa1c67d7ae7cbf7d96338947aa21d3007df7aea46c78")
     version("5.1", sha256="4cc0d6985afc5ce14cafc195ad46d9876ac4f35b959861b41a3b681385d7320d")
     version("5.0", sha256="bead6c08309a206f8a6258971272affcca07f11eb57b5ecd8496e2e7e3ead877")
@@ -159,6 +160,10 @@ class Amdfftw(FftwBase):
         if name == "cflags":
             if self.spec.satisfies("%gcc@14:"):
                 flags.append("-Wno-incompatible-pointer-types")
+            if "avx512" in self.spec.target:
+                flags.append("-mprefer-vector-width=512")
+            else:
+                flags.append("-mprefer-vector-width=256")
         return (flags, None, None)
 
     def configure(self, spec, prefix):
@@ -168,7 +173,6 @@ class Amdfftw(FftwBase):
 
         # Dynamic dispatcher builds a single portable optimized library
         # that can execute on different x86 CPU architectures.
-        # It is supported for GCC compiler and Linux based systems only.
         if spec.satisfies("+amd-dynamic-dispatcher"):
             options.append("--enable-dynamic-dispatcher")
 
@@ -200,11 +204,6 @@ class Amdfftw(FftwBase):
 
         if not self.compiler.f77 or not self.compiler.fc:
             options.append("--disable-fortran")
-
-        if "avx512" in spec.target:
-            options.append("CFLAGS=-mprefer-vector-width=512")
-        else:
-            options.append("CFLAGS=-mprefer-vector-width=256")
 
         # Specific SIMD support.
         # float and double precisions are supported

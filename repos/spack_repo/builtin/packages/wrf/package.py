@@ -253,7 +253,8 @@ class Wrf(Package):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("pkgconfig", type=("build"))
+    depends_on("gmake", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("libtirpc")
 
     depends_on("mpi")

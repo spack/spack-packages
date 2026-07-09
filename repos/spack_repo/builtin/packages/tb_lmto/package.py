@@ -11,8 +11,8 @@ from spack.package import *
 
 class TbLmto(MakefilePackage):
     """
-    The STUTTGART TB-LMTO program. The linear muffin-tin orbital (LMTO) method has been described in numerous publications.
-    Use of this software is subject to the license at
+    The STUTTGART TB-LMTO program. The linear muffin-tin orbital (LMTO) method has been described
+    in numerous publications. Use of this software is subject to the license at
     https://www2.fkf.mpg.de/andersen/LMTODOC/node180.html#SECTION000130000000000000000
     """
 

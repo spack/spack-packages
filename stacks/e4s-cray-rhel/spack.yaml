@@ -175,7 +175,6 @@ spack:
   # - datatransferkit
   # - dealii
   # - exaworks
-  # - fortrilinos
   # - gptune
   # - lammps
   # - legion                              # bitmask.h:2894:22: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]

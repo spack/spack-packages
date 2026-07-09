@@ -23,6 +23,7 @@ class Fd(CargoPackage):
     license("Apache-2.0 OR MIT")
 
     version("master", branch="master")
+    version("10.4.2", sha256="3a7e027af8c8e91c196ac259c703d78cd55c364706ddafbc66d02c326e57a456")
     version("10.3.0", sha256="2edbc917a533053855d5b635dff368d65756ce6f82ddefd57b6c202622d791e9")
     version("10.2.0", sha256="73329fe24c53f0ca47cd0939256ca5c4644742cb7c14cf4114c8c9871336d342")
     version("10.1.0", sha256="ee4b2403388344ff60125c79ff25b7895a170e7960f243ba2b5d51d2c3712d97")
@@ -33,9 +34,10 @@ class Fd(CargoPackage):
 
     depends_on("c", type="build")
 
-    depends_on("rust@1.77.2:", type="build", when="@10:")
-    depends_on("rust@1.70:", type="build", when="@8.7.1:")
-    depends_on("rust@1.64:", type="build", when="@8.7:")
+    depends_on("rust@1.90.0:", type="build", when="@10.4.0:")
+    depends_on("rust@1.77.2:", type="build", when="@10.0.0:")
+    depends_on("rust@1.70.0:", type="build", when="@8.7.1:")
+    depends_on("rust@1.64.0:", type="build", when="@8.7.0:")
 
     depends_on("gmake", type="build")
 

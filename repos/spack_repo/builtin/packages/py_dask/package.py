@@ -133,9 +133,14 @@ class PyDask(PythonPackage):
             depends_on("py-pandas@1.0:", when="@2022.10.2:")
             depends_on("py-pandas@0.25.0:", when="@2020.12.0:")
 
+            # https://github.com/dask/dask/issues/10164
+            depends_on("py-pandas@:1", when="@:2023.1")
+
             # starting with 2025.7 needs py-arrow
             depends_on("py-pyarrow@16.0:", when="@2026.1.0:")
             depends_on("py-pyarrow@14.0.1:", when="@2025.1.0:2025")
+            with when("@2025.1.0:"):
+                depends_on("arrow+parquet")
 
             # The dependency on py-toolz is non-optional starting version 2021.3.1
             depends_on("py-toolz@0.8.2:", when="@:2021.3.0")
@@ -174,6 +179,9 @@ class PyDask(PythonPackage):
             depends_on("py-cloudpickle@0.2.2:", when="@:2021.3.0")
             # The dependency on py-toolz is non-optional starting version 2021.3.1
             depends_on("py-toolz@0.8.2:", when="@:2021.3.0")
+
+    # https://github.com/dask/dask/pull/11035
+    patch("dask_dataframe_accessor.patch", when="@:2024.1.0 ^python@3.11.9:3.11")
 
     @property
     def import_modules(self):

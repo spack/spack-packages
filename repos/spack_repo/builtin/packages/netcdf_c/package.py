@@ -4,6 +4,7 @@
 
 import itertools
 import os
+import pathlib
 import sys
 
 from spack_repo.builtin.build_systems import autotools, cmake
@@ -27,6 +28,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("4.10.0", sha256="ce160f9c1483b32d1ba8b7633d7984510259e4e439c48a218b95a023dc02fd4c")
     version("4.9.3", sha256="990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
     version("4.9.2", sha256="bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7")
     version("4.9.0", sha256="9f4cb864f3ab54adb75409984c6202323d2fc66c003e5308f3cdf224ed41c0a6")
@@ -37,20 +39,26 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     version("4.7.2", sha256="7648db7bd75fdd198f7be64625af7b276067de48a49dcdfd160f1c2ddff8189c")
     version("4.7.1", sha256="583e6b89c57037293fc3878c9181bb89151da8c6015ecea404dd426fea219b2c")
     version("4.7.0", sha256="26d03164074363b3911ed79b7cddd045c22adf5ebaf978943db11a1d9f15e9d3")
-    version("4.6.3", sha256="734a629cdaed907201084d003cfa091806d6080eeffbd4204e7c7f73ff9d3564")
-    version("4.6.2", sha256="673936c76ae0c496f6dde7e077f5be480afc1e300adb2c200bf56fbe22e5a82a")
-    version("4.6.1", sha256="a2fabf27c72a5ee746e3843e1debbaad37cd035767eaede2045371322211eebb")
-    version("4.6.0", sha256="6d740356399aac12290650325a05aec2fe92c1905df10761b2b0100994197725")
-    version("4.5.0", sha256="f7d1cb2a82100b9bf9a1130a50bc5c7baf0de5b5022860ac3e09a0a32f83cf4a")
-    # Version 4.4.1.1 is having problems in tests
-    #    https://github.com/Unidata/netcdf-c/issues/343
-    version("4.4.1.1", sha256="7f040a0542ed3f6d27f3002b074e509614e18d6c515b2005d1537fec01b24909")
-    # Version 4.4.1 can crash on you (in real life and in tests).  See:
-    #    https://github.com/Unidata/netcdf-c/issues/282
-    version("4.4.1", sha256="17599385fd76ccdced368f448f654de2ed000fece44dece9fb5d598798b4c9d6")
-    version("4.4.0", sha256="09b78b152d3fd373bee4b5738dc05c7b2f5315fe34aa2d94ee9256661119112f")
-    version("4.3.3.1", sha256="f2ee78eb310637c007f001e7c18e2d773d23f3455242bde89647137b7344c2e2")
-    version("4.3.3", sha256="3f16e21bc3dfeb3973252b9addf5defb48994f84fc9c9356081f871526a680e7")
+
+    with default_args(deprecated=True):
+        version("4.6.3", sha256="734a629cdaed907201084d003cfa091806d6080eeffbd4204e7c7f73ff9d3564")
+        version("4.6.2", sha256="673936c76ae0c496f6dde7e077f5be480afc1e300adb2c200bf56fbe22e5a82a")
+        version("4.6.1", sha256="a2fabf27c72a5ee746e3843e1debbaad37cd035767eaede2045371322211eebb")
+        version("4.6.0", sha256="6d740356399aac12290650325a05aec2fe92c1905df10761b2b0100994197725")
+        version("4.5.0", sha256="f7d1cb2a82100b9bf9a1130a50bc5c7baf0de5b5022860ac3e09a0a32f83cf4a")
+        # Version 4.4.1.1 is having problems in tests
+        #    https://github.com/Unidata/netcdf-c/issues/343
+        version(
+            "4.4.1.1", sha256="7f040a0542ed3f6d27f3002b074e509614e18d6c515b2005d1537fec01b24909"
+        )
+        # Version 4.4.1 can crash on you (in real life and in tests).  See:
+        #    https://github.com/Unidata/netcdf-c/issues/282
+        version("4.4.1", sha256="17599385fd76ccdced368f448f654de2ed000fece44dece9fb5d598798b4c9d6")
+        version("4.4.0", sha256="09b78b152d3fd373bee4b5738dc05c7b2f5315fe34aa2d94ee9256661119112f")
+        version(
+            "4.3.3.1", sha256="f2ee78eb310637c007f001e7c18e2d773d23f3455242bde89647137b7344c2e2"
+        )
+        version("4.3.3", sha256="3f16e21bc3dfeb3973252b9addf5defb48994f84fc9c9356081f871526a680e7")
 
     with when("build_system=cmake"):
         # TODO: document why we need to revert https://github.com/Unidata/netcdf-c/pull/1731
@@ -141,6 +149,14 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         "https://github.com/Unidata/netcdf-c/commit/f8904d5a1d89420dde0f9d2c0e051ba08d08e086.patch?full_index=1",
         sha256="0161eb870fdfaf61be9d70132c9447a537320342366362e76b8460c823bf95ca",
         when="@4.9.0:4.9.2",
+    )
+
+    # Address the CVE-2025-14933 vulnerability (https://github.com/advisories/GHSA-cg32-6v27-jr43).
+    # See https://github.com/Unidata/netcdf-c/pull/3153
+    patch(
+        "https://github.com/Unidata/netcdf-c/commit/0e0cb290673fa5a8056df603a95d6bdc7865e9c4.patch?full_index=1",
+        sha256="5adacbeb7021ba59e6cdb23bb0095c720b9da925b276418c66d5eb9c8ddb0d56",
+        when="@:4.9",
     )
 
     variant("mpi", default=True, description="Enable parallel I/O for netcdf-4")
@@ -401,11 +417,15 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             base_cmake_args.extend(
                 [
                     self.define("ENABLE_PLUGIN_INSTALL", True),
-                    self.define("NETCDF_WITH_PLUGIN_DIR", self.prefix.plugins),
+                    self.define(
+                        "NETCDF_WITH_PLUGIN_DIR", pathlib.Path(self.prefix.plugins).as_posix()
+                    ),
                 ]
             )
         elif self.spec.satisfies("@4.9.0:+shared"):
-            base_cmake_args.append(self.define("PLUGIN_INSTALL_DIR", self.prefix.plugins))
+            base_cmake_args.append(
+                self.define("PLUGIN_INSTALL_DIR", pathlib.Path(self.prefix.plugins).as_posix())
+            )
         return base_cmake_args
 
     @run_after("install")
@@ -433,22 +453,26 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def force_autoreconf(self):
         return any(self.spec.satisfies(s) for s in self.pkg._force_autoreconf_when)
 
-    @property
-    def build_targets(self):
-        # Starting version 4.8.0, the library includes C++ source files. None of those files is
-        # compiled in any configuration that we currently support. However, Automake still chooses
-        # the C++ compiler for linking, which leads to overlinking to the standard C++ library.
-        # To avoid that, we run make with an extra argument, which overrides the linker command.
-        # This way, the C++ compiler is never called, and the linking is done with the default
-        # command that runs the C compiler.
-        if self.spec.satisfies("@4.8.0:"):
-            return ["CXXLINK=${LINK}"]
-        return []
-
     @when("@4.6.3:")
     def autoreconf(self, pkg, spec, prefix):
         if not os.path.exists(self.configure_abs_path):
             Executable("./bootstrap")()
+
+    @run_before("autoreconf")
+    def filter_stdcxx(self):
+        # Starting version 4.8.0, the library includes C++ source files. None of those files is
+        # compiled in any configuration that we currently support. The C++ compiler is also never
+        # called for the compilation and linking (e.g. libnczarr.la, which is linked with
+        # --tag=CXX, is a convenience library and therefore is created with AR, not CXX). However,
+        # the Automake files are implemented to append -lstdc++ to the list of linker flags even
+        # when unnecessary, which we fix with the following patching:
+        if self.spec.satisfies("@4.8.0:"):
+            # Patch Makefile.in files to cover the case when autoreconf if skipped:
+            filenames = find(self.configure_directory, "Makefile.in", recursive=True)
+            # Patch the Automake include file to cover the case when autoreconf is run:
+            filenames.append(join_path(self.configure_directory, "lib_flags.am"))
+            with keep_modification_time(*filenames):
+                filter_file("-lstdc++", "", *filenames, string=True)
 
     def configure_args(self):
         config_args = [
@@ -633,9 +657,16 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
 
         return config_args
 
-    # It looks like the issues with running the tests in parallel were fixed around version 4.6.0
-    # (see https://github.com/Unidata/netcdf-c/commit/812c2fd4d108cca927582c0d84049c0f271bb9e0):
-    @when("@:4.5.0")
     def check(self):
-        # h5_test fails when run in parallel
-        make("check", parallel=False)
+        # Build all tests in parallel:
+        make("check", "TESTS=", parallel=True)
+        # Run the tests serially if needed. Also, run with the the --keep-going (-k) flag to run
+        # all tests even if a test in a subdirectory fails:
+        make(
+            "check",
+            "-k",
+            # The h5_test fails when run in parallel (it looks like the issues with running the
+            # tests in parallel were fixed around version 4.6.0,
+            # see https://github.com/Unidata/netcdf-c/commit/812c2fd4d108cca927582c0d84049c0f271bb9e0):
+            parallel=self.spec.satisfies("@4.6.0:"),
+        )

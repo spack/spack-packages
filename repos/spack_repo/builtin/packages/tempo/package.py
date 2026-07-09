@@ -19,7 +19,7 @@ class Tempo(AutotoolsPackage):
     # more: cannot open /...../gcc-11.3.0/tempo-master-lnizs: No such file or directory
     #
 
-    homepage = "http://tempo.sourceforge.net/"
+    homepage = "https://tempo.sourceforge.net/"
     git = "https://git.code.sf.net/p/tempo/tempo.git"
 
     version("master", branch="master", preferred=True)

@@ -24,6 +24,8 @@ class Xrootd(CMakePackage):
 
     license("LGPL-3.0-only")
 
+    version("6.0.0", sha256="bc8d00b6c0b48f9186e3ad09e8e4e6eedf1067fad68f6d6a4f4e939bcf87007c")
+    version("5.9.2", sha256="e29edb755d5f728eff0c74f7bd8cec35c954239ea747975eebd9c1e2bd61edb5")
     version("5.9.1", sha256="39946509a50e790ab3fcc77ba0f4c9b66abef221262756aa8bb2494f00a0e321")
     version("5.8.4", sha256="d8716bf764a7e8103aab83fbf4906ea2cc157646b1a633d99f91edbf204ff632")
     version("5.7.3", sha256="3a90fda99a53cb6005ebecf7d6125ce382cedb0a27fb453e44a2c13bade0a90f")
@@ -45,7 +47,7 @@ class Xrootd(CMakePackage):
     version("5.5.2", sha256="ec4e0490b8ee6a3254a4ea4449342aa364bc95b78dc9a8669151be30353863c6")
     version("5.5.1", sha256="3556d5afcae20ed9a12c89229d515492f6c6f94f829a3d537f5880fcd2fa77e4")
 
-    variant("davix", default=True, description="Build with Davix")
+    variant("davix", default=True, description="Build with Davix", when="@:5")
     variant(
         "ec",
         default=True,
@@ -72,7 +74,16 @@ class Xrootd(CMakePackage):
         values=("11", "14", "17", "20"),
         multi=False,
         description="Use the specified C++ standard when building",
-        when="@5.7:",
+        when="@5.7:5",
+    )
+
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20"),
+        multi=False,
+        description="Use the specified C++ standard when building",
+        when="@6:",
     )
 
     variant("scitokens-cpp", default=False, description="Enable support for SciTokens")
@@ -96,6 +107,7 @@ class Xrootd(CMakePackage):
     depends_on("bzip2")
     depends_on("cmake@2.6:", type="build", when="@3.1.0:")
     depends_on("cmake@3.16:", type="build", when="@5.6:")
+    depends_on("cmake@3.18:", type="build", when="@6:")
     conflicts("^cmake@:3.0", when="@5.0.0")
     conflicts("^cmake@:3.15.99", when="@5.5.4:5.5")
     depends_on("davix", when="+davix")
@@ -104,6 +116,7 @@ class Xrootd(CMakePackage):
     depends_on("libxml2", when="+http")
     depends_on("uuid", when="@4.11.0:")
     depends_on("openssl")
+    depends_on("openssl@1.1.1:", when="@6:")
     depends_on("python", when="+python")
     depends_on("py-setuptools", type="build", when="@:5.5 +python")
     depends_on("py-pip", type="build", when="@5.6: +python")
@@ -112,9 +125,11 @@ class Xrootd(CMakePackage):
     depends_on("zlib-api")
     depends_on("curl")
     depends_on("krb5", when="+krb5")
-    depends_on("json-c")
     depends_on("scitokens-cpp", when="+scitokens-cpp")
     depends_on("libxcrypt", type="link")
+    depends_on("pkgconfig", when="@6:")
+    depends_on("libzip", when="@6:")
+    depends_on("nlohmann-json@3.10.2:", when="@6:")
 
     extends("python", when="+python")
 
@@ -163,6 +178,8 @@ class Xrootd(CMakePackage):
             ]
 
         options += [
+            define("ENABLE_TESTS", self.run_tests),
+            define("ENABLE_SERVER_TESTS", self.run_tests and spec.satisfies("~client_only")),
             define_from_variant("ENABLE_HTTP", "http"),
             define_from_variant("ENABLE_XRDCLHTTP", "davix"),
             define_from_variant("ENABLE_PYTHON", "python"),
@@ -172,13 +189,16 @@ class Xrootd(CMakePackage):
             define_from_variant("ENABLE_XRDEC", "ec"),
             define_from_variant("XRDCL_ONLY", "client_only"),
             define("ENABLE_CEPH", False),
-            define("ENABLE_CRYPTO", True),
             define("ENABLE_FUSE", False),
             define("ENABLE_MACAROONS", False),
             define("ENABLE_VOMS", False),
             define("FORCE_ENABLED", True),
-            define("USE_SYSTEM_ISAL", True),
         ]
+        if spec.satisfies("@:5.7"):
+            options.append(define("USE_SYSTEM_ISAL", True))
+        if spec.satisfies("@:5.5"):
+            options.append(define("ENABLE_CRYPTO", True))
+
         # see https://github.com/spack/spack/pull/11581
         if "+python" in self.spec:
             options.append(define("XRD_PYTHON_REQ_VERSION", spec["python"].version.up_to(2)))

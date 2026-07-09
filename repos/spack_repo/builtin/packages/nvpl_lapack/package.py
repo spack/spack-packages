@@ -21,8 +21,12 @@ class NvplLapack(Package):
 
     maintainers("albestro", "rasolca")
 
-    license("UNKNOWN")
+    redistribute(source=False, binary=False)
 
+    license("NVIDIA Software License Agreement")
+
+    version("0.3.2", sha256="3e4d9969223a52ab011d1bf38156cbe31fba0e4f12c3b87729393972a16daecf")
+    version("0.3.1.1", sha256="f5b916aa36a8549946fc2262acebb082fe8c463bd1523a3c0cc2c93527231653")
     version("0.3.0", sha256="41cc18fc52f6869747b4185a96e34de93a53eb9d6aa95aab07082958055161b0")
     version("0.2.3.1", sha256="25927df133c5486fd71d5976c93917c96e62275a78dffc354bcaf1b022f56f8e")
     version("0.2.2.1", sha256="cdfbf69517a044e99e3e6231c8b2f4e845fd0de57775ccad6b4b0b4fe7e91e84")
@@ -40,6 +44,8 @@ class NvplLapack(Package):
         values=threadings,
         multi=False,
     )
+
+    depends_on("c", type="build")  # for enforcing compiler restrictions
 
     requires("target=armv8.2a:", msg="Any CPU with Arm-v8.2a+ microarch")
 

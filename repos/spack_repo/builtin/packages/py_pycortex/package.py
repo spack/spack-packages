@@ -19,28 +19,43 @@ class PyPycortex(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.3.1", sha256="2d4eef825cde211a33b5cdb51fd974674042834653f8fd163b8e3b20e061af60")
     version("1.2.2", sha256="ac46ed6a1dc727c3126c2b5d7916fc0ac21a6510c32a5edcd3b8cfb7b2128414")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-cython", type="build")
-    depends_on("py-future", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-tornado@4.3:", type=("build", "run"))
-    depends_on("py-shapely", type=("build", "run"))
-    depends_on("py-lxml", type=("build", "run"))
-    depends_on("py-html5lib", type=("build", "run"))
-    depends_on("py-h5py", type=("build", "run"))
-    depends_on("py-numexpr", type=("build", "run"))
-    depends_on("py-cython", type=("build", "run"))  # is in install_requires
-    depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("pil", type=("build", "run"))
-    depends_on("py-nibabel", type=("build", "run"))
-    depends_on("py-networkx@2.1:", type=("build", "run"))
-    depends_on("py-imageio", type=("build", "run"))
-    depends_on("py-wget", type=("build", "run"))
+        depends_on("py-setuptools@64:", when="@1.2.13:")
+        depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@8:", when="@1.2.13:")
+        depends_on("py-build", when="@1.2.9:")
+
+    with default_args(type=("build", "run")):
+        # from requirements.txt
+        depends_on("py-setuptools", when="@1.2.9:")
+        depends_on("py-future")
+        depends_on("py-numpy")
+        depends_on("py-scipy")
+        depends_on("py-tornado@4.3:")
+        depends_on("py-shapely")
+        depends_on("py-lxml")
+        depends_on("py-html5lib")
+        depends_on("py-h5py")
+        depends_on("py-numexpr")
+        depends_on("py-cython", when="@1.2.11:")
+        depends_on("py-cython@:2", when="@:1.2.10")
+        depends_on("py-matplotlib")
+        depends_on("pil")
+        depends_on("py-nibabel@2.1:", when="@1.2.6:")
+        depends_on("py-nibabel")
+        depends_on("py-networkx@2.1:")
+        depends_on("py-imageio")
+        depends_on("py-looseversion", when="@1.2.10:")
+        depends_on("py-mda-xdrlib", when="@1.2.11:")
+        depends_on("py-typing-extensions", when="@1.3: ^python@:3.10")
+
+        # Historical dependencies
+        depends_on("py-wget", when="@:1.2.8")
 
     # inkscape is not in spack
     # TODO remove this patch and add inkscape dependency once it is in

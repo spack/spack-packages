@@ -135,7 +135,7 @@ class Arrow(CMakePackage, CudaPackage):
     patch(
         "https://github.com/apache/arrow/pull/49370.patch?full_index=1",
         sha256="ca55e18c4eaaf59bcb145ada2aa5b556b8b87a93415ace059166716864145ceb",
-        when="@19:22.0.0 platform=darwin",
+        when="@19:23.0 platform=darwin",
     )
     conflicts("%apple-clang@21:", when="@:18")
 

@@ -75,6 +75,7 @@
 #
 
 import os
+import re
 
 from spack.package import (
     EnvironmentModifications,
@@ -82,6 +83,7 @@ from spack.package import (
     any_combination_of,
     conflicts,
     depends_on,
+    join_path,
     variant,
 )
 
@@ -212,3 +214,34 @@ class ROCmPackage(PackageBase):
     # conflicts('%gcc@5:', when='+cuda ^cuda@:7.5' + arch_platform)
     # conflicts('platform=darwin', when='+cuda ^cuda@11.0.2:')
     # for hip-related limitations.
+
+
+class ROCmLibrary(PackageBase):
+    """Helpers for detecting ROCm versions from an external installation."""
+
+    @classmethod
+    def determine_version(cls, path):
+        match = re.search(r"rocm-(\d+\.\d+\.\d+)", path)
+        if match:
+            return match.group(1)
+        return cls.version_from_rocm_version_h(path)
+
+    @classmethod
+    def version_from_rocm_version_h(cls, path):
+        """Get ROCm version from <ROCM_PATH>/include/rocm-core/rocm_version.h"""
+        path_dir = os.path.dirname(os.path.abspath(path))
+        rocm_prefix = os.path.dirname(path_dir)
+        header = join_path(rocm_prefix, "include", "rocm-core", "rocm_version.h")
+        if not os.path.isfile(header):
+            return None
+        try:
+            with open(header, encoding="utf-8", errors="replace") as f:
+                text = f.read()
+        except OSError:
+            return None
+        major_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MAJOR\s+(\d+)", text, re.MULTILINE)
+        minor_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_MINOR\s+(\d+)", text, re.MULTILINE)
+        patch_m = re.search(r"^\s*#\s*define\s+ROCM_VERSION_PATCH\s+(\d+)", text, re.MULTILINE)
+        if not major_m or not minor_m or not patch_m:
+            return None
+        return "{0}.{1}.{2}".format(major_m.group(1), minor_m.group(1), patch_m.group(1))
