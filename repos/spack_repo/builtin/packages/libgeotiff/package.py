@@ -64,7 +64,12 @@ class Libgeotiff(CMakePackage, AutotoolsPackage):
     patch("a76c686441398669422cb728411abd2dec358f7f.patch", level=2, when="@1.5.0:1.5.1")
     # geo_keyp.h is a public header that includes proj.h, so PROJ must be a PUBLIC
     # cmake dependency so that downstream targets (utilities, consumers) can find proj.h
-    patch("proj_public_interface.patch", level=2, when="build_system=cmake @1.5:")
+    patch(
+        "https://github.com/OSGeo/libgeotiff/pull/143.patch?full_index=1",
+        sha256="9c7a367a43fc513679111242c2b13a79a4f93a693d71c2be9114ca1dc313f7b2",
+        level=2,
+        when="build_system=cmake @1.5:",
+    )
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
