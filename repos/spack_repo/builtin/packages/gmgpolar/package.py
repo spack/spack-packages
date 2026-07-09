@@ -34,6 +34,12 @@ class Gmgpolar(CMakePackage):
         sha256="6f5c48536babcaead6c65866536ec9471f50cfef68eb13d8990628a4d7e05e00",
         when="@2.3.1",
     )
+    # Fixes openmp dependency search in GMGPolarConfig.cmake in 2.3.1
+    patch(
+        "https://github.com/SciCompMod/GMGPolar/commit/7ea865536a4e0adc783a3dca3057a39fc30b0800.patch?full_index=1",
+        sha256="863a0e92b9567dd950fff400186f3f42a22ec89e29f480860a1fd1dc9a4630f6",
+        when="@2.3.1",
+    )
 
     def cmake_args(self):
         args = [
