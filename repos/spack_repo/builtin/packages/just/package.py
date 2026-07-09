@@ -19,6 +19,7 @@ class Just(CargoPackage):
     license("CC0-1.0", checked_by="Dando18")
 
     version("master", branch="master")
+    version("1.55.1", sha256="40a2d3725480523ffebb762669cafe2b0135a00383946eec3d47adf5e9be6345")
     version("1.54.0", sha256="53d288296054876d4d9fb76b0f947c3f2a805969bfa19ec79108da44e70cd93e")
     version("1.53.0", sha256="9742f15ea4e6afd4bf9b8fecd0c5ef61904d3d187f24675601fdfbace885a4c3")
     version("1.52.0", sha256="cd869b45801f1434d26c05df7ca999b7b56c7d1d57fb1211cdfd2526ec28f130")
@@ -38,6 +39,7 @@ class Just(CargoPackage):
 
     depends_on("c", type="build")
 
+    depends_on("rust@1.89:", type="build", when="@1.54.0:")
     depends_on("rust@1.85:", type="build", when="@1.49.0:")
     depends_on("rust@1.82:", type="build", when="@1.46.0:")
     depends_on("rust@1.77:", type="build", when="@1.41.0:")

@@ -27,6 +27,7 @@ class Musica(CMakePackage):
     license("Apache-2.0", checked_by="kshores")
 
     # Versions
+    version("0.16.0", sha256="aec7be3f46abfd334f1842acf88434c1d3d872703714641fc5a4730892a1d947")
     version("0.15.0", sha256="48a01c082d8db8731add80c691c7794e7069927fa17ec21e093ad1774b8cd30b")
     version("0.14.5", sha256="31d9c75e8a4852f8f053f43a44313f3b392911056b72f63209eb2f091c7e486a")
     version("0.14.4", sha256="8de573c1cf9100087efa6ae4871f0d0bd8b41e75a67e43b62761410e5740d0d6")
@@ -38,12 +39,20 @@ class Musica(CMakePackage):
     version("0.10.1", sha256="edefab03a676a449761997734e6c5b654b2c4f92ce8f1cc66ef63b8ae8ccccf1")
 
     # Options from CMake
+    variant("fortran", default=False, description="Build Fortran interface")
+    variant("tests", default=False, description="Enable tests")
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
-    variant("tests", default=True, description="Enable tests")
-    variant("fortran", default=False, description="Build Fortran interface")
     variant("micm", default=True, description="Enable MICM support")
     variant("tuvx", default=True, description="Enable TUV-x support")
+    variant("javascript", default=False, description="Build the JavaScript addon")
+    variant("julia", default=False, description="Build the Julia wrapper")
+    variant("shared", default=False, description="Build MUSICA as shared libraries")
+    variant(
+        "fmt",
+        default=True,
+        description="Use the fmt library instead of the standard library for formatting",
+    )
 
     # Dependencies
     depends_on("cmake@3.21:", type="build")
@@ -52,15 +61,28 @@ class Musica(CMakePackage):
     depends_on("fortran", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("netcdf-fortran", when="+tuvx")
+    depends_on("libcxxwrap-julia", when="+julia")
+    depends_on("fmt", when="+fmt")
 
     def cmake_args(self):
         args = [
+            self.define_from_variant("MUSICA_BUILD_FORTRAN_INTERFACE", "fortran"),
+            self.define("MUSICA_ENABLE_INSTALL", True),
+            self.define_from_variant("MUSICA_ENABLE_TESTS", "tests"),
             self.define_from_variant("MUSICA_ENABLE_MPI", "mpi"),
             self.define_from_variant("MUSICA_ENABLE_OPENMP", "openmp"),
-            self.define_from_variant("MUSICA_ENABLE_TESTS", "tests"),
-            self.define_from_variant("MUSICA_BUILD_FORTRAN_INTERFACE", "fortran"),
             self.define_from_variant("MUSICA_ENABLE_MICM", "micm"),
             self.define_from_variant("MUSICA_ENABLE_TUVX", "tuvx"),
-            self.define("MUSICA_ENABLE_INSTALL", True),
+            # CARMA defaults to ON upstream, but always fetches an unreleased,
+            # commit-pinned CARMA-ACOM-dev tree at build time. Keep it OFF to avoid
+            # network access and unmanaged BLAS/LAPACK/netCDF dependencies.
+            self.define("MUSICA_ENABLE_CARMA", False),
+            # Always bundle C++ dependencies (MICM, TUV-x, etc.), since Spack builds
+            # MUSICA standalone rather than as a subproject.
+            self.define("MUSICA_BUNDLE_DEPENDENCIES", True),
+            self.define_from_variant("MUSICA_ENABLE_JAVASCRIPT", "javascript"),
+            self.define_from_variant("MUSICA_ENABLE_JULIA", "julia"),
+            self.define_from_variant("MUSICA_BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("MUSICA_USE_FMT", "fmt"),
         ]
         return args
