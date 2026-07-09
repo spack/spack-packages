@@ -39,5 +39,5 @@ class LibmetatensorTorch(CMakePackage):
     depends_on("libmetatensor@0.1.18:0.1", when="@0.8.3:0.8")
     depends_on("libmetatensor@0.2.0:0.2", when="@0.9.0:")
     depends_on("libmetatensor@0.2.1:0.2", when="@0.9.2:")
-    depends_on("libmetatensor@0.2.2:0.2", when="@0.10::")
+    depends_on("libmetatensor@0.2.2:0.2", when="@0.10:")
     depends_on("py-torch@2.1.0:")
