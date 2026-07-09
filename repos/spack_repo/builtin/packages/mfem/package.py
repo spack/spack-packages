@@ -1625,7 +1625,7 @@ class CMakeBuilder(CMakeBuilder):
         with working_dir(self.build_directory):
             if not self.pkg.run_tests:
                 # check we can build ex1 (~mpi) or ex1p (+mpi).
-                target="ex1p" if ("+mpi" in self.spec) else "ex1"
+                target = "ex1p" if ("+mpi" in self.spec) else "ex1"
                 bld_cmd(target)
                 # bld_cmd("check")
             else:
@@ -1634,5 +1634,5 @@ class CMakeBuilder(CMakeBuilder):
 
     def check(self) -> None:
         """Override the default with empty implementation. We use the method
-           ``check_or_test`` instead.
+        ``check_or_test`` instead.
         """
