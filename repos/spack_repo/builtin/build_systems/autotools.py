@@ -8,7 +8,6 @@ from typing import Callable, List, Optional, Set, Tuple, Union
 
 from spack.package import (
     BuilderWithDefaults,
-    EnvironmentModifications,
     Executable,
     FileFilter,
     InstallError,
@@ -16,7 +15,6 @@ from spack.package import (
     PackageBase,
     Prefix,
     Spec,
-    Version,
     apply_macos_rpath_fixups,
     build_system,
     compiler_spec,
@@ -29,7 +27,6 @@ from spack.package import (
     force_remove,
     is_exe,
     keep_modification_time,
-    macos_version,
     mkdirp,
     register_builder,
     run_after,
