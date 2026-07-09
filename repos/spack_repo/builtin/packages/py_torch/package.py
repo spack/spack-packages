@@ -207,7 +207,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         # pyproject.toml
         depends_on("py-setuptools@70.1:81", when="@2.10:")
-        depends_on("py-setuptools@70.1:79", when="@2.9:")
+        depends_on("py-setuptools@70.1:79", when="@2.9")
         depends_on("py-setuptools@62.3:79", when="@2.8")
         depends_on("py-setuptools@:79", when="@:2.7")
         depends_on("py-numpy")
