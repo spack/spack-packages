@@ -400,7 +400,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     )
 
     # https://github.com/pytorch/pytorch/issues/151592
-    patch("macos_rpath.patch", when="@2.7:")
+    patch("macos_rpath.patch", when="@2.7:2.12")
 
     # https://github.com/pytorch/pytorch/issues/151316
     patch(
