@@ -38,7 +38,6 @@ class Laghos(MakefilePackage):
 
     depends_on("mfem+mpi+metis", when="+metis")
     depends_on("mfem+mpi~metis", when="~metis")
-    conflicts("^mfem build_system=cmake")
 
     depends_on("mfem@develop", when="@develop")
     depends_on("mfem@4.2.0:", when="@3.1")

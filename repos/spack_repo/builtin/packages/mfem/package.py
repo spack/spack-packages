@@ -332,10 +332,12 @@ class Mfem(Package, CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+mumps", when="~mpi")
 
     depends_on("cxx", type="build")
-    depends_on("c", type="build")
+    # Even with CMake, the C compiler is only needed in some configurations.
+    depends_on("c", type="build", when="build_system=cmake")
     depends_on("fortran", type="build", when="+strumpack")
+    depends_on("fortran", type="build", when="+mumps build_system=cmake")
 
-    depends_on("gmake", type="build")
+    depends_on("gmake", type="build", when="build_system=generic")
 
     depends_on("mpi", when="+mpi")
     depends_on("hipsparse", when="@4.4.0:+rocm")
@@ -683,16 +685,18 @@ class AnyBuilder(BaseBuilder):
         cache_extra_test_sources(self.pkg, extra_install_tests)
 
 
-# without splitting the cache_test_sources into AnyBuilder,
-# cache_extra_test_sources was not available in the GenericBuilder
-# took the idea from the superlu package
+# Without splitting the cache_test_sources into AnyBuilder,
+# cache_extra_test_sources was not available in the GenericBuilder.
+# This idea was taken from the superlu package.
 class GenericBuilder(AnyBuilder, GenericBuilder):
     #
-    # Note: Although MFEM does support CMake configuration, MFEM
-    # development team indicates that vanilla GNU Make is the
-    # preferred mode of configuration of MFEM and the mode most
-    # likely to be up to date in supporting *all* of MFEM's
-    # configuration options. So, don't use CMake
+    # Note: Although MFEM does support CMake configuration, MFEM development
+    # team indicates that vanilla GNU Make is the preferred mode of
+    # configuration of MFEM and the mode most likely to be up to date in
+    # supporting *all* of MFEM's configuration options. The CMake build system
+    # can also be used via the CmakeBuilder defined below by specifying the
+    # variant build_system=cmake, however, not all variants are guaranteed to be
+    # supported.
     #
     phases = ["configure", "build", "install"]
 
@@ -830,7 +834,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
             if using_nvcc:
                 cxxstd_flag = "-std=c++" + cxxstd
             else:
-                cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
+                cxxstd_flag = self.pkg["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
 
@@ -838,8 +842,8 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
 
         if cxxflags:
             # Add opt/debug flags if they are not present in global cxx flags
-            opt_flag_found = any(f in self.pkg.compiler.opt_flags for f in cxxflags)
-            debug_flag_found = any(f in self.pkg.compiler.debug_flags for f in cxxflags)
+            opt_flag_found = any(f in self.pkg["cxx"].opt_flags for f in cxxflags)
+            debug_flag_found = any(f in self.pkg["cxx"].debug_flags for f in cxxflags)
 
             if "+debug" in spec:
                 if not debug_flag_found:
@@ -890,7 +894,7 @@ class GenericBuilder(AnyBuilder, GenericBuilder):
         if "~static" in spec:
             options += ["STATIC=NO"]
         if "+shared" in spec:
-            options += ["SHARED=YES", f"PICFLAG={xcompiler + self['cxx'].pic_flag}"]
+            options += ["SHARED=YES", f"PICFLAG={xcompiler + self.pkg['cxx'].pic_flag}"]
 
         if "+mpi" in spec:
             options += ["MPICXX=%s" % spec["mpi"].mpicxx]
@@ -1587,4 +1591,48 @@ class CMakeBuilder(CMakeBuilder):
         if timer != "auto":
             args.append(self.define("MFEM_TIMER_TYPE", str_to_timerid(timer)))
 
+        if "+petsc" in self.spec:
+            args.append(self.define("PETSC_DIR", self.spec["petsc"].prefix))
+            args.append(self.define("PETSC_ARCH", ""))
+
+        if "+mumps" in self.spec:
+            args.append(self.define("MUMPS_REQUIRED_PACKAGES", ""))
+
+        if "+strumpack" in self.spec:
+            args.append(self.define("STRUMPACK_REQUIRED_PACKAGES", "MPI"))
+
+        if "+netcdf" in self.spec:
+            args.append(self.define("NetCDF_REQUIRED_PACKAGES", ""))
+
+        if "+pumi" in self.spec:
+            args.append(self.define("PUMI_DIR", self.spec["pumi"].prefix))
+
+        if "+mpfr" in self.spec:
+            mpfr = self.spec["mpfr"]
+            args.append(self.define("MPFR_INCLUDE_DIRS", mpfr.headers.directories))
+            args.append(self.define("MPFR_LIBRARIES", mpfr.libs.libraries))
+            args.append(self.define("MPFR_FOUND", True))
+
         return args
+
+    @run_after("build")
+    def check_or_test(self) -> None:
+        # Similar to the 'check' method in the base class, use
+        # generator-specific commands.
+        bld_cmd = self.pkg.module.make
+        if self.generator == "Ninja":
+            bld_cmd = self.pkg.module.ninja
+        with working_dir(self.build_directory):
+            if not self.pkg.run_tests:
+                # check we can build ex1 (~mpi) or ex1p (+mpi).
+                target="ex1p" if ("+mpi" in self.spec) else "ex1"
+                bld_cmd(target)
+                # bld_cmd("check")
+            else:
+                bld_cmd("exec")
+                bld_cmd("test")
+
+    def check(self) -> None:
+        """Override the default with empty implementation. We use the method
+           ``check_or_test`` instead.
+        """

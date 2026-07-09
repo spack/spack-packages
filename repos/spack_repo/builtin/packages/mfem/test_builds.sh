@@ -11,12 +11,17 @@ compiler=''
 cuda_arch="70"
 rocm_arch="gfx908"
 
+# Build system to use: e.g. 'build_system=cmake generator=ninja'
+build_system=''
+# build_system='build_system=cmake'
+build_system_suffix=${build_system:+ ${build_system}}
+
 spack_jobs=''
 # spack_jobs='-j 128'
 
-mfem='mfem@4.9.0'${compiler}
-# mfem_dev='mfem@develop'${compiler}
-mfem_dev='mfem@4.9.0'${compiler}
+mfem='mfem@4.9.0'${compiler}${build_system_suffix}
+mfem_dev='mfem@develop'${compiler}${build_system_suffix}
+# mfem_dev='mfem@4.9.0'${compiler}${build_system_suffix}
 
 backends='+occa+raja+libceed'
 backends_specs='^occa~cuda ^raja~openmp'
@@ -32,38 +37,41 @@ strumpack_spec='^strumpack~slate~openmp~cuda'
 strumpack_cuda_spec='^strumpack+cuda~slate~openmp'
 strumpack_rocm_spec='^strumpack+rocm~slate~openmp~cuda'
 # superlu specs with cpu, cuda and rocm
+# - v8.1.2 works
 # - v8.2.1 on CPU and GPU stalls in ex11p; works when superlu::PARMETIS is
 #   replaced with superlu::METIS_AT_PLUS_A, at least on CPU
-superlu_spec='^superlu-dist@8.1.2'
-superlu_cuda_spec='^superlu-dist@8.1.2+cuda'
-superlu_rocm_spec='^superlu-dist@8.1.2+rocm'
+# - v9.2.1 works (at least on CPU)
+superlu_ver='@9.2.1'
+superlu_spec='^superlu-dist'"${superlu_ver}"
+superlu_cuda_spec='^superlu-dist'"${superlu_ver}"'+cuda'
+superlu_rocm_spec='^superlu-dist'"${superlu_ver}"'+rocm'
 # FMS spec
 fms_spec='^libfms+conduit'
 
 builds=(
     # preferred version:
-    ${mfem}
-    ${mfem}'~mpi~metis~zlib'
+    "${mfem}"
+    "${mfem}"' -mpi~metis~zlib'
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
-    ${mfem}"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
-        +gslib+sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
-        +hiop \
+    "${mfem} $backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc \
+        +slepc+gslib+sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit \
+        +ginkgo+hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
         '"$conduit_spec"
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
-    ${mfem}'~mpi \
+    "${mfem}"' -mpi \
         '"$backends"'+suite-sparse+sundials+gslib+mpfr+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
-    ${mfem}' precision=single +mumps+petsc '"$petsc_spec"
+    "${mfem}"' precision=single +mumps+petsc '"$petsc_spec"
 
     # develop version, shared builds:
-    ${mfem_dev}'+shared~static'
-    ${mfem_dev}'+shared~static~mpi~metis~zlib'
+    "${mfem_dev}"' +shared~static'
+    "${mfem_dev}"' +shared~static~mpi~metis~zlib'
     # NOTE: Shared build with +gslib works on mac but not on linux
     # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
-    ${mfem_dev}'+shared~static \
+    "${mfem_dev}"' +shared~static \
         '"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
         +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
@@ -71,213 +79,214 @@ builds=(
     # NOTE: Shared build with +gslib works on mac but not on linux
     # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
-    ${mfem_dev}'+shared~static~mpi \
+    "${mfem_dev}"' +shared~static~mpi \
         '"$backends"'+suite-sparse+sundials+mpfr+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
-    ${mfem_dev}'+shared~static precision=single +mumps+petsc '"$petsc_spec"
+    "${mfem_dev}"' +shared~static precision=single +mumps+petsc '"$petsc_spec"
 )
 
 builds2=(
     # preferred version
-    ${mfem}"$backends $backends_specs"
-    ${mfem}' precision=single'
-    ${mfem}'+superlu-dist'" $superlu_spec"
-    ${mfem}'+strumpack'" $strumpack_spec"
-    ${mfem}'+mumps'
-    ${mfem}'+suite-sparse~mpi'
-    ${mfem}'+suite-sparse'
-    ${mfem}'+sundials~mpi ^sundials~mpi'
-    ${mfem}'+sundials'
-    ${mfem}'+pumi'
-    ${mfem}'+gslib'
-    ${mfem}'+netcdf~mpi'
-    ${mfem}'+netcdf'
-    ${mfem}'+mpfr'
-    ${mfem}'+gnutls'
-    ${mfem}'+conduit~mpi'" $conduit_spec"
-    ${mfem}'+conduit'" $conduit_spec"
+    "${mfem}"" $backends $backends_specs"
+    "${mfem}"' precision=single'
+    "${mfem}"' +superlu-dist'" $superlu_spec"
+    "${mfem}"' +strumpack'" $strumpack_spec"
+    "${mfem}"' +mumps ^mumps~openmp'
+    "${mfem}"' +suite-sparse~mpi'
+    "${mfem}"' +suite-sparse'
+    "${mfem}"' +sundials~mpi ^sundials~mpi'
+    "${mfem}"' +sundials'
+    "${mfem}"' +pumi'
+    "${mfem}"' +gslib'
+    "${mfem}"' +netcdf~mpi'
+    "${mfem}"' +netcdf'
+    "${mfem}"' +mpfr'
+    "${mfem}"' +gnutls'
+    "${mfem}"' +conduit~mpi'" $conduit_spec"
+    "${mfem}"' +conduit'" $conduit_spec"
     # TODO: uncomment next line when the FMS unit test is fixed
-    # ${mfem}'+fms'" $fms_spec"
-    ${mfem}'+umpire'
-    ${mfem}'+petsc'" $petsc_spec"
-    ${mfem}'+petsc+slepc'" $petsc_spec"
-    ${mfem}'+ginkgo'
-    ${mfem}'+hiop'
-    ${mfem}'+threadsafe'
+    # "${mfem}"' +fms'" $fms_spec"
+    "${mfem}"' +umpire'
+    "${mfem}"' +petsc'" $petsc_spec"
+    "${mfem}"' +petsc+slepc'" $petsc_spec"
+    "${mfem}"' +ginkgo'
+    "${mfem}"' +hiop'
+    "${mfem}"' +threadsafe'
     # hypre+int64 requires 64-bit blas+lapack
-    # ${mfem}' ^hypre+int64'
-    ${mfem}' ^hypre+mixedint'
+    # "${mfem}"' ^hypre+int64'
+    "${mfem}"' ^hypre+mixedint'
     #
     # develop version
-    ${mfem_dev}"$backends $backends_specs"
-    ${mfem_dev}' precision=single'
-    ${mfem_dev}'+superlu-dist'" $superlu_spec"
-    ${mfem_dev}'+strumpack'" $strumpack_spec"
-    ${mfem_dev}'+mumps'
-    ${mfem_dev}'+suite-sparse~mpi'
-    ${mfem_dev}'+suite-sparse'
-    ${mfem_dev}'+sundials~mpi ^sundials~mpi'
-    ${mfem_dev}'+sundials'
-    ${mfem_dev}'+pumi'
-    ${mfem_dev}'+gslib'
-    ${mfem_dev}'+netcdf~mpi'
-    ${mfem_dev}'+netcdf'
-    ${mfem_dev}'+mpfr'
-    ${mfem_dev}'+gnutls'
-    ${mfem_dev}'+conduit~mpi'" $conduit_spec"
-    ${mfem_dev}'+conduit'" $conduit_spec"
+    "${mfem_dev}"" $backends $backends_specs"
+    "${mfem_dev}"' precision=single'
+    "${mfem_dev}"' +superlu-dist'" $superlu_spec"
+    "${mfem_dev}"' +strumpack'" $strumpack_spec"
+    "${mfem_dev}"' +mumps ^mumps~openmp'
+    "${mfem_dev}"' +suite-sparse~mpi'
+    "${mfem_dev}"' +suite-sparse'
+    "${mfem_dev}"' +sundials~mpi ^sundials~mpi'
+    "${mfem_dev}"' +sundials'
+    "${mfem_dev}"' +pumi'
+    "${mfem_dev}"' +gslib'
+    "${mfem_dev}"' +netcdf~mpi'
+    "${mfem_dev}"' +netcdf'
+    "${mfem_dev}"' +mpfr'
+    "${mfem_dev}"' +gnutls'
+    "${mfem_dev}"' +conduit~mpi'" $conduit_spec"
+    "${mfem_dev}"' +conduit'" $conduit_spec"
     # TODO: uncomment next line when the FMS unit test is fixed
-    # ${mfem_dev}'+fms'" $fms_spec"
-    ${mfem_dev}'+umpire'
-    ${mfem_dev}'+petsc'" $petsc_spec"
-    ${mfem_dev}'+petsc+slepc'" $petsc_spec"
-    ${mfem_dev}'+ginkgo'
-    ${mfem_dev}'+hiop'
-    ${mfem_dev}'+threadsafe'
+    # "${mfem_dev}"' +fms'" $fms_spec"
+    "${mfem_dev}"' +umpire'
+    "${mfem_dev}"' +petsc'" $petsc_spec"
+    "${mfem_dev}"' +petsc+slepc'" $petsc_spec"
+    "${mfem_dev}"' +ginkgo'
+    "${mfem_dev}"' +hiop'
+    "${mfem_dev}"' +threadsafe'
     # hypre+int64 requires 64-bit blas+lapack
-    # ${mfem_dev}' ^hypre+int64'
-    ${mfem_dev}' ^hypre+mixedint'
+    # "${mfem_dev}"' ^hypre+int64'
+    "${mfem_dev}"' ^hypre+mixedint'
 )
 
 
 builds_cuda=(
     # hypre without cuda:
-    ${mfem}'+cuda cuda_arch='"${cuda_arch}"
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch}"
 
     # hypre with cuda:
-    ${mfem}'+cuda cuda_arch='"${cuda_arch} ^hypre+cuda"
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch} ^hypre+cuda"
 
     # hypre with cuda:
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
-    ${mfem}'+cuda+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem}"' +cuda+raja+occa cuda_arch='"${cuda_arch}"' \
         ^raja+cuda~openmp ^hypre+cuda'
 
     # hypre without cuda:
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
-    ${mfem}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem}"' +cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib+petsc+slepc \
         +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp'" $strumpack_cuda_spec"' \
         '"$superlu_cuda_spec $petsc_spec_cuda $conduit_spec"
 
-    ${mfem}'+cuda cuda_arch='"${cuda_arch}"' +raja+umpire'
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch}"' +raja+umpire'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem}'+cuda cuda_arch='"${cuda_arch}"' +hiop'
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch}"' +hiop'
 
     # hypre with cuda:
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
     # TODO: add back "+petsc+slepc $petsc_spec_cuda" when it works.
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: add back "+sundials" when it's supported with '^hypre+cuda'.
-    ${mfem}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem}"' +cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib \
         +pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp ^hypre+cuda \
         '" $strumpack_cuda_spec $superlu_cuda_spec $conduit_spec"
 
-    ${mfem}'+cuda cuda_arch='"${cuda_arch}"' +raja+umpire ^hypre+cuda'
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch}"' +raja+umpire ^hypre+cuda'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem}'+cuda cuda_arch='"${cuda_arch}"' +hiop ^hypre+cuda'
+    "${mfem}"' +cuda cuda_arch='"${cuda_arch}"' +hiop ^hypre+cuda'
 
-    ${mfem}' precision=single +cuda cuda_arch='"${cuda_arch}"' ^hypre+cuda'
+    "${mfem}"' precision=single +cuda cuda_arch='"${cuda_arch}"' ^hypre+cuda'
 
     #
     # same builds as above with ${mfem_dev}
     #
 
     # hypre without cuda:
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch}"
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch}"
 
     # hypre with cuda:
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch} ^hypre+cuda"
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch} ^hypre+cuda"
 
     # hypre with cuda:
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
-    ${mfem_dev}'+cuda+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem_dev}"' +cuda+raja+occa cuda_arch='"${cuda_arch}"' \
         ^raja+cuda~openmp ^hypre+cuda'
 
     # hypre without cuda:
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
-    ${mfem_dev}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem_dev}"' +cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib+petsc+slepc \
         +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp'" $strumpack_cuda_spec"' \
         '"$superlu_cuda_spec $petsc_spec_cuda $conduit_spec"
 
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch}"' +raja+umpire'
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch}"' +raja+umpire'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch}"' +hiop'
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch}"' +hiop'
 
     # hypre with cuda:
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
     # TODO: add back "+petsc+slepc $petsc_spec_cuda" when it works.
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: add back "+sundials" when it's supported with '^hypre+cuda'.
-    ${mfem_dev}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
+    "${mfem_dev}"' +cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib \
         +pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp ^hypre+cuda \
         '"$strumpack_cuda_spec $superlu_cuda_spec $conduit_spec"
 
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch}"' +raja+umpire ^hypre+cuda'
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch}"' +raja+umpire ^hypre+cuda'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem_dev}'+cuda cuda_arch='"${cuda_arch}"' +hiop ^hypre+cuda'
+    "${mfem_dev}"' +cuda cuda_arch='"${cuda_arch}"' +hiop ^hypre+cuda'
 
-    ${mfem_dev}' precision=single +cuda cuda_arch='"${cuda_arch}"' ^hypre+cuda'
+    "${mfem_dev}"' precision=single +cuda cuda_arch='"${cuda_arch}"' ^hypre+cuda'
 )
 
 
 builds_rocm=(
     # hypre without rocm:
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch}"
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch}"
 
     # hypre with rocm:
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch} ^hypre+rocm"
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch} ^hypre+rocm"
 
     # hypre with rocm:
-    ${mfem}'+rocm+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
+    "${mfem}"' +rocm+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
         ^raja+rocm~openmp ^occa~cuda~openmp ^hypre+rocm'
 
     # hypre without rocm:
-    ${mfem}'+rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
+    "${mfem}"' +rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib+petsc+slepc \
         +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+rocm~openmp ^occa~cuda'" $strumpack_rocm_spec"' \
         '"$superlu_rocm_spec $petsc_spec_rocm $conduit_spec"
 
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch}"' +raja+umpire'
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch}"' +raja+umpire'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch}"' +hiop'
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch}"' +hiop'
 
     # hypre with rocm:
     # TODO: add back "+petsc+slepc $petsc_spec_rocm" when it works.
     # TODO: add back "+sundials" when it's supported with '^hypre+rocm'.
-    ${mfem}'+rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
+    "${mfem}"' +rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib \
         +pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+rocm~openmp ^occa~cuda ^hypre+rocm \
         '"$strumpack_rocm_spec $superlu_rocm_spec $conduit_spec"
 
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch}"' +raja+umpire ^hypre+rocm'
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch}"' +raja+umpire ^hypre+rocm'
 
     # hiop needs older versions of raja, umpire, etc
     # TODO: combine this spec with the above spec when the combined spec works.
-    ${mfem}'+rocm amdgpu_target='"${rocm_arch}"' +hiop ^hypre+rocm'
+    "${mfem}"' +rocm amdgpu_target='"${rocm_arch}"' +hiop ^hypre+rocm'
 
-    ${mfem}' precision=single +rocm amdgpu_target='"${rocm_arch}"' ^hypre+rocm'
+    "${mfem}"' precision=single +rocm amdgpu_target='"${rocm_arch}"' \
+        ^hypre+rocm'
 
     #
     # same builds as above with ${mfem_dev}
@@ -293,6 +302,8 @@ SEP='=========================================================================='
 sep='--------------------------------------------------------------------------'
 
 run_builds=("${builds[@]}" "${builds2[@]}")
+# run_builds=("${builds[@]}")
+# run_builds=("${builds2[@]}")
 # run_builds=("${builds_cuda[@]}")
 # run_builds=("${builds_rocm[@]}")
 
