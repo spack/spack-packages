@@ -193,7 +193,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mgard@1.6.0:", when="@2.10:")
         depends_on("mgard@compat-2023-01-10:", when="@2.9")
         depends_on("mgard@compat-2022-11-18:", when="@:2.8")
-        
+
     depends_on("libsodium@1.0.4:", when="@2.9: +encryption")
 
     extends("python", when="+python")
