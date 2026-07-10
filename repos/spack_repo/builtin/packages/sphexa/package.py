@@ -33,7 +33,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     variant("gpu_aware_mpi", default=True, description="GPU aware MPI")
 
     depends_on("cmake@3.24:", when="@0.95:")
-    depends_on("cmake@3.22:", when=":@0.93.1")
+    depends_on("cmake@3.22:", when="@:0.93.1")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
