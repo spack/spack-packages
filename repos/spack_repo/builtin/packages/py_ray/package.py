@@ -22,7 +22,12 @@ class PyRay(PythonPackage):
     version("2.0.1", sha256="b8b2f0a99d2ac4c001ff11c78b4521b217e2a02df95fb6270fd621412143f28b")
 
     variant("default", default=False, description="Install default extras")
-    variant("tune", default=False, description="Experiment execution and hyperparameter tuning at any scale", when="+rllib")
+    variant(
+        "tune",
+        default=False,
+        description="Experiment execution and hyperparameter tuning at any scale",
+        when="+rllib",
+    )
     variant("rllib", default=False, description="Support for reinforcement learning (RL)")
 
     conflicts("+rllib~tune")
