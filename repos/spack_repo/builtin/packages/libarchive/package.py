@@ -105,7 +105,11 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         # Handle crypto explicitly: "cng" is Windows/CMake-only and unknown to configure
         for opt in ("mbedtls", "nettle", "openssl"):
-            args.append("--with-{0}".format(opt) if spec.satisfies(f"crypto={opt}") else "--without-{0}".format(opt))
+            args.append(
+                "--with-{0}".format(opt)
+                if spec.satisfies(f"crypto={opt}")
+                else "--without-{0}".format(opt)
+            )
 
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
