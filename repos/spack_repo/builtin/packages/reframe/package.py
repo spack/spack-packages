@@ -27,6 +27,7 @@ class Reframe(Package):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("4.9.3", sha256="44efde35528a36bec330926d769dbdb9277ed46c98a40a4f914bcbe5132f60ff")
     version("4.9.2", sha256="a224434033cf94e4c74654fdc6204c9a8d5a0575060addc47ec1de5242148fdf")
     version("4.9.1", sha256="82efaf74218d7f518a13393c066502ff61dfb713d040b33298fb01c3cd5e4182")
     version("4.9.0", sha256="a2065fbf15a56e5120e36ae0858b379d11ac9709e85f3eff540cac50ca70f3a0")

@@ -17,6 +17,7 @@ class PyJedi(PythonPackage):
 
     license("MIT")
 
+    version("0.20.0", sha256="c3f4ccbd276696f4b19c54618d4fb18f9fc24b0aef02acf704b23f487daa1011")
     version("0.19.2", sha256="4770dc3de41bde3966b02eb84fbcf557fb33cce26ad23da12c742fb50ecb11f0")
     version("0.18.2", sha256="bae794c30d07f6d910d32a7048af09b5a39ed740918da923c6b780790ebac612")
     version("0.18.1", sha256="74137626a64a99c8eb6ae5832d99b3bdd7d29a3850fe2aa80a4126b2a7d949ab")
@@ -29,13 +30,12 @@ class PyJedi(PythonPackage):
         depends_on("python@:3.10", when="@:0.18.1")
         depends_on("python@:3.11", when="@:0.19.0")
         depends_on("python@:3.12", when="@:0.19.1")
-        # Although v0.19.2 does not explicitly support Python v3.14, it does work well enough
-        # according to the project maintainer that we've chosen to drop the upperbound constraint
-        # https://github.com/ipython/ipython/issues/15117#issuecomment-3799451766
-        # depends_on("python@:3.13", when="@0.19.2:")
+        depends_on("python@:3.13", when="@:0.19.2")
+        depends_on("python@:3.14", when="@0.20:")
 
         depends_on("py-setuptools")
 
         depends_on("py-parso@0.7", when="@0.17")
         depends_on("py-parso@0.8", when="@0.18.0:")
         depends_on("py-parso@0.8.4:0.8", when="@0.19.2:")
+        depends_on("py-parso@0.8.6:0.8", when="@0.20:")

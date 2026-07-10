@@ -20,6 +20,7 @@ class PyFilelock(PythonPackage):
     license("Unlicense", when="@:3.22")
     license("MIT", when="@3.23:")
 
+    version("3.29.1", sha256="d97e6b1b9757569626c58caa07dc4beb1613f4a2938b1e8cc81afca398906c9e")
     version("3.29.0", sha256="69974355e960702e789734cb4871f884ea6fe50bd8404051a3530bc07809cf90")
     version("3.25.2", sha256="b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694")
     version("3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58")

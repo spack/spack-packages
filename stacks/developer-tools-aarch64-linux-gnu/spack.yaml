@@ -19,7 +19,7 @@ spack:
   - neovim~no_luajit
   - py-pynvim
   # FIXME (compiler as nodes): recover dependency on gcc as a library when +native
-  - emacs+json~native+treesitter   # note, pulls in gcc
+  - emacs~native+treesitter   # note, pulls in gcc
     # - tree-sitter is a dep, should also have cli but no package
   - nano   # just in case
     # tags and scope search helpers
@@ -83,7 +83,7 @@ spack:
   # spack developer tools
   # style
   - "py-mypy@0.900: ^py-mypy-extensions@:1.0"
-  - py-pytest@9.0.2
+  - py-pytest@9.0.3
   - py-ruff@0.15.0
   - py-ty@0.0.20
 

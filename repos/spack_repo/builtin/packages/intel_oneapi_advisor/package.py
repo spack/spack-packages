@@ -29,9 +29,16 @@ class IntelOneapiAdvisor(IntelOneApiLibraryPackageWithSdk):
     )
 
     version(
+        "2026.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/68057580-a03d-4490-87e2-b2a6092b6675/intel-advisor-2026.0.0.266_offline.sh",
+        sha256="b3dfc02ee5a22c0ac2ba163181ebd8f185cd39e14ed767e63fa8d66f5d945bdb",
+        expand=False,
+    )
+    version(
         "2025.5.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/a8122a03-4318-422a-a973-51f2e68fd95e/intel-advisor-2025.5.0.81_offline.sh",
         sha256="7c28e57963243f45a5b2724301b764d09756962a48277339d938011429725d2d",
+        expand=False,
     )
     version(
         "2025.4.1",

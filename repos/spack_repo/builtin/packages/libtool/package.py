@@ -36,7 +36,8 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
     # the following are places in which libtool depends on findutils
     # https://github.com/autotools-mirror/libtool/blob/v2.4.7/build-aux/ltmain.in#L3296
     # https://github.com/autotools-mirror/libtool/blob/v2.4.6/build-aux/ltmain.in#L3278
-    depends_on("findutils", type="run")
+    depends_on("findutils", type=("build", "run"))
+    depends_on("file", type=("build", "run"))
 
     with when("@2.4.6"):
         depends_on("autoconf@2.62:", type="test")

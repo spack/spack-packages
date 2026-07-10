@@ -19,6 +19,7 @@ class RWithr(RPackage):
 
     license("MIT")
 
+    version("3.0.2", sha256="0a3a05f493d275cca4bf13c8c1b95a1a4eed7f83b2493f41fde02ce3fc92c1a3")
     version("3.0.1", sha256="d573f1ac2f733c7dd89669feb495d68f1f15d7a9774473c2e46a9848945a3841")
     version("2.5.0", sha256="37317b3ed790a08407072993a05ab255f6305f95a12a16e0e28aa6aa80fc8bc0")
     version("2.4.3", sha256="9bdac7459ccc6c2d599ecfd132a7f0aa68d958942d9fe7dbb0442c9eda129d4c")
@@ -29,6 +30,7 @@ class RWithr(RPackage):
     version("1.0.2", sha256="2391545020adc4256ee7c2e31c30ff6f688f0b6032e355e1ce8f468cab455f10")
     version("1.0.1", sha256="7e245fdd17d290ff9e7c237159804dd06e1c6a3efe7855ed641eb0765a1e727d")
 
-    depends_on("r@3.0.2:", type=("build", "run"))
-    depends_on("r@3.2.0:", type=("build", "run"), when="@2.2:")
-    depends_on("r@3.6.0:", type=("build", "run"), when="@3.0.1:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.6.0:", when="@3.0.1:")
+        depends_on("r@3.2.0:", when="@2.2:")
+        depends_on("r@3.0.2:")

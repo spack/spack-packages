@@ -194,7 +194,9 @@ class Gromacs(CMakePackage, CudaPackage):
     conflicts(
         "+sve",
         when="%clang@20",
-        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; disable SVE (~sve) or use a different compiler. See https://gitlab.com/gromacs/gromacs/-/issues/5390",
+        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; "
+        "disable SVE (~sve) or use a different compiler. "
+        "See https://gitlab.com/gromacs/gromacs/-/issues/5390",
     )
     variant(
         "relaxed_double_precision",

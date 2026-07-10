@@ -121,9 +121,10 @@ class Scorep(AutotoolsPackage):
     def clean_compiler(self, compiler):
         renames = {
             "cce": "cray",
-            "rocmcc": "amdclang",
             "intel-oneapi-compilers": "oneapi",
+            "intel-oneapi-compilers-classic": "intel",
             "llvm": "clang",
+            "llvm-amdgpu": "amdclang",
         }
         if compiler in renames:
             return renames[compiler]
@@ -137,6 +138,8 @@ class Scorep(AutotoolsPackage):
             "--enable-shared",
         ]
 
+        # cname must match one of these:
+        # --with-nocross-compiler-suite=(gcc|ibm|intel|oneapi|nvhpc|pgi|clang|aocc|amdclang|cray)
         cname = self.clean_compiler(spec.compiler.name)
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
 

@@ -34,7 +34,7 @@ class PyNvidiaDali(PythonPackage):
             sha256="f8f0f0a6216de4d7ab933c35bbf74c20e849fb042fc816995ab5fe3f437da277",
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.53.0-py3-none-manylinux_2_28_x86_64.whl",
             expand=False,
-        ),
+        )
         version(
             "1.53.0-cuda120",
             sha256="a4e0390ab173dd93e6e97299131b54e79b7a35fccc2f88fd312f8bce94612537",
@@ -46,7 +46,7 @@ class PyNvidiaDali(PythonPackage):
             sha256="37369fb30e9c66f710b29836688c90abc36793bbe757cd3ad699fac76ba07119",
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.52.0-py3-none-manylinux_2_28_x86_64.whl",
             expand=False,
-        ),
+        )
         version(
             "1.52.0-cuda120",
             sha256="52310878e2c6ced901c8e9fde8f8ac79b65537abc2a290a1cbf1f53f44072206",

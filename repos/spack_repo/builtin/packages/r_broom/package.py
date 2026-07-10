@@ -23,6 +23,7 @@ class RBroom(RPackage):
 
     license("MIT")
 
+    version("1.0.12", sha256="29c483cc0d39d402f4d35415e054cab7733ad8e543629b29cc8f1e26aee0f79b")
     version("1.0.10", sha256="5ffabd4890dbe133c20f19feba6c687bcadb878c7a5404e0d088d87710630031")
     version("1.0.6", sha256="24cf36248dffbde38d3d81befa679e362bfd0526b9843bc536a85452a19fbccf")
     version("1.0.4", sha256="1d5f11b509786a8a45ffdd137243e24d6445f2944947cbd62a0734a06add0ad6")

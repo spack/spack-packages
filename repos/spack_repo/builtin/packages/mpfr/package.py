@@ -15,7 +15,7 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.mpfr.org/"
     gnu_mirror_path = "mpfr/mpfr-4.0.2.tar.bz2"
 
-    maintainers("cessenat")
+    maintainers("alalazo", "cessenat")
 
     license("LGPL-3.0-or-later")
 
