@@ -24,6 +24,8 @@ class Trexio(AutotoolsPackage, CMakePackage):
     build_system("cmake", "autotools", default="autotools")
 
     version("master", branch="master")
+    version("2.6.1", sha256="c3694ec1528632a386a2af89199c75d70ecd45bfcc2ca1d4ccccbfa1308ad5fa")
+    version("2.6.0", sha256="02b692c7792b4c8d041b1eeacdf144dca333a6ea699f66e911489768586de335")
     version("2.5.0", sha256="7bf7e0021467530b4946fb3f6ee39f393e2f4bd65a6f4debaec774120c29e4ee")
     version("2.4.2", sha256="074c7cf18ea7a8a1d5e29bde4a773d4fb80081c4eb52e2dc4299e6075b704c93")
     version("2.3.2", sha256="b6e831ea5430115a305626695649d823163e7404fd088fc265f0cbe2c1b46ee0")
