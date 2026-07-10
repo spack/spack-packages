@@ -51,16 +51,46 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     license("GPL-2.0-or-later")
 
-    version("2026.1", sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e")
-    version("2025.2", sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19")
-    version("2025.1", sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d")
-    version("2024.3", sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba")
-    version("2024.2", sha256="cc3e56c971dee9e89b705a1103765aba57bf41ad39a11c89d3de04c8b8cdf473")
-    version("2024.1", sha256="a7abf149a278dfd5283dc592a2c4ae803b37d040df25d62a5e35af5c4557668f")
-    version("2023.2", sha256="adbcc903c1a78cba98f49fe6905a62b49f12e3dfd7cedea00616d1a5f50550db")
-    version("2023.1", sha256="dff343b4a80c3a79363b805429bdb3320d3e1db48e0ff7d20a3dfd1c946a51ce")
-    version("2022.2", sha256="1a473dea512fe264bb45419f83de432d441f90404f829d89cbc3a03f723b8354")
-    version("2022.1", sha256="2c34f1a7972973c62d471cd35856f444f11ab22f2ff930f6ead20f3454fd228b")
+    version(
+        "2026.1",
+        sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e",
+    )
+    version(
+        "2025.2",
+        sha256="c8392a4e123304644ec8d241443796277c6ed7ae977452317e779f3c387c2e19",
+    )
+    version(
+        "2025.1",
+        sha256="65c8ad5488897b0f995919b9fa77f2aba4b61677ba1e3c19bb093d5c08a8ce1d",
+    )
+    version(
+        "2024.3",
+        sha256="a6eeee773b6b1fb417def576e4049a89a08a0ed5feffcd7f0b33c7d7b48f19ba",
+    )
+    version(
+        "2024.2",
+        sha256="cc3e56c971dee9e89b705a1103765aba57bf41ad39a11c89d3de04c8b8cdf473",
+    )
+    version(
+        "2024.1",
+        sha256="a7abf149a278dfd5283dc592a2c4ae803b37d040df25d62a5e35af5c4557668f",
+    )
+    version(
+        "2023.2",
+        sha256="adbcc903c1a78cba98f49fe6905a62b49f12e3dfd7cedea00616d1a5f50550db",
+    )
+    version(
+        "2023.1",
+        sha256="dff343b4a80c3a79363b805429bdb3320d3e1db48e0ff7d20a3dfd1c946a51ce",
+    )
+    version(
+        "2022.2",
+        sha256="1a473dea512fe264bb45419f83de432d441f90404f829d89cbc3a03f723b8354",
+    )
+    version(
+        "2022.1",
+        sha256="2c34f1a7972973c62d471cd35856f444f11ab22f2ff930f6ead20f3454fd228b",
+    )
     version("9.1", sha256="fedb4c684a98ad857cd49b69a3ae51a73f85a9c36e9cb63e3b02320c74454ce6")
     version("8.2", sha256="2e24768720efed1a5a4a58e83e2aca502cd8b95544c21695eb0de71ed652f20a")
     version("8.1", sha256="7f37aead120730234a60b2989d0547ae5e5498d93b1e9b5eb548c041ee8e7772")
@@ -69,6 +99,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     generator("ninja")
 
+    # shared is set set to false to avoid breaking spack CI/CD  static builds
+    variant("shared", default=False, description="Enable shared libraries")
+    variant("pic", default=True, description="Enable position independent code")
+
     variant("mpi", default=True, description="Enable MPI support")
     variant("openmp", default=True, description="Enable OpenMP support")
     variant(
@@ -76,11 +110,21 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         default="libxsmm",
         values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
+        when="@:2026.1",
+    )
+    variant(
+        "smm",
+        default="blas",
+        values=("libsmm", "blas", "libxs"),
+        description="Library for small matrix multiplications",
+        when="@2026.2:",
     )
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("plumed", default=False, description="Enable PLUMED support")
     variant(
-        "libint", default=True, description="Use libint, required for HFX (and possibly others)"
+        "libint",
+        default=True,
+        description="Use libint, required for HFX (and possibly others)",
     )
     variant("libxc", default=True, description="Support additional functionals via libxc")
     variant(
@@ -132,14 +176,25 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("quip", default=False, when="@:2025.2", description="Enable quip support")
     variant("dftd4", when="@2024.2:", default=False, description="Enable DFT-D4 support")
     variant("mpi_f08", default=False, description="Use MPI F08 module", when="+mpi")
-    variant("smeagol", default=False, description="Enable libsmeagol support", when="@2025.2:")
+    variant(
+        "smeagol",
+        default=False,
+        description="Enable libsmeagol support",
+        when="@2025.2:",
+    )
     variant("dbm_gpu", default=True, description="Enable DBM GPU backend", when="@2025.2:")
     variant("grid_gpu", default=True, description="Enable grid GPU backend", when="@2025.2:")
     variant(
-        "grid_gpu", default=False, description="Enable grid GPU backend", when="@2025.2: +opencl"
+        "grid_gpu",
+        default=False,
+        description="Enable grid GPU backend",
+        when="@2025.2: +opencl",
     )
     variant(
-        "pw_gpu", default=True, description="Enable FFT calculations on GPU", when="@2025.2: +cuda"
+        "pw_gpu",
+        default=True,
+        description="Enable FFT calculations on GPU",
+        when="@2025.2: +cuda",
     )
     variant(
         "pw_gpu",
@@ -147,6 +202,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         description="Enable FFT calculations on GPU",
         when="@2025.2: +rocm",
     )
+
     variant(
         "pw_gpu",
         default=False,
@@ -197,10 +253,27 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         when="@2024.2: build_system=cmake",
     )
 
-    variant("vdwxc", default=False, description="Enable VDW support in SIRIUS.", when="+sirius")
+    variant(
+        "vdwxc",
+        default=False,
+        description="Enable VDW support in SIRIUS.",
+        when="+sirius",
+    )
     variant("tblite", default=False, description="Enable tblite support", when="@2025.2:")
-    variant("nlcg", default=False, description="Enable nlcg support in sirius", when="+sirius")
-    variant("vcsqnm", default=False, description="Enable VCSQNM support in sirius", when="+sirius")
+    variant(
+        "nlcg",
+        default=False,
+        description="Enable nlcg support in sirius",
+        when="+sirius",
+    )
+    variant(
+        "vcsqnm",
+        default=False,
+        description="Enable VCSQNM support in sirius",
+        when="+sirius",
+    )
+
+    variant("gauxc", default=False, description="Enable gauxc support", when="@2026.2:")
 
     with when("+cuda"):
         variant(
@@ -213,7 +286,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
             ),
         )
         variant(
-            "cuda_fft", default=False, description="Use CUDA also for FFTs in the PW part of CP2K"
+            "cuda_fft",
+            default=False,
+            description="Use CUDA also for FFTs in the PW part of CP2K",
         )
         variant(
             "cuda_blas",
@@ -247,11 +322,19 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("blas")
     depends_on("lapack")
+
+    depends_on("libxs@1:+fortran", when="smm=libxs")
+
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
     depends_on("hdf5+hl+fortran", when="+hdf5")
     depends_on("trexio", when="+trexio")
     depends_on("deepmdkit", when="+deepmd")
+
+    with when("+gauxc"):
+        depends_on("gauxc+fortran")
+        depends_on("gauxc+fortran+mpi", when="+mpi")
+        depends_on("gauxc+pic", when="+pic")
 
     depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
@@ -261,7 +344,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cray-fftw+openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
-        depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=fftw-api] intel-oneapi-mkl")
+        depends_on(
+            "intel-oneapi-mkl threads=openmp",
+            when="^[virtuals=fftw-api] intel-oneapi-mkl",
+        )
         depends_on(
             "intel-oneapi-mkl+gfortran threads=openmp",
             when="^[virtuals=blas] intel-oneapi-mkl %gcc",
@@ -277,7 +363,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
         # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
-        depends_on("pkgconfig", type="build")
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
     with when("+opencl"):
@@ -285,16 +370,22 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         opencl_loader_header_version = "2022.10.24"
         depends_on(f"opencl-c-headers@{opencl_loader_header_version}:")
         requires(f"%opencl=opencl-icd-loader@{opencl_loader_header_version}:")
-        # OpenCL backend implementation relies on LIBXSMM
-        requires("smm=libxsmm")
+        # OpenCL backend implementation relies on LIBXS starting from 2026.2
+        requires("libxs@1:+fortran", when="@2026.2:")
+        requires("libxstream@1:", when="@2026.2:")
+        requires("libxsmm@1.11:", when="@:2026.1")
 
     with when("+libint"):
         depends_on("pkgconfig", type="build", when="@7.0:")
         for lmax in HFX_LMAX_RANGE:
-            depends_on(f"libint@2.6.0:+fortran tune=cp2k-lmax-{lmax}", when=f"@7.0: lmax={lmax}")
+            depends_on(
+                f"libint@2.6.0:+fortran tune=cp2k-lmax-{lmax}",
+                when=f"@7.0: lmax={lmax}",
+            )
             # AOCC only works with libint@2.6.0
             depends_on(
-                f"libint@=2.6.0+fortran tune=cp2k-lmax-{lmax}", when=f"@7.0: lmax={lmax} %aocc"
+                f"libint@=2.6.0+fortran tune=cp2k-lmax-{lmax}",
+                when=f"@7.0: lmax={lmax} %aocc",
             )
 
     with when("+libxc"):
@@ -425,8 +516,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr+rocm", when="+rocm")
         depends_on("dbcsr+cuda", when="+cuda")
 
-        depends_on("dbcsr smm=libxsmm", when="smm=libxsmm")
+        depends_on("dbcsr@:2.9.1 smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
+        depends_on("dbcsr@2.10: smm=libxs", when="@2026.2: smm=libxs")
 
     with when("@2022: +rocm"):
         depends_on("hipblas")
@@ -434,6 +526,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     # The CMake build system and AOCC are not compatible as of AOCC 5
     requires("build_system=makefile", when="%aocc")
+    conflicts("@2026.1:", "aocc")
 
     # CP2K needs compiler specific compilation flags, e.g. optflags
     conflicts("%apple-clang")
@@ -446,10 +539,16 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("~openmp", when="@8:", msg="Building without OpenMP is not supported in CP2K 8+")
 
-    # We only support specific cuda_archs for which we have parameter files
-    # for optimal kernels. Note that we don't override the cuda_archs property
-    # from the parent class, since the parent class defines constraints for all
-    # versions. Instead just mark all unsupported cuda archs as conflicting.
+    # Warning: This mechanism is specific to dbcsr and should remain in place
+    # for older versions of cp2k that uses the Makefile build system. Since 2026.1
+    # CP2K does not build dbcsr anymore and the current cuda / hip code should
+    # work on any architectures starting at 60 for CUDA and gfx906 for ROCM
+
+    # For any version of cp2k prior to 2026.1, we only support specific cuda_archs
+    # for which we have parameter files for optimal kernels. Note that we don't
+    # override the cuda_archs property from the parent class, since the parent
+    # class defines constraints for all versions. Instead just mark all unsupported
+    # cuda archs as conflicting.
 
     supported_cuda_arch_list = ("35", "37", "60", "70", "80", "90")
     supported_rocm_arch_list = (
@@ -467,12 +566,12 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     # ROCm already emits an error if +rocm amdgpu_target=none is given
 
-    with when("+cuda"):
+    with when("@:2026.1 +cuda"):
         for arch in CudaPackage.cuda_arch_values:
             if arch not in supported_cuda_arch_list:
                 conflicts("+cuda", when="cuda_arch={0}".format(arch), msg=cuda_msg)
 
-    with when("+rocm"):
+    with when("@:2026.1 +rocm"):
         for arch in ROCmPackage.amdgpu_targets:
             if arch not in supported_rocm_arch_list:
                 conflicts("+rocm", when="amdgpu_target={0}".format(arch), msg=rocm_msg)
@@ -551,13 +650,17 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
                     file_path = os.path.join(directory, i)
                     filter_file("USE ISO_C_BINDING", "USE,INTRINSIC :: ISO_C_BINDING", file_path)
                     filter_file(
-                        "USE ISO_FORTRAN_ENV", "USE,INTRINSIC :: ISO_FORTRAN_ENV", file_path
+                        "USE ISO_FORTRAN_ENV",
+                        "USE,INTRINSIC :: ISO_FORTRAN_ENV",
+                        file_path,
                     )
                     filter_file("USE omp_lib", "USE,INTRINSIC :: omp_lib", file_path)
                     filter_file("USE OMP_LIB", "USE,INTRINSIC :: OMP_LIB", file_path)
                     filter_file("USE iso_c_binding", "USE,INTRINSIC :: iso_c_binding", file_path)
                     filter_file(
-                        "USE iso_fortran_env", "USE,INTRINSIC :: iso_fortran_env", file_path
+                        "USE iso_fortran_env",
+                        "USE,INTRINSIC :: iso_fortran_env",
+                        file_path,
                     )
 
     def url_for_version(self, version):
@@ -721,7 +824,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
             if spec.satisfies("%aocc"):
                 libs.append(
                     join_path(
-                        elpa.prefix.lib, ("libelpa{elpa_suffix}.a".format(elpa_suffix=elpa_suffix))
+                        elpa.prefix.lib,
+                        ("libelpa{elpa_suffix}.a".format(elpa_suffix=elpa_suffix)),
                     )
                 )
             else:
@@ -827,7 +931,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
                 mpi_impl = "openmpi" if spec["mpi"].name in ["openmpi", "hpcx-mpi"] else "intelmpi"
                 scalapack = [
                     join_path(
-                        spec["intel-oneapi-mkl"].libs.directories[0], "libmkl_scalapack_lp64.so"
+                        spec["intel-oneapi-mkl"].libs.directories[0],
+                        "libmkl_scalapack_lp64.so",
                     ),
                     join_path(
                         spec["intel-oneapi-mkl"].libs.directories[0],
@@ -1114,37 +1219,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         spec = self.spec
-        args = []
 
-        if spec.satisfies("+opencl"):
-            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
-
-        if spec.satisfies("+cuda"):
-            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
-                raise InstallError("CP2K supports only one cuda_arch at a time.")
-            else:
-                gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
-                if spec.satisfies("+hip_backend_cuda"):
-                    args += [
-                        self.define("CP2K_USE_ACCEL", "HIP"),
-                        self.define("CMAKE_HIP_PLATFORM", "nvidia"),
-                    ]
-                else:
-                    args += [self.define("CP2K_USE_ACCEL", "CUDA")]
-
-                args += [self.define("CP2K_WITH_GPU", gpu_ver)]
-
-        if spec.satisfies("+rocm"):
-            if len(spec.variants["amdgpu_target"].value) > 1:
-                raise InstallError("CP2K supports only one amdgpu_target at a time.")
-            else:
-                gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
-                args += [
-                    self.define("CP2K_USE_ACCEL", "HIP"),
-                    self.define("CP2K_WITH_GPU", gpu_ver),
-                ]
-
-        args += [
+        args = [
             "-DCP2K_USE_FFTW3=ON",
             self.define_from_variant("CP2K_USE_MPI", "mpi"),
             self.define_from_variant("CP2K_ENABLE_REGTESTS", "enable_regtests"),
@@ -1177,7 +1253,52 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CP2K_USE_GREENX", "greenx"),
             self.define_from_variant("CP2K_USE_LIBVDWXC", "vdwxc"),
             self.define_from_variant("CP2K_USE_TBLITE", "tblite"),
+            self.define_from_variant("CMAKE_BUILD_SHARED", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define_from_variant("CP2K_USE_GAUXC", "gauxc"),
         ]
+
+        if spec.satisfies("+opencl"):
+            args += [self.define("CP2K_USE_ACCEL", "OPENCL")]
+
+        if spec.satisfies("+cuda"):
+            if (len(spec.variants["cuda_arch"].value) > 1) or spec.satisfies("cuda_arch=none"):
+                raise InstallError("CP2K supports only one cuda_arch at a time.")
+
+            if spec.satisfies("@:2026.1"):
+                gpu_ver = GPU_MAP[spec.variants["cuda_arch"].value[0]]
+            else:
+                args += [
+                    self.define("CMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value[0]),
+                ]
+
+            if spec.satisfies("+hip_backend_cuda"):
+                args += [
+                    self.define("CP2K_USE_ACCEL", "HIP"),
+                    self.define("CMAKE_HIP_PLATFORM", "nvidia"),
+                ]
+            else:
+                args += [self.define("CP2K_USE_ACCEL", "CUDA")]
+
+        if spec.satisfies("+rocm"):
+            if len(spec.variants["amdgpu_target"].value) > 1:
+                raise InstallError("CP2K supports only one amdgpu_target at a time.")
+
+            args += [
+                self.define("CP2K_USE_ACCEL", "HIP"),
+            ]
+
+            if spec.satisfies("@:2026.1"):
+                gpu_ver = GPU_MAP[spec.variants["amdgpu_target"].value[0]]
+                args += [
+                    self.define("CP2K_WITH_GPU", gpu_ver),
+                ]
+            else:
+                args += [
+                    self.define(
+                        "CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value[0]
+                    ),
+                ]
 
         if spec.satisfies("+sirius"):
             args += [
@@ -1204,6 +1325,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
         else:
             args += ["-DCP2K_USE_LIBXSMM=OFF"]
 
+        if spec.satisfies("smm=libxs"):
+            args += ["-DCP2K_USE_LIBXS=ON"]
+        else:
+            args += ["-DCP2K_USE_LIBXS=OFF"]
+
         lapack = spec["lapack"]
         blas = spec["blas"]
 
@@ -1221,7 +1347,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_BLAS_VENDOR", "CUSTOM"),
                     self.define("CP2K_SCALAPACK_VENDOR", "GENERIC"),
                     self.define(
-                        "CP2K_SCALAPACK_LINK_LIBRARIES", spec["scalapack"].libs.joined(";")
+                        "CP2K_SCALAPACK_LINK_LIBRARIES",
+                        spec["scalapack"].libs.joined(";"),
                     ),
                 ]
             else:
@@ -1238,7 +1365,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_BLAS_VENDOR", "CUSTOM"),
                     self.define("CP2K_SCALAPACK_VENDOR", "GENERIC"),
                     self.define(
-                        "CP2K_SCALAPACK_LINK_LIBRARIES", spec["scalapack"].libs.joined(";")
+                        "CP2K_SCALAPACK_LINK_LIBRARIES",
+                        spec["scalapack"].libs.joined(";"),
                     ),
                 ]
             )

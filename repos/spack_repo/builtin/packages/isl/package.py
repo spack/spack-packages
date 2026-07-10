@@ -18,6 +18,7 @@ class Isl(AutotoolsPackage):
 
     license("MIT")
 
+    version("0.28", sha256="01a9fc4b39c457f6fe7dfe063dbb046aa484812f1ab8c3763322bcbbd6414e5f")
     version("0.27", sha256="626335529331f7c89fec493de929e2e92fb3d8cc860fc7af554e0518ee0029ee")
     version("0.26", sha256="5eac8664e9d67be6bd0bee5085d6840b8baf738c06814df47eaf4166d9776436")
     version("0.25", sha256="4305c54d4eebc4bf3ce365af85f04984ef5aa97a52e01128445e26da5b1f467a")
