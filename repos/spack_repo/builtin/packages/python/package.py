@@ -220,7 +220,7 @@ class Python(Package):
         depends_on("pkgconfig", type="build")
         depends_on("gettext +libxml2", when="+libxml2")
         depends_on("iconv", when="~libxml2")
-        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv]gettext")
+        depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv] libiconv")
 
         # Optional dependencies
         # See detect_modules() in setup.py for details
