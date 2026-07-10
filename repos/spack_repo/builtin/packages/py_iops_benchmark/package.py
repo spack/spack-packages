@@ -18,6 +18,7 @@ class PyIopsBenchmark(PythonPackage):
     version("3.5.8", sha256="04b77c9513702d081fd0af3ba48211dace4bb4425482e51c17684832f2970984")
 
     depends_on("py-setuptools@61:", type="build")
+    depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-pandas@2.1:", type=("build", "run"))
     depends_on("py-jinja2@3:", type=("build", "run"))
