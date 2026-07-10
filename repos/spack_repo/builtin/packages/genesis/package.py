@@ -1,4 +1,5 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.  #
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
@@ -39,7 +40,6 @@ class Genesis(AutotoolsPackage, CudaPackage):
     # (e.g., GH200). nvToolsExt.h is located under
     # targets/sbsa-linux/include/nvtx3.
     patch("fix-nvtx-include.patch", when="+cuda")
-    patch("fix-nvtx-include.patch", when="+gpu")
     # The original configure logic only supports Fujitsu cross-compilation targets.
     # This patch enables native Fujitsu compiler builds on A64FX systems.
     patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
@@ -77,7 +77,7 @@ class Genesis(AutotoolsPackage, CudaPackage):
             options.append("--with-cuda=%s" % spec["cuda"].prefix)
         else:
             options.append("--disable-gpu")
-        if spec.target == "a64fx":
+        if spec.target == "a64fx" and spec.satisfies("%fj"):
             options.append("--host=Fugaku")
         return options
 
