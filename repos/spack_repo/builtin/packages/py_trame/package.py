@@ -18,6 +18,14 @@ class PyTrame(PythonPackage):
 
     license("Apache-2.0", checked_by="johnwparent")
 
+    version("3.13.2", sha256="9868d1c2bce981ae2c66eb6a16d39e2a14f042eedb1047666266c753ecaf3f64")
+    version("3.12.0", sha256="88b861162cb8b025e84e93f17dcfd43a84d02d2c1608c9f6d58e3cd646a50c05")
+    version("3.11.0", sha256="cd81f1b1f9edab4d85aa0abf4503ac62d73f7fc4709354066eb1494690970fba")
+    version("3.10.2", sha256="506a39a24a08331a73932b1ca9ba07e826692c1096961b6bfdda258d7e7fce23")
+    version("3.9.1", sha256="f93372a7eb921405feac9caf28852a6b241dbb98271010879b55498915ef4442")
+    version("3.8.2", sha256="b541e221c674a9124bc7b05241be1e465ad02748bfa9c0786b6e081ca05aad0e")
+    version("3.7.6", sha256="683dbc88a843570ded3ae60ee610053c730c78f90899c9c0dab5fe54ad1f530b")
+    version("3.6.5", sha256="fc26a7067f94377e01263facb4cd40b111d799d970b5fc8e2aecb52e60378959")
     version("3.5.5", sha256="1e346793d6d38d0ac0695001fea8e3776a4cbb8c890bd70e6e9444db4026ec6b")
     version("3.5.4", sha256="3180d2dec0b3fa96a9ee2a81793cc99e4294dca89a48965e301444af6b8eaaeb")
     version("3.5.3", sha256="b78c9d92016a6f31e66ed8cc4a517f8cf69ad91cd1d6aff4518c76df8840fbed")
