@@ -346,6 +346,17 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
                     flags.append("-O2")
         return flags, None, None
 
+    def patch(self):
+        # Needed due to the patch applied to fix CVE-2025-14933.
+        # https://github.com/spack/spack-packages/issues/5524
+        if self.spec.satisfies("@:4.9"):
+            filter_file(
+                "#include <stdio.h>",
+                "#include <stdio.h>\n#include <stdint.h>",
+                "libdispatch/dstring.c",
+                string=True,
+            )
+
     @property
     def libs(self):
         shared = "+shared" in self.spec
