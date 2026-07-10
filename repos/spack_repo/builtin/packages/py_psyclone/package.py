@@ -48,7 +48,7 @@ class PyPsyclone(PythonPackage):
     # Current dependencies
     depends_on("py-setuptools", type="build")
     depends_on("py-pyparsing", type=("build", "run"))
-    depends_on("py-fparser@0.2.4", type=("build", "run"), when="@3.3")
+    depends_on("py-fparser@0.2.4", type=("build", "run"), when="@3.3:")
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
     depends_on("py-jinja2", type="build")
