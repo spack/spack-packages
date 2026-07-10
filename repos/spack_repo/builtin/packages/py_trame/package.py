@@ -18,6 +18,7 @@ class PyTrame(PythonPackage):
 
     license("Apache-2.0", checked_by="johnwparent")
 
+    version("3.13.2", sha256="9868d1c2bce981ae2c66eb6a16d39e2a14f042eedb1047666266c753ecaf3f64")
     version("3.5.5", sha256="1e346793d6d38d0ac0695001fea8e3776a4cbb8c890bd70e6e9444db4026ec6b")
     version("3.5.4", sha256="3180d2dec0b3fa96a9ee2a81793cc99e4294dca89a48965e301444af6b8eaaeb")
     version("3.5.3", sha256="b78c9d92016a6f31e66ed8cc4a517f8cf69ad91cd1d6aff4518c76df8840fbed")
