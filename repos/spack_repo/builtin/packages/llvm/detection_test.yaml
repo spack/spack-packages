@@ -4,10 +4,26 @@ paths:
     - "bin/clang-3.9"
     - "bin/clang++-3.9"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 3.9.1-19ubuntu1 (tags/RELEASE_391/rc2)"
       echo "Target: x86_64-pc-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /usr/bin"
+  - executables:
+    - "bin/llvm-config-3.9"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   platforms: ["darwin", "linux"]
   results:
   - spec: 'llvm@3.9.1 +clang~flang~lld~lldb'
@@ -16,16 +32,50 @@ paths:
         c: ".*/bin/clang-3.9$"
         cxx: ".*/bin/clang[+][+]-3.9$"
 
+# clang compiler detection without libclang build usability
+- layout:
+  - executables:
+    - "bin/clang-18"
+    - "bin/clang++-18"
+    script: |
+      echo "clang version 18.1.3 (1ubuntu1)"
+      echo "Target: x86_64-pc-linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /usr/bin"
+  platforms: ["darwin", "linux"]
+  results:
+  - spec: 'llvm@18.1.3 ~clang~flang~lld~lldb'
+    extra_attributes:
+      compilers:
+        c: ".*/bin/clang-18$"
+        cxx: ".*/bin/clang[+][+]-18$"
+
 # flang-new detection: flang-new generates slightly-different output than clang
 - layout:
   - executables:
     - "bin/clang"
     - "bin/clang++"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 19.1.6 (https://github.com/spack/spack.git 8d3a733b7798b6e33c371518b6dec298c3ebd8b1)"
       echo "Target: x86_64-unknown-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /path/to/spack/install/llvm/bin"
+  - executables:
+    - "bin/llvm-config"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   - executables:
     - "bin/flang-new"
     script: |
@@ -48,10 +98,26 @@ paths:
     - "bin/clang"
     - "bin/clang++"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 20.1.0-rc1 (https://github.com/llvm/llvm-project af7f483a9d801252247b6c72e3763c1f55c5a506)"
       echo "Target: x86_64-unknown-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /tmp/clang/LLVM-20.1.0-rc1-Linux-X64/bin"
+  - executables:
+    - "bin/llvm-config"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   - executables:
     - "bin/flang"
     script: |
@@ -74,10 +140,26 @@ paths:
     - "bin/clang"
     - "bin/clang++"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 20.1.0-rc1 (https://github.com/llvm/llvm-project af7f483a9d801252247b6c72e3763c1f55c5a506)"
       echo "Target: x86_64-unknown-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /tmp/clang/LLVM-20.1.0-rc1-Linux-X64/bin"
+  - executables:
+    - "bin/llvm-config"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   - executables:
     - "bin/flang"
     - "bin/flang-new"
@@ -102,10 +184,26 @@ paths:
     - "bin/clang-6.0"
     - "bin/clang++-6.0"
     script: |
+        for arg in "$@"; do
+          case "$arg" in
+            -o*)
+              output="${arg#-o}"
+              printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+              chmod +x "$output"
+              exit 0
+              ;;
+          esac
+        done
         echo "clang version 6.0.1-svn334776-1~exp1~20181018152737.116 (branches/release_60)"
         echo "Target: x86_64-pc-linux-gnu"
         echo "Thread model: posix"
         echo "InstalledDir: /usr/bin",
+  - executables:
+    - "bin/llvm-config-6.0"
+    script: |
+        case "$1" in
+          --includedir|--libdir) echo "/tmp" ;;
+        esac
 
   platforms: ["darwin", "linux"]
   results:
@@ -119,10 +217,26 @@ paths:
     - "bin/clang-9.0"
     - "bin/clang++-9.0"
     script: |      
+        for arg in "$@"; do
+          case "$arg" in
+            -o*)
+              output="${arg#-o}"
+              printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+              chmod +x "$output"
+              exit 0
+              ;;
+          esac
+        done
         echo "clang version 9.0.1-+201911131414230800840845a1eea-1~exp1~20191113231141.78"
         echo "Target: x86_64-pc-linux-gnu"
         echo "Thread model: posix"
         echo "InstalledDir: /usr/bin"
+  - executables:
+    - "bin/llvm-config-9.0"
+    script: |
+        case "$1" in
+          --includedir|--libdir) echo "/tmp" ;;
+        esac
 
   platforms: ["darwin", "linux"]
   results:
@@ -138,10 +252,26 @@ paths:
     - "bin/clang-8"
     - "bin/clang++-8"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 8.0.0-3~ubuntu18.04.2 (tags/RELEASE_800/final)"
       echo "Target: x86_64-pc-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /usr/bin"
+  - executables:
+    - "bin/llvm-config-8"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   - executables:
     - "bin/ld.lld-8"
     script: 'echo "LLD 8.0.0 (compatible with GNU linkers)"'
@@ -152,10 +282,26 @@ paths:
     - "bin/clang-3.9"
     - "bin/clang++-3.9"
     script: |
+      for arg in "$@"; do
+        case "$arg" in
+          -o*)
+            output="${arg#-o}"
+            printf '#!/bin/bash\necho "OK: mock libclang"\n' > "$output"
+            chmod +x "$output"
+            exit 0
+            ;;
+        esac
+      done
       echo "clang version 3.9.1-19ubuntu1 (tags/RELEASE_391/rc2)"
       echo "Target: x86_64-pc-linux-gnu"
       echo "Thread model: posix"
       echo "InstalledDir: /usr/bin"
+  - executables:
+    - "bin/llvm-config-3.9"
+    script: |
+      case "$1" in
+        --includedir|--libdir) echo "/tmp" ;;
+      esac
   platforms: ["darwin", "linux"]
   results:
   - spec: 'llvm@8.0.0+clang~flang+lld+lldb'
