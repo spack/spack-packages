@@ -159,8 +159,6 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         patch("castep_cmake_libxc523.patch", when="@24")
         patch("castep_cmake_libxc522.patch", when="@23")
 
-    sanity_check_is_file = [join_path("bin", "castep.mpi")]
-
     @property
     def castep_exe(self):
         """Get the main executable filename"""
