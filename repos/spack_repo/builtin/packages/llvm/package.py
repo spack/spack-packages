@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 import re
+import tempfile
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -733,6 +734,51 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         return None
 
     @classmethod
+    def determine_clang_variant(cls, exe_path) -> bool:
+        if "clang" not in os.path.basename(exe_path):
+            return False
+        config_path = exe_path.replace("clang", "llvm-config")
+        if not os.path.exists(config_path):
+            tty.debug(f"llvm-config not found for clang: {config_path}")
+            return False
+        llvm_config = Executable(config_path)
+        inc = llvm_config("--includedir", output=str, error=str).strip()
+        lib = llvm_config("--libdir", output=str, error=str).strip()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            test_file = os.path.join(tmpdir, "test.cpp")
+            with open(test_file, "w") as f:
+                f.write("""#include <stdio.h>
+                    #include <clang-c/Index.h>
+                    int main(void) {
+                        CXString s = clang_getClangVersion();
+                        const char *v = clang_getCString(s);
+                        if (!v) return 2;
+                        printf("OK: %s", v);
+                        return 0;
+                    }""")
+            try:
+                Executable(exe_path)(
+                    test_file,
+                    "-o" + os.path.join(tmpdir, "test"),
+                    "-I" + inc,
+                    "-L" + lib,
+                    "-lclang",
+                    # LLVMConfig.cmake enables LLVM zstd support by default, so we need to test it
+                    "-lzstd",
+                    error=str,
+                )
+            except ProcessError:
+                tty.debug(f"Failed to compile libclang test program for {exe_path}")
+                return False
+
+            try:
+                if "OK:" in Executable(os.path.join(tmpdir, "test"))(output=str):
+                    return True
+            except ProcessError:
+                tty.debug(f"Failed to run libclang test program for {exe_path}")
+        return False
+
+    @classmethod
     def determine_variants(cls, exes, version_str):
         # Do not need to reuse more general logic from CompilerPackage
         # because LLVM has kindly named compilers
@@ -757,7 +803,11 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
                 # NOTE: since "amdclang++" is "clang", we use `in` rather than `startswith`
                 if exe in name:
                     compilers.setdefault(lang, exe_path)
-                    variants.add(var)
+                    if var == "clang":
+                        if exe == "clang" and cls.determine_clang_variant(exe_path):
+                            variants.add(var)
+                    else:
+                        variants.add(var)
                     break
 
         # Remove executables that aren't compilers
