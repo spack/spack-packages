@@ -141,11 +141,27 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
                 )
 
     # Special rules for mkl
-    requires("%fortran=intel", "%fortran=oneapi", "%fortran=gcc", when="%lapack=intel-oneapi-mkl")
     requires(
-        "%fortran=intel", "%fortran=oneapi", "%fortran=gcc", when="%fftw-api=intel-oneapi-mkl"
+        "%fortran=intel", 
+        "%fortran=oneapi", 
+        "%fortran=gcc", 
+        policy="one_of", 
+        when="%lapack=intel-oneapi-mkl",
     )
-    requires("%fortran=intel", "%fortran=oneapi", "%fortran=gcc", when="%mpi=intel-oneapi-mpi")
+    requires(
+        "%fortran=intel", 
+        "%fortran=oneapi", 
+        "%fortran=gcc", 
+        policy="one_of", 
+        when="%fftw-api=intel-oneapi-mkl",
+    )
+    requires(
+        "%fortran=intel", 
+        "%fortran=oneapi", 
+        "%fortran=gcc", 
+        policy="one_of",
+        when="%mpi=intel-oneapi-mpi",
+    )
 
     # Patches to fix the python script installation
     patch("Fix-castepconv-strings-with-invalid-escape-character.patch")
