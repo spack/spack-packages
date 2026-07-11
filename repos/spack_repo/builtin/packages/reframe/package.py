@@ -27,6 +27,8 @@ class Reframe(Package):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("4.10.1", sha256="6af76c3dd2e100d18cbfb45721dd69115f54643e493f58707953841a1f0b51b3")
+    version("4.10.0", sha256="3fddf2ab8642a11d35d878ecf07a8912ee4d21f4ab37db8e53ca6c130b1819de")
     version("4.9.3", sha256="44efde35528a36bec330926d769dbdb9277ed46c98a40a4f914bcbe5132f60ff")
     version("4.9.2", sha256="a224434033cf94e4c74654fdc6204c9a8d5a0575060addc47ec1de5242148fdf")
     version("4.9.1", sha256="82efaf74218d7f518a13393c066502ff61dfb713d040b33298fb01c3cd5e4182")
@@ -126,6 +128,7 @@ class Reframe(Package):
 
     variant("docs", default=False, description="Build ReFrame's man page documentation")
     variant("gelf", default=False, description="Add graylog handler support")
+    variant("analytics", default=False, description="Add analytics support")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -144,17 +147,22 @@ class Reframe(Package):
     # runtime dependencies
     depends_on("py-archspec", when="@3.7.0:", type="run")
     depends_on("py-argcomplete", when="@3.4.1:", type="run")
+    depends_on("py-clustershell", when="@4.8.1:", type="run")
+    depends_on("py-fasteners", when="@4.8.3:", type="run")
+    depends_on("py-filelock", when="@4.7.0:4.8.2", type="run")
     depends_on("py-importlib-metadata", when="^python@:3.7", type="run")
+    depends_on("py-jinja2", when="@4.8.0:", type="run")
     depends_on("py-jsonschema", type="run")
     depends_on("py-lxml", when="@3.6.0:", type="run")
+    depends_on("py-polars", when="@4.10.0", type="run")
     depends_on("py-pyyaml", when="@3.4.1:", type="run")
     depends_on("py-requests", when="@3.4.1:", type="run")
     depends_on("py-semver", when="@3.4.2:", type="run")
-    depends_on("py-filelock", when="@4.7:", type="run")
     depends_on("py-tabulate", when="@4.7:", type="run")
 
     # extension dependencies
     depends_on("py-pygelf", when="+gelf", type="run")
+    depends_on("py-polars", when="@4.10.1: +analytics", type="run")
 
     # documentation dependencies
     depends_on("py-sphinx", when="+docs", type="build")
@@ -162,8 +170,8 @@ class Reframe(Package):
     depends_on("gmake", type="build")
 
     # sanity check
-    sanity_check_is_file = ["bin/reframe"]
-    sanity_check_is_dir = ["bin", "docs", "reframe"]
+    sanity_check_is_file = ["reframe/__init__.py"]
+    sanity_check_is_dir = ["docs", "reframe", "unittests"]
 
     # check if we can run reframe
     @run_after("install")
