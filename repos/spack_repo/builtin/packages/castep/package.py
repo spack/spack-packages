@@ -253,7 +253,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
             benchmark_energy = get_energy_from_file(bench_file)
 
             # Get castep data
-            castep = which(self.castep_exe, required=True)
+            castep = Executable(join_path(self.prefix.bin, self.castep_exe))
             castep(seedname)
             castep_energy = get_energy_from_file(f"{seedname}.castep")
 
