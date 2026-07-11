@@ -81,7 +81,6 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         variant("grimmed3", default=True, description="Use Grimme D3 functionals")
         variant("grimmed4", default=True, description="Use Grimme D4 functionals")
         variant("dlmg", default=True, description="Use DLMG Functionality functionals")
-        variant("openmp", default=True, description="Use OpenMP threading")
         variant("tools", default=True, description="Build the executable auxilliary programs")
         variant(
             "utilities", default=True, description="Build the third-party scripts and utilities"
