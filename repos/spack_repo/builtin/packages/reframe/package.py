@@ -147,7 +147,7 @@ class Reframe(Package):
     # runtime dependencies
     depends_on("py-archspec", when="@3.7.0:", type="run")
     depends_on("py-argcomplete", when="@3.4.1:", type="run")
-    depends_on("py-ClusterShell", when="@4.8.1:", type="run")
+    depends_on("py-clustershell", when="@4.8.1:", type="run")
     depends_on("py-fasteners", when="@4.8.3:", type="run")
     depends_on("py-filelock", when="@4.7.0:4.8.2", type="run")
     depends_on("py-importlib-metadata", when="^python@:3.7", type="run")
