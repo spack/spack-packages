@@ -87,7 +87,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
             "utilities", default=True, description="Build the third-party scripts and utilities"
         )
 
-    # Depedencies
+    # Dependencies
     depends_on("c", type="build")
     depends_on("fortran", type="build")
     depends_on("awk@3:", type="build")
@@ -210,7 +210,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         check_outputs(spec_version, output)
 
     @run_after("install")
-    def prepare_postinstal_tests(self):
+    def prepare_postinstall_tests(self):
         """Store a simple test of basic castep functionality"""
         cache_extra_test_sources(self, join_path("Test", "Electronic", "Si2-den"))
 
@@ -288,7 +288,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             "nvhpc": "NVHPC",
             "cray-libsci": "SciLib",
             "blis": "BLIS",
-            "amdblix": "BLIS",
+            "amdblis": "BLIS",
             "essl": "ESSL",
         }
 
