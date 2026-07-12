@@ -324,7 +324,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
     @on_package_attributes(run_tests=True)
     def test_castep_executable(self):
         """Test that the executable launches and returns a version number"""
-        spec_version = re.compile(r"CASTEP version: " + str(self.spec.version))
+        spec_version = re.compile(r"CASTEP version: " + re.escape(str(self.spec.version)))
         castep = Executable(join_path(self.prefix.bin, self.castep_exe))
         output = castep("-v", output=str)
         check_outputs(spec_version, output)
@@ -407,7 +407,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
     @on_package_attributes(run_tests=True)
     def test_castep_executable(self):
         """Test that the executable launches and returns a version number"""
-        spec_version = re.compile(r"CASTEP version: " + str(self.spec.version))
+        spec_version = re.compile(r"CASTEP version: " + re.escape(str(self.spec.version)))
         castep = Executable(join_path(self.prefix.bin, self.castep_exe))
         output = castep("-v", output=str)
         check_outputs(spec_version, output)
