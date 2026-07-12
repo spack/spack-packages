@@ -25,6 +25,8 @@ class Cdf(MakefilePackage):
         url="https://spdf.gsfc.nasa.gov/pub/software/cdf/dist/cdf39_1/cdf39_1-dist-cdf.tar.gz",
     )
 
+    depends_on("c", type="build")
+
     def edit(self, spec, prefix):
         """CDF build system doesn't require editing."""
         pass
