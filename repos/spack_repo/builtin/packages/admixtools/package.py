@@ -31,6 +31,17 @@ class Admixtools(MakefilePackage):
 
     build_directory = "src"
 
+    def flag_handler(self, name, flags):
+        # AdmixTools is old C that relies on the pre-C23 meaning of an
+        # empty parameter list: `void setgtime ();` is a vague declaration,
+        # not a claim of "no arguments". GCC 15 defaults to C23, where ()
+        # means (void), so it conflicts with the header's
+        # `void setgtime(double *time);`. Pin the C17 dialect this code
+        # was written against.
+        if name == "cflags":
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def edit(self, spec, prefix):
         makefile = FileFilter("src/Makefile")
 
