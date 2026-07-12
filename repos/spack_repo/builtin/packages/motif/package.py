@@ -46,6 +46,18 @@ class Motif(AutotoolsPackage):
     # ensure tools/wml/wmluiltok.c has a main function
     patch("add_wmluiltok_option_main.patch")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@14:"):
+                # Implicit function declarations became a hard error in GCC 14;
+                # e.g. lib/Xm/XpmI.h only includes <string.h> on SysV platforms.
+                flags.append("-Wno-error=implicit-function-declaration")
+            if self.spec.satisfies("%gcc@15:"):
+                # GCC 15 defaults to gnu23 where empty () means no arguments, breaking
+                # legacy K&R function pointer declarations in config/util/makestrs.c.
+                flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def patch(self):
         # fix linking the simple_app demo program
         # https://bugs.launchpad.net/ubuntu/+source/openmotif/+bug/705294
