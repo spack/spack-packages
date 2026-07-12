@@ -813,6 +813,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         # Remove executables that aren't compilers
         compilers.pop(None, None)
 
+        if "clang" not in variants:
+            variants.difference_update(("flang", "lldb"))
+
         # Convert
         added_variant = set()
         variant_strings = []
@@ -825,6 +828,22 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             # Add variant string
             prefix = "+" if var in variants else "~"
             variant_strings.append(prefix + var)
+
+        if "lldb" not in variants:
+            variant_strings.append("~lua")
+
+        if "clang" not in variants:
+            variant_strings.extend(
+                [
+                    " compiler-rt=none",
+                    " libcxx=none",
+                    " libunwind=none",
+                    " openmp=project",
+                    " ~libomptarget",
+                ]
+            )
+            if Version(version_str) >= Version("19"):
+                variant_strings.append(" ~offload")
 
         return "".join(variant_strings), {"compilers": compilers}
 
