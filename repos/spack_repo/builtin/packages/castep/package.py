@@ -141,23 +141,23 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
 
     # Special rules for mkl
     requires(
-        "%fortran=intel", 
-        "%fortran=oneapi", 
-        "%fortran=gcc", 
-        policy="one_of", 
+        "%fortran=intel",
+        "%fortran=oneapi",
+        "%fortran=gcc",
+        policy="one_of",
         when="%lapack=intel-oneapi-mkl",
     )
     requires(
-        "%fortran=intel", 
-        "%fortran=oneapi", 
-        "%fortran=gcc", 
-        policy="one_of", 
+        "%fortran=intel",
+        "%fortran=oneapi",
+        "%fortran=gcc",
+        policy="one_of",
         when="%fftw-api=intel-oneapi-mkl",
     )
     requires(
-        "%fortran=intel", 
-        "%fortran=oneapi", 
-        "%fortran=gcc", 
+        "%fortran=intel",
+        "%fortran=oneapi",
+        "%fortran=gcc",
         policy="one_of",
         when="%mpi=intel-oneapi-mpi",
     )
@@ -201,35 +201,13 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
 
         return [join_path("bin", f) for f in bin_files]
 
-    #################################################
-    # Tests that are run at build/installation time #
-    #################################################
-
-    def check(self) -> None:
-        """Run the check-quick target."""
-        with working_dir(self.build_directory):
-            if self.generator == "Unix Makefiles":
-                self._if_make_target_execute("check-quick")
-            elif self.generator == "Ninja":
-                self._if_ninja_target_execute("check-quick")
-
-    @run_after("install")
-    @on_package_attributes(run_tests=True)
-    def test_castep_executable(self):
-        """Test that the executable launches and returns a version number"""
-        spec_version = re.compile(r"CASTEP version: " + str(self.spec.version))
-        castep = Executable(join_path(self.prefix.bin, self.castep_exe))
-        output = castep("-v", output=str)
-        check_outputs(spec_version, output)
-
-    @run_after("install")
-    def prepare_postinstall_tests(self):
-        """Store a simple test of basic castep functionality"""
-        cache_extra_test_sources(self, join_path("Test", "Electronic", "Si2-den"))
-
     ############################################
     # Tests that can be run at some later time #
     ############################################
+
+    def prepare_postinstall_tests(self):
+        """Store a simple test of basic castep functionality - this is called by the builder"""
+        cache_extra_test_sources(self, join_path("Test", "Electronic", "Si2-den"))
 
     def test_castep_si2(self):
         """Run the Si2 test case and verify the total energy"""
@@ -237,7 +215,11 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
             self.test_suite.current_test_cache_dir, "Test", "Electronic", "Si2-den"
         )
         energy_re = re.compile(r"Final energy =\s+(\S+)\s+eV")
-        seedname = "Si2-den-NCP"
+
+        if self.spec.satisfies("@:21"):
+            seedname = "Si2-den"
+        else:
+            seedname = "Si2-den-NCP"
 
         def get_energy_from_file(filename: str) -> float:
             with open(filename) as f:
@@ -260,7 +242,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
 
     def test_elastics_wrapper(self):
         """Check that the python script elastics.py installed correctly"""
-        if self.spec.satisfies("+utilities"):
+        if self.spec.satisfies("+utilities") or self.spec.satisfies("build_system=makefile"):
             elastics = Executable(join_path(self.prefix.bin, "elastics.py"))
             elastics("-h")
         else:
@@ -271,7 +253,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         Check that the python script wrapper installed correctly
         and passes arguments for castepconv.py
         """
-        if self.spec.satisfies("+utilities"):
+        if self.spec.satisfies("+utilities") or self.spec.satisfies("build_system=makefile"):
             castepconv = Executable(join_path(self.prefix.bin, "castepconv.py"))
             castepconv("-h")
         else:
@@ -332,6 +314,27 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         return args
 
+    def check(self) -> None:
+        """Run the check-quick target."""
+        with working_dir(self.build_directory):
+            if self.generator == "Unix Makefiles":
+                self.pkg._if_make_target_execute("check-quick")
+            elif self.generator == "Ninja":
+                self.pkg._if_ninja_target_execute("check-quick")
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def test_castep_executable(self):
+        """Test that the executable launches and returns a version number"""
+        spec_version = re.compile(r"CASTEP version: " + str(self.spec.version))
+        castep = Executable(join_path(self.prefix.bin, self.castep_exe))
+        output = castep("-v", output=str)
+        check_outputs(spec_version, output)
+
+    @run_after("install")
+    def prepare_postinstall_tests(self):
+        """Store a simple test of basic castep functionality"""
+        self.pkg.prepare_postinstall_tests()
 
 class MakefileBuilder(makefile.MakefileBuilder):
     def edit(self, pkg, spec, prefix):
@@ -401,3 +404,21 @@ class MakefileBuilder(makefile.MakefileBuilder):
     def install(self, pkg, spec, prefix):
         mkdirp(prefix.bin)
         make("install", "install-tools", *self.build_targets, "INSTALL_DIR={0}".format(prefix.bin))
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def test_castep_executable(self):
+        """Test that the executable launches and returns a version number"""
+        spec_version = re.compile(r"CASTEP version: " + str(self.spec.version))
+        castep = Executable(join_path(self.prefix.bin, self.castep_exe))
+        output = castep("-v", output=str)
+        check_outputs(spec_version, output)
+
+    @run_after("install")
+    def prepare_postinstall_tests(self):
+        """Store a simple test of basic castep functionality"""
+        self.pkg.prepare_postinstall_tests()
+
+    def check(self) -> None:
+        """Does nothing, as trying to make test causes a failure in the build system."""
+        pass
