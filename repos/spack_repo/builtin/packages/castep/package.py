@@ -50,8 +50,6 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
     with when("build_system=makefile"):
         depends_on("gmake@3.82:", when="@21:21", type="build")
         depends_on("gmake@4.2:", when="@22:", type="build")
-        requires("%gcc@9:", when="@25.12:")
-        requires("%gcc@4.9.1:", when="@21.11:")
 
     with when("build_system=cmake"):
         cmake.generator("ninja", "make", default="make")
