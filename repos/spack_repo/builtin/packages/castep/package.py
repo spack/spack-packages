@@ -79,7 +79,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         variant("grimmed3", default=True, description="Use Grimme D3 functionals")
         variant("grimmed4", default=True, description="Use Grimme D4 functionals")
         variant("dlmg", default=True, description="Use DLMG Functionality functionals")
-        variant("tools", default=True, description="Build the executable auxilliary programs")
+        variant("tools", default=True, description="Build the executable auxiliary programs")
         variant(
             "utilities", default=True, description="Build the third-party scripts and utilities"
         )
@@ -249,7 +249,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
     def test_castepconv_wrapper(self):
         """
         Check that the python script wrapper installed correctly
-        and passes arguments for castepconv.py
+        and passes an argument(-h) for castepconv.py
         """
         if self.spec.satisfies("+utilities") or self.spec.satisfies("build_system=makefile"):
             castepconv = Executable(join_path(self.prefix.bin, "castepconv.py"))
