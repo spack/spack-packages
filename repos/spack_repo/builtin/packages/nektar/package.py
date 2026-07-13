@@ -105,7 +105,8 @@ class Nektar(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-
+    depends_on("cmake@3.12:", type="build", when="@5.8.0:")
+    depends_on("cmake@3.5.1:", type="build", when="@:5.7.0")
     depends_on("py-setuptools", when="@master")
     depends_on("py-setuptools", when="@5.6.0:")
 
