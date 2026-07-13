@@ -19,6 +19,7 @@ class Nektar(CMakePackage):
 
     version("master", branch="master", preferred=True)
 
+    version("5.10.0", tag="v5.10.0", commit="078dc2fae4b5db8b500b6cdb5c3e2e251624df43")
     version("5.9.0", tag="v5.9.0", commit="f729cda85b6a206e008fd705af8001cfe6e0d6fb")
     version("5.8.0", tag="v5.8.0", commit="837223d7a51da426127052d535297d97f413bef7")
     version("5.7.0", tag="v5.7.0", commit="ebf2aec4f840729ffb2845ead6d462be6f6f341a")
