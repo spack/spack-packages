@@ -64,7 +64,7 @@ class PyPsyclone(PythonPackage):
 
     # Test cases fail without compatible versions of py-fparser:
     depends_on("py-fparser@0.2.1", type=("build", "run"), when="@3.2")
-    depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.1.0")
+    depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.0:")
     depends_on("py-fparser@0.1.4", type=("build", "run"), when="@2.5.0")
     depends_on("py-fparser@0.1.3", type=("build", "run"), when="@2.4.0")
     depends_on("py-fparser@0.0.16", type=("build", "run"), when="@2.3.1")
