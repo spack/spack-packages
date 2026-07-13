@@ -20,9 +20,9 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
     license("MIT")
 
-    version("0.96.2", sha256="2ff6edb422eadf47634f98d20258458c82374efe617de0d0c3d5bb3d7945be23")
-    version("0.95", sha256="1007ffa97eb2085d50173676ec5e6387d1da7a8b78f204308223fbdbbecc60a1")
-    version("0.93.1", sha256="95a93d0063ac8857b9be12c1aca24f5b2eef9dd4ffe8cf3f6b552a4dd54b940f")
+    version("0.96.2", tag="v0.96.2", commit="03cc0ca2e770098430677b4a6613e35b6cab793d", submodules=True)
+    version("0.95", tag="v0.95", commit="5e12d2926065cf376de30e8cfd082c4bfed78000", submodules=True)
+    version("0.93.1", tag="v0.93.1", commit="4be3f10a95f260d4e3fb901e98a8336ac6af2478", submodules=True)
     version("develop", branch="develop")
 
     variant("tests", default=False, description="Enable unit and integration tests")
@@ -36,6 +36,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.22:", when="@:0.93.1", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+grackle")
 
     depends_on("mpi")
     depends_on("cuda@12:", when="@0.95: +cuda")
