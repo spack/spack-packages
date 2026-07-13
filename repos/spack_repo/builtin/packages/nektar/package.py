@@ -33,8 +33,8 @@ class Nektar(CMakePackage):
     variant("fftw", default=True, description="Builds with fftw support")
     variant("arpack", default=True, description="Builds with arpack support")
     variant("tinyxml", default=True, description="Builds with external tinyxml support")
-    variant("hdf5", default=False, description="Builds with hdf5 support")
-    variant("scotch", default=False, description="Builds with scotch partitioning support")
+    variant("hdf5", default=True, description="Builds with hdf5 support")
+    variant("scotch", default=True, description="Builds with scotch partitioning support")
     variant("demos", default=False, description="Build demonstration codes")
     variant("python", default=True, description="Enable python support")
     # Solver variants
