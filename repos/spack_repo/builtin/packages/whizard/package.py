@@ -28,6 +28,8 @@ class Whizard(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("3.1.7", sha256="1b629f12ea9b59b68809b39257361f1ae923ded715b71064c9f5ab333cfb4e66")
+    version("3.1.6", sha256="ff878ea838c2621221d7455bc538df0af80fecb0a33b203db8058fb212340492")
     version("3.1.5", sha256="731d147b342e3b63307ea541f6f0bb4073195a78a75da60db10f284f282c3d19")
     version("3.1.4", sha256="9da9805251d786adaf4ad5a112f9c4ee61d515778af0d2623d6460c3f1f900cd")
     version("3.1.2", sha256="4f706f8ef02a580ae4dba867828691dfe0b3f9f9b8982b617af72eb8cd4c6fa3")
@@ -68,6 +70,8 @@ class Whizard(AutotoolsPackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("libtirpc", type=("build", "link", "run"))
+    depends_on("ocaml@4.11:", type="build", when="@3.1.7:")
+    depends_on("ocaml@4.08:", type="build", when="@3.1.3:")
     depends_on("ocaml@4.02.3:", type="build", when="@3:")
     depends_on("ocaml@4.02.3:~force-safe-string", type="build", when="@:2")
     depends_on("hepmc", when="hepmc=2")
