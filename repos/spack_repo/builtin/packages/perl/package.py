@@ -296,6 +296,11 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
                 maker()
                 maker("install")
 
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # make extensions visible when they are merged into an environment
+        # view, since @INC only covers perl's own prefix
+        env.prepend_path("PERL5LIB", self.prefix.lib.perl5)
+
     def _setup_dependent_env(self, env: EnvironmentModifications, dependent_spec: Spec):
         """Set PATH and PERL5LIB to include the extension and
         any other perl extensions it depends on,
