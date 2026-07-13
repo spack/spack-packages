@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
+from spack_repo.builtin.build_systems.makefile import MakefileBuilder, MakefilePackage
 
 from spack.package import *
 
 
-class Yosys(MakefilePackage):
+class Yosys(CMakePackage, MakefilePackage):
     """Yosys is a framework for RTL synthesis tools. It currently has extensive
     Verilog-2005 support and provides a basic set of synthesis algorithms for
     various application domains.
@@ -30,6 +31,7 @@ class Yosys(MakefilePackage):
 
     version("master", branch="master")
 
+    version("0.67", commit="2d1509d1bcb8df0723f6790057e3b1d21c876683", submodules=True)
     version("0.66", commit="86f2ddebce7e98ce7cacc27e8a5c14cb53b51b51", submodules=True)
     version("0.65", commit="b85cad634782fafac275e5f540c056bfacb2b5d2", submodules=True)
     version("0.64", commit="6d2c445aebd37261d0e33ed4d90d09fd1a7bf618", submodules=True)
@@ -82,10 +84,15 @@ class Yosys(MakefilePackage):
     variant("abc", default=True, description="build with abc support")
     variant("ccache", default=False, description="build with ccache support")
 
+    build_system(
+        conditional("cmake", when="@0.67:"),
+        conditional("makefile", when="@:0.66"),
+        default="cmake",
+    )
+
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build")  # generated
 
-    depends_on("automake", type="build")
     depends_on("flex")
     depends_on("bison")
     depends_on("libffi")
@@ -93,10 +100,21 @@ class Yosys(MakefilePackage):
     depends_on("pkgconfig")
     depends_on("tcl")
     depends_on("zlib")
-    depends_on("llvm")
     depends_on("ccache", type=("build", "run"), when="+ccache")
 
-    def edit(self, spec, prefix):
+    with when("build_system=makefile"):
+        depends_on("automake", type="build")
+
+    with when("build_system=cmake"):
+        depends_on("cmake@3.28:", type="build")
+        depends_on("python@3.11:", type="build")
+        depends_on("bison@3.8:", type="build")
+        conflicts("%gcc@:12")
+        conflicts("%clang@:15")
+
+
+class MakefileBuilder(MakefileBuilder):
+    def edit(self, pkg, spec, prefix):
         makefile = FileFilter("Makefile")
 
         makefile.filter(r"ENABLE_ABC :=", "ENABLE_ABC ?=")
@@ -117,3 +135,14 @@ class Yosys(MakefilePackage):
             env.set("ENABLE_CCACHE", "1")
         else:
             env.set("ENABLE_CCACHE", "0")
+
+
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        return [
+            self.define("YOSYS_WITHOUT_ABC", self.spec.satisfies("~abc")),
+            self.define(
+                "YOSYS_COMPILER_LAUNCHER",
+                "ccache" if self.spec.satisfies("+ccache") else "",
+            ),
+        ]
