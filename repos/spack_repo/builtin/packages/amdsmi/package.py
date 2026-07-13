@@ -68,8 +68,8 @@ class Amdsmi(CMakePackage):
 
     depends_on("py-pyyaml")
 
-    depends_on("googletest@1.14:", when="@6.4:")
-    depends_on("googletest@1.16:", when="@7.2:")
+    depends_on("googletest@1.14:", type="build", when="@6.4:")
+    depends_on("googletest@1.16:", type="build", when="@7.2:")
 
     resource(
         name="esmi_ib_library",

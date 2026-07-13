@@ -209,10 +209,6 @@ class Rocblas(CMakePackage):
         depends_on("py-pip", type="build")
         depends_on("py-joblib", type="build")
         depends_on("procps", type="build")
-        depends_on("py-rich", type="build")
-        depends_on("py-markdown-it-py", type="build")
-        depends_on("py-pygments", type="build")
-        depends_on("py-mdurl", type="build")
 
     for t_version, t_commit in [
         ("@5.7.0", "97e0cfc2c8cb87a1e38901d99c39090dc4181652"),
