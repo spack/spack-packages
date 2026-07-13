@@ -21,6 +21,7 @@ class PyTensorboard(PythonPackage):
     license("Apache-2.0")
     maintainers("aweits")
 
+    version("2.21.0", sha256="7279316dcb6bd5bc391d623dea841531299cde1887310e8133bc34a996d32255")
     version("2.20.0", sha256="9dc9f978cb84c0723acf9a345d96c184f0293d18f166bb8d59ee098e6cfaaba6")
     version("2.19.0", sha256="5e71b98663a641a7ce8a6e70b0be8e1a4c0c45d48760b076383ac4755c35b9a0")
     version("2.18.0", sha256="107ca4821745f73e2aefa02c50ff70a9b694f39f790b11e6f682f7d326745eab")
@@ -59,6 +60,7 @@ class PyTensorboard(PythonPackage):
         depends_on("python@3.9:", when="@2.14:")
         depends_on("python@3.8:", when="@2.12:")
         depends_on("py-absl-py@0.4:")
+        depends_on("py-grpcio@1.74.0:2", when="@2.21:")
         depends_on("py-grpcio@1.48.2:", when="@2.12:")
         depends_on("py-grpcio@1.24.3:", when="@2.3:")
         depends_on("py-grpcio@1.23.3:", when="@2.2")
@@ -70,14 +72,14 @@ class PyTensorboard(PythonPackage):
         depends_on("py-numpy@:1.23", when="@:2.5")
         depends_on("py-packaging", when="@2.18:")
         depends_on("pil", when="@2.20:")
+        depends_on("py-protobuf@6.31.1:8", when="@2.21:")
         depends_on("py-protobuf@3.19.6:", when="@2.15.2:2.16,2.18:")
         depends_on("py-protobuf@3.19.6:4", when="@2.17")
         depends_on("py-protobuf@3.19.6:4.23", when="@2.12:2.15.1")
         depends_on("py-protobuf@3.9.2:3", when="@2.11")
         depends_on("py-protobuf@3.9.2:3.19", when="@2.9:2.10")
         depends_on("py-protobuf@3.6.0:3.19", when="@:2.8")
-        # https://github.com/tensorflow/tensorboard/issues/7003
-        depends_on("py-setuptools@41:81")
+        depends_on("py-setuptools@41:")
         depends_on("py-tensorboard-data-server@0.7", when="@2.12:")
         depends_on("py-tensorboard-data-server@0.6", when="@2.5:2.11")
         depends_on("py-werkzeug@1.0.1:", when="@2.9:")
@@ -90,6 +92,8 @@ class PyTensorboard(PythonPackage):
         depends_on("py-google-auth-oauthlib@0.5:1.0", when="@2.12.1:2.14")
         depends_on("py-google-auth-oauthlib@0.4.1:0.4", when="@:2.12.0")
         depends_on("py-requests@2.21.0:2", when="@:2.15")
+        # https://github.com/tensorflow/tensorboard/issues/7003
+        depends_on("py-setuptools@:81", when="@:2.20")
         depends_on("py-six@1.9.1:", when="@:2.4,2.14:2.19")
         depends_on("py-tensorboard-plugin-wit@1.6.0:", when="@:2.13")
 
