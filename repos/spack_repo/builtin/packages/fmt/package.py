@@ -19,6 +19,7 @@ class Fmt(CMakePackage):
 
     license("MIT")
 
+    version("12.2.0", sha256="a2f4a8d51178f954e4c339007f77edd76ba0cb2e36f87a48e5a5403d9be5878f")
     version("12.1.0", sha256="695fd197fa5aff8fc67b5f2bbc110490a875cdf7a41686ac8512fb480fa8ada7")
     version("12.0.0", sha256="1c32293203449792bf8e94c7f6699c643887e826f2d66a80869b4f279fb07d25")
     version("11.2.0", sha256="203eb4e8aa0d746c62d8f903df58e0419e3751591bb53ff971096eaa0ebd4ec3")
