@@ -10,13 +10,15 @@ from spack.package import *
 class Pthreadpool(CMakePackage):
     """pthreadpool is a portable and efficient thread pool implementation."""
 
-    homepage = "https://github.com/Maratyszcza/pthreadpool"
-    git = "https://github.com/Maratyszcza/pthreadpool.git"
+    # Original repo is no longer maintained: https://github.com/Maratyszcza/pthreadpool
+    homepage = "https://github.com/goodle/pthreadpool"
+    git = "https://github.com/google/pthreadpool.git"
 
     license("BSD-2-Clause")
 
     version("master", branch="master")
-    version("2023-08-29", commit="4fe0e1e183925bf8cfa6aae24237e724a96479b8")  # py-torch@2.2:
+    version("2026-05-01", commit="a56dcd79c699366e7ac6466792c3025883ff7704")  # py-torch@2.13:
+    version("2023-08-29", commit="4fe0e1e183925bf8cfa6aae24237e724a96479b8")  # py-torch@2.2:2.12
     version("2021-04-13", commit="a134dd5d4cee80cce15db81a72e7f929d71dd413")  # py-torch@1.9:2.1
     version("2020-10-05", commit="fa75e65a58a5c70c09c30d17a1fe1c1dff1093ae")  # py-torch@1.8
     version("2020-06-15", commit="029c88620802e1361ccf41d1970bd5b07fd6b7bb")  # py-torch@1.6:1.7

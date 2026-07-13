@@ -29,6 +29,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.13.0", tag="v2.13.0", commit="cf30153c4c131c8164ee7798e5022d810682e2cb")
     version("2.12.1", tag="v2.12.1", commit="7269437d655783a26cba32aa88195b741ff496aa")
     version("2.12.0", tag="v2.12.0", commit="0d62256a2b23365f8e1604297eb23a6545102aa8")
     version("2.11.0", tag="v2.11.0", commit="70d99e998b4955e0049d13a98d77ae1b14db1f45")
@@ -174,7 +175,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.14", when="@2.9:")
+        depends_on("python@3.10:3.15", when="@2.13:")
+        depends_on("python@3.10:3.14", when="@2.9:2.12")
         depends_on("python@3.9:3.13", when="@2.5:2.8")
         depends_on("python@3.8:3.12", when="@2.2:2.4")
         depends_on("python@3.8:3.11", when="@2.0:2.1")
@@ -206,7 +208,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
-        depends_on("py-setuptools@70.1:81", when="@2.10:")
+        depends_on("py-setuptools@77.0.3:", when="@2.13:")
+        depends_on("py-setuptools@70.1:81", when="@2.10:2.12")
         depends_on("py-setuptools@70.1:79", when="@2.9")
         depends_on("py-setuptools@62.3:79", when="@2.8")
         depends_on("py-setuptools@:79", when="@:2.7")
@@ -239,7 +242,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # depends_on("xnnpack@2021-02-22", when="@1.8:1.9+xnnpack")
     # depends_on("xnnpack@2020-03-23", when="@1.6:1.7+xnnpack")
     depends_on("benchmark", when="@1.6:+test")
-    depends_on("cpuinfo@2025-11-14", when="@2.10:")
+    depends_on("cpuinfo@2026-04-13", when="@2.13:")
+    depends_on("cpuinfo@2025-11-14", when="@2.10:2.12")
     depends_on("cpuinfo@2025-03-21", when="@2.8:2.9")
     depends_on("cpuinfo@2024-09-26", when="@2.6:2.7")
     depends_on("cpuinfo@2024-09-06", when="@2.5.1")
@@ -250,7 +254,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cpuinfo@2020-12-17", when="@1.8:1.12")
     depends_on("cpuinfo@2020-06-11", when="@1.6:1.7")
     with when("+gloo"):
-        depends_on("gloo@2025-12-02", when="@2.11:")
+        depends_on("gloo@2026-02-12", when="@2.13:")
+        depends_on("gloo@2025-12-02", when="@2.11:2.12")
         depends_on("gloo@2025-08-21", when="@2.9:2.10")
         depends_on("gloo@2025-06-04", when="@2.8")
         depends_on("gloo@2023-12-03", when="@2.3:2.7")
@@ -282,11 +287,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             depends_on("py-protobuf@3.13", when="@1.10:")
             depends_on("py-protobuf@3.11", when="@1.6:1.9")
     depends_on("psimd@2020-05-17")
-    depends_on("pthreadpool@2023-08-29", when="@2.2:")
+    depends_on("pthreadpool@2026-05-01", when="@2.13:")
+    depends_on("pthreadpool@2023-08-29", when="@2.2:2.12")
     depends_on("pthreadpool@2021-04-13", when="@1.9:2.1")
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
+        depends_on("py-pybind11@3.0.4:", when="@2.13:")
         depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")
@@ -308,7 +315,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
         # cmake/public/cuda.cmake
-        depends_on("cuda@12.6:", when="@2.12:+cuda")
+        depends_on("cuda@12.1:", when="@2.12:+cuda")
         depends_on("cuda@12:", when="@2.9:+cuda")
         depends_on("cuda@11:", when="@2.4:+cuda")
         # https://github.com/pytorch/pytorch/issues/122169
@@ -318,11 +325,17 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
-    depends_on("cudnn@8.5:9", when="@2.8:+cudnn")
-    # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
-    depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
-    depends_on("nccl", when="+nccl+cuda")
+    with when("+cudnn"):
+        depends_on("cudnn@9:", when="@2.12:")
+        depends_on("cudnn@8.5:9", when="@2.8:2.11")
+        # https://github.com/pytorch/pytorch/issues/119400
+        depends_on("cudnn@8.5:9.0", when="@2.3:2.7")
+        depends_on("cudnn@7:8", when="@1.6:2.2")
+    # torch/csrc/distributed/c10d/NCCLUtils.hpp
+    with when("+nccl+cuda"):
+        depends_on("nccl@2.23:", when="@2.13:")
+        depends_on("nccl@2.7:", when="@2.6:")
+        depends_on("nccl")
     # https://github.com/pytorch/pytorch/pull/178065
     depends_on("magma@:2.9+cuda", when="+magma+cuda")
     depends_on("magma@:2.9+rocm", when="+magma+rocm")
@@ -387,7 +400,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     )
 
     # https://github.com/pytorch/pytorch/issues/151592
-    patch("macos_rpath.patch", when="@2.7:")
+    patch("macos_rpath.patch", when="@2.7:2.12")
 
     # https://github.com/pytorch/pytorch/issues/151316
     patch(

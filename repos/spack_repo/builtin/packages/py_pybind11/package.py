@@ -28,6 +28,8 @@ class PyPybind11(CMakePackage, PythonExtension):
     maintainers("ax3l")
 
     version("master", branch="master")
+    version("3.0.4", sha256="74b6a2c2b4573a400cafb6ecbf60c98df300cd3d0041296b913d02b2cbbb2676")
+    version("3.0.3", sha256="787459e1e186ee82001759508fefa408373eae8a076ffe0078b126c6f8f0ec5e")
     version("3.0.2", sha256="2f20a0af0b921815e0e169ea7fec63909869323581b89d7de1553468553f6a2d")
     version("3.0.1", sha256="741633da746b7c738bb71f1854f957b9da660bcd2dce68d71949037f0969d0ca")
     version("3.0.0", sha256="453b1a3e2b266c3ae9da872411cadb6d693ac18063bd73226d96cfb7015a200c")
