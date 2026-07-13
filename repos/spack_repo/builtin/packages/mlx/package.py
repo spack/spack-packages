@@ -56,11 +56,14 @@ class Mlx(CMakePackage, CudaPackage):
     depends_on("py-pybind11", type="build", when="+python")
 
     depends_on("cuda@11:", type=("build", "run"), when="+cuda")
+    depends_on("blas", when="+cpu platform=linux")
+    depends_on("blas", when="+cpu platform=windows")
 
     conflicts("~metal~cpu~cuda", msg="At least one backend (metal, cpu, or cuda) must be enabled")
     conflicts("+metal", when="platform=linux", msg="Metal backend is only available on macOS")
     conflicts("+metal", when="platform=windows", msg="Metal backend is only available on macOS")
     conflicts("+cuda", when="platform=darwin", msg="CUDA backend is not available on macOS")
+    conflicts("cuda_arch=none", when="+cuda", msg="A CUDA arch must be selected")
 
     requires("+shared", when="+python", msg="Python bindings require shared libraries")
 
@@ -94,8 +97,8 @@ class Mlx(CMakePackage, CudaPackage):
 
         if spec.satisfies("+python"):
             args.append(self.define("MLX_BUILD_PYTHON_STUBS", True))
-            python_platlib = join_path(self.stage.source_path, "python_install")
-            args.append(self.define("MLX_PYTHON_BINDINGS_OUTPUT_DIRECTORY", python_platlib))
+            python_install = join_path(self.stage.source_path, "python_install")
+            args.append(self.define("MLX_PYTHON_BINDINGS_OUTPUT_DIRECTORY", python_install))
 
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
@@ -108,22 +111,17 @@ class Mlx(CMakePackage, CudaPackage):
         if not self.spec.satisfies("+python"):
             return
 
-        python_spec = self.spec["python"]
-        site_packages = join_path(
-            self.prefix.lib, f"python{python_spec.version.up_to(2)}", "site-packages"
-        )
-
-        mlx_package_dir = join_path(site_packages, "mlx")
+        mlx_package_dir = join_path(python_platlib, "mlx")
         mkdirp(mlx_package_dir)
 
         python_src = join_path(self.stage.source_path, "python", "mlx")
         if os.path.exists(python_src):
             install_tree(python_src, mlx_package_dir)
 
-        python_platlib = join_path(self.stage.source_path, "python_install")
-        if os.path.exists(python_platlib):
+        python_install = join_path(self.stage.source_path, "python_install")
+        if os.path.exists(python_install):
             # Find and copy the core extension
-            for root, dirs, files in os.walk(python_platlib):
+            for root, dirs, files in os.walk(python_install):
                 for f in files:
                     if f.startswith("core") and (f.endswith(".so") or f.endswith(".pyd")):
                         src = join_path(root, f)
