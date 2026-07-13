@@ -75,7 +75,6 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("BUILD_ANALYTICAL", "analytical_tests"),
             self.define_from_variant("SPH_EXA_WITH_GRACKLE", "grackle"),
             self.define_from_variant("SPH_EXA_WITH_DISKS", "disks"),
-            self.define_from_variant("SPH_EXA_WITH_H5HUT", "hdf5"),
             self.define_from_variant("SPH_EXA_WITH_CUDA", "cuda"),
             self.define_from_variant("RYOANJI_WITH_CUDA", "cuda"),
             self.define_from_variant("CSTONE_WITH_CUDA", "cuda"),
