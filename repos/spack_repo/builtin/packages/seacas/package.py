@@ -512,8 +512,18 @@ class Seacas(CMakePackage):
 
         return options
 
+    def check(self):
+        # Disable CMakePackage's default ctest behavior
+        return
+
     @run_after("install")
     def symlink_parallel(self):
         if not self.spec.dependencies("parallel"):
             return
         symlink(self.spec["parallel"].prefix.bin.parallel, self.prefix.bin.parallel)
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def run_ctest_after_install(self):
+        with working_dir(self.build_directory):
+            ctest("-j", "8", "--output-on-failure")
