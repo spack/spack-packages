@@ -32,8 +32,8 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     variant("hdf5", default=True, description="Enable support for HDF5 I/O")
     variant("gpu_aware_mpi", default=True, description="GPU aware MPI")
 
-    depends_on("cmake@3.24:", when="@0.95:")
-    depends_on("cmake@3.22:", when="@:0.93.1")
+    depends_on("cmake@3.24:", when="@0.95:", type="build")
+    depends_on("cmake@3.22:", when="@:0.93.1", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -71,8 +71,8 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
         args = [
             self.define_from_variant("SPH_EXA_WITH_" + hdf5lib, "hdf5"),
-            self.define_from_variant("BUILD_TESTING", "testing"),
-            self.define_from_variant("BUILD_ANALYTICAL", "analytical"),
+            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define_from_variant("BUILD_ANALYTICAL", "analytical_tests"),
             self.define_from_variant("SPH_EXA_WITH_GRACKLE", "grackle"),
             self.define_from_variant("SPH_EXA_WITH_DISKS", "disks"),
             self.define_from_variant("SPH_EXA_WITH_H5HUT", "hdf5"),
