@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -117,7 +118,7 @@ class Hiprand(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("rocrand@" + ver, when="+rocm @" + ver)
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
 
-    for tgt in ROCmPackage.amdgpu_targets:
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on(
             "rocrand amdgpu_target={0}".format(tgt), when="+rocm amdgpu_target={0}".format(tgt)
         )
