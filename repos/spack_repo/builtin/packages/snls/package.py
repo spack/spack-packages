@@ -21,11 +21,31 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="rblake-llnl")
 
     version("develop", branch="develop")
-    version("v0.4.4", sha256="dbe89167c6ab9d7a76515cb5c0413f3673272bd1fc8cd20d83ba81815241f191", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.4.tar.gz")
-    version("v0.4.3", sha256="51c4ddf56e14c24fb7358ec13bbf3ddb1bbdfbc1eefe7126f42726e3a813b250", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.3.tar.gz")
-    version("v0.4.2", sha256="3a4e72069df932b71a4c4f940c6bcbc2ddad20686e81178c97de9725efe9a0aa", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.2.tar.gz")
-    version("v0.4.1", sha256="cffcfb7bb033319760fc42491eb58981190c04dcb2bb17aa6d544564854512f3", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.1.tar.gz")
-    version("v0.4.0", sha256="dfedf72272ef8bbf41d62ae2e8f2b1e48653b1ec364a19b6a832e2dd2c19d7ea", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.0.tar.gz")
+    version(
+        "v0.4.4",
+        sha256="dbe89167c6ab9d7a76515cb5c0413f3673272bd1fc8cd20d83ba81815241f191",
+        url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.4.tar.gz",
+    )
+    version(
+        "v0.4.3",
+        sha256="51c4ddf56e14c24fb7358ec13bbf3ddb1bbdfbc1eefe7126f42726e3a813b250",
+        url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.3.tar.gz",
+    )
+    version(
+        "v0.4.2",
+        sha256="3a4e72069df932b71a4c4f940c6bcbc2ddad20686e81178c97de9725efe9a0aa",
+        url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.2.tar.gz",
+    )
+    version(
+        "v0.4.1",
+        sha256="cffcfb7bb033319760fc42491eb58981190c04dcb2bb17aa6d544564854512f3",
+        url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.1.tar.gz",
+    )
+    version(
+        "v0.4.0",
+        sha256="dfedf72272ef8bbf41d62ae2e8f2b1e48653b1ec364a19b6a832e2dd2c19d7ea",
+        url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.0.tar.gz",
+    )
 
     variant("shared", default=True, description="build shared libs")
     variant("tests", default=False, description="Build with tests enabled")
