@@ -12,7 +12,7 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
     """Small solver for Nonlinear systems of equations"""
 
     homepage = "https://github.com/LLNL/SNLS"
-    url = "https://github.com/LLNL/SNLS/archive/refs/tags/v0.4.0.tar.gz"
+    url = "https://github.com/llnl/SNLS/archive/refs/tags/v0.4.4.tar.gz"
     git = "https://github.com/LLNL/SNLS.git"
 
     maintainers("rblake-llnl")
