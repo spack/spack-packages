@@ -21,8 +21,8 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     version("0.96.2", tag="v0.96.2", commit="03cc0ca2e770098430677b4a6613e35b6cab793d", submodules=True)
-    version("0.95", tag="v0.95", commit="5e12d2926065cf376de30e8cfd082c4bfed78000", submodules=True, deprecated=True)
-    version("0.93.1", tag="v0.93.1", commit="4be3f10a95f260d4e3fb901e98a8336ac6af2478", submodules=True, deprecated=True)
+    version("0.95", tag="v0.95", commit="5e12d2926065cf376de30e8cfd082c4bfed78000", submodules=True)
+    version("0.93.1", tag="v0.93.1", commit="4be3f10a95f260d4e3fb901e98a8336ac6af2478", submodules=True)
     version("develop", branch="develop")
 
     variant("tests", default=False, description="Enable unit and integration tests")
@@ -64,6 +64,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
     conflicts("amdgpu_target=none", when="+rocm", msg="HIP architecture is required")
     conflicts("+cuda", when="+rocm", msg="CUDA and HIP cannot both be enabled")
+    conflicts("+rocm", when="@:0.95", msg="This version does not support +rocm")
 
     def cmake_args(self):
         spec = self.spec
