@@ -28,6 +28,17 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
     version("v0.4.0", sha256="dfedf72272ef8bbf41d62ae2e8f2b1e48653b1ec364a19b6a832e2dd2c19d7ea", url="https://github.com/llnl/SNLS/archive/refs/tags/v0.4.0.tar.gz")
 
     variant("shared", default=True, description="build shared libs")
+    variant("tests", default=False, description="Build with tests enabled")
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     depends_on("blt", type=("build"))
     depends_on("c", type=("build"))
@@ -44,10 +55,11 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
         """
         spec = self.spec
         args = [
-            self.define("ENABLE_TESTS", False),
-            self.define("ENABLE_GTEST", False),
+            self.define_from_variant("ENABLE_TESTS", "tests"),
+            self.define_from_variant("ENABLE_GTEST", "tests"),
             self.define("USE_BATCH_SOLVERS", True),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
             self.define("RAJA_DIR", spec["raja"].prefix.lib.cmake.raja),
             self.define("CAMP_DIR", spec["camp"].prefix.lib.cmake.camp),
