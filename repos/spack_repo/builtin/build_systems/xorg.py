@@ -24,6 +24,8 @@ class XorgPackage(PackageBase):
         "https://mirror.transip.net/xorg/individual/",
         "ftp://ftp.freedesktop.org/pub/xorg/individual/",
         "http://xorg.mirrors.pair.com/individual/",
+        "https://artfiles.org/x.org/pub/individual/",
+        "https://xorg.freedesktop.org/releases/individual/",
     ]
 
     @property

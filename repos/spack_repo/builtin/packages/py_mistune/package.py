@@ -15,9 +15,19 @@ class PyMistune(PythonPackage):
 
     license("BSD-3-Clause")
 
-    # https://github.com/lepture/mistune/security/advisories/GHSA-8g87-j6q8-g93x
-    version("3.2.1", sha256="7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28")
+    version("3.3.3", sha256="c4c6c0c840b8637a2e9b8b6d607eb7c8f00888bf14c754409bcd339e848c2477")
     with default_args(deprecated=True):
+        # https://github.com/lepture/mistune/security/advisories/GHSA-jxhr-4j38-fpxg
+        # https://github.com/lepture/mistune/security/advisories/GHSA-f32h-38gf-rg5r
+        # https://github.com/lepture/mistune/security/advisories/GHSA-x2gr-6qf2-fc9x
+        # https://github.com/lepture/mistune/security/advisories/GHSA-3q64-rw38-243v
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8mpj-m6qm-5qr8
+        # https://github.com/lepture/mistune/security/advisories/GHSA-2hm2-hc3v-44h9
+        # https://github.com/lepture/mistune/security/advisories/GHSA-96vr-jm8v-g22j
+        # https://github.com/lepture/mistune/security/advisories/GHSA-ffq3-xpv3-j92q
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8ppg-4vv7-9p53
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8g87-j6q8-g93x
+        version("3.2.1", sha256="7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28")
         # https://github.com/lepture/mistune/security/advisories/GHSA-8mp2-v27r-99xp
         # https://github.com/lepture/mistune/security/advisories/GHSA-hjph-f4mc-wx4c
         # https://github.com/lepture/mistune/security/advisories/GHSA-58cw-g322-p94v
