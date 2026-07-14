@@ -15,6 +15,7 @@ class PyGrpcio(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.81.1", sha256="6fa10a767143a5e82e8eaab53918af0cd8909a57a27f8cb2288b80a613ac671b")
     version("1.78.1", sha256="27c625532d33ace45d57e775edf1982e183ff8641c72e4e91ef7ba667a149d72")
     version("1.75.0", sha256="b989e8b09489478c2d19fecc744a298930f40d8b27c3638afbfe84d22f36ce4e")
     version("1.71.0", sha256="2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c")
