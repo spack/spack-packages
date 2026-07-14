@@ -222,7 +222,8 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
         def get_energy_from_file(filename: str) -> float:
             with open(filename) as f:
                 for line in f:
-                    if m := re.search(energy_re, line):
+                    m = re.search(energy_re, line)
+                    if m:
                         return float(m.group(1))
             raise KeyError(f"Total energy not found in {filename}")
 
