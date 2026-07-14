@@ -92,12 +92,18 @@ class PyPyfr(PythonPackage, CudaPackage, ROCmPackage):
         pyfr_library_path = []
         for variant, dep in deps:
             if "+{}".format(variant) in self.spec:
-                if dep == "hip":
-                    hip_libdir = str(self.spec[dep].prefix.lib)
-                    if os.path.isdir(hip_libdir):
-                        pyfr_library_path.append(hip_libdir)
-                    continue
-                pyfr_library_path.extend(self.spec[dep].libs.directories)
+                try:
+                    libdirs = self.spec[dep].libs.directories
+                except NoLibrariesError:
+                    prefix = self.spec[dep].prefix
+                    libdirs = [
+                        str(libdir)
+                        for libdir in (prefix.lib, prefix.lib64)
+                        if os.path.isdir(str(libdir))
+                    ]
+                    if not libdirs:
+                        raise
+                pyfr_library_path.extend(libdirs)
         env.set("PYFR_LIBRARY_PATH", ":".join(pyfr_library_path))
 
         # LD_LIBRARY_PATH needed for cuda
