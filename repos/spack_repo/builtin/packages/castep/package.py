@@ -335,6 +335,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         """Store a simple test of basic castep functionality"""
         self.pkg.prepare_postinstall_tests()
 
+
 class MakefileBuilder(makefile.MakefileBuilder):
     def edit(self, pkg, spec, prefix):
         if spec.satisfies("%gcc"):
