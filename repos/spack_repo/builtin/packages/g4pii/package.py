@@ -3,12 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4pii(Geant4DataPackage):
+class G4pii(Package, Geant4DataPackage):
     """Geant4 data for shell ionisation cross-sections"""
 
     homepage = "https://geant4.web.cern.ch"
