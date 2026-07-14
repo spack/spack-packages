@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
 from spack.package import *
 
 
@@ -26,7 +27,7 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
     version("v0.4.1", sha256="cffcfb7bb033319760fc42491eb58981190c04dcb2bb17aa6d544564854512f3")
     version("v0.4.0", sha256="dfedf72272ef8bbf41d62ae2e8f2b1e48653b1ec364a19b6a832e2dd2c19d7ea")
 
-    variant("shared", default=True, description='build shared libs')
+    variant("shared", default=True, description="build shared libs")
 
     depends_on("blt", type=("build"))
     depends_on("c", type=("build"))
