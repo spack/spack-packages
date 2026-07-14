@@ -13,12 +13,9 @@ from spack.package import *
 class Xios(Package):
     """XML-IO-SERVER library for IO management of climate models."""
 
-    homepage = "https://forge.ipsl.jussieu.fr/ioserver/wiki"
-    version(
-        "2.6",
-        revision="2714",
-        svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.6",
-    )
+    homepage = "https://ipsl.pages.in2p3.fr/projets/xios-projects/xios"
+    git = "https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git"
+    version("2.6", branch="xios-2.6.x")
 
     variant(
         "mode",
@@ -35,7 +32,7 @@ class Xios(Package):
     patch("llvm_bug_17782.patch", when="@1.1: %apple-clang")
     patch("llvm_bug_17782.patch", when="@1.1: %clang")
 
-    patch("earcut_missing_include_2.6.patch", when="@2.6:")
+    patch("earcut_missing_include_2.6.patch", when="@2.6")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
