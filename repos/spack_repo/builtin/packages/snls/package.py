@@ -12,9 +12,9 @@ from spack.package import *
 class Snls(CMakePackage, CudaPackage, ROCmPackage):
     """Small solver for Nonlinear systems of equations"""
 
-    homepage = "https://github.com/LLNL/SNLS"
+    homepage = "https://github.com/llnl/SNLS"
     url = "https://github.com/llnl/SNLS/archive/refs/tags/v0.4.4.tar.gz"
-    git = "https://github.com/LLNL/SNLS.git"
+    git = "https://github.com/llnl/SNLS.git"
 
     maintainers("rblake-llnl")
 
