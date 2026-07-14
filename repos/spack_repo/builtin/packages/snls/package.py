@@ -9,14 +9,14 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 
-class Snls(CMakePackage, CudaPackage, ROCmPackage):
-    """Small solver for Nonlinear systems of equations"""
+class Snls(CMakePackage):
+    """Small Non-Linear Solver for solving non-linear systems of equations"""
 
     homepage = "https://github.com/llnl/SNLS"
     url = "https://github.com/llnl/SNLS/archive/refs/tags/v0.4.4.tar.gz"
     git = "https://github.com/llnl/SNLS.git"
 
-    maintainers("rblake-llnl")
+    maintainers("rcarson3")
 
     license("BSD-3-Clause", checked_by="rblake-llnl")
 
@@ -49,21 +49,22 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("shared", default=True, description="build shared libs")
     variant("tests", default=False, description="Build with tests enabled")
+    variant("batch_solver", default=True, description="enable batch solver")
     variant(
         "cxxstd",
-        default="20",
-        values=("11", "14", "17", "20"),
+        default="17",
+        values=("17", "20"),
         description="C++ standard to build with",
     )
 
     depends_on("blt", type=("build"))
-    depends_on("c", type=("build"))
+    depends_on("c", type=("build"), when="+tests")
     depends_on("cxx", type=("build"))
-    depends_on("chai")
-    depends_on("umpire")
-    depends_on("raja")
-    depends_on("camp")
-    depends_on("fmt")
+    depends_on("chai", when="+batch_solver")
+    depends_on("umpire", when="+batch_solver")
+    depends_on("raja", when="+batch_solver")
+    depends_on("camp", when="+batch_solver")
+    depends_on("fmt", when="+batch_solver")
 
     @property
     def cxx_std(self):
@@ -77,7 +78,7 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
         args = [
             self.define_from_variant("ENABLE_TESTS", "tests"),
             self.define_from_variant("ENABLE_GTEST", "tests"),
-            self.define("USE_BATCH_SOLVERS", True),
+            self.define_from_variant("USE_BATCH_SOLVERS", "batch_solver"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
