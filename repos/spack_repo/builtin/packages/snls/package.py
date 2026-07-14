@@ -56,10 +56,6 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
         description="C++ standard to build with",
     )
 
-    @property
-    def cxx_std(self):
-        return self.spec.variants.get("cxxstd").value
-
     depends_on("blt", type=("build"))
     depends_on("c", type=("build"))
     depends_on("cxx", type=("build"))
@@ -68,6 +64,10 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja")
     depends_on("camp")
     depends_on("fmt")
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     def cmake_args(self):
         """
