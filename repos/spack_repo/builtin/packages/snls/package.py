@@ -50,6 +50,7 @@ class Snls(CMakePackage):
     variant("shared", default=True, description="build shared libs")
     variant("tests", default=False, description="Build with tests enabled")
     variant("batch_solver", default=True, description="enable batch solver")
+    variant("use_raja_only", default=False, description="only use raja")
     variant(
         "cxxstd",
         default="17",
@@ -57,12 +58,15 @@ class Snls(CMakePackage):
         description="C++ standard to build with",
     )
 
+    conflicts("+batch_solver", when="+use_raja_only")
+
     depends_on("blt", type=("build"))
     depends_on("c", type=("build"), when="+tests")
     depends_on("cxx", type=("build"))
     depends_on("chai", when="+batch_solver")
     depends_on("umpire", when="+batch_solver")
     depends_on("raja", when="+batch_solver")
+    depends_on("raja", when="+use_raja_only")
     depends_on("camp", when="+batch_solver")
     depends_on("fmt", when="+batch_solver")
 
@@ -80,6 +84,7 @@ class Snls(CMakePackage):
             self.define_from_variant("ENABLE_GTEST", "tests"),
             self.define_from_variant("USE_BATCH_SOLVERS", "batch_solver"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("USE_RAJA_ONLY", "use_raja_only"),
             self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
             self.define("RAJA_DIR", spec["raja"].prefix),
