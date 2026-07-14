@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -23,12 +25,13 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version(
-        "2.0.0",
-        tag="2.0.0",
-        commit="ec35bc4ba311c2fe3e89573d4e2318347ae8fadd",
+        "2.1.1",
+        tag="2.1.1",
+        commit="d18ed5b7a9daabca6aeb50d51c088e85bdd05b1b",
     )
 
-    patch("use-external-dependencies.patch", when="@2.0.0")
+    patch("use-external-dependencies.patch", when="@2.1.1")
+    patch("use-cwd-as-project-root.patch", when="@2.1.1")
 
     variant("openmp", default=False, description="Build with the Kokkos OpenMP backend")
     variant("ensemble", default=False, description="Build ensemble simulation support")
@@ -47,9 +50,9 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("tests", default=False, description="Build TRITON regression tests")
 
-    conflicts("+cuda", when="+rocm", msg="TRITON selects exactly one Kokkos backend")
-    conflicts("+openmp", when="+cuda", msg="TRITON selects exactly one Kokkos backend")
-    conflicts("+openmp", when="+rocm", msg="TRITON selects exactly one Kokkos backend")
+    conflicts("+cuda", when="+rocm", msg="TRITON backends are mutually exclusive")
+    conflicts("+openmp", when="+cuda", msg="TRITON backends are mutually exclusive")
+    conflicts("+openmp", when="+rocm", msg="TRITON backends are mutually exclusive")
     conflicts(
         "+native_launcher",
         when="~cuda~rocm",
@@ -57,27 +60,25 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
     )
     conflicts("+cuda", when="cuda_arch=none")
     conflicts("+rocm", when="amdgpu_target=none")
+    conflicts("%cxx=gcc@:12", msg="TRITON requires GCC 13 or newer")
+    conflicts("%cxx=llvm@:15", msg="TRITON requires Clang 16 or newer")
+    conflicts("%cxx=cce@:15", msg="TRITON requires Cray CCE 16 or newer")
+    conflicts("%cxx=oneapi@:2023", msg="TRITON requires Intel oneAPI 2024 or newer")
 
     depends_on("cxx", type="build")
-    depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.20:", type="build")
     depends_on("python", type="build")
     depends_on("mpi", type=("build", "link", "run"))
-    depends_on("kokkos@4.6:")
+    depends_on("kokkos@5.1.1:5 cxxstd=20")
     depends_on("kokkos +serial", when="~openmp~cuda~rocm")
     depends_on("kokkos +openmp", when="+openmp")
-    depends_on("kokkos +cuda +cuda_lambda +cuda_constexpr", when="+cuda")
-    depends_on("kokkos +wrapper", when="+cuda%gcc")
+    depends_on("kokkos +cuda +cuda_constexpr", when="+cuda")
+    depends_on("kokkos +wrapper", when="+cuda %cxx=gcc")
     depends_on("kokkos +rocm", when="+rocm")
     depends_on("yaml-cpp", when="+ensemble")
     depends_on("gdal", when="+gdal")
-    depends_on("cuda", when="+cuda", type=("build", "link", "run"))
-    depends_on("hip +rocm", when="+rocm", type=("build", "link", "run"))
-
-    with when("+cuda"):
-        depends_on("openmpi +cuda", when="^[virtuals=mpi] openmpi")
-
-    with when("+rocm"):
-        depends_on("openmpi +rocm", when="^[virtuals=mpi] openmpi@5:")
+    depends_on("cuda@12.4:", when="+cuda", type=("build", "link", "run"))
+    depends_on("hip@6.2: +rocm", when="+rocm", type=("build", "link", "run"))
 
     for cuda_arch in CudaPackage.cuda_arch_values:
         depends_on(
@@ -100,19 +101,31 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
             return "OPENMP"
         return "SERIAL"
 
-    def _amdgpu_target(self):
+    def _rocm_arch_flag(self):
         targets = self.spec.variants["amdgpu_target"].value
-        if not targets or targets == "none":
+        if not targets:
             return None
 
         if isinstance(targets, str):
-            return targets
+            targets = (targets,)
 
-        target = targets[0]
-        if target == "none":
+        targets = tuple(x for x in targets if x != "none")
+        if not targets:
             return None
 
-        return target
+        return self.hip_flags(targets)
+
+    def _mpi_launcher(self):
+        mpi = self.spec["mpi"]
+        search_paths = (os.path.dirname(mpi.mpicxx), str(mpi.prefix.bin))
+
+        for name in ("mpiexec", "mpirun"):
+            for path in search_paths:
+                launcher = join_path(path, name)
+                if os.path.isfile(launcher):
+                    return launcher
+
+        return "mpiexec"
 
     def _machine_file(self):
         spec = self.spec
@@ -124,6 +137,10 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
         for lib_dir in spec["mpi"].libs.directories:
             linker_flags.append("-Wl,-rpath,{0}".format(lib_dir))
 
+        dtags = os.environ.get("SPACK_DTAGS_TO_ADD")
+        if dtags:
+            linker_flags.append("-Wl,{0}".format(dtags))
+
         if spec.variants["precision"].value == "single":
             compiler_flags.append("-DUSE_SINGLE_PRECISION")
 
@@ -132,7 +149,7 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
             linker_flags.append(self.compiler.openmp_flag)
 
         if "+cuda" in spec:
-            if "%gcc" in spec:
+            if "%cxx=gcc" in spec:
                 compiler = self["kokkos"].kokkos_cxx
             if "+native_launcher" in spec:
                 compiler_flags.append("-DTRITON_CUDA_LAUNCHER")
@@ -145,10 +162,10 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
                 compiler_flags.append("-DTRITON_HIP_LAUNCHER")
             compiler_flags.append(spec["mpi"].headers.cpp_flags)
             linker_flags.append(spec["mpi"].libs.ld_flags)
-            target = self._amdgpu_target()
-            if target:
-                compiler_flags.append("--offload-arch={0}".format(target))
-                linker_flags.append("--offload-arch={0}".format(target))
+            arch_flag = self._rocm_arch_flag()
+            if arch_flag:
+                compiler_flags.append(arch_flag)
+                linker_flags.append(arch_flag)
 
         with open(machine_file, "w", encoding="utf-8") as f:
             f.write("#!/usr/bin/env bash\n")
@@ -157,7 +174,7 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
             f.write('export TRITON_COMPILER_FLAGS="{0}"\n'.format(" ".join(compiler_flags)))
             f.write('export TRITON_LINKER_FLAGS="{0}"\n'.format(" ".join(linker_flags)))
             f.write("export TRITON_DEBUG=OFF\n")
-            f.write('export TRITON_RUN_COMMAND="mpirun -n 1"\n')
+            f.write('export TRITON_RUN_COMMAND="{0} -n 1"\n'.format(self._mpi_launcher()))
             if "+cuda" in spec:
                 f.write('export CUDA_DIR="{0}"\n'.format(spec["cuda"].prefix))
                 f.write('export CUDA_HOME="{0}"\n'.format(spec["cuda"].prefix))
@@ -165,24 +182,23 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
         return machine_file
 
     def cmake_args(self):
-        args = [
+        return [
             self.define("MACHINE", self._machine_file()),
             self.define("TRITON_USE_EXTERNAL_DEPS", True),
+            self.define("TRITON_USE_CWD_AS_PROJECT_ROOT", True),
+            self.define_from_variant("ENABLE_GDAL", "gdal"),
             self.define_from_variant("ENSEMBLE_BUILD", "ensemble"),
             self.define_from_variant("BUILD_TESTS", "tests"),
         ]
-
-        if "~gdal" in self.spec:
-            args.append(self.define("CMAKE_DISABLE_FIND_PACKAGE_GDAL", True))
-
-        return args
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         mkdirp(prefix.share.triton)
 
-        install(join_path(self.build_directory, "triton.exe"), prefix.bin.triton)
-        install(join_path(self.build_directory, "triton.exe"), prefix.bin)
+        executable = prefix.bin.triton
+        install(join_path(self.build_directory, "triton.exe"), executable)
+        with working_dir(prefix.bin):
+            symlink("triton", "triton.exe")
         install(join_path(self.build_directory, "triton_env.sh"), prefix.share.triton)
 
         install_tree(join_path(self.stage.source_path, "input"), prefix.share.triton.input)

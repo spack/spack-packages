@@ -1,17 +1,17 @@
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index 0f071bb..97eecec 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -15,6 +15,8 @@ set(CMAKE_CXX_STANDARD 17) # minimum C++ standard to support Kokkos
+@@ -15,6 +15,9 @@ set(CMAKE_CXX_STANDARD 20) # C++20 baseline; Kokkos 4.5+ supports it
  set(CMAKE_CXX_STANDARD_REQUIRED ON)
  set(CMAKE_CXX_EXTENSIONS OFF)
  
-+option(TRITON_USE_EXTERNAL_DEPS "Use externally installed Kokkos and yaml-cpp" OFF)
++option(TRITON_USE_EXTERNAL_DEPS "Use externally installed dependencies" OFF)
++option(ENABLE_GDAL "Enable GDAL output support" OFF)
 +
  message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
  
  # check if MPI is available
-@@ -22,15 +24,41 @@ if(MACHINE STREQUAL Windows)
+@@ -22,20 +25,46 @@ if(MACHINE STREQUAL Windows)
    find_package(MPI REQUIRED COMPONENTS CXX)
  endif()
  
@@ -32,12 +32,8 @@ index 0f071bb..97eecec 100644
 +    endif()
 +  endif()
 +
-+  find_package(GDAL)
-+  if(GDAL_FOUND)
-+    set(ENABLE_GDAL ON CACHE INTERNAL "ENABLE_GDAL variable")
-+  else()
-+    message(WARNING "GDAL is not found. GDAL is disabled.")
-+    set(ENABLE_GDAL OFF CACHE INTERNAL "ENABLE_GDAL variable")
++  if(ENABLE_GDAL)
++    find_package(GDAL REQUIRED)
 +  endif()
 +else()
 +  # add external packages
@@ -57,3 +53,14 @@ index 0f071bb..97eecec 100644
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENSEMBLE_BUILD")
  endif()
  
+ if (ENABLE_GDAL)
+-  target_include_directories(${TRITON_EXECUTABLE} PUBLIC ${GDAL_INCLUDE_DIR})
+-  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${GDAL_LIBRARY})
++  if(TRITON_USE_EXTERNAL_DEPS)
++    target_link_libraries(${TRITON_EXECUTABLE} PUBLIC GDAL::GDAL)
++  else()
++    target_include_directories(${TRITON_EXECUTABLE} PUBLIC ${GDAL_INCLUDE_DIR})
++    target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${GDAL_LIBRARY})
++  endif()
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTRITON_GDAL")
+ endif()
