@@ -81,10 +81,10 @@ class Snls(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
-            self.define("RAJA_DIR", spec["raja"].prefix.lib.cmake.raja),
-            self.define("CAMP_DIR", spec["camp"].prefix.lib.cmake.camp),
+            self.define("RAJA_DIR", spec["raja"].prefix),
+            self.define("CAMP_DIR", spec["camp"].prefix),
             self.define("UMPIRE_DIR", spec["umpire"].prefix),
-            self.define("CHAI_DIR", spec["chai"].prefix.lib.cmake.chai),
-            self.define("FMT_DIR", spec["fmt"].prefix.lib64.cmake.fmt),
+            self.define("CHAI_DIR", spec["chai"].prefix),
+            self.define("FMT_DIR", spec["fmt"].prefix),
         ]
         return args
