@@ -17,6 +17,7 @@ class PyZarr(PythonPackage):
 
     license("MIT")
 
+    version("3.2.1", sha256="71565b738a0e7e8ed226f0516eba8c6bb53440ad7669a8c48ebb3534a161d035")
     version("3.1.2", sha256="688e4eb79045c110128cd16f301f2f58fa19507b1803dcbea0ea894e66e06274")
     version("3.0.6", sha256="6ef23c740e34917a2a1099471361537732942e49f0cabe95c9b7124cd0d6d84f")
     version("3.0.1", sha256="033859c5603dc9c29e53af494ede24b42f1b761d2bb625466990a3b8a9afb792")
@@ -29,6 +30,7 @@ class PyZarr(PythonPackage):
     version("2.3.2", sha256="c62d0158fb287151c978904935a177b3d2d318dea3057cfbeac8541915dfa105")
 
     with default_args(type="build"):
+        depends_on("py-hatchling@1.29:", when="@3.1.6:")
         depends_on("py-hatchling@1.27:", when="@3.1.1:")
         depends_on("py-hatchling", when="@3:")
         depends_on("py-hatch-vcs", when="@3:")
@@ -42,6 +44,7 @@ class PyZarr(PythonPackage):
         depends_on("py-setuptools-scm@1.5.5:", when="@:2")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@3.2.0:")
         depends_on("python@3.11:", when="@2.18.4:")
         depends_on("python@3.10:", when="@2.18.3:")
         depends_on("python@3.9:", when="@2.17:")
@@ -51,6 +54,7 @@ class PyZarr(PythonPackage):
         depends_on("python@3.6:3", when="@2.6:2.8")
         depends_on("python@3.5:", when="@2.4:2.5")
         depends_on("py-packaging@22:", when="@3:")
+        depends_on("py-numpy@2:", when="@3.1.6:")
         depends_on("py-numpy@1.26:", when="@3.1:")
         depends_on("py-numpy@1.25:", when="@3:")
         depends_on("py-numpy@1.24:", when="@2.18.3:")
@@ -60,12 +64,15 @@ class PyZarr(PythonPackage):
         depends_on("py-numpy@1.7:")
         # https://github.com/zarr-developers/zarr-python/issues/1818
         depends_on("py-numpy@:1", when="@:2.17")
-        depends_on("py-numcodecs@0.14:+crc32c", when="@3:")
+        depends_on("py-numcodecs@0.14:", when="@3.1.4:")
+        depends_on("py-numcodecs@0.14:+crc32c", when="@3:3.1.3")
         depends_on("py-numcodecs@0.10:0.13,0.14.2:0.15", when="@2.18.7")
         depends_on("py-numcodecs@0.10:0.13,0.14.2:", when="@2.18.4:2.18.6")
         depends_on("py-numcodecs@0.10:", when="@2.13:")
         depends_on("py-numcodecs@0.6.4:", when="@2.4:")
         depends_on("py-numcodecs@0.6.2:")
+        depends_on("py-google-crc32c@1.5:", when="@3.1.4:")
+        depends_on("py-typing-extensions@4.13:", when="@3.2.0:")
         depends_on("py-typing-extensions@4.9:", when="@3:")
         depends_on("py-donfig@0.8:", when="@3:")
 
