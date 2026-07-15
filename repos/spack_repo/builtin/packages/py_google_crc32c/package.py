@@ -27,5 +27,13 @@ class PyGoogleCrc32c(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"))
     depends_on("google-crc32c", type=("build", "run"))
 
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/g/google-crc32c/google{0}crc32c-{1}.tar.gz"
+        if version > Version("1.5.0"):
+            sep = "_"
+        else:
+            sep = "-"
+        return url.format(sep, version)
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CRC32C_INSTALL_PREFIX", self.spec["google-crc32c"].prefix)
