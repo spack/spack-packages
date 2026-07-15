@@ -26,6 +26,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("BSD-2-Clause OR GPL-2.0-only")
 
     version("main", branch="main")
+    version("2.6.0", sha256="1ee2ab6eb16462c0fe7a836f9df52b8f12309dfee3f3774aa93a86f521a8e8b1")
     version("2.5.1", sha256="ac34788a52b3e4a3a1ef712ec29bc4261c63dfbd9e5e4d6e202a0c3687be368d")
     version("2.5.0", sha256="276019edca708dc0569cf3064a412e395ba7b1883299781caed120594f850995")
     version("2.4.0", sha256="13f508e1d770c44f872c4117d9bcbfc102dc9d7532d3292455e0e0e5ef7b3bba")

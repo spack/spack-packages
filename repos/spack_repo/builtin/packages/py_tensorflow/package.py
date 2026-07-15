@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
+import subprocess
 import sys
 import tempfile
 
@@ -837,12 +838,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         env.set("TEST_TMPDIR", tmp_path)
 
     def configure(self, spec, prefix):
-        # NOTE: configure script is interactive. If you set the appropriate
-        # environment variables, this interactivity is skipped. If you don't,
-        # Spack hangs during the configure phase. Use `spack build-env` to
-        # determine which environment variables must be set for a particular
-        # version.
-        configure()
+        # NOTE: configure script is interactive. If you set the appropriate environment variables,
+        # this interactivity is skipped. Use `spack build-env` to determine which environment
+        # variables must be set for a particular version.
+        configure(input=subprocess.DEVNULL)
 
     @run_after("configure")
     def post_configure_fixes(self):
