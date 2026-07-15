@@ -58,7 +58,7 @@ class PyLightningUqBox(PythonPackage):
             depends_on("py-hydra-core@1.3.2:")
             depends_on("py-omegaconf@2.3:")
             depends_on("py-jsonargparse@4.28:+signatures")
-            depends_on("py-ruff@0.2:")
+            depends_on("ruff@0.2:")
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/l/lightning-uq-box/{}-{}.tar.gz"
