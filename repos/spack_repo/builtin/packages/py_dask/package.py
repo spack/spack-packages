@@ -56,8 +56,6 @@ class PyDask(PythonPackage):
         depends_on("py-versioneer@0.29+toml", when="@2023.10.1:2025.11.0")
         depends_on("py-versioneer@0.28+toml", when="@2023.4.1:2023.10.0")
 
-        depends_on("py-packaging@20:", when="@2022.10.2:")
-
     with default_args(type=("build", "run")):
         # python@3.14 breaks py-dask@:2025.7.0
         depends_on("python@:3.13", when="@:2025.12")

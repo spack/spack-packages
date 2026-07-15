@@ -10,7 +10,7 @@ from spack.package import *
 class PyDeisaRay(PythonPackage):
     """In Situ Analytics with Ray backend."""
 
-    homepage = "https://github.com/deisa-project/deisa-dask"
+    homepage = "https://github.com/deisa-project/deisa-ray"
     pypi = "deisa_ray/deisa_ray-0.1.7.tar.gz"
 
     license("MIT")
