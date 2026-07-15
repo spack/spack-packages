@@ -125,11 +125,18 @@ class Ispc(CMakePackage):
             Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
             # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
+            # For GitLab CI, we need to remove the 32-bit target from the build, as the GitLab
+            # Runners don't have 32-bit development installed and support Debian-based builds.
+            cmake_target_file = "cmake/GenerateBuiltins.cmake"
             if self.spec.satisfies("@1.25:"):
+                filter_file("--target=x86_64-unknown-unknown", "", cmake_target_file)
+                filter_file("builtin_to_cpp(32 linux x86)", "", cmake_target_file, string=True)
+                filter_file('"x86,32"\n', "", "cmake/GenericTargets.cmake")
                 cmake_target_file = "cmake/CommonStdlibBuiltins.cmake"
-            else:
-                cmake_target_file = "cmake/GenerateBuiltins.cmake"
             filter_file("bit 32 64", "bit 64", cmake_target_file)
+
+        if self.spec.satisfies("@1.25:"):
+            filter_file("-isystem", "-isystem ", "cmake/GenerateBuiltins.cmake")
 
     def cmake_args(self):
         spec = self.spec
