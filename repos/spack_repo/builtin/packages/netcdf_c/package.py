@@ -348,12 +348,13 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
 
     def patch(self):
         # Needed due to the patch applied to fix CVE-2025-14933.
-        # https://github.com/spack/spack-packages/issues/5524
-        if self.spec.satisfies("@:4.9"):
+        # A `#include <stdint.h>` is introduced in version 4.8.1.
+        # Refer to https://github.com/spack/spack-packages/issues/5524
+        if self.spec.satisfies("@:4.8.0"):
             filter_file(
-                "#include <stdio.h>",
-                "#include <stdio.h>\n#include <stdint.h>",
-                "libdispatch/dstring.c",
+                "#define NCCONFIGURE_H 1",
+                "#define NCCONFIGURE_H 1\n\n#ifdef HAVE_STDINT_H\n#include <stdint.h>\n#endif",
+                "include/ncconfigure.h",
                 string=True,
             )
 
