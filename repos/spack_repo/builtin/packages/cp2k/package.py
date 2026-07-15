@@ -52,6 +52,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version(
+        "2026.2",
+        sha256="f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373",
+    )
+    version(
         "2026.1",
         sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e",
     )
