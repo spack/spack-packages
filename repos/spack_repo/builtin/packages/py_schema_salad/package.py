@@ -42,6 +42,7 @@ class PySchemaSalad(PythonPackage):
     depends_on("py-requests@1:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.17.21", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.18", when="@8.4.20231113094720:", type=("build", "run"))
+    depends_on("py-ruamel-yaml@0.17.6:0.19", when="@8.9.20260327095315:", type=("build", "run"))
     depends_on("py-rdflib@4.2.2:6", type=("build", "run"))
     depends_on("py-mistune@2.0.3:2.0", type=("build", "run"), when="@:8.8.20250205075315")
     depends_on("py-mistune@3.0.1:", type=("build", "run"), when="@8.9.20260417192335:")
