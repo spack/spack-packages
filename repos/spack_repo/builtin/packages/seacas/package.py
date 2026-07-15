@@ -28,7 +28,7 @@ class Seacas(CMakePackage):
     homepage = "https://sandialabs.github.io/seacas/"
     git = "https://github.com/sandialabs/seacas.git"
     url = "https://github.com/sandialabs/seacas/archive/v2019-08-20.tar.gz"
-    maintainers("gsjaardema")
+    maintainers("tokusanya")
 
     license("BSD-3-Clause")
 
@@ -296,6 +296,8 @@ class Seacas(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)
+        if self.spec.satisfies("+legacy"):
+            env.set("ACCESS", self.prefix)
 
     def cmake_args(self):
         spec = self.spec

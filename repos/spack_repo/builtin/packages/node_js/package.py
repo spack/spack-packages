@@ -258,6 +258,11 @@ class NodeJs(Package):
                     "--shared-openssl",
                     "--shared-openssl-includes={0}".format(self.spec["openssl"].prefix.include),
                     "--shared-openssl-libpath={0}".format(self.spec["openssl"].prefix.lib),
+                    # Always prefer the CA store from our OpenSSL dependency
+                    # over the bundled Mozilla snapshot.  The OPENSSLDIR baked
+                    # into the shared library already points to the right certs
+                    # (mozilla, system, or none) as chosen by the openssl spec.
+                    "--openssl-use-def-ca-store",
                 ]
             )
 

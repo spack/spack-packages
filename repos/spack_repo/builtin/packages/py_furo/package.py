@@ -28,8 +28,8 @@ class PyFuro(PythonPackage):
     depends_on("py-sphinx-theme-builder@0.2.0a10:", type="build")
 
     depends_on("py-beautifulsoup4", type=("build", "run"))
-    depends_on("py-sphinx@6:7", type=("build", "run"))
-    depends_on("py-sphinx@7:10", type=("build", "run"), when="@2025.12.19:")
+    depends_on("py-sphinx@6:7", type=("build", "run"), when="@:2024.7.18")
+    depends_on("py-sphinx@7:9", type=("build", "run"), when="@2025.12.19:")
     depends_on("py-sphinx-basic-ng@1.0.0b2:", type=("build", "run"))
     depends_on("py-pygments@2.7:", type=("build", "run"))
     depends_on("py-accessible-pygments@0.0.5:", type=("build", "run"), when="@2025.07.19:")
