@@ -61,7 +61,7 @@ class PyOpenai(PythonPackage):
 
     with when("+datalib"):
         depends_on("py-numpy", type=("build", "run"))
-        depends_on("py-numpy@1:", when="@1:")
+        depends_on("py-numpy@1:", type=("build", "run"), when="@1:")
         depends_on("py-pandas@1.2.3:", type=("build", "run"))
         depends_on("py-pandas-stubs@1.1.0.11:", type=("build", "run"))
         depends_on("py-openpyxl@3.0.7:", type=("build", "run"), when="@:0")
