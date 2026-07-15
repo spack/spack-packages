@@ -4,7 +4,9 @@
 
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
+
 from spack.package import *
+
 
 class Rapidxml(Package, SourceforgePackage):
     """Fast XML parser as a header-only C++ library"""
