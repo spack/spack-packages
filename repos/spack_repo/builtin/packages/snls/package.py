@@ -56,8 +56,9 @@ class Snls(CMakePackage):
         description="C++ standard to build with",
     )
 
-    conflicts("+batch_solver", when="+use_raja_only")
+    conflicts("+batch_solver +use_raja_only", msg="raja_only option does not allow snls batch_solver to work")
 
+    depends_on("cmake@3.21:", type="build")
     depends_on("blt", type=("build"))
     depends_on("c", type=("build"), when="+tests")
     depends_on("cxx", type=("build"))
@@ -85,10 +86,16 @@ class Snls(CMakePackage):
             self.define_from_variant("USE_RAJA_ONLY", "use_raja_only"),
             self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
-            self.define("RAJA_DIR", spec["raja"].prefix),
-            self.define("CAMP_DIR", spec["camp"].prefix),
-            self.define("UMPIRE_DIR", spec["umpire"].prefix),
-            self.define("CHAI_DIR", spec["chai"].prefix),
-            self.define("FMT_DIR", spec["fmt"].prefix),
         ]
+
+        if spec.satisfies('+batch_solver') or spec.satisfies('+use_raja_only'):
+            args.append(self.define("RAJA_DIR", spec["raja"].prefix))
+
+        if spec.satisfies('+batch_solver'):
+            args.append(self.define("RAJA_DIR", spec["raja"].prefix))
+            args.append(self.define("CAMP_DIR", spec["camp"].prefix))
+            args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
+            args.append(self.define("CHAI_DIR", spec["chai"].prefix))
+            args.append(self.define("FMT_DIR", spec["fmt"].prefix))
+        
         return args
