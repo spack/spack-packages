@@ -20,6 +20,7 @@ class Openmc(CMakePackage):
 
     homepage = "https://docs.openmc.org/"
     git = "https://github.com/openmc-dev/openmc.git"
+    url = "https://github.com/openmc-dev/openmc/tarball/v0.15.2"
     maintainers("paulromano")
 
     version("develop", branch="develop", submodules=True, get_full_repo=True)
