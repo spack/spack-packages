@@ -56,7 +56,10 @@ class Snls(CMakePackage):
         description="C++ standard to build with",
     )
 
-    conflicts("+batch_solver +use_raja_only", msg="raja_only option does not allow snls batch_solver to work")
+    conflicts(
+        "+batch_solver +use_raja_only",
+        msg="raja_only option does not allow snls batch_solver to work",
+    )
 
     depends_on("cmake@3.21:", type="build")
     depends_on("blt", type=("build"))
@@ -88,14 +91,14 @@ class Snls(CMakePackage):
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
         ]
 
-        if spec.satisfies('+batch_solver') or spec.satisfies('+use_raja_only'):
+        if spec.satisfies("+batch_solver") or spec.satisfies("+use_raja_only"):
             args.append(self.define("RAJA_DIR", spec["raja"].prefix))
 
-        if spec.satisfies('+batch_solver'):
+        if spec.satisfies("+batch_solver"):
             args.append(self.define("RAJA_DIR", spec["raja"].prefix))
             args.append(self.define("CAMP_DIR", spec["camp"].prefix))
             args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
             args.append(self.define("CHAI_DIR", spec["chai"].prefix))
             args.append(self.define("FMT_DIR", spec["fmt"].prefix))
-        
+
         return args
