@@ -417,7 +417,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
         ]
         if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
-            base_cmake_args.append(self.define("CMAKE_C_COMPILER", self.spec["mpi"].mpicc))
+            base_cmake_args.append(self.define("CMAKE_C_COMPILER", pathlib.Path(self.spec["mpi"].mpicc).as_posix()))
         if "+parallel-netcdf" in self.pkg.spec:
             base_cmake_args.append(self.define(nc + "ENABLE_PNETCDF", True))
         if self.pkg.spec.satisfies("@4.3.1:"):
