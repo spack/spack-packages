@@ -61,6 +61,7 @@ class PySchemaSalad(PythonPackage):
     )
     depends_on("py-setuptools-scm@6.2:+toml", type="build")
     depends_on("py-setuptools-scm@8.0.4:8+toml", when="@8.4.20231024070348:", type="build")
+    depends_on("py-setuptools-scm@8.0.4:10+toml", when="@8.9.20260417192335:", type="build")
     depends_on("py-mypy@0.961", when="@8.3.20220717184004:8.3.20221028160159", type="build")
     depends_on("py-mypy@0.991", when="@8.3.20221209165047:8.4.20230201194352", type="build")
     depends_on("py-mypy@1.12.1", when="@8.7.20241021092521", type="build")
