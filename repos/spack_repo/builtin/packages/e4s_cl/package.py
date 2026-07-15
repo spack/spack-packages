@@ -13,7 +13,7 @@ class E4sCl(PythonPackage):
 
     maintainers("spoutn1k", "FrederickDeny")
     homepage = "https://e4s-cl.readthedocs.io"
-    url = "https://oaciss.uoregon.edu/e4s/e4s-cl/releases"
+    url = "https://github.com/E4S-Project/e4s-cl/archive/refs/tags/v1.0.8.tar.gz"
     git = "https://github.com/E4S-Project/e4s-cl"
 
     tags = ["e4s"]
@@ -23,13 +23,16 @@ class E4sCl(PythonPackage):
     license("MIT")
 
     version("master", branch="master")
+    version("1.0.9", sha256="60a06417a98b7760e3d2ad911a6259eb516b28cd334a03cc84bb8c6d41ba1240")
+    version("1.0.8", sha256="b2bdb042db5f3106cc0a4c79781d03299828f9839a3903d1559c2c4a3e20a67c")
     version("1.0.5", commit="33b659e80a5b47a6b3e730e9eb67d1431b112587")
     version("1.0.4", commit="9781a62af20f951e3c2c19a522f4fc16d20a256e")
     version("1.0.3", commit="1b34fa7964273675ce18b9cd3006b4b87dda1ef2")
     version("1.0.1", commit="b2c92993e0c7cb42de07f0f7cc02da3a06816192")
     version("1.0.0", commit="410bb2e6601d9b90243a487ad7f7d2dabd8ba04c")
 
-    depends_on("python@3.7:", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"), when="@1.0.6:")
+    depends_on("python@3.7:", type=("build", "run"), when="@:1.0.5")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-termcolor@1.1.0:", type=("build", "run"))

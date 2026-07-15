@@ -8,7 +8,6 @@ from typing import Callable, List, Optional, Set, Tuple, Union
 
 from spack.package import (
     BuilderWithDefaults,
-    EnvironmentModifications,
     Executable,
     FileFilter,
     InstallError,
@@ -16,7 +15,6 @@ from spack.package import (
     PackageBase,
     Prefix,
     Spec,
-    Version,
     apply_macos_rpath_fixups,
     build_system,
     compiler_spec,
@@ -29,7 +27,6 @@ from spack.package import (
     force_remove,
     is_exe,
     keep_modification_time,
-    macos_version,
     mkdirp,
     register_builder,
     run_after,
@@ -840,12 +837,6 @@ To resolve this problem, please try the following:
             mkdirp(os.path.dirname(self._removed_la_files_log))
             with open(self._removed_la_files_log, mode="w", encoding="utf-8") as f:
                 f.write("\n".join(libtool_files))
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.platform == "darwin" and macos_version() >= Version("11"):
-            # Many configure files rely on matching '10.*' for macOS version
-            # detection and fail to add flags if it shows as version 11.
-            env.set("MACOSX_DEPLOYMENT_TARGET", "10.16")
 
     # On macOS, force rpaths for shared library IDs and remove duplicate rpaths
     run_after("install", when="platform=darwin")(apply_macos_rpath_fixups)

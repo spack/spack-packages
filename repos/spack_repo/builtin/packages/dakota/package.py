@@ -43,6 +43,14 @@ class Dakota(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    # 6.24.0 uses the release tarball instead of git because the tag references a
+    # surfpack submodule commit not publicly available in the upstream repo.
+    # See https://github.com/snl-dakota/dakota/issues/192
+    version(
+        "6.24.0",
+        sha256="da461ffe9df2c56c0b0125503f3b69753c30fa44ac9fabb46a43b44fa68a15fa",
+        url="https://github.com/snl-dakota/dakota/releases/download/v6.24.0/dakota-6.24.0-public-src-cli.tar.gz",
+    )
     version(
         "6.23.0",
         tag="v6.23.0",
@@ -79,9 +87,10 @@ class Dakota(CMakePackage):
         commit="f6cb33b517bb304795e1e14d3673fe289df2ec9b",
         submodules=submodules,
     )
-    version("6.12", sha256="4d69f9cbb0c7319384ab9df27643ff6767eb410823930b8fbd56cc9de0885bc9")
-    version("6.9", sha256="989b689278964b96496e3058b8ef5c2724d74bcd232f898fe450c51eba7fe0c2")
-    version("6.3", sha256="0fbc310105860d77bb5c96de0e8813d75441fca1a5e6dfaf732aa095c4488d52")
+    with default_args(deprecated=True):
+        version("6.12", sha256="4d69f9cbb0c7319384ab9df27643ff6767eb410823930b8fbd56cc9de0885bc9")
+        version("6.9", sha256="989b689278964b96496e3058b8ef5c2724d74bcd232f898fe450c51eba7fe0c2")
+        version("6.3", sha256="0fbc310105860d77bb5c96de0e8813d75441fca1a5e6dfaf732aa095c4488d52")
 
     variant("shared", default=True, description="Enables the build of shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
@@ -111,28 +120,34 @@ class Dakota(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
-    # Generic 'lapack' provider won't work, dakota searches for
-    # 'LAPACKConfig.cmake' or 'lapack-config.cmake' on the path
-    depends_on("netlib-lapack +shared")
+    depends_on("blas")
+    depends_on("lapack")
 
     depends_on("mpi", when="+mpi")
 
-    depends_on("hdf5@1.10.4:1.10 +hl+cxx", when="+hdf5")
+    depends_on("hdf5@1.10.4: +hl+cxx", when="+hdf5")
     depends_on("python", when="+python")
     depends_on("py-numpy", when="+python-direct-interface")
-    depends_on("py-numpy@:1.26.4", when="@:6.20")
     depends_on("perl-data-dumper", type="build", when="@6.12:")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="@:6.12")
-    depends_on("boost@:1.68.0", when="@:6.12")
-    depends_on("boost@1.69.0:1.84.0", when="@6.18:6.20")
-    depends_on("boost +filesystem +program_options +regex +serialization +system")
+    depends_on("boost +program_options +regex +serialization +system")
+    with when("@:6.12"):
+        depends_on(Boost.with_default_variants)
+        depends_on("boost@:1.68.0")
 
-    depends_on("cmake@2.8.9:", type="build", when="@:6.12")
-    depends_on("cmake@3.17:", type="build", when="@6.18:")
+    with when("@:6.20"):
+        depends_on("boost@:1.84.0")
+        depends_on("py-numpy@:1.26.4")
+
+    with when("@6.18:"):
+        depends_on("boost@1.69.0:")
+        depends_on("cmake@3.17:", type="build")
+
+    with when("@6.22:"):
+        depends_on("cmake@3.23:", type="build")
+
+    with when("@6.23:"):
+        depends_on("boost@1.70:")
 
     # dakota@:6.18 has broken pybind11/CMake support
     conflicts("+python", when="@:6.18")
@@ -172,27 +187,23 @@ class Dakota(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-
         args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("DAKOTA_PYTHON", "python"),
             self.define_from_variant("DAKOTA_PYTHON_DIRECT_INTERFACE", "python-direct-interface"),
             self.define_from_variant("DAKOTA_PYTHON_WRAPPER", "python-wrapper"),
-            self.define_from_variant("DAKOTA_PYTHON_SURROGATES", "python-wrapper"),
-            "-DBLAS_LIBS:STRING={}/lib64/libblas.so".format(spec["netlib-lapack"].prefix),
-            "-DLAPACK_LIBS:STRING={}/lib64/liblapack.so".format(spec["netlib-lapack"].prefix),
+            self.define_from_variant("DAKOTA_PYTHON_SURROGATES", "python-surrogates"),
+            self.define_from_variant("DAKOTA_HAVE_HDF5", "hdf5"),
+            self.define_from_variant("DAKOTA_HAVE_MPI", "mpi"),
+            self.define("BLAS_LIBS", spec["blas"].libs.joined(";")),
+            self.define("LAPACK_LIBS", spec["lapack"].libs.joined(";")),
         ]
 
         if spec.satisfies("+mpi"):
-            args.extend(
-                [
-                    "-DDAKOTA_HAVE_MPI:BOOL=ON",
-                    "-DMPI_CXX_COMPILER:STRING=%s" % join_path(spec["mpi"].mpicxx),
-                ]
-            )
+            args.append(self.define("MPI_CXX_COMPILER", join_path(spec["mpi"].mpicxx)))
 
         if spec.satisfies("+python-direct-interface") or spec.satisfies("+python-wrapper"):
-            args.append("-DDAKOTA_PYBIND11:BOOL=ON")
+            args.append(self.define("DAKOTA_PYBIND11", True))
 
         if self.run_tests:
             args += ["-DCMAKE_CTEST_ARGUMENTS=-L;Accept"]
