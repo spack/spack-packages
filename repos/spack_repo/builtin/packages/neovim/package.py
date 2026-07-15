@@ -14,7 +14,7 @@ class Neovim(CMakePackage):
     git = "https://github.com/neovim/neovim.git"
     url = "https://github.com/neovim/neovim/archive/v0.4.3.tar.gz"
 
-    maintainers("albestro", "trws")
+    maintainers("albestro", "trws", "mcmehrtens")
 
     license("Apache-2.0 AND Vim", checked_by="mcmehrtens")
 
