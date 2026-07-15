@@ -75,8 +75,7 @@ class PyPyfr(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("rocblas@5.2.0:", when="@:1.15.0 +hip", type=("run"))
     depends_on("rocblas@6.0.0:", when="@2.0.2:2.1 +hip", type=("run"))
     depends_on("rocblas@6.4.1:", when="@3: +hip", type=("run"))
-    depends_on("libxsmm@1.17-pyfr+shared blas=0", when="@:2.1 +libxsmm", type=("run"))
-    depends_on("libxsmm@1.17-pyfr+shared", when="@3: +libxsmm", type=("run"))
+    depends_on("libxsmm@2.0.0+shared", when="+libxsmm", type=("run"))
 
     # Explicitly add dependencies to environment variables
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
