@@ -56,7 +56,7 @@ class PySchemaSalad(PythonPackage):
         type=("build", "run"),
     )
     depends_on(
-        "py-cachecontrol@0.14:0.14+filecache", when="@8.8.20241204110045:", type=("build", "run")
+        "py-cachecontrol@0.14+filecache", when="@8.8.20241204110045:", type=("build", "run")
     )
     depends_on("py-setuptools-scm@6.2:+toml", type="build")
     depends_on("py-setuptools-scm@8.0.4:8+toml", when="@8.4.20231024070348:", type="build")
