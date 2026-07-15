@@ -74,6 +74,7 @@ class PySchemaSalad(PythonPackage):
     depends_on("py-types-requests", type="build")
     depends_on("py-types-dataclasses", type="build")
     depends_on("py-types-setuptools", type="build")
+    depends_on("py-rich-argparse", when="8.9.20260417192335:", type="build")
 
     def url_for_version(self, version):
         url = (
