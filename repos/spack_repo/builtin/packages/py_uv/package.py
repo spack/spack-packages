@@ -63,9 +63,15 @@ class PyUv(PythonPackage, CargoPackage):
             "0.7.15", sha256="c608cd2d89db7482ab40fc6e7de27afc87b20595e145ed81a2a8702e9a0d7e2d"
         )
         version("0.7.5", sha256="ae2192283eb645ccab189b1dfd8b13d3264eae631469a903c0e0f2dffce65e3b")
-        version("0.4.17", sha256="01564bd760eff885ad61f44173647a569732934d1a4a558839c8088fbf75e53f")
-        version("0.4.16", sha256="2144995a87b161d063bd4ef8294b1e948677bd90d01f8394d0e3fca037bb847f")
-        version("0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c")
+        version(
+            "0.4.17", sha256="01564bd760eff885ad61f44173647a569732934d1a4a558839c8088fbf75e53f"
+        )
+        version(
+            "0.4.16", sha256="2144995a87b161d063bd4ef8294b1e948677bd90d01f8394d0e3fca037bb847f"
+        )
+        version(
+            "0.4.15", sha256="8e36b8e07595fc6216d01e729c81a0b4ff029a93cc2ef987a73d3b650d6d559c"
+        )
 
     # PythonPackage builds via maturin and preserves the `python -m uv` entry
     # point; CargoPackage builds the bare Rust binary as an alternative. The
