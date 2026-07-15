@@ -35,6 +35,7 @@ class PySchemaSalad(PythonPackage):
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@8.4.20230927144413:", type=("build", "run"))
     depends_on("python@3.9:", when="@8.7.20241021092521:", type=("build", "run"))
+    depends_on("python@3.10:", when="@8.9.20260327095315:", type=("build", "run"))
     depends_on("py-setuptools@45:", type="build")
     depends_on("py-setuptools@50:", when="@8.4.20231117150958:", type="build")
 
