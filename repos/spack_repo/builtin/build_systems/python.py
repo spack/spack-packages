@@ -403,9 +403,12 @@ class PythonPipBuilder(BuilderWithDefaults):
                 join_path(bd, "dist"),
                 *glob.glob(join_path(bd, "*.egg-info")),
             ):
-                if os.path.isdir(artifact):
+                if os.path.isdir(artifact) and not os.path.islink(artifact):
                     tty.debug(f"Removing stale build artifact: {artifact}")
                     shutil.rmtree(artifact)
+                elif os.path.lexists(artifact):
+                    tty.debug(f"Removing stale build artifact: {artifact}")
+                    os.unlink(artifact)
 
         with working_dir(self.build_directory):
             pip(*args)
