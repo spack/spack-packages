@@ -38,13 +38,21 @@ class SimpleDftd3(MesonPackage, CMakePackage):
     version("0.6.0", sha256="4bef311f8e5a2c32141eddeea65615c3c8480f917cd884488ede059fb0962a50")
     version("0.5.1", sha256="3d775608bf85cd389385a84ea5586ede57215ff9cff646480552ca835a9de9ca")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
-    variant("python", default=False, description="Build Python extension module")
+    variant(
+        "python",
+        default=False,
+        when="build_system=meson",
+        description="Build Python extension module",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("meson@0.57.1:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("py-cffi", when="+python")
+    depends_on("py-numpy", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
     depends_on("pkgconfig", type="build")
     depends_on("blas")
@@ -60,6 +68,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
@@ -67,4 +76,7 @@ class MesonBuilder(meson.MesonBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OpenMP", "openmp")]
+        return [
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+        ]

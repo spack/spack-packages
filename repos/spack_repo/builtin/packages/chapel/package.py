@@ -63,11 +63,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
 
+    version("2.9.0", sha256="d91ececfc070f0e94c979dd08cdd3f6da84db4ee48fe06f3187ad259ea9553e7")
     version("2.8.0", sha256="80e8c3018e33e49674c7a2542e062547ea41d64d6595edb3b799e90c88f963f8")
     version("2.7.0", sha256="5e3269babdae334c80fc3f25114698fdfe53e84ea06626af22d2b54eeb75bee6")
-    version("2.6.0", sha256="e469c35be601cf1f59af542ab885e8a14aa2b087b79af0d5372a4421976c74b6")
 
     with default_args(deprecated=True):
+        version("2.6.0", sha256="e469c35be601cf1f59af542ab885e8a14aa2b087b79af0d5372a4421976c74b6")
         version("2.5.0", sha256="020220ca9bf52b9f416e9a029bdc465bb1f635c1e274c6ca3c18d1f83e41fce1")
         version("2.4.0", sha256="a51a472488290df12d1657db2e7118ab519743094f33650f910d92b54c56f315")
         version("2.3.0", sha256="0185970388aef1f1fae2a031edf060d5eac4eb6e6b1089e7e3b15a130edd8a31")
@@ -482,6 +483,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "CHPL_LLVM_SUPPORT",
         "CHPL_LLVM_VERSION",
         "CHPL_LOCALE_MODEL",
+        "CHPL_MAKE",
         "CHPL_MAKE_THIRD_PARTY",
         "CHPL_MEM",
         "CHPL_RE2",
@@ -513,8 +515,13 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # CUDA conflicts and dependencies
     with when("+cuda"):
         conflicts("llvm=none", msg="Cuda support requires building with LLVM")
+        # Allow using any compilers CUDA considers unsupported, to be able to
+        # use recent LLVMs; we will explicitly restrict to using version
+        # combinations that Chapel docs state are supported.
+        depends_on("cuda +allow-unsupported-compilers")
 
         depends_on("llvm@16:", when="llvm=spack ^cuda@12:")
+        depends_on("llvm@22:", when="llvm=spack ^cuda@13:")
         requires(
             "^llvm targets=all",
             msg="llvm=spack +cuda requires LLVM support the nvptx target",
@@ -527,7 +534,12 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             "https://github.com/chapel-lang/chapel/issues/27273",
         )
 
-        conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
+        with when("@:2.8"):
+            depends_on("cuda@11:12")
+            conflicts("cuda@12.9:", when="@:2.7")  # deprecation warnings otherwise
+        with when("@2.9:"):
+            # cuda@13.1: explicitly disallowed due to https://github.com/NVIDIA/cccl/issues/7896
+            depends_on("cuda@11:13.0")
 
     # ROCm conflicts and dependencies
     with when("+rocm"):
@@ -539,13 +551,16 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         with when("@:2.7"):
             depends_on("hsa-rocr-dev@6.0:6.2")
             depends_on("hip@6.0:6.2")
-        with when("@2.8:"):
-            # ROCm 6.4 is specifically prohibited. Although Chapel allows it
-            # (see https://github.com/chapel-lang/chapel/pull/28220), the
-            # support is untested; being stricter here to reduce the amount of
-            # variables in getting the Spack package to work.
+        # ROCm 6.4 is specifically prohibited. Although Chapel allows it
+        # (see https://github.com/chapel-lang/chapel/pull/28220), the
+        # support is untested; being stricter here to reduce the amount of
+        # variables in getting the Spack package to work.
+        with when("@2.8"):
             depends_on("hsa-rocr-dev@6.0:6.3,7")
             depends_on("hip@6.0:6.3,7")
+        with when("@2.9:"):
+            depends_on("hsa-rocr-dev@6.3,7")
+            depends_on("hip@6.3,7")
 
         # Chapel requires using the (patched) bundled LLVM for some versions
         # of ROCm.
@@ -555,15 +570,26 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         with when("^hsa-rocr-dev@6.0:6.2"):
             requires("llvm=bundled", msg="Chapel ROCm 6.0-6.2 support requires llvm=bundled")
         with when("^hsa-rocr-dev@6.3:6"):
-            # For 6.3-6.x, either bundled LLVM or system LLVM >= 21 is allowed.
-            depends_on("llvm@21:", when="llvm=spack")
+            with when("@2.8"):
+                # Either (bundled LLVM) or (system LLVM == 21) is allowed.
+                depends_on("llvm@21", when="llvm=spack")
+            with when("@2.9"):
+                # Bundled or system LLVM >= 21 allowed
+                depends_on("llvm@21:", when="llvm=spack")
         with when("^hsa-rocr-dev@7"):
-            # For 7.x, we require LLVM >= 21, and as of release 2.8 the bundled
-            # LLVM is 19, so effectively we require _system_ LLVM >= 21.
-            # TODO: Modify this constraint and message when Chapel releases
-            # with a bundled LLVM >= 21.
+            # For 7.x, we require LLVM >= 21.
+            # In release 2.8, the bundled LLVM is 19, and the greatest LLVM
+            # version supported is 21, so effectively we require _system_ LLVM
+            # == 21.
+            # In release 2.9, we support up to LLVM 22, but we've encountered
+            # some unresolved issues in testing ROCm 7 with LLVM 22, so still
+            # require LLVM 21 here. Since in 2.9 the bundled LLVM is 22,
+            # require system LLVM 21 in this case as well.
+
+            # TODO: Modify this constraint and message when Chapel releases with
+            # good ROCm 7 support with LLVM >= 22.
             requires("llvm=spack", msg="Chapel ROCm 7 support currently requires llvm=spack")
-            depends_on("llvm@21:")
+            depends_on("llvm@21")
 
         # Workaround for ROCmPackage forcing a dependency on llvm-amdgpu, which
         # provides %rocmcc, which we don't want to use.
@@ -643,7 +669,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         depends_on("llvm@11:19", when="@2.3:2.4")
         depends_on("llvm@11:20", when="@2.5")
         depends_on("llvm@14:20", when="@2.6:2.7")
-        depends_on("llvm@14:21", when="@2.8:")
+        depends_on("llvm@14:21", when="@2.8")
+        depends_on("llvm@14:22", when="@2.9:")
 
     # This is because certain systems have binutils installed as a system package
     # but do not include the headers. Spack incorrectly supplies those external
@@ -658,7 +685,6 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
     # but many of these are ALSO run-time dependencies of the executable
     # application built by that Chapel compiler from user-provided sources.
     with default_args(type=("build", "link", "run", "test")):
-        depends_on("cuda@11:12", when="+cuda")
         depends_on("gmp", when="gmp=spack")
         depends_on("hwloc", when="hwloc=spack")
         depends_on("libfabric", when="libfabric=spack")
@@ -783,6 +809,9 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             self.setup_if_not_unset(env, "CHPL_" + v.upper(), str(self.spec.variants[v].value))
         self.setup_chpl_compilers(env)
         self.setup_chpl_platform(env)
+
+        # Ensure that Chapel consistently uses the GNU Make selected by Spack
+        env.set("CHPL_MAKE", self.spec["gmake"].prefix.bin.make)
 
         # TODO: a function to set defaults for things where we removed variants
         # We'll set to GPU later if +rocm or +cuda requested
