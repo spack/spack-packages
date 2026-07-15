@@ -320,7 +320,7 @@ class Lua(LuaImplPackage):
             "lcode.h",
             "llex.h",
             "lopcodes.h",
-            "lparser.h"
+            "lparser.h",
         ]
         for header in internal_headers:
             install(join_path("src", header), prefix.include)
