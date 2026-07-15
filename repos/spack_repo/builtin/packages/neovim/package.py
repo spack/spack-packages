@@ -13,6 +13,7 @@ class Neovim(CMakePackage):
     homepage = "https://neovim.io"
     git = "https://github.com/neovim/neovim.git"
     url = "https://github.com/neovim/neovim/archive/v0.4.3.tar.gz"
+    supplier = "Organization: Neovim"
 
     maintainers("albestro", "trws", "mcmehrtens")
 
