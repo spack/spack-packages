@@ -14,6 +14,7 @@ class Cubelib(AutotoolsPackage):
     url = "https://apps.fz-juelich.de/scalasca/releases/cube/4.4/dist/cubelib-4.4.tar.gz"
 
     maintainers("swat-jsc", "wrwilliams")
+    version("4.9.1", sha256="d82a899af07ec6c34c88665a0dfddbbc33a760031b1a79f12d168301e8ea1e46")
     version("4.9", sha256="a0658f5bf3f74bf7dcf465ab6e30476751ad07eb93618801bdcf190ba3029443")
     version("4.8.2", sha256="d6fdef57b1bc9594f1450ba46cf08f431dd0d4ae595c47e2f3454e17e4ae74f4")
     version("4.8.1", sha256="e4d974248963edab48c5d0fc5831146d391b0ae4632cccafe840bf5f12cd80a9")
@@ -33,9 +34,22 @@ class Cubelib(AutotoolsPackage):
 
         return url.format(version.up_to(2), version)
 
+    def clean_compiler(self, compiler):
+        renames = {
+            "cce": "cray",
+            "rocmcc": "amdclang",
+            "intel-oneapi-compilers": "oneapi",
+            "llvm": "clang",
+        }
+        if compiler in renames:
+            return renames[compiler]
+        return compiler
+
     def configure_args(self):
         configure_args = ["--enable-shared"]
         configure_args.append("--with-frontend-zlib=%s" % self.spec["zlib-api"].prefix.lib)
+        cname = self.clean_compiler(self.spec.compiler.name)
+        configure_args.append("--with-nocross-compiler-suite={0}".format(cname))
         return configure_args
 
     def install(self, spec, prefix):

@@ -23,7 +23,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     homepage = "https://hpctoolkit.org"
     git = "https://gitlab.com/hpctoolkit/hpctoolkit.git"
-    maintainers("mwkrentel")
+    maintainers("blue42u")
 
     tags = ["e4s"]
 
@@ -196,6 +196,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("xz+pic libs=static", type="link", when="@:2023.08")
     depends_on("yaml-cpp@0.7.0: +shared", when="@2022.10:")
     depends_on("googletest@1.8.1: +gmock", type="test", when="@2025:")
+    depends_on("jemalloc", when="@2026.1: ^dyninst@14:")
 
     depends_on("zlib-api")
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
@@ -479,6 +480,13 @@ class MesonBuilder(meson.MesonBuilder):
 
         if spec.satisfies("@:2024.01"):
             args.append(f"--native-file={self.gen_prefix_file()}")
+
+        # Dyninst before master June 2026 pulls in tbbmalloc_proxy,
+        # and we don't really want to run both.
+        if spec.satisfies("@2026.1:"):
+            args.append(
+                "-Djemalloc=" + ("enabled" if spec.satisfies("^dyninst@14:") else "disabled")
+            )
 
         return args
 

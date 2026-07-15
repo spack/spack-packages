@@ -116,12 +116,17 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
             "--disable-java",
             "--disable-csharp",
             "--with-included-glib",
-            "--with-included-gettext",
             "--with-included-libcroco",
             "--without-emacs",
             "--with-lispdir=%s/emacs/site-lisp/gettext" % self.prefix.share,
             "--without-cvs",
         ]
+
+        # The name of the option to include libintl changed in 1.0
+        if spec.satisfies("@1.0:"):
+            config_args.append("--with-included-libintl")
+        else:
+            config_args.append("--with-included-gettext")
 
         # Until we know why we need them, do not build D sources:
         if spec.satisfies("@0.25:"):

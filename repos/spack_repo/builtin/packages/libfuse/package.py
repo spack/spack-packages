@@ -82,7 +82,7 @@ class Libfuse(autotools.AutotoolsPackage, meson.MesonPackage):
     patch(
         "https://src.fedoraproject.org/rpms/fuse3/raw/0519b7bf17c4dd1b31ee704d49f8ed94aa5ba6ab/f/fuse3-gcc11.patch",
         sha256="3ad6719d2393b46615b5787e71778917a7a6aaa189ba3c3e0fc16d110a8414ec",
-        when="@3: %gcc@11:",
+        when="@3:3.10.4 %gcc@11:",
     )
 
     patch(

@@ -3,17 +3,16 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4particlexs(Package):
+class G4particlexs(Package, Geant4DataPackage):
     """Geant4 data for evaluated particle cross-sections on
     natural composition of elements"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4PARTICLEXS.2.1.tar.gz"
 
     tags = ["hep"]
 
@@ -28,24 +27,8 @@ class G4particlexs(Package):
     version("2.1", sha256="094d103372bbf8780d63a11632397e72d1191dc5027f9adabaf6a43025520b41")
     version("1.1", sha256="100a11c9ed961152acfadcc9b583a9f649dda4e48ab314fcd4f333412ade9d62")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4PARTICLEXSDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4PARTICLEXSDATA", install_path)
-
-    def url_for_version(self, version):
-        """Handle version string."""
-        return (
-            "http://geant4-data.web.cern.ch/geant4-data/datasets/G4PARTICLEXS.%s.tar.gz" % version
-        )
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "G4PARTICLEXS{0}".format(spec.version)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "G4PARTICLEXS"
