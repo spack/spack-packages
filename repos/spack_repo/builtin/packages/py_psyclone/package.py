@@ -52,19 +52,20 @@ class PyPsyclone(PythonPackage):
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
     depends_on("py-jinja2", type="build")
-    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2.0:")
     # Anything more recent than sympy 1.13.3 currently causes problems
     # https://github.com/stfc/PSyclone/issues/3474
-    depends_on("py-sympy@1.13.3", type=("build", "run"), when="@3.3:")
+    depends_on("py-sympy@1.13.3", type=("build", "run"))
     depends_on("py-termcolor", type=("build", "run"))
 
     # Historical dependencies
     depends_on("py-six", type=("build", "run"), when="@2.0.0:2.3.1")
     depends_on("py-jsonschema@3.0.2", type=("build", "run"), when="@2.1.0:2.4.0")
+    depends_on("py-setuptools-scm-git-archive", type="build", when="@:3.3.0")
+    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2:3.2")
 
     # Test cases fail without compatible versions of py-fparser:
     depends_on("py-fparser@0.2.1", type=("build", "run"), when="@3.2")
-    depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.0:")
+    depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.0:3.1")
     depends_on("py-fparser@0.1.4", type=("build", "run"), when="@2.5.0")
     depends_on("py-fparser@0.1.3", type=("build", "run"), when="@2.4.0")
     depends_on("py-fparser@0.0.16", type=("build", "run"), when="@2.3.1")
