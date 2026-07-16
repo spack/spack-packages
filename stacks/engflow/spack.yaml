@@ -1,0 +1,15 @@
+# Windows Visualization Stack
+# maintainers:
+# - John Parent (@johnwparent)
+# - Ryan Krattiger (@kwryankrattiger)
+
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+
+  specs:
+  - "tipi-paraview"
+
+  cdash:
+    build-group: "Cmake-re test"
