@@ -196,8 +196,8 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
         args.append(self.define("ARCANE_REQUIRED_PACKAGE_LIST", self.build_required()))
 
         if "+alien" in self.spec:
-            self.define("ALIEN_DEFAULT_OPTIONS", False),
-            self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"),
+            (self.define("ALIEN_DEFAULT_OPTIONS", False),)
+            (self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"),)
 
         if "+rocm" in self.spec:
             args.append(self.define("ARCANE_ACCELERATOR_MODE", "ROCM"))
