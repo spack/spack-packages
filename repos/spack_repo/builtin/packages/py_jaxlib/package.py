@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.11.0", sha256="007ef373573ff2fb8a5485679b791581fda328754fd7ae491de3bcdb0fc70d07")
     version("0.10.2", sha256="fa7214ab31ed1cd418b4305807e9c4f3f175c783eeea40c28e0f77c3f4c24bc7")
     version("0.10.1", sha256="15983d01b0c858738b16b19b773459d22449992ce1ee97688cc532ea0047de9e")
     version("0.10.0", sha256="12ae17617d1346e2f98cfc48c1a000adc7389784eb119e8108a22dfd57cbb8c3")
@@ -152,6 +153,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheels
+        depends_on("python@3.12:", when="@0.11:")
         depends_on("python@3.11:", when="@0.7:")
         depends_on("python@3.10:", when="@0.4.31:")
         depends_on("python@3.9:", when="@0.4.14:")
