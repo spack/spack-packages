@@ -10,7 +10,7 @@ from spack.package import *
 class RSeqinfo(RPackage):
     """A simple S4 class for storing basic information about a collection of
     genomic sequences
-    
+
     The Seqinfo class stores the names, lengths, circularity flags, and genomes
     for a particular collection of sequences. These sequences are typically the
     chromosomes and/or scaffolds of a specific genome assembly of a given
