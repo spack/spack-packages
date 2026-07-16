@@ -39,7 +39,7 @@ class Cccl(CMakePackage, CudaPackage):
     variant("cuda", default=True, description="Build with CUDA")
 
     depends_on("cmake@3.21:", type="build")
-    depends_on("cxx")
-    depends_on("cuda@12:", when="@3")
+    depends_on("cxx", type="build")
+    depends_on("cuda@12:", type=("build", "link"), when="@3")
 
     requires("+cuda")
