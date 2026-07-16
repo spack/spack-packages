@@ -40,6 +40,8 @@ class Cccl(CMakePackage, CudaPackage):
 
     depends_on("cmake@3.21:", type="build")
     depends_on("cxx", type="build")
+
+    # CCCL version X needs CUDA version >= X+9
     depends_on("cuda@12:", type=("build", "link"), when="@3")
 
     requires("+cuda")
