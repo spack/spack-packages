@@ -476,7 +476,9 @@ class CMakeBuilder(BuilderWithDefaults):
                 pkg.module.make(*self.build_targets)
             elif self.generator == "Ninja":
                 self.build_targets.append("-v")
-                pkg.module.cmake_re("--build", self.build_directory, "--host", "--distributed", "--j500")
+                pkg.module.cmake_re(
+                    "--build", self.build_directory, "--host", "--distributed", "--j500"
+                )
 
     def install(self, pkg: CMakePackage, spec: Spec, prefix: Prefix) -> None:
         """Make the install targets"""
