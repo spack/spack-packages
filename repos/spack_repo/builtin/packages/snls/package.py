@@ -97,10 +97,5 @@ class Snls(CMakePackage):
             args.append(self.define("CAMP_DIR", spec["camp"].prefix))
             args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
             args.append(self.define("CHAI_DIR", spec["chai"].prefix))
-<<<<<<< HEAD
-        
-=======
-            args.append(self.define("FMT_DIR", spec["fmt"].prefix))
 
->>>>>>> 974fbb15afd47811b1fd633cdf2d790ac43099fc
         return args
