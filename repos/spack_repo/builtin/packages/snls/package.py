@@ -56,25 +56,21 @@ class Snls(CMakePackage):
         description="C++ standard to build with",
     )
 
-    conflicts(
-        "+batch_solver +use_raja_only",
-        msg="raja_only option does not allow snls batch_solver to work",
-    )
+    conflicts("+batch_solver +use_raja_only", msg="raja_only option does not allow snls batch_solver to work")
 
-    depends_on("cmake@3.21:", type="build")
-    depends_on("blt", type=("build"))
-    depends_on("c", type=("build"), when="+tests")
-    depends_on("cxx", type=("build"))
-    depends_on("chai", when="+batch_solver")
-    depends_on("umpire", when="+batch_solver")
-    depends_on("raja", when="+batch_solver")
-    depends_on("raja", when="+use_raja_only")
-    depends_on("camp", when="+batch_solver")
-    depends_on("fmt", when="+batch_solver")
-
-    @property
-    def cxx_std(self):
-        return self.spec.variants.get("cxxstd").value
+    with default_args(type="build"):
+        depends_on("cmake@3.21:")
+        depends_on("blt")
+        depends_on("c", when="+tests")
+        depends_on("cxx")
+    with when("+batch_solver"):
+        depends_on("chai")
+        depends_on("umpire")
+        depends_on("raja")
+        depends_on("camp")
+        depends_on("fmt")
+    with when("+use_raja_only"):
+        depends_on("raja")
 
     def cmake_args(self):
         """
@@ -87,18 +83,18 @@ class Snls(CMakePackage):
             self.define_from_variant("USE_BATCH_SOLVERS", "batch_solver"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("USE_RAJA_ONLY", "use_raja_only"),
-            self.define("BLT_CXX_STD", f"c++{self.cxx_std}"),
+            self.define("BLT_CXX_STD", f"c++{spec.variants.get('cxxstd').value}"),
             self.define("BLT_SOURCE_DIR", spec["blt"].prefix),
         ]
 
-        if spec.satisfies("+batch_solver") or spec.satisfies("+use_raja_only"):
+        if spec.satisfies('+batch_solver') or spec.satisfies('+use_raja_only'):
             args.append(self.define("RAJA_DIR", spec["raja"].prefix))
 
-        if spec.satisfies("+batch_solver"):
+        if spec.satisfies('+batch_solver'):
             args.append(self.define("RAJA_DIR", spec["raja"].prefix))
             args.append(self.define("CAMP_DIR", spec["camp"].prefix))
             args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
             args.append(self.define("CHAI_DIR", spec["chai"].prefix))
             args.append(self.define("FMT_DIR", spec["fmt"].prefix))
-
+        
         return args
