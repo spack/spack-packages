@@ -15,6 +15,7 @@ class Admixtools(MakefilePackage):
     homepage = "https://github.com/DReichLab/AdmixTools"
     url = "https://github.com/DReichLab/AdmixTools/archive/v7.0.2.tar.gz"
 
+    version("8.0.2", sha256="fea3eaabc5c47aa85dbc4346b6be0c377249064ccba087c246cbc7bec4b18777")
     version("7.0.2", sha256="d1dc1963e01017f40e05e28009008e14388a14a3facc75cff46653da585bd91e")
     version("7.0.1", sha256="182dd6f55109e9a1569b47843b0d1aa89fe4cf4a05f9292519b9811faea67a20")
     version("7.0", sha256="c00faab626f02bbf9c25c6d2dcf661db225776e9ed61251f164e5edeb5a448e5")
@@ -54,6 +55,8 @@ class Admixtools(MakefilePackage):
 
         makefile.filter("HOMEL=$(PWD)", "HOMEL=$(CURDIR)", string=True)
         makefile.filter("TOP=../bin", "TOP=./bin")
+        makefile.filter("cp fxtract $(BIN)", "cp fxtract $(TOP)", string=True)
+        makefile.filter("cp -r script $(BIN)", "cp -r script $(TOP)", string=True)
 
     def install(self, spec, prefix):
         with working_dir("src"):
