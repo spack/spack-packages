@@ -62,6 +62,7 @@ class RRtracklayer(RPackage):
     depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.40.6:")
     depends_on("r-biostrings@2.43.7:", type=("build", "run"))
     depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-biostrings@2.77.2:", type=("build", "run"), when="@1.70.1:")
     depends_on("r-zlibbioc", type=("build", "run"))
     depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.62.0")
     depends_on("r-curl", type=("build", "run"), when="@1.64.0:")
