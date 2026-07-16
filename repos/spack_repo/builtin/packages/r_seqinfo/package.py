@@ -27,5 +27,5 @@ class RSeqinfo(RPackage):
         version("1.0.0", commit="9fc5a613b84efd096416b9810ed62ceef79522cb")
 
     depends_on("r", type=("build", "run"))
-    depends_on("r-s4vectorss@0.50.1:", type=("build", "run"))
+    depends_on("r-s4vectors@0.50.1:", type=("build", "run"))
     depends_on("r-iranges", type=("build", "run"))
