@@ -180,7 +180,7 @@ class Hipblaslt(CMakePackage):
     # rocroller in ROCm 7.1+ fails to build with fmt 11 (consteval FMT_STRING errors).
     # Keep spdlog/fmt on a known-compatible pair.
     depends_on("spdlog@:1.14", when="@7.1:")
-    depends_on("fmt@11.1:", when="@7.2:")
+    depends_on("fmt@11.1:", when="@7.0:")
 
     resource(
         name="libdivide",
