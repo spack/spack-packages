@@ -27,8 +27,8 @@ class Nvbench(CudaPackage, CMakePackage):
     variant("cuda", default=True, description="Build with CUDA")
 
     depends_on("cmake@4:", type="build")
-    depends_on("cxx")
-    depends_on("cuda@12")
+    depends_on("cxx", type="build")
+    depends_on("cuda@12:", type=("build", "link"))
 
     requires("+cuda")
     requires("%gcc@7:", when="%gcc")
