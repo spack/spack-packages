@@ -41,7 +41,7 @@ class RRtracklayer(RPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("r@3.3:", type=("build", "run"), when="@:1.66.0")
+    depends_on("r@3.3:", type=("build", "run"))
     depends_on("r@3.5:", type=("build", "run"), when="@1.68.0:")
     depends_on("r-genomicranges@1.21.20:", type=("build", "run"))
     depends_on("r-genomicranges@1.37.2:", type=("build", "run"), when="@1.50.0:")
