@@ -68,7 +68,6 @@ class Snls(CMakePackage):
         depends_on("umpire")
         depends_on("raja")
         depends_on("camp")
-        depends_on("fmt")
     with when("+use_raja_only"):
         depends_on("raja")
 
@@ -95,6 +94,5 @@ class Snls(CMakePackage):
             args.append(self.define("CAMP_DIR", spec["camp"].prefix))
             args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
             args.append(self.define("CHAI_DIR", spec["chai"].prefix))
-            args.append(self.define("FMT_DIR", spec["fmt"].prefix))
         
         return args
