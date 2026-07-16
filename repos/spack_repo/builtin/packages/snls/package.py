@@ -93,7 +93,6 @@ class Snls(CMakePackage):
             args.append(self.define("RAJA_DIR", spec["raja"].prefix))
 
         if spec.satisfies("+batch_solver"):
-            args.append(self.define("RAJA_DIR", spec["raja"].prefix))
             args.append(self.define("CAMP_DIR", spec["camp"].prefix))
             args.append(self.define("UMPIRE_DIR", spec["umpire"].prefix))
             args.append(self.define("CHAI_DIR", spec["chai"].prefix))
