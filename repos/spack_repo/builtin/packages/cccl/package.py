@@ -3,28 +3,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Cccl(CMakePackage):
+class Cccl(CMakePackage, CudaPackage):
     """CUDA Core Compute Libraries (CCCL)
-
-    Welcome to the CUDA Core Compute Libraries (CCCL) where our mission is to make CUDA more
-    delightful.
-
-    This repository unifies three essential CUDA C++ libraries into a single, convenient
-    repository:
-
-    - Thrust,
-    - CUB,
-    - libcudacxx
-
-    The goal of CCCL is to provide CUDA C++ developers with building blocks that make it easier to
-    write safe and efficient code. Bringing these libraries together streamlines your development
-    process and broadens your ability to leverage the power of CUDA C++.
-
-    CCCL is a header-only library.
+    CCCL provide the following header-only CUDA libraries: Thrust, CUB, and libcudacxx.
     """
 
     homepage = "https://github.com/NVIDIA/cccl"
@@ -36,7 +22,11 @@ class Cccl(CMakePackage):
     maintainers("gusser93")
 
     license(
-        "Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSL-1.0 AND LicenseRef-scancode-bsd-unmodified AND BSD-3-Clause",
+        "Apache-2.0 AND"  # Thrust
+        "Apache-2.0 WITH LLVM-exception AND"  # libcu++
+        "BSL-1.0 AND"  # Parts of Thrust
+        "LicenseRef-scancode-bsd-unmodified AND"  # Portions of thrust::complex
+        "BSD-3-Clause",  # CUB
         checked_by="gusser93",
     )
 
@@ -45,4 +35,10 @@ class Cccl(CMakePackage):
     version("3.3.2", sha256="7bf03b4f3ab4db8b5781613564a01cf19682e50afc58bb06ced53cd049a52965")
     version("3.3.1", sha256="95355e7d492d70604705330c12afef785c76048e1084852ceeb31522e2dbf223")
 
+    variant("cuda", default=True, description="Build with CUDA")
+
     depends_on("cmake@3.21:", type="build")
+    depends_on("cxx")
+    depends_on("cuda@12:", when="@3")
+
+    requires("+cuda")
