@@ -20,10 +20,12 @@ class Ecflow(CMakePackage):
     """
 
     homepage = "https://confluence.ecmwf.int/display/ECFLOW/"
-    url = "https://confluence.ecmwf.int/download/attachments/8650755/ecFlow-4.11.1-Source.tar.gz"
+    url = "https://github.com/ecmwf/ecflow/releases/download/5.16.0/ecFlow-5.16.0-Source.tar.gz"
+    list_url = "https://github.com/ecmwf/ecflow/releases"
 
     maintainers("climbfuji", "AlexanderRichert-NOAA")
 
+    version("5.16.0", sha256="666f804473e0bdc63f51e0b74531217c74f6e6ed40a33c11f7d2916918489741")
     version("5.11.4", sha256="4836a876277c9a65a47a3dc87cae116c3009699f8a25bab4e3afabf160bcf212")
     version("5.8.4", sha256="bc628556f8458c269a309e4c3b8d5a807fae7dfd415e27416fe9a3f544f88951")
     version("5.8.3", sha256="1d890008414017da578dbd5a95cb1b4d599f01d5a3bb3e0297fe94a87fbd81a6")
@@ -85,6 +87,15 @@ class Ecflow(CMakePackage):
     # https://github.com/JCSDA/spack-stack/issues/1009
     patch("ctsapi_cassert.patch", when="@5.11.4")
     patch("vfile_cassert.patch", when="@5.11.4")
+
+    def url_for_version(self, version):
+        if isinstance(version, str):
+            version = Version(version)
+
+        if version >= Version("5.13.7"):
+            return f"https://github.com/ecmwf/ecflow/releases/download/{version}/ecFlow-{version}-Source.tar.gz"
+
+        return f"https://confluence.ecmwf.int/download/attachments/8650755/ecFlow-{version}-Source.tar.gz"
 
     @when("@:4.13.0")
     def patch(self):
