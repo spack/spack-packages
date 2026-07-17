@@ -25,6 +25,7 @@ class Ecflow(CMakePackage):
 
     maintainers("climbfuji", "AlexanderRichert-NOAA")
 
+    version("5.18.0", sha256="f01826a442671575a5079bc8c57abaf079317e5c14fe45bdc5acbfe24b8bc4b5")
     version("5.16.0", sha256="666f804473e0bdc63f51e0b74531217c74f6e6ed40a33c11f7d2916918489741")
     version("5.11.4", sha256="4836a876277c9a65a47a3dc87cae116c3009699f8a25bab4e3afabf160bcf212")
     version("5.8.4", sha256="bc628556f8458c269a309e4c3b8d5a807fae7dfd415e27416fe9a3f544f88951")
@@ -57,6 +58,8 @@ class Ecflow(CMakePackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type="build")
     depends_on("py-pip", type="build")
+    # ecFlow 5.18+ configures its Python bindings with pybind11.
+    depends_on("py-pybind11@2.10.3:", type=("build", "link"), when="@5.18:")
 
     # v4: Boost-1.7X release not working well on serialization
     depends_on("boost@1.53:1.69+python", when="@:4")
@@ -80,8 +83,10 @@ class Ecflow(CMakePackage):
     depends_on("openssl@1:", when="@5:")
     depends_on("pkgconfig", type="build", when="+ssl ^openssl ~shared")
     depends_on("qt@5: +gui", when="+ui")
-    # Requirement to use the Python3_EXECUTABLE variable
+    # Requirement to use the Python3_EXECUTABLE variable.
     depends_on("cmake@3.16:", type="build")
+    # ecFlow through 5.11.4 sets CMP0046 to OLD, which CMake 4 no longer permits.
+    depends_on("cmake@3.16:3", type="build", when="@:5.11.4")
 
     # https://github.com/JCSDA/spack-stack/issues/1001
     # https://github.com/JCSDA/spack-stack/issues/1009
