@@ -96,6 +96,4 @@ class Meshioplusplus(CMakePackage):
                 spec.variants["mesh_backend"].value.upper(),
             ),
         ]
-        if spec.satisfies("+fortran"):
-            args.append(self.define("CMAKE_Fortran_COMPILER", self.compiler.fc))
         return args
