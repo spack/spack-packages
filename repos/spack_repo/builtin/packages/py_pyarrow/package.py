@@ -21,6 +21,7 @@ class PyPyarrow(PythonPackage):
 
     license("Apache-2.0")
 
+    version("24.0.0", sha256="85fe721a14dd823aca09127acbb06c3ca723efbd436c004f16bca601b04dcc83")
     version("23.0.1", sha256="b8c5873e33440b2bc2f4a79d2b47017a89c5a24116c055625e6f2ee50523f019")
     version("22.0.0", sha256="3d600dc583260d845c7d8a6db540339dd883081925da2bd1c5cb808f720b3cd9")
     version("21.0.0", sha256="5051f2dccf0e283ff56335760cbc8622cf52264d67e359d5569541ac11b6d5bc")
@@ -51,6 +52,7 @@ class PyPyarrow(PythonPackage):
 
     with default_args(type="build"):
         # CMakeLists.txt
+
         depends_on("cmake@3.25:", when="@20:")
         depends_on("cmake@3.16:", when="@13:")
         depends_on("cmake@3.5:", when="@11:")
@@ -58,27 +60,37 @@ class PyPyarrow(PythonPackage):
         depends_on("cmake@2.7:")
 
         # cmake_modules and pyarrow/__init__.py
+
         depends_on("pkgconfig")
 
         # pyproject.toml, setup.py
+
         depends_on("py-cython@3.1:", when="@22:")
         depends_on("py-cython@3:", when="@20:")
         depends_on("py-cython@0.29.31:", when="@12:")
         depends_on("py-cython@0.29.22:", when="@8:")
         depends_on("py-cython@0.29:", when="@0.15:")
+
         # https://github.com/cython/cython/commit/4d8a3c9701ec78d08cd7923e3936d191d036f0e9
         depends_on("py-cython@:3.0", when="@:16")
         depends_on("py-cython@:2", when="@:13")
+
+        depends_on("py-libcst@1.8.6:", when="@24:")
+
         # up to arrow 17 numpy was also a runtime dependency
         depends_on("py-numpy@1.25:", when="@18:")
+
+        depends_on("py-scikit-build-core", when="@24:")
+
         depends_on("py-setuptools-scm@8:+toml", when="@17:")
         depends_on("py-setuptools-scm", when="@16")
         depends_on("py-setuptools-scm@:7", when="@0.15:15")
-        depends_on("py-setuptools@77:", when="@23:")
-        depends_on("py-setuptools@64:", when="@17:")
-        depends_on("py-setuptools@40.1:", when="@10.0.1:")
-        depends_on("py-setuptools@38.6:", when="@7:")
-        depends_on("py-setuptools")
+
+        depends_on("py-setuptools@77:", when="@23:23")
+        depends_on("py-setuptools@64:", when="@17:23")
+        depends_on("py-setuptools@40.1:", when="@10.0.1:23")
+        depends_on("py-setuptools@38.6:", when="@7:23")
+        depends_on("py-setuptools", when="@:23")
 
     arrow_versions = (
         "@0.9.0",
@@ -102,6 +114,7 @@ class PyPyarrow(PythonPackage):
         "@21.0.0",
         "@22.0.0",
         "@23.0.1",
+        "@24.0.0"
     )
     for v in arrow_versions:
         depends_on("arrow+python" + v, when=v)
