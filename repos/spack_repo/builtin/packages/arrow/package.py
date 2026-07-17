@@ -19,6 +19,7 @@ class Arrow(CMakePackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("24.0.0", sha256="94e18d188f26324c4da6bb3a723fec1536ae88b8308bada28d53c0b8d5206b28")
     version("23.0.1", sha256="9a9a057bba3aa7080abc2ba8e7a079effa74626a4f308ac56bfce035d31ef1ac")
     version("22.0.0", sha256="8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
     version("21.0.0", sha256="e92401790fdba33bfb4b8aa522626d800ea7fda4b6f036aaf39849927d2cf88d")
