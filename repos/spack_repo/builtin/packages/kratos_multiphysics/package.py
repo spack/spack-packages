@@ -211,9 +211,10 @@ class KratosMultiphysics(CMakePackage, PythonExtension):
 
     # HDF5Application: the serial/parallel HDF5 flavor must match USE_MPI,
     # a mismatch is a configure-time fatal error in both directions.
-    depends_on("hdf5@1.8:", when="applications=hdf5")
-    depends_on("hdf5+mpi", when="applications=hdf5 +mpi")
-    depends_on("hdf5~mpi", when="applications=hdf5 ~mpi")
+    with when("applications=hdf5"):
+        depends_on("hdf5@1.8:")
+        depends_on("hdf5+mpi", when="+mpi")
+        depends_on("hdf5~mpi", when="~mpi")
 
     # TrilinosApplication needs the Epetra stack (Epetra/Teuchos mandatory;
     # Amesos/AztecOO/Ifpack/ML wanted). Those variants were removed from the
