@@ -146,6 +146,10 @@ class KratosMultiphysics(CMakePackage, PythonExtension):
         default=False,
         description="Enable the non-free Triangle TPL (extra license restrictions)",
     )
+    # TetGen/Triangle licenses restrict redistribution, so binaries built
+    # against them must not be pushed to public build caches/mirrors.
+    redistribute(binary=False, when="+tetgen")
+    redistribute(binary=False, when="+triangle")
     # Both testing and benchmarks FetchContent-download googletest/benchmark at
     # configure time, so +cpp_tests / +benchmark need network access.
     variant("benchmark", default=False, description="Build the C++ (Google) benchmarks")
