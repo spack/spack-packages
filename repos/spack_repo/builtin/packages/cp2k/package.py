@@ -52,6 +52,10 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     license("GPL-2.0-or-later")
 
     version(
+        "2026.2",
+        sha256="f9bd86f580f57a53a0768c0045d1417f9f9a1d66d851ed7f662f496200043373",
+    )
+    version(
         "2026.1",
         sha256="4364c74bcffaa474bc234e11686b09550e4d06932acf2147a341e4f7679dd88e",
     )
@@ -362,6 +366,9 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # require libxsmm-1.11+ since 1.10 can leak file descriptors in Fortran
         depends_on("libxsmm@1.11:")
         depends_on("libxsmm@1.17:", when="@9.1:")
+        # CP2K <= 2026.1 requires the legacy libxsmmext interface,
+        # which was removed in libxsmm 2.0.
+        depends_on("libxsmm@:1", when="@:2026.1")
         # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
