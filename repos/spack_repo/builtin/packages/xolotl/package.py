@@ -26,6 +26,7 @@ class Xolotl(CMakePackage, CudaPackage):
     version("3.1.0", sha256="68a495ab0c3efb495189f73474d218eb591099b90d52d427ac868b63e8fc2ee8")
 
     depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     depends_on("mpi")
     depends_on("boost +log +program_options")
