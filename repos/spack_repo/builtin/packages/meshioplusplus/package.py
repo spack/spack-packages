@@ -31,18 +31,30 @@ class Meshioplusplus(CMakePackage):
     # CMake build of them installs nothing -- see py-meshioplusplus for those.
     version("6.2.0", sha256="275c1a938845a416040b1517fb8f9c1c008e86ad888b432d0852eba0fac83126")
 
-    variant("fortran", default=False,
-            description="Build the OO Fortran 2008 interface (implies the C API)")
-    variant("hdf5", default=True,
-            description="C++ HDF5-backed formats (CGNS, HMF, H5M, MED, XDMF-HDF)")
+    variant(
+        "fortran",
+        default=False,
+        description="Build the OO Fortran 2008 interface (implies the C API)",
+    )
+    variant(
+        "hdf5", default=True, description="C++ HDF5-backed formats (CGNS, HMF, H5M, MED, XDMF-HDF)"
+    )
     variant("netcdf", default=True, description="C++ netCDF-backed format (Exodus)")
     variant("zlib", default=True, description="C++ VTU zlib compression path")
-    variant("parallel", default="auto",
-            values=("auto", "seq", "stl", "openmp", "tbb"), multi=False,
-            description="Parallel backend for meshioplusplus::parallel_for")
-    variant("mesh_backend", default="native",
-            values=("meshio", "native", "kratos"), multi=False,
-            description="In-memory mesh backend for the standalone C++ build")
+    variant(
+        "parallel",
+        default="auto",
+        values=("auto", "seq", "stl", "openmp", "tbb"),
+        multi=False,
+        description="Parallel backend for meshioplusplus::parallel_for",
+    )
+    variant(
+        "mesh_backend",
+        default="native",
+        values=("meshio", "native", "kratos"),
+        multi=False,
+        description="In-memory mesh backend for the standalone C++ build",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

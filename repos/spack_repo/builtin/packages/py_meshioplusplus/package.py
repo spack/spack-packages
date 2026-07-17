@@ -27,10 +27,12 @@ class PyMeshioplusplus(PythonPackage):
     version("6.1.0", sha256="0061d9b3ff20b65f6bb66dc4787b4c8f5c9f3abc9567b0b9e60fab28a8774afa")
     version("6.0.0", sha256="c5edd1c3f961a6282f08a76205e060ed3cb985401381313beb02788bc537ba94")
 
-    variant("hdf5", default=True,
-            description="C++ HDF5-backed formats and the h5py fallback")
-    variant("netcdf", default=True,
-            description="C++ netCDF-backed format (Exodus) and the netCDF4 fallback")
+    variant("hdf5", default=True, description="C++ HDF5-backed formats and the h5py fallback")
+    variant(
+        "netcdf",
+        default=True,
+        description="C++ netCDF-backed format (Exodus) and the netCDF4 fallback",
+    )
     variant("zlib", default=True, description="C++ VTU zlib compression path")
 
     depends_on("c", type="build")
