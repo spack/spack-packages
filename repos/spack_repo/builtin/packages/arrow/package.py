@@ -89,6 +89,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("utf8proc@2.7.0: +shared", when="+compute")
     depends_on("utf8proc@2.7.0: +shared", when="+gandiva")
     depends_on("utf8proc@2.7.0: +shared", when="+python")
+    depends_on("xsimd@14.1:", when="@24:")
     depends_on("xsimd@8.1.0:", when="@9.0.0:")
     depends_on("zlib-api", when="+zlib @9:")
     depends_on("zlib-api", when="@:8")
