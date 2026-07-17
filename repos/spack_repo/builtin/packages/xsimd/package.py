@@ -10,15 +10,16 @@ from spack.package import *
 class Xsimd(CMakePackage):
     """C++ wrappers for SIMD intrinsics"""
 
-    homepage = "https://quantstack.net/xsimd"
-    url = "https://github.com/QuantStack/xsimd/archive/3.1.0.tar.gz"
-    git = "https://github.com/QuantStack/xsimd.git"
+    homepage = "https://xsimd.readthedocs.io"
+    url = "https://github.com/xtensor-stack/xsimd/archive/refs/tags/14.3.0.tar.gz"
+    git = "https://github.com/xtensor-stack/xsimd"
 
     maintainers("ax3l")
 
     license("BSD-3-Clause")
 
     version("develop", branch="master")
+    version("14.3.0", sha256="b3d50e7a73fbf4642ceef30131c93414901d69eee41c2a5302db650b03e2c792")
     version("13.2.0", sha256="edd8cd3d548c185adc70321c53c36df41abe64c1fe2c67bc6d93c3ecda82447a")
     version("13.1.0", sha256="88c9dc6da677feadb40fe09f467659ba0a98e9987f7491d51919ee13d897efa4")
     version("12.1.1", sha256="73f94a051278ef3da4533b691d31244d12074d5d71107473a9fd8d7be15f0110")
