@@ -18,13 +18,23 @@ class PyPandasDatareader(PythonPackage):
 
     license("BSD-3-Clause", checked_by="climbfuji")
 
+    version(
+        "0.11.1",
+        url="https://files.pythonhosted.org/packages/58/86/288382815ce0b52585e8fbcdd8167cdbc056e2d750dea84fcc2ba5c36748/pandas_datareader-0.11.1.tar.gz",
+        sha256="e1eadb6d2ccaa4b7a876a1c81b6ff0307fa7a08b56f7799862a50207c2e65a05",
+    )
     version("0.10.0", sha256="9fc3c63d39bc0c10c2683f1c6d503ff625020383e38f6cbe14134826b454d5a6")
 
+    # Versioneer bundled with 0.10.0 uses APIs removed in Python 3.12.
+    patch("py312-versioneer.patch", when="@0.10.0 ^python@3.12:")
+
     depends_on("python@3.8:", type=("build", "run"))
+    depends_on("python@3.11:", when="@0.11.1:", type=("build", "run"))
     depends_on("py-setuptools@0.64:", type="build")
     depends_on("py-setuptools-scm@8", type="build")
 
     depends_on("py-lxml", type="run")
-    depends_on("py-pandas@1.5.3:", type="run")
-    depends_on("py-statsmodels@0.12:", type="run")
+    depends_on("py-pandas@1.5.3:", when="@0.10.0", type="run")
+    depends_on("py-pandas@2.1.4:", when="@0.11.1:", type="run")
+    depends_on("py-statsmodels@0.12:", when="@0.10.0", type="run")
     depends_on("py-requests@2.19:", type="run")
