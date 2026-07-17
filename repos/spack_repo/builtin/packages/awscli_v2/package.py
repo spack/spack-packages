@@ -23,6 +23,10 @@ class AwscliV2(PythonPackage):
     version("2.15.53", sha256="a4f5fd4e09b8f2fb3d2049d0610c7b0993f9aafaf427f299439f05643b25eb4b")
     version("2.13.22", sha256="dd731a2ba5973f3219f24c8b332a223a29d959493c8a8e93746d65877d02afc1")
 
+    # The patch makes completion-index generation optional for environments
+    # where importing the full CLI command set during the wheel build hangs.
+    patch("skip-autocomplete-index.patch", when="@2.35.16")
+
     with default_args(type="build"):
         depends_on("py-flit-core@3.7.1:", when="@2.22:")
         # Upper bound relaxed for Python 3.14 support
@@ -60,6 +64,11 @@ class AwscliV2(PythonPackage):
         depends_on("py-urllib3@1.25.4:1.26", when="^python@:3.9")
 
     variant("examples", default=True, description="Install code examples")
+    variant("autocomplete", default=True, description="Build the AWS CLI shell-completion index")
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if "~autocomplete" in self.spec:
+            env.set("AWSCLI_SKIP_AUTOCOMPLETE_INDEX", "1")
 
     @run_after("install", when="~examples")
     def post_install(self):
