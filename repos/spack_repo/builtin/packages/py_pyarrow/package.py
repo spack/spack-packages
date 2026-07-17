@@ -86,7 +86,7 @@ class PyPyarrow(PythonPackage):
         depends_on("py-setuptools-scm", when="@16")
         depends_on("py-setuptools-scm@:7", when="@0.15:15")
 
-        depends_on("py-setuptools@77:", when="@23:23")
+        depends_on("py-setuptools@77:", when="@23")
         depends_on("py-setuptools@64:", when="@17:23")
         depends_on("py-setuptools@40.1:", when="@10.0.1:23")
         depends_on("py-setuptools@38.6:", when="@7:23")
