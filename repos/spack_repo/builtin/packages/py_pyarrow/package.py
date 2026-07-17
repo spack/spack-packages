@@ -114,7 +114,7 @@ class PyPyarrow(PythonPackage):
         "@21.0.0",
         "@22.0.0",
         "@23.0.1",
-        "@24.0.0"
+        "@24.0.0",
     )
     for v in arrow_versions:
         depends_on("arrow+python" + v, when=v)
