@@ -1,3 +1,21 @@
+diff --git a/domain/test/performance/CMakeLists.txt b/domain/test/performance/CMakeLists.txt
+index 1af2eff07..65b370ddd 100644
+--- a/domain/test/performance/CMakeLists.txt
++++ b/domain/test/performance/CMakeLists.txt
+@@ -2,11 +2,11 @@ include(cstone_add_performance_test)
+ 
+ cstone_add_performance_test(octree.cpp octree_perf)
+ cstone_add_performance_test(peers.cpp peers_perf)
+-cstone_add_performance_test(hilbert.cpp hilbert_perf)
+ 
+ if(CMAKE_CUDA_COMPILER)
++    cstone_add_performance_test(hilbert.cpp hilbert_perf)
+     # link to cudart to get thrust includes
+-    target_link_libraries(hilbert_perf PRIVATE CUDA::cudart)
++    target_link_libraries(hilbert_perf PRIVATE ThrustOMP CUDA::cudart)
+ endif ()
+ 
+ if(CMAKE_CUDA_COMPILER OR CMAKE_HIP_COMPILER)
 diff --git a/physics/Disk/include/CMakeLists.txt b/physics/Disk/include/CMakeLists.txt
 index 9ef6afd5b..e3b23c958 100644
 --- a/physics/Disk/include/CMakeLists.txt

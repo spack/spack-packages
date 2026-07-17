@@ -57,8 +57,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
         depends_on("mpich +rocm", when="+rocm ^[virtuals=mpi] mpich")
 
-    patch("cmake-disk-rocthrust.patch", when="@0.96.2 +rocm +disks")
-    patch("cmake-disk-rocthrust-develop.patch", when="@develop +rocm +disks")
+    patch("v0-96-2.patch", when="@0.96.2 +rocm +disks")
 
     conflicts("%gcc@:11", when="@0.95:")
     conflicts("%gcc@:10", when="@:0.93.1")
