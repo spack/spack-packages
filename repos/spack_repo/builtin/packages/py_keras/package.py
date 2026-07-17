@@ -24,9 +24,11 @@ class PyKeras(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("3.15.0", sha256="0123749ac2a704d63f691994b18e432e006cb8ae910cc0ea7035d777aed9c00d")
     version("3.14.1", sha256="ef479173102ad29db89b53c232efdc3fb5ad57c28bc27ead59f3e78a1eecd05b")
     version("3.14.0", sha256="86fcf8249a25264a566ac393c287c7ad657000e5e62615dcaad4b3472a17aeda")
     version("3.13.2", sha256="62f0123488ac87c929c988617e14f293f7bc993811837d08bb37eff77adc85a9")
+    version("3.12.3", sha256="02a3c57d1019f67f1c006fe3333cd5f0c2d38c3f82321b8ebe5929f23b1734cf")
     version("3.12.2", sha256="e19c7c7f8f2a81e44d4f203e567731a15a270d8ef351060982b45a1fafdf3fce")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2026-1669/

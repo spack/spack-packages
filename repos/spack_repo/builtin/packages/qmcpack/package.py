@@ -174,7 +174,8 @@ class Qmcpack(CMakePackage, CudaPackage):
     depends_on("boost@1.61.0:+exception+serialization+random", when="@3.6.0:", type="build")
     depends_on("libxml2")
     depends_on("mpi", when="+mpi")
-    depends_on("python@3:", when="@3.9:")
+    depends_on("python@3:", when="@3.9:", type=("build", "run", "test"))
+    depends_on("python@3.10:", when="@4.3:", type=("build", "run", "test"))
 
     # HDF5
     depends_on("hdf5~mpi", when="~phdf5")

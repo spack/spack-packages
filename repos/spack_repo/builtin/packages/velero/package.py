@@ -20,8 +20,10 @@ class Velero(GoPackage):
 
     license("Apache-2.0", checked_by="RobertMaaskant")
 
+    version("1.18.2", sha256="68d8c95817d882b2832c4c08689eb5f7b14dd581f71292a6c794acd15633b6d9")
     version("1.18.0", sha256="e94e51437b7cc54b633fcd253d5003494382e4de69c34992463588f248ba409c")
 
+    depends_on("go@1.25.11:", type="build", when="@1.18.2:")
     depends_on("go@1.25.7:", type="build", when="@1.18.0:")
 
     depends_on("kubectl", type="run")
