@@ -178,6 +178,7 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ARCANEFRAMEWORK_BUILD_COMPONENTS", "Arcane"),
             self.define("ARCANE_DISABLE_DEPRECATED_WARNINGS", "TRUE"),
             self.define_from_variant("ARCCORE_USE_MPI", "mpi"),
+            self.define_from_variant("ARCCORE_ENABLE_TBB", "tbb"),
             self.define_from_variant("ARCCORE_BUILD_MODE", "build_mode"),
             self.define_from_variant("ARCANE_ENABLE_TESTS", "build_tests"),
             self.define_from_variant("ARCANE_ENABLE_DOTNET_WRAPPER", "dotnet_wrapper"),
