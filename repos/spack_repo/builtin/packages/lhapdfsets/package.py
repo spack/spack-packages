@@ -70,7 +70,7 @@ class Lhapdfsets(BundlePackage):
                 raise InstallError("No LHAPDF sets match pattern '{0}'".format(requested_set))
 
             for match in matches:
-                resolved_sets.setdefault(match, None)
+                resolved_sets[match] = None
 
         return list(resolved_sets)
 
