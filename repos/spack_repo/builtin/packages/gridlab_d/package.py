@@ -34,11 +34,11 @@ class GridlabD(CMakePackage):
 
     depends_on("cmake@3.10:", type="build")
     depends_on("xerces-c")
-    depends_on("superlu-mt")
+    depends_on("superlu-mt") # not clear if this and SuperLU_MT_ROOT are used
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
 
-    def cmake_args(self):
+    def cmake_args(self) -> List[str]:
         args = []
 
         args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
@@ -66,7 +66,7 @@ class GridlabD(CMakePackage):
         env.set("GLPATH", join_path(self.prefix, "lib", "gridlabd"))
         env.prepend_path("GLPATH", join_path(self.prefix, "share", "gridlabd"))
 
-    def flag_handler(self, name, flags):
+    def flag_handler(self, name: str, flags: List[str]) -> Tuple[List[str], Optional[List[str]], Optional[List[str]]]:
         # gridlab-d's C++ code isn't strict-standards-compliant and needs
         # -fpermissive on GCC/Clang-family compilers to build at all.
         if name == "cxxflags":
