@@ -59,6 +59,6 @@ class PyWxpython(PythonPackage):
         return url.format(version)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # By default wxWdigets is built as well instead of using spack provided version,
+        # By default wxWidgets is built as well instead of using spack provided version,
         # this tells it to just build the python extensions
         env.set("WXPYTHON_BUILD_ARGS", "build_py --use_syswx")
