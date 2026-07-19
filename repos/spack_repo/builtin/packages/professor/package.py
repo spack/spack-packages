@@ -52,7 +52,9 @@ class Professor(Package):
     def install(self, spec, prefix):
         with working_dir(self.stage.source_path):
             configure = Executable("./configure")
-            configure("--prefix={0}".format(prefix), "--with-eigen={0}".format(spec["eigen"].prefix))
+            configure(
+                "--prefix={0}".format(prefix), "--with-eigen={0}".format(spec["eigen"].prefix)
+            )
             make()
             make("PREFIX={0}".format(prefix), "install")
         if self.spec.satisfies("~interactive"):
