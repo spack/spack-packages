@@ -4,7 +4,6 @@
 
 import fnmatch
 import os
-from functools import cached_property
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 
@@ -41,7 +40,6 @@ class Lhapdfsets(BundlePackage):
         default="default",
     )
 
-    @cached_property
     def available_sets(self):
         with open(join_path(os.path.dirname(__file__), "pdfsets.index")) as index:
             return [line.split()[1] for line in index]
