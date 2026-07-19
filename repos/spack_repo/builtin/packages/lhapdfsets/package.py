@@ -45,7 +45,7 @@ class Lhapdfsets(BundlePackage):
             return [line.split()[1] for line in index]
 
     def resolve_sets(self, requested_sets):
-        available_sets = self.available_sets
+        available_sets = self.available_sets()
         default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
         resolved_sets = []
         seen_sets = set()
