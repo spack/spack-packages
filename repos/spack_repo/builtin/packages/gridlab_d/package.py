@@ -44,16 +44,14 @@ class GridlabD(CMakePackage):
         args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
         args.append("-DSuperLU_MT_ROOT=" + self.spec["superlu-mt"].prefix)
 
-        # HELICS
-        if "+helics" in self.spec:
+        if self.spec.satisfies("+helics"):
             args.append("-DGLD_USE_HELICS=ON")
             args.append("-DBUILD_CXX_SHARED_LIB=ON")
             args.append("-DGLD_HELICS_DIR=" + self.spec["helics"].prefix)
         else:
             args.append("-DGLD_USE_HELICS=OFF")
 
-        # MySQL
-        if "+mysql" in self.spec:
+        if self.spec.satisfies("+mysql"):
             args.append("-DGLD_USE_MYSQL=ON")
             args.append("-DGLD_MYSQL_DIR=" + self.spec["mysql"].prefix)
         else:
