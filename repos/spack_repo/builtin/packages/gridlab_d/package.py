@@ -41,14 +41,14 @@ class GridlabD(CMakePackage):
     def cmake_args(self):
         args = []
 
-        args.append("-DCMAKE_CXX_FLAGS=-fpermissive")
+        args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
+        args.append("-DSuperLU_MT_ROOT=" + self.spec["superlu-mt"].prefix)
 
         # HELICS
         if "+helics" in self.spec:
             args.append("-DGLD_USE_HELICS=ON")
             args.append("-DBUILD_CXX_SHARED_LIB=ON")
             args.append("-DGLD_HELICS_DIR=" + self.spec["helics"].prefix)
-            args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
         else:
             args.append("-DGLD_USE_HELICS=OFF")
 
@@ -65,3 +65,11 @@ class GridlabD(CMakePackage):
         # Need to add GLPATH otherwise Gridlab-D will not run.
         env.set("GLPATH", join_path(self.prefix, "lib", "gridlabd"))
         env.prepend_path("GLPATH", join_path(self.prefix, "share", "gridlabd"))
+
+    def flag_handler(self, name, flags):
+        # gridlab-d's C++ code isn't strict-standards-compliant and needs
+        # -fpermissive on GCC/Clang-family compilers to build at all.
+        if name == "cxxflags":
+            if self.spec.satisfies("%gcc") or self.spec.satisfies("%clang") or self.spec.satisfies("%apple-clang"):
+                flags.append("-fpermissive")
+        return (flags, None, None)
