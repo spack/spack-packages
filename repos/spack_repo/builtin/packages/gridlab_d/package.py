@@ -22,7 +22,7 @@ class GridlabD(CMakePackage):
 
     maintainers("0t1s1", "yee29", "afisher1")
 
-    # Using only develop as other branches and releases did not build properly.
+    # Using only develop as other branches and releases historically did not build properly.
     version("develop", branch="develop", submodules=True)
 
     variant("mysql", default=False, description="Enable MySQL support for Gridlab-D.")
