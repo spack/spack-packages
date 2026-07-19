@@ -31,7 +31,7 @@ class R3d(CMakePackage):
     variant(
         "test",
         default=False,
-        description="Build R3D regression tests (versions 2019-04-24 or earlier)",
+        description="Build R3D tests (versions 2019-04-24 or earlier)",
     )
 
     variant("shared", default=False, description="Build shared libraries")
