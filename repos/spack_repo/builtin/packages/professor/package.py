@@ -38,7 +38,7 @@ class Professor(Package):
     extends("python")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("PROF_VERSION", self.spec.version)
+        env.set("PROF_VERSION", str(self.spec.version))
 
     def install(self, spec, prefix):
         make()
