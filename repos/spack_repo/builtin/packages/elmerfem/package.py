@@ -17,7 +17,9 @@ class Elmerfem(CMakePackage):
     url = "https://github.com/ElmerCSC/elmerfem/archive/release-8.4.tar.gz"
     git = "https://github.com/ElmerCSC/elmerfem.git"
 
-    version("ice", branch="elmerice")
+    # pin elmerice to commit for reproducibility reason
+    version("ice", commit="b9173160c202a3e6b9a88b8a100f9ae487eca39a")
+    # version("ice", branch="elmerice")
     version("devel", branch="devel")
     version("26.2.1", sha256="2271444cabdc9ae6185df961d939359062d43b1940ac9a7463a2b8adf7e0009b")
     version("26.2", sha256="def442937d69234f7e1b36e902a7fcd2a428d671e62f0275bf05aeef7ebbcade")
