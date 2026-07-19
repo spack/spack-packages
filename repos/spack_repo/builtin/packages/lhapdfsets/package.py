@@ -44,12 +44,15 @@ class Lhapdfsets(BundlePackage):
     @property
     def available_sets(self):
         with open(join_path(os.path.dirname(__file__), "pdfsets.index")) as index:
-            return [line.split()[1] for line in index]
+            available_sets = []
+            for line in index:
+                available_sets.append(line.split()[1])
+            return available_sets
 
     def resolve_sets(self, requested_sets):
         available_sets = self.available_sets
         default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
-        resolved_sets = []
+        resolved_sets = {}
 
         for requested_set in requested_sets:
             if requested_set == "all":
@@ -67,10 +70,9 @@ class Lhapdfsets(BundlePackage):
                 raise InstallError("No LHAPDF sets match pattern '{0}'".format(requested_set))
 
             for match in matches:
-                if match not in resolved_sets:
-                    resolved_sets.append(match)
+                resolved_sets.setdefault(match, None)
 
-        return resolved_sets
+        return list(resolved_sets)
 
     def install(self, spec, prefix):
         mkdirp(self.prefix.share.lhapdfsets)
