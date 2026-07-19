@@ -33,6 +33,8 @@ class Kealib(CMakePackage):
     license("MIT")
 
     version("develop", git=git)
+    version("2.0.0", sha256="a7a08a182c3a1f16263eac8a3ad31be71dab93ac27a6884b0504160f7943a7a0")
+    version("1.6.2", sha256="815b8d335b8d4b9048baf863cdd3959d12210f158a86f6a0d1954c7d39ce6db0")
     version("1.5.3", sha256="32b2e3c90553a03cf1e8d03781c3710500ca919bca674bc370e86f15338ee93e")
     version("1.5.2", sha256="c4e17c472761a39e45184b5fa687395b319ac75430e0f6584dbf4cec6e335572")
     version("1.5.1", sha256="06cd547b1e40394b9539beaf6982bd249e8ee93d6150295e9cd9161d00829657")
@@ -50,7 +52,9 @@ class Kealib(CMakePackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("hdf5+cxx+hl", when="@:1.5.1")
-    depends_on("hdf5+cxx", when="@1.5.2:")
+    depends_on("hdf5+cxx", when="@1.5.2:1.6.2")
+    depends_on("hdf5", when="@2.0.0:")
+    depends_on("highfive", when="@2.0.0:")
 
     patch("cmake.patch", when="@1.4.7")
 
