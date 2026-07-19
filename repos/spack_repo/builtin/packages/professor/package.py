@@ -19,8 +19,6 @@ class Professor(Package):
     maintainers("mjk655")
 
     version("2.5.6", sha256="7537f23078bd56f00e67e1f96c7a24026b255cc26907ad5d5234b8371e49b3c7")
-    version("2.4.2", sha256="d1a602f2301dac5a165d8cb5baf31d8a1a3d92f30a7069cda66b98c595a4fa21")
-    version("2.3.4", sha256="2c293479342d3a74a6261e7139677bf3580ec34c7bc6a389854fc26497c65ad8")
     version("2.3.3", sha256="60c5ba00894c809e2c31018bccf22935a9e1f51c0184468efbdd5d27b211009f")
 
     variant(
