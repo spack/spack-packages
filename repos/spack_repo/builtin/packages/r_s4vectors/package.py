@@ -22,6 +22,8 @@ class RS4vectors(RPackage):
     bioc = "S4Vectors"
 
     with default_args(get_full_repo=True):
+        version("0.50.1", commit="dfc837c68d33d9dfb2ba620c8cad386b8a730fa2")  # bioc 3.23
+        version("0.46.0", commit="f4a665d66e3d84099b551ae03840c727a374c178")  # bioc 3.21
         version("0.38.0", commit="e80c24e1481033741147a0677fb42ce455e7da74")
         version("0.36.0", commit="af58701957ffdd9209031dd6a8dee3acdc58e999")
         version("0.34.0", commit="f590de3ec4d896a63351d0c1925d3856c0bd5292")
@@ -34,12 +36,15 @@ class RS4vectors(RPackage):
         version("0.16.0", commit="00fec03fcbcb7cff37917fab0da28d91fdf9dc3d")
         version("0.14.7", commit="40af17fe0b8e93b6a72fc787540d2961773b8e23")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("r@3.3.0:", type=("build", "run"))
+    depends_on("r@4.1.0:", type=("build", "run"), when="@0.49.3:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@0.28.1:")
-    depends_on("r-biocgenerics@0.21.1:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.23.3:", type=("build", "run"), when="@0.16.0:")
-    depends_on("r-biocgenerics@0.31.1:", type=("build", "run"), when="@0.26.1:")
-    depends_on("r-biocgenerics@0.36.0:", type=("build", "run"), when="@0.28.1:")
+    depends_on("r@3.3.0:", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.53.2:", type=("build", "run"), when="@0.45.2:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@0.32.3:")
+    depends_on("r-biocgenerics@0.36.0:", type=("build", "run"), when="@0.28.1:")
+    depends_on("r-biocgenerics@0.31.1:", type=("build", "run"), when="@0.26.1:")
+    depends_on("r-biocgenerics@0.23.3:", type=("build", "run"), when="@0.16.0:")
+    depends_on("r-biocgenerics@0.21.1:", type=("build", "run"))

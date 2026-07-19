@@ -55,6 +55,8 @@ class Bufr(CMakePackage):
     depends_on("python@3:", type=("build", "run"), when="+python")
     depends_on("python@:3.11", type=("build", "run"), when="@:12.0 +python")
     depends_on("py-setuptools", type="build", when="+python")
+    # f2py uses Meson as its build backend with Python 3.12 and newer.
+    depends_on("meson", type="build", when="+python ^python@3.12:")
     depends_on("py-numpy", type=("build", "run"), when="+python")
     depends_on("py-pip", type="build", when="+python")
     depends_on("py-wheel", type="build", when="+python")

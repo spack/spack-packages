@@ -24,6 +24,7 @@ class RGenomicranges(RPackage):
     bioc = "GenomicRanges"
 
     with default_args(get_full_repo=True):
+        version("1.60.0", commit="9d5d73b5f790c884d8acc18016943784cdc0b8c8")  # bioc 3.21
         version("1.52.0", commit="883f125ea593099293dc808ec2188be3cbdbd3a7")
         version("1.50.1", commit="6b3fb388ec038fb43f3cd26684ce778ee0e80e81")
         version("1.48.0", commit="2bce60814db7c20949892587740fb484aa435978")
@@ -35,27 +36,37 @@ class RGenomicranges(RPackage):
         version("1.30.3", commit="e99979054bc50ed8c0109bc54563036c1b368997")
         version("1.28.6", commit="197472d618f3ed04c795dc6ed435500c29619563")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("r@2.10:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.46.1:")
-    depends_on("r-biocgenerics@0.21.2:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r@2.10:", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.53.2:", type=("build", "run"), when="@1.59.1:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.46.1:")
-    depends_on("r-s4vectors@0.9.47:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.32:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-s4vectors@0.19.11:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.42.0:")
-    depends_on("r-iranges@2.9.11:", type=("build", "run"))
-    depends_on("r-iranges@2.11.16:", type=("build", "run"), when="@1.30.3:")
-    depends_on("r-iranges@2.14.4:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-iranges@2.15.12:", type=("build", "run"), when="@1.34.0:")
-    depends_on("r-iranges@2.17.1:", type=("build", "run"), when="@1.36.1:")
-    depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.42.0:")
-    depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@1.50.1:")
-    depends_on("r-genomeinfodb@1.11.5:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.30.3:")
+    depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r-biocgenerics@0.21.2:", type=("build", "run"))
+
+    depends_on("r-genomeinfodb@1.43.1:", type=("build", "run"), when="@1.59.1:")
     depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-xvector", type=("build", "run"))
-    depends_on("r-xvector@0.19.8:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.30.3:")
+    depends_on("r-genomeinfodb@1.11.5:", type=("build", "run"))
+
+    depends_on("r-iranges@2.41.1:", type=("build", "run"), when="@1.59.1:")
+    depends_on("r-iranges@2.37.1:", type=("build", "run"), when="@1.55.2:")
+    depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@1.50.1:")
+    depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.42.0:")
+    depends_on("r-iranges@2.17.1:", type=("build", "run"), when="@1.36.1:")
+    depends_on("r-iranges@2.15.12:", type=("build", "run"), when="@1.34.0:")
+    depends_on("r-iranges@2.14.4:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r-iranges@2.11.16:", type=("build", "run"), when="@1.30.3:")
+    depends_on("r-iranges@2.9.11:", type=("build", "run"))
+
+    depends_on("r-s4vectors@0.45.2:", type=("build", "run"), when="@1.59.1:")
+    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.42.0:")
+    depends_on("r-s4vectors@0.19.11:", type=("build", "run"), when="@1.34.0:")
+    depends_on("r-s4vectors@0.17.32:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r-s4vectors@0.9.47:", type=("build", "run"))
+
     depends_on("r-xvector@0.29.2:", type=("build", "run"), when="@1.42.0:")
+    depends_on("r-xvector@0.19.8:", type=("build", "run"), when="@1.32.7:")
+    depends_on("r-xvector", type=("build", "run"))
