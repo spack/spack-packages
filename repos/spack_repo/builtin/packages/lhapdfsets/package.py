@@ -4,6 +4,7 @@
 
 import fnmatch
 import os
+from functools import cached_property
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
 
@@ -41,15 +42,13 @@ class Lhapdfsets(BundlePackage):
         default="default",
     )
 
+    @cached_property
     def available_sets(self):
         with open(join_path(os.path.dirname(__file__), "pdfsets.index")) as index:
-            available_sets = []
-            for line in index:
-                available_sets.append(line.split()[1])
-            return available_sets
+            return [line.split()[1] for line in index]
 
     def resolve_sets(self, requested_sets):
-        available_sets = self.available_sets()
+        available_sets = self.available_sets
         default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
         resolved_sets = []
         seen_sets = set()
@@ -67,7 +66,11 @@ class Lhapdfsets(BundlePackage):
                 ]
 
             if not matches:
-                raise InstallError("No LHAPDF sets match pattern '{0}'".format(requested_set))
+                raise InstallError(
+                    'Pattern "{0}" did not match any available LHAPDF sets'.format(
+                        requested_set
+                    )
+                )
 
             for match in matches:
                 if match not in seen_sets:
