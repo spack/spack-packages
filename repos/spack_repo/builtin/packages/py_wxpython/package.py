@@ -41,6 +41,9 @@ class PyWxpython(PythonPackage):
     # Needed for the build.py script
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@:75", type="build", when="@:4.1")  # deprecated license-file
+    # As of 4.2.4, sdists no longer ship wx/svg/_nanosvg.c
+    # https://github.com/wxWidgets/Phoenix/issues/2843
+    depends_on("py-cython", type="build", when="@4.2.4:")
     depends_on("py-pathlib2", type="build")
     depends_on("py-requests", type="build")
 
