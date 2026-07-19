@@ -35,9 +35,7 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     variant("python", default=True, description="Build Python bindings")
-    variant(
-        "c_fortran_wrappers", default=True, description="Build C and Fortran API wrappers"
-    )
+    variant("c_fortran_wrappers", default=True, description="Build C and Fortran API wrappers")
     variant("opencl", default=False, description="Build with OpenCL")
     variant("examples", default=False, description="Build example executables")
     variant("docs", default=False, description="Build API documentation")
@@ -147,9 +145,7 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("OPENMM_BUILD_HIP_LIB", "rocm"),
             self.define_from_variant("OPENMM_BUILD_OPENCL_LIB", "opencl"),
             self.define_from_variant("OPENMM_BUILD_PYTHON_WRAPPERS", "python"),
-            self.define_from_variant(
-                "OPENMM_BUILD_C_AND_FORTRAN_WRAPPERS", "c_fortran_wrappers"
-            ),
+            self.define_from_variant("OPENMM_BUILD_C_AND_FORTRAN_WRAPPERS", "c_fortran_wrappers"),
             self.define_from_variant("OPENMM_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("OPENMM_GENERATE_API_DOCS", "docs"),
             self.define_from_variant("OPENMM_BUILD_SHARED_LIB", "shared"),
