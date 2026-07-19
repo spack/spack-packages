@@ -35,8 +35,7 @@ class Lhapdfsets(BundlePackage):
     variant(
         "sets",
         description=(
-            "Individual lhapdf sets or patterns to install "
-            "(all, default, or comma-separated list)"
+            "Individual lhapdf sets or patterns to install (all, default, or comma-separated list)"
         ),
         multi=True,
         default="default",
@@ -67,9 +66,7 @@ class Lhapdfsets(BundlePackage):
 
             if not matches:
                 raise InstallError(
-                    'Pattern "{0}" did not match any available LHAPDF sets'.format(
-                        requested_set
-                    )
+                    'Pattern "{0}" did not match any available LHAPDF sets'.format(requested_set)
                 )
 
             for match in matches:
