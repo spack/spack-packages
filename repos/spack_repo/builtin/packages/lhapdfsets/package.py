@@ -33,7 +33,10 @@ class Lhapdfsets(BundlePackage):
 
     variant(
         "sets",
-        description="Individual lhapdf sets or patterns to install (all, default, or comma-separated list)",
+        description=(
+            "Individual lhapdf sets or patterns to install "
+            "(all, default, or comma-separated list)"
+        ),
         multi=True,
         default="default",
     )
