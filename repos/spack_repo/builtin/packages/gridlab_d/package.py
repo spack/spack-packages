@@ -34,7 +34,7 @@ class GridlabD(CMakePackage):
 
     depends_on("cmake@3.10:", type="build")
     depends_on("xerces-c")
-    depends_on("superlu-mt") # not clear if this and SuperLU_MT_ROOT are used
+    depends_on("superlu-mt")  # not clear if this and SuperLU_MT_ROOT are used
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
 
