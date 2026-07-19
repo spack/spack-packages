@@ -38,7 +38,7 @@ class GridlabD(CMakePackage):
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
 
-    def cmake_args(self) -> List[str]:
+    def cmake_args(self):
         args = []
 
         args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
@@ -66,9 +66,7 @@ class GridlabD(CMakePackage):
         env.set("GLPATH", join_path(self.prefix, "lib", "gridlabd"))
         env.prepend_path("GLPATH", join_path(self.prefix, "share", "gridlabd"))
 
-    def flag_handler(
-        self, name: str, flags: List[str]
-    ) -> tuple[List[str], Optional[List[str]], Optional[List[str]]]:
+    def flag_handler(self, name: str, flags: List[str]):
         # gridlab-d's C++ code isn't strict-standards-compliant and needs
         # -fpermissive on GCC/Clang-family compilers to build at all.
         if name == "cxxflags":
