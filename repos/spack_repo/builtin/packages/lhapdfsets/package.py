@@ -62,11 +62,6 @@ class Lhapdfsets(BundlePackage):
                     if fnmatch.fnmatchcase(available_set, requested_set)
                 ]
 
-            if not matches:
-                raise InstallError(
-                    'Pattern "{0}" did not match any available LHAPDF sets'.format(requested_set)
-                )
-
             for match in matches:
                 if match not in seen_sets:
                     seen_sets.add(match)
