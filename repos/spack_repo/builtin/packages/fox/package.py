@@ -33,6 +33,7 @@ class Fox(AutotoolsPackage):
 
     variant("opengl", default=False, description="opengl support")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("bzip2")

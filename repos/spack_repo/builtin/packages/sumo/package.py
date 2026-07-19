@@ -18,6 +18,7 @@ class Sumo(CMakePackage):
 
     license("EPL-2.0")
 
+    version("1.27.1", sha256="a48f3f7d46886d4c8fd1b5f751ab892bdbdfb35d05420eababefdf6e8875cd8b")
     version("1.5.0", sha256="be6ba0361b487a5e71c81e60b4c07a67826d5e170500c10c37374c1086ac2cb6")
 
     variant("gdal", default=True, description="gdal support, for arcgis")
@@ -30,6 +31,7 @@ class Sumo(CMakePackage):
     variant("gl2ps", default=False, description="gl2ps support")
     variant("eigen", default=False, description="eigen support")
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     extends("python")
