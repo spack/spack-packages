@@ -72,7 +72,10 @@ class GridlabD(CMakePackage):
         # gridlab-d's C++ code isn't strict-standards-compliant and needs
         # -fpermissive on GCC/Clang-family compilers to build at all.
         if name == "cxxflags":
-            if self.spec.satisfies("%gcc") or self.spec.satisfies("%clang")
-            or self.spec.satisfies("%apple-clang"):
+            if (
+                self.spec.satisfies("%gcc")
+                or self.spec.satisfies("%clang")
+                or self.spec.satisfies("%apple-clang")
+            ):
                 flags.append("-fpermissive")
         return (flags, None, None)
