@@ -35,7 +35,9 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     variant("python", default=True, description="Build Python bindings")
-    variant("fortran", default=True, description="Build C and Fortran wrappers")
+    variant(
+        "c_fortran_wrappers", default=True, description="Build C and Fortran API wrappers"
+    )
     variant("opencl", default=False, description="Build with OpenCL")
     variant("examples", default=False, description="Build example executables")
     variant("docs", default=False, description="Build API documentation")
@@ -45,25 +47,28 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="@:8.1.1", msg="OpenMM HIP platform was first released in 8.2.0")
     conflicts("~shared~static", msg="OpenMM must build at least one library type")
     conflicts("~shared+python", msg="OpenMM Python bindings require shared libraries")
-    conflicts("~shared+fortran", msg="OpenMM C and Fortran wrappers require shared libraries")
+    conflicts(
+        "~shared+c_fortran_wrappers",
+        msg="OpenMM C and Fortran wrappers require shared libraries",
+    )
 
     depends_on("cmake@3.17:", type="build", when="@7.5.1:")
     depends_on("cmake@3.1:", type="build")
     # https://github.com/openmm/openmm/issues/3317
     depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+python")
-    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+fortran")
+    depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+c_fortran_wrappers")
     depends_on("doxygen@:1.9.1", type="build", when="@:7.6.0+docs")
     depends_on("doxygen", type="build", when="@7.7:+python")
-    depends_on("doxygen", type="build", when="@7.7:+fortran")
+    depends_on("doxygen", type="build", when="@7.7:+c_fortran_wrappers")
     depends_on("doxygen", type="build", when="@7.7:+docs")
     depends_on("swig", type="build", when="+python")
     depends_on("fftw", when="@:7")
     depends_on("python@2.7:", type=("build", "run"), when="@:7+python")
     depends_on("python@3:", type=("build", "run"), when="@8:+python")
     depends_on("python@3.10:", type=("build", "run"), when="@8.5:+python")
-    depends_on("python@2.7:", type="build", when="@:7+fortran")
-    depends_on("python@3:", type="build", when="@8:+fortran")
-    depends_on("python@3.10:", type="build", when="@8.5:+fortran")
+    depends_on("python@2.7:", type="build", when="@:7+c_fortran_wrappers")
+    depends_on("python@3:", type="build", when="@8:+c_fortran_wrappers")
+    depends_on("python@3.10:", type="build", when="@8.5:+c_fortran_wrappers")
     depends_on("python@2.7:", type="build", when="@:7+docs")
     depends_on("python@3:", type="build", when="@8:+docs")
     depends_on("python@3.10:", type="build", when="@8.5:+docs")
@@ -142,7 +147,9 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("OPENMM_BUILD_HIP_LIB", "rocm"),
             self.define_from_variant("OPENMM_BUILD_OPENCL_LIB", "opencl"),
             self.define_from_variant("OPENMM_BUILD_PYTHON_WRAPPERS", "python"),
-            self.define_from_variant("OPENMM_BUILD_C_AND_FORTRAN_WRAPPERS", "fortran"),
+            self.define_from_variant(
+                "OPENMM_BUILD_C_AND_FORTRAN_WRAPPERS", "c_fortran_wrappers"
+            ),
             self.define_from_variant("OPENMM_BUILD_EXAMPLES", "examples"),
             self.define_from_variant("OPENMM_GENERATE_API_DOCS", "docs"),
             self.define_from_variant("OPENMM_BUILD_SHARED_LIB", "shared"),
