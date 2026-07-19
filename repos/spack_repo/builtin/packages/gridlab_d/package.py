@@ -66,10 +66,12 @@ class GridlabD(CMakePackage):
         env.set("GLPATH", join_path(self.prefix, "lib", "gridlabd"))
         env.prepend_path("GLPATH", join_path(self.prefix, "share", "gridlabd"))
 
-    def flag_handler(self, name: str, flags: List[str]) -> tuple[List[str], Optional[List[str]], Optional[List[str]]]:
+    def flag_handler(self, name: str, flags: List[str]
+                    ) -> tuple[List[str], Optional[List[str]], Optional[List[str]]]:
         # gridlab-d's C++ code isn't strict-standards-compliant and needs
         # -fpermissive on GCC/Clang-family compilers to build at all.
         if name == "cxxflags":
-            if self.spec.satisfies("%gcc") or self.spec.satisfies("%clang") or self.spec.satisfies("%apple-clang"):
+            if self.spec.satisfies("%gcc") or self.spec.satisfies("%clang")
+            or self.spec.satisfies("%apple-clang"):
                 flags.append("-fpermissive")
         return (flags, None, None)
