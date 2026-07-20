@@ -13,13 +13,14 @@ class EnvironmentModules(Package):
     modification of a user's environment via module files.
     """
 
-    homepage = "https://envmodules.github.io/modules/"
-    url = "https://github.com/envmodules/modules/releases/download/v5.6.0/modules-5.6.0.tar.gz"
+    homepage = "https://envmodules.io"
+    url = "https://github.com/envmodules/modules/releases/download/v5.6.1/modules-5.6.1.tar.gz"
     git = "https://github.com/envmodules/modules.git"
 
     maintainers("xdelaruelle")
 
     version("main", branch="main")
+    version("5.6.1", sha256="b175e57860e62d87b6118a79cc2d76e857e5774a9ff78558d6726122760b0034")
     version("5.6.0", sha256="9dd78f1543012acd3a1a14ba86dc1dca8f7d176396ea3f0027a92dcf5ff2057c")
     version("5.5.0", sha256="ad0e360c7adc2515a99836863d98499b3ad89cd7548625499b20293845b040cb")
     version("5.4.0", sha256="586245cbf9420866078d8c28fce8ef4f192530c69a0f368f51e848340dcf3b90")

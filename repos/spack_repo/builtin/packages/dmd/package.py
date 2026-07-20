@@ -53,9 +53,9 @@ class Dmd(MakefilePackage):
 
     def edit(self, spec, prefix):
         # Move contents to dmd/
-        mkdir = which("mkdir")
+        mkdir = which("mkdir", required=True)
         mkdir("dmd")
-        mv = which("mv")
+        mv = which("mv", required=True)
         dmd_files = [
             f
             for f in os.listdir(".")

@@ -21,6 +21,7 @@ class Opam(AutotoolsPackage):
 
     maintainers("green-br")
 
+    version("2.5.0", sha256="25fb98f962c4227c1261e142afc68a416778e6e819600bd5ee3ec4a18ae1e238")
     version("2.4.1", sha256="c4d053029793c714e4e7340b1157428c0f90783585fb17f35158247a640467d9")
     version("2.2.1", sha256="07ad3887f61e0bc61a0923faae16fcc141285ece5b248a9e2cd4f902523cc121")
     version("2.2.0", sha256="39334f36adbe280683487cf204b7b0642080fc5965747f7d6f7cc7b83cd7a192")
@@ -41,8 +42,8 @@ class Opam(AutotoolsPackage):
     variant("user", default=False, description="User-supplied environment.")
     variant("sandbox", default=True, description="Use sandbox feature.")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@2.2.0:")
 
     depends_on("bubblewrap", type=("build", "run"), when="@2: +sandbox platform=linux")
 

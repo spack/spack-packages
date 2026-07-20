@@ -21,6 +21,8 @@ class Libevent(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
+    maintainers("CodingYayaToure")
+
     version("2.1.12", sha256="92e6de1be9ec176428fd2367677e61ceffc2ee1cb119035037a27d346b0403bb")
     version("2.1.11", sha256="a65bac6202ea8c5609fd5c7e480e6d25de467ea1917c08290c521752f147283d")
     version("2.1.10", sha256="e864af41a336bb11dab1a23f32993afe963c1f69618bd9292b89ecf6904845b0")
@@ -46,6 +48,16 @@ class Libevent(AutotoolsPackage):
     depends_on("openssl", when="+openssl")
 
     conflicts("+openssl", when="@:2.0")
+
+    @when("@:2.1.12")
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # The extra, pthreads, and openssl libs are linked without libevent_core, so they
+        # only link as dylibs when libtool passes -undefined dynamic_lookup, which it does
+        # only for MACOSX_DEPLOYMENT_TARGET=10.*
+        # Fixed in v2.1.13 and later versions
+        # See https://github.com/spack/spack-packages/pull/5525
+        if self.spec.platform == "darwin":
+            env.set("MACOSX_DEPLOYMENT_TARGET", "10.16")
 
     def url_for_version(self, version):
         if version >= Version("2.0.22"):

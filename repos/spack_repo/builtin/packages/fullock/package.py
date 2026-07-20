@@ -34,5 +34,5 @@ class Fullock(AutotoolsPackage):
     depends_on("m4", type="build")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

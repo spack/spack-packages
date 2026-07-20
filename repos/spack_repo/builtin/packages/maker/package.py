@@ -77,8 +77,8 @@ class Maker(Package):
                 repl = "my $go = 1;"
                 filter_file(pattern, repl, "Build.PL", backup=False)
 
-        perl = which("perl")
-        rm = which("rm")
+        perl = which("perl", required=True)
+        rm = which("rm", required=True)
         with working_dir("src"):
             perl("Build.PL", "--install_base", prefix)
             perl("Build", "install")

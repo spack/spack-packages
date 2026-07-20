@@ -18,6 +18,9 @@ class PyMne(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.12.1", sha256="244f844057f28a4da2509039dba637832ffb65f678ca76fc667312c493b12044")
+    version("1.12.0", sha256="29ff8331ba58626b5ce361dee66c0de5e331a0fd8217ac7543fb552ce667f522")
+    version("1.11.0", sha256="0a89b8fc44133b81218a35cdcba74ad0f8ae2e265136249b365b9ce04864c688")
     version("1.10.2", sha256="e83610ed3fa86086c7b2006e978e2ec39d9ebc8d72e2777fde64c68674ec561f")
     version("1.10.1", sha256="a93e3d772d551e43ec5ddcd3495fffe0f98e3e384045bcd96497636e86a32a0b")
     version("1.7.1", sha256="a87bbc998b792532d2c87add8b0f7bbf28a4d8cf5db1bdfb6d6e260791754498")
@@ -34,84 +37,91 @@ class PyMne(PythonPackage):
     variant("full", default=False, when="@:0.23", description="Enable full functionality.")
     variant("hdf5", default=False, when="@1:", description="Enable hdf5 functionality.")
 
-    depends_on("python@3.10:", when="@1.9:", type=("build", "run"))
-    depends_on("python@3.9:", when="@1.7:", type=("build", "run"))
-    depends_on("python@3.8:", when="@1.4:", type=("build", "run"))
-    depends_on("py-hatchling", when="@1.7:", type="build")
-    depends_on("py-hatch-vcs", when="@1.7:", type="build")
+    with default_args(type="build"):
+        depends_on("py-hatch-vcs", when="@1.7:")
+        depends_on("py-hatchling@1.27", when="@1.12:")
+        depends_on("py-hatchling", when="@1.7:")
 
-    # dependencies for @:1.5 can be found in requirements_base.txt with versions
-    # specified in README.rst (marked with *)
-    depends_on("py-decorator", when="@1:", type=("build", "run"))
-    depends_on("py-jinja2", when="@1:", type=("build", "run"))
-    depends_on("py-lazy-loader@0.3:", when="@1.6.1:", type=("build", "run"))
-    depends_on("py-matplotlib@3.7:", when="@1.10:", type=("build", "run"))
-    depends_on("py-matplotlib@3.5:", when="@1.6.1:", type=("build", "run"))
-    depends_on("py-matplotlib@3.4:", when="@1.4:", type=("build", "run"))  # *
-    depends_on("py-matplotlib@3.1:", when="@1:", type=("build", "run"))  # *
-    depends_on("py-numpy@1.25:2", when="@1.6.1:", type=("build", "run"))
-    depends_on("py-numpy@1.21.2:", when="@1.6.1:1.7", type=("build", "run"))
-    depends_on("py-numpy@1.20.2:", when="@1.4:1.7", type=("build", "run"))  # *
-    depends_on("py-numpy@1.18.1:", when="@1:1.7", type=("build", "run"))  # *
-    depends_on("py-numpy@1.15.4:", when="@0.23:1.7", type=("build", "run"))
-    depends_on("py-numpy@1.11.3:", when="@:1.7", type=("build", "run"))
-    depends_on("py-numpy@:1", when="@:1.6", type=("build", "run"))
-    depends_on("py-packaging", when="@1:", type=("build", "run"))
-    depends_on("py-pooch@1.5:", when="@1:", type=("build", "run"))
-    depends_on("py-scipy@1.11:", when="@1.10:", type=("build", "run"))
-    depends_on("py-scipy@1.7.1:", when="@1.6.1:", type=("build", "run"))
-    depends_on("py-scipy@1.6.3:", when="@1.4:", type=("build", "run"))
-    depends_on("py-scipy@1.4.1:", when="@1:", type=("build", "run"))  # *
-    depends_on("py-scipy@1.1.0:", when="@0.23:", type=("build", "run"))
-    depends_on("py-scipy@0.17.1:", type=("build", "run"))
-    depends_on("py-tqdm", when="@1:", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-setuptools@45:", when="@1.4:1.6")
+        depends_on("py-setuptools", when="@:1.6")
+        depends_on("py-setuptools-scm@6.2:", when="@1.4:1.6")
 
-    with when("+hdf5"):
-        depends_on("py-h5io@0.2.4:", when="@1.8:", type=("build", "run"))
-        depends_on("py-h5io", type=("build", "run"))
-        depends_on("py-pymatreader", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@1.9:")
+        depends_on("python@3.9:", when="@1.7:")
+        depends_on("python@3.8:", when="@1.4:")
 
-    # Historical dependencies
-    depends_on("py-setuptools@45:", when="@1.4:1.6", type="build")
-    depends_on("py-setuptools", when="@:1.6", type="build")
-    depends_on("py-setuptools-scm@6.2:", when="@1.4:1.6", type="build")
-    depends_on(
-        "py-importlib-resources@5.10.2:", when="@1.4:1.6 ^python@:3.9", type=("build", "run")
-    )
+        # dependencies for @:1.5 can be found in requirements_base.txt with versions
+        # specified in README.rst (marked with *)
+        depends_on("py-decorator@5.1:", when="@1:")
+        depends_on("py-decorator", when="@1:")
+        depends_on("py-jinja2@3.1", when="@1.12:")
+        depends_on("py-jinja2", when="@1:")
+        depends_on("py-lazy-loader@0.3:", when="@1.6.1:")
+        depends_on("py-matplotlib@3.8:", when="@1.11:")
+        depends_on("py-matplotlib@3.7:", when="@1.10:")
+        depends_on("py-matplotlib@3.5:", when="@1.6.1:")
+        depends_on("py-matplotlib@3.4:", when="@1.4:")  # *
+        depends_on("py-matplotlib@3.1:", when="@1:")  # *
+        depends_on("py-numpy@1.26:2", when="@1.11:")
+        depends_on("py-numpy@1.25:2", when="@1.6.1:1.10")
+        depends_on("py-numpy@1.21.2:", when="@1.6.1:1.7")
+        depends_on("py-numpy@1.20.2:", when="@1.4:1.7")  # *
+        depends_on("py-numpy@1.18.1:", when="@1:1.7")  # *
+        depends_on("py-numpy@1.15.4:", when="@0.23:1.7")
+        depends_on("py-numpy@1.11.3:", when="@:1.7")
+        depends_on("py-numpy@:1", when="@:1.6")
+        depends_on("py-packaging", when="@1:")
+        depends_on("py-pooch@1.5:", when="@1:")
+        depends_on("py-scipy@1.13:", when="@1.12:")
+        depends_on("py-scipy@1.11:", when="@1.10:")
+        depends_on("py-scipy@1.7.1:", when="@1.6.1:")
+        depends_on("py-scipy@1.6.3:", when="@1.4:")
+        depends_on("py-scipy@1.4.1:", when="@1:")  # *
+        depends_on("py-scipy@1.1.0:", when="@0.23:")
+        depends_on("py-scipy@0.17.1:")
+        depends_on("py-tqdm@4.66:", when="@1.12:")
+        depends_on("py-tqdm", when="@1:")
 
-    with when("+full"):
-        # requirements.txt with versions specified in README.rst (marked with *)
-        depends_on("py-matplotlib@3.0.3:", type=("build", "run"))  # *
-        depends_on("py-pyqt5@5.10:,:5.15.1,5.15.4:", when="platform=linux", type=("build", "run"))
-        depends_on("py-pyqt5@5.10:,:5.13", when="platform=darwin", type=("build", "run"))
-        depends_on("py-pyqt5@5.10:,:5.15.2,5.15.4:", when="platform=win32", type=("build", "run"))
-        depends_on("py-pyqt5-sip", type=("build", "run"))
-        depends_on("py-sip", type=("build", "run"))
-        depends_on("py-scikit-learn@0.20.2:", type=("build", "run"))  # *
-        depends_on("py-nibabel@2.1.0:", type=("build", "run"))  # *
-        depends_on("py-numba@0.40:", type=("build", "run"))  # *
-        depends_on("py-h5py", type=("build", "run"))
-        depends_on("py-pandas@0.23.4:", type=("build", "run"))  # *
-        depends_on("py-numexpr", type=("build", "run"))
-        depends_on("py-jupyter", type=("build", "run"))
-        depends_on("py-python-picard@0.3:", type=("build", "run"))  # *
-        depends_on("py-statsmodels", type=("build", "run"))
-        depends_on("py-joblib", type=("build", "run"))
-        depends_on("py-psutil", type=("build", "run"))
-        depends_on("py-dipy@0.10.1:", type=("build", "run"))  # *
-        depends_on("vtk+python", type=("build", "run"))
-        depends_on("py-mayavi", type=("build", "run"))
-        depends_on("py-pysurfer+save_movie", type=("build", "run"))
-        depends_on("py-nilearn", type=("build", "run"))
-        depends_on("py-xlrd", type=("build", "run"))
-        depends_on("py-imageio@2.6.1:", type=("build", "run"))  # *
-        depends_on("py-imageio-ffmpeg@0.4.1:", type=("build", "run"))
-        depends_on("py-pyvista@0.24:", type=("build", "run"))  # *
-        depends_on("py-pyvistaqt@0.2.0:", type=("build", "run"))  # *
-        depends_on("py-tqdm", type=("build", "run"))
-        depends_on("py-mffpy@0.5.7:", type=("build", "run"))  # *
-        depends_on("py-ipywidgets", type=("build", "run"))
-        depends_on("py-ipyvtk-simple", type=("build", "run"))
+        with when("+hdf5"):
+            depends_on("py-h5io@0.2.4:", when="@1.8:")
+            depends_on("py-h5io")
+            depends_on("py-pymatreader")
 
-        # README.rst
-        # depends_on('py-cupy@4.0:', type=('build', 'run'))  # not yet in spack
+        # Historical dependencies
+        depends_on("py-importlib-resources@5.10.2:", when="@1.4:1.6 ^python@:3.9")
+
+        with when("+full"):
+            # requirements.txt with versions specified in README.rst (marked with *)
+            depends_on("py-matplotlib@3.0.3:")  # *
+            depends_on("py-pyqt5@5.10:,:5.15.1,5.15.4:", when="platform=linux")
+            depends_on("py-pyqt5@5.10:,:5.13", when="platform=darwin")
+            depends_on("py-pyqt5@5.10:,:5.15.2,5.15.4:", when="platform=win32")
+            depends_on("py-pyqt5-sip")
+            depends_on("py-sip")
+            depends_on("py-scikit-learn@0.20.2:")  # *
+            depends_on("py-nibabel@2.1.0:")  # *
+            depends_on("py-numba@0.40:")  # *
+            depends_on("py-h5py")
+            depends_on("py-pandas@0.23.4:")  # *
+            depends_on("py-numexpr")
+            depends_on("py-jupyter")
+            depends_on("py-python-picard@0.3:")  # *
+            depends_on("py-statsmodels")
+            depends_on("py-joblib")
+            depends_on("py-psutil")
+            depends_on("py-dipy@0.10.1:")  # *
+            depends_on("vtk+python")
+            depends_on("py-mayavi")
+            depends_on("py-pysurfer+save_movie")
+            depends_on("py-nilearn")
+            depends_on("py-xlrd")
+            depends_on("py-imageio@2.6.1:")  # *
+            depends_on("py-imageio-ffmpeg@0.4.1:")
+            depends_on("py-pyvista@0.24:")  # *
+            depends_on("py-pyvistaqt@0.2.0:")  # *
+            depends_on("py-tqdm")
+            depends_on("py-mffpy@0.5.7:")  # *
+            depends_on("py-ipywidgets")
+            depends_on("py-ipyvtk-simple")

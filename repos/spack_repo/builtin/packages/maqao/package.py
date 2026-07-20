@@ -53,6 +53,6 @@ class Maqao(Package):
                 )
             )
         # Installing from archive
-        tar = which("tar")
+        tar = which("tar", required=True)
         tar("xJf", self.stage.archive_file)
         install_tree(".", prefix)

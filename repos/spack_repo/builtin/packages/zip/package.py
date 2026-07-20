@@ -41,6 +41,10 @@ class Zip(MakefilePackage):
     # these are not from the debian branch
     patch("12-gcc14-no-implicit-declarations-fix.patch", when="%gcc@14:")
 
+    # Adopt patch from Homebrew for newer clang
+    # https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/z/zip.rb
+    patch("xcode15.patch", when="%apple-clang@15:")
+
     executables = ["^zip$"]
 
     @classmethod

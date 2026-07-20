@@ -13,7 +13,7 @@ class Alpaka(CMakePackage, CudaPackage):
     """Abstraction Library for Parallel Kernel Acceleration."""
 
     homepage = "https://github.com/alpaka-group/alpaka"
-    url = "https://github.com/alpaka-group/alpaka/archive/refs/tags/0.6.0.tar.gz"
+    url = "https://github.com/alpaka-group/alpaka/archive/refs/tags/0.9.0.tar.gz"
     git = "https://github.com/alpaka-group/alpaka.git"
 
     maintainers("vvolkl")
@@ -21,6 +21,16 @@ class Alpaka(CMakePackage, CudaPackage):
     license("MPL-2.0-no-copyleft-exception")
 
     version("develop", branch="develop")
+    version("2.1.1", sha256="2d30a43594c55067297947b0ec83300e4f2899497464c5cc6f142c823f3ea1b2")
+    # 2.1.0 is deprecated due to the buffer/view arrow operator bug
+    # see https://github.com/alpaka-group/alpaka/pull/2600
+    version(
+        "2.1.0",
+        sha256="e5de511561d7630e856e58b6e191e054f627938d4be70cfefdc47c388449d77f",
+        deprecated=True,
+    )
+    version("1.3.0", sha256="8caec8de11a5537c721d2112c97252f06ffee709392ea02fcf62df4b50511714")
+    version("2.0.0", sha256="ed313117aa922ef7260ec37bc5f79d750ae5547f0b9e0380a016590aa3a98e8b")
     version("1.2.0", sha256="069ea68ac950b17cffb3a3e790973aa5115f07ab23c0247a167e815b3c6e6fa2")
     version("1.1.0", sha256="95a8f1b706105d8a213116b6ba00e27bd904855c377f5a22a04aa0b86054dc35")
     version("1.0.0", sha256="38223dc1ca5bcf3916ff91f8825fb8caab7047430877222847e0ceb93bffecc9")
@@ -48,10 +58,18 @@ class Alpaka(CMakePackage, CudaPackage):
 
     depends_on("cxx", type="build")  # generated
 
+    variant(
+        "boost_atomic_ref",
+        default=False,
+        when="@2:",
+        description="To use atomic ref from boost, if C++20 std::atomic_ref is not available",
+    )
     depends_on("boost@1.74:")
+    depends_on("boost@1.78:+atomic", when="@2: +boost_atomic_ref")
 
     depends_on("cmake@3.18:")
     depends_on("cmake@3.22:", when="@1:")
+    depends_on("cmake@3.25:", when="@2:")
 
     # make sure no other backend is enabled if using cuda_only or hip_only
     for v in ("serial", "threads", "tbb", "omp2_gridblock", "omp2_blockthread", "cuda", "hip"):

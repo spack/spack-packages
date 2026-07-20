@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import glob
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
@@ -13,7 +11,7 @@ class Shamrock(CMakePackage):
     """The Shamrock exascale framework for astrophysics"""
 
     homepage = "https://shamrock-code.github.io/"
-    url = "https://github.com/Shamrock-code/Shamrock/releases/download/v2025.05.0/shamrock-2025.05.0.tar"
+    url = "https://github.com/Shamrock-code/Shamrock/releases/download/v2025.10.0/shamrock-2025.10.0.tar"
     git = "https://github.com/Shamrock-code/Shamrock.git"
 
     maintainers("tdavidcl")
@@ -23,12 +21,13 @@ class Shamrock(CMakePackage):
     version("main", branch="main", submodules=True)
 
     version("2025.05.0", sha256="59d5652467fd9453a65ae7b48e0c9b7d4162edc8df92e09d08dcc5275407a897")
+    version("2025.10.0", sha256="72683352d862d7b3d39568151a17ea78633bd4976a40eacb77098d3ef0ca3c55")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     variant("shared", default=True, description="Enables the build of shared libraries")
-    variant("testing", default=True, description="Enables the build of shared libraries")
+    variant("testing", default=True, description="Enables the build of tests")
     variant("pybindings", default=True, description="Install python bindings")
 
     generator("ninja")
@@ -73,33 +72,13 @@ class Shamrock(CMakePackage):
 
             args += [self.define("ACPP_PATH", self.spec["hipsycl"].prefix)]
 
-        return args
-
-    @run_after("install")
-    def install_python_bindigs(self):
-        """Copy the .so files to the python site-packages directory"""
-
-        spec = self.spec
-        libdir = spec.prefix.lib
-
         if self.spec.satisfies("+pybindings"):
-            # move shamrock python bindings into expected place
-            site_packages = join_path(python_platlib, "shamrock")
-            mkdirp(site_packages)
+            py_libdir = join_path(
+                self.prefix.lib, f"python{spec['python'].version.up_to(2)}", "site-packages"
+            )
+            args.append(self.define("CMAKE_INSTALL_PYTHONDIR", py_libdir))
 
-            # Find all .so files in the build directory
-            so_files = glob.glob(join_path(libdir, "*.so"))
-
-            # Install each .so file to the install directory
-            for _f in so_files:
-                install(_f, site_packages)
-
-            # Python need a __init__.py file to import properly the .so
-            raw_string = "from .shamrock import *\n"
-            filename = "__init__.py"
-            filepath = join_path(site_packages, filename)
-            with open(filepath, "w") as f:
-                f.write(raw_string)
+        return args
 
     def test_install(self):
         """Test the install (executable, python bindings)"""

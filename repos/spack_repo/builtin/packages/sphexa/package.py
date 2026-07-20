@@ -16,7 +16,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/sphexa-org/sphexa"
     url = "https://github.com/sphexa-org/sphexa/archive/v0.0.0.tar.gz"
     git = "https://github.com/sphexa-org/sphexa.git"
-    maintainers = ["sekelle"]
+    maintainers("sekelle")
 
     license("MIT")
 
@@ -45,8 +45,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     with when("+gpu_aware_mpi"):
         depends_on("openmpi +cuda", when="+cuda ^[virtuals=mpi] openmpi")
         depends_on("mpich +cuda", when="+cuda ^[virtuals=mpi] mpich")
-        depends_on("mvapich +cuda", when="+cuda ^[virtuals=mpi] mvapich")
-        depends_on("mvapich2 +cuda", when="+cuda ^[virtuals=mpi] mvapich2")
+        depends_on("mvapich-plus +cuda", when="+cuda ^[virtuals=mpi] mvapich-plus")
 
         depends_on("mpich +rocm", when="+rocm ^[virtuals=mpi] mpich")
 

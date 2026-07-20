@@ -197,7 +197,7 @@ Done.
                 print(output)
                 print("-" * 80)
                 print("Environment:")
-                env = which("env")
+                env = which("env", required=True)
                 env()
                 raise RuntimeError("HDF5 Blosc plugin check failed")
         shutil.rmtree(checkdir)

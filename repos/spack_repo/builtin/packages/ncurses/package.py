@@ -26,6 +26,7 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
 
     license("X11")
 
+    version("6.6", sha256="355b4cbbed880b0381a04c46617b7656e362585d52e9cf84a67e2009b749ff11")
     version(
         "6.5-20250705",
         sha256="73f6c22db6c3fcac562e7b35aebf7d4cbb253ea30ba2ee465ab84d7d1b5cefc1",

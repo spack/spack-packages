@@ -19,6 +19,7 @@ class PyTensorly(PythonPackage):
 
     maintainers("meyersbs")
 
+    version("0.9.0", sha256="9b970dde47e2267a17b66a1444113e879c0bb77fb22f497a4207eb2b548ff792")
     version("0.8.1", sha256="cf78e4ffe612feca3510214002845c6831b267b1f2c1181154d41430310b237d")
 
     depends_on("py-setuptools", type="build")

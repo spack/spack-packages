@@ -28,7 +28,7 @@ class Apktool(Package):
     def install(self, spec, prefix):
         gradlew = Executable("./gradlew")
         gradlew("--info", "--debug", "build", "shadowJar")
-        ln = which("ln")
+        ln = which("ln", required=True)
         mkdir(join_path(prefix, "bin"))
         install(
             join_path("brut.apktool", "apktool-cli", "build", "libs", "apktool-cli-all.jar"),

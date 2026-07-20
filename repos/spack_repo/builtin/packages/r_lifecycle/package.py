@@ -23,6 +23,7 @@ class RLifecycle(RPackage):
 
     license("MIT")
 
+    version("1.0.5", sha256="61841e3e6edba056a88355a3f1d6698ab8d5d9cb3c05f2af0ec5a44ab516f8ee")
     version("1.0.4", sha256="ada4d3c7e84b0c93105e888647c5754219a8334f6e1f82d5afaf83d4855b91cc")
     version("1.0.3", sha256="6459fdc3211585c0cdf120427579c12149b02161efe273a64b825c05e9aa69c2")
     version("1.0.1", sha256="1da76e1c00f1be96ca34e122ae611259430bf99d6a1b999fdef70c00c30f7ba0")

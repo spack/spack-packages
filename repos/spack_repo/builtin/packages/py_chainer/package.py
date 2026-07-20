@@ -61,7 +61,7 @@ class PyChainer(PythonPackage):
             raise SkipTest("Test only supported when built with +mn")
 
         mnist_file = join_path(install_test_root(self).examples.chainermn.mnist, "train_mnist.py")
-        mpirun = which(self.spec["mpi"].prefix.bin.mpirun)
+        mpirun = which(self.spec["mpi"].prefix.bin.mpirun, required=True)
         opts = ["-n", "4", python.path, mnist_file, "-o", "."]
         env["OMP_NUM_THREADS"] = "4"
 

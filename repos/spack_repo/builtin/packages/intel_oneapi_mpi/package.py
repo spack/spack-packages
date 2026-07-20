@@ -3,6 +3,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+import os
+import re
+
 from spack_repo.builtin.build_systems.oneapi import IntelOneApiLibraryPackage, IntelOneApiPackage
 
 from spack.package import *
@@ -22,6 +25,24 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
 
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/mpi-library.html"
 
+    version(
+        "2021.18.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/1710a04f-08b7-4b46-a0a5-bd46a4ef4436/intel-mpi-2021.18.0.748_offline.sh",
+        sha256="a1d9bebb9112f166c1911371971ae03fecb447f58d9f28f5c8ecdf78fb697f29",
+        expand=False,
+    )
+    version(
+        "2021.17.2",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/86923909-82e5-4c1a-9499-b4263e800a33/intel-mpi-2021.17.2.94_offline.sh",
+        sha256="4861c55fdfde1f08a293a7cfb715aaab498cb8fc700d5db8f0b67660e5948350",
+        expand=False,
+    )
+    version(
+        "2021.17.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/7ba1f01b-8910-4f49-ad09-27751feb8009/intel-mpi-2021.17.1.13_offline.sh",
+        sha256="f6ce783a693ef508045a5c2ae425350f1c28f6cb4ad829d6b4a7ca65eb104eb3",
+        expand=False,
+    )
     version(
         "2021.17.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0a3cb474-49c7-45a9-9dea-104122592a63/intel-mpi-2021.17.0.377_offline.sh",
@@ -188,9 +209,48 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         "external-libfabric", default=False, description="Enable external libfabric dependency"
     )
     depends_on("libfabric", when="+external-libfabric", type=("link", "run"))
+    conflicts("libfabric", when="~external-libfabric")
 
     provides("mpi@:3.1")
     conflicts("+generic-names +classic-names")
+
+    executables = [r"^mpiicpx$"]
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("-v", output=str, error=str)
+        match = re.search(r"MPI Library (20\d\d(\.\d+)+)", output)
+        return match.group(1) if match else None
+
+    @classmethod
+    def determine_variants(cls, exes, version_str):
+        output = Executable(exes[0])("-show", output=str, error=str)
+        lib_paths = re.findall(r'-L"?([^\s"]+)"?', output)
+        variants_set = set()
+        for lib_path in set(lib_paths):
+            mpi_root = join_path(lib_path, "..")
+            # Look for ilp64
+            if os.path.exists(join_path(lib_path, "libmpi_ilp64.so")):
+                variants_set.add("+ilp64")
+            # Look for libfabric
+            libfabric_dir = join_path(mpi_root, "opt/mpi/libfabric/lib")
+            if os.path.exists(join_path(libfabric_dir, "libfabric.so")):
+                variants_set.add("~external-libfabric")
+            # If generic executables don't exist, disable the variant
+            mpicxx_path = join_path(mpi_root, "bin", "mpicxx")
+            if not os.path.exists(mpicxx_path):
+                variants_set.add("~generic-names")
+            # If classic executables don't exist, disable the variant
+            mpiicpc_path = join_path(mpi_root, "bin", "mpiicpc")
+            if not os.path.exists(mpiicpc_path):
+                variants_set.add("~classic-names")
+
+        if "+ilp64" not in variants_set:
+            variants_set.add("~ilp64")
+        if "~external-libfabric" not in variants_set:
+            variants_set.add("+external-libfabric")
+
+        return "".join(list(variants_set))
 
     @property
     def mpiexec(self):
@@ -222,7 +282,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
     def wrapper_paths(self):
         return [self.component_prefix.bin.join(name) for name in self.wrapper_names()]
 
-    def setup_dependent_package(self, module, dep_spec):
+    def setup_dependent_package(self, module, dependent_spec):
         wrappers = self.wrapper_paths()
         self.spec.mpicc = wrappers[0]
         self.spec.mpicxx = wrappers[1]

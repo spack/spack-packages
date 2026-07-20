@@ -59,7 +59,7 @@ class Qucs(AutotoolsPackage):
     depends_on("xyce", type="run", when="simulators=xyce")
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         if os.path.exists("bootstrap"):
             sh("./bootstrap")
         else:

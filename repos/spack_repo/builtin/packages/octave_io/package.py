@@ -17,6 +17,7 @@ class OctaveIo(OctavePackage, SourceforgePackage):
 
     license("GPL-3.0-only")
 
+    version("2.7.1", sha256="1b8f60019fe5ce2af56301003e3046463349dd533123e8979ec4b4c9ebfc7f6b")
     version("2.7.0", sha256="4aa48468b3697934bf8c854e27dbab8827605e9dd4fe37e56834265e6130ba6f")
     version("2.6.3", sha256="6bc63c6498d79cada01a6c4446f793536e0bb416ddec2a5201dd8d741d459e10")
     version("2.6.2", sha256="01dbf8885a8011e76c919e271727c1d44f625bf6b217948b79438039ba368ceb")

@@ -20,6 +20,9 @@ class Libgpiod(AutotoolsPackage):
     license("LGPL-2.1-or-later")
 
     version("master", branch="master")
+    version("2.2.3", sha256="70de4639856620571f99d851cf1acd48f6462b62ccba929f1a0235ec76b4e4dc")
+    version("2.2.2", sha256="02794831a65adab942620dd3e8f038ff881c3c127d7d26841d94caa8caea793f")
+    version("2.2.1", sha256="c6054a64a12681beeb0ce5200867754843bb68465b06c543f132ad984aee3f83")
     version("2.2.0", sha256="ae35329db7027c740e90c883baf27c26311f0614e6a7b115771b28188b992aec")
     version("2.1.3", sha256="8d80ea022ae78122aa525308e7423b83064bff278fcd9cd045b94b4f81f8057d")
     version("2.1.2", sha256="b1bdf1e3f75238695f93e442062bafc069170f2bf4f0cd4b8e049ca67131a1f0")
@@ -45,8 +48,7 @@ class Libgpiod(AutotoolsPackage):
         Executable("./autogen.sh")()
 
     def url_for_version(self, version):
-        url = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-{0}.tar.gz"
         if version[2] == 0:
-            return url.format(version.up_to(1))
+            return f"https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-v{version.up_to(1)}.tar.gz"
         else:
-            return url.format(version)
+            return f"https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-v{version}.tar.gz"

@@ -19,10 +19,12 @@ from spack.package import (
     build_system,
     classproperty,
     depends_on,
+    determine_number_of_jobs,
     execute_install_time_tests,
     extends,
     filter_file,
     find,
+    get_effective_jobs,
     has_shebang,
     join_path,
     path_contains_subdirectory,
@@ -185,14 +187,19 @@ class PythonExtension(PackageBase):
         # Make sure we are importing the installed modules,
         # not the ones in the source directory
         python = self.module.python
-        for module in self.import_modules:
-            with test_part(
-                self,
-                f"test_imports_{module}",
-                purpose=f"checking import of {module}",
-                work_dir="spack-test",
-            ):
-                python("-c", f"import {module}")
+        with test_part(self, "test_imports", purpose="checking imports", work_dir="spack-test"):
+            python(
+                "-c",
+                """
+import importlib
+import sys
+
+for module in sys.argv[1:]:
+    print(module)
+    importlib.import_module(module)
+""",
+                *self.import_modules,
+            )
 
 
 def _homepage(cls: "PythonPackage") -> Optional[str]:
@@ -313,7 +320,7 @@ class PythonPipBuilder(BuilderWithDefaults):
         """
         return self.pkg.stage.source_path
 
-    def config_settings(self, spec: Spec, prefix: Prefix) -> Mapping[str, object]:
+    def config_settings(self, spec: Spec, prefix: Prefix) -> Dict[str, object]:
         """Configuration settings to be passed to the PEP 517 build backend.
 
         Requires pip 22.1 or newer for keys that appear only a single time,
@@ -363,8 +370,18 @@ class PythonPipBuilder(BuilderWithDefaults):
         pip.add_default_arg("-m", "pip")
 
         args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        config_settings = self.config_settings(spec, prefix)
 
-        for setting in _flatten_dict(self.config_settings(spec, prefix)):
+        # Pass -jN for compile-args if supported and needed
+        if spec.satisfies("%py-pip@22.1: %py-meson-python@0.11:"):
+            # get_effective_jobs returns None when a jobserver is active, then we don't pass -j.
+            jobs = get_effective_jobs(
+                jobs=determine_number_of_jobs(parallel=pkg.parallel), supports_jobserver=True
+            )
+            if jobs is not None:
+                config_settings["compile-args"] = f"-j{jobs}"
+
+        for setting in _flatten_dict(config_settings):
             args.append(f"--config-settings={setting}")
         for option in self.install_options(spec, prefix):
             args.append(f"--install-option={option}")

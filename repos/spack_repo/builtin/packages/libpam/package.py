@@ -29,5 +29,5 @@ class Libpam(AutotoolsPackage):
     depends_on("linux-pam")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./bootstrap.sh")

@@ -30,7 +30,7 @@ class XercesC(AutotoolsPackage):
     variant(
         "cxxstd",
         default="default",
-        values=("default", "98", "11", "14", "17", "20"),
+        values=("default", "98", "11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building",
     )

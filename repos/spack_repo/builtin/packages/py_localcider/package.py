@@ -15,6 +15,7 @@ class PyLocalcider(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.1.21", sha256="58acf94264c08675c6fc2edc7e0e6e4e3b046594bbe25f238993483c75250393")
     version("0.1.14", sha256="54ff29e8a011947cca5df79e96f3c69a76c49c4db41dcf1608663992be3e3f5f")
 
     depends_on("py-setuptools", type="build")

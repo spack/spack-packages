@@ -27,6 +27,6 @@ class Polypolish(Package):
     depends_on("bwa", type="run")
 
     def install(self, spec, prefix):
-        cargo = which("cargo")
+        cargo = which("cargo", required=True)
         cargo("install", "--root", prefix, "--path", ".")
         install("scripts/polypolish_insert_filter.py", prefix.bin)

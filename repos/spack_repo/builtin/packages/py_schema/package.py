@@ -15,6 +15,7 @@ class PySchema(PythonPackage):
 
     license("MIT")
 
+    version("0.7.8", sha256="e86cc08edd6fe6e2522648f4e47e3a31920a76e82cce8937535422e310862ab5")
     version("0.7.7", sha256="7da553abd2958a19dc2547c388cde53398b39196175a9be59ea1caf5ab0a1807")
     version("0.7.5", sha256="f06717112c61895cabc4707752b88716e8420a8819d71404501e114f91043197")
 

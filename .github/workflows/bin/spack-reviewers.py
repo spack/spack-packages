@@ -19,17 +19,36 @@ def msg(message: str, entries=()):
 
 
 def main():
+    # Validate required environment variables
+    required_vars = ["GH_REPO", "GH_PR_NUMBER"]
+    missing_vars = [var for var in required_vars if var not in os.environ]
+    if missing_vars:
+        raise Exception(f"Missing required environment variables: {', '.join(missing_vars)}")
+
     repository = os.environ["GH_REPO"]
     pr_number = os.environ["GH_PR_NUMBER"]
-    token = os.environ["GH_TOKEN"]
+    token = os.environ.get("GH_TOKEN", "")
 
-    headers = {"Accept": "application/vnd.github+json"}
+    headers = {"Accept": "application/vnd.github+json", "User-Agent": "spack-reviewers"}
     if token:
         headers["Authorization"] = f"Bearer {token}"
 
+    # use a requests session to attempt to retry failed requests if the GitHub API fails
+    session = requests.Session()
+    retries = requests.adapters.Retry(
+        total=3, backoff_factor=1, status_forcelist=[500, 502, 503, 504]
+    )
+    session.mount("https://", requests.adapters.HTTPAdapter(max_retries=retries))
+
     base_url = f"https://api.github.com/repos/{repository}"
     pr_url = f"{base_url}/pulls/{pr_number}"
-    pull_request = requests.get(pr_url, headers=headers).json()
+    pull_request_resp = session.get(pr_url, headers=headers, timeout=30)
+    if pull_request_resp.status_code != 200:
+        raise Exception(
+            f"Failed to query GitHub API for PR info [{pull_request_resp.status_code}]: "
+            f"{pull_request_resp.text}"
+        )
+    pull_request = pull_request_resp.json()
 
     if pull_request["draft"]:
         msg("skipping draft pull request")
@@ -41,7 +60,12 @@ def main():
     else:
         msg("no existing reviewers")
 
-    pull_request_files = requests.get(f"{pr_url}/files", headers=headers)
+    pull_request_files = session.get(f"{pr_url}/files", headers=headers, timeout=30)
+    if pull_request_files.status_code != 200:
+        raise Exception(
+            f"Failed to query GitHub API for PR files [{pull_request_files.status_code}]: "
+            f"{pull_request_files.text}"
+        )
     changed_packages = {
         match.group(1)
         for file in pull_request_files.json()
@@ -68,7 +92,8 @@ def main():
     pingable_maintainers = {
         maintainer
         for maintainer in maintainers
-        if requests.get(f"{collab_url}/{maintainer}", headers=headers).status_code == 204
+        if session.get(f"{collab_url}/{maintainer}", headers=headers, timeout=30).status_code
+        == 204
     }
 
     if maintainers != pingable_maintainers:
@@ -90,8 +115,11 @@ def main():
         msg("adding reviewers:", added_reviewers)
 
     if token:
-        resp = requests.post(
-            f"{pr_url}/requested_reviewers", json={"reviewers": list(reviewers)}, headers=headers
+        resp = session.post(
+            f"{pr_url}/requested_reviewers",
+            json={"reviewers": list(reviewers)},
+            headers=headers,
+            timeout=30,
         )
         resp.raise_for_status()
 

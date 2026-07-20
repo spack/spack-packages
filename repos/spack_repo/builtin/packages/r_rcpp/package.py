@@ -24,6 +24,7 @@ class RRcpp(RPackage):
 
     cran = "Rcpp"
 
+    version("1.1.1", sha256="da0c616a71c82150397259516b2ea7558dbd31a5b4a217423ec9666b3a0fcfb7")
     version("1.0.13-1", sha256="1d1fc623d27082b5749f9584a9204de410134b6412a192157a3e42e2ba43969a")
     version("1.0.13", sha256="21fec650c113e57935fd86c7d1be190811f1ae036c1ee203bfbbf3ad5cdb22ce")
     version("1.0.12", sha256="0c7359cc43beee02761aa3df2baccede1182d29d28c9cd49964b609305062bd0")
@@ -57,6 +58,7 @@ class RRcpp(RPackage):
     # leave the r dependency also for newer versions
     # (not listed in Description for @1.0.5:)
     depends_on("r@3.0.0:", type=("build", "run"))
+    depends_on("r@3.5.0:", when="@1.1.1:", type=("build", "run"))
 
     # https://github.com/RcppCore/Rcpp/issues/1341
     conflicts("^r@4.4.2", when="@=1.0.13", msg="Rcpp@1.0.13 fails to compile under R@4.4.2")

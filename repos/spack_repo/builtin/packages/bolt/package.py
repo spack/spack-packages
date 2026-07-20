@@ -71,7 +71,7 @@ class Bolt(CMakePackage):
 
         test_dir = os.path.dirname(path)
         with working_dir(test_dir):
-            cxx = which(os.environ["CXX"])
+            cxx = which(os.environ["CXX"], required=True)
             cxx(
                 "-L{0}".format(self.prefix.lib),
                 "-I{0}".format(self.prefix.include),
@@ -82,5 +82,5 @@ class Bolt(CMakePackage):
                 "-lbolt",
             )
 
-            sample_nested = which(exe)
+            sample_nested = which(exe, required=True)
             sample_nested()

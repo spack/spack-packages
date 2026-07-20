@@ -20,7 +20,7 @@ class Tbl2asn(Package):
 
     depends_on("libidn@1.34", type="run")
 
-    def url_for_version(self, ver):
+    def url_for_version(self, version):
         return "https://ftp.ncbi.nih.gov/toolbox/ncbi_tools/converters/by_program/tbl2asn/linux64.tbl2asn.gz"
 
     def install(self, spec, prefix):

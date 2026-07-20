@@ -17,6 +17,7 @@ class Med(CMakePackage):
 
     license("LGPL-3.0-only")
 
+    version("6.0.1", sha256="f8f1edc6874bc48d8f3e4e8be1cf7379ed318726d8abc6804e85e821555b1fa8")
     version(
         "5.0.0",
         sha256="267e76d0c67ec51c10e3199484ec1508baa8d5ed845c628adf660529dce7a3d4",
@@ -38,7 +39,8 @@ class Med(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("hdf5@1.10.2:1.10.7", when="@4")
-    depends_on("hdf5@1.12.1:1.12", when="@5:")
+    depends_on("hdf5@1.12.1:1.12", when="@5")
+    depends_on("hdf5@1.14", when="@6")
 
     depends_on("hdf5~mpi", when="~mpi")
     depends_on("hdf5+mpi", when="+mpi")

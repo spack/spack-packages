@@ -50,12 +50,12 @@ spack:
       require: "@5.11 ~qt ^[virtuals=gl] osmesa"
     trilinos:
       require:
-      - one_of: [+amesos +amesos2 +anasazi +aztec +boost +epetra +epetraext +ifpack
-            +intrepid +intrepid2 +isorropia +kokkos +minitensor +nox +piro +phalanx
-            +rol +rythmos +sacado +stk +shards +stratimikos +tempus +tpetra
+      - one_of: [+amesos2 +anasazi +boost
+            +intrepid2 +kokkos +minitensor +nox +piro +phalanx
+            +rol +sacado +stk +shards +stratimikos +tempus +tpetra
             +trilinoscouplings +zoltan]
       - one_of: [gotype=long_long, gotype=all]
-      - one_of: [~ml ~muelu ~zoltan2 ~teko, +ml +muelu +zoltan2 +teko]
+      - one_of: [~muelu ~zoltan2 ~teko, +muelu +zoltan2 +teko]
     xz:
       variants: +pic
     mesa:
@@ -78,7 +78,6 @@ spack:
   # - cp2k +mpi         # cp2k: Error: Type mismatch between actual argument at (1) and actual argument at (2) (LOGICAL(4)/COMPLEX(4)).
   - datatransferkit
   - flecsi
-  - fortrilinos
   - ginkgo
   - globalarrays
   - gmp

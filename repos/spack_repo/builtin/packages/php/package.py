@@ -62,7 +62,7 @@ class Php(AutotoolsPackage):
         )
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./buildconf", "--force")
 
     @when("@8:")

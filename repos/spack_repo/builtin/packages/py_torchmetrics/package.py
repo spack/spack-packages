@@ -16,6 +16,7 @@ class PyTorchmetrics(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.9.0", sha256="a488609948600df52d3db4fcdab02e62aab2a85ef34da67037dc3e65b8512faa")
     version("1.8.2", sha256="cf64a901036bf107f17a524009eea7781c9c5315d130713aeca5747a686fe7a5")
     version("1.8.1", sha256="04ca021105871637c5d34d0a286b3ab665a1e3d2b395e561f14188a96e862fdb")
     version("1.8.0", sha256="8b4d011963a602109fb8255018c2386391e8c4c7f48a09669fbf7bb7889fda8c")
@@ -60,13 +61,16 @@ class PyTorchmetrics(PythonPackage):
     version("0.3.1", sha256="78f4057db53f7c219fdf9ec9eed151adad18dd43488a44e5c780806d218e3f1d")
     version("0.2.0", sha256="481a28759acd2d77cc088acba6bc7dc4a356c7cb767da2e1495e91e612e2d548")
 
+    variant("detection", default=False, description="object detection support", when="@0.6:")
     variant("image", default=False, description="image support", when="@0.11.2:")
 
-    # setup.py
-    depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools")
+        # https://github.com/Lightning-AI/torchmetrics/pull/3324
+        depends_on("py-setuptools@:81", when="@:1.8")
 
-    # requirements/base.txt (upper bound is removed during processing)
     with default_args(type=("build", "run")):
+        # requirements/base.txt (upper bound is removed during processing)
         depends_on("py-numpy@1.20.1:", when="@1:")
         depends_on("py-numpy@1.17.2:", when="@0.4:")
         depends_on("py-numpy", when="@0.3:")
@@ -76,9 +80,17 @@ class PyTorchmetrics(PythonPackage):
         depends_on("py-torch@1.10:", when="@1.3:")
         depends_on("py-torch@1.8.1:", when="@0.11:")
         depends_on("py-torch@1.3.1:")
+        depends_on("py-lightning-utilities@0.15.3:", when="@1.9:")
         depends_on("py-lightning-utilities@0.8:", when="@1.1:")
         depends_on("py-lightning-utilities@0.7:", when="@1:")
 
+        # requirements/detection.txt (upper bound is removed during processing)
+        with when("+detection"):
+            depends_on("py-torchvision@0.15.1:", when="@1.6:")
+            depends_on("py-torchvision@0.8:")
+            depends_on("py-pycocotools@2.0.1:")
+
+        # requirements/image.txt (upper bound is removed during processing)
         with when("+image"):
             depends_on("py-scipy@1.0.1:")
             depends_on("py-torchvision@0.15.1:", when="@1.6:")

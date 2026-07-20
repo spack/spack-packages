@@ -1,0 +1,30 @@
+--- spack-src/configure      2025-11-06 09:55:16.000000000 -0800
++++ spack-src-patched/configure  2025-12-16 06:54:34.744812604 -0800
+@@ -11582,27 +11582,6 @@
+     fi
+ fi
+
+-if [ $python = yes -a $cuda = yes ] ; then
+-    #We need the boost/python libraries to build the TAU's pycuda interface.
+-    echo "Checking for boost/python ... ${nnl}"
+-    cat <<EOF>boost.cpp
+-#include "boost/python.hpp"
+-EOF
+-    pythoninc_cmd="$(echo $pythoninc | sed -e "s/ / -I/g")"
+-    #echo $cxx_compiler -I$pythoninc_cmd -c boost.cpp
+-    if $cxx_compiler -I$pythoninc_cmd -c boost.cpp 1>/dev/null 2>&1 ; then
+-        echo "yes"
+-        fixmakeargs="$fixmakeargs PYCUDA"
+-    else
+-        echo "boost/python libraries not found, skipping TAU's pycuda interface"
+-    fi
+-    rm -f boost.cpp boost.o
+-fi
+-
+-if [ $python = yes -a $cuda = yes -a $boost = yes ] ; then
+-        fixmakeargs="$fixmakeargs PYCUDA_BOOST"
+-fi
+-
+ if [ ! $cupti = no ]; then
+     echo "Checking CUPTI version at ${cupti_path}/include ... ${nnl}"
+     cat <<EOF > cupti_version.C

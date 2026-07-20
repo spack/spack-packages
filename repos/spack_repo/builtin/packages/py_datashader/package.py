@@ -17,6 +17,7 @@ class PyDatashader(PythonPackage):
 
     license("BSD-3-Clause", checked_by="climbfuji")
 
+    version("0.18.2", sha256="53ef0bc35b9ba1034bdf290a2e28babf0fa2b075a3e5a822c79dcde12183d1ff")
     version("0.18.1", sha256="ad9390a9178eb03493fb67649f6570d59ccb371cf663533e0672a1826bb436b0")
     version("0.16.3", sha256="9d0040c7887f7a5a5edd374c297402fd208a62bf6845e87631b54f03b9ae479d")
 

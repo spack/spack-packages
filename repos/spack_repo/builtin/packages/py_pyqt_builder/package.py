@@ -15,6 +15,7 @@ class PyPyqtBuilder(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.19.1", sha256="6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8")
     version("1.19.0", sha256="79540e001c476bc050180db00fffcb1e9fa74544d95c148e48ad6117e49d6ea2")
     version("1.18.2", sha256="56dfea461484a87a8f0c8b0229190defc436d7ec5de71102e20b35e5639180bc")
     version("1.15.1", sha256="a2bd3cfbf952e959141dfe55b44b451aa945ca8916d1b773850bb2f9c0fa2985")

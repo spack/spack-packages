@@ -25,6 +25,7 @@ class RJsonlite(RPackage):
 
     license("MIT")
 
+    version("2.0.0", sha256="75eb910c82b350ec33f094779da0f87bff154c232e4ae39c9896a9b89f3ac82d")
     version("1.8.8", sha256="7de21316984c3ba3d7423d12f43d1c30c716007c5e39bf07e11885e0ceb0caa4")
     version("1.8.7", sha256="7d42b7784b72d728698ea02b97818df51e2015ffa39fec2eaa2400771b0f601c")
     version("1.8.5", sha256="dc3cca4bdca1b6d6836c412760ea9656140683126c54cb89c3e42219dec4a3ad")

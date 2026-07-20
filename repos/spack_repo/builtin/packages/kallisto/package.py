@@ -52,7 +52,7 @@ class Kallisto(CMakePackage):
         # config.sub in the tree.
         if self.spec.satisfies("@0.44.0:^autoconf@2.70:"):
             with working_dir(join_path(self.stage.source_path, "ext", "htslib")):
-                autoreconf = which("autoreconf")
+                autoreconf = which("autoreconf", required=True)
                 autoreconf("--install")
 
     # Including '-DCMAKE_VERBOSE_MAKEFILE:BOOL=ON' in the cmake args

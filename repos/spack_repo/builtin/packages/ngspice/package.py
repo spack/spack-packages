@@ -23,6 +23,7 @@ class Ngspice(AutotoolsPackage):
 
     # Master version by default adds the experimental adms feature
     version("master", branch="master")
+    version("45.2", sha256="ba8345f4c3774714c10f33d7da850d361cec7d14b3a295d0dc9fd96f7423812d")
     version("44", sha256="3865d13ab44f1f01f68c7ac0e0716984e45dce5a86d126603c26d8df30161e9b")
     version("43", sha256="14dd6a6f08531f2051c13ae63790a45708bd43f3e77886a6a84898c297b13699")
     version("42", sha256="737fe3846ab2333a250dfadf1ed6ebe1860af1d8a5ff5e7803c772cc4256e50a")
@@ -63,8 +64,8 @@ class Ngspice(AutotoolsPackage):
     variant("fft", default=True, description="Use external fftw lib")
     variant("osdi", default=False, description="Use osdi/OpenVAF")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("fftw-api@3", when="+fft")
     with when("+fft+openmp"):

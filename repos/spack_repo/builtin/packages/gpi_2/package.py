@@ -86,7 +86,7 @@ class Gpi2(AutotoolsPackage):
     # GPI-2 without autotools
     @when("@:1.3.3")
     def autoreconf(self, spec, prefix):
-        touch = which("touch")
+        touch = which("touch", required=True)
         touch("configure")
         pass
 
@@ -120,7 +120,7 @@ class Gpi2(AutotoolsPackage):
             config_args += ["--with-mpi={0}".format(spec["mpi"].prefix)]
 
         with working_dir(self.build_directory):
-            install = which("./install.sh")
+            install = which("./install.sh", required=True)
             install(*config_args)
 
     @when("@:1.3.3")
@@ -130,7 +130,7 @@ class Gpi2(AutotoolsPackage):
     # GPI-2 with autotools
     @when("@1.4.0:")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def with_or_without_infiniband(self, activated):
@@ -172,5 +172,5 @@ class Gpi2(AutotoolsPackage):
     def check(self):
         self.set_machines()
         with working_dir("{0}/tests".format(self.build_directory)):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./runtests.sh")

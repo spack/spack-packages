@@ -22,6 +22,7 @@ class REmmeans(RPackage):
 
     license("GPL-2.0-only OR GPL-3.0-only")
 
+    version("2.0.2", sha256="58d8586687a2aa4ad3f818904e059ea158e1853f3930994886143c2ce7944a46")
     version("2.0.0", sha256="9064dcd6fd2a6f88b5c77449d2c2d599eefc790c497a5ceb33b144ec8f446656")
     version("1.10.4", sha256="66653623c5984f99ba481a8611d6cf3b829e577f07bbe4043f279a3f8fbadcc3")
     version("1.8.5", sha256="5c88b415b5a42d8c1aa63af090c4987326530ea6d0e60bab9b5fb7e99a982415")

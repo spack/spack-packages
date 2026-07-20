@@ -20,6 +20,7 @@ class PySerpent(PythonPackage):
 
     license("MIT")
 
+    version("1.42", sha256="8ea082b01f8ba07ecd74e34a9118ac4521bc4594938d912b808c89f1da425506")
     version("1.40", sha256="10b34e7f8e3207ee6fb70dcdc9bce473851ee3daf0b47c58aec1b48032ac11ce")
 
     depends_on("py-setuptools", type="build")
