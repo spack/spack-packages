@@ -57,6 +57,8 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("shared", default=False, description="Enables the build of shared libraries")
+    variant("tests", default=False, description="Build with tests enabled")
+    variant("batch_solver", default=True, description="enable snls batch solver")
     variant(
         "cxxstd",
         default="17",
@@ -64,14 +66,18 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
         description="C++ standard to build with",
     )
 
-    depends_on("blt", type="build")
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(type="build"):
+        depends_on("blt")
+        depends_on("c", when="+rocm +tests")
+        depends_on("cxx")
+    
     depends_on("snls")
-    depends_on("raja")
-    depends_on("camp")
-    depends_on("chai")
-    depends_on("umpire")
+    with when("+batch_solver"):
+        depends_on("snls+batch_solver")
+        depends_on("raja")
+        depends_on("camp")
+        depends_on("chai")
+        depends_on("umpire")
 
     # variant dependent dependencies
     depends_on("raja+openmp", when="+openmp")
@@ -87,13 +93,15 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
             self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix),
             self.define("BLT_CXX_STD", f"c++{spec.variants.get('cxxstd').value}"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define("ENABLE_SNLS_V03", "ON"),
-            self.define("ENABLE_GTEST", "OFF"),
+            self.define_from_variant("ENABLE_GTEST", "tests"),
             self.define("ENABLE_MINIAPPS", "OFF"),
             self.define_from_variant("ENABLE_OPENMP", "openmp"),
-            self.define("CMAKE_CUDA_SEPARABLE_COMPILATION", "ON"),
+            self.define_from_variant("CMAKE_CUDA_SEPARABLE_COMPILATION", "cuda"),
             self.define_from_variant("ENABLE_CUDA", "cuda"),
             self.define_from_variant("ENABLE_HIP", "rocm"),
-            self.define("ENABLE_TESTS", "OFF"),
+            self.define_from_variant("ENABLE_TESTS", "tests"),
         ]
+
+        if self.spec.satisfies("@:0.3.4"):
+            args.append(self.define("ENABLE_SNLS_V03", "ON"))
         return args
