@@ -42,7 +42,12 @@ class Xsimd(CMakePackage):
     version("3.1.0", sha256="d56288826f6b82fd9583f83ace6aa2306ba2ae82cec003de1d04ce17fbb1e91f")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+
+    depends_on("cmake@3.13:", type="build", when="@14.2:")
+    depends_on("cmake@3.10:", type="build", when="@14:")
+    depends_on("cmake@3.8:", type="build", when="@12:")
+    depends_on("cmake@3.1:", type="build")
 
     depends_on("googletest", type="test")
 
