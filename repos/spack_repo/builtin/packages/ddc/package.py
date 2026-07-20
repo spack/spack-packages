@@ -41,7 +41,6 @@ class Ddc(CMakePackage):
         default=True,
         description="Use double precision floating point numbers instead of single precision",
     )
-    variant("tests", default=False, description="Build the tests")
 
     depends_on("cxx", type="build")
 
@@ -49,6 +48,13 @@ class Ddc(CMakePackage):
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@:4", type="build")
     depends_on("cmake@:3", type="build", when="@:0.8")
+
+    depends_on("googletest@1.14: +gmock", type="test")
+    depends_on("googletest@:1 +gmock", type="test")
+    depends_on("py-numpy@1.24:", type="test", when="@0.15:")
+    depends_on("py-numpy@:2", type="test", when="@0.15:")
+    depends_on("py-pytest@8.4:", type="test", when="@0.15:")
+    depends_on("py-pytest@:9", type="test", when="@0.15:")
 
     depends_on("kokkos@4.4.1:")
     depends_on("kokkos@:5")
@@ -91,16 +97,8 @@ class Ddc(CMakePackage):
         depends_on("pdi@1.10.1:", when="@0.11:")
         depends_on("pdi@1.6:")
         depends_on("pdi@:1")
-
-    with when("+tests"):
-        depends_on("googletest@1.14: +gmock")
-        depends_on("googletest@:1 +gmock")
-        depends_on("pdiplugin-user-code@1.6:", type=("build", "test"), when="+pdi")
-        depends_on("pdiplugin-user-code@:1", type=("build", "test"), when="+pdi")
-        depends_on("py-numpy@1.24:", when="@0.15:")
-        depends_on("py-numpy@:2", when="@0.15:")
-        depends_on("py-pytest@8.4:", when="@0.15:")
-        depends_on("py-pytest@:9", when="@0.15:")
+        depends_on("pdiplugin-user-code@1.6:", type="test")
+        depends_on("pdiplugin-user-code@:1", type="test")
 
     conflicts("^kokkos@4.5.0", msg="Incompatible with the embedded mdspan of Kokkos")
 
@@ -129,14 +127,17 @@ class Ddc(CMakePackage):
         args = [
             self.define("DDC_BUILD_EXAMPLES", False),
             self.define("DDC_BUILD_DOCUMENTATION", False),
+            self.define("DDC_BUILD_TESTS", self.run_tests),
             self.define("DDC_Kokkos_DEPENDENCY_POLICY", "INSTALLED"),
-            self.define_from_variant("DDC_BUILD_TESTS", "tests"),
             self.define_from_variant("DDC_BUILD_KERNELS_FFT", "fft"),
             self.define_from_variant("DDC_BUILD_KERNELS_SPLINES", "splines"),
             self.define_from_variant("DDC_BUILD_PDI_WRAPPER", "pdi"),
             self.define_from_variant("DDC_BUILD_DEPRECATED_CODE", "deprecated_code"),
             self.define_from_variant("DDC_BUILD_DOUBLE_PRECISION", "double_precision"),
         ]
+
+        if self.run_tests:
+            args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
 
         if self.spec.satisfies("+fft"):
             args.append(self.define("DDC_KokkosFFT_DEPENDENCY_POLICY", "INSTALLED"))
@@ -157,9 +158,6 @@ class Ddc(CMakePackage):
                         self.define("CMAKE_CXX_FLAGS", lapack_include_directories.strip()),
                     ]
                 )
-
-        if self.spec.satisfies("+tests"):
-            args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
 
         if self.spec.satisfies("^kokkos+rocm"):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
