@@ -22,7 +22,7 @@ class PyLibensemble(PythonPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
-    version("1.6.1", sha256="e0fc3f2852bddcb1626e16193a14da64b160a11f28e672f56d45e814c945da32")
+    version("1.6.1", sha256="a3f44cf0bc2196b3fa9e8d343911d1799f09166cddc8e0f0c457249ddeef1827")
     version("1.6.0", sha256="c6592fc16a790b6423712380ac57549d4595583676a9af7fcbe8e9c73365d578")
     version("1.5.0", sha256="7541829ac412d64152eaea204ba6e3e94640a206f3605a8357b519e932e86065")
     version("1.4.3", sha256="d30fd5ec93ae78a8e931765fd773b0693fde8b43130aca547c931230225c0f63")
