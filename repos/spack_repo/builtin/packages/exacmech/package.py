@@ -70,7 +70,7 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("blt")
         depends_on("c", when="+rocm +tests")
         depends_on("cxx")
-    
+
     depends_on("snls")
     with when("+batch_solver"):
         depends_on("snls+batch_solver")
