@@ -28,15 +28,9 @@ class PyLibcst(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-pyyaml@6.0.3:", when="@1.8.6: ^python@3.14:")
-        # depends_on("py-pyyaml-ft@8:", when="@1.8: ^python@3.13")
+        depends_on("py-pyyaml-ft@8:", when="@1.8: ^python@3.13")
         depends_on("py-pyyaml@5.2:", when="^python@:3.12")
 
-        # Historical dependencies
         depends_on("py-typing-extensions", when="@1.8: ^python@:3.9")
         depends_on("py-typing-extensions@3.7.4.2:", when="@:1.2")
         depends_on("py-typing-inspect@0.4:", when="@:1.2")
-
-    conflicts(
-        "@1.8: ^python@3.13",
-        msg="py-pyyaml-ft package would be required to install py-libcst for Python 3.13",
-    )
