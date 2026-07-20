@@ -35,6 +35,7 @@ class Professor(Package):
     depends_on("eigen")
     depends_on("py-cython")
     depends_on("py-iminuit")
+    depends_on("py-iminuit@2:", when="@2.4:")
     depends_on("py-matplotlib")
     depends_on("py-matplotlib backend=wx", when="+interactive")
     depends_on("root")
@@ -47,12 +48,14 @@ class Professor(Package):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PROF_VERSION", str(self.spec.version))
 
+    @when("@2.5.0:")
+    def configure(self, spec, prefix):
+        with working_dir(self.stage.source_path):
+            configure = Executable("configure")
+            configure(f"--prefix={prefix}", f"--with-eigen={self.spec['eigen'].prefix}")
+
     def install(self, spec, prefix):
         with working_dir(self.stage.source_path):
-            configure = Executable("./configure")
-            configure(
-                "--prefix={0}".format(prefix), "--with-eigen={0}".format(spec["eigen"].prefix)
-            )
             make()
             make("PREFIX={0}".format(prefix), "install")
         if self.spec.satisfies("~interactive"):
