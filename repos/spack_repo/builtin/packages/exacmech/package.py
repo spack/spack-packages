@@ -12,7 +12,7 @@ from spack.package import *
 class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
     """GPU-friendly materials library with a focus on crystal plasticity methods"""
 
-    homepage = "https://github.com/LLNL/exacmech"
+    homepage = "https://github.com/llnl/ExaCMech"
     url = "https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.3.tar.gz"
     git = "https://github.com/llnl/ExaCMech.git"
 
