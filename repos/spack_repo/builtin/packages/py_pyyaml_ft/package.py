@@ -28,9 +28,9 @@ class PyPyyamlFt(PythonPackage):
     depends_on("libyaml", when="+libyaml", type="link")
 
     with default_args(type="build"):
-        depends_on("py-setuptools", type="build")
-        depends_on("py-packaging", type="build")
-        depends_on("py-cython@3.1:", type="build")
+        depends_on("py-setuptools")
+        depends_on("py-packaging")
+        depends_on("py-cython@3.1:")
 
     @property
     def import_modules(self):
