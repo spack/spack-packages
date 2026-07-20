@@ -14,7 +14,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     """AMReX Python Bindings with pybind11"""
 
     homepage = "https://amrex-codes.github.io/amrex/"
-    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/26.06.tar.gz"
+    url = "https://github.com/AMReX-Codes/pyamrex/archive/refs/tags/26.07.tar.gz"
     git = "https://github.com/AMReX-Codes/pyamrex.git"
 
     maintainers("ax3l", "EZoni", "atmyers", "sayerhs", "WeiqunZhang")
@@ -24,6 +24,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.07", sha256="fd3fefff3c06f23fbad4426ba6b4222e89deaa648aff996fbaddbd15a73dd9a1")
     version("26.06", sha256="990526a64378066bf9a53a6268731c03cc4e12cf59804a1695447d9336e251d5")
     version("26.05", sha256="f61a4384b46feeffd095d56b1e636f49410aa74a5fbdbfec10a3f568aa1b0e24")
     version("26.04", sha256="0d17f27ca7463b9983a987629ea2c18e06a8e4d98b2b8c6affb7aacfe340690d")
@@ -36,6 +37,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
 
     for v in [
         "develop",
+        "26.07",
         "26.06",
         "26.05",
         "26.04",
