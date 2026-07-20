@@ -42,6 +42,9 @@ class Cernlib(CMakePackage):
 
     depends_on("openssl", when="platform=linux")
 
+    # Fix build with GCC 14 and newer
+    patch("fix_build_with_gcc14.patch", level=0)
+
     def patch(self):
         if self.spec.satisfies("@:2023.08.14.0-free"):
             filter_file("crypto", "crypt", "packlib/CMakeLists.txt")
@@ -52,4 +55,9 @@ class Cernlib(CMakePackage):
 
     def cmake_args(self):
         args = [self.define_from_variant("CERNLIB_BUILD_SHARED", "shared")]
+        # The package does not build with C dialects newer than gnu17, so set gnu17
+        # for GCC 15 and newer which default to gnu23
+        if self.spec.satisfies("%gcc@15:"):
+            args.append(self.define("CMAKE_C_STANDARD", "17"))
+            args.append(self.define("CMAKE_C_EXTENSIONS", True))
         return args
