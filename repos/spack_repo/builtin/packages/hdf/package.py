@@ -172,7 +172,7 @@ class Hdf(AutotoolsPackage):
             ):
                 flags.append("-Wno-error=implicit-int")
 
-            if (self.spec.satisfies("%gcc@15:")):
+            if self.spec.satisfies("%gcc@15:"):
                 flags.append("-std=gnu17")
 
         return flags, None, None
