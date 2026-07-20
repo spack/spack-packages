@@ -57,7 +57,11 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
 
         depends_on("mpich +rocm", when="+rocm ^[virtuals=mpi] mpich")
 
-    patch("v0-96-2.patch", when="@0.96.2 +rocm +disks")
+    # ROCm 7.2 exposes several 0.96.2 test build issues: hilbert_perf pulls in
+    # HIP/Thrust headers without HIP platform definitions, disk_gpu uses the
+    # wrong target name/link interface, and laneSeg accidentally uses HIP's
+    # runtime warpSize instead of its constexpr warpSize_ argument.
+    patch("v0-96-2.patch", when="@0.96.2 +rocm")
 
     conflicts("%gcc@:11", when="@0.95:")
     conflicts("%gcc@:10", when="@:0.93.1")
@@ -86,6 +90,15 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("RYOANJI_WITH_HIP", "rocm"),
             self.define_from_variant("CSTONE_WITH_HIP", "rocm"),
         ]
+
+        # Upstream test executables link as PIE, so every object linked into
+        # them must be position independent. CMake keeps CXX and HIP flags
+        # separate; without the HIP flag, ROCm .cu objects remain non-PIE and
+        # fail at link time with R_X86_64_32S relocations from Thrust globals.
+        if spec.satisfies("+tests"):
+            args.append("-DCMAKE_CXX_FLAGS=-fPIE")
+            if spec.satisfies("+rocm"):
+                args.append("-DCMAKE_HIP_FLAGS=-fPIE")
 
         if spec.satisfies("+rocm") or spec.satisfies("+cuda"):
             args.append(self.define_from_variant("CSTONE_WITH_GPU_AWARE_MPI", "gpu_aware_mpi"))

@@ -1,5 +1,5 @@
 diff --git a/domain/test/performance/CMakeLists.txt b/domain/test/performance/CMakeLists.txt
-index 1af2eff07..65b370ddd 100644
+index 1af2eff0..65b370dd 100644
 --- a/domain/test/performance/CMakeLists.txt
 +++ b/domain/test/performance/CMakeLists.txt
 @@ -2,11 +2,11 @@ include(cstone_add_performance_test)
@@ -16,8 +16,21 @@ index 1af2eff07..65b370ddd 100644
  endif ()
  
  if(CMAKE_CUDA_COMPILER OR CMAKE_HIP_COMPILER)
+diff --git a/domain/test/unit_cuda/traversal/groups.cu b/domain/test/unit_cuda/traversal/groups.cu
+index 486bf6ad..56c6c7c2 100644
+--- a/domain/test/unit_cuda/traversal/groups.cu
++++ b/domain/test/unit_cuda/traversal/groups.cu
+@@ -46,7 +46,7 @@ TEST(TargetGroups, t0)
+     EXPECT_EQ(hgroups, ref);
+ }
+ 
+-__device__ constexpr util::array<int, 2> laneSeg(int idx, int warpSize_) { return {idx % warpSize, idx / warpSize_}; }
++__device__ constexpr util::array<int, 2> laneSeg(int idx, int warpSize_) { return {idx % warpSize_, idx / warpSize_}; }
+ 
+ //! @brief test input setup for findSplits
+ template<size_t N>
 diff --git a/physics/Disk/include/CMakeLists.txt b/physics/Disk/include/CMakeLists.txt
-index 9ef6afd5b..e3b23c958 100644
+index 9ef6afd5..a7cf19eb 100644
 --- a/physics/Disk/include/CMakeLists.txt
 +++ b/physics/Disk/include/CMakeLists.txt
 @@ -3,14 +3,16 @@ if (CMAKE_HIP_COMPILER)
@@ -36,10 +49,9 @@ index 9ef6afd5b..e3b23c958 100644
      else ()
 -        target_link_libraries(disk_gpu PRIVATE hip::host)
 -        target_compile_definitions(disk_gpu PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
--        set_target_properties(${exename} PROPERTIES LINKER_LANGUAGE CXX)
-+        target_compile_definitions(${testname} PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
-+        set_target_properties(${testname} PROPERTIES LINKER_LANGUAGE CXX)
 +        target_link_libraries(${testname} PRIVATE hip::host cstone_thrust_incl)
++        target_compile_definitions(${testname} PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
+         set_target_properties(${exename} PROPERTIES LINKER_LANGUAGE CXX)
      endif ()
 +    add_test(NAME ${testname} COMMAND ${testname})
  endif ()
