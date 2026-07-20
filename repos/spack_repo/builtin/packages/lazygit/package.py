@@ -13,11 +13,13 @@ class Lazygit(GoPackage):
 
     homepage = "https://github.com/jesseduffield/lazygit"
     url = "https://github.com/jesseduffield/lazygit/archive/refs/tags/v0.40.2.tar.gz"
+    supplier = "Person: Jesse Duffield"
 
-    maintainers("trws", "Chrismarsh")
+    maintainers("trws", "Chrismarsh", "mcmehrtens")
 
     license("MIT", checked_by="mcmehrtens")
 
+    version("0.63.1", sha256="227ff262138440ff68e893f6c95c4e586e954c46913106d84fff78d220e18b6c")
     version("0.63.0", sha256="56f028ad7700cbe4474e5fb09a617649a82d0963820d38757f61a93b31832610")
     version("0.62.2", sha256="0bd1cdbaf1a584d2eb2fd14f068a8eaaeaeb80d3e2713c72005de9e4feaf6844")
     version("0.62.1", sha256="198602c75c0d971b56088d6d364aaf9b2fd52bcadcb0e6a8548df0ed43e4dac2")
