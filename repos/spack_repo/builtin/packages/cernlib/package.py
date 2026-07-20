@@ -57,7 +57,7 @@ class Cernlib(CMakePackage):
         args = [self.define_from_variant("CERNLIB_BUILD_SHARED", "shared")]
         # The package does not build with C dialects newer than gnu17, so set gnu17
         # for GCC 15 and newer which default to gnu23
-        if (self.spec.satisfies("%gcc@15:")):
+        if self.spec.satisfies("%gcc@15:"):
             args.append(self.define("CMAKE_C_STANDARD", "17"))
             args.append(self.define("CMAKE_C_EXTENSIONS", True))
         return args
