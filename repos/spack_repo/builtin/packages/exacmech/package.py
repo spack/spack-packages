@@ -57,6 +57,12 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("shared", default=False, description="Enables the build of shared libraries")
+    variant(
+        "cxxstd",
+        default="17",
+        values=("17", "20"),
+        description="C++ standard to build with",
+    )
 
     depends_on("blt", type="build")
     depends_on("c", type="build")
@@ -79,6 +85,7 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CHAI_DIR", self.spec["chai"].prefix),
             self.define("UMPIRE_DIR", self.spec["umpire"].prefix),
             self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix),
+            self.define("BLT_CXX_STD", f"c++{spec.variants.get('cxxstd').value}"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("ENABLE_SNLS_V03", "ON"),
             self.define("ENABLE_GTEST", "OFF"),
