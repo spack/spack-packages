@@ -55,8 +55,8 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
         url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.2.0.tar.gz",
     )
 
-    variant("openmp", default=False)
-    variant("shared", default=False)
+    variant("openmp", default=False, description="Enable OpenMP support")
+    variant("shared", default=False, description="Enables the build of shared libraries")
 
     depends_on("blt", type="build")
     depends_on("c", type="build")
