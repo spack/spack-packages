@@ -31,6 +31,11 @@ class Uwtools(PythonPackage):
     version("2.9.1", sha256="1c29ce0be5f8d6c68be454b75e30220d21fcd8f67ce58ebb6e0d6a5f90fa823a")
     version("2.8.2", sha256="634f7fbc33cd9439f43df00c1d904266b9c51b3f386c2141c26c1229d4d95a34")
     version("2.7.2", sha256="56816d543664792258bfa7dfb7e4cc66f794959dc92dc3710021f40a2b8571a4")
+    version(
+        "2.6.2",
+        sha256="d0922ddd2b3bdbeb925c2e4694f929f3e966145d2929e74ab9f9c9ecd27b674a",
+        deprecated=True,
+    )
 
     depends_on("py-pip", type="build")
     # Maximum Python version limited here for compatibility with the JCSDA unified environment
