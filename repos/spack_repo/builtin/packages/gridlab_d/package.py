@@ -34,7 +34,7 @@ class GridlabD(CMakePackage):
 
     depends_on("cmake@3.10:", type="build")
     depends_on("xerces-c")
-    depends_on("superlu-mt")  # not clear if this and SuperLU_MT_ROOT are used
+    #depends_on("superlu-mt") gridlab-d now uses its own internal version
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
 
@@ -42,7 +42,6 @@ class GridlabD(CMakePackage):
         args = []
 
         args.append("-DXercesC_ROOT=" + self.spec["xerces-c"].prefix)
-        args.append("-DSuperLU_MT_ROOT=" + self.spec["superlu-mt"].prefix)
 
         if self.spec.satisfies("+helics"):
             args.append("-DGLD_USE_HELICS=ON")
