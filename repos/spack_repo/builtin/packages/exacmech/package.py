@@ -71,13 +71,14 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("c", when="+rocm +tests")
         depends_on("cxx")
 
-    depends_on("snls")
+    depends_on("raja")
     with when("+batch_solver"):
         depends_on("snls+batch_solver")
-        depends_on("raja")
         depends_on("camp")
         depends_on("chai")
         depends_on("umpire")
+    with when("~batch_solver"):
+        depends_on("snls+use_raja_only")
 
     # variant dependent dependencies
     depends_on("raja+openmp", when="+openmp")
