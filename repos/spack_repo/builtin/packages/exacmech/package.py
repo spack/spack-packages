@@ -102,6 +102,6 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_TESTS", "tests"),
         ]
 
-        if self.spec.satisfies("@:0.3.4"):
+        if self.spec.satisfies("@:0.3.5"):
             args.append(self.define("ENABLE_SNLS_V03", "ON"))
         return args
