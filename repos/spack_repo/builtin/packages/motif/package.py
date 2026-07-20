@@ -63,7 +63,6 @@ class Motif(AutotoolsPackage):
         if name == "cflags" and self.spec.satisfies("%gcc@15:"):
             flags.append("-std=gnu17")
         return (flags, None, None)
-    
 
     def autoreconf(self, spec, prefix):
         autoreconf = which("autoreconf", required=True)
