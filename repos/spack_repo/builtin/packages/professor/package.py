@@ -48,7 +48,7 @@ class Professor(Package):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PROF_VERSION", str(self.spec.version))
 
-    @when("@2.5.0:")
+    @run_before("install", when="@2.5.0:")
     def configure(self, spec, prefix):
         with working_dir(self.stage.source_path):
             configure = Executable("configure")
