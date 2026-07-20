@@ -40,7 +40,7 @@ class Uwtools(PythonPackage):
     depends_on("py-jinja2@3.1")
     depends_on("iotaa@1.1", when="@2.6")
     depends_on("iotaa@1.2", when="@2.7")
-    depends_on("iotaa@1.3:2.0", when="@2.8:")
+    depends_on("iotaa@1.3", when="@2.8:")
     depends_on("py-jsonschema@4.17:")
     depends_on("py-jsonschema@4.18:4.23", when="@:2.10")
     depends_on("py-jsonschema@4.18:4.25", when="@2.11:")
