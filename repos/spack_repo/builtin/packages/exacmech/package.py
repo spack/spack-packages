@@ -91,7 +91,7 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CHAI_DIR", self.spec["chai"].prefix),
             self.define("UMPIRE_DIR", self.spec["umpire"].prefix),
             self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix),
-            self.define("BLT_CXX_STD", f"c++{spec.variants.get('cxxstd').value}"),
+            self.define("BLT_CXX_STD", f"c++{self.spec.variants.get('cxxstd').value}"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("ENABLE_GTEST", "tests"),
             self.define("ENABLE_MINIAPPS", "OFF"),
