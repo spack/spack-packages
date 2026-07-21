@@ -6,6 +6,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
 from spack.package import *
 
 
@@ -35,15 +36,15 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("blt")
         depends_on("c")
         depends_on("cxx")
-    
+
     depends_on("boost", when="+boost")
     depends_on("mpi", when="+mpi")
 
     def cmake_args(self):
         args = [
             self.define("TESTING", "OFF"),
-            self.define("BLT_SOURCE_DIR", self.spec['blt'].prefix),
-            self.define_from_variant("ENABLE_MPI", 'mpi'),
+            self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix),
+            self.define_from_variant("ENABLE_MPI", "mpi"),
             self.define_from_variant("USE_BOOST", "boost"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
