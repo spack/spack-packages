@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -176,7 +177,11 @@ class Rocblas(CMakePackage):
         "7.2.1",
         "7.2.3",
     ]:
-        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"hipblaslt@{ver} amdgpu_target={tgt}",
+                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
+            )
 
     for ver in [
         "6.4.0",
@@ -192,6 +197,9 @@ class Rocblas(CMakePackage):
         "7.2.3",
     ]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
+
+    for ver in ["7.2.0", "7.2.1", "7.2.3"]:
+        depends_on(f"rocm-tensile@{ver}", type="build", when=f"@{ver} +tensile")
 
     depends_on("python@3.6:", type="build")
 
@@ -327,6 +335,9 @@ class Rocblas(CMakePackage):
             # and that consumes a lot of system memory.
             # https://github.com/ROCm/Tensile/blob/93e10678a0ced7843d9332b80bc17ebf9a166e8e/Tensile/Parallel.py#L38
             args.append(self.define("Tensile_CPU_THREADS", min(16, make_jobs)))
+            if self.spec.satisfies("@7.2:"):
+                args.append(self.define("BUILD_WITH_PIP", "OFF"))
+                args.append(self.define("Tensile_ROOT", self.spec["rocm-tensile"].prefix.Tensile))
 
         if "auto" not in self.spec.variants["amdgpu_target"]:
             if self.spec.satisfies("@7.1:"):

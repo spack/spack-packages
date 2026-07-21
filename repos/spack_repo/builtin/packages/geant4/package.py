@@ -26,6 +26,7 @@ class Geant4(CMakePackage):
 
     maintainers("drbenmorgan", "sethrj")
 
+    version("11.4.2", sha256="f9d5c7d108ae6be644d12997e0289e23e5d2da18df1cab9aaacd9b76412dfec6")
     version("11.4.1", sha256="99dcf5f9d4f806fb8c4fde85cb2674a42e4ca19833143464ff7efa55c1852140")
     version("11.4.0", sha256="a6d78cf70ba46902cb74ff65d09dc2d1e46b4ab9325862f84e439f0d4ec329fb")
     version("11.3.2", sha256="077edca6aa3b3940f351cf9a948457cad3fb117f215b88c52cce315e1a07fd7a")
@@ -83,6 +84,7 @@ class Geant4(CMakePackage):
     variant("tbb", default=False, description="Use TBB as a tasking backend", when="@11:")
     variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:11.2")
     variant("vtk", default=False, description="Enable VTK support", when="@11:")
+    variant("examples", default=True, description="Install examples")
 
     # For most users, obtaining the Geant4 data via Spack will be useful; the
     # sticky, default-enabled `+data` variant ensures that this happens.
@@ -368,6 +370,7 @@ class Geant4(CMakePackage):
         options.append(self.define_from_variant("GEANT4_USE_HDF5", "hdf5"))
         options.append(self.define_from_variant("GEANT4_USE_VTK", "vtk"))
         options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
+        options.append(self.define_from_variant("GEANT4_INSTALL_EXAMPLES", "examples"))
 
         return options
 

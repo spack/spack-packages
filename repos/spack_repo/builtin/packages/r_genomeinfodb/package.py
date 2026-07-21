@@ -19,6 +19,8 @@ class RGenomeinfodb(RPackage):
     bioc = "GenomeInfoDb"
 
     with default_args(get_full_repo=True):
+        version("1.48.0", commit="44b18f529396a2020b4cdf5a5ec62ca87e122832")  # bioc 3.23
+        version("1.44.3", commit="8f47cdf578468b8b4d4cce35a3fc08ab6ef1743e")  # bioc 3.21
         version("1.36.0", commit="c380bb93a5480b48e0efbf6d107cefc10d574438")
         version("1.34.3", commit="ea6f131f1d1ee61535d6733ce76fabf3c62185fc")
         version("1.32.4", commit="69df6a5a10027fecf6a6d1c8298f3f686b990d8f")
@@ -31,14 +33,27 @@ class RGenomeinfodb(RPackage):
         version("1.14.0", commit="4978308a57d887b764cc4ce83724ca1758f580f6")
         version("1.12.3", commit="2deef3f0571b7f622483257bc22d2509ab5a0369")
 
-    depends_on("r@3.1:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
+    depends_on("r@3.1:", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.53.2:", type=("build", "run"), when="@1.43.1:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.30.1:")
-    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.16.0:")
-    depends_on("r-s4vectors@0.25.12:", type=("build", "run"), when="@1.26.2:")
-    depends_on("r-iranges@1.99.26:", type=("build", "run"))
+    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
+
+    depends_on("r-iranges@2.41.1:", type=("build", "run"), when="@1.43.1:")
     depends_on("r-iranges@2.13.12:", type=("build", "run"), when="@1.16.0:")
-    depends_on("r-rcurl", type=("build", "run"))
-    depends_on("r-genomeinfodbdata", type=("build", "run"))
+    depends_on("r-iranges@1.99.26:", type=("build", "run"))
+
+    depends_on("r-seqinfo@0.99.2:", type=("build", "run"), when="@1.45.9:")
+    depends_on("r-seqinfo", type=("build", "run"), when="@1.45.5:")
+
+    depends_on("r-s4vectors@0.47.6:", type=("build", "run"), when="@1.45.13:")
+    depends_on("r-s4vectors@0.45.2:", type=("build", "run"), when="@1.43.1:")
+    depends_on("r-s4vectors@0.25.12:", type=("build", "run"), when="@1.26.2:")
+    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.16.0:")
+    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
+
+    depends_on("r-ucsc-utils", type=("build", "run"), when="@1.39.12:")
+
+    depends_on("r-genomeinfodbdata", type=("build", "run"), when="@:1.45.2")
+    depends_on("r-rcurl", type=("build", "run"), when="@:1.39.6")

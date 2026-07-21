@@ -15,7 +15,7 @@ class RustBootstrap(Package):
     homepage = "https://www.rust-lang.org"
     url = "https://static.rust-lang.org/dist/rust-1.65.0-aarch64-apple-darwin.tar.gz"
 
-    maintainers("alecbcs")
+    maintainers("alecbcs", "mcmehrtens")
 
     skip_version_audit = ["platform=windows"]
 
