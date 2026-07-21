@@ -19,6 +19,7 @@ class PyMsal(PythonPackage):
 
     license("MIT")
 
+    version("1.36.0", sha256="3f6a4af2b036b476a4215111c4297b4e6e236ed186cd804faefba23e4990978b")
     version("1.26.0", sha256="224756079fe338be838737682b49f8ebc20a87c1c5eeaf590daae4532b83de15")
     version("1.20.0", sha256="78344cd4c91d6134a593b5e3e45541e666e37b747ff8a6316c3668dd1e6ab6b2")
     version("1.3.0", sha256="5442a3a9d006506e653d3c4daff40538bdf067bf07b6b73b32d1b231d5e77a92")
@@ -27,9 +28,12 @@ class PyMsal(PythonPackage):
     # https://github.com/AzureAD/microsoft-authentication-library-for-python/blob/1.26.0/setup.cfg
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-requests@2", type=("build", "run"))
-    depends_on("py-pyjwt@1:2+crypto", type=("build", "run"), when="@1.9:")
-    depends_on("py-pyjwt@1+crypto", type=("build", "run"), when="@:1.8")
-    depends_on("py-cryptography@0.6:43", type=("build", "run"), when="@1.24:")
-    depends_on("py-cryptography@0.6:42", type=("build", "run"), when="@1.22:1.23")
-    depends_on("py-cryptography@0.6:40", type=("build", "run"), when="@1.19:1.21")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-requests@2")
+        depends_on("py-pyjwt@1:2+crypto", when="@1.9:")
+        depends_on("py-pyjwt@1+crypto", when="@:1.8")
+        depends_on("py-cryptography@2.5:48", when="@1.34:")
+        depends_on("py-cryptography@0.6:43", when="@1.24:1.26")
+        depends_on("py-cryptography@0.6:42", when="@1.22:1.23")
+        depends_on("py-cryptography@0.6:40", when="@1.19:1.21")

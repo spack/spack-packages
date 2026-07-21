@@ -14,6 +14,7 @@ class PyTwine(PythonPackage):
     pypi = "twine/twine-2.0.0.tar.gz"
     git = "https://github.com/pypa/twine.git"
 
+    version("6.2.0", sha256="e5ed0d2fd70c9959770dce51c8f39c8945c574e18173a7b81802dab51b4b75cf")
     version("6.1.0", sha256="be324f6272eff91d07ee93f251edf232fc647935dd585ac003539b42404a8dbd")
     version("6.0.1", sha256="36158b09df5406e1c9c1fb8edb24fc2be387709443e7376689b938531582ee27")
     version("4.0.2", sha256="9e102ef5fdd5a20661eb88fad46338806c3bd32cf1db729603fe3697b1bc83c8")
@@ -21,6 +22,7 @@ class PyTwine(PythonPackage):
     version("2.0.0", sha256="9fe7091715c7576df166df8ef6654e61bada39571783f2fd415bdcba867c6993")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@77.0.3:", when="@6.2.0:")
         depends_on("py-setuptools@61.2:", when="@6:")
         depends_on("py-setuptools@45:", when="@3.4.1:")
         depends_on("py-setuptools@0.7.0:")
@@ -47,12 +49,14 @@ class PyTwine(PythonPackage):
         depends_on("py-importlib-metadata@3.6:", when="@6:^python@:3.9")
         depends_on("py-importlib-metadata@3.6:", when="@3.4:4")
         depends_on("py-keyring@15.1:", when="@3:")
+        depends_on("py-keyring@21.2.0:", when="@6.2.0:")
         depends_on("py-rfc3986@1.4:", when="@3.2:")
         depends_on("py-rich@12:", when="@4:")
         depends_on("py-packaging@24:", when="@6:")
         depends_on("py-packaging", when="@6.1:")
         depends_on("py-id", when="@6.1:")
 
+        depends_on("python@3.9:", when="@6.2.0:")
         depends_on("python@3.8:", when="@5:")
         depends_on("python@3.7:", when="@4:")
         depends_on("python@3.6:", when="@2:")

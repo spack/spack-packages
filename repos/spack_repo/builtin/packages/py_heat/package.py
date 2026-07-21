@@ -8,9 +8,11 @@ from spack.package import *
 
 
 class PyHeat(PythonPackage):
-    """Heat is a flexible and seamless open-source software for high performance data analytics
-    and machine learning. It provides highly optimized algorithms and data structures for tensor
-    computations using CPUs, GPUs and distributed cluster systems on top of MPI."""
+    """Heat is a distributed tensor framework built on PyTorch and mpi4py. It provides
+    highly optimized algorithms and data structures for tensor computations using
+    CPUs, GPUs (CUDA/ROCm), and distributed cluster systems. It is designed to
+    handle massive arrays that exceed the memory and computational limits of a
+    single machine."""
 
     homepage = "https://github.com/helmholtz-analytics/heat/"
     pypi = "heat/heat-1.3.0.tar.gz"
@@ -19,6 +21,8 @@ class PyHeat(PythonPackage):
 
     license("MIT")
 
+    version("1.8.0", sha256="f0d64e122c88a44ca27ad60d91cdb7250f97c71c971913302ed90d838d7fd253")
+    version("1.7.0", sha256="1d787cc5f52fc2123bb69e6e2ee53b268b258abe4ed5be99e53706bcb250175c")
     version("1.6.0", sha256="cd011e67c284b7f94d0f1c6ff8bf5309535fa26a895b0db2df83290c47dae55b")
     version("1.5.1", sha256="95fea9daec6c2d5f0453159dbcd5efb26cb23997f0981e49fe9793a2fd342313")
     version("1.5.0", sha256="a2e2d7f0c1f340ab2597f2b9c02563f0057419a53287fbf4cdf1a7934bc6d60b")
@@ -32,6 +36,9 @@ class PyHeat(PythonPackage):
     variant("hdf5", default=False, description="Use the py-h5py package needed for HDF5 support")
     variant(
         "netcdf", default=False, description="Use the py-netcdf4 package needed for NetCDF support"
+    )
+    variant(
+        "zarr", default=False, description="Use the py-zarr package for Zarr support", when="@1.6:"
     )
     variant("dev", default=False, description="Use the py-pre-commit package")
     variant(
@@ -82,6 +89,22 @@ class PyHeat(PythonPackage):
         depends_on("py-torchvision@0.15:", type=("build", "run"))
         depends_on("py-torch@2.0:2.8.0", type=("build", "run"))
 
+    with when("@1.7"):
+        depends_on("python@3.10:", type=("build", "run"))
+        depends_on("py-mpi4py@3.0.0:", type=("build", "run"))
+        depends_on("py-scipy@1.14:", type=("build", "run"))
+        depends_on("pil", when="+examples", type=("build", "run"))
+        depends_on("py-torchvision@0.15:", type=("build", "run"))
+        depends_on("py-torch@2.0:2.9", type=("build", "run"))
+
+    with when("@1.8"):
+        depends_on("python@3.11:", type=("build", "run"))
+        depends_on("py-mpi4py@3.1:", type=("build", "run"))
+        depends_on("py-scipy@1.14:", type=("build", "run"))
+        depends_on("pil@6:", when=("+examples"), type=("build", "run"))
+        depends_on("py-torchvision@0.18:", type=("build", "run"))
+        depends_on("py-torch@2.3:2.11.0", type=("build", "run"))
+
     # specify differences cuda vs rocm
     with when("+cuda"):
         depends_on("py-torch+cuda", type=("build", "run"))
@@ -93,6 +116,7 @@ class PyHeat(PythonPackage):
     depends_on("py-docutils@0.16:", when="+docutils", type=("build", "link", "run"))
     depends_on("py-h5py@2.8.0:", when="+hdf5", type=("build", "link", "run"))
     depends_on("py-netcdf4@1.5.6:", when="+netcdf", type=("build", "link", "run"))
+    depends_on("py-zarr", when="+zarr", type=("build", "link", "run"))
     depends_on("py-pre-commit@1.18.3:", when="+dev", type=("build", "link", "run"))
     depends_on("py-scikit-learn@0.24.0:", when="+examples", type=("build", "link", "run"))
     depends_on("py-matplotlib@3.1.0:", when="+examples", type=("build", "link", "run"))

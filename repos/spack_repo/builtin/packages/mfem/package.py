@@ -828,8 +828,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             lapack_blas = spec["lapack"].libs + spec["blas"].libs
             options += [
                 # LAPACK_OPT is not used
-                "LAPACK_LIB=%s"
-                % ld_flags_from_library_list(lapack_blas)
+                "LAPACK_LIB=%s" % ld_flags_from_library_list(lapack_blas)
             ]
 
         if "+superlu-dist" in spec:
@@ -883,7 +882,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             if "^netlib-scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
                 sp_opt += ["-I%s" % scalapack.prefix.include]
-                sp_lib += [ld_flags_from_dirs([scalapack.prefix.lib], ["scalapack"])]
+                sp_lib += [ld_flags_from_library_list(scalapack.libs)]
             elif "^scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
                 sp_opt += [scalapack.headers.cpp_flags]

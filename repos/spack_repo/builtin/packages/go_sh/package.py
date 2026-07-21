@@ -19,6 +19,12 @@ class GoSh(GoPackage):
     license("BSD-3-Clause", checked_by="mcmehrtens")
 
     version(
+        "3.13.1",
+        tag="v3.13.1",
+        commit="2f3f5e36d9b0f8f14c998d50aa20a28832205ae8",
+        get_full_repo=True,
+    )
+    version(
         "3.13.0",
         tag="v3.13.0",
         commit="5c4d285c3e8fa3b85137b34cec5ce66b98d97bdc",
@@ -42,20 +48,25 @@ class GoSh(GoPackage):
             files.append(join_path("bin", "gosh"))
         return files
 
+    @property
+    def ldflags(self):
+        # v3.12 uses ldflags to set version; v3.13+ uses Go's VCS stamping
+        if self.spec.satisfies("@:3.12"):
+            return [f"-X main.version={self.spec.version}"]
+        return []
+
     def build(self, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory for the specified
         variants."""
-        # v3.12 uses ldflags to set version; v3.13+ uses Go's VCS stamping
-        if spec.satisfies("@:3.12"):
-            ldflags = f"-s -w -X main.version={spec.version}"
-        else:
-            ldflags = "-s -w"
-        common_flags = ("-p", str(make_jobs), "-modcacherw", "-ldflags", ldflags)
         with working_dir(self.build_directory):
             if spec.satisfies("+shfmt"):
-                go("build", "-o", "shfmt", *common_flags, "./cmd/shfmt")
+                args = list(self.std_build_args)
+                args[args.index("-o") + 1] = "shfmt"
+                go("build", *args, "./cmd/shfmt")
             if spec.satisfies("+gosh"):
-                go("build", "-o", "gosh", *common_flags, "./cmd/gosh")
+                args = list(self.std_build_args)
+                args[args.index("-o") + 1] = "gosh"
+                go("build", *args, "./cmd/gosh")
 
     def install(self, spec: Spec, prefix: Prefix) -> None:
         """Install built binaries into prefix bin."""

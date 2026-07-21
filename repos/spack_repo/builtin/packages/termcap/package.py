@@ -27,4 +27,6 @@ class Termcap(AutotoolsPackage, GNUMirrorPackage):
         if name == "cflags":
             if self.spec.satisfies("%gcc@14:"):
                 flags.append("-Wno-error=implicit-function-declaration")
+            if self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
         return (flags, None, None)

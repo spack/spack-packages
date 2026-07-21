@@ -87,7 +87,7 @@ class Paraconf(CMakePackage):
     depends_on("cmake@3.5:", type=("build"))
     depends_on("cmake@3.10:", type=("build"), when="@1.0.1:")
     depends_on("cmake@3.22:", type=("build"), when="@1.0.2:")
-    depends_on("pkgconfig", type=("build"))
+    depends_on("pkgconfig", type=("build", "link"))
     depends_on("libyaml@0.1.7:", type=("link", "run"))
     depends_on("libyaml@0.2.2:", type=("link", "run"), when="@1.0.2:")
 

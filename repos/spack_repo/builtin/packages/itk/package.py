@@ -66,6 +66,7 @@ class Itk(CMakePackage):
     depends_on("perl", type="build")
 
     depends_on("eigen")
+    depends_on("eigen@3.3:3", when="@:5")
     depends_on("expat")
     depends_on("fftw-api")
     depends_on("hdf5+cxx+hl")

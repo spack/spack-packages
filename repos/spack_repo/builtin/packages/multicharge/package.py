@@ -28,6 +28,7 @@ class Multicharge(CMakePackage, MesonPackage):
     version("0.3.1", sha256="180541714c26804a2d66edd892c8cd4cb40a21acbaf7edb24aaf04d580368b97")
     version("0.3.0", sha256="e8f6615d445264798b12d2854e25c93938373dc149bb79e6eddd23fc4309749d")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Enable OpenMP support")
 
     depends_on("c", type="build")
@@ -47,7 +48,10 @@ class Multicharge(CMakePackage, MesonPackage):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        args = [self.define_from_variant("WITH_OpenMP", "openmp")]
+        args = [
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]
         return args
 
 
@@ -62,6 +66,7 @@ class MesonBuilder(meson.MesonBuilder):
             lapack = "auto"
 
         return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dlapack={0}".format(lapack),
         ]
