@@ -27,6 +27,7 @@ class Libxc(AutotoolsPackage, CudaPackage, ROCmPackage, CMakePackage):
         conditional("cmake", when="@7:"), conditional("autotools", when="@:7"), default="cmake"
     )
 
+    version("7.1.2", sha256="c517ce61820ea8114664a4280b6a6bc74a4f22f1fd1ea4ddecd6df0caeeae4f4")
     version("7.1.1", sha256="73a9d5b7a0e0928a0108daba7cb88886ff2e8f17b1225b188562462b7c5da1ef")
     version("7.1.0", sha256="403499330a8ff7e1aa27d51c2b14cc5bc4e49ec02fd115031ab8c8a91465bb51")
     version("7.0.0", sha256="8d4e343041c9cd869833822f57744872076ae709a613c118d70605539fb13a77")

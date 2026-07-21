@@ -239,6 +239,21 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             when=f"@{d_version}",
         )
 
+    for d_version, spirv_headers_commit in [
+        ("7.1.0", "c9aad99f9276817f18f72a4696239237c83cb775"),
+        ("7.1.1", "c9aad99f9276817f18f72a4696239237c83cb775"),
+        ("7.2.0", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+        ("7.2.1", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+        ("7.2.3", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+    ]:
+        resource(
+            name="spirv-headers",
+            git="https://github.com/KhronosGroup/SPIRV-Headers.git",
+            commit=spirv_headers_commit,
+            placement="spirv-headers",
+            when=f"@{d_version}",
+        )
+
     for d_version, d_shasum in [
         ("6.0.2", "737b110d9402509db200ee413fb139a78369cf517453395b96bda52d0aa362b9"),
         ("6.0.0", "04353d27a512642a5e5339532a39d0aabe44e0964985de37b150a2550385800a"),
@@ -375,6 +390,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(
                 self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir)
             )
+            spirv_headers_dir = os.path.join(self.stage.source_path, "spirv-headers")
+            args.append(self.define("LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR", spirv_headers_dir))
         if self.spec.satisfies("@7.2:"):
             args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
