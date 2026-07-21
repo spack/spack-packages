@@ -44,7 +44,7 @@ class Uwtools(PythonPackage):
     depends_on("python@3.10:3.14", when="@2.11:")
     depends_on("py-setuptools", type="build")
     depends_on("py-f90nml@1.4", when="@:2.13")
-    depends_on("py-f90nml@1.4:1.5", when="@2.14")
+    depends_on("py-f90nml@1.4:1.5", when="@2.14:")
 
     depends_on("iotaa@1.1", when="@2.6")
     depends_on("iotaa@1.2", when="@2.7")
