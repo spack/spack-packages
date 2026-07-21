@@ -21,18 +21,27 @@ class Atlas(Package):
 
     license("Apache-2.0")
 
-    # Developer (unstable)
-    version("3.11.41", sha256="477d567a8d683e891d786e9e8bb6ad6659daa9ba18e8dd0e2f70b7a54095f8de")
-    version("3.11.39", sha256="584bd44572746142bf19348139530c18f4538ce41d94330ff86ede38c36eddc9")
-    version("3.11.34", sha256="b6d42af3afd4fe54ef3a04a070fc7e75f6d8ac9f7d4886b636fe27ebfcbdf91f")
+    with default_args(deprecated=True):
+        # Developer (unstable)
+        version(
+            "3.11.41", sha256="477d567a8d683e891d786e9e8bb6ad6659daa9ba18e8dd0e2f70b7a54095f8de"
+        )
+        version(
+            "3.11.39", sha256="584bd44572746142bf19348139530c18f4538ce41d94330ff86ede38c36eddc9"
+        )
+        version(
+            "3.11.34", sha256="b6d42af3afd4fe54ef3a04a070fc7e75f6d8ac9f7d4886b636fe27ebfcbdf91f"
+        )
 
-    # Stable
-    version(
-        "3.10.3",
-        sha256="2688eb733a6c5f78a18ef32144039adcd62fabce66f2eb51dd59dde806a6d2b7",
-        preferred=True,
-    )
-    version("3.10.2", sha256="3aab139b118bf3fcdb4956fbd71676158d713ab0d3bccb2ae1dc3769db22102f")
+        # Stable
+        version(
+            "3.10.3",
+            sha256="2688eb733a6c5f78a18ef32144039adcd62fabce66f2eb51dd59dde806a6d2b7",
+            preferred=True,
+        )
+        version(
+            "3.10.2", sha256="3aab139b118bf3fcdb4956fbd71676158d713ab0d3bccb2ae1dc3769db22102f"
+        )
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated

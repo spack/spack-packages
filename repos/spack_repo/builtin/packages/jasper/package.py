@@ -13,6 +13,7 @@ class Jasper(CMakePackage):
     homepage = "https://www.ece.uvic.ca/~frodo/jasper/"
     url = "https://github.com/jasper-software/jasper/archive/version-2.0.32.tar.gz"
 
+    version("4.2.8", sha256="987e8c8b4afcff87553833b6f0fa255b5556a0ecc617b45ee1882e10c1b5ec14")
     version("4.2.4", sha256="23a3d58cdeacf3abdf9fa1d81dcefee58da6ab330940790c0f27019703bfd2cd")
     version("3.0.6", sha256="c79961bc00158f5b5dc5f5fcfa792fde9bebb024432689d0f9e3f95a097d0ec3")
     version("3.0.3", sha256="1b324f7746681f6d24d06fcf163cf3b8ae7ac320adc776c3d611b2b62c31b65f")

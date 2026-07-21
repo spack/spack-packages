@@ -15,6 +15,7 @@ class PyPyvizComms(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.6", sha256="73d66b620390d97959b2c4d8a2c0778d41fe20581be4717f01e46b8fae8c5695")
     version("3.0.4", sha256="d70e17555f7262c4884a6b7bc9ca19cb816507a032a334d9cb411b4546caff4c")
     version("2.2.1", sha256="a26145b8ce43d2d934b3c6826d77b913ce105c528eb2e494c890b3e3525ddf33")
 

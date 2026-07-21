@@ -25,6 +25,7 @@ class PyScikitImage(PythonPackage):
         "skimage.future.graph",
     ]
 
+    version("0.26.0", sha256="f5f970ab04efad85c24714321fcc91613fcb64ef2a892a13167df2f3e59199fa")
     version("0.25.2", sha256="e5a37e6cd4d0c018a7a55b9d601357e3382826d3888c10d0213fc63bff977dde")
     version("0.25.1", sha256="d4ab30540d114d37c35fe5c837f89b94aaba2a7643afae8354aa353319e9bbbb")
     version("0.25.0", sha256="58d94fea11b6b3306b3770417dc1cbca7fa9bcbd6a13945d7910399c88c2018c")
@@ -39,9 +40,6 @@ class PyScikitImage(PythonPackage):
     version("0.18.3", sha256="ecae99f93f4c5e9b1bf34959f4dc596c41f2f6b2fc407d9d9ddf85aebd3137ca")
     version("0.18.1", sha256="fbb618ca911867bce45574c1639618cdfb5d94e207432b19bc19563d80d2f171")
     version("0.17.2", sha256="bd954c0588f0f7e81d9763dc95e06950e68247d540476e06cb77bcbcd8c2d8b3")
-
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
 
     variant(
         "data",
@@ -58,6 +56,7 @@ class PyScikitImage(PythonPackage):
     # @:0.13      from requirements.txt, DEPENDS.txt
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@0.26:")
         depends_on("python@3.10:", when="@0.23:")
         depends_on("python@3.9:", when="@0.22:")
 
@@ -73,6 +72,7 @@ class PyScikitImage(PythonPackage):
         depends_on("py-numpy@:1", when="@:0.23.0")
 
     with default_args(type=("build", "run")):
+        depends_on("py-scipy@1.11.4:", when="@0.25.2:")
         depends_on("py-scipy@1.11.2:", when="@0.25:")
         depends_on("py-scipy@1.9:", when="@0.23:")
         depends_on("py-scipy@1.8:", when="@0.20:")
@@ -99,19 +99,17 @@ class PyScikitImage(PythonPackage):
         depends_on("py-lazy-loader@0.3:", when="@0.22:")
         depends_on("py-lazy-loader@0.2:", when="@0.21:")
         depends_on("py-lazy-loader@0.1:", when="@0.20:")
+
         depends_on("py-pooch@1.6.0:", when="@0.21: +data")
         depends_on("py-pooch@1.3.0:", when="@0.18: +data")
 
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         depends_on("py-meson-python@0.16:", when="@0.25:")
         depends_on("py-meson-python@0.15:", when="@0.23:")
         depends_on("py-meson-python@0.14:", when="@0.22:")
         depends_on("py-meson-python@0.13:", when="@0.20:")
-        depends_on("py-setuptools@68:", when="@0.25:")
-        depends_on("py-setuptools@67:", when="@0.20:")
-        depends_on("py-setuptools@:59.4", when="@0.19.1:0.19")
-        depends_on("py-setuptools@51:", when="@0.18:")
-        depends_on("py-setuptools")
         depends_on("py-cython@3.0.8:", when="@0.25:")
         depends_on("py-cython@3.0.4:", when="@0.23:")
         depends_on("py-cython@0.29.32:", when="@0.21:")
@@ -123,6 +121,13 @@ class PyScikitImage(PythonPackage):
         depends_on("py-pythran", when="@0.19:")
 
     # dependencies for old versions
+    with default_args(type="build"):
+        depends_on("py-setuptools@68:", when="@0.25.0:0.25.1")
+        depends_on("py-setuptools@67:", when="@0.20:0.24")
+        depends_on("py-setuptools@:59.4", when="@0.19.1:0.19")
+        depends_on("py-setuptools@51:", when="@0.18:0.19.0")
+        depends_on("py-setuptools", when="@:0.17")
+
     with default_args(type=("build", "run")):
         depends_on("py-pywavelets@1.1.1:", when="@0.17:0.21")
         depends_on("py-matplotlib@2.0:2,3.0.1:", when="@0.15:0.18")

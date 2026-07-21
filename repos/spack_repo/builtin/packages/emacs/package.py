@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
@@ -61,7 +60,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         description="X11 toolkit when gui=x11 (gtk, athena)",
         when="gui=x11",
     )
-    variant("json", default=False, when="@27:", description="Build with json support")
+    variant("json", default=False, when="@27:29", description="Build with json support")
     variant("native", default=False, when="@28:", description="Enable native compilation of elisp")
     variant("sqlite", default=False, when="@29.1:", description="Build with sqlite3 support")
     variant("tls", default=True, description="Build with gnutls support")
@@ -88,10 +87,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
-    depends_on("tree-sitter", when="+treesitter")
     depends_on("gcc@11: languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
     depends_on("sqlite@3", when="+sqlite")
+
+    with when("+treesitter"):
+        depends_on("tree-sitter")
+        depends_on("tree-sitter@:0.25", when="@:30.2")
 
     # GUI dependencies
     with when("gui=x11"):
@@ -128,7 +130,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
             args.append("--disable-ns-self-contained")
         else:
             args.append("--without-x")
-            if sys.platform == "darwin":
+            if self.spec.satisfies("platform=darwin"):
                 args.append("--without-ns")
 
         args.extend(self.with_or_without("native-compilation", variant="native"))
@@ -177,6 +179,6 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         if not os.path.exists(exe_path):
             raise SkipTest(f"{exe_path} is not installed")
 
-        exe = which(exe_path)
+        exe = which(exe_path, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert str(self.spec.version) in out

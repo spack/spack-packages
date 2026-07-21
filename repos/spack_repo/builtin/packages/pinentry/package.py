@@ -22,6 +22,7 @@ class Pinentry(AutotoolsPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.3.3", sha256="c2970f16d6afb66ecddfca767d743936c86239bff936eed7fd7597a678414b63")
     version("1.3.2", sha256="8e986ed88561b4da6e9efe0c54fa4ca8923035c99264df0b0464497c5fb94e9e")
     version("1.3.1", sha256="bc72ee27c7239007ab1896c3c2fae53b076e2c9bd2483dc2769a16902bce8c04")
     version("1.3.0", sha256="9b3cd5226e7597f2fded399a3bc659923351536559e9db0826981bca316494de")
@@ -100,7 +101,7 @@ class Pinentry(AutotoolsPackage):
 
     def check_version(self, exe_name):
         """Version check"""
-        exe = which(join_path(self.prefix.bin, exe_name))
+        exe = which(join_path(self.prefix.bin, exe_name), required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert str(self.version) in out
 

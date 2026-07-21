@@ -25,7 +25,7 @@ class Conda4aarch64(Package):
 
     def install(self, spec, prefix):
         conda_script = self.stage.archive_file
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash(conda_script, "-b", "-f", "-p", self.prefix)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

@@ -143,7 +143,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
     # patch from https://gitlab.freedesktop.org/cairo/cairo/issues/346
     patch("fontconfig.patch", when="@1.16.0:1.17.2")
     # Don't regenerate docs to avoid a dependency on gtk-doc
-    patch("disable-gtk-docs.patch", when="build_system=autotools ^autoconf@2.70:")
+    patch("disable-gtk-docs.patch", when="build_system=autotools")
 
 
 class MesonBuilder(meson.MesonBuilder):
@@ -179,7 +179,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def autoreconf(self, pkg, spec, prefix):
         # Regenerate, directing the script *not* to call configure before Spack
         # does
-        which("sh")("./autogen.sh", extra_env={"NOCONFIGURE": "1"})
+        which("sh", required=True)("./autogen.sh", extra_env={"NOCONFIGURE": "1"})
 
     def configure_args(self):
         args = ["--disable-trace", "--enable-tee"]  # can cause problems with libiberty
@@ -197,7 +197,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args.extend(self.with_or_without("pic"))
 
         if self.spec.satisfies("+ft ^freetype~shared"):
-            pkgconf = which("pkg-config")
+            pkgconf = which("pkg-config", required=True)
             ldflags = pkgconf("--libs-only-L", "--static", "freetype2", output=str)
             libs = pkgconf("--libs-only-l", "--static", "freetype2", output=str)
             args.append(f"LDFLAGS={ldflags}")

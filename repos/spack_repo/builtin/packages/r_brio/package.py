@@ -22,4 +22,6 @@ class RBrio(RPackage):
     version("1.1.3", sha256="eaa89041856189bee545bf1c42c7920a0bb0f1f70bb477487c467ee3e8fedcc6")
     version("1.1.0", sha256="6bb3a3b47bea13f1a1e3dcdc8b9f688502643e4b40a481a34aa04a261aabea38")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.6:", when="@1.1.4:", type=("build", "run"))

@@ -16,7 +16,7 @@ class Nim(Package):
     """
 
     homepage = "https://nim-lang.org/"
-    url = "https://nim-lang.org/download/nim-2.2.6.tar.xz"
+    url = "https://nim-lang.org/download/nim-2.2.10.tar.xz"
     git = "https://github.com/nim-lang/Nim.git"
 
     license("MIT", checked_by="Buldram")
@@ -24,6 +24,8 @@ class Nim(Package):
     maintainers("Buldram")
 
     version("develop", branch="devel")
+    version("2.2.10", sha256="7957b7ed004206bcf10bcc4f3b4744153878e62f2431552a9a8e9d3f40e8d5d5")
+    version("2.2.8", sha256="114191afa083c5059dcbe5ce88dbe4f42542cff04e2c3017668ee438bc0b8cfc")
     version("2.2.6", sha256="657b0e3d5def788148d2a87fa6123fa755b2d92cad31ef60fd261e451785528b")
     version("2.2.4", sha256="f82b419750fcce561f3f897a0486b180186845d76fb5d99f248ce166108189c7")
     version("2.2.2", sha256="7fcc9b87ac9c0ba5a489fdc26e2d8480ce96a3ca622100d6267ef92135fd8a1f")

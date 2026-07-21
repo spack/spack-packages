@@ -15,6 +15,7 @@ class PyTypingInspect(PythonPackage):
 
     license("MIT")
 
+    version("0.9.0", sha256="b23fc42ff6f6ef6954e4852c1fb512cdd18dbea03134f91f856a95ccc9461f78")
     version("0.8.0", sha256="8b1ff0c400943b6145df8119c41c244ca8207f1f10c9c057aeed1560e4806e3d")
 
     depends_on("py-setuptools", type="build")

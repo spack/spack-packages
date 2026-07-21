@@ -37,5 +37,5 @@ class Drishti(PythonPackage):
 
     def test_help(self):
         """Run drishti help."""
-        drishti = which(self.prefix.bin.drishti)
+        drishti = which(self.prefix.bin.drishti, required=True)
         drishti("-h")

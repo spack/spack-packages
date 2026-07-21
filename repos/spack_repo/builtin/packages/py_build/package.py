@@ -15,6 +15,7 @@ class PyBuild(PythonPackage):
 
     license("MIT")
 
+    version("1.4.3", sha256="5aa4231ae0e807efdf1fd0623e07366eca2ab215921345a2e38acdd5d0fa0a74")
     version("1.2.2", sha256="119b2fb462adef986483438377a13b2f42064a2a3a4161f24a0cca698a07ac8c")
     version("1.2.1", sha256="526263f4870c26f26c433545579475377b2b7588b6f1eac76a001e873ae3e19d")
     version("1.1.1", sha256="8eea65bb45b1aac2e734ba2cc8dad3a6d97d97901a395bd0ed3e7b46953d2a31")
@@ -29,6 +30,7 @@ class PyBuild(PythonPackage):
     variant("virtualenv", default=False, description="Install optional virtualenv dependency")
 
     with default_args(type="build"):
+        depends_on("py-flit-core@3.11:", when="@1.4.3:")
         depends_on("py-flit-core@3.8:", when="@1:")
         depends_on("py-flit-core@3.4:", when="@0.10:")
 
@@ -36,10 +38,12 @@ class PyBuild(PythonPackage):
         depends_on("py-setuptools", when="@:0.9")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1.4.3:")
         depends_on("python@3.8:", when="@1.2:")
         depends_on("python@3.7:", when="@0.10:")
         depends_on("python@3.6:", when="@0.6:")
 
+        depends_on("py-packaging@24.0:", when="@1.4.3:")
         depends_on("py-packaging@19.1:", when="@1.2:")
         depends_on("py-packaging@19:")
 

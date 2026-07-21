@@ -17,6 +17,7 @@ class PyGrequests(PythonPackage):
     homepage = "https://github.com/spyoungtech/grequests"
     pypi = "grequests/grequests-0.4.0.tar.gz"
 
+    version("0.7.0", sha256="5c33f14268df5b8fa1107d8537815be6febbad6ec560524d6a404b7778cf6ba6")
     version("0.4.0", sha256="8aeccc15e60ec65c7e67ee32e9c596ab2196979815497f85cf863465a1626490")
     version("0.3.0", sha256="0f41c4eee83bab39f5543af49665c08681637a0562a5704a3f7b2e4a996531c9")
 

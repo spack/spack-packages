@@ -1,0 +1,39 @@
+diff --git a/configure.ac b/configure.ac
+index b73901f..1f53de6 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -695,6 +695,14 @@ if test "x${have_openpmd}" = xyes; then
+ fi
+ AM_CONDITIONAL(HAVE_OPENPMD, [test "x${have_openpmd}" = xyes])
+ 
++hdf5_examples=yes
++AC_ARG_ENABLE([hdf5-examples],
++   [AS_HELP_STRING([--disable-hdf5-examples],
++                   [Disable hdf5 examples. @<:@default: enabled@:>@])],
++   [hdf5_examples=${enableval}], [hdf5_examples=yes]
++)
++AM_CONDITIONAL(HDF5_EXAMPLES, [test "x${hdf5_examples}" = xyes])
++
+ dnl Configuration Date
+ dnl Note that command 'date' is not portable across Unix platforms
+ if test "x$SOURCE_DATE_EPOCH" != x ; then
+diff --git a/examples/Makefile.am b/examples/Makefile.am
+index b209b5e..eb34ad5 100644
+--- a/examples/Makefile.am
++++ b/examples/Makefile.am
+@@ -58,9 +58,13 @@ SH_LOG_COMPILER =
+ 
+ TESTS = $(TESTPROGRAMS)
+ 
+-C_SUBDIRS = hdf5_examples
++C_SUBDIRS =
+ 
+-DIST_SUBDIRS = $(C_SUBDIRS) 
++if HDF5_EXAMPLES
++    C_SUBDIRS += hdf5_examples
++endif
++
++DIST_SUBDIRS = hdf5_examples
+ 
+ SUBDIRS = . $(C_SUBDIRS)
+ 

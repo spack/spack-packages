@@ -40,6 +40,8 @@ class PyPyproj(PythonPackage):
 
     # In pyproject.toml
     with default_args(type="build"):
+        # https://github.com/pyproj4/pyproj/pull/1575
+        depends_on("py-setuptools@77.0.1:", when="@3.7.2:")
         depends_on("py-setuptools@61:", when="@3.4:")
         depends_on("py-setuptools")
         depends_on("py-cython@3.1:", when="@3.7.2:")

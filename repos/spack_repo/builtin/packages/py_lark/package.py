@@ -15,6 +15,9 @@ class PyLark(PythonPackage):
 
     license("MIT")
 
+    version("1.3.1", sha256="b426a7a6d6d53189d318f2b6236ab5d6429eaf09259f1ca33eb716eed10d2905")
+    version("1.2.2", sha256="ca807d0162cd16cef15a8feecb862d7319e7a09bdb13aef927968e45040fed80")
+    version("1.1.9", sha256="15fa5236490824c2c4aba0e22d2d6d823575dcaf4cdd1848e34b6ad836240fba")
     version("1.1.2", sha256="7a8d0c07d663da9391d7faee1bf1d7df4998c47ca43a593cbef5c7566acd057a")
     version("1.1.1", sha256="5115193433051f079374c4f81059fa4bf2afa78cc87dd87817ed4435e8647c82")
     version("1.1.0", sha256="669eab99a9627b2b9e0c6fb97f23113c64d673c93d804bca40b05b2a765f13c0")

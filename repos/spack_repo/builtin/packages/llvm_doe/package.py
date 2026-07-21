@@ -346,7 +346,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
     @run_before("cmake")
     def codesign_check(self):
         if self.spec.satisfies("+code_signing"):
-            codesign = which("codesign")
+            codesign = which("codesign", required=True)
             mkdir("tmp")
             llvm_check_file = join_path("tmp", "llvm_check")
             copy("/usr/bin/false", llvm_check_file)
@@ -385,7 +385,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
-                    os.symlink(bin, sym)
+                    symlink(bin, sym)
             env.prepend_path("PATH", self.stage.path)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

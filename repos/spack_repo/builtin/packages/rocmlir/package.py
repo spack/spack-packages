@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
 
@@ -19,7 +19,19 @@ class Rocmlir(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
-
+    version(
+        "7.2.3",
+        url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-7.2.3.tar.gz",
+        sha256="415eacd1fbd916e2f62cd7b8acad0bf8b66cdac0211ebce09eca931843c2dce2",
+    )
+    version("7.2.1", sha256="9764005aabc939d32e2f9383cf50d7ca1d0f02c8b3c986ecf04340db3ac60720")
+    version("7.2.0", sha256="7349cf8ccf7bb612e24168b4be2e7312f243e1603907613edf6d2ec8e71f7801")
+    version("7.1.1", sha256="e5fb89f55b6d5abf1be85cc35a68bc496d908fdf9b9c51ad44ac3cbf67aa35ee")
+    version(
+        "7.1.0",
+        url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-7.1.tar.gz",
+        sha256="2e57ff0b098ebe67fca02ef65cb2e1a44f3aaa6d23456d747c4c8c0df24f9d50",
+    )
     version("7.0.2", sha256="01e4b5c3f22c23595816a8c16e3ec67d39c7c5f63ecfa2d8a641ef65a9b79d50")
     version(
         "7.0.0",
@@ -58,9 +70,9 @@ class Rocmlir(CMakePackage):
             string=True,
         )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    generator("ninja")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("python", type="build")
     depends_on("z3", type="link")
     depends_on("zlib-api", type="link")
@@ -89,6 +101,11 @@ class Rocmlir(CMakePackage):
         "6.4.3",
         "7.0.0",
         "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

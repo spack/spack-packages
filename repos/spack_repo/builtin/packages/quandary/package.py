@@ -24,6 +24,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("MIT", checked_by="tdrwenski")
 
     version("main", branch="main", preferred=True)
+    version("4.4", tag="v4.4", commit="530f059e086894ee74d56198f3e4aa2a1808d916")
     version("4.3", tag="v4.3", commit="d5087e7ac82665ceb028b492c88b3fe8acd5cd13")
     version("4.2", tag="v4.2", commit="557675fd76daf9fd0be7ebd6321bf2afcb6a6b9c")
     version("learning", branch="learning")
@@ -47,6 +48,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", type=("build", "link", "run"))
 
     depends_on("blt@0.6.0:", type="build")
+    depends_on("tomlplusplus", when="@4.4:")
 
     with when("+rocm"):
         for arch_ in ROCmPackage.amdgpu_targets:

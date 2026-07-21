@@ -38,7 +38,9 @@ class Mmseqs2(CMakePackage, CudaPackage):
     conflicts("@:15 +cuda")
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA architecture is required")
     conflicts(
-        "cmake@3.14:,:4", when="@18-8cc5c", msg="Cuda >=3.15 and <4 is required to compile MMseqs2"
+        "cmake@3.14:,:4",
+        when="@18-8cc5c",
+        msg="CMake >=3.15 and <4 is required to compile MMseqs2",
     )
 
     # patch to support building with gcc@13:
@@ -48,6 +50,12 @@ class Mmseqs2(CMakePackage, CudaPackage):
         when="@:14 %gcc@13:",
         level=1,
     )
+
+    @when("@18-8cc5c+cuda")
+    def patch(self):
+        filter_file(
+            r'^(#include "GpuUtil.h")', "\\1\n#include <thread>\n", "src/util/gpuserver.cpp"
+        )
 
     # apple-clang will build with +openmp with llvm-openmp as a dependency
     # however when running with real data, it threw segmentation faults

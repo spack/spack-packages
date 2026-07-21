@@ -17,6 +17,7 @@ class PyTraits(PythonPackage):
 
     license("CC-BY-3.0")
 
+    version("7.1.0", sha256="af4775747e11e05ffe13d3ba463d92f67f1f3d1a9e4f46ba33a44ea22b0c9644")
     version("7.0.2", sha256="a563515809cb3911975de5a54209855f0b6fdb7ca6912a5e81de26529f70428c")
     version("6.4.2", sha256="5be7cc5fb7a99cba7e9014786373e3ad2f75efb445eeced094654bbaf3b0fa82")
     version("6.4.1", sha256="78bb2ccafd60aff606515aac46de64668a0a81cb5c54c650b9877a841aa9e812")

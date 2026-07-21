@@ -20,8 +20,9 @@ class CbtfArgonavisGui(QMakePackage):
 
     maintainers("jgalarowicz")
 
-    version("develop", branch="master")
-    version("1.3.0.0", branch="1.3.0.0")
+    with default_args(deprecated=True):
+        version("develop", branch="master")
+        version("1.3.0.0", branch="1.3.0.0")
 
     depends_on("cxx", type="build")  # generated
 

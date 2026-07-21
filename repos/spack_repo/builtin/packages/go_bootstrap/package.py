@@ -33,6 +33,28 @@ class GoBootstrap(Package):
     # should update these binary releases on a yearly schedule as
     # bootstrapping requirements are modified by new releases of go.
     go_releases = {
+        "1.24.13": {
+            "darwin": {
+                "amd64": "6cc6549b06725220b342b740497ffd24e0ebdcef75781a77931ca199f46ad781",
+                "arm64": "f282d882c3353485e2fc6c634606d85caf36e855167d59b996dbeae19fa7629a",
+            },
+            "linux": {
+                "amd64": "1fc94b57134d51669c72173ad5d49fd62afb0f1db9bf3f798fd98ee423f8d730",
+                "arm64": "74d97be1cc3a474129590c67ebf748a96e72d9f3a2b6fef3ed3275de591d49b3",
+                "ppc64le": "5f0dfab58ce15a84d824363c041246c76847a69d14f9ffac16bd5342299ecc14",
+            },
+        },
+        "1.24.6": {
+            "darwin": {
+                "amd64": "4a8d7a32052f223e71faab424a69430455b27b3fff5f4e651f9d97c3e51a8746",
+                "arm64": "4e29202c49573b953be7cc3500e1f8d9e66ddd12faa8cf0939a4951411e09a2a",
+            },
+            "linux": {
+                "amd64": "bbca37cc395c974ffa4893ee35819ad23ebb27426df87af92e93a9ec66ef8712",
+                "arm64": "124ea6033a8bf98aa9fbab53e58d134905262d45a022af3a90b73320f3c3afd5",
+                "ppc64le": "63fc9559a3d6dfd63aa902f714375b879bbc848466181c035c122489b9646e27",
+            },
+        },
         "1.22.12": {
             "darwin": {
                 "amd64": "e7bbe07e96f0bd3df04225090fe1e7852ed33af37c43a23e16edbbb3b90a5b7c",

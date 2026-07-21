@@ -15,11 +15,13 @@ class Ocaml(Package):
     url = "https://caml.inria.fr/pub/distrib/ocaml-4.06/ocaml-4.06.0.tar.gz"
 
     maintainers("scemama")
+    version("5.4.0", sha256="6fcf1b192e389e54c4f5cb51306ab2baee2a54a25b1770366de5a8b42695996e")
     version("5.2.1", sha256="2d0f8090951a97a2c0e5b8a11e90096c0e1791d2e471e4a67f87e3b974044cd0")
     version("5.2.0", sha256="3a7b5fb6d81bb42bbda84aadf5d84ff8bcbb149988087e7863bf5c2f4b27b187")
     version("5.1.1", sha256="33b8c1df88700ba1f5123aa4bdbc7a125482feafc77e5081ef1725fddf290be1")
     version("5.1.0", sha256="5e91492d87b193728a0729122b679039c73e75820dcf2724a31b262390d210c2")
     version("5.0.0", sha256="969e1f7939736d39f2af533cd12cc64b05f060dbed087d7b760ee2503bfe56de")
+    version("4.14.3", sha256="b9b5b3bef697cfd35c7ea3f3563c4cf6755531f922fef7ba112a1525cd32781b")
     version("4.14.2", sha256="93b4f3ba39d559a963fc10744563b4c6e92e9ffb540ce89e5c5ebf76086b99f3")
     version("4.13.1", sha256="66a5353c5e7b33a8981446e857657aad45a3b82080ea5c67d4baa434eacfcf5f")
     version("4.12.0", sha256="9825e5903b852a7a5edb71a1ed68f5d5d55d6417e2dda514dda602bc6efeed7b")

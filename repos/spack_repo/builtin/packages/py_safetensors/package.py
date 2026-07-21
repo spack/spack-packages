@@ -28,6 +28,7 @@ class PySafetensors(PythonPackage):
     # Based on PyPI wheel availability
     depends_on("python@3.7:3.12", when="@:0.4.3", type=("build", "run"))
     depends_on("py-maturin@1", type="build", when="@0.4.3:")
+    depends_on("rust", type="build", when="@0.4.3:")
 
     # Historical dependencies
     depends_on("py-setuptools", when="@0.3.1", type="build")

@@ -15,6 +15,7 @@ class PySpacyLoggers(PythonPackage):
 
     license("MIT")
 
+    version("1.0.5", sha256="d60b0bdbf915a60e516cc2e653baeff946f0cfc461b452d11a4d5458c6fe5f24")
     version("1.0.4", sha256="e6f983bf71230091d5bb7b11bf64bd54415eca839108d5f83d9155d0ba93bf28")
 
     depends_on("python@3.6:", type=("build", "run"))

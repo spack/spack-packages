@@ -27,6 +27,7 @@ class RAfex(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.5-1", sha256="68c5bb370579e288c4e11603a84aa637d2c44995faee10ebc2b42ebd86c03dbb")
     version("1.5-0", sha256="b78aa9acba8e7f47f9cfb69a9739f07635ba042a10364e92922f317fd0b777c6")
     version("1.3-1", sha256="4a64fb7e86e3d081e576c0d744d1613f391656082962c5799cf3fc5e2ca631a8")
     version("1.3-0", sha256="f8e276a1070288c54b83db1d1214fd88fe8d8b8698cf0c2743ef2a45f61e1933")

@@ -16,6 +16,10 @@ class Librdkafka(AutotoolsPackage):
 
     license("BSD-2-Clause")
 
+    version("2.13.2", sha256="14972092e4115f6e99f798a7cb420cbf6daa0c73502b3c52ae42fb5b418eea8f")
+    version("2.13.0", sha256="3bd351601d8ebcbc99b9a1316cae1b83b00edbcf9411c34287edf1791c507600")
+    version("2.12.1", sha256="ec103fa05cb0f251e375f6ea0b6112cfc9d0acd977dc5b69fdc54242ba38a16f")
+    version("2.12.0", sha256="1355d81091d13643aed140ba0fe62437c02d9434b44e90975aaefab84c2bf237")
     version("2.11.1", sha256="a2c87186b081e2705bb7d5338d5a01bc88d43273619b372ccb7bb0d264d0ca9f")
     version("2.8.0", sha256="5bd1c46f63265f31c6bfcedcde78703f77d28238eadf23821c2b43fc30be3e25")
     version("2.6.1", sha256="0ddf205ad8d36af0bc72a2fec20639ea02e1d583e353163bf7f4683d949e901b")
@@ -30,6 +34,8 @@ class Librdkafka(AutotoolsPackage):
     version("1.4.4", sha256="0984ffbe17b9e04599fb9eceb16cfa189f525a042bef02474cd1bbfe1ea68416")
     version("1.4.2", sha256="3b99a36c082a67ef6295eabd4fb3e32ab0bff7c6b0d397d6352697335f4e57eb")
 
+    variant("sasl", default=True, description="Enable SASL")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -39,3 +45,4 @@ class Librdkafka(AutotoolsPackage):
     depends_on("curl")
     depends_on("openssl")
     depends_on("zlib")
+    depends_on("cyrus-sasl", when="+sasl")

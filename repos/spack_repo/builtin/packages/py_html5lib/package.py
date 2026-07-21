@@ -19,7 +19,13 @@ class PyHtml5lib(PythonPackage):
     version("1.0.1", sha256="66cb0dcfdbbc4f9c3ba1a63fdb511ffdbd4f513b2b6d81b80cd26ce6b3fb3736")
     version("0.99", sha256="aff6fd3031c563883197e5a04b7df324086ff5f358278a0386808c463a077e59")
 
+    depends_on("python@:3.13", type=("build", "run"), when="@:0.99")
     depends_on("py-six", type=("build", "run"))
     depends_on("py-six@1.9:", type=("build", "run"), when="@1.0.1:")
-    depends_on("py-setuptools", type="build", when="@1.0.1:")
+    # pkg_resources removed from v81
+    depends_on("py-setuptools@:80", type="build", when="@1.0.1:")
     depends_on("py-webencodings", type=("build", "run"), when="@1.0.1:")
+
+    # ast.Str removed from 3.14
+    # (https://docs.python.org/dev/whatsnew/3.14.html#id9)
+    patch("py314astfix.patch", when="@1:1.1 ^python@3.14:")

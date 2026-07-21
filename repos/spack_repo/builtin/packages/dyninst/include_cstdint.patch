@@ -1,0 +1,36 @@
+diff --git a/common/src/arch-x86.h b/common/src/arch-x86.h
+index ecdc3dc13..7745306d3 100644
+--- a/common/src/arch-x86.h
++++ b/common/src/arch-x86.h
+@@ -40,6 +40,7 @@
+ #include <set>
+ #include <map>
+ #include <vector>
++#include <cstdint>
+ #include "entryIDs.h"
+ #include "registers/MachRegister.h"
+ #include "common/src/ia32_locations.h"
+diff --git a/common/src/sha1.C b/common/src/sha1.C
+index 08dd9f6bb..489e6314a 100644
+--- a/common/src/sha1.C
++++ b/common/src/sha1.C
+@@ -102,6 +102,7 @@ A million repetitions of "a"
+ 
+ #include <stdio.h>
+ #include <string.h>
++#include <cstdint>
+ 
+ #include "dyntypes.h"
+ #include "common/src/sha1.h"
+diff --git a/instructionAPI/h/ArchSpecificFormatters.h b/instructionAPI/h/ArchSpecificFormatters.h
+index b32d4cc14..145c604f9 100644
+--- a/instructionAPI/h/ArchSpecificFormatters.h
++++ b/instructionAPI/h/ArchSpecificFormatters.h
+@@ -34,6 +34,7 @@
+ #include <map>
+ #include <vector>
+ #include <string>
++#include <cstdint>
+ #include "Architecture.h"
+ #include "registers/MachRegister.h"
+ 

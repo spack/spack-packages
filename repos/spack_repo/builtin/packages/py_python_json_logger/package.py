@@ -15,6 +15,7 @@ class PyPythonJsonLogger(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("4.0.0", sha256="f58e68eb46e1faed27e0f574a55a0455eecd7b8a5b88b85a784519ba3cff047f")
     version("3.3.0", sha256="12b7e74b17775e7d565129296105bbe3910842d9d0eb083fc83a6a617aa8df84")
     version("2.0.7", sha256="23e7ec02d34237c5aa1e29a070193a4ea87583bb4e7f8fd06d3de8264c4b2e1c")
     version("2.0.2", sha256="202a4f29901a4b8002a6d1b958407eeb2dd1d83c18b18b816f5b64476dde9096")

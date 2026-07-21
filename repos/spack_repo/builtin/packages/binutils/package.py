@@ -28,6 +28,9 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         "GPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND LGPL-3.0-or-later",
         checked_by="tgamblin",
     )
+    version("2.46.1", sha256="324ed40ada2633a28eaa5d104ca5db165fd3cc3162cc1d48a7b7fa9c932da439")
+    version("2.46.0", sha256="0f3152632a2a9ce066f20963e9bb40af7cf85b9b6c409ed892fd0676e84ecd12")
+    version("2.45.1", sha256="860daddec9085cb4011279136fc8ad29eb533e9446d7524af7f517dd18f00224")
     version("2.45", sha256="1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e")
     version("2.44", sha256="f66390a661faa117d00fab2e79cf2dc9d097b42cc296bf3f8677d1e7b452dc3a")
     version("2.43.1", sha256="becaac5d295e037587b63a42fad57fe3d9d7b83f478eb24b67f9eec5d0f1872f")
@@ -51,7 +54,8 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
     variant("plugins", default=True, description="enable plugins, needed for gold linker")
     # When you build ld.gold you automatically get ld, even when you add the
     # --disable-ld flag
-    variant("gold", default=False, when="+ld", description="build the gold linker")
+    # The gold linker was removed in v2.44.
+    variant("gold", default=False, when="@:2.43 +ld", description="Build the gold linker.")
     variant("libiberty", default=False, description="Also install libiberty.")
     variant("nls", default=False, description="Enable Native Language Support")
     variant("headers", default=False, description="Install extra headers (e.g. ELF)")
@@ -212,7 +216,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
                 if not os.path.exists(installed_exe):
                     raise SkipTest("{0} is not installed".format(_bin))
 
-                exe = which(installed_exe)
+                exe = which(installed_exe, required=True)
                 out = exe("--version", output=str.split, error=str.split)
                 assert version in out
 
@@ -234,6 +238,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             "--disable-dependency-tracking",
             "--disable-werror",
             "--enable-64-bit-bfd",
+            "--enable-deterministic-archives",
             "--enable-multilib",
             "--enable-pic",
             "--enable-targets={}".format(targets),

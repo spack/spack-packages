@@ -27,10 +27,10 @@ class Spm(Package):
     depends_on("matlab", type="run")
 
     def install(self, spec, prefix):
-        unzip = which("unzip")
+        unzip = which("unzip", required=True)
         unzip("spm12.ctf")
 
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./run_spm12.sh")
 
         install_tree("spm12", prefix)

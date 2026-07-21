@@ -17,6 +17,7 @@ class PySnakemakeStoragePluginFs(PythonPackage):
 
     license("MIT")
 
+    version("1.1.3", sha256="a3d4245915c5973645579afc1e2c7406dd5238ac600cdade388747095ced012e")
     version("1.0.6", sha256="8d8ead1883d7e670b1d34ea084f7c927bb4fab71fd8d221b7478680cc09a443e")
     version("1.0.5", sha256="4f7ce1bf16d10510f8f4a2fde2ae22d047131020bd5efa603132dabfc85f444b")
     version("1.0.4", sha256="d9467d2d8f00689c6af6478f67f693373ce3cb0404d10c6d783997465d5110a9")
@@ -31,9 +32,14 @@ class PySnakemakeStoragePluginFs(PythonPackage):
 
     depends_on("py-snakemake-interface-common@1.17:1", type=("build", "run"))
     depends_on(
-        "py-snakemake-interface-storage-plugins@3.2.2:3", type=("build", "run"), when="@1.0.3:"
+        "py-snakemake-interface-storage-plugins@4.1.0:4", type=("build", "run"), when="@1.1:"
     )
-    depends_on("py-snakemake-interface-storage-plugins@3.1:3", type=("build", "run"))
+    depends_on(
+        "py-snakemake-interface-storage-plugins@3.2.2:3", type=("build", "run"), when="@1.0.3:1.0"
+    )
+    depends_on(
+        "py-snakemake-interface-storage-plugins@3.1:3", type=("build", "run"), when="@:1.0.2"
+    )
 
     depends_on("python@3.11:3", type=("build", "run"))
     depends_on("py-poetry-core", type="build")

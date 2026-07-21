@@ -15,6 +15,7 @@ class PyPymeeus(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.5.12", sha256="548f7186bd8b96cbc069cf649a8e8e377dce49ac74486709849fe63a99cad684")
     version("0.3.6", sha256="1f1ba0682e1b5c6b0cd6432c966e8bc8acc31737ea6f0ae79917a2189a98bb87")
 
     depends_on("py-setuptools", type="build")

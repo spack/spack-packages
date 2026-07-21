@@ -42,4 +42,4 @@ class UniversalCtags(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")

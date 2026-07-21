@@ -58,10 +58,14 @@ class NvidiaNsightSystems(Package):
 
     homepage = "https://developer.nvidia.com/nsight-systems"
     url = "https://developer.download.nvidia.com/devtools/repos/"
-    maintainers("scothalverson")
-    license("NVIDIA Software License Agreement")
 
     executables = ["^nsys$"]
+
+    maintainers("scothalverson")
+
+    license("NVIDIA Software License Agreement", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
 
     # Used to unpack the source RPM archives.
     depends_on("libarchive programs='bsdtar'", type="build")
@@ -82,7 +86,7 @@ class NvidiaNsightSystems(Package):
         return match.group(1) if match else None
 
     def install(self, spec, prefix):
-        bsdtar = which("bsdtar")
+        bsdtar = which("bsdtar", required=True)
         rpm_file = glob(join_path(self.stage.source_path, "nsight-systems*.rpm"))[0]
         params = ["-x", "-f", rpm_file]
         ver = prefix.split("/")[-1].split("-")[-2]
@@ -106,23 +110,23 @@ class NvidiaNsightSystems(Package):
             shutil.copytree(join_path(base_path, ver, sd), join_path(prefix, sd))
         os.mkdir(join_path(prefix, "bin"))
         if arch == "aarch64":
-            os.symlink(
+            symlink(
                 join_path(prefix, "host-linux-armv8", "nsys-ui"),
                 join_path(prefix, "bin", "nsys-ui"),
             )
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-sbsa-armv8", "nsys"),
                 join_path(prefix, "bin", "nsys"),
             )
         elif arch == "ppc64le":
             # `nsys-ui` is missing in the PowerPC version of the package.
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-ppc64le", "nsys"), join_path(prefix, "bin", "nsys")
             )
         elif arch == "x86_64":
-            os.symlink(
+            symlink(
                 join_path(prefix, "host-linux-x64", "nsys-ui"), join_path(prefix, "bin", "nsys-ui")
             )
-            os.symlink(
+            symlink(
                 join_path(prefix, "target-linux-x64", "nsys"), join_path(prefix, "bin", "nsys")
             )

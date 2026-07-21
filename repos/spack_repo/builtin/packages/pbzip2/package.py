@@ -32,6 +32,14 @@ class Pbzip2(MakefilePackage):
 
     def flag_handler(self, name: str, flags: List[str]):
         if name == "cxxflags":
-            if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=apple-clang"):
+            # pbzip2 uses C99 PRIuMAX macros without the C++11-required space
+            # between the string literal and the macro (e.g., "%"PRIuMAX).
+            # Clang-based compilers (including Intel oneAPI icpx) treat this
+            # as an error. Suppress it since the code is functionally correct.
+            if (
+                self.spec.satisfies("%cxx=clang")
+                or self.spec.satisfies("%cxx=apple-clang")
+                or self.spec.satisfies("%cxx=oneapi")
+            ):
                 flags.append("-Wno-reserved-user-defined-literal")
         return (flags, None, None)

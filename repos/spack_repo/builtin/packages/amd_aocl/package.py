@@ -21,10 +21,12 @@ class AmdAocl(BundlePackage):
     https://www.amd.com/en/developer/aocl/eula/aocl-4-1-eula.html
     """
 
-    homepage = "https://developer.amd.com/amd-aocl/"
+    homepage = "https://www.amd.com/en/developer/aocl.html"
 
     maintainers("amd-toolchain-support")
 
+    version("5.3")
+    version("5.2")
     version("5.1")
     version("5.0")
     version("4.2")
@@ -64,7 +66,7 @@ class AmdAocl(BundlePackage):
         depends_on("aocl-da ~openmp")
         depends_on("aocl-compression ~openmp")
 
-    for vers in ["2.2", "3.0", "3.1", "3.2", "4.0", "4.1", "4.2", "5.0", "5.1"]:
+    for vers in ["2.2", "3.0", "3.1", "3.2", "4.0", "4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@={vers}"):
             depends_on(f"amdblis@={vers}")
             depends_on(f"amdfftw@={vers}")
@@ -78,3 +80,5 @@ class AmdAocl(BundlePackage):
                 depends_on(f"aocl-libmem@={vers}")
             if Version(vers) >= Version("5.0"):
                 depends_on(f"aocl-da@={vers}")
+            if Version(vers) >= Version("5.2"):
+                depends_on(f"aocl-dlp@={vers}")

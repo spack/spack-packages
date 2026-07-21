@@ -18,6 +18,7 @@ class PyFsspec(PythonPackage):
     # Requires pytest
     skip_modules = ["fsspec.tests"]
 
+    version("2026.3.0", sha256="1ee6a0e28677557f8c2f994e3eea77db6392b4de9cd1f5d7a9e87a0ae9d01b41")
     version("2025.9.0", sha256="19fd429483d25d28b65ec68f9f4adc16c17ea2c7c7bf54ec61360d478fb19c19")
     version("2024.10.0", sha256="eda2d8a4116d4f2429db8550f2457da57279247dd930bb12f821b58391359493")
     version("2024.5.0", sha256="1d021b0b0f933e3b3029ed808eb400c08ba101ca2de4b3483fbc9ca23fcee94a")
@@ -35,10 +36,19 @@ class PyFsspec(PythonPackage):
 
     variant("http", default=False, description="HTTPFileSystem support", when="@0.8.1:")
 
-    depends_on("py-hatchling", type="build", when="@2024.5:")
-    depends_on("py-hatch-vcs", type="build", when="@2024.5:")
-    depends_on("py-aiohttp", type=("build", "run"), when="+http")
+    with default_args(type="build"):
+        depends_on("python@3.10:", when="@2025.12:")
+        depends_on("python@3.9:", when="@2025.3.2:")
 
-    # Historical dependencies
-    depends_on("py-setuptools", type="build", when="@:2024.4")
-    depends_on("py-requests", type=("build", "run"), when="@:2023+http")
+        depends_on("py-hatchling@1.27:", when="@2025.9:")
+        depends_on("py-hatchling", when="@2024.5:")
+        depends_on("py-hatch-vcs", when="@2024.5:")
+
+        # Historical dependencies
+        depends_on("py-setuptools", when="@:2024.4")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-aiohttp", when="+http")
+
+        # Historical dependencies
+        depends_on("py-requests", when="@:2023+http")

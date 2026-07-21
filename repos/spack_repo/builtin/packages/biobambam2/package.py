@@ -21,6 +21,7 @@ class Biobambam2(AutotoolsPackage):
         url="https://gitlab.com/german.tischler/biobambam2/-/archive/2.0.177-release-20201112105453/biobambam2-2.0.177-release-20201112105453.tar.gz",
     )
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("autoconf", type="build")
@@ -51,6 +52,6 @@ class Biobambam2(AutotoolsPackage):
         """run testshortsort.sh to check alignments sorted by coordinate"""
         test_dir = join_path(self.test_suite.current_test_cache_dir, self.test_src_dir)
         with working_dir(test_dir):
-            sh = which("sh")
+            sh = which("sh", required=True)
             out = sh("testshortsort.sh", output=str.split, error=str.split)
             assert "Alignments sorted by coordinate." in out

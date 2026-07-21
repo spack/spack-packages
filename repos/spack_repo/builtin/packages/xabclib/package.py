@@ -38,7 +38,7 @@ class Xabclib(MakefilePackage):
                 m.filter("$(LD)", "$(LD) -mlcmain=main", string=True)
 
     def build(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./make.all")
 
     def install(self, spec, prefix):

@@ -222,7 +222,7 @@ class PyHail(MakefilePackage):
 
     def install(self, spec, prefix):
         spec = self.spec
-        pip = which("pip")
+        pip = which("pip", required=True)
         wheel = self.build_wheel_file_path
 
         # This mimics the install-on-cluster target but avoids anything
@@ -232,6 +232,5 @@ class PyHail(MakefilePackage):
 
         backend = spec.variants["query_backend"].value
         if backend != "undefined":
-            hailctl = which("hailctl")  # Should be installed from above
-            if hailctl is not None:  # but it might not be
-                hailctl("config", "set", "query/backend", f"{backend}")
+            hailctl = which("hailctl", required=True)
+            hailctl("config", "set", "query/backend", f"{backend}")

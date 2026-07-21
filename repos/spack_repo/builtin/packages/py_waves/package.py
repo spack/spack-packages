@@ -92,7 +92,7 @@ class PyWaves(PythonPackage):
     def install(self, spec, prefix):
         if self.spec.satisfies("@0.12.10:"):
             with working_dir(self.build_directory):
-                scons = which("scons")
+                scons = which("scons", required=True)
                 scons("install", f"--prefix={self.prefix}")
         else:
             with working_dir(self.build_directory):
@@ -118,7 +118,7 @@ class PyWaves(PythonPackage):
                     # installation logic to be a ``@run_after("install")`` function.
                     f"dist/waves-{self.version}.tar.gz",
                 )
-                scons = which("scons")
+                scons = which("scons", required=True)
                 scons("html", "man")
 
                 site_packages_directory = list(
@@ -144,5 +144,5 @@ class PyWaves(PythonPackage):
             custom_arguments.insert(0, "--ignore=_tests/test_salib_sampler.py")
 
         with working_dir(installed_package):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest(*custom_arguments)

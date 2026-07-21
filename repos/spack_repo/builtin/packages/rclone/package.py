@@ -18,6 +18,9 @@ class Rclone(GoPackage):
 
     license("MIT")
 
+    version("1.74.3", sha256="c51062f24bb8e6d05c252c9c9fb527adc831715e0dd936ca0c9fb8d07e49d66a")
+    version("1.73.5", sha256="19c929ce2f54bd22af2db4dd9d2a289499b02274f9f7d3c6639090761adfab1f")
+    version("1.73.3", sha256="608dde134e02a429b95ae566d638e514a9a658d0d69c35812069cf1c1b8f24af")
     version("1.70.2", sha256="982b1f09239855e7e55fb6a3b6a8146fe2ef93c8ba6e015a9c5d6ada5297ea30")
     version("1.70.0", sha256="d151d9b969dc0e000e3019c82599f53252b63fe1e63fad3c7031b718af0d0e88")
     version("1.69.3", sha256="febfd634e4eeb2e81506673debaf9af996a390dd79f215b605ac93f3d68d2b93")
@@ -48,6 +51,7 @@ class Rclone(GoPackage):
     version("1.55.1", sha256="25da7fc5c9269b3897f27b0d946919df595c6dda1b127085fda0fe32aa59d29d")
     version("1.55.0", sha256="75accdaedad3b82edc185dc8824a19a59c30dc6392de7074b6cd98d1dc2c9040")
 
+    depends_on("go@1.25:", type="build", when="@1.73.3:")
     depends_on("go@1.23:", type="build", when="@1.69.2:")
     depends_on("go@1.21:", type="build", when="@1.68:")
     depends_on("go@1.20:", type="build", when="@1.66:")
@@ -55,6 +59,11 @@ class Rclone(GoPackage):
     depends_on("go@1.18:", type="build", when="@1.62:")
     depends_on("go@1.17:", type="build", when="@1.58:")
     depends_on("go@1.14:", type="build")
+
+    @property
+    def ldflags(self):
+        version_path = go("list", "./fs", output=str).strip()
+        return [f"-X {version_path}.Version={self.spec.version}"]
 
     @run_after("install")
     def install_completions(self):

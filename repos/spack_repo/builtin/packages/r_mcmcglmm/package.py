@@ -25,6 +25,9 @@ class RMcmcglmm(RPackage):
     version("2.28", sha256="7d92e6d35638e5e060a590b92c3b1bfc02a11386276a8ab99bceec5d797bfc2a")
     version("2.25", sha256="3072316bf5c66f6db5447cb488395ff019f6c47122813467384474f340643133")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-matrix", type=("build", "run"))
     depends_on("r-coda", type=("build", "run"))
     depends_on("r-ape", type=("build", "run"))

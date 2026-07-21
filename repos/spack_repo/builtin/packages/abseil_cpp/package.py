@@ -11,13 +11,16 @@ class AbseilCpp(CMakePackage):
     """Abseil Common Libraries (C++)"""
 
     homepage = "https://abseil.io/"
-    url = "https://github.com/abseil/abseil-cpp/archive/refs/tags/20211102.0.tar.gz"
+    url = "https://github.com/abseil/abseil-cpp/archive/refs/tags/20260107.1.tar.gz"
 
     maintainers("jcftang")
     tags = ["windows"]
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version(
+        "20260107.1", sha256="4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195"
+    )
     version(
         "20240722.0", sha256="f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3"
     )
@@ -83,8 +86,13 @@ class AbseilCpp(CMakePackage):
 
     variant(
         "cxxstd",
-        values=(conditional("11", when="@:2022"), "14", "17", "20"),
-        default="14",
+        values=(
+            conditional("11", when="@:20220623"),
+            conditional("14", when="@:20250127"),
+            "17",
+            "20",
+        ),
+        default="17",
         description="C++ standard used during compilation",
     )
 

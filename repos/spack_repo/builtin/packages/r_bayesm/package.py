@@ -42,6 +42,8 @@ class RBayesm(RPackage):
     version("3.1-1", sha256="4854517dec30ab7c994de862aae1998c2d0c5e71265fd9eb7ed36891d4676078")
     version("3.1-0.1", sha256="5879823b7fb6e6df0c0fe98faabc1044a4149bb65989062df4ade64e19d26411")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r-rcpp@0.12.0:", type=("build", "run"))
     depends_on("r-rcpparmadillo", type=("build", "run"))

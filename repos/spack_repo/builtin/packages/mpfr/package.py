@@ -15,10 +15,11 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.mpfr.org/"
     gnu_mirror_path = "mpfr/mpfr-4.0.2.tar.bz2"
 
-    maintainers("cessenat")
+    maintainers("alalazo", "cessenat")
 
     license("LGPL-3.0-or-later")
 
+    version("4.2.2", sha256="9ad62c7dc910303cd384ff8f1f4767a655124980bb6d8650fe62c815a231bb7b")
     version("4.2.1", sha256="b9df93635b20e4089c29623b19420c4ac848a1b29df1cfd59f26cab0d2666aa0")
     version("4.2.0", sha256="691db39178e36fc460c046591e4b0f2a52c8f2b3ee6d750cc2eab25f1eaa999d")
     version("4.1.1", sha256="85fdf11614cc08e3545386d6b9c8c9035e3db1e506211a45f4e108117fe3c951")
@@ -32,19 +33,6 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
     version("3.1.3", sha256="f63bb459157cacd223caac545cb816bcdb5a0de28b809e7748b82e9eb89b0afd")
     version("3.1.2", sha256="79c73f60af010a30a5c27a955a1d2d01ba095b72537dab0ecaad57f5a7bb1b6b")
 
-    depends_on("c", type="build")  # generated
-
-    # mpir is a drop-in replacement for gmp
-    depends_on("gmp@4.1:")  # 4.2.3 or higher is recommended
-    depends_on("gmp@5.0:", when="@4.0.0:")  # https://www.mpfr.org/mpfr-4.0.0/
-
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
-    depends_on("autoconf-archive", when="@4.0.0:", type="build")
-    depends_on("texinfo", when="@4.1.0:", type="build")
-
     variant(
         "libs",
         default="shared,static",
@@ -52,6 +40,17 @@ class Mpfr(AutotoolsPackage, GNUMirrorPackage):
         multi=True,
         description="Build shared libs, static libs or both",
     )
+
+    depends_on("c", type="build")
+    depends_on("autoconf", type="build")
+    depends_on("autoconf-archive", when="@4.0.0:", type="build")
+    depends_on("automake@1.13:", when="@4.0.0:", type="build")
+    depends_on("automake@1.11:", type="build")
+    depends_on("libtool", type="build")
+    depends_on("m4", type="build")
+    depends_on("texinfo", when="@4.1.0:", type="build")
+    depends_on("gmp@5.0:", when="@4.0.0:")
+    depends_on("gmp@4.1:")  # 4.2.3 or higher is recommended
 
     force_autoreconf = True
 

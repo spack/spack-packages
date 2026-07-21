@@ -23,7 +23,7 @@ class Lsof(Package):
     depends_on("gmake", type="build")
 
     def install(self, spec, prefix):
-        tar = which("tar")
+        tar = which("tar", required=True)
         tar("xf", "lsof_{0}_src.tar".format(self.version))
 
         with working_dir("lsof_{0}_src".format(self.version)):

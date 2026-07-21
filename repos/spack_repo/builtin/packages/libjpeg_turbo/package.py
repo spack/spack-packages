@@ -21,10 +21,11 @@ class LibjpegTurbo(CMakePackage):
 
     # https://github.com/libjpeg-turbo/libjpeg-turbo/blob/master/BUILDING.md
     homepage = "https://libjpeg-turbo.org/"
-    url = "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/2.0.3.tar.gz"
+    url = "https://github.com/libjpeg-turbo/libjpeg-turbo/archive/3.1.3.tar.gz"
 
     license("BSD-3-Clause AND IJG AND Zlib")
 
+    version("3.1.3", sha256="3a13a5ba767dc8264bc40b185e41368a80d5d5f945944d1dbaa4b2fb0099f4e5")
     version("3.0.4", sha256="0270f9496ad6d69e743f1e7b9e3e9398f5b4d606b6a47744df4b73df50f62e38")
     version("3.0.3", sha256="a649205a90e39a548863a3614a9576a3fb4465f8e8e66d54999f127957c25b21")
     version("3.0.2", sha256="29f2197345aafe1dcaadc8b055e4cbec9f35aad2a318d61ea081f835af2eebe9")

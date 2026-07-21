@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
@@ -76,7 +74,7 @@ class Ioapi(MakefilePackage):
 
     def edit(self, spec, prefix):
         # No default Makefile bundled; edit the template.
-        os.symlink("Makefile.template", "Makefile")
+        symlink("Makefile.template", "Makefile")
         # The makefile uses stubborn assignments of = instead of ?= so
         # edit the makefile instead of using environmental variables.
         makefile = FileFilter("Makefile")
