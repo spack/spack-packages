@@ -155,7 +155,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="17",
-        values=("11", "14", "17", "20"),
+        values=("11", "14", "17", "20", "23"),
         description="C++ standard to build with",
     )
 
