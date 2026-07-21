@@ -74,6 +74,8 @@ class HdfEos2(AutotoolsPackage):
 
     # Build dependencies
     depends_on("hdf")
+    depends_on("hdf +fortran", when="+fortran")
+
     # Because hdf always depends on zlib and jpeg in spack, the tests below in configure_args
     # (if self.spec.satisfies("^jpeg"):) always returns true and hdf-eos2 wants zlib and jpeg, too.
     depends_on("zlib-api", when="^hdf")
@@ -119,6 +121,24 @@ class HdfEos2(AutotoolsPackage):
         filter_file("\\$CC -show &> /dev/null", "true", "configure")
         filter_file("CC=./\\$SZIP_CC", "", "configure")
 
+    @run_before("autoreconf", when="@3.0")
+    def fix_gctp_linking(self):
+        # In hdf-eos2 3.0, the GCTP library (bundled in gctp/src/libGctp.la)
+        # is built but never linked into libhdfeos. The source tarball ships
+        # pre-generated Makefile.in with an empty libhdfeos_la_LIBADD. Patch
+        # both Makefile.am and Makefile.in before configure runs.
+        src = self.stage.source_path
+        # Patch Makefile.am so autoreconf (if it runs) picks it up
+        with open(join_path(src, "src", "Makefile.am"), "a") as f:
+            f.write("\nlibhdfeos_la_LIBADD=$(LIBGCTP)\n")
+        # Patch Makefile.in which configure uses to generate Makefile
+        filter_file(
+            "libhdfeos_la_LIBADD =\n",
+            "libhdfeos_la_LIBADD = $(LIBGCTP)\n",
+            join_path(src, "src", "Makefile.in"),
+            string=True,
+        )
+
     def flag_handler(self, name, flags):
         if name == "cflags":
             flags.append(self.compiler.cc_pic_flag)
@@ -130,6 +150,7 @@ class HdfEos2(AutotoolsPackage):
             ):
                 flags.append("-Wno-error=implicit-function-declaration")
                 flags.append("-Wno-error=implicit-int")
+                flags.append("-std=gnu17")
 
             # Testing shows we need one extra flag for gcc@14
             if self.spec.satisfies("%gcc@14:"):
@@ -148,6 +169,11 @@ class HdfEos2(AutotoolsPackage):
         # Use h4cc compiler wrapper and flags
         if self.spec.satisfies("^hdf"):
             env.set("CC", os.path.join(self.spec["hdf"].prefix.bin, "h4cc"))
+            # h4cc has a hardcoded compiler path (CCBASE) that bypasses the
+            # Spack wrappers. Override it via HDF4_CC so h4cc uses the Spack
+            # compiler wrapper instead.
+            env.set("HDF4_CC", self.compiler.cc)
+            env.set("HDF4_CLINKER", self.compiler.cc)
             if (
                 self.spec.satisfies("%clang@16:")
                 or self.spec.satisfies("%apple-clang@15:")
@@ -155,8 +181,25 @@ class HdfEos2(AutotoolsPackage):
                 or self.spec.satisfies("%gcc@14:")
             ):
                 env.set(
-                    "CFLAGS", "-Wno-error=implicit-function-declaration -Wno-error=implicit-int"
+                    "CFLAGS",
+                    "-Wno-error=implicit-function-declaration -Wno-error=implicit-int -std=gnu17",
                 )
+
+    @run_before("configure", when="@3.0")
+    def unset_h4cc_for_configure(self):
+        # CC=h4cc causes autoconf's cross-compile detection to fail on macOS
+        # because h4cc produces binaries using hardcoded paths that can't run
+        # in the configure sandbox. Use the Spack compiler wrapper for configure
+        # only; h4cc (with HDF4_CC set) takes over for build/install.
+        os.environ["CC"] = self.compiler.cc
+        # On macOS the Spack compiler wrappers also prevent autoconf from
+        # running test programs, causing malloc/realloc/memcmp checks to
+        # default to "no" and generate rpl_malloc/rpl_realloc stubs that are
+        # never defined. Pre-seed the cache with the correct values.
+        if self.spec.satisfies("platform=darwin"):
+            os.environ["ac_cv_func_malloc_0_nonnull"] = "yes"
+            os.environ["ac_cv_func_realloc_0_nonnull"] = "yes"
+            os.environ["ac_cv_func_memcmp_working"] = "yes"
 
     def configure_args(self):
         extra_args = []
@@ -173,10 +216,10 @@ class HdfEos2(AutotoolsPackage):
         extra_args.extend(self.enable_or_disable("fortran"))
 
         # Provide config args for dependencies
+        # Pass the HDF4 prefix (not lib dir) so configure finds both
+        # headers and libraries correctly without double-appending /lib.
         if self.spec.satisfies("^hdf"):
-            tmp = self.spec["hdf"].libs.directories
-            if tmp:
-                extra_args.append("--with-hdf4={0}".format(tmp[0]))
+            extra_args.append("--with-hdf4={0}".format(self.spec["hdf"].prefix))
         if self.spec.satisfies("^jpeg"):
             # Allow handling whatever provider of jpeg are using
             tmp = self.spec["jpeg"].libs.directories
