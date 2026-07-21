@@ -19,7 +19,7 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("rcarson3")
 
     version("develop", branch="develop")
-        version(
+    version(
         "v0.4.3",
         sha256="0740d0eb6b8eb4036dd3b50a9e3061f0986a09c5398ad62b892d3ed221493152",
         url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.3.tar.gz",
