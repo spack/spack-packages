@@ -1,3 +1,5 @@
 concretizer:
   reuse: false
   unify: false
+  concretization_cache:
+    enable: false

@@ -6,11 +6,12 @@ from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
+class Libxc(AutotoolsPackage, CudaPackage, ROCmPackage, CMakePackage):
     """Libxc is a library of exchange-correlation functionals for
     density-functional theory."""
 
@@ -21,8 +22,14 @@ class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
 
     maintainers("RMeli")
 
-    build_system(conditional("cmake", when="@7.0.0:"), "autotools", default="cmake")
+    # Autotools is marked as deprecated in 7.1.0 and will be removed in 8.0.0
+    build_system(
+        conditional("cmake", when="@7:"), conditional("autotools", when="@:7"), default="cmake"
+    )
 
+    version("7.1.2", sha256="c517ce61820ea8114664a4280b6a6bc74a4f22f1fd1ea4ddecd6df0caeeae4f4")
+    version("7.1.1", sha256="73a9d5b7a0e0928a0108daba7cb88886ff2e8f17b1225b188562462b7c5da1ef")
+    version("7.1.0", sha256="403499330a8ff7e1aa27d51c2b14cc5bc4e49ec02fd115031ab8c8a91465bb51")
     version("7.0.0", sha256="8d4e343041c9cd869833822f57744872076ae709a613c118d70605539fb13a77")
     version("6.2.2", sha256="d1b65ef74615a1e539d87a0e6662f04baf3a2316706b4e2e686da3193b26b20f")
     version("6.2.1", sha256="da96fc4f6e4221734986f49758b410ffe1d406efd3538761062a4af57a2bd272")
@@ -59,16 +66,22 @@ class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("fortran", type="build", when="build_system=autotools")
     depends_on("fortran", type="build", when="build_system=cmake +fortran")
+    depends_on("cmake@3.21:", type="build", when="@7.1: build_system=cmake")
 
-    conflicts("+shared +cuda", msg="Only ~shared supported with +cuda")
+    depends_on("bzip2", type="test", when="@7.0 build_system=cmake")
+    depends_on("python", type="test", when="@7.1: build_system=cmake")
+    depends_on("py-pytest", type="test", when="@7.1: build_system=cmake")
+
+    conflicts("+shared +cuda", when="@:7.0.0", msg="Only ~shared supported with +cuda")
+    conflicts("+cuda +rocm", msg="CUDA and ROCm are mutually exclusive")
     conflicts("+cuda", when="@:4", msg="CUDA support only in libxc 5.0.0 and above")
+    conflicts("+rocm", when="@:7.0", msg="HIP support was added in libxc 7.1.0")
 
-    # Remove this if the release tarballs are available again.
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-
-    depends_on("perl", type="build")
+    # GitLab source archives need the Autotools-generated files.
+    depends_on("autoconf", type="build", when="build_system=autotools")
+    depends_on("automake", type="build", when="build_system=autotools")
+    depends_on("libtool", type="build", when="build_system=autotools")
+    depends_on("perl", type="build", when="build_system=autotools")
 
     patch("0001-Bugfix-avoid-implicit-pointer-cast-to-make-libxc-com.patch", when="@5.0.0")
     patch("0002-Mark-xc_erfcx-a-GPU_FUNCTION.patch", when="@5.0.0")
@@ -101,8 +114,10 @@ class Libxc(AutotoolsPackage, CudaPackage, CMakePackage):
         if "fortran" in query_parameters:
             if self.version < Version("4.0.0"):
                 libraries = ["libxcf90"] + libraries
-            else:  # starting from version 4 there is also a stable f03 iface
+            elif self.version < Version("7.0.0"):
                 libraries = ["libxcf90", "libxcf03"] + libraries
+            else:
+                libraries = ["libxcf03"] + libraries
 
         return find_libraries(libraries, root=self.prefix, shared=shared, recursive=True)
 
@@ -169,8 +184,38 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("ENABLE_CUDA", "cuda"),
             self.define("DISABLE_FHC", spec.satisfies("~fhc")),
-            self.define("DISABLE_KXC", spec.satisfies("~kxc")),
-            self.define("DISABLE_LXC", spec.satisfies("~lxc")),
             self.define("BUILD_TESTING", self.pkg.run_tests),
         ]
+
+        if spec.satisfies("@7.1:"):
+            args.append(self.define_from_variant("ENABLE_HIP", "rocm"))
+            maxorder = 2
+            if spec.satisfies("+lxc"):
+                maxorder = 4
+            elif spec.satisfies("+kxc"):
+                maxorder = 3
+            args.append(self.define("MAXORDER", maxorder))
+        else:
+            # Fourth derivatives necessarily include third derivatives.
+            args.extend(
+                [
+                    self.define("DISABLE_KXC", spec.satisfies("~kxc ~lxc")),
+                    self.define("DISABLE_LXC", spec.satisfies("~lxc")),
+                ]
+            )
+
+        if spec.satisfies("+cuda") and not spec.satisfies("cuda_arch=none"):
+            cuda_arch = ";".join(spec.variants["cuda_arch"].value)
+            args.append(self.define("CMAKE_CUDA_ARCHITECTURES", cuda_arch))
+
+        if spec.satisfies("+rocm"):
+            hip_compiler = join_path(spec["llvm-amdgpu"].prefix.bin, "amdclang++")
+            amdgpu_target = ";".join(spec.variants["amdgpu_target"].value)
+            args.extend(
+                [
+                    self.define("CMAKE_HIP_COMPILER", hip_compiler),
+                    self.define("CMAKE_HIP_ARCHITECTURES", amdgpu_target),
+                ]
+            )
+
         return args

@@ -325,7 +325,6 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("+deviceconst", when="~rocm~cuda")
     conflicts("~openmp", when="+omptarget", msg="OpenMP target requires OpenMP")
     conflicts("+cuda", when="+rocm")
-    conflicts("+tools", when="+rocm")
     conflicts(
         "+rocm", when="+omptarget", msg="Cant support both rocm and openmp device backends at once"
     )
