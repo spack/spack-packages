@@ -19,6 +19,7 @@ class Omnictl(GoPackage):
 
     license("BUSL-1.1", checked_by="RobertMaaskant")
 
+    version("1.9.3", sha256="123ad8e2b8a52d3ae159cb13bce7dbf32d29c62436bc749e60d29eb8912eb14e")
     version("1.9.1", sha256="91694fed6ca74416be35befe4f001bf3b45e973310e84ac7f8d0cdd851f565bf")
     version("1.8.2", sha256="40addbfac6c38e923df03d622b6d150d51fc254c4a622b4edd34658213cad36d")
     version("1.7.0", sha256="07dd01d8d724f59697e2754027dcbd12ee6e5bf2da1348e5b32d844e7eef4288")
