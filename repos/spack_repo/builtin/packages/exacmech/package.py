@@ -68,6 +68,7 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
 
     with default_args(type="build"):
         depends_on("blt")
+        depends_on("cmake@3.20:")
         depends_on("c", when="+rocm +tests")
         depends_on("cxx")
 
