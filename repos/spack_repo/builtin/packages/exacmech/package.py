@@ -19,13 +19,41 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("rcarson3")
 
     version("develop", branch="develop")
-    version("v0.4.3", sha256="0740d0eb6b8eb4036dd3b50a9e3061f0986a09c5398ad62b892d3ed221493152")
-    version("v0.4.2", sha256="66d88d9c19271a43cb511479e00a399f14b11952fe10720eb276dd7db467721c")
-    version("v0.4.1", sha256="ff0e748bcc7172fc99700974cc2e64f169d7369706a803d110061fccfa3d99a9")
-    version("v0.4.0", sha256="18f4790552333a6e15487ef277be7fe6476f838b51a11fb0da3b0244b5edd5aa")
-    version("v0.3.4", sha256="76448be985ed2869298b899dd92f48da1ff6113523e13c1b0e611a434cfb7bd2")
-    version("v0.3.0", sha256="c879c18c0947f6a6c921b6784ebf436ed75b2af061be428b6eaf60f30b26697d")
-    version("v0.2.0", sha256="3a2b229b493cfb3490c4a4cbe280c32de8f361f0aa4b9a2a84412dcbfa7e5db6")
+        version(
+        "v0.4.3",
+        sha256="0740d0eb6b8eb4036dd3b50a9e3061f0986a09c5398ad62b892d3ed221493152",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.3.tar.gz",
+    )
+    version(
+        "v0.4.2",
+        sha256="66d88d9c19271a43cb511479e00a399f14b11952fe10720eb276dd7db467721c",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.2.tar.gz",
+    )
+    version(
+        "v0.4.1",
+        sha256="ff0e748bcc7172fc99700974cc2e64f169d7369706a803d110061fccfa3d99a9",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.1.tar.gz",
+    )
+    version(
+        "v0.4.0",
+        sha256="18f4790552333a6e15487ef277be7fe6476f838b51a11fb0da3b0244b5edd5aa",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.4.0.tar.gz",
+    )
+    version(
+        "v0.3.4",
+        sha256="76448be985ed2869298b899dd92f48da1ff6113523e13c1b0e611a434cfb7bd2",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.3.4.tar.gz",
+    )
+    version(
+        "v0.3.0",
+        sha256="c879c18c0947f6a6c921b6784ebf436ed75b2af061be428b6eaf60f30b26697d",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.3.0.tar.gz",
+    )
+    version(
+        "v0.2.0",
+        sha256="3a2b229b493cfb3490c4a4cbe280c32de8f361f0aa4b9a2a84412dcbfa7e5db6",
+        url="https://github.com/llnl/ExaCMech/archive/refs/tags/v0.2.0.tar.gz",
+    )
 
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("shared", default=False, description="Enables the build of shared libraries")
