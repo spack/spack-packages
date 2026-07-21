@@ -104,6 +104,13 @@ class Podio(CMakePackage):
         sha256="9e42e0995634f2afdd358cd19383e882dc9143cce1b6afb0d2c4a1ec9add6e15",
     )
 
+    # fmt 12 patch: see https://github.com/AIDASoft/podio/pull/977
+    patch(
+        "https://github.com/AIDASoft/podio/commit/988961b7172b8f1ad7d89450cd8cddd4413e1564.patch?full_index=1",
+        when="@1.3:1.7",
+        sha256="b291e1ebc5b73f15d0ce76b9f9211644dc7a4fe9920fbede7f2fb77382d65251",
+    )
+
     # See https://github.com/AIDASoft/podio/pull/599 that landed after 0.99
     extends("python", when="@1.0:")
 

@@ -120,7 +120,7 @@ class Libxsmm(MakefilePackage):
             "FC={0}".format(spack_fc),
             "PREFIX=%s" % prefix,
         ]
-        if spec.target.family == "aarch64":
+        if spec.satisfies("@1.17-cp2k") and spec.target.family == "aarch64":
             make_args += ["PLATFORM=1"]
         else:
             make_args += ["SYM=1"]

@@ -28,6 +28,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         "GPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND LGPL-3.0-or-later",
         checked_by="tgamblin",
     )
+    version("2.46.1", sha256="324ed40ada2633a28eaa5d104ca5db165fd3cc3162cc1d48a7b7fa9c932da439")
     version("2.46.0", sha256="0f3152632a2a9ce066f20963e9bb40af7cf85b9b6c409ed892fd0676e84ecd12")
     version("2.45.1", sha256="860daddec9085cb4011279136fc8ad29eb533e9446d7524af7f517dd18f00224")
     version("2.45", sha256="1393f90db70c2ebd785fb434d6127f8888c559d5eeb9c006c354b203bab3473e")

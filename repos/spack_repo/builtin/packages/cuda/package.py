@@ -834,7 +834,11 @@ class Cuda(Package):
     )
 
     # `cuda_installer` binary contained in run script depends on libxml2.so.2
-    depends_on("libxml2@:2.13", when="@10.1.243:", type="build")
+    # To verify this is true in the future:
+    # 1. stage the installer with `spack stage cuda`
+    # 2. extract the installer exe with `./cuda_*.run --noexec --target {temp dir}`
+    # 3. check links with `readelf -d {temp-dir}/cuda_files/cuda-installer`
+    depends_on("libxml2", when="@10.1.243:", type="build")
     # cuda-gdb needed libncurses.so.5 before 11.4.0
     # see https://docs.nvidia.com/cuda/archive/11.3.1/cuda-gdb/index.html#common-issues-oss
     # see https://docs.nvidia.com/cuda/archive/11.4.0/cuda-gdb/index.html#release-notes
