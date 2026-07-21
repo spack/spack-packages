@@ -139,7 +139,6 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         sha256="b4774ca19b030890d7b276d12c446400ccf8bc3aa724c7f2e9a73531a7400d69",
         when="@6",
     )
-    patch("002-Add-rpath-to-hiprt.patch", when="@7.0:")
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
     # Patch from https://github.com/llvm/llvm-project/pull/80071
@@ -237,6 +236,21 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             expand=True,
             destination="llvm/projects",
             placement="spirv-llvm-translator",
+            when=f"@{d_version}",
+        )
+
+    for d_version, spirv_headers_commit in [
+        ("7.1.0", "c9aad99f9276817f18f72a4696239237c83cb775"),
+        ("7.1.1", "c9aad99f9276817f18f72a4696239237c83cb775"),
+        ("7.2.0", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+        ("7.2.1", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+        ("7.2.3", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
+    ]:
+        resource(
+            name="spirv-headers",
+            git="https://github.com/KhronosGroup/SPIRV-Headers.git",
+            commit=spirv_headers_commit,
+            placement="spirv-headers",
             when=f"@{d_version}",
         )
 
@@ -376,6 +390,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(
                 self.define("LIBOMPTARGET_EXTERNAL_PROJECT_ROCM_DEVICE_LIBS_PATH", devlibs_dir)
             )
+            spirv_headers_dir = os.path.join(self.stage.source_path, "spirv-headers")
+            args.append(self.define("LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR", spirv_headers_dir))
         if self.spec.satisfies("@7.2:"):
             args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
@@ -473,6 +489,13 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+
+        if self.spec.satisfies("@7:"):
+            with open(os.path.join(self.prefix.bin, "rocm.cfg"), "w") as f:
+                print("-frtlib-add-rpath", file=f)
+            for cfg in cfg_files:
+                with open(os.path.join(self.prefix.bin, cfg), "a") as f:
+                    print("@rocm.cfg", file=f)
 
     # Required for enabling asan on dependent packages
     def setup_dependent_build_environment(

@@ -40,6 +40,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
 
     # Previous stable series releases
+    version("15.3.0", sha256="fa59c1beef8995f27c4d71c1df227587189315d3e6faff1bb4306e61b0c530eb")
     version("15.2.0", sha256="438fd996826b0c82485a29da03a72d71d6e3541a83ec702df4271f6fe025d24e")
     version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
@@ -478,6 +479,18 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
         # aarch64-darwin support from Iain Sandoe's branch
         # the 14.2.0 branch has patches applicable to the x86_64 builds too, e.g., https://gcc.gnu.org/bugzilla/show_bug.cgi?id=116809
+        patch(
+            "https://github.com/iains/gcc-16-branch/compare/6afcc4f6da931eb93f3ab001a0dd9650ea71d1ea..gcc-16.1-darwin-r0.patch?full_index=1",
+            sha256="8d613f218608806db7e264d9d3f4ade4ff3f8a46c4cfece917e8701b1bb01475",
+            when="@16.1.0 target=aarch64:",
+        )
+
+        patch(
+            "https://github.com/iains/gcc-15-branch/compare/4db0e8df15bef836558857c291c323add11d035c..gcc-15.3-darwin-r0.patch?full_index=1",
+            sha256="8d6298dcb4f0d5cb419792405888d4e0820a9227da1374cfe413696d755468d7",
+            when="@15.3.0 target=aarch64:",
+        )
+
         patch(
             "https://github.com/iains/gcc-14-branch/compare/04696df09633baf97cdbbdd6e9929b9d472161d3..5e090fc0112f86cbcaebb6065ad97ea599868505.patch?full_index=1",
             sha256="d74542461b22ae2d23533323e01861f4c66d252345c51682740f521a74412500",

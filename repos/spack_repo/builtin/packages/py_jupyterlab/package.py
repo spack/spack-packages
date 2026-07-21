@@ -18,6 +18,7 @@ class PyJupyterlab(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
+    version("4.5.8", sha256="af54d7242cc689a1e6c3ad213cc9b6d9781787d9ec67c52ec9a8f4707088cadd")
     version("4.5.7", sha256="55a9822c4754da305f41e113452c68383e214dcf96de760146af89ce5d5117b0")
     version("4.5.6", sha256="642fe2cfe7f0f5922a8a558ba7a0d246c7bc133b708dfe43f7b3a826d163cf42")
     version("4.4.10", sha256="521c017508af4e1d6d9d8a9d90f47a11c61197ad63b2178342489de42540a615")
@@ -63,6 +64,7 @@ class PyJupyterlab(PythonPackage):
         depends_on("py-jupyterlab-server@2.27.1:2", when="@4.1.7:4.4")
         depends_on("py-jupyterlab-server@2.19:2", when="@4:4.1.6")
         depends_on("py-notebook-shim@0.2:", when="@4:")
+        depends_on("py-packaging@23.2:", when="@4.5.8:")
         depends_on("py-packaging", when="@3:")
         depends_on("py-setuptools@41.1:", when="@4.3.7:")
         depends_on("py-setuptools@40.8.0:", when="@4.3.5:")
