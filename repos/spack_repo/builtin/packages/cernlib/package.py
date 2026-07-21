@@ -45,6 +45,8 @@ class Cernlib(CMakePackage):
 
     # Fix build with GCC 14 and newer
     patch("fix_build_with_gcc14.patch", level=0)
+    # Fix build with GCC 16 and newer
+    patch("fix_build_with_gcc16.patch", level=0, when="%gcc@16:")
 
     def patch(self):
         if self.spec.satisfies("@:2023.08.14.0-free"):
