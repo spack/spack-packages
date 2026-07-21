@@ -4,7 +4,9 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
+
 
 class Polyclipper(CMakePackage):
     """Library for polyhedral clipping planes."""
@@ -20,7 +22,7 @@ class Polyclipper(CMakePackage):
     version("1.2.2", sha256="fd7ca794c1189bde1563b9704b371c65d7ba94b3582351fa2c3e0dd487b431da")
     version("1.01", sha256="88196e83fd2e17586d8258332a6677cdaa0695f624285c043a010f71d7f323a4")
     version("1.0", sha256="4b9094d5cc83239cc28ec30fe8048220eaa73ef51bafcffe027f9bbaec050fd2")
-    
+
     with default_args(type="build"):
         depends_on("blt")
         depends_on("cxx")
