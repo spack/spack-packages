@@ -21,6 +21,7 @@ class PyDmTree(CMakePackage, PythonExtension):
 
     license("Apache-2.0")
 
+    version("0.1.10", sha256="22f37b599e01cc3402a17f79c257a802aebd8d326de05b54657650845956208a")
     version("0.1.9", sha256="a4c7db3d3935a5a2d5e4b383fc26c6b0cd6f78c6d4605d3e7b518800ecd5342b")
 
     with default_args(deprecated=True):
