@@ -21,6 +21,7 @@ class RocmTensile(CMakePackage):
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+    version("7.2.3", sha256="3bb419564c6c61cc0663c6cab3c46c45459be16bb2c15f055852de954dc8a3cf")
     version("7.2.1", sha256="9d7757997b09c80a450a81dc48046408433d79d78f72ba362ee0afd721788b2e")
     version("7.2.0", sha256="e09cfe77fc0b9198e3dd0530214599b1bf849a8bd36031a734f0e591aafb7caf")
     version("7.1.1", sha256="12e3b538efe2069ecd77dfd0bc9309d6f067eab002f153ddbf8b20896ee46ec3")
@@ -108,6 +109,7 @@ class RocmTensile(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -118,7 +120,6 @@ class RocmTensile(CMakePackage):
 
     root_cmakelists_dir = "Tensile/Source"
 
-    patch("0003-require-openmp-extras-when-tensile-use-openmp.patch")
     patch("0004-replace_rocm_smi.patch", when="@6.4:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -142,8 +143,6 @@ class RocmTensile(CMakePackage):
             self.define_from_variant("TENSILE_USE_OPENMP", "openmp"),
             self.define("BUILD_WITH_TENSILE_HOST", True),
             self.define("Tensile_LIBRARY_FORMAT", "msgpack"),
-            self.define("TENSILE_USE_OPENMP", True),
-            self.define("ROCM_OPENMP_EXTRAS_DIR", self.spec["rocm-openmp-extras"].prefix),
         ]
 
         if self.spec.satisfies("^cmake@3.21.0:"):
@@ -170,3 +169,5 @@ class RocmTensile(CMakePackage):
         with working_dir(self.build_directory):
             install_tree("./client", prefix.client)
             install_tree("./lib", prefix.lib)
+        with working_dir(self.stage.source_path):
+            install_tree("./Tensile", prefix.Tensile)

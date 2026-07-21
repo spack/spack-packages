@@ -51,9 +51,9 @@ spack:
       variants: amdgpu_target=gfx90a
     trilinos:
       prefer:
-      - +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
-        +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
-        +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
+      - +amesos2 +anasazi +belos +boost
+        +ifpack2 +intrepid2 +kokkos +minitensor +muelu
+        +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos
         +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
       - target=x86_64_v3
     mpich:
@@ -252,7 +252,7 @@ spack:
   - sz3
   - tasmanian
   - tau +mpi +python +syscall
-  - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+  - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
   - turbine
   - umap
   - umpire
@@ -403,7 +403,7 @@ spack:
     - sundials
     - superlu-dist
     - tasmanian ~openmp
-    - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
+    - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu ~stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 gotype=long_long
     - umpire
     - upcxx
     # INCLUDED IN ECP DAV ROCM

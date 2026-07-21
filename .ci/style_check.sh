@@ -22,6 +22,10 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+# Ref should always be the merge-base to avoid picking up extra files
+ref=$(git merge-base $ref HEAD)
+
 if ! python_files > /dev/null; then
   info "skipping style checks: no Python files changed"
   exit 0

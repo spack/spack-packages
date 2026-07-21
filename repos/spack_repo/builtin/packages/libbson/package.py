@@ -18,6 +18,7 @@ class Libbson(AutotoolsPackage, CMakePackage):
 
     maintainers("michaelkuhn")
 
+    version("2.3.0", sha256="0ef2c33345482d444ef766ebf3f066b4596bd6867a24ab6889b76dd51cb23878")
     version("1.27.2", sha256="a53010803e2df097a2ea756be6ece34c8f52cda2c18e6ea21115097b75f5d4bf")
     version("1.24.4", sha256="2f4a3e8943bfe3b8672c2053f88cf74acc8494dc98a45445f727901eee141544")
     version("1.23.4", sha256="209406c91fcf7c63aa633179a0a6b1b36ba237fb77e0470fd81f7299a408e334")
@@ -38,8 +39,8 @@ class Libbson(AutotoolsPackage, CMakePackage):
     version("1.6.3", sha256="e9e4012a9080bdc927b5060b126a2c82ca11e71ebe7f2152d079fa2ce461a7fb")
     version("1.6.2", sha256="aad410123e4bd8a9804c3c3d79e03344e2df104872594dc2cf19605d492944ba")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.1:", type="build")
@@ -51,8 +52,9 @@ class Libbson(AutotoolsPackage, CMakePackage):
     )
 
     def url_for_version(self, version):
-        if version >= Version("1.25.0"):
+        if version >= Version("1.25.0") and version <= Version("1.27.2"):
             return f"https://github.com/mongodb/mongo-c-driver/archive/refs/tags/{version}.tar.gz"
+
         if version >= Version("1.10.0"):
             return f"https://github.com/mongodb/mongo-c-driver/releases/download/{version}/mongo-c-driver-{version}.tar.gz"
         else:

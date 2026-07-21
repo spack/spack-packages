@@ -28,6 +28,7 @@ class RocmSmiLib(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
         return url.format(version)
 
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="f47550aeeb2827a3ae857c35e16f5a9042de70d911abab80bebe4840c9ecd4fd")
@@ -87,6 +88,7 @@ class RocmSmiLib(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -111,6 +113,7 @@ class RocmSmiLib(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on("llvm-amdgpu", when=f"@{ver}+asan")
 
@@ -127,6 +130,12 @@ class RocmSmiLib(CMakePackage):
         "https://github.com/ROCm/rocm_smi_lib/commit/ce405476cabf66a884a351cb2e3253bd5c29e06b.patch?full_index=1",
         sha256="54094b5dbd05b79341e38e95f785dcbb0ba4a5aef4bad19e075ea77470164138",
         when="@6.4.0",
+    )
+    # fix error with gcc 14
+    patch(
+        "https://github.com/ROCm/rocm_smi_lib/commit/7fdc6e56c40ed6f02c888dcb1492944a9373ba74.patch?full_index=1",
+        sha256="5568bd495fcebdf1557c05621474fcc6c9928544f83234e1bc20a7d5757e360e",
+        when="@:6.1 %cxx=gcc@14:",
     )
     patch("0001-add-libdrm-include-dir.patch", when="@6.4")
 

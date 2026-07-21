@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocshmem(CMakePackage):
+class Rocshmem(ROCmLibrary, CMakePackage):
     """rocSHMEM intra-kernel networking runtime for AMD dGPUs on the ROCm platform."""
 
     homepage = "https://github.com/ROCm/rocSHMEM"
@@ -15,9 +16,11 @@ class Rocshmem(CMakePackage):
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocshmem"]
 
     license("MIT")
 
+    version("7.2.3", sha256="ed409d703ccc7bc07baf1e7e046c322441b2a5e83b95e4acf0ea2bd2585e71e2")
     version("7.2.1", sha256="03484b56547b8a5905cec34707e59105d23e4576f0b87c3bb6abb052f58bd0ae")
     version("7.2.0", sha256="22c6851287e635bfa1bf0b23b98d6142440b3ab366d15e2203da362c1497341d")
     version("7.1.1", sha256="610018ac57b5b56954da3ae0d6b5a64fb72fc3228f2e69085c4cd61f901820a8")
@@ -43,6 +46,7 @@ class Rocshmem(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
