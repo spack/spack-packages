@@ -11,7 +11,7 @@ from spack.package import *
 class Polyclipper(CMakePackage):
     """Library for polyhedral clipping planes."""
 
-    homepage = "https://github.com/llnl/PolyClipper.git"
+    homepage = "https://github.com/LLNL/PolyClipper"
     url = "https://github.com/llnl/PolyClipper/archive/refs/tags/v1.2.6.tar.gz"
     git = "https://github.com/llnl/PolyClipper.git"
 
