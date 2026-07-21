@@ -41,6 +41,6 @@ class Ncview(AutotoolsPackage):
 
     def url_for_version(self, version):
         if version >= Version("2.1.9"):
-            return F"https://cirrus.ucsd.edu/~pierce/ncview/ncview-{version}.tar.gz"
+            return f"https://cirrus.ucsd.edu/~pierce/ncview/ncview-{version}.tar.gz"
         else:
-            return F"ftp://cirrus.ucsd.edu/pub/ncview/ncview-{version}.tar.gz"
+            return f"ftp://cirrus.ucsd.edu/pub/ncview/ncview-{version}.tar.gz"
