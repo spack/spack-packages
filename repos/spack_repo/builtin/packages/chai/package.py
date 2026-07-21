@@ -224,8 +224,6 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             )
 
     with when("+raja"):
-        for std in ("11", "14", "17", "20"):
-            depends_on(f"raja cxxstd={std}", when=f"cxxstd={std}")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja@2025.12:", when="@2025.12.0:")
