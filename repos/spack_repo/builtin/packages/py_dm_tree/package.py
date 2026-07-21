@@ -36,12 +36,13 @@ class PyDmTree(CMakePackage, PythonExtension):
         depends_on("py-pybind11@2.10.1:", when="@0.1.8:")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.10:", when="@0.1.9:")
-        # Based on PyPI wheel availability
+        depends_on("python@3.10:3.14", type=("build", "run"), when="@0.1.10:")
+        depends_on("python@3.10:3.13", type=("build", "run"), when="@0.1.9")
         depends_on("python@:3.11", when="@:0.1.8")
         depends_on("python@:3.10", when="@:0.1.7")
 
-    depends_on("abseil-cpp cxxstd=14", type="link", when="@0.1.8:")
+    depends_on("abseil-cpp cxxstd=17", type="link", when="@0.1.10:")
+    depends_on("abseil-cpp cxxstd=14", type="link", when="@0.1.8:0.1.9")
     depends_on("py-attrs@18.2.0:", type=("build", "run"), when="@0.1.9:")
     depends_on("py-wrapt@1.11.2:", type=("build", "run"), when="@0.1.9:")
 
