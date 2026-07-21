@@ -66,6 +66,17 @@ class PyLlvmlite(PythonPackage):
     depends_on("llvm@14", when="@0.41:0.43")
     depends_on("llvm@11:14", when="@0.40")
     depends_on("llvm@11", when="@0.37:0.39")
+
+    # On macOS, llvmlite must link the platform (system) libc++. If the LLVM
+    # dependency ships its own libc++/libunwind runtime (libcxx=runtime,
+    # libunwind=runtime), both that runtime and the system libc++ get loaded
+    # into the host Python process at JIT time. C++ objects allocated by one
+    # runtime are then freed by the other, producing crashes such as
+    # "malloc: pointer being freed was not allocated" / "Abort trap: 6".
+    # Requiring the platform C++ runtime keeps a single libc++ in the process.
+    # See https://github.com/spack/spack-packages/issues/5403
+    depends_on("llvm libcxx=none libunwind=none", when="platform=darwin")
+
     for t in [
         "arm:",
         "ppc:",
