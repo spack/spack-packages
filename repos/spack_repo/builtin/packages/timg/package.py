@@ -1,4 +1,3 @@
-# ruff: noqa: F403, F405
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -94,7 +93,6 @@ class Timg(CMakePackage):
 
     # Mandatory dependencies
     depends_on("graphicsmagick")
-    depends_on("libexif")
     depends_on("libdeflate")
 
     # Variants
@@ -136,6 +134,7 @@ class Timg(CMakePackage):
     # Variants' dependencies
     depends_on("libsixel", when="+sixel")
     depends_on("libjpeg-turbo", when="+turbojpeg")
+    depends_on("libexif", when="+turbojpeg")
     # NOTE: we enforce the glib variant on the upstream poppler dependency whenever the
     # poppler variant is activated for timg
     depends_on("poppler+glib", when="+poppler")
@@ -146,7 +145,8 @@ class Timg(CMakePackage):
     depends_on("openslide", when="+openslide")
     depends_on("ffmpeg", when="+videodevice")
 
-conflicts("~video", when="+videodevice"
+    conflicts("~video", when="+videodevice")
+              
     def cmake_args(self):
         args = [
             # Highly-recommended
