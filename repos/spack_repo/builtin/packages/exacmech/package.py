@@ -19,34 +19,13 @@ class Exacmech(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("rcarson3")
 
     version("develop", branch="develop")
-    version(
-        "0.4.3",
-        sha256="0740d0eb6b8eb4036dd3b50a9e3061f0986a09c5398ad62b892d3ed221493152"
-    )
-    version(
-        "0.4.2",
-        sha256="66d88d9c19271a43cb511479e00a399f14b11952fe10720eb276dd7db467721c"
-    )
-    version(
-        "0.4.1",
-        sha256="ff0e748bcc7172fc99700974cc2e64f169d7369706a803d110061fccfa3d99a9"
-    )
-    version(
-        "0.4.0",
-        sha256="18f4790552333a6e15487ef277be7fe6476f838b51a11fb0da3b0244b5edd5aa"
-    )
-    version(
-        "0.3.4",
-        sha256="76448be985ed2869298b899dd92f48da1ff6113523e13c1b0e611a434cfb7bd2"
-    )
-    version(
-        "0.3.0",
-        sha256="c879c18c0947f6a6c921b6784ebf436ed75b2af061be428b6eaf60f30b26697d"
-    )
-    version(
-        "0.2.0",
-        sha256="3a2b229b493cfb3490c4a4cbe280c32de8f361f0aa4b9a2a84412dcbfa7e5db6"
-    )
+    version("0.4.3", sha256="0740d0eb6b8eb4036dd3b50a9e3061f0986a09c5398ad62b892d3ed221493152")
+    version("0.4.2", sha256="66d88d9c19271a43cb511479e00a399f14b11952fe10720eb276dd7db467721c")
+    version("0.4.1", sha256="ff0e748bcc7172fc99700974cc2e64f169d7369706a803d110061fccfa3d99a9")
+    version("0.4.0", sha256="18f4790552333a6e15487ef277be7fe6476f838b51a11fb0da3b0244b5edd5aa")
+    version("0.3.4", sha256="76448be985ed2869298b899dd92f48da1ff6113523e13c1b0e611a434cfb7bd2")
+    version("0.3.0", sha256="c879c18c0947f6a6c921b6784ebf436ed75b2af061be428b6eaf60f30b26697d")
+    version("0.2.0", sha256="3a2b229b493cfb3490c4a4cbe280c32de8f361f0aa4b9a2a84412dcbfa7e5db6")
 
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("shared", default=False, description="Enables the build of shared libraries")
