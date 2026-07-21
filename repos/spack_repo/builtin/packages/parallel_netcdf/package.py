@@ -184,7 +184,7 @@ class ParallelNetcdf(AutotoolsPackage):
         ]
 
         with working_dir(test_dir):
-            mpicxx = which(self.spec["mpi"].prefix.bin.mpicxx)
+            mpicxx = which(self.spec["mpi"].prefix.bin.mpicxx, required=True)
             mpicxx(*options)
 
             mpiexe_list = [
@@ -198,9 +198,9 @@ class ParallelNetcdf(AutotoolsPackage):
                 try:
                     args = ["--immediate=30"] if mpiexe == "srun" else []
                     args += ["-n", "1", test_exe]
-                    exe = which(mpiexe)
+                    exe = which(mpiexe, required=True)
                     exe(*args)
-                    rm = which("rm")
+                    rm = which("rm", required=True)
                     rm("-f", "column_wise")
                     return
 

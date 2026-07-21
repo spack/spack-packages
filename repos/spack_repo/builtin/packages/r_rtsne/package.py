@@ -23,4 +23,6 @@ class RRtsne(RPackage):
     version("0.11", sha256="1e2e7368f3de870b9270f70b207ba9e8feea67f9b061cb6abb2fec785fb7247e")
     version("0.10", sha256="c54371f4a935520e7e7ab938ef8f5f7f9ad2a829123b9513ae715c07de034790")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-rcpp@0.11.0:", type=("build", "run"))

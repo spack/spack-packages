@@ -31,8 +31,10 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
 
     _kokkos_backends = Kokkos.devices_variants
     for _backend in _kokkos_backends:
-        _deflt, _descr = _kokkos_backends[_backend]
-        variant(_backend.lower(), default=_deflt, description=_descr)
+        _deflt, _when, _descr = _kokkos_backends[_backend]
+        if _when is not None:
+            _when = f"^kokkos{_when}"
+        variant(_backend.lower(), default=_deflt, description=_descr, when=_when)
 
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Build with mpi support")
@@ -92,9 +94,11 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
 
     # Dependencies for subpackages
     depends_on("all-library", when="@0.5.0:+all")
-    depends_on("arborx", when="+arborx")
-    depends_on("hypre-cmake@2.22.0:", when="@0.4.0:+hypre")
-    depends_on("hypre-cmake@2.22.1:", when="@0.5.0:+hypre")
+    depends_on("arborx", when="+arborx @master")
+    depends_on("arborx@1.7", when="+arborx @:0.7.0")
+    depends_on("hypre-cmake@2.22.0:", when="@0.4.0 +hypre")
+    depends_on("hypre-cmake@2.22.1:", when="@0.5.0:0.7.0 +hypre")
+    depends_on("hypre@3.0.0:", when="@0.8.0:+hypre")
     depends_on("heffte@2.1.0", when="@0.5.0+heffte")
     depends_on("heffte@2.3.0:", when="@0.6.0:+heffte")
     depends_on("silo", when="@0.5.0:+silo")
@@ -118,6 +122,9 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+sycl", when="@:0.3.0")
     conflicts("+silo", when="@:0.3.0")
     conflicts("+hdf5", when="@:0.5.0")
+
+    # Hypre doesn't support rocm for older versions
+    conflicts("+hypre +rocm", when="@:0.7.0")
 
     @when("+mpi")
     def patch(self):

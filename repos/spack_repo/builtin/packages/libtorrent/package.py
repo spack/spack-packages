@@ -21,5 +21,5 @@ class Libtorrent(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

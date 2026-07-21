@@ -37,7 +37,7 @@ class HpxKokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "future_type",
         default="polling",
-        values=future_types_map.keys(),
+        values=tuple(future_types_map.keys()),
         description="Integration type for GPU futures",
     )
 

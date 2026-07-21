@@ -15,6 +15,7 @@ class PyParamiko(PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("4.0.0", sha256="6a25f07b380cc9c9a88d2b920ad37167ac4667f8d9886ccebd8f90f654b5d69f")
     version("3.5.1", sha256="b2c665bc45b2b215bd7d7f039901b14b067da00f3a11e6640995fd58f2664822")
     version("3.5.0", sha256="ad11e540da4f55cedda52931f1a3f812a8238a7af7f62a60de538cd80bb28124")
     version("3.4.1", sha256="8b15302870af7f6652f2e038975c1d2973f06046cb5d7d65355668b3ecbece0c")
@@ -32,6 +33,7 @@ class PyParamiko(PythonPackage):
     variant("invoke", default=False, description="Enable invoke support")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@77:", when="@4:", type="build")
     depends_on("py-bcrypt@3.1.3:", when="@2.7:", type=("build", "run"))
     depends_on("py-bcrypt@3.2:", when="@3:", type=("build", "run"))
     depends_on("py-cryptography@2.5:", when="@2.7:", type=("build", "run"))

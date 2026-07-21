@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -75,12 +73,12 @@ class PySmartsim(PythonPackage):
     @run_after("install")
     def symlink_bin_deps(self):
         ss_core_path = join_path(python_purelib, "smartsim", "_core")
-        os.symlink(
+        symlink(
             self.spec["redis"].prefix.bin.join("redis-server"),
             join_path(ss_core_path, "bin", "redis-server"),
         )
-        os.symlink(
+        symlink(
             self.spec["redis"].prefix.bin.join("redis-cli"),
             join_path(ss_core_path, "bin", "redis-cli"),
         )
-        os.symlink(self.spec["redis-ai"].prefix, join_path(ss_core_path, "lib"))
+        symlink(self.spec["redis-ai"].prefix, join_path(ss_core_path, "lib"))

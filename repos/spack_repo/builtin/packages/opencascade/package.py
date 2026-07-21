@@ -17,13 +17,23 @@ class Opencascade(CMakePackage):
     visualization, data exchange and rapid application development."""
 
     homepage = "https://www.opencascade.com"
-    url = "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V7_4_0;sf=tgz"
-    git = "https://git.dev.opencascade.org/repos/occt.git"
+    url = "https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V7_4_0.tar.gz"
+    git = "https://github.com/Open-Cascade-SAS/OCCT.git"
 
     maintainers("wdconinc")
 
     license("LGPL-2.1-only")
 
+    version("8.0.0.p1", sha256="ad794cba1f377274b40050b098c106e02409def7e23b0763fae4b0aea95ac3a7")
+    version("8.0.0", sha256="118398ff8a010c2cb693450d7e5e2690533c88208fc25bd2730451ec4fab0a0f")
+    version(
+        "7.9.3",
+        sha256="5ecf094ec6b12d5413dfb851d8c3590c354058aee556e32e408bdfbf8c357d57",
+        preferred=True,
+    )
+    version("7.9.2", sha256="3cd080d3fc33ba0c6c157e110afe3e015859524c4694dbb09812ec9d61595639")
+    version("7.9.1", sha256="de442298cd8860f5580b01007f67f0ecd0b8900cfa4da467fa3c823c2d1a45df")
+    version("7.9.0", sha256="151b7a522ba8220aed3009e440246abbaf2ffec42672c37e9390096f7f2c098d")
     with default_args(extension="tar.gz"):
         version("7.8.1", sha256="33f2bdb67e3f6ae469f3fa816cfba34529a23a9cb736bf98a32b203d8531c523")
         version("7.8.0", sha256="b9c8f0a9d523ac1a606697f95fc39d8acf1140d3728561b8010a604431b4e9cf")
@@ -92,8 +102,8 @@ class Opencascade(CMakePackage):
     variant("freetype", default=False, description="Build with freetype")
     variant("rapidjson", default=False, description="Build with rapidjson")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("tbb", when="+tbb")
     depends_on("intel-tbb@2021.5: build_type=Release", when="@7.7 +tbb")
@@ -118,9 +128,10 @@ class Opencascade(CMakePackage):
     conflicts("^vtk@9.2", when="@:7.7.0 +vtk")
 
     def url_for_version(self, version):
-        url = (
-            "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V{0};sf=tgz"
-        )
+        if version > Version("7.8.1"):
+            url = "https://github.com/Open-Cascade-SAS/OCCT/archive/refs/tags/V{0}.tar.gz"
+        else:
+            url = "https://git.dev.opencascade.org/gitweb/?p=occt.git;a=snapshot;h=refs/tags/V{0};sf=tgz"
         return url.format(version.underscored)
 
     def cmake_args(self):

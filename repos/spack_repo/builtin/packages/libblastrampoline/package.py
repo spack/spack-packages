@@ -18,6 +18,13 @@ class Libblastrampoline(MakefilePackage):
 
     license("MIT")
 
+    version("5.15.0", sha256="69e0be57ebf037c1997c35edf03565614cd3c6863a695d01348a21bf1f482e74")
+    version("5.14.0", sha256="1036d8a34d2b6cad715da9b5f84c505517c9c65c24fcf90ba0f17d4d0003811a")
+    version("5.13.1", sha256="6df0eddd846db56b885056641cf02304862411bd0e641d444acf8f4eb2e33327")
+    version("5.13.0", sha256="45a73ab0e112df142d37117cd78a53c5d9b3ffd86a5f151d3103ec2274600364")
+    version("5.12.0", sha256="12f9d186bc844a21dfa2a6ea1f38a039227554330c43230d72f721c330cf6018")
+    version("5.11.2", sha256="eeee692ca6f28977f3aa089592b8d25bac223158f5be7a9a5f241ec837d3af51")
+    version("5.11.1", sha256="65206141b81bf151f1dfcceabf280b7b7ced995da3da170b85ce3cbb5f514cc8")
     version("5.11.0", sha256="4ea6c134843bd868f78d7ee0c61bf8bdda5334f20deaa6d3cd5bc6caafc4af17")
     version("5.10.1", sha256="1185a2a85453827823c224727e7cd665b7af8f48af5d2cd0225bd45389112e81")
     version("5.9.0", sha256="fe62c48eab6000a348d6d0cc3f2ebd2c38c6cae460468b56539b8438d42dc589")

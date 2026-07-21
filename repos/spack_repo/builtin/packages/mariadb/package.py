@@ -68,7 +68,7 @@ class Mariadb(CMakePackage):
     depends_on("msgpack-c")
     depends_on("openssl")
     depends_on("krb5")
-    depends_on("snappy", when="@11.8.3:")
+    depends_on("snappy+shared", when="@11.8.3:")
     depends_on("pcre2", when="@11.8.3:")
     depends_on("fmt@11:", when="@11:")
     depends_on("fmt@:8", when="@:10")

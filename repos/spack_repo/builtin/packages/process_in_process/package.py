@@ -132,7 +132,7 @@ class ProcessInProcess(Package):
         if target.family not in ["x86_64", "aarch64"]:
             raise InstallError("PiP only supports x86_64 and aarch64")
 
-        bash = which("bash")
+        bash = which("bash", required=True)
 
         # installing PiP-glibc
         glibc_builddir = join_path("PiP-glibc", "PiP-glibc.build")

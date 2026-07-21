@@ -26,6 +26,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
+    version("1.22.2", tag="v1.22.2", commit="5630b081cd25e4eccc7516a652ff956e51676794")
+    version("1.21.1", tag="v1.21.1", commit="8f7cce3a49fdbdac96e0868b75b7d0159db7ac7f")
     version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
     version("1.20.2", tag="v1.20.2", commit="8608bf02f21774be0388d2aa3a9f886d009d0b4c")
     version("1.19.2", tag="v1.19.2", commit="ffceed9d44f2f3efb9dd69fa75fea51163c91d91")
@@ -38,19 +40,24 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     version("1.10.0", tag="v1.10.0", commit="0d9030e79888d1d5828730b254fedc53c7b640c1")
     version("1.7.2", tag="v1.7.2", commit="5bc92dff16b0ddd5063b717fb8522ca2ad023cb0")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("binutils@2.36:", type="build")
 
     # cmake/CMakeLists.txt
+    depends_on("cmake@3.28:", when="@1.21:", type="build")
     depends_on("cmake@3.26:", when="@1.17:", type="build")
     depends_on("cmake@3.1:", type="build")
 
-    depends_on("abseil-cpp@20240722.0: cxxstd=17", when="@1.20:")
-    # Needs absl/strings/has_absl_stringify.h
-    # cxxstd=20 may also work, but cxxstd=14 does not
-    depends_on("abseil-cpp@20240116.0: cxxstd=17", when="@1.17:1.19.2")
+    with when("@1.17:"):
+        # Needs absl/strings/has_absl_stringify.h
+        # cxxstd=20 may also work, but cxxstd=14 does not
+        depends_on("abseil-cpp@20240116.0: cxxstd=17")
+        depends_on("abseil-cpp@20240722.0:", when="@1.20:")
+
+        # abseil 20250814+ lacks absl::low_level_hash: https://github.com/microsoft/onnxruntime/issues/25815
+        depends_on("abseil-cpp@:20250512")
 
     extends("python")
     depends_on("python", type=("build", "run"))
@@ -146,6 +153,10 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         when="@1.17:1.20.2",
     )
 
+    # Add back linker flags "-z noexecstack"
+    # https://github.com/microsoft/onnxruntime/pull/25200
+    patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
+
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 
     variant(
@@ -195,6 +206,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         args = [
             define("onnxruntime_ENABLE_PYTHON", True),
             define("onnxruntime_BUILD_SHARED_LIB", True),
+            define("onnxruntime_BUILD_UNIT_TESTS", self.run_tests),
             define_from_variant("onnxruntime_USE_CUDA", "cuda"),
             define("onnxruntime_BUILD_CSHARP", False),
             define("onnxruntime_USE_TVM", False),

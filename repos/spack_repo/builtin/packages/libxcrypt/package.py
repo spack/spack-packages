@@ -12,11 +12,14 @@ class Libxcrypt(AutotoolsPackage):
 
     homepage = "https://github.com/besser82/libxcrypt"
     url = "https://github.com/besser82/libxcrypt/releases/download/v4.4.30/libxcrypt-4.4.30.tar.xz"
+
     tags = ["build-tools"]
+
     maintainers("haampie")
 
     license("LGPL-2.1-or-later")
 
+    version("4.5.2", sha256="71513a31c01a428bccd5367a32fd95f115d6dac50fb5b60c779d5c7942aec071")
     version("4.4.38", sha256="80304b9c306ea799327f01d9a7549bdb28317789182631f1b54f4511b4206dd6")
     # 4.4.37 requires pkg-config and is not included here
     version("4.4.36", sha256="e5e1f4caee0a01de2aee26e3138807d6d3ca2b8e67287966d1fefd65e1fd8943")
@@ -26,8 +29,7 @@ class Libxcrypt(AutotoolsPackage):
 
     patch("truncating-conversion.patch", when="@4.4.30")
 
-    depends_on("c", type="build")  # generated
-
+    depends_on("c", type="build")
     # Some distros have incomplete perl installs, +open catches that.
     depends_on("perl@5.14:+open", type="build")
 

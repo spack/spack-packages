@@ -23,6 +23,7 @@ class Diy(CMakePackage):
     version("3.5.0", sha256="b3b5490441d521b6e9b33471c782948194bf95c7c3df3eb97bc5cf4530b91576")
 
     depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("mpi")
 

@@ -17,7 +17,7 @@ class C(Package):
 
     def test_c(self):
         """build and run C examples"""
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         expected = ["Hello world", "YES!"]
 
         test_source = self.test_suite.current_test_data_dir
@@ -26,6 +26,6 @@ class C(Package):
             with test_part(self, f"test_c_{test}", f"build and run {exe_name}"):
                 filepath = join_path(test_source, test)
                 cc("-o", exe_name, filepath)
-                exe = which(exe_name)
+                exe = which(exe_name, required=True)
                 out = exe(output=str.split, error=str.split)
                 check_outputs(expected, out)

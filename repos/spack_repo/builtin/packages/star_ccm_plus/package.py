@@ -74,7 +74,7 @@ class StarCcmPlus(Package):
             "-DINSTALLFLEX=false",
             "-DADDSYSTEMPATH=false",
             "-DCOMPUTE_NODE=false",
-            "-DNODOC={0}".format("false" if "+docs" in spec else "true"),
+            "-DNODOC={0}".format("false" if "+doc" in spec else "true"),
         )
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

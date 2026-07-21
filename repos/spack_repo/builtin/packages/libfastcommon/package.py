@@ -28,7 +28,7 @@ class Libfastcommon(Package):
     depends_on("c", type="build")  # generated
 
     def install(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("make.sh")
         sh("make.sh", "install")
         install_tree(".", prefix)

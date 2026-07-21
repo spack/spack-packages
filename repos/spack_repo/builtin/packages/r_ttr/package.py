@@ -23,6 +23,8 @@ class RTtr(RPackage):
     version("0.23-3", sha256="2136032c7a2cd2a82518a4412fc655ecb16597b123dbdebe5684caef9f15261f")
     version("0.23-1", sha256="699798f06ceae9663da47b67d1bc8679fc1c0776d12afd054d6ac4d19e05b2ae")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r-xts@0.10-0:", type=("build", "run"))
     depends_on("r-zoo", type=("build", "run"))
     depends_on("r-curl", type=("build", "run"), when="@0.23-4:")

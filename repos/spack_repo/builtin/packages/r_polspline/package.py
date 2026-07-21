@@ -26,3 +26,6 @@ class RPolspline(RPackage):
     version("1.1.17", sha256="d67b269d01105d4a6ea774737e921e66e065a859d1931ae38a70f88b6fb7ee30")
     version("1.1.16", sha256="aa3b5a1560008a1a401a65a25f19a27ba6f0a6ea185b6d093acd40e4e2818934")
     version("1.1.15", sha256="8cdbaa5ee672055a4d02f965025199ce764958f84bfa159e853feba7ee24faa7")
+
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated

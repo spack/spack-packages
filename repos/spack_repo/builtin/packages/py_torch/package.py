@@ -29,38 +29,62 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
-    version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
-    version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
-    version("2.7.0", tag="v2.7.0", commit="134179474539648ba7dee1317959529fbd0e7f89")
-    version("2.6.0", tag="v2.6.0", commit="1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340")
-    version("2.5.1", tag="v2.5.1", commit="a8d6afb511a69687bbb2b7e88a3cf67917e1697e")
-    version("2.5.0", tag="v2.5.0", commit="32f585d9346e316e554c8d9bf7548af9f62141fc")
-    version("2.4.1", tag="v2.4.1", commit="ee1b6804381c57161c477caa380a840a84167676")
-    version("2.4.0", tag="v2.4.0", commit="d990dada86a8ad94882b5c23e859b88c0c255bda")
-    version("2.3.1", tag="v2.3.1", commit="63d5e9221bedd1546b7d364b5ce4171547db12a9")
-    version("2.3.0", tag="v2.3.0", commit="97ff6cfd9c86c5c09d7ce775ab64ec5c99230f5d")
-    version("2.2.2", tag="v2.2.2", commit="39901f229520a5256505ec24782f716ee7ddc843")
-    version("2.2.1", tag="v2.2.1", commit="6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0")
-    version("2.2.0", tag="v2.2.0", commit="8ac9b20d4b090c213799e81acf48a55ea8d437d6")
-    version("2.1.2", tag="v2.1.2", commit="a8e7c98cb95ff97bb30a728c6b2a1ce6bff946eb")
-    version("2.1.1", tag="v2.1.1", commit="4c55dc50355d5e923642c59ad2a23d6ad54711e7")
-    version("2.1.0", tag="v2.1.0", commit="7bcf7da3a268b435777fe87c7794c382f444e86d")
-    version("2.0.1", tag="v2.0.1", commit="e9ebda29d87ce0916ab08c06ab26fd3766a870e5")
-    version("2.0.0", tag="v2.0.0", commit="c263bd43e8e8502d4726643bc6fd046f0130ac0e")
-    version("1.13.1", tag="v1.13.1", commit="49444c3e546bf240bed24a101e747422d1f8a0ee")
-    version("1.13.0", tag="v1.13.0", commit="7c98e70d44abc7a1aead68b6ea6c8adc8c554db5")
-    version("1.12.1", tag="v1.12.1", commit="664058fa83f1d8eede5d66418abff6e20bd76ca8")
-    version("1.12.0", tag="v1.12.0", commit="67ece03c8cd632cce9523cd96efde6f2d1cc8121")
-    version("1.11.0", tag="v1.11.0", commit="bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
-    version("1.10.2", tag="v1.10.2", commit="71f889c7d265b9636b93ede9d651c0a9c4bee191")
-    version("1.10.1", tag="v1.10.1", commit="302ee7bfb604ebef384602c56e3853efed262030")
-    version("1.10.0", tag="v1.10.0", commit="36449ea93134574c2a22b87baad3de0bf8d64d42")
-    version("1.9.1", tag="v1.9.1", commit="dfbd030854359207cb3040b864614affeace11ce")
-    version("1.9.0", tag="v1.9.0", commit="d69c22dd61a2f006dcfe1e3ea8468a3ecaf931aa")
-    version("1.8.2", tag="v1.8.2", commit="e0495a7aa104471d95dc85a1b8f6473fbcc427a8")
-    version("1.8.1", tag="v1.8.1", commit="56b43f4fec1f76953f15a627694d4bba34588969")
-    version("1.8.0", tag="v1.8.0", commit="37c1f4a7fef115d719104e871d0cf39434aa9d56")
-    version("1.7.1", tag="v1.7.1", commit="57bffc3a8e4fee0cce31e1ff1f662ccf7b16db57")
+    version("2.13.0", tag="v2.13.0", commit="cf30153c4c131c8164ee7798e5022d810682e2cb")
+    version("2.12.1", tag="v2.12.1", commit="7269437d655783a26cba32aa88195b741ff496aa")
+    version("2.12.0", tag="v2.12.0", commit="0d62256a2b23365f8e1604297eb23a6545102aa8")
+    version("2.11.0", tag="v2.11.0", commit="70d99e998b4955e0049d13a98d77ae1b14db1f45")
+    version("2.10.0", tag="v2.10.0", commit="449b1768410104d3ed79d3bcfe4ba1d65c7f22c0")
+    with default_args(deprecated=True):
+        # https://www.cvedetails.com/cve/CVE-2026-24747/
+        version("2.9.1", tag="v2.9.1", commit="d38164a545b4a4e4e0cf73ce67173f70574890b6")
+        version("2.9.0", tag="v2.9.0", commit="0fabc3ba44823f257e70ce397d989c8de5e362c1")
+        # https://www.cvedetails.com/cve/CVE-2025-55554/
+        # https://www.cvedetails.com/cve/CVE-2025-55552/
+        # https://www.cvedetails.com/cve/CVE-2025-55551/
+        version("2.8.0", tag="v2.8.0", commit="ba56102387ef21a3b04b357e5b183d48f0afefc7")
+        version("2.7.1", tag="v2.7.1", commit="e2d141dbde55c2a4370fac5165b0561b6af4798b")
+        # https://www.cvedetails.com/cve/CVE-2025-55560/
+        # https://www.cvedetails.com/cve/CVE-2025-55558/
+        # https://www.cvedetails.com/cve/CVE-2025-55557/
+        # https://www.cvedetails.com/cve/CVE-2025-55553/
+        version("2.7.0", tag="v2.7.0", commit="134179474539648ba7dee1317959529fbd0e7f89")
+        # https://www.cvedetails.com/cve/CVE-2025-46148/
+        version("2.6.0", tag="v2.6.0", commit="1eba9b3aa3c43f86f4a2c807ac8e12c4a7767340")
+        # https://www.cvedetails.com/cve/CVE-2025-32434/
+        version("2.5.1", tag="v2.5.1", commit="a8d6afb511a69687bbb2b7e88a3cf67917e1697e")
+        version("2.5.0", tag="v2.5.0", commit="32f585d9346e316e554c8d9bf7548af9f62141fc")
+        # https://www.cvedetails.com/cve/CVE-2024-48063/
+        version("2.4.1", tag="v2.4.1", commit="ee1b6804381c57161c477caa380a840a84167676")
+        version("2.4.0", tag="v2.4.0", commit="d990dada86a8ad94882b5c23e859b88c0c255bda")
+        version("2.3.1", tag="v2.3.1", commit="63d5e9221bedd1546b7d364b5ce4171547db12a9")
+        version("2.3.0", tag="v2.3.0", commit="97ff6cfd9c86c5c09d7ce775ab64ec5c99230f5d")
+        version("2.2.2", tag="v2.2.2", commit="39901f229520a5256505ec24782f716ee7ddc843")
+        # https://www.cvedetails.com/cve/CVE-2024-5480/
+        version("2.2.1", tag="v2.2.1", commit="6c8c5ad5eaf47a62fafbb4a2747198cbffbf1ff0")
+        version("2.2.0", tag="v2.2.0", commit="8ac9b20d4b090c213799e81acf48a55ea8d437d6")
+        # https://www.cvedetails.com/cve/CVE-2024-31584/
+        # https://www.cvedetails.com/cve/CVE-2024-31583/
+        # https://www.cvedetails.com/cve/CVE-2024-31580/
+        version("2.1.2", tag="v2.1.2", commit="a8e7c98cb95ff97bb30a728c6b2a1ce6bff946eb")
+        version("2.1.1", tag="v2.1.1", commit="4c55dc50355d5e923642c59ad2a23d6ad54711e7")
+        version("2.1.0", tag="v2.1.0", commit="7bcf7da3a268b435777fe87c7794c382f444e86d")
+        version("2.0.1", tag="v2.0.1", commit="e9ebda29d87ce0916ab08c06ab26fd3766a870e5")
+        version("2.0.0", tag="v2.0.0", commit="c263bd43e8e8502d4726643bc6fd046f0130ac0e")
+        version("1.13.1", tag="v1.13.1", commit="49444c3e546bf240bed24a101e747422d1f8a0ee")
+        # https://www.cvedetails.com/cve/CVE-2022-45907/
+        version("1.13.0", tag="v1.13.0", commit="7c98e70d44abc7a1aead68b6ea6c8adc8c554db5")
+        version("1.12.1", tag="v1.12.1", commit="664058fa83f1d8eede5d66418abff6e20bd76ca8")
+        version("1.12.0", tag="v1.12.0", commit="67ece03c8cd632cce9523cd96efde6f2d1cc8121")
+        version("1.11.0", tag="v1.11.0", commit="bc2c6edaf163b1a1330e37a6e34caf8c553e4755")
+        version("1.10.2", tag="v1.10.2", commit="71f889c7d265b9636b93ede9d651c0a9c4bee191")
+        version("1.10.1", tag="v1.10.1", commit="302ee7bfb604ebef384602c56e3853efed262030")
+        version("1.10.0", tag="v1.10.0", commit="36449ea93134574c2a22b87baad3de0bf8d64d42")
+        version("1.9.1", tag="v1.9.1", commit="dfbd030854359207cb3040b864614affeace11ce")
+        version("1.9.0", tag="v1.9.0", commit="d69c22dd61a2f006dcfe1e3ea8468a3ecaf931aa")
+        version("1.8.2", tag="v1.8.2", commit="e0495a7aa104471d95dc85a1b8f6473fbcc427a8")
+        version("1.8.1", tag="v1.8.1", commit="56b43f4fec1f76953f15a627694d4bba34588969")
+        version("1.8.0", tag="v1.8.0", commit="37c1f4a7fef115d719104e871d0cf39434aa9d56")
+        version("1.7.1", tag="v1.7.1", commit="57bffc3a8e4fee0cce31e1ff1f662ccf7b16db57")
 
     is_darwin = sys.platform == "darwin"
 
@@ -151,7 +175,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.9:3.13", when="@2.5:")
+        depends_on("python@3.10:3.15", when="@2.13:")
+        depends_on("python@3.10:3.14", when="@2.9:2.12")
+        depends_on("python@3.9:3.13", when="@2.5:2.8")
         depends_on("python@3.8:3.12", when="@2.2:2.4")
         depends_on("python@3.8:3.11", when="@2.0:2.1")
         depends_on("python@:3.10", when="@1.11:1")
@@ -175,19 +201,25 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-sympy@1.13.3:", when="@2.7:")
         depends_on("py-sympy@1.13.1", when="@2.5:2.6")
         depends_on("py-sympy", when="@2:")
+        depends_on("py-networkx@2.5.1:", when="@2.9:")
         depends_on("py-networkx", when="@2:")
         depends_on("py-jinja2", when="@2:")
+        depends_on("py-fsspec@0.8.5:", when="@2.9:")
         depends_on("py-fsspec", when="@2.1:")
 
         # pyproject.toml
-        depends_on("py-setuptools@62.3:79", when="@2.8:")
-        depends_on("py-setuptools")
-        depends_on("py-astunparse", when="@1.13:")
+        depends_on("py-setuptools@77.0.3:", when="@2.13:")
+        depends_on("py-setuptools@70.1:81", when="@2.10:2.12")
+        depends_on("py-setuptools@70.1:79", when="@2.9")
+        depends_on("py-setuptools@62.3:79", when="@2.8")
+        depends_on("py-setuptools@:79", when="@:2.7")
         depends_on("py-numpy")
         # https://github.com/pytorch/pytorch/issues/107302
         depends_on("py-numpy@:1", when="@:2.2")
+        depends_on("py-packaging", when="@2.9:")
         depends_on("py-pyyaml")
         depends_on("py-requests", when="@1.13:")
+        depends_on("py-six", when="@1.13:1,2.9:")
 
     # Undocumented dependencies
     depends_on("py-tqdm", type="run")
@@ -197,7 +229,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # third_party
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
-    depends_on("nvtx@3.2.1", when="@2.8:")
+    depends_on("nvtx@3.3.0", when="@2.10:")
+    depends_on("nvtx@3.2.1", when="@2.8:2.9")
     depends_on("nvtx@3.1.0", when="@2.6:2.7")
     # https://github.com/pytorch/pytorch/issues/60332
     # depends_on("xnnpack@2024-12-03", when="@2.7:+xnnpack")
@@ -209,7 +242,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # depends_on("xnnpack@2021-02-22", when="@1.8:1.9+xnnpack")
     # depends_on("xnnpack@2020-03-23", when="@1.6:1.7+xnnpack")
     depends_on("benchmark", when="@1.6:+test")
-    depends_on("cpuinfo@2025-03-21", when="@2.8:")
+    depends_on("cpuinfo@2026-04-13", when="@2.13:")
+    depends_on("cpuinfo@2025-11-14", when="@2.10:2.12")
+    depends_on("cpuinfo@2025-03-21", when="@2.8:2.9")
     depends_on("cpuinfo@2024-09-26", when="@2.6:2.7")
     depends_on("cpuinfo@2024-09-06", when="@2.5.1")
     depends_on("cpuinfo@2024-08-30", when="@2.5.0")
@@ -218,16 +253,20 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("cpuinfo@2022-08-19", when="@1.13:2.0")
     depends_on("cpuinfo@2020-12-17", when="@1.8:1.12")
     depends_on("cpuinfo@2020-06-11", when="@1.6:1.7")
-    depends_on("gloo@2025-06-04", when="@2.8:+gloo")
-    depends_on("gloo@2023-12-03", when="@2.3:2.7+gloo")
-    depends_on("gloo@2023-05-19", when="@2.1:2.2+gloo")
-    depends_on("gloo@2023-01-17", when="@2.0+gloo")
-    depends_on("gloo@2022-05-18", when="@1.13:1+gloo")
-    depends_on("gloo@2021-05-21", when="@1.10:1.12+gloo")
-    depends_on("gloo@2021-05-04", when="@1.9+gloo")
-    depends_on("gloo@2020-09-18", when="@1.7:1.8+gloo")
-    depends_on("gloo+cuda", when="+gloo+cuda")
-    depends_on("gloo+libuv", when="platform=darwin")
+    with when("+gloo"):
+        depends_on("gloo@2026-02-12", when="@2.13:")
+        depends_on("gloo@2025-12-02", when="@2.11:2.12")
+        depends_on("gloo@2025-08-21", when="@2.9:2.10")
+        depends_on("gloo@2025-06-04", when="@2.8")
+        depends_on("gloo@2023-12-03", when="@2.3:2.7")
+        depends_on("gloo@2023-05-19", when="@2.1:2.2")
+        depends_on("gloo@2023-01-17", when="@2.0")
+        depends_on("gloo@2022-05-18", when="@1.13:1")
+        depends_on("gloo@2021-05-21", when="@1.10:1.12")
+        depends_on("gloo@2021-05-04", when="@1.9")
+        depends_on("gloo@2020-09-18", when="@1.7:1.8")
+        depends_on("gloo+cuda", when="+gloo+cuda")
+        depends_on("gloo+libuv", when="platform=darwin")
     # https://github.com/pytorch/pytorch/issues/60331
     # depends_on("onnx@1.18.0", when="@2.8:")
     # depends_on("onnx@1.17.0", when="@2.6:2.7")
@@ -248,11 +287,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             depends_on("py-protobuf@3.13", when="@1.10:")
             depends_on("py-protobuf@3.11", when="@1.6:1.9")
     depends_on("psimd@2020-05-17")
-    depends_on("pthreadpool@2023-08-29", when="@2.2:")
+    depends_on("pthreadpool@2026-05-01", when="@2.13:")
+    depends_on("pthreadpool@2023-08-29", when="@2.2:2.12")
     depends_on("pthreadpool@2021-04-13", when="@1.9:2.1")
     depends_on("pthreadpool@2020-10-05", when="@1.8")
     depends_on("pthreadpool@2020-06-15", when="@1.6:1.7")
     with default_args(type=("build", "link", "run")):
+        depends_on("py-pybind11@3.0.4:", when="@2.13:")
+        depends_on("py-pybind11@3.0.1:", when="@2.9:")
         depends_on("py-pybind11@2.13.6:", when="@2.6:")
         depends_on("py-pybind11@2.13.5:", when="@2.5")
         depends_on("py-pybind11@2.12.0:", when="@2.3:2.4")
@@ -261,6 +303,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-pybind11@2.10.0:", when="@1.13:1")
         depends_on("py-pybind11@2.6.2:", when="@1.8:1.12")
         depends_on("py-pybind11@2.3.0:", when="@:1.7")
+        # https://github.com/spack/spack-packages/pull/3708#issuecomment-4077800794
+        depends_on("py-pybind11@:3.0.1", when="@:2.11")
     depends_on("sleef@3.8", when="@2.8:")
     depends_on("sleef@3.7.0_2024-12-06", when="@2.7")
     depends_on("sleef@3.6.0_2024-03-20", when="@2.4:2.6")
@@ -271,6 +315,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # Optional dependencies
     with default_args(type=("build", "link", "run")):
         # cmake/public/cuda.cmake
+        depends_on("cuda@12.1:", when="@2.12:+cuda")
+        depends_on("cuda@12:", when="@2.9:+cuda")
         depends_on("cuda@11:", when="@2.4:+cuda")
         # https://github.com/pytorch/pytorch/issues/122169
         depends_on("cuda@11:12.3", when="@2.0:2.3+cuda")
@@ -279,13 +325,20 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("cuda@10.2:11.4", when="@1.10+cuda")
         depends_on("cuda@9.2:11.4", when="@1.6:1.9+cuda")
     # https://github.com/pytorch/pytorch#prerequisites
-    depends_on("cudnn@8.5:9", when="@2.8:+cudnn")
-    # https://github.com/pytorch/pytorch/issues/119400
-    depends_on("cudnn@8.5:9.0", when="@2.3:2.7+cudnn")
-    depends_on("cudnn@7:8", when="@1.6:2.2+cudnn")
-    depends_on("nccl", when="+nccl+cuda")
-    depends_on("magma+cuda", when="+magma+cuda")
-    depends_on("magma+rocm", when="+magma+rocm")
+    with when("+cudnn"):
+        depends_on("cudnn@9:", when="@2.12:")
+        depends_on("cudnn@8.5:9", when="@2.8:2.11")
+        # https://github.com/pytorch/pytorch/issues/119400
+        depends_on("cudnn@8.5:9.0", when="@2.3:2.7")
+        depends_on("cudnn@7:8", when="@1.6:2.2")
+    # torch/csrc/distributed/c10d/NCCLUtils.hpp
+    with when("+nccl+cuda"):
+        depends_on("nccl@2.23:", when="@2.13:")
+        depends_on("nccl@2.7:", when="@2.6:")
+        depends_on("nccl")
+    # https://github.com/pytorch/pytorch/pull/178065
+    depends_on("magma@:2.9+cuda", when="+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
@@ -328,9 +381,16 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("mkl@2021.1.1:2021.4.0", when="@2.3 platform=windows")
         depends_on("py-cffi", when="@:1")
         depends_on("py-future", when="@1.5:1")
-        depends_on("py-six", when="@1.13:1")
+        depends_on("py-astunparse", when="@1.13:2.8")
 
     conflicts("%gcc@:9.3", when="@2.2:", msg="C++17 support required")
+
+    # https://github.com/pytorch/pytorch/issues/172630 (GCC-14.2 ICE for aarch64)
+    patch(
+        "https://github.com/pytorch/pytorch/commit/8fd509399e25cb4b265dff663d3f777406001f2e.patch?full_index=1",
+        sha256="91d0470cc05f5f0f775f32b70f174af74f5607162852ba1bcdd81381cd735f24",
+        when="@2.9:2.10.0",
+    )
 
     # https://github.com/pytorch/pytorch/issues/160092
     patch(
@@ -340,7 +400,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     )
 
     # https://github.com/pytorch/pytorch/issues/151592
-    patch("macos_rpath.patch", when="@2.7:")
+    patch("macos_rpath.patch", when="@2.7:2.12")
 
     # https://github.com/pytorch/pytorch/issues/151316
     patch(
@@ -547,6 +607,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         working_dir="third_party/fbgemm",
     )
 
+    # Make Pytorch build work in air gapped environments (without internet access)
+    # This forwards six source folder path to NNPACK which forwards it to PeachPy
+    # for versions @2.5:2.11
+    patch("air_gapped_nnpack_cmake_older.patch", when="@2.5:2.11")
+    # for version @2.12: (env forwarding mecanism changed)
+    # This error has been raised upstream https://github.com/pytorch/pytorch/pull/188263
+    patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
+
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
         filter_file(
@@ -696,6 +764,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
         # cmake/External/nnpack.cmake
         enable_or_disable("nnpack")
+        if "+nnpack" in self.spec and "py-six" in self.spec:
+            # NNPACK/PeachPy wires this path into PYTHONPATH for codegen.
+            # Point it at Spack's installed py-six to avoid network fetches.
+            env.set(
+                "PYTHON_SIX_SOURCE_DIR",
+                self["py-six"].module.python_purelib,
+            )
 
         enable_or_disable("numa")
         if "+numa" in self.spec:
@@ -803,3 +878,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     def cmake_prefix_paths(self):
         cmake_prefix_paths = [join_path(python_platlib, "torch", "share", "cmake")]
         return cmake_prefix_paths
+
+    @property
+    def libs(self):
+        return find_libraries(
+            "libtorch*", root=python_platlib, recursive=True, shared=True
+        ) + find_libraries("libc10*", root=python_platlib, recursive=True, shared=True)

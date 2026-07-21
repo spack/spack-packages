@@ -37,7 +37,7 @@ class DocbookXml(Package):
         version = self.version
         docbook = join_path(prefix, "docbook")
         ent_dir = join_path(prefix, "ent")
-        xmlcatalog = which("xmlcatalog")
+        xmlcatalog = which("xmlcatalog", required=True)
 
         # create docbook
         xmlcatalog("--noout", "--create", docbook)

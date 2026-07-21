@@ -46,7 +46,6 @@ class Madgraph5amc(MakefilePackage):
     depends_on("fortran", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("syscalc")
     depends_on("gosam-contrib", when="+ninja")
     depends_on("collier", when="+collier")
     depends_on("lhapdf")
@@ -75,8 +74,6 @@ class Madgraph5amc(MakefilePackage):
             join_path("input", ".mg5_configuration_default.txt"),
             join_path("input", "mg5_configuration.txt"),
         )
-
-        set_parameter("syscalc_path", spec["syscalc"].prefix.bin)
 
         if "+ninja" in spec:
             set_parameter("ninja", spec["gosam-contrib"].prefix.lib)

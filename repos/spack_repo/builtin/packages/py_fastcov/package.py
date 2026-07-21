@@ -20,6 +20,7 @@ class PyFastcov(PythonPackage):
 
     license("MIT")
 
+    version("1.16", sha256="a54bd43b5c86f00a5df369e45b1821292cea17ef85054b78bd829d0f1180f669")
     version("1.13", sha256="ec8a5271f90a2f8b894cb999e262c33e225ed6072d9a6ca38f636f88cc0543e8")
 
     # Depends on gcov too, but that's installed with the compiler

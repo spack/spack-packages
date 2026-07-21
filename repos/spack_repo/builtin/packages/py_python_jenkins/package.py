@@ -13,6 +13,7 @@ class PyPythonJenkins(PythonPackage):
     homepage = "https://opendev.org/jjb/python-jenkins/"
     pypi = "python-jenkins/python-jenkins-1.5.0.tar.gz"
 
+    version("1.8.2", sha256="56e7dabb0607bdb8e1d6fc6d2d4301abedbed9165da2b206facbd3071cb6eecb")
     version("1.5.0", sha256="0b11f7c1dffc48579afefa8a310cba5b1c98785b9132892ff8cf5312f32ebc90")
     version("1.0.2", sha256="54aba30cf49f78f9eb64e9717ad8049dacf090731a3e0c27e6035f9ec52ff78e")
 

@@ -19,6 +19,7 @@ class RVctrs(RPackage):
 
     license("MIT")
 
+    version("0.7.1", sha256="2f93519dfcffabc08bc508c2f47b5c23151cc667250b08a8b90be367ef1317c0")
     version("0.6.5", sha256="43167d2248fd699594044b5c8f1dbb7ed163f2d64761e08ba805b04e7ec8e402")
     version("0.6.4", sha256="8a80192356e724d21bd89a0ce3e5835856fd5bb1651e7fc205c6fee58fd001c8")
     version("0.6.3", sha256="93dc220dcde8b440586b2260460ef354e827a17dfec1ea6a9815585a10cfa5c2")
@@ -41,6 +42,7 @@ class RVctrs(RPackage):
     depends_on("r@3.2:", type=("build", "run"))
     depends_on("r@3.3:", type=("build", "run"), when="@0.3.5:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@0.6.2:")
+    depends_on("r@4.0.0:", type=("build", "run"), when="@0.7.0:")
     depends_on("r-cli@3.2.0:", type=("build", "run"), when="@0.4.1:")
     depends_on("r-cli@3.4.0:", type=("build", "run"), when="@0.5.0:")
     depends_on("r-glue", type=("build", "run"))
@@ -52,7 +54,9 @@ class RVctrs(RPackage):
     depends_on("r-rlang@1.0.2:", type=("build", "run"), when="@0.4.2:")
     depends_on("r-rlang@1.0.6:", type=("build", "run"), when="@0.5.0:")
     depends_on("r-rlang@1.1.0:", type=("build", "run"), when="@0.6.2:")
+    depends_on("r-rlang@1.1.7:", type=("build", "run"), when="@0.7.0:")
 
+    # Historical dependencies
     depends_on("r-digest", type=("build", "run"), when="@:0.3.6")
     depends_on("r-zeallot", type=("build", "run"), when="@:0.2.0")
     depends_on("r-ellipsis@0.2.0:", type=("build", "run"), when="@:0.3.8")

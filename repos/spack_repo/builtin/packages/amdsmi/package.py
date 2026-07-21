@@ -15,13 +15,27 @@ class Amdsmi(CMakePackage):
     applications to monitor and control AMD device."""
 
     homepage = "https://github.com/ROCm/amdsmi"
-    url = "https://github.com/ROCm/amdsmi/archive/refs/tags/rocm-6.4.3.tar.gz"
+    git = "https://github.com/ROCm/rocm-systems.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libamd_smi"]
-
+    executables = ["amd-smi"]
     license("MIT")
+
+    def url_for_version(self, version):
+        if version <= Version("7.1.1"):
+            url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
+        else:
+            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
+        return url.format(version)
+
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
+    version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
+    version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
+    version("7.1.1", sha256="2a9dfafac9593d3093c3f5fc611682e712f08816414f210344ea7b719c085ff5")
+    version("7.1.0", sha256="17ccddf8988a5674edb360b9f3b41bf3d94c6f4ba36cf8d84739c6ccdfc87c50")
+    version("7.0.2", sha256="6df8d828157124b513f4ffa6c059231398b19120f5b782ec42fc151862e2cf90")
+    version("7.0.0", sha256="5a126721473859afc687bd5f00bf480cffc76c2aed2bfa0b74dfbc87d93037a2")
     version("6.4.3", sha256="a850125bf33402cad6e57d2130e32d8b37bfc315a6dcfddd90fb593fea1f0e46")
     version("6.4.2", sha256="194652d8d6fa8acfdd638ae1d474647ea057441e139971d366a24cbb265722f9")
     version("6.4.1", sha256="5e1030cebacf2c92e63a555db6433ce7bb4f91409910ec98947e459d36630401")
@@ -48,26 +62,66 @@ class Amdsmi(CMakePackage):
     depends_on("py-virtualenv")
     depends_on("pkgconfig")
     depends_on("libdrm")
+
+    # https://github.com/ROCm/amdsmi/issues/167
+    depends_on("libdrm@:2.4.124", when="@:7.2")
+
     depends_on("py-pyyaml")
+
+    depends_on("googletest@1.14:", type="build", when="@6.4:")
+    depends_on("googletest@1.16:", type="build", when="@7.2:")
+
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="projects/amdsmi/esmi_ib_library",
+        when="@7.2:",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="esmi_ib_library",
+        when="@7.0:7.1",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.1.2",
+        commit="a8ea3019061419fae9dabdb93786ae278957b0be",
+        placement="esmi_ib_library",
+        when="@6.4",
+    )
+
     patch(
         "https://github.com/ROCm/amdsmi/commit/2858e51b4e8ff124ed67e23e0cd131e8b2140fae.patch?full_index=1",
         sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
         when="@6.2",
     )
+    patch(
+        "https://github.com/ROCm/amdsmi/commit/9b8c6fc4e2236d4d43831e1fabf5b0550738d735.patch?full_index=1",
+        sha256="091499873b52aae42ae09e1a30ab5742db4a5a66bf3f03c1914a65724688ac97",
+        when="@6.4:7.1",
+    )
 
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            ver = "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/amdsmi"
         else:
-            ver = None
-        return ver
+            return "."
 
     def cmake_args(self):
         args = []
         args.append(self.define("BUILD_TESTS", "ON"))
         args.append("-DCMAKE_INSTALL_LIBDIR=lib")
         return args
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("version", output=str, error=str)
+        match = re.search(r"ROCm version: (\d+\.\d+\.\d+)", output)
+        return match.group(1) if match else None

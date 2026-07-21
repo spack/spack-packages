@@ -32,7 +32,7 @@ class Cosign(Package):
         env.prepend_path("GOPATH", self.stage.path)
 
     def install(self, spec, prefix):
-        go = which("go")
+        go = which("go", required=True)
         go("build", "-o", "cosign", os.path.join("cmd", "cosign", "main.go"))
         mkdirp(prefix.bin)
         install("cosign", prefix.bin)

@@ -14,7 +14,6 @@ class Qemacs(MakefilePackage):
     git = "https://github.com/qemacs/qemacs.git"
 
     license("MIT", checked_by="Buldram")
-    maintainers("Buldram")
 
     version("master", branch="master")
     version("6.4.1", commit="43b5851958ee13fe0b96cf92b5cfc0aaa085d740")

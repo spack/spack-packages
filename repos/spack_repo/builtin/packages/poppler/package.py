@@ -20,6 +20,7 @@ class Poppler(CMakePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("26.03.0", sha256="8b3c5e2a9f2ab4c3ec5029f28af1b433c6b71f0d1e7b3997aa561cf1c0ca4ebe")
     version("25.08.0", sha256="425ed4d4515a093bdcdbbaac6876f20617451edc710df6a4fd6c45dd67eb418d")
     version("23.04.0", sha256="b6d893dc7dcd4138b9e9df59a13c59695e50e80dc5c2cacee0674670693951a1")
     version("21.09.0", sha256="5a47fef738c2b99471f9b459a8bf8b40aefb7eed92caa4861c3798b2e126d05b")

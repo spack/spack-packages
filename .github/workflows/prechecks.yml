@@ -17,8 +17,8 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
-    - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
       with:
         python-version: '3.13'
     - name: Install Python Packages
@@ -32,19 +32,15 @@ jobs:
   style:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       with:
         fetch-depth: 2
-    - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c
+    - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
       with:
         python-version: '3.13'
     - name: Install Python packages
       run: |
         pip install -r .github/workflows/requirements/style/requirements.txt
-    - uses: ./.github/actions/checkout-spack
-      with:
-        # This path must match the path in pyprojects.toml
-        path: spack-core
     - name: Run style tests
       run: .ci/style_check.sh HEAD^
     # todo: license check
@@ -62,7 +58,7 @@ jobs:
       ${{ inputs.with_packages == 'true' }}
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
       with:
         # Depth 2 is required for this check
         fetch-depth: 2
@@ -78,10 +74,10 @@ jobs:
     name: package.py canonicalization
     runs-on: ubuntu-latest
     container:
-      image: ghcr.io/spack/all-pythons:2025-07-25
+      image: ghcr.io/spack/all-pythons:2025-10-10
 
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
       - uses: ./.github/actions/checkout-spack
@@ -89,6 +85,6 @@ jobs:
       - name: Test package.py canonicalization
         run: .github/workflows/bin/canonicalize.py
           --spack $PWD/spack-core
-          --python python3.6 python3.7 python3.8 python3.9 python3.10 python3.11 python3.12 python3.13
+          --python python3.6 python3.7 python3.8 python3.9 python3.10 python3.11 python3.12 python3.13 python3.14
           --input-dir repos/spack_repo/builtin/packages/
           --output-dir canonicalized

@@ -35,6 +35,8 @@ class Libseccomp(AutotoolsPackage, PythonExtension):
         # https://github.com/seccomp/libseccomp/commit/afbde6ddaec7c58c3b281d43b0b287269ffca9bd
         depends_on("python@:3.11", type=("run", "link", "build"), when="@:2.5")
         depends_on("py-setuptools", type="build", when="@2.6:")
+        # upstream PR: https://github.com/seccomp/libseccomp/pull/482
+        patch("fix-pyx-copy.patch", when="@2.6")
 
     def configure_args(self):
         return self.enable_or_disable("python", variant="python")

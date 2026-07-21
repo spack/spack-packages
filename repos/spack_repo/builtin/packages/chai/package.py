@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 import socket
 
 from spack_repo.builtin.build_systems.cached_cmake import (
@@ -31,6 +32,30 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop", submodules=False)
+    version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="26d5646707e1848b0524379b12a7716e4a830a27",
+        submodules=False,
+    )
+    version(
+        "2025.09.1",
+        tag="v2025.09.1",
+        commit="51e66b8a5a6caac41aa329c8643180b8e2b33e5f",
+        submodules=False,
+    )
+    version(
+        "2025.09.0",
+        tag="v2025.09.0",
+        commit="352ae302535d9dc5ba50b77bf508c89fc7500d30",
+        submodules=False,
+    )
+    version(
+        "2025.03.1",
+        tag="v2025.03.1",
+        commit="2e83ca803ec8656d2ca677972fdd1378a17ad5d2",
+        submodules=False,
+    )
     version(
         "2025.03.0",
         tag="v2025.03.0",
@@ -126,6 +151,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("raja", default=False, description="Build plugin for RAJA")
     variant("examples", default=True, description="Build examples.")
     variant("openmp", default=False, description="Build using OpenMP")
+    variant("disable_rm", default=False, description="Make ManagedArray a thin wrapper")
+
     # TODO: figure out gtest dependency and then set this default True
     # and remove the +tests conflict below.
     variant(
@@ -146,6 +173,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.8:", type="build")
 
     depends_on("blt", type="build")
+    depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
+    depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
     depends_on("blt@0.6.1", type="build", when="@2024.02.0")
     depends_on("blt@0.5.3", type="build", when="@2023.06.0")
@@ -157,7 +186,10 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("^blt@:0.3.6", when="+rocm")
 
     depends_on("umpire")
-    depends_on("umpire@2024.07.0:", when="@2024.07.0:")
+    depends_on("umpire@2025.12:", when="@2025.12:")
+    depends_on("umpire@2025.09", when="@2025.09")
+    depends_on("umpire@2025.03", when="@2025.03")
+    depends_on("umpire@2024.07.0", when="@2024.07.0")
     depends_on("umpire@2024.02.1", when="@2024.02.1")
     depends_on("umpire@2024.02.0", when="@2024.02.0")
     depends_on("umpire@2023.06.0", when="@2023.06.0")
@@ -185,7 +217,11 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     with when("+raja"):
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+openmp", when="+openmp")
-        depends_on("raja@2024.07.0:", when="@2024.07.0:")
+        depends_on("raja@2025.12:", when="@2025.12.0:")
+        depends_on("raja@2025.09", when="@2025.09.0")
+        depends_on("raja@2025.03.2", when="@2025.03.1")
+        depends_on("raja@2025.03.0", when="@2025.03.0")
+        depends_on("raja@2024.07.0", when="@2024.07.0")
         depends_on("raja@2024.02.2", when="@2024.02.2")
         depends_on("raja@2024.02.1", when="@2024.02.1")
         depends_on("raja@2024.02.0", when="@2024.02.0")
@@ -255,11 +291,54 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("+separable_compilation"):
                 entries.append(cmake_cache_option("CMAKE_CUDA_SEPARABLE_COMPILATION", True))
                 entries.append(cmake_cache_option("CUDA_SEPARABLE_COMPILATION", True))
+
+            # CUDA configuration from cuda_for_radiuss_projects
+            cuda_flags = []
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_archs = ";".join(spec.variants["cuda_arch"].value)
+                entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
+
+            # gcc-toolchain support
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            if using_toolchain:
+                cuda_flags.append("-Xcompiler {}".format(using_toolchain[0]))
+
+            if cuda_flags:
+                entries.append(cmake_cache_string("CMAKE_CUDA_FLAGS", " ".join(cuda_flags)))
         else:
             entries.append(cmake_cache_option("ENABLE_CUDA", False))
 
         if spec.satisfies("+rocm"):
             entries.append(cmake_cache_option("ENABLE_HIP", True))
+
+            # HIP configuration from hip_for_radiuss_projects
+            rocm_root = spec["llvm-amdgpu"].prefix
+            gcc_toolchain_regex = re.compile(".*gcc-toolchain.*")
+            using_toolchain = list(
+                filter(gcc_toolchain_regex.match, spec.compiler_flags["cxxflags"])
+            )
+            hip_link_flags = ""
+
+            if using_toolchain:
+                gcc_prefix = using_toolchain[0]
+                entries.append(
+                    cmake_cache_string("HIP_CLANG_FLAGS", "--gcc-toolchain={0}".format(gcc_prefix))
+                )
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS",
+                        hip_link_flags + " -Wl,-rpath={0}/lib64".format(gcc_prefix),
+                    )
+                )
+            else:
+                entries.append(
+                    cmake_cache_string(
+                        "CMAKE_EXE_LINKER_FLAGS", "-Wl,-rpath={0}/llvm/lib/".format(rocm_root)
+                    )
+                )
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
@@ -267,8 +346,8 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_mpi_entries(self):
         spec = self.spec
-
         entries = super(Chai, self).initconfig_mpi_entries()
+
         entries.append(cmake_cache_option("ENABLE_MPI", spec.satisfies("+mpi")))
 
         return entries
@@ -321,6 +400,10 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             cmake_cache_option(
                 "{}ENABLE_PICK".format(option_prefix), spec.satisfies("+enable_pick")
             )
+        )
+
+        entries.append(
+            cmake_cache_option("{}DISABLE_RM".format(option_prefix), spec.satisfies("+disable_rm"))
         )
 
         return entries

@@ -168,7 +168,7 @@ class Fsl(Package, CudaPackage):
         build = Executable(join_path(self.stage.source_path, "build"))
         build()
 
-        rm = which("rm")
+        rm = which("rm", required=True)
         for file in glob.glob("build*"):
             rm("-f", file)
         rm("-r", "-f", "src")

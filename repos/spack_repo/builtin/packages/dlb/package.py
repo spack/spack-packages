@@ -23,6 +23,11 @@ class Dlb(AutotoolsPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("3.7.0", sha256="25155576f1b1a9e3753cc033b610b0e1eb809acf7e76b85cbadc769ff046913a")
+    version("3.6.2", sha256="7f5703c72d57aad98a99e654f400bc20fc5213581f6ccfd2efd5ae26a0303141")
+    version("3.6.1", sha256="d5f3b8af5ddf7cf9baa2e76bffb20e2ea2ad2980c4d36155ad186e7afc709377")
+    version("3.6.0", sha256="52b42be9422e5036797c93e0ab592ad336ab14b9a5f9ff7dc428506e67beca6d")
+    version("3.5.3", sha256="4aac0e5d9eb701c51ec82adc7b56acddbd41e136d2fa3ef1dadb4c6b691a7f3b")
     version("3.5.2", sha256="ec81284f77aa07c1589a91f75ed1c88501beb6c8340f5bcad603c210f5c446d4")
     version("3.5.1", sha256="32ec884c90220478f9873bf37eb11b536bfc3739d108ba6b29edefb651a10c34")
     version("3.5.0", sha256="df7fe979059998c2199dc4ee3775d623287fcce728be07e2f6657da2314daf6b")
@@ -40,6 +45,7 @@ class Dlb(AutotoolsPackage):
     variant("mpi", default=True, description="Build MPI libraries")
     variant("hwloc", default=True, description="Enable HWLOC support")
     variant("papi", default=True, description="Enable PAPI support")
+    variant("cuda", default=False, description="Enable CUDA support")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -47,6 +53,7 @@ class Dlb(AutotoolsPackage):
     depends_on("mpi", when="+mpi")
     depends_on("hwloc", when="+hwloc")
     depends_on("papi", when="@3.4: +papi")
+    depends_on("cuda", when="@3.6: +cuda")
     depends_on("python", type="build")
     depends_on("autoconf", type="build", when="@main")
     depends_on("automake", type="build", when="@main")
@@ -60,5 +67,7 @@ class Dlb(AutotoolsPackage):
         args.extend(self.with_or_without("hwloc"))
         if self.spec.satisfies("@3.4:"):
             args.extend(self.with_or_without("papi"))
+        if self.spec.satisfies("@3.6:"):
+            args.extend(self.with_or_without("cuda"))
 
         return args

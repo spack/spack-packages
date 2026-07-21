@@ -23,9 +23,8 @@ class Beast1(Package):
     depends_on("java", type="run")
     depends_on("libbeagle", type=("build", "link", "run"), when="+beagle")
 
-    def url_for_version(self, ver):
-        base = "https://github.com/beast-dev/beast-mcmc/releases/download"
-        return "{0}/v{1}/BEASTv{1}.tgz".format(base, ver.dotted)
+    def url_for_version(self, version):
+        return f"https://github.com/beast-dev/beast-mcmc/releases/download/v{version.dotted}/BEASTv{version.dotted}.tgz"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("BEAST1", self.prefix)

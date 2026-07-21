@@ -64,7 +64,7 @@ class MesonPackage(PackageBase):
         # when setuptools is in PYTHONPATH; it has to be in system site-packages. In a future meson
         # release, the distutils requirement will be dropped, so this conflict can be relaxed.
         # We have patches to make it work with meson 1.1 and above.
-        conflicts("^python@3.12:", when="^meson@:1.0")
+        conflicts("^python@3.12:", when="%meson@:1.0")
 
     def flags_to_build_system_args(self, flags):
         """Produces a list of all command line arguments to pass the specified

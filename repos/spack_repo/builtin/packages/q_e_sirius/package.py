@@ -21,6 +21,7 @@ class QESirius(CMakePackage):
     license("GPL-2.0-or-later")
 
     version("develop-ristretto", branch="ristretto", submodules=True)
+    version("1.0.2", sha256="6885979d6c23b81b49d4a96c7f73f2eac618adccb0181bfb96ae2318664d9828")
     version("1.0.1", sha256="512f982aa60fe9fd1cc588fa270e74427c66b62cb2d02ac1cb6cd07dcbe72204")
     version("1.0.0", sha256="d85485db8e9252a0bcd67a6a348b2a74626030183199b0edeb97f14c33bca15b")
 

@@ -18,6 +18,7 @@ class Fabulous(CMakePackage):
     maintainers("fpruvost")
 
     version("master", branch="master", submodules=True)
+    version("1.1.4", sha256="bdfad5addb6df40b811bc076eacf71555f6a6291fe043e8eb9f9b0a4ee9720c5")
     version("1.1.3", sha256="a75a5461984360286c26b104c1d01ac6cf7c3151bfaa42d8e980eb072981f3ef")
 
     variant("blasmt", default=False, description="use multi-threaded blas and lapack kernels")

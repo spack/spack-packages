@@ -21,12 +21,13 @@ class RMethylumi(RPackage):
 
     bioc = "methylumi"
 
-    version("2.46.0", commit="eb09e6508f1619c789d6b3091a8065cb6571cdac")
-    version("2.44.0", commit="8f1f1f944993800da2776cb3240b4482c09429ad")
-    version("2.42.0", commit="73e9c7fe1252c4ca20dc7b4e58decf04bf22d5e0")
-    version("2.40.1", commit="211039225ca6fca9af75b8266f656161912ce10f")
-    version("2.36.0", commit="5fb0b609f9c9181ac99f902745958774e5489606")
-    version("2.32.0", commit="e2a29c1b214c0d43c7325d176f9ce41dcf8e2f9d")
+    with default_args(get_full_repo=True):
+        version("2.46.0", commit="eb09e6508f1619c789d6b3091a8065cb6571cdac")
+        version("2.44.0", commit="8f1f1f944993800da2776cb3240b4482c09429ad")
+        version("2.42.0", commit="73e9c7fe1252c4ca20dc7b4e58decf04bf22d5e0")
+        version("2.40.1", commit="211039225ca6fca9af75b8266f656161912ce10f")
+        version("2.36.0", commit="5fb0b609f9c9181ac99f902745958774e5489606")
+        version("2.32.0", commit="e2a29c1b214c0d43c7325d176f9ce41dcf8e2f9d")
 
     depends_on("r@2.13:", type=("build", "run"))
     depends_on("r-biobase", type=("build", "run"))

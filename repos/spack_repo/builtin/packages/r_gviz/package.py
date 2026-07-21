@@ -21,16 +21,17 @@ class RGviz(RPackage):
 
     license("Artistic-2.0")
 
-    version("1.44.0", commit="e70aaa7dd27df8482ee854395475a87ec2121279")
-    version("1.42.0", commit="4eddb688bca3fdeb65fd536d653d7ba7f7976121")
-    version("1.40.1", commit="d21843710cd05135353de5cd4ce4d35cdd333b7c")
-    version("1.38.3", commit="c4b352a16455a5744533c511e59354977814cb9e")
-    version("1.34.0", commit="445fadff2aedd8734580fa908aa47ff1216a8182")
-    version("1.28.3", commit="20b9825af144cfc888629c34aa980b5bbd65bf86")
-    version("1.26.5", commit="430310b9d2e098f9757a71d26a2f69871071f30c")
-    version("1.24.0", commit="3ee1eec97a56653c07c434a97f82cfe3c4281841")
-    version("1.22.3", commit="2238079d0a7017c474f010acb35d98ee7cc1c5d1")
-    version("1.20.0", commit="299b8255e1b03932cebe287c3690d58c88f5ba5c")
+    with default_args(get_full_repo=True):
+        version("1.44.0", commit="e70aaa7dd27df8482ee854395475a87ec2121279")
+        version("1.42.0", commit="4eddb688bca3fdeb65fd536d653d7ba7f7976121")
+        version("1.40.1", commit="d21843710cd05135353de5cd4ce4d35cdd333b7c")
+        version("1.38.3", commit="c4b352a16455a5744533c511e59354977814cb9e")
+        version("1.34.0", commit="445fadff2aedd8734580fa908aa47ff1216a8182")
+        version("1.28.3", commit="20b9825af144cfc888629c34aa980b5bbd65bf86")
+        version("1.26.5", commit="430310b9d2e098f9757a71d26a2f69871071f30c")
+        version("1.24.0", commit="3ee1eec97a56653c07c434a97f82cfe3c4281841")
+        version("1.22.3", commit="2238079d0a7017c474f010acb35d98ee7cc1c5d1")
+        version("1.20.0", commit="299b8255e1b03932cebe287c3690d58c88f5ba5c")
 
     depends_on("r@2.10.0:", type=("build", "run"))
     depends_on("r@4.0:", type=("build", "run"), when="@1.34.0:")

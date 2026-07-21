@@ -27,6 +27,6 @@ class Grafana(Package):
     depends_on("go", type="build")
 
     def install(self, spec, prefix):
-        go = which("go")
+        go = which("go", required=True)
         go("run", "build.go", "build")
         install_tree("bin", prefix.bin)

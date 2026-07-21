@@ -1,3 +1,0 @@
-repos:
-  builtin:: ${CI_PROJECT_DIR}/repos/spack_repo/builtin
-  ci: ${CI_PROJECT_DIR}/.ci/repos/spack_repo/ci

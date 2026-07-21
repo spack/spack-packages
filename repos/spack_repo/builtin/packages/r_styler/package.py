@@ -24,6 +24,8 @@ class RStyler(RPackage):
     version("1.6.2", sha256="a62fcc76aac851069f33874f9eaabdd580973b619cfc625d6ec910476015f75c")
     version("1.3.2", sha256="3fcf574382c607c2147479bad4f9fa8b823f54fb1462d19ec4a330e135a44ff1")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.7.0:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.8.0:")
     depends_on("r@3.6.0:", type=("build", "run"), when="@1.10.0:")

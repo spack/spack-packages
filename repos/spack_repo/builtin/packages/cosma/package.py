@@ -13,7 +13,7 @@ class Cosma(CMakePackage):
     Distributed Communication-Optimal Matrix-Matrix Multiplication Library
     """
 
-    maintainers("haampie", "kabicm", "teonnik", "simonpintarelli", "mtaillefumier")
+    maintainers("haampie", "kabicm", "simonpintarelli", "mtaillefumier")
     homepage = "https://github.com/eth-cscs/COSMA"
     url = "https://github.com/eth-cscs/COSMA/archive/refs/tags/v2.6.6.tar.gz"
     git = "https://github.com/eth-cscs/COSMA.git"
@@ -23,6 +23,11 @@ class Cosma(CMakePackage):
     # note: The default archives produced with github do not have the archives
     #       of the submodules.
     version("master", branch="master", submodules=False)
+    version("2.8.4", sha256="b478cc239a99baf6fdf889d123308a6b01a4521330bdb3f4def457feb0f7dfa0")
+    version("2.8.2", sha256="bcf42558c1cdc35e91f662a9e87ae606f22d0c1aaf0cb763a6e4385c412c8f6b")
+    version("2.8.1", sha256="563bb0785dca32ede780a05ad424db9b6d7f473a909ca423931b96204e2b5d9c")
+    version("2.8.0", sha256="fd5a0b64c2858858eac46d1a897d51d844cf68f303b480f2e2b3f5a04eb83b5c")
+    version("2.7.1", sha256="ef9acaecf0c073cb3358ea6fed07388811ba2f47469ba3803eefff956403f50e")
     version("2.7.0", sha256="f4775d18379539d7bb5053bff8acb4e13d6ed31a9677f498d9099a7500488789")
     version("2.6.6", sha256="1604be101e77192fbcc5551236bc87888d336e402f5409bbdd9dea900401cc37")
     version("2.6.5", sha256="10d9b7ecc1ce44ec5b9e0c0bf89278a63029912ec3ea99661be8576b553ececf")
@@ -48,6 +53,12 @@ class Cosma(CMakePackage):
     variant("apps", default=False, description="Build miniapp")
     variant("profiling", default=False, description="Enable profiling")
     variant("gpu_direct", default=False, description="GPU aware MPI")
+    variant(
+        "unified_memory",
+        default=False,
+        description="Enable unified memory support",
+        when="@2.8.2:+rocm",
+    )
 
     with when("+cuda"):
         variant("nccl", default=False, description="Use cuda nccl")
@@ -83,6 +94,8 @@ class Cosma(CMakePackage):
         depends_on("cxxopts", when="+tests")
         depends_on("semiprof", when="+profiling")
         depends_on("costa+profiling", when="+profiling")
+
+    depends_on("costa@2.3:", when="@2.8:")
 
     patch("fj-ssl2.patch", when="^fujitsu-ssl2")
 
@@ -136,6 +149,7 @@ class Cosma(CMakePackage):
             self.define_from_variant("COSMA_WITH_RCCL", "rccl"),
             self.define_from_variant("COSMA_WITH_GPU_AWARE_MPI", "gpu_direct"),
             self.define_from_variant("COSMA_WITH_PROFILING", "profiling"),
+            self.define_from_variant("COSMA_USE_UNIFIED_MEMORY", "unified_memory"),
             self.define("COSMA_WITH_BENCHMARKS", False),
             self.define("COSMA_BLAS", self.cosma_blas_cmake_arg()),
             self.define("COSMA_SCALAPACK", self.cosma_scalapack_cmake_arg()),

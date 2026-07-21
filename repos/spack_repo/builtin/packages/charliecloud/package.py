@@ -11,27 +11,33 @@ class Charliecloud(AutotoolsPackage):
     """Lightweight user-defined software stacks for HPC."""
 
     maintainers("j-ogas", "reidpr", "loshak")
-    homepage = "https://hpc.github.io/charliecloud"
-    url = "https://github.com/hpc/charliecloud/releases/download/v0.18/charliecloud-0.18.tar.gz"
-    git = "https://github.com/hpc/charliecloud.git"
+    homepage = "https://charliecloud.io/"
+    url = "https://gitlab.com/charliecloud/charliecloud/-/releases/v0.44/downloads/charliecloud-0.44.tar.gz"
+    git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
 
     license("Apache-2.0")
 
-    version("master", branch="master")
-    version("0.40", sha256="dcad81136d1fed905be6e573a7bf191ea655ae7827f7980bbe6559942f2affdd")
-    version("0.39", sha256="38503b507119a970ac288df7181aefe6cd1a125b9d509f5cb162dacea7143fd1")
+    version("main", branch="main")
+    version("0.44", sha256="2a01ecbb6cb2cfe0495338484fdba1ea63e44a48caff0d77ddd602f9e12177cf")
+    version("0.43", sha256="540c8d1ac5d6194116abd96f12fad5d3079f82e9fbceca2704e5ecadb3e04299")
+    version("0.42", sha256="201c10ace23d076513c34b7226bea340190e38eee5f97f7ca42d30c18db90cbb")
+    version("0.41", sha256="6b8093f8bb79308a83541cad7d09144926a3dd571f4034a16b4fe0789132b398")
+    version("0.40", sha256="e56f0adbf1e44d15b4fb22e7c6c9e263e5422eab314521ba24d1de890b6d8a72")
+    version("0.39", sha256="52397d0a0594fad11ae5436523f4be8c2850c645e834d2e0196d675d753bae49")
     version("0.38", sha256="1a3766d57ff4db9c65fd5c561bbaac52476c9a19fa10c1554190912a03429b7a")
     version("0.37", sha256="1fd8e7cd1dd09a001aead5e105e3234792c1a1e9e30417f495ab3f422ade7397")
     version("0.36", sha256="b6b1a085d8ff82abc6d625ab990af3925c84fa08ec837828b383f329bd0b8e72")
     version("0.35", sha256="042f5be5ed8eda95f45230b4647510780142a50adb4e748be57e8dd8926b310e")
 
-    variant("docs", default=False, description="Build man pages and html docs")
-    variant("squashfuse", default=True, description="Build with squashfuse support")
+    variant("docs", default=False, description="Build man pages and HTML docs")
+    variant("squashfuse", default=True, description="Build with SquashFUSE support")
     variant("cdi", default=True, description="Build with CDI support", when="@0.40:")
 
     depends_on("c", type="build")  # generated
+    depends_on("bdw-gc", type=("build", "link"))
+    depends_on("bdw-gc@8:", type=("build", "link"), when="@0.40:")
 
     # Autoconf.
     depends_on("m4", type="build")
@@ -80,19 +86,12 @@ class Charliecloud(AutotoolsPackage):
         # Require cjson for CDI support
         depends_on("cjson", type="build", when="@0.40:")
 
-    def url_for_version(self, version):
-        if version >= Version("0.39"):
-            url_fmt = "https://gitlab.com/charliecloud/main/-/archive/v{0}/main-v{0}.tar.gz"
-        else:
-            url_fmt = "https://github.com/hpc/charliecloud/releases/download/v{0}/charliecloud-{0}.tar.gz"
-        return url_fmt.format(version)
-
     @property
     def force_autoreconf(self):
         return self.spec.satisfies("@0.39:")
 
     def autoreconf(self, spec, prefix):
-        which("bash")("autogen.sh")
+        which("bash", required=True)("autogen.sh")
 
     def configure_args(self):
         args = ["--with-python=/usr/bin/env python3"]

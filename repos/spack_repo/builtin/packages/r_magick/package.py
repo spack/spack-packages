@@ -31,6 +31,8 @@ class RMagick(RPackage):
     version("2.6.0", sha256="66585336e3ff18793ae9e2726af67a6672622f270468670ab5fe5e013bc48ecc")
     version("2.1", sha256="ef4fb8fc1c5a9cfcc36b22485a0e17d622f61e55803b1e7423fd15f0550de7df")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r+X", type=("build", "run"))
     depends_on("r-rcpp@0.12.12:", type=("build", "run"))
     depends_on("r-magrittr", type=("build", "run"))
