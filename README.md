@@ -19,6 +19,23 @@
 This is the default [Spack](https://github.com/spack/spack) package repository, which contains the set of packages maintained by the Spack community.
 In Spack v1.0 and later, the repository here is automatically added to the Spack configuration.
 
+## Contributing
+
+To contribute, make a pull request to this repository with your package changes.
+We run continuous integration to test builds of a large number of Spack packages.
+
+If you want to test your changes locally before submitting a PR, you can make
+Spack use your local clone of `spack-packages` like this:
+
+```
+spack repo set --destination /path/to/local/spack-packages builtin
+```
+
+`$spack` can be used to form a relative path to your Spack root directory.
+
+If you are migrating your pull requests from
+[github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [migration tool](https://github.com/spack/migrate-package-prs).
+
 ## Community
 
 Spack is an open source project.  Questions, discussion, and contributions are welcome.
@@ -55,23 +72,6 @@ The new repository structure is designed around several goals:
 
 If you use an editor like vscode, you should be able to point it directly to the `repos/`
 directory and have the editor understand the package code.
-
-## Contributing
-
-To contribute, simply make a pull request to this repository with your package changes.
-We run continuous integration on this repository to test builds of a large number of
-Spack packages.
-
-If you want to test your package changes locally before submitting a pull request,
-simply change Spack's default package repo from the default cache location to the full
-path to your local git clone:
-```
-spack repo set --destination /path/to/local/spack-packages builtin
-```
-`$spack` can be used to form a relative path to your Spack root directory.
-
-If you are migrating your pull requests from
-[github.com/spack/spack](https://github.com/spack/spack), it is recommended to use the [migration tool](https://github.com/spack/migrate-package-prs).
 
 ## Searching Spack packages
 

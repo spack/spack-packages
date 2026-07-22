@@ -38,6 +38,7 @@ class Apptainer(SingularityBase):
     )
 
     version("main", branch="main", get_full_repo=True)  # apptainer version uses git describe
+    version("1.5.0", sha256="36d67d57ef959397fa4f59169cf7deb92220537160e761e0c1cff84624ad81e3")
     version("1.4.4", sha256="eb806e22dabfb6549c398b55e50c747e4c51b57f8879da9e29813de40af54b48")
     version("1.4.3", sha256="dfb85b8ad48bd366245c7f6a1d0b56d2ce480cfdf18d7a64397098184b4ade90")
     version("1.4.2", sha256="6dda1dd2ca8e42ed7f498d2bc8574f01d7ad3db68494e453639d76aef4424d1d")
@@ -69,6 +70,7 @@ class Apptainer(SingularityBase):
     depends_on("go@1.20:", when="@1.3:")
     depends_on("go@1.22.7:", when="@1.4:")
     depends_on("go@1.23.6:", when="@1.4.1:")
+    depends_on("go@1.25.7:", when="@1.5:")
     depends_on("gocryptfs@2.4:", type="run", when="@1.3:")
     depends_on("squashfuse", type="run")
     depends_on("squashfuse@0.5.1:", type="run", when="@1.3:")

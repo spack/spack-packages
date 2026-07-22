@@ -43,7 +43,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
 
     homepage = "https://gasnet.lbl.gov"
     url = "https://gasnet.lbl.gov/EX/GASNet-2024.5.0.tar.gz"
-    git = "https://bitbucket.org/berkeleylab/gasnet.git"
+    git = "https://github.com/BerkeleyLab/gasnet.git"
 
     license("BSD-3-Clause-LBNL")
 
@@ -52,15 +52,20 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     tags = ["e4s", "ecp"]
     executables = ["^gasnet_trace$"]
 
+    # Note to spackage maintainers:
+    # GASNet's branch ordering in git is:
+    #   develop >= stable >= main >= numbered releases
+    # which doesn't match Spack's sorting for infinity version strings.
+    # Please avoid version ranges on non-numeric refs!
     version("develop", branch="develop")
-    version("main", branch="stable")
-    version("master", branch="master")
+    version("stable", branch="stable")
+    version("main", branch="main")
 
     # commit hash e2fdec corresponds to tag gex-2025.2.0-snapshot
     version("2025.2.0-snapshot", commit="e2fdece76d86d7b4fa090fbff9b46eb98ce97177")
 
     # Versions fetched from git require a Bootstrap step
-    bootstrap_version = "@master:,2025.2.0-snapshot"
+    bootstrap_version = "@develop,stable,main,2025.2.0-snapshot"
 
     version("2025.8.0", sha256="bd5919099477d1d2f59c247d006e9d1ac017c9190c974f5e069667418e5bf48d")
     version("2024.5.0", sha256="f945e80f71d340664766b66290496d230e021df5e5cd88f404d101258446daa9")
