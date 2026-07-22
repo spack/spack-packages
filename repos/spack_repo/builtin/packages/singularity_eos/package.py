@@ -27,19 +27,20 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/lanl/singularity-eos.git"
     url = "https://github.com/lanl/singularity-eos/archive/refs/tags/release-1.6.1.tar.gz"
 
-    maintainers("rbberger")
+    maintainers("rbberger", "Yurlungur")
 
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version("1.11.1", sha256="2bbec8d1ba98fb3038ecdda0c066b513a5b3dd4cab9b0de4cf6b5a0b4d5ee41f")
-    version("1.11.0", sha256="8bee9a40a4c2337d4df2b811a7071f4f5b0e9a50714a30a02b2712db1038bdf7")
-    version("1.10.0", sha256="f2b5986d2e7f11b61c4cc1ac3b264adac39e16047f95fac29c60a19a2853f35b")
-    version("1.9.2", sha256="4a58782020ad7bff3ea1c0cf55838a3692205770dbe4be39a3df25ba6fae302d")
-    version("1.9.1", sha256="148889e1b2d5bdc3d59c5fd6a6b5da25bb4f4f0f4343c57b3ccaf96691c93aff")
-    version("1.9.0", sha256="460b36a8311df430e6d4cccf3e72a6b3afda7db8d092b4a0a4259c4363c4dbde")
-    version("1.8.0", sha256="1f1ec496f714aa23cc7003c88a85bd10d0e53e37659ba7310541248e48a66558")
-    version("1.7.0", sha256="ce0825db2e9d079503e98cecf1c565352be696109042b3a0941762b35f36dc49")
+    version("1.12.0", commit="e32a25bed7b73baa7a5684c0183d2c369e16693c", tag="release-1.12.0")
+    version("1.11.1", commit="7365053a5bd59839ac47e6133426620540aca7e3", tag="release-1.11.1")
+    version("1.11.0", commit="c996f6505161618f9ca9663942e0beef738b0ecc", tag="release-1.11.0")
+    version("1.10.0", commit="82df6cff9ca8b16f8468f20b9d1eaeff60ac53c7", tag="release-1.10.0")
+    version("1.9.2", commit="9e7de3eccd610e0654e9a05d673ef7b24d32cf31", tag="release-1.9.2")
+    version("1.9.1", commit="1be18426a2c9c26f969bc14a73b482d5beca0217", tag="release-1.9.1")
+    version("1.9.0", commit="cfb7d4bf9fac557d53793a6717e52377b586d77a", tag="release-1.9.0")
+    version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
+    version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
 
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
