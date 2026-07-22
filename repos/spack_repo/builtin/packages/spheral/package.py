@@ -1,9 +1,11 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
-# 
+#
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+
 from spack.package import *
+
 
 class Spheral(CMakePackage):
     """Spheral++ provides a steerable parallel environment for performing coupled hydrodynamical and gravitational numerical simulations."""
@@ -12,7 +14,7 @@ class Spheral(CMakePackage):
     url = "https://github.com/llnl/spheral/archive/refs/tags/v2026.06.0.tar.gz"
     git = "https://github.com/llnl/spheral.git"
 
-    version('develop', branch='develop')
+    version("develop", branch="develop")
     version("2026.06.0", sha256="06ef78ba1d400250541b9a2fe66636e914ac5a00e23afd370c463d440369688b")
     version("2025.12.0", sha256="d770750cf81e8f945976c157c3401cfb3c15a67c5291c78a9378e09c32103d11")
     version("2025.06.1", sha256="d4048308b5f79cf5a4e0ac7a00a16d7da9f75501283b20432f2a09c7253454ed")
@@ -31,29 +33,37 @@ class Spheral(CMakePackage):
     version("2022.06.0", sha256="5267db6a0ce4ce4394db4c6eb1588180e80cc2954b03209142ee3571c1254e9b")
 
     # Define variants
-    variant('mpi', default=True, description='Enable MPI Support.')
-    variant('openmp', default=True, description='Enable OpenMP Support.')
-    variant('cuda', default=False, description='Enable CUDA.')
-    variant('docs', default=False, description='Enable building Docs.')
-    variant('tests', default=False, description='Enable test support libs, including py-ats.')
-    variant('shared', default=True, description='Build C++ libs as shared (disable for static).')
-    variant('cxxonly', default=False, description='Enable CXX-only build (disable Python bindings).')
-    variant('aneos', default=False, description='Enable ANEOS support.')
-    variant('opensubdiv', default=False, description='Enable OpenSubdiv support.')
-    variant('helmholtz', default=False, description='Enable Helmholtz EOS support.')
-    variant('artificial_conduction', default=False, description='Enable Artificial Conduction.')
-    variant('external_force', default=False, description='Enable External Force.')
-    variant('gravity', default=False, description='Enable Gravity.')
-    variant('gsph', default=False, description='Enable Generalized Smoothed Particle Hydrodynamics (GSPH).')
-    variant('svph', default=False, description='Enable Smoothed Volume Particle Hydrodynamics (SVPH).')
-    variant('external_chai', default=True, description='Use external CHAI library.')
-    variant('boost_header_only', default=True, description='Use Boost header-only libraries.')
-    variant('one_dim', default=True, description='Enable 1D kernels')
-    variant('sundials', default=False, description='Enable sundials solver')
-    variant('globaldt_reduction', default=False, description='Enable GlobalDt reduction.')
-    variant('longcsdt', default=False, description='Enable LongCsDt.')
-    variant('external_install', default=True, description='Use external install mode.')
-    
+    variant("mpi", default=True, description="Enable MPI Support.")
+    variant("openmp", default=True, description="Enable OpenMP Support.")
+    variant("cuda", default=False, description="Enable CUDA.")
+    variant("docs", default=False, description="Enable building Docs.")
+    variant("tests", default=False, description="Enable test support libs, including py-ats.")
+    variant("shared", default=True, description="Build C++ libs as shared (disable for static).")
+    variant(
+        "cxxonly", default=False, description="Enable CXX-only build (disable Python bindings)."
+    )
+    variant("aneos", default=False, description="Enable ANEOS support.")
+    variant("opensubdiv", default=False, description="Enable OpenSubdiv support.")
+    variant("helmholtz", default=False, description="Enable Helmholtz EOS support.")
+    variant("artificial_conduction", default=False, description="Enable Artificial Conduction.")
+    variant("external_force", default=False, description="Enable External Force.")
+    variant("gravity", default=False, description="Enable Gravity.")
+    variant(
+        "gsph",
+        default=False,
+        description="Enable Generalized Smoothed Particle Hydrodynamics (GSPH).",
+    )
+    variant(
+        "svph", default=False, description="Enable Smoothed Volume Particle Hydrodynamics (SVPH)."
+    )
+    variant("external_chai", default=True, description="Use external CHAI library.")
+    variant("boost_header_only", default=True, description="Use Boost header-only libraries.")
+    variant("one_dim", default=True, description="Enable 1D kernels")
+    variant("sundials", default=False, description="Enable sundials solver")
+    variant("globaldt_reduction", default=False, description="Enable GlobalDt reduction.")
+    variant("longcsdt", default=False, description="Enable LongCsDt.")
+    variant("external_install", default=True, description="Use external install mode.")
+
     variant(
         "cxxstd",
         default="20",
@@ -65,28 +75,28 @@ class Spheral(CMakePackage):
     with default_args(type="build"):
         depends_on("cxx")
         depends_on("c")
-        depends_on('fortran')
+        depends_on("fortran")
         depends_on("blt")
         depends_on("cmake@3.24:")
-        depends_on('python')
-        depends_on('opensubdiv', when='+opensubdiv')
+        depends_on("python")
+        depends_on("opensubdiv", when="+opensubdiv")
 
-    depends_on('boost')
-    depends_on('eigen')
-    depends_on('qhull')
-    depends_on('silo')
-    depends_on('hdf5')
-    depends_on('polyclipper')
-    depends_on('polytope')
-    depends_on('caliper')
-    depends_on('conduit')
+    depends_on("boost")
+    depends_on("eigen")
+    depends_on("qhull")
+    depends_on("silo")
+    depends_on("hdf5")
+    depends_on("polyclipper")
+    depends_on("polytope")
+    depends_on("caliper")
+    depends_on("conduit")
     depends_on("axom")
     depends_on("raja")
-    depends_on('umpire')
-    depends_on('chai', when='+external_chai')
-    depends_on('zlib-api')
-    depends_on('opensubdiv', type='build', when='+opensubdiv')
-    depends_on('sundials', when='+sundials') 
+    depends_on("umpire")
+    depends_on("chai", when="+external_chai")
+    depends_on("zlib-api")
+    depends_on("opensubdiv", type="build", when="+opensubdiv")
+    depends_on("sundials", when="+sundials")
     depends_on("mpi", when="+mpi")
 
     def cmake_args(self):
@@ -106,25 +116,31 @@ class Spheral(CMakePackage):
         args.append(self.define("axom_DIR", self.spec["axom"].prefix))
         args.append(self.define("raja_DIR", self.spec["raja"].prefix))
         args.append(self.define("umpire_DIR", self.spec["umpire"].prefix))
-        if self.spec.satisfies('+external_chai'):
+        if self.spec.satisfies("+external_chai"):
             args.append(self.define("chai_DIR", self.spec["chai"].prefix))
         args.append(self.define("zlib_DIR", self.spec["zlib-api"].prefix))
         args.append(self.define("ZLIB_ROOT", self.spec["zlib-api"].prefix))
         args.append(self.define_from_variant("BOOST_HEADER_ONLY", "boost_header_only"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_ANEOS", "aneos"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_OPENSUBDIV", "opensubdiv"))
-        if self.spec.satisfies('+opensubdiv'):
+        if self.spec.satisfies("+opensubdiv"):
             args.append(self.define("opensubdiv_DIR", self.spec["opensubdiv"].prefix))
         args.append(self.define_from_variant("SPHERAL_ENABLE_HELMHOLTZ", "helmholtz"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_SUNDIALS", "sundials"))
-        if self.spec.satisfies('+sundials'):
+        if self.spec.satisfies("+sundials"):
             args.append(self.define("sundials_DIR", self.spec["sundials"].prefix))
-        args.append(self.define_from_variant("SPHERAL_ENABLE_ARTIFICIAL_CONDUCTION", "artificial_conduction"))
+        args.append(
+            self.define_from_variant(
+                "SPHERAL_ENABLE_ARTIFICIAL_CONDUCTION", "artificial_conduction"
+            )
+        )
         args.append(self.define_from_variant("SPHERAL_ENABLE_EXTERNAL_FORCE", "external_force"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_GRAVITY", "gravity"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_GSPH", "gsph"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_SVPH", "svph"))
-        args.append(self.define_from_variant("SPHERAL_ENABLE_GLOBALDT_REDUCTION", "globaldt_reduction"))
+        args.append(
+            self.define_from_variant("SPHERAL_ENABLE_GLOBALDT_REDUCTION", "globaldt_reduction")
+        )
         args.append(self.define_from_variant("SPHERAL_ENABLE_LONGCSDT", "longcsdt"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_TESTS", "tests"))
         args.append(self.define("SPHERAL_ENABLE_PYTHON", not self.spec.satisfies("+cxxonly")))
