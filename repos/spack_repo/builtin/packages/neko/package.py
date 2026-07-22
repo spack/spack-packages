@@ -21,6 +21,10 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="njansson")
 
     version("develop", branch="develop")
+    version("1.1.0", sha256="e234f5ea1d899e8aa02f1132542fb1ba4bc8718ae735c74df893e19c38d0a1fa")
+    version("1.0.4", sha256="0a5778aaaff13155cf50db50af81684a52296de34bedf6f12fecce9dcf8d5ae3")
+    version("1.0.3", sha256="29f01e671c4eccc919ed4e3cb912d0b0d1345d73a5c66f2c237ca342ac35e61b")
+    version("1.0.2", sha256="c47ff4f78e02830d0f1a6534dcdf96dc932d1e5a1dc89859d3df0221bb0ca394")
     version("1.0.1", sha256="d5ca4fba615c2f48a667f8e15b0d0acef725f741d8293b617d451200a07e88a8")
     version("1.0.0", sha256="2a62c5fb961155c1aa185a6d605af8cd3bba9f922f3ff32e855d3e6cc91d9eac")
     version("0.9.1", sha256="098bee5cb807d10cdf2fb56111ba8cbc592882a87e4dae18caf9dbda894611ef")
