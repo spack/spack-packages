@@ -154,9 +154,13 @@ class Spheral(CMakePackage):
         args.append(self.define("BLT_CXX_STD", f"c++{self.spec.variants.get('cxxstd').value}"))
         args.append(self.define("HDF5_DIR", self.spec["hdf5"].prefix))
         if self.spec.satisfies("+mpi"):
-            args.append(self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5pcc))
+            args.append(
+                self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5pcc)
+            )
         else:
-            args.append(self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5cc))
+            args.append(
+                self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5cc)
+            )
         args.append(self.define("HDF5_USE_STATIC_LIBRARIES", not self.spec.satisfies("+shared")))
 
         return args
