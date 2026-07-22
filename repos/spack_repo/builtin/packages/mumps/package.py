@@ -5,7 +5,6 @@
 import glob
 import os
 import sys
-import platform
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -67,6 +66,7 @@ class Mumps(Package):
         description="Allow BLAS calls in OpenMP regions "
         + "(warning: might not be supported by all multithread BLAS)",
     )
+    variant("pkgconfig", default=False, description="Create unofficial pkgconfig files")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -176,7 +176,9 @@ class Mumps(Package):
             )
 
             orderings.append("-Dmetis")
-
+        if "+pkgconfig" in self.spec:
+            # Keeping orderings in case we have to create pkg_config files
+            self.orderings = orderings
         makefile_conf.append("ORDERINGSF = %s" % (" ".join(orderings)))
 
         # Determine which compiler suite we are using
@@ -335,7 +337,6 @@ class Mumps(Package):
             inject_libs = " ".join(inject_libs)
 
             if sys.platform == "darwin":
-                major, minor, patch = tuple(map(int, platform.release().split('.')))
                 # Building dylibs with mpif90 causes segfaults on 10.8 and
                 # 10.10. Use gfortran. (Homebrew)
                 if major == 10 and (minor == 8 or minor == 10): 
@@ -355,8 +356,7 @@ class Mumps(Package):
                             " -undefined dynamic_lookup %s -o "
                             % (self.spec["mpi"].mpifc, prefix.lib, inject_libs),
                             "RANLIB=echo",
-                        ])
-            else:
+                        ])            else:
                 if using_xlf:
                     build_shared_flag = "qmkshrobj"
                 else:
@@ -451,6 +451,56 @@ class Mumps(Package):
                     if "+complex" in spec:
                         zsimpletest = Executable("./zsimpletest")
                         zsimpletest(input="input_simpletest_cmplx")
+
+    @run_after("install", when="+pkgconfig")
+    def create_pkgconfig(self):
+        """Create unofficial pkgconfig files for mumps libraries"""
+        libdir = join_path(self.prefix, "lib")
+        pkg_path = join_path(libdir, "pkgconfig")
+        mkdirp(pkg_path)
+        precision_desc = {
+            "s": "single",
+            "d": "double",
+            "c": "complex single",
+            "z": "complex double",
+        }
+        orderings = [ordering[2:] for ordering in self.orderings]
+        if len(orderings) > 1:
+            ord_desc = "with the following orderings available: "
+            ord_desc += ", ".join(orderings[:-1])
+            ord_desc += f" and {orderings[-1]}"
+        else:
+            ord_desc = f"with the {orderings[0]} ordering available"
+
+        if "+mpi" in self.spec:
+            parallel_desc = "parallel"
+        else:
+            parallel_desc = "sequential"
+        for char in "zscd":
+            if (
+                ("+float" in self.spec and char == "s")
+                or ("+double" in self.spec and char == "d")
+                or ("+complex" in self.spec and "+float" in self.spec and char == "c")
+                or ("+complex" in self.spec and "+double" in self.spec and char == "z")
+            ):
+                with open(join_path(pkg_path, f"{char}mumps.pc"), "w") as f:
+                    desc = f"The {parallel_desc} {precision_desc[char]} MUMPS library {ord_desc}"
+                    f.write(
+                        "\n".join(
+                            [
+                                f"prefix={self.prefix}",
+                                "exec_prefix=${prefix}",
+                                "includedir=${prefix}/include",
+                                "libdir=${exec_prefix}/lib",
+                                "",
+                                f"Name: {char}mumps",
+                                f"Description: {desc}",
+                                f"Version: {self.version}",
+                                "Cflags: -I${includedir}",
+                                f"Libs: -L${{libdir}} -l{char}mumps",
+                            ]
+                        )
+                    )
 
     @property
     def libs(self):
