@@ -68,12 +68,6 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
     )
 
     with when("build_system=cmake"):
-        variant(
-            "build_type",
-            default="fast",
-            description="CASTEP build type",
-            values=("debug", "intermediate", "fast"),
-        )
         variant("libxc", description="Build with libXC support", default=False)
         variant("openmp", description="Use OpenMP threading", default=True)
         variant("grimmed3", default=True, description="Use Grimme D3 functionals")
@@ -279,6 +273,17 @@ class CMakeBuilder(cmake.CMakeBuilder):
         return targetlist
 
     def cmake_args(self):
+        # Select internal BUILD= flag as castep uses different names than the cmake defaults.
+        # This is modified from code in builtin/build_systems/cmake.py. The default is to use
+        # the castep build=fast unless a debug version is specifically requested.
+        try:
+            cmake_build_type = self.pkg.spec.variants["build_type"].value
+            if cmake_build_type in ["Release", "RelWithDebInfo", "MinSizeRel"]:
+                castep_build_type = "fast"
+            else:  # Debug
+                castep_build_type = "debug"
+        except KeyError:  # no build_type given...
+            castep_build_type = "fast"
 
         # Internal names for blas libraries, otherwise castep will prefer mkl if it is present
         castep_math_libs = {
@@ -302,7 +307,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         fftlib = castep_fft_libs.get(self.spec["fftw-api"].name, None)
 
         args = [
-            "-DBUILD={0}".format(self.spec.variants["build_type"].value),
+            "-DBUILD={0}".format(castep_build_type),
             self.define_from_variant("WITH_MPI", "mpi"),
             self.define_from_variant("WITH_LIBXC", "libxc"),
             self.define_from_variant("WITH_GRIMMED3", "grimmed3"),
