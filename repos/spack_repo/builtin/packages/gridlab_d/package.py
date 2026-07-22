@@ -38,6 +38,8 @@ class GridlabD(CMakePackage):
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
 
+    patch("find_mysql_pkg_conf.patch", when="+mysql")
+
     def cmake_args(self):
         args = []
 
