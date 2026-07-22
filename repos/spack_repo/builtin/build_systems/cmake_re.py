@@ -147,7 +147,7 @@ def generator(*names: str, default: Optional[str] = None) -> None:
         conflicts(f"generator={x}")
 
 
-class CMakePackage(PackageBase):
+class CMakeREPackage(PackageBase):
     """Specialized class for packages built using CMake
 
     For more information on the CMake build system, see:
@@ -162,11 +162,11 @@ class CMakePackage(PackageBase):
     build_system_class = "CMakePackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
-    default_buildsystem = "cmake"
+    default_buildsystem = "cmake-re"
 
-    build_system("cmake")
+    build_system("cmake-re")
 
-    with when("build_system=cmake"):
+    with when("build_system=cmake-re"):
         # https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html
         # See https://github.com/spack/spack/pull/36679 and related issues for a
         # discussion of the trade-offs between Release and RelWithDebInfo for default
@@ -187,10 +187,7 @@ class CMakePackage(PackageBase):
             description="CMake interprocedural optimization",
         )
 
-        if sys.platform == "win32":
-            generator("ninja")
-        else:
-            generator("ninja", "make", default="make")
+        generator("ninja", "make", default="ninja")
 
         depends_on("cmake", type="build")
         depends_on("gmake", type="build", when="generator=make")
@@ -255,8 +252,8 @@ class CMakePackage(PackageBase):
         return define_from_variant(self, cmake_var, variant)
 
 
-@register_builder("cmake")
-class CMakeBuilder(BuilderWithDefaults):
+@register_builder("cmake-re")
+class CMakeREBuilder(BuilderWithDefaults):
     """The cmake builder encodes the default way of building software with CMake. IT
     has three phases that can be overridden:
 
@@ -337,9 +334,14 @@ class CMakeBuilder(BuilderWithDefaults):
         """Standard cmake arguments provided as a property for
         convenience of package writers
         """
-        args = CMakeBuilder.std_args(self.pkg, generator=self.generator)
+        args = CMakeREBuilder.std_args(self.pkg, generator=self.generator)
         args += getattr(self.pkg, "cmake_flag_args", [])
         return args
+
+    @memoized
+    @property
+    def cmake_re(self):
+        return Executable("cmake-re")
 
     @staticmethod
     def std_args(pkg: PackageBase, generator: Optional[str] = None) -> List[str]:
@@ -442,7 +444,7 @@ class CMakeBuilder(BuilderWithDefaults):
         """
         return []
 
-    def cmake(self, pkg: CMakePackage, spec: Spec, prefix: Prefix) -> None:
+    def cmake(self, pkg: CMakeREPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``cmake`` in the build directory"""
 
         if spec.is_develop:
@@ -467,20 +469,18 @@ class CMakeBuilder(BuilderWithDefaults):
         options += self.cmake_args()
         options.append(os.path.abspath(self.root_cmakelists_dir))
         with working_dir(self.build_directory, create=True):
-            pkg.module.cmake_re(*options, "--host", "--distributed")
+            self.cmake_re(*options, "--host", "--distributed")
 
-    def build(self, pkg: CMakePackage, spec: Spec, prefix: Prefix) -> None:
+    def build(self, pkg: CMakeREPackage, spec: Spec, prefix: Prefix) -> None:
         """Make the build targets"""
         with working_dir(self.build_directory):
             if self.generator == "Unix Makefiles":
                 pkg.module.make(*self.build_targets)
             elif self.generator == "Ninja":
                 self.build_targets.append("-v")
-                pkg.module.cmake_re(
-                    "--build", self.build_directory, "--host", "--distributed", "--j500"
-                )
+                self.cmake_re("--build", self.build_directory, "--host", "--distributed", "--j500")
 
-    def install(self, pkg: CMakePackage, spec: Spec, prefix: Prefix) -> None:
+    def install(self, pkg: CMakeREPackage, spec: Spec, prefix: Prefix) -> None:
         """Make the install targets"""
         with working_dir(self.build_directory):
             if self.generator == "Unix Makefiles":

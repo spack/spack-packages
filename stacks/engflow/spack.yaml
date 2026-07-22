@@ -11,5 +11,14 @@ spack:
   specs:
   - "tipi-paraview"
 
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: { name: "tipibuild/linux-kitware-paraview@sha256:e0417824c4d417eb4d363f08954d11b94f9e6eb4ec76cee391db72e1e281fb18", entrypoint: ["/bin/bash"]}
+        before_script:
+        - mkdir -p /usr/local/share/.tipi/environments/generalized/v1/
+        - mkdir -p /usr/local/share/.tipi/vT.w/
+
+    
   cdash:
     build-group: "Cmake-re test"

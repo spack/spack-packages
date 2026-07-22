@@ -888,9 +888,6 @@ engflow-generate:
 
 engflow-build:
   extends: [".build", ".engflow"]
-  before_script:
-    - mkdir -p /usr/local/share/.tipi/environments/generalized/v1/
-    - mkdir -p /usr/local/share/.tipi/vT.w/
   trigger:
     << : *trigger_build
     include:

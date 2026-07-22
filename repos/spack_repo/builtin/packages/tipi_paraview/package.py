@@ -8,7 +8,7 @@ import re
 import sys
 from subprocess import Popen
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+from spack_repo.builtin.build_systems.cmake_re import CMakeREPackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -44,7 +44,7 @@ supported_cuda_archs = {
 viskores_dependency_variants = ["+cuda", "+fides", "+rocm"]
 
 
-class TipiParaview(CMakePackage, CudaPackage, ROCmPackage):
+class TipiParaview(CMakeREPackage, CudaPackage, ROCmPackage):
     """ParaView is an open-source, multi-platform data analysis and
     visualization application. This package includes the Catalyst
     in-situ library for versions 5.7 and greater, otherwise use the
@@ -483,6 +483,7 @@ class TipiParaview(CMakePackage, CudaPackage, ROCmPackage):
             "-DVTK_MODULE_USE_EXTERNAL_VTK_libharu:BOOL=OFF",
             "-DVTK_MODULE_USE_EXTERNAL_VTK_utf8:BOOL=OFF",
             "-DPARAVIEW_BUILD_WITH_EXTERNAL=ON",
+            "-DCMAKE_TOOLCHAIN_FILE=toolchains/environments/linux-kitware-paraview-mini.cmake"
             f"-DPARAVIEW_BUILD_EDITION:STRING={build_edition}",
             self.define_from_variant("PARAVIEW_INSTALL_DEVELOPMENT_FILES", "development_files"),
             self.define_from_variant("VTK_USE_X", "x"),
