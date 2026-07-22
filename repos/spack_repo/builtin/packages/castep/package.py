@@ -229,8 +229,10 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
 
         with working_dir(test_dir):
             # Get reference data
-            bench_file = glob.glob("benchmark*param")[0]
-            benchmark_energy = get_energy_from_file(bench_file)
+            bench_files = glob.glob("benchmark*param")
+            if not bench_files:
+                raise SkipTest("No benchmark*param file found in cached CASTEP test directory")
+            benchmark_energy = get_energy_from_file(bench_files[0])
 
             # Get castep data
             castep = Executable(join_path(self.prefix.bin, self.castep_exe))
