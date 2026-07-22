@@ -619,7 +619,7 @@ class Cudnn(Package):
     # Note that libcudnn.so does come with the RPATH set.
     @run_after("install", when="@8")
     def ensure_rpaths(self):
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         for path in Path(self.prefix.lib).rglob("lib*.so.*"):
             if not path.is_symlink() and not path.name.startswith("libcudnn.so"):
                 patchelf("--set-rpath", "$ORIGIN", str(path))
