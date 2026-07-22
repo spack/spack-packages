@@ -52,13 +52,17 @@ class MatrixSwitch(CMakePackage):
         if self.spec.satisfies("+lapack"):
             args.append(self.define("LAPACK_DETECTION", "OFF"))
             args.append(self.define("LAPACK_LIBRARY", self.spec["lapack"].libs.search_flags))
-            args.append(self.define("LAPACK_LIBRARY_DIR", self.spec["lapack"].headers.include_flags))
+            args.append(
+                self.define("LAPACK_LIBRARY_DIR", self.spec["lapack"].headers.include_flags)
+            )
             args.append(self.define("LAPACK_LINKER_FLAG", self.spec["lapack"].libs.link_flags))
 
         if self.spec.satisfies("+scalapack"):
             args.append(self.define("SCALAPACK_DETECTION", "OFF"))
             args.append(self.define("SCALAPACK_LIBRARY", self.spec["scalapack"].libs.link_flags))
-            args.append(self.define("SCALAPACK_LIBRARY_DIR", self.spec["scalapack"].libs.search_flags))
+            args.append(
+                self.define("SCALAPACK_LIBRARY_DIR", self.spec["scalapack"].libs.search_flags)
+            )
 
         if self.spec.satisfies("+dbcsr"):
             args.append(self.define("DBCSR_ROOT", self.spec["dbcsr"].prefix))
