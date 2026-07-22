@@ -29,7 +29,7 @@ class Spheral(CMakePackage):
     version("2023.03.1", sha256="a4e818fdb7d5d1fa9b67247ef2a0e5b80f3346a87da166112a4b1944f79df211")
     version("2023.03.0", sha256="52544b9f031914a2b625d8f9ec822348e4b61076980a0029ac34c07ab459dc1c")
     version("2022.6.1", sha256="d2efc04b1e82d711089ce54c7843d219b17c97eca093a8c19c410abb35d57118")
-    
+
     # Define variants
     variant("mpi", default=True, description="Enable MPI Support.")
     variant("openmp", default=True, description="Enable OpenMP Support.")
