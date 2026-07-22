@@ -45,7 +45,6 @@ class GridlabD(CMakePackage):
 
         if self.spec.satisfies("+helics"):
             args.append("-DGLD_USE_HELICS=ON")
-            args.append("-DBUILD_CXX_SHARED_LIB=ON")
             args.append("-DGLD_HELICS_DIR=" + self.spec["helics"].prefix)
         else:
             args.append("-DGLD_USE_HELICS=OFF")
