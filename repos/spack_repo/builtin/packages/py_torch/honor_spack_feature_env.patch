@@ -1,0 +1,24 @@
+diff --git a/cmake/EnvVarForwarding.cmake b/cmake/EnvVarForwarding.cmake
+index a31ce6db266..8286c394f10 100644
+--- a/cmake/EnvVarForwarding.cmake
++++ b/cmake/EnvVarForwarding.cmake
+@@ -88,6 +88,19 @@ foreach(_line IN LISTS _env_lines)
+   endif()
+ endforeach()
+ 
++# PyTorch 2.12 declares these feature options after this file is included.
++# Preserve package-manager selections in the cache so their later defaults do
++# not override the corresponding USE_* environment variables.
++if(DEFINED ENV{USE_XPU})
++  set(USE_XPU "$ENV{USE_XPU}" CACHE BOOL "Use XPU" FORCE)
++endif()
++if(DEFINED ENV{USE_KINETO})
++  set(USE_KINETO "$ENV{USE_KINETO}" CACHE BOOL "Use Kineto profiling library" FORCE)
++endif()
++if(DEFINED ENV{USE_MKLDNN})
++  set(USE_MKLDNN "$ENV{USE_MKLDNN}" CACHE BOOL "Use MKLDNN" FORCE)
++endif()
++
+ # Low-priority aliases
+ foreach(_alias IN LISTS _LOW_PRIORITY_ALIASES)
+   string(REPLACE "=" ";" _parts "${_alias}")

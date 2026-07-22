@@ -611,9 +611,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # This forwards six source folder path to NNPACK which forwards it to PeachPy
     # for versions @2.5:2.11
     patch("air_gapped_nnpack_cmake_older.patch", when="@2.5:2.11")
-    # for version @2.12: (env forwarding mecanism changed)
+    # for version @2.12: (env forwarding mechanism changed)
     # This error has been raised upstream https://github.com/pytorch/pytorch/pull/188263
     patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
+
+    # PyTorch 2.12 does not reliably forward these Spack-controlled feature
+    # selections from its PEP 517 build environment to CMake.
+    patch("honor_spack_feature_env.patch", when="@2.12:")
 
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
