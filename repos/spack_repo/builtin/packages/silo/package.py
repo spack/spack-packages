@@ -174,8 +174,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         when="@4.12.0",
     )
 
-
-class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def flag_handler(self, name, flags):
         spec = self.spec
         if name == "ldflags":
@@ -224,6 +222,9 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             if spec.satisfies("%clang") or spec.satisfies("%apple-clang"):
                 flags.append("-Wno-implicit-function-declaration")
         return (flags, None, None)
+
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
     @when("@:4.11.1 %clang@9:")
     def patch(self):
