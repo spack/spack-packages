@@ -5,6 +5,7 @@
 import glob
 import os
 import sys
+import platform
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -356,7 +357,7 @@ class Mumps(Package):
                             " -undefined dynamic_lookup %s -o "
                             % (self.spec["mpi"].mpifc, prefix.lib, inject_libs),
                             "RANLIB=echo",
-                        ])            else:
+                        ])
                 if using_xlf:
                     build_shared_flag = "qmkshrobj"
                 else:
