@@ -29,7 +29,7 @@ class PySphinxcontribQthelp(PythonPackage):
     depends_on("py-setuptools", when="@:1.0.3", type="build")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sphinxcontrib-qthelp/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.0.4"):
             name = "sphinxcontrib_qthelp"
         else:

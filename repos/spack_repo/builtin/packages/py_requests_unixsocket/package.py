@@ -27,9 +27,9 @@ class PyRequestsUnixsocket(PythonPackage):
     depends_on("py-urllib3@1.8:", when="@:0.2.0", type=("build", "run"))
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/r/requests-unixsocket/requests{}unixsocket-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/r/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.3.1"):
-            sep = "_"
+            name = "requests_unixsocket"
         else:
-            sep = "-"
-        return url.format(sep, version)
+            name = "requests-unixsocket"
+        return url.format(name, version)
