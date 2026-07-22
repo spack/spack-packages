@@ -74,6 +74,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
 
     with default_args(type="build"):
         depends_on("blt")
+        depends_on("cmake@3.1.0:")
         depends_on("c")
         depends_on("cxx")
 
