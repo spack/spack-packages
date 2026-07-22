@@ -616,7 +616,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
 
     # PyTorch 2.12 does not reliably forward these Spack-controlled feature
-    # selections from its PEP 517 build environment to CMake.
+    # selections from its PEP 517 build environment to CMake. This error
+    # has been raised upstream: https://github.com/pytorch/pytorch/issues/190800
     patch("honor_spack_feature_env.patch", when="@2.12:")
 
     def patch(self):
