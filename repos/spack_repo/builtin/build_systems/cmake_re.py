@@ -340,7 +340,6 @@ class CMakeREBuilder(BuilderWithDefaults):
         return args
 
     @memoized
-    @property
     def cmake_re(self):
         return Executable("cmake-re")
 
@@ -470,7 +469,7 @@ class CMakeREBuilder(BuilderWithDefaults):
         options += self.cmake_args()
         options.append(os.path.abspath(self.root_cmakelists_dir))
         with working_dir(self.build_directory, create=True):
-            self.cmake_re(*options, "--host", "--distributed")
+            self.cmake_re()(*options, "--host", "--distributed")
 
     def build(self, pkg: CMakeREPackage, spec: Spec, prefix: Prefix) -> None:
         """Make the build targets"""
@@ -479,7 +478,7 @@ class CMakeREBuilder(BuilderWithDefaults):
                 pkg.module.make(*self.build_targets)
             elif self.generator == "Ninja":
                 self.build_targets.append("-v")
-                self.cmake_re("--build", self.build_directory, "--host", "--distributed", "--j500")
+                self.cmake_re()("--build", self.build_directory, "--host", "--distributed", "--j500")
 
     def install(self, pkg: CMakeREPackage, spec: Spec, prefix: Prefix) -> None:
         """Make the install targets"""
