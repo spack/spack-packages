@@ -44,7 +44,7 @@ class PyGoogleapisCommonProtos(PythonPackage):
         depends_on("py-grpcio@1:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/googleapis-common-protos/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/g/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.64"):
             name = "googleapis_common_protos"
         else:

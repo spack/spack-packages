@@ -30,7 +30,7 @@ class PySphinxcontribDevhelp(PythonPackage):
     depends_on("py-setuptools", when="@:1.0.2", type="build")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sphinxcontrib-devhelp/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.0.3"):
             name = "sphinxcontrib_devhelp"
         else:

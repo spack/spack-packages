@@ -30,7 +30,7 @@ class PyGrpcioStatus(PythonPackage):
         depends_on("py-googleapis-common-protos@1.5.5:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/grpcio_status/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/g/{0}/{0}-{1}.tar.gz"
         if version >= Version("63"):
             name = "grpcio_status"
         else:

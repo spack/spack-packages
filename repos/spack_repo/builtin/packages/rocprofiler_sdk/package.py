@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -198,7 +199,7 @@ class RocprofilerSdk(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rccl@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -215,8 +216,16 @@ class RocprofilerSdk(CMakePackage):
         "7.2.1",
         "7.2.3",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+
+    resource(
+        name="otf2",
+        destination="deps",
+        placement="otf2",
+        url="https://rocm-third-party-deps.s3.us-east-2.amazonaws.com/otf2-3.0.3.tar.gz",
+        sha256="18a3905f7917340387e3edc8e5766f31ab1af41f4ecc5665da6c769ca21c4ee8",
+    )
 
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
@@ -232,7 +241,8 @@ class RocprofilerSdk(CMakePackage):
             return "projects/rocprofiler-sdk"
 
     def cmake_args(self):
-        args = []
+        otf2_source = join_path(self.stage.source_path, "deps", "otf2")
+        args = [self.define("FETCHCONTENT_SOURCE_DIR_OTF2-SOURCE", otf2_source)]
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
         if self.spec.satisfies("@7.2:"):

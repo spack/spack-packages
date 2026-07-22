@@ -21,6 +21,8 @@ class REdger(RPackage):
     bioc = "edgeR"
 
     with default_args(get_full_repo=True):
+        version("4.10.1", commit="5a71e43e4c203bf14f0201e9151d4fcfd00e8f0d")  # bioc 3.23
+        version("4.6.3", commit="0dc836a7c8e53633bb7817d55b27128ceb898ac9")  # bioc 3.21
         version("3.42.0", commit="197b9a8ccc27016611b262c2c31ca22f991661c5")
         version("3.40.0", commit="0b25adcc6b3cb0a8c641964d1274536ee07ee162")
         version("3.38.4", commit="f5a3bb568a23b34146ac66329a95ee4785093536")
@@ -33,13 +35,18 @@ class REdger(RPackage):
         version("3.20.9", commit="acbcbbee939f399673678653678cd9cb4917c4dc")
         version("3.18.1", commit="101106f3fdd9e2c45d4a670c88f64c12e97a0495")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("r@2.15.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@3.26.8:")
-    depends_on("r-limma", type=("build", "run"))
-    depends_on("r-limma@3.34.5:", type=("build", "run"), when="@3.20.9:")
+    depends_on("r@2.15.0:", type=("build", "run"))
+
+    depends_on("r-limma@3.63.6:", type=("build", "run"), when="@4.5.6:")
+    depends_on("r-limma@3.61.9:", type=("build", "run"), when="@4.3.8:")
     depends_on("r-limma@3.41.5:", type=("build", "run"), when="@3.32.1:")
+    depends_on("r-limma@3.34.5:", type=("build", "run"), when="@3.20.9:")
+    depends_on("r-limma", type=("build", "run"))
+
     depends_on("r-locfit", type=("build", "run"))
-    depends_on("r-rcpp", type=("build", "run"), when="@3.20.9:")
+
+    depends_on("r-rcpp", type=("build", "run"), when="@3.20.9:4.3.10")
