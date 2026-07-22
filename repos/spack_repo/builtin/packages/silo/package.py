@@ -225,7 +225,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
-
     @when("@:4.11.1 %clang@9:")
     def patch(self):
         self.clang_9_patch()
