@@ -50,7 +50,8 @@ class Admixtools(MakefilePackage):
 
         makefile.filter(
             "override LDLIBS += -lgsl -lopenblas -lm -lnick",
-            "override LDLIBS += -lgsl -lm -lnick " + lapackflags, string=True
+            "override LDLIBS += -lgsl -lm -lnick " + lapackflags,
+            string=True,
         )
 
         makefile.filter("HOMEL=$(PWD)", "HOMEL=$(CURDIR)", string=True)
