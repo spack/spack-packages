@@ -236,7 +236,14 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
 
             # Get castep data
             castep = Executable(join_path(self.prefix.bin, self.castep_exe))
-            castep(seedname)
+
+            # Run castep in serial or parallel...
+            if self.spec.satisfies("+mpi"):
+                mpiexec = Executable(self.spec["mpi"].prefix.bin.mpiexec)
+                mpiexec("-n", "1", castep.path, seedname)
+            else:
+                castep(seedname)
+
             castep_energy = get_energy_from_file(f"{seedname}.castep")
 
             assert math.isclose(castep_energy, benchmark_energy, rel_tol=1e-6)
@@ -329,7 +336,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
         """Test that the executable launches and returns a version number"""
         spec_version = re.compile(r"CASTEP version: " + re.escape(str(self.spec.version)))
         castep = Executable(join_path(self.prefix.bin, self.castep_exe))
-        output = castep("-v", output=str)
+        if self.spec.satisfies("+mpi"):
+            mpiexec = Executable(self.spec["mpi"].prefix.bin.mpiexec)
+            output = mpiexec("-n", "1", castep.path, "-v", output=str)
+        else:
+            output = castep("-v", output=str)
         check_outputs(spec_version, output)
 
     @run_after("install")
@@ -413,7 +424,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
         """Test that the executable launches and returns a version number"""
         spec_version = re.compile(r"CASTEP version: " + re.escape(str(self.spec.version)))
         castep = Executable(join_path(self.prefix.bin, self.castep_exe))
-        output = castep("-v", output=str)
+        if self.spec.satisfies("+mpi"):
+            mpiexec = Executable(self.spec["mpi"].prefix.bin.mpiexec)
+            output = mpiexec("-n", "1", castep.path, "-v", output=str)
+        else:
+            output = castep("-v", output=str)
         check_outputs(spec_version, output)
 
     @run_after("install")
