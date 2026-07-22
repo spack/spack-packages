@@ -53,6 +53,7 @@ class Polyclipper(CMakePackage):
 
     with default_args(type="build"):
         depends_on("blt")
+        depends_on("cmake@3.20:")
         depends_on("cxx")
         depends_on("c")
 
