@@ -33,7 +33,7 @@ class PyBidsValidator(PythonPackage):
     depends_on("py-bidsschematools@0.10:", when="@1.14.7:", type=("build", "run"))
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/b/bids-validator/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/b/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.14.6"):
             name = "bids_validator"
         else:

@@ -29,6 +29,4 @@ class PyJupyterLsp(PythonPackage):
             name = "jupyter_lsp"
         else:
             name = "jupyter-lsp"
-        return (
-            f"https://files.pythonhosted.org/packages/source/j/jupyter-lsp/{name}-{version}.tar.gz"
-        )
+        return f"https://files.pythonhosted.org/packages/source/j/{name}/{name}-{version}.tar.gz"

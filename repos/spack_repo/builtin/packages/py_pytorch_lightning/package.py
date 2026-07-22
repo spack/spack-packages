@@ -132,7 +132,7 @@ class PyPytorchLightning(PythonPackage):
     conflicts("^py-torch~distributed", when="@1.5.0:1.5.2")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/pytorch-lightning/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
         if version >= Version("2.5"):
             name = "pytorch_lightning"
         else:

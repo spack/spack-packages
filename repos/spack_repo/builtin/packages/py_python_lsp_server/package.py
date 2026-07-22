@@ -54,7 +54,7 @@ class PyPythonLspServer(PythonPackage):
         depends_on("py-ruff", when="@1.13: formatter=ruff")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/python-lsp-server/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.13"):
             name = "python_lsp_server"
         else:

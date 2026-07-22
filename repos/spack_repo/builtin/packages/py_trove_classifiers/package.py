@@ -42,8 +42,8 @@ class PyTroveClassifiers(PythonPackage):
 
     def url_for_version(self, version):
         if version >= Version("2024.5.17"):
-            sep = "_"
+            name = "trove_classifiers"
         else:
-            sep = "-"
+            name = "trove-classifiers"
 
-        return f"https://files.pythonhosted.org/packages/source/t/trove{sep}classifiers/trove{sep}classifiers-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/t/{name}/{name}-{version}.tar.gz"

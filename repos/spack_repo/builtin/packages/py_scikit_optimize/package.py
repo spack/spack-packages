@@ -47,9 +47,9 @@ class PyScikitOptimize(PythonPackage):
     depends_on("py-matplotlib@2:", when="@0.9:+plots")
 
     def url_for_version(self, version):
-        url = "https://pypi.org/packages/source/s/scikit-optimize/scikit{}optimize-{}.tar.gz"
+        url = "https://pypi.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version < Version("0.10.2"):
-            separator = "-"
+            name = "scikit-optimize"
         else:
-            separator = "_"
-        return url.format(separator, version)
+            name = "scikit_optimize"
+        return url.format(name, version)

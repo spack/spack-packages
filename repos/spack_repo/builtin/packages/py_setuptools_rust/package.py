@@ -46,4 +46,4 @@ class PySetuptoolsRust(PythonPackage):
             name = "setuptools_rust"
         else:
             name = "setuptools-rust"
-        return f"https://files.pythonhosted.org/packages/source/s/setuptools-rust/{name}-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/s/{name}/{name}-{version}.tar.gz"

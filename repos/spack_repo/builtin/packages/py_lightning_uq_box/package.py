@@ -61,7 +61,7 @@ class PyLightningUqBox(PythonPackage):
             depends_on("py-ruff@0.2:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/l/lightning-uq-box/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/l/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.2.0"):
             name = "lightning_uq_box"
         else:

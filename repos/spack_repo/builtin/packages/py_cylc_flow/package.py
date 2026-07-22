@@ -66,7 +66,7 @@ class PyCylcFlow(PythonPackage):
     depends_on("py-typing-extensions", type="run", when="@8.4")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cylc-flow/{0}-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/c/{0}/{0}-{1}.tar.gz"
         if version >= Version("8.3"):
             prefix = "cylc_flow"
         else:

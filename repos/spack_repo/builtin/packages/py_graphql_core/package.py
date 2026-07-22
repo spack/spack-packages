@@ -36,7 +36,7 @@ class PyGraphqlCore(PythonPackage):
     depends_on("py-rx@1.6:1", type=("build", "run"), when="@2.3.2")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/graphql-core/{0}-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/g/{0}/{0}-{1}.tar.gz"
         if version >= Version("3.2.5"):
             prefix = "graphql_core"
         else:
