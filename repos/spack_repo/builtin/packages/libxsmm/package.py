@@ -122,7 +122,7 @@ class Libxsmm(CMakePackage, MakefilePackage):
         # A recent `as` is needed to compile libxsmm until version 1.17
         # (<https://github.com/spack/spack/issues/28404>), but not afterwards
         # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
-        depends_on("binutils+ld+gas@2.33:", type="build")
+        depends_on("binutils+ld+gas@2.33:", type="build", when="@:1.16")
 
     # Although it predates CMake support, this snapshot starts with the
     # infinity-version component "main" and therefore satisfies "@2:".
