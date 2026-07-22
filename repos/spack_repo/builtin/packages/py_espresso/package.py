@@ -49,6 +49,9 @@ class PyEspresso(CMakePackage):
     # espressomd/espresso#2244 merge upstream
     patch("2244.patch", when="@4.0.0")
 
+    # See 'changed requirements' (https://github.com/espressomd/espresso/releases#release-5.0.0)
+    conflicts("%gcc@:12.1", when="@5.0.0:")
+
     # Support for modern gcc was fixed in 4.2 (https://github.com/espressomd/espresso/pull/3990)
     conflicts("%gcc@11:", when="@:4.1")
 
