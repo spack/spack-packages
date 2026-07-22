@@ -19,6 +19,7 @@ from spack.package import (
     conflicts,
     depends_on,
     get_cmake_prefix_path,
+    memoized,
     register_builder,
     run_after,
     tty,
