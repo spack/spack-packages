@@ -1,0 +1,53 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      require:
+      - target=x86_64_v3
+      - ~cuda
+      - ~rocm
+      prefer:
+        - "%gcc"
+  concretizer:
+    unify: true
+    reuse: false
+    static_analysis: true
+
+  specs:
+    # runtimes and compilers
+  - python
+  - llvm+link_llvm_dylib~lld~offload~lldb~polly+python build_type=MinSizeRel   # for clangd, clang-format
+  - cmake
+  - go   # to build fzf, gh, hub
+  - rust+dev   # fd, ripgrep, hyperfine, exa, rust-analyzer
+  - cppcheck
+    # cli dev tools
+  - ripgrep
+  - gh
+  - fd
+  - bfs
+  - fzf
+  - tree
+  - jq
+  - py-yq
+  - ccache
+    # ensure we can use a jobserver build and do this fast
+  - ninja   # should be @kitware, can't be because of meson requirement
+  - openssl certs=system     # must be this, system external does not work
+  - flex
+  - graphviz
+  - doxygen
+  - meson
+  # spack developer tools
+  # style
+  - "py-mypy@0.900: ^py-mypy-extensions@:1.0"
+  - py-pytest@9.0.3
+  - py-ruff@0.15.0
+  - py-ty@0.0.20
+
+  cdash:
+    build-group: Windows Dev Tools (Kitware)
