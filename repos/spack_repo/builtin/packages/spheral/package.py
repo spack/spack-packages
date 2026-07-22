@@ -93,7 +93,6 @@ class Spheral(CMakePackage):
     depends_on("umpire")
     depends_on("chai", when="+external_chai")
     depends_on("zlib-api")
-    depends_on("opensubdiv", type="build", when="+opensubdiv")
     depends_on("sundials", when="+sundials")
     depends_on("mpi", when="+mpi")
 
@@ -154,7 +153,10 @@ class Spheral(CMakePackage):
         args.append(self.define_from_variant("USE_EXTERNAL_CHAI", "external_chai"))
         args.append(self.define("BLT_CXX_STD", f"c++{self.spec.variants.get('cxxstd').value}"))
         args.append(self.define("HDF5_DIR", self.spec["hdf5"].prefix))
-        args.append(self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5pcc))
+        if self.spec.satisfies("+mpi"):
+            args.append(self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5pcc))
+        else:
+            args.append(self.define("HDF5_C_COMPILER_EXECUTABLE", self.spec["hdf5"].prefix.bin.h5cc))
         args.append(self.define("HDF5_USE_STATIC_LIBRARIES", not self.spec.satisfies("+shared")))
 
         return args
