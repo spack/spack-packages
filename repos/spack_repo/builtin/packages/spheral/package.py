@@ -3,16 +3,20 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Spheral(CMakePackage):
+class Spheral(CMakePackage, CudaPackage):
     """Spheral++ provides a steerable parallel environment for performing coupled hydrodynamical and gravitational numerical simulations."""
 
     homepage = "https://github.com/llnl/spheral"
     url = "https://github.com/llnl/spheral/archive/refs/tags/v2026.06.0.tar.gz"
     git = "https://github.com/llnl/spheral.git"
+
+    maintainers("jmikeowen")
+    license("BSD-3-Clause")
 
     version("develop", branch="develop")
     version("2026.06.0", sha256="06ef78ba1d400250541b9a2fe66636e914ac5a00e23afd370c463d440369688b")
@@ -33,12 +37,11 @@ class Spheral(CMakePackage):
     # Define variants
     variant("mpi", default=True, description="Enable MPI Support.")
     variant("openmp", default=True, description="Enable OpenMP Support.")
-    variant("cuda", default=False, description="Enable CUDA.")
     variant("docs", default=False, description="Enable building Docs.")
     variant("tests", default=False, description="Enable test support libs, including py-ats.")
     variant("shared", default=True, description="Build C++ libs as shared (disable for static).")
     variant(
-        "cxxonly", default=False, description="Enable CXX-only build (disable Python bindings)."
+        "python", default=False, description="Enable Python bindings."
     )
     variant("aneos", default=False, description="Enable ANEOS support.")
     variant("opensubdiv", default=False, description="Enable OpenSubdiv support.")
@@ -54,7 +57,6 @@ class Spheral(CMakePackage):
     variant(
         "svph", default=False, description="Enable Smoothed Volume Particle Hydrodynamics (SVPH)."
     )
-    variant("external_chai", default=True, description="Use external CHAI library.")
     variant("boost_header_only", default=True, description="Use Boost header-only libraries.")
     variant("one_dim", default=True, description="Enable 1D kernels")
     variant("sundials", default=False, description="Enable sundials solver")
@@ -91,10 +93,9 @@ class Spheral(CMakePackage):
     depends_on("axom")
     depends_on("raja")
     depends_on("umpire")
-    depends_on("chai", when="+external_chai")
+    depends_on("chai")
     depends_on("zlib-api")
     depends_on("sundials", when="+sundials")
-    depends_on("mpi", when="+mpi")
 
     def cmake_args(self):
         args = []
@@ -110,11 +111,10 @@ class Spheral(CMakePackage):
         args.append(self.define("polytope_DIR", self.spec["polytope"].prefix))
         args.append(self.define("caliper_DIR", self.spec["caliper"].prefix))
         args.append(self.define("conduit_DIR", self.spec["conduit"].prefix))
+        args.append(self.define("chai_DIR", self.spec["chai"].prefix))
         args.append(self.define("axom_DIR", self.spec["axom"].prefix))
         args.append(self.define("raja_DIR", self.spec["raja"].prefix))
         args.append(self.define("umpire_DIR", self.spec["umpire"].prefix))
-        if self.spec.satisfies("+external_chai"):
-            args.append(self.define("chai_DIR", self.spec["chai"].prefix))
         args.append(self.define("zlib_DIR", self.spec["zlib-api"].prefix))
         args.append(self.define("ZLIB_ROOT", self.spec["zlib-api"].prefix))
         args.append(self.define_from_variant("BOOST_HEADER_ONLY", "boost_header_only"))
@@ -140,7 +140,7 @@ class Spheral(CMakePackage):
         )
         args.append(self.define_from_variant("SPHERAL_ENABLE_LONGCSDT", "longcsdt"))
         args.append(self.define_from_variant("SPHERAL_ENABLE_TESTS", "tests"))
-        args.append(self.define("SPHERAL_ENABLE_PYTHON", not self.spec.satisfies("+cxxonly")))
+        args.append(self.define("SPHERAL_ENABLE_PYTHON", self.spec.satisfies("+python")))
         args.append(self.define_from_variant("SPHERAL_EXTERNAL_INSTALL", "external_install"))
         args.append(self.define("SPHERAL_ENABLE_STATIC", not self.spec.satisfies("+shared")))
         args.append(self.define_from_variant("SPHERAL_ENABLE_SHARED", "shared"))
@@ -150,7 +150,6 @@ class Spheral(CMakePackage):
         args.append(self.define_from_variant("ENABLE_OPENMP", "openmp"))
         args.append(self.define_from_variant("ENABLE_MPI", "mpi"))
         args.append(self.define_from_variant("ENABLE_DOCS", "docs"))
-        args.append(self.define_from_variant("USE_EXTERNAL_CHAI", "external_chai"))
         args.append(self.define("BLT_CXX_STD", f"c++{self.spec.variants.get('cxxstd').value}"))
         args.append(self.define("HDF5_DIR", self.spec["hdf5"].prefix))
         if self.spec.satisfies("+mpi"):
