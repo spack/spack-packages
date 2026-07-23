@@ -540,5 +540,6 @@ class Seacas(CMakePackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def run_ctest_after_install(self):
+        ctestjobs = min(make_jobs, 8)
         with working_dir(self.build_directory):
-            ctest("-j", str(make_jobs), "--output-on-failure")
+            ctest("-j", str(ctestjobs), "--output-on-failure")
