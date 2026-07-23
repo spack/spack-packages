@@ -192,6 +192,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("nczarr_zip", default=False, description="Enable NCZarr zipfile format storage")
     variant("optimize", default=True, description="Enable -O2 for a more optimized lib")
     variant("logging", default=False, description="Enable logging")
+    variant("utilities", default=True, description="Build command-line utilities")
+    variant("tests", default=True, description="Build test programs")
+    variant("examples", default=True, description="Build example programs")
 
     variant("szip", default=True, description="Enable Szip compression plugin")
     variant("blosc", default=True, description="Enable Blosc compression plugin")
@@ -419,7 +422,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
         base_cmake_args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(nc + "ENABLE_BYTERANGE", "byterange"),
-            self.define(nc + "BUILD_UTILITIES", True),
+            self.define_from_variant(nc + "BUILD_UTILITIES", "utilities"),
             self.define(nc + "ENABLE_NETCDF_4", True),
             self.define_from_variant(nc + "ENABLE_DAP", "dap"),
             self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
@@ -427,6 +430,12 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
+            self.define_from_variant(nc + "ENABLE_TESTS", "tests"),
+            self.define_from_variant(nc + "ENABLE_UNIT_TESTS", "tests"),
+            self.define_from_variant(nc + "ENABLE_EXAMPLES", "examples"),
+            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define_from_variant(nc + "ENABLE_NCZARR_ZIP", "nczarr_zip"),
+            self.define_from_variant("ENABLE_NCZARR_ZIP", "nczarr_zip"),
         ]
         if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
             base_cmake_args.append(
@@ -514,10 +523,13 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def configure_args(self):
         config_args = [
             "--enable-v2",
-            "--enable-utilities",
             "--enable-static",
             "--enable-largefile",
         ]
+
+        config_args += self.enable_or_disable("utilities")
+        config_args += self.enable_or_disable("test", variant="tests")
+        config_args += self.enable_or_disable("examples")
 
         if self.spec.satisfies("@4.8.0:"):
             config_args.append("--enable-hdf5")
