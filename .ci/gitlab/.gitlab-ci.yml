@@ -23,8 +23,8 @@ default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
 .clone_spack: &clone_spack
-  - mkdir /.ci/tmp
-  - mkdir /.ci/tmp/spack
+  - mkdir -p /.ci/tmp
+  - mkdir -p /.ci/tmp/spack
   - cd /.ci/tmp/spack
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
