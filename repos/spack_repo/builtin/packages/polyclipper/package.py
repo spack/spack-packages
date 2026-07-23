@@ -47,6 +47,6 @@ class Polyclipper(CMakePackage):
             args.append(self.define("POLYCLIPPER_ENABLE_PYTHON", "ON"))
         else:
             args.append(self.define("ENABLE_CXXONLY", "ON"))
-        args.append(self.define("POLYCLIPPER_ENABLE_PYTHON", "OFF"))
+            args.append(self.define("POLYCLIPPER_ENABLE_PYTHON", "OFF"))
         args.append(self.define("POLYCLIPPER_ENABLE_TESTS", "OFF"))
         return args
