@@ -47,6 +47,8 @@ class Professor(Package):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PROF_VERSION", str(self.spec.version))
+        if self.spec["eigen"].satisfies("@5:"):
+            env.set("CXXSTD", "c++14")
 
     @run_before("install", when="@2.5.0:")
     def configure(self):
