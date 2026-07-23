@@ -17,6 +17,7 @@ class Polyclipper(CMakePackage):
     maintainers("jmikeowen", "ldowen")
     license("BSD-3-Clause")
 
+    version("master", branch="master", submodules=True)
     version("1.2.6", sha256="ffce2fe36fb888b7aaf93d4b3591b0875909573537ca39c0730b7d85bbc5558c")
     version("1.2.5", sha256="914b3f4bcc89f3c63f66b80cf3a45daa772dc71f3bdbc2ee4d312d7c5bbe60f3")
     version("1.2.4", sha256="02066fbf34b8bdbd22414514583c481c573cbb003e6dace398bc78678d967d38")
