@@ -28,12 +28,12 @@ class PyGoogleCrc32c(PythonPackage):
     depends_on("google-crc32c", type=("build", "run"))
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/google-crc32c/google{0}crc32c-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/g/{0}/{0}-{1}.tar.gz"
         if version > Version("1.5.0"):
-            sep = "_"
+            name = "google_crc32c"
         else:
-            sep = "-"
-        return url.format(sep, version)
+            name = "google-crc32c"
+        return url.format(name, version)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CRC32C_INSTALL_PREFIX", self.spec["google-crc32c"].prefix)

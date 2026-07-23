@@ -17,6 +17,7 @@ class PyAwscrt(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.35.0", sha256="761ae0dda17fd9dfaff4bbb2a376e28e44dfd77dc6410b7bc408297a1fd5600e")
     version("0.31.2", sha256="552555de1beff02d72a1f6d384cd49c5a7c283418310eae29d21bcb749c65792")
     version("0.29.2", sha256="c78d81b1308d42fda1eb21d27fcf26579137b821043e528550f2cfc6c09ab9ff")
     version("0.20.9", sha256="243785ac9ee64945e0479c2384325545f29597575743ce84c371556d1014e63e")
