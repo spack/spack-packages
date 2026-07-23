@@ -903,6 +903,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         if spec.satisfies("languages=jit"):
             options.append("--enable-host-shared")
 
+        # https://github.com/spack/spack-packages/issues/5677
+        if spec.satisfies("+binutils"):
+            binutils = spec["binutils"].prefix.bin
+            options.append(f"--with-build-time-tools={binutils}")
+
         # enable_bootstrap
         if spec.satisfies("+bootstrap"):
             options.extend(["--enable-bootstrap"])
