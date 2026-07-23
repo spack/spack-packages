@@ -37,6 +37,7 @@ class GridlabD(CMakePackage):
     # depends_on("superlu-mt") gridlab-d now uses its own internal version
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
+    depends_on("ncurses+termlib", when="+mysql")
 
     patch("find_mysql_pkg_conf.patch", when="+mysql")
 
@@ -54,6 +55,7 @@ class GridlabD(CMakePackage):
         if self.spec.satisfies("+mysql"):
             args.append("-DGLD_USE_MYSQL=ON")
             args.append("-DGLD_MYSQL_DIR=" + self.spec["mysql"].prefix)
+            args.append("-DCMAKE_EXE_LINKER_FLAGS=-ltinfo")
         else:
             args.append("-DGLD_USE_MYSQL=OFF")
 
