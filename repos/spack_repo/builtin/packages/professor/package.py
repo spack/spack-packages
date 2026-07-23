@@ -49,10 +49,10 @@ class Professor(Package):
         env.set("PROF_VERSION", str(self.spec.version))
 
     @run_before("install", when="@2.5.0:")
-    def configure(self, spec, prefix):
+    def configure(self):
         with working_dir(self.stage.source_path):
             configure = Executable("configure")
-            configure(f"--prefix={prefix}", f"--with-eigen={self.spec['eigen'].prefix}")
+            configure(f"--prefix={self.prefix}", f"--with-eigen={self.spec['eigen'].prefix}")
 
     def install(self, spec, prefix):
         with working_dir(self.stage.source_path):
