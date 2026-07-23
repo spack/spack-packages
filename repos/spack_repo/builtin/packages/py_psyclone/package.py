@@ -45,25 +45,19 @@ class PyPsyclone(PythonPackage):
     version("2.0.0", sha256="94766ffda760404af99f85d70341376192e4a1b8e16e7ae5df980038898a9c41")
     version("1.5.1", sha256="f053ad7316623b2a4002afc79607abda3b22306645e86f2312d9f3fe56d312dc")
 
-    # Current dependencies
     depends_on("py-setuptools", type="build")
     depends_on("py-pyparsing", type=("build", "run"))
-    depends_on("py-fparser@0.2.4", type=("build", "run"), when="@3.3:")
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
     depends_on("py-jinja2", type="build")
     # Anything more recent than sympy 1.13.3 currently causes problems
     # https://github.com/stfc/PSyclone/issues/3474
     depends_on("py-sympy@1.13.3", type=("build", "run"))
+    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2:3.2")
     depends_on("py-termcolor", type=("build", "run"))
 
-    # Historical dependencies
-    depends_on("py-six", type=("build", "run"), when="@2.0.0:2.3.1")
-    depends_on("py-jsonschema@3.0.2", type=("build", "run"), when="@2.1.0:2.4.0")
-    depends_on("py-setuptools-scm-git-archive", type="build", when="@:3.3.0")
-    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2:3.2")
-
     # Test cases fail without compatible versions of py-fparser:
+    depends_on("py-fparser@0.2.4", type=("build", "run"), when="@3.3:")
     depends_on("py-fparser@0.2.1", type=("build", "run"), when="@3.2")
     depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.0:3.1")
     depends_on("py-fparser@0.1.4", type=("build", "run"), when="@2.5.0")
@@ -80,6 +74,10 @@ class PyPsyclone(PythonPackage):
     depends_on("py-pytest-cov", type="test")
     depends_on("py-pytest-xdist", type="test")
     depends_on("py-pytest", type="test")
+
+    # Historical dependencies
+    depends_on("py-six", type=("build", "run"), when="@2.0.0:2.3.1")
+    depends_on("py-jsonschema@3.0.2", type=("build", "run"), when="@2.1.0:2.4.0")
 
     def url_for_version(self, version):
         # As of version 3.0.0, the name of the tarball on pypi is all lowercase.
