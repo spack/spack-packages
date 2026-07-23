@@ -28,6 +28,18 @@ class PyEspresso(CMakePackage):
     license("GPL-3.0-only")
 
     version("develop", branch="python")
+
+    version(
+        "5.0.1",
+        sha256="92b314c39e7715a9a8c347269bf2ffb8c85c23d6dfcadd3d81a7e04b67d89589",
+        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.1.tar.gz",
+    )
+    version(
+        "5.0.0",
+        sha256="8b6a6ce62fa9358464c789ed200f72e19b6687f999dc95b20b407ee1274cdf4e",
+        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.0.tar.gz",
+    )
+
     version("4.2.2", sha256="2bc02f91632b0030f1203759768bd718bd8a0005f72696980b12331b4bfa0d76")
     version("4.2.1", sha256="d74b46438b0d013cac35602e28f3530686446a3a307f6771baf15395066bdad5")
     version("4.2.0", sha256="080bbf6bec5456192ce4e1bc0ddebb9e8735db723d3062ec87154f1ac411aaab")
@@ -44,6 +56,9 @@ class PyEspresso(CMakePackage):
 
     # espressomd/espresso#2244 merge upstream
     patch("2244.patch", when="@4.0.0")
+
+    # See 'changed requirements' (https://github.com/espressomd/espresso/releases#release-5.0.0)
+    conflicts("%gcc@:12.1", when="@5.0.0:")
 
     # Support for modern gcc was fixed in 4.2 (https://github.com/espressomd/espresso/pull/3990)
     conflicts("%gcc@11:", when="@:4.1")
