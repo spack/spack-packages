@@ -120,6 +120,16 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         default=False,
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.14.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("cxxstd=17", when="@2026.07.0:")
+    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")  # generated
 
@@ -195,6 +205,10 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
             self.spec.compiler.version,
             self.spec.dag_hash(8),
         )
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
 
     def initconfig_compiler_entries(self):
         spec = self.spec
@@ -391,15 +405,8 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("RAJA_ENABLE_OPENMP_TASK", "+omptask" in spec))
         entries.append(cmake_cache_option("RAJA_ENABLE_SYCL", spec.satisfies("+sycl")))
 
-        # C++17
-        if spec.satisfies("@2025.09.0:") or (
-            spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl")
-        ):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
-        # C++14
-        # Using RAJA version as threshold on purpose (no 0.14 version of RAJAPerf were released).
-        elif spec.satisfies("@0.14.0:2025.09.0"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(cmake_cache_option("ENABLE_BENCHMARKS", "tests=benchmarks" in spec))
         entries.append(
