@@ -24,6 +24,9 @@ class PyUv(PythonPackage, CargoPackage):
 
     executables = ["^uv$"]
 
+    version("0.11.31", sha256="763609d59721af5b8522e16deac6cffe8055f82bb837740c708917506f305185")
+    version("0.11.30", sha256="06f4b824c6123df1cd00a68367f970870e7252b0b11a4d03a06b2b4b433afcda")
+    version("0.11.29", sha256="a4ca34dc3b247740e511ca7c718181d5300e7899bbef755db45bb6c993610a64")
     version("0.11.28", sha256="df86cfd135542a833e9f84708b3b8dbaa987a3b9db85b267062db49ab639d242")
     version("0.11.27", sha256="3469204521869f0e6bdea17b02c1d86db2d0150820895653a6152cab206fb00b")
     version("0.11.26", sha256="2a433ece2ace088dd572d8abb0e6bd9a4ecb0e10bc9856447bbb37545f384f29")
@@ -90,6 +93,7 @@ class PyUv(PythonPackage, CargoPackage):
         depends_on("gmake")
 
         # Minimum Rust toolchain, from Cargo.toml
+        depends_on("rust@1.95:", when="@0.11.29:")
         depends_on("rust@1.94:", when="@0.11.18:")
         depends_on("rust@1.93:", when="@0.11.8:")
         depends_on("rust@1.92:", when="@0.10.10:")

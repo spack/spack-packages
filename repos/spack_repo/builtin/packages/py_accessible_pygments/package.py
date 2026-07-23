@@ -27,11 +27,9 @@ class PyAccessiblePygments(PythonPackage):
     depends_on("py-hatch-vcs", type="build", when="@0.0.5:")
 
     def url_for_version(self, version):
-        url = (
-            "https://pypi.org/packages/source/a/accessible-pygments/accessible{}pygments-{}.tar.gz"
-        )
+        url = "https://pypi.org/packages/source/a/{0}/{0}-{1}.tar.gz"
         if version < Version("0.0.5"):
-            separator = "-"
+            name = "accessible-pygments"
         else:
-            separator = "_"
-        return url.format(separator, version)
+            name = "accessible_pygments"
+        return url.format(name, version)
