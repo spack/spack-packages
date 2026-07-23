@@ -277,6 +277,18 @@ class Seacas(CMakePackage):
 
     conflicts("@2024-06-27 platform=windows")
 
+    # Require mpi +fortran only when +fortran
+    conflicts(
+        "^mpich ~fortran",
+        when="+fortran ^[virtuals=mpi] mpich",
+        msg="MPICH Fortran support required for SEACAS Fortran support.",
+    )
+    conflicts(
+        "^openmpi ~fortran",
+        when="+fortran ^[virtuals=mpi] openmpi",
+        msg="OpenMPI Fortran support required for SEACAS Fortran support.",
+    )
+
     # Remove use of variable in array assignment (triggers c2057 on MSVC)
     # See https://github.com/sandialabs/seacas/issues/438
     patch(
@@ -346,10 +358,11 @@ class Seacas(CMakePackage):
                 [
                     define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
                     define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
-                    define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
                     define("MPI_BASE_DIR", spec["mpi"].prefix),
                 ]
             )
+            if "+fortran" in spec:
+                options.append(define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # ########## What applications should be built #############
         # Check whether they want everything; if so, do the easy way...
