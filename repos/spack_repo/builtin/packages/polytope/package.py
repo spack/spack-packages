@@ -32,12 +32,12 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     version("0.6.0", sha256="25b10759d784de2f2ea0b93200194b69319079b68c73785d1aaa397cacce2eea")
     version("0.5.24", sha256="ff45624cfc522d62f21c69ac8aa90477bf00d6ee472f4e0a07b508702304fa57")
 
-    variant("mpi", default=True, description="Enable MPI support")
+    # MPI support is currently broken
+    # variant("mpi", default=True, description="Enable MPI support")
     variant("shared", default=False, description="Enable share lib build")
     variant("boost", default=False, description="Enable Boost support")
 
     with default_args(type="build"):
-        depends_on("blt")
         depends_on("cmake@3.1.0:")
         depends_on("c")
         depends_on("cxx")
@@ -55,8 +55,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         args = [
             self.define("TESTING", "OFF"),
-            self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix),
-            self.define_from_variant("ENABLE_MPI", "mpi"),
+            self.define("ENABLE_MPI", "OFF"),
             self.define_from_variant("USE_BOOST", "boost"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
