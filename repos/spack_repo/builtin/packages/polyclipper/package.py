@@ -43,6 +43,14 @@ class Polyclipper(CMakePackage):
         url="https://github.com/llnl/PolyClipper/archive/refs/tags/v1.2.2.tar.gz",
     )
 
+    variant("python", default=False, description="Enable python bindings.")
+    depends_on('python@3.10:', when="+python")
+
+    with default_args(type="build"):
+        depends_on("blt")
+        depends_on("cmake@3.20:")
+        depends_on("cxx")
+        depends_on("c")
 
     def url_for_version(self, version):
         if version <= Version("1.2.5"):
@@ -51,17 +59,14 @@ class Polyclipper(CMakePackage):
             url = "https://github.com/llnl/PolyClipper/archive/refs/tags/v{0}.tar.gz"
         return url.format(version)
 
-    with default_args(type="build"):
-        depends_on("blt")
-        depends_on("cmake@3.20:")
-        depends_on("cxx")
-        depends_on("c")
-
     def cmake_args(self):
         args = []
         args.append(self.define("BLT_SOURCE_DIR", self.spec["blt"].prefix))
         args.append(self.define("POLYCLIPPER_BLT_DIR", self.spec["blt"].prefix))
-        args.append(self.define("ENABLE_CXXONLY", "ON"))
+        if self.spec.satisfies("+python"):
+            args.append(self.define("POLYCLIPPER_ENABLE_PYTHON", "ON"))
+        else:
+            args.append(self.define("ENABLE_CXXONLY", "ON"))
         args.append(self.define("POLYCLIPPER_ENABLE_PYTHON", "OFF"))
         args.append(self.define("POLYCLIPPER_ENABLE_TESTS", "OFF"))
         return args
