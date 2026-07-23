@@ -124,7 +124,7 @@ class PyScikitLearn(PythonPackage):
         depends_on("py-setuptools@:59", when="@:1.2.1")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/scikit-learn/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.5"):
             name = "scikit_learn"
         else:

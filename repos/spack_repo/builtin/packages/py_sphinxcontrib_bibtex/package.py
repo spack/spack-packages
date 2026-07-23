@@ -45,9 +45,9 @@ class PySphinxcontribBibtex(PythonPackage):
     conflicts("^py-docutils@0.18:0.19", when="@2.6.5")
 
     def url_for_version(self, version):
-        url = "https://pypi.org/packages/source/s/sphinxcontrib-bibtex/sphinxcontrib{}bibtex-{}.tar.gz"
+        url = "https://pypi.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version < Version("2.6.3"):
-            separator = "-"
+            name = "sphinxcontrib-bibtex"
         else:
-            separator = "_"
-        return url.format(separator, version)
+            name = "sphinxcontrib_bibtex"
+        return url.format(name, version)
