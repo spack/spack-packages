@@ -609,8 +609,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Make Pytorch build work in air gapped environments (without internet access)
     # This forwards six source folder path to NNPACK which forwards it to PeachPy
-    patch("air_gapped_nnpack_cmake.patch", when="@2.12")
+    # for versions @2.5:2.11
     patch("air_gapped_nnpack_cmake_older.patch", when="@2.5:2.11")
+    # for version @2.12: (env forwarding mecanism changed)
+    # This error has been raised upstream https://github.com/pytorch/pytorch/pull/188263
+    patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
 
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208
