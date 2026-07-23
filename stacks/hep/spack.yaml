@@ -24,7 +24,7 @@ spack:
     c:
       require:
       - gcc
-    cpp:
+    cxx:
       require:
       - gcc
     fortran:
