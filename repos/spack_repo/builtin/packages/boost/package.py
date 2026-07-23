@@ -166,7 +166,7 @@ class Boost(Package):
         "openmethod": {"when": "@1.90:"},
         "mqtt5": {"when": "@1.88:"},
         "charconv": {"when": "@1.85:"},
-        "cobalt": {"when": "@1.84"},
+        "cobalt": {"when": "@1.84:"},
         "url": {"when": "@1.81:"},
         "json": {"when": "@1.75:"},
         "nowide": {"when": "@1.73:"},

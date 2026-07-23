@@ -43,9 +43,9 @@ class PyNvidiaMlPy(PythonPackage):
     # pip silently replaces distutils with setuptools
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/n/nvidia-ml-py/nvidia{0}ml{0}py-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/n/{0}/{0}-{1}.tar.gz"
         if version > Version("12.560.30"):
-            sep = "_"
+            name = "nvidia_ml_py"
         else:
-            sep = "-"
-        return url.format(sep, version)
+            name = "nvidia-ml-py"
+        return url.format(name, version)
