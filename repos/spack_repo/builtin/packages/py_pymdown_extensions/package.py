@@ -25,7 +25,8 @@ class PyPymdownExtensions(PythonPackage):
         sha256="39f4a020f40773f6b2ff31d2cd2546c2c04d0a6498c31d9c688d2be07e1767d5",
     )
     version(
-        "9.5", sha256="3ef2d998c0d5fa7eb09291926d90d69391283561cf6306f85cd588a5eb5befa0"
+        "9.5",
+        sha256="3ef2d998c0d5fa7eb09291926d90d69391283561cf6306f85cd588a5eb5befa0",
     )
 
     depends_on("py-hatchling@1.26:", when="@11.0.1:", type="build")
