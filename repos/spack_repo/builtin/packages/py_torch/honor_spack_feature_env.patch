@@ -6,7 +6,7 @@ index a31ce6db266..8286c394f10 100644
    endif()
  endforeach()
  
-+# PyTorch 2.12 declares these feature options after this file is included.
++# PyTorch 2.12-2.13 declares these feature options after this file is included.
 +# Preserve package-manager selections in the cache so their later defaults do
 +# not override the corresponding USE_* environment variables.
 +if(DEFINED ENV{USE_XPU})
