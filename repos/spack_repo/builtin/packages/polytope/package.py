@@ -43,7 +43,6 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("cxx")
 
     depends_on("boost", when="+boost")
-    depends_on("mpi", when="+mpi")
 
     def url_for_version(self, version):
         if version >= Version("1.7.5"):
