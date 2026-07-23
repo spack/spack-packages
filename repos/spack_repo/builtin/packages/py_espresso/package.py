@@ -32,12 +32,12 @@ class PyEspresso(CMakePackage):
     version(
         "5.0.1",
         sha256="92b314c39e7715a9a8c347269bf2ffb8c85c23d6dfcadd3d81a7e04b67d89589",
-        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.1.tar.gz"
+        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.1.tar.gz",
     )
     version(
         "5.0.0",
         sha256="8b6a6ce62fa9358464c789ed200f72e19b6687f999dc95b20b407ee1274cdf4e",
-        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.0.tar.gz"
+        url="https://github.com/espressomd/espresso/archive/refs/tags/5.0.0.tar.gz",
     )
 
     version("4.2.2", sha256="2bc02f91632b0030f1203759768bd718bd8a0005f72696980b12331b4bfa0d76")
