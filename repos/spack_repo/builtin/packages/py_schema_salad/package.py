@@ -47,7 +47,7 @@ class PySchemaSalad(PythonPackage):
     depends_on("py-rdflib@4.2.2:7", when="@8.4.20230927144413:", type=("build", "run"))
     depends_on("py-mistune@2.0.3:2.0", type=("build", "run"))
     depends_on(
-        "py-mistune@3.0.0", type=("build", "run"), when="@8.5.20240311110950:8.8.20250205075315"
+        "py-mistune@3.0", type=("build", "run"), when="@8.5.20240311110950:"
     )
     depends_on("py-mistune@3.0.1:3.2", type=("build", "run"), when="@8.9.20260417192335:")
     depends_on(
