@@ -251,6 +251,12 @@ class Python(Package):
         depends_on("libxcrypt", when="+crypt")
 
     patch(
+        "https://github.com/python/cpython/commit/106eb532ea3b243423e62a702719e9d3c0e40c16.patch?full_index=1",
+        sha256="d01422e6c6cb1df21161f5fa261cfd12853756abbddf816543934f3fe96a5827",
+        when="@3.14:3.14.4 platform=windows"
+        )
+
+    patch(
         "https://bugs.python.org/file44413/alignment.patch",
         when="@3.6",
         sha256="d39bacde16128f380933992ea7f237ac8f70f9cdffb40c051aca3be46dc29bdf",
@@ -441,7 +447,13 @@ class Python(Package):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
-
+        if sys.platform == "win32":
+            # on windows, python tries to find another python and if it fails to do
+            # so, downloads one via nuget.
+            # Just use Spack's python 
+            # temporary fix until the branch moving python to only use Spack based
+            # dependencies can land.
+            env.set("PYTHON_FOR_BUILD", sys.executable)
         # TODO: Python has incomplete support for Python modules with mixed
         # C/C++ source, and patches are required to enable building for these
         # modules. All Python versions without a viable patch are installed
