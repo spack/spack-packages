@@ -1,8 +1,8 @@
 import os
 import sys
 
-CI_PROJECT_DIR = "."
-CI_AUX_DIR = os.path.join(".ci", "tmp", "spack")
+CI_PROJECT_DIR = os.path.join("/tmp", "spack")
+CI_AUX_DIR = os.path.join("/.ci", "tmp", "spack")
 
 
 def configure_packages_repo(dotenv):

@@ -2,7 +2,9 @@ stages: [ "generate", "build" ]
 
 variables:
   SPACK_DISABLE_LOCAL_CONFIG: "1"
-  SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
+  SPACK_USER_CACHE_PATH: "/tmp/spack/_user_cache/"
+  SPACK_USER_CONFIG_PATH: "/tmp/spack/_config_dir/"
+  SPACK_PROJECT_CI_DIR: "/home/tipi"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
   PR_MIRROR_FETCH_DOMAIN: "s3://spack-binaries-prs"
   PR_MIRROR_PUSH_DOMAIN: "s3://spack-binaries-prs"
@@ -21,15 +23,15 @@ default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
 .clone_spack: &clone_spack
-  - mkdir .ci/tmp
-  - mkdir .ci/tmp/spack
-  - cd .ci/tmp/spack
+  - mkdir /.ci/tmp
+  - mkdir /.ci/tmp/spack
+  - cd /.ci/tmp/spack
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
-  - cd ${CI_PROJECT_DIR}
+  - cd ~/tipi
 
 .trigger_build: &trigger_build
   strategy: depend
@@ -113,26 +115,26 @@ default:
       "${SPACK_CI_CONFIG_ROOT}/${PIPELINE_MIRROR_TEMPLATE}"
       "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
     - spack config add -f "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
-    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir"
-    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+    - mkdir "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir"
+    - mkdir "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
     - spack
-      config blame > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
+      config blame > "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
     - spack -v  --color=always
       ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
       --forward-variable SPACK_CHECKOUT_VERSION
       --forward-variable SPACK_CHECKOUT_REPO
       --forward-variable SPACK_CI_PACKAGES_ROOT
       --forward-variable SPACK_CI_SPACK_ROOT
-      --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      --artifacts-root "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      --output-file "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
     when: always
     paths:
-      - "${CI_PROJECT_DIR}/jobs_scratch_dir"
-      - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/patches"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
+      - "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir"
+      - "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/patches"
+      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/providers"
+      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/tags"
   variables:
     SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
@@ -168,7 +170,7 @@ default:
     - |
       [ ! -z ${NOOP_JOB} ] && \
       python3 ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py \
-      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
     - |
       [ ! -z ${NOOP_JOB} ] && exit 0
     - uname -a || true
@@ -215,7 +217,7 @@ default:
     - |
       If ( $NOOP_JOB )
       {
-          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
       }
     - |
       If ( $NOOP_JOB ) { exit 0 }
@@ -246,7 +248,7 @@ default:
   tags: ["spack", "public", "medium", "x86_64_v3"]
   image: {
     name: "tipibuild/linux-kitware-paraview@sha256:e0417824c4d417eb4d363f08954d11b94f9e6eb4ec76cee391db72e1e281fb18",
-    entrypoint: ["/bin/bash"]
+    entrypoint: [""]
   }
 
 .build:
