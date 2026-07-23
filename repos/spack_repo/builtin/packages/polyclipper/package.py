@@ -14,6 +14,9 @@ class Polyclipper(CMakePackage):
     url = "https://github.com/llnl/PolyClipper/archive/refs/tags/v1.2.6.tar.gz"
     git = "https://github.com/llnl/PolyClipper.git"
 
+    maintainers("jmikeowen")
+    license("BSD-3-Clause")
+
     version(
         "1.2.6",
         sha256="ffce2fe36fb888b7aaf93d4b3591b0875909573537ca39c0730b7d85bbc5558c",
