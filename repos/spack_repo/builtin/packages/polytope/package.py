@@ -20,11 +20,8 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("jmikeowen")
     license("BSD-2-Clause")
 
-    version(
-        "0.7.5",
-        sha256="ee249cfbb38632a704d177bb3269124ab7b227d29a6c36c9857e822cf4df0430"
-    )
-    
+    version("0.7.5", sha256="ee249cfbb38632a704d177bb3269124ab7b227d29a6c36c9857e822cf4df0430")
+
     variant("mpi", default=True, description="Enable MPI support")
     variant("shared", default=False, description="Enable share lib build")
     variant("boost", default=False, description="Enable Boost support")
