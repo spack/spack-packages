@@ -13,7 +13,7 @@ class PerlStatisticsRegression(PerlPackage):
     homepage = "https://metacpan.org/pod/Statistics::Regression"
     url = "https://cpan.metacpan.org/authors/id/I/IA/IAWELCH/Statistics-Regression-0.53.tar.gz"
 
-    license("GPL-1.0")
+    license("GPL-1.0-or-later")
 
     version("0.53", sha256="2cc53e3996dda4dceb5d7a794ba15107adb7a6614e19b485c0b8e47a5ab8b69a")
 
