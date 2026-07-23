@@ -44,9 +44,9 @@ class PyCwlUtils(PythonPackage):
     depends_on("py-typing-extensions@4.10.0:", when="@0.42:", type=("build", "run"))
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cwl-utils/cwl{}utils-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/c/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.34"):
-            sep = "_"
+            name = "cwl_utils"
         else:
-            sep = "-"
-        return url.format(sep, version)
+            name = "cwl-utils"
+        return url.format(name, version)

@@ -36,9 +36,9 @@ class PySphinxcontribSerializinghtml(PythonPackage):
     depends_on("py-setuptools", when="@:1.1.5", type="build")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sphinxcontrib-serializinghtml/sphinxcontrib{}serializinghtml-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.1.6"):
-            separator = "_"
+            name = "sphinxcontrib_serializinghtml"
         else:
-            separator = "-"
-        return url.format(separator, version)
+            name = "sphinxcontrib-serializinghtml"
+        return url.format(name, version)
