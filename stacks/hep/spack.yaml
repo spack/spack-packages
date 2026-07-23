@@ -15,13 +15,21 @@ spack:
     all:
       target: ["x86_64_v3"]
       require:
-      - "%gcc"
       - target=x86_64_v3
       providers:
         blas: [openblas]
         mpi: [mpich]
         tbb: [intel-tbb]
       variants: +mpi
+    c:
+      require:
+      - gcc
+    cxx:
+      require:
+      - gcc
+    fortran:
+      require:
+      - gcc
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
