@@ -17,10 +17,7 @@ class Polyclipper(CMakePackage):
     maintainers("jmikeowen")
     license("BSD-3-Clause")
 
-    version(
-        "1.2.6",
-        sha256="ffce2fe36fb888b7aaf93d4b3591b0875909573537ca39c0730b7d85bbc5558c"
-    )
+    version("1.2.6", sha256="ffce2fe36fb888b7aaf93d4b3591b0875909573537ca39c0730b7d85bbc5558c")
 
     with default_args(type="build"):
         depends_on("blt")
