@@ -45,6 +45,8 @@ class Omm(CMakePackage):
     depends_on("dbcsr~shared", when="+dbcsr")  # Expects static library (FindCustomDbcsr)
 
     depends_on("matrix-switch")
+    depends_on("matrix-switch@1.3.1", when="@1.4.1")
+    depends_on("matrix-switch@1.2.1", when="@1.2.1")
     depends_on("matrix-switch+lapack", when="+lapack")
     depends_on("matrix-switch+mpi", when="+mpi")
     depends_on("matrix-switch+scalapack", when="+scalapack")
