@@ -20,6 +20,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("jmikeowen", "ldowen")
     license("BSD-2-Clause")
 
+    version("master", branch="master", submodules=True)
     version("0.7.5", sha256="ee249cfbb38632a704d177bb3269124ab7b227d29a6c36c9857e822cf4df0430")
     version("0.7.4", sha256="a1901b0feaf3c4d3660766e8a6c325c0fe1fcaeb236b5ae95c8d139c386147c8")
     version("0.7.3", sha256="f32817b44d2a3b98407531980b89d0a31b0c14b8b30de37a6a7bc6ec91e48bf1")
