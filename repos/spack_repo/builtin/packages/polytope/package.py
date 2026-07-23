@@ -60,7 +60,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
         "0.5.24",
         sha256="ff45624cfc522d62f21c69ac8aa90477bf00d6ee472f4e0a07b508702304fa57"
     )
-
+    
     variant("mpi", default=True, description="Enable MPI support")
     variant("shared", default=False, description="Enable share lib build")
     variant("boost", default=False, description="Enable Boost support")
