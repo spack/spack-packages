@@ -57,7 +57,6 @@ class GridlabD(CMakePackage):
         if self.spec.satisfies("+mysql"):
             args.append("-DGLD_USE_MYSQL=ON")
             args.append("-DGLD_MYSQL_DIR=" + self.spec["mysql"].prefix)
-            args.append("-DCMAKE_EXE_LINKER_FLAGS=-ltinfo")
         else:
             args.append("-DGLD_USE_MYSQL=OFF")
 
@@ -78,4 +77,6 @@ class GridlabD(CMakePackage):
                 or self.spec.satisfies("%apple-clang")
             ):
                 flags.append("-fpermissive")
+        if name == "ldflags" and self.spec.satisfies("^ncurses+termlib"):
+            flags.append("-ltinfo")
         return (flags, None, None)
