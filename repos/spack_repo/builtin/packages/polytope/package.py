@@ -17,7 +17,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/llnl/polytope/archive/refs/tags/v0.7.5.tar.gz"
     git = "https://github.com/llnl/polytope.git"
 
-    maintainers("jmikeowen")
+    maintainers("jmikeowen", "ldowen")
     license("BSD-2-Clause")
 
     version(
