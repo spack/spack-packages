@@ -541,4 +541,4 @@ class Seacas(CMakePackage):
     @on_package_attributes(run_tests=True)
     def run_ctest_after_install(self):
         with working_dir(self.build_directory):
-            ctest("-j", "8", "--output-on-failure")
+            ctest("-j", str(make_jobs), "--output-on-failure")
