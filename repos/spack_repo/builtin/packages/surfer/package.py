@@ -21,6 +21,9 @@ class Surfer(CargoPackage):
     version("main", branch="main", submodules=True)
 
     version(
+        "0.7.0", tag="v0.7.0", commit="bd749b1f786c1c62cd67893ca71346cbe6983915", submodules=True
+    )
+    version(
         "0.6.0", tag="v0.6.0", commit="78e71f1e7761750a68fd94c128dd60ad00b220bc", submodules=True
     )
     version(
@@ -33,13 +36,15 @@ class Surfer(CargoPackage):
         "0.3.0", tag="v0.3.0", commit="1a6b34c44ea0e5089bd55d0bce1297aa1a02e6ef", submodules=True
     )
 
-    depends_on("rust@1.92:", when="@:0.4.0")
-    depends_on("rust@1.82:", when="@:0.3.0")
+    depends_on("rust@1.92:", type="build", when="@0.7.0:")
+    depends_on("rust@1.90:", type="build", when="@0.5.0:0.6.0")
+    depends_on("rust@1.88:", type="build", when="@0.4.0")
+    depends_on("rust@1.82:", type="build", when="@0.3.0")
     depends_on("c", type="build")
     depends_on("openssl")
 
     def build(self, spec, prefix):
-        cargo("build", "--release")
+        cargo("build", "--release", "--locked")
 
     def install(self, spec, prefix):
-        cargo("install", "--path", "surfer", "--root", prefix)
+        cargo("install", "--locked", "--path", "surfer", "--root", prefix)

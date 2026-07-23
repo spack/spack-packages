@@ -558,10 +558,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("target=m1:"):
             # Use custom simplified target for macOS ARM procesors:
             # GENERIC target results in SIGILL
-            make_defs += [
-                "TARGET=VORTEX",
-                "NO_SVE=1",
-            ]
+            make_defs += ["TARGET=VORTEX", "NO_SVE=1"]
         else:
             # Try to intelligently add target and architecture flags
             make_defs += self._microarch_target_args()
@@ -690,6 +687,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # ensure MACOSX_RPATH is set
             self.define("CMAKE_POLICY_DEFAULT_CMP0042", "NEW"),
         ]
+
+        # On macOS the cmake build sets the dylib install name to the build-stage
+        # path instead of the install prefix, causing downstream packages (e.g.
+        # py-numpy) to embed a broken rpath.  Setting CMAKE_INSTALL_NAME_DIR fixes
+        # the install name to the real installed lib directory.
+        if self.spec.satisfies("platform=darwin"):
+            cmake_defs += [self.define("CMAKE_INSTALL_NAME_DIR", self.spec.prefix.lib)]
 
         if self.spec.satisfies("+dynamic_dispatch"):
             cmake_defs += [self.define("DYNAMIC_ARCH", "ON")]
