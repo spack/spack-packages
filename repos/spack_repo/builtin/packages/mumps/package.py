@@ -348,7 +348,8 @@ class Mumps(Package):
                             " -undefined dynamic_lookup %s -o "
                             % (os.environ["FC"], prefix.lib, inject_libs),
                             "RANLIB=echo",
-                        ])
+                        ]
+                    )
                 else:
                     makefile_conf.extend(
                         [
@@ -357,7 +358,9 @@ class Mumps(Package):
                             " -undefined dynamic_lookup %s -o "
                             % (self.spec["mpi"].mpifc, prefix.lib, inject_libs),
                             "RANLIB=echo",
-                        ])
+                        ]
+                    )
+            else:
                 if using_xlf:
                     build_shared_flag = "qmkshrobj"
                 else:
