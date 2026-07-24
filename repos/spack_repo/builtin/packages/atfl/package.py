@@ -21,27 +21,27 @@ _VERSIONS = {
             "https://developer.arm.com/packages/arm-toolchains/ubuntu/pool/arm-toolchain-for-linux_22.1-54~noble_arm64.deb",
         ),
         "rhel8": (
-            "030b4f7456c36cf956ecd82cd7d8b34210f501a9a3214acb9f3c660c1a931fe9",
+            "73bd1adbcf0bcd4a496ff22229c253a50b8b764ca3b49b1d0dafb8157a9c884a",
             "https://developer.arm.com/packages/arm-toolchains/rhel/el8/aarch64/arm-toolchain-for-linux-22.1-54.el8.aarch64.rpm",
         ),
         "rhel9": (
-            "596fd8468fe3d132de168e043ca8a29b6c6fead275d2254ee630f2da27d6b1ae",
+            "6740b459a8b23bb97058f0d353dc798f1d831be4f2a871527d54bd444c2a3ff9",
             "https://developer.arm.com/packages/arm-toolchains/rhel/el9/aarch64/arm-toolchain-for-linux-22.1-54.el9.aarch64.rpm",
         ),
         "rhel10": (
-            "89bd818d8d7b3e30f93a3ace60ab3d269a28c2b3b3e3ded31cd76d89877419ec",
+            "188c38a4940481caae6d4611cfe0b9255e6c98e706d902ef50471744f365d9c7",
             "https://developer.arm.com/packages/arm-toolchains/rhel/el10/aarch64/arm-toolchain-for-linux-22.1-54.el10.aarch64.rpm",
         ),
         "amzn2023": (
-            "48c01cd0bd8063eb55709d1a968aa0fb2465f129558974cff7dbe80e0a3d7785",
+            "8ff120e5d567535b980b8f8693aad63d4a20c2776bb4a2e4cefad555b38e0b0c",
             "https://developer.arm.com/packages/arm-toolchains/amazonlinux/al2023/aarch64/arm-toolchain-for-linux-22.1-54.al2023.aarch64.rpm",
         ),
         "sles15": (
-            "83bab7739d8866453903ed4c9591e34a729e4414517ba290a7af269ed74d862c",
+            "13ce7001a5c5d0aa9824d4b5e364a021ee728a764e0d1c5518510bb6b2ed24fb",
             "https://developer.arm.com/packages/arm-toolchains/sles/sles15/aarch64/arm-toolchain-for-linux-22.1-54.sles15.aarch64.rpm",
         ),
         "sles16": (
-            "48225eb252ca6894c83dbe7b4e8adf93bf316b9e93216794defa198dc50b0cc7",
+            "948da28e2387588fd7ba4e67c9cd037c74cf7a788ac79fc5f26c306bdc4e955b",
             "https://developer.arm.com/packages/arm-toolchains/sles/sles16/aarch64/arm-toolchain-for-linux-22.1-54.sles16.aarch64.rpm",
         ),
     },
