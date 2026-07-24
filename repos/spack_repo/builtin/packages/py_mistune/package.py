@@ -34,6 +34,7 @@ class PyMistune(PythonPackage):
         # https://github.com/lepture/mistune/security/advisories/GHSA-v87v-83h2-53w7
         version("3.2.0", sha256="708487c8a8cdd99c9d90eb3ed4c3ed961246ff78ac82f03418f5183ab70e398a")
         version("3.1.4", sha256="b5a7f801d389f724ec702840c11d8fc48f2b33519102fc7ee739e8177b672164")
+        version("3.0.0", sha256="b28444efe542cc9bb9f19fb133740ab020fe5e14fe6ffcce9576d24fbd1e5b20")
         version("2.0.5", sha256="0246113cb2492db875c6be56974a7c893333bf26cd92891c85f63151cee09d34")
         version("2.0.4", sha256="9ee0a66053e2267aba772c71e06891fa8f1af6d4b01d5e84e267b4570d4d9808")
         version("2.0.2", sha256="6fc88c3cb49dba8b16687b41725e661cf85784c12e8974a29b9d336dd596c3a1")

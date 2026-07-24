@@ -16,6 +16,10 @@ class PySchemaSalad(PythonPackage):
 
     license("Apache-2.0")
     version(
+        "8.9.20260417192335",
+        sha256="5ad4599231dcf7ae8ae2fc841a677db9c120544b36a6d6347ae87875b2c1b083",
+    )
+    version(
         "8.8.20250205075315",
         sha256="444a45509fb048347e0ec205b2af6390f0bb145f7183716ba6af2f75a22b8bdd",
     )
@@ -31,14 +35,19 @@ class PySchemaSalad(PythonPackage):
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@8.4.20230927144413:", type=("build", "run"))
     depends_on("python@3.9:", when="@8.7.20241021092521:", type=("build", "run"))
+    depends_on("python@3.10:", when="@8.9.20260327095315:", type=("build", "run"))
     depends_on("py-setuptools@45:", type="build")
     depends_on("py-setuptools@50:", when="@8.4.20231117150958:", type="build")
 
     depends_on("py-requests@1:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.17.21", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.18", when="@8.4.20231113094720:", type=("build", "run"))
+    depends_on("py-ruamel-yaml@0.17.6:0.19", when="@8.9.20260327095315:", type=("build", "run"))
     depends_on("py-rdflib@4.2.2:6", type=("build", "run"))
+    depends_on("py-rdflib@4.2.2:7", when="@8.4.20230927144413:", type=("build", "run"))
     depends_on("py-mistune@2.0.3:2.0", type=("build", "run"))
+    depends_on("py-mistune@3.0", type=("build", "run"), when="@8.5.20240311110950:")
+    depends_on("py-mistune@3.0.1:3.2", type=("build", "run"), when="@8.9.20260417192335:")
     depends_on(
         "py-cachecontrol@0.11.7:0.12+filecache", when="@:8.7.20240718183047", type=("build", "run")
     )
@@ -48,20 +57,26 @@ class PySchemaSalad(PythonPackage):
         type=("build", "run"),
     )
     depends_on(
-        "py-cachecontrol@0.14:0.14+filecache", when="@8.8.20241204110045:", type=("build", "run")
+        "py-cachecontrol@0.14+filecache", when="@8.8.20241204110045:", type=("build", "run")
     )
     depends_on("py-setuptools-scm@6.2:+toml", type="build")
     depends_on("py-setuptools-scm@8.0.4:8+toml", when="@8.4.20231024070348:", type="build")
+    depends_on("py-setuptools-scm@8.0.4:10+toml", when="@8.9.20260417192335:", type="build")
     depends_on("py-mypy@0.961", when="@8.3.20220717184004:8.3.20221028160159", type="build")
     depends_on("py-mypy@0.991", when="@8.3.20221209165047:8.4.20230201194352", type="build")
     depends_on("py-mypy@1.12.1", when="@8.7.20241021092521", type="build")
     depends_on("py-mypy@1.15.0", when="@8.8.20250205075315", type="build")
+    depends_on("py-mypy@1.20.1", when="@8.9.20260417192335", type="build")
     depends_on("py-black@19.10b0:", type="build")
-    depends_on("py-black@19.10b0:24.10", when="@8.7.20241021092521:", type="build")
+    depends_on(
+        "py-black@19.10b0:24.10", when="@8.7.20241021092521:8.8.20250205075315", type="build"
+    )
+    depends_on("py-black@19.10b0:26.3", type="build", when="@8.9.20260417192335:")
     depends_on("py-types-pkg-resources", when="@:8.4.20231117150958", type="build")
     depends_on("py-types-requests", type="build")
     depends_on("py-types-dataclasses", type="build")
     depends_on("py-types-setuptools", type="build")
+    depends_on("py-rich-argparse", when="@8.9.20260417192335:", type="build")
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
