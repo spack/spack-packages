@@ -19,6 +19,7 @@ class Arrow(CMakePackage, CudaPackage):
 
     license("Apache-2.0")
 
+    version("24.0.0", sha256="94e18d188f26324c4da6bb3a723fec1536ae88b8308bada28d53c0b8d5206b28")
     version("23.0.1", sha256="9a9a057bba3aa7080abc2ba8e7a079effa74626a4f308ac56bfce035d31ef1ac")
     version("22.0.0", sha256="8a95e6c7b9bec2bc0058feb73efe38ad6cfd49a0c7094db29b37ecaa8ab16051")
     version("21.0.0", sha256="e92401790fdba33bfb4b8aa522626d800ea7fda4b6f036aaf39849927d2cf88d")
@@ -55,8 +56,10 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("boost@1.60: +filesystem +system")
     depends_on("brotli", when="+brotli")
     depends_on("bzip2", when="+bz2")
-    depends_on("cmake@3.2.0:", type="build")
-    depends_on("cmake@3.25.0:", type="build", when="@20:")
+    depends_on("cmake@3.2:", type="build")
+    depends_on("cmake@3.5:", when="@3:", type="build")
+    depends_on("cmake@3.16:", when="@13:", type="build")
+    depends_on("cmake@3.25:", when="@20:", type="build")
     depends_on("flatbuffers")
     conflicts("%gcc@14", when="@:15.0.1")  # https://github.com/apache/arrow/issues/40009
     depends_on("llvm@:11 +clang", when="+gandiva @:3", type="build")
@@ -86,6 +89,7 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("utf8proc@2.7.0: +shared", when="+compute")
     depends_on("utf8proc@2.7.0: +shared", when="+gandiva")
     depends_on("utf8proc@2.7.0: +shared", when="+python")
+    depends_on("xsimd@14:", when="@24:")
     depends_on("xsimd@8.1.0:", when="@9.0.0:")
     depends_on("zlib-api", when="+zlib @9:")
     depends_on("zlib-api", when="@:8")
