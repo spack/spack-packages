@@ -112,7 +112,7 @@ spack:
   - hepmc
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
-  #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
+  - herwig3 +njet +vbfnlo
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python
