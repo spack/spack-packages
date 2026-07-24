@@ -206,6 +206,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         "profiled", default=False, description="Use Profile Guided Optimization", when="+bootstrap"
     )
     variant("libsanitizer", default=True, description="Use libsanitizer")
+    with when("platform=linux"):
+        variant("futex", default=True, description="Use linux futex")
 
     # See https://gcc.gnu.org/install/prerequisites.html
 
@@ -914,6 +916,13 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             options.extend(["--enable-libsanitizer"])
         else:
             options.extend(["--disable-libsanitizer"])
+
+        # enable_libsanitizera
+        with when("platform=linux"):
+            if spec.satisfies("+futex"):
+                options.extend(["--enable-linux-futex"])
+            else:
+                options.extend(["--disable-linux-futex"])
 
         # Configure include and lib directories explicitly for these
         # dependencies since the short GCC option assumes that libraries
