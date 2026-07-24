@@ -15,8 +15,10 @@ class RGraph(RPackage):
     bioc = "graph"
 
     with default_args(get_full_repo=True):
-        version("1.78.0", commit="9df68e8f74e2b807b033f991d21142edfd1bc090")
-        version("1.76.0", commit="e3efc108716e98bd3363621d17a6f9c3ef975d19")
+        version("1.90.0", commit="d70a1b6a3b99e67bf127134e03b4223740f8680b")  # bioc 3.23
+        version("1.86.0", commit="5e339a3baf01d0cba82b4be98683952c7155d498")  # bioc 3.21
+        version("1.78.0", commit="9df68e8f74e2b807b033f991d21142edfd1bc090")  # bioc 3.17
+        version("1.76.0", commit="e3efc108716e98bd3363621d17a6f9c3ef975d19")  # bioc 3.16
         version("1.74.0", commit="4af608a5d9e1de33fda6ae28fb73bff9272ee296")
         version("1.72.0", commit="7afbd26ecd76e55e6bbd74915a561d7a9b15f907")
         version("1.68.0", commit="03ad9ed088095605e317510b8234501318994e94")
@@ -26,7 +28,8 @@ class RGraph(RPackage):
         version("1.56.0", commit="c4abe227dac525757679743e6fb4f49baa34acad")
         version("1.54.0", commit="2a8b08520096241620421078fc1098f4569c7301")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("r@2.10:", type=("build", "run"))
+
     depends_on("r-biocgenerics@0.13.11:", type=("build", "run"))

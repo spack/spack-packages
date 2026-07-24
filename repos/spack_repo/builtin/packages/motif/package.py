@@ -45,6 +45,8 @@ class Motif(AutotoolsPackage):
     patch("add_xbitmaps_dependency.patch")
     # ensure tools/wml/wmluiltok.c has a main function
     patch("add_wmluiltok_option_main.patch")
+    # Fix build with GCC 14 and newer
+    patch("fix_build_with_gcc14.patch", level=0)
 
     def patch(self):
         # fix linking the simple_app demo program
@@ -54,6 +56,13 @@ class Motif(AutotoolsPackage):
             "../../../lib/Exm/libExm.a -lX11",
             "demos/programs/Exm/simple_app/Makefile.am",
         )
+
+    def flag_handler(self, name, flags):
+        # The package does not build with C dialects newer than gnu17, so set gnu17
+        # for GCC 15 and newer which default to gnu23
+        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
 
     def autoreconf(self, spec, prefix):
         autoreconf = which("autoreconf", required=True)
