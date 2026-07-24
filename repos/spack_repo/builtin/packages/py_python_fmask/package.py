@@ -18,6 +18,7 @@ class PyPythonFmask(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("0.5.10", sha256="5df8a25af967b849d2afe4439d339e40e007f0b5af48670de5d7d3034368425c")
     version("0.5.9", sha256="7e2875abab87da545d3ec06b9dad704105729977ad1e479a3d9d3b8294c49e44")
     version("0.5.8", sha256="d55f54d3fecde818374017fdbe0ad173c893ef74c79ba2a7bc1890b7ec416c2f")
     version("0.5.7", sha256="da9dad1b977a50599d068dedaed007100b20322a79ca5d78f702712647c2c3f3")
