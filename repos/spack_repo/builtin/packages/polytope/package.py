@@ -52,7 +52,7 @@ class Polytope(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         args = [
             self.define("TESTING", "OFF"),
-            self.define("ENABLE_MPI", "OFF"), # MPI support is currently broken
+            self.define("ENABLE_MPI", "OFF"),  # MPI support is currently broken
             self.define_from_variant("USE_BOOST", "boost"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
