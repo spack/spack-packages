@@ -15,14 +15,20 @@ class PyMeshioplusplus(PythonPackage):
     homepage = "https://github.com/loumalouomega/meshioplusplus"
     # 6.0.0 has no PyPI sdist, so build every version from the GitHub archive
     # (scikit-build-core builds fine from the source tree) for a uniform source.
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v6.6.1.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v8.7.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
 
     license("MIT", checked_by="loumalouomega")
 
-    version("main", branch="main")
+    # Upstream's default branch moved from main to master at v7.0.0.
+    version("master", branch="master")
+    version("8.7.0", sha256="d8721aa4ed82ef2f7fe49062910826a7012f6823eb22d5290690c298eafe68ec")
+    # v8.0.0: the WebAssembly build gained every core format; no change to the
+    # Python wheel this package builds.
+    version("8.0.0", sha256="ba0434950e9e2ef165ff9d50043ee6bb3e4359e7bc72ba77108553b7aad4b83f")
+    version("7.0.0", sha256="797809b8c645d4712de9160ea375b0dc301b593844c475ca5bdbeb6490446c9a")
     version("6.6.1", sha256="327c1b146fefa3eb19404e2b422b5cf789fe81b8f402fea9694124d50b13e88b")
     version("6.6.0", sha256="a585a7b932a9a893b17710f68ed64a04b492d12abfe74c5744812fb44599cbae")
     version("6.5.0", sha256="f0ebdb7a547097ae338b2295eaa2cb08fe728a7d32c408f4109511ded3196779")
@@ -39,6 +45,24 @@ class PyMeshioplusplus(PythonPackage):
         description="C++ netCDF-backed format (Exodus) and the netCDF4 fallback",
     )
     variant("zlib", default=True, description="C++ VTU zlib compression path")
+    variant(
+        "zstd",
+        default=False,
+        description="C++ VTK XML zstd compression codec and the zstandard fallback",
+        when="@7.3:",
+    )
+    variant(
+        "lz4",
+        default=False,
+        description="C++ VTK XML lz4 compression codec and the lz4 fallback",
+        when="@7.3:",
+    )
+    variant(
+        "kahip",
+        default=False,
+        description="KaHIP-backed mesh partitioning quality",
+        when="@7.6:",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -56,6 +80,13 @@ class PyMeshioplusplus(PythonPackage):
     depends_on("netcdf-c", when="+netcdf")
     depends_on("py-netcdf4", when="+netcdf", type="run")
     depends_on("zlib-api", when="+zlib")
+    depends_on("zstd", when="+zstd")
+    depends_on("py-zstandard", when="+zstd", type="run")
+    depends_on("lz4", when="+lz4")
+    depends_on("py-lz4", when="+lz4", type="run")
+    # KaHIP has no PyPI/Spack Python fallback package; +kahip only wires up
+    # the native accelerator.
+    depends_on("kahip", when="+kahip")
 
     # meshio++ requires a C++20 toolchain for the native core.
     conflicts("%gcc@:9", msg="meshio++ needs GCC >= 10 for C++20")
@@ -70,4 +101,7 @@ class PyMeshioplusplus(PythonPackage):
             "cmake.define.MESHIOPLUSPLUS_WITH_HDF5": onoff("+hdf5"),
             "cmake.define.MESHIOPLUSPLUS_WITH_NETCDF": onoff("+netcdf"),
             "cmake.define.MESHIOPLUSPLUS_WITH_ZLIB": onoff("+zlib"),
+            "cmake.define.MESHIOPLUSPLUS_WITH_ZSTD": onoff("+zstd"),
+            "cmake.define.MESHIOPLUSPLUS_WITH_LZ4": onoff("+lz4"),
+            "cmake.define.MESHIOPLUSPLUS_WITH_KAHIP": onoff("+kahip"),
         }

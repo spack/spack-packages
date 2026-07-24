@@ -18,14 +18,22 @@ class Meshioplusplus(CMakePackage):
     """
 
     homepage = "https://github.com/loumalouomega/meshioplusplus"
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v6.6.1.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v8.7.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
 
     license("MIT", checked_by="loumalouomega")
 
-    version("main", branch="main")
+    # Upstream's default branch moved from main to master at v7.0.0.
+    version("master", branch="master")
+    version("8.7.0", sha256="d8721aa4ed82ef2f7fe49062910826a7012f6823eb22d5290690c298eafe68ec")
+    # v8.0.0: the WebAssembly build gained every core format; no change to the
+    # native/CMake build this package drives.
+    version("8.0.0", sha256="ba0434950e9e2ef165ff9d50043ee6bb3e4359e7bc72ba77108553b7aad4b83f")
+    # v7.0.0: find_package(meshioplusplus) consumers now need version >=7.0
+    # (the packaged CMake config version was bumped).
+    version("7.0.0", sha256="797809b8c645d4712de9160ea375b0dc301b593844c475ca5bdbeb6490446c9a")
     version("6.6.1", sha256="327c1b146fefa3eb19404e2b422b5cf789fe81b8f402fea9694124d50b13e88b")
     version("6.6.0", sha256="a585a7b932a9a893b17710f68ed64a04b492d12abfe74c5744812fb44599cbae")
     version("6.5.0", sha256="f0ebdb7a547097ae338b2295eaa2cb08fe728a7d32c408f4109511ded3196779")
@@ -47,9 +55,28 @@ class Meshioplusplus(CMakePackage):
     variant("netcdf", default=True, description="C++ netCDF-backed format (Exodus)")
     variant("zlib", default=True, description="C++ VTU zlib compression path")
     variant(
+        "zstd",
+        default=False,
+        description="C++ VTK XML zstd compression codec",
+        when="@7.3:",
+    )
+    variant("lz4", default=False, description="C++ VTK XML lz4 compression codec", when="@7.3:")
+    variant(
+        "kahip",
+        default=False,
+        description="KaHIP-backed mesh partitioning quality",
+        when="@7.6:",
+    )
+    variant(
+        "cli",
+        default=False,
+        description="Build the native meshioplusplus CLI binary",
+        when="@7.0:",
+    )
+    variant(
         "parallel",
         default="auto",
-        values=("auto", "seq", "stl", "openmp", "tbb"),
+        values=("auto", "seq", "stl", "openmp", "tbb", conditional("kokkos", when="@8.5:")),
         multi=False,
         description="Parallel backend for meshioplusplus::parallel_for",
     )
@@ -71,9 +98,15 @@ class Meshioplusplus(CMakePackage):
     depends_on("mpi", when="+hdf5 ^hdf5+mpi")
     depends_on("netcdf-c", when="+netcdf")
     depends_on("zlib-api", when="+zlib")
+    depends_on("zstd", when="+zstd")
+    depends_on("lz4", when="+lz4")
+    depends_on("kahip", when="+kahip")
     # The TBB and (on libstdc++) the STL parallel backends need TBB.
     depends_on("tbb", when="parallel=tbb")
     depends_on("tbb", when="parallel=stl")
+    # The shared libmeshioplusplus.so needs a PIC Kokkos; its default static
+    # archives aren't position-independent and fail to link into it.
+    depends_on("kokkos@3.4: +pic", when="parallel=kokkos")
 
     # meshio++ requires a C++20 toolchain.
     conflicts("%gcc@:9", msg="meshio++ needs GCC >= 10 for C++20")
@@ -89,8 +122,14 @@ class Meshioplusplus(CMakePackage):
             self.define_from_variant("MESHIOPLUSPLUS_WITH_HDF5", "hdf5"),
             self.define_from_variant("MESHIOPLUSPLUS_WITH_NETCDF", "netcdf"),
             self.define_from_variant("MESHIOPLUSPLUS_WITH_ZLIB", "zlib"),
-            # Eigen is a vendored git submodule (a MED-transpose optimization
-            # only); the release tarball omits it, so use the plain-loop fallback.
+            self.define_from_variant("MESHIOPLUSPLUS_WITH_ZSTD", "zstd"),
+            self.define_from_variant("MESHIOPLUSPLUS_WITH_LZ4", "lz4"),
+            self.define_from_variant("MESHIOPLUSPLUS_WITH_KAHIP", "kahip"),
+            self.define_from_variant("MESHIOPLUSPLUS_BUILD_CLI", "cli"),
+            # Eigen and Polyscope are vendored git submodules (an MED-transpose
+            # optimization and the CLI's optional 3D viewer, respectively); the
+            # release tarball omits both, so Eigen falls back to a plain loop
+            # and Polyscope (attached only to the CLI target) stays off.
             self.define("MESHIOPLUSPLUS_WITH_EIGEN", False),
             self.define(
                 "MESHIOPLUSPLUS_PARALLEL_BACKEND",
