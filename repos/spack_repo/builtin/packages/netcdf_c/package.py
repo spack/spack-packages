@@ -480,18 +480,14 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
                 if "+external-xdr ^libtirpc" in hdf:
                     # This is somewhat ugly
                     libdir = hdf["rpc"].prefix.lib
-                    lib="tirpc"
+                    lib = "tirpc"
                     linker_flags.append(f"-L{libdir}")
                     linker_flags.append(f"-l{lib}")
 
         if linker_flags:
             lflagstr = " ".join(linker_flags)
-            base_cmake_args.append( 
-                    self.define("CMAKE_EXE_LINKER_FLAGS", lflagstr)
-                )
-            base_cmake_args.append( 
-                    self.define("CMAKE_MODULE_LINKER_FLAGS", lflagstr)
-                )
+            base_cmake_args.append(self.define("CMAKE_EXE_LINKER_FLAGS", lflagstr))
+            base_cmake_args.append(self.define("CMAKE_MODULE_LINKER_FLAGS", lflagstr))
 
         return base_cmake_args
 
