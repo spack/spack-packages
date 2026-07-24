@@ -40,6 +40,7 @@ class Rust(Package):
     version("nightly")
 
     # Stable versions.
+    version("1.97.1", sha256="0ed06fdaffd4722a7702e0b4eebfafc897ab8f513e8e1b247cdd7e5c6df6ded2")
     version("1.97.0", sha256="de002ee301c1b7422b0a7b09d7c4cb4924cd3224e6cfb24f065dad786dd3ed12")
     version("1.96.1", sha256="77a6ff3003a4ad0cb00697b043c879e3e1a15d945b1a1f63818903bfc3fa8b98")
     version("1.96.0", sha256="b99ce16cdf0ecfc761b585ac84d131b46733465a02f8ecd0ff2de9713c62ee09")
