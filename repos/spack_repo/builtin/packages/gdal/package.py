@@ -31,6 +31,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.13.2", sha256="0200b7878d837a7f475ff4070121d0e601f8ef801c2fd83a64294c544f609211")
     version("3.13.1", sha256="7398fb132753140740fac4f099f0dbe49d1ad074c4162290c308e067c46b7f92")
     version("3.13.0", sha256="1c537dd2f4d66f05534ae419bc2af495c2204ce13bb266c8cbd867dd6705f0c7")
     version("3.12.4", sha256="813094498c17522ac42821a5ea1ea783d8326c0adf286cce86a949038bd09198")
@@ -317,6 +318,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("geos@3.1:", when="+geos")
     depends_on("giflib", when="+gif")
     depends_on("grass@5.7:", when="+grass")
+    # depends_on("grok@20.3.5:", when="@2.13.2:+grok")
     # depends_on("grok@20.3.2:", when="@3.13.1:+grok")
     # depends_on("grok@20.2:", when="+grok")
     depends_on("libgta", when="+gta")
@@ -378,6 +380,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     with when("+poppler"):
         depends_on("poppler@0.86:", when="@3.9:")
         depends_on("poppler@0.24:")
+        depends_on("poppler@:26.07", when="@:3.13.1")
         depends_on("poppler@:26.05", when="@:3.13.0")
         depends_on("poppler@:26.04", when="@:3.12.4")
         depends_on("poppler@:26.03", when="@:3.12.3")
