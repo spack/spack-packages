@@ -111,14 +111,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=True, description="Enable OpenMP support")
     variant(
         "smm",
-        default="libxsmm",
+        default="blas",
         values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
         when="@:2026.1",
     )
     variant(
         "smm",
-        default="libxs",
+        default="blas",
         values=("blas", "libxs"),
         description="Library for small matrix multiplications",
         when="@2026.2:",
@@ -538,7 +538,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr@:2.9.1 smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
         depends_on("dbcsr@2.10: smm=libxs", when="@2026.2: smm=libxs")
-        depends_on("dbcsr+libxsmm", when="@2026.2: +libxsmm")
         depends_on("dbcsr~libxsmm", when="@2026.2: ~libxsmm")
 
     with when("@2022: +rocm"):

@@ -85,7 +85,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "smm",
-        default="libxsmm",
+        default="blas",
         values=("libxsmm", "blas"),
         description="Library for small matrix multiplications",
         when="@:2.9.1",
@@ -99,7 +99,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant(
         "libxsmm",
-        default=False,
+        default=True,
         description="Enable LIBXSMM JIT kernels for LIBXS",
         when="@2.10: smm=libxs",
     )
@@ -256,7 +256,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@2.10:"):
             args += [
                 self.define("USE_LIBXS", spec.satisfies("smm=libxs")),
-                self.define("USE_LIBXSMM", spec.satisfies("+libxsmm")),
+                self.define_from_variant("USE_LIBXSMM", "libxsmm"),
             ]
 
         if "@:2.9.1" in spec:
