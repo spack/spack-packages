@@ -1341,9 +1341,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "spla" in spec and (spec.satisfies("+cuda") or spec.satisfies("+rocm")):
             args += ["-DCP2K_USE_SPLA_GEMM_OFFLOADING=ON"]
 
-        use_libxsmm = spec.satisfies("smm=libxsmm") or spec.satisfies(
-            "@2026.2: +libxsmm"
-        )
+        use_libxsmm = spec.satisfies("smm=libxsmm") or spec.satisfies("@2026.2: +libxsmm")
         args += [
             self.define("CP2K_USE_LIBXSMM", use_libxsmm),
             self.define("CP2K_USE_LIBXS", spec.satisfies("smm=libxs")),
