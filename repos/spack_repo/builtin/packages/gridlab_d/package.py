@@ -65,8 +65,8 @@ class GridlabD(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Need to add GLPATH otherwise Gridlab-D will not run.
-        env.set("GLPATH", join_path(self.prefix, "lib", "gridlabd"))
-        env.prepend_path("GLPATH", join_path(self.prefix, "share", "gridlabd"))
+        env.set("GLPATH", self.prefix.lib)
+        env.prepend_path("GLPATH", self.prefix.share)
 
     def flag_handler(self, name: str, flags: List[str]):
         # gridlab-d's C++ code isn't strict-standards-compliant and needs
