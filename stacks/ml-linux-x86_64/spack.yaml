@@ -113,15 +113,11 @@ spack:
     - $jax_specs
     - matrix:
       - [$keras_specs]
-      exclude:
-      - py-keras backend=torch
-    # Does not yet support Spack-installed ROCm
-    # - $torch_specs
+    - $torch_specs
     - $scikit_learn_specs
     - $tensorboard_specs
     - $tensorflow_specs
-    # Does not yet support Spack-installed ROCm
-    # - $xgboost_specs
+    - $xgboost_specs
     override:
       packages:
         all:
@@ -139,8 +135,9 @@ spack:
             - target=x86_64_v3
             - ~cuda
             - +rocm
+            - ~distributed
             - amdgpu_target=gfx90a
-            - ~flash_attention
+            - +flash_attention
             - "%c,cxx=gcc"
 
   ci:
