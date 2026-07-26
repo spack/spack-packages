@@ -61,14 +61,13 @@ class IntelOneapiRuntime(Package):
             install(path, os.path.join(prefix.lib, os.path.basename(name)))
 
         if self.spec["intel-oneapi-compilers"].satisfies("+fix_rt_linkage"):
+            patchelf = which("patchelf", required=True)
             for _, name in libraries:
                 if name == "libimf.so":
-                    patchelf = which("patchelf")
                     patchelf.add_default_arg("--add-needed")
                     patchelf.add_default_arg("libm.so.6")
                     patchelf(join_path(prefix.lib, name), fail_on_error=True)
                 if name in ["libirc.so", "libimf.so"]:
-                    patchelf = which("patchelf")
                     patchelf.add_default_arg("--add-needed")
                     patchelf.add_default_arg("libc.so.6")
                     patchelf(join_path(prefix.lib, name), fail_on_error=True)
