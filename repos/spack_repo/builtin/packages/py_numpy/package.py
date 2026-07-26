@@ -278,6 +278,14 @@ class PyNumpy(PythonPackage):
             if gcc_version <= Version("5.1"):
                 flags.append(self.compiler.c99_flag)
 
+        if self.spec.satisfies("@1.26 ^intel-oneapi-compilers@2025.2") and name in (
+            "cflags",
+            "cxxflags",
+            "fflags",
+        ):
+            flags = [flag for flag in flags if not flag.startswith("-O")]
+            flags.append("-O1")
+
         return (flags, None, None)
 
     def _blas_lapack_pkg_config_mkl(self, spec) -> str:
