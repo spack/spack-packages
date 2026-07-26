@@ -14,6 +14,17 @@ from spack.package import *
 
 versions = [
     {
+        "version": "2026.1.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/eb43fd3f-7cff-46a4-ab14-a2d3b60c4899/intel-dpcpp-cpp-compiler-2026.1.0.118_offline.sh",
+            "sha256": "65d81ec1f249fb2cb7267fc787b21cf618b4f553c06b9e19d0981b30f25ae227",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/87bd1c07-e474-4f38-9492-e44e15ea7a52/intel-fortran-compiler-2026.1.0.104_offline.sh",
+            "sha256": "3779081508ebc099e99717eccd9de615c57fde292dc4f93e18955a103835f58d",
+        },
+    },
+    {
         "version": "2026.0.0",
         "cpp": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e2f4cda3-8891-4d0e-bf60-00d19c4e3e27/intel-dpcpp-cpp-compiler-2026.0.0.564_offline.sh",

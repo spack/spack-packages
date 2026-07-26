@@ -24,6 +24,13 @@ class IntelOneapiTbb(IntelOneApiLibraryPackage):
     )
 
     version(
+        "2023.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/d93b2767-7739-4b1c-8cfc-084b52f31447/intel-onetbb-2023.1.0.157_offline.sh",
+        sha256="ca12a1dcfebd119bd5f832a39d560e8740d441949e87a11213d82a84ef4df324",
+        expand=False,
+    )
+
+    version(
         "2023.0.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0abefd3d-79b7-44b6-9b64-d82dea1b9dae/intel-onetbb-2023.0.0.725_offline.sh",
         sha256="86f1055eb647699e818249fbc8ff0a651b66b58d193e9c9967d454b8e4aca9e7",
