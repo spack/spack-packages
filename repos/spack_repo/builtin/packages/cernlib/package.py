@@ -25,6 +25,7 @@ class Cernlib(CMakePackage):
     )
 
     variant("shared", default=True, description="Build shared libraries")
+    variant("internal_xbae", default=False, description="Use internal Xbae")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -38,12 +39,14 @@ class Cernlib(CMakePackage):
     depends_on("libxt")
     depends_on("libxcrypt")
 
-    depends_on("xbae", when="@2023:")
+    depends_on("xbae", when="@2023: ~internal_xbae")
 
     depends_on("openssl", when="platform=linux")
 
     # Fix build with GCC 14 and newer
     patch("fix_build_with_gcc14.patch", level=0)
+    # Fix build with GCC 16 and newer
+    patch("fix_build_with_gcc16.patch", level=0, when="%gcc@16:")
 
     def patch(self):
         if self.spec.satisfies("@:2023.08.14.0-free"):
@@ -54,7 +57,10 @@ class Cernlib(CMakePackage):
             )
 
     def cmake_args(self):
-        args = [self.define_from_variant("CERNLIB_BUILD_SHARED", "shared")]
+        args = [
+            self.define_from_variant("CERNLIB_BUILD_SHARED", "shared"),
+            self.define_from_variant("CERNLIB_USE_INTERNAL_XBAE", "internal_xbae"),
+        ]
         # The package does not build with C dialects newer than gnu17, so set gnu17
         # for GCC 15 and newer which default to gnu23
         if self.spec.satisfies("%gcc@15:"):

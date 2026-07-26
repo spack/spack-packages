@@ -286,6 +286,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         args = [
             self.define("LLVM_ENABLE_Z3_SOLVER", "OFF"),
             self.define("LLVM_ENABLE_ZLIB", "ON"),
+            self.define("LLVM_ENABLE_BINDINGS", "OFF"),  # prevent OCaml build errors
             self.define("CLANG_DEFAULT_LINKER", "lld"),
             self.define("LIBCXXABI_INSTALL_STATIC_LIBRARY", "OFF"),
             self.define("LLVM_ENABLE_RTTI", "ON"),
