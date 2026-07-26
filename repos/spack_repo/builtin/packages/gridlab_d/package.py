@@ -40,7 +40,7 @@ class GridlabD(CMakePackage):
     depends_on("helics", when="+helics")
     depends_on("mysql", when="+mysql")
     depends_on("ncurses+termlib", when="+mysql")
-    depends_on("pkgconf", when="+mysql")
+    depends_on("pkgconf", when="+mysql", type="build")
 
     patch("find_mysql_pkg_conf.patch", when="+mysql")
 
