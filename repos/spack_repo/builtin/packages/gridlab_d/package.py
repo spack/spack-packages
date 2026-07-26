@@ -35,9 +35,9 @@ class GridlabD(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.10:", type="build")
-    depends_on("xerces-c")
+    depends_on("xerces-c@3.1.0:")
     # depends_on("superlu-mt") gridlab-d now uses its own internal version
-    depends_on("helics", when="+helics")
+    depends_on("helics@3.1.0:", when="+helics")
     depends_on("mysql", when="+mysql")
     depends_on("ncurses+termlib", when="+mysql")
     depends_on("pkgconfig", when="+mysql", type="build")
