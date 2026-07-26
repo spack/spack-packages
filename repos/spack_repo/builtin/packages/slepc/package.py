@@ -68,6 +68,10 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
+    # Default installation contains ~1 k tutorial/example files.
+    # Give packagers a switch to trim them away (‘spack install slepc ~examples’)
+    # while preserving current behaviour by default.
+    variant("examples", default=True, description="Install test and tutorial example sources")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -175,7 +179,9 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         if self.run_tests:
             make("test", parallel=False)
 
-        make("install", parallel=False)
+        # SLEPc provides a lighter target that omits docs/examples.
+        target = "install" if "+examples" in spec else "install-lib"
+        make(target, parallel=False)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # set SLEPC_DIR & PETSC_DIR in the module file
