@@ -918,8 +918,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             after = spec["llvm-amdgpu"].prefix.bin.clang
             filter_file(before, after, ".bazelrc")
 
-        filter_file("build:opt --copt=-march=native", "", ".tf_configure.bazelrc")
-        filter_file("build:opt --host_copt=-march=native", "", ".tf_configure.bazelrc")
+        # Support for host_copt customization on macOS arm64 seems to be broken?
+        # https://github.com/tensorflow/tensorflow/issues/111876
+        if spec.satisfies("@2.21: platform=darwin target=aarch64:"):
+            filter_file("build:opt --host_copt=.*", "", ".tf_configure.bazelrc")
 
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install
