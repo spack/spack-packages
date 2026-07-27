@@ -8,6 +8,9 @@ from spack.package import *
 
 # Necessary to pin each version to libmetatensor
 VERSIONS = {
+    "0.2.3": "08a8f175af6bdd04cc9d54d867b88ddc9528803446859d4b67c197dcdfa7fdc1",
+    "0.2.2": "817af5c6eed636ce4eb0931c9be1a7581a2386189a9138b5a9535f8e5b2fcada",
+    "0.2.0": "30200451eb70e635fdef5dfd46476d0303b1757b1e34c23f9c9e568c9d188545",
     "0.1.19": "ca7e1e73da3712a79989e856ebab4a254b7f893d01d8fb63f162b4937d81d824",
     "0.1.17": "98708f89a37652016ee508e307f824f3ca63307b85829de17ba6d2558f0b3b3b",
 }
@@ -25,6 +28,7 @@ class PyMetatensorCore(PythonPackage):
     license("BSD-3-Clause", checked_by="HaoZeke")
 
     depends_on("python@3.9:", type=("run", "build"))
+    depends_on("python@3.10:", when="@0.1.19:", type=("run", "build"))
     depends_on("py-numpy", type=("run", "build"))
 
     for ver, sha in VERSIONS.items():
