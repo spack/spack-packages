@@ -30,19 +30,20 @@ class Tpp(MakefilePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("perl@5.10:")
+    depends_on("argtable", when="@7:")
     depends_on("zlib", when="@6.3.3:")
 
-    depends_on("perl-cgi")
-    depends_on("perl-xml-parser")
-    depends_on("perl-xml-twig")
-    depends_on("perl-findbin-libs")
-    depends_on("perl-json")
-    depends_on("perl-tie-ixhash")
-    depends_on("perl-statistics-regression")
-    depends_on("perl-statistics-r")
+    with default_args(type=("build", "run")):
+        depends_on("perl@5.10:")
 
-    depends_on("argtable", when="@7:")
+        depends_on("perl-cgi")
+        depends_on("perl-xml-parser")
+        depends_on("perl-xml-twig")
+        depends_on("perl-findbin-libs")
+        depends_on("perl-json")
+        depends_on("perl-tie-ixhash")
+        depends_on("perl-statistics-regression")
+        depends_on("perl-statistics-r")
 
     conflicts("%gcc@15:", msg="Hardklor fails to build with GCC 15")
     conflicts("@7.0 %gcc@14:", msg="HDF5 from TPP 7.0 fails to build with GCC 14")
