@@ -19,7 +19,7 @@ class Zip(MakefilePackage):
 
     version("3.0", sha256="f0e8bb1f9b7eb0b01285495a2699df3a4b766784c1765a8f1aeedf63c0806369")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("bzip2")
 
@@ -44,6 +44,9 @@ class Zip(MakefilePackage):
     # Adopt patch from Homebrew for newer clang
     # https://github.com/Homebrew/homebrew-core/blob/HEAD/Formula/z/zip.rb
     patch("xcode15.patch", when="%apple-clang@15:")
+    # LLVM clang 16+ also treats implicit function declarations as errors,
+    # which breaks the unix/configure feature checks the same way
+    patch("xcode15.patch", when="%clang@16:")
 
     executables = ["^zip$"]
 
