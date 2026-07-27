@@ -521,6 +521,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+tblite"):
         depends_on("tblite build_system=cmake")
+        depends_on("tblite@0.6", when="@2026.2")
         depends_on("tblite@0.7:", when="@2027.1:")
 
     with when("build_system=cmake"):
