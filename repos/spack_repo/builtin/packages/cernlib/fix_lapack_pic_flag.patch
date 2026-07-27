@@ -1,5 +1,3 @@
-diff --git a/lapack/CMakeLists.txt.orig b/lapack/CMakeLists.txt
-index 683e0c6..d111e9d 100644
 --- lapack/CMakeLists.txt
 +++ lapack/CMakeLists.txt
 @@ -179,7 +179,7 @@ if (CERNLIB_BUILD_STATIC)
