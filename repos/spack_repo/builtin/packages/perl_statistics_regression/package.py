@@ -20,5 +20,5 @@ class PerlStatisticsRegression(PerlPackage):
     version("0.53", sha256="2cc53e3996dda4dceb5d7a794ba15107adb7a6614e19b485c0b8e47a5ab8b69a")
 
     depends_on("perl-module-install", type="build")
+
     depends_on("perl-test-pod", type="test")
-    depends_on("perl-carp", type="run")
