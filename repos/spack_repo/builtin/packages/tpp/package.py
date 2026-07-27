@@ -45,7 +45,7 @@ class Tpp(MakefilePackage):
     depends_on("argtable", when="@7:")
 
     conflicts("%gcc@15:", msg="Hardklor fails to build with GCC 15")
-    conflicts("@:7.0 %gcc@14:", msg="HDF5 from TPP 7.0 fails to build with GCC 14")
+    conflicts("@7.0 %gcc@14:", msg="HDF5 from TPP 7.0 fails to build with GCC 14")
     conflicts("@:6 %gcc@12:", msg="ProteoWizard from TPP 6 fails to build with GCC 12")
 
     def edit(self, spec, prefix):
