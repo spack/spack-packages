@@ -1,0 +1,66 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -15,6 +15,9 @@ set(CMAKE_CXX_STANDARD 20) # C++20 baseline; Kokkos 4.5+ supports it
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+ 
++option(TRITON_USE_EXTERNAL_DEPS "Use externally installed dependencies" OFF)
++option(ENABLE_GDAL "Enable GDAL output support" OFF)
++
+ message(STATUS "CMAKE_CXX_COMPILER = ${CMAKE_CXX_COMPILER}")
+ 
+ # check if MPI is available
+@@ -22,20 +25,46 @@ if(MACHINE STREQUAL Windows)
+   find_package(MPI REQUIRED COMPONENTS CXX)
+ endif()
+ 
+-# add external packages
+-add_subdirectory(${TRITON_SOURCE_DIR}/external)
++if(TRITON_USE_EXTERNAL_DEPS)
++  find_package(Kokkos REQUIRED CONFIG)
++  set(TRITON_KOKKOS_TARGET Kokkos::kokkos)
++
++  if(ENSEMBLE_BUILD)
++    find_package(yaml-cpp REQUIRED CONFIG)
++    if(TARGET yaml-cpp::yaml-cpp)
++      set(TRITON_YAML_CPP_TARGET yaml-cpp::yaml-cpp)
++    elseif(TARGET yaml-cpp)
++      set(TRITON_YAML_CPP_TARGET yaml-cpp)
++    else()
++      message(FATAL_ERROR "yaml-cpp was found, but no CMake target is available")
++    endif()
++  endif()
++
++  if(ENABLE_GDAL)
++    find_package(GDAL REQUIRED)
++  endif()
++else()
++  # add external packages
++  add_subdirectory(${TRITON_SOURCE_DIR}/external)
++  set(TRITON_KOKKOS_TARGET kokkos)
++  set(TRITON_YAML_CPP_TARGET yaml-cpp)
++endif()
+ 
+ # build triton
+ add_executable(${TRITON_EXECUTABLE} ./src/main.cpp)
+-target_link_libraries(${TRITON_EXECUTABLE} PUBLIC kokkos)
++target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${TRITON_KOKKOS_TARGET})
+ 
+ if (ENSEMBLE_BUILD)
+-  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC yaml-cpp)
++  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${TRITON_YAML_CPP_TARGET})
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENSEMBLE_BUILD")
+ endif()
+ 
+ if (ENABLE_GDAL)
+-  target_include_directories(${TRITON_EXECUTABLE} PUBLIC ${GDAL_INCLUDE_DIR})
+-  target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${GDAL_LIBRARY})
++  if(TRITON_USE_EXTERNAL_DEPS)
++    target_link_libraries(${TRITON_EXECUTABLE} PUBLIC GDAL::GDAL)
++  else()
++    target_include_directories(${TRITON_EXECUTABLE} PUBLIC ${GDAL_INCLUDE_DIR})
++    target_link_libraries(${TRITON_EXECUTABLE} PUBLIC ${GDAL_LIBRARY})
++  endif()
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DTRITON_GDAL")
+ endif()

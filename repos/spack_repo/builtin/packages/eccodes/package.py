@@ -125,6 +125,7 @@ class Eccodes(CMakePackage):
 
     depends_on("libpng", when="+png")
     depends_on("libaec", when="+aec")
+    depends_on("libaec@1.1.4:", when="@2.47: +aec")
     # Can be built with Python 2 or Python 3.
     depends_on("python", when="+memfs", type="build")
 
@@ -370,6 +371,11 @@ class Eccodes(CMakePackage):
         if self.spec.satisfies("+aec"):
             # Prevent overriding by environment variables AEC_DIR and AEC_PATH:
             args.append(self.define("AEC_DIR", self.spec["libaec"].prefix))
+            # set ENABLE_USE_SHARED_LIB_AEC based on libaec's specs; used since eccodes 2.46
+            if self.spec.satisfies("@2.46:"):
+                args.append(
+                    self.define("ENABLE_USE_SHARED_LIB_AEC", "+shared" in self.spec["libaec"])
+                )
 
         return args
 

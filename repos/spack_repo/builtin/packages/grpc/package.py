@@ -14,6 +14,7 @@ class Grpc(CMakePackage):
 
     license("Apache-2.0 AND BSD-3-Clause AND MIT")
 
+    version("1.78.1", sha256="961a44a2a5a50670e58f5e887c17fe70529253da23802245326d681f6d8d1ba6")
     version("1.76.0", sha256="0af37b800953130b47c075b56683ee60bdc3eda3c37fc6004193f5b569758204")
     version("1.67.1", sha256="d74f8e99a433982a12d7899f6773e285c9824e1d9a173ea1d1fb26c9bd089299")
     version("1.66.1", sha256="79ed4ab72fa9589b20f8b0b76c16e353e4cfec1d773d33afad605d97b5682c61")
@@ -83,6 +84,7 @@ class Grpc(CMakePackage):
         # missing includes: https://github.com/grpc/grpc/commit/bc044174401a0842b36b8682936fc93b5041cf88
         depends_on("abseil-cpp@:20230802", when="@:1.61")
         depends_on("abseil-cpp@20240116.1:20240117.0", when="@1.67")
+        depends_on("abseil-cpp@20240722.0", when="@1.78")
 
     depends_on("re2+pic@2023-09-01", when="@1.33.1:")
 

@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
     version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
     version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
     version("2.4.5", sha256="ca670567a5683b7c1670ec03e0ddd5862e10934e92a70751d68d7b7b74ca7f9f")
@@ -201,6 +202,7 @@ class PyNumpy(PythonPackage):
 
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
+    conflicts("%gcc@:10.2", when="@2.5.1:", msg="NumPy requires GCC >= 10.3")
     conflicts("%gcc@:9.2", when="@2.3:", msg="NumPy requires GCC >= 9.3")
     conflicts("%gcc@:8.3", when="@1.26:", msg="NumPy requires GCC >= 8.4")
     conflicts("%gcc@:6.4", when="@1.23:", msg="NumPy requires GCC >= 6.5")
@@ -275,6 +277,14 @@ class PyNumpy(PythonPackage):
                 )
             if gcc_version <= Version("5.1"):
                 flags.append(self.compiler.c99_flag)
+
+        if self.spec.satisfies("@1.26 ^intel-oneapi-compilers@2025.2") and name in (
+            "cflags",
+            "cxxflags",
+            "fflags",
+        ):
+            flags = [flag for flag in flags if not flag.startswith("-O")]
+            flags.append("-O1")
 
         return (flags, None, None)
 

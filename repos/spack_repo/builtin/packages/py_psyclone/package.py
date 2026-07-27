@@ -20,7 +20,7 @@ class PyPsyclone(PythonPackage):
     # Links
     homepage = "https://github.com/stfc/PSyclone"
     git = "https://github.com/stfc/PSyclone.git"
-    pypi = "PSyclone/psyclone-3.1.0.tar.gz"
+    pypi = "PSyclone/psyclone-3.3.1.tar.gz"
 
     # Maintainers
     maintainers("arporter", "sergisiso", "TeranIvy", "hiker")
@@ -30,6 +30,10 @@ class PyPsyclone(PythonPackage):
 
     # Releases
     version("master", branch="master")
+    version("3.3.1", sha256="9d256cc4ee1494286b1ed8b4b8447b576748008ea5e236159717db1ddc3bd09a")
+    version("3.2.2", sha256="8452fad84a2e61566e8599dc6ff336c4ada73ec03e17900aa5d37afe656d46d5")
+    version("3.2.1", sha256="5e8280528f3243148be9567f8cc66e978fcf287ef07156d708ca1fcb0d78929d")
+    version("3.2.0", sha256="9b3ba5c7c60dae365e06b0f6ca426d5667e004bd0049a96e6d9d468c03d79daa")
     version("3.1.0", sha256="7b369353942358afcb93b199ef2b11116d756cf9d671667ca95fa83fb31f0355")
     version("3.0.0", sha256="25085a6d0dad36c03ec1f06becf7e2f915ded26603d4a1a2981392f5752fdb3e")
     version("2.5.0", sha256="dd1b40d635423c6b23effd2c569908d319afa6153680692e1cbae27f7b5bf4dc")
@@ -41,21 +45,21 @@ class PyPsyclone(PythonPackage):
     version("2.0.0", sha256="94766ffda760404af99f85d70341376192e4a1b8e16e7ae5df980038898a9c41")
     version("1.5.1", sha256="f053ad7316623b2a4002afc79607abda3b22306645e86f2312d9f3fe56d312dc")
 
-    # Current dependencies
     depends_on("py-setuptools", type="build")
     depends_on("py-pyparsing", type=("build", "run"))
-    depends_on("py-fparser@0.2.0:", type=("build", "run"), when="@3.0.0:")
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
     depends_on("py-jinja2", type="build")
-    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2.0:")
+    # Anything more recent than sympy 1.13.3 currently causes problems
+    # https://github.com/stfc/PSyclone/issues/3474
+    depends_on("py-sympy@1.13.3", type=("build", "run"))
+    depends_on("py-sympy@1.6.1:", type=("build", "run"), when="@2.2:3.2")
     depends_on("py-termcolor", type=("build", "run"))
 
-    # Historical dependencies
-    depends_on("py-six", type=("build", "run"), when="@2.0.0:2.3.1")
-    depends_on("py-jsonschema@3.0.2", type=("build", "run"), when="@2.1.0:2.4.0")
-
     # Test cases fail without compatible versions of py-fparser:
+    depends_on("py-fparser@0.2.4", type=("build", "run"), when="@3.3:")
+    depends_on("py-fparser@0.2.1", type=("build", "run"), when="@3.2")
+    depends_on("py-fparser@0.2.0", type=("build", "run"), when="@3.0:3.1")
     depends_on("py-fparser@0.1.4", type=("build", "run"), when="@2.5.0")
     depends_on("py-fparser@0.1.3", type=("build", "run"), when="@2.4.0")
     depends_on("py-fparser@0.0.16", type=("build", "run"), when="@2.3.1")
@@ -70,6 +74,10 @@ class PyPsyclone(PythonPackage):
     depends_on("py-pytest-cov", type="test")
     depends_on("py-pytest-xdist", type="test")
     depends_on("py-pytest", type="test")
+
+    # Historical dependencies
+    depends_on("py-six", type=("build", "run"), when="@2.0.0:2.3.1")
+    depends_on("py-jsonschema@3.0.2", type=("build", "run"), when="@2.1.0:2.4.0")
 
     def url_for_version(self, version):
         # As of version 3.0.0, the name of the tarball on pypi is all lowercase.
