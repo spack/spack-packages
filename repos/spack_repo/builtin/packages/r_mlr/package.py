@@ -35,6 +35,8 @@ class RMlr(RPackage):
     version("2.12.1", sha256="9cbb98b82eb493b783fe8808a18d76f32881d941364466ef8829b852fabbc82c")
     version("2.12", sha256="cfe00089ae4cd88c6d03826eda43d4fe29e467e3a7c95d103fafca8308f5c161")
 
+    depends_on("c", type="build")  # generated
+
     # There are some potential variants for this.
     # SystemRequirements: gdal (optional), geos (optional), proj (optional),
     # udunits (optional), gsl (optional), gmp (optional), glu (optional), jags

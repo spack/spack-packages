@@ -18,11 +18,16 @@ class Igv(Package):
 
     maintainers("snehring")
 
+    version("2.19.7", sha256="692ae6c3037a6633c33afdbbe960a715f537173f26a16f56a58cb9ccbe163e9f")
+    version("2.18.4", sha256="d60870e27db0ba22278df3bcfb6113c1adc86b940f02d754983c91688d3a0fae")
+    version("2.17.4", sha256="6a36ae64fa3b74182db654a93f6254256305a8afa6b878f381b5d04fc1e8eaa5")
     version("2.16.2", sha256="489d34ed4e807a3d32a3720f11248d2ddf1e21d264b06bea44fbe1ccb74b3aa2")
     version("2.12.3", sha256="c87a109deb35994e1b28dee80b5acfd623ec3257f031fcd9cfce008cd32a4cf2")
     version("2.8.0", sha256="33f3ac57017907b931f90c35b63b2de2e4f8d2452f0fbb5be39d30288fc9b2c6")
 
-    depends_on("java@11:", type="run")
+    depends_on("java@21:", when="@2.19:", type="run")
+    depends_on("java@17:", when="@2.17:2.18", type="run")
+    depends_on("java@11:", when="@:2.16", type="run")
 
     variant("igvtools", default=False, description="Include igvtools")
 

@@ -29,6 +29,10 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     # Versions
     # ==========================================================================
     version("develop", branch="develop")
+    version("main", branch="main")
+    version("7.7.0", tag="v7.7.0", commit="0a1024b7fb902a5eae3142adf8c13561c6989543")
+    version("7.6.0", tag="v7.6.0", commit="ddf5daba8397ea89287a0fec6f1b3bc3fe6c548b")
+    version("7.5.0", tag="v7.5.0", commit="c8dabcea90ca8bf195474da120e4f3dd39aa711f")
     version("7.4.0", tag="v7.4.0", commit="8e17876d3b4d682b4098684b07a85b005a122f81")
     version("7.3.0", tag="v7.3.0", commit="cb681a4e3a46bcad903fb966284d6f53e85bdb94")
     version("7.2.1", tag="v7.2.1", commit="2dcb3e018b4c4cfe824bff09eb52184ed083e368")
@@ -242,6 +246,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             when="+kokkos +rocm amdgpu_target=%s" % rocm_arch,
         )
     depends_on("lapack", when="+lapack")
+    depends_on("blas", when="+lapack")
     depends_on("hypre+mpi~int64", when="@5.7.1: +hypre ~int64")
     depends_on("hypre+mpi+int64", when="@5.7.1: +hypre +int64")
     depends_on("hypre@:2.22.0+mpi~int64", when="@:5.7.0 +hypre ~int64")
@@ -735,9 +740,9 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
                 cmake = self.spec["cmake"].command
                 cmake("-DCMAKE_PREFIX_PATH=" + prefixes, ".")
 
-            make = which("make")
+            make = which("make", required=True)
             make()
-            exe = which(basename)
+            exe = which(basename, required=True)
             exe(*opts)
             make("clean")
 

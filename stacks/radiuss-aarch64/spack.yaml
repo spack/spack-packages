@@ -1,0 +1,38 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      require:
+      - target=aarch64
+      - +mpi
+    blas:
+      require:
+      - openblas
+    mpi:
+      require:
+      - openmpi
+
+  specs:
+  - ascent
+  - blt
+  - caliper
+  - camp
+  - chai
+  - mfem
+  - mfem +superlu-dist+petsc+sundials
+  - raja
+  - umpire
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image:
+          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          entrypoint: ['']
+
+  cdash:
+    build-group: RADIUSS Packages on ARM64

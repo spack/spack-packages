@@ -14,9 +14,10 @@ class Libmetatensor(CMakePackage):
     url = "https://github.com/metatensor/metatensor/releases/download/metatensor-core-v0.0.0/metatensor-core-cxx-0.0.0.tar.gz"
     git = "https://github.com/metatensor/metatensor.git"
 
-    maintainers("HaoZeke", "luthaf", "rmeli")
+    maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.1.19", sha256="2d319186057cf6da8fe39cc4f961baccce59c4486223113ce554632ae7765e26")
     version("0.1.17", sha256="42119e11908239915ccc187d7ca65449b461f1d4b5af4d6df1fb613d687da76a")
 
     variant("shared", default=True, description="Build shared library version")
@@ -24,6 +25,7 @@ class Libmetatensor(CMakePackage):
     generator("ninja")
 
     depends_on("cmake@3.16:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@0.1.18:")
     depends_on("rust@1.74.0:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")

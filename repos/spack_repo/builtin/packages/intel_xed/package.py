@@ -42,9 +42,6 @@ class IntelXed(Package):
     version("12.0.1", tag="12.0.1", commit="5976632eeaaaad7890c2109d0cfaf4012eaca3b8")
     version("11.2.0", tag="11.2.0", commit="40125558530137444b4ee6fd26b445bfa105b543")
 
-    # The old 2019.03.01 version (before there were tags).
-    version("10.2019.03", commit="b7231de4c808db821d64f4018d15412640c34113", deprecated=True)
-
     # XED wants the mbuild directory adjacent to xed in the same directory.
     mdir = join_path("..", "mbuild")
 
@@ -92,7 +89,6 @@ class IntelXed(Package):
     depends_on("python@3.9:", type="build")
 
     patch("1201-segv.patch", when="@12.0.1")
-    patch("2019-python3.patch", when="@10.2019.03")
     patch("libxed-ild.patch", when="@12.0:2022.12")
 
     requires("target=x86_64:,aarch64:", msg="intel-xed only builds on x86-64 or aarch64")
@@ -104,7 +100,7 @@ class IntelXed(Package):
         # See: https://github.com/intelxed/xed/issues/300
         try:
             lname = join_path(self.stage.source_path, "..", "xed")
-            os.symlink("spack-src", lname)
+            symlink("spack-src", lname)
         except OSError:
             pass
 

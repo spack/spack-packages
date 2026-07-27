@@ -15,6 +15,7 @@ class PyBiotraj(PythonPackage):
 
     license("LGPL-2.1")
 
+    version("1.2.2", sha256="4bcba92101ed50f369cc1487fb5dfcfe1d8402ad47adaa9232b080553271663a")
     version("1.2.1", sha256="4d7ad33ad940dbcfb3c2bd228a18f33f88e04657786a9562173b58dc2dd05349")
 
     depends_on("python@3.10:", type=("build", "run"))

@@ -54,7 +54,7 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
         "convergence_order",
         default="4",
         description="polynomial degree plus one",
-        values=(str(v) for v in range(2, 9)),
+        values=tuple(str(v) for v in range(2, 9)),
         multi=False,
     )
     variant(
@@ -185,11 +185,11 @@ class Seissol(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
 
     with when("+cuda"):
-        for var in ["openmpi", "mpich", "mvapich", "mvapich2", "mvapich2-gdr"]:
+        for var in ["openmpi", "mpich", "mvapich-plus"]:
             depends_on(f"{var} +cuda", when=f"^[virtuals=mpi] {var}")
 
     with when("+rocm"):
-        for var in ["mpich", "mvapich2-gdr"]:
+        for var in ["openmpi@5:", "mpich", "mvapich-plus"]:
             depends_on(f"{var} +rocm", when=f"^[virtuals=mpi] {var}")
 
     # with cuda 12 and llvm 14:15, we have the issue: "error: no template named 'texture"

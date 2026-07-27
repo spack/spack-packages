@@ -17,6 +17,7 @@ class RHaven(RPackage):
 
     license("MIT")
 
+    version("2.5.5", sha256="9482cd9c3760e1838acf687235317fed97fa6bf79219d3216f0ea447d4b1c9a5")
     version("2.5.4", sha256="9e1531bb37aa474abd91db5e0ed9e3a355c03faa65f4e653b3ea68b7c61ea835")
     version("2.5.3", sha256="9a5999afad09f0cf80515241b2ff19a0c480658c4bd3810638ad52762e04b7e3")
     version("2.5.2", sha256="2131fb0377ae1beffae54bf4beb8b3a876e9b6b9841a5acc39a2a2615023561d")
@@ -30,22 +31,26 @@ class RHaven(RPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-
-    depends_on("r@3.1:", type=("build", "run"))
-    depends_on("r@3.2:", type=("build", "run"), when="@2.1.1:")
-    depends_on("r@3.4:", type=("build", "run"), when="@2.5.0:")
-    depends_on("r@3.6:", type=("build", "run"), when="@2.5.4:")
-    depends_on("r-cli@3.0.0:", type=("build", "run"), when="@2.5.0:")
-    depends_on("r-forcats@0.2.0:", type=("build", "run"))
-    depends_on("r-hms", type=("build", "run"))
-    depends_on("r-lifecycle", type=("build", "run"), when="@2.5.0:")
-    depends_on("r-readr@0.1.0:", type=("build", "run"))
-    depends_on("r-rlang@0.4.0:", type=("build", "run"), when="@2.3.1:")
-    depends_on("r-tibble", type=("build", "run"))
-    depends_on("r-tidyselect", type=("build", "run"), when="@2.3.1:")
-    depends_on("r-vctrs@0.3.0:", type=("build", "run"), when="@2.3.1:")
-    depends_on("r-cpp11", type=("build", "run"), when="@2.4:")
     depends_on("gmake", type="build")
-    depends_on("zlib-api", when="@2.4:")
 
-    depends_on("r-rcpp@0.11.4:", type=("build", "run"), when="@:2.3")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.6:", when="@2.5.4:")
+        depends_on("r@3.4:", when="@2.5.0:")
+        depends_on("r@3.2:", when="@2.1.1:")
+        depends_on("r@3.1:")
+
+        depends_on("r-cli@3.0.0:", when="@2.5.0:")
+        depends_on("r-forcats@0.2.0:")
+        depends_on("r-hms")
+        depends_on("r-lifecycle", when="@2.5.0:")
+        depends_on("r-readr@0.1.0:")
+        depends_on("r-rlang@0.4.0:", when="@2.3.1:")
+        depends_on("r-tibble")
+        depends_on("r-tidyselect", when="@2.3.1:")
+        depends_on("r-vctrs@0.3.0:", when="@2.3.1:")
+        depends_on("r-cpp11", when="@2.4:")
+
+        # Historical dependencies
+        depends_on("r-rcpp@0.11.4:", when="@:2.3")
+
+    depends_on("zlib-api", when="@2.4:")

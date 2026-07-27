@@ -35,7 +35,7 @@ class Libsharp(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         """Generate autotools configuration"""
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autoconf")
 
     def configure_args(self):

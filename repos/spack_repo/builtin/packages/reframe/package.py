@@ -18,8 +18,8 @@ class Reframe(Package):
     focusing only on the functionality."""
 
     homepage = "https://reframe-hpc.readthedocs.io"
-    url = "https://github.com/eth-cscs/reframe/archive/v2.21.tar.gz"
-    git = "https://github.com/eth-cscs/reframe.git"
+    url = "https://github.com/reframe-hpc/reframe/archive/v2.21.tar.gz"
+    git = "https://github.com/reframe-hpc/reframe.git"
 
     # notify when the package is updated.
     maintainers("victorusu", "vkarak")
@@ -27,6 +27,18 @@ class Reframe(Package):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("4.10.1", sha256="6af76c3dd2e100d18cbfb45721dd69115f54643e493f58707953841a1f0b51b3")
+    version("4.10.0", sha256="3fddf2ab8642a11d35d878ecf07a8912ee4d21f4ab37db8e53ca6c130b1819de")
+    version("4.9.3", sha256="44efde35528a36bec330926d769dbdb9277ed46c98a40a4f914bcbe5132f60ff")
+    version("4.9.2", sha256="a224434033cf94e4c74654fdc6204c9a8d5a0575060addc47ec1de5242148fdf")
+    version("4.9.1", sha256="82efaf74218d7f518a13393c066502ff61dfb713d040b33298fb01c3cd5e4182")
+    version("4.9.0", sha256="a2065fbf15a56e5120e36ae0858b379d11ac9709e85f3eff540cac50ca70f3a0")
+    version("4.8.4", sha256="07f09b6612a0cf57dde94e05c7b82ae5292e328ec6d1f2173f1f52b8e618d73b")
+    version("4.8.3", sha256="8401f46a7a662b980080fc5176f784c37d9d483da9a6e43658c6663d744b8745")
+    version("4.8.2", sha256="820c2b2a36434b477c0ebf252acdf2cac9adffdf91d4ef7fc17d894f741c58d7")
+    version("4.8.1", sha256="3d45685e8b88bdefa25c9b57f0b32159da77cb87e7c562ed983bcda38e520770")
+    version("4.8.0", sha256="94dcb8d651280a44b406790552b1e1e3acb406cd6c7786a9dcc799189c9442d5")
+    version("4.7.4", sha256="5d06aebd931e8f9f52b28843d08c20a46f88a6300b4baa992527c8a129176453")
     version("4.7.3", sha256="74b8f56dc622d1c75fc1152d15d45e00edab9d2db1f6bc8fd7290125d69c74dd")
     version("4.7.2", sha256="90e04eaaa21afd5c29a9c6218204c3df4503f624f21f2fe773f90e148d30c152")
     version("4.7.1", sha256="ed693368d8b47327981a0db2b984c88d7dd703add1ffe736c95f9193ef727baf")
@@ -116,12 +128,13 @@ class Reframe(Package):
 
     variant("docs", default=False, description="Build ReFrame's man page documentation")
     variant("gelf", default=False, description="Add graylog handler support")
+    variant("analytics", default=False, description="Add analytics support")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     # ReFrame requires git up to version 3.1, see:
-    # https://github.com/eth-cscs/reframe/issues/1464
+    # https://github.com/reframe-hpc/reframe/issues/1464
     depends_on("git", when="@2.0:3.1", type="run")
 
     # supported python versions
@@ -134,17 +147,22 @@ class Reframe(Package):
     # runtime dependencies
     depends_on("py-archspec", when="@3.7.0:", type="run")
     depends_on("py-argcomplete", when="@3.4.1:", type="run")
+    depends_on("py-clustershell", when="@4.8.1:", type="run")
+    depends_on("py-fasteners", when="@4.8.3:", type="run")
+    depends_on("py-filelock", when="@4.7.0:4.8.2", type="run")
     depends_on("py-importlib-metadata", when="^python@:3.7", type="run")
+    depends_on("py-jinja2", when="@4.8.0:", type="run")
     depends_on("py-jsonschema", type="run")
     depends_on("py-lxml", when="@3.6.0:", type="run")
+    depends_on("py-polars", when="@4.10.0", type="run")
     depends_on("py-pyyaml", when="@3.4.1:", type="run")
     depends_on("py-requests", when="@3.4.1:", type="run")
     depends_on("py-semver", when="@3.4.2:", type="run")
-    depends_on("py-filelock", when="@4.7:", type="run")
     depends_on("py-tabulate", when="@4.7:", type="run")
 
     # extension dependencies
     depends_on("py-pygelf", when="+gelf", type="run")
+    depends_on("py-polars", when="@4.10.1: +analytics", type="run")
 
     # documentation dependencies
     depends_on("py-sphinx", when="+docs", type="build")
@@ -152,8 +170,8 @@ class Reframe(Package):
     depends_on("gmake", type="build")
 
     # sanity check
-    sanity_check_is_file = ["bin/reframe"]
-    sanity_check_is_dir = ["bin", "docs", "reframe"]
+    sanity_check_is_file = ["reframe/__init__.py"]
+    sanity_check_is_dir = ["docs", "reframe", "unittests"]
 
     # check if we can run reframe
     @run_after("install")

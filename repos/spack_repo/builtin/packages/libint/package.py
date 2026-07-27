@@ -25,6 +25,7 @@ class Libint(AutotoolsPackage):
 
     license("LGPL-3.0-only")
 
+    version("2.11.2", sha256="f2fba90579d95f535a93decdae98028ef3a982e6570e1547a0916186f51e86f2")
     version("2.11.1", sha256="58ab0f893d94cbed3ab35a6c26ec5e4d8541c59889407a6d30c50b8ea415bdf3")
     version("2.9.0", sha256="4929b2f2d3e53479270be052e366e8c70fa154a7f309e5c2c23b7d394159687d")
     version("2.6.0", sha256="4ae47e8f0b5632c3d2a956469a7920896708e9f0e396ec10071b8181e4c8d9fa")
@@ -98,7 +99,7 @@ class Libint(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         if self.spec.satisfies("@2:"):
-            which("bash")("autogen.sh")
+            which("bash", required=True)("autogen.sh")
         else:
             # Fall back since autogen is not available
             libtoolize()

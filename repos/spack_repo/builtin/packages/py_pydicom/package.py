@@ -16,6 +16,7 @@ class PyPydicom(PythonPackage):
     homepage = "https://github.com/pydicom/pydicom"
     pypi = "pydicom/pydicom-2.1.2.tar.gz"
 
+    version("3.0.1", sha256="7b8be344b5b62493c9452ba6f5a299f78f8a6ab79786c729b0613698209603ec")
     version("2.4.3", sha256="51906e0b9fb6e184a0f56298cb43ed716b7cf7edc00f6b71d5c769bc1f982402")
     version("2.4.1", sha256="6cb210dbe5586841036e8eeb2d4feb4df22a48f39161ba7ee0bf3c89faaba946")
     version("2.3.0", sha256="dbfa081c9ad9ac8ff8a8efbd71784104db9eecf02fd775f7d7773f2183f89386")
@@ -23,6 +24,8 @@ class PyPydicom(PythonPackage):
 
     variant("numpy", default=False, description="Use NumPy for Pixel data")
 
+    depends_on("python@3.10:", when="@3:", type=("build", "run"))
+    depends_on("python@3.7:", when="@2.4:", type=("build", "run"))
     depends_on("py-flit-core@3.2:3", when="@2.4:", type="build")
 
     depends_on("py-numpy", when="+numpy", type="run")

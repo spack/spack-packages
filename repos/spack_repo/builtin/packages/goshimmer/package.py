@@ -35,11 +35,11 @@ class Goshimmer(Package):
             filter_file("./snapshot.bin", self.snapbin, file + ".go")
 
     def install(self, spec, prefix):
-        which("go")("build", "-modcacherw", "-tags", "rocksdb,netgo")
+        which("go", required=True)("build", "-modcacherw", "-tags", "rocksdb,netgo")
         mkdir(prefix.bin)
         install("config.default.json", prefix.bin)
         install("goshimmer", prefix.bin)
-        which("wget")(
+        which("wget", required=True)(
             "-O",
             self.snapbin,
             "https://dbfiles-goshimmer.s3.eu-central-1.amazonaws.com/snapshots/nectar/snapshot-latest.bin",

@@ -22,6 +22,10 @@ class PyMpi4py(PythonPackage):
     license("BSD-2-Clause", when="@:3")
 
     version("master", branch="master")
+    version("4.1.1", sha256="eb2c8489bdbc47fdc6b26ca7576e927a11b070b6de196a443132766b3d0a2a22")
+    version("4.1.0", sha256="817492796bce771ccd809a6051cf68d48689815493b567a696ce7679260449cd")
+    version("4.0.3", sha256="de2710d73e25e115865a3ab63d34a54b2d8608b724f761c567b6ad58dd475609")
+    version("4.0.2", sha256="86085436d3ea3587323321b9e661e4df60eabbcf11c2c9cf63d0873ca111cc8b")
     version("4.0.1", sha256="f3174b245775d556f4fddb32519a2066ef0592edc810c5b5a59238f9a0a40c89")
     version("4.0.0", sha256="820d31ae184d69c17d9b5d55b1d524d56be47d2e6cb318ea4f3e7007feff2ccc")
     version("3.1.6", sha256="c8fa625e0f92b082ef955bfb52f19fa6691d29273d7d71135d295aa143dee6cb")
@@ -37,7 +41,8 @@ class PyMpi4py(PythonPackage):
     version("2.0.0", sha256="6543a05851a7aa1e6d165e673d422ba24e45c41e4221f0993fe1e5924a00cb81")
     version("1.3.1", sha256="e7bd2044aaac5a6ea87a87b2ecc73b310bb6efe5026031e33067ea3c2efc3507")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("py-setuptools@40.9:", type="build")
     depends_on("py-cython@3:", when="@4:", type="build")

@@ -19,6 +19,7 @@ class Libsigsegv(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2.15", sha256="036855660225cb3817a190fc00e6764ce7836051bacb48d35e26444b8c1729d9")
     version("2.14", sha256="cdac3941803364cf81a908499beb79c200ead60b6b5b40cad124fd1e06caa295")
     version("2.13", sha256="be78ee4176b05f7c75ff03298d84874db90f4b6c9d5503f0da1226b3a3c48119")
     version("2.12", sha256="3ae1af359eebaa4ffc5896a1aee3568c052c99879316a1ab57f8fe1789c390b6")
@@ -56,10 +57,10 @@ class Libsigsegv(AutotoolsPackage, GNUMirrorPackage):
             "{0}{1}".format(self.compiler.cc_rpath_arg, self.prefix.lib),
         ]
 
-        cc = which(os.environ["CC"])
+        cc = which(os.environ["CC"], required=True)
         cc(*options)
 
-        exe = which(prog)
+        exe = which(prog, required=True)
         out = exe(output=str.split, error=str.split)
         expected = get_escaped_text_output(data_dir.join("smoke_test.out"))
         check_outputs(expected, out)

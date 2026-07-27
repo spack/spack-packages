@@ -24,9 +24,12 @@ class RDismo(RPackage):
     version("1.3-3", sha256="fd65331ac18a4287ba0856b90508ddd0e2738c653eecc5f3eb2b14e1d06949ca")
     version("1.1-4", sha256="f2110f716cd9e4cca5fd2b22130c6954658aaf61361d2fe688ba22bbfdfa97c8")
 
+    depends_on("cxx", type="build")
+    depends_on("r+java", type=("build", "run"), when="@1.3-3:")
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.3-5:")
     depends_on("r@3.6.3:", type=("build", "run"), when="@1.3-9:")
+    depends_on("java@8:", when="@1.3-3:")
     depends_on("r-raster@2.5-2:", type=("build", "run"))
     depends_on("r-raster@3.5-2:", type=("build", "run"), when="@1.3-5:")
     depends_on("r-raster@3.5-21:", type=("build", "run"), when="@1.3-9:")
@@ -34,4 +37,3 @@ class RDismo(RPackage):
     depends_on("r-sp@1.4-5:", type=("build", "run"), when="@1.3-5:")
     depends_on("r-terra@1.5-34:", type=("build", "run"), when="@1.3-9:")
     depends_on("r-rcpp", type=("build", "run"), when="@1.3-9:")
-    depends_on("java@8:", when="@1.3-3:")

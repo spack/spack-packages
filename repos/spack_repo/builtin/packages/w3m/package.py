@@ -53,10 +53,6 @@ class W3m(AutotoolsPackage):
     depends_on("termcap", when="termlib=termcap")
     depends_on("ncurses+termlib", when="termlib=ncurses")
 
-    # https support
-    variant("https", default=True, description="support https protocol")
-    depends_on("openssl@:1.0.2u", when="+https")
-
     # X11 support
     variant("image", default=True, description="enable image")
     depends_on("libx11", when="+image")

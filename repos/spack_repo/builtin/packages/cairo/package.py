@@ -18,6 +18,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
     license("LGPL-2.1-or-later OR MPL-1.1", checked_by="tgamblin")
 
+    version("1.18.4", sha256="445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb")
     version("1.18.2", sha256="a62b9bb42425e844cc3d6ddde043ff39dbabedd1542eba57a2eb79f85889d45a")
     version("1.18.0", sha256="243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64")
     version(
@@ -45,14 +46,14 @@ class Cairo(AutotoolsPackage, MesonPackage):
     variant("X", default=False, description="Build with X11 support")
     variant("gobject", default=False, description="Enable cairo's gobject functions feature")
 
-    variant("svg", default=False, description="Enable cairo's SVG functions feature")
-    variant("png", default=False, description="Enable cairo's PNG functions feature")
+    variant("svg", default=True, description="Enable cairo's SVG functions feature")
+    variant("png", default=True, description="Enable cairo's PNG functions feature")
 
     # doesn't exist @1.17.8: but kept as compatibility
-    variant("pdf", default=False, description="Enable cairo's PDF surface backend feature")
+    variant("pdf", default=True, description="Enable cairo's PDF surface backend feature")
 
-    variant("ft", default=False, description="Enable cairo's FreeType font backend feature")
-    variant("fc", default=False, description="Enable cairo's Fontconfig font backend feature")
+    variant("ft", default=True, description="Enable cairo's FreeType font backend feature")
+    variant("fc", default=True, description="Enable cairo's Fontconfig font backend feature")
 
     # variants and build system depends for the autotools builds
     with when("build_system=autotools"):
@@ -80,7 +81,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
         variant("dwrite", default=False, description="Microsoft Windows DWrite font backend")
         variant(
             "zlib",
-            default=False,
+            default=True,
             description="Enable cairo's script, ps, pdf, xml functions feature",
         )
 
@@ -90,8 +91,8 @@ class Cairo(AutotoolsPackage, MesonPackage):
         # meson seems to have assumptions about what is enabled/disabled
         # so this protects against incompatible combinations
         requires(
-            "~zlib~ft~fc~png~pdf",
             "+zlib+ft+fc+png+pdf",
+            "~zlib~ft~fc~png~pdf",
             policy="one_of",
             msg="these variants must be activated, or deactivated, together",
         )
@@ -142,7 +143,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
     # patch from https://gitlab.freedesktop.org/cairo/cairo/issues/346
     patch("fontconfig.patch", when="@1.16.0:1.17.2")
     # Don't regenerate docs to avoid a dependency on gtk-doc
-    patch("disable-gtk-docs.patch", when="build_system=autotools ^autoconf@2.70:")
+    patch("disable-gtk-docs.patch", when="build_system=autotools")
 
 
 class MesonBuilder(meson.MesonBuilder):
@@ -178,7 +179,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def autoreconf(self, pkg, spec, prefix):
         # Regenerate, directing the script *not* to call configure before Spack
         # does
-        which("sh")("./autogen.sh", extra_env={"NOCONFIGURE": "1"})
+        which("sh", required=True)("./autogen.sh", extra_env={"NOCONFIGURE": "1"})
 
     def configure_args(self):
         args = ["--disable-trace", "--enable-tee"]  # can cause problems with libiberty
@@ -196,7 +197,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args.extend(self.with_or_without("pic"))
 
         if self.spec.satisfies("+ft ^freetype~shared"):
-            pkgconf = which("pkg-config")
+            pkgconf = which("pkg-config", required=True)
             ldflags = pkgconf("--libs-only-L", "--static", "freetype2", output=str)
             libs = pkgconf("--libs-only-l", "--static", "freetype2", output=str)
             args.append(f"LDFLAGS={ldflags}")

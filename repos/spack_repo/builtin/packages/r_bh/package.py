@@ -27,6 +27,8 @@ class RBh(RPackage):
 
     cran = "BH"
 
+    version("1.90.0-1", sha256="2e1fafb05938e81073561ae4892dc543ef15807e375e0ea8fa75e3ab79f0281b")
+    version("1.87.0-1", sha256="59829ae635f42a23289a1c51617f5f972704e1b243b604dad20ef5a812e60393")
     version("1.84.0-0", sha256="6fb660755f572cd975073d7052075654acf8db12d208954ca223b8e4f77ef1ac")
     version("1.81.0-1", sha256="f51c8badd6f181e06353314e1d15a6ec1495cc498ee74b6fa4ea8aba6e97ff64")
     version("1.78.0-0", sha256="3b9e9d07682013e0c06a396dda176b405eab99a7273eca6c40d1b4c4110e8cb3")
@@ -35,3 +37,5 @@ class RBh(RPackage):
     version("1.69.0-1", sha256="a0fd4364b7e368f09c56dec030823f52c16da0787580af7e4615eddeb99baca2")
     version("1.65.0-1", sha256="82baa78afe8f1edc3c7e84e1c9924321047e14c1e990df9b848407baf3f7cb58")
     version("1.60.0-2", sha256="e441aede925d760dc0142be77079ebd7a46f2392772b875cde6ca567dd49c48c")
+
+    depends_on("cxx", type="build")  # generated

@@ -54,7 +54,7 @@ class Vmd(Package):
         # make sure the executable finds and uses the Spack-provided
         # libraries, otherwise the executable may or may not run depending
         # on what is installed on the host
-        patchelf = which("patchelf")
+        patchelf = which("patchelf", required=True)
         rpath = ":".join(
             self.spec[dep].libs.directories[0] for dep in ["libx11", "libxi", "libxinerama", "gl"]
         )

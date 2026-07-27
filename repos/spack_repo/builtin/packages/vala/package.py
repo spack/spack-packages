@@ -20,6 +20,7 @@ class Vala(AutotoolsPackage):
 
     license("LGPL-2.0-or-later")
 
+    version("0.56.18", sha256="f2affe7d40ab63db8e7b9ecc3f6bdc9c2fc7e3134c84ff2d795f482fe926a382")
     version("0.48.25", sha256="50cb3c5eccddc7fd4368bfa96414a556045e79d2b15a68918c727b8c83b18a24")
     version("0.48.24", sha256="3649ef84573b6865fc3470640ee603720099eb915b39faad19b7498de1a7df24")
     version("0.48.23", sha256="de3cc858d995e07474219e25a3e1f0ed998070d2e206d3a313d4379a5f77a06a")
@@ -38,10 +39,14 @@ class Vala(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("pkgconfig", type="build")
+    depends_on("gobject-introspection", when="@0.56:")
     depends_on("glib@2.48:")
     depends_on("flex")
     depends_on("bison")
     depends_on("graphviz", when="+doc")
+
+    def url_for_version(self, version):
+        return f"https://download.gnome.org/sources/vala/{version.up_to(2)}/vala-{version}.tar.xz"
 
     def configure_args(self):
         args = []

@@ -20,9 +20,9 @@ class Metis(CMakePackage, MakefilePackage):
     recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes.
     """
 
-    homepage = "http://glaros.dtc.umn.edu/gkhome/metis/metis/overview"
-    url = "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz"
-    list_url = "http://glaros.dtc.umn.edu/gkhome/fsroot/sw/metis/OLD"
+    homepage = "http://papers.karypis.org/glaros/software/metis/overview.html#metis---serial-graph-partitioning-and-fill-reducing-matrix-ordering"
+    url = "http://papers.karypis.org/glaros/files/sw/metis/metis-5.1.0.tar.gz"
+    list_url = "http://papers.karypis.org/glaros/files/sw/metis/OLD"
 
     # not a metis developer, just package reviewer!
     maintainers("mthcrts")
@@ -250,7 +250,7 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
     def check(self):
         # On some systems, the installed binaries for METIS cannot
         # be executed without first being read.
-        ls = which("ls")
+        ls = which("ls", required=True)
         ls("-a", "-l", self.prefix.bin)
 
         graphchk = Executable(join_path(self.prefix.bin, "graphchk"))

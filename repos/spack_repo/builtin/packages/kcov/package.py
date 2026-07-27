@@ -17,21 +17,18 @@ class Kcov(CMakePackage):
 
     license("GPL-2.0-or-later")
 
+    version("43", sha256="4cbba86af11f72de0c7514e09d59c7927ed25df7cebdad087f6d3623213b95bf")
     version("42", sha256="2c47d75397af248bc387f60cdd79180763e1f88f3dd71c94bb52478f8e74a1f8")
-    version(
-        "38",
-        sha256="b37af60d81a9b1e3b140f9473bdcb7975af12040feb24cc666f9bb2bb0be68b4",
-        url="https://github.com/SimonKagstrom/kcov/archive/38.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@2.8.4:", type="build")
-    depends_on("zlib-api")
-    depends_on("curl")
-    depends_on("elfutils", when="platform=linux")
+    depends_on("zlib-api", type="link")
+    depends_on("curl", type="link")
+    depends_on("openssl", type="link")
+    depends_on("libdwarf", when="platform=darwin", type="link")
+    depends_on("elfutils", when="platform=linux", type="link")
     depends_on("binutils +libiberty", when="platform=linux", type="link")
 
     def cmake_args(self):

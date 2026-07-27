@@ -14,6 +14,7 @@ class PyPolars(PythonPackage):
     pypi = "polars/polars-0.20.5.tar.gz"
 
     license("MIT")
+    maintainers("Chrismarsh")
 
     version("1.29.0", sha256="d2acb71fce1ff0ea76db5f648abd91a7a6c460fafabce9a2e8175184efa00d02")
     version("0.20.5", sha256="fa4abc22cee024b5872961ddcd8a13a0a76150df345e21ce4308c2b1a36b47aa")
@@ -59,3 +60,7 @@ class PyPolars(PythonPackage):
         # https://github.com/PyO3/maturin/discussions/1090
         # https://github.com/pola-rs/polars/issues/22708#issuecomment-2872555300
         env.prepend_path("MATURIN_PEP517_ARGS", "--no-default-features --features all")
+
+        # https://github.com/pola-rs/polars/issues/26503#issuecomment-3874046239
+        if self.spec.satisfies("@1.29.0 ^rust@1.89:"):
+            env.prepend_path("RUSTFLAGS", "--cap-lints warn")

@@ -22,6 +22,7 @@ class PyGeemap(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-hatchling", when="@0.36:")
+        depends_on("py-hatch-jupyter-builder@0.5:", when="@0.36:")
 
         # Historical dependencies
         depends_on("py-setuptools@64:", when="@:0.35")

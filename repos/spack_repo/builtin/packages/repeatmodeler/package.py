@@ -18,12 +18,8 @@ class Repeatmodeler(Package):
 
     license("OSL-2.1")
 
+    version("2.0.7", sha256="2873697a885e7115bf5e940cf880f47de17efb7a200ec2d3a1627d5a689f7a8f")
     version("2.0.4", sha256="94aad46cc70911d48de3001836fc3165adb95b2b282b5c53ab0d1da98c27a6b6")
-    version(
-        "1.0.11",
-        sha256="7ff0d588b40f9ad5ce78876f3ab8d2332a20f5128f6357413f741bb7fa172193",
-        url="https://www.repeatmasker.org/RepeatModeler/RepeatModeler-open-1.0.11.tar.gz",
-    )
 
     depends_on("perl", type=("build", "run"))
     depends_on("perl-json", type=("build", "run"))
@@ -45,10 +41,61 @@ class Repeatmodeler(Package):
     depends_on("mafft", type="run", when="@2.0.4:")
     depends_on("ninja-phylogeny", type="run", when="@2.0.4:")
     depends_on("blat", type="run", when="@2.0.4:")
-    depends_on("ltr-retriever", type="run", when="@2.0.4:")
+    depends_on("ltr-retriever@=2.9.0", type="run", when="@2.0.4:")
+    depends_on("repeatafterme", type="run", when="@2.0.7:")
+
+    def patch(self):
+        file_list = [
+            "BuildDatabase",
+            "Job.pm",
+            "LTRPipeline",
+            "MultAln.pm",
+            "NeedlemanWunschGotohAlgorithm.pm",
+            "Refiner",
+            "RepeatClassifier",
+            "RepeatModeler",
+            "RepeatUtil.pm",
+            "RepModelConfig.pm",
+            "SeedAlignmentCollection.pm",
+            "SeedAlignment.pm",
+            "SequenceSimilarityMatrix.pm",
+            "Task.pm",
+            "ThreadedJob.pm",
+            "ThreadedTaskSimple.pm",
+            "TRFMask",
+            "util/alignAndCallConsensus.pl",
+            "util/align.pl",
+            "util/AutoRunBlocker.pl",
+            "util/bestwindow.pl",
+            "util/Blocker.pl",
+            "util/ClusterPartialMatchingSubs.pl",
+            "util/CntSubst",
+            "util/extendFlankingSeqs.pl",
+            "util/fasta-trf-filter.pl",
+            "util/generateSeedAlignments.pl",
+            "util/Linup",
+            "util/renameIds.pl",
+            "util/resolveIndels.pl",
+            "util/rmblast.pl",
+            "util/TSD.pl",
+            "util/viewMSA.pl",
+            "util/visualizeAlignPNG.pl",
+            "configure",
+        ]
+        for f in file_list:
+            filter_file(
+                r"^#!.*perl( -w)?.*$",
+                rf"#!{self.spec['perl'].prefix.bin.perl}\1",
+                f,
+                ignore_absent=True,
+            )
+        file_list = ["configure", "RepModelConfig.pm"]
+        for f in file_list:
+            filter_file(r'^.*system\( "clear" \).*$', "", f)
 
     def install(self, spec, prefix):
         # interactive configuration script
+        # once 1.0.11 is removed we can clean this up a bit
         if spec.satisfies("@1.0.11"):
             config_answers = [
                 "",
@@ -76,10 +123,12 @@ class Repeatmodeler(Package):
                 spec["ncbi-rmblastn"].prefix.bin,
                 "y",
                 spec["genometools"].prefix.bin,
-                spec["ltr-retriever"].prefix.bin,
+                spec["ltr-retriever"].prefix,
                 spec["mafft"].prefix.bin,
                 spec["ninja-phylogeny"].prefix.bin,
             ]
+        if spec.satisfies("@2.0.7:"):
+            config_answers.insert(2, spec["repeatafterme"].prefix.bin)
 
         config_filename = "spack-config.in"
 
@@ -87,7 +136,7 @@ class Repeatmodeler(Package):
             f.write("\n".join(config_answers))
 
         with open(config_filename, "r") as f:
-            perl = which("perl")
+            perl = which("perl", required=True)
             perl("configure", input=f)
 
         install_tree(".", prefix.bin)

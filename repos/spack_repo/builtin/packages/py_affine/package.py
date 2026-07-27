@@ -17,4 +17,6 @@ class PyAffine(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.3.1", sha256="78384c197c6d87d79eb94bf07c64e38491e53bc2ba54f9973b6469d0e574ea92")
+    version("2.2.2", sha256="b6560b93f2f613c9d4730ac120b25b942cc577fb7c074efe32090f40f72ce645")
     version("2.1.0", sha256="b67b7dee9a9865185a931758a3e347ad8583d0ac985895b90985a477ccfa4745")

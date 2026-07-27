@@ -113,6 +113,6 @@ class Nekcem(Package):
         install_tree(self.stage.source_path, prefix.bin.NekCEM)
         # Create symlinks to makenek, nek and configurenek scripts
         with working_dir(prefix.bin):
-            os.symlink(os.path.join("NekCEM", bin_dir, makenek), makenek)
-            os.symlink(os.path.join("NekCEM", bin_dir, configurenek), configurenek)
-            os.symlink(os.path.join("NekCEM", bin_dir, nek), nek)
+            symlink(os.path.join("NekCEM", bin_dir, makenek), makenek)
+            symlink(os.path.join("NekCEM", bin_dir, configurenek), configurenek)
+            symlink(os.path.join("NekCEM", bin_dir, nek), nek)

@@ -1,0 +1,35 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 379cf70..1ca0b2e 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -368,6 +368,7 @@ endif()
+ # Check for ROCTX
+ if(ROCTX)
+   find_library(ROCTX_LIB NAMES roctx64)
++  find_path(ROCTRACER_INCLUDE_DIR "roctracer/roctx.h")
+   if(ROCTX_LIB)
+     set(ROCTX_ENABLE ON)
+     message(STATUS "ROCTX library found: ${ROCTX_LIB}")
+@@ -786,9 +787,13 @@ target_include_directories(rccl PRIVATE ${HIPIFY_DIR}/src/device/network/unpack)
+ target_include_directories(rccl PRIVATE ${HIPIFY_DIR}/gensrc)
+ target_include_directories(rccl PRIVATE ${HSA_INCLUDE_PATH})
+ target_include_directories(rccl PRIVATE ${ROCM_SMI_INCLUDE_DIR})
++target_include_directories(rccl PRIVATE $ENV{ROCMCORE_PATH}/include)
+ if(DEMANGLE_DIR)
+   target_include_directories(rccl PRIVATE ${DEMANGLE_DIR})
+ endif()
++if(ROCTX_ENABLE)
++  target_include_directories(rccl PRIVATE ${ROCTRACER_INCLUDE_DIR})
++endif()
+ 
+ ## Set RCCL compile definitions
+ if(COLLTRACE)
+@@ -1090,7 +1095,7 @@ if (HAVE_BFD)
+   endif()
+ endif()
+ if (ROCTX_ENABLE)
+-  target_link_libraries(rccl PRIVATE -lroctx64)
++  target_link_libraries(rccl PRIVATE ${ROCTX_LIB})
+ endif()
+ target_link_libraries(rccl PRIVATE   -fgpu-rdc)             # Required when linking relocatable device code
+ target_link_libraries(rccl PRIVATE   Threads::Threads)

@@ -12,11 +12,14 @@ class PyIminuit(PythonPackage):
 
     homepage = "http://github.com/scikit-hep/iminuit"
     pypi = "iminuit/iminuit-1.2.tar.gz"
+    git = "http://github.com/scikit-hep/iminuit.git"
 
     tags = ["hep"]
 
     license("MIT AND LGPL-2.0-only", checked_by="wdconinc")
 
+    version("2.32.0", sha256="a32b34d18665959be75ad6bdb1dd80459bb94466c62b455631c00568accdf7d2")
+    version("2.31.3", sha256="ffb3aeb2de26c400d0aff7e2b7457f64cd609a494c45ee579effee81b1bc5d78")
     version("2.31.1", sha256="d5e004f1ffd83d2a076409fbf4a79691e7a17c9d73950bb63465af32e104de18")
     version("2.30.1", sha256="2815bfdeb8e7f78185f316b75e2d4b19d0f6993bdc5ff03352ed37b70a796360")
     version("2.29.1", sha256="474d10eb2f924b9320f6f7093e4c149d0a38c124d0419c12a07a3eca942de025")

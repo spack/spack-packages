@@ -1,0 +1,13 @@
+diff --git a/Plugins/CDIReader/Reader/vtkCDIReader.cxx b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+index 1561f047240ee9efc7dcf7688bf32b2ad43c22e5..89e869b68bc623e81d4315d6aefcf088c5789884 100644
+--- a/Plugins/CDIReader/Reader/vtkCDIReader.cxx
++++ b/Plugins/CDIReader/Reader/vtkCDIReader.cxx
+@@ -252,6 +252,8 @@ vtkCDIReader::vtkCDIReader()
+ 
+   vtkDebugMacro("MAX_VARS:" << MAX_VARS);
+   vtkDebugMacro("Created vtkCDIReader");
++
++  cdiDefGlobal("NETCDF_LAZY_GRID_LOAD", true);
+ }
+ 
+ //----------------------------------------------------------------------------

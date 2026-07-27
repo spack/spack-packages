@@ -18,6 +18,7 @@ class PyModulesGui(PythonPackage):
 
     license("GPL-2.0")
 
+    version("0.2.2", sha256="9b0b1a5aecff5db30e214d0e193cb2db6f35f89c672adf0267d00f9967512cc1")
     version("0.2", sha256="d58a3943f4631756afa4f84c13b70fae67a72365ab3cad28014f972b8d023aec")
 
     depends_on("py-setuptools@61:", type=("build"))

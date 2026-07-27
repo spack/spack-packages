@@ -16,6 +16,12 @@ class QtQuick3d(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.11.1", sha256="fa684e2a86e0de6d128d30d71b8d6155082d2dbfc0b6d4f8f3196dbf106e81ac")
+    version("6.10.2", sha256="88082ab6847283c3c2b83c387538099c8d2840eb4b5efe7ab0b6cc8c565ee388")
+    version("6.10.1", sha256="993684adddc2825dd9ae1b9c1687e0163960332057df4dfbc3dbe4ea6b900413")
+    version("6.10.0", sha256="4a87e5c8f9f187a672af15da8bd1e412fe745d57d71a1df32e4114f340b72ffe")
+    version("6.9.3", sha256="959ace15a463726963df819f3c46d8f43bc7956556ce7fc28bad5e4b1c55f0f1")
+    version("6.9.2", sha256="a10d237850e40fc7bdae44fac8658726864995c5c6cca740b80a2c10b85d3d3b")
     version("6.9.1", sha256="127ea0306c5ca1a67d90b13c8d60a21b8e52ade007853bac7bcbf55af61ae0db")
     version("6.9.0", sha256="49c743ca41528787fb26057e603854c115a85efb3edb56977e49bf81ba3fada0")
     version("6.8.3", sha256="7a6d2087a5112b1d1bfe7455ae023418a2d5f6ef6d3d8de8ccdcef979a7cdd17")

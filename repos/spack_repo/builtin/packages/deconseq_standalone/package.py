@@ -33,7 +33,7 @@ class DeconseqStandalone(Package):
         install("splitFasta.pl", prefix.bin)
         install("DeconSeqConfig.pm", prefix)
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", join_path(prefix.bin, "bwa64"))
         chmod("+x", join_path(prefix.bin, "bwaMAC"))
         chmod("+x", join_path(prefix.bin, "deconseq.pl"))

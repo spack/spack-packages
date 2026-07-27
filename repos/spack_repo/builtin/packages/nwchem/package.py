@@ -24,11 +24,21 @@ class Nwchem(Package):
     version("master", branch="master")
 
     version(
+        "7.3.1",
+        sha256="d5d6055eadada2288aa35d32bb42b43ff45d60cfab96cb96ce576553d584a4e8",
+        url="https://github.com/nwchemgit/nwchem/releases/download/v7.3.1-release/nwchem-7.3.1-release.revision-23c3b41b-srconly.2025-11-06.tar.bz2",
+    )
+
+    version(
+        "7.3.0",
+        sha256="5498aad0d6cee5b94335a6f31f05313c2d45325060cb8f38edd38c4496df50e8",
+        url="https://github.com/nwchemgit/nwchem/releases/download/v7.3.0-release/nwchem-7.3.0-release.revision-e60d3d90-srconly.2025-10-24.tar.bz2",
+    )
+    version(
         "7.2.3",
         sha256="8cb4ec065215bc0316d8e01f67f1674a572f7d0f565c52e4a327975c04ddb6eb",
         url="https://github.com/nwchemgit/nwchem/releases/download/v7.2.3-release/nwchem-7.2.3-release.revision-d690e065-srconly.2024-08-27.tar.bz2",
     )
-
     version(
         "7.2.2",
         sha256="6b68e9c12eec38c09d92472bdd1ff130b93c1b5e1f65e4702aa7ee36c80e4af7",
@@ -240,7 +250,7 @@ class Nwchem(Package):
             install_tree(join_path("nwpw", "libraryps"), join_path(share_path, "libraryps"))
 
             b_path = join_path(self.stage.source_path, "bin", target, "nwchem")
-            chmod = which("chmod")
+            chmod = which("chmod", required=True)
             chmod("+x", b_path)
             install(b_path, prefix.bin)
 
@@ -257,9 +267,7 @@ class Nwchem(Package):
    spce    {data}/solvents/spce.rst
    charmm_s {data}/charmm_s/
    charmm_x {data}/charmm_x/
-""".format(
-                data=share_path
-            )
+""".format(data=share_path)
             with open(".nwchemrc", "w") as f:
                 f.write(nwchemrc)
             install(".nwchemrc", share_path)

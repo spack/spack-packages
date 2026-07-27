@@ -17,6 +17,7 @@ class PerlBioEnsemblVariation(Package):
     license("APACHE-2.0", checked_by="teaguesterling")
 
     for vers, sha in [
+        ("113", "6e930e34ecf524a635c848636e1b479eba9102b3a386f49597640571c25e9e94"),
         ("112", "ad75ff0a9efbf2d5c10ab5087d414bac685819664d01fbe4a9765393bd742a7c"),
         ("111", "b2171b3f5f82a2b7e849c0ec8dc254f4bace4b3faba1b3ab75c5eea596e33bef"),
         ("110", "210d627dcb867d9fda3a0d94428da256f394c32e34df5171b9b9e604507e1f05"),
@@ -58,12 +59,12 @@ class PerlBioEnsemblVariation(Package):
 
     def build(self, spec, prefix):
         if spec.satisfies("+ld"):
-            make = which("make")
+            make = which("make", required=True)
             with working_dir("C_code"):
                 make()
         if spec.satisfies("+tools"):
             # Fix the fact that phenotype_annotation isn't executable
-            chmod = which("chmod")
+            chmod = which("chmod", required=True)
             chmod("+x", "tools/phenotype_annotation/phenotype_annotation")
 
     def install(self, spec, prefix):

@@ -21,6 +21,7 @@ class PyDocutils(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.22.4", sha256="4db53b1fde9abecbb74d91230d32ab626d94f6badfc575d6db9194a49df29968")
     version("0.21.2", sha256="3a6b18732edf182daa3cd12775bbb338cf5691468f91eeeb109deff6ebfa986f")
     version("0.20.1", sha256="f08a4e276c3a1583a86dce3e34aba3fe04d02bba2dd51ed16106244e8a923e3b")
     version("0.19", sha256="33995a6753c30b7f577febfc2c50411fec6aac7f7ffeb7c4cfe5991072dcf9e6")
@@ -55,4 +56,4 @@ class PyDocutils(PythonPackage):
         bin_path = self.prefix.bin
         for file in os.listdir(bin_path):
             if file.endswith(".py"):
-                os.symlink(os.path.join(bin_path, file), os.path.join(bin_path, file[:-3]))
+                symlink(os.path.join(bin_path, file), os.path.join(bin_path, file[:-3]))

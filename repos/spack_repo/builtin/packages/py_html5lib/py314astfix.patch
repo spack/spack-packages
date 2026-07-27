@@ -1,0 +1,13 @@
+--- a/setup.py	2020-06-22 23:23:02.000000000 +0000
++++ b/setup.py	2026-04-09 09:14:32.850544088 +0000
+@@ -90,8 +90,8 @@
+         if (len(a.targets) == 1 and
+                 isinstance(a.targets[0], ast.Name) and
+                 a.targets[0].id == "__version__" and
+-                isinstance(a.value, ast.Str)):
+-            version = a.value.s
++                isinstance(a.value, ast.Constant)):
++            version = a.value.value
+ 
+ setup(name='html5lib',
+       version=version,

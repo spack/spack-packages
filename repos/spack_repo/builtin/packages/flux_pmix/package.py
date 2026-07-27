@@ -19,6 +19,7 @@ class FluxPmix(AutotoolsPackage):
     maintainers("grondo")
 
     version("main", branch="main")
+    version("0.7.0", sha256="0ad9fa0d76e8ffeaa4aa45bd39760b623219e8d3d2a66eb62e8832c2f7e3f47b")
     version("0.6.0", sha256="31f9d9b99f8a75c05e2fd183a35998f104d8e80bd819c57252aca477be0d4c6e")
     version("0.5.0", sha256="f382800b1a342df0268146ea7ce33011299bf0c69a46ac8a52e87de6026c9322")
     version("0.4.0", sha256="f7f58891fc9d9a97a0399b3ab186f2cae30a75806ba0b4d4c1307f07b3f6d1bc")
@@ -40,7 +41,7 @@ class FluxPmix(AutotoolsPackage):
     def autoreconf(self, spec, prefix):
         if not os.path.exists("configure"):
             # Bootstrap with autotools
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./autogen.sh")
 
     @run_after("install")

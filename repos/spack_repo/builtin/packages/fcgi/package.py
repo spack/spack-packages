@@ -18,14 +18,17 @@ class Fcgi(AutotoolsPackage):
 
     license("OML")
 
-    version("2.4.4", sha256="c0e0d9cc7d1e456d7278c974e2826f593ef5ca555783eba81e7e9c1a07ae0ecc")
-    version("2.4.3", sha256="5273bc54c28215d81b9bd78f937a9bcdd4fe94e41ccd8d7c991aa8a01b50b70e")
-    version("2.4.2", sha256="1fe83501edfc3a7ec96bb1e69db3fd5ea1730135bd73ab152186fd0b437013bc")
-    version(
-        "2.4.1-SNAP-0910052249",
-        sha256="829dc89a0a372c7b0b172303ec9b42e9d20615d6d0e9fc81570fdac6c41a0f30",
-        url="https://github.com/FastCGI-Archives/FastCGI.com/raw/master/original_snapshot/fcgi-2.4.1-SNAP-0910052249.tar.gz",
-    )
+    version("2.4.7", sha256="e41ddc3a473b555bdc0cbd80703dcb1f4610c1a7700d3b9d3d0c14a416e1074b")
+    # CVE-2025-23016
+    with default_args(deprecated=True):
+        version("2.4.4", sha256="c0e0d9cc7d1e456d7278c974e2826f593ef5ca555783eba81e7e9c1a07ae0ecc")
+        version("2.4.3", sha256="5273bc54c28215d81b9bd78f937a9bcdd4fe94e41ccd8d7c991aa8a01b50b70e")
+        version("2.4.2", sha256="1fe83501edfc3a7ec96bb1e69db3fd5ea1730135bd73ab152186fd0b437013bc")
+        version(
+            "2.4.1-SNAP-0910052249",
+            sha256="829dc89a0a372c7b0b172303ec9b42e9d20615d6d0e9fc81570fdac6c41a0f30",
+            url="https://github.com/FastCGI-Archives/FastCGI.com/raw/master/original_snapshot/fcgi-2.4.1-SNAP-0910052249.tar.gz",
+        )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -34,3 +37,9 @@ class Fcgi(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     parallel = False
+
+    def patch(self):
+        if self.spec.satisfies("@2.4.7"):
+            # 2.4.7 removed m4/ but not AC_CONFIG_MACRO_DIR
+            # https://github.com/FastCGI-Archives/fcgi2/pull/78
+            mkdirp(self.stage.source_path, "m4")

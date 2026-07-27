@@ -127,7 +127,7 @@ class IntelGtpin(Package):
 
     @property
     def headers(self):
-        return find_headers("gtpin", self.prefix.Include)
+        return find_all_headers(self.prefix.Include)
 
     @property
     def libs(self):

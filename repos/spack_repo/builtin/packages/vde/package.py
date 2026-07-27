@@ -27,3 +27,9 @@ class Vde(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         autoreconf("--install", "--verbose")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
+        return (flags, None, None)

@@ -21,6 +21,7 @@ class Ghostscript(AutotoolsPackage):
 
     license("AGPL-3.0-or-later", checked_by="wdconinc")
 
+    version("10.06.0", sha256="5bd6da34794928cc7e616f288e32bd0be7f9a5ca2d3c206a0af2c19a4e3a318f")
     version("10.05.0", sha256="56e77833de683825c420d0af8cb90aa8ba7da71ea6fb5624290cbc1b53fe7942")
 
     # --enable-dynamic is deprecated, but kept as a variant since it used to be default
@@ -30,11 +31,14 @@ class Ghostscript(AutotoolsPackage):
     # https://www.ghostscript.com/ocr.html
     variant("tesseract", default=False, description="Use the Tesseract library for OCR")
     variant("gtk", default=True, description="Enable gtk+ device for screen output")
+    variant("krb5", default=True, description="Enable Kerberos 5 support")
+    variant("x11", default=True, description="Enable X11 support")
+    variant("dbus", default=True, description="Enable D-Bus support")
 
     depends_on("c", type="build")
 
     depends_on("pkgconfig", type="build")
-    depends_on("krb5", type="link")
+    depends_on("krb5", type="link", when="+krb5")
 
     depends_on("freetype@2.4.2:")
     depends_on("fontconfig", type="link")
@@ -43,11 +47,11 @@ class Ghostscript(AutotoolsPackage):
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
-    depends_on("libx11")
-    depends_on("libxt")
-    depends_on("libxext")
+    depends_on("libx11", when="+x11")
+    depends_on("libxt", when="+x11")
+    depends_on("libxext", when="+x11")
     depends_on("gtkplus", type="link", when="+gtk")
-    depends_on("dbus", type="link")
+    depends_on("dbus", type="link", when="+dbus")
     depends_on("libiconv", type="link")
 
     # https://trac.macports.org/ticket/62832

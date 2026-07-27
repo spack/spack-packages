@@ -24,6 +24,7 @@ class RCurl(RPackage):
 
     license("MIT")
 
+    version("7.1.0", sha256="74f079b6306acc18fbe60c18dbaac805703fb6579e6ab398f3437377695fd8a9")
     version("6.2.0", sha256="0399bb6bcad5f31ad2a2a7165ff8c976111707125ca0a9c4b8ccf40bb5eb1635")
 
     depends_on("c", type="build")

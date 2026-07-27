@@ -18,6 +18,26 @@ class NcbiToolkit(AutotoolsPackage):
     # Per https://ncbi.github.io/cxx-toolkit/pages/ch_getcode_svn#ch_getcode_svn.external
     # New versions are released on github
     version(
+        "30_4_0",
+        sha256="d9937d0a0b495c63b46c94918d4538e32039c9076fe956c606e6659fecd6b4a2",
+        url="https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release/30.4.0.tar.gz",
+    )
+    version(
+        "29_10_0",
+        sha256="08b460edcc0de32d176bcf2b6134e3e4ded5df1dce15ff1111c44cd355358bca",
+        url="https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release/29.10.0.tar.gz",
+    )
+    version(
+        "28_0_12",
+        sha256="db8a21ca242480badce126a6cad6ed5a2a8bcf40427fe6ea0dfd1ce6e8755a33",
+        url="https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release-28.0.12.tar.gz",
+    )
+    version(
+        "27_0_0",
+        sha256="c8fb3f99c6fce4f170b381f3a7789c76a2ff1c23c094c9852e2e3de1fdc57277",
+        url="https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release-27.0.0.tar.gz",
+    )
+    version(
         "26_0_1",
         sha256="aba79da5c8d0407ffc92b7831f4f8f8a8096a15e47a016ada81b6568f9d280cc",
         url="https://github.com/ncbi/ncbi-cxx-toolkit-public/archive/refs/tags/release-26.0.1.tar.gz",
@@ -60,6 +80,18 @@ class NcbiToolkit(AutotoolsPackage):
     depends_on("samtools")
     depends_on("bamtools")
     depends_on("berkeley-db")
+
+    # GCC 13.2, Clang 16, ICC (20)24 required for C++20 support
+    conflicts("%gcc@:13.1", when="@30:")
+    conflicts("%llvm@:15", when="@30:")
+    conflicts("%intel-oneapi-compilers@:2023", when="@30:")
+
+    # boost 1.87 removes dummy_cond(). ncbi-toolset 29.5.0 fixes this.
+    conflicts("boost@1.87:", when="@:29_4")
+
+    # libxml2's xmlGetLastError starts returning const in libxml2@2.12:
+    # ncbi-toolkit fixes this in :29
+    conflicts("libxml2@2.12:", when="@:28")
 
     def configure_args(self):
         args = ["--without-sybase", "--without-fastcgi"]

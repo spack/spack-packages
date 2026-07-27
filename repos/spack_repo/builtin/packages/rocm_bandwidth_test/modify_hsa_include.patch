@@ -1,0 +1,26 @@
+diff --git a/plugins/tb/CMakeLists.txt b/plugins/tb/CMakeLists.txt
+index e92a5f2..fcad400 100644
+--- a/plugins/tb/CMakeLists.txt
++++ b/plugins/tb/CMakeLists.txt
+@@ -68,7 +68,7 @@ if (NOT USE_SYSTEM_TB_ENGINE)
+     endif()
+
+     set(AMD_WORK_BENCH_COMMON_INCLUDE_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/../common/)
+-    set(TB_PLUGIN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/transferbench/include ${CMAKE_CURRENT_SOURCE_DIR}/transferbench/include/Presets ${ROCM_PATH}/include)
++    set(TB_PLUGIN_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/transferbench/include ${CMAKE_CURRENT_SOURCE_DIR}/transferbench/include/Presets ${ROCM_PATH}/include ${HSA_INCLUDE_DIR})
+ else()
+     find_package(TransferBench REQUIRED)
+ endif()
+diff --git a/plugins/tb/transferbench/CMakeLists.txt b/plugins/tb/transferbench/CMakeLists.txt
+index 98e4bc4..632f584 100644
+--- a/plugins/tb/transferbench/CMakeLists.txt
++++ b/plugins/tb/transferbench/CMakeLists.txt
+@@ -153,7 +153,7 @@ endif()
+
+ ## Check for hsa support
+ find_library(HSA_LIBRARY hsa-runtime64 PATHS ${ROCM_PATH} ${ROCM_PATH}/lib)
+-find_path(HSA_INCLUDE_DIR hsa.h PATHS ${ROCM_PATH}/include ${ROCM_PATH}/include/hsa)
++find_path(HSA_INCLUDE_DIR hsa/hsa.h PATHS ${ROCM_PATH}/include ${ROCM_PATH}/include/hsa)
+ if(HSA_LIBRARY AND HSA_INCLUDE_DIR)
+     add_library(hsa-runtime64 SHARED IMPORTED)
+     set_target_properties(hsa-runtime64 PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${HSA_INCLUDE_DIR}" IMPORTED_LOCATION "${HSA_LIBRARY}" INTERFACE_SYSTEM_INCLUDE_DIRECTORIES "${HSA_INCLUDE_DIR}")

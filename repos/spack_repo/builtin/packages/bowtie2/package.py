@@ -30,6 +30,8 @@ class Bowtie2(MakefilePackage):
     version("2.3.0", sha256="f9f841e780e78b1ae24b17981e2469e6d5add90ec22ef563af23ae2dd5ca003c")
     version("2.2.5", sha256="e22766dd9421c10e82a3e207ee1f0eb924c025b909ad5fffa36633cd7978d3b0")
 
+    depends_on("cxx", type="build")
+
     depends_on("tbb", when="@2.3.0:")
     depends_on("readline", when="@2.3.1:")
     depends_on("perl", type="run")

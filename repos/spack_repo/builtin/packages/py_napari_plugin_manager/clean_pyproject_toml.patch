@@ -1,0 +1,14 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index 3938b74..d4c12f7 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -22,9 +22,6 @@ authors = [
+   {name = "napari team", email = "napari-steering-council@googlegroups.com"}
+ ]
+ license = "BSD-3-Clause"
+-license-files = [
+-    "LICENSE",
+-]
+ classifiers = [
+     "Development Status :: 3 - Alpha",
+     "Environment :: X11 Applications :: Qt",

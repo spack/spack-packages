@@ -1,0 +1,13 @@
+diff --git a/test/unit/CMakeLists.txt b/test/unit/CMakeLists.txt
+index 43eeca98..e0084f3c 100644
+--- a/test/unit/CMakeLists.txt
++++ b/test/unit/CMakeLists.txt
+@@ -160,7 +160,7 @@ add_executable(test_network
+   main.cpp
+   test_network.cpp)
+ if(CURL_ENABLED)
+-  include_directories(${CURL_INCLUDE_DIR})
++  include_directories(${CURL_INCLUDE_DIRS})
+   target_compile_definitions(test_network PRIVATE -DCURL_ENABLED)
+   target_link_libraries(test_network PRIVATE ${CURL_LIBRARY})
+ endif()

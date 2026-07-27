@@ -2,22 +2,34 @@ spack:
   view: false
 
   include:
-  - $CI_PROJECT_DIR/.ci/gitlab/
+  - ../../.ci/gitlab/
 
   concretizer:
     static_analysis: true
+
+  config:
+    # ROOT fails downloads frequently
+    url_fetch_method: curl --continue-at - --retry 3 --retry-all-errors
 
   packages:
     all:
       target: ["x86_64_v3"]
       require:
-      - "%gcc"
       - target=x86_64_v3
       providers:
         blas: [openblas]
         mpi: [mpich]
         tbb: [intel-tbb]
       variants: +mpi
+    c:
+      require:
+      - gcc
+    cxx:
+      require:
+      - gcc
+    fortran:
+      require:
+      - gcc
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
@@ -48,8 +60,9 @@ spack:
       - target=x86_64_v3
     root:
       require:
-      - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +mysql +opengl +postgres +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran +vc +vdt +veccore +webgui +x +xml +xrootd # cxxstd=20
+      - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +opengl +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran ~vc +vdt ~veccore +webgui +x +xml +xrootd # cxxstd=20
       # note: root cxxstd=20 not concretizable within sherpa
+      # ~vc ~veccore since PCM integration broken with runtime_cxxmodules=ON
       - target=x86_64_v3
     vecgeom:
       require:
@@ -99,7 +112,7 @@ spack:
   - hepmc
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
-  #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
+  - herwig3 +njet +vbfnlo
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python

@@ -17,6 +17,7 @@ class PyPydocstyle(PythonPackage):
 
     license("MIT")
 
+    version("6.3.0", sha256="7ce43f0c0ac87b07494eb9c0b462c0b73e6ff276807f204d6b53edc72b7e44e1")
     version("6.2.1", sha256="5ddccabe3c9555d4afaabdba909ca2de4fa24ac31e2eede4ab3d528a4bcadd52")
     version("6.2.0", sha256="b2d280501a4c0d9feeb96e9171dc3f6f7d0064c55270f4c7b1baa18452019fd9")
     version("6.1.1", sha256="1d41b7c459ba0ee6c345f2eb9ae827cab14a7533a88c5c6f7e94923f72df92dc")

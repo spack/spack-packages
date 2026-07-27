@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from typing import List
+
 from spack.package import (
     BuilderWithDefaults,
     EnvironmentModifications,
@@ -12,7 +14,6 @@ from spack.package import (
     depends_on,
     execute_install_time_tests,
     install,
-    join_path,
     mkdirp,
     register_builder,
     run_after,
@@ -65,7 +66,10 @@ class GoBuilder(BuilderWithDefaults):
 
     #: Names associated with package attributes in the old build-system format
     package_attributes = (
+        "std_build_args",
         "build_args",
+        "std_ldflags",
+        "ldflags",
         "check_args",
         "build_directory",
         "install_time_test_callbacks",
@@ -74,39 +78,52 @@ class GoBuilder(BuilderWithDefaults):
     #: Callback names for install-time test
     install_time_test_callbacks = ["check"]
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GO111MODULE", "on")
-        env.set("GOTOOLCHAIN", "local")
-        env.set("GOPATH", join_path(self.pkg.stage.path, "go"))
-
     @property
     def build_directory(self):
         """Return the directory containing the main go.mod."""
         return self.pkg.stage.source_path
 
     @property
-    def build_args(self):
-        """Arguments for ``go build``."""
+    def std_ldflags(self) -> List[str]:
         # Pass ldflags -s = --strip-all and -w = --no-warnings by default
+        return ["-s", "-w"]
+
+    @property
+    def ldflags(self) -> List[str]:
+        return []
+
+    @property
+    def std_build_args(self):
+        """Arguments for ``go build``."""
         return [
             "-p",
             str(self.pkg.module.make_jobs),
             "-modcacherw",
+            "-trimpath",
             "-ldflags",
-            "-s -w",
+            " ".join([*self.std_ldflags, *self.ldflags]),
             "-o",
             f"{self.pkg.name}",
         ]
 
     @property
-    def check_args(self):
+    def build_args(self) -> List[str]:
+        return []
+
+    @property
+    def check_args(self) -> List[str]:
         """Argument for ``go test`` during check phase"""
         return []
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        """Setup build environment variables"""
+        # Enable CGO functionality if a package directly depends on a C compiler
+        env.set("CGO_ENABLED", "1" if self.spec.satisfies("%c") else "0")
 
     def build(self, pkg: GoPackage, spec: Spec, prefix: Prefix) -> None:
         """Runs ``go build`` in the source directory"""
         with working_dir(self.build_directory):
-            pkg.module.go("build", *self.build_args)
+            pkg.module.go("build", *self.std_build_args, *self.build_args)
 
     def install(self, pkg: GoPackage, spec: Spec, prefix: Prefix) -> None:
         """Install built binaries into prefix bin."""

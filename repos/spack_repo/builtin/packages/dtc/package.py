@@ -28,6 +28,7 @@ class Dtc(MakefilePackage):
     depends_on("pkgconfig", type="build")
     depends_on("python", type="build")
     depends_on("libyaml", type=("build", "link"))
+    depends_on("diffutils", type="build")
 
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")

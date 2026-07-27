@@ -1,0 +1,9 @@
+--- a/meson.build
++++ b/meson.build
+@@ -440,6 +440,7 @@
+   foreach png_ver : [ '16', '15', '14', '13', '12', '10' ]
+     if not dep_png.found()
+       dep_png = cc.find_library('libpng@0@'.format(png_ver), has_headers : ['png.h'], required : false)
++      dep_png = cc.find_library('png@0@'.format(png_ver), has_headers : ['png.h'], required : false)
+     endif
+   endforeach

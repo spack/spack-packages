@@ -102,7 +102,8 @@ class Libunwind(AutotoolsPackage):
     conflicts("target=ppc64:", when="@1.8")
     conflicts("target=ppc64le:", when="@1.8")
 
-    conflicts("target=aarch64:", when="@1.8:")
+    # https://github.com/libunwind/libunwind/issues/672
+    conflicts("%gcc@14:", when="@1.7.2")
 
     provides("unwind")
 
@@ -135,6 +136,11 @@ class Libunwind(AutotoolsPackage):
                 wrapper_flags.append(self.compiler.cc_pic_flag)
 
         return (wrapper_flags, None, flags)
+
+    # The master/stable branches don't have an m4 directory.
+    @run_before("autoreconf")
+    def make_m4_dir(self):
+        mkdirp("m4")
 
     def configure_args(self):
         spec = self.spec
