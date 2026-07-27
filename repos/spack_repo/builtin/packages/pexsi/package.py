@@ -53,8 +53,8 @@ class Pexsi(MakefilePackage, CMakePackage):
         depends_on("cmake@3.10:", type="build")
         depends_on("cmake@3.17:", type="build", when="@2:")
 
-    variant("openmp", default=False, description="Build with OpenMP support", when="@1.2")
-    variant("fortran", default=False, description="Builds the Fortran interface")
+    variant("openmp", default=True, description="Build with OpenMP support", when="@1.2:")
+    variant("fortran", default=True, description="Builds the Fortran interface")
     variant("pic", default=True, description="Compile position independent code (PIC)")
 
     def url_for_version(self, version):
