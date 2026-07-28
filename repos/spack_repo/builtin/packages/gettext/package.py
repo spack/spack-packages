@@ -100,6 +100,8 @@ class Gettext(AutotoolsPackage, GNUMirrorPackage):
         # this goes together with gl_cv_libxml_force_included=no
         if name == "ldflags" and self.spec.satisfies("+libxml2"):
             flags.append("-lxml2")
+        if name == "cflags" and self.spec.satisfies("%intel"):
+            flags.append("-std=c11")
         return (flags, None, None)
 
     @classmethod
