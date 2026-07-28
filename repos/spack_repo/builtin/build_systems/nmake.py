@@ -10,7 +10,9 @@ from spack.package import (
     Spec,
     build_system,
     conflicts,
+    depends_on,
     register_builder,
+    when,
     windows_sfn,
     working_dir,
 )
@@ -26,6 +28,10 @@ class NMakePackage(PackageBase):
     build_system("nmake")
     conflicts("platform=linux", when="build_system=nmake")
     conflicts("platform=darwin", when="build_system=nmake")
+
+    with when("build_system=nmake"):
+        # Either Visual Studio's nmake or a drop-in replacement such as jom
+        depends_on("nmake", type="build")
 
 
 @register_builder("nmake")
