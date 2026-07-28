@@ -90,12 +90,20 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("utf8proc@2.7.0: +shared", when="+gandiva")
     depends_on("utf8proc@2.7.0: +shared", when="+python")
     depends_on("xsimd@14:", when="@24:")
+    depends_on("xsimd@13:", when="@23:")
     depends_on("xsimd@8.1.0:", when="@9.0.0:")
     depends_on("zlib-api", when="+zlib @9:")
     depends_on("zlib-api", when="@:8")
     conflicts("^zlib~pic")
     depends_on("zstd", when="+zstd @9:")
     depends_on("zstd", when="@:8")
+
+    conflicts("@:23 %gcc@:9 ^xsimd@14", msg="Use newer Arrow or newer GCC")
+    conflicts(
+        "@23+parquet %gcc@:9",
+        msg="Arrow 23 requires 'C++20-enabled compiler' to build with parquet support",
+    )
+    conflicts("@24: %gcc@:9", msg="Arrow 24 requires 'C++20-enabled compiler'")
 
     variant("brotli", default=False, description="Build support for Brotli compression")
     variant("bz2", default=False, description="Build support for bzip2 compression")
