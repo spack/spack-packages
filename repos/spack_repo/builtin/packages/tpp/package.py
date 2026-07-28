@@ -250,9 +250,7 @@ class Tpp(MakefilePackage):
         if spec.satisfies("@6.3.3:"):
             make_flags.append(f"ZLIB_LDFLAGS={self.spec['zlib'].libs.link_flags}")
 
-        libarchive_ldflags = [
-            self.spec['libarchive'].libs.link_flags
-        ]
+        libarchive_ldflags = [self.spec["libarchive"].libs.link_flags]
 
         if self.spec.satisfies("^libarchive compression=bz2lib"):
             libarchive_ldflags.append("-lbz2")
@@ -275,7 +273,7 @@ class Tpp(MakefilePackage):
         if self.spec.satisfies("^libarchive+iconv"):
             libarchive_ldflags.extend(["-liconv", "-lcharset"])
 
-        make_flags.append(f"LIBARCHIVE_LDFLAGS={" ".join(libarchive_ldflags)}")
+        make_flags.append(f"LIBARCHIVE_LDFLAGS={' '.join(libarchive_ldflags)}")
 
         make("boost", *make_flags)  # otherwise pwiz fails
         make("comet", *make_flags, parallel=False)
