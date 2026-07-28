@@ -178,9 +178,10 @@ class Hipblaslt(CMakePackage):
     depends_on("py-msgpack", when="@7.1:")
     depends_on("py-nanobind", when="@7.1:")
     # rocroller in ROCm 7.1+ fails to build with fmt 11 (consteval FMT_STRING errors).
-    # Keep spdlog/fmt on a known-compatible pair.
-    depends_on("spdlog@:1.14", when="@7.1:")
-    depends_on("fmt@11.1:", when="@7.0:")
+    conflicts("fmt@:1.11", when="@7.1:")
+    # spdlog pairs itself with fmt, so we only depend on "spdlog" for ROCm 7.1+
+    # and let it pair with the fmt version constraint as it sees fit.
+    depends_on("spdlog", when="@7.1:")
 
     resource(
         name="libdivide",
@@ -246,6 +247,14 @@ class Hipblaslt(CMakePackage):
 
         if self.spec.satisfies("@7.1") and self.run_tests:
             env.append_flags("LDFLAGS", "-lstdc++fs")
+
+        # hipblaslt up to 7.2.x expect stdint typedefs to be available in the global
+        # namespace without including stdint.h, which is not the case in all configurations.
+        # This can lead to build failures when compiling hipblaslt with certain libraries,
+        # so we add it to the compile flags to ensure it is available:
+
+        if self.spec.satisfies("@:7.2"):
+            env.append_flags("CXXFLAGS", "-include stdint.h")
 
     def patch(self):
         purelib = self.spec["python"].package.purelib

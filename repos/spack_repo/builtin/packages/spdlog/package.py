@@ -96,6 +96,9 @@ class Spdlog(CMakePackage):
     # https://github.com/gabime/spdlog/releases/tag/v1.16.0
     depends_on("fmt@12.0.0:12", when="@1.16.0:")
 
+    # https://github.com/gabime/spdlog/releases#release-v1.17.0
+    depends_on("fmt@12.1.0:12", when="@1.17.0:")
+
     # spdlog@1.11.0 with fmt@10  https://github.com/gabime/spdlog/pull/2694
     patch(
         "https://github.com/gabime/spdlog/commit/0ca574ae168820da0268b3ec7607ca7b33024d05.patch?full_index=1",
