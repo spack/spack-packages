@@ -222,12 +222,6 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm ^blt@:0.6"):
             entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
 
-        # adrienbernede-23-01
-        # Maybe we want to share this in the above llnl_link_helpers function.
-        compilers_using_cxx14 = ["intel-17", "intel-18", "xl"]
-        if any(compiler in self.compiler.cxx for compiler in compilers_using_cxx14):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
-
         llnl_link_helpers(entries, spec, compiler)
 
         return entries
