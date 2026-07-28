@@ -31,6 +31,7 @@ class Tpp(MakefilePackage):
     depends_on("cxx", type="build")
 
     depends_on("argtable", when="@7:")
+    depends_on("libarchive")
     depends_on("zlib", when="@6.3.3:")
 
     with default_args(type=("build", "run")):
@@ -121,7 +122,7 @@ class Tpp(MakefilePackage):
             if spec.satisfies("@7:"):
                 filter_file(
                     "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools ",
-                    "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools -lz ",
+                    f"LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools {self.spec['zlib'].libs.link_flags} ",  # noqa: E501
                     "extern/kojak/kojak-2.1.0/Makefile",
                     string=True,
                 )
@@ -129,7 +130,7 @@ class Tpp(MakefilePackage):
             if spec.satisfies("@7.0"):
                 filter_file(
                     "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools ",
-                    "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools -lz ",
+                    f"LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools {self.spec['zlib'].libs.link_flags} ",  # noqa: E501
                     "extern/magnum/magnum-Official_1.3.2/Makefile",
                     string=True,
                 )
@@ -137,7 +138,7 @@ class Tpp(MakefilePackage):
             if spec.satisfies("@7.1:"):
                 filter_file(
                     "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools ",
-                    "LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools -lz ",
+                    f"LIBS := -lmstoolkitlite -lhardklor -lpepxml -lmzimltools {self.spec['zlib'].libs.link_flags} ",  # noqa: E501
                     "extern/magnum/mhoopmann-magnum-948173b/Makefile",
                     string=True,
                 )
@@ -248,6 +249,33 @@ class Tpp(MakefilePackage):
 
         if spec.satisfies("@6.3.3:"):
             make_flags.append(f"ZLIB_LDFLAGS={self.spec['zlib'].libs.link_flags}")
+
+        libarchive_ldflags = [
+            self.spec['libarchive'].libs.link_flags
+        ]
+
+        if self.spec.satisfies("^libarchive compression=bz2lib"):
+            libarchive_ldflags.append("-lbz2")
+
+        if self.spec.satisfies("^libarchive compression=lz4"):
+            libarchive_ldflags.append("-llz4")
+
+        if self.spec.satisfies("^libarchive compression=lzo2"):
+            libarchive_ldflags.append("-llzo2")
+
+        if self.spec.satisfies("^libarchive compression=lzma"):
+            libarchive_ldflags.append("-llzma")
+
+        if self.spec.satisfies("^libarchive compression=zlib"):
+            libarchive_ldflags.append("-lz")
+
+        if self.spec.satisfies("^libarchive compression=zstd"):
+            libarchive_ldflags.append("-lzstd")
+
+        if self.spec.satisfies("^libarchive+iconv"):
+            libarchive_ldflags.extend(["-liconv", "-lcharset"])
+
+        make_flags.append(f"LIBARCHIVE_LDFLAGS={" ".join(libarchive_ldflags)}")
 
         make("boost", *make_flags)  # otherwise pwiz fails
         make("comet", *make_flags, parallel=False)
