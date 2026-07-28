@@ -93,7 +93,14 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Build with OpenMP support")
     variant("omptarget", default=False, description="Build with OpenMP Target support")
     variant("sycl", default=False, description="Build with Sycl support")
-
+    
+    # TODO: Add conflicts. I know that  v2026.07.0 has concepts (C++20 feature) and cannot be built with earlier C++ versions.
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20", "23"),
+        description="C++ standard to build with",
+    )
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -129,6 +136,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
         options = []
 
         options.append("-DBLT_SOURCE_DIR={0}".format(spec["blt"].prefix))
+        options.append(self.define("BLT_CXX_STD", f"c++{self.spec.variants.get('cxxstd').value}"))
 
         options.append(self.define_from_variant("ENABLE_CUDA", "cuda"))
         if spec.satisfies("+cuda"):
