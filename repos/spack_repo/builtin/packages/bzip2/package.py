@@ -49,6 +49,7 @@ class Bzip2(Package, SourcewarePackage):
         depends_on("diffutils", type="build")
 
     depends_on("c", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
 
     depends_on("gmake", type="build", when="platform=linux")
     depends_on("gmake", type="build", when="platform=darwin")

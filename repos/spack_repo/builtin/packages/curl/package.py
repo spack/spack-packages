@@ -87,6 +87,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
 
     depends_on("pkgconfig", type="build", when="platform=darwin")
     depends_on("pkgconfig", type="build", when="platform=linux")
