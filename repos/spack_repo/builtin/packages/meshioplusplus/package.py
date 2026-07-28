@@ -18,7 +18,7 @@ class Meshioplusplus(CMakePackage):
     """
 
     homepage = "https://github.com/loumalouomega/meshioplusplus"
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v8.7.0.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.4.1.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -27,6 +27,11 @@ class Meshioplusplus(CMakePackage):
 
     # Upstream's default branch moved from main to master at v7.0.0.
     version("master", branch="master")
+    version("9.4.1", sha256="dc57060303b90a18128e259c5266d48d4a80e68d535ac028467b3ac8d518d772")
+    # v9.0.0: the installable C++ core (MESHIOPLUSPLUS_INSTALL_CPP) landed at
+    # v8.9.0; this major bump marks it stabilizing as a real consumer surface.
+    # Not a breaking change to any existing build path.
+    version("9.0.0", sha256="8d7fdab4763a2174291e40c5da503bbb6d37b36591a54f7c0b1fa869eef54798")
     version("8.7.0", sha256="d8721aa4ed82ef2f7fe49062910826a7012f6823eb22d5290690c298eafe68ec")
     # v8.0.0: the WebAssembly build gained every core format; no change to the
     # native/CMake build this package drives.
@@ -87,6 +92,20 @@ class Meshioplusplus(CMakePackage):
         multi=False,
         description="In-memory mesh backend for the standalone C++ build",
     )
+    variant(
+        "cxx_api",
+        default=False,
+        description="Build the installable, find_package()-able C++ core library",
+        when="@8.9:",
+    )
+    variant(
+        "cxx_api_backends",
+        values=any_combination_of("meshio", "native", "kratos").with_default(
+            "meshio,native,kratos"
+        ),
+        description="Mesh backends to install as separate C++ libraries",
+        when="+cxx_api",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -139,5 +158,9 @@ class Meshioplusplus(CMakePackage):
                 "MESHIOPLUSPLUS_MESH_BACKEND",
                 spec.variants["mesh_backend"].value.upper(),
             ),
+            self.define_from_variant("MESHIOPLUSPLUS_INSTALL_CPP", "cxx_api"),
         ]
+        if spec.satisfies("+cxx_api"):
+            backends = ";".join(sorted(v.upper() for v in spec.variants["cxx_api_backends"].value))
+            args.append(self.define("MESHIOPLUSPLUS_INSTALL_CPP_BACKENDS", backends))
         return args
