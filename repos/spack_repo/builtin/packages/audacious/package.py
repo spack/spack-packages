@@ -35,7 +35,9 @@ class Audacious(AutotoolsPackage):
     depends_on("qt", when="@:4.3")
     depends_on("qmake", when="@4.4:")
     with when("^[virtuals=qmake] qt"):
-        depends_on("qt")
+        # Mirrors the qt-base branch below: audacious needs Qt's GUI, so a bare
+        # "qt" would also be satisfied by a qmake-only provider.
+        depends_on("qt+gui")
     with when("^[virtuals=qmake] qt-base"):
         depends_on("qt-base +gui +widgets")
         depends_on("qt-svg")
