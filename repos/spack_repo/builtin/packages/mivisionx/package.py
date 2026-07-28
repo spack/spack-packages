@@ -76,19 +76,21 @@ class Mivisionx(ROCmLibrary, CMakePackage):
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
 
     def patch(self):
-        filter_file(
-            r"${ROCM_PATH}/include/miopen/config.h",
-            "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
-            "amd_openvx_extensions/CMakeLists.txt",
-            string=True,
-        )
-        filter_file(
-            r"${ROCM_PATH}/llvm/bin/clang++",
-            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-            "amd_openvx/openvx/hipvx/CMakeLists.txt",
-            "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("+hip"):
+            # miopen-hip and llvm-amdgpu are spec dependencies for HIP builds only:
+            filter_file(
+                r"${ROCM_PATH}/include/miopen/config.h",
+                f"{self.spec['miopen-hip'].prefix}/include/miopen/config.h",
+                "amd_openvx_extensions/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                r"${ROCM_PATH}/llvm/bin/clang++",
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++",
+                "amd_openvx/openvx/hipvx/CMakeLists.txt",
+                "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
+                string=True,
+            )
         if self.spec.satisfies("@:6.1 + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
@@ -169,7 +171,8 @@ class Mivisionx(ROCmLibrary, CMakePackage):
                 string=True,
             )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("ffmpeg@4.4:", type="build")
@@ -241,7 +244,8 @@ class Mivisionx(ROCmLibrary, CMakePackage):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@6.1:"):
+        # llvm-amdgpu is only a dependency for HIP builds, we can use it only when +hip:
+        if self.spec.satisfies("@6.1: +hip"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
         if self.spec.satisfies("+asan"):
@@ -259,20 +263,19 @@ class Mivisionx(ROCmLibrary, CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        protobuf = spec["protobuf"].prefix.include
-        args = [
-            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
-            self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix)),
-            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
-            self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
-        ]
-        if self.spec.satisfies("+hip"):
-            args.append(self.define("BACKEND", "HIP"))
-            args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
-            args.append(self.define("HIP_PATH", spec["hip"].prefix))
-
-        if self.spec.satisfies("~hip"):
-            args.append(self.define("BACKEND", "CPU"))
+        if spec.satisfies("+hip"):
+            args = [
+                self.define("BACKEND", "HIP"),
+                self.define("HIP_PATH", spec["hip"].prefix),
+                self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix),
+                self.define("CMAKE_CXX_FLAGS", f"-I{spec['protobuf'].prefix.include}"),
+                # rpp is only a dependency for HIP builds, we can use it only when +hip:
+                self.define("AMDRPP_LIBRARIES", f"{spec['rpp'].prefix}/lib/librpp.so"),
+                self.define("AMDRPP_INCLUDE_DIRS", f"{spec['rpp'].prefix}/include/rpp"),
+                self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
+            ]
+        else:
+            args = [self.define("BACKEND", "CPU")]
 
         if self.spec.satisfies("@:6.2.0"):
             args.append(
