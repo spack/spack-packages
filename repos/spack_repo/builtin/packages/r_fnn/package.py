@@ -34,8 +34,8 @@ class RFnn(RPackage):
     depends_on("r@3.0.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.1.4:")
 
-    conflicts("^r@4.5.0:",
-            when="@:1.1.3,=1.1.4",
-            msg="r@4.5.0: dropped Calloc/Free for R_Call/R_Free; need r-fnn@1.1.4.1: to support",
-        )
-
+    conflicts(
+        "^r@4.5.0:",
+        when="@:1.1.3,=1.1.4",
+        msg="r@4.5.0: dropped Calloc/Free for R_Call/R_Free; need r-fnn@1.1.4.1: to support",
+    )
