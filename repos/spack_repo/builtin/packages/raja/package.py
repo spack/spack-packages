@@ -290,7 +290,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
     # TODO(johnbowen42): Remove the following line after the June 2026 RAJA suite release
-    depends_on("camp@main commit=e75ab64c029aa27c80593715cb2a3ccad7453c8c", when="@develop")
+    depends_on("camp@2026.07", when="@develop")
     depends_on("camp@2025.12", when="@2025.12.0:2025.12.2")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
