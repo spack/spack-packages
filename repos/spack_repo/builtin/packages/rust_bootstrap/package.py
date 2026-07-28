@@ -250,9 +250,9 @@ class RustBootstrap(Package):
     def fixup_rpaths(self):
         # set rpaths of libLLVM.so and rust-ldd to zlib's lib directory
         rpaths = self.spec["zlib-api"].libs.directories
+        patchelf = which("patchelf", required=True)
 
         for binary in find(self.stage.source_path, ["libLLVM.so.*", "rust-lld"]):
-            patchelf = Executable("patchelf")
             patchelf("--add-rpath", ":".join(rpaths), binary)
 
     def install(self, spec, prefix):
