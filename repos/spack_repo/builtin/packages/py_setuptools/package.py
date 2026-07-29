@@ -80,9 +80,50 @@ class PySetuptools(Package, PythonExtension):
 
     depends_on("py-pip", type="build")
 
+    # https://github.com/pypa/setuptools/blob/v71.0.0/NEWS.rst
+    #
+    # Now setuptools declares its own dependencies in the core extra.
+    # Dependencies are still vendored for bootstrapping purposes,
+    # but setuptools will prefer installed dependencies if present.
+    conflicts("py-importlib-metadata@:5", when="@71.1: ^python@:3.9")
+    conflicts("py-importlib-metadata@:5", when="@71.0")
+
+    conflicts("py-importlib-resources@:5.10.1", when="@75.3.3 ^python@:3.8")
+    conflicts("py-importlib-resources@:5.10.1", when="@71.1:75.3.1 ^python@:3.8")
+    conflicts("py-importlib-resources@:5.10.1", when="@71.0")
+
+    # does not exist in spack (2026-07-07)
+    # jaraco.collections    v77.0.2 -
+    # jaraco.collections    v75.4.0 +
+    # jaraco.collections    v75.3.4 -
+    # jaraco.collections    v75.0.0 +
+
+    conflicts("py-jaraco-functools@:3", when="@75.3.4:")
+    conflicts("py-jaraco-functools@:3", when="@75.3.2")
+
+    # does not exist in spack (2026-07-07)
+    # jaraco.text>=3.7      v71.0.0 +
+
+    conflicts("py-more_itertools@:8.7", when="@71:")
+
+    conflicts("py-ordered-set@:3.1.0", when="@71:72")
+
+    conflicts("py-packaging@:24.1", when="@75.3.4:")
+    conflicts("py-packaging@:23", when="@75.3.3")
+    conflicts("py-packaging@:24.1", when="@75.3.2")
+    conflicts("py-packaging@:23", when="@71:")
+
+    conflicts("py-platformdirs@:4.2.1", when="@75.3:82.0.0")
+    conflicts("py-platformdirs@:2.6.1", when="@71:75.2")
+
+    conflicts("py-tomli@:2.0.0", when="@71.1: ^python@:3.10")
+    conflicts("py-tomli@:2.0.0", when="@71.0")
+
+    conflicts("py-wheel@:0.42", when="@71:")
+
     conflicts(
-        "^python@:3.9 ^py-pip@25:",
-        when="@:75.1.0",
+        "^py-pip@25:",
+        when="@:75.1.0 ^python@:3.9",
         msg="py-pip@25: vendors pyproject-hooks@1.2. "
         "The combination pyproject-hooks@1.2, python@:3.9, and py-setuptools@:75.1.0 is broken. "
         "See https://github.com/pypa/pyproject-hooks/issues/206 for details.",
