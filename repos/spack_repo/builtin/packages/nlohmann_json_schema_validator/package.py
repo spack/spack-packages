@@ -26,6 +26,7 @@ class NlohmannJsonSchemaValidator(CMakePackage):
 
     depends_on("cxx", type="build")  # generated
 
+    depends_on("cmake@3.14:", type="build", when="@2.3:")
     depends_on("cmake@3.2:", type="build")
     depends_on("nlohmann-json")
 
