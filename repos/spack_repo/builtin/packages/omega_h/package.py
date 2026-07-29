@@ -92,7 +92,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
     variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
-    variant('python', default=False, description='enable python interfaces')
+    variant("python", default=False, description="enable python interfaces")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -104,10 +104,10 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("trilinos +kokkos+exodus", when="@:11.0.0-scorec+exodus")
     depends_on("kokkos", when="+kokkos")
     depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:+kokkos")
-    depends_on('python', when='+python')
-    depends_on('py-numpy', type=('build','link','run'), when='+python')
-    depends_on('py-pybind11', type='build', when='+python')
-    depends_on("py-pytest", type="test", when='+python')
+    depends_on("python", when="+python")
+    depends_on("py-numpy", type=("build", "link", "run"), when="+python")
+    depends_on("py-pybind11", type="build", when="+python")
+    depends_on("py-pytest", type="test", when="+python")
     depends_on("zlib-api", when="+zlib")
     depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
 
