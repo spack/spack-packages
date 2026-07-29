@@ -23,15 +23,15 @@ default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
 .clone_spack: &clone_spack
-  - mkdir -p /.ci/tmp
-  - mkdir -p /.ci/tmp/spack
-  - cd /.ci/tmp/spack
+  - mkdir -p .ci/tmp
+  - mkdir -p .ci/tmp/spack
+  - cd .ci/tmp/spack
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
   - echo ${SPACK_CHECKOUT_VERSION}
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
-  - cd ~/tipi
+  - cd ${CI_PROJECT_DIR}
 
 .trigger_build: &trigger_build
   strategy: depend
@@ -115,26 +115,26 @@ default:
       "${SPACK_CI_CONFIG_ROOT}/${PIPELINE_MIRROR_TEMPLATE}"
       "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
     - spack config add -f "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
-    - mkdir "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir"
-    - mkdir "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir"
+    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
     - spack
-      config blame > "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
+      config blame > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
     - spack -v  --color=always
       ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
       --forward-variable SPACK_CHECKOUT_VERSION
       --forward-variable SPACK_CHECKOUT_REPO
       --forward-variable SPACK_CI_PACKAGES_ROOT
       --forward-variable SPACK_CI_SPACK_ROOT
-      --artifacts-root "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      --output-file "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
     when: always
     paths:
-      - "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir"
-      - "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/patches"
-      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/providers"
-      - "${SPACK_PROJECT_CI_DIR}/tmp/_user_cache/cache/tags"
+      - "${CI_PROJECT_DIR}/jobs_scratch_dir"
+      - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/patches"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
   variables:
     SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
@@ -170,7 +170,7 @@ default:
     - |
       [ ! -z ${NOOP_JOB} ] && \
       python3 ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py \
-      "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
     - |
       [ ! -z ${NOOP_JOB} ] && exit 0
     - uname -a || true
@@ -217,7 +217,7 @@ default:
     - |
       If ( $NOOP_JOB )
       {
-          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${SPACK_PROJECT_CI_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
       }
     - |
       If ( $NOOP_JOB ) { exit 0 }
