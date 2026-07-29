@@ -22,6 +22,23 @@ class Herwig3(AutotoolsPackage):
     version("7.2.2", sha256="53e06b386df5bc20fe268b6c8ba50f1e62b6744e577d383ec836ea3fc672c383")
     version("7.2.1", sha256="d4fff32f21c5c08a4b2e563c476b079859c2c8e3b78d853a8a60da96d5eea686")
 
+    resource(
+        name="ct14lo",
+        url="http://lhapdfsets.web.cern.ch/lhapdfsets/current/CT14lo.tar.gz",
+        sha256="5554b2f66027accc3fe38b55b846d5c7c6d771283868187870bf9c86e5c46678",
+        destination="lhapdfsets",
+        placement="CT14lo",
+        expand=True,
+    )
+    resource(
+        name="ct14nlo",
+        url="http://lhapdfsets.web.cern.ch/lhapdfsets/current/CT14nlo.tar.gz",
+        sha256="ad62063067e1d73942b1aadcaff2e50a6b2e2d28ad989e8bd3eee5f48e05f18c",
+        destination="lhapdfsets",
+        placement="CT14nlo",
+        expand=True,
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -31,7 +48,6 @@ class Herwig3(AutotoolsPackage):
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
     depends_on("lhapdf")
-    depends_on("lhapdfsets", type="build")
     depends_on("thepeg@2.2.1", when="@7.2.1")
     depends_on("thepeg@2.2.2", when="@7.2.2")
     depends_on("thepeg@2.2.3", when="@7.2.3")
@@ -96,6 +112,7 @@ class Herwig3(AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         thepeg_home = self.spec["thepeg"].prefix
         env.prepend_path("LD_LIBRARY_PATH", thepeg_home.lib.ThePEG)
+        env.set("LHAPDF_DATA_PATH", join_path(self.stage.source_path, "lhapdfsets"))
         env.set("HERWIGINCLUDE", "-I" + self.prefix.include)
         env.set("BOOSTINCLUDE", "-I" + self.spec["boost"].prefix.include)
         env.set("HERWIGINSTALL", self.prefix)
