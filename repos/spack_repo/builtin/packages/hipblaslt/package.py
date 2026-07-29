@@ -179,11 +179,9 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
     depends_on("py-packaging", when="@7.1:")
     depends_on("py-msgpack", when="@7.1:")
     depends_on("py-nanobind", when="@7.1:")
-    # rocroller in ROCm 7.1-7.2 fails to build with fmt 11 (consteval FMT_STRING errors).
-    # Keep spdlog/fmt on a known-compatible pair for those versions.
-    depends_on("spdlog@:1.14", when="@7.1:7.2")
-    depends_on("spdlog", when="@7.13:")
-    depends_on("fmt@11.1:", when="@7.0:")
+    depends_on("spdlog", when="@7.1:")
+    # spdlog pairs itself with fmt, but we need to exclude fmt@11 for ROCm 7.1+:
+    conflicts("fmt@11", when="@7.1:", msg="rocroller in ROCm 7.1+ fails to build with fmt 11")
 
     resource(
         name="libdivide",
@@ -225,6 +223,20 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
     patch("0005-add-offload-bundler-path.patch", when="@7.1:7.2")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # hipBLASLt's tensilelite/extops CMake code snapshots $ENV{PATH} at
+        # configure time and bakes it verbatim (without shell-escaping) into
+        # the generated Makefiles (see
+        # projects/hipblaslt/cmake/hipblaslt_python.cmake,
+        # hipblaslt_configure_bundled_python_command()). If PATH contains
+        # entries with spaces and/or parentheses -- e.g. WSL's interop PATH
+        # entries such as "/mnt/c/Program Files (x86)/...' -- the generated
+        # recipe fails with:
+        #   /bin/sh: 1: Syntax error: "(" unexpected
+        # Such entries are never needed to build hipblaslt, so drop them.
+        for entry in os.environ.get("PATH", "").split(os.pathsep):
+            if re.search(r"[()\s]", entry):
+                env.remove_path("PATH", entry)
+
         if self.spec.satisfies("@:6.4"):
             env.set("CXX", self.spec["hip"].hipcc)
         else:
@@ -249,6 +261,14 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
 
         if self.spec.satisfies("@7.1") and self.run_tests:
             env.append_flags("LDFLAGS", "-lstdc++fs")
+
+        # hipblaslt up to 7.2.x expect stdint typedefs to be available in the global
+        # namespace without including stdint.h, which is not the case in all configurations.
+        # This can lead to build failures when compiling hipblaslt with certain libraries,
+        # so we add it to the compile flags to ensure it is available:
+
+        if self.spec.satisfies("@:7.2"):
+            env.append_flags("CXXFLAGS", "-include stdint.h")
 
     def patch(self):
         purelib = self.spec["python"].package.purelib
