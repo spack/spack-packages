@@ -48,7 +48,7 @@ spack:
     binutils:
       variants: +ld +gold +headers +libiberty ~nls
     rust:
-      require: 'target=x86_64_v3 %gcc' 
+      require: 'target=x86_64_v3 %gcc'
     bison:
       require: 'target=x86_64_v3 %gcc'
     raja:
@@ -196,14 +196,14 @@ spack:
   # Current errors:
   # - gptune ~mpispawn            # py-gpy-1.13.2: GPy/kern/src/stationary_cython.c:17564:41: error: no member named 'subarray' in 'struct _PyArray_Descr'
   # - hypre +sycl                 # Could NOT find IntelSYCL (missing: SYCL_INCLUDE_DIR SYCL_LIBRARY_DIR SYCL_LIBRARY) (found version "202012")
-  # - nco                         # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF 
-  # - netcdf-fortran              # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF 
+  # - nco                         # hdf5-1.14.6:Fatal Error: Reading module '/home/tipi/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF
+  # - netcdf-fortran              # hdf5-1.14.6:Fatal Error: Reading module '/home/tipi/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF
   # - nrm                         # py-gevent-25.5.1: gcc: error: unrecognized command-line option '-fp-model=strict'
   # - petsc +sycl                 # kokkos-kernels-5.0.2: batched/dense/impl/KokkosBatched_HostLevel_Gemm_DblBuf_Impl.hpp:233:24: error: 'BatchedDblBufGemm<KokkosBlas::Trans::Transpose, KokkosBlas::Trans::Transpose, KokkosBatched::BatchLayout::Right, KokkosBatched::BatchedGemmHandle, double, Kokkos::View<double ***, Kokkos::LayoutLeft, Kokkos::Device<Kokkos::SYCL, Kokkos::SYCLDeviceUSMSpace>, Kokkos::MemoryTraits<1>>, Kokkos::View<double ***, Kokkos::LayoutLeft, Kokkos::Device<Kokkos::SYCL, Kokkos::SYCLDeviceUSMSpace>, Kokkos::MemoryTraits<1>>, Kokkos::View<double ***, Kokkos::LayoutLeft, Kokkos::Device<Kokkos::SYCL, Kokkos::SYCLDeviceUSMSpace>, Kokkos::MemoryTraits<1>>, KokkosBatched::BoundsCheck::No, KokkosBatched::AlphaTag::Yes, 32, 32, 8> &' cannot be used as the type of a kernel parameter
   # - py-cinemasci                # node-js-24.13.0: ??
   # - py-jupyterhub               # node-js-24.13.0: ??
   # - slate +sycl                 # error: invalid LLVM IR input: Instruction operands must be first-class values!
-  # - wrf                         # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF 
+  # - wrf                         # hdf5-1.14.6:Fatal Error: Reading module '/home/tipi/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF
 
   # Old errors:
   # - chapel ~cuda ~rocm
