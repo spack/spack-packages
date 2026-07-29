@@ -11,14 +11,15 @@ class PortsOfCall(CMakePackage):
     """Ports of Call: Performance Portability Utilities"""
 
     homepage = "https://github.com/lanl/ports-of-call"
-    url = "https://github.com/lanl/ports-of-call/archive/refs/tags/v1.1.0.tar.gz"
+    url = "https://github.com/lanl/ports-of-call/archive/refs/tags/v3.0.0.tar.gz"
     git = "https://github.com/lanl/ports-of-call.git"
 
-    maintainers("rbberger")
+    maintainers("rbberger", "Yurlungur")
 
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("3.0.0", commit="8af8ca7c4f5c720ef3e814423d02d59d2f0f9f37", tag="v3.0.0")
     version("2.1.0", commit="4caf262ca5d0b4ba7fbca86fd6f67532388309d9", tag="v2.1.0")
     version("2.0.1", commit="a284b6b2d42e70afeb99babb23522c869200d6ea", tag="v2.0.1")
     version("2.0.0", commit="3349de8995868ec4c6125acdb5aefa4fa9a999c5", tag="v2.0.0")
