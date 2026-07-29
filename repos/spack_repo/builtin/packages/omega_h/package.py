@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.2.0-scorec",
+        commit="6b26c685cf3a62f595d5f21f05deb0525ae48c6f",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "11.1.0-scorec",
         commit="9254be597e6460df497724e11b466485c37e94ff",
         git="https://github.com/SCOREC/omega_h.git",
@@ -87,6 +92,7 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
     variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
+    variant('python', default=False, description='enable python interfaces')
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -98,6 +104,10 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("trilinos +kokkos+exodus", when="@:11.0.0-scorec+exodus")
     depends_on("kokkos", when="+kokkos")
     depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:+kokkos")
+    depends_on('python', when='+python')
+    depends_on('py-numpy', type=('build','link','run'), when='+python')
+    depends_on('py-pybind11', type='build', when='+python')
+    depends_on("py-pytest", type="test", when='+python')
     depends_on("zlib-api", when="+zlib")
     depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
 
@@ -107,6 +117,8 @@ class OmegaH(CMakePackage, CudaPackage):
         when="@11.1.0-scorec:+exodus",
         msg="Use SEACASExodus directly or via Trilinos, not both",
     )
+
+    extends("python")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
@@ -126,6 +138,8 @@ class OmegaH(CMakePackage, CudaPackage):
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
+
+    conflicts("+python", when="~shared", msg="python requires shared build")
 
     def patch(self):
         if "@:9.34.8" in self.spec:
@@ -175,6 +189,8 @@ class OmegaH(CMakePackage, CudaPackage):
             args.append("-DOmega_h_USE_Gmsh:BOOL=ON")
         if "+kokkos" in self.spec:
             args.append("-DOmega_h_USE_Kokkos:BOOL=ON")
+        if "+python" in self.spec:
+            args.append("-DOmega_h_USE_pybind11:BOOL=ON")
         if "+zlib" in self.spec:
             args.append("-DOmega_h_USE_ZLIB:BOOL=ON")
             args.append("-DZLIB_ROOT:PATH={0}".format(self.spec["zlib-api"].prefix))
