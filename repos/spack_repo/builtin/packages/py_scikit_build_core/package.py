@@ -20,6 +20,7 @@ class PyScikitBuildCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.0.3", sha256="a4d7a05978ee37975c37743510c8991e2debce7ef83afb0a07c0c576fd4f16e8")
     version("0.12.2", sha256="562e0bbc9de1a354c87825ccf732080268d6582a0200f648e8c4a2dcb1e3736d")
     version("0.11.6", sha256="5982ccd839735be99cfd3b92a8847c6c196692f476c215da84b79d2ad12f9f1b")
     version("0.11.5", sha256="8f0a1edb86cb087876f3c699d2a2682012efd8867b390ed37355f13949d0628e")
