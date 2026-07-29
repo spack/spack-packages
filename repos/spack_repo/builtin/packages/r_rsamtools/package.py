@@ -21,7 +21,9 @@ class RRsamtools(RPackage):
     license("MIT")
 
     with default_args(get_full_repo=True):
-        version("2.24.0", commit="5fa43af28dd6ae25fbabd23e2e7329003ba53e30")
+        version("2.28.0", commit="31add2895a57afb8e120f057f0f068ca69544f87")  # bioc 3.23
+        version("2.26.0", commit="ea99fb0d9481cc7c8f2734ddefb6892abba37d59")  # bioc 3.22
+        version("2.24.1", commit="5fa43af28dd6ae25fbabd23e2e7329003ba53e30")  # bioc 3.21
         version("2.16.0", commit="3eb6d03acecb8d640ec5201cacdc322e9e0c2445")
         version("2.14.0", commit="8302eb7fa1c40384f1af5855222d94f2efbdcad1")
         version("2.12.0", commit="d6a65dd57c5a17e4c441a27492e92072f69b175e")
@@ -38,9 +40,12 @@ class RRsamtools(RPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("r@3.5.0:", type=("build", "run"), when="@2.10.0:")
-    depends_on("r-genomeinfodb@1.1.3:", type=("build", "run"))
+    depends_on("r-seqinfo", type=("build", "run"), when="@2.26.0:")
+    depends_on("r-genomeinfodb@1.1.3:1.47", type=("build", "run"), when="@:2.24")
+    depends_on("r-genomicranges@1.61.1:", type=("build", "run"), when="@2.26.0:")
     depends_on("r-genomicranges@1.21.6:", type=("build", "run"))
     depends_on("r-genomicranges@1.31.8:", type=("build", "run"), when="@1.32.3:")
+    depends_on("r-biostrings@2.77.2:", type=("build", "run"), when="@2.26.0:")
     depends_on("r-biostrings@2.37.1:", type=("build", "run"))
     depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.32.3:")
     depends_on("r-biocgenerics@0.1.3:", type=("build", "run"))
