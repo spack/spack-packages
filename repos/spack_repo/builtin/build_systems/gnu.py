@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os.path
-from typing import Optional
+from typing import List, Optional
 
 from spack.package import PackageBase, join_url
 
@@ -27,7 +27,7 @@ class GNUMirrorPackage(PackageBase):
     ]
 
     @property
-    def urls(self) -> list[str]:
+    def urls(self) -> List[str]:
         self._ensure_gnu_mirror_path_is_set_or_raise()
         # narrow the type for the checker: the call above raises when None
         if self.gnu_mirror_path is None:
