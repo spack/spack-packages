@@ -94,7 +94,8 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     variant("omptarget", default=False, description="Build with OpenMP Target support")
     variant("sycl", default=False, description="Build with Sycl support")
 
-    # TODO: Add conflicts. I know that  v2026.07.0 has concepts (C++20 feature) and cannot be built with earlier C++ versions.
+    # TODO: Add conflicts. I know that  v2026.07.0 has concepts
+    # This C++20 feature cannot be built with earlier C++ versions.
     variant(
         "cxxstd",
         default="20",
