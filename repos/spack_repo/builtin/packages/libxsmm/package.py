@@ -122,6 +122,9 @@ class Libxsmm(CMakePackage, MakefilePackage):
         # A recent `as` is needed to compile libxsmm until version 1.17
         # (<https://github.com/spack/spack/issues/28404>), but not afterwards
         # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
+        # On macOS binutils+gas+ld is unbuildable (recipe fails against the
+        # current SDK) and unavailable from Homebrew (no gas/ld), so an
+        # unconditional dep breaks builds that do not need it.
         depends_on("binutils+ld+gas@2.33:", type="build", when="@:1.16")
 
     # Although it predates CMake support, this snapshot starts with the
