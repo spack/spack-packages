@@ -133,6 +133,11 @@ class Arrow(CMakePackage, CudaPackage):
     variant("ipc", default=True, description="Build the Arrow IPC extensions")
     variant("jemalloc", default=False, description="Build the Arrow jemalloc-based allocator")
     variant("lz4", default=False, description="Build support for lz4 compression")
+    variant(
+        "mimalloc",
+        default=True,
+        description="Build the Arrow mimalloc-based allocator",
+    )
     variant("orc", default=False, description="Build integration with Apache ORC")
     variant("parquet", default=False, description="Build Parquet interface")
     variant("python", default=False, description="Build Python interface")
@@ -186,8 +191,14 @@ class Arrow(CMakePackage, CudaPackage):
             args.append(self.define("ARROW_USE_SSE", "ON"))
 
         # https://github.com/apache/arrow/issues/47790
-        if self.spec.satisfies("%oneapi@2025:"):
+        # mimalloc is always vendored (no system lookup); Arrow downloads its source
+        # via FetchContent at build time, which fails on air-gapped compute nodes.
+        # The ~mimalloc variant allows disabling it for such environments.
+        # Note: oneapi@2025: also has a compiler bug requiring MIMALLOC=OFF regardless.
+        if self.spec.satisfies("%oneapi@2025:") or self.spec.satisfies("~mimalloc"):
             args.append(self.define("ARROW_MIMALLOC", "OFF"))
+        else:
+            args.append(self.define_from_variant("ARROW_MIMALLOC", "mimalloc"))
 
         args.append(self.define_from_variant("ARROW_COMPUTE", "compute"))
         args.append(self.define_from_variant("ARROW_CSV", "csv"))
