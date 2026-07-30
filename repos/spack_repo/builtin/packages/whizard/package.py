@@ -28,6 +28,7 @@ class Whizard(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("3.1.8", sha256="96bfdf2ec4476ab7945e50550a3294634af6bc0f472cf7848b5903887629ce55")
     version("3.1.7", sha256="1b629f12ea9b59b68809b39257361f1ae923ded715b71064c9f5ab333cfb4e66")
     version("3.1.6", sha256="ff878ea838c2621221d7455bc538df0af80fecb0a33b203db8058fb212340492")
     version("3.1.5", sha256="731d147b342e3b63307ea541f6f0bb4073195a78a75da60db10f284f282c3d19")
