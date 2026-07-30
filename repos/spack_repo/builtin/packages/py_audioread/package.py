@@ -24,7 +24,8 @@ class PyAudioread(PythonPackage):
     # setup.py
     depends_on("py-pytest-runner", type="build")
 
-    conflicts("^python@3.1.2:",
-            when="@:3.0.0",
-            msg="python@3.1.2 dropped imp module, fixed in py-audioread@3.0.1",
-        )
+    conflicts(
+        "^python@3.1.2:",
+        when="@:3.0.0",
+        msg="python@3.1.2 dropped imp module, fixed in py-audioread@3.0.1",
+    )
