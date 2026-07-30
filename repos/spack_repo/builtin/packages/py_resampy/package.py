@@ -24,7 +24,8 @@ class PyResampy(PythonPackage):
     depends_on("py-numba@0.32:", type=("build", "run"))
     depends_on("py-six@1.3:", type=("build", "run"))
 
-    conflicts("^python@3.1.2:",
-            when="@:0.2.2",
-            msg="python@3.1.2 dropped imp module, fixed in py-resampy@0.3.0",
-        )
+    conflicts(
+        "^python@3.1.2:",
+        when="@:0.2.2",
+        msg="python@3.1.2 dropped imp module, fixed in py-resampy@0.3.0",
+    )
