@@ -265,7 +265,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": ("navi1030", None),
         "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
+        "gfx1151": ("amd_gfx1151", "@5.2.0:"),
+        "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
