@@ -96,12 +96,31 @@ def main():
         == 204
     }
 
-    if maintainers != pingable_maintainers:
+    non_collaborators = maintainers - pingable_maintainers
+    if non_collaborators:
         msg(
             "the following package maintainers cannot be added as reviewers "
             "(no collaborator status):",
-            sorted(maintainers - pingable_maintainers),
+            sorted(non_collaborators),
         )
+
+        # invite as outside collaborators so they can perform PR reviews
+        # they will need to accept the invitation before they can review PRs / be pinged
+        if token:
+            for maintainer in sorted(non_collaborators):
+                invite_resp = session.put(
+                    f"{collab_url}/{maintainer}",
+                    json={"permission": "triage"},
+                    headers=headers,
+                    timeout=30,
+                )
+                if invite_resp.status_code in (201, 204):
+                    msg(f"invited {maintainer} as an outside collaborator (triage)")
+                else:
+                    msg(
+                        f"failed to invite {maintainer} as a collaborator "
+                        f"[{invite_resp.status_code}]: {invite_resp.text}"
+                    )
 
     author = pull_request["user"]["login"]
     reviewers = (pingable_maintainers | existing_reviewers) - {author}
