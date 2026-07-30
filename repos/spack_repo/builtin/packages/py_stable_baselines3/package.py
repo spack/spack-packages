@@ -17,6 +17,8 @@ class PyStableBaselines3(PythonPackage):
 
     version("2.9.0", sha256="92b46c6099a0e8f99163ff09e26729e4d0a68b33dc8598626ca13ade3c0b3a61")
 
+    variant("extra", default=False, description="Enable optional features and dependencies")
+
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
@@ -24,3 +26,12 @@ class PyStableBaselines3(PythonPackage):
     depends_on("py-numpy@1.20:2", type=("build", "run"))
     depends_on("py-torch@2.8:2", type=("build", "run"))
     depends_on("py-cloudpickle", type=("build", "run"))
+    depends_on("opencv+python3", type=("build", "run"), when="+extra")
+    depends_on("py-tensorboard@2.9.1:", type=("build", "run"), when="+extra")
+    depends_on("py-psutil", type=("build", "run"), when="+extra")
+    depends_on("py-tqdm", type=("build", "run"), when="+extra")
+    depends_on("py-rich", type=("build", "run"), when="+extra")
+    depends_on("py-ale-py@0.9.0:", type=("build", "run"), when="+extra")
+    depends_on("py-pillow", type=("build", "run"), when="+extra")
+    depends_on("py-pandas", type=("build", "run"), when="+extra")
+    depends_on("py-matplotlib", type=("build", "run"), when="+extra")

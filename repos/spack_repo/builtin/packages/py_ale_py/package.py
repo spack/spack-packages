@@ -18,6 +18,8 @@ class PyAlePy(PythonPackage):
     version("0.12.0", sha256="6030416b6a049d399bf95420ad2fdbf0ea8f83051b502774d27b477a06000dbc")
 
     variant("sdl", default=True, description="Enable SDL support")
+    variant("vector", default=True, description="Build the vector interface")
+    variant("xla", default=True, description="Build vector XLA support")
 
     depends_on("cxx", type="build")
     depends_on("cmake@3.14:", type="build")
@@ -28,12 +30,15 @@ class PyAlePy(PythonPackage):
     depends_on("py-scikit-build-core@0.10:", type="build")
     depends_on("py-nanobind@2.5.0:", type="build")
     depends_on("py-jax@0.4.31:", type="build", when="platform=linux")
+    depends_on("py-jax@0.4.31:", type="build", when="platform=windows")
 
     depends_on("py-numpy@1.20:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"), when="^python@:3.10")
 
     def config_settings(self, spec, prefix):
         sdl = "ON" if spec.satisfies("+sdl") else "OFF"
+        vector = "ON" if spec.satisfies("+vector") else "OFF"
+        xla = "ON" if spec.satisfies("+xla") else "OFF"
 
         return {
             "cmake.args": ";".join(
@@ -42,8 +47,8 @@ class PyAlePy(PythonPackage):
                     f"-DSDL_DYNLOAD={sdl}",
                     "-DBUILD_CPP_LIB=OFF",
                     "-DBUILD_PYTHON_LIB=ON",
-                    "-DBUILD_VECTOR_LIB=ON",
-                    "-DBUILD_VECTOR_XLA_LIB=ON",
+                    f"-DBUILD_VECTOR_LIB={vector}",
+                    f"-DBUILD_VECTOR_XLA_LIB={xla}",
                 ]
             )
         }
