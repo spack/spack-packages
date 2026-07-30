@@ -62,7 +62,7 @@ class TipiParaview(CMakeREPackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0")
 
-    version("cmake-re", branch="feature/support-cmake-re", submodules=True)
+    version("6.1.2", commit="c285b14148e15c6811e0317893b8efc69a16a864", submodules=True)
 
     variant(
         "development_files",
