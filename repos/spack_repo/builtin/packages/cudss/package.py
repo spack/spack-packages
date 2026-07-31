@@ -9,7 +9,18 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
-    "0.7.1": {
+    # Have both CUDA 12 and CUDA 13 precompiled binary versions
+    "0.7.1-13": {
+        "Linux-x86_64": (
+            "84b34ebe7fad40ec10f2aab2957a63b6070bd8ce16e3ada3e6bcac7317256347",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.1.4_cuda13-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "de8295cb6773992bd1ca7e2ad93caae1fd18eba39175f0101b85d53abd3e0179",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-sbsa/libcudss-linux-sbsa-0.7.1.4_cuda13-archive.tar.xz",
+        ),
+    },
+    "0.7.1-12": {
         "Linux-x86_64": (
             "946571d9ea164f948e402dd97a14541cb90fbec800336cfa7ae644af5937632f",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.1.4_cuda12-archive.tar.xz",
@@ -19,7 +30,17 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.1.4_cuda12-archive.tar.xz",
         ),
     },
-    "0.7.0": {
+    "0.7.0-13": {
+        "Linux-x86_64": (
+            "939606e8d062ee0fc28094e7be19e22191662e8593bc7f5eec16220ad836feb9",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.0.20_cuda13-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "f915eb581ab965d0baa74cd1e529086fce00e9d14d9366da4480b5ef7fabb8a6",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-sbsa/libcudss-linux-sbsa-0.7.0.20_cuda13-archive.tar.xz",
+        ),
+    },
+    "0.7.0-12": {
         "Linux-x86_64": (
             "c98d5ef87e8b6a356b21a678715033b19620ce58b5fa64c97e25e6d3e76e42dc",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.0.20_cuda12-archive.tar.xz",
@@ -29,6 +50,7 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.0.20_cuda12-archive.tar.xz",
         ),
     },
+    # Only have CUDA 12 precompiled binaries
     "0.6.0": {
         "Linux-x86_64": (
             "159ce1d4e3e4bba13b0bd15cf943e44b869c53b7a94f9bac980768c927f02e75",
@@ -64,10 +86,22 @@ class Cudss(Package):
 
     for ver, packages in _versions.items():
         pkg = packages.get(f"{platform.system()}-{platform.machine()}")
+
         if pkg:
             version(ver, sha256=pkg[0], url=pkg[1])
 
-    depends_on("cuda@12:")
+            ver_parts = ver.split("-")
+
+            if len(ver_parts) > 1:
+                cudss_ver = ver_parts[0]
+                cuda_ver = Version(ver_parts[1])
+
+                long_ver = f"{cudss_ver}-{cuda_ver}"
+                depends_on(f"cuda@{cuda_ver}", when=f"@{long_ver}")
+
+    # No CUDA 13 versions
+    depends_on("cuda@12", when="@0.6")
+    depends_on("cuda@12", when="@0.5")
 
     def install(self, spec, prefix):
         install_tree(".", prefix)
