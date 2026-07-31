@@ -49,6 +49,8 @@ class PyPyside6(PythonPackage):
     # optional dependencies
     depends_on("qt-tools@6.11:", when="+tools")
     depends_on("qt-3d@6.11:", when="+qt3d")
+    depends_on("gl", when="+qt3d")
+    depends_on("glu", when="+qt3d")
     depends_on("qt-declarative@6.11:", when="+declarative")
     depends_on("qt-svg@6.11:", when="+svg")
 
@@ -65,6 +67,14 @@ class PyPyside6(PythonPackage):
             additional_includes += [self.spec["qt-tools"].prefix.include]
         if "+qt3d" in self.spec:
             additional_includes += [self.spec["qt-3d"].prefix.include]
+            # Qt3D headers pull in QtGui/qopengl.h, which unconditionally
+            # includes <GL/gl.h> (and <GL/glu.h> in some Qt3D headers) on
+            # non-macOS desktop builds. The "gl"/"glu" virtual providers
+            # don't install into their own prefix (e.g. the "glx" bundle
+            # package forwards to its "libglx" dependency), so use the
+            # headers property rather than prefix.include to locate them.
+            additional_includes += [self.spec["gl"].headers.directories[0]]
+            additional_includes += [self.spec["glu"].headers.directories[0]]            
         if "+declarative" in self.spec:
             additional_includes += [self.spec["qt-declarative"].prefix.include]
             # not sure if needed
