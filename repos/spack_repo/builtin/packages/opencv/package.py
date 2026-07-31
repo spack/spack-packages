@@ -27,6 +27,7 @@ class Opencv(CMakePackage, CudaPackage):
 
     version("master", branch="master")
     version("4.13.0", sha256="1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d")
+    version("4.12.0", sha256="44c106d5bb47efec04e531fd93008b3fcd1d27138985c5baf4eafac0e1ec9e9d")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2025-53644/
         version(
@@ -97,6 +98,7 @@ class Opencv(CMakePackage, CudaPackage):
         "4.8.1",
         "4.9.0",
         "4.10.0",
+        "4.12.0",
         "4.13.0",
     ]
     for cv in contrib_vers:
@@ -905,12 +907,10 @@ class Opencv(CMakePackage, CudaPackage):
         args = [self.define("BUILD_opencv_core", "on")]
 
         if self.spec.satisfies("+contrib"):
-            args.append(
-                self.define(
-                    "OPENCV_EXTRA_MODULES_PATH",
-                    join_path(self.stage.source_path, "opencv_contrib", "modules"),
-                )
+            contrib_modules = self._posix_path(
+                join_path(self.stage.source_path, "opencv_contrib", "modules")
             )
+            args.append(self.define("OPENCV_EXTRA_MODULES_PATH", contrib_modules))
 
         # OpenCV pre-built apps
         apps_list = []
@@ -981,8 +981,8 @@ class Opencv(CMakePackage, CudaPackage):
         args.extend(
             [
                 self.define("BUILD_ZLIB", False),
-                self.define("ZLIB_LIBRARY", zlib.libs[0]),
-                self.define("ZLIB_INCLUDE_DIR", zlib.headers.directories[0]),
+                self.define("ZLIB_LIBRARY", self._posix_path(zlib.libs[0])),
+                self.define("ZLIB_INCLUDE_DIR", self._posix_path(zlib.headers.directories[0])),
             ]
         )
 
@@ -991,8 +991,8 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_PNG", False),
-                    self.define("PNG_LIBRARY", libpng.libs[0]),
-                    self.define("PNG_INCLUDE_DIR", libpng.headers.directories[0]),
+                    self.define("PNG_LIBRARY", self._posix_path(libpng.libs[0])),
+                    self.define("PNG_INCLUDE_DIR", self._posix_path(libpng.headers.directories[0])),
                 ]
             )
 
@@ -1001,8 +1001,10 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_JPEG", False),
-                    self.define("JPEG_LIBRARY", libjpeg.libs[0]),
-                    self.define("JPEG_INCLUDE_DIR", libjpeg.headers.directories[0]),
+                    self.define("JPEG_LIBRARY", self._posix_path(libjpeg.libs[0])),
+                    self.define(
+                        "JPEG_INCLUDE_DIR", self._posix_path(libjpeg.headers.directories[0])
+                    ),
                 ]
             )
 
@@ -1011,8 +1013,10 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_TIFF", False),
-                    self.define("TIFF_LIBRARY", libtiff.libs[0]),
-                    self.define("TIFF_INCLUDE_DIR", libtiff.headers.directories[0]),
+                    self.define("TIFF_LIBRARY", self._posix_path(libtiff.libs[0])),
+                    self.define(
+                        "TIFF_INCLUDE_DIR", self._posix_path(libtiff.headers.directories[0])
+                    ),
                 ]
             )
 
@@ -1021,8 +1025,10 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_JASPER", False),
-                    self.define("JASPER_LIBRARY", jasper.libs[0]),
-                    self.define("JASPER_INCLUDE_DIR", jasper.headers.directories[0]),
+                    self.define("JASPER_LIBRARY", self._posix_path(jasper.libs[0])),
+                    self.define(
+                        "JASPER_INCLUDE_DIR", self._posix_path(jasper.headers.directories[0])
+                    ),
                 ]
             )
 
@@ -1031,8 +1037,8 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_CLP", False),
-                    self.define("CLP_LIBRARIES", clp.prefix.lib),
-                    self.define("CLP_INCLUDE_DIR", clp.headers.directories[0]),
+                    self.define("CLP_LIBRARIES", self._posix_path(clp.prefix.lib)),
+                    self.define("CLP_INCLUDE_DIR", self._posix_path(clp.headers.directories[0])),
                 ]
             )
 
@@ -1041,8 +1047,8 @@ class Opencv(CMakePackage, CudaPackage):
             args.extend(
                 [
                     self.define("BUILD_ONNX", False),
-                    self.define("ORT_LIB", onnx.libs[0]),
-                    self.define("ORT_INCLUDE", onnx.headers.directories[0]),
+                    self.define("ORT_LIB", self._posix_path(onnx.libs[0])),
+                    self.define("ORT_INCLUDE", self._posix_path(onnx.headers.directories[0])),
                 ]
             )
 
@@ -1051,15 +1057,26 @@ class Opencv(CMakePackage, CudaPackage):
             leptonica = spec["leptonica"]
             args.extend(
                 [
-                    self.define("Lept_LIBRARY", leptonica.libs[0]),
-                    self.define("Tesseract_LIBRARY", tesseract.libs[0]),
-                    self.define("Tesseract_INCLUDE_DIR", tesseract.headers.directories[0]),
+                    self.define("Lept_LIBRARY", self._posix_path(leptonica.libs[0])),
+                    self.define("Tesseract_LIBRARY", self._posix_path(tesseract.libs[0])),
+                    self.define(
+                        "Tesseract_INCLUDE_DIR", self._posix_path(tesseract.headers.directories[0])
+                    ),
+                ]
+            )
+
+        if "+ffmpeg" in spec:
+            ffmpeg = spec["ffmpeg"]
+            args.extend(
+                [
+                    self.define("FFMPEG_INCLUDE_DIR", self._posix_path(ffmpeg.prefix.include)),
+                    self.define("FFMPEG_LIB_DIR", self._posix_path(ffmpeg.prefix.lib)),
                 ]
             )
 
         # Python
-        python_lib = spec["python"].libs[0]
-        python_include_dir = spec["python"].headers.directories[0]
+        python_lib = self._posix_path(spec["python"].libs[0])
+        python_include_dir = self._posix_path(spec["python"].headers.directories[0])
 
         if "+python3" in spec:
             args.extend(
@@ -1081,3 +1098,8 @@ class Opencv(CMakePackage, CudaPackage):
     def libs(self):
         shared = "+shared" in self.spec
         return find_libraries("libopencv_*", root=self.prefix, shared=shared, recursive=True)
+
+    @staticmethod
+    def _posix_path(path):
+        """Convert path to forward slashes so CMake does not treat backslashes as escapes."""
+        return str(path).replace("\\", "/")
