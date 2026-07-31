@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.25.4", sha256="12c990fb39a5764ac8311211d09c01ed80fb983136c75bf7b558312b2509dbbd")
     version("3.25.3", sha256="95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5")
     version("3.25.2", sha256="03fbcfb72e28dbd92eac042faf7a4ba7e75e602fd1c9af0676f78e0a762412ec")
     version("3.25.1", sha256="d9d9518110aea1f8f5444985cc1a95273ab140cdbcd2c2038c6309a3b611abb4")
