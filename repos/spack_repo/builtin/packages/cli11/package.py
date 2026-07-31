@@ -17,6 +17,7 @@ class Cli11(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("2.7.1", sha256="c02abe5c5fed9b9c9192bff3c74d2c0d19755253f9ca9e3c44484c1cf5ce6568")
     version("2.6.1", sha256="377691f3fac2b340f12a2f79f523c780564578ba3d6eaf5238e9f35895d5ba95")
     version("2.5.0", sha256="17e02b4cddc2fa348e5dbdbb582c59a3486fa2b2433e70a0c3bacb871334fd55")
     version("2.4.2", sha256="f2d893a65c3b1324c50d4e682c0cdc021dd0477ae2c048544f39eed6654b699a")
@@ -53,6 +54,8 @@ class Cli11(CMakePackage):
             self.define_from_variant("CLI11_PRECOMPILED", "precompiled"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
+        if self.spec.satisfies("@2.7:"):
+            args.append(self.define("CLI11_MODULES", False))
         return args
 
     @when("@2.3:")
