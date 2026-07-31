@@ -66,9 +66,10 @@ class Gloo(CMakePackage, CudaPackage):
     def patch(self):
         if self.spec.satisfies("%cxx=gcc@14:"):
             filter_file(
-                'gloo_list_append_if_unique\(GLOO_NVCC_FLAGS "-std=c\+\+11"\)',
+                'gloo_list_append_if_unique(GLOO_NVCC_FLAGS "-std=c++11")',
                 'gloo_list_append_if_unique(GLOO_NVCC_FLAGS "-std=c++14")',
                 "cmake/Cuda.cmake",
+                string=True,
             )
 
     def cmake_args(self):
