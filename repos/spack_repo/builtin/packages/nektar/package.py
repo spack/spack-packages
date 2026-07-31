@@ -139,6 +139,7 @@ class Nektar(CMakePackage):
 
     conflicts("+cwipi", when="~mpi", msg="Nektar requires MPI support to build with CWIPI.")
     conflicts("+hdf5", when="~mpi", msg="Nektar's hdf5 output is for parallel builds only")
+    conflicts("~scotch", when="+mpi+hdf5", msg="Parallel hdf5 requires scotch")
 
     def cmake_args(self):
         def hasfeature(feature):
