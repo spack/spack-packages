@@ -235,6 +235,34 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("deviceconst", default=False, description="Enables support for constant device memory")
     variant("examples", default=False, description="Build Umpire Examples")
     variant(
+        "cxxstd",
+        default="11",
+        values=("11", "14", "17", "20", "23"),
+        when="@:6.0.0",
+        description="C++ standard to build with",
+    )
+    variant(
+        "cxxstd",
+        default="14",
+        values=("14", "17", "20", "23"),
+        when="@2022.03.0:2025.03.1",
+        description="C++ standard to build with",
+    )
+    variant(
+        "cxxstd",
+        default="17",
+        values=("17", "20", "23"),
+        when="@2025.09.0:2025.12.0",
+        description="C++ standard to build with",
+    )
+    variant(
+        "cxxstd",
+        default="20",
+        values=("20", "23"),
+        when="@2026.07:",
+        description="C++ standard to build with",
+    )
+    variant(
         "tests",
         default="none",
         values=("none", "basic", "benchmarks"),
@@ -363,6 +391,10 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             self.spec.compiler.version,
             self.spec.dag_hash(8),
         )
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants["cxxstd"].value
 
     def initconfig_compiler_entries(self):
         spec = self.spec
@@ -503,6 +535,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_string("CMAKE_BUILD_TYPE", spec.variants["build_type"].value))
         entries.append(cmake_cache_option("BUILD_SHARED_LIBS", spec.satisfies("+shared")))
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
         entries.append(cmake_cache_option("ENABLE_WARNINGS_AS_ERRORS", spec.satisfies("+werror")))
 
         # Generic options that have a prefixed equivalent in Umpire CMake
