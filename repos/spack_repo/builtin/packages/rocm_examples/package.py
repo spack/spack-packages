@@ -23,6 +23,11 @@ class RocmExamples(CMakePackage):
 
     license("MIT")
 
+    version(
+        "7.13.0",
+        url="https://github.com/ROCm/rocm-examples/archive/refs/tags/therock-7.13.tar.gz",
+        sha256="0e096a9119db06ab62228c42a4d9eb97cbbe4b3e8783c0816d356e95e3df04ad",
+    )
     version("7.2.3", sha256="523ed9d130338eb7f2b96005445bac132829bfb649d564df67672e1edce8e27a")
     version("7.2.1", sha256="34457fc665f814ec3a0a5f83edabccc18c293825f0d421b5d9e101b7494da637")
     version("7.2.0", sha256="74c516f08cc0067c85ac5c29f25831a6e74c0cc0f0c07e80798dc827efefbde5")
@@ -82,6 +87,7 @@ class RocmExamples(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
@@ -121,6 +127,7 @@ class RocmExamples(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -128,7 +135,7 @@ class RocmExamples(CMakePackage):
                 f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -154,11 +161,19 @@ class RocmExamples(CMakePackage):
 
     def patch(self):
         filter_file(
-            r"${ROCM_ROOT}/bin/hipify-perl",
-            f"{self.spec['hipify-clang'].prefix}/bin/hipify-perl",
+            r"${ROCM_PATH}",
+            f"{self.spec['hipify-clang'].prefix}",
             "HIP-Basic/hipify/CMakeLists.txt",
             string=True,
         )
+        # Disable rocProfiler-SDK examples in 7.13 due to missing header issues
+        if self.spec.satisfies("@7.13:"):
+            filter_file(
+                "add_subdirectory(rocProfiler-SDK)",
+                "# add_subdirectory(rocProfiler-SDK)  # Disabled due to missing headers",
+                "Libraries/CMakeLists.txt",
+                string=True,
+            )
 
     def cmake_args(self):
         args = []
@@ -191,4 +206,7 @@ class RocmExamples(CMakePackage):
             args.append(self.define("REDUCTION_BUILD_EXAMPLES", False))
             args.append(self.define("REDUCTION_BUILD_TESTING", False))
             args.append(self.define("REDUCTION_BUILD_BENCHMARKS", False))
+        # Disable rocDecode examples in 7.13 due to upstream path issues
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("ROCM_EXAMPLES_ENABLE_ROCDECODE", False))
         return args

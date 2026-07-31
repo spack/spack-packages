@@ -5,11 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Hipcc(CMakePackage):
+class Hipcc(ROCmLibrary, CMakePackage):
     """HIPCC: HIP compiler driver"""
 
     homepage = "https://github.com/ROCm/llvm-project"
@@ -20,13 +21,12 @@ class Hipcc(CMakePackage):
     executables = ["hipcc"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("6.0.2"):
-            url = "https://github.com/ROCm/HIPCC/archive/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("6.0.2", "https://github.com/ROCm/HIPCC/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
     version("7.2.0", sha256="e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f")

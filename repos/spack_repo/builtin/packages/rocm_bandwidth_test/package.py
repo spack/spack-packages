@@ -18,6 +18,9 @@ class RocmBandwidthTest(ROCmLibrary, CMakePackage):
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     executables = ["rocm-bandwidth-test"]
+
+    rocm_url_map = [(None, "https://github.com/ROCm/rocm_bandwidth_test/archive/rocm-{0}.tar.gz")]
+
     version(
         "7.2.3",
         git="https://github.com/ROCm/rocm_bandwidth_test",

@@ -1,0 +1,42 @@
+--- a/barectf/config_parse_common.py
++++ b/barectf/config_parse_common.py
+@@ -21,7 +21,12 @@
+ # TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ # SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ 
+-import pkg_resources
++try:
++    from importlib import resources
++except ImportError:
++    import importlib_resources as resources
++import sys
++from pathlib import Path
+ import collections
+ import jsonschema  # type: ignore
+ import os.path
+@@ -126,7 +131,11 @@ class _YamlConfigFilesSchemaStore:
+     # Initializes a schema store.
+     #
+     def __init__(self, subdirs: Iterable[str]):
+-        schemas_dir = pkg_resources.resource_filename(__name__, 'schemas')
++        if sys.version_info >= (3, 9):
++            schemas_dir = str(resources.files('barectf').joinpath('schemas'))
++        else:
++            with resources.path('barectf', 'schemas') as p:
++                schemas_dir = str(p)
+         self._store: Dict[str, str] = {}
+ 
+         for subdir in subdirs:
+@@ -350,7 +359,11 @@ class _Parser:
+         self._include_dirs = copy.copy(include_dirs)
+ 
+         if with_pkg_include_dir:
+-            self._include_dirs.append(pkg_resources.resource_filename(__name__, f'include/{major_version}'))
++            if sys.version_info >= (3, 9):
++                self._include_dirs.append(str(resources.files('barectf').joinpath(f'include/{major_version}')))
++            else:
++                with resources.path('barectf', f'include/{major_version}') as p:
++                    self._include_dirs.append(str(p))
+ 
+         self._ignore_include_not_found = ignore_include_not_found
+         self._include_stack: List[str] = []
