@@ -10,7 +10,17 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
-    "0.7.1": {
+    "0.7.1-13": {
+        "Linux-x86_64": (
+            "84b34ebe7fad40ec10f2aab2957a63b6070bd8ce16e3ada3e6bcac7317256347",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.1.4_cuda13-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "4085361899eaf08f6b707321b33a2d5263ac986015527bef8e500f2c102f0258",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.1.4_cuda13-archive.tar.xz",
+        ),
+    },
+    "0.7.1-12": {
         "Linux-x86_64": (
             "946571d9ea164f948e402dd97a14541cb90fbec800336cfa7ae644af5937632f",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.1.4_cuda12-archive.tar.xz",
@@ -20,7 +30,7 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.1.4_cuda12-archive.tar.xz",
         ),
     },
-    "0.7.0": {
+    "0.7.0-12": {
         "Linux-x86_64": (
             "c98d5ef87e8b6a356b21a678715033b19620ce58b5fa64c97e25e6d3e76e42dc",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.0.20_cuda12-archive.tar.xz",
@@ -30,7 +40,7 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.0.20_cuda12-archive.tar.xz",
         ),
     },
-    "0.6.0": {
+    "0.6.0-12": {
         "Linux-x86_64": (
             "159ce1d4e3e4bba13b0bd15cf943e44b869c53b7a94f9bac980768c927f02e75",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.6.0.5_cuda12-archive.tar.xz",
@@ -40,7 +50,7 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.6.0.5_cuda12-archive.tar.xz",
         ),
     },
-    "0.5.0": {
+    "0.5.0-12": {
         "Linux-x86_64": (
             "5245d2ba26a590839e2f1dd074f87e39ee5cc201c3b29245b35c7060d59c37a5",
             "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.5.0.16_cuda12-archive.tar.xz",
@@ -67,6 +77,8 @@ class Cudss(Package):
         pkg = packages.get(f"{platform.system()}-{platform.machine()}")
         if pkg:
             version(ver, sha256=pkg[0], url=pkg[1])
+            _, cuda_ver = ver.rsplit("-", 1)
+            depends_on(f"cuda@{cuda_ver}", when=f"@{ver}")
 
     variant(
         "mpi",
@@ -74,7 +86,6 @@ class Cudss(Package):
         description="Build a communication layer for the selected MPI implementation",
     )
 
-    depends_on("cuda@12:")
     depends_on("mpi", when="+mpi")
 
     conflicts(
