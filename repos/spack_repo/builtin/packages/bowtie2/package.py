@@ -53,9 +53,13 @@ class Bowtie2(MakefilePackage):
 
     def url_for_version(self, version):
         if version >= Version("2.5.5"):
-            return "https://github.com/BenLangmead/bowtie2/archive/refs/tags/v{0}.tar.gz".format(version.dotted)
+            return "https://github.com/BenLangmead/bowtie2/archive/refs/tags/v{0}.tar.gz".format(
+                version.dotted
+            )
         else:
-            return "https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/{0}/bowtie2-{0}-source.zip".format(version.dotted)
+            return "https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/{0}/bowtie2-{0}-source.zip".format(
+                version.dotted
+            )
 
     def edit(self, spec, prefix):
         kwargs = {"ignore_absent": True, "backup": False, "string": False}
