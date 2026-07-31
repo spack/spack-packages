@@ -18,6 +18,7 @@ class Zookeeper(Package):
 
     license("Apache-2.0")
 
+    version("3.8.6", sha256="9d28cfc78b78c1df880fb31723bb3b27a559f00d5571049b46cb259d6104aab8")
     version("3.8.4", sha256="284cb4675adb64794c63d95bf202d265cebddc0cda86ac86fb0ede8049de9187")
 
     depends_on("java")
