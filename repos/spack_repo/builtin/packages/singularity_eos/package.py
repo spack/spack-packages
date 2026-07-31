@@ -121,6 +121,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("ports-of-call@1.5.2:", when="@1.7.1:")
     depends_on("ports-of-call@1.6.0:", when="@1.9.0:")
     depends_on("ports-of-call@2.0.0:", when="@1.11.0:")
+    depends_on("ports-of-call@3.0.0:", when="@1.12.0:")
     depends_on("ports-of-call@main", when="@main")
 
     depends_on("spiner +kokkos", when="+kokkos+spiner")
@@ -151,9 +152,9 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=Debug")
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=RelWithDebInfo")
 
-    for _myver, _kver in zip(("@:1.6.2", "@1.7.0:"), ("@3.2:", "@3.3:")):
-        depends_on("kokkos" + _kver, when=_myver + "+kokkos")
-        depends_on("kokkos-kernels" + _kver, when=_myver + "+kokkos-kernels")
+    for _myver, _kver in zip(("@:1.6.2", "@1.7.0:", "@1.12.0:"), ("@3.2:", "@3.3:", "@4.7:")):
+        depends_on(f"kokkos{_kver}", when=f"{_myver}+kokkos")
+        depends_on(f"kokkos-kernels{_kver}", when=f"{_myver}+kokkos-kernels")
 
     # set up kokkos offloading dependencies
     for _flag in ("~cuda", "+cuda", "~rocm", "+rocm"):
