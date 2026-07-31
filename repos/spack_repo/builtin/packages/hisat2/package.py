@@ -47,6 +47,8 @@ class Hisat2(MakefilePackage):
     depends_on("sra-tools", when="+sra")
     depends_on("ncbi-vdb", when="+sra")
 
+    depends_on("cxx")
+
     # patch to get SRA working
     patch("sra.patch", when="+sra")
 
