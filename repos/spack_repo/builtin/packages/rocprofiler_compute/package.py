@@ -7,6 +7,11 @@ from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
+def submodules(package):
+    submodules = [
+        "rocprofiler-compute/src/lib/external/fmt",
+        "rocprofiler-compute/src/lib/external/json",
+    ]
 
 class RocprofilerCompute(ROCmLibrary, CMakePackage):
     """Advanced Profiling and Analytics for AMD Hardware"""
@@ -25,6 +30,12 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version(
+        "7.14.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="therock-7.14",
+        submodules=submodules,
+    )
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
@@ -61,6 +72,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
     depends_on("py-textual-plotext", when="@7.0:")
     depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
     depends_on("py-textual-fspicker@0.4.3:", when="@7.1:")
+    depends_on("fmt@12.1", when="@7.1:")
     for ver in [
         "6.3.2",
         "6.3.3",
@@ -76,6 +88,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -83,8 +96,26 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
 
     for ver in [
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on("rocprofiler-sdk", when=f"@{ver}")
+
+    """
+    resource(
+        name="fmt",
+        url="https://github.com/fmtlib/fmt/archive/refs/tags/12.1.0.tar.gz",
+        sha256="ea7de4299689e12b6dddd392f9896f08fb0777ac7168897a244a6d6085043fea",
+        destination="projects/rocprofiler-compute/src/lib/external/fmt",
+        when="@7.14:",
+    )
+    resource(
+        name="json",
+        url="https://github.com/nlohmann/json/archive/refs/tags/v3.12.0.tar.gz",
+        sha256="4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187",
+        destination="projects/rocprofiler-compute/src/lib/external/json",
+        when="@7.14:",
+    )
+    """
 
     @property
     def root_cmakelists_dir(self):
@@ -102,6 +133,8 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
 
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]
+        if self.spec.satisfies("@7.14:"):
+            args.append(self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"))
         return args
 
     @run_before("cmake")

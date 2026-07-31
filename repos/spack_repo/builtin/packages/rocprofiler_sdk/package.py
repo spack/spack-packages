@@ -24,6 +24,8 @@ def submodules(package):
         "projects/rocprofiler-sdk/external/yaml-cpp",
         "projects/rocprofiler-sdk/external/json",
     ]
+    if package.spec.satisfies("@7.13:"):
+        submodules.append("projects/rocprofiler-sdk/external/abseil-cpp")
     return submodules
 
 
@@ -47,6 +49,12 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+    version(
+        "7.14.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="therock-7.14",
+        submodules=submodules,
+    )
     version(
         "7.13.0",
         git="https://github.com/ROCm/rocm-systems.git",
@@ -182,12 +190,13 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     depends_on("pkgconfig", when="@7.1:")
     depends_on("py-pybind11", when="@7.2:")
     depends_on("gotcha", when="@7.2:")
-    depends_on("fmt@:10", when="@7.2: ~internal-fmt")
+    depends_on("fmt@:10", when="@7.2:7.13 ~internal-fmt")
+    depends_on("fmt@:12.1", when="@7.14: ~internal-fmt")
     depends_on("glog", when="@7.2:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -208,6 +217,7 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
@@ -228,6 +238,7 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
