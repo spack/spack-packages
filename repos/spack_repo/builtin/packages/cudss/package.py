@@ -10,6 +10,26 @@ from spack.package import *
 
 _versions = {
     # Have both CUDA 12 and CUDA 13 precompiled binary versions
+    "0.8.0-13": {
+        "Linux-x86_64": (
+            "ba18f5fd80dcbbe905d158caac5b3061d848442bb5abd477b5f296b4257a4937",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.8.0.10_cuda13-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "c5fe7e5796792e10c3c5971bbb169ab3040ba61fe6fc99bdcbc02cf0f1ed9409",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-sbsa/libcudss-linux-sbsa-0.8.0.10_cuda13-archive.tar.xz",
+        ),
+    },
+    "0.8.0-12": {
+        "Linux-x86_64": (
+            "29716a05c64b28531309afcb7a9dd5044081a43197e72bdd0fbf29e9b4ee4707",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.8.0.10_cuda12-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "11cf97c8cecf3a651bab1890894c8b8793666a17ad3002104e573efa564af231",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.8.0.10_cuda12-archive.tar.xz",
+        ),
+    },
     "0.7.1-13": {
         "Linux-x86_64": (
             "84b34ebe7fad40ec10f2aab2957a63b6070bd8ce16e3ada3e6bcac7317256347",
@@ -80,7 +100,7 @@ class Cudss(Package):
 
     homepage = "https://developer.nvidia.com/cudss"
 
-    maintainers("ddement")
+    maintainers("ddement", "imciner2")
 
     skip_version_audit = ["platform=darwin", "platform=windows"]
 
