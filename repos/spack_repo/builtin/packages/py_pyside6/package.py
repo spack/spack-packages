@@ -74,7 +74,7 @@ class PyPyside6(PythonPackage):
             # package forwards to its "libglx" dependency), so use the
             # headers property rather than prefix.include to locate them.
             additional_includes += [self.spec["gl"].headers.directories[0]]
-            additional_includes += [self.spec["glu"].headers.directories[0]]            
+            additional_includes += [self.spec["glu"].headers.directories[0]]
         if "+declarative" in self.spec:
             additional_includes += [self.spec["qt-declarative"].prefix.include]
             # not sure if needed
