@@ -160,7 +160,6 @@ class Rpp(ROCmLibrary, CMakePackage):
                 string=True,
             )
 
-    # depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
     depends_on("cmake@3.5:", type="build")
     depends_on("pkgconfig", type="build")
@@ -179,7 +178,6 @@ class Rpp(ROCmLibrary, CMakePackage):
     )
     depends_on("libjpeg-turbo", type=("build", "link"))
     depends_on("rocm-openmp-extras", when="@:7.1")
-    # depends_on("msgpack-c", when="@7.14:")
     conflicts("+opencl+hip")
 
     with when("+hip"):

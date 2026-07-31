@@ -44,8 +44,8 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
 
     version(
         "7.14.0",
-        git="https://github.com/ROCm/rocm-systems.git",
         tag="therock-7.14",
+        commit="2b22ab0195cc1461cd9abf3b969e9dd7c10af350",
         submodules=submodules,
     )
     version(

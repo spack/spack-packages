@@ -27,7 +27,6 @@ class Mivisionx(ROCmLibrary, CMakePackage):
     tags = ["rocm"]
 
     license("MIT")
-    version("7.14.0", branch="release/therock-7.14")
     version(
         "7.13.0", branch="release/therock-7.13", commit="112b6ba9e8ab872a3e1b95afb037be0cea84fddd"
     )

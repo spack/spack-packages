@@ -23,7 +23,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
     libraries = ["libmigraphx"]
 
     rocm_url_map = [
-        ("7.13.0", "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{0}.tar.gz"),
+        ("7.14.0", "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{1}.{2}.tar.gz"),
     ]
 

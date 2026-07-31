@@ -25,8 +25,8 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     # Version 7.14.0 uses release/rvs-1.5.x branch
     version(
         "7.14.0",
-        tag="v1.5.0",
-        # sha256="6f4982c3583b44f9d698f6fca5daec263aea65b8e4c821574ba016e7c6796043",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/heads/release/rvs-1.5.x.tar.gz",
+        sha256="6f4982c3583b44f9d698f6fca5daec263aea65b8e4c821574ba016e7c6796043",
     )
     # Version 7.13.0 uses release/rvs-1.4.x branch
     version(

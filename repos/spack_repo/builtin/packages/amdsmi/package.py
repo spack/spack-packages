@@ -99,14 +99,6 @@ class Amdsmi(CMakePackage):
     resource(
         name="esmi_ib_library",
         git="https://github.com/amd/esmi_ib_library.git",
-        tag="esmi_pkg_ver-5.1.1",
-        commit="6cf2435dd15519ab4148c36751de7a9efc27d8dc",
-        placement="projects/amdsmi/esmi_ib_library",
-        when="@7.13",
-    )
-    resource(
-        name="esmi_ib_library",
-        git="https://github.com/amd/esmi_ib_library.git",
         tag="esmi_pkg_ver-4.2",
         commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
         placement="projects/amdsmi/esmi_ib_library",

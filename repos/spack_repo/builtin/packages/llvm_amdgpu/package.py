@@ -247,7 +247,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             sha256=d_shasum,
             when=f"@{d_version}",
         )
-    # TheRock therock-7.13/7.14 releases (rocm-systems super-repo)
+    # TheRock therock-7.13 release (rocm-systems super-repo)
     for d_version, d_shasum in [
         ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
         ("7.14", "8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330"),
