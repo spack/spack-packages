@@ -25,7 +25,6 @@ class Yasm(AutotoolsPackage, CMakePackage):
 
     build_system("autotools", "cmake", default="autotools")
 
-    # Autotools is not available on Windows; the CMake build is used there.
     requires("build_system=cmake", when="platform=windows")
 
     # Ensure C23 compliance in boolean enum
