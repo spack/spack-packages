@@ -992,7 +992,9 @@ class Opencv(CMakePackage, CudaPackage):
                 [
                     self.define("BUILD_PNG", False),
                     self.define("PNG_LIBRARY", self._posix_path(libpng.libs[0])),
-                    self.define("PNG_INCLUDE_DIR", self._posix_path(libpng.headers.directories[0])),
+                    self.define(
+                        "PNG_INCLUDE_DIR", self._posix_path(libpng.headers.directories[0])
+                    ),
                 ]
             )
 
