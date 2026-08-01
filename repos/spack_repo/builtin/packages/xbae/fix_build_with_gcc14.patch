@@ -1,0 +1,172 @@
+--- src/Methods.c	2006-05-26 10:57:25.000000000 +0200
++++ src/Methods.c	2026-06-23 18:33:50.333270805 +0200
+@@ -1688,7 +1688,7 @@
+                                          * The event must have occurred in a legal position
+                                          * otherwise control wouldn't have made it here
+                                          */
+-                                        xbaeEventToRowColumn(mw, event, &r, &c, &x, &y);
++                                        xbaeEventToRowColumn((Widget)mw, event, &r, &c, &x, &y);
+                                         x -= mw->matrix.cell_shadow_thickness;
+                                         y -= mw->matrix.cell_shadow_thickness;
+                                         position = XmTextXYToPos(TextField(mw), x, y);
+--- examples/tests/leak2.c	2003-06-21 11:38:46.000000000 +0200
++++ examples/tests/leak2.c	2026-06-23 18:33:50.321046959 +0200
+@@ -8,6 +8,7 @@
+ 
+ #include <stdlib.h>
+ #include <stdio.h>
++#include <stdint.h>
+ #include <unistd.h>
+ 
+ #include <Xm/Xm.h>
+@@ -20,7 +21,7 @@
+ 
+ XtResource	resources[] = {
+ 	{ "numIter", "NumIter", XtRInt, sizeof(int),
+-		XtOffsetOf(AppRes, numIter), XtRImmediate, 1000 },
++		XtOffsetOf(AppRes, numIter), XtRImmediate, (XtPointer)(intptr_t)1000 },
+ };
+ 
+ int
+--- examples/matrix/matrix.c	2006-05-15 17:57:04.000000000 +0200
++++ examples/matrix/matrix.c	2026-06-23 18:33:50.319133901 +0200
+@@ -29,6 +29,7 @@
+ #include <XbaeConfig.h>
+ #endif
+ #include <stdlib.h>
++#include <stdio.h>
+ #ifdef USE_EDITRES
+ #include <X11/Intrinsic.h>
+ #include <X11/Xmu/Editres.h>
+--- examples/input/pattern.c	2003-10-20 21:12:46.000000000 +0200
++++ examples/input/pattern.c	2026-06-23 18:33:50.307984385 +0200
+@@ -128,7 +128,7 @@
+ {
+     Widget toplevel, rc, pattern, cw, radio, frame;
+     XtAppContext app;
+-    XmString true, false, begin, centre, end;
++    XmString xm_true, xm_false, begin, centre, end;
+ 
+     toplevel = XtVaAppInitialize(&app, "Input",
+ 				 NULL, 0,
+@@ -167,8 +167,8 @@
+ 		XmNoverwriteMode,	False,
+ 		NULL);
+ 
+-    true = XmStringCreateSimple("True");
+-    false = XmStringCreateSimple("False");
++    xm_true = XmStringCreateSimple("True");
++    xm_false = XmStringCreateSimple("False");
+ 
+     cw = XtVaCreateManagedWidget(
+ 	"XmNautofill", xbaeCaptionWidgetClass, rc,
+@@ -180,8 +180,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNautoFill", 0, autoFillToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -198,8 +198,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNconvertCase", 1, convertCaseToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -231,8 +231,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNoverwriteMode", 0, overwriteModeToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -261,8 +261,8 @@
+ 
+     XtManageChild(radio);
+ 
+-    XmStringFree(true);
+-    XmStringFree(false);
++    XmStringFree(xm_true);
++    XmStringFree(xm_false);
+     XmStringFree(begin);
+     XmStringFree(centre);
+     XmStringFree(end);
+--- examples/input/input.c	2001-03-30 09:52:02.000000000 +0200
++++ examples/input/input.c	2026-06-23 18:33:50.307871214 +0200
+@@ -126,7 +126,7 @@
+ {
+     Widget toplevel, rc, pattern, cw, radio, frame;
+     XtAppContext app;
+-    XmString true, false, begin, centre, end;
++    XmString xm_true, xm_false, begin, centre, end;
+ 
+     toplevel = XtVaAppInitialize(&app, "Input",
+ 				 NULL, 0,
+@@ -160,8 +160,8 @@
+ 
+     XtAddCallback(input, XmNvalidateCallback, validateCB, NULL);
+ 
+-    true = XmStringCreateSimple("True");
+-    false = XmStringCreateSimple("False");
++    xm_true = XmStringCreateSimple("True");
++    xm_false = XmStringCreateSimple("False");
+ 
+     cw = XtVaCreateManagedWidget(
+ 	"XmNautofill", xbaeCaptionWidgetClass, rc,
+@@ -173,8 +173,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNautoFill", 0, autoFillToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -191,8 +191,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNconvertCase", 1, convertCaseToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -224,8 +224,8 @@
+ 
+     radio = XmVaCreateSimpleRadioBox(
+ 	frame, "XmNoverwriteMode", 0, overwriteModeToggle,
+-	XmVaRADIOBUTTON, false, NULL, NULL, NULL,
+-	XmVaRADIOBUTTON, true, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_false, NULL, NULL, NULL,
++	XmVaRADIOBUTTON, xm_true, NULL, NULL, NULL,
+ 	NULL);
+ 
+     XtVaSetValues(radio, XmNtraversalOn, False, NULL);
+@@ -254,8 +254,8 @@
+ 
+     XtManageChild(radio);
+ 
+-    XmStringFree(true);
+-    XmStringFree(false);
++    XmStringFree(xm_true);
++    XmStringFree(xm_false);
+     XmStringFree(begin);
+     XmStringFree(centre);
+     XmStringFree(end);

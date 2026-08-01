@@ -15,6 +15,7 @@ class PyResampy(PythonPackage):
 
     license("ISC")
 
+    version("0.4.3", sha256="a0d1c28398f0e55994b739650afef4e3974115edbe96cd4bb81968425e916e47")
     version("0.2.2", sha256="62af020d8a6674d8117f62320ce9470437bb1d738a5d06cd55591b69b463929e")
 
     depends_on("py-setuptools", type="build")
@@ -22,3 +23,9 @@ class PyResampy(PythonPackage):
     depends_on("py-scipy@0.13:", type=("build", "run"))
     depends_on("py-numba@0.32:", type=("build", "run"))
     depends_on("py-six@1.3:", type=("build", "run"))
+
+    conflicts(
+        "^python@3.1.2:",
+        when="@:0.2.2",
+        msg="python@3.1.2 dropped imp module, fixed in py-resampy@0.3.0",
+    )

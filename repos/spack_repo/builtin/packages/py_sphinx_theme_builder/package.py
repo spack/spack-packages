@@ -39,7 +39,7 @@ class PySphinxThemeBuilder(PythonPackage):
         depends_on("py-diagnostic@2:", when="@0.3:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sphinx-theme-builder/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version == Version("0.2.0b2"):
             name = "sphinx-theme-builder"
         else:

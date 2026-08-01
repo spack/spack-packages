@@ -152,6 +152,8 @@ default:
       - runner_unsupported
       - stale_schedule
       - job_execution_timeout
+      - server_timeout_running
+      - server_timeout_canceling
       - archived_failure
       - unmet_prerequisites
       - scheduler_failure

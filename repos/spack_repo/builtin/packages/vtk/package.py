@@ -222,7 +222,7 @@ class Vtk(CMakePackage):
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
         depends_on("seacas@2024-06-27", when="@9.4:")
 
-    depends_on("nlohmann-json", when="@9.2:")
+    depends_on("nlohmann-json+multiple_headers", when="@9.2:")
 
     # Freetype@2.10.3 no longer exports FT_CALLBACK_DEF, this
     # patch replaces FT_CALLBACK_DEF with simple extern "C"

@@ -18,7 +18,14 @@ class PyZensical(PythonPackage):
 
     license("MIT", checked_by="abhishek1297")
 
-    version("0.0.29", sha256="0d6282be7cb551e12d5806badf5e94c54a5e2f2cf07057a3e36d1eaf97c33ada")
+    version(
+        "0.0.50",
+        sha256="7040e52ebe5e6a275e4edeb351bf2bc314d007f3fb5750f178a38d840723e69c",
+    )
+    version(
+        "0.0.29",
+        sha256="0d6282be7cb551e12d5806badf5e94c54a5e2f2cf07057a3e36d1eaf97c33ada",
+    )
 
     # build-only dependencies
     depends_on("py-maturin@1.8:1", type="build")
@@ -27,11 +34,15 @@ class PyZensical(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("python@3.10:")
         depends_on("py-click@8.1.8:")
+        depends_on("py-jinja2@3.1:", when="@0.0.50:")
         depends_on("py-deepmerge@2.0:")
         depends_on("py-markdown@3.7:")
+        depends_on("py-pygments@2.20:", when="@0.0.50:")
         depends_on("py-pygments@2.16:")
+        depends_on("py-pymdown-extensions@10.21.3:", when="@0.0.50:")
         depends_on("py-pymdown-extensions@10.15:")
         depends_on("py-pyyaml@6.0.2:")
         # tomli only needed on Python < 3.11
         # (stdlib tomllib covers 3.11+)
-        depends_on("py-tomli@2.0:", when="^python@:3.10")
+        depends_on("py-tomli@2.4.0:", when="@0.0.50:")
+        depends_on("py-tomli@2.0:", when="@0.0.29 ^python@:3.10")

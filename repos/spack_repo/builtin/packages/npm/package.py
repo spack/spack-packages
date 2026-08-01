@@ -12,16 +12,19 @@ from spack.package import *
 
 
 class Npm(Package):
-    """npm: A package manager for javascript."""
+    """the package manager for JavaScript"""
 
     homepage = "https://github.com/npm/cli"
     url = "https://registry.npmjs.org/npm/-/npm-9.3.1.tgz"
     git = "https://github.com/npm/cli.git"
-
+    supplier = "Organization: npm, Inc."
     tags = ["build-tools"]
+    sanity_check_is_file = ["bin/npm", "bin/npx"]
 
-    license("Artistic-2.0")
+    maintainers("mcmehrtens")
+    license("Artistic-2.0", checked_by="mcmehrtens")
 
+    version("12.0.1", sha256="5e02bea4c784df1c3bbea9e55c7d2232329e1d1920c254789833ed9e8b0a5f16")
     version("11.12.1", sha256="e679850e663b16f5f146ee425d0eb0e3442c1d2bda3d513bbfd7c81f5ee5db38")
     version("11.2.0", sha256="1a947c2f9f3bc8c227dd3d30c39338214598dd7da6b4771b7c735c56401d5fb8")
     version("11.1.0", sha256="0f144846f78cc0eb230b0e228f736d5c06362e4ea867c72f059790568454abb7")
@@ -33,18 +36,15 @@ class Npm(Package):
     version("7.24.2", sha256="5b9eeea011f8bc3b76e55cc33339e87213800677f37e0756ad13ef0e9eaccd64")
     version("6.14.18", sha256="c9b15f277e2a0b1b57e05bad04504296a27024555d56c2aa967f862e957ad2ed")
 
-    depends_on("cxx", type="build")  # generated
-
     # Based on https://registry.npmjs.org/npm/x.y.z engines.node
     with default_args(type=("build", "run")):
+        depends_on("node-js@22.22.2:22,24.15.0:24,26:", when="@12")
         depends_on("node-js@20.17.0:20,22.9.0:", when="@11")
         depends_on("node-js@18.17.0:18,20.5.0:", when="@10")
-        depends_on("node-js@14.17.0:14,16.14.0:16,18.0.0:", when="@9")
+        depends_on("node-js@14.17.0:14,16.13.0:16,18.0.0:", when="@9")
         depends_on("node-js@12.13.0:12,14.15.0:14,16:", when="@8")
         depends_on("node-js@10:", when="@7")
         depends_on("node-js@6.2.0:6,8,9.3.0:", when="@6")
-
-    depends_on("libvips", when="@:7")
 
     # npm 6.13.4 ships with node-gyp 5.0.5, which contains several Python 3
     # compatibility issues on macOS. Manually update to node-gyp 6.0.1 for
@@ -140,3 +140,15 @@ class Npm(Package):
         npm_config_cache_dir = "%s/npm-cache" % dependent_spec.prefix
         env.set("npm_config_cache", npm_config_cache_dir)
         env.set("npm_config_install_links", "true")
+
+    def test_npm_version(self):
+        """verify npm executable outputs version"""
+        npm = Executable(self.prefix.bin.npm)
+        out = npm("--version", output=str, error=str)
+        assert self.spec.version.string in out
+
+    def test_npx_version(self):
+        """verify npx executable outputs version"""
+        npx = Executable(self.prefix.bin.npx)
+        out = npx("--version", output=str, error=str)
+        assert self.spec.version.string in out
