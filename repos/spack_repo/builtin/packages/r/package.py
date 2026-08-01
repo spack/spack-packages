@@ -32,7 +32,7 @@ class R(AutotoolsPackage):
     version(
         "4.5.3",
         sha256="aa5c1ed4293c7271ac513d654670356ac0e8a6ad5e42be014365d11150b5b8f2",
-        preferred=True
+        preferred=True,
     )
     version("4.5.2", sha256="0d71ff7106ec69cd7c67e1e95ed1a3cee355880931f2eb78c530014a9e379f20")
     version("4.5.1", sha256="b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70")
