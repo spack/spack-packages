@@ -82,16 +82,30 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
     )
     version(
-        "20230802.4", sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b"
+        "20230802.4",
+        sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b",
+        deprecated=True,
     )
     version(
-        "20220623.4", sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf"
+        "20220623.4",
+        sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf",
+        deprecated=True,
     )
     version(
-        "20210929.3", sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e"
+        "20210929.3",
+        sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e",
+        deprecated=True,
     )
-    version("20201029", sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726")
-    version("20200303", sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1")
+    version(
+        "20201029",
+        sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726",
+        deprecated=True,
+    )
+    version(
+        "20200303",
+        sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1",
+        deprecated=True,
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -396,7 +410,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("curl", when="+curl")
     depends_on("libpng", when="+png")
     depends_on("ffmpeg", when="+ffmpeg")
-    depends_on("kokkos+shared@3.1:", when="@20200505:+kokkos")
+    depends_on("kokkos+shared", when="+kokkos")
     depends_on("kokkos@3.7.01:", when="@20230208: +kokkos")
     depends_on("kokkos@4.3.00:", when="@20240417: +kokkos")
     depends_on("kokkos@4.3.01:", when="@20240627: +kokkos")
@@ -531,11 +545,16 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         when="@20221103:20250402 +openmp %apple-clang",
     )
 
-    # Older LAMMPS does not compile with Kokkos 4.x
+    # Older LAMMPS does not compile with Kokkos 4.x/5.x
     conflicts(
         "^kokkos@4:",
         when="@:20230802.1",
         msg="LAMMPS is incompatible with Kokkos 4.x until @20230802.1",
+    )
+    conflicts(
+        "^kokkos@5:",
+        when="@:20251210",
+        msg="LAMMPS is incompatible with Kokkos 5.x until @20260211",
     )
 
     patch("lib.patch", when="@20170901")
