@@ -25,10 +25,16 @@ class Amdsmi(CMakePackage):
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
-        else:
+            return url.format(version)
+        elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
+            return url.format(version)
+        else:
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
@@ -61,12 +67,50 @@ class Amdsmi(CMakePackage):
     depends_on("python@3.6:")
     depends_on("py-virtualenv")
     depends_on("pkgconfig")
+    depends_on("libdrm")
+
+    # https://github.com/ROCm/amdsmi/issues/167
     depends_on("libdrm@:2.4.124", when="@:7.2")
+    depends_on("libdrm@2.4.131:", when="@7.13:")
     depends_on("py-pyyaml")
+
+    depends_on("googletest@1.14:", type="build", when="@6.4:")
+    depends_on("googletest@1.16:", type="build", when="@7.2:")
+
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="projects/amdsmi/esmi_ib_library",
+        when="@7.2:",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.2",
+        commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
+        placement="esmi_ib_library",
+        when="@7.0:7.1",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-4.1.2",
+        commit="a8ea3019061419fae9dabdb93786ae278957b0be",
+        placement="esmi_ib_library",
+        when="@6.4",
+    )
+
     patch(
         "https://github.com/ROCm/amdsmi/commit/2858e51b4e8ff124ed67e23e0cd131e8b2140fae.patch?full_index=1",
         sha256="1cac40d057cb19f0cfac83ea427c8e98f7808be9a2778cd53cdbf963910798e8",
         when="@6.2",
+    )
+    patch(
+        "https://github.com/ROCm/amdsmi/commit/9b8c6fc4e2236d4d43831e1fabf5b0550738d735.patch?full_index=1",
+        sha256="091499873b52aae42ae09e1a30ab5742db4a5a66bf3f03c1914a65724688ac97",
+        when="@6.4:7.1",
     )
 
     @property

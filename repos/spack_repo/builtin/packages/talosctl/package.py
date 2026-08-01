@@ -19,6 +19,7 @@ class Talosctl(GoPackage):
 
     license("MPL-2.0", checked_by="RobertMaaskant")
 
+    version("1.13.7", sha256="2694a289d868ecb5ab2b0fcfbf61c452dfbc6540fab1c6b49f52d451755b5c8a")
     version("1.13.6", sha256="8e08a279ef826c50e98ce8953dcc140d66f40c59922ab794d67b3e39f938f1f7")
     version("1.13.5", sha256="d3457377cf574d843f7aa4efb7f1263830ff150a153bd3e21ec93795f8c43f76")
     version("1.13.3", sha256="f0f42d68db52cec6f5e6f4da3994f7f4c9dca700e05b690184ea588251f92aca")

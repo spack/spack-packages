@@ -17,6 +17,7 @@ class PyPythonLspServer(PythonPackage):
 
     license("MIT")
 
+    version("1.14.0", sha256="509c445fc667f41ffd3191cb7512a497bf7dd76c14ceb1ee2f6c13ebe71f9a6b")
     version("1.13.2", sha256="d507fc6be69861740827f4e4dffa1c9b1dec97c0ead859cfef86aa342a4c7904")
     version("1.11.0", sha256="89edd6fb3f7852e4bf5a3d1d95ea41484d1a28fa94b6e3cbff12b9db123b8e86")
     version("1.10.0", sha256="0c9a52dcc16cd0562404d529d50a03372db1ea6fb8dfcc3792b3265441c814f4")
@@ -24,34 +25,38 @@ class PyPythonLspServer(PythonPackage):
     version("1.7.0", sha256="401ce78ea2e98cadd02d94962eb32c92879caabc8055b9a2f36d7ef44acc5435")
     version("1.6.0", sha256="d75cdff9027c4212e5b9e861e9a0219219c8e2c69508d9f24949951dabd0dc1b")
 
-    depends_on("python@3.7:", type=("build", "run"))
-    depends_on("python@3.8:", type=("build", "run"), when="@1.8.0:")
-    depends_on("py-setuptools@61.2.0:", type=("build", "run"), when="@:1.7")
-    depends_on("py-setuptools@61.2.0:", type="build", when="@1.8.0:1.12")
-    depends_on("py-setuptools@69:", type="build", when="@1.13:")
-    depends_on("py-setuptools-scm@3.4.3:+toml", type="build")
-
     variant(
         "formatter", values=any_combination_of("black", "ruff"), description="Formatter to use"
     )
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1.14:")
+        depends_on("python@3.8:", when="@1.8.0:1.13")
+        depends_on("python@3.7:")
+
+    depends_on("py-setuptools@69:", type="build", when="@1.13:")
+    depends_on("py-setuptools@61.2.0:", type="build", when="@1.8.0:1.12")
+    depends_on("py-setuptools@61.2.0:", type=("build", "run"), when="@:1.7")
+
+    depends_on("py-setuptools-scm@3.4.3:+toml", type="build")
+
+    with default_args(type=("build", "run")):
         depends_on("py-docstring-to-markdown")
         depends_on("py-importlib-metadata@4.8.3:", when="@1.8.0: ^python@:3.9")
-        depends_on("py-jedi@0.17.2:0.18", when="@:1.7")
         depends_on("py-jedi@0.17.2:0.19", when="@1.8.0:")
+        depends_on("py-jedi@0.17.2:0.18", when="@:1.7")
         depends_on("py-pluggy@1.0.0:")
-        depends_on("py-python-lsp-jsonrpc@1.0.0:1")
         depends_on("py-python-lsp-jsonrpc@1.1.0:1", when="@1.8.0:")
+        depends_on("py-python-lsp-jsonrpc@1.0.0:1")
         depends_on("py-ujson@3.0.0:")
+
         depends_on("py-black", when="@1.13: formatter=black")
         depends_on("py-ruff", when="@1.13: formatter=ruff")
-        depends_on("py-importlib-metadata@4.8.3:", when="^python@:3.9")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/"
-        if self.spec.satisfies("@1.13:"):
-            url += "python_lsp_server/python_lsp_server-{0}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
+        if version >= Version("1.13"):
+            name = "python_lsp_server"
         else:
-            url += "python-lsp-server/python-lsp-server-{0}.tar.gz"
-        return url.format(version)
+            name = "python-lsp-server"
+        return url.format(name, version)

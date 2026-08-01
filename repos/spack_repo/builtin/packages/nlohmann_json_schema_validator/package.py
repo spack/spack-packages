@@ -17,6 +17,7 @@ class NlohmannJsonSchemaValidator(CMakePackage):
     license("MIT")
 
     version("main", branch="main")
+    version("2.4.0", sha256="24cbb114609cc9b43d4018b8d03e082ff5d2f26f5dce8bd36538097267b63af9")
     version("2.3.0", sha256="2c00b50023c7d557cdaa71c0777f5bcff996c4efd7a539e58beaa4219fa2a5e1")
     version("2.2.0", sha256="03897867bd757ecac1db7545babf0c6c128859655b496582a9cea4809c2260aa")
     version("2.1.0", sha256="83f61d8112f485e0d3f1e72d51610ba3924b179926a8376aef3c038770faf202")
@@ -25,6 +26,7 @@ class NlohmannJsonSchemaValidator(CMakePackage):
 
     depends_on("cxx", type="build")  # generated
 
+    depends_on("cmake@3.14:", type="build", when="@2.3:")
     depends_on("cmake@3.2:", type="build")
     depends_on("nlohmann-json")
 

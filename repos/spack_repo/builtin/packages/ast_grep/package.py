@@ -15,7 +15,7 @@ class AstGrep(CargoPackage):
     homepage = "https://ast-grep.github.io"
     url = "https://github.com/ast-grep/ast-grep/archive/refs/tags/0.43.0.tar.gz"
     git = "https://github.com/ast-grep/ast-grep.git"
-    supplier = "Organization: ast-grep"
+    supplier = "Person: Herrington Darkholme"
 
     executables = ["^ast-grep$"]
 
@@ -24,10 +24,13 @@ class AstGrep(CargoPackage):
     license("MIT", checked_by="mcmehrtens")
 
     version("main", branch="main")
+    version("0.45.0", sha256="996e9d879f095d3ccef55754d3a32d61e1ae03cfaecdcff5e247bfa5b649b27a")
     version("0.44.1", sha256="a5a1eea64346853f5c911982f332f3e1fb670f18483d805d33686086dcce510f")
     version("0.44.0", sha256="1cc8d5d6a759c6d99c676bcec09fbf1fc72e023804e54480146fd62b300fce95")
     version("0.43.0", sha256="1fb6c32a5ae96254d54df7c4358f664e5c6bebdd7754c8b9a3a7db079fe4d525")
 
+    # https://github.com/ast-grep/ast-grep/blob/0.45.0/Cargo.toml#L20
+    depends_on("rust@1.88:", type="build", when="@0.45:")
     # https://github.com/ast-grep/ast-grep/blob/0.44.0/Cargo.toml#L20
     depends_on("rust@1.85:", type="build", when="@0.44:")
     # https://github.com/ast-grep/ast-grep/blob/0.43.0/Cargo.toml#L20

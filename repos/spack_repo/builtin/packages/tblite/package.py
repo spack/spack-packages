@@ -21,6 +21,7 @@ class Tblite(CMakePackage, MesonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("0.7.0", sha256="3a7cb4602101e828caf41c38ca5e30f82de82d0d26d5db40168acdcad3462b92")
     version("0.6.0", sha256="372281aedb89234168d00eb691addb303197a9462a9c55d145c835f2cf5e8b42")
     version("0.5.0", sha256="e8a70b72ed0a0db0621c7958c63667a9cd008c97c868a4a417ff1bc262052ea8")
     version("0.4.0", sha256="5c2249b568bfd3b987d3b28f2cbfddd5c37f675b646e17c1e750428380af464b")
