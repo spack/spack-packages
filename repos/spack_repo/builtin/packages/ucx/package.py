@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import re
 import shutil
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -20,6 +21,8 @@ class Ucx(AutotoolsPackage, CudaPackage):
     maintainers("hppritcha")
 
     license("BSD-3-Clause")
+
+    executables = ["^ucx_info$"]
 
     version("master", branch="master", submodules=True)
 
@@ -159,6 +162,99 @@ class Ucx(AutotoolsPackage, CudaPackage):
 
     # https://github.com/openucx/ucx/issues/10589
     conflicts("%gcc@15:", when="@:1.18")
+
+    # External detection is driven by the build configuration that "ucx_info -b"
+    # reports (i.e. the installed config.h), not by the configure line from
+    # "ucx_info -v".  The configure line is unreliable as a primary source
+    # because most UCX components are either on by default (rc, ud, dc, dm,
+    # ib_hw_tm, mlx5) or auto-detected (rdmacm, knem, xpmem, bfd, fuse3, cuda,
+    # rocm), so they never show up there unless a packager explicitly overrode
+    # them.  Parsing only the configure line badly under-detects vendor builds
+    # such as HPCX, MOFED and distro packages.
+
+    #: Variants detected from a single "#define <name> 1" in "ucx_info -b".
+    detection_defines = {
+        "assertions": "ENABLE_ASSERT",
+        "backtrace_detail": "HAVE_DETAILED_BACKTRACE",
+        "dc": "HAVE_TL_DC",
+        "debug": "ENABLE_DEBUG_DATA",
+        "dm": "HAVE_IBV_DM",
+        "ib_hw_tm": "IBV_HW_TM",
+        "parameter_checking": "ENABLE_PARAMS_CHECK",
+        "rc": "HAVE_TL_RC",
+        "thread_multiple": "ENABLE_MT",
+        "ud": "HAVE_TL_UD",
+        "verbs": "HAVE_IB",
+    }
+
+    #: Variants detected from the "<component>_MODULES" lists in "ucx_info -b".
+    #: A HAVE_* define is not usable for these: it only says the headers were
+    #: found at build time, not that the module was built.  A build that has
+    #: ROCm headers installed but was configured --without-rocm still reports
+    #: "HAVE_HIP 1" while uct_rocm_MODULES stays empty.
+    detection_modules = {
+        "cma": (("uct_MODULES", "cma"),),
+        "cuda": (("uct_MODULES", "cuda"), ("ucm_MODULES", "cuda")),
+        "gdrcopy": (("uct_cuda_MODULES", "gdrcopy"),),
+        "knem": (("uct_MODULES", "knem"),),
+        "rdmacm": (("uct_MODULES", "rdmacm"),),
+        "rocm": (("uct_MODULES", "rocm"), ("ucm_MODULES", "rocm")),
+        "vfs": (("ucs_MODULES", "fuse"),),
+        "xpmem": (("uct_MODULES", "xpmem"),),
+    }
+
+    @classmethod
+    def determine_version(cls, exe):
+        output = Executable(exe)("-v", output=str, error=str)
+        match = re.search(r"# Library version:\s+(\S+)", output)
+        # Must be a Version, not a str: determine_variants compares it against
+        # ver() ranges, which do not accept plain strings.
+        return Version(match.group(1)) if match else None
+
+    @classmethod
+    def determine_variants(cls, exes, version):
+        results = []
+        for exe in exes:
+            defines = {}
+            for line in Executable(exe)("-b", output=str, error=str).splitlines():
+                match = re.match(r"#define\s+(\w+)\s+(.*)", line)
+                if match:
+                    defines[match.group(1)] = match.group(2).strip().strip('"')
+
+            def is_defined(name):
+                return defines.get(name, "0") not in ("0", "")
+
+            def has_module(candidates):
+                return any(mod in defines.get(key, "").split(":") for key, mod in candidates)
+
+            found = {v: is_defined(d) for v, d in cls.detection_defines.items()}
+            found.update({v: has_module(c) for v, c in cls.detection_modules.items()})
+
+            # mlx5 is folded into the ib module before v1.18 and is a module of
+            # its own from v1.18 on, so accept either signal.
+            found["mlx5_dv"] = is_defined("HAVE_MLX5_DV") or has_module(
+                (("uct_ib_MODULES", "mlx5"),)
+            )
+
+            # UCX compiles in logging by default; --disable-logging caps the
+            # highest compiled-in level at DEBUG instead of TRACE_POLL.
+            found["logging"] = "TRACE" in defines.get("UCS_MAX_LOG_LEVEL", "")
+
+            # Java support is only an automake conditional, so it leaves no
+            # trace in the build config.  The configure line is all we have.
+            cfg = defines.get("UCX_CONFIGURE_FLAGS", "")
+            found["java"] = bool(re.search(r"--with-java(?!=no)", cfg))
+
+            # Variants that only exist for a subset of versions.
+            if version in ver(":1.10"):
+                found["cm"] = is_defined("HAVE_TL_CM")
+            if version not in ver("1.11.0:"):
+                found.pop("vfs", None)
+
+            results.append(
+                " ".join(("+" if on else "~") + name for name, on in sorted(found.items()))
+            )
+        return results
 
     configure_abs_path = "contrib/configure-release"
 
