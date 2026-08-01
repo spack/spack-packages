@@ -10,11 +10,8 @@ class Lunum(MakefilePackage):
     parallel = False
 
     version("0.5.3", tag="v0.5.3")
-    version("0.5.2", tag="v0.5.2")
-    version("0.5.1", tag="v0.5.1")
 
-    patch("lunum-0.5.3-source-fixes.patch", when="@0.5.3")
-    patch("lunum-0.5.3-test-fixes.patch", when="@0.5.3")
+    patch("lunum-0.5.3-source-fixes.patch")
 
     depends_on("c", type="build")
     depends_on("lua-lang@5.1:", type=("build", "link", "run"))
