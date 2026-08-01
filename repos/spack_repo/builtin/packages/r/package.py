@@ -55,6 +55,7 @@ class R(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("findutils", type="build")
+    depends_on("texinfo@6.8:", when="@4.6:")
     depends_on("texinfo", type="build")
 
     depends_on("blas")
