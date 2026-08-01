@@ -37,7 +37,7 @@ class Scale(MakefilePackage):
     depends_on("mpi@2:", type=("build", "link", "run"))
     depends_on("netcdf-c@:4.8.9")  # scale depends upon old nc-config that supports --fflags
     depends_on("netcdf-fortran")
-    depends_on("parallel-netcdf")
+    depends_on("parallel-netcdf@1.7.0:")
 
     patch("fj-own_compiler.patch", when="%fj")
 
