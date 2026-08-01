@@ -857,6 +857,7 @@ class Cuda(Package):
         return match.group(1) if match else None
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        env.unset("DISPLAY")  # avoid installer trying to call $XTERM -title
         if self.spec.satisfies("@:8.0.61"):
             # Perl 5.26 removed current directory from module search path,
             # CUDA 9 has a fix for this, but CUDA 8 and lower don't.
