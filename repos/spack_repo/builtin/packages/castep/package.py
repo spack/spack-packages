@@ -23,7 +23,7 @@ class Castep(cmake.CMakePackage, makefile.MakefilePackage):
     electronic response properties etc.
     """
 
-    homepage = "http://castep.org"
+    homepage = "https://www.castep.org"
     url = f"file://{os.getcwd()}/CASTEP-25.12.tar.gz"
     manual_download = True
 
