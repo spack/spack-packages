@@ -1,0 +1,48 @@
+diff --git a/cuda/hotspot3D/Makefile b/cuda/hotspot3D/Makefile
+index a92e8b0..7170905 100755
+--- a/cuda/hotspot3D/Makefile
++++ b/cuda/hotspot3D/Makefile
+@@ -1,4 +1,4 @@
+-include ~/rodinia_3.0/common/make.config
++include ../../common/make.config
+ 
+ CC := $(CUDA_DIR)/bin/nvcc
+ 
+diff --git a/cuda/nn/nn_cuda.cu b/cuda/nn/nn_cuda.cu
+index 02384d2..9e53cf4 100644
+--- a/cuda/nn/nn_cuda.cu
++++ b/cuda/nn/nn_cuda.cu
+@@ -8,8 +8,12 @@
+ #include <sys/time.h>
+ #include <float.h>
+ #include <vector>
++#include <filesystem>
++#include <string>
+ #include "cuda.h"
+ 
++namespace fs = std::filesystem;
++
+ #define min( a, b )			a > b ? b : a
+ #define ceilDiv( a, b )		( a + b - 1 ) / b
+ #define print( x )			printf( #x ": %lu\n", (unsigned long) x )
+@@ -174,6 +178,8 @@ int loadData(char *filename,std::vector<Record> &records,std::vector<LatLong> &l
+ 
+     /**Main processing **/
+ 
++	fs::path lspath(filename);	
++	auto files_dir = lspath.parent_path();
+     flist = fopen(filename, "r");
+ 	while(!feof(flist)) {
+ 		/**
+@@ -185,9 +191,9 @@ int loadData(char *filename,std::vector<Record> &records,std::vector<LatLong> &l
+             fprintf(stderr, "error reading filelist\n");
+             exit(0);
+         }
+-        fp = fopen(dbname, "r");
++        fp = fopen((files_dir / dbname).c_str(), "r");
+         if(!fp) {
+-            printf("error opening a db\n");
++            printf("error opening a db; dbname=%s\n", dbname);
+             exit(1);
+         }
+         // read each record

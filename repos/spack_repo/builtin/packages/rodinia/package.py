@@ -41,6 +41,9 @@ class Rodinia(MakefilePackage, CudaPackage):
     variant("mummergpu", default=True, description="enable mummergpu")
     variant("hybridsort", default=True, description="enable hybridsort")
 
+    # Should nvcc use option -lineinfo for all generated progarms
+    variant("lineinfo", default=True, description="enable -lineinfo")
+
     conflicts("~cuda")
     conflicts("cuda_arch=none",
         msg="Please specify cuda_arch as variant for installation.\n"
@@ -60,6 +63,7 @@ class Rodinia(MakefilePackage, CudaPackage):
     patch("leukocyte.patch")
     patch("mummergpu.patch")
     patch("hybridsort.patch")
+    patch("hotspot-NN.patch")
 
     def edit(self, spec, prefix):
         # set cuda paths
@@ -228,6 +232,9 @@ class Rodinia(MakefilePackage, CudaPackage):
                     "#cd cuda/hybridsort",
                     "Makefile"
                 )
+
+        if self.spec.satisfies("+lineinfo"):
+            patch("lineinfo.patch")
 
     # Override this to run make clean before all
     def build(self, spec: Spec, prefix) -> None:

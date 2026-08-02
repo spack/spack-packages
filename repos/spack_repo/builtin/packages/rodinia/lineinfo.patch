@@ -1,0 +1,413 @@
+diff --git a/Makefile b/Makefile
+index 74ea334..5028678 100755
+--- a/Makefile
++++ b/Makefile
+@@ -12,7 +12,10 @@ OCL_DIRS  := backprop bfs cfd gaussian heartwall hotspot kmeans lavaMD leukocyte
+ 
+ all: CUDA OMP OPENCL
+ 
+-CUDA: 
++$(CUDA_BIN_DIR) :
++	mkdir -p $(CUDA_BIN_DIR)
++
++CUDA: $(CUDA_BIN_DIR) 
+ 	cd cuda/backprop;		make;	cp backprop $(CUDA_BIN_DIR)
+ 	cd cuda/bfs; 			make;	cp bfs $(CUDA_BIN_DIR)
+ 	cd cuda/cfd; 			make;	cp euler3d euler3d_double pre_euler3d pre_euler3d_double $(CUDA_BIN_DIR)
+diff --git a/common/common.mk b/common/common.mk
+index 4a5d800..4c97fa8 100644
+--- a/common/common.mk
++++ b/common/common.mk
+@@ -96,7 +96,7 @@ CWARN_FLAGS := $(CXXWARN_FLAGS) \
+ 	-Wmain \
+ 
+ # Compiler-specific flags
+-NVCCFLAGS := 
++NVCCFLAGS := -lineinfo
+ CXXFLAGS  := $(CXXWARN_FLAGS)
+ CFLAGS    := $(CWARN_FLAGS)
+ 
+diff --git a/cuda/.gitignore b/cuda/.gitignore
+index d441483..bb445ab 100644
+--- a/cuda/.gitignore
++++ b/cuda/.gitignore
+@@ -26,3 +26,6 @@
+ *.qdrep
+ *.sqlite
+ *.sass
++
++# compiler mid product
++*.ii
+diff --git a/cuda/b+tree/Makefile b/cuda/b+tree/Makefile
+index e5f88c4..1dd0be9 100755
+--- a/cuda/b+tree/Makefile
++++ b/cuda/b+tree/Makefile
+@@ -1,7 +1,7 @@
+ include ../../common/make.config
+ 
+ CUDA_LIB =	-lcuda -lcudart
+-CUDA_FLAG = -arch sm_89
++CUDA_FLAG = -arch sm_89 -lineinfo
+ 
+ # ====================================================================================================100
+ #	END
+diff --git a/cuda/backprop/Makefile b/cuda/backprop/Makefile
+index a6812bd..369a7fb 100755
+--- a/cuda/backprop/Makefile
++++ b/cuda/backprop/Makefile
+@@ -6,7 +6,7 @@ CC_FLAGS = -g  -O2
+ 
+ # CUDA compiler
+ NVCC = $(CUDA_DIR)/bin/nvcc
+-NVCC_FLAGS = -I$(CUDA_DIR)/include
++NVCC_FLAGS = -lineinfo -I$(CUDA_DIR)/include
+ 
+ # 'make dbg=1' enables NVCC debugging
+ ifeq ($(dbg),1)
+diff --git a/cuda/bfs/Makefile b/cuda/bfs/Makefile
+index c275dd3..b81e0b8 100755
+--- a/cuda/bfs/Makefile
++++ b/cuda/bfs/Makefile
+@@ -9,16 +9,16 @@ SRC = bfs.cu
+ EXE = bfs
+ 
+ release: $(SRC)
+-	$(CC) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
++	$(CC) -lineinfo $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ enum: $(SRC)
+-	$(CC) -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
++	$(CC) -lineinfo -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ debug: $(SRC)
+-	$(CC) -g $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
++	$(CC) -lineinfo -g $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ debugenum: $(SRC)
+-	$(CC) -g -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
++	$(CC) -lineinfo -g -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ clean: $(SRC)
+ 	rm -f $(EXE) $(EXE).linkinfo result.txt
+diff --git a/cuda/cfd/Makefile b/cuda/cfd/Makefile
+index 77b00c3..c0b98e8 100755
+--- a/cuda/cfd/Makefile
++++ b/cuda/cfd/Makefile
+@@ -14,17 +14,17 @@ endif
+ all: euler3d euler3d_double  pre_euler3d  pre_euler3d_double 
+ 
+ euler3d: euler3d.cu
+-	nvcc $(KERNEL_DIM) -O2 -Xptxas -v --gpu-architecture=compute_89 --gpu-code=compute_89 euler3d.cu -o euler3d -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
++	nvcc -lineinfo $(KERNEL_DIM) -O2 -Xptxas -v --gpu-architecture=compute_89 --gpu-code=compute_89 euler3d.cu -o euler3d -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
+ 
+ euler3d_double: euler3d_double.cu
+-	nvcc -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 euler3d_double.cu -o euler3d_double -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
++	nvcc -lineinfo -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 euler3d_double.cu -o euler3d_double -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
+ 
+ 
+ pre_euler3d: pre_euler3d.cu
+-	nvcc -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 pre_euler3d.cu -o pre_euler3d -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
++	nvcc -lineinfo -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 pre_euler3d.cu -o pre_euler3d -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
+ 
+ pre_euler3d_double: pre_euler3d_double.cu
+-	nvcc -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 pre_euler3d_double.cu -o pre_euler3d_double -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
++	nvcc -lineinfo -Xptxas -v -O3 --gpu-architecture=compute_89 --gpu-code=compute_89 pre_euler3d_double.cu -o pre_euler3d_double -I$(CUDA_SDK_PATH)/common  -L$(CUDA_SDK_PATH)/lib $(CUTIL_LIB)
+ 
+ 
+ clean:
+diff --git a/cuda/dwt2d/Makefile b/cuda/dwt2d/Makefile
+index 693c9f7..3ec8754 100755
+--- a/cuda/dwt2d/Makefile
++++ b/cuda/dwt2d/Makefile
+@@ -9,7 +9,7 @@ cudagdb=0 #compile for use with cuda-gdb, note that 'dbg' must be 1 as well
+ performancetest=1
+ 
+ # NVCC Options
+-NVCCFLAGS += -arch sm_89
++NVCCFLAGS += -arch sm_89 -lineinfo
+ 
+ # Files
+ CFILES := 
+@@ -109,4 +109,4 @@ $(EXECUTABLE): $(COBJS) $(CXXOBJS) $(CUOBJS)
+ 
+ clean:
+ 	rm -f $(COBJS) $(CXXOBJS) $(CUOBJS) $(EXECUTABLE)
+-	rm *.bmp.dwt.*		
+\ No newline at end of file
++	rm *.bmp.dwt.*		
+diff --git a/cuda/gaussian/Makefile b/cuda/gaussian/Makefile
+index f520a5f..3915e54 100755
+--- a/cuda/gaussian/Makefile
++++ b/cuda/gaussian/Makefile
+@@ -8,7 +8,7 @@ SRC = gaussian.cu
+ EXE = gaussian
+ 
+ release: $(SRC)
+-	$(CC) $(KERNEL_DIM) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
++	$(CC) -lineinfo $(KERNEL_DIM) $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ clean:
+ 	rm gaussian
+diff --git a/cuda/heartwall/Makefile b/cuda/heartwall/Makefile
+index 0e47ac8..84273fd 100755
+--- a/cuda/heartwall/Makefile
++++ b/cuda/heartwall/Makefile
+@@ -5,7 +5,7 @@ endif
+ 
+ # link objects(binaries) together
+ heartwall: main.o ./AVI/avilib.o ./AVI/avimod.o 
+-	nvcc main.o ./AVI/avilib.o ./AVI/avimod.o -I/usr/local/cuda/include -lm -o heartwall
++	nvcc -lineinfo main.o ./AVI/avilib.o ./AVI/avimod.o -I/usr/local/cuda/include -lm -o heartwall
+ 
+ # compile main function file into object (binary)
+ main.o: main.cu kernel.cu define.c
+diff --git a/cuda/hotspot/Makefile b/cuda/hotspot/Makefile
+index d3ebef1..31ab015 100644
+--- a/cuda/hotspot/Makefile
++++ b/cuda/hotspot/Makefile
+@@ -1,6 +1,6 @@
+ include ../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+diff --git a/cuda/hotspot3D/Makefile b/cuda/hotspot3D/Makefile
+index 7170905..b71b9cd 100755
+--- a/cuda/hotspot3D/Makefile
++++ b/cuda/hotspot3D/Makefile
+@@ -1,6 +1,6 @@
+ include ../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+diff --git a/cuda/huffman/Makefile b/cuda/huffman/Makefile
+index 290cdbc..d77ec0d 100755
+--- a/cuda/huffman/Makefile
++++ b/cuda/huffman/Makefile
+@@ -3,7 +3,7 @@ CC = g++
+ 
+ CUDA_INCLUDEPATH=/usr/local/cuda-6.5/include
+ 
+-NVCC_OPTS=-O3 -arch=sm_89 -Xcompiler -m64 -g -G
++NVCC_OPTS=-O3 -arch=sm_89 -Xcompiler -m64 -g -G -lineinfo 
+ 
+ GCC_OPTS=-O3 -Wall -Wextra -m64
+ 
+diff --git a/cuda/hybridsort/Makefile b/cuda/hybridsort/Makefile
+index b092d0c..48857ab 100644
+--- a/cuda/hybridsort/Makefile
++++ b/cuda/hybridsort/Makefile
+@@ -1,7 +1,7 @@
+ include ../../common/make.config
+ CC := $(CUDA_DIR)/bin/nvcc
+ 
+-CC_FLAGS = -arch=sm_89
++CC_FLAGS = -arch=sm_89 -lineinfo 
+ 
+ ifdef VERIFY
+ override VERIFY = -DVERIFY
+diff --git a/cuda/kmeans/Makefile b/cuda/kmeans/Makefile
+index e765bd1..6960464 100755
+--- a/cuda/kmeans/Makefile
++++ b/cuda/kmeans/Makefile
+@@ -6,7 +6,7 @@ CC_FLAGS = -g -fopenmp -O2
+ 
+ # CUDA compiler
+ NVCC = $(CUDA_DIR)/bin/nvcc
+-NVCC_FLAGS = -I$(CUDA_DIR)/include 
++NVCC_FLAGS = -I$(CUDA_DIR)/include -lineinfo 
+ 
+ # 'make dbg=1' enables NVCC debugging
+ ifeq ($(dbg),1)
+diff --git a/cuda/lavaMD/makefile b/cuda/lavaMD/makefile
+index b810b71..5414206 100755
+--- a/cuda/lavaMD/makefile
++++ b/cuda/lavaMD/makefile
+@@ -18,7 +18,7 @@ OMP_FLAG = -fopenmp
+ 
+ CUD_C = $(CUDA_DIR)/bin/nvcc
+ # OMP_FLAG = 	-Xcompiler paste_one_here
+-CUDA_FLAG = -arch sm_89
++CUDA_FLAG = -arch sm_89 -lineinfo 
+ 
+ # link objects (binaries) together
+ a.out:		main.o \
+diff --git a/cuda/leukocyte/CUDA/Makefile b/cuda/leukocyte/CUDA/Makefile
+index 67fcc1a..b130372 100755
+--- a/cuda/leukocyte/CUDA/Makefile
++++ b/cuda/leukocyte/CUDA/Makefile
+@@ -10,7 +10,7 @@ CC_FLAGS = -g -O3 -Wall -I$(MATRIX_DIR)
+ 
+ # CUDA compiler
+ NVCC = $(CUDA_DIR)/bin/nvcc
+-NVCC_FLAGS = -I$(CUDA_DIR)/include -I$(SDK_DIR)/common
++NVCC_FLAGS = -I$(CUDA_DIR)/include -I$(SDK_DIR)/common -lineinfo 
+ 
+ # Matrix library path
+ MATRIX_DIR = ../meschach_lib
+diff --git a/cuda/lud/cuda/Makefile b/cuda/lud/cuda/Makefile
+index 94581c3..8ec2443 100755
+--- a/cuda/lud/cuda/Makefile
++++ b/cuda/lud/cuda/Makefile
+@@ -31,14 +31,14 @@ OBJS = ../common/common.o lud.o lud_kernel.o
+ all : $(EXECUTABLE)
+ 
+ .c.o : 
+-	$(NVCC) $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
++	$(NVCC) -lineinfo $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
+ 
+ %.o:	%.cu 
+-	$(NVCC) $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
++	$(NVCC) -lineinfo $(KERNEL_DIM) $(NVCCFLAGS) $(DEFS) -o $@ -c $<
+ 
+ 
+ $(EXECUTABLE) : $(OBJS)
+-	$(NVCC) $(NVCCFLAGS) -o $@  $?
++	$(NVCC) -lineinfo $(NVCCFLAGS) -o $@  $?
+ 
+ clean:
+ 	rm -f $(EXECUTABLE) $(OBJS) *.linkinfo
+diff --git a/cuda/mummergpu/src/Makefile b/cuda/mummergpu/src/Makefile
+index 8ac71b9..873216f 100755
+--- a/cuda/mummergpu/src/Makefile
++++ b/cuda/mummergpu/src/Makefile
+@@ -8,7 +8,7 @@ include ../experiments/test_rule.mk
+ CUDA_INSTALL_PATH := $(CUDA_DIR)
+ 
+ # Compilers
+-NVCC       := $(CUDA_INSTALL_PATH)/bin/nvcc 
++NVCC       := $(CUDA_INSTALL_PATH)/bin/nvcc -lineinfo 
+ CXX        := g++ -fopenmp $(PROFILE)
+ CC         := gcc 
+ LINK       := $(NVCC) -Xcompiler -fopenmp -Xcompiler -m64 -Xcompiler -fPIC -L ../lib $(PROFILE)
+diff --git a/cuda/myocyte/Makefile b/cuda/myocyte/Makefile
+index b7d27d6..41c79db 100755
+--- a/cuda/myocyte/Makefile
++++ b/cuda/myocyte/Makefile
+@@ -9,7 +9,7 @@
+ 
+ # link objects(binaries) together
+ myocyte.out:		main.o
+-	nvcc	main.o \
++	nvcc -lineinfo 	main.o \
+ 				-I/usr/local/cuda/include \
+ 				-L/usr/local/cuda/lib \
+ 				-lm -lcuda -lcudart \
+@@ -35,7 +35,7 @@ main.o:	define.c \
+ 				kernel_fin_2.cu \
+ 				file.c \
+ 				timer.c
+-	nvcc	main.cu \
++	nvcc	-lineinfo main.cu \
+ 				-c -O3 -g
+ 
+ # delete all object files
+diff --git a/cuda/nn/Makefile b/cuda/nn/Makefile
+index 2c60101..3968c89 100755
+--- a/cuda/nn/Makefile
++++ b/cuda/nn/Makefile
+@@ -1,7 +1,7 @@
+ include ../../common/make.config
+ 
+ LOCAL_CC = gcc -g -O3 -Wall
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ 
+ all : nn hurricane_gen
+ 
+diff --git a/cuda/nw/Makefile b/cuda/nw/Makefile
+index e87b602..553de3c 100755
+--- a/cuda/nw/Makefile
++++ b/cuda/nw/Makefile
+@@ -1,6 +1,6 @@
+ include ../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+diff --git a/cuda/particlefilter/Makefile b/cuda/particlefilter/Makefile
+index 49118d0..0f85c03 100755
+--- a/cuda/particlefilter/Makefile
++++ b/cuda/particlefilter/Makefile
+@@ -2,7 +2,7 @@
+ 
+ include ../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc  -lineinfo 
+ 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+diff --git a/cuda/pathfinder/Makefile b/cuda/pathfinder/Makefile
+index 62c9592..3c7e986 100755
+--- a/cuda/pathfinder/Makefile
++++ b/cuda/pathfinder/Makefile
+@@ -1,6 +1,6 @@
+ include ../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+ SRC = pathfinder.cu
+@@ -20,4 +20,4 @@ debugenum:
+ 	$(CC) -g -deviceemu $(SRC) -o $(EXE) -I$(INCLUDE) -L$(CUDA_LIB_DIR) 
+ 
+ clean:
+-	rm -f pathfinder
+\ No newline at end of file
++	rm -f pathfinder
+diff --git a/cuda/srad/srad_v1/makefile b/cuda/srad/srad_v1/makefile
+index f2a1645..c2fec48 100755
+--- a/cuda/srad/srad_v1/makefile
++++ b/cuda/srad/srad_v1/makefile
+@@ -15,7 +15,7 @@ INCLUDE := $(CUDA_DIR)/include
+ 
+ # link objects(binaries) together
+ a.out:		main.o
+-	$(CC)	main.o \
++	$(CC)	-lineinfo main.o \
+ 				-I$(INCLUDE) \
+ 				-L$(CUDA_LIB_DIR)  \
+ 				-lm -lcuda -lcudart -o srad
+@@ -30,7 +30,7 @@ main.o: 	main.cu \
+ 				srad_kernel.cu \
+ 				srad2_kernel.cu \
+ 				compress_kernel.cu
+-	nvcc	main.cu \
++	nvcc	-lineinfo main.cu \
+ 				-c -O3 -arch sm_89
+ 
+ # delete all object files
+diff --git a/cuda/srad/srad_v2/Makefile b/cuda/srad/srad_v2/Makefile
+index 5964155..c0c6d98 100755
+--- a/cuda/srad/srad_v2/Makefile
++++ b/cuda/srad/srad_v2/Makefile
+@@ -1,6 +1,6 @@
+ include ../../../common/make.config
+ 
+-CC := $(CUDA_DIR)/bin/nvcc
++CC := $(CUDA_DIR)/bin/nvcc -lineinfo 
+ 
+ INCLUDE := $(CUDA_DIR)/include
+ 
+diff --git a/cuda/streamcluster/Makefile b/cuda/streamcluster/Makefile
+index 17dfdd2..46aba8b 100755
+--- a/cuda/streamcluster/Makefile
++++ b/cuda/streamcluster/Makefile
+@@ -2,7 +2,7 @@ include ../../common/make.config
+ 
+ NVCC = $(CUDA_DIR)/bin/nvcc
+ 
+-NVCC_FLAGS = -I$(CUDA_DIR)/include
++NVCC_FLAGS = -I$(CUDA_DIR)/include -lineinfo 
+ 
+ TARGET_G = sc_gpu
+ 
