@@ -43,7 +43,6 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-
     with default_args(type=("build", "run")):
         depends_on("python@:3.14", when="@:0.12")
         depends_on("python@3.8:", when="@0.11:")
