@@ -17,6 +17,8 @@ class RBiostrings(RPackage):
     bioc = "Biostrings"
 
     with default_args(get_full_repo=True):
+        version("2.80.1", commit="bc262d5f452e0724e2f68696387d30e0b33e85b0")
+        version("2.78.0", commit="eda5d667ad05a73336d8c83a71f670198433232f")
         version("2.76.0", commit="2e04124cda03d509d857df228153a45c89840284")
         version("2.68.0", commit="f28b7838fb8321a9956506b3d2f4af2740bca124")
         version("2.66.0", commit="3470ca7da798971e2c3a595d8dc8d0d86f14dc53")
@@ -26,6 +28,7 @@ class RBiostrings(RPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("r@4.0.0:", type=("build", "run"))
+    depends_on("r@4.1.0:", type=("build", "run"), when="@2.80.1:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"))
     depends_on("r-s4vectors@0.27.12:", type=("build", "run"))
     depends_on("r-iranges@2.23.9:", type=("build", "run"))
@@ -33,7 +36,8 @@ class RBiostrings(RPackage):
     depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@2.66.0:")
     depends_on("r-xvector@0.29.2:", type=("build", "run"))
     depends_on("r-xvector@0.37.1:", type=("build", "run"), when="@2.66.0:")
-    depends_on("r-genomeinfodb", type=("build", "run"))
+    depends_on("r-genomeinfodb", type=("build", "run"), when="@:2.76.0")
     depends_on("r-crayon", type=("build", "run"))
+    depends_on("r-seqinfo", type=("build", "run"), when="@2.78.0:")
 
     conflicts("r@4.5.0:", when="@:2.75")

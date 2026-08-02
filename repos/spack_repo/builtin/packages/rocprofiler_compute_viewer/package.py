@@ -3,11 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocprofilerComputeViewer(CMakePackage):
+class RocprofilerComputeViewer(ROCmLibrary, CMakePackage):
     """ROCprof Compute Viewer (RCV) is a tool for visualizing and analyzing GPU
     thread trace data collected using rocprofv3."""
 
@@ -18,10 +19,9 @@ class RocprofilerComputeViewer(CMakePackage):
     maintainers("etiennemlb", "srekolam", "renjithravindrankannath", "afzpatel")
     license("MIT")
 
-    def url_for_version(self, version):
-        url = "https://github.com/ROCm/rocprof-compute-viewer/archive/refs/tags/{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        (None, "https://github.com/ROCm/rocprof-compute-viewer/archive/refs/tags/{0}.tar.gz"),
+    ]
     version("0.1.6", sha256="22de1dfb0dd2ac38cb67825f6477f13e271a8fea1cd91fa3d429f8f36a93992b")
 
     depends_on("cxx", type="build")

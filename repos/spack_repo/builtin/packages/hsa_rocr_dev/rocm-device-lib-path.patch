@@ -1,0 +1,20 @@
+diff --git a/projects/rocr-runtime/runtime/hsa-runtime/image/blit_src/CMakeLists.txt b/projects/rocr-runtime/runtime/hsa-runtime/image/blit_src/CMakeLists.txt
+index 1111111..2222222 100644
+--- a/projects/rocr-runtime/runtime/hsa-runtime/image/blit_src/CMakeLists.txt
++++ b/projects/rocr-runtime/runtime/hsa-runtime/image/blit_src/CMakeLists.txt
+@@ -70,10 +70,14 @@ endif()
+ function(gen_kernel_bc TARGET_ID INPUT_FILE OUTPUT_FILE)
+   if(WIN32)
+     set (WIN_CL_COMPILE_OPTION "-fshort-wchar")
+   endif()
++  if(DEFINED BITCODE_DIR)
++    set (ROCM_DEVICE_LIB_OPTION "--rocm-device-lib-path=${BITCODE_DIR}")
++  endif()
+   separate_arguments(CLANG_ARG_LIST UNIX_COMMAND
+     "-O2 -x cl -Xclang -finclude-default-header -cl-denorms-are-zero -cl-std=CL2.0
+-    -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -mcode-object-version=4 ${WIN_CL_COMPILE_OPTION}
++    -target amdgcn-amd-amdhsa -mcpu=${TARGET_ID} -mcode-object-version=4
++    ${WIN_CL_COMPILE_OPTION} ${ROCM_DEVICE_LIB_OPTION}
+     -o ${OUTPUT_FILE} ${INPUT_FILE}")
+
+   ## Add custom command to produce a code object file.

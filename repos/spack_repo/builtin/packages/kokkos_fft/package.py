@@ -17,6 +17,7 @@ class KokkosFft(CMakePackage):
 
     license("Apache-2.0 WITH LLVM-exception OR MIT", checked_by="cedricchevalier19")
 
+    version("2.0.0", sha256="f2c1f7b848e68aa214f2dea7820c22e729564167a4d4010170b01c81ad3a0714")
     version("1.1.0", sha256="71a87f562ad5163a6e6da2979974b3bec1f6482d0a651a17ef882b4bca347782")
     version("1.0.0", sha256="626c8eec4bd0675a13ccbbffccde0984d8b9ded18809ca8223370b51a0bbfc82")
     version("0.4.0", sha256="c51d37b8c06d74bdb2af0fa4e1eae40104c23ae0dae17c795bce55dbda6ab0d6")
@@ -44,6 +45,7 @@ class KokkosFft(CMakePackage):
     depends_on("cmake@:3", type="build", when="@:0")
 
     depends_on("kokkos +complex_align")
+    depends_on("kokkos@5.0:", when="@2.0:")
     depends_on("kokkos@4.7:", when="@1.1:")
     depends_on("kokkos@4.6:", when="@1.0:")
     depends_on("kokkos@4.5:", when="@0.4:")
