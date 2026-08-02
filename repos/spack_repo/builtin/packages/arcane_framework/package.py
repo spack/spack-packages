@@ -19,10 +19,13 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("grospelliergilles")
     license("Apache-2.0")
 
-    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v4.0.0.0/framework-4.0.0.0.src.tar.gz"
+    url = "https://github.com/arcaneframework/framework/releases/download/arcane-v4.1.16.0/framework-4.1.16.0.src.tar.gz"
     git = "https://github.com/arcaneframework/framework.git"
 
     version("4.1.16.0", sha256="094fbddacbda9d44a2344b472ec28574918f824d14d68fd573608b99650359db")
+
+    def url_for_version(self, version):
+        return f"https://github.com/arcaneframework/framework/releases/download/arcane-v{version}/framework-{version}.src.tar.gz"
 
     generator("ninja")
 
@@ -72,7 +75,7 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     depends_on("c", type="build", when="+arcane")
-    # TOOD: check if alien needs 'C' language
+    # TODO: check if alien needs 'C' language
     depends_on("c", type="build", when="+alien")
     depends_on("cxx", type="build")
 
@@ -119,6 +122,7 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+zoltan", when="~mpi")
     conflicts("+scotch", when="~mpi")
     conflicts("+med", when="~mpi")
+    conflicts("+alien", when="~mpi")
 
     # To be moved
     # For Aleph
@@ -197,8 +201,8 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
         args.append(self.define("ARCANE_REQUIRED_PACKAGE_LIST", self.build_required()))
 
         if "+alien" in self.spec:
-            (self.define("ALIEN_DEFAULT_OPTIONS", False),)
-            (self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"),)
+            args.append(self.define("ALIEN_DEFAULT_OPTIONS", False))
+            args.append(self.define_from_variant("ALIEN_PLUGIN_HYPRE", "hypre"))
 
         if "+rocm" in self.spec:
             args.append(self.define("ARCANE_ACCELERATOR_MODE", "ROCM"))
