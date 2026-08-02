@@ -15,7 +15,7 @@ class PyMeshioplusplus(PythonPackage):
     homepage = "https://github.com/loumalouomega/meshioplusplus"
     # 6.0.0 has no PyPI sdist, so build every version from the GitHub archive
     # (scikit-build-core builds fine from the source tree) for a uniform source.
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.4.1.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.10.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -24,6 +24,7 @@ class PyMeshioplusplus(PythonPackage):
 
     # Upstream's default branch moved from main to master at v7.0.0.
     version("master", branch="master")
+    version("9.10.0", sha256="6006148e1afb57f6d9426209775c2c6b008d8e10bd3d80ff7c676af9a99fd5fa")
     version("9.4.1", sha256="dc57060303b90a18128e259c5266d48d4a80e68d535ac028467b3ac8d518d772")
     version("9.0.0", sha256="8d7fdab4763a2174291e40c5da503bbb6d37b36591a54f7c0b1fa869eef54798")
     version("8.7.0", sha256="d8721aa4ed82ef2f7fe49062910826a7012f6823eb22d5290690c298eafe68ec")
@@ -69,7 +70,11 @@ class PyMeshioplusplus(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.15:", type="build")
-    depends_on("py-scikit-build-core@0.8:", type="build")
+    # +pyproject: py-scikit-build-core@:0.8 only pulls in py-pyproject-metadata
+    # / py-pathspec (needed to parse our PEP 621 pyproject.toml) when this
+    # variant is set; without it, the concretizer can pick @0.8~pyproject and
+    # the build fails at "Preparing metadata (pyproject.toml)".
+    depends_on("py-scikit-build-core@0.8: +pyproject", type="build")
     depends_on("py-pybind11@2.11:", type="build")
 
     depends_on("python@3.8:", type=("build", "link", "run"))

@@ -18,7 +18,7 @@ class Meshioplusplus(CMakePackage):
     """
 
     homepage = "https://github.com/loumalouomega/meshioplusplus"
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.4.1.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.10.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -27,6 +27,7 @@ class Meshioplusplus(CMakePackage):
 
     # Upstream's default branch moved from main to master at v7.0.0.
     version("master", branch="master")
+    version("9.10.0", sha256="6006148e1afb57f6d9426209775c2c6b008d8e10bd3d80ff7c676af9a99fd5fa")
     version("9.4.1", sha256="dc57060303b90a18128e259c5266d48d4a80e68d535ac028467b3ac8d518d772")
     # v9.0.0: the installable C++ core (MESHIOPLUSPLUS_INSTALL_CPP) landed at
     # v8.9.0; this major bump marks it stabilizing as a real consumer surface.
