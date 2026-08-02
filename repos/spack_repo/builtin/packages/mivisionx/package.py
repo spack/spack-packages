@@ -22,9 +22,14 @@ class Mivisionx(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libopenvx", "libvxu"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/MIVisionX/archive/rocm-{0}.tar.gz")]
+
     tags = ["rocm"]
 
     license("MIT")
+    version(
+        "7.13.0", branch="release/therock-7.13", commit="112b6ba9e8ab872a3e1b95afb037be0cea84fddd"
+    )
     version("7.2.3", sha256="91d0cccdd5d9590dabfdfd60e4e5704359594c392d7bc6bcfb2ff2a7321269cf")
     version("7.2.1", sha256="cedcb0bcbbe6b8636a36cac0ec3bf9e80da9e24653a8602b6e4f4f3d4d3caff2")
     version("7.2.0", sha256="188dc225d0813f172521e5a2129af5d917ab9e6616488520c0ef27468cc6d89b")
@@ -76,19 +81,21 @@ class Mivisionx(ROCmLibrary, CMakePackage):
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
 
     def patch(self):
-        filter_file(
-            r"${ROCM_PATH}/include/miopen/config.h",
-            "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
-            "amd_openvx_extensions/CMakeLists.txt",
-            string=True,
-        )
-        filter_file(
-            r"${ROCM_PATH}/llvm/bin/clang++",
-            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-            "amd_openvx/openvx/hipvx/CMakeLists.txt",
-            "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("+hip"):
+            # miopen-hip and llvm-amdgpu are spec dependencies for HIP builds only:
+            filter_file(
+                r"${ROCM_PATH}/include/miopen/config.h",
+                f"{self.spec['miopen-hip'].prefix}/include/miopen/config.h",
+                "amd_openvx_extensions/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                r"${ROCM_PATH}/llvm/bin/clang++",
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++",
+                "amd_openvx/openvx/hipvx/CMakeLists.txt",
+                "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
+                string=True,
+            )
         if self.spec.satisfies("@:6.1 + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
@@ -169,7 +176,8 @@ class Mivisionx(ROCmLibrary, CMakePackage):
                 string=True,
             )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("ffmpeg@4.4:", type="build")
@@ -220,6 +228,7 @@ class Mivisionx(ROCmLibrary, CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -230,7 +239,7 @@ class Mivisionx(ROCmLibrary, CMakePackage):
                 depends_on(
                     f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
                 )
-            depends_on(f"rpp@{ver}", when=f"@{ver}")
+                depends_on(f"rpp@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on("python@3.5:", type="build")
@@ -241,7 +250,8 @@ class Mivisionx(ROCmLibrary, CMakePackage):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@6.1:"):
+        # llvm-amdgpu is only a dependency for HIP builds, we can use it only when +hip:
+        if self.spec.satisfies("@6.1: +hip"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
         if self.spec.satisfies("+asan"):
@@ -259,20 +269,19 @@ class Mivisionx(ROCmLibrary, CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        protobuf = spec["protobuf"].prefix.include
-        args = [
-            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
-            self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix)),
-            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
-            self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
-        ]
-        if self.spec.satisfies("+hip"):
-            args.append(self.define("BACKEND", "HIP"))
-            args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
-            args.append(self.define("HIP_PATH", spec["hip"].prefix))
-
-        if self.spec.satisfies("~hip"):
-            args.append(self.define("BACKEND", "CPU"))
+        if spec.satisfies("+hip"):
+            args = [
+                self.define("BACKEND", "HIP"),
+                self.define("HIP_PATH", spec["hip"].prefix),
+                self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix),
+                self.define("CMAKE_CXX_FLAGS", f"-I{spec['protobuf'].prefix.include}"),
+                # rpp is only a dependency for HIP builds, we can use it only when +hip:
+                self.define("AMDRPP_LIBRARIES", f"{spec['rpp'].prefix}/lib/librpp.so"),
+                self.define("AMDRPP_INCLUDE_DIRS", f"{spec['rpp'].prefix}/include/rpp"),
+                self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
+            ]
+        else:
+            args = [self.define("BACKEND", "CPU")]
 
         if self.spec.satisfies("@:6.2.0"):
             args.append(

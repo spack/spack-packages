@@ -20,6 +20,13 @@ class RRtracklayer(RPackage):
     bioc = "rtracklayer"
 
     with default_args(get_full_repo=True):
+        version("1.72.0", commit="3136d28c9e15ed28f32b9fe5428738acade52742")
+        version("1.70.1", commit="873c7111e8befb0e5761618280100a4de0cc5f3e")
+        version("1.68.0", commit="aa5ace3bafeb3acdd179911c44a439b4b406cf93")
+        version("1.66.0", commit="d81035b2aa7efe3066e4bc6470bf940b0dd5954d")
+        version("1.64.0", commit="ba889ee7eb05809837dc66eebb13cfe2d76afc82")
+        version("1.62.0", commit="58efbf9c30c6f62e9c432746af75626fc10d2a3f")
+        version("1.60.1", commit="55c0c7a483d483f8351b13c3a8e8bc94774b3b86")
         version("1.60.0", commit="de35bc03116fc7ad30f0e425b41715c3cb2e783b")
         version("1.58.0", commit="54a74972c08775fdf1e83e6e22cd0b8fad677fc1")
         version("1.56.1", commit="4c6d2201fcb102d471bd88f4f51cc34317669955")
@@ -35,6 +42,7 @@ class RRtracklayer(RPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("r@3.3:", type=("build", "run"))
+    depends_on("r@3.5:", type=("build", "run"), when="@1.68.0:")
     depends_on("r-genomicranges@1.21.20:", type=("build", "run"))
     depends_on("r-genomicranges@1.37.2:", type=("build", "run"), when="@1.50.0:")
     depends_on("r-xml@1.98-0:", type=("build", "run"))
@@ -54,8 +62,12 @@ class RRtracklayer(RPackage):
     depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.40.6:")
     depends_on("r-biostrings@2.43.7:", type=("build", "run"))
     depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-biostrings@2.77.2:", type=("build", "run"), when="@1.70.1:")
     depends_on("r-zlibbioc", type=("build", "run"))
-    depends_on("r-rcurl@1.4-2:", type=("build", "run"))
+    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.62.0")
+    depends_on("r-curl", type=("build", "run"), when="@1.64.0:")
+    depends_on("r-httr", type=("build", "run"), when="@1.64.0:")
+    depends_on("r-seqinfo", type=("build", "run"), when="@1.70.1:")
     depends_on("r-rsamtools@1.17.8:", type=("build", "run"))
     depends_on("r-rsamtools@1.31.2:", type=("build", "run"), when="@1.40.6:")
     depends_on("r-genomicalignments@1.5.4:", type=("build", "run"))

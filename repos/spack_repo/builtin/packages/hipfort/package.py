@@ -21,6 +21,8 @@ class Hipfort(ROCmLibrary, CMakePackage):
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libhipfort-amdgcn.a", "libhipfort-nvptx.a"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/hipfort/archive/rocm-{0}.tar.gz")]
+
     version("7.2.3", sha256="21cb7049a1696a3f91666e5dcae184c496846c26618da3263affb7659fa659f5")
     version("7.2.1", sha256="a908ed8a3f871581e55166fdbfdd24ab97d1a5ff91573b552ed3cae89607c298")
     version("7.2.0", sha256="0e59a7fd503ed4a76db89b3c679658108d3f0a7e6730ecfb7555087b203805c8")

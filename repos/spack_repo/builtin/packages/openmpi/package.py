@@ -525,7 +525,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/open-mpi/ompi/commit/aa024ac73d624611cfe3af6f541b5d28dedf07bb.patch?full_index=1",
         sha256="646eb1a7382d628eb821715ca69fc5467a9a25aaddfe8290dbce008536dbfaa0",
-        when="@5.0.0:",
+        when="@5.0.0:5.0.10",
     )
 
     # GCC 16: fix excessive brace initialization in memheap_base_frame.c
@@ -533,7 +533,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/open-mpi/ompi/commit/b878c7d974dae767246ad20ef9124a331d0f59a4.patch?full_index=1",
         sha256="1dcebafdb310203f3b62456a5ba67e1a21ad3a88aaf40326734885d7b0d776f9",
-        when="@5.0.0: +openshmem",
+        when="@5.0.0:5.0.10 +openshmem",
     )
 
     FABRICS = (
@@ -1236,6 +1236,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.append("--with-libevent=internal")
         elif spec.satisfies("%libevent"):
             config_args.append(f"--with-libevent={spec['libevent'].prefix}")
+            config_args.append(f"--with-libevent-libdir={spec['libevent'].libs.directories[0]}")
 
         # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):

@@ -32,4 +32,4 @@ class PyPytestTimeout(PythonPackage):
             name = "pytest_timeout"
         else:
             name = "pytest-timeout"
-        return f"https://files.pythonhosted.org/packages/source/p/pytest-timeout/{name}-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/p/{name}/{name}-{version}.tar.gz"

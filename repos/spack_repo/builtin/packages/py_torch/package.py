@@ -611,9 +611,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # This forwards six source folder path to NNPACK which forwards it to PeachPy
     # for versions @2.5:2.11
     patch("air_gapped_nnpack_cmake_older.patch", when="@2.5:2.11")
-    # for version @2.12: (env forwarding mecanism changed)
+    # for version @2.12: (env forwarding mechanism changed)
     # This error has been raised upstream https://github.com/pytorch/pytorch/pull/188263
     patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
+
+    # Backport the generic environment forwarding fix from PyTorch PR 188242.
+    # PyTorch 2.12--2.13 parse the entire environment as a CMake list, which
+    # can lose USE_* selections when unrelated values contain semicolons.
+    patch("envvar-forwarding-188242.patch", when="@2.12:2.13")
 
     def patch(self):
         # https://github.com/pytorch/pytorch/issues/52208

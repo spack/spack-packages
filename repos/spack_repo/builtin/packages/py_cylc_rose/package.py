@@ -42,7 +42,7 @@ class PyCylcRose(PythonPackage):
         depends_on("py-ansimarkup", type=("build", "run"))
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/c/cylc-rose/{0}-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/c/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.4"):
             prefix = "cylc_rose"
         else:
