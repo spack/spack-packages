@@ -22,16 +22,22 @@ class Qt(Package):
 
     homepage = "https://qt.io"
 
-    # Supported releases: 'https://download.qt.io/official_releases/qt/'
-    # Older archives: 'https://download.qt.io/new_archive/qt/'
     url = "https://download.qt.io/archive/qt/5.15/5.15.2/single/qt-everywhere-src-5.15.2.tar.xz"
     list_url = "https://download.qt.io/archive/qt/"
     list_depth = 3
+
+    # Supported releases: 'https://download.qt.io/official_releases/qt/'
+    # Older archives: 'https://download.qt.io/new_archive/qt/'
+    def url_for_version(self, version: StandardVersion) -> str:
+        if version.satisfies(ver("6:")):
+            return f"https://download.qt.io/official_releases/qt/{version.up_to(2).dotted}/{version.dotted}/single/qt-everywhere-src-{version.dotted}.tar.xz"
+        return f"https://download.qt.io/archive/qt/{version.up_to(2).dotted}/{version.dotted}/single/qt-everywhere-src-{version.dotted}.tar.xz"
 
     phases = ["configure", "build", "install"]
 
     license("LGPL-3.0-only")
 
+    version("6.11.1", sha256="252acef8c5ae68074d91cadba2ee4a83465051bbb970dd26e8f0daa0f3904e03")
     version("5.15.18", sha256="cea1fbabf02455f3f0e8eaa839f5d6f45cdb56b62c8a83af5c1d00ac05f912ea")
     version("5.15.17", sha256="85eb566333d6ba59be3a97c9445a6e52f2af1b52fc3c54b8a2e7f9ea040a7de4")
     version("5.15.16", sha256="efa99827027782974356aceff8a52bd3d2a8a93a54dd0db4cca41b5e35f1041c")
