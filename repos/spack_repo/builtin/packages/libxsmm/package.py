@@ -34,6 +34,7 @@ class Libxsmm(CMakePackage, MakefilePackage):
         deprecated=True,
     )
     version("main", branch="main")
+    version("2.1.0", sha256="704ed8f99b61a767798ed1ee1cadc5d185ca449f466a2bae37930f68c65961e9")
     version("2.0.0", sha256="7e532dc5520f864ce6d7f44f3fd50365e3edb23da97dbdc54fd53845d86a290b")
     version(
         "1.17-cp2k",
