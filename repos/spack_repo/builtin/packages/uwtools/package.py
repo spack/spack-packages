@@ -24,7 +24,7 @@ class Uwtools(PythonPackage):
     license("GPL-2.0-or-later", checked_by="WeirAE")
 
     version("main", branch="main")
-    # Latest three minor releases per deprecation policy
+    # Supported releases per deprecation policy
     version("2.17.0", sha256="e864586fe459ce393544b206a3d7b7bca7b93f01665e654f1244aa4e22285216")
     version("2.11.0", sha256="7249357fd384a172796dbf002e2cf61e5be348e4431c57a03cd0417fc9b8a728")
     version("2.10.0", sha256="f103352957de999e79fdc281145bcf1c570314e8b047f6a900cacff668b96a37")
