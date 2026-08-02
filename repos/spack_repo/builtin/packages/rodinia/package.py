@@ -64,6 +64,7 @@ class Rodinia(MakefilePackage, CudaPackage):
     patch("mummergpu.patch")
     patch("hybridsort.patch")
     patch("hotspot-NN.patch")
+    #patch("lineinfo.patch")
 
     def edit(self, spec, prefix):
         # set cuda paths
@@ -156,6 +157,10 @@ class Rodinia(MakefilePackage, CudaPackage):
             filter_file(
                 r"/common/inc", "/common", makefile
             )
+            if self.spec.satisfies("+lineinfo"):
+                filter_file(
+                    r"nvcc", "nvcc -lineinfo", makefile
+                )
             # No need to do this now, as make clean is run
             #filter_file(
             #    r"^CC_FLAGS =", "CC_FLAGS = -fPIE", makefile
@@ -233,8 +238,6 @@ class Rodinia(MakefilePackage, CudaPackage):
                     "Makefile"
                 )
 
-        if self.spec.satisfies("+lineinfo"):
-            patch("lineinfo.patch")
 
     # Override this to run make clean before all
     def build(self, spec: Spec, prefix) -> None:
