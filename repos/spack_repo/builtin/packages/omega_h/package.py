@@ -92,7 +92,9 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
     variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
-    variant("python", default=False, description="enable python interfaces", when="@11.2.0-scorec:")
+    variant(
+        "python", default=False, description="enable python interfaces", when="@11.2.0-scorec:"
+    )
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
