@@ -20,3 +20,6 @@ class PyNvtx(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-cython", type="build")
     depends_on("nvtx")
+
+    def setup_build_environment(self, env):
+        env.set("NVTX_PREFIX", self.spec["nvtx"].prefix.include)
