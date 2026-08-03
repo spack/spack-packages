@@ -45,8 +45,10 @@ class Cernlib(CMakePackage):
 
     # Fix build with GCC 14 and newer
     patch("fix_build_with_gcc14.patch", level=0)
-    # Fix build with GCC 16 and newer
-    patch("fix_build_with_gcc16.patch", level=0, when="%gcc@16:")
+    # Fix build with modern gfortran which does not ship the etime_ binary symbol
+    patch("fix_build_with_modern_gfortran.patch", level=0)
+    # Fix the setting of -fPIC for internal lapack static and shared libraries
+    patch("fix_lapack_pic_flag.patch", level=0, when="@2023:")
 
     def patch(self):
         if self.spec.satisfies("@:2023.08.14.0-free"):
