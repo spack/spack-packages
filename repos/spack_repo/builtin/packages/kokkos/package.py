@@ -235,22 +235,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cuda_arch",
         description="CUDA architecture",
-        values=("none",) + CudaPackage.cuda_arch_values,
+        values=("none",) + tuple(cuda_arch_map.keys()),
         default="none",
         multi=False,
         sticky=True,
         when="+cuda",
-    )
-
-    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
-    variant(
-        "amdgpu_target",
-        description="AMD GPU architecture",
-        values=("none",) + ROCmPackage.amdgpu_targets,
-        default="none",
-        multi=False,
-        sticky=True,
-        when="+rocm",
     )
 
     # amdgpu_target : (cmake_arch_option, condition)
@@ -267,6 +256,18 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
+
+    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=("none",) + tuple(amdgpu_arch_map.keys()),
+        default="none",
+        multi=False,
+        sticky=True,
+        when="+rocm",
+    )
+
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
     amd_support_conflict_msg = (
         "{0} is not supported; "
