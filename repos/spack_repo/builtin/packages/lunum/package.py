@@ -27,10 +27,3 @@ class Lunum(MakefilePackage):
     @property
     def install_targets(self):
         return self.build_targets + ["install"]
-
-    @property
-    def libs(self):
-        return find_libraries("liblunum", root=self.prefix.lib, shared=False, recursive=False)
-
-    def setup_run_environment(self, env):
-        env.prepend_path("LUA_CPATH", join_path(self.prefix.lib, "?.so"), separator=";")

@@ -1,0 +1,3127 @@
+diff -ruN '--exclude=array_class.lc' a/src/Makefile b/src/Makefile
+--- a/src/Makefile	2026-06-29 17:45:04.770600832 -0700
++++ b/src/Makefile	2026-06-29 17:45:04.770600832 -0700
+@@ -5,7 +5,10 @@
+ default : $(LUNUM_A) $(LUNUM_SO)
+ 
+ %.o : %.c
+-	$(CC) $(CFLAGS) -std=c99 -c $<
++	$(CC) $(CFLAGS) -std=c99 -c $< -I$(LUA_HOME)/include
++
++array_class.lc : array_class.lua
++	$(LUA) bin2c.lua +$< > $@
+ 
+ lunum.o : lunum.c array_class.lc
+ 	$(CC) $(CFLAGS) -std=c99 -c $< -I$(LUA_HOME)/include
+@@ -13,17 +16,11 @@
+ lunum_capi.o : lunum_capi.c
+ 	$(CC) $(CFLAGS) -std=c99 -c $< -I$(LUA_HOME)/include
+ 
+-array_class.o : array_class.c
+-	$(CC) $(CFLAGS) -std=c99 -c $< -I$(LUA_HOME)/include
+-
+-$(LUNUM_A)  : numarray.o lunum.o lunum_capi.o array_class.o
++$(LUNUM_A)  : numarray.o lunum.o lunum_capi.o
+ 	$(AR) $@ $?
+ 
+-$(LUNUM_SO) : numarray.o lunum.o lunum_capi.o array_class.o
++$(LUNUM_SO) : numarray.o lunum.o lunum_capi.o
+ 	$(SO) -o $(LUNUM_SO) $^
+ 
+-array_class.lc : array_class.lua
+-	$(LUA) bin2c.lua +$< > $@
+-
+ clean :
+ 	rm -f *.o $(LUNUM_A) $(LUNUM_SO) *.lc
+diff -ruN '--exclude=array_class.lc' a/src/array_class.c b/src/array_class.c
+--- a/src/array_class.c	2026-06-29 17:45:04.771600819 -0700
++++ b/src/array_class.c	1969-12-31 16:00:00.000000000 -0800
+@@ -1,158 +0,0 @@
+-
+-
+-#define LUNUM_PRIVATE_API
+-#include <stdlib.h>
+-#include <string.h>
+-#include "lunum.h"
+-#include "lauxlib.h"
+-
+-
+-static int luaC_array_dtype(lua_State *L);
+-static int luaC_array_shape(lua_State *L);
+-static int luaC_array_size(lua_State *L);
+-static int luaC_array_astable(lua_State *L);
+-static int luaC_array_astype(lua_State *L);
+-static int luaC_array_tofile(lua_State *L);
+-
+-
+-void _lunum_register_array(lua_State *L, struct Array *B)
+-{
+-  lua_newtable(L);
+-
+-  lua_pushcfunction(L, luaC_array_dtype);
+-  lua_setfield(L, -2, "dtype");
+-
+-  lua_pushcfunction(L, luaC_array_shape);
+-  lua_setfield(L, -2, "shape");
+-
+-  lua_pushcfunction(L, luaC_array_size);
+-  lua_setfield(L, -2, "size");
+-
+-  lua_pushcfunction(L, luaC_array_astable);
+-  lua_setfield(L, -2, "astable");
+-
+-  lua_pushcfunction(L, luaC_array_astype);
+-  lua_setfield(L, -2, "astype");
+-
+-  lua_pushcfunction(L, luaC_array_tofile);
+-  lua_setfield(L, -2, "tofile");
+-
+-
+-  // Calls code written in Lua: lunum.__register_array(new_array) to add
+-  // additional methods to the new array.
+-  // ---------------------------------------------------------------------------
+-  lua_getglobal(L, "lunum");
+-  lua_getfield(L, -1, "__register_array");
+-  lua_pushvalue(L, -3);
+-  lua_call(L, 1, 0);
+-  lua_pop(L, 1);
+-
+-
+-  void *data = lua_newuserdata(L, B->size * array_sizeof(B->dtype));
+-  lua_setfield(L, -2, "__buffer");
+-
+-  memcpy(data, B->data, B->size * array_sizeof(B->dtype));
+-  free(B->data);
+-  B->owns = 0;
+-  B->data = data;
+-
+-  struct Array *A = (struct Array*) lua_newuserdata(L, sizeof(struct Array));
+-  lua_setfield(L, -2, "__cstruct");
+-  *A = *B;
+-
+-  luaL_getmetatable(L, "array");
+-  lua_setmetatable(L, -2);
+-}
+-
+-
+-
+-
+-int luaC_array_dtype(lua_State *L)
+-// -----------------------------------------------------------------------------
+-// If there is no argument, return a string description of the data type. If
+-// the string 'enum' is given as the first argument, then return the enumated
+-// value of the Array's type.
+-// -----------------------------------------------------------------------------
+-{
+-  struct Array *A = lunum_checkarray1(L, 1);
+-
+-  if (lua_isstring(L, 2)) {
+-    if (strcmp(lua_tostring(L, 2), "enum") == 0) {
+-      lua_pushnumber(L, A->dtype);
+-      return 1;
+-    }
+-  }
+-
+-  lua_pushstring(L, array_typename(A->dtype));
+-  return 1;
+-}
+-
+-int luaC_array_shape(lua_State *L)
+-// -----------------------------------------------------------------------------
+-// If there is no argument, return the shape as a table. If the string 'array'
+-// is given, return it as an array.
+-// -----------------------------------------------------------------------------
+-{
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  lunum_pusharray2(L, A->shape, ARRAY_TYPE_INT, A->ndims);
+-
+-  if (lua_isstring(L, 2)) {
+-    if (strcmp(lua_tostring(L, 2), "array") == 0) {
+-      return 1;
+-    }
+-  }
+-
+-  lunum_astable(L, 2);
+-  lua_replace(L, -2);
+-  return 1;
+-}
+-
+-int luaC_array_size(lua_State *L)
+-{
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  lua_pushnumber(L, A->size);
+-  return 1;
+-}
+-
+-int luaC_array_astable(lua_State *L)
+-{
+-  lunum_astable(L, 1);
+-  return 1;
+-}
+-
+-int luaC_array_astype(lua_State *L)
+-{
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  enum ArrayType T;
+-
+-  if (lua_type(L, 2) == LUA_TSTRING) {
+-    T = array_typeflag(lua_tostring(L, 2)[0]);
+-  }
+-  else {
+-    T = (enum ArrayType) luaL_checkinteger(L, 2);
+-  }
+-
+-  struct Array B = array_new_copy(A, T);
+-  lunum_pusharray1(L, &B);
+-  return 1;
+-}
+-
+-
+-
+-int luaC_array_tofile(lua_State *L)
+-// -----------------------------------------------------------------------------
+-// Writes the array 'A' as binary data to the file named 'fname'.
+-// -----------------------------------------------------------------------------
+-{
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  const char *fname = luaL_checkstring(L, 2);
+-  FILE *output = fopen(fname, "wb");
+-
+-  if (output == NULL) {
+-    luaL_error(L, "could not create file %s", fname);
+-  }
+-  fwrite(A->data, A->size, array_sizeof(A->dtype), output);
+-  fclose(output);
+-
+-  return 0;
+-}
+diff -ruN '--exclude=array_class.lc' a/src/array_class.lua b/src/array_class.lua
+--- a/src/array_class.lua	2026-06-29 17:45:04.771600819 -0700
++++ b/src/array_class.lua	2026-06-29 17:45:04.770600832 -0700
+@@ -17,7 +17,7 @@
+    end
+ end
+ 
+-function string_split(self, sSeparator, nMax, bRegexp)
++local function string_split(self, sSeparator, nMax, bRegexp)
+    -- --------------------------------------------------------------------------
+    -- http://lua-users.org/wiki/SplitJoin
+    -- --------------------------------------------------------------------------
+@@ -45,7 +45,7 @@
+    return aRecord
+ end
+ 
+-function string_trim(s)
++local function string_trim(s)
+    -- --------------------------------------------------------------------------
+    -- http://lua-users.org/wiki/CommonFunctions
+    -- from PiL2 20.4
+@@ -157,7 +157,7 @@
+          end
+       end
+       if I[1] == N[1] then return nil end
+-      return unpack(I)
++      return (unpack or table.unpack)(I)
+    end
+ 
+    local function g()
+@@ -250,7 +250,7 @@
+    for i=0,B:size()-1 do
+       local x = { }
+       for d=1,#A do x[d] = A[d][i] end
+-      B[i] = f(unpack(x))
++      B[i] = f((unpack or table.unpack)(x))
+    end
+    return B
+ end
+@@ -298,30 +298,30 @@
+       sT[4][i] = s[i][4] or 0            -- squeeze
+    end
+ 
+-   return lunum.slice(A, unpack(sT))
++   return lunum.slice(A, (unpack or table.unpack)(sT))
+ end
+ 
+ -- -----------------------------------------------------------------------------
+--- This function gets called from C code to register an array's class methods
+--- have been were implemented in Lua.
++-- This function sets the array metatable class methods
++-- that have been implemented in Lua.
+ -- -----------------------------------------------------------------------------
+-local function __register_array(t)
+-   t.copy      = copy
+-   t.min       = min
+-   t.max       = max
+-   t.real      = real
+-   t.imag      = imag
+-   t.conj      = conj
+-   t.resize    = resize
+-   t.setasflat = setasflat
+-   t.reshape   = reshape
+-   t.indices   = indices
+-   t.eq        = eq
+-   t.ne        = ne
+-   t.lt        = lt
+-   t.le        = le
+-   t.gt        = gt
+-   t.ge        = ge
++local function __register_array_metafunctions(mt)
++   mt.copy      = copy
++   mt.min       = min
++   mt.max       = max
++   mt.real      = real
++   mt.imag      = imag
++   mt.conj      = conj
++   mt.resize    = resize
++   mt.setasflat = setasflat
++   mt.reshape   = reshape
++   mt.indices   = indices
++   mt.eq        = eq
++   mt.ne        = ne
++   mt.lt        = lt
++   mt.le        = le
++   mt.gt        = gt
++   mt.ge        = ge
+ end
+ 
+ 
+@@ -329,6 +329,6 @@
+ -- Registering the functions with the lunum table.
+ -- -----------------------------------------------------------------------------
+ lunum.__build_slice    = __build_slice
+-lunum.__register_array = __register_array
++lunum.__register_array_metafunctions = __register_array_metafunctions
+ lunum.apply = apply
+ 
+diff -ruN '--exclude=array_class.lc' a/src/debug.c b/src/debug.c
+--- a/src/debug.c	2026-06-29 17:45:04.770600832 -0700
++++ b/src/debug.c	2026-06-29 17:45:04.771600819 -0700
+@@ -1,28 +1,28 @@
+ 
+ 
+ 
+-static void _stackdump(lua_State* l)
++static void _stackdump(lua_State* L)
+ {
+   int i;
+-  int top = lua_gettop(l);
++  int top = lua_gettop(L);
+ 
+   printf("total in stack %d\n",top);
+ 
+   for (i = 1; i <= top; i++)
+     {  /* repeat for each level */
+-      int t = lua_type(l, i);
++      int t = lua_type(L, i);
+       switch (t) {
+       case LUA_TSTRING:  /* strings */
+-        printf("string: '%s'\n", lua_tostring(l, i));
++        printf("string: '%s'\n", lua_tostring(L, i));
+         break;
+       case LUA_TBOOLEAN:  /* booleans */
+-        printf("boolean %s\n",lua_toboolean(l, i) ? "true" : "false");
++        printf("boolean %s\n",lua_toboolean(L, i) ? "true" : "false");
+         break;
+       case LUA_TNUMBER:  /* numbers */
+-        printf("number: %g\n", lua_tonumber(l, i));
++        printf("number: %g\n", lua_tonumber(L, i));
+         break;
+       default:  /* other values */
+-        printf("%s\n", lua_typename(l, t));
++        printf("%s\n", lua_typename(L, t));
+         break;
+       }
+       printf("  ");  /* put a separator */
+diff -ruN '--exclude=array_class.lc' a/src/lunum.c b/src/lunum.c
+--- a/src/lunum.c	2026-06-29 17:45:04.771600819 -0700
++++ b/src/lunum.c	2026-06-29 17:45:24.479347113 -0700
+@@ -3,19 +3,23 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <math.h>
++#include <limits.h>
+ 
+-#include "lualib.h"
+-#include "lauxlib.h"
+ #include "lunum.h"
+ 
+ 
+-
+ #define LUA_NEW_METAMETHOD(luastate, obj, funcname) {           \
+     lua_pushfstring((luastate), "__%s", (#funcname));           \
+     lua_pushcfunction((luastate), (luaC_##obj##__##funcname));  \
+     lua_settable((luastate), -3);                               \
+   }
+ 
++#define LUA_NEW_METAFUNCTION(luastate, obj, funcname) {         \
++    lua_pushfstring((luastate), "%s", (#funcname));             \
++    lua_pushcfunction((luastate), (luaC_##obj##_##funcname));   \
++    lua_settable((luastate), -3);                               \
++  }
++
+ #define LUA_NEW_MODULEMETHOD(luastate, obj, funcname) {         \
+     lua_pushfstring((luastate), "%s", (#funcname));             \
+     lua_pushcfunction((luastate), (luaC_##obj##_##funcname));   \
+@@ -33,6 +37,7 @@
+ static int luaC_lunum_array(lua_State *L);
+ static int luaC_lunum_zeros(lua_State *L);
+ static int luaC_lunum_range(lua_State *L);
++static int luaC_lunum_linear(lua_State *L);
+ static int luaC_lunum_resize(lua_State *L);
+ 
+ 
+@@ -60,11 +65,21 @@
+ static int luaC_lunum_log(lua_State *L);
+ static int luaC_lunum_log10(lua_State *L);
+ 
++static int luaC_lunum_transpose(lua_State *L);
++
+ static int luaC_lunum_conjugate(lua_State *L);
+ static int luaC_lunum_slice(lua_State *L);
+ static int luaC_lunum_loadtxt(lua_State *L);
+ static int luaC_lunum_fromfile(lua_State *L);
+ 
++static int luaC_array_dtype(lua_State *L);
++static int luaC_array_dtypemin(lua_State *L);
++static int luaC_array_dtypemax(lua_State *L);
++static int luaC_array_shape(lua_State *L);
++static int luaC_array_size(lua_State *L);
++static int luaC_array_astable(lua_State *L);
++static int luaC_array_astype(lua_State *L);
++static int luaC_array_tofile(lua_State *L);
+ 
+ 
+ static int luaC_array__tostring(lua_State *L);
+@@ -75,11 +90,21 @@
+ static int luaC_array__sub(lua_State *L);
+ static int luaC_array__mul(lua_State *L);
+ static int luaC_array__div(lua_State *L);
++static int luaC_array__idiv(lua_State *L);
++static int luaC_array__mod(lua_State *L);
+ static int luaC_array__pow(lua_State *L);
+ static int luaC_array__unm(lua_State *L);
++static int luaC_array__bnot(lua_State *L);
++static int luaC_array__band(lua_State *L);
++static int luaC_array__bor(lua_State *L);
++static int luaC_array__bxor(lua_State *L);
++static int luaC_array__shl(lua_State *L);
++static int luaC_array__shr(lua_State *L);
+ static int luaC_array__gc(lua_State *L);
++static int luaC_array__preserve(lua_State *L);
+ 
+ 
++static int luaC_complex_new(lua_State *L);
+ static int luaC_complex__tostring(lua_State *L);
+ static int luaC_complex__add(lua_State *L);
+ static int luaC_complex__sub(lua_State *L);
+@@ -90,30 +115,21 @@
+ static int luaC_complex__eq(lua_State *L);
+ static int luaC_complex__lt(lua_State *L);
+ static int luaC_complex__le(lua_State *L);
++static int luaC_complex__preserve(lua_State *L);
+ 
+ 
+-static int   _array_binary_op1(lua_State *L, enum ArrayOperation op);
+-static int   _array_binary_op2(lua_State *L, enum ArrayOperation op);
+-
+-static int _complex_binary_op1(lua_State *L, enum ArrayOperation op);
+-static int _complex_binary_op2(lua_State *L, enum ArrayOperation op);
+-
+-static void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex),
+-			int cast);
+-static void _push_value(lua_State *L, enum ArrayType T, void *v);
+-static int _get_index(lua_State *L, struct Array *A);
+-
+-
+-
+-// Functions used by unary predicates
+-// -----------------------------------------------------------------------------
+-static double rconj(double x) { return x; }   // conj, but for real argument
+-static double runm(double x) { return -x; }   // unary minus, real
+-static Complex cunm(Complex z) { return -z; } // unary minus, complex
+-// -----------------------------------------------------------------------------
++static int _array_unary_op(lua_State *L, ArrayUnaryOperation op);
+ 
++static int _array_binary_op(lua_State *L, ArrayBinaryOperation op);
++static int _array_number_binary_op(lua_State *L, ArrayBinaryOperation op, Bool array_first);
++static int _array_array_binary_op(lua_State *L, ArrayBinaryOperation op);
+ 
++static int _complex_binary_op1(lua_State *L, ArrayBinaryOperation op);
++static int _complex_binary_op2(lua_State *L, ArrayBinaryOperation op);
+ 
++static void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cast);
++static void _push_value(lua_State *L, ArrayType T, void *v);
++static size_t _get_index(lua_State *L, Array *A, int *success);
+ 
+ 
+ int luaopen_lunum(lua_State *L)
+@@ -123,6 +139,8 @@
+   // Create the 'array' metatable
+   // ---------------------------------------------------------------------------
+   luaL_newmetatable(L, "array");
++  lua_pushliteral(L, "array");
++  lua_setfield(L, -2, "__name");
+   LUA_NEW_METAMETHOD(L, array, tostring);
+   LUA_NEW_METAMETHOD(L, array, call);
+   LUA_NEW_METAMETHOD(L, array, index);
+@@ -131,15 +149,34 @@
+   LUA_NEW_METAMETHOD(L, array, sub);
+   LUA_NEW_METAMETHOD(L, array, mul);
+   LUA_NEW_METAMETHOD(L, array, div);
++  LUA_NEW_METAMETHOD(L, array, idiv);
++  LUA_NEW_METAMETHOD(L, array, mod);
+   LUA_NEW_METAMETHOD(L, array, pow);
++  LUA_NEW_METAMETHOD(L, array, band);
++  LUA_NEW_METAMETHOD(L, array, bor);
++  LUA_NEW_METAMETHOD(L, array, bxor);
++  LUA_NEW_METAMETHOD(L, array, shl);
++  LUA_NEW_METAMETHOD(L, array, shr);
+   LUA_NEW_METAMETHOD(L, array, unm);
++  LUA_NEW_METAMETHOD(L, array, bnot);
+   LUA_NEW_METAMETHOD(L, array, gc);
+-  lua_pop(L, 1);
++  LUA_NEW_METAMETHOD(L, array, preserve);
+ 
++  LUA_NEW_METAFUNCTION(L, array, dtype);
++  LUA_NEW_METAFUNCTION(L, array, dtypemin);
++  LUA_NEW_METAFUNCTION(L, array, dtypemax);
++  LUA_NEW_METAFUNCTION(L, array, shape);
++  LUA_NEW_METAFUNCTION(L, array, size);
++  LUA_NEW_METAFUNCTION(L, array, astable);
++  LUA_NEW_METAFUNCTION(L, array, astype);
++  LUA_NEW_METAFUNCTION(L, array, tofile);
++  lua_pop(L, 1);
+ 
+   // Create the 'complex' metatable
+   // ---------------------------------------------------------------------------
+   luaL_newmetatable(L, "complex");
++  lua_pushliteral(L, "complex");
++  lua_setfield(L, -2, "__name");
+   LUA_NEW_METAMETHOD(L, complex, tostring);
+   LUA_NEW_METAMETHOD(L, complex, add);
+   LUA_NEW_METAMETHOD(L, complex, sub);
+@@ -150,6 +187,9 @@
+   LUA_NEW_METAMETHOD(L, complex, eq);
+   LUA_NEW_METAMETHOD(L, complex, lt);
+   LUA_NEW_METAMETHOD(L, complex, le);
++  LUA_NEW_METAMETHOD(L, complex, preserve);
++
++  LUA_NEW_METAFUNCTION(L, complex, new);
+   lua_pop(L, 1);
+ 
+ 
+@@ -159,6 +199,7 @@
+   LUA_NEW_MODULEMETHOD(L, lunum, array);
+   LUA_NEW_MODULEMETHOD(L, lunum, zeros);
+   LUA_NEW_MODULEMETHOD(L, lunum, range);
++  LUA_NEW_MODULEMETHOD(L, lunum, linear);
+   LUA_NEW_MODULEMETHOD(L, lunum, resize);
+ 
+   LUA_NEW_MODULEMETHOD(L, lunum, sin);
+@@ -181,6 +222,8 @@
+   LUA_NEW_MODULEMETHOD(L, lunum, log);
+   LUA_NEW_MODULEMETHOD(L, lunum, log10);
+ 
++  LUA_NEW_MODULEMETHOD(L, lunum, transpose);
++
+   LUA_NEW_MODULEMETHOD(L, lunum, conjugate);
+   LUA_NEW_MODULEMETHOD(L, lunum, loadtxt);
+   LUA_NEW_MODULEMETHOD(L, lunum, fromfile);
+@@ -193,6 +236,7 @@
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_SHORT  , short);
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_INT    , int);
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_LONG   , long);
++  LUA_NEW_MODULEDATA(L, ARRAY_TYPE_SIZE_T , size_t);
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_FLOAT  , float);
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_DOUBLE , double);
+   LUA_NEW_MODULEDATA(L, ARRAY_TYPE_COMPLEX, complex);
+@@ -202,33 +246,35 @@
+   lua_setfield(L, 1, "I");
+ 
+   lua_setglobal(L, "lunum");
+-#include "array_class.lc" // sets the lunum.__array_methods table
++#include "array_class.lc" // sets lunum.__register_array_metafunctions
+ 
+   lua_getglobal(L, "lunum");
++  lua_getfield(L, -1, "__register_array_metafunctions");
++  luaL_getmetatable(L, "array");
++  lua_call(L, 1, 0);
++
+   return 1;
+ }
+ 
+ 
+-
+-
+ // *****************************************************************************
+ // Implementation of lunum.array metatable
+ //
+ // *****************************************************************************
+-int luaC_array__gc(lua_State *L)
++static int luaC_array__gc(lua_State *L)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
++  Array *A = lunum_checkarray1(L, 1);
+   array_del(A);
+   return 0;
+ }
+ 
+-int luaC_array__tostring(lua_State *L)
++static int luaC_array__tostring(lua_State *L)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
++  Array *A = lunum_checkarray1(L, 1);
+ 
+   lua_pushstring(L, "  [ ");
+-  int nstr = 1;
+-  for (int n=0; n<A->size; ++n) {
++  size_t nstr = 1;
++  for (size_t n=0; n<A->size; ++n) {
+ 
+     char s[64];
+ 
+@@ -238,6 +284,7 @@
+     case ARRAY_TYPE_SHORT   : sprintf(s, "%d" , ((short  *)A->data)[n]); break;
+     case ARRAY_TYPE_INT     : sprintf(s, "%d" , ((int    *)A->data)[n]); break;
+     case ARRAY_TYPE_LONG    : sprintf(s, "%ld", ((long   *)A->data)[n]); break;
++    case ARRAY_TYPE_SIZE_T  : sprintf(s, "%lu", ((size_t *)A->data)[n]); break;
+     case ARRAY_TYPE_FLOAT   : sprintf(s, "%g" , ((float  *)A->data)[n]); break;
+     case ARRAY_TYPE_DOUBLE  : sprintf(s, "%g" , ((double *)A->data)[n]); break;
+     case ARRAY_TYPE_COMPLEX : sprintf(s, "%g%s%gj",
+@@ -262,148 +309,273 @@
+   return 1;
+ }
+ 
+-int luaC_array__call(lua_State *L)
++static int luaC_array__call(lua_State *L)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  int nind = lua_gettop(L) - 1;
++  Array *A = lunum_checkarray1(L, 1);
++
++  /* slicing done here to split concerns between indexing and slicing */
++  if (lua_type(L, 2) == LUA_TTABLE || lua_type(L, 2) == LUA_TSTRING) {
++    /* make slice */
++    lua_getglobal(L, "lunum");
++    lua_getfield(L, -1, "__build_slice");
++    lua_insert(L, 1);
++    lua_settop(L, 3);
++    lua_call(L, 2, 1);
++
++    return 1;
++  }
++  /* index */
++  const int nind = lua_gettop(L) - 1;
+ 
+   if (nind != A->ndims) {
+-    luaL_error(L, "wrong number of indices (%d) for array of dimension %d",
++    return luaL_error(L, "wrong number of indices (%d) for array of dimension %d",
+                nind, A->ndims);
+     return 0;
+   }
+-  const int Nd = A->ndims;
+-  int *stride = (int*) malloc(A->ndims * sizeof(int));
+-  stride[Nd-1] = 1;
+ 
+-  for (int d=Nd-2; d>=0; --d) {
+-    stride[d] = stride[d+1] * A->shape[d+1];
+-  }
+-
+-  int m = 0;
+-  for (int d=0; d<A->ndims; ++d) {
+-    int i = lua_tointeger(L, d+2);
+-    m += i*stride[d];
++  size_t m = 0;
++  for (int d=0; d < nind; ++d) {
++    const size_t i = luaL_checkinteger(L, d+2);
++    if (i >= A->shape[d]) {
++      return luaL_error(L, "array indexed out of bounds (%d) on dimension %d of size %d",
++                 i, d, A->shape[d]);
++    }
++    m = m * A->shape[d] + i;
+   }
+-
+   _push_value(L, A->dtype, (char*)A->data + m*array_sizeof(A->dtype));
+-  free(stride);
+ 
+   return 1;
+ }
+ 
+-int luaC_array__index(lua_State *L)
++static int luaC_array__index(lua_State *L)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
++  Array *A = lunum_checkarray1(L, 1);
+ 
+   // Figure out what is the format of the input index. If it's a number or a
+-  // table of numbers, then pass it along to _get_index. If it's a table of
+-  // tables or numbers, then assume it's a slice. If it's an array of bools,
++  // table of numbers, then pass it along to _get_index. If it's an array of bools,
+   // then use it as a mask.
+   // ---------------------------------------------------------------------------
+ 
+   if (lunum_hasmetatable(L, 2, "array")) {
+-    struct Array *M = lunum_checkarray1(L, 2);
++    Array *M = lunum_checkarray1(L, 2);
+     if (M->dtype != ARRAY_TYPE_BOOL) {
+-      luaL_error(L, "index array must be of type bool");
++      return luaL_error(L, "index array must be of type bool");
+     }
+-    struct Array B = array_new_from_mask(A, M);
++    Array B = array_new_from_mask(A, M);
+     lunum_pusharray1(L, &B);
+     return 1;
+   }
+-  else if (lua_type(L, 2) == LUA_TTABLE || lua_type(L, 2) == LUA_TSTRING) {
+-
+-    lua_getglobal(L, "lunum");
+-    lua_getfield(L, -1, "__build_slice");
+-    lua_remove(L, -2);
+-    lua_pushvalue(L, 1);
+-    lua_pushvalue(L, 2);
+-    lua_call(L, 2, 1);
+ 
++  /* try to index into array */
++  int success;
++  const size_t m = _get_index(L, A, &success);
++  if (success) {
++    _push_value(L, A->dtype, (char*)A->data + array_sizeof(A->dtype)*m);
+     return 1;
+   }
+ 
+-  const int m = _get_index(L, A);
+-  _push_value(L, A->dtype, (char*)A->data + array_sizeof(A->dtype)*m);
++  /* check metatable */
++  lua_getmetatable(L, 1);
++  lua_pushvalue(L, 2);
++  lua_gettable(L, -2);
++  if (!lua_isnil(L, -1)) {
++    return 1;
++  }
+ 
+-  return 1;
++  return 0;
+ }
+ 
+-
+-int luaC_array__newindex(lua_State *L)
++static int luaC_array__newindex(lua_State *L)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  const int m = _get_index(L, A);
++  Array *A = lunum_checkarray1(L, 1);
+ 
+-  const enum ArrayType T = A->dtype;
++  int success;
++  const size_t m = _get_index(L, A, &success);
+ 
+-  void *val = lunum_tovalue(L, T);
+-  memcpy((char*)A->data + array_sizeof(T)*m, val, array_sizeof(T));
+-  free(val);
++  if (success) {
++    const ArrayType T = A->dtype;
++    ArrayAllNum val;
++
++    lunum_tovalue(L, T, &val);
++    memcpy((char*)A->data + array_sizeof(T)*m, &val, array_sizeof(T));
++  }
+ 
+   return 0;
+ }
+ 
+-int luaC_array__add(lua_State *L) { return _array_binary_op1(L, ARRAY_OP_ADD); }
+-int luaC_array__sub(lua_State *L) { return _array_binary_op1(L, ARRAY_OP_SUB); }
+-int luaC_array__mul(lua_State *L) { return _array_binary_op1(L, ARRAY_OP_MUL); }
+-int luaC_array__div(lua_State *L) { return _array_binary_op1(L, ARRAY_OP_DIV); }
+-int luaC_array__pow(lua_State *L) { return _array_binary_op1(L, ARRAY_OP_POW); }
+-int luaC_array__unm(lua_State *L) { _unary_func(L, runm, cunm, 0); return 1; }
++static int luaC_array__preserve(lua_State *L)
++{
++  Array *A = lunum_checkarray1(L, 1);
+ 
++  lua_getglobal(L, "lunum");
++  lua_getfield(L, -1, "array");
+ 
+-int _array_binary_op1(lua_State *L, enum ArrayOperation op)
+-{
+-  if (!lunum_hasmetatable(L, 1, "array")) {
+-    struct Array *B = lunum_checkarray1(L, 2);
+-    lunum_upcast(L, 1, B->dtype, B->size);
+-    lua_replace(L, 1);
+-    struct Array *A = lunum_checkarray1(L, 1);
+-    array_resize(A, B->shape, B->ndims);
+-  }
+-  if (!lunum_hasmetatable(L, 2, "array")) {
+-    struct Array *A = lunum_checkarray1(L, 1);
+-    lunum_upcast(L, 2, A->dtype, A->size);
+-    lua_replace(L, 2);
+-    struct Array *B = lunum_checkarray1(L, 2);
+-    array_resize(B, A->shape, A->ndims);
++  lunum_astable(L, 1);
++
++  lua_pushinteger(L, A->dtype);
++
++  lua_createtable(L, A->ndims, 0);
++  for (int d = 0; d < A->ndims; d++) {
++    lua_pushinteger(L, d+1);
++    lua_pushinteger(L, A->shape[d]);
++    lua_settable(L, -3);
+   }
+-  return _array_binary_op2(L, op);
++
++  return 4;
+ }
+ 
+-int _array_binary_op2(lua_State *L, enum ArrayOperation op)
++static int luaC_array__add(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_ADD); }
++static int luaC_array__sub(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_SUB); }
++static int luaC_array__mul(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_MUL); }
++static int luaC_array__div(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_DIV); }
++static int luaC_array__idiv(lua_State *L) { return _array_binary_op(L, ARRAY_OP_IDIV);}
++static int luaC_array__mod(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_MOD); }
++static int luaC_array__pow(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_POW); }
++static int luaC_array__unm(lua_State *L)  { return _array_unary_op(L,  ARRAY_OP_UNM); }
++static int luaC_array__bnot(lua_State *L) { return _array_unary_op(L,  ARRAY_OP_BNOT);}
++static int luaC_array__band(lua_State *L) { return _array_binary_op(L, ARRAY_OP_BAND);}
++static int luaC_array__bor(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_BOR); }
++static int luaC_array__bxor(lua_State *L) { return _array_binary_op(L, ARRAY_OP_BXOR);}
++static int luaC_array__shl(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_SHL); }
++static int luaC_array__shr(lua_State *L)  { return _array_binary_op(L, ARRAY_OP_SHR); }
++
++
++static int _array_unary_op(lua_State *L, ArrayUnaryOperation op)
+ {
+-  struct Array *A = lunum_checkarray1(L, 1);
+-  struct Array *B = lunum_checkarray1(L, 2);
++  Array *A = lunum_checkarray1(L, 1);
+ 
++  const size_t N = A->size;
++  ArrayType T = A->dtype;
+ 
+-  if (A->ndims != B->ndims) {
+-    luaL_error(L, "arrays have different dimensions");
++  Array B = array_new_zeros(N, T);
++  array_resize_t(&B, A->shape, A->ndims);
++  lunum_pusharray1(L, &B);
++
++  array_unary_op(L, A, &B, op);
++
++  return 1;
++}
++
++static int _array_binary_op(lua_State *L, ArrayBinaryOperation op)
++{
++  if ((lua_istable(L, 1) || lunum_hasmetatable(L, 1, "array")) && (lua_istable(L, 2) || lunum_hasmetatable(L, 2, "array"))) {
++    /* both args are tables or arrays, upcast to arrays if not already */
++    if (!lunum_hasmetatable(L, 1, "array")) {
++      Array *B = lunum_checkarray1(L, 2);
++      lunum_upcast(L, 1, B->dtype, B->size);
++      lua_replace(L, 1);
++      Array *A = lunum_checkarray1(L, 1);
++      array_resize_t(A, B->shape, B->ndims);
++    }
++    if (!lunum_hasmetatable(L, 2, "array")) {
++      Array *A = lunum_checkarray1(L, 1);
++      lunum_upcast(L, 2, A->dtype, A->size);
++      lua_replace(L, 2);
++      Array *B = lunum_checkarray1(L, 2);
++      array_resize_t(B, A->shape, A->ndims);
++    }
++    return _array_array_binary_op(L, op);
++  } else {
++    /* one arg is not a table(array) */
++    return _array_number_binary_op(L, op, lunum_hasmetatable(L, 1, "array"));
+   }
+-  for (int d=0; d<A->ndims; ++d) {
+-    if (A->shape[d] != B->shape[d]) {
+-      luaL_error(L, "arrays shapes do not agree");
++}
++
++static int _array_number_binary_op(lua_State *L, ArrayBinaryOperation op, Bool array_first)
++{
++  const Array *A = array_first ? lunum_checkarray1(L, 1) : lunum_checkarray1(L, 2);
++  ArrayType T = A->dtype;
++
++  int num_pos = array_first ? 2 : 1;
++  union {
++    Bool b;
++    char c;
++    short s;
++    int i;
++    long l;
++    size_t t;
++    float f;
++    double d;
++    Complex z;
++    lua_Number ln;
++  } num;
++
++  if (lua_isboolean(L, num_pos)) {
++    num.i = lua_toboolean(L, num_pos);
++    /* number can't have a higher type, upgrade to type T */
++    switch (T) {
++      case ARRAY_TYPE_BOOL    : num.b = (Bool)num.i;    break;
++      case ARRAY_TYPE_CHAR    : num.c = (char)num.i;    break;
++      case ARRAY_TYPE_SHORT   : num.s = (short)num.i;   break;
++      case ARRAY_TYPE_INT     : num.i = (int)num.i;     break;
++      case ARRAY_TYPE_LONG    : num.l = (long)num.i;    break;
++      case ARRAY_TYPE_SIZE_T  : num.t = (size_t)num.i;  break;
++      case ARRAY_TYPE_FLOAT   : num.f = (float)num.i;   break;
++      case ARRAY_TYPE_DOUBLE  : num.d = (double)num.i;  break;
++      case ARRAY_TYPE_COMPLEX : num.z = (Complex)num.i; break;
+     }
+   }
++  else if (lua_isnumber(L, num_pos)) {
++    num.ln = lua_tonumber(L, num_pos);
++    /* already assigned above */
++    if (T >= ARRAY_TYPE_DOUBLE) {
++      /* A has higher type */
++    } else {
++      /* number has higher type */
++      T = ARRAY_TYPE_DOUBLE;
++    }
++    /* upgrade to type T */
++    switch (T) {
++      case ARRAY_TYPE_BOOL    : num.b = (Bool)num.ln;    break;
++      case ARRAY_TYPE_CHAR    : num.c = (char)num.ln;    break;
++      case ARRAY_TYPE_SHORT   : num.s = (short)num.ln;   break;
++      case ARRAY_TYPE_INT     : num.i = (int)num.ln;     break;
++      case ARRAY_TYPE_LONG    : num.l = (long)num.ln;    break;
++      case ARRAY_TYPE_SIZE_T  : num.t = (size_t)num.ln;  break;
++      case ARRAY_TYPE_FLOAT   : num.f = (float)num.ln;   break;
++      case ARRAY_TYPE_DOUBLE  : num.d = (double)num.ln;  break;
++      case ARRAY_TYPE_COMPLEX : num.z = (Complex)num.ln; break;
++    }
++  }
++  else if (lunum_hasmetatable(L, num_pos, "complex")) {
++    /* number complex */
++    num.z = *((Complex*) lua_touserdata(L, num_pos));
++    T = ARRAY_TYPE_COMPLEX;
++  } else {
++    return luaL_error(L, "Invalid argument in Array binary op");
++  }
+ 
++  Array C = array_new_zeros(A->size, T);
++  array_resize_t(&C, A->shape, A->ndims);
++  lunum_pusharray1(L, &C);
+ 
+-  const int N = A->size;
+-  enum ArrayType T = (A->dtype >= B->dtype) ? A->dtype : B->dtype;
++  array_number_binary_op(L, A, (void *)&num, &C, op, array_first);
+ 
+-  struct Array A_ = (A->dtype == T) ? *A : array_new_copy(A, T);
+-  struct Array B_ = (B->dtype == T) ? *B : array_new_copy(B, T);
++  return 1;
++}
+ 
+-  struct Array C = array_new_zeros(N, T);
+-  array_resize(&C, A->shape, A->ndims);
+-  lunum_pusharray1(L, &C);
++static int _array_array_binary_op(lua_State *L, ArrayBinaryOperation op)
++{
++  const Array *A = lunum_checkarray1(L, 1);
++  const Array *B = lunum_checkarray1(L, 2);
+ 
+-  array_binary_op(&A_, &B_, &C, op);
++  /* check size and dimensions */
++  if (A->ndims != B->ndims) {
++    return luaL_error(L, "arrays have different dimensions");
++  }
++  for (int d=0; d<A->ndims; ++d) {
++    if (A->shape[d] != B->shape[d]) {
++      return luaL_error(L, "arrays shapes do not agree");
++    }
++  }
+ 
+-  luaL_getmetatable(L, "array");
+-  lua_setmetatable(L, -2);
++  const ArrayType T = (A->dtype >= B->dtype) ? A->dtype : B->dtype;
+ 
+-  if (A->dtype != T) array_del(&A_);
+-  if (B->dtype != T) array_del(&B_);
++  Array C = array_new_zeros(A->size, T);
++  array_resize_t(&C, A->shape, A->ndims);
++  lunum_pusharray1(L, &C);
++
++  array_array_binary_op(L, A, B, &C, op);
+ 
+   return 1;
+ }
+@@ -414,43 +586,73 @@
+ // Implementation of lunum.complex metatable
+ //
+ // *****************************************************************************
+-int luaC_complex__tostring(lua_State *L)
++static int luaC_complex_new(lua_State *L)
++{
++  Complex *z = (Complex*) lua_newuserdata(L, sizeof(Complex));
++  *z = luaL_checknumber(L, 1) + I * luaL_checknumber(L, 2);
++  luaL_getmetatable(L, "complex");
++  lua_setmetatable(L, -2);
++  return 1;
++}
++
++static int luaC_complex__tostring(lua_State *L)
+ {
+   Complex z = *((Complex*) luaL_checkudata(L, 1, "complex"));
+ 
+   lua_pushfstring(L, "%f%s%fj", creal(z), cimag(z)>=0.0?"+":"-", fabs(cimag(z)));
+   return 1;
+ }
+-int luaC_complex__add(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_ADD); }
+-int luaC_complex__sub(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_SUB); }
+-int luaC_complex__mul(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_MUL); }
+-int luaC_complex__div(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_DIV); }
+-int luaC_complex__pow(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_POW); }
+-int luaC_complex__unm(lua_State *L) { _unary_func(L, runm, cunm, 0); return 1; }
++
++static int luaC_complex__preserve(lua_State *L)
++{
++  Complex z = *((Complex*) luaL_checkudata(L, 1, "complex"));
++
++  luaL_getmetafield(L, 1, "new");
++
++  lua_pushnumber(L, creal(z));
++  lua_pushnumber(L, cimag(z));
++
++  return 3;
++}
++
++
++static int luaC_complex__add(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_ADD); }
++static int luaC_complex__sub(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_SUB); }
++static int luaC_complex__mul(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_MUL); }
++static int luaC_complex__div(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_DIV); }
++static int luaC_complex__pow(lua_State *L) { return _complex_binary_op1(L, ARRAY_OP_POW); }
++static int luaC_complex__unm(lua_State *L) {
++  Complex v = *((Complex*) luaL_checkudata(L, 1, "complex"));
++  Complex *z = (Complex*) lua_newuserdata(L, sizeof(Complex));
++  luaL_getmetatable(L, "complex");
++  lua_setmetatable(L, -2);
++  *z = -v;
++  return(1);
++}
+ 
+ 
+ // -----------------------------------------------------------------------------
+ // Use a dictionary ordering on the complex numbers. Might not be useful too
+ // often, but it's better than having this behavior undefined.
+ // -----------------------------------------------------------------------------
+-#define LUA_COMPARISON(comp)				\
+-  {							\
+-    Complex z1 = lunum_checkcomplex(L, 1);		\
+-    Complex z2 = lunum_checkcomplex(L, 2);		\
+-							\
+-    if (creal(z1) != creal(z2)) {			\
+-      lua_pushboolean(L, creal(z1) comp creal(z2));	\
+-    }							\
+-    else {						\
+-      lua_pushboolean(L, cimag(z1) comp cimag(z2));	\
+-    }							\
+-    return 1;						\
+-  }							\
+-
+-
+-int luaC_complex__lt(lua_State *L) LUA_COMPARISON(<);
+-int luaC_complex__le(lua_State *L) LUA_COMPARISON(<=);
+-int luaC_complex__eq(lua_State *L)
++#define LUA_COMPARISON(comp) \
++  {\
++    Complex z1 = lunum_checkcomplex(L, 1);\
++    Complex z2 = lunum_checkcomplex(L, 2);\
++\
++    if (creal(z1) != creal(z2)) {\
++      lua_pushboolean(L, creal(z1) comp creal(z2));\
++    }\
++    else {\
++      lua_pushboolean(L, cimag(z1) comp cimag(z2));\
++    }\
++    return 1;\
++  }\
++
++
++static int luaC_complex__lt(lua_State *L) LUA_COMPARISON(<);
++static int luaC_complex__le(lua_State *L) LUA_COMPARISON(<=);
++static int luaC_complex__eq(lua_State *L)
+ {
+   Complex z1 = lunum_checkcomplex(L, 1);
+   Complex z2 = lunum_checkcomplex(L, 2);
+@@ -459,11 +661,11 @@
+ }
+ 
+ 
+-int _complex_binary_op1(lua_State *L, enum ArrayOperation op)
++static int _complex_binary_op1(lua_State *L, ArrayBinaryOperation op)
+ {
+   if (lunum_hasmetatable(L, 1, "array") ||
+       lunum_hasmetatable(L, 2, "array")) {
+-    return _array_binary_op1(L, op);
++    return _array_binary_op(L, op);
+   }
+   if (!lunum_hasmetatable(L, 1, "complex")) {
+     lunum_pushcomplex(L, lua_tonumber(L, 1));
+@@ -476,7 +678,7 @@
+   return _complex_binary_op2(L, op);
+ }
+ 
+-int _complex_binary_op2(lua_State *L, enum ArrayOperation op)
++static int _complex_binary_op2(lua_State *L, ArrayBinaryOperation op)
+ {
+   Complex v = *((Complex*) luaL_checkudata(L, 1, "complex"));
+   Complex w = *((Complex*) luaL_checkudata(L, 2, "complex"));
+@@ -486,11 +688,18 @@
+   lua_setmetatable(L, -2);
+ 
+   switch (op) {
+-  case ARRAY_OP_ADD: *z = v + w; break;
+-  case ARRAY_OP_SUB: *z = v - w; break;
+-  case ARRAY_OP_MUL: *z = v * w; break;
+-  case ARRAY_OP_DIV: *z = v / w; break;
+-  case ARRAY_OP_POW: *z = cpow(v,w); break;
++    case ARRAY_OP_ADD: *z = v + w; break;
++    case ARRAY_OP_SUB: *z = v - w; break;
++    case ARRAY_OP_MUL: *z = v * w; break;
++    case ARRAY_OP_DIV: *z = v / w; break;
++    case ARRAY_OP_POW: *z = cpow(v,w); break;
++    case ARRAY_OP_IDIV:
++    case ARRAY_OP_MOD:
++    case ARRAY_OP_BAND:
++    case ARRAY_OP_BOR:
++    case ARRAY_OP_BXOR:
++    case ARRAY_OP_SHL:
++    case ARRAY_OP_SHR: { return luaL_error(L, "Invalid operation"); break; }
+   }
+ 
+   return 1;
+@@ -503,110 +712,177 @@
+ 
+ 
+ 
+-int luaC_lunum_array(lua_State *L)
++static int luaC_lunum_array(lua_State *L)
+ {
+   if (lua_type(L, 2) == LUA_TSTRING) {
+-    const enum ArrayType T = array_typeflag(lua_tostring(L, 2)[0]);
++    const ArrayType T = array_typeflag(lua_tostring(L, 2)[0]);
+     lunum_upcast(L, 1, T, 1);
+   }
+   else {
+-    const enum ArrayType T = (enum ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
++    const ArrayType T = (ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
+     lunum_upcast(L, 1, T, 1);
+   }
++  lua_replace(L, 1); /* place array at bottom of stack */
++  if (!lua_isnone(L, 2)) lua_remove(L, 2); /* remove arg 2 if given */
++  if (lua_istable(L, 2)) {
++    luaC_lunum_resize(L); /* reshape array to third arg if given */
++    lua_pop(L, 1); /* pop resize arg 2 */
++  }
+   return 1;
+ }
+ 
+-int luaC_lunum_zeros(lua_State *L)
++static int luaC_lunum_zeros(lua_State *L)
+ {
+   if (lua_isnumber(L, 1)) {
+-    const int N = luaL_checkinteger(L, 1);
+-    const enum ArrayType T = (enum ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
+-    struct Array A = array_new_zeros(N, T);
++    const lua_Integer N = luaL_checkinteger(L, 1);
++    if (N <= 0) { return luaL_error(L, "Invalid size %d", N); }
++    const ArrayType T = (ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
++    Array A = array_new_zeros(N, T);
+     lunum_pusharray1(L, &A);
+     return 1;
+   }
+   else if (lua_istable(L, 1) || lunum_hasmetatable(L, 1, "array")) {
+ 
+-    int Nd;
+-    int *N = (int*) lunum_checkarray2(L, 1, ARRAY_TYPE_INT, &Nd);
+-    const enum ArrayType T = (enum ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
++    size_t Nd_t;
++    size_t *N = (size_t*) lunum_checkarray2(L, 1, ARRAY_TYPE_SIZE_T, &Nd_t);
++    int Nd = (int)Nd_t;
++    const ArrayType T = (ArrayType) luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
+ 
+-    int ntot = 1;
++    size_t ntot = 1;
+     for (int d=0; d<Nd; ++d) ntot *= N[d];
+-    struct Array A = array_new_zeros(ntot, T);
++    Array A = array_new_zeros(ntot, T);
+ 
+-    array_resize(&A, N, Nd);
++    array_resize_t(&A, N, Nd);
+     lunum_pusharray1(L, &A);
+ 
+     return 1;
+   }
+   else {
+-    luaL_error(L, "argument must be either number, table, or array");
+-    return 0;
++    return luaL_error(L, "argument must be either number, table, or array");
+   }
+ }
+ 
+-int luaC_lunum_range(lua_State *L)
++static int luaC_lunum_range(lua_State *L)
+ {
+-  const int N = luaL_checkinteger(L, 1);
+-  struct Array A = array_new_zeros(N, ARRAY_TYPE_INT);
+-  lunum_pusharray1(L, &A);
+-  for (int i=0; i<N; ++i) {
+-    ((int*)A.data)[i] = i;
++  const lua_Integer N = luaL_checkinteger(L, 1);
++  if (N <= 0) { return luaL_error(L, "Invalid size %d", N); }
++  if (N <= INT_MAX) {
++    Array A = array_new_zeros(N, ARRAY_TYPE_INT);
++    lunum_pusharray1(L, &A);
++    for (size_t i=0; i<N; ++i) {
++      ((int*)A.data)[i] = i;
++    }
++  } else {
++    Array A = array_new_zeros(N, ARRAY_TYPE_LONG);
++    lunum_pusharray1(L, &A);
++    for (size_t i=0; i<N; ++i) {
++      ((long*)A.data)[i] = i;
++    }
+   }
++
+   return 1;
+ }
+ 
+-int luaC_lunum_resize(lua_State *L)
++#define EXPR_ASSIGN_LINEAR(T) {for(size_t i=0;i<=N-1;++i)((T*)a)[i]=((N-1-i)*e1 + i*e2)/(N-1);}
++
++#define ARRAY_ASSIGN_OP(sw, op) \
++    switch (sw) {\
++      case ARRAY_TYPE_BOOL    : op(Bool   ) ; break;\
++      case ARRAY_TYPE_CHAR    : op(char   ) ; break;\
++      case ARRAY_TYPE_SHORT   : op(short  ) ; break;\
++      case ARRAY_TYPE_INT     : op(int    ) ; break;\
++      case ARRAY_TYPE_LONG    : op(long   ) ; break;\
++      case ARRAY_TYPE_SIZE_T  : op(size_t ) ; break;\
++      case ARRAY_TYPE_FLOAT   : op(float  ) ; break;\
++      case ARRAY_TYPE_DOUBLE  : op(double ) ; break;\
++      case ARRAY_TYPE_COMPLEX : op(Complex) ; break;\
++    }
++
++static int luaC_lunum_linear(lua_State *L)
+ {
+-  int Nd;
+-  struct Array *A = lunum_checkarray1(L, 1); // the array to resize
+-  int *N = (int*) lunum_checkarray2(L, 2, ARRAY_TYPE_INT, &Nd);
++  const lua_Number  e1 = luaL_checknumber(L, 1);
++  const lua_Number  e2 = luaL_checknumber(L, 2);
++  const lua_Integer N  = luaL_checkinteger(L, 3);
++  if (N <= 1) { return luaL_error(L, "Invalid size %d", N); }
++  const ArrayType T = (ArrayType) luaL_optinteger(L, 4, ARRAY_TYPE_DOUBLE);
++
++  Array A = array_new_zeros(N, T);
++  void *a = A.data;
+ 
+-  int ntot = 1;
++  ARRAY_ASSIGN_OP(T, EXPR_ASSIGN_LINEAR);
++
++  lunum_pusharray1(L, &A);
++
++  return 1;
++}
++
++static int luaC_lunum_resize(lua_State *L)
++{
++  size_t Nd_t;
++  Array *A = lunum_checkarray1(L, 1); // the array to resize
++  size_t *N = (size_t*) lunum_checkarray2(L, 2, ARRAY_TYPE_SIZE_T, &Nd_t);
++  int Nd = (int)Nd_t;
++
++  size_t ntot = 1;
+   for (int d=0; d<Nd; ++d) ntot *= N[d];
+ 
+   if (A->size != ntot) {
+-    luaL_error(L, "new and old total sizes do not agree");
+-    return 0;
++    return luaL_error(L, "new and old total sizes do not agree");
+   }
+-  array_resize(A, N, Nd);
++  array_resize_t(A, N, Nd);
+ 
+   return 0;
+ }
+ 
+-int luaC_lunum_slice(lua_State *L)
++static int luaC_lunum_transpose(lua_State *L)
++{
++  const Array *A = lunum_checkarray1(L, 1); // the array to transpose
++
++  /* copy transposed shape and size to B */
++  Array B = array_new_zeros(A->size, A->dtype);
++  array_resize_t(&B, A->shape, A->ndims);
++  array_transpose(A, &B);
++
++  lunum_pusharray1(L, &B);
++
++  return 1;
++
++}
++
++static int luaC_lunum_slice(lua_State *L)
+ {
+ 
+   // The first part of this function extracts a slice of the array 'A' according
+   // to the convention start:stop:skip. The result is a contiguous array 'B'
+   // having the same number of dimensions as 'A'.
+   // ---------------------------------------------------------------------------
+-  int Nd0, Nd1, Nd2, Nd3;
++  size_t Nd0_t, Nd1_t, Nd2_t, Nd3_t;
+ 
+-  const struct Array *A = lunum_checkarray1(L, 1); // the array to resize
+-  int *start   = (int*) lunum_checkarray2(L, 2, ARRAY_TYPE_INT, &Nd0);
+-  int *stop    = (int*) lunum_checkarray2(L, 3, ARRAY_TYPE_INT, &Nd1);
+-  int *skip    = (int*) lunum_checkarray2(L, 4, ARRAY_TYPE_INT, &Nd2);
+-  int *squeeze = (int*) lunum_checkarray2(L, 5, ARRAY_TYPE_INT, &Nd3);
++  const Array *A = lunum_checkarray1(L, 1); // the array to resize
++  size_t *start   = (size_t*) lunum_checkarray2(L, 2, ARRAY_TYPE_SIZE_T, &Nd0_t);
++  size_t *stop    = (size_t*) lunum_checkarray2(L, 3, ARRAY_TYPE_SIZE_T, &Nd1_t);
++  size_t *skip    = (size_t*) lunum_checkarray2(L, 4, ARRAY_TYPE_SIZE_T, &Nd2_t);
++  size_t *squeeze = (size_t*) lunum_checkarray2(L, 5, ARRAY_TYPE_SIZE_T, &Nd3_t);
++
++  int Nd0 = (int)Nd0_t, Nd1 = (int)Nd1_t, Nd2 = (int)Nd2_t, Nd3 = (int)Nd3_t;
+ 
+ 
+   if (Nd0 != A->ndims || Nd1 != A->ndims || Nd2 != A->ndims || Nd3 != A->ndims) {
+-    luaL_error(L, "slice has wrong number of dimensions for array");
++    return luaL_error(L, "slice has wrong number of dimensions for array");
+   }
+ 
+   for (int d=0; d<A->ndims; ++d) {
+     if (start[d] < 0 || stop[d] > A->shape[d]) {
+-      luaL_error(L, "slice not within array extent");
++      return luaL_error(L, "slice not within array extent");
+     }
+   }
+-  struct Array B = array_new_from_slice(A, start, stop, skip, Nd0);
++  Array B = array_new_from_slice(A, start, stop, skip, Nd0);
+ 
+ 
+   // The rest of this function deals with squeezing out the size-1 dimensions of
+   // 'B' which are marked by the 'squeeze' array.
+   // ---------------------------------------------------------------------------
+-  int Nd_new = 0;
++  size_t Nd_new = 0;
+   for (int d=0; d<Nd0; ++d) Nd_new += !squeeze[d];
+ 
+   // In case we're left with a 0-dimensional (scalar) slice
+@@ -617,14 +893,14 @@
+   // In case there are any dims to squeeze out
+   else if (Nd_new != Nd0) {
+ 
+-    int *shape_new = (int*) malloc(Nd_new * sizeof(int));
++    size_t *shape_new = (size_t*) malloc(Nd_new * sizeof(size_t));
+     for (int d=0,e=0; d<Nd0; ++d) {
+       if (B.shape[d] > 1 || !squeeze[d]) {
+ 	shape_new[e] = B.shape[d];
+ 	++e;
+       }
+     }
+-    array_resize(&B, shape_new, Nd_new);
++    array_resize_t(&B, shape_new, Nd_new);
+     free(shape_new);
+   }
+ 
+@@ -633,30 +909,34 @@
+ }
+ 
+ 
++// Functions used by unary predicates
++// -----------------------------------------------------------------------------
++static double rconj(double x) { return x; }   // conj, but for real argument
++// -----------------------------------------------------------------------------
+ 
+-int luaC_lunum_sin(lua_State *L) { _unary_func(L, sin, csin, 1); return 1; }
+-int luaC_lunum_cos(lua_State *L) { _unary_func(L, cos, ccos, 1); return 1; }
+-int luaC_lunum_tan(lua_State *L) { _unary_func(L, tan, ctan, 1); return 1; }
++static int luaC_lunum_sin(lua_State *L) { _unary_func(L, sin, csin, 1); return 1; }
++static int luaC_lunum_cos(lua_State *L) { _unary_func(L, cos, ccos, 1); return 1; }
++static int luaC_lunum_tan(lua_State *L) { _unary_func(L, tan, ctan, 1); return 1; }
+ 
+-int luaC_lunum_asin(lua_State *L) { _unary_func(L, asin, casin, 1); return 1; }
+-int luaC_lunum_acos(lua_State *L) { _unary_func(L, acos, cacos, 1); return 1; }
+-int luaC_lunum_atan(lua_State *L) { _unary_func(L, atan, catan, 1); return 1; }
++static int luaC_lunum_asin(lua_State *L) { _unary_func(L, asin, casin, 1); return 1; }
++static int luaC_lunum_acos(lua_State *L) { _unary_func(L, acos, cacos, 1); return 1; }
++static int luaC_lunum_atan(lua_State *L) { _unary_func(L, atan, catan, 1); return 1; }
+ 
+-int luaC_lunum_sinh(lua_State *L) { _unary_func(L, sinh, csinh, 1); return 1; }
+-int luaC_lunum_cosh(lua_State *L) { _unary_func(L, cosh, ccosh, 1); return 1; }
+-int luaC_lunum_tanh(lua_State *L) { _unary_func(L, tanh, ctanh, 1); return 1; }
++static int luaC_lunum_sinh(lua_State *L) { _unary_func(L, sinh, csinh, 1); return 1; }
++static int luaC_lunum_cosh(lua_State *L) { _unary_func(L, cosh, ccosh, 1); return 1; }
++static int luaC_lunum_tanh(lua_State *L) { _unary_func(L, tanh, ctanh, 1); return 1; }
+ 
+-int luaC_lunum_asinh(lua_State *L) { _unary_func(L, asinh, casinh, 1); return 1; }
+-int luaC_lunum_acosh(lua_State *L) { _unary_func(L, acosh, cacosh, 1); return 1; }
+-int luaC_lunum_atanh(lua_State *L) { _unary_func(L, atanh, catanh, 1); return 1; }
++static int luaC_lunum_asinh(lua_State *L) { _unary_func(L, asinh, casinh, 1); return 1; }
++static int luaC_lunum_acosh(lua_State *L) { _unary_func(L, acosh, cacosh, 1); return 1; }
++static int luaC_lunum_atanh(lua_State *L) { _unary_func(L, atanh, catanh, 1); return 1; }
+ 
+-int luaC_lunum_exp(lua_State *L) { _unary_func(L, exp, cexp, 1); return 1; }
+-int luaC_lunum_log(lua_State *L) { _unary_func(L, log, clog, 1); return 1; }
+-int luaC_lunum_log10(lua_State *L) { _unary_func(L, log10, NULL, 1); return 1; }
+-int luaC_lunum_conjugate(lua_State *L) { _unary_func(L, rconj, conj, 0); return 1; }
++static int luaC_lunum_exp(lua_State *L) { _unary_func(L, exp, cexp, 1); return 1; }
++static int luaC_lunum_log(lua_State *L) { _unary_func(L, log, clog, 1); return 1; }
++static int luaC_lunum_log10(lua_State *L) { _unary_func(L, log10, NULL, 1); return 1; }
++static int luaC_lunum_conjugate(lua_State *L) { _unary_func(L, rconj, conj, 0); return 1; }
+ 
+ 
+-int luaC_lunum_loadtxt(lua_State *L)
++static int luaC_lunum_loadtxt(lua_State *L)
+ // -----------------------------------------------------------------------------
+ // Opens the text file 'fname' for reading, and parses the data
+ // line-by-line. It is assumed that the data is all floating point, and that
+@@ -669,12 +949,12 @@
+   FILE *input = fopen(fname, "r");
+ 
+   if (input == NULL) {
+-    luaL_error(L, "no such file %s", fname);
++    return luaL_error(L, "no such file %s", fname);
+   }
+ 
+-  int nline = 0;
+-  int ncols = 0;
+-  int ntot = 0;
++  size_t nline = 0;
++  size_t ncols = 0;
++  size_t ntot = 0;
+   double *data = NULL;
+ 
+   char line[2048];
+@@ -685,7 +965,7 @@
+       continue;
+     }
+ 
+-    int nvals = 0;
++    size_t nvals = 0;
+     double *vals = NULL;
+     char *word = strtok(line, " \n");
+ 
+@@ -697,7 +977,7 @@
+ 
+     if (ncols == 0) ncols = nvals;
+     if (ncols != nvals) {
+-      luaL_error(L, "wrong number of data on line %d of %s", nline, fname);
++      return luaL_error(L, "wrong number of data on line %d of %s", nline, fname);
+     }
+ 
+     data = (double*) realloc(data, (ntot+=nvals)*sizeof(double));
+@@ -709,41 +989,44 @@
+   fclose(input);
+ 
+   lunum_pusharray2(L, data, ARRAY_TYPE_DOUBLE, ntot);
+-  struct Array *A = lunum_checkarray1(L, -1);
++  Array *A = lunum_checkarray1(L, -1);
+ 
+-  int shape[2] = { nline, ncols };
+-  array_resize(A, shape, ncols == 1 ? 1 : 2);
++  size_t shape[2] = { nline, ncols };
++  array_resize_t(A, shape, ncols == 1 ? 1 : 2);
+ 
+   free(data);
+   return 1;
+ }
+ 
+ 
+-int luaC_lunum_fromfile(lua_State *L)
++static int luaC_lunum_fromfile(lua_State *L)
+ // -----------------------------------------------------------------------------
+ // Opens the binary file 'fname' for reading, and returns a 1d array from the
+ // data. The file size must be a multiple of the data type 'T'.
+ // -----------------------------------------------------------------------------
+ {
+   const char *fname = luaL_checkstring(L, 1);
+-  const enum ArrayType T = luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
++  const ArrayType T = luaL_optinteger(L, 2, ARRAY_TYPE_DOUBLE);
+   const int sizeof_T = array_sizeof(T);
+ 
+   FILE *input = fopen(fname, "rb");
+ 
+   if (input == NULL) {
+-    luaL_error(L, "no such file %s", fname);
++    return luaL_error(L, "no such file %s", fname);
+   }
+-  fseek(input, 0L, SEEK_END); const int sz = ftell(input);
++  fseek(input, 0L, SEEK_END); const size_t sz = ftell(input);
+   fseek(input, 0L, SEEK_SET);
+ 
+   if (sz % sizeof_T != 0) {
+-    luaL_error(L, "file size must be a multiple of the data type size");
++    return luaL_error(L, "file size must be a multiple of the data type size");
+   }
+-  const int N = sz / sizeof_T;
+-  struct Array A = array_new_zeros(N, T);
++  const size_t N = sz / sizeof_T;
++  Array A = array_new_zeros(N, T);
+ 
+-  fread(A.data, N, sizeof_T, input);
++  if (fread(A.data, N, sizeof_T, input) != sizeof_T) {
++    fclose(input);
++    return luaL_error(L, "Error while reading file %s", fname);
++  }
+   fclose(input);
+   lunum_pusharray1(L, &A);
+ 
+@@ -751,8 +1034,8 @@
+ }
+ 
+ 
+-#define EXPR_EVALF(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=f(((T*)(x))[i]);}
+-#define EXPR_EVALG(T,N,x) {for(int i=0;i<N;++i)((T*)(x))[i]=g(((T*)(x))[i]);}
++#define EXPR_EVALF(T,N,x) {for(size_t i=0;i<N;++i)((T*)(x))[i]=f(((T*)(x))[i]);}
++#define EXPR_EVALG(T,N,x) {for(size_t i=0;i<N;++i)((T*)(x))[i]=g(((T*)(x))[i]);}
+ 
+ void _unary_func(lua_State *L, double(*f)(double), Complex(*g)(Complex), int cast)
+ {
+@@ -770,17 +1053,18 @@
+     lunum_pushcomplex(L, g(z));
+   }
+   else if (lunum_hasmetatable(L, 1, "array")) {
+-    struct Array *A = (struct Array*) lunum_checkarray1(L, 1);
++    Array *A = (Array*) lunum_checkarray1(L, 1);
+ 
+     if (cast == 0) {
+-      struct Array B = array_new_copy(A, A->dtype);
++      Array B = array_new_copy(A, A->dtype);
+ 
+       switch (B.dtype) {
+       case ARRAY_TYPE_BOOL    : EXPR_EVALF(Bool   , B.size, B.data); break;
+       case ARRAY_TYPE_CHAR    : EXPR_EVALF(char   , B.size, B.data); break;
+       case ARRAY_TYPE_SHORT   : EXPR_EVALF(short  , B.size, B.data); break;
+-      case ARRAY_TYPE_INT     : EXPR_EVALF(long   , B.size, B.data); break;
+-      case ARRAY_TYPE_LONG    : EXPR_EVALF(int    , B.size, B.data); break;
++      case ARRAY_TYPE_INT     : EXPR_EVALF(int    , B.size, B.data); break;
++      case ARRAY_TYPE_LONG    : EXPR_EVALF(long   , B.size, B.data); break;
++      case ARRAY_TYPE_SIZE_T  : EXPR_EVALF(size_t , B.size, B.data); break;
+       case ARRAY_TYPE_FLOAT   : EXPR_EVALF(float  , B.size, B.data); break;
+       case ARRAY_TYPE_DOUBLE  : EXPR_EVALF(double , B.size, B.data); break;
+       case ARRAY_TYPE_COMPLEX : EXPR_EVALG(Complex, B.size, B.data); break;
+@@ -789,9 +1073,9 @@
+       lunum_pusharray1(L, &B);
+     }
+     else if (A->dtype <= ARRAY_TYPE_DOUBLE) {
+-      struct Array B = array_new_copy(A, ARRAY_TYPE_DOUBLE);
++      Array B = array_new_copy(A, ARRAY_TYPE_DOUBLE);
+       double *b = (double*) B.data;
+-      for (int i=0; i<B.size; ++i) b[i] = f(b[i]);
++      for (size_t i=0; i<B.size; ++i) b[i] = f(b[i]);
+       lunum_pusharray1(L, &B);
+     }
+     else if (A->dtype == ARRAY_TYPE_COMPLEX) {
+@@ -800,64 +1084,186 @@
+         luaL_error(L, "complex operation not supported");
+       }
+ 
+-      struct Array B = array_new_copy(A, ARRAY_TYPE_COMPLEX);
++      Array B = array_new_copy(A, ARRAY_TYPE_COMPLEX);
+       Complex *b = (Complex*) B.data;
+-      for (int i=0; i<B.size; ++i) b[i] = g(b[i]);
++      for (size_t i=0; i<B.size; ++i) b[i] = g(b[i]);
+       lunum_pusharray1(L, &B);
+     }
+   }
+ }
+ 
+-int _get_index(lua_State *L, struct Array *A)
++size_t _get_index(lua_State *L, Array *A, int *success)
+ {
+-  int m = 0;
++  size_t m = 0;
++  int got_numerical_indice = 1;
+ 
+   if (lua_isnumber(L, 2)) {
+-    m = luaL_checkinteger(L, 2);
++    m = lua_tointeger(L, 2);
+ 
+-    if (m >= A->size || m < 0) {
+-      luaL_error(L, "index %d out of bounds on array of length %d", m, A->size);
++    if (m >= A->size) {
++      return luaL_error(L, "index %d out of bounds on array of length %d", m, A->size);
+     }
+   }
+   else if (lua_istable(L, 2)) {
+-    int Nd;
+-    int *ind = (int*) lunum_checkarray2(L, 2, ARRAY_TYPE_INT, &Nd);
+ 
+-    if (A->ndims != Nd) {
+-      luaL_error(L, "wrong number of indices (%d) on array of dimension %d",
+-                 Nd, A->ndims);
+-    }
+-    int *stride = (int*) malloc(A->ndims * sizeof(int));
+-    stride[Nd-1] = 1;
++    const int nind = lua_rawlen(L, 2);
+ 
+-    for (int d=Nd-2; d>=0; --d) {
+-      stride[d] = stride[d+1] * A->shape[d+1];
++    if (A->ndims != nind) {
++      return luaL_error(L, "wrong number of indices (%d) on array of dimension %d",
++                 nind, A->ndims);
+     }
+ 
+-    for (int d=0; d<A->ndims; ++d) {
+-      if (ind[d] >= A->shape[d] || ind[d] < 0) {
+-        luaL_error(L, "array indexed out of bounds (%d) on dimension %d of size %d",
+-                   ind[d], d, A->shape[d]);
++    for (int d=0; d < nind; ++d) {
++      lua_pushinteger(L, d+1);
++      lua_gettable(L, 2);
++
++      const size_t i = luaL_checkinteger(L, -1);
++      lua_pop(L, 1);
++
++      if (i >= A->shape[d]) {
++        return luaL_error(L, "array indexed out of bounds (%d) on dimension %d of size %d",
++                   i, d, A->shape[d]);
+       }
+-      m += ind[d]*stride[d];
++      m = m * A->shape[d] + i;
+     }
+-    free(stride);
+   }
++  else {
++    /* failure */
++    got_numerical_indice = 0;
++  }
++  *success = got_numerical_indice;
+   return m;
+ }
+ 
+ 
+-void _push_value(lua_State *L, enum ArrayType T, void *v)
++void _push_value(lua_State *L, ArrayType T, void *v)
+ {
+   switch (T) {
+   case ARRAY_TYPE_BOOL    : lua_pushboolean(L,    *((Bool   *)v)); break;
+-  case ARRAY_TYPE_CHAR    : lua_pushnumber (L,    *((char   *)v)); break;
+-  case ARRAY_TYPE_SHORT   : lua_pushnumber (L,    *((short  *)v)); break;
+-  case ARRAY_TYPE_INT     : lua_pushnumber (L,    *((int    *)v)); break;
+-  case ARRAY_TYPE_LONG    : lua_pushnumber (L,    *((long   *)v)); break;
++  case ARRAY_TYPE_CHAR    : lua_pushinteger(L,    *((char   *)v)); break;
++  case ARRAY_TYPE_SHORT   : lua_pushinteger(L,    *((short  *)v)); break;
++  case ARRAY_TYPE_INT     : lua_pushinteger(L,    *((int    *)v)); break;
++  case ARRAY_TYPE_LONG    : lua_pushinteger(L,    *((long   *)v)); break;
++  case ARRAY_TYPE_SIZE_T  : lua_pushinteger(L,    *((size_t *)v)); break;
+   case ARRAY_TYPE_FLOAT   : lua_pushnumber (L,    *((float  *)v)); break;
+   case ARRAY_TYPE_DOUBLE  : lua_pushnumber (L,    *((double *)v)); break;
+   case ARRAY_TYPE_COMPLEX : lunum_pushcomplex (L, *((Complex*)v)); break;
+   }
+ }
+ 
++
++int luaC_array_dtype(lua_State *L)
++// -----------------------------------------------------------------------------
++// If there is no argument, return a string description of the data type. If
++// the string 'enum' is given as the first argument, then return the enumated
++// value of the Array's type.
++// -----------------------------------------------------------------------------
++{
++  Array *A = lunum_checkarray1(L, 1);
++
++  if (lua_isstring(L, 2)) {
++    if (strcmp(lua_tostring(L, 2), "enum") == 0) {
++      lua_pushinteger(L, A->dtype);
++      return 1;
++    }
++  }
++
++  lua_pushstring(L, array_typename(A->dtype));
++  return 1;
++}
++
++int luaC_array_dtypemin(lua_State *L)
++// -----------------------------------------------------------------------------
++// If there is no argument, return a string description of the data type. If
++// the string 'enum' is given as the first argument, then return the enumated
++// value of the Array's type.
++// -----------------------------------------------------------------------------
++{
++  Array *A = lunum_checkarray1(L, 1);
++
++  lua_pushnumber(L, array_typemin(A->dtype));
++  return 1;
++}
++
++int luaC_array_dtypemax(lua_State *L)
++// -----------------------------------------------------------------------------
++// If there is no argument, return a string description of the data type. If
++// the string 'enum' is given as the first argument, then return the enumated
++// value of the Array's type.
++// -----------------------------------------------------------------------------
++{
++  Array *A = lunum_checkarray1(L, 1);
++
++  lua_pushnumber(L, array_typemax(A->dtype));
++  return 1;
++}
++
++int luaC_array_shape(lua_State *L)
++// -----------------------------------------------------------------------------
++// If there is no argument, return the shape as a table. If the string 'array'
++// is given, return it as an array.
++// -----------------------------------------------------------------------------
++{
++  Array *A = lunum_checkarray1(L, 1);
++  lunum_pusharray2(L, A->shape, ARRAY_TYPE_SIZE_T, (size_t)A->ndims);
++
++  if (lua_isstring(L, 2)) {
++    if (strcmp(lua_tostring(L, 2), "array") == 0) {
++      return 1;
++    }
++  }
++
++  lunum_astable(L, 2);
++  lua_replace(L, -2);
++  return 1;
++}
++
++int luaC_array_size(lua_State *L)
++{
++  Array *A = lunum_checkarray1(L, 1);
++  lua_pushinteger(L, A->size);
++  return 1;
++}
++
++int luaC_array_astable(lua_State *L)
++{
++  lunum_astable(L, 1);
++  return 1;
++}
++
++int luaC_array_astype(lua_State *L)
++{
++  Array *A = lunum_checkarray1(L, 1);
++  ArrayType T;
++
++  if (lua_type(L, 2) == LUA_TSTRING) {
++    T = array_typeflag(lua_tostring(L, 2)[0]);
++  }
++  else {
++    T = (ArrayType) luaL_checkinteger(L, 2);
++  }
++
++  Array B = array_new_copy(A, T);
++  lunum_pusharray1(L, &B);
++  return 1;
++}
++
++
++
++int luaC_array_tofile(lua_State *L)
++// -----------------------------------------------------------------------------
++// Writes the array 'A' as binary data to the file named 'fname'.
++// -----------------------------------------------------------------------------
++{
++  Array *A = lunum_checkarray1(L, 1);
++  const char *fname = luaL_checkstring(L, 2);
++  FILE *output = fopen(fname, "wb");
++
++  if (output == NULL) {
++    return luaL_error(L, "could not create file %s", fname);
++  }
++  fwrite(A->data, A->size, array_sizeof(A->dtype), output);
++  fclose(output);
++
++  return 0;
++}
+diff -ruN '--exclude=array_class.lc' a/src/lunum.h b/src/lunum.h
+--- a/src/lunum.h	2026-06-29 17:45:04.770600832 -0700
++++ b/src/lunum.h	2026-06-29 17:45:11.361515984 -0700
+@@ -3,30 +3,35 @@
+ #ifndef __NumluaCapi_HEADER__
+ #define __NumluaCapi_HEADER__
+ 
+-#include "numarray.h"
++#include "lua.h"
+ #include "lualib.h"
++#include "lauxlib.h"
+ 
+-typedef      unsigned char Bool;
+-int luaopen_lunum(lua_State *L);
+-
+-struct Array *lunum_checkarray1(lua_State *L, int pos);
+-void         *lunum_checkarray2(lua_State *L, int pos, enum ArrayType T, int *N);
+-void          lunum_pusharray1(lua_State *L, struct Array *B);
+-void          lunum_pusharray2(lua_State *L, void *data, enum ArrayType T, int N);
+-void          lunum_astable(lua_State *L, int pos);
+-int           lunum_upcast(lua_State *L, int pos, enum ArrayType T, int N);
+-int           lunum_hasmetatable(lua_State *L, int pos, const char *name);
+-void         *lunum_tovalue(lua_State *L, enum ArrayType T);
++#if LUA_VERSION_NUM < 502
++#define lua_rawlen lua_objlen
++#endif
+ 
+ #ifndef LUNUM_API_NOCOMPLEX
++
+ #include <complex.h>
+ typedef double complex Complex;
++
+ Complex       lunum_checkcomplex(lua_State *L, int n);
+ void          lunum_pushcomplex(lua_State *L, Complex z);
+ #endif // LUNUM_API_COMPLEX
+ 
+-#ifdef LUNUM_PRIVATE_API
+-void         _lunum_register_array(lua_State *L, struct Array *B);
+-#endif // LUNUM_PRIVATE_API
++#include "numarray.h"
++
++int luaopen_lunum(lua_State *L);
++
++Array *lunum_checkarray1(lua_State *L, int pos);
++/* returns a pointer to the data, and sets *N to the size */
++void         *lunum_checkarray2(lua_State *L, int pos, ArrayType T, size_t *N);
++void          lunum_pusharray1(lua_State *L, Array *B);
++void          lunum_pusharray2(lua_State *L, void *data, ArrayType T, size_t N);
++void          lunum_astable(lua_State *L, int pos);
++int           lunum_upcast(lua_State *L, int pos, ArrayType T, size_t N);
++int           lunum_hasmetatable(lua_State *L, int pos, const char *name);
++void          lunum_tovalue(lua_State *L, ArrayType T, void *num);
+ 
+ #endif // __NumluaCapi_HEADER__
+diff -ruN '--exclude=array_class.lc' a/src/lunum_capi.c b/src/lunum_capi.c
+--- a/src/lunum_capi.c	2026-06-29 17:45:04.771600819 -0700
++++ b/src/lunum_capi.c	2026-06-29 17:45:24.479347113 -0700
+@@ -4,46 +4,36 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#define LUNUM_PRIVATE_API
+ #include "lunum.h"
+-#include "lauxlib.h"
+ 
+ 
+-void lunum_pusharray1(lua_State *L, struct Array *B)
++void lunum_pusharray1(lua_State *L, Array *B)
+ {
+-  _lunum_register_array(L, B);
++  Array *A = (Array*) lua_newuserdata(L, sizeof(Array));
++  *A = *B;
++
++  luaL_getmetatable(L, "array");
++  lua_setmetatable(L, -2);
+ }
+ 
+-void lunum_pusharray2(lua_State *L, void *data, enum ArrayType T, int N)
++void lunum_pusharray2(lua_State *L, void *data, ArrayType T, size_t N)
+ {
+-  struct Array A = array_new_zeros(N, T);
++  Array A = array_new_zeros(N, T);
+   memcpy(A.data, data, N*array_sizeof(T));
+   lunum_pusharray1(L, &A);
+ }
+ 
+-struct Array *lunum_checkarray1(lua_State *L, int pos)
++Array *lunum_checkarray1(lua_State *L, int pos)
+ {
+-  lua_pushvalue(L, pos);
+-
+-  if (!lunum_hasmetatable(L, -1, "array")) {
+-    luaL_error(L, "bad argument #%d (array expected, got %s)",
+-               pos, lua_typename(L, lua_type(L, -1)));
+-  }
+-  lua_pushstring(L, "__cstruct");
+-  lua_rawget(L, -2);
+-
+-  struct Array *A = (struct Array*) lua_touserdata(L, -1);
+-  lua_pop(L, 2);
+-
+-  return A;
++  return (Array*) luaL_checkudata(L, pos, "array");
+ }
+ 
+-void *lunum_checkarray2(lua_State *L, int pos, enum ArrayType T, int *N)
++void *lunum_checkarray2(lua_State *L, int pos, ArrayType T, size_t *N)
+ {
+   if (lunum_upcast(L, pos, T, 1)) {
+     lua_replace(L, pos);
+   }
+-  struct Array *A = lunum_checkarray1(L, pos);
++  Array *A = lunum_checkarray1(L, pos);
+   if (N != NULL) *N = A->size;
+   return A->data;
+ }
+@@ -51,23 +41,23 @@
+ 
+ void lunum_astable(lua_State *L, int pos)
+ {
+-  struct Array *A = lunum_checkarray1(L, pos);
++  Array *A = lunum_checkarray1(L, pos);
+   const void *a = A->data;
+ 
+-  lua_newtable(L);
+-  for (int i=0; i<A->size; ++i) {
+-
+-    lua_pushnumber(L, i+1);
++  lua_createtable(L, A->size, 0);
++  for (size_t i=0; i < A->size; ++i) {
+ 
++    lua_pushinteger(L, i+1);
+     switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : lua_pushboolean  (L, ((Bool    *)a)[i]); break;
+-    case ARRAY_TYPE_CHAR    : lua_pushnumber   (L, ((char    *)a)[i]); break;
+-    case ARRAY_TYPE_SHORT   : lua_pushnumber   (L, ((short   *)a)[i]); break;
+-    case ARRAY_TYPE_INT     : lua_pushnumber   (L, ((int     *)a)[i]); break;
+-    case ARRAY_TYPE_LONG    : lua_pushnumber   (L, ((long    *)a)[i]); break;
+-    case ARRAY_TYPE_FLOAT   : lua_pushnumber   (L, ((float   *)a)[i]); break;
+-    case ARRAY_TYPE_DOUBLE  : lua_pushnumber   (L, ((double  *)a)[i]); break;
+-    case ARRAY_TYPE_COMPLEX : lunum_pushcomplex(L, ((Complex *)a)[i]); break;
++      case ARRAY_TYPE_BOOL    : lua_pushboolean  (L, ((Bool    *)a)[i]); break;
++      case ARRAY_TYPE_CHAR    : lua_pushinteger  (L, ((char    *)a)[i]); break;
++      case ARRAY_TYPE_SHORT   : lua_pushinteger  (L, ((short   *)a)[i]); break;
++      case ARRAY_TYPE_INT     : lua_pushinteger  (L, ((int     *)a)[i]); break;
++      case ARRAY_TYPE_LONG    : lua_pushinteger  (L, ((long    *)a)[i]); break;
++      case ARRAY_TYPE_SIZE_T  : lua_pushinteger  (L, ((size_t  *)a)[i]); break;
++      case ARRAY_TYPE_FLOAT   : lua_pushnumber   (L, ((float   *)a)[i]); break;
++      case ARRAY_TYPE_DOUBLE  : lua_pushnumber   (L, ((double  *)a)[i]); break;
++      case ARRAY_TYPE_COMPLEX : lunum_pushcomplex(L, ((Complex *)a)[i]); break;
+     }
+ 
+     lua_settable(L, -3);
+@@ -90,25 +80,25 @@
+ 
+ 
+ 
+-int lunum_upcast(lua_State *L, int pos, enum ArrayType T, int N)
++int lunum_upcast(lua_State *L, int pos, ArrayType T, size_t N)
+ // -----------------------------------------------------------------------------
+ // If the object at position 'pos' is already an array of dtype 'T', then push
+ // nothing and return 0. If the dtype is not 'T', then return 1 and push a copy
+ // of that array with dtype 'T' onto the stack. If it is a table, then push an
+ // array of dtype 'T' having the length of the table. If it is a number or
+-// complex, then push an array of dtype float or complex respectively having
++// complex, then push an array of dtype double or complex respectively having
+ // length 'N'.
+ // -----------------------------------------------------------------------------
+ {
+   if (array_typename(T) == NULL) {
+-    luaL_error(L, "invalid array type");
++    return luaL_error(L, "invalid array type");
+   }
+ 
+   // Deal with lunum.array
+   // ---------------------------------------------------------------------------
+   if (lunum_hasmetatable(L, pos, "array")) {
+ 
+-    struct Array *A = lunum_checkarray1(L, pos);
++    Array *A = lunum_checkarray1(L, pos);
+ 
+     if (A->dtype == T) {
+       return 0;
+@@ -116,7 +106,7 @@
+ 
+     else {
+ 
+-      struct Array A_ = array_new_copy(A, T);
++      Array A_ = array_new_copy(A, T);
+       lunum_pusharray1(L, &A_);
+       return 1;
+     }
+@@ -126,16 +116,16 @@
+   // ---------------------------------------------------------------------------
+   else if (lua_istable(L, pos)) {
+ 
+-    struct Array A = array_new_zeros(lua_rawlen(L, pos), T);
++    Array A = array_new_zeros(lua_rawlen(L, pos), T);
+ 
+-    for (int i=0; i<A.size; ++i) {
++    for (size_t i=0; i<A.size; ++i) {
+ 
+-      lua_pushnumber(L, i+1);
++      lua_pushinteger(L, i+1);
+       lua_gettable(L, pos);
+ 
+-      void *val = lunum_tovalue(L, T);
+-      memcpy((char*)A.data + array_sizeof(T)*i, val, array_sizeof(T));
+-      free(val);
++      ArrayAllNum val;
++      lunum_tovalue(L, T, &val);
++      memcpy((char*)A.data + array_sizeof(T)*i, &val, array_sizeof(T));
+ 
+       lua_pop(L, 1);
+     }
+@@ -148,7 +138,7 @@
+   // ---------------------------------------------------------------------------
+   else if (lua_isboolean(L, pos)) {
+     const Bool x = lua_toboolean(L, pos);
+-    struct Array A = array_new_zeros(N, ARRAY_TYPE_BOOL);
++    Array A = array_new_zeros(N, ARRAY_TYPE_BOOL);
+     array_assign_from_scalar(&A, &x);
+     lunum_pusharray1(L, &A);
+     return 1;
+@@ -158,9 +148,9 @@
+   // ---------------------------------------------------------------------------
+   else if (lua_isnumber(L, pos)) {
+     const double x = lua_tonumber(L, pos);
+-    struct Array A = array_new_zeros(N, ARRAY_TYPE_DOUBLE);
++    Array A = array_new_zeros(N, ARRAY_TYPE_DOUBLE);
+     array_assign_from_scalar(&A, &x);
+-    struct Array B = array_new_copy(&A, T);
++    Array B = array_new_copy(&A, T);
+     array_del(&A);
+     lunum_pusharray1(L, &B);
+     return 1;
+@@ -171,7 +161,7 @@
+   else if (lunum_hasmetatable(L, pos, "complex")) {
+ 
+     const Complex z = *((Complex*) lua_touserdata(L, pos));
+-    struct Array A = array_new_zeros(N, ARRAY_TYPE_COMPLEX);
++    Array A = array_new_zeros(N, ARRAY_TYPE_COMPLEX);
+     array_assign_from_scalar(&A, &z);
+     lunum_pusharray1(L, &A);
+     return 1;
+@@ -180,9 +170,8 @@
+   // Throw an error
+   // ---------------------------------------------------------------------------
+   else {
+-    luaL_error(L, "cannot cast to array from object of dtype %s\n",
++    return luaL_error(L, "cannot cast to array from object of dtype %s\n",
+                lua_typename(L, lua_type(L, pos)));
+-    return 0;
+   }
+ }
+ 
+@@ -197,37 +186,36 @@
+   return eq;
+ }
+ 
++#define ASSIGN_TO_VOID(T, n, x) \
++    switch (T) {\
++      case ARRAY_TYPE_BOOL    : *((Bool    *)n) = (Bool)   (x); break;\
++      case ARRAY_TYPE_CHAR    : *((char    *)n) = (char)   (x); break;\
++      case ARRAY_TYPE_SHORT   : *((short   *)n) = (short)  (x); break;\
++      case ARRAY_TYPE_INT     : *((int     *)n) = (int)    (x); break;\
++      case ARRAY_TYPE_LONG    : *((long    *)n) = (long)   (x); break;\
++      case ARRAY_TYPE_SIZE_T  : *((size_t  *)n) = (size_t) (x); break;\
++      case ARRAY_TYPE_FLOAT   : *((float   *)n) = (float)  (x); break;\
++      case ARRAY_TYPE_DOUBLE  : *((double  *)n) = (double) (x); break;\
++      case ARRAY_TYPE_COMPLEX : *((Complex *)n) = (Complex)(x); break;\
++    }
+ 
+-void *lunum_tovalue(lua_State *L, enum ArrayType T)
++void lunum_tovalue(lua_State *L, ArrayType T, void *num)
+ {
+-  Complex x=0.0;
++  ArrayAllNum tmp_num;
+ 
+-  if (lua_isnumber(L, -1)) {
+-    x = lua_tonumber(L, -1);
+-  }
+-  else if (lua_isboolean(L, -1)) {
+-    x = lua_toboolean(L, -1);
++  if (lua_isboolean(L, -1)) {
++    tmp_num.b = lua_toboolean(L, -1);
++    ASSIGN_TO_VOID(T, num, tmp_num.b);
++  } else if (lua_isnumber(L, -1)) {
++    tmp_num.ln = lua_tonumber(L, -1);
++    ASSIGN_TO_VOID(T, num, tmp_num.ln);
+   }
+   else if (lunum_hasmetatable(L, -1, "complex")) {
+-    x = *((Complex*) lua_touserdata(L, -1));
++    tmp_num.z = *((Complex*) lua_touserdata(L, -1));
++    ASSIGN_TO_VOID(T, num, tmp_num.z);
+   }
+   else {
+     luaL_error(L, "unkown data type");
+   }
+-
+-  void *y = malloc(array_sizeof(T));
+-
+-  switch (T) {
+-  case ARRAY_TYPE_BOOL    : *((Bool   *)y) = x; break;
+-  case ARRAY_TYPE_CHAR    : *((char   *)y) = x; break;
+-  case ARRAY_TYPE_SHORT   : *((short  *)y) = x; break;
+-  case ARRAY_TYPE_INT     : *((int    *)y) = x; break;
+-  case ARRAY_TYPE_LONG    : *((long   *)y) = x; break;
+-  case ARRAY_TYPE_FLOAT   : *((float  *)y) = x; break;
+-  case ARRAY_TYPE_DOUBLE  : *((double *)y) = x; break;
+-  case ARRAY_TYPE_COMPLEX : *((Complex*)y) = x; break;
+-  }
+-
+-  return y;
+ }
+ 
+diff -ruN '--exclude=array_class.lc' a/src/numarray.c b/src/numarray.c
+--- a/src/numarray.c	2026-06-29 17:45:04.771600819 -0700
++++ b/src/numarray.c	2026-06-29 17:45:04.772600806 -0700
+@@ -4,25 +4,125 @@
+ #include <stdlib.h>
+ #include <math.h>
+ #include <complex.h>
+-#include "numarray.h"
+-
+-typedef unsigned char Bool;
+-typedef double complex Complex;
+-
+-#define EXPR_ADD(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]+((T*)b)[i];}
+-#define EXPR_SUB(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]-((T*)b)[i];}
+-#define EXPR_MUL(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]*((T*)b)[i];}
+-#define EXPR_DIV(T) {for(int i=0;i<N;++i)((T*)c)[i]=((T*)a)[i]/((T*)b)[i];}
+-#define EXPR_POW(T) {for(int i=0;i<N;++i)((T*)c)[i]= pow(((T*)a)[i],((T*)b)[i]);}
+-#define EXPR_COW(T) {for(int i=0;i<N;++i)((T*)c)[i]=cpow(((T*)a)[i],((T*)b)[i]);}
+-
+-#define EXPR_ASSIGN0(T,val) {for(int i=0;i<N;++i)((T*)a)[i]=val;}
+-#define EXPR_ASSIGN1(T,val) {for(int i=0;i<N;++i)((T*)a)[i]=*((T*)val);}
+-#define EXPR_ASSIGN2(Ta,Tb) {for(int i=0;i<N;++i)((Ta*)a)[i]=((Tb*)b)[i];}
++#include <limits.h>
++#include <stdint.h>
++#include <float.h>
++
++#include "lunum.h"
++
++#define EXPR_UN_MNS(Ta, Tb)  {const Ta*restrict _a=a;Tb*restrict _b=b;for(size_t i=0;i<N;++i)_b[i]=-_a[i];}
++#define EXPR_UN_BNOT(Ta, Tb) {const Ta*restrict _a=a;Tb*restrict _b=b;for(size_t i=0;i<N;++i)_b[i]=~_a[i];}
++#define EXPR_UN_ERR(Ta, Tb)  {luaL_error(L, "Invalid operation"); return;}
++
++#define EXPR_BIN_ADD(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]+(Tc)_b[ib];}
++#define EXPR_BIN_SUB(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]-(Tc)_b[ib];}
++#define EXPR_BIN_MUL(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]*(Tc)_b[ib];}
++#define EXPR_BIN_DIV(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]/(Tc)_b[ib];}
++#define EXPR_BIN_FIDIVF(Ta, a, ia, Tb, b, ib, Tc, c) {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)floorf((Tc)_a[ia]/(Tc)_b[ib]);}
++#define EXPR_BIN_FIDIV(Ta, a, ia, Tb, b, ib, Tc, c)  {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc) floor((Tc)_a[ia]/(Tc)_b[ib]);}
++#define EXPR_BIN_MOD(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]-(Tc)      ((Tc)_a[ia]/(Tc)_b[ib])*(Tc)_b[ib];}
++#define EXPR_BIN_FMODF(Ta, a, ia, Tb, b, ib, Tc, c)  {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]-(Tc)floorf((Tc)_a[ia]/(Tc)_b[ib])*(Tc)_b[ib];}
++#define EXPR_BIN_FMOD(Ta, a, ia, Tb, b, ib, Tc, c)   {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]-(Tc) floor((Tc)_a[ia]/(Tc)_b[ib])*(Tc)_b[ib];}
++#define EXPR_BIN_POW(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]= pow((Tc)_a[ia],(Tc)_b[ib]);}
++#define EXPR_BIN_FPOWF(Ta, a, ia, Tb, b, ib, Tc, c)  {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=powf((Tc)_a[ia],(Tc)_b[ib]);}
++#define EXPR_BIN_FPOW(Ta, a, ia, Tb, b, ib, Tc, c)   {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]= pow((Tc)_a[ia],(Tc)_b[ib]);}
++#define EXPR_BIN_CPOW(Ta, a, ia, Tb, b, ib, Tc, c)   {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=cpow((Tc)_a[ia],(Tc)_b[ib]);}
++#define EXPR_BIN_BAND(Ta, a, ia, Tb, b, ib, Tc, c)   {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]&(Tc)_b[ib];}
++#define EXPR_BIN_BOR(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]|(Tc)_b[ib];}
++#define EXPR_BIN_BXOR(Ta, a, ia, Tb, b, ib, Tc, c)   {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]^(Tc)_b[ib];}
++#define EXPR_BIN_SHL(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]<<(Tc)_b[ib];}
++#define EXPR_BIN_SHR(Ta, a, ia, Tb, b, ib, Tc, c)    {Tc*restrict _c=c;const Ta*restrict _a=a;const Tb*restrict _b=b;for(size_t i=0;i<N;++i)_c[i]=(Tc)_a[ia]>>(Tc)_b[ib];}
++#define EXPR_BIN_ERR(Ta, a, ia, Tb, b, ib, Tc, c)    {luaL_error(L, "Invalid operation"); return;}
++
++#define GET_ORDR(op, Ta, Tb) {\
++  if (array_first) {\
++    op(Ta, a, i, Tb, b, 0, Tb, c)\
++  } else {\
++    op(Tb, b, 0, Ta, a, i, Tb, c)\
++  }\
++}
++
++#define GET_TYPEC(op, Ta, Tb) {\
++  if (outA) {\
++    op(Ta, a, i, Tb, b, i, Ta, c)\
++  } else {\
++    op(Ta, a, i, Tb, b, i, Tb, c)\
++  }\
++}
++
++#define ARRAY_OP_BINARY_B(op_adpt, Ta, op, opf, opd, opc) \
++    switch (TypeB) {\
++      case ARRAY_TYPE_BOOL    : op_adpt(op,  Ta, Bool   ) ; break;\
++      case ARRAY_TYPE_CHAR    : op_adpt(op,  Ta, char   ) ; break;\
++      case ARRAY_TYPE_SHORT   : op_adpt(op,  Ta, short  ) ; break;\
++      case ARRAY_TYPE_INT     : op_adpt(op,  Ta, int    ) ; break;\
++      case ARRAY_TYPE_LONG    : op_adpt(op,  Ta, long   ) ; break;\
++      case ARRAY_TYPE_SIZE_T  : op_adpt(op,  Ta, size_t ) ; break;\
++      case ARRAY_TYPE_FLOAT   : op_adpt(opf, Ta, float  ) ; break;\
++      case ARRAY_TYPE_DOUBLE  : op_adpt(opd, Ta, double ) ; break;\
++      case ARRAY_TYPE_COMPLEX : op_adpt(opc, Ta, Complex) ; break;\
++    }
++
++#define ARRAY_OP_BINARY(op_adpt, op, opf, opd, opc) \
++    switch (TypeA) {\
++      case ARRAY_TYPE_BOOL    : ARRAY_OP_BINARY_B(op_adpt, Bool,    op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_CHAR    : ARRAY_OP_BINARY_B(op_adpt, char,    op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_SHORT   : ARRAY_OP_BINARY_B(op_adpt, short,   op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_INT     : ARRAY_OP_BINARY_B(op_adpt, int,     op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_LONG    : ARRAY_OP_BINARY_B(op_adpt, long,    op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_SIZE_T  : ARRAY_OP_BINARY_B(op_adpt, size_t,  op,  opf, opd, opc) ; break;\
++      case ARRAY_TYPE_FLOAT   : ARRAY_OP_BINARY_B(op_adpt, float,   opf, opf, opd, opc) ; break;\
++      case ARRAY_TYPE_DOUBLE  : ARRAY_OP_BINARY_B(op_adpt, double,  opd, opd, opd, opc) ; break;\
++      case ARRAY_TYPE_COMPLEX : ARRAY_OP_BINARY_B(op_adpt, Complex, opc, opc, opc, opc) ; break;\
++    }
++
++#define ARRAY_OP_UNARY(op, opf, opd, opc) \
++    switch (TypeA) {\
++      case ARRAY_TYPE_BOOL    : op(Bool,     Bool   ) ; break;\
++      case ARRAY_TYPE_CHAR    : op(char,     char   ) ; break;\
++      case ARRAY_TYPE_SHORT   : op(short,    short  ) ; break;\
++      case ARRAY_TYPE_INT     : op(int,      int    ) ; break;\
++      case ARRAY_TYPE_LONG    : op(long,     long   ) ; break;\
++      case ARRAY_TYPE_SIZE_T  : op(size_t,   size_t ) ; break;\
++      case ARRAY_TYPE_FLOAT   : opf(float,   float  ) ; break;\
++      case ARRAY_TYPE_DOUBLE  : opd(double,  double ) ; break;\
++      case ARRAY_TYPE_COMPLEX : opc(Complex, Complex) ; break;\
++    }
++
++
++#define EXPR_ASSIGN0(Ta,val) {Ta*restrict _a=a;                         for(size_t i=0;i<N;++i)_a[i]=val;}
++#define EXPR_ASSIGN1(Ta,val) {Ta*restrict _a=a;const Ta*restrict _b=val;for(size_t i=0;i<N;++i)_a[i]=_b[0];}
++#define EXPR_ASSIGN2(Ta,Tb)  {Ta*restrict _a=a;const Tb*restrict _b=b;  for(size_t i=0;i<N;++i)_a[i]=_b[i];}
++
++#define ARRAY_ASSIGN_OP1(sw, op, A1) \
++    switch (sw) {\
++      case ARRAY_TYPE_BOOL    : op(A1, Bool   ) ; break;\
++      case ARRAY_TYPE_CHAR    : op(A1, char   ) ; break;\
++      case ARRAY_TYPE_SHORT   : op(A1, short  ) ; break;\
++      case ARRAY_TYPE_INT     : op(A1, int    ) ; break;\
++      case ARRAY_TYPE_LONG    : op(A1, long   ) ; break;\
++      case ARRAY_TYPE_SIZE_T  : op(A1, size_t ) ; break;\
++      case ARRAY_TYPE_FLOAT   : op(A1, float  ) ; break;\
++      case ARRAY_TYPE_DOUBLE  : op(A1, double ) ; break;\
++      case ARRAY_TYPE_COMPLEX : op(A1, Complex) ; break;\
++    }
++
++#define ARRAY_ASSIGN_OP2(sw, op, A2) \
++    switch (sw) {\
++      case ARRAY_TYPE_BOOL    : op(Bool,    A2) ; break;\
++      case ARRAY_TYPE_CHAR    : op(char,    A2) ; break;\
++      case ARRAY_TYPE_SHORT   : op(short,   A2) ; break;\
++      case ARRAY_TYPE_INT     : op(int,     A2) ; break;\
++      case ARRAY_TYPE_LONG    : op(long,    A2) ; break;\
++      case ARRAY_TYPE_SIZE_T  : op(size_t,  A2) ; break;\
++      case ARRAY_TYPE_FLOAT   : op(float,   A2) ; break;\
++      case ARRAY_TYPE_DOUBLE  : op(double,  A2) ; break;\
++      case ARRAY_TYPE_COMPLEX : op(Complex, A2) ; break;\
++    }
+ 
+ 
+ 
+-char *array_typename(enum ArrayType T)
++char *array_typename(ArrayType T)
+ {
+   switch (T) {
+   case ARRAY_TYPE_BOOL    : return "bool";
+@@ -30,6 +130,7 @@
+   case ARRAY_TYPE_SHORT   : return "short";
+   case ARRAY_TYPE_INT     : return "int";
+   case ARRAY_TYPE_LONG    : return "long";
++  case ARRAY_TYPE_SIZE_T  : return "size_t";
+   case ARRAY_TYPE_FLOAT   : return "float";
+   case ARRAY_TYPE_DOUBLE  : return "double";
+   case ARRAY_TYPE_COMPLEX : return "complex";
+@@ -37,7 +138,39 @@
+   return NULL; // indicates invalid type
+ }
+ 
+-enum ArrayType array_typeflag(char c)
++double array_typemin(ArrayType T)
++{
++  switch (T) {
++  case ARRAY_TYPE_BOOL    : return 0;
++  case ARRAY_TYPE_CHAR    : return CHAR_MIN;
++  case ARRAY_TYPE_SHORT   : return SHRT_MIN;
++  case ARRAY_TYPE_INT     : return INT_MIN;
++  case ARRAY_TYPE_LONG    : return LONG_MIN;
++  case ARRAY_TYPE_SIZE_T  : return 0;
++  case ARRAY_TYPE_FLOAT   : return -FLT_MAX;
++  case ARRAY_TYPE_DOUBLE  : return -DBL_MAX;
++  case ARRAY_TYPE_COMPLEX : return -DBL_MAX;
++  }
++  return -1; // indicates invalid type
++}
++
++double array_typemax(ArrayType T)
++{
++  switch (T) {
++  case ARRAY_TYPE_BOOL    : return 1;
++  case ARRAY_TYPE_CHAR    : return CHAR_MAX;
++  case ARRAY_TYPE_SHORT   : return SHRT_MAX;
++  case ARRAY_TYPE_INT     : return INT_MAX;
++  case ARRAY_TYPE_LONG    : return LONG_MAX;
++  case ARRAY_TYPE_SIZE_T  : return SIZE_MAX;
++  case ARRAY_TYPE_FLOAT   : return FLT_MAX;
++  case ARRAY_TYPE_DOUBLE  : return DBL_MAX;
++  case ARRAY_TYPE_COMPLEX : return DBL_MAX;
++  }
++  return -1; // indicates invalid type
++}
++
++ArrayType array_typeflag(char c)
+ {
+   switch (c) {
+   case 'b': return ARRAY_TYPE_BOOL;
+@@ -45,6 +178,7 @@
+   case 's': return ARRAY_TYPE_SHORT;
+   case 'i': return ARRAY_TYPE_INT;
+   case 'l': return ARRAY_TYPE_LONG;
++  case 't': return ARRAY_TYPE_SIZE_T;
+   case 'f': return ARRAY_TYPE_FLOAT;
+   case 'd': return ARRAY_TYPE_DOUBLE;
+   case 'z': return ARRAY_TYPE_COMPLEX;
+@@ -53,45 +187,35 @@
+ }
+ 
+ 
+-struct Array array_new_zeros(int N, enum ArrayType T)
++Array array_new_zeros(size_t N, ArrayType T)
+ {
+-  struct Array A;
++  Array A;
+ 
+   A.data  = malloc(N*array_sizeof(T));
+-  A.owns  = 1;
+   A.size  = N;
+   A.dtype = T;
+-  A.shape = (int*) malloc(sizeof(int));
++  A.shape = (size_t*) malloc(sizeof(size_t));
+   A.ndims = 1;
+ 
+   A.shape[0] = N;
+-  void *a = A.data;
++  void *restrict a = A.data;
+ 
+-  switch (T) {
+-  case ARRAY_TYPE_BOOL    : EXPR_ASSIGN0(Bool   ,0) ; break;
+-  case ARRAY_TYPE_CHAR    : EXPR_ASSIGN0(char   ,0) ; break;
+-  case ARRAY_TYPE_SHORT   : EXPR_ASSIGN0(short  ,0) ; break;
+-  case ARRAY_TYPE_INT     : EXPR_ASSIGN0(int    ,0) ; break;
+-  case ARRAY_TYPE_LONG    : EXPR_ASSIGN0(long   ,0) ; break;
+-  case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN0(float  ,0) ; break;
+-  case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN0(double ,0) ; break;
+-  case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN0(Complex,0) ; break;
+-  }
++  ARRAY_ASSIGN_OP2(T, EXPR_ASSIGN0, 0);
+ 
+   return A;
+ }
+ 
+-struct Array array_new_copy(const struct Array *B, enum ArrayType T)
++Array array_new_copy(const Array *B, ArrayType T)
+ {
+-  struct Array A = array_new_zeros(B->size, T);
+-  array_resize(&A, B->shape, B->ndims);
++  Array A = array_new_zeros(B->size, T);
++  array_resize_t(&A, B->shape, B->ndims);
+   array_assign_from_array(&A, B);
+   return A;
+ }
+ 
+-void array_del(struct Array *A)
++void array_del(Array *A)
+ {
+-  if (A->data && A->owns) free(A->data);
++  if (A->data) free(A->data);
+   if (A->shape) free(A->shape);
+ 
+   A->size = 0;
+@@ -99,243 +223,254 @@
+   A->shape = NULL;
+ }
+ 
+-int array_resize(struct Array *A, const int *N, int Nd)
++int array_resize(Array *A, const int *N, int Nd)
+ {
+-  int ntot = 1;
++  size_t ntot = 1;
+   for (int d=0; d<Nd; ++d) ntot *= N[d];
+ 
+   if (A->size != ntot) {
+     return 1;
+   }
+-  if (A->shape) free(A->shape);
++  if (A->ndims != Nd) {
++    if (A->shape) {free(A->shape); A->shape = NULL;}
++    A->ndims = Nd;
++  }
++  if (A->shape == NULL) {
++    A->shape = (size_t*) malloc(Nd*sizeof(size_t));
++  }
+ 
+-  A->ndims = Nd;
+-  A->shape = (int*) malloc(Nd*sizeof(int));
+-  memcpy(A->shape, N, Nd*sizeof(int));
++  for (int d=0; d<Nd; ++d) A->shape[d] = N[d];
+ 
+   return 0;
+ }
+ 
+-void array_binary_op(const struct Array *A, const struct Array *B,
+-                     struct Array *C, enum ArrayOperation op)
++int array_resize_t(Array *A, const size_t *N, int Nd)
+ {
+-  const int N = A->size;
+-  const void *a = A->data;
+-  const void *b = B->data;
+-  void *c = C->data;
++  size_t ntot = 1;
++  for (int d=0; d<Nd; ++d) ntot *= N[d];
++
++  if (A->size != ntot) {
++    return 1;
++  }
++  if (A->ndims != Nd) {
++    if (A->shape) {free(A->shape); A->shape = NULL;}
++    A->ndims = Nd;
++  }
++  if (A->shape == NULL) {
++    A->shape = (size_t*) malloc(Nd*sizeof(size_t));
++  }
++
++  memcpy(A->shape, N, Nd*sizeof(size_t));
++
++  return 0;
++}
++
++/* Arrays A and B guaranteed to have same types */
++void array_unary_op(lua_State * L, const Array *A, Array *B,
++                    ArrayUnaryOperation op)
++{
++  const size_t          N = A->size;
++  const void  *restrict a = A->data;
++  void        *restrict b = B->data;
++
++  const ArrayType TypeA = A->dtype;
+ 
+   switch (op) {
+-  case ARRAY_OP_ADD:
+-    switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ADD(Bool   ) ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ADD(char   ) ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ADD(short  ) ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ADD(int    ) ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ADD(long   ) ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ADD(float  ) ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ADD(double ) ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ADD(Complex) ; break;
+-    }
+-    break;
+-  case ARRAY_OP_SUB:
+-    switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_SUB(Bool   ) ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_SUB(char   ) ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_SUB(short  ) ; break;
+-    case ARRAY_TYPE_INT     : EXPR_SUB(int    ) ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_SUB(long   ) ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_SUB(float  ) ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_SUB(double ) ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_SUB(Complex) ; break;
+-    }
+-    break;
+-  case ARRAY_OP_MUL:
+-    switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_MUL(Bool   ) ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_MUL(char   ) ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_MUL(short  ) ; break;
+-    case ARRAY_TYPE_INT     : EXPR_MUL(int    ) ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_MUL(long   ) ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_MUL(float  ) ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_MUL(double ) ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_MUL(Complex) ; break;
+-    }
++  case ARRAY_OP_UNM:
++    ARRAY_OP_UNARY(EXPR_UN_MNS, EXPR_UN_MNS, EXPR_UN_MNS, EXPR_UN_MNS);
+     break;
+-  case ARRAY_OP_DIV:
+-    switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_DIV(Bool   ) ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_DIV(char   ) ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_DIV(short  ) ; break;
+-    case ARRAY_TYPE_INT     : EXPR_DIV(int    ) ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_DIV(long   ) ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_DIV(float  ) ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_DIV(double ) ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_DIV(Complex) ; break;
+-    }
+-    break;
+-  case ARRAY_OP_POW:
+-    switch (A->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_POW(Bool   ) ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_POW(char   ) ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_POW(short  ) ; break;
+-    case ARRAY_TYPE_INT     : EXPR_POW(int    ) ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_POW(long   ) ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_POW(float  ) ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_POW(double ) ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_COW(Complex) ; break;
+-    }
++  case ARRAY_OP_BNOT:
++    ARRAY_OP_UNARY(EXPR_UN_BNOT, EXPR_UN_ERR, EXPR_UN_ERR, EXPR_UN_ERR);
+     break;
+   }
+ }
+ 
+-int array_sizeof(enum ArrayType T)
++/* Arrays A and B may have different types, C has higher of A and B types */
++void array_array_binary_op(lua_State * L, const Array *A, const Array *B,
++                     Array *C, ArrayBinaryOperation op)
+ {
+-  switch (T) {
+-  case ARRAY_TYPE_BOOL    : return sizeof(Bool);
+-  case ARRAY_TYPE_CHAR    : return sizeof(char);
+-  case ARRAY_TYPE_SHORT   : return sizeof(short);
+-  case ARRAY_TYPE_INT     : return sizeof(int);
+-  case ARRAY_TYPE_LONG    : return sizeof(long);
+-  case ARRAY_TYPE_FLOAT   : return sizeof(float);
+-  case ARRAY_TYPE_DOUBLE  : return sizeof(double);
+-  case ARRAY_TYPE_COMPLEX : return sizeof(Complex);
+-  }
+-  return sizeof(int);
+-}
++  const size_t          N = A->size;
++  const void  *restrict a = A->data;
++  const void  *restrict b = B->data;
++  void        *restrict c = C->data;
+ 
+-void array_assign_from_scalar(struct Array *A, const void *val)
+-{
+-  const int N = A->size;
+-  void     *a = A->data;
++  const ArrayType TypeA = A->dtype;
++  const ArrayType TypeB = B->dtype;
++  const Bool      outA  = TypeA == C->dtype;
+ 
+-  switch (A->dtype) {
+-  case ARRAY_TYPE_BOOL    : EXPR_ASSIGN1(Bool   , val) ; break;
+-  case ARRAY_TYPE_CHAR    : EXPR_ASSIGN1(char   , val) ; break;
+-  case ARRAY_TYPE_SHORT   : EXPR_ASSIGN1(short  , val) ; break;
+-  case ARRAY_TYPE_INT     : EXPR_ASSIGN1(int    , val) ; break;
+-  case ARRAY_TYPE_LONG    : EXPR_ASSIGN1(long   , val) ; break;
+-  case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN1(float  , val) ; break;
+-  case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN1(double , val) ; break;
+-  case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN1(Complex, val) ; break;
++  switch (op) {
++    case ARRAY_OP_ADD:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_ADD, EXPR_BIN_ADD, EXPR_BIN_ADD, EXPR_BIN_ADD); break;
++    case ARRAY_OP_SUB:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_SUB, EXPR_BIN_SUB, EXPR_BIN_SUB, EXPR_BIN_SUB); break;
++    case ARRAY_OP_MUL:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_MUL, EXPR_BIN_MUL, EXPR_BIN_MUL, EXPR_BIN_MUL); break;
++    case ARRAY_OP_DIV:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_DIV, EXPR_BIN_DIV, EXPR_BIN_DIV, EXPR_BIN_DIV); break;
++    case ARRAY_OP_IDIV:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_DIV, EXPR_BIN_FIDIVF, EXPR_BIN_FIDIV, EXPR_BIN_ERR); break;
++    case ARRAY_OP_MOD:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_MOD, EXPR_BIN_FMODF, EXPR_BIN_FMOD, EXPR_BIN_ERR); break;
++    case ARRAY_OP_POW:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_POW, EXPR_BIN_FPOWF, EXPR_BIN_FPOW, EXPR_BIN_CPOW); break;
++    case ARRAY_OP_BAND:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_BAND, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_BOR:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_BOR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_BXOR:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_BXOR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_SHL:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_SHL, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_SHR:
++      ARRAY_OP_BINARY(GET_TYPEC, EXPR_BIN_SHR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
+   }
+ }
+ 
+-void array_assign_from_array(struct Array *A, const struct Array *B)
+-{
+-  void        *a = A->data;
+-  const void  *b = B->data;
+-  const int    N = B->size;
+-
+-  switch (A->dtype) {
+-  case ARRAY_TYPE_BOOL:
+-    switch (B->dtype) {
+-      //                               (A->type, B->type)
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(Bool, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(Bool, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(Bool, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(Bool, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(Bool, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(Bool, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(Bool, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(Bool, Complex) ; break;
+-    }
+-    break;
++/* Arrays A and B may have different types, C is the same type as B (B is upcast to the output type) */
++void array_number_binary_op(lua_State * L, const Array *A, const void *B,
++                     Array *C, ArrayBinaryOperation op, Bool array_first)
++{
++  const size_t          N = A->size;
++  const void  *restrict a = A->data;
++  const void  *restrict b = B;
++  void        *restrict c = C->data;
+ 
+-  case ARRAY_TYPE_CHAR:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(char, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(char, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(char, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(char, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(char, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(char, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(char, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(char, Complex) ; break;
+-    }
+-    break;
++  const ArrayType TypeA = A->dtype;
++  const ArrayType TypeB = C->dtype;
+ 
+-  case ARRAY_TYPE_SHORT:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(short, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(short, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(short, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(short, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(short, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(short, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(short, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(short, Complex) ; break;
+-    }
+-    break;
++  switch (op) {
++    case ARRAY_OP_ADD:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_ADD, EXPR_BIN_ADD, EXPR_BIN_ADD, EXPR_BIN_ADD); break;
++    case ARRAY_OP_SUB:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_SUB, EXPR_BIN_SUB, EXPR_BIN_SUB, EXPR_BIN_SUB); break;
++    case ARRAY_OP_MUL:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_MUL, EXPR_BIN_MUL, EXPR_BIN_MUL, EXPR_BIN_MUL); break;
++    case ARRAY_OP_DIV:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_DIV, EXPR_BIN_DIV, EXPR_BIN_DIV, EXPR_BIN_DIV); break;
++    case ARRAY_OP_IDIV:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_DIV, EXPR_BIN_FIDIVF, EXPR_BIN_FIDIV, EXPR_BIN_ERR); break;
++    case ARRAY_OP_MOD:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_MOD, EXPR_BIN_FMODF, EXPR_BIN_FMOD, EXPR_BIN_ERR); break;
++    case ARRAY_OP_POW:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_POW, EXPR_BIN_FPOWF, EXPR_BIN_FPOW, EXPR_BIN_CPOW); break;
++    case ARRAY_OP_BAND:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_BAND, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_BOR:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_BOR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_BXOR:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_BXOR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_SHL:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_SHL, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++    case ARRAY_OP_SHR:
++      ARRAY_OP_BINARY(GET_ORDR, EXPR_BIN_SHR, EXPR_BIN_ERR, EXPR_BIN_ERR, EXPR_BIN_ERR); break;
++  }
++}
+ 
+-  case ARRAY_TYPE_INT:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(int, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(int, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(int, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(int, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(int, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(int, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(int, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(int, Complex) ; break;
+-    }
+-    break;
++int array_sizeof(ArrayType T)
++{
++  switch (T) {
++    case ARRAY_TYPE_BOOL    : return sizeof(Bool);
++    case ARRAY_TYPE_CHAR    : return sizeof(char);
++    case ARRAY_TYPE_SHORT   : return sizeof(short);
++    case ARRAY_TYPE_INT     : return sizeof(int);
++    case ARRAY_TYPE_LONG    : return sizeof(long);
++    case ARRAY_TYPE_SIZE_T  : return sizeof(size_t);
++    case ARRAY_TYPE_FLOAT   : return sizeof(float);
++    case ARRAY_TYPE_DOUBLE  : return sizeof(double);
++    case ARRAY_TYPE_COMPLEX : return sizeof(Complex);
++  }
++  return 0;  // indicates invalid type
++}
+ 
+-  case ARRAY_TYPE_LONG:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(long, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(long, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(long, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(long, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(long, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(long, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(long, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(long, Complex) ; break;
+-    }
+-    break;
++void array_assign_from_scalar(Array *A, const void *val)
++{
++  const size_t N = A->size;
++  void        *restrict a = A->data;
+ 
+-  case ARRAY_TYPE_FLOAT:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(float, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(float, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(float, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(float, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(float, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(float, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(float, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(float, Complex) ; break;
+-    }
+-    break;
++  ARRAY_ASSIGN_OP2(A->dtype, EXPR_ASSIGN1, val);
++}
+ 
+-  case ARRAY_TYPE_DOUBLE:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(double, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(double, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(double, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(double, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(double, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(double, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(double, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(double, Complex) ; break;
+-    }
+-    break;
++void array_assign_from_array(Array *A, const Array *B)
++{
++  void          *restrict a = A->data;
++  const void    *restrict b = B->data;
++  const size_t   N = B->size;
+ 
+-  case ARRAY_TYPE_COMPLEX:
+-    switch (B->dtype) {
+-    case ARRAY_TYPE_BOOL    : EXPR_ASSIGN2(Complex, Bool)    ; break;
+-    case ARRAY_TYPE_CHAR    : EXPR_ASSIGN2(Complex, char)    ; break;
+-    case ARRAY_TYPE_SHORT   : EXPR_ASSIGN2(Complex, short)   ; break;
+-    case ARRAY_TYPE_INT     : EXPR_ASSIGN2(Complex, int)     ; break;
+-    case ARRAY_TYPE_LONG    : EXPR_ASSIGN2(Complex, long)    ; break;
+-    case ARRAY_TYPE_FLOAT   : EXPR_ASSIGN2(Complex, float)   ; break;
+-    case ARRAY_TYPE_DOUBLE  : EXPR_ASSIGN2(Complex, double)  ; break;
+-    case ARRAY_TYPE_COMPLEX : EXPR_ASSIGN2(Complex, Complex) ; break;
+-    }
+-    break;
++  switch (A->dtype) {
++    case ARRAY_TYPE_BOOL:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, Bool);
++      break;
++    case ARRAY_TYPE_CHAR:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, char);
++      break;
++    case ARRAY_TYPE_SHORT:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, short);
++      break;
++    case ARRAY_TYPE_INT:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, int);
++      break;
++    case ARRAY_TYPE_LONG:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, long);
++      break;
++    case ARRAY_TYPE_SIZE_T:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, size_t);
++      break;
++    case ARRAY_TYPE_FLOAT:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, float);
++      break;
++    case ARRAY_TYPE_DOUBLE:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, double);
++      break;
++    case ARRAY_TYPE_COMPLEX:
++      ARRAY_ASSIGN_OP1(B->dtype, EXPR_ASSIGN2, Complex);
++      break;
++  }
++}
++
++#define TRANSPOSE(Ta, Tb) \
++{\
++  rpos = 0;\
++  const Ta*restrict _a=a;Tb*restrict _b=b;\
++  while (indices[0] < shape[0])\
++  {\
++    POS_COLMAJOR(cpos, indices, shape, ndims);\
++    _b[cpos]=_a[rpos];\
++    ADVANCE_INDICES(indices, shape, ndims);\
++    ++rpos;\
++  }\
++}
++
++void array_transpose(const Array *A, Array *B)
++{
++  const int        ndims = A->ndims;
++  const void *restrict a = A->data;
++  void       *restrict b = B->data;
++
++  if (ndims < 2) {
++    /* copy linear array */
++    memcpy(b, a, A->size * array_sizeof(A->dtype));
++    return;
++  }
++
++  const size_t *restrict   shape = A->shape;
++  const ArrayType          TypeA = A->dtype;
++  size_t       *restrict indices = (size_t *) calloc(ndims, sizeof(size_t));
++
++  size_t rpos = 0;
++  size_t cpos = 0;
++
++  ARRAY_OP_UNARY(TRANSPOSE, TRANSPOSE, TRANSPOSE, TRANSPOSE);
++
++  for (int d = 0; d < ndims; d++) {
++    indices[d] = shape[ndims - d - 1];
+   }
++  array_resize_t(B, indices, ndims);
++
++  free(indices);
+ }
+ 
+-struct Array array_new_from_slice(const struct Array *B1,
+-				  int *start, int *stop, int *skip, int Nd)
++Array array_new_from_slice(const Array *B1,
++				  size_t *restrict start, size_t *restrict stop, size_t *restrict skip, int Nd)
+ // -----------------------------------------------------------------------------
+ // Extracts a slice from B1, and returns it as the contiguous array 'B0'
+ // -----------------------------------------------------------------------------
+@@ -346,11 +481,11 @@
+ // -----------------------------------------------------------------------------
+ {
+ 
+-  int *J = (int*) malloc(Nd*sizeof(int)); // current indices into B1
+-  int *N = (int*) malloc(Nd*sizeof(int)); // number of elements to select
+-  int *S = (int*) malloc(Nd*sizeof(int)); // strides (in memory) along each axis
++  size_t *restrict J = (size_t*) malloc(Nd*sizeof(size_t)); // current indices into B1
++  size_t *restrict N = (size_t*) malloc(Nd*sizeof(size_t)); // number of elements to select
++  size_t *restrict S = (size_t*) malloc(Nd*sizeof(size_t)); // strides (in memory) along each axis
+ 
+-  int ntot = 1;
++  size_t ntot = 1;
+ 
+   for (int d=0; d<Nd; ++d) {
+     J[d] = 0;
+@@ -362,19 +497,19 @@
+   for (int d=Nd-2; d>=0; --d) S[d] = S[d+1] * B1->shape[d+1];
+ 
+ 
+-  struct Array B0 = array_new_zeros(ntot, B1->dtype);
+-  array_resize(&B0, N, Nd);
++  Array B0 = array_new_zeros(ntot, B1->dtype);
++  array_resize_t(&B0, N, Nd);
+   int sizeof_T = array_sizeof(B0.dtype);
+-  int m = 0; // indexes into B0, advanced uniformly
++  size_t m = 0; // indexes into B0, advanced uniformly
+ 
+ 
+-  char *b0 = (char*) B0 .data;
+-  char *b1 = (char*) B1->data;
++  char *restrict b0 = (char*) B0 .data;
++  char *restrict b1 = (char*) B1->data;
+ 
+ 
+   while (J[0] < N[0]) {
+ 
+-    int M = 0;
++    size_t M = 0;
+     for (int d=0; d<Nd; ++d) M += (J[d] * skip[d] + start[d]) * S[d];
+ 
+     // ----- use the indices m,M -----
+@@ -397,7 +532,7 @@
+   return B0;
+ }
+ 
+-struct Array array_new_from_mask(const struct Array *B1, struct Array *M)
++Array array_new_from_mask(const Array *B1, Array *M)
+ // -----------------------------------------------------------------------------
+ // Extracts the indices of B1 for which M is true, and returns a 1d-array
+ // -----------------------------------------------------------------------------
+@@ -406,19 +541,20 @@
+ {
+   int sizeof_T = array_sizeof(B1->dtype);
+ 
+-  char *b0 = (char*) malloc(sizeof_T);
+-  char *b1 = (char*) B1->data;
++  char *restrict b0 = (char*) malloc(sizeof_T);
++  char *restrict b1 = (char*) B1->data;
++  Bool *restrict Mp = (Bool*) M->data;
+ 
+-  int m = 0;
++  size_t m = 0;
+ 
+-  for (int n=0; n<B1->size; ++n) {
+-    if (((Bool*)M->data)[n]) {
++  for (size_t n=0; n<B1->size; ++n) {
++    if (Mp[n]) {
+       b0 = (char*) realloc(b0, (++m)*sizeof(double));
+       memcpy(b0 + (m-1)*sizeof_T, b1 + n*sizeof_T, sizeof_T);
+     }
+   }
+ 
+-  struct Array B0 = array_new_zeros(m, B1->dtype);
++  Array B0 = array_new_zeros(m, B1->dtype);
+   memcpy(B0.data, b0, m*sizeof_T);
+   free(b0);
+ 
+diff -ruN '--exclude=array_class.lc' a/src/numarray.h b/src/numarray.h
+--- a/src/numarray.h	2026-06-29 17:45:04.772600806 -0700
++++ b/src/numarray.h	2026-06-29 17:45:04.773600793 -0700
+@@ -3,49 +3,121 @@
+ #ifndef __Array_HEADER__
+ #define __Array_HEADER__
+ 
+-enum ArrayType {
++#include "lua.h"
++#include "lualib.h"
++
++typedef      unsigned char Bool;
++
++typedef enum {
+   ARRAY_TYPE_BOOL,
+   ARRAY_TYPE_CHAR,
+   ARRAY_TYPE_SHORT,
+   ARRAY_TYPE_INT,
+   ARRAY_TYPE_LONG,
++  ARRAY_TYPE_SIZE_T,
+   ARRAY_TYPE_FLOAT,
+   ARRAY_TYPE_DOUBLE,
+   ARRAY_TYPE_COMPLEX,
+-};
++} ArrayType;
+ 
+-enum ArrayOperation {
++typedef union {
++  Bool b;
++  char c;
++  short s;
++  int i;
++  long l;
++  size_t t;
++  float f;
++  double d;
++#ifndef LUNUM_API_NOCOMPLEX
++  Complex z;
++#else
++  double z[2];
++#endif
++  lua_Integer li;
++  lua_Number ln;
++} ArrayAllNum;
++
++typedef enum {
+   ARRAY_OP_ADD,
+   ARRAY_OP_SUB,
+   ARRAY_OP_MUL,
+   ARRAY_OP_DIV,
++  ARRAY_OP_IDIV,
++  ARRAY_OP_MOD,
+   ARRAY_OP_POW,
+-};
++  ARRAY_OP_BAND,
++  ARRAY_OP_BOR,
++  ARRAY_OP_BXOR,
++  ARRAY_OP_SHL,
++  ARRAY_OP_SHR,
++} ArrayBinaryOperation;
++
++typedef enum {
++  ARRAY_OP_UNM,
++  ARRAY_OP_BNOT,
++} ArrayUnaryOperation;
+ 
+-struct Array
+-{
++typedef struct {
+   void *data;
+-  enum ArrayType dtype;
+-  int size, ndims, owns;
+-  int *shape;
+-} ;
+-
+-char          *array_typename(enum ArrayType T);
+-enum ArrayType array_typeflag(char c);
+-struct Array   array_new_zeros(int N, enum ArrayType T);
+-struct Array   array_new_copy(const struct Array *B, enum ArrayType T);
+-struct Array   array_new_from_slice(const struct Array *B1,
+-				   int *start, int *stop, int *skip, int Nd);
+-struct Array   array_new_from_mask(const struct Array *B1, struct Array *M);
+-void           array_del(struct Array *A);
+-void           array_assign_from_scalar(struct Array *A, const void *val);
+-void           array_assign_from_array(struct Array *A, const struct Array *B);
+-void           array_binary_op(const struct Array *A,
+-			       const struct Array *B,
+-			       struct Array *C, enum ArrayOperation op);
+-int            array_sizeof(enum ArrayType T);
+-int            array_resize(struct Array *A, const int *N, int Nd);
+-void           array_extract_slice(struct Array *B0, const struct Array *B1,
+-				   int *start, int *size, int *stride, int Nd);
++  ArrayType dtype;
++  int ndims;
++  size_t size, *shape;
++} Array;
++
++char      *array_typename(ArrayType T);
++double     array_typemin(ArrayType T);
++double     array_typemax(ArrayType T);
++ArrayType  array_typeflag(char c);
++Array      array_new_zeros(size_t N, ArrayType T);
++Array      array_new_copy(const Array *B, ArrayType T);
++Array      array_new_from_slice(const Array *B1,
++				   size_t *start, size_t *stop, size_t *skip, int Nd);
++Array      array_new_from_mask(const Array *B1, Array *M);
++void       array_del(Array *A);
++void       array_assign_from_scalar(Array *A, const void *val);
++void       array_assign_from_array(Array *A, const Array *B);
++void       array_array_binary_op(lua_State * L, const Array *A,
++			                const Array *B, Array *C, ArrayBinaryOperation op);
++void       array_number_binary_op(lua_State * L, const Array *A, const void *B,
++                     Array *C, ArrayBinaryOperation op, Bool array_first);
++void       array_unary_op(lua_State * L, const Array *A,
++                      Array *B, ArrayUnaryOperation op);
++/* returns the sizeof( the array data type ) */
++int        array_sizeof(ArrayType T);
++int        array_resize(Array *A, const int *N, int Nd);
++int        array_resize_t(Array *A, const size_t *N, int Nd);
++void       array_transpose(const Array *A, Array *B);
++void       array_extract_slice(Array *B0, const Array *B1,
++				   size_t *start, size_t *size, size_t *stride, int Nd);
++
++#define POS_ROWMAJOR(pos, indices, shape, ndims) \
++{\
++  (pos) = 0;\
++  for(int _d = 0; _d < (ndims); ++_d) {\
++    (pos) = (pos) * (shape)[_d] + (indices)[_d];\
++  }\
++}
++
++#define POS_COLMAJOR(pos, indices, shape, ndims) \
++{\
++  (pos) = 0;\
++  for(int _d = (ndims)-1; _d >= 0; --_d) {\
++    (pos) = (pos) * (shape)[_d] + (indices)[_d];\
++  }\
++}
++
++#define ADVANCE_INDICES(indices, shape, ndims) \
++{\
++  ++((indices)[(ndims)-1]);\
++  for(int _d = (ndims)-1; _d > 0; --_d) {\
++    if ((indices)[_d] >= (shape)[_d]){\
++      (indices)[_d] = 0;\
++      ++((indices)[_d-1]);\
++    } else {\
++      break;\
++    }\
++  }\
++}
+ 
+ #endif // __Array_HEADER__
+diff -ruN '--exclude=array_class.lc' a/src/slicing.c b/src/slicing.c
+--- a/src/slicing.c	2026-06-29 17:45:04.772600806 -0700
++++ b/src/slicing.c	2026-06-29 17:45:04.773600793 -0700
+@@ -4,29 +4,16 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <complex.h>
++#include "lunum.h"
+ 
+-typedef unsigned char Bool;
+-typedef double complex Complex;
+-
+-
+-enum ArrayType {
+-  ARRAY_TYPE_BOOL,
+-  ARRAY_TYPE_CHAR,
+-  ARRAY_TYPE_SHORT,
+-  ARRAY_TYPE_INT,
+-  ARRAY_TYPE_LONG,
+-  ARRAY_TYPE_FLOAT,
+-  ARRAY_TYPE_DOUBLE,
+-  ARRAY_TYPE_COMPLEX,
+-};
+-
+-struct Buffer {
+-  int size, owner;
++typedef struct {
++  size_t size;
++  Bool owner;
+   void *data;
+-  enum ArrayType dtype;
+-} ;
++  ArrayType dtype;
++} Buffer;
+ 
+-int buffer_sizeof(enum ArrayType T)
++int buffer_sizeof(ArrayType T)
+ {
+   switch (T) {
+   case ARRAY_TYPE_BOOL    : return sizeof(Bool);
+@@ -34,15 +21,16 @@
+   case ARRAY_TYPE_SHORT   : return sizeof(short);
+   case ARRAY_TYPE_INT     : return sizeof(int);
+   case ARRAY_TYPE_LONG    : return sizeof(long);
++  case ARRAY_TYPE_SIZE_T  : return sizeof(size_t);
+   case ARRAY_TYPE_FLOAT   : return sizeof(float);
+   case ARRAY_TYPE_DOUBLE  : return sizeof(double);
+   case ARRAY_TYPE_COMPLEX : return sizeof(Complex);
+   }
+ }
+ 
+-struct Buffer buffer_new(int size, enum ArrayType T, void *data)
++Buffer buffer_new(size_t size, ArrayType T, void *data)
+ {
+-  struct Buffer buf;
++  Buffer buf;
+ 
+   if (data == NULL) {
+     buf.data = malloc(size*buffer_sizeof(T));
+@@ -59,7 +47,7 @@
+   return buf;
+ }
+ 
+-void buffer_free(struct Buffer *buf)
++void buffer_free(Buffer *buf)
+ {
+   if (buf->owner) free(buf->data);
+   buf->data = NULL;
+@@ -68,8 +56,8 @@
+   buf->owner = 0;
+ }
+ 
+-void buffer_extract_slice(struct Buffer *B0, const struct Buffer *B1,
+-			  int *start, int *size, int *stride, int Nd)
++void buffer_extract_slice(Buffer *B0, const Buffer *B1,
++			  size_t *start, size_t *size, size_t *stride, int Nd)
+ // -----------------------------------------------------------------------------
+ // Extract the slice from B1, and insert it contiguously into B0
+ // -----------------------------------------------------------------------------
+@@ -83,17 +71,17 @@
+   char *b0 = (char*) B0->data;
+   char *b1 = (char*) B1->data;
+ 
+-  int *N = size;
+-  int *S = stride;
+-  int *J = (int*) malloc(Nd*sizeof(int));
++  size_t *N = size;
++  size_t *S = stride;
++  size_t *J = (size_t*) malloc(Nd*sizeof(size_t));
+   for (int d=0; d<Nd; ++d) J[d] = 0;
+ 
+   int sizeof_T = buffer_sizeof(B0->dtype);
+-  int m = 0; // indexes into B0, advanced uniformly
++  size_t m = 0; // indexes into B0, advanced uniformly
+ 
+   while (J[0] < N[0]) {
+ 
+-    int M = 0;
++    size_t M = 0;
+     for (int d=0; d<Nd; ++d) M += (J[d] + start[d]) * S[d];
+ 
+     // ----- use the index x -----
+@@ -113,8 +101,8 @@
+   free(J);
+ }
+ 
+-void buffer_insert_slice(struct Buffer *b0, const struct Buffer *b1,
+-			 int *start, int *size, int *stride, int Nd)
++void buffer_insert_slice(Buffer *b0, const Buffer *b1,
++			 size_t *start, size_t *size, size_t *stride, int Nd)
+ // -----------------------------------------------------------------------------
+ // Extract contiguously from b1, and insert as a slice into b0
+ // -----------------------------------------------------------------------------
+@@ -127,12 +115,12 @@
+ {
+   double *mydata = (double*) malloc(144*sizeof(double));
+ 
+-  struct Buffer A = buffer_new(144, ARRAY_TYPE_DOUBLE, NULL);
+-  struct Buffer B = buffer_new(144, ARRAY_TYPE_DOUBLE, mydata);
++  Buffer A = buffer_new(144, ARRAY_TYPE_DOUBLE, NULL);
++  Buffer B = buffer_new(144, ARRAY_TYPE_DOUBLE, mydata);
+   
+-  int start [4] = {0,0,0,0};
+-  int size  [4] = {4,3,4,3};
+-  int stride[4] = {36,12,3,1};
++  size_t start [4] = {0,0,0,0};
++  size_t size  [4] = {4,3,4,3};
++  size_t stride[4] = {36,12,3,1};
+ 
+   buffer_extract_slice(&A, &B, start, size, stride, 4);
+ 
