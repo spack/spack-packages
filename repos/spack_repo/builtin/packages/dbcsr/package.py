@@ -149,7 +149,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
     depends_on(
         "libxsmm@2: build_system=cmake",
-        when="@2.10: +libxsmm",
+        when="+libxsmm",
     )
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"

@@ -334,7 +334,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
 
     depends_on("libxs@1:+fortran", when="smm=libxs")
-    depends_on("libxsmm@2:", when="@2026.2: +libxsmm")
+    depends_on("libxsmm@2:", when="+libxsmm")
 
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
@@ -539,7 +539,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr@:2.9.1 smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
         depends_on("dbcsr@2.10: smm=libxs", when="@2026.2: smm=libxs")
-        depends_on("dbcsr~libxsmm", when="@2026.2: ~libxsmm")
+        depends_on("dbcsr~libxsmm", when="~libxsmm")
 
     with when("@2022: +rocm"):
         depends_on("hipblas")
@@ -1341,7 +1341,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "spla" in spec and (spec.satisfies("+cuda") or spec.satisfies("+rocm")):
             args += ["-DCP2K_USE_SPLA_GEMM_OFFLOADING=ON"]
 
-        use_libxsmm = spec.satisfies("smm=libxsmm") or spec.satisfies("@2026.2: +libxsmm")
+        use_libxsmm = spec.satisfies("smm=libxsmm") or spec.satisfies("+libxsmm")
         args += [
             self.define("CP2K_USE_LIBXSMM", use_libxsmm),
             self.define("CP2K_USE_LIBXS", spec.satisfies("smm=libxs")),
