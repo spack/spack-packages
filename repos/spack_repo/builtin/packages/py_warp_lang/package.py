@@ -49,7 +49,9 @@ class PyWarpLang(PythonPackage, CudaPackage):
         when="@1.14.0",
     )
 
-    def build(self, spec, prefix):
+    @run_before("install")
+    def build_lib(self):
+        spec = self.spec
         python = spec["python"].command
         build_command = ["build_lib.py"]
         build_command += ["--libmathdx-path", f"{spec['nvidia-libmathdx'].prefix}"]
