@@ -111,7 +111,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=True, description="Enable OpenMP support")
     variant(
         "smm",
-        default="libxsmm",
+        default="blas",
         values=("libxsmm", "libsmm", "blas"),
         description="Library for small matrix multiplications",
         when="@:2026.1",
@@ -119,9 +119,15 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "smm",
         default="blas",
-        values=("libsmm", "blas", "libxs"),
+        values=("blas", "libxs"),
         description="Library for small matrix multiplications",
         when="@2026.2:",
+    )
+    variant(
+        "libxsmm",
+        default=True,
+        description="Use LIBXSMM as a JIT kernel provider for LIBXS",
+        when="@2026.2: smm=libxs",
     )
     variant("opencl", default=False, description="Enable OpenCL backend")
     variant("plumed", default=False, description="Enable PLUMED support")
@@ -328,6 +334,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
 
     depends_on("libxs@1:+fortran", when="smm=libxs")
+    depends_on("libxsmm@2:", when="+libxsmm")
 
     depends_on("fftw-api@3")
     depends_on("greenx", when="+greenx")
@@ -340,7 +347,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("gauxc+fortran+mpi", when="+mpi")
         depends_on("gauxc+pic", when="+pic")
 
-    depends_on("tblite build_system=cmake", when="+tblite")
     # Force openmp propagation on some providers of blas / fftw-api
     with when("+openmp"):
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
@@ -509,7 +515,14 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("spglib", when="+spglib")
 
-    depends_on("dftd4@3.6.0: build_system=cmake", when="+dftd4")
+    with when("+dftd4"):
+        depends_on("dftd4@3.6.0: build_system=cmake")
+        depends_on("dftd4@:3", when="@:2026.1")
+
+    with when("+tblite"):
+        depends_on("tblite build_system=cmake")
+        depends_on("tblite@0.6", when="@2026.2")
+        depends_on("tblite@0.7:", when="@2027.1:")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.22:", type="build")
@@ -526,6 +539,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("dbcsr@:2.9.1 smm=libxsmm", when="smm=libxsmm")
         depends_on("dbcsr smm=blas", when="smm=blas")
         depends_on("dbcsr@2.10: smm=libxs", when="@2026.2: smm=libxs")
+        depends_on("dbcsr~libxsmm", when="~libxsmm")
 
     with when("@2022: +rocm"):
         depends_on("hipblas")
@@ -1327,15 +1341,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if "spla" in spec and (spec.satisfies("+cuda") or spec.satisfies("+rocm")):
             args += ["-DCP2K_USE_SPLA_GEMM_OFFLOADING=ON"]
 
-        if spec.satisfies("smm=libxsmm"):
-            args += ["-DCP2K_USE_LIBXSMM=ON"]
-        else:
-            args += ["-DCP2K_USE_LIBXSMM=OFF"]
-
-        if spec.satisfies("smm=libxs"):
-            args += ["-DCP2K_USE_LIBXS=ON"]
-        else:
-            args += ["-DCP2K_USE_LIBXS=OFF"]
+        use_libxsmm = spec.satisfies("smm=libxsmm") or spec.satisfies("+libxsmm")
+        args += [
+            self.define("CP2K_USE_LIBXSMM", use_libxsmm),
+            self.define("CP2K_USE_LIBXS", spec.satisfies("smm=libxs")),
+        ]
 
         lapack = spec["lapack"]
         blas = spec["blas"]
