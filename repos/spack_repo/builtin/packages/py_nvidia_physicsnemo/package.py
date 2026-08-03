@@ -21,7 +21,6 @@ class PyNvidiaPhysicsnemo(PythonPackage):
     license("Apache-2.0", checked_by="LydDeb")
 
     version("2.1.1", sha256="86479174f725dd8f569f76f7e688f64721afd2c16421e8516973f46f8febbefc")
-    version("2.0.0", sha256="fcea6ac198a2925ab81c3f62011225f53b73e1212e5364aac939ab599c0dfd9d")
     version("1.3.0", sha256="404b5a17cdc00bcc8a2b003304695e4cbd8fff7fc7cca7f140988569c690f6b9")
 
     variant("sym", default=False, description="Provides extra module: sym")
