@@ -66,7 +66,9 @@ class BigdftFutile(AutotoolsPackage, CudaPackage):
         linalg = [spec["blas"].libs.ld_flags, spec["lapack"].libs.ld_flags]
 
         python_version = spec["python"].version.up_to(2)
-        pyyaml = join_path(spec["py-pyyaml"].prefix.lib, f"python{python_version}")
+        pyyaml = join_path(
+            spec["py-pyyaml"].prefix.lib, f"python{python_version}", "site-packages"
+        )
 
         openmp_flag = []
         if spec.satisfies("+openmp"):
