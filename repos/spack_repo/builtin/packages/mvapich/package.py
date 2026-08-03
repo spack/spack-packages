@@ -100,6 +100,8 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     depends_on("libfabric", when="netmod=ofi")
     depends_on("slurm", when="process_managers=slurm")
     depends_on("ucx", when="netmod=ucx")
+    depends_on("json-c")
+    depends_on("libnl", when="netmod=ofi")
 
     filter_compiler_wrappers("mpicc", "mpicxx", "mpif77", "mpif90", "mpifort", relative_root="bin")
 

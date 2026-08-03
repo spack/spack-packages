@@ -40,7 +40,7 @@ class PyTypesSetuptools(PythonPackage):
         depends_on("python@3.9:", when="@75.8.0.20250210:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/t/types-setuptools/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/t/{0}/{0}-{1}.tar.gz"
         if version >= Version("75.5.0.20241121"):
             name = "types_setuptools"
         else:

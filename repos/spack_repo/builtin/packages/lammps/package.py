@@ -33,14 +33,20 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20260704", sha256="be9deffba169d140c337fd29570d3f5469332ece7e77280cce998f6caaad5534")
     version("20260330", sha256="395f00e166836ac0164793d65ba0d957d79dd0848a79c36fa903855e8b49b7e0")
     version("20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e")
     version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
     version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
     version(
+        "20250722.4",
+        sha256="411088d9c03339e025f6a975e0a5741bb9e3f351cc39eda220ab22ac318fe2fb",
+        preferred=True,
+    )
+    version(
         "20250722.3",
         sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20250722.2",
@@ -95,6 +101,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20250722.4",
         "20250722.3",
         "20250722.2",
         "20250722.1",
@@ -162,6 +169,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "extra-pair": {"when": "@20210728:"},
         "fep": {"when": "@20210702:"},
         "granular": {},
+        "gransurf": {"when": "@20260704:"},
+        "graphics": {"when": "@20260211:"},
         "h5md": {"when": "@20210702:"},
         "intel": {"when": "@20210702:"},
         "interlayer": {"when": "@20210728:"},
@@ -397,6 +406,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.6.02:", when="@20250722: +kokkos")
     depends_on("kokkos@4.7.01:", when="@20251210: +kokkos")
     depends_on("kokkos@5.0.2:", when="@20260211: +kokkos")
+    depends_on("kokkos@5.1.0:", when="@20260704: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")

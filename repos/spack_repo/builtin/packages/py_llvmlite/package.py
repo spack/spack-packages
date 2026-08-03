@@ -14,8 +14,11 @@ class PyLlvmlite(PythonPackage):
     pypi = "llvmlite/llvmlite-0.23.0.tar.gz"
     git = "https://github.com/numba/llvmlite.git"
 
+    maintainers("mathomp4")
+
     license("BSD-2-Clause")
 
+    version("0.48.0", sha256="543b19f9ef8f3c7c60d1468191e4ee1b1537bf9f8a3d56f64c0ddd98de92edd2")
     version("0.47.0", sha256="62031ce968ec74e95092184d4b0e857e444f8fdff0b8f9213707699570c33ccc")
     version("0.46.0", sha256="227c9fd6d09dce2783c18b754b7cd9d9b3b3515210c46acc2d3c5badd9870ceb")
     version("0.45.1", sha256="09430bb9d0bb58fc45a45a57c7eae912850bedc095cd0810a57de109c69e1c32")
@@ -57,11 +60,23 @@ class PyLlvmlite(PythonPackage):
         depends_on("python@:3.9", when="@0.36:0.37")
 
     # https://github.com/numba/llvmlite#compatibility
-    depends_on("llvm@20", when="@0.45:")
+    depends_on("llvm@22", when="@0.48:")
+    depends_on("llvm@20", when="@0.45:0.47")
     depends_on("llvm@15:16", when="@0.44")
     depends_on("llvm@14", when="@0.41:0.43")
     depends_on("llvm@11:14", when="@0.40")
     depends_on("llvm@11", when="@0.37:0.39")
+
+    # On macOS, llvmlite must link the platform (system) libc++. If the LLVM
+    # dependency ships its own libc++/libunwind runtime (libcxx=runtime,
+    # libunwind=runtime), both that runtime and the system libc++ get loaded
+    # into the host Python process at JIT time. C++ objects allocated by one
+    # runtime are then freed by the other, producing crashes such as
+    # "malloc: pointer being freed was not allocated" / "Abort trap: 6".
+    # Requiring the platform C++ runtime keeps a single libc++ in the process.
+    # See https://github.com/spack/spack-packages/issues/5403
+    depends_on("llvm libcxx=none libunwind=none", when="platform=darwin")
+
     for t in [
         "arm:",
         "ppc:",

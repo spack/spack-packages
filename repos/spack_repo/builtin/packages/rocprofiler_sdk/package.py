@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
@@ -26,21 +27,32 @@ def submodules(package):
     return submodules
 
 
-class RocprofilerSdk(CMakePackage):
-    """ROCProfiler-SDK is AMD’s new and improved tooling infrastructure, providing a
+class RocprofilerSdk(ROCmLibrary, CMakePackage):
+    """ROCProfiler-SDK is AMD's new and improved tooling infrastructure, providing a
     hardware-specific low-level performance analysis interface for profiling and
     tracing GPU compute applications."""
 
     homepage = "https://github.com/ROCm/rocprofiler-sdk"
     git = "https://github.com/ROCm/rocm-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-6.3.2.tar.gz"
 
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocprofiler-sdk/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
     executables = ["rocprofv3"]
 
     license("MIT")
+
+    version(
+        "7.13.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="therock-7.13",
+        submodules=submodules,
+    )
     version(
         "7.2.3",
         tag="rocm-7.2.3",
@@ -175,7 +187,7 @@ class RocprofilerSdk(CMakePackage):
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -195,10 +207,11 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rccl@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -214,14 +227,23 @@ class RocprofilerSdk(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+
+    resource(
+        name="otf2",
+        destination="deps",
+        placement="otf2",
+        url="https://rocm-third-party-deps.s3.us-east-2.amazonaws.com/otf2-3.0.3.tar.gz",
+        sha256="18a3905f7917340387e3edc8e5766f31ab1af41f4ecc5665da6c769ca21c4ee8",
+    )
 
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
         sha256="05a71386d12d7fc98a40c025dc65a804556e01f381d1101ea244f35f29edd3d8",
-        when="@7.2:",
+        when="@7.2",
     )
 
     @property
@@ -232,7 +254,8 @@ class RocprofilerSdk(CMakePackage):
             return "projects/rocprofiler-sdk"
 
     def cmake_args(self):
-        args = []
+        otf2_source = join_path(self.stage.source_path, "deps", "otf2")
+        args = [self.define("FETCHCONTENT_SOURCE_DIR_OTF2-SOURCE", otf2_source)]
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("ElfUtils_ROOT_DIR", self.spec["elfutils"].prefix))
         if self.spec.satisfies("@7.2:"):
