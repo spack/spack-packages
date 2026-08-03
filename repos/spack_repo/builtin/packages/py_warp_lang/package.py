@@ -21,15 +21,15 @@ class PyWarpLang(PythonPackage, CudaPackage):
 
     version("1.14.0", sha256="bacae67709fb87f6cc03cda78f93e466a0a076580eb815294e2629a6aaacfc0d")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
     with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         depends_on("cuda", when="+cuda")
         depends_on("py-setuptools@75.3.2:")
         depends_on("py-wheel")
         depends_on("py-build")
         # To build local llvm
+        depends_on("cmake@3.20:")
         depends_on("ninja")
 
     with default_args(type=("build", "run")):
