@@ -261,13 +261,13 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         description="C++ standard to build with",
         values=(
             conditional("11", when="@:0.13"),
+            conditional("11", when="@:2024.2 +sycl")
             conditional("14", when="@:2025.03"),
             conditional("17", when="@:2025.12"),
             "20",
         ),
         multi=False,
     )
-    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
