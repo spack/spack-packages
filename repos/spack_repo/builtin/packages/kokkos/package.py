@@ -205,7 +205,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # ("ARMV8_THUNDERX", None),  # Cavium ThunderX
 
     # cuda_arch : (cmake_arch_option, condition)
-    spack_cuda_arch_map = {
+    cuda_arch_map = {
         "30": ("kepler30", "@:4"),
         "32": ("kepler32", "@:4"),
         "35": ("kepler35", "@:4"),
@@ -228,7 +228,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "120": ("blackwell120", "@4.7.00:"),
         "121": ("blackwell121", "@5.1.0:"),
     }
-    cuda_arches = spack_cuda_arch_map.values()
+    cuda_arches = cuda_arch_map.values()
     conflicts("+cuda", when="cuda_arch=none")
 
     # Kokkos support only one cuda_arch at a time
@@ -466,7 +466,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
-                kokkos_arch_name, cond = self.spack_cuda_arch_map[cuda_arch]
+                kokkos_arch_name, cond = self.cuda_arch_map[cuda_arch]
 
                 if cond and not self.spec.satisfies(cond):
                     raise SpackError(f"Unsupported CUDA arch: {cuda_arch}")
