@@ -258,12 +258,15 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="20",
-        values=("11", "14", "17", "20"),
         description="C++ standard to build with",
+        values=(
+            conditional("11", when="@:0.13"),
+            conditional("14", when="@:2025.03"),
+            conditional("17", when="@:2025.12"),
+            "20",
+        ),
+        multi=False,
     )
-    conflicts("cxxstd=11", when="@0.14.0:")
-    conflicts("cxxstd=14", when="@2025.09.0:")
-    conflicts("cxxstd=17", when="@2026.03.0:")
     conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")

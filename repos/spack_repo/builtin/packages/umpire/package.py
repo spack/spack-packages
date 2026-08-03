@@ -236,31 +236,16 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("examples", default=False, description="Build Umpire Examples")
     variant(
         "cxxstd",
-        default="11",
-        values=("11", "14", "17", "20", "23"),
-        when="@:6.0.0",
-        description="C++ standard to build with",
-    )
-    variant(
-        "cxxstd",
-        default="14",
-        values=("14", "17", "20", "23"),
-        when="@2022.03.0:2025.03.1",
-        description="C++ standard to build with",
-    )
-    variant(
-        "cxxstd",
-        default="17",
-        values=("17", "20", "23"),
-        when="@2025.09.0:2025.12.0",
-        description="C++ standard to build with",
-    )
-    variant(
-        "cxxstd",
         default="20",
-        values=("20", "23"),
-        when="@2026.07:",
         description="C++ standard to build with",
+        values=(
+            conditional("11", when="@:6.0.0"),
+            conditional("14", when="@:2025.03.1"),
+            conditional("17", when="@:2025.12.0"),
+            "20",
+            "23",
+        ),
+        multi=False,
     )
     variant(
         "tests",
