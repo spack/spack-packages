@@ -242,6 +242,17 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         when="+cuda",
     )
 
+    cuda_support_conflict_msg = (
+        "{0} is not supported; "
+        "Kokkos supports the following Cuda GPU targets: " + ", ".join(cuda_arch_map.keys())
+    )
+
+    for arch in CudaPackage.cuda_targets:
+        if arch not in cuda_arch_map:
+            conflicts(
+                "+cuda", when=f"cuda_target={arch}", msg=cuda_support_conflict_msg.format(arch)
+            )
+
     # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
         "gfx900": ("vega900", None),
