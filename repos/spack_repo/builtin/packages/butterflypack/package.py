@@ -64,6 +64,18 @@ class Butterflypack(CMakePackage):
 
     conflicts("%gcc@:7", when="@2.2.1:")
 
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/1393fc11b390934cbb020700397cc75bab87c783.patch?full_index=1",
+        sha256="a662fc51552eac3911cd7987bb2ebb283f6513e1bde094769f1fe9eba6878a18",
+        when="@4.1.0",
+    )
+    # ifx rejects SIZEOF on components of assumed-size dummy arrays.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/pull/42.patch?full_index=1",
+        sha256="c7a22ed21b7eb3f2f295e7ed2b04099a108151c64da61b87c823dc8e0b3f950d",
+        when="@4.1.0 %oneapi",
+    )
+
     # https://github.com/spack/spack/issues/31818
     patch("qopenmp-for-oneapi.patch", when="@2.1.1 %oneapi")
 
