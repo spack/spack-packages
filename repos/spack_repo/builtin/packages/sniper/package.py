@@ -33,7 +33,7 @@ class Sniper(CMakePackage):
 
     variant(
         "cxxstd",
-        default="11",
+        default="17",
         values=("11", "14", "17", "20"),
         multi=False,
         description="C++ language standard",
@@ -45,9 +45,21 @@ class Sniper(CMakePackage):
     depends_on("cmake@3.12:", type="build")
     depends_on("boost@1.67:+python", when="+python", type=("build", "link"))
     depends_on("python@3:", when="+python", type=("build", "link", "run"))
-    depends_on("root@5.18:", when="+root", type=("build", "link", "run"))
+
+    conflicts("+root cxxstd=11", msg="ROOT requires at least C++14")
+    conflicts("+root cxxstd=14", msg="Supported ROOT versions require C++17")
+    depends_on(
+        "root@5.18: cxxstd=17", when="+root cxxstd=17", type=("build", "link", "run")
+    )
+    depends_on(
+        "root@6.28.04: cxxstd=20",
+        when="+root cxxstd=20",
+        type=("build", "link", "run"),
+    )
 
     def cmake_args(self):
+        # Upstream installs the example scripts only when BUILD_TESTS is enabled.
+        # self.run_tests is true only for a direct `spack install --test=root`.
         args = [
             self.define("BUILD_TESTS", self.run_tests),
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),
@@ -66,8 +78,8 @@ class Sniper(CMakePackage):
         return args
 
     # The upstream CTest definitions run build-tree binaries without the
-    # build-tree library and Python paths. Test an installed example instead,
-    # using the same environment as a user gets from `spack load`.
+    # build-tree library and Python paths. The post-install hook below tests an
+    # installed example instead, using the environment provided by `spack load`.
     def check(self):
         pass
 
