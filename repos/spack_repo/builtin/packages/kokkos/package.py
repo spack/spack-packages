@@ -247,6 +247,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "Kokkos supports the following Cuda GPU targets: " + ", ".join(cuda_arch_map.keys())
     )
 
+    # warn early if we do not support an arch
     for arch in CudaPackage.cuda_targets:
         if arch not in cuda_arch_map:
             conflicts(
@@ -280,6 +281,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
+    # warn early if we do not support an arch
     amd_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
