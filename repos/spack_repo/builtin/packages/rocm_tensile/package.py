@@ -4,13 +4,13 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
 
-class RocmTensile(CMakePackage):
+class RocmTensile(ROCmLibrary, CMakePackage):
     """Radeon Open Compute Tensile library"""
 
     homepage = "https://github.com/ROCm/Tensile/"
@@ -21,6 +21,13 @@ class RocmTensile(CMakePackage):
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
+
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/Tensile/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="3bb419564c6c61cc0663c6cab3c46c45459be16bb2c15f055852de954dc8a3cf")
     version("7.2.1", sha256="9d7757997b09c80a450a81dc48046408433d79d78f72ba362ee0afd721788b2e")
     version("7.2.0", sha256="e09cfe77fc0b9198e3dd0530214599b1bf849a8bd36031a734f0e591aafb7caf")
@@ -110,17 +117,52 @@ class RocmTensile(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", type="build", when=f"@{ver}")
-        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", type="build", when=f"@{ver}")
 
-    root_cmakelists_dir = "Tensile/Source"
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.13:"):
+            return "shared/tensile/Tensile/Source"
+        else:
+            return "Tensile/Source"
 
     patch("0004-replace_rocm_smi.patch", when="@6.4:")
+    patch("0004-replace_rocm_smi.patch", when="@7.13:", working_dir="shared/tensile")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
@@ -157,7 +199,14 @@ class RocmTensile(CMakePackage):
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
 
-        if self.spec.satisfies("@7.1:"):
+        if self.spec.satisfies("@7.13:"):
+            args.append(
+                self.define(
+                    "CMAKE_MODULE_PATH",
+                    f"{self.stage.source_path}/shared/tensile/next-cmake/cmake",
+                )
+            )
+        elif self.spec.satisfies("@7.1:"):
             args.append(
                 self.define("CMAKE_MODULE_PATH", f"{self.stage.source_path}/next-cmake/cmake")
             )
@@ -170,4 +219,7 @@ class RocmTensile(CMakePackage):
             install_tree("./client", prefix.client)
             install_tree("./lib", prefix.lib)
         with working_dir(self.stage.source_path):
-            install_tree("./Tensile", prefix.Tensile)
+            if self.spec.satisfies("@7.13:"):
+                install_tree("./shared/tensile/Tensile", prefix.Tensile)
+            else:
+                install_tree("./Tensile", prefix.Tensile)

@@ -90,12 +90,20 @@ class Arrow(CMakePackage, CudaPackage):
     depends_on("utf8proc@2.7.0: +shared", when="+gandiva")
     depends_on("utf8proc@2.7.0: +shared", when="+python")
     depends_on("xsimd@14:", when="@24:")
+    depends_on("xsimd@13:", when="@23:")
     depends_on("xsimd@8.1.0:", when="@9.0.0:")
     depends_on("zlib-api", when="+zlib @9:")
     depends_on("zlib-api", when="@:8")
     conflicts("^zlib~pic")
     depends_on("zstd", when="+zstd @9:")
     depends_on("zstd", when="@:8")
+
+    conflicts("@:23 %gcc@:9 ^xsimd@14", msg="Use newer Arrow or newer GCC")
+    conflicts(
+        "@23+parquet %gcc@:9",
+        msg="Arrow 23 requires 'C++20-enabled compiler' to build with parquet support",
+    )
+    conflicts("@24: %gcc@:9", msg="Arrow 24 requires 'C++20-enabled compiler'")
 
     variant("brotli", default=False, description="Build support for Brotli compression")
     variant("bz2", default=False, description="Build support for bzip2 compression")
@@ -125,6 +133,11 @@ class Arrow(CMakePackage, CudaPackage):
     variant("ipc", default=True, description="Build the Arrow IPC extensions")
     variant("jemalloc", default=False, description="Build the Arrow jemalloc-based allocator")
     variant("lz4", default=False, description="Build support for lz4 compression")
+    variant(
+        "mimalloc",
+        default=True,
+        description="Build the Arrow mimalloc-based allocator",
+    )
     variant("orc", default=False, description="Build integration with Apache ORC")
     variant("parquet", default=False, description="Build Parquet interface")
     variant("python", default=False, description="Build Python interface")
@@ -178,8 +191,14 @@ class Arrow(CMakePackage, CudaPackage):
             args.append(self.define("ARROW_USE_SSE", "ON"))
 
         # https://github.com/apache/arrow/issues/47790
-        if self.spec.satisfies("%oneapi@2025:"):
+        # mimalloc is always vendored (no system lookup); Arrow downloads its source
+        # via FetchContent at build time, which fails on air-gapped compute nodes.
+        # The ~mimalloc variant allows disabling it for such environments.
+        # Note: oneapi@2025: also has a compiler bug requiring MIMALLOC=OFF regardless.
+        if self.spec.satisfies("%oneapi@2025:") or self.spec.satisfies("~mimalloc"):
             args.append(self.define("ARROW_MIMALLOC", "OFF"))
+        else:
+            args.append(self.define_from_variant("ARROW_MIMALLOC", "mimalloc"))
 
         args.append(self.define_from_variant("ARROW_COMPUTE", "compute"))
         args.append(self.define_from_variant("ARROW_CSV", "csv"))
