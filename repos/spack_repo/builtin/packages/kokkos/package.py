@@ -229,7 +229,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "121": ("blackwell121", "@5.1.0:"),
     }
     cuda_arches = cuda_arch_map.values()
-    conflicts("+cuda", when="cuda_arch=none")
 
     # Kokkos support only one cuda_arch at a time
     variant(
@@ -241,6 +240,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         sticky=True,
         when="+cuda",
     )
+    conflicts("+cuda", when="cuda_arch=none")
 
     cuda_support_conflict_msg = (
         "{0} is not supported; "
@@ -248,7 +248,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     # warn early if we do not support an arch
-    for arch in CudaPackage.cuda_targets:
+    for arch in CudaPackage.cuda_arch_values:
         if arch not in cuda_arch_map:
             conflicts(
                 "+cuda", when=f"cuda_target={arch}", msg=cuda_support_conflict_msg.format(arch)
@@ -279,6 +279,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         sticky=True,
         when="+rocm",
     )
+    conflicts("+rocm", when="amdgpu_target=none")
 
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
     # warn early if we do not support an arch
@@ -322,6 +323,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         values=("none",) + tuple(intel_gpu_arches.keys()),
         description="Intel GPU architecture",
     )
+    conflicts("+sycl", when="intel_gpu_arch=none")
+
     # FIXME this should move to the apu part
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
 
