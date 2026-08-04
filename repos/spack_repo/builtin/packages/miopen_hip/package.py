@@ -6,13 +6,13 @@ import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
 
-class MiopenHip(CMakePackage):
+class MiopenHip(ROCmLibrary, CMakePackage):
     """AMD's library for high performance machine learning primitives."""
 
     homepage = "https://github.com/ROCm/MIOpen"
@@ -23,13 +23,12 @@ class MiopenHip(CMakePackage):
     libraries = ["libMIOpen"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/MIOpen/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/MIOpen/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -149,6 +148,7 @@ class MiopenHip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -178,6 +178,7 @@ class MiopenHip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -185,6 +186,23 @@ class MiopenHip(CMakePackage):
                 f"hipblaslt@{ver} amdgpu_target={tgt}",
                 when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
             )
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     depends_on("nlohmann-json", type="link")
@@ -272,4 +290,6 @@ class MiopenHip(CMakePackage):
                     f"{self.spec['llvm-amdgpu'].prefix.bin}/clang-offload-bundler",
                 )
             )
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("MIOPEN_USE_MLIR", "OFF"))
         return args

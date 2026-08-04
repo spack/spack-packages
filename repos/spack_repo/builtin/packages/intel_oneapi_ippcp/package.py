@@ -30,6 +30,13 @@ class IntelOneapiIppcp(IntelOneApiLibraryPackage):
     )
 
     version(
+        "2026.0.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/bdaa109d-f2ae-4b10-a8ad-a6ef8663abda/intel-cryptography-primitives-library-2026.0.1.11_offline.sh",
+        sha256="c890e961fe60367ce2ec7ce79edddebe3a91b7ccfe97379fb3e587a2afce327f",
+        expand=False,
+    )
+
+    version(
         "2026.0.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/db3a2202-3937-4149-8845-087401bd2fba/intel-cryptography-primitives-library-2026.0.0.472_offline.sh",
         sha256="79a27cea101c44ec4d5bdf66684e5dd5348aa6454c7082b226e46aa437277143",

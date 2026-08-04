@@ -125,6 +125,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+hdf5", when="backend=hpx", msg="HPX backend doesn't support HDF5")
     conflicts("^hpx networking=none", when="backend=hpx")
 
+    conflicts("^boost cxxstd=98")
     for cxxstd in ("11", "14"):
         conflicts(f"^boost cxxstd={cxxstd}")
         conflicts(f"^hpx cxxstd={cxxstd}", when="backend=hpx")
