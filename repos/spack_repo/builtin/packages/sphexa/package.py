@@ -8,6 +8,7 @@ from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
+from typing import List
 
 
 class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
@@ -98,13 +99,11 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
         ]
 
         # Upstream test executables link as PIE, so every object linked into
-        # them must be position independent. CMake keeps CXX and HIP flags
+        # them must be position independent. CMake keeps (CXX and) HIP flags
         # separate; without the HIP flag, ROCm .cu objects remain non-PIE and
         # fail at link time with R_X86_64_32S relocations from Thrust globals.
-        if spec.satisfies("+tests"):
-            args.append("-DCMAKE_CXX_FLAGS=-fPIE")
-            if spec.satisfies("+rocm"):
-                args.append("-DCMAKE_HIP_FLAGS=-fPIE")
+        if spec.satisfies("+tests +rocm"):
+            args.append("-DCMAKE_HIP_FLAGS=-fPIE")
 
         if spec.satisfies("+rocm") or spec.satisfies("+cuda"):
             args.append(self.define_from_variant("CSTONE_WITH_GPU_AWARE_MPI", "gpu_aware_mpi"))
@@ -121,3 +120,9 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_CUDA_ARCHITECTURES", arch_str))
 
         return args
+
+    def flag_handler(self, name, flags):
+        # append -fPIE to existing CXX flags below to preserve Spack flags
+        if name == "cxxflags" and self.spec.satisfies("+tests"):
+            flags.append("-fPIE")
+        return (flags, None, None)
