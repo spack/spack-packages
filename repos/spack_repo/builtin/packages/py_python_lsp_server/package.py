@@ -17,6 +17,7 @@ class PyPythonLspServer(PythonPackage):
 
     license("MIT")
 
+    version("1.15.0", sha256="85fa090262c3d1aef09b759d98811d6cb9ad5bbc58af15d588608ae8c1925801")
     version("1.14.0", sha256="509c445fc667f41ffd3191cb7512a497bf7dd76c14ceb1ee2f6c13ebe71f9a6b")
     version("1.13.2", sha256="d507fc6be69861740827f4e4dffa1c9b1dec97c0ead859cfef86aa342a4c7904")
     version("1.11.0", sha256="89edd6fb3f7852e4bf5a3d1d95ea41484d1a28fa94b6e3cbff12b9db123b8e86")
@@ -43,7 +44,8 @@ class PyPythonLspServer(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-docstring-to-markdown")
         depends_on("py-importlib-metadata@4.8.3:", when="@1.8.0: ^python@:3.9")
-        depends_on("py-jedi@0.17.2:0.19", when="@1.8.0:")
+        depends_on("py-jedi@0.17.2:0.20", when="@1.15:")
+        depends_on("py-jedi@0.17.2:0.19", when="@1.8.0:1.14")
         depends_on("py-jedi@0.17.2:0.18", when="@:1.7")
         depends_on("py-pluggy@1.0.0:")
         depends_on("py-python-lsp-jsonrpc@1.1.0:1", when="@1.8.0:")
