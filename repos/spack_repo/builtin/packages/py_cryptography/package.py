@@ -20,7 +20,9 @@ class PyCryptography(PythonPackage):
     with default_args(deprecated=True):
         # https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5
         # https://github.com/pyca/cryptography/security/advisories/GHSA-537c-gmf6-5ccf
-        version("46.0.7", sha256="e4cfd68c5f3e0bfdad0d38e023239b96a2fe84146481852dffbcca442c245aa5")
+        version(
+            "46.0.7", sha256="e4cfd68c5f3e0bfdad0d38e023239b96a2fe84146481852dffbcca442c245aa5"
+        )
         # CVE-2026-39892
         version(
             "46.0.3", sha256="a8b17438104fed022ce745b362294d9ce35b4c2e45c1d958ad4a4b019285f4a1"
