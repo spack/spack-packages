@@ -39,8 +39,6 @@ class PyWarpLang(PythonPackage, CudaPackage):
 
     patch("clang_cpp.patch")
 
-    phases = ["build", "install"]
-
     resource(
         name="llvm",
         url="https://github.com/llvm/llvm-project/archive/refs/tags/llvmorg-21.1.0.tar.gz",
