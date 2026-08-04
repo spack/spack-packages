@@ -60,6 +60,14 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("zlib-api", type="link")
     conflicts("^openssl@3.3.0")
 
+    depends_on("googletest@1.17.0", type="test", when="@3.5.1")
+
+    patch(
+        "triton-v3.5.1-proton-gate-tests.patch",
+        sha256="792a954ad48c4d70ab983f5aa8611a93cabfd139f1d7d00c4eb5c2801f815a2d",
+        when="@3.5.1",
+    )
+
     @run_before("install")
     def patch_llvm_target_libraries(self):
         """Ensure libtriton.so links all LLVM target libraries.
@@ -183,11 +191,18 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         # the clang that LLVM was built with.  TRITON_APPEND_CMAKE_ARGS is
         # appended last to the cmake invocation (see setup.py) and therefore
         # takes precedence.
-        env.set("TRITON_APPEND_CMAKE_ARGS",
-                f"-DCMAKE_C_COMPILER={self.compiler.cc} "
-                f"-DCMAKE_CXX_COMPILER={self.compiler.cxx} "
-                f"-DCMAKE_LINKER_TYPE=DEFAULT "
-                f"-DZLIB_ROOT={self.spec['zlib-api'].prefix}")
+        extra_cmake_args = [
+            f"-DCMAKE_C_COMPILER={self.compiler.cc}",
+            f"-DCMAKE_CXX_COMPILER={self.compiler.cxx}",
+            "-DCMAKE_LINKER_TYPE=DEFAULT",
+            f"-DZLIB_ROOT={self.spec['zlib-api'].prefix}",
+        ]
+        if self.run_tests and "googletest" in self.spec:
+            extra_cmake_args += [
+                "-DTRITON_BUILD_UT=ON",
+                f"-DGOOGLETEST_DIR={self.spec['googletest'].package.stage.source_path}",
+            ]
+        env.set("TRITON_APPEND_CMAKE_ARGS", " ".join(extra_cmake_args))
 
     @property
     def build_directory(self):
