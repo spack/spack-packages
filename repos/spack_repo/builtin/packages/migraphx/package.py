@@ -90,7 +90,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         when="@6.0",
     )
     patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:7.2")
-    patch("0007-disable-mlir-for-7.13.patch", when="@7.13:")
+    patch("0007-disable-mlir-for-7.13.patch", when="@7.13")
     patch(
         "https://github.com/ROCm/AMDMIGraphX/commit/ea9f87af094d110f2d92ad181e629cc909ecdea1.patch?full_index=1",
         sha256="0da7dcd198f114eb6f76646a8803524feb3c4bf4e928d2faddd2cdf2bb4cac8e",

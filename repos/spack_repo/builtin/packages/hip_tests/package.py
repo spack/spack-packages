@@ -181,7 +181,12 @@ class HipTests(ROCmLibrary, CMakePackage):
                 )
             )
         if self.spec.satisfies("@7.14:"):
-            args.append(self.define("CLANG_OFFLOAD_BUNDLER", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler"))
+            args.append(
+                self.define(
+                    "CLANG_OFFLOAD_BUNDLER",
+                    f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
+                )
+            )
             if "auto" not in self.spec.variants["amdgpu_target"]:
                 args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

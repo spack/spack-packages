@@ -206,7 +206,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
     ]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
         depends_on(f"rocm-tensile@{ver}", type="build", when=f"@{ver} +tensile")
 
     depends_on("python@3.6:", type="build")

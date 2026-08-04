@@ -24,8 +24,6 @@ def submodules(package):
         "projects/rocprofiler-sdk/external/yaml-cpp",
         "projects/rocprofiler-sdk/external/json",
     ]
-    if package.spec.satisfies("@7.13:"):
-        submodules.append("projects/rocprofiler-sdk/external/abseil-cpp")
     return submodules
 
 
@@ -193,6 +191,7 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     depends_on("fmt@:10", when="@7.2:7.13 ~internal-fmt")
     depends_on("fmt@:12.1", when="@7.14: ~internal-fmt")
     depends_on("glog", when="@7.2:")
+    depends_on("abseil-cpp", when="@7.13:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
@@ -275,6 +274,8 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
             args.append(self.define("ROCPROFILER_BUILD_GLOG", "OFF"))
             args.append(self.define("ROCPROFILER_BUILD_GOTCHA", "OFF"))
             args.append(self.define("ROCPROFILER_BUILD_SQLITE3", "OFF"))
+        if self.spec.satisfies("@7.14:"):
+            args.append(self.define("ROCPROFILER_BUILD_ABSEIL", "OFF"))
         return args
 
     def setup_run_environment(self, env):

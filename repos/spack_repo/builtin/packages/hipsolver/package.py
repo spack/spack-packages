@@ -135,6 +135,8 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("openblas", when="@7.13: +rocm")
+
     patch("001-suite-sparse-include-path.patch", when="@6.1.0")
     patch("0001-suite-sparse-include-path-6.1.1.patch", when="@6.1.1:6.2")
 
@@ -182,6 +184,10 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix))
         if self.spec.satisfies("@5.2.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if self.spec.satisfies("@7.13: +rocm"):
+            args.append(self.define("HIPSOLVER_INTERNAL_LAPACK_BUILD", False))
+            args.append(self.define("HIPSOLVER_FIND_PACKAGE_LAPACK_CONFIG", False))
+            args.append(self.define("BLA_VENDOR", "OpenBLAS"))
         libloc = self.spec["suite-sparse"].prefix.lib64
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib

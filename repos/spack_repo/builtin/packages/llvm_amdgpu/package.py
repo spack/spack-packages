@@ -176,7 +176,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     patch(
         "https://github.com/llvm/llvm-project/commit/319a50123c6391ff9ca14173f798e1fc737b4784.patch?full_index=1",
-        sha256="d05fe8c60d0e37c9e7e9415460df6b099fe33c01c96a3e5086c9720b11ec0b29",
+        sha256="700f4f4db0454679fa2d80b21c0f8f1c2e82f964b7ef114692b776c0d5875fa5",
         when="@7.14",
     )
 
@@ -284,6 +284,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("7.2.1", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
         ("7.2.3", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
         ("7.13.0", "29981f65241605e08b0ede4cfeb999fe3b723c6a"),
+        ("7.14.0", "4015a331f5ffd6fc5c6fa7b03e08fb4a692491d7"),
     ]:
         resource(
             name="spirv-headers",
