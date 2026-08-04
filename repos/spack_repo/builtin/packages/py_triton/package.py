@@ -45,7 +45,7 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         # The mapping between the LLVM and Triton is documented in file cmake/llvm-hash.txt.
         # This file pins commit ids, we are using plain LLVM versions instead (the one
         # closest to the commit id).
-        depends_on("llvm@22.1.0-rc-triton-v3.5.1 +mlir +utils ~offload ~libomptarget", when="@3.5.1")
+        depends_on("llvm@22.1.0-rc-triton-v3.5.1 +mlir +utils", when="@3.5.1")
         depends_on("llvm@21.1.0-rc-triton-v3.4.0 +mlir +utils", when="@3.4.0")
         depends_on("llvm@21.1.0-rc-triton-v3.3.1 +mlir +utils", when="@3.3.1")
         depends_on("llvm@20.1.0-rc-triton-v3.2.0 +mlir +utils", when="@3.2.0")

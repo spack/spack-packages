@@ -684,6 +684,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         when="@22.1.0",
     )
 
+    # Fix "Cannot specify include directories for target obj.omp which is not
+    # built by this project" when building the triton-pinned LLVM commit
+    # (7d5de30, release/22.x) with openmp=runtime + LIBOMP_USE_HWLOC. The
+    # add_llvm_library path backs `omp` with an OBJECT library (obj.omp) that
+    # is not visible to target_include_directories in the runtimes sub-build.
+    # Use directory-scoped include_directories() instead, which works in both
+    # the plain add_library and add_llvm_library paths.
+    patch(
+        "llvm-22.1.0-rc-triton-openmp-hwloc.patch",
+        sha256="584cbfa0832d743d247a0fa9e33370bce4b6ab5e157863e1ee2fa75190ba5d88",
+        when="@22.1.0-rc-triton-v3.5.1",
+    )
+
     @when("@14:17")
     def patch(self):
         # https://github.com/llvm/llvm-project/pull/69458

@@ -1,0 +1,26 @@
+--- a/openmp/runtime/src/CMakeLists.txt
++++ b/openmp/runtime/src/CMakeLists.txt
+@@ -191,17 +191,12 @@
+   set(LIBOMP_LINKER_LANGUAGE CXX)
+ endif()
+ if(${LIBOMP_USE_HWLOC})
+-  # Since we are using an OBJECT library, the PRIVATE and INTERFACE options are split
+-  # (instead of using PUBLIC): obj.omp for compiling itself, omp for propagating
+-  # the options to other libraries that depend on it, e.g. libompd.
+-  target_include_directories(obj.omp
+-    PRIVATE
+-    "$<BUILD_INTERFACE:${LIBOMP_HWLOC_INCLUDE_DIR}>"
+-    "$<INSTALL_INTERFACE:${LIBOMP_HWLOC_INCLUDE_DIR}>")
+-  target_include_directories(omp
+-    INTERFACE
+-    "$<BUILD_INTERFACE:${LIBOMP_HWLOC_INCLUDE_DIR}>"
+-    "$<INSTALL_INTERFACE:${LIBOMP_HWLOC_INCLUDE_DIR}>")
++  # Use directory-scoped includes so this works whether `omp` is a plain
++  # target or backed by an OBJECT library (obj.omp) created by add_llvm_library
++  # in the runtimes sub-build, where target_include_directories(obj.omp ...)
++  # fails with "Cannot specify include directories for target obj.omp which
++  # is not built by this project".
++  include_directories(${LIBOMP_HWLOC_INCLUDE_DIR})
+ endif()
+ 
+ if(OPENMP_MSVC_NAME_SCHEME)
