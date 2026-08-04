@@ -53,6 +53,7 @@ class Hipdnn(ROCmLibrary, CMakePackage):
     depends_on("cmake@3.13.4:", type="build")
     depends_on("nlohmann-json")
     depends_on("flatbuffers")
+    depends_on("flatbuffers@25.9.23~shared", when="@7.13:")
     depends_on("spdlog")
     depends_on("googletest")
 
