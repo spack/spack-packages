@@ -37,6 +37,7 @@ class Collier(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    depends_on("cmake@3.5:", type="build", when="@1.2.9:")
 
     @property
     def parallel(self):
