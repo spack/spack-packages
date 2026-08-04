@@ -31,5 +31,7 @@ class PyNarwhals(PythonPackage):
         depends_on("python@3.8:")
 
     with default_args(type="build"):
-        depends_on("py-hatchling", when="@:2.21")
         depends_on("py-uv-build@0.11", when="@2.22:")
+
+        # Historical dependencies
+        depends_on("py-hatchling", when="@:2.21")
