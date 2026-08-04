@@ -29,3 +29,17 @@ class PyAudioread(PythonPackage):
         when="@:3.0.0",
         msg="python@3.12 dropped imp, use py-audioread >= 3.0.1 for 3.12 support",
     )
+
+    conflicts(
+        "^python@:3.8",
+        when="@3.1:",
+        msg="py-audioread >= 3.1 requires python@3.9 or later",
+    )
+
+    # This can be replaced with dependencies on py-standard-aifc, py-standard-sunau once
+    # these packages are available in spack
+    conflicts(
+        "^python@3.13:",
+        when="@3.1:",
+        msg="py-audioread requires py-standard-aifc, py-standard-sunau packages with python@3.13:",
+    )
