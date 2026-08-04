@@ -16,11 +16,13 @@ def submodules(package):
         "projects/rocprofiler-systems/external/perfetto",
         "projects/rocprofiler-systems/external/elfio",
         "projects/rocprofiler-systems/external/dyninst",
-        "projects/rocprofiler-systems/external/PTL",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
-        "projects/rocprofiler-systems/examples/openmp/external/ompvv",
     ]
+    if package.spec.satisfies("@:7.2"):
+        submodules.append("projects/rocprofiler-systems/external/PTL")
+    if package.spec.satisfies("@:7.13"):
+        submodules.append("projects/rocprofiler-systems/examples/openmp/external/ompvv")
     return submodules
 
 
