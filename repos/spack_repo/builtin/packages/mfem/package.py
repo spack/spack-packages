@@ -595,6 +595,20 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # PR: https://github.com/mfem/mfem/pull/5224
     patch("mfem-4.9.patch", when="@4.9.0")
 
+    # Teach the makefile build to accept a comma-separated CUDA_ARCH list and
+    # expand it into a per-architecture -gencode/--cuda-gpu-arch sequence.
+    # PR: https://github.com/mfem/mfem/pull/5440
+    patch(
+        "https://github.com/mfem/mfem/commit/b8fcd640e51b7ff4de2d93095c47ea7a3aea4fb5.patch?full_index=1",
+        when="@4.9.0:+cuda",
+        sha256="4b6fba40d470053cb873c53b24f9e980b5ac6e3ed92e118ea30af57b3eb79e96",
+    )
+    patch(
+        "https://github.com/mfem/mfem/commit/66dbe60cb1272407deebaf3347db4a8be399fb1b.patch?full_index=1",
+        when="@4.9.0:+cuda",
+        sha256="db80992a8b32dd9aa716fc6d4c04aaf39416b64d73c1b811633699ac532c559b",
+    )
+
     phases = ["configure", "build", "install"]
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
@@ -742,6 +756,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
+        if spec.satisfies("@4.9.0:"):
+            cuda_flags_var = "NVCC_FLAGS" if using_nvcc else "CLANG_CUDA_FLAGS"
+        else:
+            cuda_flags_var = "CUDA_FLAGS"
 
         cxxflags = spec.compiler_flags["cxxflags"].copy()
 
@@ -761,22 +779,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
             cxxflags = [(xcompiler + flag) for flag in cxxflags]
             if "+cuda" in spec:
+                cxxflags.append(f"$({cuda_flags_var})")
                 if using_nvcc:
-                    nvcc_base_flags = "-x=cu --expt-extended-lambda"
-                    if spec.satisfies("@4.9.0:"):
-                        nvcc_base_flags += " --expt-relaxed-constexpr"
-                    cxxflags += [
-                        nvcc_base_flags,
-                        "-arch=sm_%s" % cuda_arch,
-                        "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
-                    ]
-                else:
-                    # using clang cuda
-                    cxxflags += [
-                        "-xcuda",
-                        f"--cuda-path={spec['cuda'].prefix}",
-                        "--cuda-gpu-arch=sm_%s" % cuda_arch,
-                    ]
+                    cxxflags.append(
+                        "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"])
+                    )
 
             if cxxstd_flag:
                 cxxflags.append(cxxstd_flag)
@@ -1049,7 +1056,15 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 cuda_cxx = join_path(spec["cuda"].prefix, "bin", "nvcc")
             else:
                 cuda_cxx = spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]
-            options += [f"CUDA_CXX={cuda_cxx}", "CUDA_ARCH=sm_%s" % cuda_arch]
+            # A comma-separated CUDA_ARCH list is only expanded by the makefile
+            # for mfem@4.9.0: (see the CUDA multi-arch patch above).
+            if len(cuda_arch) > 1 and not spec.satisfies("@4.9.0:"):
+                raise InstallError(
+                    "building MFEM for multiple CUDA architectures requires mfem@4.9.0:"
+                )
+            cuda_archs = ",".join("sm_%s" % arch for arch in cuda_arch)
+            options += [f"CUDA_CXX={cuda_cxx}", "CUDA_ARCH=%s" % cuda_archs]
+
             # Check if we are using a CUDA installation where the math libs are
             # in a separate directory:
             culibs = ["libcusparse"]
