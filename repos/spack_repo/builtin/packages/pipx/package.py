@@ -46,7 +46,6 @@ class Pipx(PythonPackage):
     )
 
     depends_on("python@3.10:", when="@1.11.2:", type=("build", "run"))
-    depends_on("python@3.9:", when="@1.9:", type=("build", "run"))
     depends_on("python@3.9:", when="@1.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.3:1.7", type=("build", "run"))
     depends_on("python@3.7:", type=("build", "run"))
