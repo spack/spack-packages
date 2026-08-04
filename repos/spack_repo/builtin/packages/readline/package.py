@@ -73,7 +73,7 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
     ]:
         ver = Version(verstr)
         patch(
-            f"https://ftpmirror.gnu.org/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
+            f"https://ftp.gnu.org/gnu/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
             level=0,
             when=f"@{ver}",
             sha256=checksum,

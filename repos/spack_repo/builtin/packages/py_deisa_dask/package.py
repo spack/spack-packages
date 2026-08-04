@@ -17,6 +17,7 @@ class PyDeisaDask(PythonPackage):
 
     license("MIT")
 
+    version("0.6.3", sha256="b2e2ab10a2e9be1a38e624252dd1d7cd82eb4cfd6d95f8ee0771d1fc00d75023")
     version("0.6.2", sha256="3aa89f4e0fafcb87b7a20a7c1ac13234ae61554c3da330dfcbced6a841cc7c82")
     version("0.6.1", sha256="ada6f011cac35ae9c9d8a67f1b5971e86d4d039566d64b852274615c9367b932")
     version("0.6.0", sha256="38681e6382c945b493cb1f6ab0e5fbaafd8960556ea720a279874c6b085b3c1e")
@@ -26,6 +27,9 @@ class PyDeisaDask(PythonPackage):
     version("0.3.0", sha256="615483d3c21e05c1cdf0564db0245f7f6ba979e75c25a0292d3d42fcc4cf6d23")
 
     variant("mpi", default=True, description="Compile with MPI support.", when="@0.5.1:")
+    variant(
+        "benchmark", default=False, description="Include benchmarking libraries.", when="@0.6.3:"
+    )
 
     depends_on("py-setuptools@61:", type="build", when="@0.5.1:")
     depends_on("py-setuptools", type="build")
@@ -40,3 +44,5 @@ class PyDeisaDask(PythonPackage):
     depends_on("py-numpy", type=("build", "run"), when="@0.5.1:")
 
     depends_on("py-mpi4py", type=("build", "run"), when="+mpi")
+
+    depends_on("py-pytest-benchmark", type=("build", "run"), when="+benchmark")
