@@ -68,6 +68,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi", type=("build", "run"))
 
+    # Only the fftw@3.3.8 and rocfft@6.4.3 backend implementation used in our current testing is verified.
     depends_on(
         "fftw-api",
         when="+fftw",
