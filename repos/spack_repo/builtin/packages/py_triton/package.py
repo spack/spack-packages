@@ -23,6 +23,7 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
     license("MIT")
 
     #version("main", branch="main")
+    version("3.5.1", sha256="03d7c41f6f2dc1dfa3445776c4a893dc34b1e0ece42b953f036c071ff6409b80")
     version("3.4.0", sha256="a96e87a911794c907fab30e0c7a3f96ef4e9e8fdc8812cd8bbc6f0457619072f")
     version("3.3.1", sha256="9dc77d9205933bf2fc05eb054f4f1d92acd79a963826174d57fe9cfd58ba367b")
     version("3.2.0", sha256="04eb07e2ff1b87bf4b26e132d696177248bfb9c71cecd4864e561a9c103de9b3")
@@ -44,7 +45,7 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         # The mapping between the LLVM and Triton is documented in file cmake/llvm-hash.txt.
         # This file pins commit ids, we are using plain LLVM versions instead (the one
         # closest to the commit id).
-        #depends_on("llvm@main +mlir +utils", when="@main")
+        depends_on("llvm@22.1.0-rc-triton-v3.5.1 +mlir +utils ~offload ~libomptarget", when="@3.5.1")
         depends_on("llvm@21.1.0-rc-triton-v3.4.0 +mlir +utils", when="@3.4.0")
         depends_on("llvm@21.1.0-rc-triton-v3.3.1 +mlir +utils", when="@3.3.1")
         depends_on("llvm@20.1.0-rc-triton-v3.2.0 +mlir +utils", when="@3.2.0")

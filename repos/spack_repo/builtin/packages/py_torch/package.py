@@ -283,7 +283,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("gloo@2021-05-21", when="@1.10:1.12")
         depends_on("gloo@2021-05-04", when="@1.9")
         depends_on("gloo@2020-09-18", when="@1.7:1.8")
-        depends_on("gloo+cuda", when="+gloo+cuda")
+        # Note: we do NOT add +cuda to the external gloo here. gloo+cuda
+        # includes py-torch's c10 headers (GLOO_USE_TORCH_DTYPES), creating a
+        # circular dependency. When +gloo+cuda, py-torch builds its vendored
+        # gloo submodule for CUDA support (see USE_SYSTEM_GLOO in
+        # setup_build_environment) and uses the external gloo only for the
+        # CPU distributed backend.
         depends_on("gloo+libuv", when="platform=darwin")
     # https://github.com/pytorch/pytorch/issues/60331
     # depends_on("onnx@1.18.0", when="@2.8:")
@@ -899,7 +904,14 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         env.set("USE_SYSTEM_EIGEN_INSTALL", "ON")
         env.set("USE_SYSTEM_FP16", "ON")
         env.set("USE_SYSTEM_FXDIV", "ON")
-        env.set("USE_SYSTEM_GLOO", "ON")
+        # gloo+cuda includes c10/util/BFloat16.h from py-torch, so building
+        # the external gloo with +cuda creates a circular dependency
+        # (py-torch+gloo -> gloo+cuda -> py-torch headers). Fall back to the
+        # vendored gloo submodule when both +gloo and +cuda are enabled.
+        if self.spec.satisfies("+gloo+cuda"):
+            env.set("USE_SYSTEM_GLOO", "OFF")
+        else:
+            env.set("USE_SYSTEM_GLOO", "ON")
         env.set("USE_SYSTEM_NCCL", "ON")
         env.set("USE_SYSTEM_NVTX", "ON")
         # https://github.com/pytorch/pytorch/issues/60331

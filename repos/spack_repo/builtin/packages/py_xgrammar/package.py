@@ -15,6 +15,12 @@ class PyXgrammar(PythonPackage):
 
     version("0.1.29", sha256="cf195afa81b489eebf35d4c6f37f27136d05420739ab4a6f7f065c938d7e4baa")
 
+    # nanobind's nb_type_get/nb_type_put have hidden visibility and get
+    # dropped by GCC's LTO, causing undefined references at link time.
+    # See https://github.com/wjakob/nanobind/issues/795. Drop the LTO flag
+    # passed to nanobind_add_module in cpp/nanobind/CMakeLists.txt.
+    patch("no-lto-nanobind.patch", when="@0.1.29")
+
     depends_on("py-scikit-build-core@0.10:", type="build")
     depends_on("py-nanobind@2.5.0", type="build", when="@0.1.29")
     depends_on("python@3.8:", type=("build", "run"))
