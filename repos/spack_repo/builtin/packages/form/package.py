@@ -16,6 +16,7 @@ class Form(AutotoolsPackage):
 
     license("GPL-3.0-only")
 
+    version("5.0.1", sha256="ce62530a54e5232dfefb6c1ff0e7047372a43941b3c0e0db08b5714fd868722c")
     version("4.3.1", sha256="f1f512dc34fe9bbd6b19f2dfef05fcb9912dfb43c8368a75b796ec472ee8bbce")
     version("4.3.0", sha256="b234e0d095f73ecb0904cdc3b0d8d8323a9fa7f46770a52fb22267c624aafbf6")
     version("4.2.1", sha256="f2722d6d4ccb034e01cf786d55342e1c21ff55b182a4825adf05d50702ab1a28")
