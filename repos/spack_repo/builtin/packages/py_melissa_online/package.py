@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.python import PythonPackage
+
+from spack.package import *
 
 
 class PyMelissaOnline(PythonPackage):
@@ -61,7 +62,6 @@ class PyMelissaOnline(PythonPackage):
         depends_on("py-rich@14:")
 
     with when("~launcher_only"):
-
         # ======================================================
         #                client-api dependencies
         # ======================================================
