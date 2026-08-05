@@ -48,12 +48,6 @@ class Scnlib(CMakePackage):
 
     conflicts("+shared", when="platform=windows")
 
-    patch(
-        "https://github.com/eliaskosunen/scnlib/commit/39276cc436adcfc2544faf1de3991c2784c86ce3.patch?full_index=1",
-        sha256="013a8a9466fadb3396af187da08057f4e79b1c26bf340da99b19fd47dd049795",
-        when="@4",
-    )
-
     def cmake_args(self):
         args = [
             self.define("SCN_TESTS", self.run_tests),
