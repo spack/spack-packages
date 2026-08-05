@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmDbgapi(CMakePackage):
+class RocmDbgapi(ROCmLibrary, CMakePackage):
     """The AMD Debugger API is a library that provides all the support
     necessary for a debugger and other tools to perform low level
     control of the execution and inspection of execution state of
@@ -17,7 +16,6 @@ class RocmDbgapi(CMakePackage):
 
     homepage = "https://github.com/ROCm/ROCdbgapi"
     git = "https://github.com/ROCm/ROCdbgapi.git"
-    url = "https://github.com/ROCm/ROCdbgapi/archive/rocm-6.2.1.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
@@ -25,6 +23,13 @@ class RocmDbgapi(CMakePackage):
 
     license("MIT")
 
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/ROCdbgapi/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="746c3c5d0e64fcdad5ec99a47d2be719656c2f24e79f1dc22d29e4ce4f9fb832")
     version("7.2.1", sha256="29a5f689e03c176ec562634fb22192309fab538fe4245225a66b25ad6de0fab1")
     version("7.2.0", sha256="3649f1ae9642cdc7f3b172a580388cbe50489dfbea6b245a6a73082a64e06c5b")
     version("7.1.1", sha256="4c31da40e6da3c81fea8a8b0757daae3d6e95dc86ba32ff55484e7044aaa094f")
@@ -88,26 +93,33 @@ class RocmDbgapi(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hsa-rocr-dev@{ver}", type="build", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type=("build", "link"), when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            return "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        return None
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.13:"):
+            return join_path(super().root_cmakelists_dir, "projects", "rocdbgapi")
+        else:
+            return super().root_cmakelists_dir
 
     def patch(self):
-        filter_file(
-            r"(<INSTALL_INTERFACE:include>)",
-            r"\1 {0}/include".format(self.spec["hsa-rocr-dev"].prefix),
-            "CMakeLists.txt",
-        )
+        if self.spec.satisfies("@7.13:"):
+            filter_file(
+                r"(<INSTALL_INTERFACE:include>)",
+                r"\1 {0}/include".format(self.spec["hsa-rocr-dev"].prefix),
+                "projects/rocdbgapi/CMakeLists.txt",
+            )
+        else:
+            filter_file(
+                r"(<INSTALL_INTERFACE:include>)",
+                r"\1 {0}/include".format(self.spec["hsa-rocr-dev"].prefix),
+                "CMakeLists.txt",
+            )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

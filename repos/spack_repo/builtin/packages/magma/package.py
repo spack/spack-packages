@@ -94,6 +94,9 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("cuda_arch=75", when="@:2.5.0", msg="magma: cuda_arch=75 needs a version > 2.5.0")
     conflicts("cuda_arch=80", when="@:2.5.3", msg="magma: cuda_arch=80 needs a version > 2.5.3")
 
+    # MAGMA uses mkl_zcsrmv, which is not available in MKL 2026.0+
+    conflicts("^intel-oneapi-mkl@2026.0:", msg="magma: MKL 2026.0+ is not supported")
+
     patch("ibm-xl.patch", when="@2.2:2.5.0%xl")
     patch("ibm-xl.patch", when="@2.2:2.5.0%xl_r")
     patch("magma-2.3.0-gcc-4.8.patch", when="@2.3.0%gcc@:4.8")

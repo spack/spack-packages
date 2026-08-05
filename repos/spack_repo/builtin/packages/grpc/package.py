@@ -14,6 +14,7 @@ class Grpc(CMakePackage):
 
     license("Apache-2.0 AND BSD-3-Clause AND MIT")
 
+    version("1.78.1", sha256="961a44a2a5a50670e58f5e887c17fe70529253da23802245326d681f6d8d1ba6")
     version("1.76.0", sha256="0af37b800953130b47c075b56683ee60bdc3eda3c37fc6004193f5b569758204")
     version("1.67.1", sha256="d74f8e99a433982a12d7899f6773e285c9824e1d9a173ea1d1fb26c9bd089299")
     version("1.66.1", sha256="79ed4ab72fa9589b20f8b0b76c16e353e4cfec1d773d33afad605d97b5682c61")
@@ -83,6 +84,7 @@ class Grpc(CMakePackage):
         # missing includes: https://github.com/grpc/grpc/commit/bc044174401a0842b36b8682936fc93b5041cf88
         depends_on("abseil-cpp@:20230802", when="@:1.61")
         depends_on("abseil-cpp@20240116.1:20240117.0", when="@1.67")
+        depends_on("abseil-cpp@20240722.0", when="@1.78")
 
     depends_on("re2+pic@2023-09-01", when="@1.33.1:")
 
@@ -110,3 +112,33 @@ class Grpc(CMakePackage):
         if self.spec.satisfies("@1.33.1:"):
             args.append("-DgRPC_RE2_PROVIDER:String=package")
         return args
+
+    def patch(self):
+        # GCC 13+ and Clang 15+ removed implicit transitive includes (e.g. <string>,
+        # <cstdint>, <limits>, <algorithm>). Inject them into the portability header
+        if self.spec.satisfies("%gcc@13:") or self.spec.satisfies("%clang@15:"):
+            filter_file(
+                r"(#define GRPC_SUPPORT_PORT_PLATFORM_H)",
+                r"\1"
+                "\n// Added by Spack: fix missing transitive includes for GCC 13+ / Clang 15+\n"
+                "#if defined(__cplusplus)\n"
+                "#include <algorithm>\n"
+                "#include <cstdint>\n"
+                "#include <limits>\n"
+                "#include <string>\n"
+                "#endif\n",
+                join_path(self.stage.source_path, "include/grpc/support/port_platform.h"),
+            )
+
+        # glob.cc uses std::min/std::max but omits <algorithm>
+        # File location changed in grpc 1.67.0+
+        if self.spec.satisfies("@1.67"):
+            glob_path = join_path(self.stage.source_path, "src/core/lib/gprpp/glob.cc")
+        else:
+            glob_path = join_path(self.stage.source_path, "src/core/util/glob.cc")
+
+        filter_file(
+            r'(#include "absl/strings/string_view.h")',
+            '#include <algorithm>\n#include "absl/strings/string_view.h"',
+            glob_path,
+        )

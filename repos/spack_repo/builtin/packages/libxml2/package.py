@@ -22,6 +22,8 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     maintainers("AlexanderRichert-NOAA")
 
+    executables = ["xml2-config"]
+
     def url_for_version(self, version):
         if version >= Version("2.9.13"):
             url = "https://download.gnome.org/sources/libxml2/{0}/libxml2-{1}.tar.xz"
@@ -30,6 +32,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     license("MIT")
 
+    version("2.15.3", sha256="78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07")
     version("2.15.1", sha256="c008bac08fd5c7b4a87f7b8a71f283fa581d80d80ff8d2efd3b26224c39bc54c")
     version("2.13.9", sha256="a2c9ae7b770da34860050c309f903221c67830c86e4a7e760692b803df95143a")
     version("2.13.5", sha256="74fc163217a3964257d3be39af943e08861263c4231f9ef5b496b6f6d4c7b2b6")
@@ -74,6 +77,12 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     build_system(
         conditional("nmake", when="platform=windows"), "cmake", "autotools", default="autotools"
     )
+
+    @classmethod
+    def determine_version(cls, exe):
+        # Output from --version is just the version, nothing else
+        output = Executable(exe)("--version", output=str)
+        return output.strip()
 
     def flag_handler(self, name, flags):
         if name == "cflags" and self.spec.satisfies("+pic"):
@@ -202,12 +211,24 @@ class AnyBuilder(BaseBuilder):
 
 
 class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
+    def _iconv_option(self):
+        """Special handling for iconv
+        iconv can be vendored from libc and in these cases the assumption of a prefix
+        is not valid. libxml2's build system allows 3 options (yes, no, or a prefix)
+        to account for this. When iconv comes from glibc or musl pass 'yes' as the
+        build system intends.
+        """
+        iconv = self.spec["iconv"]
+        if iconv.name in ("glibc", "musl"):
+            return "yes"
+        return iconv.prefix
+
     def configure_args(self):
         spec = self.spec
 
         args = [
             "--with-lzma={0}".format(spec["xz"].prefix),
-            "--with-iconv={0}".format(spec["iconv"].prefix),
+            "--with-iconv={0}".format(self._iconv_option()),
         ]
 
         if spec.satisfies("+python"):

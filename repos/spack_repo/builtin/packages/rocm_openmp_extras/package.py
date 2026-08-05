@@ -41,6 +41,7 @@ aomp = [
     "89f11c149953c17b54186251eb3d3ffcd457fca1c7666c0c77c07d6d1e7efda4",
     "740cb8945ddc7d5d9d59a77cfcd2e9f24dc60f062c1a0d46377516037fd21939",
     "5c4e38373ea41f12a4ffa44ef457a4a504a661966afcf39bb43a92c0df712706",
+    "652bbcd7da07063758ab5f65b0199dba430908c0d7c8c8ae9106abbdfde5db14",
 ]
 
 devlib = [
@@ -68,6 +69,7 @@ devlib = [
     "d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e",
     "e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f",
     "4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa",
+    "6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114",
 ]
 
 llvm = [
@@ -95,6 +97,7 @@ llvm = [
     "d76a16db4a56914383029e241823f7bc2a3d645f2967dd22230f11c11cfe189e",
     "e86138d2a63fbcbdf64668d55573b26ae944d0f0ae5a3f5bb59bf7bdb3124d3f",
     "4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa",
+    "6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114",
 ]
 
 flang = [
@@ -122,6 +125,7 @@ flang = [
     "a2e27a8da910facea710f56f5d83319dd192746f5ba755493ba1da223228ae8a",
     "c4c7caa29c1ad4363288853229a7ef78abb397bb51e3b617d0dc4e8b7d0b08ad",
     "5fcc82780fb934e1af9ae835296bf1a1adeb7267fc20d085076995cedde00d07",
+    "24b426e85b11ad2e63dfd87111a643d2ae0f008bb294db22104588b3b6856f64",
 ]
 
 extras = [
@@ -149,6 +153,7 @@ extras = [
     "4b0068986e62bb2ba1e26197f8b1350aec65132396f225e3c66530c2ef78f801",
     "8b56639b4ba9f791b873da20dbc552e4678acd69f9b256177e9a1d44c8361fdd",
     "9c1f2f350f8f4399a4d63c107b231b5a383eb4856792cf512690630198e22460",
+    "26c697fdc5259efb8601ac607addc3e7f7b7b05fb2cd53e8bc6d332b35b82ae2",
 ]
 
 versions = [
@@ -176,6 +181,7 @@ versions = [
     "7.1.1",
     "7.2.0",
     "7.2.1",
+    "7.2.3",
 ]
 versions_dict = dict()  # type: Dict[str,Dict[str,str]]
 components = ["aomp", "devlib", "llvm", "flang", "extras"]
@@ -199,6 +205,7 @@ class RocmOpenmpExtras(Package):
     license("Apache-2.0")
 
     maintainers("srekolam", "renjithravindrankannath", "estewart08", "afzpatel")
+    version("7.2.3", sha256=versions_dict["7.2.3"]["aomp"])
     version("7.2.1", sha256=versions_dict["7.2.1"]["aomp"])
     version("7.2.0", sha256=versions_dict["7.2.0"]["aomp"])
     version("7.1.1", sha256=versions_dict["7.1.1"]["aomp"])
@@ -269,6 +276,7 @@ class RocmOpenmpExtras(Package):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
@@ -340,6 +348,7 @@ class RocmOpenmpExtras(Package):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
