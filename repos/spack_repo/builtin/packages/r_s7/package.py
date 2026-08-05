@@ -23,4 +23,5 @@ class RS7(RPackage):
 
     depends_on("c", type="build")
 
+    # Versions <= 0.2.1 use R_NamespaceRegistry which was removed in r@4.6.0
     conflicts("r@4.6:", when="@:0.2.1")
