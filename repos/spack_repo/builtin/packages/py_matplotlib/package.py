@@ -259,6 +259,8 @@ class PyMatplotlib(PythonPackage):
     # rely on does not exist anymore, only libqhull_r.so
     depends_on("qhull@2015.2:2020.1", when="@3.3")
     depends_on("libpng@1.2:")
+    # https://github.com/spack/spack-packages/issues/5589
+    conflicts("freetype@2.14.2")
 
     # Dependencies for building matplotlib
     # Setup dependencies
