@@ -22,8 +22,7 @@ class Rocjpeg(ROCmLibrary, CMakePackage):
 
     license("MIT")
     rocm_url_map = [
-        ("7.1.1", "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-{0}.tar.gz"),
-        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocJPEG/archive/refs/tags/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
     version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
