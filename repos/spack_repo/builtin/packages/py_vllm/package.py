@@ -195,3 +195,14 @@ class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
         numa_lib = self.spec["numactl"].prefix.lib
         env.append_flags("CXXFLAGS", f"-I{numa_inc}")
         env.append_flags("LDFLAGS", f"-L{numa_lib}")
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Triton JIT-compiles its CUDA driver (driver.c / cuda_utils.c) at
+        # runtime using the system gcc, and that compile needs cuda.h.
+        # Triton's build only knows about its own include dir, not CUDA's,
+        # so without CUDA_HOME / CPATH the JIT fails with
+        # "fatal error: cuda.h: No such file or directory".
+        if self.spec.satisfies("+cuda"):
+            cuda_home = self.spec["cuda"].prefix
+            env.set("CUDA_HOME", cuda_home)
+            env.prepend_path("CPATH", join_path(str(cuda_home), "include"))

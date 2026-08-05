@@ -204,6 +204,22 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
             ]
         env.set("TRITON_APPEND_CMAKE_ARGS", " ".join(extra_cmake_args))
 
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Triton's runtime JIT and backend knobs read these env vars to locate
+        # CUDA tooling. They must be set at run time (not just build time),
+        # otherwise the JIT fails with "Cannot find ptxas" / cuda.h not found
+        # when invoked from a subprocess that doesn't inherit the build env
+        # (e.g. vLLM's EngineCore worker via multiprocessing.spawn).
+        if "cuda" in self.spec:
+            cuda = self.spec["cuda"].prefix
+            env.set("CUDA_HOME", cuda)
+            # The runtime JIT patch (triton-v3.5.1-cuda-home-include.patch)
+            # reads CUDA_HOME to add it to the gcc -I flags. Without it the
+            # JIT can't find cuda.h.
+            env.set("TRITON_PTXAS_PATH", cuda.bin.ptxas)
+            env.set("TRITON_CUOBJDUMP_PATH", cuda.bin.cuobjdump)
+            env.set("TRITON_NVDISASM_PATH", cuda.bin.nvdisasm)
+
     @property
     def build_directory(self):
         return "." if self.spec.satisfies("@3.4.0:") else "python"
