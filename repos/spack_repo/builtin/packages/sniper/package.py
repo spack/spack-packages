@@ -48,9 +48,7 @@ class Sniper(CMakePackage):
 
     conflicts("+root cxxstd=11", msg="ROOT requires at least C++14")
     conflicts("+root cxxstd=14", msg="Supported ROOT versions require C++17")
-    depends_on(
-        "root@5.18: cxxstd=17", when="+root cxxstd=17", type=("build", "link", "run")
-    )
+    depends_on("root@5.18: cxxstd=17", when="+root cxxstd=17", type=("build", "link", "run"))
     depends_on(
         "root@6.28.04: cxxstd=20",
         when="+root cxxstd=20",
@@ -93,9 +91,7 @@ class Sniper(CMakePackage):
         sniper = Executable(join_path(self.prefix.bin, "sniper.exe"))
         sniper.add_default_envmod(run_env)
         extension = "py" if "+python" in self.spec else "json"
-        sniper(
-            join_path(self.prefix.share, "SniperExamples", f"run-HelloWorld.{extension}")
-        )
+        sniper(join_path(self.prefix.share, "SniperExamples", f"run-HelloWorld.{extension}"))
 
     def setup_run_environment(self, env):
         env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
