@@ -64,6 +64,7 @@ class RVctrs(RPackage):
     depends_on("r-zeallot", type=("build", "run"), when="@:0.2.0")
     depends_on("r-ellipsis@0.2.0:", type=("build", "run"), when="@:0.3.8")
 
+    # Versions <= 0.7.2 use R_NamespaceRegistry which was removed in r@4.6.0
     conflicts("r@4.6:", when="@:0.7.2")
 
     def flag_handler(self, name, flags):
