@@ -98,13 +98,13 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libxml2", when="+alien")
 
     depends_on("glib")
-    depends_on("valgrind", when="+valgrind")
     depends_on("mpi", when="+mpi")
     depends_on("hdf5@1.10:", when="+hdf5")
     depends_on("intel-tbb@2021:", when="+tbb")
     depends_on("mkl", when="+mkl")
     depends_on("bzip2", when="+bzip2")
     depends_on("lz4", when="+lz4")
+    depends_on("zstd", when="+zstd")
     depends_on("med", when="+med")
     depends_on("otf2", when="+otf2")
     depends_on("swig@4:", type=("build"), when="+dotnet_wrapper")
@@ -158,12 +158,10 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
             "zoltan": "Zoltan",
             "libunwind": "LibUnwind",
             "udunits": "Udunits",
-            "valgrind": "Valgrind",
             "hwloc": "HWLoc",
             "papi": "Papi",
             "hypre": "Hypre",
             "trilinos": "Trilinos",
-            "lima": "Lima",
             "dotnet_wrapper": ["SWIG", "CoreClrEmbed"],
         }
         return ";".join(
@@ -179,7 +177,6 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
             self.define("ARCCORE_CXX_STANDARD", "20"),
             self.define("ARCANE_BUILD_WITH_SPACK", True),
             self.define("ARCANE_NO_DEFAULT_PACKAGE", True),
-            self.define("ARCANEFRAMEWORK_BUILD_COMPONENTS", "Arcane"),
             self.define("ARCANE_DISABLE_DEPRECATED_WARNINGS", "TRUE"),
             self.define_from_variant("ARCCORE_USE_MPI", "mpi"),
             self.define_from_variant("ARCCORE_ENABLE_TBB", "tbb"),
@@ -196,8 +193,8 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
             components_to_build = components_to_build + ";" + "Alien"
         args.append(self.define("ARCANEFRAMEWORK_BUILD_COMPONENTS", components_to_build))
 
-        default_partitionner = "Auto"
-        args.append(self.define("ARCANE_DEFAULT_PARTITIONER", default_partitionner))
+        default_partitioner = "Auto"
+        args.append(self.define("ARCANE_DEFAULT_PARTITIONER", default_partitioner))
         args.append(self.define("ARCANE_REQUIRED_PACKAGE_LIST", self.build_required()))
 
         if "+alien" in self.spec:
