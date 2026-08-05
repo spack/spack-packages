@@ -70,11 +70,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
 
     # Only the fftw@3.3.8: backend implementation is verified in current testing.
     # Alternative fftw-api providers such as amdfftw and cray-fftw have not been tested.
-    depends_on(
-        "fftw-api",
-        when="+fftw",
-        type=("build", "run")
-    )
+    depends_on("fftw-api", when="+fftw", type=("build", "run"))
     depends_on("intel-oneapi-mkl", when="+mkl", type=("build", "run"))
     # mkl renamed dfti.hpp to dft.hpp in 2026.0, which breaks heffte@2.4.1 and earlier
     conflicts("^intel-oneapi-mkl@2026.0:", when="@:2.4.1")
