@@ -45,6 +45,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
+    version("14.4.0", sha256="752b6f567beac83159c77a7680b1316bdd784738bff9a9d070112c09da90f6d9")
     version("14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a")
     version(
         "14.2.0",
