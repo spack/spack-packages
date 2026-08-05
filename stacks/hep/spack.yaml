@@ -115,6 +115,7 @@ spack:
   # Note: ~vbfnlo for herwig3 works around gfortran-13 ICE in CI (does not reproduce locally).
   # Re-enable once CI environment is updated with a fix, i.e. a fixed gfortran-13+.
   - herwig3 +njet ~vbfnlo
+  - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python
