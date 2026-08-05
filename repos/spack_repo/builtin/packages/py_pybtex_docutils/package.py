@@ -13,6 +13,7 @@ class PyPybtexDocutils(PythonPackage):
     pypi = "pybtex-docutils/pybtex-docutils-0.2.1.tar.gz"
 
     license("MIT")
+    maintainers("sethrj")
 
     version("1.0.3", sha256="3a7ebdf92b593e00e8c1c538aa9a20bca5d92d84231124715acc964d51d93c6b")
     version("1.0.2", sha256="43aa353b6d498fd5ac30f0073a98e332d061d34fe619d3d50d1761f8fd4aa016")
