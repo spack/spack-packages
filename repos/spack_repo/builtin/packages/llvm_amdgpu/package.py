@@ -387,7 +387,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
                     llvm_version = "20"
                 args.append(
                     self.define(
-                        "ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC_NEW",
+                        "ROCM_DEVICE_LIBS_BITCODE_INSTALL_LOC",
                         f"lib/clang/{llvm_version}/lib/amdgcn",
                     )
                 )
