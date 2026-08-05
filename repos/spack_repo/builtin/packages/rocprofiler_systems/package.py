@@ -19,9 +19,9 @@ def submodules(package):
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
     ]
-    if package.spec.satisfies("@:7.2"):
+    if package is not None and package.spec.satisfies("@:7.2"):
         submodules.append("projects/rocprofiler-systems/external/PTL")
-    if package.spec.satisfies("@:7.13"):
+    if package is not None and package.spec.satisfies("@:7.13"):
         submodules.append("projects/rocprofiler-systems/examples/openmp/external/ompvv")
     return submodules
 
