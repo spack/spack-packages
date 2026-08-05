@@ -102,6 +102,8 @@ class R(AutotoolsPackage):
         when="@:4.3.3",
     )
 
+    conflicts("@:4.4.2 %gcc@15:")
+
     build_directory = "spack-build"
 
     @classmethod
