@@ -19,6 +19,7 @@ class RSparsearray(RPackage):
     depends_on("c", type="build")
 
     depends_on("r@4.3:", type=("build", "run"))
+    depends_on("r@4.5:", type=("build", "run"), when="@1.12.2:")
 
     depends_on("r-biocgenerics@0.43.1:", type=("build", "run"))
 
