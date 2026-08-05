@@ -38,6 +38,7 @@ class Apptainer(SingularityBase):
     )
 
     version("main", branch="main", get_full_repo=True)  # apptainer version uses git describe
+    version("1.5.3", sha256="5a3bf360a5240086324aa7f7005ab7eeee91095e2091078b3f9783eaf6e7288a")
     version("1.5.0", sha256="36d67d57ef959397fa4f59169cf7deb92220537160e761e0c1cff84624ad81e3")
     version("1.4.4", sha256="eb806e22dabfb6549c398b55e50c747e4c51b57f8879da9e29813de40af54b48")
     version("1.4.3", sha256="dfb85b8ad48bd366245c7f6a1d0b56d2ce480cfdf18d7a64397098184b4ade90")
