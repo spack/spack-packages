@@ -30,7 +30,7 @@ index 486bf6ad..56c6c7c2 100644
  //! @brief test input setup for findSplits
  template<size_t N>
 diff --git a/physics/Disk/include/CMakeLists.txt b/physics/Disk/include/CMakeLists.txt
-index 9ef6afd5..a7cf19eb 100644
+index 9ef6afd5..af2d6868 100644
 --- a/physics/Disk/include/CMakeLists.txt
 +++ b/physics/Disk/include/CMakeLists.txt
 @@ -3,14 +3,16 @@ if (CMAKE_HIP_COMPILER)
@@ -49,9 +49,10 @@ index 9ef6afd5..a7cf19eb 100644
      else ()
 -        target_link_libraries(disk_gpu PRIVATE hip::host)
 -        target_compile_definitions(disk_gpu PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
-+        target_link_libraries(${testname} PRIVATE hip::host cstone_thrust_incl)
+-        set_target_properties(${exename} PROPERTIES LINKER_LANGUAGE CXX)
++        set_target_properties(${testname} PROPERTIES LINKER_LANGUAGE CXX)
 +        target_compile_definitions(${testname} PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
-         set_target_properties(${exename} PROPERTIES LINKER_LANGUAGE CXX)
++        target_link_libraries(${testname} PRIVATE hip::host cstone_thrust_incl)
      endif ()
 +    add_test(NAME ${testname} COMMAND ${testname})
  endif ()
