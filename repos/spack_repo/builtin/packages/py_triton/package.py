@@ -68,6 +68,31 @@ class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
         when="@3.5.1",
     )
 
+    # Triton JIT-compiles its CUDA driver (driver.c / cuda_utils.c) at runtime
+    # via subprocess.check_call([cc, ...]). The gcc command only includes
+    # triton's own backend dirs and python's include dir, not CUDA's, so
+    # `#include "cuda.h"` fails when the JIT runs in a subprocess that
+    # doesn't inherit CPATH (e.g. vLLM's EngineCore worker). Inject
+    # $CUDA_HOME/include into the include_dirs list in _build() so the
+    # flag is passed explicitly on the cc command line.
+    patch(
+        "triton-v3.5.1-cuda-home-include.patch",
+        sha256="de9918feb9b431ac9633d45b86febd22a027b1c0122381c91e260799ab013a1b",
+        when="@3.5.1",
+    )
+
+    # Triton's knobs.nvidia.{ptxas,cuobjdump,nvdisasm} read TRITON_*_PATH env
+    # vars to locate the CUDA binaries. When vLLM spawns the EngineCore worker
+    # via multiprocessing.spawn, those env vars may not propagate, and the
+    # knobs raise "Cannot find ptxas". Add a shutil.which(self.binary) PATH
+    # fallback in env_nvidia_tool.transform so the tools are still found via
+    # PATH (which `spack load` populates).
+    patch(
+        "triton-v3.5.1-nvidia-tool-path-fallback.patch",
+        sha256="0076f183de9f8955ebf01fef78443cec18f00b46a8c088e858612df34433ed40",
+        when="@3.5.1",
+    )
+
     @run_before("install")
     def patch_llvm_target_libraries(self):
         """Ensure libtriton.so links all LLVM target libraries.
