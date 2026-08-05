@@ -18,7 +18,8 @@ class PyHydraCore(PythonPackage):
     version("1.3.2", sha256="8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824")
     version("1.3.1", sha256="8dd42d551befc43dfca0c612cbd58c4f3e273dbd97a87214c1a030ba557d238b")
 
-    depends_on("py-setuptools", type="build")
+    # Limiting setuptools upper bound due to: No module named 'pkg_resources'
+    depends_on("py-setuptools@:81", type="build")
     depends_on("py-omegaconf@2.2:2.3", type=("build", "run"))
     depends_on("py-antlr4-python3-runtime@4.9", type=("build", "run"))
     depends_on("py-importlib-resources", when="^python@:3.8", type=("build", "run"))
