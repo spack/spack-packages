@@ -314,8 +314,18 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
 
         if "+rocm" in spec:
             self._copy_arch_file("hip")
+            # Enable cross-compilation
+            filter_file(
+                r"HIPCCOPTS \+= -march=native",
+                r"HIPCCOPTS += ",
+                join_path("arch", self.arch + ".hip"),
+            )
             opts.append("--with-hip")
             opts.extend(["--rocm-prefix", os.environ["ROCM_PATH"]])
+
+            # Fix hip compilation
+            if spec.satisfies("@3.0.1"):
+                filter_file(r"__syncwarp", r"__syncthreads", "src/SequencerCUDAKernel.cu")
 
             if "+single_node_gpu" in spec:
                 opts.extend(["--with-single-node-hip"])
