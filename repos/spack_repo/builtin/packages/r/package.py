@@ -27,7 +27,13 @@ class R(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("trunk", svn="https://svn.r-project.org/R/trunk")
-    version("4.5.3", sha256="aa5c1ed4293c7271ac513d654670356ac0e8a6ad5e42be014365d11150b5b8f2")
+    version("4.6.1", sha256="4da6e61d2c0aac5f14a2e7e432cb5fcc269efe83da4293050ba7f03dff4e2cf4")
+    version("4.6.0", sha256="b8dc9b4543660c7b596b87938df532394350360976527d344228ee0ed12e45ec")
+    version(
+        "4.5.3",
+        sha256="aa5c1ed4293c7271ac513d654670356ac0e8a6ad5e42be014365d11150b5b8f2",
+        preferred=True,
+    )
     version("4.5.2", sha256="0d71ff7106ec69cd7c67e1e95ed1a3cee355880931f2eb78c530014a9e379f20")
     version("4.5.1", sha256="b42a7921400386645b10105b91c68728787db5c4c83c9f6c30acdce632e1bb70")
     version("4.5.0", sha256="3b33ea113e0d1ddc9793874d5949cec2c7386f66e4abfb1cef9aec22846c3ce1")
@@ -49,6 +55,7 @@ class R(AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("findutils", type="build")
+    depends_on("texinfo@6.8:", when="@4.6:")
     depends_on("texinfo", type="build")
 
     depends_on("blas")
@@ -94,6 +101,8 @@ class R(AutotoolsPackage):
         sha256="56c77763cb104aa9cb63420e585da63cb2c23bc03fa3ef9d088044eeff9d7380",
         when="@:4.3.3",
     )
+
+    conflicts("@:4.4.2 %gcc@15:")
 
     build_directory = "spack-build"
 
@@ -254,6 +263,10 @@ class R(AutotoolsPackage):
         # determine how many jobs can actually be started.
         env.set("MAKEFLAGS", "-j{0}".format(make_jobs))
         env.set("R_HOME", join_path(self.prefix, "rlib", "R"))
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Standardize the timezone for the builds
+        env.set("TZ", "UTC")
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

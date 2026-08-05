@@ -15,7 +15,7 @@ class Trng(CMakePackage):
 
     maintainers("chapman39")
 
-    version("4.28", commit="691817a4a0331421776e7f00efa9fbe81554da86", submodules=True)
+    version("4.28.1", commit="cc1b170b050b541ac481415b175394670c2a4e85", submodules=True)
     version("4.24", commit="a22a32b9a285d1293b74b17b34f81af5dcec6311")
     version("4.23.1", commit="610f7836610e9e01788f8461fbe83b67544ded7c")
     version("4.23", commit="22a30c493eff4cb547185fa48275683751df18e0")

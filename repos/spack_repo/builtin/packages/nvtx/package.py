@@ -46,6 +46,11 @@ class Nvtx(Package, PythonExtension):
         setup = FileFilter("python/setup.py")
         setup.filter("include_dirs=include_dirs", f"include_dirs=['{include_dir}']", string=True)
 
+    def flag_handler(self, name, flags):
+        if name == "cflags" and self.spec.satisfies("@3.2: %gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def install(self, spec, prefix):
         install_tree("c/include", prefix.include)
         install("c/CMakeLists.txt", prefix)

@@ -60,7 +60,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         description="X11 toolkit when gui=x11 (gtk, athena)",
         when="gui=x11",
     )
-    variant("json", default=False, when="@27:", description="Build with json support")
+    variant("json", default=False, when="@27:29", description="Build with json support")
     variant("native", default=False, when="@28:", description="Enable native compilation of elisp")
     variant("sqlite", default=False, when="@29.1:", description="Build with sqlite3 support")
     variant("tls", default=True, description="Build with gnutls support")

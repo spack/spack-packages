@@ -2,16 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class HipTensor(CMakePackage, ROCmPackage):
-    """AMD’s C++ library for accelerating tensor primitives"""
+class HipTensor(ROCmLibrary, CMakePackage, ROCmPackage):
+    """AMD's C++ library for accelerating tensor primitives"""
 
     homepage = "https://github.com/ROCm/hipTensor"
     git = "https://github.com/ROCm/rocm-libraries.git"
@@ -20,13 +21,12 @@ class HipTensor(CMakePackage, ROCmPackage):
     maintainers("srekolam", "afzpatel")
     libraries = ["libhiptensor"]
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/hipTensor/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -54,6 +54,19 @@ class HipTensor(CMakePackage, ROCmPackage):
     version("5.7.0", sha256="4b17f6d43b17fe2dc1d0c61e9663d4752006f7898cc94231206444a1663eb252")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+
+    # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=disjoint_sets(("auto",), amdgpu_targets)
+        .with_default("auto")
+        .with_error(
+            "the values 'auto' and 'none' are mutually exclusive with any of the other values"
+        )
+        .with_non_feature_values("auto", "none"),
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
@@ -84,8 +97,9 @@ class HipTensor(CMakePackage, ROCmPackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(
                 f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
             )

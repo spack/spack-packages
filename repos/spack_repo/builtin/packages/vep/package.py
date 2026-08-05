@@ -60,7 +60,7 @@ class Vep(Package):
     # This is a workaround for the VEP installer which downloads
     # and manually installs dependent packages
     with default_args(type=("build", "run"), when="~vep_installer"):
-        for ver in ["110", "111", "112"]:
+        for ver in ["110", "111", "112", "113"]:
             depends_on(f"perl-bio-ensembl@{ver}", when=f"@{ver}")
             depends_on(f"perl-bio-ensembl-variation@{ver}", when=f"@{ver}")
             depends_on(f"perl-bio-ensembl-funcgen@{ver}", when=f"@{ver}")

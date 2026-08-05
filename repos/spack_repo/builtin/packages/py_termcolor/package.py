@@ -14,8 +14,12 @@ class PyTermcolor(PythonPackage):
 
     license("MIT")
 
+    version("3.3.0", sha256="348871ca648ec6a9a983a13ab626c0acce02f515b9e1983332b17af7979521c5")
     version("3.1.0", sha256="6a6dd7fbee581909eeec6a756cff1d7f7c376063b14e4a298dc4980309e55970")
     version("1.1.0", sha256="1d6d69ce66211143803fbc56652b41d73b4a400a2891d7bf7a1cdf4c02de613b")
+
+    depends_on("python@3.10:", type=("build", "run"), when="@3.2:")
+    depends_on("python@3.9:", type=("build", "run"), when="@2.5:")
 
     with default_args(type="build"):
         with when("@3:"):
