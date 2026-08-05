@@ -71,7 +71,8 @@ class Pipx(PythonPackage):
     # When using uv backend, py-pip is needed for building, else it is needed for building and
     # running
     depends_on("py-pip", when="backend=uv", type="build")
-    depends_on("py-pip", type=("build", "run"))
+    depends_on("py-pip", when="backend=pip", type=("build", "run"))
+    depends_on("py-pip", when="@:1.11", type=("build", "run"))
 
     depends_on("py-platformdirs@2.1:", when="@1.3:", type=("build", "run"))
 
@@ -84,12 +85,11 @@ class Pipx(PythonPackage):
     depends_on("py-uv@0.4:", when="@1.12: backend=uv", type="run")
 
     def setup_run_environment(self, env):
-        if self.spec.satisfies("backend=pip"):
-            # If uv is not desired, force pip backend. This avoids pipx using any other uv found on
-            # PATH.
-            env.set("PIPX_DEFAULT_BACKEND", "pip")
+        if self.spec.satisfies("@1.12:"):
+            backend = self.spec.variants["backend"].value
 
-        elif self.spec.satisfies("backend=uv"):
-            # Ensure Spack-installed uv is used
-            env.set("PIPX_DEFAULT_BACKEND", "uv")
-            env.set("PIPX_UV_BINARY", join_path(self.spec["py-uv"].prefix.bin, "uv"))
+            env.set("PIPX_DEFAULT_BACKEND", backend)
+
+            if backend == "uv":
+                # Ensure Spack-installed uv is used
+                env.set("PIPX_UV_BINARY", self.spec["py-uv"].prefix.bin.uv)
