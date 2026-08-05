@@ -390,6 +390,8 @@ class Openfoam(Package):
         values=("none", conditional("adios", "visualization", when="@2512:")),
         multi=True,
     )
+    conflicts("modules=none", when="modules=adios")
+    conflicts("modules=none", when="modules=visualization")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
