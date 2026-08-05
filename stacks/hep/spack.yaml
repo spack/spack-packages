@@ -145,6 +145,7 @@ spack:
   - py-vector
   - py-zfit
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
+  - recola
   - rivet
   - root ~cuda
   - root ~builtin_llvm
