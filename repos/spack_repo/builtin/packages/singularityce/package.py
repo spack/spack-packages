@@ -129,6 +129,13 @@ class SingularityBase(MakefilePackage):
             join_path(prefix.etc, self.singularity_name, self.singularity_name + ".conf"),
         )
 
+    def flag_handler(self, name, flags):
+        # The package does not build with C dialects newer than gnu17, so set gnu17
+        # for GCC 15 and newer which default to gnu23
+        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     #
     # Assemble a script that fixes the ownership and permissions of several
     # key files, install it, and tty.warn() the user.

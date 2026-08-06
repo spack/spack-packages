@@ -532,3 +532,16 @@ class Seacas(CMakePackage):
         if not self.spec.dependencies("parallel"):
             return
         symlink(self.spec["parallel"].prefix.bin.parallel, self.prefix.bin.parallel)
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def run_ctest_after_install(self):
+        ctestjobs = min(make_jobs, 8)
+        with working_dir(self.build_directory):
+            ctest("-j", str(ctestjobs), "--output-on-failure")
+
+    def check(self):
+        # Currently the seacas tests run by ctest only succeed after
+        # installation has been completed, so we do not want to run
+        # the tests here after the build before the install
+        return

@@ -4,11 +4,12 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmCmake(CMakePackage):
+class RocmCmake(ROCmLibrary, CMakePackage):
     """rocm-cmake provides CMake modules for common build tasks
     in the ROCm software stack"""
 
@@ -20,6 +21,12 @@ class RocmCmake(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocm-cmake/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="bd024d6cd61d6ab09c9b2369bb26baf1fb956a929757abdf672a458edb94e2ae")
     version("7.2.3", sha256="069dc6405efc252d690e905dddb18b385691011cbc3fe142f0dd4f7a598211d7")
     version("7.2.1", sha256="5eec670557b41516e9e27738d20178122b5b536344f471ab823b308d3c767588")
     version("7.2.0", sha256="3f3899e84d78a0fecab62a35eed0014bb503c04d2cf76d263b29daf17f178636")
@@ -76,6 +83,7 @@ class RocmCmake(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
