@@ -121,7 +121,7 @@ spack:
   - hpx max_cpu_count=512 networking=mpi
   - hypre
   - kokkos +openmp
-  - kokkos-fft host_backend=fftw-openmp +tests
+  - kokkos-fft host_backend=fftw-openmp
   - kokkos-kernels +openmp
   - libnrm
   - libquo
