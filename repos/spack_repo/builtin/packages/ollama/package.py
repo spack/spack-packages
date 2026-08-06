@@ -109,8 +109,10 @@ class GoBuilder(go.GoBuilder):
         """Arguments for ``go build``."""
         # Manually set the version embedded into the executable because it normally uses git tags
         # to determine this.
+        ver = self.spec.version.string
         return [
-            f"-ldflags=-w -s -X=github.com/ollama/ollama/version.Version={self.spec.version.string} -X=github.com/ollama/ollama/server.mode=release"
+            (f"-ldflags=-w -s -X=github.com/ollama/ollama/version.Version={ver}"
+            f"-X=github.com/ollama/ollama/server.mode=release")
         ]
 
     def generate(self, pkg, spec, prefix):
