@@ -3,19 +3,29 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems import go
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.go import GoPackage
 
 from spack.package import *
 
-
-class Ollama(GoPackage, CudaPackage):
+class Ollama(CMakePackage, GoPackage, CudaPackage):
     """Run Llama 2, Code Llama, and other models. Customize and create your own."""
 
     homepage = "https://ollama.com"
     git = "https://github.com/ollama/ollama.git"
 
     maintainers("teaguesterling", "brettviren")
+
+    # Starting with 0.30, the way ollama integrates the llama server was changed,
+    # and so now it must be built by the CMake included in ollama. That CMake
+    # system will call the go builder automatically during its processing.
+    # Before that, use the go system.
+    build_system(
+        conditional("cmake", when="@0.30:"),
+        conditional("go", when="@:0.29"),
+        default="cmake",
+    )
 
     # A shell script is run by `go generate` which assumes source is in a git
     # repo.  So we must use git VCS and not tarballs and defeat source caching.
@@ -55,6 +65,25 @@ class Ollama(GoPackage, CudaPackage):
     depends_on("go@1.24.1:", type="build", when="@0.12.10:")
     depends_on("go@1.26.0:", type="build", when="@0.23.1:")
     depends_on("git", type="build")
+
+    depends_on("cuda@13", when="+cuda")
+
+    def cmake_args(self):
+        spec = self.spec
+        args = [
+            self.define("OLLAMA_VERSION", self.spec.version.string),
+        ]
+
+        if spec.satisfies("+cuda"):
+            cuda_prefix = self.spec["cuda"].prefix
+            args += [
+                self.define("CUDACXX", cuda_prefix.bin.nvcc),
+                self.define("CUDA_LIB_DIR", cuda_prefix.lib),
+                self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
+                self.define("OLLAMA_LLAMA_BACKENDS", "cuda_v13"),
+            ]
+
+        return args
 
 
 class GoBuilder(go.GoBuilder):
