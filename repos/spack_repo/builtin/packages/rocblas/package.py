@@ -99,10 +99,11 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
-        "7.13.0",
-        "7.14.0",
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
+
+    for ver in ["7.13.0", "7.14.0"]:
+        depends_on(f"amdsmi@{ver}", type="test", when=f"@{ver}")
 
     for ver in [
         "5.7.0",
