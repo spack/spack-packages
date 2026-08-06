@@ -77,7 +77,11 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=False, description="Use Kokkos and SEACASExodus from trilinos")
+    variant(
+        "trilinos",
+        default=False,
+        description="Use Kokkos and SEACASExodus from trilinos",
+    )
     variant(
         "exodus",
         default=False,
@@ -93,7 +97,10 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("kokkos", default=False, description="Use Kokkos")
     variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
     variant(
-        "python", default=False, description="enable python interfaces", when="@11.2.0-scorec:"
+        "python",
+        default=False,
+        description="enable python interfaces",
+        when="@11.2.0-scorec:",
     )
 
     depends_on("cxx", type="build")
@@ -113,14 +120,16 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("zlib-api", when="+zlib")
     depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
 
-    conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
+    conflicts(
+        "+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both"
+    )
     conflicts(
         "+trilinos",
         when="@11.1.0-scorec:+exodus",
         msg="Use SEACASExodus directly or via Trilinos, not both",
     )
 
-    extends("python")
+    extends("python", when="+python")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
