@@ -346,7 +346,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # FIXME regroup variants and conflicts
     variant(
         "deprecated_code",
-        default=True,
+        default=False,
         description="Whether to enable code deprecated in the major version",
     )
 
