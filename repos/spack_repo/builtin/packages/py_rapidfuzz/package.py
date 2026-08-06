@@ -27,6 +27,7 @@ class PyRapidfuzz(PythonPackage):
     depends_on("python@3.10:", type=("build", "link", "run"), when="@3.14:")
     depends_on("py-scikit-build-core@0.11:", type="build", when="@3.14.1:")
     depends_on("py-cython@3.0.12:3.1", type="build", when="@3.14.1:")
+    depends_on("py-cython@3.1.6:3.1", type="build", when="@3.14.2:")
 
     # historical
     with when("@:3.3.1"):
