@@ -1,4 +1,4 @@
-diff --git a/Tensile/Source/client/CMakeLists.txt b/Tensile/Source/client/CMakeLists.txt
+diff --git a/shared/tensile/Tensile/Source/client/CMakeLists.txt b/shared/tensile/Tensile/Source/client/CMakeLists.txt
 index a9ac80a..087e0c5 100644
 --- a/shared/tensile/Tensile/Source/client/CMakeLists.txt
 +++ b/shared/tensile/Tensile/Source/client/CMakeLists.txt
