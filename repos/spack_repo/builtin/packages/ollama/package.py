@@ -111,8 +111,10 @@ class GoBuilder(go.GoBuilder):
         # to determine this.
         ver = self.spec.version.string
         return [
-            (f"-ldflags=-w -s -X=github.com/ollama/ollama/version.Version={ver}"
-            f" -X=github.com/ollama/ollama/server.mode=release")
+            (
+                f"-ldflags=-w -s -X=github.com/ollama/ollama/version.Version={ver}"
+                f" -X=github.com/ollama/ollama/server.mode=release"
+            )
         ]
 
     def generate(self, pkg, spec, prefix):
