@@ -25,8 +25,8 @@ class Opari2(AutotoolsPackage):
     # still in Spack. 1.x is ancient and is deprecated in anticipation of removal.
     # Deprecating here as a _slightly_ gentler approach than hard-bumping the version dependencies downstream.
     version("2.0.10", sha256="49d9526bf76ebf7836e62f70850d4d605b08910dbabddac3f7479b509abce887")
-    version("2.0.9", sha256="d57139f757c5666afaaead45ed3d0954a9b98c4a6cef6b22afe672707cffd779")
     with default_args(deprecated=True):
+        version("2.0.9", sha256="d57139f757c5666afaaead45ed3d0954a9b98c4a6cef6b22afe672707cffd779")
         version("2.0.8", sha256="196e59a2a625e6c795a6124c61e784bad142f9f38df0b4fa4d435ba9b9c19721")
         version("2.0.7", sha256="e302a4cc265eb2a4aa27c16a90eabd9e1e58cb02a191dd1c4d86f9a0df128715")
         version("2.0.6", sha256="55972289ce66080bb48622110c3189a36e88a12917635f049b37685b9d3bbcb0")
