@@ -355,7 +355,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
-    conflicts("+cuda", when="cxxstd=23 ^cuda@:13.2")
+    requires("@5.2: ^cuda@13.3:", when="+cuda cxxstd=23")
 
     # Expose a way to disable CudaMallocAsync that can cause problems
     # with some MPI such as cray-mpich
