@@ -23,7 +23,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
 
     homepage = "https://hpctoolkit.org"
     git = "https://gitlab.com/hpctoolkit/hpctoolkit.git"
-    maintainers("mwkrentel")
+    maintainers("blue42u")
 
     tags = ["e4s"]
 
@@ -33,6 +33,9 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     license("BSD-3-Clause", when="@:2024")
 
     version("develop", branch="develop")
+    version("2026.0.stable", branch="release/2026.0")
+    version("2026.0.1", tag="2026.0.1", commit="fc620c4751e6e233725620b2f22b1bcaa07c967f")
+    version("2026.0.0", tag="2026.0.0", commit="7134ddc4bc68b0c7a92f31d1268bdd01e177efc0")
     version("2025.1.stable", branch="release/2025.1")
     version("2025.1.2", tag="2025.1.2", commit="b2f42a93d7f40a20398d35905d8d54a4568cb52e")
     version("2025.1.1", tag="2025.1.1", commit="a1ffae9da0e7da042c70e6ed592db35286e4483d")
@@ -193,6 +196,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("xz+pic libs=static", type="link", when="@:2023.08")
     depends_on("yaml-cpp@0.7.0: +shared", when="@2022.10:")
     depends_on("googletest@1.8.1: +gmock", type="test", when="@2025:")
+    depends_on("jemalloc", when="@2026.1: ^dyninst@14:")
 
     depends_on("zlib-api")
     depends_on("zlib+shared", when="^[virtuals=zlib-api] zlib")
@@ -208,6 +212,7 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
     depends_on("cuda", when="+cuda")
     depends_on("oneapi-level-zero", when="+level_zero")
     depends_on("oneapi-igc", when="+gtpin")
+    depends_on("oneapi-igc", when="@2026: +level_zero")
     depends_on("intel-gtpin", when="+gtpin")
     depends_on("opencl-c-headers", when="+opencl")
 
@@ -475,6 +480,13 @@ class MesonBuilder(meson.MesonBuilder):
 
         if spec.satisfies("@:2024.01"):
             args.append(f"--native-file={self.gen_prefix_file()}")
+
+        # Dyninst before master June 2026 pulls in tbbmalloc_proxy,
+        # and we don't really want to run both.
+        if spec.satisfies("@2026.1:"):
+            args.append(
+                "-Djemalloc=" + ("enabled" if spec.satisfies("^dyninst@14:") else "disabled")
+            )
 
         return args
 

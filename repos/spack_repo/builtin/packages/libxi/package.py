@@ -13,12 +13,14 @@ class Libxi(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXi"
     xorg_mirror_path = "lib/libXi-1.7.6.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXi.git"
 
     license("MIT AND X11")
 
     maintainers("wdconinc")
 
     # Newer versions are blocked by https://github.com/spack/spack/issues/41688
+    # version("1.8.2", sha256="5542daec66febfeb6f51d57abfa915826efe2e3af57534f4105b82240ea3188d")
     # version("1.8.1", sha256="3b5f47c223e4b63d7f7fe758886b8bf665b20a7edb6962c423892fd150e326ea")
     # version("1.8", sha256="c80fd200a1190e4406bb4cc6958839d9651638cb47fa546a595d4bebcd3b9e2d")
     version("1.7.10", sha256="b51e106c445a49409f3da877aa2f9129839001b24697d75a54e5c60507e9a5e3")

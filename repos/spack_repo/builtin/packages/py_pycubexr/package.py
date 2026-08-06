@@ -17,6 +17,7 @@ class PyPycubexr(PythonPackage):
 
     maintainers("pearzt")
 
+    version("2.1.1", sha256="124031f86ed313c5c58048a16e8661324e644fea025795509516bd55df0e709a")
     version("2.1.0", sha256="c09ea0d3a13465f38ce1302eb980f8e0cd1293f9d1dc5d21eb5bd47c19f8fe0d")
     version("2.0.1", sha256="699643c076b603fb1140564da6c4589b73ec9efd3b9112cd3d957f5bee646915")
     version("2.0.0", sha256="03504fbbc9cbd514943e8aeb57919ad49731fe264bdbab86711bf10851276924")

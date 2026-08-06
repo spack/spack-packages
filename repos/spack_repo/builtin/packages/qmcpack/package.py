@@ -26,6 +26,7 @@ class Qmcpack(CMakePackage, CudaPackage):
     # can occasionally change.
     # NOTE: 12/19/2017 QMCPACK 3.0.0 does not build properly with Spack.
     version("develop")
+    version("4.3.0", tag="v4.3.0", commit="bb7eede051f98ec03296664b304982e655f960c4")
     version("4.2.0", tag="v4.2.0", commit="44a7f7e99a5770ea368b8ea35b181329606bc343")
     version("4.1.0", tag="v4.1.0", commit="c32123a5233186b177d75b800b86f1ad3b1a1413")
     version("4.0.0", tag="v4.0.0", commit="0199944fb644b4798446fdfc0549c81666a4a943")
@@ -173,7 +174,8 @@ class Qmcpack(CMakePackage, CudaPackage):
     depends_on("boost@1.61.0:+exception+serialization+random", when="@3.6.0:", type="build")
     depends_on("libxml2")
     depends_on("mpi", when="+mpi")
-    depends_on("python@3:", when="@3.9:")
+    depends_on("python@3:", when="@3.9:", type=("build", "run", "test"))
+    depends_on("python@3.10:", when="@4.3:", type=("build", "run", "test"))
 
     # HDF5
     depends_on("hdf5~mpi", when="~phdf5")

@@ -121,7 +121,7 @@ spack:
   - hpx max_cpu_count=512 networking=mpi
   - hypre
   - kokkos +openmp
-  - kokkos-fft host_backend=fftw-openmp +tests
+  - kokkos-fft host_backend=fftw-openmp
   - kokkos-kernels +openmp
   - libnrm
   - libquo
@@ -175,7 +175,6 @@ spack:
   # - datatransferkit
   # - dealii
   # - exaworks
-  # - fortrilinos
   # - gptune
   # - lammps
   # - legion                              # bitmask.h:2894:22: error: a template argument list is expected after a name prefixed by the template keyword [-Wmissing-template-arg-list-after-template-kw]

@@ -18,6 +18,7 @@ class RSurvival(RPackage):
 
     license("LGPL-2.0-or-later")
 
+    version("3.8-6", sha256="9a4c0a35d86c64ec5a6e6cf179ab22dcffb5ce1d313d2880a09f1e53422699d7")
     version("3.8-3", sha256="dcab05a57d37a561c7426f6213d49852dc4f462180dd28b5325ff4b6a5e59915")
     version("3.7-0", sha256="cd96b08ec928b0028f69c942cc788e190b4543c8518d71deb6d8a712de44feef")
     version("3.5-5", sha256="1375a509554b0258e04e27baca2e073e179406e2a9a71e6d3e0c777072568476")
@@ -34,7 +35,9 @@ class RSurvival(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@3.5.0:", type=("build", "run"), when="@3.2-13:")
-    depends_on("r@3.4:", type=("build", "run"), when="@3.1-12:")
-    depends_on("r@2.13.0:", type=("build", "run"))
-    depends_on("r-matrix", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.5.0:", when="@3.2-13:")
+        depends_on("r@3.4:", when="@3.1-12:")
+        depends_on("r@2.13.0:")
+
+        depends_on("r-matrix")

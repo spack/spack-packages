@@ -24,6 +24,7 @@ class RDesolve(RPackage):
 
     cran = "deSolve"
 
+    version("1.42", sha256="c15d4d3b17f7e6c9344728f7623c519495b6742d5236b9323d6b6250ce2c0f71")
     version("1.40", sha256="8c09ae6bb6875b569b9844eede30b790f39fc227f5c9d045fa63ce1b22f500ef")
     version("1.35", sha256="96f17f497713754f84ff56c3538c6d05b9f5229f9a2a32aafec7d7cdc721d488")
     version("1.34", sha256="2254305f44dde22ac685fef4c60e29a0608af0197c803107365d1d80b75c9f21")
@@ -38,6 +39,8 @@ class RDesolve(RPackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("r@2.15.0:", type=("build", "run"))
-    depends_on("r@3.3.0:", type=("build", "run"), when="@1.28:")
-    depends_on("r@4.0.0:", type=("build", "run"), when="@1.32:")
+    with default_args(type=("build", "run")):
+        # the dependency was relaxed in later versions again
+        depends_on("r@4.0.0:", when="@1.32")
+        depends_on("r@3.3.0:", when="@1.28:")
+        depends_on("r@2.15.0:")

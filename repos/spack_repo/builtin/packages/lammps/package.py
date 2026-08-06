@@ -33,14 +33,20 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
+    version("20260704", sha256="be9deffba169d140c337fd29570d3f5469332ece7e77280cce998f6caaad5534")
     version("20260330", sha256="395f00e166836ac0164793d65ba0d957d79dd0848a79c36fa903855e8b49b7e0")
     version("20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e")
     version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
     version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
     version(
+        "20250722.4",
+        sha256="411088d9c03339e025f6a975e0a5741bb9e3f351cc39eda220ab22ac318fe2fb",
+        preferred=True,
+    )
+    version(
         "20250722.3",
         sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef",
-        preferred=True,
+        deprecated=True,
     )
     version(
         "20250722.2",
@@ -76,16 +82,30 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
     )
     version(
-        "20230802.4", sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b"
+        "20230802.4",
+        sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b",
+        deprecated=True,
     )
     version(
-        "20220623.4", sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf"
+        "20220623.4",
+        sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf",
+        deprecated=True,
     )
     version(
-        "20210929.3", sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e"
+        "20210929.3",
+        sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e",
+        deprecated=True,
     )
-    version("20201029", sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726")
-    version("20200303", sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1")
+    version(
+        "20201029",
+        sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726",
+        deprecated=True,
+    )
+    version(
+        "20200303",
+        sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1",
+        deprecated=True,
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -95,6 +115,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20250722.4",
         "20250722.3",
         "20250722.2",
         "20250722.1",
@@ -162,6 +183,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "extra-pair": {"when": "@20210728:"},
         "fep": {"when": "@20210702:"},
         "granular": {},
+        "gransurf": {"when": "@20260704:"},
+        "graphics": {"when": "@20260211:"},
         "h5md": {"when": "@20210702:"},
         "intel": {"when": "@20210702:"},
         "interlayer": {"when": "@20210728:"},
@@ -387,7 +410,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("curl", when="+curl")
     depends_on("libpng", when="+png")
     depends_on("ffmpeg", when="+ffmpeg")
-    depends_on("kokkos+shared@3.1:", when="@20200505:+kokkos")
+    depends_on("kokkos+shared", when="+kokkos")
     depends_on("kokkos@3.7.01:", when="@20230208: +kokkos")
     depends_on("kokkos@4.3.00:", when="@20240417: +kokkos")
     depends_on("kokkos@4.3.01:", when="@20240627: +kokkos")
@@ -397,6 +420,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.6.02:", when="@20250722: +kokkos")
     depends_on("kokkos@4.7.01:", when="@20251210: +kokkos")
     depends_on("kokkos@5.0.2:", when="@20260211: +kokkos")
+    depends_on("kokkos@5.1.0:", when="@20260704: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
@@ -521,11 +545,16 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         when="@20221103:20250402 +openmp %apple-clang",
     )
 
-    # Older LAMMPS does not compile with Kokkos 4.x
+    # Older LAMMPS does not compile with Kokkos 4.x/5.x
     conflicts(
         "^kokkos@4:",
         when="@:20230802.1",
         msg="LAMMPS is incompatible with Kokkos 4.x until @20230802.1",
+    )
+    conflicts(
+        "^kokkos@5:",
+        when="@:20251210",
+        msg="LAMMPS is incompatible with Kokkos 5.x until @20260211",
     )
 
     patch("lib.patch", when="@20170901")
@@ -627,7 +656,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         if spec.satisfies("%aocc"):
             if spec.satisfies("+intel"):
                 cxx_flags = (
-                    "-O3 -fno-math-errno -fno-unroll-loops "
+                    "-O3 -m64 -ffast-math -fno-math-errno -fno-unroll-loops "
                     "-fveclib=AMDLIBM -muse-unaligned-vector-move"
                 )
                 if spec.satisfies("%aocc@4.1:4.2"):
@@ -636,9 +665,15 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                         " -mllvm -enable-masked-gather-sequence=false"
                     )
                 elif spec.satisfies("%aocc@5.0:"):
-                    cxx_flags += " -mllvm -enable-aggressive-gather"
+                    if spec.satisfies("%aocc@5.1:"):
+                        cxx_flags += " -mllvm -enable-vector-gathers"
+                    else:
+                        cxx_flags += " -mllvm -enable-aggressive-gather"
                     if spec.target >= "zen5":
-                        cxx_flags += " -fenable-restrict-based-lv"
+                        cxx_flags += (
+                            " -fenable-restrict-based-lv"
+                            " -mllvm -vectorizer-maximize-bandwidth=true"
+                        )
 
                 # add -fopenmp-simd if OpenMP not already turned on
                 if spec.satisfies("~openmp"):

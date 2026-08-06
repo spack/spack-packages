@@ -23,47 +23,31 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/ornladios/ADIOS2.git"
     test_requires_compiler = True
 
-    maintainers("ax3l", "vicentebolea", "williamfgc")
+    maintainers("ax3l", "vicentebolea", "williamfgc", "eisenhauer")
 
     tags = ["e4s"]
 
     license("Apache-2.0")
 
     version("master", branch="master")
-    version(
-        "2.12.0-rc1", sha256="c2f2e1e594a85ff46623a99c7a8d71e3f8bf2249b1c6f8be6a9e472daaf12889"
-    )
-    version(
-        "2.11.0",
-        sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf",
-        preferred=True,
-    )
+    version("2.12.1", sha256="71edd8f721448311852122fca8d83ae497b43846e5bfcdfd275dc06bb7f3d0c5")
+    version("2.12.0", sha256="c59aeb75f3ea9949c4ae2d597115536ee593dedb50592784917ba8d29c8a3b34")
+    version("2.11.0", sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf")
     version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")
     version("2.10.1", sha256="ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85")
     version("2.10.0", sha256="e5984de488bda546553dd2f46f047e539333891e63b9fe73944782ba6c2d95e4")
     version("2.9.2", sha256="78309297c82a95ee38ed3224c98b93d330128c753a43893f63bbe969320e4979")
-    version("2.9.1", sha256="ddfa32c14494250ee8a48ef1c97a1bf6442c15484bbbd4669228a0f90242f4f9")
-    version("2.9.0", sha256="69f98ef58c818bb5410133e1891ac192653b0ec96eb9468590140f2552b6e5d1")
-    version("2.8.3", sha256="4906ab1899721c41dd918dddb039ba2848a1fb0cf84f3a563a1179b9d6ee0d9f")
-    version("2.8.2", sha256="9909f6409dc44b2c28c1fda0042dab4b711f25ec3277ef0cb6ffc40f5483910d")
-    version("2.8.1", sha256="3f515b442bbd52e3189866b121613fe3b59edb8845692ea86fad83d1eba35d93")
-    version("2.8.0", sha256="5af3d950e616989133955c2430bd09bcf6bad3a04cf62317b401eaf6e7c2d479")
-    version("2.7.1", sha256="c8e237fd51f49d8a62a0660db12b72ea5067512aa7970f3fcf80b70e3f87ca3e")
+    with default_args(deprecated=True):
+        version("2.9.1", sha256="ddfa32c14494250ee8a48ef1c97a1bf6442c15484bbbd4669228a0f90242f4f9")
+        version("2.9.0", sha256="69f98ef58c818bb5410133e1891ac192653b0ec96eb9468590140f2552b6e5d1")
+        version("2.8.3", sha256="4906ab1899721c41dd918dddb039ba2848a1fb0cf84f3a563a1179b9d6ee0d9f")
+        version("2.8.2", sha256="9909f6409dc44b2c28c1fda0042dab4b711f25ec3277ef0cb6ffc40f5483910d")
+        version("2.8.1", sha256="3f515b442bbd52e3189866b121613fe3b59edb8845692ea86fad83d1eba35d93")
+        version("2.8.0", sha256="5af3d950e616989133955c2430bd09bcf6bad3a04cf62317b401eaf6e7c2d479")
+        version("2.7.1", sha256="c8e237fd51f49d8a62a0660db12b72ea5067512aa7970f3fcf80b70e3f87ca3e")
 
-    # There's not really any consistency about how static and shared libs are
-    # implemented across spack.  What we're trying to support is specifically three
-    # library build types:
-    #   shared (which is implicitly w/ pic)
-    #     Implemented by +shared +pic
-    #   static w/o pic
-    #     Implemented by ~shared ~pic
-    #   static w/ pic
-    #     Implemented by ~shared +pic
-    # shared w/o pic is not a valid configuration because shared libraries are Position
-    # Independent # Code by design.  We're not inherently tied to this approach and can
-    # change how we're supporting differnt library types in the package at anytime if
-    # spack decides on a standardized way of doing it across packages
-    variant("shared", default=True, when="+pic", description="Build shared libraries")
+    variant("pic", default=True, description="Build pic-enabled static libraries")
+    variant("shared", default=True, description="Build shared libraries")
 
     # Features
     variant("mpi", default=True, description="Enable MPI")
@@ -107,12 +91,15 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     variant("xrootd", default=True, description="Enable the XRootD")
+    variant("encryption", default=False, when="@2.9:", description="Enable encryption operators")
 
     # Optional language bindings, C++11 and C always provided
     variant("kokkos", default=False, when="@2.9:", description="Enable Kokkos support")
     variant("sycl", default=False, when="@2.10:", description="Enable SYCL support")
     variant("python", default=False, description="Enable the Python bindings")
     variant("fortran", default=True, description="Enable the Fortran bindings")
+
+    conflicts("+shared", when="~pic")
 
     # Requires mature C++11 implementations
     conflicts("%gcc@:4.7")
@@ -122,7 +109,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("%oneapi@:2022.1.0", when="+fortran")
 
     # https://github.com/ornladios/ADIOS2/issues/4620
-    conflicts("^cuda@13:", when="+cuda")
+    conflicts("%cuda@13:", when="@:2.11 +cuda")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -172,12 +159,6 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
 
     for _platform in ["linux", "darwin"]:
         depends_on("pkgconfig", type="build", when=f"platform={_platform}")
-        variant(
-            "pic",
-            default=False,
-            description="Build pic-enabled static libraries",
-            when=f"platform={_platform}",
-        )
         # libffi and libfabric and not currently supported on Windows
         # see Paraview's superbuild handling of libfabric at
         # https://gitlab.kitware.com/paraview/paraview-superbuild/-/blob/master/projects/adios2.cmake#L3
@@ -207,8 +188,13 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zfp@0.5.1:0.5", when="+zfp")
     depends_on("sz@2.0.2.0:", when="+sz")
     depends_on("sz3", when="+sz3")
-    depends_on("mgard@compat-2022-11-18:", when="+mgard")
-    depends_on("mgard@compat-2023-01-10:", when="@2.9: +mgard")
+
+    with when("+mgard"):
+        depends_on("mgard@1.6.0:", when="@2.10:")
+        depends_on("mgard@compat-2023-01-10:", when="@2.9")
+        depends_on("mgard@compat-2022-11-18:", when="@:2.8")
+
+    depends_on("libsodium@1.0.4:", when="@2.9: +encryption")
 
     extends("python", when="+python")
     depends_on("python", when="+python", type=("build", "run"))
@@ -273,6 +259,15 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.11",
     )
 
+    # https://github.com/ornladios/ADIOS2/pull/5006
+    # Using a diff rather than patch since the commit is a git subtree commit which does not play
+    # well with the github .patch URL param
+    patch(
+        "https://github.com/ornladios/ADIOS2/compare/98c51cc2207fd178d2f84f493d19710cf21f84c1^1...98c51cc2207fd178d2f84f493d19710cf21f84c1.diff?full_index=1",
+        sha256="0fe8ecf75eabf975caf5de447ac34084b574f78e73cf83cf158a9e58b692f2e3",
+        when="@2.12.0",
+    )
+
     @when("%fj")
     def patch(self):
         """add fujitsu mpi commands #16864"""
@@ -316,6 +311,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_ZFP", "zfp"),
             from_variant("ADIOS2_USE_Catalyst", "libcatalyst"),
             from_variant("ADIOS2_USE_LIBPRESSIO", "libpressio"),
+            from_variant("ADIOS2_USE_Sodium", "encryption"),
             self.define("ADIOS2_USE_CUDA", self.spec.satisfies("+cuda ~kokkos")),
             self.define("ADIOS2_USE_Kokkos", self.spec.satisfies("+kokkos")),
             self.define("Kokkos_ENABLE_CUDA", self.spec.satisfies("+cuda +kokkos")),
@@ -354,6 +350,9 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         # hip support
         if spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
+
+        if spec.satisfies("@2.12: +encryption"):
+            args.append(CMakeBuilder.define("ADIOS2_USE_SealKeygen", True))
 
         if spec.satisfies("+python"):
             py_libdir = join_path(

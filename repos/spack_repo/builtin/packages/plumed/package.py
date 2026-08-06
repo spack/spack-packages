@@ -36,6 +36,7 @@ class Plumed(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("2.10.1", sha256="92e504371869091fe1ef1dd5a1f2996aa369ed9db6c7d2a56650231786ac7c5d")
     version("2.10.0", sha256="ca6410d47e91b4e0f953e1a8933f15b05c4681167611ab3b096ab121155f6879")
     version("2.9.2", sha256="301fbc958374f81d9b8c7a1eac73095f6dded52cce73ce33d64bdbebf51ac63d")
     version("2.9.1", sha256="e24563ad1eb657611918e0c978d9c5212340f128b4f1aa5efbd439a0b2e91b58")
@@ -180,6 +181,14 @@ class Plumed(AutotoolsPackage):
     force_autoreconf = True
 
     parallel = True
+
+    # Filter Spack's compiler wrapper
+    # so that "plumed mklib" works correctly
+    filter_compiler_wrappers(
+        "config.txt",
+        "compile_options.sh",
+        relative_root=join_path("lib", "plumed", "src", "config"),
+    )
 
     def apply_patch(self, other):
         # The name of MD engines differ slightly from the ones used in Spack

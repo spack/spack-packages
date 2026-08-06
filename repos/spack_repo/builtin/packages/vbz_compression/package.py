@@ -10,14 +10,16 @@ from spack.package import *
 
 class VbzCompression(CMakePackage):
     """
-    VBZ Compression uses variable byte integer encoding to compress nanopore signal data and is built using the following libraries:
+    VBZ Compression uses variable byte integer encoding to compress nanopore signal data and is
+    built using the following libraries:
 
     https://github.com/lemire/streamvbyte
     https://github.com/facebook/zstd
 
-    The performance of VBZ is achieved by taking advantage of the properties of the raw signal and therefore is most effective when applied to the signal dataset.
-    Other datasets you may have in your Fast5 files will not be able to take advantage of the default VBZ settings for compression.
-    VBZ will be used as the default compression scheme in a future release of MinKNOW.
+    The performance of VBZ is achieved by taking advantage of the properties of the raw signal and
+    therefore is most effective when applied to the signal dataset. Other datasets you may have in
+    your Fast5 files will not be able to take advantage of the default VBZ settings for
+    compression. VBZ will be used as the default compression scheme in a future release of MinKNOW.
     """
 
     homepage = "https://nanoporetech.com"

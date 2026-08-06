@@ -32,6 +32,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
 
     maintainers("pmccormick", "streichler", "elliottslaughter", "rbberger")
     tags = ["e4s"]
+    version("26.06.0", tag="legion-26.06.0", commit="c1096661a42f970904881366a94ff26c686fde61")
     version("26.03.0", tag="legion-26.03.0", commit="b95c7bfdbdf564eac57f9ace73c394acea4ac216")
     version("25.12.0", tag="legion-25.12.0", commit="6f710cb46590b04ad299362819fdecb3a4e429ca")
     version("25.09.0", tag="legion-25.09.0", commit="8759d840099a138b5f395e86c841848520b34b73")
@@ -68,6 +69,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("realm+rocm", when="@25.09.0: +rocm")
     depends_on("realm+cuda_unsupported_compiler", when="@25.09.0: +cuda_unsupported_compiler")
 
+    depends_on("realm@26.7.1:", when="@26.06:")
     depends_on("realm@26:", when="@26:")
     depends_on("realm@25:", when="@25.09.0:")
 
