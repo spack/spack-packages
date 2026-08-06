@@ -347,7 +347,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "deprecated_code",
         default=True,
-        description="Whether to enable deprecated code",
+        description="Whether to enable code deprecated in the major version",
     )
 
     variant("pic", default=False, description="Build position independent code")
@@ -455,9 +455,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
         ]
 
+        # TODO new major: update this
         if spec.version == Version("develop"):
-            highest = max(v for v in self.versions if not v.isdevelop())
-            major_version = int(str(highest.up_to(1)))
+            major_version = 5
         else:
             major_version = int(str(spec.version.up_to(1)))
         options.append(
