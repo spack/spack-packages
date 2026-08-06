@@ -135,6 +135,7 @@ class SingularityBase(MakefilePackage):
         if name == "cflags" and self.spec.satisfies("%gcc@15:"):
             flags.append("-std=gnu17")
         return (flags, None, None)
+
     #
     # Assemble a script that fixes the ownership and permissions of several
     # key files, install it, and tty.warn() the user.
