@@ -25,7 +25,7 @@ jobs:
         - { os: macos-latest, shell: bash }
         # An empty ref means the commit pinned in .ci/env, the others are the
         # released versions we keep the packages repository compatible with
-        spack_ref: ['', 'v1.2.2']
+        spack_ref: ['', 'v1.2.2', 'v1.1.1']
     defaults:
       run:
         shell: ${{ matrix.system.shell }}
