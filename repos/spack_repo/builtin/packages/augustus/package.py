@@ -66,6 +66,7 @@ class Augustus(MakefilePackage):
     # Trying to use filter_file here got too complicated so use a patch with a
     # corresponding environment variable
     patch("bam2wig_Makefile.patch", when="@3.4.0")
+    patch("cstdint.patch")
 
     def edit(self, spec, prefix):
         # Set compile commands for each compiler and
