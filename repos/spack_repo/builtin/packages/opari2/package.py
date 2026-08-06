@@ -21,8 +21,8 @@ class Opari2(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/opari2/tags/opari2-2.0.8/opari2-2.0.8.tar.gz"
 
-    # OPARI2 2.x gets bugfix releases that preserve backwards compatibility for all Score-P versions
-    # still in Spack.
+    # OPARI2 2.x gets bugfix releases that preserve backwards compatibility
+    # for all Score-P versions still in Spack.
     version("2.0.10", sha256="49d9526bf76ebf7836e62f70850d4d605b08910dbabddac3f7479b509abce887")
     with default_args(deprecated=True):
         version("2.0.9", sha256="d57139f757c5666afaaead45ed3d0954a9b98c4a6cef6b22afe672707cffd779")
