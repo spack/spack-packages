@@ -36,7 +36,8 @@ class Adms(AutotoolsPackage):
         depends_on("automake", when="@master")
         depends_on("libtool", when="@master")
 
-    conflicts("%gcc@15:")
+    # https://github.com/Qucs/ADMS/issues/116
+    conflicts("%gcc@15:", msg="ADMS is no longer actively maintained and fails on newer compilers")
 
     @when("@master")
     def autoreconf(self, spec, prefix):
