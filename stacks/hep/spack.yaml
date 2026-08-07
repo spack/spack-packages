@@ -103,6 +103,7 @@ spack:
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
+  - form
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
@@ -128,11 +129,12 @@ spack:
   - pandorasdk
   - photos +hepmc3
   - podio +rntuple +sio
-  #- professor
+  - professor
   - py-awkward
   - py-boost-histogram
   - py-dask-awkward ~io
   - py-dask-histogram
+  - py-gosam
   - py-hepunits
   - py-hist +dask +fit +plot
   - py-histbook

@@ -99,9 +99,13 @@ class Apptainer(SingularityBase):
         return options
 
     def flag_handler(self, name, flags):
+        # The package does not build with C dialects newer than gnu17, so set gnu17
+        # for GCC 15 and newer which default to gnu23
+        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+            flags.append("-std=gnu17")
         # Certain go modules this build pulls in cannot be built with anything
         # other than -O0. Best to just discard any injected flags.
-        return (None, flags, None)
+        return (flags, None, None)
 
     # They started vendoring the fuse bits and assume they'll be in the
     # libexec/apptainer prefix as a result. When singularity is run with
