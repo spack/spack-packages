@@ -20,6 +20,7 @@ class RSf(RPackage):
 
     license("GPL-2.0-only OR MIT")
 
+    version("1.1-0", sha256="7ce76026eb51c789c123639901ad655273fedea29be508e3afd35000a122da25")
     version("1.0-23", sha256="4a44abad6e94b648b8a31269fa5a5ff862f69a9dfcdd60b8958a5b9ee3bddceb")
     version("1.0-16", sha256="e96e191011cdf2a073c773bdfc50ffd4a5d80f1da0ba1aa05db8015da45a9987")
     version("1.0-12", sha256="3778ebf58d824b1dfa6297ca8363714d5d85eda04c55ab2bf39597cac1d91287")

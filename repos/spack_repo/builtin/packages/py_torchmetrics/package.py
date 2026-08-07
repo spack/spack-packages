@@ -61,6 +61,7 @@ class PyTorchmetrics(PythonPackage):
     version("0.3.1", sha256="78f4057db53f7c219fdf9ec9eed151adad18dd43488a44e5c780806d218e3f1d")
     version("0.2.0", sha256="481a28759acd2d77cc088acba6bc7dc4a356c7cb767da2e1495e91e612e2d548")
 
+    variant("detection", default=False, description="object detection support", when="@0.6:")
     variant("image", default=False, description="image support", when="@0.11.2:")
 
     with default_args(type="build"):
@@ -82,6 +83,12 @@ class PyTorchmetrics(PythonPackage):
         depends_on("py-lightning-utilities@0.15.3:", when="@1.9:")
         depends_on("py-lightning-utilities@0.8:", when="@1.1:")
         depends_on("py-lightning-utilities@0.7:", when="@1:")
+
+        # requirements/detection.txt (upper bound is removed during processing)
+        with when("+detection"):
+            depends_on("py-torchvision@0.15.1:", when="@1.6:")
+            depends_on("py-torchvision@0.8:")
+            depends_on("py-pycocotools@2.0.1:")
 
         # requirements/image.txt (upper bound is removed during processing)
         with when("+image"):

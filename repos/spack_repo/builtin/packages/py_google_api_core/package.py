@@ -67,7 +67,7 @@ class PyGoogleApiCore(PythonPackage):
             depends_on("py-grpcio@1.8.2:1", type="run")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/g/google-api-core/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/g/{0}/{0}-{1}.tar.gz"
         if version >= Version("2.19.2"):
             name = "google_api_core"
         else:

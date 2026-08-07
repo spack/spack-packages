@@ -54,7 +54,7 @@ class Trinity(MakefilePackage):
     depends_on("java@8:", type=("build", "run"))
     depends_on("bowtie2")
     depends_on("jellyfish")
-    depends_on("salmon")
+    depends_on("salmon@:1.10.3")
     depends_on("perl+threads", type=("build", "run"))
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")

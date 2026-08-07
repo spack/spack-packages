@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
+import subprocess
 import sys
 import tempfile
 
@@ -438,6 +439,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     )
     conflicts("os=tahoe", when="@:2.19")
 
+    # https://github.com/tensorflow/tensorflow/pull/98321
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/b9c263c3df2bb4926618a9c63e1dac45dc39c48a.patch?full_index=1",
+        sha256="275116b21eb27b86a5119ec69bfb7a5c1a5e8b6a7040d2272b65dbdbe997e8b4",
+        when="@2.20",
+    )
+
     # Fix build error with CUDA
     patch(
         "https://github.com/tensorflow/tensorflow/pull/99046.patch?full_index=1",
@@ -830,12 +838,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         env.set("TEST_TMPDIR", tmp_path)
 
     def configure(self, spec, prefix):
-        # NOTE: configure script is interactive. If you set the appropriate
-        # environment variables, this interactivity is skipped. If you don't,
-        # Spack hangs during the configure phase. Use `spack build-env` to
-        # determine which environment variables must be set for a particular
-        # version.
-        configure()
+        # NOTE: configure script is interactive. If you set the appropriate environment variables,
+        # this interactivity is skipped. Use `spack build-env` to determine which environment
+        # variables must be set for a particular version.
+        configure(input=subprocess.DEVNULL)
 
     @run_after("configure")
     def post_configure_fixes(self):
@@ -851,9 +857,15 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # make sure xla is actually turned off
         if spec.satisfies("~xla"):
+            if spec.satisfies("@:2.19"):
+                join = " "
+                build = ""
+            else:
+                join = "="
+                build = "build "
             filter_file(
-                r"--define with_xla_support=true",
-                r"--define with_xla_support=false",
+                f"{build}--define{join}with_xla_support=true",
+                f"{build}--define{join}with_xla_support=false",
                 ".tf_configure.bazelrc",
             )
 

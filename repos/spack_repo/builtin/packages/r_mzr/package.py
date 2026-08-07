@@ -20,16 +20,17 @@ class RMzr(RPackage):
 
     bioc = "mzR"
 
-    version("2.34.0", commit="14ccc37ab3efd4b6003442a0268668258ccb7df9")
-    version("2.32.0", commit="ef57d59205398558898a748ba9c8de66b0bddb81")
-    version("2.30.0", commit="563ae755cfc7de1ac8862247779182b7b3aebdcc")
-    version("2.28.0", commit="bee7d6fb5f99e1fab5444ae1ad27b0bc6e83be9e")
-    version("2.24.1", commit="e1d4de8761e6729fd45320d842691c8fe9116b7b")
-    version("2.18.1", commit="13f9f9b1149859c3e29cfce941d958cc4f680546")
-    version("2.16.2", commit="22d7dad98f46b5bed7f6f7b3a703dcdf5997f709")
-    version("2.14.0", commit="bf1154bc45101d95b5a67c66980856a779b84bd4")
-    version("2.12.0", commit="f05eb27ae31c3d019cca10fc3b9ee513cbcdfc5a")
-    version("2.10.0", commit="a6168b68e48c281e88de9647254a8db1e21df388")
+    with default_args(get_full_repo=True):
+        version("2.34.0", commit="14ccc37ab3efd4b6003442a0268668258ccb7df9")
+        version("2.32.0", commit="ef57d59205398558898a748ba9c8de66b0bddb81")
+        version("2.30.0", commit="563ae755cfc7de1ac8862247779182b7b3aebdcc")
+        version("2.28.0", commit="bee7d6fb5f99e1fab5444ae1ad27b0bc6e83be9e")
+        version("2.24.1", commit="e1d4de8761e6729fd45320d842691c8fe9116b7b")
+        version("2.18.1", commit="13f9f9b1149859c3e29cfce941d958cc4f680546")
+        version("2.16.2", commit="22d7dad98f46b5bed7f6f7b3a703dcdf5997f709")
+        version("2.14.0", commit="bf1154bc45101d95b5a67c66980856a779b84bd4")
+        version("2.12.0", commit="f05eb27ae31c3d019cca10fc3b9ee513cbcdfc5a")
+        version("2.10.0", commit="a6168b68e48c281e88de9647254a8db1e21df388")
 
     depends_on("cxx", type="build")  # generated
 

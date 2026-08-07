@@ -81,7 +81,6 @@ class Openvdb(CMakePackage):
     # depends_on("flex@2.6.4:", when="+ax")
 
     def cmake_args(self):
-
         args = [
             self.define("OPENVDB_BUILD_CORE", True),
             # Force the specific Spack-built Boost prefix

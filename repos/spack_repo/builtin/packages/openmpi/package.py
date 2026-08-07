@@ -453,6 +453,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
             "1.0", sha256="cf75e56852caebe90231d295806ac3441f37dc6d9ad17b1381791ebb78e21564"
         )  # libmpi.so.0.0.0
 
+    patch("fix-integer-kind-8.patch", when="@5.0:5.0.10")
     patch("ad_lustre_rwcontig_open_source.patch", when="@1.6.5")
     patch("llnl-platforms.patch", when="@1.6.5")
     patch("configure.patch", when="@1.10.1")
@@ -517,6 +518,23 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     # Add missing header for memcpy
     # https://github.com/open-mpi/ompi/commit/aa5577441ff1ab7f97f8b63e442b37457c7bd997
     patch("add_string.patch", when="@5.0.1:5.0.8 +rocm")
+
+    # GCC 16: drop __opal_attribute_always_inline__ from mca_part_persist_start
+    # to fix "inlining failed in call to always_inline: recursive inlining" error
+    # https://github.com/open-mpi/ompi/issues/13721
+    patch(
+        "https://github.com/open-mpi/ompi/commit/aa024ac73d624611cfe3af6f541b5d28dedf07bb.patch?full_index=1",
+        sha256="646eb1a7382d628eb821715ca69fc5467a9a25aaddfe8290dbce008536dbfaa0",
+        when="@5.0.0:5.0.10",
+    )
+
+    # GCC 16: fix excessive brace initialization in memheap_base_frame.c
+    # https://github.com/open-mpi/ompi/issues/13757
+    patch(
+        "https://github.com/open-mpi/ompi/commit/b878c7d974dae767246ad20ef9124a331d0f59a4.patch?full_index=1",
+        sha256="1dcebafdb310203f3b62456a5ba67e1a21ad3a88aaf40326734885d7b0d776f9",
+        when="@5.0.0:5.0.10 +openshmem",
+    )
 
     FABRICS = (
         "psm",
@@ -746,7 +764,6 @@ with '-Wl,-commons,use_dylibs' and without
 
         # @:4 does not depend on prrte and used orte
         with when("@5"):
-
             # When an external PMIx is used, also an external PRRTE should be used
             # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
             depends_on("prrte")
@@ -1147,7 +1164,12 @@ with '-Wl,-commons,use_dylibs' and without
 
     def configure_args(self):
         spec = self.spec
-        config_args = ["--enable-shared", "--disable-silent-rules", "--disable-sphinx"]
+        config_args = [
+            "--enable-shared",
+            "--disable-silent-rules",
+            "--disable-sphinx",
+            "--disable-dependency-tracking",
+        ]
 
         # Work around incompatibility with new apple-clang linker
         # https://github.com/open-mpi/ompi/issues/12427
@@ -1214,6 +1236,7 @@ with '-Wl,-commons,use_dylibs' and without
             config_args.append("--with-libevent=internal")
         elif spec.satisfies("%libevent"):
             config_args.append(f"--with-libevent={spec['libevent'].prefix}")
+            config_args.append(f"--with-libevent-libdir={spec['libevent'].libs.directories[0]}")
 
         # PMIx/PRRTE support
         if spec.satisfies("+internal-pmix"):
@@ -1340,7 +1363,7 @@ with '-Wl,-commons,use_dylibs' and without
         #       if spec.satisfies("@5.0.0:") and spec.satisfies("%oneapi"):
         #           config_args.append("--disable-io-romio")
 
-        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html :
+        # https://www.intel.com/content/www/us/en/developer/articles/release-notes/oneapi-c-compiler-release-notes.html:
         # Key Features in Intel C++ Compiler Classic 2021.7
         #
         # The Intel C++ Classic Compiler is deprecated and an additional

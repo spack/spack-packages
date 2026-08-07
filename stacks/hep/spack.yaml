@@ -15,13 +15,21 @@ spack:
     all:
       target: ["x86_64_v3"]
       require:
-      - "%gcc"
       - target=x86_64_v3
       providers:
         blas: [openblas]
         mpi: [mpich]
         tbb: [intel-tbb]
       variants: +mpi
+    c:
+      require:
+      - gcc
+    cxx:
+      require:
+      - gcc
+    fortran:
+      require:
+      - gcc
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +root +svg cxxstd=20
@@ -52,8 +60,9 @@ spack:
       - target=x86_64_v3
     root:
       require:
-      - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +mysql +opengl +postgres +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran +vc +vdt +veccore +webgui +x +xml +xrootd # cxxstd=20
+      - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +opengl +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran ~vc +vdt ~veccore +webgui +x +xml +xrootd # cxxstd=20
       # note: root cxxstd=20 not concretizable within sherpa
+      # ~vc ~veccore since PCM integration broken with runtime_cxxmodules=ON
       - target=x86_64_v3
     vecgeom:
       require:
@@ -98,6 +107,7 @@ spack:
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
+  - form
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
@@ -107,8 +117,10 @@ spack:
   - hepmc
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
-  #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
   #- hepmcanalysis
+  # Note: ~vbfnlo for herwig3 works around gfortran-13 ICE in CI (does not reproduce locally).
+  # Re-enable once CI environment is updated with a fix, i.e. a fixed gfortran-13+.
+  - herwig3 +njet ~vbfnlo
   - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
@@ -123,12 +135,13 @@ spack:
   - pandorasdk
   - photos +hepmc3
   - podio +rntuple +sio
-  #- professor
+  - professor
   - py-awkward
   - py-b2luigi
   - py-boost-histogram
   - py-dask-awkward ~io
   - py-dask-histogram
+  - py-gosam
   - py-hepdata-validator
   - py-hepunits
   - py-hepstats
@@ -149,6 +162,7 @@ spack:
   #- recola-sm
   - rivet
   - root ~cuda
+  - root ~builtin_llvm
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola +rivet +root +ufo cxxstd=20
   - tauola +hepmc3 +lhapdf cxxstd=20

@@ -26,6 +26,12 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main", submodules=False)
     version(
+        "2026.07.0",
+        tag="v2026.07.0",
+        commit="824a6a3ba48a233791332c398e7f024b2191aa27",
+        submodules=False,
+    )
+    version(
         "2025.12.0",
         tag="v2025.12.0",
         commit="a8caefa9f4c811b1a114b4ed2c9b681d40f12325",
@@ -104,6 +110,8 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     patch("libstdc++-13-missing-header.patch", when="@:2022.10")
 
     patch("camp-rocm6.patch", when="@0.2.3 +rocm ^hip@6:")
+    # Version 2022.03.0 to 2023.06.0 requires patch
+    patch("camp-rocm6.patch", when="@2022.03.0:2023.06.0 +rocm ^hip@6:")
 
     conflicts("^blt@:0.3.6", when="+rocm")
 

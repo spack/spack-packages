@@ -3,23 +3,32 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocdecode(CMakePackage):
+class Rocdecode(ROCmLibrary, CMakePackage):
     """rocDecode is a high performance video decode SDK for AMD hardware"""
 
     homepage = "https://github.com/ROCm/rocDecode"
     git = "https://github.com/ROCm/rocDecode.git"
-    url = "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-6.4.3.tar.gz"
 
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocdecode"]
 
     license("MIT")
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocDecode/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="058ad6046a2c24e2610a87c4eefaebf62e4f94e5fcd10c42fd6d1863835fe593")
+    version("7.2.1", sha256="59e162fcc472aefcf68cfe28b50316612572ca9f1256696537282f703310abaa")
     version("7.2.0", sha256="70c3828364a289098123111aa27d37bab7238065b6ee8ceae35810ad4842bf0a")
     version("7.1.1", sha256="76e7a27eb49b262ed68c2c8f13a20aba8700113087bc58068c396979e6051596")
     version("7.1.0", sha256="ccd8d7fe8010214a00d75ac0299747ad9ebf25849f2575cb096b814ec071d952")
@@ -73,13 +82,35 @@ class Rocdecode(CMakePackage):
         "7.1.0",
         "7.1.1",
         "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
-    for ver in ["6.4.0", "6.4.1", "6.4.2", "6.4.3", "7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+    for ver in [
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+    ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.13.0:"):
+            return join_path(super().root_cmakelists_dir, "projects", "rocdecode")
+        return super().root_cmakelists_dir
 
     def patch(self):
         if self.spec.satisfies("@:7.0"):

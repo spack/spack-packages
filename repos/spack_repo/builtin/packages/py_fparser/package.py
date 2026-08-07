@@ -20,15 +20,19 @@ class PyFparser(PythonPackage):
     # Links
     homepage = "https://github.com/stfc/fparser"
     git = "https://github.com/stfc/fparser.git"
-    pypi = "fparser/fparser-0.2.0.tar.gz"
+    pypi = "fparser/fparser-0.2.4.tar.gz"
 
-    maintainers("arporter")
+    maintainers("arporter", "sergisiso")
 
     # License
     license("BSD-3-Clause")
 
     # Releases
     version("develop", branch="master")
+    version("0.2.4", sha256="1bdcfd757b739e0435e249a5b2735d672b45c39b3defa6f1065336b69e77ae0f")
+    version("0.2.3", sha256="c61d12dd4e1ee5aec35855431378ac16826362e4b22359a3a2ec9d5efc981333")
+    version("0.2.2", sha256="81fee12416cde2dc57782542e4e271a1155e6f7a16eab099c030d54ff1b56b8c")
+    version("0.2.1", sha256="1ca89a760ef23747fc54c53918c03d9165026736d9f0ea6347885bd79fe4be85")
     version("0.2.0", sha256="3901d31c104062c4e532248286929e7405e43b79a6a85815146a176673e69c82")
     version("0.1.4", sha256="00d4f7e9bbd8a9024c3c2f308dd3be9b0eeff3cb852772c9f3cf0c4909dbafd4")
     version("0.1.3", sha256="10ba8b2803632846f6f011278e3810188a078d89afcb4a38bed0cbf10f775736")
@@ -44,7 +48,7 @@ class PyFparser(PythonPackage):
     depends_on("py-setuptools@61:", type="build", when="@0.1.4:")
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-scm@6.2:+toml", type=("build", "run"), when="@0.1:")
-    depends_on("py-setuptools-scm-git-archive", type="build", when="@0.1:")
+    depends_on("py-setuptools-scm-git-archive", type="build", when="@0.1:0.2.2")
     depends_on("py-wheel@0.29:", type="build", when="@0.1:")
     depends_on("py-importlib-metadata", type=("build", "run"), when="@0.1:")
 

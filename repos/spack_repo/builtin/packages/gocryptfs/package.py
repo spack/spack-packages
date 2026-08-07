@@ -30,5 +30,3 @@ class Gocryptfs(GoPackage):
 
     depends_on("openssl")
     depends_on("pkgconfig", type="build")
-
-    cgo_enabled = True
