@@ -50,7 +50,7 @@ class Sperr(CMakePackage):
     def cmake_args(self):
         # ensure the compiler supports OpenMP if it is used
         if "+openmp" in self.spec:
-            self.compiler.openmp_flag
+            self['cxx'].openmp_flag
 
         args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),

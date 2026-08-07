@@ -22,4 +22,4 @@ class BamReadcount(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_flags("CFLAGS", self.compiler.cc_pic_flag)
+        env.append_flags("CFLAGS", self["c"].pic_flag)

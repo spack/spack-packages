@@ -148,8 +148,8 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
             compiler_flags.append("-DUSE_SINGLE_PRECISION")
 
         if "+openmp" in spec:
-            compiler_flags.append(self.compiler.openmp_flag)
-            linker_flags.append(self.compiler.openmp_flag)
+            compiler_flags.append(self['cxx'].openmp_flag)
+            linker_flags.append(self['cxx'].openmp_flag)
 
         if "+cuda" in spec:
             if "%cxx=gcc" in spec:

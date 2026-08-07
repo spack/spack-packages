@@ -41,7 +41,7 @@ class Xxhash(MakefilePackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags" and self.spec.satisfies("+pic"):
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         return (flags, None, None)
 
     @property

@@ -45,7 +45,7 @@ class Cryptopp(MakefilePackage):
         cxx_flags = []
 
         if spec.satisfies("+shared"):
-            cxx_flags.append(self.compiler.cxx_pic_flag)
+            cxx_flags.append(self["cxx"].pic_flag)
 
         target = self.spec.target
         if "sse4.1" not in target:

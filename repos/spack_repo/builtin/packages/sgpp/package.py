@@ -234,7 +234,7 @@ class Sgpp(SConsPackage):
         if "+mpi" in spec:
             self.args.append("CXX={0}".format(self.spec["mpi"].mpicxx))
         else:
-            self.args.append("CXX={0}".format(self.compiler.cxx))
+            self.args.append("CXX={0}".format(self["cxx"].cxx))
 
         # Include PYDOC when building the documentation
         self.args.append("PYDOC={0}".format("1" if "+doc +python" in spec else "0"))

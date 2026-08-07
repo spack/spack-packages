@@ -473,7 +473,7 @@ class Hip(ROCmLibrary, CMakePackage):
         # being used to compile. This is only important for external ROCm
         # installations, which may otherwise pick up the wrong GCC toolchain.
         if self.spec.external and self.spec.satisfies("%gcc"):
-            gcc = Executable(self.compiler.cc)
+            gcc = Executable(self["c"].cc)
             libgcc_path = gcc("-print-file-name=libgcc.a", output=str, fail_on_error=False).strip()
             libgcc_dir = os.path.abspath(os.path.dirname(libgcc_path))
             gcc_install_dir_flag = (
@@ -524,14 +524,14 @@ class Hip(ROCmLibrary, CMakePackage):
             # This is picked up by hipcc.
             env.append_path(
                 "HIPCC_COMPILE_FLAGS_APPEND",
-                f"--gcc-toolchain={self.compiler.prefix}",
+                f"--gcc-toolchain={self['c'].prefix}",
                 separator=" ",
             )
             env.append_path(
-                "HIPCC_LINK_FLAGS_APPEND", f"--gcc-toolchain={self.compiler.prefix}", separator=" "
+                "HIPCC_LINK_FLAGS_APPEND", f"--gcc-toolchain={self['c'].prefix}", separator=" "
             )
             # This is picked up by CMake when using HIP as a CMake language.
-            env.append_path("HIPFLAGS", f"--gcc-toolchain={self.compiler.prefix}", separator=" ")
+            env.append_path("HIPFLAGS", f"--gcc-toolchain={self['c'].prefix}", separator=" ")
 
     def setup_dependent_package(self, module, dependent_spec):
         self.spec.hipcc = join_path(self.prefix.bin, "hipcc")

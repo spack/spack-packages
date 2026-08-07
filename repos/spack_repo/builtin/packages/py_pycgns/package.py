@@ -36,4 +36,4 @@ class PyPycgns(PythonPackage):
         depends_on("hdf5~mpi+hl")
 
     def setup_build_environment(self, env):
-        env.set("CC", self.compiler.cc)
+        env.set("CC", self["c"].cc)

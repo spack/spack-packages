@@ -85,7 +85,7 @@ class Ocaml(Package):
                 )
 
         if self.spec.satisfies("@4.8.0:"):
-            base_args += [f"CC={self.compiler.cc}"]
+            base_args += [f"CC={self['c'].cc}"]
 
         configure(*(base_args))
 

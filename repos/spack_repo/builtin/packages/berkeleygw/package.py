@@ -186,11 +186,11 @@ class Berkeleygw(MakefilePackage):
         # We need to copy fflags in case we append to it (#34019):
         cflags = spec.compiler_flags["cflags"][:]
         fflags = spec.compiler_flags["fflags"][:]
-        cflags.append(self.compiler.cc_pic_flag)
-        fflags.append(self.compiler.fc_pic_flag)
+        cflags.append(self["c"].pic_flag)
+        fflags.append(self["fortran"].pic_flag)
         if spec.satisfies("+openmp"):
             paraflags.append("-DOMP")
-            fflags.append(self.compiler.openmp_flag)
+            fflags.append(self['fortran'].openmp_flag)
 
         if spec.satisfies("+mpi"):
             buildopts.append("C_PARAFLAG=-DPARA")
@@ -254,7 +254,7 @@ class Berkeleygw(MakefilePackage):
             # std c11 prevents problems with linebreaks and fortran comments
             # containing // (which is interpreted as C++ style comment)
             buildopts.append(
-                "FCPP=%s -C -nostdinc -std=c11" % join_path(self.compiler.prefix, "bin", "cpp")
+                "FCPP=%s -C -nostdinc -std=c11" % join_path(self["c"].prefix, "bin", "cpp")
             )
             if spec.satisfies("+mpi"):
                 buildopts.append("F90free=%s %s" % (spec["mpi"].mpifc, f90_flags))

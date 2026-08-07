@@ -323,7 +323,7 @@ class Wrf(Package):
         if self.spec.satisfies("%aocc"):
             env.set("WRFIO_NCD_LARGE_FILE_SUPPORT", "1")
             env.set("HDF5", self.spec["hdf5"].prefix)
-            env.prepend_path("PATH", ancestor(self.compiler.cc))
+            env.prepend_path("PATH", ancestor(self["c"].cc))
 
         if "+adios2" in self.spec:
             env.set("ADIOS2", self.spec["adios2"].prefix)
@@ -369,8 +369,8 @@ class Wrf(Package):
         if "Please select from among the following" in outputbuf:
             options = collect_platform_options(outputbuf)
             comp_pair = "%s/%s" % (
-                basename(self.compiler.fc).split("-")[0],
-                basename(self.compiler.cc).split("-")[0],
+                basename(self["fortran"].fortran).split("-")[0],
+                basename(self["c"].cc).split("-")[0],
             )
             compiler_matches = dict((x, y) for x, y in options.items() if comp_pair in x.lower())
             if len(compiler_matches) > 1:

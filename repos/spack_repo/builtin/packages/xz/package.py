@@ -78,7 +78,7 @@ class Xz(MSBuildPackage, AutotoolsPackage, SourceforgePackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags" and "+pic" in self.spec:
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         return (flags, None, None)
 
     @property

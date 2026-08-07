@@ -154,7 +154,7 @@ class R(AutotoolsPackage):
         # TODO: cleaning this up seem to require both compilers as dependencies and use variants.
         if (
             spec.satisfies("^[virtuals=lapack] intel-oneapi-mkl")
-            and "gfortran" in self.compiler.fc
+            and "gfortran" in self["fortran"].fortran
         ):
             xlp64 = "ilp64" if spec["lapack"].satisfies("+ilp64") else "lp64"
             blas_flags = blas_flags.replace(f"mkl_intel_{xlp64}", f"mkl_gf_{xlp64}")
@@ -203,8 +203,8 @@ class R(AutotoolsPackage):
             config_args.append("--enable-memory-profiling")
 
         # Set FPICFLAGS for compilers except 'gcc'.
-        if self.compiler.name != "gcc":
-            config_args.append("FPICFLAGS={0}".format(self.compiler.cc_pic_flag))
+        if self.spec.compiler.name != "gcc":
+            config_args.append("FPICFLAGS={0}".format(self["c"].pic_flag))
 
         return config_args
 

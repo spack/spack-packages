@@ -87,8 +87,8 @@ class Mlx(CMakePackage, CudaPackage):
         if spec.satisfies("%c,cxx=apple-clang"):
             args.extend(
                 [
-                    self.define("CMAKE_C_COMPILER", self.compiler.cc),
-                    self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
+                    self.define("CMAKE_C_COMPILER", self["c"].cc),
+                    self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx),
                 ]
             )
 

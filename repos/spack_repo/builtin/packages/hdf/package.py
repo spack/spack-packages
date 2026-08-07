@@ -150,9 +150,9 @@ class Hdf(AutotoolsPackage):
     def flag_handler(self, name, flags):
         if self.spec.satisfies("+pic"):
             if name == "cflags":
-                flags.append(self.compiler.cc_pic_flag)
+                flags.append(self["c"].pic_flag)
             elif name == "fflags":
-                flags.append(self.compiler.f77_pic_flag)
+                flags.append(self["fortran"].pic_flag)
 
         if name == "cflags":
             # https://forum.hdfgroup.org/t/help-building-hdf4-with-clang-error-implicit-declaration-of-function-test-mgr-szip-is-invalid-in-c99/7680

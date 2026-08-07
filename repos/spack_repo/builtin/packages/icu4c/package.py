@@ -81,7 +81,11 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
         if name == "cxxflags" and not self.spec.platform == "windows":
             # Control of the C++ Standard is via adding the required "-std"
             # flag to CXXFLAGS in env
-            flags.append(getattr(self.compiler, f"cxx{self.spec.variants['cxxstd'].value}_flag"))
+            flags.append(
+                self["cxx"].standard_flag(
+                    language="cxx", standard=self.spec.variants["cxxstd"].value
+                )
+            )
         return (None, flags, None)
 
     @property

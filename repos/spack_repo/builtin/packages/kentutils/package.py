@@ -70,7 +70,7 @@ class Kentutils(MakefilePackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         elif name == "ldflags":
             flags.append(f"{self.spec['libiconv'].libs.ld_flags}")
         return (flags, None, None)

@@ -183,12 +183,12 @@ class Mumps(Package):
         makefile_conf.append("ORDERINGSF = %s" % (" ".join(orderings)))
 
         # Determine which compiler suite we are using
-        using_gcc = self.compiler.name == "gcc"
-        using_nvhpc = self.compiler.name == "nvhpc"
-        using_intel = self.compiler.name in ("intel", "intel-oneapi-compilers-classic")
-        using_oneapi = self.compiler.name in ("oneapi", "intel-oneapi-compilers")
-        using_xl = self.compiler.name in ("xl", "xl_r")
-        using_fj = self.compiler.name == "fj"
+        using_gcc = self.spec.compiler.name == "gcc"
+        using_nvhpc = self.spec.compiler.name == "nvhpc"
+        using_intel = self.spec.compiler.name in ("intel", "intel-oneapi-compilers-classic")
+        using_oneapi = self.spec.compiler.name in ("oneapi", "intel-oneapi-compilers")
+        using_xl = self.spec.compiler.name in ("xl", "xl_r")
+        using_fj = self.spec.compiler.name == "fj"
 
         # The llvm compiler suite does not contain a Fortran compiler by
         # default.  Its possible that a Spack user may have configured
@@ -198,8 +198,8 @@ class Mumps(Package):
         # when building shared libs need -fPIC, otherwise
         # /usr/bin/ld: graph.o: relocation R_X86_64_32 against `.rodata.str1.1'
         # can not be used when making a shared object; recompile with -fPIC
-        cpic = self.compiler.cc_pic_flag if shared else ""
-        fpic = self.compiler.fc_pic_flag if shared else ""
+        cpic = self["c"].pic_flag if shared else ""
+        fpic = self["fortran"].pic_flag if shared else ""
         # TODO: test this part, it needs a full blas, scalapack and
         # partitionning environment with 64bit integers
 
@@ -255,9 +255,9 @@ class Mumps(Package):
             optf.append("-DGEMMT_AVAILABLE")
 
         if "+openmp" in self.spec:
-            optc.append(self.compiler.openmp_flag)
-            optf.append(self.compiler.openmp_flag)
-            optl.append(self.compiler.openmp_flag)
+            optc.append(self["c"].openmp_flag)
+            optf.append(self["fortran"].openmp_flag)
+            optl.append(self["fortran"].openmp_flag)
 
         # Using BLR_MT might not be supported by all multithreaded BLAS
         # (MKL is known to work) but it is not something we can easily

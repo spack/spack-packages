@@ -190,11 +190,11 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
 
         if "+pic" in spec:
             if name == "cflags":
-                flags.append(self.compiler.cc_pic_flag)
+                flags.append(self["c"].pic_flag)
             elif name == "cxxflags":
-                flags.append(self.compiler.cxx_pic_flag)
+                flags.append(self["cxx"].pic_flag)
             elif name == "fcflags":
-                flags.append(self.compiler.fc_pic_flag)
+                flags.append(self["fortran"].pic_flag)
         if name == "cflags" or name == "cxxflags":
             if spec.satisfies("%oneapi"):
                 flags.append("-Wno-error=int")

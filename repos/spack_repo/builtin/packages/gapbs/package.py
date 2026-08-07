@@ -31,10 +31,10 @@ class Gapbs(MakefilePackage):
     variant("serial", default=False, description="Version with no parallelism")
 
     def build(self, spec, prefix):
-        cxx_flags = ["-O3", self.compiler.cxx11_flag]
+        cxx_flags = ["-O3", self["cxx"].standard_flag(language="cxx", standard="11")]
 
         if spec.satisfies("-serial"):
-            cxx_flags.append(self.compiler.openmp_flag)
+            cxx_flags.append(self['cxx'].openmp_flag)
 
         make("CXX_FLAGS=" + " ".join(cxx_flags))
 

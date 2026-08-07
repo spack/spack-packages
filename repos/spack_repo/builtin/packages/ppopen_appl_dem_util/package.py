@@ -38,7 +38,7 @@ class PpopenApplDemUtil(MakefilePackage):
         makefile_in.filter("MPIF90 += .*", "MPIF90 = {0}".format(spec["mpi"].mpifc))
         makefile_in.filter("MPIF77 += .*", "MPIF77 = {0}".format(spec["mpi"].mpifc))
         makefile_in.filter(
-            "F90MPFLAGS += .*", "F90MPFLAGS = -O3 {0}".format(self.compiler.openmp_flag)
+            "F90MPFLAGS += .*", "F90MPFLAGS = -O3 {0}".format(self['fortran'].openmp_flag)
         )
 
     def install(self, spec, prefix):

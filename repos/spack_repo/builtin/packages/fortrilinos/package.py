@@ -95,8 +95,8 @@ class Fortrilinos(CMakePackage):
         """build and run ctest against the installed software"""
         cmake_args = [
             self.define("CMAKE_PREFIX_PATH", self.prefix),
-            self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
-            self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
+            self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx),
+            self.define("CMAKE_Fortran_COMPILER", self["fortran"].fortran),
             self.cached_tests_work_dir,
         ]
         cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)

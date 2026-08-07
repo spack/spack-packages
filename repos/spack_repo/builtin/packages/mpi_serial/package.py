@@ -51,13 +51,13 @@ class MpiSerial(AutotoolsPackage):
         config_flags = []
 
         if name == "cflags":
-            config_flags.append(self.compiler.cc_pic_flag)
+            config_flags.append(self["c"].pic_flag)
             if spec.satisfies("%oneapi"):
                 # OneAPI fails due to these standards checks
                 config_flags.append("-Wno-error=implicit-int")
                 config_flags.append("-Wno-error=implicit-function-declaration")
         elif name == "fflags":
-            config_flags.append(self.compiler.fc_pic_flag)
+            config_flags.append(self["fortran"].pic_flag)
             if spec.satisfies("%cce"):
                 # Makefile expects "mpi.mod", not "MPI.mod"
                 config_flags.append("-ef")

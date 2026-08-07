@@ -69,7 +69,7 @@ class Pcre2(AutotoolsPackage, CMakePackage):
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def build_environment(self, env):
         if "+pic" in self.spec:
-            env.append_flags("CFLAGS", self.compiler.cc_pic_flag)
+            env.append_flags("CFLAGS", self["c"].pic_flag)
 
     def configure_args(self):
         args = []

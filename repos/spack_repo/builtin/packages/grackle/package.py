@@ -64,7 +64,7 @@ class Grackle(Package):
             "@CXX": spec["mpi"].mpicxx,
             "@FC": spec["mpi"].mpifc,
             "@F77": spec["mpi"].mpif77,
-            "@STDCXX_LIB": " ".join(self.compiler.stdcxx_libs),
+            "@STDCXX_LIB": " ".join(self["cxx"].stdcxx_libs),
             "@HDF5_ROOT": spec["hdf5"].prefix,
             "@PREFIX": prefix,
             "@LINK_VARIABLES_DEFINITION": link_variables,

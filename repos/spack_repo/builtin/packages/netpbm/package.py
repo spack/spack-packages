@@ -116,7 +116,7 @@ class Netpbm(MakefilePackage):
         config.append("LD = {0}".format(spack_cc))
         config.append("CC_FOR_BUILD = {0}".format(spack_cc))
         config.append("LD_FOR_BUILD = {0}".format(spack_cc))
-        config.append("CFLAGS_SHLIB += {0}".format(self.compiler.cc_pic_flag))
+        config.append("CFLAGS_SHLIB += {0}".format(self["c"].pic_flag))
         if "%gcc" in spec or "platform=darwin" in spec:
             cflags = ["-O3", "-ffast-math", "-pedantic", "-Wall", "-Wimplicit"]
             cflags.extend(["-Wno-uninitialized", "-Wmissing-declarations"])

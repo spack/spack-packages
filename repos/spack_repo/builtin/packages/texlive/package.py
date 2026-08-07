@@ -227,7 +227,7 @@ class Texlive(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if name == "cxxflags" and self.spec.satisfies("@20240312:"):
-            flags.append(self.compiler.cxx17_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="17"))
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

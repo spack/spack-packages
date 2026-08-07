@@ -40,8 +40,8 @@ class Nekbone(Package):
     def install(self, spec, prefix):
         mkdir(prefix.bin)
 
-        fc = self.compiler.fc
-        cc = self.compiler.cc
+        fc = self["fortran"].fortran
+        cc = self["c"].cc
         if "+mpi" in spec:
             fc = spec["mpi"].mpif77
             cc = spec["mpi"].mpicc

@@ -48,8 +48,8 @@ class Yorick(Package):
     def install(self, spec, prefix):
         make("config")
 
-        filter_file(r"^CC.+", "CC={0}".format(self.compiler.cc), "Make.cfg")
-        filter_file(r"^FC.+", "FC={0}".format(self.compiler.fc), "Make.cfg")
+        filter_file(r"^CC.+", "CC={0}".format(self["c"].cc), "Make.cfg")
+        filter_file(r"^FC.+", "FC={0}".format(self["fortran"].fortran), "Make.cfg")
         filter_file(r"^COPT_DEFAULT.+", "COPT_DEFAULT=-O3", "Make.cfg")
 
         make()

@@ -384,8 +384,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             args.append(self.define("CLANG_LINK_CLANG_DYLIB", True))
 
         # Get the GCC prefix for LLVM.
-        if self.compiler.name == "gcc" and self.spec.satisfies("@:6.3"):
-            args.append(self.define("GCC_INSTALL_PREFIX", self.compiler.prefix))
+        if self.spec.compiler.name == "gcc" and self.spec.satisfies("@:6.3"):
+            args.append(self.define("GCC_INSTALL_PREFIX", self["c"].prefix))
         if self.spec.satisfies("@:6.0"):
             comgrinc_path = os.path.join(self.stage.source_path, "comgr/lib/comgr/include")
         elif self.spec.satisfies("@6.1:"):
@@ -459,7 +459,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         runtime_cmake_args = [self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True)]
 
         # When building runtimes, just-built clang has to know where GCC is.
-        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self["c"])
         if gcc_install_dir_flag:
             runtime_cmake_args.extend(
                 [
@@ -538,7 +538,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         cfg_files = ["clang.cfg", "clang++.cfg"]
         if self.spec.satisfies("@7:"):
             cfg_files.append("flang.cfg")
-        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
+        gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self["c"])
         if gcc_install_dir_flag:
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:

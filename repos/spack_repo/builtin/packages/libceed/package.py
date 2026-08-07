@@ -80,7 +80,8 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     @property
     def common_make_opts(self):
         spec = self.spec
-        compiler = self.compiler
+        compiler = self.spec.compiler
+        cxx_compiler = self["cxx"]
         # Note: The occa package exports OCCA_DIR in the environment
 
         # Use verbose building output
@@ -131,7 +132,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
                 if spec.satisfies("@:0.4"):
                     nvccflags = [
                         '-ccbin %s -Xcompiler "%s" -Xcompiler %s'
-                        % (compiler.cxx, opt, compiler.cc_pic_flag)
+                        % (cxx_compiler.cxx, opt, self["c"].pic_flag)
                     ]
                     nvccflags = " ".join(nvccflags)
                     makeopts += ["NVCCFLAGS=%s" % nvccflags]

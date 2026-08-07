@@ -37,19 +37,19 @@ class GosamContrib(AutotoolsPackage):
     def patch(self):
         # remove spack compiler wrapper path
         mf = FileFilter("gosam.conf.in")
-        mf.filter("^fc.bin=.*", "fc.bin=" + self.compiler.fc)
+        mf.filter("^fc.bin=.*", "fc.bin=" + self["fortran"].fortran)
 
     def flag_handler(self, name, flags):
         if name in ["cflags", "cxxflags", "cppflags"]:
             if self.spec.satisfies("+pic"):
-                flags.append(self.compiler.cc_pic_flag)
+                flags.append(self["c"].pic_flag)
 
         if name == "fflags":
-            if "gfortran" in self.compiler.fc:
+            if "gfortran" in self["fortran"].fortran:
                 flags.append("-std=legacy")
 
             if self.spec.satisfies("+pic"):
-                flags.append(self.compiler.fc_pic_flag)
+                flags.append(self["fortran"].pic_flag)
 
         return (None, flags, None)
 

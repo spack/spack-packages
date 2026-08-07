@@ -51,7 +51,7 @@ class Rsbench(MakefilePackage):
         elif spec.satisfies("%arm"):
             cflags += " -ffast-math "
 
-        cflags += self.compiler.openmp_flag
+        cflags += self['c'].openmp_flag
 
         targets.append(f"CFLAGS={cflags}")
         targets.append(f"LDFLAGS={ldflags}")

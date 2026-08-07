@@ -174,8 +174,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
             # compiler. If not, the variable SYCL_COMPILER of that script is
             # broken, and all the SYCL detection mechanism is wrong. We fix it
             # by giving hint environment variables.
-            env.set("SYCL_LIBRARY_DIR_HINT", os.path.dirname(os.path.dirname(self.compiler.cxx)))
-            env.set("SYCL_INCLUDE_DIR_HINT", os.path.dirname(os.path.dirname(self.compiler.cxx)))
+            env.set("SYCL_LIBRARY_DIR_HINT", os.path.dirname(os.path.dirname(self["cxx"].cxx)))
+            env.set("SYCL_INCLUDE_DIR_HINT", os.path.dirname(os.path.dirname(self["cxx"].cxx)))
 
     def cmake_args(self):
         if self.spec.satisfies("@1.4.0:1.6.0 +sycl") and not self.spec.satisfies(
@@ -243,7 +243,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+sycl"):
             sycl_compatible_compilers = ["icpx"]
-            if os.path.basename(self.compiler.cxx) not in sycl_compatible_compilers:
+            if os.path.basename(self["cxx"].cxx) not in sycl_compatible_compilers:
                 raise InstallError("ginkgo +sycl requires icpx compiler.")
         return args
 

@@ -136,7 +136,7 @@ class Openmm(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
         if "+cuda" in spec:
             env.set("OPENMM_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc)
-            env.set("CUDA_HOST_COMPILER", self.compiler.cxx)
+            env.set("CUDA_HOST_COMPILER", self["cxx"].cxx)
 
     def cmake_args(self):
         spec = self.spec

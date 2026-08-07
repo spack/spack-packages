@@ -38,7 +38,7 @@ class Fasttree(Package):
         if self.spec.satisfies("+openmp"):
             cc(
                 "-O3",
-                self.compiler.openmp_flag,
+                self['c'].openmp_flag,
                 "-DOPENMP",
                 "-finline-functions",
                 "-funroll-loops",

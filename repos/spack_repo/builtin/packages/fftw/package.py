@@ -88,7 +88,7 @@ class FftwBase(AutotoolsPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+openmp %apple-clang"):
-            env.append_flags("CPPFLAGS", self.compiler.openmp_flag)
+            env.append_flags("CPPFLAGS", self['c'].openmp_flag)
             env.append_flags("CFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("CXXFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("LDFLAGS", self.spec["llvm-openmp"].libs.ld_flags)
@@ -113,7 +113,7 @@ class FftwBase(AutotoolsPackage):
             uname_r = uname("-r", output=str)
             options.append("--build=aarch64-apple-darwin{0}".format(uname_r))
 
-        if not self.compiler.f77 or not self.compiler.fc:
+        if not self["fortran"].fortran or not self["fortran"].fortran:
             options.append("--disable-fortran")
         if spec.satisfies("@:2"):
             options.append("--enable-type-prefix")
@@ -124,7 +124,7 @@ class FftwBase(AutotoolsPackage):
             if spec.satisfies("@:2"):
                 # TODO: libtool strips CFLAGS, so 2.x libxfftw_threads
                 #       isn't linked to the openmp library. Patch Makefile?
-                options.insert(0, "CFLAGS=" + self.compiler.openmp_flag)
+                options.insert(0, "CFLAGS=" + self['c'].openmp_flag)
         if spec.satisfies("+mpi"):
             options.append("--enable-mpi")
 

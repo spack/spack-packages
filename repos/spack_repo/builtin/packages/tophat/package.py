@@ -40,7 +40,7 @@ class Tophat(AutotoolsPackage):
         filter_file(r"^AM_INIT_AUTOMAKE$", "", "configure.ac")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_flags("CFLAGS", self.compiler.cxx98_flag)
+        env.append_flags("CFLAGS", self["cxx"].standard_flag(language="cxx", standard="98"))
 
     def configure_args(self):
         return ["--with-boost={0}".format(self.spec["boost"].prefix)]

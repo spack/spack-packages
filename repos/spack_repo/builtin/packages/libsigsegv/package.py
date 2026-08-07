@@ -54,7 +54,7 @@ class Libsigsegv(AutotoolsPackage, GNUMirrorPackage):
             prog,
             "-L{0}".format(self.prefix.lib),
             "-lsigsegv",
-            "{0}{1}".format(self.compiler.cc_rpath_arg, self.prefix.lib),
+            "{0}{1}".format(self["c"].rpath_arg, self.prefix.lib),
         ]
 
         cc = which(os.environ["CC"], required=True)

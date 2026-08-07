@@ -264,7 +264,7 @@ class Lua(LuaImplPackage):
             "MYLDFLAGS="
             + " ".join((spec["readline"].libs.search_flags, spec["ncurses"].libs.search_flags)),
             "MYLIBS=%s" % spec["ncurses"].libs.link_flags,
-            "CC={0} -std=gnu99 {1}".format(spack_cc, self.compiler.cc_pic_flag),
+            "CC={0} -std=gnu99 {1}".format(spack_cc, self["c"].pic_flag),
             target,
         )
 

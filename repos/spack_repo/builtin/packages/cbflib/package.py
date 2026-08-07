@@ -33,7 +33,7 @@ class Cbflib(MakefilePackage):
     patch("cbf_int.patch")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        ce = Executable(self.compiler.cc)
+        ce = Executable(self["c"].cc)
         ce(
             "-E",
             join_path(os.path.dirname(__file__), "checkint.c"),

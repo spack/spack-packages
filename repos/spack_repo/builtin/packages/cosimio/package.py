@@ -180,6 +180,6 @@ class Cosimio(CMakePackage):
         # wrapper.  Passing CMAKE_Fortran_COMPILER directly fixes this for all
         # compilers, including gfortran 10+.
         if "+fortran" in self.spec:
-            args.append(self.define("CMAKE_Fortran_COMPILER", self.compiler.fc))
+            args.append(self.define("CMAKE_Fortran_COMPILER", self["fortran"].fortran))
 
         return args

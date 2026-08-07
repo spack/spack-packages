@@ -549,7 +549,7 @@ class Qt(Package):
 
         # Intel's `ar` equivalent might not be in the path: replace it with
         # explicit
-        xiar = os.path.join(os.path.dirname(self.compiler.cc), "xiar")
+        xiar = os.path.join(os.path.dirname(self["c"].cc), "xiar")
         filter_file(r"\bxiar\b", xiar, conf_file)
 
         if self.spec.satisfies("@4"):

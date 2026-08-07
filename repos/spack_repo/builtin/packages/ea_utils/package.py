@@ -50,5 +50,5 @@ class EaUtils(MakefilePackage):
 
     def flag_handler(self, name, flags):
         if name.lower() == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
         return (flags, None, None)

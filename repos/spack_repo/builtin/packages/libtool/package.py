@@ -118,9 +118,9 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
 
     def setup_test_environment(self, env: EnvironmentModifications):
         """When Fortran is not provided, a few tests need to be skipped"""
-        if self.compiler.f77 is None:
+        if self["fortran"].fortran is None:
             env.set("F77", "no")
-        if self.compiler.fc is None:
+        if self["fortran"].fortran is None:
             env.set("FC", "no")
 
     @when("@2.4.6")

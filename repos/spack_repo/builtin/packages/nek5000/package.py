@@ -74,13 +74,13 @@ class Nek5000(Package):
 
         # Do not use the Spack compiler wrappers.
         # Use directly the compilers:
-        fc = self.compiler.f77
-        cc = self.compiler.cc
+        fc = self["fortran"].fortran
+        cc = self["c"].cc
 
         fflags = spec.compiler_flags["fflags"]
         cflags = spec.compiler_flags["cflags"]
 
-        if self.compiler.name in ["xl", "xl_r"]:
+        if self.spec.compiler.name in ["xl", "xl_r"]:
             # Use '-qextname' to add underscores.
             # Use '-WF,-qnotrigraph' to fix an error about a string: '... ??'
             fflags += ["-qextname", "-WF,-qnotrigraph"]
@@ -141,7 +141,7 @@ class Nek5000(Package):
                 filter_file(r"^#CFLAGS=.*", 'CFLAGS+=" {0}"'.format(cflags), "makenek")
 
         with working_dir("core"):
-            if self.compiler.name in ["xl", "xl_r"]:
+            if self.spec.compiler.name in ["xl", "xl_r"]:
                 # Patch 'core/makenek.inc' and 'makefile.template' to use
                 # '-qextname' when checking for underscore becasue 'xl'/'xl_r'
                 # use this option to enable the addition of the underscore.

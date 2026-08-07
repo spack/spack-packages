@@ -526,7 +526,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
                 if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=rocmcc"):
-                    options.append(self.define("CMAKE_HIP_COMPILER", self.compiler.cxx))
+                    options.append(self.define("CMAKE_HIP_COMPILER", self["cxx"].cxx))
                 else:
                     options.append(
                         self.define(
@@ -552,7 +552,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 options.append(self.define("Kokkos_ENABLE_IMPL_HIP_MALLOC_ASYNC", False))
         elif "+cuda" in self.spec and "+cmake_lang" in self.spec:
             if self.spec.satisfies("%cxx=clang"):
-                options.append(self.define("CMAKE_CUDA_COMPILER", self.compiler.cxx))
+                options.append(self.define("CMAKE_CUDA_COMPILER", self["cxx"].cxx))
             else:
                 options.append(
                     self.define(

@@ -138,6 +138,11 @@ class Openfast(CMakePackage):
         spec = self.spec
         if name in ["cflags", "cxxflags", "cppflags", "fflags"]:
             if "+openmp" in spec:
-                flags.append(self.compiler.openmp_flag)
+                if name in ("cflags", "cppflags"):
+                    flags.append(self["c"].openmp_flag)
+                elif name == "cxxflags":
+                    flags.append(self["cxx"].openmp_flag)
+                else:
+                    flags.append(self["fortran"].openmp_flag)
             return (None, flags, None)
         return (flags, None, None)

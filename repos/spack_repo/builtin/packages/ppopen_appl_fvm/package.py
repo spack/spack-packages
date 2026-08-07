@@ -51,7 +51,7 @@ class PpopenApplFvm(MakefilePackage):
         makefile_in.filter("mpifrtpx", spec["mpi"].mpifc)
         makefile_in.filter("frtpx", spack_fc)
         makefile_in.filter("-Kfast", " ".join(fflags))
-        makefile_in.filter(",openmp", " {0}".format(self.compiler.openmp_flag))
+        makefile_in.filter(",openmp", " {0}".format(self['fortran'].openmp_flag))
 
         def install(self, spec, prefix):
             make("install")

@@ -184,11 +184,11 @@ class Ncl(Package):
         with working_dir(spec.prefix.bin):
             # Change NCARG compiler wrappers to use real compiler, not Spack wrappers
             for wrapper in c_wrappers:
-                filter_file(spack_cc, self.compiler.cc, wrapper)
+                filter_file(spack_cc, self["c"].cc, wrapper)
             for wrapper in f77_wrappers:
-                filter_file(spack_f77, self.compiler.f77, wrapper)
+                filter_file(spack_f77, self["fortran"].fortran, wrapper)
             for wrapper in f90_wrappers:
-                filter_file(spack_fc, self.compiler.fc, wrapper)
+                filter_file(spack_fc, self["fortran"].fortran, wrapper)
 
             # Make library reference and corrections to wrappers
             for wrapper in c_wrappers + f77_wrappers + f90_wrappers:
@@ -207,21 +207,21 @@ class Ncl(Package):
             env.set("ESMFBINDIR", self.spec["esmf"].prefix.bin)
 
     def prepare_site_config(self):
-        fc_flags = [self.compiler.fc_pic_flag]
-        cc_flags = [self.compiler.cc_pic_flag]
-        c2f_flags = [self.compiler.cc_pic_flag]
+        fc_flags = [self["fortran"].pic_flag]
+        cc_flags = [self["c"].pic_flag]
+        c2f_flags = [self["c"].pic_flag]
 
         if "+openmp" in self.spec:
-            fc_flags.append(self.compiler.openmp_flag)
-            cc_flags.append(self.compiler.openmp_flag)
+            fc_flags.append(self["fortran"].openmp_flag)
+            cc_flags.append(self["c"].openmp_flag)
 
         if self.spec.satisfies("^hdf5@1.11:"):
             cc_flags.append("-DH5_USE_110_API")
 
-        if self.compiler.name == "gcc":
+        if self.spec.compiler.name == "gcc":
             fc_flags.append("-fno-range-check")
             c2f_flags.extend(["-lgfortran", "-lm"])
-        elif self.compiler.name == "intel":
+        elif self.spec.compiler.name == "intel":
             fc_flags.append("-fp-model precise")
             cc_flags.extend(
                 ["-fp-model precise", "-std=c99", "-D_POSIX_C_SOURCE=2", "-D_GNU_SOURCE"]

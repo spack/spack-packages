@@ -54,7 +54,7 @@ class Lcals(MakefilePackage):
         else:
             raise InstallError("unknown architecture.")
 
-        if self.compiler.name == "intel":
+        if self.spec.compiler.name == "intel":
             if arch == "MIC":
                 cxxflags += "-DLCALS_PLATFORM_X86_SSE -DLCALS_COMPILER_ICC "
                 cxx_compile += (
@@ -73,8 +73,8 @@ class Lcals(MakefilePackage):
                     "-O3 -mavx -inline-max-total-size=10000"
                     " -inline-forceinline -ansi-alias -std=c++0x"
                 )
-            cxxflags += self.compiler.openmp_flag
-        elif self.compiler.name == "gcc":
+            cxxflags += self['cxx'].openmp_flag
+        elif self.spec.compiler.name == "gcc":
             if arch == "MIC" or (microarch == "sse" and arch == "x86"):
                 cxxflags += "-DLCALS_PLATFORM_X86_SSE -DLCALS_COMPILER_GNU "
                 cxx_compile += (
@@ -86,7 +86,7 @@ class Lcals(MakefilePackage):
             elif arch == "aarch64":
                 cxxflags += "-DLCALS_COMPILER_GNU "
                 cxx_compile += "-Ofast -finline-functions -finline-limit=10000 -std=c++11"
-            cxxflags += self.compiler.openmp_flag
+            cxxflags += self['cxx'].openmp_flag
 
         targets.append("LCALS_ARCH=")
         cxx_compile += " " + cxxflags

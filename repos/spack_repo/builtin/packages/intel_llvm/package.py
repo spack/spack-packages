@@ -30,7 +30,7 @@ class IntelLlvm(CMakePackage):
     #            msg='Intel LLVM compiler currently only works for x86')
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_flags("CXXFLAGS", self.compiler.cxx11_flag)
+        env.append_flags("CXXFLAGS", self["cxx"].standard_flag(language="cxx", standard="11"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+clang"):

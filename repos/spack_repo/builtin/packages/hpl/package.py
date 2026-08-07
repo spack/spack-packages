@@ -70,7 +70,7 @@ class Hpl(AutotoolsPackage):
 
         # OpenMP support
         if spec.satisfies("+openmp"):
-            config.append("OMP_DEFS     = {0}".format(self.compiler.openmp_flag))
+            config.append("OMP_DEFS     = {0}".format(self['c'].openmp_flag))
 
         config.extend(
             [
@@ -126,7 +126,7 @@ class Hpl(AutotoolsPackage):
 
         cflags, ldflags = ["-O3", "-DHPL_PROGRESS_REPORT", "-DHPL_DETAILED_TIMING"], []
         if self.spec.satisfies("+openmp"):
-            cflags.append(self.compiler.openmp_flag)
+            cflags.append(self['c'].openmp_flag)
 
         if self.spec.satisfies("^intel-oneapi-mkl"):
             ldflags.append(self.spec["blas"].libs.ld_flags)

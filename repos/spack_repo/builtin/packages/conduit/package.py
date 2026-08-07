@@ -263,9 +263,16 @@ class Conduit(CachedCMakePackage):
     def initconfig_compiler_entries(self):
         spec = self.spec
         entries = super().initconfig_compiler_entries()
-        f_compiler = getattr(self.compiler, "fc", None)
-        cpp_compiler = getattr(self.compiler, "cxx", "")
-        rpaths = list(self.compiler.extra_rpaths)
+        compiler_pkgs = [self["c"], self["cxx"]]
+        if spec.satisfies("^fortran"):
+            compiler_pkgs.append(self["fortran"])
+
+        f_compiler = self["fortran"].fortran if spec.satisfies("^fortran") else None
+        cpp_compiler = self["cxx"].cxx
+        rpaths = []
+        for compiler_pkg in compiler_pkgs:
+            rpaths.extend(getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", []))
+        rpaths = list(dict.fromkeys(rpaths))
 
         #  Note: This is not needed if we add `extra_rpaths` to this compiler spec case
         if (f_compiler is not None) and ("gfortran" in f_compiler) and ("clang" in cpp_compiler):

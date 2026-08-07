@@ -181,7 +181,7 @@ class Graphviz(AutotoolsPackage):
         super().setup_build_environment(env)
 
         if self.spec.satisfies("+quartz"):
-            env.set("OBJC", self.compiler.cc)
+            env.set("OBJC", self["c"].cc)
 
     @when("platform=darwin %clang")
     def patch(self):

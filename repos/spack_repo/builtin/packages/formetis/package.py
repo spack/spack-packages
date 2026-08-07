@@ -65,7 +65,7 @@ class Formetis(CMakePackage):
         """build and run metis"""
         cmake_args = [
             self.define("CMAKE_PREFIX_PATH", self.prefix),
-            self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
+            self.define("CMAKE_Fortran_COMPILER", self["fortran"].fortran),
             self.define("METIS_ROOT", self.spec["metis"].prefix),
         ]
         if self.spec.satisfies("+mpi"):

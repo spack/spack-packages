@@ -42,6 +42,6 @@ class Gsoap(AutotoolsPackage, SourceforgePackage):
 
     def flag_handler(self, name, flags):
         if name in ["cflags", "cxxflags", "cppflags"]:
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
 
         return self.build_system_flags(name, flags)

@@ -171,7 +171,7 @@ class Hipsycl(CMakePackage, ROCmPackage):
             configfiles = {"core": "acpp-core.json", "cuda": "acpp-cuda.json"}
 
         def adjust_core_config(config):
-            config["default-cpu-cxx"] = self.compiler.cxx
+            config["default-cpu-cxx"] = self["cxx"].cxx
             return config
 
         edit_config(configfiles["core"], adjust_core_config)

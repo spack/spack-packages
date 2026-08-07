@@ -652,7 +652,7 @@ class Root(CMakePackage):
             define("testing", self.run_tests),
             # The following option makes sure that Cling will call the compiler
             # it was compiled with at run time; see #17488, #18078 and #23886
-            define("CLING_CXX_PATH", self.compiler.cxx),
+            define("CLING_CXX_PATH", self["cxx"].cxx),
         ]
 
         if self.spec.satisfies("@:6.28"):
@@ -812,7 +812,7 @@ class Root(CMakePackage):
 
         # #################### Compiler options ####################
 
-        if _is_macos and self.compiler.cc == "gcc":
+        if _is_macos and self["c"].cc == "gcc":
             cflags = "-D__builtin_unreachable=__builtin_trap"
             options.extend([define("CMAKE_C_FLAGS", cflags), define("CMAKE_CXX_FLAGS", cflags)])
 

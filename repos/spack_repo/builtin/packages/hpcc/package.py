@@ -206,5 +206,5 @@ class Hpcc(MakefilePackage):
     def flag_handler(self, name, flags):
         # old GCC defaults to -std=c90 but C99 is required for "restrict"
         if self.spec.satisfies("%gcc@:5.1") and name == "cflags":
-            flags.append(self.compiler.c99_flag)
+            flags.append(self["c"].standard_flag(language="c", standard="99"))
         return (flags, None, None)

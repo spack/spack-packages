@@ -146,10 +146,10 @@ class Whizard(AutotoolsPackage):
         # and seems incompatible with
         # filter_compiler_wrappers, thus the
         # actual compilers need to be used to build
-        env.set("CC", self.compiler.cc)
-        env.set("CXX", self.compiler.cxx)
-        env.set("FC", self.compiler.fc)
-        env.set("F77", self.compiler.fc)
+        env.set("CC", self["c"].cc)
+        env.set("CXX", self["cxx"].cxx)
+        env.set("FC", self["fortran"].fortran)
+        env.set("F77", self["fortran"].fortran)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Whizard creates a whizard_setup.[c]sh script that sets the

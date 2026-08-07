@@ -92,7 +92,7 @@ class Mptensor(CMakePackage):
         with working_dir(join_path(install_test_root(self))):
             makefile = FileFilter("Makefile.option")
             makefile.filter("CXX =.*", f"CXX ={self.spec['mpi'].mpicxx}")
-            makefile.filter("CXXFLAGS =.*", f"CXXFLAGS ={self.compiler.cxx11_flag}")
+            makefile.filter("CXXFLAGS =.*", f"CXXFLAGS ={self['cxx'].standard_flag(language='cxx', standard='11')}")
 
     def test_tensor_test(self):
         """build and run tensor_test"""

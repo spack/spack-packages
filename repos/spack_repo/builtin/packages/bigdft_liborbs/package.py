@@ -48,7 +48,7 @@ class BigdftLiborbs(AutotoolsPackage, CudaPackage):
 
         openmp_flag = []
         if "+openmp" in spec:
-            openmp_flag.append(self.compiler.openmp_flag)
+            openmp_flag.append(self['fortran'].openmp_flag)
 
         linalg = []
         if "+scalapack" in spec:

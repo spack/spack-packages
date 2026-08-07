@@ -38,7 +38,7 @@ class Usalign(Package):
     phases = ["build", "install"]
 
     def build(self, spec, prefix):
-        cxx = Executable(self.compiler.cxx)
+        cxx = Executable(self["cxx"].cxx)
         args = ["-O3"]
         if spec.satisfies("+fast-math"):
             args.append("-ffast-math")

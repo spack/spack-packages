@@ -376,7 +376,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_compiler_entries(self):
         spec = self.spec
-        compiler = self.compiler
+        compiler = self.spec.compiler
         # Default entries are already defined in CachedCMakePackage, inherit them:
         entries = super().initconfig_compiler_entries()
 
@@ -601,10 +601,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         """Replace compiler wrappers in cached install-test files."""
         kwargs = {"backup": False, "ignore_absent": True}
         compiler_paths = {
-            "CMAKE_C_COMPILER": getattr(self.compiler, "cc", None),
-            "CMAKE_CXX_COMPILER": getattr(self.compiler, "cxx", None),
-            "CMAKE_Fortran_COMPILER": getattr(self.compiler, "fc", None),
-            "CMAKE_CUDA_HOST_COMPILER": getattr(self.compiler, "cxx", None),
+            "CMAKE_C_COMPILER": self["c"].cc,
+            "CMAKE_CXX_COMPILER": self["cxx"].cxx,
+            "CMAKE_Fortran_COMPILER": (
+                self["fortran"].fortran if self.spec.satisfies("^fortran") else None
+            ),
+            "CMAKE_CUDA_HOST_COMPILER": self["cxx"].cxx,
         }
 
         for key, value in compiler_paths.items():

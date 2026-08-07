@@ -152,7 +152,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
         if "+fortran" in spec:
             options.append(define("USE_FORTRAN", True))
             if spec.satisfies("%xl") or spec.satisfies("%xl_r"):
-                options.append(define("CMAKE_Fortran_COMPILER", self.compiler.f77))
+                options.append(define("CMAKE_Fortran_COMPILER", self["fortran"].fortran))
             if spec.satisfies("%cce"):
                 options.append(define("CMAKE_Fortran_FLAGS", "-ef"))
 
@@ -205,7 +205,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             pkg_config_path = self.prefix.lib.pkgconfig
             with set_env(PKG_CONFIG_PATH=pkg_config_path):
                 make = self.spec["gmake"].command
-                CC = "hipcc" if self.spec.satisfies("+rocm") else self.compiler.cc
+                CC = "hipcc" if self.spec.satisfies("+rocm") else self["c"].cc
                 make("c", f"CC={CC}")
                 tests = [
                     ("example_sparse", "sparse solver"),

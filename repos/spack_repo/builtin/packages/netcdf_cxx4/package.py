@@ -44,9 +44,9 @@ class NetcdfCxx4(CMakePackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags" and "+pic" in self.spec:
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         if name == "cxxflags" and "+pic" in self.spec:
-            flags.append(self.compiler.cxx_pic_flag)
+            flags.append(self["cxx"].pic_flag)
 
         return flags, None, None
 

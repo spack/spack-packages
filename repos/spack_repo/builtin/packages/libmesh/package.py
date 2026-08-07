@@ -305,8 +305,8 @@ class Libmesh(AutotoolsPackage):
             options.append("--disable-mpi")
             # libMesh will try to link with the system MPI library unless we
             # provide explicit overrides
-            options.append("CC=%s" % self.compiler.cc)
-            options.append("CXX=%s" % self.compiler.cxx)
+            options.append("CC=%s" % self["c"].cc)
+            options.append("CXX=%s" % self["cxx"].cxx)
 
         if self.spec.satisfies("threads=openmp"):
             # OpenMP cannot be used if pthreads is not available: see

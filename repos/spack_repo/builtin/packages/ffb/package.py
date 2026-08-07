@@ -35,14 +35,22 @@ class Ffb(MakefilePackage):
     parallel = False
 
     def flag_handler(self, name, flags):
-        opt_flag_found = any(f in self.compiler.opt_flags for f in flags)
+        opt_flags = []
+        if name == "cflags":
+            opt_flags = self["c"].opt_flags
+        elif name == "cxxflags":
+            opt_flags = self["cxx"].opt_flags
+        elif name == "fflags":
+            opt_flags = self["fortran"].opt_flags
+
+        opt_flag_found = any(f in opt_flags for f in flags)
         if name == "cflags":
             if not opt_flag_found:
                 flags.append("-O3")
         elif name == "cxxflags":
             if not opt_flag_found:
                 flags.append("-O2")
-            flags.append(self.compiler.cxx_pic_flag)
+            flags.append(self["cxx"].pic_flag)
         if name == "fflags":
             if not opt_flag_found:
                 flags.append("-O3")

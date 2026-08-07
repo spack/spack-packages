@@ -44,7 +44,7 @@ class E3smKernels(MakefilePackage):
         # But we still need to pass in fortran flags for gfortran
         args = []
         # Test for gfortran specifically due to hybrid compilers like llvm
-        if "gfortran" in self.compiler.fc:
+        if "gfortran" in self["fortran"].fortran:
             args.append("FFLAGS=-ffree-line-length-none")
         return args
 

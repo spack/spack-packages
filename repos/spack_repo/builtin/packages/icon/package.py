@@ -238,9 +238,9 @@ class Icon(AutotoolsPackage):
             args.append("--disable-gpu")
 
         if gpu in self.nvidia_targets or self.spec.satisfies("+comin"):
-            flags["ICON_LDFLAGS"].extend(self.compiler.stdcxx_libs)
+            flags["ICON_LDFLAGS"].extend(self["cxx"].stdcxx_libs)
 
-        if self.compiler.name == "gcc":
+        if self.spec.compiler.name == "gcc":
             flags["CFLAGS"].append("-g")
             flags["ICON_CFLAGS"].append("-O3")
             flags["ICON_BUNDLED_CFLAGS"].append("-O2")
@@ -252,7 +252,7 @@ class Icon(AutotoolsPackage):
                     ["--enable-fcgroup-OCEAN", "ICON_OCEAN_PATH=src/hamocc:src/ocean:src/sea_ice"]
                 )
 
-        elif self.compiler.name in ["intel", "oneapi"]:
+        elif self.spec.compiler.name in ["intel", "oneapi"]:
             args.append("--enable-intel-consistency")
 
             flags["CFLAGS"].extend(["-g", "-ftz", "-fma", "-ip", "-qno-opt-dynamic-align"])
@@ -288,7 +288,7 @@ class Icon(AutotoolsPackage):
             if self.spec.satisfies("+ecrad"):
                 flags["ICON_ECRAD_FCFLAGS"].extend(["-qno-opt-dynamic-align", "-no-fma", "-fpe0"])
 
-        elif self.compiler.name == "nvhpc":
+        elif self.spec.compiler.name == "nvhpc":
             flags["CFLAGS"].extend(["-g", "-O2"])
             flags["FCFLAGS"].extend(
                 ["-g", "-O2", "-Mrecursive", "-Mallocatable=03", "-Mstack_arrays"]

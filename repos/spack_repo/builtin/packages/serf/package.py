@@ -53,7 +53,7 @@ class Serf(SConsPackage):
         # execution environment. Therefore, we can't use Spack's compiler
         # wrappers. Use the actual compilers. SCons seems to RPATH things
         # on its own anyway.
-        args["CC"] = self.compiler.cc
+        args["CC"] = self["c"].cc
 
         # Old versions of serf ignore the ZLIB variable on non-Windows platforms.
         # Also, there is no UUID variable to specify its installation location.
@@ -65,7 +65,7 @@ class Serf(SConsPackage):
             library_dirs.extend(query.libs.directories)
             include_dirs.extend(query.headers.directories)
 
-        rpath = self.compiler.cc_rpath_arg
+        rpath = self["c"].rpath_arg
         args["LINKFLAGS"] = "-L" + " -L".join(library_dirs)
         args["LINKFLAGS"] += " " + rpath + (" " + rpath).join(library_dirs)
         args["CPPFLAGS"] = "-I" + " -I".join(include_dirs)

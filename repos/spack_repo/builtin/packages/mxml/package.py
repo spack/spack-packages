@@ -38,7 +38,7 @@ class Mxml(AutotoolsPackage):
     def configure_args(self):
         return [
             # ADIOS build with -fPIC, so we need it too (avoid linkage issue)
-            "CFLAGS={0}".format(self.compiler.cc_pic_flag),
+            "CFLAGS={0}".format(self["c"].pic_flag),
             # Default is non-shared, but avoid any future surprises
             "--disable-shared",
         ]

@@ -94,7 +94,7 @@ class AdolC(AutotoolsPackage):
             configure_args.append("--with-boost=no")
 
         if spec.satisfies("+openmp"):
-            configure_args.append(f"--with-openmp-flag={self.compiler.openmp_flag}")
+            configure_args.append(f"--with-openmp-flag={self['cxx'].openmp_flag}")
 
         configure_args.extend(
             self.enable_or_disable("advanced-branching", variant="advanced_branching")

@@ -49,7 +49,7 @@ class Cbench(MakefilePackage):
 
         # Pick the compiler collection/chain you want to compile with.
         # Examples include: intel, gcc.
-        env.set("COMPILERCOLLECTION", self.compiler.name)
+        env.set("COMPILERCOLLECTION", self.spec.compiler.name)
 
         # Linking flags for BLAS/LAPACK and FFTW
         env.set("BLASLIB", self.spec["blas"].libs.ld_flags)

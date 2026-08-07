@@ -524,8 +524,8 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest(f"{test_dir} must exist")
 
         cmake_args = [
-            f"-DCMAKE_C_COMPILER={self.compiler.cc}",
-            f"-DCMAKE_CXX_COMPILER={self.compiler.cxx}",
+            f"-DCMAKE_C_COMPILER={self['c'].cc}",
+            f"-DCMAKE_CXX_COMPILER={self['cxx'].cxx}",
             f"-DLegion_DIR={join_path(self.prefix, 'share', 'Legion', 'cmake')}",
         ]
 

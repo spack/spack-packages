@@ -88,9 +88,9 @@ class Amp(CMakePackage):
         else:
             options.extend(
                 [
-                    self.define("CMAKE_C_COMPILER", self.compiler.cc),
-                    self.define("CMAKE_CXX_COMPILER", self.compiler.cxx),
-                    self.define("CMAKE_Fortran_COMPILER", self.compiler.fc),
+                    self.define("CMAKE_C_COMPILER", self["c"].cc),
+                    self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx),
+                    self.define("CMAKE_Fortran_COMPILER", self["fortran"].fortran),
                 ]
             )
 

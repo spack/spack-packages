@@ -207,8 +207,8 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
                 mpi_home = self.spec["mpi"].prefix
             cmake(
                 self.prefix.share.doc.Viskores.examples.smoke_test,
-                f"-DCMAKE_C_COMPILER={self.compiler.cc}",
-                f"-DCMAKE_CXX_COMPILER={self.compiler.cxx}",
+                f"-DCMAKE_C_COMPILER={self['c'].cc}",
+                f"-DCMAKE_CXX_COMPILER={self['cxx'].cxx}",
                 f"-DMPI_HOME={mpi_home}",
                 f"-DViskores_ROOT={self.prefix}",
             )

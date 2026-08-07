@@ -50,8 +50,8 @@ class Itensor(MakefilePackage):
 
     def getcopts(self, spec):
         copts = []
-        copts.append(self.compiler.cxx17_flag)
-        copts.append(self.compiler.cc_pic_flag)
+        copts.append(self["cxx"].standard_flag(language="cxx", standard="17"))
+        copts.append(self["c"].pic_flag)
 
         if spec.satisfies("%gcc"):
             if not spec.satisfies("arch=aarch64:"):
@@ -101,7 +101,7 @@ class Itensor(MakefilePackage):
         # 4.openmp
         if spec.satisfies("+openmp"):
             filter_file("#ITENSOR_USE_OMP", "ITENSOR_USE_OMP", mf)
-            filter_file("-fopenmp", self.compiler.openmp_flag, mf)
+            filter_file("-fopenmp", self['cxx'].openmp_flag, mf)
 
         # 5.prefix
         filter_file(r"^PREFIX.+", f"PREFIX={os.getcwd()}", mf)
@@ -116,7 +116,7 @@ class Itensor(MakefilePackage):
         copy(mf, "options.mk.build")
 
         # 1.CCCOM
-        ccopts = f"CCCOM={self.compiler.cxx}"
+        ccopts = f"CCCOM={self['cxx'].cxx}"
         ccopts += " " + " ".join(spec.compiler_flags["cxxflags"])
         if spec.satisfies("%fj"):
             ccopts += " " + env["FCC_ENV"]

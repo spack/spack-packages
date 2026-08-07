@@ -218,12 +218,12 @@ class Cantera(SConsPackage):
             args.extend(
                 [
                     "libdirname={0}".format(spec.variants["libdirname"].value),
-                    "cc_flags={0}".format(self.compiler.cc_pic_flag),
+                    "cc_flags={0}".format(self["c"].pic_flag),
                 ]
             )
         else:
             # enable build of versions <= 2.4.0 with modern compilers
-            args.append("cc_flags={0} -fcommon".format(self.compiler.cc_pic_flag))
+            args.append("cc_flags={0} -fcommon".format(self["c"].pic_flag))
 
         if spec.satisfies("@:2.5.1"):
             args.append("VERBOSE=yes")
@@ -387,20 +387,20 @@ class Cantera(SConsPackage):
 
         for filename in cc_files:
             filter_file(
-                os.environ["CC"], self.compiler.cc, os.path.join(dirname, filename), **kwargs
+                os.environ["CC"], self["c"].cc, os.path.join(dirname, filename), **kwargs
             )
 
         for filename in cxx_files:
             filter_file(
-                os.environ["CXX"], self.compiler.cxx, os.path.join(dirname, filename), **kwargs
+                os.environ["CXX"], self["cxx"].cxx, os.path.join(dirname, filename), **kwargs
             )
 
         for filename in f77_files:
             filter_file(
-                os.environ["F77"], self.compiler.f77, os.path.join(dirname, filename), **kwargs
+                os.environ["F77"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
             )
 
         for filename in fc_files:
             filter_file(
-                os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
+                os.environ["FC"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
             )

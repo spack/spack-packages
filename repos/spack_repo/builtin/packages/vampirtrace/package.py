@@ -44,19 +44,18 @@ class Vampirtrace(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
-        compiler = self.compiler
 
         args = [
             "--with-extern-otf",
             "--with-extern-otf-dir={0}".format(spec["otf"].prefix),
             "--with-papi-dir={0}".format(spec["papi"].prefix),
             "--with-zlib-dir={0}".format(spec["zlib-api"].prefix),
-            "--with-wrapper-cc-compiler={0}".format(compiler.cc),
-            "--with-wrapper-cc-cpp={0} -E".format(compiler.cc),
-            "--with-wrapper-cxx-compiler={0}".format(compiler.cxx),
-            "--with-wrapper-cxx-cpp={0} -E".format(compiler.cxx),
-            "--with-wrapper-fc-compiler={0}".format(compiler.fc),
-            "--with-wrapper-fc-cpp={0} -E".format(compiler.fc),
+            "--with-wrapper-cc-compiler={0}".format(self["c"].cc),
+            "--with-wrapper-cc-cpp={0} -E".format(self["c"].cc),
+            "--with-wrapper-cxx-compiler={0}".format(self["cxx"].cxx),
+            "--with-wrapper-cxx-cpp={0} -E".format(self["cxx"].cxx),
+            "--with-wrapper-fc-compiler={0}".format(self["fortran"].fortran),
+            "--with-wrapper-fc-cpp={0} -E".format(self["fortran"].fortran),
         ]
 
         if "+mpi" in spec:

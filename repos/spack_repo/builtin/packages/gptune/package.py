@@ -135,8 +135,8 @@ class Gptune(CMakePackage):
         cache_extra_test_sources(self, [self.examples_src_dir])
 
         # Create the environment setup script
-        comp_name = self.compiler.name
-        comp_version = str(self.compiler.version).replace(".", ",")
+        comp_name = self.spec.compiler.name
+        comp_version = str(self.spec.compiler.version).replace(".", ",")
         spec = self.spec
         script_path = f"{install_test_root(self)}/run_env.sh"
         with open(script_path, "w") as envfile:

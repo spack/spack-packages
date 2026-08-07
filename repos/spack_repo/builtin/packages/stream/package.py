@@ -46,8 +46,8 @@ class Stream(MakefilePackage):
         cflags = "-O2"
         fflags = "-O2"
         if "+openmp" in self.spec:
-            cflags += " " + self.compiler.openmp_flag
-            fflags += " " + self.compiler.openmp_flag
+            cflags += " " + self["c"].openmp_flag
+            fflags += " " + self["fortran"].openmp_flag
         if "%aocc" in self.spec:
             cflags += " -mcmodel=large -ffp-contract=fast -fnt-store"
 

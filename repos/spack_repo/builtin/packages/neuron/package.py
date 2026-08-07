@@ -165,8 +165,8 @@ class Neuron(CMakePackage):
             cc_compiler = spec["mpi"].mpicc
             cxx_compiler = spec["mpi"].mpicxx
         else:
-            cc_compiler = self.compiler.cc
-            cxx_compiler = self.compiler.cxx
+            cc_compiler = self["c"].cc
+            cxx_compiler = self["cxx"].cxx
 
         kwargs = {"backup": False, "string": True}
         nrnmech_makefile = join_path(self.prefix, "bin/nrnmech_makefile")

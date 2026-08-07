@@ -49,7 +49,7 @@ class Srilm(MakefilePackage):
         makefile_common.filter(r"GAWK\s*=.*", "GAWK = {0}".format(which("gawk", required=True)))
         makefile_common.filter(r"PERL\s*=.*", "PERL = {0}".format(which("perl", required=True)))
         makefile_common.filter(
-            r"PIC_FLAG\s*=.*", "PIC_FLAG = {0}".format(self.compiler.cc_pic_flag)
+            r"PIC_FLAG\s*=.*", "PIC_FLAG = {0}".format(self["c"].pic_flag)
         )
 
         makefile_machine_fn = "common/Makefile.machine.{0}".format(self.machine_type)
@@ -60,12 +60,13 @@ class Srilm(MakefilePackage):
             r"CXX\s*=.*", "CXX = {0} -DINSTANTIATE_TEMPLATES".format(spack_cxx)
         )
 
-        omp_flag = self.compiler.openmp_flag if "+openmp" in spec else ""
+        c_omp_flag = self["c"].openmp_flag if "+openmp" in spec else ""
+        cxx_omp_flag = self["cxx"].openmp_flag if "+openmp" in spec else ""
         makefile_machine.filter(
-            r"ADDITIONAL_CFLAGS\s*=.*", "ADDITIONAL_CFLAGS = {0}".format(omp_flag)
+            r"ADDITIONAL_CFLAGS\s*=.*", "ADDITIONAL_CFLAGS = {0}".format(c_omp_flag)
         )
         makefile_machine.filter(
-            r"ADDITIONAL_CXXFLAGS\s*=.*", "ADDITIONAL_CXXFLAGS = {0}".format(omp_flag)
+            r"ADDITIONAL_CXXFLAGS\s*=.*", "ADDITIONAL_CXXFLAGS = {0}".format(cxx_omp_flag)
         )
         makefile_machine.filter(r"(SYS_LIBRARIES\s*=.*)", r"\1 -liconv")
 

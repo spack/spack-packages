@@ -129,7 +129,7 @@ class Steps(CMakePackage):
     def build_targets(self):
         targets = []
         if "+coverage" in self.spec:
-            if self.compiler.name != "gcc":
+            if self.spec.compiler.name != "gcc":
                 raise ValueError(
                     "Package " + self.name + " build with coverage enabled requires GCC to build"
                 )

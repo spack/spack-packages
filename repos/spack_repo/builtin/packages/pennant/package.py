@@ -39,13 +39,13 @@ class Pennant(MakefilePackage):
         debug = "-g"
         opt = "-O3"
 
-        if self.compiler.name == "intel":
+        if self.spec.compiler.name == "intel":
             opt += " -fast -fno-alias"
 
         makefile.filter("CXXFLAGS_DEBUG .*", "CXXFLAGS_DEBUG := {0}".format(debug))
         makefile.filter("CXXFLAGS_OPT .*", "CXXFLAGS_OPT := {0}".format(opt))
         makefile.filter(
-            "CXXFLAGS_OPENMP .*", "CXXFLAGS_OPENMP := {0}".format(self.compiler.openmp_flag)
+            "CXXFLAGS_OPENMP .*", "CXXFLAGS_OPENMP := {0}".format(self['cxx'].openmp_flag)
         )
 
         if "+mpi" in spec:

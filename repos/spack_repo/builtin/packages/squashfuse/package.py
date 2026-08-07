@@ -69,7 +69,7 @@ class Squashfuse(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags" and "+min_size" in self.spec:
-            if "-Os" in self.compiler.opt_flags:
+            if "-Os" in self["c"].opt_flags:
                 flags.append("-Os")
                 return (None, None, flags)
 

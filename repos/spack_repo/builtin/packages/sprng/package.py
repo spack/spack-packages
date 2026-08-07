@@ -122,7 +122,7 @@ int main() {
             if "+mpi" in spec:
                 cc = Executable(spec["mpi"].mpicxx)
             else:
-                cc = Executable(self.compiler.cxx)
+                cc = Executable(self["cxx"].cxx)
             cc(*(["-c", "check.c"] + spec["sprng"].headers.cpp_flags.split()))
             cc(*(["-o", "check", "check.o"] + spec["sprng"].libs.ld_flags.split()))
             try:

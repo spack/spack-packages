@@ -75,8 +75,8 @@ class Exciting(MakefilePackage):
         opts["F90"] = spack_fc
         opts["F77"] = spack_f77
         if spec.satisfies("+omp"):
-            opts["SMPF90_OPTS"] = self.compiler.openmp_flag + " -DUSEOMP"
-            opts["SMPF77_OPTS"] = self.compiler.openmp_flag + " -DUSEOMP"
+            opts["SMPF90_OPTS"] = self['fortran'].openmp_flag + " -DUSEOMP"
+            opts["SMPF77_OPTS"] = self['fortran'].openmp_flag + " -DUSEOMP"
         else:
             opts["BUILDSMP"] = "false"
 
@@ -91,7 +91,7 @@ class Exciting(MakefilePackage):
                 opts["F77_OPTS"] += " -fallow-argument-mismatch"
         filter_file(
             "FCFLAGS = @FCFLAGS@",
-            " ".join(["FCFLAGS = @FCFLAGS@", "-cpp", self.compiler.openmp_flag]),
+            " ".join(["FCFLAGS = @FCFLAGS@", "-cpp", self['fortran'].openmp_flag]),
             "src/libXC/src/Makefile.in",
         )
         if spec.satisfies("+mkl"):
@@ -104,7 +104,7 @@ class Exciting(MakefilePackage):
                 [
                     spec["lapack"].libs.ld_flags,
                     spec["blas"].libs.ld_flags,
-                    self.compiler.openmp_flag,
+                    self['fortran'].openmp_flag,
                 ]
             )
 
@@ -120,7 +120,7 @@ class Exciting(MakefilePackage):
 
             if spec.satisfies("+omp"):
                 opts["BUILDMPISMP"] = "true"
-                opts["SMPF90_OPTS"] = self.compiler.openmp_flag + " -DUSEOMP"
+                opts["SMPF90_OPTS"] = self['fortran'].openmp_flag + " -DUSEOMP"
                 opts["SMPF77_OPTS"] = opts["SMPF90_OPTS"]
                 opts["SMP_LIBS"] = ""
 

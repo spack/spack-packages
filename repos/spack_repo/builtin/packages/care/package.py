@@ -249,7 +249,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_compiler_entries(self):
         spec = self.spec
-        compiler = self.compiler
+        compiler = self.spec.compiler
         entries = super().initconfig_compiler_entries()
 
         if spec.satisfies("+rocm ^blt@:0.6"):

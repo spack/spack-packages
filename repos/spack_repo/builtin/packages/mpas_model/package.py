@@ -108,7 +108,7 @@ class MpasModel(MakefilePackage):
     def target(self, model, action):
         spec = self.spec
         satisfies = spec.satisfies
-        fflags = [self.compiler.openmp_flag]
+        fflags = [self["fortran"].openmp_flag]
         cppflags = ["-D_MPI"]
         if satisfies("%gcc"):
             fflags.extend(["-ffree-line-length-none", "-fconvert=big-endian", "-ffree-form"])
@@ -130,7 +130,7 @@ class MpasModel(MakefilePackage):
             "FC_SERIAL={0}".format(spack_fc),
             "CC_SERIAL={0}".format(spack_cc),
             "CXX_SERIAL={0}".format(spack_cxx),
-            "CFLAGS_OMP={0}".format(self.compiler.openmp_flag),
+            "CFLAGS_OMP={0}".format(self["c"].openmp_flag),
             "FFLAGS_OMP={0}".format(" ".join(fflags)),
             "CPPFLAGS={0}".format(" ".join(cppflags)),
             "PIO={0}".format(spec["parallelio"].prefix),

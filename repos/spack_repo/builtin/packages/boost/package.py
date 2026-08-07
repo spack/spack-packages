@@ -712,12 +712,12 @@ class Boost(Package):
             options.append("cxxstd={0}".format(spec.variants["cxxstd"].value))
         else:  # Add to cxxflags for older Boost.
             cxxstd = spec.variants["cxxstd"].value
-            flag = getattr(self.compiler, "cxx{0}_flag".format(cxxstd))
+            flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
             if flag:
                 cxxflags.append(flag)
 
         if self.spec.satisfies("+pic"):
-            cxxflags.append(self.compiler.cxx_pic_flag)
+            cxxflags.append(self["cxx"].pic_flag)
 
         # clang is not officially supported for pre-compiled headers
         # and at least in clang 3.9 still fails to build

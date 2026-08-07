@@ -21,8 +21,8 @@ class Xabclib(MakefilePackage):
     depends_on("fortran", type="build")
 
     def edit(self, spec, prefix):
-        cc = [spack_cc, "-O3", self.compiler.openmp_flag]
-        fc = [spack_fc, "-O3", self.compiler.openmp_flag]
+        cc = [spack_cc, "-O3", self["c"].openmp_flag]
+        fc = [spack_fc, "-O3", self["fortran"].openmp_flag]
         if spec.satisfies("%gcc"):
             fc.extend(["-ffixed-form", "-cpp"])
         elif spec.satisfies("%fj"):

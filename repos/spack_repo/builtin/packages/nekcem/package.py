@@ -52,8 +52,8 @@ class Nekcem(Package):
         configurenek = "configurenek"
         makenek = "makenek"
 
-        fc = self.compiler.f77
-        cc = self.compiler.cc
+        fc = self["fortran"].fortran
+        cc = self["c"].cc
 
         fflags = spec.compiler_flags["fflags"]
         cflags = spec.compiler_flags["cflags"]
@@ -69,14 +69,14 @@ class Nekcem(Package):
             fflags += ["-I."]
             cflags += ["-I.", "-DGLOBAL_LONG_LONG"]
 
-            if self.compiler.name == "gcc" or self.compiler.name == "clang":
+            if self.spec.compiler.name == "gcc" or self.spec.compiler.name == "clang":
                 # assuming 'clang' uses 'gfortran'
                 fflags += ["-fdefault-real-8", "-fdefault-double-8"]
                 cflags += ["-DUNDERSCORE"]
-            elif self.compiler.name == "intel":
+            elif self.spec.compiler.name == "intel":
                 fflags += ["-r8"]
                 cflags += ["-DUNDERSCORE"]
-            elif self.compiler.name == "xl" or self.compiler.name == "xl_r":
+            elif self.spec.compiler.name == "xl" or self.spec.compiler.name == "xl_r":
                 fflags += ["-qrealsize=8"]
                 cflags += ["-DPREFIX=jl_", "-DIBM"]
 

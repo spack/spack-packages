@@ -39,7 +39,7 @@ class Quickjs(MakefilePackage):
         makefile.filter("CFLAGS=", "CFLAGS+=-fPIC ")
         if "+lto" not in spec:
             makefile.filter("CONFIG_LTO=y", "")
-        cc = self.compiler.cc
+        cc = self["c"].cc
         makefile.filter("^ *CC=.*", "  CC={}".format(cc))
         makefile.filter("^ *HOST_CC=.*", "  HOST_CC={}".format(cc))
         makefile.filter("gcc-ar", "{}-ar".format(cc))

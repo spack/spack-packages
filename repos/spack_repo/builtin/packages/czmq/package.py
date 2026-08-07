@@ -45,7 +45,7 @@ class Czmq(AutotoolsPackage):
 
     def configure_args(self):
         config_args = []
-        if "clang" in self.compiler.name:
+        if "clang" in self.spec.compiler.name:
             config_args.append("CFLAGS=-Wno-gnu")
             config_args.append("CXXFLAS=-Wno-gnu")
         return config_args

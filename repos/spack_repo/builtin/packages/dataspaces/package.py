@@ -53,7 +53,7 @@ class Dataspaces(AutotoolsPackage):
             env.set("CC", self.spec["mpi"].mpicc)
             env.set("FC", self.spec["mpi"].mpifc)
 
-        env.set("CFLAGS", self.compiler.cc_pic_flag)
+        env.set("CFLAGS", self["c"].pic_flag)
 
         if self.spec.satisfies("%gcc@10:"):
             env.set("FCFLAGS", "-fallow-argument-mismatch")

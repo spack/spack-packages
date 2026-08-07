@@ -38,7 +38,7 @@ class PpopenApplAmrFdm(MakefilePackage):
         makefile_in.filter("^F90 +=.*", "F90 = {0}".format(spack_fc))
         makefile_in.filter("^MPIF90 +=.*", "MPIF90 = {0}".format(spec["mpi"].mpifc))
         makefile_in.filter("^sFFLAGS +=.*", "sFFLAGS = {0}".format(" ".join(fflags)))
-        fflags.append(self.compiler.openmp_flag)
+        fflags.append(self['fortran'].openmp_flag)
         makefile_in.filter("^pFFLAGS +=.*", "pFFLAGS = {0}".format(" ".join(fflags)))
 
     def install(self, spec, prefix):

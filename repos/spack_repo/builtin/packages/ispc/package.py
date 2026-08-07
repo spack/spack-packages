@@ -122,7 +122,7 @@ class Ispc(CMakePackage):
         with open("check-m32.c", "w") as f:
             f.write("#include <sys/cdefs.h>")
         try:
-            Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
+            Executable(self["c"].cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
             # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
             # For GitLab CI, we need to remove the 32-bit target from the build, as the GitLab

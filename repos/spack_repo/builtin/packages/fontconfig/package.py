@@ -69,7 +69,7 @@ class Fontconfig(AutotoolsPackage):
             args.append("LIBS=%s" % " ".join(libs))
 
         if self.spec.satisfies("+pic"):
-            args.append(f"CFLAGS={self.compiler.cc_pic_flag}")
+            args.append(f"CFLAGS={self['c'].pic_flag}")
 
         return args
 

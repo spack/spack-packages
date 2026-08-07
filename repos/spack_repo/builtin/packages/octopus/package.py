@@ -353,7 +353,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
                 ]
             )
         else:
-            args.extend(["CC=%s" % self.compiler.cc, "FC=%s" % self.compiler.fc])
+            args.extend(["CC=%s" % self["c"].cc, "FC=%s" % self["fortran"].fortran])
 
         if "^fftw" in spec:
             args.append("--with-fftw-prefix=%s" % spec["fftw"].prefix)

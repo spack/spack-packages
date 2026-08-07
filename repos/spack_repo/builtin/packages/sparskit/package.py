@@ -43,22 +43,22 @@ class Sparskit(MakefilePackage):
         spec = self.spec
         if "+pic" in spec:
             if name == "fflags":
-                flags.append(self.compiler.fc_pic_flag)
+                flags.append(self["fortran"].pic_flag)
         if name == "fflags":
-            if "gfortran" in self.compiler.fc:
+            if "gfortran" in self["fortran"].fortran:
                 flags.append("-std=legacy")
                 flags.append("-Wall")
         if "+debug" in spec:
-            if "-g" in self.compiler.debug_flags:
+            if "-g" in self["fortran"].debug_flags:
                 flags.append("-g")
-            if "-O0" in self.compiler.opt_flags:
+            if "-O0" in self["fortran"].opt_flags:
                 flags.append("-O0")
-            elif "-O" in self.compiler.opt_flags:
+            elif "-O" in self["fortran"].opt_flags:
                 flags.append("-O")
         else:
-            if "-O3" in self.compiler.opt_flags:
+            if "-O3" in self["fortran"].opt_flags:
                 flags.append("-O3")
-            elif "-O2" in self.compiler.opt_flags:
+            elif "-O2" in self["fortran"].opt_flags:
                 flags.append("-O2")
 
         return (None, flags, None)

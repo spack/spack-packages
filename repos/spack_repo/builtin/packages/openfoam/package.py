@@ -670,7 +670,7 @@ class Openfoam(Package):
         general_rules = "wmake/rules/General"
         arch_rules = "wmake/rules/linuxARM64"  # self.arch
         src = arch_rules + "Clang"
-        dst = arch_rules + "Fujitsu"  # self.compiler
+        dst = arch_rules + "Fujitsu"  # compiler_name
         self.configure_trapFpe_off()  # LLVM may falsely trigger FPE
 
         if os.path.exists(dst):
@@ -679,7 +679,7 @@ class Openfoam(Package):
         # Handle rules/<ARCH><COMP> or rules/<ARCH>/<COMP>
         if not os.path.exists(src):
             src = join_path(arch_rules, "Clang")
-            dst = join_path(arch_rules, "Fujitsu")  # self.compiler
+            dst = join_path(arch_rules, "Fujitsu")  # compiler_name
             if os.path.exists(dst):
                 return
 
@@ -695,7 +695,7 @@ class Openfoam(Package):
             filter_file("clang++", spack_cxx, join_path(dst, "c++"), backup=False, string=True)
 
         src = join_path(general_rules, "Clang")
-        dst = join_path(general_rules, "Fujitsu")  # self.compiler
+        dst = join_path(general_rules, "Fujitsu")  # compiler_name
         copy_tree(src, dst)
         if self.spec.version >= Version("1906"):
             filter_file("clang", spack_cc, join_path(dst, "c"), backup=False, string=True)
@@ -965,7 +965,7 @@ class OpenfoamArch:
 
     def __init__(self, spec, **kwargs):
         # Some user settings, to be adjusted manually or via variants
-        self.compiler = None  # <- %compiler
+        self.compiler_name = None  # <- %compiler
         self.arch_option = ""  # Eg, -march=knl
         self.label_size = None  # <- +int64
         self.precision_option = "DP"  # <- precision= sp | dp | spdp
@@ -997,7 +997,7 @@ class OpenfoamArch:
         if comp in self.compiler_mapping:
             comp = self.compiler_mapping[comp]
 
-        self.compiler = comp.capitalize()
+        self.compiler_name = comp.capitalize()
         self.update_arch(spec)
         self.update_options()
 
@@ -1042,7 +1042,7 @@ class OpenfoamArch:
         self.options = "".join(
             [
                 self.arch,
-                self.compiler,
+                self.compiler_name,
                 self.precision_option,
                 ("Int" + self.label_size if self.label_size else ""),
                 self.compile_option,
@@ -1059,7 +1059,7 @@ class OpenfoamArch:
         """Returns a dictionary for OpenFOAM prefs, bashrc, cshrc."""
         return dict(
             [
-                ("WM_COMPILER", self.compiler),
+                ("WM_COMPILER", self.compiler_name),
                 ("WM_LABEL_SIZE", self.label_size),
                 ("WM_PRECISION_OPTION", self.precision_option),
                 ("WM_COMPILE_OPTION", self.compile_option),
@@ -1079,11 +1079,11 @@ class OpenfoamArch:
             return os.path.join(rules_dir, "General")
 
         arch_dir = os.path.join(rules_dir, self.arch)
-        comp_rules = arch_dir + self.compiler
+        comp_rules = arch_dir + self.compiler_name
         if os.path.isdir(comp_rules):
             return comp_rules
         else:
-            return os.path.join(arch_dir, self.compiler)
+            return os.path.join(arch_dir, self.compiler_name)
 
     def has_rule(self, projdir):
         """Verify that a wmake/rules/ compiler rule exists in the project."""
@@ -1091,7 +1091,7 @@ class OpenfoamArch:
         rule_dir = self._rule_directory(projdir)
 
         if not os.path.isdir(rule_dir):
-            raise InstallError("No wmake rule for {0} {1}".format(self.arch, self.compiler))
+            raise InstallError("No wmake rule for {0} {1}".format(self.arch, self.compiler_name))
         return True
 
     def _rule_add_rpath(self, rpath, src, dst):

@@ -68,7 +68,7 @@ class Assimp(CMakePackage):
     def flag_handler(self, name, flags):
         flags = list(flags)
         if name == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
         return (None, None, flags)
 
     def check(self):

@@ -48,7 +48,7 @@ class Atompaw(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if self.spec.satisfies("%fj") and name == "fflags":
-            opt_flag_found = any(f in self.compiler.opt_flags for f in flags)
+            opt_flag_found = any(f in self["fortran"].opt_flags for f in flags)
             if not opt_flag_found:
                 flags.append("-Kfast")
         return (flags, None, None)

@@ -86,7 +86,7 @@ class Fjcontrib(AutotoolsPackage):
     def configure_args(self):
         args = [
             "--fastjet-config=" + self.spec["fastjet"].prefix.bin + "/fastjet-config",
-            "CXXFLAGS=-O3 -Wall -g " + self.compiler.cxx_pic_flag,
+            "CXXFLAGS=-O3 -Wall -g " + self["cxx"].pic_flag,
         ]
         return args
 

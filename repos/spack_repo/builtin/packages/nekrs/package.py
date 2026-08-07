@@ -75,7 +75,7 @@ class Nekrs(Package, CMakePackage, CudaPackage, ROCmPackage):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # The 'env' is included in the Spack generated module files.
         spec = self.spec
-        env.set("OCCA_CXX", self.compiler.cxx)
+        env.set("OCCA_CXX", self["cxx"].cxx)
 
         cxxflags = spec.compiler_flags["cxxflags"]
         if cxxflags:

@@ -127,11 +127,11 @@ class ParallelNetcdf(AutotoolsPackage):
         flags = {"CFLAGS": [], "CXXFLAGS": [], "FFLAGS": [], "FCFLAGS": []}
 
         if self.spec.satisfies("+pic"):
-            flags["CFLAGS"].append(self.compiler.cc_pic_flag)
-            flags["CXXFLAGS"].append(self.compiler.cxx_pic_flag)
+            flags["CFLAGS"].append(self["c"].pic_flag)
+            flags["CXXFLAGS"].append(self["cxx"].pic_flag)
             if self.spec.satisfies("+fortran"):
-                flags["FFLAGS"].append(self.compiler.f77_pic_flag)
-                flags["FCFLAGS"].append(self.compiler.fc_pic_flag)
+                flags["FFLAGS"].append(self["fortran"].pic_flag)
+                flags["FCFLAGS"].append(self["fortran"].pic_flag)
 
         # https://github.com/Parallel-NetCDF/PnetCDF/issues/61
         if self.spec.satisfies("@:1.12.1%gcc@10:"):

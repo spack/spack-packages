@@ -116,7 +116,7 @@ class Openssh(AutotoolsPackage):
         # https://www.mail-archive.com/openssh-bugs@mindrot.org/msg17461.html
         # Therefore, remove -fzero-call-used-regs=all for these compilers:
         spec = self.spec
-        if spec.version < Version("9.6p1") and self.compiler.name.endswith(("clang", "oneapi")):
+        if spec.version < Version("9.6p1") and self.spec.compiler.name.endswith(("clang", "oneapi")):
             filter_file("-fzero-call-used-regs=all", "", "configure")
 
     def configure_args(self):

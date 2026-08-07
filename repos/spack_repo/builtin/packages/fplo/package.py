@@ -70,9 +70,9 @@ class Fplo(MakefilePackage):
         if platform.system() == "Linux":
             fplo_cc = "gcc"
         else:
-            fplo_cc = os.path.basename(self.compiler.cc)
+            fplo_cc = os.path.basename(self["c"].cc)
 
-        fplo_fc = os.path.basename(self.compiler.fc)
+        fplo_fc = os.path.basename(self["fortran"].fortran)
 
         conffile = "{0}-{1}-{2}-{3}".format(
             fplo_cc, fplo_fc, platform.system(), platform.machine()

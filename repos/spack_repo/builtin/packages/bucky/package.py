@@ -40,5 +40,5 @@ class Bucky(MakefilePackage):
 
     def flag_handler(self, name, flags):
         if self.spec.satisfies("%gcc@5:") and name.lower() == "cxxflags":
-            flags.append(self.compiler.cxx98_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="98"))
         return (flags, None, None)

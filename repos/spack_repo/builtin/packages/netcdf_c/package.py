@@ -365,7 +365,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         if self.spec.satisfies("build_system=autotools"):
             if name == "cflags":
                 if "+pic" in self.spec:
-                    flags.append(self.compiler.cc_pic_flag)
+                    flags.append(self["c"].pic_flag)
                 if "+optimize" in self.spec:
                     flags.append("-O2")
         return flags, None, None

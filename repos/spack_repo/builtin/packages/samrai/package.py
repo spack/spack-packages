@@ -303,4 +303,4 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         if self.spec.satisfies("@3.12:"):
-            env.append_flags("CXXFLAGS", self.compiler.cxx11_flag)
+            env.append_flags("CXXFLAGS", self["cxx"].standard_flag(language="cxx", standard="11"))

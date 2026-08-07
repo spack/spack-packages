@@ -40,7 +40,7 @@ class Isescan(Package):
             Executable(spack_cc)(
                 "-O3",
                 "-pipe",
-                self.compiler.cc_pic_flag,
+                self["c"].pic_flag,
                 "-shared",
                 "-rdynamic",
                 "-o",

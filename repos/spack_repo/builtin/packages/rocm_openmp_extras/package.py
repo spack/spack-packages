@@ -746,9 +746,9 @@ class RocmOpenmpExtras(Package):
 
         flang_legacy_flags = []
         if (
-            self.compiler.name == "gcc"
-            and self.compiler.version >= Version("7.0.0")
-            and self.compiler.version < Version("9.0.0")
+            self.spec.compiler.name == "gcc"
+            and self.spec.compiler.version >= Version("7.0.0")
+            and self.spec.compiler.version < Version("9.0.0")
         ):
             flang_legacy_flags.append("-D_GLIBCXX_USE_CXX11_ABI=0")
         if self.spec.satisfies("@6.2:"):

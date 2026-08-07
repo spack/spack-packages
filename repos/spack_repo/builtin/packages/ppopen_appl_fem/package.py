@@ -38,7 +38,7 @@ class PpopenApplFem(MakefilePackage):
     parallel = False
 
     def edit(self, spec, prefix):
-        fflags = ["-O3", "-I.", self.compiler.openmp_flag]
+        fflags = ["-O3", "-I.", self['fortran'].openmp_flag]
         if spec.satisfies("%gcc"):
             fflags.extend(["-cpp", "-ffree-line-length-none"])
         makefile_in = FileFilter("Makefile.in")

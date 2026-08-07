@@ -129,6 +129,6 @@ class Wi4mpi(CMakePackage):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("WI4MPI_ROOT", self.prefix)
         env.set("WI4MPI_VERSION", str(self.version))
-        env.set("WI4MPI_CC", self.compiler.cc)
-        env.set("WI4MPI_CXX", self.compiler.cxx)
-        env.set("WI4MPI_FC", self.compiler.fc)
+        env.set("WI4MPI_CC", self["c"].cc)
+        env.set("WI4MPI_CXX", self["cxx"].cxx)
+        env.set("WI4MPI_FC", self["fortran"].fortran)

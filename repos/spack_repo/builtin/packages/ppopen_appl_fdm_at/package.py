@@ -25,7 +25,7 @@ class PpopenApplFdmAt(MakefilePackage):
 
     def edit(self, spec, prefix):
         with working_dir(self.build_directory):
-            fflags = ["-O3", self.compiler.openmp_flag]
+            fflags = ["-O3", self['fortran'].openmp_flag]
             if spec.satisfies("%gcc"):
                 fflags.append("-ffree-line-length-none")
             if spec.satisfies("arch=x86_64:"):

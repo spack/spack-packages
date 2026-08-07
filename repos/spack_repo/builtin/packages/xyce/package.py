@@ -187,7 +187,7 @@ class Xyce(CMakePackage):
         elif name == "ldflags":
             # Fortran lib
             if spec.satisfies("+fortran %fortran=gcc"):
-                fc = Executable(self.compiler.fc)
+                fc = Executable(self["fortran"].fortran)
                 libgfortran = fc(
                     "--print-file-name", "libgfortran." + dso_suffix, output=str
                 ).strip()

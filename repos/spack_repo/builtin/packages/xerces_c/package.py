@@ -77,7 +77,7 @@ class XercesC(AutotoolsPackage):
         # Need to pass -std flag explicitly
         if name == "cxxflags" and spec.variants["cxxstd"].value != "default":
             flags.append(
-                getattr(self.compiler, "cxx{0}_flag".format(spec.variants["cxxstd"].value))
+                self["cxx"].standard_flag(language="cxx", standard=spec.variants["cxxstd"].value)
             )
 
         # There is no --with-pkg for gnuiconv.

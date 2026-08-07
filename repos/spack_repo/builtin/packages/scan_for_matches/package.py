@@ -19,7 +19,7 @@ class ScanForMatches(Package):
     depends_on("c", type="build")  # generated
 
     def install(self, spec, prefix):
-        cc = Executable(self.compiler.cc)
+        cc = Executable(self["c"].cc)
         cc("-O", "-o", "scan_for_matches", "ggpunit.c", "scan_for_matches.c")
         mkdirp(prefix.bin)
         install("scan_for_matches", prefix.bin)

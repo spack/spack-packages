@@ -112,7 +112,7 @@ class Bufr(CMakePackage):
         when an object referencing them is linked against the library.
         You can work around this by compiling with option -fno-common.
         """
-        fc = self.compiler.fc
+        fc = self["fortran"].fortran
         if self.spec.satisfies("platform=darwin"):
             if name == "fflags":
                 if "ifort" in fc or "gfortran" in fc:

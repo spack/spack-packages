@@ -61,7 +61,7 @@ class PpopenApplFdm(MakefilePackage):
 
         makefile_opt = FileFilter(join_path("src", "seismic_3D", "3.parallel", "Makefile.option"))
         makefile_opt.filter("FC = .*$", "FC = {0}".format(spec["mpi"].mpifc))
-        makefile_opt.filter("FFLAGS = .*$", "FFLAGS = -O3 {0}".format(self.compiler.openmp_flag))
+        makefile_opt.filter("FFLAGS = .*$", "FFLAGS = -O3 {0}".format(self['fortran'].openmp_flag))
 
         copy(
             join_path("examples", "seismic_3D-example", "m_param.f90"),
