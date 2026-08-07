@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems import go
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.go import GoPackage
 
 from spack.package import *
 
 
-class Ollama(GoPackage, CudaPackage):
+class Ollama(CMakePackage, GoPackage, CudaPackage):
     """Run Llama 2, Code Llama, and other models. Customize and create your own."""
 
     homepage = "https://ollama.com"
@@ -17,9 +18,20 @@ class Ollama(GoPackage, CudaPackage):
 
     maintainers("teaguesterling", "brettviren")
 
+    # Starting with 0.30, the way ollama integrates the llama server was changed,
+    # and so now it must be built by the CMake included in ollama. That CMake
+    # system will call the go builder automatically during its processing.
+    # Before that, use the go system.
+    build_system(
+        conditional("cmake", when="@0.30:"),
+        conditional("go", when="@:0.29"),
+        default="cmake",
+    )
+
     # A shell script is run by `go generate` which assumes source is in a git
     # repo.  So we must use git VCS and not tarballs and defeat source caching.
     with default_args(no_cache=True):
+        version("0.32.5", commit="eec8e0b9458b8a01be0c216a9cc53eefde24ef50")
         version("0.20.7", commit="8d0dcf4b6daf8d7833c8b55108e5b45063795e57")
         version("0.13.1", commit="5317202c38437867bc6c9ed21ffc5c949ab6794c")
         version("0.12.11", commit="c1149875234a51aa1e5e60b74f3807f5982c60fa")
@@ -52,7 +64,27 @@ class Ollama(GoPackage, CudaPackage):
     depends_on("go@1.23.4:", type="build", when="@0.5.2:")
     depends_on("go@1.24.0:", type="build", when="@0.5.13:")
     depends_on("go@1.24.1:", type="build", when="@0.12.10:")
+    depends_on("go@1.26.0:", type="build", when="@0.23.1:")
     depends_on("git", type="build")
+
+    depends_on("cuda@13", when="+cuda")
+
+    def cmake_args(self):
+        spec = self.spec
+        args = [
+            self.define("OLLAMA_VERSION", self.spec.version.string),
+        ]
+
+        if spec.satisfies("+cuda"):
+            cuda_prefix = self.spec["cuda"].prefix
+            args += [
+                self.define("CUDACXX", cuda_prefix.bin.nvcc),
+                self.define("CUDA_LIB_DIR", cuda_prefix.lib),
+                self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
+                self.define("OLLAMA_LLAMA_BACKENDS", "cuda_v13"),
+            ]
+
+        return args
 
 
 class GoBuilder(go.GoBuilder):
@@ -71,6 +103,19 @@ class GoBuilder(go.GoBuilder):
     def generate_args(self):
         """Arguments for ``go generate``."""
         return ["./..."]
+
+    @property
+    def build_args(self):
+        """Arguments for ``go build``."""
+        # Manually set the version embedded into the executable because it normally uses git tags
+        # to determine this.
+        ver = self.spec.version.string
+        return [
+            (
+                f"-ldflags=-w -s -X=github.com/ollama/ollama/version.Version={ver}"
+                f" -X=github.com/ollama/ollama/server.mode=release"
+            )
+        ]
 
     def generate(self, pkg, spec, prefix):
         """Runs ``go generate`` in the source directory"""
