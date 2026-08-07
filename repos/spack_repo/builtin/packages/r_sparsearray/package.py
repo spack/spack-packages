@@ -14,11 +14,15 @@ class RSparsearray(RPackage):
 
     with default_args(get_full_repo=True):
         version("1.12.2", commit="dd96584c2f1284fe00041e392b5bed5749b4e42d")  # bioc 3.23
+        version("1.11.13", commit="65383c02f986832b1416c6ad39da800d8ced05df")
+        version("1.10.10", commit="ae957c5c70aacacb712d2449d9edeab2362c7904")
+        version("1.9.2", commit="62a3a8c1957f2584b3ed0989ae02bb2ae1f3bc80")
         version("1.8.1", commit="ca78384f77def2f2e068739e8b43688eed3bb9da")  # bioc 3.21
 
     depends_on("c", type="build")
 
     depends_on("r@4.3:", type=("build", "run"))
+    depends_on("r@4.5:", type=("build", "run"), when="@1.11:")
 
     depends_on("r-biocgenerics@0.43.1:", type=("build", "run"))
 
@@ -37,3 +41,6 @@ class RSparsearray(RPackage):
     depends_on("r-s4vectors@0.43.2:", type=("build", "run"))
 
     depends_on("r-xvector", type=("build", "run"))
+
+    # <=1.10 calls DATAPTR without a declaration; GCC 14+ errors on this
+    conflicts("%gcc@14: ^r@4.6:", when="@:1.10")
