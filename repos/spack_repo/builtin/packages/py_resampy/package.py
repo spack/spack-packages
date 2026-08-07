@@ -11,7 +11,7 @@ class PyResampy(PythonPackage):
     """Efficient sample rate conversion in python"""
 
     homepage = "https://github.com/bmcfee/resampy"
-    pypi = "resampy/resampy-0.2.2.tar.gz"
+    pypi = "resampy/resampy-0.4.3.tar.gz"
 
     license("ISC")
 
@@ -22,10 +22,20 @@ class PyResampy(PythonPackage):
     depends_on("py-numpy@1.10:", type=("build", "run"))
     depends_on("py-scipy@0.13:", type=("build", "run"))
     depends_on("py-numba@0.32:", type=("build", "run"))
-    depends_on("py-six@1.3:", type=("build", "run"))
+    depends_on("py-six@1.3:", type=("build", "run"), when="@:0.2")
+
+    with when("@0.3:"), default_args(type="build"):
+        depends_on("py-setuptools@48:")
+        depends_on("py-wheel@0.29:")
+
+    with when("@0.3:"), default_args(type=("build", "run")):
+        depends_on("py-numpy@1.17:")
+        depends_on("py-numba@0.53:")
+        depends_on("py-scipy@1.1:")
+        depends_on("py-importlib-resources", when="@0.4.3: ^python@:3.8")
 
     conflicts(
-        "^python@3.1.2:",
-        when="@:0.2.2",
-        msg="python@3.1.2 dropped imp module, fixed in py-resampy@0.3.0",
+        "^python@3.12:",
+        when="@:0.2",
+        msg="python@3.12 dropped imp, use py-resampy >= 0.3.0 for 3.12 support",
     )
