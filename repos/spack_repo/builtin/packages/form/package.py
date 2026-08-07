@@ -33,6 +33,16 @@ class Form(AutotoolsPackage):
     depends_on("zlib-api", type="link", when="+zlib")
     depends_on("mpi", type="link", when="+parform")
 
+    with default_args(type="link", when="@5:"):
+        depends_on("mpfr", when="+mpfr")
+        depends_on("zstd", when="+zstd")
+        depends_on("flint@3.2:", when="+flint")
+
+    with default_args(default=True, when="@5:"):
+        variant("mpfr", description="Use MPFR for floating point arithmetic")
+        variant("zstd", description="Use Zstandard for compression")
+        variant("flint", description="Use FLINT for polynomial arithmetic")
+
     variant("gmp", default=True, description="Use GMP for long integer arithmetic")
     variant("zlib", default=True, description="Use zlib for compression")
     variant("scalar", default=True, description="Build scalar version (form)")
@@ -42,6 +52,12 @@ class Form(AutotoolsPackage):
     def configure_args(self):
         args = []
         args += self.with_or_without("gmp", "prefix")
+        
+        if self.spec.satisfies("@5:"):
+            args += self.with_or_without("mpfr", "prefix")
+            args += self.with_or_without("zstd", "prefix")
+            args += self.with_or_without("flint", "prefix")
+        
         if self.spec.satisfies("+zlib"):
             args.append("--with-zlib=%s" % self.spec["zlib-api"].prefix)
         else:
