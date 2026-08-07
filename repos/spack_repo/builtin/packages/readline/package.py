@@ -73,7 +73,7 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
     ]:
         ver = Version(verstr)
         patch(
-            f"https://ftpmirror.gnu.org/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
+            f"https://ftp.gnu.org/gnu/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
             level=0,
             when=f"@{ver}",
             sha256=checksum,
@@ -97,3 +97,8 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
             flags.append("-g")
             return (None, flags, None)
         return (flags, None, None)
+
+    def configure_args(self):
+        config_args = ["--with-curses"]
+
+        return config_args

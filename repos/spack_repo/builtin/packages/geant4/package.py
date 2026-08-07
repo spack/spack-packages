@@ -26,6 +26,7 @@ class Geant4(CMakePackage):
 
     maintainers("drbenmorgan", "sethrj")
 
+    version("11.4.2", sha256="f9d5c7d108ae6be644d12997e0289e23e5d2da18df1cab9aaacd9b76412dfec6")
     version("11.4.1", sha256="99dcf5f9d4f806fb8c4fde85cb2674a42e4ca19833143464ff7efa55c1852140")
     version("11.4.0", sha256="a6d78cf70ba46902cb74ff65d09dc2d1e46b4ab9325862f84e439f0d4ec329fb")
     version("11.3.2", sha256="077edca6aa3b3940f351cf9a948457cad3fb117f215b88c52cce315e1a07fd7a")
@@ -75,14 +76,15 @@ class Geant4(CMakePackage):
     variant("threads", default=True, description="Build with multithreading")
     variant("vecgeom", default=False, description="Enable vecgeom support", when="@10.7:")
     variant("opengl", default=False, description="Optional OpenGL support")
-    variant("x11", default=False, description="Optional X11 support")
-    variant("motif", default=False, description="Optional motif support")
+    variant("x11", default=False, when="platform=linux", description="Optional X11 support")
+    variant("motif", default=False, when="+x11", description="Optional motif support")
     variant("qt", default=False, description="Enable Qt support")
     variant("hdf5", default=False, description="Enable HDF5 support", when="@10.4:")
     variant("python", default=False, description="Enable Python bindings", when="@10.6.2:11.0")
     variant("tbb", default=False, description="Use TBB as a tasking backend", when="@11:")
     variant("timemory", default=False, description="Use TiMemory for profiling", when="@9.5:11.2")
     variant("vtk", default=False, description="Enable VTK support", when="@11:")
+    variant("examples", default=True, description="Install examples")
 
     # For most users, obtaining the Geant4 data via Spack will be useful; the
     # sticky, default-enabled `+data` variant ensures that this happens.
@@ -205,6 +207,7 @@ class Geant4(CMakePackage):
             depends_on("qt@5.9:", when="@11.2:11.3")
     conflicts("@11.4: ^[virtuals=qmake] qt", msg="Qt5 not supported in 11.4 and later")
     conflicts("@:11.1 ^[virtuals=qmake] qt-base", msg="Qt6 not supported before 11.2")
+    conflicts("+opengl", when="platform=darwin", msg="OpenGL requires Linux or Windows")
 
     # CMAKE PROBLEMS #
     # As released, 10.0.4 has inconsistently capitalised filenames
@@ -346,32 +349,28 @@ class Geant4(CMakePackage):
                     )
 
         # Vecgeom
+        options.append(self.define_from_variant("GEANT4_USE_USOLIDS", "vecgeom"))
         if spec.satisfies("+vecgeom"):
-            options.append(self.define("GEANT4_USE_USOLIDS", True))
             options.append(self.define("USolids_DIR", spec["vecgeom"].prefix.lib.CMake.USolids))
 
         # Visualization options
-        if "platform=darwin" not in spec:
-            if spec.satisfies("+x11 +opengl"):
-                options.append(self.define("GEANT4_USE_OPENGL_X11", True))
-            if spec.satisfies("+motif +opengl"):
-                options.append(self.define("GEANT4_USE_XM", True))
-            if spec.satisfies("+x11"):
-                options.append(self.define("GEANT4_USE_RAYTRACER_X11", True))
+        if spec.satisfies("+x11 +opengl"):
+            options.append(self.define("GEANT4_USE_OPENGL_X11", True))
+        if spec.satisfies("platform=windows"):
+            options.append(self.define_from_variant("GEANT4_USE_OPENGL_WIN32", "opengl"))
+        options.append(self.define_from_variant("GEANT4_USE_XM", "motif"))
+        options.append(self.define_from_variant("GEANT4_USE_RAYTRACER_X11", "x11"))
 
+        options.append(self.define_from_variant("GEANT4_USE_QT", "qt"))
         if spec.satisfies("+qt"):
-            options.append(self.define("GEANT4_USE_QT", True))
             if spec.satisfies("^[virtuals=qmake] qt-base"):
                 options.append(self.define("GEANT4_USE_QT_QT6", True))
             options.append(self.define("QT_QMAKE_EXECUTABLE", spec["qmake"].prefix.bin.qmake))
 
         options.append(self.define_from_variant("GEANT4_USE_HDF5", "hdf5"))
-
         options.append(self.define_from_variant("GEANT4_USE_VTK", "vtk"))
-
-        # Python
-        if spec.version > Version("10.6.1"):
-            options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
+        options.append(self.define_from_variant("GEANT4_USE_PYTHON", "python"))
+        options.append(self.define_from_variant("GEANT4_INSTALL_EXAMPLES", "examples"))
 
         return options
 

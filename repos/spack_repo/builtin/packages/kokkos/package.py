@@ -316,6 +316,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are not compatible in Kokkos.")
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
+    depends_on("llvm-openmp", when="+openmp %apple-clang")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -331,6 +332,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
+    requires("%clang", "%cce", "+cmake_lang", policy="any_of", when="~wrapper+cuda")
 
     # TODO new major: update c++ std
     with default_args(multi=False, description="C++ standard"):
@@ -442,13 +444,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
-
-        if spec.satisfies("~wrapper+cuda") and not (
-            spec.satisfies("%clang") or spec.satisfies("%cce") or spec.satisfies("+cmake_lang")
-        ):
-            raise InstallError(
-                "Kokkos requires +wrapper when using +cuda without %clang, %cce or +cmake_lang"
-            )
 
         options = [
             from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),

@@ -17,15 +17,18 @@ class Fzf(GoPackage):
     homepage = "https://github.com/junegunn/fzf"
     url = "https://github.com/junegunn/fzf/archive/v0.54.0.tar.gz"
     git = "https://github.com/junegunn/fzf.git"
+    supplier = "Person: Junegunn Choi"
 
-    maintainers("alecbcs")
+    maintainers("alecbcs", "mcmehrtens")
 
-    license("MIT")
+    license("MIT", checked_by="mcmehrtens")
 
     sanity_check_is_file = ["bin/fzf"]
 
     # Versions from newest to oldest
     version("master", branch="master")
+    version("0.74.1", sha256="ba37120bbe45966c6eba6a00c8ea64b86c3c57e349cb55b1c3e0f522976fd978")
+    version("0.74.0", sha256="55ab5f2256edd8890f81d407b63d3a3e81cffe10e318cd196031dc85efdeb079")
     version("0.73.1", sha256="ae4f49f8606a7d28498208fa1b93c5d3b890719eea97e02559e66160138b750c")
     version("0.67.0", sha256="da72936dd23045346769dbf233a7a1fa6b4cfe4f0e856b279821598ce8f692af")
     version("0.66.0", sha256="576659beee244b4ecccf45f1c576340143d8ce6d97fa053e6cbdd3f75c66b351")
@@ -70,8 +73,8 @@ class Fzf(GoPackage):
 
     def url_for_version(self, version):
         """Generate download URL for a specific version."""
-        base = "refs/tags/v" if self.spec.satisfies("@:0.53.0") else ""
-        return f"https://github.com/junegunn/fzf/archive/{base}{version}.tar.gz"
+        prefix = "" if version <= Version("0.53.0") else "v"
+        return f"https://github.com/junegunn/fzf/archive/{prefix}{version}.tar.gz"
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set up the build environment for fzf."""

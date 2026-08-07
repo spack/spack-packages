@@ -24,8 +24,13 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     version("main", branch="main")
     version("4.12RC", branch="4.12RC")
     version(
-        "4.12.0",
+        "4.12.1",
         preferred=True,
+        sha256="9fdf81303b8dc7fab941e365f4156fe48d0bb036cdfdcb59a7c2d218771576b6",
+        url="https://github.com/llnl/Silo/releases/download/4.12.1/Silo-4.12.1.tar.xz",
+    )
+    version(
+        "4.12.0",
         sha256="bde1685e4547d5dd7416bd6215b41f837efef0e4934d938ba776957afbebdff0",
         url="https://github.com/LLNL/Silo/releases/download/4.12.0/Silo-4.12.0.tar.xz",
     )
@@ -84,6 +89,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     variant("zfp", default=True, description="Enable zfp compression features")
     variant("hzip", default=False, description="Enable hzip compression features (!BSD)")
     variant("fpzip", default=False, description="Enable fpzip compression features (!BSD)")
+    variant("json", default=False, description="Enable experimental JSON interface")
 
     # convenience multi-valued 'license mode'
     variant(
@@ -111,6 +117,7 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
     depends_on("libxmu", when="+silex")
     depends_on("readline")
     depends_on("zlib-api")
+    depends_on("json-c", when="@4.12.0: +json")
 
     with when("build_system=autotools"):
         depends_on("m4", type="build", when="+shared")
@@ -174,8 +181,6 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         when="@4.12.0",
     )
 
-
-class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def flag_handler(self, name, flags):
         spec = self.spec
         if name == "ldflags":
@@ -225,6 +230,8 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
                 flags.append("-Wno-implicit-function-declaration")
         return (flags, None, None)
 
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
     @when("@:4.11.1 %clang@9:")
     def patch(self):
         self.clang_9_patch()
@@ -333,6 +340,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("SILO_ENABLE_HZIP", "hzip"),
             self.define_from_variant("SILO_ENABLE_FPZIP", "fpzip"),
             self.define_from_variant("SILO_ENABLE_ZFP", "zfp"),
+            self.define_from_variant("SILO_ENABLE_JSON", "json"),
         ]
 
         if self.spec.satisfies("license=bsdonly"):

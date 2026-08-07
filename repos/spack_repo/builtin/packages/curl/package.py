@@ -30,6 +30,7 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
 
     license("curl")
 
+    version("8.21.0", sha256="ad6f2f94934b38e31e48272833c99b891d045b4565fe942a53fbd27bd3910e16")
     version("8.20.0", sha256="4be48e69cf467246cb97d369b85d78a08528f2b37cffef2418ee16e6a4eb596e")
     version("8.19.0", sha256="eba3230c1b659211a7afa0fbf475978cbf99c412e4d72d9aa92d020c460742d4")
     version("8.18.0", sha256="ffd671a3dad424fb68e113a5b9894c5d1b5e13a88c6bdf0d4af6645123b31faf")

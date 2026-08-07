@@ -58,11 +58,9 @@ class PyScikitBuild(PythonPackage):
     depends_on("py-setuptools-scm+toml", when="@0.15", type="build")
 
     def url_for_version(self, version):
-        url = (
-            "https://files.pythonhosted.org/packages/source/s/scikit-build/scikit{}build-{}.tar.gz"
-        )
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.17"):
-            separator = "_"
+            name = "scikit_build"
         else:
-            separator = "-"
-        return url.format(separator, version)
+            name = "scikit-build"
+        return url.format(name, version)
