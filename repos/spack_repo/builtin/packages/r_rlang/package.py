@@ -53,3 +53,6 @@ class RRlang(RPackage):
 
     # Versions <= 1.1 use R_NamespaceRegistry which was removed in r@4.6.0
     conflicts("r@4.6:", when="@:1.1")
+
+    # > multiple definition of `r_ops_precedence'
+    conflicts("%gcc@10:", when="@0.2")
