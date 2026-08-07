@@ -27,7 +27,7 @@ class Vtk(CMakePackage):
 
     version("9.6.2", sha256="aed12cec12a9609179bf66329070266627ca64244a10856a452b2a17ffb04a1d")
     version("9.6.0", sha256="d77d180694faafdc816578b9a53651f6790e799615811bfbb91018661a3bb8f2")
-    version("9.5.1",sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
+    version("9.5.1", sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
@@ -355,9 +355,7 @@ class Vtk(CMakePackage):
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
             )
             if spec.satisfies("@9.6:"):
-                cmake_args.append(
-                    self.define("VTK_USE_MPI", "YES")
-                )
+                cmake_args.append(self.define("VTK_USE_MPI", "YES"))
 
         if spec.satisfies("raytracing=ospray"):
             cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_RenderingRayTracing", "YES"))
