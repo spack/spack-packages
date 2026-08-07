@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -74,7 +75,7 @@ class Genesis(AutotoolsPackage, CudaPackage):
         options.extend(self.enable_or_disable("hmdisk"))
         if spec.satisfies("+cuda"):
             options.append("--enable-gpu")
-            options.append("--with-cuda=%s" % spec["cuda"].prefix)
+            options.append(f"--with-cuda={spec['cuda'].prefix}")
         else:
             options.append("--disable-gpu")
         if spec.target == "a64fx" and spec.satisfies("%fj"):
@@ -105,17 +106,23 @@ class Genesis(AutotoolsPackage, CudaPackage):
     def cache_test_sources(self):
         cache_extra_test_sources(self, ["tests"])
 
-    def test(self):
-        import os
-
-        os.environ["OMP_NUM_THREADS"] = "1"
-
-        exe_name = self.spec["python"].command.path
-        test_name = join_path(self.install_test_root, "tests", "regression_test", "test.py")
-        bin_name = join_path(self.prefix.bin, "spdyn")
+    def test_regression(self):
+        """run the spdyn regression test suite"""
+        work_dir = join_path(self.cached_tests_work_dir, "regression_test")
+        script = join_path(work_dir, "test.py")
+        if not os.path.exists(script):
+            raise SkipTest("Regression test sources are not cached")
 
         mpirun = self.spec["mpi"].mpirun
+        spdyn = join_path(self.prefix.bin, "spdyn")
 
-        opts = [test_name, f"{mpirun} -np 8 {bin_name}"]
-
-        self.run_test(exe_name, options=opts, expected="Passed  61 / 61")
+        with working_dir(work_dir):
+            python = self.spec["python"].command
+            out = python(
+                script,
+                f"{mpirun} -np 8 {spdyn}",
+                extra_env={"OMP_NUM_THREADS": "1"},
+                output=str,
+                error=str,
+            )
+            check_outputs("Passed  61 / 61", out)

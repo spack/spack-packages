@@ -153,11 +153,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
             flags.append("-lz")
         return (flags, None, None)
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        spec = self.spec
-        if "+cuda" in spec:
-            env.set("CUDAHOSTCXX", spack_cxx)
-
     def check(self):
         if self.spec.satisfies("+tests"):
             with working_dir(self.build_directory):
@@ -169,6 +164,10 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
 
 
 class CMakeBuilder(CachedCMakeBuilder):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDAHOSTCXX", spack_cxx)
+
     @property
     def libs(self):
         libs = [
@@ -259,16 +258,20 @@ class CMakeBuilder(CachedCMakeBuilder):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDAHOSTCXX", spack_cxx)
+
     def configure_args(self):
         options = []
         options.extend(
             [
-                "--with-CXX=%s" % self.spec["mpi"].mpicxx,
-                "--with-CC=%s" % self.spec["mpi"].mpicc,
-                "--with-F77=%s" % self.spec["mpi"].mpifc,
-                "--with-M4=%s" % self.spec["m4"].prefix,
-                "--with-hdf5=%s" % self.spec["hdf5"].prefix,
-                "--with-zlib=%s" % self.spec["zlib-api"].prefix,
+                f"--with-CXX={self.spec['mpi'].mpicxx}",
+                f"--with-CC={self.spec['mpi'].mpicc}",
+                f"--with-F77={self.spec['mpi'].mpifc}",
+                f"--with-M4={self.spec['m4'].prefix}",
+                f"--with-hdf5={self.spec['hdf5'].prefix}",
+                f"--with-zlib={self.spec['zlib-api'].prefix}",
                 "--without-blas",
                 "--without-lapack",
                 "--with-hypre=no",
@@ -286,13 +289,13 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             options.extend(["--enable-opt", "--disable-debug"])
 
         if "+silo" in self.spec:
-            options.append("--with-silo=%s" % self.spec["silo"].prefix)
+            options.append(f"--with-silo={self.spec['silo'].prefix}")
 
         if "+shared" in self.spec:
             options.append("--enable-shared")
 
         if self.spec.satisfies("@3.0:3.11"):
-            options.append("--with-boost=%s" % self.spec["boost"].prefix)
+            options.append(f"--with-boost={self.spec['boost'].prefix}")
 
         return options
 
