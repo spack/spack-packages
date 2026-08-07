@@ -176,6 +176,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("@7.0.7:"):
             args.append(self.define_from_variant("SCOTCH_DETERMINISTIC", "determinism"))
 
+        if self.spec.satisfies("@7.0.9:"):
+            args.append(self.define_from_variant("BUILD_FORTRAN", "fortran"))
+
         if "+int64" in self.spec:
             args.append("-DINTSIZE=64")
         elif self.is_64bit():
