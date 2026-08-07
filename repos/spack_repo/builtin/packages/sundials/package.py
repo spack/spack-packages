@@ -643,9 +643,7 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
         ]
 
         for filename in cc_files:
-            filter_file(
-                os.environ["CC"], self["c"].cc, os.path.join(dirname, filename), **kwargs
-            )
+            filter_file(os.environ["CC"], self["c"].cc, os.path.join(dirname, filename), **kwargs)
 
         for filename in cc_files:
             filter_file(r"^CPP\s*=.*", self["c"].cc, os.path.join(dirname, filename), **kwargs)
@@ -661,19 +659,28 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
         if ("+fcmix" in spec) and ("+examples" in spec):
             for filename in f77_files:
                 filter_file(
-                    os.environ["F77"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
+                    os.environ["F77"],
+                    self["fortran"].fortran,
+                    os.path.join(dirname, filename),
+                    **kwargs,
                 )
 
         if ("+fcmix" in spec) and ("+examples" in spec):
             for filename in f90_files:
                 filter_file(
-                    os.environ["FC"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
+                    os.environ["FC"],
+                    self["fortran"].fortran,
+                    os.path.join(dirname, filename),
+                    **kwargs,
                 )
 
         if ("+f2003" in spec) and ("+examples" in spec):
             for filename in f2003_files:
                 filter_file(
-                    os.environ["FC"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
+                    os.environ["FC"],
+                    self["fortran"].fortran,
+                    os.path.join(dirname, filename),
+                    **kwargs,
                 )
 
     @property

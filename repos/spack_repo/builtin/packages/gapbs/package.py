@@ -34,7 +34,7 @@ class Gapbs(MakefilePackage):
         cxx_flags = ["-O3", self["cxx"].standard_flag(language="cxx", standard="11")]
 
         if spec.satisfies("-serial"):
-            cxx_flags.append(self['cxx'].openmp_flag)
+            cxx_flags.append(self["cxx"].openmp_flag)
 
         make("CXX_FLAGS=" + " ".join(cxx_flags))
 

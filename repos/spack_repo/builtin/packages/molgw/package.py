@@ -106,7 +106,9 @@ class Molgw(MakefilePackage):
 
         # Set FCFLAGS
         if "+openmp" in spec:
-            flags["FCFLAGS"] = flags.get("FCFLAGS", "") + " {0} ".format(self['fortran'].openmp_flag)
+            flags["FCFLAGS"] = flags.get("FCFLAGS", "") + " {0} ".format(
+                self["fortran"].openmp_flag
+            )
         if "%intel" in spec or "%oneapi" in spec:
             flags["FCFLAGS"] = flags.get("FCFLAGS", "") + " -fpp "
         else:

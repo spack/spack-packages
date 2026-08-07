@@ -112,7 +112,9 @@ class Gnuplot(AutotoolsPackage):
         if spec.satisfies("+qt"):
             options.append("--with-qt=qt5")
             # QT needs C++11 compiler:
-            os.environ["CXXFLAGS"] = "{0}".format(self["cxx"].standard_flag(language="cxx", standard="11"))
+            os.environ["CXXFLAGS"] = "{0}".format(
+                self["cxx"].standard_flag(language="cxx", standard="11")
+            )
 
             if spec.satisfies("platform=darwin"):
                 qt_path = spec["qt"].prefix

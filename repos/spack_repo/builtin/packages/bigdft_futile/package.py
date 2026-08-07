@@ -72,7 +72,7 @@ class BigdftFutile(AutotoolsPackage, CudaPackage):
 
         openmp_flag = []
         if spec.satisfies("+openmp"):
-            openmp_flag.append(self['fortran'].openmp_flag)
+            openmp_flag.append(self["fortran"].openmp_flag)
 
         args = [
             f"FCFLAGS={' '.join(openmp_flag)}",

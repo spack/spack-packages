@@ -45,9 +45,7 @@ class Pacparser(MakefilePackage):
     def build(self, spec, prefix):
         make('CC="%s"' % self["c"].cc, 'CXX="%s"' % self["cxx"].cxx, "-C", "src")
         if "+python" in spec:
-            make(
-                'CC="%s"' % self["c"].cc, 'CXX="%s"' % self["cxx"].cxx, "-C", "src", "pymod"
-            )
+            make('CC="%s"' % self["c"].cc, 'CXX="%s"' % self["cxx"].cxx, "-C", "src", "pymod")
 
     def install(self, spec, prefix):
         make("-C", "src", "install", "PREFIX=" + self.prefix)

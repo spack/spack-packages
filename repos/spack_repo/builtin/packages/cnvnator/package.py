@@ -31,7 +31,7 @@ class Cnvnator(MakefilePackage):
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")
         # Replace -fopenmp with self['cxx'].openmp_flag
-        makefile.filter("-fopenmp", self['cxx'].openmp_flag)
+        makefile.filter("-fopenmp", self["cxx"].openmp_flag)
         # Replace CXX with CXXFLAGS
         makefile.filter(
             "CXX.*=.*",

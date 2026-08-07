@@ -47,8 +47,8 @@ class Lulesh(MakefilePackage):
             ldflags = " -g -L${SILO_LIBDIR} -Wl,-rpath=${SILO_LIBDIR} -lsiloh5 -lhdf5 "
 
         if self.spec.satisfies("+openmp"):
-            cxxflag += self['cxx'].openmp_flag
-            ldflags += self['cxx'].openmp_flag
+            cxxflag += self["cxx"].openmp_flag
+            ldflags += self["cxx"].openmp_flag
 
         targets.append("CXXFLAGS = {0}".format(cxxflag))
         targets.append("LDFLAGS = {0}".format(ldflags))

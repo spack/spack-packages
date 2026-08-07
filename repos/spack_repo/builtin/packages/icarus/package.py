@@ -53,9 +53,7 @@ class Icarus(AutotoolsPackage):
     # wrapper scripts which aren't usable without spack
     @run_after("install")
     def patch_compiler(self):
-        filter_file(
-            r"^CC\s*=.*", f"CC={self['c'].cc}", join_path(self.prefix.bin, "iverilog-vpi")
-        )
+        filter_file(r"^CC\s*=.*", f"CC={self['c'].cc}", join_path(self.prefix.bin, "iverilog-vpi"))
         filter_file(
             r"^CXX\s*=.*", f"CXX={self['cxx'].cxx}", join_path(self.prefix.bin, "iverilog-vpi")
         )

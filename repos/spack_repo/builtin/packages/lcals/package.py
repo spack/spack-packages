@@ -73,7 +73,7 @@ class Lcals(MakefilePackage):
                     "-O3 -mavx -inline-max-total-size=10000"
                     " -inline-forceinline -ansi-alias -std=c++0x"
                 )
-            cxxflags += self['cxx'].openmp_flag
+            cxxflags += self["cxx"].openmp_flag
         elif self.spec.compiler.name == "gcc":
             if arch == "MIC" or (microarch == "sse" and arch == "x86"):
                 cxxflags += "-DLCALS_PLATFORM_X86_SSE -DLCALS_COMPILER_GNU "
@@ -86,7 +86,7 @@ class Lcals(MakefilePackage):
             elif arch == "aarch64":
                 cxxflags += "-DLCALS_COMPILER_GNU "
                 cxx_compile += "-Ofast -finline-functions -finline-limit=10000 -std=c++11"
-            cxxflags += self['cxx'].openmp_flag
+            cxxflags += self["cxx"].openmp_flag
 
         targets.append("LCALS_ARCH=")
         cxx_compile += " " + cxxflags

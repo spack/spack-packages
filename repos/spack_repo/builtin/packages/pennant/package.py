@@ -45,7 +45,7 @@ class Pennant(MakefilePackage):
         makefile.filter("CXXFLAGS_DEBUG .*", "CXXFLAGS_DEBUG := {0}".format(debug))
         makefile.filter("CXXFLAGS_OPT .*", "CXXFLAGS_OPT := {0}".format(opt))
         makefile.filter(
-            "CXXFLAGS_OPENMP .*", "CXXFLAGS_OPENMP := {0}".format(self['cxx'].openmp_flag)
+            "CXXFLAGS_OPENMP .*", "CXXFLAGS_OPENMP := {0}".format(self["cxx"].openmp_flag)
         )
 
         if "+mpi" in spec:

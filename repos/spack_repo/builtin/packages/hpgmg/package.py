@@ -68,7 +68,7 @@ class Hpgmg(MakefilePackage):
         else:
             # Apple's Clang doesn't support OpenMP
             if not self.spec.satisfies("%apple-clang"):
-                cflags.append(self['c'].openmp_flag)
+                cflags.append(self["c"].openmp_flag)
 
         if self.spec.satisfies("+debug"):
             cflags.append("-g")

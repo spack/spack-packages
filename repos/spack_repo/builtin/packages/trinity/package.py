@@ -127,7 +127,7 @@ class Trinity(MakefilePackage):
         force_remove(join_path(prefix.bin, "trinity-plugins", "slclust", "bin", ".hidden"))
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_flags("CXXFLAGS", self['cxx'].openmp_flag)
+        env.append_flags("CXXFLAGS", self["cxx"].openmp_flag)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("TRINITY_HOME", self.prefix.bin)

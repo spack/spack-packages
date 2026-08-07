@@ -386,9 +386,7 @@ class Cantera(SConsPackage):
         fc_files = ["f90/Makefile", "f90/SConstruct"]
 
         for filename in cc_files:
-            filter_file(
-                os.environ["CC"], self["c"].cc, os.path.join(dirname, filename), **kwargs
-            )
+            filter_file(os.environ["CC"], self["c"].cc, os.path.join(dirname, filename), **kwargs)
 
         for filename in cxx_files:
             filter_file(
@@ -397,10 +395,16 @@ class Cantera(SConsPackage):
 
         for filename in f77_files:
             filter_file(
-                os.environ["F77"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
+                os.environ["F77"],
+                self["fortran"].fortran,
+                os.path.join(dirname, filename),
+                **kwargs,
             )
 
         for filename in fc_files:
             filter_file(
-                os.environ["FC"], self["fortran"].fortran, os.path.join(dirname, filename), **kwargs
+                os.environ["FC"],
+                self["fortran"].fortran,
+                os.path.join(dirname, filename),
+                **kwargs,
             )

@@ -152,8 +152,8 @@ class Elk(MakefilePackage):
 
         # OpenMP support
         if spec.satisfies("+openmp"):
-            config["F90_OPTS"] += " " + self['fortran'].openmp_flag
-            config["F77_OPTS"] += " " + self['fortran'].openmp_flag
+            config["F90_OPTS"] += " " + self["fortran"].openmp_flag
+            config["F77_OPTS"] += " " + self["fortran"].openmp_flag
             config["SRC_OMP"] = " "
 
         # BLAS/LAPACK support

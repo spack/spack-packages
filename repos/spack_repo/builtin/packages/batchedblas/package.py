@@ -26,7 +26,7 @@ class Batchedblas(MakefilePackage):
     patch("AVX2.patch")
 
     def edit(self, spec, prefix):
-        CCFLAGS = [self['c'].openmp_flag, "-I./", "-O3"]
+        CCFLAGS = [self["c"].openmp_flag, "-I./", "-O3"]
         BLAS = ["-lm", spec["blas"].libs.ld_flags]
         if not spec.satisfies("^[virtuals=blas] intel-oneapi-mkl"):
             CCFLAGS.append("-D_CBLAS_")

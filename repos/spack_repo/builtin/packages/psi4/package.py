@@ -78,9 +78,7 @@ class Psi4(CMakePackage):
         template = "share/psi4/plugin/Makefile.template"
 
         for filename in cc_files:
-            filter_file(
-                os.environ["CC"], self["c"].cc, os.path.join(prefix, filename), **kwargs
-            )
+            filter_file(os.environ["CC"], self["c"].cc, os.path.join(prefix, filename), **kwargs)
 
         for filename in cxx_files:
             filter_file(

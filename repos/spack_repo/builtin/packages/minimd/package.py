@@ -30,7 +30,7 @@ class Minimd(MakefilePackage):
         targets = [
             "LINK={0}".format(self.spec["mpi"].mpicxx),
             "CC={0}".format(self.spec["mpi"].mpicxx),
-            "CCFLAGS={0} -DMPICH_IGNORE_CXX_SEEK -DNOCHUNK".format(self['cxx'].openmp_flag),
+            "CCFLAGS={0} -DMPICH_IGNORE_CXX_SEEK -DNOCHUNK".format(self["cxx"].openmp_flag),
             "EXE=miniMD_mpi",
             "openmpi",
         ]

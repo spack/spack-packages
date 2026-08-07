@@ -32,7 +32,7 @@ class Tycho2(MakefilePackage):
     @property
     def build_targets(self):
         targets = [
-            "MPICC={0} -std=c++11 {1}".format(self.spec["mpi"].mpicxx, self['cxx'].openmp_flag)
+            "MPICC={0} -std=c++11 {1}".format(self.spec["mpi"].mpicxx, self["cxx"].openmp_flag)
         ]
 
         return targets
