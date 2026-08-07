@@ -14,7 +14,7 @@ class KokkosTools(CMakePackage):
     git = "https://github.com/kokkos/kokkos-tools.git"
     url = (
         "https://github.com/kokkos/kokkos-tools/releases/download/5.2.0/kokkos-tools-5.2.0.tar.gz"
-        )
+    )
 
     maintainers("jennfshr", "vlkale", "rbberger")
     license("Apache-2.0 WITH LLVM-exception")
