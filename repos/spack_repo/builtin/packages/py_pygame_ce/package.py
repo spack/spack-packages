@@ -19,6 +19,10 @@ class PyPygameCe(PythonPackage):
 
     version("2.5.7", sha256="86beb797cd73c141299a29b56f7df2b0543fbdc81d428022458329ff694aaa51")
 
+    # pygame-ce 2.5.7 still builds the mixer and MIDI extensions when these
+    # features are disabled.
+    patch("disable-mixer-midi.patch", when="@2.5.7")
+
     depends_on("c", type="build")
 
     depends_on("python@3.10:", type=("build", "run"))
@@ -28,34 +32,21 @@ class PyPygameCe(PythonPackage):
     depends_on("ninja@:1.13.0", type="build")
     depends_on("pkgconf", type="build")
     depends_on("py-cython@:3.2.4", type="build")
+    depends_on("py-astroid@:3", type="build")
+    depends_on("py-sphinx@:8.2.3", type="build")
+    depends_on("py-sphinx-autoapi@:3.6.0", type="build")
     depends_on("py-pyproject-metadata", type="build")
+    conflicts("^py-pyproject-metadata@0.9.1")
     depends_on("sdl2", type=("build", "link"))
     depends_on("sdl2-image", type=("build", "link"))
     depends_on("sdl2-ttf", type=("build", "link"))
     depends_on("freetype", type=("build", "link"))
 
-    def patch(self):
-        filter_file(
-            '# setup = ["-Derror_on_warns=true"]',
-            'setup = ["-Dmixer=disabled", "-Dmidi=disabled", "-Dstripped=true"]',
-            "pyproject.toml",
-            string=True,
-        )
-        filter_file(
-            "if sdl_mixer_dep.found()",
-            "if get_option('mixer').enabled() and sdl_mixer_dep.found()",
-            "src_c/_sdl2/meson.build",
-            string=True,
-        )
-        filter_file(
-            "if sdl_mixer_dep.found()",
-            "if get_option('mixer').enabled() and sdl_mixer_dep.found()",
-            "src_c/meson.build",
-            string=True,
-        )
-        filter_file(
-            "if portmidi_dep.found()",
-            "if get_option('midi').enabled() and portmidi_dep.found()",
-            "src_c/meson.build",
-            string=True,
-        )
+    def config_settings(self, spec, prefix):
+        return {
+            "setup-args": {
+                "-Dmixer": "disabled",
+                "-Dmidi": "disabled",
+                "-Dstripped": "true",
+            }
+        }
