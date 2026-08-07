@@ -52,12 +52,12 @@ class Form(AutotoolsPackage):
     def configure_args(self):
         args = []
         args += self.with_or_without("gmp", "prefix")
-        
+
         if self.spec.satisfies("@5:"):
             args += self.with_or_without("mpfr", "prefix")
             args += self.with_or_without("zstd", "prefix")
             args += self.with_or_without("flint", "prefix")
-        
+
         if self.spec.satisfies("+zlib"):
             args.append("--with-zlib=%s" % self.spec["zlib-api"].prefix)
         else:
