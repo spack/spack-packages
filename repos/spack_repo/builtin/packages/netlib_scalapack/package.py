@@ -22,7 +22,8 @@ class ScalapackBase(CMakePackage):
     depends_on("mpi")
     depends_on("lapack")
     depends_on("blas")
-    depends_on("cmake", when="@2.0.0:", type="build")
+    depends_on("cmake", when="@2.0.0:2.2.2", type="build")
+    depends_on("cmake@3.26:", when="@2.2.3:", type="build")
 
     # See: https://github.com/Reference-ScaLAPACK/scalapack/issues/9
     patch("cmake_fortran_mangle.patch", when="@2.0.2:2.0")
