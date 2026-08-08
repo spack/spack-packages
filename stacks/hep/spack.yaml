@@ -97,6 +97,7 @@ spack:
   - collier
   - dd4hep +ddalign +ddcad +ddcond +dddetectors +dddigi +ddeve +ddg4 +ddrec +edm4hep +hepmc3 +lcio +utilityapps +xercesc
   - delphes +pythia8
+  - detray
   - dpmjet
   - edm4hep
   - evtgen +hepmc3 +photos +pythia8 +sherpa +tauola
