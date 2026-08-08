@@ -47,7 +47,6 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     variant("tbb", default=False, description="Use Intel TBB")
     variant("dotnet_wrapper", default=False, when="+arcane", description=".Net wrappers")
 
-    variant("valgrind", default=False, description="Add support for running tests with valgrind")
     variant("med", default=False, when="+arcane", description="Salome MED support")
     variant("otf2", default=False, when="+arcane", description="OTF2 library support")
     variant("mkl", default=False, description="Use Intel MKL")
