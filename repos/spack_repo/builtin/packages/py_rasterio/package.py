@@ -22,6 +22,7 @@ class PyRasterio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("1.5.1", sha256="c1b6ae15f4ccad704f1fe8417da5c2250145c7bcdb91acb53833bf5aefdd9e48")
     version("1.5.0", sha256="1e0ea56b02eea4989b36edf8e58a5a3ef40e1b7edcb04def2603accd5ab3ee7b")
     version("1.4.4", sha256="c95424e2c7f009b8f7df1095d645c52895cd332c0c2e1b4c2e073ea28b930320")
     version("1.4.3", sha256="201f05dbc7c4739dacb2c78a1cf4e09c0b7265b0a4d16ccbd1753ce4f2af350a")
@@ -67,15 +68,17 @@ class PyRasterio(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-affine")
+        depends_on("py-affine@:2", when="@:1.5.0")
         depends_on("py-attrs")
         depends_on("py-certifi", when="@1.2:")
         depends_on("py-click@4:", when="@1.2.4:")
         depends_on("py-click@4:7", when="@:1.2.3")
-        depends_on("py-cligj@0.5:")
+        depends_on("py-pyparsing@3:", when="@1.5.1:")
         depends_on("py-pyparsing")
 
         # Historical dependencies
         depends_on("py-click-plugins", when="@:1.4")
+        depends_on("py-cligj@0.5:", when="@:1.5.0")
         depends_on("py-importlib-metadata", when="@1.3.10: ^python@:3.9")
         depends_on("py-setuptools", when="@:1.3.9")
         depends_on("py-snuggs@1.4.1:", when="@:1.3")
@@ -92,6 +95,9 @@ class PyRasterio(PythonPackage):
     conflicts("^gdal@3.11:", when="@:1.4.3")
     # https://github.com/rasterio/rasterio/pull/3212
     conflicts("^gdal@3.10:", when="@:1.4.1")
+
+    # https://github.com/pallets/click/issues/2939
+    conflicts("py-click@8.2")
 
     # ensure cython absolutely gets the right gdal and embeds the correct rpaths
     def setup_build_environment(self, env):
