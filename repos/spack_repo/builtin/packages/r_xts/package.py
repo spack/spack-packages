@@ -19,6 +19,7 @@ class RXts(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.14.2", sha256="d4b68584b2b64664163850af6cb936b9bf14485bfb725d048c272cee0812dc6f")
     version("0.14.0", sha256="d28b16eefa9876a815bad3fc204779c197e3a0d7796b8dae8856fe153f5fcfd9")
     version("0.13.1", sha256="2c3907c6d0162e48d1898647105bbb32cfe0cb005788481a64ee675a941d825d")
     version("0.13.0", sha256="188e4d1d8c3ec56a544dfb9da002e8aac80b9303d0a5a1f62ff0e960aeef9674")
@@ -27,8 +28,12 @@ class RXts(RPackage):
     version("0.11-2", sha256="12772f6a66aab5b84b0665c470f11a3d8d8a992955c027261cfe8e6077ee13b8")
     version("0.9-7", sha256="f11f7cb98f4b92b7f6632a2151257914130880c267736ef5a264b5dc2dfb7098")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("fortran", type="build", when="@:0.10")
 
     depends_on("r@3.6.0:", type=("build", "run"), when="@0.13.0:")
 
     depends_on("r-zoo@1.7-12:", type=("build", "run"))
+
+    conflicts("%gcc@14: ^r@4.6:", when="@:0.14.1")
+    conflicts("%gcc@10:", when="@:0.11")
