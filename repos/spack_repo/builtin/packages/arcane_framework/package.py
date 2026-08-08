@@ -73,23 +73,23 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
         "cuda_clang", default=False, description="Use clang (instead of nvcc) to compile CUDA code"
     )
 
-    depends_on("c", type="build", when="+arcane")
-    # TODO: check if alien needs 'C' language
-    depends_on("c", type="build", when="+alien")
-    depends_on("cxx", type="build")
-
-    # TODO: handle the dependencies of this variant
-    depends_on("blas", when="+alien")
-    depends_on("boost +program_options", when="+alien")
-    depends_on("fortran", type="build", when="+alien")
-
-    depends_on("cmake@3.26:", type="build")
+    with default_args(type="build"):
+        depends_on("cxx")
+        depends_on("c", when="+arcane")
+        depends_on("c", when="+alien")
+        depends_on("fortran", when="+alien")
+        depends_on("cmake@3.26:")
+        depends_on("swig@4:", when="+dotnet_wrapper")
 
     # Hack to only add 'dotnet-core-sdk' because 'spack audit' can not
     # find a valid 'dotnet-core-sdk' version on macos or windows.
     if platform.system() == "Linux":
         depends_on("dotnet-core-sdk", when="+arcane", type=("build", "link", "run"))
         depends_on("dotnet-core-sdk", when="+alien", type=("build", "link", "run"))
+
+    # TODO: handle the dependencies of this variant
+    depends_on("blas", when="+alien")
+    depends_on("boost +program_options", when="+alien")
 
     # TODO: Handle variants for alien standalone and alien with arcane
     # For example, alien standalone does not depend on 'libxml2'
@@ -106,7 +106,6 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zstd", when="+zstd")
     depends_on("med", when="+med")
     depends_on("otf2", when="+otf2")
-    depends_on("swig@4:", type=("build"), when="+dotnet_wrapper")
 
     depends_on("parmetis@4:", when="+parmetis")
     depends_on("scotch +mpi -metis +int64", when="+scotch")
@@ -173,7 +172,6 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         args = [
             self.define("BUILD_SHARED_LIBS", True),
-            self.define("ARCCORE_CXX_STANDARD", "20"),
             self.define("ARCANE_BUILD_WITH_SPACK", True),
             self.define("ARCANE_NO_DEFAULT_PACKAGE", True),
             self.define("ARCANE_DISABLE_DEPRECATED_WARNINGS", "TRUE"),
@@ -181,9 +179,9 @@ class ArcaneFramework(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ARCCORE_ENABLE_TBB", "tbb"),
             self.define_from_variant("ARCCORE_BUILD_MODE", "build_mode"),
             self.define_from_variant("ARCANE_ENABLE_TESTS", "build_tests"),
-            self.define_from_variant("ARCANE_ENABLE_DOTNET_WRAPPER", "dotnet_wrapper"),
         ]
-
+        if self.spec.satisfies("+arcane"):
+            args += [self.define_from_variant("ARCANE_ENABLE_DOTNET_WRAPPER", "dotnet_wrapper")]
         # List of components to build
         components_to_build = "Arccore"
         if "+arcane" in self.spec:
