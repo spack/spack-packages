@@ -200,7 +200,10 @@ class Detray(CMakePackage):
     with when("@0.111:"):
         depends_on("vc@1.4.5:", when="+vc")
         depends_on("eigen@3.4.0:", when="+eigen")
-        depends_on("root@6.18.0:", when="+smatrix")
+        with when("+smatrix"):
+            depends_on("root@6.18.0:")
+            depends_on("root cxxstd=20", when="cxxstd=20")
+            conflicts("cxxstd=23")
     with when("@:0.110"):
         depends_on("acts-algebra-plugins@0.18.0: +vecmem")
         depends_on("acts-algebra-plugins +vc", when="+vc")
