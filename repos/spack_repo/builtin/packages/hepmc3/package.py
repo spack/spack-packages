@@ -64,7 +64,7 @@ class Hepmc3(CMakePackage):
     patch(
         "https://gitlab.cern.ch/hepmc/HepMC3/-/commit/68901dfb4e4f19539ec31630f529095e96718935.diff",
         sha256="a9210112d98566c47195c5a2ad1a6aa07b452e5bf9e9b6980c3031052ff41610",
-        when="@3.3.1",
+        when="@3.2.6:3.3.1",
     )
 
     extends("python", when="+python")
