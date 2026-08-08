@@ -10,13 +10,21 @@ from spack.package import *
 class PyAffine(PythonPackage):
     """Matrices describing affine transformation of the plane."""
 
-    homepage = "https://github.com/sgillies/affine"
-    url = "https://github.com/sgillies/affine/archive/2.1.0.zip"
-
-    depends_on("py-setuptools", type="build")
+    homepage = "https://github.com/rasterio/affine"
+    pypi = "affine/affine-3.0.0.tar.gz"
 
     license("BSD-3-Clause")
+    maintainers("adamjstewart")
 
-    version("2.3.1", sha256="78384c197c6d87d79eb94bf07c64e38491e53bc2ba54f9973b6469d0e574ea92")
-    version("2.2.2", sha256="b6560b93f2f613c9d4730ac120b25b942cc577fb7c074efe32090f40f72ce645")
-    version("2.1.0", sha256="b67b7dee9a9865185a931758a3e347ad8583d0ac985895b90985a477ccfa4745")
+    version("3.0.0", sha256="573514d5c37e98401a0ec34139c2b725d9f9ae4d074662f4b62a47d6a2ba9f06")
+    version("2.4.0", sha256="a24d818d6a836c131976d22f8c27b8d3ca32d0af64c1d8d29deb7bafa4da1eea")
+    version("2.3.1", sha256="d676de66157ad6af99ffd94e0f54e89dfc35b0fb7252ead2ed0ad2dca431bdd0")
+    version("2.2.2", sha256="ff0d0f40a90faa651f7bc7fece15bdbb7a0e0658b1e7ba6a03422c21efa7da90")
+    version("2.1.0", sha256="5f97938c63195551d89237e241c435cdeb296b81bcfaa46140afc12cac7bc447")
+
+    with default_args(type="build"):
+        depends_on("py-flit-core@3.2:3", when="@2.4:")
+        depends_on("py-setuptools", when="@:2.3")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-attrs", when="@3:")
