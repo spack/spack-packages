@@ -647,7 +647,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # files created, we suppress makefile command echoing via `-s`.
             make("-s", *self.make_defs)
 
-    def edit(self, spec, prefix):
+    def edit(self, pkg, spec, prefix):
         # https://github.com/spack/spack-packages/pull/5883#issuecomment-5189054355
         filter_file("OBJS += test_fork.o", "", "utest/Makefile", string=True)
 
