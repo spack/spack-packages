@@ -20,6 +20,7 @@ class Gomplate(GoPackage):
 
     license("MIT")
 
+    version("5.2.0", sha256="fb08872f54f776863a30adcd58dce0437529d0e6a468839d107803bbff1d0b23")
     version("5.1.0", sha256="b6763aaf2c52a2e57a02f5e4cae199166b1ae8df8beb43ef5c927bb10ca775fc")
     version("4.3.3", sha256="d15c66230d72bdc13b0155f28d391c55cac45b7fdbe1ff4a73db8ee263471a3d")
 
