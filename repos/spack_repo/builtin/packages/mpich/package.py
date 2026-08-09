@@ -167,6 +167,13 @@ supported, and netmod is ignored if device is ch3:sock.""",
     )
 
     variant(
+        "mpi5-abi",
+        default=False,
+        when="@5:",
+        description="Enable MPI-5 standard ABI.",
+    )
+
+    variant(
         "datatype-engine",
         default="auto",
         description="controls the datatype engine to use",
@@ -554,6 +561,9 @@ supported, and netmod is ignored if device is ch3:sock.""",
             )
 
         config_args.extend(self.enable_or_disable("fortran"))
+
+        if spec.satisfies("@5:"):
+            config_args.extend(self.enable_or_disable("mpi-abi", variant="mpi5-abi"))
 
         if "+slurm" in spec:
             config_args.append("--with-slurm=yes")
