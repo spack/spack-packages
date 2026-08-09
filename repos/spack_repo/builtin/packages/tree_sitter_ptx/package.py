@@ -37,11 +37,12 @@ class TreeSitterPtx(CMakePackage):
 
     license("MIT", checked_by="guanyuming-he")
 
-    version("993c54d2c60a943b8c6bcfe0972ea1d9633f314",
-         sha256="7f6d7ec802c1342135087d0d0af8a9bfabff7d2e836fc5ed9a2b5de934a0883f",
-         extension="tar.gz")
+    version(
+        "993c54d2c60a943b8c6bcfe0972ea1d9633f314",
+        sha256="7f6d7ec802c1342135087d0d0af8a9bfabff7d2e836fc5ed9a2b5de934a0883f",
+        extension="tar.gz",
+    )
 
     depends_on("tree-sitter")
     depends_on("c", type="build")
     depends_on("cmake@3.13:", type="build")
-
