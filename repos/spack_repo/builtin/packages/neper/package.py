@@ -19,6 +19,7 @@ class Neper(CMakePackage):
 
     license("GPL-3.0-only", checked_by="jcortial-safran")
 
+    version("5.0.0", sha256="b6bc63db2f1090b0a78117d43bc3be823960b46f04b4b8978a81b7dd1c06dccc")
     version("4.10.1", sha256="73aeb29658a73fa5fd1deec74daacc1d43fcf0f771da4157a00fb3736dbdc37e")
 
     variant("gsl", default=True, description="Enable GNU scientific library")
