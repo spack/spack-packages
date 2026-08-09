@@ -655,16 +655,16 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # illegal instructions when cross compiling with spack
         if self.spec.satisfies("@2026.1"):
             filter_file(
-                    r";-march=native;-mtune=native",
-                    "",
-                    "cmake/CompilerConfiguration.cmake",
-                )
+                r";-march=native;-mtune=native",
+                "",
+                "cmake/CompilerConfiguration.cmake",
+            )
         if self.spec.satisfies("@2026.2"):
             filter_file(
-                    r"-march=native;-mtune=native",
-                    "",
-                    "cmake/CompilerConfiguration.cmake",
-                )
+                r"-march=native;-mtune=native",
+                "",
+                "cmake/CompilerConfiguration.cmake",
+            )
 
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
