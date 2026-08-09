@@ -22,6 +22,8 @@ class Lcov(MakefilePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("2.5", sha256="7e5e5a154bd5f3557659c328cab376764e7abd238bb403c424472c296b175126")
+    version("2.4", sha256="3457825c6b2fe4ef77c782b82a23875c84a3c955243823f05d8f2dec0d455820")
     version("2.3.2", sha256="6fed6cf48757d5083202be3356dfa6d64afa12d96d691745fad7e4c9ebe90bfa")
     version("2.3.1", sha256="b3017679472d5fcca727254493d0eb44253c564c2c8384f86965ba9c90116704")
     version("2.0", sha256="1857bb18e27abe8bcec701a907d5c47e01db4d4c512fc098d1a6acd29267bf46")
@@ -61,6 +63,11 @@ class Lcov(MakefilePackage):
     depends_on("perl-sub-identify", type=("run"))
     depends_on("perl-time-hires", type=("run"))
     depends_on("perl-timedate", type=("run"))
+
+    # Required to build the documentation
+    with default_args(when="@2.5:"):
+        depends_on("py-sphinx", type=("build"))
+        depends_on("py-sphinx-rtd-theme", type=("build"))
 
     def install(self, spec, prefix):
         make(
