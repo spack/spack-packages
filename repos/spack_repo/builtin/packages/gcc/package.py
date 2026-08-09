@@ -644,6 +644,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # see https://gcc.gnu.org/gcc-11/changes.html 11.5 Caveats
     patch("patch-5522dec054cb940fe83661b96249aa12c54c1d77.patch", when="@11.5.0 target=aarch64:")
+    patch("cuda11-drops-sm_30-support.patch", when="@13:14 +nvptx ^cuda@13:")
+    patch("cuda13-drops-sm_52-support.patch", when="@15: +nvptx ^cuda@13:")
 
     build_directory = "spack-build"
 
