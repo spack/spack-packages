@@ -2,13 +2,14 @@
 #
 # SPDX-License-Identifier: (NVIDIA Software License Agreement)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
-import os
 
 class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     """Samples for CUDA Developers which demonstrates features in CUDA
@@ -20,9 +21,9 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     # Not sure if I can take the responsibility;
     # I just added it since running benchmarks on HPC need it now.
-    #maintainers("guanyuming-he")
+    # maintainers("guanyuming-he")
 
-    # This is a proprietary license. See 
+    # This is a proprietary license. See
     # https://spack.readthedocs.io/en/latest/
     # packaging_guide_creation.html#proprietary-software
     license_required = True
@@ -48,12 +49,12 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         "12.4.1": "01bb311cc8f802a0d243700e4abe6a2d402132c9d97ecf2c64f3fbb1006c304c",
         "12.4": "aa28fa2227768dd31ebbf9cd48b265a0c8810fae03e02c6079c0fa71bbea7319",
     }
-    for v,h in _ver_map.items():
+    for v, h in _ver_map.items():
         version(v, sha256=h)
-        depends_on("cuda@"+v, when="@"+v)
+        depends_on("cuda@" + v, when="@" + v)
 
     # Don't need this variant now as CUDA is always required.
-    #variant("cuda", default=True, description="build using CUDA (required)")
+    # variant("cuda", default=True, description="build using CUDA (required)")
 
     # Don't know why it could build before without depending on it with gcc 14,
     # but now it can't with gcc 12.
@@ -64,8 +65,8 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     depends_on("freeglut", when="+freeglut")
     # Can't do this now. Otherwise, spack will complain about
     # internal_error("something depends_on a non-node")
-    #variant("freeimage", default=True, description="build with freeimage.")
-    #depends_on("freeimage", when="+freeimage")
+    # variant("freeimage", default=True, description="build with freeimage.")
+    # depends_on("freeimage", when="+freeimage")
 
     # Allows one to specify the compilers to use. Please do specify it
     # explicitly if the default is ambiguous.
@@ -81,10 +82,12 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     # After the change to CMake, the build defaults to all GPU arches
     # supported by the NVCC it depends on
-    conflicts("cuda_arch=none", when="@:12.5+cuda", 
+    conflicts(
+        "cuda_arch=none",
+        when="@:12.5+cuda",
         msg="Please specify cuda_arch as variant for installation.\n"
-            "You can query it with \n"
-            "nvidia-smi --query-gpu=name,compute_cap --format=csv"
+        "You can query it with \n"
+        "nvidia-smi --query-gpu=name,compute_cap --format=csv",
     )
 
     @when("@:12.5")
@@ -92,11 +95,11 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         glu = self.spec["mesa-glu"]
         env.append_flags("CPPFLAGS", f"-I{glu.prefix.include}")
         env.append_flags("LDFLAGS", f"-L{glu.prefix.lib}")
-        if (self.spec.satisfies("+freeglut")):
+        if self.spec.satisfies("+freeglut"):
             freeglut = self.spec["freeglut"]
             env.append_flags("CPPFLAGS", f"-I{freeglut.prefix.include}")
             env.append_flags("CPPFLAGS", f"-I{freeglut.prefix.include}")
-        if (self.spec.satisfies("+freeimage")):
+        if self.spec.satisfies("+freeimage"):
             freeimg = self.spec["freeimage"]
             env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
             env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
@@ -111,13 +114,13 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
         ]
-        if (self.spec.satisfies("+freeglut")):
+        if self.spec.satisfies("+freeglut"):
             freeglut = self.spec["freeglut"]
             args += [
                 self.define("GLUT_INCLUDE_DIR", freeglut.prefix.include),
                 self.define("GLUT_freeglut_LIBRARY", freeglut.libs[0]),
             ]
-        if (self.spec.satisfies("+freeimage")):
+        if self.spec.satisfies("+freeimage"):
             freeimg = self.spec["freeimage"]
             args += [
                 self.define("FreeImage_INCLUDE_DIR", freeimg.prefix.include),
@@ -130,17 +133,10 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     @when("@12.8:")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
-        install_tree(
-            os.path.join(self.build_directory, "Samples"),
-            prefix.bin
-        )
+        install_tree(os.path.join(self.build_directory, "Samples"), prefix.bin)
         # Don't forget to install the common files!
         mkdir(prefix.common)
-        install_tree(
-            os.path.join(self.stage.source_path, "Common"),
-            prefix.common
-        )
-        
+        install_tree(os.path.join(self.stage.source_path, "Common"), prefix.common)
 
     # Similar to the CMake version, the Make version doesn't have an install
     # phase but instead just creates binaries in a `bin` folder under the build
@@ -148,14 +144,7 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     @when("@:12.5")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
-        install_tree(
-            os.path.join(self.build_directory, "bin"), 
-            prefix.bin
-        )
+        install_tree(os.path.join(self.build_directory, "bin"), prefix.bin)
         # Don't forget to install the common files!
         mkdir(prefix.common)
-        install_tree(
-            os.path.join(self.stage.source_path, "Common"),
-            prefix.common
-        )
-        
+        install_tree(os.path.join(self.stage.source_path, "Common"), prefix.common)
