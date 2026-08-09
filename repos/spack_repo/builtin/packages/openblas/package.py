@@ -577,6 +577,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # Fortran-free compilation
         if "~fortran" in self.spec:
             make_defs += ["NOFORTRAN=1"]
+            # f_check still auto-detects Fortran compilers on PATH
+            make_defs += ["F_COMPILER=none"]
 
         if "~shared" in self.spec:
             if "+pic" in self.spec:
