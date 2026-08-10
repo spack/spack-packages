@@ -43,9 +43,20 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
     version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
 
-    patch("fix-header-only-install.patch", when="@1.7.0:1.11.1")
-    patch("add_header_to_registry.patch", when="@1.12.0")
-    
+    # https://github.com/lanl/singularity-eos/pull/647
+    patch(
+        "https://github.com/lanl/singularity-eos/pull/647.patch?full_index=1", 
+        sha256="712e15cb05ea440886579b7b211f005f18d1046d1453978696b7524ae5732387",
+        when="@1.7.0:1.11.1"
+    )
+
+    # https://github.com/lanl/singularity-eos/pull/643
+    patch(
+        "https://github.com/lanl/singularity-eos/pull/643.patch?full_index=1",
+        sha256="477cd5728f1e9d3e1152038ff9f1f5f6d83bec7fd00cf85174a2305e07251f1d",
+        when="@1.12.0"
+    )
+
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
     variant(
