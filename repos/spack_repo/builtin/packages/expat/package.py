@@ -83,6 +83,12 @@ class Expat(AutotoolsPackage, CMakePackage):
         when="build_system=cmake",
     )
 
+    variant(
+        "pic",
+        default=True,
+        description="Build position-independent code",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -100,6 +106,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         if spec.satisfies("+libbsd"):
             args.append("--with-libbsd")
         return args
+        args.append("--with-pic" if "+pic" in spec else "--without-pic")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -107,6 +114,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             self.define("EXPAT_BUILD_DOCS", False),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
 
         if self.spec.satisfies("+libbsd"):

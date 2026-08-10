@@ -45,7 +45,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("15.1.0", sha256="e2b09ec21660f01fecffb715e0120265216943f038d0e48a9868713e54f06cea")
 
     # Final releases of previous versions
-    version("14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a")
+    version("14.4.0", sha256="752b6f567beac83159c77a7680b1316bdd784738bff9a9d070112c09da90f6d9")
     version(
         "14.2.0",
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
@@ -68,6 +68,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # Deprecated older non-final releases
     with default_args(deprecated=True):
+        version(
+            "14.3.0", sha256="e0dc77297625631ac8e50fa92fffefe899a4eb702592da5c32ef04e2293aca3a"
+        )
         version(
             "14.1.0", sha256="e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840"
         )
@@ -641,6 +644,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # see https://gcc.gnu.org/gcc-11/changes.html 11.5 Caveats
     patch("patch-5522dec054cb940fe83661b96249aa12c54c1d77.patch", when="@11.5.0 target=aarch64:")
+    patch("cuda11-drops-sm_30-support.patch", when="@13:14 +nvptx ^cuda@13:")
+    patch("cuda13-drops-sm_52-support.patch", when="@15: +nvptx ^cuda@13:")
 
     build_directory = "spack-build"
 

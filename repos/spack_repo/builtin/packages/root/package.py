@@ -463,13 +463,6 @@ class Root(CMakePackage):
         when="@:6.35",
         msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
     )
-    # In order to avoid adding newer versions with incorrect LLVM versions,
-    # newer versions are explicitly added as conflicts as well.
-    conflicts(
-        "~builtin_llvm",
-        when="@6.39:",
-        msg="External LLVM support for ROOT 6.39+ has not been validated",
-    )
 
     # GCC 15 support was added in 6.34.04
     conflicts("%gcc@15:", when="@:6.34.02")

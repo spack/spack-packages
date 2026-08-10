@@ -18,7 +18,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.gnu.org/software/emacs"
     gnu_mirror_path = "emacs/emacs-24.5.tar.gz"
     git = "https://git.savannah.gnu.org/git/emacs.git"
-    list_url = "https://ftpmirror.gnu.org/emacs/"
+
     list_depth = 0
 
     maintainers("alecbcs")

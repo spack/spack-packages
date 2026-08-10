@@ -15,11 +15,21 @@ class PyGitpython(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("3.1.50", sha256="80da2d12504d52e1f998772dc5baf6e553f8d2fcfe1fcc226c9d9a2ee3372dcc")
-    version("3.1.43", sha256="35f314a9f878467f5453cc1fee295c3e18e52f1b99f10f6cf5b1682e968a9e7c")
+    version("3.1.58", sha256="621416df10ef3fd0e19fabf9172ddeed0fa704d353d04f194eec56a625a95b22")
+    with default_args(deprecated=True):
+        # https://github.com/gitpython-developers/GitPython/security
+        version(
+            "3.1.50", sha256="80da2d12504d52e1f998772dc5baf6e553f8d2fcfe1fcc226c9d9a2ee3372dcc"
+        )
+        version(
+            "3.1.43", sha256="35f314a9f878467f5453cc1fee295c3e18e52f1b99f10f6cf5b1682e968a9e7c"
+        )
 
     depends_on("py-setuptools", type="build")
     depends_on("py-gitdb@4.0.1:4", type=("build", "run"))
+    depends_on(
+        "py-typing-extensions@3.10.0.2:", when="@3.1.45: ^python@:3.9", type=("build", "run")
+    )
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/G/GitPython/GitPython-{}.tar.gz"
