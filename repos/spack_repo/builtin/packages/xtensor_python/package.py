@@ -19,11 +19,6 @@ class XtensorPython(CMakePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="master")
-    # NOTE: exploratory addition (not yet upstreamed) while packaging
-    # py-proteus -- 0.23.1 was the newest version known to Spack, requiring
-    # py-pybind11@2.2.1:2.2, which conflicts with any modern py-scipy
-    # (needs py-pybind11@2.10:). xtensor-python's own CMakeLists.txt
-    # requires pybind11>=2.6.1 and xtensor>=0.26.0 as of this release.
     version("0.28.0", sha256="3be09f2bc284e5a468937ad411a9976f9ab7ea5d0df40f5b1964a3694e7ee931")
     version("0.23.1", sha256="450b25f5c739df174b2a50774b89e68b23535fdc37cb55bd542ffdb7c78991ab")
     version("0.17.0", sha256="30f2e8c99376e38f942d62c0d2959bc1e52a562a4f8cc5e27ddc4d572a25e34c")
