@@ -1376,6 +1376,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_LAPACK_FOUND", True),
                     self.define("CP2K_LAPACK_LINK_LIBRARIES", lapack.libs.joined(";")),
                     self.define("CP2K_BLAS_FOUND", True),
+                    self.define("CP2K_BLAS_INCLUDE_DIRS", blas.prefix.include),
                     self.define("CP2K_BLAS_LINK_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_SCALAPACK_FOUND", True),
                     self.define("CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include),
