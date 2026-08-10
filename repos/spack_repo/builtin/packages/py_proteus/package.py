@@ -31,14 +31,22 @@ class PyProteus(PythonPackage):
 
     version("torino_narwhal", branch="torino_narwhal")
 
-    # This first pass deliberately omits Chrono (rigid-body/FSI coupling)
-    # and SCOREC/PUMI (parallel mesh adaptation) support: both are optional
-    # at the proteus code level (proteus/Domain.py degrades gracefully
-    # without MeshAdaptPUMI.MeshAdapt; setup.py can skip both extensions
-    # via PROTEUS_SKIP_PUMI_CHRONO, used unconditionally below), and neither
-    # has an upstream Spack package yet -- pychrono in particular would be
-    # a separate, nontrivial packaging effort. Revisit as `scorec`/`chrono`
-    # variants once those exist upstream.
+    # Chrono (rigid-body/FSI coupling) is still omitted unconditionally:
+    # it's optional at the proteus code level (setup.py's mbd.CouplingFSI
+    # extension is always skippable), but pychrono has no upstream Spack
+    # package yet and would be a separate, nontrivial packaging effort.
+    #
+    # SCOREC/PUMI (parallel mesh adaptation), however, *does* have an
+    # upstream Spack package (`pumi`) -- the `scorec` variant below wires
+    # setup.py's MeshAdaptPUMI.MeshAdapt extension up to it instead of
+    # skipping it. setup.py originally gated MeshAdaptPUMI and
+    # mbd.CouplingFSI behind the single PROTEUS_SKIP_PUMI_CHRONO switch;
+    # split-pumi-chrono-skip.patch splits that into independent
+    # PROTEUS_SKIP_PUMI / PROTEUS_SKIP_CHRONO switches so PUMI can be
+    # enabled while Chrono stays skipped.
+    variant("scorec", default=False, description="Enable SCOREC/PUMI mesh adaptation support")
+
+    patch("split-pumi-chrono-skip.patch")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -73,6 +81,23 @@ class PyProteus(PythonPackage):
     # no build-time skip switch, so it's a hard dependency here.
     depends_on("ncurses")
 
+    # config/default.py's PROTEUS_SCOREC_LIBS links 'zoltan', 'parmetis',
+    # and 'metis' directly (not just transitively through pumi), so all
+    # three need their own *_DIR env vars set in setup_build_environment
+    # below; zoltan+parmetis is required so pumi's apf_zoltan is actually
+    # built against ParMETIS (matching what config/default.py expects to
+    # link against).
+    # +shared: pumi defaults to static libs (~shared), which aren't built
+    # with -fPIC and can't be linked into MeshAdaptPUMI.MeshAdapt (a
+    # shared Python extension) -- setup.py has no static-linking path.
+    depends_on("pumi+zoltan+shared", when="+scorec")
+    # ~fortran: zoltan's Fortran interface is unused here (PUMI's
+    # apf_zoltan and proteus's own linking only ever call Zoltan's C API),
+    # and zoltan@3.901's libzoltan.so leaves unresolved libgfortran
+    # symbols when +fortran is built on this toolchain.
+    depends_on("zoltan+parmetis~fortran", when="+scorec")
+    depends_on("parmetis", when="+scorec")
+
     # Header-only C++ dependencies. setup.py's get_xtensor_include() (used
     # by ~30 of proteus's extensions) looks under sys.prefix/include, not
     # any per-package *_DIR env var, so these need to land on the compiler's
@@ -98,7 +123,11 @@ class PyProteus(PythonPackage):
     depends_on("xtl")
 
     def setup_build_environment(self, env):
-        env.set("PROTEUS_SKIP_PUMI_CHRONO", "1")
+        # Chrono/pychrono is never packaged here (see the `scorec` variant
+        # comment above), so mbd.CouplingFSI is always skipped.
+        env.set("PROTEUS_SKIP_CHRONO", "1")
+        if self.spec.satisfies("~scorec"):
+            env.set("PROTEUS_SKIP_PUMI", "1")
 
         # proteus/config/default.py's get_flags() resolves each dependency
         # via <PACKAGE>_DIR (falling back to one shared PROTEUS_PREFIX) --
@@ -112,6 +141,11 @@ class PyProteus(PythonPackage):
         env.set("SUPERLU_DIR", self.spec["superlu"].prefix)
         env.set("TRIANGLE_DIR", self.spec["triangle"].prefix)
         env.set("NCURSES_DIR", self.spec["ncurses"].prefix)
+
+        if self.spec.satisfies("+scorec"):
+            env.set("SCOREC_DIR", self.spec["pumi"].prefix)
+            env.set("ZOLTAN_DIR", self.spec["zoltan"].prefix)
+            env.set("PARMETIS_DIR", self.spec["parmetis"].prefix)
 
         # Headers-only deps setup.py can't be told about via a *_DIR env
         # var -- fall back to the standard compiler search-path variables.
