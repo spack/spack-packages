@@ -187,7 +187,9 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                     optims_opts["intel-oneapi-compilers"] += " -DNAMD_AVXTILES -xCORE-AVX512"
 
                 optim_opts = (
-                    optims_opts[self.spec.compiler.name] if self.spec.compiler.name in optims_opts else ""
+                    optims_opts[self.spec.compiler.name]
+                    if self.spec.compiler.name in optims_opts
+                    else ""
                 )
 
                 fh.write(

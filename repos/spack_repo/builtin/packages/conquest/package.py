@@ -70,8 +70,8 @@ class Conquest(MakefilePackage):
         ldflags = ""
 
         if self.spec.satisfies("+openmp"):
-            fflags += " " + self['fortran'].openmp_flag
-            ldflags += " " + self['fortran'].openmp_flag
+            fflags += " " + self["fortran"].openmp_flag
+            ldflags += " " + self["fortran"].openmp_flag
 
         libxc = self.spec["libxc:fortran"]
         fflags += " " + libxc.headers.include_flags

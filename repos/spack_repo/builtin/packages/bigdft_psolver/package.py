@@ -63,7 +63,7 @@ class BigdftPsolver(AutotoolsPackage, CudaPackage):
 
         openmp_flag = []
         if spec.satisfies("+openmp"):
-            openmp_flag.append(self['fortran'].openmp_flag)
+            openmp_flag.append(self["fortran"].openmp_flag)
 
         linalg = []
         if spec.satisfies("+scalapack"):

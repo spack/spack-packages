@@ -31,7 +31,7 @@ class GamessRiMp2Miniapp(MakefilePackage):
         targets = [
             "rimp2-serial",
             "SDIR=../source",
-            "FFLAGS_SERIAL=-cpp " + self['fortran'].openmp_flag,
+            "FFLAGS_SERIAL=-cpp " + self["fortran"].openmp_flag,
             "LDFLAGS_ESSL={0}".format(self.spec["lapack"].libs.ld_flags),
         ]
 

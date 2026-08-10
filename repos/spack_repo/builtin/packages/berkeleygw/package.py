@@ -190,7 +190,7 @@ class Berkeleygw(MakefilePackage):
         fflags.append(self["fortran"].pic_flag)
         if spec.satisfies("+openmp"):
             paraflags.append("-DOMP")
-            fflags.append(self['fortran'].openmp_flag)
+            fflags.append(self["fortran"].openmp_flag)
 
         if spec.satisfies("+mpi"):
             buildopts.append("C_PARAFLAG=-DPARA")

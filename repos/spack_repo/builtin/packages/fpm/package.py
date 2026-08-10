@@ -57,7 +57,7 @@ class Fpm(Package):
 
         fflags = "-O3"
         if self.spec.satisfies("+openmp"):
-            fflags += " " + self['fortran'].openmp_flag
+            fflags += " " + self["fortran"].openmp_flag
         env.set("FFLAGS", fflags)
 
     def install(self, spec, prefix):

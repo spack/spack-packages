@@ -359,7 +359,7 @@ class Dihydrogen(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+openmp %apple-clang"):
-            env.append_flags("CPPFLAGS", self['cxx'].openmp_flag)
+            env.append_flags("CPPFLAGS", self["cxx"].openmp_flag)
             env.append_flags("CFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("CXXFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("LDFLAGS", self.spec["llvm-openmp"].libs.ld_flags)

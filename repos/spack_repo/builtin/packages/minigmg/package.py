@@ -71,7 +71,7 @@ class Minigmg(Package):
             args.append("-O3")
 
         # Add OpenMP flag
-        args += [self['c'].openmp_flag]
+        args += [self["c"].openmp_flag]
 
         args += ["miniGMG.c", "mg.c", "box.c", "solver.c"]
 

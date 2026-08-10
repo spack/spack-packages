@@ -45,8 +45,8 @@ class Zpares(MakefilePackage):
 
         if "+mumps" in self.spec:
             targets.append("USE_MUMPS=1")
-            targets.append("FFLAG={0}".format(self['fortran'].openmp_flag))
-            targets.append("LFFLAG={0}".format(self['fortran'].openmp_flag))
+            targets.append("FFLAG={0}".format(self["fortran"].openmp_flag))
+            targets.append("LFFLAG={0}".format(self["fortran"].openmp_flag))
             targets.append("MUMPS_DIR={0}".format(self.spec["mumps"].prefix))
         else:
             targets.append("USE_MUMPS=0")

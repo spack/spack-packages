@@ -40,7 +40,7 @@ class Modylas(AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+mpi"):
             env.set("FC", self.spec["mpi"].mpifc, force=True)
-        fflags = ["-O3", self['fortran'].openmp_flag]
+        fflags = ["-O3", self["fortran"].openmp_flag]
         if self.spec.satisfies("%gcc"):
             fflags.append("-cpp")
         elif self.spec.satisfies("%fj"):

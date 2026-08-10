@@ -42,7 +42,7 @@ class Hpccg(MakefilePackage):
 
         if self.spec.satisfies("+openmp"):
             targets.append("USE_OMP=-DUSING_OMP")
-            targets.append("OMP_FLAGS={0}".format(self['cxx'].openmp_flag))
+            targets.append("OMP_FLAGS={0}".format(self["cxx"].openmp_flag))
 
         # Remove Compiler Specific Optimization Flags
         if "%gcc" not in self.spec:

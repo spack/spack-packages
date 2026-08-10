@@ -174,7 +174,9 @@ class Likwid(Package):
             )
 
         filter_file(
-            "^COMPILER .*", "COMPILER = " + supported_compilers[self.spec.compiler.name], "config.mk"
+            "^COMPILER .*",
+            "COMPILER = " + supported_compilers[self.spec.compiler.name],
+            "config.mk",
         )
         filter_file("^PREFIX .*", "PREFIX = " + prefix, "config.mk")
 

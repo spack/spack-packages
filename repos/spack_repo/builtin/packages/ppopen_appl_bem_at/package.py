@@ -34,7 +34,7 @@ class PpopenApplBemAt(MakefilePackage):
     build_targets = ["SYSTEM=spack"]
 
     def edit(self, spec, prefix):
-        flags = ["-O3", self['fortran'].openmp_flag]
+        flags = ["-O3", self["fortran"].openmp_flag]
         fflags = flags[:]
         if spec.satisfies("%gcc"):
             fflags.append("-ffree-line-length-none")

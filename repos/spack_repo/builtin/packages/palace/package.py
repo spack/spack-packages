@@ -357,7 +357,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                 # Add OpenMP libraries - use compiler's OpenMP library
                 if self.spec.satisfies("+openmp"):
                     # Get OpenMP library from compiler
-                    omp_lib = self['cxx'].openmp_flag
+                    omp_lib = self["cxx"].openmp_flag
                     if omp_lib:
                         strumpack_libs += ";" + omp_lib
 

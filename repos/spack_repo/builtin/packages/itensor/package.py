@@ -101,7 +101,7 @@ class Itensor(MakefilePackage):
         # 4.openmp
         if spec.satisfies("+openmp"):
             filter_file("#ITENSOR_USE_OMP", "ITENSOR_USE_OMP", mf)
-            filter_file("-fopenmp", self['cxx'].openmp_flag, mf)
+            filter_file("-fopenmp", self["cxx"].openmp_flag, mf)
 
         # 5.prefix
         filter_file(r"^PREFIX.+", f"PREFIX={os.getcwd()}", mf)

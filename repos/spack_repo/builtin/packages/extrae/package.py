@@ -168,7 +168,9 @@ class Extrae(AutotoolsPackage):
         args += ["--with-cupti=%s" % cupti_dir] if "+cupti" in spec else ["--without-cupti"]
 
         if spec.satisfies("+dyninst"):
-            make.add_default_arg("CXXFLAGS=%s" % self["cxx"].standard_flag(language="cxx", standard="11"))
+            make.add_default_arg(
+                "CXXFLAGS=%s" % self["cxx"].standard_flag(language="cxx", standard="11")
+            )
             args.append("CXXFLAGS=%s" % self["cxx"].standard_flag(language="cxx", standard="11"))
 
         args.extend(self.enable_or_disable("single-mpi-lib"))

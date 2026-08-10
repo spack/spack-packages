@@ -271,7 +271,9 @@ class Conduit(CachedCMakePackage):
         cpp_compiler = self["cxx"].cxx
         rpaths = []
         for compiler_pkg in compiler_pkgs:
-            rpaths.extend(getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", []))
+            rpaths.extend(
+                getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
+            )
         rpaths = list(dict.fromkeys(rpaths))
 
         #  Note: This is not needed if we add `extra_rpaths` to this compiler spec case

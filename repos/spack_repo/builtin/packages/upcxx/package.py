@@ -226,9 +226,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
             options.append("--enable-cuda")
             options.append("--with-cuda-home=" + spec["cuda"].prefix)
             options.append("--with-nvcc=" + spec["cuda"].prefix.bin.nvcc)
-            options.append(
-                "--with-ldflags=" + self["c"].rpath_arg + spec["cuda"].prefix.lib64
-            )
+            options.append("--with-ldflags=" + self["c"].rpath_arg + spec["cuda"].prefix.lib64)
 
         if "+rocm" in spec:
             options.append("--enable-hip")
