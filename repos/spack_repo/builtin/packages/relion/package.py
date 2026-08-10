@@ -99,10 +99,18 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("mpi")
     depends_on("cmake@3:", type="build")
     depends_on("binutils@2.32:", type="build")
-    depends_on("fftw precision=float,double", when="~mklfft")
+    # 3.3.5 floor when +cuda: fftw3.h's own __CUDACC__ guard (see the -D__INTEL_COMPILER removal
+    # in patch() below) was only added in that release - anything older would need the define
+    # this recipe otherwise strips.
+    depends_on("fftw@3.3.5: precision=float,double", when="~mklfft +cuda")
+    depends_on("fftw precision=float,double", when="~mklfft ~cuda")
 
     # use the +xft variant so the interface is not so horrible looking
     depends_on("fltk+xft", when="+gui")
+    # cmake_args() below references self.spec["libx11"]/["xproto"]; without these declared as
+    # dependencies, an actual +gui install crashes with KeyError.
+    depends_on("libx11", when="+gui")
+    depends_on("xproto", when="+gui")
 
     depends_on("libtiff")
     depends_on("libpng", when="@4:")
@@ -174,7 +182,13 @@ class Relion(CMakePackage, CudaPackage):
 
         if self.spec.satisfies("@5:"):
             if self.spec.satisfies("+python"):
-                args.append(f"-DPYTHON_EXE_PATH={self.spec['python'].command.path}")
+                # Not self.spec["python"] (the bare interpreter) - it has none of
+                # py-relion/topaz-3dem/model-angelo/dynamight's own site-packages on its
+                # sys.path (they're all python_pip-build packages sharing one pooled build
+                # venv, python-venv). RELION bakes PYTHON_EXE_PATH into its generated
+                # relion_python_* wrapper scripts, so pointing it at the bare interpreter
+                # breaks every one of them at runtime with ModuleNotFoundError.
+                args.append(f"-DPYTHON_EXE_PATH={self.spec['python-venv'].prefix.bin.python3}")
             else:
                 # /does-not-exist prevents CMake from auto-discovering Conda Python
                 args.append("-DPYTHON_EXE_PATH=/does-not-exist")
@@ -186,6 +200,20 @@ class Relion(CMakePackage, CudaPackage):
         # Remove flags not recognized by the NVIDIA compilers
         if self.spec.satisfies("%nvhpc"):
             filter_file("-std=c99", "-c99", "src/apps/CMakeLists.txt")
+
+        # cmake/BuildTypes.cmake unconditionally adds -D__INTEL_COMPILER to nvcc's flags, meant
+        # only to stop fftw3.h emitting a __float128 typedef nvcc can't parse. FFTW's own
+        # fftw3.h guards that exact code path on !defined(__CUDACC__) (nvcc always defines
+        # __CUDACC__ itself) since commit 07ef78dc1b273a40fb4f7db1797d12d3423b1f40 ("fix #18
+        # (disable float128 for CUDACC)", 2014-07-08), first released in FFTW 3.3.5 - so the
+        # define is redundant for any FFTW this recipe would resolve today (enforced by the
+        # depends_on floor above). If left in place, it actively breaks the following instead:
+        # CUDA 12.9's own libcu++ headers branch on __INTEL_COMPILER too, taking a path invalid
+        # under GCC 13 and failing every .cu file ("use of built-in trait
+        # '__remove_reference(_Tp)' in function signature; use library traits instead") -
+        # reproduced with gcc@13.4 + cuda@12.9.2.
+        if "+cuda" in self.spec:
+            filter_file(r"-D__INTEL_COMPILER ", "", "cmake/BuildTypes.cmake")
 
         # set up some defaults
         filter_file(
