@@ -83,7 +83,12 @@ class PyPandas(PythonPackage):
         depends_on("py-meson-python@0.13.1:", when="@2.1:")
         depends_on("meson@1.2.1:", when="@2.1.1:")
         depends_on("meson@1.0.1:", when="@2.1.0")
-        depends_on("py-cython@3.1.0:", when="@3.0.2:")
+        # was when="@3.0.2:" - pandas' own pyproject.toml requires
+        # Cython>3.1.0 starting at 3.0.1 too, not just 3.0.2+. The cutoff
+        # here was one release too high, letting 3.0.1 fall through to an
+        # older Cython incompatible with its @cython.critical_section
+        # directive (added in Cython 3.1).
+        depends_on("py-cython@3.1.0:", when="@3.0.1:")
         depends_on("py-cython@3.0.5:3", when="@2.2:")
         depends_on("py-cython@0.29.33:2", when="@2.0:2.1")
         depends_on("py-cython@0.29.32:2", when="@1.4.4:1")
