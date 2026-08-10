@@ -20,6 +20,7 @@ class PyAudioread(PythonPackage):
     version("2.1.8", sha256="073904fabc842881e07bd3e4a5776623535562f70b1655b635d22886168dd168")
 
     depends_on("py-setuptools", type="build")
+    depends_on("py-poetry-core",  type="build")
     # the following does not seem to be used for building but is listed in
     # setup.py
     depends_on("py-pytest-runner", type="build")
