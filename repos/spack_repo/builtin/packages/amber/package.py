@@ -121,6 +121,7 @@ class Amber(Package, CudaPackage):
     depends_on("cuda@:12", when="@24:+cuda")
     depends_on("cuda@:11.1", when="@20:23+cuda")  # when='AmberTools@21:'
     depends_on("cuda@:10.2.89", when="@18+cuda")
+    depends_on("cmake", type="build", when="@24:")
     depends_on("gmake", type="build")
 
     # conflicts
