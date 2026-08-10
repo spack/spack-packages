@@ -7,7 +7,7 @@ which overrides the `extern "C"` language linkage. GCC 15 consequently
 emits a mangled reference instead of the plain C symbol exported by CGNS.
 Move the declaration to global scope so it retains external C linkage.
 
-Upstream context: https://github.com/CGNS/CGNS/issues/835
+Upstream report: https://github.com/sandialabs/seacas/issues/889
 
 --- a/packages/seacas/libraries/ioss/src/cgns/Iocgns_DatabaseIO.C
 +++ b/packages/seacas/libraries/ioss/src/cgns/Iocgns_DatabaseIO.C
