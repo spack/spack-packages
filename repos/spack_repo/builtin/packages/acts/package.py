@@ -388,4 +388,3 @@ class Acts(CMakePackage, CudaPackage):
         # Acts installs in non-standard python path
         if self.spec.satisfies("+python"):
             env.prepend_path("PYTHONPATH", self.prefix.python)
-        
