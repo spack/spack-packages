@@ -153,7 +153,10 @@ class OmegaH(CMakePackage, CudaPackage):
     conflicts("+python", when="~shared", msg="python requires shared build")
 
     def patch(self):
-        if "@:9.34.8" in self.spec:
+        # https://github.com/SCOREC/omega_h/commit/4dd682ef16ebf2502239ad06883e9f10c611f1c4
+        if self.spec.satisfies("@10.8.6-scorec:11.0.0-scorec" ):
+            filter_file(r"nc_set_log_level\(5\);", "", "src/Omega_h_exodus.cpp")
+        if self.spec.satisfies("@:9.34.8"):
             filter_file(
                 r"OUTPUT_QUIET", "OUTPUT_VARIABLE Gmsh_VERSION_STRING", "cmake/FindGmsh.cmake"
             )
