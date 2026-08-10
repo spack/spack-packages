@@ -82,7 +82,9 @@ class _4cMultiphysics(CMakePackage):
         "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
         patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
     )
-    depends_on("boost+graph")
+    # deal.II 9.6.2 uses bundled Boost 1.84. Keep 4C's compiled Boost.Graph
+    # library and headers ABI-compatible with the deal.II headers.
+    depends_on("boost@1.84.0+graph")
     depends_on("cln")
     depends_on("zlib-api")
     depends_on("cli11@2.6.1")
@@ -92,7 +94,15 @@ class _4cMultiphysics(CMakePackage):
     depends_on("qhull@2019.1", when="+qhull")
     depends_on("vtk@9:+shared", when="+vtk")
     depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
-    depends_on("dealii@9.6.2+trilinos+mpi~adol-c", when="+dealii")
+    depends_on(
+        "dealii@9.6.2+trilinos+mpi~adol-c",
+        patches=[
+            patch("dealii-force-bundled-boost.patch"),
+            patch("dealii-use-cxx20.patch"),
+            patch("dealii-petsc-3.25-domain-flags.patch"),
+        ],
+        when="+dealii",
+    )
     depends_on("arborx@2.0.1+mpi", when="+arborx")
     depends_on("fftw", when="+fftw")
     depends_on("libbacktrace", when="+backtrace")
@@ -160,4 +170,3 @@ class _4cMultiphysics(CMakePackage):
             )
 
         return args
-
