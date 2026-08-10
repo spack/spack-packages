@@ -28,6 +28,7 @@ class Openblas(CMakePackage, MakefilePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("0.3.34", sha256="cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed")
     version("0.3.33", sha256="6761af1d9f5d353ab4f0b7497be2643313b36c8f31caec0144bfef198e71e6ab")
     version("0.3.32", sha256="f8a1138e01fddca9e4c29f9684fd570ba39dedc9ca76055e1425d5d4b1a4a766")
     version("0.3.30", sha256="27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
@@ -576,6 +577,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # Fortran-free compilation
         if "~fortran" in self.spec:
             make_defs += ["NOFORTRAN=1"]
+            # f_check still auto-detects Fortran compilers on PATH
+            make_defs += ["F_COMPILER=none"]
 
         if "~shared" in self.spec:
             if "+pic" in self.spec:
@@ -645,6 +648,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
             # Due to the verbosity of the command line and number of object
             # files created, we suppress makefile command echoing via `-s`.
             make("-s", *self.make_defs)
+
+    def edit(self, pkg, spec, prefix):
+        # https://github.com/spack/spack-packages/pull/5883#issuecomment-5189054355
+        filter_file("OBJS += test_fork.o", "", "utest/Makefile", string=True)
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
