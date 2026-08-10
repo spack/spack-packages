@@ -373,9 +373,7 @@ class ArmplGcc(Package):
             expand = extension != ".dmg"
             version(ver, sha256=sha256sum, url=url, extension=extension, expand=expand)
 
-    conflicts("target=x86:", msg="Only available on Aarch64")
-    conflicts("target=ppc64:", msg="Only available on Aarch64")
-    conflicts("target=ppc64le:", msg="Only available on Aarch64")
+    requires("target=aarch64:", msg="Only available on Aarch64")
 
     conflicts("%gcc@:11", when="@23.10_gcc-12.2")
     conflicts("%gcc@:10", when="@23.10_gcc-11.3")
