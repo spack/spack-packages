@@ -178,8 +178,8 @@ class Amber(Package, CudaPackage):
             string=True,
         )
 
-        # Installation until version 20 used configure script
-        if self.version <= Version("20"):
+        # Installation before version 24 used the configure script
+        if self.version < Version("24"):
             # Base configuration
             conf = Executable("./configure")
             base_args = ["--skip-python", "--with-netcdf", self.spec["netcdf-fortran"].prefix]
