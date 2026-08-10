@@ -175,13 +175,13 @@ class Cmake(Package):
     # on Windows, the same Schannel stack CMake's vendored cmcurl already uses.
     # Keeping the default (+ownlibs) free of curl lets CMake bootstrap on
     # Windows from nothing
-    for _system_curl in (
+    for _requires_system_curl in (
         "platform=linux",
         "platform=darwin",
         "platform=freebsd",
         "platform=windows ~ownlibs",
     ):
-        with when(_system_curl):
+        with when(_requires_system_curl):
             depends_on("curl@:8.15", when="@:3.25")
             depends_on("curl")
 
@@ -338,13 +338,6 @@ class Cmake(Package):
         else:
             args.append("-DCMAKE_INSTALL_PREFIX=%s" % self.prefix)
 
-            # There is no bootstrap script on Windows -- the build is driven by an
-            # existing cmake.exe -- so the --system-* flags above have no analogue
-            # here and the cache variables have to be set directly. Opt in per
-            # library rather than with CMAKE_USE_SYSTEM_LIBRARIES, because most of
-            # what CMake vendors is unavailable on Windows: libarchive is
-            # autotools-only in Spack, nghttp2 and rhash cannot build here at all,
-            # and cppdap is not packaged. Those stay vendored.
             if spec.satisfies("~ownlibs"):
                 args.extend(
                     [

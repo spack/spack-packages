@@ -163,15 +163,6 @@ class Curl(AutotoolsPackage, CMakePackage):
         return flags, None, build_system_flags
 
 
-class BuildEnvironment:
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        if self.spec.satisfies("libs=static"):
-            env.append_flags("CFLAGS", "-DCURL_STATICLIB")
-            env.append_flags("CXXFLAGS", "-DCURL_STATICLIB")
-
-
 class AutotoolsBuilder(AutotoolsBuilder):
     def configure_args(self):
         spec = self.spec
