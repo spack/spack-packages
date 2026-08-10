@@ -120,9 +120,7 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("zlib-api", when="+zlib")
     depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
 
-    conflicts(
-        "+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both"
-    )
+    conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
     conflicts(
         "+trilinos",
         when="@11.1.0-scorec:+exodus",
@@ -154,7 +152,7 @@ class OmegaH(CMakePackage, CudaPackage):
 
     def patch(self):
         # https://github.com/SCOREC/omega_h/commit/4dd682ef16ebf2502239ad06883e9f10c611f1c4
-        if self.spec.satisfies("@10.8.6-scorec:11.0.0-scorec" ):
+        if self.spec.satisfies("@10.8.6-scorec:11.0.0-scorec"):
             filter_file(r"nc_set_log_level\(5\);", "", "src/Omega_h_exodus.cpp")
         if self.spec.satisfies("@:9.34.8"):
             filter_file(
