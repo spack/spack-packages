@@ -32,6 +32,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.12.1", commit="760ac3f8e106addc13dad8a47b9d4ad75e44ea48", tag="release-1.12.1")
     version("1.12.0", commit="e32a25bed7b73baa7a5684c0183d2c369e16693c", tag="release-1.12.0")
     version("1.11.1", commit="7365053a5bd59839ac47e6133426620540aca7e3", tag="release-1.11.1")
     version("1.11.0", commit="c996f6505161618f9ca9663942e0beef738b0ecc", tag="release-1.11.0")
@@ -42,6 +43,9 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
     version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
 
+    patch("fix-header-only-install.patch", when="@1.7.0:1.11.1")
+    patch("add_header_to_registry.patch", when="@1.12.0")
+    
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
     variant(
