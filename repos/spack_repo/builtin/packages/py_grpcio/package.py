@@ -109,6 +109,13 @@ class PyGrpcio(PythonPackage):
     depends_on("zlib-api", when="@1.33.1:")
     depends_on("c-ares", when="@1.33.1:")
     depends_on("re2+shared", when="@1.34:")
+    # re2 has no upper bound by default. Recent re2 (2025-11-05+) needs
+    # std::optional (C++17) in its public header, but grpcio's own
+    # setup.py hardcodes -std=c++14 for this version bracket - and
+    # abseil-cpp's cxxstd=14 default (shared with re2 on the same DAG node)
+    # can't be raised to 17 without conflicting with other consumers. Cap
+    # re2 at the last version still using absl::optional instead.
+    depends_on("re2@:2024-07-02", when="@1.47:1.64")
     depends_on("abseil-cpp+shared cxxstd=17", when="@1.71:")
     depends_on("abseil-cpp+shared cxxstd=14", when="@1.47:1.64")
 
