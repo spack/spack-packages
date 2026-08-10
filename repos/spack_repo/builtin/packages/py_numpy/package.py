@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.2", sha256="d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860")
     version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
     version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
     version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
@@ -96,7 +97,8 @@ class PyNumpy(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.12:3.14", when="@2.5:")
+        depends_on("python@3.12:3.15", when="@2.5.2:")
+        depends_on("python@3.12:3.14", when="@2.5.0:2.5.1")
         depends_on("python@3.11:3.14", when="@2.3.2:2.4")
         depends_on("python@3.11:3.13", when="@2.3.0:2.3.1")
         depends_on("python@3.10:3.13", when="@2.1:2.2")
@@ -114,6 +116,7 @@ class PyNumpy(PythonPackage):
         # Build dependencies (do not include upper bound unless known issues)
         depends_on("py-meson-python@0.18:", when="@2.4:")
         depends_on("py-meson-python@0.15:", when="@1.26.4:")
+        depends_on("py-cython@3.1.0:", when="@2.5.2:")
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
