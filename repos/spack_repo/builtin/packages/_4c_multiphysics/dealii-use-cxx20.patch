@@ -1,0 +1,20 @@
+Build deal.II 9.6.2 with the C++ standard used by 4C.
+
+4C's supported dependency build configures deal.II with C++20. This is also
+required by current Taskflow releases, whose headers use C++20 concepts,
+std::bit_width, and atomic wait/notify operations.
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -90,6 +90,10 @@ endif()
+ #
+ verbose_include(${CMAKE_SOURCE_DIR}/cmake/setup_cached_variables.cmake)
+
++set(CMAKE_CXX_STANDARD 20 CACHE STRING
++  "The C++ standard required by 4C and Taskflow." FORCE
++  )
++
+ #
+ # Now, set the project and set up the rest:
+ #
+
