@@ -130,9 +130,13 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             ]
         return args
 
+    # After 13.0,
+    # they added ./cmake/InstallSamples.cmake 
+    # since commit 547f65851fafdb6a66f47ce56b4c0603db885910
+    # Before 13.0
     # cuda-samples doesn't actually install the samples in the
     # CMAKE_INSTALL_PREFIX dir, so this copies them
-    @when("@12.8:")
+    @when("@12.8:13.0")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         install_tree(os.path.join(self.build_directory, "Samples"), prefix.bin)
