@@ -12,10 +12,16 @@ class KokkosTools(CMakePackage):
 
     homepage = "https://github.com/kokkos/kokkos-tools/"
     git = "https://github.com/kokkos/kokkos-tools.git"
+    url = (
+        "https://github.com/kokkos/kokkos-tools/releases/download/5.2.0/kokkos-tools-5.2.0.tar.gz"
+    )
+
     maintainers("jennfshr", "vlkale", "rbberger")
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
+
+    version("5.2.0", sha256="545169f76709a7e8391b3c8bbf3cc1b03844095fe54a85946e840eab4cbfc513")
 
     variant("mpi", default=False, description="Enable MPI support")
     variant("papi", default=False, description="Enable PAPI support")

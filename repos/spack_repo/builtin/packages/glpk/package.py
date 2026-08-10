@@ -32,6 +32,13 @@ class Glpk(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("gmp", when="+gmp")
 
+    # Do not define bool, true, or false for C23 compatibility
+    patch(
+        "https://src.fedoraproject.org/rpms/glpk/raw/2f25ac1417ccd1a9e2773d63800d50a2ab326ede/f/glpk-5.0-bool.patch",
+        sha256="962e2526a1fab58cd3d577a786e714ca923086179bb94d9d4bf259f7e0f42c27",
+        when="%gcc@15:",
+    )
+
     def configure_args(self):
         options = []
 

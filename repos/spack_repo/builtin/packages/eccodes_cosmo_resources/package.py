@@ -20,6 +20,7 @@ class EccodesCosmoResources(Package):
 
     maintainers("huppd", "lxavier", "victoria-cherkas")
 
+    version("2.47.0.1", sha256="f3b1db5827d275061a72ac0fa882028a0309ff9c5e46d24d338de058f5a956b1")
     version("2.44.0.1", sha256="0413a791e53e2d2a120c7aea92560a729d2a8bb202b6fbcfa691911a2d066f06")
     version("2.36.0.3", sha256="503a1b5f8a0aefc782e0faab52960d957d1d73f042ea4e1ac6e4888e53784125")
     version("2.25.0.3", sha256="f2ebf768a489c17d6b3fbb49c27b50c2806d48cc03c4aa93a9e9bca0ff44c599")
@@ -28,6 +29,7 @@ class EccodesCosmoResources(Package):
     version("2.18.0.1", sha256="666e14a3841f168a231487a55eea58fa5a6209a65a1f8a6ef02af713fa6fcbe7")
 
     depends_on("eccodes")
+    depends_on("eccodes@2.47.0", type=("build", "link", "run"), when="@2.47.0.1")
     depends_on("eccodes@2.44.0", type=("build", "link", "run"), when="@2.44.0.1")
     depends_on("eccodes@2.36.4", type=("build", "link", "run"), when="@2.36.0.3")
     depends_on("eccodes@2.25.0", type=("build", "link", "run"), when="@2.25.0.1:2.25.0.3")

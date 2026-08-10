@@ -22,6 +22,16 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.2.0-scorec",
+        commit="6b26c685cf3a62f595d5f21f05deb0525ae48c6f",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
+        "11.1.0-scorec",
+        commit="9254be597e6460df497724e11b466485c37e94ff",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "11.0.0-scorec",
         commit="fbe1cc131fb1b5ac840129ecd8bd7b42ab244000",
         git="https://github.com/SCOREC/omega_h.git",
@@ -67,7 +77,11 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=True, description="Use Teuchos and Kokkos")
+    variant(
+        "trilinos",
+        default=False,
+        description="Use Kokkos and SEACASExodus from trilinos",
+    )
     variant(
         "exodus",
         default=False,
@@ -82,6 +96,12 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
     variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
+    variant(
+        "python",
+        default=False,
+        description="enable python interfaces",
+        when="@11.2.0-scorec:",
+    )
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -89,10 +109,25 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh", when="+examples")
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
-    depends_on("trilinos +kokkos", when="+trilinos")
-    depends_on("trilinos +exodus", when="+exodus")
+    depends_on("trilinos +kokkos+exodus", when="+trilinos")
+    depends_on("trilinos +kokkos+exodus", when="@:11.0.0-scorec+exodus")
     depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:+kokkos")
+    depends_on("python", when="+python")
+    depends_on("py-numpy", type=("build", "link", "run"), when="+python")
+    depends_on("py-pybind11", type="build", when="+python")
+    depends_on("py-pytest", type="test", when="+python")
     depends_on("zlib-api", when="+zlib")
+    depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
+
+    conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
+    conflicts(
+        "+trilinos",
+        when="@11.1.0-scorec:+exodus",
+        msg="Use SEACASExodus directly or via Trilinos, not both",
+    )
+
+    extends("python", when="+python")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
@@ -113,10 +148,13 @@ class OmegaH(CMakePackage, CudaPackage):
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
 
-    conflicts("+exodus", when="~trilinos", msg="exodus requires trilinos to be enabled")
+    conflicts("+python", when="~shared", msg="python requires shared build")
 
     def patch(self):
-        if "@:9.34.8" in self.spec:
+        # https://github.com/SCOREC/omega_h/commit/4dd682ef16ebf2502239ad06883e9f10c611f1c4
+        if self.spec.satisfies("@10.8.6-scorec:11.0.0-scorec"):
+            filter_file(r"nc_set_log_level\(5\);", "", "src/Omega_h_exodus.cpp")
+        if self.spec.satisfies("@:9.34.8"):
             filter_file(
                 r"OUTPUT_QUIET", "OUTPUT_VARIABLE Gmsh_VERSION_STRING", "cmake/FindGmsh.cmake"
             )
@@ -163,6 +201,8 @@ class OmegaH(CMakePackage, CudaPackage):
             args.append("-DOmega_h_USE_Gmsh:BOOL=ON")
         if "+kokkos" in self.spec:
             args.append("-DOmega_h_USE_Kokkos:BOOL=ON")
+        if "+python" in self.spec:
+            args.append("-DOmega_h_USE_pybind11:BOOL=ON")
         if "+zlib" in self.spec:
             args.append("-DOmega_h_USE_ZLIB:BOOL=ON")
             args.append("-DZLIB_ROOT:PATH={0}".format(self.spec["zlib-api"].prefix))

@@ -85,7 +85,7 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     variant(
         "smm",
-        default="libxsmm",
+        default="blas",
         values=("libxsmm", "blas"),
         description="Library for small matrix multiplications",
         when="@:2.9.1",
@@ -96,6 +96,12 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
         values=("blas", "libxs"),
         description="Library for small matrix multiplications",
         when="@2.10:",
+    )
+    variant(
+        "libxsmm",
+        default=True,
+        description="Enable LIBXSMM JIT kernels for LIBXS",
+        when="@2.10: smm=libxs",
     )
 
     variant(
@@ -141,6 +147,10 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hipblas", when="+rocm")
     depends_on("libxs@1:+fortran", when="@2.10: smm=libxs")
+    depends_on(
+        "libxsmm@2: build_system=cmake",
+        when="+libxsmm",
+    )
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
     with when("+opencl"):
@@ -243,9 +253,10 @@ class Dbcsr(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
 
-        if "smm=libxs" in spec:
+        if spec.satisfies("@2.10:"):
             args += [
-                "-DUSE_LIBXS=ON",
+                self.define("USE_LIBXS", spec.satisfies("smm=libxs")),
+                self.define_from_variant("USE_LIBXSMM", "libxsmm"),
             ]
 
         if "@:2.9.1" in spec:

@@ -16,8 +16,13 @@ class PyCryptography(PythonPackage):
 
     license("Apache-2.0")
 
-    version("46.0.7", sha256="e4cfd68c5f3e0bfdad0d38e023239b96a2fe84146481852dffbcca442c245aa5")
+    version("50.0.0", sha256="eeac2acb5a20ed25e0ad6d1df9891a520b78b404266b6d11778f25d5d691a6c9")
     with default_args(deprecated=True):
+        # https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5
+        # https://github.com/pyca/cryptography/security/advisories/GHSA-537c-gmf6-5ccf
+        version(
+            "46.0.7", sha256="e4cfd68c5f3e0bfdad0d38e023239b96a2fe84146481852dffbcca442c245aa5"
+        )
         # CVE-2026-39892
         version(
             "46.0.3", sha256="a8b17438104fed022ce745b362294d9ce35b4c2e45c1d958ad4a4b019285f4a1"
@@ -64,6 +69,7 @@ class PyCryptography(PythonPackage):
     # distutils required in version <= 40
     depends_on("python@:3.11", when="@:40", type=("build", "run"))
 
+    depends_on("py-maturin@1.14.1:1", when="@50:", type="build")
     depends_on("py-maturin@1.9.4:1", when="@46:", type="build")
     depends_on("py-maturin@1.8.6:1", when="@45", type="build")
     depends_on("py-maturin@1", when="@43:44", type="build")
@@ -74,7 +80,8 @@ class PyCryptography(PythonPackage):
         depends_on("py-setuptools-rust@1.7.0:", when="@42", type=("build", "run"))
         depends_on("py-setuptools-rust@0.11.4:", type="build")
 
-    # from https://cryptography.io/en/latest/installation/#rust
+    # Cargo.toml
+    depends_on("rust@1.83:", when="@47:", type="build")
     depends_on("rust@1.74:", when="@45:", type="build")
     depends_on("rust@1.65:", when="@43:", type="build")
     depends_on("rust@1.63:", when="@42:", type="build")
@@ -83,6 +90,7 @@ class PyCryptography(PythonPackage):
     depends_on("rust@1.41:", type="build")
     depends_on("pkgconfig", when="@40:", type="build")
 
+    depends_on("py-cffi@2.0:", when="@48:", type=("build", "run"))
     depends_on("py-cffi@1.14:", when="@45:", type=("build", "run"))
     depends_on("py-cffi@1.12:", type=("build", "run"))
     depends_on("py-typing-extensions@4.13.2:", when="@46: ^python@:3.10", type=("build", "run"))

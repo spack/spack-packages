@@ -37,12 +37,13 @@ class KokkosFft(CMakePackage):
         multi=False,
         description="Enable device backend",
     )
-    variant("tests", default=False, description="Enable tests")
 
     depends_on("cxx", type="build")
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@:4", type="build", when="@:1")
     depends_on("cmake@:3", type="build", when="@:0")
+
+    depends_on("googletest@1.15:1", type="test")
 
     depends_on("kokkos +complex_align")
     depends_on("kokkos@5.0:", when="@2.0:")
@@ -59,7 +60,6 @@ class KokkosFft(CMakePackage):
     requires("^kokkos +rocm", when="device_backend=hipfft")
     requires("^kokkos +rocm", when="device_backend=rocfft")
     requires("^kokkos +sycl", when="device_backend=onemkl")
-    depends_on("googletest@1.15:1", when="+tests")
 
     depends_on("fftw@3.3:3 ~mpi precision=float,double")
     requires("^fftw +openmp", when="host_backend=fftw-openmp")
@@ -77,7 +77,7 @@ class KokkosFft(CMakePackage):
     def cmake_args(self):
         args = [
             self.define("KokkosFFT_ENABLE_INTERNAL_KOKKOS", False),
-            self.define_from_variant("KokkosFFT_ENABLE_TESTS", "tests"),
+            self.define("KokkosFFT_ENABLE_TESTS", self.run_tests),
             self.define("KokkosFFT_ENABLE_DOCS", False),
             self.define("KokkosFFT_ENABLE_BENCHMARK", False),
             self.define("KokkosFFT_ENABLE_EXAMPLES", False),
