@@ -130,6 +130,7 @@ class PyOnnx(PythonPackage):
         env.set(
             "CMAKE_BUILD_DIR", join_path(self.stage.path, f"spack-build-{self.spec.dag_hash(7)}")
         )
-        purelib = self.spec["python"].package.purelib
-        nanobind_site_packages = os.path.join(self.spec["py-nanobind"].prefix, purelib)
-        env.append_path("CMAKE_PREFIX_PATH", f"{nanobind_site_packages}/nanobind/cmake")
+        if self.spec.satisfies("^py-nanobind"):
+            purelib = self.spec["python"].package.purelib
+            nanobind_site_packages = os.path.join(self.spec["py-nanobind"].prefix, purelib)
+            env.append_path("CMAKE_PREFIX_PATH", f"{nanobind_site_packages}/nanobind/cmake")
