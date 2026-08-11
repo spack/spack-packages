@@ -16,6 +16,16 @@ class PyProteus(PythonPackage):
     # Tracks cekees/proteus's torino_narwhal branch rather than erdc/proteus
     # releases: upstream unconditionally requires a Chrono install.
     # torino_narwhal makes Chrono and SCOREC independently optional.
+    #
+    # NOTE: github.com/cekees/proteus's fork-network LFS bandwidth budget is
+    # billed against upstream erdc/proteus, not cekees, and can be exhausted
+    # independent of anything the cekees fork owner does -- a fresh clone's
+    # `git checkout` then fails during LFS smudge ("git checkout --quiet
+    # ...: exit status 128"). If you hit that, point this at a local,
+    # already-cloned checkout instead (`git = "file:///path/to/checkout"`)
+    # as a temporary local edit -- Spack has no per-invocation override for
+    # a version's own git URL (confirmed: `git=` is not a valid spec
+    # variant here).
     git = "https://github.com/cekees/proteus.git"
 
     maintainers("cekees")
@@ -51,6 +61,15 @@ class PyProteus(PythonPackage):
     depends_on("hdf5+mpi+hl")
     # config/default.py hard-codes '-lopenblas' on Linux.
     depends_on("openblas")
+    # superlu's own library calls METIS_NodeND for fill-reducing ordering, but
+    # metis was previously only pulled in transitively via parmetis, and only
+    # when +scorec. Without a direct dependency Spack never adds metis's lib
+    # dir to the rpath/link-path Spack automatically wires up for direct
+    # depends_on() packages, so the base (~scorec) build's superluWrappers
+    # extension fails at import time with "symbol not found in flat
+    # namespace '_METIS_NodeND'" (confirmed via a real `spack install
+    # py-proteus` build).
+    depends_on("metis")
     depends_on("superlu")
     depends_on("triangle")
     # proteus.fenton.Fenton links ncurses unconditionally.
@@ -90,6 +109,9 @@ class PyProteus(PythonPackage):
         env.set("SUPERLU_DIR", self.spec["superlu"].prefix)
         env.set("TRIANGLE_DIR", self.spec["triangle"].prefix)
         env.set("NCURSES_DIR", self.spec["ncurses"].prefix)
+        # Needed unconditionally now (config/default.py's get_flags('metis')
+        # feeds superluWrappers'/csmoothers' link line), not just +scorec.
+        env.set("METIS_DIR", self.spec["metis"].prefix)
 
         if self.spec.satisfies("+scorec"):
             env.set("SCOREC_DIR", self.spec["pumi"].prefix)
