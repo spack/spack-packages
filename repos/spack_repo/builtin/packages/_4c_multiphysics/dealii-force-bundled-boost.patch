@@ -1,0 +1,22 @@
+Force deal.II 9.6.2 to use its bundled Boost implementation.
+
+Boost 1.90 no longer installs libboost_system, but deal.II 9.6.2's legacy
+FindBoost logic requires that compiled library. 4C's supported deal.II build
+already sets DEAL_II_FORCE_BUNDLED_BOOST=ON; make the same setting for this
+4C-scoped Spack dependency patch.
+
+--- a/cmake/configure/configure_20_boost.cmake
++++ b/cmake/configure/configure_20_boost.cmake
+@@ -30,6 +30,11 @@ set(DEAL_II_WITH_BOOST ON # Always true. We need it :-]
+   CACHE BOOL "Build deal.II with support for boost." FORCE
+   )
+
++set(DEAL_II_FORCE_BUNDLED_BOOST ON
++  CACHE BOOL "Use the bundled Boost implementation required by 4C." FORCE
++  )
++
++
+
+ macro(feature_boost_find_external var)
+   find_package(DEAL_II_BOOST)
+
