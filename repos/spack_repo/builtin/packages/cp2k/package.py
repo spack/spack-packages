@@ -653,7 +653,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     def patch(self):
         # Patch to disable -march=native and -mtune=native to avoid
         # illegal instructions when cross compiling with spack
-        if self.spec.satisfies("@2026.1:"):
+        if self.spec.satisfies("@2026.1:2026.2"):
             filter_file(
                 r"-march=native;-mtune=native",
                 "",
