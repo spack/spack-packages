@@ -17,7 +17,7 @@ class Sfcgal(CMakePackage):
 
     homepage = "http://www.sfcgal.org/"
     url = "https://gitlab.com/sfcgal/SFCGAL/-/archive/v2.3.0/SFCGAL-v2.3.0.tar.gz"
-    old_github_urlbase = "https://github.com/Oslandia/SFCGAL/archive/v{0}.tar.gz" # up to 1.3.8
+    old_github_urlbase = "https://github.com/Oslandia/SFCGAL/archive/v{0}.tar.gz"  # up to 1.3.8
 
     license("LGPL-2.0-or-later")
 
