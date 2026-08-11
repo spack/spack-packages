@@ -62,9 +62,7 @@ class Podio(CMakePackage):
         description="Build the RDataSource for reading podio collections",
         when="@1.0.2:",
     )
-    variant(
-        "arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:"
-    )
+    variant("arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
