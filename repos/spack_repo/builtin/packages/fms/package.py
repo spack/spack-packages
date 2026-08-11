@@ -119,6 +119,14 @@ class Fms(CMakePackage):
         description="yaml input file support(requires libyaml)",
         when="@2021.04:",
     )
+
+    # fms CMake omits a needed target_link_libraries statement, so the yaml symbols
+    # never get linked into the exported fms target, causing downstream consumers to
+    # fail with "undefined reference to yaml_*" at link time. Fixed upstream in
+    # 2026.01 (github.com/noaa-gfdl/FMS commit d814ff6a, PR #1822); not backported to
+    # any earlier release. This patch covers a recent part of the range.
+    patch("fms-link-libyaml.patch", when="+yaml @2025.02:2025.04")
+
     variant(
         "constants",
         default="GFDL",
