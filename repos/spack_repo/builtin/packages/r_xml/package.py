@@ -16,6 +16,7 @@ class RXml(RPackage):
 
     cran = "XML"
 
+    version("3.99-0.23", sha256="ecd13e11563ccc03196daec2b3dfc68368daab1877d540e1415e88cd31d61998")
     version("3.99-0.17", sha256="6e233265ff69ff2f59f56fe4abc5af70e2cfa6d99aec6ad2afd2bf2c0d98a2d8")
     version("3.99-0.14", sha256="2cb6a61a4d8d89e311994f47df09913d4ce5281317d42c78af4aafd75a31f1f9")
     version("3.99-0.12", sha256="cb209425c886bf405dc03fda8854e819bd9b2d4e4b031c71c5120b7302a36d14")
@@ -31,6 +32,8 @@ class RXml(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@2.13.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@3.99-0.5:")
+
+    depends_on("libxml2@:2.14", when="@:3.99-0.18")
+    depends_on("libxml2@:2.10", when="@:3.99-0.16")  # @= would be more precise
     depends_on("libxml2@2.6.3:")
