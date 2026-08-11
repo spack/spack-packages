@@ -653,13 +653,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     def patch(self):
         # Patch to disable -march=native and -mtune=native to avoid
         # illegal instructions when cross compiling with spack
-        if self.spec.satisfies("@2026.1"):
-            filter_file(
-                r";-march=native;-mtune=native",
-                "",
-                "cmake/CompilerConfiguration.cmake",
-            )
-        if self.spec.satisfies("@2026.2"):
+        if self.spec.satisfies("@2026.1:"):
             filter_file(
                 r"-march=native;-mtune=native",
                 "",
@@ -1402,9 +1396,5 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     ),
                 ]
             )
-
-        # let spack decide the mtune flags -- the flag should work in the next releases
-        if self.spec.satisfies("@2026.1:"):
-            args += [self.define("CP2K_GNU_NATIVE_TUNE", "")]
 
         return args
