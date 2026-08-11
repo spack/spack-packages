@@ -66,7 +66,7 @@ class Opensubdiv(CMakePackage, CudaPackage):
         if "+cuda" in spec:
             args.append("-DNO_CUDA=0")
 
-            cuda_arch = [x for x in spec.variants["cuda_arch"].value if x]
+            cuda_arch = [x for x in spec.variants["cuda_arch"].value if x and x != "none"]
             if cuda_arch:
                 args.append(
                     "-DOSD_CUDA_NVCC_FLAGS={0}".format(" ".join(self.cuda_flags(cuda_arch)))
