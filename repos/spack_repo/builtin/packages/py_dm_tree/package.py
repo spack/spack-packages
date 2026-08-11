@@ -52,9 +52,11 @@ class PyDmTree(CMakePackage, PythonExtension):
         sha256="77dbd895611d412da99a5afbf312c3c49984ad02bd0e56ad342b2002a87d789c",
         when="@0.1.8",
     )
-    # Add missing an install(...) to CMakeLists.txt
+    # Add missing an install(...) to CMakeLists.txt.
+    # Similar patches may be needed to compile versions older than v0.1.9.
     # https://github.com/google-deepmind/tree/pull/136
-    patch("add-cmake-install.patch")
+    patch("add-cmake-install-0.1.10.patch", when="@0.1.10")
+    patch("add-cmake-install-0.1.9.patch", when="@0.1.9")
 
     conflicts("%gcc@13:", when="@:0.1.7")
 
