@@ -57,7 +57,15 @@ class PyProteus(PythonPackage):
     depends_on("py-h5py+mpi", type=("build", "run"))
 
     depends_on("mpi")
-    depends_on("petsc+mpi")
+    # +hypre+superlu-dist to match the --download-proteus/HPC and pip paths'
+    # own PETSc configure flags (--download-hypre --download-superlu_dist).
+    # Without them, a noticeable slice of the solver-heavy test suite fails
+    # outright (AMG-based tests, parallel-direct-solve tests) rather than
+    # just running slower/differently -- confirmed via a real
+    # `spack install py-proteus+scorec` build and full pytest run: 35 failed
+    # (mostly AMG/solver tests) vs. the 6 known pre-existing failures other
+    # install paths show.
+    depends_on("petsc+mpi+hypre+superlu-dist")
     depends_on("hdf5+mpi+hl")
     # config/default.py hard-codes '-lopenblas' on Linux.
     depends_on("openblas")
