@@ -410,6 +410,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libxc@6.2:", when="@2023.2:")
         depends_on("libxc@:6", when="@:2024.3")
         depends_on("libxc@7 build_system=cmake", when="@2025.2:")
+        depends_on("libxc+kxc", when="@8.2:")
 
     with when("+spla"):
         depends_on("spla+cuda+fortran", when="+cuda")
