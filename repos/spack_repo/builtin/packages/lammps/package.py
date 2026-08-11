@@ -639,16 +639,16 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                 args.append(self.define("GPU_API", "opencl"))
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
             elif spec.satisfies("+rocm"):
-                args.append(self.define("PKG_GPU", True))
-                args.append(self.define("GPU_API", "hip"))
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-                args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
             else:
                 args.append(self.define("PKG_GPU", False))
         else:
             args.append(self.define("EXTERNAL_KOKKOS", True))
             if spec.satisfies("@20240207: +kokkos+kspace"):
                 args.append(self.define_from_variant("FFT_KOKKOS", "fft_kokkos"))
+            if spec.satisfies("+rocm"):
+                args.append(self.define("Kokkos_ENABLE_HIP", True))
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
 
         if spec.satisfies("@20180629:+lib"):
             args.append(self.define("BUILD_LIB", True))
@@ -739,12 +739,21 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
 
         if spec.satisfies("+rocm"):
+            args.append(self.define("PKG_GPU", True))
+            args.append(self.define("GPU_API", "hip"))
             args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
+            args.append(self.define("HIP_PLATFORM", "amd"))
             if spec.satisfies("@:20231121"):
                 if spec.satisfies("^hip@:5.4"):
                     args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
                 elif spec.satisfies("^hip@5.5:"):
                     args.append(self.define("HIP_PATH", spec["hip"].prefix))
+            else:
+                args.append(self.define("HIP_PATH", spec["hip"].prefix))
+            args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
+            # HIP_ARCH deprecated, use GPU_ARCH instead
+            args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
+            args.append(self.define("HIP_USE_DEVICE_SORT", False))
 
         return args
 
