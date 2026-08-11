@@ -24,8 +24,9 @@ class PyCftime(PythonPackage):
     # https://github.com/Unidata/cftime/blob/v1.6.3rel/Changelog#L7
     depends_on("python@:3.11", when="@:1.6.2")
 
-    depends_on("py-setuptools@18.0:", type="build", when="@1.0.3.4")
+    depends_on("py-setuptools@77:", type="build", when="@1.6.5:")
     depends_on("py-setuptools@41.2:", type="build", when="@1.6.4:")
+    depends_on("py-setuptools@18.0:", type="build", when="@1.0.3.4")
 
     depends_on("py-cython@0.19:", type="build", when="@1.0.3.4")
     depends_on("py-cython@0.29.20:", type="build", when="@1.6.4:")
