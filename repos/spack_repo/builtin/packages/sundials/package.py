@@ -1,18 +1,21 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
-#
-# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
 import sys
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cached_cmake import (
+    CachedCMakePackage,
+    cmake_cache_option,
+    cmake_cache_path,
+    cmake_cache_string,
+)
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Sundials(CMakePackage, CudaPackage, ROCmPackage):
+class Sundials(CachedCMakePackage, CudaPackage, ROCmPackage):
     """SUNDIALS (SUite of Nonlinear and DIfferential/ALgebraic equation
     Solvers)"""
 
@@ -154,7 +157,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     variant("static", default=True, description="Build static libraries")
 
     # Fortran interfaces
-    variant("fcmix", default=False, description="Enable Fortran 77 interface")
     variant("f2003", default=False, description="Enable Fortran 2003 interface")
 
     # Examples
@@ -181,28 +183,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "profiling", default=False, when="@6.0.0:", description="Build with profiling capabilities"
     )
-
-    # ==========================================================================
-    # Conflicts
-    # ==========================================================================
-
-    conflicts("+rocm", when="@:5.6.0")
-
-    # External libraries incompatible with 64-bit indices
-    conflicts("+lapack", when="+int64")
-
-    # External libraries incompatible with single precision
-    conflicts("+klu", when="precision=single")
-    conflicts("+superlu-dist", when="precision=single")
-
-    # External libraries incompatible with extended (quad) precision
-    conflicts("+lapack", when="precision=extended")
-    conflicts("+superlu-mt", when="precision=extended")
-    conflicts("+superlu-dist", when="precision=extended")
-    conflicts("+klu", when="precision=extended")
-
-    # rocm+examples and cstd do not work together in 6.0.0
-    conflicts("+rocm+examples", when="@6.0.0")
 
     # ==========================================================================
     # Dependencies
@@ -272,6 +252,41 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("superlu-mt+blas", when="+superlu-mt")
 
     # ==========================================================================
+    # Conflicts
+    # ==========================================================================
+
+    conflicts("+rocm", when="@:5.6.0")
+
+    with when("+int64"):
+        conflicts("+lapack")
+        conflicts("+hypre", when="+hypre@:2.6.1a")
+
+    # External libraries incompatible with single precision
+    with when("precision=single"):
+        conflicts("+hypre", when="+hypre@:2.12.0")
+        conflicts("+klu")
+        conflicts("+superlu-dist")
+
+    # External libraries incompatible with extended (quad) precision
+    with when("precision=extended"):
+        conflicts("+hypre", when="+hypre@:2.12.0")
+        conflicts("+klu")
+        conflicts("+lapack")
+        conflicts("+superlu-dist")
+        conflicts("+superlu-mt")
+
+
+    # rocm+examples and cstd do not work together in 6.0.0
+    conflicts("+rocm+examples", when="@6.0.0")
+
+    # Ginkgo requires at least C++17 starting with 1.9.0
+    conflicts("cxxstd=14", when="+ginkgo@1.9.0:")
+
+    # SYCL requires at least C++17
+    conflicts("cxxstd=14", when="+sycl")
+
+
+    # ==========================================================================
     # Patches
     # ==========================================================================
     # https://github.com/LLNL/sundials/pull/434
@@ -293,242 +308,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
     patch("remove-links-to-OpenMP-vector.patch", when="@5.5.0:5.7.0")
     # fix issues with exported PETSc target(s) in SUNDIALSConfig.cmake
     patch("sundials-v5.8.0.patch", when="@5.8.0")
-
-    def flag_handler(self, name, flags):
-        if name == "cxxflags":
-            if self.spec.satisfies("+sycl"):
-                flags.append("-fsycl")
-        return (flags, None, None)
-
-    # ==========================================================================
-    # SUNDIALS Settings
-    # ==========================================================================
-
-    def cmake_args(self):
-        spec = self.spec
-        define = self.define
-        from_variant = self.define_from_variant
-
-        # List of CMake arguments
-        # Note: CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE are set automatically
-        args = []
-
-        # SUNDIALS solvers
-        for pkg in self.sun_solvers:
-            args.append(from_variant("BUILD_" + pkg, pkg))
-
-        args.extend(
-            [
-                # language standard
-                from_variant("CMAKE_C_STANDARD", "cstd"),
-                from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
-                # precision
-                from_variant("SUNDIALS_PRECISION", "precision"),
-            ]
-        )
-
-        # index type
-        intsize = "64" if "+int64" in spec else "32"
-        args.extend(
-            [
-                define("SUNDIALS_INDEX_SIZE", intsize),
-                define("SUNDIALS_INDEX_TYPE", f"int{intsize}_t"),
-            ]
-        )
-
-        args.extend(
-            [
-                # Fortran interface
-                from_variant("F77_INTERFACE_ENABLE", "fcmix"),
-                from_variant("F2003_INTERFACE_ENABLE", "f2003"),
-                # library type
-                from_variant("BUILD_SHARED_LIBS", "shared"),
-                from_variant("BUILD_STATIC_LIBS", "static"),
-                # Generic (std-c) math libraries
-                from_variant("USE_GENERIC_MATH", "generic-math"),
-                # Logging
-                from_variant("SUNDIALS_LOGGING_LEVEL", "logging-level"),
-                from_variant("SUNDIALS_LOGGING_ENABLE_MPI", "logging-mpi"),
-                # Monitoring
-                from_variant("SUNDIALS_BUILD_WITH_MONITORING", "monitoring"),
-                # Profiling
-                from_variant("SUNDIALS_BUILD_WITH_PROFILING", "profiling"),
-                from_variant("ENABLE_CALIPER", "caliper"),
-            ]
-        )
-
-        if "+caliper" in spec:
-            args.append(define("CALIPER_DIR", spec["caliper"].prefix))
-
-        # parallelism
-        args.extend(
-            [
-                from_variant("MPI_ENABLE", "mpi"),
-                from_variant("OPENMP_ENABLE", "openmp"),
-                from_variant("PTHREAD_ENABLE", "pthread"),
-                from_variant("ENABLE_SYCL", "sycl"),
-                from_variant("CUDA_ENABLE", "cuda"),
-                from_variant("ENABLE_HIP", "rocm"),
-                from_variant("HYPRE_ENABLE", "hypre"),
-                from_variant("KLU_ENABLE", "klu"),
-                from_variant("LAPACK_ENABLE", "lapack"),
-                from_variant("PETSC_ENABLE", "petsc"),
-                from_variant("RAJA_ENABLE", "raja"),
-                from_variant("SUPERLUMT_ENABLE", "superlu-mt"),
-                from_variant("SUPERLUDIST_ENABLE", "superlu-dist"),
-                from_variant("Trilinos_ENABLE", "trilinos"),
-                from_variant("ENABLE_KOKKOS", "kokkos"),
-                from_variant("ENABLE_KOKKOS_KERNELS", "kokkos-kernels"),
-                from_variant("EXAMPLES_INSTALL", "examples-install"),
-            ]
-        )
-
-        if "+cuda" in spec:
-            args.append(define("CMAKE_CUDA_ARCHITECTURES", spec.variants["cuda_arch"].value))
-            args.append(define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
-
-        if "+rocm" in spec:
-            args.extend(
-                [
-                    define("CMAKE_C_COMPILER", spec["llvm-amdgpu"].prefix.bin.amdclang),
-                    define("CMAKE_CXX_COMPILER", spec["hip"].hipcc),
-                    define("HIP_PATH", spec["hip"].prefix),
-                    define("HIP_CLANG_INCLUDE_PATH", spec["llvm-amdgpu"].prefix.include),
-                    define("ROCM_PATH", spec["llvm-amdgpu"].prefix),
-                    define("AMDGPU_TARGETS", spec.variants["amdgpu_target"].value),
-                ]
-            )
-
-        # MPI support
-        if "+mpi" in spec:
-            args.extend(
-                [
-                    define("MPI_MPICC", spec["mpi"].mpicc),
-                    define("MPI_MPICXX", spec["mpi"].mpicxx),
-                    define("MPI_MPIF77", spec["mpi"].mpif77),
-                    define("MPI_MPIF90", spec["mpi"].mpifc),
-                ]
-            )
-
-        # Building with Ginkgo
-        if "+ginkgo" in spec:
-            gko_backends = ["REF"]
-            if "+openmp" in spec["ginkgo"] and "+openmp" in spec:
-                gko_backends.append("OMP")
-            if "+cuda" in spec["ginkgo"] and "+cuda" in spec:
-                gko_backends.append("CUDA")
-            if "+rocm" in spec["ginkgo"] and "+rocm" in spec:
-                gko_backends.append("HIP")
-            if "+oneapi" in spec["ginkgo"] and "+sycl" in spec:
-                gko_backends.append("DPCPP")
-            args.extend(
-                [
-                    from_variant("ENABLE_GINKGO", "ginkgo"),
-                    define("Ginkgo_DIR", spec["ginkgo"].prefix),
-                    define("SUNDIALS_GINKGO_BACKENDS", ";".join(gko_backends)),
-                ]
-            )
-
-        # Building with Hypre
-        if "+hypre" in spec:
-            args.extend(
-                [
-                    define("HYPRE_INCLUDE_DIR", spec["hypre"].prefix.include),
-                    define("HYPRE_LIBRARY_DIR", spec["hypre"].prefix.lib),
-                ]
-            )
-            if not spec["hypre"].variants["shared"].value:
-                hypre_libs = spec["blas"].libs + spec["lapack"].libs
-                args.extend([define("HYPRE_LIBRARIES", hypre_libs.joined(";"))])
-
-        # Building with Kokkos and KokkosKernels
-        if "+kokkos" in spec:
-            args.extend([define("Kokkos_DIR", spec["kokkos"].prefix)])
-        if "+kokkos-kernels" in spec:
-            args.extend([define("KokkosKernels_DIR", spec["kokkos-kernels"].prefix)])
-
-        # Building with KLU
-        if "+klu" in spec:
-            args.extend(
-                [
-                    define("KLU_INCLUDE_DIR", spec["suite-sparse"].prefix.include),
-                    define("KLU_LIBRARY_DIR", spec["suite-sparse"].prefix.lib),
-                ]
-            )
-
-        # Building with LAPACK
-        if "+lapack" in spec:
-            args.append(define("LAPACK_LIBRARIES", spec["lapack"].libs + spec["blas"].libs))
-
-        # Building with MAGMA
-        if "+magma" in spec:
-            args.extend([define("ENABLE_MAGMA", True), define("MAGMA_DIR", spec["magma"].prefix)])
-            if "+cuda" in spec:
-                args.extend([define("SUNDIALS_MAGMA_BACKENDS", "CUDA")])
-            if "+rocm" in spec:
-                args.extend([define("SUNDIALS_MAGMA_BACKENDS", "HIP")])
-
-        # Building with PETSc
-        if "+petsc" in spec:
-            args.append(define("PETSC_DIR", spec["petsc"].prefix))
-            if "+kokkos" in spec["petsc"]:
-                args.append(define("Kokkos_DIR", spec["kokkos"].prefix))
-                args.append(define("KokkosKernels_DIR", spec["kokkos-kernels"].prefix))
-
-        # Building with RAJA
-        if "+raja" in spec:
-            args.append(define("RAJA_DIR", spec["raja"].prefix))
-
-        # Building with SuperLU_MT
-        if "+superlu-mt" in spec:
-            args.extend([define("BLAS_ENABLE", True), define("BLAS_LIBRARIES", spec["blas"].libs)])
-            args.extend(
-                [
-                    define("SUPERLUMT_INCLUDE_DIR", spec["superlu-mt"].prefix.include),
-                    define("SUPERLUMT_LIBRARY_DIR", spec["superlu-mt"].prefix.lib),
-                    define(
-                        "SUPERLUMT_THREAD_TYPE",
-                        "OpenMP" if "^superlu-mt+openmp" in spec else "Pthread",
-                    ),
-                ]
-            )
-
-        # Building with SuperLU_DIST
-        if "+superlu-dist" in spec:
-            if spec.satisfies("@6.4.0:"):
-                args.extend(
-                    [
-                        define("SUPERLUDIST_DIR", spec["superlu-dist"].prefix),
-                        define("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
-                    ]
-                )
-            else:
-                args.extend(
-                    [
-                        define("SUPERLUDIST_INCLUDE_DIR", spec["superlu-dist"].prefix.include),
-                        define("SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib),
-                        define("SUPERLUDIST_LIBRARIES", spec["blas"].libs),
-                        define("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
-                    ]
-                )
-
-        # Building with Trilinos
-        if "+trilinos" in spec:
-            args.append(define("Trilinos_DIR", spec["trilinos"].prefix))
-
-        # Examples
-        args.extend(
-            [
-                from_variant("EXAMPLES_ENABLE_C", "examples"),
-                from_variant("EXAMPLES_ENABLE_CXX", "examples"),
-                define("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
-                define("EXAMPLES_ENABLE_F77", "+examples+fcmix" in spec),
-                define("EXAMPLES_ENABLE_F90", "+examples+fcmix" in spec),
-                define("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
-            ]
-        )
-
-        return args
 
     # ==========================================================================
     # Post Install Actions
@@ -618,21 +397,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             "nvector/raja/Makefile",
         ]
 
-        f77_files = [
-            "arkode/F77_parallel/Makefile",
-            "arkode/F77_serial/Makefile",
-            "cvode/fcmix_parallel/Makefile",
-            "cvode/fcmix_serial/Makefile",
-            "ida/fcmix_openmp/Makefile",
-            "ida/fcmix_parallel/Makefile",
-            "ida/fcmix_pthreads/Makefile",
-            "ida/fcmix_serial/Makefile",
-            "kinsol/fcmix_parallel/Makefile",
-            "kinsol/fcmix_serial/Makefile",
-        ]
-
-        f90_files = ["arkode/F90_parallel/Makefile", "arkode/F90_serial/Makefile"]
-
         f2003_files = [
             "arkode/F2003_serial/Makefile",
             "cvode/F2003_serial/Makefile",
@@ -657,18 +421,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
 
         for filename in cxx_files:
             filter_file(r"^CPP\s*=.*", self.compiler.cc, os.path.join(dirname, filename), **kwargs)
-
-        if ("+fcmix" in spec) and ("+examples" in spec):
-            for filename in f77_files:
-                filter_file(
-                    os.environ["F77"], self.compiler.f77, os.path.join(dirname, filename), **kwargs
-                )
-
-        if ("+fcmix" in spec) and ("+examples" in spec):
-            for filename in f90_files:
-                filter_file(
-                    os.environ["FC"], self.compiler.fc, os.path.join(dirname, filename), **kwargs
-                )
 
         if ("+f2003" in spec) and ("+examples" in spec):
             for filename in f2003_files:
@@ -698,8 +450,6 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             # Q: should the result be ordered by dependency?
         else:
             sun_libs = ["libsundials_" + p for p in query_parameters]
-            if self.spec.satisfies("@7:"):
-                sun_libs += ["libsundials_core"]
         is_shared = "+shared" in self.spec
 
         libs = find_libraries(sun_libs, root=self.prefix, shared=is_shared, recursive=True)
@@ -800,3 +550,342 @@ class Sundials(CMakePackage, CudaPackage, ROCmPackage):
             raise SkipTest("Package must be installed with +sycl and +CVODE")
 
         self.run_example(join_path("cvode", "sycl", "cvAdvDiff_kry_sycl"), [], True)
+
+    # ==========================================================================
+    # SUNDIALS Settings
+    # ==========================================================================
+
+    def cmake_args(self):
+        spec = self.spec
+
+        options = []
+
+        return options
+
+    def _from_variant_helper(self, cmake_var, variant):
+        if variant is None:
+            variant = cmake_var.lower()
+        if variant not in self.variants:
+            raise KeyError('"{0}" is not a variant of "{1}"'.format(variant, self.name))
+        if variant not in self.spec.variants:
+            return ""
+        value = self.spec.variants[variant].value
+        if isinstance(value, (tuple, list)):
+            # Sort multi-valued variants for reproducibility
+            value = sorted(value)
+        return value
+
+    def cache_string_from_variant(self, cmake_var, variant):
+        value = self._from_variant_helper(cmake_var, variant)
+        return cmake_cache_string(cmake_var, value)
+
+    def cache_option_from_variant(self, cmake_var, variant):
+        value = self._from_variant_helper(cmake_var, variant)
+        return cmake_cache_option(cmake_var, value)
+
+    def initconfig_compiler_entries(self):
+        entries = []
+
+        entries.extend(
+            [
+                # compilers
+                cmake_cache_path("CMAKE_C_COMPILER", self.compiler.cc),
+                cmake_cache_path("CMAKE_CXX_COMPILER", self.compiler.cxx),
+                cmake_cache_path("CMAKE_Fortran_COMPILER", self.compiler.fc),
+                # language standard
+                self.cache_string_from_variant("CMAKE_C_STANDARD", "cstd"),
+                self.cache_string_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
+            ]
+        )
+
+        return entries
+
+    def initconfig_mpi_entries(self):
+        spec = self.spec
+        entries = []
+
+        if "+mpi" in spec:
+            entries.extend(
+                [
+                    self.cache_option_from_variant("MPI_ENABLE", "mpi"),
+                    cmake_cache_path("MPI_MPICC", spec["mpi"].mpicc),
+                    cmake_cache_path("MPI_MPICXX", spec["mpi"].mpicxx),
+                    cmake_cache_path("MPI_MPIF77", spec["mpi"].mpif77),
+                    cmake_cache_path("MPI_MPIF90", spec["mpi"].mpifc),
+                ]
+            )
+            # if "scheduler=flux" in spec:
+            #     entries.append(cmake_cache_string("SUNDIALS_SCHEDULER_COMMAND", "flux run"))
+            # if "scheduler=slurm" in spec:
+            #     entries.append(cmake_cache_string("SUNDIALS_SCHEDULER_COMMAND", "srun"))
+            # if "scheduler=lsf" in spec:
+            #     entries.append(cmake_cache_string("SUNDIALS_SCHEDULER_COMMAND", "jsrun"))
+
+        return entries
+
+    def initconfig_hardware_entries(self):
+        spec = self.spec
+        entries = []
+
+        if "+cuda" in spec:
+            entries.append(self.cache_option_from_variant("CUDA_ENABLE", "cuda"))
+            if not spec.satisfies("cuda_arch=none"):
+                cuda_arch = spec.variants["cuda_arch"].value
+                entries.append(
+                    cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", "{0}".format(cuda_arch[0]))
+                )
+
+        if "+rocm" in spec:
+            entries.extend(
+                [
+                    self.cache_option_from_variant("ENABLE_HIP", "rocm"),
+                    cmake_cache_path("HIP_PATH", spec["hip"].prefix),
+                    cmake_cache_path("HIP_DIR", spec["hip"].prefix.cmake),
+                    cmake_cache_path("HIP_CLANG_INCLUDE_PATH", spec["llvm-amdgpu"].prefix.include),
+                    cmake_cache_path("ROCM_PATH", spec["hsa-rocr-dev"].prefix),
+                    cmake_cache_string(
+                        "AMDGPU_TARGETS", ";".join(spec.variants["amdgpu_target"].value)
+                    ),
+                ]
+            )
+        return entries
+
+    def initconfig_package_entries(self):
+        spec = self.spec
+        entries = []
+
+        # SUNDIALS solvers
+        for pkg in self.sun_solvers:
+            entries.append(self.cache_option_from_variant("BUILD_" + pkg, pkg))
+
+        entries.extend(
+            [
+                # Precision
+                self.cache_string_from_variant("SUNDIALS_PRECISION", "precision"),
+                # Fortran interface
+                self.cache_option_from_variant("F2003_INTERFACE_ENABLE", "f2003"),
+                # library type
+                self.cache_option_from_variant("BUILD_SHARED_LIBS", "shared"),
+                self.cache_option_from_variant("BUILD_STATIC_LIBS", "static"),
+                # Generic (std-c) math libraries
+                self.cache_option_from_variant("USE_GENERIC_MATH", "generic-math"),
+                # Logging
+                self.cache_string_from_variant("SUNDIALS_LOGGING_LEVEL", "logging-level"),
+                # Monitoring
+                self.cache_option_from_variant("SUNDIALS_BUILD_WITH_MONITORING", "monitoring"),
+                # Profiling
+                self.cache_option_from_variant("SUNDIALS_BUILD_WITH_PROFILING", "profiling"),
+                self.cache_option_from_variant("ENABLE_CALIPER", "caliper"),
+                self.cache_option_from_variant("ENABLE_ADIAK", "adiak"),
+                # Benchmarking
+                self.cache_option_from_variant("BUILD_BENCHMARKS", "benchmarks"),
+                # Profile examples
+                self.cache_option_from_variant(
+                    "SUNDIALS_TEST_ENABLE_PROFILING", "profile-examples"
+                ),
+                self.cache_option_from_variant(
+                    "SUNDIALS_TEST_ENABLE_DEV_TESTS", "profile-examples"
+                ),
+                cmake_cache_string("SPACK_VERSION", ".".join(map(str, spack.spack_version_info))),
+            ]
+        )
+
+        intsize = "64" if "+int64" in spec else "32"
+        entries.extend(
+            [
+                cmake_cache_string("SUNDIALS_INDEX_SIZE", intsize),
+                cmake_cache_string("SUNDIALS_INDEX_TYPE", "int{}_t".format(intsize)),
+            ]
+        )
+
+        # TPLs
+        entries.extend(
+            [
+                self.cache_option_from_variant("ENABLE_GINKGO", "ginkgo"),
+                self.cache_option_from_variant("ENABLE_KOKKOS_KERNELS", "kokkos-kernels"),
+                self.cache_option_from_variant("ENABLE_KOKKOS", "kokkos"),
+                self.cache_option_from_variant("ENABLE_SYCL", "sycl"),
+                self.cache_option_from_variant("EXAMPLES_INSTALL", "examples-install"),
+                self.cache_option_from_variant("HYPRE_ENABLE", "hypre"),
+                self.cache_option_from_variant("KLU_ENABLE", "klu"),
+                self.cache_option_from_variant("LAPACK_ENABLE", "lapack"),
+                self.cache_option_from_variant("OPENMP_ENABLE", "openmp"),
+                self.cache_option_from_variant("PETSC_ENABLE", "petsc"),
+                self.cache_option_from_variant("PTHREAD_ENABLE", "pthread"),
+                self.cache_option_from_variant("RAJA_ENABLE", "raja"),
+                self.cache_option_from_variant("SUPERLUDIST_ENABLE", "superlu-dist"),
+                self.cache_option_from_variant("SUPERLUMT_ENABLE", "superlu-mt"),
+                self.cache_option_from_variant("Trilinos_ENABLE", "trilinos"),
+            ]
+        )
+
+        # Building with Adiak
+        if "+adiak" in spec:
+            entries.append(
+                cmake_cache_path("adiak_DIR", spec["adiak"].prefix.lib.cmake + "/adiak")
+            )
+
+        # Building with Caliper
+        if "+caliper" in spec:
+            entries.append(cmake_cache_path("CALIPER_DIR", spec["caliper"].prefix))
+            if "+adiak" in spec["caliper"]:
+                entries.append(
+                    cmake_cache_path("adiak_DIR", spec["adiak"].prefix.lib.cmake + "/adiak")
+                )
+
+            if not "caliper-dir=none" in spec:
+                entries.append(
+                    self.cache_string_from_variant(
+                        "SUNDIALS_TEST_CALIPER_OUTPUT_DIR", "caliper-dir"
+                    )
+                )
+                entries.append(
+                    self.cache_string_from_variant(
+                        "SUNDIALS_BENCHMARK_CALIPER_OUTPUT_DIR", "caliper-dir"
+                    )
+                )
+
+        # Building with Ginkgo
+        if "+ginkgo" in spec:
+            gko_backends = ["REF"]
+            if "+openmp" in spec["ginkgo"] and "+openmp" in spec:
+                gko_backends.append("OMP")
+            if "+cuda" in spec["ginkgo"] and "+cuda" in spec:
+                gko_backends.append("CUDA")
+            if "+rocm" in spec["ginkgo"] and "+rocm" in spec:
+                gko_backends.append("HIP")
+            if "+oneapi" in spec["ginkgo"] and "+sycl" in spec:
+                gko_backends.append("DPCPP")
+            entries.extend(
+                [
+                    cmake_cache_path("Ginkgo_DIR", spec["ginkgo"].prefix),
+                    cmake_cache_string("SUNDIALS_GINKGO_BACKENDS", ";".join(gko_backends)),
+                ]
+            )
+
+        # Building with Hypre
+        if "+hypre" in spec:
+            entries.extend(
+                [
+                    cmake_cache_path("HYPRE_INCLUDE_DIR", spec["hypre"].prefix.include),
+                    cmake_cache_path("HYPRE_LIBRARY_DIR", spec["hypre"].prefix.lib),
+                ]
+            )
+            if not spec["hypre"].variants["shared"].value:
+                hypre_libs = spec["blas"].libs + spec["lapack"].libs
+                entries.extend([cmake_cache_string("HYPRE_LIBRARIES", hypre_libs.joined(";"))])
+
+        # Building with Kokkos and KokkosKernels
+        if "+kokkos" in spec:
+            entries.extend([cmake_cache_path("Kokkos_DIR", spec["kokkos"].prefix)])
+        if "+kokkos-kernels" in spec:
+            entries.extend([cmake_cache_path("KokkosKernels_DIR", spec["kokkos-kernels"].prefix)])
+
+        # Building with KLU
+        if "+klu" in spec:
+            entries.extend(
+                [
+                    cmake_cache_path("KLU_INCLUDE_DIR", spec["suite-sparse"].prefix.include),
+                    cmake_cache_path("KLU_LIBRARY_DIR", spec["suite-sparse"].prefix.lib),
+                ]
+            )
+
+        # Building with LAPACK
+        if "+lapack" in spec:
+            lapack_libs = []
+            lapack_libs.extend(spec["lapack"].libs)
+            lapack_libs.extend(spec["blas"].libs)
+            entries.append(cmake_cache_string("LAPACK_LIBRARIES", ";".join(lapack_libs)))
+
+        # Building with MAGMA
+        if "+magma" in spec:
+            entries.extend(
+                [
+                    cmake_cache_option("ENABLE_MAGMA", True),
+                    cmake_cache_path("MAGMA_DIR", spec["magma"].prefix),
+                ]
+            )
+            if "+cuda" in spec:
+                entries.append(cmake_cache_string("SUNDIALS_MAGMA_BACKENDS", "CUDA"))
+            if "+rocm" in spec:
+                entries.append(cmake_cache_string("SUNDIALS_MAGMA_BACKENDS", "HIP"))
+
+        # Building with PETSc
+        if "+petsc" in spec:
+            if spec.version >= Version("5"):
+                entries.append(cmake_cache_path("PETSC_DIR", spec["petsc"].prefix))
+                if "+kokkos" in spec["petsc"]:
+                    entries.extend(
+                        [
+                            cmake_cache_path("Kokkos_DIR", spec["kokkos"].prefix),
+                            cmake_cache_path("KokkosKernels_DIR", spec["kokkos-kernels"].prefix),
+                        ]
+                    )
+            else:
+                entries.extend(
+                    [
+                        cmake_cache_path("PETSC_INCLUDE_DIR", spec["petsc"].prefix.include),
+                        cmake_cache_path("PETSC_LIBRARY_DIR", spec["petsc"].prefix.lib),
+                    ]
+                )
+
+        # Building with RAJA
+        if "+raja" in spec:
+            entries.append(cmake_cache_path("RAJA_DIR", spec["raja"].prefix))
+            if "camp" in spec:
+                entries.append(
+                    cmake_cache_path("camp_DIR", spec["camp"].prefix.lib.cmake + "/camp")
+                )
+            if "+rocm" in spec:
+                entries.append(cmake_cache_string("SUNDIALS_RAJA_BACKENDS", "HIP"))
+
+        # Building with SuperLU_DIST
+        if "+superlu-dist" in spec:
+            superludist_libs = []
+            superludist_libs.extend(spec["parmetis"].libs)
+            superludist_libs.extend(spec["metis"].libs)
+            superludist_libs.extend(spec["superlu-dist"].libs)
+            entries.extend(
+                [
+                    cmake_cache_path(
+                        "SUPERLUDIST_INCLUDE_DIR", spec["superlu-dist"].prefix.include
+                    ),
+                    cmake_cache_path(
+                        "SUPERLUDIST_LIBRARY_DIR", spec["superlu-dist"].prefix.lib
+                    ),
+                    cmake_cache_string("SUPERLUDIST_LIBRARIES", ";".join(superludist_libs)),
+                    cmake_cache_string("SUPERLUDIST_OpenMP", "^superlu-dist+openmp" in spec),
+                ]
+            )
+
+        # Building with SuperLU_MT
+        if "+superlu-mt" in spec:
+            entries.extend(
+                [
+                    cmake_cache_string("BLAS_ENABLE", True),
+                    cmake_cache_string("BLAS_LIBRARIES", spec["blas"].libs),
+                    cmake_cache_path("SUPERLUMT_INCLUDE_DIR", spec["superlu-mt"].prefix.include),
+                    cmake_cache_path("SUPERLUMT_LIBRARY_DIR", spec["superlu-mt"].prefix.lib),
+                    cmake_cache_string(
+                        "SUPERLUMT_THREAD_TYPE",
+                        "OpenMP" if "^superlu-mt+openmp" in spec else "Pthread",
+                    ),
+                ]
+            )
+
+        # Building with Trilinos
+        if "+trilinos" in spec:
+            entries.append(cmake_cache_path("Trilinos_DIR", spec["trilinos"].prefix))
+
+        # Examples
+        entries.extend(
+            [
+                self.cache_option_from_variant("EXAMPLES_ENABLE_C", "examples"),
+                self.cache_option_from_variant("EXAMPLES_ENABLE_CXX", "examples"),
+                cmake_cache_option("EXAMPLES_ENABLE_F2003", "+examples+f2003" in spec),
+                cmake_cache_option("EXAMPLES_ENABLE_CUDA", "+examples+cuda" in spec),
+                cmake_cache_option("EXAMPLES_ENABLE_HIP", "+examples+rocm" in spec),
+            ]
+        )
+        
+        return entries
