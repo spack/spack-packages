@@ -17,12 +17,12 @@ class PyProteus(PythonPackage):
     # erdc/proteus release tags) -- erdc/proteus@1.8.3's config/default.py
     # unconditionally requires a Chrono install (unguarded open() of
     # chrono-config.cmake), matching conda-forge's proteus-feedstock, which
-    # also hard-depends on pychrono. The PROTEUS_SKIP_PUMI_CHRONO env var
-    # and the try/except around that open() call (making Chrono/SCOREC
-    # genuinely optional, which is the whole point of this first pass) only
-    # exist on cekees/proteus's torino_narwhal branch, not yet released
-    # upstream. Revisit tracking erdc/proteus tags once that support lands
-    # there.
+    # also hard-depends on pychrono. The try/except around that open() call,
+    # and the PROTEUS_SKIP_PUMI/PROTEUS_SKIP_CHRONO env vars (making
+    # Chrono/SCOREC independently optional, which is the whole point of
+    # this first pass) only exist on cekees/proteus's torino_narwhal
+    # branch, not yet released upstream. Revisit tracking erdc/proteus
+    # tags once that support lands there.
     git = "https://github.com/cekees/proteus.git"
 
     maintainers("cekees")
@@ -39,14 +39,9 @@ class PyProteus(PythonPackage):
     # SCOREC/PUMI (parallel mesh adaptation), however, *does* have an
     # upstream Spack package (`pumi`) -- the `scorec` variant below wires
     # setup.py's MeshAdaptPUMI.MeshAdapt extension up to it instead of
-    # skipping it. setup.py originally gated MeshAdaptPUMI and
-    # mbd.CouplingFSI behind the single PROTEUS_SKIP_PUMI_CHRONO switch;
-    # split-pumi-chrono-skip.patch splits that into independent
-    # PROTEUS_SKIP_PUMI / PROTEUS_SKIP_CHRONO switches so PUMI can be
-    # enabled while Chrono stays skipped.
+    # skipping it, via the independent PROTEUS_SKIP_PUMI switch (see
+    # setup_build_environment below).
     variant("scorec", default=False, description="Enable SCOREC/PUMI mesh adaptation support")
-
-    patch("split-pumi-chrono-skip.patch")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
