@@ -21,7 +21,6 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     maintainers("guanyuming-he")
 
-    # This is a proprietary license. 
     license_required = True
     license_files = ["LICENSE"]
     license_url = (
@@ -36,8 +35,6 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         default="cmake",
     )
 
-    # Versions section
-    ######################################################################
     _ver_map = {
         "13.3": "fab59f405d6c0b87395ce6fc1d46d3f559c380c9a2704ab14d6dc0d3ce1cff16",
         "13.2update": "057e68d22bd02e41d60c9826e7622ac1b88de0f1dbe25ed49bd995f768306f9d",
@@ -53,35 +50,27 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     for v, h in _ver_map.items():
         version(v, sha256=h)
 
-    # Variants section
-    ######################################################################
-    # Cuda samples could build without each of the following, but some samples will be
+    # cuda-samples could build without each of the following, but some samples will be
     # unavailable then.
-    variant("freeglut", default=False, description="build with freeglut.")
-    # Can't do this now. Otherwise, spack will complain about
-    # internal_error("something depends_on a non-node")
-    # Could be a bug of freeimage or the concretizer
-    # variant("freeimage", default=False, description="build with freeimage.")
+    variant("freeglut", default=False, 
+        description="build samples which need freeglut.")
+    # A bug somewhere prevents depending on freeimage.
+    # variant("freeimage", default=False, 
+    #    description="build samples which need freeimage.")
 
-    # Dependency section
-    ######################################################################
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-
     for v, _ in _ver_map.items():
         depends_on("cuda@" + v, when="@" + v)
-
     depends_on("mesa-glu")
     depends_on("freeglut", when="+freeglut")
-    #depends_on("freeimage", when="+freeimage")
+    # depends_on("freeimage", when="+freeimage")
 
-    # The user must specific the desired compute_cap that the samples are built
-    # for.
     conflicts(
         "cuda_arch=none",
         when="@:12.5+cuda",
         msg="Please specify cuda_arch as variant for installation.\n"
-        "You can query it with \n"
+        "cuda_arch is the compute_cap you desire, which can be queried via \n"
         "nvidia-smi --query-gpu=name,compute_cap --format=csv",
     )
 
@@ -107,9 +96,6 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             "-DCUDAToolkit_ROOT=" + self.spec["cuda"].prefix,
         ]
         glu = self.spec["mesa-glu"]
-        # Even though glu is just a utility helper for OpenGL,
-        # CMake groups it inside OpenGL, hence the macros that start with
-        # OPENGL_.
         args += [
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
@@ -130,12 +116,8 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             ]
         return args
 
-    # After 13.0,
-    # they added ./cmake/InstallSamples.cmake 
-    # since commit 547f65851fafdb6a66f47ce56b4c0603db885910
-    # Before 13.0
-    # cuda-samples doesn't actually install the samples in the
-    # CMAKE_INSTALL_PREFIX dir, so this copies them
+    # Starting with 13.1, cmake/InstallSamples.cmake installs cuda-samples
+    # Manual handling is required before.
     @when("@12.8:13.0")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
