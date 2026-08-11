@@ -99,193 +99,132 @@ class Geant4Data(BundlePackage):
     version("10.3.3")
     version("10.0.4")
 
+    variant("tendl", default=True, when="@10.3:", description="Enable G4TENDL")
+    variant("nudexlib", default=True, when="@11.3:", description="Enable G4NUDEXLIB")
+    variant("urrpt", default=True, when="@11.3:", description="Enable G4URRPT")
+
     # Add install phase so we can create the data "view"
     phases = ["install"]
 
-    # For clarity, declare deps on a Major-Minor version basis as
-    # they generally don't change on the patch level
-    # Can move to declaring on a dataset basis if needed
+    # Declare deps per dataset package, mapping the Geant4 version range(s) that use a dataset
+    # to the dataset's version.
+    # When adding a new version
+    # Ordering follows cmake/Modules/G4DatasetDefinitions.cmake.
     _datasets = {
-        "11.4.0:11.4": [
-            "g4ndl@4.7.1",
-            "g4emlow@8.8",
-            "g4photonevaporation@6.1.2",
-            "g4radioactivedecay@6.1.2",
-            "g4particlexs@4.2",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.3",
-            "g4incl@1.3",
-            "g4ensdfstate@3.0",
-            "g4channeling@2.0",
-        ],
-        "11.3.0:11.3": [
-            "g4ndl@4.7.1",
-            "g4emlow@8.6.1",
-            "g4photonevaporation@=6.1",
-            "g4radioactivedecay@6.1.2",
-            "g4particlexs@4.1",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.3",
-            "g4incl@1.2",
-            "g4ensdfstate@3.0",
-            "g4channeling@1.0",
-        ],
-        "11.2.2:11.2": [
-            "g4ndl@4.7.1",
-            "g4emlow@8.5",
-            "g4photonevaporation@5.7",
-            "g4radioactivedecay@5.6",
-            "g4particlexs@4.0",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.3",
-            "g4incl@1.2",
-            "g4ensdfstate@2.3",
-        ],
-        "11.2.0:11.2.1": [
-            "g4ndl@=4.7",
-            "g4emlow@8.5",
-            "g4photonevaporation@5.7",
-            "g4radioactivedecay@5.6",
-            "g4particlexs@4.0",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.3",
-            "g4incl@1.2",
-            "g4ensdfstate@2.3",
-        ],
-        "11.1.0:11.1": [
-            "g4ndl@4.7",
-            "g4emlow@8.2",
-            "g4photonevaporation@5.7",
-            "g4radioactivedecay@5.6",
-            "g4particlexs@4.0",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.1",
-            "g4incl@1.0",
-            "g4ensdfstate@2.3",
-        ],
-        "11.0.0:11.0": [
-            "g4ndl@4.6",
-            "g4emlow@8.0",
-            "g4photonevaporation@5.7",
-            "g4radioactivedecay@5.6",
-            "g4particlexs@4.0",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.1",
-            "g4incl@1.0",
-            "g4ensdfstate@2.3",
-        ],
-        "10.7.0:10.7": [
-            "g4ndl@4.6",
-            "g4emlow@7.13",
-            "g4photonevaporation@5.7",
-            "g4radioactivedecay@5.6",
-            "g4pii@1.3",
-            "g4realsurface@2.2",
-            "g4saiddata@2.0",
-            "g4abla@3.1",
-            "g4incl@1.0",
-            "g4ensdfstate@2.3",
-        ],
-        "10.7.1:10.7": ["g4particlexs@3.1.1"],
-        "10.7.0": ["g4particlexs@3.1"],
-        "10.6.0:10.6": [
-            "g4ndl@4.6",
-            "g4emlow@7.9.1",
-            "g4photonevaporation@5.5",
-            "g4radioactivedecay@5.4",
-            "g4particlexs@2.1",
-            "g4pii@1.3",
-            "g4realsurface@2.1.1",
-            "g4saiddata@2.0",
-            "g4abla@3.1",
-            "g4incl@1.0",
-            "g4ensdfstate@2.2",
-        ],
-        "10.5.0:10.5": [
-            "g4ndl@4.5",
-            "g4emlow@7.7",
-            "g4photonevaporation@5.3",
-            "g4radioactivedecay@5.3",
-            "g4particlexs@1.1",
-            "g4pii@1.3",
-            "g4realsurface@2.1.1",
-            "g4saiddata@2.0",
-            "g4abla@3.1",
-            "g4incl@1.0",
-            "g4ensdfstate@2.2",
-        ],
-        "10.4.0:10.4": [
-            "g4ndl@4.5",
-            "g4emlow@7.3",
-            "g4photonevaporation@5.2",
-            "g4radioactivedecay@5.2",
-            "g4neutronxs@1.4",
-            "g4pii@1.3",
-            "g4saiddata@1.1",
-            "g4abla@3.1",
-            "g4ensdfstate@2.2",
-        ],
-        "10.4.2:10.4": ["g4realsurface@2.1.1"],
-        "10.4.0:10.4.1": ["g4realsurface@2.1"],
-        "10.3.0:10.3": [
-            "g4ndl@4.5",
-            "g4emlow@6.50",
-            "g4neutronxs@1.4",
-            "g4pii@1.3",
-            "g4realsurface@1.0",
-            "g4saiddata@1.1",
-            "g4abla@3.0",
-            "g4ensdfstate@2.1",
-        ],
-        "10.3.1:10.3": ["g4photonevaporation@4.3.2", "g4radioactivedecay@5.1.1"],
-        "10.3.0": ["g4photonevaporation@4.3", "g4radioactivedecay@5.1"],
-        "10.0.4": [
-            "g4ndl@4.4",
-            "g4emlow@6.35",
-            "g4photonevaporation@3.0",
-            "g4radioactivedecay@4.0",
-            "g4neutronxs@1.4",
-            "g4pii@1.3",
-            "g4realsurface@1.0",
-            "g4saiddata@1.1",
-            "g4abla@3.0",
-            "g4ensdfstate@1.0",
-        ],
+        "g4ndl": {
+            "11.2.2:": "4.7.1",
+            "11.1:11.2.1": "=4.7",
+            "10.6:11.0": "4.6",
+            "10.3:10.5": "4.5",
+            "10.0": "4.4",
+        },
+        "g4emlow": {
+            "11.4": "8.8",
+            "11.3": "8.6.1",
+            "11.2": "8.5",
+            "11.1": "8.2",
+            "11.0": "8.0",
+            "10.7": "7.13",
+            "10.6": "7.9.1",
+            "10.5": "7.7",
+            "10.4": "7.3",
+            "10.3": "6.50",
+            "10.0": "6.35",
+        },
+        "g4photonevaporation": {
+            "11.4": "6.1.2",
+            "11.3": "=6.1",
+            "10.7:11.2": "5.7",
+            "10.6": "5.5",
+            "10.5": "5.3",
+            "10.4": "5.2",
+            "10.3.1:10.3": "4.3.2",
+            "10.3.0": "=4.3",
+            "10.0": "3.0",
+        },
+        "g4radioactivedecay": {
+            "11.3:11.4": "6.1.2",
+            "10.7:11.2": "5.6",
+            "10.6": "5.4",
+            "10.5": "5.3",
+            "10.4": "5.2",
+            "10.3.1:10.3": "5.1.1",
+            "10.3.0": "5.1",
+            "10.0.4": "4.0",
+        },
+        "g4particlexs": {
+            "11.4": "4.2",
+            "11.3": "4.1",
+            "11.0:11.2": "4.0",
+            "10.7.1:10.7": "3.1.1",
+            "10.7.0": "3.1",
+            "10.6": "2.1",
+            "10.5": "1.1",
+        },
+        "g4neutronxs": {
+            "10.0:10.4": "1.4",
+        },
+        "g4pii": {
+            "10:": "1.3",
+        },
+        "g4realsurface": {
+            "10.7:": "2.2",
+            "10.4.2:10.6": "2.1.1",
+            "10.4.0:10.4.1": "2.1",
+            "10.0.4:10.3": "1.0",
+        },
+        "g4saiddata": {
+            "10.5:": "2.0",
+            "10.0.4:10.4": "1.1",
+        },
+        "g4abla": {
+            "11.2.0:": "3.3",
+            "10.4:11.1": "3.1",
+            "10.0.4:10.3": "3.0",
+        },
+        "g4incl": {
+            "11.4": "1.3",
+            "11.2.0:11.3": "1.2",
+            "10.5:11.1": "1.0",
+        },
+        "g4ensdfstate": {
+            "11.3:11.4": "3.0",
+            "10.7:11.2": "2.3",
+            "10.4:10.6": "2.2",
+            "10.3": "2.1",
+            "10.0.4": "1.0",
+        },
+        "g4channeling": {
+            "11.4": "2.0",
+            "11.3": "1.0",
+        },
     }
 
-    for _vers, _dsets in _datasets.items():
-        _vers = "@" + _vers
-        for _d in _dsets:
-            depends_on(_d, type=("build", "run"), when=_vers)
-
-    _datasets_tendl = {
-        "11.0:11.4": "g4tendl@1.4",
-        "10.4:10.7": "g4tendl@1.3.2",
-        "10.3:10.3": "g4tendl@1.3",
+    # Optional datasets with independent variants
+    _optional_datasets = {
+        "g4tendl": {
+            "11.0:11.4": "1.4",
+            "10.4:10.7": "1.3.2",
+            "10.3": "1.3",
+        },
+        "g4nudexlib": {
+            "11.3:": "1.0",
+        },
+        "g4urrpt": {
+            "11.3:": "1.1",
+        },
     }
 
-    variant("tendl", default=True, when="@10.3:", description="Enable G4TENDL")
-    with when("+tendl"):
-        for _vers, _d in _datasets_tendl.items():
-            depends_on(_d, type=("build", "run"), when="@" + _vers)
-    variant("nudexlib", default=True, when="@11.3:", description="Enable G4NUDEXLIB")
-    with when("+nudexlib"):
-        depends_on("g4nudexlib@1.0", type=("build", "run"))
-    variant("urrpt", default=True, when="@11.3:", description="Enable G4URRPT")
-    with when("+urrpt"):
-        depends_on("g4urrpt@1.1", type=("build", "run"))
+    for _pkg, _vers_map in _datasets.items():
+        for _g4_vers, _dset_vers in _vers_map.items():
+            depends_on(f"{_pkg}@{_dset_vers}", type=("build", "run"), when=f"@{_g4_vers}")
+
+    for _pkg, _vers_map in _optional_datasets.items():
+        _variant = _pkg.replace("g4", "")
+        for _g4_vers, _dset_vers in _vers_map.items():
+            depends_on(
+                f"{_pkg}@{_dset_vers}", type=("build", "run"), when=f"@{_g4_vers} +{_variant}"
+            )
 
     @property
     def datadir(self):
