@@ -32,6 +32,18 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
     version("main", branch="main", submodules=True)
     version(
+        "2025.12.1",
+        tag="v2025.12.1",
+        commit="e3c6197dfa8f1c9ac61635c26775c333411bdcd5",
+        submodules=True,
+    )
+    version(
+        "2025.12.0",
+        tag="v2025.12.0",
+        commit="f2ad263e08db89327ceccaa9a6c1e994b6d24e67",
+        submodules=True,
+    )
+    version(
         "2025.03.0",
         tag="v2025.03.0",
         commit="b66b9d7a1c6826037fed991492bc3ea1893d86ac",
@@ -108,10 +120,21 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         default=False,
         description="For developers, lowers optimization level to pass tests with some compilers",
     )
+    variant(
+        "cxxstd",
+        default="20",
+        values=("11", "14", "17", "20"),
+        description="C++ standard to build with",
+    )
+    conflicts("cxxstd=11", when="@0.14.0:")
+    conflicts("cxxstd=14", when="@2025.09.0:")
+    conflicts("cxxstd=17", when="@2026.07.0:")
+    conflicts("+sycl cxxstd=14", when="@2024.07.0:")
 
     depends_on("cxx", type="build")  # generated
 
     depends_on("blt")
+    depends_on("blt@0.7.1:", type="build", when="@2025.12.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.07.0:")
     depends_on("blt@0.5.3", type="build", when="@2023.06")
@@ -121,6 +144,7 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("blt@0.4.0:", type="build", when="@0.8.0:")
     depends_on("blt@0.3.0:", type="build", when="@:0.7.0")
 
+    depends_on("cmake@3.24:", when="@2025.12.0:", type="build")
     depends_on("cmake@3.23:", when="@2024.07.0:", type="build")
     depends_on("cmake@3.23:", when="@0.12.0:2023.06.0 +rocm", type="build")
     depends_on("cmake@3.20:", when="@0.12.0:2023.06.0", type="build")
@@ -182,6 +206,10 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
             self.spec.dag_hash(8),
         )
 
+    @property
+    def cxx_std(self):
+        return self.spec.variants.get("cxxstd").value
+
     def initconfig_compiler_entries(self):
         spec = self.spec
         compiler = self.compiler
@@ -193,12 +221,6 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+rocm ^blt@:0.6"):
             entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
-
-        # adrienbernede-23-01
-        # Maybe we want to share this in the above llnl_link_helpers function.
-        compilers_using_cxx14 = ["intel-17", "intel-18", "xl"]
-        if any(compiler in self.compiler.cxx for compiler in compilers_using_cxx14):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
 
         llnl_link_helpers(entries, spec, compiler)
 
@@ -377,15 +399,8 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
         entries.append(cmake_cache_option("RAJA_ENABLE_OPENMP_TASK", "+omptask" in spec))
         entries.append(cmake_cache_option("RAJA_ENABLE_SYCL", spec.satisfies("+sycl")))
 
-        # C++17
-        if spec.satisfies("@2025.09.0:") or (
-            spec.satisfies("@2024.07.0:") and spec.satisfies("+sycl")
-        ):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++17"))
-        # C++14
-        # Using RAJA version as threshold on purpose (no 0.14 version of RAJAPerf were released).
-        elif spec.satisfies("@0.14.0:2025.09.0"):
-            entries.append(cmake_cache_string("BLT_CXX_STD", "c++14"))
+        # C++ standard
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
 
         entries.append(cmake_cache_option("ENABLE_BENCHMARKS", "tests=benchmarks" in spec))
         entries.append(

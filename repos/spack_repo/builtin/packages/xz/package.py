@@ -29,6 +29,7 @@ class Xz(MSBuildPackage, AutotoolsPackage, SourceforgePackage):
 
     license("GPL-2.0-or-later AND Public-Domain AND LGPL-2.1-or-later", checked_by="tgamblin")
 
+    version("5.8.3", sha256="33bf69c0d6c698e83a68f77e6c1f465778e418ca0b3d59860d3ab446f4ac99a6")
     version("5.8.2", sha256="60345d7c0b9c8d7ffa469e96898c300def3669f5047fc76219b819340839f3d8")
     version("5.6.3", sha256="a95a49147b2dbb5487517acc0adcd77f9c2032cf00664eeae352405357d14a6c")
     version("5.6.2", sha256="e12aa03cbd200597bd4ce11d97be2d09a6e6d39a9311ce72c91ac7deacde3171")

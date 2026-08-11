@@ -60,7 +60,7 @@ class Aotriton(CMakePackage):
     depends_on("pkgconfig", type="build")
 
     # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
-    depends_on("aotriton-llvm@0.10", when="@0.10b")
+    depends_on("aotriton-llvm@0.10", when="@0.10b:")
     depends_on("aotriton-llvm@0.9", when="@0.9b")
     depends_on("aotriton-llvm@0.8", when="@0.8b")
 
@@ -134,4 +134,21 @@ class Aotriton(CMakePackage):
         args = []
         args.append(self.define("AOTRITON_GPU_BUILD_TIMEOUT", 0))
         args.append(self.define("AOTRITON_NOIMAGE_MODE", "ON"))
+        # So libaotriton_v2.so and extensions find libamdhip64.so at runtime and
+        # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
+        args.append(self.define("CMAKE_INSTALL_RPATH", self.spec["hip"].prefix.lib))
+        args.append(self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True))
+        # So libaotriton_v2.so and extensions find shared libs at runtime and
+        # during binary cache relocation (avoids "=> not found" for e.g.
+        # libamdhip64.so.6, libz.so.1, libhsa-runtime64.so.1, libc++abi.so.1,
+        # libunwind.so.1).
+        rpath_dirs = [
+            self.spec["hip"].prefix.lib,
+            self.spec["hsa-rocr-dev"].prefix.lib,
+            self.spec["zlib-api"].prefix.lib,
+            self.spec["aotriton-llvm"].prefix.lib,
+        ]
+        args.append(self.define("CMAKE_INSTALL_RPATH", rpath_dirs))
+        if self.spec.satisfies("@0.11b"):
+            args.append(self.define("AOTRITON_USE_TORCH", "OFF"))
         return args

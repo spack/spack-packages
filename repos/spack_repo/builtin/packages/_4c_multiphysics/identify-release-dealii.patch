@@ -1,0 +1,19 @@
+diff --git a/cmake/configure/configure_deal.II.cmake b/cmake/configure/configure_deal.II.cmake
+index 584fe76f14..eff1fd56eb 100644
+--- a/cmake/configure/configure_deal.II.cmake
++++ b/cmake/configure/configure_deal.II.cmake
+@@ -28,6 +28,12 @@ else()
+ endif()
+
+ include(${DEAL_II_GIT_CONFIG})
+-set(FOUR_C_deal.II_GIT_HASH "${DEAL_II_GIT_REVISION}")
++if(DEAL_II_GIT_REVISION)
++  set(FOUR_C_deal.II_GIT_HASH "${DEAL_II_GIT_REVISION}")
++elseif(DEAL_II_PACKAGE_VERSION VERSION_EQUAL "9.6.2")
++  # Release archives do not retain Git metadata. Map the supported release to
++  # the exact commit pinned in dependencies/current/dealii/install.sh.
++  set(FOUR_C_deal.II_GIT_HASH "6890ca740b6e51530ebb7ae7e4932977010ef2be")
++endif()
+
+ four_c_remember_variable_for_install(FOUR_C_DEAL_II_ROOT)
+

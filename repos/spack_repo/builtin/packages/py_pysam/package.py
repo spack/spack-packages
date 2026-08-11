@@ -16,6 +16,7 @@ class PyPysam(PythonPackage):
 
     license("MIT")
 
+    version("0.23.3", sha256="9ebcb1f004b296fd139b103ec6fd7e415e80f89f194eb7d0d972ac6d11bbaf24")
     version("0.21.0", sha256="5c9645ddd87668e36ff0a1966391e26f9c403bf85b1bc06c53fe2fcd592da2ce")
     version("0.19.1", sha256="dee403cbdf232170c1e11cc24c76e7dd748fc672ad38eb0414f3b9d569b1448f")
     version("0.18.0", sha256="1d6d49a0b3c626fae410a93d4c80583a8b5ddaacc9b46a080b250dbcebd30a59")
@@ -26,15 +27,20 @@ class PyPysam(PythonPackage):
     version("0.7.7", sha256="c9f3018482eec99ee199dda3fdef2aa7424dde6574672a4c0d209a10985755cc")
 
     depends_on("c", type="build")  # generated
-
-    depends_on("py-setuptools@59.0:", when="@0.21:", type="build")
+    depends_on("python@3.8:", type=("build", "run"))
+    # pysam requires pkg-resources which is removed from setuptools in
+    # version 82.0.0
+    depends_on("py-setuptools@:80", when="@:0.23", type="build")
+    depends_on("py-setuptools@59:", when="@0.21:", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.30:2", when="@0.21:", type="build")
-    depends_on("py-cython@0.29.12:2", when="@0.18:", type="build")
-    depends_on("py-cython@0.21:2", when="@0.14:", type="build")
-    depends_on("py-cython@0.17:2", type="build")
+    depends_on("py-cython@0.29.12:3", when="@0.23.3:", type="build")
+    depends_on("py-cython@0.29.30:2", when="@0.21", type="build")
+    depends_on("py-cython@0.29.12:2", when="@0.18:0.19", type="build")
+    depends_on("py-cython@0.21:2", when="@0.14:0.15", type="build")
+    depends_on("py-cython@0.17:2", when="@0.7.7", type="build")
     depends_on("curl")
     depends_on("xz")
+    depends_on("htslib@1.21", when="@0.23.3")
     depends_on("htslib@1.17", when="@0.21.0")
     depends_on("htslib@:1.6", when="@:0.13")
     depends_on("htslib")

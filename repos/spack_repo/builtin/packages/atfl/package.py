@@ -11,6 +11,40 @@ from spack_repo.builtin.packages.llvm.package import LlvmDetection
 from spack.package import *
 
 _VERSIONS = {
+    "22.1.0": {
+        "ubuntu22.04": (
+            "c691180ffd64acd3aa68b04610283145702d66470ccb1de49b59141727e5da29",
+            "https://developer.arm.com/packages/arm-toolchains/ubuntu/pool/arm-toolchain-for-linux_22.1-54~jammy_arm64.deb",
+        ),
+        "ubuntu24.04": (
+            "c5183342da63c780ca0877a7cdebcee982dee86d617bed72518d9e62082a955a",
+            "https://developer.arm.com/packages/arm-toolchains/ubuntu/pool/arm-toolchain-for-linux_22.1-54~noble_arm64.deb",
+        ),
+        "rhel8": (
+            "73bd1adbcf0bcd4a496ff22229c253a50b8b764ca3b49b1d0dafb8157a9c884a",
+            "https://developer.arm.com/packages/arm-toolchains/rhel/el8/aarch64/arm-toolchain-for-linux-22.1-54.el8.aarch64.rpm",
+        ),
+        "rhel9": (
+            "6740b459a8b23bb97058f0d353dc798f1d831be4f2a871527d54bd444c2a3ff9",
+            "https://developer.arm.com/packages/arm-toolchains/rhel/el9/aarch64/arm-toolchain-for-linux-22.1-54.el9.aarch64.rpm",
+        ),
+        "rhel10": (
+            "188c38a4940481caae6d4611cfe0b9255e6c98e706d902ef50471744f365d9c7",
+            "https://developer.arm.com/packages/arm-toolchains/rhel/el10/aarch64/arm-toolchain-for-linux-22.1-54.el10.aarch64.rpm",
+        ),
+        "amzn2023": (
+            "8ff120e5d567535b980b8f8693aad63d4a20c2776bb4a2e4cefad555b38e0b0c",
+            "https://developer.arm.com/packages/arm-toolchains/amazonlinux/al2023/aarch64/arm-toolchain-for-linux-22.1-54.al2023.aarch64.rpm",
+        ),
+        "sles15": (
+            "13ce7001a5c5d0aa9824d4b5e364a021ee728a764e0d1c5518510bb6b2ed24fb",
+            "https://developer.arm.com/packages/arm-toolchains/sles/sles15/aarch64/arm-toolchain-for-linux-22.1-54.sles15.aarch64.rpm",
+        ),
+        "sles16": (
+            "948da28e2387588fd7ba4e67c9cd037c74cf7a788ac79fc5f26c306bdc4e955b",
+            "https://developer.arm.com/packages/arm-toolchains/sles/sles16/aarch64/arm-toolchain-for-linux-22.1-54.sles16.aarch64.rpm",
+        ),
+    },
     "21.1.1": {
         "ubuntu22.04": (
             "8132ef95e4671c20a5f2b21dbe2d7ad8ae16137ea634e3e11096a8b87a3ffeee",

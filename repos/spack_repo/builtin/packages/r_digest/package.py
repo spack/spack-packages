@@ -31,6 +31,7 @@ class RDigest(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.6.39", sha256="8bf048b49b2d17077138fae758bda56bbd53278d9437f2fdeaedf979c90a13c9")
     version("0.6.37", sha256="82c4d149994b8a4a9af930f5a8e47420829935abed41f3f9030e94b6a48f0321")
     version("0.6.31", sha256="5a284f490eaca6750f695f00a584cfca3f180ca1046ac1107202141149d431b9")
     version("0.6.30", sha256="7b8059943be7dba6053268dfcc229de1bb0b55db497b2943541a6abace076aa7")
@@ -47,6 +48,7 @@ class RDigest(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@2.4.1:", type=("build", "run"))
-    depends_on("r@3.1.0:", type=("build", "run"), when="@0.6.16:")
-    depends_on("r@3.3.0:", type=("build", "run"), when="@0.6.27:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.3.0:", when="@0.6.27:")
+        depends_on("r@3.1.0:", when="@0.6.16:")
+        depends_on("r@2.4.1:")

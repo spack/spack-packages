@@ -19,16 +19,17 @@ class RTfbstools(RPackage):
 
     bioc = "TFBSTools"
 
-    version("1.38.0", commit="2ce17166b6f73b5093acec2a3dde33b6bcfa56bc")
-    version("1.36.0", commit="3358c89227a4d2e237ee5f8c532f468460a16ee2")
-    version("1.34.0", commit="7f8d0cb58a527a5d7ba94a773279f13aedca6ec7")
-    version("1.32.0", commit="235505626b910de29156a07e1f990daa3b5d57d9")
-    version("1.28.0", commit="15e7cf76f39ee3280a27284d58f7adef1c33f193")
-    version("1.22.0", commit="613d3567fd662b65269bd200c5aa5f87ac6a4612")
-    version("1.20.0", commit="74035fc6beb1af82f171c11ef2b0a8817714c5bc")
-    version("1.18.0", commit="17e12b9f3dcb9059d414307ec0bc23ed1ee33294")
-    version("1.16.0", commit="565436a5a674d4dea7279e796a20c5bd2034f65a")
-    version("1.14.2", commit="e429fdefb6f7ee4585dd2a8ca3d0ced7a5bed4ff")
+    with default_args(get_full_repo=True):
+        version("1.38.0", commit="2ce17166b6f73b5093acec2a3dde33b6bcfa56bc")
+        version("1.36.0", commit="3358c89227a4d2e237ee5f8c532f468460a16ee2")
+        version("1.34.0", commit="7f8d0cb58a527a5d7ba94a773279f13aedca6ec7")
+        version("1.32.0", commit="235505626b910de29156a07e1f990daa3b5d57d9")
+        version("1.28.0", commit="15e7cf76f39ee3280a27284d58f7adef1c33f193")
+        version("1.22.0", commit="613d3567fd662b65269bd200c5aa5f87ac6a4612")
+        version("1.20.0", commit="74035fc6beb1af82f171c11ef2b0a8817714c5bc")
+        version("1.18.0", commit="17e12b9f3dcb9059d414307ec0bc23ed1ee33294")
+        version("1.16.0", commit="565436a5a674d4dea7279e796a20c5bd2034f65a")
+        version("1.14.2", commit="e429fdefb6f7ee4585dd2a8ca3d0ced7a5bed4ff")
 
     depends_on("c", type="build")  # generated
 

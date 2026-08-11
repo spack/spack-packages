@@ -55,8 +55,6 @@ class PyMumps4py(PythonPackage):
                 args.append(f"--config-settings={setting}={config_settings[setting]}")
         for option in self.install_options(spec, prefix):
             args.append(f"--install-option={option}")
-        for option in self.global_options(spec, prefix):
-            args.append(f"--global-option={option}")
 
         if self.stage.archive_file and self.stage.archive_file.endswith(".whl"):
             args.append(self.stage.archive_file)

@@ -44,6 +44,17 @@ class GoBootstrap(Package):
                 "ppc64le": "5f0dfab58ce15a84d824363c041246c76847a69d14f9ffac16bd5342299ecc14",
             },
         },
+        "1.24.6": {
+            "darwin": {
+                "amd64": "4a8d7a32052f223e71faab424a69430455b27b3fff5f4e651f9d97c3e51a8746",
+                "arm64": "4e29202c49573b953be7cc3500e1f8d9e66ddd12faa8cf0939a4951411e09a2a",
+            },
+            "linux": {
+                "amd64": "bbca37cc395c974ffa4893ee35819ad23ebb27426df87af92e93a9ec66ef8712",
+                "arm64": "124ea6033a8bf98aa9fbab53e58d134905262d45a022af3a90b73320f3c3afd5",
+                "ppc64le": "63fc9559a3d6dfd63aa902f714375b879bbc848466181c035c122489b9646e27",
+            },
+        },
         "1.22.12": {
             "darwin": {
                 "amd64": "e7bbe07e96f0bd3df04225090fe1e7852ed33af37c43a23e16edbbb3b90a5b7c",

@@ -34,6 +34,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     # explanation of version numbering scheme
 
     # Maintenance releases (even numbers)
+    version("5.42.2", sha256="9384e8deb75b7b1695e5637971b752281aaecd025a3d5d4734d33c1d0adfee47")
     version("5.42.0", sha256="e093ef184d7f9a1b9797e2465296f55510adb6dab8842b0c3ed53329663096dc")
     version("5.40.2", sha256="10d4647cfbb543a7f9ae3e5f6851ec49305232ea7621aed24c7cfbb0bef4b70d")
     version("5.40.0", sha256="c740348f357396327a9795d3e8323bafd0fe8a5c7835fc1cbaba0cc8dfe7161f")
@@ -51,6 +52,7 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         depends_on("berkeley-db")
         depends_on("bzip2")
         depends_on("zlib-api")
+        depends_on("less", type="run")
 
     conflicts("%msvc@:19.29.30136")
     conflicts("%nvhpc@:20.11")
@@ -347,6 +349,11 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         env.set("BUILD_ZLIB", "0")
         env.set("ZLIB_INCLUDE", spec["zlib-api"].prefix.include)
         env.set("ZLIB_LIB", spec["zlib-api"].libs.directories[0])
+
+        # Setting TZ=UTC is a critical step for reproducibility, since it forces the environment
+        # into a consistent, offset-free timezone before the configuration tests begin
+        # See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=791362
+        env.set("TZ", "UTC")
 
     @run_after("install")
     def filter_config_dot_pm(self):

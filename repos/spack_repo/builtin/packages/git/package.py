@@ -34,6 +34,7 @@ class Git(AutotoolsPackage):
     # https://www.kernel.org/pub/software/scm/git/git-manpages-{version}.tar.gz
     # https://mirrors.edge.kernel.org/pub/software/scm/git/sha256sums.asc
     version("master", branch="master")
+    version("2.55.0", sha256="0842dc384a23ac33ba3e570c4f3a8ded85963ee4713b1cd21153c3db41813d1e")
     version("2.53.0", sha256="429dc0f5fe5f14109930cdbbb588c5d6ef5b8528910f0d738040744bebdc6275")
     version("2.52.0", sha256="6880cb1e737e26f81cf7db9957ab2b5bb2aa1490d87619480b860816e0c10c32")
     version("2.51.2", sha256="9b44c2b337ec838e10aad42439d390963904449710d30c9e7e4ba449f45da98f")
@@ -57,6 +58,7 @@ class Git(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     for _version, _sha256_manpage in {
+        "2.55.0": "e1d56c160c55be805d339613d6c5cdb1269d5346a50d757c39135f1449e28ed5",
         "2.53.0": "4954390466c125e82dce4a978dd1dadda13a916564d908cfdbd319f2e174a8ae",
         "2.52.0": "14426e66b5a12c188e44f53f89282bc586b34ebc3a22fafa8eb80d0bbe370f10",
         "2.51.2": "811aa98750c6d5e4c67848c9991f3d0cbe6cb109da5aefaf4a08c1d760533410",
@@ -185,6 +187,11 @@ class Git(AutotoolsPackage):
 
         if self.spec.satisfies("~perl"):
             env.append_flags("NO_PERL", "1")
+
+        # @2.55: enables Rust support by default. Keep this package's build
+        # non Rust for now until we have a better way of bootstrapping Rust.
+        if self.spec.satisfies("@2.55:"):
+            env.append_flags("NO_RUST", "1")
 
     def configure_args(self):
         spec = self.spec

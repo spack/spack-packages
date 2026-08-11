@@ -22,6 +22,7 @@ class RTidyr(RPackage):
 
     license("MIT")
 
+    version("1.3.2", sha256="04c0e6daf0af682af73763a42c027d7171761cdbdbf9ff7a77a0e421343d665a")
     version("1.3.1", sha256="e820c261cb5543f572f49276a7bdc7302aa4215da4bf850b1b939a315353835d")
     version("1.3.0", sha256="8d532b9366fdd3ec9827b51830e559a49d073425007c766025f0e603964e0a9d")
     version("1.2.1", sha256="6971766d3663dc75c2328ab257816f4e42d9fdc05c2d87d171b8b9b5ecce61af")
@@ -36,37 +37,54 @@ class RTidyr(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.1:", type=("build", "run"))
-    depends_on("r@3.4.0:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r@3.6:", type=("build", "run"), when="@1.3.1:")
-    depends_on("r-dplyr@0.7.0:", type=("build", "run"))
-    depends_on("r-dplyr@0.8.2:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-dplyr@1.0.0:", type=("build", "run"), when="@1.2.0:")
-    depends_on("r-dplyr@1.0.10:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-glue", type=("build", "run"))
-    depends_on("r-lifecycle", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-lifecycle@1.0.3:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-magrittr", type=("build", "run"))
-    depends_on("r-stringr@1.5.0:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-purrr", type=("build", "run"))
-    depends_on("r-purrr@1.0.1:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-rlang", type=("build", "run"))
-    depends_on("r-rlang@1.0.4:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-rlang@1.1.1:", type=("build", "run"), when="@1.3.1:")
-    depends_on("r-tibble", type=("build", "run"))
-    depends_on("r-tibble@2.1.1:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-tidyselect@0.2.5:", type=("build", "run"))
-    depends_on("r-tidyselect@1.1.0:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-tidyselect@1.2.0:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-vctrs@0.3.0:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-vctrs@0.3.6:", type=("build", "run"), when="@1.1.3:")
-    depends_on("r-vctrs@0.3.7:", type=("build", "run"), when="@1.2.0:")
-    depends_on("r-vctrs@0.5.2:", type=("build", "run"), when="@1.3.0:")
-    depends_on("r-cpp11@0.2.1:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-cpp11@0.2.6:", type=("build", "run"), when="@1.1.3:")
-    depends_on("r-cpp11@0.4.0:", type=("build", "run"), when="@1.2.0:")
-    depends_on("r-cli@3.4.1:", type=("build", "run"), when="@1.3.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.1:", when="@1.3.2:")
+        depends_on("r@3.6:", when="@1.3.1:")
+        depends_on("r@3.4.0:", when="@1.3.0:")
+        depends_on("r@3.1:")
 
-    depends_on("r-stringi", type=("build", "run"), when="@:0.8.3")
-    depends_on("r-rcpp", type=("build", "run"), when="@:0.8.3")
-    depends_on("r-ellipsis@0.1.0:", type=("build", "run"), when="@1.1.2:1.2.1")
+        depends_on("r-cli@3.4.1:", when="@1.3.0:")
+
+        depends_on("r-dplyr@1.1.0:", when="@1.3.2:")
+        depends_on("r-dplyr@1.0.10:", when="@1.3.0:")
+        depends_on("r-dplyr@1.0.0:", when="@1.2.0:")
+        depends_on("r-dplyr@0.8.2:", when="@1.1.2:")
+        depends_on("r-dplyr@0.7.0:")
+
+        depends_on("r-glue")
+
+        depends_on("r-lifecycle@1.0.3:", when="@1.3.0:")
+        depends_on("r-lifecycle", when="@1.1.2:")
+
+        depends_on("r-magrittr")
+
+        depends_on("r-purrr@1.0.1:", when="@1.3.0:")
+        depends_on("r-purrr")
+
+        depends_on("r-rlang@1.1.1:", when="@1.3.1:")
+        depends_on("r-rlang@1.0.4:", when="@1.3.0:")
+        depends_on("r-rlang")
+
+        depends_on("r-stringr@1.5.0:", when="@1.3.0:")
+
+        depends_on("r-tibble@2.1.1:", when="@1.1.2:")
+        depends_on("r-tibble")
+
+        depends_on("r-tidyselect@1.2.1:", when="@1.3.2:")
+        depends_on("r-tidyselect@1.2.0:", when="@1.3.0:")
+        depends_on("r-tidyselect@1.1.0:", when="@1.1.2:")
+        depends_on("r-tidyselect@0.2.5:")
+
+        depends_on("r-vctrs@0.5.2:", when="@1.3.0:")
+        depends_on("r-vctrs@0.3.7:", when="@1.2.0:")
+        depends_on("r-vctrs@0.3.6:", when="@1.1.3:")
+        depends_on("r-vctrs@0.3.0:", when="@1.1.2:")
+
+        depends_on("r-cpp11@0.4.0:", when="@1.2.0:")
+        depends_on("r-cpp11@0.2.6:", when="@1.1.3:")
+        depends_on("r-cpp11@0.2.1:", when="@1.1.2:")
+
+        # Historical dependencies
+        depends_on("r-ellipsis@0.1.0:", when="@1.1.2:1.2.1")
+        depends_on("r-stringi", when="@:0.8.3")
+        depends_on("r-rcpp", when="@:0.8.3")

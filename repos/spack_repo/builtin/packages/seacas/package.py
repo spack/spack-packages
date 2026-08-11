@@ -28,7 +28,7 @@ class Seacas(CMakePackage):
     homepage = "https://sandialabs.github.io/seacas/"
     git = "https://github.com/sandialabs/seacas.git"
     url = "https://github.com/sandialabs/seacas/archive/v2019-08-20.tar.gz"
-    maintainers("gsjaardema")
+    maintainers("tokusanya")
 
     license("BSD-3-Clause")
 
@@ -277,6 +277,18 @@ class Seacas(CMakePackage):
 
     conflicts("@2024-06-27 platform=windows")
 
+    # Require mpi +fortran only when +fortran
+    conflicts(
+        "^mpich ~fortran",
+        when="+fortran ^[virtuals=mpi] mpich",
+        msg="MPICH Fortran support required for SEACAS Fortran support.",
+    )
+    conflicts(
+        "^openmpi ~fortran",
+        when="+fortran ^[virtuals=mpi] openmpi",
+        msg="OpenMPI Fortran support required for SEACAS Fortran support.",
+    )
+
     # Remove use of variable in array assignment (triggers c2057 on MSVC)
     # See https://github.com/sandialabs/seacas/issues/438
     patch(
@@ -296,6 +308,8 @@ class Seacas(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)
+        if self.spec.satisfies("+legacy"):
+            env.set("ACCESS", self.prefix)
 
     def cmake_args(self):
         spec = self.spec
@@ -344,10 +358,11 @@ class Seacas(CMakePackage):
                 [
                     define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
                     define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
-                    define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
                     define("MPI_BASE_DIR", spec["mpi"].prefix),
                 ]
             )
+            if "+fortran" in spec:
+                options.append(define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # ########## What applications should be built #############
         # Check whether they want everything; if so, do the easy way...
@@ -517,3 +532,16 @@ class Seacas(CMakePackage):
         if not self.spec.dependencies("parallel"):
             return
         symlink(self.spec["parallel"].prefix.bin.parallel, self.prefix.bin.parallel)
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def run_ctest_after_install(self):
+        ctestjobs = min(make_jobs, 8)
+        with working_dir(self.build_directory):
+            ctest("-j", str(ctestjobs), "--output-on-failure")
+
+    def check(self):
+        # Currently the seacas tests run by ctest only succeed after
+        # installation has been completed, so we do not want to run
+        # the tests here after the build before the install
+        return
