@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import glob
-import os
 import re
 import sys
 
@@ -224,6 +222,7 @@ class AutotoolsBuilder(AutotoolsBuilder):
             return "--with-secure-transport"
         else:
             return "--without-secure-transport"
+
 
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
