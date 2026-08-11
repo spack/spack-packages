@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -119,6 +120,21 @@ class Zoltan(AutotoolsPackage):
                 # Although adding to config_libs _should_ suffice, it does not
                 # Add to ldflags as well
                 config_ldflags.append("-lgfortran")
+                # A bare -lgfortran only resolves if libgfortran sits on the
+                # linker's default search path -- true for a system-package-
+                # manager-provided gcc, but not for a from-source Spack-built
+                # gcc, whose runtime libs live in its own package prefix.
+                # Without an explicit -L here this fails outright on macOS
+                # ("ld: library 'gfortran' not found"; confirmed via a real
+                # `spack install py-proteus+scorec` build). Ask the Fortran
+                # compiler itself where its own libgfortran lives rather than
+                # guessing a layout, so this works regardless of the actual
+                # gcc package/version Spack picked.
+                gfortran_lib = Executable(self.compiler.fc)(
+                    "-print-file-name=libgfortran." + dso_suffix, output=str
+                ).strip()
+                if gfortran_lib and gfortran_lib != "libgfortran." + dso_suffix:
+                    config_ldflags.append("-L" + os.path.dirname(gfortran_lib))
             if spec.satisfies("%intel") or spec.satisfies("%oneapi"):
                 config_libs.append("-lifcore")
 
@@ -211,3 +227,26 @@ class Zoltan(AutotoolsPackage):
         for lib_path in find(self.spec.prefix.lib, "lib*.a"):
             lib_shared_name = re.sub(r"\.a$", f".{dso_suffix}", lib_path)
             move(lib_path, lib_shared_name)
+            # The `--with-ar="$(CXX) -shared $(LDFLAGS) -o"` trick above
+            # (needed since Zoltan's own build system only ever knows how to
+            # *archive* into a .a, never link a real shared library) compiles
+            # a genuine Mach-O dylib, but names the link command's `-o`
+            # output "libzoltan.a" -- and without an explicit -install_name,
+            # clang bakes that literal, path-less string into the dylib's
+            # own LC_ID_DYLIB. Renaming the file on disk just above doesn't
+            # touch that embedded metadata: any consumer linked against this
+            # library afterward (pumi's libapf_zoltan.dylib, confirmed via a
+            # real `spack install py-proteus+scorec` build) captures
+            # "libzoltan.a" as *its own* reference -- a bare filename with no
+            # directory, which no rpath entry can resolve, so it fails to
+            # dlopen ("Library not loaded: libzoltan.a") however correct its
+            # own rpath list otherwise is. Fix the dylib's self-declared ID
+            # to a proper @rpath-relative one to match what it was renamed
+            # to, so downstream linkers record something resolvable instead.
+            if dso_suffix == "dylib":
+                install_name_tool = which("install_name_tool", required=True)
+                install_name_tool(
+                    "-id",
+                    "@rpath/" + os.path.basename(lib_shared_name),
+                    lib_shared_name,
+                )
