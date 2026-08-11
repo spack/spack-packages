@@ -47,7 +47,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/lanl/singularity-eos/pull/647.patch?full_index=1", 
         sha256="712e15cb05ea440886579b7b211f005f18d1046d1453978696b7524ae5732387",
-        when="@1.7.0:1.11.1")
+        when="@1.9.0:1.11.1")
 
     # https://github.com/lanl/singularity-eos/pull/643
     patch(
