@@ -81,12 +81,12 @@ class Paraconf(CMakePackage):
 
     variant("example", default=False, description="Build example")
     variant("fortran", default=True, description="Enable Fortran support")
-    variant("tests", default=False, description="Build tests")
     variant("shared", default=True, description="Build shared libraries rather than static ones")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="@1.0.3 +example")
-    depends_on("cxx", type="build", when="@1.2: +tests")
+    # I would prefer cxx to be a test dependency but it failed to concretize in Spack 1.2.2
+    depends_on("cxx", type="build", when="@1.2:")
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.5:", type=("build"))
@@ -108,5 +108,5 @@ class Paraconf(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("PARACONF_BUILD_EXAMPLE", "example"),
             self.define_from_variant("PARACONF_BUILD_FORTRAN", "fortran"),
-            self.define_from_variant("PARACONF_BUILD_TESTING", "tests"),
+            self.define("PARACONF_BUILD_TESTING", self.run_tests),
         ]

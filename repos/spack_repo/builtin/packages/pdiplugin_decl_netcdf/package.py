@@ -24,7 +24,6 @@ class PdipluginDeclNetcdf(CMakePackage):
     for v in Pdi.versions:
         version(str(v), **Pdi.versions[v])
 
-    variant("tests", default=False, description="Build tests")
     variant("mpi", default=True, description="Enable parallel NetCDF")
 
     depends_on("c", type="build")
@@ -46,7 +45,7 @@ class PdipluginDeclNetcdf(CMakePackage):
         return [
             "-DINSTALL_PDIPLUGINDIR:PATH={:s}".format(self.prefix.lib),
             self.define_from_variant("BUILD_NETCDF_PARALLEL", "mpi"),
-            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define("BUILD_TESTING", self.run_tests),
         ]
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

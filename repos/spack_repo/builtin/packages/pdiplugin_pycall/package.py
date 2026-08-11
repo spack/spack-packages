@@ -23,8 +23,6 @@ class PdipluginPycall(CMakePackage):
     for v in Pdi.versions:
         version(str(v), **Pdi.versions[v])
 
-    variant("tests", default=False, description="Build tests")
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -38,13 +36,14 @@ class PdipluginPycall(CMakePackage):
     depends_on("python@3.8.2:", type=("build", "link", "run"))
     depends_on("py-pybind11@2.9:", type=("build", "link"), when="@1.10.0:")
     depends_on("py-pybind11@2.4.3:", type=("build", "link"))
+    depends_on("py-numpy", type="test")
 
     root_cmakelists_dir = "plugins/pycall"
 
     def cmake_args(self):
         return [
             "-DINSTALL_PDIPLUGINDIR:PATH={:s}".format(self.prefix.lib),
-            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define("BUILD_TESTING", self.run_tests),
         ]
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
