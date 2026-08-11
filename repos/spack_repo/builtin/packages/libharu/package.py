@@ -34,6 +34,17 @@ class Libharu(autotools.AutotoolsPackage, cmake.CMakePackage):
         conditional("cmake", when="@2.4:"), conditional("autotools", when="@:2.3"), default="cmake"
     )
 
+    variant("png", default=True, description="Enable PNG support")
+    variant("shared", default=True, description="Build shared libraries")
+    variant("static", default=False, description="Build static libraries")
+
+    conflicts("~shared~static", msg="At least one of +shared or +static must be enabled")
+    conflicts(
+        "+shared+static",
+        when="@2.4: build_system=cmake",
+        msg="libharu 2.4+ CMake builds either shared or static libraries, not both",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -45,7 +56,8 @@ class Libharu(autotools.AutotoolsPackage, cmake.CMakePackage):
         depends_on("autoconf", type="build")
         depends_on("automake", type="build")
 
-    depends_on("libpng")
+    depends_on("libpng", when="+png")
+    depends_on("libpng@:1.4", when="@2.2.0 +png")
     depends_on("zlib-api")
 
     def url_for_version(self, version):
@@ -65,11 +77,46 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             bash("./buildconf.sh", "--force")
 
     def configure_args(self):
-        """Point to spack-installed zlib and libpng"""
+        """Point to Spack-installed dependencies and select library types."""
         spec = self.spec
         args = []
 
+        args.extend(self.enable_or_disable("shared"))
+        args.extend(self.enable_or_disable("static"))
+
         args.append(f"--with-zlib={spec['zlib-api'].prefix}")
-        args.append(f"--with-png={spec['libpng'].prefix}")
+        if "+png" in spec:
+            args.append(f"--with-png={spec['libpng'].prefix}")
+        else:
+            args.append("--with-png=no")
+
+        return args
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        """Select optional PNG support and library types."""
+        spec = self.spec
+        if spec.satisfies("@2.4:"):
+            args = [self.define("BUILD_SHARED_LIBS", "+shared" in spec)]
+        elif spec.satisfies("@:2.2"):
+            shared_option = "LIBHARU_SHARED"
+            static_option = "LIBHARU_STATIC"
+            args = [
+                self.define_from_variant(shared_option, "shared"),
+                self.define_from_variant(static_option, "static"),
+            ]
+        else:
+            shared_option = "LIBHPDF_SHARED"
+            static_option = "LIBHPDF_STATIC"
+            args = [
+                self.define_from_variant(shared_option, "shared"),
+                self.define_from_variant(static_option, "static"),
+            ]
+
+        if "~png" in spec:
+            args.append(self.define("CMAKE_DISABLE_FIND_PACKAGE_PNG", True))
+            if spec.satisfies("@:2.3"):
+                args.append(self.define("LIBHPDF_HAVE_NOPNGLIB", True))
 
         return args

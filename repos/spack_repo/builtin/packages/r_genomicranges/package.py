@@ -24,6 +24,8 @@ class RGenomicranges(RPackage):
     bioc = "GenomicRanges"
 
     with default_args(get_full_repo=True):
+        version("1.64.0", commit="ac531f1ce56cc9119075d1c6862c68ad33f98536")  # bioc 3.23
+        version("1.62.1", commit="ce11a45400f198fbede382bf1f0ad137ef2d8a96")  # bioc 3.22
         version("1.60.0", commit="9d5d73b5f790c884d8acc18016943784cdc0b8c8")  # bioc 3.21
         version("1.52.0", commit="883f125ea593099293dc808ec2188be3cbdbd3a7")
         version("1.50.1", commit="6b3fb388ec038fb43f3cd26684ce778ee0e80e81")
@@ -46,11 +48,14 @@ class RGenomicranges(RPackage):
     depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@1.32.7:")
     depends_on("r-biocgenerics@0.21.2:", type=("build", "run"))
 
-    depends_on("r-genomeinfodb@1.43.1:", type=("build", "run"), when="@1.59.1:")
-    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.30.3:")
-    depends_on("r-genomeinfodb@1.11.5:", type=("build", "run"))
+    depends_on("r-seqinfo@0.99.3:", type=("build", "run"), when="@1.61.1:")
 
+    depends_on("r-genomeinfodb@1.43.1:1.47", type=("build", "run"), when="@1.59.1:1.61.0")
+    depends_on("r-genomeinfodb@1.15.2:1.47", type=("build", "run"), when="@1.32.7:1.61.0")
+    depends_on("r-genomeinfodb@1.13.1:1.47", type=("build", "run"), when="@1.30.3:1.61.0")
+    depends_on("r-genomeinfodb@1.11.5:1.47", type=("build", "run"), when="@:1.61.0")
+
+    depends_on("r-iranges@2.43.6:", type=("build", "run"), when="@1.61.7:")
     depends_on("r-iranges@2.41.1:", type=("build", "run"), when="@1.59.1:")
     depends_on("r-iranges@2.37.1:", type=("build", "run"), when="@1.55.2:")
     depends_on("r-iranges@2.31.2:", type=("build", "run"), when="@1.50.1:")
@@ -67,6 +72,6 @@ class RGenomicranges(RPackage):
     depends_on("r-s4vectors@0.17.32:", type=("build", "run"), when="@1.32.7:")
     depends_on("r-s4vectors@0.9.47:", type=("build", "run"))
 
-    depends_on("r-xvector@0.29.2:", type=("build", "run"), when="@1.42.0:")
-    depends_on("r-xvector@0.19.8:", type=("build", "run"), when="@1.32.7:")
-    depends_on("r-xvector", type=("build", "run"))
+    depends_on("r-xvector@0.29.2:", type=("build", "run"), when="@1.42.0:1.61.7")
+    depends_on("r-xvector@0.19.8:", type=("build", "run"), when="@1.32.7:1.61.7")
+    depends_on("r-xvector", type=("build", "run"), when="@:1.61.7")
