@@ -105,6 +105,9 @@ class Parallelio(CMakePackage):
             define("PIO_ENABLE_EXAMPLES", False),
             define_from_variant("WITH_PNETCDF", "pnetcdf"),
         ]
+        if spec.satisfies("%nag"):
+            # NAG cannot pass Spack's padded build rpath through its linker.
+            args.append(define("CMAKE_SKIP_RPATH", True))
         if spec.satisfies("+ncint"):
             args.extend([define("PIO_ENABLE_NETCDF_INTEGRATION", True)])
         if spec.satisfies("+pnetcdf"):
