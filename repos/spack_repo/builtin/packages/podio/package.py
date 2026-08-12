@@ -171,6 +171,9 @@ class Podio(CMakePackage):
         """
         base_url = self.url.rsplit("/", 1)[0]
 
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
+
         if len(version) == 1:
             major = version[0]
             minor, patch = 0, 0
