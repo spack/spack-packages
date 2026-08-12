@@ -972,5 +972,5 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
                     import_path.append(dep_py)
 
         imports = "import axom.sidre as s; import numpy; print('axom.sidre', s.__version__)"
-        python = Executable(join_path(self.spec["python"].prefix.bin, "python3"))
+        python = self["python"].command
         python("-c", imports, extra_env={"PYTHONPATH": ":".join(import_path)})
