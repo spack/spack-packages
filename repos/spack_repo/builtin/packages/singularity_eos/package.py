@@ -52,7 +52,8 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/lanl/singularity-eos/pull/643
     patch(
-        "fix-header-only-install.patch", when="@1.9.0:1.11.1",
+        "fix-header-only-install.patch",
+        when="@1.9.0:1.11.1",
     )
 
     # build with kokkos, kokkos-kernels for offloading support
