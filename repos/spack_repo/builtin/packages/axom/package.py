@@ -168,7 +168,13 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="20",
-        values=("11", "14", "17", "20"),
+        values=(
+            conditional("11", when="@:0.6.1"),
+            conditional("14", when="@:0.11.0"),
+            conditional("17", when="@:0.14.0"),
+            "20",
+        ),
+        multi=False,
         description="C++ standard to build with",
     )
 
@@ -344,13 +350,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
     # -----------------------------------------------------------------------
     # Conflicts
     # -----------------------------------------------------------------------
-
-    # C++14 required as of 0.6.2
-    conflicts("cxxstd=11", when="@0.6.2:")
-    # C++17 required as of 0.12.0
-    conflicts("cxxstd=14", when="@0.12.0:")
-    # C++20 required as of unreleased 0.15.0
-    conflicts("cxxstd=17", when="@0.15.0:")
 
     # Conduit's cmake config files moved and < 0.4.0 can't find it
     conflicts("^conduit@0.7.2:", when="@:0.4.0")
@@ -531,13 +530,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+fortran"):
                 link_lib_remove_list = []
-                link_dir_remove_list = []
-
-                if self.cxx_std == "20":
-                    link_dir_remove_list += [
-                        "/opt/rh/gcc-toolset-12/root/usr/lib/gcc/x86_64-redhat-linux/12"
-                    ]
-                    link_dir_remove_list += ["/opt/rh/gcc-toolset-12/root/usr/lib64"]
 
                 # Remove extra link library for crayftn
                 if self.is_fortran_compiler("crayftn"):
@@ -552,14 +544,6 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
                         cmake_cache_string(
                             "BLT_CMAKE_IMPLICIT_LINK_LIBRARIES_EXCLUDE",
                             ";".join(link_lib_remove_list),
-                        )
-                    )
-
-                if link_dir_remove_list:
-                    entries.append(
-                        cmake_cache_string(
-                            "BLT_CMAKE_IMPLICIT_LINK_DIRECTORIES_EXCLUDE",
-                            ";".join(link_dir_remove_list),
                         )
                     )
 
