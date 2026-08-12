@@ -111,6 +111,14 @@ class BigdftChess(AutotoolsPackage, CudaPackage):
             args.append(f"--with-cuda-path={spec['cuda'].prefix}")
             args.append(f"--with-cuda-libs={spec['cuda'].libs.link_flags}")
 
+            cuda_arch = [x for x in spec.variants["cuda_arch"].value if x and x != "none"]
+            if cuda_arch:
+                args.append(
+                    "NVCC_FLAGS={0} --compiler-options {1}".format(
+                        " ".join(self.cuda_flags(cuda_arch)), self.compiler.cxx_pic_flag
+                    )
+                )
+
         if spec.satisfies("+minpack"):
             args.append("--with-minpack")
 
