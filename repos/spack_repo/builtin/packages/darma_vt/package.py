@@ -44,7 +44,7 @@ class DarmaVt(CMakePackage):
     variant(
         "mimalloc_enabled",
         default=False,
-        description="Enable mimalloc, alternative allocator for debugging memory usage/frees/corruption",
+        description="Enable mimalloc, an alternative allocator for debugging memory issues",
     )
     variant("asan_enabled", default=False, description="Enable building with address sanitizer")
     variant("werror_enabled", default=False, description="Treat all warnings as errors")
