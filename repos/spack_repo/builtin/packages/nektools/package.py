@@ -96,7 +96,7 @@ class Nektools(Package):
                     "X11/Intrinsic.h not found in %s" % spec["libxt"].prefix.include
                 )
             cflags += ["-I%s" % os.path.dirname(libxt_h.directories[0])]
-        if self.compiler.name in ["xl", "xl_r"]:
+        if self.spec.compiler.name in ["xl", "xl_r"]:
             # Use '-qextname' to add underscores.
             # Use '-WF,-qnotrigraph' to fix an error about a string: '... ??'
             fflags += ["-qextname", "-WF,-qnotrigraph"]
@@ -122,7 +122,7 @@ class Nektools(Package):
             if cflags:
                 filter_file(r"^#CFLAGS=.*", 'CFLAGS="{0}"'.format(cflags), "maketools")
 
-            if self.compiler.name in ["xl", "xl_r"]:
+            if self.spec.compiler.name in ["xl", "xl_r"]:
                 # Patch 'maketools' to use '-qextname' when checking for
                 # underscore becasue 'xl'/'xl_r' use this option to enable the
                 # addition of the underscore.
@@ -142,7 +142,7 @@ class Nektools(Package):
             filter_file(r"-L\$\(X\)", libx11_lib.search_flags, join_path("prenek", "makefile"))
             filter_file(r"-L\$\(X\)", libx11_lib.search_flags, join_path("postnek", "makefile"))
 
-            if self.compiler.name in ["xl", "xl_r"]:
+            if self.spec.compiler.name in ["xl", "xl_r"]:
                 # Use '-qextname' when compiling mxm.f
                 filter_file(r"\$\(OLAGS\)", "-qextname $(OLAGS)", join_path("postnek", "makefile"))
             # Define 'rename_' function that calls 'rename'

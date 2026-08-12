@@ -47,9 +47,9 @@ class Veloc(CMakePackage):
         flags = list(flags)
         if name == "cxxflags":
             if self.spec.satisfies("@:1.5"):
-                flags.append(self.compiler.cxx11_flag)
+                flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
             else:
-                flags.append(self.compiler.cxx17_flag)
+                flags.append(self["cxx"].standard_flag(language="cxx", standard="17"))
         return (None, None, flags)
 
     def cmake_args(self):

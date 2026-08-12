@@ -96,8 +96,8 @@ class Amdlibm(SConsPackage, CMakePackage):
             args.append("--compiler=aocc")
 
         var_prefix = "" if self.spec.satisfies("@:3.0") else "ALM_"
-        args.append("{0}CC={1}".format(var_prefix, self.compiler.cc))
-        args.append("{0}CXX={1}".format(var_prefix, self.compiler.cxx))
+        args.append("{0}CC={1}".format(var_prefix, self["c"].cc))
+        args.append("{0}CXX={1}".format(var_prefix, self["cxx"].cxx))
 
         # Always build verbose
         args.append("--verbose=1")

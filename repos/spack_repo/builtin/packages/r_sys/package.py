@@ -30,5 +30,5 @@ class RSys(RPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            flags.append(self.compiler.c99_flag)
+            flags.append(self["c"].standard_flag(language="c", standard="99"))
         return (flags, None, None)

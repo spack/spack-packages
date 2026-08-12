@@ -55,10 +55,10 @@ class Sw4lite(MakefilePackage, CudaPackage):
 
         if "+openmp" in self.spec:
             cflags.append("-DSW4_OPENMP")
-            cflags.append(self.compiler.openmp_flag)
+            cflags.append(self["c"].openmp_flag)
             cxxflags.append("-DSW4_OPENMP")
-            cxxflags.append(self.compiler.openmp_flag)
-            fflags.append(self.compiler.openmp_flag)
+            cxxflags.append(self["cxx"].openmp_flag)
+            fflags.append(self["fortran"].openmp_flag)
 
         if spec.variants["ckernel"].value is True:
             cxxflags.append("-DSW4_CROUTINES")

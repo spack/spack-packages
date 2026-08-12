@@ -130,7 +130,7 @@ class Grid(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env):
         spec = self.spec
-        env.set("CXXFLAGS", self.compiler.cxx17_flag)
+        env.set("CXXFLAGS", self["cxx"].standard_flag(language="cxx", standard="17"))
 
         if spec.satisfies("+cuda"):
             arch_config = ",".join(

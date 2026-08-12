@@ -52,7 +52,7 @@ class Libunistring(AutotoolsPackage, GNUMirrorPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags" and self.spec.satisfies("@1.1:") and self.spec.satisfies("%intel"):
-            flags.append(self.compiler.c18_flag)
+            flags.append(self["c"].standard_flag(language="c", standard="18"))
         return (flags, None, None)
 
     @when("@master")

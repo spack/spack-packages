@@ -418,7 +418,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "~mpi" in self.spec:
             compiler_opts = [
                 "--with-cc=%s" % os.environ["CC"],
-                "--with-cxx=%s" % (os.environ["CXX"] if self.compiler.cxx is not None else "0"),
+                "--with-cxx=%s" % (os.environ["CXX"] if self["cxx"].cxx is not None else "0"),
                 "--with-mpi=0",
             ]
             if "+fortran" in self.spec:
@@ -500,10 +500,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         if "+sycl" in spec:
             sycl_compatible_compilers = ["icpx"]
-            if os.path.basename(self.compiler.cxx) not in sycl_compatible_compilers:
+            if os.path.basename(self["cxx"].cxx) not in sycl_compatible_compilers:
                 raise InstallError("PETSc's SYCL GPU Backend requires oneAPI CXX (icpx) compiler.")
             options.append("--with-sycl=1")
-            options.append("--with-syclc=" + self.compiler.cxx)
+            options.append("--with-syclc=" + self["cxx"].cxx)
             options.append("SYCLPPFLAGS=-Wno-tautological-constant-compare")
         else:
             options.append("--with-sycl=0")

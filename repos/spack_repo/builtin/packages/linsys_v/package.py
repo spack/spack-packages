@@ -40,7 +40,7 @@ class LinsysV(MakefilePackage):
             makefile.filter(r"^CC\s+=\smpifccpx", "CC={0}".format(self.spec["mpi"].mpicc))
             makefile.filter(
                 r"^CFLAGS\s+=\s-Kfast,openmp",
-                "CFLAGS=-Ofast -fstrict-aliasing {0}".format(self.compiler.openmp_flag),
+                "CFLAGS=-Ofast -fstrict-aliasing {0}".format(self["c"].openmp_flag),
             )
             makefile.filter(
                 r"^LIBS\s+=\s-SCALAPACK\s-SSL2BLAMP",

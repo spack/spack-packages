@@ -38,7 +38,7 @@ class Qhull(CMakePackage):
     def flag_handler(self, name, flags):
         # See https://github.com/qhull/qhull/issues/65
         if name == "cxxflags" and self.version == Version("2020.1"):
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
         return (flags, None, None)
 
     @property

@@ -38,9 +38,9 @@ class Pdftk(MakefilePackage):
         makefile.filter("/usr/local/bin", spec.prefix.bin)
 
         # ------ Create new config file
-        compiler = self.compiler
-        gcc_base = os.path.split(os.path.split(compiler.cxx)[0])[0]
-        gcc_version = compiler.version
+        cxx_compiler = self["cxx"]
+        gcc_base = os.path.split(os.path.split(cxx_compiler.cxx)[0])[0]
+        gcc_version = self.spec.compiler.version
 
         cppflags = (
             "-DPATH_DELIM=0x2f",
@@ -52,7 +52,7 @@ class Pdftk(MakefilePackage):
         gcjflags = ("-Wall", "-Wextra", "-O2")
         vars = [
             ("VERSUFF", "-%s" % gcc_version),
-            ("CXX", compiler.cxx),
+            ("CXX", cxx_compiler.cxx),
             ("GCJ", self["eclipse-gcj-parser"].gcj),
             ("GCJH", join_path(gcc_base, "bin", "gcjh")),
             ("GJAR", join_path(gcc_base, "bin", "gjar")),
@@ -73,8 +73,7 @@ class Pdftk(MakefilePackage):
             mk.write("include Makefile.Base\n")
 
     def build(self, spec, prefix):
-        compiler = self.compiler
-        gcc_base = os.path.split(os.path.split(compiler.cxx)[0])[0]
+        gcc_base = os.path.split(os.path.split(self["cxx"].cxx)[0])[0]
         env["PATH"] = join_path(gcc_base, "bin") + ":" + env["PATH"]
         with working_dir(self.build_directory):
             make("-f", "Makefile.Spack", parallel=False)

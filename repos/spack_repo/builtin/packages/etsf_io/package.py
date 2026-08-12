@@ -36,9 +36,9 @@ class EtsfIo(Package):
 
     def flag_handler(self, name, flags):
         if name == "fflags":
-            flags.append(self.compiler.f77_pic_flag)
+            flags.append(self["fortran"].pic_flag)
         elif name == "fcflags":
-            flags.append(self.compiler.fc_pic_flag)
+            flags.append(self["fortran"].pic_flag)
         return flags, None, None
 
     def install(self, spec, prefix):

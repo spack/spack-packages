@@ -260,12 +260,12 @@ class PyNumpy(PythonPackage):
     def flag_handler(self, name, flags):
         # -std=c99 at least required, old versions of GCC default to -std=c90
         if self.spec.satisfies("%gcc@:5.1") and name == "cflags":
-            flags.append(self.compiler.c99_flag)
+            flags.append(self["c"].standard_flag(language="c", standard="99"))
         # Check gcc version in use by intel compiler
         # This will essentially check the system gcc compiler unless a gcc
         # module is already loaded.
         if self.spec.satisfies("%intel") and name == "cflags":
-            p1 = subprocess.Popen([self.compiler.cc, "-v"], stderr=subprocess.PIPE)
+            p1 = subprocess.Popen([self["c"].cc, "-v"], stderr=subprocess.PIPE)
             p2 = subprocess.Popen(
                 ["grep", "compatibility"], stdin=p1.stderr, stdout=subprocess.PIPE
             )
@@ -279,7 +279,7 @@ class PyNumpy(PythonPackage):
                     "{0}".format(gcc_version)
                 )
             if gcc_version <= Version("5.1"):
-                flags.append(self.compiler.c99_flag)
+                flags.append(self["c"].standard_flag(language="c", standard="99"))
 
         if self.spec.satisfies("@1.26 ^intel-oneapi-compilers@2025.2") and name in (
             "cflags",
@@ -530,8 +530,8 @@ class PyNumpy(PythonPackage):
         if self.spec.satisfies("%msvc"):
             # For meson build system, compiler paths must be in quotes
             # to prevent paths from being split by spaces.
-            env.set("CC", f'"{self.compiler.cc}"')
-            env.set("CXX", f'"{self.compiler.cxx}"')
+            env.set("CC", f'"{self["c"].cc}"')
+            env.set("CXX", f'"{self["cxx"].cxx}"')
 
     @when("@:1.25")
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

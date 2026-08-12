@@ -37,10 +37,10 @@ class ThornadoMini(MakefilePackage):
         file = open("Makefile", "w")
 
         file.write(
-            "FORTRAN_mymachine = %s %s\n" % (self.spec["mpi"].mpifc, self.compiler.openmp_flag)
+            "FORTRAN_mymachine = %s %s\n" % (self.spec["mpi"].mpifc, self["fortran"].openmp_flag)
         )
         file.write(
-            "FLINKER_mymachine = %s %s\n" % (self.spec["mpi"].mpifc, self.compiler.openmp_flag)
+            "FLINKER_mymachine = %s %s\n" % (self.spec["mpi"].mpifc, self["fortran"].openmp_flag)
         )
         file.write("DEBUG_mymachine = -g -ffpe-trap=invalid,zero -fcheck=bounds\n")
         file.write("OPTIMIZE_mymachine = -O2\n")

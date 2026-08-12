@@ -673,7 +673,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
             # Fortran lib (assumes clang is built with gfortran!)
             if spec.satisfies("+fortran %fortran=gcc"):
-                fc = Executable(self.compiler.fc)
+                fc = Executable(self["fortran"].fortran)
                 libgfortran = fc(
                     "--print-file-name",
                     "libgfortran." + shared_library_suffix(self.spec),
@@ -830,9 +830,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 define(
                     "Trilinos_CXX11_FLAGS",
                     (
-                        self.compiler.cxx14_flag
+                        self["cxx"].standard_flag(language="cxx", standard="14")
                         if spec.variants["cxxstd"].value == "14"
-                        else self.compiler.cxx11_flag
+                        else self["cxx"].standard_flag(language="cxx", standard="11")
                     ),
                 )
             )

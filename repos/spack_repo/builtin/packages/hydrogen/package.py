@@ -187,7 +187,7 @@ class Hydrogen(CachedCMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+openmp platform=darwin %clang") or spec.satisfies(
             "+omp_taskloops platform=darwin %clang"
         ):
-            clang = self.compiler.cc
+            clang = self["c"].cc
             clang_bin = os.path.dirname(clang)
             clang_root = os.path.dirname(clang_bin)
             entries.append(cmake_cache_string("OpenMP_CXX_FLAGS", "-fopenmp=libomp"))
@@ -290,7 +290,7 @@ class Hydrogen(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+openmp %apple-clang"):
-            env.append_flags("CPPFLAGS", self.compiler.openmp_flag)
+            env.append_flags("CPPFLAGS", self["cxx"].openmp_flag)
             env.append_flags("CFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("CXXFLAGS", self.spec["llvm-openmp"].headers.include_flags)
             env.append_flags("LDFLAGS", self.spec["llvm-openmp"].libs.ld_flags)

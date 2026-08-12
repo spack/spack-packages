@@ -765,8 +765,8 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
             real_cc = join_path(self.spec["llvm"].prefix, "bin", "clang")
             real_cxx = join_path(self.spec["llvm"].prefix, "bin", "clang++")
         else:
-            real_cc = self.compiler.cc
-            real_cxx = self.compiler.cxx
+            real_cc = self["c"].cc
+            real_cxx = self["cxx"].cxx
 
         if self.spec.satisfies("llvm=spack") or self.spec.satisfies("llvm=none"):
             env.set("CHPL_TARGET_CC", real_cc)

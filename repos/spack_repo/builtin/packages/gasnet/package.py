@@ -295,9 +295,9 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
             flags = {"cflags": [], "cxxflags": [], "mpi-cflags": []}
 
             if spec.satisfies("+pic"):
-                flags["cflags"].append(self.compiler.cc_pic_flag)
-                flags["mpi-cflags"].append(self.compiler.cc_pic_flag)
-                flags["cxxflags"].append(self.compiler.cxx_pic_flag)
+                flags["cflags"].append(self["c"].pic_flag)
+                flags["mpi-cflags"].append(self["c"].pic_flag)
+                flags["cxxflags"].append(self["cxx"].pic_flag)
 
             for key, value in sorted(flags.items()):
                 if value:

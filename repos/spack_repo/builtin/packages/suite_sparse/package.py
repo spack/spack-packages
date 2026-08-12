@@ -114,7 +114,10 @@ class SuiteSparse(Package):
     def flag_handler(self, name, flags):
         if name in ("cflags", "cxxflags"):
             if self.spec.satisfies("^openblas ~shared threads=openmp"):
-                flags.append(self.compiler.openmp_flag)
+                if name == "cflags":
+                    flags.append(self["c"].openmp_flag)
+                else:
+                    flags.append(self["cxx"].openmp_flag)
         return (flags, None, None)
 
     def symbol_suffix_blas(self, spec, args):
@@ -181,8 +184,8 @@ class SuiteSparse(Package):
         # logic in it. Any kind of customization will need to go through
         # filtering of that file
 
-        cc_pic_flag = self.compiler.cc_pic_flag if "+pic" in spec else ""
-        f77_pic_flag = self.compiler.f77_pic_flag if "+pic" in spec else ""
+        cc_pic_flag = self["c"].pic_flag if "+pic" in spec else ""
+        f77_pic_flag = self["fortran"].pic_flag if "+pic" in spec else ""
 
         make_args = [
             # By default, the Makefile uses the Intel compilers if
@@ -195,7 +198,7 @@ class SuiteSparse(Package):
             # [SuiteSparse/SuiteSparse_config/SuiteSparse_config.mk] for more.
             "CUDA=no",
             f"CUDA_PATH={spec['cuda'].prefix if '+cuda' in spec else ''}",
-            f"CFOPENMP={self.compiler.openmp_flag if '+openmp' in spec else ''}",
+            f"CFOPENMP={self['c'].openmp_flag if '+openmp' in spec else ''}",
             f"CFLAGS=-O3 {cc_pic_flag}",
             # Both FFLAGS and F77FLAGS are used in SuiteSparse makefiles;
             # FFLAGS is used in CHOLMOD, F77FLAGS is used in AMD and UMFPACK.
@@ -220,7 +223,7 @@ class SuiteSparse(Package):
         # not an issue because c11 or newer is their default. However, for some
         # compilers (e.g. xlc) the c11 flag is necessary.
         if spec.satisfies("@5.4:5.7.1") and ("%xl" in spec or "%xl_r" in spec):
-            make_args += [f"CFLAGS+={self.compiler.c11_flag}"]
+            make_args += [f"CFLAGS+={self['c'].standard_flag(language='c', standard='11')}"]
 
         # 64bit blas in UMFPACK:
         if spec.satisfies("^[virtuals=lapack] openblas+ilp64") or spec.satisfies(

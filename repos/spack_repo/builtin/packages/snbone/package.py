@@ -28,12 +28,12 @@ class Snbone(MakefilePackage):
         working_dirs = ["src_c", "src_fortran", "src_makemesh", "src_processmesh"]
         for wdir in working_dirs:
             with working_dir(wdir, create=False):
-                if self.compiler.name == "gcc" and wdir == "src_processmesh":
+                if self.spec.compiler.name == "gcc" and wdir == "src_processmesh":
                     make(
                         "COMPILER=gfortran",
                         "METISLIB={0}".format(spec["metis"].prefix + "/lib/libmetis.so"),
                     )
-                elif self.compiler.name == "intel":
+                elif self.spec.compiler.name == "intel":
                     make("COMPILER=intel", "LDFLAGS=-lm")
                 else:
                     # older gcc need link libs after objs, but

@@ -99,7 +99,7 @@ class Xgboost(CMakePackage, CudaPackage):
                 self.define("OpenMP_CXX_FLAGS", OpenMP_C_FLAGS),
                 self.define("OpenMP_CXX_LIB_NAMES", OpenMP_C_LIB_NAMES),
             ]
-            clang = self.compiler.cc
+            clang = self["c"].cc
             clang_bin = os.path.dirname(clang)
             clang_root = os.path.dirname(clang_bin)
             args += [

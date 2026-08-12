@@ -76,7 +76,7 @@ class Sw4(MakefilePackage):
             or self.spec.satisfies("%clang")
             or self.spec.satisfies("%apple-clang")
         ):
-            fc = Executable(self.compiler.fc)
+            fc = Executable(self["fortran"].fortran)
             libgfortran = fc("--print-file-name", "libgfortran." + dso_suffix, output=str).strip()
             if libgfortran == "libgfortran." + dso_suffix:
                 libgfortran = fc("--print-file-name", "libgfortran.a", output=str).strip()

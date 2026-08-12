@@ -50,5 +50,5 @@ class Fgsl(AutotoolsPackage):
         mkdir("m4")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.compiler.name == "gcc":
+        if self.spec.compiler.name == "gcc":
             env.append_flags("FCFLAGS", "-ffree-line-length-none")

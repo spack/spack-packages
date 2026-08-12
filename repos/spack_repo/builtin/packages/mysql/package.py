@@ -107,7 +107,7 @@ class Mysql(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         cxxstd = self.spec.variants["cxxstd"].value
-        flag = getattr(self.compiler, "cxx{0}_flag".format(cxxstd))
+        flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
         if flag:
             env.append_flags("CXXFLAGS", flag)
         if cxxstd != "98":

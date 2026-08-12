@@ -322,21 +322,21 @@ class Libpressio(CMakePackage, CudaPackage):
 
     def lp_cxx_version(self):
         try:
-            self.compiler.cxx20_flag
+            self["cxx"].standard_flag(language="cxx", standard="20")
             return "20"
         except Exception:
             pass
         try:
-            self.compiler.cxx17_flag
+            self["cxx"].standard_flag(language="cxx", standard="17")
             return "17"
         except Exception:
             pass
         try:
-            self.compiler.cxx14_flag
+            self["cxx"].standard_flag(language="cxx", standard="14")
             return "14"
         except Exception:
             pass
-        self.compiler.cxx11_flag
+        self["cxx"].standard_flag(language="cxx", standard="11")
         return "11"
 
     def cmake_args(self):

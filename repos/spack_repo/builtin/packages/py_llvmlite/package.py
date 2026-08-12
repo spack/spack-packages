@@ -92,8 +92,8 @@ class PyLlvmlite(PythonPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):
-            env.set("CXX_FLTO_FLAGS", "{0}".format(self.compiler.cxx_pic_flag))
+            env.set("CXX_FLTO_FLAGS", "{0}".format(self["cxx"].pic_flag))
             env.set("LD_FLTO_FLAGS", "-Wl,--exclude-libs=ALL")
         else:
             # Need to set PIC flag since this is linking statically with LLVM
-            env.set("CXX_FLTO_FLAGS", "-flto {0}".format(self.compiler.cxx_pic_flag))
+            env.set("CXX_FLTO_FLAGS", "-flto {0}".format(self["cxx"].pic_flag))

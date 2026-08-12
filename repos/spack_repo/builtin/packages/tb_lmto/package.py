@@ -43,8 +43,8 @@ class TbLmto(MakefilePackage):
     def build_targets(self):
         # something about the spack wrapper breaks this, it's extremely weird
         return [
-            f"CC={self.compiler.cc}",
-            f"FC={self.compiler.fc} -finit-local-zero -fallow-argument-mismatch",
+            f"CC={self['c'].cc}",
+            f"FC={self['fortran'].fortran} -finit-local-zero -fallow-argument-mismatch",
             "all",
         ]
 

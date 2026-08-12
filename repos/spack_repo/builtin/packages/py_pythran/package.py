@@ -91,7 +91,7 @@ class PyPythran(PythonPackage):
     def patch(self):
         # Compiler is used at run-time to determine name of OpenMP library to search for
         cfg_file = join_path("pythran", "pythran-{0}.cfg".format(sys.platform))
-        filter_file("CXX=", "CXX=" + self.compiler.cxx, cfg_file)
+        filter_file("CXX=", "CXX=" + self["cxx"].cxx, cfg_file)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Needed for `spack install --test=root py-pythran`

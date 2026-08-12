@@ -37,7 +37,7 @@ class Mc(AutotoolsPackage):
 
     def configure_args(self):
         args = [
-            f"CFLAGS={self.compiler.c99_flag}",
+            f"CFLAGS={self['c'].standard_flag(language='c', standard='99')}",
             "--disable-debug",
             "--disable-dependency-tracking",
             "--disable-silent-rules",

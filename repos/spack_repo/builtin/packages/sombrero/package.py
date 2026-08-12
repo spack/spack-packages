@@ -47,8 +47,8 @@ class Sombrero(MakefilePackage):
     def build(self, spec, prefix):
         # Pass to make the actual C/C++/MPI compilers.
         make(
-            f"GCC={self.compiler.cc}",
-            f"CXX={self.compiler.cxx}",
+            f"GCC={self['c'].cc}",
+            f"CXX={self['cxx'].cxx}",
             f"MPICC={self.spec['mpi'].mpicc}",
         )
 

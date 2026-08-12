@@ -34,9 +34,9 @@ class Ace(MakefilePackage):
         # Dictionary mapping: compiler-name : ACE config-label
         supported = {"intel": "_icc", "gcc": ""}
 
-        if self.compiler.name not in supported:
+        if self.spec.compiler.name not in supported:
             raise Exception(
-                "compiler " + self.compiler.name + " not supported in ace spack-package"
+                "compiler " + self.spec.compiler.name + " not supported in ace spack-package"
             )
 
         env["ACE_ROOT"] = self.stage.source_path
@@ -49,6 +49,6 @@ class Ace(MakefilePackage):
             with open("platform_macros.GNU", "w") as f:
                 f.write(
                     "include $(ACE_ROOT)/include/makeinclude/"
-                    "platform_linux" + supported[self.compiler.name] + ".GNU\n"
+                    "platform_linux" + supported[self.spec.compiler.name] + ".GNU\n"
                 )
                 f.write(f"INSTALL_PREFIX={prefix}")

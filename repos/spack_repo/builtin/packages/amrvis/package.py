@@ -96,7 +96,7 @@ class Amrvis(MakefilePackage):
             r"^COMM_PROFILE\s*=.*",
             "COMM_PROFILE = {0}".format(spec.variants["profiling"].value).upper(),
         )
-        makefile.filter(r"^COMP\s*=.*", "COMP = {0}".format(self.compiler.name))
+        makefile.filter(r"^COMP\s*=.*", "COMP = {0}".format(self.spec.compiler.name))
         makefile.filter(
             r"^DEBUG\s*=.*", "DEBUG = {0}".format(spec.variants["debug"].value).upper()
         )

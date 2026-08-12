@@ -29,5 +29,5 @@ class Looptools(AutotoolsPackage):
     patch("conf.patch", when="%fj")
 
     def configure_args(self):
-        args = ["FFLAGS=" + self.compiler.f77_pic_flag, "CFLAGS=" + self.compiler.cc_pic_flag]
+        args = ["FFLAGS=" + self["fortran"].pic_flag, "CFLAGS=" + self["c"].pic_flag]
         return args

@@ -897,9 +897,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """When using %clang, add only its ld.lld-$ver and/or ld.lld to our PATH"""
-        if self.compiler.name in ["clang", "apple-clang"]:
-            for lld in "ld.lld-{0}".format(self.compiler.version.version[0]), "ld.lld":
-                bin = os.path.join(os.path.dirname(self.compiler.cc), lld)
+        if self.spec.compiler.name in ["clang", "apple-clang"]:
+            for lld in "ld.lld-{0}".format(self.spec.compiler.version.version[0]), "ld.lld":
+                bin = os.path.join(os.path.dirname(self["c"].cc), lld)
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
@@ -1116,7 +1116,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         # From clang 16 onwards we use a more precise --gcc-install-dir flag in post-install
         # generated config files.
         if self.spec.satisfies("@:15 %gcc"):
-            cmake_args.append(define("GCC_INSTALL_PREFIX", self.compiler.prefix))
+            cmake_args.append(define("GCC_INSTALL_PREFIX", self["c"].prefix))
 
         if self.spec.satisfies("~code_signing platform=darwin"):
             cmake_args.append(define("LLDB_USE_SYSTEM_DEBUGSERVER", True))
@@ -1173,7 +1173,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             runtime_cmake_args = [define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True)]
 
             # When building runtimes, just-built clang has to know where GCC is.
-            gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self.compiler)
+            gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self["c"])
             if gcc_install_dir_flag:
                 runtime_cmake_args.extend(
                     [
@@ -1243,7 +1243,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             # The config file is `flang.cfg` even though the executable is `flang-new`.
             # `--gcc-install-dir` / `--gcc-toolchain` support was only added in LLVM 19.
             cfg_files.append("flang.cfg")
-        gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self.compiler)
+        gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self["c"])
         if gcc_install_dir_flag:
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:

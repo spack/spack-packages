@@ -126,17 +126,17 @@ class Elk(MakefilePackage):
         # Compiler-specific flags
 
         flags = ""
-        if self.compiler.name == "intel":
+        if self.spec.compiler.name == "intel":
             flags = "-O3 -ip -unroll -no-prec-div"
-        elif self.compiler.name == "gcc":
+        elif self.spec.compiler.name == "gcc":
             flags = "-O3 -ffast-math -funroll-loops"
             if spec.satisfies("%gcc@10:"):
                 flags += " -fallow-argument-mismatch "
-        elif self.compiler.name == "g95":
+        elif self.spec.compiler.name == "g95":
             flags = "-O3 -fno-second-underscore"
-        elif self.compiler.name == "nag":
+        elif self.spec.compiler.name == "nag":
             flags = "-O4 -kind=byte -dusty -dcfuns"
-        elif self.compiler.name == "xl":
+        elif self.spec.compiler.name == "xl":
             flags = "-O3"
         config["F90_OPTS"] = flags
         config["F77_OPTS"] = flags
@@ -152,8 +152,8 @@ class Elk(MakefilePackage):
 
         # OpenMP support
         if spec.satisfies("+openmp"):
-            config["F90_OPTS"] += " " + self.compiler.openmp_flag
-            config["F77_OPTS"] += " " + self.compiler.openmp_flag
+            config["F90_OPTS"] += " " + self["fortran"].openmp_flag
+            config["F77_OPTS"] += " " + self["fortran"].openmp_flag
             config["SRC_OMP"] = " "
 
         # BLAS/LAPACK support

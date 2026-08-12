@@ -125,14 +125,14 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
     def cfg_files(self):
         # Add path to gcc/g++ such that clang/clang++ can always find a full gcc installation
         # including libstdc++.so and header files.
-        if self.spec.satisfies("%gcc") and self.compiler.cxx is not None:
-            compiler_options = "--gcc-toolchain={}".format(self.compiler.prefix)
+        if self.spec.satisfies("%gcc") and self["cxx"].cxx is not None:
+            compiler_options = "--gcc-toolchain={}".format(self["c"].prefix)
             for compiler in ["clang", "clang++"]:
                 with open(join_path(self.prefix.bin, "{}.cfg".format(compiler)), "w") as f:
                     f.write(compiler_options)
 
         # help flang find gcc
-        if self.spec.satisfies("@:5 %gcc") and self.compiler.prefix != "/usr":
+        if self.spec.satisfies("@:5 %gcc") and self["c"].prefix != "/usr":
             # help flang{1,2} find libquadmath
             libdir = self._libquadmath_dir()
             patchelf = which("patchelf", required=True)
@@ -153,7 +153,7 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
 
     def _libquadmath_dir(self):
         for lib in ["lib64", "lib"]:
-            libdir = join_path(self.compiler.prefix, lib)
+            libdir = join_path(self["c"].prefix, lib)
             if glob.glob(join_path(libdir, "libquadmath.*")):
                 return libdir
         return None

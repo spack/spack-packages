@@ -90,15 +90,15 @@ class Openmx(MakefilePackage):
         lapack_blas_libs = spec["lapack"].libs + spec["blas"].libs + spec["scalapack"].libs
         cc_option = [
             spec["mpi"].mpicc,
-            self.compiler.openmp_flag,
+            self["c"].openmp_flag,
             spec["fftw-api"].headers.include_flags,
         ]
-        fc_option = [spec["mpi"].mpifc, self.compiler.openmp_flag]
+        fc_option = [spec["mpi"].mpifc, self["fortran"].openmp_flag]
         lib_option = [
             spec["fftw-api"].libs.ld_flags,
             lapack_blas_libs.ld_flags,
             "-lmpi_mpifh",
-            self.compiler.openmp_flag,
+            self["fortran"].openmp_flag,
         ]
         if spec.satisfies("@3.8"):
             cc_option.append("-I$(LIBERIDIR)")
@@ -109,7 +109,7 @@ class Openmx(MakefilePackage):
         if "%fj" in spec:
             common_option.append("-Dkcomp  -Kfast")
             cc_option.append("-Dnosse -Nclang")
-            fc_option.extend([self.compiler.openmp_flag, "-Ccpp"])
+            fc_option.extend([self["fortran"].openmp_flag, "-Ccpp"])
         else:
             common_option.append("-O3")
             cc_option.extend(

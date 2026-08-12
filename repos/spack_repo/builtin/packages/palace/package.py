@@ -357,7 +357,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                 # Add OpenMP libraries - use compiler's OpenMP library
                 if self.spec.satisfies("+openmp"):
                     # Get OpenMP library from compiler
-                    omp_lib = self.compiler.openmp_flag
+                    omp_lib = self["cxx"].openmp_flag
                     if omp_lib:
                         strumpack_libs += ";" + omp_lib
 
@@ -409,9 +409,9 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                         strumpack_libs += ";" + ";".join(str(lib) for lib in cuda_libs)
 
                 # Add Fortran libraries
-                if "gfortran" in self.compiler.fc:
+                if "gfortran" in self["fortran"].fortran:
                     strumpack_libs += ";gfortran"
-                elif "ifx" in self.compiler.fc:
+                elif "ifx" in self["fortran"].fortran:
                     strumpack_libs += ";ifport;ifcore"
 
                 args.append(self.define("STRUMPACK_REQUIRED_LIBRARIES", strumpack_libs))
@@ -447,9 +447,9 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(self.define("MUMPS_REQUIRED_PACKAGES", ";".join(mumps_packages)))
 
                 mumps_libs = str(self.spec["scalapack"].libs).replace(" ", ";")
-                if "gfortran" in self.compiler.fc:
+                if "gfortran" in self["fortran"].fortran:
                     mumps_libs += ";gfortran"
-                elif "ifort" in self.compiler.fc or "ifx" in self.compiler.fc:
+                elif "ifort" in self["fortran"].fortran or "ifx" in self["fortran"].fortran:
                     mumps_libs += ";ifport;ifcore"
                 args.append(self.define("MUMPS_REQUIRED_LIBRARIES", mumps_libs))
 

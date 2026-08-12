@@ -1177,7 +1177,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     def detect_gdc(self):
         """Detect and return the path to GDC that belongs to the same instance of GCC that is used
-        by self.compiler.
+        by the selected compiler package.
 
         If the path cannot be detected, raise InstallError with recommendations for the users on
         how to circumvent the problem.

@@ -187,7 +187,9 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                     optims_opts["intel-oneapi-compilers"] += " -DNAMD_AVXTILES -xCORE-AVX512"
 
                 optim_opts = (
-                    optims_opts[self.compiler.name] if self.compiler.name in optims_opts else ""
+                    optims_opts[self.spec.compiler.name]
+                    if self.spec.compiler.name in optims_opts
+                    else ""
                 )
 
                 fh.write(
@@ -195,14 +197,17 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                         [
                             "NAMD_ARCH = {0}".format(self.arch),
                             "CHARMARCH = {0}".format(self.spec["charmpp"].charmarch),
-                            "CXX = {0.cxx} {0.cxx11_flag}".format(self.compiler),
+                            "CXX = {0} {1}".format(
+                                self["cxx"].cxx,
+                                self["cxx"].standard_flag(language="cxx", standard="11"),
+                            ),
                             "CXXOPTS = {0} {1} {2} {3}".format(
                                 " ".join(spec.compiler_flags["cppflags"]),
                                 optim_opts,
                                 " ".join(spec.compiler_flags["cxxflags"]),
                                 " ".join(spec.compiler_flags["ldflags"]),
                             ),
-                            "CC = {0}".format(self.compiler.cc),
+                            "CC = {0}".format(self["c"].cc),
                             "COPTS = {0} {1} {2} {3}".format(
                                 " ".join(spec.compiler_flags["cppflags"]),
                                 optim_opts,
@@ -232,7 +237,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
             # Optimizations for skylake_avx512
             if (
                 spec.platform == "linux"
-                and self.compiler.name == "intel"
+                and self.spec.compiler.name == "intel"
                 and "avx512" in spec.target
                 and spec.target >= "skylake_avx512"
             ):
@@ -245,8 +250,8 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
                 else:
                     return False
 
-                replace.append([r"^CXX = icpc", "CXX = {0}".format(self.compiler.cxx)])
-                replace.append([r"^CC = icc", "CC = {0}".format(self.compiler.cc)])
+                replace.append([r"^CXX = icpc", "CXX = {0}".format(self["cxx"].cxx)])
+                replace.append([r"^CC = icc", "CC = {0}".format(self["c"].cc)])
                 found_special_opt = True
 
             if found_special_opt:

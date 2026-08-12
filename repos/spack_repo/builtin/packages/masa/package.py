@@ -57,7 +57,12 @@ class Masa(AutotoolsPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # Unfortunately can't use this because MASA overwrites it
-        # env.set('CXXFLAGS', self.compiler.cxx11_flag)
-        env.set("CXX", "{0} {1}".format(self.compiler.cxx, self.compiler.cxx11_flag))
+        # env.set('CXXFLAGS', self["cxx"].standard_flag(language="cxx", standard="11"))
+        env.set(
+            "CXX",
+            "{0} {1}".format(
+                self["cxx"].cxx, self["cxx"].standard_flag(language="cxx", standard="11")
+            ),
+        )
         if self.spec.satisfies("%apple-clang"):
             env.set("CFLAGS", "-Wno-implicit-function-declaration")

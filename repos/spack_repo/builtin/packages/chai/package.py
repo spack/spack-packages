@@ -276,7 +276,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def initconfig_compiler_entries(self):
         spec = self.spec
-        compiler = self.compiler
+        compiler = self.spec.compiler
         # Default entries are already defined in CachedCMakePackage, inherit them:
         entries = super().initconfig_compiler_entries()
 

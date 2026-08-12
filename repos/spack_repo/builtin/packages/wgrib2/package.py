@@ -215,8 +215,8 @@ class Wgrib2(MakefilePackage, CMakePackage):
             # When mixing Clang/gfortran need to link to -lgfortran
             # Find this by searching for gfortran/../lib
             if self.spec.compiler.name in ["apple-clang", "clang"]:
-                if "gfortran" in self.compiler.fc:
-                    output = Executable(self.compiler.fc)("-###", output=str, error=str)
+                if "gfortran" in self["fortran"].fortran:
+                    output = Executable(self["fortran"].fortran)("-###", output=str, error=str)
                     libdir = re.search("--libdir=(.+?) ", output).group(1)
                     flags.append("-L{}".format(libdir))
 

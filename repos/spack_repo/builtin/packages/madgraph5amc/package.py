@@ -87,8 +87,8 @@ class Madgraph5amc(MakefilePackage):
 
         set_parameter("automatic_html_opening", "False")
 
-        set_parameter("cpp_compiler", self.compiler.cxx)
-        set_parameter("fortran_compiler", self.compiler.fc)
+        set_parameter("cpp_compiler", self["cxx"].cxx)
+        set_parameter("fortran_compiler", self["fortran"].fortran)
 
     def build(self, spec, prefix):
         with working_dir(join_path("vendor", "CutTools")):

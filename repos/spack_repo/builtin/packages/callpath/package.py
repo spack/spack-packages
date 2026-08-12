@@ -32,7 +32,7 @@ class Callpath(CMakePackage):
         # TODO: offer options for the walker used.
         args = ["-DCALLPATH_WALKER=dyninst"]
 
-        std_flag = self.compiler.cxx11_flag
+        std_flag = self["cxx"].standard_flag(language="cxx", standard="11")
         flags = [std_flag, "-fpermissive"]
 
         if self.spec.satisfies("^tbb@2021.1:"):

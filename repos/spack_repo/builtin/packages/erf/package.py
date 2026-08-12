@@ -142,6 +142,6 @@ class Erf(CMakePackage, CudaPackage):
         env.set("AMREX_HOME", self.spec["amrex"].prefix)
         if "+openmp" in self.spec:
             if "%clang" in self.spec or "%gcc" in self.spec:
-                env.append_flags("CFLAGS", self.compiler.openmp_flag)
-                env.append_flags("CXXFLAGS", self.compiler.openmp_flag)
-                env.append_flags("FFLAGS", self.compiler.openmp_flag)
+                env.append_flags("CFLAGS", self["c"].openmp_flag)
+                env.append_flags("CXXFLAGS", self["cxx"].openmp_flag)
+                env.append_flags("FFLAGS", self["fortran"].openmp_flag)

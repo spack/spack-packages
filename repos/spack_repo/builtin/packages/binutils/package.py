@@ -168,7 +168,7 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
 
         # Set -O3 -g0 by default when using gcc or clang, since it improves performance
         # a bit and significantly reduces install size
-        if name in ("cflags", "cxxflags") and self.compiler.name in ("gcc", "clang"):
+        if name in ("cflags", "cxxflags") and self.spec.compiler.name in ("gcc", "clang"):
             flags.insert(0, "-g0")
             flags.insert(0, "-O3")
 
@@ -178,7 +178,8 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
         # To ignore the errors of narrowing conversions for
         # the Fujitsu compiler
         if name == "cxxflags" and (
-            spec.satisfies("@:2.31.1") and self.compiler.name in ("fj", "clang", "apple-clang")
+            spec.satisfies("@:2.31.1")
+            and self.spec.compiler.name in ("fj", "clang", "apple-clang")
         ):
             iflags.append("-Wno-narrowing")
         elif name == "cflags":

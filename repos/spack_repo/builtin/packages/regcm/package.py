@@ -77,7 +77,7 @@ class Regcm(AutotoolsPackage):
     parallel = False
 
     def flag_handler(self, name, flags):
-        if name == "fflags" and self.compiler.fc.endswith("gfortran"):
+        if name == "fflags" and self["fortran"].fortran.endswith("gfortran"):
             flags.extend(
                 [
                     "-Wall",
@@ -95,7 +95,7 @@ class Regcm(AutotoolsPackage):
 
         elif name == "ldlibs":
             flags.extend(["-lnetcdff", "-lnetcdf"])
-            if self.compiler.fc.endswith("gfortran"):
+            if self["fortran"].fortran.endswith("gfortran"):
                 flags.extend(["-lm", "-ldl"])
             else:
                 flags.extend(["-lhdf5_hl", "-lhdf5", "-lz"])
@@ -140,7 +140,7 @@ class Regcm(AutotoolsPackage):
         fcflags = list(self.spec.compiler_flags["fflags"])
 
         # RegCM complains when compiled with gfortran.
-        if self.compiler.fc.endswith("gfortran"):
+        if self["fortran"].fortran.endswith("gfortran"):
             fcflags.append("-fno-range-check")
 
         args.append("FCFLAGS=" + " ".join(fcflags))

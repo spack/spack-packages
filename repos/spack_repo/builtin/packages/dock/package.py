@@ -68,7 +68,7 @@ class Dock(Package):
                 filter_file(r"^DOCK_SUFFIX=.*", "DOCK_SUFFIX=.mpi", "config.h")
                 filter_file(r"^LOAD=.*$", f"LOAD={self.spec['mpi'].mpicxx}", "config.h")
             else:
-                filter_file(r"^LOAD=.*$", f"LOAD={self.compiler.cxx}", "config.h")
+                filter_file(r"^LOAD=.*$", f"LOAD={self['cxx'].cxx}", "config.h")
                 filter_file(r"^CFLAGS=.*", "", "config.h")
 
             with open("config.h", "a", encoding="UTF-8") as f:

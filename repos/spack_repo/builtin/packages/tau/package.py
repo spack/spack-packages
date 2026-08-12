@@ -299,10 +299,15 @@ class Tau(Package):
         #     ('CC', 'CXX' and 'FC')
         # 4 - if no -cc=<compiler> -cxx=<compiler> is passed tau is built with
         #     system compiler silently
+        compiler_paths = {
+            "cc": self["c"].cc,
+            "cxx": self["cxx"].cxx,
+            "fc": self["fortran"].fortran,
+        }
         compiler_flags: Dict[str, str] = {
-            flag: os.path.basename(getattr(self.compiler, compiler))
+            flag: os.path.basename(compiler_paths[compiler])
             for flag, compiler in (("-cc", "cc"), ("-c++", "cxx"), ("-fortran", "fc"))
-            if getattr(self.compiler, compiler)
+            if compiler_paths[compiler]
         }
 
         if "~fortran" in spec:

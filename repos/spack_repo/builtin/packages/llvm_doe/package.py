@@ -370,7 +370,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
 
     def flag_handler(self, name, flags):
         if name == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
             return (None, flags, None)
         elif name == "ldflags" and self.spec.satisfies("%intel"):
             flags.append("-shared-intel")
@@ -379,9 +379,9 @@ class LlvmDoe(CMakePackage, CudaPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """When using %clang, add only its ld.lld-$ver and/or ld.lld to our PATH"""
-        if self.compiler.name in ["clang", "apple-clang"]:
-            for lld in "ld.lld-{0}".format(self.compiler.version.version[0]), "ld.lld":
-                bin = os.path.join(os.path.dirname(self.compiler.cc), lld)
+        if self.spec.compiler.name in ["clang", "apple-clang"]:
+            for lld in "ld.lld-{0}".format(self.spec.compiler.version.version[0]), "ld.lld":
+                bin = os.path.join(os.path.dirname(self["c"].cc), lld)
                 sym = os.path.join(self.stage.path, "ld.lld")
                 if os.path.exists(bin) and not os.path.exists(sym):
                     mkdirp(self.stage.path)
@@ -544,8 +544,8 @@ class LlvmDoe(CMakePackage, CudaPackage):
             if spec.satisfies("+argobots") and spec.satisfies("@bolt"):
                 cmake_args.append("-DLIBOMP_USE_ARGOBOTS=ON")
 
-        if self.compiler.name == "gcc":
-            cmake_args.append(define("GCC_INSTALL_PREFIX", self.compiler.prefix))
+        if self.spec.compiler.name == "gcc":
+            cmake_args.append(define("GCC_INSTALL_PREFIX", self["c"].prefix))
 
         # if spec.satisfies("platform=linux"):
         #     cmake_args.append("-DCMAKE_BUILD_WITH_INSTALL_RPATH=1")

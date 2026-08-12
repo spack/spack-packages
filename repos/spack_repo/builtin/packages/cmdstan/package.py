@@ -47,7 +47,7 @@ class Cmdstan(MakefilePackage):
             "CXX={0}\n".format(cxx),
             "CXXFLAGS+= -O2 -funroll-loops\n",
             "LDFLAGS+={0}{1}\n".format(
-                self.compiler.cc_rpath_arg,
+                self["c"].rpath_arg,
                 join_path(prefix, "stan", "lib", "stan_math", "lib", "tbb"),
             ),
             "STANCFLAGS+= --warn-pedantic\n",

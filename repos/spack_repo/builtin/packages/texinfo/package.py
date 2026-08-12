@@ -80,7 +80,7 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
     def flag_handler(self, name, flags):
         if name == "cflags":
             if self.spec.satisfies("@7.0:7.1"):
-                flags.append(self.compiler.c11_flag)
+                flags.append(self["c"].standard_flag(language="c", standard="11"))
 
         return (flags, None, None)
 

@@ -51,13 +51,13 @@ class Fpm(Package):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@0.4.0"):
-            env.set("FPM_C_COMPILER", self.compiler.cc)
+            env.set("FPM_C_COMPILER", self["c"].cc)
 
-        env.set("FPM_CC", self.compiler.cc)
+        env.set("FPM_CC", self["c"].cc)
 
         fflags = "-O3"
         if self.spec.satisfies("+openmp"):
-            fflags += " " + self.compiler.openmp_flag
+            fflags += " " + self["fortran"].openmp_flag
         env.set("FFLAGS", fflags)
 
     def install(self, spec, prefix):

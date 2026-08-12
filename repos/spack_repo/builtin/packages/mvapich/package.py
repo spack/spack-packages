@@ -2,13 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.mpich.package import MpichEnvironmentModifications
 
+from spack.compilers.libraries import CompilerPropertyDetector
 from spack.package import *
 
 
@@ -229,8 +229,16 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
         else:
             args.append("--disable-registration-cache")
 
+        compiler_pkgs = [self["c"], self["cxx"], self["fortran"]]
+        rpaths = []
+        for compiler_pkg in compiler_pkgs:
+            rpaths.extend(
+                getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
+            )
+            rpaths.extend(CompilerPropertyDetector(compiler_pkg.spec).implicit_rpaths())
+
         ld = ""
-        for path in itertools.chain(self.compiler.extra_rpaths, self.compiler.implicit_rpaths()):
+        for path in dict.fromkeys(rpaths):
             ld += "-Wl,-rpath," + path + " "
         if ld != "":
             args.append("LDFLAGS=" + ld)

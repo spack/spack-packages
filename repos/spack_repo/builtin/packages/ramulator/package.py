@@ -28,7 +28,7 @@ class Ramulator(MakefilePackage):
     patch("ramulator_sha_7d2e723_libPatch.patch", when="@sst")
 
     def patch(self):
-        filter_file("-fpic", self.compiler.cxx_pic_flag, "Makefile")
+        filter_file("-fpic", self["cxx"].pic_flag, "Makefile")
 
     def build(self, spec, prefix):
         if spec.satisfies("platform=darwin"):

@@ -46,7 +46,7 @@ class TinyTensorCompiler(CMakePackage):
     depends_on("bison@3.8.2:", type="build")
 
     def cmake_args(self):
-        cxx_compiler = os.path.basename(self.compiler.cxx)
+        cxx_compiler = os.path.basename(self["cxx"].cxx)
         if self.spec.satisfies("+sycl") and cxx_compiler not in ["icpx"]:
             raise InstallError("The tinytc_sycl library requires the oneapi C++ compiler")
 

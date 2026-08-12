@@ -64,7 +64,7 @@ class LuaLuajitOpenresty(LuaImplPackage):
         makefile.filter("PREFIX= .*", f"PREFIX = {prefix}")
         src_makefile = FileFilter(join_path("src", "Makefile"))
         src_makefile.filter("^DEFAULT_CC = .*", f"DEFAULT_CC = {spack_cc}")
-        src_makefile.filter("^DYNAMIC_CC = .*", f"DYNAMIC_CC = $(CC) {self.compiler.cc_pic_flag}")
+        src_makefile.filter("^DYNAMIC_CC = .*", f"DYNAMIC_CC = $(CC) {self['c'].pic_flag}")
         # Catalina and higher produce a non-functional luajit unless this is set
         if spec.satisfies("platform=darwin"):
             src_makefile.filter(

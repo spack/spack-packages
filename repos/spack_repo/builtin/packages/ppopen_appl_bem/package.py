@@ -40,7 +40,7 @@ class PpopenApplBem(MakefilePackage):
     ]
 
     def edit(self, spec, prefix):
-        flags = [self.compiler.openmp_flag]
+        flags = [self["fortran"].openmp_flag]
         fflags = flags[:]
         if spec.satisfies("%gcc"):
             fflags.append("-ffree-line-length-none")

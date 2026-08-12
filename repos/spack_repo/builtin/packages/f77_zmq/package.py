@@ -36,7 +36,7 @@ class F77Zmq(MakefilePackage):
     def edit(self, spec, prefix):
         cflags = os.environ.get("CFLAGS")
         makefile = FileFilter("Makefile")
-        makefile.filter("CC=.*", "CC={0} {1}".format(spack_cc, self.compiler.cc_pic_flag))
+        makefile.filter("CC=.*", "CC={0} {1}".format(spack_cc, self["c"].pic_flag))
         makefile.filter("CFLAGS=.*", "CFLAGS={0}".format(cflags))
         makefile.filter("PREFIX=.*", "PREFIX={0}".format(self.prefix))
         p = self.spec["libzmq"].prefix

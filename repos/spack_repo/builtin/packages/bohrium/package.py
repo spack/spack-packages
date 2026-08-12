@@ -149,7 +149,7 @@ class Bohrium(CMakePackage, CudaPackage):
             args += [
                 "-DVE_OPENMP=ON",
                 "-DOPENMP_FOUND=True",
-                "-DVE_OPENMP_COMPILER_CMD=" + self.compiler.cc,
+                "-DVE_OPENMP_COMPILER_CMD=" + self["c"].cc,
             ]
         else:
             args += ["-DVE_OPENMP=OFF", "-DOPENMP_FOUND=False"]
@@ -239,7 +239,7 @@ class Bohrium(CMakePackage, CudaPackage):
             stacks.append("opencl")
 
         # C++ compiler and compiler flags
-        cxx = Executable(self.compiler.cxx)
+        cxx = Executable(self["cxx"].cxx)
         cxx_flags = [
             "-I",
             self.prefix.include,

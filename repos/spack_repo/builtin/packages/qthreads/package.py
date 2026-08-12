@@ -128,7 +128,7 @@ class Qthreads(AutotoolsPackage):
             test,
             f"-L{self.prefix.lib}",
             "-lqthread",
-            f"{self.compiler.cc_rpath_arg}{self.prefix.lib}",
+            f"{self['c'].rpath_arg}{self.prefix.lib}",
         ]
         cc = which(os.environ["CC"], required=True)
         cc(*options)

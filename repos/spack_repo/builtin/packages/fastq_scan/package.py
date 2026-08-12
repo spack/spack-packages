@@ -29,7 +29,7 @@ class FastqScan(MakefilePackage):
 
     @property
     def build_targets(self):
-        return [f"CXX={self.compiler.cxx}", "all"]
+        return [f"CXX={self['cxx'].cxx}", "all"]
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)

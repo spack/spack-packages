@@ -118,7 +118,7 @@ class Truchas(CMakePackage):
         if "+config" in spec:
             root = self.root_cmakelists_dir
 
-            nag = "nag" in self.compiler.fc
+            nag = "nag" in self["fortran"].fortran
 
             if spec.satisfies("platform=linux"):
                 if nag or "%nag" in spec:

@@ -173,7 +173,7 @@ class UfsWeatherModel(CMakePackage):
         else:
             msg = "The host system {0} and compiler {1} "
             msg += "are not supported by UFS."
-            raise InstallError(msg.format(spec.platform, self.compiler.name))
+            raise InstallError(msg.format(spec.platform, self.spec.compiler.name))
 
     def cmake_args(self):
         args = [

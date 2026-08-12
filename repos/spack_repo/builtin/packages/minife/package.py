@@ -47,7 +47,7 @@ class Minife(MakefilePackage):
     def edit(self, spec, prefix):
         makefile = FileFilter("{0}/src/Makefile".format(self.spec.variants["build"].value))
 
-        makefile.filter("-fopenmp", self.compiler.openmp_flag, string=True)
+        makefile.filter("-fopenmp", self["cxx"].openmp_flag, string=True)
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)

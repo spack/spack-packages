@@ -57,7 +57,7 @@ class LuaLuajit(LuaImplPackage):
         src_makefile = FileFilter(join_path("src", "Makefile"))
         src_makefile.filter("^DEFAULT_CC = .*", "DEFAULT_CC = {0}".format(spack_cc))
         src_makefile.filter(
-            "^DYNAMIC_CC = .*", "DYNAMIC_CC = $(CC) {0}".format(self.compiler.cc_pic_flag)
+            "^DYNAMIC_CC = .*", "DYNAMIC_CC = $(CC) {0}".format(self["c"].pic_flag)
         )
 
         # Linking with the C++ compiler is a dirty hack to deal with the fact

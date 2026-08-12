@@ -26,7 +26,7 @@ class KokkosNvccWrapper(Package):
     for v, vargs in Kokkos.versions.items():
         version(str(v), **vargs)
 
-    depends_on("cxx", type="build")  # needed for self.compiler.cxx
+    depends_on("cxx", type="build")  # needed for self["cxx"].cxx
 
     depends_on("cuda")
 
@@ -40,8 +40,8 @@ class KokkosNvccWrapper(Package):
     ) -> None:
         wrapper = join_path(self.prefix.bin, "nvcc_wrapper")
         env.set("CUDA_ROOT", dependent_spec["cuda"].prefix)
-        env.set("NVCC_WRAPPER_DEFAULT_COMPILER", self.compiler.cxx)
-        env.set("KOKKOS_CXX", self.compiler.cxx)
+        env.set("NVCC_WRAPPER_DEFAULT_COMPILER", self["cxx"].cxx)
+        env.set("KOKKOS_CXX", self["cxx"].cxx)
         env.set("MPICH_CXX", wrapper)
         env.set("OMPI_CXX", wrapper)
         env.set("MPICXX_CXX", wrapper)  # HPE MPT

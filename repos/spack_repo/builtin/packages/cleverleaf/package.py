@@ -41,6 +41,6 @@ class Cleverleaf(CMakePackage):
 
     def flag_handler(self, name, flags):
         if self.spec.satisfies("%intel") and name in ["cppflags", "cxxflags"]:
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
 
         return (None, None, flags)

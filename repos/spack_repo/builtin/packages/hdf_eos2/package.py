@@ -141,7 +141,7 @@ class HdfEos2(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
             if (
                 self.spec.satisfies("%clang@16:")
                 or self.spec.satisfies("%apple-clang@15:")
@@ -172,8 +172,8 @@ class HdfEos2(AutotoolsPackage):
             # h4cc has a hardcoded compiler path (CCBASE) that bypasses the
             # Spack wrappers. Override it via HDF4_CC so h4cc uses the Spack
             # compiler wrapper instead.
-            env.set("HDF4_CC", self.compiler.cc)
-            env.set("HDF4_CLINKER", self.compiler.cc)
+            env.set("HDF4_CC", self["c"].cc)
+            env.set("HDF4_CLINKER", self["c"].cc)
             if (
                 self.spec.satisfies("%clang@16:")
                 or self.spec.satisfies("%apple-clang@15:")
@@ -191,7 +191,7 @@ class HdfEos2(AutotoolsPackage):
         # because h4cc produces binaries using hardcoded paths that can't run
         # in the configure sandbox. Use the Spack compiler wrapper for configure
         # only; h4cc (with HDF4_CC set) takes over for build/install.
-        os.environ["CC"] = self.compiler.cc
+        os.environ["CC"] = self["c"].cc
         # On macOS the Spack compiler wrappers also prevent autoconf from
         # running test programs, causing malloc/realloc/memcmp checks to
         # default to "no" and generate rpl_malloc/rpl_realloc stubs that are

@@ -61,10 +61,10 @@ class SuperluMt(Package):
                 [
                     "PLAT       = _OPENMP",
                     "TMGLIB     = libtmglib.a",
-                    "MPLIB      = {0}".format(self.compiler.openmp_flag),
-                    "CFLAGS     = {0}".format(self.compiler.openmp_flag),
-                    "FFLAGS     = {0}".format(self.compiler.openmp_flag),
-                    "LOADOPTS   += {0}".format(self.compiler.openmp_flag),
+                    "MPLIB      = {0}".format(self["c"].openmp_flag),
+                    "CFLAGS     = {0}".format(self["c"].openmp_flag),
+                    "FFLAGS     = {0}".format(self["fortran"].openmp_flag),
+                    "LOADOPTS   += {0}".format(self["c"].openmp_flag),
                 ]
             )
         elif "+pthread" in spec:
@@ -118,10 +118,10 @@ class SuperluMt(Package):
         if "+pic" in spec:
             config.extend(
                 [
-                    "CFLAGS     += {0}".format(self.compiler.cc_pic_flag),
-                    "NOOPTS     += {0}".format(self.compiler.cc_pic_flag),
-                    "FFLAGS     += {0}".format(self.compiler.f77_pic_flag),
-                    "LOADOPTS   += {0}".format(self.compiler.cc_pic_flag),
+                    "CFLAGS     += {0}".format(self["c"].pic_flag),
+                    "NOOPTS     += {0}".format(self["c"].pic_flag),
+                    "FFLAGS     += {0}".format(self["fortran"].pic_flag),
+                    "LOADOPTS   += {0}".format(self["c"].pic_flag),
                 ]
             )
 

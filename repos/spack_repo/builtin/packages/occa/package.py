@@ -75,7 +75,7 @@ class Occa(Package):
     def _setup_runtime_flags(self, s_env):
         spec = self.spec
         s_env.set("OCCA_DIR", self.prefix)
-        s_env.set("OCCA_CXX", self.compiler.cxx)
+        s_env.set("OCCA_CXX", self["cxx"].cxx)
 
         cxxflags = spec.compiler_flags["cxxflags"]
         if cxxflags:

@@ -42,8 +42,8 @@ class Amg2013(MakefilePackage):
 
         if self.spec.satisfies("+openmp"):
             include_cflags.append("-DHYPRE_USING_OPENMP")
-            include_cflags.append(self.compiler.openmp_flag)
-            include_lflags.append(self.compiler.openmp_flag)
+            include_cflags.append(self["c"].openmp_flag)
+            include_lflags.append(self["c"].openmp_flag)
             if self.spec.satisfies("+optflags"):
                 include_cflags.append("-DHYPRE_USING_PERSISTENT_COMM")
                 include_cflags.append("-DHYPRE_HOPSCOTCH")

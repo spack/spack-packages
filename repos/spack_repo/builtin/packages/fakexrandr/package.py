@@ -41,7 +41,7 @@ class Fakexrandr(MakefilePackage):
         # Also need to hack Makefile
         makefile = FileFilter("Makefile")
         makefile.filter("PREFIX=/usr", "PREFIX=" + prefix)
-        makefile.filter("-fPIC", self.compiler.cc_pic_flag)
+        makefile.filter("-fPIC", self["c"].pic_flag)
 
         # And tool used to generate skeleton
         filter_file("gcc", spack_cc, "make_skeleton.py")

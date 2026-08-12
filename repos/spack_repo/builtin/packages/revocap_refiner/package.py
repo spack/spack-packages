@@ -32,7 +32,7 @@ class RevocapRefiner(MakefilePackage):
 
     def edit(self, spec, prefix):
         cflags = ["-O3"]
-        cxxflags = ["-O3", self.compiler.cxx_pic_flag]
+        cxxflags = ["-O3", self["cxx"].pic_flag]
         ldflags = [""]
         ldshare = [""]
         libs = [""]

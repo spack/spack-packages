@@ -38,7 +38,7 @@ class EclipseGcjParser(Package):
         even in the face of GCC binaries with version numbers
         included in their names."""
 
-        dir, gcc = os.path.split(str(self.compiler.cc))
+        dir, gcc = os.path.split(str(self["c"].cc))
         if "gcc" not in gcc:
             raise ValueError("Package {0} requires GCC to build".format(self.name))
 

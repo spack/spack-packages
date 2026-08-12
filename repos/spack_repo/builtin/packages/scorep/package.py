@@ -241,8 +241,8 @@ class Scorep(AutotoolsPackage):
 
         config_args.extend(
             [
-                "CFLAGS={0}".format(self.compiler.cc_pic_flag),
-                "CXXFLAGS={0}".format(self.compiler.cxx_pic_flag),
+                "CFLAGS={0}".format(self["c"].pic_flag),
+                "CXXFLAGS={0}".format(self["cxx"].pic_flag),
             ]
         )
 

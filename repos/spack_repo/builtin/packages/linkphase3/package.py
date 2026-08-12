@@ -20,7 +20,7 @@ class Linkphase3(Package):
     depends_on("fortran", type="build")  # generated
 
     def install(self, spec, prefix):
-        fortran = Executable(self.compiler.fc)
+        fortran = Executable(self["fortran"].fortran)
         fortran("LINKPHASE3.f90", "-o", "LINKPHASE3")
         mkdirp(prefix.bin)
         install("LINKPHASE3", prefix.bin)

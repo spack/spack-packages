@@ -64,11 +64,11 @@ class Xsbench(MakefilePackage, CudaPackage):
             targets.append("CC={0}".format(self.spec["mpi"].mpicc))
             targets.append("MPI=yes")
         else:
-            targets.append("CC={0}".format(self.compiler.cc))
+            targets.append("CC={0}".format(self["c"].cc))
             targets.append("MPI=no")
 
         if "+openmp" in self.spec:
-            cflags += " " + self.compiler.openmp_flag
+            cflags += " " + self["c"].openmp_flag
         targets.append("CFLAGS={0}".format(cflags))
         targets.append("LDFLAGS=-lm")
 

@@ -79,7 +79,7 @@ class Hpcg(AutotoolsPackage):
             CXXFLAGS += " -Rpass-missed=loop-vectorize"
             CXXFLAGS += " -Rpass-analysis=loop-vectorize "
         if self.spec.satisfies("+openmp"):
-            CXXFLAGS += self.compiler.openmp_flag
+            CXXFLAGS += self["cxx"].openmp_flag
         config = [
             # Shell
             "SHELL         = /bin/sh",

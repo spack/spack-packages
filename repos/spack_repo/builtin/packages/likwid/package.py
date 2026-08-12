@@ -168,13 +168,15 @@ class Likwid(Package):
             supported_compilers = {"gcc": "GCCARMv8", "clang": "ARMCLANG", "arm": "ARMCLANG"}
         elif spec.target.family == "ppc64" or spec.target.family == "ppc64le":
             supported_compilers = {"gcc": "GCCPOWER"}
-        if self.compiler.name not in supported_compilers:
+        if self.spec.compiler.name not in supported_compilers:
             raise RuntimeError(
-                "{0} is not a supported compiler to compile Likwid".format(self.compiler.name)
+                "{0} is not a supported compiler to compile Likwid".format(self.spec.compiler.name)
             )
 
         filter_file(
-            "^COMPILER .*", "COMPILER = " + supported_compilers[self.compiler.name], "config.mk"
+            "^COMPILER .*",
+            "COMPILER = " + supported_compilers[self.spec.compiler.name],
+            "config.mk",
         )
         filter_file("^PREFIX .*", "PREFIX = " + prefix, "config.mk")
 
@@ -192,7 +194,7 @@ class Likwid(Package):
 
         if self.spec.satisfies("+fortran"):
             filter_file("^FORTRAN_INTERFACE .*", "FORTRAN_INTERFACE = true", "config.mk")
-            if self.compiler.name == "gcc":
+            if self.spec.compiler.name == "gcc":
                 makepath = join_path("make", "include_GCC.mk")
                 filter_file("ifort", "gfortran", makepath)
                 filter_file("-module", "-I", makepath)

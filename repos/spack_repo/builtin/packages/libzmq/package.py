@@ -119,7 +119,7 @@ class Libzmq(AutotoolsPackage):
         # this option was only added in version 4.2.3.
         if self.spec.version >= Version("4.2.3"):
             config_args.append("--disable-Werror")
-        if "clang" in self.compiler.cc:
+        if "clang" in self["c"].cc:
             config_args.append("CFLAGS=-Wno-gnu")
             config_args.append("CXXFLAGS=-Wno-gnu")
         return config_args

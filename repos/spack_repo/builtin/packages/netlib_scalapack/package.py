@@ -83,8 +83,8 @@ class ScalapackBase(CMakePackage):
 
         c_flags = []
         if "+pic" in spec:
-            c_flags.append(self.compiler.cc_pic_flag)
-            options.append("-DCMAKE_Fortran_FLAGS=%s" % self.compiler.fc_pic_flag)
+            c_flags.append(self["c"].pic_flag)
+            options.append("-DCMAKE_Fortran_FLAGS=%s" % self["fortran"].pic_flag)
 
         # Work around errors of the form:
         #   error: implicit declaration of function 'BI_smvcopy' is

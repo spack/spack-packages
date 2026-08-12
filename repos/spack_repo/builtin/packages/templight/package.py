@@ -110,7 +110,7 @@ class Templight(CMakePackage):
             cmake_lists.write("add_clang_subdirectory(templight)")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_flags("CXXFLAGS", self.compiler.cxx11_flag)
+        env.append_flags("CXXFLAGS", self["cxx"].standard_flag(language="cxx", standard="11"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("CC", join_path(self.spec.prefix.bin, "templight"))

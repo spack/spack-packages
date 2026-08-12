@@ -32,8 +32,8 @@ class Neve(MakefilePackage):
         ldflags = []
 
         if "+openmp" in self.spec:
-            cxxflags.append(self.compiler.openmp_flag)
-            ldflags.append(self.compiler.openmp_flag)
+            cxxflags.append(self["cxx"].openmp_flag)
+            ldflags.append(self["cxx"].openmp_flag)
         if "+opt" in self.spec:
             cxxflags.append(" -O3 ")
 

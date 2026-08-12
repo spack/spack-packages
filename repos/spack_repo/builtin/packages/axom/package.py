@@ -363,7 +363,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
         return sys_type
 
     def is_fortran_compiler(self, compiler):
-        if self.compiler.fc is not None and compiler in self.compiler.fc:
+        if self["fortran"].fortran is not None and compiler in self["fortran"].fortran:
             return True
         return False
 
@@ -394,8 +394,8 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+fortran"):
             entries.append(cmake_cache_option("ENABLE_FORTRAN", True))
-            if self.is_fortran_compiler("gfortran") and "clang" in self.compiler.cxx:
-                libdir = pjoin(os.path.dirname(os.path.dirname(self.compiler.cxx)), "lib")
+            if self.is_fortran_compiler("gfortran") and "clang" in self["cxx"].cxx:
+                libdir = pjoin(os.path.dirname(os.path.dirname(self["cxx"].cxx)), "lib")
                 flags = ""
                 for _libpath in [libdir, libdir + "64"]:
                     if os.path.exists(_libpath):
@@ -542,7 +542,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+fortran") and self.is_fortran_compiler("xlf"):
             # Grab lib directory for the current fortran compiler
-            libdir = pjoin(os.path.dirname(os.path.dirname(self.compiler.fc)), "lib")
+            libdir = pjoin(os.path.dirname(os.path.dirname(self["fortran"].fortran)), "lib")
             description = "Adds a missing rpath for libraries associated with the fortran compiler"
 
             linker_flags = "${BLT_EXE_LINKER_FLAGS} -Wl,-rpath," + libdir
@@ -564,7 +564,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         if (
             spec.satisfies("+openmp")
-            and "clang" in self.compiler.cxx
+            and "clang" in self["cxx"].cxx
             and spec.satisfies("+fortran")
             and self.is_fortran_compiler("xlf")
         ):

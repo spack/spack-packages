@@ -30,7 +30,7 @@ class Minitri(MakefilePackage):
             targets.append("CCC={0}".format(self.spec["mpi"].mpicxx))
             targets.append("--directory=miniTri/linearAlgebra/MPI")
         else:
-            targets.append("CCC={0}".format(self.compiler.cxx))
+            targets.append("CCC={0}".format(self["cxx"].cxx))
             targets.append("--directory=miniTri/linearAlgebra/serial")
 
         targets.append("--file=Makefile")

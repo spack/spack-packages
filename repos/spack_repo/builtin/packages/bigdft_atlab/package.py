@@ -54,7 +54,7 @@ class BigdftAtlab(AutotoolsPackage):
         cxxflags = []
 
         if spec.satisfies("+openmp"):
-            fcflags.append(self.compiler.openmp_flag)
+            fcflags.append(self["fortran"].openmp_flag)
 
         if spec.satisfies("+shared"):
             fcflags.append("-fPIC")

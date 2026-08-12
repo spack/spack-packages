@@ -39,10 +39,10 @@ class Stripack(MakefilePackage):
         config = [
             "BUILDIR ?= " + join_path(self.build_directory, "build"),
             "DYLIB=" + dso_suffix,
-            "F90=" + self.compiler.fc,
-            "LD=" + self.compiler.fc,
-            "FFLAGS=" + self.compiler.fc_pic_flag,
-            "LDFLAGS=" + self.compiler.fc_pic_flag,
+            "F90=" + self["fortran"].fortran,
+            "LD=" + self["fortran"].fortran,
+            "FFLAGS=" + self["fortran"].pic_flag,
+            "LDFLAGS=" + self["fortran"].pic_flag,
             ".SUFFIXES: .f .f90 .F90",
             "$(BUILDIR)/%.o: %.f90",
             "\t$(F90) $(FFLAGS) -c $< -o $@",
@@ -75,7 +75,7 @@ class Stripack(MakefilePackage):
             fflags += ["-CcdRR8"]
         elif satisfies("%nvhpc"):
             fflags += ["-r8"]
-        fflags += [self.compiler.fc_pic_flag]
+        fflags += [self["fortran"].pic_flag]
         make("all", "FFLAGS={0}".format(" ".join(fflags)))
 
     def install(self, spec, prefix):

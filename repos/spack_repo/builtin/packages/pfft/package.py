@@ -32,7 +32,7 @@ class Pfft(AutotoolsPackage):
 
     def configure(self, spec, prefix):
         options = ["--prefix={0}".format(prefix)]
-        if not self.compiler.f77 or not self.compiler.fc:
+        if not self["fortran"].fortran or not self["fortran"].fortran:
             options.append("--disable-fortran")
 
         configure = Executable("../configure")

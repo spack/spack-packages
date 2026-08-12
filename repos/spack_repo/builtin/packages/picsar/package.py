@@ -55,7 +55,7 @@ class Picsar(MakefilePackage):
                 comp = value
         targets.append("COMP={0}".format(comp))
         if comp == "user":
-            targets.append("FARGS={0}{1}".format("-g -O3 ", self.compiler.openmp_flag))
+            targets.append("FARGS={0}{1}".format("-g -O3 ", self["fortran"].openmp_flag))
 
         if "+prod" in self.spec:
             mode = "prod"

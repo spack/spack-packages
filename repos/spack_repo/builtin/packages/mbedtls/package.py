@@ -84,7 +84,7 @@ class Mbedtls(CMakePackage, MakefilePackage):
             build_type = self.spec.variants["build_type"].value
             flags.append(build_type_to_flags[build_type])
             if self.spec.variants["pic"].value:
-                flags.append(self.compiler.cc_pic_flag)
+                flags.append(self["c"].pic_flag)
 
         return (None, flags, None)
 

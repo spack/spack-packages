@@ -95,7 +95,7 @@ class Vasp(MakefilePackage, CudaPackage):
             "-Dvasp6",
         ]
         objects_lib = ["linpack_double.o"]
-        llibs = list(self.compiler.stdcxx_libs)
+        llibs = list(self["cxx"].stdcxx_libs)
         cflags = ["-fPIC", "-DAAD_"]
         fflags = ["-w"]
         incs = [spec["fftw-api"].headers.include_flags]
@@ -234,7 +234,7 @@ class Vasp(MakefilePackage, CudaPackage):
                 cuda_flags.append(f"cc{f}")
             fc.append(f"-gpu={','.join(cuda_flags)}")
             fcl.append(f"-gpu={','.join(cuda_flags)}")
-            fcl.extend(list(self.compiler.stdcxx_libs))
+            fcl.extend(list(self["cxx"].stdcxx_libs))
             cc = [spec["mpi"].mpicc, "-acc"]
             if spec.satisfies("+openmp"):
                 cc.append(omp_flag)
@@ -266,7 +266,7 @@ class Vasp(MakefilePackage, CudaPackage):
         if spec.satisfies("+fftlib"):
             cxxftlib = (
                 f"CXX_FFTLIB = {spack_cxx} {omp_flag}"
-                f" -DFFTLIB_THREADSAFE{' '.join(list(self.compiler.stdcxx_libs))}"
+                f" -DFFTLIB_THREADSAFE{' '.join(list(self['cxx'].stdcxx_libs))}"
             )
             filter_file("^#FCL[ ]{0,}=fftlib.o", "FCL += fftlib/fftlib.o", make_include)
             filter_file("^#CXX_FFTLIB.*$", cxxftlib, make_include)

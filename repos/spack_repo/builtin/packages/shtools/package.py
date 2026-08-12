@@ -46,9 +46,9 @@ class Shtools(MakefilePackage):
     # Options for the Makefile
     def makeopts(self, spec, prefix):
         return [
-            "F95={0}".format(self.compiler.fc),
-            "F95FLAGS={0} -O3 -std=gnu -ffast-math".format(self.compiler.fc_pic_flag),
-            "OPENMPFLAGS={0}".format(self.compiler.openmp_flag),
+            "F95={0}".format(self["fortran"].fortran),
+            "F95FLAGS={0} -O3 -std=gnu -ffast-math".format(self["fortran"].pic_flag),
+            "OPENMPFLAGS={0}".format(self["fortran"].openmp_flag),
             "BLAS={0}".format(spec["blas"].libs),
             "FFTW={0}".format(spec["fftw"].libs),
             "LAPACK={0}".format(spec["lapack"].libs),

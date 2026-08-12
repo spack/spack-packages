@@ -125,7 +125,7 @@ class Adios(AutotoolsPackage):
 
         extra_args = [
             # required, otherwise building its python bindings will fail
-            f"CFLAGS={self.compiler.cc_pic_flag}"
+            f"CFLAGS={self['c'].pic_flag}"
         ]
 
         extra_args += self.enable_or_disable("shared")

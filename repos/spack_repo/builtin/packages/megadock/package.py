@@ -62,7 +62,7 @@ class Megadock(MakefilePackage, CudaPackage):
         targets = [
             "USE_GPU=%s" % ("1" if "+cuda" in spec else "0"),
             "USE_MPI=%s" % ("1" if "+mpi" in spec else "0"),
-            "OMPFLAG=%s" % self.compiler.openmp_flag,
+            "OMPFLAG=%s" % self["cxx"].openmp_flag,
             "CPPCOMPILER=c++",
             "FFTW_INSTALL_PATH=%s" % self.spec["fftw"].prefix,
         ]

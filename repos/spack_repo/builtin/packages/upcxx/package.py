@@ -187,8 +187,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
             if "+mpi" in spec:
                 env["GASNET_CONFIGURE_ARGS"] += " --with-mpicc=" + real_cc
         else:
-            real_cc = self.compiler.cc
-            real_cxx = self.compiler.cxx
+            real_cc = self["c"].cc
+            real_cxx = self["cxx"].cxx
             if "+mpi" in spec:
                 real_cxx = spec["mpi"].mpicxx
 
@@ -226,14 +226,12 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
             options.append("--enable-cuda")
             options.append("--with-cuda-home=" + spec["cuda"].prefix)
             options.append("--with-nvcc=" + spec["cuda"].prefix.bin.nvcc)
-            options.append(
-                "--with-ldflags=" + self.compiler.cc_rpath_arg + spec["cuda"].prefix.lib64
-            )
+            options.append("--with-ldflags=" + self["c"].rpath_arg + spec["cuda"].prefix.lib64)
 
         if "+rocm" in spec:
             options.append("--enable-hip")
             options.append("--with-hip-home=" + spec["hip"].prefix)
-            options.append("--with-ldflags=" + self.compiler.cc_rpath_arg + spec["hip"].prefix.lib)
+            options.append("--with-ldflags=" + self["c"].rpath_arg + spec["hip"].prefix.lib)
 
         if "+level_zero" in spec:
             options.append("--enable-ze")

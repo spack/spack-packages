@@ -42,5 +42,5 @@ class Exabayes(AutotoolsPackage):
     def flag_handler(self, name, flags):
         if name.lower() == "cxxflags":
             # manual cites need for c++11
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
         return flags, None, None

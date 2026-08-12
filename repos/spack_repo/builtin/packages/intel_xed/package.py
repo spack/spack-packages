@@ -131,8 +131,8 @@ class IntelXed(Package):
             mfile.add_default_arg("--debug")
         if spec.satisfies("+pic"):
             mfile.add_default_arg(
-                f"--extra-ccflags={self.compiler.cc_pic_flag}",
-                f"--extra-cxxflags={self.compiler.cxx_pic_flag}",
+                f"--extra-ccflags={self['c'].pic_flag}",
+                f"--extra-cxxflags={self['cxx'].pic_flag}",
             )
 
         # Build and install first as static (the default).

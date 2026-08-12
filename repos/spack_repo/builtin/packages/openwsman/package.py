@@ -65,5 +65,5 @@ class Openwsman(CMakePackage):
             if self.spec.satisfies("%gcc"):
                 flags.append("-std=gnu99")
             else:
-                flags.append(self.compiler.c99_flag)
+                flags.append(self["c"].standard_flag(language="c", standard="99"))
         return (None, None, flags)

@@ -56,7 +56,7 @@ class Cpmd(MakefilePackage):
 
         # OMP flag
         if spec.satisfies("+omp"):
-            cp.filter("-fopenmp", self.compiler.openmp_flag)
+            cp.filter("-fopenmp", self["fortran"].openmp_flag)
 
         # lapack
         cp.filter("LIBS=.+", "LIBS='{0}'".format(spec["lapack"].libs.ld_flags))

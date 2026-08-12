@@ -30,7 +30,7 @@ class Mmv(MakefilePackage):
     patch("utime.diff")
 
     def build(self, spec, prefix):
-        cc = Executable(self.compiler.cc)
+        cc = Executable(self["c"].cc)
         cc("-DIS_SYSV", "-DHAS_DIRENT", "-DHAS_RENAME", "-O2", "-o", "mmv", "mmv.c")
 
     def install(self, spec, prefix):

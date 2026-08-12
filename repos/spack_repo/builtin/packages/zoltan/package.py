@@ -113,7 +113,7 @@ class Zoltan(AutotoolsPackage):
 
         if spec.satisfies("+shared"):
             config_args.extend(["RANLIB=echo", "--with-ar=$(CXX) -shared $(LDFLAGS) -o"])
-            config_cflags.append(self.compiler.cc_pic_flag)
+            config_cflags.append(self["c"].pic_flag)
             if spec.satisfies("%gcc"):
                 config_libs.append("-lgfortran")
                 # Although adding to config_libs _should_ suffice, it does not

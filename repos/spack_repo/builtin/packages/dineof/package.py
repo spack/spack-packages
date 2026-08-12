@@ -49,7 +49,7 @@ class Dineof(MakefilePackage):
 
     def build(self, spec, prefix):
         make(
-            f"FC={self.compiler.fc}",
+            f"FC={self['fortran'].fortran}",
             f"BLAS_LIB={spec['blas'].libs.joined()}",
             f"LAPACK_LIB={spec['lapack'].libs.joined()}",
             parallel=False,

@@ -130,8 +130,8 @@ class Onednn(CMakePackage):
         if self.spec.satisfies("cpu_runtime=omp %apple-clang"):
             args.extend(
                 [
-                    "-DOpenMP_CXX_FLAGS={0}".format(self.compiler.openmp_flag),
-                    "-DOpenMP_C_FLAGS={0}".format(self.compiler.openmp_flag),
+                    "-DOpenMP_CXX_FLAGS={0}".format(self["cxx"].openmp_flag),
+                    "-DOpenMP_C_FLAGS={0}".format(self["c"].openmp_flag),
                     "-DOpenMP_CXX_LIB_NAMES=libomp",
                     "-DOpenMP_C_LIB_NAMES=libomp",
                     "-DOpenMP_libomp_LIBRARY={0}".format(

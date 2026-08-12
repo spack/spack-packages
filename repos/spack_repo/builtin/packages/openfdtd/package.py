@@ -42,7 +42,7 @@ class Openfdtd(MakefilePackage):
         for makefile in makefiles:
             m = FileFilter(makefile)
             m.filter("gcc", spack_cc)
-            m.filter("-fopenmp", self.compiler.openmp_flag)
+            m.filter("-fopenmp", self["c"].openmp_flag)
             if spec.satisfies("+mpi"):
                 m.filter("mpicc", spec["mpi"].mpicc)
             if spec.satisfies("%fj"):

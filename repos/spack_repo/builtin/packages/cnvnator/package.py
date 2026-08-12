@@ -30,14 +30,14 @@ class Cnvnator(MakefilePackage):
 
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")
-        # Replace -fopenmp with self.compiler.openmp_flag
-        makefile.filter("-fopenmp", self.compiler.openmp_flag)
+        # Replace -fopenmp with self['cxx'].openmp_flag
+        makefile.filter("-fopenmp", self["cxx"].openmp_flag)
         # Replace CXX with CXXFLAGS
         makefile.filter(
             "CXX.*=.*",
             r"CXXFLAGS = -DCNVNATOR_VERSION=\"$(VERSION)\""
             " $(OMPFLAGS)"
-            " {0}".format(self.compiler.cxx11_flag),
+            " {0}".format(self["cxx"].standard_flag(language="cxx", standard="11")),
         )
         makefile.filter("$(CXX)", "$(CXX) $(CXXFLAGS)", string=True)
         # Replace -I$(SAMDIR) with -I$(SAMINC)

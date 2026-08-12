@@ -94,7 +94,7 @@ class AoclDa(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%aocc"):
-            cc = self.compiler.cc
+            cc = self["c"].cc
             compiler_install_dir = os.path.dirname(os.path.dirname(cc))
             env.append_path("LD_LIBRARY_PATH", join_path(compiler_install_dir, "lib"))
 

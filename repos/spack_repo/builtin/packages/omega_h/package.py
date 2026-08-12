@@ -225,7 +225,7 @@ class OmegaH(CMakePackage, CudaPackage):
     def flag_handler(self, name, flags):
         flags = list(flags)
         if name == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="11"))
 
             if self.spec.satisfies("%cce"):
                 flags.append("-Wno-final-dtor-non-final-class")

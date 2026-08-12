@@ -57,10 +57,10 @@ class Lorene(MakefilePackage):
         pgplot_libs = spec["pgplot"].libs.link_flags
 
         substitutions = [
-            ("@CXX@", self.compiler.cxx),
+            ("@CXX@", self["cxx"].cxx),
             ("@CXXFLAGS@", "-g -I$(HOME_LORENE)/C++/Include -O3 -DNDEBUG"),
             ("@CXXFLAGS_G@", "-g -I$(HOME_LORENE)/C++/Include"),
-            ("@F77@", self.compiler.f77),
+            ("@F77@", self["fortran"].fortran),
             ("@F77FLAGS@", "-ffixed-line-length-none -g -O3"),
             ("@F77FLAGS_G@", "-ffixed-line-length-none -g"),
             (

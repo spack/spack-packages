@@ -324,10 +324,10 @@ class Charmpp(Package):
         # We assume that Spack's compiler wrappers make this work. If
         # not, then we need to query the compiler vendor from Spack
         # here.
-        options = [os.path.basename(self.compiler.cc)]
+        options = [os.path.basename(self["c"].cc)]
 
         if "@:6.8.2 %aocc" not in spec and spec.satisfies("+fortran"):
-            options.append(os.path.basename(self.compiler.fc))
+            options.append(os.path.basename(self["fortran"].fortran))
 
         options.append("-j%d" % make_jobs)
         options.append("--destination=%s" % builddir)

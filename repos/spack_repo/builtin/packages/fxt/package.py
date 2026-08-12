@@ -71,5 +71,5 @@ class Fxt(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         if name == "cflags":
-            flags.append(self.compiler.cc_pic_flag)
+            flags.append(self["c"].pic_flag)
         return (flags, None, None)

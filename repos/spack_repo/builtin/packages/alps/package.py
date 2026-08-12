@@ -138,7 +138,7 @@ class Alps(CMakePackage):
 
         # Assemble the full C++ flags string
         cxx_flags = (
-            self.compiler.cxx14_flag
+            self["cxx"].standard_flag(language="cxx", standard="14")
             + " -fpermissive -DBOOST_NO_AUTO_PTR -DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF"
             + " -DBOOST_TIMER_ENABLE_DEPRECATED"
             + cstdlibstr
@@ -199,4 +199,4 @@ class Alps(CMakePackage):
         env.append_flags("CXXFLAGS", "-DBOOST_NO_AUTO_PTR")
         env.append_flags("CXXFLAGS", "-DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF")
         env.append_flags("CXXFLAGS", "-DBOOST_TIMER_ENABLE_DEPRECATED")
-        env.append_flags("CXXFLAGS", self.compiler.cxx14_flag)
+        env.append_flags("CXXFLAGS", self["cxx"].standard_flag(language="cxx", standard="14"))

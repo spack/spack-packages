@@ -202,7 +202,7 @@ class Amdfftw(FftwBase):
         options.extend(self.enable_or_disable("amd-trans"))
         options.extend(self.enable_or_disable("amd-app-opt"))
 
-        if not self.compiler.f77 or not self.compiler.fc:
+        if not self["fortran"].fortran or not self["fortran"].fortran:
             options.append("--disable-fortran")
 
         # Specific SIMD support.

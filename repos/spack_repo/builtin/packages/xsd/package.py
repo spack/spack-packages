@@ -45,8 +45,10 @@ class Xsd(MakefilePackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         xercesc_lib_flags = self.spec["xerces-c"].libs.search_flags
         env.append_flags("LDFLAGS", xercesc_lib_flags)
-        cxxstdflag = "cxx{0}_flag".format(self.spec.variants["cxxstd"].value)
-        env.append_flags("CXXFLAGS", getattr(self.compiler, cxxstdflag))
+        env.append_flags(
+            "CXXFLAGS",
+            self["cxx"].standard_flag(language="cxx", standard=self.spec.variants["cxxstd"].value),
+        )
 
     def url_for_version(self, version):
         url = "https://www.codesynthesis.com/download/xsd/{0}/xsd-{1}+dep.tar.bz2"

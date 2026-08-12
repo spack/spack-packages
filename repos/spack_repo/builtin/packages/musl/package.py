@@ -50,16 +50,16 @@ class Musl(MakefilePackage):
 
     def patch(self):
         config = FileFilter("configure")
-        if self.compiler.name == "gcc":
-            config.filter("WRAPCC_GCC = .*'", "WRAPCC_GCC = {0}'".format(self.compiler.cc))
-        elif self.compiler.name in ("clang", "apple-clang"):
-            config.filter("WRAPCC_CLANG = .*'", "WRAPCC_CLANG = {0}'".format(self.compiler.cc))
+        if self.spec.compiler.name == "gcc":
+            config.filter("WRAPCC_GCC = .*'", "WRAPCC_GCC = {0}'".format(self["c"].cc))
+        elif self.spec.compiler.name in ("clang", "apple-clang"):
+            config.filter("WRAPCC_CLANG = .*'", "WRAPCC_CLANG = {0}'".format(self["c"].cc))
 
     def configure_args(self):
         args = ["--prefix={0}".format(self.prefix)]
-        if self.compiler.name == "gcc":
+        if self.spec.compiler.name == "gcc":
             args.append("--enable-wrapper=gcc")
-        elif self.compiler.name in ("clang", "apple-clang"):
+        elif self.spec.compiler.name in ("clang", "apple-clang"):
             args.append("--enable-wrapper=clang")
         else:
             args.append("--enable-wrapper=no")

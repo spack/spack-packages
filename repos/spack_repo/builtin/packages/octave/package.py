@@ -137,11 +137,11 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         mkoctfile_in = os.path.join(self.stage.source_path, "src", "mkoctfile.in.cc")
         quote = lambda s: '"' + s + '"'
         entries_to_patch = {
-            r"%OCTAVE_CONF_MKOCTFILE_CC%": quote(self.compiler.cc),
-            r"%OCTAVE_CONF_MKOCTFILE_CXX%": quote(self.compiler.cxx),
-            r"%OCTAVE_CONF_MKOCTFILE_F77%": quote(self.compiler.f77),
-            r"%OCTAVE_CONF_MKOCTFILE_DL_LD%": quote(self.compiler.cxx),
-            r"%OCTAVE_CONF_MKOCTFILE_LD_CXX%": quote(self.compiler.cxx),
+            r"%OCTAVE_CONF_MKOCTFILE_CC%": quote(self["c"].cc),
+            r"%OCTAVE_CONF_MKOCTFILE_CXX%": quote(self["cxx"].cxx),
+            r"%OCTAVE_CONF_MKOCTFILE_F77%": quote(self["fortran"].fortran),
+            r"%OCTAVE_CONF_MKOCTFILE_DL_LD%": quote(self["cxx"].cxx),
+            r"%OCTAVE_CONF_MKOCTFILE_LD_CXX%": quote(self["cxx"].cxx),
         }
 
         for pattern, subst in entries_to_patch.items():
@@ -168,7 +168,7 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         # Check that mkoctfile outputs the expected value for CC
         cc = mkoctfile("-p", "CC", output=str, env=mkoctfile_env)
         msg = "mkoctfile didn't output the expected CC compiler"
-        assert self.compiler.cc in cc, msg
+        assert self["c"].cc in cc, msg
 
         # Try to compile an Octave extension
         shutil.copy(helloworld_cc, tmp_dir)
@@ -184,7 +184,7 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         config_args = []
 
         # Required dependencies
-        if spec["lapack"].name == "intel-oneapi-mkl" and "gfortran" in self.compiler.fc:
+        if spec["lapack"].name == "intel-oneapi-mkl" and "gfortran" in self["fortran"].fortran:
             mkl_re = re.compile(r"(mkl_)intel(_i?lp64\b)")
             config_args.extend(
                 [

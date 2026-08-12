@@ -148,7 +148,7 @@ class Flamemaster(CMakePackage):
             env.append_flags(
                 "LDFLAGS",
                 "-L{0} -lalm -lm -lstdc++".format(
-                    pjoin(os.path.dirname(os.path.dirname(self.compiler.cxx)), "lib")
+                    pjoin(os.path.dirname(os.path.dirname(self["cxx"].cxx)), "lib")
                 ),
             )
 
@@ -188,7 +188,7 @@ class Flamemaster(CMakePackage):
 
         if self.spec.satisfies("%aocc"):
             OpenMP_CXX_FLAGS = "-fopenmp=libomp"
-            clang = self.compiler.cc
+            clang = self["c"].cc
             clang_bin = os.path.dirname(clang)
             clang_root = os.path.dirname(clang_bin)
             args.extend(

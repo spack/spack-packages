@@ -176,7 +176,7 @@ Done.
             if "+mpi" in spec["hdf5"]:
                 cc = Executable(spec["mpi"].mpicc)
             else:
-                cc = Executable(self.compiler.cc)
+                cc = Executable(self["c"].cc)
             # TODO: Automate these path and library settings
             cc("-c", "-I%s" % spec["hdf5"].prefix.include, "check.c")
             cc("-o", "check", "check.o", "-L%s" % spec["hdf5"].prefix.lib, "-lhdf5")
