@@ -97,12 +97,14 @@ spack:
   - collier
   - dd4hep +ddalign +ddcad +ddcond +dddetectors +dddigi +ddeve +ddg4 +ddrec +edm4hep +hepmc3 +lcio +utilityapps +xercesc
   - delphes +pythia8
+  - detray
   - dpmjet
   - edm4hep
   - evtgen +hepmc3 +photos +pythia8 +sherpa +tauola
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
+  - form
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
@@ -115,6 +117,7 @@ spack:
   # Note: ~vbfnlo for herwig3 works around gfortran-13 ICE in CI (does not reproduce locally).
   # Re-enable once CI environment is updated with a fix, i.e. a fixed gfortran-13+.
   - herwig3 +njet ~vbfnlo
+  - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python
@@ -128,11 +131,12 @@ spack:
   - pandorasdk
   - photos +hepmc3
   - podio +rntuple +sio
-  #- professor
+  - professor
   - py-awkward
   - py-boost-histogram
   - py-dask-awkward ~io
   - py-dask-histogram
+  - py-gosam
   - py-hepunits
   - py-hist +dask +fit +plot
   - py-histbook
@@ -145,6 +149,7 @@ spack:
   - py-vector
   - py-zfit
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
+  - recola
   - rivet
   - root ~cuda
   - root ~builtin_llvm

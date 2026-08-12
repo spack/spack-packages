@@ -11,16 +11,24 @@ class PyHydraCore(PythonPackage):
     """A framework for elegantly configuring complex applications."""
 
     homepage = "https://github.com/facebookresearch/hydra"
-    pypi = "hydra-core/hydra-core-1.3.1.tar.gz"
+    pypi = "hydra-core/hydra_core-1.3.1.tar.gz"
 
     license("MIT")
 
+    version("1.3.5", sha256="71c441eabbde086062045e4d3fce9e26015244f1a4ac721cf3e444c7edf10633")
     version("1.3.2", sha256="8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824")
     version("1.3.1", sha256="8dd42d551befc43dfca0c612cbd58c4f3e273dbd97a87214c1a030ba557d238b")
 
     depends_on("py-setuptools", type="build")
+    # Limiting setuptools upper bound due to: No module named 'pkg_resources'
+    depends_on("py-setuptools@:81", when="@:1.3.2", type="build")
     depends_on("py-omegaconf@2.2:2.3", type=("build", "run"))
     depends_on("py-antlr4-python3-runtime@4.9", type=("build", "run"))
     depends_on("py-importlib-resources", when="^python@:3.8", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))
     depends_on("java", type="build")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/h/hydra-core/{}-{}.tar.gz"
+        name = "hydra_core" if version >= Version("1.3.3") else "hydra-core"
+        return url.format(name, version)
