@@ -17,6 +17,7 @@ class Trivy(GoPackage):
 
     license("Apache-2.0", checked_by="RobertMaaskant")
 
+    version("0.73.0", sha256="a2a6f9eee305dd6672ec3af92954c456e5f5439ab3a46d6f4dc06f53422752d0")
     version("0.72.0", sha256="2c6e0e5a4b1b08241aab8e379155dfb31855a50cb1d04fa790039cf3010477cf")
     version("0.71.0", sha256="922f2e818849201df66fecdc9cf8b5f5d315130e476c1460621ab447db7d744f")
     version("0.70.0", sha256="ff9ac06468aab89802388f16d1d179f4680db714afbf6a8132a417d288aa008e")

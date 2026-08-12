@@ -33,16 +33,31 @@ class Hdf5(CMakePackage):
 
     # The 'develop' version is renamed so that we could uninstall (or patch) it
     # without affecting other develop version.
-    version("develop-2.0", branch="develop")
+    version("develop-2", branch="develop")
     version("develop-1.14", branch="hdf5_1_14")
     version("develop-1.12", branch="hdf5_1_12")
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
     version(
+        "2.2.0",
+        sha256="1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.2.0/hdf5-2.2.0.tar.gz",
+    )
+    version(
+        "2.1.1",
+        sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1.tar.gz",
+    )
+    version(
         "2.1.0",
         sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
         url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+    )
+    version(
+        "2.0.0",
+        sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz",
     )
 
     # Odd versions are considered experimental releases
@@ -781,7 +796,14 @@ int main(int argc, char **argv) {{
 
             cc = Executable(os.environ["CC"])
             cc(*(["-c", "check.c"] + spec["hdf5"].headers.cpp_flags.split()))
-            cc(*(["-o", "check", "check.o"] + spec["hdf5"].libs.ld_flags.split()))
+            ld_flags = spec["hdf5"].libs.ld_flags.split()
+            if spec.satisfies("~shared"):
+                # Static builds require explicit linking
+                ld_flags += spec["zlib-api"].libs.ld_flags.split()
+                if spec.satisfies("+mpi"):
+                    ld_flags += spec["mpi"].libs.ld_flags.split()
+                ld_flags += ["-lm"]
+            cc(*(["-o", "check", "check.o"] + ld_flags))
             try:
                 check = Executable("./check")
                 output = check(output=str)
