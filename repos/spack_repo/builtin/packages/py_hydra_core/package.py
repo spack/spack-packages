@@ -30,5 +30,5 @@ class PyHydraCore(PythonPackage):
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/h/hydra-core/{}-{}.tar.gz"
-        name = 'hydra_core' if version >= Version("1.3.3") else "hydra-core"
+        name = "hydra_core" if version >= Version("1.3.3") else "hydra-core"
         return url.format(name, version)
