@@ -19,6 +19,7 @@ class FluxPmix(AutotoolsPackage):
     maintainers("grondo")
 
     version("main", branch="main")
+    version("0.7.1", sha256="0530d203370b13b63263ee48ecc829ab6bddadabf4e66ea470983f6f530a410f")
     version("0.7.0", sha256="0ad9fa0d76e8ffeaa4aa45bd39760b623219e8d3d2a66eb62e8832c2f7e3f47b")
     version("0.6.0", sha256="31f9d9b99f8a75c05e2fd183a35998f104d8e80bd819c57252aca477be0d4c6e")
     version("0.5.0", sha256="f382800b1a342df0268146ea7ce33011299bf0c69a46ac8a52e87de6026c9322")
@@ -60,6 +61,7 @@ class FluxPmix(AutotoolsPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
+        env.set("FLUX_PMI_CLIENT_METHODS", "simple pmix libpmi2 libpmi single")
         env.prepend_path("FLUX_SHELL_RC_PATH", join_path(self.prefix.etc, "flux/shell/lua.d"))
         if spec.satisfies("@0.3.0:"):
             env.prepend_path(

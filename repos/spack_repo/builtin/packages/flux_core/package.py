@@ -22,6 +22,8 @@ class FluxCore(AutotoolsPackage):
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.88.0", sha256="e7c5a48045a0574aa330f9bf94cad0a5de47f88c206f66387bfe8fd062c21a1c")
+    version("0.87.0", sha256="7a91d222c00cc559c21dbc66312967974a01b17d00778dc549830c6f416831e7")
     version("0.86.0", sha256="0339f1c45af02a2c2ccafddc3d37da4bcf0318c7e6be50dd557ee4cb7b9421f5")
     version("0.85.0", sha256="b413ab4b5a7ff3dd037cc4976691e9bbb1d5ebe2f1ba7b011995903a1b27c056")
     version("0.84.0", sha256="6cf45d418ff021eb38300ca594501804e1ab74fc8aabc2fd103023e1284bc3bc")
@@ -102,8 +104,11 @@ class FluxCore(AutotoolsPackage):
     depends_on("libarchive+iconv", when="@0.38.0:")
     depends_on("ncurses@6.2:", when="@0.32.0:")
     depends_on("libzmq@4.0.4:")
+    depends_on("libzmq@4.2.0:", when="@0.87.0:")
     depends_on("czmq@3.0.1:", when="@:0.54.0")
     depends_on("hwloc@1.11.1:")
+    depends_on("hwloc@2.0.0:", when="@0.85.0:")
+    depends_on("hwloc@2.1.0:", when="@0.87.0:")
     depends_on("hwloc +cuda", when="+cuda")
     # Provide version hints for lua so that the concretizer succeeds when no
     # explicit flux-core version is given. See issue #10000 for details
