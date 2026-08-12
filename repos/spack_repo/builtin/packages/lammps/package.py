@@ -620,17 +620,9 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             self.define("DOWNLOAD_POTENTIALS", False),
         ]
         if spec.satisfies("~kokkos"):
-            # LAMMPS can be build with the GPU package OR the KOKKOS package
-            # Using both in a single build is discouraged.
-            # +cuda only implies that one of the two is used
-            # by default it will use the GPU package if kokkos wasn't enabled
+            # By default it will use the GPU package if kokkos wasn't enabled
             if spec.satisfies("+cuda"):
-                args.append(self.define("PKG_GPU", True))
-                args.append(self.define("GPU_API", "cuda"))
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-                cuda_arch = spec.variants["cuda_arch"].value
-                if cuda_arch != "none":
-                    args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
                 args.append(self.define_from_variant("CUDA_MPS_SUPPORT", "cuda_mps"))
             elif spec.satisfies("+opencl"):
                 # LAMMPS downloads and bundles its own OpenCL ICD Loader by default
@@ -647,7 +639,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             if spec.satisfies("@20240207: +kokkos+kspace"):
                 args.append(self.define_from_variant("FFT_KOKKOS", "fft_kokkos"))
             if spec.satisfies("+rocm"):
-                args.append(self.define("Kokkos_ENABLE_HIP", True))
                 args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
 
         if spec.satisfies("@20180629:+lib"):
@@ -738,6 +729,12 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             args.append(self.define("DOWNLOAD_N2P2", False))
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
 
+        if spec.satisfies("+cuda"):
+            args.append(self.define("PKG_GPU", True))
+            args.append(self.define("GPU_API", "cuda"))
+            cuda_arch = spec.variants["cuda_arch"].value
+            if cuda_arch != "none":
+                args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
         if spec.satisfies("+rocm"):
             args.append(self.define("PKG_GPU", True))
             args.append(self.define("GPU_API", "hip"))
@@ -750,7 +747,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                     args.append(self.define("HIP_PATH", spec["hip"].prefix))
             else:
                 args.append(self.define("HIP_PATH", spec["hip"].prefix))
-            args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
             # HIP_ARCH deprecated, use GPU_ARCH instead
             args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
             args.append(self.define("HIP_USE_DEVICE_SORT", False))
