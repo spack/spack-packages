@@ -44,7 +44,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("binutils@2.36:", type="build")
+    depends_on("binutils+ld+gas@2.36:", type="build")
 
     # cmake/CMakeLists.txt
     depends_on("cmake@3.28:", when="@1.21:", type="build")
@@ -57,7 +57,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         depends_on("abseil-cpp@20240116.0: cxxstd=17")
         depends_on("abseil-cpp@20240722.0:", when="@1.20:")
 
-        # abseil 20250814+ lacks absl::low_level_hash: https://github.com/microsoft/onnxruntime/issues/25815
+        # abseil 20250814+ lacks absl::low_level_hash
+        # https://github.com/microsoft/onnxruntime/issues/25815
         depends_on("abseil-cpp@:20250512", when="@:1.26")
 
         # v1.27+ regenerated ABSEIL_LIBS without low_level_hash and requires abseil 20250814.
