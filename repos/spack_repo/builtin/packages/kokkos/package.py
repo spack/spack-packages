@@ -206,7 +206,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # ("ARMV8_THUNDERX", None),  # Cavium ThunderX
 
     # cuda_arch : (cmake_arch_option, condition)
-    spack_cuda_arch_map = {
+    cuda_arch_map = {
         "30": ("kepler30", "@:4"),
         "32": ("kepler32", "@:4"),
         "35": ("kepler35", "@:4"),
@@ -229,30 +229,31 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "120": ("blackwell120", "@4.7.00:"),
         "121": ("blackwell121", "@5.1.0:"),
     }
-    cuda_arches = spack_cuda_arch_map.values()
-    conflicts("+cuda", when="cuda_arch=none")
+    cuda_arches = cuda_arch_map.values()
 
     # Kokkos support only one cuda_arch at a time
     variant(
         "cuda_arch",
         description="CUDA architecture",
-        values=("none",) + CudaPackage.cuda_arch_values,
+        values=("none",) + tuple(cuda_arch_map.keys()),
         default="none",
         multi=False,
         sticky=True,
         when="+cuda",
     )
+    conflicts("+cuda", when="cuda_arch=none")
 
-    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
-    variant(
-        "amdgpu_target",
-        description="AMD GPU architecture",
-        values=("none",) + ROCmPackage.amdgpu_targets,
-        default="none",
-        multi=False,
-        sticky=True,
-        when="+rocm",
+    cuda_support_conflict_msg = (
+        "{0} is not supported; "
+        "Kokkos supports the following Cuda GPU targets: " + ", ".join(cuda_arch_map.keys())
     )
+
+    # warn early if we do not support an arch
+    for arch in CudaPackage.cuda_arch_values:
+        if arch not in cuda_arch_map:
+            conflicts(
+                "+cuda", when=f"cuda_target={arch}", msg=cuda_support_conflict_msg.format(arch)
+            )
 
     # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
@@ -271,7 +272,21 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
+
+    # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=("none",) + tuple(amdgpu_arch_map.keys()),
+        default="none",
+        multi=False,
+        sticky=True,
+        when="+rocm",
+    )
+    conflicts("+rocm", when="amdgpu_target=none")
+
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
+    # warn early if we do not support an arch
     amd_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
@@ -312,6 +327,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         values=("none",) + tuple(intel_gpu_arches.keys()),
         description="Intel GPU architecture",
     )
+    conflicts("+sycl", when="intel_gpu_arch=none")
+
     # FIXME this should move to the apu part
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
 
@@ -472,7 +489,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
-                kokkos_arch_name, cond = self.spack_cuda_arch_map[cuda_arch]
+                kokkos_arch_name, cond = self.cuda_arch_map[cuda_arch]
 
                 if cond and not self.spec.satisfies(cond):
                     raise SpackError(f"Unsupported CUDA arch: {cuda_arch}")
