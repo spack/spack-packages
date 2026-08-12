@@ -166,7 +166,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             conditional("14", when="@:2025.03"),
             conditional("17", when="@:2025.12"),
             "20",
-            "23"
+            "23",
         ),
         multi=False,
         description="C++ standard to build with",
