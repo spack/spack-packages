@@ -383,7 +383,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     with when("~gtest"):
         conflicts("+minitensor")
         conflicts("+rol")
-        conflicts("+stk")
+        conflicts("+stk", when="@17:")
     # this does alleviate needing: conflicts("+test", when="@17: ~gtest")
     # see https://github.com/spack/spack-packages/pull/3361 for explanation
 
