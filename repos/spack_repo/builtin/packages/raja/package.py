@@ -295,7 +295,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
 
-    depends_on("camp@2026.07.1", when="@2026.07.0:")
+    depends_on("camp@2026.07.1:", when="@2026.07.0:")
     depends_on("camp@2025.12", when="@2025.12.0:2025.12.2")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
