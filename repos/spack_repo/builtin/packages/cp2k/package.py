@@ -409,6 +409,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libxc@6.2:", when="@2023.2:")
         depends_on("libxc@:6", when="@:2024.3")
         depends_on("libxc@7 build_system=cmake", when="@2025.2:")
+        depends_on("libxc+kxc", when="@8.2:")
 
     with when("+spla"):
         depends_on("spla+cuda+fortran", when="+cuda")
@@ -1385,6 +1386,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_LAPACK_LINK_LIBRARIES", lapack.libs.joined(";")),
                     self.define("BLAS_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_BLAS_FOUND", True),
+                    self.define("CP2K_BLAS_INCLUDE_DIRS", blas.prefix.include),
                     self.define("CP2K_BLAS_LINK_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_SCALAPACK_FOUND", True),
                     self.define("CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include),
