@@ -22,11 +22,11 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
-    # Version 7.14.0 uses release/rvs-1.5.x branch
+    # Version 7.14.0 uses v1.5.0 tag
     version(
         "7.14.0",
-        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/heads/release/rvs-1.5.x.tar.gz",
-        sha256="6f4982c3583b44f9d698f6fca5daec263aea65b8e4c821574ba016e7c6796043",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/tags/v1.5.0.tar.gz",
+        sha256="4182f854d14777752793220f051dd1070929c845b233fe3e019c9d2d5792bd41",
     )
     # Version 7.13.0 uses release/rvs-1.4.x branch
     version(
