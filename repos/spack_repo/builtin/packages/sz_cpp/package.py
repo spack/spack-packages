@@ -19,7 +19,8 @@ class SzCpp(CMakePackage):
 
     variant("shared", description="build shared libs", default=True)
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("zstd")
     depends_on("pkgconfig")

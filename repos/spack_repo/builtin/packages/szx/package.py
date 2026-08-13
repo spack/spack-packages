@@ -16,7 +16,7 @@ class Szx(CMakePackage, AutotoolsPackage, CudaPackage):
     url = "https://github.com/szcompressor/SZx/archive/refs/tags/1.1.1.tar.gz"
     git = "https://github.com/szcompressor/szx"
 
-    maintainers = ["robertu94"]
+    maintainers("robertu94")
 
     version("main", branch="main")
     version("1.1.1", commit="b1609dde7702135b647fb92f91833fc84de2492e")
@@ -32,7 +32,8 @@ class Szx(CMakePackage, AutotoolsPackage, CudaPackage):
     variant("examples", default=False, description="install the examples", when="@1.1.1:")
     conflicts("+cuda", when="@:1.1.0")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     with when("build_system=autotools"):
         depends_on("autoconf", type="build")

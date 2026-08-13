@@ -37,7 +37,8 @@ class LcFramework(CMakePackage, CudaPackage):
             "cuda_arch={sm}".format(sm=sm), when="+cuda", msg="cuda_arch 60 or newer is required"
         )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("python", type=("build",))
     depends_on("libpressio@0.98.0:", when="+libpressio")

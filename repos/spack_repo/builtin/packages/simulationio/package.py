@@ -33,7 +33,8 @@ class Simulationio(CMakePackage):
 
     variant("pic", default=True, description="Produce position-independent code")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("asdf-cxx ~python", when="+asdf")
     depends_on("asdf-cxx ~python", when="+asdf ~python")

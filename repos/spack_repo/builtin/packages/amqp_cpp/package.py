@@ -32,7 +32,8 @@ class AmqpCpp(CMakePackage):
 
     conflicts("+tcp", when="platform=darwin", msg="TCP module requires Linux")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("openssl@1.1.1:", when="+tcp", type=("build", "link", "run"))
