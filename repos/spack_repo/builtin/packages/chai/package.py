@@ -206,7 +206,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("^blt@:0.3.6", when="+rocm")
 
     depends_on("umpire")
-    depends_on("umpire@2026.07:", when="@2026.07:")
+    depends_on("umpire@2026.07.1:", when="@2026.07:")
     depends_on("umpire@2025.12", when="@2025.12")
     depends_on("umpire@2025.09", when="@2025.09")
     depends_on("umpire@2025.03", when="@2025.03")
