@@ -31,3 +31,4 @@ class Difftastic(CargoPackage):
     depends_on("rust@1.74.1:", type="build", when="@0.62:")
 
     depends_on("gmake", type="build")
+    depends_on("c", type="build")
