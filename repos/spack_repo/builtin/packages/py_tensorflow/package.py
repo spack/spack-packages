@@ -49,6 +49,12 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     maintainers("adamjstewart", "aweits")
     tags = ["e4s"]
 
+    version(
+        "2.21.0-rocm-enhanced",
+        git="https://github.com/ROCm/tensorflow-upstream.git",
+        branch="r2.21-rocm-enhanced",
+        commit="ebcf58a9a6da204dc9092f2cfc75f00033c244a5",
+    )
     version("2.21.0", sha256="ef3568bb4865d6c1b2564fb5689c19b6b9a5311572cd1f2ff9198636a8520921")
     version(
         "2.20.0-rocm-enhanced",
@@ -360,6 +366,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     with when("+rocm"):
         depends_on("llvm-amdgpu")
         depends_on("hipblaslt", when="@2.20:")
+        depends_on("rocprofiler-sdk", when="@2.21:")
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6.0:", when="@2.14:")
             depends_on(f"{pkg_dep}@:6.3", when="@:2.18")
@@ -408,6 +415,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.16.1-rocm-enhanced",
         "2.18.0-rocm-enhanced",
         "2.20.0-rocm-enhanced",
+        "2.21.0-rocm-enhanced",
     ]
     rocm_conflicts = [
         ":2.7.4-a",
@@ -416,7 +424,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.14-z:2.16.1-a",
         "2.16.1-z:2.18.0-a",
         "2.18.0-z:2.20.0-a",
-        "2.20.0-z:",
+        "2.20.0-z:2.20.1-a",
+        "2.21.0-z:"
     ]
 
     conflicts("~rocm", when=f"@{','.join(rocm_versions)}")
@@ -701,6 +710,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                         "comgr",
                         "aqlprofile",
                         "hsa-amd-aqlprofile",
+                        "hipblaslt",
+                        "rocprofiler-sdk",
                     ]
                     for pkg_dep in transitive_rocm_dependencies:
                         if self.spec.satisfies(f"^{pkg_dep}"):
