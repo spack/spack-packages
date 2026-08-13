@@ -358,14 +358,15 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         values=("kiss", "fftw3", "mkl", "mkl_gpu", "nvpl", "hipfft", "cufft"),
         multi=False,
     )
-    variant(
-        "gpu_precision",
-        default="mixed",
-        when="~kokkos",
-        description="Select GPU precision (used by GPU package)",
-        values=("double", "mixed", "single"),
-        multi=False,
-    )
+    for cond in ("cuda", "rocm", "opencl"):
+        variant(
+            "gpu_precision",
+            default="mixed",
+            when=f"+{cond}",
+            description="Select GPU precision (used by GPU package)",
+            values=("double", "mixed", "single"),
+            multi=False,
+        )
     variant("tools", default=False, description="Build LAMMPS tools (msi2lmp, binary2txt, chain)")
 
     depends_on("cmake@3.16:", when="@20231121:", type="build")
@@ -738,8 +739,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                     args.append(self.define("HIP_PATH", spec["hip"].prefix))
             else:
                 args.append(self.define("HIP_PATH", spec["hip"].prefix))
-            # HIP_ARCH deprecated, use GPU_ARCH instead
-            args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
+            if spec.satisfies("@:20260330"):
+                args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
+            else:
+                # HIP_ARCH deprecated, use GPU_ARCH instead
+                args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
             # HIP auto-detection can fail on machines without an attached GPU.
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
             args.append(self.define("HIP_USE_DEVICE_SORT", False))
