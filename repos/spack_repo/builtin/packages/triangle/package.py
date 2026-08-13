@@ -23,28 +23,44 @@ class Triangle(Package):
 
     version("1.6", sha256="1766327add038495fa3499e9b7cc642179229750f7201b94f8e1b7bee76f8480")
 
-    depends_on("libx11", type="link")
+    depends_on("libx11", type=("build", "link"))
+    # Xlib.h itself #includes X11/X.h (protocol constants), which libx11
+    # doesn't re-export -- it comes from xproto, already pulled in
+    # transitively as one of libx11's own build deps, but that isn't enough
+    # to put its prefix on this package's own include path below; depend on
+    # it directly so spec["xproto"] is guaranteed available here too
+    # (confirmed needed via a real build: showme failed with "X11/X.h: No
+    # such file or directory" once Xlib.h's own location was fixed).
+    depends_on("xproto", type="build")
     depends_on("gmake", type="build")
 
     def install(self, spec, prefix):
-        # triangle 1.6's own makefile hardcodes CSWITCHES with -DLINUX
-        # unconditionally, regardless of the actual build platform. triangle.c
-        # only consults that macro (alongside the mutually-exclusive -DCPU86)
-        # to twiddle the legacy x87 FPU's precision-control register on old
-        # x86 hardware -- irrelevant on Apple Silicon (no x87 unit) and
-        # unnecessary on modern x86_64 (doubles use SSE by default), but the
-        # macro also gates an unconditional `#include <fpu_control.h>`, a
-        # glibc/Linux-only header that doesn't exist on macOS at all. Building
-        # with the stock makefile there fails outright with "fatal error:
-        # 'fpu_control.h' file not found". Override CSWITCHES on Darwin to
-        # drop -DLINUX (and skip the header/precision tweak entirely, since
-        # neither alternative macro applies here); Linux builds are
-        # unaffected and keep the upstream makefile's own default.
-        cswitches = "-O -I/usr/X11R6/include -L/usr/X11R6/lib"
-        if spec.satisfies("platform=darwin"):
-            make("CSWITCHES=" + cswitches)
-        else:
-            make()
+        # triangle 1.6's own makefile hardcodes CSWITCHES to
+        # "-O -DLINUX -I/usr/X11R6/include -L/usr/X11R6/lib" unconditionally,
+        # regardless of the actual build platform, and CSWITCHES must be
+        # overridden on every platform (not just Darwin) for two independent
+        # reasons:
+        #  - showme.c #includes X11/Xlib.h directly, and the hardcoded
+        #    -I/usr/X11R6/include is a legacy path that doesn't exist once
+        #    X11 comes from Spack's own libx11 dependency rather than a
+        #    system install (confirmed via a real build: showme failed with
+        #    "X11/Xlib.h: No such file or directory" even with libx11 built
+        #    as a dependency above -- the generic build system used here
+        #    doesn't auto-inject dependency include/lib paths the way
+        #    AutotoolsPackage/CMakePackage do, so they must be wired up
+        #    explicitly here).
+        #  - -DLINUX gates an unconditional `#include <fpu_control.h>` in
+        #    triangle.c (used to twiddle the legacy x87 FPU's
+        #    precision-control register on old x86 hardware -- irrelevant on
+        #    Apple Silicon, unnecessary on modern x86_64 where doubles use
+        #    SSE by default) via a glibc/Linux-only header that doesn't
+        #    exist on macOS at all; keep it on Linux, drop it on Darwin.
+        x11 = spec["libx11"].prefix
+        xproto = spec["xproto"].prefix
+        cswitches = "-O -I{0} -I{1} -L{2}".format(x11.include, xproto.include, x11.lib)
+        if not spec.satisfies("platform=darwin"):
+            cswitches = "-DLINUX " + cswitches
+        make("CSWITCHES=" + cswitches)
         mkdirp(prefix.bin)
 
         install("triangle", prefix.bin)
