@@ -102,9 +102,12 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     with when("@1.17:"):
         # onnxruntime links flatbuffers::flatbuffers (the static target);
         # the +shared build only exports flatbuffers::flatbuffers_shared.
-        depends_on("flatbuffers@23.5.26 ~shared")
+        # v1.17 FIND_PACKAGE_ARGS is 1.12.0...<2.0.0 (deps.txt v1.12.0);
+        # v1.18+ FIND_PACKAGE_ARGS is 23.5.9 (deps.txt v23.5.26).
+        depends_on("flatbuffers@1.12 ~shared", when="@1.17")
+        depends_on("flatbuffers@23.5.26 ~shared", when="@1.18:")
         depends_on("nlohmann-json@3.10:")
-        depends_on("date@3:3")
+        depends_on("date@3")
         depends_on("cpuinfo")
         depends_on("cppgsl@4:")
 
