@@ -35,4 +35,4 @@ class PyLibcst(PythonPackage):
         depends_on("py-typing-extensions@3.7.4.2:", when="@:1.2")
 
     # Historical depedencies
-    depends_on("py-typing-inspect@0.4:", when="@:1.2:", type=("build", "run"))
+    depends_on("py-typing-inspect@0.4:", when="@:1.2", type=("build", "run"))
