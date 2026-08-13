@@ -536,8 +536,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "amgx~mpi cuda_arch={0}".format(sm_), when="+amgx~mpi cuda_arch={0}".format(sm_)
         )
 
-    depends_on("cudss+mpi", when="+cudss+mpi")
-    depends_on("cudss~mpi", when="+cudss~mpi")
+    depends_on("cudss@0.6:0.7.1+mpi", when="+cudss+mpi")
+    depends_on("cudss@0.5:0.7.1~mpi", when="+cudss~mpi")
 
     depends_on("enzyme@0.0.176:", when="+enzyme")
     requires("%cxx=llvm", when="+enzyme~rocm")
