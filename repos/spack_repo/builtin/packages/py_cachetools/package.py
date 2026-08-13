@@ -32,6 +32,7 @@ class PyCachetools(PythonPackage):
         depends_on("python@3.9:3", when="@6:")
 
     with default_args(type="build"):
-        depends_on("py-setuptools")
+        depends_on("py-setuptools@77:", when="@7.1.1:")
+        depends_on("py-setuptools@61:", when="@6.2.3:")
         depends_on("py-setuptools@46.4.0:", when="@4.2.2:")
-        depends_on("py-setuptools@61.0.0:", when="@6.2.3:")
+        depends_on("py-setuptools")
