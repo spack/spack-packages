@@ -425,7 +425,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.16.1-z:2.18.0-a",
         "2.18.0-z:2.20.0-a",
         "2.20.0-z:2.21.0-a",
-        "2.21.0-z:"
+        "2.21.0-z:",
     ]
 
     conflicts("~rocm", when=f"@{','.join(rocm_versions)}")
