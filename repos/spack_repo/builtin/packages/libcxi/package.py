@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.packages.cxi_driver.package import CxiDriver
 
 from spack.package import *
 
@@ -17,11 +18,13 @@ class Libcxi(AutotoolsPackage):
     license("LGPL-2.1-or-later or BSD-3-Clause")
 
     version("main", branch="main")
-    version("13.1.0", tag="release/shs-13.1.0")
-    version("13.0.0", tag="release/shs-13.0.0")
-    version("12.0.2", tag="release/shs-12.0.2")
-    version("12.0.1", tag="release/shs-12.0.1")
-    version("12.0.0", tag="release/shs-12.0.0")
+    version("14.0.1", tag="release/shs-14.0.1", commit="136a213673e9e41c9229236b84a2cc6a013d278e")
+    version("14.0.0", tag="release/shs-14.0.0", commit="136a213673e9e41c9229236b84a2cc6a013d278e")
+    version("13.1.0", tag="release/shs-13.1.0", commit="9d460216fdc449d53c5c3ff367bbc7c9c65c02fe")
+    version("13.0.0", tag="release/shs-13.0.0", commit="4b7fc964bf5065539a631abf425ba5a1a340e5ba")
+    version("12.0.2", tag="release/shs-12.0.2", commit="30fa2ddd65a234158b9331e39d6786bf0c337dc0")
+    version("12.0.1", tag="release/shs-12.0.1", commit="1571bd348bb75a8fe4a40c58240b0f687d6d5537")
+    version("12.0.0", tag="release/shs-12.0.0", commit="3a33b3966d2898ab129458c8813b0cbcdcec06f5")
 
     variant("level_zero", default=False, description="Enable level zero support")
     variant("cuda", default=False, description="Build with CUDA support")
@@ -35,8 +38,9 @@ class Libcxi(AutotoolsPackage):
         depends_on("libtool")
         depends_on("pkgconfig")
 
-    depends_on("cassini-headers")
-    depends_on("cxi-driver")
+    for v in CxiDriver.versions:
+        depends_on(f"cassini-headers@{v}", when=f"@{v}")
+        depends_on(f"cxi-driver@{v}", when=f"@{v}")
 
     depends_on("libconfig@1.5:")
     depends_on("libuv@1.18:")
