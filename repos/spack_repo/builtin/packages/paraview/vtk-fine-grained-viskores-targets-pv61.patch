@@ -1,0 +1,313 @@
+From c3514adb8fac48a0937de784d561c2f07c6f5945 Mon Sep 17 00:00:00 2001
+From: Ben Boeckel <ben.boeckel@kitware.com>
+Date: Tue, 31 Mar 2026 23:21:28 -0400
+Subject: [PATCH 1/4] vtkm: link to the proper viskores target
+
+---
+ ThirdParty/vtkm/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ThirdParty/vtkm/CMakeLists.txt b/ThirdParty/vtkm/CMakeLists.txt
+index 272306bdec..577e10cfe8 100644
+--- a/ThirdParty/vtkm/CMakeLists.txt
++++ b/ThirdParty/vtkm/CMakeLists.txt
+@@ -1,5 +1,5 @@
+ vtk_module_add_module(VTK::vtkvtkm HEADER_ONLY)
+-vtk_module_link(VTK::vtkvtkm INTERFACE VTK::viskores)
++vtk_module_link(VTK::vtkvtkm INTERFACE VTK::vtkviskores)
+ 
+ set(deprecation_warning "Target VTK::vtkvtkm deprecated, VTK::vtkviskores enabled.")
+ message(DEPRECATION "${deprecation_warning}")
+-- 
+2.50.1 (Apple Git-155)
+
+From 8ac32d9610f21206ca812ab8abc28c5e41a88214 Mon Sep 17 00:00:00 2001
+From: Ben Boeckel <ben.boeckel@kitware.com>
+Date: Tue, 31 Mar 2026 23:21:43 -0400
+Subject: [PATCH 2/4] viskores: create fine-grained targets for components
+
+This gives a consistent interface for Viskores targets no matter how
+Viskores is provided: vendored or externally. For external usage, the
+`find_package` makes the imported targets scoped so that they are not
+visible elsewhere in the tree.
+---
+ ThirdParty/viskores/CMakeLists.txt | 24 ++++++++++++++++++++++++
+ 1 file changed, 24 insertions(+)
+
+diff --git a/ThirdParty/viskores/CMakeLists.txt b/ThirdParty/viskores/CMakeLists.txt
+index 54031beeca..d23fdd5cb4 100644
+--- a/ThirdParty/viskores/CMakeLists.txt
++++ b/ThirdParty/viskores/CMakeLists.txt
+@@ -23,3 +23,27 @@ vtk_module_third_party(
+ if(VTK_MODULE_USE_EXTERNAL_vtkviskores)
+   viskores_setup_job_pool()
+ endif()
++
++set(viskores_specific_targets
++  cont
++  cont_testing
++  cuda
++  filter
++  kokkos_cuda
++  kokkos_hip
++  worklet)
++foreach (viskores_target IN LISTS viskores_specific_targets)
++  if (VTK_MODULE_USE_EXTERNAL_vtkviskores)
++    set(target "viskores::${viskores_target}")
++  else ()
++    set(target "viskores_${viskores_target}")
++  endif ()
++  if (NOT TARGET "${target}")
++    continue ()
++  endif()
++
++  add_library("vtkviskores_${viskores_target}" INTERFACE)
++  target_link_libraries("vtkviskores_${viskores_target}" INTERFACE "${target}")
++  _vtk_module_install("vtkviskores_${viskores_target}")
++  add_library("VTK::vtkviskores_${viskores_target}" ALIAS "vtkviskores_${viskores_target}")
++endforeach ()
+-- 
+2.50.1 (Apple Git-155)
+
+From 96c963f0817019c86f25851f4d550ecd312c9822 Mon Sep 17 00:00:00 2001
+From: Fides Upstream <kwrobot@kitware.com>
+Date: Wed, 22 Apr 2026 14:42:24 -0400
+Subject: [PATCH 3/4] fides 2026-04-22 (5330f6f2)
+
+Code extracted from:
+
+    https://gitlab.kitware.com/third-party/fides.git
+
+at commit 5330f6f2bf47cab1434bbaa71a20a20f3051a03f (for/vtk-20260422-master-1e7e886).
+---
+ ThirdParty/fides/vtkfides/fides/CMakeLists.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/ThirdParty/fides/vtkfides/fides/CMakeLists.txt b/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
+index deb18e37b8..72f0a9fbd8 100644
+--- a/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
++++ b/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
+@@ -82,7 +82,9 @@ endif()
+ vtk_module_link(VTK::fides
+   PRIVATE
+     adios2::adios2
+-    fides_rapidjson)
++    fides_rapidjson
++    VTK::vtkviskores_worklet
++  )
+ vtk_module_include(VTK::fides
+   PUBLIC
+     $<BUILD_INTERFACE:${FIDES_SOURCE_DIR}>
+-- 
+2.50.1 (Apple Git-155)
+
+From 33d22c1f141c963c8f5a2cbabcbab9428f5b04a8 Mon Sep 17 00:00:00 2001
+From: Ben Boeckel <ben.boeckel@kitware.com>
+Date: Tue, 31 Mar 2026 23:23:33 -0400
+Subject: [PATCH 4/4] viskores: use third party "bridge" targets
+
+These work regardless of internal versus external Viskores.
+---
+ Accelerators/Vtkm/Core/CMakeLists.txt                  | 8 ++++----
+ Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt      | 4 ++--
+ Accelerators/Vtkm/DataModel/CMakeLists.txt             | 6 +++---
+ Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt | 4 ++--
+ Accelerators/Vtkm/Filters/CMakeLists.txt               | 6 +++---
+ Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt   | 4 ++--
+ IO/CatalystConduit/CMakeLists.txt                      | 2 +-
+ IO/CatalystConduit/Testing/Cxx/CMakeLists.txt          | 2 +-
+ 8 files changed, 18 insertions(+), 18 deletions(-)
+
+diff --git a/Accelerators/Vtkm/Core/CMakeLists.txt b/Accelerators/Vtkm/Core/CMakeLists.txt
+index 062661eccf..0501715be0 100644
+--- a/Accelerators/Vtkm/Core/CMakeLists.txt
++++ b/Accelerators/Vtkm/Core/CMakeLists.txt
+@@ -47,7 +47,7 @@ list(TRANSFORM nowrap_classes APPEND ".cxx" OUTPUT_VARIABLE device_sources)
+ if(VTK_USE_KOKKOS)
+   add_compile_definitions(VTK_USE_KOKKOS)
+ endif()
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # Temporarily suppress "has address taken but no possible call to it" warnings,
+   # until we figure out its implications.
+   # We are disabling all warnings as nvlink has no known way to suppress
+@@ -59,11 +59,11 @@ if (TARGET viskores::cuda)
+   find_package(CUDAToolkit REQUIRED)
+   vtk_module_link(VTK::AcceleratorsVTKmCore PRIVATE CUDA::cudart)
+ 
+-elseif (TARGET viskores::kokkos_cuda)
++elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+   set_source_files_properties(${device_sources} PROPERTIES LANGUAGE CUDA)
+   kokkos_compilation(SOURCE ${device_sources})
+ 
+-elseif (TARGET viskores::kokkos_hip)
++elseif (TARGET VTK::vtkviskores_kokkos_hip)
+   set_source_files_properties(${device_sources} PROPERTIES LANGUAGE HIP)
+   kokkos_compilation(SOURCE ${device_sources})
+ 
+@@ -87,7 +87,7 @@ if (MSVC)
+     )
+   set(viskores_msvc_flags)
+   foreach (msvc_warning_flag IN LISTS msvc_warning_flags)
+-    if (TARGET viskores::cuda)
++    if (TARGET VTK::vtkviskores_cuda)
+       list(APPEND viskores_msvc_flags
+         $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=${msvc_warning_flag},${msvc_warning_flag}>)
+     else ()
+diff --git a/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
+index a3b1851215..1a32f156a7 100644
+--- a/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/Core/Testing/Cxx/CMakeLists.txt
+@@ -6,7 +6,7 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmCoreCxxTests tests
+   TestVTKMImplicitDataArray.cxx,NO_VALID
+   )
+ 
+-if (TARGET viskores::cuda OR TARGET viskores::kokkos_cuda)
++if (TARGET VTK::vtkviskores_cuda OR TARGET VTK::vtkviskores_kokkos_cuda)
+   foreach(src IN LISTS tests)
+     string(REPLACE "," ";" src ${src})
+     list(GET src 0 src)
+@@ -27,7 +27,7 @@ endif()
+ 
+ vtk_test_cxx_executable(vtkAcceleratorsVTKmCoreCxxTests tests)
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # When cuda is enabled VTK::AcceleratorsVTKmCore is built statically but with fpic
+   # enabled so the tests are also built with fpic enabled
+   set_target_properties(vtkAcceleratorsVTKmCoreCxxTests PROPERTIES
+diff --git a/Accelerators/Vtkm/DataModel/CMakeLists.txt b/Accelerators/Vtkm/DataModel/CMakeLists.txt
+index 1754ebe182..b653c23013 100644
+--- a/Accelerators/Vtkm/DataModel/CMakeLists.txt
++++ b/Accelerators/Vtkm/DataModel/CMakeLists.txt
+@@ -48,7 +48,7 @@ viskores_add_target_information(${vtkm_accel_target}
+                             MODIFY_CUDA_FLAGS
+                             DEVICE_SOURCES ${sources})
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # Temporarily suppress "has address taken but no possible call to it" warnings,
+   # until we figure out its implications.
+   # We are disabling all warnings as nvlink has no known way to suppress
+@@ -64,7 +64,7 @@ if (TARGET viskores::cuda)
+   vtk_module_compile_options(VTK::AcceleratorsVTKmDataModel
+     PUBLIC $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=extra_semicolon>)
+ 
+-elseif (TARGET viskores::kokkos_cuda)
++elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+   list(TRANSFORM nowrap_classes APPEND ".cxx" OUTPUT_VARIABLE nowrap_sources)
+   set(cuda_impl ${nowrap_sources} vtkmDataSet.cxx)
+   set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+@@ -90,7 +90,7 @@ if (MSVC)
+     )
+   set(viskores_msvc_flags)
+   foreach (msvc_warning_flag IN LISTS msvc_warning_flags)
+-    if (TARGET viskores::cuda)
++    if (TARGET VTK::vtkviskores_cuda)
+       list(APPEND viskores_msvc_flags
+         $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=${msvc_warning_flag},${msvc_warning_flag}>)
+     else ()
+diff --git a/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
+index 627a3f5341..a105aaa49e 100644
+--- a/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/DataModel/Testing/Cxx/CMakeLists.txt
+@@ -15,7 +15,7 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmDataModelCxxTests tests
+   TestVTKMDataSet.cxx,NO_VALID
+   )
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   foreach(src IN LISTS tests)
+     string(REPLACE "," ";" src ${src})
+     list(GET src 0 src)
+@@ -38,7 +38,7 @@ vtk_test_cxx_executable(vtkAcceleratorsVTKmDataModelCxxTests tests
+   RENDERING_FACTORY
+   )
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # When cuda is enabled VTK::AcceleratorsVTKmDataModel is built statically but with fpic
+   # enabled so the tests are also built with fpic enabled
+   set_target_properties(vtkAcceleratorsVTKmDataModelCxxTests PROPERTIES
+diff --git a/Accelerators/Vtkm/Filters/CMakeLists.txt b/Accelerators/Vtkm/Filters/CMakeLists.txt
+index 1b249d5f2d..4eb9989da5 100644
+--- a/Accelerators/Vtkm/Filters/CMakeLists.txt
++++ b/Accelerators/Vtkm/Filters/CMakeLists.txt
+@@ -114,7 +114,7 @@ viskores_add_target_information(${vtkm_accel_target}
+                             MODIFY_CUDA_FLAGS
+                             DEVICE_SOURCES ${sources})
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # Temporarily suppress "has address taken but no possible call to it" warnings,
+   # until we figure out its implications.
+   # We are disabling all warnings as nvlink has no known way to suppress
+@@ -127,7 +127,7 @@ if (TARGET viskores::cuda)
+ 
+   vtk_module_compile_options(VTK::AcceleratorsVTKmFilters
+     PUBLIC $<$<COMPILE_LANGUAGE:CUDA>:-Xcudafe --diag_suppress=extra_semicolon>)
+-elseif (TARGET viskores::kokkos_cuda)
++elseif (TARGET VTK::vtkviskores_kokkos_cuda)
+ 
+   list(TRANSFORM classes APPEND ".cxx" OUTPUT_VARIABLE cuda_impl)
+   set_source_files_properties(${cuda_impl} PROPERTIES LANGUAGE CUDA)
+@@ -153,7 +153,7 @@ if (MSVC)
+     )
+   set(viskores_msvc_flags)
+   foreach (msvc_warning_flag IN LISTS msvc_warning_flags)
+-    if (TARGET viskores::cuda OR TARGET viskores::kokkos_cuda)
++    if (TARGET VTK::vtkviskores_cuda OR TARGET VTK::vtkviskores_kokkos_cuda)
+       list(APPEND viskores_msvc_flags
+         $<$<COMPILE_LANGUAGE:CUDA>:-Xcompiler=${msvc_warning_flag},${msvc_warning_flag}>)
+     else ()
+diff --git a/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt b/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
+index 8506bc29fd..6e831b2f87 100644
+--- a/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
++++ b/Accelerators/Vtkm/Filters/Testing/Cxx/CMakeLists.txt
+@@ -28,7 +28,7 @@ vtk_add_test_cxx(vtkAcceleratorsVTKmFiltersCxxTests tests
+   TestVTKMWarpVector.cxx
+   )
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   foreach(src IN LISTS tests)
+     string(REPLACE "," ";" src ${src})
+     list(GET src 0 src)
+@@ -53,7 +53,7 @@ vtk_test_cxx_executable(vtkAcceleratorsVTKmFiltersCxxTests tests
+   RENDERING_FACTORY
+   )
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   set_target_properties(vtkAcceleratorsVTKmFiltersCxxTests PROPERTIES
+     CUDA_ARCHITECTURES OFF)
+ endif()
+diff --git a/IO/CatalystConduit/CMakeLists.txt b/IO/CatalystConduit/CMakeLists.txt
+index d9f78669d5..91d60f1638 100644
+--- a/IO/CatalystConduit/CMakeLists.txt
++++ b/IO/CatalystConduit/CMakeLists.txt
+@@ -17,7 +17,7 @@ vtk_module_add_module(VTK::IOCatalystConduit
+   PRIVATE_CLASSES ${private_classes})
+ 
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   # Temporarily suppress "has address taken but no possible call to it" warnings,
+   # until we figure out its implications.
+   # We are disabling all warnings as nvlink has no known way to suppress
+diff --git a/IO/CatalystConduit/Testing/Cxx/CMakeLists.txt b/IO/CatalystConduit/Testing/Cxx/CMakeLists.txt
+index a8e42b6ff1..9a956fc3d8 100644
+--- a/IO/CatalystConduit/Testing/Cxx/CMakeLists.txt
++++ b/IO/CatalystConduit/Testing/Cxx/CMakeLists.txt
+@@ -31,7 +31,7 @@ if (TARGET VTK::ParallelMPI)
+   vtk_test_cxx_executable(vtkConduitCxxTests-MPI mpitests)
+ endif()
+ 
+-if (TARGET viskores::cuda)
++if (TARGET VTK::vtkviskores_cuda)
+   set_source_files_properties(TestConduitSourceDeviceMemory.cxx PROPERTIES LANGUAGE CUDA)
+ 
+ 
+-- 
+2.50.1 (Apple Git-155)
+

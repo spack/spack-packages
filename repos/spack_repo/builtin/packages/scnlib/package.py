@@ -46,6 +46,8 @@ class Scnlib(CMakePackage):
     depends_on("googletest cxxstd=17", type="test")
     depends_on("python@3:", type="test")
 
+    conflicts("+shared", when="platform=windows")
+
     def cmake_args(self):
         args = [
             self.define("SCN_TESTS", self.run_tests),

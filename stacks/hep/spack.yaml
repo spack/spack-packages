@@ -15,13 +15,21 @@ spack:
     all:
       target: ["x86_64_v3"]
       require:
-      - "%gcc"
       - target=x86_64_v3
       providers:
         blas: [openblas]
         mpi: [mpich]
         tbb: [intel-tbb]
       variants: +mpi
+    c:
+      require:
+      - gcc
+    cxx:
+      require:
+      - gcc
+    fortran:
+      require:
+      - gcc
     acts:
       require:
       - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
@@ -89,12 +97,14 @@ spack:
   - collier
   - dd4hep +ddalign +ddcad +ddcond +dddetectors +dddigi +ddeve +ddg4 +ddrec +edm4hep +hepmc3 +lcio +utilityapps +xercesc
   - delphes +pythia8
+  - detray
   - dpmjet
   - edm4hep
   - evtgen +hepmc3 +photos +pythia8 +sherpa +tauola
   - fastjet plugins=all
   - feynhiggs
   - fjcontrib
+  - form
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
   - geant4 ~vtk ^[virtuals=qmake] qt
@@ -104,7 +114,10 @@ spack:
   - hepmc
   # hepmc3 fixed to 3.3.0 due to whizard, see https://github.com/spack/spack-packages/pull/427#issuecomment-3167516435
   - hepmc3@3.3.0 +interfaces +protobuf +python +rootio
-  #- herwig3 +njet +vbfnlo  # Note: herwig3 fails to find evtgen
+  # Note: ~vbfnlo for herwig3 works around gfortran-13 ICE in CI (does not reproduce locally).
+  # Re-enable once CI environment is updated with a fix, i.e. a fixed gfortran-13+.
+  - herwig3 +njet ~vbfnlo
+  - hoppet
   - hztool
   - lcio -examples ~jar +rootdict  # Note: lcio +examples ^ncurses -termlib, which leads to conflicts
   - lhapdf +python
@@ -118,11 +131,12 @@ spack:
   - pandorasdk
   - photos +hepmc3
   - podio +rntuple +sio
-  #- professor
+  - professor
   - py-awkward
   - py-boost-histogram
   - py-dask-awkward ~io
   - py-dask-histogram
+  - py-gosam
   - py-hepunits
   - py-hist +dask +fit +plot
   - py-histbook
@@ -133,10 +147,12 @@ spack:
   - py-uhi
   - py-uproot +lz4 +xrootd +zstd
   - py-vector
-  - py-zfit
+  #- py-zfit
   - pythia8 +evtgen +fastjet +hdf5 +hepmc +hepmc3 +lhapdf ~madgraph5amc +python +rivet ~root # pythia8 and root circularly depend
+  - recola
   - rivet
   - root ~cuda
+  - root ~builtin_llvm
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
   - tauola +hepmc3 +lhapdf cxxstd=20
   - thepeg hepmc=3 ~rivet

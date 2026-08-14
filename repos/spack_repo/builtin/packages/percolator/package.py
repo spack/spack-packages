@@ -40,9 +40,8 @@ class Percolator(CMakePackage):
 
     depends_on("cmake@3.5:", type="build", when="@3.8:")
     depends_on("cmake@2.8.11:", type="build", when="@3.6:3.7")
-    depends_on("boost@1.70:", type="build", when="@3.8:")
-    depends_on("boost@1.46:", type="build", when="@3.6:3.7")
-    depends_on("boost+system+filesystem", type="build")
+    depends_on("boost@1.70:+filesystem+thread", type="build", when="@3.8:")
+    depends_on("boost@1.46:1.86+filesystem", type="build", when="@3.6:3.7")
 
     depends_on("xerces-c transcoder=none netaccessor=none", when="+xml")
     depends_on("xsd", when="+xml")
@@ -53,3 +52,10 @@ class Percolator(CMakePackage):
 
     def cmake_args(self):
         return [self.define_from_variant("XML_SUPPORT", "xml")]
+
+    def patch(self):
+        # The Boost::system target was removed in 1.88
+        filter_file(r"(COMPONENTS filesystem) system", r"\1 ", "src/CMakeLists.txt")
+
+        if self.spec.satisfies("@3.8.1:"):
+            filter_file("Boost::system", "", "src/CMakeLists.txt")

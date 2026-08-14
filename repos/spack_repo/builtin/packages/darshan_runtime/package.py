@@ -17,7 +17,7 @@ class DarshanRuntime(AutotoolsPackage):
     systems where you intend to instrument MPI applications."""
 
     homepage = "https://www.mcs.anl.gov/research/projects/darshan/"
-    url = "https://web.cels.anl.gov/projects/darshan/releases/darshan-3.4.0.tar.gz"
+    url = "https://github.com/darshan-hpc/darshan/archive/refs/tags/3.5.0.tar.gz"
     git = "https://github.com/darshan-hpc/darshan.git"
 
     maintainers("carns", "wkliao")
@@ -26,6 +26,7 @@ class DarshanRuntime(AutotoolsPackage):
     test_requires_compiler = True
 
     version("main", branch="main", submodules=True)
+    version("3.5.0", sha256="76eac5a3ff556476ef8df53aa61851756bf6dcab59f5b92bb307abfdcbcd7f36")
     version("3.4.7", sha256="115a6d840b3bdb30751c271c0dec098b25bed2f8c77175125c133564d76afe5b")
     version("3.4.6", sha256="092b35e7af859af903dce0c51bcb5d3901dd0d9ad79d1b2f3282692407f032ee")
     version("3.4.5", sha256="1c017ac635fab5ee0e87a6b52c5c7273962813569495cb1dd3b7cfa6e19f6ed0")
@@ -104,8 +105,25 @@ class DarshanRuntime(AutotoolsPackage):
         default="none",
         description="Path to centralized, formatted Darshan log directory",
     )
-    variant("mmap_logs", default=False, description="Use mmap to store Darshan log data")
+
+    variant(
+        "mmap_logs",
+        default=False,
+        description="Use mmap to store Darshan log data",
+        when="@:3.4.7",
+    )
+
+    variant(
+        "mmap_logs", default=True, description="Use mmap to store Darshan log data", when="@3.5.0:"
+    )
+
     variant("group_readable_logs", default=False, description="Write group-readable logs")
+
+    def url_for_version(self, version):
+        if self.spec.satisfies("@:3.4"):
+            return f"https://web.cels.anl.gov/projects/darshan/releases/darshan-{version}.tar.gz"
+        else:
+            return f"https://github.com/darshan-hpc/darshan/archive/refs/tags/{version}.tar.gz"
 
     @property
     def configure_directory(self):

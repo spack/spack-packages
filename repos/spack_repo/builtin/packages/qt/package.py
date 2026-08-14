@@ -177,7 +177,7 @@ class Qt(Package):
         "https://github.com/qt/qtbase/commit/cdf64b0e47115cc473e1afd1472b4b09e130b2a5.patch?full_index=1",
         sha256="2b881ffb2808f8fa79f51f8bec71be91a886bcdc59b1d7b6986cba26ed18d1d3",
         working_dir="qtbase",
-        when="@5.12.1: %apple-clang@15:",
+        when="@5.12.1:5.15.17 %apple-clang@15:",
     )
     conflicts("%apple-clang@15:", when="@:5.12.0")
 
@@ -660,10 +660,13 @@ class Qt(Package):
 
         if "+gui" in spec:
             use_spack_dep("freetype")
+
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
-            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
-            config_args.append("-no-vulkan")
+
+            if spec.satisfies("@5.10:5"):
+                # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+                config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")

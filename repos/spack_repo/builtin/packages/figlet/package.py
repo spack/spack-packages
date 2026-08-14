@@ -11,7 +11,7 @@ class Figlet(MakefilePackage):
     """FIGlet is a program that creates large characters out of ordinary
     screen characters."""
 
-    homepage = "http://www.figlet.org/"
+    homepage = "https://www.figlet.org/"
     url = "https://github.com/cmatsuoka/figlet/archive/2.2.5.tar.gz"
 
     license("BSD-3-Clause")

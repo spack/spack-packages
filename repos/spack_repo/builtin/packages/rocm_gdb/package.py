@@ -2,26 +2,31 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class RocmGdb(AutotoolsPackage):
+class RocmGdb(ROCmLibrary, AutotoolsPackage):
     """This is ROCmgdb, the ROCm source-level debugger for Linux,
     based on GDB, the GNU source-level debugger."""
 
     homepage = "https://github.com/ROCm/ROCgdb"
-    url = "https://github.com/ROCm/ROCgdb/archive/rocm-6.4.3.tar.gz"
+
     tags = ["rocm"]
     executables = ["rocgdb"]
 
     license("LGPL-2.0-or-later")
 
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/ROCgdb/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/ROCgdb/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     maintainers("srekolam", "renjithravindrankannath")
 
+    version("7.13.0", sha256="979533cc1a207e8a65755224bdc407e443144c40200fd22b324d1a986a646ad1")
+    version("7.2.3", sha256="ce7e26f5470ed7afa4cb842d562e4ae6778f0ce123eed81ce10d867eb3ec0d80")
     version("7.2.1", sha256="eaf4b7994ad4bf3b5e5e864e95b354d685c4cfeecb9a47aa1d84cb885feb1f97")
     version("7.2.0", sha256="0648c00a4098af9edddbdb05832f0afd03c0027359213ad4d6b211951ec672d1")
     version("7.1.1", sha256="4369b0dc0bea6c371872d517c43867fdfba3f12af7d5ae3900d4a4311bd49e30")
@@ -89,6 +94,8 @@ class RocmGdb(AutotoolsPackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-dbgapi@{ver}", type="link", when=f"@{ver}")
         depends_on(f"comgr@{ver}", type="link", when=f"@{ver}")
@@ -122,13 +129,3 @@ class RocmGdb(AutotoolsPackage):
             "--disable-gprofng",
         ]
         return options
-
-    @classmethod
-    def determine_version(cls, exe):
-        output = Executable(exe)("--version", output=str, error=str)
-        match = re.search(r"rocm-rel-(\d+)\.(\d+)", output)
-        if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
-        else:
-            ver = None
-        return ver

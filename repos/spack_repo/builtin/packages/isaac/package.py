@@ -33,7 +33,8 @@ class Isaac(CMakePackage):
     # variant('alpaka', default=False,
     #         description='Generate kernels via Alpaka, for CPUs or GPUs')
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.3:", type="build")
     depends_on("jpeg", type="link")

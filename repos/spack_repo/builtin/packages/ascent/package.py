@@ -314,12 +314,14 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("fides@:1.2", when="@:0.9.5")
 
     # Adios2
-    depends_on("adios2", when="+adios2")
-    # propagate relevent variants to adios2
-    depends_on("adios2+mpi", when="+adios2+mpi")
-    depends_on("adios2~mpi", when="+adios2~mpi")
-    depends_on("adios2+shared", when="+adios2+shared")
-    depends_on("adios2~shared", when="+adios2~shared")
+    with when("+adios2"):
+        depends_on("adios2")
+        # propagate relevent variants to adios2
+        depends_on("adios2+mpi", when="+mpi")
+        depends_on("adios2~mpi", when="~mpi")
+        depends_on("adios2+shared", when="+shared")
+        depends_on("adios2~shared", when="~shared")
+        depends_on("adios2+fortran", when="+fortran")
 
     # Catalyst
     with when("+catalyst"):

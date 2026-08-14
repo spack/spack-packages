@@ -19,7 +19,11 @@ class Rocmlir(CMakePackage):
     tags = ["rocm"]
 
     maintainers("srekolam", "afzpatel", "renjithravindrankannath")
-
+    version(
+        "7.2.3",
+        url="https://github.com/ROCm/rocMLIR/archive/refs/tags/rocm-7.2.3.tar.gz",
+        sha256="415eacd1fbd916e2f62cd7b8acad0bf8b66cdac0211ebce09eca931843c2dce2",
+    )
     version("7.2.1", sha256="9764005aabc939d32e2f9383cf50d7ca1d0f02c8b3c986ecf04340db3ac60720")
     version("7.2.0", sha256="7349cf8ccf7bb612e24168b4be2e7312f243e1603907613edf6d2ec8e71f7801")
     version("7.1.1", sha256="e5fb89f55b6d5abf1be85cc35a68bc496d908fdf9b9c51ad44ac3cbf67aa35ee")
@@ -101,6 +105,7 @@ class Rocmlir(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

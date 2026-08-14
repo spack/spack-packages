@@ -30,9 +30,9 @@ spack:
     openblas:
       variants: threads=openmp
     trilinos:
-      variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
-        +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
-        +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
+      variants: +amesos2 +anasazi +belos +boost
+        +ifpack2 +intrepid2 +kokkos +minitensor +muelu
+        +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos
         +teko +tempus +thyra +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     mpi:
       require: mpich
@@ -91,7 +91,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
-  - kokkos-fft host_backend=fftw-openmp +tests
+  - kokkos-fft host_backend=fftw-openmp
   - lammps
   - lbann
   - legion
@@ -148,7 +148,7 @@ spack:
   - sz3
   - tasmanian
   - tau +mpi +python +syscall
-  - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+  - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
   - turbine
   # - umap
   - umpire
@@ -204,7 +204,7 @@ spack:
   - hpx +cuda cuda_arch=90
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
-  - kokkos-fft device_backend=cufft +tests ^kokkos +wrapper +cuda cuda_arch=90
+  - kokkos-fft device_backend=cufft ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - magma +cuda cuda_arch=90
   - mfem +cuda cuda_arch=90

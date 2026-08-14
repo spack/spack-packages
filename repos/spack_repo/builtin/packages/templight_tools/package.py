@@ -17,7 +17,11 @@ class TemplightTools(CMakePackage):
 
     version("develop", branch="master")
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("cmake @2.8.7:")
 
-    depends_on("cmake @2.8.7:", type="build")
-    depends_on("boost @1.48.1: +exception+filesystem+system+graph+program_options+test+container")
+    depends_on(
+        "boost @1.56:1.88 +exception+filesystem+system+graph+program_options+test+container"
+    )

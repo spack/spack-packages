@@ -21,6 +21,7 @@ class Scotch(CMakePackage, MakefilePackage):
 
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
+    version("7.0.12", sha256="870bf681e7e40b6b01c3890dbe7b27da2617660f1722541919a865a6729dcbf2")
     version("7.0.11", sha256="ce1ea6e16ca36ae91426a360f639c8f575fccebc0116fbcb381f164c5e862768")
     version("7.0.10", sha256="8327725a08cdd4fc7575e291251883b4f93f75b07a54bc58f89f50dcbba7b244")
     version("7.0.9", sha256="6d50c3f66e3e0e2058bce45ed9eee171fd8d6c01123c802a98544948a1c3d5d1")
@@ -174,6 +175,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if self.spec.satisfies("@7.0.7:"):
             args.append(self.define_from_variant("SCOTCH_DETERMINISTIC", "determinism"))
+
+        if self.spec.satisfies("@7.0.9:"):
+            args.append(self.define_from_variant("BUILD_FORTRAN", "fortran"))
 
         if "+int64" in self.spec:
             args.append("-DINTSIZE=64")

@@ -2,15 +2,16 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
+
+import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Migraphx(CMakePackage):
+class Migraphx(ROCmLibrary, CMakePackage):
     """AMD's graph optimization engine."""
 
     homepage = "https://github.com/ROCm/AMDMIGraphX"
@@ -21,7 +22,13 @@ class Migraphx(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libmigraphx"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{0}.tar.gz")]
+
     license("MIT")
+    version(
+        "7.13.0", branch="release/rocm-rel-7.13", commit="f066712b04f87e927217edee3fc630e856787eb2"
+    )
+    version("7.2.3", sha256="25d491d83fe84c6c071305a71100f77b393b35ae5c9eeec277c68986378f6abc")
     version("7.2.1", sha256="611e4646f11fe559946275a6c79f1aaabe0a5c7cb95a42b28e724ba29f4c753a")
     version("7.2.0", sha256="085ea6fcf6197b20fed60917194ca622e5d2c1705237fe063563f988494a8b3d")
     version("7.1.1", sha256="beb9cbf4475d979e8431a983ee0ae8a9f5b75bb24699b7b8dfa2753db9822c4d")
@@ -78,7 +85,8 @@ class Migraphx(CMakePackage):
         sha256="410d0fd49f5f65089cd4f540c530c85896708b4fd94c67d15c2c279158aea85d",
         when="@6.0",
     )
-    patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:")
+    patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:7.2")
+    patch("0007-disable-mlir-for-7.13.patch", when="@7.13:")
 
     depends_on("cmake@3.5:", type="build")
     depends_on("protobuf", type="link")
@@ -118,15 +126,35 @@ class Migraphx(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
+        "7.13.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
+        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+    ]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
 
     for ver in [
@@ -144,9 +172,10 @@ class Migraphx(CMakePackage):
         "7.1.1",
         "7.2.0",
         "7.2.1",
+        "7.2.3",
+        "7.13.0",
     ]:
-        depends_on(f"rocmlir@{ver}", when=f"@{ver}")
-        for tgt in ROCmPackage.amdgpu_targets:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
@@ -156,17 +185,6 @@ class Migraphx(CMakePackage):
         CMake based on current spec
         """
         return [self.define("Python_INCLUDE_DIR", self["python"].config_vars["include"])]
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            ver = "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        else:
-            ver = None
-        return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):
@@ -202,6 +220,8 @@ class Migraphx(CMakePackage):
             )
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("PROTOBUF_INCLUDE_DIR", self.spec["protobuf"].prefix.include))
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("MIGRAPHX_ENABLE_MLIR", "OFF"))
         if "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

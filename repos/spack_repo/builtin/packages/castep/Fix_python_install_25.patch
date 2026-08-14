@@ -1,0 +1,29 @@
+diff --git a/cmake/python_utilities.cmake.in b/cmake/python_utilities.cmake.in
+index 19448afd3..23c27dc45 100644
+--- a/cmake/python_utilities.cmake.in
++++ b/cmake/python_utilities.cmake.in
+@@ -7,24 +7,15 @@
+ execute_process(
+   COMMAND ${INSTALL_COMMAND} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/CASTEPconv
+   )
+-execute_process(
+-  COMMAND sed -i -e "${SEDSCRIPT}" castepconv.py WORKING_DIRECTORY ${CMAKE_FULL_BINDIR}
+-  )
+ #
+ # Install elastic_constants
+ #
+ execute_process(
+   COMMAND ${INSTALL_COMMAND} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/elastic_constants
+   )
+-execute_process(
+-  COMMAND sed -i -e "${SEDSCRIPT}" elastics.py generate_strain.py WORKING_DIRECTORY ${CMAKE_FULL_BINDIR}
+-  )
+ #
+ # Install cif2cell
+ #
+ execute_process(
+   COMMAND ${INSTALL_COMMAND} WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/cif2cell
+   )
+-execute_process(
+-  COMMAND sed -i -e "${SEDSCRIPT}" cif2cell WORKING_DIRECTORY ${CMAKE_FULL_BINDIR}
+-  )
