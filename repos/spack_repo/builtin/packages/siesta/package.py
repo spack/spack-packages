@@ -29,7 +29,7 @@ class Siesta(MakefilePackage, CMakePackage):
         "5.4.2",
         url="https://gitlab.com/siesta-project/siesta/-/releases/5.4.2/downloads/siesta-5.4.2.tar.gz",
         sha256="9cd855bd2702b69785588931aa06e4c1b1036f11b5ef7b01ecc29a7218a38d3f",
-     )
+    )
 
     version(
         "5.0.1",
@@ -86,9 +86,9 @@ class Siesta(MakefilePackage, CMakePackage):
     )
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  
+    depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    
+
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
