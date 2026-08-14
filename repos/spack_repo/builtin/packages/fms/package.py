@@ -86,7 +86,7 @@ class Fms(CMakePackage):
     patch(
         "cmake-build-tests-option-2026.01.patch",
         sha256="eb043f992942224e3f8fc8dae22f4e53294ecadad83dd80a031c3d4465b7e4b8",
-        when="@2026.01",
+        when="@=2026.01",
     )
 
     # https://github.com/NOAA-GFDL/FMS/issues/1417
@@ -124,6 +124,14 @@ class Fms(CMakePackage):
             + " option used"
         ),
         when="@2025.04:",
+    )
+    variant(
+        "precision",
+        values=("32", "64"),
+        description="Build a version of the library with default 32 or 64 bit reals or both",
+        default="32",
+        multi=True,
+        when="@:2025.03",
     )
     conflicts(
         "precision=32,64",
