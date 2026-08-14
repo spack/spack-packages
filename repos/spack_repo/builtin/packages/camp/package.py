@@ -99,6 +99,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+cuda"):
         depends_on("cub", when="^cuda@:10")
+        depends_on("cmake@3.18:", type="build")
 
     depends_on("blt", type="build")
     depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
@@ -138,10 +139,7 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
-                options.append("-DCMAKE_CUDA_ARCHITECTURES={0}".format(cuda_arch[0]))
-                options.append("-DCUDA_ARCH=sm_{0}".format(cuda_arch[0]))
-                flag = "-arch sm_{0}".format(cuda_arch[0])
-                options.append("-DCMAKE_CUDA_FLAGS:STRING={0}".format(flag))
+                options.append("-DCMAKE_CUDA_ARCHITECTURES={0}".format(";".join(cuda_arch)))
 
         options.append(self.define_from_variant("ENABLE_HIP", "rocm"))
         if spec.satisfies("+rocm"):
