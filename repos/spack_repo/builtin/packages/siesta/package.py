@@ -26,6 +26,12 @@ class Siesta(MakefilePackage, CMakePackage):
     git = "https://gitlab.com/siesta-project/siesta"
 
     version(
+        "5.4.2",
+        url="https://gitlab.com/siesta-project/siesta/-/releases/5.4.2/downloads/siesta-5.4.2.tar.gz",
+        sha256="9cd855bd2702b69785588931aa06e4c1b1036f11b5ef7b01ecc29a7218a38d3f",
+    )
+
+    version(
         "5.0.1",
         url="https://gitlab.com/siesta-project/siesta/-/archive/5.0.1/siesta-5.0.1.tar.gz",
         sha256="800a22a831c1d36c6f5fe4aa9c49ee510cbd49a0b2f87b3c8bf3edb6ebd0193a",
@@ -78,6 +84,10 @@ class Siesta(MakefilePackage, CMakePackage):
         description="The build type to build",
         values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel", "check"),
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("blas")
