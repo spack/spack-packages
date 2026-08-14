@@ -13,26 +13,28 @@ class PyProteus(PythonPackage):
     around PETSc for parallel linear/nonlinear solves."""
 
     homepage = "http://proteustoolkit.org"
-    # Tracks cekees/proteus's torino_narwhal branch rather than erdc/proteus
-    # releases: upstream unconditionally requires a Chrono install.
-    # torino_narwhal makes Chrono and SCOREC independently optional.
+    # Tracks cekees/proteus's main branch rather than erdc/proteus releases:
+    # upstream unconditionally requires a Chrono install, but main (like the
+    # torino_narwhal branch this used to track, now merged into main and
+    # fully superseded) makes Chrono and SCOREC independently optional.
     #
-    # NOTE: github.com/cekees/proteus's fork-network LFS bandwidth budget is
-    # billed against upstream erdc/proteus, not cekees, and can be exhausted
-    # independent of anything the cekees fork owner does -- a fresh clone's
-    # `git checkout` then fails during LFS smudge ("git checkout --quiet
-    # ...: exit status 128"). If you hit that, point this at a local,
-    # already-cloned checkout instead (`git = "file:///path/to/checkout"`)
-    # as a temporary local edit -- Spack has no per-invocation override for
-    # a version's own git URL (confirmed: `git=` is not a valid spec
-    # variant here).
+    # NOTE: this used to warn about github.com/cekees/proteus's fork-network
+    # Git LFS bandwidth budget (billed against upstream erdc/proteus, not
+    # cekees, and exhaustible independent of anything the cekees fork owner
+    # does) -- moot as of main dropping LFS entirely for its test comparison
+    # data (commit c75eb6c9, "Stop tracking test comparison data via Git
+    # LFS"). If a similar external-quota issue ever recurs for some other
+    # reason, point this at a local, already-cloned checkout instead
+    # (`git = "file:///path/to/checkout"`) as a temporary local edit --
+    # Spack has no per-invocation override for a version's own git URL
+    # (confirmed: `git=` is not a valid spec variant here).
     git = "https://github.com/cekees/proteus.git"
 
     maintainers("cekees")
 
     license("MIT")
 
-    version("torino_narwhal", branch="torino_narwhal")
+    version("main", branch="main")
 
     # Chrono (pychrono) has no upstream Spack package and stays disabled.
     # SCOREC/PUMI does (`pumi`); this variant wires it in instead of

@@ -33,6 +33,16 @@ class Pumi(CMakePackage):
     # scorec/core develop branch and we prefer not to expose spack users
     # to the added instability.
     version("master", submodules=True, branch="master")
+    # scorec/core >=3.0.0 replaced PCU's global mutable state with an
+    # explicit pcu::PCU object (every PCU_* free function now takes a PCU_t
+    # handle, and a new PCU_C.h header carries the C-linkage declarations);
+    # proteus's main branch requires this API as of its own PCU port
+    # (proteus/MeshAdaptPUMI/*), so pin a tagged release past that
+    # refactor -- 2.2.9 (and everything below it here) predates it entirely
+    # and fails proteus's build with "PCU_C.h: No such file or directory".
+    version(
+        "4.1.0", submodules=True, commit="a8e3aef58bfe86790782c4ae5e5c1bb5f232ff30"
+    )  # tag 4.1.0
     version(
         "2.2.9", submodules=True, commit="f87525cae7597322edfb2ccf1c7d4437402d9481"
     )  # tag 2.2.9
