@@ -44,13 +44,16 @@ class Busco(PythonPackage):
     depends_on("blast-plus")
     depends_on("hmmer")
     depends_on("augustus")
-    depends_on("py-biopython", when="@4.1.3:", type=("build", "run"))
+    depends_on("py-biopython", when="@4:", type=("build", "run"))
+    depends_on("py-numpy", when="@4:", type=("build", "run"))
+    depends_on("prodigal", when="@4:", type="run")
+    depends_on("sepp", when="@4:", type="run")
     depends_on("py-pandas", when="@5:", type="run")
-    depends_on("bbmap", when="@5:", type="run")
-    depends_on("prodigal", when="@5:", type="run")
     depends_on("metaeuk", when="@5:", type="run")
-    depends_on("sepp", when="@5:", type="run")
-    depends_on("miniprot", when="@5.6:", type="run")
+    depends_on("bbmap", when="@5.4:", type="run")
+    depends_on("miniprot", when="@5.5:", type="run")
+    depends_on("py-requests", when="@5.6:", type="run")
+    depends_on("py-matplotlib", when="@6:", type="run")
 
     def install(self, spec, prefix):
         if self.spec.satisfies("@4.1.3:"):
