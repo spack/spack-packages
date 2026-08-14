@@ -29,8 +29,8 @@ class PyPyzmq(PythonPackage):
     version("16.0.2", sha256="0322543fff5ab6f87d11a8a099c4c07dd8a1719040084b6ce9162bcdf5c45c9d")
 
     # Runtime variants
-    variant("green", default=False, description="enable zmq.green")
-    variant("ssh", default=False, description="enable zqm.ssh")
+    variant("green", default=False, description="enable pyzmq.green")
+    variant("ssh", default=False, description="enable pyzmq.ssh")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
