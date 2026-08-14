@@ -18,7 +18,8 @@ class Dorian3dDlib(CMakePackage):
 
     version("master", branch="master")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.0:", type="build")
     depends_on("opencv+calib3d+features2d+highgui+imgproc+imgcodecs+flann")

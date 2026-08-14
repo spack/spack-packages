@@ -134,6 +134,13 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
         when="@8.0.0 +cuda ^cuda@13.2:",
     )
 
+    # https://github.com/pghysels/STRUMPACK/pull/144
+    patch(
+        "https://github.com/pghysels/STRUMPACK/commit/be784ab4ced0a603e8643ef011ecd0fc1b77a83e.patch?full_index=1",
+        sha256="7efbae963cc34f001fe4a6437e2da099a2ad7f81ed6e73868a223bb5606e718c",
+        when="@8.0.0 +butterflypack+mpi ^butterflypack@4.1.0:",
+    )
+
     def cmake_args(self):
         spec = self.spec
 
