@@ -29,8 +29,8 @@ class Gfan(MakefilePackage):
 
     patch("compile-on-more-systems-0.8beta.patch", when="@0.8beta")
     patch(
-        "https://raw.githubusercontent.com/Macaulay2/M2/aa0a8e3/M2/libraries/gfan/patch-0.6.2",
-        sha256="52eb59458f14644c00fa3281a2d1cf26143a31dab32293a5c69f222ffce6c3b1",
+        "https://raw.githubusercontent.com/Macaulay2/M2/3cf0a02/M2/libraries/gfan/patch-0.6.2",
+        sha256="fd0ba0c3f1ccacc388a1de6d5f9d686ecc2531e6d06174f35edfcb81067072e0",
         when="@0.6.2",
     )
 
