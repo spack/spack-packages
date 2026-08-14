@@ -152,8 +152,16 @@ class HdfEos2(AutotoolsPackage):
                 flags.append("-Wno-error=implicit-int")
                 flags.append("-std=gnu17")
 
-            # Testing shows we need one extra flag for gcc@14
-            if self.spec.satisfies("%gcc@14:"):
+            # Newer compilers promote -Wincompatible-pointer-types from a warning
+            # to an error. This is not gcc-specific: clang 16+, and oneAPI's
+            # clang-based icx, reject the same code (58 errors in EHapi/GDapi/
+            # PTapi/SWapi.c passing 'long *' where 'int32 *' is expected).
+            if (
+                self.spec.satisfies("%clang@16:")
+                or self.spec.satisfies("%apple-clang@15:")
+                or self.spec.satisfies("%oneapi")
+                or self.spec.satisfies("%gcc@14:")
+            ):
                 flags.append("-Wno-error=incompatible-pointer-types")
         return flags, None, None
 
@@ -180,9 +188,15 @@ class HdfEos2(AutotoolsPackage):
                 or self.spec.satisfies("%oneapi")
                 or self.spec.satisfies("%gcc@14:")
             ):
+                # NOTE: this env.set REPLACES the cflags computed in
+                # flag_handler above (the build uses CC=h4cc with these CFLAGS),
+                # so every flag needed there must be repeated here.
                 env.set(
                     "CFLAGS",
-                    "-Wno-error=implicit-function-declaration -Wno-error=implicit-int -std=gnu17",
+                    "-Wno-error=implicit-function-declaration "
+                    "-Wno-error=implicit-int "
+                    "-Wno-error=incompatible-pointer-types "
+                    "-std=gnu17",
                 )
 
     @run_before("configure", when="@3.0")
