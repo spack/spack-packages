@@ -44,10 +44,6 @@ class PyGevent(PythonPackage):
         depends_on("python@3.8:", when="@23.7.0:")
         depends_on("python@:3.10", when="@:21.12")
 
-        depends_on("py-setuptools@40.8:", when="@20.5.1:")
-        # https://github.com/pypa/distutils/pull/335
-        depends_on("py-setuptools@:80")
-
         depends_on("py-cffi@1.17.1:", when="@24.10.1:")
         depends_on("py-cffi@1.12.3:")
         depends_on("py-greenlet@3.2.2:", when="@25.5.1:")  # setup.py
@@ -64,6 +60,8 @@ class PyGevent(PythonPackage):
     conflicts("^py-cython@3.1:", when="@:24.10.3")
     # https://github.com/gevent/gevent/issues/1599
     conflicts("^py-cython@3:", when="@:20.5.0")
+    # https://github.com/gevent/gevent/issues/2201
+    conflicts("py-setuptools@80:", when="@:26.4")
 
     # Deprecated compiler options. upstream PR: https://github.com/gevent/gevent/pull/1896
     patch("icc.patch", when="@:21.12.0 %intel")
