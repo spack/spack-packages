@@ -46,6 +46,5 @@ class Qorts(RPackage):
         # Munge the helper script to explicitly point to java and the
         # jar file.
         java = self.spec["java"].prefix.bin.java
-        kwargs = {"backup": False}
-        filter_file("^java", java, script, **kwargs)
-        filter_file("QoRTs.jar", join_path(self.prefix.bin, "QoRTs.jar"), script, **kwargs)
+        filter_file("^java", java, script)
+        filter_file("QoRTs.jar", join_path(self.prefix.bin, "QoRTs.jar"), script)

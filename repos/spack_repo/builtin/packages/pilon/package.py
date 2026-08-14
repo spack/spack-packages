@@ -44,6 +44,5 @@ class Pilon(Package):
         # Munge the helper script to explicitly point to java and the
         # jar file.
         java = self.spec["java"].prefix.bin.java
-        kwargs = {"ignore_absent": False, "backup": False, "string": False}
-        filter_file("^java", java, script, **kwargs)
-        filter_file("pilon-{0}.jar", join_path(prefix.bin, jar_file), script, **kwargs)
+        filter_file("^java", java, script)
+        filter_file("pilon-{0}.jar", join_path(prefix.bin, jar_file), script)
