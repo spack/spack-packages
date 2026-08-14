@@ -18,6 +18,7 @@ class Dorado(CMakePackage, CudaPackage):
 
     maintainers("snehring")
 
+    version("2.1.1", commit="d66c17c657a55eaa2a6e3b5551cc83fd0a4a28b5", submodules=True)
     version("2.1.0", commit="48ab35d456dab9b08318c7413fd993ecee523a88", submodules=True)
     version("1.4.0", commit="ba44a0132a6fc54ffa790add140ebf6006a5a994", submodules=True)
     version("1.2.0", commit="f9443bb8695f075dadc60bf4d1d92d8fd4361668", submodules=True)
@@ -48,7 +49,7 @@ class Dorado(CMakePackage, CudaPackage):
     depends_on("zlib-api")
 
     conflicts("%gcc@:8", msg="Dorado requires at least gcc@9 to compile.")
-    conflicts("%gcc@13:", msg="Dorado will not build with gcc@13 and newer.")
+    conflicts("%gcc@13:", when="@:2", msg="Dorado will not build with gcc@13 and newer.")
 
     patch("hdf5-libaec-0.5.3.patch", when="@:0.5.3")
     patch("hdf5-libaec-0.6.3.patch", when="@0.6:0.9")
