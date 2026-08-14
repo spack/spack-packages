@@ -35,9 +35,12 @@ class IsaacServer(CMakePackage):
     #     description="Support for RTP streams, e.g. to Twitch or Youtube"
     # )
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("pkgconfig")
+        depends_on("cmake@3.3:")
 
-    depends_on("cmake@3.3:", type="build")
     depends_on("jpeg", type="link")
     depends_on("jansson@:2.9", type="link", when="@:1.5.1")
     depends_on("jansson", type="link")
