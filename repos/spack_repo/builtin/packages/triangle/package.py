@@ -55,9 +55,23 @@ class Triangle(Package):
         #    Apple Silicon, unnecessary on modern x86_64 where doubles use
         #    SSE by default) via a glibc/Linux-only header that doesn't
         #    exist on macOS at all; keep it on Linux, drop it on Darwin.
+        #  - triangle.c/showme.c are K&R-style C (old-style function
+        #    definitions, no prototypes in scope at call sites) -- harmless
+        #    under GCC's old implicit-int/implicit-declaration defaults, but
+        #    a sufficiently modern GCC (confirmed reproducing on 15.2.0;
+        #    apparently not triggered on whatever GCC version/platform this
+        #    fix was originally verified against) defaults to a C standard
+        #    that treats a call to an as-yet-undeclared function as
+        #    returning int with no parameters, then reports a hard "too many
+        #    arguments" error once it reaches that function's own
+        #    (parameter-bearing) K&R definition later in the file, rather
+        #    than the warning older defaults gave. PETSc's own Triangle.py
+        #    package hits the identical failure and works around it exactly
+        #    this way -- add -std=gnu17 (old enough to keep implicit
+        #    declarations as a warning, not an error) unconditionally.
         x11 = spec["libx11"].prefix
         xproto = spec["xproto"].prefix
-        cswitches = "-O -I{0} -I{1} -L{2}".format(x11.include, xproto.include, x11.lib)
+        cswitches = "-O -std=gnu17 -I{0} -I{1} -L{2}".format(x11.include, xproto.include, x11.lib)
         if not spec.satisfies("platform=darwin"):
             cswitches = "-DLINUX " + cswitches
         make("CSWITCHES=" + cswitches)
