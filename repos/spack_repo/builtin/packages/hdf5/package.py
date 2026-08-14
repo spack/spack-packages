@@ -377,6 +377,14 @@ class Hdf5(CMakePackage):
                 # in C99:
                 cmake_flags.append("-Wno-error=implicit-function-declaration")
                 # Note that this flag will cause an error if building %nvhpc.
+            if spec.satisfies("@:1.10.8 %gcc@14:"):
+                cmake_flags.extend(
+                    [
+                        "-Wno-error=implicit-int",
+                        "-Wno-error=incompatible-pointer-types",
+                        "-Wno-error=int-conversion",
+                    ]
+                )
             if spec.satisfies("@:1.8.12~shared"):
                 # More recent versions set CMAKE_POSITION_INDEPENDENT_CODE to
                 # True and build with PIC flags.
@@ -579,6 +587,9 @@ class Hdf5(CMakePackage):
             self.define_from_variant("HDF5_BUILD_JAVA", "java"),
             self.define_from_variant("HDF5_BUILD_TOOLS", "tools"),
         ]
+
+        if spec.satisfies("@:1.10.8 %gcc@14:"):
+            args.append(self.define("HDF5_DISABLE_COMPILER_WARNINGS", True))
 
         # Always enable this option. This does not actually enable any
         # features: it only *allows* the user to specify certain combinations
