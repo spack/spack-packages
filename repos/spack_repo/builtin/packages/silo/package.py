@@ -174,6 +174,15 @@ class Silo(autotools.AutotoolsPackage, cmake.CMakePackage):
         default="cmake",
     )
 
+    # Windows requires CMake
+    # Only @4.12.0: supports CMake, so older versions cannot build on Windows.
+    requires("build_system=cmake", when="platform=windows")
+    conflicts(
+        "platform=windows",
+        when="@:4.11.1",
+        msg="Silo @:4.11.1 uses autotools only; CMake support was added in 4.12.0",
+    )
+
     # Fix issue with delimiter char in constant nameschemes
     patch(
         "https://github.com/llnl/Silo/commit/43a52d788a3c15bee3b9391906e8ed276c5a456c.patch?full_index=1",
