@@ -29,6 +29,7 @@ class Clingo(CMakePackage):
     version("master", branch="master", submodules=True)
     version("spack", commit="2a025667090d71b2c9dce60fe924feb6bde8f667", submodules=True)
 
+    version("5.8.1", sha256="28fe78322cefb92e0f68f350777e19407d07bbb5179ca725fc6f77d538f0d19a")
     version("5.8.0", sha256="4ddd5975e79d7a0f8d126039f1b923a371b1a43e0e0687e1537a37d6d6d5cc7c")
     version(
         "5.7.1",
@@ -56,11 +57,13 @@ class Clingo(CMakePackage):
 
     with when("@5.6:5.8,master"):
         depends_on("re2c@1.1.1:", type="build")
-        # forward compat issue: reference to undefined condition 'aspif'
-        depends_on("re2c@:3", type="build")
         depends_on("bison@2.5:", type="build", when="platform=linux")
         depends_on("bison@2.5:", type="build", when="platform=darwin")
         depends_on("bison@2.5:", type="build", when="platform=freebsd")
+
+    # Lexers use a re2c condition that 4.3+ rejects ("undefined condition 'aspif'"),
+    # fixed upstream in 5.8.1 and master. See https://github.com/potassco/clingo/issues/591
+    depends_on("re2c@:3", type="build", when="@5.6:5.8.0")
 
     with when("@6:"):
         depends_on("re2c@3:", type="build")
