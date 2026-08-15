@@ -403,7 +403,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         filter_compiler_wrappers(
             "KokkosConfigCommon.cmake",
             relative_root=os.path.join(libdir, "cmake", "Kokkos"),
-        ) 
+        )
 
     # sanity check
     sanity_check_is_file = [
