@@ -85,3 +85,13 @@ class RDelayedarray(RPackage):
 
     depends_on("r-biocparallel", type=("build", "run"), when="@0.6.6:0.10.0")
     depends_on("r-matrixstats", type=("build", "run"), when="@:0.10.0")
+
+    # > Error in matchSignature(signature, fdef, where) :
+    #     more elements in the method signature (2) than in the generic signature (1)
+    #       for function 'type<-'
+    conflicts("^r-biocgenerics@0.44:", when="@:0.22")
+
+    # > Error in reconcilePropertiesAndPrototype(name, slots, prototype, superClasses,  :
+    #     no definition was found for superclass "DataTable" in the specification
+    #         of class "DelayedMatrix"
+    conflicts("^r-s4vectors@0.26:", when="@:0.10")

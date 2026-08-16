@@ -48,3 +48,11 @@ class RS4vectors(RPackage):
     depends_on("r-biocgenerics@0.31.1:", type=("build", "run"), when="@0.26.1:")
     depends_on("r-biocgenerics@0.23.3:", type=("build", "run"), when="@0.16.0:")
     depends_on("r-biocgenerics@0.21.1:", type=("build", "run"))
+
+    # > Error: package or namespace load failed for 'S4Vectors' in
+    #       dyn.load(file, DLLpath = DLLpath, ...):
+    #    unable to load shared object 'S4Vectors.so': ... undefined symbol: PREXPR
+    conflicts("^r@4.6:", when="@:0.46")
+
+    # > Error in eval(exprs[i], envir) : object 'apply_hotfix73465' not found
+    conflicts("^r-biocgenerics@0.40:", when="@:0.28")
