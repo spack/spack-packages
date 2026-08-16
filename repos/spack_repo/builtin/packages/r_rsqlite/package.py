@@ -16,6 +16,9 @@ class RRsqlite(RPackage):
 
     cran = "RSQLite"
 
+    version("3.53.3", sha256="82946aac5e2869da5fdaf57d0e4afeee3d4deac21d9eaeffb5f743273a93736c")
+    version("2.4.6", sha256="6f51e487afc2eb1972518c3fb31a3fd232946f1ef126a033592ebfa2dec1df3e")
+    version("2.3.11", sha256="3f6a219b762b10083cd262b1c1327d97a48030cbe9a3c920607c621e42b80759")
     version("2.3.7", sha256="25e0572589e64264fe4e5d0495f5d85d977bacbb93a3fc631ede5b078db294ce")
     version("2.3.1", sha256="9ed23e160c401c14e41c40e9930f72697172b2c72933c2d2725a05e81e1f34ca")
     version("2.2.18", sha256="62196adb62ad8ec73ddce573e5391686e9359566e365b123ac4f299809944bea")
@@ -30,18 +33,26 @@ class RRsqlite(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.1.0:", type=("build", "run"))
-    depends_on("r-bit64", type=("build", "run"))
-    depends_on("r-blob@1.2.0:", type=("build", "run"))
-    depends_on("r-dbi@1.0.0:", type=("build", "run"))
-    depends_on("r-dbi@1.1.0:", type=("build", "run"), when="@2.2.10:")
-    depends_on("r-dbi@1.2.0:", type=("build", "run"), when="@2.3.5:")
-    depends_on("r-rlang", type=("build", "run"), when="@2.3.4:")
-    depends_on("r-memoise", type=("build", "run"))
-    depends_on("r-pkgconfig", type=("build", "run"))
-    depends_on("r-plogr@0.2.0:", type=("build", "run"))
-    depends_on("r-cpp11@0.4.0:", type=("build", "run"), when="@2.3.1:")
+    depends_on("r@3.1:", type=("build", "run"))
 
-    depends_on("r-bh", type=("build", "run"), when="@:2.2.2")
+    depends_on("r-bit64", type=("build", "run"))
+
+    depends_on("r-blob@1.2.0:", type=("build", "run"))
+
+    depends_on("r-cpp11@0.4:", type=("build", "run"), when="@2.3.1:")
+
+    depends_on("r-dbi@1.2:", type=("build", "run"), when="@2.3.5:")
+    depends_on("r-dbi@1.1:", type=("build", "run"), when="@2.2.10:")
+    depends_on("r-dbi@1:", type=("build", "run"))
+
+    depends_on("r-memoise", type=("build", "run"))
+
+    depends_on("r-pkgconfig", type=("build", "run"))
+
+    depends_on("r-rlang", type=("build", "run"), when="@2.3.4:")
+
+    # Historical dependencies
+    depends_on("r-plogr@0.2:", type=("build", "run"), when="@:2.4.5")
     depends_on("r-rcpp@0.12.7:", type=("build", "run"), when="@:2.2.18")
     depends_on("r-rcpp@1.0.7:", type=("build", "run"), when="@2.2.9:2.2.18")
+    depends_on("r-bh", type=("build", "run"), when="@:2.2.2")
