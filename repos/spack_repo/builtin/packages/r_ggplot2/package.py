@@ -38,37 +38,59 @@ class RGgplot2(RPackage):
 
     with default_args(type=("build", "run")):
         depends_on("r@4.1:", when="@4:")
-        depends_on("r@3.5:", when="@3.5.0:")
+        depends_on("r@3.5:", when="@3.5:")
         depends_on("r@3.3:", when="@3.3.4:")
-        depends_on("r@3.2:", when="@3.2.0:")
+        depends_on("r@3.2:", when="@3.2:")
         depends_on("r@3.1:")
 
-        depends_on("r-cli", when="@3.4.0:")
+        depends_on("r-cli", when="@3.4:")
+
         depends_on("r-gtable@0.3.6:", when="@4:")
         depends_on("r-gtable@0.1.1:")
-        depends_on("r-isoband", when="@3.3.3:")
-        depends_on("r-lifecycle@1.0.1.1:", when="@3.4.0:")
-        depends_on("r-rlang@1.1.0:", when="@3.4.2:")
-        depends_on("r-rlang@1.0.0:", when="@3.4.0:")
+
+        depends_on("r-isoband", when="@3.3:")
+
+        depends_on("r-lifecycle@1.0.1.1:", when="@3.4:")
+
+        depends_on("r-rlang@1.1:", when="@3.4.2:")
+        depends_on("r-rlang@1:", when="@3.4:")
         depends_on("r-rlang@0.4.10:", when="@3.3.4:")
-        depends_on("r-rlang@0.3.0:", when="@3.0.0:")
+        depends_on("r-rlang@0.3:", when="@3.2:")
+        depends_on("r-rlang@0.2.1:", when="@3.1:")
+        depends_on("r-rlang", when="@3:")
+
         depends_on("r-s7", when="@4:")
-        depends_on("r-scales@1.4.0:", when="@4:")
-        depends_on("r-scales@1.3.0:", when="@3.5.0:")
-        depends_on("r-scales@1.2.0:", when="@3.4.0:3.4.4")
-        depends_on("r-scales@0.5.0:")
-        depends_on("r-vctrs@0.6.0:", when="@3.5.1:")
-        depends_on("r-vctrs@0.5.0:", when="@3.4.0:")
+
+        depends_on("r-scales@1.4:", when="@4:")
+        depends_on("r-scales@1.3:", when="@3.5:")
+        depends_on("r-scales@1.2:", when="@3.4:3.4.4")
+        depends_on("r-scales@0.5:", when="@3:")
+        depends_on("r-scales@0.4.1:", when="@2.2:")
+        depends_on("r-scales@0.3:")
+
+        depends_on("r-vctrs@0.6:", when="@3.5.1:")
+        depends_on("r-vctrs@0.5:", when="@3.4:")
+
         depends_on("r-withr@2.5.0:", when="@3.4.0:")
-        depends_on("r-withr@2.0.0:", when="@3.0.0:")
+        depends_on("r-withr@2:", when="@3:")
 
         # Historical dependencies
-        depends_on("r-digest", when="@:3.3.6")
-        depends_on("r-glue", when="@3.3.3:3")
-        depends_on("r-lazyeval", when="@:3.2.0")
+        depends_on("r-digest", when="@:3.3")
+        depends_on("r-glue", when="@3.3:3")
+        depends_on("r-lazyeval", when="@2.2:3.2")
         depends_on("r-mass", when="@:3")
-        depends_on("r-mgcv", when="@3.2.0:3")
-        depends_on("r-plyr@1.7.1:", when="@:3.1.1")
-        depends_on("r-reshape2", when="@:3.2.0")
-        depends_on("r-tibble", when="@:3")
-        depends_on("r-viridislite", when="@3.0.0:3.2.0")
+        depends_on("r-mgcv", when="@3")
+        depends_on("r-plyr@1.7.1:", when="@:3.1")
+        depends_on("r-reshape2", when="@:3.2")
+        depends_on("r-tibble", when="@2.2:3")
+        depends_on("r-viridislite", when="@3:3.2")
+
+    # R 4.4 changed the way version comparison works causing following build error:
+    #   > Error in .make_numeric_version(x, strict, .standard_regexps()$valid_numeric_version) :
+    #       invalid non-character version specification 'x' (type: double)
+    conflicts("^r@4.4:", when="@3:3.4.2")  # approximate
+
+    # R 4.6 no longer accepts "structure(NULL, ...)"
+    #   > Error in structure(NULL, class = "waiver") :
+    #       attempt to set an attribute on NULL
+    conflicts("^r@4.6:", when="@2.1")
