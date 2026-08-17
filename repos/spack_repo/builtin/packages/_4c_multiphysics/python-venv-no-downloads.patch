@@ -1,0 +1,79 @@
+Keep the configure-time virtual environment connected to Python packages
+provided by Spack and prevent pip from contacting package indexes. Use
+Spack-packaged equivalents for requirements that have no builtin recipes,
+and omit the unsupported sphinx-multibuild and PyVista Jupyter extras.
+
+--- a/cmake/configure/configure_Python.cmake
++++ b/cmake/configure/configure_Python.cmake
+@@ -70,6 +70,7 @@ _execute_process(
+   PROCESS_COMMAND
+   ${Python_EXECUTABLE}
+   -m
+   venv
++  --system-site-packages
+   ${FOUR_C_PYTHON_VENV_BUILD}
+   )
+ _execute_process(
+@@ -77,6 +78,9 @@ _execute_process(
+   PROCESS_COMMAND
+   ${FOUR_C_PYTHON_VENV_BUILD}/bin/pip
+   install
++  --no-deps
++  --no-build-isolation
++  --no-index
+   -e
+   ${PROJECT_SOURCE_DIR}/utilities/four_c_python[build]
+   )
+--- a/utilities/four_c_python/requirements.txt
++++ b/utilities/four_c_python/requirements.txt
+@@ -1,2 +1,2 @@
+-rapidyaml
+-jsonschema-rs
++pyyaml
++jsonschema
+--- a/utilities/four_c_python/build-requirements.txt
++++ b/utilities/four_c_python/build-requirements.txt
+@@ -16 +15,0 @@
+-sphinx-multibuild
+@@ -19 +18 @@
+-pyvista[jupyter]
+\ No newline at end of file
++pyvista
+\ No newline at end of file
+--- a/utilities/four_c_python/src/four_c_common_utils/io.py
++++ b/utilities/four_c_python/src/four_c_common_utils/io.py
+@@ -8 +7,0 @@
+-import ryml
+@@ -10,2 +9,2 @@
+-import json
+-import re
++
++import yaml
+@@ -19,13 +18 @@
+-    json_str = ryml.emit_json(
+-        ryml.parse_in_arena(pathlib.Path(path_to_yaml_file).read_bytes())
+-    )
+-
+-    # Convert `inf` to a string to avoid JSON parsing errors, see https://github.com/biojppm/rapidyaml/issues/312
+-    json_str = re.sub(r":\s*(-?)inf\b", r': "\1inf"', json_str)
+-    # Convert floats that are missing digits on either side of the decimal point
+-    json_str = re.sub(r":\s*(-?)\.([0-9]+)", r": \g<1>0.\2", json_str)
+-    json_str = re.sub(r":\s*(-?)([0-9]+)\.(\D)", r": \1\2.0\3", json_str)
+-
+-    data = json.loads(json_str)
+-
+-    return data
++    return yaml.safe_load(pathlib.Path(path_to_yaml_file).read_text())
+--- a/utilities/four_c_python/src/four_c_metadata/validate_test_input_files.py
++++ b/utilities/four_c_python/src/four_c_metadata/validate_test_input_files.py
+@@ -9 +9 @@
+-import jsonschema_rs
++import jsonschema
+@@ -33 +33,3 @@
+-    validator = jsonschema_rs.validator_for(json_schema)
++    validator_class = jsonschema.validators.validator_for(json_schema)
++    validator_class.check_schema(json_schema)
++    validator = validator_class(json_schema)
+@@ -46 +48 @@
+-        except jsonschema_rs.ValidationError as e:
++        except jsonschema.ValidationError as e:
