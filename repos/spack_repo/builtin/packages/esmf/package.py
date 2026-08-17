@@ -249,13 +249,13 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMPILER", "gfortranclang")
         elif spec["fortran"].name == "llvm":
             env.set("ESMF_COMPILER", "llvm")
-        elif self.pkg.compiler.name == "nag":
+        elif spec["fortran"].name == "nag":
             env.set("ESMF_COMPILER", "nag")
-        elif self.pkg.compiler.name == "nvhpc":
+        elif spec["fortran"].name == "nvhpc":
             env.set("ESMF_COMPILER", "nvhpc")
-        elif self.pkg.compiler.name == "cce":
+        elif spec["fortran"].name == "cce":
             env.set("ESMF_COMPILER", "cce")
-        elif self.pkg.compiler.name == "aocc":
+        elif spec["fortran"].name == "aocc":
             env.set("ESMF_COMPILER", "aocc")
         else:
             msg = "The compiler you are building with, "
