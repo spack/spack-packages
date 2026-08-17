@@ -16,7 +16,7 @@ class PyNanobind(PythonPackage):
     """
 
     homepage = "https://nanobind.readthedocs.io"
-    pypi = "nanobind/nanobind-2.13.0.tar.gz"
+    pypi = "nanobind/nanobind-2.15.0.tar.gz"
     git = "https://github.com/wjakob/nanobind.git"
 
     maintainers("chrisrichardson", "garth-wells")
@@ -24,6 +24,10 @@ class PyNanobind(PythonPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master", submodules=True)
+    version(
+        "2.15.0",
+        sha256="3eace37a3b8cdadd531fcc6145263985b29821467161d34ff722b0644cf445b5",
+    )
     version(
         "2.14.0",
         sha256="0cf1477d8b1697abc1454028b6469e7113d9aa6ba3ced8b102cc569affbacb13",
