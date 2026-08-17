@@ -1,0 +1,28 @@
+diff --git a/configure b/configure
+index 02a162f22..e3368593f 100755
+--- a/configure
++++ b/configure
+@@ -14470,6 +14470,9 @@ fi
+ if [ $tauprefix != unknown ] ; then
+     echo "TAU: Copying include directory to ${tauprefix}"
+     cp -r include ${tauprefix}
++    sed -e 's@^TAUROOT=.*@TAUROOT='$tauprefix'@' \
++        include/Makefile > ${tauprefix}/include/Makefile.new && \
++    mv ${tauprefix}/include/Makefile.new ${tauprefix}/include/Makefile
+     echo "TAU: Copying man directory to ${tauprefix}"
+     cp -r man ${tauprefix}
+ fi
+diff --git a/src/Profile/Makefile.skel b/src/Profile/Makefile.skel
+index f22e2f467..f68f94714 100644
+--- a/src/Profile/Makefile.skel
++++ b/src/Profile/Makefile.skel
+@@ -510,7 +510,8 @@ $(INSTALLDEST)/$(TAU_TARGET): $(TAU_TARGET)
+ 		@if [ -d $(INSTALLDEST) ] ; then true; \
+                    else $(MKDIR) $(INSTALLDEST) ;fi
+ 		$(TAU_INSTALL) $? $(INSTALLDEST)
+-		$(TAU_INSTALL) $(TAUROOT)/include/Makefile $(INSTALLDEST)/Makefile.tau$(TAU_CONFIG)
++		sed -e 's@^TAUROOT=.*@TAUROOT=$(TAU_PREFIX_INSTALL_DIR)@' \
++			$(TAUROOT)/include/Makefile > $(INSTALLDEST)/Makefile.tau$(TAU_CONFIG)
+ 
+ $(INSTALLDEST)/$(TAU_DISABLE): $(TAU_DISABLE) $(TAU_DISABLE_SHARED)
+ 		@echo Installing $? in $(INSTALLDEST)

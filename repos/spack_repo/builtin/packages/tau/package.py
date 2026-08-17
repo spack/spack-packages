@@ -274,6 +274,7 @@ class Tau(Package):
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
     patch("tau-rocm-disable-rocprofiler-default.patch", when="@2.34.0 +rocm")
     patch("cuptipc.patch", when="@2.34.1:2.35.1 +cuda")
+    patch("tauroot.patch", when="@2.35.2")
 
     filter_compiler_wrappers("Makefile", relative_root="include")
     filter_compiler_wrappers("Makefile.tau*", relative_root="lib")
