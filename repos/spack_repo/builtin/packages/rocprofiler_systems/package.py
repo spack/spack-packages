@@ -326,7 +326,7 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
     patch(
         "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
         sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
-        when="%rocmcc",
+        when="@:7.1 %rocmcc",
         working_dir="external/timemory",
     )
 
