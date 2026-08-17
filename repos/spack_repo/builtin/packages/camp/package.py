@@ -26,6 +26,12 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main", submodules=False)
     version(
+        "2026.07.1",
+        tag="v2026.07.1",
+        commit="390c5e05159a5a88545a7c5c9f1fdbbb3f64f120",
+        submodules=False,
+    )
+    version(
         "2026.07.0",
         tag="v2026.07.0",
         commit="824a6a3ba48a233791332c398e7f024b2191aa27",
