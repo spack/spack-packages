@@ -165,6 +165,11 @@ class RocmExamples(CMakePackage):
     patch("add_hip_include_cuda.patch", when="@6.4+cuda")
     patch("add_mesa_include.patch", when="@6.4+cuda")
     patch("disable_hiptensor_rocprof-sdk.patch", when="@7.2")
+    patch(
+        "https://github.com/ROCm/rocm-examples/commit/e8abf81fd573cb99f2aa363a4eadf082541827bb.patch?full_index=1",
+        sha256="728741f24798a3e36941ecb47caafedcf9d83d1e0799f207609b9a0232cc8133",
+        when="@7.14",
+    )
 
     def patch(self):
         filter_file(
