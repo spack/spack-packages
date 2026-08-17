@@ -99,9 +99,9 @@ class Gromacs(CMakePackage, CudaPackage, ROCmPackage):
     )
     depends_on("heffte +cuda", when="+heffte +cuda")
     depends_on("heffte +sycl", when="+heffte +sycl")
-    conflicts("+heffte", when="@2025.4:+sycl", msg=
-              "heFFTe backend is compatible with AdaptiveCpp SYCL 2025 and "
-              "later")
+    depends_on("heffte +sycl", when="+heffte +sycl ~rocm")
+    depends_on("heffte +rocm", when="+heffte +sycl +rocm")
+    depends_on("heffte +rocm", when="+heffte ~sycl +rocm")
     variant("opencl", default=False, description="Enable OpenCL support")
     variant("sycl", default=False, when="@2021:", description="Enable SYCL support")
     requires(
@@ -673,16 +673,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
             options.append("-DGMX_USE_HEFFTE=on")
             options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
             if self.spec.satisfies("+rocm"):
-                # HeFFTe with rocFFT backend 
+                # HeFFTe with rocFFT backend (HeFFTe does not have a VkFFT backend)
                 options.append("-DHeffte_ENABLE_ROCM:BOOL=ON")
                 options.append(f"-DHeffte_ROCM_ROOT={self.spec['hip'].prefix}")
 
-        # Use rocFFT backend to perform FFT on GPU only for pure ROCm builds
-        if self.spec.satisfies("+rocm") and not self.spec.satisfies("+sycl"):
+        # ROCm builds, whether using HIP or SYCL/ACPP on AMD GPUs, are using rocFFT as the GPU FFT backend otherwise build failed.
+        if self.spec.satisfies("+rocm") and self.spec.satisfies("~sycl"):
             options.append("-DGMX_GPU_FFT_LIBRARY=rocFFT")
             options.append(f"-DCMAKE_CXX_FLAGS=-I{self.spec['rocfft'].headers.directories[0]}")
-            options.append("-DGMX_BUILD_OWN_FFTW=OFF")
-        # For SYCL builds, VkFFT provides a portable backend which currently can be used on AMD and NVIDIA GPUs    
+        # VkFFT provides a portable GPU FFT backend which currently can be used on AMD and NVIDIA GPUs 
         elif self.spec.satisfies("+sycl"):
             options.append("-DGMX_GPU_FFT_LIBRARY=VkFFT")
         if self.spec.satisfies("+intel-data-center-gpu-max"):
