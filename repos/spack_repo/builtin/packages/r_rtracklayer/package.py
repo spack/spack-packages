@@ -62,7 +62,6 @@ class RRtracklayer(RPackage):
     depends_on("r-biostrings@2.43.7:", type=("build", "run"))
 
     depends_on("r-curl", type=("build", "run"), when="@1.63.2:")
-    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.63.0")
 
     depends_on("r-genomicalignments@1.15.6:", type=("build", "run"), when="@1.40.6:")
     depends_on("r-genomicalignments@1.5.4:", type=("build", "run"))
@@ -103,7 +102,7 @@ class RRtracklayer(RPackage):
     depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.40.6:1.69.0")
     depends_on("r-genomeinfodb@1.3.14:", type=("build", "run"), when="@:1.69.0")
     depends_on("r-zlibbioc", type=("build", "run"), when="@:1.67.1")
-    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.62.0")
+    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.63.0")
 
     # > ucsc/common.c:360:9: error: too many arguments to function 'free'
     conflicts("r@4.6:", when="@:1.66")
