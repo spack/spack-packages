@@ -407,7 +407,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         conflicts("+bootstrap")
 
     # Graphite loop optimizations cause bootstrap comparison failures
-    conflicts("+graphite +bootstrap")
+    conflicts("+graphite +bootstrap", when="@:15")
 
     # Binutils can't build ld on macOS
     conflicts("+binutils", when="platform=darwin")
