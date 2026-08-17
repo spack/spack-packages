@@ -55,14 +55,12 @@ class Precice(CMakePackage):
         version("1.2.0", sha256="0784ecd002092949835151b90393beb6e9e7a3e9bd78ffd40d18302d6da4b05b")
     # Skip version 1.1.1 entirely, the cmake was lacking install.
 
+    ## Variants
+
     variant("mpi", default=True, description="Enable MPI support")
     variant("petsc", default=True, description="Enable PETSc support")
     variant("python", default=False, description="Enable Python support", when="@2:")
     variant("shared", default=True, description="Build shared libraries")
-
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
 
     for build_type in ("Release", "RelWithDebInfo", "MinSizeRel"):
         variant(
@@ -78,13 +76,26 @@ class Precice(CMakePackage):
             when=f"@2.4: build_type={build_type}",
         )
 
+    ## Dependencies
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+
+    # Baseline version lifts
+    # version 1.4.0 to Ubuntu 18.04 LTS
+    # version 2.4.0 to Ubuntu 20.04 LTS
+    # version 3.2.0 to Ubuntu 22.04 LTS
+
     depends_on("cmake@3.5:", type="build")
     depends_on("cmake@3.10.2:", type="build", when="@1.4:")
     depends_on("cmake@3.16.3:", type="build", when="@2.4:")
     depends_on("cmake@3.22.1:", type="build", when="@3.2:")
+
     depends_on("pkgconfig", type="build", when="@2.2:")
 
-    # Boost components
+    ## Boost
+    # Required components
     depends_on("boost+log+program_options+system+test+thread")
     depends_on("boost+filesystem", when="@:3.0.0")
     # Boost 1.69 removed signals
@@ -103,31 +114,50 @@ class Precice(CMakePackage):
     depends_on("boost@:1.86", when="@:3.1.2")
     depends_on("boost@:1.89", when="@:3.2.0")
 
+    ## Eigen
+
+    # Baseline versions
     depends_on("eigen@3.2:")
     depends_on("eigen@3.4:", when="@3.2:")
+
+    # Forward compatibility
     depends_on("eigen@:3.3.7", type="build", when="@:1.5")  # bug in prettyprint
     depends_on("eigen@:3.4.99", when="@:3.3")
 
+    ## Libxml2
     depends_on("libxml2")
     depends_on("libxml2@:2.11.99", type="build", when="@:2.5.0")
     depends_on("libxml2@:2.13.99", type="build", when="@:3.2.0")
 
     depends_on("mpi", when="+mpi")
 
-    depends_on("petsc@3.6:", when="+petsc")
-    depends_on("petsc@3.12:", when="+petsc@2.1.0:")
-    depends_on("petsc@3.15:", when="+petsc@3.2:")
+    with when("+petsc"):
+        depends_on("petsc@3.6:")
+        depends_on("petsc@3.12:", when="@2.1.0:")
+        # Ubuntu baselines
+        depends_on("petsc@3.15:", when="@3.2:")
 
-    depends_on("python@3:", when="+python", type=("build", "run"))
-    depends_on("py-numpy@1.17:", when="+python", type=("build", "run"))
-    depends_on("py-numpy@1.21.5:", when="+python@3.2:", type=("build", "run"))
+    with when("+python"):
+        depends_on("python@3:", type=("build", "run"))
+        depends_on("py-numpy@1.17:", type=("build", "run"))
+        # Ubuntu baselines
+        depends_on("py-numpy@1.21.5:", when="@3.2:", type=("build", "run"))
 
-    # We require C++14 compiler support
     conflicts("%gcc@:4")
-    conflicts("%apple-clang@:5")
+    conflicts("%gcc@:9.2.99", when="@1.4:")
+    conflicts("%gcc@:11.1.99", when="@2.4:")
+    conflicts("%gcc@:13.1.99", when="@3.2:")
+
     conflicts("%clang@:3.7")
+    conflicts("%clang@:9.99", when="@1.4:")
+    conflicts("%clang@:13.99", when="@2.4:")
+    conflicts("%clang@:17.99", when="@3.2:")
+
+    conflicts("%apple-clang@:5")
     conflicts("%intel@:16")
     conflicts("%gcc@:9.2", when="@3.0.0:")
+
+    conflicts("-shared", when="@3:", msg="Since v3.0.0, only shared library builds are supported.")
 
     # Fixes missing #include<array> in src/mesh/Edge.hpp
     patch(
@@ -141,15 +171,6 @@ class Precice(CMakePackage):
         when="@2.3.0",
         sha256="6a38783eec984a59991f0895d411212e0ba1ebd2ec2c8f53f962df8facbc0344",
     )
-
-    def xsdk_tpl_args(self):
-        return [
-            "-DTPL_ENABLE_BOOST:BOOL=ON",
-            "-DTPL_ENABLE_EIGEN3:BOOL=ON",
-            "-DTPL_ENABLE_LIBXML2:BOOL=ON",
-            self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
-            self.define_from_variant("TPL_ENABLE_PYTHON", "python"),
-        ]
 
     def cmake_args(self):
         """Populate cmake arguments for precice."""
@@ -169,10 +190,16 @@ class Precice(CMakePackage):
             python_option = "PRECICE_FEATURE_PYTHON_ACTIONS"
 
         cmake_args = [
-            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(mpi_option, "mpi"),
             self.define_from_variant(petsc_option, "petsc"),
         ]
+
+        if not self.run_tests:
+            cmake_args.append(f"-DBUILD_TESTING=OFF")
+
+        # Use the shared variant prior to version 3
+        if not spec.satisfies("@3:"):
+            cmake_args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         # Python 3 is only supported after version 2
         if spec.satisfies("@2:"):
@@ -180,10 +207,16 @@ class Precice(CMakePackage):
         else:
             cmake_args.append("-DPYTHON=OFF")
 
-        # The xSDK installation policies were implemented after 1.5.2.
-        # The TPL arguments were removed in 3.0.0.
-        if spec.satisfies("@1.6:3"):
-            cmake_args.extend(self.xsdk_tpl_args())
+        # The xSDK installation policies were implemented after 1.5.2 and removed in 3.0.0
+        if spec.satisfies("@1.6:2"):
+            cmake_args.extend(
+                [
+                    "-DTPL_ENABLE_BOOST:BOOL=ON",
+                    "-DTPL_ENABLE_EIGEN3:BOOL=ON",
+                    "-DTPL_ENABLE_LIBXML2:BOOL=ON",
+                    self.define_from_variant("TPL_ENABLE_PETSC", "petsc"),
+                ]
+            )
 
         # Release options
         if spec.satisfies("@2.4:"):
@@ -216,7 +249,7 @@ class Precice(CMakePackage):
         )
 
         # PETSc
-        if "+petsc" in spec:
+        if spec.satisfies("@:2 +petsc"):
             cmake_args.extend(["-DPETSC_DIR=%s" % spec["petsc"].prefix, "-DPETSC_ARCH=."])
 
         # Python
