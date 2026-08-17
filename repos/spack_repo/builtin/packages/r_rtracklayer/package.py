@@ -43,8 +43,8 @@ class RRtracklayer(RPackage):
         version("1.38.3", commit="f20db703c09dc7e808c09e9b78c15aec9e546248")
         version("1.36.6", commit="8c0ac7230f94e0c5a981acbb178c8de70e968131")
 
-    # # > chain_io.c:1:10: fatal error: S.h: No such file or directory
-    # conflicts("r@4.2:", when="@:1.54")
+    # > chain_io.c:1:10: fatal error: S.h: No such file or directory
+    conflicts("r@4.2:", when="@:1.54.0")
 
     depends_on("c", type="build")
 
