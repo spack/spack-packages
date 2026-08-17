@@ -20,18 +20,22 @@ class RRtracklayer(RPackage):
     bioc = "rtracklayer"
 
     with default_args(get_full_repo=True):
-        version("1.72.0", commit="3136d28c9e15ed28f32b9fe5428738acade52742")
-        version("1.70.1", commit="873c7111e8befb0e5761618280100a4de0cc5f3e")
-        version("1.68.0", commit="aa5ace3bafeb3acdd179911c44a439b4b406cf93")
-        version("1.66.0", commit="d81035b2aa7efe3066e4bc6470bf940b0dd5954d")
-        version("1.64.0", commit="ba889ee7eb05809837dc66eebb13cfe2d76afc82")
-        version("1.62.0", commit="58efbf9c30c6f62e9c432746af75626fc10d2a3f")
-        version("1.60.1", commit="55c0c7a483d483f8351b13c3a8e8bc94774b3b86")
+        version("1.72.0", commit="3136d28c9e15ed28f32b9fe5428738acade52742")  # bioc 3.23
+        version("1.70.1", commit="873c7111e8befb0e5761618280100a4de0cc5f3e")  # bioc 3.22
+        version("1.68.0", commit="aa5ace3bafeb3acdd179911c44a439b4b406cf93")  # bioc 3.21
+        version("1.66.0", commit="d81035b2aa7efe3066e4bc6470bf940b0dd5954d")  # bioc 3.20
+        version("1.64.0", commit="ba889ee7eb05809837dc66eebb13cfe2d76afc82")  # bioc 3.19
+        version("1.62.0", commit="58efbf9c30c6f62e9c432746af75626fc10d2a3f")  # bioc 3.18
+        version("1.60.1", commit="55c0c7a483d483f8351b13c3a8e8bc94774b3b86")  # bioc 3.17
         version("1.60.0", commit="de35bc03116fc7ad30f0e425b41715c3cb2e783b")
-        version("1.58.0", commit="54a74972c08775fdf1e83e6e22cd0b8fad677fc1")
-        version("1.56.1", commit="4c6d2201fcb102d471bd88f4f51cc34317669955")
+        version("1.58.0", commit="54a74972c08775fdf1e83e6e22cd0b8fad677fc1")  # bioc 3.16
+        version("1.56.1", commit="4c6d2201fcb102d471bd88f4f51cc34317669955")  # bioc 3.15
         version("1.56.0", commit="1d70f7dc464ad87a1fde61588cd9ae0cb86b6e86")
-        version("1.54.0", commit="04cdd75521a8364e67a49d7352500dd4a3e83c55")
+
+    # These versions require R <= 4.1 which is no longer offered by Spack
+
+    with default_args(get_full_repo=True, deprecated=True):
+        version("1.54.0", commit="04cdd75521a8364e67a49d7352500dd4a3e83c55")  # bioc 3.14
         version("1.50.0", commit="d2e61f72ff5d5a94c2c487ba108a37f23bfcc1e6")
         version("1.44.4", commit="aec96e85daf53b5c5eb2e89250d2755352be4de3")
         version("1.42.2", commit="76702f671faea736807d54aeecfbadcd152d94c5")
@@ -39,40 +43,69 @@ class RRtracklayer(RPackage):
         version("1.38.3", commit="f20db703c09dc7e808c09e9b78c15aec9e546248")
         version("1.36.6", commit="8c0ac7230f94e0c5a981acbb178c8de70e968131")
 
-    depends_on("c", type="build")  # generated
+    # > chain_io.c:1:10: fatal error: S.h: No such file or directory
+    conflicts("r@4.2:", when="@:1.54.0")
 
-    depends_on("r@3.3:", type=("build", "run"))
+    depends_on("c", type="build")
+
     depends_on("r@3.5:", type=("build", "run"), when="@1.68.0:")
-    depends_on("r-genomicranges@1.21.20:", type=("build", "run"))
-    depends_on("r-genomicranges@1.37.2:", type=("build", "run"), when="@1.50.0:")
-    depends_on("r-xml@1.98-0:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-biocgenerics@0.35.3:", type=("build", "run"), when="@1.50.0:")
-    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-s4vectors@0.19.22:", type=("build", "run"), when="@1.42.2:")
-    depends_on("r-s4vectors@0.23.18:", type=("build", "run"), when="@1.50.0:")
-    depends_on("r-iranges@2.3.7:", type=("build", "run"))
-    depends_on("r-iranges@2.11.12:", type=("build", "run"), when="@1.38.3:")
-    depends_on("r-iranges@2.13.13:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-xvector@0.9.4:", type=("build", "run"))
-    depends_on("r-xvector@0.19.7:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-genomeinfodb@1.3.14:", type=("build", "run"))
-    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-biostrings@2.43.7:", type=("build", "run"))
-    depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-biostrings@2.77.2:", type=("build", "run"), when="@1.70.1:")
-    depends_on("r-zlibbioc", type=("build", "run"))
-    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.62.0")
-    depends_on("r-curl", type=("build", "run"), when="@1.64.0:")
-    depends_on("r-httr", type=("build", "run"), when="@1.64.0:")
-    depends_on("r-seqinfo", type=("build", "run"), when="@1.70.1:")
-    depends_on("r-rsamtools@1.17.8:", type=("build", "run"))
-    depends_on("r-rsamtools@1.31.2:", type=("build", "run"), when="@1.40.6:")
-    depends_on("r-genomicalignments@1.5.4:", type=("build", "run"))
-    depends_on("r-genomicalignments@1.15.6:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r@3.3:", type=("build", "run"))
+
     depends_on("r-biocio", type=("build", "run"), when="@1.54.0:")
+
+    depends_on("r-biocgenerics@0.35.3:", type=("build", "run"), when="@1.50.0:")
+    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-biocgenerics@0.13.8:", type=("build", "run"))
+
+    depends_on("r-biostrings@2.77.2:", type=("build", "run"), when="@1.70.1:")
+    depends_on("r-biostrings@2.47.6:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-biostrings@2.43.7:", type=("build", "run"))
+
+    depends_on("r-curl", type=("build", "run"), when="@1.63.2:")
+
+    depends_on("r-genomicalignments@1.15.6:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-genomicalignments@1.5.4:", type=("build", "run"))
+
+    depends_on("r-genomicranges@1.37.2:", type=("build", "run"), when="@1.50.0:")
+    depends_on("r-genomicranges@1.21.20:", type=("build", "run"))
+
+    depends_on("r-httr", type=("build", "run"), when="@1.64.0:")
+
+    depends_on("r-iranges@2.13.13:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-iranges@2.11.12:", type=("build", "run"), when="@1.38.3:")
+    depends_on("r-iranges@2.3.7:", type=("build", "run"))
+
     depends_on("r-restfulr@0.0.13:", type=("build", "run"), when="@1.54.0:")
-    depends_on("zlib-api")
+
+    depends_on("r-rsamtools@1.31.2:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-rsamtools@1.17.8:", type=("build", "run"))
+
+    depends_on("r-s4vectors@0.23.18:", type=("build", "run"), when="@1.50.0:")
+    depends_on("r-s4vectors@0.19.22:", type=("build", "run"), when="@1.42.2:")
+    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
+
+    depends_on("r-seqinfo", type=("build", "run"), when="@1.69.1:")
+
+    depends_on("r-xml@1.98-0:", type=("build", "run"))
+
+    depends_on("r-xvector@0.19.7:", type=("build", "run"), when="@1.40.6:")
+    depends_on("r-xvector@0.9.4:", type=("build", "run"))
+
+    depends_on("curl")
+
     depends_on("openssl")
+
+    depends_on("zlib-api")
+
+    # Historical dependencies
+    depends_on("r-genomeinfodb@1.15.2:", type=("build", "run"), when="@1.40.6:1.69.0")
+    depends_on("r-genomeinfodb@1.3.14:", type=("build", "run"), when="@:1.69.0")
+    depends_on("r-zlibbioc", type=("build", "run"), when="@:1.67.1")
+    depends_on("r-rcurl@1.4-2:", type=("build", "run"), when="@:1.63.0")
+
+    # > ucsc/common.c:360:9: error: too many arguments to function 'free'
+    conflicts("r@4.6:", when="@:1.66")
+
+    # > ucsc/common.c:249:9: error: too many arguments to function 'free'; expected 0, have 1
+    conflicts("%gcc@15:", when="@:1.66")
