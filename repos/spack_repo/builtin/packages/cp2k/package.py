@@ -375,7 +375,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # CP2K <= 2026.1 requires the legacy libxsmmext interface,
         # which was removed in libxsmm 2.0.
         depends_on("libxsmm@:1", when="@:2026.1")
-        # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
     with when("+opencl"):
@@ -653,6 +652,15 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     def patch(self):
+        # Patch to disable -march=native and -mtune=native to avoid
+        # illegal instructions when cross compiling with spack
+        if self.spec.satisfies("@2026.1:2026.2"):
+            filter_file(
+                r"-march=native;-mtune=native",
+                "",
+                "cmake/CompilerConfiguration.cmake",
+            )
+
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
             if self.spec["elpa"].satisfies("@2022.05.001:"):
@@ -1377,6 +1385,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_LAPACK_FOUND", True),
                     self.define("CP2K_LAPACK_LINK_LIBRARIES", lapack.libs.joined(";")),
                     self.define("CP2K_BLAS_FOUND", True),
+                    self.define("CP2K_BLAS_INCLUDE_DIRS", blas.prefix.include),
                     self.define("CP2K_BLAS_LINK_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_SCALAPACK_FOUND", True),
                     self.define("CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include),

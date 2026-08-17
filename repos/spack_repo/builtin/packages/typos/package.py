@@ -28,4 +28,6 @@ class Typos(CargoPackage):
     depends_on("rust@1.87:", type="build", when="@1.39.1:")
     depends_on("rust@1.80:", type="build")
 
+    depends_on("c", type="build")
+
     build_directory = "crates/typos-cli"
