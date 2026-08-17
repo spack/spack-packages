@@ -7,6 +7,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
+
 def submodules(package):
     submodules = [
         "projects/rocprofiler-compute/src/lib/external/googletest",
