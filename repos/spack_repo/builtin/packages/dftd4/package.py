@@ -95,7 +95,10 @@ class MesonBuilder(meson.MesonBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [
-            self.define_from_variant("WITH_OPENMP", "openmp"),
+        args = [
+            self.define_from_variant("WITH_OpenMP", "openmp"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            "-DBLAS_LIBRARIES=%s" % self.spec["blas"].libs.joined(";"),
+            "-DLAPACK_LIBRARIES=%s" % self.spec["lapack"].libs.joined(";"),
         ]
+        return args
