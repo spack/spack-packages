@@ -550,7 +550,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("kokkos", "kokkos", False, False),
             ("kokkos-kernels", "kokkos-kernels", False, False),
             ("superlu-dist", "superlu_dist", True, True),
-            "superlu", 
+            "superlu",
             ("scotch", "ptscotch", True, True),
             (
                 "suite-sparse:umfpack,klu,cholmod,btf,ccolamd,colamd,camd,amd,"
