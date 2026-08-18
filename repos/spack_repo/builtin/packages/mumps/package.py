@@ -5,6 +5,7 @@
 import glob
 import os
 import sys
+import platform
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -340,15 +341,26 @@ class Mumps(Package):
             if sys.platform == "darwin":
                 # Building dylibs with mpif90 causes segfaults on 10.8 and
                 # 10.10. Use gfortran. (Homebrew)
-                makefile_conf.extend(
-                    [
-                        "LIBEXT=.dylib",
-                        "AR=%s -dynamiclib -Wl,-install_name -Wl,%s/$(notdir $@)"
-                        " -undefined dynamic_lookup %s -o "
-                        % (os.environ["FC"], prefix.lib, inject_libs),
-                        "RANLIB=echo",
-                    ]
-                )
+                if major == 10 and (minor == 8 or minor == 10): 
+                    makefile_conf.extend(
+                        [
+                            "LIBEXT=.dylib",
+                            "AR=%s -dynamiclib -Wl,-install_name -Wl,%s/$(notdir $@)"
+                            " -undefined dynamic_lookup %s -o "
+                            % (os.environ["FC"], prefix.lib, inject_libs),
+                            "RANLIB=echo",
+                        ]
+                    )
+                else:
+                    makefile_conf.extend(
+                        [
+                            "LIBEXT=.dylib",
+                            "AR=%s -dynamiclib -Wl,-install_name -Wl,%s/$(notdir $@)"
+                            " -undefined dynamic_lookup %s -o "
+                            % (self.spec["mpi"].mpifc, prefix.lib, inject_libs),
+                            "RANLIB=echo",
+                        ]
+                    )
             else:
                 if using_xlf:
                     build_shared_flag = "qmkshrobj"
