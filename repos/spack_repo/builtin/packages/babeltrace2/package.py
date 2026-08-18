@@ -36,6 +36,7 @@ class Babeltrace2(AutotoolsPackage):
     variant("manpages", default=True, description="Build man pages")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@2.1:")
 
     depends_on("pkgconfig", type="build")
     depends_on("autoconf", type="build")

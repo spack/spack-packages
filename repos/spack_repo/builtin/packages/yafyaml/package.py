@@ -94,6 +94,15 @@ class Yafyaml(CMakePackage):
     )
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
 
+    def cmake_args(self):
+        args = []
+        if self.spec.satisfies("%nag"):
+            # NAG's nested linker-argument syntax cannot represent Spack's
+            # padded install-prefix placeholder in an rpath. yaFyaml only
+            # installs static libraries, so it does not need build rpaths.
+            args.append(self.define("CMAKE_SKIP_RPATH", True))
+        return args
+
     @when("+fismahigh")
     def patch(self):
         if os.path.exists("tools/ci-install-gfe.bash"):
