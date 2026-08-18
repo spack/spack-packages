@@ -136,14 +136,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         when="+fortran",
         description="Activates support for superlu-dist (only parallel)",
     )
-    # Sequential SuperLU (distinct package from superlu-dist above): needed
-    # for PETSc's "superlu" MatSolverType, requested explicitly by some
-    # PETSc/proteus code (e.g. proteus's RDLS3P/periodic tests set
-    # pc_factor_mat_solver_package='superlu'). Without this, PETSc raises
-    # "Could not locate solver type superlu for factorization type LU" even
-    # though superlu-dist is enabled -- the two MatSolverTypes aren't
-    # interchangeable (confirmed via a real `spack install py-proteus` test
-    # run: 6 tests failed on exactly that error before this variant existed).
     variant(
         "superlu", default=False, description="Activates support for superlu (sequential)"
     )
@@ -371,8 +363,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
     depends_on("superlu", when="+superlu")
-    # SuperLU (sequential) has no 64-bit integer support -- use superlu-dist
-    # for that instead (its own package.py already declares that split).
     conflicts("+superlu+int64", msg="SuperLU has no support for 64-bit integers, use superlu-dist instead")
     depends_on("libx11", when="+X")
     depends_on("mpfr", when="+mpfr")

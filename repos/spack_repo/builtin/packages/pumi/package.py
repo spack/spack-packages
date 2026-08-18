@@ -33,13 +33,9 @@ class Pumi(CMakePackage):
     # scorec/core develop branch and we prefer not to expose spack users
     # to the added instability.
     version("master", submodules=True, branch="master")
-    # scorec/core >=3.0.0 replaced PCU's global mutable state with an
-    # explicit pcu::PCU object (every PCU_* free function now takes a PCU_t
-    # handle, and a new PCU_C.h header carries the C-linkage declarations);
-    # proteus's main branch requires this API as of its own PCU port
-    # (proteus/MeshAdaptPUMI/*), so pin a tagged release past that
-    # refactor -- 2.2.9 (and everything below it here) predates it entirely
-    # and fails proteus's build with "PCU_C.h: No such file or directory".
+    version(
+        "4.2.0", submodules=True, commit="a40922de30f09af63a0251a0d53f95c6cadd9199"
+    )  # tag 4.2.0
     version(
         "4.1.0", submodules=True, commit="a8e3aef58bfe86790782c4ae5e5c1bb5f232ff30"
     )  # tag 4.1.0
@@ -95,123 +91,6 @@ class Pumi(CMakePackage):
     depends_on("simmetrix-simmodsuite" + simbase, when="simmodsuite=base")
     depends_on("simmetrix-simmodsuite" + simkernels, when="simmodsuite=kernels")
     depends_on("simmetrix-simmodsuite" + simfull, when="simmodsuite=full")
-
-    def patch(self):
-        '''mds/apfMDS.cc: getFaceIdInRegion() and getEdgeIdInFace() (helpers used by
-           apf::deriveMdlFromManifold()/apf::derive2DMdlFromManifold(), called from
-           proteus's MeshAdaptPUMIDrvr::reconstructFromProteus2()) look up the
-           "_vert_id" tag via mesh->findTag("_vert_id") and read it with
-           getIntTag() into a 4-byte int/int[2]. But "_vert_id" is created a few
-           lines above (and identically in the sibling deriveMdlFromManifold) via
-           mesh->createLongTag("_vert_id", 1) -- an 8-byte long. SCOREC's generic
-           tag storage (MeshMDS::getTag) does an unconditional
-           memcpy(dest, storage, tag->bytes) with no type/size check, so every
-           call here is an 8-byte-into-4-byte stack buffer overflow -- confirmed
-           via gdb on aarch64 (petsc/download-proteus-support session,
-           2026-08-01): this exact bug crashes every PUMI-mesh-generation test
-           that goes through this code path (reconstructFromProteus2 ->
-           derive2DMdlFromManifold), reproducing here too as a glibc
-           stack-protector "*** buffer overflow detected ***" abort inside
-           derive2DMdlFromManifold when this same pumi is built via Spack rather
-           than PETSc's own --download-scorec (which already carries this fix via
-           config/BuildSystem/config/packages/scorec.py in the
-           gitlab.com/cekees/petsc download-proteus-support fork -- this file is
-           the Spack-side equivalent so py-proteus+scorec gets the same fix).
-           Fixed by matching the tag's actual type (getLongTag/long, not
-           getIntTag/int) in both helpers, plus replacing the silent
-           "return 12; // Should give segmentation fault" fallback (apf::Downward
-           is a fixed MeshEntity*[12]; indexing it with 12 is UB regardless of
-           what causes the "no match" case) with an explicit assertion so a
-           genuinely unmatched vertex/edge aborts loudly at the fault site
-           instead of silently indexing one past the array.'''
-        apfmds_cc = join_path(self.stage.source_path, 'mds', 'apfMDS.cc')
-        with open(apfmds_cc, 'r') as f:
-            content = f.read()
-        orig = content
-        content = content.replace(
-            'apf::Downward verts;\n'
-            '  apf::MeshTag* vIDTag = mesh->findTag("_vert_id");\n'
-            '  int vID;\n'
-            '  mesh->getDownward(region, 0, verts);\n'
-            '  // Go through all vertices. What vertex is not on the face can be used to determine the face id.\n'
-            '  // TODO: Good way to assert that the rest of the 3 actually exist?\n'
-            '  mesh->getIntTag(verts[0], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 2;\n'
-            '  mesh->getIntTag(verts[1], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 3;\n'
-            '  mesh->getIntTag(verts[2], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 1;\n'
-            '  mesh->getIntTag(verts[3], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 0;\n'
-            '  return 12; // Should give segmentation fault\n'
-            '}',
-            'apf::Downward verts;\n'
-            '  apf::MeshTag* vIDTag = mesh->findTag("_vert_id");\n'
-            '  PCU_ALWAYS_ASSERT(mesh->getTagType(vIDTag) == Mesh::LONG);\n'
-            '  long vID;\n'
-            '  mesh->getDownward(region, 0, verts);\n'
-            '  // Go through all vertices. What vertex is not on the face can be used to determine the face id.\n'
-            '  // TODO: Good way to assert that the rest of the 3 actually exist?\n'
-            '  mesh->getLongTag(verts[0], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 2;\n'
-            '  mesh->getLongTag(verts[1], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 3;\n'
-            '  mesh->getLongTag(verts[2], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 1;\n'
-            '  mesh->getLongTag(verts[3], vIDTag, &vID);\n'
-            '  if (vID != bface_data[2] && vID != bface_data[3] && vID != bface_data[4])\n'
-            '    return 0;\n'
-            '  PCU_ALWAYS_ASSERT_VERBOSE(false, "getFaceIdInRegion: no matching vertex found");\n'
-            '  return 12; // unreachable\n'
-            '}')
-        content = content.replace(
-            'apf::Downward verts, edges;\n'
-            '  apf::MeshTag* vIDTag = mesh->findTag("_vert_id");\n'
-            '  int vID[2], eID;\n'
-            '  mesh->getDownward(face, 1, edges);\n'
-            '  for (eID = 0; eID < 3; ++eID) {\n'
-            '    mesh->getDownward(edges[eID], 0, verts);\n'
-            '    mesh->getIntTag(verts[0], vIDTag, &vID[0]);\n'
-            '    mesh->getIntTag(verts[1], vIDTag, &vID[1]);\n'
-            '    if((vID[0] == bedge_data[2] && vID[1] == bedge_data[3]) ||\n'
-            '       (vID[0] == bedge_data[3] && vID[1] == bedge_data[2])) {\n'
-            '      return eID;\n'
-            '    }\n'
-            '  }\n'
-            '\n'
-            '  return 12; // Should give segmentation fault\n'
-            '}',
-            'apf::Downward verts, edges;\n'
-            '  apf::MeshTag* vIDTag = mesh->findTag("_vert_id");\n'
-            '  PCU_ALWAYS_ASSERT(mesh->getTagType(vIDTag) == Mesh::LONG);\n'
-            '  long vID[2];\n'
-            '  int eID;\n'
-            '  mesh->getDownward(face, 1, edges);\n'
-            '  for (eID = 0; eID < 3; ++eID) {\n'
-            '    mesh->getDownward(edges[eID], 0, verts);\n'
-            '    mesh->getLongTag(verts[0], vIDTag, &vID[0]);\n'
-            '    mesh->getLongTag(verts[1], vIDTag, &vID[1]);\n'
-            '    if((vID[0] == bedge_data[2] && vID[1] == bedge_data[3]) ||\n'
-            '       (vID[0] == bedge_data[3] && vID[1] == bedge_data[2])) {\n'
-            '      return eID;\n'
-            '    }\n'
-            '  }\n'
-            '\n'
-            '  PCU_ALWAYS_ASSERT_VERBOSE(false, "getEdgeIdInFace: no matching edge found");\n'
-            '  return 12; // unreachable\n'
-            '}')
-        if content == orig:
-            tty.warn('pumi patch(): apfMDS.cc _vert_id int/long fix found nothing to replace -- upstream source may have changed, check getFaceIdInRegion/getEdgeIdInFace by hand')
-        else:
-            with open(apfmds_cc, 'w') as f:
-                f.write(content)
 
     def cmake_args(self):
         spec = self.spec
