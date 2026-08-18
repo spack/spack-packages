@@ -26,6 +26,14 @@ class Mpfi(AutotoolsPackage):
         sha256="2383d457b208c6cd3cf2e66b69c4ce47477b2a0db31fbec0cd4b1ebaa247192f",
     )
 
+    # fix gcc 14+ build (https://gitlab.inria.fr/mpfi/mpfi/-/work_items/21774)
+    patch(
+        "https://gitlab.inria.fr/mpfi/mpfi/-/commit/a02e3f9cc10767cc4284a2ef6554f6df85e41982.diff",
+        sha256="fcd9ddca317682e65019629742e4095fa14181010b7a997055db2fec7f167cd9",
+        level=2,
+        when="@1.5.4",
+    )
+
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")

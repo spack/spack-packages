@@ -31,6 +31,8 @@ class Butterflypack(CMakePackage):
     license("BSD-3-Clause-LBNL")
 
     version("master", branch="master")
+    version("4.1.0", sha256="3782840011a28c89339059e02062f4a21ab5b97f95d16cdba6ae0b66c7b5fb33")
+    version("4.0.0", sha256="f632ef4e4b5a349a36d86c286039440badac57d3047751174dfe3990c750a31d")
     version("3.2.0", sha256="0f1570947f0a7c0e130bbec3abbb2fa275ae453dc3f428e7a3a2265fecafe1ae")
     version("2.4.0", sha256="12d04e7101b2c8292b5c62d9f42b5cd1e8a3c5af639d2665596e3e4255fd0804")
     version("2.2.2", sha256="73f67073e4291877f1eee19483a8a7b3c761eaf79a75805d52105ceedead85ea")
@@ -61,6 +63,18 @@ class Butterflypack(CMakePackage):
     depends_on("sed", type="build")
 
     conflicts("%gcc@:7", when="@2.2.1:")
+
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/1393fc11b390934cbb020700397cc75bab87c783.patch?full_index=1",
+        sha256="a662fc51552eac3911cd7987bb2ebb283f6513e1bde094769f1fe9eba6878a18",
+        when="@4.1.0",
+    )
+    # ifx rejects SIZEOF on components of assumed-size dummy arrays.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/pull/42.patch?full_index=1",
+        sha256="c7a22ed21b7eb3f2f295e7ed2b04099a108151c64da61b87c823dc8e0b3f950d",
+        when="@4.1.0 %oneapi",
+    )
 
     # https://github.com/spack/spack/issues/31818
     patch("qopenmp-for-oneapi.patch", when="@2.1.1 %oneapi")

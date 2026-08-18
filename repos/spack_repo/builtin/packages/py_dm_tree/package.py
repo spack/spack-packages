@@ -21,6 +21,7 @@ class PyDmTree(CMakePackage, PythonExtension):
 
     license("Apache-2.0")
 
+    version("0.1.10", sha256="22f37b599e01cc3402a17f79c257a802aebd8d326de05b54657650845956208a")
     version("0.1.9", sha256="a4c7db3d3935a5a2d5e4b383fc26c6b0cd6f78c6d4605d3e7b518800ecd5342b")
 
     with default_args(deprecated=True):
@@ -35,12 +36,13 @@ class PyDmTree(CMakePackage, PythonExtension):
         depends_on("py-pybind11@2.10.1:", when="@0.1.8:")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.10:", when="@0.1.9:")
-        # Based on PyPI wheel availability
+        depends_on("python@3.10:3.14", type=("build", "run"), when="@0.1.10:")
+        depends_on("python@3.10:3.13", type=("build", "run"), when="@0.1.9")
         depends_on("python@:3.11", when="@:0.1.8")
         depends_on("python@:3.10", when="@:0.1.7")
 
-    depends_on("abseil-cpp cxxstd=14", type="link", when="@0.1.8:")
+    depends_on("abseil-cpp cxxstd=17", type="link", when="@0.1.10:")
+    depends_on("abseil-cpp cxxstd=14", type="link", when="@0.1.8:0.1.9")
     depends_on("py-attrs@18.2.0:", type=("build", "run"), when="@0.1.9:")
     depends_on("py-wrapt@1.11.2:", type=("build", "run"), when="@0.1.9:")
 
@@ -50,9 +52,11 @@ class PyDmTree(CMakePackage, PythonExtension):
         sha256="77dbd895611d412da99a5afbf312c3c49984ad02bd0e56ad342b2002a87d789c",
         when="@0.1.8",
     )
-    # Add missing an install(...) to CMakeLists.txt
+    # Add missing an install(...) to CMakeLists.txt.
+    # Similar patches may be needed to compile versions older than v0.1.9.
     # https://github.com/google-deepmind/tree/pull/136
-    patch("add-cmake-install.patch")
+    patch("add-cmake-install-0.1.10.patch", when="@0.1.10")
+    patch("add-cmake-install-0.1.9.patch", when="@0.1.9")
 
     conflicts("%gcc@13:", when="@:0.1.7")
 
