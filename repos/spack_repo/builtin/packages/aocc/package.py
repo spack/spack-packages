@@ -156,6 +156,12 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
             libdir = join_path(self.compiler.prefix, lib)
             if glob.glob(join_path(libdir, "libquadmath.*")):
                 return libdir
+        # search gcc multiarch layout e.g. lib/gcc/x86_64-redhat-linux/13/
+        gcc_lib = join_path(self.compiler.prefix, "lib", "gcc")
+        if os.path.isdir(gcc_lib):
+            for root, dirs, files in os.walk(gcc_lib):
+                if any(f.startswith("libquadmath") for f in files):
+                    return root
         return None
 
     def _cc_path(self):

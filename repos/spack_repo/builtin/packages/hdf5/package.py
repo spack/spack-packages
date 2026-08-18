@@ -33,16 +33,31 @@ class Hdf5(CMakePackage):
 
     # The 'develop' version is renamed so that we could uninstall (or patch) it
     # without affecting other develop version.
-    version("develop-2.0", branch="develop")
+    version("develop-2", branch="develop")
     version("develop-1.14", branch="hdf5_1_14")
     version("develop-1.12", branch="hdf5_1_12")
     version("develop-1.10", branch="hdf5_1_10")
     version("develop-1.8", branch="hdf5_1_8")
 
     version(
+        "2.2.0",
+        sha256="1a1ab8209b35586fbc1aa279ba76d102130b95badcb20ca329587219112d8c16",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.2.0/hdf5-2.2.0.tar.gz",
+    )
+    version(
+        "2.1.1",
+        sha256="efff93b5a904d66e8f626d7da60b5eedc9faf544be27dbabbaa87967b8ad798b",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.1.1/hdf5-2.1.1.tar.gz",
+    )
+    version(
         "2.1.0",
         sha256="ce7f5515a95d588b8606c3fb50643f8b88ac52ffbbde9c63bb1edca6a256e964",
         url="https://github.com/HDFGroup/hdf5/releases/download/2.1.0/hdf5-2.1.0.tar.gz",
+    )
+    version(
+        "2.0.0",
+        sha256="f4c2edc5668fb846627182708dbe1e16c60c467e63177a75b0b9f12c19d7efed",
+        url="https://github.com/HDFGroup/hdf5/releases/download/2.0.0/hdf5-2.0.0.tar.gz",
     )
 
     # Odd versions are considered experimental releases
@@ -362,6 +377,14 @@ class Hdf5(CMakePackage):
                 # in C99:
                 cmake_flags.append("-Wno-error=implicit-function-declaration")
                 # Note that this flag will cause an error if building %nvhpc.
+            if spec.satisfies("@:1.10.8 %gcc@14:"):
+                cmake_flags.extend(
+                    [
+                        "-Wno-error=implicit-int",
+                        "-Wno-error=incompatible-pointer-types",
+                        "-Wno-error=int-conversion",
+                    ]
+                )
             if spec.satisfies("@:1.8.12~shared"):
                 # More recent versions set CMAKE_POSITION_INDEPENDENT_CODE to
                 # True and build with PIC flags.
@@ -564,6 +587,9 @@ class Hdf5(CMakePackage):
             self.define_from_variant("HDF5_BUILD_JAVA", "java"),
             self.define_from_variant("HDF5_BUILD_TOOLS", "tools"),
         ]
+
+        if spec.satisfies("@:1.10.8 %gcc@14:"):
+            args.append(self.define("HDF5_DISABLE_COMPILER_WARNINGS", True))
 
         # Always enable this option. This does not actually enable any
         # features: it only *allows* the user to specify certain combinations

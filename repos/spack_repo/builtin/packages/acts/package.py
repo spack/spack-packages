@@ -383,3 +383,8 @@ class Acts(CMakePackage, CudaPackage):
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         return args
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Acts installs in non-standard python path
+        if self.spec.satisfies("+python"):
+            env.prepend_path("PYTHONPATH", self.prefix.python)

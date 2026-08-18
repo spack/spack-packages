@@ -37,6 +37,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
+    version("16.2.0", sha256="e6738e29597f733270731aa90600f37ffdc045079dfc27ec7e8192cc81085c3e")
     version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
 
     # Previous stable series releases
@@ -909,6 +910,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Enabling language "jit" requires --enable-host-shared.
         if spec.satisfies("languages=jit"):
             options.append("--enable-host-shared")
+
+        # https://github.com/spack/spack-packages/issues/5677
+        if spec.satisfies("+binutils"):
+            binutils = spec["binutils"].prefix.bin
+            options.append(f"--with-build-time-tools={binutils}")
 
         # enable_bootstrap
         if spec.satisfies("+bootstrap"):
