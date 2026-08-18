@@ -30,7 +30,10 @@ class Rocalution(CMakePackage, ROCmLibrary):
 
     rocm_url_map = [
         ("7.2.3", "https://github.com/ROCm/rocALUTION/archive/refs/tags/rocm-{0}.tar.gz"),
-        ("7.14.0", "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+        (
+            "7.14.0",
+            "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz",
+        ),
     ]
 
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
