@@ -363,7 +363,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("fftw+mpi", when="+fftw+mpi")
     depends_on("suite-sparse", when="+suite-sparse")
     depends_on("superlu", when="+superlu")
-    conflicts("+superlu+int64", msg="SuperLU has no support for 64-bit integers, use superlu-dist instead")
+    conflicts(
+        "+superlu+int64",
+        msg="SuperLU has no support for 64-bit integers, use superlu-dist instead"
+    )
     depends_on("libx11", when="+X")
     depends_on("mpfr", when="+mpfr")
     depends_on("gmp", when="+mpfr")
