@@ -1,0 +1,88 @@
+Fix the CMake build under MSVC: enable install(), and stop the
+"programs" (gpmetis, ndmetis, mpmetis, m2gmetis, graphchk, cmpfillin)
+from failing to link against a shared metis.dll.
+
+Upstream's CMakeLists.txt disables install() entirely when the
+compiler is MSVC. It also builds the "programs" against whichever
+metis library target was requested (static or shared); but those
+programs call directly into GKlib and internal libmetis__-prefixed
+symbols that are never part of the public METIS_API (see the
+METIS_API() dllexport macro in include/metis.h), so when SHARED is
+requested on Windows those internal symbols are never exported from
+metis.dll and the programs fail to link with LNK2019 unresolved
+external errors. Some of those internal symbols (gk_optarg/gk_optind)
+are global *data*, which additionally can't be transparently imported
+across a DLL boundary without every consumer declaring them
+__declspec(dllimport) -- which upstream's plain `extern` declarations
+in GKlib do not do.
+
+Rather than patch dllexport/dllimport annotations into every internal
+GKlib/libmetis symbol, give the "programs" a private static copy of
+the library to link against on Windows when SHARED is requested, so
+they never depend on DLL export/import semantics for symbols that were
+never meant to be part of the public interface. The installed
+metis.dll's public surface (METIS_API) is unaffected.
+
+Also install the DLL itself to bin/ instead of lib/: on Windows the
+runtime artifact of a shared library needs to be discoverable next to
+its consumers (and by Spack's automatic Windows DLL-linkage, which
+only scans dependents' bin/ directories), whereas import libraries
+belong in lib/. This has no effect on Unix, where RUNTIME DESTINATION
+is meaningless for a library target (LIBRARY/ARCHIVE DESTINATION lib
+already governs .so/.a placement there).
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,11 +4,7 @@
+ set(GKLIB_PATH "${CMAKE_SOURCE_DIR}/GKlib" CACHE PATH "path to GKlib")
+ set(SHARED FALSE CACHE BOOL "build a shared library")
+
+-if(MSVC)
+-  set(METIS_INSTALL FALSE)
+-else()
+-  set(METIS_INSTALL TRUE)
+-endif()
++set(METIS_INSTALL TRUE)
+
+ # Configure libmetis library.
+ if(SHARED)
+--- a/libmetis/CMakeLists.txt
++++ b/libmetis/CMakeLists.txt
+@@ -8,10 +8,20 @@
+   target_link_libraries(metis m)
+ endif()
+
++# The "programs" (gpmetis, ndmetis, ...) call directly into internal
++# GKlib/libmetis symbols that are not part of the public METIS_API and are
++# therefore never exported from a shared metis.dll on Windows. Give them a
++# private static copy of the library to link against instead, so they never
++# depend on Windows DLL export/import semantics for internal symbols.
++if(WIN32 AND METIS_LIBRARY_TYPE STREQUAL "SHARED")
++  add_library(metis_internal STATIC ${GKlib_sources} ${metis_sources})
++  set_target_properties(metis_internal PROPERTIES EXCLUDE_FROM_ALL TRUE)
++endif()
++
+ if(METIS_INSTALL)
+   install(TARGETS metis
+     LIBRARY DESTINATION lib
+-    RUNTIME DESTINATION lib
++    RUNTIME DESTINATION bin
+     ARCHIVE DESTINATION lib)
+   install(FILES gklib_defs.h DESTINATION include)
+   install(FILES gklib_rename.h DESTINATION include)
+--- a/programs/CMakeLists.txt
++++ b/programs/CMakeLists.txt
+@@ -8,8 +8,13 @@
+ add_executable(m2gmetis m2gmetis.c cmdline_m2gmetis.c io.c)
+ add_executable(graphchk graphchk.c io.c)
+ add_executable(cmpfillin cmpfillin.c io.c smbfactor.c)
++if(TARGET metis_internal)
++  set(METIS_PROGRAMS_LIBRARY metis_internal)
++else()
++  set(METIS_PROGRAMS_LIBRARY metis)
++endif()
+ foreach(prog gpmetis ndmetis mpmetis m2gmetis graphchk cmpfillin)
+-  target_link_libraries(${prog} metis)
++  target_link_libraries(${prog} ${METIS_PROGRAMS_LIBRARY})
+ #  target_link_libraries(${prog} metis profiler)
+ endforeach(prog)
