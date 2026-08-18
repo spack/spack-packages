@@ -219,7 +219,7 @@ class R(AutotoolsPackage):
             ("icuuc", "icu4c"),
         ]:
             filter_file(
-                f"-l{_lib}",
+                rf"-l{_lib}\b",
                 f"-L{self.spec[_pkg].libs.directories[0]} -l{_lib}",
                 join_path(self.etcdir, "Makeconf"),
             )
