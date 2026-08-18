@@ -70,6 +70,7 @@ class Augustus(MakefilePackage):
     # Trying to use filter_file here got too complicated so use a patch with a
     # corresponding environment variable
     patch("bam2wig_Makefile.patch", when="@3.4.0")
+    patch("cstdint.patch")
 
     # bam2wig links samtools' libbam.a, which calls bam_name2id. This became a static
     # inline in htslib 1.10. Only 2 versions of augustus are affected. Earlier ones don't
