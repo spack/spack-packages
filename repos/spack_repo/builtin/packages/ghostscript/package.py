@@ -34,11 +34,13 @@ class Ghostscript(AutotoolsPackage):
     variant("krb5", default=True, description="Enable Kerberos 5 support")
     variant("x11", default=True, description="Enable X11 support")
     variant("dbus", default=True, description="Enable D-Bus support")
+    variant("cups", default=True, description="Enable CUPS support")
 
     depends_on("c", type="build")
 
     depends_on("pkgconfig", type="build")
     depends_on("krb5", type="link", when="+krb5")
+    depends_on("cups", when="+cups")
 
     depends_on("freetype@2.4.2:")
     depends_on("fontconfig", type="link")
@@ -103,6 +105,9 @@ class Ghostscript(AutotoolsPackage):
             args.append("--disable-hidden-visibility")
         else:
             args.append("--disable-dynamic")
+
+        if "+cups" not in self.spec:
+            args.append("--disable-cups")
 
         args.extend(self.enable_or_disable("gtk"))
         args.append("--with-libiconv=gnu")
