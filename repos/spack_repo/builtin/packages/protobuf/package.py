@@ -118,6 +118,10 @@ class Protobuf(CMakePackage):
     depends_on("abseil-cpp@20230125.3:", when="@22.5:")
     # https://github.com/protocolbuffers/protobuf/issues/11828#issuecomment-1433557509
     depends_on("abseil-cpp@20230125:", when="@22:")
+    # protobuf@26:29 link to absl::if_constexpr, which was removed from abseil-cpp in the
+    # 20250512 release.
+    # https://github.com/protocolbuffers/protobuf/issues/24785
+    conflicts("^abseil-cpp@20250512:", when="@26:29")
     depends_on("zlib-api")
 
     # See https://github.com/protocolbuffers/protobuf/issues/26383
