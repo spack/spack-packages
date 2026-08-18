@@ -62,6 +62,7 @@ class Podio(CMakePackage):
         description="Build the RDataSource for reading podio collections",
         when="@1.0.2:",
     )
+    variant("arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -82,6 +83,7 @@ class Podio(CMakePackage):
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-jinja2@2.10.1:", type=("build", "run"))
     depends_on("sio", type=("build", "link"), when="+sio")
+    depends_on("arrow", type=("build", "link"), when="+arrow")
     depends_on("fmt@9:", type=("build", "link"), when="@1.3:")
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
@@ -117,6 +119,7 @@ class Podio(CMakePackage):
     def cmake_args(self):
         args = [
             self.define_from_variant("ENABLE_SIO", "sio"),
+            self.define_from_variant("ENABLE_ARROW", "arrow"),
             self.define_from_variant("ENABLE_RNTUPLE", "rntuple"),
             self.define_from_variant("ENABLE_DATASOURCE", "datasource"),
             self.define("PODIO_SET_RPATH", True),
@@ -170,6 +173,9 @@ class Podio(CMakePackage):
         :type param: str
         """
         base_url = self.url.rsplit("/", 1)[0]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
 
         if len(version) == 1:
             major = version[0]
