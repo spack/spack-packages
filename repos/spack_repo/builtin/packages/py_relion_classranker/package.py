@@ -26,9 +26,9 @@ class PyRelionClassranker(PythonPackage):
 
     depends_on("py-torch@2.0.1:", type=("build", "run"))
     depends_on("py-torchvision@0.15.2:", type=("build", "run"))
-    # classranker's requirements.txt only declares numpy>=1.24.4 (no ceiling); numpy<2.0
-    # doesn't support python@3.13, so the floor is raised to match py-relion's own numpy floor.
+    # 1.26.1 matches py-relion's own numpy floor: numpy<2.0 doesn't support python@3.13.
+    # classranker's requirements.txt itself only declares numpy>=1.24.4, with no ceiling.
     depends_on("py-numpy@1.26.1:", type=("build", "run"))
-    # classranker's training/test_*.py import matplotlib directly. Floor is past 3.8.3, which
-    # caps numpy at <2.0.
+    # classranker's training/test_*.py import matplotlib directly; matplotlib up to 3.8.3 caps
+    # numpy at <2.0, conflicting with the numpy floor above.
     depends_on("py-matplotlib@3.9.0:", type=("build", "run"))
