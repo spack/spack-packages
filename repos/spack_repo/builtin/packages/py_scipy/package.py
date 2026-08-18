@@ -189,6 +189,10 @@ class PyScipy(PythonPackage):
         when="@1.8.0:1.14.0",
     )
 
+    # NAG forwards GNU linker flags (e.g. --version-script) to GCC without
+    # the required -Wl, prefix, causing the link step to fail.
+    patch("nag_disable_version_script.patch", when="@1.17:1 %nag")
+
     @property
     def archive_files(self):
         return [join_path(self.stage.source_path, "build", "meson-logs", "meson-log.txt")]
