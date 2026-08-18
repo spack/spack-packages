@@ -63,6 +63,8 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     for v, _ in _ver_map.items():
         depends_on("cuda@" + v, when="@" + v)
 
+    conflicts("%gcc@15:", when="@:12", msg="GCC 15 is not supported for CUDA <= 12")
+    conflicts("%gcc@16:", when="@:13.3", msg="GCC 16 is not supported for CUDA <= 13.3")
     conflicts(
         "cuda_arch=none",
         when="@:12.5+cuda",
