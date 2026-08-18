@@ -169,7 +169,7 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("fmt@:8", when="@:36.9")
     depends_on("fmt@:10", when="@:38")
     depends_on("fmt@:11", when="@:39")
-    with when("@36.15:"):
+    with when("@36.15:40.3"):
         # GaudiKernel/tests/src/test_PropertyHolder.cpp
         # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
         depends_on("fmt@:10", type="test")
