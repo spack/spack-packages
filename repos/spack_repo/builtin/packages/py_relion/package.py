@@ -42,14 +42,12 @@ class PyRelion(PythonPackage, CudaPackage):
     variant(
         "aretomo",
         default=False,
-        description="Enable AreTomo-based tilt-series alignment (pulls in a hard old-CUDA requirement via py-lil-aretomo)",
+        description="Enable AreTomo tilt-series alignment (needs old CUDA via py-lil-aretomo)",
     )
 
-    # Range instead of exact @3.10: 3.10/3.11 confirmed working by direct execution
-    # (napari+PyQt5+numpy+pydantic install+smoke test); 3.12 confirmed BROKEN the same way
-    # (pyhmmer has no cp312 wheel; napari+PyQt5 segfaults on Viewer() construction), so it's
-    # excluded rather than left in an unverified range. No ceiling above 3.13: only verified
-    # that far, no specific break known past it.
+    # 3.10 and 3.11 are verified working (napari+PyQt5+numpy+pydantic install and smoke test).
+    # 3.12 is excluded: pyhmmer has no cp312 wheel and napari+PyQt5 segfaults on Viewer()
+    # construction. No ceiling: verified through 3.13, no specific break known beyond it.
     depends_on("python@3.10:3.11,3.13:")
 
     with default_args(type=("build", "run")):
@@ -67,7 +65,7 @@ class PyRelion(PythonPackage, CudaPackage):
         depends_on("py-loguru@0.7.0:")
         depends_on("py-scikit-learn@1.3.0:")
         depends_on("py-umap-learn@0.5.3:")
-        # floor raised past 3.8.3, which caps numpy at <2.0.
+        # matplotlib up to 3.8.3 caps numpy at <2.0, conflicting with the numpy floor below.
         depends_on("py-matplotlib@3.9.0:")
         # pydantic's v1 compat shim (which relion's own _metadata_models classes rely on) is
         # documented as removed in v3.0 - capped at the 2.x line, not an arbitrary patch version.
@@ -88,8 +86,7 @@ class PyRelion(PythonPackage, CudaPackage):
         depends_on("py-rich")
         depends_on("py-einops")
         depends_on("py-lil-aretomo", when="+aretomo")
-        # IMOD-based alignment (fiducials/patch tracking) - the default
-        # backend now that aretomo is opt-in.
+        # Default tilt-series alignment backend (IMOD fiducials/patch tracking); AreTomo is opt-in.
         depends_on("py-yet-another-imod-wrapper")
         depends_on("py-makefun")
         depends_on("py-lru-dict")
@@ -115,9 +112,8 @@ class PyRelion(PythonPackage, CudaPackage):
                 f"tsne-cuda@3.0.1 +cuda cuda_arch={arch} +python",
                 when=f"@5.0 +cuda cuda_arch={arch}",
             )
-            # Not torch@2.0.1 (the old non-Blackwell environment.yml pin) - predates Blackwell
-            # kernel support entirely. No ceiling: only verified up to 2.13.0, no specific
-            # break known beyond it.
+            # torch 2.7.1+ is needed for Blackwell GPU kernel support. No ceiling: verified up
+            # to 2.13.0, no specific break known beyond it.
             depends_on(
                 f"py-torch@2.7.1: +cuda cuda_arch={arch}",
                 when=f"@5.0 +cuda cuda_arch={arch}",
