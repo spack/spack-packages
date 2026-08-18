@@ -616,16 +616,19 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     options.append(f"-DCMAKE_C_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang")
                     options.append(f"-DCMAKE_CXX_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang++")
                     options.append("-DGMX_SYCL=ACPP")
-                    options.append("-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1")
+                    if self.spec.satisfies("^hipsycl@24.06:"):
+                        options.append("-DSYCL_CXX_FLAGS_EXTRA=-DACPP_ALLOW_INSTANT_SUBMISSION=1")
+                    else:
+                        options.append("-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1")
                     options.append(f"-DACPP_TARGETS=hip:{','.join(rocm_archs)}")
-                    hipsycl_prefix = self.spec['hipsycl'].prefix
+                    hipsycl_prefix = self.spec["hipsycl"].prefix
                     options.append("-DCMAKE_PREFIX_PATH={0}".format(hipsycl_prefix))
             elif self.spec.satisfies("+rocm"):
                 options.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
                 options.append("-DGMX_GPU:STRING=HIP")
             else:
                 options.append("-DGMX_GPU:STRING=OFF")
-                
+
             # Properly handle CRAY MPICH link dependencies
             if self.spec.satisfies("+mpi") and self.spec.satisfies("^[virtuals=mpi] cray-mpich") and (
                     self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm")
@@ -635,7 +638,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     ldflags = " ".join(gtl.get("ldflags", []))
                     ldlibs   = " ".join(gtl.get("ldlibs", []))
                     options.append(f"-DCMAKE_EXE_LINKER_FLAGS={ldflags} {ldlibs}")
-            
+
         else:
             if self.spec.satisfies("+cuda") or self.spec.satisfies("+opencl"):
                 options.append("-DGMX_GPU:BOOL=ON")
@@ -672,16 +675,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
             options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
-            if self.spec.satisfies("+rocm"):
-                # HeFFTe with rocFFT backend (HeFFTe does not have a VkFFT backend)
-                options.append("-DHeffte_ENABLE_ROCM:BOOL=ON")
-                options.append(f"-DHeffte_ROCM_ROOT={self.spec['hip'].prefix}")
-
-        # ROCm builds, whether using HIP or SYCL/ACPP on AMD GPUs, are using rocFFT as the GPU FFT backend otherwise build failed.
-        if self.spec.satisfies("+rocm") and self.spec.satisfies("~sycl"):
-            options.append("-DGMX_GPU_FFT_LIBRARY=rocFFT")
-            options.append(f"-DCMAKE_CXX_FLAGS=-I{self.spec['rocfft'].headers.directories[0]}")
-        # VkFFT provides a portable GPU FFT backend which currently can be used on AMD and NVIDIA GPUs 
+        if self.spec.satisfies("+rocm"):
+            if self.spec.satisfies("+heffte"):
+                # HeFFTe is only compatible with rocFFT
+                options.append("-DGMX_GPU_FFT_LIBRARY=rocFFT")
+                options.append(f"-DCMAKE_CXX_FLAGS=-I{self.spec['rocfft'].headers.directories[0]}")
+            else:
+                # VkFFT provides a portable GPU FFT backend which can be used on AMD and
+                # NVIDIA GPUs, this is the GROMACS default and offers good performance
+                options.append("-DGMX_GPU_FFT_LIBRARY=VkFFT")
         elif self.spec.satisfies("+sycl"):
             options.append("-DGMX_GPU_FFT_LIBRARY=VkFFT")
         if self.spec.satisfies("+intel-data-center-gpu-max"):
