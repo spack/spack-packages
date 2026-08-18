@@ -162,6 +162,13 @@ class Root(CMakePackage):
         when="@6.38.0 +python",
     )
 
+    # Fix CMake bug that becomes an error in newer versions
+    patch(
+        "https://github.com/root-project/root/pull/22790.diff?full_index=1",
+        sha256="8f95c3d0532be4880dbe4e74b0180ecaed410c59ed915067c4f585aba270029c",
+        when="@6.40.02 ^cmake@4.4:",
+    )
+
     if _is_macos:
         # Fix macOS build when cocoa is disabled:
         patch(
