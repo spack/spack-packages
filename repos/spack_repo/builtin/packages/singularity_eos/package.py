@@ -32,6 +32,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.12.1", commit="760ac3f8e106addc13dad8a47b9d4ad75e44ea48", tag="release-1.12.1")
     version("1.12.0", commit="e32a25bed7b73baa7a5684c0183d2c369e16693c", tag="release-1.12.0")
     version("1.11.1", commit="7365053a5bd59839ac47e6133426620540aca7e3", tag="release-1.11.1")
     version("1.11.0", commit="c996f6505161618f9ca9663942e0beef738b0ecc", tag="release-1.11.0")
@@ -41,6 +42,19 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     version("1.9.0", commit="cfb7d4bf9fac557d53793a6717e52377b586d77a", tag="release-1.9.0")
     version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
     version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
+
+    # https://github.com/lanl/singularity-eos/pull/647
+    patch(
+        "https://github.com/lanl/singularity-eos/pull/647.patch?full_index=1",
+        sha256="712e15cb05ea440886579b7b211f005f18d1046d1453978696b7524ae5732387",
+        when="@1.12.0",
+    )
+
+    # https://github.com/lanl/singularity-eos/pull/643
+    patch(
+        "fix-header-only-install.patch",
+        when="@1.9.0:1.11.1",
+    )
 
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
@@ -121,6 +135,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("ports-of-call@1.5.2:", when="@1.7.1:")
     depends_on("ports-of-call@1.6.0:", when="@1.9.0:")
     depends_on("ports-of-call@2.0.0:", when="@1.11.0:")
+    depends_on("ports-of-call@3.0.0:", when="@1.12.0:")
     depends_on("ports-of-call@main", when="@main")
 
     depends_on("spiner +kokkos", when="+kokkos+spiner")
@@ -151,9 +166,9 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=Debug")
     depends_on("binutils@:2.39,2.42:+ld", when="build_type=RelWithDebInfo")
 
-    for _myver, _kver in zip(("@:1.6.2", "@1.7.0:"), ("@3.2:", "@3.3:")):
-        depends_on("kokkos" + _kver, when=_myver + "+kokkos")
-        depends_on("kokkos-kernels" + _kver, when=_myver + "+kokkos-kernels")
+    for _myver, _kver in zip(("@:1.6.2", "@1.7.0:", "@1.12.0:"), ("@3.2:", "@3.3:", "@4.7:")):
+        depends_on(f"kokkos{_kver}", when=f"{_myver}+kokkos")
+        depends_on(f"kokkos-kernels{_kver}", when=f"{_myver}+kokkos-kernels")
 
     # set up kokkos offloading dependencies
     for _flag in ("~cuda", "+cuda", "~rocm", "+rocm"):

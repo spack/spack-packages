@@ -90,7 +90,7 @@ spack:
   - hypre
   - kokkos +openmp
   - kokkos-kernels +openmp
-  - kokkos-fft host_backend=fftw-openmp +tests
+  - kokkos-fft host_backend=fftw-openmp
   - lammps
   - legion
   - libnrm
