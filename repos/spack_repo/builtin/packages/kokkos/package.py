@@ -336,7 +336,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
-    requires("%clang", "%cce", "+cmake_lang", policy="any_of", when="~wrapper+cuda")
 
     # TODO new major: update c++ std
     with default_args(multi=False, description="C++ standard"):

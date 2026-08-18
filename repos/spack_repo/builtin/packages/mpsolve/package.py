@@ -36,7 +36,7 @@ class Mpsolve(AutotoolsPackage):
     depends_on("gmp")
 
     # regenerate parser w/ bison (https://github.com/robol/MPSolve/issues/48)
-    depends_on("bison", type="build", when="@3.2.3")
+    depends_on("bison@3:", type="build", when="@3.2.3")
 
     @when("@3.2.3")
     def patch(self):
