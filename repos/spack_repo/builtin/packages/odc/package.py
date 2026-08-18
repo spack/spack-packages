@@ -17,6 +17,7 @@ class Odc(CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.6.3", sha256="3d81fd02b368b1f74a19c1d630d951f36aaac48f47d4798fb99b6fd46f6573f6")
     version("1.6.1", sha256="4f403e6b0ef94c880a15f3a99369d32e7a0c9d2f751b9332f1f80f300a063679")
     version("1.5.2", sha256="49575c3ef9ae8825d588357022d0ff6caf3e557849888c9d2f0677e9efe95869")
     version("1.4.6", sha256="ff99d46175e6032ddd0bdaa3f6a5e2c4729d24b698ba0191a2a4aa418f48867c")
@@ -32,7 +33,9 @@ class Odc(CMakePackage):
     depends_on("ecbuild@3.4:", type="build")
     depends_on("cmake@3.12:", type="build")
 
-    depends_on("eckit@1.4:+sql")
+    # exclude older odc (<= 1.6.2) with newer eckit (>= 2.0)
+    depends_on("eckit@1.4:1.99+sql", when="@:1.6.2")
+    depends_on("eckit@1.4:+sql", when="@1.6.3:")
 
     def cmake_args(self):
         args = [
