@@ -26,7 +26,9 @@ class Spark(Package):
 
     license("Apache-2.0")
 
-    version("4.2.0", sha512="da791f5587f402a1c4385e864c67f388f095c4a19e8eb4eb5e5663867f09dd4877e945cadd6e47fd7d7d42a532afdf61dd32c91bf8e86e3cbcdb039ff17a07b0")
+    version("4.2.0", 
+            sha512="da791f5587f402a1c4385e864c67f388f095c4a19e8eb4eb5e5663867f09dd4877e945cadd6e47fd7d7d42a532afdf61dd32c91bf8e86e3cbcdb039ff17a07b0"
+    )
     version("3.5.1", sha256="5548c02625676fa97cb6b8072f131ed0b860a09d1e86be4e025d0cbfa869bc4a")
     version("3.4.3", sha256="85caa74671d46640a2ecccc5248ef673842b507b9843aeebccd6891721b6673f")
     version("3.3.4", sha256="793205ff45ce2cb4d91bb2c2724c14fb2a2a49754b93f36c60c4f47e100c2b10")
