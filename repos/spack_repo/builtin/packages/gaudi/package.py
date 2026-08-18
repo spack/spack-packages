@@ -18,6 +18,9 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.5", sha256="3b8cc6f0d677f24eff51d5f51f31880320f4761ab8ebdb57e968397ca53f0e04")
+    version("40.4", sha256="dd288f066e09237f2968a2390e80bef5580e0075896116f4d729b9b609bc25c8")
+    version("40.3", sha256="134b2f2be08a605e85669fd753c92ac1a982209285c0aa7c23887126f19a0a33")
     version("40.2", sha256="93bf0ae5e33d7d3a5aa36504840ed62aeab9f6f8ddddd4ea1b23bc5455b51e41")
     version("40.1", sha256="f02010c865717d397b8fc8b8bf5d904e711ee2e416f3d12330cf04deaa7a4343")
     version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
