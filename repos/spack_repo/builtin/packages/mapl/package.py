@@ -29,8 +29,6 @@ class Mapl(CMakePackage):
         "mathomp4",
         "tclune",
         "climbfuji",
-        "edwardhartnett",
-        "Hang-Lei-NOAA",
         "AlexanderRichert-NOAA",
     )
 
@@ -537,7 +535,7 @@ class Mapl(CMakePackage):
             nc_pc_cmd = ["nc-config", "--static", "--libs"]
             nc_flags = subprocess.check_output(nc_pc_cmd, encoding="utf8").strip()
             filter_file(
-                "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
+                "(target_link_libraries[^)]+PUBLIC )", rf"\1 {nc_flags} ", "pfio/CMakeLists.txt"
             )
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
