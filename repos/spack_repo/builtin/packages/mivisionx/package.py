@@ -177,7 +177,7 @@ class Mivisionx(ROCmLibrary, CMakePackage):
                 "utilities/runcl/CMakeLists.txt",
                 string=True,
             )
-        if self.spec.satisfies("@7.13:"):
+        if self.spec.satisfies("@6.2:"):
             filter_file(
                 r"crypto",
                 "{0}".format(self.spec["openssl"].libs),
