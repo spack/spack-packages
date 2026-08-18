@@ -407,7 +407,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         conflicts("+bootstrap")
 
     # Graphite loop optimizations cause bootstrap comparison failures
-    conflicts("+graphite +bootstrap")
+    conflicts("+graphite +bootstrap", when="@:15")
 
     # Binutils can't build ld on macOS
     conflicts("+binutils", when="platform=darwin")
@@ -877,6 +877,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             # Improve the build time for stage 2 a bit by enabling -O1 in stage 1.
             # Note: this is ignored under ~bootstrap.
             f.write("STAGE1_CFLAGS += -O1\n")
+            if self.spec.satisfies("+bootstrap @16:16.2"):
+                # GCC 16 fails in compairing debug infos. See:
+                # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125598
+                with open("config/bootstrap-debug.mk") as bd:
+                    f.write(bd.read())
 
     # https://gcc.gnu.org/install/configure.html
     def configure_args(self):
