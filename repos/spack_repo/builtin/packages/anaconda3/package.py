@@ -37,6 +37,11 @@ class Anaconda3(Package):
         )
     elif platform.machine() == "x86_64":
         version(
+            "2025.12-2",
+            sha256="57b2b48cc5b8665e25fce7011f0389d47c1288288007844b3b1ba482d4f39029",
+            expand=False,
+        )
+        version(
             "2023.09-0",
             sha256="6c8a4abb36fbb711dc055b7049a23bbfd61d356de9468b41c5140f8a11abd851",
             expand=False,
