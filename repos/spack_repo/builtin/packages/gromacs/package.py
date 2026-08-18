@@ -119,9 +119,11 @@ class Gromacs(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"hipsycl+rocm amdgpu_target={arch}", when=f"+sycl+rocm amdgpu_target={arch}")
     conflicts("+rocm", when="+cuda")
     conflicts("+rocm", when="+opencl")
-    conflicts("+rocm", when="@:2024.6", msg=
-              "HIP backend: only main non-bonded kernels are offloaded on "
-              "2025.x; full offload support starts at 2026."
+    conflicts(
+        "+rocm",
+        when="@:2024.6",
+        msg="HIP backend: only main non-bonded kernels are offloaded on "
+        "2025.x; full offload support starts at 2026.",
     )
     variant(
         "intel-data-center-gpu-max",
@@ -613,13 +615,19 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 options.append("-DGMX_GPU:STRING=SYCL")
                 if self.spec.satisfies("^hipsycl+rocm"):
                     rocm_archs = self.spec.variants["amdgpu_target"].value
-                    options.append(f"-DCMAKE_C_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang")
-                    options.append(f"-DCMAKE_CXX_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang++")
+                    options.append(
+                        f"-DCMAKE_C_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang"
+                    )
+                    options.append(
+                        f"-DCMAKE_CXX_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang++"
+                    )
                     options.append("-DGMX_SYCL=ACPP")
                     if self.spec.satisfies("^hipsycl@24.06:"):
                         options.append("-DSYCL_CXX_FLAGS_EXTRA=-DACPP_ALLOW_INSTANT_SUBMISSION=1")
                     else:
-                        options.append("-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1")
+                        options.append(
+                            "-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1"
+                        )
                     options.append(f"-DACPP_TARGETS=hip:{','.join(rocm_archs)}")
                     hipsycl_prefix = self.spec["hipsycl"].prefix
                     options.append("-DCMAKE_PREFIX_PATH={0}".format(hipsycl_prefix))
@@ -630,13 +638,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 options.append("-DGMX_GPU:STRING=OFF")
 
             # Properly handle CRAY MPICH link dependencies
-            if self.spec.satisfies("+mpi") and self.spec.satisfies("^[virtuals=mpi] cray-mpich") and (
-                    self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm")
-                ):
+            if (
+                self.spec.satisfies("+mpi")
+                and self.spec.satisfies("^[virtuals=mpi] cray-mpich")
+                and (self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"))
+            ):
                 gtl = self.spec["cray-mpich"].package.gtl_lib
                 if gtl:
                     ldflags = " ".join(gtl.get("ldflags", []))
-                    ldlibs   = " ".join(gtl.get("ldlibs", []))
+                    ldlibs = " ".join(gtl.get("ldlibs", []))
                     options.append(f"-DCMAKE_EXE_LINKER_FLAGS={ldflags} {ldlibs}")
 
         else:
