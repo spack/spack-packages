@@ -57,6 +57,7 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         depends_on("cxx")
         depends_on("cmake@3.10:")
 
+    depends_on("gl")
     depends_on("mesa-glu")
     depends_on("freeglut", when="+freeglut")
     depends_on("freeimage", when="+freeimage")
@@ -91,22 +92,23 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     @when("@12.8:")
     def cmake_args(self):
-        glu = self.spec["mesa-glu"]
+        spec = self.spec
+        glu = spec["mesa-glu"]
         args = [
-            self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix),
+            self.define("CUDAToolkit_ROOT", spec["cuda"].prefix),
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
             self.define("OPENGL_INCLUDE_DIR", glu.prefix.include),
             self.define("OPENGL_glu_LIBRARY", glu.libs[0]),
         ]
-        if self.spec.satisfies("+freeglut"):
-            freeglut = self.spec["freeglut"]
+        if spec.satisfies("+freeglut"):
+            freeglut = spec["freeglut"]
             args += [
                 self.define("GLUT_INCLUDE_DIR", freeglut.prefix.include),
                 self.define("GLUT_freeglut_LIBRARY", freeglut.libs[0]),
             ]
-        if self.spec.satisfies("+freeimage"):
-            freeimg = self.spec["freeimage"]
+        if spec.satisfies("+freeimage"):
+            freeimg = spec["freeimage"]
             args += [
                 self.define("FreeImage_INCLUDE_DIR", freeimg.prefix.include),
                 self.define("FreeImage_LIBRARY", freeimg.libs[0]),
