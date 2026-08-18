@@ -24,6 +24,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["e4s"]
 
+    version("2.4.2", tag="v2.4.2", commit="65b070310350f2d95d2b266145929c8d4b90a7b7")
     version("2.4.1", tag="v2.4.1", commit="f57a634e3f1f136e8932ad81f267d3b69657ae15")
     version("2.4.0", tag="v2.4.0", commit="598d518b4105ec91ee42ee50420aa46a32a0f60f")
     version("2.3.2", tag="v2.3.2", commit="736fc74248777a00dbd41f1a66ae49e615c8a514")
@@ -130,6 +131,11 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
         conflicts(f"^boost cxxstd={cxxstd}")
         conflicts(f"^hpx cxxstd={cxxstd}", when="backend=hpx")
 
+    # C++20 required since 2.4.2
+    conflicts("^boost cxxstd=17", when="@2.4.2:")
+    conflicts("^hpx cxxstd=17", when="@2.4.2: backend=hpx")
+    conflicts("^legion cxxstd=17", when="@2.4.2: backend=legion")
+
     def cmake_args(self):
         spec = self.spec
         options = [
@@ -153,7 +159,5 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
             if self.spec.satisfies("backend=legion"):
                 # CMake pulled in via find_package(Legion) won't work without this
                 options.append(self.define("HIP_PATH", "{0}/hip".format(spec["hip"].prefix)))
-        elif self.spec.satisfies("^kokkos +cuda"):
-            options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
 
         return options

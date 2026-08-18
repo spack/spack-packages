@@ -92,7 +92,6 @@ spack:
   - e4s-cl
   - exaworks
   - faodel
-  - flecsi
   - flit
   - flux-core
   - gasnet
@@ -194,6 +193,7 @@ spack:
   - upcxx +level_zero
 
   # Current errors:
+  # - flecsi                      # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.18.0-lufklfi5m4d7ozbwg6hawancq32cwynz/mpi/2021.18/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF
   # - gptune ~mpispawn            # py-gpy-1.13.2: GPy/kern/src/stationary_cython.c:17564:41: error: no member named 'subarray' in 'struct _PyArray_Descr'
   # - hypre +sycl                 # Could NOT find IntelSYCL (missing: SYCL_INCLUDE_DIR SYCL_LIBRARY_DIR SYCL_LIBRARY) (found version "202012")
   # - nco                         # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF 
