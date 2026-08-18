@@ -29,11 +29,8 @@ class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    # was @3.20:3.30 ("CMake 3.31 messes a bit too much with find CUDA") -
-    # that turned out to describe the faiss cuda_arch bug below, not a real
-    # problem in tsne-cuda's own CMakeLists.txt. Builds cleanly through
-    # cmake 4.3.3 once the faiss fix is in place; no ceiling since that's
-    # only the highest version tested, not a known break.
+    # No ceiling: with faiss getting a real cuda_arch (see below), builds are clean through
+    # cmake 4.3.3, the highest version tested; no specific break is known beyond it.
     depends_on("cmake@3.20:", type="build")
 
     depends_on("cuda@9:")
@@ -41,9 +38,8 @@ class TsneCuda(CMakePackage, CudaPackage, PythonExtension):
     depends_on("lapack")
     depends_on("gflags@2.2:")
     depends_on("googletest@1.10:", type=("build", "link", "run"))
-    # faiss (also a CudaPackage) otherwise defaults to cuda_arch=none, which
-    # its own cmake_args() passes through as
-    # -DCMAKE_CUDA_ARCHITECTURES=none - newer CMake rejects that literal string.
+    # faiss (also a CudaPackage) must receive a real cuda_arch: with its default cuda_arch=none,
+    # its cmake_args() passes -DCMAKE_CUDA_ARCHITECTURES=none, a literal newer CMake rejects.
     for arch in CudaPackage.cuda_arch_values:
         depends_on(
             f"faiss@1.6.5: +cuda +shared cuda_arch={arch}",
