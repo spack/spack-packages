@@ -136,9 +136,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         when="+fortran",
         description="Activates support for superlu-dist (only parallel)",
     )
-    variant(
-        "superlu", default=False, description="Activates support for superlu (sequential)"
-    )
+    variant("superlu", default=False, description="Activates support for superlu (sequential)")
     variant("strumpack", default=False, description="Activates support for Strumpack")
     variant(
         "scalapack", default=False, when="+fortran", description="Activates support for Scalapack"
@@ -365,7 +363,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("superlu", when="+superlu")
     conflicts(
         "+superlu+int64",
-        msg="SuperLU has no support for 64-bit integers, use superlu-dist instead"
+        msg="SuperLU has no support for 64-bit integers, use superlu-dist instead",
     )
     depends_on("libx11", when="+X")
     depends_on("mpfr", when="+mpfr")
