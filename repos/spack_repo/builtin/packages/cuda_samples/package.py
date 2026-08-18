@@ -12,8 +12,7 @@ from spack.package import *
 
 
 class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
-    """Samples for CUDA Developers which demonstrates features in CUDA
-    Toolkit."""
+    """Samples for CUDA Developers to demonstrate features of the CUDA Toolkit."""
 
     homepage = "https://github.com/NVIDIA/cuda-samples"
     git = "https://github.com/NVIDIA/cuda-samples.git"
@@ -28,7 +27,6 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         "enterprise-software/nvidia-software-license-agreement/"
     )
 
-    # cuda-samples changed build systems starting with 12.8
     build_system(
         conditional("cmake", when="@12.8:"),
         conditional("makefile", when="@:12.5"),
@@ -50,21 +48,20 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     for v, h in _ver_map.items():
         version(v, sha256=h)
 
-    # cuda-samples could build without each of the following, but some samples will be
-    # unavailable then.
-    variant("freeglut", default=False, 
-        description="build samples which need freeglut.")
-    # A bug somewhere prevents depending on freeimage.
-    # variant("freeimage", default=False, 
-    #    description="build samples which need freeimage.")
+    # freeimage is deprecated. Use --deprecated for cuda-samples+freeimage
+    variant("freeimage", default=False, description="add samples using freeimage")
+    variant("freeglut", default=False, description="add samples using freeglut")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    for v, _ in _ver_map.items():
-        depends_on("cuda@" + v, when="@" + v)
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("cmake@3.10:")
+
     depends_on("mesa-glu")
     depends_on("freeglut", when="+freeglut")
-    # depends_on("freeimage", when="+freeimage")
+    depends_on("freeimage", when="+freeimage")
+    for v, _ in _ver_map.items():
+        depends_on("cuda@" + v, when="@" + v)
 
     conflicts(
         "cuda_arch=none",
@@ -92,11 +89,9 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     @when("@12.8:")
     def cmake_args(self):
-        args = [
-            "-DCUDAToolkit_ROOT=" + self.spec["cuda"].prefix,
-        ]
         glu = self.spec["mesa-glu"]
-        args += [
+        args = [
+            self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix),
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
             self.define("OPENGL_INCLUDE_DIR", glu.prefix.include),
@@ -116,8 +111,7 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             ]
         return args
 
-    # Starting with 13.1, cmake/InstallSamples.cmake installs cuda-samples
-    # Manual handling is required before.
+    # Below 13.1, installation is not handled by CMake or the Makefile.
     @when("@12.8:13.0")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
@@ -125,9 +119,6 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         mkdir(prefix.common)
         install_tree(os.path.join(self.stage.source_path, "Common"), prefix.common)
 
-    # Similar to the CMake version, the Make version doesn't have an install
-    # phase but instead just creates binaries in a `bin` folder under the build
-    # directory
     @when("@:12.5")
     def install(self, spec, prefix):
         mkdir(prefix.bin)
