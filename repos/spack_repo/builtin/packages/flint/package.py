@@ -48,8 +48,7 @@ class Flint(AutotoolsPackage):
         depends_on("libtool", type="build")
 
     # https://github.com/flintlib/flint/pull/2800
-    @when("@3.4.0:")
-    @run_before("configure")
+    @run_before("configure", when="@3.4.0")
     def fix_in_tree_detection(self):
         filter_file(
             'if test "$ac_abs_confdir" = "`pwd`";',
