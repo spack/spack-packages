@@ -35,7 +35,7 @@ class Odc(CMakePackage):
 
     # exclude older odc (<= 1.6.2) with newer eckit (>= 2.0)
     depends_on("eckit@1.4:1.99+sql", when="@:1.6.2")
-    depends_on("eckit@1.4+sql", when="@1.6.3:")
+    depends_on("eckit@1.4:+sql", when="@1.6.3:")
 
     def cmake_args(self):
         args = [
