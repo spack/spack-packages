@@ -59,7 +59,7 @@ class Ecflow(CMakePackage):
     depends_on("py-numpy", type="build")
     depends_on("py-pip", type="build")
     # ecFlow 5.18+ configures its Python bindings with pybind11.
-    depends_on("py-pybind11@2.10.3:", type=("build", "link"), when="@5.18:")
+    depends_on("py-pybind11@2.10.3:2", type=("build", "link"), when="@5.18:")
 
     # v4: Boost-1.7X release not working well on serialization
     depends_on("boost@1.53:1.69+python", when="@:4")
