@@ -34,6 +34,9 @@ class Pumi(CMakePackage):
     # to the added instability.
     version("master", submodules=True, branch="master")
     version(
+        "4.2.1", submodules=True, commit="a40922de30f09af63a0251a0d53f95c6cadd9199"
+    )  # tag 4.2.1 (same commit as 4.2.0 -- retag only, includes the apfMDS.cc int/long fix)
+    version(
         "4.2.0", submodules=True, commit="a40922de30f09af63a0251a0d53f95c6cadd9199"
     )  # tag 4.2.0
     version(
