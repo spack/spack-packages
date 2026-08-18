@@ -22,11 +22,10 @@ class PyFairEsm(PythonPackage):
 
     variant("esmfold", default=True, description="Enable dependencies for OpenFold")
     depends_on("py-biopython@1.79:", when="+esmfold", type=("build", "run"))
-
-    depends_on("py-deepspeed", type=("build", "run"))
-    depends_on("py-dm-tree", type=("build", "run"))
-    depends_on("py-pytorch-lightning", type=("build", "run"))
-    depends_on("py-omegaconf", type=("build", "run"))
-    depends_on("py-ml-collections", type=("build", "run"))
+    depends_on("py-deepspeed", when="+esmfold", type=("build", "run"))
+    depends_on("py-dm-tree", when="+esmfold", type=("build", "run"))
+    depends_on("py-pytorch-lightning", when="+esmfold", type=("build", "run"))
+    depends_on("py-omegaconf", when="+esmfold", type=("build", "run"))
+    depends_on("py-ml-collections", when="+esmfold", type=("build", "run"))
     depends_on("py-einops", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
