@@ -25,14 +25,30 @@ class PyKeras(PythonPackage):
     maintainers("adamjstewart")
 
     version("3.15.1", sha256="92ae7c1dd7f61041953dc2d42253181ee099086f0b58ae36fcf98147a6f08a29")
-    version("3.15.0", sha256="0123749ac2a704d63f691994b18e432e006cb8ae910cc0ea7035d777aed9c00d")
-    version("3.14.1", sha256="ef479173102ad29db89b53c232efdc3fb5ad57c28bc27ead59f3e78a1eecd05b")
-    version("3.14.0", sha256="86fcf8249a25264a566ac393c287c7ad657000e5e62615dcaad4b3472a17aeda")
-    version("3.13.2", sha256="62f0123488ac87c929c988617e14f293f7bc993811837d08bb37eff77adc85a9")
     version("3.12.4", sha256="4b192bc123854d5b70ccd07c79a77119fe20deb79ddd02c4c73f821bd838b1b3")
-    version("3.12.3", sha256="02a3c57d1019f67f1c006fe3333cd5f0c2d38c3f82321b8ebe5929f23b1734cf")
-    version("3.12.2", sha256="e19c7c7f8f2a81e44d4f203e567731a15a270d8ef351060982b45a1fafdf3fce")
     with default_args(deprecated=True):
+        # CVE-2026-12484: https://huntr.com/bounties/ab14df49-13b5-4442-b754-3189430bfa28
+        version(
+            "3.15.0", sha256="0123749ac2a704d63f691994b18e432e006cb8ae910cc0ea7035d777aed9c00d"
+        )
+        version(
+            "3.14.1", sha256="ef479173102ad29db89b53c232efdc3fb5ad57c28bc27ead59f3e78a1eecd05b"
+        )
+        version(
+            "3.12.3", sha256="02a3c57d1019f67f1c006fe3333cd5f0c2d38c3f82321b8ebe5929f23b1734cf"
+        )
+        # https://advisories.gitlab.com/pypi/keras/CVE-2026-12480/
+        # https://advisories.gitlab.com/pypi/keras/CVE-2026-9335/
+        version(
+            "3.14.0", sha256="86fcf8249a25264a566ac393c287c7ad657000e5e62615dcaad4b3472a17aeda"
+        )
+        version(
+            "3.13.2", sha256="62f0123488ac87c929c988617e14f293f7bc993811837d08bb37eff77adc85a9"
+        )
+        version(
+            "3.12.2", sha256="e19c7c7f8f2a81e44d4f203e567731a15a270d8ef351060982b45a1fafdf3fce"
+        )
+        # CVE-2026-1462: https://huntr.com/bounties/7e78d6f1-6977-4300-b595-e81bdbda331c
         # https://www.cvedetails.com/cve/CVE-2026-1669/
         version(
             "3.13.1", sha256="670c726dfc9c357fe7ae5ef1c15d8f61ee7fbb40ae9a091a458ec6444a772480"
@@ -146,6 +162,8 @@ class PyKeras(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        # https://github.com/keras-team/keras/releases/tag/v3.15.1
+        depends_on("python@:3.13", when="@:3.15.0")
         depends_on("python@3.11:", when="@3.13:")
         depends_on("python@3.10:", when="@3.11:")
         depends_on("python@3.9:", when="@3:")
