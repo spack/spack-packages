@@ -162,6 +162,7 @@ class PyKeras(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        # https://github.com/keras-team/keras/releases/tag/v3.15.1
         depends_on("python@:3.13", when="@:3.15.0")
         depends_on("python@3.11:", when="@3.13:")
         depends_on("python@3.10:", when="@3.11:")
