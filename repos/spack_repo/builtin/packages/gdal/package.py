@@ -31,6 +31,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("3.13.3", sha256="a3348c2102dd91962290007d7c293b467bb1b0cd89f086f24bb97b9b653a9804")
     version("3.13.2", sha256="0200b7878d837a7f475ff4070121d0e601f8ef801c2fd83a64294c544f609211")
     version("3.13.1", sha256="7398fb132753140740fac4f099f0dbe49d1ad074c4162290c308e067c46b7f92")
     version("3.13.0", sha256="1c537dd2f4d66f05534ae419bc2af495c2204ce13bb266c8cbd867dd6705f0c7")
