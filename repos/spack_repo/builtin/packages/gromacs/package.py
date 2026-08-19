@@ -179,8 +179,8 @@ class Gromacs(CMakePackage, CudaPackage):
     )
 
     variant(
-        "openmp_max_threads", 
-        default="none", 
+        "openmp_max_threads",
+        default="none",
         description="Max number of OpenMP threads",
         when="+openmp",
     )
