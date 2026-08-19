@@ -33,6 +33,16 @@ class PyNvidiaNvimagecodec(PythonPackage):
             url="https://files.pythonhosted.org/packages/ff/40/46399708f195b8926ec1eadc7f0bca118cc4e3e06a202af34d892f588027/nvidia_nvimgcodec_cu12-0.9.0.20-py3-none-manylinux_2_28_x86_64.whl",
         )
         version(
+            "0.8.0.22-cuda130",
+            sha256="0efee8404d36a857e9d713635f8076b4e50c5b5446c526e569dd6ba5e6455b4a",
+            url="https://files.pythonhosted.org/packages/60/81/bdef6244778b96c039c36b561e85faa19411ad448f1d0453bd4f3f205d8b/nvidia_nvimgcodec_cu13-0.8.0.22-py3-none-manylinux_2_28_x86_64.whl",
+        )
+        version(
+            "0.8.0.22-cuda120",
+            sha256="c146eeb5b1f6a59189aaa2d55859829fc5feabd4f850fa4cb1e175ef6545720b",
+            url="https://files.pythonhosted.org/packages/c3/85/ac4ce9273ed6c576b07e828f821f6319a7c63fd44417d601b8c500331c6d/nvidia_nvimgcodec_cu12-0.8.0.22-py3-none-manylinux_2_28_x86_64.whl",
+        )
+        version(
             "0.7.0.11-cuda130",
             sha256="6075220b7ece40b5d975969f423e4ff9bc6d02bae4ac64ff8c8bf67d1234b12e",
             url="https://files.pythonhosted.org/packages/0d/ab/e23d570d282394188882526f65a8719bc03e10ce11bc398ea6d81ed5d480/nvidia_nvimgcodec_cu13-0.7.0.11-py3-none-manylinux_2_28_x86_64.whl",
@@ -114,6 +124,16 @@ class PyNvidiaNvimagecodec(PythonPackage):
             url="https://files.pythonhosted.org/packages/e2/75/252519d599f387fda0cabb1deb796164c4f299c8fea26b8687ad1a21625c/nvidia_nvimgcodec_cu12-0.9.0.20-py3-none-manylinux_2_28_aarch64.whl",
         )
         version(
+            "0.8.0.22-cuda130",
+            sha256="3b525a78bdfb4d9baa0cb9798883f36efca524807b37453c43a95f2d9e3476bb",
+            url="https://files.pythonhosted.org/packages/b5/73/0de8c0b0efe300c06a8cf2b5668450d2d44c00baf8fe8462cf2b585fb21f/nvidia_nvimgcodec_cu13-0.8.0.22-py3-none-manylinux_2_28_aarch64.whl"
+        )
+        version(
+            "0.8.0.22-cuda120",
+            sha256="221ac8707061f0aa7c3f6992dd13b199b4adde380fdbc7679ee654049d4d6f87",
+            url="https://files.pythonhosted.org/packages/5b/33/6a1d03f78555632adeb2a6ee0dff42e3d8811dc1914d40f82111997a0adf/nvidia_nvimgcodec_cu12-0.8.0.22-py3-none-manylinux_2_28_aarch64.whl",
+        )
+        version(
             "0.7.0.11-cuda130",
             sha256="65ee61c93aaed80e21dc5db428bc7641fca6dcc319c166835a961359f7703736",
             url="https://files.pythonhosted.org/packages/55/04/09d25e7af95cfd2a946326ad9276623c1ef6a0063dd85e03296074539ee2/nvidia_nvimgcodec_cu13-0.7.0.11-py3-none-manylinux_2_28_aarch64.whl",
@@ -189,10 +209,12 @@ class PyNvidiaNvimagecodec(PythonPackage):
 
     cuda130_versions = (
         "@0.9.0.20-cuda130",
+        "@0.8.0.22-cuda130",
         "@0.7.0.11-cuda130",
     )
     cuda120_versions = (
         "@0.9.0.20-cuda120",
+        "@0.8.0.22-cuda120",
         "@0.7.0.11-cuda120",
         "@0.6.1.37-cuda120",
         "@0.5.0.13-cuda120",
