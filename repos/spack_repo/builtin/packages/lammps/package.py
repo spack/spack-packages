@@ -359,10 +359,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         multi=False,
     )
     for cond in ("cuda", "rocm", "opencl"):
+        variant("gpu", default=True, when=f"+{cond}", description="Activate the GPU package")
         variant(
             "gpu_precision",
             default="mixed",
-            when=f"+{cond}",
+            when=f"+gpu+{cond}",
             description="Select GPU precision (used by GPU package)",
             values=("double", "mixed", "single"),
             multi=False,
