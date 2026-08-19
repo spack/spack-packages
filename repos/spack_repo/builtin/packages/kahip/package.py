@@ -60,6 +60,7 @@ class Kahip(CMakePackage):
 
     @when("@3.13:")
     def cmake_args(self):
-        args = super().cmake_args()
-        args.append(self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic"))
-        return args
+        return [
+            self.define("NONATIVEOPTIMIZATIONS", True),
+            self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic"),
+        ]
