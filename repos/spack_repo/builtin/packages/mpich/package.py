@@ -70,7 +70,7 @@ class Mpich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPa
     list_url = "https://www.mpich.org/static/downloads/"
     list_depth = 1
 
-    maintainers("raffenet", "yfguo")
+    maintainers("raffenet", "hzhou")
     tags = ["e4s"]
     executables = ["^mpichversion$"]
 
