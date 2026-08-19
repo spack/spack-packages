@@ -81,7 +81,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
         "alloca",
         default=False,
         when="@3.0",
-        description="Use alloca to allocate temporary memory if available"
+        description="Use alloca to allocate temporary memory if available",
     )
 
     variant(
@@ -222,12 +222,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             else:
                 args.append("--disable-registration-cache")
         elif self.spec.satisfies("@4.0:"):
-            args.extend(
-                [
-                    "--without-cuda",
-                    "--without-hip",
-                ]
-            )
+            args.extend(["--without-cuda", "--without-hip"])
 
         if self.spec.satisfies("+debug"):
             args.extend(
