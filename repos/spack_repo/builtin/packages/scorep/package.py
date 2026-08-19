@@ -57,7 +57,12 @@ class Scorep(AutotoolsPackage):
     variant(
         "llvm-plugin", default=True, description="Enable LLVM compiler plugin", when="@9.0: ^llvm"
     )
-    variant("xray", default=False, description="Enable instrumetation via LLVM XRay", when="@10.0: %llvm")
+    variant(
+        "xray",
+        default=False,
+        description="Enable instrumetation via LLVM XRay",
+        when="@10.0: %llvm",
+    )
     variant(
         "binutils",
         default=True,
@@ -133,7 +138,7 @@ class Scorep(AutotoolsPackage):
     # Score-P first has support for ROCm 6.x as of v8.4
     conflicts("hip@6.0:", when="@:8.3+hip")
 
-    # XRay-based instrumentation is mutually exclusive 
+    # XRay-based instrumentation is mutually exclusive
     # with the LLVM instrumentation plugin
     conflicts("+xray", when="+llvm-plugin")
 
