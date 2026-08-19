@@ -173,6 +173,10 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         sha256="0dc417d8a454d235cdeb9e0f0bb527dc3c42a1eb6ae80e8bd5b33ead19198329",
     )
 
+    # cudaDeviceProp.memoryClockRate was removed in CUDA 13.0
+    patch("ascent-blt-cuda13-memory-clock.patch", when="@:0.9.5 +cuda")
+    patch("ascent-blt-cuda13-memory-clock.patch", when="@develop +cuda")
+
     ##########################################################################
     # package dependencies
     ###########################################################################
