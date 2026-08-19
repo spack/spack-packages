@@ -94,11 +94,15 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     def cmake_args(self):
         spec = self.spec
         glu = spec["mesa-glu"]
+        gl_headers = ";".join(spec["gl"].headers.directories + glu.headers.directories)
+        if spec.satisfies("^libx11"):
+            gl_headers += f";{spec['libx11'].headers.directories[0]}"
+            gl_headers += f";{spec['xproto'].headers.directories[0]}"
         args = [
             self.define("CUDAToolkit_ROOT", spec["cuda"].prefix),
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
             self.define("GLU_LIBRARY", glu.libs[0]),
-            self.define("OPENGL_INCLUDE_DIR", glu.prefix.include),
+            self.define("OPENGL_INCLUDE_DIR", gl_headers),
             self.define("OPENGL_glu_LIBRARY", glu.libs[0]),
         ]
         if spec.satisfies("+freeglut"):
