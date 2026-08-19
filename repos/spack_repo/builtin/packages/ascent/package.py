@@ -235,7 +235,8 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:")
+        # develop needs raja@develop, so restrict the release range to 0.9.x
+        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:0.9.5")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
@@ -654,6 +655,14 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
                     "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].values)
                 )
             )
+            # Camp/RAJA headers need the CUDA standard to match the C++ standard
+            # they were built with (RAJA develop currently defaults to C++20).
+            if spec.satisfies("+raja"):
+                cfg.write(
+                    cmake_cache_entry(
+                        "CMAKE_CUDA_STANDARD", str(spec["raja"].variants["cxxstd"].value)
+                    )
+                )
 
         else:
             cfg.write(cmake_cache_entry("ENABLE_CUDA", "OFF"))
