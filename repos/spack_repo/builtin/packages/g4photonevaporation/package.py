@@ -25,7 +25,6 @@ class G4photonevaporation(Package, Geant4DataPackage):
     version("5.3", sha256="d47ababc8cbe548065ef644e9bd88266869e75e2f9e577ebc36bc55bf7a92ec8")
     version("5.2", sha256="83607f8d36827b2a7fca19c9c336caffbebf61a359d0ef7cee44a8bcf3fc2d1f")
     version("4.3.2", sha256="d4641a6fe1c645ab2a7ecee09c34e5ea584fb10d63d2838248bfc487d34207c7")
-    version("4.3", sha256="1a8d0b4ee60dfbbca38fb313e70508dde3a2ec0f34af59baedd37cb9ae68427e")
     version("3.0", sha256="c76a843672eca21110e97a274a6b5cd9a58b66f35235301c8e1b162926e0e7cb")
 
     #: G4-prefixed environment variable

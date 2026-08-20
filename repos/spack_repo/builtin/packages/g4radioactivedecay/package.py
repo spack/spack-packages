@@ -25,7 +25,6 @@ class G4radioactivedecay(Package, Geant4DataPackage):
     version("5.3", sha256="5c8992ac57ae56e66b064d3f5cdfe7c2fee76567520ad34a625bfb187119f8c1")
     version("5.2", sha256="99c038d89d70281316be15c3c98a66c5d0ca01ef575127b6a094063003e2af5d")
     version("5.1.1", sha256="f7a9a0cc998f0d946359f2cb18d30dff1eabb7f3c578891111fc3641833870ae")
-    version("5.1", sha256="f30ed6efcde0d8554559a30a23cf17881565d50fdb2c30d2c36983434b1bfcc6")
     version("4.0", sha256="ed2053bddee507920a29a27db4364fbef255b951597686b0410d5458e9b38cb5")
 
     #: G4-prefixed environment variable

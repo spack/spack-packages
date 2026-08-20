@@ -129,7 +129,6 @@ class Geant4(CMakePackage):
 
     for _vers in [
         "10.0.4",
-        "10.3.0",
         "10.3.3",
         "10.4.0",
         "10.4.3",
