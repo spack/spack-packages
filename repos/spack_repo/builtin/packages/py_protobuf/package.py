@@ -23,6 +23,13 @@ class PyProtobuf(PythonPackage):
     version("6.33.6", sha256="a6768d25248312c297558af96a9f9c929e8c4cee0659cb07e780731095f38135")
     version("5.29.6", sha256="da9ee6a5424b6b30fd5e45c5ea663aef540ca95f9ad99d1e887e819cdf9b8723")
 
+    # Backport of CVE-2026-0994 applies to these versions: Fixes py-tensorflow %gcc@11 for E4S
+    version("4.25.8", sha256="6135cf8affe1fc6f76cced2641e4ea8d3e59518d1f24ae41ba97bcad82d397cd")
+    version("4.24.4", sha256="5a70731910cd9104762161719c3d883c960151eea077134458503723b60e3667")
+    version("4.23.3", sha256="7a92beb30600332a52cdadbedb40d33fd7c8a0d7f549c440347bc606fb3fe34b")
+    version("4.21.9", sha256="61f21493d96d2a77f9ca84fefa105872550ab5ef71d21c458eb80edcf4885a99")
+    version("3.20.3", sha256="2e3427429c9cffebf259491be0af70189607f365c2f41c7c3764af6f337105f2")
+
     with default_args(deprecated=True):
         # CVE-2026-0994 https://github.com/protocolbuffers/protobuf/issues/25070#issuecomment-4297395015
         version(
@@ -41,25 +48,13 @@ class PyProtobuf(PythonPackage):
             "4.25.3", sha256="25b5d0b42fd000320bd7830b349e3b696435f3b329810427a6bcce6a5492cc5c"
         )
         version(
-            "4.24.4", sha256="5a70731910cd9104762161719c3d883c960151eea077134458503723b60e3667"
-        )
-        version(
             "4.24.3", sha256="12e9ad2ec079b833176d2921be2cb24281fa591f0b119b208b788adc48c2561d"
-        )
-        version(
-            "4.23.3", sha256="7a92beb30600332a52cdadbedb40d33fd7c8a0d7f549c440347bc606fb3fe34b"
-        )
-        version(
-            "4.21.9", sha256="61f21493d96d2a77f9ca84fefa105872550ab5ef71d21c458eb80edcf4885a99"
         )
         version(
             "4.21.7", sha256="71d9dba03ed3432c878a801e2ea51e034b0ea01cf3a4344fb60166cb5f6c8757"
         )
         version(
             "4.21.5", sha256="eb1106e87e095628e96884a877a51cdb90087106ee693925ec0a300468a9be3a"
-        )
-        version(
-            "3.20.3", sha256="2e3427429c9cffebf259491be0af70189607f365c2f41c7c3764af6f337105f2"
         )
         version(
             "3.20.2", sha256="712dca319eee507a1e7df3591e639a2b112a2f4a62d40fe7832a16fd19151750"
@@ -147,6 +142,9 @@ class PyProtobuf(PythonPackage):
         version("3.4.0", sha256="ef02609ef445987976a3a26bff77119c518e0915c96661c3a3b17856d0ef6374")
         version("3.3.0", sha256="1cbcee2c45773f57cb6de7ee0eceb97f92b9b69c0178305509b162c0160c1f04")
         version("3.0.0", sha256="ecc40bc30f1183b418fe0ec0c90bc3b53fa1707c4205ee278c6b90479e5b6ff5")
+
+    # Backport of https://github.com/protocolbuffers/protobuf/commit/d2b001626d137c62dfee6c88c87324102531868b
+    patch("cve-2026-0994.patch", when="@3.20:5.25")
 
     depends_on("c", type="build")
 
