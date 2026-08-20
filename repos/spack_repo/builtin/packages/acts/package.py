@@ -241,7 +241,8 @@ class Acts(CMakePackage, CudaPackage):
     # robust solution is available we pretend that these packages are also
     # run- and link-time dependencies.
     depends_on("python@3.12:", when="@44:")
-    depends_on("py-numpy @2.2", when="@44:")
+    depends_on("py-numpy @2.2", when="@44:45")
+    depends_on("py-numpy @2.3:", when="@46:")  # TODO: verify
     depends_on("py-onnxruntime@1.12:", when="+onnx")
     depends_on("py-particle @0.24", when="@44:")
     depends_on("py-pybind11 @2.13.1:", when="+python")
