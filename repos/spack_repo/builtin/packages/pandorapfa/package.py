@@ -13,9 +13,9 @@ class Pandorapfa(Package):
     NOTE: this recipe is not used to install  other pandora packages, for which
     separate recipes exist. It only installs the cmakemodules directory."""
 
-    url = "https://github.com/PandoraPFA/PandoraPFA/archive/v03-14-00.tar.gz"
-    homepage = "https://github.com/PandoraPFA/PandoraPFA"
-    git = "https://github.com/PandoraPFA/PandoraPFA.git"
+    url = "https://github.com/PandoraPFAOrg/PandoraPFA/archive/v03-14-00.tar.gz"
+    homepage = "https://github.com/PandoraPFAOrg/PandoraPFA"
+    git = "https://github.com/PandoraPFAOrg/PandoraPFA.git"
 
     tags = ["hep"]
 

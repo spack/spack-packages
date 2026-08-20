@@ -11,9 +11,9 @@ from spack.package import *
 class Pandorasdk(CMakePackage):
     """Pandora Software Development Kit for pattern-recognition algorithms"""
 
-    url = "https://github.com/PandoraPFA/PandoraSDK/archive/v03-04-00.tar.gz"
-    homepage = "https://github.com/PandoraPFA/PandoraSDK"
-    git = "https://github.com/PandoraPFA/PandoraSDK.git"
+    url = "https://github.com/PandoraPFAOrg/PandoraSDK/archive/v03-04-00.tar.gz"
+    homepage = "https://github.com/PandoraPFAOrg/PandoraSDK"
+    git = "https://github.com/PandoraPFAOrg/PandoraSDK.git"
 
     tags = ["hep"]
 
