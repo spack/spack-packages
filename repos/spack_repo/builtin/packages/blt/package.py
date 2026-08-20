@@ -85,10 +85,6 @@ class Blt(Package):
         when="@0.7.1",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-
     depends_on("cmake", type="run")
 
     def install(self, spec, prefix):
