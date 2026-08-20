@@ -16,6 +16,7 @@ class PyGevent(PythonPackage):
 
     license("MIT")
 
+    version("26.5.0", sha256="1655eb04c1e20d71b2aa4a3c7528162dd58ff6cc46a037af1f01f534c80fefba")
     version("26.4.0", sha256="288d03addfccf0d1c67268358b6759b04392bf3bc35d26f3d9a45c82899c292d")
     version("25.5.1", sha256="582c948fa9a23188b890d0bc130734a506d039a2e5ad87dae276a456cc683e61")
     version("24.11.1", sha256="8bd1419114e9e4a3ed33a5bad766afff9a3cf765cb440a582a1b3a9bc80c1aca")
@@ -44,10 +45,6 @@ class PyGevent(PythonPackage):
         depends_on("python@3.8:", when="@23.7.0:")
         depends_on("python@:3.10", when="@:21.12")
 
-        depends_on("py-setuptools@40.8:", when="@20.5.1:")
-        # https://github.com/pypa/distutils/pull/335
-        depends_on("py-setuptools@:80")
-
         depends_on("py-cffi@1.17.1:", when="@24.10.1:")
         depends_on("py-cffi@1.12.3:")
         depends_on("py-greenlet@3.2.2:", when="@25.5.1:")  # setup.py
@@ -64,6 +61,8 @@ class PyGevent(PythonPackage):
     conflicts("^py-cython@3.1:", when="@:24.10.3")
     # https://github.com/gevent/gevent/issues/1599
     conflicts("^py-cython@3:", when="@:20.5.0")
+    # https://github.com/gevent/gevent/issues/2201
+    conflicts("py-setuptools@80:", when="@:26.4")
 
     # Deprecated compiler options. upstream PR: https://github.com/gevent/gevent/pull/1896
     patch("icc.patch", when="@:21.12.0 %intel")
