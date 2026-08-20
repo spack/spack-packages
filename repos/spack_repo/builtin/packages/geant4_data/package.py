@@ -106,8 +106,8 @@ class Geant4Data(BundlePackage):
     # Add install phase so we can create the data "view"
     phases = ["install"]
 
-    # Declare deps per dataset package, mapping the Geant4 version range(s) that use a dataset
-    # to the dataset's exact version.
+    # Declare deps per dataset package, mapping each dataset version (see
+    # other packager recipes) to the Geant4 version range that uses it.
     # - When adding a new version of Geant4, you should only need to update the topmost line
     #   of each dataset (if at all): constrain its version and add a new version.
     # - Dataset ordering is based on cmake/Modules/G4DatasetDefinitions.cmake
@@ -115,115 +115,115 @@ class Geant4Data(BundlePackage):
     #   matching versions, we *always* use `@={dataset}` for the dependencies.
     _datasets = {
         "g4ndl": {
-            "11.2.2:": "4.7.1",
-            "11.1:11.2.1": "4.7",
-            "10.6:11.0": "4.6",
-            "10.3:10.5": "4.5",
-            "10.0": "4.4",
+            "4.7.1": "11.2.2:",
+            "4.7": "11.1:11.2.1",
+            "4.6": "10.6:11.0",
+            "4.5": "10.3:10.5",
+            "4.4": "10.0",
         },
         "g4emlow": {
-            "11.4:": "8.8",
-            "11.3": "8.6.1",
-            "11.2": "8.5",
-            "11.1": "8.2",
-            "11.0": "8.0",
-            "10.7": "7.13",
-            "10.6": "7.9.1",
-            "10.5": "7.7",
-            "10.4": "7.3",
-            "10.3": "6.50",
-            "10.0": "6.35",
+            "8.8": "11.4:",
+            "8.6.1": "11.3",
+            "8.5": "11.2",
+            "8.2": "11.1",
+            "8.0": "11.0",
+            "7.13": "10.7",
+            "7.9.1": "10.6",
+            "7.7": "10.5",
+            "7.3": "10.4",
+            "6.50": "10.3",
+            "6.35": "10.0",
         },
         "g4photonevaporation": {
-            "11.4:": "6.1.2",
-            "11.3": "6.1",
-            "10.7:11.2": "5.7",
-            "10.6": "5.5",
-            "10.5": "5.3",
-            "10.4": "5.2",
-            "10.3.1:10.3": "4.3.2",
-            "10.0": "3.0",
+            "6.1.2": "11.4:",
+            "6.1": "11.3",
+            "5.7": "10.7:11.2",
+            "5.5": "10.6",
+            "5.3": "10.5",
+            "5.2": "10.4",
+            "4.3.2": "10.3.1:10.3",
+            "3.0": "10.0",
         },
         "g4radioactivedecay": {
-            "11.3:": "6.1.2",
-            "10.7:11.2": "5.6",
-            "10.6": "5.4",
-            "10.5": "5.3",
-            "10.4": "5.2",
-            "10.3.1:10.3": "5.1.1",
-            "10.0.4": "4.0",
+            "6.1.2": "11.3:",
+            "5.6": "10.7:11.2",
+            "5.4": "10.6",
+            "5.3": "10.5",
+            "5.2": "10.4",
+            "5.1.1": "10.3.1:10.3",
+            "4.0": "10.0.4",
         },
         "g4particlexs": {
-            "11.4:": "4.2",
-            "11.3": "4.1",
-            "11.0:11.2": "4.0",
-            "10.7.1:10.7": "3.1.1",
-            "10.7.0": "3.1",
-            "10.6": "2.1",
-            "10.5": "1.1",
+            "4.2": "11.4:",
+            "4.1": "11.3",
+            "4.0": "11.0:11.2",
+            "3.1.1": "10.7.1:10.7",
+            "3.1": "10.7.0",
+            "2.1": "10.6",
+            "1.1": "10.5",
         },
         "g4neutronxs": {
-            # Replaced by g4particlexs in 10.5
-            "10.0:10.4": "1.4",
+            # Replaced by g4particlexs in G4@10.5
+            "1.4": "10.0:10.4",
         },
         "g4pii": {
-            "10:": "1.3",
+            "1.3": "10:",
         },
         "g4realsurface": {
-            "10.7:": "2.2",
-            "10.4.2:10.6": "2.1.1",
-            "10.4.0:10.4.1": "2.1",
-            "10.0.4:10.3": "1.0",
+            "2.2": "10.7:",
+            "2.1.1": "10.4.2:10.6",
+            "2.1": "10.4.0:10.4.1",
+            "1.0": "10.0.4:10.3",
         },
         "g4saiddata": {
-            "10.5:": "2.0",
-            "10.0.4:10.4": "1.1",
+            "2.0": "10.5:",
+            "1.1": "10.0.4:10.4",
         },
         "g4abla": {
-            "11.2:": "3.3",
-            "10.4:11.1": "3.1",
-            "10.0.4:10.3": "3.0",
+            "3.3": "11.2:",
+            "3.1": "10.4:11.1",
+            "3.0": "10.0.4:10.3",
         },
         "g4incl": {
-            "11.4:": "1.3",
-            "11.2.0:11.3": "1.2",
-            "10.5:11.1": "1.0",
+            "1.3": "11.4:",
+            "1.2": "11.2.0:11.3",
+            "1.0": "10.5:11.1",
         },
         "g4ensdfstate": {
-            "11.3:": "3.0",
-            "10.7:11.2": "2.3",
-            "10.4:10.6": "2.2",
-            "10.3": "2.1",
-            "10.0.4": "1.0",
+            "3.0": "11.3:",
+            "2.3": "10.7:11.2",
+            "2.2": "10.4:10.6",
+            "2.1": "10.3",
+            "1.0": "10.0.4",
         },
         "g4channeling": {
-            "11.4:": "2.0",
-            "11.3": "1.0",
+            "2.0": "11.4:",
+            "1.0": "11.3",
         },
     }
 
     # Optional datasets with independent variants
     _optional_datasets = {
         "g4tendl": {
-            "11.0:": "1.4",
-            "10.4:10.7": "1.3.2",
-            "10.3": "1.3",
+            "1.4": "11.0:",
+            "1.3.2": "10.4:10.7",
+            "1.3": "10.3",
         },
         "g4nudexlib": {
-            "11.3:": "1.0",
+            "1.0": "11.3:",
         },
         "g4urrpt": {
-            "11.3:": "1.1",
+            "1.1": "11.3:",
         },
     }
 
     for _pkg, _vers_map in _datasets.items():
-        for _g4_vers, _dset_vers in _vers_map.items():
+        for _dset_vers, _g4_vers in _vers_map.items():
             depends_on(f"{_pkg}@={_dset_vers}", type=("build", "run"), when=f"@{_g4_vers}")
 
     for _pkg, _vers_map in _optional_datasets.items():
         _variant = _pkg.replace("g4", "")
-        for _g4_vers, _dset_vers in _vers_map.items():
+        for _dset_vers, _g4_vers in _vers_map.items():
             depends_on(
                 f"{_pkg}@={_dset_vers}", type=("build", "run"), when=f"@{_g4_vers} +{_variant}"
             )
