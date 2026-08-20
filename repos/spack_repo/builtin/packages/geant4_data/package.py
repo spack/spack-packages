@@ -205,7 +205,7 @@ class Geant4Data(BundlePackage):
     # Optional datasets with independent variants
     _optional_datasets = {
         "g4tendl": {
-            "11.0:11.4": "1.4",
+            "11.0:": "1.4",
             "10.4:10.7": "1.3.2",
             "10.3": "1.3",
         },
