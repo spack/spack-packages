@@ -34,6 +34,7 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
         ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
@@ -121,6 +122,7 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
         for tgt in itertools.chain(["auto"], amdgpu_targets):
@@ -133,6 +135,8 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("openblas", when="@7.13: +rocm")
+
     patch("001-suite-sparse-include-path.patch", when="@6.1.0")
     patch("0001-suite-sparse-include-path-6.1.1.patch", when="@6.1.1:6.2")
 
@@ -180,6 +184,10 @@ class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix))
         if self.spec.satisfies("@5.2.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if self.spec.satisfies("@7.13: +rocm"):
+            args.append(self.define("HIPSOLVER_INTERNAL_LAPACK_BUILD", False))
+            args.append(self.define("HIPSOLVER_FIND_PACKAGE_LAPACK_CONFIG", False))
+            args.append(self.define("BLA_VENDOR", "OpenBLAS"))
         libloc = self.spec["suite-sparse"].prefix.lib64
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib

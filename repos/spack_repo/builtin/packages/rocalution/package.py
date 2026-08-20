@@ -6,12 +6,12 @@ import itertools
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocalution(CMakePackage):
+class Rocalution(CMakePackage, ROCmLibrary):
     """rocALUTION is a sparse linear algebra library with focus on
     exploring fine-grained parallelism on top of AMD's Radeon Open
     eCosystem Platform ROCm runtime and toolchains, targeting modern
@@ -21,7 +21,6 @@ class Rocalution(CMakePackage):
 
     homepage = "https://github.com/ROCm/rocALUTION"
     git = "https://github.com/ROCm/rocALUTION.git"
-    url = "https://github.com/ROCm/rocALUTION/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
@@ -29,6 +28,15 @@ class Rocalution(CMakePackage):
 
     license("MIT")
 
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocALUTION/archive/refs/tags/rocm-{0}.tar.gz"),
+        (
+            "7.14.0",
+            "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz",
+        ),
+    ]
+
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.2.3", sha256="6092bf6f59435b573f6d44fd4e78aa515f2e1f0c1b516f2d9f4e76a5a0fbd049")
     version("7.2.1", sha256="09b22b15ba70b8f3c8b5d0a26dc5eb5d2318cbf9c079b1fd3897382c65aa5892")
     version("7.2.0", sha256="15cf2f3cded70c300a2b5ee2af5b887397640ece922b4e384daef26e3ef65656")
@@ -99,6 +107,7 @@ class Rocalution(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.14.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
@@ -124,13 +133,14 @@ class Rocalution(CMakePackage):
             env.set("LDFLAGS", "-fuse-ld=lld")
 
     def patch(self):
-        with working_dir("src/base/hip"):
-            filter_file(
-                "^#include <rocrand/rocrand.hpp>",
-                "#include <rocrand.hpp>",
-                "hip_rand_normal.hpp",
-                "hip_rand_uniform.hpp",
-            )
+        if self.spec.satisfies("@:7.2"):
+            with working_dir("src/base/hip"):
+                filter_file(
+                    "^#include <rocrand/rocrand.hpp>",
+                    "#include <rocrand.hpp>",
+                    "hip_rand_normal.hpp",
+                    "hip_rand_uniform.hpp",
+                )
 
     @classmethod
     def determine_version(cls, lib):
@@ -140,6 +150,13 @@ class Rocalution(CMakePackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         return None
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.14:"):
+            return "projects/rocalution"
+        else:
+            return "."
 
     def cmake_args(self):
         args = [

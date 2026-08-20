@@ -34,6 +34,7 @@ class Amdsmi(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
@@ -73,6 +74,8 @@ class Amdsmi(CMakePackage):
     depends_on("libdrm@:2.4.124", when="@:7.2")
     depends_on("libdrm@2.4.131:", when="@7.13:")
     depends_on("py-pyyaml")
+    depends_on("libnl", when="@7.14:")
+    depends_on("libmnl", when="@7.14:")
 
     depends_on("googletest@1.14:", type="build", when="@6.4:")
     depends_on("googletest@1.16:", type="build", when="@7.2:")
@@ -80,10 +83,26 @@ class Amdsmi(CMakePackage):
     resource(
         name="esmi_ib_library",
         git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-5.2.1.1",
+        commit="d494a3194ceb4cc4dbb2debf9fcbe8773c6d3bef",
+        placement="projects/amdsmi/esmi_ib_library",
+        when="@7.14",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
+        tag="esmi_pkg_ver-5.1.1",
+        commit="6cf2435dd15519ab4148c36751de7a9efc27d8dc",
+        placement="projects/amdsmi/esmi_ib_library",
+        when="@7.13",
+    )
+    resource(
+        name="esmi_ib_library",
+        git="https://github.com/amd/esmi_ib_library.git",
         tag="esmi_pkg_ver-4.2",
         commit="8da6df879b0acafbcbe78e5b54af81a9e51dce6d",
         placement="projects/amdsmi/esmi_ib_library",
-        when="@7.2:",
+        when="@7.2",
     )
     resource(
         name="esmi_ib_library",

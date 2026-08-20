@@ -52,6 +52,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("7.14.0", sha256="db365c1f0ab500eeee04a990d29d79a6bb667874f8069f7b69920ca62c352d2f")
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
     version("7.2.1", sha256="4d3449d758e3f79b336248b0207a394eda04ba5cdd48a4088e135ddf769127fa")
@@ -107,7 +108,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     provides("libllvm@19", when="@6.4")
     provides("libllvm@20", when="@7.0:7.1")
     provides("libllvm@22", when="@7.2")
-    provides("libllvm@23", when="@7.13")
+    provides("libllvm@23", when="@7.13:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -124,6 +125,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libdrm", when="@7.1:")
     depends_on("libelf", when="@7.1:")
     depends_on("xxd", when="@7.1:")
+    depends_on("py-pyaml", when="@7.13:")
 
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
@@ -155,7 +157,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "https://github.com/ROCm/rocm-systems/commit/5d97b21c2b486716a32472143ad44ea74fbfdd41.patch?full_index=1",
         sha256="562509320bcf363ae4e8979f4b669c683f8407d11900b349d6cd1a999ec0b11b",
         working_dir="rocm-systems",
-        when="@7.13:",
+        when="@7.13",
     )
 
     # Fix for https://github.com/llvm/llvm-project/issues/78530
@@ -170,6 +172,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         "https://github.com/ROCm/llvm-project/commit/97301a5390f841241e5ed88e26c218882e018cc4.patch?full_index=1",
         sha256="74471ee320c4d839a433c04b9d35db868f2a13c08183297d1a09ec580ca1d7e9",
         when="@7.2",
+    )
+
+    patch(
+        "https://github.com/llvm/llvm-project/commit/319a50123c6391ff9ca14173f798e1fc737b4784.patch?full_index=1",
+        sha256="700f4f4db0454679fa2d80b21c0f8f1c2e82f964b7ef114692b776c0d5875fa5",
+        when="@7.14",
     )
 
     conflicts("^cmake@3.19.0")
@@ -242,6 +250,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     # TheRock therock-7.13 release (rocm-systems super-repo)
     for d_version, d_shasum in [
         ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
+        ("7.14", "8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330"),
     ]:
         resource(
             name="rocm-systems",
@@ -275,6 +284,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("7.2.1", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
         ("7.2.3", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
         ("7.13.0", "29981f65241605e08b0ede4cfeb999fe3b723c6a"),
+        ("7.14.0", "4015a331f5ffd6fc5c6fa7b03e08fb4a692491d7"),
     ]:
         resource(
             name="spirv-headers",
@@ -286,6 +296,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     for d_version, d_shasum in [
         ("7.13", "22836583c72d40493517ee6932db487256958d3da9afa5b666d046e48477fcc6"),
+        ("7.14", "dda1d2bf71c73b840b1a51f44f1bce6884ac0cd3aeee9269800cba533b92c2ee"),
     ]:
         resource(
             name="spirv-llvm-translator",
@@ -341,7 +352,12 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             self.define("CLANG_DEFAULT_UNWINDLIB", "libgcc"),
         ]
 
-        if self.spec.target.family == "aarch64":
+        if self.spec.satisfies("@7.13:"):
+            if self.spec.target.family == "aarch64":
+                args.append(self.define("LLVM_TARGETS_TO_BUILD", "AMDGPU;Native;AArch64"))
+            else:
+                args.append(self.define("LLVM_TARGETS_TO_BUILD", "AMDGPU;Native;SPIRV"))
+        elif self.spec.target.family == "aarch64":
             args.append(self.define("LLVM_TARGETS_TO_BUILD", "AMDGPU;AArch64"))
         else:
             args.append(self.define("LLVM_TARGETS_TO_BUILD", "AMDGPU;X86"))
@@ -446,17 +462,53 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             )
             spirv_headers_dir = os.path.join(self.stage.source_path, "spirv-headers")
             args.append(self.define("LLVM_EXTERNAL_SPIRV_HEADERS_SOURCE_DIR", spirv_headers_dir))
-        if self.spec.satisfies("@7.2:"):
+        if self.spec.satisfies("@7.2"):
             args.append(self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"))
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES=openmp")
             args.append("-DRUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR=ON")
             spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
             args.append(self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir))
+        if self.spec.satisfies("@7.13:"):
+            spirv_dir = os.path.join(self.stage.source_path, "llvm/projects/spirv-llvm-translator")
+            external_projects = ["spirv-llvm-translator"]
+            if self.spec.satisfies("+rocm-device-libs"):
+                external_projects.insert(0, "rocm-device-libs")
+            args.extend(
+                [
+                    self.define("LIBOMP_COPY_EXPORTS", "OFF"),
+                    self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir),
+                    self.define("LLVM_EXTERNAL_PROJECTS", ";".join(external_projects)),
+                    self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"),
+                    self.define(
+                        "RUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR", "ON"
+                    ),
+                    self.define(
+                        "RUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES",
+                        "compiler-rt;libc;libcxx;libcxxabi;flang-rt;openmp",
+                    ),
+                    self.define("RUNTIMES_amdgcn-amd-amdhsa_FLANG_RT_LIBC_PROVIDER", "llvm"),
+                    self.define("RUNTIMES_amdgcn-amd-amdhsa_FLANG_RT_LIBCXX_PROVIDER", "llvm"),
+                ]
+            )
+            compiler_rt_cache = os.path.join(
+                self.stage.source_path, "compiler-rt/cmake/caches/GPU.cmake"
+            )
+            libcxx_cache = os.path.join(self.stage.source_path, "libcxx/cmake/caches/AMDGPU.cmake")
+            if os.path.isfile(compiler_rt_cache) and os.path.isfile(libcxx_cache):
+                args.append(
+                    self.define(
+                        "RUNTIMES_amdgcn-amd-amdhsa_CACHE_FILES",
+                        f"{compiler_rt_cache};{libcxx_cache}",
+                    )
+                )
+            llvm_runtimes.append("flang-rt")
         args.append(self.define("LLVM_ENABLE_PROJECTS", llvm_projects))
         args.append(self.define("LLVM_ENABLE_RUNTIMES", llvm_runtimes))
 
         # CMake args passed just to runtimes
         runtime_cmake_args = [self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True)]
+        if self.spec.satisfies("@7.13:"):
+            runtime_cmake_args.append(self.define("CMAKE_FIND_PACKAGE_PREFER_CONFIG", "ON"))
 
         # When building runtimes, just-built clang has to know where GCC is.
         gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)

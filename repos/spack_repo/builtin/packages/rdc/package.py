@@ -33,6 +33,7 @@ class Rdc(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
@@ -67,7 +68,8 @@ class Rdc(CMakePackage):
     depends_on("grpc@1.55.0+shared", when="@:6.0")
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:6.4")
-    depends_on("grpc@1.67.1 cxxstd=17 +shared", when="@7.0:")
+    depends_on("grpc@1.67.1 cxxstd=17 +shared", when="@7.0:7.13")
+    depends_on("grpc@1.78.1+shared", when="@7.14:")
     depends_on("protobuf")
     depends_on("libcap")
     for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
@@ -100,6 +102,7 @@ class Rdc(CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -124,6 +127,7 @@ class Rdc(CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
@@ -140,6 +144,7 @@ class Rdc(CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
