@@ -22,6 +22,7 @@ class Spark(Package):
     variant("hadoop", default=False, description="Build with Hadoop")
 
     depends_on("java", type=("build", "run"))
+    depends_on("java@17:24,25.0.3:", when="@4:", type=("build", "run"))
     depends_on("hadoop", when="+hadoop", type=("build", "run"))
 
     license("Apache-2.0")
