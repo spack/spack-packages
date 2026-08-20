@@ -126,7 +126,7 @@ class PyNvidiaNvimagecodec(PythonPackage):
         version(
             "0.8.0.22-cuda130",
             sha256="3b525a78bdfb4d9baa0cb9798883f36efca524807b37453c43a95f2d9e3476bb",
-            url="https://files.pythonhosted.org/packages/b5/73/0de8c0b0efe300c06a8cf2b5668450d2d44c00baf8fe8462cf2b585fb21f/nvidia_nvimgcodec_cu13-0.8.0.22-py3-none-manylinux_2_28_aarch64.whl"
+            url="https://files.pythonhosted.org/packages/b5/73/0de8c0b0efe300c06a8cf2b5668450d2d44c00baf8fe8462cf2b585fb21f/nvidia_nvimgcodec_cu13-0.8.0.22-py3-none-manylinux_2_28_aarch64.whl",
         )
         version(
             "0.8.0.22-cuda120",
