@@ -82,9 +82,10 @@ class Whizard(AutotoolsPackage):
     depends_on("pythia8@:8.309", when="@:3.1.3+pythia8")
     depends_on("lhapdf", when="+lhapdf")
     depends_on("fastjet", when="+fastjet")
-    depends_on("py-gosam", when="+gosam")
-    depends_on("gosam-contrib", when="+gosam")
-    depends_on("qgraf", when="+gosam")
+    depends_on("py-gosam@3:", when="@3.1.8:+gosam")
+    depends_on("py-gosam@:2", when="@:3.1.7+gosam")
+    depends_on("gosam-contrib", when="@:3.1.7+gosam")
+    depends_on("qgraf", when="@:3.1.7+gosam")
 
     depends_on(
         "openloops@2.0.0: +compile_extra num_jobs=1 processes=eett,eevvjj,ppllj,tbw",
