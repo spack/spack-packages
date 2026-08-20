@@ -24,6 +24,11 @@ class RocmExamples(CMakePackage):
     license("MIT")
 
     version(
+        "7.14.0",
+        url="https://github.com/ROCm/rocm-examples/archive/refs/tags/therock-7.14.tar.gz",
+        sha256="9b349f7cf6af86f84cd469486be6203dc01bafbe3bcf4738cf91d22f46373103",
+    )
+    version(
         "7.13.0",
         url="https://github.com/ROCm/rocm-examples/archive/refs/tags/therock-7.13.tar.gz",
         sha256="0e096a9119db06ab62228c42a4d9eb97cbbe4b3e8783c0816d356e95e3df04ad",
@@ -88,6 +93,7 @@ class RocmExamples(CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
@@ -128,6 +134,7 @@ class RocmExamples(CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -135,7 +142,7 @@ class RocmExamples(CMakePackage):
                 f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
             )
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
@@ -158,6 +165,11 @@ class RocmExamples(CMakePackage):
     patch("add_hip_include_cuda.patch", when="@6.4+cuda")
     patch("add_mesa_include.patch", when="@6.4+cuda")
     patch("disable_hiptensor_rocprof-sdk.patch", when="@7.2")
+    patch(
+        "https://github.com/ROCm/rocm-examples/commit/e8abf81fd573cb99f2aa363a4eadf082541827bb.patch?full_index=1",
+        sha256="728741f24798a3e36941ecb47caafedcf9d83d1e0799f207609b9a0232cc8133",
+        when="@7.14",
+    )
 
     def patch(self):
         filter_file(

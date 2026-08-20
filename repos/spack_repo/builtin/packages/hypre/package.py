@@ -32,6 +32,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Support both CMake and Autotools. CMake is available and default only for v3+.
     build_system(conditional("cmake", when="@3:"), "autotools", default="cmake")
+    # CMake support exists only for @3:.
+    requires("build_system=cmake", when="platform=windows")
+    conflicts(
+        "platform=windows",
+        when="@:2",
+        msg="Hypre versions before 3.0 use Autotools only and cannot be built on Windows",
+    )
 
     # Package versions
     version("develop", branch="master")

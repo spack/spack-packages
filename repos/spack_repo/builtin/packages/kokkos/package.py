@@ -336,7 +336,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
-    requires("%clang", "%cce", "+cmake_lang", policy="any_of", when="~wrapper+cuda")
 
     # TODO new major: update c++ std
     with default_args(multi=False, description="C++ standard"):
@@ -399,9 +398,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # Filter spack-generated files that may include links to the
     # spack compiler wrappers
     filter_compiler_wrappers("kokkos_launch_compiler", relative_root="bin")
-    filter_compiler_wrappers(
-        "KokkosConfigCommon.cmake", relative_root=os.path.join("lib64", "cmake", "Kokkos")
-    )
+    for libdir in ("lib", "lib64"):
+        filter_compiler_wrappers(
+            "KokkosConfigCommon.cmake",
+            relative_root=os.path.join(libdir, "cmake", "Kokkos"),
+        )
 
     # sanity check
     sanity_check_is_file = [

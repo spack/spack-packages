@@ -18,6 +18,10 @@ class Iotaa(PythonPackage):
 
     license("Apache-2.0", checked_by="WeirAE")
 
+    version("1.6.0", sha256="5ade9629dccaccc5fcac17b6d66cbc661b63e0164a85cfadcf54cd45cfb75305")
+    version("1.5.0", sha256="bd8266e47facbddee85f43cf8b8593047e7f4923085d35a71c7055a2fe451414")
+    version("1.4.1", sha256="b9cc19d44ecd8e85da7615497fa88eafa646776197280fc4d8ba9cf3c9f60e70")
+    version("1.4.0", sha256="363bcbb9c0543b4d6e8ac625302f11ea6b237aa99d506ef1335e2e90a7eca0b3")
     version("1.3.0", sha256="2e3a31cfae0000f2440917ecc9cb7c769bd1024952a299d0db263761b388693f")
     version("1.2.3", sha256="010842cc3f20f203f1154b29befe7d58db7ed45ca7c8d972c08487de5d7dc43e")
     version("1.1.6", sha256="b375edafec7dc00f854f7122e0817924ce53f05e0a62e01422ea44aff25c5f8d")

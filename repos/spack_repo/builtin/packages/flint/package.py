@@ -41,6 +41,22 @@ class Flint(AutotoolsPackage):
 
     depends_on("m4", type="build")
 
+    # generate configure script when building from git
+    with when("@main"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+
+    # https://github.com/flintlib/flint/pull/2800
+    @run_before("configure", when="@3.4.0:")
+    def fix_in_tree_detection(self):
+        filter_file(
+            'if test "$ac_abs_confdir" = "`pwd`";',
+            'if test "`cd "$ac_abs_confdir" && pwd -P`" = "`pwd -P`";',
+            "configure",
+            string=True,
+        )
+
     def configure_args(self):
         spec = self.spec
         return [f"--with-gmp={spec['gmp'].prefix}", f"--with-mpfr={spec['mpfr'].prefix}"]
