@@ -392,10 +392,10 @@ class PyNvidiaDali(PythonPackage):
         depends_on("py-nvidia-nvcomp@4", when="@1.50:1.51")
 
     # Historical dependencies
-    depends_on("py-dm-tree@:0.1.9", when="@1.27:2.1 ^python@3.10:")
-    depends_on("py-dm-tree@:0.1.8", when="@1.27: ^python@:3.9")
-    depends_on("py-nvidia-nvjpeg2k", when="@1.46:1.48")
-    depends_on("py-nvidia-nvtiff", when="@1.46:1.48")
+    depends_on("py-dm-tree@:0.1.9", type=("build", "run"), when="@1.27:2.1 ^python@3.10:")
+    depends_on("py-dm-tree@:0.1.8", type=("build", "run"), when="@1.27: ^python@:3.9")
+    depends_on("py-nvidia-nvjpeg2k", type=("build", "run"), when="@1.46:1.48")
+    depends_on("py-nvidia-nvtiff", type=("build", "run"), when="@1.46:1.48")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("WITH_DYNAMIC_NVIMGCODEC", "yes")
