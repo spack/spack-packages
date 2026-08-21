@@ -364,6 +364,10 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         "sysomp", default=False, description="Use system OpenMP implementation instead of Realm's"
     )
 
+    @property
+    def parallel(self):
+        return not self.spec.satisfies("@:26.06 +rocm")
+
     def flag_handler(self, name, flags):
         if name == "cxxflags":
             if self.spec.satisfies("%oneapi@2025:") or self.spec.satisfies("%cxx=clang@20:"):
