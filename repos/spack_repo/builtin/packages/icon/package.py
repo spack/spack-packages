@@ -153,7 +153,7 @@ class Icon(AutotoolsPackage):
         self.flags: dict(str, list[str]) = defaultdict(list)
 
     def set_configure_args(self) -> None:
-        self.args = ["--disable-rpaths"]
+        self.single_args.append("--disable-rpaths")
         libs = LibraryList([])
 
         for x in [
