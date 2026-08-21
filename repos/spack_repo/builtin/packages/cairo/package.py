@@ -148,9 +148,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
     def flag_handler(self, name, flags):
         # gcc@15: defaults to -std=gnu23, causing errors with "typedef int bool;"
-        if name == "cflags" and self.spec.satisfies(
-            "build_system=autotools %gcc@15:"
-        ):
+        if name == "cflags" and self.spec.satisfies("build_system=autotools %gcc@15:"):
             flags.append("-std=gnu17")
         return (flags, None, None)
 
