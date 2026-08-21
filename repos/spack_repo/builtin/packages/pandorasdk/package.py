@@ -11,9 +11,9 @@ from spack.package import *
 class Pandorasdk(CMakePackage):
     """Pandora Software Development Kit for pattern-recognition algorithms"""
 
-    url = "https://github.com/PandoraPFA/PandoraSDK/archive/v03-04-00.tar.gz"
-    homepage = "https://github.com/PandoraPFA/PandoraSDK"
-    git = "https://github.com/PandoraPFA/PandoraSDK.git"
+    url = "https://github.com/PandoraPFAOrg/PandoraSDK/archive/v03-04-00.tar.gz"
+    homepage = "https://github.com/PandoraPFAOrg/PandoraSDK"
+    git = "https://github.com/PandoraPFAOrg/PandoraSDK.git"
 
     tags = ["hep"]
 
@@ -50,6 +50,10 @@ class Pandorasdk(CMakePackage):
     def url_for_version(self, version):
         # contrary to iLCSoft packages, here the patch version is kept when 0
         base_url = self.url[: self.url.rfind("/")]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
+
         major = str(version[0]).zfill(2)
         minor = str(version[1]).zfill(2)
         patch = str(version[2]).zfill(2)

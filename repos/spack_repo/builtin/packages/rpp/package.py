@@ -25,12 +25,15 @@ class Rpp(ROCmLibrary, CMakePackage):
     license("MIT")
 
     def url_for_version(self, version):
-        if version >= Version("5.7.0"):
+        if version >= Version("7.14.0"):
+            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.14.tar.gz"
+        elif version >= Version("5.7.0"):
             url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
         else:
             url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
         return url.format(version)
 
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version(
         "7.13.0", branch="release/therock-7.13", commit="8a9aa66aa8bc2186d3f12ce0ffa92f861047088d"
     )
@@ -206,6 +209,7 @@ class Rpp(ROCmLibrary, CMakePackage):
                 "7.2.1",
                 "7.2.3",
                 "7.13.0",
+                "7.14.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
@@ -227,6 +231,13 @@ class Rpp(ROCmLibrary, CMakePackage):
             env.set("CFLAGS", "-fsanitize=address -shared-libasan")
             env.set("CXXFLAGS", "-fsanitize=address -shared-libasan")
             env.set("LDFLAGS", "-fuse-ld=lld")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.14:"):
+            return "projects/rpp"
+        else:
+            return "."
 
     def cmake_args(self):
         spec = self.spec

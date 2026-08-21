@@ -27,6 +27,7 @@ class RocmTensile(ROCmLibrary, CMakePackage):
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
 
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="3bb419564c6c61cc0663c6cab3c46c45459be16bb2c15f055852de954dc8a3cf")
     version("7.2.1", sha256="9d7757997b09c80a450a81dc48046408433d79d78f72ba362ee0afd721788b2e")
@@ -118,6 +119,7 @@ class RocmTensile(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -161,8 +163,8 @@ class RocmTensile(ROCmLibrary, CMakePackage):
         else:
             return "Tensile/Source"
 
-    patch("0004-replace_rocm_smi.patch", when="@6.4:")
-    patch("0004-replace_rocm_smi.patch", when="@7.13:", working_dir="shared/tensile")
+    patch("0004-replace_rocm_smi.patch", when="@6.4:7.2")
+    patch("0004-replace_rocm_smi_7_13.patch", when="@7.13:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
