@@ -33,4 +33,3 @@ class PyIpyvuetify(PythonPackage):
 
     depends_on("py-ipyvue@3:", when="@3:", type=("build", "run"))
     depends_on("py-jupyter-builder@1.0.0:", when="@3:", type=("build", "run"))
-    
