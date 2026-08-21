@@ -12,9 +12,9 @@ class Pandoramonitoring(CMakePackage):
     """ROOT-based Event Visualisation Environment for Pandora with
     tree-writing functionality"""
 
-    url = "https://github.com/PandoraPFA/PandoraMonitoring/archive/v03-04-00.tar.gz"
-    homepage = "https://github.com/PandoraPFA/PandoraMonitoring"
-    git = "https://github.com/PandoraPFA/PandoraMonitoring.git"
+    url = "https://github.com/PandoraPFAOrg/PandoraMonitoring/archive/v03-04-00.tar.gz"
+    homepage = "https://github.com/PandoraPFAOrg/PandoraMonitoring"
+    git = "https://github.com/PandoraPFAOrg/PandoraMonitoring.git"
 
     tags = ["hep"]
 
@@ -34,7 +34,7 @@ class Pandoramonitoring(CMakePackage):
     depends_on("pandorasdk")
     depends_on("pandorasdk@4:", when="@4:")
 
-    # https://github.com/PandoraPFA/PandoraMonitoring/pull/13
+    # https://github.com/PandoraPFAOrg/PandoraMonitoring/pull/13
     @when("@:3.6.0")
     def patch(self):
         filter_file(
