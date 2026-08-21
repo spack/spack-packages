@@ -22,9 +22,13 @@ class Migraphx(ROCmLibrary, CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libmigraphx"]
 
-    rocm_url_map = [(None, "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{0}.tar.gz")]
+    rocm_url_map = [
+        ("7.14.0", "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{1}.{2}.tar.gz"),
+        (None, "https://github.com/ROCm/AMDMIGraphX/archive/rocm-{1}.{2}.tar.gz"),
+    ]
 
     license("MIT")
+    version("7.14.0", sha256="9798b091a9660d5e7a889087956684416c43dabc4f315fd8937590b00d35034d")
     version(
         "7.13.0", branch="release/rocm-rel-7.13", commit="f066712b04f87e927217edee3fc630e856787eb2"
     )
@@ -86,7 +90,13 @@ class Migraphx(ROCmLibrary, CMakePackage):
         when="@6.0",
     )
     patch("0003-add-half-include-directory-migraphx-6.0.patch", when="@6.0:7.2")
-    patch("0007-disable-mlir-for-7.13.patch", when="@7.13:")
+    patch("0007-disable-mlir-for-7.13.patch", when="@7.13")
+    patch(
+        "https://github.com/ROCm/AMDMIGraphX/commit/ea9f87af094d110f2d92ad181e629cc909ecdea1.patch?full_index=1",
+        sha256="0da7dcd198f114eb6f76646a8803524feb3c4bf4e928d2faddd2cdf2bb4cac8e",
+        when="@7.14",
+        reverse=True,
+    )
 
     depends_on("cmake@3.5:", type="build")
     depends_on("protobuf", type="link")
@@ -128,6 +138,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -174,6 +185,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.1",
         "7.2.3",
         "7.13.0",
+        "7.14.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
