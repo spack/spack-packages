@@ -29,15 +29,16 @@ class Graphite2(CMakePackage):
 
     depends_on("python@3.6:", type="test")
     depends_on("freetype")
+    depends_on("cmake@3.5:", when="@1.3.15:", type="build")
 
-    requires("cmake@3.5:", when="@1.3.15:")
+    conflicts("%cxx=gcc@16:", when="@:1.3.14")
 
     patch("regparm.patch")
 
     patch(
         "https://src.fedoraproject.org/rpms/graphite2/raw/deba28323b0a3b7a3dcfd06df1efc2195b102ed7/f/graphite2-1.3.14-gcc15.patch",
         sha256="4cff0ae949153596d26d5f8bfaa4ce80bcff23a157b34ff797c6d00b4268a4b1",
-        when="%gcc@15:",
+        when="@:1.3.14 %gcc@15:",
     )
 
     @run_after("install")
