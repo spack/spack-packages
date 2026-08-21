@@ -45,6 +45,14 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     extendable = True
 
     depends_on("c", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
+    # Perl's win32/Makefile does not build correctly under jom, so pin the nmake
+    # provider to the one from Visual Studio.
+    requires(
+        "%[virtuals=nmake] msvc",
+        when="platform=windows",
+        msg="Perl's Windows makefile requires MSVC's nmake; jom cannot build it",
+    )
 
     if sys.platform != "win32":
         depends_on("gmake", type="build")

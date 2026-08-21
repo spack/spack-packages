@@ -44,6 +44,7 @@ class Nasm(AutotoolsPackage, Package):
 
     with when("platform=windows"):
         depends_on("perl")
+        depends_on("nmake", type="build")
         patch("msvc.mak.patch", when="@2.15.05")
 
     conflicts("%intel@:14", when="@2.14:", msg="Intel <= 14 lacks support for C11")

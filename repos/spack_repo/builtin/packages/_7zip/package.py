@@ -29,6 +29,7 @@ class _7zip(SourceforgePackage, Package):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
 
     variant(
         "link_type",
