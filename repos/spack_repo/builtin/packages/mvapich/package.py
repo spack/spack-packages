@@ -211,7 +211,6 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
                 [
                     "--disable-new-dtags",
                     "--enable-fortran=all",
-                    "--disable-new-dtags",
                     "--disable-cuda",
                     "--disable-hip",
                 ]
