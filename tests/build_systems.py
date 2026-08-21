@@ -448,6 +448,24 @@ def test_autoreconf_search_path_args_external_order(
     ]
 
 
+def test_autoreconf_search_path_args_skip_compiler(
+    default_mock_concretization, tmp_path: pathlib.Path
+):
+    """Compiler prefixes are not aclocal macro providers."""
+    spec = default_mock_concretization("dttop")
+    compiler, macro_provider = spec.dependencies(deptype="build")
+    compiler_aclocal = tmp_path / "compiler" / "share" / "aclocal"
+    provider_aclocal = tmp_path / "provider" / "share" / "aclocal"
+    compiler_aclocal.mkdir(parents=True)
+    provider_aclocal.mkdir(parents=True)
+    compiler.external_path = str(tmp_path / "compiler")
+    macro_provider.set_prefix(str(tmp_path / "provider"))
+    compiler_edge = next(edge for edge in spec.edges_to_dependencies() if edge.spec is compiler)
+    compiler_edge.virtuals = ("c", "cxx")
+
+    assert autotools._autoreconf_search_path_args(spec) == ["-I", str(provider_aclocal)]
+
+
 def test_autoreconf_search_path_skip_nonexisting(
     default_mock_concretization, tmp_path: pathlib.Path
 ):

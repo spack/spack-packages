@@ -6,6 +6,7 @@ import stat
 import subprocess
 from typing import Callable, List, Optional, Set, Tuple, Union
 
+from spack import deptypes
 from spack.package import (
     BuilderWithDefaults,
     Executable,
@@ -856,7 +857,11 @@ def _autoreconf_search_path_args(spec: Spec) -> List[str]:
         except OSError:
             pass
 
-    for dep in spec.dependencies(deptype="build"):
+    for edge in spec.edges_to_dependencies(depflag=deptypes.BUILD):
+        # compiler prefixes might have foreign aclocal files which we do not want to include
+        if any(language in edge.virtuals for language in ("c", "cxx", "fortran")):
+            continue
+        dep = edge.spec
         path = dep.prefix.share.aclocal
         # Skip non-existing aclocal paths
         try:
