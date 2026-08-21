@@ -76,19 +76,28 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
 
     @when("@:12.5")
     def setup_build_environment(self, env):
-        glu = self.spec["mesa-glu"]
+        spec = self.spec
+        glu = sepc["mesa-glu"]
         env.append_flags("CPPFLAGS", f"-I{glu.prefix.include}")
         env.append_flags("LDFLAGS", f"-L{glu.prefix.lib}")
-        if self.spec.satisfies("+freeglut"):
-            freeglut = self.spec["freeglut"]
+        gl_headers = [
+            spec["gl"].headers.directories, glu.headers.directories
+        ]
+        if spec.satisfies("^libx11"):
+            gl_headers += spec['libx11'].headers.directories[0]
+            gl_headers += spec['xproto'].headers.directories[0]
+        for h in gl_headers:
+            env.append_flags("CPPFLAGS", f"-I{h}")
+        if sepc.satisfies("+freeglut"):
+            freeglut = sepc["freeglut"]
             env.append_flags("CPPFLAGS", f"-I{freeglut.prefix.include}")
             env.append_flags("LDFLAGS", f"-L{freeglut.prefix.lib}")
-        if self.spec.satisfies("+freeimage"):
-            freeimg = self.spec["freeimage"]
+        if sepc.satisfies("+freeimage"):
+            freeimg = sepc["freeimage"]
             env.append_flags("CPPFLAGS", f"-I{freeimg.prefix.include}")
             env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
-        env.set("CUDA_PATH", self.spec["cuda"].prefix)
-        env.set("SMS", self.spec.variants["cuda_arch"].value[0])
+        env.set("CUDA_PATH", sepc["cuda"].prefix)
+        env.set("SMS", sepc.variants["cuda_arch"].value[0])
 
     @when("@12.8:")
     def cmake_args(self):
