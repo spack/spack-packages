@@ -24,6 +24,7 @@ class NvplScalapack(Package):
 
     license("NVIDIA Software License Agreement")
 
+    version("0.2.4", sha256="fc50f9eae51db7d46fc2bd0fb9350d2bf149b0fea7a48815236c145c299b43a8")
     version("0.2.3", sha256="1afa2a6f2ab0580bff2148cc769e4c03f79a5de622c89699564287dd1a1112cf")
     version("0.2.2", sha256="20cf6c54a0352f2fb0060e6f5ef6b892c5d07a242f8aab31cd9bbceb58a7bd11")
     version("0.2.1", sha256="dada4d1ecf044d90609b9e62750b383d11be9b22c87e109414bcc07dce3c83c9")

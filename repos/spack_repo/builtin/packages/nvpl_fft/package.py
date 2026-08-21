@@ -24,6 +24,7 @@ class NvplFft(Package):
 
     license("NVIDIA Software License Agreement")
 
+    version("0.6.0.1", sha256="87ddf5f3aa5ecfd8bb4fee892ec3c12e475578b38885fbeb031b0b4fbd0e45c9")
     version("0.5.0", sha256="fc53bf42124b0e395230109cea5c325fd6963b8797bdd98aa127cb402e92e813")
     version("0.4.2.1", sha256="ebb9d98abc23ddee5c492e0bbf2c534570a38d7df1863a0630da2c6d7f5cca3d")
     version("0.4.1", sha256="b7d114a795841f28109fcc1508a6848b33ab779bef01bacf143d3ea47a0fd0a1")

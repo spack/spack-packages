@@ -25,6 +25,7 @@ class NvplBlas(Package):
 
     license("NVIDIA Software License Agreement")
 
+    version("0.6.0", sha256="f45da9dcd482f987a7da6bd5f8272813765edaae693a839e3211c02d4afd8aad")
     version("0.5.0.1", sha256="c51fc9cc908cca7c6aa39e72c492c2bfcc9472b542b109b6bcfa5d143f9d780e")
     version("0.4.1.1", sha256="57704e2e211999c899bca26346b946b881b609554914245131b390410f7b93e8")
     version("0.4.0.1", sha256="6655898327ed36afd0242719075447058c3c89640b5b9bbfeb5af4dd5c101174")
