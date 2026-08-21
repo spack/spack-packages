@@ -17,8 +17,9 @@ class PyPytorchLightning(PythonPackage):
 
     license("Apache-2.0")
 
-    version("2.6.1", sha256="ba08f8901cf226fcca473046ad9346f414e99117762dc869c76e650d5b3d7bdc")
     with default_args(deprecated=True):
+        # https://www.cve.org/CVERecord?id=CVE-2026-58659
+        version("2.6.1", sha256="ba08f8901cf226fcca473046ad9346f414e99117762dc869c76e650d5b3d7bdc")
         # https://www.cvedetails.com/cve/CVE-2024-8020/
         # https://www.cvedetails.com/cve/CVE-2024-8019/
         # https://www.cvedetails.com/cve/CVE-2024-5980/
