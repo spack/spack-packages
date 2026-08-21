@@ -1,0 +1,26 @@
+--- a/config/singularity-eosConfig.cmake.in
++++ b/config/singularity-eosConfig.cmake.in
+@@ -31,6 +31,13 @@ endif()
+ # ------------------------------------------------------------------------------#
+ # check for selected components
+ # ------------------------------------------------------------------------------#
++
++# Determine which components were actually built and installed
++set(${CMAKE_FIND_PACKAGE_NAME}_available_components Interface)
++if(@SINGULARITY_BUILD_CLOSURE@)
++  list(APPEND ${CMAKE_FIND_PACKAGE_NAME}_available_components Library)
++endif()
++
+ if(${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
+   set(${CMAKE_FIND_PACKAGE_NAME}_known_components Interface Library)
+   foreach(comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
+@@ -42,7 +49,8 @@ if(${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS)
+   endforeach()
+   set(${CMAKE_FIND_PACKAGE_NAME}_comps ${${CMAKE_FIND_PACKAGE_NAME}_FIND_COMPONENTS})
+ else()
+-  set(${CMAKE_FIND_PACKAGE_NAME}_comps Interface Library)
++  # Default to all available components (only what was actually built)
++  set(${CMAKE_FIND_PACKAGE_NAME}_comps ${${CMAKE_FIND_PACKAGE_NAME}_available_components})
+ endif()
+ 
+ foreach(comp IN LISTS ${CMAKE_FIND_PACKAGE_NAME}_comps)
