@@ -5,7 +5,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
-
+import os
 
 class Nnpack(CMakePackage):
     """Acceleration package for neural networks on multi-core CPUs."""
@@ -28,6 +28,8 @@ class Nnpack(CMakePackage):
     depends_on("cmake@2.8.12:", type="build")
     depends_on("python", type="build")
     depends_on("py-setuptools", type="build")
+    depends_on("py-wheel",type="build")
+    depends_on("py-pip",type="build")
 
     resource(
         name="six",
@@ -44,12 +46,13 @@ class Nnpack(CMakePackage):
         placement="opcodes",
     )
     resource(
-        name="peachpy",
-        git="https://github.com/Maratyszcza/PeachPy.git",
-        commit="349e8f836142b2ed0efeb6bb99b1b715d87202e9",
-        destination="deps",
-        placement="peachpy",
-    )
+    name="peachpy",
+    git="https://github.com/malfet/PeachPy.git",
+    commit="f45429b087dd7d5bc78bb40dc7cf06425c252d67",
+    destination="deps",
+    placement="peachpy",
+)
+
     resource(
         name="cpuinfo",
         git="https://github.com/pytorch/cpuinfo.git",
@@ -58,12 +61,12 @@ class Nnpack(CMakePackage):
         placement="cpuinfo",
     )
     resource(
-        name="fp16",
-        git="https://github.com/Maratyszcza/FP16.git",
-        commit="782eea126dc5c755827be751a099eb01826175cf",
-        destination="deps",
-        placement="fp16",
-    )
+    name="fp16",
+    git="https://github.com/Maratyszcza/FP16.git",
+    commit="4987f20d48c22694d84bbffa839168596ea027ae",
+    destination="deps",
+    placement="fp16",
+)
     resource(
         name="fxdiv",
         git="https://github.com/Maratyszcza/FXdiv.git",
@@ -95,9 +98,26 @@ class Nnpack(CMakePackage):
 
     @run_before("cmake")
     def generate_peachpy(self):
-        # https://github.com/Maratyszcza/NNPACK/issues/203
-        with working_dir(join_path(self.stage.source_path, "deps", "peachpy")):
-            python("setup.py", "generate")
+        deps_dir = join_path(self.stage.source_path, "deps")
+        pythonpath = ":".join(
+        [
+            join_path(deps_dir, "six"),
+            join_path(deps_dir, "opcodes"),
+        ]
+    )
+
+        old_pythonpath = os.environ.get("PYTHONPATH")
+        os.environ["PYTHONPATH"] = (
+        f"{pythonpath}:{old_pythonpath}" if old_pythonpath else pythonpath
+    )
+        try:
+            with working_dir(join_path(deps_dir, "peachpy")):
+                python("setup.py", "generate")
+        finally:
+            if old_pythonpath is None:
+                del os.environ["PYTHONPATH"]
+            else:
+                os.environ["PYTHONPATH"] = old_pythonpath
 
     def cmake_args(self):
         return [
@@ -118,4 +138,7 @@ class Nnpack(CMakePackage):
                 "GOOGLETEST_SOURCE_DIR", join_path(self.stage.source_path, "deps", "googletest")
             ),
             self.define("NNPACK_BUILD_TESTS", self.run_tests),
+            self.define("NNPACK_BUILD_BENCHMARKS", False),
+            self.define("NNPACK_LIBRARY_TYPE", "static"),
+            self.define("PYTHON_OPCODES_SOURCE_DIR", join_path(self.stage.source_path, "deps", "opcodes"))
         ]
