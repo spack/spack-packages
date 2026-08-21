@@ -2,21 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import glob
-import os
 import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
-from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
 
 from spack.package import *
 
 IS_WINDOWS = sys.platform == "win32"
 
 
-class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
+class Curl(AutotoolsPackage, CMakePackage):
     """cURL is an open source command line tool and library for
     transferring data with URL syntax"""
 
@@ -121,7 +118,6 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
     build_system(
         "autotools",
         "cmake",
-        conditional("nmake", when="@:8.11 platform=windows"),
         default="cmake" if IS_WINDOWS else "autotools",
     )
 
@@ -164,15 +160,6 @@ class Curl(NMakePackage, AutotoolsPackage, CMakePackage):
         if name == "cflags" and (spec.satisfies("%intel") or spec.satisfies("%oneapi")):
             build_system_flags = ["-we147"]
         return flags, None, build_system_flags
-
-
-class BuildEnvironment:
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        if self.spec.satisfies("libs=static"):
-            env.append_flags("CFLAGS", "-DCURL_STATICLIB")
-            env.append_flags("CXXFLAGS", "-DCURL_STATICLIB")
 
 
 class AutotoolsBuilder(AutotoolsBuilder):
@@ -236,69 +223,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
             return "--with-secure-transport"
         else:
             return "--without-secure-transport"
-
-
-class NMakeBuilder(BuildEnvironment, NMakeBuilder):
-    phases = ["install"]
-
-    def nmake_args(self):
-        args = []
-        mode = "dll" if self.spec.satisfies("libs=shared") else "static"
-        args.append("mode=%s" % mode)
-        args.append("WITH_ZLIB=%s" % mode)
-        args.append("ZLIB_PATH=%s" % self.spec["zlib-api"].prefix)
-        args.append("WINBUILD_ACKNOWLEDGE_DEPRECATED=yes")
-        if self.spec.satisfies("+libssh"):
-            args.append("WITH_SSH=%s" % mode)
-        if self.spec.satisfies("+libssh2"):
-            args.append("WITH_SSH2=%s" % mode)
-            args.append("SSH2_PATH=%s" % self.spec["libssh2"].prefix)
-        if self.spec.satisfies("+nghttp2"):
-            args.append("WITH_NGHTTP2=%s" % mode)
-            args.append("NGHTTP2=%s" % self.spec["nghttp2"].prefix)
-        if self.spec.satisfies("tls=openssl"):
-            args.append("WITH_SSL=%s" % mode)
-            args.append("SSL_PATH=%s" % self.spec["openssl"].prefix)
-        elif self.spec.satisfies("tls=mbedtls"):
-            args.append("WITH_MBEDTLS=%s" % mode)
-            args.append("MBEDTLS_PATH=%s" % self.spec["mbedtls"].prefix)
-        elif self.spec.satisfies("tls=sspi"):
-            args.append("ENABLE_SSPI=%s" % mode)
-
-        # The trailing path seperator is REQUIRED for cURL to install
-        # otherwise cURLs build system will interpret the path as a file
-        # and the install will fail with ambiguous errors
-        inst_prefix = self.prefix + "\\"
-        args.append(f"WITH_PREFIX={windows_sfn(inst_prefix)}")
-        return args
-
-    def install(self, pkg, spec, prefix):
-        # Spack's env CC and CXX values will cause an error
-        # if there is a path in the space, and escaping with
-        # double quotes raises a syntax issues, instead
-        # cURLs nmake will automatically invoke proper cl.exe if
-        # no env value for CC, CXX is specified
-        # Unset the value to allow for cURLs heuristics (derive via VCVARS)
-        # to derive the proper compiler
-        env = os.environ
-        env["CC"] = ""
-        env["CXX"] = ""
-        winbuild_dir = os.path.join(self.stage.source_path, "winbuild")
-        winbuild_dir = windows_sfn(winbuild_dir)
-        with working_dir(winbuild_dir):
-            nmake("/f", "Makefile.vc", *self.nmake_args(), ignore_quotes=True)
-        with working_dir(os.path.join(self.stage.source_path, "builds")):
-            install_dir = glob.glob("libcurl-**")[0]
-            install_tree(install_dir, self.prefix)
-        if spec.satisfies("libs=static"):
-            # curl is named libcurl_a when static on Windows
-            # Consumers look for just libcurl
-            # make a symlink to make consumers happy
-            libcurl_a = os.path.join(prefix.lib, "libcurl_a.lib")
-            libcurl = os.path.join(self.prefix.lib, "libcurl.lib")
-            # safeguard against future curl releases that do this for us
-            if os.path.exists(libcurl_a) and not os.path.exists(libcurl):
-                symlink(libcurl_a, libcurl)
 
 
 class CMakeBuilder(CMakeBuilder):

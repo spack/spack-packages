@@ -174,19 +174,31 @@ class Cmake(Package):
     # provide Spack's TLS libs anyways, which is not flexible, and actually
     # leads to issues where we have to keep track of the vendored curl version
     # and its conflicts with OpenSSL.
-    depends_on("curl@:8.15", when="@:3.25")
-    depends_on("curl")
+    #
+    # Windows is the exception, since Spack's curl defaults to tls=sspi
+    # on Windows, the same Schannel stack CMake's vendored cmcurl already uses.
+    # Keeping the default (+ownlibs) free of curl lets CMake bootstrap on
+    # Windows from nothing
+    for _requires_system_curl in (
+        "platform=linux",
+        "platform=darwin",
+        "platform=freebsd",
+        "platform=windows ~ownlibs",
+    ):
+        with when(_requires_system_curl):
+            depends_on("curl@:8.15", when="@:3.25")
+            depends_on("curl")
 
-    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
-    conflicts("curl@8.16:", when="@:3.30")
+            # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
+            conflicts("curl@8.16:", when="@:3.30")
 
-    # When using curl, cmake defaults to using system zlib too, probably because
-    # curl already depends on zlib. Therefore, also unconditionaly depend on zlib.
-    depends_on("zlib-api")
+            # When using curl, cmake defaults to using system zlib too, probably
+            # because curl already depends on zlib. Therefore, also depend on zlib.
+            depends_on("zlib-api")
 
     with when("~ownlibs"):
-        depends_on("expat")
         # expat/zlib are used in CMake/CTest, so why not require them in libarchive.
+        depends_on("expat")
         for plat in ["darwin", "linux", "freebsd"]:
             with when("platform=%s" % plat):
                 depends_on("libarchive@3.1.0: xar=expat compression=bz2lib,lzma,zlib,zstd")
@@ -329,6 +341,15 @@ class Cmake(Package):
             args.append("--")
         else:
             args.append("-DCMAKE_INSTALL_PREFIX=%s" % self.prefix)
+
+            if spec.satisfies("~ownlibs"):
+                args.extend(
+                    [
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_CURL=ON",
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_EXPAT=ON",
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_ZLIB=ON",
+                    ]
+                )
 
         # Make CMake find its own dependencies.
         prefixes = get_cmake_prefix_path(self)
