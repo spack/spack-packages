@@ -13,9 +13,9 @@ class Pandorapfa(Package):
     NOTE: this recipe is not used to install  other pandora packages, for which
     separate recipes exist. It only installs the cmakemodules directory."""
 
-    url = "https://github.com/PandoraPFA/PandoraPFA/archive/v03-14-00.tar.gz"
-    homepage = "https://github.com/PandoraPFA/PandoraPFA"
-    git = "https://github.com/PandoraPFA/PandoraPFA.git"
+    url = "https://github.com/PandoraPFAOrg/PandoraPFA/archive/v03-14-00.tar.gz"
+    homepage = "https://github.com/PandoraPFAOrg/PandoraPFA"
+    git = "https://github.com/PandoraPFAOrg/PandoraPFA.git"
 
     tags = ["hep"]
 
@@ -57,6 +57,10 @@ class Pandorapfa(Package):
     def url_for_version(self, version):
         # contrary to iLCSoft packages, here the patch version is kept when 0
         base_url = self.url[: self.url.rfind("/")]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
+
         major = str(version[0]).zfill(2)
         minor = str(version[1]).zfill(2)
         patch = str(version[2]).zfill(2)
