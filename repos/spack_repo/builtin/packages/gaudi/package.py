@@ -267,6 +267,9 @@ class Gaudi(CMakePackage, CudaPackage):
             env.prepend_path("GAUDI_PLUGIN_PATH", lib_path)
 
     def url_for_version(self, version):
+        if version.isdevelop():
+            return f"https://gitlab.cern.ch/gaudi/Gaudi/-/archive/{version}/Gaudi-{version}.tar.gz"
+
         major = str(version[0])
         minor = str(version[1])
         url = "https://gitlab.cern.ch/gaudi/Gaudi/-/archive/v{0}r{1}/Gaudi-v{0}r{1}.tar.gz".format(

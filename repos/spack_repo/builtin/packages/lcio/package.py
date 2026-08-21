@@ -104,6 +104,10 @@ class Lcio(CMakePackage):
 
     def url_for_version(self, version):
         base_url = self.url.rsplit("/", 1)[0]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
+
         major = str(version[0]).zfill(2)
         minor = str(version[1]).zfill(2)
         # handle the different cases for the patch version:
