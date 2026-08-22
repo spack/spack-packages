@@ -148,7 +148,7 @@ class Icon(AutotoolsPackage):
         depends_on("cuda", when="gpu={0}".format(__x))
 
     def set_configure_args(self) -> None:
-        self.flags: dict(str, list[str]) = defaultdict(list)
+        self.flags: defaultdict[str, list[str]] = defaultdict(list)
         self.single_args: list[str] = ["--disable-rpaths"]
         libs = LibraryList([])
 
