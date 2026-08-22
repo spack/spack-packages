@@ -147,13 +147,9 @@ class Icon(AutotoolsPackage):
     for __x in nvidia_targets.keys():
         depends_on("cuda", when="gpu={0}".format(__x))
 
-    def __init__(self, spec: spack.spec.Spec) -> None:
-        super().__init__()
-        self.single_args: list[str] = []
-        self.flags: dict(str, list[str]) = defaultdict(list)
-
     def set_configure_args(self) -> None:
-        self.single_args.append("--disable-rpaths")
+        self.flags: dict(str, list[str]) = defaultdict(list)
+        self.single_args: list[str] = ["--disable-rpaths"]
         libs = LibraryList([])
 
         for x in [
@@ -313,6 +309,11 @@ class Icon(AutotoolsPackage):
 
         self.flags["LIBS"].append(libs.link_flags)
 
+        self.extend_configure_args()
+
+    def extend_configure_args(self) -> None:
+        """Placeholder for subclasses extending the recipe"""
+        pass
 
     def configure_args(self) -> list[str]:
         # Set configure args
