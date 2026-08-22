@@ -53,12 +53,25 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("17.2.0", sha256="3df928f8d600fd8952593565c507112bc562ac32f3ef9ba6217d9a86072c3e72")
     version("17.1.2", sha256="f6ebacae0fd09c096eb7ff35c45c455525e22e4d317e98ceee5bbcfd880dc353")
-    version("17.1.1", sha256="482bb76c9a993767a9e649261462f70620254a631d34fb089482d8474dfb2766")
+    version(
+        "17.1.1",
+        sha256="482bb76c9a993767a9e649261462f70620254a631d34fb089482d8474dfb2766",
+        deprecated=True,
+    )
     version("17.0.0", sha256="7afa68fc6bf1dfdcd0c07f7b61055b03509e62cee1a835d570201b46aa440a6b")
     version("16.2.2", sha256="211810d0f642736ac93ca500c3e28c72a9e8fa9991a757d60c0ecc85108e35d4")
-    version("16.2.1", sha256="c68a9d28fc9e7b06f33804c1f5e998234820878c21ae075649483b56992cea05")
-    version("16.2.0", sha256="543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418")
+    version(
+        "16.2.1",
+        sha256="c68a9d28fc9e7b06f33804c1f5e998234820878c21ae075649483b56992cea05",
+        deprecated=True,
+    )
+    version(
+        "16.2.0",
+        sha256="543aa56232d7c0cbe73705fab2d3b5524f11b15fef8917aa14de02d23a5ca418",
+        deprecated=True,
+    )
     version("16.1.0", sha256="e9651c88f581049457036cfc01b527a9d3903c257338eeeab942befd7452f23a")
     version("16.0.0", sha256="46bfc40419ed2aa2db38c144fb8e61d4aa8170eaa654a88d833ba6b92903f309")
     version("15.1.1", sha256="2108d633d2208ed261d09b2d6b2fbae7a9cdc455dd963c9c94412d38d8aaefe4")
@@ -67,7 +80,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     version("14.2.0", sha256="c96606e5cd7fc9d25b9dc20719cd388658520d7cbbd2b4de77a118440d1e0ccb")
     version("14.0.0", sha256="054d2fabdf70fce0dfaeb20eed265bd7894045d3e00c3d1ddb72d1c77c339ca1")
     version("13.4.1", sha256="5465cbff3de7ef4ac7d40eeff9d99342c00d9d20eee0a5f64f0a523093f5f1b3")
-    version("13.4.0", sha256="39550006e059043b7e2177f10467ae2f77fe639901aee91cbc1e359516ff8d3e")
+    version(
+        "13.4.0",
+        sha256="39550006e059043b7e2177f10467ae2f77fe639901aee91cbc1e359516ff8d3e",
+        deprecated=True,
+    )
     version("13.2.0", sha256="0ddb47784ba7b8a6b9a07a4822b33be508feb4ccd54301b2a5d10c9e54524b90")
     version("13.0.1", sha256="0bce7066c27e83085bc189bf524e535e5225636c9ee4b16291a38849d6c2216d")
     version("13.0.0", sha256="d44e8181b3ef5eae4e90aad40a33486f0b2ae6ba1c34b419ce8cbc70fd5dd6bd")
@@ -79,15 +96,35 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
     version("12.10.1", sha256="ab81d917196ffbc21c4927d42df079dd94c83c1a08bda43fef2dd34d0c1a5512")
     version("12.8.1", sha256="d20fe60e31e3ba1ef36edecd88226240a518f50a4d6edcc195b88ee9dda5b4a1")
     version("12.6.4", sha256="1c7104ba60ee8cc4ec0458a1c4f6a26130616bae7580a7b15f2771a955818b73")
-    version("12.6.3", sha256="4d28298bb4074eef522db6cd1626f1a934e3d80f292caf669b8846c0a458fe81")
-    version("12.6.2", sha256="8be7e3e1166cc05aea7f856cc8033182e8114aeb8f87184cb38873bfb2061779")
-    version("12.6.1", sha256="4b38ede471bed0036dcb81a116fba8194f7bf1a9330da4e29c3eb507d2db18db")
+    version(
+        "12.6.3",
+        sha256="4d28298bb4074eef522db6cd1626f1a934e3d80f292caf669b8846c0a458fe81",
+        deprecated=True,
+    )
+    version(
+        "12.6.2",
+        sha256="8be7e3e1166cc05aea7f856cc8033182e8114aeb8f87184cb38873bfb2061779",
+        deprecated=True,
+    )
+    version(
+        "12.6.1",
+        sha256="4b38ede471bed0036dcb81a116fba8194f7bf1a9330da4e29c3eb507d2db18db",
+        deprecated=True,
+    )
     version("12.4.2", sha256="fd2c12e87a7cedc058bcb8357107ffa2474997aa7b17b8e37225a1f7c32e6f0e")
     version("12.2.1", sha256="088f303e0dc00fb4072b895c6ecb4e2a3ad9a2687b9c62153de05832cf242098")
     version("12.0.1", sha256="eee7c19ca108538fa1c77a6651b084e06f59d7c3307dae77144136639ab55980")
     version("11.14.3", sha256="e37fa5f69103576c89300e14d43ba77ad75998a54731008b25890d39892e6e60")
-    version("11.14.2", sha256="f22b2b0df7b88e28b992e19044ba72b845292b93cbbb3a948488199647381119")
-    version("11.14.1", sha256="f10fc0a496bf49427eb6871c80816d6e26822a39177d850cc62cf1484e4eec07")
+    version(
+        "11.14.2",
+        sha256="f22b2b0df7b88e28b992e19044ba72b845292b93cbbb3a948488199647381119",
+        deprecated=True,
+    )
+    version(
+        "11.14.1",
+        sha256="f10fc0a496bf49427eb6871c80816d6e26822a39177d850cc62cf1484e4eec07",
+        deprecated=True,
+    )
 
     # ###################### Variants ##########################
 
@@ -483,7 +520,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos+hip_relocatable_device_code", when="+rocm_rdc")
         depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
-        depends_on("kokkos@=5.2.0", when="@master:")
+        depends_on("kokkos@=5.2.1", when="@master:")
+        depends_on("kokkos@=5.2.1", when="@17.2.0")
         depends_on("kokkos@=5.1.1", when="@17.1.2")
         depends_on("kokkos@=5.1.1", when="@17.1.1")
         depends_on("kokkos@=5.1.1", when="@17.1.0")
@@ -495,7 +533,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos@=4.3.01", when="@16.0")
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
-        depends_on("kokkos-kernels@=5.2.0", when="@master:")
+        depends_on("kokkos-kernels@=5.2.1", when="@master:")
+        depends_on("kokkos-kernels@=5.2.1", when="@17.2.0")
         depends_on("kokkos-kernels@=5.1.1", when="@17.1.2")
         depends_on("kokkos-kernels@=5.1.1", when="@17.1.1")
         depends_on("kokkos-kernels@=5.1.1", when="@17.1.0")
