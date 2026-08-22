@@ -46,6 +46,12 @@ class Libevent(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("openssl", when="+openssl")
+    # configure's openssl detection shells out to pkg-config to find
+    # openssl.pc; without it configure fails outright ("openssl is a
+    # must but can not be found") even though the openssl dependency
+    # above is present and its headers are found -- pkg-config itself
+    # was just never declared.
+    depends_on("pkgconfig", type="build", when="+openssl")
 
     conflicts("+openssl", when="@:2.0")
 

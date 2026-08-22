@@ -22,6 +22,7 @@ class Edm4hep(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("1.1", sha256="a45c849e69ae23640086315547a3bf480aaab954168043c82ccf9a7d372bffdd")
     version("1.0", sha256="7bb76479883997ba39357b0db65d96d5f1201bc8a79b47866db8b44f76a231be")
     version("0.99.4", sha256="34a76e74a3199b96d8108425fdf894cafa7e4a71483d4893537c3026b4e666d6")
     version("0.99.3", sha256="c89e90085d83c5565b2609a81532af0d631d423fdf6d03396f666ea3a8472429")
@@ -121,6 +122,9 @@ class Edm4hep(CMakePackage):
         :type param: str
         """
         base_url = self.url.rsplit("/", 1)[0]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
 
         if len(version) == 1:
             major = version[0]

@@ -37,6 +37,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     version("master", branch="master")
 
     # Latest stable
+    version("16.2.0", sha256="e6738e29597f733270731aa90600f37ffdc045079dfc27ec7e8192cc81085c3e")
     version("16.1.0", sha256="50efb4d94c3397aff3b0d61a5abd748b4dd31d9d3f2ab7be05b171d36a510f79")
 
     # Previous stable series releases
@@ -406,7 +407,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         conflicts("+bootstrap")
 
     # Graphite loop optimizations cause bootstrap comparison failures
-    conflicts("+graphite +bootstrap")
+    conflicts("+graphite +bootstrap", when="@:15")
 
     # Binutils can't build ld on macOS
     conflicts("+binutils", when="platform=darwin")
@@ -644,6 +645,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
 
     # see https://gcc.gnu.org/gcc-11/changes.html 11.5 Caveats
     patch("patch-5522dec054cb940fe83661b96249aa12c54c1d77.patch", when="@11.5.0 target=aarch64:")
+    patch("cuda11-drops-sm_30-support.patch", when="@13:14 +nvptx ^cuda@13:")
+    patch("cuda13-drops-sm_52-support.patch", when="@15: +nvptx ^cuda@13:")
 
     build_directory = "spack-build"
 
@@ -874,6 +877,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             # Improve the build time for stage 2 a bit by enabling -O1 in stage 1.
             # Note: this is ignored under ~bootstrap.
             f.write("STAGE1_CFLAGS += -O1\n")
+            if self.spec.satisfies("+bootstrap @16:16.2"):
+                # GCC 16 fails in compairing debug infos. See:
+                # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=125598
+                with open("config/bootstrap-debug.mk") as bd:
+                    f.write(bd.read())
 
     # https://gcc.gnu.org/install/configure.html
     def configure_args(self):
@@ -907,6 +915,11 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         # Enabling language "jit" requires --enable-host-shared.
         if spec.satisfies("languages=jit"):
             options.append("--enable-host-shared")
+
+        # https://github.com/spack/spack-packages/issues/5677
+        if spec.satisfies("+binutils"):
+            binutils = spec["binutils"].prefix.bin
+            options.append(f"--with-build-time-tools={binutils}")
 
         # enable_bootstrap
         if spec.satisfies("+bootstrap"):

@@ -90,6 +90,10 @@ class Bowtie2(MakefilePackage):
         make_arg = ["PREFIX={0}".format(self.prefix)]
         if self.spec.satisfies("target=aarch64:"):
             make_arg.append("POPCNT_CAPABILITY=0")
+
+        if self.spec.satisfies("@2.5.5 %gcc@:11 target=x86_64:"):
+            # avoid __builtin_cpu_supports("x86-64-v3"), unsupported before GCC 12
+            make_arg.append("SSE_AVX2=0")
         return make_arg
 
     @property
