@@ -87,7 +87,7 @@ class Acts(CMakePackage, CudaPackage):
     variant(
         "benchmarks", default=False, description="Build the performance benchmarks", when="@0.16:"
     )
-    _cxxstd_values = (conditional("20", when="@24:"),)
+    _cxxstd_values = (conditional("20", when="@24:"), conditional("23", when="@46:"))
     _cxxstd_common = {
         "values": _cxxstd_values,
         "multi": False,
@@ -383,3 +383,8 @@ class Acts(CMakePackage, CudaPackage):
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         return args
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Acts installs in non-standard python path
+        if self.spec.satisfies("+python"):
+            env.prepend_path("PYTHONPATH", self.prefix.python)

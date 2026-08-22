@@ -44,6 +44,12 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
     version(
+        "2026.07.0",
+        tag="v2026.07.0",
+        commit="80d218eba514a6d51bfd99ab6ebd6fbf83a74ca9",
+        submodules=submodules,
+    )
+    version(
         "2025.12.2",
         tag="v2025.12.2",
         commit="eca7c5015a5cf8bf7cc8ad1829fd36d3276ab274",
@@ -270,8 +276,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
 
     depends_on("blt", type="build")
-    # TODO(smith84): Edit the following line after the June 2026 RAJA suite release
-    depends_on("blt@0.7.2:", type="build", when="@develop")
+    depends_on("blt@0.7.2:", type="build", when="@2026.07.0:")
     depends_on("blt@0.7.1:", type="build", when="@2025.09.0:")
     depends_on("blt@0.7.0:", type="build", when="@2025.03.0:")
     depends_on("blt@0.6.2:", type="build", when="@2024.02.1:")
@@ -289,8 +294,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
-    # TODO(johnbowen42): Remove the following line after the June 2026 RAJA suite release
-    depends_on("camp@2026.07", when="@develop")
+
+    depends_on("camp@2026.07.1:", when="@2026.07.0:")
     depends_on("camp@2025.12", when="@2025.12.0:2025.12.2")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
