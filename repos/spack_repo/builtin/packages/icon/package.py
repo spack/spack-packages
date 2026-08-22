@@ -314,7 +314,7 @@ class Icon(AutotoolsPackage):
         pass
 
     def configure_args(self) -> list[str]:
-        # Populate configure self.single_args and self.flags
+        # Populate self.single_args and self.flags
         self.set_configure_args()
         self.extend_configure_args()
         # Remove duplicates
