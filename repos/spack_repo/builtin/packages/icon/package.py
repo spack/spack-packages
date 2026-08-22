@@ -312,7 +312,7 @@ class Icon(AutotoolsPackage):
         self.extend_configure_args()
 
     def extend_configure_args(self) -> None:
-        """Placeholder for subclasses extending the recipe"""
+        """Placeholder for subclasses extending the self.args and self.flags"""
         pass
 
     def configure_args(self) -> list[str]:
