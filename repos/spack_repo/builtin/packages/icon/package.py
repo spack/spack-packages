@@ -309,8 +309,6 @@ class Icon(AutotoolsPackage):
 
         self.flags["LIBS"].append(libs.link_flags)
 
-        self.extend_configure_args()
-
     def extend_configure_args(self) -> None:
         """Placeholder for subclasses extending the self.args and self.flags"""
         pass
@@ -318,6 +316,7 @@ class Icon(AutotoolsPackage):
     def configure_args(self) -> list[str]:
         # Set configure args
         self.set_configure_args()
+        self.extend_configure_args()
         # Remove duplicates
         self.single_args = list(set(self.single_args))
         for key, values in self.flags.items():
