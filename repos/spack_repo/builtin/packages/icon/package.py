@@ -310,7 +310,7 @@ class Icon(AutotoolsPackage):
         self.flags["LIBS"].append(libs.link_flags)
 
     def extend_configure_args(self) -> None:
-        """Placeholder for subclasses extending the self.args and self.flags"""
+        """Placeholder for subclasses extending self.args and self.flags"""
         pass
 
     def configure_args(self) -> list[str]:
