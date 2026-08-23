@@ -86,7 +86,7 @@ class Macaulay2(AutotoolsPackage):
 
     def configure_args(self) -> List[str]:
         # workaround for https://github.com/Macaulay2/M2/issues/4074
-        flibs = "-lgfortran -lm -lquadmath"
+        flibs = "-lgfortran -lm"
 
         return [
             "--with-system-libs",
