@@ -128,6 +128,7 @@ ci:
   - noop-job:
       tags: ["service_noop"]
       image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
+      timeout: 1 seconds
       variables:
         CI_OIDC_REQUIRED: 0
         GIT_STRATEGY: "none"
