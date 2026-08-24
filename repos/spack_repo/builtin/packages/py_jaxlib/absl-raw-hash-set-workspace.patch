@@ -1,0 +1,54 @@
+diff --git a/third_party/xla/absl_raw_hash_set.patch b/third_party/xla/absl_raw_hash_set.patch
+new file mode 100644
+index 0000000..72c7880
+--- /dev/null
++++ b/third_party/xla/absl_raw_hash_set.patch
+@@ -0,0 +1,36 @@
++diff --git a/third_party/absl/raw_hash_set.patch b/third_party/absl/raw_hash_set.patch
++new file mode 100644
++index 0000000..ac2cc7b
++--- /dev/null
+++++ b/third_party/absl/raw_hash_set.patch
++@@ -0,0 +1,18 @@
+++# ABSL PR #2071: Include immintrin.h instead of bmi2intrin.h
+++# https://github.com/abseil/abseil-cpp/pull/2071
+++diff --git a/absl/container/internal/raw_hash_set.h b/absl/container/internal/raw_hash_set.h
+++--- a/absl/container/internal/raw_hash_set.h
++++++ b/absl/container/internal/raw_hash_set.h
+++@@ -232,9 +232,9 @@
+++ #if ABSL_INTERNAL_CPLUSPLUS_LANG >= 202002L
+++ #include <ranges>  // NOLINT(build/c++20)
+++ #endif
+++ 
+++-#ifdef __BMI2__
+++-#include <bmi2intrin.h>
+++-#endif  // __BMI2__
++++#if defined(__i386__) || defined(__x86_64__)
++++#include <immintrin.h>
++++#endif
+++ 
+++ namespace absl {
++diff --git a/third_party/absl/workspace.bzl b/third_party/absl/workspace.bzl
++index cf6a25b..a47f286 100644
++--- a/third_party/absl/workspace.bzl
+++++ b/third_party/absl/workspace.bzl
++@@ -20,6 +20,7 @@ def repo():
++             "//third_party/absl:btree.patch",
++             "//third_party/absl:build_dll.patch",
++             "//third_party/absl:endian.patch",
+++            "//third_party/absl:raw_hash_set.patch",
++         ],
++         repo_mapping = {
++             "@google_benchmark": "@com_google_benchmark",
+diff --git a/third_party/xla/workspace.bzl b/third_party/xla/workspace.bzl
+index ce12701..1436b57 100644
+--- a/third_party/xla/workspace.bzl
++++ b/third_party/xla/workspace.bzl
+@@ -25,6 +25,7 @@ def repo():
+         patch_file = [
+             # Add any patch files here.
+             # "//third_party/xla:temporary.patch
++            "//third_party/xla:absl_raw_hash_set.patch",
+         ],
+     )
+ 
