@@ -1,0 +1,191 @@
+From: Bernhard Kaindl <bernhardkaindl7@gmail.com>
+Subject: [PATCH 2/2] Add SPACK_INCLUDE_DIRS test suite for bazel 8.7.0
+
+- Comprehensive test scripts for verifying SPACK_INCLUDE_DIRS support
+- test1.sh: Minimal test suitable for spack post-build test function
+- test2.sh: Full test with setup, build, and verification
+- Example C++ program that uses custom include directories
+
+diff --git a/include_test/BUILD b/include_test/BUILD
+new file mode 100644
+--- /dev/null
++++ b/include_test/BUILD
+@@ -0,0 +1,4 @@
++cc_binary(
++    name = "spack_test",
++    srcs = ["main.cpp"],
++)
+diff --git a/include_test/MODULE.bazel b/include_test/MODULE.bazel
+new file mode 100644
+--- /dev/null
++++ b/include_test/MODULE.bazel
+@@ -0,0 +1,5 @@
++"""Test module for SPACK_INCLUDE_DIRS feature."""
++module(
++    name = "spack_test",
++    version = "1.0",
++)
+diff --git a/include_test/README.md b/include_test/README.md
+new file mode 100644
+--- /dev/null
++++ b/include_test/README.md
+@@ -0,0 +1,16 @@
++# Manual Test
++
++```bash
++# Create a test include directory
++mkdir -p /tmp/spack_test/include
++cp include_test/spack_header.h /tmp/spack_test/include/
++
++# Set environment variable and build
++export SPACK_INCLUDE_DIRS=/tmp/spack_test/include
++cd /tmp/test_workspace
++cp include_test/{BUILD,MODULE.bazel,main.cpp} .
++/path/to/bazel/binary build //:spack_test
++
++# Run the binary to verify it works
++/path/to/bazel/binary run //:spack_test
++```
+diff --git a/include_test/main.cpp b/include_test/main.cpp
+new file mode 100644
+--- /dev/null
++++ b/include_test/main.cpp
+@@ -0,0 +1,6 @@
++#include <iostream>
++#include <spack_header.h>
++int main() {
++    std::cout << get_spack_message() << std::endl;
++    return 0;
++}
+diff --git a/include_test/spack_header.h b/include_test/spack_header.h
+new file mode 100644
+--- /dev/null
++++ b/include_test/spack_header.h
+@@ -0,0 +1,10 @@
++#ifndef SPACK_CUSTOM_HEADER_H
++#define SPACK_CUSTOM_HEADER_H
++
++#include <iostream>
++
++const char* get_spack_message() {
++    return "SPACK_INCLUDE_DIRS support is working!";
++}
++
++#endif
+diff --git a/include_test/test1.sh b/include_test/test1.sh
+new file mode 100755
+--- /dev/null
++++ b/include_test/test1.sh
+@@ -0,0 +1,37 @@
++#!/bin/bash
++# Simple test for SPACK_INCLUDE_DIRS support
++# This is suitable for running in a spack post-build test
++# Usage: ./test1.sh /path/to/bazel/binary
++
++BAZEL_BIN="${1:?Error: bazel binary path required}"
++
++if [ ! -x "$BAZEL_BIN" ]; then
++    echo "Error: $BAZEL_BIN is not executable"
++    exit 1
++fi
++
++# Get the directory where this script is located
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++WORK_DIR=$(mktemp -d)
++trap 'rm -rf "$WORK_DIR"' EXIT
++
++# Create temporary include directory
++SPACK_INCLUDE_DIR="$WORK_DIR/spack_includes"
++mkdir -p "$SPACK_INCLUDE_DIR"
++cp "$SCRIPT_DIR/spack_header.h" "$SPACK_INCLUDE_DIR/"
++
++# Copy test files
++cp -r "$SCRIPT_DIR"/{BUILD,MODULE.bazel,main.cpp} "$WORK_DIR/"
++
++# Build with SPACK_INCLUDE_DIRS set
++echo "Building //:spack_test with SPACK_INCLUDE_DIRS=$SPACK_INCLUDE_DIR..."
++export SPACK_INCLUDE_DIRS="$SPACK_INCLUDE_DIR"
++cd "$WORK_DIR"
++if "$BAZEL_BIN" --output_user_root="$WORK_DIR/bazel-output-root" build //:spack_test >/dev/null 2>&1; then
++    echo "Build succeeded with SPACK_INCLUDE_DIRS"
++    exit 0
++else
++    echo "Build failed with SPACK_INCLUDE_DIRS"
++    "$BAZEL_BIN" --output_user_root="$WORK_DIR/bazel-output-root" build //:spack_test
++    exit 1
++fi
+diff --git a/include_test/test2.sh b/include_test/test2.sh
+new file mode 100755
+--- /dev/null
++++ b/include_test/test2.sh
+@@ -0,0 +1,70 @@
++#!/bin/bash
++# Test script for SPACK_INCLUDE_DIRS support in Bazel
++# Usage: ./test2.sh [bazel_binary_path] [test_dir]
++
++set -e
++
++BAZEL_BIN="${1:?Error: bazel binary path required}"
++TEST_DIR="${2:-$(mktemp -d)}"
++SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
++
++if [ ! -x "$BAZEL_BIN" ]; then
++    echo "Error: $BAZEL_BIN is not executable"
++    exit 1
++fi
++
++case "$TEST_DIR" in /*) ;; *) TEST_DIR="$PWD/$TEST_DIR" ;; esac
++cleanup() {
++    if [ -d "$TEST_DIR" ] && [ "$TEST_DIR" != "$(pwd)" ]; then
++        rm -rf "$TEST_DIR"
++    fi
++}
++
++trap cleanup EXIT
++
++echo "=== Testing SPACK_INCLUDE_DIRS Support ==="
++echo "BAZEL: $BAZEL_BIN"
++echo "TEST_DIR: $TEST_DIR"
++echo
++
++# Step 1: Create temporary include directory with test header
++echo "[1/4] Creating test include directory..."
++SPACK_INCLUDE_DIR="$TEST_DIR/spack_includes"
++mkdir -p "$SPACK_INCLUDE_DIR"
++
++# Copy the header to the spack include directory
++cp "$SCRIPT_DIR/spack_header.h" "$SPACK_INCLUDE_DIR/"
++echo "Created: $SPACK_INCLUDE_DIR"
++echo
++
++# Step 2: Set up test workspace
++echo "[2/4] Setting up test workspace..."
++mkdir -p "$TEST_DIR/workspace"
++cp -r "$SCRIPT_DIR"/{BUILD,MODULE.bazel,main.cpp} "$TEST_DIR/workspace/"
++cd "$TEST_DIR/workspace"
++echo "Copied test files to: $TEST_DIR/workspace"
++echo
++
++# Step 3: Build with SPACK_INCLUDE_DIRS set
++echo "[3/4] Building with SPACK_INCLUDE_DIRS=$SPACK_INCLUDE_DIR..."
++export SPACK_INCLUDE_DIRS="$SPACK_INCLUDE_DIR"
++
++if "$BAZEL_BIN" --output_user_root="$TEST_DIR/bazel-output-root" build //:spack_test 2>&1; then
++    echo "Build succeeded"
++else
++    echo "Build failed"
++    exit 1
++fi
++echo
++
++# Step 4: Verify the binary works
++echo "[4/4] Verifying test binary runs correctly..."
++OUTPUT=$("$BAZEL_BIN" --output_user_root="$TEST_DIR/bazel-output-root" run //:spack_test 2>/dev/null)
++if [[ "$OUTPUT" == *"SPACK_INCLUDE_DIRS support is working"* ]]; then
++    echo "Binary output: $OUTPUT"
++    echo "All tests passed!"
++    exit 0
++else
++    echo "Binary output unexpected: $OUTPUT"
++    exit 1
++fi
