@@ -152,7 +152,7 @@ class Icon(AutotoolsPackage):
         super().__init__(spec)
         self.single_args: list[str] = []
         self.flags: dict(str, list[str]) = defaultdict(list)
-        self.libs: LibraryList = LibraryList([])
+        self.config_libs: LibraryList = LibraryList([])
 
     def set_configure_args(self) -> None:
         self.single_args.append("--disable-rpaths")
@@ -182,13 +182,13 @@ class Icon(AutotoolsPackage):
 
         if self.spec.satisfies("+art"):
             self.single_args.append("--enable-art")
-            self.libs += self.spec["libxml2"].libs
+            self.config_libs += self.spec["libxml2"].libs
         else:
             self.single_args.append("--disable-art")
 
         if self.spec.satisfies("+coupling"):
             self.single_args.append("--enable-coupling")
-            self.libs += self.spec["libfyaml"].libs
+            self.config_libs += self.spec["libfyaml"].libs
         else:
             self.single_args.append("--disable-coupling")
 
@@ -202,18 +202,18 @@ class Icon(AutotoolsPackage):
                     "SB2PP={0}".format(self.spec["serialbox"].pp_ser),
                 ]
             )
-            self.libs += self.spec["serialbox:fortran"].libs
+            self.config_libs += self.spec["serialbox:fortran"].libs
 
         if self.spec.satisfies("+grib2"):
             self.single_args.append("--enable-grib2")
-            self.libs += self.spec["eccodes:c"].libs
+            self.config_libs += self.spec["eccodes:c"].libs
         else:
             self.single_args.append("--disable-grib2")
 
-        self.libs += self.spec["lapack:fortran"].libs
-        self.libs += self.spec["blas:fortran"].libs
-        self.libs += self.spec["netcdf-fortran"].libs
-        self.libs += self.spec["netcdf-c"].libs
+        self.config_libs += self.spec["lapack:fortran"].libs
+        self.config_libs += self.spec["blas:fortran"].libs
+        self.config_libs += self.spec["netcdf-fortran"].libs
+        self.config_libs += self.spec["netcdf-c"].libs
 
         if self.spec.satisfies("+mpi"):
             self.single_args.extend(
@@ -239,7 +239,7 @@ class Icon(AutotoolsPackage):
                 "-arch=sm_{0}".format(self.nvidia_targets[gpu]),
                 "-ccbin={0}".format(spack_cxx),
             ]
-            self.libs += self.spec["cuda"].libs
+            self.config_libs += self.spec["cuda"].libs
         else:
             self.single_args.append("--disable-gpu")
 
