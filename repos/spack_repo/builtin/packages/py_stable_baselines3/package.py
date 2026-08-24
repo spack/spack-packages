@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PyStableBaselines3(PythonPackage):
-    """Pytorch version of Stable Baselines, implementations of reinforcement learning algorithms."""
+    """PyTorch version of Stable Baselines, implementations of reinforcement
+    learning algorithms."""
 
     homepage = "https://github.com/DLR-RM/stable-baselines3"
     pypi = "stable_baselines3/stable_baselines3-2.9.0.tar.gz"
