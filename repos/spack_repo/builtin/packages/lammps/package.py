@@ -620,7 +620,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             self.define_from_variant("BUILD_TOOLS", "tools"),
             self.define("ENABLE_TESTING", self.run_tests),
             self.define("DOWNLOAD_POTENTIALS", False),
-            self.define_from_variant("PKG_GPU", "gpu")
+            self.define_from_variant("PKG_GPU", "gpu"),
         ]
 
         if spec.satisfies("+gpu"):
