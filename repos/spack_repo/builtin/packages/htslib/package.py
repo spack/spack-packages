@@ -17,6 +17,7 @@ class Htslib(AutotoolsPackage):
 
     license("MIT AND BSD-3-Clause-Modification")
 
+    version("1.24", sha256="28a8de191381c7a97a35675ceac76fa1ea95e7b678d6a2e9d600a7874e4077de")
     version("1.23.1", sha256="f8a3f36effeec38f043c53ab1f2d9ed45064f14205c5ef8e3c815763b90803c4")
     version("1.22.1", sha256="3dfa6eeb71db719907fe3ef7c72cb2ec9965b20b58036547c858c89b58c342f7")
     version("1.21", sha256="84b510e735f4963641f26fd88c8abdee81ff4cb62168310ae716636aac0f1823")
