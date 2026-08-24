@@ -35,7 +35,7 @@ class RBackports(RPackage):
 
     depends_on("r@3.0.0:", type=("build", "run"))
 
-    # Versions <= 1.5.0 call the removed-from-public-API findVar() in
-    # dotsElt.c/dotsLength.c/dotsNames.c, which r@4.6.0 gated behind
-    # ENABLE_LEGACY_NONAPI_FUNS. 1.5.1 switched to the new R_Dots* API.
-    conflicts("r@4.6:", when="@:1.5.0")
+#    # Versions <= 1.5.0 call the removed-from-public-API findVar() in
+#    # dotsElt.c/dotsLength.c/dotsNames.c, which r@4.6.0 gated behind
+#    # ENABLE_LEGACY_NONAPI. 1.5.1 switched to the new R_Dots* API.
+#    conflicts("r@4.6:", when="@:1.5.0")
