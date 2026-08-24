@@ -64,7 +64,7 @@ class PyAstropy(PythonPackage):
     depends_on("py-astropy-iers-data@0.2025.4.28.0.37.27:", when="@7.1.0:", type=("build", "run"))
     depends_on("py-astropy-iers-data", when="@6:", type=("build", "run"))
     depends_on("py-numpy@1.24:", when="@7.2.0:", type=("build", "run"))
-    depends_on("py-numpy@1.23.2:", when="@7.0.1:", type=("build", "run"))
+    depends_on("py-numpy@1.23.2:2.3", when="@7.0.1:", type=("build", "run"))
     depends_on("py-numpy@1.23:", when="@6.1:", type=("build", "run"))
     depends_on("py-numpy@1.18:", when="@5.1:", type=("build", "run"))
     depends_on("py-numpy@1.16:", when="@4.0:", type=("build", "run"))
