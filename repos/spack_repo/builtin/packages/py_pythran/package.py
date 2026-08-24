@@ -42,7 +42,13 @@ class PyPythran(PythonPackage):
 
     depends_on("cxx", type="build")
 
+    # https://github.com/serge-sans-paille/pythran/pull/2432
     depends_on("python@:3.14", when="@:0.18", type=("build", "run"))
+    # from distutils.errors import CompileError in run.py
+    depends_on("python@:3.11", when="@:0.15")
+    # https://github.com/serge-sans-paille/pythran/issues/2101
+    depends_on("python@:3.10", when="@:0.12.1")
+
     # https://github.com/serge-sans-paille/pythran/pull/2196
     depends_on("py-setuptools@62:", when="@0.15:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
@@ -85,10 +91,6 @@ class PyPythran(PythonPackage):
 
     # https://github.com/serge-sans-paille/pythran/issues/1937
     conflicts("%apple-clang@13:", when="@:0.10")
-    # https://github.com/serge-sans-paille/pythran/issues/2101
-    conflicts("^python@3.11:", when="@:0.12.1")
-    # from distutils.errors import CompileError in run.py
-    conflicts("^python@3.12:", when="@:0.15")
 
     def patch(self):
         # Compiler is used at run-time to determine name of OpenMP library to search for
