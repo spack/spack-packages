@@ -46,7 +46,7 @@ spack:
     libllvm:
       require: ["llvm"]
     visit:
-      require: ["@3.4.1:"]
+      require: ["@3.5:", "~gui"]
 
   concretizer:
     unify: when_possible
@@ -63,7 +63,6 @@ spack:
       - - visit
       - - ~gui %[virtuals=gl] glx
         - ~gui %[virtuals=gl] osmesa
-        - +gui %[virtuals=gl] glx # GUI Support w/ GLX Rendering
 
   - hdf5_specs:
     - hdf5
