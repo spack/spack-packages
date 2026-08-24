@@ -147,9 +147,13 @@ class Icon(AutotoolsPackage):
     for __x in nvidia_targets.keys():
         depends_on("cuda", when="gpu={0}".format(__x))
 
+    def __init__(self, spec: spack.spec.Spec) -> None:
+        super().__init__(spec)
+        self.single_args: list[str] = []
+        self.flags: dict(str, list[str]) = defaultdict(list)
+
     def set_configure_args(self) -> None:
-        self.flags: defaultdict[str, list[str]] = defaultdict(list)
-        self.single_args: list[str] = ["--disable-rpaths"]
+        self.single_args.append("--disable-rpaths")
         libs = LibraryList([])
 
         for x in [
@@ -309,18 +313,13 @@ class Icon(AutotoolsPackage):
 
         self.flags["LIBS"].append(libs.link_flags)
 
-    def extend_configure_args(self) -> None:
-        """Placeholder for subclasses extending self.args and self.flags"""
-        pass
-
     def configure_args(self) -> list[str]:
         # Populate self.single_args and self.flags
         self.set_configure_args()
-        self.extend_configure_args()
-        # Remove duplicates
-        self.single_args = list(set(self.single_args))
+        # Remove duplicates while keeping the original order
+        self.single_args = list(dict.fromkeys(self.single_args))
         for key, values in self.flags.items():
-            self.flags[key] = list(set(values))
+            self.flags[key] = list(dict.fromkeys(values))
         # Return final list
         return [
             *chain(
