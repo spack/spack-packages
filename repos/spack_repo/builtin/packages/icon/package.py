@@ -152,10 +152,10 @@ class Icon(AutotoolsPackage):
         super().__init__(spec)
         self.single_args: list[str] = []
         self.flags: dict(str, list[str]) = defaultdict(list)
+        self.libs: LibraryList = LibraryList([])
 
     def set_configure_args(self) -> None:
         self.single_args.append("--disable-rpaths")
-        libs = LibraryList([])
 
         for x in [
             "atmo",
@@ -182,13 +182,13 @@ class Icon(AutotoolsPackage):
 
         if self.spec.satisfies("+art"):
             self.single_args.append("--enable-art")
-            libs += self.spec["libxml2"].libs
+            self.libs += self.spec["libxml2"].libs
         else:
             self.single_args.append("--disable-art")
 
         if self.spec.satisfies("+coupling"):
             self.single_args.append("--enable-coupling")
-            libs += self.spec["libfyaml"].libs
+            self.libs += self.spec["libfyaml"].libs
         else:
             self.single_args.append("--disable-coupling")
 
@@ -202,18 +202,18 @@ class Icon(AutotoolsPackage):
                     "SB2PP={0}".format(self.spec["serialbox"].pp_ser),
                 ]
             )
-            libs += self.spec["serialbox:fortran"].libs
+            self.libs += self.spec["serialbox:fortran"].libs
 
         if self.spec.satisfies("+grib2"):
             self.single_args.append("--enable-grib2")
-            libs += self.spec["eccodes:c"].libs
+            self.libs += self.spec["eccodes:c"].libs
         else:
             self.single_args.append("--disable-grib2")
 
-        libs += self.spec["lapack:fortran"].libs
-        libs += self.spec["blas:fortran"].libs
-        libs += self.spec["netcdf-fortran"].libs
-        libs += self.spec["netcdf-c"].libs
+        self.libs += self.spec["lapack:fortran"].libs
+        self.libs += self.spec["blas:fortran"].libs
+        self.libs += self.spec["netcdf-fortran"].libs
+        self.libs += self.spec["netcdf-c"].libs
 
         if self.spec.satisfies("+mpi"):
             self.single_args.extend(
@@ -239,7 +239,7 @@ class Icon(AutotoolsPackage):
                 "-arch=sm_{0}".format(self.nvidia_targets[gpu]),
                 "-ccbin={0}".format(spack_cxx),
             ]
-            libs += self.spec["cuda"].libs
+            self.libs += self.spec["cuda"].libs
         else:
             self.single_args.append("--disable-gpu")
 
@@ -312,11 +312,10 @@ class Icon(AutotoolsPackage):
             self.flags["CFLAGS"].extend(["-g", "-O2"])
             self.flags["FCFLAGS"].extend(["-g", "-O2"])
 
-        self.flags["LIBS"].append(libs.link_flags)
-
     def configure_args(self) -> list[str]:
         # Populate self.single_args and self.flags
         self.set_configure_args()
+        self.flags["LIBS"].append(libs.link_flags)
         # Remove duplicates while keeping the original order
         self.single_args = list(dict.fromkeys(self.single_args))
         for key, values in self.flags.items():
