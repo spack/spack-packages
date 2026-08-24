@@ -620,7 +620,42 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             self.define_from_variant("BUILD_TOOLS", "tools"),
             self.define("ENABLE_TESTING", self.run_tests),
             self.define("DOWNLOAD_POTENTIALS", False),
+            self.define_from_variant("PKG_GPU", "gpu")
         ]
+
+        if spec.satisfies("+gpu"):
+            if spec.satisfies("+cuda"):
+                args.append(self.define("GPU_API", "cuda"))
+                args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
+                cuda_arch = spec.variants["cuda_arch"].value
+                if cuda_arch != "none":
+                    args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
+                args.append(self.define_from_variant("CUDA_MPS_SUPPORT", "cuda_mps"))
+            elif spec.satisfies("+opencl"):
+                # LAMMPS downloads and bundles its own OpenCL ICD Loader by default
+                args.append(self.define("USE_STATIC_OPENCL_LOADER", False))
+                args.append(self.define("GPU_API", "opencl"))
+                args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
+            elif spec.satisfies("+rocm"):
+                args.append(self.define("GPU_API", "hip"))
+                args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
+                args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
+                if spec.satisfies("@:20231121"):
+                    if spec.satisfies("^hip@:5.4"):
+                        args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
+                    elif spec.satisfies("^hip@5.5:"):
+                        args.append(self.define("HIP_PATH", spec["hip"].prefix))
+                else:
+                    args.append(self.define("HIP_PATH", spec["hip"].prefix))
+                if spec.satisfies("@:20260330"):
+                    args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
+                else:
+                    # HIP_ARCH deprecated, use GPU_ARCH instead
+                    args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
+                # HIP auto-detection can fail on machines without an attached GPU.
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+                args.append(self.define("HIP_USE_DEVICE_SORT", False))
+
         if spec.satisfies("+kokkos"):
             args.append(self.define("EXTERNAL_KOKKOS", True))
             if spec.satisfies("@20240207: +kokkos+kspace"):
@@ -713,43 +748,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         if spec.satisfies("+user-hdnnp") or spec.satisfies("+ml-hdnnp"):
             args.append(self.define("DOWNLOAD_N2P2", False))
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
-
-        if spec.satisfies("+cuda"):
-            args.append(self.define("PKG_GPU", True))
-            args.append(self.define("GPU_API", "cuda"))
-            args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-            args.append(self.define_from_variant("CUDA_MPS_SUPPORT", "cuda_mps"))
-            cuda_arch = spec.variants["cuda_arch"].value
-            if cuda_arch != "none":
-                args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
-        elif spec.satisfies("+opencl"):
-            # LAMMPS downloads and bundles its own OpenCL ICD Loader by default
-            args.append(self.define("USE_STATIC_OPENCL_LOADER", False))
-            args.append(self.define("PKG_GPU", True))
-            args.append(self.define("GPU_API", "opencl"))
-            args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-        elif spec.satisfies("+rocm"):
-            args.append(self.define("PKG_GPU", True))
-            args.append(self.define("GPU_API", "hip"))
-            args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-            args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
-            if spec.satisfies("@:20231121"):
-                if spec.satisfies("^hip@:5.4"):
-                    args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
-                elif spec.satisfies("^hip@5.5:"):
-                    args.append(self.define("HIP_PATH", spec["hip"].prefix))
-            else:
-                args.append(self.define("HIP_PATH", spec["hip"].prefix))
-            if spec.satisfies("@:20260330"):
-                args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
-            else:
-                # HIP_ARCH deprecated, use GPU_ARCH instead
-                args.append(self.define_from_variant("GPU_ARCH", "amdgpu_target"))
-            # HIP auto-detection can fail on machines without an attached GPU.
-            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
-            args.append(self.define("HIP_USE_DEVICE_SORT", False))
-        else:
-            args.append(self.define("PKG_GPU", False))
 
         return args
 
