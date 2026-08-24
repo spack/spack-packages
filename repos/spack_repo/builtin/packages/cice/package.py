@@ -36,7 +36,7 @@ class Cice(Package):
         default="src",
         description="Directory name where CICE is installed",
         values=str,
-        )
+    )
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
