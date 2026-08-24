@@ -316,10 +316,10 @@ class Icon(AutotoolsPackage):
         # Populate self.single_args and self.flags
         self.set_configure_args()
         self.flags["LIBS"].append(self.config_libs.link_flags)
-        # Remove duplicates while keeping the original order
-        self.single_args = list(dict.fromkeys(self.single_args))
+        # De-duplicate
+        self.single_args = list(dedupe(self.single_args))
         for key, values in self.flags.items():
-            self.flags[key] = list(dict.fromkeys(values))
+            self.flags[key] = list(dedupe(values))
         # Return final list
         return [
             *chain(
