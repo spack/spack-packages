@@ -148,6 +148,28 @@ class Icon(AutotoolsPackage):
     for __x in nvidia_targets.keys():
         depends_on("cuda", when="gpu={0}".format(__x))
 
+    EN_DIS_ABLE_FLAGS = (
+        "atmo",
+        "les",
+        "upatmo",
+        "ocean",
+        "jsbach",
+        "waves",
+        "aes",
+        "nwp",
+        "ecrad",
+        "rte-rrtmgp",
+        "openmp",
+        "mpi-gpu",
+        "parallel-netcdf",
+        "cdi-pio",
+        "yaxt",
+        "mixed-precision",
+        "single-precision",
+        "single-precision-ecrad",
+        "comin",
+    )
+
     def __init__(self, spec: Spec) -> None:
         super().__init__(spec)
         self.single_args: list[str] = []
@@ -157,27 +179,7 @@ class Icon(AutotoolsPackage):
     def set_configure_args(self) -> None:
         self.single_args.append("--disable-rpaths")
 
-        for x in [
-            "atmo",
-            "les",
-            "upatmo",
-            "ocean",
-            "jsbach",
-            "waves",
-            "aes",
-            "nwp",
-            "ecrad",
-            "rte-rrtmgp",
-            "openmp",
-            "mpi-gpu",
-            "parallel-netcdf",
-            "cdi-pio",
-            "yaxt",
-            "mixed-precision",
-            "single-precision",
-            "single-precision-ecrad",
-            "comin",
-        ]:
+        for x in self.EN_DIS_ABLE_FLAGS:
             self.single_args.extend(self.enable_or_disable(x))
 
         if self.spec.satisfies("+art"):
