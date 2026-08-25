@@ -72,31 +72,27 @@ class Coinhsl(meson.MesonPackage, autotools.AutotoolsPackage):
 
     # Autotools builds
     version(
-        "2019.05.21",
-        sha256="95ce1160f0b013151a3e25d40337775c760a8f3a79d801a1d190598bf4e4c0c3"
+        "2019.05.21", sha256="95ce1160f0b013151a3e25d40337775c760a8f3a79d801a1d190598bf4e4c0c3"
     )
     version(
-        "2015.06.23",
-        sha256="3e955a2072f669b8f357ae746531b37aea921552e415dc219a5dd13577575fb3"
+        "2015.06.23", sha256="3e955a2072f669b8f357ae746531b37aea921552e415dc219a5dd13577575fb3"
     )
     version(
-        "2014.01.17",
-        sha256="ed49fea62692c5d2f928d4007988930da9ff9a2e944e4c559d028671d122437b"
+        "2014.01.17", sha256="ed49fea62692c5d2f928d4007988930da9ff9a2e944e4c559d028671d122437b"
     )
     version(
-        "2014.01.10",
-        sha256="7c2be60a3913b406904c66ee83acdbd0709f229b652c4e39ee5d0876f6b2e907"
+        "2014.01.10", sha256="7c2be60a3913b406904c66ee83acdbd0709f229b652c4e39ee5d0876f6b2e907"
     )
 
     with when("build_system=autotools"):
         parallel = False
-        variant("blas", default=False,
-                description="Link to external BLAS library")
+        variant("blas", default=False, description="Link to external BLAS library")
         depends_on("blas", when="+blas")
 
 
 class MesonBuilder(meson.MesonBuilder):
     """Builder class to hold functions specific to meson"""
+
     def meson_args(self) -> list[str]:
         """Add arguments for calling meson setup"""
         spec = self.spec
@@ -108,17 +104,13 @@ class MesonBuilder(meson.MesonBuilder):
 
         # Configure blas
         blas: str = spec["blas"].libs.names[0]
-        blas_paths: list[str] = [
-            sf[2:] for sf in spec["blas"].libs.search_flags.split()
-        ]
+        blas_paths: list[str] = [sf[2:] for sf in spec["blas"].libs.search_flags.split()]
         args.append(f"-Dlibblas={blas}")
         args.extend([f"-Dlibblas_path={p}" for p in blas_paths])
 
         # Configure lapack
         lapack: str = spec["lapack"].libs.names[0]
-        lapack_paths: list[str] = [
-            sf[2:] for sf in spec["lapack"].libs.search_flags.split()
-        ]
+        lapack_paths: list[str] = [sf[2:] for sf in spec["lapack"].libs.search_flags.split()]
         args.append(f"-Dliblapack={lapack}")
         args.extend([f"-Dliblapack_path={p}" for p in lapack_paths])
 
@@ -140,6 +132,7 @@ class MesonBuilder(meson.MesonBuilder):
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     """Builder class to hold functions specific to autotools"""
+
     def configure_args(self) -> list[str]:
         """Add arguments for the calling configure"""
         spec = self.spec
