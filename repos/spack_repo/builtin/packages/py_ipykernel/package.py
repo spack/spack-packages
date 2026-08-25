@@ -77,9 +77,9 @@ class PyIpykernel(PythonPackage):
         depends_on("py-jupyter-core@5.1:5", when="@7.2:")
         depends_on("py-jupyter-core@4.12:", when="@6.22:")
 
+        depends_on("py-nest-asyncio2@1.7:", when="@7.3:")
         depends_on("py-nest-asyncio@1.4:", when="@6.30:7.2")
         depends_on("py-nest-asyncio", when="@6.6.1:7.2")
-        depends_on("py-nest-asyncio2@1.7:", when="@7.3:")
 
         depends_on("py-tornado@6.4.1:", when="@7.2:")
         depends_on("py-tornado@6.2:", when="@6.30:")
