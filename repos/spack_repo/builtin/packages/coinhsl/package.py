@@ -4,8 +4,9 @@
 
 import os
 
-from spack.package import *
 from spack_repo.builtin.build_systems import autotools, meson
+
+from spack.package import *
 
 
 class Coinhsl(meson.MesonPackage, autotools.AutotoolsPackage):
