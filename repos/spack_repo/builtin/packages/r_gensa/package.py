@@ -26,9 +26,8 @@ class RGensa(RPackage):
     depends_on("r@2.12.0:", type=("build", "run"))
     # Rf_allocLang() was only added in r@4.4.1.
     depends_on("r@4.4.1:", type=("build", "run"), when="@1.1.15:")
-
     # Versions <= 1.1.14 use SET_TYPEOF, which was removed from Rinternals.h in r@4.6.0
-    conflicts("r@4.6:", when="@:1.1.14")
+    depends_on("r@4.6:", type=("build", "run"), when="@1.1.15:")
 
     def patch(self):
         if self.spec.satisfies("@:1.1.8 ^r@4.4.0:"):
