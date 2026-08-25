@@ -29,9 +29,6 @@ class Nnpack(CMakePackage):
     generator("ninja")
     depends_on("cmake@2.8.12:", type="build")
     depends_on("python", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-wheel", type="build")
-    depends_on("py-pip", type="build")
 
     resource(
         name="six",
@@ -39,13 +36,6 @@ class Nnpack(CMakePackage):
         sha256="70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9",
         destination="deps",
         placement="six",
-    )
-    resource(
-        name="opcodes",
-        url="https://files.pythonhosted.org/packages/source/o/opcodes/opcodes-0.3.13.tar.gz",
-        sha256="1859c23143fe20daa4110be87a947cbf3eefa048da71dde642290213f251590c",
-        destination="deps",
-        placement="opcodes",
     )
     resource(
         name="peachpy",
@@ -98,28 +88,6 @@ class Nnpack(CMakePackage):
         placement="googletest",
     )
 
-    @run_before("cmake")
-    def generate_peachpy(self):
-        deps_dir = join_path(self.stage.source_path, "deps")
-        pythonpath = ":".join(
-            [
-                join_path(deps_dir, "six"),
-                join_path(deps_dir, "opcodes"),
-            ]
-        )
-
-        old_pythonpath = os.environ.get("PYTHONPATH")
-        os.environ["PYTHONPATH"] = (
-            f"{pythonpath}:{old_pythonpath}" if old_pythonpath else pythonpath
-        )
-        try:
-            with working_dir(join_path(deps_dir, "peachpy")):
-                python("setup.py", "generate")
-        finally:
-            if old_pythonpath is None:
-                del os.environ["PYTHONPATH"]
-            else:
-                os.environ["PYTHONPATH"] = old_pythonpath
 
     def cmake_args(self):
         return [
@@ -140,9 +108,5 @@ class Nnpack(CMakePackage):
                 "GOOGLETEST_SOURCE_DIR", join_path(self.stage.source_path, "deps", "googletest")
             ),
             self.define("NNPACK_BUILD_TESTS", self.run_tests),
-            self.define("NNPACK_BUILD_BENCHMARKS", False),
             self.define("NNPACK_LIBRARY_TYPE", "static"),
-            self.define(
-                "PYTHON_OPCODES_SOURCE_DIR", join_path(self.stage.source_path, "deps", "opcodes")
-            ),
         ]
