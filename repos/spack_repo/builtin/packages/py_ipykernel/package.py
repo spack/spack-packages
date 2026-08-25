@@ -67,6 +67,7 @@ class PyIpykernel(PythonPackage):
         depends_on("py-traitlets@4.1.0:")
         depends_on("py-traitlets@:5", when="@:6.10")
 
+        depends_on("py-jupyter-client@8.9:", when="@7.3:")
         depends_on("py-jupyter-client@8.8:", when="@7.2:")
         depends_on("py-jupyter-client@8:", when="@6.30:")
         depends_on("py-jupyter-client@6.1.12:", when="@6.11:")
