@@ -2,22 +2,19 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
-import re
-
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Abacus(MakefilePackage):
+class Abacus(CMakePackage):
     """ABACUS (Atomic-orbital Based Ab-initio Computation at UStc)
     is an open-source computer code package aiming
     for large-scale electronic-structure simulations
     from first principles"""
 
     homepage = "http://abacus.ustc.edu.cn/"
-    url = "https://github.com/abacusmodeling/abacus-develop/archive/refs/tags/v2.2.1.tar.gz"
+    url = "https://github.com/abacusmodeling/abacus-develop/archive/refs/tags/v3.9.0.19.tar.gz"
     git = "https://github.com/abacusmodeling/abacus-develop.git"
 
     maintainers("bitllion")
@@ -25,78 +22,32 @@ class Abacus(MakefilePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
-    version("2.2.3", sha256="88dbf6a3bdd907df3e097637ec8e51fde13e2f5e0b44f3667443195481320edf")
-    version("2.2.2", sha256="4a7cf2ec6e43dd5c53d5f877a941367074f4714d93c1977a719782957916169e")
-    version("2.2.1", sha256="14feca1d8d1ce025d3f263b85ebfbebc1a1efff704b6490e95b07603c55c1d63")
-    version("2.2.0", sha256="09d4a2508d903121d29813a85791eeb3a905acbe1c5664b8a88903f8eda64b8f")
+    version("3.10.1", sha256="06873eba8a4e0bc085177a6580455b28e4b62ea8a18f8afe71a02105756d91a0")
+    version("3.9.0.19", sha256="c985af3d8ac6edb5767b7a094ac2fd2e0ea70b46cf353cd5a4b60096b289939d")
 
     variant("openmp", default=True, description="Enable OpenMP support")
+    variant("lcao", default=True, description="Enable LCAO algorithm")
+    variant("elpa", default=True, description="Enable ELPA support")
+    variant("libxc", default=True, description="Enable LibXC support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
-    depends_on("elpa+openmp", when="+openmp")
-    depends_on("elpa~openmp", when="~openmp")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
+    depends_on("mpi")
     depends_on("cereal")
-    depends_on("libxc")
-    depends_on("fftw")
-    # MPI is a necessary dependency
-    depends_on("mpi", type=("build", "link", "run"))
-    depends_on("mkl")
+    depends_on("fftw+openmp", when="+openmp")
+    depends_on("fftw~openmp", when="~openmp")
+    depends_on("elpa", when="+elpa")
+    depends_on("libxc", when="+libxc")
+    depends_on("openblas")
 
-    build_directory = "source"
-
-    def edit(self, spec, prefix):
-        if spec.satisfies("+openmp"):
-            inc_var = "_openmp-"
-            system_var = "ELPA_LIB = -L${ELPA_LIB_DIR} -lelpa_openmp -Wl, -rpath=${ELPA_LIB_DIR}"
-        else:
-            inc_var = "-"
-            system_var = "ELPA_LIB = -L${ELPA_LIB_DIR} -lelpa -Wl,-rpath=${ELPA_LIB_DIR}"
-
-        tempInc = """
-FORTRAN = ifort
-CPLUSPLUS = icpc
-CPLUSPLUS_MPI = mpiicpc
-LAPACK_DIR = $(MKLROOT)
-FFTW_DIR = %s
-ELPA_DIR = %s
-ELPA_INCLUDE = -I${ELPA_DIR}/include/elpa%s%s
-CEREAL_DIR = %s
-OBJ_DIR = obj
-OBJ_DIR_serial = obj
-NP      = 14
-""" % (
-            spec["fftw"].prefix,
-            spec["elpa"].prefix,
-            inc_var,
-            spec["elpa"].version,
-            spec["cereal"].prefix,
-        )
-
-        with open(join_path(self.build_directory, "Makefile.vars"), "w") as f:
-            f.write(tempInc)
-
-        lineList = []
-        Pattern1 = re.compile("^ELPA_INCLUDE_DIR")
-        Pattern2 = re.compile("^ELPA_LIB\\s*= ")
-        with open(join_path(self.build_directory, "Makefile.system"), "r") as f:
-            while True:
-                line = f.readline()
-                if not line:
-                    break
-                elif Pattern1.search(line):
-                    pass
-                elif Pattern2.search(line):
-                    pass
-                else:
-                    lineList.append(line)
-        with open(join_path(self.build_directory, "Makefile.system"), "w") as f:
-            for i in lineList:
-                f.write(i)
-
-        with open(join_path(self.build_directory, "Makefile.system"), "a") as f:
-            f.write(system_var)
-
-    def install(self, spec, prefix):
-        install_tree("bin", prefix.bin)
+    def cmake_args(self):
+        args = [
+            self.define("ENABLE_MPI", True),
+            self.define("GIT_SUBMODULE", False),
+            self.define_from_variant("USE_OPENMP", "openmp"),
+            self.define_from_variant("ENABLE_LCAO", "lcao"),
+            self.define_from_variant("USE_ELPA", "elpa"),
+            self.define_from_variant("ENABLE_LIBXC", "libxc"),
+        ]
+        return args
