@@ -66,7 +66,9 @@ class BigdftFutile(AutotoolsPackage, CudaPackage):
         linalg = [spec["blas"].libs.ld_flags, spec["lapack"].libs.ld_flags]
 
         python_version = spec["python"].version.up_to(2)
-        pyyaml = join_path(spec["py-pyyaml"].prefix.lib, f"python{python_version}")
+        pyyaml = join_path(
+            spec["py-pyyaml"].prefix.lib, f"python{python_version}", "site-packages"
+        )
 
         openmp_flag = []
         if spec.satisfies("+openmp"):
@@ -101,6 +103,14 @@ class BigdftFutile(AutotoolsPackage, CudaPackage):
             args.append(f"--with-ocl-path={spec['cuda'].prefix}")
             args.append("--enable-cuda-gpu")
             args.append(f"--with-cuda-path={spec['cuda'].prefix}")
+
+            cuda_arch = [x for x in spec.variants["cuda_arch"].value if x and x != "none"]
+            if cuda_arch:
+                args.append(
+                    "NVCC_FLAGS={0} --compiler-options {1}".format(
+                        " ".join(self.cuda_flags(cuda_arch)), self.compiler.cxx_pic_flag
+                    )
+                )
 
         return args
 

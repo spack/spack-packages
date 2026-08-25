@@ -28,6 +28,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.2.1", sha256="3f754c99aa6130b1dd6520d904db7b2fd44ed618cd91e0dfd921956f23f6812d")
+    version("5.2.0", sha256="54993e0682d80b78939bbf260490f8cf31428bb883c0309961369997f15d94df")
     version("5.1.1", sha256="8bdbee0f0ac383436743ad8a9e3e928705b34b31a25a92dc5179c52a3aa98519")
     version("5.1.0", sha256="7bdbdfc88033ed7d940c7940ed8919e1f2b78a9656c69276beb76ad45c41ec4e")
     version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
@@ -264,7 +266,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": ("navi1030", None),
         "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
+        "gfx1151": ("amd_gfx1151", "@5.2.0:"),
+        "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
@@ -316,6 +321,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are not compatible in Kokkos.")
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
+    depends_on("llvm-openmp", when="+openmp %apple-clang")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -331,7 +337,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos-nvcc-wrapper@develop", when="@develop+wrapper")
     conflicts("+wrapper", when="~cuda")
     conflicts("+wrapper", when="+cmake_lang")
-    requires("%clang", "%cce", "+cmake_lang", policy="any_of", when="~wrapper+cuda")
 
     # TODO new major: update c++ std
     with default_args(multi=False, description="C++ standard"):
@@ -351,6 +356,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
+    requires("@5.2: ^cuda@13.3:", when="+cuda cxxstd=23")
 
     # Expose a way to disable CudaMallocAsync that can cause problems
     # with some MPI such as cray-mpich
@@ -393,9 +399,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # Filter spack-generated files that may include links to the
     # spack compiler wrappers
     filter_compiler_wrappers("kokkos_launch_compiler", relative_root="bin")
-    filter_compiler_wrappers(
-        "KokkosConfigCommon.cmake", relative_root=os.path.join("lib64", "cmake", "Kokkos")
-    )
+    for libdir in ("lib", "lib64"):
+        filter_compiler_wrappers(
+            "KokkosConfigCommon.cmake",
+            relative_root=os.path.join(libdir, "cmake", "Kokkos"),
+        )
 
     # sanity check
     sanity_check_is_file = [

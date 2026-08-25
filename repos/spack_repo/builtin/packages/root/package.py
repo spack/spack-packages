@@ -162,6 +162,13 @@ class Root(CMakePackage):
         when="@6.38.0 +python",
     )
 
+    # Fix CMake bug that becomes an error in newer versions
+    patch(
+        "https://github.com/root-project/root/pull/22790.diff?full_index=1",
+        sha256="8f95c3d0532be4880dbe4e74b0180ecaed410c59ed915067c4f585aba270029c",
+        when="@6.40.02 ^cmake@4.4:",
+    )
+
     if _is_macos:
         # Fix macOS build when cocoa is disabled:
         patch(
@@ -462,13 +469,6 @@ class Root(CMakePackage):
         "~builtin_llvm",
         when="@:6.35",
         msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
-    )
-    # In order to avoid adding newer versions with incorrect LLVM versions,
-    # newer versions are explicitly added as conflicts as well.
-    conflicts(
-        "~builtin_llvm",
-        when="@6.39:",
-        msg="External LLVM support for ROOT 6.39+ has not been validated",
     )
 
     # GCC 15 support was added in 6.34.04

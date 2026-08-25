@@ -110,6 +110,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
     depends_on("freetype", when="+ft")
     depends_on("libpng", when="+png")
     depends_on("glib")
+    depends_on("pixman@0.30.0:")
     depends_on("pixman@0.36.0:", when="@1.17.2:")
     depends_on("fontconfig@2.10.91:", when="+fc")
 
@@ -145,6 +146,12 @@ class Cairo(AutotoolsPackage, MesonPackage):
     # Don't regenerate docs to avoid a dependency on gtk-doc
     patch("disable-gtk-docs.patch", when="build_system=autotools")
 
+    def flag_handler(self, name, flags):
+        # gcc@15: defaults to -std=gnu23, causing errors with "typedef int bool;"
+        if name == "cflags" and self.spec.satisfies("build_system=autotools %gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
 
 class MesonBuilder(meson.MesonBuilder):
     def enable_or_disable(self, feature_name, variant=None):
@@ -171,6 +178,9 @@ class MesonBuilder(meson.MesonBuilder):
             self.enable_or_disable("glib", variant="gobject"),
             "-Dspectre=disabled",
             "-Dsymbol-lookup=disabled",
+            # test/ and perf/ are never installed, and perf/meson.build probes for a
+            # system gtk+-2.0 regardless of -Dgtk2-utils, which fails to link when ~X
+            "-Dtests=disabled",
         ]
         return args
 
