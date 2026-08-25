@@ -13,6 +13,7 @@ spack:
   - "boost"
   - "paraview@:5.13.1+mpi+qt"
   - "py-numpy ^netlib-lapack"
+  - gdal
 
   cdash:
     build-group: Windows Visualization (Kitware)
