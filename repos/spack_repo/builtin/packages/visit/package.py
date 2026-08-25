@@ -119,6 +119,16 @@ class Visit(CMakePackage):
         when="@3.4 +adios2",
     )
 
+    # plots/Volume/CMakeLists.txt unconditionally references the VVolumePlot
+    # target in vtk_module_autoinit, but that target is only created when the
+    # viewer/GUI components are built. This breaks ~gui (engine-only) builds.
+    patch("vtk_module_autoinit_volume_engine_only.patch", when="@3.5:")
+
+    # The OpenPMD reader passes a "fields" argument to H5Oget_info_by_name,
+    # but H5_USE_18_API (forced by PMDParticle.h) maps that call to the
+    # 4-argument H5Oget_info_by_name1, which doesn't accept it.
+    patch("openpmd_h5oget_info_by_name_18api.patch", when="@3.5: +hdf5")
+
     conflicts(
         "+gui", when="^[virtuals=gl] osmesa", msg="GUI cannot be activated with OSMesa front-end"
     )
@@ -156,9 +166,12 @@ class Visit(CMakePackage):
     depends_on("gl")
 
     # VisIt doesn't work with later versions of qt.
-    depends_on("qt+gui+opengl", when="+gui")
+    depends_on("qt+gui+opengl", when="+gui @:3.4")
     depends_on("qt@5:5.14", when="+gui @:3.4")
-    depends_on("qt-base@6:", when="@3.5: +gui")
+    # FindVisItQt.cmake requires Svg and UiTools, which Qt6 splits out of qt-base.
+    depends_on("qt-base@6: +gui+opengl+network", when="@3.5: +gui")
+    depends_on("qt-svg", when="@3.5: +gui")
+    depends_on("qt-tools", when="@3.5: +gui")
     depends_on("qwt+opengl", when="+gui")
 
     # python@3.8 doesn't work with older VisIt.
@@ -302,14 +315,15 @@ class Visit(CMakePackage):
             )
 
         if "+gui" in spec:
-            qt_bin = spec["qt"].prefix.bin
+            qt_name = "qt-base" if spec.satisfies("@3.5:") else "qt"
+            qt_bin = spec[qt_name].prefix.bin
             qmake_exe = os.path.join(qt_bin, "qmake")
             args.extend(
                 [
                     self.define("VISIT_SERVER_COMPONENTS_ONLY", False),
                     self.define("VISIT_ENGINE_ONLY", False),
                     self.define("VISIT_LOC_QMAKE_EXE", qmake_exe),
-                    self.define("VISIT_QT_DIR", spec["qt"].prefix),
+                    self.define("VISIT_QT_DIR", spec[qt_name].prefix),
                     self.define("VISIT_QWT_DIR", spec["qwt"].prefix),
                 ]
             )
