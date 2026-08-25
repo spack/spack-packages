@@ -627,6 +627,20 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             if spec.satisfies("+cuda"):
                 args.append(self.define("PKG_GPU", True))
                 args.append(self.define("GPU_API", "cuda"))
+                # The GPU package (cmake/Modules/Packages/GPU.cmake) uses
+                # the classic find_package(CUDA) module (FindCUDA,
+                # deprecated), which reads CUDA_HOST_COMPILER -- a
+                # different variable from CMAKE_CUDA_HOST_COMPILER, the one
+                # set by the modern enable_language(CUDA) path used for the
+                # rest of the build. Because nothing in this recipe sets
+                # CUDA_HOST_COMPILER, FindCUDA falls back to its own
+                # detection instead of the compiler Spack actually selected
+                # for the spec, and any attempt to steer the CUDA host
+                # compiler via CMAKE_CUDA_HOST_COMPILER (e.g. to work
+                # around a CUDA/GCC version incompatibility) silently has
+                # no effect. Set it explicitly so the legacy module stays
+                # consistent with the rest of the build.
+                args.append(self.define("CUDA_HOST_COMPILER", self.compiler.cxx))
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
                 cuda_arch = spec.variants["cuda_arch"].value
                 if cuda_arch != "none":
