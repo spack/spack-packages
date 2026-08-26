@@ -21,6 +21,7 @@ from typing import Dict, List
 
 import spack.repo
 import spack.spec
+from spack.util import tty
 from spack.version import StandardVersion
 
 
@@ -62,6 +63,10 @@ def main(sha256_file: str) -> None:
     # limit to a maximum of 100 specs at a time due to GitHub
     # runner disk space limitations. Skipped specs will be
     # retried on the next scheduled job.
+    specs_to_output_num = len(specs_to_output)
+    if specs_to_output_num > 100:
+        tty.warn(f"Limiting to first 100 missing specs. Detected {specs_to_output_num} missing.")
+
     for spec in specs_to_output[:100]:
         print(spec)
 
