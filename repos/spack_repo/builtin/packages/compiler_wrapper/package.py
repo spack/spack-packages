@@ -1,12 +1,14 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
 import pathlib
 import shutil
 import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
+import spack.builder
 from spack.package import *
 
 
@@ -40,6 +42,13 @@ class CompilerWrapper(Package):
     if sys.platform != "win32":
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
+        # Prototype: pulls in --build-id/-Wl,--build-id injection ahead of an official release.
+        version(
+            "1.1.0-build-id",
+            git="https://github.com/SebastianPaucar/compiler-wrapper.git",
+            commit="59c5d3ebbe3098499805209bf0000ea4ad19d3ce",
+        )
+
     else:
         version("1.0")
         has_code = False
@@ -228,6 +237,23 @@ class CompilerWrapper(Package):
         if extra_rpaths:
             extra_rpaths = dedupe(extra_rpaths)
             env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
+
+        # Set SPACK_PREFIX_MAP and SPACK_BUILD_PREFIX_MAP, so
+        # the source tree and and the out-of-source build directory
+        # are remapped to . and ./build respectively
+        staging_src = dependent_spec.package.stage.source_path
+        env.set("SPACK_PREFIX_MAP", staging_src)
+
+        try:
+            builder = spack.builder.create(dependent_spec.package)
+            build_dir = getattr(builder, "build_directory", None)
+        except Exception:
+            build_dir = None
+
+        if build_dir and os.path.isabs(build_dir):
+            env.set("SPACK_BUILD_PREFIX_MAP", build_dir)
+        else:
+            env.set("SPACK_BUILD_PREFIX_MAP", staging_src)
 
         env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)
         env.set("SPACK_DISABLE_NEW_DTAGS", self.disable_new_dtags)
