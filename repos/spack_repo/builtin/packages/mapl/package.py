@@ -1,15 +1,10 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import subprocess
 
-from package_base import on_package_attributes
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-
 from spack.package import *
-
-from spec import Spec
 
 
 class Mapl(CMakePackage):
