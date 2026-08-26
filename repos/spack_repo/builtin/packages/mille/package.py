@@ -16,6 +16,7 @@ class Mille(CMakePackage):
     git = "https://gitlab.desy.de/millepede/mille.git"
 
     license("LGPL-2.0-only", checked_by="paulgessinger")
+    
     version("main", branch="main")
     version("01-01-01", sha256="cd96069d42ab1afd799e1eecd82c0a98e9dd2d0f42a0f86942dead1664381f3d")
     version("01-01-00", sha256="57eb5ec11fc9506038151d2a4abcf0d891d05a3f7de526cdb99bf51461cd324b")
