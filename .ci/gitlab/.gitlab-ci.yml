@@ -59,6 +59,7 @@ default:
 ########################################
 .base-job:
   variables:
+    SPACK_CI_BUILDCACHE_VIEW: "append"
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
     SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
     SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
