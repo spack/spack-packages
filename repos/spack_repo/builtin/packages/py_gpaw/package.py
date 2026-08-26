@@ -31,12 +31,16 @@ class PyGpaw(PythonPackage, CudaPackage):
     variant("scalapack", default=True, description="Build with ScaLAPACK support")
     variant("fftw", default=True, description="Build with FFTW support")
     variant("libvdwxc", default=True, description="Build with libvdwxc support")
-    variant("elpa", default=True, description="Build with ELPA support")
+    variant("elpa", default=False, description="Build with ELPA support")
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("cuda", default=False, when="@23.6:", description="Build with CUDA GPU support")
 
     # Build dependencies
-    depends_on("c", type="build")
+    with when("@:25.7.0"):
+        depends_on("c", type="build")
+    with when("@26.7.0:"):
+        # C++ is the default build type as of 26.7.0 (C build is legacy);
+        depends_on("cxx", type="build")
     depends_on("py-setuptools", type="build")
 
     # Version-agnostic required dependencies
@@ -48,7 +52,6 @@ class PyGpaw(PythonPackage, CudaPackage):
         depends_on("libxc")
         # C++ is the default build type as of 26.7.0 (C build is legacy);
         # the C++ path also pulls in pybind11 headers.
-        depends_on("cxx", type="build")
         depends_on("py-setuptools@77.0.3:", type="build")
         depends_on("py-pybind11@2.6.2:", type="build")
         depends_on("python@3.10:", type=("build", "run"))
