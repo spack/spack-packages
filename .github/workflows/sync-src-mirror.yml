@@ -1,0 +1,92 @@
+name: sync-src-mirror
+
+# Nightly backfill of the source mirror: finds package versions missing from
+# the mirror (e.g. because update-src-mirror failed or a fetch was flaky) and
+# mirrors them.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # nightly at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # Required for AWS OIDC authentication
+  contents: read
+
+jobs:
+  sync-mirror:
+    if: github.repository == 'spack/spack-packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Checkout Spack
+        uses: ./.github/actions/checkout-spack
+        with:
+          fetch-depth: 1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c  # v6.2.3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Get digests already in the mirror
+        run: |
+          # Tarballs are content addressed as _source-cache/archive/<xx>/<sha256>.<ext>.
+          # Thus a single recursive listing of the archive/ prefix is a complete list
+          # of mirrored versions, patches, and package resources. Use awk and sed to strip
+          # out the shas from the filenames and save the shas to a file for later use.
+          aws s3 ls --recursive "s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/archive/" \
+            | awk '{print $4}' \
+            | sed -e 's|.*/||' -e 's|\..*||' \
+            | sort -u > mirrored-shas.txt
+          echo "$(wc -l < mirrored-shas.txt) shas in the mirror"
+
+      - name: Find shas in repository missing from mirror
+        id: find-missing
+        run: |
+          source spack-core/share/spack/setup-env.sh
+
+          spack python .github/workflows/bin/find-missing-mirror-specs.py \
+            mirrored-shas.txt > missing-specs.txt
+
+          if [ ! -s missing-specs.txt ]; then
+            echo "Mirror is up to date"
+            echo "missing=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          echo "$(wc -l < missing-specs.txt) versions missing from the mirror:"
+          cat missing-specs.txt
+          echo "missing=true" >> $GITHUB_OUTPUT
+
+      - name: Create source mirror
+        id: create-mirror
+        if: steps.find-missing.outputs.missing == 'true'
+        run: |
+          source spack-core/share/spack/setup-env.sh
+
+          # Tolerate individual fetch failures (dead upstream URLs etc.) and
+          # upload whatever was mirrored successfully; anything that failed
+          # will simply be retried on the next nightly run.
+          spack -c concretizer:unify:false -c config:deprecated:true \
+            mirror create -d src-mirror --jobs 8 --file missing-specs.txt \
+            || echo "Some sources failed to fetch; uploading the rest"
+
+          if [ -d src-mirror/_source-cache ]; then
+            echo "upload=true" >> $GITHUB_OUTPUT
+          else
+            echo "Nothing was mirrored"
+            echo "upload=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload to S3
+        if: steps.create-mirror.outputs.upload == 'true'
+        run: |
+          aws s3 cp src-mirror/_source-cache s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/ \
+            --no-overwrite \
+            --recursive \
+            --no-progress
+          echo "Successfully uploaded source mirror to S3"
