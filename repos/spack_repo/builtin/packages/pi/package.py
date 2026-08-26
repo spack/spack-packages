@@ -13,7 +13,7 @@ class Pi(Package):
     """
 
     homepage = "https://pi.dev"
-    url = "https://github.com/earendil-works/pi/archive/refs/tags/v0.79.2.tar.gz"
+    url = "https://github.com/earendil-works/pi/releases/download/v0.84.3/pi-0.84.3-source.tar.gz"
     supplier = "earendil"
 
     maintainers("alecbcs")
@@ -22,11 +22,8 @@ class Pi(Package):
 
     sanity_check_is_file = ["bin/pi"]
 
-    version("0.84.2", sha256="65077457f18f9d3b0bc642870c5c19f41e38378e7f0ba4c3dd0962989e7d0036")
-    version("0.83.0", sha256="2d59693804fc4456f075ec71947d9e5d392500e1b744cf5b17f79a4c91ea728c")
-    version("0.80.6", sha256="1448c29f6803db7e8c06dfa18d1d78ebbb9bb7991768fa142a47513966c49165")
-    version("0.80.3", sha256="585ff67a0d63d693dd71415f1dee50c04e4e70f2a1d2a23679805d9d8b5a9250")
-    version("0.79.6", sha256="60d255bd9465a7e5ef461ab6ac8529a9d7ad837dca0fafd50af18f1824928772")
+    version("0.84.3", sha256="056f84c467450fb5700ad4df9c8cc669bf7f6046976eed7a19eadbc7553b6500")
+    version("0.84.2", sha256="96a9efad258fa6fa89f661bbf830c356dd3baf6cd06c6543ce4e8253c143460e")
 
     depends_on("node-js@22.19.0:", type=("build", "link", "run"))
     depends_on("npm", type=("build", "run"))
@@ -37,7 +34,7 @@ class Pi(Package):
         npm = which("npm", required=True)
 
         npm("install", "--ignore-scripts")
-        npm("run", "build")
+        npm("run", "build:offline")
 
     def install(self, spec, prefix):
         npm = which("npm", required=True)
