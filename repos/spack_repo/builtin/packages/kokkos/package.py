@@ -322,6 +322,22 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+    for v in [
+        "develop",
+        "5.2.1",
+        "5.2.0",
+        "5.1.1",
+        "5.1.0",
+        "5.0.2",
+        "5.0.1",
+        "5.0.0",
+        "4.7.04",
+        "4.7.03",
+        "4.7.02",
+        "4.7.01",
+        "4.7.00",
+    ]:
+        depends_on(f"mdspan@kokkos-{v}", when=f"@{v}")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -457,6 +473,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
+            self.define("Kokkos_ENABLE_MDSPAN_EXTERNAL", True),
         ]
 
         # TODO new major: update this
