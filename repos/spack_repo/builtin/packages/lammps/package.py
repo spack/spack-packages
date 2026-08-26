@@ -639,14 +639,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             elif spec.satisfies("+rocm"):
                 args.append(self.define("GPU_API", "hip"))
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
-                args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
-                if spec.satisfies("@:20231121"):
-                    if spec.satisfies("^hip@:5.4"):
-                        args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
-                    elif spec.satisfies("^hip@5.5:"):
-                        args.append(self.define("HIP_PATH", spec["hip"].prefix))
-                else:
-                    args.append(self.define("HIP_PATH", spec["hip"].prefix))
                 if spec.satisfies("@:20260330"):
                     args.append(self.define_from_variant("HIP_ARCH", "amdgpu_target"))
                 else:
@@ -748,6 +740,16 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         if spec.satisfies("+user-hdnnp") or spec.satisfies("+ml-hdnnp"):
             args.append(self.define("DOWNLOAD_N2P2", False))
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
+
+        if spec.satisfies("+rocm"):
+            args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
+            if spec.satisfies("@:20231121"):
+                if spec.satisfies("^hip@:5.4"):
+                    args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
+                elif spec.satisfies("^hip@5.5:"):
+                    args.append(self.define("HIP_PATH", spec["hip"].prefix))
+            else:
+                args.append(self.define("HIP_PATH", spec["hip"].prefix))
 
         return args
 
