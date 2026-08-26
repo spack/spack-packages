@@ -80,10 +80,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Required dependencies
     depends_on("ncurses")
-    depends_on("pcre")
     depends_on("zlib-api")
     depends_on("libxml2")
-    depends_on("jpeg")
+    depends_on("gmp", when="@27:")
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
@@ -97,6 +96,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # GUI dependencies
     with when("gui=x11"):
+        depends_on("jpeg")
         depends_on("libtiff")
         depends_on("libpng")
         depends_on("libxpm")
@@ -119,7 +119,20 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
 
     def configure_args(self):
-        args = []
+        args = [
+            "--without-dbus",
+            "--without-selinux",
+            "--without-libsystemd",
+            "--without-gpm",
+            "--without-lcms2",
+            "--without-webp",
+            "--without-rsvg",
+            "--without-gsettings",
+            "--without-xaw3d",
+        ]
+
+        if self.spec.satisfies("@27:"):
+            args.append("--with-libgmp")
 
         gui = self.spec.variants["gui"].value
         if gui == "x11":
@@ -136,6 +149,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         args.extend(self.with_or_without("native-compilation", variant="native"))
         args.extend(self.with_or_without("gnutls", variant="tls"))
         args.extend(self.with_or_without("tree-sitter", variant="treesitter"))
+        args.extend(self.with_or_without("sqlite3", variant="sqlite"))
         args.extend(self.with_or_without("json"))
 
         return args
@@ -175,6 +189,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     def run_version_check(self, bin):
         """Runs and checks output of the installed binary."""
+        if self.spec.version.isdevelop():
+            raise SkipTest("version check not supported for development builds")
+
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
             raise SkipTest(f"{exe_path} is not installed")
