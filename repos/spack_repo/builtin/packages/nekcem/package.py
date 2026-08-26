@@ -71,6 +71,10 @@ class Nekcem(Package):
             fflags += ["-I."]
             cflags += ["-I.", "-DGLOBAL_LONG_LONG"]
 
+            # The C sources rely on tentative definitions.
+            if spec.satisfies("%c=gcc@10:") or spec.satisfies("%c=llvm@11:"):
+                cflags += ["-fcommon"]
+
             if spec.satisfies("%fortran=gcc") or spec.satisfies("%fortran=llvm"):
                 # 'flang' accepts the same flags as 'gfortran'
                 fflags += ["-fdefault-real-8", "-fdefault-double-8"]
