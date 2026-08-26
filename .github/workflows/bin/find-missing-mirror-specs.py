@@ -26,7 +26,7 @@ from spack.version import StandardVersion
 
 def main(sha256_file: str) -> None:
     with open(sha256_file) as f:
-        # store shas as a set / hash-table for faster key lookups
+        # Store shas as a set / hash-table for faster key lookups
         mirrored = {line.strip() for line in f if line.strip()}
 
     specs_to_output: List[spack.spec.Spec] = []
@@ -34,11 +34,11 @@ def main(sha256_file: str) -> None:
     repo = spack.repo.PATH.get_repo("builtin")
 
     for pkg_cls in repo.all_package_classes():
-        # filter out manual packages
+        # Filter out manual packages
         if pkg_cls.manual_download:
             continue
 
-        # get all versions with checksums; no sha256 means not a
+        # Get all versions with checksums; no sha256 means not a
         # content-addressed URL fetch (e.g. a git version)
         version_to_checksum: Dict[StandardVersion, str] = {
             version: version_dict["sha256"]
@@ -53,13 +53,16 @@ def main(sha256_file: str) -> None:
             version_spec.constrain(f"@={version}")
             specs_to_output.append(version_spec)
 
-    # filter out non-redistributable packages
+    # Filter out non-redistributable packages
     specs_to_output = [
         spec for spec in specs_to_output if repo.get_pkg_class(spec.name).redistribute_source(spec)
     ]
 
-    # output specs one per line for use by `spack mirror create`
-    for spec in specs_to_output:
+    # Output specs one per line for use by `spack mirror create`
+    # limit to a maximum of 100 specs at a time due to GitHub
+    # runner disk space limitations. Skipped specs will be
+    # retried on the next scheduled job.
+    for spec in specs_to_output[:100]:
         print(spec)
 
 
