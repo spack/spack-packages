@@ -51,6 +51,14 @@ class Aotriton(CMakePackage):
 
     depends_on("py-setuptools@40.8:", type="build")
     depends_on("py-filelock", type=("build", "run"))
+    depends_on("py-iniconfig", type="build")
+    depends_on("py-numpy", type="build")
+    depends_on("py-packaging", type="build")
+    depends_on("py-pandas", type="build")
+    depends_on("py-pluggy", type="build")
+    depends_on("py-pybind11", type="build")
+    depends_on("py-pyyaml", type="build", when="@0.11.1b:")
+    depends_on("py-wheel", type="build")
 
     depends_on("cmake@3.26:", type="build")
     depends_on("python", type="build")
@@ -61,8 +69,8 @@ class Aotriton(CMakePackage):
 
     # build llvm version with mlir with the commit that matches inside the llvm-hash.txt
     depends_on("aotriton-llvm@0.10", when="@0.10b:")
-    depends_on("aotriton-llvm@0.9", when="@0.9b")
-    depends_on("aotriton-llvm@0.8", when="@0.8b")
+    depends_on("aotriton-llvm@0.9", when="@0.9b:0.9.2b")
+    depends_on("aotriton-llvm@0.8", when="@0.8b:0.8.2b")
 
     conflicts("^openssl@3.3.0")
 
@@ -83,6 +91,19 @@ class Aotriton(CMakePackage):
                 "third_party/triton/third_party/amd/backend/compiler.py",
                 string=True,
             )
+
+        filter_file(
+            "  .comment : {",
+            "  .aotriton_version : {",
+            "v2python/ld_script.py",
+            string=True,
+        )
+        filter_file(
+            "    KEEP(*(.comment))\n",
+            "",
+            "v2python/ld_script.py",
+            string=True,
+        )
 
         if self.spec.satisfies("@:0.9b"):
             filter_file(
@@ -125,15 +146,23 @@ class Aotriton(CMakePackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
+        env.append_flags("LDFLAGS", "-fuse-ld=lld")
         if self.spec.satisfies("%clang"):
             env.set(
                 "TRITON_HIP_LLD_PATH", join_path(self.spec["llvm-amdgpu"].prefix, "bin", "ld.lld")
             )
 
+    @run_after("cmake")
+    def patch_generated_linker_script(self):
+        script = join_path(self.build_directory, "v2src", "set_aotriton_version.ld")
+        filter_file("  .comment : {", "  .aotriton_version : {", script, string=True)
+        filter_file("    KEEP(*(.comment))\n", "", script, string=True)
+
     def cmake_args(self):
         args = []
         args.append(self.define("AOTRITON_GPU_BUILD_TIMEOUT", 0))
         args.append(self.define("AOTRITON_NOIMAGE_MODE", "ON"))
+        args.append(self.define("AOTRITON_INHERIT_SYSTEM_SITE_TRITON", "ON"))
         # So libaotriton_v2.so and extensions find libamdhip64.so at runtime and
         # during binary cache relocation (avoids "libamdhip64.so.6 => not found").
         args.append(self.define("CMAKE_INSTALL_RPATH", self.spec["hip"].prefix.lib))
