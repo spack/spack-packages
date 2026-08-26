@@ -40,6 +40,7 @@ class Mdspan(CMakePackage):
         args = [
             self.define("MDSPAN_ENABLE_EXAMPLES", False),
             self.define("MDSPAN_ENABLE_TESTS", self.run_tests),
+            self.define("MDSPAN_GENERATE_STD_NAMESPACE_TARGETS", False),
             self.define("MDSPAN_USE_SYSTEM_GTEST", self.run_tests),
             self.define_from_variant("MDSPAN_ENABLE_BENCHMARKS", "benchmarks"),
             self.define_from_variant("MDSPAN_CXX_STANDARD", "cxxstd"),
