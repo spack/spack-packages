@@ -72,9 +72,9 @@ class Butterflypack(CMakePackage):
     )
     # Fix OpenMP-disabled builds.
     patch(
-        "https://github.com/Sbozzolo/ButterflyPACK/commit/2e7bf495dc641dbbe8c22eff739da57c4e433ae8.patch?full_index=1",
+        "https://github.com/liuyangzhuan/ButterflyPACK/pull/45.patch?full_index=1",
         sha256="cf6c3adb2563d9ef90303846915a65f3024771165a281a3dd915b6f4c2b2e8d7",
-        when="@4.1.0",
+        when="@4.0.0:5.0.0",
     )
     patch(
         "https://github.com/liuyangzhuan/ButterflyPACK/commit/1393fc11b390934cbb020700397cc75bab87c783.patch?full_index=1",
