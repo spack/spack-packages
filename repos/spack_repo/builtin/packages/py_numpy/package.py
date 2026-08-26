@@ -520,8 +520,7 @@ class PyNumpy(PythonPackage):
                 write_library_dirs(f, lapack_lib_dirs)
                 f.write("include_dirs = {0}\n".format(lapack_header_dirs))
 
-    @when("@:1.25")
-    @run_before("install")
+    @run_before("install", when="@:1.25")
     def set_blas_lapack(self):
         self.blas_lapack_site_cfg()
 

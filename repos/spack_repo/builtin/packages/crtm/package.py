@@ -128,8 +128,7 @@ class Crtm(CMakePackage):
         if not self.run_tests:
             filter_file(r"add_subdirectory\(test\)", "# disable testing", "CMakeLists.txt")
 
-    @when("@3.1.1-build1")
-    @run_after("install")
+    @run_after("install", when="@3.1.1-build1")
     def cmake_config_softlinks(self):
         cmake_config_files = glob.glob(join_path(self.prefix, "cmake/crtm/*"))
         for srcpath in cmake_config_files:
