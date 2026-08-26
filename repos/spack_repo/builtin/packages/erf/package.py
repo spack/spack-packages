@@ -1,3 +1,5 @@
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
@@ -9,6 +11,10 @@ def submodules(package):
 
     if package.spec.satisfies("+noahmp"):
         submodules.append("Submodules/Noah-MP")
+
+    if package.spec.satisfies("+rrtmgp"):
+        submodules.append("Submodules/RRTMGP")
+        submodules.append("Submodules/ekat")
 
     return submodules
 
@@ -70,9 +76,11 @@ class Erf(CMakePackage, CudaPackage):
     variant("fcompare", default=False, description="Enable fcompare")
     variant("fft", default=False, description="Enable FFT support")
     variant("noahmp", default=False, description="Enable Noah-MP")
+    variant("rrtmgp", default=False, description="Enable RRTMGP radiation support via EKAT")
 
     with default_args(type="build"):
         depends_on("cmake@3.20:")
+        depends_on("cmake@3.21:", when="+rrtmgp")
         depends_on("git")
         depends_on("c")
         depends_on("cxx")
@@ -80,6 +88,7 @@ class Erf(CMakePackage, CudaPackage):
         depends_on("pkgconfig")
 
     with default_args(type=("build", "link")):
+        depends_on("amrex+pic")
         for v in ("mpi", "openmp", "cuda", "particles"):
             depends_on(f"amrex+{v}", when=f"+{v}")
             depends_on(f"amrex~{v}", when=f"~{v}")
@@ -95,8 +104,30 @@ class Erf(CMakePackage, CudaPackage):
             depends_on("netcdf-fortran")
             depends_on("hdf5+mpi", when="+mpi")
 
+        with when("+rrtmgp"):
+            depends_on("kokkos@4.5:")
+            depends_on("yaml-cpp")
+            for sm in CudaPackage.cuda_arch_values:
+                depends_on(f"kokkos+cuda cuda_arch={sm}", when=f"+cuda cuda_arch={sm}")
+
     conflicts("+openmp", when="+cuda", msg="Cannot enable both OpenMP and CUDA")
     conflicts("+fft", when="~mpi", msg="FFT support requires MPI")
+    conflicts("+rrtmgp", when="~mpi", msg="RRTMGP support requires MPI")
+    conflicts("+rrtmgp", when="~netcdf", msg="RRTMGP support requires NetCDF")
+
+    def patch(self):
+        if self.spec.satisfies("+rrtmgp"):
+            ekat_dir = os.path.join(self.stage.source_path, "Submodules", "ekat")
+            gitmodules = os.path.join(ekat_dir, ".gitmodules")
+
+            # Rewrite spdlog SSH URL to HTTPS so it works without SSH keys
+            if os.path.exists(gitmodules):
+                filter_file("git@github.com:", "https://github.com/", gitmodules, string=True)
+
+            # Fetch spdlog submodule (nested under ekat, can't be fetched
+            # from top-level .gitmodules)
+            git = which("git")
+            git("-C", ekat_dir, "submodule", "update", "--init", "extern/spdlog")
 
     def cmake_args(self):
         args = [
@@ -109,12 +140,11 @@ class Erf(CMakePackage, CudaPackage):
             self.define_from_variant("ERF_BUILD_FCOMPARE", "fcompare"),
             self.define_from_variant("ERF_ENABLE_FFT", "fft"),
             self.define_from_variant("ERF_ENABLE_NOAHMP", "noahmp"),
+            self.define_from_variant("ERF_ENABLE_RRTMGP", "rrtmgp"),
             self.define("ERF_DIM", "3"),
             self.define("ERF_USE_INTERNAL_AMREX", False),
             self.define("ERF_CLONE_AMREX", False),
             self.define("GIT_SUBMODULE_PROTOCOL", "https"),
-            self.define("MPIEXEC_PREFLAGS", "--oversubscribe"),
-            self.define("ERF_DIM", "3"),
         ]
 
         if "+netcdf" in self.spec:
@@ -134,6 +164,18 @@ class Erf(CMakePackage, CudaPackage):
                     self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix),
                 ]
             )
+
+        if "+rrtmgp" in self.spec:
+            # Write a cmake include file that injects find_package() calls
+            # for Spack-provided Kokkos and yaml-cpp. This is needed because
+            # ERF uses add_subdirectory() for EKAT which tries to build its
+            # own Kokkos/yaml-cpp. CMAKE_PROJECT_INCLUDE runs right after
+            # ERF's project() call, making Spack targets visible first.
+            include_file = os.path.join(self.stage.source_path, "spack_find_deps.cmake")
+            with open(include_file, "w") as f:
+                f.write("find_package(Kokkos REQUIRED)\n")
+                f.write("find_package(yaml-cpp REQUIRED)\n")
+            args.append(self.define("CMAKE_PROJECT_INCLUDE", include_file))
 
         return args
 
