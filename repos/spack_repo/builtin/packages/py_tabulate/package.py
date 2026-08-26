@@ -27,4 +27,4 @@ class PyTabulate(PythonPackage):
 
     # TODO: it moved to flit[-scm] after 0.10.0
     depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools-scm@3.4.3 +toml", type="build", when="0.9:0.10")
+    depends_on("py-setuptools-scm@3.4.3: +toml", type="build", when="@0.9:0.10")
