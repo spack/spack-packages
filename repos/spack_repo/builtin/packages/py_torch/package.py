@@ -877,7 +877,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         elif self.spec["blas"].name == "intel-oneapi-mkl":
             env.set("BLAS", "MKL")
             env.set("WITH_BLAS", "mkl")
-            env.set("INTEL_MKL_DIR", self.spec["mkl"].prefix.mkl.latest)
+            env.set("INTEL_MKL_DIR", self.spec["intel-oneapi-mkl"].prefix.mkl.latest)
         elif self.spec["blas"].name == "openblas":
             env.set("BLAS", "OpenBLAS")
             env.set("WITH_BLAS", "open")
