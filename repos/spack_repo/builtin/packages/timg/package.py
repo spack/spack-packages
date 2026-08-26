@@ -146,7 +146,7 @@ class Timg(CMakePackage):
     depends_on("ffmpeg", when="+videodevice")
 
     conflicts("~video", when="+videodevice")
-              
+
     def cmake_args(self):
         args = [
             # Highly-recommended
