@@ -951,8 +951,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             if spec.satisfies("@2.21 ^llvm-amdgpu@7.2:"):
                 if spec.satisfies("target=zen2"):
                     disabled_targets = (
-                        "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|"
-                        "HWY_AVX3_SPR|HWY_AVX10_2"
+                        "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
                     )
                 elif spec.satisfies("target=skylake_avx512"):
                     disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
@@ -961,9 +960,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
                 if disabled_targets:
                     with open(".tf_configure.bazelrc", mode="a") as f:
-                        f.write(
-                            f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n"
-                        )
+                        f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
 
         # Support for host_copt customization on macOS arm64 seems to be broken?
         # https://github.com/tensorflow/tensorflow/issues/111876
