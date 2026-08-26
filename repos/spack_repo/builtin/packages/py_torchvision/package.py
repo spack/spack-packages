@@ -61,6 +61,9 @@ class PyTorchvision(PythonPackage):
     version("0.9.0", sha256="9351ed92aded632f8c7f59dfadac13c191a834babe682f5785ea47e6fcf6b472")
     version("0.8.2", sha256="9a866c3c8feb23b3221ce261e6153fc65a98ce9ceaa71ccad017016945c178bf")
 
+    # Fix duplicate symbol error when building with ROCm
+    patch("torchvision-0.26.0-rocm-vision-duplicate-symbol.patch", when="@0.26.0 ^py-torch+rocm")
+
     desc = "Enable support for native encoding/decoding of {} formats in torchvision.io"
     variant("png", default=True, description=desc.format("PNG"))
     variant("jpeg", default=True, description=desc.format("JPEG"))
@@ -207,6 +210,28 @@ class PyTorchvision(PythonPackage):
             include.extend(query.headers.directories)
             library.extend(query.libs.directories)
 
+        # When building with ROCm, add all ROCm library include paths for HIP compilation
+        # PyTorch headers transitively include many ROCm headers that extensions need
+        if "^py-torch+rocm" in self.spec:
+            rocm_deps = [
+                "rocthrust",
+                "rocprim",
+                "hipsparse",
+                "hipblas",
+                "hipblas-common",
+                "hipblaslt",
+                "hipfft",
+                "hiprand",
+                "hipsolver",
+                "rocblas",
+                "rocsparse",
+                "rocsolver",
+                "rocfft",
+            ]
+            for dep in rocm_deps:
+                if dep in self.spec:
+                    include.append(self.spec[dep].prefix.include)
+
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
         # and the actual compiler, so this is needed to get parts of the build working.
@@ -215,3 +240,10 @@ class PyTorchvision(PythonPackage):
         env.set("TORCHVISION_LIBRARY", ":".join(library))
         env.set("CPATH", ":".join(include))
         env.set("LIBRARY_PATH", ":".join(library))
+
+        # For ROCm builds, also prepend ROCm includes to ensure hipcc can find them
+        if "^py-torch+rocm" in self.spec:
+            for dep in rocm_deps:
+                if dep in self.spec:
+                    env.prepend_path("CPATH", self.spec[dep].prefix.include)
+                    env.prepend_path("CPLUS_INCLUDE_PATH", self.spec[dep].prefix.include)

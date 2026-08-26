@@ -236,10 +236,11 @@ class QtBase(QtPackage):
     depends_on("glu", when="+opengl", type=("build", "link"))
     depends_on("sqlite", when="+sql")
 
+    # see qt/qtbase/src/gui/configure.cmake for dependencies and versions
     with when("+gui"):
         depends_on("fontconfig")
-        depends_on("freetype")
-        depends_on("harfbuzz")
+        depends_on("freetype@2.2:")
+        depends_on("harfbuzz@2.6:")
         depends_on("jpeg")
         depends_on("libpng")
         with when("platform=linux"):
