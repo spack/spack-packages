@@ -60,6 +60,9 @@ class _4cMultiphysics(CMakePackage):
     variant("mirco", default=False, description="Enable MIRCO support")
     variant("backtrace", default=False, description="Enable libbacktrace support")
 
+    conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
+    conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
+
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
 
@@ -67,7 +70,6 @@ class _4cMultiphysics(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.30:", type="build")
     depends_on("ninja", type="build")
-    requires("platform=linux")
 
     depends_on("mpi")
     depends_on("hdf5+mpi+hl")
