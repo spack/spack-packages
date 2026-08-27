@@ -62,6 +62,9 @@ class _4cMultiphysics(CMakePackage):
 
     conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
 
+    conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
+    conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
+
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
     patch("use-installed-googletest.patch", when="@2026.1.0:2026.3.0")
@@ -74,7 +77,6 @@ class _4cMultiphysics(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.30:", type="build")
     depends_on("ninja", type="build")
-    requires("platform=linux")
 
     depends_on("mpi")
     depends_on("hdf5+mpi+hl")
