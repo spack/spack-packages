@@ -24,6 +24,10 @@ class Charmpp(Package):
     git = "https://github.com/UIUC-PPL/charm.git"
 
     maintainers("matthiasdiener")
+    # relicensed from a non-commercial license to Apache-2.0 in May 2024, after v7.0.0
+    license("LicenseRef-Charmpp-Non-Commercial", when="@:7.0", checked_by="tgamblin")
+    license("Apache-2.0 WITH LLVM-exception", when="@7.1:", checked_by="tgamblin")
+    redistribute(source=False, binary=False, when="@:7.0")
 
     version("main", branch="main")
 

@@ -35,6 +35,9 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
 
     maintainers("amd-toolchain-support")
 
+    redistribute(source=False, binary=False)
+    license("LicenseRef-AMD-Proprietary", checked_by="tgamblin")
+
     version(
         ver="5.2.0",
         sha256="f98af7e2ae8801dd4ba443520653acb739536a86c2a1caf096310c3cfd554ca0",
