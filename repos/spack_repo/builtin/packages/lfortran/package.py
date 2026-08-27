@@ -14,7 +14,7 @@ class Lfortran(CMakePackage):
     url = "https://github.com/lfortran/lfortran/releases/download/v0.49.0/lfortran-0.49.0.tar.gz"
     git = "https://github.com/lfortran/lfortran.git"
 
-    maintainers("certik")
+    maintainers("certik", "bonachea")
     license("BSD-3-Clause")
 
     # The build process uses 'git describe --tags' to get the package version
