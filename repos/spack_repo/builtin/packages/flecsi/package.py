@@ -123,7 +123,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     # Disallow conduit=none when using legion as a backend
     conflicts("^legion conduit=none", when="backend=legion")
-    conflicts("+hdf5", when="backend=hpx", msg="HPX backend doesn't support HDF5")
+    conflicts("+hdf5", when="@:2.4 backend=hpx", msg="HPX backend doesn't support HDF5")
     conflicts("^hpx networking=none", when="backend=hpx")
 
     conflicts("^boost cxxstd=98")
