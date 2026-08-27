@@ -151,8 +151,9 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_DOCUMENTATION", "doc"),
         ]
 
-        if self.spec.satisfies("^kokkos +rocm") and not self.spec.satisfies(
-            "^kokkos %cxx=llvm-amdgpu"
+        if self.spec.satisfies("^kokkos +rocm") and not (
+            self.spec.satisfies("^kokkos %cxx=llvm-amdgpu")
+            or self.spec.satisfies("^kokkos %cxx=llvm")
         ):
             options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
