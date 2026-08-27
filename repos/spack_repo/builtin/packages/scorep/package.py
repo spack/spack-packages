@@ -61,7 +61,7 @@ class Scorep(AutotoolsPackage):
         "xray",
         default=False,
         description="Enable instrumetation via LLVM XRay",
-        when="@10.0: %llvm",
+        when="@10.0: %c,cxx=llvm",
     )
     variant(
         "binutils",
