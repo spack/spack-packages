@@ -1,0 +1,54 @@
+name: sync-src-mirror
+
+# Nightly backfill of the source mirror: finds version tarballs, resources,
+# and patches missing from the mirror (e.g. because update-src-mirror failed
+# or a fetch was flaky) and mirrors them. URLs and checksums are all known
+# statically from package.py files, so nothing here concretizes. Fetching
+# and checksum verification use spack's own fetch strategies.
+
+on:
+  schedule:
+    - cron: '0 3 * * *'  # nightly at 03:00 UTC
+  workflow_dispatch:
+
+permissions:
+  id-token: write  # Required for AWS OIDC authentication
+  contents: read
+
+jobs:
+  sync-mirror:
+    if: github.repository == 'spack/spack-packages'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+
+      - name: Checkout Spack
+        uses: ./.github/actions/checkout-spack
+        with:
+          fetch-depth: 1
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c  # v6.2.3
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Get digests already in the mirror
+        run: |
+          # Tarballs are content addressed as _source-cache/archive/<xx>/<sha256>.<ext>.
+          # Thus a single recursive listing of the archive/ prefix is a complete list
+          # of mirrored versions, patches, and package resources. Use awk and sed to strip
+          # out the shas from the filenames and save the shas to a file for later use.
+          aws s3 ls --recursive "s3://${{ secrets.S3_BUCKET_NAME }}/_source-cache/archive/" \
+            | awk '{print $4}' \
+            | sed -e 's|.*/||' -e 's|\..*||' \
+            | sort -u > mirrored-shas.txt
+          echo "$(wc -l < mirrored-shas.txt) shas in the mirror"
+
+      - name: Sync missing artifacts to the mirror
+        run: |
+          source spack-core/share/spack/setup-env.sh
+
+          .github/workflows/bin/sync-src-mirror.py \
+            mirrored-shas.txt --upload-to "s3://${{ secrets.S3_BUCKET_NAME }}"
