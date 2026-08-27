@@ -66,6 +66,17 @@ class _4cMultiphysics(CMakePackage):
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
 
+    # GCC 14.2.0 hits an internal compiler error (ICE) in
+    # cxx_eval_indirect_ref (cp/constexpr.cc) while instantiating
+    # Core::LinAlg::einsum_sym on 4C's tensor templates
+    # (src/core/linalg/src/dense/4C_linalg_tensor_internals.hpp). Not
+    # confirmed on other 14.x point releases; narrow this once tested.
+    conflicts(
+        "%gcc@14:14",
+        msg="GCC 14.x hits an internal compiler error compiling 4C's tensor "
+        "templates; use GCC 13 or GCC 15 instead.",
+    )
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.30:", type="build")
