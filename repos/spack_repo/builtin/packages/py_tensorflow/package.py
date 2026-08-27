@@ -361,25 +361,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     with when("+rocm"):
         depends_on("llvm-amdgpu")
         depends_on("roctracer-dev", when="@:2.20")
-        amdgpu_targets = ROCmPackage.amdgpu_targets
-        for tgt in amdgpu_targets:
-            depends_on(
-                f"hipblaslt amdgpu_target={tgt}",
-                when=f"@2.20: amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocsparse amdgpu_target={tgt}",
-                when=f"@2.21: amdgpu_target={tgt}",
-            )
-            depends_on(
-                f"rocprofiler-sdk amdgpu_target={tgt}",
-                when=f"@2.21: amdgpu_target={tgt}",
-            )
+        depends_on("hipblaslt", when="@2.20:")
+        depends_on("rocsparse", when="@2.21:")
+        depends_on("rocprofiler-sdk", when="@2.21:")
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6.0:", when="@2.14:")
             depends_on(f"{pkg_dep}@:6.3", when="@:2.18")
-            for tgt in amdgpu_targets:
-                depends_on(f"{pkg_dep} amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+            depends_on(pkg_dep)
 
     # Check configure and configure.py to see when these variants are supported
     conflicts("+mkl", when="platform=darwin", msg="Darwin is not yet supported")
