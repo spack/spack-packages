@@ -39,8 +39,8 @@ class PyAlePy(PythonPackage):
 
     depends_on("py-gymnasium@1.1.0:", type=("build", "run"), when="+xla")
     depends_on("py-opencv-python@3.0:", type=("build", "run"), when="+xla")
-    depends_on("py-jax@0.4.31:", type="run", when="+xla platform=linux")
-    depends_on("py-jax@0.4.31:", type="run", when="+xla platform=windows")
+    depends_on("py-jax@0.4.31:", type=("build", "run"), when="+xla platform=linux")
+    depends_on("py-jax@0.4.31:", type=("build", "run"), when="+xla platform=windows")
     depends_on("py-chex", type=("build", "run"), when="+xla platform=linux")
     depends_on("py-chex", type=("build", "run"), when="+xla platform=windows")
 
