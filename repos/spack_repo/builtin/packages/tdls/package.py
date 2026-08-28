@@ -23,7 +23,6 @@ class Tdls(CMakePackage):
 
     version("main", branch="main")
 
-    depends_on("cxx", type="build")
     depends_on("cmake@3.21:", type="build")
 
     def cmake_args(self):
