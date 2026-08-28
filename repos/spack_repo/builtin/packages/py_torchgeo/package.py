@@ -40,7 +40,7 @@ class PyTorchgeo(PythonPackage):
 
     # Required dependencies
     with default_args(type="build"):
-        depends_on("py-uv-build@0.7:", type="build")
+        depends_on("py-uv-build@0.7:0.12", type="build")
 
         # Historical dependencies
         depends_on("py-setuptools@77.0.1:", when="@0.7.1:0.9")

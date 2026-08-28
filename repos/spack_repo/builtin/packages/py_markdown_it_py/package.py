@@ -26,6 +26,7 @@ class PyMarkdownItPy(PythonPackage):
 
     variant("linkify", default=False, description="Linkify support")
 
+    depends_on("python@3.10:", when="@4:", type=("build", "run"))
     depends_on("python@3.8:", when="@2.1:", type=("build", "run"))
     depends_on("python@3.6:3", when="@:2.0", type=("build", "run"))
     depends_on("py-flit-core@3.4:3", when="@2.1:", type="build")

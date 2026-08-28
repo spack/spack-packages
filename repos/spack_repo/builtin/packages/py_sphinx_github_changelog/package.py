@@ -32,4 +32,4 @@ class PySphinxGithubChangelog(PythonPackage):
         depends_on("py-tenacity", when="@2:")
 
         # Historical dependencies
-        depends_on("py-requests")
+        depends_on("py-requests", when="@1")
