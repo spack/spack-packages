@@ -29,7 +29,7 @@ class PyStableBaselines3(PythonPackage):
     depends_on("py-cloudpickle", type=("build", "run"))
 
     with when("+extra"):
-        depends_on("opencv+python3", type=("build", "run"))
+        depends_on("py-opencv-python", type=("build", "run"))
         depends_on("py-pygame-ce", type=("build", "run"))
         depends_on("py-tensorboard@2.9.1:", type=("build", "run"))
         depends_on("py-psutil", type=("build", "run"))
