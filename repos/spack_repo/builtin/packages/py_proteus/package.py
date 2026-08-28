@@ -23,7 +23,6 @@ class PyProteus(PythonPackage):
 
     version("main", branch="main")
 
-    # Chrono (pychrono) currently has no upstream Spack package and stays disabled.
     variant("pumi", default=False, description="Enable PUMI mesh adaptation support")
 
     depends_on("c", type="build")
@@ -48,6 +47,10 @@ class PyProteus(PythonPackage):
     depends_on("tetgen")  # shells out
     depends_on("gmsh")  # shells oput
     depends_on("ncurses")  # Fenton waves as text gui, generally not used
+    # run type matters: chrono exports PYTHONPATH for share/chrono/python
+    # (pychrono is not installed into site-packages) via
+    # setup_dependent_run_environment, which spack only applies to run deps.
+    depends_on("chrono+python", type=("build", "link", "run"))
     depends_on("pumi@4.2.1+zoltan+shared", when="+pumi")  # <4.2.1 requires patch
     depends_on("zoltan+parmetis~fortran", when="+pumi")
     depends_on("parmetis", when="+pumi")
@@ -70,9 +73,12 @@ class PyProteus(PythonPackage):
         return mpi_prefix
 
     def setup_build_environment(self, env):
-        env.set("PROTEUS_SKIP_CHRONO", "1")
         if self.spec.satisfies("~pumi"):
             env.set("PROTEUS_SKIP_PUMI", "1")
+        # proteus/config/default.py get_flags("chrono") reads $CHRONO_DIR/
+        # {include,lib} and pulls CHRONO_CXX_FLAGS out of
+        # lib/cmake/Chrono/ChronoConfig.cmake.
+        env.set("CHRONO_DIR", self.spec["chrono"].prefix)
         env.set("PETSC_DIR", self.spec["petsc"].prefix)
         env.set("MPI_DIR", self._mpi_dir())
         env.set("HDF5_DIR", self.spec["hdf5"].prefix)
