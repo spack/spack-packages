@@ -19,6 +19,7 @@ class PyMystParser(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("5.1.0", sha256="ab69322dc6719dcc7f296479dbb70181b66df6ed315064f92dbc85c0e1bf2f02")
     version("5.0.0", sha256="f6f231452c56e8baa662cc352c548158f6a16fcbd6e3800fc594978002b94f3a")
     version("4.0.0", sha256="851c9dfb44e36e56d15d05e72f02b80da21a9e0d07cba96baf5e2d476bb91531")
     version("3.0.1", sha256="88f0cb406cb363b077d176b51c476f62d60604d68a8dcdf4832e080441301a87")
@@ -47,13 +48,15 @@ class PyMystParser(PythonPackage):
 
         depends_on("py-markdown-it-py@1:2", when="@:1")
         depends_on("py-markdown-it-py@3", when="@2:4")
-        depends_on("py-markdown-it-py@4", when="@5")
+        depends_on("py-markdown-it-py@4", when="@5.0")
+        depends_on("py-markdown-it-py@4.2:4", when="@5.1:")
 
         depends_on("py-mdit-py-plugins@0.3.1:0.3", when="@0.18")
         depends_on("py-mdit-py-plugins@0.3.4:0.3", when="@0.19:1")
         depends_on("py-mdit-py-plugins@0.4", when="@2:3")
         depends_on("py-mdit-py-plugins@0.4.1:0.4", when="@4")
-        depends_on("py-mdit-py-plugins@0.5", when="@5")
+        depends_on("py-mdit-py-plugins@0.5", when="@5.0")
+        depends_on("py-mdit-py-plugins@0.6.1:0.6", when="@5.1:")
 
         depends_on("py-pyyaml")
 
