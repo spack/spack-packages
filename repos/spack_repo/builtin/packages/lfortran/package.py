@@ -14,11 +14,12 @@ class Lfortran(CMakePackage):
     url = "https://github.com/lfortran/lfortran/releases/download/v0.49.0/lfortran-0.49.0.tar.gz"
     git = "https://github.com/lfortran/lfortran.git"
 
-    maintainers("certik")
+    maintainers("certik", "bonachea")
     license("BSD-3-Clause")
 
     # The build process uses 'git describe --tags' to get the package version
     version("main", branch="main", get_full_repo=True)
+    version("0.65.0", sha256="2be0b3806a18c15b55083fecd9930c5e9188832a01ed2b91614315939e705fb2")
     version("0.64.0", sha256="91fad2e020d046f2ec8db767584b487d982172798eb2de89788f111afa3a6b92")
     version("0.63.0", sha256="e5ad61bc0571ec572dec542913858a9d9a6142ae5023ffc9517e1b0dc15da98c")
     version("0.62.0", sha256="6b34221fa85ab2e3f102a73bcbf59125318f637bbb64da34fe1200425eed4788")
