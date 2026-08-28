@@ -24,22 +24,23 @@ class PyAlePy(PythonPackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.14:", type="build")
     depends_on("sdl2", type=("build", "link"), when="+sdl")
-    depends_on("opencv+imgproc", type=("build", "link"))
 
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-scikit-build-core@0.10:", type="build")
     depends_on("py-nanobind@2.5.0:", type="build")
+    depends_on("py-jax@0.4.31:", type="build", when="platform=linux")
+    depends_on("py-jax@0.4.31:", type="build", when="platform=windows")
 
     depends_on("py-numpy@1.20:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"), when="^python@:3.10")
 
     depends_on("py-gymnasium@1.1.0:", type=("build", "run"), when="+vector")
-    depends_on("opencv@3.0:+python3", type=("build", "run"), when="+vector")
+    depends_on("py-opencv-python@3.0:", type=("build", "run"), when="+vector")
 
     depends_on("py-gymnasium@1.1.0:", type=("build", "run"), when="+xla")
-    depends_on("opencv@3.0:+python3", type=("build", "run"), when="+xla")
-    depends_on("py-jax@0.4.31:", type=("build", "run"), when="+xla platform=linux")
-    depends_on("py-jax@0.4.31:", type=("build", "run"), when="+xla platform=windows")
+    depends_on("py-opencv-python@3.0:", type=("build", "run"), when="+xla")
+    depends_on("py-jax@0.4.31:", type="run", when="+xla platform=linux")
+    depends_on("py-jax@0.4.31:", type="run", when="+xla platform=windows")
     depends_on("py-chex", type=("build", "run"), when="+xla platform=linux")
     depends_on("py-chex", type=("build", "run"), when="+xla platform=windows")
 
