@@ -45,7 +45,16 @@ class PyProteus(PythonPackage):
     depends_on("superlu")
     depends_on("triangle")  # shells out but has linked in past
     depends_on("tetgen")  # shells out
-    depends_on("gmsh")  # shells oput
+    # proteus shells out to the gmsh executable as a mesh generator, so it needs
+    # neither the FLTK GUI nor MED file support. Both are gmsh defaults, and both
+    # pull in heavy dependencies that fail to build on current toolchains: +fltk
+    # brings mesa, whose vendored src/c11/threads.h redefines once_flag and
+    # call_once and so conflicts with glibc 2.43's own <threads.h>; +med brings
+    # med, which passes an incompatible pointer to H5Literate2 and is rejected by
+    # gcc >= 14, where -Wincompatible-pointer-types is an error. Excluding them
+    # fixes the build on Ubuntu 26.04 / gcc 15.2 and drops a large amount of
+    # build time everywhere else.
+    depends_on("gmsh~fltk~med")  # shells out to the gmsh executable
     depends_on("ncurses")  # Fenton waves as text gui, generally not used
     # run type matters: chrono exports PYTHONPATH for share/chrono/python
     # (pychrono is not installed into site-packages) via
