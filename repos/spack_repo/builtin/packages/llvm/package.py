@@ -55,6 +55,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("23.1.0", sha256="d8657b2a7291e518407bf13c4b41c85ef2cded2d4354097a2f451644dfc817b0")
+
+    # Previous stable series releases
     version("22.1.8", sha256="ad18b70e287954c3d62bc7e0b86e7b7af2adf87bcfce21c15fe717f101d7aace")
     version("22.1.7", sha256="da1578ea1faf2050e4b1923fce150b5656db1dbdeda71fe02498ac04f35b03d3")
     version("22.1.6", sha256="ba534c6835a5b9c2162c806e269799fe41fca952a3c25baff1afcff23841ec2b")
@@ -65,7 +68,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("22.1.1", sha256="c48878550911a8a8993a749e6118446082656768e62b26456ac7d39c4422b409")
     version("22.1.0", sha256="933765a1c2cd518d95a9033a92d88d7109a79aefa4609247c31f28b8bc8dd96e")
 
-    # Previous stable series releases
     version("21.1.8", sha256="7ba3f2a8d8fda88be18a31d011e8195d3b7f87f9fa92b20c94cba2d7f65b0e3f")
     version("21.1.7", sha256="9ee167cdf8f6b5221d6b02dbe9a664cf8c6fee70fab071aaa4a3889c7c265258")
     version("21.1.6", sha256="2380973eb435b48bd70881939da3629069009a851c81676dfb211a1b068d72a6")
@@ -275,6 +277,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     variant("utils", default=False, description="Install utility binaries (FileCheck, etc.)")
 
+    provides("libllvm@23", when="@23")
     provides("libllvm@22", when="@22")
     provides("libllvm@21", when="@21")
     provides("libllvm@20", when="@20")
