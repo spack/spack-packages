@@ -123,7 +123,7 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
 
     # Disallow conduit=none when using legion as a backend
     conflicts("^legion conduit=none", when="backend=legion")
-    conflicts("+hdf5", when="backend=hpx", msg="HPX backend doesn't support HDF5")
+    conflicts("+hdf5", when="@:2.4 backend=hpx", msg="HPX backend doesn't support HDF5")
     conflicts("^hpx networking=none", when="backend=hpx")
 
     conflicts("^boost cxxstd=98")
@@ -151,8 +151,9 @@ class Flecsi(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ENABLE_DOCUMENTATION", "doc"),
         ]
 
-        if self.spec.satisfies("^kokkos +rocm") and not self.spec.satisfies(
-            "^kokkos %cxx=llvm-amdgpu"
+        if self.spec.satisfies("^kokkos +rocm") and not (
+            self.spec.satisfies("^kokkos %cxx=llvm-amdgpu")
+            or self.spec.satisfies("^kokkos %cxx=llvm")
         ):
             options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             options.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
