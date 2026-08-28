@@ -25,6 +25,7 @@ class NvplLapack(Package):
 
     license("NVIDIA Software License Agreement")
 
+    version("0.4.0.1", sha256="2233a1502de4bc720671462b09a1123e3bb329d0e7f5759566d879e5f1071c20")
     version("0.3.2", sha256="3e4d9969223a52ab011d1bf38156cbe31fba0e4f12c3b87729393972a16daecf")
     version("0.3.1.1", sha256="f5b916aa36a8549946fc2262acebb082fe8c463bd1523a3c0cc2c93527231653")
     version("0.3.0", sha256="41cc18fc52f6869747b4185a96e34de93a53eb9d6aa95aab07082958055161b0")

@@ -58,6 +58,10 @@ _os_pkg_map = {
 }
 
 _versions = {
+    "26.07": {
+        "deb": ("6024f534554260939b369030bc4b6b47196f64bde840700b72c602e311aa7610"),
+        "rpm": ("896863e1c7be03f997c9cdfe3e8f236355111a80e4826dc53c749cb7a6fae614"),
+    },
     "26.01.1": {
         "deb": ("97bea9a6b873d7fbbe0f85150ff32fdc1d08cb3bd012ab79e687a595eb90141f"),
         "rpm": ("c1206132a02e9ddd476862e63c97f7a3cfe79281788db1d107cd5aa7287c7c8a"),
@@ -362,6 +366,9 @@ class ArmplGcc(Package):
 
     homepage = "https://developer.arm.com/tools-and-software/server-and-hpc/downloads/arm-performance-libraries"
     maintainers("paolotricerri")
+
+    redistribute(source=False, binary=False)
+    license("LicenseRef-ARM-Proprietary", checked_by="tgamblin")
 
     for ver, packages in _versions.items():
         key = get_os_or_pkg_manager(ver)

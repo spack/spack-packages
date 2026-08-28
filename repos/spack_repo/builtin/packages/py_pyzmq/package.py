@@ -28,6 +28,10 @@ class PyPyzmq(PythonPackage):
     version("17.1.2", sha256="a72b82ac1910f2cf61a49139f4974f994984475f771b0faa730839607eeedddf")
     version("16.0.2", sha256="0322543fff5ab6f87d11a8a099c4c07dd8a1719040084b6ce9162bcdf5c45c9d")
 
+    # Runtime variants
+    variant("green", default=False, description="enable pyzmq.green")
+    variant("ssh", default=False, description="enable pyzmq.ssh")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
@@ -43,8 +47,9 @@ class PyPyzmq(PythonPackage):
     depends_on("libzmq@3.2.2:", type=("build", "link"), when="@22.3.0:")
     depends_on("libzmq", type=("build", "link"))
 
-    # Undocumented dependencies
-    depends_on("py-gevent", type=("build", "run"))
+    # Undocumented runtime dependencies
+    depends_on("py-gevent", type="run", when="+green")
+    depends_on("py-paramiko", type="run", when="+ssh")
 
     # https://github.com/zeromq/pyzmq/issues/1915
     conflicts("^py-cython@3.1:", when="@:25")

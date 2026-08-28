@@ -42,11 +42,11 @@ class RDplyr(RPackage):
 
     depends_on("r@4.1.0:", type=("build", "run"), when="@1.2.1:")
     depends_on("r@4.1.0:4.5", type=("build", "run"), when="@1.2.0")
-    depends_on("r@3.5.0:4.5", type=("build", "run"), when="@1.1.2:")
-    depends_on("r@3.4.0:4.5", type=("build", "run"), when="@1.0.9:")
-    depends_on("r@3.3.0:4.5", type=("build", "run"), when="@1.0.3:")
-    depends_on("r@3.2.0:4.5", type=("build", "run"), when="@0.8.1:")
-    depends_on("r@3.1.2:4.5", type=("build", "run"))
+    depends_on("r@3.5.0:4.5", type=("build", "run"), when="@1.1.2:1.1")
+    depends_on("r@3.4.0:4.5", type=("build", "run"), when="@1.0.9:1.1")
+    depends_on("r@3.3.0:4.5", type=("build", "run"), when="@1.0.3:1.1")
+    depends_on("r@3.2.0:4.5", type=("build", "run"), when="@0.8.1:1.1")
+    depends_on("r@3.1.2:4.5", type=("build", "run"), when="@:1.1")
 
     depends_on("r-cli@3.6.2:", type=("build", "run"), when="@1.2.0:")
     depends_on("r-cli@3.4.0:", type=("build", "run"), when="@1.1.2:")

@@ -16,8 +16,10 @@ class PyHydraCore(PythonPackage):
     license("MIT")
 
     version("1.3.5", sha256="71c441eabbde086062045e4d3fce9e26015244f1a4ac721cf3e444c7edf10633")
-    version("1.3.2", sha256="8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824")
-    version("1.3.1", sha256="8dd42d551befc43dfca0c612cbd58c4f3e273dbd97a87214c1a030ba557d238b")
+    with default_args(deprecated=True):
+        # https://github.com/hydra-ecosystem/hydra/security/advisories/GHSA-2cp2-2r3c-7p7r
+        version("1.3.2", sha256="8a878ed67216997c3e9d88a8e72e7b4767e81af37afb4ea3334b269a4390a824")
+        version("1.3.1", sha256="8dd42d551befc43dfca0c612cbd58c4f3e273dbd97a87214c1a030ba557d238b")
 
     depends_on("py-setuptools", type="build")
     # Limiting setuptools upper bound due to: No module named 'pkg_resources'

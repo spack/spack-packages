@@ -77,7 +77,7 @@ class PyLibensemble(PythonPackage):
     depends_on("py-setuptools", when="@0.10.2:", type="build")
     depends_on("py-setuptools", when="@:0.10.1", type=("build", "run"))
     depends_on("py-pydantic@1.10:", when="@1.2.0:", type=("build", "run"))
-    depends_on("py-pydantic@:1", when="@0.10:", type=("build", "run"))
+    depends_on("py-pydantic@:1", when="@0.10:1.2", type=("build", "run"))
     depends_on("py-tomli@1.2.1:", when="@1:", type=("build", "run"))
     depends_on("py-tomli", when="@0.10:", type=("build", "run"))
     depends_on("py-pyyaml@6.0:", when="@1:", type=("build", "run"))

@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import subprocess
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -29,8 +28,6 @@ class Mapl(CMakePackage):
         "mathomp4",
         "tclune",
         "climbfuji",
-        "edwardhartnett",
-        "Hang-Lei-NOAA",
         "AlexanderRichert-NOAA",
     )
 
@@ -41,10 +38,11 @@ class Mapl(CMakePackage):
 
     # Remember if there is a new ESMA_cmake, to update the resources too
     version(
-        "2.70.0",
-        sha256="c31a390f39260ef25620c9d0367dc111e354d1f3e83157209ee2aca03249d804",
+        "2.71.0",
+        sha256="0f763e1b74d227a06eff16daeb8d86425d75597f299d35cd3453a32f5c4864ef",
         preferred=True,
     )
+    version("2.70.0", sha256="c31a390f39260ef25620c9d0367dc111e354d1f3e83157209ee2aca03249d804")
     version("2.69.1", sha256="d34ba656c06a1ab0f306e22a8615a694f87c24626fc4cc8da3fe6f19fcbf3a4d")
     version("2.69.0", sha256="ba5d08dbcfd6765955b19d944748d93506df649c59781e7307c14ca2ef613d92")
     version("2.68.0", sha256="ccba8339569d4a8f64fd2435bcde1b09a41c6a54aae798eb8d4cc44a30e2a495")
@@ -163,9 +161,17 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.44.0",
+        commit="3a024a54bb086a16d7ccbb5ff854d8be4b3c3a27",
+        when="@2.71:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v4.40.0",
         commit="bfea7ae9482f508f66f7964cf98908c7a6c63ce8",
-        when="@2.70:",
+        when="@2.70",
         placement="ESMA_cmake",
     )
     resource(
@@ -528,7 +534,7 @@ class Mapl(CMakePackage):
             nc_pc_cmd = ["nc-config", "--static", "--libs"]
             nc_flags = subprocess.check_output(nc_pc_cmd, encoding="utf8").strip()
             filter_file(
-                "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
+                "(target_link_libraries[^)]+PUBLIC )", rf"\1 {nc_flags} ", "pfio/CMakeLists.txt"
             )
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
@@ -558,10 +564,10 @@ cpp -P -traditional-cpp -undef \"$@\"
 
     # We can run some tests to make sure the build is working
     # but we can only do it if the pfunit variant is enabled
-    @when("+pfunit")
-    @run_after("build")
     @on_package_attributes(run_tests=True)
     def check(self):
+        if not self.spec.satisfies("+pfunit"):
+            return
         with working_dir(self.build_directory):
             # The test suite contains a lot of tests. We select only those
             # that are cheap. Note this requires MPI and 6 processes
