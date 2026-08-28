@@ -28,10 +28,7 @@ class Chrono(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version(
-        "10.0.0",
-        sha256="806e5e24a06f26bbd42344dd1f13d75e3214c9eb29901553574b9c87217d8722",
-    )
+    version("10.0.0", sha256="806e5e24a06f26bbd42344dd1f13d75e3214c9eb29901553574b9c87217d8722")
 
     variant("python", default=False, description="Build the pychrono Python module")
     variant("openmp", default=True, description="Enable OpenMP parallelism")
@@ -86,11 +83,7 @@ class Chrono(CMakePackage):
         with open(header) as f:
             if "#include <type_traits>" in f.read():
                 return
-        filter_file(
-            r"^#include <cstdio>$",
-            "#include <cstdio>\n#include <type_traits>",
-            header,
-        )
+        filter_file(r"^#include <cstdio>$", "#include <cstdio>\n#include <type_traits>", header)
 
     def cmake_args(self):
         args = [
@@ -131,9 +124,7 @@ class Chrono(CMakePackage):
                 # passes -undefined dynamic_lookup. Unresolved symbols in a
                 # shared object are fine on Linux and resolve at dlopen time,
                 # but are a hard link error for a macOS bundle.
-                args.append(
-                    self.define("CMAKE_MODULE_LINKER_FLAGS", "-undefined dynamic_lookup")
-                )
+                args.append(self.define("CMAKE_MODULE_LINKER_FLAGS", "-undefined dynamic_lookup"))
 
         return args
 
