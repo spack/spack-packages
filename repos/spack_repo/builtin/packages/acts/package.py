@@ -336,6 +336,7 @@ class Acts(CMakePackage, CudaPackage):
             plugin_cmake_variant("PODIO", "podio"),
             example_cmake_variant("PYTHIA8", "pythia8"),
             example_cmake_variant("PYTHON_BINDINGS", "python"),
+            example_cmake_variant("ROOT", "root"),
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
             plugin_cmake_variant("TGEO", "root"),
