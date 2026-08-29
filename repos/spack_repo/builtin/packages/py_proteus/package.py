@@ -94,6 +94,6 @@ class PyProteus(PythonPackage):
 
         if self.spec.satisfies("+chrono"):
             env.set("CHRONO_DIR", self.spec["chrono"].prefix)
-            
+
         for dep in ("eigen", "xtensor", "xtensor-python", "xtl"):
             env.prepend_path("CPATH", self.spec[dep].prefix.include)
