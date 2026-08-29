@@ -60,7 +60,7 @@ class PyProteus(PythonPackage):
     # (pychrono is not installed into site-packages) via
     # setup_dependent_run_environment, which spack only applies to run deps.
     depends_on("chrono+python", type=("build", "link", "run"))
-    depends_on("pumi@4.2.1+zoltan+shared", when="+pumi")  # <4.2.1 requires patch
+    depends_on("pumi@4.2.1:+zoltan+shared", when="+pumi")  # <4.2.1 requires patch
     depends_on("zoltan+parmetis~fortran", when="+pumi")
     depends_on("parmetis", when="+pumi")
     depends_on("eigen@3.4")  # xtensor dep
