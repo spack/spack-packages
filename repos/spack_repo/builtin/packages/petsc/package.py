@@ -232,6 +232,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
 
+    # fixes build with: +complex ^cuda@13.3. Upstream fix: petsc!9532.
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/c0f7467a2261011568d510ece23f14cad8dcaaa4.diff",
+        sha256="e91c9b9323f22fe8988f5707eb262290e850b81262cf41557dc552848313a6b8",
+        when="@3.16:3.25.5 +cuda +complex ^cuda@13.3:",
+    )
+
     # These require +mpi
     mpi_msg = "Requires +mpi"
     conflicts("+cgns", when="~mpi", msg=mpi_msg)

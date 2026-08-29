@@ -21,6 +21,7 @@ class Podio(CMakePackage):
     tags = ["hep", "key4hep"]
 
     version("master", branch="master")
+    version("1.8", sha256="8c8a39e23aa45c35977a86f525a71d341f3b8e7f4210793962b239730a2cc2c1")
     version("1.7", sha256="4a62ed2fdd9cebb5fc1799ea17237979b2d435797f1201fa8031fd99e9e47c15")
     version("1.6", sha256="4a625419bcf9d10b33b9fcf6cacbbebfd24c62e88a9980c5735b011d671397fe")
     version("1.5", sha256="3d316a86420a1e79088488f229bb8d1259244cf17752c40f817abeec2cec89a5")
@@ -63,6 +64,12 @@ class Podio(CMakePackage):
         when="@1.0.2:",
     )
     variant("arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:")
+    variant(
+        "parquet",
+        default=False,
+        description="Build the Arrow/Parquet I/O backend",
+        when="@1.8: +arrow",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -84,6 +91,7 @@ class Podio(CMakePackage):
     depends_on("py-jinja2@2.10.1:", type=("build", "run"))
     depends_on("sio", type=("build", "link"), when="+sio")
     depends_on("arrow", type=("build", "link"), when="+arrow")
+    depends_on("arrow+parquet", type=("build", "link"), when="+parquet")
     depends_on("fmt@9:", type=("build", "link"), when="@1.3:")
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
@@ -122,6 +130,7 @@ class Podio(CMakePackage):
             self.define_from_variant("ENABLE_ARROW", "arrow"),
             self.define_from_variant("ENABLE_RNTUPLE", "rntuple"),
             self.define_from_variant("ENABLE_DATASOURCE", "datasource"),
+            self.define_from_variant("ENABLE_PARQUET", "parquet"),
             self.define("PODIO_SET_RPATH", True),
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),
             self.define("BUILD_TESTING", self.run_tests),
