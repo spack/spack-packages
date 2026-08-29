@@ -32,4 +32,4 @@ class Iperf3(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
-    conflicts("%gcc@15:", when="@:3.18") # https://github.com/esnet/iperf/issues/1838
+    conflicts("%gcc@15:", when="@:3.18")  # https://github.com/esnet/iperf/issues/1838
