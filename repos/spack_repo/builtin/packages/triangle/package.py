@@ -38,11 +38,3 @@ class Triangle(Package):
 
         install("triangle", prefix.bin)
         install("showme", prefix.bin)
-
-        make("CSWITCHES=" + cswitches, "trilibrary")
-        mkdirp(prefix.include)
-        mkdirp(prefix.lib)
-        install("triangle.h", prefix.include)
-        ar = which("ar", required=True)
-        ar("rcs", "libtri.a", "triangle.o")
-        install("libtri.a", prefix.lib)

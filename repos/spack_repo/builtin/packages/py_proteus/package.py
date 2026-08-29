@@ -23,7 +23,8 @@ class PyProteus(PythonPackage):
 
     version("main", branch="main")
 
-    variant("pumi", default=False, description="Enable PUMI mesh adaptation support")
+    variant("pumi", default=True, description="Enable PUMI mesh adaptation support")
+    variant("chrono", default=True, description="Enable Chrono modeling support")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -38,31 +39,22 @@ class PyProteus(PythonPackage):
     depends_on("py-petsc4py", type=("build", "run"))
     depends_on("py-h5py+mpi", type=("build", "run"))
     depends_on("mpi")
-    depends_on("petsc+mpi+hypre+superlu-dist+superlu+tetgen")  # how much to lock in?
+    depends_on("petsc+mpi+hypre+superlu-dist+superlu")
     depends_on("hdf5+mpi+hl")
     depends_on("openblas")  # should relax to generic blas in future
     depends_on("metis")  # through several dependencies
     depends_on("superlu")
     depends_on("triangle")  # shells out but has linked in past
     depends_on("tetgen")  # shells out
-    # proteus shells out to the gmsh executable as a mesh generator, so it needs
-    # neither the FLTK GUI nor MED file support. Both are gmsh defaults, and both
-    # pull in heavy dependencies that fail to build on current toolchains: +fltk
-    # brings mesa, whose vendored src/c11/threads.h redefines once_flag and
-    # call_once and so conflicts with glibc 2.43's own <threads.h>; +med brings
-    # med, which passes an incompatible pointer to H5Literate2 and is rejected by
-    # gcc >= 14, where -Wincompatible-pointer-types is an error. Excluding them
-    # fixes the build on Ubuntu 26.04 / gcc 15.2 and drops a large amount of
-    # build time everywhere else.
-    depends_on("gmsh~fltk~med")  # shells out to the gmsh executable
+    depends_on("gmsh~fltk~med")  # shells out to the gmsh, no fltk/med needed
     depends_on("ncurses")  # Fenton waves as text gui, generally not used
     # run type matters: chrono exports PYTHONPATH for share/chrono/python
     # (pychrono is not installed into site-packages) via
     # setup_dependent_run_environment, which spack only applies to run deps.
-    depends_on("chrono+python", type=("build", "link", "run"))
+    depends_on("chrono+python", when="+chrono", type=("build", "link", "run"))
     depends_on("pumi@4.2.1:+zoltan+shared", when="+pumi")  # <4.2.1 requires patch
     depends_on("zoltan+parmetis~fortran", when="+pumi")
-    depends_on("parmetis", when="+pumi")
+    depends_on("parmetis")
     depends_on("eigen@3.4")  # xtensor dep
     depends_on("xtensor@0.26.0")
     depends_on("xtensor-python@0.28.0:")
@@ -84,17 +76,14 @@ class PyProteus(PythonPackage):
     def setup_build_environment(self, env):
         if self.spec.satisfies("~pumi"):
             env.set("PROTEUS_SKIP_PUMI", "1")
-        # proteus/config/default.py get_flags("chrono") reads $CHRONO_DIR/
-        # {include,lib} and pulls CHRONO_CXX_FLAGS out of
-        # lib/cmake/Chrono/ChronoConfig.cmake.
-        env.set("CHRONO_DIR", self.spec["chrono"].prefix)
+        if self.spec.satisfies("~chrono"):
+            env.set("PROTEUS_SKIP_CHRONO", "1")
         env.set("PETSC_DIR", self.spec["petsc"].prefix)
         env.set("MPI_DIR", self._mpi_dir())
         env.set("HDF5_DIR", self.spec["hdf5"].prefix)
         env.set("BLAS_DIR", self.spec["openblas"].prefix)
         env.set("LAPACK_DIR", self.spec["openblas"].prefix)
         env.set("SUPERLU_DIR", self.spec["superlu"].prefix)
-        env.set("TRIANGLE_DIR", self.spec["triangle"].prefix)
         env.set("NCURSES_DIR", self.spec["ncurses"].prefix)
         env.set("METIS_DIR", self.spec["metis"].prefix)
 
@@ -103,5 +92,8 @@ class PyProteus(PythonPackage):
             env.set("ZOLTAN_DIR", self.spec["zoltan"].prefix)
             env.set("PARMETIS_DIR", self.spec["parmetis"].prefix)
 
+        if self.spec.satisfies("+chrono"):
+            env.set("CHRONO_DIR", self.spec["chrono"].prefix)
+            
         for dep in ("eigen", "xtensor", "xtensor-python", "xtl"):
             env.prepend_path("CPATH", self.spec[dep].prefix.include)
