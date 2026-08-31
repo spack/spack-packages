@@ -16,6 +16,7 @@ class PyStarlette(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.6.0", sha256="d4e3ac5e546444960c710297a3c9fc3f7ebae1b7e963f3d36173b49da535be9b")
     version("0.46.2", sha256="7f7361f34eed179294600af672f565727419830b54b7b084efe44bb82d2fccd5")
     version("0.41.2", sha256="9834fd799d1a87fd346deb76158668cfa0b0d56f85caefe8268e2d97c3468b62")
     version("0.37.2", sha256="9af890290133b79fc3db55474ade20f6220a364a0402e0b556e7cd5e1e093823")
@@ -27,8 +28,10 @@ class PyStarlette(PythonPackage):
     version("0.23.1", sha256="8510e5b3d670326326c5c1d4cb657cc66832193fe5d5b7015a51c7b1e1b1bf42")
     version("0.22.0", sha256="b092cbc365bea34dd6840b42861bdabb2f507f8671e642e8272d2442e08ea4ff")
 
+    depends_on("python@3.10:", when="@1:", type=("build", "run"))
     depends_on("py-hatchling", type="build")
 
     depends_on("py-anyio@3.6.2:4", when="@0.45.2:", type=("build", "run"))
     depends_on("py-anyio@3.4:4", type=("build", "run"))
+    depends_on("py-typing-extensions@4.10:", when="@1: ^python@:3.12", type=("build", "run"))
     depends_on("py-typing-extensions@3.10.0:", when="^python@:3.9", type=("build", "run"))
