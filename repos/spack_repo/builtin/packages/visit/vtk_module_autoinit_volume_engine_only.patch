@@ -1,0 +1,15 @@
+--- a/src/plots/Volume/CMakeLists.txt
++++ b/src/plots/Volume/CMakeLists.txt
+@@ -154,7 +154,11 @@
+ if(TARGET VTK::RenderingRayTracing)
+     list(APPEND vtkmods VTK::RenderingRayTracing)
+ endif()
+-vtk_module_autoinit(TARGETS VVolumePlot EVolumePlot_ser MODULES ${vtkmods})
++set(volume_autoinit_targets EVolumePlot_ser)
++if(TARGET VVolumePlot)
++    list(APPEND volume_autoinit_targets VVolumePlot)
++endif()
++vtk_module_autoinit(TARGETS ${volume_autoinit_targets} MODULES ${vtkmods})
+
+ if(PARALLEL)
+     vtk_module_autoinit(TARGETS EVolumePlot_par MODULES ${vtkmods})
