@@ -55,7 +55,10 @@ class Scorep(AutotoolsPackage):
     variant("hip", default=False, description="Enable ROCm/HIP support", when="@8.0:")
     variant("gcc-plugin", default=True, description="Enable gcc-plugin", when="%gcc")
     variant(
-        "llvm-plugin", default=True, description="Enable LLVM compiler plugin", when="@9.0: %c,cxx=llvm"
+        "llvm-plugin",
+        default=True,
+        description="Enable LLVM compiler plugin",
+        when="@9.0: %c,cxx=llvm",
     )
     variant(
         "xray",
