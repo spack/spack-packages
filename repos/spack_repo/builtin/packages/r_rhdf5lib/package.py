@@ -15,6 +15,8 @@ class RRhdf5lib(RPackage):
     bioc = "Rhdf5lib"
 
     with default_args(get_full_repo=True):
+        version("2.0.0", commit="21f3087035b375f46b89b27f67d11493aaef2171")  # bioc 3.23
+        version("1.30.0", commit="e60e82a78edd3ca6494c5b44ed80521766d4ae86")  # bioc 3.21
         version("1.22.0", commit="2bf06b364e8d478549b07a298eaf60177a050dc9")
         version("1.20.0", commit="760679995f17996a9de328cf7a8bcaa6c87286d4")
         version("1.18.2", commit="d104bbfdb91ac5ec7db3c453f23e4d1d6feb671f")
@@ -25,10 +27,21 @@ class RRhdf5lib(RPackage):
         version("1.2.1", commit="dbf85dbedb736d5a696794d52875729c8514494e")
         version("1.0.0", commit="79608038c2016a518ba747fe6a2bf02ce53a75f9")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
-    depends_on("r@3.3.0:", type="build", when="@1.12.1:")
+    depends_on("r@4.2.0:", type=("build", "run"), when="@1.21.1:")
     depends_on("r@4.0.0:", type="build", when="@1.16.0:")
-    depends_on("r@4.2.0:", type=("build", "run"), when="@1.22.0:")
-    depends_on("gmake", type="build")
+    depends_on("r@3.3.0:", type="build", when="@1.12.1:")
+
+    depends_on("r-biocmake", type="build", when="@1.33.1:")
+
+    depends_on("curl", type=("build", "link"), when="@1.33.1:")
+
     depends_on("zlib-api")
+
+    # > error: assignment to 'H5A_t *' from 'int' makes pointer from integer without a cast
+    conflicts("%gcc@14:", when="@:1.12")
+
+    # Historical dependencies
+    depends_on("gmake", type="build", when="@:1.33.0")
