@@ -16,6 +16,7 @@ class PyAffine(PythonPackage):
     license("BSD-3-Clause")
     maintainers("adamjstewart")
 
+    version("3.0.1", sha256="e1b3c38c5d4d3ef5024a182a6d1bf1e0c51ab221825781c741aeb4d0c079a7e2")
     version("3.0.0", sha256="573514d5c37e98401a0ec34139c2b725d9f9ae4d074662f4b62a47d6a2ba9f06")
     version("2.4.0", sha256="a24d818d6a836c131976d22f8c27b8d3ca32d0af64c1d8d29deb7bafa4da1eea")
     version("2.3.1", sha256="d676de66157ad6af99ffd94e0f54e89dfc35b0fb7252ead2ed0ad2dca431bdd0")
@@ -27,4 +28,4 @@ class PyAffine(PythonPackage):
         depends_on("py-setuptools", when="@:2.3")
 
     with default_args(type=("build", "run")):
-        depends_on("py-attrs", when="@3:")
+        depends_on("py-attrs@21.3:", when="@3:")
