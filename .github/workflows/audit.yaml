@@ -19,10 +19,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        system:
-        - { os: windows-latest, shell: powershell }
-        - { os: ubuntu-latest, shell: bash }
-        - { os: macos-latest, shell: bash }
+        # In a local docker-based workflow run using act, only Linux-based systems are available
+        system: >-
+          ${{ github.actor == 'nektos/act'
+              && fromJSON('[{"os":"ubuntu-latest","shell":"bash"}]')
+              || fromJSON('[{"os":"ubuntu-latest","shell":"bash"},
+                           {"os":"windows-latest","shell":"powershell"},
+                           {"os":"macos-latest","shell":"bash"}]') }}
         # An empty ref means the commit pinned in .ci/env, the others are the
         # released versions we keep the packages repository compatible with
         spack_ref: ['', 'v1.2.2', 'v1.1.1']
