@@ -11,17 +11,14 @@ class PySseStarlette(PythonPackage):
     """SSE plugin for Starlette / FastAPI, serving Server-Sent Events."""
 
     homepage = "https://github.com/sysid/sse-starlette"
-    pypi = "sse-starlette/sse_starlette-2.1.3.tar.gz"
-
-    maintainers("aprozo")
+    pypi = "sse-starlette/sse_starlette-3.4.8.tar.gz"
 
     license("BSD-3-Clause", checked_by="aprozo")
 
-    version("2.1.3", sha256="9cd27eb35319e1414e3d2558ee7414487f9529ce3b3cf9b21434fd110e017169")
+    version("3.4.8", sha256="ed89ffbb75cbf78a5fe2f2109cd584792ee7f9dfac96f791db546df8f15f3f9c")
 
-    depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-pdm-backend", type="build")
+    depends_on("python@3.10:", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
 
-    depends_on("py-anyio", type=("build", "run"))
-    depends_on("py-starlette", type=("build", "run"))
-    depends_on("py-uvicorn", type=("build", "run"))
+    depends_on("py-anyio@4.7:", type=("build", "run"))
+    depends_on("py-starlette@0.49.1:", type=("build", "run"))
