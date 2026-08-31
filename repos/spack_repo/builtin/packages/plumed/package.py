@@ -299,7 +299,11 @@ class Plumed(AutotoolsPackage):
 
             extra_ldflags.append(spec["py-torch"].libs.search_flags)
 
-            # Do not link libtorch_python
+            # PLUMED only needs libtorch (PyTorch C++ API)
+            # Here we manually remove the torch_python library to avoid linking against it
+            # Linking against torch_python requires linking against Python as well,
+            # which is not needed and can cause issues with some workflows
+            # (e.g. GIL-related when mixing Spack installed-PLUMED with external Python installations)
             extra_libs.append(spec["py-torch"].libs.link_flags.replace("-ltorch_python ", ""))
 
             # Add include paths manually
