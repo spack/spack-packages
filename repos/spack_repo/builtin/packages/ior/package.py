@@ -33,7 +33,7 @@ class Ior(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("autoconf", type="build")
+    depends_on("autoconf@2.62:", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")

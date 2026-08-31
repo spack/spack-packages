@@ -21,4 +21,5 @@ class EprosimaFastcdr(CMakePackage):
     version("2.2.0", sha256="8a75ee3aed59f495e95208050920d2c2146df92f073809505a3bd29011c21f20")
     version("1.0.27", sha256="a9bc8fd31a2c2b95e6d2fb46e6ce1ad733e86dc4442f733479e33ed9cdc54bf6")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")

@@ -6,11 +6,12 @@
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class HipTests(CMakePackage):
+class HipTests(ROCmLibrary, CMakePackage):
     """This repository provides unit tests for HIP implementation."""
 
     homepage = "https://github.com/ROCm/hip-tests"
@@ -19,13 +20,13 @@ class HipTests(CMakePackage):
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/hip-tests/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/hip-tests/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
@@ -48,9 +49,18 @@ class HipTests(CMakePackage):
     version("6.1.1", sha256="10c96ee72adf4580056292ab17cfd858a2fd7bc07abeb41c6780bd147b47f7af")
     version("6.1.0", sha256="cf3a6a7c43116032d933cc3bc88bfc4b17a4ee1513c978e751755ca11a5ed381")
 
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("cmake", type="run")
+    depends_on("py-pyyaml", type="build", when="@7.13:")
 
     for ver in [
         "6.1.0",
@@ -74,6 +84,8 @@ class HipTests(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -82,7 +94,8 @@ class HipTests(CMakePackage):
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
 
-    patch("0001_link_numa.patch", when="@7.2:")
+    patch("0001_link_numa.patch", when="@7.2")
+    patch("002_find_comgr_hsa.patch", when="@7.14:")
 
     @property
     def root_cmakelists_dir(self):
@@ -166,6 +179,15 @@ class HipTests(CMakePackage):
                     f"{self.stage.source_path}/projects/hip-tests/catch/perftests/memory",
                 )
             )
+        if self.spec.satisfies("@7.14:"):
+            args.append(
+                self.define(
+                    "CLANG_OFFLOAD_BUNDLER",
+                    f"{self.spec['llvm-amdgpu'].prefix}/bin/clang-offload-bundler",
+                )
+            )
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     def build(self, spec, prefix):

@@ -111,8 +111,7 @@ class Relion(CMakePackage, CudaPackage):
     conflicts("cuda@13:", when="@:5.0.0 +cuda")
     depends_on("tbb", when="+altcpu")
     depends_on("mkl", when="+mklfft")
-    depends_on("ctffind@4.1:4", type="run", when="@5")
-    depends_on("ctffind@:4", type="run")
+    depends_on("ctffind@4.1:4", type="run")
     depends_on("motioncor2", type="run", when="+external_motioncor2")
 
     # ghostscript is only needed at runtime for merging EPS diagnostic plots
