@@ -17,7 +17,7 @@ class PySchemaSalad(PythonPackage):
     license("Apache-2.0")
     version(
         "8.10.20260825112551",
-        sha256="426af8bae86b1b8026469968bcd0802e6c61fd6c44c6b1f77d48467164a6ac74"
+        sha256="426af8bae86b1b8026469968bcd0802e6c61fd6c44c6b1f77d48467164a6ac74",
     )
     version(
         "8.9.20260417192335",
@@ -45,12 +45,18 @@ class PySchemaSalad(PythonPackage):
 
     depends_on("py-requests@1:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.17.6:0.17.21", type=("build", "run"), when="@8.3.20221209165047")
-    depends_on("py-ruamel-yaml@0.17.6:0.18", when="@8.4.20231113094720:8.8.20250205075315", type=("build", "run"))
+    depends_on(
+        "py-ruamel-yaml@0.17.6:0.18",
+        when="@8.4.20231113094720:8.8.20250205075315",
+        type=("build", "run"),
+    )
     depends_on("py-ruamel-yaml@0.17.6:0.19", when="@8.9.20260327095315:", type=("build", "run"))
     depends_on("py-rdflib@4.2.2:6", type=("build", "run"), when="@8.3.20221209165047")
     depends_on("py-rdflib@4.2.2:7", when="@8.4.20230927144413:", type=("build", "run"))
     depends_on("py-mistune@2.0.3:2.0", type=("build", "run"), when="@8.3.20221209165047")
-    depends_on("py-mistune@3:3.1", type=("build", "run"), when="@8.7.20241021092521:8.8.20250205075315")
+    depends_on(
+        "py-mistune@3:3.1", type=("build", "run"), when="@8.7.20241021092521:8.8.20250205075315"
+    )
     depends_on("py-mistune@3:3.2", type=("build", "run"), when="@8.9.20260417192335")
     depends_on("py-mistune@3.3", type=("build", "run"), when="@8.10.20260825112551:")
     depends_on(
