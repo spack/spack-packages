@@ -22,6 +22,7 @@ class QtWebsockets(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.11.2", commit="3eab06de7076a83514e98c2403baa433d137b013", submodules=True)
     version("6.11.1", commit="451920600d7f0b8a4b458bba56a2dd303e587026", submodules=True)
     version("6.10.2", commit="2b969cb983d1e22df0e6fc6ece54043942090bd8", submodules=True)
     version("6.10.1", commit="ba2ada87ef9027650efb6251e7fc05519f484e95", submodules=True)
