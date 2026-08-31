@@ -27,6 +27,7 @@ class GoBootstrap(Package):
     maintainers("alecbcs")
 
     executables = ["^go$"]
+    unresolved_libraries = ["libtiff.so.*"]
 
     # List binary go releases for multiple operating systems and architectures.
     # These binary versions are not intended to stay up-to-date. Instead we
