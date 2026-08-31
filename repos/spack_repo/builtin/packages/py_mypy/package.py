@@ -84,7 +84,6 @@ class PyMypy(PythonPackage):
         depends_on("python@3.7:", when="@0.981:")
 
         depends_on("py-typing-extensions@4.14:", when="^python@3.15:")
-        depends_on("py-typing-extensions@4.6:", when="^python@:3.14")
         depends_on("py-typing-extensions@4.6:", when="@1.11:")
         depends_on("py-typing-extensions@4.1:", when="@1.5:")
         depends_on("py-typing-extensions@3.10:", when="@0.930:")
