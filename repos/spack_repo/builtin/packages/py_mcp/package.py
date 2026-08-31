@@ -13,15 +13,10 @@ class PyMcp(PythonPackage):
     homepage = "https://github.com/modelcontextprotocol/python-sdk"
     pypi = "mcp/mcp-1.28.1.tar.gz"
 
-    maintainers("aprozo")
-
     license("MIT", checked_by="aprozo")
 
     version("1.28.1", sha256="d51e36a5f5644faea4f85ea649bfffa6bc6c26770d42798ad6a3de3d2ba69683")
 
-    # Default off: the cli extra pulls py-typer, whose newest builtin version
-    # pins py-click@:8.1.8 and cannot unify with environments that need
-    # click 8.3+ (e.g. eic_xl via flask). MCP servers only need mcp core.
     variant("cli", default=False, description="Command-line tooling (mcp CLI)")
 
     depends_on("python@3.10:", type=("build", "run"))
@@ -32,13 +27,13 @@ class PyMcp(PythonPackage):
     depends_on("py-httpx-sse@0.4:", type=("build", "run"))
     depends_on("py-jsonschema@4.20:", type=("build", "run"))
     depends_on("py-pydantic@2.11:2", type=("build", "run"))
+    depends_on("py-pydantic@2.12:2", when="^python@3.14:", type=("build", "run"))
     depends_on("py-pydantic-settings@2.5.2:", type=("build", "run"))
-    # pyjwt[crypto]: the crypto extra just adds cryptography
-    depends_on("py-pyjwt@2.10.1:", type=("build", "run"))
-    depends_on("py-cryptography", type=("build", "run"))
+    depends_on("py-pyjwt@2.10.1:+crypto", type=("build", "run"))
     depends_on("py-python-multipart@0.0.9:", type=("build", "run"))
     depends_on("py-sse-starlette@1.6.1:", type=("build", "run"))
     depends_on("py-starlette@0.27:", type=("build", "run"))
+    depends_on("py-starlette@0.48:", when="^python@3.14:", type=("build", "run"))
     depends_on("py-typing-extensions@4.9:", type=("build", "run"))
     depends_on("py-typing-inspection@0.4.1:", type=("build", "run"))
     depends_on("py-uvicorn@0.31.1:", type=("build", "run"))
