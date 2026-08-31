@@ -39,7 +39,7 @@ class Meson(PythonPackage):
         version("1.8.2", sha256="6b878fb0f6f0318cbd54e13539f89a1a8305791668e8e93ffd59d82722888dac")
         version("1.7.0", sha256="a6ca46e2a11a0278bb6492ecd4e0520ff441b164ebfdef1e012b11beb848d26e")
 
-    depends_on("py-setuptools@42:", type=("build", "run"))
+    depends_on("py-setuptools@42:", type="build")
     depends_on("ninja@1.8.2:", type="run")
 
     # By default, Meson strips the rpath on installation. This patch disables

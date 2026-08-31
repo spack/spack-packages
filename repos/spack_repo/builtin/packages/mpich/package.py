@@ -70,7 +70,7 @@ class Mpich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPa
     list_url = "https://www.mpich.org/static/downloads/"
     list_depth = 1
 
-    maintainers("raffenet", "yfguo")
+    maintainers("raffenet", "hzhou")
     tags = ["e4s"]
     executables = ["^mpichversion$"]
 
@@ -164,6 +164,13 @@ supported, and netmod is ignored if device is ch3:sock.""",
         "of applications that do heavy concurrent MPI"
         "communications. Set MPIR_CVAR_CH4_NUM_VCIS=<N> to "
         "enable multiple vcis at runtime.",
+    )
+
+    variant(
+        "mpi5-abi",
+        default=False,
+        when="@5:",
+        description="Enable MPI-5 standard ABI.",
     )
 
     variant(
@@ -554,6 +561,9 @@ supported, and netmod is ignored if device is ch3:sock.""",
             )
 
         config_args.extend(self.enable_or_disable("fortran"))
+
+        if spec.satisfies("@5:"):
+            config_args.extend(self.enable_or_disable("mpi-abi", variant="mpi5-abi"))
 
         if "+slurm" in spec:
             config_args.append("--with-slurm=yes")

@@ -31,7 +31,7 @@ class PyEarthengineApi(PythonPackage):
     depends_on("google-cloud-cli", type="run")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/e/earthengine-api/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/e/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.1.399"):
             name = "earthengine_api"
         else:

@@ -34,6 +34,7 @@ class Libxsmm(CMakePackage, MakefilePackage):
         deprecated=True,
     )
     version("main", branch="main")
+    version("2.1.0", sha256="704ed8f99b61a767798ed1ee1cadc5d185ca449f466a2bae37930f68c65961e9")
     version("2.0.0", sha256="7e532dc5520f864ce6d7f44f3fd50365e3edb23da97dbdc54fd53845d86a290b")
     version(
         "1.17-cp2k",
@@ -122,7 +123,10 @@ class Libxsmm(CMakePackage, MakefilePackage):
         # A recent `as` is needed to compile libxsmm until version 1.17
         # (<https://github.com/spack/spack/issues/28404>), but not afterwards
         # (<https://github.com/spack/spack/pull/21671#issuecomment-779882282>).
-        depends_on("binutils+ld+gas@2.33:", type="build")
+        # On macOS binutils+gas+ld is unbuildable (recipe fails against the
+        # current SDK) and unavailable from Homebrew (no gas/ld), so an
+        # unconditional dep breaks builds that do not need it.
+        depends_on("binutils+ld+gas@2.33:", type="build", when="@:1.16")
 
     # Although it predates CMake support, this snapshot starts with the
     # infinity-version component "main" and therefore satisfies "@2:".

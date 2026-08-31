@@ -36,6 +36,7 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.40.04", sha256="44ada253b1935d34b6801222232d50731fe7c5e3cbcfab47734c85031cfbe4d3")
     version("6.40.02", sha256="f631eebee3dbea128f1415f4b784f5e83637a2b431193bce75f10385f71efc56")
     version("6.40.00", sha256="676f8fde8926ce05902be7f44ce7d492a4a2060022fcab0e3d1c44f6dc0fbde8")
     version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
@@ -160,6 +161,13 @@ class Root(CMakePackage):
         "https://github.com/root-project/root/commit/5b09965c2acf098f0bfba465c395a2ce23f276b5.patch?full_index=1",
         sha256="131ab40a3be20b14929327bf9fc0a4c5e2da7d56aa1ad6f8bd39c7826038da81",
         when="@6.38.0 +python",
+    )
+
+    # Fix CMake bug that becomes an error in newer versions
+    patch(
+        "https://github.com/root-project/root/pull/22790.diff?full_index=1",
+        sha256="8f95c3d0532be4880dbe4e74b0180ecaed410c59ed915067c4f585aba270029c",
+        when="@6.40.02 ^cmake@4.4:",
     )
 
     if _is_macos:
@@ -445,7 +453,7 @@ class Root(CMakePackage):
     # (interpreter/llvm-project/clang) and builds it against the external LLVM, so
     # vanilla LLVM is sufficient here.  ROOT's patches to llvm-project only touch
     # clang/, not the LLVM core.
-    depends_on("llvm@20.1.0:20.1", when="@6.36: ~builtin_llvm")
+    depends_on("llvm@20.1.0:20.1+polly+clang", when="@6.36: ~builtin_llvm")
 
     depends_on("googletest", when="@6.28.00:", type="test")
 
@@ -462,13 +470,6 @@ class Root(CMakePackage):
         "~builtin_llvm",
         when="@:6.35",
         msg="External LLVM is only supported for ROOT 6.36+ in this spack recipe",
-    )
-    # In order to avoid adding newer versions with incorrect LLVM versions,
-    # newer versions are explicitly added as conflicts as well.
-    conflicts(
-        "~builtin_llvm",
-        when="@6.39:",
-        msg="External LLVM support for ROOT 6.39+ has not been validated",
     )
 
     # GCC 15 support was added in 6.34.04
