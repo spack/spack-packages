@@ -240,7 +240,8 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.13:", type="build", when="@18.11:19.03")
     depends_on("cmake@3.14:", type="build", when="@19.04:22.05")
     depends_on("cmake@3.17:", type="build", when="@22.06:23.01")
-    depends_on("cmake@3.18:", type="build", when="@23.02:")
+    depends_on("cmake@3.18:", type="build", when="@23.02:26.08")
+    depends_on("cmake@3.25:", type="build", when="@26.09:")
     # cmake @3.17: is necessary to handle cuda @11: correctly
     depends_on("cmake@3.17:", type="build", when="^cuda @11:")
     depends_on("cmake@3.20:", type="build", when="+rocm")
@@ -312,6 +313,12 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("cuda_arch=21", when="+cuda", msg="AMReX only supports compute capabilities >= 3.5")
     conflicts("cuda_arch=30", when="+cuda", msg="AMReX only supports compute capabilities >= 3.5")
     conflicts("cuda_arch=32", when="+cuda", msg="AMReX only supports compute capabilities >= 3.5")
+    for arch in ("35", "37", "50", "52", "53"):
+        conflicts(
+            "cuda_arch=%s" % arch,
+            when="@26.09: +cuda",
+            msg="AMReX 26.09+ only supports compute capabilities >= 6.0",
+        )
     conflicts(
         "+rocm", when="@:20.11", msg="AMReX HIP support needs AMReX newer than version 20.11"
     )
@@ -346,6 +353,12 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             # Use format x.y instead of CudaPackage xy format
             vf = tuple(float(x) / 10.0 for x in values)
             return ";".join(str(x) for x in vf)
+
+    def get_cuda_architectures(self, values):
+        if "none" in values:
+            return "native"
+        else:
+            return ";".join(str(x) for x in values)
 
     #
     # For versions > 20.11
@@ -391,7 +404,10 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
             args.append("-DAMReX_CUDA_ERROR_CAPTURE_THIS=ON")
             args.append("-DAMReX_CUDA_ERROR_CROSS_EXECUTION_SPACE_CALL=ON")
             cuda_arch = self.spec.variants["cuda_arch"].value
-            args.append("-DAMReX_CUDA_ARCH=" + self.get_cuda_arch_string(cuda_arch))
+            if self.spec.satisfies("@26.09:"):
+                args.append("-DCMAKE_CUDA_ARCHITECTURES=" + self.get_cuda_architectures(cuda_arch))
+            else:
+                args.append("-DAMReX_CUDA_ARCH=" + self.get_cuda_arch_string(cuda_arch))
             args.append(self.define_from_variant("AMReX_GPU_RDC", "gpu_rdc"))
 
         if self.spec.satisfies("+rocm"):
