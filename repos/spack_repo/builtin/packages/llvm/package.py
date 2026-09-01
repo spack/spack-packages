@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
 import re
+import tempfile
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -22,12 +23,14 @@ class LlvmDetection(PackageBase):
     def filter_detected_exes(cls, prefix, exes_in_prefix):
         # Executables like lldb-vscode-X are daemon listening on some port and would hang Spack
         # during detection. clang-cl, clang-cpp, etc. are dev tools that we don't need to test
+        # and can be filtered out. Only apply it to the file names not the full path to avoid
+        # filtering out directories with these names which would break some environments.
         reject = re.compile(
             r"-(vscode|cpp|cl|ocl|gpu|tidy|rename|scan-deps|format|refactor|offload|"
             r"check|query|doc|move|extdef|apply|reorder|change-namespace|"
             r"include-fixer|import-test|dap|server|PerfectShuffle)"
         )
-        return [x for x in exes_in_prefix if not reject.search(x)]
+        return [x for x in exes_in_prefix if not reject.search(os.path.basename(x))]
 
 
 class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
@@ -106,6 +109,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     variant(
         "clang", default=True, description="Build the LLVM C/C++/Objective-C compiler frontend"
     )
+    variant("libclang", default=True, description="Provide the libclang development interface")
+    conflicts("+libclang", when="~clang")
 
     variant("flang", default=False, description="Build the LLVM Fortran compiler frontend ")
 
@@ -715,13 +720,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     @classproperty
     def executables(cls):
-        return super().executables + [r"^ld\.lld(-\d+)?$", r"^lldb(-\d+)?$"]
+        return super().executables + [
+            r"^ld\.lld(-\d+)?$",
+            r"^lldb(-\d+)?$",
+            r"^llvm-config(-\d+(\.\d+)*)?$",
+        ]
 
     @classmethod
     def determine_version(cls, exe):
         try:
             compiler = Executable(exe)
             output = compiler(cls.compiler_version_argument, output=str, error=str)
+            if compiler.name.startswith("llvm-config"):
+                return output.strip()
             if "Apple" in output:
                 return None
             if "AMD" in output:
@@ -739,6 +750,63 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         return None
 
     @classmethod
+    def determine_libclang_variant(cls, exe_path) -> bool:
+        """Determine if the given executable support the libclang variant.
+
+        Compiles and runs a test program that uses the libclang API.
+        """
+        llvm_config = Executable(exe_path)
+        try:
+            inc = llvm_config("--includedir", output=str, error=str).strip()
+            lib = llvm_config("--libdir", output=str, error=str).strip()
+            bin = llvm_config("--bindir", output=str, error=str).strip()
+        except ProcessError:
+            tty.debug(f"Failed to query llvm-config for {exe_path}")
+            return False
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            test_file = os.path.join(tmpdir, "test.cpp")
+            with open(test_file, "w") as f:
+                f.write("""#include <stdio.h>
+                    #include <clang-c/Index.h>
+                    int main(void) {
+                        CXString s = clang_getClangVersion();
+                        const char *v = clang_getCString(s);
+                        if (!v) return 2;
+                        printf("OK: %s", v);
+                        return 0;
+                    }""")
+            clang = os.path.join(bin, os.path.basename(exe_path).replace("llvm-config", "clang"))
+            try:
+                # TODO: If cmake is available, get llvm-config --cmakedir.
+                # Or check the cmake modules directory for LLVMConfig.cmake and
+                # and read the LLVMConfig.cmake file to get the libraries it
+                # requires.
+                # Use it to get the correct flags for compiling the test program.
+                # This is needed for LLVM 15+ where zstd support is enabled by
+                # default, and the test program wants to link with zstd.
+                Executable(clang)(
+                    test_file,
+                    "-o" + os.path.join(tmpdir, "test"),
+                    "-I" + inc,
+                    "-L" + lib,
+                    "-lclang",
+                    # LLVMConfig.cmake enables LLVM zstd support by default, so we need to test it
+                    "-lzstd",
+                    error=str,
+                )
+            except ProcessError:
+                tty.debug(f"Failed to compile libclang test program for {exe_path}")
+                return False
+
+            try:
+                if "OK:" in Executable(os.path.join(tmpdir, "test"))(output=str):
+                    return True
+            except ProcessError:
+                tty.debug(f"Failed to run libclang test program for {exe_path}")
+        return False
+
+    @classmethod
     def determine_variants(cls, exes, version_str):
         # Do not need to reuse more general logic from CompilerPackage
         # because LLVM has kindly named compilers
@@ -751,6 +819,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             ("flang", "flang", "fortran"),
             ("ld.lld", "lld", None),
             ("lldb", "lldb", None),
+            ("llvm-config", "libclang", None),
         ]
 
         variants = set()
@@ -759,11 +828,15 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         # Prefer shorter pathnames by sorting with len and using setdefault
         for exe_path in sorted(exes, key=len):
             name = os.path.basename(exe_path)
-            for exe, var, lang in exe_variant_lang:
+            for exe, variant, lang in exe_variant_lang:
                 # NOTE: since "amdclang++" is "clang", we use `in` rather than `startswith`
                 if exe in name:
                     compilers.setdefault(lang, exe_path)
-                    variants.add(var)
+                    if variant == "libclang":
+                        if cls.determine_libclang_variant(exe_path):
+                            variants.add(variant)
+                    elif variant:
+                        variants.add(variant)
                     break
 
         # Remove executables that aren't compilers
@@ -1196,6 +1269,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     def post_install(self):
         spec = self.spec
         define = self.define
+
+        if spec.satisfies("~libclang"):
+            clang_c_headers = join_path(self.prefix.include, "clang-c")
+            if os.path.exists(clang_c_headers):
+                remove_linked_tree(clang_c_headers)
+            if os.path.isdir(self.prefix.lib):
+                force_remove(*find(self.prefix.lib, "libclang.*", recursive=False))
 
         # unnecessary if we build openmp via LLVM_ENABLE_RUNTIMES
         if self.spec.satisfies("+cuda openmp=project"):
