@@ -487,10 +487,16 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ]
         )
 
-        # Make sure we use exactly the same Blas/Lapack libraries
-        # across the DAG. To that end list them explicitly
-        lapack_blas = spec["lapack"].libs + spec["blas"].libs
-        options.extend(["--with-blas-lapack-lib=%s" % lapack_blas.joined()])
+        blas_lapack_flags = " ".join(
+            [
+                spec["lapack"].libs.ld_flags,
+                spec["blas"].libs.ld_flags,
+            ]
+        )
+
+        options.append(
+            "--with-blas-lapack-lib={}".format(blas_lapack_flags)
+        )
 
         if "+batch" in spec:
             options.append("--with-batch=1")
