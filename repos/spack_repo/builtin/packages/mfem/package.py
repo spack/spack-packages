@@ -53,6 +53,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     # other version.
     version("develop", branch="master")
 
+    # TODO: update source after the release
+    version("4.10.0", branch="mfem-4.10-dev")
+
     version(
         "4.9.0",
         sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
