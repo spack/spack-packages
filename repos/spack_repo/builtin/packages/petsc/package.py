@@ -494,9 +494,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ]
         )
 
-        options.append(
-            "--with-blas-lapack-lib={}".format(blas_lapack_flags)
-        )
+        options.append("--with-blas-lapack-lib={}".format(blas_lapack_flags))
 
         if "+batch" in spec:
             options.append("--with-batch=1")
