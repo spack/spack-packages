@@ -155,7 +155,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "debug": [False, None, "Activate extra debug features - may increase compiletimes"],
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
         "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
-        "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
@@ -348,8 +347,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "deprecated_code",
         default=True,
-        when="@5:",
-        description="Whether to enable deprecated code",
+        description="Whether to enable code deprecated in the major version",
     )
 
     variant("pic", default=False, description="Build position independent code")
@@ -460,15 +458,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         ]
 
         # TODO new major: update this
-        if spec.satisfies("@5:"):
-            if spec.version == Version("develop"):
-                highest = max(v for v in self.versions if not v.isdevelop())
-                major_version = int(str(highest.up_to(1)))
-            else:
-                major_version = int(str(spec.version.up_to(1)))
-            options.append(
-                from_variant(f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}", "deprecated_code")
-            )
+        if spec.version == Version("develop"):
+            major_version = 5
+        else:
+            major_version = int(str(spec.version.up_to(1)))
+        options.append(
+            from_variant(f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}", "deprecated_code")
+        )
 
         spack_microarches = []
         if spec.satisfies("+cuda"):
