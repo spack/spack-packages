@@ -11,24 +11,26 @@ class PortsOfCall(CMakePackage):
     """Ports of Call: Performance Portability Utilities"""
 
     homepage = "https://github.com/lanl/ports-of-call"
-    url = "https://github.com/lanl/ports-of-call/archive/refs/tags/v1.1.0.tar.gz"
+    url = "https://github.com/lanl/ports-of-call/archive/refs/tags/v3.0.0.tar.gz"
     git = "https://github.com/lanl/ports-of-call.git"
 
-    maintainers("rbberger")
+    maintainers("rbberger", "Yurlungur")
 
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version("2.0.1", sha256="da4ebfb071903bab17f9bc62f5cfda980d3776db754a09e173b8be5be0f44b57")
-    version("2.0.0", sha256="2118b5bf4471da33df9b13b8645c6709e5c2d24087f77d09390d8de862d43047")
-    version("1.7.1", sha256="18b0b99370ef2adf3374248f653461606f826fe4076d0f19ac8c72d46035fdf5")
-    version("1.7.0", sha256="99045a7c4e3fbc73f01e930ce870cdc573a39910a28d85c54d65d2135f764bfc")
-    version("1.6.0", sha256="290da149d4ad79c15787956559aeeefa0a06403be2f08cd324562ef013306797")
-    version("1.5.2", sha256="73d16fe9236a9475010dbb01bf751c15bef01eb2e15bf92c8d9be2c0a606329f")
-    version("1.5.1", sha256="b1f0232cd6d2aac65385d77cc061ec5035283ea50d0f167e7003eae034effb78")
-    version("1.4.1", sha256="82d2c75fcca8bd613273fd4126749df68ccc22fbe4134ba673b4275f9972b78d")
-    version("1.4.0", sha256="e08ae556b7c30d14d77147d248d118cf5343a2e8c0847943385c602394bda0fa")
-    version("1.3.0", sha256="54b4a62539c23b1a345dd87c1eac65f4f69db4e50336cd81a15a627ce80ce7d9")
+    version("3.0.0", commit="8af8ca7c4f5c720ef3e814423d02d59d2f0f9f37", tag="v3.0.0")
+    version("2.1.0", commit="4caf262ca5d0b4ba7fbca86fd6f67532388309d9", tag="v2.1.0")
+    version("2.0.1", commit="a284b6b2d42e70afeb99babb23522c869200d6ea", tag="v2.0.1")
+    version("2.0.0", commit="3349de8995868ec4c6125acdb5aefa4fa9a999c5", tag="v2.0.0")
+    version("1.7.1", commit="0b1e73b93799cc635ac1c3f8c54f3d9d09f17221", tag="v1.7.1")
+    version("1.7.0", commit="7841f2b311dc6d23acb41f27e7570e96a3e6da08", tag="v1.7.0")
+    version("1.6.0", commit="58ce1181b2d835bd32673ad70550c9130381f91b", tag="v1.6.0")
+    version("1.5.2", commit="5f83ece2b203efb3737cf7c89f3daa29c2642765", tag="v1.5.2")
+    version("1.5.1", commit="caf672277b47f0aea15e77fffae8548c6e521ae4", tag="v1.5.1")
+    version("1.4.1", commit="603e5cdf87f0760d6ee90843d304a427d9617ba4", tag="v1.4.1")
+    version("1.4.0", commit="b2b2a0af10ba9b9d76e50dd02eda06199cee958c", tag="v1.4.0")
+    version("1.3.0", commit="4c3d3f7534f6c3d0d303286c936f89b75dbba005", tag="v1.3.0")
 
     variant("test", default=False, description="Build tests")
     variant(

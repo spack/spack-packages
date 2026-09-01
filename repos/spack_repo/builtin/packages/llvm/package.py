@@ -55,6 +55,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("22.1.8", sha256="ad18b70e287954c3d62bc7e0b86e7b7af2adf87bcfce21c15fe717f101d7aace")
+    version("22.1.7", sha256="da1578ea1faf2050e4b1923fce150b5656db1dbdeda71fe02498ac04f35b03d3")
+    version("22.1.6", sha256="ba534c6835a5b9c2162c806e269799fe41fca952a3c25baff1afcff23841ec2b")
     version("22.1.5", sha256="263e99bd0b590664a886b0332037ff060e108f4e7b0310b7c8277208858f867d")
     version("22.1.4", sha256="e813bf8da34ec2b7c108c4067937380fa7d5a04a13f4fe13555dbe388482d69f")
     version("22.1.3", sha256="7e144bd6da8177757434cc0dfd1476122f143413df379c6d6cf03843512b5a9e")
@@ -360,6 +363,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # gold support, required for some features
     depends_on("binutils+gold+ld+plugins+headers", when="+gold")
 
+    # if gcc was built with newer binutils than the system default, we need the
+    # same for our own build
+    depends_on(
+        "binutils+gas+ld+plugins~libiberty", type=("build", "link", "run"), when="%gcc+binutils"
+    )
+
     # Older LLVM do not build with newer compilers, and vice versa
     with when("@16:"):
         conflicts("%gcc@:7.0")
@@ -369,8 +378,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     conflicts("%gcc@:5.0", when="@8:")
     # Internal compiler error on gcc 8.4 on aarch64 https://bugzilla.redhat.com/show_bug.cgi?id=1958295
     conflicts("%gcc@8.4:8.4.9", when="@12: target=aarch64:")
-    # Compiler will throw errors like e.g. "no type named 'iterator'" or "class has no member"
-    conflicts("%gcc@15:", when="@:18")
 
     # libcxx=project imposes compiler conflicts
     # see https://libcxx.llvm.org/#platform-and-compiler-support for the latest release
@@ -489,6 +496,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         sha256="c6ca6b925f150e8644ce756023797b7f94c9619c62507231f979edab1c09af78",
         when="@6:13",
     )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/7e44305041d96b064c197216b931ae3917a34ac1.patch?full_index=1",
+        sha256="8459dc31d2dbda4fbd89e5cfe80bc184573de30137b8a2b371c1d702eb75f304",
+        when="@13:18",
+    )
+    patch(
+        "https://github.com/llvm/llvm-project/commit/8f39502b85d34998752193e85f36c408d3c99248.patch?full_index=1",
+        sha256="8b07b12cb9c6c5b571163a68d2f044fd7ce33fb8b3b646d4c5bd6dac4a9fc6c2",
+        when="@12:18",
+    )
+    patch("cstdint-1.patch", when="@18")
+    patch("cstdint-2.patch", when="@11:18")
+
     # fix building of older versions of llvm with newer versions of glibc
     for compiler_rt_as in ["project", "runtime"]:
         with when("compiler-rt={0}".format(compiler_rt_as)):
@@ -608,9 +628,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     # fix detection of LLDB_PYTHON_EXE_RELATIVE_PATH
     # see https://reviews.llvm.org/D133513
-    # TODO: the patch is not applicable after https://reviews.llvm.org/D141042 but it is not clear
-    #  yet whether we need a version of it for when="@16:"
     patch("D133513.diff", level=0, when="@14:15+lldb+python")
+    patch("lldb_python_exe_relative_path.patch", when="@16:+lldb+python")
 
     # Fix hwloc@:2.3 (Conditionally disable hwloc@2.0 and hwloc@2.4 code)
     patch(
@@ -904,6 +923,18 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         if self.spec.satisfies("+flang"):
             env.set("FC", join_path(self.spec.prefix.bin, "flang"))
             env.set("F77", join_path(self.spec.prefix.bin, "flang"))
+
+    @classmethod
+    def runtime_constraints(cls, *, spec, pkg):
+        if spec.satisfies("%gcc"):
+            gcc = spec["gcc"]
+            for language in ("c", "cxx", "fortran"):
+                pkg("*").depends_on(
+                    f"gcc-runtime@{gcc.version}:",
+                    when=f"%[deptypes=build virtuals={language}] {spec.name}/{spec.dag_hash()}",
+                    type="link",
+                    description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
+                )
 
     root_cmakelists_dir = "llvm"
 
@@ -1217,6 +1248,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # make sure LLVM prefers binutils prefix over system default
+                    if self.spec.satisfies("^binutils"):
+                        print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
 
     def llvm_config(self, *args, result=None, **kwargs):
         lc = Executable(self.prefix.bin.join("llvm-config"))

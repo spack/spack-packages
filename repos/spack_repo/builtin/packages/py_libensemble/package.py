@@ -13,7 +13,7 @@ class PyLibensemble(PythonPackage):
     """Library for managing ensemble-like collections of computations."""
 
     homepage = "https://libensemble.readthedocs.io"
-    pypi = "libensemble/libensemble-1.5.0.tar.gz"
+    pypi = "libensemble/libensemble-1.6.1.tar.gz"
     git = "https://github.com/Libensemble/libensemble.git"
     maintainers("shuds13", "jlnav")
 
@@ -22,6 +22,8 @@ class PyLibensemble(PythonPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("1.6.1", sha256="a3f44cf0bc2196b3fa9e8d343911d1799f09166cddc8e0f0c457249ddeef1827")
+    version("1.6.0", sha256="c6592fc16a790b6423712380ac57549d4595583676a9af7fcbe8e9c73365d578")
     version("1.5.0", sha256="7541829ac412d64152eaea204ba6e3e94640a206f3605a8357b519e932e86065")
     version("1.4.3", sha256="d30fd5ec93ae78a8e931765fd773b0693fde8b43130aca547c931230225c0f63")
     version("1.4.2", sha256="d283935594333793112f65cec1070137e0a87e31cd2bf1baec4a1261ac06ab63")
@@ -67,6 +69,7 @@ class PyLibensemble(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    depends_on("py-gest-api", when="@1.6:", type=("build", "run"))
     depends_on("py-numpy@1.21:", when="@1:", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-psutil@5.9.4:", when="@1:", type=("build", "run"))
@@ -74,7 +77,7 @@ class PyLibensemble(PythonPackage):
     depends_on("py-setuptools", when="@0.10.2:", type="build")
     depends_on("py-setuptools", when="@:0.10.1", type=("build", "run"))
     depends_on("py-pydantic@1.10:", when="@1.2.0:", type=("build", "run"))
-    depends_on("py-pydantic@:1", when="@0.10:", type=("build", "run"))
+    depends_on("py-pydantic@:1", when="@0.10:1.2", type=("build", "run"))
     depends_on("py-tomli@1.2.1:", when="@1:", type=("build", "run"))
     depends_on("py-tomli", when="@0.10:", type=("build", "run"))
     depends_on("py-pyyaml@6.0:", when="@1:", type=("build", "run"))

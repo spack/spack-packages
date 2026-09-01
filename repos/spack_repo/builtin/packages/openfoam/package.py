@@ -357,7 +357,10 @@ class Openfoam(Package):
     variant("zoltan", default=False, description="With zoltan renumbering")
     variant("mgridgen", default=False, description="With mgridgen support")
     variant(
-        "paraview", default=False, description="Build paraview plugins and runtime post-processing"
+        "paraview",
+        default=False,
+        description="Build paraview plugins and runtime post-processing",
+        when="@1706:",
     )
     variant("vtk", default=False, description="With VTK runTimePostProcessing")
     variant(
@@ -431,9 +434,7 @@ class Openfoam(Package):
     #   ~/.spack/packages.yaml
 
     # 1706 ok with newer paraview but avoid pv-5.2, pv-5.3 readers
-    depends_on("paraview@5.4:", when="@1706:+paraview")
-    # 1612 plugins need older paraview
-    depends_on("paraview@:5.0.1", when="@1612+paraview")
+    depends_on("paraview", when="@1706:+paraview")
 
     # Icx only support from v2106 onwards
     conflicts("%oneapi", when="@:2012", msg="OneAPI compiler not supported. Try v2106 or greater.")
@@ -646,8 +647,7 @@ class Openfoam(Package):
         if os.path.exists(controlDict):
             filter_file(r"trapFpe\s+\d+\s*;", "trapFpe 0;", controlDict, backup=False)
 
-    @when("@:2106 %aocc@3.2.0:")
-    @run_before("configure")
+    @run_before("configure", when="@:2106 %aocc@3.2.0:")
     def make_amd_rules(self):
         """Due to the change in the linker behavior in AOCC v3.2, it is now
         issuing diagnostic messages for the unreferenced symbols in the
@@ -659,8 +659,7 @@ class Openfoam(Package):
             "clang++", spack_cxx + " -pthread", join_path(src, "c++"), backup=False, string=True
         )
 
-    @when("@1812: %fj")
-    @run_before("configure")
+    @run_before("configure", when="@1812: %fj")
     def make_fujitsu_rules(self):
         """Create Fujitsu rules (clang variant) unless supplied upstream.
         Implemented for 1812 and later (older rules are too messy to edit).

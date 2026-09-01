@@ -157,6 +157,14 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     # https://github.com/microsoft/onnxruntime/pull/25200
     patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
 
+    # optimizer_api.h uses uint8_t/int32_t without including <cstdint>, which
+    # newer libstdc++ no longer provides transitively
+    patch(
+        "https://github.com/microsoft/onnxruntime/commit/f7619dc93f592ddfc10f12f7145f9781299163a0.patch?full_index=1",
+        sha256="c0d1112d5ad4bae4260c0b1b13eb1397d87fdcec8c21c02467f31e6e0db1b906",
+        when="@1.17:1.22",
+    )
+
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 
     variant(

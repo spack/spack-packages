@@ -28,6 +28,7 @@ class Ectrans(CMakePackage):
 
     version("develop", branch="develop", no_cache=True)
     version("main", branch="main", no_cache=True)
+    version("1.8.0", sha256="9a6576215296a91b05e778b3ad3454d44437653355b37526e2f53f6b3617824c")
     version("1.7.0", sha256="224893a8edeaaf76140842340eb30ad4f9ab772591a55aab4e4493a978e086c7")
     version("1.6.2", sha256="63e01a5106fb4eee70a4e544b84300b104507a3fbeb9b7374964c8c48e06acda")
     version("1.5.0", sha256="8b2b24d1988b92dc3793b29142946614fca9e9c70163ee207d2a123494430fde")
@@ -50,6 +51,11 @@ class Ectrans(CMakePackage):
 
     variant("mkl", default=False, description="Use MKL")
     variant("fftw", default=True, description="Use FFTW")
+    variant(
+        "trust_ecbuild_flags",
+        default=False,
+        description="Skip ecbuild compiler-flag probes",
+    )
 
     variant(
         "etrans",
@@ -66,9 +72,10 @@ class Ectrans(CMakePackage):
     # Add explicit dependency on newer cmake versions in order to apply patch
     # "find_lapack.patch", see below and https://github.com/ecmwf-ifs/ectrans/issues/316
     # Newer versions of ectrans (1.7.0+) also require cmake@3.25: by default.
-    depends_on("cmake@3.25:", type="build")
+    depends_on("cmake@3.25:", when="@1.5:", type="build")
 
     depends_on("ecbuild", type="build")
+    depends_on("ecbuild@3.6:", when="+trust_ecbuild_flags", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
@@ -88,7 +95,8 @@ class Ectrans(CMakePackage):
     )
 
     # https://github.com/ecmwf-ifs/ectrans/issues/316
-    patch("find_lapack.patch", when="@1.5:")
+    patch("find_lapack_v15.patch", when="@1.5:1.7")
+    patch("find_lapack_v18.patch", when="@1.8")
 
     def cmake_args(self):
         args = [
@@ -106,4 +114,6 @@ class Ectrans(CMakePackage):
             # https://github.com/JCSDA/spack-stack/issues/1522
             "-DECTRANS_HAVE_CONTIGUOUS_ISSUE=ON",
         ]
+        if "+trust_ecbuild_flags" in self.spec:
+            args.append(self.define("ECBUILD_TRUST_FLAGS", True))
         return args

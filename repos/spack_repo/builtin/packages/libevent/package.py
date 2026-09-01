@@ -46,8 +46,24 @@ class Libevent(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("openssl", when="+openssl")
+    # configure's openssl detection shells out to pkg-config to find
+    # openssl.pc; without it configure fails outright ("openssl is a
+    # must but can not be found") even though the openssl dependency
+    # above is present and its headers are found -- pkg-config itself
+    # was just never declared.
+    depends_on("pkgconfig", type="build", when="+openssl")
 
     conflicts("+openssl", when="@:2.0")
+
+    @when("@:2.1.12")
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # The extra, pthreads, and openssl libs are linked without libevent_core, so they
+        # only link as dylibs when libtool passes -undefined dynamic_lookup, which it does
+        # only for MACOSX_DEPLOYMENT_TARGET=10.*
+        # Fixed in v2.1.13 and later versions
+        # See https://github.com/spack/spack-packages/pull/5525
+        if self.spec.platform == "darwin":
+            env.set("MACOSX_DEPLOYMENT_TARGET", "10.16")
 
     def url_for_version(self, version):
         if version >= Version("2.0.22"):

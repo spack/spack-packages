@@ -275,6 +275,12 @@ class Aqlprofile(Package):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
+    # aqlprofile is only open source (MIT) as of rocm-7.0.0; all versions here are
+    # prebuilt proprietary binaries from repo.radeon.com that predate that release
+    license("LicenseRef-AMD-Proprietary", when="@:6", checked_by="tgamblin")
+    license("MIT", when="@7:", checked_by="tgamblin")
+    redistribute(source=False, binary=False, when="@:6")
+
     libraries = ["libhsa-amd-aqlprofile64"]
 
     spack_os = host_platform().default_os

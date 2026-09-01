@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 
 from spack.package import *
@@ -27,7 +28,6 @@ class Nnpack(CMakePackage):
     generator("ninja")
     depends_on("cmake@2.8.12:", type="build")
     depends_on("python", type="build")
-    depends_on("py-setuptools", type="build")
 
     resource(
         name="six",
@@ -37,51 +37,45 @@ class Nnpack(CMakePackage):
         placement="six",
     )
     resource(
-        name="opcodes",
-        url="https://files.pythonhosted.org/packages/source/o/opcodes/opcodes-0.3.13.tar.gz",
-        sha256="1859c23143fe20daa4110be87a947cbf3eefa048da71dde642290213f251590c",
-        destination="deps",
-        placement="opcodes",
-    )
-    resource(
         name="peachpy",
-        git="https://github.com/Maratyszcza/PeachPy.git",
-        branch="master",
+        git="https://github.com/malfet/PeachPy.git",
+        commit="f45429b087dd7d5bc78bb40dc7cf06425c252d67",
         destination="deps",
         placement="peachpy",
     )
+
     resource(
         name="cpuinfo",
-        git="https://github.com/Maratyszcza/cpuinfo.git",
-        branch="master",
+        git="https://github.com/pytorch/cpuinfo.git",
+        commit="315d03cacc51bfabe316057b0d3466e13bce88a0",
         destination="deps",
         placement="cpuinfo",
     )
     resource(
         name="fp16",
         git="https://github.com/Maratyszcza/FP16.git",
-        branch="master",
+        commit="4987f20d48c22694d84bbffa839168596ea027ae",
         destination="deps",
         placement="fp16",
     )
     resource(
         name="fxdiv",
         git="https://github.com/Maratyszcza/FXdiv.git",
-        branch="master",
+        commit="63058eff77e11aa15bf531df5dd34395ec3017c8",
         destination="deps",
         placement="fxdiv",
     )
     resource(
         name="psimd",
         git="https://github.com/Maratyszcza/psimd.git",
-        branch="master",
+        commit="072586a71b55b7f8c584153d223e95687148a900",
         destination="deps",
         placement="psimd",
     )
     resource(
         name="pthreadpool",
         git="https://github.com/Maratyszcza/pthreadpool.git",
-        branch="master",
+        commit="560c60d342a76076f0557a3946924c6478470044",
         destination="deps",
         placement="pthreadpool",
     )
@@ -92,12 +86,6 @@ class Nnpack(CMakePackage):
         destination="deps",
         placement="googletest",
     )
-
-    @run_before("cmake")
-    def generate_peachpy(self):
-        # https://github.com/Maratyszcza/NNPACK/issues/203
-        with working_dir(join_path(self.stage.source_path, "deps", "peachpy")):
-            python("setup.py", "generate")
 
     def cmake_args(self):
         return [
@@ -118,4 +106,5 @@ class Nnpack(CMakePackage):
                 "GOOGLETEST_SOURCE_DIR", join_path(self.stage.source_path, "deps", "googletest")
             ),
             self.define("NNPACK_BUILD_TESTS", self.run_tests),
+            self.define("NNPACK_LIBRARY_TYPE", "static"),
         ]

@@ -11,10 +11,11 @@ class PyPytestXdist(PythonPackage):
     """py.test xdist plugin for distributed testing and loop-on-failing mode"""
 
     homepage = "https://github.com/pytest-dev/pytest-xdist"
-    pypi = "pytest-xdist/pytest-xdist-3.2.0.tar.gz"
+    pypi = "pytest-xdist/pytest_xdist-3.8.0.tar.gz"
 
     license("MIT")
 
+    version("3.8.0", sha256="7e578125ec9bc6050861aa93f2d59f1d8d085595d6551c2c90b6f4fad8d3a9f1")
     version("3.2.0", sha256="fa10f95a2564cd91652f2d132725183c3b590d9fdcdec09d3677386ecf4c1ce9")
     version("1.30.0", sha256="5d1b1d4461518a6023d56dab62fb63670d6f7537f23e2708459a557329accf48")
     version("1.29.0", sha256="3489d91516d7847db5eaecff7a2e623dba68984835dbe6cedb05ae126c4fb17f")
@@ -24,10 +25,14 @@ class PyPytestXdist(PythonPackage):
     version("1.16.0", sha256="42e5a1e5da9d7cff3e74b07f8692598382f95624f234ff7e00a3b1237e0feba2")
 
     depends_on("python@2.7:2.8,3.4:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@3.8.0:")
     depends_on("py-setuptools@45.0:", type="build", when="@3.2.0:")
+    depends_on("py-setuptools@77.0:", type="build", when="@3.7.0:")
     depends_on("py-setuptools", type="build", when="@:1.30.0")
     depends_on("py-setuptools-scm@6.2.3: +toml", type="build", when="@3.2.0:")
     depends_on("py-execnet@1.1:", type=("build", "run"))
+    depends_on("py-execnet@2.1:", type=("build", "run"), when="@3.6.0:")
+    depends_on("py-pytest@7.0.0:", type=("build", "run"), when="@3.6.0:")
     depends_on("py-pytest@6.2.0:", type=("build", "run"), when="@3.2.0:")
     depends_on("py-pytest@4.4.0:", type=("build", "run"), when="@1.28.0:1.30.0")
     depends_on("py-pytest@3.6.0:", type=("build", "run"), when="@1.25.0:1.27.0")
@@ -35,3 +40,9 @@ class PyPytestXdist(PythonPackage):
     depends_on("py-pytest@2.7.0:", type=("build", "run"), when="@1.16.0:1.17.0")
     depends_on("py-pytest-forked", type=("build", "run"), when="@1.19.0:1")
     depends_on("py-six", type=("build", "run"), when="@1.23.0:1")
+
+    def url_for_version(self, version):
+        if version <= Version("3.6"):
+            return super().url_for_version(version).replace("_", "-")
+        else:
+            return super().url_for_version(version)
