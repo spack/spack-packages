@@ -1,0 +1,31 @@
+--- a/src_c/meson.build
++++ b/src_c/meson.build
+@@ -423,7 +423,7 @@
+ # TODO: support SDL3
+ if sdl_api != 3
+ 
+-if sdl_mixer_dep.found()
++if get_option('mixer').enabled() and sdl_mixer_dep.found()
+     mixer = py.extension_module(
+         'mixer',
+         'mixer.c',
+@@ -464,7 +464,7 @@
+     )
+ endif
+ 
+-if portmidi_dep.found()
++if get_option('midi').enabled() and portmidi_dep.found()
+     pypm = py.extension_module(
+         'pypm',
+         fs.is_file('pypm.c') ? 'pypm.c' : 'cython/pygame/pypm.pyx',
+--- a/src_c/_sdl2/meson.build
++++ b/src_c/_sdl2/meson.build
+@@ -27,7 +27,7 @@
+     subdir: pg / '_sdl2',
+ )
+ 
+-if sdl_mixer_dep.found()
++if get_option('mixer').enabled() and sdl_mixer_dep.found()
+     _sdl2_mixer = py.extension_module(
+         'mixer',
+         fs.is_file('mixer.c') ? 'mixer.c' : cython_base / 'mixer.pyx',
