@@ -155,7 +155,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "debug": [False, None, "Activate extra debug features - may increase compiletimes"],
         "debug_bounds_check": [False, None, "Use bounds checking - will increase runtime"],
         "debug_dualview_modify_check": [False, "@:4", "Debug check on dual views"],
-        "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
         "tests": [False, None, "Build for tests"],
@@ -344,12 +343,20 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         variant("cxxstd", default="17", values=("17", "20", "23"), when="@4")
         variant("cxxstd", default="20", values=("20", "23"), when="@5:")
 
-    # FIXME regroup variants and conflicts
     variant(
         "deprecated_code",
-        default=True,
-        when="@5:",
-        description="Whether to enable deprecated code",
+        default="auto",
+        values=("none", "auto", "all", "previous", "current"),
+        description=(
+            "Whether to enable deprecated code: "
+            "none: disable all deprecated code; "
+            "auto: leave to cmake defaults; "
+            "all: enable code deprecated in the provided spec major version and the "
+            "major version prior to that; "
+            "current: enable code only deprecated in the provided spec major version; "
+            "previous: enable code only deprecated in the major version prior to the "
+            "spec's major version"
+        ),
     )
 
     variant("pic", default=False, description="Build position independent code")
@@ -459,15 +466,26 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("Kokkos_ENABLE_COMPILE_AS_CMAKE_LANGUAGE", "cmake_lang"),
         ]
 
-        # TODO new major: update this
-        if spec.satisfies("@5:"):
-            if spec.version == Version("develop"):
-                highest = max(v for v in self.versions if not v.isdevelop())
-                major_version = int(str(highest.up_to(1)))
-            else:
-                major_version = int(str(spec.version.up_to(1)))
+        if spec.version == Version("develop"):
+            # TODO new major: update this
+            major_version = 5
+        else:
+            major_version = int(str(spec.version.up_to(1)))
+
+        if not self.spec.satisfies("deprecated_code:=auto"):
             options.append(
-                from_variant(f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}", "deprecated_code")
+                self.define(
+                    f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version - 1}",
+                    spec.satisfies("deprecated_code=previous")
+                    or spec.satisfies("deprecated_code=all"),
+                )
+            )
+            options.append(
+                self.define(
+                    f"Kokkos_ENABLE_DEPRECATED_CODE_{major_version}",
+                    spec.satisfies("deprecated_code=current")
+                    or spec.satisfies("deprecated_code=all"),
+                )
             )
 
         spack_microarches = []
