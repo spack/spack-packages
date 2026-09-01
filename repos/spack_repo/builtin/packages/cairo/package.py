@@ -109,7 +109,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
     depends_on("freetype", when="+ft")
     depends_on("libpng", when="+png")
-    depends_on("glib")
+    depends_on("glib", when="+gobject")
     depends_on("pixman@0.30.0:")
     depends_on("pixman@0.36.0:", when="@1.17.2:")
     depends_on("fontconfig@2.10.91:", when="+fc")

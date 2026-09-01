@@ -121,8 +121,8 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
                 description="Build harfbuzz utils",
             )
             depends_on("pkgconfig", type="build")
-            depends_on("glib")
-            depends_on("gobject-introspection")
+            depends_on("glib", when="+gobject")
+            depends_on("gobject-introspection", when="+gobject")
             depends_on("cairo+pdf+ft")
 
     depends_on("icu4c")
