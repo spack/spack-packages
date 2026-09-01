@@ -95,6 +95,13 @@ class Edm4hep(CMakePackage):
         sha256="374f0b7635c632e5a57d23ad163efab7370ab471c62e2713a41aa26e33d8f221",
     )
 
+    # Update CMake configuration to use new PodioArrow library suffix
+    patch(
+        "https://github.com/key4hep/EDM4hep/commit/f87de123bb1a56dfab7cdcb7f3cfb9dd51fc9313.patch?full_index=1",
+        when="@=1.1",
+        sha256="d4412d1340481a741893dd8684400eb3662c76f63d47cc940e38091c0ae9e766",
+    )
+
     def cmake_args(self):
         args = [
             self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
