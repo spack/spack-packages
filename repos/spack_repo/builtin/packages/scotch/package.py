@@ -170,6 +170,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("BUILD_PTSCOTCH", "mpi"),
             self.define_from_variant("THREADS", "threads"),
             self.define_from_variant("MPI_THREAD_MULTIPLE", "mpi_thread"),
+            self.define_from_variant("USE_ZLIB", "compression"),
+            self.define("USE_LZMA", False),
+            self.define("USE_BZ2", False),
         ]
 
         if self.spec.satisfies("@7.0.5:"):
