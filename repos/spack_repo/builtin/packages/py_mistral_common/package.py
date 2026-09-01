@@ -15,6 +15,7 @@ class PyMistralCommon(PythonPackage):
 
     license("Apache-2.0", checked_by="thomas-bouvier")
 
+    version("1.11.7", sha256="d3b79583595cf6d96a2ab33e42cb8449768383147b8c56cac5a4f193be19d20d")
     version("1.10.0", sha256="e456ff101edbdfc094039ec6c26f7d0f73356729798d628a6e6e96c3917147bc")
 
     variant("image", default=False, description="Enable image support")

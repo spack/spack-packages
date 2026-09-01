@@ -13,6 +13,7 @@ class PyModelHostingContainerStandards(PythonPackage):
     homepage = "https://github.com/aws/model-hosting-container-standards"
     pypi = "model_hosting_container_standards/model_hosting_container_standards-0.1.13.tar.gz"
 
+    version("0.1.16", sha256="d34589633900e53c3ee5f7c78280a7cf7e4f6532c35e763341a262fc85cbe84a")
     version("0.1.13", sha256="27a1333410dde2719286a300a2803e24fdde407baa91894eb845c0f268aa194d")
 
     depends_on("c", type="build")
@@ -25,4 +26,4 @@ class PyModelHostingContainerStandards(PythonPackage):
     depends_on("py-pydantic", type=("build", "run"))
     depends_on("py-jmespath", type=("build", "run"))
     depends_on("py-httpx", type=("build", "run"))
-    depends_on("py-supervisor", type=("build", "run"))
+    depends_on("py-supervisor@4.2:", type=("build", "run"))

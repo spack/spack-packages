@@ -13,12 +13,15 @@ class PyCompressedTensors(PythonPackage):
     homepage = "https://github.com/vllm-project/compressed-tensors"
     pypi = "compressed_tensors/compressed_tensors-0.13.0.tar.gz"
 
+    version("0.17.0", sha256="15c20d06bdbcf35b51fc99fd125e7b9be1e1855567c33b7a46dfac26ad6fb126")
     version("0.13.0", sha256="23893824d3498ea3f1a829f14a8fa85f9a5e76a34c711a038b8d7c619ca9a67c")
 
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-scm@8.2.0", type="build")
-    depends_on("py-torch@1.7:", type=("build", "run"))
-    depends_on("py-transformers@:4", type=("build", "run"))
+    depends_on("py-torch@2.10:", type=("build", "run"), when="@0.16:")
+    depends_on("py-torch@1.7:2.10", type=("build", "run"), when="@:0.15")
+    depends_on("py-transformers@4.45:", type=("build", "run"), when="@0.15:")
+    depends_on("py-transformers@:4", type=("build", "run"), when="@:0.14")
     depends_on("py-pydantic@2:", type=("build", "run"))
     depends_on("py-loguru", type=("build", "run"))
