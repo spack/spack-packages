@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -27,15 +26,20 @@ class PyQuast(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("boost@1.56.0")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    # No real boost dependency: setup.py never references boost at all
+    # (confirmed by grepping the actual sdist). The upstream package.py's
+    # depends_on("boost@1.56.0") is vestigial, most likely inherited by
+    # copy-paste from the vendored BamTools/bedtools copies bundled
+    # inside quast_libs/ -- but those vendored copies aren't what gets
+    # built here, Spack's own separate bedtools2/glimmer/bwa deps below
+    # are. The pin drags in an ancient (2014) boost whose own bjam
+    # bootstrap hits an unrelated ICU duplicate-target bug on this
+    # system; dropping the pin avoids that whole rabbit hole for a
+    # dependency quast doesn't actually use.
     depends_on("perl@5.6.0:", type=("build", "run"))
     depends_on("python@2.5:,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    depends_on("py-packaging", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-joblib", type=("build", "run"))
     depends_on("py-simplejson", type=("build", "run"))
@@ -46,3 +50,39 @@ class PyQuast(PythonPackage):
     depends_on("bedtools2", type=("build", "run"))
     depends_on("bwa", type=("build", "run"))
     depends_on("glimmer", type=("build", "run"))
+    depends_on("gmake", type="build")
+    depends_on("zlib-api", type="build")
+
+    def patch(self):
+        # qconfig.py imports distutils.version.LooseVersion just to check
+        # the running Python falls within quast's own supported-version
+        # range -- distutils was removed from the stdlib in Python 3.12+.
+        # packaging.version.Version is a drop-in for the comparison usage
+        # here (Version(str), <, <=).
+        filter_file(
+            "from distutils.version import LooseVersion",
+            "from packaging.version import Version as LooseVersion",
+            "quast_libs/qconfig.py",
+            string=True,
+        )
+
+    @run_after("install")
+    def compile_bundled_minimap2(self):
+        # quast bundles its own minimap2 source under quast_libs/minimap2
+        # and, by design, lazily runs `make` there the first time a user
+        # actually needs it (ca_utils/misc.py's get_path_to_program ->
+        # compile_tool). That's fine for a normal per-user pip install,
+        # but under Spack the install tree is only writable by whoever
+        # ran `spack install` -- any other user running `quast.py -r`
+        # (reference alignment, the single most common invocation) hits
+        # a PermissionError trying to write quast_libs/minimap2/minimap2.
+        # Do the one-time compile ourselves during install, while we
+        # still have write access, so it's already cached for everyone.
+        import glob
+
+        minimap2_dirs = glob.glob(
+            join_path(self.prefix, "lib", "python*", "site-packages", "quast_libs", "minimap2")
+        )
+        make = which("make")
+        for d in minimap2_dirs:
+            make("-C", d)
