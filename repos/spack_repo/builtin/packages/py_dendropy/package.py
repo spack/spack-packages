@@ -22,7 +22,7 @@ class PyDendropy(PythonPackage):
     version(
         "5.0.13",
         sha256="97dc804ee266c430e64bae6d9389def782bcc3a7fe5f9f760d936639f10fd600",
-        url="https://files.pythonhosted.org/packages/4a/cc/4c8c596d317bbb86d21d057f44d513045a99ca29e76ab73ba9a6a321fc92/dendropy-5.0.13.tar.gz"
+        url="https://files.pythonhosted.org/packages/4a/cc/4c8c596d317bbb86d21d057f44d513045a99ca29e76ab73ba9a6a321fc92/dendropy-5.0.13.tar.gz",
     )
     version("4.5.2", sha256="3e5d2522170058ebc8d1ee63a7f2d25b915e34957dc02693ebfdc15f347a0101")
     version("4.3.0", sha256="bd5b35ce1a1c9253209b7b5f3939ac22beaa70e787f8129149b4f7ffe865d510")
