@@ -16,6 +16,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=True, description="build OpenMP backend")
     variant("cuda", default=False, description="build CUDA backend")
     variant("rocm", default=False, description="build HIP backend")
+    variant("rccl", default=False, description="Use ROCm Collective Comm. Library", when="+rocm")
     variant("metal", default=True, description="build Metal backend", when="platform=darwin")
     variant("rpc", default=False, description="build with RPC support")
 
@@ -29,6 +30,9 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hipblas", when="+rocm")
     depends_on("rocblas", when="+rocm")
+    depends_on("rccl", when="+rccl")
+
+    depends_on("nccl", when="+cuda")
 
     def cmake_args(self):
         args = [
@@ -55,6 +59,8 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_CUDA_COMPILER", f"{self.spec['cuda'].prefix}/bin/nvcc"))
+            args.append(self.define("GGML_CUDA_GRAPHS", "ON"))
+            args.append(self.define("GGML_CUDA_NCCL", "ON"))
             if not self.spec.satisfies("cuda_arch=none"):
                 archs = self.spec.variants["cuda_arch"].value
                 arch_str = ";".join(archs)
@@ -66,6 +72,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
                     "CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+            args.append(self.define_from_variant("GGML_HIP_RCCL", "rccl"))
             if not self.spec.satisfies("amdgpu_target=none"):
                 archs = self.spec.variants["amdgpu_target"].value
                 arch_str = ";".join(archs)
@@ -78,10 +85,12 @@ class Ggml(GGMLPackageBase):
 
     homepage = "https://github.com/ggml-org/ggml"
     git = "https://github.com/ggml-org/ggml.git"
+    url = "https://github.com/ggml-org/ggml/archive/refs/tags/v0.22.0.tar.gz"
 
     maintainers("rbberger")
 
     license("MIT")
 
     version("master", branch="master")
+    version("0.22.0", sha256="34006b8c637dd507c4c9772cf826d8c3fcec00f49c094e74bb6e9e40c26d891d")
     version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")
