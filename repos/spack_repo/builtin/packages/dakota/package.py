@@ -43,6 +43,8 @@ class Dakota(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    maintainers("fryeguy52")
+
     # 6.24.0 uses the release tarball instead of git because the tag references a
     # surfpack submodule commit not publicly available in the upstream repo.
     # See https://github.com/snl-dakota/dakota/issues/192
