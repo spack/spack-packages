@@ -25,12 +25,12 @@ class PyPykdtree(PythonPackage):
 
     # Runtime and Link Dependencies
     depends_on("py-numpy@1.16:", type=("build", "run"))
-    
+
     # OpenMP is required for multi-threaded queries
     depends_on("llvm-openmp", when="%apple-clang", type=("build", "link"))
 
     def install_options(self, spec, prefix):
-        # Optional: Hand over specific compilation variables if building on macOS 
+        # Optional: Hand over specific compilation variables if building on macOS
         options = []
         if "%apple-clang" in spec:
             options.append("--build-option=--use-openmp")
