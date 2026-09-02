@@ -14,13 +14,14 @@ class YamlCpp(CMakePackage):
     """A YAML parser and emitter in C++"""
 
     homepage = "https://github.com/jbeder/yaml-cpp"
-    url = "https://github.com/jbeder/yaml-cpp/archive/0.8.0.tar.gz"
+    url = "https://github.com/jbeder/yaml-cpp/releases/download/yaml-cpp-0.9.0/yaml-cpp-yaml-cpp-0.9.0.tar.gz"
     git = "https://github.com/jbeder/yaml-cpp.git"
     maintainers("eschnett")
 
     license("MIT")
 
     version("develop", branch="master")
+    version("0.9.0", sha256="298593d9c440fd9034b8b193d96318b76d49bc97c6ceadb7b0836edf0b6d7539")
     version("0.8.0", sha256="fbe74bbdcee21d656715688706da3c8becfd946d92cd44705cc6098bb23b3a16")
     version("0.7.0", sha256="43e6a9fcb146ad871515f0d0873947e5d497a1c9c60c58cb102a97b47208b7c3")
     version("0.6.3", sha256="77ea1b90b3718aa0c324207cb29418f5bced2354c2e483a9523d98c3460af1ed")
@@ -51,7 +52,7 @@ class YamlCpp(CMakePackage):
     patch(
         "https://github.com/jbeder/yaml-cpp/commit/7b469b4220f96fb3d036cf68cd7bd30bd39e61d2.patch?full_index=1",
         sha256="0bb42bea4f38ac5e9b51a46938cf7ed12c23e62c8690a166101caa00f09dd639",
-        when="@0.7:",
+        when="@0.7:0.8",
     )
 
     conflicts("%gcc@:4.7", when="@0.6.0:", msg="versions 0.6.0: require c++11 support")
@@ -92,10 +93,12 @@ class YamlCpp(CMakePackage):
         return options
 
     def url_for_version(self, version):
-        url = "https://github.com/jbeder/yaml-cpp/archive/{0}.tar.gz"
+        url = "https://github.com/jbeder/yaml-cpp/archive/refs/tags/{0}.tar.gz"
         if version < Version("0.5.3"):
             return url.format(f"release-{version}")
         elif version < Version("0.8.0"):
             return url.format(f"yaml-cpp-{version}")
+        elif version < Version("0.9.0"):
+            return url.format(f"{version}")
         else:
             return url.format(version)
