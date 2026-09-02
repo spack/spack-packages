@@ -16,6 +16,7 @@ class QtQuicktimeline(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.11.2", sha256="0f129b101ba1bdda2f23bca10e2d50c5a2a29e664f1b8101514670092c0a451a")
     version("6.11.1", sha256="8b044f64c96a84282669a76f84fd11b9f7de3e681c025d0b3b595b541153db95")
     version("6.10.2", sha256="e4a1b21a6e1579d1a954b67a22e816aaf23f4e74f156e34aab4ea5ed71d73528")
     version("6.10.1", sha256="cb0db62d8844886eca6387d62be9997c3d25d75503af619690a1cc906d7eb855")

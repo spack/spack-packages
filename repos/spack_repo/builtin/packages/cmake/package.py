@@ -31,6 +31,7 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.4.3", sha256="c46400618b4f1f2b43507f24fb22f3ae830c3416cf23b776e16e1d413aa892f0")
     version("4.4.2", sha256="1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d")
     version("4.4.1", sha256="95d4721f3625fb0d9d6ca480dd59a46c84b4c157f7fadd2e9b179ef9c871174d")
     version("4.3.4", sha256="fdeff897b9eb49d764539f2b1edc6eb7e1440df325678a97c1978499e931adda")
@@ -174,19 +175,31 @@ class Cmake(Package):
     # provide Spack's TLS libs anyways, which is not flexible, and actually
     # leads to issues where we have to keep track of the vendored curl version
     # and its conflicts with OpenSSL.
-    depends_on("curl@:8.15", when="@:3.25")
-    depends_on("curl")
+    #
+    # Windows is the exception, since Spack's curl defaults to tls=sspi
+    # on Windows, the same Schannel stack CMake's vendored cmcurl already uses.
+    # Keeping the default (+ownlibs) free of curl lets CMake bootstrap on
+    # Windows from nothing
+    for _requires_system_curl in (
+        "platform=linux",
+        "platform=darwin",
+        "platform=freebsd",
+        "platform=windows ~ownlibs",
+    ):
+        with when(_requires_system_curl):
+            depends_on("curl@:8.15", when="@:3.25")
+            depends_on("curl")
 
-    # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
-    conflicts("curl@8.16:", when="@:3.30")
+            # https://gitlab.kitware.com/cmake/cmake/-/merge_requests/11134
+            conflicts("curl@8.16:", when="@:3.30")
 
-    # When using curl, cmake defaults to using system zlib too, probably because
-    # curl already depends on zlib. Therefore, also unconditionaly depend on zlib.
-    depends_on("zlib-api")
+            # When using curl, cmake defaults to using system zlib too, probably
+            # because curl already depends on zlib. Therefore, also depend on zlib.
+            depends_on("zlib-api")
 
     with when("~ownlibs"):
-        depends_on("expat")
         # expat/zlib are used in CMake/CTest, so why not require them in libarchive.
+        depends_on("expat")
         for plat in ["darwin", "linux", "freebsd"]:
             with when("platform=%s" % plat):
                 depends_on("libarchive@3.1.0: xar=expat compression=bz2lib,lzma,zlib,zstd")
@@ -329,6 +342,15 @@ class Cmake(Package):
             args.append("--")
         else:
             args.append("-DCMAKE_INSTALL_PREFIX=%s" % self.prefix)
+
+            if spec.satisfies("~ownlibs"):
+                args.extend(
+                    [
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_CURL=ON",
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_EXPAT=ON",
+                        "-DCMAKE_USE_SYSTEM_LIBRARY_ZLIB=ON",
+                    ]
+                )
 
         # Make CMake find its own dependencies.
         prefixes = get_cmake_prefix_path(self)

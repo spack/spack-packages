@@ -18,6 +18,7 @@ class PyMarkdownItPy(PythonPackage):
 
     license("MIT")
 
+    version("4.2.0", sha256="04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49")
     version("4.0.0", sha256="cb0a2b4aa34f932c007117b194e945bd74e0ec24133ceb5bac59009cda1cb9f3")
     version("3.0.0", sha256="e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb")
     version("2.2.0", sha256="7c9a5e412688bc771c67432cbfebcdd686c93ce6484913dccf06cb5a0bea35a1")
@@ -25,6 +26,7 @@ class PyMarkdownItPy(PythonPackage):
 
     variant("linkify", default=False, description="Linkify support")
 
+    depends_on("python@3.10:", when="@4:", type=("build", "run"))
     depends_on("python@3.8:", when="@2.1:", type=("build", "run"))
     depends_on("python@3.6:3", when="@:2.0", type=("build", "run"))
     depends_on("py-flit-core@3.4:3", when="@2.1:", type="build")

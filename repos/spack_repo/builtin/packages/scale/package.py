@@ -40,6 +40,9 @@ class Scale(MakefilePackage):
     depends_on("parallel-netcdf@1.7.0:")
 
     patch("fj-own_compiler.patch", when="%fj")
+    # Newer gfortran compilers detect old-style fortran code and error out.
+    # Change compiler flags to accept old code as valid.
+    patch("gcc-own_compiler.patch", when="%gcc@10:")
 
     parallel = False
 
