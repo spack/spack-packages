@@ -177,7 +177,7 @@ class RocmSmiLib(ROCmLibrary, CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     @run_after("build")
     @on_package_attributes(run_tests=True)

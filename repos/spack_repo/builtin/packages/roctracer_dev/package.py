@@ -121,7 +121,7 @@ class RoctracerDev(ROCmLibrary, CMakePackage, ROCmPackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

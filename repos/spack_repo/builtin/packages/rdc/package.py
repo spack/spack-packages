@@ -6,11 +6,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rdc(CMakePackage):
+class Rdc(ROCmLibrary, CMakePackage):
     """ROCm Data Center Tool"""
 
     homepage = "https://github.com/ROCm/rdc"
@@ -166,7 +167,7 @@ class Rdc(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     def cmake_args(self):
         args = [self.define("GRPC_ROOT", self.spec["grpc"].prefix)]
