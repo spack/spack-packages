@@ -1,0 +1,9 @@
+{
+  "ref": "",
+  "repository": {
+    "default_branch": "develop"
+  },
+  "merge_group": {
+    "base_ref": "develop"
+  }
+}

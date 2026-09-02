@@ -1,6 +1,9 @@
 name: unit tests
 
 on:
+  # Allows act's default push event to select this workflow locally. The job
+  # guards below prevent this local-only trigger from running tests on GitHub.
+  push:
   workflow_dispatch:
   workflow_call:
 
@@ -11,6 +14,9 @@ concurrency:
 jobs:
   # Run unit tests with different configurations on linux
   ubuntu:
+    # Run act's synthetic push, or GitHub's workflow_call/dispatch events, but
+    # skip ordinary GitHub push events introduced only for act compatibility.
+    if: ${{ github.actor == 'nektos/act' || github.event_name != 'push' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -39,6 +45,8 @@ jobs:
     steps:
     - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
     - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+      # In local workflow runs using act, setup-python is not supported and not needed
+      if: ${{ github.actor != 'nektos/act' }}
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install System packages
@@ -56,6 +64,8 @@ jobs:
 
   # Run unit tests on MacOS
   macos:
+    # Keep the same event guard as the Linux matrix; act skips this platform.
+    if: ${{ github.actor == 'nektos/act' || github.event_name != 'push' }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -76,6 +86,8 @@ jobs:
 
   # Run unit tests on Windows
   windows:
+    # Keep the same event guard as the Linux matrix; act skips this platform.
+    if: ${{ github.actor == 'nektos/act' || github.event_name != 'push' }}
     defaults:
       run:
         shell:
