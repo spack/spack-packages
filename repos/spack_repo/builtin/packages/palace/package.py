@@ -21,6 +21,8 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("hughcars", "simlap", "cameronrutherford", "sbozzolo", "phdum")
 
     version("develop", branch="main")
+    version("0.17.0", tag="v0.17.0", commit="12d8069afb5aa9e169a17e303d735e120968e9f2")
+    version("0.16.1", tag="v0.16.1", commit="c13e409f255392b9d78369c386276cf9343c2205")
     version("0.16.0", tag="v0.16.0", commit="869ee5ced4850384410a7aeebc7c25f4c01be161")
     version("0.15.0", tag="v0.15.0", commit="b6762777d85a06072fdf4cc96e8a365da73df170")
     version("0.14.0", tag="v0.14.0", commit="a428a3a32dbbd6a2a6013b3b577016c3e9425abc")
@@ -149,6 +151,11 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("metis+int64", when="+int64")
     depends_on("metis~int64", when="~int64")
 
+    # As of version 5.1.0, the PETSc fork of METIS provides a better mesh
+    # partitioning.
+    depends_on("metis+petsc_patches+gkrand")
+    depends_on("parmetis+petsc_patches")
+
     conflicts("^hypre+int64", msg="Palace uses HYPRE's mixedint option for 64 bit integers")
     depends_on("hypre@:2", when="@:0.15.0")
     depends_on("hypre@3:", when="@0.16.0:")
@@ -170,8 +177,37 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         # +lapack means: use external lapack
         depends_on(
             "mfem+mpi+metis+lapack@4.9:",
-            patches=["patch_par_tet_mesh_fix_dev.diff", "patch_gmsh_parser_performance.diff"],
+            patches=[
+                "patch_par_tet_mesh_fix_dev.diff",
+                "patch_gmsh_parser_performance.diff",
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/v0.16.1/extern/patch/mfem/mfem_pr5246.diff",
+                    sha256="d5227c18768369b8fa3a20f4457dd378a360346850329ab1970d18ed5a73b0d6",
+                    when="@:4.9",
+                ),
+            ],
         )
+        depends_on(
+            "mfem",
+            when="@0.16",
+            patches=[
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/v0.16.1/extern/patch/mfem/mfem_pr5280.diff",
+                    sha256="d5026c7f14a3bdc359f5a74b141bc02bfce6813195f54620aa1fe96fe6f865ea",
+                ),
+            ],
+        )
+        depends_on(
+            "mfem",
+            when="@0.17:",
+            patches=[
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/v0.17.0/extern/patch/mfem/mfem_pr5353.diff",
+                    sha256="c35f584090f97c84c12fc80e6d5c068512911d192132e18f5aa4254f507c5e4f",
+                ),
+            ],
+        )
+
         depends_on("mfem+shared", when="+shared")
         depends_on("mfem~shared", when="~shared")
         depends_on("mfem+openmp", when="+openmp")
@@ -187,7 +223,11 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mfem~sundials", when="~sundials")
         depends_on("mfem+gslib", when="+gslib")
         depends_on("mfem~gslib", when="~gslib")
-        depends_on("mfem+exceptions", type="test")
+        # Palace tests require mfem+exceptions, checked at build time.
+        # TODO: depends_on("mfem+exceptions", type="test") should work but
+        # the concretizer enables +exceptions even for non-test builds:
+        # https://github.com/spack/spack/issues/51775
+        # depends_on("mfem+exceptions", type="test")
 
         depends_on("mfem+libunwind", when="build_type=Debug")
         depends_on("eigen@3.5:", type="build")
@@ -502,6 +542,11 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     def build(self, spec, prefix):
         with working_dir(self.build_directory):
             if self.run_tests:
+                if spec.satisfies("^mfem~exceptions"):
+                    raise InstallError(
+                        "Palace tests require mfem+exceptions. "
+                        "Reinstall with: spack install palace ^mfem+exceptions"
+                    )
                 make("palace-tests")
             else:
                 make()
