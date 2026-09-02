@@ -275,6 +275,12 @@ class Aqlprofile(Package):
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
 
+    # aqlprofile is only open source (MIT) as of rocm-7.0.0; all versions here are
+    # prebuilt proprietary binaries from repo.radeon.com that predate that release
+    license("LicenseRef-AMD-Proprietary", when="@:6", checked_by="tgamblin")
+    license("MIT", when="@7:", checked_by="tgamblin")
+    redistribute(source=False, binary=False, when="@:6")
+
     libraries = ["libhsa-amd-aqlprofile64"]
 
     spack_os = host_platform().default_os
@@ -335,6 +341,9 @@ class Aqlprofile(Package):
             ver = "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
+            major = int(ver.split(".")[0])
+            if major >= 7:
+                ver = None
         else:
             ver = None
         return ver

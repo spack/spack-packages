@@ -11,7 +11,7 @@ class Albert(MakefilePackage):
     """Albert is an interactive program to assist the
     specialist in the study of nonassociative algebra."""
 
-    homepage = "https://people.cs.clemson.edu/~dpj/albertstuff/albert.html"
+    homepage = "https://dpj.people.clemson.edu/albertstuff/albert.html"
     url = "https://github.com/kentavv/Albert/archive/v4.0a_opt4.tar.gz"
 
     version("4.0a_opt4", sha256="80b9ee774789c9cd123072523cfb693c443c3624708a58a5af177a51f36b2c79")

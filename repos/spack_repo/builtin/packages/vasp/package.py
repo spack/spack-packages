@@ -64,6 +64,9 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("libbeef", when="+libbeef")
     depends_on("libxc~fhc+fortran", when="+libxc")
     depends_on("wannier90", when="+wannier90")
+    # The +mpi variant of wannier90 3.x does not work with VASP
+    # https://vasp.at/wiki/Makefile.include#Wannier90_(optional)
+    conflicts("^wannier90@3:+mpi", msg="The +mpi variant of wannier90 3.x does not work with VASP")
     # at the very least the nvhpc mpi seems required
     requires("^nvhpc+mpi+lapack+blas", when="%nvhpc")
 
@@ -71,6 +74,9 @@ class Vasp(MakefilePackage, CudaPackage):
         "%gcc@:8", msg="GFortran before 9.x does not support all features needed to build VASP"
     )
     requires("%nvhpc", when="+cuda", msg="vasp requires nvhpc to build the openacc build")
+    # intel mkl/mpi conflicts with ilp64, which is a default behaviour
+    requires("^intel-oneapi-mkl~ilp64", when="^intel-oneapi-mkl")
+    requires("^intel-oneapi-mpi~ilp64", when="^intel-oneapi-mpi")
     # the mpi compiler wrappers in nvhpc assume nvhpc is the underlying compiler, seemingly
     conflicts("^[virtuals=mpi] nvhpc", when="%gcc", msg="nvhpc mpi requires nvhpc compiler")
     conflicts("^[virtuals=mpi] nvhpc", when="%aocc", msg="nvhpc mpi requires nvhpc compiler")
@@ -113,6 +119,14 @@ class Vasp(MakefilePackage, CudaPackage):
             if spec.satisfies("+openmp"):
                 include_string += "_omp"
             make_include = join_path("arch", include_string)
+        # oneapi
+        elif spec.satisfies("%oneapi"):
+            include_string += "oneapi"
+            if spec.satisfies("+openmp"):
+                include_string += "_omp"
+            make_include = join_path("arch", include_string)
+            filter_file("^CC_LIB[ ]{0,}=.*$", f"CC_LIB={spack_cc}", make_include)
+            filter_file("^CXX_PARS[ ]{0,}=.*$", f"CXX_PARS={spack_cxx}", make_include)
         # nvhpc
         elif spec.satisfies("%nvhpc"):
             qd_root = join_path(

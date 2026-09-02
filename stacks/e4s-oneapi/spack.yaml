@@ -37,9 +37,9 @@ spack:
       variants: threads=openmp
       require: 'cppflags="-O1" target=x86_64_v3 %oneapi'
     trilinos:
-      variants: +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext
-        +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu
-        +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos
+      variants: +amesos2 +anasazi +belos +boost
+        +ifpack2 +intrepid2 +kokkos +minitensor +muelu
+        +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos
         +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
     xz:
       variants: +pic
@@ -59,6 +59,11 @@ spack:
     # externals
     mpi:
       require: intel-oneapi-mpi
+    oneapi-igc:
+      buildable: false
+      externals:
+      - spec: oneapi-igc@1.0.10409
+        prefix: /usr
 
   specs:
   # CPU Specs:
@@ -87,10 +92,8 @@ spack:
   - e4s-cl
   - exaworks
   - faodel
-  - flecsi
   - flit
   - flux-core
-  - fortrilinos
   - gasnet
   - ginkgo
   - globalarrays
@@ -162,7 +165,7 @@ spack:
   - sz3
   - tasmanian
   - tau +mpi +python +syscall
-  - trilinos +amesos +amesos2 +anasazi +aztec +belos +boost +epetra +epetraext +ifpack +ifpack2 +intrepid +intrepid2 +isorropia +kokkos +ml +minitensor +muelu +nox +piro +phalanx +rol +rythmos +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
+  - trilinos +amesos2 +anasazi +belos +boost +ifpack2 +intrepid2 +kokkos +minitensor +muelu +nox +piro +phalanx +rol +sacado +stk +shards +shylu +stokhos +stratimikos +teko +tempus +tpetra +trilinoscouplings +zoltan +zoltan2 +superlu-dist gotype=long_long
   - turbine
   - umap
   - umpire
@@ -190,6 +193,7 @@ spack:
   - upcxx +level_zero
 
   # Current errors:
+  # - flecsi                      # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.18.0-lufklfi5m4d7ozbwg6hawancq32cwynz/mpi/2021.18/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF
   # - gptune ~mpispawn            # py-gpy-1.13.2: GPy/kern/src/stationary_cython.c:17564:41: error: no member named 'subarray' in 'struct _PyArray_Descr'
   # - hypre +sycl                 # Could NOT find IntelSYCL (missing: SYCL_INCLUDE_DIR SYCL_LIBRARY_DIR SYCL_LIBRARY) (found version "202012")
   # - nco                         # hdf5-1.14.6:Fatal Error: Reading module '/home/software/spack/[padded-to-256-chars]/linux-x86_64_v3/intel-oneapi-mpi-2021.17.2-4qz7nzr4kheywlw2dln3vwbe4527tdck/mpi/2021.17/include/mpi/mpi.mod' at line 1 column 2: Unexpected EOF 
@@ -222,7 +226,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+        image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
   cdash:
     build-group: E4S OneAPI

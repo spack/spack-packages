@@ -24,6 +24,8 @@ class PySetuptools(Package, PythonExtension):
     # Requires railroad
     skip_modules = ["setuptools._vendor", "pkg_resources._vendor"]
 
+    version("83.0.0", sha256="29b23c360f22f414dc7336bb39178cc7bcbf6021ed2733cde173f09dba19abb3")
+    # Last version supporting Python 3.9
     version("82.0.1", sha256="a59e362652f08dcd477c78bb6e7bd9d80a7995bc73ce773050228a348ce2e5bb")
     version("82.0.0", sha256="70b18734b607bd1da571d097d236cfcfacaf01de45717d59e6e04b96877532e0")
     version("80.9.0", sha256="062d34222ad13e0cc312a4c02d73f059e86a4acbfbdea8f8f76b28c99f306922")
@@ -67,6 +69,7 @@ class PySetuptools(Package, PythonExtension):
     extends("python")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@83:")
         depends_on("python@3.9:", when="@75.4:")
         depends_on("python@3.8:", when="@68.1:")
         depends_on("python@3.7:", when="@59.7:")
@@ -77,9 +80,50 @@ class PySetuptools(Package, PythonExtension):
 
     depends_on("py-pip", type="build")
 
+    # https://github.com/pypa/setuptools/blob/v71.0.0/NEWS.rst
+    #
+    # Now setuptools declares its own dependencies in the core extra.
+    # Dependencies are still vendored for bootstrapping purposes,
+    # but setuptools will prefer installed dependencies if present.
+    conflicts("py-importlib-metadata@:5", when="@71.1: ^python@:3.9")
+    conflicts("py-importlib-metadata@:5", when="@71.0")
+
+    conflicts("py-importlib-resources@:5.10.1", when="@75.3.3 ^python@:3.8")
+    conflicts("py-importlib-resources@:5.10.1", when="@71.1:75.3.1 ^python@:3.8")
+    conflicts("py-importlib-resources@:5.10.1", when="@71.0")
+
+    # does not exist in spack (2026-07-07)
+    # jaraco.collections    v77.0.2 -
+    # jaraco.collections    v75.4.0 +
+    # jaraco.collections    v75.3.4 -
+    # jaraco.collections    v75.0.0 +
+
+    conflicts("py-jaraco-functools@:3", when="@75.3.4:")
+    conflicts("py-jaraco-functools@:3", when="@75.3.2")
+
+    # does not exist in spack (2026-07-07)
+    # jaraco.text>=3.7      v71.0.0 +
+
+    conflicts("py-more_itertools@:8.7", when="@71:")
+
+    conflicts("py-ordered-set@:3.1.0", when="@71:72")
+
+    conflicts("py-packaging@:24.1", when="@75.3.4:")
+    conflicts("py-packaging@:23", when="@75.3.3")
+    conflicts("py-packaging@:24.1", when="@75.3.2")
+    conflicts("py-packaging@:23", when="@71:")
+
+    conflicts("py-platformdirs@:4.2.1", when="@75.3:82.0.0")
+    conflicts("py-platformdirs@:2.6.1", when="@71:75.2")
+
+    conflicts("py-tomli@:2.0.0", when="@71.1: ^python@:3.10")
+    conflicts("py-tomli@:2.0.0", when="@71.0")
+
+    conflicts("py-wheel@:0.42", when="@71:")
+
     conflicts(
-        "^python@:3.9 ^py-pip@25:",
-        when="@:75.1.0",
+        "^py-pip@25:",
+        when="@:75.1.0 ^python@:3.9",
         msg="py-pip@25: vendors pyproject-hooks@1.2. "
         "The combination pyproject-hooks@1.2, python@:3.9, and py-setuptools@:75.1.0 is broken. "
         "See https://github.com/pypa/pyproject-hooks/issues/206 for details.",

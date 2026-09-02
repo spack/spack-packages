@@ -19,6 +19,7 @@ class RBslib(RPackage):
 
     license("MIT")
 
+    version("0.10.0", sha256="b4a8d24855e299a4980b8eac0f1b6213d7e16ff8ef1be530d3623565ea5a56d3")
     version("0.9.0", sha256="add7a107ff6a3185f68511cfcc45832f018917870eae06a8044f41de84ff0907")
     version("0.8.0", sha256="fd182ddb1b128691d2b0c12882361732a23d451dbf4052ba70b11257e8d44b03")
     version("0.4.2", sha256="9a40b7a1bbe409af273e1e940d921ab198ea576548f06f055f552f70ff822f19")

@@ -36,6 +36,7 @@ class Plumed(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("2.10.1", sha256="92e504371869091fe1ef1dd5a1f2996aa369ed9db6c7d2a56650231786ac7c5d")
     version("2.10.0", sha256="ca6410d47e91b4e0f953e1a8933f15b05c4681167611ab3b096ab121155f6879")
     version("2.9.2", sha256="301fbc958374f81d9b8c7a1eac73095f6dded52cce73ce33d64bdbebf51ac63d")
     version("2.9.1", sha256="e24563ad1eb657611918e0c978d9c5212340f128b4f1aa5efbd439a0b2e91b58")
@@ -181,6 +182,14 @@ class Plumed(AutotoolsPackage):
 
     parallel = True
 
+    # Filter Spack's compiler wrapper
+    # so that "plumed mklib" works correctly
+    filter_compiler_wrappers(
+        "config.txt",
+        "compile_options.sh",
+        relative_root=join_path("lib", "plumed", "src", "config"),
+    )
+
     def apply_patch(self, other):
         # The name of MD engines differ slightly from the ones used in Spack
         format_strings = collections.defaultdict(lambda: "{0.name}-{0.version}")
@@ -288,17 +297,23 @@ class Plumed(AutotoolsPackage):
         # Set flags to help with PyTorch
         if enable_libtorch:
             pytorch_path = Path(spec["py-torch"].package.cmake_prefix_paths[0]).parent.parent
+
             extra_ldflags.append(spec["py-torch"].libs.search_flags)
-            extra_libs.append(spec["py-torch"].libs.link_flags)
-            extra_ldflags.append(spec["python"].libs.search_flags)
-            extra_libs.append(spec["python"].libs.link_flags)
+
+            # PLUMED only needs libtorch (PyTorch C++ API)
+            # Here we manually remove the torch_python library to avoid linking against it
+            # Linking against torch_python requires linking against Python as well,
+            # which is not needed and can cause issues with some workflows
+            # (e.g. GIL-related when mixing Spack installed-PLUMED with external Python
+            # installations)
+            extra_libs.append(spec["py-torch"].libs.link_flags.replace("-ltorch_python ", ""))
+
             # Add include paths manually
             # Spack HeaderList.cpp_flags does not support include paths within include paths
             extra_cppflags.extend(
                 [
                     f"-I{pytorch_path / 'include'}",
                     f"-I{pytorch_path / 'include' / 'torch' / 'csrc' / 'api' / 'include'}",
-                    spec["python"].headers.include_flags,
                 ]
             )
         if enable_libmetatomic:

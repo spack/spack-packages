@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import platform
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -9,6 +10,16 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    "0.7.1": {
+        "Linux-x86_64": (
+            "946571d9ea164f948e402dd97a14541cb90fbec800336cfa7ae644af5937632f",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-0.7.1.4_cuda12-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "f283c31b6badf4a5277014295705eac8e6e28f27de30d746719ea1cef7a750b8",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-aarch64/libcudss-linux-aarch64-0.7.1.4_cuda12-archive.tar.xz",
+        ),
+    },
     "0.7.0": {
         "Linux-x86_64": (
             "c98d5ef87e8b6a356b21a678715033b19620ce58b5fa64c97e25e6d3e76e42dc",
@@ -57,7 +68,43 @@ class Cudss(Package):
         if pkg:
             version(ver, sha256=pkg[0], url=pkg[1])
 
+    variant(
+        "mpi",
+        default=False,
+        description="Build a communication layer for the selected MPI implementation",
+    )
+
     depends_on("cuda@12:")
+    depends_on("mpi", when="+mpi")
+
+    conflicts(
+        "+mpi",
+        when="@:0.6 target=aarch64:",
+        msg="cuDSS aarch64 archives provide communication-layer sources starting at 0.7.0",
+    )
 
     def install(self, spec, prefix):
         install_tree(".", prefix)
+
+        if "+mpi" in spec:
+            # NVIDIA calls this source and build target "openmpi", but it uses
+            # the standard MPI API and can be built against any MPI provider.
+            # Use a provider-neutral installed name because the concrete MPI
+            # dependency, rather than the filename, identifies its ABI.
+            with working_dir("src"):
+                with set_env(
+                    CUDA_PATH=spec["cuda"].prefix,
+                    CUDSS_PATH=self.stage.source_path,
+                    MPI_PATH=spec["mpi"].prefix,
+                    NVCC_PREPEND_FLAGS="-Xlinker=-rpath -Xlinker=%s:%s"
+                    % (spec["mpi"].prefix.lib64, spec["mpi"].prefix.lib),
+                ):
+                    bash = which("bash", required=True)
+                    bash("./cudss_build_commlayer.sh", "openmpi")
+
+                comm_layer = "libcudss_commlayer_openmpi.so"
+                if not os.path.isfile(comm_layer):
+                    raise InstallError(
+                        "cuDSS did not produce the requested MPI communication layer"
+                    )
+                install(comm_layer, join_path(prefix.lib, "libcudss_commlayer_mpi.so"))

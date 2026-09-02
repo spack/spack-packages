@@ -24,6 +24,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.25.5", sha256="6d61c472db39006d261542d1a42f1fa6c52d6e89f9e77041386189aa8c24b490")
+    version("3.25.4", sha256="12c990fb39a5764ac8311211d09c01ed80fb983136c75bf7b558312b2509dbbd")
+    version("3.25.3", sha256="95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5")
+    version("3.25.2", sha256="03fbcfb72e28dbd92eac042faf7a4ba7e75e602fd1c9af0676f78e0a762412ec")
+    version("3.25.1", sha256="d9d9518110aea1f8f5444985cc1a95273ab140cdbcd2c2038c6309a3b611abb4")
     version("3.25.0", sha256="dc1c018c16bd9dcf40596959875725edb4ba8b854a0b67bbce62a0d4be1bd3be")
     version("3.24.6", sha256="d6ad14652996b0e0d3da51068eec902118057f275de867e8cf258ffd64d90a7d")
     version("3.24.5", sha256="b538efa53ebfa5c7a1c3ac9783a57852a74ce4fb436f0ee4802564503c67269f")
@@ -226,6 +231,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # https://gitlab.com/petsc/petsc/-/merge_requests/8152
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
+
+    # fixes build with: +complex ^cuda@13.3. Upstream fix: petsc!9532.
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/c0f7467a2261011568d510ece23f14cad8dcaaa4.diff",
+        sha256="e91c9b9323f22fe8988f5707eb262290e850b81262cf41557dc552848313a6b8",
+        when="@3.16:3.25.5 +cuda +complex ^cuda@13.3:",
+    )
 
     # These require +mpi
     mpi_msg = "Requires +mpi"
@@ -615,7 +627,12 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if "+cuda" in spec:
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
-                options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
+                if spec.satisfies("@3.19:"):
+                    options.append("--with-cuda-gencodearch={0}".format(",".join(cuda_arch)))
+                else:
+                    if len(cuda_arch) != 1:
+                        raise InstallError("multiple CUDA architectures require petsc@3.19:")
+                    options.append("--with-cuda-gencodearch={0}".format(cuda_arch[0]))
         else:
             options.append("--with-cudac=0")
         if "+rocm" in spec:
@@ -650,6 +667,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
 
         if "+mkl-pardiso" in spec:
             options.append("--with-mkl_pardiso-dir=%s" % spec["mkl"].prefix)
+
+        # See https://github.com/spack/spack-packages/pull/4651
+        if spec.satisfies("^intel-oneapi-mkl@2026.0:"):
+            options.append("--with-mkl_sparse=0")
+            options.append("--with-mkl_sparse_optimize=0")
 
         # For the moment, HPDDM does not work as a dependency
         # using download instead

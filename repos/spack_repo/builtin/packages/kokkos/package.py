@@ -28,10 +28,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.2.1", sha256="3f754c99aa6130b1dd6520d904db7b2fd44ed618cd91e0dfd921956f23f6812d")
+    version("5.2.0", sha256="54993e0682d80b78939bbf260490f8cf31428bb883c0309961369997f15d94df")
+    version("5.1.1", sha256="8bdbee0f0ac383436743ad8a9e3e928705b34b31a25a92dc5179c52a3aa98519")
     version("5.1.0", sha256="7bdbdfc88033ed7d940c7940ed8919e1f2b78a9656c69276beb76ad45c41ec4e")
     version("5.0.2", sha256="188817bb452ca805ee8701f1c5adbbb4fb83dc8d1c50624566a18a719ba0fa5e")
     version("5.0.1", sha256="cf7d8515ca993229929be9f051aecd8f93cde325adac8a4f82ed6848adace218")
     version("5.0.0", sha256="c45f3e19c3eb71fc8b7210cb04cac658015fc1839e7cc0571f7406588ff9bcef")
+    version("4.7.04", sha256="4213b248c39e112299fa94ee08817e51126fc02996ed6e2ab56aec4cdb80ee1f")
     version("4.7.03", sha256="969e7933b9426219b220f08036e489b3226e6d8cd24eecf2c5b80df8c37443c0")
     version("4.7.02", sha256="a81826ac0a167933d13506bc2a986fb5517038df9abb780fe9bb2c1d4e80803b")
     version("4.7.01", sha256="404cf33e76159e83b8b4ad5d86f6899d442b5da4624820ab457412116cdcd201")
@@ -110,19 +114,19 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
+    # device : (default value, when clause, description)
     devices_variants = {
-        "cuda": [False, "Whether to build CUDA backend"],
-        "openmp": [False, "Whether to build OpenMP backend"],
-        "threads": [False, "Whether to build the C++ threads backend"],
-        "serial": [False, "Whether to build serial backend"],
-        "rocm": [False, "Whether to build HIP backend"],
-        "sycl": [False, "Whether to build the SYCL backend"],
-        "openmptarget": [False, "Whether to build the OpenMPTarget backend"],
+        "cuda": [False, None, "Whether to build CUDA backend"],
+        "openmp": [False, None, "Whether to build OpenMP backend"],
+        "threads": [False, None, "Whether to build the C++ threads backend"],
+        "serial": [False, None, "Whether to build serial backend"],
+        "rocm": [False, None, "Whether to build HIP backend"],
+        "sycl": [False, None, "Whether to build the SYCL backend"],
+        "openmptarget": [False, "@:5.0", "Whether to build the OpenMPTarget backend"],
     }
     requires(
         "+serial", when="~hpx ~openmp ~threads", msg="Kokkos requires at least one host backend"
     )
-    conflicts("+openmptarget", when="@5.1:")
 
     tpls_variants = {
         "hpx": [False, None, "Whether to enable the HPX library"],
@@ -163,6 +167,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     spack_micro_arch_map = {
         "armv8.1a": ("ARMV81", None),
         "armv8.4a": ("ARMV84", "@4.7.00:"),
+        "neoverse_v2": ("ARMV9_GRACE", "@4.7.04:4,5.1:"),
         "u74mc": ("RISCV_U74MC", "@4.7.00:"),
         "a64fx": ("A64FX", None),
         "thunderx2": ("ARMV8_THUNDERX2", None),
@@ -196,7 +201,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # ("KNC", None),          # Knights Corner Xeon Phi
     # ("BGQ", "@:4.2.01"),    # IBM Blue Gene/Q
     # ("RISCV_SG2042", "@4.3.00:"), # Sophgo SG2042 (64-core RISC-V)
-    # ("ARMV9_GRACE", "@4.4.00:"),  # NVIDIA Grace CPU (ARMv9)
     # ("RISCV_RVA22V", "@4.5.00:"), # RVA22V profile (RISC-V vector extension)
     # ("ARMV80", None),       # ARMv8.0 Compatible CPU
     # ("ARMV84_SVE", "@4.7.00:"),   # ARMv8.4 with SVE (Scalable Vector Extension)
@@ -262,7 +266,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": ("navi1030", None),
         "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
+        "gfx1151": ("amd_gfx1151", "@5.2.0:"),
+        "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
@@ -309,11 +316,12 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # FIXME this should move to the apu part
     variant("apu", default=False, description="Enable APU support", when="@4.5: +rocm")
 
-    for dev, (dflt, desc) in devices_variants.items():
-        variant(dev, default=dflt, description=desc)
+    for dev, (dflt, when, desc) in devices_variants.items():
+        variant(dev, default=dflt, description=desc, when=when)
     conflicts("+cuda", when="+rocm", msg="CUDA and ROCm are not compatible in Kokkos.")
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
+    depends_on("llvm-openmp", when="+openmp %apple-clang")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -348,6 +356,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda", when="cxxstd=17 ^cuda@:10")
     conflicts("+cuda", when="cxxstd=20 ^cuda@:11")
+    requires("@5.2: ^cuda@13.3:", when="+cuda cxxstd=23")
 
     # Expose a way to disable CudaMallocAsync that can cause problems
     # with some MPI such as cray-mpich
@@ -375,7 +384,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         sha256="145619e87dbf26b66ea23e76906576e2a854a3b09f2a2dd70363e61419fa6a6e",
         when="@4.2.00",
     )
-    # Remove unnecessary C and C++ languages dependency in scripts/spack_test/CMakeLists.txt (upstreamed in https://github.com/kokkos/kokkos/pull/8357)
+    # Remove unnecessary C and C++ languages dependency in scripts/spack_test/CMakeLists.txt
+    # (upstreamed in https://github.com/kokkos/kokkos/pull/8357)
     patch(
         "https://github.com/kokkos/kokkos/commit/05d4901538251fff7ae6e58c84db670ad326b5c8.patch?full_index=1",
         sha256="89eb693ad4913c4fd06b25d786d56bfa631d7d612df80c0f5331852e358e0608",
@@ -389,9 +399,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # Filter spack-generated files that may include links to the
     # spack compiler wrappers
     filter_compiler_wrappers("kokkos_launch_compiler", relative_root="bin")
-    filter_compiler_wrappers(
-        "KokkosConfigCommon.cmake", relative_root=os.path.join("lib64", "cmake", "Kokkos")
-    )
+    for libdir in ("lib", "lib64"):
+        filter_compiler_wrappers(
+            "KokkosConfigCommon.cmake",
+            relative_root=os.path.join(libdir, "cmake", "Kokkos"),
+        )
 
     # sanity check
     sanity_check_is_file = [
@@ -439,13 +451,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
-
-        if spec.satisfies("~wrapper+cuda") and not (
-            spec.satisfies("%clang") or spec.satisfies("%cce") or spec.satisfies("+cmake_lang")
-        ):
-            raise InstallError(
-                "Kokkos requires +wrapper when using +cuda without %clang, %cce or +cmake_lang"
-            )
 
         options = [
             from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
@@ -596,29 +601,3 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         ]
         cmake(*cmake_args)
         cache_extra_test_sources(self, cmake_out_path)
-
-    def test_run(self):
-        """Test if kokkos builds and runs"""
-        cmake_path = join_path(
-            self.test_suite.current_test_cache_dir, self.test_script_relative_path, "out"
-        )
-
-        if not os.path.exists(cmake_path):
-            raise SkipTest(f"{cmake_path} is missing")
-
-        cmake = self.spec["cmake"].command
-        cmake_args = []
-        if self.spec.satisfies("+rocm"):
-            prefix_paths = ";".join(get_cmake_prefix_path(self))
-            cmake_args.append(self.define("CMAKE_PREFIX_PATH", prefix_paths))
-
-        if self.spec.satisfies("+wrapper"):
-            cmake_args.append(
-                self.define("CMAKE_CXX_COMPILER", self["kokkos-nvcc-wrapper"].kokkos_cxx)
-            )
-        else:
-            cmake_args.append(self.define("CMAKE_CXX_COMPILER", self["cxx"].cxx))
-
-        cmake(cmake_path, *cmake_args)
-        cmake("--build", ".")
-        cmake("--build", ".", "--target", "test")

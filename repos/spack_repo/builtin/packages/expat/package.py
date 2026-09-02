@@ -18,8 +18,36 @@ class Expat(AutotoolsPackage, CMakePackage):
     url = "https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2"
 
     license("MIT")
-    version("2.7.5", sha256="386a423d40580f1e392e8b512b7635cac5083fe0631961e74e036b0a7a830d77")
-    # deprecate all releases before 2.7.5 because of various security issues
+    version(
+        "2.8.4",
+        sha256="963250a823c16a498582b4ad82ad0f88926be0769675d3b6956be4d769a1cd8f",
+    )
+    # deprecate all releases before 2.8.4 because of various security issues
+    version(
+        "2.8.3",
+        sha256="b4cc2483927d5e90bf8c40b44a6b95b368b42a8a96e25883fce188b48a92b670",
+        deprecated=True,
+    )
+    version(
+        "2.8.2",
+        sha256="69e7f52417d85b1c2b7fe855e176eec55d0b2d7d92d691372d833a1c7df7923b",
+        deprecated=True,
+    )
+    version(
+        "2.8.1",
+        sha256="f5833dd2e1cd7739ec9182804a1a29c4f0cc7c2f26b633d3a2188b7766a88ecb",
+        deprecated=True,
+    )
+    version(
+        "2.8.0",
+        sha256="586494499ac3ad46d87f3beda7b1f770c1c8026a9b60e151593f8b29089a52ca",
+        deprecated=True,
+    )
+    version(
+        "2.7.5",
+        sha256="386a423d40580f1e392e8b512b7635cac5083fe0631961e74e036b0a7a830d77",
+        deprecated=True,
+    )
     version(
         "2.7.4",
         sha256="e6af11b01e32e5ef64906a5cca8809eabc4beb7ff2f9a0e6aabbd42e825135d0",
@@ -65,6 +93,12 @@ class Expat(AutotoolsPackage, CMakePackage):
         when="build_system=cmake",
     )
 
+    variant(
+        "pic",
+        default=True,
+        description="Build position-independent code",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -82,6 +116,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         if spec.satisfies("+libbsd"):
             args.append("--with-libbsd")
         return args
+        args.append("--with-pic" if "+pic" in spec else "--without-pic")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -89,6 +124,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             self.define("EXPAT_BUILD_DOCS", False),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
 
         if self.spec.satisfies("+libbsd"):

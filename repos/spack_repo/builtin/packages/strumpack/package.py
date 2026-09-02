@@ -76,6 +76,8 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.11:", when="@:6.2.9", type="build")
     depends_on("cmake@3.17:", when="@6.3.0:", type="build")
+    # CMake 3.18 initializes target CUDA_ARCHITECTURES.
+    depends_on("cmake@3.18:", when="@5:+cuda", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
@@ -127,6 +129,20 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/pghysels/STRUMPACK/commit/e4b110b2d823c51a90575b77ec1531c699097a9f
     patch("strumpack-7.0.1-mpich-hipcc.patch", when="@7.0.1 +rocm ^mpich")
 
+    # https://github.com/pghysels/STRUMPACK/pull/142
+    patch(
+        "https://github.com/pghysels/STRUMPACK/commit/e08ec96e8514d3b8e374fd436eae5e1590a2c254.patch?full_index=1",
+        sha256="db741166d26768f77a97651e628a75cc9d7894ad5613f20450a494bb3cb08bb0",
+        when="@8.0.0 +cuda ^cuda@13.2:",
+    )
+
+    # https://github.com/pghysels/STRUMPACK/pull/144
+    patch(
+        "https://github.com/pghysels/STRUMPACK/commit/be784ab4ced0a603e8643ef011ecd0fc1b77a83e.patch?full_index=1",
+        sha256="7efbae963cc34f001fe4a6437e2da099a2ad7f81ed6e73868a223bb5606e718c",
+        when="@8.0.0 +butterflypack+mpi ^butterflypack@4.1.0:",
+    )
+
     def cmake_args(self):
         spec = self.spec
 
@@ -174,7 +190,10 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             )
             cuda_archs = spec.variants["cuda_arch"].value
             if "none" not in cuda_archs:
-                args.append(f"-DCUDA_NVCC_FLAGS={' '.join(self.cuda_flags(cuda_archs))}")
+                if spec.satisfies("@5:"):
+                    args.append(f"-DCMAKE_CUDA_ARCHITECTURES={';'.join(cuda_archs)}")
+                else:
+                    args.append(f"-DCUDA_NVCC_FLAGS={' '.join(self.cuda_flags(cuda_archs))}")
 
         if "+rocm" in spec:
             args.append(f"-DCMAKE_CXX_COMPILER={spec['hip'].hipcc}")

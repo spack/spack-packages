@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -17,14 +18,23 @@ class HsaAmdAqlprofile(CMakePackage):
     git = "https://github.com/ROCm/rocm-systems"
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libhsa-amd-aqlprofile64"]
 
     def url_for_version(self, version):
         if version <= Version("7.1.1"):
             url = "https://github.com/ROCm/aqlprofile/archive/rocm-{0}.tar.gz"
-        else:
+            return url.format(version)
+        elif version <= Version("7.2.3"):
             url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
+            return url.format(version)
+        else:
+            # For versions >= 7.13, use therock-{major}.{minor} tag format
+            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
+            return url.format(version[0], version[1])
 
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
     version("7.1.1", sha256="0137f429a551c431a81f613e114b247d7e269ab9201154d6c87fe7fc86987a66")
@@ -35,7 +45,7 @@ class HsaAmdAqlprofile(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1"]:
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
 
     @property
@@ -44,3 +54,17 @@ class HsaAmdAqlprofile(CMakePackage):
             return "."
         else:
             return "projects/aqlprofile"
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+            major = int(ver.split(".")[0])
+            if major < 7:
+                ver = None
+        else:
+            ver = None
+        return ver

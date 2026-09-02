@@ -21,6 +21,7 @@ class Podio(CMakePackage):
     tags = ["hep", "key4hep"]
 
     version("master", branch="master")
+    version("1.8", sha256="b6e2ffed29ae0821951179496e69e2be42eb7dbaf55f8080258447f3812c4a73")
     version("1.7", sha256="4a62ed2fdd9cebb5fc1799ea17237979b2d435797f1201fa8031fd99e9e47c15")
     version("1.6", sha256="4a625419bcf9d10b33b9fcf6cacbbebfd24c62e88a9980c5735b011d671397fe")
     version("1.5", sha256="3d316a86420a1e79088488f229bb8d1259244cf17752c40f817abeec2cec89a5")
@@ -62,6 +63,13 @@ class Podio(CMakePackage):
         description="Build the RDataSource for reading podio collections",
         when="@1.0.2:",
     )
+    variant("arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:")
+    variant(
+        "parquet",
+        default=False,
+        description="Build the Arrow/Parquet I/O backend",
+        when="@1.8: +arrow",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -82,6 +90,8 @@ class Podio(CMakePackage):
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-jinja2@2.10.1:", type=("build", "run"))
     depends_on("sio", type=("build", "link"), when="+sio")
+    depends_on("arrow", type=("build", "link"), when="+arrow")
+    depends_on("arrow+parquet", type=("build", "link"), when="+parquet")
     depends_on("fmt@9:", type=("build", "link"), when="@1.3:")
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
@@ -104,14 +114,23 @@ class Podio(CMakePackage):
         sha256="9e42e0995634f2afdd358cd19383e882dc9143cce1b6afb0d2c4a1ec9add6e15",
     )
 
+    # fmt 12 patch: see https://github.com/AIDASoft/podio/pull/977
+    patch(
+        "https://github.com/AIDASoft/podio/commit/988961b7172b8f1ad7d89450cd8cddd4413e1564.patch?full_index=1",
+        when="@1.3:1.7",
+        sha256="b291e1ebc5b73f15d0ce76b9f9211644dc7a4fe9920fbede7f2fb77382d65251",
+    )
+
     # See https://github.com/AIDASoft/podio/pull/599 that landed after 0.99
     extends("python", when="@1.0:")
 
     def cmake_args(self):
         args = [
             self.define_from_variant("ENABLE_SIO", "sio"),
+            self.define_from_variant("ENABLE_ARROW", "arrow"),
             self.define_from_variant("ENABLE_RNTUPLE", "rntuple"),
             self.define_from_variant("ENABLE_DATASOURCE", "datasource"),
+            self.define_from_variant("ENABLE_PARQUET", "parquet"),
             self.define("PODIO_SET_RPATH", True),
             self.define("CMAKE_CXX_STANDARD", self.spec.variants["cxxstd"].value),
             self.define("BUILD_TESTING", self.run_tests),
@@ -163,6 +182,9 @@ class Podio(CMakePackage):
         :type param: str
         """
         base_url = self.url.rsplit("/", 1)[0]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
 
         if len(version) == 1:
             major = version[0]

@@ -18,6 +18,7 @@ class RCheckmate(RPackage):
 
     license("BSD-3-Clause")
 
+    version("2.3.4", sha256="95e1068dee07d95c5e616dfd66e622cf245821acd358a77e790118c34ebd85ca")
     version("2.3.3", sha256="f7af5c701b85505141f68ea3d35e01034752bb22bc0578fc72bd58c0043ae57f")
     version("2.3.2", sha256="7255732d6c2da51204128a910e8c0d05246324a0402fca4d0d99433af40a88e3")
     version("2.1.0", sha256="b784dd5163a0350d084ef34882d9781373839dedeaa9a8b8e6187d773d0d21c6")

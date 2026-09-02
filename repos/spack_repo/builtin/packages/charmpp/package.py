@@ -24,6 +24,10 @@ class Charmpp(Package):
     git = "https://github.com/UIUC-PPL/charm.git"
 
     maintainers("matthiasdiener")
+    # relicensed from a non-commercial license to Apache-2.0 in May 2024, after v7.0.0
+    license("LicenseRef-Charmpp-Non-Commercial", when="@:7.0", checked_by="tgamblin")
+    license("Apache-2.0 WITH LLVM-exception", when="@7.1:", checked_by="tgamblin")
+    redistribute(source=False, binary=False, when="@:7.0")
 
     version("main", branch="main")
 
@@ -127,7 +131,12 @@ class Charmpp(Package):
     # Fix was suggested in https://github.com/charmplusplus/charm/pull/3646 and the same has
     # been implemented in v8.0.0
     conflicts("%fortran=intel-oneapi-compilers", when="@8: +fortran")
-    conflicts("%fortran=aocc", when="@8: +fortran")
+    conflicts(
+        "%fortran=aocc@:4.2",
+        when="@8: +fortran",
+        msg="Charm++ 8.x +fortran fails to build with AOCC 4.2.0 and earlier; "
+        "use AOCC 5.0+ or charmpp@8: ~fortran",
+    )
 
     # Versions 7.0.0+ use CMake by default when it's available. It's more
     # robust.

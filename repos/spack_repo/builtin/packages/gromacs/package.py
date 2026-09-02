@@ -178,9 +178,11 @@ class Gromacs(CMakePackage, CudaPackage):
         msg="OpenMP not available for the Apple clang compiler",
     )
 
-    variant("openmp_max_threads", default="none", description="Max number of OpenMP threads")
-    conflicts(
-        "+openmp_max_threads", when="~openmp", msg="OpenMP is off but OpenMP Max threads is set"
+    variant(
+        "openmp_max_threads",
+        default="none",
+        description="Max number of OpenMP threads",
+        when="+openmp",
     )
     variant(
         "sve",
@@ -194,7 +196,9 @@ class Gromacs(CMakePackage, CudaPackage):
     conflicts(
         "+sve",
         when="%clang@20",
-        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; disable SVE (~sve) or use a different compiler. See https://gitlab.com/gromacs/gromacs/-/issues/5390",
+        msg="There is a severe performance regression in GROMACS with SVE and Clang 20; "
+        "disable SVE (~sve) or use a different compiler. "
+        "See https://gitlab.com/gromacs/gromacs/-/issues/5390",
     )
     variant(
         "relaxed_double_precision",

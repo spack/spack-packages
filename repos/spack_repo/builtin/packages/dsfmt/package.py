@@ -10,7 +10,7 @@ from spack.package import *
 class Dsfmt(MakefilePackage):
     """Double precision SIMD-oriented Fast Mersenne Twister"""
 
-    homepage = "http://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/"
+    homepage = "https://www.math.sci.hiroshima-u.ac.jp/m-mat/MT/SFMT/"
     url = "https://github.com/MersenneTwister-Lab/dSFMT/archive/v2.2.4.tar.gz"
 
     maintainers("haampie")

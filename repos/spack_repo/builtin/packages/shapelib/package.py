@@ -18,8 +18,18 @@ class Shapelib(CMakePackage):
 
     license("LGPL-2.0-only OR MIT")
 
+    version("1.6.3", sha256="3f9cb7526332144ccc83bb56ead6cd3a6765761a611481901a431458a1899dec")
     version("1.6.0", sha256="0bfd1eab9616ca3c420a5ad674b0d07c7c5018620d6ab6ae43917daa18ff0d1e")
     version("1.5.0", sha256="48de3a6a8691b0b111b909c0b908af4627635c75322b3a501c0c0885f3558cad")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    # Tests require internet access during build because upstream fetches
+    # GoogleTest and Google Benchmark via CMake FetchContent. Disabled by default
+    # to support offline and air-gapped builds.
+    variant("tests", default=False, description="Build tests (requires internet access)")
+
+    def cmake_args(self):
+        args = [self.define_from_variant("BUILD_TESTING", "tests")]
+        return args

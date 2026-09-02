@@ -9,7 +9,6 @@ from spack_repo.builtin.build_systems import cmake, makefile
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
-from spack.llnl.util import tty
 from spack.package import *
 
 
@@ -22,13 +21,15 @@ class Openblas(CMakePackage, MakefilePackage):
     )
     git = "https://github.com/OpenMathLib/OpenBLAS.git"
 
-    maintainers("mathomp4")
+    maintainers("mathomp4", "sethrj")
 
     libraries = ["libopenblas", "openblas"]
 
     license("BSD-3-Clause")
 
     version("develop", branch="develop")
+    version("0.3.34", sha256="cd7e129868320cc2d033afa920e31202dfe0b8066a5b66661900ccc0f197dfed")
+    version("0.3.33", sha256="6761af1d9f5d353ab4f0b7497be2643313b36c8f31caec0144bfef198e71e6ab")
     version("0.3.32", sha256="f8a1138e01fddca9e4c29f9684fd570ba39dedc9ca76055e1425d5d4b1a4a766")
     version("0.3.30", sha256="27342cff518646afb4c2b976d809102e368957974c250a25ccc965e53063c95d")
     version("0.3.29", sha256="38240eee1b29e2bde47ebb5d61160207dc68668a54cac62c076bb5032013b1eb")
@@ -140,6 +141,18 @@ class Openblas(CMakePackage, MakefilePackage):
         multi=False,
     )
 
+    # We add a variant to allow setting of NUM_THREADS as on some machines, 512 might be
+    # too small. But we default to 512 as per OpenBLAS maintainer higher numbers
+    # will only lead to unnecessary memory usage and potential bottlenecks
+    # see https://github.com/spack/spack-packages/issues/4178#issuecomment-4239472982
+    for _when_condition in ("threads=openmp", "threads=pthreads"):
+        variant(
+            "max_num_threads",
+            default="512",
+            description="Set the default number of threads for OpenBLAS",
+            when=_when_condition,
+        )
+
     # virtual dependency
     provides("blas", "lapack")
     provides("lapack@3.9.1:", when="@0.3.15:")
@@ -150,6 +163,21 @@ class Openblas(CMakePackage, MakefilePackage):
     depends_on("fortran", when="+fortran", type="build")
     depends_on("fortran", when="@:0.3.20", type="build")
     depends_on("perl", when="@:0.3.20", type="build")
+
+    # https://github.com/OpenMathLib/OpenBLAS/issues/5947
+    # https://github.com/OpenMathLib/OpenBLAS/pull/5949
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/842189bf3f4fe62624bdb6d0186699dd4689f891.diff?full_index=1",
+        when="@0.3.34",
+        sha256="e1923356044ba7d0f41662735a841352cc655a993538b243ae0a03afd4210820",
+    )
+
+    # https://github.com/OpenMathLib/OpenBLAS/pull/5796
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/88705a932831c0de1ed136b461c6c239802828b2.diff?full_index=1",
+        when="@0.3.32:0.3.33",
+        sha256="723ddc1553b6d27ff89d96985f7732695935c0d4d8df766987702689bdb750ac",
+    )
 
     # https://github.com/OpenMathLib/OpenBLAS/pull/4879
     patch("openblas-0.3.28-thread-buffer.patch", when="@0.3.28")
@@ -536,8 +564,20 @@ class MakefileBuilder(makefile.MakefileBuilder):
         else:
             make_defs.append("MAKE_NB_JOBS=0")  # flag provided by OpenBLAS
 
-        # Add target and architecture flags
-        make_defs += self._microarch_target_args()
+        if self.spec.satisfies("target=m1:"):
+            # Use custom simplified target for macOS ARM procesors:
+            # GENERIC target results in SIGILL
+            make_defs += ["TARGET=VORTEX", "NO_SVE=1"]
+        else:
+            # Try to intelligently add target and architecture flags
+            make_defs += self._microarch_target_args()
+
+            # Prevent errors in `as` assembler from newer instructions
+            if self.spec.satisfies("%gcc@:4.8.4"):
+                make_defs.append("NO_AVX2=1")
+
+            if not self.spec.satisfies("target=x86_64_v4:"):
+                make_defs.append("NO_AVX512=1")
 
         if self.spec.satisfies("+dynamic_dispatch"):
             make_defs += ["DYNAMIC_ARCH=1"]
@@ -545,6 +585,8 @@ class MakefileBuilder(makefile.MakefileBuilder):
         # Fortran-free compilation
         if "~fortran" in self.spec:
             make_defs += ["NOFORTRAN=1"]
+            # f_check still auto-detects Fortran compilers on PATH
+            make_defs += ["F_COMPILER=none"]
 
         if "~shared" in self.spec:
             if "+pic" in self.spec:
@@ -589,10 +631,6 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("+fortran%clang"):
             make_defs.append("TIMER=INT_CPU_TIME")
 
-        # Prevent errors in `as` assembler from newer instructions
-        if self.spec.satisfies("%gcc@:4.8.4"):
-            make_defs.append("NO_AVX2=1")
-
         # Fujitsu Compiler dose not add  Fortran runtime in rpath.
         if self.spec.satisfies("%fj"):
             make_defs.append("LDFLAGS=-lfj90i -lfj90f -lfjsrcinfo -lelf")
@@ -605,31 +643,23 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if self.spec.satisfies("+bignuma"):
             make_defs.append("BIGNUMA=1")
 
-        if not self.spec.satisfies("target=x86_64_v4:"):
-            make_defs.append("NO_AVX512=1")
-
         # Avoid that NUM_THREADS gets initialized with the host's number of CPUs.
         if self.spec.satisfies("threads=openmp") or self.spec.satisfies("threads=pthreads"):
-            make_defs.append("NUM_THREADS=512")
-
-        # Fix https://github.com/OpenMathLib/OpenBLAS/issues/4212
-        # Following https://github.com/OpenMathLib/OpenBLAS/pull/4214
-        if self.spec.satisfies("platform=darwin target=aarch64: %gcc"):
-            make_defs.append("NO_SVE=1")
+            max_num_threads = self.spec.variants["max_num_threads"].value
+            make_defs.append("NUM_THREADS={0}".format(max_num_threads))
 
         return make_defs
 
     def build(self, pkg: MakefilePackage, spec: Spec, prefix: Prefix) -> None:
         """Override 'make all' with sequential builds due to race conditions."""
-        # Due to the verbosity of the command line and number of object files
-        # created, we suppress makefile command echoing via `-s`.
-        args = ["-s"] + self.make_defs
-
-        # Make each target sequentially
         with working_dir(self.build_directory):
-            for target in ["libs", "netlib", "shared"]:
-                tty.info("Building target", target)
-                make(*(args + [target]))
+            # Due to the verbosity of the command line and number of object
+            # files created, we suppress makefile command echoing via `-s`.
+            make("-s", *self.make_defs)
+
+    def edit(self, pkg, spec, prefix):
+        # https://github.com/spack/spack-packages/pull/5883#issuecomment-5189054355
+        filter_file("OBJS += test_fork.o", "", "utest/Makefile", string=True)
 
     @run_after("build")
     @on_package_attributes(run_tests=True)
@@ -672,6 +702,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # ensure MACOSX_RPATH is set
             self.define("CMAKE_POLICY_DEFAULT_CMP0042", "NEW"),
         ]
+
+        # On macOS the cmake build sets the dylib install name to the build-stage
+        # path instead of the install prefix, causing downstream packages (e.g.
+        # py-numpy) to embed a broken rpath.  Setting CMAKE_INSTALL_NAME_DIR fixes
+        # the install name to the real installed lib directory.
+        if self.spec.satisfies("platform=darwin"):
+            cmake_defs += [self.define("CMAKE_INSTALL_NAME_DIR", self.spec.prefix.lib)]
 
         if self.spec.satisfies("+dynamic_dispatch"):
             cmake_defs += [self.define("DYNAMIC_ARCH", "ON")]

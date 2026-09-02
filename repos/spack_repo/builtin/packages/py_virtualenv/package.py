@@ -16,6 +16,7 @@ class PyVirtualenv(PythonPackage):
 
     license("MIT")
 
+    version("21.4.1", sha256="2ca543c713b72840ceffd94e9bdedfbd09a661defa1f7f69e5429ad4059442e2")
     version("21.2.0", sha256="1720dc3a62ef5b443092e3f499228599045d7fea4c79199770499df8becf9098")
     version("20.35.3", sha256="4f1a845d131133bdff10590489610c98c168ff99dc75d6c96853801f7f67af44")
     version("20.26.6", sha256="280aede09a2a5c317e409a00102e7077c6432c5a38f0ef938e643805a7ad2c48")
@@ -82,6 +83,7 @@ class PyVirtualenv(PythonPackage):
         depends_on("py-platformdirs@2.4:2", when="@20.16.3:20.21")
         depends_on("py-platformdirs@2:2", when="@20.5:20.16.2")
 
+        depends_on("py-python-discovery@1.4:", when="@21.4:")
         depends_on("py-python-discovery@1:", when="@21:")
 
         depends_on("py-typing-extensions@4.13.2:", when="@20.34: ^python@:3.10")

@@ -45,7 +45,7 @@ class Pajeng(CMakePackage):
     variant("gui", default=False, description="The PajeNG visualization tool")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("boost+exception+regex")
     depends_on("flex")

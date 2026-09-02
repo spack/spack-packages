@@ -94,6 +94,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("papi@7.1.0: +sde", when="+sde")
 
     depends_on("googletest", type="test")
+    depends_on("nlohmann-json@3.9:3", type="test")
+    depends_on("yaml-cpp@0.8:0", type="test")
     depends_on("numactl", type="test", when="+hwloc")
 
     depends_on("intel-oneapi-mkl", when="+sycl")
@@ -126,6 +128,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/ginkgo-project/ginkgo/pull/1926
     conflicts("^cuda@13:", when="@:1.10.0 +cuda")
+
+    # https://github.com/ginkgo-project/ginkgo/pull/2002
+    conflicts("^cuda@13.2:", when="@1.11.0 +cuda")
 
     # error due to change in warpSize constant definition in ROCm 7.0 prior to v.1.11.0
     # https://github.com/ginkgo-project/ginkgo/pull/1954

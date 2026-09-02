@@ -76,7 +76,7 @@ class PyPyyaml(PythonPackage):
 
         return modules
 
-    @when("^py-pip@23.1:")
+    @when("^py-pip@23.1: ^py-setuptools@64:")
     def config_settings(self, spec, prefix):
         if "+libyaml" in self.spec:
             return {"--global-option": "--with-libyaml"}
