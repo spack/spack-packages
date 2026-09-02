@@ -31,6 +31,27 @@ class Gmgpolar(CMakePackage):
     depends_on("googletest@1.17:", type="test")
     depends_on("googletest@:1", type="test")
 
+    requires(
+        "^kokkos +cuda_constexpr",
+        when="^kokkos +cuda",
+        msg="GMGPolar relies on the constexpr support of nvcc",
+    )
+    requires(
+        "^kokkos +cuda_relocatable_device_code",
+        when="^kokkos +cuda",
+        msg="GMGPolar relies on relocatable device code",
+    )
+    requires(
+        "^kokkos +hip_relocatable_device_code",
+        when="^kokkos +rocm",
+        msg="GMGPolar relies on relocatable device code",
+    )
+    requires(
+        "^kokkos +sycl_relocatable_device_code",
+        when="^kokkos +sycl",
+        msg="GMGPolar relies on relocatable device code",
+    )
+
     # Fixes missing headers in 2.3.1
     patch(
         "https://github.com/SciCompMod/GMGPolar/commit/9356b29a80848c9c88eaa748eb6ce4d8dc67028f.patch?full_index=1",

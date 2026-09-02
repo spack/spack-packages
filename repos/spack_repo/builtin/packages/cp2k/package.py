@@ -375,7 +375,6 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         # CP2K <= 2026.1 requires the legacy libxsmmext interface,
         # which was removed in libxsmm 2.0.
         depends_on("libxsmm@:1", when="@:2026.1")
-        # use pkg-config (support added in libxsmm-1.10) to link to libxsmm
 
     # Several packages provide "opencl" (incl. ICD/loader), e.g., "cuda"
     with when("+opencl"):
@@ -410,6 +409,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("libxc@6.2:", when="@2023.2:")
         depends_on("libxc@:6", when="@:2024.3")
         depends_on("libxc@7 build_system=cmake", when="@2025.2:")
+        depends_on("libxc+kxc", when="@8.2:")
 
     with when("+spla"):
         depends_on("spla+cuda+fortran", when="+cuda")
@@ -490,6 +490,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
         depends_on("sirius@7.4:", when="@2023.2")
         depends_on("sirius@7.5:", when="@2024.1:")
         depends_on("sirius@7.6:+pugixml", when="@2024.2:")
+        depends_on("sirius@:7.6", when="@:2025.1")
         depends_on("sirius@7.7:+pugixml", when="@2025.2:")
         depends_on("sirius+vdwxc", when="+vdwxc")
         depends_on("sirius+nlcglib", when="@2025.2:+nlcg")
@@ -652,6 +653,15 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     )
 
     def patch(self):
+        # Patch to disable -march=native and -mtune=native to avoid
+        # illegal instructions when cross compiling with spack
+        if self.spec.satisfies("@2026.1:2026.2"):
+            filter_file(
+                r"-march=native;-mtune=native",
+                "",
+                "cmake/CompilerConfiguration.cmake",
+            )
+
         # Patch for an undefined constant due to incompatible changes in ELPA
         if self.spec.satisfies("@9.1:2022.2 +elpa"):
             if self.spec["elpa"].satisfies("@2022.05.001:"):
@@ -1376,6 +1386,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     self.define("CP2K_LAPACK_FOUND", True),
                     self.define("CP2K_LAPACK_LINK_LIBRARIES", lapack.libs.joined(";")),
                     self.define("CP2K_BLAS_FOUND", True),
+                    self.define("CP2K_BLAS_INCLUDE_DIRS", blas.prefix.include),
                     self.define("CP2K_BLAS_LINK_LIBRARIES", blas.libs.joined(";")),
                     self.define("CP2K_SCALAPACK_FOUND", True),
                     self.define("CP2K_SCALAPACK_INCLUDE_DIRS", spec["scalapack"].prefix.include),

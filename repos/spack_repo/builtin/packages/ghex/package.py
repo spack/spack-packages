@@ -23,6 +23,7 @@ class Ghex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="msimberg")
 
     version("master", branch="master")
+    version("0.9.0", sha256="d15da18fd9b0780b9184838a893eb21f954f401aa9b6d30fa30d15dd108262b5")
     version("0.8.0", sha256="9785c440b01bc2cfa28f3da384afc274e2fad2b03648b4fc386649f22ad008e1")
     version("0.7.0", sha256="12619c69aeba80a9e75a0a9af67561bde8c0928c7fb01abc15e52d44ee84f372")
     version("0.6.0", sha256="7a9ebeef0f7dcbb2fa44c529f52d2be6cc2bf8a1720d232343b3f5fd071a1e92")

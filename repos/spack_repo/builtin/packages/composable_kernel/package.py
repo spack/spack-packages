@@ -32,6 +32,7 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
@@ -82,6 +83,7 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
     generator("ninja")
 
     for ver in [
+        "7.14.0",
         "7.13.0",
         "7.2.3",
         "7.2.1",
@@ -117,6 +119,15 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
     # https://github.com/ROCm/composable_kernel/commit/959073842c0db839d45d565eb260fd018c996ce4
     patch("0001-mark-kernels-maybe-unused.patch", when="@6.2")
 
+    # Fix CMake error with set_source_files_properties COMPILE_FLAGS
+    # The offload_targets variable contains spaces and needs to be quoted
+    # PR: https://github.com/ROCm/rocm-libraries/pull/11440
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/17f401ff6fdb33828c505a70c7dad126ad437150.patch?full_index=1",
+        when="@7.14.0",
+        sha256="bd5b65d48b23a8fa489a302c32d6d2029a4ea76ece4b48ee9cb6b7b7840efa5c",
+    )
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
@@ -151,4 +162,6 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("BUILD_DEV", "OFF"))
+        if self.spec.satisfies("@7.14:"):
+            args.append(self.define("BUILD_CK_EXAMPLES", "OFF"))
         return args

@@ -16,13 +16,17 @@ class PyLmdb(PythonPackage):
 
     license("OLDAP-2.8")
 
+    version("2.3.0", sha256="260f443640ee2da3cfd059a84258659319ff39ca912c16bf9748c324076b9d09")
     version("1.3.0", sha256="60a11efc21aaf009d06518996360eed346f6000bfc9de05114374230879f992e")
     version("1.1.1", sha256="165cd1669b29b16c2d5cc8902b90fede15a7ee475c54d466f1444877a3f511ac")
 
     depends_on("c", type="build")  # generated
 
     depends_on("python@2.7:2,3.4:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"), when="@2.3:")
     depends_on("py-setuptools", type="build")
+    depends_on("py-cffi@0.8:", type="build", when="@2.3:")
+    depends_on("py-patch-ng", type="build", when="@2.3:")
     depends_on("lmdb")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

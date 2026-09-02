@@ -51,6 +51,11 @@ class Ectrans(CMakePackage):
 
     variant("mkl", default=False, description="Use MKL")
     variant("fftw", default=True, description="Use FFTW")
+    variant(
+        "trust_ecbuild_flags",
+        default=False,
+        description="Skip ecbuild compiler-flag probes",
+    )
 
     variant(
         "etrans",
@@ -70,6 +75,7 @@ class Ectrans(CMakePackage):
     depends_on("cmake@3.25:", when="@1.5:", type="build")
 
     depends_on("ecbuild", type="build")
+    depends_on("ecbuild@3.6:", when="+trust_ecbuild_flags", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
@@ -108,4 +114,6 @@ class Ectrans(CMakePackage):
             # https://github.com/JCSDA/spack-stack/issues/1522
             "-DECTRANS_HAVE_CONTIGUOUS_ISSUE=ON",
         ]
+        if "+trust_ecbuild_flags" in self.spec:
+            args.append(self.define("ECBUILD_TRUST_FLAGS", True))
         return args
