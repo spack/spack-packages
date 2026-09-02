@@ -19,6 +19,7 @@ class PyIpyvue(PythonPackage):
 
     maintainers("jeremyfix")
 
+    version("3.0.0", sha256="aed73ac831b492725318954c1832649963a69402e8b73487e9bb2372b8394cae")
     version("1.10.1", sha256="20615ce86ba516cf0b7aad84cc607e4e2c9104232e954cd0eccbf33530a5e1d4")
 
     depends_on("py-setuptools", type="build")
