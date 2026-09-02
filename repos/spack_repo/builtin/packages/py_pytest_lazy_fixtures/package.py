@@ -16,7 +16,7 @@ class PyPytestLazyFixtures(PythonPackage):
     license("MIT")
 
     version("1.4.0", sha256="f544b60c96b909b307558a62cc1f28f026f11e9f03d7f583a1dc636de3dbcb10")
-    version("1.3.4", sha256="15e12ec3ca7e2e50efb0e352ef2e3d54ec2f38a1ef084c8a2b5e28a5e1144410")
+    version("1.3.4", sha256="7dd2c110830897b83f041d3a503cbdda10c98ced6dca7602fc43e2f6017c27ed")
 
     # Python version compatibility requirement
     depends_on("python@3.8:", type=("build", "run"))
