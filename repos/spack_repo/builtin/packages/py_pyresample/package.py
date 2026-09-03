@@ -23,7 +23,7 @@ class PyPyresample(PythonPackage):
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-scm +toml", type="build")
 
-    depends_on("python@3.11:", when="@1.34.0:", type=("build", "run"))
+    depends_on("python@3.11:", type=("build", "run"))
 
     depends_on("py-configobj", type=("build", "run"))
     depends_on("py-cython", type=("build", "run"))
