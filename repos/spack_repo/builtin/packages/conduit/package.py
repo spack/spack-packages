@@ -146,6 +146,8 @@ class Conduit(CachedCMakePackage):
     depends_on("cmake@3.14.1:", type="build")
     # cmake 3.21.0 or newer for conduit 0.9.0
     depends_on("cmake@3.21.0:", type="build", when="@0.9.0:")
+    # cmake 3.26.0 or newer for conduit 0.9.8
+    depends_on("cmake@3.26.0:", type="build", when="@0.9.8:")
 
     #######################
     # Python
