@@ -28,9 +28,7 @@ class PyHeat(PythonPackage):
     variant(
         "netcdf", default=False, description="Use the py-netcdf4 package needed for NetCDF support"
     )
-    variant(
-        "zarr", default=False, description="Use the py-zarr package for Zarr support"
-    )
+    variant("zarr", default=False, description="Use the py-zarr package for Zarr support")
     variant("dev", default=False, description="Use the py-pre-commit package")
     variant(
         "examples",

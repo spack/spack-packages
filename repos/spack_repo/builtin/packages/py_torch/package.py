@@ -23,7 +23,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # core libraries to ensure that the package was successfully installed.
     import_modules = ["torch", "torch.autograd", "torch.nn", "torch.utils"]
 
-    license("Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT")
+    license(
+        "Apache-2.0 AND Apache-2.0 WITH LLVM-exception AND "
+        "BSD-2-Clause AND BSD-3-Clause AND BSL-1.0 AND MIT"
+    )
     maintainers("adamjstewart")
 
     tags = ["e4s"]
