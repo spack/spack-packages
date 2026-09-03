@@ -26,6 +26,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
 
     license("MIT")
 
+    version("1.27.1", tag="v1.27.1", commit="df2ba1cf8108aa63627cf4cdf8f807880b938616")
     version("1.22.2", tag="v1.22.2", commit="5630b081cd25e4eccc7516a652ff956e51676794")
     version("1.21.1", tag="v1.21.1", commit="8f7cce3a49fdbdac96e0868b75b7d0159db7ac7f")
     version("1.21.0", tag="v1.21.0", commit="e0b66cad282043d4377cea5269083f17771b6dfc")
@@ -43,7 +44,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("binutils@2.36:", type="build")
+    depends_on("binutils+ld+gas@2.36:", type="build")
 
     # cmake/CMakeLists.txt
     depends_on("cmake@3.28:", when="@1.21:", type="build")
@@ -56,8 +57,14 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
         depends_on("abseil-cpp@20240116.0: cxxstd=17")
         depends_on("abseil-cpp@20240722.0:", when="@1.20:")
 
-        # abseil 20250814+ lacks absl::low_level_hash: https://github.com/microsoft/onnxruntime/issues/25815
-        depends_on("abseil-cpp@:20250512")
+        # abseil 20250814+ lacks absl::low_level_hash
+        # https://github.com/microsoft/onnxruntime/issues/25815
+        depends_on("abseil-cpp@:20250512", when="@:1.26")
+
+        # v1.27+ regenerated ABSEIL_LIBS without low_level_hash and requires abseil 20250814.
+        # Abseil uses COMPATIBILITY ExactVersion in CMake, so only an exact major version match
+        # will satisfy find_package(absl 20250814).
+        depends_on("abseil-cpp@20250814", when="@1.27:")
 
     extends("python")
     depends_on("python", type=("build", "run"))
@@ -67,7 +74,6 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("py-pybind11", type="build")
 
     # requirements.txt
-    depends_on("py-coloredlogs", when="@1.17:", type=("build", "run"))
     depends_on("py-flatbuffers", type=("build", "run"))
     depends_on("py-numpy@1.21.6:", when="@1.19:", type=("build", "run"))
     depends_on("py-numpy@1.21.6:1", when="@1.18.1:1.18.2", type=("build", "run"))
@@ -76,11 +82,8 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("py-numpy@:1", when="@:1.18", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))
     depends_on("py-protobuf", type=("build", "run"))
-    depends_on("py-sympy@1.1:", type=("build", "run"))
-
-    depends_on("protobuf")
-    # https://github.com/microsoft/onnxruntime/pull/11639
     depends_on("protobuf@:3.19", when="@:1.11")
+
     depends_on("py-cerberus", type=("build", "run"))
     depends_on("py-onnx", type=("build", "run"))
     depends_on("py-onnx@:1.16", type=("build", "run"), when="@:1.18")
@@ -92,6 +95,21 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     depends_on("cudnn", when="+cuda")
     depends_on("iconv", type=("build", "link", "run"))
     depends_on("re2+shared")
+
+    # C++ libraries consumed via FetchContent FIND_PACKAGE_ARGS.
+    # onnxruntime's cmake tries find_package() first; these must be present
+    # so the bundled-source fallback (which requires network) is never hit.
+    with when("@1.17:"):
+        # onnxruntime links flatbuffers::flatbuffers (the static target);
+        # the +shared build only exports flatbuffers::flatbuffers_shared.
+        # v1.17 FIND_PACKAGE_ARGS is 1.12.0...<2.0.0 (deps.txt v1.12.0);
+        # v1.18+ FIND_PACKAGE_ARGS is 23.5.9 (deps.txt v23.5.26).
+        depends_on("flatbuffers@1.12 ~shared", when="@1.17")
+        depends_on("flatbuffers@23.5.26 ~shared", when="@1.18:")
+        depends_on("nlohmann-json@3.10:")
+        depends_on("date@3")
+        depends_on("cpuinfo")
+        depends_on("cppgsl@4:")
 
     rocm_dependencies = [
         "hsa-rocr-dev",
@@ -121,6 +139,10 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             depends_on(f"{pkg_dep}@5.7:6.1", when="@1.17")
             depends_on(f"{pkg_dep}@6.1:", when="@1.18:")
             depends_on(pkg_dep)
+
+    # Historical dependencies
+    depends_on("py-coloredlogs", when="@1.17:1.23.2", type=("build", "run"))
+    depends_on("py-sympy@1.1:1.24.4", type=("build", "run"))
 
     # Adopted from CMS experiment's fork of onnxruntime
     # https://github.com/cms-externals/onnxruntime/compare/5bc92df...d594f80
