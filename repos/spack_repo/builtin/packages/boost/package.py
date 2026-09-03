@@ -691,7 +691,7 @@ class Boost(Package):
             # Any lib that is in self.all_libs AND in the variants dictionary
             # AND is set to False should be added to options in a --without flag
             for lib in self.all_libs:
-                if lib not in self.spec.variants.dict or self.spec.satisfies(f"+{lib}"):
+                if lib not in self.spec.variants or self.spec.satisfies(f"+{lib}"):
                     continue
                 options.append(f"--without-{lib}")
 

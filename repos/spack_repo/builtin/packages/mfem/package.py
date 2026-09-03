@@ -743,7 +743,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
 
-        cxxflags = spec.compiler_flags["cxxflags"].copy()
+        cxxflags = list(spec.compiler_flags["cxxflags"])
 
         if cxxflags:
             # Add opt/debug flags if they are not present in global cxx flags

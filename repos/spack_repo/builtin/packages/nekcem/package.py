@@ -52,14 +52,16 @@ class Nekcem(Package):
         configurenek = "configurenek"
         makenek = "makenek"
 
-        fc = self.compiler.f77
-        cc = self.compiler.cc
+        # The installed 'makenek' runs outside a Spack build environment, where wrappers fail.
+        fc = spec["fortran"].package.fortran
+        cc = spec["c"].package.cc
 
-        fflags = spec.compiler_flags["fflags"]
-        cflags = spec.compiler_flags["cflags"]
-        ldflags = spec.compiler_flags["ldflags"]
+        # the flag lists stored on the spec must not be modified in place
+        fflags = list(spec.compiler_flags["fflags"])
+        cflags = list(spec.compiler_flags["cflags"])
+        ldflags = list(spec.compiler_flags["ldflags"])
 
-        if "+mpi" in spec:
+        if spec.satisfies("+mpi"):
             fc = spec["mpi"].mpif77
             cc = spec["mpi"].mpicc
 
@@ -69,25 +71,26 @@ class Nekcem(Package):
             fflags += ["-I."]
             cflags += ["-I.", "-DGLOBAL_LONG_LONG"]
 
-            if self.compiler.name == "gcc" or self.compiler.name == "clang":
-                # assuming 'clang' uses 'gfortran'
+            # The C sources rely on tentative definitions.
+            if spec.satisfies("%c=gcc@10:") or spec.satisfies("%c=llvm@11:"):
+                cflags += ["-fcommon"]
+
+            if spec.satisfies("%fortran=gcc") or spec.satisfies("%fortran=llvm"):
+                # 'flang' accepts the same flags as 'gfortran'
                 fflags += ["-fdefault-real-8", "-fdefault-double-8"]
                 cflags += ["-DUNDERSCORE"]
-            elif self.compiler.name == "intel":
+            elif spec.satisfies("%fortran=intel"):
                 fflags += ["-r8"]
                 cflags += ["-DUNDERSCORE"]
-            elif self.compiler.name == "xl" or self.compiler.name == "xl_r":
+            elif spec.satisfies("%fortran=xl"):
                 fflags += ["-qrealsize=8"]
                 cflags += ["-DPREFIX=jl_", "-DIBM"]
 
-            error = Executable(fc)("empty.f", output=str, error=str, fail_on_error=False)
-
-            if "gfortran" in error or "GNU" in error or "gfortran" in fc:
-                # Use '-std=legacy' to suppress an error that used to be a
-                # warning in previous versions of gfortran.
+            if spec.satisfies("%fortran=gcc"):
+                # Use '-std=legacy' to suppress an error that was a warning in older gfortran.
                 fflags += ["-std=legacy"]
 
-            if "+mpi" in spec:
+            if spec.satisfies("+mpi"):
                 fflags += ["-DMPI", "-DMPIIO"]
                 cflags += ["-DMPI", "-DMPIIO"]
             blas_lapack = spec["lapack"].libs + spec["blas"].libs
