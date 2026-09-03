@@ -33,7 +33,9 @@ class Multicharge(CMakePackage, MesonPackage):
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
+    depends_on("blas")
     depends_on("lapack")
+    depends_on("libfabric", when="^cray-libsci")
     depends_on("mctc-lib build_system=cmake", when="build_system=cmake")
     depends_on("mctc-lib build_system=meson", when="build_system=meson")
     depends_on("mctc-lib@0.4:", when="@0.4:")
@@ -51,6 +53,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             self.define_from_variant("WITH_OpenMP", "openmp"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            "-DBLAS_LIBRARIES=%s" % self.spec["blas"].libs.joined(";"),
+            "-DLAPACK_LIBRARIES=%s" % self.spec["lapack"].libs.joined(";"),
         ]
         return args
 
