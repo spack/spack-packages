@@ -42,6 +42,20 @@ class Spades(CMakePackage):
 
     root_cmakelists_dir = "src"
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # id_map.hpp (binspreader project) uses uint64_t without including
+        # <cstdint> -- older GCC pulled it in transitively, GCC 14's
+        # libstdc++ does not. A static scan of the whole source tree found
+        # 111 files with the same pattern (relying on transitive includes
+        # for fixed-width int types), way too many to patch file by file
+        # and too easy for the build to hit a new one further along.
+        # Force the header into every translation unit at the compiler
+        # level instead.
+        # <cstdint> is the C++ wrapper header, not visible to the plain C
+        # compiler -- the equivalent for .c files is <stdint.h>.
+        env.append_flags("CFLAGS", "-include stdint.h")
+        env.append_flags("CXXFLAGS", "-include cstdint")
+
     def cmake_args(self):
         args = [self.define_from_variant("SPADES_USE_NCBISDK", "sra")]
         if self.spec.satisfies("+tools"):
