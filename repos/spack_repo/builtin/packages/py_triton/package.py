@@ -2,28 +2,35 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.python import PythonPackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class PyTriton(PythonPackage):
+class PyTriton(PythonPackage, CudaPackage, ROCmPackage):
     """A language and compiler for custom Deep Learning operations."""
 
     homepage = "https://github.com/triton-lang/triton"
     url = "https://github.com/triton-lang/triton/archive/refs/tags/v2.1.0.tar.gz"
     git = "https://github.com/triton-lang/triton.git"
 
+    maintainers("thomas-bouvier")
+
     license("MIT")
 
-    version("main", branch="main")
+    #version("main", branch="main")
+    version("3.5.1", sha256="03d7c41f6f2dc1dfa3445776c4a893dc34b1e0ece42b953f036c071ff6409b80")
     version("3.4.0", sha256="a96e87a911794c907fab30e0c7a3f96ef4e9e8fdc8812cd8bbc6f0457619072f")
     version("3.3.1", sha256="9dc77d9205933bf2fc05eb054f4f1d92acd79a963826174d57fe9cfd58ba367b")
     version("3.2.0", sha256="04eb07e2ff1b87bf4b26e132d696177248bfb9c71cecd4864e561a9c103de9b3")
     version("2.1.0", sha256="4338ca0e80a059aec2671f02bfc9320119b051f378449cf5f56a1273597a3d99")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     with default_args(type="build"):
         # https://github.com/triton-lang/triton/blob/v3.3.1/python/requirements.txt
@@ -33,15 +40,210 @@ class PyTriton(PythonPackage):
         depends_on("py-pybind11@2.13.1:")
         depends_on("py-lit")
 
+        # By default, the following dependencies are downloaded in the setup.py.
+        # We want to manage such dependencies from within Spack.
+        # The mapping between the LLVM and Triton is documented in file cmake/llvm-hash.txt.
+        # This file pins commit ids, we are using plain LLVM versions instead (the one
+        # closest to the commit id).
+        depends_on("llvm@22.1.0-rc-triton-v3.5.1 +mlir +utils", when="@3.5.1")
+        depends_on("llvm@21.1.0-rc-triton-v3.4.0 +mlir +utils", when="@3.4.0")
+        depends_on("llvm@21.1.0-rc-triton-v3.3.1 +mlir +utils", when="@3.3.1")
+        depends_on("llvm@20.1.0-rc-triton-v3.2.0 +mlir +utils", when="@3.2.0")
+        depends_on("llvm@13 +mlir +utils", when="@2.1.0")
+        depends_on("nlohmann-json@3.11.3", when="@3:")
+        depends_on("py-pybind11")
+        #depends_on("roctracer-dev")
+        depends_on("cuda@10:")
+
     depends_on("py-setuptools@40.8.0:", type="run", when="@3.2.0")
     depends_on("py-filelock", type=("build", "run"))
     depends_on("zlib-api", type="link")
     conflicts("^openssl@3.3.0")
 
+    depends_on("googletest@1.17.0", type="test", when="@3.5.1")
+
+    patch(
+        "triton-v3.5.1-proton-gate-tests.patch",
+        sha256="792a954ad48c4d70ab983f5aa8611a93cabfd139f1d7d00c4eb5c2801f815a2d",
+        when="@3.5.1",
+    )
+
+    # Triton JIT-compiles its CUDA driver (driver.c / cuda_utils.c) at runtime
+    # via subprocess.check_call([cc, ...]). The gcc command only includes
+    # triton's own backend dirs and python's include dir, not CUDA's, so
+    # `#include "cuda.h"` fails when the JIT runs in a subprocess that
+    # doesn't inherit CPATH (e.g. vLLM's EngineCore worker). Inject
+    # $CUDA_HOME/include into the include_dirs list in _build() so the
+    # flag is passed explicitly on the cc command line.
+    patch(
+        "triton-v3.5.1-cuda-home-include.patch",
+        sha256="de9918feb9b431ac9633d45b86febd22a027b1c0122381c91e260799ab013a1b",
+        when="@3.5.1",
+    )
+
+    # Triton's knobs.nvidia.{ptxas,cuobjdump,nvdisasm} read TRITON_*_PATH env
+    # vars to locate the CUDA binaries. When vLLM spawns the EngineCore worker
+    # via multiprocessing.spawn, those env vars may not propagate, and the
+    # knobs raise "Cannot find ptxas". Add a shutil.which(self.binary) PATH
+    # fallback in env_nvidia_tool.transform so the tools are still found via
+    # PATH (which `spack load` populates).
+    patch(
+        "triton-v3.5.1-nvidia-tool-path-fallback.patch",
+        sha256="0076f183de9f8955ebf01fef78443cec18f00b46a8c088e858612df34433ed40",
+        when="@3.5.1",
+    )
+
+    @run_before("install")
+    def patch_llvm_target_libraries(self):
+        """Ensure libtriton.so links all LLVM target libraries.
+
+        Triton's llvm.cc calls llvm::InitializeAllTargetInfos(),
+        InitializeAllTargets(), InitializeAllTargetMCs(), etc. These
+        header-only macros expand at compile time to direct calls for every
+        LLVM target that was built. Triton's CMakeLists.txt only links
+        AMDGPU, NVPTX, and host-arch libs, leaving symbols like
+        LLVMInitializeAArch64TargetMC unresolved at runtime.
+
+        We patch CMakeLists.txt to add all per-target component libraries.
+        """
+        llvm_prefix = self.spec["llvm"].prefix
+        llvm_config = Executable(os.path.join(str(llvm_prefix), "bin", "llvm-config"))
+        targets_built = llvm_config("--targets-built", output=str).strip().split()
+        llvm_libdir = llvm_config("--libdir", output=str).strip()
+
+        # Build list of all target libs that exist
+        extra_libs = []
+        for t in targets_built:
+            for component in ("CodeGen", "AsmParser", "Desc", "Info", "Disassembler"):
+                libname = f"LLVM{t}{component}"
+                if os.path.exists(os.path.join(llvm_libdir, f"lib{libname}.a")):
+                    extra_libs.append(libname)
+
+        # Read the CMakeLists.txt and insert the extra libraries
+        cmake_file = join_path(self.stage.source_path, "CMakeLists.txt")
+        with open(cmake_file, "r") as f:
+            content = f.read()
+
+        # Find "LLVMAMDGPUAsmParser" and append extra libs after it
+        anchor = "LLVMAMDGPUAsmParser"
+        if anchor not in content:
+            tty.warn(f"Anchor '{anchor}' not found in CMakeLists.txt, skipping LLVM target patch")
+            return
+
+        # Build the replacement: original anchor + all extra libs on new lines
+        extra_lines = "\n".join(f"    {lib}" for lib in extra_libs)
+        replacement = f"{anchor}\n{extra_lines}"
+
+        new_content = content.replace(anchor, replacement, 1)
+
+        with open(cmake_file, "w") as f:
+            f.write(new_content)
+
+        tty.msg(f"Patched CMakeLists.txt with {len(extra_libs)} extra LLVM target libraries")
+
+    @run_before("install")
+    def create_cuda_include_dir(self):
+        """Create a merged include directory with both CUDA and CUPTI headers.
+
+        Triton's Proton component uses CUPTI_INCLUDE_DIR as its only include
+        search path, but expects both cupti.h (from extras/CUPTI/include) and
+        cuda.h (from include) to be found there. In a standard CUDA toolkit
+        these headers live in separate directories, so we create a staging
+        directory with symlinks to both.
+
+        This must run as a build phase (not in setup_build_environment) because
+        setup_build_environment executes before the stage is finalized, and
+        any files created there may be destroyed during restaging.
+        """
+        cuda = self.spec["cuda"].prefix
+        merged_dir = os.path.join(self.stage.path, "cuda-include")
+        mkdirp(merged_dir)
+
+        # Collect all include directories to merge.
+        # The main CUDA include dir contains cuda.h, cuda_runtime.h, etc.
+        # The CUPTI include dir contains cupti.h, cupti_activity.h, etc.
+        # CUPTI headers take priority if there are overlaps.
+        include_dirs = [
+            os.path.join(str(cuda), "include"),
+            os.path.join(str(cuda), "extras", "CUPTI", "include"),
+        ]
+
+        for include_dir in include_dirs:
+            if not os.path.isdir(include_dir):
+                tty.warn(f"CUDA include directory not found: {include_dir}")
+                continue
+            for entry in os.listdir(include_dir):
+                src = os.path.join(include_dir, entry)
+                dst = os.path.join(merged_dir, entry)
+                if os.path.lexists(dst):
+                    os.remove(dst)
+                symlink(src, dst)
+
+        # Verify that the critical headers are present
+        for header in ("cuda.h", "cupti.h"):
+            if not os.path.exists(os.path.join(merged_dir, header)):
+                raise RuntimeError(
+                    f"{header} not found in merged include directory {merged_dir}. "
+                    f"Searched: {include_dirs}"
+                )
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Set environment variables used to control the build"""
         if self.spec.satisfies("%clang"):
             env.set("TRITON_BUILD_WITH_CLANG_LLD", "True")
+        env.set("TRITON_OFFLINE_BUILD", "True")
+        env.set("LLVM_SYSPATH", self.spec["llvm"].prefix)
+        env.set("JSON_SYSPATH", self.spec["nlohmann-json"].prefix)
+        env.set("PYBIND11_SYSPATH", self.spec["py-pybind11"].prefix)
+        #env.set("TRITON_ROCTRACER_INCLUDE_PATH", self.spec["roctracer-dev"].prefix.include)
+
+        cuda = self.spec["cuda"].prefix
+        env.set("TRITON_PTXAS_PATH", cuda.bin.ptxas)
+        env.set("TRITON_CUOBJDUMP_PATH", cuda.bin.cuobjdump)
+        env.set("TRITON_NVDISASM_PATH", cuda.bin.nvdisasm)
+        env.set("TRITON_CUDACRT_PATH", cuda.join("include"))
+        env.set("TRITON_CUDART_PATH", cuda.join("include"))
+
+        # Point to the merged include directory that will be created by
+        # create_cuda_include_dir (a @run_before("install") phase).
+        # The env var is set here so it's available to the build subprocess;
+        # the directory itself is created later, after staging is complete.
+        env.set("TRITON_CUPTI_INCLUDE_PATH", os.path.join(self.stage.path, "cuda-include"))
+        env.set("TRITON_CUPTI_LIB_PATH", os.path.join(str(cuda), "extras", "CUPTI", "lib64"))
+
+        # Force Spack's compilers.  Triton's setup.py runs CMake under the
+        # hood and LLVM's exported CMake config can override the compiler to
+        # the clang that LLVM was built with.  TRITON_APPEND_CMAKE_ARGS is
+        # appended last to the cmake invocation (see setup.py) and therefore
+        # takes precedence.
+        extra_cmake_args = [
+            f"-DCMAKE_C_COMPILER={self.compiler.cc}",
+            f"-DCMAKE_CXX_COMPILER={self.compiler.cxx}",
+            "-DCMAKE_LINKER_TYPE=DEFAULT",
+            f"-DZLIB_ROOT={self.spec['zlib-api'].prefix}",
+        ]
+        if self.run_tests and "googletest" in self.spec:
+            extra_cmake_args += [
+                "-DTRITON_BUILD_UT=ON",
+                f"-DGOOGLETEST_DIR={self.spec['googletest'].package.stage.source_path}",
+            ]
+        env.set("TRITON_APPEND_CMAKE_ARGS", " ".join(extra_cmake_args))
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Triton's runtime JIT and backend knobs read these env vars to locate
+        # CUDA tooling. They must be set at run time (not just build time),
+        # otherwise the JIT fails with "Cannot find ptxas" / cuda.h not found
+        # when invoked from a subprocess that doesn't inherit the build env
+        # (e.g. vLLM's EngineCore worker via multiprocessing.spawn).
+        if "cuda" in self.spec:
+            cuda = self.spec["cuda"].prefix
+            env.set("CUDA_HOME", cuda)
+            # The runtime JIT patch (triton-v3.5.1-cuda-home-include.patch)
+            # reads CUDA_HOME to add it to the gcc -I flags. Without it the
+            # JIT can't find cuda.h.
+            env.set("TRITON_PTXAS_PATH", cuda.bin.ptxas)
+            env.set("TRITON_CUOBJDUMP_PATH", cuda.bin.cuobjdump)
+            env.set("TRITON_NVDISASM_PATH", cuda.bin.nvdisasm)
 
     @property
     def build_directory(self):

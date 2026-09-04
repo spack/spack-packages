@@ -19,6 +19,7 @@ class PyTransformers(PythonPackage):
 
     license("Apache-2.0")
 
+    version("5.16.1", sha256="17b0eac726ddc55e84ac58946063e0c6d37fd000c456b581f050ea0f4e822869")
     version("4.57.0", sha256="d045753f3d93f9216e693cdb168698dfd2e9d3aad1bb72579a5d60ebf1545a8b")
     version("4.48.3", sha256="a5e8f1e9a6430aa78215836be70cecd3f872d99eeda300f41ad6cc841724afdb")
     version("4.46.3", sha256="8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc")
@@ -31,7 +32,7 @@ class PyTransformers(PythonPackage):
     version("4.24.0", sha256="486f353a8e594002e48be0e2aba723d96eda839e63bfe274702a4b5eda85559b")
     version("4.6.1", sha256="83dbff763b7e7dc57cbef1a6b849655d4fcab6bffdd955c5e8bea12a4f76dc10")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     with default_args(type="build"):
         depends_on("py-setuptools")
@@ -39,6 +40,7 @@ class PyTransformers(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("python@3.9:", when="@4.47:")
         depends_on("py-filelock")
+        depends_on("py-huggingface-hub@1.5:1", when="@5.4:")
         depends_on("py-huggingface-hub@0.34:0", when="@4.57:")
         depends_on("py-huggingface-hub@0.24:0", when="@4.47:")
         depends_on("py-huggingface-hub@0.23.2:", when="@4.42.3:")
@@ -52,11 +54,14 @@ class PyTransformers(PythonPackage):
         depends_on("py-packaging@20:", when="@4.24:")
         depends_on("py-packaging", when="@4.6.1")
         depends_on("py-pyyaml@5.1:", when="@4.24:")
-        depends_on("py-regex@:2019.12.16,2019.12.18:")
+        depends_on("py-regex@2025.10.22:", when="@5.4:")
+        conflicts("^py-regex@2019.12.17")
         depends_on("py-requests")
+        depends_on("py-safetensors@0.8", when="@5.13:")
         depends_on("py-safetensors@0.4.3:", when="@4.57:")
         depends_on("py-safetensors@0.4.1:", when="@4.38.1:")
         depends_on("py-safetensors@0.3.1:", when="@4.31:")
+        depends_on("py-safetensors@0.23.1:0.23", when="@5.16:")
         depends_on("py-tokenizers@0.22:0.23.0", when="@4.57:")
         depends_on("py-tokenizers@0.21", when="@4.47:4.48.3")
         depends_on("py-tokenizers@0.20", when="@4.45:4.46")
@@ -64,6 +69,7 @@ class PyTransformers(PythonPackage):
         depends_on("py-tokenizers@0.14:0.18", when="@4.35:4.39.3")
         depends_on("py-tokenizers@0.11.1:0.11.2,0.11.4:0.13", when="@4.24:4.33")
         depends_on("py-tokenizers@0.10.1:0.10", when="@4.6.1")
+        depends_on("py-typer")
         depends_on("py-tqdm@4.27:")
 
         # Historical requirements

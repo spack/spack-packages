@@ -16,17 +16,20 @@ class PyUvicorn(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.42.0", sha256="9b1f190ce15a2dd22e7758651d9b6d12df09a13d51ba5bf4fc33c383a48e1775")
     version("0.34.2", sha256="0e929828f6186353a80b58ea719861d2629d766293b6d19baf086ba31d4f3328")
     version("0.27.1", sha256="3d9a267296243532db80c83a959a3400502165ade2c1338dea4e67915fd4745a")
     version("0.20.0", sha256="a4e12017b940247f836bc90b72e725d7dfd0c8ed1c51eb365f5ba30d9f5127d8")
 
     variant("standard", default=False, description="Build standard dependencies")
 
+    depends_on("python@3.10:", when="@0.40:", type=("build", "run"))
+    depends_on("python", type=("build", "run"))
     depends_on("py-hatchling", type="build")
     depends_on("py-click@7.0:", type=("build", "run"))
     depends_on("py-h11@0.8:", type=("build", "run"))
-    depends_on("py-typing-extensions", when="^python@:3.7", type=("build", "run"))
     depends_on("py-typing-extensions@4:", when="^python@:3.10", type=("build", "run"))
+    depends_on("py-typing-extensions", when="^python@:3.7", type=("build", "run"))
 
     with when("+standard"):
         depends_on("py-colorama@0.4:", when="platform=windows", type=("build", "run"))
@@ -38,5 +41,6 @@ class PyUvicorn(PythonPackage):
         depends_on("py-uvloop@0.15.1:", when="@0.34.2: platform=darwin", type=("build", "run"))
         depends_on("py-uvloop@0.14,0.15.2:", when="platform=linux", type=("build", "run"))
         depends_on("py-uvloop@0.14,0.15.2:", when="platform=darwin", type=("build", "run"))
+        depends_on("py-watchfiles@0.20:", when="@0.41:", type=("build", "run"))
         depends_on("py-watchfiles@0.13:", type=("build", "run"))
         depends_on("py-websockets@10.4:", type=("build", "run"))

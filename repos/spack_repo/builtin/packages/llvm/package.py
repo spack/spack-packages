@@ -65,6 +65,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("22.1.1", sha256="c48878550911a8a8993a749e6118446082656768e62b26456ac7d39c4422b409")
     version("22.1.0", sha256="933765a1c2cd518d95a9033a92d88d7109a79aefa4609247c31f28b8bc8dd96e")
 
+    version("22.1.0-rc-triton-v3.5.1", commit="7d5de3033187c8a3bb4d2e322f5462cdaf49808f")
+
     # Previous stable series releases
     version("21.1.8", sha256="7ba3f2a8d8fda88be18a31d011e8195d3b7f87f9fa92b20c94cba2d7f65b0e3f")
     version("21.1.7", sha256="9ee167cdf8f6b5221d6b02dbe9a664cf8c6fee70fab071aaa4a3889c7c265258")
@@ -76,6 +78,10 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     version("21.1.1", sha256="5f048351ee63050d7fa45b6a1160768fb222a8d306a89e1344515ef7a4bcd278")
     version("21.1.0", sha256="fba0618cf8de48ec05880c446edd756a2669157eab9d29949e971c77da10275f")
 
+    version("21.1.0-rc-triton-v3.4.0", commit="8957e64a20fc7f4277565c6cfe3e555c119783ce")
+    version("21.1.0-rc-triton-v3.3.1", commit="a66376b0dc3b2ea8a84fda26faca287980986f78")
+    version("20.1.0-rc-triton-v3.2.0", commit="86b69c31642e98f8357df62c09d118ad1da4e16a")
+    
     version("20.1.8", sha256="a6cbad9b2243b17e87795817cfff2107d113543a12486586f8a055a2bb044963")
     version("20.1.7", sha256="91865189d0ca30ca81b7f7af637aca745b6eeeba97c5dfb0ab7d79a1d9659289")
     version("20.1.6", sha256="afa487c401613f5e4a35935b2abfb5d07e6ebfa20df32787e34a5c7e97c6ea4b")
@@ -678,6 +684,19 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         when="@22.1.0",
     )
 
+    # Fix "Cannot specify include directories for target obj.omp which is not
+    # built by this project" when building the triton-pinned LLVM commit
+    # (7d5de30, release/22.x) with openmp=runtime + LIBOMP_USE_HWLOC. The
+    # add_llvm_library path backs `omp` with an OBJECT library (obj.omp) that
+    # is not visible to target_include_directories in the runtimes sub-build.
+    # Use directory-scoped include_directories() instead, which works in both
+    # the plain add_library and add_llvm_library paths.
+    patch(
+        "llvm-22.1.0-rc-triton-openmp-hwloc.patch",
+        sha256="584cbfa0832d743d247a0fa9e33370bce4b6ab5e157863e1ee2fa75190ba5d88",
+        when="@22.1.0-rc-triton-v3.5.1",
+    )
+
     @when("@14:17")
     def patch(self):
         # https://github.com/llvm/llvm-project/pull/69458
@@ -978,6 +997,11 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             cmake_args.extend(
                 [
                     define("CUDA_TOOLKIT_ROOT_DIR", spec["cuda"].prefix),
+                    # LLVM 22's offload/openmp runtimes use find_package(CUDAToolkit)
+                    # (modern CMake), which looks for CUDAToolkit_ROOT, not the
+                    # legacy CUDA_TOOLKIT_ROOT_DIR. Without this, the runtimes
+                    # sub-build fails with CUDAToolkit_DIR=CUDAToolkit_DIR-NOTFOUND.
+                    define("CUDAToolkit_ROOT", spec["cuda"].prefix),
                     define(
                         "LIBOMPTARGET_NVPTX_COMPUTE_CAPABILITIES",
                         ",".join(spec.variants["cuda_arch"].value),
