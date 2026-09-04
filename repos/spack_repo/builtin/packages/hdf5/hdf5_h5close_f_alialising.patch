@@ -1,0 +1,44 @@
+--- a/fortran/src/H5_ff.F90
++++ b/fortran/src/H5_ff.F90
+@@ -830,7 +830,7 @@
+          integer_types, INTEGER_TYPES_LEN )
+ 
+     ! Reset the number of open objects from h5open_f to zero
+-    CALL h5fget_obj_count_f(INT(H5F_OBJ_ALL_F,HID_T), H5F_OBJ_ALL_F, H5OPEN_NUM_OBJ,  error)
++    H5OPEN_NUM_OBJ = 0
+ 
+   END SUBROUTINE h5close_f
+ 
+--- a/fortran/src/H5Fff.F90
++++ b/fortran/src/H5Fff.F90
+@@ -860,6 +860,8 @@
+     INTEGER(SIZE_T), INTENT(OUT) :: obj_count
+     INTEGER        , INTENT(OUT) :: hdferr
+ 
++    INTEGER(SIZE_T) :: count_loc
++
+     INTERFACE
+        INTEGER(SIZE_T) FUNCTION H5Fget_obj_count(file_id, obj_type) BIND(C,NAME='H5Fget_obj_count')
+          IMPORT :: C_INT
+@@ -870,16 +872,18 @@
+        END FUNCTION H5Fget_obj_count
+     END INTERFACE
+ 
+-    obj_count = H5Fget_obj_count(file_id, INT(obj_type, C_INT))
++    count_loc = H5Fget_obj_count(file_id, INT(obj_type, C_INT))
+ 
+     hdferr = 0
+-    IF(obj_count.LT.0) hdferr = -1
++    IF(count_loc.LT.0) hdferr = -1
+ 
+     ! Don't include objects created by H5open in the H5F_OBJ_ALL_F count
+     IF(file_id.EQ.INT(H5F_OBJ_ALL_F,HID_T))THEN
+-       obj_count = obj_count - H5OPEN_NUM_OBJ
++       count_loc = count_loc - H5OPEN_NUM_OBJ
+     ENDIF
+ 
++    obj_count = count_loc
++
+   END SUBROUTINE h5fget_obj_count_f
+ 
+ !>

@@ -222,6 +222,11 @@ class Hdf5(CMakePackage):
         "+fortran", when="@1.13.3:^cmake@:3.22", msg="cmake_minimum_required is not set correctly."
     )
 
+    # https://github.com/HDFGroup/hdf5/issues/6642
+    # Issue present also in earlier versions, starting from 1.13.2;
+    # patch only works for 1.14.5 and newer
+    patch("hdf5_h5close_f_alialising.patch", when="@1.14.5:")
+
     # https://github.com/HDFGroup/hdf5/pull/6267
     patch(
         "https://github.com/HDFGroup/hdf5/commit/84e5adf753cdd97a807df2da6338bb0e0cdf9862.patch?full_index=1",
