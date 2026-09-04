@@ -170,7 +170,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
     depends_on("nvtx@3.5.0", when="@2.14:")
-    depends_on("nvtx@3.3.0")
+    depends_on("nvtx@3.3.0", when="@:2.13")
     # https://github.com/pytorch/pytorch/issues/60332
     # depends_on("xnnpack@2024-12-03", when="+xnnpack")
     depends_on("benchmark", when="@1.6:+test")
