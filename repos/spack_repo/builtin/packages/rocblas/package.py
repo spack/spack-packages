@@ -74,6 +74,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("hip-lang", type="build")
 
     depends_on("cmake@3.16.8:", type="build")
 
@@ -256,6 +257,8 @@ class Rocblas(ROCmLibrary, CMakePackage):
             when=f"{t_version} +tensile",
         )
 
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     patch("0007-add-rocm-openmp-extras-include-dir.patch", when="@5.7")
     patch("0008-link-roctracer.patch", when="@6.4")
     patch("0009-use-rocm-smi-config.patch", when="@6.4:7.1")
@@ -275,11 +278,6 @@ class Rocblas(ROCmLibrary, CMakePackage):
             return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@:7.0"):
-            env.set("CXX", self.spec["hip"].hipcc)
-        else:
-            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
-            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")

@@ -448,6 +448,30 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # Assumes build-time globals have been set already
         return spack_cxx
 
+    def get_clang_rt_library(self):
+        """Find the clang runtime library for ROCm with relocatable device code.
+
+        Returns the path to libclang_rt.builtins-x86_64.a by running
+        amdclang++ --print-resource-dir and searching for the library.
+        """
+        amdclang = Executable(join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"))
+
+        try:
+            arch = amdclang("-dumpmachine", output=str, error=str).strip().split("-")[0]
+            resource_dir = amdclang("--print-resource-dir", output=str, error=str).strip()
+
+            clang_rt_libs = find(resource_dir, "libclang_rt.builtins*")
+
+            if clang_rt_libs:
+                arch_libs = [x for x in clang_rt_libs if arch in x]
+                if arch_libs:
+                    return sorted(arch_libs)[0]
+                return sorted(clang_rt_libs)[0]
+            else:
+                raise RuntimeError(f"Could not find libclang_rt.builtins* in {resource_dir}")
+        except Exception as e:
+            raise RuntimeError(f"Failed to determine clang runtime library path: {e}")
+
     def cmake_args(self):
         spec = self.spec
         from_variant = self.define_from_variant
@@ -527,15 +551,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(self.define("CMAKE_CXX_COMPILER", self.kokkos_cxx))
         elif "+rocm" in self.spec:
             if "+cmake_lang" in self.spec:
-                if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=rocmcc"):
-                    options.append(self.define("CMAKE_HIP_COMPILER", self.compiler.cxx))
-                else:
-                    options.append(
-                        self.define(
-                            "CMAKE_HIP_COMPILER",
-                            join_path(self.spec["llvm-amdgpu"].prefix.bin, "amdclang++"),
-                        )
-                    )
+                options.append(self.define("CMAKE_HIP_COMPILER", env["HIPCXX"]))
                 options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
                 options.append(
                     self.define(
@@ -544,7 +560,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 options.append(self.define("CMAKE_HIP_EXTENSIONS", False))
             elif not (self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=rocmcc")):
-                options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
+                options.append(self.define("CMAKE_CXX_COMPILER", env["HIPCXX"]))
             options.append(self.define("Kokkos_ENABLE_ROCTHRUST", True))
 
             # TODO deprecation of v4: remove partially
@@ -577,6 +593,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # TODO deprecation v4: remove
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
+
+        # Set CLANG_RT_LIBRARY for ROCm with relocatable device code
+        if spec.satisfies("+rocm+hip_relocatable_device_code"):
+            clang_rt_lib = self.get_clang_rt_library()
+            options.append(self.define("CLANG_RT_LIBRARY", clang_rt_lib))
 
         # Remove duplicate options
         return dedupe(options)

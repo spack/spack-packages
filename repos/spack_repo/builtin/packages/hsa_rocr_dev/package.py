@@ -74,6 +74,8 @@ class HsaRocrDev(ROCmLibrary, CMakePackage):
     depends_on("numactl")
     depends_on("pkgconfig")
     depends_on("libdrm", when="@6.3:")
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     # irocr: include intrin headers before namespace rocr
     # https://github.com/ROCm/rocm-systems/pull/5615
     patch(

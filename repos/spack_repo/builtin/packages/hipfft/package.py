@@ -147,6 +147,11 @@ class Hipfft(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("+asan"):
             self.asan_on(env)
 
+        if self.spec.satisfies("+rocm"):
+            # HIP_CLANG_PATH must be set to llvm-amdgpu/bin for hipconfig to
+            # succeed
+            self.spec["hip"].package.set_variables(env)
+
     def cmake_args(self):
         args = [
             self.define("BUILD_CLIENTS_SAMPLES", "OFF"),

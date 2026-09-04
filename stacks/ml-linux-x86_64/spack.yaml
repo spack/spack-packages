@@ -142,6 +142,19 @@ spack:
         hwloc:
           require:
             - ~rocm
+        c::
+          prefer:
+          - gcc
+        cxx::
+          prefer:
+          - gcc
+        fortran::
+          prefer:
+          - gcc
+    needs: [hip-compiler]
+  - group: hip-compiler
+    specs:
+    - llvm-amdgpu
 
   ci:
     pipeline-gen:

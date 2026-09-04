@@ -76,6 +76,7 @@ class Rocfft(ROCmLibrary, CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("hip-lang", type="build")
 
     depends_on("cmake@3.16:", type="build")
     depends_on("python@3.6:", type="build")
@@ -120,6 +121,8 @@ class Rocfft(ROCmLibrary, CMakePackage):
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
 
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     # Patch to fix the build issue when --test=root is enabled
     # This adds  the include headers from the rocrand and fftw in the cmakelists.txt
     # issue is seen from 5.7.0 onwards
@@ -145,7 +148,6 @@ class Rocfft(ROCmLibrary, CMakePackage):
             return "."
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")

@@ -516,6 +516,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     # External Kokkos
     with when("@14.4: +kokkos"):
+        depends_on("kokkos+shared", when="+shared")
+        depends_on("kokkos~shared", when="~shared")
         depends_on("kokkos~cuda", when="~cuda")
         depends_on("kokkos~rocm", when="~rocm")
         depends_on("kokkos+wrapper", when="+wrapper")
@@ -777,13 +779,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
         if "+rocm" in spec:
             if "+mpi" in spec:
-                env.set("OMPI_CXX", self.spec["hip"].hipcc)
-                env.set("MPICH_CXX", self.spec["hip"].hipcc)
-                env.set("MPICXX_CXX", self.spec["hip"].hipcc)
+                env.set("OMPI_CXX", spack_hipcxx)
+                env.set("MPICH_CXX", spack_hipcxx)
+                env.set("MPICXX_CXX", spack_hipcxx)
             else:
-                env.set("CXX", self.spec["hip"].hipcc)
+                env.set("CXX", spack_hipcxx)
             if "+stk" in spec:
-                # Using CXXFLAGS for hipcc which doesn't use flags in the spack wrappers
+                # Using CXXFLAGS for HIPCXX which doesn't use flags in the spack wrappers
                 env.set("CXXFLAGS", "-DSTK_NO_BOOST_STACKTRACE")
 
     def cmake_args(self):
