@@ -31,9 +31,6 @@ class E3smScorpio(CMakePackage):
     version("1.4.2", sha256="e41b2725b2389df48b91932224a0dfb8c8fe6e98c7a49e1dfd65f7d49f7ffa81")
     version("1.4.1", sha256="7cb4589410080d7e547ef17ddabe68f749e6af019c1d0e6ee9f11554f3ff6b1a")
 
-    variant("timing", default=False, description="Enable timing")
-    variant("mpi", default=True, description="Enable MPI")
-
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
