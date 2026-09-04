@@ -20,6 +20,7 @@ class PyXarray(PythonPackage):
     license("Apache-2.0")
     maintainers("Chrismarsh", "adamjstewart")
 
+    version("2026.7.0", sha256="361b495928fdbf5b58d0969bb6775339019da5e93ca74d61ddf4eb5edd6ce604")
     version("2026.4.0", sha256="c4ac9a01a945d90d5b1628e2af045099a9d4943536d4f2ee3ae963c3b222d15b")
     version("2026.2.0", sha256="978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf")
     version("2025.7.1", sha256="2884bf5672b540fcc6ff8c20a3196bda0d78fbfb4d67398d60526e97c2faceef")
