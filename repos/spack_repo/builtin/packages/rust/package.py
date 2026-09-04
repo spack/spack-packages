@@ -205,7 +205,14 @@ class Rust(Package):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        env.set("CARGO_HOME", join_path(dependent_spec.package.stage.path, "cargo"))
+        # Respect an explicitly configured Cargo cache for offline builds.
+        # Otherwise retain Spack's isolated per-package cache.
+        cargo_home = os.environ.get("SPACK_CARGO_HOME")
+        cargo_offline = os.environ.get("CARGO_NET_OFFLINE", "").lower() == "true"
+        if cargo_home and cargo_offline:
+            env.set("CARGO_HOME", cargo_home)
+        else:
+            env.set("CARGO_HOME", join_path(dependent_spec.package.stage.path, "cargo"))
 
         # Until we get a little more integration with cargo or offload solving to spack
         # (how to do this is TBD), we need it to fall back to older package versions
