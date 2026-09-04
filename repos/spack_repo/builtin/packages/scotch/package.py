@@ -171,6 +171,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("MPI_THREAD_MULTIPLE", "mpi_thread"),
         ]
 
+        if self.spec.satisfies("@7.0.2:"):
+            args.extend(
+                [
+                    self.define_from_variant("USE_ZLIB", "compression"),
+                    self.define("USE_LZMA", False),
+                    self.define("USE_BZ2", False),
+                ]
+            )
+
         if self.spec.satisfies("@7.0.5:"):
             args.append(self.define("ENABLE_TESTS", self.pkg.run_tests))
 
