@@ -22,6 +22,12 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
+    # Version 10.0.0 uses v1.6.0 tag
+    version(
+        "10.0.0",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/tags/v1.6.0.tar.gz",
+        sha256="1cce2345dafbe1d1ae929c11f4371cfb4fe23b6b9063976d5da05c55cdeb539c",
+    )
     # Version 7.14.0 uses v1.5.0 tag
     version(
         "7.14.0",
@@ -101,7 +107,8 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     patch("010-add-drm-include-path.patch", when="@6.4")
     # https://github.com/ROCm/ROCmValidationSuite/pull/998
     patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:7.2")
-    patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13:")
+    patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13:7.14")
+    patch("011_add_inc_and_lib_path_for_pciutils-10.0.patch", when="@10.0:")
     patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
     patch("013-add-hiprand-includes-7.13.patch", when="@7.13:")
     depends_on("cmake@3.5:", type="build")
@@ -181,6 +188,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -207,6 +215,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -229,13 +238,25 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
     for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
         depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
 
-    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
+    for ver in [
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
+    ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     for tgt in ROCmPackage.amdgpu_targets:

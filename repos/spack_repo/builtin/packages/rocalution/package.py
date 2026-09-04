@@ -36,6 +36,7 @@ class Rocalution(CMakePackage, ROCmLibrary):
         ),
     ]
 
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.2.3", sha256="6092bf6f59435b573f6d44fd4e78aa515f2e1f0c1b516f2d9f4e76a5a0fbd049")
     version("7.2.1", sha256="09b22b15ba70b8f3c8b5d0a26dc5eb5d2318cbf9c079b1fd3897382c65aa5892")
@@ -108,6 +109,7 @@ class Rocalution(CMakePackage, ROCmLibrary):
         "7.2.1",
         "7.2.3",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")

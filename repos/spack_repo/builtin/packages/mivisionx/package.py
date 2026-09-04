@@ -28,6 +28,9 @@ class Mivisionx(ROCmLibrary, CMakePackage):
 
     license("MIT")
     version(
+        "10.0.0", branch="release/therock-10.0", commit="4cf30db69f4d650aac2a2696c611ee6b862deb34"
+    )
+    version(
         "7.14.0", branch="release/therock-7.14", commit="181011f470e974539446de943a5fd2fde75a3929"
     )
     version(
@@ -239,6 +242,7 @@ class Mivisionx(ROCmLibrary, CMakePackage):
             "7.2.3",
             "7.13.0",
             "7.14.0",
+            "10.0.0",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
