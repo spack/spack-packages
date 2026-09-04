@@ -1,0 +1,28 @@
+--- a/glob.c
++++ b/glob.c
+@@ -39,7 +39,6 @@
+ #include <unistd.h>
+ #include <limits.h>
+ #include <stdarg.h>
+-#include <publib.h>
+ 
+ #include "csh.h"
+ #include "extern.h"
+@@ -435,7 +434,7 @@
+ 	if (append) {
+ 	    if (nvp + append >= nv + size) {
+ 		size = (nvp - nv) + append + GLOBSPACE;
+-		nv = xrealloc((void*) nv, sizeof(Char *) * size);
++		nv = xreallocarray(nv, size, sizeof(Char *));
+ 		nvp = nv + size - append - GLOBSPACE;
+ 	    }
+ 	    if (*magicp && globv.gl_pathc) {
+@@ -456,7 +455,7 @@
+ 	 * Output is empty, or none of the magic patterns matched.
+ 	 * It's up to the caller to generate a "No match" error.
+ 	 */
+-	xfree(nv);
++	free(nv);
+ 	return (NULL);
+     }
+     *nvp = NULL;

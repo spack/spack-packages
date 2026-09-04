@@ -1,0 +1,10 @@
+--- a/misc.c
++++ b/misc.c
+@@ -33,6 +33,7 @@
+ #include <sys/types.h>
+ #include <stdlib.h>
+ #include <unistd.h>
++#include <bsd/unistd.h>
+ #include <stdarg.h>
+ 
+ #include "csh.h"

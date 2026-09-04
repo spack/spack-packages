@@ -1,0 +1,66 @@
+--- a/csh.h
++++ b/csh.h
+@@ -38,7 +38,63 @@
+  *	BUFSIZ		The i/o buffering size; also limits word size
+  *	MAILINTVL	How often to mailcheck; more often is more expensive
+  */
++
++/*
++ * macOS compatibility: shims for OpenBSD-isms missing from Darwin libc.
++ */
++#ifdef __APPLE__
++#include <sys/time.h>
++#include <limits.h>
++#include <stdlib.h>
++#include <unistd.h>
++
++#ifndef HOST_NAME_MAX
++#define HOST_NAME_MAX 255
++#endif
++
++/* Darwin has no reallocarray(3) */
++static inline void *
++csh_reallocarray(void *p, size_t c, size_t n)
++{
++    if (n != 0 && c > (size_t)-1 / n)
++	return (NULL);
++    return (realloc(p, c * n));
++}
++#define reallocarray csh_reallocarray
++
++/* Darwin strnvis(3) takes (dst, dstsize, src, flag); OpenBSD (dst, src, dstsize, flag) */
++#define strnvis(dst, src, siz, flag) (strnvis)((dst), (siz), (src), (flag))
++
++/* Darwin has no closefrom(3) */
++static inline void
++csh_closefrom(int fd)
++{
++    int i, max = (int)sysconf(_SC_OPEN_MAX);
+ 
++    if (max < 0)
++	max = 256;
++    for (i = fd; i < max; i++)
++	(void) close(i);
++}
++#define closefrom csh_closefrom
++
++#ifndef timespecsub
++#define timespecsub(a, b, res) do { \
++    (res)->tv_sec = (a)->tv_sec - (b)->tv_sec; \
++    (res)->tv_nsec = (a)->tv_nsec - (b)->tv_nsec; \
++    if ((res)->tv_nsec < 0) { \
++	(res)->tv_sec--; \
++	(res)->tv_nsec += 1000000000L; \
++    } \
++} while (0)
++#endif
++#ifndef timespeccmp
++#define timespeccmp(a, b, CMP) \
++    (((a)->tv_sec == (b)->tv_sec) ? \
++	((a)->tv_nsec CMP (b)->tv_nsec) : ((a)->tv_sec CMP (b)->tv_sec))
++#endif
++#endif /* __APPLE__ */
++
+ #define FORKSLEEP	10	/* delay loop on non-interactive fork failure */
+ #define	MAILINTVL	600	/* 10 minutes */
+ 
