@@ -91,6 +91,7 @@ spack:
   - kokkos +openmp
   - kokkos-kernels +openmp
   - kokkos-fft host_backend=fftw-openmp
+  - kokkos-tools
   - lammps
   - legion
   - libnrm
