@@ -286,7 +286,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("air_gapped_nnpack_cmake_older.patch", when="@:2.11")
     # for version @2.12: (env forwarding mechanism changed)
     # This error has been raised upstream https://github.com/pytorch/pytorch/pull/188263
-    patch("air_gapped_nnpack_cmake.patch", when="@2.12:")
+    patch("air_gapped_nnpack_cmake.patch", when="@2.12:2.13")
 
     # Backport the generic environment forwarding fix from PyTorch PR 188242.
     # PyTorch 2.12--2.13 parse the entire environment as a CMake list, which
