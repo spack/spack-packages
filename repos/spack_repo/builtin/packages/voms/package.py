@@ -45,8 +45,14 @@ class Voms(AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # https://aur.archlinux.org/cgit/aur.git/tree/PKGBUILD?h=voms
         pkgconfig = Executable(join_path(self.spec["pkgconfig"].prefix.bin, "pkg-config"))
-        env.set("GSOAP_SSL_PP_CFLAGS", pkgconfig("--cflags", "gsoapssl++", "zlib", output=str))
-        env.set("GSOAP_SSL_PP_LIBS", pkgconfig("--libs", "gsoapssl++", "zlib", output=str))
+        env.set(
+            "GSOAP_SSL_PP_CFLAGS",
+            pkgconfig("--cflags", "gsoapssl++", "zlib", env=env, output=str),
+        )
+        env.set(
+            "GSOAP_SSL_PP_LIBS",
+            pkgconfig("--libs", "gsoapssl++", "zlib", env=env, output=str),
+        )
 
     def autoreconf(self, spec, prefix):
         autogen = Executable("./autogen.sh")
