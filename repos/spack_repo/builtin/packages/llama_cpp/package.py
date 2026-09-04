@@ -23,7 +23,9 @@ class LlamaCpp(GGMLPackageBase):
     license("MIT")
 
     version("master", branch="master")
-    version("0.3.0", tag="v0.3.0", commit="c1d0e7a004015f23bc0233470b747b596f29b264", preferred=True)
+    version(
+        "0.3.0", tag="v0.3.0", commit="c1d0e7a004015f23bc0233470b747b596f29b264", preferred=True
+    )
     version("7158", tag="b7158", commit="b3b03a7baf387cfeaf56641bd14c06dbd3d2fcf0")
     version("7086", tag="b7086", commit="7aaeedc098a77e9323044187101db4f6b69988da")
 

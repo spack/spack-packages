@@ -92,5 +92,7 @@ class Ggml(GGMLPackageBase):
     license("MIT")
 
     version("master", branch="master")
-    version("0.22.0", tag="v0.22.0", commit="34dc0e5589504286cb40e13cbdae4bf2b5b4071b", preferred=True)
+    version(
+        "0.22.0", tag="v0.22.0", commit="34dc0e5589504286cb40e13cbdae4bf2b5b4071b", preferred=True
+    )
     version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")
