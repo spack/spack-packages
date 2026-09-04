@@ -13,8 +13,9 @@ class Copacabana(Package):
 
     homepage = "https://github.com/jfalcou/copacabana"
     url = "https://github.com/jfalcou/copacabana/archive/refs/tags/v7.tar.gz"
-    maintainers("jfalcou")
     git = "https://github.com/jfalcou/copacabana.git"
+
+    maintainers("jfalcou")
 
     license("BSL-1.0")
 
