@@ -162,6 +162,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-jinja2")
         depends_on("py-fsspec@0.8.5:")
 
+    # Undocumented dependencies
+    depends_on("blas")
+    depends_on("lapack")
+
     # third_party
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
