@@ -30,7 +30,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hipblas", when="+rocm")
     depends_on("rocblas", when="+rocm")
-    depends_on("rccl", when="+rccl")
+    depends_on("rccl", when="+rocm")
 
     depends_on("nccl", when="+cuda")
 
@@ -72,7 +72,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
                     "CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
-            args.append(self.define_from_variant("GGML_HIP_RCCL", "rccl"))
+            args.append(self.define("GGML_HIP_RCCL", "ON"))
             if not self.spec.satisfies("amdgpu_target=none"):
                 archs = self.spec.variants["amdgpu_target"].value
                 arch_str = ";".join(archs)
@@ -85,7 +85,6 @@ class Ggml(GGMLPackageBase):
 
     homepage = "https://github.com/ggml-org/ggml"
     git = "https://github.com/ggml-org/ggml.git"
-    url = "https://github.com/ggml-org/ggml/archive/refs/tags/v0.22.0.tar.gz"
 
     maintainers("rbberger")
 
