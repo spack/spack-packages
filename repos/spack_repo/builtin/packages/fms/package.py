@@ -88,6 +88,11 @@ class Fms(CMakePackage):
         sha256="eb043f992942224e3f8fc8dae22f4e53294ecadad83dd80a031c3d4465b7e4b8",
         when="@=2026.01",
     )
+    patch(
+        "cmake-build-tests-option-2026.01.01.patch",
+        sha256="948342aceb3befcbbe5d4edc755a0d34ea5a7181052ac46b40f5429dcfbc09e6",
+        when="@=2026.01.01",
+    )
 
     # https://github.com/NOAA-GFDL/FMS/issues/1417
     patch(

@@ -24,6 +24,10 @@ class Pajeng(CMakePackage):
     license("GPL-3.0-only")
 
     version("develop", git="https://github.com/schnorr/pajeng.git")
+    version("1.3.10", sha256="23b3a2561ecfb4ef56c73cc9cbc6a22a142433a6d905c17e5d9cf01c49ef5055")
+    version("1.3.9", sha256="33bb00cea4a527e30f44fc472fc706ceeb16aaa7d1bf976efff4c23ae683d753")
+    version("1.3.8", sha256="98fd3c49167b082ce9aff4ecaaef9372d3ca73cc889d5d5fe3c620530a7bf1e5")
+    version("1.3.7", sha256="296b9492f3933540153dbf8ca8df3eaf53e22f1c6a4c88cdda3d0d8bd4713954")
     version("1.3.6", sha256="1a2722bfaeb0c6437fb9e8efc2592edbf14ba01172f97e01c7839ffea8b9d0b3")
     version("1.3.5", sha256="ea8ca02484de4091dcf57289724876ec17dd98e3a032dc609b7ea020ca2629eb")
     version("1.3.4", sha256="284e9a590a2861251e808542663bf1b77bc2c99650a1fbf945cd5bab65402f9e")
@@ -48,7 +52,7 @@ class Pajeng(CMakePackage):
     depends_on("bison")
     depends_on("qt@:4+opengl", when="@:1.3.2+gui")
     depends_on("freeglut", when="@:1.3.2+gui")
-    depends_on("fmt", when="@develop")
+    depends_on("fmt", when="@1.3.7:")
 
     conflicts("+tools", when="~lib", msg="Enable libpaje to compile tools.")
     conflicts(

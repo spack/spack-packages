@@ -19,6 +19,14 @@ class PyDendropy(PythonPackage):
 
     license("CC-BY-NC-SA-4.0")
 
+    def url_for_version(self, version):
+        if version >= Version("5.0.10"):
+            return f"https://files.pythonhosted.org/packages/source/d/dendropy/dendropy-{version}.tar.gz"
+        return (
+            f"https://files.pythonhosted.org/packages/source/d/dendropy/DendroPy-{version}.tar.gz"
+        )
+
+    version("5.0.13", sha256="97dc804ee266c430e64bae6d9389def782bcc3a7fe5f9f760d936639f10fd600")
     version("4.5.2", sha256="3e5d2522170058ebc8d1ee63a7f2d25b915e34957dc02693ebfdc15f347a0101")
     version("4.3.0", sha256="bd5b35ce1a1c9253209b7b5f3939ac22beaa70e787f8129149b4f7ffe865d510")
     version("3.12.0", sha256="38a0f36f2f7aae43ec5599408b0d0a4c80996b749589f025940d955a70fc82d4")

@@ -55,7 +55,16 @@ class Scorep(AutotoolsPackage):
     variant("hip", default=False, description="Enable ROCm/HIP support", when="@8.0:")
     variant("gcc-plugin", default=True, description="Enable gcc-plugin", when="%gcc")
     variant(
-        "llvm-plugin", default=True, description="Enable LLVM compiler plugin", when="@9.0: ^llvm"
+        "llvm-plugin",
+        default=True,
+        description="Enable LLVM compiler plugin",
+        when="@9.0: %c,cxx=llvm",
+    )
+    variant(
+        "xray",
+        default=False,
+        description="Enable instrumetation via LLVM XRay",
+        when="@10.0: %c,cxx=llvm",
     )
     variant(
         "binutils",
@@ -132,6 +141,10 @@ class Scorep(AutotoolsPackage):
     # Score-P first has support for ROCm 6.x as of v8.4
     conflicts("hip@6.0:", when="@:8.3+hip")
 
+    # XRay-based instrumentation is mutually exclusive
+    # with the LLVM instrumentation plugin
+    conflicts("+xray", when="+llvm-plugin")
+
     # Utility function: extract the first directory in `root` where
     # we find `libname`. Used to handle CUDA irregular layouts.
     def find_libpath(self, libname, root):
@@ -200,6 +213,7 @@ class Scorep(AutotoolsPackage):
         config_args.extend(self.enable_or_disable("gcc-plugin"))
         config_args.extend(self.enable_or_disable("mpi_f08"))
         config_args.extend(self.enable_or_disable("fortran"))
+        config_args.extend(self.enable_or_disable("xray"))
 
         if "~shmem" in spec:
             config_args.append("--without-shmem")
