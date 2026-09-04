@@ -24,6 +24,8 @@ class PyMetatrain(PythonPackage):
     version("2025.12", sha256="d0634934cc33d23189a9ef99f8c27e2e81cdfc248cf110d8df6c48255cb78765")
     version("2025.11", sha256="4c1a78feb359885f29d659f97ccf0e0676892ba1aa120cf58d0c7a0442161255")
 
+    variant("soap_bpnn", default=False, description="Enable SOAP-BPNN architecture")
+
     # pyproject.toml [build-system]
     with default_args(type="build"):
         depends_on("py-setuptools@77:")
@@ -56,3 +58,9 @@ class PyMetatrain(PythonPackage):
         depends_on("py-tqdm")
         depends_on("py-vesin")
         depends_on("py-vesin@0.5.2:", when="@2026.2:")
+
+    # soap-bpnn
+    # pyproject.toml [project.optional-dependencies] soap-bpnn
+    with default_args(type=("build", "run"), when="+soap_bpnn"):
+        depends_on("py-torch-spex@0.1")
+        depends_on("py-wigners")
