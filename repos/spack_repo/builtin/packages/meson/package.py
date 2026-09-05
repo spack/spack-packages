@@ -50,6 +50,15 @@ class Meson(PythonPackage):
     # Python 3.12 detection support
     patch("python-3.12-support.patch", when="@1.1:1.2.2")
 
+    # search_version() could match a version-shaped substring embedded in
+    # unrelated text (e.g. a compiler's own install path, such as
+    # ".../gcc-11.4.1/...") in preference to the compiler's real version,
+    # silently corrupting capability detection (e.g. c_std/cpp_std support)
+    # for any compiler invoked from such a path. Planned to be fixed in version 1.12.1;
+    # backported here for older releases. Verified to apply cleanly back to
+    # 1.0.2.
+    patch("search_version_no_trailing_digits.patch", when="@1.0.2:1.12.0")
+
     executables = ["^meson$"]
 
     @classmethod
