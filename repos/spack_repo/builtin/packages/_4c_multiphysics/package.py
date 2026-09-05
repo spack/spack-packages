@@ -28,7 +28,6 @@ class _4cMultiphysics(CMakePackage):
     version("main", branch="main")
     version("2026.2.0", sha256="57e05128934e06b67d5ae3c2d3402f80d1ddfc3975b1557670e5b1d3399a6c0b")
     version("2026.1.0", sha256="9d95607a0b7668c9712392c81863b6327b8922745705b62e07f605f1d6932646")
-    version("2025.3.0", sha256="31088a9392bf55eb8c1b5a3b8426e8ae2b367327cef01f8f34aff55cb1153180")
 
     # Keep these sources private to 4C until maintained packages are available
     # in the builtin repository. FetchContent consumes the staged source trees.
@@ -58,9 +57,14 @@ class _4cMultiphysics(CMakePackage):
     variant("fftw", default=False, description="Enable FFTW support")
     variant("mirco", default=False, description="Enable MIRCO support")
     variant("backtrace", default=False, description="Enable libbacktrace support")
+    variant("python", default=False, description="Enable Python build and test utilities")
+    variant("pybind11", default=False, description="Build the py4C Python bindings")
+
+    conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
 
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
+    patch("python-venv-no-downloads.patch", when="+python")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -103,6 +107,24 @@ class _4cMultiphysics(CMakePackage):
     depends_on("arborx@2.0.1+mpi", when="+arborx")
     depends_on("fftw", when="+fftw")
     depends_on("libbacktrace", when="+backtrace")
+    depends_on("python@3.12:", type=("build", "link", "run"), when="+python")
+    depends_on("python-venv", type=("build", "run"), when="+python")
+    depends_on("py-pip", type="build", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
+    depends_on("py-numpy", type=("build", "run"), when="+python")
+    depends_on("py-scipy", type=("build", "run"), when="+python")
+    depends_on("py-pytest", type=("build", "run"), when="+python")
+    depends_on("py-pyyaml", type=("build", "run"), when="+python")
+    depends_on("py-jsonschema", type=("build", "run"), when="+python")
+    depends_on("vtk@9.4.2:9.6+python", type=("build", "run"), when="+python")
+    depends_on("py-pyvista", type=("build", "run"), when="+python")
+    depends_on("py-jinja2", type=("build", "run"), when="+python")
+    depends_on("py-matplotlib", type=("build", "run"), when="+python")
+    depends_on("py-myst-parser", type=("build", "run"), when="+python")
+    depends_on("py-nbsphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx-rtd-theme", type=("build", "run"), when="+python")
+    depends_on("py-pybind11", type=("build", "link", "run"), when="+pybind11")
 
     generator("ninja")
 
@@ -133,9 +155,9 @@ class _4cMultiphysics(CMakePackage):
             self.define_from_variant("FOUR_C_WITH_FFTW", "fftw"),
             self.define_from_variant("FOUR_C_WITH_MIRCO", "mirco"),
             self.define_from_variant("FOUR_C_WITH_BACKTRACE", "backtrace"),
-            self.define("FOUR_C_WITH_PYTHON", False),
-            self.define("FOUR_C_WITH_PYBIND11", False),
-            self.define("FOUR_C_ENABLE_PYTHON_BINDINGS", False),
+            self.define_from_variant("FOUR_C_WITH_PYTHON", "python"),
+            self.define_from_variant("FOUR_C_WITH_PYBIND11", "pybind11"),
+            self.define_from_variant("FOUR_C_ENABLE_PYTHON_BINDINGS", "pybind11"),
         ]
 
         roots = {
@@ -146,6 +168,8 @@ class _4cMultiphysics(CMakePackage):
             "arborx": ("FOUR_C_ARBORX_ROOT", "arborx"),
             "fftw": ("FOUR_C_FFTW_ROOT", "fftw"),
             "backtrace": ("FOUR_C_BACKTRACE_ROOT", "libbacktrace"),
+            "python": ("FOUR_C_PYTHON_ROOT", "python"),
+            "pybind11": ("FOUR_C_PYBIND11_ROOT", "py-pybind11"),
         }
         for variant, (variable, dependency) in roots.items():
             if "+" + variant in spec:
