@@ -15,6 +15,7 @@ class Tdls(CMakePackage):
     to be embedded in TFEL/MFront."""
 
     homepage = "https://trsxvz.github.io/TDLS/"
+    url = "https://github.com/trsxvz/TDLS/archive/refs/tags/v0.1.0.tar.gz"
     git = "https://github.com/trsxvz/TDLS.git"
 
     maintainers("trsxvz")
@@ -22,6 +23,7 @@ class Tdls(CMakePackage):
     license("BSD-3-Clause", checked_by="trsxvz")
 
     version("main", branch="main")
+    version("0.1.0", sha256="c10969df6d2e91d44c2200eaffad0db041938fad24d3455c65a2a69082d7eb0d")
 
     depends_on("cmake@3.21:", type="build")
     # A compiler is only needed to build and run the test suites and the
