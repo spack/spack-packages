@@ -91,10 +91,8 @@ class Coinhsl(meson.MesonPackage, autotools.AutotoolsPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-    """Builder class to hold functions specific to meson"""
 
     def meson_args(self) -> list[str]:
-        """Add arguments for calling meson setup"""
         spec = self.spec
         args: list[str] = []
 
