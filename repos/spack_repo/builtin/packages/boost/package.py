@@ -296,10 +296,12 @@ class Boost(Package):
     conflicts("context-impl=ucontext", when="@:1.65.0")
     conflicts("context-impl=winfib", when="@:1.65.0")
 
-    # Coroutine, Context, Fiber, etc., are not straightforward. The version ranges in which
-    # these libraries exist are encoded in the "when" clauses of the variants above.
+    # Coroutine, Context, Fiber, etc., are not straightforward.
+    conflicts("+context", when="@:1.50")  # Context since 1.51.0.
     conflicts("cxxstd=98", when="+context")  # Context requires >=C++11.
+    conflicts("+coroutine", when="@:1.52")  # Context since 1.53.0.
     conflicts("~context", when="+coroutine")  # Coroutine requires Context.
+    conflicts("+fiber", when="@:1.61")  # Fiber since 1.62.0.
     conflicts("cxxstd=98", when="+fiber")  # Fiber requires >=C++11.
     conflicts("~context", when="+fiber")  # Fiber requires Context.
 
@@ -318,6 +320,9 @@ class Boost(Package):
 
     # boost-mpi depends on boost-python since 1.87.0
     conflicts("~python", when="+mpi @1.87.0:")
+
+    # Container's Extended Allocators were not added until 1.56.0
+    conflicts("+container", when="@:1.55")
 
     # Boost.System till 1.76 (included) was relying on mutex, which was not
     # detected correctly on Darwin platform when using GCC
@@ -518,6 +523,23 @@ class Boost(Package):
         # Fixes https://github.com/spack/spack/issues/29352
         if self.spec.satisfies("@1.78 %intel") or self.spec.satisfies("@1.78 %oneapi"):
             filter_file("-static", "", "tools/build/src/engine/build.sh")
+
+        # bjam's own build engine (tools/build/src/engine) is bootstrapped
+        # TWICE: once directly via a bare "gcc" call in build.sh to produce
+        # bootstrap/jam0, then AGAIN by jam0 itself running its own Jam
+        # rules to produce the real b2 -- a CFLAGS/toolset override only
+        # reaches the first stage, not the second. modules/path.c calls
+        # file_query() (properly declared in filesys.h) without including
+        # that header; GCC 14 makes implicit-function-declaration a hard
+        # error by default where older GCC only warned. Fixing the actual
+        # missing include covers both compile stages at once.
+        if self.spec.satisfies("@1.56.0"):
+            filter_file(
+                '#include "../timestamp.h"',
+                '#include "../timestamp.h"\n#include "../filesys.h"',
+                "tools/build/src/engine/modules/path.c",
+                string=True,
+            )
 
     def url_for_version(self, version):
         if version >= Version("1.63.0"):
