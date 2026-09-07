@@ -33,6 +33,16 @@ class Cpio(AutotoolsPackage, GNUMirrorPackage):
     def patch(self):
         """Fix mutiple definition of char *program_name for gcc@10: and clang"""
         filter_file(r"char \*program_name;", "", "src/global.c")
+        filter_file(
+            r"extern int \(\*xstat\) \(\);",
+            r"extern int (*xstat) (const char *, struct stat *);",
+            "src/extern.h",
+        )
+        filter_file(
+            r"int \(\*xstat\) \(\);",
+            r"int (*xstat) (const char *, struct stat *);",
+            "src/global.c",
+        )
 
     @classmethod
     def determine_version(cls, exe):
