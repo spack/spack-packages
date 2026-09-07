@@ -36,6 +36,36 @@ class Sepp(Package):
 
     extends("python")
 
+    def patch(self):
+        # setup.py bootstraps via a 2010-era "distribute_setup.py" helper
+        # (from back when setuptools/distribute were separate forks) and
+        # separately imports "from distutils.core import setup, Command"
+        # directly. distutils was removed from the stdlib in Python 3.12+,
+        # breaking both. setuptools has been a strict superset for over a
+        # decade (find_packages is already imported from it two lines
+        # above) and setuptools.Command is a drop-in replacement -- the
+        # docstring on the Command subclass below even says "setuptools
+        # Command". Drop the obsolete bootstrap entirely and import
+        # setup/Command from setuptools instead.
+        filter_file(
+            "from distribute_setup import use_setuptools\n",
+            "",
+            "setup.py",
+            string=True,
+        )
+        filter_file(
+            "from distutils.core import setup, Command",
+            "from setuptools import setup, Command",
+            "setup.py",
+            string=True,
+        )
+        filter_file(
+            'use_setuptools(version="0.6.24")\n',
+            "",
+            "setup.py",
+            string=True,
+        )
+
     def install(self, spec, prefix):
         dirs = ["sepp", "tools"]
         for d in dirs:
