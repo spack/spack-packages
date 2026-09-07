@@ -884,7 +884,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
                     f.write(bd.read())
 
     # https://gcc.gnu.org/install/configure.html
-    def configure_args(self):
+    def configure_args(self) -> list[str]:
         spec = self.spec
 
         # Generic options to compile GCC
