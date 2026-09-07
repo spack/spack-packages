@@ -14,16 +14,18 @@ class EnvironmentModules(Package):
     """
 
     homepage = "https://envmodules.io"
-    url = "https://github.com/envmodules/modules/releases/download/v5.6.1/modules-5.6.1.tar.gz"
+    url = "https://github.com/envmodules/modules/releases/download/v5.6.2/modules-5.6.2.tar.gz"
     git = "https://github.com/envmodules/modules.git"
 
     maintainers("xdelaruelle")
 
     version("main", branch="main")
+    version("5.6.2", sha256="a06dd0001aef2722564bba3ec7ff62bc52fb560565af8522728ac8296f98fd69")
     version("5.6.1", sha256="b175e57860e62d87b6118a79cc2d76e857e5774a9ff78558d6726122760b0034")
     version("5.6.0", sha256="9dd78f1543012acd3a1a14ba86dc1dca8f7d176396ea3f0027a92dcf5ff2057c")
     version("5.5.0", sha256="ad0e360c7adc2515a99836863d98499b3ad89cd7548625499b20293845b040cb")
     version("5.4.0", sha256="586245cbf9420866078d8c28fce8ef4f192530c69a0f368f51e848340dcf3b90")
+    version("5.3.2", sha256="132ace718fa97183508c02bc77a5f7fef33d9edf28d9dc207ae4da0823172b3b")
     version("5.3.1", sha256="d02f9ce4f8baf6c99edceb7c73bfdd1e97d77bcc4725810b86efed9f58dda962")
     version("5.3.0", sha256="21b8daa0181044ef65097a1e3517af1f24e7c7343cc5bdaf70be11e3cb0edb51")
     version("5.2.0", sha256="48f9f10864303df628a48cab17074820a6251ad8cd7d66dd62aa7798af479254")
@@ -36,6 +38,7 @@ class EnvironmentModules(Package):
     version("4.7.0", sha256="3ab0a649e23b4dd00963e4cae60e573b449194ecb4035c5ce487330b272b4d06")
     version("4.6.1", sha256="3445df39abe5838b94552b53e7dbff56ada8347b9fdc6c04a72297d5b04af76f")
     version("4.6.0", sha256="b42b14bb696bf1075ade1ecaefe7735dbe411db4c29031a1dae549435eafa946")
+    version("4.5.4", sha256="28b2dfcd53dc9c1b121851a9aae2fb1d1dc3519918fd1cddc7af8593d58116d0")
     version("4.5.3", sha256="7cbd9c61e6dcd82a3f81b5ced92c3cf84ecc5489639bdfc94869256383a2c915")
     version("4.5.2", sha256="74ccc9ab0fea0064ff3f4c5841435cef13cc6d9869b3c2b25e5ca4efa64a69a1")
     version("4.5.1", sha256="7d4bcc8559e7fbbc52e526fc86a15b161ff4422aa49eee37897ee7a48eb64ac2")
