@@ -2,12 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+import sys
+
+from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
+from spack_repo.builtin.build_systems.meson import MesonBuilder, MesonPackage
 
 from spack.package import *
 
+IS_WINDOWS = sys.platform == "win32"
 
-class Pkgconf(AutotoolsPackage):
+
+class Pkgconf(AutotoolsPackage, MesonPackage):
     """pkgconf is a program which helps to configure compiler and linker
     flags for development frameworks. It is similar to pkg-config from
     freedesktop.org, providing additional functionality while also
@@ -38,6 +43,8 @@ class Pkgconf(AutotoolsPackage):
     version("1.3.10", sha256="62577d265fa9415a57a77a59dede5526b7ece3ef59a750434b281b262f0c1da9")
     version("1.3.8", sha256="fc06f058e6905435481f649865ca51000192c91808f307b1053ca5e859cb1488")
 
+    build_system("meson", "autotools", default="autotools")
+
     depends_on("c", type="build")  # generated
 
     provides("pkgconfig")
@@ -48,6 +55,20 @@ class Pkgconf(AutotoolsPackage):
     tags = ["build-tools"]
 
     executables = ["^pkgconf$", "^pkg-config$"]
+
+
+class AutotoolsBuilder(AutotoolsBuilder):
+    def configure_args(self):
+        args = []
+        return args
+
+
+class MesonBuilder(MesonBuilder):
+    def meson_args(self):
+        args = [
+            "-Dtests=disabled",
+        ]
+        return args
 
     @classmethod
     def determine_version(cls, exe):
@@ -75,5 +96,9 @@ class Pkgconf(AutotoolsPackage):
 
     @run_after("install")
     def link_pkg_config(self):
-        symlink("pkgconf", f"{self.prefix.bin}/pkg-config")
-        symlink("pkgconf.1", f"{self.prefix.share.man.man1}/pkg-config.1")
+        if IS_WINDOWS:
+            symlink("pkgconf.exe", join_path(prefix.bin, "pkg-conf.exe"))
+            symlink("pkgconf.1", f"{self.prefix.share.man.man1}/pkg-config.1")
+        else:
+            symlink("pkgconf", f"{self.prefix.bin}/pkg-config")
+            symlink("pkgconf.1", f"{self.prefix.share.man.man1}/pkg-config.1")
