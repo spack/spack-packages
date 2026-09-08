@@ -18,6 +18,7 @@ class PyPyproj(PythonPackage):
     license("MIT")
     maintainers("citibeth", "adamjstewart")
 
+    version("3.8.0", sha256="efa59725bba68bf97fa808b61302df32934acdceb6a5c92a8dd0e71dc266a876")
     version("3.7.2", sha256="39a0cf1ecc7e282d1d30f36594ebd55c9fae1fda8a2622cee5d100430628f88c")
     version("3.7.1", sha256="60d72facd7b6b79853f19744779abcd3f804c4e0d4fa8815469db20c9f640a47")
     version("3.7.0", sha256="bf658f4aaf815d9d03c8121650b6f0b8067265c36e31bc6660b98ef144d81813")
@@ -49,6 +50,7 @@ class PyPyproj(PythonPackage):
         depends_on("py-cython@0.28.4:2", when="@2:3.6.0")
 
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.12:", when="@3.8:")
         depends_on("python@3.11:", when="@3.7.2:")
         depends_on("python@3.10:", when="@3.7:")
         depends_on("python@3.9:", when="@3.6:")
