@@ -85,14 +85,18 @@ class Coinhsl(meson.MesonPackage, autotools.AutotoolsPackage):
     )
 
     with when("build_system=autotools"):
-        parallel = False
         variant("blas", default=False, description="Link to external BLAS library")
         depends_on("blas", when="+blas")
+
+    @property
+    def parallel(self):
+        """The autotools builds are not parallel safe"""
+        return not self.spec.satisfies("build_system=autotools")
 
 
 class MesonBuilder(meson.MesonBuilder):
 
-    def meson_args(self) -> list[str]:
+    def meson_args(self):
         spec = self.spec
         args: list[str] = []
 
@@ -131,7 +135,7 @@ class MesonBuilder(meson.MesonBuilder):
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
     """Builder class to hold functions specific to autotools"""
 
-    def configure_args(self) -> list[str]:
+    def configure_args(self):
         """Add arguments for the calling configure"""
         spec = self.spec
         args: list[str] = []
