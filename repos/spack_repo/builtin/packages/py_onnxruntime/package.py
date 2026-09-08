@@ -248,6 +248,13 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
                     define("onnxruntime_USE_COMPOSABLE_KERNEL", "OFF"),
                 )
             )
+
+        if self.spec.satisfies("platform=darwin"):
+            # avoid onnxruntime's vendored protoc, which can be older than the
+            # protobuf found by find_package and generate incompatible code
+            args.append(
+                define("ONNX_CUSTOM_PROTOC_EXECUTABLE", self.spec["protobuf"].prefix.bin.protoc)
+            )
         return args
 
     @run_after("install")
