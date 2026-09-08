@@ -144,7 +144,8 @@ class Reframe(Package):
     depends_on("python@3.6:", when="@3.0:", type="run")
 
     # build dependencies
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools", when="@:4.9", type="build")
+    depends_on("py-hatchling@1.29:", when="@4.10:", type="build")
 
     # runtime dependencies
     depends_on("py-archspec", when="@3.7.0:", type="run")
