@@ -17,6 +17,17 @@ class Fabtests(AutotoolsPackage):
 
     license("GPL-2.0-only")
 
+    version("2.6.0", sha256="79ddab1290fcd62c76735ce7c25a277cb322de91d5e1b696b6e01a8824c62b7d")
+    version("2.5.1", sha256="005fded6a91dbb929ca41dc35ec6c043bf6f82de055eed8413fa6de172a56346")
+    version("2.5.0", sha256="d0902946f421e490cc33452d4131ad94f7ea919a07cffb674dab063fc5552182")
+    version("2.4.0", sha256="2caff4517c36df3a4df89d0ba4c0869f1e5e01c458153fd0ba0767da2d0759d7")
+    version("2.3.1", sha256="d19d526e26e4620ae4fdc13f89d3e79b39df5fca643787c8b2e62151152ee4fd")
+    version("2.3.0", sha256="18c17bff50257735356ed059211ae3345f2313e993a1951b2d5e283f1da520fd")
+    version("2.2.0", sha256="2e4c79fbacea2e2aa776bdae7310bc8e0c8b02671ebcc8325d3bee0b27aabe5c")
+    version("2.1.0", sha256="60f024a5c5e5c956db7af07229a40e5c64f3ea37d84b9c142c1a23c3248c08cc")
+    version("2.0.0", sha256="121ac305750e78bce744594c103bb72a6669c701a2419bec1da6a409c15e48de")
+    version("1.22.0", sha256="140ad1d9fa6e03c13d0ce62fe4c158777a218825f9837b121aa75e1edb869e44")
+    version("1.21.1", sha256="3d9eacdfb64066609593a615af5cfd440ee1cbc71ade394d09aaade38698f3ea")
     version("1.21.0", sha256="d022a186d37bd6ccb52303e0588c28e29f0f56c25a384c37acb16c881ba99e64")
     version("1.20.2", sha256="624beb02ffc8e325834545810566330f2a1204d5c6ad015ba095303121cb8ae6")
     version("1.20.1", sha256="687884b6fd3046f46e2f878e19e76e4506b50950bd2f59a731618b89d02a5436")
@@ -45,6 +56,17 @@ class Fabtests(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     for v in (
+        "2.6.0",
+        "2.5.1",
+        "2.5.0",
+        "2.4.0",
+        "2.3.1",
+        "2.3.0",
+        "2.2.0",
+        "2.1.0",
+        "2.0.0",
+        "1.22.0",
+        "1.21.1",
         "1.21.0",
         "1.20.2",
         "1.20.1",
