@@ -55,7 +55,7 @@ class RocprofilerRegister(ROCmLibrary, CMakePackage):
     depends_on("cxx", type="build")
     # https://github.com/ROCm/rocm-systems/issues/8183
     depends_on("fmt@:12.1", when="@:7")
-    depends_on("fmt@:12.2", when="@10:")
+    depends_on("fmt@:12.2", when="@10.0:")
     depends_on("glog")
     depends_on("libunwind")
 

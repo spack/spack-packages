@@ -87,7 +87,7 @@ class Amdsmi(CMakePackage):
         tag="esmi_pkg_ver-5.2.1.1",
         commit="d494a3194ceb4cc4dbb2debf9fcbe8773c6d3bef",
         placement="projects/amdsmi/esmi_ib_library",
-        when="@7.14",
+        when="@7.14:",
     )
     resource(
         name="esmi_ib_library",
