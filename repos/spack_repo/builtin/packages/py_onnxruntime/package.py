@@ -250,8 +250,7 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
             )
 
         if self.spec.satisfies("platform=darwin"):
-            # avoid onnxruntime's vendored protoc, which can be older than the
-            # protobuf found by find_package and generate incompatible code
+            # avoid onnxruntime's vendored protoc
             args.append(
                 define("ONNX_CUSTOM_PROTOC_EXECUTABLE", self.spec["protobuf"].prefix.bin.protoc)
             )
