@@ -12,9 +12,7 @@ class FastlowessCpp(CargoPackage):
     C++ bindings, implemented in Rust."""
 
     homepage = "https://github.com/thisisamirv/lowess-project"
-    url = (
-        "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.0.0.tar.gz"
-    )
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.0.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     maintainers("thisisamirv")
