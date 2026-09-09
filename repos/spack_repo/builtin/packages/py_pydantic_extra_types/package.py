@@ -16,10 +16,15 @@ class PyPydanticExtraTypes(PythonPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("2.11.1", sha256="46792d2307383859e923d8fcefa82108b1a141f8a9c0198982b3832ab5ef1049")
     version("2.10.5", sha256="1dcfa2c0cf741a422f088e0dbb4690e7bfadaaf050da3d6f80d6c3cf58a2bad8")
     version("2.10.0", sha256="552c47dd18fe1d00cfed75d9981162a2f3203cf7e77e55a3d3e70936f59587b9")
+
+    variant("pycountry", default=False, description="Enable pycountry support")
 
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-hatchling", type="build")
     depends_on("py-pydantic@2.5.2:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"))
+
+    depends_on("py-pycountry", type=("build", "run"), when="+pycountry")

@@ -1,0 +1,23 @@
+--- a/python/triton/knobs.py	2026-08-05 00:05:14.308910438 +0200
++++ b/python/triton/knobs.py	2026-08-05 00:05:21.234830133 +0200
+@@ -6,6 +6,7 @@
+ import re
+ import subprocess
+ import sysconfig
++import shutil
+ 
+ from dataclasses import dataclass
+ from contextlib import contextmanager
+@@ -212,6 +213,12 @@
+             if tool := NvidiaTool.from_path(path):
+                 return tool
+ 
++        
++        # Last-resort fallback: search PATH. Spack puts ptxas/cuobjdump/nvdisasm
++        # on PATH via `spack load`, but env vars may not propagate to subprocesses
++        # spawned via multiprocessing.spawn (e.g. vLLM's EngineCore worker).
++        if (which := shutil.which(self.binary)) and (tool := NvidiaTool.from_path(which)):
++            return tool
+         raise RuntimeError(f"Cannot find {self.binary}")
+ 
+ 

@@ -1,0 +1,22 @@
+--- a/CMakeLists.txt	2026-07-29 10:42:56.427782223 +0200
++++ b/CMakeLists.txt	2026-07-29 10:42:56.432620560 +0200
+@@ -58,7 +58,7 @@
+     )
+   else()
+     set(CMAKE_CXX_FLAGS "-Wall -Wextra -Werror -Wno-pedantic -Wno-unused-parameter \
+--Woverloaded-virtual -flto=auto ${CMAKE_CXX_FLAGS}"
++-Woverloaded-virtual ${CMAKE_CXX_FLAGS}"
+     )
+   endif()
+ endif()
+--- a/cpp/nanobind/CMakeLists.txt	2026-07-29 10:42:56.435661200 +0200
++++ b/cpp/nanobind/CMakeLists.txt	2026-07-29 10:42:56.440727839 +0200
+@@ -18,7 +18,7 @@
+ target_link_libraries(python_methods PUBLIC xgrammar)
+ 
+ # Any code that uses nanobind directly lives here
+-nanobind_add_module(xgrammar_bindings LTO nanobind.cc)
++nanobind_add_module(xgrammar_bindings nanobind.cc)
+ target_link_libraries(xgrammar_bindings PRIVATE python_methods)
+ 
+ if(DEFINED SKBUILD_PROJECT_NAME)

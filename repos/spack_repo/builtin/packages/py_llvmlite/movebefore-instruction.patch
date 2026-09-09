@@ -1,0 +1,11 @@
+diff --git a/ffi/custom_passes.cpp b/ffi/custom_passes.cpp
+--- a/ffi/custom_passes.cpp
++++ b/ffi/custom_passes.cpp
+@@ -151,7 +151,7 @@
+                     // move the decref to a location prior to the block
+                     // terminator and set mutated.
+                     auto term = bb.getTerminator();
+-                    decref->moveBefore(term->getIterator());
++                    decref->moveBefore(term);
+                     mutated |= true;
+                 }

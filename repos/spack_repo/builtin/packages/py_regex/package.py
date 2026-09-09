@@ -15,6 +15,9 @@ class PyRegex(PythonPackage):
 
     license("Apache-2.0")
 
+    version(
+        "2025.10.22", sha256="cc50db098b9d678ace33176a3ab4099616726ae4680fee6ac292302e8950fc4c"
+    )
     version("2024.11.6", sha256="7ab159b063c52a0333c884e4679f8d7a85112ee3078fe3d9004b2dd875585519")
     version("2022.8.17", sha256="5c77eab46f3a2b2cd8bbe06467df783543bf7396df431eb4a144cc4b89e9fb3c")
     version(
@@ -31,8 +34,10 @@ class PyRegex(PythonPackage):
         "2017.07.11", sha256="dbda8bdc31a1c85445f1a1b29d04abda46e5c690f8f933a9cc3a85a358969616"
     )
 
-    depends_on("c", type="build")  # generated
-
+    depends_on("c", type="build")
+    depends_on("py-setuptools@77.0.3:", type="build", when="@2025.7.32:")
+    depends_on("py-setuptools@62:", type="build", when="@2024.11.7:")
     depends_on("py-setuptools", type="build")
+    depends_on("python@3.9:", type=("build", "run"), when="@2025.5.18:")
     depends_on("python@3.8:", when="@2024.11.6:", type=("build", "run"))
     depends_on("python@3.6:", when="@2022.8.17:", type=("build", "run"))

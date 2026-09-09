@@ -40,6 +40,11 @@ class PyLlvmlite(PythonPackage):
     version("0.38.0", sha256="a99d166ccf3b116f3b9ed23b9b70ba2415640a9c978f3aaa13fad49c58f4965c")
     version("0.37.0", sha256="6392b870cd018ec0c645d6bbb918d6aa0eeca8c62674baaee30862d6b6865b15")
 
+    # LLVM (including the triton-flavored builds) removed the
+    # moveBefore(iterator) overload, leaving only moveBefore(Instruction*).
+    # See https://github.com/numba/llvmlite for upstream tracking.
+    patch("movebefore-instruction.patch", when="@0.46:")
+
     with default_args(type="build"):
         depends_on("c")
         depends_on("cxx")

@@ -1,0 +1,13 @@
+--- a/python/triton/runtime/build.py
++++ b/python/triton/runtime/build.py
+@@ -42,5 +42,9 @@
+     py_include_dir = sysconfig.get_paths(scheme=scheme)["include"]
+     custom_backend_dirs = knobs.build.backend_dirs
+-    include_dirs = include_dirs + [srcdir, py_include_dir, *custom_backend_dirs]
++    cuda_include = []
++    _cuda_home = os.environ.get("CUDA_HOME")
++    if _cuda_home:
++        cuda_include = [os.path.join(_cuda_home, "include")]
++    include_dirs = include_dirs + [srcdir, py_include_dir, *custom_backend_dirs, *cuda_include]
+     # for -Wno-psabi, see https://gcc.gnu.org/bugzilla/show_bug.cgi?id=111047
+     cc_cmd = [cc, src, "-O3", "-shared", "-fPIC", "-Wno-psabi", "-o", so]

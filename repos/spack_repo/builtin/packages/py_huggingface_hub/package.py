@@ -17,6 +17,7 @@ class PyHuggingfaceHub(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.29.0", sha256="6ebb385a581435325cf6d5c5b233d5d4bc91175834d99fd65dae14379b36e9ad")
     version("0.34.3", sha256="d58130fd5aa7408480681475491c0abd7e835442082fbc3ef4d45b6c39f83853")
     version("0.33.1", sha256="589b634f979da3ea4b8bdb3d79f97f547840dc83715918daf0b64209c0844c7b")
     version("0.26.2", sha256="b100d853465d965733964d123939ba287da60a547087783ddff8a323f340332b")
@@ -31,13 +32,13 @@ class PyHuggingfaceHub(PythonPackage):
     variant(
         "cli",
         default=False,
-        when="@0.10:",
+        when="@0.10:0",
         description="Install dependencies for CLI-specific features",
     )
     variant(
         "hf_transfer",
         default=False,
-        when="@0.21:",
+        when="@0.21:0",
         description="Install hf_transfer to speed up downloads/uploads",
     )
 
@@ -45,16 +46,21 @@ class PyHuggingfaceHub(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        depends_on("py-click@8.4:8", when="@1.16.2:")
+        depends_on("py-filelock@3.10:", when="@1.5:")
         depends_on("py-filelock")
         depends_on("py-fsspec@2023.5:", when="@0.18:")
         depends_on("py-fsspec", when="@0.14:")
+        depends_on("py-httpx@0.23:0", when="@1:")
         depends_on("py-packaging@20.9:", when="@0.10:")
         depends_on("py-pyyaml@5.1:", when="@0.10:")
         depends_on("py-requests")
         depends_on("py-tqdm@4.42.1:", when="@0.12:")
         depends_on("py-tqdm")
+        depends_on("py-typing-extensions@4.1:", when="@1.2.4:")
         depends_on("py-typing-extensions@3.7.4.3:", when="@0.10:")
         depends_on("py-typing-extensions", when="@0.0.10:")
+        depends_on("py-hf-xet@1.5.2:1", when="@1.27:")
         depends_on("py-hf-xet@1.1.3:1", when="@0.34:")
         depends_on("py-hf-xet@1.1.2:1", when="@0.32:")
 
