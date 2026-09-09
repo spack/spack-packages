@@ -79,6 +79,22 @@ class Gtkplus(AutotoolsPackage, MesonPackage):
         return url.format(version.up_to(2), version)
 
     def patch(self):
+        if "darwin" in self.spec.architecture:
+            with open('tests/gtkgears.c', 'r') as f:
+                content = f.read()
+            content = content.replace(
+                '#include <math.h>',
+                '#include <math.h>\n'
+                '#ifndef sincos\n'
+                'static inline void sincos(double x,double *s,double *c){*s=sin(x);*c=cos(x);}\n'
+                '#endif',
+                1
+            )
+            with open('tests/gtkgears.c', 'w') as f:
+                f.write(content)
+            with open('gtk/gtksearchenginequartz.c', 'w') as f:
+                f.write('void *_gtk_search_engine_quartz_new(void) { return 0; }\n')
+
         if self.spec.satisfies("@:3.24.35"):
             # remove disable deprecated flag.
             filter_file(
