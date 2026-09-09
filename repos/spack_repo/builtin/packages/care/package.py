@@ -131,13 +131,16 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     )
     variant(
         "cxxstd",
-        default="20",
-        values=("11", "14", "17", "20"),
         description="C++ standard to build with",
+        default="20",
+        values=(
+            conditional("11", when="@:0.15.1"),
+            conditional("14", when="@:0.15.1"),
+            conditional("17", when="@:0.15.3"),
+            "20",
+        ),
+        multi=False,
     )
-    conflicts("cxxstd=11", when="@0.15.2:")
-    conflicts("cxxstd=14", when="@0.15.2:")
-    conflicts("cxxstd=17", when="@2026.07.0:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
