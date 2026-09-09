@@ -157,6 +157,9 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     # Fix for the inline assembly problem for the Nvidia compilers
     # https://github.com/ofiwg/libfabric/pull/7665
     patch("nvhpc-symver.patch", when="@1.6.0:1.14.0 %nvhpc")
+    # Fix null deref in ofi_import_monitor_unsubscribe when no imported monitor
+    # is active. File introduced in v2.1.0; still unfixed as of v2.6.0/main.
+    patch("mr_unsubscribe.patch", when="@2.1.0:")
 
     depends_on("c", type="build")  # generated
 
