@@ -95,24 +95,23 @@ class Coinhsl(meson.MesonPackage, autotools.AutotoolsPackage):
 
 
 class MesonBuilder(meson.MesonBuilder):
-
     def meson_args(self):
         spec = self.spec
-        args: list[str] = []
+        args = []
 
         # archive versions have no deps
         if spec.satisfies("@:b"):
             return []
 
         # Configure blas
-        blas: str = spec["blas"].libs.names[0]
-        blas_paths: list[str] = [sf[2:] for sf in spec["blas"].libs.search_flags.split()]
+        blas = spec["blas"].libs.names[0]
+        blas_paths = [sf[2:] for sf in spec["blas"].libs.search_flags.split()]
         args.append(f"-Dlibblas={blas}")
         args.extend([f"-Dlibblas_path={p}" for p in blas_paths])
 
         # Configure lapack
-        lapack: str = spec["lapack"].libs.names[0]
-        lapack_paths: list[str] = [sf[2:] for sf in spec["lapack"].libs.search_flags.split()]
+        lapack = spec["lapack"].libs.names[0]
+        lapack_paths = [sf[2:] for sf in spec["lapack"].libs.search_flags.split()]
         args.append(f"-Dliblapack={lapack}")
         args.extend([f"-Dliblapack_path={p}" for p in lapack_paths])
 
@@ -136,9 +135,9 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     """Builder class to hold functions specific to autotools"""
 
     def configure_args(self):
-        """Add arguments for the calling configure"""
+        """Add arguments for calling configure"""
         spec = self.spec
-        args: list[str] = []
+        args = []
 
         # Configure blas
         if spec.satisfies("+blas"):
