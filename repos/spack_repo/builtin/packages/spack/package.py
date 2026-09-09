@@ -26,6 +26,12 @@ class Spack(Package):
     license("Apache-2.0 OR MIT")
 
     version("develop", branch="develop")
+    version("1.2.2", sha256="ed39d08bc295571cdec23a4566cbd8aa7ef4ebd582013d43874471a2b1257bf5")
+    version("1.1.1", sha256="a0160ae5e84adc81ac7832562a65ad79053d5c135996815dbb0d2eee6b2fca1c")
+    version("1.0.1", sha256="dd1345427dbc9281f359bdb6d0d53cb38edb94fd2ebee3256fda441c8242205e")
+    version("1.0.0", sha256="70dceb9abdf1225d596714522a0fc4d0290e8c5496f1bae8192ffe611b60cfa1")
+    version("0.23.0", sha256="ddb8220c46743e45c9484622370a1e17e193acba6a43230868c2dbc717e88b56")
+    version("0.22.0", sha256="81d0d25ba022d5a8b2f4852cefced92743fe0cae8c18a54e82bd0ec67ee96cac")
     version("0.21.1", sha256="9a66bc8b59d436d5c0bd7b052c36d2177b228665ece6c9a2c339c2acb3f9103e")
     version("0.21.0", sha256="98680e52591428dc194a021e673a79bdc7799f394c1217b3fc22c89465159a84")
     version("0.20.1", sha256="141be037b56e4b095840a95ac51c428c29dad078f7f88140ae6355b2a1b32dc3")
