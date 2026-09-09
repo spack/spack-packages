@@ -76,6 +76,11 @@ class Augustus(MakefilePackage):
     # build bam2wig and 3.4.0+ links -lhts only.
     conflicts("^htslib@1.10:", when="@3.3.1-tag1:3.3.2 ^samtools@:1.2")
 
+    def flag_handler(self, name, flags):
+        if name == "cppflags":
+            flags.append("-include stdint.h")  # needed for gcc 14 and newer
+        return (flags, None, None)
+
     def edit(self, spec, prefix):
         # Set compile commands for each compiler and
         # Fix for using 'boost' on Spack. (only after ver.3.3.1-tag1)
