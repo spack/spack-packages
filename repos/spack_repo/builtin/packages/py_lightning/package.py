@@ -20,18 +20,19 @@ class PyLightning(PythonPackage):
 
     version("master", branch="master")
     version("2.6.5", sha256="16a30310ed69afde3748491feb5d13508908effd70390d2bfc203dc0812a4b4a")
-    version("2.6.4", sha256="79a4eaf3db09e88485d0589abb6aa1beedde81e4e52536b1ddbb4478cda22235")
-    version("2.6.1", sha256="859104b98c61add6fe60d0c623abf749baf25f2950a66ebdfb4bd18aa7decba9")
-    version("2.6.0", sha256="881841716b59c1837ae0c562c2e64fea9bcf49ef9de3867bd1f868557ec23d04")
-    version("2.5.6", sha256="57b6abe87080895bc237fb7f36b7b4abaa2793760cbca00e3907e56607e0ed27")
-    version("2.5.5", sha256="4d3d66c5b1481364a7e6a1ce8ddde1777a04fa740a3145ec218a9941aed7dd30")
-    version("2.5.4", sha256="cec9459a356117f11c501b591fe80f327947614fc345dc6b6c9f8d4d373f214e")
-    version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
-    version("2.5.2", sha256="9550df613cfb22358ebf77b4a8ad45f3767cd7d26ba2d52b7f036bd3cdd701c4")
-    version("2.5.1", sha256="aca88f8abf3fc38d8b40c1f82ce481f4379c2b181a6eeeb9217db0aba8e40736")
-    version("2.5.0", sha256="3090d979acbc5a97a91906687f9530a246f357fd6b1a81a38d8a8c998ba6db5f")
-    version("2.4.0", sha256="9156604cc56e4b2b603f34fa7f0fe5107375c8e6d85e74544b319a15faa9ed0e")
     with default_args(deprecated=True):
+        # https://www.cve.org/CVERecord?id=CVE-2026-58659
+        version("2.6.4", sha256="79a4eaf3db09e88485d0589abb6aa1beedde81e4e52536b1ddbb4478cda22235")
+        version("2.6.1", sha256="859104b98c61add6fe60d0c623abf749baf25f2950a66ebdfb4bd18aa7decba9")
+        version("2.6.0", sha256="881841716b59c1837ae0c562c2e64fea9bcf49ef9de3867bd1f868557ec23d04")
+        version("2.5.6", sha256="57b6abe87080895bc237fb7f36b7b4abaa2793760cbca00e3907e56607e0ed27")
+        version("2.5.5", sha256="4d3d66c5b1481364a7e6a1ce8ddde1777a04fa740a3145ec218a9941aed7dd30")
+        version("2.5.4", sha256="cec9459a356117f11c501b591fe80f327947614fc345dc6b6c9f8d4d373f214e")
+        version("2.5.3", sha256="4ed3e12369a1e0f928beecf5c9f5efdabda60a9216057954851e2d89f1abecde")
+        version("2.5.2", sha256="9550df613cfb22358ebf77b4a8ad45f3767cd7d26ba2d52b7f036bd3cdd701c4")
+        version("2.5.1", sha256="aca88f8abf3fc38d8b40c1f82ce481f4379c2b181a6eeeb9217db0aba8e40736")
+        version("2.5.0", sha256="3090d979acbc5a97a91906687f9530a246f357fd6b1a81a38d8a8c998ba6db5f")
+        version("2.4.0", sha256="9156604cc56e4b2b603f34fa7f0fe5107375c8e6d85e74544b319a15faa9ed0e")
         # https://www.cvedetails.com/cve/CVE-2024-8019/
         version("2.3.3", sha256="7f454711895c1c6e455766f01fa39522e25e5ab54c15c5e5fbad342fa92bc93c")
         # https://www.cvedetails.com/cve/CVE-2024-8020/

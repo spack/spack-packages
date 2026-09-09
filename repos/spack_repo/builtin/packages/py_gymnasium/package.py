@@ -8,7 +8,8 @@ from spack.package import *
 
 
 class PyGymnasium(PythonPackage):
-    """A standard API for reinforcement learning and a diverse set of reference environments."""
+    """A standard API for reinforcement learning and a diverse set of reference
+    environments (formerly Gym)."""
 
     homepage = "https://github.com/Farama-Foundation/Gymnasium"
     pypi = "gymnasium/gymnasium-1.1.1.tar.gz"

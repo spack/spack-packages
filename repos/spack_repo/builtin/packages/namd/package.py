@@ -21,7 +21,9 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     url = "file://{0}/NAMD_2.12_Source.tar.gz".format(os.getcwd())
     git = "https://charm.cs.illinois.edu/gerrit/namd.git"
     manual_download = True
+
     redistribute(source=False, binary=False)
+    license("LicenseRef-NAMD-Proprietary", checked_by="tgamblin")
 
     maintainers("jcphill")
 

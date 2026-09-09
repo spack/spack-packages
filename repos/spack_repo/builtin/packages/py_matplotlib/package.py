@@ -379,8 +379,7 @@ class PyMatplotlib(PythonPackage):
         env.set("CPATH", ":".join(include))
         env.set("LIBRARY_PATH", ":".join(library))
 
-    @when("@:3.8")
-    @run_before("install")
+    @run_before("install", when="@:3.8")
     def configure(self):
         """Set build options with regards to backend GUI libraries."""
 

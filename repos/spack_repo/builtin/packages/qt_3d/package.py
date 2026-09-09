@@ -20,6 +20,7 @@ class Qt3d(QtPackage):
 
     license("LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only", checked_by="melven")
 
+    version("6.11.2", commit="8977447599a78dee99656ae3628cf6288dd123de", submodules=True)
     version("6.11.1", commit="1f4c3a7548201bcad21a273a49060c96ad9ff3a9", submodules=True)
 
     depends_on("c", type="build")

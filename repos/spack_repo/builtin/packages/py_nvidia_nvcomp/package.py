@@ -24,6 +24,16 @@ class PyNvidiaNvcomp(PythonPackage):
     arch = platform.machine()
     if "linux" in system and arch == "x86_64":
         version(
+            "5.2.0.13-cuda130",
+            sha256="73634520491a57eeffa0b2bd0b86686a6e0af51f33099df7be3b5c21697d9f44",
+            url="https://files.pythonhosted.org/packages/e3/90/7a16ea70a1dc17843713bfc1fd308f9bafd51cacedb54e647aed5eb043c5/nvidia_nvcomp_cu13-5.2.0.13-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+        )
+        version(
+            "5.2.0.13-cuda120",
+            sha256="c1797b45e041513af8bfc8aad2d727501f15ffbca633a419fd8a8e0ebb7b6a20",
+            url="https://files.pythonhosted.org/packages/e5/75/f9436615f16187d9e6d49c507fb00927d9dfab79ad3daf269a3761fb4c74/nvidia_nvcomp_cu12-5.2.0.13-py3-none-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl",
+        )
+        version(
             "5.1.0.21-cuda130",
             sha256="b8b89f14435529b750f2fab61c35655e234611807e0857d606c77c41807e5d58",
             url="https://files.pythonhosted.org/packages/08/e9/a60b0df949c65d758420109c5f2c6223caa2ee9c99f0f489641588ce6dbe/nvidia_nvcomp_cu13-5.1.0.21-py3-none-manylinux_2_28_x86_64.whl",
@@ -60,6 +70,16 @@ class PyNvidiaNvcomp(PythonPackage):
         )
     elif "linux" in system and arch == "aarch64":
         version(
+            "5.2.0.13-cuda130",
+            sha256="a2b3228ab85e327cdc1e400879387b02db45cc28842583c5d5c199a20913eb75",
+            url="https://files.pythonhosted.org/packages/99/61/bf5b63c9902b985acb65af8714b997edf506fc38a25b367d3f6ee613f06a/nvidia_nvcomp_cu13-5.2.0.13-py3-none-manylinux_2_26_aarch64.whl",
+        )
+        version(
+            "5.2.0.13-cuda120",
+            sha256="c67cd3ca1089078078c0002d58f60c5783cd1905db346bea86499918bcb7bb2e",
+            url="https://files.pythonhosted.org/packages/2b/a6/76464cc820f29fc02d21bc22ba369c53fe73ffe9cd62b94adadd5c6803f6/nvidia_nvcomp_cu12-5.2.0.13-py3-none-manylinux_2_26_aarch64.whl",
+        )
+        version(
             "5.1.0.21-cuda130",
             sha256="e43bdd25ee4265ee5b0e30b2b20b2a88e5249864e1f7a69607a05fc8249152fa",
             url="https://files.pythonhosted.org/packages/44/93/cadd09eabc687450e0dccecd793d55b3bfd055529a1fb4b05e7bf5767e90/nvidia_nvcomp_cu13-5.1.0.21-py3-none-manylinux_2_28_aarch64.whl",
@@ -95,8 +115,17 @@ class PyNvidiaNvcomp(PythonPackage):
             url="https://files.pythonhosted.org/packages/33/3b/b2664b92a45be3cade6ca033d743041e593cc510ea6f76ab49c28fc71794/nvidia_nvcomp_cu11-4.2.0.14-py3-none-manylinux_2_28_aarch64.whl",
         )
 
-    cuda130_versions = ("@5.1.0.21-cuda130", "@5.0.0.6-cuda130")
-    cuda120_versions = ("@5.1.0.21-cuda120", "@5.0.0.6-cuda120", "@4.2.0.14-cuda120")
+    cuda130_versions = (
+        "@5.2.0.13-cuda130",
+        "@5.1.0.21-cuda130",
+        "@5.0.0.6-cuda130",
+    )
+    cuda120_versions = (
+        "@5.2.0.13-cuda120",
+        "@5.1.0.21-cuda120",
+        "@5.0.0.6-cuda120",
+        "@4.2.0.14-cuda120",
+    )
     cuda110_versions = ("@5.0.0.6-cuda110", "@4.2.0.14-cuda110")
 
     for v in cuda130_versions:

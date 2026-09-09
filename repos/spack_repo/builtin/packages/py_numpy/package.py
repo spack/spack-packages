@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.3", sha256="df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563")
     version("2.5.2", sha256="d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860")
     version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
     version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
@@ -520,8 +521,7 @@ class PyNumpy(PythonPackage):
                 write_library_dirs(f, lapack_lib_dirs)
                 f.write("include_dirs = {0}\n".format(lapack_header_dirs))
 
-    @when("@:1.25")
-    @run_before("install")
+    @run_before("install", when="@:1.25")
     def set_blas_lapack(self):
         self.blas_lapack_site_cfg()
 

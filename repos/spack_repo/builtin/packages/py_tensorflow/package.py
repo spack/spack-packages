@@ -15,7 +15,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 rocm_dependencies = [
-    "hip",
     "rocrand",
     "rocblas",
     "rocfft",
@@ -23,16 +22,12 @@ rocm_dependencies = [
     "rccl",
     "hipsparse",
     "rocprim",
-    "hsa-rocr-dev",
-    "rocminfo",
     "hipsolver",
     "hiprand",
     "rocsolver",
     "hipsolver",
     "hipblas",
     "hipcub",
-    "rocm-core",
-    "roctracer-dev",
     "miopen-hip",
 ]
 
@@ -53,7 +48,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         "2.21.0-rocm-enhanced",
         git="https://github.com/ROCm/tensorflow-upstream.git",
         branch="r2.21-rocm-enhanced",
-        commit="ebcf58a9a6da204dc9092f2cfc75f00033c244a5",
+        commit="a0926cc4477566dc609ca341f5275ac9c4005f86",
     )
     version("2.21.0", sha256="ef3568bb4865d6c1b2564fb5689c19b6b9a5311572cd1f2ff9198636a8520921")
     version(
@@ -365,7 +360,9 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
     with when("+rocm"):
         depends_on("llvm-amdgpu")
+        depends_on("roctracer-dev", when="@:2.20")
         depends_on("hipblaslt", when="@2.20:")
+        depends_on("rocsparse", when="@2.21:")
         depends_on("rocprofiler-sdk", when="@2.21:")
         for pkg_dep in rocm_dependencies:
             depends_on(f"{pkg_dep}@6.0:", when="@2.14:")
@@ -712,6 +709,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                         "hsa-amd-aqlprofile",
                         "hipblaslt",
                         "rocprofiler-sdk",
+                        "roctracer-dev",
+                        "hip",
+                        "rocm-core",
+                        "roctracer-dev",
+                        "hsa-rocr-dev",
+                        "rocminfo",
+                        "rocsparse",
                     ]
                     for pkg_dep in transitive_rocm_dependencies:
                         if self.spec.satisfies(f"^{pkg_dep}"):
@@ -928,6 +932,23 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             before = r"/usr/lib/llvm-\d+/bin/clang"
             after = spec["llvm-amdgpu"].prefix.bin.clang
             filter_file(before, after, ".bazelrc")
+
+            # https://github.com/google/highway/issues/2705
+            # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
+            # Disable targets that require instructions newer than the selected CPU.
+            if spec.satisfies("@2.21 ^llvm-amdgpu@7.2:"):
+                if spec.satisfies("target=zen2"):
+                    disabled_targets = (
+                        "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
+                    )
+                elif spec.satisfies("target=skylake_avx512"):
+                    disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
+                else:
+                    disabled_targets = None
+
+                if disabled_targets:
+                    with open(".tf_configure.bazelrc", mode="a") as f:
+                        f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
 
         # Support for host_copt customization on macOS arm64 seems to be broken?
         # https://github.com/tensorflow/tensorflow/issues/111876

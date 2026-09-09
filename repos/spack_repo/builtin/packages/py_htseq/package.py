@@ -22,7 +22,6 @@ class PyHtseq(PythonPackage):
     version("0.9.1", sha256="af5bba775e3fb45ed4cde64c691ebef36b0bf7a86efd35c884ad0734c27ad485")
 
     variant("qa", default=True, description="Quality assessment")
-    variant("mtx", default=True, description="BigWig manipulation", when="@2:")
     variant("mtx", default=True, description="mtx output files", when="@2:")
     variant("h5ad", default=True, description="h5ad output files", when="@2:")
     variant("loom", default=True, description="loom output files", when="@2:")

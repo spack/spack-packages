@@ -15,6 +15,7 @@ class Bats(Package):
 
     license("MIT")
 
+    version("1.14.0", sha256="bb537b70b15b732f6d8827dd6578e3d8ce166636ce1f18ea9a074184fcce9177")
     version("1.13.0", sha256="a85e12b8828271a152b338ca8109aa23493b57950987c8e6dff97ba492772ff3")
     version("1.10.0", sha256="a1a9f7875aa4b6a9480ca384d5865f1ccf1b0b1faead6b47aa47d79709a5c5fd")
     version(

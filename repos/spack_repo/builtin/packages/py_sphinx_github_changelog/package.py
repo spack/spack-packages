@@ -17,6 +17,7 @@ class PySphinxGithubChangelog(PythonPackage):
 
     license("MIT")
 
+    version("2.3.0", sha256="704a6dfca5426b70b0bbcfb426937cb900935a69c0343690af8602bd50d100f8")
     version("1.7.2", sha256="79f11f30ec5b1ae52a1742a6dc702644203b164732a1af4b049ebe522ff484e4")
 
     with default_args(type="build"):
@@ -25,5 +26,10 @@ class PySphinxGithubChangelog(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("py-docutils")
-        depends_on("py-requests")
+        depends_on("py-myst-parser@5.1:", when="@2:")
+        depends_on("py-httpx", when="@2:")
         depends_on("py-sphinx")
+        depends_on("py-tenacity", when="@2:")
+
+        # Historical dependencies
+        depends_on("py-requests", when="@1")

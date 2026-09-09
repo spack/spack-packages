@@ -18,6 +18,7 @@ class PyCffi(PythonPackage):
     license("MIT-0 AND MIT", when="@2:")
     license("MIT", when="@:1")
 
+    version("2.1.1", sha256="dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be")
     version("2.0.0", sha256="44d1b5909021139fe36001ae048dbdde8214afa20200eda0f64c068cac5d5529")
     version("1.17.1", sha256="1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824")
     version("1.16.0", sha256="bcb3ef43e58665bbda2fb198698fcae6776483e0c4a631aa5647806c25e02cc0")
@@ -30,10 +31,12 @@ class PyCffi(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.10:", when="@2.1:")
         depends_on("python@3.9:", when="@2:")
         depends_on("python@3.8:", when="@1.16:")
 
-        depends_on("python@:3.14")
+        depends_on("python@:3.15")
+        depends_on("python@:3.14", when="@:2.0")
         depends_on("python@:3.13", when="@:1")
         depends_on("python@:3.12", when="@:1.16")
         depends_on("python@:3.11", when="@:1.15")
@@ -43,7 +46,7 @@ class PyCffi(PythonPackage):
     depends_on("pkgconfig", type="build")
     # Not yet documented, but required for PEP 639 support
     # https://github.com/python-cffi/cffi/issues/200
-    depends_on("py-setuptools@77:", type="build", when="@2:")
+    depends_on("py-setuptools@77.0.3:", type="build", when="@2:")
     depends_on("py-setuptools@66.1:", type="build", when="@1.16:")
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools", type="run", when="^python@3.12:")

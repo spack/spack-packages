@@ -19,6 +19,7 @@ class PyPythran(PythonPackage):
     license("BSD-3-Clause")
     maintainers("rgommers")
 
+    version("0.19.0", sha256="18a096daa8b4bbe3ace06ce5d7325be5ff57aec4cf67b91834cf1b757b3e5392")
     version("0.18.1", sha256="8803ed948bf841a11bbbb10472a8ff6ea24ebd70e67c3f77b77be3db900eccfe")
     version("0.18.0", sha256="5c003e8cbedf6dbb68c2869c49fc110ce8b5e8982993078a4a819f1dadc4fc6a")
     version("0.16.1", sha256="861748c0f9c7d422b32724b114b3817d818ed4eab86c09781aa0a3f7ceabb7f9")
@@ -39,7 +40,14 @@ class PyPythran(PythonPackage):
     version("0.9.4", sha256="ec9c91f5331454263b064027292556a184a9f55a50f8615e09b08f57a4909855")
     version("0.9.3", sha256="217427a8225a331fdc8f3efe57871aed775cdf2c6e847a0a83df0aaae4b02493")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+
+    # https://github.com/serge-sans-paille/pythran/pull/2432
+    depends_on("python@:3.14", when="@:0.18", type=("build", "run"))
+    # from distutils.errors import CompileError in run.py
+    depends_on("python@:3.11", when="@:0.15")
+    # https://github.com/serge-sans-paille/pythran/issues/2101
+    depends_on("python@:3.10", when="@:0.12.1")
 
     # https://github.com/serge-sans-paille/pythran/pull/2196
     depends_on("py-setuptools@62:", when="@0.15:", type=("build", "run"))
@@ -83,10 +91,6 @@ class PyPythran(PythonPackage):
 
     # https://github.com/serge-sans-paille/pythran/issues/1937
     conflicts("%apple-clang@13:", when="@:0.10")
-    # https://github.com/serge-sans-paille/pythran/issues/2101
-    conflicts("^python@3.11:", when="@:0.12.1")
-    # from distutils.errors import CompileError in run.py
-    conflicts("^python@3.12:", when="@:0.15")
 
     def patch(self):
         # Compiler is used at run-time to determine name of OpenMP library to search for

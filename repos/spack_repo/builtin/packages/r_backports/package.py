@@ -21,6 +21,7 @@ class RBackports(RPackage):
 
     license("GPL-2.0-only OR GPL-3.0-only")
 
+    version("1.5.1", sha256="b8eeeabe3c27e1486f43e0b18dae57f0e870dd7c6979d3668df76bf0d4735bad")
     version("1.5.0", sha256="0d3ed9db8f1505e88967f48d669b2a257e0c6b7e6320ea64b946c1bd40897ca2")
     version("1.4.1", sha256="845c3c59fbb05e5a892c4231b955a0afdd331d82b7cc815bcff0672023242474")
     version("1.4.0", sha256="e7611565d24a852ad8b08579a7c67ad9121c1bda148bade98c7bec686e8dabbf")
@@ -33,3 +34,7 @@ class RBackports(RPackage):
     depends_on("c", type="build")
 
     depends_on("r@3.0.0:", type=("build", "run"))
+
+    # Versions <= 1.5.0 calls the removed-from-public-API findVar()
+    # 1.5.1 switched to the new R_Dots* API.
+    depends_on("r@4.6:", type=("build", "run"), when="@1.5.1:")

@@ -20,11 +20,17 @@ class Opencarp(CMakePackage):
     maintainers("MarieHouillon")
 
     version(
+        "20.0",
+        commit="ffce19513ca90235192fff261160f53167921877",
+        submodules=False,
+        no_cache=True,
+        preferred=True,
+    )
+    version(
         "19.0",
         commit="9accae0522f4108774ed8eb1df90b8ef0afd4c8e",
         submodules=False,
         no_cache=True,
-        preferred=True,
     )
     version(
         "18.1", commit="6eaa147d18b69a6037d05a90b841e23301048a59", submodules=False, no_cache=True
@@ -91,6 +97,7 @@ class Opencarp(CMakePackage):
     depends_on("meshtool", when="+meshtool", type=("build", "run"))
     # Use specific versions of carputils and meshtool for releases
     for ver in [
+        "20.0",
         "19.0",
         "18.1",
         "18.0",
