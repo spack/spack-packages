@@ -39,7 +39,7 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
-        version("1.2.0", commit="3e2f803b9e65c952192710f46e52a658e74fc26d")
+        version("1.2.0", commit="1c07624d7f352939ad33c0ea3e37188b6f1388e5")
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
