@@ -28,6 +28,8 @@ class Ectrans(CMakePackage):
 
     version("develop", branch="develop", no_cache=True)
     version("main", branch="main", no_cache=True)
+    version("2.0.0", sha256="dbe7875fca912a431b01defa2c6af51982c1ae1fb9f8eaa3504c40c8762e0638")
+    version("1.9.0", sha256="4e42eafce3acea88d0a48007fda33b620f8468c54b238103648ace6dc82c3b59")
     version("1.8.0", sha256="9a6576215296a91b05e778b3ad3454d44437653355b37526e2f53f6b3617824c")
     version("1.7.0", sha256="224893a8edeaaf76140842340eb30ad4f9ab772591a55aab4e4493a978e086c7")
     version("1.6.2", sha256="63e01a5106fb4eee70a4e544b84300b104507a3fbeb9b7374964c8c48e06acda")
@@ -76,6 +78,7 @@ class Ectrans(CMakePackage):
 
     depends_on("ecbuild", type="build")
     depends_on("ecbuild@3.6:", when="+trust_ecbuild_flags", type="build")
+    depends_on("ecbuild@3.14.2:", when="@1.9:", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")

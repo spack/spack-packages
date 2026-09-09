@@ -22,14 +22,21 @@ class LlamaCpp(GGMLPackageBase):
     license("MIT")
 
     version("master", branch="master")
+    version(
+        "0.3.0", tag="v0.3.0", commit="c1d0e7a004015f23bc0233470b747b596f29b264", preferred=True
+    )
     version("7158", tag="b7158", commit="b3b03a7baf387cfeaf56641bd14c06dbd3d2fcf0")
     version("7086", tag="b7086", commit="7aaeedc098a77e9323044187101db4f6b69988da")
 
     variant("curl", default=True, description="use curl for model download")
     variant("system_ggml", default=False, description="use external GGML library")
+    variant("numactl", default=True, description="use numactl core binding option")
 
     depends_on("curl", when="+curl")
     depends_on("ggml", when="+system_ggml")
+    depends_on("numactl", type="run", when="+numactl")
+    depends_on("openssl")
+    depends_on("pkgconfig", type="build")
 
     for v in ("cpu", "blas", "openmp", "cuda", "rocm", "metal", "rpc"):
         depends_on(f"ggml+{v}", when=f"+system_ggml +{v}")
