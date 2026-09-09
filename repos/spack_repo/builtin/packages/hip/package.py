@@ -79,6 +79,8 @@ class Hip(ROCmLibrary, CMakePackage):
     depends_on("libedit", type="build")
     depends_on("perl@5.10:", type=("build", "run"))
 
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     test_requires_compiler = True
 
     with when("+rocm"):
@@ -134,6 +136,7 @@ class Hip(ROCmLibrary, CMakePackage):
             "7.14.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
+            depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
             depends_on(f"llvm-amdgpu@{ver} +rocm-device-libs", when=f"@{ver}")
             depends_on(f"rocminfo@{ver}", when=f"@{ver}")
