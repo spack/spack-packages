@@ -53,10 +53,10 @@ class Bufr(CMakePackage):
     depends_on("fortran", type="build")
 
     depends_on("python@3:", type=("build", "run"), when="+python")
-    depends_on("python@:3.11", type=("build", "run"), when="@:12.0 +python")
+    depends_on("python@:3.11", type=("build", "run"), when="@:12.0.1 +python")
     depends_on("py-setuptools", type="build", when="+python")
     # f2py uses Meson as its build backend with Python 3.12 and newer.
-    depends_on("meson", type="build", when="+python ^python@3.12:")
+    depends_on("meson", type="build", when="@12.1: +python ^python@3.12:")
     depends_on("py-numpy", type=("build", "run"), when="+python")
     depends_on("py-pip", type="build", when="+python")
     depends_on("py-wheel", type="build", when="+python")
@@ -95,11 +95,11 @@ class Bufr(CMakePackage):
         # NumPy f2py uses Meson on Python 3.12 and newer. Direct its
         # temporary build directory to CMake's already-created binary tree,
         # rather than the potentially noexec /tmp default.
-        if self.spec.satisfies("+python ^python@3.12:"):
+        if self.spec.satisfies("@12.1: +python ^python@3.12:"):
             filter_file(
                 '-c "${CMAKE_CURRENT_SOURCE_DIR}/_bufrlib.pyf"',
                 '-c "${CMAKE_CURRENT_SOURCE_DIR}/_bufrlib.pyf"\n'
-                '                   --build-dir "${CMAKE_CURRENT_BINARY_DIR}/f2py-build"',
+                '                   --build-dir "${CMAKE_BINARY_DIR}/f2py-build"',
                 "python/CMakeLists.txt",
                 string=True,
             )
