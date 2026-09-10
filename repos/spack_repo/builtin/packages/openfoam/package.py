@@ -250,6 +250,10 @@ def submodules(package):
         submodules.append("plugins/avalanche")
     if package is not None and package.spec.satisfies("plugins=cfmesh"):
         submodules.append("plugins/cfmesh")
+    if package is not None and package.spec.satisfies("modules=adios"):
+        submodules.append("modules/adios")
+    if package is not None and package.spec.satisfies("modules=visualization"):
+        submodules.append("modules/visualization")
     return submodules
 
 
@@ -381,6 +385,16 @@ class Openfoam(Package):
         values=("none", conditional("avalanche", "cfmesh", when="@2512:")),
         multi=True,
     )
+
+    variant(
+        "modules",
+        default="none",
+        description="With optional modules",
+        values=("none", conditional("adios", "visualization", when="@2512:")),
+        multi=True,
+    )
+    conflicts("modules=none", when="modules=adios")
+    conflicts("modules=none", when="modules=visualization")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -892,6 +906,12 @@ class Openfoam(Package):
         dirs = ["platforms"]
         if "+source" in spec:
             dirs.extend(["doc"])
+
+            if not spec.satisfies("plugins=none"):
+                dirs.extend(["plugins"])
+
+            if not spec.satisfies("modules=none"):
+                dirs.extend(["modules"])
 
         # Install platforms (and doc) skipping intermediate targets
         relative_ignore_paths = ["src", "applications", "html", "Guides"]
