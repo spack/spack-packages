@@ -704,6 +704,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             languages.append("fortran")
         return languages
 
+    @property
+    def file_prefix_map_arg(self):
+        if self.spec.satisfies("@10: +clang"):
+            return "-ffile-prefix-map={0}={1}"
+        return None
+
     @classproperty
     def executables(cls):
         return super().executables + [r"^ld\.lld(-\d+)?$", r"^lldb(-\d+)?$"]

@@ -178,6 +178,9 @@ class CompilerWrapper(Package):
             if compiler_pkg.name == "gcc" and self.spec.satisfies("@1.1:"):
                 env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
 
+            if getattr(compiler_pkg, "file_prefix_map_arg", None):
+                prefix_map_arg = compiler_pkg.file_prefix_map_arg
+                
             if language not in compiler_pkg.compiler_wrapper_link_paths:
                 continue
 
@@ -231,25 +234,25 @@ class CompilerWrapper(Package):
             extra_rpaths = dedupe(extra_rpaths)
             env.set("SPACK_COMPILER_EXTRA_RPATHS", ":".join(extra_rpaths))
 
-        # Set SPACK_PREFIX_MAP and SPACK_BUILD_PREFIX_MAP, so
-        # the source tree and and the out-of-source build directory
-        # are remapped to . and ./build respectively
-        staging_src = dependent_spec.package.stage.source_path
-        env.set("SPACK_PREFIX_MAP", staging_src)
+        # If (at least one of) the compiler(s) used for this build supports a
+        # file-prefix-remapping flag, emit the full flag(s) so the source tree
+        # and the out-of-source build directory are remapped to . and ./build
+        # respectively. Compilers without this capability (file_prefix_map_arg
+        # is None) get no flag at all, rather than a broken/rejected one.
+        if prefix_map_arg:
+            staging_src = dependent_spec.package.stage.source_path
+            env.set("SPACK_PREFIX_MAP_ARGS", prefix_map_arg.format(staging_src, "."))
 
-        try:
-            builder = spack.builder.create(dependent_spec.package)
-            build_dir = getattr(builder, "build_directory", None)
-        except Exception:
-            build_dir = None
+            try:
+                builder = spack.builder.create(dependent_spec.package)
+                build_dir = getattr(builder, "build_directory", None)
+            except Exception:
+                build_dir = None
 
-        if build_dir and os.path.isabs(build_dir):
-            env.set("SPACK_BUILD_PREFIX_MAP", build_dir)
-        else:
-            env.set("SPACK_BUILD_PREFIX_MAP", staging_src)
-
-        env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)
-        env.set("SPACK_DISABLE_NEW_DTAGS", self.disable_new_dtags)
+            if build_dir and os.path.isabs(build_dir) and build_dir != staging_src:
+                env.set(
+                    "SPACK_BUILD_PREFIX_MAP_ARGS", prefix_map_arg.format(build_dir, "./build")
+                    )
 
         for item in env_paths:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)

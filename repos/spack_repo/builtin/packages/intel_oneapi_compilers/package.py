@@ -404,6 +404,8 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
 
     openmp_flag = "-fiopenmp"
 
+    file_prefix_map_arg = "-ffile-prefix-map={0}={1}"
+
     compiler_wrapper_link_paths = {
         "c": os.path.join("oneapi", "icx"),
         "cxx": os.path.join("oneapi", "icpx"),
