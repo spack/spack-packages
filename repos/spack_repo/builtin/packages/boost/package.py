@@ -31,6 +31,8 @@ class Boost(Package):
     license("BSL-1.0")
 
     version("develop", branch="develop", submodules=True)
+    version("1.92.0", sha256="5c1d40cb8e19adbf740a4ec2da35b3e58f3f5804b1dce44deb53df72193cbc6c")
+    version("1.91.0", sha256="de5e6b0e4913395c6bdfa90537febd9028ea4c0735d2cdb0cd9b45d5f51264f5")
     version("1.90.0", sha256="49551aff3b22cbc5c5a9ed3dbc92f0e23ea50a0f7325b0d198b705e8ee3fc305")
     version("1.89.0", sha256="85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a")
     version("1.88.0", sha256="46d9d2c06637b219270877c9e16155cbd015b6dc84349af064c088e9b5b12f7b")
@@ -360,9 +362,10 @@ class Boost(Package):
     patch("boost_11856.patch", when="@1.60.0%gcc@4.4.7")
 
     # Patch fix from https://svn.boost.org/trac/boost/ticket/11120
-    patch("python_jam-1_77.patch", when="@1.77:     ^python@3:")
+    patch("python_jam-1_91.patch", when="@1.91: ^python@3:")
+    patch("python_jam-1_77.patch", when="@1.77:1.90 ^python@3:")
     patch("python_jam.patch", when="@1.56:1.76 ^python@3:")
-    patch("python_jam_pre156.patch", when="@:1.55.0   ^python@3:")
+    patch("python_jam_pre156.patch", when="@:1.55.0 ^python@3:")
 
     # Patch fix for IBM XL compiler
     patch("xl_1_62_0_le.patch", when="@1.62.0%xl_r")
