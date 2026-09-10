@@ -1,11 +1,18 @@
 mirrors:
-  buildcache-source:
+  buildcache-source-legacy:
     fetch: ${PROTECTED_MIRROR_FETCH_DOMAIN}/${PR_TARGET_REF_NAME}/${SPACK_CI_STACK_NAME}
     push: ${PROTECTED_MIRROR_PUSH_DOMAIN}/${PR_TARGET_REF_NAME}/${SPACK_CI_STACK_NAME}
     source: False
     binary: True
+  buildcache-source:
+    fetch: ${PROTECTED_MIRROR_FETCH_DOMAIN}/${PR_TARGET_REF_NAME}
+    push: ${PROTECTED_MIRROR_PUSH_DOMAIN}/${PR_TARGET_REF_NAME}
+    view: ${SPACK_CI_STACK_NAME}
+    source: False
+    binary: True
   buildcache-destination:
-    fetch: ${PR_MIRROR_FETCH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
-    push: ${PR_MIRROR_PUSH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
+    fetch: ${PR_MIRROR_FETCH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    push: ${PR_MIRROR_PUSH_DOMAIN}/${CI_PROJECT_NAME}/${CI_COMMIT_REF_NAME}
+    view: ${SPACK_CI_STACK_NAME}
     source: False
     binary: True
