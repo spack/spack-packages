@@ -21,6 +21,9 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("hughcars", "simlap", "cameronrutherford", "sbozzolo", "phdum")
 
     version("develop", branch="main")
+    version("0.18.0", tag="v0.18.0", commit="b92aef83ecfe6d360c4b3d83e2122986297f6778")
+    version("0.17.0", tag="v0.17.0", commit="12d8069afb5aa9e169a17e303d735e120968e9f2")
+    version("0.16.1", tag="v0.16.1", commit="c13e409f255392b9d78369c386276cf9343c2205")
     version("0.16.0", tag="v0.16.0", commit="869ee5ced4850384410a7aeebc7c25f4c01be161")
     version("0.15.0", tag="v0.15.0", commit="b6762777d85a06072fdf4cc96e8a365da73df170")
     version("0.14.0", tag="v0.14.0", commit="a428a3a32dbbd6a2a6013b3b577016c3e9425abc")
@@ -45,9 +48,20 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         when="@0.14:",
     )
     variant("mumps", default=False, description="Build with MUMPS sparse direct solver")
+    variant(
+        "cudss",
+        default=False,
+        description="Build with cuDSS sparse direct solver",
+        when="@0.18:",
+    )
     variant("slepc", default=True, description="Build with SLEPc eigenvalue solver")
     variant("arpack", default=False, description="Build with ARPACK eigenvalue solver")
-    variant("libxsmm", default=True, description="Build with libxsmm backend for libCEED")
+    variant(
+        "libxsmm",
+        default=True,
+        sticky=True,
+        description="Build with libxsmm backend for libCEED",
+    )
     variant(
         "gslib",
         default=True,
@@ -87,7 +101,16 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("eigen", type="build")
     depends_on("lcov@1.15:", when="+coverage@0.16:", type="run")
 
-    conflicts("~superlu-dist~strumpack~mumps", msg="Need at least one sparse direct solver")
+    conflicts(
+        "~superlu-dist~strumpack~mumps",
+        when="@:0.17",
+        msg="Need at least one sparse direct solver",
+    )
+    conflicts(
+        "~superlu-dist~strumpack~mumps~cudss",
+        when="@0.18:",
+        msg="Need at least one sparse direct solver",
+    )
     conflicts(
         "+asan",
         when="platform=darwin %gcc",
@@ -149,6 +172,11 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("metis+int64", when="+int64")
     depends_on("metis~int64", when="~int64")
 
+    # As of version 5.1.0, the PETSc fork of METIS provides a better mesh
+    # partitioning.
+    depends_on("metis+petsc_patches+gkrand")
+    depends_on("parmetis+petsc_patches")
+
     conflicts("^hypre+int64", msg="Palace uses HYPRE's mixedint option for 64 bit integers")
     depends_on("hypre@:2", when="@:0.15.0")
     depends_on("hypre@3:", when="@0.16.0:")
@@ -170,8 +198,55 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         # +lapack means: use external lapack
         depends_on(
             "mfem+mpi+metis+lapack@4.9:",
-            patches=["patch_par_tet_mesh_fix_dev.diff", "patch_gmsh_parser_performance.diff"],
+            patches=[
+                # https://github.com/mfem/mfem/pull/3847
+                patch(
+                    "https://github.com/mfem/mfem/compare/"
+                    "2d574015756711029556c14d096ca52c15d5b663..."
+                    "50ead1a9a785e3273b2a72ff59ac8ed8a496b498.diff",
+                    sha256="e9be1a0d4b2642ed1b72f31c36065cf0aacbe342b6594d5d943782c73a6177f4",
+                ),
+                patch(
+                    "https://github.com/mfem/mfem/commit/"
+                    "e4a2b9568c40f20e24612066d155cc6a9973b247.diff",
+                    sha256="6ced66f487780af66fb8184d329b9aad4b694e711b65830391e8c6d0c898713e",
+                    when="@4.9.0",
+                ),
+                # Curated backport of https://github.com/mfem/mfem/pull/5246.
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/"
+                    "b22f654ab36fe01f1f3176349c60626efed1a6a2/extern/patch/mfem/"
+                    "mfem_pr5246.diff",
+                    sha256="d5227c18768369b8fa3a20f4457dd378a360346850329ab1970d18ed5a73b0d6",
+                    when="@4.9.0",
+                ),
+            ],
         )
+        depends_on(
+            "mfem",
+            when="@0.16",
+            patches=[
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/"
+                    "c13e409f255392b9d78369c386276cf9343c2205/extern/patch/mfem/"
+                    "mfem_pr5280.diff",
+                    sha256="d5026c7f14a3bdc359f5a74b141bc02bfce6813195f54620aa1fe96fe6f865ea",
+                ),
+            ],
+        )
+        depends_on(
+            "mfem",
+            when="@0.17:",
+            patches=[
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/"
+                    "b22f654ab36fe01f1f3176349c60626efed1a6a2/extern/patch/mfem/"
+                    "mfem_pr5353.diff",
+                    sha256="c35f584090f97c84c12fc80e6d5c068512911d192132e18f5aa4254f507c5e4f",
+                ),
+            ],
+        )
+
         depends_on("mfem+shared", when="+shared")
         depends_on("mfem~shared", when="~shared")
         depends_on("mfem+openmp", when="+openmp")
@@ -187,14 +262,48 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mfem~sundials", when="~sundials")
         depends_on("mfem+gslib", when="+gslib")
         depends_on("mfem~gslib", when="~gslib")
-        depends_on("mfem+exceptions", type="test")
+        # Palace tests require mfem+exceptions, checked at build time.
+        # TODO: depends_on("mfem+exceptions", type="test") should work but
+        # the concretizer enables +exceptions even for non-test builds:
+        # https://github.com/spack/spack/issues/51775
+        # depends_on("mfem+exceptions", type="test")
 
         depends_on("mfem+libunwind", when="build_type=Debug")
         depends_on("eigen@3.5:", type="build")
 
+    with when("@0.18:"):
+        depends_on(
+            "mfem",
+            patches=[
+                # https://github.com/mfem/mfem/pull/4983
+                patch(
+                    "https://raw.githubusercontent.com/awslabs/palace/"
+                    "b22f654ab36fe01f1f3176349c60626efed1a6a2/extern/patch/mfem/"
+                    "mfem_pr4983.diff",
+                    sha256="530532da3ae8815d004bb6ce19f6f08a1248c3d585503551c90d0eeae7fb3f87",
+                    when="@:4.9",
+                ),
+                # https://github.com/mfem/mfem/pull/5415
+                patch(
+                    "https://github.com/mfem/mfem/commit/"
+                    "9d1438d8a2502cc927c63e093cf8c855ff17918e.diff",
+                    sha256="482655b6b740b880713d67bcca843571244b7d383c95e0cef3d3102b3327ff2f",
+                    when="@4.9.0",
+                ),
+            ],
+        )
+        depends_on("mfem+cudss", when="+cudss")
+        depends_on("cudss", when="+cudss")
+        # Umpire 2026.07 requires C++20; Palace's GPU dependencies use C++17.
+        depends_on("umpire@:2025.12", when="+cuda")
+        depends_on("umpire@:2025.12", when="+rocm")
+        # https://github.com/llnl/blt/pull/735
+        depends_on("umpire %blt@0.7.2:", when="+cuda")
+
     with when("+libxsmm"):
         # NOTE: @=main != @main since libxsmm has a version main-2023-22
-        depends_on("libxsmm@=main blas=0")
+        depends_on("libxsmm@=main blas=0", when="@:0.17")
+        depends_on("libxsmm@2: blas=0", when="@0.18:")
         depends_on("libxsmm+debug", when="build_type=Debug")
         depends_on("libceed+libxsmm", when="@0.14:")
         # NOTE: libxsmm builds on MacOS have linker issues
@@ -218,6 +327,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="@:0.13", msg="CUDA is only supported for Palace versions after 0.13")
     conflicts("+rocm", when="@:0.13", msg="ROCm is only supported for Palace versions after 0.13")
     conflicts("+cuda+rocm", msg="PALACE_WITH_CUDA is not compatible with PALACE_WITH_HIP")
+    conflicts("+cudss", when="~cuda", msg="PALACE_WITH_CUDSS requires PALACE_WITH_CUDA")
     conflicts(
         "cuda_arch=none", when="+cuda", msg="palace: Please specify a CUDA arch value / values"
     )
@@ -303,6 +413,13 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
             self.define("PALACE_BUILD_EXTERNAL_DEPS", False),
             self.define("PALACE_MFEM_USE_EXCEPTIONS", self.run_tests),
         ]
+
+        if self.spec.satisfies("@0.18:"):
+            args.append(self.define_from_variant("PALACE_WITH_CUDSS", "cudss"))
+            if self.spec.satisfies("+cudss"):
+                args.append(self.define("CUDSS_DIR", self.spec["cudss"].prefix))
+            if self.spec.satisfies("+mumps") or self.spec.satisfies("+strumpack"):
+                args.append(self.define("SCALAPACK_DIR", self.spec["scalapack"].prefix))
 
         if self.spec.satisfies("@0.16:"):
             args.append(self.define("MFEM_DIR", self.spec["mfem"].prefix))
@@ -502,6 +619,11 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
     def build(self, spec, prefix):
         with working_dir(self.build_directory):
             if self.run_tests:
+                if spec.satisfies("^mfem~exceptions"):
+                    raise InstallError(
+                        "Palace tests require mfem+exceptions. "
+                        "Reinstall with: spack install palace ^mfem+exceptions"
+                    )
                 make("palace-tests")
             else:
                 make()
