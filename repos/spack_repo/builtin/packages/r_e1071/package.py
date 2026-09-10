@@ -29,5 +29,8 @@ class RE1071(RPackage):
     version("1.7-1", sha256="5c5f04a51c1cd2c7dbdf69987adef9bc07116804c63992cd36d804a1daf89dfe")
     version("1.6-7", sha256="7048fbc0ac17d7e3420fe68081d0e0a2176b1154ee3191d53558ea9724c7c980")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-class", type=("build", "run"))
     depends_on("r-proxy", type=("build", "run"), when="@1.7-9:")

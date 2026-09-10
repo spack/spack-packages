@@ -15,14 +15,27 @@ class Mpi(Package):
     homepage = "https://www.mpi-forum.org/"
     virtual = True
 
+    version("5.0")
+    version("4.1")
+    version("4.0")
+    version("3.1")
+    version("3.0")
+    version("2.2")
+    version("2.1")
+    version("2.0")
+    version("1.3")
+    version("1.2")
+    version("1.1")
+    version("1.0")
+
     def test_mpi_hello(self):
         """build and run mpi hello world"""
         for lang in ("c", "f"):
             filename = self.test_suite.current_test_data_dir.join("mpi_hello." + lang)
 
             compiler_var = "MPICC" if lang == "c" else "MPIF90"
-            compiler = which(os.environ[compiler_var])
-            mpirun = which(self.prefix.bin.mpirun)
+            compiler = which(os.environ[compiler_var], required=True)
+            mpirun = which(self.prefix.bin.mpirun, required=True)
 
             exe_name = "mpi_hello_%s" % lang
 

@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index de95010c6..3edd8a520 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -1492,6 +1492,9 @@ IF(ENABLE_PARALLEL4 AND ENABLE_HDF5)
+     SET(USE_PARALLEL ON CACHE BOOL "")
+     SET(USE_PARALLEL4 ON CACHE BOOL "")
+     SET(STATUS_PARALLEL "ON")
++    if(MPI_C_INCLUDE_PATH)
++      list(REMOVE_ITEM MPI_C_INCLUDE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
++    endif()
+     configure_file("${netCDF_SOURCE_DIR}/nc_test4/run_par_test.sh.in"
+       "${netCDF_BINARY_DIR}/tmp/run_par_test.sh" @ONLY NEWLINE_STYLE LF)
+     FILE(COPY "${netCDF_BINARY_DIR}/tmp/run_par_test.sh"

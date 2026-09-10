@@ -15,6 +15,8 @@ class Gmp(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://gmplib.org"
     gnu_mirror_path = "gmp/gmp-6.1.2.tar.bz2"
 
+    maintainers("alalazo")
+
     license("LGPL-3.0-or-later OR GPL-2.0-or-later")
 
     version("6.3.0", sha256="ac28211a7cfb609bae2e2c8d6058d66c8fe96434f740cf6fe2e47b000d1c20cb")

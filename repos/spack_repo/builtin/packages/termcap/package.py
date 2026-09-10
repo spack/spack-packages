@@ -22,3 +22,11 @@ class Termcap(AutotoolsPackage, GNUMirrorPackage):
     version("1.3", sha256="3eb4b98ae08408ca65dd9275f3c8e56e2feac1261fae914a9b21273db51cf000")
 
     depends_on("c", type="build")  # generated
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%gcc@14:"):
+                flags.append("-Wno-error=implicit-function-declaration")
+            if self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
+        return (flags, None, None)

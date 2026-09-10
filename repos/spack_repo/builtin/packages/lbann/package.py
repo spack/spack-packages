@@ -43,11 +43,6 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     version("benchmarking", branch="benchmarking")
     version("0.104", sha256="a847c7789082ab623ed5922ab1248dd95f5f89d93eed44ac3d6a474703bbc0bf")
     version("0.103", sha256="9da1bf308f38323e30cb07f8ecf8efa05c7f50560e8683b9cd961102b1b3e25a")
-    version(
-        "0.102",
-        sha256="3734a76794991207e2dd2221f05f0e63a86ddafa777515d93d99d48629140f1a",
-        deprecated=True,
-    )
 
     variant(
         "build_type",
@@ -238,7 +233,7 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-setuptools", type="build", when="+pfe")
     depends_on("py-protobuf@3.10.0:4.21.12", type=("build", "run"), when="+pfe")
 
-    depends_on("protobuf@3.10.0:3.21.12")
+    depends_on("protobuf@3.10.0:21.12")
     depends_on("zlib-api", when="^protobuf@3.11.0:")
 
     # using cereal@1.3.1 and above requires changing the

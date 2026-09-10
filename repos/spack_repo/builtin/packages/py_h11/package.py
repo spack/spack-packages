@@ -15,6 +15,7 @@ class PyH11(PythonPackage):
 
     license("MIT")
 
+    version("0.16.0", sha256="4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1")
     version("0.13.0", sha256="70813c1135087a248a4d38cc0e1a0181ffab2188141a93eaf567940c3957ff06")
     version("0.12.0", sha256="47222cb6067e4a307d535814917cd98fd0a57b6788ce715755fa2b6c28b56042")
     version("0.11.0", sha256="3c6c61d69c6f13d41f1b80ab0322f1872702a3ba26e12aa864c928f6a43fbaab")
@@ -23,5 +24,8 @@ class PyH11(PythonPackage):
 
     depends_on("py-setuptools", type="build")
 
+    depends_on("python@3.8:", type=("build", "run"), when="@0.15.0:")
     depends_on("python@3.6:", type=("build", "run"), when="@0.12.0:")
+
+    # Historical dependencies
     depends_on("py-typing-extensions", type=("build", "run"), when="@0.13: ^python@:3.7")

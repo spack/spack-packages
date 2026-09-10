@@ -20,6 +20,7 @@ class RMagrittr(RPackage):
 
     license("MIT")
 
+    version("2.0.5", sha256="3f5b5b1d4e6d12807a95c50b6c88cb1d8af2c5eb5213f08bfe58f278eca2ed23")
     version("2.0.3", sha256="a2bff83f792a1acb801bfe6330bb62724c74d5308832f2cb6a6178336ace55d2")
     version("2.0.2", sha256="7be6fd0d0da75b92d8bad0136076da96260ee84bf639ef632a24668acdc163a6")
     version("2.0.1", sha256="75c265d51cc2b34beb27040edb09823c7b954d3990a7a931e40690b75d4aad5f")

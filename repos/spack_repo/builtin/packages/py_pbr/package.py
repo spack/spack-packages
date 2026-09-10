@@ -16,6 +16,7 @@ class PyPbr(PythonPackage):
     # Skip 'pbr.tests' imports
     import_modules = ["pbr", "pbr.cmd", "pbr.hooks"]
 
+    version("7.0.3", sha256="b46004ec30a5324672683ec848aed9e8fc500b0d261d40a3229c2d2bbfcedc29")
     version("5.10.0", sha256="cfcc4ff8e698256fc17ea3ff796478b050852585aa5bae79ecd05b2ab7b39b9a")
     version("5.7.0", sha256="4651ca1445e80f2781827305de3d76b3ce53195f2227762684eb08f17bc473b7")
     version("5.4.3", sha256="2c8e420cd4ed4cec4e7999ee47409e876af575d4c35a45840d59e8b5f3155ab8")
@@ -29,3 +30,4 @@ class PyPbr(PythonPackage):
 
     depends_on("python@2.6:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
+    depends_on("py-setuptools@64:", type=("build", "run"), when="@6.1.1: ^python@3.8:")

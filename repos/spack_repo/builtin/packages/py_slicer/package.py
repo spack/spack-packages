@@ -13,6 +13,7 @@ class PySlicer(PythonPackage):
     homepage = "https://github.com/interpretml/slicer"
     pypi = "slicer/slicer-0.0.7.tar.gz"
 
+    version("0.0.8", sha256="2e7553af73f0c0c2d355f4afcc3ecf97c6f2156fcf4593955c3f56cf6c4d6eb7")
     version("0.0.7", sha256="f5d5f7b45f98d155b9c0ba6554fa9770c6b26d5793a3e77a1030fb56910ebeec")
 
     depends_on("py-setuptools", type="build")

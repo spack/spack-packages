@@ -3,35 +3,80 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocshmem(CMakePackage):
+class Rocshmem(ROCmLibrary, CMakePackage):
     """rocSHMEM intra-kernel networking runtime for AMD dGPUs on the ROCm platform."""
 
     homepage = "https://github.com/ROCm/rocSHMEM"
-    url = "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-6.4.0.tar.gz"
+    tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocshmem"]
 
     license("MIT")
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocSHMEM/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="ed409d703ccc7bc07baf1e7e046c322441b2a5e83b95e4acf0ea2bd2585e71e2")
+    version("7.2.1", sha256="03484b56547b8a5905cec34707e59105d23e4576f0b87c3bb6abb052f58bd0ae")
+    version("7.2.0", sha256="22c6851287e635bfa1bf0b23b98d6142440b3ab366d15e2203da362c1497341d")
+    version("7.1.1", sha256="610018ac57b5b56954da3ae0d6b5a64fb72fc3228f2e69085c4cd61f901820a8")
+    version("7.1.0", sha256="6092bd05976e73262cbb7f48dc55718db389100ad1b36e3baa01db401f0ca222")
+    version("7.0.2", sha256="63f5bb31e969c0d38f331e992e7cfd130802a8f66cec9d1fc6bfa73b282ed06a")
+    version("7.0.0", sha256="90d9a9915b0ba069b7b6f00b05525c476fa6c4942e4f53d0ba16d911ec68ff94")
+    version("6.4.3", sha256="96efeed8640862d9e35e4d8ffe9e6cbfa8efcd9be303e457fd2909f34d776fd8")
+    version("6.4.2", sha256="ec070adb6db0622c0c86739db5cb3dcfc40149980bcc49a24b0f5aeea64a0e09")
     version("6.4.1", sha256="35424f49b1060567a63045480eef6c9715ebf9f755f39c2cec2fbf447cce72de")
     version("6.4.0", sha256="fbc8b6a7159901fdeda0d6cc8b97f20740c6cce59ba4a28c2050658cc1eecb81")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    for ver in ["6.4.0", "6.4.1"]:
+    for ver in [
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
         depends_on(f"rocthrust@{ver}", when=f"@{ver}")
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 
     depends_on("ucx@1.17: +rocm")
     depends_on("openmpi@5.0.6: fabrics=ucx")
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.13:"):
+            return join_path(super().root_cmakelists_dir, "projects", "rocshmem")
+        return super().root_cmakelists_dir
+
     def cmake_args(self):
-        args = [self.define("USE_GPU_IB", False)]
+        args = []
+        if self.spec.satisfies("@6.4"):
+            args.append(self.define("USE_GPU_IB", False))
+        if self.spec.satisfies("@7.1:"):
+            args.append(self.define("ROCM_PATH", self.spec["rocm-core"].prefix))
         return args

@@ -14,6 +14,7 @@ class PyPyprof2html(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.3.2", sha256="ca0bc88f8a98f523f97f63293144922d7c4f5bd7ca92cd39c009d2feb8f2ee93")
     version("0.3.1", sha256="db2d37e21d8c76f2fd25fb1ba9273c9b3ff4a98a327e37d943fed1ea225a6720")
 
     patch("version_0.3.1.patch", when="@0.3.1")

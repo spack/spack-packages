@@ -17,6 +17,7 @@ class PyCssParser(PythonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("1.0.10", sha256="bf1e972ad33344e93206964fb4cd908d9ddef9fcd0c01fa93e0d734675394363")
     version("1.0.9", sha256="196db822cef22745af6a58d180cf8206949ced58b48f5f3ee98f1de1627495bb")
 
     depends_on("py-setuptools", type="build")

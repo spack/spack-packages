@@ -1,0 +1,28 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b898063..aab6ccb 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -11,6 +11,11 @@ include(cmake/machine.cmake)
+ set_environment()
+ 
+ project(triton CXX)
++option(TRITON_USE_CWD_AS_PROJECT_ROOT "Use the working directory as the project root" OFF)
++if(TRITON_USE_CWD_AS_PROJECT_ROOT)
++  add_compile_definitions(TRITON_USE_CWD_AS_PROJECT_ROOT)
++endif()
++
+ set(CMAKE_CXX_STANDARD 20) # C++20 baseline; Kokkos 4.5+ supports it
+ set(CMAKE_CXX_STANDARD_REQUIRED ON)
+ set(CMAKE_CXX_EXTENSIONS OFF)
+diff --git a/src/config_utils.h b/src/config_utils.h
+index 0610cb7..25eaa33 100644
+--- a/src/config_utils.h
++++ b/src/config_utils.h
+@@ -543,0 +544,7 @@ namespace ConfigUtils
++#ifdef TRITON_USE_CWD_AS_PROJECT_ROOT
++        char cwd[PATH_MAX];
++        if (getcwd(cwd, sizeof(cwd)) != NULL)
++            return std::string(cwd);
++        return ".";
++#endif
++

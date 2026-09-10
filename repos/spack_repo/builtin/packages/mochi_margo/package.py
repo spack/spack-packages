@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems import autotools, cmake
 
+from spack import *
 from spack.package import *
 
 
-class MochiMargo(AutotoolsPackage):
+class MochiMargo(cmake.CMakePackage, autotools.AutotoolsPackage):
     """A library that provides Argobots bindings to the Mercury RPC
     implementation."""
 
@@ -17,7 +18,21 @@ class MochiMargo(AutotoolsPackage):
 
     maintainers("carns", "mdorier", "fbudin69500")
 
+    build_system(
+        conditional("cmake", when="@0.22.0:"),
+        conditional("autotools", when="@:0.21.0"),
+        default="cmake",
+    )
+
     version("main", branch="main")
+    version("0.23.1", sha256="6db0b11094836e4107e44ed23c94c4c9b4ede21d4d35e425a3d7e40e59437293")
+    version("0.23.0", sha256="7c39df5e09da67745ad4df8de81c30c1d9562d8a5ce7f35278bc9c38f2e7dc03")
+    version("0.22.1", sha256="4f619e48ec64e5250c45e79095e2687cd5d04008731b0fb3d90264b892bfd017")
+    version("0.22.0", sha256="65d9170e517779beea7ce6f251271602bbee98cc434312336d0dcc8496ffed58")
+    version("0.21.0", sha256="d0a527cd0dcbeb9a8f04d090140cdedb66d9a90c6794a046d48d6bc2d11fc278")
+    version("0.20.0", sha256="ed19f65c3c0dda42b285904f64508d1997f4b0fcef81cddb011aa9c42381eb2a")
+    version("0.19.2", sha256="cfd20117744631779f0e99a0bc0668a1ca4d6d3c89fce5e9926961f830491689")
+    version("0.19.1", sha256="77422156be5d1e24b16f6d65109ada29a2276c9d6fdd9a5392c23f1fbe370b98")
     version("0.19.0", sha256="269e3b52228fb59a8ab502b8fac4761fc15440817455bb006f311093bd4c02f3")
     version("0.18.3", sha256="4871af11d3cadc81e6f08a2112782c61324d9cdabc9e9b61c595c95da6d75127")
     version("0.18.2", sha256="a3a9fde826954be06b9123887533f91e6725faf6f6c682c080b97c2172a22057")
@@ -67,24 +82,44 @@ class MochiMargo(AutotoolsPackage):
     version("0.4.3", sha256="61a634d6983bee2ffa06e1e2da4c541cb8f56ddd9dd9f8e04e8044fb38657475")
     version("0.4.2", sha256="91085e28f50e373b9616e1ae5c3c8d40a19a7d3776259592d8f361766890bcaa")
 
-    depends_on("c", type="build")  # generated
+    variant(
+        "hwloc",
+        default=True,
+        when="@0.21:",
+        description="Use hwloc to help select network cards when possible",
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    with when("build_system=autotools"):
+        depends_on("autoconf@2.65:", type=("build"))
+        depends_on("m4", type=("build"))
+        depends_on("automake", type=("build"))
+        depends_on("libtool", type=("build"))
+
+    with when("build_system=cmake"):
+        depends_on("cmake@3.12:", type=("build"))
 
     depends_on("json-c", when="@0.9:")
-    depends_on("autoconf@2.65:", type=("build"))
-    depends_on("m4", type=("build"))
-    depends_on("automake", type=("build"))
-    depends_on("libtool", type=("build"))
     depends_on("pkgconfig", type=("build"))
     depends_on("argobots@1.0:")
     depends_on("argobots@1.1:", when="@0.11:")
+    depends_on("argobots@1.2:", when="@0.21.0:")
     # "breadcrumb" support not available in mercury-1.0
     depends_on("mercury@1.0.0:", type=("build", "link", "run"), when="@:0.5.1")
     depends_on("mercury@2.0.0:", type=("build", "link", "run"), when="@0.5.2:")
+    depends_on("hwloc", when="+hwloc")
+    depends_on("libfabric", when="+hwloc")
 
     # Fix pthread detection
     # https://github.com/mochi-hpc/mochi-margo/pull/177
     patch("mochi-margo-pthreads.patch", when="@0.9:0.9.7")
 
+    def cmake_args(self):
+        args = [self.define_from_variant("ENABLE_PLUMBER", "hwloc")]
+        return args
+
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("./prepare.sh")

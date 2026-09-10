@@ -1,0 +1,163 @@
+--- packlib/cspack/tcpaw/tcpaw.c	2023-08-14 13:45:46.000000000 +0200
++++ packlib/cspack/tcpaw/tcpaw.c	2026-06-24 10:48:38.624411560 +0200
+@@ -1696,7 +1696,7 @@
+         return(i);
+ }
+  
+-reply(s1, s2, s3)
++void reply(s1, s2, s3)
+     char *s1, *s2, *s3;
+ {
+ #ifdef OSK
+@@ -1715,7 +1715,7 @@
+ #endif /* LOGFILE */
+ }
+  
+-sock_reply(s, s1, s2, s3)
++void sock_reply(s, s1, s2, s3)
+     int *s;
+     char *s1, *s2, *s3;
+ {
+@@ -2441,7 +2441,7 @@
+ 
+ static  FILE *cfile;
+  
+-ruserpass(host, aname, apass)
++void ruserpass(host, aname, apass)
+         char *host, **aname, **apass;
+ {
+  
+@@ -2503,7 +2503,7 @@
+         if (cfile == NULL) {
+                 if (errno != ENOENT)
+                         perror(buf);
+-                return;
++                return 0;
+         }
+ next:
+         while ((t = token())) switch(t) {
+@@ -2611,7 +2611,7 @@
+ #endif
+  
+ #ifndef BSDTTY
+-#include <termio.h>
++#include <termios.h>
+ #else
+ //AV: Newer APPLE requires sys/ioctl_compat.h
+ #include <sys/ioctl_compat.h>
+@@ -2638,7 +2638,7 @@
+ const char    *prompt;
+ {
+ #ifndef BSDTTY
+-        struct termio ttyb;
++        struct termios ttyb;
+         unsigned short flags;
+ #else
+         struct sgttyb ttyb;
+@@ -2713,9 +2713,9 @@
+      const char *pass, const char *cmd, int *fd2p)
+ #else
+ # ifdef linux
+-_rexec(ahost, rport, name, pass, cmd, fd2p)
++int _rexec(ahost, rport, name, pass, cmd, fd2p)
+ # else
+-rexec(ahost, rport, name, pass, cmd, fd2p)
++int rexec(ahost, rport, name, pass, cmd, fd2p)
+ # endif /* linux */
+  
+         char **ahost;
+@@ -3563,7 +3563,7 @@
+         return (-1);
+ }
+  
+-getstr(sock,buf, cnt, errmesg)
++int getstr(sock,buf, cnt, errmesg)
+ int     sock;
+ char    *buf;
+ int     cnt;              /* sizeof() the char array */
+--- packlib/zbook/code/zjump.c	2023-08-14 13:45:46.000000000 +0200
++++ packlib/zbook/code/zjump.c	2026-06-24 10:48:38.595393011 +0200
+@@ -12,13 +12,13 @@
+ #endif
+ #if defined(CERNLIB_UNIX)
+ #if defined(CERNLIB_QX_SC)
+-zjump_(name,p1,p2,p3,p4)
++void zjump_(name,p1,p2,p3,p4)
+ #endif
+ #if defined(CERNLIB_QXNO_SC)
+-zjump(name,p1,p2,p3,p4)
++void zjump(name,p1,p2,p3,p4)
+ #endif
+ #if defined(CERNLIB_QXCAPT)
+-ZJUMP(name,p1,p2,p3,p4)
++void ZJUMP(name,p1,p2,p3,p4)
+ #endif
+ char *p1, *p2, *p3, *p4;
+ /*  LP64 compatibility:
+@@ -30,11 +30,11 @@
+ {
+   long jadr;
+   jadr   = *name;  /* convert int to long */
+-  target = (void (*)())jadr;
++  target = (void (*)(char*, char*, char*, char*))jadr;
+   (*target)(p1, p2, p3, p4);
+ }
+ #else
+-void (**name)();
++void (**name)(char*, char*, char*, char*)
+ {
+    (**name)(p1, p2, p3, p4);
+ }
+--- pawlib/paw/ntuple/qp_scanner.c	2023-08-14 13:45:46.000000000 +0200
++++ pawlib/paw/ntuple/qp_scanner.c	2026-06-24 10:48:37.809524281 +0200
+@@ -549,7 +549,7 @@
+ 	result = len; }
+ */
+ 	
+-yy_input_routine( char *buf, int * result, int max_size )
++void yy_input_routine( char *buf, int * result, int max_size )
+ {
+ /*
+ 	int len = max_size > inp_len ? inp_len : max_size;
+
+--- mathlib/gen/divon/split.F    2023-08-14 13:45:46.000000000 +0200
++++ mathlib/gen/divon/split.F       2026-06-24 10:48:37.614101789 +0200
+@@ -7,7 +7,7 @@
+ *
+ *
+ #include "gen/pilot.h"
+-      SUBROUTINE SPLIT (NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,DISCRM,PART
++      SUBROUTINE DIV_SPLIT (NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,DISCRM,PART
+      1N,BUCKTS,IRBUC)
+       INTEGER NDIM, DISCRM, IRBUC
+       LOGICAL TERMNL
+
+--- mathlib/gen/divon/recpar.F   2023-08-14 13:45:46.000000000 +0200
++++ mathlib/gen/divon/recpar.F      2026-06-24 10:48:37.613895543 +0200
+@@ -37,7 +37,7 @@
+       TERMNL=.FALSE.
+       IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+       IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+-      CALL SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
++      CALL DIV_SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
+      1E),BUCKTS(MAXWRD*(ENTBUC-1)+1),IRBUC)
+       TREE(4,ENTREE)=-ITREE
+       IF(TERMNL) RETURN
+@@ -67,7 +67,7 @@
+       UMINUS(JTREE)=PARTN(PARENT)
+  30   IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+       IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+-      CALL SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
++      CALL DIV_SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
+      1E),BUCKTS(MAXWRD*(ENTBUC-1)+1),IRBUC)
+       TREE(4,ENTREE)=-ITREE
+       IF(.NOT.(.NOT.TERMNL)) GOTO 50
+@@ -120,7 +120,7 @@
+       UMINUS(-JTREE)=PARTN(PARENT)
+  110  IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+       IRBUC=IBUC-(MAXWRD*(ENTBUC-1))
+-      CALL SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
++      CALL DIV_SPLIT(NDIM,UMINUS,UPLUS,FLOBD,FUPBD,TERMNL,ITREE,PARTN(ENTRE
+      1E),BUCKTS(MAXWRD*(ENTBUC-1)+1),IRBUC)
+       TREE(4,ENTREE)=-ITREE
+       IF(.NOT.(.NOT.TERMNL)) GOTO 130

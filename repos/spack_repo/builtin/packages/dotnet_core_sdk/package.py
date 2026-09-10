@@ -15,6 +15,7 @@ class DotnetCoreSdk(Package):
 
     homepage = "https://www.microsoft.com/net/"
 
+    maintainers("grospelliergilles")
     license("MIT")
 
     if platform.system() == "Linux" and platform.machine() == "x86_64":
@@ -24,60 +25,10 @@ class DotnetCoreSdk(Package):
             sha256="2212ace90b536bd99910baf485e925024a37fc08e31fc8c1014fe4392b8d4967",
             preferred=True,
         )
-
-        version(
-            "8.0.4",
-            url="https://download.visualstudio.microsoft.com/download/pr/0a1b3cbd-b4af-4d0d-9ed7-0054f0e200b4/4bcc533c66379caaa91770236667aacb/dotnet-sdk-8.0.204-linux-x64.tar.gz",
-            sha256="0ec834dc0f11a994057cd05d84c6250db726457f2fe308091d50543a5285dd15",
-            deprecated=True,
-        )
-
-        version(
-            "7.0.18",
-            url="https://download.visualstudio.microsoft.com/download/pr/a256265b-0ec6-4b63-b943-bc27bcfc98c0/47c8bbd54d7f6dbfe0ca4985c410282e/dotnet-sdk-7.0.408-linux-x64.tar.gz",
-            sha256="e72beb77f59d5c55de46f52cce01b68f244e28058f646f1ea4ecf8a35b177e58",
-            deprecated=True,
-        )
-
         version(
             "6.0.36",
             url="https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.428/dotnet-sdk-6.0.428-linux-x64.tar.gz",
             sha256="9b2f9b91e28677b58e47d34a1d9e2a88f597af1f6acd44764a3abc2f1bacdc8a",
-        )
-
-        version(
-            "6.0.25",
-            url="https://download.visualstudio.microsoft.com/download/pr/1cac4d08-3025-4c00-972d-5c7ea446d1d7/a83bc5cbedf8b90495802ccfedaeb2e6/dotnet-sdk-6.0.417-linux-x64.tar.gz",
-            sha256="1b7c5ea04ccb817e1a411c9e1f89d7a4e54c0842b01b457e141bbc254ce97ba2",
-            deprecated=True,
-        )
-
-        version(
-            "6.0.2",
-            url="https://download.visualstudio.microsoft.com/download/pr/e7acb87d-ab08-4620-9050-b3e80f688d36/e93bbadc19b12f81e3a6761719f28b47/dotnet-sdk-6.0.102-linux-x64.tar.gz",
-            sha256="9bdd4dacdf9a23d386f207ec19260afd36a7fb7302233c9abc0b47e65ffc3119",
-            deprecated=True,
-        )
-
-        version(
-            "5.0.4",
-            url="https://download.visualstudio.microsoft.com/download/pr/73a9cb2a-1acd-4d20-b864-d12797ca3d40/075dbe1dc3bba4aa85ca420167b861b6/dotnet-sdk-5.0.201-linux-x64.tar.gz",
-            sha256="9ff77087831e8ca32719566ec9ef537e136cfc02c5ff565e53f5509cc6e7b341",
-            deprecated=True,
-        )
-
-        version(
-            "3.1.13",
-            url="https://download.visualstudio.microsoft.com/download/pr/ab82011d-2549-4e23-a8a9-a2b522a31f27/6e615d6177e49c3e874d05ee3566e8bf/dotnet-sdk-3.1.407-linux-x64.tar.gz",
-            sha256="a744359910206fe657c3a02dfa54092f288a44c63c7c86891e866f0678a7e911",
-            deprecated=True,
-        )
-
-        version(
-            "2.1.300",
-            url="https://download.microsoft.com/download/8/8/5/88544F33-836A-49A5-8B67-451C24709A8F/dotnet-sdk-2.1.300-linux-x64.tar.gz",
-            sha256="fabca4c8825182ff18e5a2f82dfe75aecd10260ee9e7c85a8c4b3d108e5d8e1b",
-            deprecated=True,
         )
     elif platform.system() == "Linux" and platform.machine() == "aarch64":
         version(
@@ -86,32 +37,38 @@ class DotnetCoreSdk(Package):
             sha256="7e28342741de05af2c4244c7384230bf51a3ffe6f314f26a25d1b57222c27751",
             preferred=True,
         )
-
-        version(
-            "8.0.4",
-            url="https://download.visualstudio.microsoft.com/download/pr/1e449990-2934-47ee-97fb-b78f0e587c98/1c92c33593932f7a86efa5aff18960ed/dotnet-sdk-8.0.204-linux-arm64.tar.gz",
-            sha256="c6ecb0c1897e217e8d20153a0119276ee1091c0600aecf2aca8e674c3575942e",
-            deprecated=True,
-        )
-
-        version(
-            "7.0.18",
-            url="https://download.visualstudio.microsoft.com/download/pr/460f951f-0944-442b-8474-555e20394ca8/5fcf6b1845d87d772f919737b3dd5f55/dotnet-sdk-7.0.408-linux-arm64.tar.gz",
-            sha256="dd9a8794561a8b9c658a2ba832328449a34b0dd0cdcb79e31d6efc2d0c9a8efc",
-            deprecated=True,
-        )
-
         version(
             "6.0.36",
             url="https://builds.dotnet.microsoft.com/dotnet/Sdk/6.0.428/dotnet-sdk-6.0.428-linux-arm64.tar.gz",
             sha256="b5956b0d9ab3063c2886ec74adc953394e81a1aa3f5075c6b41b3e4f1d7a53f9",
         )
-
+    elif platform.system() == "Darwin" and platform.machine() == "x86_64":
         version(
-            "6.0.25",
-            url="https://download.visualstudio.microsoft.com/download/pr/03972b46-ddcd-4529-b8e0-df5c1264cd98/285a1f545020e3ddc47d15cf95ca7a33/dotnet-sdk-6.0.417-linux-arm64.tar.gz",
-            sha256="c071e936442b90b80a941ab177b8c7851bc5377cf842cc1e61922b3d7fefeb0e",
-            deprecated=True,
+            "8.0.21",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.121/dotnet-sdk-8.0.121-osx-x64.tar.gz",
+            sha256="7ac6d6356300947e5c926fb6eb03bcda10d6d886d063de17ed63ae23b70e4756",
+            preferred=True,
+        )
+    elif platform.system() == "Darwin" and platform.machine() == "aarch64":
+        version(
+            "8.0.21",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.121/dotnet-sdk-8.0.121-osx-arm64.tar.gz",
+            sha256="2cc5724a8470c3cd6db9f3d3c4970f5cd019a5186546a7acb0edd1703c6b8a09",
+            preferred=True,
+        )
+    elif platform.system() == "Windows" and platform.machine() == "x86_64":
+        version(
+            "8.0.21",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.121/dotnet-sdk-8.0.121-win-x64.zip",
+            sha256="f5bbabfaaad0a07e19a641516a0a3d32160d5a05d2431d1bc67a1fcd47a0ca76",
+            preferred=True,
+        )
+    elif platform.system() == "Windows" and platform.machine() == "aarch64":
+        version(
+            "8.0.21",
+            url="https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.121/dotnet-sdk-8.0.121-win-arm64.zip",
+            sha256="9ef78ec827d453bdfe774b7ebf2c504b0257e9d5116698accf60b06291ee8b4b",
+            preferred=True,
         )
 
     variant("telemetry", default=False, description="allow collection of telemetry data")

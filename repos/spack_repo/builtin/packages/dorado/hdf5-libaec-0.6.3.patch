@@ -1,0 +1,10 @@
+diff --git a/cmake/HDF5.cmake b/cmake/HDF5.cmake
+index d1b9432b..d09566cb 100644
+--- a/cmake/HDF5.cmake
++++ b/cmake/HDF5.cmake
+@@ -65,4 +65,5 @@ else()
+ endif()
+
+ find_package(ZLIB REQUIRED)
++find_package(libaec COMPONENTS sz-shared REQUIRED)
+ find_package(HDF5 COMPONENTS C REQUIRED)

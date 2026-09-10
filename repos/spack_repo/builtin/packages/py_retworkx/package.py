@@ -22,4 +22,5 @@ class PyRetworkx(PythonPackage):
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-rust", type="build")
+    depends_on("rust", type="build")
     depends_on("py-numpy@1.16.0:", type=("build", "run"))

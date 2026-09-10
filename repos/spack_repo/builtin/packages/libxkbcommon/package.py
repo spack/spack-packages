@@ -28,31 +28,15 @@ class Libxkbcommon(MesonPackage, AutotoolsPackage):
     version("1.5.0", sha256="560f11c4bbbca10f495f3ef7d3a6aa4ca62b4f8fb0b52e7d459d18a26e46e017")
     version("1.4.1", sha256="943c07a1e2198026d8102b17270a1f406e4d3d6bbc4ae105b9e1b82d7d136b39")
     version("1.4.0", sha256="106cec5263f9100a7e79b5f7220f889bc78e7d7ffc55d2b6fdb1efefb8024031")
-    version(
-        "0.8.2",
-        sha256="7ab8c4b3403d89d01898066b72cb6069bddeb5af94905a65368f671a026ed58c",
-        deprecated=True,
-    )
-    version(
-        "0.8.0",
-        sha256="e829265db04e0aebfb0591b6dc3377b64599558167846c3f5ee5c5e53641fe6d",
-        deprecated=True,
-    )
-    version(
-        "0.7.1",
-        sha256="ba59305d2e19e47c27ea065c2e0df96ebac6a3c6e97e28ae5620073b6084e68b",
-        deprecated=True,
-    )
 
     variant("wayland", default=False, description="Enable Wayland support")
 
     depends_on("c", type="build")  # generated
 
-    depends_on("meson@0.41:", type="build", when="@0.9:")
     depends_on("meson@0.49:", type="build", when="@1.0:")
     depends_on("meson@0.51:", type="build", when="@1.5:")
     depends_on("meson@0.52:", type="build", when="@1.6:")
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("bison", type="build")
     depends_on("util-macros")
     depends_on("xkbdata-api")

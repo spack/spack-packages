@@ -110,9 +110,15 @@ class Pythia6(CMakePackage):
 
     # Docs.
     docs = {
-        "https://pythia.org/download/pythia6/pythia6428.update": "a229be4ba9a4eb65a9d53600a5f388b620038d56694c6cb4671c2be224b67751",
-        "https://pythia.org/download/pythia6/lutp0613man2.pdf": "03d637310ea80f0d7aea761492bd38452c602890d8cf913a1ec9edacd79fa43d",
-        "https://pythia.org/download/misc/pythia6plans.txt": "1befc8c6e641051a97a53ba4df7f890bf0c4d6ba9e0774c03df69b0fef481d89",
+        "https://pythia.org/download/pythia6/pythia6428.update": (
+            "a229be4ba9a4eb65a9d53600a5f388b620038d56694c6cb4671c2be224b67751"
+        ),
+        "https://pythia.org/download/pythia6/lutp0613man2.pdf": (
+            "03d637310ea80f0d7aea761492bd38452c602890d8cf913a1ec9edacd79fa43d"
+        ),
+        "https://pythia.org/download/misc/pythia6plans.txt": (
+            "1befc8c6e641051a97a53ba4df7f890bf0c4d6ba9e0774c03df69b0fef481d89"
+        ),
     }
 
     for docurl, checksum in docs.items():
@@ -135,6 +141,7 @@ class Pythia6(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
+    depends_on("patch", type="build")
 
     def patch(self):
         # Use our provided CMakeLists.txt. The Makefile provided with

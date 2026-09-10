@@ -1,0 +1,99 @@
+--- lib/Xm/XpmCrBufFrI.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/XpmCrBufFrI.c	2026-06-23 17:51:13.276114016 +0200
+@@ -39,7 +39,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+-
++#include <string.h>
+ 
+ /* October 2004, source code review by Thomas Biege <thomas@suse.de> */
+ 
+--- lib/Xm/Xpmcreate.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/Xpmcreate.c	2026-06-23 17:51:13.272284682 +0200
+@@ -42,6 +42,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
++#include <string.h>
+ 
+ 
+ /* October 2004, source code review by Thomas Biege <thomas@suse.de> */
+--- lib/Xm/XpmWrFFrI.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/XpmWrFFrI.c	2026-06-23 17:51:13.264367668 +0200
+@@ -36,7 +36,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+-
++#include <string.h>
+ 
+ /* October 2004, source code review by Thomas Biege <thomas@suse.de> */
+ 
+--- lib/Xm/XpmRdFToI.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/XpmRdFToI.c	2026-06-23 17:51:13.264270706 +0200
+@@ -36,7 +36,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+-
++#include <string.h>
+ 
+ /* October 2004, source code review by Thomas Biege <thomas@suse.de> */
+ 
+--- lib/Xm/Xpmrgb.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/Xpmrgb.c	2026-06-23 17:51:13.211862929 +0200
+@@ -46,7 +46,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
+-
++#include <string.h>
+ 
+ #include "XpmI.h"
+ #include <ctype.h>
+--- lib/Xm/XpmCrDatFrI.c	2016-03-16 03:10:08.000000000 +0100
++++ lib/Xm/XpmCrDatFrI.c	2026-06-23 17:51:13.205282072 +0200
+@@ -36,6 +36,7 @@
+ #ifdef HAVE_CONFIG_H
+ #include <config.h>
+ #endif
++#include <string.h>
+ 
+ 
+ /* October 2004, source code review by Thomas Biege <thomas@suse.de> */
+
+--- lib/Xm/XpmI.h      2017-08-17 02:38:43.000000000 +0200
++++ lib/Xm/XpmI.h      2026-07-19 13:45:15.235914574 +0200
+@@ -129,7 +129,6 @@
+ extern FILE *popen();
+ #endif
+ 
+-#if defined(SYSV) || defined(SVR4) || defined(VMS) || defined(WIN32) || defined (_SVID_SOURCE)
+ #include <string.h>
+ 
+ #ifndef index
+@@ -140,11 +139,6 @@
+ #define rindex strrchr
+ #endif
+ 
+-#else  /* defined(SYSV) || defined(SVR4) || defined(VMS) */
+-#include <strings.h>
+-#endif
+-
+-
+ 
+ #if defined(SYSV) || defined(SVR4) || defined(VMS) || defined(WIN32)
+ #ifndef bcopy
+ 
+--- demos/unsupported/xmform/xmform.c  2026-07-19 19:58:08.233545067 +0200
++++ demos/unsupported/xmform/xmform.c  2026-07-19 19:55:59.508397105 +0200
+@@ -54,6 +54,7 @@
+ #include <Xm/Form.h>
+ #include <Xm/PushB.h>
+ #include <Xm/ArrowB.h>
++#include <stdlib.h>
+ 
+ static void FillItPlease();
+ static void NearlyEvenSpread();
+

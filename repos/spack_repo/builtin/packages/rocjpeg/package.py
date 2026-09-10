@@ -2,25 +2,40 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Rocjpeg(CMakePackage):
+class Rocjpeg(ROCmLibrary, CMakePackage):
     """rocJPEG is a high-performance jpeg decode SDK for decoding jpeg images
     using a hardware-accelerated jpeg decoder on AMD's GPUs."""
 
     homepage = "https://github.com/ROCm/rocJPEG"
     git = "https://github.com/ROCm/rocJPEG.git"
-    url = "https://github.com/ROCm/rocJPEG/archive/refs/tags/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/rocJPEG/archive/refs/tags/rocm-6.4.2.tar.gz"
     tags = ["rocm"]
 
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
+    libraries = ["librocjpeg"]
 
     license("MIT")
-
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocJPEG/archive/refs/tags/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
+    version("7.2.3", sha256="0aafd0468bc79575ad3bb5f51c02a1dd1a696db87c8ce4151eeaf8573cb35ade")
+    version("7.2.1", sha256="b1e28958d7e3986856388e98e04995b96601c8664cf325b9d3e3140e0ff0711a")
+    version("7.2.0", sha256="703af33cb0784cd279dbe581dec2a7b0993ad887fadc296648038d5e918f229a")
+    version("7.1.1", sha256="38ed6ad6aa6de3f830a157297ff239caa1a65010e7b4200891d37b7f31378f4b")
+    version("7.1.0", sha256="26ea59dd772c57ae5476a6ba3799bf86981694fbba9b87af882ed76c1b89c639")
+    version("7.0.2", sha256="fe1813e333dfb958d74693301ffb70e1baa2601ffd8b8d644f4026e56048164a")
+    version("7.0.0", sha256="00dfac45d1776f5e79704fc56bae1b5017fc19326f69e363a49285ebf72bff2e")
+    version("6.4.3", sha256="28c95c30603d6a0e39632cd31e8adcbe80786f5d77e15bb88cfef341eaf4eb94")
+    version("6.4.2", sha256="543d0a25b7da44885c99845041a54f391f484e0f1e051973c5993f08185d82fa")
     version("6.4.1", sha256="23eed12646409d8f931f6bbdacf68df246c762877a3c0ef723568f89f0f5b40f")
     version("6.4.0", sha256="5488f5ab9c475566716d99ad32fb4c20686ac1bcc00c9242221abdbde2b94ffe")
     version("6.3.3", sha256="65081b20ab3df82337fdcaf3d4e614c75f946656a4ea7bc00ac0d1bbd81e3e83")
@@ -30,7 +45,25 @@ class Rocjpeg(CMakePackage):
 
     depends_on("cxx", type="build")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -39,12 +72,19 @@ class Rocjpeg(CMakePackage):
     patch("0001-add-amdgpu-drm-include.patch", when="@6.4")
 
     def patch(self):
-        filter_file(
-            r"${ROCM_PATH}/lib/llvm/bin/clang++",
-            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-            "CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:7.2"):
+            filter_file(
+                r"${ROCM_PATH}/lib/llvm/bin/clang++",
+                "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
+                "CMakeLists.txt",
+                string=True,
+            )
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.13.0:"):
+            return join_path(super().root_cmakelists_dir, "projects", "rocjpeg")
+        return super().root_cmakelists_dir
 
     def cmake_args(self):
         args = [self.define("LIBVA_INCLUDE_DIR", self.spec["libva"].prefix.include)]
@@ -57,5 +97,11 @@ class Rocjpeg(CMakePackage):
                     "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+        if self.spec.satisfies("@6.4"):
             args.append(self.define("AMDGPU_DRM_INCLUDE_DIRS", self.spec["libdrm"].prefix.include))
+        if self.spec.satisfies("@7.0:"):
+            args.append(
+                self.define("LIBDRM_AMDGPU_INCLUDE_DIR", self.spec["libdrm"].prefix.include)
+            )
+            args.append(self.define("LIBDRM_AMDGPU_LIBRARY", self.spec["libdrm"].prefix.lib))
         return args

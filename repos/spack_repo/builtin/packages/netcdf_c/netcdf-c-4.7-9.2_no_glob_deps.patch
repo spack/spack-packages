@@ -1,0 +1,30 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index de95010c6..04e9077ae 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2398,25 +2398,6 @@ ENDIF()
+ #####
+ ADD_SUBDIRECTORY(docs)
+ 
+-##
+-# Brute force, grab all of the dlls from the dependency directory,
+-# install them in the binary dir. Grab all of the .libs, put them
+-# in the libdir.
+-##
+-IF(MSVC)
+-  FILE(GLOB COPY_FILES ${CMAKE_PREFIX_PATH}/lib/*.lib)
+-  INSTALL(FILES ${COPY_FILES}
+-  DESTINATION ${CMAKE_INSTALL_LIBDIR}
+-  COMPONENT dependencies)
+-
+-  FILE(GLOB COPY_FILES ${CMAKE_PREFIX_PATH}/bin/*.dll)
+-  STRING(REGEX REPLACE "msv[.*].dll" "" COPY_FILES "${COPY_FILES}")
+-  INSTALL(FILES ${COPY_FILES}
+-  DESTINATION ${CMAKE_INSTALL_BINDIR}
+-  COMPONENT dependencies)
+-
+-ENDIF()
+-
+ # Subdirectory CMakeLists.txt files should specify their own
+ # 'install' files.
+ # Including 'CPack' kicks everything off.

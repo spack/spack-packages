@@ -26,6 +26,13 @@ class Pigz(MakefilePackage):
 
     depends_on("zlib-api")
 
+    # fixes pigz's zlib_vernum check, which breaks when built with zlib 1.3 and other X.X versions
+    patch(
+        "https://github.com/madler/pigz/commit/907ca0763be4547a9b0cce8c1057217488149744.patch?full_index=1",
+        sha256="181d0cd36e6be5fc14a8f966d49b4bd08897d9dd724b39babccd537ce06306e9",
+        when="@2.4:2.7",
+    )
+
     def build(self, spec, prefix):
         # force makefile to use cc as C compiler which is set by
         # spack

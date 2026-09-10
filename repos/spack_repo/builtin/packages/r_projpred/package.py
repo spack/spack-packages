@@ -28,6 +28,8 @@ class RProjpred(RPackage):
     version("2.1.2", sha256="a88a651e533c118aad0e8c2c905cfcf688d9c419ed195896036b8f6667b5cfb0")
     version("2.0.2", sha256="af0a9fb53f706090fe81b6381b27b0b6bd3f7ae1e1e44b0ada6f40972b09a55b")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@2.7.0:")
     depends_on("r-rcpp", type=("build", "run"))

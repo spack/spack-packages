@@ -13,10 +13,11 @@ class Bowtie2(MakefilePackage):
     sequencing reads to long reference sequences"""
 
     homepage = "https://bowtie-bio.sourceforge.net/bowtie2/index.shtml"
-    url = "https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.3.1/bowtie2-2.3.1-source.zip"
+    url = "https://github.com/BenLangmead/bowtie2/archive/refs/tags/v2.5.5.tar.gz"
 
     license("GPL-3.0-or-later")
 
+    version("2.5.5", sha256="e38d1833ec235ca27fa57589d32d897c9addf87085b7cb7bc978662954662da2")
     version("2.5.4", sha256="94ec207a0494b9f5e0e62dbbca8cb79fe4ff16602395802a86d098349c6ef004")
     version("2.5.2", sha256="2c47a7da0a507c68319b307cdd15dee385127cc817d6bbf1d357af8d8af578ef")
     version("2.5.1", sha256="cb6cbbbb5a7167a2f21a3d63cb9774336361f540e1ec3d8ff907f955c35f71b8")
@@ -29,6 +30,8 @@ class Bowtie2(MakefilePackage):
     version("2.3.1", sha256="33bd54f5041a31878e7e450cdcf0afba08345fa1133ce8ac6fd00bf7e521a443")
     version("2.3.0", sha256="f9f841e780e78b1ae24b17981e2469e6d5add90ec22ef563af23ae2dd5ca003c")
     version("2.2.5", sha256="e22766dd9421c10e82a3e207ee1f0eb924c025b909ad5fffa36633cd7978d3b0")
+
+    depends_on("cxx", type="build")
 
     depends_on("tbb", when="@2.3.0:")
     depends_on("readline", when="@2.3.1:")
@@ -47,6 +50,16 @@ class Bowtie2(MakefilePackage):
     conflicts("^intel-oneapi-tbb", when="@:2.3.5.1")
     conflicts("@:2.3.5.0", when="target=aarch64:")
     conflicts("@2.4.1", when="target=aarch64:")
+
+    def url_for_version(self, version):
+        if version >= Version("2.5.5"):
+            return "https://github.com/BenLangmead/bowtie2/archive/refs/tags/v{0}.tar.gz".format(
+                version.dotted
+            )
+        else:
+            return "https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/{0}/bowtie2-{0}-source.zip".format(
+                version.dotted
+            )
 
     def edit(self, spec, prefix):
         kwargs = {"ignore_absent": True, "backup": False, "string": False}
@@ -77,6 +90,10 @@ class Bowtie2(MakefilePackage):
         make_arg = ["PREFIX={0}".format(self.prefix)]
         if self.spec.satisfies("target=aarch64:"):
             make_arg.append("POPCNT_CAPABILITY=0")
+
+        if self.spec.satisfies("@2.5.5 %gcc@:11 target=x86_64:"):
+            # avoid __builtin_cpu_supports("x86-64-v3"), unsupported before GCC 12
+            make_arg.append("SSE_AVX2=0")
         return make_arg
 
     @property

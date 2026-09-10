@@ -16,6 +16,7 @@ class PyIgvNotebook(PythonPackage):
 
     license("MIT license", checked_by="ashim-mahara")
 
+    version("0.6.2", sha256="24c3990872851701bf17e7479180b02b63ab988e35b59859b294acae36eccc21")
     version("0.5.2", sha256="8b47a1a6c41f11359a07264815401cc4000c99722c77cbb749182bf6b66cf69c")
 
     depends_on("py-setuptools", type="build")

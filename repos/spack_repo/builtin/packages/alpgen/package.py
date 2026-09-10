@@ -54,11 +54,11 @@ class Alpgen(CMakePackage, MakefilePackage):
 
 class MakefileBuilder(makefile.MakefileBuilder):
     def build(self, pkg, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./cms_build.sh")
 
     def install(self, pkg, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./cms_install.sh", prefix)
 
         for root, dirs, files in os.walk(prefix):

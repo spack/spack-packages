@@ -35,11 +35,14 @@ class Scale(MakefilePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("mpi@2:", type=("build", "link", "run"))
-    depends_on("netcdf-c")
+    depends_on("netcdf-c@:4.8.9")  # scale depends upon old nc-config that supports --fflags
     depends_on("netcdf-fortran")
-    depends_on("parallel-netcdf")
+    depends_on("parallel-netcdf@1.7.0:")
 
     patch("fj-own_compiler.patch", when="%fj")
+    # Newer gfortran compilers detect old-style fortran code and error out.
+    # Change compiler flags to accept old code as valid.
+    patch("gcc-own_compiler.patch", when="%gcc@10:")
 
     parallel = False
 
@@ -66,7 +69,7 @@ class Scale(MakefilePackage):
         env["SCALE_SYS"] = scale_sys_str
 
         # set SCALE_NETCDF_INCLUDE
-        nc_config = which("nc-config")
+        nc_config = which("nc-config", required=True)
         nc_str = nc_config("--cflags", "--fflags", output=str)
         try:
             env["SCALE_NETCDF_INCLUDE"] = nc_str.replace("\n", " ")
@@ -74,7 +77,7 @@ class Scale(MakefilePackage):
             env["SCALE_NETCDF_INCLUDE"] = nc_str.decode().replace("\n", " ")
 
         # set SCALE_NETCDF_LIBS
-        nc_config = which("nc-config")
+        nc_config = which("nc-config", required=True)
         nc_str = nc_config("--libs", "--flibs", output=str)
         try:
             env["SCALE_NETCDF_LIBS"] = nc_str.replace("\n", " ")

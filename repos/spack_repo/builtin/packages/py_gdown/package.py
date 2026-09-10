@@ -15,6 +15,7 @@ class PyGdown(PythonPackage):
 
     license("MIT")
 
+    version("5.2.1", sha256="247c2ad1f579db5b66b54c04e6a871995fc8fd7021708b950b8ba7b32cf90323")
     version("5.2.0", sha256="2145165062d85520a3cd98b356c9ed522c5e7984d408535409fd46f94defc787")
 
     with default_args(type="build"):

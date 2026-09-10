@@ -1,0 +1,42 @@
+diff --git i/fixincludes/fixincl.x w/fixincludes/fixincl.x
+index bad490453b7..ead33dc5693 100644
+--- i/fixincludes/fixincl.x
++++ w/fixincludes/fixincl.x
+@@ -7224,8 +7224,15 @@ tSCC zPthread_Incomplete_Struct_ArgumentList[] =
+ tSCC zPthread_Incomplete_Struct_ArgumentSelect0[] =
+        "struct __jmp_buf_tag";
+ 
+-#define    PTHREAD_INCOMPLETE_STRUCT_ARGUMENT_TEST_CT  1
++/*
++ *  content bypass pattern - skip fix if pattern found
++ */
++tSCC zPthread_Incomplete_Struct_ArgumentBypass0[] =
++       "bits/types/struct___jmp_buf_tag.h";
++
++#define    PTHREAD_INCOMPLETE_STRUCT_ARGUMENT_TEST_CT  2
+ static tTestDesc aPthread_Incomplete_Struct_ArgumentTests[] = {
++  { TT_NEGREP,   zPthread_Incomplete_Struct_ArgumentBypass0, (regex_t*)NULL },
+   { TT_EGREP,    zPthread_Incomplete_Struct_ArgumentSelect0, (regex_t*)NULL }, };
+ 
+ /*
+@@ -10872,7 +10879,7 @@ static const char* apzX11_SprintfPatch[] = {
+  *
+  *  List of all fixes
+  */
+-#define REGEX_COUNT          305
++#define REGEX_COUNT          306
+ #define MACH_LIST_SIZE_LIMIT 187
+ #define FIX_COUNT            267
+ 
+diff --git i/fixincludes/inclhack.def w/fixincludes/inclhack.def
+index 7605ac89aa2..43fa4a4df1c 100644
+--- i/fixincludes/inclhack.def
++++ w/fixincludes/inclhack.def
+@@ -3626,6 +3626,7 @@ fix = {
+     hackname  = pthread_incomplete_struct_argument;
+     files     = pthread.h;
+     select    = "struct __jmp_buf_tag";
++    bypass    = "bits/types/struct___jmp_buf_tag.h";
+     c_fix     = format;
+     c_fix_arg = "%1 *%2%3";
+     c_fix_arg = "^(extern int __sigsetjmp \\(struct __jmp_buf_tag) "

@@ -2,20 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import glob
-import os
 import re
 import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsBuilder, AutotoolsPackage
-from spack_repo.builtin.build_systems.nmake import NMakeBuilder, NMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 
 from spack.package import *
 
-is_windows = sys.platform == "win32"
+IS_WINDOWS = sys.platform == "win32"
 
 
-class Curl(NMakePackage, AutotoolsPackage):
+class Curl(AutotoolsPackage, CMakePackage):
     """cURL is an open source command line tool and library for
     transferring data with URL syntax"""
 
@@ -29,62 +27,13 @@ class Curl(NMakePackage, AutotoolsPackage):
 
     license("curl")
 
+    version("8.21.0", sha256="ad6f2f94934b38e31e48272833c99b891d045b4565fe942a53fbd27bd3910e16")
+    version("8.20.0", sha256="4be48e69cf467246cb97d369b85d78a08528f2b37cffef2418ee16e6a4eb596e")
+    version("8.19.0", sha256="eba3230c1b659211a7afa0fbf475978cbf99c412e4d72d9aa92d020c460742d4")
+    version("8.18.0", sha256="ffd671a3dad424fb68e113a5b9894c5d1b5e13a88c6bdf0d4af6645123b31faf")
+    version("8.17.0", sha256="230032528ce5f85594d4f3eace63364c4244ccc3c801b7f8db1982722f2761f4")
     version("8.15.0", sha256="699a6d2192322792c88088576cff5fe188452e6ea71e82ca74409f07ecc62563")
     version("8.14.1", sha256="5760ed3c1a6aac68793fc502114f35c3e088e8cd5c084c2d044abdf646ee48fb")
-
-    # Deprecated versions due to CVEs
-    version(
-        "8.11.1",
-        sha256="e9773ad1dfa21aedbfe8e1ef24c9478fa780b1b3d4f763c98dd04629b5e43485",
-        deprecated=True,
-    )
-    version(
-        "8.10.1",
-        sha256="3763cd97aae41dcf41950d23e87ae23b2edb2ce3a5b0cf678af058c391b6ae31",
-        deprecated=True,
-    )
-    version(
-        "8.8.0",
-        sha256="40d3792d38cfa244d8f692974a567e9a5f3387c547579f1124e95ea2a1020d0d",
-        deprecated=True,
-    )
-    version(
-        "8.7.1",
-        sha256="05bbd2b698e9cfbab477c33aa5e99b4975501835a41b7ca6ca71de03d8849e76",
-        deprecated=True,
-    )
-    version(
-        "8.6.0",
-        sha256="b4785f2d8877fa92c0e45d7155cf8cc6750dbda961f4b1a45bcbec990cf2fa9b",
-        deprecated=True,
-    )
-    version(
-        "8.4.0",
-        sha256="e5250581a9c032b1b6ed3cf2f9c114c811fc41881069e9892d115cc73f9e88c6",
-        deprecated=True,
-    )
-    version(
-        "8.1.2",
-        sha256="b54974d32fd610acace92e3df1f643144015ac65847f0a041fdc17db6f43f243",
-        deprecated=True,
-    )
-    version(
-        "8.0.1",
-        sha256="9b6b1e96b748d04b968786b6bdf407aa5c75ab53a3d37c1c8c81cdb736555ccf",
-        deprecated=True,
-    )
-    # needed by r@:4.2
-    version(
-        "7.88.1",
-        sha256="8224b45cce12abde039c12dc0711b7ea85b104b9ad534d6e4c5b4e188a61c907",
-        deprecated=True,
-    )
-    # needed by old r-curl
-    version(
-        "7.63.0",
-        sha256="9bab7ed4ecff77020a312d84cc5fb7eb02d58419d218f267477a724a17fd8dd8",
-        deprecated=True,
-    )
 
     # TODO: add dependencies for other possible TLS backends
 
@@ -96,9 +45,8 @@ class Curl(NMakePackage, AutotoolsPackage):
             # 'amissl',
             # 'bearssl',
             "gnutls",
-            conditional("mbedtls", when="@7.46:"),
+            "mbedtls",
             # 'mesalink',
-            conditional("nss", when="@:7.81"),
             "openssl",
             # 'rustls',
             # 'schannel',
@@ -115,18 +63,22 @@ class Curl(NMakePackage, AutotoolsPackage):
 
     variant("nghttp2", default=True, description="build nghttp2 library (requires C++11)")
     variant("libssh2", default=False, description="enable libssh2 support")
-    variant("libssh", default=False, description="enable libssh support", when="@7.58:")
+    variant("libssh", default=False, description="enable libssh support")
     variant("gssapi", default=False, description="enable Kerberos support")
     variant("librtmp", default=False, description="enable Rtmp support")
     variant("ldap", default=False, description="enable ldap support")
     variant("libidn2", default=False, description="enable libidn2 support")
     variant(
         "libs",
-        default="shared,static" if not is_windows else "shared",
+        default="shared,static" if not IS_WINDOWS else "shared",
         values=("shared", "static"),
-        multi=not is_windows,
+        multi=not IS_WINDOWS,
         description="Build shared libs, static libs or both",
     )
+
+    with when("platform=windows build_system=cmake"):
+        variant("static-crt", default=False, description="Link to static CRT")
+        variant("unicode", default=False, description="Use the unicode version of Windows API")
 
     conflicts("platform=linux", when="tls=secure_transport", msg="Only supported on macOS")
 
@@ -137,22 +89,16 @@ class Curl(NMakePackage, AutotoolsPackage):
     depends_on("pkgconfig", type="build", when="platform=linux")
     depends_on("pkgconfig", type="build", when="platform=freebsd")
 
+    # CMake 4.0: is not compatible with CMake systems requiring
+    # 3.0, which curl@7.63 requires
+    depends_on("cmake@:3", type="build", when="build_system=cmake @:7.63")
+
+    depends_on("gnutls@3.6.5:", when="tls=gnutls @8.18:")
     depends_on("gnutls", when="tls=gnutls")
-
-    with when("tls=mbedtls"):
-        depends_on("mbedtls +pic")
-        depends_on("mbedtls@:2", when="@:7.78")
-        depends_on("mbedtls@:3.5", when="@:8.7")
-        depends_on("mbedtls@2:", when="@7.79:")
-        depends_on("mbedtls@3.2:", when="@8.8")  # https://github.com/curl/curl/issues/13748
-
-    depends_on("nss", when="tls=nss")
-
-    with when("tls=openssl"):
-        depends_on("openssl")
-        # Since https://github.com/curl/curl/commit/ee36e86ce8f77a017c49b8312814c33f4b969565
-        # there is OpenSSL 3 detection.
-        depends_on("openssl@:1", when="@:7.76")
+    depends_on("mbedtls@3: +pic", when="tls=mbedtls @8.17:")
+    depends_on("mbedtls@2: +pic", when="tls=mbedtls")
+    depends_on("openssl@3:", when="tls=openssl @8.18:")
+    depends_on("openssl", when="tls=openssl")
 
     depends_on("libidn2", when="+libidn2")
     depends_on("zlib-api")
@@ -167,12 +113,13 @@ class Curl(NMakePackage, AutotoolsPackage):
     # https://github.com/curl/curl/issues/12832
     # https://github.com/curl/curl/issues/13508
     # https://github.com/curl/curl/issues/18088
-    depends_on("perl", type="build", when="@8.6:8.7.1,8.15.0")
+    depends_on("perl", type="build", when="@8.15.0")
 
-    # https://github.com/curl/curl/pull/9054
-    patch("easy-lock-sched-header.patch", when="@7.84.0")
-
-    build_system("autotools", conditional("nmake", when="platform=windows"), default="autotools")
+    build_system(
+        "autotools",
+        "cmake",
+        default="cmake" if IS_WINDOWS else "autotools",
+    )
 
     @classmethod
     def determine_version(cls, exe):
@@ -215,15 +162,6 @@ class Curl(NMakePackage, AutotoolsPackage):
         return flags, None, build_system_flags
 
 
-class BuildEnvironment:
-    def setup_dependent_build_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        if self.spec.satisfies("libs=static"):
-            env.append_flags("CFLAGS", "-DCURL_STATICLIB")
-            env.append_flags("CXXFLAGS", "-DCURL_STATICLIB")
-
-
 class AutotoolsBuilder(AutotoolsBuilder):
     def configure_args(self):
         spec = self.spec
@@ -236,11 +174,9 @@ class AutotoolsBuilder(AutotoolsBuilder):
             "--without-libgsasl",
             "--without-libpsl",
             "--without-zstd",
+            "--disable-docs",
             "--disable-manual",
         ]
-
-        if spec.satisfies("@8.7:"):
-            args.append("--disable-docs")
 
         args += self.enable_or_disable("libs")
 
@@ -248,12 +184,6 @@ class AutotoolsBuilder(AutotoolsBuilder):
         # TODO: certs for other tls options.
         if spec.satisfies("tls=gnutls") or spec.satisfies("tls=openssl"):
             args.extend(["--without-ca-bundle", "--without-ca-path", "--with-ca-fallback"])
-
-        # https://daniel.haxx.se/blog/2021/06/07/bye-bye-metalink-in-curl/
-        # We always disable it explicitly, but the flag is gone in newer
-        # versions.
-        if spec.satisfies("@:7.77"):
-            args.append("--without-libmetalink")
 
         if spec.satisfies("+gssapi"):
             args.append("--with-gssapi=" + spec["krb5"].prefix)
@@ -277,100 +207,71 @@ class AutotoolsBuilder(AutotoolsBuilder):
             return "--without-gnutls"
 
     def with_or_without_mbedtls(self, activated):
-        if self.spec.satisfies("@7.46:"):
-            if activated:
-                return "--with-mbedtls=" + self.spec["mbedtls"].prefix
-            else:
-                return "--without-mbedtls"
-
-    def with_or_without_nss(self, activated):
         if activated:
-            return "--with-nss=" + self.spec["nss"].prefix
+            return "--with-mbedtls=" + self.spec["mbedtls"].prefix
         else:
-            return "--without-nss"
+            return "--without-mbedtls"
 
     def with_or_without_openssl(self, activated):
-        if self.spec.satisfies("@7.77:"):
-            if activated:
-                return "--with-openssl=" + self.spec["openssl"].prefix
-            else:
-                return "--without-openssl"
+        if activated:
+            return "--with-openssl=" + self.spec["openssl"].prefix
         else:
-            if activated:
-                return "--with-ssl=" + self.spec["openssl"].prefix
-            else:
-                return "--without-ssl"
+            return "--without-openssl"
 
     def with_or_without_secure_transport(self, activated):
-        if self.spec.satisfies("@7.65:"):
-            if activated:
-                return "--with-secure-transport"
-            else:
-                return "--without-secure-transport"
+        if activated:
+            return "--with-secure-transport"
         else:
-            if activated:
-                return "--with-darwinssl"
-            else:
-                return "--without-darwinssl"
+            return "--without-secure-transport"
 
 
-class NMakeBuilder(BuildEnvironment, NMakeBuilder):
-    phases = ["install"]
+class CMakeBuilder(CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define("BUILD_TESTING", False),
+            self.define("CURL_USE_LIBPSL", False),
+            # Curl's CMake will turn this off if not building static libcurl
+            self.define("BUILD_STATIC_CURL", True),
+            # enables install from cmake
+            self.define("CURL_DISABLE_INSTALL", False),
+            self.define("BUILD_MISC_DOCS", False),
+            self.define("BUILD_LIBCURL_DOCS", False),
+            self.define("BUILD_EXAMPLES", False),
+            self.define("CURL_BROTLI", False),
+            self.define("CURL_USE_GSASL", False),
+            self.define("CURL_ZSTD", False),
+            self.define("ENABLE_CURL_MANUAL", False),
+            self.define_from_variant("CURL_USE_LIBSSH2", "libssh2"),
+            self.define_from_variant("CURL_USE_LIBSSH", "libssh"),
+            self.define_from_variant("CURL_USE_OPENLDAP", "ldap"),
+            self.define_from_variant("CURL_DISABLE_LDAP", "ldap"),
+            self.define_from_variant("USE_NGHTTP2", "nghttp2"),
+            self.define_from_variant("CURL_USE_GSSAPI", "gssapi"),
+            self.define_from_variant("USE_LIBRTMP", "librtmp"),
+            self.define_from_variant("USE_LIBIDN2", "libidn2"),
+        ]
 
-    def nmake_args(self):
-        args = []
-        mode = "dll" if self.spec.satisfies("libs=shared") else "static"
-        args.append("mode=%s" % mode)
-        args.append("WITH_ZLIB=%s" % mode)
-        args.append("ZLIB_PATH=%s" % self.spec["zlib-api"].prefix)
-        if self.spec.satisfies("+libssh"):
-            args.append("WITH_SSH=%s" % mode)
-        if self.spec.satisfies("+libssh2"):
-            args.append("WITH_SSH2=%s" % mode)
-            args.append("SSH2_PATH=%s" % self.spec["libssh2"].prefix)
-        if self.spec.satisfies("+nghttp2"):
-            args.append("WITH_NGHTTP2=%s" % mode)
-            args.append("NGHTTP2=%s" % self.spec["nghttp2"].prefix)
+        if self.spec.satisfies("tls=sspi"):
+            args.append(self.define("CURL_WINDOWS_SSPI", True))
+        if self.spec.satisfies("tls=gnutls"):
+            args.append(self.define("CURL_USE_GNUTLS", True))
+        if self.spec.satisfies("tls=mbedtls"):
+            args.append(self.define("CURL_USE_MBEDTLS", True))
         if self.spec.satisfies("tls=openssl"):
-            args.append("WITH_SSL=%s" % mode)
-            args.append("SSL_PATH=%s" % self.spec["openssl"].prefix)
-        elif self.spec.satisfies("tls=mbedtls"):
-            args.append("WITH_MBEDTLS=%s" % mode)
-            args.append("MBEDTLS_PATH=%s" % self.spec["mbedtls"].prefix)
-        elif self.spec.satisfies("tls=sspi"):
-            args.append("ENABLE_SSPI=%s" % mode)
+            args.append(self.define("CURL_USE_OPENSSL", True))
 
-        # The trailing path seperator is REQUIRED for cURL to install
-        # otherwise cURLs build system will interpret the path as a file
-        # and the install will fail with ambiguous errors
-        inst_prefix = self.prefix + "\\"
-        args.append(f"WITH_PREFIX={windows_sfn(inst_prefix)}")
+        if self.spec.satisfies("platform=windows"):
+            args.extend(
+                [
+                    self.define_from_variant("ENABLE_UNICODE", "unicode"),
+                    self.define_from_variant("CURL_STATIC_CRT", "static-crt"),
+                ]
+            )
+            if self.spec.satisfies("+ldap"):
+                args.append(self.define("USE_WIN32_LDAP", True))
+
+        if self.spec.satisfies("libs=shared"):
+            args.append(self.define("BUILD_SHARED_LIBS", True))
+        if self.spec.satisfies("libs=static"):
+            args.append(self.define("BUILD_STATIC_LIBS", True))
         return args
-
-    def install(self, pkg, spec, prefix):
-        # Spack's env CC and CXX values will cause an error
-        # if there is a path in the space, and escaping with
-        # double quotes raises a syntax issues, instead
-        # cURLs nmake will automatically invoke proper cl.exe if
-        # no env value for CC, CXX is specified
-        # Unset the value to allow for cURLs heuristics (derive via VCVARS)
-        # to derive the proper compiler
-        env = os.environ
-        env["CC"] = ""
-        env["CXX"] = ""
-        winbuild_dir = os.path.join(self.stage.source_path, "winbuild")
-        winbuild_dir = windows_sfn(winbuild_dir)
-        with working_dir(winbuild_dir):
-            nmake("/f", "Makefile.vc", *self.nmake_args(), ignore_quotes=True)
-        with working_dir(os.path.join(self.stage.source_path, "builds")):
-            install_dir = glob.glob("libcurl-**")[0]
-            install_tree(install_dir, self.prefix)
-        if spec.satisfies("libs=static"):
-            # curl is named libcurl_a when static on Windows
-            # Consumers look for just libcurl
-            # make a symlink to make consumers happy
-            libcurl_a = os.path.join(prefix.lib, "libcurl_a.lib")
-            libcurl = os.path.join(self.prefix.lib, "libcurl.lib")
-            # safeguard against future curl releases that do this for us
-            if os.path.exists(libcurl_a) and not os.path.exists(libcurl):
-                symlink(libcurl_a, libcurl)

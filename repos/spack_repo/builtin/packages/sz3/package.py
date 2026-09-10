@@ -52,7 +52,7 @@ class Sz3(CMakePackage):
         """Run sz3 smoke test"""
         if self.spec.satisfies("@:3.1.6"):
             raise SkipTest("Package must be installed as version 3.1.7 or later")
-        exe = which(self.prefix.bin.sz3_smoke_test)
+        exe = which(self.prefix.bin.sz3_smoke_test, required=True)
         exe()
 
     def test_mdz_smoke_test(self):
@@ -61,5 +61,5 @@ class Sz3(CMakePackage):
             raise SkipTest("Package must be installed as version 3.1.7 or later")
         if "+mdz" not in self.spec:
             raise SkipTest("Package must be installed with '+mdz'")
-        exe = which(self.prefix.bin.mdz_smoke_test)
+        exe = which(self.prefix.bin.mdz_smoke_test, required=True)
         exe()

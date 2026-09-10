@@ -14,6 +14,7 @@ class PyPamela(PythonPackage):
 
     license("MIT")
 
+    version("1.2.0", sha256="0ea6e2a99dded8c7783a4a06f2d31f5bdcad894d79101e8f09322e387a34aacf")
     version("1.0.0", sha256="65c9389bef7d1bb0b168813b6be21964df32016923aac7515bdf05366acbab6c")
 
     depends_on("py-setuptools", type="build")

@@ -36,6 +36,15 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     # We cannot set up a warning for gets(), since gets() is not part
     # of C11 any more and thus might not exist.
     patch("gets.patch", when="@1.14")
+
+    # Error for declaration of mbrtowc without a prototype.
+    # https://gitweb.git.savannah.gnu.org/gitweb/?p=libiconv.git;a=commit;h=e46dee2f581c11
+    patch(
+        "loop_wchar_9eb508.patch",
+        when="@:1.17",
+        sha256="e0145a14e9fed1d9f07003a4772db916faa8cbb7c5273880a38d7c2e64d4103c",
+    )
+
     provides("iconv")
 
     conflicts("@1.14", when="%gcc@5:")
@@ -57,6 +66,15 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
         if self.spec.satisfies("@1.17:%nvhpc"):
             args.append("gl_cv_cc_wallow=none")
 
+        # Intel oneAPI icx incorrectly marks glibc's error() as noreturn,
+        # causing the gnulib gl_cv_func_working_error configure test to
+        # infinite-loop and consume unbounded memory.
+        # Fix available in icx 2026, but this workaround is needed for
+        # all versions of icx up to 2025.
+        # https://community.intel.com/t5/Intel-oneAPI-DPC-C-Compiler/All-versions-of-icx-miscompile-error-0-resulting-in-segfaults/m-p/1744208
+        if self.spec.satisfies("%oneapi@:2025"):
+            args.append("gl_cv_func_working_error=yes")
+
         # A hack to patch config.guess in the libcharset sub directory
         copy("./build-aux/config.guess", "libcharset/build-aux/config.guess")
         return args
@@ -65,3 +83,9 @@ class Libiconv(AutotoolsPackage, GNUMirrorPackage):
     def libs(self):
         shared = self.spec.satisfies("libs=shared")
         return find_libraries(["libiconv"], root=self.prefix, recursive=True, shared=shared)
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        super().setup_build_environment(env)
+
+        if self.spec.satisfies("@1.18 %intel"):
+            env.append_flags("CFLAGS", "-std=c11")

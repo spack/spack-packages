@@ -19,6 +19,7 @@ class MongoCDriver(AutotoolsPackage, CMakePackage):
 
     license("Apache-2.0")
 
+    version("2.3.0", sha256="0ef2c33345482d444ef766ebf3f066b4596bd6867a24ab6889b76dd51cb23878")
     version("1.27.2", sha256="a53010803e2df097a2ea756be6ece34c8f52cda2c18e6ea21115097b75f5d4bf")
     version("1.24.4", sha256="2f4a3e8943bfe3b8672c2053f88cf74acc8494dc98a45445f727901eee141544")
     version("1.23.3", sha256="c8f951d4f965d455f37ae2e10b72914736fc0f25c4ffc14afc3cbadd1a574ef6")
@@ -36,11 +37,6 @@ class MongoCDriver(AutotoolsPackage, CMakePackage):
     version("1.7.0", sha256="48a0dbd44fef2124b51cf501f06be269b1a39452303b880b37473a6030c6e023")
     version("1.6.3", sha256="82df03de117a3ccf563b9eccfd2e5365df8f215a36dea7446d439969033ced7b")
     version("1.6.2", sha256="7ec27e9be4da2bf9e4b316374f8c29f816f0a0f019b984411777e9681e17f70e")
-    version(
-        "1.6.1",
-        sha256="1bdfb27944c6da8e56da209a5d56efac70df1f8c4ca4498b46f75bf3f9360898",
-        deprecated=True,
-    )
 
     variant("ssl", default=True, description="Enable SSL support.")
     variant("snappy", default=True, description="Enable Snappy support.")
@@ -53,8 +49,8 @@ class MongoCDriver(AutotoolsPackage, CMakePackage):
         when="@1.8.1",
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.1:", type="build")
@@ -71,16 +67,15 @@ class MongoCDriver(AutotoolsPackage, CMakePackage):
     )
 
     def url_for_version(self, version):
-        if version >= Version("1.25.0"):
+        if version >= Version("1.25.0") and version <= Version("1.27.2"):
             return f"https://github.com/mongodb/mongo-c-driver/archive/refs/tags/{version}.tar.gz"
-        if version >= Version("1.10.0"):
-            return f"https://github.com/mongodb/mongo-c-driver/releases/download/{version}/mongo-c-driver-{version}.tar.gz"
-        else:
-            return f"https://github.com/mongodb/libbson/releases/download/{version}/libbson-{version}.tar.gz"
+
+        return f"https://github.com/mongodb/mongo-c-driver/releases/download/{version}/mongo-c-driver-{version}.tar.gz"
 
     depends_on("pkgconfig", type="build")
 
     # When updating mongo-c-driver, libbson has to be kept in sync.
+    depends_on("libbson@2.3", when="@2.3")
     depends_on("libbson@1.27", when="@1.27")
     depends_on("libbson@1.24", when="@1.24")
     depends_on("libbson@1.23", when="@1.23")

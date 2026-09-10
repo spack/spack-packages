@@ -1,0 +1,202 @@
+From 97799df970c090a5f18c6c60f7478036d54f0c43 Mon Sep 17 00:00:00 2001
+From: Fides Upstream <kwrobot@kitware.com>
+Date: Mon, 20 Apr 2026 12:22:58 -0400
+Subject: [PATCH 1/3] fides 2026-04-20 (ceedfb2f)
+
+Code extracted from:
+
+    https://gitlab.kitware.com/third-party/fides.git
+
+at commit ceedfb2f766eeb82742474bc7346647413577b36 (for/vtk-20260420-master-1e7e886).
+---
+ ThirdParty/fides/vtkfides/fides/CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/ThirdParty/fides/vtkfides/fides/CMakeLists.txt b/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
+index d21e907420..deb18e37b8 100644
+--- a/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
++++ b/ThirdParty/fides/vtkfides/fides/CMakeLists.txt
+@@ -87,7 +87,7 @@ vtk_module_include(VTK::fides
+   PUBLIC
+     $<BUILD_INTERFACE:${FIDES_SOURCE_DIR}>
+     $<BUILD_INTERFACE:${FIDES_BINARY_DIR}/fides>
+-    $<INSTALL_INTERFACE:${_vtk_build_HEADERS_DESTINATION}/vtkfides/fides>
++    $<INSTALL_INTERFACE:${_vtk_build_HEADERS_DESTINATION}/vtkfides>
+   )
+ 
+ include(GenerateExportHeader)
+-- 
+2.50.1 (Apple Git-155)
+
+From ff6b10bf7130479e0c0d316a77fd1ecfc8328a14 Mon Sep 17 00:00:00 2001
+From: Kenneth Moreland <morelandkd@ornl.gov>
+Date: Tue, 14 Apr 2026 13:24:02 -0400
+Subject: [PATCH 2/3] Enable linking to an externally built Fides
+
+---
+ IO/Fides/vtkFidesReader.cxx     |  6 +++++-
+ IO/Fides/vtkFidesWriter.cxx     |  6 +++++-
+ ThirdParty/fides/CMakeLists.txt | 31 ++++++++++++++++++++++---------
+ ThirdParty/fides/vtk_fides.h.in | 15 +++++++++++++++
+ 4 files changed, 47 insertions(+), 11 deletions(-)
+ create mode 100644 ThirdParty/fides/vtk_fides.h.in
+
+diff --git a/IO/Fides/vtkFidesReader.cxx b/IO/Fides/vtkFidesReader.cxx
+index 246e1c3ded..6450edebed 100644
+--- a/IO/Fides/vtkFidesReader.cxx
++++ b/IO/Fides/vtkFidesReader.cxx
+@@ -20,7 +20,11 @@
+ #include "vtkmlib/UnstructuredGridConverter.h"
+ #include "vtksys/SystemTools.hxx"
+ 
+-#include <fides/DataSetReader.h>
++// Fides includes
++#include <vtk_fides.h>
++// clang-format off
++#include VTK_FIDES(fides/DataSetReader.h)
++// clang-format on
+ 
+ #include <viskores/filter/clean_grid/CleanGrid.h>
+ 
+diff --git a/IO/Fides/vtkFidesWriter.cxx b/IO/Fides/vtkFidesWriter.cxx
+index 1eaf338f98..55259a9eb4 100644
+--- a/IO/Fides/vtkFidesWriter.cxx
++++ b/IO/Fides/vtkFidesWriter.cxx
+@@ -26,7 +26,11 @@
+ #include "vtkMPIController.h"
+ #endif
+ 
+-#include <fides/DataSetWriter.h>
++// Fides includes
++#include <vtk_fides.h>
++// clang-format off
++#include VTK_FIDES(fides/DataSetWriter.h)
++// clang-format on
+ 
+ #include <viskores/cont/DataSet.h>
+ #include <viskores/cont/PartitionedDataSet.h>
+diff --git a/ThirdParty/fides/CMakeLists.txt b/ThirdParty/fides/CMakeLists.txt
+index 2da2afa02b..a50b8eebcf 100644
+--- a/ThirdParty/fides/CMakeLists.txt
++++ b/ThirdParty/fides/CMakeLists.txt
+@@ -1,9 +1,22 @@
+-vtk_module_third_party_internal(
+-  LICENSE_FILES           "vtkfides/LICENSE.txt"
+-  SPDX_LICENSE_IDENTIFIER "BSD-3-Clause"
+-  SPDX_COPYRIGHT_TEXT     "Copyright (c) 2019 Kitware Inc."
+-  SPDX_DOWNLOAD_LOCATION  "git+https://gitlab.kitware.com/third-party/fides.git@for/vtk-20230505-master-6922a48e"
+-  VERSION                 "master"
+-  SUBDIRECTORY            vtkfides
+-  STANDARD_INCLUDE_DIRS
+-  INTERFACE)
++vtk_module_third_party(
++  INTERNAL
++    LICENSE_FILES           "vtkfides/LICENSE.txt"
++    SPDX_LICENSE_IDENTIFIER "BSD-3-Clause"
++    SPDX_COPYRIGHT_TEXT     "Copyright (c) 2019 Kitware Inc."
++    SPDX_DOWNLOAD_LOCATION  "git+https://gitlab.kitware.com/third-party/fides.git@for/vtk-20260420-master-1e7e886"
++    VERSION                 "master"
++    SUBDIRECTORY            vtkfides
++    STANDARD_INCLUDE_DIRS
++    INTERFACE
++  EXTERNAL
++    PACKAGE                 Fides
++    TARGETS                 fides
++    STANDARD_INCLUDE_DIRS
++  )
++
++configure_file(
++  "${CMAKE_CURRENT_SOURCE_DIR}/vtk_fides.h.in"
++  "${CMAKE_CURRENT_BINARY_DIR}/vtk_fides.h")
++
++vtk_module_install_headers(
++  FILES "${CMAKE_CURRENT_BINARY_DIR}/vtk_fides.h")
+diff --git a/ThirdParty/fides/vtk_fides.h.in b/ThirdParty/fides/vtk_fides.h.in
+new file mode 100644
+index 0000000000..5383f71c87
+--- /dev/null
++++ b/ThirdParty/fides/vtk_fides.h.in
+@@ -0,0 +1,15 @@
++// SPDX-FileCopyrightText: Copyright (c) Ken Martin, Will Schroeder, Bill Lorensen
++// SPDX-License-Identifier: BSD-3-Clause
++#ifndef vtk_fides_h
++#define vtk_fides_h
++
++/* Use the fides library configured for VTK.  */
++#cmakedefine01 VTK_MODULE_USE_EXTERNAL_VTK_fides
++
++#if VTK_MODULE_USE_EXTERNAL_VTK_fides
++# define VTK_FIDES(x) <x>
++#else
++# define VTK_FIDES(x) <vtkfides/x>
++#endif
++
++#endif
+-- 
+2.50.1 (Apple Git-155)
+
+From 86e8ce32b719aa9381268f547ff4e57b7a5e1e52 Mon Sep 17 00:00:00 2001
+From: Kenneth Moreland <morelandkd@ornl.gov>
+Date: Thu, 16 Apr 2026 07:50:44 -0400
+Subject: [PATCH 3/3] Add test for Fides third-party module include file
+
+---
+ ThirdParty/fides/Testing/CMakeLists.txt           |  1 +
+ ThirdParty/fides/Testing/Cxx/CMakeLists.txt       |  4 ++++
+ ThirdParty/fides/Testing/Cxx/TestIncludeFides.cxx | 11 +++++++++++
+ ThirdParty/fides/vtk.module                       |  4 ++++
+ 4 files changed, 20 insertions(+)
+ create mode 100644 ThirdParty/fides/Testing/CMakeLists.txt
+ create mode 100644 ThirdParty/fides/Testing/Cxx/CMakeLists.txt
+ create mode 100644 ThirdParty/fides/Testing/Cxx/TestIncludeFides.cxx
+
+diff --git a/ThirdParty/fides/Testing/CMakeLists.txt b/ThirdParty/fides/Testing/CMakeLists.txt
+new file mode 100644
+index 0000000000..35f9732a93
+--- /dev/null
++++ b/ThirdParty/fides/Testing/CMakeLists.txt
+@@ -0,0 +1 @@
++add_subdirectory(Cxx)
+diff --git a/ThirdParty/fides/Testing/Cxx/CMakeLists.txt b/ThirdParty/fides/Testing/Cxx/CMakeLists.txt
+new file mode 100644
+index 0000000000..d0f115663e
+--- /dev/null
++++ b/ThirdParty/fides/Testing/Cxx/CMakeLists.txt
+@@ -0,0 +1,4 @@
++vtk_add_test_cxx(vtkfidesCxxTests tests
++  NO_DATA NO_VALID NO_OUTPUT
++  TestIncludeFides.cxx)
++vtk_test_cxx_executable(vtkfidesCxxTests tests)
+diff --git a/ThirdParty/fides/Testing/Cxx/TestIncludeFides.cxx b/ThirdParty/fides/Testing/Cxx/TestIncludeFides.cxx
+new file mode 100644
+index 0000000000..b6b81a4948
+--- /dev/null
++++ b/ThirdParty/fides/Testing/Cxx/TestIncludeFides.cxx
+@@ -0,0 +1,11 @@
++#include "vtk_fides.h"
++// clang-format off
++#include VTK_FIDES(fides/DataSetReader.h)
++// clang-format on
++
++#include <cstdlib>
++
++int TestIncludeFides(int /*argc*/, char* /*argv*/[])
++{
++  return EXIT_SUCCESS;
++}
+diff --git a/ThirdParty/fides/vtk.module b/ThirdParty/fides/vtk.module
+index 07a6e0f2f9..197ff8ab03 100644
+--- a/ThirdParty/fides/vtk.module
++++ b/ThirdParty/fides/vtk.module
+@@ -10,4 +10,8 @@ DEPENDS
+   VTK::vtkviskores
+ OPTIONAL_DEPENDS
+   VTK::mpi
++TEST_DEPENDS
++  VTK::TestingCore
++TEST_OPTIONAL_DEPENDS
++  VTK::mpi
+ THIRD_PARTY
+-- 
+2.50.1 (Apple Git-155)
+

@@ -15,6 +15,8 @@ class PyPrometheusClient(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.25.0", sha256="5e373b75c31afb3c86f1a52fa1ad470c9aace18082d39ec0d2f918d11cc9ba28")
+    version("0.22.1", sha256="190f1331e783cf21eb60bca559354e0a4d4378facecf78f5428c39b675d20d28")
     version("0.17.0", sha256="9c3b26f1535945e85b8934fb374678d263137b78ef85f305b1156c7c881cd11b")
     version("0.14.1", sha256="5459c427624961076277fdc6dc50540e2bacb98eebde99886e59ec55ed92093a")
     version("0.12.0", sha256="1b12ba48cee33b9b0b9de64a1047cbd3c5f2d0ab6ebcead7ddda613a750ec3c5")
@@ -24,11 +26,18 @@ class PyPrometheusClient(PythonPackage):
 
     variant("twisted", default=False, description="Expose metrics as a twisted resource")
 
-    depends_on("py-setuptools", type="build")
-    # Notice: prometheus_client/twisted/_exposition.py imports 'twisted.web.wsgi'
-    # which was not ported to Python 3 until twisted 16.0.0
-    depends_on("py-twisted@16:", when="@0.12.0: +twisted ^python@3:", type=("build", "run"))
-    depends_on("py-twisted", when="+twisted", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-setuptools@77:", when="@0.22.1:")
+        depends_on("py-setuptools")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@0.22:")
+
+        with when("+twisted"):
+            # Notice: prometheus_client/twisted/_exposition.py imports 'twisted.web.wsgi'
+            # which was not ported to Python 3 until twisted 16.0.0
+            depends_on("py-twisted@16:", when="@0.12.0: ^python@3:")
+            depends_on("py-twisted")
 
     @property
     def skip_modules(self):

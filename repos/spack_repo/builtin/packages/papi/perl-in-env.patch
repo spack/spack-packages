@@ -1,0 +1,10 @@
+diff --git a/src/maint/genpapifdef.pl b/src/maint/genpapifdef.pl
+index 2b54ba7dc..5acfde0ff 100755
+--- a/src/maint/genpapifdef.pl
++++ b/src/maint/genpapifdef.pl
+@@ -1,4 +1,4 @@
+-#!/usr/bin/perl
++#!/usr/bin/env perl
+ 
+ ##
+ ## Copyright (C) by Innovative Computing Laboratory

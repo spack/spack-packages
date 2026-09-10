@@ -26,6 +26,7 @@ class Gmsh(CMakePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("4.15.1", sha256="eba8e4064f6586c8ca880f1cfdf697f4d70f026f398a93b458f247f7e4364fed")
     version("4.13.1", sha256="77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d")
     version("4.13.0", sha256="c85f056ee549a433e814a61c385c97952bbfe514b442b999f6149fffb1e54f64")
     version("4.12.2", sha256="13e09d9ca8102e5c40171d6ee150c668742b98c3a6ca57f837f7b64e1e2af48f")
@@ -64,7 +65,6 @@ class Gmsh(CMakePackage):
     variant("mmg", default=True, description="Build with Mmg3d")
     variant("netgen", default=True, description="Build with Netgen (built-in)")
     variant("opencascade", default=False, description="Build with OpenCASCADE")
-    variant("oce", default=False, description="Build with OCE")
     variant("petsc", default=False, description="Build with PETSc")
     variant("slepc", default=False, description="Build with SLEPc (only when PETSc is enabled)")
     variant("tetgen", default=False, description="Build with Tetgen (built-in)")
@@ -75,9 +75,9 @@ class Gmsh(CMakePackage):
     variant("voropp", default=True, description="Build with voro++ (built-in or 3rd party")
     variant("cgns", default=True, description="Build with CGNS")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     # https://gmsh.info/doc/texinfo/gmsh.html#Compiling-the-source-code
     # We make changes to the GMSH default, such as external blas.
@@ -97,12 +97,9 @@ class Gmsh(CMakePackage):
     depends_on("glu", when="+fltk")
     depends_on("cairo", when="+cairo")
     depends_on("hdf5", when="+hdf5")
-    depends_on("hdf5", when="+med")
-    depends_on("med", when="+med")
+    depends_on("med@:5", when="+med")
     depends_on("mmg", when="+mmg")
     depends_on("opencascade", when="+opencascade")
-    depends_on("oce", when="+oce")
-    depends_on("freetype", when="+oce")
     depends_on("freetype", when="+opencascade")
     depends_on("slepc", when="+slepc+petsc")
     depends_on("zlib-api", when="+compression")
@@ -120,9 +117,6 @@ class Gmsh(CMakePackage):
     # and https://gitlab.onelab.info/gmsh/gmsh/-/blob/master/Graphics/gl2ps.cpp
 
     conflicts("+slepc", when="~petsc")
-    conflicts("+oce", when="+opencascade")
-    conflicts("+oce", when="^gmsh@4.10:4.10.3")
-    conflicts("+oce", when="@4.10.3:")
     conflicts("+metis", when="+external", msg="External Metis cannot build with GMSH")
 
     def flag_handler(self, name, flags):
@@ -171,9 +165,7 @@ class Gmsh(CMakePackage):
             blas_lapack = spec["lapack"].libs + spec["blas"].libs
             options.append(f"-DBLAS_LAPACK_LIBRARIES={blas_lapack.ld_flags}")
 
-        if spec.satisfies("+oce"):
-            options.append("-DENABLE_OCC=ON")
-        elif spec.satisfies("+opencascade"):
+        if spec.satisfies("+opencascade"):
             options.append("-DENABLE_OCC=ON")
         else:
             options.append("-DENABLE_OCC=OFF")

@@ -20,9 +20,10 @@ class Libde265(CMakePackage):
 
     license("LGPL-3.0-or-later")
 
+    version("1.0.16", sha256="ed12c931759c1575848832f70db5071a001ac813db4e4f568ee08aef6e234d4e")
     version("1.0.15", sha256="d4e55706dfc5b2c5c9702940b675ce2d3e7511025c6894eaddcdbaf0b15fd3f3")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.13:", type="build")

@@ -17,6 +17,7 @@ class RXml2(RPackage):
 
     license("MIT")
 
+    version("1.5.2", sha256="ed87cfa478f9e4c398288963cf7b0e1a66ba08f54d909b261a4a6c35944f50ab")
     version("1.3.6", sha256="e81991ff99bff3616dde8683c1327194e3ea64fa3b8062f52d8ce32673dd308f")
     version("1.3.3", sha256="cb4e9c0d31618ed67d2bfa4c7b5e52680e11612ed356a8164b541d44163c1c8d")
     version("1.3.2", sha256="df22f9e7e3189d8c9b8804eaf0105324fdac983cffe743552f6d76613600a4cf")
@@ -27,11 +28,15 @@ class RXml2(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.1.0:", type=("build", "run"))
-    depends_on("r@3.6.0:", type=("build", "run"), when="@1.3.6:")
     depends_on("libxml2")
 
-    depends_on("r-bh", type=("build", "run"), when="@:1.1.1")
-    depends_on("r-cli", type=("build", "run"), when="@1.3.6:")
-    depends_on("r-rcpp@0.12.12:", type=("build", "run"), when="@:1.2")
-    depends_on("r-rlang@1.1.0:", type=("build", "run"), when="@1.3.6:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.6.0:", when="@1.3.6:")
+        depends_on("r@3.1.0:")
+
+        depends_on("r-cli", when="@1.3.6:")
+        depends_on("r-rlang@1.1.0:", when="@1.3.6:")
+
+        # Historical dependencies
+        depends_on("r-bh", when="@:1.1.1")
+        depends_on("r-rcpp@0.12.12:", when="@:1.2")

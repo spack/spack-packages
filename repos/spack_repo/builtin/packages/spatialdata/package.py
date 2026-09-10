@@ -29,7 +29,7 @@ class Spatialdata(AutotoolsPackage):
 
     license("MIT", checked_by="downloadico")
 
-    version("develop", branch="develop", submodules="true")
+    version("develop", branch="develop", submodules=True)
     version("3.1.0", sha256="dd6caccbf41a51928183d6a1caf2380aa0ed0f2c8c71ecc9b2cd9e3f23aa418c")
 
     depends_on("cxx", type="build")  # generated

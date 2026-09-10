@@ -42,29 +42,11 @@ def _extract_primary_generator(generator):
     return _primary_generator_extractor.match(generator).group(1)
 
 
-def _maybe_set_python_hints(pkg: PackageBase, args: List[str]) -> None:
-    """Set the PYTHON_EXECUTABLE, Python_EXECUTABLE, and Python3_EXECUTABLE CMake variables
-    if the package has Python as build or link dep and ``find_python_hints`` is set to True. See
-    ``find_python_hints`` for context."""
-    if not getattr(pkg, "find_python_hints", False) or not pkg.spec.dependencies(
-        "python", deptype=("build", "link")
-    ):
-        return
-    python_executable = pkg.spec["python"].command.path
-    args.extend(
-        [
-            define("PYTHON_EXECUTABLE", python_executable),
-            define("Python_EXECUTABLE", python_executable),
-            define("Python3_EXECUTABLE", python_executable),
-        ]
-    )
-
-
 def _supports_compilation_databases(pkg: PackageBase) -> bool:
     """Check if this package (and CMake) can support compilation databases."""
 
     # CMAKE_EXPORT_COMPILE_COMMANDS only exists for CMake >= 3.5
-    if not pkg.spec.satisfies("^cmake@3.5:"):
+    if not pkg.spec.satisfies("%cmake@3.5:"):
         return False
 
     # CMAKE_EXPORT_COMPILE_COMMANDS is only implemented for Makefile and Ninja generators
@@ -172,19 +154,15 @@ class CMakePackage(PackageBase):
     https://cmake.org/cmake/help/latest/
     """
 
+    #: List of package names for which CMake argument injection should be disabled
+    disable_cmake_hints_from: List[str] = []
+
     #: This attribute is used in UI queries that need to know the build
     #: system base class
     build_system_class = "CMakePackage"
 
     #: Legacy buildsystem attribute used to deserialize and install old specs
     default_buildsystem = "cmake"
-
-    #: When this package depends on Python and ``find_python_hints`` is set to True, pass the
-    #: defines {Python3,Python,PYTHON}_EXECUTABLE explicitly, so that CMake locates the right
-    #: Python in its builtin FindPython3, FindPython, and FindPythonInterp modules. Spack does
-    #: CMake's job because CMake's modules by default only search for Python versions known at the
-    #: time of release.
-    find_python_hints = True
 
     build_system("cmake")
 
@@ -205,7 +183,7 @@ class CMakePackage(PackageBase):
         variant(
             "ipo",
             default=False,
-            when="^cmake@3.9:",
+            when="%cmake@3.9:",
             description="CMake interprocedural optimization",
         )
 
@@ -217,6 +195,20 @@ class CMakePackage(PackageBase):
         depends_on("cmake", type="build")
         depends_on("gmake", type="build", when="generator=make")
         depends_on("ninja", type="build", when="generator=ninja")
+
+        # CMake earlier than 4.1 improperly handles arguments provided to
+        # the linker when using msvc as a c/cxx compiler and oneapi as a
+        # fortran compiler https://gitlab.kitware.com/cmake/cmake/-/issues/26005
+        #
+        # Currently in Spack msvc is modeled as both the fortran/cxx compiler
+        # due to restrictions w/ oneapi on Windows, but in reality, when msvc
+        # is the fortran compiler, it is utilizing oneapi, and this
+        # must conflict.
+        # this should be updated to reflect a oneapi fortran provider
+        # once oneapi is usable with fortran on Windows
+        # NOTE: commented out for now because cmake@3 is used in Spack CI
+        # successfully with %fortran=msvc.
+        # depends_on("cmake@4.1:", type="build", when="%cxx=msvc %fortran=msvc")
 
     def flags_to_build_system_args(self, flags):
         """Return a list of all command line arguments to pass the specified
@@ -393,7 +385,25 @@ class CMakeBuilder(BuilderWithDefaults):
             )
 
         _conditional_cmake_defaults(pkg, args)
-        _maybe_set_python_hints(pkg, args)
+
+        # Append extra hint/option arguments from dependencies
+        # TODO: Consider properties from virtual packages like Mpi
+        disable_cmake_hints_from = getattr(pkg, "disable_cmake_hints_from", [])
+        for dep in pkg.spec.edges_to_dependencies():
+            # Skip packages without the callback
+            dep_pkg = dep.spec.package
+            if not hasattr(dep_pkg, "dependent_cmake_args"):
+                continue
+
+            # Skip disabled dependency cmake args
+            if dep_pkg.name in disable_cmake_hints_from:
+                continue
+
+            # Skip disabled virtual dependency cmake args
+            if any(v in disable_cmake_hints_from for v in dep.virtuals):
+                continue
+
+            args.extend(dep_pkg.dependent_cmake_args(pkg.spec))
 
         return args
 
@@ -599,7 +609,7 @@ def define_hip_architectures(pkg: PackageBase) -> str:
     not set.
 
     """
-    if "amdgpu_target" in pkg.spec.variants and pkg.spec.satisfies("^cmake@3.21:"):
+    if "amdgpu_target" in pkg.spec.variants and pkg.spec.satisfies("%cmake@3.21:"):
         return define("CMAKE_HIP_ARCHITECTURES", pkg.spec.variants["amdgpu_target"].value)
 
     return ""
@@ -614,6 +624,6 @@ def define_cuda_architectures(pkg: PackageBase) -> str:
     This method is no-op for cmake<3.18 and when ``cuda_arch`` variant is not set.
 
     """
-    if "cuda_arch" in pkg.spec.variants and pkg.spec.satisfies("^cmake@3.18:"):
+    if "cuda_arch" in pkg.spec.variants and pkg.spec.satisfies("%cmake@3.18:"):
         return define("CMAKE_CUDA_ARCHITECTURES", pkg.spec.variants["cuda_arch"].value)
     return ""

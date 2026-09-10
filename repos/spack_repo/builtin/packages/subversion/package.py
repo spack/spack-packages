@@ -25,6 +25,7 @@ class Subversion(AutotoolsPackage):
     # internal lz4, x509, and utf8proc code have different licenses.
     license("Apache-2.0 AND BSD-3-Clause AND BSD-2-Clause AND MIT", checked_by="tgamblin")
 
+    version("1.14.5", sha256="cd143fe8fdb1cd506c438eef1c772a2e87e1519e6b0be3fcd54a8c59e9022390")
     version("1.14.2", sha256="fd826afad03db7a580722839927dc664f3e93398fe88b66905732c8530971353")
     version("1.14.1", sha256="dee2796abaa1f5351e6cc2a60b1917beb8238af548b20d3e1ec22760ab2f0cad")
     version("1.14.0", sha256="ef3d1147535e41874c304fb5b9ea32745fbf5d7faecf2ce21d4115b567e937d0")

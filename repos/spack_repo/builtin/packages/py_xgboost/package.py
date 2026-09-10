@@ -20,6 +20,7 @@ class PyXgboost(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("2.1.4", sha256="ab84c4bbedd7fae1a26f61e9dd7897421d5b08454b51c6eb072abc1d346d08d7")
     version("2.1.1", sha256="4b1729837f9f1ba88a32ef1be3f8efb860fee6454a68719b196dc88032c23d97")
     version("2.1.0", sha256="7144980923e76ce741c7b03a14d3bd7514db6de5c7cabe96ba95b229d274f5ca")
     version("1.7.6", sha256="1c527554a400445e0c38186039ba1a00425dcdb4e40b37eed0e74cb39a159c47")
@@ -34,12 +35,12 @@ class PyXgboost(PythonPackage):
     )
     variant("dask", default=False, description="Enables Dask extensions for distributed training.")
     variant("plotting", default=False, description="Enables tree and importance plotting.")
-    patch("add-lib64.patch", when="@2:")
 
-    for ver in ["1.3.3", "1.5.2", "1.6.1", "1.6.2", "1.7.6", "2.1.0", "2.1.1"]:
+    for ver in ["1.3.3", "1.5.2", "1.6.1", "1.6.2", "1.7.6", "2.1.0", "2.1.1", "2.1.4"]:
         depends_on("xgboost@" + ver, when="@" + ver)
 
     with default_args(type="build"):
+        depends_on("py-packaging@21.3:", type="build", when="@2.1.2:")
         depends_on("py-hatchling@1.12.1:", type="build", when="@2:")
         # Required to use --config-settings
         depends_on("py-pip@22.1:", when="@2:")
@@ -70,6 +71,10 @@ class PyXgboost(PythonPackage):
         with when("+plotting"):
             depends_on("py-graphviz")
             depends_on("py-matplotlib")
+
+    # Hard-coded to search lib directory, add lib64 for certain distros
+    patch("add-lib64-1.patch", when="@1")
+    patch("add-lib64-2.patch", when="@2:")
 
     def patch(self):
         # Hard-coded to search for system libxgboost in the Python installation prefix

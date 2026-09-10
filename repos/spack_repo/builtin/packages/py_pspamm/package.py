@@ -25,9 +25,8 @@ class PyPspamm(PythonPackage):
 
     depends_on("py-numpy", when="+numpy")
     depends_on("py-scipy", when="+scipy")
-
-    def install(self, spec, prefix):
-        install_tree(".", prefix)
+    depends_on("py-setuptools", type="build")
+    depends_on("py-wheel", type="build")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PATH", self.spec.prefix)

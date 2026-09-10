@@ -15,7 +15,12 @@ class PyHfTransfer(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.1.9", sha256="035572865dab29d17e783fbf1e84cf1cb24f3fcf8f1b17db1cfc7fdf139f02bf")
     version("0.1.8", sha256="26d229468152e7a3ec12664cac86b8c2800695fd85f9c9a96677a775cc04f0b3")
 
     with default_args(type="build"):
         depends_on("py-maturin@1.4:1")
+        depends_on("rust")
+
+    # https://github.com/huggingface/hf_transfer/pull/74
+    depends_on("python@:3.13", when="@:0.1.8", type=("build", "run"))

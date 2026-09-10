@@ -27,7 +27,7 @@ class Meshlab(CMakePackage):
     depends_on("eigen")
     depends_on("glew")
     depends_on("mpfr")
-    depends_on("qt@5.15: +opengl")
+    depends_on("qt@5.15: +opengl +ssl")
 
     def cmake_args(self):
         args = [

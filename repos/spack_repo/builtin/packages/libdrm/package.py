@@ -22,6 +22,7 @@ class Libdrm(AutotoolsPackage, MesonPackage):
 
     license("MIT")
 
+    version("2.4.131", sha256="45ba9983b51c896406a3d654de81d313b953b76e6391e2797073d543c5f617d5")
     version("2.4.124", sha256="ac36293f61ca4aafaf4b16a2a7afff312aa4f5c37c9fbd797de9e3c0863ca379")
     version("2.4.123", sha256="a2b98567a149a74b0f50e91e825f9c0315d86e7be9b74394dae8b298caadb79e")
     version("2.4.122", sha256="d9f5079b777dffca9300ccc56b10a93588cdfbc9dde2fae111940dfb6292f251")

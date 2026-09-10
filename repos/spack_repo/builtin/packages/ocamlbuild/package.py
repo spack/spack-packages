@@ -22,6 +22,7 @@ class Ocamlbuild(MakefilePackage):
 
     # Add proper versions here.
     version("master", branch="master")
+    version("0.16.1", sha256="2ba6857f2991b7f69368e8db818b163d31cf5a367f15f5953bf8f01a77b3d4fc")
     version("0.15.0", sha256="d3f6ee73100b575d4810247d10ed8f53fccef4e90daf0e4a4c5f3e6a3030a9c9")
     version("0.14.3", sha256="ce151bfd2141abc6ee0b3f25ba609e989ff564a48bf795d6fa7138a4db0fc2e1")
     version("0.14.2", sha256="62d2dab6037794c702a83ac584a7066d018cf1645370d1f3d5764c2b458791b1")

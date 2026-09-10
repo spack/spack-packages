@@ -33,5 +33,5 @@ class Libmbim(AutotoolsPackage):
     depends_on("glib@:2.62.0")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

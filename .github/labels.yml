@@ -1,3 +1,27 @@
+#========================================================================
+# Spack Packages Labels
+#========================================================================
+#------------------------------------------------------------------------
+# CI/CD Modifications
+#------------------------------------------------------------------------
+ci:
+  filename: '^\.(ci|github).*\.ya?ml$'
+
+#------------------------------------------------------------------------
+# Test Modifications
+#------------------------------------------------------------------------
+tests:
+  filename: '^tests/.*$'
+
+#------------------------------------------------------------------------
+# Build Systems
+#------------------------------------------------------------------------
+build-systems:
+  filename: '^repos/spack_repo/builtin/build_systems/.*$'
+
+#------------------------------------------------------------------------
+# Package Types
+#------------------------------------------------------------------------
 intel:
   package: 'intel'
 
@@ -11,6 +35,9 @@ R:
     - '^r$'
     - '^r_'
 
+#------------------------------------------------------------------------
+# Package Statuses
+#------------------------------------------------------------------------
 new-package:
   filename: '^repos/spack_repo/builtin/packages/[^/]+/package.py$'
   status: 'added'
@@ -26,32 +53,38 @@ remove-package:
   status:
     - 'removed'
 
+#------------------------------------------------------------------------
+# Package Properties
+#------------------------------------------------------------------------
 maintainers:
-  patch: '[+-] +maintainers +='
+  patch: '[+-] +maintainers\('
+
+licenses:
+  patch: '[+-] +license\('
 
 new-version:
   patch: '\+ +version\('
 
-conflicts:
-  patch: '\+ +conflicts\('
-
-dependencies:
-  patch: '\+ +depends_on\('
-
-extends:
-  patch: '\+ +extends\('
-
-virtual-dependencies:
-  patch: '\+ +provides\('
-
-patch:
-  patch: '\+ +patch\('
-
 new-variant:
   patch: '\+ +variant\('
 
+conflicts:
+  patch: '[+-] +conflicts\('
+
+dependencies:
+  patch: '[+-] +depends_on\('
+
+extends:
+  patch: '[+-] +extends\('
+
+virtual-dependencies:
+  patch: '[+-] +provides\('
+
+patch:
+  patch: '[+-] +patch\('
+
 resources:
-  patch: '\+ +resource\('
+  patch: '[+-] +resource\('
 
 external-packages:
   patch: '[+-] +def determine_spec_details\('

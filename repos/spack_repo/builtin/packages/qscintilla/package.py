@@ -41,7 +41,7 @@ class Qscintilla(QMakePackage):
     depends_on("py-pyqt-builder", type="build", when="+python")
     depends_on("py-pyqt5", type=("build", "run"), when="+python ^qt@5")
     depends_on("python", type=("build", "run"), when="+python")
-    # adter install inquires py-sip variant : so we need to have it
+    # after install inquires py-sip variant : so we need to have it
     depends_on("py-sip", type="build", when="+python")
 
     extends("python", when="+python")
@@ -76,6 +76,12 @@ class Qscintilla(QMakePackage):
         makefile.filter(
             "$(INSTALL_ROOT)" + self.spec["qmake"].prefix, "$(INSTALL_ROOT)", string=True
         )
+        # if prefix includes symlinks, the realpath is what was written to the make file
+        makefile.filter(
+            "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix),
+            "$(INSTALL_ROOT)",
+            string=True,
+        )
 
     @run_after("install", when="+designer")
     def make_designer(self):
@@ -87,6 +93,12 @@ class Qscintilla(QMakePackage):
             makefile = FileFilter("Makefile")
             makefile.filter(
                 "$(INSTALL_ROOT)" + self.spec["qmake"].prefix, "$(INSTALL_ROOT)", string=True
+            )
+            # if prefix includes symlinks, the realpath is what was written to the make file
+            makefile.filter(
+                "$(INSTALL_ROOT)" + os.path.realpath(self.spec["qmake"].prefix),
+                "$(INSTALL_ROOT)",
+                string=True,
             )
             make("install")
 
@@ -112,7 +124,14 @@ class Qscintilla(QMakePackage):
                 tomlfile.write(f'\n[tool.sip.project]\nsip-include-dirs = ["{sip_inc_dir}"]\n')
                 # add widgets and printsupport to Qsci.pro
                 # also add link statement to fix "undefined symbol _Z...Qsciprinter...
-                link_qscilibs = "LIBS += -L" + self.prefix.lib + " -lqscintilla2_" + qtx
+                # without no-as-needed this can be dropped from linking stage
+                link_qscilibs = (
+                    "LIBS += -Wl,--no-as-needed -L"
+                    + self.prefix.lib
+                    + " -lqscintilla2_"
+                    + qtx
+                    + " -Wl,--as-needed"
+                )
                 tomlfile.write(
                     f"""
 [tool.sip.builder]

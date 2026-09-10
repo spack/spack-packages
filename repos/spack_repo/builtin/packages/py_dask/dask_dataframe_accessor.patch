@@ -1,0 +1,28 @@
+diff --git a/dask/dataframe/accessor.py b/dask/dataframe/accessor.py
+index 9a73eb6cef47852c422ed7ec0e58c3442dabdf7b..0bb10e98151f36136679c2ad111a86da5e309773 100644
+--- a/dask/dataframe/accessor.py
++++ b/dask/dataframe/accessor.py
+@@ -1,5 +1,6 @@
+ from __future__ import annotations
+ 
++import functools
+ import warnings
+ 
+ import numpy as np
+@@ -28,8 +29,15 @@ def func(self):
+ 
+     func.__name__ = attr
+     func.__qualname__ = f"{cls.__name__}.{attr}"
++    original_prop = getattr(pd_cls, attr)
++    if isinstance(original_prop, property):
++        method = original_prop.fget
++    elif isinstance(original_prop, functools.cached_property):
++        method = original_prop.func
++    else:
++        raise TypeError("bind_property expects original class to provide a property")
+     try:
+-        func.__wrapped__ = getattr(pd_cls, attr)
++        func.__wrapped__ = method
+     except Exception:
+         pass
+     setattr(cls, attr, property(derived_from(pd_cls, version=min_version)(func)))

@@ -65,10 +65,6 @@ class Spack(Package):
     # This should be read as "require at least curl", not "require curl".
     requires("fetchers=curl", when="@:0.16", msg="Curl is required for Spack < 0.17")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-
     # Python
     depends_on("python@2.6.0:2.7,3.5:", type="run")
     depends_on("python@2.7.0:2.7,3.5:", type="run", when="@0.18.0:")

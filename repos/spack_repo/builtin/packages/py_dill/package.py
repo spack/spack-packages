@@ -15,6 +15,7 @@ class PyDill(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.4.1", sha256="423092df4182177d4d8ba8290c8a5b640c66ab35ec7da59ccfa00f6fa3eea5fa")
     version("0.3.9", sha256="81aa267dddf68cbfe8029c42ca9ec6a4ab3b22371d1c450abc54422577b4512c")
     version("0.3.8", sha256="3ebe3c479ad625c4553aca177444d89b486b1d84982eeacded644afc0cf797ca")
     version("0.3.7", sha256="cc1c8b182eb3013e24bd475ff2e9295af86c1a38eb1aff128dac8962a9ce3c03")
@@ -35,6 +36,7 @@ class PyDill(PythonPackage):
 
     depends_on("python@3.7:", when="@0.3.6:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.3.8:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.4.1:", type=("build", "run"))
     depends_on("py-setuptools@42:", when="@0.3.5.1:", type="build")
     depends_on("py-setuptools@0.6:", type="build")
 

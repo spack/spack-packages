@@ -11,7 +11,7 @@ from spack.package import *
 
 
 class Networkdirect(msbuild.MSBuildPackage):
-    """NetworkDirect is a user-mode programming interface specification
+    """NetworkDirect is a Windows user-mode programming interface specification
     for Remote Direct Memory Access (RDMA)"""
 
     homepage = "https://learn.microsoft.com/en-us/previous-versions/windows/it-pro/windows-server-2012-r2-and-2012/hh997033(v=ws.11)"
@@ -35,6 +35,14 @@ class Networkdirect(msbuild.MSBuildPackage):
     # CBT is entirely deprecated, and fully incompatible with modern dotnet versions
     # so we disable the CBT system and drive the underlying MSBuild system directly
     patch("no_cbt.patch")
+    # MSBuild's native handling of OutputPath does not handle spaces in paths well
+    # add quoting to work around this
+    patch("quote_ndutil_includes.patch")
+    # For whatever reason, specifying the platform toolset
+    # prevents message compiler (mc) detection
+    # We know its present because we have a WDK
+    # patches the build system to just directly call the MC
+    patch("no_mc.patch")
 
 
 class MSBuildBuilder(msbuild.MSBuildBuilder):
@@ -52,6 +60,7 @@ class MSBuildBuilder(msbuild.MSBuildBuilder):
         args.append(
             self.define("WindowsTargetPlatformVersion", str(self.pkg["win-sdk"].version) + ".0")
         )
+        args.append(self.define("PlatformToolset", "v" + self.pkg["msvc"].platform_toolset_ver))
         # one of the headers we need isn't generated during release builds
         args.append(self.define("Configuration", "Debug"))
         args.append("src\\netdirect.sln")

@@ -15,6 +15,7 @@ class PyPyopengl(PythonPackage):
     homepage = "https://pyopengl.sourceforge.net"
     pypi = "pyopengl/PyOpenGL-3.1.6.tar.gz"
 
+    version("3.1.7", sha256="eef31a3888e6984fd4d8e6c9961b184c9813ca82604d37fe3da80eb000a76c86")
     version("3.1.6", sha256="8ea6c8773927eda7405bffc6f5bb93be81569a7b05c8cac50cd94e969dce5e27")
 
     variant("glu", default=True, description="Enable OpenGL Utility (GLU) binding.")

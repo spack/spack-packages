@@ -21,19 +21,12 @@ class Tmalign(Package):
         sha256="09227c46705ca8cf7c922a6e1672c34d7ed4daba32e5c7c484306808db54117a",
         expand=False,
     )
-    version(
-        "2016-05-25",
-        sha256="ce7f68289f3766d525afb0a58e3acfc28ae05f538d152bd33d57f8708c60e2af",
-        url="http://zhanglab.ccmb.med.umich.edu/TM-align/TM-align-C/TMalignc.tar.gz",
-        deprecated=True,
-    )
 
-    variant("fast-math", default=False, description="Enable fast math", when="@20220412:")
+    variant("fast-math", default=False, description="Enable fast math")
 
     depends_on("cxx", type="build")
 
-    with when("@20220412:"):
-        phases = ["build", "install"]
+    phases = ["build", "install"]
 
     def build(self, spec, prefix):
         cxx = Executable(self.compiler.cxx)

@@ -17,6 +17,7 @@ class PyEarthengineApi(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("1.6.2", sha256="12fdb65594c80cc0947ca88423026f89b05b047657521cec0a5822570f384840")
     version("1.4.3", sha256="052b65d4dfc6cc474d70fb78946cd981aee4c52e6df6dfbbe17a9ac5124214d0")
     version("0.1.344", sha256="bc5a270b8296aaae8574e68dfd93fe878bc5fbe77d1c41f90bcb5e5b830ca5c8")
 
@@ -30,7 +31,7 @@ class PyEarthengineApi(PythonPackage):
     depends_on("google-cloud-cli", type="run")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/e/earthengine-api/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/e/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.1.399"):
             name = "earthengine_api"
         else:

@@ -16,6 +16,12 @@ class PyFlye(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.9.6", sha256="f05a3889b1c7aafed4cc0ed1adc1f19c22618c1c7b97ab5f80d388c8192bd32a")
+    version("2.9.5", sha256="7b384266d83b1e66bcaf82d49d35ac6c587bad9146e8f3b752a220291f6b1a6f")
+    version("2.9.4", sha256="197a2dfe39fc324a39d8e1901af4f539609159c4a64a578ec8e60f73f5ea4696")
+    version("2.9.3", sha256="09580390ed0558c131ca0b836a2374d3cc7993cba2a6500024c2ee1d96666edc")
+    version("2.9.2", sha256="4b9534b912c805d44b83d497b40102bed807678b82be62667129bf1641676402")
+    version("2.9.1", sha256="25a2375cd9ba6b2285f930951ad0fde81628baa97d8709172aa59e931a96678e")
     version("2.9", sha256="158ea620d4aa92a53dae1832b09fd605e17552e45b83eecbf28e41a4516a6957")
     version("2.8.3", sha256="070f9fbee28eef8e8f87aaecc048053f50a8102a3715e71b16c9c46819a4e07c")
     version("2.8.2", sha256="f1284bd2a777356fbf808d89052bc0f9bf5602560dde7cf722d7974d9a94d03b")
@@ -37,6 +43,8 @@ class PyFlye(PythonPackage):
     conflicts("%gcc@:4.7", msg=msg)
     conflicts("%clang@:3.2", msg=msg)
     conflicts("%apple-clang@:4.9", msg=msg)
+
+    patch("dir_fix.patch", when="@:2.8,=2.9")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.target.family == "aarch64":

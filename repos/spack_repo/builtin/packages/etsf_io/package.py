@@ -65,6 +65,6 @@ class EtsfIo(Package):
     def test_etsf_io_help(self):
         """check etsf_io can execute (--help)"""
 
-        etsfio = which(self.prefix.bin.etsf_io)
+        etsfio = which(self.prefix.bin.etsf_io, required=True)
         out = etsfio("--help", output=str.split, error=str.split)
         assert "Usage: etsf_io" in out

@@ -20,9 +20,23 @@ class PyNumpy(PythonPackage):
 
     maintainers("adamjstewart", "rgommers")
 
-    license("BSD-3-Clause")
+    license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.3", sha256="df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563")
+    version("2.5.2", sha256="d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860")
+    version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
+    version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
+    version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
+    version("2.4.5", sha256="ca670567a5683b7c1670ec03e0ddd5862e10934e92a70751d68d7b7b74ca7f9f")
+    version("2.4.4", sha256="2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0")
+    version("2.4.3", sha256="483a201202b73495f00dbc83796c6ae63137a9bdade074f7648b3e32613412dd")
+    version("2.4.2", sha256="659a6107e31a83c4e33f763942275fd278b21d095094044eb35569e86a21ddae")
+    version("2.4.1", sha256="a1ceafc5042451a858231588a104093474c6a5c57dcc724841f5c888d237d690")
+    version("2.4.0", sha256="6e504f7b16118198f138ef31ba24d985b124c2c469fe8467007cf30fd992f934")
+    version("2.3.5", sha256="784db1dcdab56bf0517743e746dfb0f885fc68d948aba86eeec2cba234bdf1c0")
+    version("2.3.4", sha256="a7d018bfedb375a8d979ac758b120ba846a7fe764911a64465fd87b8729f4a6a")
+    version("2.3.3", sha256="ddc7c39727ba62b80dfdbedf400d1c10ddfa8eefbd7ec8dcb118be8b56d31029")
     version("2.3.2", sha256="e0486a11ec30cdecb53f184d496d1c6a20786c81e55e41640270130056f8ee48")
     version("2.3.1", sha256="1ec9ae20a4226da374362cca3c62cd753faf2f951440b0e3b98e93c235441d2b")
     version("2.3.0", sha256="581f87f9e9e9db2cba2141400e160e9dd644ee248788d6f90636eeb8fd9260a6")
@@ -78,73 +92,15 @@ class PyNumpy(PythonPackage):
     version("1.19.5", sha256="a76f502430dd98d7546e1ea2250a7360c065a5fdea52b2dffe8ae7180909b6f4")
     version("1.19.4", sha256="141ec3a3300ab89c7f2b0775289954d193cc8edb621ea05f99db9cb181530512")
     version("1.19.3", sha256="35bf5316af8dc7c7db1ad45bec603e5fb28671beb98ebd1d65e8059efcfd3b72")
-    version(
-        "1.19.2",
-        sha256="0d310730e1e793527065ad7dde736197b705d0e4c9999775f212b03c44a8484c",
-        deprecated=True,
-    )
-    version(
-        "1.19.1",
-        sha256="b8456987b637232602ceb4d663cb34106f7eb780e247d51a260b84760fd8f491",
-        deprecated=True,
-    )
-    version(
-        "1.19.0",
-        sha256="76766cc80d6128750075378d3bb7812cf146415bd29b588616f72c943c00d598",
-        deprecated=True,
-    )
-    version(
-        "1.18.5",
-        sha256="34e96e9dae65c4839bd80012023aadd6ee2ccb73ce7fdf3074c62f301e63120b",
-        deprecated=True,
-    )
-    version(
-        "1.18.4",
-        sha256="bbcc85aaf4cd84ba057decaead058f43191cc0e30d6bc5d44fe336dc3d3f4509",
-        deprecated=True,
-    )
-    version(
-        "1.18.3",
-        sha256="e46e2384209c91996d5ec16744234d1c906ab79a701ce1a26155c9ec890b8dc8",
-        deprecated=True,
-    )
-    version(
-        "1.18.2",
-        sha256="e7894793e6e8540dbeac77c87b489e331947813511108ae097f1715c018b8f3d",
-        deprecated=True,
-    )
-    version(
-        "1.18.1",
-        sha256="b6ff59cee96b454516e47e7721098e6ceebef435e3e21ac2d6c3b8b02628eb77",
-        deprecated=True,
-    )
-    version(
-        "1.18.0",
-        sha256="a9d72d9abaf65628f0f31bbb573b7d9304e43b1e6bbae43149c17737a42764c4",
-        deprecated=True,
-    )
-    version(
-        "1.17.5",
-        sha256="16507ba6617f62ae3c6ab1725ae6f550331025d4d9a369b83f6d5a470446c342",
-        deprecated=True,
-    )
-    version(
-        "1.17.4",
-        sha256="f58913e9227400f1395c7b800503ebfdb0772f1c33ff8cb4d6451c06cabdf316",
-        deprecated=True,
-    )
-    version(
-        "1.17.3",
-        sha256="a0678793096205a4d784bd99f32803ba8100f639cf3b932dc63b21621390ea7e",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.11:3.14", when="@2.3.2:")
+        depends_on("python@3.12:3.15", when="@2.5.2:")
+        depends_on("python@3.12:3.14", when="@2.5.0:2.5.1")
+        depends_on("python@3.11:3.14", when="@2.3.2:2.4")
         depends_on("python@3.11:3.13", when="@2.3.0:2.3.1")
         depends_on("python@3.10:3.13", when="@2.1:2.2")
         depends_on("python@3.9:3.12", when="@1.26:2.0")
@@ -153,22 +109,21 @@ class PyNumpy(PythonPackage):
         depends_on("python@3.8:3.10", when="@1.22:1.23.1")
         depends_on("python@:3.10", when="@1.21.2:1.21")
         depends_on("python@:3.9", when="@1.19.3:1.21.1")
-        depends_on("python@:3.8", when="@1.17.3:1.19.2")
 
     with default_args(type="build"):
         # Required to use --config-settings
         depends_on("py-pip@23.1:", when="@1.26:")
 
         # Build dependencies (do not include upper bound unless known issues)
+        depends_on("py-meson-python@0.18:", when="@2.4:")
+        depends_on("py-meson-python@0.15:", when="@1.26.4:")
+        depends_on("py-cython@3.1.0:", when="@2.5.2:")
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
         depends_on("py-cython@0.29.30:2", when="@1.22.4:1.24")
         depends_on("py-cython@0.29.24:2", when="@1.21.2:1.22.3")
         depends_on("py-cython@0.29.21:2", when="@1.19.1:1.21.1")
-        depends_on("py-cython@0.29.14:2", when="@1.18.1:1.19.0")
-        depends_on("py-cython@0.29.13:2", when="@1.18.0")
-        depends_on("py-meson-python@0.15:", when="@1.26.4:")
 
     depends_on("blas")
     depends_on("lapack")
@@ -176,14 +131,14 @@ class PyNumpy(PythonPackage):
     # requirements/test_requirements.txt
     with default_args(type="test"):
         depends_on("py-pytest")
-        depends_on("py-hypothesis", when="@1.19:")
+        depends_on("py-hypothesis")
         depends_on("py-typing-extensions@4.2:", when="@1.23:")
 
     # Historical dependencies
     with default_args(type="build"):
         depends_on("py-pyproject-metadata@0.7.1:", when="@1.26.0:1.26.3")
         depends_on("py-tomli@1:", when="@1.26.0:1.26.3 ^python@:3.10")
-        depends_on("py-setuptools@60:", when="@1.26.0:1.26.3 ^python@3.12:")
+        depends_on("py-setuptools@60:67", when="@1.26.0:1.26.3 ^python@3.12:")
         depends_on("py-colorama", when="@1.26.0:1.26.3 platform=windows")
         depends_on("ninja@1.8.2:", when="@1.26.0:1.26.3")
         depends_on("pkgconfig", when="@1.26.0:1.26.3")
@@ -208,12 +163,9 @@ class PyNumpy(PythonPackage):
 
     # Add Fujitsu Fortran compiler
     patch("add_fj_compiler.patch", when="@1.19.3:1.19.5%fj")
-    patch("add_fj_compiler2.patch", when="@1.19.0:1.19.2%fj")
-    patch("add_fj_compiler3.patch", when="@1.14.0:1.18.5%fj")
 
-    patch("check_executables.patch", when="@1.20.0:")
+    patch("check_executables.patch", when="@1.20.0:2.4")
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
-    patch("check_executables3.patch", when="@1.16.0:1.18.5")
 
     # Fix atomic_load const issue
     patch("fix-atomic-const.patch", when="@2.1.0: %fj")
@@ -242,11 +194,29 @@ class PyNumpy(PythonPackage):
             when="@1.26:1.26.3",
         )
 
+    # https://github.com/spack/spack-packages/issues/1477
+    @when("@1.26 ^intel-oneapi-compilers@2025.2")
+    def patch(self):
+        filter_file(
+            ".get(compiler_id, ['-O3'])",
+            ".get(compiler_id, ['-O1'])",
+            "./numpy/core/meson.build",
+            string=True,
+        )
+
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
+    conflicts("%gcc@:10.2", when="@2.5.1:", msg="NumPy requires GCC >= 10.3")
+    conflicts("%gcc@:9.2", when="@2.3:", msg="NumPy requires GCC >= 9.3")
     conflicts("%gcc@:8.3", when="@1.26:", msg="NumPy requires GCC >= 8.4")
     conflicts("%gcc@:6.4", when="@1.23:", msg="NumPy requires GCC >= 6.5")
     conflicts("%gcc@:4.7", msg="NumPy requires GCC >= 4.8")
+    conflicts(
+        "%msvc@:19.34",
+        when="@2.5:",
+        msg="NumPy requires at least vc142 (default with Visual Studio 2019) "
+        "when building with MSVC",
+    )
     conflicts(
         "%msvc@:19.19",
         when="@1.26:",
@@ -312,6 +282,14 @@ class PyNumpy(PythonPackage):
             if gcc_version <= Version("5.1"):
                 flags.append(self.compiler.c99_flag)
 
+        if self.spec.satisfies("@1.26 ^intel-oneapi-compilers@2025.2") and name in (
+            "cflags",
+            "cxxflags",
+            "fflags",
+        ):
+            flags = [flag for flag in flags if not flag.startswith("-O")]
+            flags.append("-O1")
+
         return (flags, None, None)
 
     def _blas_lapack_pkg_config_mkl(self, spec) -> str:
@@ -348,8 +326,17 @@ class PyNumpy(PythonPackage):
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
 
-        if spec["blas"].name in ["blis", "amdblis"]:
+        if spec["blas"].name == "blis":
             blas = "blis"
+
+        # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when threading is enabled
+        if spec["blas"].name == "amdblis":
+            blas = "blis"
+            if spec["amdblis"].satisfies("@5.1:") and (
+                spec["amdblis"].satisfies("threads=openmp")
+                or spec["amdblis"].satisfies("threads=pthreads")
+            ):
+                blas = "blis-mt"
 
         if spec["blas"].name == "cray-libsci":
             blas = "libsci"
@@ -385,7 +372,6 @@ class PyNumpy(PythonPackage):
 
         settings = {
             "builddir": "build",
-            "compile-args": f"-j{make_jobs}",
             "setup-args": {
                 # https://scipy.github.io/devdocs/building/blas_lapack.html
                 "-Dblas": blas,
@@ -535,8 +521,7 @@ class PyNumpy(PythonPackage):
                 write_library_dirs(f, lapack_lib_dirs)
                 f.write("include_dirs = {0}\n".format(lapack_header_dirs))
 
-    @when("@:1.25")
-    @run_before("install")
+    @run_before("install", when="@:1.25")
     def set_blas_lapack(self):
         self.blas_lapack_site_cfg()
 

@@ -20,6 +20,7 @@ class Metplus(Package):
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
     version("develop", branch="develop")
+    version("6.1.0", sha256="f79552f18d439e416dfa4f7cb65de9f1196864c5d3abf7443310ae4a154cc15f")
     version("6.0.0", sha256="e9358aede2fd2abecd81806227de7b165d68fdf2fc9defcbba24df229461b155")
     version("5.1.0", sha256="e80df2d1059176a453b7991a9f123cb5a187cc7ba7f48a75313b92c7a0e68474")
     version("5.0.1", sha256="0e22b4f6791496551d99f68247d382b2af02c90b34c172a64c6f060e774bdced")
@@ -44,6 +45,7 @@ class Metplus(Package):
     depends_on("netcdf-c@1.5.4:", when="@6:")
     depends_on("py-python-dateutil", type=("run"))
     depends_on("py-python-dateutil@2.8:", when="@6:", type=("run"))
+    depends_on("py-python-dateutil@2.8.2:", when="@6.1:", type=("run"))
 
     depends_on("py-cartopy", when="+makeplots", type=("run"))
     depends_on("py-cartopy@0.20.3:", when="@6: +makeplots", type=("run"))

@@ -33,5 +33,5 @@ class GnomeCommon(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     def autoreconf(self, spec, prefix):
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf("-ifv")

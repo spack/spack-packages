@@ -26,9 +26,7 @@ class PyPoetryPluginExport(PythonPackage):
     # depends_on("py-poetry@1.2:1", type="run") # circular dependency
 
     def url_for_version(self, version):
-        url = (
-            "https://files.pythonhosted.org/packages/source/p/poetry-plugin-export/{0}-{1}.tar.gz"
-        )
+        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.6"):
             letter = "poetry_plugin_export"
         else:

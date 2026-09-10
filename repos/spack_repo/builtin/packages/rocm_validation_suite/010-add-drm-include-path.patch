@@ -1,16 +1,301 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8740ce8..e3d36ec 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -138,6 +138,21 @@ else() #If hipblas-common not found
+   message(FATAL_ERROR "hipblas-common not found !!! Install rocrand to proceed ...")
+ endif(hipblas-common_FOUND)
+ 
++find_path(PCI_INCLUDE_DIR pci/pci.h PATHS /usr/include /usr/local/include)
++if(NOT PCI_INCLUDE_DIR)
++  message(FATAL_ERROR "PCI_INCLUDE_DIR not found !!! Install pciutils-devel to proceed ...")
++else() #If PCI_INCLUDE_DIR found
++  message(STATUS "PCI_INCLUDE_DIR found")
++endif(PCI_INCLUDE_DIR)
++
++find_library(PCI_LIB pci PATHS /usr/lib /usr/local/lib)
++if(NOT PCI_LIB)
++  message(FATAL_ERROR "PCI_LIB not found !!! Install pciutils-devel to proceed ...")
++else() #If PCI_LIB found
++  message(STATUS "PCI_LIB found")
++  get_filename_component(PCI_LIB_DIR ${PCI_LIB} DIRECTORY)
++endif(PCI_LIB)
++
+ # Making ROCM_PATH, CMAKE_INSTALL_PREFIX, CPACK_PACKAGING_INSTALL_PREFIX as CACHE
+ # variables since we will pass them as cmake params appropriately, and 
+ # all find_packages relevant to this build will be in ROCM path hence appending it to CMAKE_PREFIX_PATH 
+diff --git a/babel.so/CMakeLists.txt b/babel.so/CMakeLists.txt
+index b228d1a..985cfd4 100644
+--- a/babel.so/CMakeLists.txt
++++ b/babel.so/CMakeLists.txt
+@@ -141,10 +141,10 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR})
++include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR} ${PCI_INCLUDE_DIR})
+ 
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/edp.so/CMakeLists.txt b/edp.so/CMakeLists.txt
+index a6ebb58..a465c96 100644
+--- a/edp.so/CMakeLists.txt
++++ b/edp.so/CMakeLists.txt
+@@ -134,9 +134,9 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR})
++include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpciaccess.so libpci.so libm.so)
+ 
+diff --git a/gm.so/CMakeLists.txt b/gm.so/CMakeLists.txt
+index 767729f..bc08c4d 100644
+--- a/gm.so/CMakeLists.txt
++++ b/gm.so/CMakeLists.txt
+@@ -118,9 +118,9 @@ if(DEFINED RVS_ROCMSMI)
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${YAML_CPP_INCLUDE_DIR})
++include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${HIPBLASLT_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${HIPBLASLT_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/gpup.so/CMakeLists.txt b/gpup.so/CMakeLists.txt
+index 6d79409..7aaddc7 100644
+--- a/gpup.so/CMakeLists.txt
++++ b/gpup.so/CMakeLists.txt
+@@ -111,7 +111,7 @@ endif()
+ ## define include directories
+ include_directories(./ ../ include ../include ${YAML_CPP_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${ROCR_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${ROCR_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpci.so libm.so)
+ 
+diff --git a/gst.so/CMakeLists.txt b/gst.so/CMakeLists.txt
+index 9b45dbe..63e376a 100644
+--- a/gst.so/CMakeLists.txt
++++ b/gst.so/CMakeLists.txt
+@@ -143,9 +143,9 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR})
++include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${HIP_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_DIR} ${ROCRAND_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${HIP_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_DIR} ${ROCRAND_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/iet.so/CMakeLists.txt b/iet.so/CMakeLists.txt
+index 4d5880a..02b0bf1 100644
+--- a/iet.so/CMakeLists.txt
++++ b/iet.so/CMakeLists.txt
+@@ -160,9 +160,9 @@ if(DEFINED RVS_ROCMSMI)
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${ROCBLAS_INC_DIR} ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR})
++include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${ROCBLAS_INC_DIR} ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${HIPBLASLT_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${HIPBLASLT_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/mem.so/CMakeLists.txt b/mem.so/CMakeLists.txt
+index f9702bf..bc029b0 100644
+--- a/mem.so/CMakeLists.txt
++++ b/mem.so/CMakeLists.txt
+@@ -140,10 +140,10 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR})
++include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${PCI_INCLUDE_DIR})
+ 
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${HIP_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${HIP_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/pbqt.so/CMakeLists.txt b/pbqt.so/CMakeLists.txt
+index 50eacd2..79db4ea 100644
+--- a/pbqt.so/CMakeLists.txt
++++ b/pbqt.so/CMakeLists.txt
+@@ -134,9 +134,9 @@ if(NOT EXISTS ${ROCR_LIB_DIR}/${CORE_RUNTIME_LIBRARY}.so)
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR})
++include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/pebb.so/CMakeLists.txt b/pebb.so/CMakeLists.txt
+index 5668969..666443d 100644
+--- a/pebb.so/CMakeLists.txt
++++ b/pebb.so/CMakeLists.txt
+@@ -135,9 +135,9 @@ if(NOT EXISTS ${ROCR_LIB_DIR}/${CORE_RUNTIME_LIBRARY}.so)
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR})
++include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/peqt.so/CMakeLists.txt b/peqt.so/CMakeLists.txt
+index eff0fa0..e2692d1 100644
+--- a/peqt.so/CMakeLists.txt
++++ b/peqt.so/CMakeLists.txt
+@@ -107,9 +107,9 @@ else()
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${HSA_INC_DIR})
++include_directories(./ ../ ${HSA_INC_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${HSA_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${HSA_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpci.so libm.so)
+ 
+diff --git a/perf.so/CMakeLists.txt b/perf.so/CMakeLists.txt
+index 62dbc91..4d8602c 100644
+--- a/perf.so/CMakeLists.txt
++++ b/perf.so/CMakeLists.txt
+@@ -143,9 +143,9 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR})
++include_directories(./ ../ ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${HIP_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${HIP_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
+ 
+diff --git a/pesm.so/CMakeLists.txt b/pesm.so/CMakeLists.txt
+index 3ccec31..bc22fb0 100644
+--- a/pesm.so/CMakeLists.txt
++++ b/pesm.so/CMakeLists.txt
+@@ -107,9 +107,9 @@ else()
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ pci)
++include_directories(./ ../ pci ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_DIR} ${ROCRAND_DIR})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${HIPRAND_DIR} ${ROCRAND_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS libpthread.so libpci.so libm.so)
+ 
+diff --git a/rvs/CMakeLists.txt b/rvs/CMakeLists.txt
+index 11cc788..4775a39 100644
+--- a/rvs/CMakeLists.txt
++++ b/rvs/CMakeLists.txt
+@@ -113,9 +113,9 @@ else()
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${YAML_CPP_INCLUDE_DIR})
++include_directories(./ ../ ${YAML_CPP_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ ## define lib directories
+-link_directories(${CMAKE_CURRENT_BINARY_DIR} ${RVS_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${HIPRAND_LIB_DIR} ${HSA_LIB_DIR} ${HIPBLASLT_LIB_DIR} ${YAML_CPP_LIBRARY_DIR})
++link_directories(${CMAKE_CURRENT_BINARY_DIR} ${RVS_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${HIPRAND_LIB_DIR} ${HSA_LIB_DIR} ${HIPBLASLT_LIB_DIR} ${YAML_CPP_LIBRARY_DIR} ${PCI_LIB_DIR})
+ 
+ ## additional libraries
+ set(ROCBLAS_LIB "rocblas")
 diff --git a/rvslib/CMakeLists.txt b/rvslib/CMakeLists.txt
-index d3ea8af..55b26c3 100644
+index d3ea8af..fde13a3 100644
 --- a/rvslib/CMakeLists.txt
 +++ b/rvslib/CMakeLists.txt
-@@ -114,9 +114,10 @@ else()
+@@ -114,11 +114,13 @@ else()
    set(ASAN_LIB_PATH "$ENV{LD_LIBRARY_PATH}")
  endif()
  
 +find_path(DRM_INCLUDE_DIR libdrm/drm.h PATHS /usr/include /usr/local/include)
++
  ## define include directories
  include_directories(./ ../ ../rvs
 -  ${ROCM_SMI_INC_DIR} ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPBLASLT_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR})
-+  ${ROCM_SMI_INC_DIR} ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPBLASLT_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${DRM_INCLUDE_DIR})
++  ${ROCM_SMI_INC_DIR} ${ROCR_INC_DIR} ${ROCBLAS_INC_DIR} ${HIP_INC_DIR} ${HIPBLASLT_INC_DIR} ${YAML_CPP_INCLUDE_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${DRM_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
  
- link_directories(${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR})
+-link_directories(${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR})
++link_directories(${ASAN_LIB_PATH} ${ROCM_SMI_LIB_DIR} ${PCI_LIB_DIR})
+ 
+ ## define common source files
+ set(SOURCES
+diff --git a/smqt.so/CMakeLists.txt b/smqt.so/CMakeLists.txt
+index 2b4f6fa..c4f957b 100644
+--- a/smqt.so/CMakeLists.txt
++++ b/smqt.so/CMakeLists.txt
+@@ -106,9 +106,9 @@ else()
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ pci)
++include_directories(./ ../ pci ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCR_LIB_DIR})
++link_directories(${RVS_LIB_DIR} ${ASAN_LIB_PATH} ${ROCR_LIB_DIR} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpci.so libm.so)
+ 
+diff --git a/testif.so/CMakeLists.txt b/testif.so/CMakeLists.txt
+index c0b9921..92fa84f 100644
+--- a/testif.so/CMakeLists.txt
++++ b/testif.so/CMakeLists.txt
+@@ -108,9 +108,9 @@ endif()
+ 
+ 
+ ## define include directories
+-include_directories(./ ../ pci)
++include_directories(./ ../ pci ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS libpthread.so libpci.so libm.so)
+ 
+diff --git a/tst.so/CMakeLists.txt b/tst.so/CMakeLists.txt
+index 6f2df40..43bd4a7 100644
+--- a/tst.so/CMakeLists.txt
++++ b/tst.so/CMakeLists.txt
+@@ -155,9 +155,9 @@ if(DEFINED RVS_ROCMSMI)
+ endif()
+ 
+ ## define include directories
+-include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${ROCBLAS_INC_DIR} ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR})
++include_directories(./ ../ ${ROCM_SMI_INC_DIR} ${ROCBLAS_INC_DIR} ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${HIPBLASLT_INC_DIR} ${HIPBLAS-COMMON_INCLUDE_DIR} ${PCI_INCLUDE_DIR})
+ # Add directories to look for library files to link
+-link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH})
++link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ROCM_SMI_LIB_DIR} ${ASAN_LIB_PATH} ${PCI_LIB_DIR})
+ ## additional libraries
+ set (PROJECT_LINK_LIBS rvslib libpthread.so libpci.so libm.so)
  

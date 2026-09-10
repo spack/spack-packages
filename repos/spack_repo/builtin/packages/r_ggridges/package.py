@@ -18,6 +18,7 @@ class RGgridges(RPackage):
 
     license("GPL-2.0-only OR custom")
 
+    version("0.5.7", sha256="fcba89ffa3a31edfb3eeea249a78997150d9e01888dbe2015fec310709681133")
     version("0.5.6", sha256="efccaa309a150d11c6b402b912e618ea041f25cca3101f32cd821a6f41684e35")
     version("0.5.4", sha256="2bf71c2034804cec637e6748dc51d8cadad01d3ea4d14ace754327f082e8d851")
     version("0.5.3", sha256="f5eafab17f2d4a8a2a83821ad3e96ae7c26b62bbce9de414484c657383c7b42e")
@@ -26,11 +27,15 @@ class RGgridges(RPackage):
     version("0.4.1", sha256="03d2013df6adf07c9741d4476df96865b878a88359763ac36b98aa86591cca4d")
     version("0.4.0", sha256="c62153fb47f55468c873e6cf882b46754b6eedec423dacf3992ab23c474d521c")
 
-    depends_on("r@3.2:", type=("build", "run"))
-    depends_on("r-ggplot2@2.2.0:", type=("build", "run"))
-    depends_on("r-ggplot2@3.0.0:", type=("build", "run"), when="@0.5.3:")
-    depends_on("r-ggplot2@3.4.0:", type=("build", "run"), when="@0.5.5:")
-    depends_on("r-scales@0.4.1:", type=("build", "run"))
-    depends_on("r-withr@2.1.1:", type=("build", "run"), when="@0.5.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.2:")
 
-    depends_on("r-plyr@1.8.0:", type=("build", "run"), when="@:0.5.3")
+        depends_on("r-ggplot2@3.5.0:", when="@0.5.7:")
+        depends_on("r-ggplot2@3.4.0:", when="@0.5.5:")
+        depends_on("r-ggplot2@3.0.0:", when="@0.5.3:")
+        depends_on("r-ggplot2@2.2.0:")
+        depends_on("r-scales@0.4.1:")
+        depends_on("r-withr@2.1.1:", when="@0.5.0:")
+
+        # Historical dependencies
+        depends_on("r-plyr@1.8.0:", when="@:0.5.3")

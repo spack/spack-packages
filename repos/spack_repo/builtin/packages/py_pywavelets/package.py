@@ -13,24 +13,40 @@ class PyPywavelets(PythonPackage):
     in Python"""
 
     homepage = "https://github.com/PyWavelets/pywt"
-    pypi = "PyWavelets/PyWavelets-0.5.2.tar.gz"
+    pypi = "PyWavelets/pywavelets-0.9.0.tar.gz"
 
     license("MIT")
 
+    version("1.9.0", sha256="148d12203377772bea452a59211d98649c8ee4a05eff019a9021853a36babdc8")
     version("1.4.1", sha256="6437af3ddf083118c26d8f97ab43b0724b956c9f958e9ea788659f6a2834ba93")
     version("1.1.1", sha256="1a64b40f6acb4ffbaccce0545d7fc641744f95351f62e4c6aaa40549326008c9")
     version("0.5.2", sha256="ce36e2f0648ea1781490b09515363f1f64446b0eac524603e5db5e180113bed9")
 
     depends_on("c", type="build")  # generated
 
-    depends_on("python@3.8:", when="@1.4.1:", type=("build", "run"))
-    depends_on("python@3.5:", when="@1.1.1:", type=("build", "run"))
-    depends_on("py-setuptools@:64", type="build")
-    depends_on("py-cython@0.29.24:2", when="@1.2:", type="build")
+    depends_on("python@3.11:", type=("build", "run"), when="@1.9:")
+    depends_on("python@3.8:", type=("build", "run"), when="@1.4.1:")
+    depends_on("python@3.5:", type=("build", "run"), when="@1.1.1:")
+    depends_on("py-meson-python@0.18:", type="build", when="@1.9:")
+    depends_on("py-cython@3.0.4:", type="build", when="@1.7:")
+    depends_on("py-cython@0.29.24:2", type="build", when="@1.2:1.4")
     depends_on("py-cython", type="build")
 
-    depends_on("py-numpy@1.17.3:", when="@1.2:", type=("build", "run"))
-    depends_on("py-numpy@1.13.3:", when="@1.1.1:", type=("build", "run"))
+    depends_on("py-numpy@1.25:2", type=("build", "run"), when="@1.9:")
+    depends_on("py-numpy@1.17.3:", type=("build", "run"), when="@1.2:")
+    depends_on("py-numpy@1.13.3:", type=("build", "run"), when="@1.1.1:")
     depends_on("py-numpy@1.9.1:", type=("build", "run"))
     # https://github.com/PyWavelets/pywt/pull/731
-    depends_on("py-numpy@:1", when="@:1.5", type=("build", "run"))
+    depends_on("py-numpy@:1", type=("build", "run"), when="@:1.5")
+
+    # Historical dependencies
+    depends_on("py-setuptools@:64", type="build", when="@:1.4")
+
+    def url_for_version(self, version):
+        if version >= Version("1.5"):
+            name = "pywavelets"
+        else:
+            name = "PyWavelets"
+        return (
+            f"https://files.pythonhosted.org/packages/source/P/PyWavelets/{name}-{version}.tar.gz"
+        )

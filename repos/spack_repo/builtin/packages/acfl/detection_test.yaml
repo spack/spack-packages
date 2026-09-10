@@ -81,3 +81,22 @@ paths:
       echo "InstalledDir: /usr/bin"
   platforms: [linux]
   results: []
+
+- layout: # does not detect ATfL
+  - executables:
+    - "bin/armclang"
+    - "bin/armclang++"
+    script: |
+      echo "Arm Toolchain for Linux 20.1 clang version 20.1.0"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /opt/arm/arm-toolchain-for-linux-20.1/bin"
+  - executables:
+    - "bin/armflang"
+    script: |
+      echo "Arm Toolchain for Linux 20.1 flang version 20.1.0"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /opt/arm/arm-toolchain-for-linux-20.1/bin"
+  platforms: [linux]
+  results: []

@@ -19,10 +19,14 @@ class PyInstaller(Package, PythonExtension):
     )
     list_url = "https://pypi.org/simple/installer/"
 
+    version("1.0.0", sha256="7b46327ded20d8544bfe2d8561618bbcd12d88e7e3645333af1ed141d8bc1bfe")
     version("0.7.0", sha256="05d1933f0a5ba7d8d6296bb6d5018e7c94fa473ceb10cf198a92ccea19c27b53")
     version("0.6.0", sha256="ae7c62d1d6158b5c096419102ad0d01fdccebf857e784cee57f94165635fe038")
 
     extends("python")
+
+    # https://github.com/pypa/installer/issues/132
+    depends_on("python@:3.12", type=("build", "run"), when="@:0")
 
     def install(self, spec, prefix):
         # To build and install installer from source, you need flit-core, build, and installer

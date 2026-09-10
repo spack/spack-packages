@@ -19,6 +19,8 @@ class PyNbclient(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.10.4", sha256="1e54091b16e6da39e297b0ece3e10f6f29f4ac4e8ee515d29f8a7099bd6553c9")
+    version("0.10.2", sha256="90b7fc6b810630db87a6d0c2250b1f0ab4cf4d3c27a299b0cde78a4ed3fd9193")
     version("0.8.0", sha256="f9b179cd4b2d7bca965f900a2ebf0db4a12ebff2f36a711cb66861e4ae158e55")
     version("0.7.2", sha256="884a3f4a8c4fc24bb9302f263e0af47d97f0d01fe11ba714171b320c8ac09547")
     version("0.6.7", sha256="3c5a7fc6bb74be7d31edf2817b44501a65caa99e5e56363bc359649b97cd24b9")
@@ -27,22 +29,26 @@ class PyNbclient(PythonPackage):
     version("0.5.5", sha256="ed7d18431393750d29a64da432e0b7889274eb5a5056682be5691b1b1dc8f755")
     version("0.5.0", sha256="8ad52d27ba144fca1402db014857e53c5a864a2f407be66ca9d74c3a56d6591d")
 
+    depends_on("python@3.10:", when="@0.10.3:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.10.2:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.5.13:", type=("build", "run"))
     depends_on("python@3.6.1:", when="@0.5.5:", type=("build", "run"))
-    depends_on("py-setuptools", when="@:0.7.0", type="build")
     depends_on("py-hatchling@1.10:", when="@0.7.1:", type="build")
 
-    depends_on("py-jupyter-client@6.1.12:", when="@0.7.1:", type=("build", "run"))
-    depends_on("py-jupyter-client@6.1.5:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.12:4,5.1:", when="@0.7.1:", type=("build", "run"))
-    depends_on("py-nbformat@5.1:", when="@0.7.1:", type=("build", "run"))
-    depends_on("py-nbformat@5.0:", type=("build", "run"))
-    depends_on("py-traitlets@5.4:", when="@0.8:", type=("build", "run"))
-    depends_on("py-traitlets@5.3:", when="@0.7.1:", type=("build", "run"))
-    depends_on("py-traitlets@5.2.2:", when="@0.6:", type=("build", "run"))
-    depends_on("py-traitlets@5:", when="@0.5.13:", type=("build", "run"))
-    depends_on("py-traitlets@4.2:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("py-jupyter-client@6.1.12:", when="@0.7.1:")
+        depends_on("py-jupyter-client@6.1.5:")
+        depends_on("py-jupyter-core@4.12:4,5.1:", when="@0.7.1:")
+        depends_on("py-nbformat@5.1.3:", when="@0.10.3:")
+        depends_on("py-nbformat@5.1:", when="@0.7.1:")
+        depends_on("py-nbformat@5.0:")
+        depends_on("py-traitlets@5.4:", when="@0.8:")
+        depends_on("py-traitlets@5.3:", when="@0.7.1:")
+        depends_on("py-traitlets@5.2.2:", when="@0.6:")
+        depends_on("py-traitlets@5:", when="@0.5.13:")
+        depends_on("py-traitlets@4.2:")
 
     # Historical dependencies
+    depends_on("py-setuptools", when="@:0.7.0", type="build")
     depends_on("py-async-generator", when="@0.5.0", type=("build", "run"))
     depends_on("py-nest-asyncio", when="@:0.7.0", type=("build", "run"))

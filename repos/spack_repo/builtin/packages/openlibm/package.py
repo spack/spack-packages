@@ -18,6 +18,7 @@ class Openlibm(MakefilePackage):
 
     license("MIT AND BSD-2-Clause AND ISC AND LGPL-2.1-or-later")
 
+    version("0.8.7", sha256="e328a1d59b94748b111e022bca6a9d2fc0481fb57d23c87d90f394b559d4f062")
     version("0.8.6", sha256="347998968cfeb2f9b91de6a8e85d2ba92dec0915d53500a4bc483e056f85b94c")
     version("0.8.5", sha256="d380c2d871f6dc16e22893569d57bda9121742cc8f6534510526e5278867c6cf")
     version("0.8.4", sha256="c0bac12a6596f2315341790a7f386f9162a5b1f98db9ec40d883fce64e231942")

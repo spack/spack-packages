@@ -17,4 +17,7 @@ class RBiglm(RPackage):
 
     version("0.9-3", sha256="805d483dc58c041f1616267abeb39cecaaf7271a34e90668a5439383bf9a0d58")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r-dbi", type=("build", "run"))

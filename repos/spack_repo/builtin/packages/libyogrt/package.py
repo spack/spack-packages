@@ -17,6 +17,7 @@ class Libyogrt(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.36", sha256="2615cf0ad6cd2938e953c13c42bc6b79e79fb35be20bd30cc4e073e2dc8caa6a")
     version("1.35", sha256="a03b3d24da49af626351aaca9ab3eaff102ed41d5171f1bcb2ff26a561bd0cd6")
     version("1.33", sha256="797d20c49cdc4f6beae8660b4f41ba7ac13f7e93a0344b47f0bdc64f780d1398")
     version("1.27", sha256="c57ce60770b61aa20bc83fe34ff52b5e444964338df3786f282d0d9bcdd26138")
@@ -52,7 +53,7 @@ class Libyogrt(AutotoolsPackage):
 
     depends_on("flux-core@0.21.0:", when="scheduler=flux")
     depends_on("lsf", when="scheduler=lsf")
-    depends_on("slurm", when="scheduler=slurm")
+    depends_on("slurm@:25", when="scheduler=slurm")
 
     # support for flux added in libyogrt 1.27
     conflicts("scheduler=flux", when="@:1.26")

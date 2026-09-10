@@ -95,9 +95,8 @@ class Entrezdirect(Package):
     depends_on("perl-xml-simple", type="run")
     depends_on("python", type="run", when="@22:")
 
-    def url_for_version(self, ver):
-        pfx = "https://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/versions/"
-        return pfx + "{0}/edirect-{0}.tar.gz".format(ver.dotted)
+    def url_for_version(self, version):
+        return f"https://ftp.ncbi.nlm.nih.gov/entrez/entrezdirect/versions/{version.dotted}/edirect-{version.dotted}.tar.gz"
 
     def install(self, spec, prefix):
         for i in ["rchive", "transmute", "xtract"]:

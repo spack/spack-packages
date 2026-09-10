@@ -18,4 +18,6 @@ class RWritexl(RPackage):
 
     version("1.5.0", sha256="e253dc58f00abf51e9b727ae132e8b301e359fb23df0afc40c3ebec3fb096dce")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("zlib-api", type=("build", "run"))

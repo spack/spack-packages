@@ -16,6 +16,7 @@ class PyAmpltools(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.7.5", sha256="df43fffd2d263a24fc95297bc56a62a6ab18248f86496b46eba2998fd1431af3")
     version("0.4.6", sha256="d54b399c1d78d02e3f4023aa2335b57832deb7d31cdefe4e219e4f2a2bb19a83")
 
     depends_on("py-requests", type=("build", "run"))

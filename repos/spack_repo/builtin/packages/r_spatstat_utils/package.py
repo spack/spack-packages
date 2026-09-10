@@ -24,5 +24,7 @@ class RSpatstatUtils(RPackage):
     version("1.17-0", sha256="39cd683ed7f41d8adc9e28af073d91b244aa1cf5ad966dfbb396ee3ee79f0922")
     version("1.15-0", sha256="90e07d730b6939f47f93c939afae10874b2c82bd402960ede4133de67dca2a0c")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@3.1-0:")

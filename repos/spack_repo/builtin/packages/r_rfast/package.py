@@ -27,6 +27,9 @@ class RRfast(RPackage):
     version("2.0.6", sha256="34694b5c67ce8fcbdc90aac2ac80a74d4b66515f383e6301aea7c020009ebe7f")
     version("2.0.4", sha256="959907e36e24620c07ec282b203b40214f4914f4928c07ee6491043c27af31d9")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-rcpp@0.12.3:", type=("build", "run"))
     depends_on("r-rcppparallel", type=("build", "run"), when="@2.1.0:")

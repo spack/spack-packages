@@ -15,8 +15,12 @@ class PyPydantic(PythonPackage):
 
     license("MIT")
 
+    version("2.12.5", sha256="4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49")
+    version("2.12.4", sha256="0f8cb9555000a4b5b617f66bfd2566264c4984b27589d3b845685983e8ea85ac")
     version("2.10.1", sha256="a4daca2dc0aa429555e0656d6bf94873a7dc5f54ee42b1f5873d666fb3f35560")
+    version("2.9.0", sha256="c7a8a9fdf7d100afa49647eae340e2d23efa382466a8d177efcd1381e9be5598")
     version("2.7.4", sha256="0c84efd9548d545f63ac0060c1e4d39bb9b14db8b3c0652338aecc07b5adec52")
+    version("1.10.26", sha256="8c6aa39b494c5af092e690127c283d84f363ac36017106a9e66cb33a22ac412e")
     version("1.10.19", sha256="fea36c2065b7a1d28c6819cc2e93387b43dd5d3cf5a1e82d8132ee23f36d1f10")
     version("1.10.9", sha256="95c70da2cd3b6ddf3b9645ecaa8d98f3d80c606624b6d245558d202cd23ea3be")
     version("1.10.2", sha256="91b8e218852ef6007c2b98cd861601c6a09f1aa32bbbb74fab5b1c33d4a1e410")
@@ -25,9 +29,14 @@ class PyPydantic(PythonPackage):
 
     variant("dotenv", default=False, description="Install requirements for pydantic.dotenv")
 
+    depends_on("python@3.8:", type="build", when="@2")
+    depends_on("python@3.9:", type="build", when="@2.11.0:")
+    depends_on("py-setuptools@68:", type="build", when="@1.10.20:1")
     depends_on("py-setuptools", type="build", when="@1")
+    depends_on("py-cython@3:", type="build", when="@1.10.20:1")
     depends_on("py-hatchling", type="build", when="@2")
     depends_on("py-hatch-fancy-pypi-readme@22.5.0:", type="build", when="@2")
+    depends_on("py-typing-extensions@4.14.1:", when="@2.12:", type=("build", "run"))
     depends_on("py-typing-extensions@4.12.2:", when="@2.10:", type=("build", "run"))
     depends_on("py-typing-extensions@4.6.1:", when="@2.7.1:", type=("build", "run"))
     depends_on("py-typing-extensions@4.2:", when="@1.10.9:", type=("build", "run"))
@@ -35,9 +44,13 @@ class PyPydantic(PythonPackage):
     depends_on("py-typing-extensions@3.7.4.3:", type=("build", "run"))
     depends_on("py-annotated-types@0.6:", type=("build", "run"), when="@2.10:")
     depends_on("py-annotated-types@0.4.0:", type=("build", "run"), when="@2.7.4:")
+    depends_on("py-pydantic-core@2.41.5", type=("build", "run"), when="@2.12.4:")
     depends_on("py-pydantic-core@2.27.1", type=("build", "run"), when="@2.10.1")
+    depends_on("py-pydantic-core@2.23.2", type=("build", "run"), when="@2.9.0")
     depends_on("py-pydantic-core@2.18.4", type=("build", "run"), when="@2.7.4")
+    depends_on("py-typing-inspection@0.4.2:", type=("build", "run"), when="@2.12.0:")
     depends_on("py-python-dotenv@0.10.4:", when="@1 +dotenv", type=("build", "run"))
+    depends_on("py-tzdata", type=("build", "run"), when="@2.9.0 ^python@3.9:")
 
     # https://github.com/pydantic/pydantic/pull/9612
     conflicts("python@3.12.4:", when="@:1.10.15")

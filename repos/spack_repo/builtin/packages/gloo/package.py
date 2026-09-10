@@ -17,7 +17,11 @@ class Gloo(CMakePackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version("2023-12-03", commit="5354032ea08eadd7fc4456477f7f7c6308818509")  # py-torch@2.3:
+    version("2026-02-12", commit="bcd1672ee07538123ea8f4fac76832efc58fb8ef")  # py-torch@2.13:
+    version("2025-12-02", commit="3135b0b41b67dde590eef0938a0bf3d6238df5f7")  # py-torch@2.11:2.12
+    version("2025-08-21", commit="54cbae0d3a67fa890b4c3d9ee162b7860315e341")  # py-torch@2.9:2.10
+    version("2025-06-04", commit="c7b7b022c124d9643957d9bd55f57ac59fce8fa2")  # py-torch@2.8
+    version("2023-12-03", commit="5354032ea08eadd7fc4456477f7f7c6308818509")  # py-torch@2.3:2.7
     version("2023-05-19", commit="597accfd79f5b0f9d57b228dec088ca996686475")  # py-torch@2.1:2.2
     version("2023-01-17", commit="10909297fedab0a680799211a299203e53515032")  # py-torch@2.0
     version("2022-05-18", commit="5b143513263133af2b95547e97c07cebeb72bf72")  # py-torch@1.13
@@ -59,8 +63,18 @@ class Gloo(CMakePackage, CudaPackage):
     depends_on("cmake@2.8.12:", type="build")
     depends_on("libuv", when="platform=windows")
 
+    def patch(self):
+        if self.spec.satisfies("%cxx=gcc@14:"):
+            filter_file(
+                'gloo_list_append_if_unique(GLOO_NVCC_FLAGS "-std=c++11")',
+                'gloo_list_append_if_unique(GLOO_NVCC_FLAGS "-std=c++14")',
+                "cmake/Cuda.cmake",
+                string=True,
+            )
+
     def cmake_args(self):
         return [
+            self.define_from_variant("GLOO_USE_TORCH_DTYPES", "cuda"),
             self.define_from_variant("USE_CUDA", "cuda"),
             self.define_from_variant("USE_LIBUV", "libuv"),
         ]

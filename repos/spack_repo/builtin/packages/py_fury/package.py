@@ -32,7 +32,7 @@ class PyFury(PythonPackage):
     @on_package_attributes(run_tests=True)
     def install_test(self):
         with working_dir("spack-test", create=True):
-            pytest = which("pytest")
+            pytest = which("pytest", required=True)
             pytest(
                 join_path(python_purelib, "fury"),
                 # 'Some warning' is not propagated to __warningregistry__ so

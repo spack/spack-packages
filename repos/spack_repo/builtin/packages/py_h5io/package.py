@@ -16,10 +16,15 @@ class PyH5io(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.2.5", sha256="265bc9c24508b30575e8a8806b19cd4440643ff26f8b82b51d0280444807eed8")
     version("0.1.7", sha256="be2684e678a28a5d59140de838f0165f095af865e48b8e498a279a3c2b89303e")
 
+    depends_on("python@3.8:", type=("build", "run"), when="@0.2.4:")
     depends_on("python@3.7:", type=("build", "run"))
+
+    depends_on("py-setuptools@64:", type="build", when="@0.2.4:")
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-scm@8:", type="build", when="@0.2.4:")
 
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-h5py", type=("build", "run"))

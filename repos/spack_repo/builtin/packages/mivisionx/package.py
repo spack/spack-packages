@@ -2,32 +2,46 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Mivisionx(CMakePackage):
+class Mivisionx(ROCmLibrary, CMakePackage):
     """MIVisionX toolkit is a set of comprehensive computer
     vision and machine intelligence libraries, utilities, and
     applications bundled into a single toolkit."""
 
     homepage = "https://github.com/ROCm/MIVisionX"
     git = "https://github.com/ROCm/MIVisionX.git"
-    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.1.tar.gz"
+    url = "https://github.com/ROCm/MIVisionX/archive/rocm-6.4.3.tar.gz"
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    libraries = ["libopenvx", "libvxu"]
+
+    rocm_url_map = [(None, "https://github.com/ROCm/MIVisionX/archive/rocm-{0}.tar.gz")]
+
     tags = ["rocm"]
 
-    def url_for_version(self, version):
-        if version == Version("1.7"):
-            return "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/archive/1.7.tar.gz"
-
-        url = "https://github.com/ROCm/MIVisionX/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
     license("MIT")
-
+    version(
+        "7.14.0", branch="release/therock-7.14", commit="181011f470e974539446de943a5fd2fde75a3929"
+    )
+    version(
+        "7.13.0", branch="release/therock-7.13", commit="112b6ba9e8ab872a3e1b95afb037be0cea84fddd"
+    )
+    version("7.2.3", sha256="91d0cccdd5d9590dabfdfd60e4e5704359594c392d7bc6bcfb2ff2a7321269cf")
+    version("7.2.1", sha256="cedcb0bcbbe6b8636a36cac0ec3bf9e80da9e24653a8602b6e4f4f3d4d3caff2")
+    version("7.2.0", sha256="188dc225d0813f172521e5a2129af5d917ab9e6616488520c0ef27468cc6d89b")
+    version("7.1.1", sha256="7a7bd6ccb67e2b858526667decea938cc80c72d6279e7f6d9f3c0bb89ef823d7")
+    version("7.1.0", sha256="2fba3aeb970df06f95d465cc2dd5ba5096ec47966e26f2a4544a719e78d43e37")
+    version("7.0.2", sha256="ae4f230890f0ddaf0be5ea9a891843312e44c86bd8697c7e663cea142722c4de")
+    version("7.0.0", sha256="31a963625e6ab6a85c371c189f265f304d7c75c573189d09882e5b2e7ca131ec")
+    version("6.4.3", sha256="a489623d757d8e9825eb7eef7d799f33c84810ba053ee99106bad5f97058ab15")
+    version("6.4.2", sha256="efdde57dc1c48936f371c3c548f36040bfce74d835cf1f9816076dfa601ce29e")
     version("6.4.1", sha256="9f1a1a33dc2770ac014e5ea019ebde6cadcca017840753b9cb8cf1598d2d83c8")
     version("6.4.0", sha256="de3902ad2402bf29e4f53617ec10d34188b0c67547fc290390ff0c8ac4ad505a")
     version("6.3.3", sha256="6ab255305b786c6152ffe12211f329d2bc56823bb2192a945b9aa5efe6731b82")
@@ -44,9 +58,15 @@ class Mivisionx(CMakePackage):
     version("6.0.0", sha256="01324a12f21ea0e29a4d7d7c60498ba9231723569fedcdd90f28ddffb5e0570e")
     version("5.7.1", sha256="bfc074bc32ebe84c72149ee6abb30b5b6499023d5b98269232de82e35d0505a8")
     version("5.7.0", sha256="07e4ec8a8c06a9a8bb6394a043c9c3e7176acd3b462a16de91ef9518a64df9ba")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="b2ff95c1488e244f379482631dae4f9ab92d94a513d180e03607aa1e184b5b0a")
-        version("5.6.0", sha256="34c184e202b1a6da2398b66e33c384d5bafd8f8291089c18539715c5cb73eb1f")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     # Adding variant HIP which HIP as default.
 
@@ -63,26 +83,22 @@ class Mivisionx(CMakePackage):
     patch("0002-add-half-include-path-for-tests-6.1.0.patch", when="@6.1 +add_tests")
     patch("0002-add-half-include-path-for-tests-6.2.0.patch", when="@6.2.0: +add_tests")
 
-    patch(
-        "https://github.com/GPUOpen-ProfessionalCompute-Libraries/MIVisionX/commit/da24882438b91a0ae1feee23206b75c1a1256887.patch?full_index=1",
-        sha256="41caff199224f904ef5dc2cd9c5602d6cfa41eba6af0fcc782942a09dd202ab4",
-        when="@5.6",
-    )
-
     def patch(self):
-        filter_file(
-            r"${ROCM_PATH}/include/miopen/config.h",
-            "{0}/include/miopen/config.h".format(self.spec["miopen-hip"].prefix),
-            "amd_openvx_extensions/CMakeLists.txt",
-            string=True,
-        )
-        filter_file(
-            r"${ROCM_PATH}/llvm/bin/clang++",
-            "{0}/bin/clang++".format(self.spec["llvm-amdgpu"].prefix),
-            "amd_openvx/openvx/hipvx/CMakeLists.txt",
-            "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
-            string=True,
-        )
+        if self.spec.satisfies("@:7.13 +hip"):
+            # miopen-hip and llvm-amdgpu are spec dependencies for HIP builds only:
+            filter_file(
+                r"${ROCM_PATH}/include/miopen/config.h",
+                f"{self.spec['miopen-hip'].prefix}/include/miopen/config.h",
+                "amd_openvx_extensions/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                r"${ROCM_PATH}/llvm/bin/clang++",
+                f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++",
+                "amd_openvx/openvx/hipvx/CMakeLists.txt",
+                "amd_openvx_extensions/amd_nn/nn_hip/CMakeLists.txt",
+                string=True,
+            )
         if self.spec.satisfies("@:6.1 + hip"):
             filter_file(
                 r"${ROCM_PATH}/llvm/bin/clang++",
@@ -154,20 +170,27 @@ class Mivisionx(CMakePackage):
                 "model_compiler/python/nnir_to_clib.py",
                 string=True,
             )
+        if self.spec.satisfies("@6.2:7.13"):
+            filter_file(
+                r"crypto",
+                "{0}".format(self.spec["openssl"].libs),
+                "utilities/runcl/CMakeLists.txt",
+                string=True,
+            )
         if self.spec.satisfies("@6.2:"):
             filter_file(
                 r"crypto",
                 "{0}".format(self.spec["openssl"].libs),
                 "utilities/runvx/CMakeLists.txt",
-                "utilities/runcl/CMakeLists.txt",
                 string=True,
             )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
-    depends_on("ffmpeg@4.4", type="build")
-    depends_on("protobuf@:3", type="build")
+    depends_on("ffmpeg@4.4:", type="build")
+    depends_on("protobuf@3.12.4:", type="build")
     depends_on(
         "opencv@4.5:"
         "+calib3d+features2d+highgui+imgcodecs+imgproc"
@@ -176,7 +199,6 @@ class Mivisionx(CMakePackage):
     )
     depends_on("openssl")
     depends_on("libjpeg-turbo@2.0.6+partial_decoder", type="build", when="@:6.2.0")
-    depends_on("rpp@1.2.0", when="@:5.6")
     depends_on("lmdb")
     depends_on("py-setuptools")
     depends_on("py-wheel")
@@ -189,11 +211,6 @@ class Mivisionx(CMakePackage):
     depends_on("rapidjson", when="@5.7:")
 
     with when("+hip"):
-        for ver in ["5.6.0", "5.6.1"]:
-            depends_on(f"migraphx@{ver}", when=f"@{ver}")
-            depends_on(f"hip@{ver}", when=f"@{ver}")
-            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
-            depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         for ver in [
             "5.7.0",
             "5.7.1",
@@ -211,12 +228,28 @@ class Mivisionx(CMakePackage):
             "6.3.3",
             "6.4.0",
             "6.4.1",
+            "6.4.2",
+            "6.4.3",
+            "7.0.0",
+            "7.0.2",
+            "7.1.0",
+            "7.1.1",
+            "7.2.0",
+            "7.2.1",
+            "7.2.3",
+            "7.13.0",
+            "7.14.0",
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-            depends_on(f"migraphx@{ver}", when=f"@{ver}")
-            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
-            depends_on(f"rpp@{ver}", when=f"@{ver}")
+            for tgt in itertools.chain(["auto"], amdgpu_targets):
+                depends_on(
+                    f"migraphx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+                )
+                depends_on(
+                    f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+                )
+                depends_on(f"rpp@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
         depends_on("python@3.5:", type="build")
@@ -227,7 +260,8 @@ class Mivisionx(CMakePackage):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["hsa-rocr-dev"].prefix.lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@6.1:"):
+        # llvm-amdgpu is only a dependency for HIP builds, we can use it only when +hip:
+        if self.spec.satisfies("@6.1: +hip"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
         if self.spec.satisfies("+asan"):
@@ -245,20 +279,19 @@ class Mivisionx(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        protobuf = spec["protobuf"].prefix.include
-        args = [
-            self.define("CMAKE_CXX_FLAGS", "-I{0}".format(protobuf)),
-            self.define("AMDRPP_LIBRARIES", "{0}/lib/librpp.so".format(spec["rpp"].prefix)),
-            self.define("AMDRPP_INCLUDE_DIRS", "{0}/include/rpp".format(spec["rpp"].prefix)),
-            self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
-        ]
-        if self.spec.satisfies("+hip"):
-            args.append(self.define("BACKEND", "HIP"))
-            args.append(self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix))
-            args.append(self.define("HIP_PATH", spec["hip"].prefix))
-
-        if self.spec.satisfies("~hip"):
-            args.append(self.define("BACKEND", "CPU"))
+        if spec.satisfies("+hip"):
+            args = [
+                self.define("BACKEND", "HIP"),
+                self.define("HIP_PATH", spec["hip"].prefix),
+                self.define("HSA_PATH", spec["hsa-rocr-dev"].prefix),
+                self.define("CMAKE_CXX_FLAGS", f"-I{spec['protobuf'].prefix.include}"),
+                # rpp is only a dependency for HIP builds, we can use it only when +hip:
+                self.define("AMDRPP_LIBRARIES", f"{spec['rpp'].prefix}/lib/librpp.so"),
+                self.define("AMDRPP_INCLUDE_DIRS", f"{spec['rpp'].prefix}/include/rpp"),
+                self.define("CMAKE_INSTALL_PREFIX_PYTHON", spec.prefix),
+            ]
+        else:
+            args = [self.define("BACKEND", "CPU")]
 
         if self.spec.satisfies("@:6.2.0"):
             args.append(
@@ -266,6 +299,8 @@ class Mivisionx(CMakePackage):
                     "TurboJpeg_LIBRARIES_DIRS", "{0}/lib64".format(spec["libjpeg-turbo"].prefix)
                 )
             )
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args
 
     @run_after("install")

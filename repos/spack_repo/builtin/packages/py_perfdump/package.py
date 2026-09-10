@@ -24,6 +24,7 @@ class PyPerfdump(CMakePackage):
     variant("hdf5", default=False, description="Enable HDF5 output")
 
     depends_on("cmake@3.15:", type="build")
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("papi", type=("build", "link", "run"))
     depends_on("python@3:", type=("build", "link", "run"))

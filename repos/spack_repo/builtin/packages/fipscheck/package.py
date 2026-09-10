@@ -27,5 +27,5 @@ class Fipscheck(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

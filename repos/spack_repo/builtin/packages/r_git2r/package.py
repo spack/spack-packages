@@ -30,6 +30,8 @@ class RGit2r(RPackage):
     version("0.18.0", sha256="91b32e49afb859c0c4f6f77988343645e9499e5046ef08d945d4d8149b6eff2d")
     version("0.15.0", sha256="682ab9e7f71b2ed13a9ef95840df3c6b429eeea070edeb4d21d725cf0b72ede6")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.1:", type=("build", "run"))
     depends_on("r@3.4:", type=("build", "run"), when="@0.31.0:")
     depends_on("r@4.0:", type=("build", "run"), when="@0.33.0:")

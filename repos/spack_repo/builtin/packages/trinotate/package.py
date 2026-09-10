@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
-import os
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -56,11 +55,9 @@ class Trinotate(Package):
         install_tree(".", join_path(prefix.lib, "trinotate"))
 
         mkdirp(prefix.bin)
-        os.symlink(
-            join_path(prefix.lib, "trinotate/Trinotate"), join_path(prefix.bin, "Trinotate")
-        )
+        symlink(join_path(prefix.lib, "trinotate/Trinotate"), join_path(prefix.bin, "Trinotate"))
 
-        os.symlink(
+        symlink(
             join_path(prefix.lib, "trinotate/run_TrinotateWebserver.pl"),
             join_path(prefix.bin, "run_TrinotateWebserver.pl"),
         )

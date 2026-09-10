@@ -16,6 +16,7 @@ class PyImmutables(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.21", sha256="b55ffaf0449790242feb4c56ab799ea7af92801a0a43f9e2f4f8af2ab24dfc4a")
     version("0.20", sha256="1d2f83e6a6a8455466cd97b9a90e2b4f7864648616dfa6b19d18f49badac3876")
     version("0.19", sha256="df17942d60e8080835fcc5245aa6928ef4c1ed567570ec019185798195048dcf")
     version("0.18", sha256="5336c7974084cce62f7e29aaff81a3c3f75e0fd0a23a2faeb986ae0ea08d8cf4")
@@ -24,8 +25,15 @@ class PyImmutables(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("python@3.5:", type=("build", "run"))
-    depends_on("python@3.6:", type=("build", "run"), when="@0.16:")
+    # Based on PyPI wheel availability
+    with default_args(type=("build", "link", "run")):
+        depends_on("python@3.8:3.13", when="@0.21")
+        depends_on("python@3.8:3.12", when="@0.20")
+        depends_on("python@3.6:3.11", when="@0.19")
+        depends_on("python@3.6:3.10", when="@0.17:0.18")
+        depends_on("python@3.6:3.9", when="@0.16")
+        depends_on("python@3.5:3.9", when="@0.15")
+        depends_on("python@3.5:3.8", when="@0.14")
     depends_on("py-setuptools", type="build")
     # setuptools 68 is more strict about the format of pyproject.toml and fails to install older
     # versions of this package

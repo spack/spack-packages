@@ -15,7 +15,9 @@ class PyMutagen(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.47.0", sha256="719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99")
     version("1.45.1", sha256="6397602efb3c2d7baebd2166ed85731ae1c1d475abca22090b7141ff5034b3e1")
 
-    depends_on("python@3.5:3", type=("build", "run"))
+    depends_on("python@3.7:", type=("build", "run"), when="@1.46:")
+    depends_on("python@3.5:3", type=("build", "run"), when="@:1.45")
     depends_on("py-setuptools", type="build")

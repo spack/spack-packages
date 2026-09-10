@@ -36,7 +36,7 @@ class Fsl(Package, CudaPackage):
     depends_on("glu")
     depends_on("iconv")
     depends_on("openblas", when="@6:")
-    depends_on("vtk@:8")
+    depends_on("vtk")
 
     conflicts("cuda_arch=none", when="+cuda", msg="must select a CUDA architecture")
     conflicts("platform=darwin", msg="currently only packaged for linux")
@@ -168,7 +168,7 @@ class Fsl(Package, CudaPackage):
         build = Executable(join_path(self.stage.source_path, "build"))
         build()
 
-        rm = which("rm")
+        rm = which("rm", required=True)
         for file in glob.glob("build*"):
             rm("-f", file)
         rm("-r", "-f", "src")

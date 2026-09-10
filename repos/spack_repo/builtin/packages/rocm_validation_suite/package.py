@@ -5,11 +5,12 @@
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class RocmValidationSuite(CMakePackage):
+class RocmValidationSuite(ROCmLibrary, CMakePackage):
     """The ROCm Validation Suite (RVS) is a system administrators
     and cluster manager's tool for detecting and troubleshooting
     common problems affecting AMD GPU(s) running in a high-performance
@@ -17,13 +18,39 @@ class RocmValidationSuite(CMakePackage):
     compatible platform."""
 
     homepage = "https://github.com/ROCm/ROCmValidationSuite"
-    url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.1.1.tar.gz"
+    git = "https://github.com/ROCm/ROCmValidationSuite.git"
+    url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
+
+    # Version 7.14.0 uses v1.5.0 tag
+    version(
+        "7.14.0",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/tags/v1.5.0.tar.gz",
+        sha256="4182f854d14777752793220f051dd1070929c845b233fe3e019c9d2d5792bd41",
+    )
+    # Version 7.13.0 uses release/rvs-1.4.x branch
+    version(
+        "7.13.0",
+        url="https://github.com/ROCm/ROCmValidationSuite/archive/refs/heads/release/rvs-1.4.x.tar.gz",
+        sha256="d774c1021751e29da33ec73883ac32553693e22cf6ab93aa335aa30f00c13b32",
+    )
 
     license("MIT")
 
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
+    executables = ["rvs"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-{0}.tar.gz")]
+
+    version("7.2.3", sha256="363009b394350a2ae1d8debe7092c96ab5aa2b183487aed6834580979e969c8c")
+    version("7.2.1", sha256="737c30e9ded3b9b70b85973aca49cf98015eff890eb8bb81c940f04f1079b7c9")
+    version("7.2.0", sha256="d4c7252104431542fb748afd2e17eb9d86ad87f490b19a3fa343721222d67910")
+    version("7.1.1", sha256="eecce5e1597f2da152feffe6ac6aec9234a686f10591c58995e1120d601f3128")
+    version("7.1.0", sha256="ef2ef3a6468e9dc47061afa91d862870c08cbdb7a6c883880d11eb168427bba9")
+    version("7.0.2", sha256="c4f2e8732e9f8fcabc925f97a5617fc89f6ae4d872987c34d407ac60c9883efc")
+    version("7.0.0", sha256="093951bfe198a47871137329341ca3d0fdb175183fc1121eb80cbac9da542317")
+    version("6.4.3", sha256="2ed24ee2a4bd581515fbdea1c182f377b84be15d8a75ad448bafdc3380fe3624")
+    version("6.4.2", sha256="2db0210ae6c894a8480bad0f50ea7553a5b2b14f6969006af666b9d1779285f7")
     version("6.4.1", sha256="2a0ce3e037e2eaee5a29bb796813f94faa9e080af29937583e5ddba7af3c3acb")
     version("6.4.0", sha256="1963aa0ec6f6b7e957a5521dbfba615c2047ef7f432048b4a14c979c90a6f995")
     version("6.3.3", sha256="3d1afc47f6bd491991f6deb80f84d00041497e7fd564fd0129622263b5b87cc1")
@@ -40,16 +67,23 @@ class RocmValidationSuite(CMakePackage):
     version("6.0.0", sha256="a84e36b5e50e70ba033fb6bc6fa99da2e32bf7eaef2098df3164365a77a8f14c")
     version("5.7.1", sha256="202f2b6e014bbbeec40af5d3ec630c042f09a61087a77bd70715d81044ea4d65")
     version("5.7.0", sha256="f049b7786a220e9b6dfe099f17727dd0d9e41be9e680fe8309eae400cc5536ea")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="d5e4100e2d07311dfa101563c15d026a8130442cdee8af9ef861832cd7866c0d")
-        version("5.6.0", sha256="54cc5167055870570c97ee7114f48d24d5415f984e0c9d7b58b83467e0cf18fb")
+
+    # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=disjoint_sets(("auto",), amdgpu_targets)
+        .with_default("auto")
+        .with_error(
+            "the values 'auto' and 'none' are mutually exclusive with any of the other values"
+        )
+        .with_non_feature_values("auto", "none"),
+        sticky=True,
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
-    patch(
-        "007-cleanup-path-reference-donot-download-googletest-yaml-library-path_5.6.patch",
-        when="@5.6",
-    )
     patch("008-correcting-library-and-include-path-WITHOUT-RVS-BUILD-TESTS.patch", when="@5.7")
 
     # Replacing ROCM_PATH with corresponding package prefix path.
@@ -65,20 +99,25 @@ class RocmValidationSuite(CMakePackage):
         when="@6.3",
     )
     patch("010-add-drm-include-path.patch", when="@6.4")
+    # https://github.com/ROCm/ROCmValidationSuite/pull/998
+    patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:7.2")
+    patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13:")
+    patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
+    patch("013-add-hiprand-includes-7.13.patch", when="@7.13:")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
     depends_on("googletest")
     depends_on("doxygen", type="build")
     depends_on("libdrm", when="@6.4:")
+    depends_on("pciutils+shared", when="@6.4:")
+    depends_on("numactl", when="@7.13:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
         env.set("HIPCC_PATH", spec["hip"].prefix)
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -93,8 +132,6 @@ class RocmValidationSuite(CMakePackage):
         depends_on(f"hsakmt-roct@{ver}", when=f"@{ver}")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -111,18 +148,101 @@ class RocmValidationSuite(CMakePackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+    ]:
+        depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
+
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
         depends_on(f"rocblas@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
-    for ver in ["6.2.1", "6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+
+    for ver in [
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
 
-    for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1"]:
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1"]:
+        depends_on(f"rocm-openmp-extras@{ver}", when=f"@{ver}")
+
+    for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
+        depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+
+    for tgt in ROCmPackage.amdgpu_targets:
+        depends_on(f"hipblaslt amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocrand amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"hiprand amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     def patch(self):
         if self.spec.satisfies("@:5.7"):
@@ -140,7 +260,7 @@ class RocmValidationSuite(CMakePackage):
             self.define("UT_INC", self.spec["googletest"].prefix.include),
         ]
 
-        if self.spec.satisfies("@6.2.1:6.2.4"):
+        if self.spec.satisfies("@6.2.1:6.2.4") or self.spec.satisfies("@7.13:"):
             args.append(self.define("HIPRAND_DIR", self.spec["hiprand"].prefix))
             args.append(self.define("ROCRAND_DIR", self.spec["rocrand"].prefix))
 
@@ -163,5 +283,11 @@ class RocmValidationSuite(CMakePackage):
         if self.spec.satisfies("@6.3.0:"):
             args.append(self.define("CMAKE_INSTALL_RPATH", self.spec.prefix.lib))
             args.append(self.define("CPACK_PACKAGING_INSTALL_PREFIX", self.spec.prefix))
+
+        if self.spec.satisfies("@7.1:"):
+            # hipblaslt config file no longer sets this
+            args.append(
+                self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include)
+            )
 
         return args

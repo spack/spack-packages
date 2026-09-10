@@ -1,0 +1,163 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+import re
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
+
+from spack.package import *
+
+
+class Hipdnn(ROCmLibrary, CMakePackage):
+    """hipDNN is a graph-based deep learning library for AMD GPUs that leverages a flexible
+    plugin architecture to provide optimized implementations and utilities
+    for various routines"""
+
+    homepage = "https://github.com/ROCm/hipDNN"
+    git = "https://github.com/ROCm/hipDNN.git"
+
+    maintainers("srekolam", "afzpatel", "renjithravindrankannath")
+    tags = ["rocm"]
+    libraries = ["libmiopen_legacy_plugin", "libhipdnn_backend"]
+
+    license("MIT")
+
+    rocm_url_map = [
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/refs/tags/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="2c00694c6131192354b0e785e4dcb06a302e4b7891ec50ca30927e05ba7b368b")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
+    variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
+    variant("plugins", default=True, description="Build with  plugins enabled or disabled")
+    variant("frontend", default=True, description="Build with front-end  enabled or disabled")
+
+    generator("ninja")
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    depends_on("cmake@3.13.4:", type="build")
+    depends_on("nlohmann-json")
+    depends_on("flatbuffers")
+    depends_on("flatbuffers@25.9.23~shared", when="@7.13:")
+    depends_on("spdlog")
+    depends_on("googletest")
+
+    for ver in ["7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
+        depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+        depends_on(f"hip@{ver}", when=f"@{ver}")
+        depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
+        depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+
+    patch("0001-change-the-install-prefix-of-hipdnn-for-spack-builds.patch", when="@7.1")
+
+    def patch(self):
+        filter_file(
+            r"${ROCM_PATH}/llvm/bin",
+            "{0}/bin".format(self.spec["llvm-amdgpu"].prefix),
+            "projects/hipdnn/cmake/ClangToolChain.cmake",
+            string=True,
+        )
+        filter_file(
+            r"${ROCM_PATH}/llvm/lib",
+            "{0}/lib".format(self.spec["llvm-amdgpu"].prefix),
+            "projects/hipdnn/cmake/ClangToolChain.cmake",
+            string=True,
+        )
+        if self.spec.satisfies("@7.2:"):
+            filter_file(
+                r"${ROCM_PATH}${DEFAULT_ROCM_LLVM_ROOT}",
+                self.spec["llvm-amdgpu"].prefix,
+                "projects/hipdnn/cmake/ClangToolChain.cmake",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend_private)",
+                "# clang_tidy_check(hipdnn_backend_private)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
+                string=True,
+            )
+        # Disable clang-tidy checks for version 7.13.0
+        if self.spec.satisfies("@7.13.0:"):
+            filter_file(
+                "include(cmake/ClangTidy.cmake)",
+                "# include(cmake/ClangTidy.cmake)",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "add_clang_tidy_custom_target()",
+                "# add_clang_tidy_custom_target()",
+                "projects/hipdnn/CMakeLists.txt",
+                string=True,
+            )
+            filter_file(
+                "clang_tidy_check(hipdnn_backend)",
+                "# clang_tidy_check(hipdnn_backend)",
+                "projects/hipdnn/backend/src/CMakeLists.txt",
+                string=True,
+            )
+
+    @classmethod
+    def determine_version(cls, lib):
+        match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
+        if match:
+            ver = "{0}.{1}.{2}".format(
+                int(match.group(1)), int(match.group(2)), int(match.group(3))
+            )
+        else:
+            ver = None
+        return ver
+
+    @property
+    def root_cmakelists_dir(self):
+        return "projects/hipdnn"
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("@7.1:"):
+            env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
+            env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
+        if self.spec.satisfies("+asan"):
+            env.set("ASAN_OPTIONS", "detect_leaks=0")
+            env.set("CFLAGS", "-fsanitize=address -shared-libasan")
+            env.set("CXXFLAGS", "-fsanitize=address -shared-libasan")
+            env.set("LDFLAGS", "-fuse-ld=lld")
+
+    def cmake_args(self):
+        spec = self.spec
+        args = [
+            self.define_from_variant("BUILD_ADDRESS_SANITIZER", "asan"),
+            self.define_from_variant("HIP_DNN_BUILD_PLUGINS", "plugins"),
+            self.define_from_variant("HIP_DNN_BUILD_FRONTEND", "frontend"),
+            self.define(
+                "HIP_DNN_NLOHMANN_JSON_INCLUDE_DIR",
+                "{0}/include".format(spec["nlohmann-json"].prefix),
+            ),
+            self.define(
+                "HIP_DNN_FLATBUFFERS_INCLUDE_DIR", "{0}/include".format(spec["flatbuffers"].prefix)
+            ),
+            self.define("HIP_DNN_SPDLOG_INCLUDE_DIR", "{0}/include".format(spec["spdlog"].prefix)),
+            self.define("HIPDNN_NO_DOWNLOAD", "ON"),
+            self.define("HIP_DNN_SKIP_TESTS", not self.run_tests),
+        ]
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+        if spec.satisfies("@7.2:"):
+            args.append(self.define("CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT", "OFF"))
+            args.append(self.define("CMAKE_MAKE_PROGRAM", spec["ninja"].prefix.bin.ninja))
+            args.append(self.define("ROCM_LLVM_BIN_DIR", spec["llvm-amdgpu"].prefix.bin))
+        return args

@@ -28,6 +28,10 @@ class RSpam(RPackage):
     version("2.6-0", sha256="638fdd658e94f7544b46f6b6568b20a9f390bcd703aff572a3a5249fef66be5c")
     version("2.3-0.2", sha256="848fa95c0a71ac82af6344539af7b1c33563c687f06ead42851a68b621fff533")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@3.1:", type=("build", "run"))
     depends_on("r@3.5:", type=("build", "run"), when="@2.9-1:")
     depends_on("r-dotcall64", type=("build", "run"))

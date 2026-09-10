@@ -26,4 +26,12 @@ class Capstone(CMakePackage):
     depends_on("cxx", type="build")
 
     def cmake_args(self):
-        return ["-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE"]
+        args = ["-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=TRUE"]
+
+        # Always build the shared libraries
+        if self.spec.satisfies("@next"):
+            args.append("-DCAPSTONE_BUILD_SHARED_LIBS:BOOL=TRUE")
+        else:
+            args.append("-DBUILD_SHARED_LIBS:BOOL=TRUE")
+
+        return args

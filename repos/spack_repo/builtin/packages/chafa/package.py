@@ -13,13 +13,13 @@ class Chafa(AutotoolsPackage):
     suitable for display in a terminal."""
 
     homepage = "https://hpjansson.org/chafa/"
-    url = "https://hpjansson.org/chafa/releases/chafa-1.16.1.tar.xz"
+    url = "https://hpjansson.org/chafa/releases/chafa-1.16.2.tar.xz"
     git = "https://github.com/hpjansson/chafa.git"
 
     license("LGPL-3.0-or-later", checked_by="Buldram")
-    maintainers("Buldram")
 
     version("master", branch="master")
+    version("1.16.2", sha256="657898dd9a89b45130a44c1efe1fc03e2c7bd00c2f543ed7111613cb9e7861df")
     version("1.16.1", sha256="4a25debb71530baf0a748b15cfee6b8da6b513f696d9484987eaf410ecce1129")
     version("1.16.0", sha256="bf863e57b6200b696bde1742aa95d7feb8cd23b9df1e91e91859b2b1e54fd290")
     version("1.14.5", sha256="7b5b384d5fb76a641d00af0626ed2115fb255ea371d9bef11f8500286a7b09e5")

@@ -19,6 +19,7 @@ class MagicEnum(CMakePackage):
 
     license("MIT", checked_by="pranav-sivaraman")
 
+    version("0.9.7", sha256="b403d3dad4ef542fdc3024fa37d3a6cedb4ad33c72e31b6d9bab89dcaf69edf7")
     version("0.9.6", sha256="814791ff32218dc869845af7eb89f898ebbcfa18e8d81aa4d682d18961e13731")
 
     variant("examples", default=False, description="Enable examples")

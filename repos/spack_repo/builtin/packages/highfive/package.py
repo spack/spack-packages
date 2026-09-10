@@ -12,14 +12,18 @@ from spack.package import *
 class Highfive(CMakePackage):
     """HighFive - Header only C++ HDF5 interface"""
 
-    homepage = "https://github.com/BlueBrain/HighFive"
-    url = "https://github.com/BlueBrain/HighFive/archive/v1.2.tar.gz"
-    git = "https://github.com/BlueBrain/HighFive.git"
+    homepage = "https://github.com/highfive-devs/highfive"
+    git = "https://github.com/highfive-devs/highfive.git"
+
     maintainers("1uc")
 
     license("BSL-1.0")
 
     version("develop", branch="master")
+    version("3.3.0", sha256="325cfbcf0c0296a6dd26f3b088801b7ebb8d6f109c0565c11d2d8c4af3253bff")
+    version("3.2.0", sha256="01ea2eed7dbce1cf5dfff59476cfa113a7822b641aecbd99c674592fe7a4e630")
+    version("3.1.1", sha256="622034f34badda41255d7793e1c5a3046954dcf0875b0bca076e7c77088a8890")
+    version("3.0.0", sha256="cf9ad114b79bfa2c1deceefc6d4e710b882451ebaa81c063e2eb1de908e7c989")
     version("2.10.1", sha256="60d66ba1315730494470afaf402bb40300a39eb6ef3b9d67263335a236069cce")
     version("2.10.0", sha256="c29e8e1520e7298fabb26545f804e35bb3af257005c1c2df62e39986458d7c38")
     version("2.9.0", sha256="6301def8ceb9f4d7a595988612db288b448a3c0546f6c83417dab38c64994d7e")
@@ -66,3 +70,10 @@ class Highfive(CMakePackage):
             self.define("HIGHFIVE_UNIT_TESTS", False),
             self.define("HIGHFIVE_EXAMPLES", False),
         ]
+
+    def url_for_version(self, version):
+        if version < Version("3.0.0"):
+            url = "https://github.com/BlueBrain/HighFive/archive/v{0}.tar.gz"
+        else:
+            url = "https://github.com/highfive-devs/highfive/archive/v{0}.tar.gz"
+        return url.format(version)

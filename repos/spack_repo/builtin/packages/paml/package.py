@@ -18,6 +18,11 @@ class Paml(MakefilePackage):
 
     license("GPL-3.0-or-later")
 
+    version(
+        "4.10.10",
+        sha256="173e8754ad78000371099a96910f2c72b03a7b7b13c717405dc23385ae2f2c0f",
+        url="https://github.com/abacus-gene/paml/archive/refs/tags/v4.10.10.tar.gz",
+    )
     version("4.10.7", sha256="0f29e768b3797b69eadc6332c3d046d8727702052d56c3b729883626c0a5a4e3")
     version(
         "4.10.3",
@@ -46,6 +51,8 @@ class Paml(MakefilePackage):
             install("basemlg", prefix.bin)
             install("chi2", prefix.bin)
             install("codeml", prefix.bin)
+            if spec.satisfies("@4.10.10:"):
+                install("ds", prefix.bin)
             install("evolver", prefix.bin)
             install("infinitesites", prefix.bin)
             install("mcmctree", prefix.bin)

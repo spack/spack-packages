@@ -39,7 +39,7 @@ class Isoquant(Package):
     depends_on("py-seaborn@0.10.0:", type="run")
 
     def install(self, spec, prefix):
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", "isoquant.py", "visualize.py")
         mkdirp(prefix.bin)
         install("*.py", prefix.bin)

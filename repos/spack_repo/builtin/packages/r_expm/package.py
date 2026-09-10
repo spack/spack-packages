@@ -24,4 +24,7 @@ class RExpm(RPackage):
     version("0.999-3", sha256="511bac5860cc5b3888bca626cdf23241b6118eabcc82d100935386039e516412")
     version("0.999-2", sha256="38f1e5bfa90f794486789695d0d9e49158c7eb9445dc171dd83dec3d8fa130d6")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r-matrix", type=("build", "run"))

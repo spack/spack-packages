@@ -38,21 +38,6 @@ class Davix(CMakePackage):
     )
     version("0.7.6", sha256="a2e7fdff29f7ba247a3bcdb08ab1db6d6ed745de2d3971b46526986caf360673")
     version("0.7.5", sha256="d920ca976846875d83af4dc50c99280bb3741fcf8351d5733453e70fa5fe6fc8")
-    version(
-        "0.7.3",
-        sha256="cd46276e72c6a0da1e2ad30eb66ec509a4c023687767c62a66713fa8c23d328a",
-        deprecated=True,
-    )
-    version(
-        "0.6.9",
-        sha256="fbd97eb5fdf82ca48770d06bf8e2805b35f23255478aa381a9d25a49eb98e348",
-        deprecated=True,
-    )
-    version(
-        "0.6.8",
-        sha256="e1820f4cc3fc44858ae97197a3922cce2a1130ff553b080ba19e06eb8383ddf7",
-        deprecated=True,
-    )
 
     variant(
         "cxxstd",
@@ -77,8 +62,12 @@ class Davix(CMakePackage):
     variant("thirdparty", default=False, description="Build vendored libraries")
     depends_on("gsoap", when="+thirdparty")
 
-    def url_for_version(self, v):
-        return f"https://github.com/cern-fts/davix/releases/download/R_{v.underscored}/davix-{v}.tar.gz"
+    # soapcpp2 -v (lowercase) reads from stdin instead of exiting; use -V (uppercase)
+    # which prints the version string and exits immediately.
+    patch("fix-gsoap-version-detection.patch", when="+thirdparty")
+
+    def url_for_version(self, version):
+        return f"https://github.com/cern-fts/davix/releases/download/R_{version.underscored}/davix-{version}.tar.gz"
 
     def cmake_args(self):
         return [

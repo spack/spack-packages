@@ -133,11 +133,11 @@ class Rose(AutotoolsPackage):
 
     def autoreconf(self, spec, prefix):
         with working_dir(self.stage.source_path):
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("build")
 
         if "+edg_source" in spec:
-            git = which("git")
+            git = which("git", required=True)
             git(
                 "clone",
                 "rose-dev@rosecompiler1.llnl.gov:rose/edg4x/edg.git",
@@ -240,13 +240,13 @@ class Rose(AutotoolsPackage):
                     make()
 
             if "+polyopt" in spec:
-                mkdir = which("mkdir")
+                mkdir = which("mkdir", required=True)
                 mkdir("-p", "projects/PolyOpt2")
                 with working_dir("projects/PolyOpt2"):
                     env["ROSE_SRC"] = self.stage.source_path
                     env["ROSE_ROOT"] = self.prefix
 
-                    bash = which("bash")
+                    bash = which("bash", required=True)
                     bash(join_path(self.stage.source_path, "projects/PolyOpt2/install.sh"))
 
     def install(self, spec, prefix):

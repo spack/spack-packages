@@ -17,6 +17,7 @@ class PyLineenhancer(PythonPackage):
 
     license("MIT")
 
+    version("1.0.9", sha256="170698c7947c3257d19234668ad6743df163d26fe607dcab8d84a1995442f7b6")
     version("1.0.8", sha256="a1c7f2556110135d7298b0002674b669b8bbf23f94d63e3e3db8f17f2fd3efbe")
 
     depends_on("py-setuptools", type="build")

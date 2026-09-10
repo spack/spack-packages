@@ -30,6 +30,10 @@ class Stata(Package):
     manual_download = True
     # url      = "stata"
 
+    license("LicenseRef-Stata-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version("16", sha256="a13a6a92558eeb3c6cb3013c458a6777e54c21af43599df6b0a924f5f5c2d5d2")
     version("15", sha256="2486f4c7db1e7b453004c7bd3f8da40ba1e30be150613065c7b82b1915259016")
 
@@ -82,8 +86,8 @@ class Stata(Package):
     # $ stinit
 
     def install(self, spec, prefix):
-        bash = which("bash")
-        tar = which("tar")
+        bash = which("bash", required=True)
+        tar = which("tar", required=True)
 
         res_dir = "unix/linux64/"
 

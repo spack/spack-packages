@@ -22,12 +22,6 @@ class XcbUtilKeysyms(AutotoolsPackage, XorgPackage):
     license("MIT")
 
     version("0.4.1", sha256="7c260a5294412aed429df1da2f8afd3bd07b7cba3fec772fba15a613a6d5c638")
-    version(
-        "0.4.0",
-        sha256="0807cf078fbe38489a41d755095c58239e1b67299f14460dec2ec811e96caa96",
-        url="https://xcb.freedesktop.org/dist/xcb-util-keysyms-0.4.0.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 

@@ -31,11 +31,6 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
     version("7.7", sha256="85fb3a7b302ea21a3b700712767a59a623d9ab93da03308fa47d4413654c3878")
 
     # when adding a new version, deprecate an old one, this gives us 3 - 4 years of support
-    version(
-        "7.5",
-        sha256="d621bd36dced4db86ef638693ba89b336762e7a3d7fedb3b5bcefb03390712b3",
-        deprecated=True,
-    )
 
     variant("xsdkflags", default=False, description="enable XSDK defaults for Tasmanian")
 
@@ -153,10 +148,10 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
         if "+mpi" in self.spec:
             options.append("-DMPI_HOME=" + self.spec["mpi"].prefix)
 
-        cmake = which(self.spec["cmake"].prefix.bin.cmake)
+        cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
         cmake(*options)
 
-        make = which("make")
+        make = which("make", required=True)
         make()
 
         make("test")

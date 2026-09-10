@@ -21,9 +21,10 @@ class Patch(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.8", sha256="f87cee69eec2b4fcbf60a396b030ad6aa3415f192aa5f7ee84cad5e11f7f5ae3")
     version("2.7.6", sha256="ac610bda97abe0d9f6b7c963255a11dcb196c25e337c61f94e4778d632f1d8fd")
     version("2.7.5", sha256="fd95153655d6b95567e623843a0e77b81612d502ecf78a489a4aed7867caa299")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     build_directory = "spack-build"

@@ -29,14 +29,15 @@ class RGofuncr(RPackage):
 
     bioc = "GOfuncR"
 
-    version("1.20.0", commit="2374d68fdd13a72bc8d43cc3b5e6735228996ff1")
-    version("1.18.0", commit="49182411e40a5d72abf99a5cca9287f34f870b19")
-    version("1.16.0", commit="603fc79e13b58ec4612b6092f37d2450078dbfe1")
-    version("1.14.0", commit="b3d445acf95851241d1fdb673d108ee115bdc17b")
-    version("1.10.0", commit="51b01a2b9afa03fde2e1628036096cbeafaa2ef4")
-    version("1.4.0", commit="2f633dc28e3faeddc5346fcdcadf1c29e3fcf709")
-    version("1.2.0", commit="140a3cea4fe34d32fef9be756f85e337ce3deded")
-    version("1.0.0", commit="becd4ddde085c5477042adb856e7a4f40dbd648e")
+    with default_args(get_full_repo=True):
+        version("1.20.0", commit="2374d68fdd13a72bc8d43cc3b5e6735228996ff1")
+        version("1.18.0", commit="49182411e40a5d72abf99a5cca9287f34f870b19")
+        version("1.16.0", commit="603fc79e13b58ec4612b6092f37d2450078dbfe1")
+        version("1.14.0", commit="b3d445acf95851241d1fdb673d108ee115bdc17b")
+        version("1.10.0", commit="51b01a2b9afa03fde2e1628036096cbeafaa2ef4")
+        version("1.4.0", commit="2f633dc28e3faeddc5346fcdcadf1c29e3fcf709")
+        version("1.2.0", commit="140a3cea4fe34d32fef9be756f85e337ce3deded")
+        version("1.0.0", commit="becd4ddde085c5477042adb856e7a4f40dbd648e")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

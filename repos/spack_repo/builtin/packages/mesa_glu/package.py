@@ -10,7 +10,7 @@ class MesaGlu(AutotoolsPackage):
     """This package provides the Mesa OpenGL Utility library."""
 
     homepage = "https://www.mesa3d.org"
-    url = "https://www.mesa3d.org/archive/glu/glu-9.0.0.tar.gz"
+    url = "https://archive.mesa3d.org/glu/glu-9.0.0.tar.gz"
 
     version("9.0.2", sha256="24effdfb952453cc00e275e1c82ca9787506aba0282145fff054498e60e19a65")
     version("9.0.1", sha256="f6f484cfcd51e489afe88031afdea1e173aa652697e4c19ddbcb8260579a10f7")
@@ -25,6 +25,11 @@ class MesaGlu(AutotoolsPackage):
     # When using -std=c++17, using register long will throw an error. This
     # patch switches all instances of register long to long to fix this.
     patch("register-long.patch")
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ):
+        env.prepend_path("OpenGL_ROOT", self.prefix)
 
     def configure_args(self):
         args = ["--disable-libglvnd"]

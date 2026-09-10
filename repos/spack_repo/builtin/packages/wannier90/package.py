@@ -32,13 +32,14 @@ class Wannier90(MakefilePackage):
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("mpi")
+    depends_on("mpi", when="+mpi")
     depends_on("lapack")
     depends_on("blas")
 
     parallel = False
 
     variant("shared", default=True, description="Builds a shared version of the library")
+    variant("mpi", default=True, description="Build parallel version of Wannier90")
 
     @property
     def build_targets(self):
@@ -74,13 +75,22 @@ class Wannier90(MakefilePackage):
     def edit(self, spec, prefix):
         lapack = self.spec["lapack"].libs
         blas = self.spec["blas"].libs
-        mpi = self.spec["mpi"].libs
 
-        substitutions = {
-            "@F90": spack_fc,
-            "@MPIF90": self.spec["mpi"].mpifc,
-            "@LIBS": (lapack + blas + mpi).joined(),
-        }
+        if self.spec.satisfies("+mpi"):
+            mpi = self.spec["mpi"].libs
+
+            substitutions = {
+                "@F90": spack_fc,
+                "@MPIF90": self.spec["mpi"].mpifc,
+                "@LIBS": (lapack + blas + mpi).joined(),
+            }
+        else:
+            substitutions = {
+                "@F90": spack_fc,
+                "@LIBS": (lapack + blas).joined(),
+                "@MPIF90": "",
+                "COMMS=mpi": "",
+            }
 
         template = join_path(os.path.dirname(__file__), "make.sys")
 
@@ -148,7 +158,8 @@ class Wannier90(MakefilePackage):
             )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("MPIFC", self.prefix.bin.mpifc)
+        if self.spec.satisfies("+mpi"):
+            env.set("MPIFC", self.prefix.bin.mpifc)
 
     def install(self, spec, prefix):
         mkdirp(self.prefix.bin)

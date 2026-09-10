@@ -15,20 +15,28 @@ class PyRapidfuzz(PythonPackage):
 
     license("MIT")
 
+    version("3.14.1", sha256="b02850e7f7152bd1edff27e9d584505b84968cacedee7a734ec4050c655a803c")
     version("3.3.1", sha256="6783b3852f15ed7567688e2e358757a7b4f38683a915ba5edc6c64f1a3f0b450")
     version("2.2.0", sha256="acb8839aac452ec61a419fdc8799e8a6e6cd21bed53d04678cdda6fba1247e2f")
     version("1.8.2", sha256="d6efbb2b6b18b3a67d7bdfbcd9bb72732f55736852bbef823bdf210f9e0c6c90")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("python", type=("build", "link", "run"))
-    depends_on("py-setuptools@42:", when="@2:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-scikit-build@0.17", when="@3:", type="build")
-    depends_on("py-scikit-build@0.13:", when="@2.2:", type="build")
-    depends_on("py-rapidfuzz-capi@1.0.5", when="@2", type="build")
-    depends_on("py-jarowinkler@1.2.0:1", when="@2", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "link", "run"), when="@3.14:")
+    depends_on("py-scikit-build-core@0.11:", type="build", when="@3.14.1:")
+    depends_on("py-cython@3.0.12:3.1", type="build", when="@3.14.1:")
+
+    # historical
+    with when("@:3.3.1"):
+        depends_on("py-setuptools@42:", when="@2:", type="build")
+        depends_on("py-setuptools", type="build")
+        depends_on("py-scikit-build@0.17", when="@3:", type="build")
+        depends_on("py-scikit-build@0.13:", when="@2.2:", type="build")
+        depends_on("py-rapidfuzz-capi@1.0.5", when="@2", type="build")
+        depends_on("py-jarowinkler@1.2.0:1", when="@2", type=("build", "run"))
 
     # CMakeLists.txt
-    depends_on("cmake@3.12:", type="build")
+    depends_on("cmake@3.12:", type="build", when="@:3.3.1")
+    depends_on("cmake@3.15:", type="build", when="@3.14:")
     depends_on("ninja", type="build")

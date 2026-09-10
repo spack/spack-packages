@@ -4,10 +4,11 @@
 
 import os
 
-from spack_repo.builtin.build_systems import autotools, cmake, python
+from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.python import PythonPipBuilder
 
 from spack.package import *
 
@@ -34,6 +35,7 @@ class Faiss(AutotoolsPackage, CMakePackage, CudaPackage):
 
     license("MIT")
 
+    version("1.14.1", sha256="0216d38d8c5c460433815b72d3cde6725eaa5d5770576277a2abc01ffc414d20")
     version("1.8.0", sha256="56ece0a419d62eaa11e39022fa27c8ed6d5a9b9eb7416cc5a0fdbeab07ec2f0c")
     version("1.7.4", sha256="d9a7b31bf7fd6eb32c10b7ea7ff918160eed5be04fe63bb7b4b4b5f2bbde01ad")
     version("1.7.2", sha256="d49b4afd6a7a5b64f260a236ee9b2efb760edb08c33d5ea5610c2f078a5995ec")
@@ -117,9 +119,9 @@ class CMakeBuilder(cmake.CMakeBuilder):
         super().install(pkg, spec, prefix)
         if spec.satisfies("+python"):
 
-            class CustomPythonPipBuilder(python.PythonPipBuilder):
+            class CustomPythonPipBuilder(PythonPipBuilder):
                 def __init__(self, pkg, build_dirname):
-                    python.PythonPipBuilder.__init__(self, pkg)
+                    PythonPipBuilder.__init__(self, pkg)
                     self.build_dirname = build_dirname
 
                 @property
@@ -159,7 +161,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         if self.spec.satisfies("+python"):
             with working_dir("python"):
-                pip(*python.PythonPipBuilder.std_args(pkg), f"--prefix={prefix}", ".")
+                pip(*PythonPipBuilder.std_args(pkg), f"--prefix={prefix}", ".")
 
         if "+tests" not in self.spec:
             return

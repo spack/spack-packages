@@ -35,6 +35,7 @@ class ParallelNetcdf(AutotoolsPackage):
         return url
 
     version("master", branch="master")
+    version("1.14.1", sha256="6f0f7221006c211fce9ddd2c008796b8c69dd717b2ad1be0b4027fc328fd3220")
     version("1.14.0", sha256="575f189fb01c53f93b3d6ae0e506f46e19694807c81af0b9548e947995acf704")
     version("1.13.0", sha256="aba0f1c77a51990ba359d0f6388569ff77e530ee574e40592a1e206ed9b2c491")
     version("1.12.3", sha256="439e359d09bb93d0e58a6e3f928f39c2eae965b6c97f64e67cd42220d6034f77")
@@ -60,7 +61,7 @@ class ParallelNetcdf(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("fortran", when="+fortran", type="build")
 
     depends_on("mpi")
 
@@ -128,13 +129,15 @@ class ParallelNetcdf(AutotoolsPackage):
         if self.spec.satisfies("+pic"):
             flags["CFLAGS"].append(self.compiler.cc_pic_flag)
             flags["CXXFLAGS"].append(self.compiler.cxx_pic_flag)
-            flags["FFLAGS"].append(self.compiler.f77_pic_flag)
-            flags["FCFLAGS"].append(self.compiler.fc_pic_flag)
+            if self.spec.satisfies("+fortran"):
+                flags["FFLAGS"].append(self.compiler.f77_pic_flag)
+                flags["FCFLAGS"].append(self.compiler.fc_pic_flag)
 
         # https://github.com/Parallel-NetCDF/PnetCDF/issues/61
         if self.spec.satisfies("@:1.12.1%gcc@10:"):
-            flags["FFLAGS"].append("-fallow-argument-mismatch")
-            flags["FCFLAGS"].append("-fallow-argument-mismatch")
+            if self.spec.satisfies("+fortran"):
+                flags["FFLAGS"].append("-fallow-argument-mismatch")
+                flags["FCFLAGS"].append("-fallow-argument-mismatch")
 
         for key, value in sorted(flags.items()):
             if value:
@@ -183,7 +186,7 @@ class ParallelNetcdf(AutotoolsPackage):
         ]
 
         with working_dir(test_dir):
-            mpicxx = which(self.spec["mpi"].prefix.bin.mpicxx)
+            mpicxx = which(self.spec["mpi"].prefix.bin.mpicxx, required=True)
             mpicxx(*options)
 
             mpiexe_list = [
@@ -197,9 +200,9 @@ class ParallelNetcdf(AutotoolsPackage):
                 try:
                     args = ["--immediate=30"] if mpiexe == "srun" else []
                     args += ["-n", "1", test_exe]
-                    exe = which(mpiexe)
+                    exe = which(mpiexe, required=True)
                     exe(*args)
-                    rm = which("rm")
+                    rm = which("rm", required=True)
                     rm("-f", "column_wise")
                     return
 

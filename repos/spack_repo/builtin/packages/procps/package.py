@@ -19,6 +19,7 @@ class Procps(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("4.0.6", sha256="1bbe8ff21dcd05a6adcda99a67d2e99cbd515c9e3a78fd3cc915b12aeb330d40")
     version("4.0.4", sha256="3214fab0f817d169f2c117842ba635bafb1cd6090273e311a8b5c6fc393ddb9d")
     version("4.0.3", sha256="14cc21219c45d196772274ea3f194f6d668b6cc667fbde9ee6d8039121b73fa6")
     version("4.0.2", sha256="b03e4b55eaa5661e726acb714e689356d80bc056b09965c2284d039ba8dc21e8")
@@ -31,16 +32,15 @@ class Procps(AutotoolsPackage):
 
     variant("nls", default=True, description="Enable Native Language Support.")
 
-    depends_on("c", type="build")  # generated
-
+    depends_on("c", type="build")
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
+    depends_on("gettext", type="build")  # required by autogen.sh
     depends_on("dejagnu", type="test")
     depends_on("iconv")
-    depends_on("gettext", type="build")  # required by autogen.sh
     with when("+nls"):
         depends_on("gettext")
         # msgfmt 0.22 gives parsing errors
@@ -56,7 +56,7 @@ class Procps(AutotoolsPackage):
     patch("libintl-4.0.1.patch", when="@4.0.1:4.0.3")
 
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def configure_args(self):

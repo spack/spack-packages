@@ -37,5 +37,5 @@ class Acl(AutotoolsPackage):
         return self.build_system_flags(name, flags)
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")

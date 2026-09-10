@@ -1,0 +1,103 @@
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+
+  config:
+    shared_linking:
+      missing_library_policy: ignore  # due to the use of externals
+
+  definitions:
+  - apps:
+    - gromacs@2024.3 ^armpl-gcc ^openmpi
+    - mpas-model
+    - mpich
+    - openfoam ^scotch@6.0.9
+    - quantum-espresso@6.6 ^armpl-gcc
+    - wrf
+
+  packages:
+    all:
+      target: ["neoverse_v1"]
+      require:
+      - "target=neoverse_v1"
+      providers:
+        blas: [armpl-gcc, openblas]
+        fftw-api: [armpl-gcc, fftw]
+        lapack: [armpl-gcc, openblas]
+        mpi: [openmpi, mpich]
+        scalapack: [netlib-scalapack]
+    acfl:
+      require:
+      - "target=aarch64"
+    libfabric:
+      buildable: true
+      externals:
+      - prefix: /opt/amazon/efa/
+        spec: libfabric@1.17.0 fabrics=shm,efa
+      require:
+      - fabrics=shm,efa
+      - target=neoverse_v1
+    llvm:
+      variants: ~lldb
+    mpas-model:
+      require:
+      - precision=single ^parallelio+pnetcdf
+      - target=neoverse_v1
+    mpich:
+      require:
+      - mpich pmi=pmi2 device=ch4 netmod=ofi +slurm
+      - target=neoverse_v1
+    nvhpc:
+      require:
+      - "target=aarch64"
+    openmpi:
+      variants: ~atomics ~cuda ~cxx ~cxx_exceptions ~internal-hwloc ~java +legacylaunchers ~lustre ~memchecker +pmi +romio +vt +wrapper-rpath fabrics=ofi schedulers=slurm
+      require:
+      - '@4:'
+      - target=neoverse_v1
+    # Palace does not build correctly with armpl until https://github.com/awslabs/palace/pull/207 is merged into a version.
+    # palace:
+    #   require:
+    #     - one_of: ["palace cxxflags=\"-include cstdint\" ^fmt@9.1.0"]
+    pmix:
+      require:
+      - "pmix@3:"
+      - target=neoverse_v1
+    slurm:
+      buildable: false
+      externals:
+      - prefix: /opt/slurm
+        spec: slurm@22.05.8 +pmix
+      require:
+      - "+pmix"
+
+  specs:
+  - group: gcc12
+    specs:
+    - gcc@12 +strip +binutils ^binutils@2.37
+
+  - group: apps
+    needs: [gcc12]
+    specs:
+    - $apps
+    override:
+      packages:
+        c: {prefer: [gcc@12]}
+        cxx: {prefer: [gcc@12]}
+        fortran: {prefer: [gcc@12]}
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: {name: ghcr.io/spack/pcluster-amazonlinux-2:v2026-03-27, entrypoint: ['']}
+        tags: [aarch64]
+    - signing-job:
+        before_script:
+            # Do not distribute Intel & ARM binaries
+        - - export SPECS_PATH=${SPACK_BUILDCACHE_RELATIVE_SPECS_PATH}
+          - for i in $(aws s3 ls --recursive ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/ | grep intel-oneapi | awk '{print $4}' | sed -e "s?^.*${SPECS_PATH}/??g"); do aws s3 rm ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/$i; done
+          - for i in $(aws s3 ls --recursive ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/ | grep armpl | awk '{print $4}' | sed -e "s?^.*${SPECS_PATH}/??g"); do aws s3 rm ${SPACK_REMOTE_MIRROR_OVERRIDE}/${SPECS_PATH}/$i; done
+
+  cdash:
+    build-group: AWS Packages

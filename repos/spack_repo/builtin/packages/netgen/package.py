@@ -21,7 +21,6 @@ class Netgen(AutotoolsPackage):
     version("5.3.1", sha256="cb97f79d8f4d55c00506ab334867285cde10873c8a8dc783522b47d2bc128bf9")
 
     variant("mpi", default=True, description="enable mpi support")
-    variant("oce", default=False, description="enable oce geometry kernel")
     variant("gui", default=False, description="enable gui")
     variant("metis", default=False, description="use metis for partitioning")
 
@@ -29,7 +28,6 @@ class Netgen(AutotoolsPackage):
 
     depends_on("zlib-api")
     depends_on("mpi", when="+mpi")
-    depends_on("oce+X11", when="+oce")
     depends_on("metis", when="+metis")
 
     def url_for_version(self, version):
@@ -43,16 +41,6 @@ class Netgen(AutotoolsPackage):
             args.extend(["CC={0}".format(spec["mpi"].mpicc), "CXX={0}".format(spec["mpi"].mpicxx)])
         else:
             args.append("--without-mpi")
-
-        if "+oce" in spec:
-            args.append("--with-occ={0}".format(spec["oce"].prefix))
-        #  FIXME
-        # due to a bug in netgen config, when --without-occ is specified
-        #   or --with-occ=no, OCC flags is turned true, and build fails
-        #   later; so do not specify anything like that
-        # else:
-        #    args.append("--without-occ")
-
         if "~gui" in spec:
             args.append("--disable-gui")
         else:

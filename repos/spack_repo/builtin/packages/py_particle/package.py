@@ -23,6 +23,8 @@ class PyParticle(PythonPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("0.26.1", sha256="107698d0ad8d56d6568ef97367f424e5d672a14087a5de31539d6218257590c7")
+    version("0.25.4", sha256="bfa77d8aa073e6b498f1ae2d4d4926b707662b060fb23eb986a7cdb4931f58af")
     version("0.25.3", sha256="78cf7e56e9e2118385fbfb8908d8395e7a267ab5f0596aaafebadb08cb04452b")
     version("0.25.2", sha256="1fa4bbee38bfeaef08a40b2779b4c30c5ce4fa2865a10c02acfe90679b4e61e9")
     version("0.25.1", sha256="9706748e95a706dffd49426db393298197fe1af819721c5d2c6e515764a1fb01")
@@ -49,6 +51,7 @@ class PyParticle(PythonPackage):
     depends_on("python@3.6:", when="@0.20:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.21:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.24:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.26:", type=("build", "run"))
     depends_on("py-setuptools", when="@:0.20", type="build")
     depends_on("py-setuptools-scm@3.4:+toml", when="@:0.20", type="build")
     depends_on("py-hatchling", when="@0.21:", type="build")
@@ -56,8 +59,11 @@ class PyParticle(PythonPackage):
     depends_on("py-importlib-resources@2:", when="@0.16: ^python@:3.8", type=("build", "run"))
     depends_on("py-typing-extensions@4.5:", when="@0.23.1: ^python@:3.12", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.16:0.23.0 ^python@:3.7", type=("build", "run"))
-    depends_on("py-deprecated", when="@0.22.0:0.23.0", type=("build", "run"))
-
     depends_on("py-attrs@19.2.0:", type=("build", "run"))
-    depends_on("py-hepunits@1.2.0:", when="@:0.12", type=("build", "run"))
+    depends_on("py-attrs@22.2.0:", when="@0.26.1:", type=("build", "run"))
     depends_on("py-hepunits@2.0.0:", when="@0.13:", type=("build", "run"))
+    depends_on("py-hepunits@2.4:", when="@0.26:", type=("build", "run"))
+
+    # Historical dependencies
+    depends_on("py-deprecated", when="@0.22.0:0.23.0", type=("build", "run"))
+    depends_on("py-hepunits@1.2.0:", when="@:0.12", type=("build", "run"))

@@ -18,6 +18,8 @@ class PyJupyterCore(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("5.9.1", sha256="4d09aaff303b9566c3ce657f580bd089ff5c91f5f89cf7d8846c3cdf465b5508")
+    version("5.8.1", sha256="0a5f9706f70e64786b75acba995988915ebd4601c8a52e534a40b51c95f59941")
     version("5.3.0", sha256="6db75be0c83edbf1b7c9f91ec266a9a24ef945da630f3120e1a0046dc13713fc")
     version("5.1.0", sha256="a5ae7c09c55c0b26f692ec69323ba2b62e8d7295354d20f6cd57b749de4a05bf")
     version("4.11.1", sha256="2e5f244d44894c4154d06aeae3419dd7f1b0ef4494dc5584929b398c61cfd314")
@@ -38,13 +40,14 @@ class PyJupyterCore(PythonPackage):
     version("4.0.1", sha256="7c165f7de7a063596f8be1bcfc86e9ba6897e38baf24e8510514690963600122")
     version("4.0.0", sha256="9025208cdfc40718c7e3ab62b5e17aacf68e3fc66e34ff21fe032d553620122a")
 
+    depends_on("python@3.10:", when="@5.9:", type=("build", "run"))
     depends_on("python@3.8:", when="@5:", type=("build", "run"))
     depends_on("py-hatchling@1.4:", when="@4.11.1:", type="build")
+    depends_on("py-hatchling@1.26:", when="@5.8.1:", type="build")
 
     depends_on("py-platformdirs@2.5:", when="@5.1:", type=("build", "run"))
     depends_on("py-traitlets@5.3:", when="@5.1:", type=("build", "run"))
     depends_on("py-traitlets", type=("build", "run"))
-    # additional pywin32>=300 dependency for windows
 
     # Historical dependencies
     depends_on("py-setuptools", when="@:4.9.2", type=("build", "run"))

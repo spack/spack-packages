@@ -16,6 +16,7 @@ class PyJeepney(PythonPackage):
 
     license("MIT")
 
+    version("0.9.0", sha256="cf0e9e845622b81e4a28df94c40345400256ec608d0e55bb8a3feaa9163f5732")
     version("0.8.0", sha256="5efe48d255973902f6badc3ce55e2aa6c5c3b3bc642059ef3a91247bcfcc5806")
     version("0.7.1", sha256="fa9e232dfa0c498bd0b8a3a73b8d8a31978304dcef0515adc859d4e096f96f4f")
     version("0.6.0", sha256="7d59b6622675ca9e993a6bd38de845051d315f8b0c72cca3aef733a20b648657")
@@ -24,4 +25,5 @@ class PyJeepney(PythonPackage):
     depends_on("python@3.7:", when="@0.8:", type=("build", "run"))
     depends_on("python@3.6:", when="@0.5:", type=("build", "run"))
     depends_on("python@3.5:", when="@:0.4", type=("build", "run"))
+    depends_on("py-flit-core@3.11:3", when="@0.9:", type="build")
     depends_on("py-flit-core@2:3", type="build")

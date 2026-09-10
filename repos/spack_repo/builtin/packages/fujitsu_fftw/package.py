@@ -49,9 +49,9 @@ class FujitsuFftw(FftwBase):
     requires("target=a64fx")
 
     def autoreconf(self, spec, prefix):
-        touch = which("touch")
+        touch = which("touch", required=True)
         touch("ChangeLog")
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf("-ifv")
 
     def configure(self, spec, prefix):

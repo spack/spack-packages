@@ -16,6 +16,7 @@ class PyMetaphlan(PythonPackage):
     homepage = "https://github.com/biobakery/MetaPhlAn/"
     pypi = "MetaPhlAn/MetaPhlAn-4.0.2.tar.gz"
 
+    version("4.2.4", sha256="58f9546820c937f258dd9142720422fa5665c6ea7ef90e89bd8f0adbc8a4efc8")
     version("4.0.2", sha256="2549fdf2de97a0024551a7bb8d639613b8a7b612054506c88cdb719353f466ff")
     version("3.1.0", sha256="4e7a7a36d07ed6f4f945afc4216db7f691d44a22b059c2404c917a160a687a6b")
 
@@ -27,11 +28,11 @@ class PyMetaphlan(PythonPackage):
     depends_on("py-biopython", type=("build", "run"))
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
-    depends_on("py-hclust2", type=("build", "run"), when="@4.0.2:")
+    depends_on("py-hclust2", type=("build", "run"), when="@4.0.2")
     depends_on("py-requests", type=("build", "run"))
     depends_on("py-dendropy", type=("build", "run"))
     depends_on("py-pysam", type=("build", "run"))
-    depends_on("py-cmseq", type=("build", "run"))
+    depends_on("py-cmseq", type=("build", "run"), when="@:4.0.2")
     depends_on("py-phylophlan", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("bowtie2@2.3:", type=("build", "run"))

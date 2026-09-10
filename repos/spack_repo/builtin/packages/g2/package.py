@@ -73,7 +73,7 @@ class G2(CMakePackage):
     depends_on("ip@3.3.3:", when="+utils +w3emc")
     requires("^ip precision=d", when="^ip@4.1:")
     depends_on("sp", when="+utils +w3emc ^ip@:4")
-    requires("sp precision=d", when="^sp@2.4:")
+    requires("^sp precision=d", when="^sp@2.4:")
     with when("+w3emc"):
         depends_on("w3emc")
         depends_on("w3emc precision=4", when="precision=4")

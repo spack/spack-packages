@@ -13,6 +13,7 @@ class PyLerc(PythonPackage):
     homepage = "https://github.com/Esri/lerc"
     pypi = "lerc/lerc-0.1.0.tar.gz"
 
+    version("4.0.1", sha256="dc4c243db0cd1d5c9df612f69bd75b880679aa0b575b347c491f1ec5bc891e41")
     version("0.1.0", sha256="46cac3f5a0194518f49a52e3ae073093fc85b0d79396383b64b1f9dba4aeacc1")
 
     depends_on("python@3.6:", type=("build", "run"))

@@ -20,6 +20,7 @@ class Openbabel(CMakePackage):
     maintainers("RMeli")
 
     version("master", branch="master")
+    version("3.2.0", tag="openbabel-3-2-0", commit="5046ed24e1c33180537715e0204f3111125eb595")
     version("3.1.1", tag="openbabel-3-1-1", commit="cbd4db43f8908b874864280fdc03bf92569eebc1")
     version("3.1.0", tag="openbabel-3-1-0", commit="1e593abc1edf47352d5e8a0887654edf69a2f5f3")
     version("3.0.0", tag="openbabel-3-0-0", commit="49f9cfb32bd0bc6ea440639d338123eb27accbe2")
@@ -27,7 +28,7 @@ class Openbabel(CMakePackage):
     version("2.4.0", tag="openbabel-2-4-0", commit="087f33320e6796f39e6a1da04f4de7ec46bec4af")
 
     variant("python", default=True, description="Build Python bindings")
-    variant("gui", default=True, description="Build with GUI")
+    variant("gui", default=False, description="Build with GUI")
     variant("cairo", default=True, description="Build with Cairo (PNG output support)")
     variant("openmp", default=False, description="Build with OpenMP")
     variant("maeparser", default=False, description="Built with MAE parser")
@@ -38,20 +39,24 @@ class Openbabel(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("python", type=("build", "run"), when="+python")
+    with when("+python"):
+        depends_on("python", type=("build", "run"), when="@3.2:")
+        # Pin because distutils was removed in 3.12
+        depends_on("python@:3.11", type=("build", "run"), when="@:3.1.1")
     depends_on("cmake@3.1:", type="build")
     depends_on("pkgconfig", type="build")
     depends_on("swig@2.0:", type="build", when="+python")
 
-    depends_on("boost +filesystem +iostreams +test")
+    depends_on("boost +program_options +filesystem +iostreams +system +test")
     depends_on("cairo", when="+cairo")  # required to support PNG depiction
     depends_on("pango", when="+cairo")  # custom cairo requires custom pango
-    depends_on("eigen@3.0:")  # required if using the language bindings
+    depends_on("eigen@3")  # required if using the language bindings
     depends_on("libxml2")  # required to read/write CML files, XML formats
     depends_on("zlib-api")  # required to support reading gzipped files
     depends_on("rapidjson")  # required to support JSON
     depends_on("libsm")
     depends_on("uuid")
+    depends_on("wxwidgets", when="+gui")
 
     depends_on("maeparser", when="+maeparser")
     depends_on("coordgen", when="+coordgen")
@@ -64,6 +69,12 @@ class Openbabel(CMakePackage):
 
     # https://github.com/openbabel/openbabel/pull/2493
     patch("cmake-time.patch", when="@3.1.1")
+
+    patch(
+        "https://github.com/openbabel/openbabel/pull/2964.patch?full_index=1",
+        sha256="0ada5d204487440dbb283995f8a6e04652def929b3cdaf7d71e801d6d31f1244",
+        when="@:3.2.0",
+    )
 
     def cmake_args(self):
         spec = self.spec

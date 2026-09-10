@@ -20,13 +20,6 @@ class PyPartd(PythonPackage):
     version("1.4.0", sha256="aa0ff35dbbcc807ae374db56332f4c1b39b46f67bf2975f5151e0b4186aed0d5")
     version("1.1.0", sha256="6e258bf0810701407ad1410d63d1a15cfd7b773fd9efe555dac6bb82cc8832b0")
 
-    # very old versions, should remove later
-    with default_args(deprecated=True):
-        version(
-            "0.3.10", sha256="33722a228ebcd1fa6f44b1631bdd4cff056376f89eb826d7d880b35b637bcfba"
-        )
-        version("0.3.8", sha256="67291f1c4827cde3e0148b3be5d69af64b6d6169feb9ba88f0a6cfe77089400f")
-
     variant("complete", default=False, description="Complete install")
 
     # python 3.12+ requires 1.4.2

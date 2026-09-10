@@ -35,7 +35,9 @@ class GitAnnex(Package):
     # - $ ls -l git-annex/linux/current/
     #   gives for example for amd64
     #   git-annex-standalone-amd64.tar.gz ->
-    #       ../../../.git/annex/objects/KM/Ff/SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz/SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz
+    #   ../../../.git/annex/objects/KM/Ff/
+    #   SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz/
+    #   SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz
     # - exchange "../../../" with "https://downloads.kitenet.net" and you have the link
     # the version to the link can be found in
     # git-annex/linux/current/git-annex-standalone-amd64.tar.gz.info
@@ -130,4 +132,4 @@ class GitAnnex(Package):
             git_files = ["git", "git-receive-pack", "git-shell", "git-upload-pack"]
             for i in git_files:
                 os.remove(join_path(prefix.bin, i))
-                os.symlink(join_path(spec["git"].prefix.bin, i), join_path(prefix.bin, i))
+                symlink(join_path(spec["git"].prefix.bin, i), join_path(prefix.bin, i))

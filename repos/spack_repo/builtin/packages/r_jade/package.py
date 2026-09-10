@@ -22,4 +22,7 @@ class RJade(RPackage):
     version("2.0-4", sha256="d4b3d65a33cae454d3ab13343bceabfb3f6b8004ac64ae7bd86dee92a1cd2055")
     version("2.0-3", sha256="56d68a993fa16fc6dec758c843960eee840814c4ca2271e97681a9d2b9e242ba")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r-clue", type=("build", "run"))

@@ -28,13 +28,13 @@ class Watch(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("pkgconfig@0.9.0:", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("gettext", type="build")
     depends_on("ncurses")
 
     # https://github.com/Homebrew/homebrew-core/blob/master/Formula/watch.rb
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def configure_args(self):

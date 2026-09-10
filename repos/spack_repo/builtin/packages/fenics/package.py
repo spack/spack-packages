@@ -30,19 +30,8 @@ class Fenics(CMakePackage):
     version(
         "2018.1.0.post1", sha256="425cc49b90e0f5c2ebdd765ba9934b1ada97e2ac2710d982d6d267a5e2c5982d"
     )
-    # Pre 2018.1.0 versions are deprecated due to expected compatibility issues
-    version(
-        "2017.2.0.post0",
-        sha256="d3c40cd8c1c882f517999c25ea4220adcd01dbb1d829406fce99b1fc40184c82",
-        deprecated=True,
-    )
-    version(
-        "2016.2.0",
-        sha256="c6760996660a476f77889e11e4a0bc117cc774be0eec777b02a7f01d9ce7f43d",
-        deprecated=True,
-    )
 
-    dolfin_versions = ["2019.1.0", "2018.1.0", "2017.2.0", "2016.2.0"]
+    dolfin_versions = ["2019.1.0", "2018.1.0"]
 
     variant("python", default=True, description="Compile with Python interface")
     variant("hdf5", default=True, description="Compile with HDF5")

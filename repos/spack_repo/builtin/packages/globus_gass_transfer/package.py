@@ -24,6 +24,7 @@ class GlobusGassTransfer(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("9.5", sha256="748f41997c7fd08166d9fda52d2418e89b2655a529ea079c8e3e5f2bfda564de")
     version("9.4", sha256="c5ad54d0e4959f7dc4131918ad9d40d49db2823b84aec8229127826a9601fbf9")
 
     depends_on("c", type="build")

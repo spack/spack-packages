@@ -28,13 +28,16 @@ class LuaLuafilesystem(LuaPackage):
 
     license("MIT")
 
+    version("1.9.0", sha256="1142c1876e999b3e28d1c236bf21ffd9b023018e336ac25120fb5373aade1450")
     version("1.8.0", sha256="16d17c788b8093f2047325343f5e9b74cccb1ea96001e45914a58bbae8932495")
     version("1.7.0-2", sha256="23b4883aeb4fb90b2d0f338659f33a631f9df7a7e67c54115775a77d4ac3cc59")
     version("1.6.3", sha256="11c7b1fc2e560c0a521246b84e6257138d97dddde5a19e405714dbabcb9436ca")
 
-    depends_on("c", type="build")  # generated
-
-    depends_on("lua-lang@:5.3", when="@:1.7")
+    depends_on("c", type="build")
+    depends_on("lua-lang@:5.5", when="@1.9:")
+    depends_on("lua-lang@:5.4", when="@1.8")
+    depends_on("lua-lang@:5.3", when="@1.6.3:1.7")
+    depends_on("lua-lang@5.1:")
 
 
 class LuaBuilder(lua.LuaBuilder):

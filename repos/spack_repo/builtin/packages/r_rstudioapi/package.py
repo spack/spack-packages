@@ -17,6 +17,7 @@ class RRstudioapi(RPackage):
 
     license("MIT")
 
+    version("0.18.0", sha256="9649eef00381d3bde3d96928782e8792d78b9be0a2968e832728b54f5886fdbd")
     version("0.16.0", sha256="74ffa867199e87a54386fbd26919233371f314f73d7338dd4e4695708fed4fe6")
     version("0.14", sha256="469d0987b1ad728a96c363a422fba712a5cebc8b11a5f7e953b4a671044dafc4")
     version("0.13", sha256="aac35bbdcb4a8e8caba943bc8a2b98120e8940b80cd1020224bb1a26ff776d8b")

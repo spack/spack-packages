@@ -19,6 +19,8 @@ class Kassiopeia(CMakePackage):
     maintainers("wdconinc")
 
     version("main", branch="main")
+    version("4.1.0", sha256="d7a138877ce273d00cf7c303409c95ac1ec6dc3eba19acca9e652681e10d19a2")
+    version("4.0.1", sha256="7ace5767a1db1a84cdd03c786a3d12b9e8b827b16f21d1c101d8ab6c0fa39f64")
     version("3.8.2", sha256="9da59697365540a8b0d66e9a63f57aff6d868f7c5b39dfec28bb11ec83f31527")
     version("3.8.0", sha256="ae44c2d485fadaa6f562388064a211ae51b7d06bab7add2723ab0c8b21eb7e8f")
     version("3.7.7", sha256="b5f62b2e796fac57698794b46b63acbc47ce02010bd1f716996918a550b22a21")

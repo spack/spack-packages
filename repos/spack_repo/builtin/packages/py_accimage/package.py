@@ -35,5 +35,5 @@ class PyAccimage(PythonPackage):
     @run_after("install")
     @on_package_attributes(run_tests=True)
     def build_test(self):
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         pytest("test.py")

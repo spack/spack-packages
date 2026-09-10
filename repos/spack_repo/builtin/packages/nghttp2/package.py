@@ -16,6 +16,9 @@ class Nghttp2(AutotoolsPackage):
 
     license("MIT")
 
+    version("1.67.1", sha256="da8d640f55036b1f5c9cd950083248ec956256959dc74584e12c43550d6ec0ef")
+    version("1.67.0", sha256="f61f8b38c0582466da9daa1adcba608e1529e483de6b5b2fbe8a5001d41db80c")
+    version("1.66.0", sha256="e178687730c207f3a659730096df192b52d3752786c068b8e5ee7aeb8edae05a")
     version("1.65.0", sha256="8ca4f2a77ba7aac20aca3e3517a2c96cfcf7c6b064ab7d4a0809e7e4e9eb9914")
     version("1.64.0", sha256="20e73f3cf9db3f05988996ac8b3a99ed529f4565ca91a49eb0550498e10621e8")
     version("1.63.0", sha256="9318a2cc00238f5dd6546212109fb833f977661321a2087f03034e25444d3dbb")

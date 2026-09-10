@@ -22,6 +22,8 @@ class Latex2html(AutotoolsPackage):
     license("GPL-2.0-only")
 
     version("master", branch="master")
+    version("2026", sha256="f91c0c9bc8dbcadbba883f912f9d1cd2382b563fd754456488a95c120f24331e")
+    version("2025", sha256="d6f4e9f674994c82cbdff5a39441258add4a8822087fc0d418c0a697dbf3d191")
     version("2024.2", sha256="d99c5963d802edf1516a6301a5275edd54014bea2ca924f8752aacab0cdd23fd")
     version("2024", sha256="554a51f83431683521b9e47a19edf07c90960feb040048a08ad8301bdca2c6fa")
     version("2023.2", sha256="2a3f50621a71c9c0c425fb6709ae69bb2cf4df4bfe72ac661c2ea302e5aba185")
@@ -118,7 +120,7 @@ class Latex2html(AutotoolsPackage):
             else:
                 # This should be the only needed code if texlive where
                 # to set its proper dependent_build_environment
-                exe = which(p)
+                exe = which(p, required=True)
                 if exe:
                     args.append("--with-{0}={1}".format(p, str(exe)))
         if spec.satisfies("+svg"):
@@ -127,7 +129,7 @@ class Latex2html(AutotoolsPackage):
             if os.path.exists(exe):
                 args.append("--with-{0}={1}".format(p, exe))
             else:
-                exe = which(p)
+                exe = which(p, required=True)
                 if exe:
                     args.append("--with-{0}={1}".format(p, str(exe)))
 

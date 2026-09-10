@@ -19,6 +19,12 @@ class Ccls(CMakePackage):
     license("Apache-2.0")
 
     version(
+        "0.20241108", sha256="76224663c3554eef9102dca66d804874d0252312d7c7d02941c615c87dcb68af"
+    )
+    version(
+        "0.20240505", sha256="4ea6d90a9f93d5503e59c3bd0e5568ab262ff3dcf1b7539b50a0ede4a0e32fea"
+    )
+    version(
         "0.20240202", sha256="355ff7f5eb5f24d278dda05cccd9157e89583272d0559d6b382630171f142d86"
     )
     version(
@@ -30,12 +36,12 @@ class Ccls(CMakePackage):
     version(
         "0.20210330", sha256="28c228f49dfc0f23cb5d581b7de35792648f32c39f4ca35f68ff8c9cb5ce56c2"
     )
-    version(
-        "0.20201025", sha256="1470797b2c1a466e2d8a069efd807aac6fefdef8a556e1edf2d44f370c949221"
-    )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("c", type="build")
 
     depends_on("cmake@3.8:", type="build")
-    depends_on("llvm@7:")
+    depends_on("llvm@10:19", when="@=0.20241108")
+    depends_on("llvm@7:19", when="@=0.20240505")
+    depends_on("llvm@7:18", when="@:0.20240202")
     depends_on("rapidjson")

@@ -32,8 +32,12 @@ class Callpath(CMakePackage):
         # TODO: offer options for the walker used.
         args = ["-DCALLPATH_WALKER=dyninst"]
 
-        if self.spec.satisfies("^dyninst@9.3.0:"):
-            std_flag = self.compiler.cxx11_flag
-            args.append("-DCMAKE_CXX_FLAGS='{0} -fpermissive'".format(std_flag))
+        std_flag = self.compiler.cxx11_flag
+        flags = [std_flag, "-fpermissive"]
+
+        if self.spec.satisfies("^tbb@2021.1:"):
+            flags.append("-DDYNINST_TBB_HAS_VERSION_H")
+
+        args.append("-DCMAKE_CXX_FLAGS={0}".format(" ".join(flags)))
 
         return args

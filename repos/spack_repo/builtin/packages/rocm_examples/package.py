@@ -2,8 +2,10 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
@@ -12,6 +14,7 @@ class RocmExamples(CMakePackage):
     """A collection of examples for the ROCm software stack"""
 
     homepage = "https://github.com/ROCm/rocm-examples"
+    git = "https://github.com/ROCm/rocm-examples.git"
     url = "https://github.com/ROCm/rocm-examples/archive/refs/tags/rocm-6.2.1.tar.gz"
 
     tags = ["rocm"]
@@ -19,6 +22,26 @@ class RocmExamples(CMakePackage):
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
 
     license("MIT")
+
+    version(
+        "7.14.0",
+        url="https://github.com/ROCm/rocm-examples/archive/refs/tags/therock-7.14.tar.gz",
+        sha256="9b349f7cf6af86f84cd469486be6203dc01bafbe3bcf4738cf91d22f46373103",
+    )
+    version(
+        "7.13.0",
+        url="https://github.com/ROCm/rocm-examples/archive/refs/tags/therock-7.13.tar.gz",
+        sha256="0e096a9119db06ab62228c42a4d9eb97cbbe4b3e8783c0816d356e95e3df04ad",
+    )
+    version("7.2.3", sha256="523ed9d130338eb7f2b96005445bac132829bfb649d564df67672e1edce8e27a")
+    version("7.2.1", sha256="34457fc665f814ec3a0a5f83edabccc18c293825f0d421b5d9e101b7494da637")
+    version("7.2.0", sha256="74c516f08cc0067c85ac5c29f25831a6e74c0cc0f0c07e80798dc827efefbde5")
+    version("7.1.1", sha256="7475c4eaca103395ecae93cc5fa51b77884d06ebe990e71383c53a91bc1b089f")
+    version("7.1.0", sha256="d64a82ba472126bb426c54abd1b2516479a375db895171bbc4024a7c8d0f4e94")
+    version("7.0.2", sha256="02ca88ec6ce584b6710f295c2ab2df61d38a6a5e4950082863186922be40f062")
+    version("7.0.0", sha256="a06dd85c3b55e62626884b9fe477393729ab5cbf7fb45c432df49bb3d918c0fe")
+    version("6.4.3", sha256="febace4c74256c9dc29b3ef71227dad615701263aa4825fd4b1bb00145e59122")
+    version("6.4.2", sha256="c9aa4d24a7542d029185fe382a0382bd208b2984813ebb854c352b78daf9fb80")
     version("6.4.1", sha256="ceece00ac0cb3431e032ce52eb660667fdfdcc64c1c7e9bb15ac1177fa20db83")
     version("6.4.0", sha256="af2be5806982a72c726cf052c512493cc004bfa98d0136fbf8fed2754a4f4b80")
     version("6.3.3", sha256="5e5bdffb4bf56d30c5f8dd8fda95d162362d17e446396e6b6a3afe8d293039f3")
@@ -28,6 +51,15 @@ class RocmExamples(CMakePackage):
     version("6.2.4", sha256="510931103e4a40b272123b5c731d2ea795215c6171810beb1d5335d73bcc9b03")
     version("6.2.1", sha256="2e426572aa5f5b44c7893ea256945c8733b79db39cca84754380f40c8b44a563")
     version("6.2.0", sha256="6fb1f954ed32b5c4085c7f071058d278c2e1e8b7b71118ee5e85cf9bbc024df0")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     variant("rocm", default=True, description="Build with ROCm")
     variant("cuda", default=False, description="Build with CUDA")
@@ -41,21 +73,83 @@ class RocmExamples(CMakePackage):
     depends_on("glfw", type="build")
     depends_on("mesa", type="build", when="+cuda")
 
-    for ver in ["6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0", "6.2.4", "6.2.1", "6.2.0"]:
+    for ver in [
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
-        depends_on(f"hipcub@{ver}", when=f"@{ver}")
-        depends_on(f"hipsolver@{ver}", when=f"@{ver}")
-        depends_on(f"hipblas@{ver}", when=f"@{ver}")
-        depends_on(f"hiprand@{ver}", when=f"@{ver} +rocm")
-        depends_on(f"rocblas@{ver}", when=f"@{ver} +rocm")
-        depends_on(f"rocthrust@{ver}", when=f"@{ver} +rocm")
-        depends_on(f"rocsparse@{ver}", when=f"@{ver} +rocm")
-        depends_on(f"rocsolver@{ver}", when=f"@{ver} +rocm")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(f"hipcub@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(
+                f"hiprand@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocthrust@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
 
-    for ver in ["6.4.1", "6.4.0", "6.3.3", "6.3.2", "6.3.1", "6.3.0"]:
-        depends_on(f"hipfft@{ver}", when=f"@{ver}")
-        depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
+    for ver in [
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+    ]:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(
+                f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
+            )
+
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0"]:
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"rocwmma@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(
+                f"rocprofiler-sdk@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
+            )
 
     depends_on("hip+cuda", when="+cuda")
     depends_on("hipcub+cuda", when="+cuda")
@@ -70,14 +164,28 @@ class RocmExamples(CMakePackage):
     )
     patch("add_hip_include_cuda.patch", when="@6.4+cuda")
     patch("add_mesa_include.patch", when="@6.4+cuda")
+    patch("disable_hiptensor_rocprof-sdk.patch", when="@7.2")
+    patch(
+        "https://github.com/ROCm/rocm-examples/commit/e8abf81fd573cb99f2aa363a4eadf082541827bb.patch?full_index=1",
+        sha256="728741f24798a3e36941ecb47caafedcf9d83d1e0799f207609b9a0232cc8133",
+        when="@7.14",
+    )
 
     def patch(self):
         filter_file(
-            r"${ROCM_ROOT}/bin/hipify-perl",
-            f"{self.spec['hipify-clang'].prefix}/bin/hipify-perl",
+            r"${ROCM_PATH}",
+            f"{self.spec['hipify-clang'].prefix}",
             "HIP-Basic/hipify/CMakeLists.txt",
             string=True,
         )
+        # Disable rocProfiler-SDK examples in 7.13 due to missing header issues
+        if self.spec.satisfies("@7.13:"):
+            filter_file(
+                "add_subdirectory(rocProfiler-SDK)",
+                "# add_subdirectory(rocProfiler-SDK)  # Disabled due to missing headers",
+                "Libraries/CMakeLists.txt",
+                string=True,
+            )
 
     def cmake_args(self):
         args = []
@@ -110,4 +218,7 @@ class RocmExamples(CMakePackage):
             args.append(self.define("REDUCTION_BUILD_EXAMPLES", False))
             args.append(self.define("REDUCTION_BUILD_TESTING", False))
             args.append(self.define("REDUCTION_BUILD_BENCHMARKS", False))
+        # Disable rocDecode examples in 7.13 due to upstream path issues
+        if self.spec.satisfies("@7.13:"):
+            args.append(self.define("ROCM_EXAMPLES_ENABLE_ROCDECODE", False))
         return args

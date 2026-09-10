@@ -18,6 +18,9 @@ class IqTree(CMakePackage):
     license("GPL-2.0-or-later")
 
     version(
+        "2.4.0", tag="v2.4.0", commit="977cc4324234b36fbfb80b326b8e43b73952e365", submodules=True
+    )
+    version(
         "2.3.2", tag="v2.3.1", commit="60f1aa68646ab84cc96b55a7548707adde15f47a", submodules=True
     )
     version(
@@ -49,7 +52,7 @@ class IqTree(CMakePackage):
     # Depends on Eigen3 and zlib
 
     depends_on("boost+container+math+exception")
-    depends_on("eigen")
+    depends_on("eigen@3")
     depends_on("zlib-api")
     depends_on("mpi", when="+mpi")
 

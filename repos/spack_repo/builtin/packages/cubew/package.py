@@ -15,6 +15,7 @@ class Cubew(AutotoolsPackage):
 
     maintainers("swat-jsc", "wrwilliams")
 
+    version("4.9.1", sha256="c2e43089bb24bf27bb07eb1a3b4114df8040372e4ba247788d99bc872d23d8ea")
     version("4.9", sha256="4ef74e81c569bf53117459cba5a1ea52b5dac739493fa83be39678840cd2acdd")
     version("4.8.2", sha256="4f3bcf0622c2429b8972b5eb3f14d79ec89b8161e3c1cc5862ceda417d7975d2")
     version("4.8.1", sha256="42cbd743d87c16e805c8e28e79292ab33de259f2cfba46f2682cb35c1bc032d6")
@@ -22,31 +23,6 @@ class Cubew(AutotoolsPackage):
     version("4.7.1", sha256="0d364a4930ca876aa887ec40d12399d61a225dbab69e57379b293516d7b6db8d")
     version("4.7", sha256="a7c7fca13e6cb252f08d4380223d7c56a8e86a67de147bcc0279ebb849c884a5")
     version("4.6", sha256="99fe58ce7ab13061ebfbc360aedaecc28099a30636c5269a42c0cbaf57149aa8")
-    version(
-        "4.5",
-        sha256="16bd8fd864197a74ca65f7325761ad75d73d555072326e95e1338cff39f28a5c",
-        deprecated="true",
-    )
-    version(
-        "4.4.3",
-        sha256="93fff6cc1e8b0780f0171ef5302a2e1a257f99b6383fbfc1b9b82f925ceff501",
-        deprecated="true",
-    )
-    version(
-        "4.4.2",
-        sha256="31a71e9a05e6523de2b86b4026821bbb75fb411eb5b18ae38b27c1f44158014a",
-        deprecated="true",
-    )
-    version(
-        "4.4.1",
-        sha256="c09e3f5a3533ebedee2cc7dfaacd7bac4680c14c3fa540669466583a23f04b67",
-        deprecated="true",
-    )
-    version(
-        "4.4",
-        sha256="b1d6fecb546bc645ced430ea3fc166e85835f3b997d4e5f0dece71919fc95a99",
-        deprecated="true",
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -55,7 +31,7 @@ class Cubew(AutotoolsPackage):
     depends_on("zlib-api")
 
     def url_for_version(self, version):
-        url = "http://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cubew-{1}.tar.gz"
+        url = "https://apps.fz-juelich.de/scalasca/releases/cube/{0}/dist/cubew-{1}.tar.gz"
 
         return url.format(version.up_to(2), version)
 

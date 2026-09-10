@@ -26,6 +26,8 @@ class RBlavaan(RPackage):
     version("0.3-18", sha256="373960a22fc741c765e2ad2e0d99c1d4b2162f5f2a230ef314778ef8f433e865")
     version("0.3-15", sha256="f73ead024bc3b65bdb0c5e5cd5458845158914eb579c07be2fd697a3573ebe6f")
 
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-lavaan@0.6-5:", type=("build", "run"))
     depends_on("r-lavaan@0.6-7:", type=("build", "run"), when="@0.3-18:")

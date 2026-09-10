@@ -19,6 +19,7 @@ class Subread(MakefilePackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.1.1", sha256="6392d7c66831cdd767e58251892a79a51b6fab8ed0ba9671ad5e85ff1ab01eaa")
     version("2.0.6", sha256="f0fdda6b98634d2946028948c220253e10a0f27c7fa5f24913b65b3ac6cbb045")
     version("2.0.4", sha256="c54b37ed83b34318d8f119b5c02fb9d0a65c811195bcc9e1745df6daf74ca2db")
     version("2.0.2", sha256="0b64bd51f39f8d322c4594697fa5f0f64fbe60283113eadadff9f4268f897079")
@@ -46,7 +47,7 @@ class Subread(MakefilePackage):
             elif plat.startswith("darwin"):
                 make("-f", "Makefile.MacOS")
             else:
-                raise InstallError("The communication mechanism %s is not supported" % plat)
+                raise InstallError("%s is not a supported platform" % plat)
 
     def install(self, spec, prefix):
         install_tree("bin", prefix.bin)

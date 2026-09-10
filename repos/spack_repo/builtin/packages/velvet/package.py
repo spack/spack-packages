@@ -51,6 +51,8 @@ class Velvet(MakefilePackage):
     variant("openmp", default=False, description="Enable multithreading")
     variant("single_cov_cat", default=False, description="Per-library coverage")
 
+    depends_on("c")
+
     depends_on("zlib-api")
 
     def edit(self, spec, prefix):
@@ -59,6 +61,7 @@ class Velvet(MakefilePackage):
             makefile.filter("-m64", "")
         maxkmerlength = self.spec.variants["maxkmerlength"].value
         categories = self.spec.variants["categories"].value
+        makefile.filter(r"^CFLAGS\s*=\s*", f"CFLAGS = -I{self.spec['zlib-api'].prefix.include} ")
         makefile.filter(r"^MAXKMERLENGTH\s*=\s*.*", f"MAXKMERLENGTH = {maxkmerlength}")
         makefile.filter(r"^CATEGORIES\s*=\s*.*", f"CATEGORIES = {categories}")
         if "+bigassembly" in self.spec:

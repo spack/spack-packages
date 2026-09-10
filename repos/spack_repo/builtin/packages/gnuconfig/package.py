@@ -23,6 +23,9 @@ class Gnuconfig(Package):
 
     version("master", branch="master")
     version(
+        "2025-07-10", sha256="7f7425886afe47aa574793f580a67a2d1a49db7c43822bcb72001e8b9797b19d"
+    )
+    version(
         "2024-07-27", sha256="1135044961853c7f116145cee9bb15c3d29b1b081cf8293954efd0f05d801a7c"
     )
     version(

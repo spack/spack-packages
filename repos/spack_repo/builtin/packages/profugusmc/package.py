@@ -23,8 +23,7 @@ class Profugusmc(CMakePackage, CudaPackage):
     variant("cuda", default=False, description="Enable CUDA")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("blas")
     depends_on("lapack")

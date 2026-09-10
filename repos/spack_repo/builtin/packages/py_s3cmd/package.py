@@ -19,6 +19,7 @@ class PyS3cmd(PythonPackage):
     homepage = "https://github.com/s3tools/s3cmd"
     url = "https://github.com/s3tools/s3cmd/releases/download/v2.0.2/s3cmd-2.0.2.tar.gz"
 
+    version("2.4.0", sha256="6b567521be1c151323f2059c8feec85ded96b6f184ff80535837fea33798b40b")
     version("2.3.0", sha256="15330776e7ff993d8ae0ac213bf896f210719e9b91445f5f7626a8fa7e74e30b")
     version("2.2.0", sha256="2a7d2afe09ce5aa9f2ce925b68c6e0c1903dd8d4e4a591cd7047da8e983a99c3")
     version("2.1.0", sha256="966b0a494a916fc3b4324de38f089c86c70ee90e8e1cae6d59102103a4c0cc03")

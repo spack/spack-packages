@@ -19,9 +19,10 @@ class Nauty(AutotoolsPackage):
 
     license("Apache-2.0")
 
+    version("2.9.3", sha256="9fc4edae04f88a0f5883985be3b39cf7f898fd6cc96e96b9ee25452743cc1b5b")
     version("2.6r7", sha256="97b5648de17645895cbd56a9a0b3e23cf01f5332c476d013ea459f1a0363cdc6")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     # Debian/ Fedora patches for @2.6r7:
     urls_for_patches = {
@@ -88,8 +89,11 @@ class Nauty(AutotoolsPackage):
         return self.spec.satisfies("@2.6r7")
 
     def url_for_version(self, version):
-        url = "https://pallini.di.uniroma1.it//nauty{0}.tar.gz"
-        return url.format(version.joined)
+        if version < Version("2.8"):
+            version_str = version.joined
+        else:
+            version_str = version.underscored
+        return f"https://pallini.di.uniroma1.it//nauty{version_str}.tar.gz"
 
     def patch(self):
         os.remove("makefile")

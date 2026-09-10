@@ -10,7 +10,7 @@ from spack.package import *
 class Hping(AutotoolsPackage):
     """hping is a command-line oriented TCP/IP packet assembler/analyzer."""
 
-    homepage = "http://www.hping.org"
+    homepage = "https://www.hping.org"
     git = "https://github.com/antirez/hping.git"
 
     license("GPL-2.0-only")

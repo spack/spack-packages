@@ -70,7 +70,7 @@ class Scons(PythonPackage):
     ) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib.scons)
 
-    def setup_dependent_package(self, module, dspec):
+    def setup_dependent_package(self, module, dependent_spec):
         if sys.platform == "win32":
             module.scons = Executable(self.spec.prefix.Scripts.scons)
         else:

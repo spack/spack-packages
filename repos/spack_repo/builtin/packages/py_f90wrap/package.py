@@ -17,13 +17,22 @@ class PyF90wrap(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.3.0", sha256="9c9f08768fe7e9d60de9e913e30909fa1bdc67828f49dffd7149089703d74836")
+    version("0.2.16", sha256="f085be1eb0dc62512df604e3f5d7535d70ae1837175beb12e3f49466f08776c6")
     version("0.2.6", sha256="e0748eb5e288be7f47829a272fc230373469fb40afccddf91e9973c56da43dd4")
     version("0.2.3", sha256="5577ea92934c5aad378df21fb0805b5fb433d6f2b8b9c1bf1a9ec1e3bf842cff")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    # TODO errors with python 3.6 due to UnicodeDecodeError
+    depends_on("py-meson-python@0.12:", type="build", when="@0.2.12:")
+
+    depends_on("python@3.9:", type=("build", "run"), when="@0.3:")
+    depends_on("python@3.8:", type=("build", "run"), when="@0.2.15:")
     depends_on("python@3.6:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
-    depends_on("py-numpy@1.3.0:", type=("build", "run"))
+    depends_on("py-numpy@2:", type=("build", "run"), when="@0.3:")
+    depends_on("py-numpy@1.3:", type=("build", "run"))
+    depends_on("py-packaging", type=("build", "run"), when="@0.2.14:")
+
+    # Historical dependencies
+    depends_on("py-setuptools", type="build", when="@:0.2.11")

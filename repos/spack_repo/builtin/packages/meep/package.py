@@ -74,7 +74,7 @@ class Meep(AutotoolsPackage):
     depends_on("hdf5+mpi", when="+hdf5+mpi")
     depends_on("gsl", when="+gsl")
     with when("+python"):
-        depends_on("python")
+        depends_on("python@:3.11")
         depends_on("py-numpy")
         depends_on("swig")
         depends_on("py-mpi4py", when="+mpi")

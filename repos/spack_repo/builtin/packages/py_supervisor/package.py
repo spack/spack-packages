@@ -11,7 +11,7 @@ from spack.package import *
 class PySupervisor(PythonPackage):
     """A system for controlling process state under UNIX"""
 
-    homepage = "http://supervisord.org"
+    homepage = "https://supervisord.org"
     pypi = "supervisor/supervisor-4.2.4.tar.gz"
 
     version("4.2.4", sha256="40dc582ce1eec631c3df79420b187a6da276bbd68a4ec0a8f1f123ea616b97a2")

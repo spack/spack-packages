@@ -4,14 +4,15 @@
 import os
 import re
 
-from spack_repo.builtin.build_systems import autotools
+from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.sourceforge import SourceforgePackage
 
 from spack.package import *
 
 
-class Swig(AutotoolsPackage, SourceforgePackage):
+class Swig(AutotoolsPackage, CMakePackage, SourceforgePackage):
     """SWIG is an interface compiler that connects programs written in
     C and C++ with scripting languages such as Perl, Python, Ruby,
     and Tcl. It works by taking the declarations found in C/C++
@@ -22,7 +23,8 @@ class Swig(AutotoolsPackage, SourceforgePackage):
     application."""
 
     homepage = "https://www.swig.org"
-    sourceforge_mirror_path = "swig/swig-3.0.12.tar.gz"
+    git = "https://github.com/swig/swig.git"
+    sourceforge_mirror_path = "swig/swig-4.4.1.tar.gz"
     maintainers("sethrj")
 
     tags = ["e4s", "build-tools"]
@@ -31,12 +33,12 @@ class Swig(AutotoolsPackage, SourceforgePackage):
 
     license("GPL-3.0-only")
 
-    version("master", git="https://github.com/swig/swig.git")
-    version(
-        "4.1.1",
-        sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b",
-        preferred=True,
-    )
+    build_system("cmake", "autotools", default="autotools")
+
+    version("master")
+    version("4.5.0", sha256="22ae0e887f8cca8031a325c67d005207653200b40e71edb3f88780e28e47d0ff")
+    version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
+    version("4.1.1", sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
     version("4.1.0", sha256="d6a9a8094e78f7cfb6f80a73cc271e1fe388c8638ed22668622c2c646df5bb3d")
     version("4.0.2", sha256="d53be9730d8d58a16bf0cbd1f8ac0c0c3e1090573168bfa151b01eb47fa906fc")
     version("4.0.1", sha256="7a00b4d0d53ad97a14316135e2d702091cd5f193bb58bcfcd8bc59d41e7887a9")
@@ -64,6 +66,7 @@ class Swig(AutotoolsPackage, SourceforgePackage):
         "4.1.dev1-fortran",
         sha256="d9020319771879b41f9545e95f9d252a3ffc379832dded14c385e5cd823e526d",
         url="https://github.com/swig-fortran/swig/archive/refs/tags/v4.1.0-dev1+fortran.tar.gz",
+        deprecated=True,
     )
     version(
         "4.0.2-fortran",
@@ -71,16 +74,16 @@ class Swig(AutotoolsPackage, SourceforgePackage):
         url="https://github.com/swig-fortran/swig/archive/v4.0.2+fortran.tar.gz",
     )
 
+    variant("pcre", default=True, description="Enable PCRE support")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("pcre", when="@:4.0")
-    depends_on("pcre2", when="@4.1:")
-    depends_on("zlib-api")
+    with when("build_system=cmake"):
+        depends_on("cmake@3.13:", type="build")
 
     AUTOCONF_VERSIONS = "@" + ",".join(
         [
-            "master",
             "fortran",
             "4.0.2-fortran",
             "4.1.dev1-fortran",
@@ -88,19 +91,22 @@ class Swig(AutotoolsPackage, SourceforgePackage):
             "4.1.1-fortran",
         ]
     )
-
     # Git releases do *not* include configure script
-    depends_on("autoconf", type="build", when=AUTOCONF_VERSIONS)
-    depends_on("automake", type="build", when=AUTOCONF_VERSIONS)
-    depends_on("libtool", type="build", when=AUTOCONF_VERSIONS)
-    depends_on("yacc", type="build", when=AUTOCONF_VERSIONS)
-
-    # Need newer 'automake' to support newer platforms
-    for _target in ["ppc64le", "aarch64"]:
-        depends_on("automake@1.15:", type="build", when="target={0}:".format(_target))
-    depends_on("pkgconfig", type="build")
+    with when("build_system=autotools"):
+        depends_on("autoconf", type="build", when=AUTOCONF_VERSIONS)
+        depends_on("automake", type="build", when=AUTOCONF_VERSIONS)
+        depends_on("libtool", type="build", when=AUTOCONF_VERSIONS)
+        depends_on("yacc", type="build", when=AUTOCONF_VERSIONS)
+        # Need newer 'automake' to support newer platforms
+        for _target in ["ppc64le", "aarch64"]:
+            depends_on("automake@1.15:", type="build", when=f"target={_target}:")
+        depends_on("pkgconfig", type="build")
 
     conflicts("%nvhpc", when="@:4.0.2")
+
+    depends_on("pcre", when="@:4.0 +pcre")
+    depends_on("pcre2", when="@4.1: +pcre")
+    depends_on("yacc", type="build", when="@4.3:")
 
     @classmethod
     def determine_version(cls, exe):
@@ -153,8 +159,16 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def create_symlink(self):
         # CMake compatibility: see https://github.com/spack/spack/pull/6240
         with working_dir(self.prefix.bin):
-            os.symlink("swig", "swig{0}.0".format(self.spec.version.up_to(1)))
+            symlink("swig", f"swig{self.spec.version.up_to(1)}.0")
 
     @when(Swig.AUTOCONF_VERSIONS)
     def autoreconf(self, pkg, spec, prefix):
-        which("sh")("./autogen.sh")
+        which("sh", required=True)("./autogen.sh")
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define_from_variant("WITH_PCRE", "pcre"),
+        ]
+        return args

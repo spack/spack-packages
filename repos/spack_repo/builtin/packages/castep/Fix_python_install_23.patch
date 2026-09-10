@@ -1,0 +1,44 @@
+diff --git a/cmake/python_utilities.cmake.in b/cmake/python_utilities.cmake.in
+index 1281d136e..cb0c9aec9 100644
+--- a/cmake/python_utilities.cmake.in
++++ b/cmake/python_utilities.cmake.in
+@@ -2,36 +2,20 @@
+ # Install castepconv
+ #
+ execute_process(
+-  COMMAND echo ${Python_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX} --install-lib=${CMAKE_INSTALL_PREFIX}/bin
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/CASTEPconv
+-  )
+-execute_process(
+-  COMMAND echo ${Python_EXECUTABLE} setup.py clean --all
++  COMMAND ${Python_EXECUTABLE} -m pip install --prefix=${CMAKE_INSTALL_PREFIX} .
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/CASTEPconv
+   )
+ #
+ # Install elastic_constants
+ #
+ execute_process(
+-  COMMAND ${Python_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX} --install-lib=${CMAKE_INSTALL_PREFIX}/bin
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/elastic_constants
+-  )
+-execute_process(
+-  COMMAND ${Python_EXECUTABLE} setup.py clean --all
++  COMMAND ${Python_EXECUTABLE} -m pip install --prefix=${CMAKE_INSTALL_PREFIX} .
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/elastic_constants
+   )
+ #
+ # Install elastic_cif2cell
+ #
+ execute_process(
+-  COMMAND ${Python_EXECUTABLE} setup.py install --prefix=${CMAKE_INSTALL_PREFIX} --install-lib=${CMAKE_INSTALL_PREFIX}/bin
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/cif2cell
+-  )
+-execute_process(
+-  COMMAND ${Python_EXECUTABLE} setup.py clean --all
+-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/cif2cell
+-  )
+-execute_process(
+-  COMMAND ${CMAKE_COMMAND} -E rm -rf dist cif2cell.egg-info
++  COMMAND ${Python_EXECUTABLE} -m pip install --prefix=${CMAKE_INSTALL_PREFIX} .
+   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/Utilities/cif2cell
+   )

@@ -15,6 +15,7 @@ class PyBokeh(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.8.2", sha256="8e7dcacc21d53905581b54328ad2705954f72f2997f99fc332c1de8da53aa3cc")
     version("3.7.2", sha256="80c21885cec276431acd4db92f831c71eb999ea995470ce777e0c577b0cfc1d8")
     version("3.5.2", sha256="03a54a67db677b8881834271c620a781b383ae593af5c3ea2149164754440d07")
     version("3.3.1", sha256="2a7b3702d7e9f03ef4cd801b02b7380196c70cff2773859bcb84fa565218955c")

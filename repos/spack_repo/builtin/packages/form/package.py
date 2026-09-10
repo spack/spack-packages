@@ -16,6 +16,7 @@ class Form(AutotoolsPackage):
 
     license("GPL-3.0-only")
 
+    version("5.0.1", sha256="ce62530a54e5232dfefb6c1ff0e7047372a43941b3c0e0db08b5714fd868722c")
     version("4.3.1", sha256="f1f512dc34fe9bbd6b19f2dfef05fcb9912dfb43c8368a75b796ec472ee8bbce")
     version("4.3.0", sha256="b234e0d095f73ecb0904cdc3b0d8d8323a9fa7f46770a52fb22267c624aafbf6")
     version("4.2.1", sha256="f2722d6d4ccb034e01cf786d55342e1c21ff55b182a4825adf05d50702ab1a28")
@@ -32,6 +33,16 @@ class Form(AutotoolsPackage):
     depends_on("zlib-api", type="link", when="+zlib")
     depends_on("mpi", type="link", when="+parform")
 
+    with default_args(type="link", when="@5:"):
+        depends_on("mpfr", when="+mpfr")
+        depends_on("zstd", when="+zstd")
+        depends_on("flint@3.2:", when="+flint")
+
+    with default_args(default=True, when="@5:"):
+        variant("mpfr", description="Use MPFR for floating point arithmetic")
+        variant("zstd", description="Use Zstandard for compression")
+        variant("flint", description="Use FLINT for polynomial arithmetic")
+
     variant("gmp", default=True, description="Use GMP for long integer arithmetic")
     variant("zlib", default=True, description="Use zlib for compression")
     variant("scalar", default=True, description="Build scalar version (form)")
@@ -41,6 +52,12 @@ class Form(AutotoolsPackage):
     def configure_args(self):
         args = []
         args += self.with_or_without("gmp", "prefix")
+
+        if self.spec.satisfies("@5:"):
+            args += self.with_or_without("mpfr", "prefix")
+            args += self.with_or_without("zstd", "prefix")
+            args += self.with_or_without("flint", "prefix")
+
         if self.spec.satisfies("+zlib"):
             args.append("--with-zlib=%s" % self.spec["zlib-api"].prefix)
         else:

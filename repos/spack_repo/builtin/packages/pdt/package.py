@@ -87,4 +87,4 @@ class Pdt(AutotoolsPackage):
                 src = join_path(path, d)
                 dst = join_path(self.prefix, d)
                 if os.path.isdir(src) and not os.path.exists(dst):
-                    os.symlink(join_path(dir, d), dst)
+                    symlink(join_path(dir, d), dst)

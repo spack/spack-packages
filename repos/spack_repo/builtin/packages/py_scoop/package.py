@@ -18,6 +18,7 @@ class PyScoop(PythonPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.7.2.0", sha256="7658faf751627f5507b6f636794721d89db1771234a36e1378ee6796dd7ee761")
     version("0.7.1.1", sha256="d8b6444c7bac901171e3327a97e241dde63f060354e162a65551fd8083ca62b4")
 
     depends_on("py-setuptools", type="build")

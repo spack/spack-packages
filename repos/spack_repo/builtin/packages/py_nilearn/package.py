@@ -18,6 +18,8 @@ class PyNilearn(PythonPackage):
 
     license("BSD")
 
+    version("0.13.1", sha256="66d4a4f3f1dea9b8683806849ea8e91abfeac11e14f7e972a726f644e515bc2b")
+    version("0.12.1", sha256="a08bbfae94d0fac5ba0aebbbcd864b7f91d1ef5725d1c309ce643dd64b2391b9")
     version("0.10.3", sha256="77819331314c4ca5c15c07634f69f855fafdf9add051b1882e3a600ad52757d8")
     version("0.10.1", sha256="928a364e7ed77d15d02b7f227197ea7c78f44f2fe780feb555d6d7cf9232f846")
     version("0.10.0", sha256="cc7f1068e038076527ead1bd363436f88f5e8d21e8bb57b323b30b926fc7553a")
@@ -26,61 +28,77 @@ class PyNilearn(PythonPackage):
     version("0.8.1", sha256="a0489940855130f35bbc4cac0750479a6f82025215ea7b1d778faca064219298")
     version("0.8.0", sha256="f2d3dc81005f829f3a183efa6c90d698ea6818c06264d2e3f03e805c4340febb")
     version("0.7.1", sha256="8b1409a5e1f0f6d1a1f02555c2f11115a2364f45f1e57bcb5fb3c9ea11f346fa")
-    version("0.6.2", sha256="cfc6cfda59a6f4247189f8ccf92e364de450460a15c0ec21bdb857c420dd198c")
-    version("0.4.2", sha256="5049363eb6da2e7c35589477dfc79bf69929ca66de2d7ed2e9dc07acf78636f4")
 
     variant("plotting", default=False, description="Enable plotting functionalities")
 
+    depends_on("python@3.10:", when="@0.13:", type=("build", "run"))
+    depends_on("python@3.9:", when="@0.11:", type=("build", "run"))
+    depends_on("python@3.8:", when="@0.10.3:", type=("build", "run"))
+    depends_on("python@3.7:", when="@0.10:", type=("build", "run"))
     depends_on("py-hatchling", when="@0.10.1:", type="build")
     depends_on("py-hatch-vcs", when="@0.10.1:", type="build")
-    depends_on("py-setuptools", when="@:0.10.0", type="build")
 
+    depends_on("py-joblib@1.2:", when="@0.11:", type=("build", "run"))
     depends_on("py-joblib@1:", when="@0.10:", type=("build", "run"))
     depends_on("py-joblib@0.15:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-joblib@0.12:", when="@0.7:", type=("build", "run"))
-    depends_on("py-joblib@0.11:", when="@0.6:", type=("build", "run"))
-    depends_on("py-lxml", when="@0.9.1:", type=("build", "run"))
-    depends_on("py-nibabel@4.0.0:", when="@0.10.3:", type=("build", "run"))
+
+    depends_on("py-nibabel@5.2:", when="@0.11:", type=("build", "run"))
+    depends_on("py-nibabel@4:", when="@0.10.3:", type=("build", "run"))
     depends_on("py-nibabel@3.2:", when="@0.10:", type=("build", "run"))
     depends_on("py-nibabel@3:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-nibabel@2.5:", when="@0.8:", type=("build", "run"))
     depends_on("py-nibabel@2.0.2:", type=("build", "run"))
+
+    depends_on("py-numpy@1.22.4:", when="@0.11:", type=("build", "run"))
     depends_on("py-numpy@1.19:", when="@0.10:", type=("build", "run"))
     depends_on("py-numpy@1.18:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-numpy@1.16:", when="@0.8:", type=("build", "run"))
     depends_on("py-numpy@1.11:", when="@0.5:", type=("build", "run"))
     depends_on("py-numpy@1.6.1:", type=("build", "run"))
+
+    depends_on("py-pandas@2.2:", when="@0.11:", type=("build", "run"))
     depends_on("py-pandas@1.1.5:", when="@0.10:", type=("build", "run"))
     depends_on("py-pandas@1:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-pandas@0.24.0:", when="@0.8:", type=("build", "run"))
     depends_on("py-pandas@0.18.0:", when="@0.7:", type=("build", "run"))
+
+    depends_on("py-requests@2.30:", when="@0.13:", type=("build", "run"))
     depends_on("py-requests@2.25:", when="@0.10:", type=("build", "run"))
     depends_on("py-requests@2:", when="@0.7:", type=("build", "run"))
+
+    depends_on("py-scikit-learn@1.4:", when="@0.11:", type=("build", "run"))
     depends_on("py-scikit-learn@1:", when="@0.10:", type=("build", "run"))
     depends_on("py-scikit-learn@0.22:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-scikit-learn@0.21:", when="@0.8:", type=("build", "run"))
     depends_on("py-scikit-learn@0.19:", when="@0.7:", type=("build", "run"))
-    # sklearn.linear_model.base was deprecated in py-scikit.learn@0.24
-    depends_on("py-scikit-learn@0.19:0.23", when="@0.6.0:0.6", type=("build", "run"))
-    # older py-nilearn versions use import sklearn.external.joblib which was
-    # deprecated in py-scikit-learn@0.23:
-    depends_on("py-scikit-learn@0.15:0.22", when="@:0.5", type=("build", "run"))
+
+    depends_on("py-jinja2@3.1.2:", when="@0.13:", type=("build", "run"))
+
+    depends_on("py-scipy@1.9:", when="@0.13:", type=("build", "run"))
     depends_on("py-scipy@1.8:", when="@0.10.3:", type=("build", "run"))
     depends_on("py-scipy@1.6:", when="@0.10:", type=("build", "run"))
     depends_on("py-scipy@1.5:", when="@0.9.1:", type=("build", "run"))
     depends_on("py-scipy@1.2:", when="@0.8:", type=("build", "run"))
     depends_on("py-scipy@0.19:", when="@0.6:", type=("build", "run"))
-    depends_on("py-scipy@0.17:", when="@0.5:", type=("build", "run"))
-    depends_on("py-scipy@0.14:", type=("build", "run"))
+
     depends_on("py-packaging", when="@0.10.1:", type=("build", "run"))
 
-    depends_on("py-matplotlib@3.3:", when="@0.10: +plotting", type=("build", "run"))
-    depends_on("py-matplotlib@3:", when="@0.9.1: +plotting", type=("build", "run"))
-    depends_on("py-matplotlib@2:", when="@0.6: +plotting", type=("build", "run"))
-    # older py-nilearn versions use matplotlib.cm.revcmap which was deprecated
-    # in py-matplotlib@3.4:
-    depends_on("py-matplotlib@1.5.1:3.3", when="@:0.5 +plotting", type=("build", "run"))
-    depends_on("py-matplotlib@1.1.1:3.3", when="@0.4.2 +plotting", type=("build", "run"))
+    with when("+plotting"):
+        depends_on("py-matplotlib@3.8:", when="@0.13:", type=("build", "run"))
+        depends_on("py-matplotlib@3.3:", when="@0.10:", type=("build", "run"))
+        depends_on("py-matplotlib@3:", when="@0.9.1:", type=("build", "run"))
+        depends_on("py-matplotlib@2:", when="@0.6:", type=("build", "run"))
+        depends_on("py-plotly@5:", when="@0.12:", type=("build", "run"))
+        depends_on("py-plotly", when="@0.10.3:", type=("build", "run"))
+        depends_on("py-kaleido", when="@0.10.3:", type=("build", "run"))
+
+    conflicts("py-setuptools-scm@9.0.0")
+    conflicts("py-plotly@6.1.0")
+
+    # Historical dependencies
+    depends_on("py-lxml", when="@0.9.1:0.12", type=("build", "run"))
+    depends_on("py-setuptools", when="@:0.10.0", type="build")
 
     @property
     def skip_modules(self):

@@ -16,6 +16,7 @@ class PyRtree(PythonPackage):
     license("MIT")
     maintainers("adamjstewart", "hobu")
 
+    version("1.4.1", sha256="c6b1b3550881e57ebe530cc6cffefc87cd9bf49c30b37b894065a9f810875e46")
     version("1.4.0", sha256="9d97c7c5dcf25f6c0599c76d9933368c6a8d7238f2c1d00e76f1a69369ca82a0")
     version("1.3.0", sha256="b36e9dd2dc60ffe3d02e367242d2c26f7281b00e1aaf0c39590442edaaadd916")
     version("1.2.0", sha256="f5145f7852bf7f95c126fb16bf1a4c2ca9300ae151b07f8a0f7083ea47912675")

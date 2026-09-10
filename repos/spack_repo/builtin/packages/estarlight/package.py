@@ -20,6 +20,10 @@ class Estarlight(CMakePackage):
     maintainers("wdconinc")
 
     version("master", branch="master")
+    version("1.2.0", sha256="230e6e02a198b5902f78289f1e7abc53877a09dfaa09b18e5379a17956cd309d")
+    version("1.1.0", sha256="86896df9084975685efdf28d421d5bf273c65526be2d4ec24e6fddc94900a8c6")
+    version("1.0.3", sha256="c417e5f62faf7983f548a83e3c86cef2cfc72a55f87c0928cd5eb5d38c86d434")
+    version("1.0.2", sha256="cf54b833c66a905603a84c4f3132af61c4bfaa239f3e216431150e0fa22da494")
     version("1.0.1", sha256="b43c1dd3663d8f325f30b17dd7cf4b49f2eb8ceeed7319c5aabebec8676279fd")
 
     variant("dpmjet", default=False, description="Use dpmjet for jets")

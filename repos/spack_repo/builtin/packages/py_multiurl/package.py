@@ -15,6 +15,7 @@ class PyMultiurl(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.3.7", sha256="4201563fc8989baca7b525fdc69d4cd5a6c0cef4f303559710b9890021aab6d9")
     version("0.2.3.2", sha256="b625892ef3a5b8d4bd323f1dcd4750b6ea7e4e2e2e4574b6e88cdf92e10579e9")
 
     depends_on("py-setuptools", type="build")

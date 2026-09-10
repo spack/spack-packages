@@ -17,20 +17,19 @@ class Vim(AutotoolsPackage):
     """
 
     homepage = "https://www.vim.org"
-    url = "https://github.com/vim/vim/archive/v8.1.0338.tar.gz"
+    url = "https://github.com/vim/vim/archive/v9.1.2103.tar.gz"
+    git = "https://github.com/vim/vim.git"
 
     maintainers("sethrj")
 
     license("Vim")
 
+    version("master", branch="master")
+    version("9.2.0000", sha256="875875fb5988af3db0726bef9b048a559a9563aa0ecca8240e82057e8e5941c3")
+    version("9.1.2103", sha256="b0fb638adc1ee6e28c53ce734dc5a73bbdda044658df1257be790c50d6ff2749")
     version("9.1.1194", sha256="4575b9ae81cca6a304f165d16ea3c65f4864390001ed5d7bf000e55417153f30")
     version("9.1.0437", sha256="7024fbf8d0e8eec2eae21d279d487b60c58dc4ba3d42146388dc3743506d1fe6")
     version("9.0.0045", sha256="594a31e96e3eda07a358db305de939ca749693b4684de9e027bfa70311b1994d")
-    version(
-        "9.0.0000",
-        sha256="1b3cd3732eb7039cf58a9321de26ab1a12d81c2f6760eb03c5d7b60d548f4587",
-        deprecated=True,
-    )
     version("8.2.2541", sha256="2699dfe87b524169e7390f0b383c406cb77a9fde7431665d3b9b80964d8d5daf")
     version("8.2.1201", sha256="39032fe866f44724b104468038dc9ac4ff2c00a4b18c9a1e2c27064ab1f1143d")
     version("8.2.0752", sha256="d616945810dac5a1fab2f23b003d22bdecd34861b31f208d5d0012a609821c0f")
@@ -58,12 +57,10 @@ class Vim(AutotoolsPackage):
     for _f in _features[1:]:
         conflicts("+gui", when="features=" + _f, msg="+gui requires features=huge")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("findutils", type="build")
     depends_on("ncurses", when="@7.4:")
-
     depends_on("cscope", when="+cscope", type="run")
     depends_on("lua", when="+lua")
     depends_on("perl", when="+perl")
@@ -81,12 +78,17 @@ class Vim(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
-        args = ["--enable-fail-if-missing"]
+        args = [
+            "--enable-fail-if-missing",
+            "--without-wayland",
+            "--disable-canberra",
+            "--disable-libsodium",
+        ]
 
         def yes_or_no(variant):
             return "yes" if spec.variants[variant].value else "no"
 
-        if "+termlib" in spec["ncurses"]:
+        if spec.satisfies("%ncurses +termlib"):
             args.append("--with-tlib=tinfow")
         else:
             args.append("--with-tlib=ncursesw")
@@ -94,12 +96,8 @@ class Vim(AutotoolsPackage):
         args.append("--with-features=" + spec.variants["features"].value)
 
         if "+python" in spec:
-            if spec["python"].version >= Version("3"):
-                args.append("--enable-python3interp=dynamic")
-                args.append("--enable-pythoninterp=no")
-            else:
-                args.append("--enable-python3interp=no")
-                args.append("--enable-pythoninterp=dynamic")
+            args.append("--enable-python3interp=dynamic")
+            args.append("--enable-pythoninterp=no")
         else:
             args.append("--enable-python3interp=no")
 

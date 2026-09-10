@@ -22,6 +22,9 @@ class ZlibNg(AutotoolsPackage, CMakePackage):
 
     license("Zlib")
 
+    version("2.3.3", sha256="f9c65aa9c852eb8255b636fd9f07ce1c406f061ec19a2e7d508b318ca0c907d1")
+    version("2.3.2", sha256="6a0561b50b8f5f6434a6a9e667a67026f2b2064a1ffa959c6b2dae320161c2a8")
+    version("2.2.5", sha256="5b3b022489f3ced82384f06db1e13ba148cbce38c7941e424d6cb414416acd18")
     version("2.2.4", sha256="a73343c3093e5cdc50d9377997c3815b878fd110bf6511c2c7759f2afb90f5a3")
     version("2.2.3", sha256="f2fb245c35082fe9ea7a22b332730f63cf1d42f04d84fe48294207d033cba4dd")
     version("2.2.2", sha256="fcb41dd59a3f17002aeb1bb21f04696c9b721404890bb945c5ab39d2cb69654c")
@@ -102,11 +105,15 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [
+        args = [
             self.define_from_variant("ZLIB_COMPAT", "compat"),
             self.define_from_variant("WITH_OPTIM", "opt"),
             self.define("BUILD_SHARED_LIBS", self.spec.satisfies("+shared")),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
             self.define_from_variant("WITH_NEW_STRATEGIES", "new_strategies"),
-            self.define("ZLIB_ENABLE_TESTS", self.pkg.run_tests),
         ]
+        if self.spec.satisfies("@2.3:"):
+            args.append(self.define("BUILD_TESTING", self.pkg.run_tests))
+        else:
+            args.append(self.define("ZLIB_ENABLE_TESTS", self.pkg.run_tests))
+        return args

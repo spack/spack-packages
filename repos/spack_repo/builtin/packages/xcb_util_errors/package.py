@@ -20,12 +20,6 @@ class XcbUtilErrors(AutotoolsPackage, XorgPackage):
     xorg_mirror_path = "lib/xcb-util-errors-1.0.1.tar.xz"
 
     version("1.0.1", sha256="5628c87b984259ad927bacd8a42958319c36bdf4b065887803c9d820fb80f357")
-    version(
-        "1.0",
-        sha256="7752a722e580efdbada30632cb23aed35c18757399ac3b547b59fd7257cf5e33",
-        url="https://xcb.freedesktop.org/dist/xcb-util-errors-1.0.tar.gz",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
 

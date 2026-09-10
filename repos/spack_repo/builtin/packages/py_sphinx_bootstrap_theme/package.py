@@ -14,6 +14,7 @@ class PySphinxBootstrapTheme(PythonPackage):
 
     license("MIT")
 
+    version("0.8.1", sha256="683e3b735448dadd0149f76edecf95ff4bd9157787e9e77e0d048ca6f1d680df")
     version("0.4.13", sha256="47f7719e56304026f285455bbb115525d227a6e23341d4b7f6f0b48b2eface82")
 
     depends_on("py-setuptools", type="build")

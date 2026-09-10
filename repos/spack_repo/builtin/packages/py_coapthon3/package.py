@@ -17,6 +17,7 @@ class PyCoapthon3(PythonPackage):
 
     license("MIT")
 
+    version("1.0.2", sha256="07a2c8699eeda2fa819cde30b40a408e7ee6e803f7746bb8702bf52143fb3481")
     version("1.0.1", sha256="331150a581708d47b208cee3b067ced80a00f0cc1278e913ec546e6c6b28bffd")
     version("1.0", sha256="63eb083269c2a286aedd206d3df17ab67fa978dc43caf34eaab9498da15c497a")
 

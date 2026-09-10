@@ -22,8 +22,6 @@ class GlobusXioPopenDriver(AutotoolsPackage):
     homepage = "https://github.com/gridcf/gct/blob/master/xio/drivers/popen/source"
     url = "https://repo.gridcf.org/gct6/sources/globus_xio_popen_driver-4.1.tar.gz"
 
-    maintainers("github_user1", "github_user2")
-
     license("Apache-2.0", checked_by="wdconinc")
 
     version("4.1", sha256="6e9875c0d279511d8c476f71a46346712512284ade0623cd780c4e504908c110")

@@ -1,0 +1,18 @@
+# Windows Visualization Stack
+# maintainers:
+# - John Parent (@johnwparent)
+# - Ryan Krattiger (@kwryankrattiger)
+
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+
+  specs:
+  - "vtk@9: +mpi"
+  - "boost"
+  - "paraview@:5.13.1+mpi+qt"
+  - "py-numpy ^netlib-lapack"
+
+  cdash:
+    build-group: Windows Visualization (Kitware)

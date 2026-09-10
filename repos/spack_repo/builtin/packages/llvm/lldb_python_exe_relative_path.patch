@@ -1,0 +1,31 @@
+diff --git a/lldb/bindings/python/get-python-config.py b/lldb/bindings/python/get-python-config.py
+index ae84cbb12..1e4175470 100755
+--- a/lldb/bindings/python/get-python-config.py
++++ b/lldb/bindings/python/get-python-config.py
+@@ -45,17 +45,21 @@ def main():
+     elif args.variable_name == "LLDB_PYTHON_EXE_RELATIVE_PATH":
+         tried = list()
+         exe = sys.executable
+-        prefix = os.path.realpath(sys.prefix)
++        prefix = sys.prefix
+         while True:
+             try:
+                 print(relpath_nodots(exe, prefix))
+                 break
+             except ValueError:
+                 tried.append(exe)
+-                # Retry if the executable is symlinked or similar.
+-                # This is roughly equal to os.path.islink, except it also works for junctions on Windows.
+-                if os.path.realpath(exe) != exe:
+-                    exe = os.path.realpath(exe)
++                real_exe_dirname = os.path.realpath(os.path.dirname(exe))
++                real_prefix = os.path.realpath(prefix)
++                if prefix != real_prefix:
++                    prefix = real_prefix
++                    exe = os.path.join(real_exe_dirname, os.path.basename(exe))
++                    continue
++                elif os.path.islink(exe):
++                    exe = os.path.join(real_exe_dirname, os.readlink(exe))
+                     continue
+                 else:
+                     print(

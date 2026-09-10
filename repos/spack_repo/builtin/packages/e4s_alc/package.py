@@ -21,6 +21,7 @@ class E4sAlc(PythonPackage):
     license("MIT")
 
     version("main", branch="main")
+    version("1.0.3", commit="54fc0a955c5ae0221a425ce439e34a7e2ac92a87")
     version("1.0.2", commit="9eddfc61659ecab3c0253b2eac020ddb6e610b49")
     version("1.0.1", commit="262298128a4991ffc773b1bd835687fb6493311e")
 

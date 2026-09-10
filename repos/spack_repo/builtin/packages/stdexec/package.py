@@ -17,6 +17,8 @@ class Stdexec(CMakePackage):
 
     license("Apache-2.0")
 
+    version("25.09", sha256="46651430312b1f66a9120dde3daa578e9c9eba709e135d5e508ad5f8f4f18dab")
+    version("25.03.rc1", sha256="dc45560a7f68b9d7734e81e0a080fc13937b0f06b745631e9552af623bfb1f74")
     version("24.09", sha256="d2d811c852dc6c53527a244a54ae343d6b65a50c23ea49f93723e3082435fff4")
     version("23.03", sha256="2c9dfb6e56a190543049d2300ccccd1b626f4bb82af5b607869c626886fadd15")
     version("main", branch="main")

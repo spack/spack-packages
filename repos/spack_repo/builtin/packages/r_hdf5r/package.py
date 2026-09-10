@@ -28,6 +28,8 @@ class RHdf5r(RPackage):
     version("1.3.3", sha256="a0f83cbf21563e81dbd1a1bd8379623ed0c9c4df4e094c75013abfd7a5271545")
     version("1.2.0", sha256="58813e334fd3f9040038345a7186e5cb02090898883ac192477a76a5b8b4fe81")
 
+    depends_on("c", type="build")  # generated
+
     depends_on("r@3.2.2:", type=("build", "run"))
     depends_on("r-r6", type=("build", "run"))
     depends_on("r-bit64", type=("build", "run"))

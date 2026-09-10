@@ -38,6 +38,11 @@ class Apptainer(SingularityBase):
     )
 
     version("main", branch="main", get_full_repo=True)  # apptainer version uses git describe
+    version("1.5.3", sha256="5a3bf360a5240086324aa7f7005ab7eeee91095e2091078b3f9783eaf6e7288a")
+    version("1.5.0", sha256="36d67d57ef959397fa4f59169cf7deb92220537160e761e0c1cff84624ad81e3")
+    version("1.4.4", sha256="eb806e22dabfb6549c398b55e50c747e4c51b57f8879da9e29813de40af54b48")
+    version("1.4.3", sha256="dfb85b8ad48bd366245c7f6a1d0b56d2ce480cfdf18d7a64397098184b4ade90")
+    version("1.4.2", sha256="6dda1dd2ca8e42ed7f498d2bc8574f01d7ad3db68494e453639d76aef4424d1d")
     version("1.4.1", sha256="77f25c756397a0886baf462ffdde0e21fe528063505c67a51460c165094d166d")
     version("1.4.0", sha256="204cded54046547cb3eb4c7874bdf45892fedc58b0d104195c59d2972cba51d3")
     version("1.3.6", sha256="b5343369e7fdf67572f887d81f8d2b938f099fb39c876d96430d747935960d51")
@@ -66,6 +71,7 @@ class Apptainer(SingularityBase):
     depends_on("go@1.20:", when="@1.3:")
     depends_on("go@1.22.7:", when="@1.4:")
     depends_on("go@1.23.6:", when="@1.4.1:")
+    depends_on("go@1.25.7:", when="@1.5:")
     depends_on("gocryptfs@2.4:", type="run", when="@1.3:")
     depends_on("squashfuse", type="run")
     depends_on("squashfuse@0.5.1:", type="run", when="@1.3:")
@@ -93,9 +99,13 @@ class Apptainer(SingularityBase):
         return options
 
     def flag_handler(self, name, flags):
+        # The package does not build with C dialects newer than gnu17, so set gnu17
+        # for GCC 15 and newer which default to gnu23
+        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+            flags.append("-std=gnu17")
         # Certain go modules this build pulls in cannot be built with anything
         # other than -O0. Best to just discard any injected flags.
-        return (None, flags, None)
+        return (flags, None, None)
 
     # They started vendoring the fuse bits and assume they'll be in the
     # libexec/apptainer prefix as a result. When singularity is run with

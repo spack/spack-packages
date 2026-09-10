@@ -143,7 +143,7 @@ class PyCellprofiler(PythonPackage):
     # 1412 passed, 16 skipped, 75 deselected
     def test_cellprofiler_no_gui(self):
         """Test installed package."""
-        pytest = which("pytest")
+        pytest = which("pytest", required=True)
         prefix = join_path(python_purelib, self.dir_tests)
         pytest(
             "-v",

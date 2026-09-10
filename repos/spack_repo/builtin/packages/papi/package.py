@@ -32,6 +32,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("7.2.0", sha256="a9bff89ccf39915d729e08ae0a0c6a71ce0ebbe98411e9a2eb3c83c8db0af39c")
     version("7.1.0", sha256="5818afb6dba3ece57f51e65897db5062f8e3464e6ed294b654ebf34c3991bc4f")
     version("7.0.1", sha256="c105da5d8fea7b113b0741a943d467a06c98db959ce71bdd9a50b9f03eecc43e")
     # Note: version 7.0.0 is omitted due to build issues, see PR 33940 for more information
@@ -54,12 +55,14 @@ class Papi(AutotoolsPackage, ROCmPackage):
     variant("cuda", default=False, description="Enable CUDA support")
     variant("nvml", default=False, description="Enable NVML support")
     variant("rocm_smi", default=False, description="Enable ROCm SMI support")
+    variant("rocp_sdk", default=False, when="@7.2:", description="Enable ROCp support")
     variant(
         "rdpmc",
         default=True,
         when="@6.0.0:",
         description="Enable use of rdpmc for reading counters, when possible",
     )
+    variant("topdown", default=False, when="@7.2:", description="Enable topdown support")
 
     variant("shared", default=True, description="Build shared libraries")
     # PAPI requires building static libraries, so there is no "static" variant
@@ -68,16 +71,18 @@ class Papi(AutotoolsPackage, ROCmPackage):
     # The PAPI configure option "--with-shlib-tools" is deprecated
     # and therefore not implemented here
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
+    depends_on("perl", when="@7.1.0:", type="build")
     depends_on("lm-sensors", when="+lmsensors")
     depends_on("cuda", when="+cuda")
     depends_on("cuda", when="+nvml")
     depends_on("bc", when="+cuda", type="build")
     depends_on("hsa-rocr-dev", when="+rocm")
     depends_on("rocprofiler-dev", when="+rocm")
+    depends_on("rocprofiler-sdk", when="+rocp_sdk")
     depends_on("llvm-amdgpu", when="+rocm")
     depends_on("rocm-openmp-extras", when="+rocm")
     depends_on("rocm-smi-lib", when="+rocm_smi")
@@ -87,6 +92,8 @@ class Papi(AutotoolsPackage, ROCmPackage):
     conflicts("^cuda", when="@:5", msg="CUDA support for versions < 6.0.0 not implemented")
     # https://github.com/icl-utk-edu/papi/pull/205
     conflicts("^cuda@12.4:", when="@:7.1")
+    # https://github.com/spack/spack-packages/pull/3028#issuecomment-3749940489
+    conflicts("^cuda@13.1:")
     conflicts("%cce", when="@7.1:", msg="-ffree-form flag not recognized")
 
     conflicts("@=6.0.0", when="+static_tools", msg="Static tools cannot build on version 6.0.0")
@@ -98,6 +105,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         sha256="64c57b3ad4026255238cc495df6abfacc41de391a0af497c27d0ac819444a1f8",
         when="@5.4.0:5.6%gcc@8:",
     )
+    patch("perl-in-env.patch", when="@7.1.0:")
     # 7.1.0 erroneously adds -ffree-form for all fortran compilers
     patch("sysdetect-free-form-fix.patch", when="@7.1.0")
     patch("crayftn-fixes.patch", when="@6.0.0:%cce@9:")
@@ -126,6 +134,8 @@ class Papi(AutotoolsPackage, ROCmPackage):
             env.set("AQLPROFILE_READ_API", "1")
         if "+rocm_smi" in spec:
             env.append_flags("CFLAGS", "-I%s/rocm_smi" % spec["rocm-smi-lib"].prefix.include)
+        if "+rocp_sdk" in spec:
+            env.set("PAPI_ROCP_SDK_ROOT", spec["rocprofiler-sdk"].prefix)
         #
         # Intel OneAPI LLVM cannot compile papi unless the DBG enviroment variable is cleared
         #
@@ -136,7 +146,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
 
     @when("@6.0.0:%oneapi")
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("-c", "cd src && autoreconf -ivf")
 
     def configure_args(self):
@@ -159,6 +169,8 @@ class Papi(AutotoolsPackage, ROCmPackage):
                 "nvml",
                 "rocm",
                 "rocm_smi",
+                "rocp_sdk",
+                "topdown",
             ],
         )
         if components:
@@ -175,6 +187,11 @@ class Papi(AutotoolsPackage, ROCmPackage):
 
         if "+debug" in spec:
             options.append("--with-debug=yes")
+
+        if self.run_tests:
+            options.append("--with-tests=ctests")
+        else:
+            options.append("--with-tests=no")
 
         return options
 
@@ -225,7 +242,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
             with set_env(PAPIROOT=self.prefix):
                 make = self.spec["gmake"].command
                 make()
-                exe_simple = which("simple")
+                exe_simple = which("simple", required=True)
                 exe_simple()
-                exe_threads = which("threads")
+                exe_threads = which("threads", required=True)
                 exe_threads()

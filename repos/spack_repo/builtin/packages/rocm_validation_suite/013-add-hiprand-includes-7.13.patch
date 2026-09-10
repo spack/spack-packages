@@ -1,0 +1,43 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 8a286a9..f123456 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -196,6 +196,12 @@ endif()
+ # Use pkg_check_modules to find libpci
+ pkg_check_modules(PCI_PACKAGE REQUIRED libpci)
+
++# Find numactl
++find_package(PkgConfig REQUIRED)
++pkg_check_modules(NUMA REQUIRED numa)
++include_directories(${NUMA_INCLUDE_DIRS})
++link_directories(${NUMA_LIBRARY_DIRS})
++
+ # Making ROCM_PATH, CMAKE_INSTALL_PREFIX, CPACK_PACKAGING_INSTALL_PREFIX as CACHE
+ # variables since we will pass them as cmake params appropriately, and
+ # all find_packages relevant to this build will be in ROCM path hence appending it to CMAKE_PREFIX_PATH
+diff --git a/babel.so/CMakeLists.txt b/babel.so/CMakeLists.txt
+index bc0a993..d8a54b8 100644
+--- a/babel.so/CMakeLists.txt
++++ b/babel.so/CMakeLists.txt
+@@ -140,7 +140,7 @@ if(NOT EXISTS "${HIP_LIB_DIR}/lib${HIP_HCC_LIB}.so")
+ endif()
+
+ ## define include directories
+-include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR} ${PCI_PACKAGE_INCLUDE_DIRS})
++include_directories(./ ../ ${ROCR_INC_DIR} ${HIP_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${PCI_PACKAGE_INCLUDE_DIRS})
+
+ # Add directories to look for library files to link
+ link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ROCBLAS_LIB_DIR} ${ASAN_LIB_PATH} ${AMD_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_PACKAGE_LIBRARY_DIRS})
+diff --git a/pbqt.so/CMakeLists.txt b/pbqt.so/CMakeLists.txt
+index 81511ae..6a4db43 100644
+--- a/pbqt.so/CMakeLists.txt
++++ b/pbqt.so/CMakeLists.txt
+@@ -133,7 +133,7 @@ if(NOT EXISTS ${ROCR_LIB_DIR}/${CORE_RUNTIME_LIBRARY}.so)
+ endif()
+
+ ## define include directories
+-include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${TRANSFERBENCH_INC_DIR} ${PCI_PACKAGE_LIBRARY_DIRS})
++include_directories(./ ../ pci ${ROCR_INC_DIR} ${HIPRAND_INC_DIR} ${ROCRAND_INC_DIR} ${TRANSFERBENCH_INC_DIR} ${PCI_PACKAGE_INCLUDE_DIRS})
+ # Add directories to look for library files to link
+ link_directories(${RVS_LIB_DIR} ${ROCR_LIB_DIR} ${ASAN_LIB_PATH} ${AMD_SMI_LIB_DIR} ${HIPRAND_LIB_DIR} ${ROCRAND_LIB_DIR} ${PCI_PACKAGE_LIBRARY_DIRS})
+ ## additional libraries

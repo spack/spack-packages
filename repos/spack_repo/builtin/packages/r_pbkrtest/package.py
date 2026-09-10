@@ -25,6 +25,7 @@ class RPbkrtest(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.5.5", sha256="d26c8ef0a6fd73bba184bde8e3434439d62539d93aef0a0b5b480a0f309bc51b")
     version("0.5.3", sha256="b03e5156fef6a4a2ea67c1d15c051799e63acafef2f89962c580645266e6ba63")
     version("0.5.2", sha256="8e79adf035a0fcf3c82145ad55847497379e009f7be880ba3007ebeb2e69b6e3")
     version("0.5.1", sha256="b2a3452003d93890f122423b3f2487dcb6925440f5b8a05578509e98b6aec7c5")
@@ -33,18 +34,23 @@ class RPbkrtest(RPackage):
     version("0.4-6", sha256="9d28b8916fea3ffec8d5958bb8c531279b1e273f21fdbeb2fcad6d7e300a9c01")
     version("0.4-4", sha256="a685392ef3fca0ddc2254f6cc9bba6bc22b298fa823359fc4515e64e753abd31")
 
-    depends_on("r@3.0.2:", type=("build", "run"))
-    depends_on("r@3.2.3:", type=("build", "run"), when="@0.4-6:")
-    depends_on("r@3.5.0:", type=("build", "run"), when="@0.5-0.1:")
-    depends_on("r@4.1.0:", type=("build", "run"), when="@0.5.2:")
-    depends_on("r@4.2.0:", type=("build", "run"), when="@0.5.3:")
-    depends_on("r-lme4@1.1-10:", type=("build", "run"))
-    depends_on("r-lme4@1.1-31:", type=("build", "run"), when="@0.5.2:")
-    depends_on("r-broom", type=("build", "run"), when="@0.5-0.1:")
-    depends_on("r-doby", type=("build", "run"), when="@0.5.3:")
-    depends_on("r-dplyr", type=("build", "run"), when="@0.5-0.1:")
-    depends_on("r-mass", type=("build", "run"))
-    depends_on("r-matrix@1.2-3:", type=("build", "run"))
-    depends_on("r-numderiv", type=("build", "run"), when="@0.5-0.1:")
-    depends_on("r-knitr", type=("build", "run"), when="@0.5-0.1:0.5.1")
-    depends_on("r-magrittr", type=("build", "run"), when="@0.5-0.1:0.5.1")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.2.0:", when="@0.5.3:")
+        depends_on("r@4.1.0:", when="@0.5.2:")
+        depends_on("r@3.5.0:", when="@0.5-0.1:")
+        depends_on("r@3.2.3:", when="@0.4-6:")
+        depends_on("r@3.0.2:")
+
+        depends_on("r-lme4@1.1-31:", when="@0.5.2:")
+        depends_on("r-lme4@1.1-10:")
+        depends_on("r-broom", when="@0.5-0.1:")
+        depends_on("r-dplyr", when="@0.5-0.1:")
+        depends_on("r-mass")
+        depends_on("r-numderiv", when="@0.5-0.1:")
+        depends_on("r-matrix@1.2-3:")
+        depends_on("r-doby@4.6.22:", when="@0.5.4:")
+        depends_on("r-doby", when="@0.5.3:")
+
+        # Historical dependencies
+        depends_on("r-knitr", when="@0.5-0.1:0.5.1")
+        depends_on("r-magrittr", when="@0.5-0.1:0.5.1")

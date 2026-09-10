@@ -18,14 +18,15 @@ class RDmrcate(RPackage):
 
     bioc = "DMRcate"
 
-    version("3.2.0", commit="1f46517bcdea269a2c9726d1156495d6dd172067")
-    version("3.0.0", commit="9cd77dedef76528990487b931ae0cc314423c3b9")
-    version("2.16.0", commit="9e42d8c8eb26dbd2d36a70bf32be322062ecc850")
-    version("2.14.0", commit="6e7bae0917001e7664f01c3f8d261f9fe28c2f4d")
-    version("2.12.0", commit="560dd5067b05715631739d0fb58ef9cebdbf7078")
-    version("2.10.0", commit="81e83701da5c55ac83d0e0b5e640a9d431f09551")
-    version("2.8.5", commit="c65dc79a33a047c10932a98b3383709a6bcb8903")
-    version("2.4.1", commit="bc6242a0291a9b997872f575a4417d38550c9550")
+    with default_args(get_full_repo=True):
+        version("3.2.0", commit="1f46517bcdea269a2c9726d1156495d6dd172067")
+        version("3.0.0", commit="9cd77dedef76528990487b931ae0cc314423c3b9")
+        version("2.16.0", commit="9e42d8c8eb26dbd2d36a70bf32be322062ecc850")
+        version("2.14.0", commit="6e7bae0917001e7664f01c3f8d261f9fe28c2f4d")
+        version("2.12.0", commit="560dd5067b05715631739d0fb58ef9cebdbf7078")
+        version("2.10.0", commit="81e83701da5c55ac83d0e0b5e640a9d431f09551")
+        version("2.8.5", commit="c65dc79a33a047c10932a98b3383709a6bcb8903")
+        version("2.4.1", commit="bc6242a0291a9b997872f575a4417d38550c9550")
 
     depends_on("r@3.6.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@2.8.5:2.17.1")

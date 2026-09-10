@@ -16,6 +16,7 @@ class PyKneaddata(PythonPackage):
     homepage = "https://github.com/biobakery/kneaddata"
     pypi = "kneaddata/kneaddata-0.12.0.tar.gz"
 
+    version("0.12.4", sha256="f95811aeb7c4a74250ce3f62879676f4e3c970f20dad2d5f9628250a9c45a6c3")
     version("0.12.0", sha256="b211bf973ea50cc89dd5935761ca3b101d422cfb62b215aae08f5ed92a624a58")
 
     maintainers("Pandapip1")

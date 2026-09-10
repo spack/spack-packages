@@ -2,17 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
 import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
+class Hipsolver(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
     """hipSOLVER is a LAPACK marshalling library, with multiple supported backends.
     It sits between the application and a 'worker' LAPACK library, marshalling
     inputs into the backend library and marshalling results back to the application.
@@ -21,15 +22,29 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     and cuSOLVER as backends."""
 
     homepage = "https://github.com/ROCm/hipSOLVER"
-    git = "https://github.com/ROCm/hipSOLVER.git"
-    url = "https://github.com/ROCm/hipSOLVER/archive/rocm-6.4.1.tar.gz"
-    tags = ["rocm"]
+    git = "https://github.com/ROCm/rocm-libraries.git"
 
+    tags = ["rocm"]
     maintainers("cgmb", "srekolam", "renjithravindrankannath", "afzpatel")
     libraries = ["libhipsolver"]
-
     license("MIT")
 
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/hipSOLVER/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
+    version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
+    version("7.1.1", sha256="bd664e3cd43bfcc7e94d5a387c27262c4b218d6d2e71e086992b174349dd1c10")
+    version("7.1.0", sha256="19b87cd27b9048964e94a77bb8c07a23ecfd5f96a73a91eebd1d365487bad2bf")
+    version("7.0.2", sha256="eac1a691bdc00ceb50580c1dab6cbffd6c7d579ebbad145857f58c4de84a3cae")
+    version("7.0.0", sha256="5ea1e0250651da458158432409bd4c06a53224902e17ea26f3b941aed15ee8aa")
+    version("6.4.3", sha256="403c2d0aacc3ea2dea5f6d61aca058337d448a224891b887ae1601ce68af8d15")
+    version("6.4.2", sha256="5c1afee73157d042fd1dcae1ac416ea6f6f62207d7cb08595942b9f016673631")
     version("6.4.1", sha256="86ac30d5cf741a254485ed54c7f51e4c9bc9803cda31dab8e86f11b39742b28e")
     version("6.4.0", sha256="d6cf798c5f2d1d00a442f7a3f07c6f3a9e4ce5b3be36608aac7c97175dac9eb0")
     version("6.3.3", sha256="529263f9abe5b7485bbabedc3993630abaa0d5fd547c4add0993d1cb0d71e226")
@@ -46,9 +61,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     version("6.0.0", sha256="385849db02189d5e62096457e52ae899ae5c1ae7d409dc1da61f904d8861b48c")
     version("5.7.1", sha256="5592e965c0dc5722931302289643d1ece370220af2c7afc58af97b3395295658")
     version("5.7.0", sha256="0e35795bfbcb57ed8e8437471209fb7d230babcc31d9a4a0b3640c3ee639f4a7")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="2e546bc7771f7bf0aa7892b69cded725941573e8b70614759c3d03c21eb78dde")
-        version("5.6.0", sha256="11fa51d210853d93d24d55b20367738e49711793412f58e8d7689710b92ae16c")
 
     # default to an 'auto' variant until amdgpu_targets can be given a better default than 'none'
     amdgpu_targets = ROCmPackage.amdgpu_targets
@@ -84,8 +96,6 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hip +cuda", when="+cuda")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -102,23 +112,44 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
         "6.3.3",
         "6.4.0",
         "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocblas@{ver}", when=f"+rocm @{ver}")
-        depends_on(f"rocsolver@{ver}", when=f"+rocm @{ver}")
-
-    for tgt in ROCmPackage.amdgpu_targets:
-        depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
-        depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(
+                f"rocblas@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
+            depends_on(
+                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"+rocm @{ver} amdgpu_target={tgt}"
+            )
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
+    depends_on("openblas", when="@7.13: +rocm")
+
     patch("001-suite-sparse-include-path.patch", when="@6.1.0")
     patch("0001-suite-sparse-include-path-6.1.1.patch", when="@6.1.1:6.2")
 
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.2:"):
+            return "projects/hipsolver"
+        else:
+            return "."
+
     def check(self):
         exe = join_path(self.build_directory, "clients", "staging", "hipsolver-test")
-        exe = which(exe)
+        exe = which(exe, required=True)
         exe(["--gtest_filter=-*known_bug*"])
 
     @classmethod
@@ -153,8 +184,14 @@ class Hipsolver(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("ROCBLAS_PATH", self.spec["rocblas"].prefix))
         if self.spec.satisfies("@5.2.0:6.3.1"):
             args.append(self.define("BUILD_FILE_REORG_BACKWARD_COMPATIBILITY", True))
+        if self.spec.satisfies("@7.13: +rocm"):
+            args.append(self.define("HIPSOLVER_INTERNAL_LAPACK_BUILD", False))
+            args.append(self.define("HIPSOLVER_FIND_PACKAGE_LAPACK_CONFIG", False))
+            args.append(self.define("BLA_VENDOR", "OpenBLAS"))
         libloc = self.spec["suite-sparse"].prefix.lib64
         if not os.path.isdir(libloc):
             libloc = self.spec["suite-sparse"].prefix.lib
         args.append(self.define("SUITE_SPARSE_LIBDIR", libloc))
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

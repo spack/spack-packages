@@ -1,0 +1,101 @@
+From 29d9c1691b389927e1abfd51d05d55e2fb2868d1 Mon Sep 17 00:00:00 2001
+From: Sreenivasa Murthy Kolam <sreenivasamurthy.kolam@amd.com>
+Date: Tue, 24 Feb 2026 12:11:29 +0530
+Subject: [PATCH] Fix libopenmp.so and libamdhip64.so not found error
+
+---
+ projects/rocwmma/CMakeLists.txt         | 25 +++++++++++++++++++++----
+ projects/rocwmma/samples/CMakeLists.txt |  6 ++----
+ projects/rocwmma/test/CMakeLists.txt    |  7 +++----
+ 3 files changed, 26 insertions(+), 12 deletions(-)
+
+diff --git a/projects/rocwmma/CMakeLists.txt b/projects/rocwmma/CMakeLists.txt
+index be44651..3f991ca 100644
+--- a/projects/rocwmma/CMakeLists.txt
++++ b/projects/rocwmma/CMakeLists.txt
+@@ -150,7 +150,23 @@ message(STATUS "GPU_TARGETS=${GPU_TARGETS}")
+ 
+ find_package( hip REQUIRED )
+ find_package( hiprtc REQUIRED )
+-find_package( OpenMP REQUIRED )
++set(ROCWMMA_USE_OPENMP   ON CACHE BOOL "Use OpenMP to improve performance.")
++set(ROCWMMA_USE_HIP      ON CACHE BOOL "Use the Hip runtime.")
++
++if(ROCWMMA_USE_OPENMP)
++    # Workaround for https://gitlab.kitware.com/cmake/cmake/-/issues/21787
++    # ensures we link to HIP's libomp and get an rpath to it.
++    add_library(custom_openmp_cxx INTERFACE)
++
++    if(ROCWMMA_USE_HIP)
++        target_compile_options(custom_openmp_cxx INTERFACE "-fopenmp")
++        target_link_options(custom_openmp_cxx INTERFACE "-fopenmp")
++    else ()
++       find_package(OpenMP REQUIRED)
++       target_link_libraries(custom_openmp_cxx INTERFACE OpenMP::OpenMP_CXX)
++    endif ()
++endif()
++
+ 
+ if (ROCWMMA_BUILD_BENCHMARK_TESTS)
+     ## Check for ROCM-smi
+@@ -165,10 +181,10 @@ if (ROCWMMA_BUILD_BENCHMARK_TESTS)
+ endif()
+ 
+ add_library(rocwmma INTERFACE)
+-target_link_libraries(rocwmma INTERFACE hip::device hip::host OpenMP::OpenMP_CXX ${ROCM_SMI_LIBRARY})
+-
++target_link_libraries(rocwmma INTERFACE hip::device hip::host custom_openmp_cxx ${ROCM_SMI_LIBRARY})
++target_link_directories(rocwmma INTERFACE ${ROCM_SMI_LIB_DIR})
+ rocm_install_targets(
+-  TARGETS rocwmma
++  TARGETS rocwmma custom_openmp_cxx
+   INCLUDE library/include
+ )
+ 
+@@ -201,6 +217,7 @@ set(CPACK_RPM_PACKAGE_LICENSE "MIT")
+ 
+ rocm_export_targets(
+   TARGETS roc::rocwmma
++  DEPENDS PACKAGE hip
+   NAMESPACE roc::
+ )
+ 
+diff --git a/projects/rocwmma/samples/CMakeLists.txt b/projects/rocwmma/samples/CMakeLists.txt
+index 3d23b15..8362c3d 100644
+--- a/projects/rocwmma/samples/CMakeLists.txt
++++ b/projects/rocwmma/samples/CMakeLists.txt
+@@ -40,10 +40,8 @@ function(add_rocwmma_sample TEST_TARGET TEST_SOURCE)
+ 
+   list(APPEND TEST_SOURCE ${ARGN})
+   add_executable(${TEST_TARGET} ${TEST_SOURCE})
+-  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/lib")
+-  if(UNIX)
+-    set_target_properties(${TEST_TARGET} PROPERTIES INSTALL_RPATH "\$ORIGIN/../llvm/lib")
+-    target_link_libraries(${TEST_TARGET} "-fno-rtlib-add-rpath")
++  if(ROCWMMA_USE_HIP)
++      target_link_libraries(${TEST_TARGET} custom_openmp_cxx)
+   endif()
+   target_link_libraries(${TEST_TARGET} rocwmma hiprtc::hiprtc)
+   target_include_directories(${TEST_TARGET} PRIVATE
+diff --git a/projects/rocwmma/test/CMakeLists.txt b/projects/rocwmma/test/CMakeLists.txt
+index 0e767aa..cfe3f34 100644
+--- a/projects/rocwmma/test/CMakeLists.txt
++++ b/projects/rocwmma/test/CMakeLists.txt
+@@ -108,11 +108,10 @@ function(add_rocwmma_test TEST_TARGET TEST_SOURCE)
+   list(APPEND TEST_SOURCE ${ARGN})
+   add_executable(${TEST_TARGET} ${TEST_SOURCE})
+   target_link_libraries(${TEST_TARGET} rocwmma GTest::gtest)
+-  target_link_libraries(${TEST_TARGET} OpenMP::OpenMP_CXX "-L${HIP_CLANG_ROOT}/lib")
+-  if(UNIX)
+-    set_target_properties(${TEST_TARGET} PROPERTIES INSTALL_RPATH "\$ORIGIN/../llvm/lib")
+-    target_link_libraries(${TEST_TARGET} "-fno-rtlib-add-rpath")
++  if(ROCWMMA_USE_HIP)
++      target_link_libraries(${TEST_TARGET} custom_openmp_cxx)
+   endif()
++
+   target_include_directories(${TEST_TARGET} PRIVATE
+                              ${CMAKE_CURRENT_SOURCE_DIR}
+                              ${ROCWMMA_TEST_INCLUDE_DIRS})
+-- 
+2.43.0
+

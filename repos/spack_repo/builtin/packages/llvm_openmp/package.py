@@ -27,6 +27,10 @@ class LlvmOpenmp(CMakePackage):
 
     license("Apache-2.0")
 
+    version("21.1.8", sha256="856b023748b41ac7b2c83fd8e9f765ff48a4df2fe6777d2811ef7c7ed8f2f977")
+    resource_for_ver(
+        "21.1.8", sha256="85735f20fd8c81ecb0a09abb0c267018475420e93b65050cc5b7634eab744de9"
+    )
     version("20.1.8", sha256="b21c04ee9cbe56e200c5d83823765a443ee6389bbc3f64154c96e94016e6cee9")
     resource_for_ver(
         "20.1.8", sha256="3319203cfd1172bbac50f06fa68e318af84dcb5d65353310c0586354069d6634"
@@ -52,11 +56,12 @@ class LlvmOpenmp(CMakePackage):
     version("9.0.0", sha256="9979eb1133066376cc0be29d1682bc0b0e7fb541075b391061679111ae4d3b5b")
     version("8.0.0", sha256="f7b1705d2f16c4fc23d6531f67d2dd6fb78a077dd346b02fed64f4b8df65c9d5")
 
+    variant("fortran", default=False, description="Build Fortran modules")
     variant("multicompat", default=True, description="Support the GNU OpenMP runtime interface.")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.13.4:", when="@12:", type="build")
     depends_on("cmake@2.8:", type="build")
@@ -85,7 +90,8 @@ class LlvmOpenmp(CMakePackage):
             os.rename(cmake_mod_dir, os.path.join(self.stage.path, "cmake"))
 
     def cmake_args(self):
-        cmake_args = []
+        cmake_args = [self.define_from_variant("LIBOMP_FORTRAN_MODULES", "fortran")]
+
         # Add optional support for both Intel and gcc compilers
         if self.spec.satisfies("+multicompat"):
             cmake_args.append("-DKMP_GOMP_COMPAT=1")

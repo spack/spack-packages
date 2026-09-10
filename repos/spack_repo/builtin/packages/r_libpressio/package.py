@@ -16,8 +16,6 @@ class RLibpressio(RPackage):
     maintainers("robertu94")
 
     version("1.6.0", sha256="4f8a712e5e84a201373a104e73b10282fcf98f1c7672cc1dd5a2ff07a32d54f6")
-
-    version("1.6.0", sha256="4f8a712e5e84a201373a104e73b10282fcf98f1c7672cc1dd5a2ff07a32d54f6")
     version("1.5.0", sha256="6b0e095610f190aad5dded0dbc6c0783893d4d5e773afc80328fc8c5befeff58")
     version("1.4.1", sha256="fa9d47c84ddeb4edd9c5250067a87cc1bb549b9b1dd71e2501dd39ee4e171c27")
     version("1.3.2", sha256="6afc907aa3663fbb9bfc7c92ca57e15d05ecbec59f94badec24e8da99ac1422f")
@@ -30,7 +28,7 @@ class RLibpressio(RPackage):
         "third_party", description="include support for 3rd party compressor modules", default=True
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("r@3.3.0:", type=("build", "run"))
     depends_on("r-rcpp", type=("build", "link", "run"))
@@ -39,3 +37,5 @@ class RLibpressio(RPackage):
     depends_on("libpressio@0.88.0:", type=("build", "link", "run"), when="@1.6:")
     depends_on("pkgconfig", type=("build"))
     depends_on("libpressio-tools@0.1.4:", type=("build", "link", "run"), when="+third_party")
+
+    conflicts("%gcc@:9", when="@1.3:")

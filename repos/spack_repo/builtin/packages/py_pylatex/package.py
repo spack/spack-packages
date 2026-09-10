@@ -15,6 +15,7 @@ class PyPylatex(PythonPackage):
 
     license("MIT")
 
+    version("1.4.2", sha256="bb7b21bec57ecdba3f6f44c856ebebdf6549fd6e80661bd44fd5094236729242")
     version("1.4.1", sha256="d3c12efb8b260771260443dce78d1e9089c09f9d0b92e6273dfca0bf5e7302fb")
 
     variant("docs", default=False, description="Build with Sphinx support for documentation")

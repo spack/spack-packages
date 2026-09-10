@@ -18,13 +18,13 @@ class Fortran(Package):
     def test_fortran(self):
         """Compile and run 'Hello world'"""
         expected = ["Hello world", "YES!"]
-        fc = which(os.environ["FC"])
+        fc = which(os.environ["FC"], required=True)
 
         test_source = self.test_suite.current_test_data_dir
         for test in os.listdir(test_source):
             exe_name = f"{test}.exe"
             with test_part(self, f"test_fortran_{test}", f"run {exe_name}"):
                 fc("-o", exe_name, join_path(test_source, test))
-                exe = which(exe_name)
+                exe = which(exe_name, required=True)
                 out = exe(output=str.split, error=str.split)
                 check_outputs(expected, out)

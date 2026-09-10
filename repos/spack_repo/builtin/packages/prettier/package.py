@@ -16,6 +16,7 @@ class Prettier(Package):
     maintainers("adamjstewart")
     license("MIT")
 
+    version("3.9.6", sha256="bf37f54b26897bb52955135539e4b3c1f169b635c025e0ca173cfe8424a14df2")
     version("3.2.5", sha256="0ac58fbe50859feb06099670526460cef7f51c83fee458b02fc67e53ffd23f57")
 
     depends_on("node-js", type=("build", "run"))

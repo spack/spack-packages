@@ -14,6 +14,7 @@ class PyAnybadge(PythonPackage):
     homepage = "https://github.com/jongracecox/anybadge"
     pypi = "anybadge/anybadge-1.14.0.tar.gz"
 
+    version("1.16.0", sha256="f4e95eca834482f9932f9020ac2fe04a5ca863728b446324a8d35b1e67faab71")
     version("1.14.0", sha256="47f06e0a6320d3e5eac55c712dc0bab71b9ed85353c591d448653c5a0740783f")
 
     depends_on("py-setuptools", type="build")

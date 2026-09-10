@@ -16,6 +16,7 @@ class PyPrettytable(PythonPackage):
     homepage = "https://github.com/jazzband/prettytable"
     pypi = "prettytable/prettytable-0.7.2.tar.gz"
 
+    version("3.16.0", sha256="3c64b31719d961bf69c9a7e03d0c1e477320906a98da63952bc6698d6164ff57")
     version("3.7.0", sha256="ef8334ee40b7ec721651fc4d37ecc7bb2ef55fde5098d994438f0dfdaa385c0c")
     version("3.4.1", sha256="7d7dd84d0b206f2daac4471a72f299d6907f34516064feb2838e333a4e2567bd")
     version("3.2.0", sha256="ae7d96c64100543dc61662b40a28f3b03c0f94a503ed121c6fca2782c5816f81")

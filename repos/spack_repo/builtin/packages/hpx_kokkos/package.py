@@ -24,7 +24,6 @@ class HpxKokkos(CMakePackage, CudaPackage, ROCmPackage):
     version("0.4.0", sha256="dafef55521cf4bf7ab28ebad546ea1d3fb83fac3a9932e292db4ab3666cd833f")
     version("0.3.0", sha256="83c1d11dab95552ad0abdae767c71f757811d7b51d82bd231653dc942e89a45d")
     version("0.2.0", sha256="289b711cea26afe80be002fc521234c9194cd0e8f69863f3b08b654674dbe5d5")
-    version("0.1.0", sha256="24edb817d0969f4aea1b68eab4984c2ea9a58f4760a9b8395e20f85b178f0850")
 
     cxxstds = ("14", "17", "20")
     variant(
@@ -38,7 +37,7 @@ class HpxKokkos(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "future_type",
         default="polling",
-        values=future_types_map.keys(),
+        values=tuple(future_types_map.keys()),
         description="Integration type for GPU futures",
     )
 
@@ -59,9 +58,6 @@ class HpxKokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hpx@1.7", when="@0.2")
     depends_on("kokkos@3.6:", when="@0.2")
-
-    depends_on("hpx@1.6", when="@0.1")
-    depends_on("kokkos@3.2:3.5", when="@0.1")
 
     for cxxstd in cxxstds:
         depends_on("hpx cxxstd={0}".format(cxxstd), when="cxxstd={0}".format(cxxstd))

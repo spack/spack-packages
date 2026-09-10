@@ -1,0 +1,12 @@
+diff --git a/dep/laynii_lib.h b/dep/laynii_lib.h
+index 4d470af..23eb3e2 100644
+--- a/dep/laynii_lib.h
++++ b/dep/laynii_lib.h
+@@ -6,6 +6,7 @@
+ #include <iostream>
+ #include <string>
+ #include <tuple>
++#include <limits>
+ #include "./nifti2_io.h"
+ 
+ using namespace std;

@@ -39,6 +39,10 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     variant("libxsmm", default=False, description="Enable LIBXSMM backend", when="@0.3:")
     variant("magma", default=False, description="Enable MAGMA backend", when="@0.6:")
 
+    variant("openmp", default=False, description="Enable OpenMP support")
+
+    variant("shared", default=True, description="Build shared libraries")
+
     conflicts("+rocm", when="@:0.7")
 
     depends_on("c", type="build")  # generated
@@ -58,10 +62,12 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
         depends_on("occa+cuda", when="+cuda")
         depends_on("occa~cuda", when="~cuda")
 
-    depends_on("libxsmm", when="+libxsmm")
+    depends_on("libxsmm~shared", when="+libxsmm~shared")
+    depends_on("libxsmm+shared", when="+libxsmm+shared")
     depends_on("blas", when="+libxsmm", type="link")
 
-    depends_on("magma", when="+magma")
+    depends_on("magma~shared", when="+magma~shared")
+    depends_on("magma+shared", when="+magma+shared")
 
     patch("libceed-v0.8-hip.patch", when="@0.8+rocm")
     patch("pkgconfig-version-0.4.diff", when="@0.4")
@@ -83,7 +89,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("@:0.2"):
             makeopts += ["NDEBUG=%s" % ("" if spec.satisfies("+debug") else "1")]
 
-        elif spec.satisfies("@0.4:"):
+        elif spec.satisfies("@0.4:0.12"):
             # Determine options based on the compiler:
             if spec.satisfies("+debug"):
                 opt = "-g"
@@ -118,9 +124,20 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("@:0.7") and "avx" in self.spec.target:
                 makeopts.append("AVX=1")
 
+        if spec.satisfies("@0.4:"):
             if spec.satisfies("+cuda"):
                 makeopts += ["CUDA_DIR=%s" % spec["cuda"].prefix]
-                makeopts += ["CUDA_ARCH=sm_%s" % spec.variants["cuda_arch"].value]
+                cuda_arch = spec.variants["cuda_arch"].value
+                if "none" not in cuda_arch:
+                    if spec.satisfies("@develop"):
+                        cuda_targets = " ".join("sm_%s" % arch for arch in cuda_arch)
+                        makeopts += ["CUDA_TARGETS=%s" % cuda_targets]
+                    else:
+                        if len(cuda_arch) != 1:
+                            raise InstallError(
+                                "multiple CUDA architectures require libceed@develop"
+                            )
+                        makeopts += ["CUDA_ARCH=sm_%s" % cuda_arch[0]]
                 if spec.satisfies("@:0.4"):
                     nvccflags = [
                         '-ccbin %s -Xcompiler "%s" -Xcompiler %s'
@@ -145,6 +162,12 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+magma"):
                 makeopts += ["MAGMA_DIR=%s" % spec["magma"].prefix]
+
+            if spec.satisfies("+openmp"):
+                makeopts += ["OPENMP=1"]
+
+            if spec.satisfies("~shared"):
+                makeopts += ["STATIC=1"]
 
         return makeopts
 

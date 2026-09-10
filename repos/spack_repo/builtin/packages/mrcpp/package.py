@@ -39,7 +39,8 @@ class Mrcpp(CMakePackage):
     variant("mpi", default=True, description="Enable MPI support")
     depends_on("mpi", when="+mpi")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.11:", type="build")
     depends_on("eigen")

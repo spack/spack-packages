@@ -13,12 +13,21 @@ class AwsOfiNccl(AutotoolsPackage):
     applications."""
 
     homepage = "https://github.com/aws/aws-ofi-nccl"
-    url = "https://github.com/aws/aws-ofi-nccl/archive/v0.0.0.tar.gz"
+    url = "https://github.com/aws/aws-ofi-nccl/releases/download/v0.0.0/aws-ofi-nccl-0.0.0.tar.gz"
     git = "https://github.com/aws/aws-ofi-nccl.git"
 
     maintainers("bvanessen", "msimberg")
 
     version("master", branch="master")
+    version("1.19.0", sha256="fd8ecd15f0de88e07b2194637938dadcf247ad3b5150651dfd0bb0c4bb32ff3c")
+    version("1.18.0", sha256="12fd67f05872600c485d74b8e3c3a640d063322371170f3a9c17d67a5a2ca681")
+    version("1.17.3", sha256="0b3313e9ad48226cb143c8f1dead60bcd59a8083e582558ee44a438d58cc23c1")
+    version("1.17.2", sha256="6676f49cdfbaa10e953f18aad55f25812e0a7e716692bc911a69fd55cab42181")
+    version("1.17.1", sha256="15a3b5db51075d20b2cb255b99668a7161779fdf5455436e3bea02d59a04685a")
+    version("1.17.0", sha256="45a383ffca1e17866e290247e4a314d190aeee09c5380b983a62633168765ec1")
+    version("1.16.3", sha256="a3e99ecdb6331139b28097ffb3dc03418ed41d1867c6d225778e16a22fbebf60")
+    version("1.16.2", sha256="579ea75626d8ca5219b8b9c394521cd5d14c058c0f8f7851ce398a1d6bd005e3")
+    version("1.16.1", sha256="8688a49067bb763db42350563cc4420cd50570a79b7c1f71f8ee0f010cbe159c")
     version("1.16.0", sha256="442342eba7ac09f4a089cb4bf33d19935f59a4c7ad12109b4dca366f99a80f65")
     version("1.15.0", sha256="0a962d8444ad8312b08a2a9784671c554ae0350600e62bb6c6652e5bd3d96b9d")
     version("1.14.2", sha256="e523ea08ce0caeff5c949b2134b4897186d793ce908904dd9d47bb08230b9bbd")
@@ -41,15 +50,21 @@ class AwsOfiNccl(AutotoolsPackage):
     version("1.7.1", sha256="d50a160c7aba76445e5c895fba0f3dbfdec51f702d218168a5e5017806cf0fb0")
     version("1.6.0", sha256="19a6fc91afe9a317fd3154c897fa219eab48fcdddefa66d881f1843c1165f7ee")
 
+    variant("cuda", default=True, description="Enable CUDA support")
+    variant("rocm", default=False, description="Enable ROCm support", when="@1.18:")
     variant("trace", default=False, description="Enable printing trace messages")
     variant("tests", default=False, description="Build tests")
+
+    conflicts("+cuda +rocm", msg="CUDA and ROCm support are mutually exclusive")
+    conflicts("~cuda ~rocm", msg="Either CUDA or ROCm support must be enabled")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="@1.15:")
 
     depends_on("libfabric")
-    depends_on("cuda")
-    depends_on("nccl")
+    depends_on("cuda", when="+cuda")
+    depends_on("nccl fabrics=auto", when="+cuda")
+    depends_on("hip", when="+rocm")
     depends_on("mpi")
     depends_on("hwloc", when="@1.7:")
     depends_on("autoconf", type="build")
@@ -57,14 +72,18 @@ class AwsOfiNccl(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     def url_for_version(self, version):
-        if version < Version("1.7.0") or version >= Version("1.14.0"):
+        if version >= Version("1.19.0"):
             return super().url_for_version(version)
-        url_fmt = "https://github.com/aws/aws-ofi-nccl/archive/v{0}-aws.tar.gz"
-        return url_fmt.format(version)
+        elif version < Version("1.7.0") or version >= Version("1.14.0"):
+            return f"https://github.com/aws/aws-ofi-nccl/archive/v{version}.tar.gz"
+        else:
+            return f"https://github.com/aws/aws-ofi-nccl/archive/v{version}-aws.tar.gz"
 
     # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.append_path("LD_LIBRARY_PATH", self.prefix.lib)
+        # Set the network so that NCCL doesn't pick up anything else.
+        env.set("NCCL_NET", "AWS Libfabric")
 
     # To enable this plug-in to work with NCCL add it to the LD_LIBRARY_PATH
     def setup_dependent_run_environment(
@@ -81,11 +100,18 @@ class AwsOfiNccl(AutotoolsPackage):
         args.extend(
             [
                 "--with-libfabric={0}".format(spec["libfabric"].prefix),
-                "--with-cuda={0}".format(spec["cuda"].prefix),
-                "--with-nccl={0}".format(spec["nccl"].prefix),
                 "--with-mpi={0}".format(spec["mpi"].prefix),
             ]
         )
+        if spec.satisfies("+cuda"):
+            args.extend(
+                [
+                    "--with-cuda={0}".format(spec["cuda"].prefix),
+                    "--with-nccl={0}".format(spec["nccl"].prefix),
+                ]
+            )
+        if spec.satisfies("+rocm"):
+            args.extend(["--with-rocm={0}".format(spec["hip"].prefix)])
         if spec.satisfies("@1.7:"):
             args.extend(["--with-hwloc={0}".format(spec["hwloc"].prefix)])
 

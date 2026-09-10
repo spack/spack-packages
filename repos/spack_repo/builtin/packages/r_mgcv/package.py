@@ -22,6 +22,7 @@ class RMgcv(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("1.9-4", sha256="a98159698afb269e06a46cac1f945bf2b3427a2dd587c6f2efd67ede90089372")
     version("1.9-1", sha256="700fbc37bedd3a49505b9bc4949faee156d9cfb4f669d797d06a10a15a5bdb32")
     version("1.8-42", sha256="087fc38b64ad06f2149eafc54f2679dd8840cf6fc488e66cf131e3c1de2db6c7")
     version("1.8-41", sha256="2f7a030fe2be75edef6bd96147df46c2262f3cdc44c383d8f82b401df44fe690")
@@ -41,8 +42,12 @@ class RMgcv(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@2.14.0:", type=("build", "run"))
-    depends_on("r@3.6.0:", type=("build", "run"), when="@1.8.34:")
-    depends_on("r-nlme@3.1-64:", type=("build", "run"))
-    depends_on("r-matrix", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@4.4.0:", when="@1.9-4:")
+        depends_on("r@3.6.0:", when="@1.8-34:")
+        depends_on("r@2.14.0:")
+
+        depends_on("r-nlme@3.1-64:")
+        depends_on("r-matrix")
+
     depends_on("gettext")

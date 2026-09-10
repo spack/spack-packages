@@ -1,0 +1,42 @@
+diff --git a/IO/Image/vtkSEPReader.h b/IO/Image/vtkSEPReader.h
+index 83d127a41e457e95240bdb335c26a54d36cd1c3a..b9110780f261e35f61dad0d93f6e206a9b9b43ba 100644
+--- a/IO/Image/vtkSEPReader.h
++++ b/IO/Image/vtkSEPReader.h
+@@ -25,8 +25,9 @@
+ #include "vtkImageAlgorithm.h"
+ #include "vtkNew.h" // for ivars
+ 
+-#include <array>  // for std::array
+-#include <string> // for std::string
++#include <array>   // for std::array
++#include <cstdint> // for std::uint8_t and std::uint32_t
++#include <string>  // for std::string
+ 
+ namespace details
+ {
+diff --git a/IO/PIO/PIOData.h b/IO/PIO/PIOData.h
+index 98137f44c1ca30aec961e264ed4165b57176314f..03e59f7c832ed2d9f2c71c1dd0ebc675bf71d282 100644
+--- a/IO/PIO/PIOData.h
++++ b/IO/PIO/PIOData.h
+@@ -1,6 +1,7 @@
+ #if !defined(_PIODATA_H)
+ #define _PIODATA_H
+ 
++#include <cstdint>
+ #include <fstream>
+ #include <iostream>
+ #include <list>
+diff --git a/Rendering/Matplotlib/vtkMatplotlibMathTextUtilities.h b/Rendering/Matplotlib/vtkMatplotlibMathTextUtilities.h
+index ca5445ddf4bb4dac25d60ea87687fd1a264eab80..d0ba449a3c0d917cde563a095a6df6a8cb59f987 100644
+--- a/Rendering/Matplotlib/vtkMatplotlibMathTextUtilities.h
++++ b/Rendering/Matplotlib/vtkMatplotlibMathTextUtilities.h
+@@ -49,7 +49,8 @@
+ #include "vtkMathTextUtilities.h"
+ #include "vtkRenderingMatplotlibModule.h" // For export macro
+ 
+-#include <vector> // for std::vector
++#include <cstdint> // for std::uint64_t
++#include <vector>  // for std::vector
+ 
+ struct _object;
+ typedef struct _object PyObject;

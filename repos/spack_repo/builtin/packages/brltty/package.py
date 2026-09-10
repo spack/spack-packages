@@ -32,5 +32,5 @@ class Brltty(AutotoolsPackage):
     depends_on("alsa-lib", when="platform=linux", type="link")
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("autogen")

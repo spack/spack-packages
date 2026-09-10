@@ -31,7 +31,7 @@ class Fp16(CMakePackage):
     resource(
         name="psimd",
         git="https://github.com/Maratyszcza/psimd.git",
-        branch="master",
+        commit="072586a71b55b7f8c584153d223e95687148a900",
         destination="deps",
         placement="psimd",
     )

@@ -26,3 +26,4 @@ class Babeltrace(AutotoolsPackage):
     depends_on("glib@2.22:", type=("build", "link"))
     depends_on("uuid")
     depends_on("popt")
+    depends_on("elfutils")

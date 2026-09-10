@@ -15,6 +15,7 @@ class PyPortpicker(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.6.0", sha256="bd507fd6f96f65ee02781f2e674e9dc6c99bbfa6e3c39992e3916204c9d431fa")
     version("1.5.2", sha256="c55683ad725f5c00a41bc7db0225223e8be024b1fa564d039ed3390e4fd48fb3")
 
     depends_on("py-setuptools@40.9:", type="build")

@@ -24,6 +24,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("master", branch="master")
+    version("2.10.0", sha256="ea0c57fcb64ac2fd7ffe8f02d8fe18f07055c5b7fba0164f565d1e3a85148fb5")
     version("2.9.0", sha256="ff77fd3726b3dfec3bfb55790b06480aa5cc384396c2db35c56fdae4a82c641c")
     version("2.8.0", sha256="f4e5e75350743fe57f49b615247da2cc875e5193cc90c11b43554a7c82cc4348")
     version("2.7.2", sha256="729bc1a70e518a7422fe7a3a54537a4741035a77be3349f66eac5c362576d560")
@@ -53,6 +54,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("lapack")
     depends_on("cuda@8:", when="@2.5.1: +cuda")  # See PR #14471
     depends_on("hipblas", when="+rocm")
+    depends_on("hipblas@:6", when="@:2.9.0 +rocm")
     depends_on("hipsparse", when="+rocm")
     depends_on("rocm-core", when="@2.8.0: +rocm")
     depends_on("python", when="@master", type="build")
@@ -73,6 +75,10 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/icl-utk-edu/magma/issues/7
     conflicts("^cuda@12.6:", when="@:2.8.0")
 
+    # 2.9.0 release not compatible with CUDA-13.0
+    # https://github.com/icl-utk-edu/magma/issues/61
+    conflicts("^cuda@13:", when="@:2.9.0")
+
     # Many cuda_arch values were not recognized by MAGMA's CMakeLists.txt
     with when("@:2.8"):
         # All cuda_arch values are supported in 2.9.0 release
@@ -87,6 +93,9 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("cuda_arch=70", when="@:2.2", msg="magma: cuda_arch=70 needs a version > 2.2")
     conflicts("cuda_arch=75", when="@:2.5.0", msg="magma: cuda_arch=75 needs a version > 2.5.0")
     conflicts("cuda_arch=80", when="@:2.5.3", msg="magma: cuda_arch=80 needs a version > 2.5.3")
+
+    # MAGMA uses mkl_zcsrmv, which is not available in MKL 2026.0+
+    conflicts("^intel-oneapi-mkl@2026.0:", msg="magma: MKL 2026.0+ is not supported")
 
     patch("ibm-xl.patch", when="@2.2:2.5.0%xl")
     patch("ibm-xl.patch", when="@2.2:2.5.0%xl_r")
@@ -154,6 +163,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define("GPU_TARGET", capabilities))
             archs = ";".join("%s" % i for i in cuda_arch)
             options.append(define("CMAKE_CUDA_ARCHITECTURES", archs))
+            options.append(define("CMAKE_CUDA_FLAGS", " -Xfatbin -compress-all"))
 
         if "@2.5.0" in spec:
             options.append(define("MAGMA_SPARSE", False))
@@ -206,7 +216,7 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
 
                 for test, desc in tests:
                     with test_part(self, f"test_c_{test}", purpose=f"Run {desc} example"):
-                        exe = which(test)
+                        exe = which(test, required=True)
                         exe()
 
                 make("clean")
@@ -222,6 +232,6 @@ class Magma(CMakePackage, CudaPackage, ROCmPackage):
             with set_env(PKG_CONFIG_PATH=pkg_config_path):
                 make = self.spec["gmake"].command
                 make("fortran")
-                example_f = which("example_f")
+                example_f = which("example_f", required=True)
                 example_f()
                 make("clean")

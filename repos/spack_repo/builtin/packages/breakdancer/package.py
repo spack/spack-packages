@@ -23,10 +23,7 @@ class Breakdancer(CMakePackage):
 
     version("1.4.5", sha256="5d74f3a90f5c69026ebb4cf4cb9ccc51ec8dd49ac7a88595a1efabd5a73e92b6")
     version(
-        "master",
-        submodules="true",
-        git="https://github.com/genome/breakdancer.git",
-        preferred=True,
+        "master", submodules=True, git="https://github.com/genome/breakdancer.git", preferred=True
     )
 
     depends_on("cxx", type="build")  # generated

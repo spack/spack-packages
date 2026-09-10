@@ -35,33 +35,10 @@ class Xyce(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("7.10.0", sha256="b5a883196f0a2b3972fd13c541fecf04735bfabc7d124d7c7e17de707204f4e2")
+    version("7.9.0", sha256="36ea88736b5e2012f28755588c857c88ed5dab5f4eccd3f59c6f42e6320fee4e")
     version("7.8.0", sha256="f763b7d5ad6defd25d2c7e5cc95155958cd12510a5e22a179daab459b21fa713")
     version("7.7.0", sha256="1b95450e1905c3af3c16b42c41d5ef1f8ab0e640f48086d0cb4d52961a90a175")
-    version(
-        "7.6.0",
-        sha256="fc25557e2edc82adbe0436a15fca2929a2f9ab08ddf91f1a47aab5e8b27ec88c",
-        deprecated=True,
-    )
-    version(
-        "7.5.0",
-        sha256="854d7d5e19e0ee2138d1f20f10f8f27f2bebb94ec81c157040955cff7250dacd",
-        deprecated=True,
-    )
-    version(
-        "7.4.0",
-        sha256="2d6bc1b7377834b2e0bf50131e96728c5be83dbb3548e765bb48911067c87c91",
-        deprecated=True,
-    )
-    version(
-        "7.3.0",
-        sha256="43869a70967f573ff6f00451db3f4642684834bdad1fd3926380e3789016b446",
-        deprecated=True,
-    )
-    version(
-        "7.2.0",
-        sha256="cf49705278ecda46373784bb24925cb97f9017b6adff49e4416de146bdd6a4b5",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -103,6 +80,14 @@ class Xyce(CMakePackage):
         description="Require static blas build for PyMi",
     )
 
+    variant("fftw", default=True, description="Depend on FFTW")
+    depends_on("fftw~mpi", type=("build", "run"), when="+fftw~mpi")
+    depends_on("fftw+mpi", type=("build", "run"), when="+fftw+mpi")
+
+    # https://github.com/Xyce/Xyce/commit/ddec31a9c42c683831937be17fd6ffc3180e77a1
+    # requirement because of use of std::filesystem
+    conflicts("@7.10:", when="%gcc@:8")
+
     depends_on("python@3:", type=("build", "link", "run"), when="+pymi")
     depends_on("py-pip", type="run", when="+pymi")
     depends_on("py-pybind11@2.6.1:", type=("build", "link"), when="@:7.8 +pymi")
@@ -118,25 +103,18 @@ class Xyce(CMakePackage):
     depends_on("trilinos+isorropia+zoltan", when="+mpi")
 
     # Currently supported versions of Xyce
-    depends_on("trilinos@15.0.0:develop", when="@7.8.0:")
+    depends_on("trilinos@15:16", when="@7.8.0:")
     depends_on("trilinos+rol", when="@7.7.0:")
 
     # tested versions of Trilinos against older versions of Xyce
     depends_on("trilinos@13.5.0:14.4", when="@7.6.0:7.7.0")
-    depends_on("trilinos@12.12.1:13.4", when="@7.5")
-    depends_on("trilinos@12.12.1", when="@:7.4")
     requires("^trilinos gotype=all cxxstd=11", when="^trilinos@:12.15")
     # pymi requires Kokkos/KokkosKernels >= 3.3, Trilinos 13.2 onward
     depends_on("trilinos@13.2.0:", when="+pymi")
 
     # Propagate variants to trilinos:
-    for _variant in ("mpi",):
-        depends_on("trilinos~" + _variant, when="~" + _variant)
-        depends_on("trilinos+" + _variant, when="+" + _variant)
-
-    # The default settings for various Trilinos variants would require the
-    # installation of many more packages than are needed for Xyce.
-    depends_on("trilinos~anasazi~float~ifpack2~ml~muelu~zoltan2")
+    depends_on("trilinos~mpi", when="~mpi")
+    depends_on("trilinos+mpi", when="+mpi")
 
     # Issue #1712 forces explicitly enumerating blas packages to propagate variants
     with when("+pymi_static_tpls"):
@@ -145,7 +123,6 @@ class Xyce(CMakePackage):
         depends_on("openblas~shared", when="^[virtuals=blas] openblas")
         depends_on("netlib-lapack~shared", when="^[virtuals=blas] netlib-lapack~external-blas")
         depends_on("armpl-gcc~shared", when="^[virtuals=blas] armpl-gcc")
-        depends_on("atlas~shared", when="^[virtuals=blas] atlas")
         depends_on("blis libs=static", when="^[virtuals=blas] blis+cblas")
         depends_on("blis libs=static", when="^[virtuals=blas] blis+blas")
         depends_on("clblast~shared", when="^[virtuals=blas] clblast+netlib")
@@ -156,27 +133,6 @@ class Xyce(CMakePackage):
         conflicts("^nvhpc", msg="nvhpc not supported with +pymi_static_tpls")
         conflicts("^cray-libsci", msg="cray-libsci not supported with +pymi_static_tpls")
         # netlib-xblas+plain_blas is always static
-
-    # fix MPI issue
-    patch(
-        "https://github.com/xyce/xyce/commit/2f95783637a5171a7f65f5d18c24d9a580a7f39e.patch?full_index=1",
-        sha256="1aeaac78830fbc9ae089a50ef61c6cbd89d29ead54ce7fdca258e194fa05b1a3",
-        when="@:7.6",
-    )
-
-    # fix RPATH issue on mac
-    patch(
-        "https://github.com/xyce/xyce/commit/40dbc0e0341a5cf9a7fa82a87313869dc284fdd9.patch?full_index=1",
-        sha256="3c32faeeea0bb29be44ec20e414670c9fd375f9ed921a7f6e9fd3de02c28859d",
-        when="@7.3:7.5 +shared",
-    )
-
-    # fix parameter merging in pymi
-    patch(
-        "https://github.com/xyce/xyce/commit/fdf457fce1b1511b8a29d134d38e515fb7149246.patch?full_index=1",
-        sha256="077f91d2ff0649b3f7e83c224f71a030521c6fb5a84b29acd772d5657cdb6c23",
-        when="@7.4:7.6 +pymi",
-    )
 
     # fix missing type
     patch(
@@ -194,7 +150,6 @@ class Xyce(CMakePackage):
     patch(
         "454-cmake-xyce.patch",
         sha256="4d47cd1f10607205e64910ac124c6dd329f1ecbf861416e9da24a1736f2149ff",
-        when="@7.6:",
     )
 
     def cmake_args(self):
@@ -204,8 +159,10 @@ class Xyce(CMakePackage):
 
         if "+mpi" in spec:
             options.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
+            options.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
         else:
             options.append(self.define("CMAKE_CXX_COMPILER", spack_cxx))
+            options.append(self.define("CMAKE_C_COMPILER", spack_cc))
 
         options.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
         options.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
@@ -228,12 +185,8 @@ class Xyce(CMakePackage):
         if name == "cxxflags":
             flags.append("-DXyce_INTRUSIVE_PCE -Wreorder")
         elif name == "ldflags":
-            # Fortran lib (assumes clang is built with gfortran!)
-            if (
-                spec.satisfies("%gcc")
-                or spec.satisfies("%clang")
-                or spec.satisfies("%apple-clang")
-            ):
+            # Fortran lib
+            if spec.satisfies("+fortran %fortran=gcc"):
                 fc = Executable(self.compiler.fc)
                 libgfortran = fc(
                     "--print-file-name", "libgfortran." + dso_suffix, output=str

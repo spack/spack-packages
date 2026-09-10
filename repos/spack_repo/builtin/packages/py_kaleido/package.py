@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import platform
 import sys
 
@@ -14,12 +13,17 @@ arch64_32, _ = platform.architecture()
 
 
 class PyKaleido(PythonPackage):
-    """Static image export for web-based visualization libraries with zero dependencies"""
+    """Plotly graph export library."""
 
-    homepage = "https://github.com/plotly/Kaleido"
-    pypi = "kaleido/kaleido-0.2.1-py2.py3-none-manylinux1_x86_64.whl"
+    homepage = "https://github.com/plotly/kaleido"
+    pypi = "kaleido/kaleido-1.1.0.tar.gz"
+    git = "https://github.com/plotly/Kaleido.git"
 
     maintainers("Pandapip1")
+
+    license("MIT")
+
+    version("1.1.0", sha256="5747703a56d4c034efa69abea4a9c2bfe8ef516ba848e0ec485c65b3b0ab52b6")
 
     if (arch == "x86_64" or arch == "x64") and os == "linux":  # Linux on x86_64
         version(
@@ -71,5 +75,13 @@ class PyKaleido(PythonPackage):
             expand=False,
         )
 
-    depends_on("python", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"), when="@1:")
+    depends_on("py-setuptools@65:", type="build", when="@1:")
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-git-versioning", type="build", when="@1:")
+
+    depends_on("py-choreographer@1.0.10:", type=("build", "run"), when="@1:")
+    depends_on("py-logistro@1.0.8:", type=("build", "run"), when="@1:")
+    depends_on("py-orjson@3.10.15:", type=("build", "run"), when="@1:")
+    depends_on("py-packaging", type=("build", "run"), when="@1:")
+    depends_on("py-pytest-timeout@2.4:", type=("build", "run"), when="@1:")

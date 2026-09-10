@@ -19,6 +19,8 @@ class Rdkit(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("2024_09_6", sha256="337075aadd51760fe920442c73972c2fef2561645785fac246615fcb03914062")
+    version("2024_09_5", sha256="ee55cf72d211c880b8f63e18fca6d9abce2b060987b7d2ce61d2d3b9527003c2")
     version("2024_03_3", sha256="52f79c6bf1d446cdb5c86a35de655d96bad0c52a5f4ecbe15f08eaf334e6f76a")
     version("2023_03_1", sha256="db346afbd0ba52c843926a2a62f8a38c7b774ffab37eaf382d789a824f21996c")
     version("2022_09_5", sha256="2efe7ce3b527df529ed3e355e2aaaf14623e51876be460fa4ad2b7f7ad54c9b1")
@@ -82,6 +84,10 @@ class Rdkit(CMakePackage):
 
         conflicts("+xyz2mol", when="~yaehmop", msg="XY2MOL requires YAeHMOP")
 
+    depends_on(
+        "boost@1.53.0: +python +serialization +iostreams +system +numpy +program_options",
+        when="@2024_09_5:",
+    )
     depends_on("boost@1.53.0: +python +serialization +iostreams +system")
     depends_on("sqlite")
     depends_on("freetype", when="@2020_09_1: +freetype")

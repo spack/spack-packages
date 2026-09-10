@@ -1,0 +1,109 @@
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      variants:
+      - build_type=MinSizeRel
+      require:
+      - target=aarch64
+  concretizer:
+    unify: true
+    reuse: false
+  specs:
+      # editors
+    - emacs~native+treesitter   # TODO +native not supported until gcc builds on darwin
+    - nano
+    # - neovim
+    - py-pynvim
+
+      # runtimes and language compilers
+    - cmake
+    - go
+    - libtool
+    - llvm+link_llvm_dylib+lld~lldb~polly+python
+    - node-js
+    - npm
+    - python
+    - rust+dev
+
+      # cli dev tools
+    - bfs
+    - ccache
+    # - difftastic # TODO investigate linker error here
+    - eza
+    - fd
+    - flex
+    - fzf
+    - gh
+    - git
+    - htop
+    - hub
+    - hyperfine
+    - jq
+    - libtree
+    - lsd
+    - mergiraf
+    - ncdu
+    - py-yq
+    - ripgrep
+    - sed
+    - tmux
+    - tree
+    - which
+    - zoxide
+
+      # styling and lints
+    - aspell
+    - astyle
+    # - cppcheck # TODO: investigate why this is not reproducible outside of runner
+    - py-black
+    - py-codespell
+    - py-flake8
+    - py-isort
+    - py-mypy-extensions
+    - py-fortran-language-server
+    - py-fprettify
+    - py-mypy
+    - py-python-lsp-ruff
+    - py-python-lsp-server
+    - typos
+    - uncrustify
+    - gopls
+    - goimports
+
+      # docs tools
+    - graphviz
+    - doxygen
+
+      # shell integration tools
+    - direnv
+
+      # container tools
+    - lima
+    - podman
+
+      # tags and scope search helpers
+    - universal-ctags
+
+      # ensure we can use a jobserver build and do this fast
+    - gmake
+    - ninja
+    - meson
+    # spack developer tools
+    # style
+    - "py-mypy@0.900: ^py-mypy-extensions@:1.0"
+    - py-pytest@9.0.3
+    - py-ruff@0.15.0
+    - py-ty@0.0.20
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        variables:
+          CI_GPG_KEY_ROOT: /etc/protected-runner
+
+  cdash:
+    build-group: Developer Tools Darwin

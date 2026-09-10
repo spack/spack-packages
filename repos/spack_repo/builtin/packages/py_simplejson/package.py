@@ -14,8 +14,11 @@ class PySimplejson(PythonPackage):
     homepage = "https://github.com/simplejson/simplejson"
     pypi = "simplejson/simplejson-3.10.0.tar.gz"
 
-    license("AFL-2.1")
+    license("MIT OR AFL-2.1", when="@4:")
+    license("MIT", when="@:3")
 
+    version("4.1.0", sha256="7b3ce1e8f13ec3cd41e31c45c2172caa4c66299c7002d3e0871b49a85683157e")
+    version("3.20.1", sha256="e64139b4ec4f1f24c142ff7dcafe55a22b811a74d86d66560c8815687143037d")
     version("3.19.1", sha256="6277f60848a7d8319d27d2be767a7546bc965535b28070e310b3a9af90604a4c")
     version("3.18.0", sha256="58a429d2c2fa80834115b923ff689622de8f214cf0dc4afa9f59e824b444ab31")
     version("3.17.2", sha256="75ecc79f26d99222a084fbdd1ce5aad3ac3a8bd535cd9059528452da38b68841")
@@ -32,6 +35,8 @@ class PySimplejson(PythonPackage):
     version("3.8.0", sha256="217e4797da3a9a4a9fbe6722e0db98070b8443a88212d7acdbd241a7668141d9")
     version("3.3.0", sha256="7a8a6bd82e111976aeb06138316ab10847adf612925072eaff8512228bcf9a1f")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
 
-    depends_on("py-setuptools", type="build")
+        depends_on("py-setuptools@42:", when="@4:")
+        depends_on("py-setuptools")

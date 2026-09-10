@@ -1,0 +1,13 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -417,6 +417,10 @@
+                                          NetCDF::NetCDF_Fortran
+                                          MPI::MPI_Fortran)
+
++  if(WITH_YAML)
++    target_link_libraries(${libTgt} PRIVATE ${LIBYAML_LIBRARIES})
++  endif()
++
+   if(OpenMP_Fortran_FOUND)
+     target_link_libraries(${libTgt} PRIVATE OpenMP::OpenMP_C OpenMP::OpenMP_Fortran)
+   endif()

@@ -15,6 +15,7 @@ class PyHdfs(PythonPackage):
 
     license("MIT")
 
+    version("2.7.3", sha256="752a21e43f82197dce43697c73f454ba490838108c73a57a9247efb66d1c0479")
     version("2.1.0", sha256="a40fe99ccb03b5c3247b33a4110eb21b57405dd7c3f1b775e362e66c19b44bc6")
 
     depends_on("py-setuptools", type="build")

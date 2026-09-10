@@ -18,7 +18,7 @@ class Cln(AutotoolsPackage):
 
     homepage = "https://www.ginac.de/CLN/"
     url = "https://www.ginac.de/CLN/cln-1.3.7.tar.bz2"
-    git = "git://www.ginac.de/cln.git"
+    git = "https://codeberg.org/ginac/cln.git"
     maintainers("prudhomm")
 
     license("GPL-2.0-or-later")
@@ -42,6 +42,7 @@ class Cln(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("autoconf", type="build")
+    depends_on("autoconf-archive", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
@@ -52,15 +53,15 @@ class Cln(AutotoolsPackage):
     depends_on("gettext", type="build")
 
     def autoreconf(self, spec, prefix):
-        autoreconf_args = ["-i"]
+        autoreconf_args = ["-i", "-f"]
 
-        aclocal_pkg_list = ["gettext"]
+        aclocal_pkg_list = ["gettext", "autoconf-archive"]
         aclocal_path = os.path.join("share", "aclocal")
 
         for pkg in aclocal_pkg_list:
             autoreconf_args += ["-I", os.path.join(spec[pkg].prefix, aclocal_path)]
 
-        autoreconf = which("autoreconf")
+        autoreconf = which("autoreconf", required=True)
         autoreconf(*autoreconf_args)
 
     @run_before("autoreconf")
@@ -68,10 +69,10 @@ class Cln(AutotoolsPackage):
         source_directory = self.stage.source_path
         build_aux_directory = os.path.join(source_directory, "build-aux")
 
-        mkdir = which("mkdir")
+        mkdir = which("mkdir", required=True)
         mkdir(build_aux_directory)
 
-        touch = which("touch")
+        touch = which("touch", required=True)
         touch(os.path.join(build_aux_directory, "config.rpath"))
 
     def configure_args(self):

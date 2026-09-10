@@ -186,7 +186,7 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
         except KeyError:
             print("Slurm not found, ignoring.")
         commands = ["srun", "mpirun", "mpiexec"]
-        return which(*commands, path=searchpath) or which(*commands)
+        return which(*commands, path=searchpath) or which(*commands, required=True)
 
     def test_example(self):
         """build and run slate example"""
@@ -206,7 +206,7 @@ class Slate(CMakePackage, CudaPackage, ROCmPackage):
             prefixes = ";".join([self.spec[x].prefix for x in deps.split()])
 
             cmake("-DCMAKE_PREFIX_PATH=" + prefixes, "..")
-            make = which("make")
+            make = which("make", required=True)
             make()
             launcher = self.mpi_launcher()
             assert launcher is not None, "Cannot run tests due to absence of MPI launcher"

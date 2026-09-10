@@ -20,6 +20,14 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.28.0", sha256="ecc4451241c8eeadc0c88213bd65c7932c9622d1d0034254b938f25362283ee9")
+    version("0.27.1", sha256="705d5ab7d01af9ece3bfbb1486eed3c23a2f68414fcc9c9a88910fb3c018c3db")
+    version("0.27.0", sha256="04c588d80e63903e1e4444db8a1c32dc56e4080ed48782555e1d00752d6edb17")
+    version("0.26.0", sha256="fb95b6b78b3801c4d4d6332f7a5a0b6c624588e1b39e0d6fa145227b0c749403")
+    version("0.25.0", sha256="a7ac1b3ab489d71f6e27edfad1e27616e4b8a9b1517e60fce4a950600d3510e8")
+    version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
+    version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
+    version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
     version("0.22.1", sha256="fa1b0a58e13c08329bcff8d52607b4e25944fd074c01dee1b501c8158fadcdec")
     version("0.22.0", sha256="83ed8855cdfb138aba6f116f8fd8da8b83463170dad67a70f60327915ed12014")
     version("0.21.0", sha256="0a4a967bbb7f9810f792cd0289a07fb98c8fb5d1303fae8b63e3a6b05d720058")
@@ -52,21 +60,17 @@ class PyTorchvision(PythonPackage):
     version("0.9.1", sha256="79964773729880e0eee0e6af13f336041121d4cc8491a3e2c0e5f184cac8a718")
     version("0.9.0", sha256="9351ed92aded632f8c7f59dfadac13c191a834babe682f5785ea47e6fcf6b472")
     version("0.8.2", sha256="9a866c3c8feb23b3221ce261e6153fc65a98ce9ceaa71ccad017016945c178bf")
-    with default_args(deprecated=True):
-        version("0.8.1", sha256="c46734c679c99f93e5c06654f4295a05a6afe6c00a35ebd26a2cce507ae1ccbd")
-        version("0.8.0", sha256="b5f040faffbfc7bac8d4687d8665bd1196937334589b3fb5fcf15bb69ca25391")
-        version("0.7.0", sha256="fa0a6f44a50451115d1499b3f2aa597e0092a07afce1068750260fa7dd2c85cb")
-        version("0.6.1", sha256="8173680a976c833640ecbd0d7e6f0a11047bf8833433e2147180efc905e48656")
-        version("0.6.0", sha256="02de11b3abe6882de4032ce86dab9c7794cbc84369b44d04e667486580f0f1f7")
-        version("0.5.0", sha256="eb9afc93df3d174d975ee0914057a9522f5272310b4d56c150b955c287a4d74d")
+
+    # Fix duplicate symbol error when building with ROCm
+    patch("torchvision-0.26.0-rocm-vision-duplicate-symbol.patch", when="@0.26.0 ^py-torch+rocm")
 
     desc = "Enable support for native encoding/decoding of {} formats in torchvision.io"
     variant("png", default=True, description=desc.format("PNG"))
     variant("jpeg", default=True, description=desc.format("JPEG"))
     variant("webp", default=False, description=desc.format("WEBP"), when="@0.20:")
     variant("nvjpeg", default=False, description=desc.format("NVJPEG"))
-    variant("video_codec", default=False, description=desc.format("video_codec"))
-    variant("ffmpeg", default=False, description=desc.format("FFMPEG"))
+    variant("video_codec", default=False, description=desc.format("video_codec"), when="@:0.25")
+    variant("ffmpeg", default=False, description=desc.format("FFMPEG"), when="@:0.25")
 
     # torchvision does not yet support disabling giflib:
     # https://github.com/pytorch/vision/pull/8406#discussion_r1590926939
@@ -77,15 +81,24 @@ class PyTorchvision(PythonPackage):
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.9:3.13", when="@0.21:")
+        depends_on("python@3.10:3.15", when="@0.28:")
+        depends_on("python@3.10:3.14", when="@0.24:0.27")
+        depends_on("python@3.9:3.13", when="@0.21:0.23")
         depends_on("python@3.8:3.12", when="@0.17:0.20")
         depends_on("python@3.8:3.11", when="@0.15:0.16")
         depends_on("python@:3.10", when="@0.12:0.14")
         depends_on("python@:3.9", when="@0.8.2:0.11")
-        depends_on("python@:3.8", when="@0.5:0.8.1")
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.13.0", when="@0.28.0")
+        depends_on("py-torch@2.12.1", when="@0.27.1")
+        depends_on("py-torch@2.12.0", when="@0.27.0")
+        depends_on("py-torch@2.11.0", when="@0.26.0")
+        depends_on("py-torch@2.10.0", when="@0.25.0")
+        depends_on("py-torch@2.9.1", when="@0.24.1")
+        depends_on("py-torch@2.9.0", when="@0.24.0")
+        depends_on("py-torch@2.8.0", when="@0.23.0")
         depends_on("py-torch@2.7.1", when="@0.22.1")
         depends_on("py-torch@2.7.0", when="@0.22.0")
         depends_on("py-torch@2.6.0", when="@0.21.0")
@@ -118,12 +131,6 @@ class PyTorchvision(PythonPackage):
         depends_on("py-torch@1.8.1", when="@0.9.1")
         depends_on("py-torch@1.8.0", when="@0.9.0")
         depends_on("py-torch@1.7.1", when="@0.8.2")
-        depends_on("py-torch@1.7.0", when="@0.8.1")
-        depends_on("py-torch@1.7.0", when="@0.8.0")
-        depends_on("py-torch@1.6.0", when="@0.7.0")
-        depends_on("py-torch@1.5.1", when="@0.6.1")
-        depends_on("py-torch@1.5.0", when="@0.6.0")
-        depends_on("py-torch@1.4.1", when="@0.5.0")
 
     depends_on("ninja", type="build")
 
@@ -154,6 +161,8 @@ class PyTorchvision(PythonPackage):
     depends_on("py-six", when="@:0.5", type=("build", "run"))
     depends_on("py-typing-extensions", when="@0.12:0.14", type=("build", "run"))
 
+    # https://github.com/pytorch/vision/issues/9307
+    conflicts("^python@3.14.1")
     # https://github.com/pytorch/vision/pull/5898
     conflicts("^pil@10:", when="@:0.12")
     # https://github.com/pytorch/vision/issues/4146
@@ -201,6 +210,28 @@ class PyTorchvision(PythonPackage):
             include.extend(query.headers.directories)
             library.extend(query.libs.directories)
 
+        # When building with ROCm, add all ROCm library include paths for HIP compilation
+        # PyTorch headers transitively include many ROCm headers that extensions need
+        if "^py-torch+rocm" in self.spec:
+            rocm_deps = [
+                "rocthrust",
+                "rocprim",
+                "hipsparse",
+                "hipblas",
+                "hipblas-common",
+                "hipblaslt",
+                "hipfft",
+                "hiprand",
+                "hipsolver",
+                "rocblas",
+                "rocsparse",
+                "rocsolver",
+                "rocfft",
+            ]
+            for dep in rocm_deps:
+                if dep in self.spec:
+                    include.append(self.spec[dep].prefix.include)
+
         # CONTRIBUTING.md says to use TORCHVISION_INCLUDE and TORCHVISION_LIBRARY, but
         # these do not work for older releases. Build uses a mix of Spack's compiler wrapper
         # and the actual compiler, so this is needed to get parts of the build working.
@@ -209,3 +240,10 @@ class PyTorchvision(PythonPackage):
         env.set("TORCHVISION_LIBRARY", ":".join(library))
         env.set("CPATH", ":".join(include))
         env.set("LIBRARY_PATH", ":".join(library))
+
+        # For ROCm builds, also prepend ROCm includes to ensure hipcc can find them
+        if "^py-torch+rocm" in self.spec:
+            for dep in rocm_deps:
+                if dep in self.spec:
+                    env.prepend_path("CPATH", self.spec[dep].prefix.include)
+                    env.prepend_path("CPLUS_INCLUDE_PATH", self.spec[dep].prefix.include)

@@ -38,7 +38,7 @@ class Xmlf90(AutotoolsPackage):
 
     @when("@1.5.2")
     def autoreconf(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("autogen.sh")
 
     def configure_args(self):

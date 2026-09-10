@@ -1,0 +1,47 @@
+diff --git a/Makefile b/Makefile
+index 9e60c8ea..9ec62766 100644
+--- a/Makefile
++++ b/Makefile
+@@ -86,12 +86,12 @@ else
+ 	ARFLAGS ?= rs
+ endif
+ 
+-ifeq ($(BUILDTYPE), Linux)
+-ifneq (,$(findstring Red Hat,$(shell gcc --version)))
+-	CPPFLAGS+=-I/usr/include/lapacke/
+-	LDFLAGS+=-L/usr/lib64/atlas -ltatlas
+-endif
+-endif
++#ifeq ($(BUILDTYPE), Linux)
++#ifneq (,$(findstring Red Hat,$(shell gcc --version)))
++#	CPPFLAGS+=-I/usr/include/lapacke/
++#	LDFLAGS+=-L/usr/lib64/atlas -ltatlas
++#endif
++#endif
+ 
+ ifeq ($(UNAME),Cygwin)
+ 	BUILDTYPE = Cygwin
+@@ -405,9 +405,9 @@ ifeq ($(BUILDTYPE), MacOSX)
+ CUDA_L := -L$(CUDA_BASE)/$(CUDA_LIB) -lcufft -lcudart -lcublas -m64 -lstdc++
+ else
+ ifeq ($(CUDNN),1)
+-CUDA_L := -L$(CUDA_BASE)/$(CUDA_LIB) -L$(CUDNN_BASE)/$(CUDNN_LIB) -lcudnn -lcufft -lcudart -lcublas -lstdc++ -Wl,-rpath $(CUDA_BASE)/$(CUDA_LIB)
++CUDA_L := -L$(CUDA_BASE)/$(CUDA_LIB) -L$(CUDNN_BASE)/$(CUDNN_LIB) -lcudnn -lcufft -lcudart -lcublas -lstdc++
+ else
+-CUDA_L := -L$(CUDA_BASE)/$(CUDA_LIB) -lcufft -lcudart -lcublas -lstdc++ -Wl,-rpath $(CUDA_BASE)/$(CUDA_LIB)
++CUDA_L := -L$(CUDA_BASE)/$(CUDA_LIB) -lcufft -lcudart -lcublas -lstdc++
+ endif
+ endif
+ else
+@@ -471,9 +471,9 @@ CPPFLAGS += -Isrc/lapacke
+ else
+ ifeq ($(OPENBLAS), 1)
+ ifeq ($(FORTRAN), 0)
+-BLAS_L := -L$(BLAS_BASE)/lib -lopenblas
++BLAS_L := -lopenblas
+ else
+-BLAS_L := -L$(BLAS_BASE)/lib -llapacke -lopenblas
++BLAS_L :=  -llapacke -lopenblas
+ endif
+ CPPFLAGS += -DUSE_OPENBLAS
+ CFLAGS += -DUSE_OPENBLAS

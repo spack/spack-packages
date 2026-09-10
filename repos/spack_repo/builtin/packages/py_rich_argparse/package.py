@@ -15,8 +15,10 @@ class PyRichArgparse(PythonPackage):
     homepage = "https://github.com/hamdanal/rich-argparse"
     pypi = "rich_argparse/rich_argparse-1.4.0.tar.gz"
 
+    version("1.8.0", sha256="679df3d832fa94ad6e4bdb07ded088cd7ea2dddc58ae9b2b46346a40b06cbc0c")
     version("1.4.0", sha256="c275f34ea3afe36aec6342c2a2298893104b5650528941fb53c21067276dba19")
 
+    depends_on("python@3.9:", when="@1.8:", type=("build", "run"))
     depends_on("python@3.7:", type=("build", "run"))
 
     depends_on("py-hatchling@1.11.0:", type="build")

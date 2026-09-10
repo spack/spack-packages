@@ -1,0 +1,24 @@
+diff --git a/shared/common/src/17_yaml_out/c_pair_list.c b/shared/common/src/17_yaml_out/c_pair_list.c
+index e7a5927ff3..4db66be395 100644
+--- a/shared/common/src/17_yaml_out/c_pair_list.c
++++ b/shared/common/src/17_yaml_out/c_pair_list.c
+@@ -13,6 +13,7 @@
+ #include <stdio.h>
+ #include <stdint.h>
+ #include <string.h>
++#include <stdbool.h>
+ 
+ #include "abi_clib.h"
+ 
+@@ -26,8 +27,6 @@
+ #define TC_REAL 1
+ #define TC_STRING 2
+ 
+-typedef uint8_t bool;
+-
+ typedef union {
+   int i;
+   double r;
+-- 
+2.49.0
+

@@ -14,12 +14,22 @@ class Fdb(CMakePackage):
     homepage = "https://github.com/ecmwf/fdb"
     url = "https://github.com/ecmwf/fdb/archive/refs/tags/5.7.8.tar.gz"
     git = "https://github.com/ecmwf/fdb.git"
+    list_url = "https://github.com/ecmwf/fdb/tags"
 
-    maintainers("skosukhin", "victoria-cherkas")
+    maintainers("victoria-cherkas")
 
     license("Apache-2.0")
 
     version("master", branch="master")
+
+    version("5.19.2", sha256="7dfffd7279a53431fe11a82b5c6dcc94f42bc5100a0ff925fe0b54de94d1cfe2")
+    version("5.19.1", sha256="de5edddd4c17cb4ddfe61bfed60a6b37408d5ed92a2d19a493592e1abfe65a8d")
+    version("5.19.0", sha256="1275c4b89dcdfcb342a255e22a7d500070d5d32251910c4c2a10d5734c0590eb")
+    version("5.18.3", sha256="8b6fff6c32923bd8e456f2ec1540b171b4efdbf92e81ae2e5ff2967dec224a86")
+    version("5.18.0", sha256="d72c7180b9c0e3048a19bc60df6f2827e7849dea8299b7d3f21d5ffb7fc99951")
+    version("5.17.3", sha256="b477f95a00bd0177e26490e0d0911679aba9183c53ac525625fe1665487068d0")
+    version("5.16.2", sha256="1014c85f7bd6f406f9abd04d0f5bd5bd757c17a1556dd6e49e0288bf455da12a")
+    version("5.13.106", sha256="34c7ee498f7511f5255ffcfd94bee51264c6e4892063e2c2a172f2a4fd86062d")
     version("5.11.23", sha256="09b1d93f2b71d70c7b69472dfbd45a7da0257211f5505b5fcaf55bfc28ca6c65")
     version("5.11.17", sha256="375c6893c7c60f6fdd666d2abaccb2558667bd450100817c0e1072708ad5591e")
     version("5.10.8", sha256="6a0db8f98e13c035098dd6ea2d7559f883664cbf9cba8143749539122ac46099")

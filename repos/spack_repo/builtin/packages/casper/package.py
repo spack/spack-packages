@@ -18,11 +18,6 @@ class Casper(MakefilePackage):
     git = "https://github.com/skwonPNU/casper.git"
 
     version("20220916", commit="08655cad5af7e801f05fdb9e643dcd859f823cba")
-    version(
-        "0.8.2",
-        sha256="3005e165cebf8ce4e12815b7660a833e0733441b5c7e5ecbfdccef7414b0c914",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")
@@ -31,11 +26,6 @@ class Casper(MakefilePackage):
     depends_on("boost+exception")
 
     conflicts("%gcc@7.1.0")
-
-    def flag_handler(self, name, flags):
-        if self.spec.satisfies("@:0.8.2") and name.lower() == "cxxflags":
-            flags.append(self.compiler.cxx98_flag)
-        return (flags, None, None)
 
     def install(self, spec, prefix):
         install_tree(".", prefix)

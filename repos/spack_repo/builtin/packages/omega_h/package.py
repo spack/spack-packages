@@ -22,6 +22,21 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "11.2.0-scorec",
+        commit="6b26c685cf3a62f595d5f21f05deb0525ae48c6f",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
+        "11.1.0-scorec",
+        commit="9254be597e6460df497724e11b466485c37e94ff",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
+        "11.0.0-scorec",
+        commit="fbe1cc131fb1b5ac840129ecd8bd7b42ab244000",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "10.8.6-scorec",
         commit="a730c78e516d7f6cca4f8b4e4e0a5eb8020f9ad9",
         git="https://github.com/SCOREC/omega_h.git",
@@ -62,7 +77,17 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("shared", default=True, description="Build shared libraries")
     variant("mpi", default=True, description="Activates MPI support")
     variant("zlib", default=True, description="Activates ZLib support")
-    variant("trilinos", default=True, description="Use Teuchos and Kokkos")
+    variant(
+        "trilinos",
+        default=False,
+        description="Use Kokkos and SEACASExodus from trilinos",
+    )
+    variant(
+        "exodus",
+        default=False,
+        description="Enable use of ExodusII meshes",
+        when="@10.8.6-scorec:",
+    )
     variant("throw", default=False, description="Errors throw exceptions instead of abort")
     variant("examples", default=False, description="Compile examples")
     variant("optimize", default=True, description="Compile C++ with optimization")
@@ -70,6 +95,13 @@ class OmegaH(CMakePackage, CudaPackage):
     variant("warnings", default=False, description="Compile C++ with warnings")
     variant("gmsh", default=False, description="Use Gmsh C++ API")
     variant("kokkos", default=False, description="Use Kokkos")
+    variant("cuda", default=False, description="Enable CUDA backend", when="@:10.10.0")
+    variant(
+        "python",
+        default=False,
+        description="enable python interfaces",
+        when="@11.2.0-scorec:",
+    )
 
     depends_on("cxx", type="build")
     depends_on("c", type="build", when="+mpi")
@@ -77,9 +109,25 @@ class OmegaH(CMakePackage, CudaPackage):
     depends_on("gmsh", when="+examples")
     depends_on("gmsh@4.4.1:", when="+gmsh")
     depends_on("mpi", when="+mpi")
-    depends_on("trilinos +kokkos", when="+trilinos")
+    depends_on("trilinos +kokkos+exodus", when="+trilinos")
+    depends_on("trilinos +kokkos+exodus", when="@:11.0.0-scorec+exodus")
     depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos@4.3.00:", when="@10.10.0-scorec:+kokkos")
+    depends_on("python", when="+python")
+    depends_on("py-numpy", type=("build", "link", "run"), when="+python")
+    depends_on("py-pybind11", type="build", when="+python")
+    depends_on("py-pytest", type="test", when="+python")
     depends_on("zlib-api", when="+zlib")
+    depends_on("seacas~x11~tests~fortran", when="@11.1.0-scorec:+exodus")
+
+    conflicts("+trilinos", when="+kokkos", msg="Use Kokkos directly or via Trilinos, not both")
+    conflicts(
+        "+trilinos",
+        when="@11.1.0-scorec:+exodus",
+        msg="Use SEACASExodus directly or via Trilinos, not both",
+    )
+
+    extends("python", when="+python")
 
     with when("+cuda"):
         # https://github.com/SCOREC/omega_h/commit/40a2d36d0b747a7147aeed238a0323f40b227cb2
@@ -91,14 +139,22 @@ class OmegaH(CMakePackage, CudaPackage):
         # Single, broken CUDA version.
         conflicts("^cuda@11.2", msg="See https://github.com/sandialabs/omega_h/issues/366")
 
+        # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+        conflicts("^cuda@13:")
+
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
 
     # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=86610
     conflicts("%gcc@8:8.2", when="@:9.22.1")
 
+    conflicts("+python", when="~shared", msg="python requires shared build")
+
     def patch(self):
-        if "@:9.34.8" in self.spec:
+        # https://github.com/SCOREC/omega_h/commit/4dd682ef16ebf2502239ad06883e9f10c611f1c4
+        if self.spec.satisfies("@10.8.6-scorec:11.0.0-scorec"):
+            filter_file(r"nc_set_log_level\(5\);", "", "src/Omega_h_exodus.cpp")
+        if self.spec.satisfies("@:9.34.8"):
             filter_file(
                 r"OUTPUT_QUIET", "OUTPUT_VARIABLE Gmsh_VERSION_STRING", "cmake/FindGmsh.cmake"
             )
@@ -125,23 +181,28 @@ class OmegaH(CMakePackage, CudaPackage):
                 args.append("-DCMAKE_CXX_COMPILER:FILEPATH={0}".format(self.spec["mpi"].mpicxx))
         else:
             args.append("-DOmega_h_USE_MPI:BOOL=OFF")
-        if "+cuda" in self.spec:
-            args.append("-DOmega_h_USE_CUDA:BOOL=ON")
-            cuda_arch_list = self.spec.variants["cuda_arch"].value
-            cuda_arch = cuda_arch_list[0]
-            if cuda_arch != "none":
-                if self.spec.satisfies("@10:"):
-                    args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
-                else:
-                    args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
-        else:
-            args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
+        if self.spec.satisfies("@:10.10.0"):
+            if "+cuda" in self.spec:
+                args.append("-DOmega_h_USE_CUDA:BOOL=ON")
+                cuda_arch_list = self.spec.variants["cuda_arch"].value
+                cuda_arch = cuda_arch_list[0]
+                if cuda_arch != "none":
+                    if self.spec.satisfies("@10:"):
+                        args.append("-DOmega_h_CUDA_ARCH={0}".format(cuda_arch))
+                    else:
+                        args.append("-DCMAKE_CUDA_FLAGS=-arch=sm_{0}".format(cuda_arch))
+            else:
+                args.append("-DOmega_h_USE_CUDA:BOOL=OFF")
         if "+trilinos" in self.spec:
             args.append("-DOmega_h_USE_Trilinos:BOOL=ON")
+        if "+exodus" in self.spec:
+            args.append("-DOmega_h_USE_SEACASExodus:BOOL=ON")
         if "+gmsh" in self.spec:
             args.append("-DOmega_h_USE_Gmsh:BOOL=ON")
         if "+kokkos" in self.spec:
             args.append("-DOmega_h_USE_Kokkos:BOOL=ON")
+        if "+python" in self.spec:
+            args.append("-DOmega_h_USE_pybind11:BOOL=ON")
         if "+zlib" in self.spec:
             args.append("-DOmega_h_USE_ZLIB:BOOL=ON")
             args.append("-DZLIB_ROOT:PATH={0}".format(self.spec["zlib-api"].prefix))
@@ -177,14 +238,14 @@ class OmegaH(CMakePackage, CudaPackage):
             raise SkipTest("Package must be installed as version 9.34.1 or later")
 
         with test_part(self, "test_mesh_create", purpose="mesh construction"):
-            exe = which(self.prefix.bin.osh_box)
+            exe = which(self.prefix.bin.osh_box, required=True)
             exe("1", "1", "1", "2", "2", "2", "box.osh")
 
         with test_part(self, "test_mesh_adapt", purpose="mesh adaptation"):
-            exe = which(self.prefix.bin.osh_scale)
+            exe = which(self.prefix.bin.osh_scale, required=True)
             actual = exe("box.osh", "100", "box_100.osh", output=str.split, error=str.split)
             assert "adapting took" in actual
 
         with test_part(self, "test_mesh_convert", purpose="mesh to vtu conversion"):
-            exe = which(self.prefix.bin.osh2vtk)
+            exe = which(self.prefix.bin.osh2vtk, required=True)
             exe("box_100.osh", "box_100_vtk")

@@ -1,0 +1,90 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      target: [ "x86_64_v3" ]
+      require:
+      - target=x86_64_v3
+    mpi:
+      require:
+      - openmpi
+
+  concretizer:
+    unify: false
+    reuse: false
+
+  specs:
+  - group: radiuss-cpu
+    specs:
+    - ascent
+    - axom
+    - blt
+    - caliper
+    - care
+    - chai
+    - conduit
+    - flux-core
+    - hypre
+    - lbann
+    # - lvarray@develop ~tests #concretization fails for some reason
+    - mfem
+    - py-hatchet
+    - py-maestrowf
+    - py-merlin
+    - py-shroud
+    # - quandary # package needs to specify a version
+    - raja
+    - raja-perf
+    - samrai
+    - scr
+    - sundials
+    - umpire
+    # - visit   # ^mesa-glu@9.0.0
+    - xbraid
+    - zfp
+    override:
+      packages:
+        all:
+          require:
+          - ~cuda
+          - ~rocm
+
+  - group: radiuss-cuda
+    specs:
+    - ascent
+    - blt
+    - caliper
+    - caliper +cuda
+    - camp
+    - camp +cuda
+    - chai
+    - chai +cuda +raja
+    - mfem
+    - mfem +superlu-dist+petsc+sundials
+    - mfem +cuda ^hypre+cuda
+    - raja
+    - raja +cuda
+    - umpire
+    - umpire +cuda
+    override:
+      packages:
+        all:
+          variants: +mpi cuda_arch=70
+        blas:
+          require: [openblas]
+        mkl:
+          require: [intel-oneapi-mkl]
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image:
+          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          entrypoint: ['']
+
+  cdash:
+    build-group: RADIUSS

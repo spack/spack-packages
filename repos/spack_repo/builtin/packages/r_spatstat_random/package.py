@@ -31,6 +31,9 @@ class RSpatstatRandom(RPackage):
     version("3.0-1", sha256="938c845c063b8781bf894c0a67537e7b2a7c425a4beba4a95ec9d2c37b43e5b6")
     version("2.2-0", sha256="45f0bbdb9dbd53b6c4151c3cdd098451cf787729717ccbb063cd1f33910e604d")
 
+    depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build")  # generated
+
     depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-spatstat-data@2.1-0:", type=("build", "run"))
     depends_on("r-spatstat-data@2.2-0.003:", type=("build", "run"), when="@3.0-1:")

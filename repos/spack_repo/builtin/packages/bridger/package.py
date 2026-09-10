@@ -23,7 +23,7 @@ class Bridger(MakefilePackage, SourceforgePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("boost + exception + filesystem + system + serialization + graph")
+    depends_on("boost@:1.83+exception+filesystem+system+serialization+graph")
     depends_on("ncurses~termlib")
     depends_on("perl", type="run")
 

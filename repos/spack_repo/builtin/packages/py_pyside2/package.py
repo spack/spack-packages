@@ -28,40 +28,6 @@ class PyPyside2(PythonPackage):
         commit="9282e03de471bb3772c8d3997159e49c113d7678",
         submodules=True,
     )
-    version(
-        "5.14.2.1",
-        tag="v5.14.2.1",
-        commit="6341c063dea6022c1e40cca28d3bbf0f52350dcb",
-        submodules=True,
-    )
-    version(
-        "5.13.2",
-        tag="v5.13.2",
-        commit="a1a94b43c5b277fd4e65c1389e24c4fbbb1c5641",
-        submodules=True,
-        deprecated=True,
-    )
-    version(
-        "5.13.1",
-        tag="v5.13.1",
-        commit="de1e75b55f6f59bba4bae5cd036d6c355c62986a",
-        submodules=True,
-        deprecated=True,
-    )
-    version(
-        "5.13.0",
-        tag="v5.13.0",
-        commit="208d0c8bc8595aebc2191dafd9d0e3ec719e2550",
-        submodules=True,
-        deprecated=True,
-    )
-    version(
-        "5.12.5",
-        tag="v5.12.5",
-        commit="af0953e0d261ab9b1fc498d63e8d790a329dd285",
-        submodules=True,
-        deprecated=True,
-    )
 
     variant(
         "doc",
@@ -73,7 +39,6 @@ class PyPyside2(PythonPackage):
     depends_on("cxx", type="build")
 
     # see https://wiki.qt.io/Qt_for_Python#Python_compatibility_matrix
-    depends_on("python@2.7.0:2.7,3.5.0:3.5,3.6.1:3.8", when="@:5.15.0", type=("build", "run"))
     depends_on(
         "python@2.7.0:2.7,3.5.0:3.5,3.6.1:3.9", when="@5.15.1:5.15.7", type=("build", "run")
     )
@@ -82,15 +47,11 @@ class PyPyside2(PythonPackage):
     depends_on("python@3.6:3.11", when="@5.15.11:5.15.15", type=("build", "run"))
 
     depends_on("cmake@3.1:", type="build")
-    # libclang versioning from sources/shiboken2/doc/gettingstarted.rst
-    depends_on("llvm@6", type="build", when="@5.12:5.13")
     # clang >= 16 doesn't work, see https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=270715#c6
     depends_on("llvm@10:15 +clang", type="build", when="@5.15")
     depends_on("py-setuptools", type="build")
     depends_on("py-packaging", type="build")
     depends_on("py-wheel", type="build")
-    # https://bugreports.qt.io/browse/PYSIDE-1385
-    depends_on("py-wheel@:0.34", when="@:5.14", type="build")
     # in newer pip versions --install-option does not exist
     depends_on("py-pip@:23.0", type="build")
     depends_on("qt@5.11:+opengl")

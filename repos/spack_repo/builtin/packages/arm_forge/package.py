@@ -18,7 +18,12 @@ class ArmForge(Package):
     through to complex parallel HPC codes with MPI, OpenMP, threads or CUDA."""
 
     homepage = "https://www.arm.com/products/development-tools/server-and-hpc/forge"
+
     maintainers("NickRF")
+
+    license("LicenseRef-ARM-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
 
     # TODO: this mess should be fixed as soon as a way to parametrize/constrain
     #       versions (and checksums) based on the target platform shows up

@@ -1,0 +1,96 @@
+spack:
+  view: false
+  include:
+  - ../../.ci/gitlab/
+  - path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/tags/v0.2.0/spack/configs/packages.yaml
+    sha256: "2da821c1b275912b16fbe7870d821345254ee8daebd3e0c490d9a8e0043c40d4"
+
+  packages:
+    all:
+      target: ["x86_64_v3"]
+      require:
+      - target=x86_64_v3
+    c:
+      require:
+      - gcc@11
+    cxx:
+      require:
+      - gcc@11
+    fortran:
+      require:
+        - gcc@11
+
+    cmake:
+      variants: ~ownlibs
+
+    mesa:
+      require:
+      - +glx +osmesa +opengl ~opengles +llvm
+
+    libglx:
+      require: [mesa +glx]
+
+    llvm:
+      require:
+      - "@14:"
+      - target=x86_64_v3
+      # Minimize LLVM
+      variants: ~lldb~lld~lua~offload~libomptarget~polly~gold libunwind=none compiler-rt=none
+
+    ospray:
+      require: [+denoiser +mpi]
+
+    paraview:
+      require: ["@6:", "+raytracing +fides"]
+
+    libllvm:
+      require: ["llvm"]
+    visit:
+      require: ["@3.4.1:"]
+
+  concretizer:
+    unify: when_possible
+
+  definitions:
+  # Test ParaView and VisIt builds with different GL backends
+  - paraview_specs:
+    - matrix:
+      - - paraview
+      - - +qt
+        - ~qt
+  - visit_specs:
+    - matrix:
+      - - visit
+      - - ~gui ^[virtuals=gl] glx
+        - ~gui ^[virtuals=gl] osmesa
+        - +gui ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
+
+  - hdf5_specs:
+    - hdf5
+    - hdf5-vol-async
+    - hdf5-vol-cache
+    - hdf5-vol-log
+
+
+  specs:
+    # Compression
+  - zfp
+
+    # IO
+  - adios2
+  - $hdf5_specs
+  - parallel-netcdf
+
+    # Visualization
+  - ascent
+  - $paraview_specs
+  - $visit_specs
+  - vtk-m
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: {name: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01, entrypoint: [""]}
+
+  cdash:
+    "build-group:": Data and Vis SDK

@@ -31,6 +31,8 @@ class Butterflypack(CMakePackage):
     license("BSD-3-Clause-LBNL")
 
     version("master", branch="master")
+    version("4.1.0", sha256="3782840011a28c89339059e02062f4a21ab5b97f95d16cdba6ae0b66c7b5fb33")
+    version("4.0.0", sha256="f632ef4e4b5a349a36d86c286039440badac57d3047751174dfe3990c750a31d")
     version("3.2.0", sha256="0f1570947f0a7c0e130bbec3abbb2fa275ae453dc3f428e7a3a2265fecafe1ae")
     version("2.4.0", sha256="12d04e7101b2c8292b5c62d9f42b5cd1e8a3c5af639d2665596e3e4255fd0804")
     version("2.2.2", sha256="73f67073e4291877f1eee19483a8a7b3c761eaf79a75805d52105ceedead85ea")
@@ -62,6 +64,36 @@ class Butterflypack(CMakePackage):
 
     conflicts("%gcc@:7", when="@2.2.1:")
 
+    # Fix missing hostname declarations on macOS.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/4b70741a5e69644bccba13dc9f100b101d45a09c.patch?full_index=1",
+        sha256="c164600adbc0cb06a779a449835f5bf4e0aa1176f5d4bafa8dc9516da48b7e0c",
+        when="@4.1.0",
+    )
+    # Fix an invalid comparison in BF_block_MVP_dat_batch_mkl.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/757dcb23d88d27fa24a9ad3078100ebcccad3d6f.patch?full_index=1",
+        sha256="48ad9acbf96d625cff53a485bd64bdc32ae391b266292fa35f2a863892d0c459",
+        when="@4.1.0",
+    )
+    # Fix OpenMP-disabled builds.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/80a68716310a4bb47555b6c1605bebe85346569d.patch?full_index=1",
+        sha256="cf6c3adb2563d9ef90303846915a65f3024771165a281a3dd915b6f4c2b2e8d7",
+        when="@4.0.0:5.0.0",
+    )
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/1393fc11b390934cbb020700397cc75bab87c783.patch?full_index=1",
+        sha256="a662fc51552eac3911cd7987bb2ebb283f6513e1bde094769f1fe9eba6878a18",
+        when="@4.1.0",
+    )
+    # ifx rejects SIZEOF on components of assumed-size dummy arrays.
+    patch(
+        "https://github.com/liuyangzhuan/ButterflyPACK/commit/19fc92ec31a9e13c699dce5092e94750238f9862.patch?full_index=1",
+        sha256="c7a22ed21b7eb3f2f295e7ed2b04099a108151c64da61b87c823dc8e0b3f950d",
+        when="@4.1.0 %oneapi",
+    )
+
     # https://github.com/spack/spack/issues/31818
     patch("qopenmp-for-oneapi.patch", when="@2.1.1 %oneapi")
 
@@ -73,13 +105,13 @@ class Butterflypack(CMakePackage):
         spec = self.spec
 
         args = [
-            "-DCMAKE_C_COMPILER=%s" % spec["mpi"].mpicc,
-            "-DCMAKE_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
-            "-DCMAKE_CXX_COMPILER=%s" % spec["mpi"].mpicxx,
-            "-DTPL_BLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
-            "-DTPL_LAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
-            "-DTPL_SCALAPACK_LIBRARIES=%s" % spec["scalapack"].libs.joined(";"),
-            "-DTPL_ARPACK_LIBRARIES=%s" % spec["arpack-ng"].libs.joined(";"),
+            f"-DCMAKE_C_COMPILER={spec['mpi'].mpicc}",
+            f"-DCMAKE_Fortran_COMPILER={spec['mpi'].mpifc}",
+            f"-DCMAKE_CXX_COMPILER={spec['mpi'].mpicxx}",
+            f"-DTPL_BLAS_LIBRARIES={spec['blas'].libs.joined(';')}",
+            f"-DTPL_LAPACK_LIBRARIES={spec['lapack'].libs.joined(';')}",
+            f"-DTPL_SCALAPACK_LIBRARIES={spec['scalapack'].libs.joined(';')}",
+            f"-DTPL_ARPACK_LIBRARIES={spec['arpack-ng'].libs.joined(';')}",
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
         args.append("-Denable_openmp=%s" % ("ON" if "+openmp" in spec else "OFF"))

@@ -51,6 +51,15 @@ class Msmpi(msbuild.MSBuildPackage):
     # We know its present because we have a WDK
     # patches the build system to just directly call the MC
     patch("no_mc.patch")
+    # MSBuild does not handle paths with spaces well
+    # nor does MSMPIs msbuild system introduce the proper
+    # quoting required to use paths with spaces
+    # this patch adds the required quoting to handle
+    # stages and install prefixes with spaces
+    # this patch must be the last patch applied
+    # and should be updated if other patches
+    # add lines that require quoting
+    patch("quote_source_tree_refs.patch")
 
     requires("platform=windows")
     requires("%msvc")
@@ -72,8 +81,8 @@ class Msmpi(msbuild.MSBuildPackage):
         self.spec.mpicc = dependent_spec["c"].package.cc
         self.spec.mpicxx = dependent_spec["cxx"].package.cxx
         if "fortran" in dependent_spec:
-            self.spec.mpifc = dependent_spec["fortran"].package.fc
-            self.spec.mpif77 = dependent_spec["fortran"].package.f77
+            self.spec.mpifc = dependent_spec["fortran"].package.fortran
+            self.spec.mpif77 = dependent_spec["fortran"].package.fortran
 
 
 class MSBuildBuilder(msbuild.MSBuildBuilder):
@@ -114,5 +123,21 @@ class MSBuildBuilder(msbuild.MSBuildBuilder):
             install_path = x.replace(build_configuration, prefix)
             mkdirp(os.path.dirname(install_path))
             install(x, install_path)
+
+        # construct more traditional install layout
+        # grab all .lib .exp and .pdb files from their components specific layouts
+        # glob statement matches any of the above.
+        # symlink all linking related components (libs, .exp, etc)
+        # to lib
+        def link_to_lib(file_type):
+            for x in glob.glob(os.path.join(prefix, "**", f"*.{file_type}")):
+                install_path = os.path.join(prefix.lib, os.path.basename(x))
+                symlink(x, install_path)
+
+        mkdirp(prefix.lib)
+        link_to_lib("lib")
+        link_to_lib("pdb")
+        link_to_lib("exp")
+
         include_dir = os.path.join(os.path.join(base_build, "src"), "include")
         install_tree(include_dir, prefix.include)

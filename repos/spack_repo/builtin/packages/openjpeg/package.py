@@ -22,6 +22,7 @@ class Openjpeg(CMakePackage):
 
     license("BSD-2-Clause-NetBSD")
 
+    version("2.5.4", sha256="a695fbe19c0165f295a8531b1e4e855cd94d0875d2f88ec4b61080677e27188a")
     version("2.5.2", sha256="90e3896fed910c376aaf79cdd98bdfdaf98c6472efd8e1debf0a854938cbda6a")
     version("2.5.1", sha256="c0b92dadd65e33b1cf94f39dd9157d5469846744c2e0afb8ca10961f51f61da6")
     version("2.5.0", sha256="0333806d6adecc6f7a91243b2b839ff4d2053823634d4f6ed7a59bc87409122a")

@@ -37,6 +37,7 @@ class Babl(MesonPackage):
     depends_on("pkgconfig", type="build")
     depends_on("lcms")
     depends_on("gobject-introspection")
+    depends_on("glib", type="build")
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

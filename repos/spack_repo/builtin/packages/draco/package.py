@@ -23,6 +23,8 @@ class Draco(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause-Open-MPI")
 
     version("develop", branch="develop")
+    version("7.22.0", sha256="c3cb0c122918b4f9a391351318a8384b8e5100621fcfa62e39112b9a8727bddb")
+    version("7.21.0", sha256="f6856eca57c9286662104c82cb124edadaf93830aa672d2995caef4f7cd9b486")
     version("7.20.0", sha256="5b695f686c914dfac7cc144ffba37f24b1fb1e53058fbcb6df0ea94fe9971ea6")
     version("7.19.0", sha256="04b33cfea244052efcdd40d2b9dd79348749d34647aaf4dfcb15cdfdbe989783")
     version("7.18.0", sha256="b210e202a06ffdaf149193b5cba164411fd508e20e573e1dfc46d1f56e3fffaa")
@@ -146,16 +148,24 @@ class Draco(CMakePackage, CudaPackage, ROCmPackage):
 
         # FMA option
         if "+fast_fma" in self.spec:
-            options.extend(
-                [
-                    "-DDRACO_ROUNDOFF_MODE={0}".format(
-                        "FAST" if "build_type=Release" in spec else "ACCURATE"
-                    )
-                ]
-            )
+            # Newer draco versions only offer "FAST" and "NOFMA" (effectively an ON/OFF switch).
+            if spec.satisfies("@7.21.0:"):
+                options.extend(["-DDRACO_ROUNDOFF_MODE=FAST"])
+            # Older draco versions offered several software and hardware FMA options
+            else:
+                options.extend(
+                    [
+                        "-DDRACO_ROUNDOFF_MODE={0}".format(
+                            "FAST" if "build_type=Release" in spec else "ACCURATE"
+                        )
+                    ]
+                )
         # OneAPI-specific logic
         if spec.satisfies("%oneapi"):
             # Known issues with oneapi+IPO for packages that depend on draco.
+            options.extend(["-DUSE_IPO=OFF"])
+        # "rocm" mixed-builds barf when IPO/LTO is on.
+        if spec.satisfies("@7.20.0: +rocm"):
             options.extend(["-DUSE_IPO=OFF"])
         return options
 

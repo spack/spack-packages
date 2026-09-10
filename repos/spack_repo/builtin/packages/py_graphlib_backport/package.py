@@ -13,6 +13,7 @@ class PyGraphlibBackport(PythonPackage):
     homepage = "https://github.com/mariushelf/graphlib_backport"
     pypi = "graphlib_backport/graphlib_backport-1.0.3.tar.gz"
 
+    version("1.1.0", sha256="00a7888b21e5393064a133209cb5d3b3ef0a2096cf023914c9d778dff5644125")
     version("1.0.3", sha256="7bb8fc7757b8ae4e6d8000a26cd49e9232aaa9a3aa57edb478474b8424bfaae2")
 
     depends_on("python@3.6:3", type=("build", "run"))

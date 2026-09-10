@@ -63,7 +63,10 @@ class LuaBuilder(Builder):
     package_attributes = ()
 
     def unpack(self, pkg: LuaPackage, spec: Spec, prefix: Prefix) -> None:
-        if os.path.splitext(pkg.stage.archive_file)[1] == ".rock":
+        if (
+            pkg.stage.archive_file is not None
+            and os.path.splitext(pkg.stage.archive_file)[1] == ".rock"
+        ):
             directory = pkg.luarocks("unpack", pkg.stage.archive_file, output=str)
             dirlines = directory.split("\n")
             # TODO: figure out how to scope this better
@@ -87,9 +90,7 @@ class LuaBuilder(Builder):
                 rocks_trees={{
                 {}
                 }}
-                """.format(
-                    "\n".join(table_entries)
-                )
+                """.format("\n".join(table_entries))
             )
 
     def preprocess(self, pkg: LuaPackage, spec: Spec, prefix: Prefix) -> None:

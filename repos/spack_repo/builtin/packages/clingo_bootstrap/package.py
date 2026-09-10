@@ -15,6 +15,7 @@ class ClingoBootstrap(Clingo):
     maintainers("alalazo")
 
     variant("build_type", default="Release", values=("Release",), description="CMake build type")
+    variant("apps", default=False, description="build command line applications")
 
     variant(
         "static_libstdcpp",
@@ -44,10 +45,25 @@ class ClingoBootstrap(Clingo):
         patch("version-script.patch", when="@spack,5.5:5.6")
         patch("version-script-5.4.patch", when="@5.2:5.4")
 
+    # flat multimap for performance: https://github.com/potassco/clasp/pull/118
+    patch(
+        "https://github.com/haampie/clasp/commit/0f43ac61e8576404c6a33f25954883d3e51ef0df.patch?full_index=1",
+        sha256="0a266a4d475c225af30607ccd2b541cfca0e4b31368219f6de71039c8df156b3",
+        working_dir="clasp",
+        when="@:5.7 +optimized",
+    )
+    patch(
+        "https://github.com/haampie/clasp/commit/208972863506ecbd85ed0bd78fac580b5e9c9c90.patch?full_index=1",
+        sha256="c569fb439a99b709b6e6ac05253b344e4f3055d52223265baa55946db6d44e8b",
+        working_dir="clasp",
+        when="@5.8: +optimized",
+    )
+
     # CMake at version 3.16.0 or higher has the possibility to force the
     # Python interpreter, which is crucial to build against external Python
     # in environment where more than one interpreter is in the same prefix
     depends_on("cmake@3.16.0:", type="build")
+    depends_on("clingo-bootstrap-pgo", type="build", when="+optimized")
 
     # On Linux we bootstrap with GCC or clang
     requires(
@@ -68,12 +84,7 @@ class ClingoBootstrap(Clingo):
     # Clingo needs the Python module to be usable by Spack
     conflicts("~python", msg="Python support is required to bootstrap Spack")
 
-    @property
-    def cmake_py_shared(self):
-        return self.define("CLINGO_BUILD_PY_SHARED", "OFF")
-
-    def cmake_args(self):
-        return [*super().cmake_args(), self.define("CLINGO_BUILD_APPS", False)]
+    cmake_py_shared = False
 
     @run_before("cmake", when="+optimized")
     def pgo_train(self):
@@ -84,12 +95,15 @@ class ClingoBootstrap(Clingo):
                 Executable("xcrun")("-find", "llvm-profdata", output=str).strip()
             )
 
+        # Find the PGO script before starting the build
+        script = which_string("clingo-pgo.py", required=True)
+
         # First configure with PGO flags, and do build apps.
         reports = os.path.abspath("reports")
         sources = os.path.abspath(self.root_cmakelists_dir)
         cmake_options = self.std_cmake_args + self.cmake_args() + [sources]
 
-        # Set PGO training flags.
+        # Set PGO flags.
         generate_mods = EnvironmentModifications()
         generate_mods.append_flags("CFLAGS", f"-fprofile-generate={reports}")
         generate_mods.append_flags("CXXFLAGS", f"-fprofile-generate={reports}")
@@ -103,14 +117,9 @@ class ClingoBootstrap(Clingo):
         # Clean the reports dir.
         rmtree(reports, ignore_errors=True)
 
-        # Run spack solve --fresh hdf5 with instrumented clingo.
-        python_runtime_env = EnvironmentModifications()
-        python_runtime_env.extend(
-            environment_modifications_for_specs(self.spec, set_package_py_globals=False)
-        )
-        python_runtime_env.unset("SPACK_ENV")
-        python_runtime_env.unset("SPACK_PYTHON")
-        python(spack_script, "solve", "--fresh", "hdf5", extra_env=python_runtime_env)
+        # Generate profile data.
+        env = environment_modifications_for_specs(self.spec, set_package_py_globals=False)
+        python(script, extra_env=env)
 
         # Clean the build dir.
         rmtree(self.build_directory, ignore_errors=True)

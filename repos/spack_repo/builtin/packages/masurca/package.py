@@ -18,6 +18,7 @@ class Masurca(Package):
 
     license("GPL-3.0-only")
 
+    version("4.1.4", sha256="6112d742bac326917a57d02f71494e5de4c6a67c6bbef8de54f842b9d5873d7d")
     version("4.1.1", sha256="8758f6196bf7f57e24e08bda84abddfff08feb4cea204c0eb5e1cb9fe8198573")
     version("4.1.0", sha256="15078e24c79fe5aabe42748d64f95d15f3fbd7708e84d88fc07c4b7f2e4b0902")
     version("4.0.9", sha256="a31c2f786452f207c0b0b20e646b6c85b7357dcfd522b697c1009d902d3ed4cf")
@@ -28,6 +29,8 @@ class Masurca(Package):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    depends_on("gmake", type="build")
 
     depends_on("perl", type=("build", "run"))
     depends_on(Boost.with_default_variants)

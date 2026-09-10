@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import functools
-import operator
 import os
 import re
 import shutil
@@ -15,25 +13,24 @@ from spack.package import (
     ClassProperty,
     HeaderList,
     LibraryList,
-    NoHeadersError,
-    NoLibrariesError,
     PackageBase,
     Prefix,
     Spec,
     build_system,
     classproperty,
     depends_on,
+    determine_number_of_jobs,
     execute_install_time_tests,
     extends,
     filter_file,
     find,
-    find_all_headers,
-    find_all_libraries,
+    get_effective_jobs,
     has_shebang,
     join_path,
     path_contains_subdirectory,
     register_builder,
     run_after,
+    symlink,
     test_part,
     tty,
     when,
@@ -163,7 +160,7 @@ class PythonExtension(PackageBase):
                 continue
 
             # If it's executable and has a shebang, copy and patch it.
-            if (s.st_mode & 0b111) and has_shebang(src):
+            if (s.st_mode & (stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)) and has_shebang(src):
                 copied_files[(s.st_dev, s.st_ino)] = dst
                 shutil.copy2(src, dst)
                 filter_file(
@@ -180,7 +177,7 @@ class PythonExtension(PackageBase):
             except (OSError, KeyError):
                 target = None
             if target:
-                os.symlink(os.path.relpath(target, os.path.dirname(dst)), dst)
+                symlink(os.path.relpath(target, os.path.dirname(dst)), dst)
             else:
                 view.link(src, dst, spec=self.spec)
 
@@ -190,14 +187,19 @@ class PythonExtension(PackageBase):
         # Make sure we are importing the installed modules,
         # not the ones in the source directory
         python = self.module.python
-        for module in self.import_modules:
-            with test_part(
-                self,
-                f"test_imports_{module}",
-                purpose=f"checking import of {module}",
-                work_dir="spack-test",
-            ):
-                python("-c", f"import {module}")
+        with test_part(self, "test_imports", purpose="checking imports", work_dir="spack-test"):
+            python(
+                "-c",
+                """
+import importlib
+import sys
+
+for module in sys.argv[1:]:
+    print(module)
+    importlib.import_module(module)
+""",
+                *self.import_modules,
+            )
 
 
 def _homepage(cls: "PythonPackage") -> Optional[str]:
@@ -258,46 +260,11 @@ class PythonPackage(PythonExtension):
 
     @property
     def headers(self) -> HeaderList:
-        """Discover header files in platlib."""
-
-        # Remove py- prefix in package name
-        name = self.spec.name[3:]
-
-        # Headers should only be in include or platlib, but no harm in checking purelib too
-        include = self.prefix.join(self.spec["python"].package.include).join(name)
-        python = self.python_spec
-        platlib = self.prefix.join(python.package.platlib).join(name)
-        purelib = self.prefix.join(python.package.purelib).join(name)
-
-        headers_list = map(find_all_headers, [include, platlib, purelib])
-        headers = functools.reduce(operator.add, headers_list)
-
-        if headers:
-            return headers
-
-        msg = "Unable to locate {} headers in {}, {}, or {}"
-        raise NoHeadersError(msg.format(self.spec.name, include, platlib, purelib))
+        return HeaderList([])
 
     @property
     def libs(self) -> LibraryList:
-        """Discover libraries in platlib."""
-
-        # Remove py- prefix in package name
-        name = self.spec.name[3:]
-
-        # Libraries should only be in platlib, but no harm in checking purelib too
-        python = self.python_spec
-        platlib = self.prefix.join(python.package.platlib).join(name)
-        purelib = self.prefix.join(python.package.purelib).join(name)
-
-        libs_list = map(functools.partial(find_all_libraries, recursive=True), [platlib, purelib])
-        libs = functools.reduce(operator.add, libs_list)
-
-        if libs:
-            return libs
-
-        msg = "Unable to recursively locate {} libraries in {} or {}"
-        raise NoLibrariesError(msg.format(self.spec.name, platlib, purelib))
+        return LibraryList([])
 
 
 @register_builder("python_pip")
@@ -353,7 +320,7 @@ class PythonPipBuilder(BuilderWithDefaults):
         """
         return self.pkg.stage.source_path
 
-    def config_settings(self, spec: Spec, prefix: Prefix) -> Mapping[str, object]:
+    def config_settings(self, spec: Spec, prefix: Prefix) -> Dict[str, object]:
         """Configuration settings to be passed to the PEP 517 build backend.
 
         Requires pip 22.1 or newer for keys that appear only a single time,
@@ -403,8 +370,18 @@ class PythonPipBuilder(BuilderWithDefaults):
         pip.add_default_arg("-m", "pip")
 
         args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        config_settings = self.config_settings(spec, prefix)
 
-        for setting in _flatten_dict(self.config_settings(spec, prefix)):
+        # Pass -jN for compile-args if supported and needed
+        if spec.satisfies("%py-pip@22.1: %py-meson-python@0.11:"):
+            # get_effective_jobs returns None when a jobserver is active, then we don't pass -j.
+            jobs = get_effective_jobs(
+                jobs=determine_number_of_jobs(parallel=pkg.parallel), supports_jobserver=True
+            )
+            if jobs is not None:
+                config_settings["compile-args"] = f"-j{jobs}"
+
+        for setting in _flatten_dict(config_settings):
             args.append(f"--config-settings={setting}")
         for option in self.install_options(spec, prefix):
             args.append(f"--install-option={option}")

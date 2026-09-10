@@ -53,8 +53,12 @@ class Augustus(MakefilePackage):
     depends_on(Boost.with_default_variants)
     depends_on("zlib-api")
     depends_on("htslib")
+    depends_on("htslib@1.10:", when="@3.4.0:")
     depends_on("bcftools")
     depends_on("samtools")
+    # bam2wig/checkTargetSortedness use the legacy samtools API (sam.h, libbam.a),
+    # which was removed in samtools 1.14
+    depends_on("samtools@:1.13", when="@:3.3.2")
     depends_on("ncurses")
     depends_on("curl", when="@3.3.1:")
     depends_on("sqlite", when="@3.4.0:")
@@ -66,6 +70,11 @@ class Augustus(MakefilePackage):
     # Trying to use filter_file here got too complicated so use a patch with a
     # corresponding environment variable
     patch("bam2wig_Makefile.patch", when="@3.4.0")
+
+    # bam2wig links samtools' libbam.a, which calls bam_name2id. This became a static
+    # inline in htslib 1.10. Only 2 versions of augustus are affected. Earlier ones don't
+    # build bam2wig and 3.4.0+ links -lhts only.
+    conflicts("^htslib@1.10:", when="@3.3.1-tag1:3.3.2 ^samtools@:1.2")
 
     def edit(self, spec, prefix):
         # Set compile commands for each compiler and
@@ -129,6 +138,13 @@ class Augustus(MakefilePackage):
                     "LIBS = -lbamtools -lz", f"LIBS = {bamtools}/lib/bamtools/libbamtools.a -lz"
                 )
 
+        # For 3.3, when building with newer versions of Boost, the -ansi flag causes an old
+        # standard to be used which boost complains about.
+        if spec.satisfies("@=3.3"):
+            with working_dir("src"):
+                makefile = FileFilter("Makefile")
+                makefile.filter("-ansi", "-std=c++14")
+
         if self.version < Version("3.4.0"):
             with working_dir(join_path("auxprogs", "bam2wig")):
                 makefile = FileFilter("Makefile")
@@ -137,9 +153,13 @@ class Augustus(MakefilePackage):
                 makefile.filter("SAMTOOLS=.*$", f"SAMTOOLS={samtools}/include")
                 makefile.filter("HTSLIB=.*$", f"HTSLIB={htslib}/include")
 
-                # fix bad linking dirs
+                # fix bad linking dirs; libhts.a is linked statically, so
+                # anything it was built against must be named explicitly
+                hts = "$(HTSLIB)/../lib/libhts.a"
+                if spec.satisfies("^libdeflate"):
+                    hts += " " + spec["libdeflate"].libs.ld_flags
                 makefile.filter("$(SAMTOOLS)/libbam.a", "$(SAMTOOLS)/../lib/libbam.a", string=True)
-                makefile.filter("$(HTSLIB)/libhts.a", "$(HTSLIB)/../lib/libhts.a", string=True)
+                makefile.filter("$(HTSLIB)/libhts.a", hts, string=True)
             with working_dir(join_path("auxprogs", "checkTargetSortedness")):
                 makefile = FileFilter("Makefile")
                 makefile.filter("SAMTOOLS.*=.*$", f"SAMTOOLS={samtools}/include")

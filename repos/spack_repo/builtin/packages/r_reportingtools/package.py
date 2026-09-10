@@ -24,16 +24,17 @@ class RReportingtools(RPackage):
 
     bioc = "ReportingTools"
 
-    version("2.40.0", commit="808af36aa9756be8c907a8669726c90dcd02c73c")
-    version("2.38.0", commit="5c4971eebbaf3577ef20b74bf36c2db4e91561cc")
-    version("2.36.0", commit="34122d4bde5ce43415f63f2e39e3a088c55282cc")
-    version("2.34.0", commit="fb5aef0b6e1c6166d0f025d9e6ca60e54c68dbaf")
-    version("2.30.0", commit="fb9aee416f38cfd308d6d7264ccbcda0467642a7")
-    version("2.24.0", commit="d114c658affba9b682a37b4e2caf4341cf8da6cf")
-    version("2.22.1", commit="dce6af6c6a1cddff077fe61368f2c13e5a0e7bab")
-    version("2.20.0", commit="77e14ae13fdc16654300852dfd94e6cef58009da")
-    version("2.17.3", commit="b2e379cd5b813d8ccca37ec25f0660deec943622")
-    version("2.16.0", commit="b1aa0ea302da7f2993ce8087b1d09c11ddf03663")
+    with default_args(get_full_repo=True):
+        version("2.40.0", commit="808af36aa9756be8c907a8669726c90dcd02c73c")
+        version("2.38.0", commit="5c4971eebbaf3577ef20b74bf36c2db4e91561cc")
+        version("2.36.0", commit="34122d4bde5ce43415f63f2e39e3a088c55282cc")
+        version("2.34.0", commit="fb5aef0b6e1c6166d0f025d9e6ca60e54c68dbaf")
+        version("2.30.0", commit="fb9aee416f38cfd308d6d7264ccbcda0467642a7")
+        version("2.24.0", commit="d114c658affba9b682a37b4e2caf4341cf8da6cf")
+        version("2.22.1", commit="dce6af6c6a1cddff077fe61368f2c13e5a0e7bab")
+        version("2.20.0", commit="77e14ae13fdc16654300852dfd94e6cef58009da")
+        version("2.17.3", commit="b2e379cd5b813d8ccca37ec25f0660deec943622")
+        version("2.16.0", commit="b1aa0ea302da7f2993ce8087b1d09c11ddf03663")
 
     depends_on("r+X", type=("build", "run"))
     depends_on("r-knitr", type=("build", "run"))

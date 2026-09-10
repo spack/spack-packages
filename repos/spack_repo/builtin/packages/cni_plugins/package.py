@@ -27,7 +27,7 @@ class CniPlugins(Package):
 
     def install(self, spec, prefix):
         utils = "github.com/containernetworking/plugins/pkg/utils/buildversion"
-        which("./build_linux.sh")(
+        which("./build_linux.sh", required=True)(
             "-ldflags", "-extldflags -static -X {0}.BuildVersion={1}".format(utils, self.version)
         )
         install_tree("bin", prefix.bin)

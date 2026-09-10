@@ -24,6 +24,7 @@ class RTzdb(RPackage):
 
     license("MIT")
 
+    version("0.5.0", sha256="380d5237dbfa722fddb7d1d9ad8520a2b26331dbbb77d51850ded332fcf347db")
     version("0.4.0", sha256="4253c66041bdddfd463c98183bf0052fbcacdb7c5cff9eadbb858b3dcf9d3a23")
     version("0.3.0", sha256="6099f0ec1fba692b51b4360aa776902a39f10dae815933c31994b8e4d4277038")
     version("0.2.0", sha256="c335905d452b400af7ed54b916b5246cb3f47ede0602911a2bcb25a1cf56d5a9")
@@ -31,8 +32,12 @@ class RTzdb(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@3.3:", type=("build", "run"))
-    depends_on("r@3.4.0:", type=("build", "run"), when="@0.3.0:")
-    depends_on("r@3.5.0:", type=("build", "run"), when="@0.4.0:")
-    depends_on("r-cpp11@0.4.0:", type=("build", "run"))
-    depends_on("r-cpp11@0.4.2:", type=("build", "run"), when="@0.3.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@4.0.0:", when="@0.5.0:")
+        depends_on("r@3.5.0:", when="@0.4.0:")
+        depends_on("r@3.4.0:", when="@0.3.0:")
+        depends_on("r@3.3:")
+
+        depends_on("r-cpp11@0.5.2:", when="@0.5.0:")
+        depends_on("r-cpp11@0.4.2:", when="@0.3.0:")
+        depends_on("r-cpp11@0.4.0:")

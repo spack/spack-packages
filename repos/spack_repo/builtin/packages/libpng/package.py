@@ -18,6 +18,9 @@ class Libpng(CMakePackage):
 
     license("Libpng")
 
+    version("1.6.58", sha256="28eb403f51f0f7405249132cecfe82ea5c0ef97f1b32c5a65828814ae0d34775")
+    version("1.6.55", sha256="d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d")
+    version("1.6.54", sha256="01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805")
     version("1.6.47", sha256="b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631")
     version("1.6.39", sha256="1f4696ce70b4ee5f85f1e1623dc1229b210029fa4b7aee573df3e2ba7b036937")
     version("1.6.37", sha256="505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca")
@@ -50,6 +53,8 @@ class Libpng(CMakePackage):
     )
     variant("pic", default=False, description="PIC")
 
+    variant("stdio", default=False, description="Enable/disable stdio support", when="@1.2.57")
+
     # Tries but fails to include fp.h, removed in libpng 1.6.45
     conflicts("@:1.6.44", when="%apple-clang@17:")
 
@@ -72,6 +77,10 @@ class CMakeBuilder(CMakeBuilder):
             self.define("PNG_STATIC", "static" in self.spec.variants["libs"].value),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
+
+        if self.spec.satisfies("@1.2.57"):
+            args.append(self.define("PNG_NO_STDIO", not self.spec.satisfies("+stdio")))
+
         zlib_lib = self.spec["zlib-api"].libs
         if zlib_lib:
             args.append(self.define("ZLIB_LIBRARY", zlib_lib[0]))

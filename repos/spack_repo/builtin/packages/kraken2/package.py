@@ -5,12 +5,13 @@
 import glob
 import os
 
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 
-class Kraken2(Package):
+class Kraken2(Package, CMakePackage):
     """Kraken2 is a system for assigning taxonomic labels to short DNA
     sequences, usually obtained through metagenomic studies."""
 
@@ -21,6 +22,7 @@ class Kraken2(Package):
 
     license("MIT")
 
+    version("2.17.1", sha256="4dc64ead045b5ae9180731c260046aa37b6642244be085a9ba9b15db78ab442d")
     version("2.1.2", sha256="e5f431e8bc3d5493a79e1d8125f4aacbad24f9ea2cc9657b66da06a32bef6ff3")
     version("2.1.1", sha256="8f3e928cdb32b9e8e6f55b44703d1557b2a5fc3f30f63e8d16e465e19a81dee4")
     version(
@@ -33,7 +35,16 @@ class Kraken2(Package):
         "2.0.6-beta", sha256="d77db6251179c4d7e16bc9b5e5e9043d25acf81f3e32ad6eadfba829a31e1d09"
     )
 
+    build_system(
+        conditional("cmake", when="@2.17.0:"),
+        conditional("generic", when="@2.0.6-beta:2.1.2"),
+        default="cmake",
+    )
+
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
+    depends_on("gmake", type="build", when="build_system=generic")
 
     depends_on("perl", type=("build", "run"))
     depends_on("rsync", type=("run"))
@@ -47,3 +58,24 @@ class Kraken2(Package):
         for file in files:
             if os.path.isfile(file):
                 install(file, prefix.bin)
+
+
+class CMakeBuilder(CMakeBuilder):
+    def install(self, pkg, spec, prefix):
+        mkdirp(prefix.bin)
+        mkdirp(prefix.lib)
+        with working_dir(join_path(self.build_directory, "src")):
+            files = [
+                "estimate_capacity",
+                "build_db",
+                "classify",
+                "dump_table",
+                "lookup_accession_numbers",
+                "k2mask",
+                "blast_to_fasta",
+            ]
+            for file in files:
+                install(file, prefix.bin)
+            install("libtax.so", prefix.lib)
+            force_symlink(join_path(prefix.lib, "libtax.so"), join_path(prefix.bin, "libtax.so"))
+        install_tree("scripts", prefix.bin)

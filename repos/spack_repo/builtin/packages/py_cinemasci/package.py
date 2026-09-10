@@ -18,6 +18,7 @@ class PyCinemasci(PythonPackage):
 
     maintainers("EthanS94")
 
+    version("1.7.9", sha256="ceab37e9d9f5c9b9bd94c12200ae05fb5a866c6f6a4ecae51db1858971998bfb")
     version("1.7.0", sha256="70e1fa494bcbefdbd9e8859cdf1b01163a94ecffcdfa3da1011e4ef2fcee6169")
     version("1.3", sha256="c024ca9791de9d78e5dad3fd11e8f87d8bc1afa5830f2697d7ec4116a5d23c20")
 

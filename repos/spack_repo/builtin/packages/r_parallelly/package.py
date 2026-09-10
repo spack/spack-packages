@@ -25,6 +25,8 @@ class RParallelly(RPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.47.0", sha256="88c0f4515c71dfe70c3b22f488daa55d4c410865e0885e2df71fb6e3877797c4")
+    version("1.45.1", sha256="6b5d3c0487fd8f9b05d98077c08919dc282bc9046c305efe49b34487ffbf485d")
     version("1.38.0", sha256="632c823c64d1bb840b2a5ff2cb2f5ffc743d62d5090a3cde55a2ebdde230d1aa")
     version("1.35.0", sha256="3f5e9b6507196aab052c5e67f8b524b75aa356731c5eaffbadde76c967ad5dcd")
     version("1.32.1", sha256="31c685f59ac7ff702fe2720910780378113adf0df0baf048a62eef94524cca90")
@@ -32,3 +34,5 @@ class RParallelly(RPackage):
     version("1.30.0", sha256="aab080cb709bab232b2d808053efb2391eeb30a2de9497cbe474c99df89f9f3b")
     version("1.28.1", sha256="f4ae883b18409adb83c561ed69427e740e1b50bf85ef57f48c3f2edf837cc663")
     version("1.23.0", sha256="376ce2381587380a4da60f9563710d63084a605f93aa364e9349f2523e83bc08")
+
+    depends_on("c", type="build")

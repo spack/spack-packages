@@ -16,4 +16,5 @@ class PyOpencensusContext(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.1.3", sha256="073bb0590007af276853009fac7e4bab1d523c3f03baf4cb4511ca38967c6039")
     version("0.1.1", sha256="1a3fdf6bec537031efcc93d51b04f1edee5201f8c9a0c85681d63308b76f5702")

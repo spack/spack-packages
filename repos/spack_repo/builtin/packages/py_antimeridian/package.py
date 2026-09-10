@@ -16,6 +16,7 @@ class PyAntimeridian(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.4.5", sha256="088f8daec4109ce5d85d52e9b4382bffcbd1a5b47c78644898f9c6d8562d1207")
     version("0.3.11", sha256="fde0134e6799676ec68765d3e588f5f32cabd4041b1f969b923758d0a6cd0c7f")
 
     depends_on("python@3.10:", type=("build", "run"))

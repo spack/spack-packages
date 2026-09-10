@@ -1,0 +1,10 @@
+diff --git a/cmake/HDF5.cmake b/cmake/HDF5.cmake
+index 256a17c0..e99ef8ec 100644
+--- a/cmake/HDF5.cmake
++++ b/cmake/HDF5.cmake
+@@ -55,4 +55,5 @@ else()
+ endif()
+ 
+ find_package(ZLIB QUIET)
++find_package(libaec COMPONENTS sz-shared)
+ find_package(HDF5 COMPONENTS C QUIET)

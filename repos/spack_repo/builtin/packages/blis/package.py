@@ -11,10 +11,17 @@ from spack.package import *
 # https://github.com/flame/blis/issues/195
 # https://github.com/flame/blis/issues/197
 
-# If the spack target architecture matches one of these values,
-# provide this target to the Blis build as the Blis config target
-# instead of using automatic configuration detection.
-_targets = ["x86_64", "zen", "zen2"]
+# Mapping from Spack target names to BLIS config targets, ordered
+# from most specific to most generic. The first match wins.
+# When the Spack name matches the BLIS config name, the value is None.
+_targets = {
+    "zen3": None,
+    "zen2": None,
+    "zen": None,
+    "skylake_avx512": "skx",
+    "haswell": None,
+    "x86_64": None,
+}
 
 
 class BlisBase(MakefilePackage):
@@ -89,9 +96,10 @@ class BlisBase(MakefilePackage):
 
     def edit(self, spec, prefix):
         target = "auto"
-        for _target in _targets:
-            if self.spec.satisfies(f"target={_target}"):
-                target = _target
+        for spack_target, blis_target in _targets.items():
+            if self.spec.satisfies(f"target={spack_target}:"):
+                target = blis_target or spack_target
+                break
         # To ensure the target should always be the last argument for base and derived class
         config_args = self.configure_args() + [target]
         configure("--prefix={0}".format(prefix), *config_args)
@@ -133,6 +141,8 @@ class Blis(BlisBase):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.0", sha256="08bbebd77914a6d1a43874ae5ec2f54fe6a77cba745f2532df28361b0f1ad1b3")
+    version("1.2", sha256="c36f2bd7580f1d30c2d81c5081b76da1058db888d303d7f5a3a41e0cb09bea94")
     version("1.0", sha256="9c12972aa1e50f64ca61684eba6828f2f3dd509384b1e41a1e8a9aedea4b16a6")
     version("0.9.0", sha256="1135f664be7355427b91025075562805cdc6cc730d3173f83533b2c5dcc2f308")
     version("0.8.1", sha256="729694128719801e82fae7b5f2489ab73e4a467f46271beff09588c9265a697b")
@@ -151,6 +161,25 @@ class Blis(BlisBase):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    # Override base class variant and adds conditional values
+    variant(
+        "threads",
+        default="none",
+        values=("pthreads", "openmp", conditional("hpx", when="@1.1:"), "none"),
+        description="Multithreading support",
+        multi=False,
+    )
+
+    variant("scalapack", default=False, description="ScaLAPACK compatibility", when="@2.0:")
+
     # Problems with permissions on installed libraries:
     # https://github.com/flame/blis/issues/343
     patch("Makefile_0.6.0.patch", when="@0.4.0:0.6.0")
+
+    def configure_args(self):
+        config_args = super().configure_args()
+        if self.spec.satisfies("+scalapack"):
+            config_args.append("--enable-scalapack-compat")
+        elif self.spec.satisfies("~scalapack"):
+            config_args.append("--disable-scalapack-compat")
+        return config_args

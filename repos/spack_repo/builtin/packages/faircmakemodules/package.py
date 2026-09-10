@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class Faircmakemodules(CMakePackage):
-    """CMake Modules developed in the context of various FAIR (https://www.gsi.de/en/researchaccelerators/fair) projects"""
+    """CMake Modules developed in the context of various FAIR
+    (https://www.gsi.de/en/researchaccelerators/fair) projects.
+    """
 
     homepage = "https://fairrootgroup.github.io/FairCMakeModules/latest/"
     url = "https://github.com/FairRootGroup/FairCMakeModules/archive/refs/tags/v1.0.0.tar.gz"

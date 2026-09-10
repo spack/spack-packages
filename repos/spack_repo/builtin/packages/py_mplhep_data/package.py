@@ -15,6 +15,7 @@ class PyMplhepData(PythonPackage):
 
     license("MIT")
 
+    version("0.0.5", sha256="4e5c4eae3e423762eb3d4ad542060f1be7f122c18a17164f7fcfedcf943fac7d")
     version("0.0.4", sha256="cd1f3ad3af9dbff33aef9e7406d2130d624a0bd1d5aa5970fc713a6421165a4e")
     version("0.0.3", sha256="b54d257f3f53c93a442cda7a6681ce267277e09173c0b41fd78820f78321772f")
 

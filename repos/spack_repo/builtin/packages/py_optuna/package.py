@@ -18,19 +18,24 @@ class PyOptuna(PythonPackage):
     homepage = "https://optuna.org/"
     pypi = "optuna/optuna-3.2.0.tar.gz"
 
-    maintainers("elliottslaughter", "eugeneswalker")
+    maintainers("eugeneswalker")
 
     license("MIT")
 
+    version("4.8.0", sha256="6f7043e9f8ecb5e607af86a7eb00fb5ec2be26c3b08c201209a73d36aff37a38")
     version("3.2.0", sha256="683d8693643a761a41d251a6b8e13263b24acacf9fc46a9233d5f6aa3ce5c683")
 
     depends_on("py-setuptools@61.1:", type="build")
 
-    depends_on("py-alembic@1.5:", type=("build", "run"))
-    depends_on("py-cmaes@0.9.1:", type=("build", "run"))
-    depends_on("py-colorlog", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-packaging@20:", type=("build", "run"))
-    depends_on("py-pyyaml", type=("build", "run"))
-    depends_on("py-sqlalchemy@1.3:", type=("build", "run"))
-    depends_on("py-tqdm", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@4.8:")
+        depends_on("python@3.7:")
+        depends_on("py-alembic@1.5:")
+        depends_on("py-cmaes@0.9.1:", when="@3.2")
+        depends_on("py-colorlog")
+        depends_on("py-numpy")
+        depends_on("py-packaging@20:")
+        depends_on("py-pyyaml")
+        depends_on("py-tqdm")
+        depends_on("py-sqlalchemy@1.4.2:", when="@4.8:")
+        depends_on("py-sqlalchemy@1.3:")

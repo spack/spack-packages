@@ -17,6 +17,9 @@ class PyJupyterlabServer(PythonPackage):
 
     license("BSD-3-Clause")
 
+    tags = ["build-tools"]
+
+    version("2.28.0", sha256="35baa81898b15f93573e2deca50d11ac0ae407ebb688299d3a5213265033712c")
     version("2.27.3", sha256="eb36caca59e74471988f0ae25c77945610b887f777255aa21f8065def9e51ed4")
     version("2.27.2", sha256="15cbb349dc45e954e09bacf81b9f9bcb10815ff660fb2034ecd7417db3a7ea27")
     version("2.27.1", sha256="097b5ac709b676c7284ac9c5e373f11930a561f52cd5a86e4fc7e5a9c8a8631d")

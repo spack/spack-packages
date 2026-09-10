@@ -19,6 +19,8 @@ class Nccmp(CMakePackage):
 
     license("GPL-2.0-only")
 
+    version("1.11.0.0", sha256="fbac27f69fa9582ecd43e54f24b8837670bcfcf9c15d0aa32c8d2356222a4d25")
+    version("1.10.0.0", sha256="4b665a5d1b77523e5eb353cc4c607794920faa5a1f31e6293f0dbcbe15d89a15")
     version("1.9.1.0", sha256="5aa8d6cbc54d26f77e3d0511690cfafa57514a4145f75e8cabce782126509c91")
     version("1.9.0.1", sha256="81e9753cf451afe8248d44c841e102349e07cde942b11d1f91b5f85feb622b99")
     version("1.8.9.0", sha256="da5d2b4dcd52aec96e7d96ba4d0e97efebbd40fe9e640535e5ee3d5cd082ae50")

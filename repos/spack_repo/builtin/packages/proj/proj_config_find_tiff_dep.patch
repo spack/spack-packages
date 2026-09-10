@@ -1,0 +1,17 @@
+diff --git a/cmake/project-config.cmake.in b/cmake/project-config.cmake.in
+index 23f997ab..f813c27a 100644
+--- a/cmake/project-config.cmake.in
++++ b/cmake/project-config.cmake.in
+@@ -8,6 +8,12 @@
+ #  @PROJECT_VARIANT_NAME@_BINARY_DIRS = /usr/local/bin
+ #  @PROJECT_VARIANT_NAME@_VERSION = 4.9.1 (for example)
+ 
++# Establish dependencies
++if (@ENABLE_TIFF@) #ENABLE_TIFF
++  include(CMakeFindDependencyMacro)
++  find_dependency(TIFF)
++endif()
++
+ # Tell the user project where to find our headers and libraries
+ get_filename_component (_DIR ${CMAKE_CURRENT_LIST_FILE} PATH)
+ get_filename_component (_ROOT "${_DIR}/@PROJECT_ROOT_DIR@" ABSOLUTE)

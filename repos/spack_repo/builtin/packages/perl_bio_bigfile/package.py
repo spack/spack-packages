@@ -51,14 +51,21 @@ class PerlBioBigfile(PerlPackage):
             # so we need to give it some special help for HTSLIB
             f"-I{kentutils_htslib_include_dir.htslib}",
         ]
+        kent = self.spec["kentutils"]
+        if kent.satisfies("~builtin_htslib"):
+            htslib_flags = self.spec["htslib"].libs.ld_flags
+        else:
+            htslib_flags = join_path(kent.prefix, "htslib", "libhts.a")
+
         libs = [
             # This is usually set by Build.PL from KENT_SRC
             join_path(kentutils_lib_dir, "jkweb.a"),
             # These are being set in Build.PL so we need to reset here
             "-lz",
             "-lssl",
-            # This is an undocumented dependency from kentutils
-            "-lhts",
+            # htslib is needed by kentutils but Perl's build system
+            # bypasses spack's compiler wrapper, so we need explicit paths
+            htslib_flags,
         ]
 
         return [

@@ -30,6 +30,7 @@ class RBrms(RPackage):
 
     license("GPL-2.0-only")
 
+    version("2.23.0", sha256="b5f5bb5604ec3f87b3ad99f0da4e6a37d8c5488221e8abe459171340992c37a5")
     version("2.21.0", sha256="7289ff33c2a4b83584b7fece0a6aa53fd14b5881a467d417fbca5dbf62ec5d58")
     version("2.19.0", sha256="0e146842c7acfcc6b8273df536eabb5279fb3bf2ae27ce1696f7d838d94fe5c1")
     version("2.18.0", sha256="63914be03cd1c4e6333317d22d7827ba2dc0414cb0dc88337cf74763ba07e111")
@@ -38,13 +39,15 @@ class RBrms(RPackage):
     version("2.16.1", sha256="749efbd9fb061fe207cf2e729c1387d9a8538b922f12ceec4e82a9f8dd9c1bc4")
     version("2.15.0", sha256="c11701d1d8758590b74bb845b568b736e4455a81b114c7dfde0b27b7bd1bcc2f")
 
-    depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@2.20.1:")
+    depends_on("r@3.5.0:", type=("build", "run"))
     depends_on("r-rcpp@0.12.0:", type=("build", "run"))
+    depends_on("r-rstan@2.29.0:", type=("build", "run"), when="@2.21:")
     depends_on("r-rstan@2.19.2:", type=("build", "run"))
-    depends_on("r-rstan@2.29.0:", type=("build", "run"), when="@2.21.0:")
     depends_on("r-ggplot2@2.0.0:", type=("build", "run"))
+    depends_on("r-loo@2.8:", type=("build", "run"), when="@2.22:")
     depends_on("r-loo@2.3.1:", type=("build", "run"))
+    depends_on("r-posterior@1.6:", type=("build", "run"), when="@2.22:")
     depends_on("r-posterior@1.0.0:", type=("build", "run"), when="@2.16:")
     depends_on("r-matrix@1.1-1:", type=("build", "run"))
     depends_on("r-mgcv@1.8-13:", type=("build", "run"))
@@ -62,5 +65,6 @@ class RBrms(RPackage):
     depends_on("r-abind", type=("build", "run"))
     depends_on("r-backports", type=("build", "run"))
 
+    # Historical dependencies
     depends_on("r-shinystan@2.4.0:", type=("build", "run"), when="@:2.20.4")
     depends_on("r-projpred@2.0.0:", type=("build", "run"), when="@:2.16.1")

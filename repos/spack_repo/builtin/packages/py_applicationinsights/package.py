@@ -29,6 +29,7 @@ class PyApplicationinsights(PythonPackage):
 
     license("MIT")
 
+    version("0.11.10", sha256="0b761f3ef0680acf4731906dfc1807faa6f2a57168ae74592db0084a6099f7b3")
     version("0.11.9", sha256="30a11aafacea34f8b160fbdc35254c9029c7e325267874e3c68f6bdbcd6ed2c3")
 
     depends_on("py-setuptools", type="build")

@@ -11,7 +11,7 @@ class Flint(AutotoolsPackage):
     """FLINT (Fast Library for Number Theory)."""
 
     homepage = "https://flintlib.org"
-    url = "https://flintlib.org/flint-3.1.2.tar.gz"
+    url = "https://flintlib.org/download/flint-3.1.2.tar.gz"
     git = "https://github.com/flintlib/flint.git"
     list_url = "https://flintlib.org/downloads.html"
     list_depth = 0
@@ -19,6 +19,9 @@ class Flint(AutotoolsPackage):
     license("LGPL-2.1-or-later")
 
     version("main", branch="main")
+    version("3.6.0", sha256="b95e2c7792f5eea4a1c8d2d42c4098434756832e57a094b295eb5dfdc9b4c36b")
+    version("3.5.0", sha256="3982f385f00610a944e0152eb0a29893b2366fa640e8f5f3076c47564cf7e2a6")
+    version("3.4.0", sha256="9497679804dead926e3affeb8d4c58739d1c7684d60c2c12827550d28e454a33")
     version("3.1.2", sha256="fdb3a431a37464834acff3bdc145f4fe8d0f951dd5327c4c6f93f4cbac5c2700")
     version("3.0.1", sha256="7b311a00503a863881eb8177dbeb84322f29399f3d7d72f3b1a4c9ba1d5794b4")
     version("2.5.2", sha256="cbf1fe0034533c53c5c41761017065f85207a1b770483e98b2392315f6575e87")
@@ -35,6 +38,24 @@ class Flint(AutotoolsPackage):
 
     depends_on("gmp")  # mpir is a drop-in replacement for this
     depends_on("mpfr")  # Could also be built against mpir
+
+    depends_on("m4", type="build")
+
+    # generate configure script when building from git
+    with when("@main"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+
+    # https://github.com/flintlib/flint/pull/2800
+    @run_before("configure", when="@3.4.0:")
+    def fix_in_tree_detection(self):
+        filter_file(
+            'if test "$ac_abs_confdir" = "`pwd`";',
+            'if test "`cd "$ac_abs_confdir" && pwd -P`" = "`pwd -P`";',
+            "configure",
+            string=True,
+        )
 
     def configure_args(self):
         spec = self.spec

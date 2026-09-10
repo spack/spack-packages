@@ -19,8 +19,11 @@ class Sleef(CMakePackage):
     license("BSL-1.0")
 
     version("master", branch="master")
-    version("3.7.0_2024-12-06", commit="56e1f79cb140fb9326d612d0be06b5250565cade")  # py-torch@2.7:
-    version("3.7.0", commit="c5494730bf601599a55f4e77f357b51ba590585e", preferred=True)
+    version(
+        "3.8", sha256="a12ccd50f57083c530e1c76f10d52865defbd19fc9e2c85b483493065709874a"
+    )  # py-torch@2.8:
+    version("3.7.0_2024-12-06", commit="56e1f79cb140fb9326d612d0be06b5250565cade")  # py-torch@2.7
+    version("3.7.0", commit="c5494730bf601599a55f4e77f357b51ba590585e")
     version("3.6.1", commit="6ee14bcae5fe92c2ff8b000d5a01102dab08d774")
     version(
         "3.6.0_2024-03-20", commit="60e76d2bce17d278b439d9da17177c8f957a9e9b"
@@ -33,26 +36,6 @@ class Sleef(CMakePackage):
     version(
         "3.4.0_2019-07-30", commit="7f523de651585fe25cade462efccca647dcc8d02"
     )  # py-torch@1.3:1.7
-    version(
-        "3.4.0_2019-05-13",
-        commit="9b249c53a80343cc1a394ca961d7d5696ea76409",  # py-torch@1.2
-        git="https://github.com/zdevito/sleef.git",
-        deprecated=True,
-    )
-    version(
-        "3.3.1_2018-12-09",
-        commit="191f655caa25526ae226cf88dd2529265176014a",  # py-torch@1.1
-        git="https://github.com/zdevito/sleef.git",
-        deprecated=True,
-    )
-    version(
-        "3.2.0_2018-05-09", commit="6ff7a135a1e31979d1e1844a2e7171dfbd34f54f", deprecated=True
-    )  # py-torch@0.4.1:1.0
-    version(
-        "3.2.0",
-        sha256="3130c5966e204e6d6a3ace81e543d12b5b21f60897f1c185bfa587c1bd77bee2",
-        deprecated=True,
-    )
 
     depends_on("c", type="build")
 

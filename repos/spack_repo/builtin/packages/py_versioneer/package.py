@@ -15,6 +15,8 @@ class PyVersioneer(PythonPackage):
     pypi = "versioneer/versioneer-0.26.tar.gz"
     git = "https://github.com/python-versioneer/python-versioneer.git"
 
+    tags = ["build-tools"]
+
     maintainers("scemama")
 
     license("Unlicense")

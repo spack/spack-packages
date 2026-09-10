@@ -17,6 +17,26 @@ class ROrgHsEgDb(RPackage):
     url = "https://www.bioconductor.org/packages/release/data/annotation/src/contrib/org.Hs.eg.db_3.4.1.tar.gz"
 
     version(
+        "3.21.0",
+        url="https://bioconductor.org/packages/3.21/data/annotation/src/contrib/org.Hs.eg.db_3.21.0.tar.gz",
+        sha256="3494ddec079cf57f63a7a32dc5d58825b376218631132f7c49477eab48bf31c5",
+    )
+    version(
+        "3.20.0",
+        url="https://bioconductor.org/packages/3.20/data/annotation/src/contrib/org.Hs.eg.db_3.20.0.tar.gz",
+        sha256="8c36c3cde805cae99f1d391cf00aec8983f6d0b4fabd75e71aa8ef3f5d6ed3bf",
+    )
+    version(
+        "3.19.0",
+        url="https://bioconductor.org/packages/3.19/data/annotation/src/contrib/org.Hs.eg.db_3.19.1.tar.gz",
+        sha256="1932eff4d5d46c1ab219565dfff6706c93cfddc6bcbc65223832cc583f702bf7",
+    )
+    version(
+        "3.18.0",
+        url="https://bioconductor.org/packages/3.18/data/annotation/src/contrib/org.Hs.eg.db_3.18.0.tar.gz",
+        sha256="41dc753ed5f4d31dcf0d645ef32b6339b1b70cc48b7c4c4673767643b129c5ca",
+    )
+    version(
         "3.17.0",
         url="https://www.bioconductor.org/packages/3.17/data/annotation/src/contrib/org.Hs.eg.db_3.17.0.tar.gz",
         sha256="94714ea22b50d20523becbb665d9b27f2f147d3b1f77bc24ddcd3a245e201a0e",
@@ -53,10 +73,15 @@ class ROrgHsEgDb(RPackage):
     )
 
     depends_on("r@2.7.0:", type=("build", "run"))
-    depends_on("r-annotationdbi@1.37.4:", type=("build", "run"))
+
+    depends_on("r-annotationdbi@1.69:", type=("build", "run"), when="@3.21:")
+    depends_on("r-annotationdbi@1.67:", type=("build", "run"), when="@3.20:")
+    depends_on("r-annotationdbi@1.65.2:", type=("build", "run"), when="@3.19.1:")
+    depends_on("r-annotationdbi@1.63.2:", type=("build", "run"), when="@3.18:")
+    depends_on("r-annotationdbi@1.61:", type=("build", "run"), when="@3.17:")
+    depends_on("r-annotationdbi@1.59.1:", type=("build", "run"), when="@3.16:")
+    depends_on("r-annotationdbi@1.57.1:", type=("build", "run"), when="@3.15:")
+    depends_on("r-annotationdbi@1.55.1:", type=("build", "run"), when="@3.14:")
+    depends_on("r-annotationdbi@1.51.3:", type=("build", "run"), when="@3.12:")
     depends_on("r-annotationdbi@1.43.1:", type=("build", "run"), when="@3.8.2:")
-    depends_on("r-annotationdbi@1.51.3:", type=("build", "run"), when="@3.12.0:")
-    depends_on("r-annotationdbi@1.55.1:", type=("build", "run"), when="@3.14.0:")
-    depends_on("r-annotationdbi@1.57.1:", type=("build", "run"), when="@3.15.0:")
-    depends_on("r-annotationdbi@1.59.1:", type=("build", "run"), when="@3.16.0:")
-    depends_on("r-annotationdbi@1.61.0:", type=("build", "run"), when="@3.17.0:")
+    depends_on("r-annotationdbi@1.37.4:", type=("build", "run"))

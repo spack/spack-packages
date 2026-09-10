@@ -23,7 +23,7 @@ class Cronie(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     def autoreconf(self, spec, prefix):
-        bash = which("bash")
+        bash = which("bash", required=True)
         bash("./autogen.sh")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:

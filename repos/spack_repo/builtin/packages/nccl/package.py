@@ -15,10 +15,20 @@ class Nccl(MakefilePackage, CudaPackage):
 
     homepage = "https://github.com/NVIDIA/nccl"
     url = "https://github.com/NVIDIA/nccl/archive/v2.7.3-1.tar.gz"
+    git = "https://github.com/NVIDIA/nccl.git"
 
-    maintainers("adamjstewart")
+    maintainers("msimberg")
     libraries = ["libnccl.so"]
 
+    version("2.29.7-1", sha256="e67239212c395bfdb398a7519491840d06fdf6b599c299f97c7ed0109777bba1")
+    version("2.29.3-1", sha256="d1dffc5e9dd059985704f98ff3d8b7e6cf62d20c10a181d427a4e3233f8148f1")
+    version("2.29.2-1", sha256="063e20649c4cfa01e789b4dc73514dbb5d73f9518e426823dab53316415e071b")
+    version("2.28.9-1", sha256="f349860336c6b7fb97b22bed9c729142f3531a0e82826c1204d01e44af8b9cb9")
+    version("2.28.7-1", sha256="1d2d1dd53e6c6bb42c200d9b934fa31fd528cbf3c6443581519aa628fcbd618a")
+    version("2.28.3-1", sha256="888b305a79954b67022cfdd91aec515e88c9fed7ddbd2fb96af4ee3295853bb0")
+    version("2.28.1-1", sha256="4945974609e04ab870a1264acdcc01cef08e6217fd42fd1b13d9b247181473d8")
+    version("2.27.7-1", sha256="98e6262bd55932c51e7c8ffc50cc764f019e4b94a8fd6694d839ae828ec8d128")
+    version("2.27.6-1", sha256="be322d358891c48acf34ac23655e7ebdce27bcfa83d67d09483c335d3b5021cc")
     version("2.27.5-1", sha256="e8a8972fc7f7517703510ef23608d41f6484db5331fca37827b4af3f66995344")
     version("2.27.3-1", sha256="97cde99265d0b76004b96e258deea6365df18ff9a292b8588f648e59c3ce1f2e")
     version("2.26.6-1", sha256="2a4f86198510e1f0764c116b33ff70e082240f87d158b2017d7f34c7c3768ac6")
@@ -67,7 +77,17 @@ class Nccl(MakefilePackage, CudaPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("rdma-core")
+    # Make verbs default but packages like aws-ofi-nccl can be used instead which loads
+    # another library to use instead at runtime.
+    variant(
+        "fabrics",
+        values=disjoint_sets(("auto",), ("verbs",))  # supported transports
+        .with_default("verbs")
+        .with_non_feature_values("auto"),
+        description="List of fabrics that are enabled; 'auto' lets nccl determine at runtime",
+    )
+
+    depends_on("rdma-core", when="fabrics=verbs", type="run")
 
     # https://github.com/NVIDIA/nccl/issues/244
     patch("so_reuseport.patch", when="@2.3.7-1:2.4.8-1")
@@ -78,6 +98,14 @@ class Nccl(MakefilePackage, CudaPackage):
         msg="Must specify CUDA compute capabilities of your GPU, see "
         "https://developer.nvidia.com/cuda-gpus",
     )
+    # https://github.com/NVIDIA/nccl/issues/1743
+    conflicts("%gcc@14:", msg="Compilation issue with gcc 14", when="@:2.27.5-1")
+
+    depends_on("cuda@12:13", when="@2.27:")
+    depends_on("cuda@12", when="@2.22:2.26")
+    depends_on("cuda@11:12", when="@2.16:2.21")
+    depends_on("cuda@10:11", when="@2.7:2.15")
+    depends_on("cuda@9:11", when="@:2.6")
 
     @classmethod
     def determine_version(cls, lib):

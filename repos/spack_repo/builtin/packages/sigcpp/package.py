@@ -24,7 +24,8 @@ class Sigcpp(CMakePackage):
 
     variant("doc", default=True, description="Keep man files")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     @run_after("install")
     def drop_doc(self):

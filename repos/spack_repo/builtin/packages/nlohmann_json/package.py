@@ -12,10 +12,11 @@ class NlohmannJson(CMakePackage):
 
     homepage = "https://nlohmann.github.io/json/"
     url = "https://github.com/nlohmann/json/archive/v3.1.2.tar.gz"
-    maintainers("ax3l")
+    maintainers("ax3l", "pearzt")
 
     license("MIT")
 
+    version("3.12.0", sha256="4b92eb0c06d10683f7447ce9406cb97cd4b453be18d7279320f7b2f025c10187")
     version("3.11.3", sha256="0d8ef5af7f9794e3263480193c491549b2ba6cc74bb018906202ada498a79406")
     version("3.11.2", sha256="d69f9deb6a75e2580465c6c4c5111b89c4dc2fa94e3a85fcd2ffcd9a143d9273")
     # v3.11.0 & v3.11.1 omitted; released with significant regressions
@@ -53,6 +54,26 @@ class NlohmannJson(CMakePackage):
     # https://github.com/nlohmann/json/releases/tag/v3.3.0
     conflicts("%gcc@:4.8", when="@:3.2.9")
     conflicts("%intel@:16")
+
+    def patch(self):
+        if self.spec.satisfies("@3.11.0:3.12.0"):
+            # Ensure no TU-local entities for C++20 modules
+            # (https://github.com/nlohmann/json/pull/4764)
+            for f in [
+                "include/nlohmann/detail/input/binary_reader.hpp",
+                "single_include/nlohmann/json.hpp",
+            ]:
+                filter_file(
+                    "static inline bool little_endianness",
+                    "inline bool little_endianness",
+                    f,
+                    string=True,
+                )
+            for f in [
+                "include/nlohmann/detail/string_escape.hpp",
+                "single_include/nlohmann/json.hpp",
+            ]:
+                filter_file("static void unescape", "inline void unescape", f, string=True)
 
     def cmake_args(self):
         return [

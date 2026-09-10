@@ -29,7 +29,10 @@ class Ntl(MakefilePackage):
 
     variant("shared", default=False, description="Build shared library.")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+
+    # need C compiler for compiling libtool when building shared library
+    depends_on("c", type="build", when="+shared")
 
     depends_on("gmp")
 

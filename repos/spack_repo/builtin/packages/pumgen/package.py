@@ -16,6 +16,9 @@ class Pumgen(CMakePackage):
     version("master", branch="master", submodules=True)
 
     version(
+        "1.1.3", tag="v1.1.3", commit="6518bc6269a847b1d947f095eb04ec73af43ede0", submodules=True
+    )
+    version(
         "1.1.1", tag="v1.1.1", commit="ad3d0f22edfdb72713ef7bb42a41251fa7275bd8", submodules=True
     )
     version(

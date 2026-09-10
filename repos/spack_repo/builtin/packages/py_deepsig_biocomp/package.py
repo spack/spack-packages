@@ -31,7 +31,7 @@ class PyDeepsigBiocomp(PythonPackage):
     def create_share_folder(self):
         share_dir = join_path(self.prefix, "share", "deepsig")
         mkdirp(share_dir)
-        mv = which("mv")
+        mv = which("mv", required=True)
         for d in ("models", "tools"):
             mv(d, share_dir)
 

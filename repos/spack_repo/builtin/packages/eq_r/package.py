@@ -15,7 +15,7 @@ class EqR(AutotoolsPackage):
     Installs EQ/R.
     """
 
-    homepage = "http://emews.org"
+    homepage = "https://emews.org"
     url = "https://github.com/emews/EQ-R/archive/1.0.tar.gz"
     git = "https://github.com/emews/EQ-R.git"
 
@@ -48,11 +48,7 @@ class EqR(AutotoolsPackage):
         args = ["--with-tcl=" + self.spec["tcl"].prefix]
         r_location = "{0}/rlib/R".format(self.spec["r"].prefix)
         if not os.path.exists(r_location):
-            rscript = which("Rscript")
-            if rscript is not None:
-                r_location = rscript("-e", "cat(R.home())", output=str)
-            else:
-                msg = "couldn't locate Rscript on your PATH"
-                raise RuntimeError(msg)
+            rscript = which("Rscript", required=True)
+            r_location = rscript("-e", "cat(R.home())", output=str)
         args.append("--with-r={0}".format(r_location))
         return args

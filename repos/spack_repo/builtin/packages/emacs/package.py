@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
-import sys
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.gnu import GNUMirrorPackage
@@ -19,7 +18,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     homepage = "https://www.gnu.org/software/emacs"
     gnu_mirror_path = "emacs/emacs-24.5.tar.gz"
     git = "https://git.savannah.gnu.org/git/emacs.git"
-    list_url = "https://ftpmirror.gnu.org/emacs/"
+
     list_depth = 0
 
     maintainers("alecbcs")
@@ -30,6 +29,8 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     sanity_check_is_dir = ["share/emacs"]
 
     version("master", branch="master")
+    version("31.1", sha256="3cad7fd1466c0e24867df8d2609da3ac75abc90d7c4c0175e410e9be46d4092a")
+    version("30.2", sha256="1d79a4ba4d6596f302a7146843fe59cf5caec798190bcc07c907e7ba244b076d")
     version("30.1", sha256="54404782ea5de37e8fcc4391fa9d4a41359a4ba9689b541f6bc97dd1ac283f6c")
     version("29.4", sha256="1adb1b9a2c6cdb316609b3e86b0ba1ceb523f8de540cfdda2aec95b6a5343abf")
     version("29.3", sha256="2de8df5cab8ac697c69a1c46690772b0cf58fe7529f1d1999582c67d927d22e4")
@@ -60,8 +61,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         description="X11 toolkit when gui=x11 (gtk, athena)",
         when="gui=x11",
     )
-    variant("json", default=False, when="@27:", description="Build with json support")
+    variant("json", default=False, when="@27:29", description="Build with json support")
     variant("native", default=False, when="@28:", description="Enable native compilation of elisp")
+    variant("sqlite", default=False, when="@29.1:", description="Build with sqlite3 support")
     variant("tls", default=True, description="Build with gnutls support")
     variant("treesitter", default=False, when="@29:", description="Build with tree-sitter support")
 
@@ -79,19 +81,23 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Required dependencies
     depends_on("ncurses")
-    depends_on("pcre")
     depends_on("zlib-api")
     depends_on("libxml2")
-    depends_on("jpeg")
+    depends_on("gmp", when="@27:")
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
-    depends_on("tree-sitter", when="+treesitter")
-    depends_on("gcc@11: +strip languages=jit", when="+native")
+    depends_on("gcc@11: languages=jit", when="+native")
     depends_on("jansson@2.7:", when="+json")
+    depends_on("sqlite@3", when="+sqlite")
+
+    with when("+treesitter"):
+        depends_on("tree-sitter")
+        depends_on("tree-sitter@:0.25", when="@:30.2")
 
     # GUI dependencies
     with when("gui=x11"):
+        depends_on("jpeg")
         depends_on("libtiff")
         depends_on("libpng")
         depends_on("libxpm")
@@ -106,8 +112,28 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     conflicts("gui=x11", when="platform=darwin", msg="Use gui=cocoa for macOS GUI support")
     conflicts("@:26.3", when="platform=darwin os=catalina")
 
+    # Xcode 26 adds support for `posix_spawn_file_actions_addchdir`, but older
+    # macOS kernels (for example, macOS 15) do not implement it. The newer CLI
+    # tools can therefore appear to support the feature even though the kernel
+    # lacks the required support, causing Emacs to segfault during compilation.
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sequoia")
+    patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
+
     def configure_args(self):
-        args = []
+        args = [
+            "--without-dbus",
+            "--without-selinux",
+            "--without-libsystemd",
+            "--without-gpm",
+            "--without-lcms2",
+            "--without-webp",
+            "--without-rsvg",
+            "--without-gsettings",
+            "--without-xaw3d",
+        ]
+
+        if self.spec.satisfies("@27:"):
+            args.append("--with-libgmp")
 
         gui = self.spec.variants["gui"].value
         if gui == "x11":
@@ -118,12 +144,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
             args.append("--disable-ns-self-contained")
         else:
             args.append("--without-x")
-            if sys.platform == "darwin":
+            if self.spec.satisfies("platform=darwin"):
                 args.append("--without-ns")
 
         args.extend(self.with_or_without("native-compilation", variant="native"))
         args.extend(self.with_or_without("gnutls", variant="tls"))
         args.extend(self.with_or_without("tree-sitter", variant="treesitter"))
+        args.extend(self.with_or_without("sqlite3", variant="sqlite"))
         args.extend(self.with_or_without("json"))
 
         return args
@@ -141,8 +168,11 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         mkdir(apps_dir)
         move("nextstep/Emacs.app", apps_dir)
 
+    @when("@:30")
     def test_ctags(self):
-        """check ctags version"""
+        """check ctags version when Emacs <= v30. Emacs's ctags program
+        was removed in v31.1. Upstream recommends Universal Ctags
+        or `etags --ctags` as replacements."""
         self.run_version_check("ctags")
 
     def test_ebrowse(self):
@@ -163,10 +193,13 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     def run_version_check(self, bin):
         """Runs and checks output of the installed binary."""
+        if self.spec.version.isdevelop():
+            raise SkipTest("version check not supported for development builds")
+
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
             raise SkipTest(f"{exe_path} is not installed")
 
-        exe = which(exe_path)
+        exe = which(exe_path, required=True)
         out = exe("--version", output=str.split, error=str.split)
         assert str(self.spec.version) in out

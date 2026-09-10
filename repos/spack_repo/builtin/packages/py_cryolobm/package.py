@@ -16,6 +16,7 @@ class PyCryolobm(PythonPackage):
 
     license("MIT")
 
+    version("1.6.1", sha256="6beb622861d9cc4eb841758993944242e73e46c6cb22851404a7a7c144352913")
     version("1.3.7", sha256="e3505c95cddac3a344d1c6eddf1a9ff576a1384f9194b580287c76367912bedc")
 
     depends_on("python@3.4.0:")

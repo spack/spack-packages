@@ -41,6 +41,8 @@ class PyFlitCore(PythonPackage):
         depends_on("python@3.6:", when="@3.4:")
         depends_on("python@3.4:", when="@3.0:")
         depends_on("python@2.7,3.4:", when="@2.3:")
+        # https://github.com/pypa/flit/pull/684
+        depends_on("python@:3.13", when="@:3.9")
 
     # flit_core/build_thyself.py
     depends_on("py-tomli", when="@3.4:3.5", type="run")

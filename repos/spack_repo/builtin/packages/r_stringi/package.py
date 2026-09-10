@@ -23,6 +23,7 @@ class RStringi(RPackage):
 
     license("custom")
 
+    version("1.8.7", sha256="0526decdcd41b7c42278aca96945394c2cb66ba6fdd47fd917b5d3d38ed5c8c6")
     version("1.8.4", sha256="c219f8f64d1a2bfd4ca9528452d44d30db1899af14f4b9ef248412443bc669f3")
     version("1.7.12", sha256="efe8ac2900001f986a75db5641fbb24587a6d23de274a6a85c39dfa58921e009")
     version("1.7.8", sha256="538918b1cd6ed1d8a2dd5ab146ba800a088e99f93c52dcd82615b6e127478b1c")
@@ -39,9 +40,12 @@ class RStringi(RPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("r@2.14:", type=("build", "run"))
-    depends_on("r@3.1:", type=("build", "run"), when="@1.6.1:")
-    depends_on("r@3.4:", type=("build", "run"), when="@1.8.1:")
-    depends_on("icu4c@52:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.4:", type=("build", "run"), when="@1.8.1:")
+        depends_on("r@3.1:", type=("build", "run"), when="@1.6.1:")
+        depends_on("r@2.14:", type=("build", "run"))
+
+    depends_on("icu4c@61:", when="@1.8:")
     depends_on("icu4c@55:", when="@1.5.3:")
-    # since version 1.6.1 there is also a SystemRequirement on C++11
+    depends_on("icu4c@52:")
+    # for version 1.6.1 till 1.7.12 there is also a SystemRequirement on C++11

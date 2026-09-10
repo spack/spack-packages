@@ -19,6 +19,7 @@ class Vcftools(AutotoolsPackage):
 
     license("LGPL-3.0-only")
 
+    version("0.1.17", sha256="b9e0e1c3e86533178edb35e02c6c4de9764324ea0973bebfbb747018c2d2a42c")
     version("0.1.16", sha256="dbfc774383c106b85043daa2c42568816aa6a7b4e6abc965eeea6c47dde914e3")
     # this is "a pre-release"
     # version('0.1.15', sha256='31e47afd5be679d89ece811a227525925b6907cce4af2c86f10f465e080383e3')
@@ -85,4 +86,7 @@ class Vcftools(AutotoolsPackage):
             filter_file(match, substitute, *files, **kwargs)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.prepend_path("PERL5LIB", self.prefix.lib)
+        if self.spec.satisfies("@0.1.16:"):
+            env.prepend_path("PERL5LIB", f"{self.prefix.lib}/site_perl")
+        else:
+            env.prepend_path("PERL5LIB", self.prefix.lib)

@@ -53,7 +53,7 @@ class Cloverleaf(MakefilePackage):
     def patch_for_reference_module(self):
         if self.spec.satisfies("@master %aocc"):
             fp = join_path(self.package_dir, "aocc_support.patch")
-            which("patch")("-s", "-p0", "-i", "{0}".format(fp), "-d", ".")
+            which("patch", required=True)("-s", "-p0", "-i", "{0}".format(fp), "-d", ".")
 
     @property
     def type_of_build(self):

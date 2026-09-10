@@ -31,7 +31,7 @@ class Dramsim3(Package):
     depends_on("gmake", type="build")
 
     def install(self, spec, prefix):
-        cmake = which("cmake")
+        cmake = which("cmake", required=True)
         cmake(".")
 
         make()

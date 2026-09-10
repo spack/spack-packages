@@ -19,6 +19,8 @@ class PyHumanize(PythonPackage):
 
     license("MIT")
 
+    version("4.15.0", sha256="1dd098483eb1c7ee8e32eb2e99ad1910baefa4b75c3aff3a82f4d78688993b10")
+    version("4.13.0", sha256="78f79e68f76f0b04d711c4e55d32bebef5be387148862cb1ef83d2b58e7935a0")
     version("4.9.0", sha256="582a265c931c683a7e9b8ed9559089dea7edcf6cc95be39a3cbc2c5d5ac2bcfa")
     version("4.8.0", sha256="9783373bf1eec713a770ecaa7c2d7a7902c98398009dfa3d8a2df91eec9311e8")
     version("4.6.0", sha256="5f1f22bc65911eb1a6ffe7659bd6598e33dcfeeb904eb16ee1e705a09bf75916")
@@ -31,8 +33,11 @@ class PyHumanize(PythonPackage):
     version("1.0.0", sha256="38ace9b66bcaeb7f8186b9dbf0b3448e00148e5b4fbaf726f96c789e52c3e741")
     version("0.5.1", sha256="a43f57115831ac7c70de098e6ac46ac13be00d69abbf60bdcac251344785bb19")
 
+    depends_on("python@3.10:", when="@4.15:")
+    depends_on("python@3.9:", when="@4.11:")
     depends_on("python@3.8:", when="@4.6:")
     depends_on("py-hatch-vcs", when="@4.6:", type=("build", "run"))
+    depends_on("py-hatchling@1.27:", when="@4.12:", type=("build", "run"))
     depends_on("py-hatchling", when="@4.6:", type=("build", "run"))
 
     with when("@:4.4"):

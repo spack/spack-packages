@@ -39,7 +39,9 @@ class Amrvis(MakefilePackage):
     variant("debug", default=False, description="Enable debugging features")
     variant("profiling", default=False, description="Enable AMReX profiling features")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("c", type="build")
+    depends_on("fortran", type="build", when="+profiling")
 
     depends_on("gmake", type="build")
     depends_on("mpi", when="+mpi")

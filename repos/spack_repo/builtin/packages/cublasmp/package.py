@@ -48,7 +48,9 @@ class Cublasmp(Package, CudaPackage):
     depends_on("nccl@2.18.5:")
 
     for cuda_arch in CudaPackage.cuda_arch_values:
-        depends_on(f"nccl cuda_arch={cuda_arch}", when=f"cuda_arch={cuda_arch}")
+        with when(f"cuda_arch={cuda_arch}"):
+            depends_on(f"nvshmem cuda_arch={cuda_arch}")
+            depends_on(f"nccl cuda_arch={cuda_arch}")
 
     def install(self, spec, prefix):
         install_tree(".", prefix)

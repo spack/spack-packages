@@ -17,6 +17,9 @@ class PySip(PythonPackage):
 
     license("GPL-2.0-or-later")
 
+    version("6.15.3", sha256="bb2516983f9f716d321e5157c00d0de0c12422eba73b8f43a44610a0f6622438")
+    version("6.14.0", sha256="20c086aba387707b34cf47fd96d1a978d01e2b95807e86f8aaa960081f163b28")
+    version("6.12.0", sha256="083ced94f85315493231119a63970b2ba42b1d38b38e730a70e02a99191a89c6")
     version("6.8.5", sha256="5dddd5966e9875d89ecde9d3e6ac63225f9972e4d25c09e20fa22f1819409c70")
     version("6.7.9", sha256="35d51fc10f599d3696abb50f29d068ad04763df7b77808c76b74597660f99b17")
     version("6.6.2", sha256="0e3efac1c5dfd8e525ae57140927df26993e13f58b89d1577c314f4105bfd90d")
@@ -39,25 +42,33 @@ class PySip(PythonPackage):
         multi=False,
     )
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("gmake")
 
-    depends_on("py-ply", type=("build", "run"), when="@6.6:")
+        depends_on("py-setuptools-scm@8:", when="@6.8.4:")
 
-    with when("@5:"):
-        depends_on("python", type=("build", "link", "run"))
-        depends_on("py-packaging", type=("build", "run"))
-        depends_on("py-setuptools@64:", type=("build", "run"), when="@6.8.4:")
-        depends_on("py-setuptools@30.3:", type=("build", "run"), when="@:6.8.3")
-        depends_on("py-setuptools-scm@8:", type="build", when="@6.8.4:")
-        depends_on("py-tomli", type=("build", "run"), when="@6.7: ^python@:3.10")
-        depends_on("py-toml", type=("build", "run"), when="@:6.6")
+        # Historical dependencies
+        depends_on("flex", when="@:4")
+        depends_on("bison", when="@:4")
 
-    with when("@:4"):
+    with default_args(type=("build", "link", "run")):
+        depends_on("python@3.10:", when="@6.15:")
+        depends_on("python", when="@5:")
         # Requires distutils
-        depends_on("python@:3.11", type=("build", "link", "run"))
-        depends_on("flex", type="build")
-        depends_on("bison", type="build")
-    depends_on("gmake", type="build")
+        depends_on("python@:3.11", when="@:4")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-setuptools@77:", when="@6.11:")
+        depends_on("py-setuptools@64:", when="@6.8.4:")
+        depends_on("py-setuptools@30.3:", when="@5:6.8.3")
+        depends_on("py-packaging@24.2:", when="@6.11:")
+        depends_on("py-packaging", when="@5:")
+        depends_on("py-tomli", when="@6.7: ^python@:3.10")
+        depends_on("py-toml", when="@5:6.6")
+
+        # Historical dependencies
+        depends_on("py-ply", when="@6.6:6.7")
 
     def url_for_version(self, version):
         if version < Version("5"):

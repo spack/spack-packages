@@ -13,30 +13,9 @@ from spack.package import *
 class Xios(Package):
     """XML-IO-SERVER library for IO management of climate models."""
 
-    homepage = "https://forge.ipsl.jussieu.fr/ioserver/wiki"
-    version(
-        "2.6",
-        revision=2714,
-        svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.6",
-    )
-    version(
-        "2.5",
-        revision=1860,
-        svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.5",
-        deprecated=True,
-    )
-    version(
-        "2.0",
-        revision=1627,
-        svn="https://forge.ipsl.jussieu.fr/ioserver/svn/XIOS2/branches/xios-2.0",
-        deprecated=True,
-    )
-    version(
-        "1.0",
-        revision=910,
-        svn="http://forge.ipsl.jussieu.fr/ioserver/svn/XIOS/branchs/xios-1.0",
-        deprecated=True,
-    )
+    homepage = "https://ipsl.pages.in2p3.fr/projets/xios-projects/xios"
+    git = "https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git"
+    version("2.6", branch="xios-2.6.x")
 
     variant(
         "mode",
@@ -46,10 +25,6 @@ class Xios(Package):
     )
     # NOTE: oasis coupler could be supported with a variant
 
-    # Use spack versions of blitz and netcdf-c for compatibility
-    # with recent compilers and optimised platform libraries:
-    patch("bld_extern_1.0.patch", when="@:1.0")
-
     # Workaround bug #17782 in llvm, where reading a double
     # followed by a character is broken (e.g. duration '1d')
     # https://bugs.llvm.org/show_bug.cgi?id=17782
@@ -57,7 +32,7 @@ class Xios(Package):
     patch("llvm_bug_17782.patch", when="@1.1: %apple-clang")
     patch("llvm_bug_17782.patch", when="@1.1: %clang")
 
-    patch("earcut_missing_include_2.6.patch", when="@2.6:")
+    patch("earcut_missing_include_2.6.patch", when="@2.6")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -169,9 +144,7 @@ OASIS_LIB=""
 %CPP            {CC} -E
 %FPP            {CC} -E -P -x c
 %MAKE           make
-""".format(
-                **param
-            )
+""".format(**param)
         elif spec.satisfies("%cce"):
             # In the CC compiler prior to cce/8.3.7,
             # optimisation must be reduced to avoid a bug,
@@ -203,9 +176,7 @@ OASIS_LIB=""
 %CPP            cpp
 %FPP            cpp -P -CC
 %MAKE           gmake
-""".format(
-                **param
-            )
+""".format(**param)
         else:
             raise InstallError("Unsupported compiler.")
 

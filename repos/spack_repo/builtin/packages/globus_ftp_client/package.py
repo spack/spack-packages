@@ -24,6 +24,7 @@ class GlobusFtpClient(AutotoolsPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("9.9", sha256="3ac4c2f9a50bed8e17b590c37363110c7b34bb44bb4dd356dca7cc6273c87db6")
     version("9.8", sha256="aa83229f70352e106fc29f28cef4fc8fdab37c794603e7b425f193d947e5926c")
 
     depends_on("c", type="build")

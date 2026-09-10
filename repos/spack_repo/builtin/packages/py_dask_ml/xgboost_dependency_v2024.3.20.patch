@@ -1,0 +1,10 @@
+diff --git a/dask_ml/xgboost.py b/dask_ml/xgboost.py
+index d24009a..0c1f911 100644
+--- a/dask_ml/xgboost.py
++++ b/dask_ml/xgboost.py
+@@ -5,4 +5,4 @@ will be setup in distributed mode alongside your existing
+ ``dask.distributed`` cluster.
+ """
+ 
+-from dask_xgboost import *  # noqa
++from xgboost import *  # noqa

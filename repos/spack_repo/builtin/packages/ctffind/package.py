@@ -26,7 +26,8 @@ class Ctffind(AutotoolsPackage):
         extension="tar.gz",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     def url_for_version(self, version):
         url = "https://grigoriefflab.umassmed.edu/system/tdf?path=ctffind-{0}.tar.gz&file=1&type=node&id=26"

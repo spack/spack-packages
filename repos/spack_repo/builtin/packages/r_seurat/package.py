@@ -33,10 +33,15 @@ class RSeurat(RPackage):
     version("2.1.0", sha256="7d20d231b979a4aa63cd7dae7e725405212e8975889f12b8d779c6c896c10ac3")
     version("2.0.1", sha256="6aa33aa3afb29a8be364ab083c7071cfbc56ad042a019bcf6f939e0c8c7744f0")
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
     depends_on("r@3.2.0:", type=("build", "run"))
     depends_on("r@3.4.0:", type=("build", "run"), when="@2.3.1:")
     depends_on("r@3.6.0:", type=("build", "run"), when="@3.2.3:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@4.1.0:")
+    depends_on("r+java", type=("build", "run"), when="@:2.3.0")
+    depends_on("java", when="@:2.3.0")
+
     depends_on("r-cluster", type=("build", "run"), when="@2.3.0:")
     depends_on("r-cowplot", type=("build", "run"))
     depends_on("r-fastdummies", type=("build", "run"), when="@5.0.0:")
@@ -138,5 +143,4 @@ class RSeurat(RPackage):
     depends_on("r-hdf5r", type=("build", "run"), when="@2.3.2:2.3.4")
     depends_on("r-rsvd", type=("build", "run"), when="@3.0.0:3.2.3")
     depends_on("r-spatstat@:1.64-1", type=("build", "run"), when="@3.2.3")
-    depends_on("java", when="@:2.3.0")
     depends_on("r-spatstat-core", type=("build", "run"), when="@4.1.0:4.2.0")

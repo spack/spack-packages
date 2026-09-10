@@ -13,6 +13,7 @@ class PyTqdm(PythonPackage):
     homepage = "https://github.com/tqdm/tqdm"
     pypi = "tqdm/tqdm-4.45.0.tar.gz"
 
+    version("4.67.3", sha256="7d825f03f89244ef73f1d4ce193cb1774a8179fd96f31d7e1dcde62092b960bb")
     version("4.67.1", sha256="f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2")
     version("4.67.0", sha256="fe5a6f95e6fe0b9755e9469b77b9c3cf850048224ecaa8293d7d2d31f97d869a")
     version("4.66.6", sha256="4bdd694238bef1485ce839d67967ab50af8f9272aab687c0d7702a01da0be090")

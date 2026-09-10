@@ -18,6 +18,7 @@ class PyFlaskPaginate(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2024.4.12", sha256="2de04606b061736f0fc8fbe73d9d4d6fc03664638eca70a57728b03b3e2c9577")
     version("2022.1.8", sha256="a32996ec07ca004c45b768b0d50829728ab8f3986c0650ef538e42852c7aeba2")
 
     # From setup.py:

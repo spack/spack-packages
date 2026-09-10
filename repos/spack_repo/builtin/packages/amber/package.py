@@ -32,17 +32,11 @@ class Amber(Package, CudaPackage):
 
     version("20", sha256="a4c53639441c8cc85adee397933d07856cc4a723c82c6bea585cd76c197ead75")
     version("18", sha256="2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277")
-    version(
-        "16",
-        sha256="3b7ef281fd3c46282a51b6a6deed9ed174a1f6d468002649d84bfc8a2577ae5d",
-        deprecated=True,
-    )
 
     for ver, ambertools_ver, ambertools_checksum in (
         # (version amber, version ambertools, sha256sum)
         ("20", "21", "f55fa930598d5a8e9749e8a22d1f25cab7fcf911d98570e35365dd7f262aaafd"),
         ("18", "19", "0c86937904854b64e4831e047851f504ec45b42e593db4ded92c1bee5973e699"),
-        ("16", "16", "7b876afe566e9dd7eb6a5aa952a955649044360f15c1f5d4d91ba7f41f3105fa"),
     ):
         resource(
             when="@{0}".format(ver),
@@ -83,21 +77,6 @@ class Amber(Package, CudaPackage):
         ("18", "15", "4deb3df329c05729561dcc7310e49059eaddc504c4210ad31fad11dc70f61742"),
         ("18", "16", "cf02f9b949127363bad1aa700ab662a3c7cf9ce0e2e4750e066d2204b9500a99"),
         ("18", "17", "480300f949e0dd6402051810a9714adb388cf96e454a55346c76954cdd69413d"),
-        ("16", "1.txt", "c7ef2303bb35131a48e2256c5a3c7b391efa73e2acf757d7e39760efb6320ed4"),
-        ("16", "2", "a4db183f7c337a67f5d6b5015e3ae0af0d0edaa56894f0e9e3469c99708fed1c"),
-        ("16", "3", "5b279531c42445c6f58281dd94588460218d2258ec9013c8447f3e2b7b81bf02"),
-        ("16", "4", "035bddd63bc9d5fd6de26beab31887e5c14c3caa4958d2424d72f3c49832bd42"),
-        ("16", "5", "02d8a1fcb6baa466de4e3683afa48076394acd805f490fbbe50ab19040675136"),
-        ("16", "6", "69a3e64d75255d9179c98a2b3a63fe76d5be08c9fc41f27ac197663c97915113"),
-        ("16", "7", "0d674c907758e90a168345e6b35b7a0de79c2ead390ab372465a354fcab67d17"),
-        ("16", "8", "d722c0db46af905a5bd13b60e3130c4ddfb0c9da86df0a33253e5f8d53068946"),
-        ("16", "9", "b563e744fbc50c1240d23df369750879df2cec69fba933704b97a73a66d9c4f1"),
-        ("16", "10", "99affc65740080b7a1ab87c5c9119bf5be7cf47b2b2d8fc13407d35bd2ba6238"),
-        ("16", "11", "86b89dbcae80ef48720fd3c7da88cffbdabfd4021af5a827339b56a33ddae27a"),
-        ("16", "12", "c8d61d1efbd44086f88d74ad9e07dfdc3737dc7053c7d2503131ba0918973a03"),
-        ("16", "13", "5ce28e6e0118a4780ad72fc096e617c874cde7d140e15f87451babb25aaf2d8f"),
-        ("16", "14", "93703e734e76da30a5e050189a66d5a4d6bec5885752503c4c798e2f44049080"),
-        ("16", "15", "a156ec246cd06688043cefde24de0d715fd46b08f5c0235015c2c5c3c6e37488"),
     ):
         patch_url_str = "https://ambermd.org/bugfixes/{0}.0/update.{1}"
         patch(patch_url_str.format(ver, num), sha256=checksum, level=0, when="@{0}".format(ver))
@@ -139,7 +118,6 @@ class Amber(Package, CudaPackage):
     # /AmberTools/src/configure2:1329
     depends_on("cuda@:11.1", when="@20:+cuda")  # when='AmberTools@21:'
     depends_on("cuda@:10.2.89", when="@18+cuda")
-    depends_on("cuda@7.5.18", when="@:16+cuda")
     depends_on("gmake", type="build")
 
     # conflicts

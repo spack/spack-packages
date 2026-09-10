@@ -9,7 +9,7 @@ from spack.package import *
 class RustClap(CargoPackage):
     """A full featured, fast Command Line Argument Parser for Rust"""
 
-    homepage = "http://docs.rs/clap"
+    homepage = "https://docs.rs/clap"
     url = "https://github.com/clap-rs/clap/archive/refs/tags/v4.5.10.tar.gz"
 
     license("APACHE-2.0 OR MIT", checked_by="teaguesterling")

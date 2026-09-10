@@ -18,6 +18,7 @@ class PythonVenv(Package):
 
     tags = ["build-tools"]
 
+    license("0BSD")
     maintainers("haampie")
 
     version("1.0")

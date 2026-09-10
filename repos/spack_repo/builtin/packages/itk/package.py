@@ -25,6 +25,10 @@ class Itk(CMakePackage):
 
     license("Apache-2.0")
 
+    version("5.4.4", sha256="d2092cd018a7b9d88e8c3dda04acb7f9345ab50619b79800688c7bc3afcca82a")
+    version("5.4.3", sha256="dd3f286716ee291221407a67539f2197c184bd80d4a8f53de1fb7d19351c7eca")
+    version("5.4.2", sha256="906e60577c95e0bbf51f661af894b5b16663606e39565c4854c803bc98b13e7d")
+    version("5.4.0", sha256="cdd6ce44f15c1246c3c7a439bbbb431dc09706d6465d79fafb6fb14a02517e3b")
     version("5.3.0", sha256="57a4471133dc8f76bde3d6eb45285c440bd40d113428884a1487472b7b71e383")
     version("5.3rc02", sha256="163aaf4a6cecd5b70ff718c1a986c746581797212fd1b629fa81f12ae4756d14")
     version(
@@ -62,6 +66,7 @@ class Itk(CMakePackage):
     depends_on("perl", type="build")
 
     depends_on("eigen")
+    depends_on("eigen@3.3:3", when="@:5")
     depends_on("expat")
     depends_on("fftw-api")
     depends_on("hdf5+cxx+hl")

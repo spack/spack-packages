@@ -1,0 +1,5 @@
+--- a/meson.build
++++ b/meson.build
+@@ -168 +168 @@
+-if cc.get_id() != 'clang-cl'
++if cc.get_id() != 'clang-cl' and ff.get_id() != 'nagfor'

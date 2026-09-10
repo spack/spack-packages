@@ -15,6 +15,7 @@ class PyEeglabio(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.1.3", sha256="0dbb48ba5a5bc1ebe156acf1b1cc793575928f9a6f73457a05eef567967f9bf3")
     version(
         "0.0.2.post4", sha256="64ccaca0ec1b0aa78ca6569ed3581ea601dec51ae6a3b2971e9dc82f54d95f39"
     )

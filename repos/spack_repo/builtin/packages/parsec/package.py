@@ -63,6 +63,9 @@ class Parsec(CMakePackage, CudaPackage):
         "+debug_verbose build_type=RelWithDebInfo",
         msg="You need to set build_type=Debug for +debug_verbose",
     )
+
+    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+    conflicts("^cuda@13:", when="+cuda")
     # TODO: Spack does not handle cross-compilation atm
     # variant('xcompile', default=False, description='Cross compile')
 
@@ -125,7 +128,7 @@ class Parsec(CMakePackage, CudaPackage):
 
             for name in ["dtd_test_allreduce", "write_check"]:
                 with test_part(self, f"test_contrib_{name}", f"run {name}"):
-                    exe = which(name)
+                    exe = which(name, required=True)
                     exe()
 
     @run_after("install")

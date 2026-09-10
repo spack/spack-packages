@@ -18,6 +18,7 @@ class RMatrixstats(RPackage):
 
     cran = "matrixStats"
 
+    version("1.5.0", sha256="12996c5f3e6fc202a43e1087f16a71b7fa93d7e908f512542c7ee89cf95dcc15")
     version("1.3.0", sha256="413ee607d95b243c514b4a7c4944c2caea1fb264d27c96ff547c3939f893245a")
     version("0.63.0", sha256="c000b60421742eb035ff4ceedd3e588a79e4b28985484f0c81361e5a6c351f5f")
     version("0.62.0", sha256="85e2016b6dd20cbfe32d38a2ef2578ae80e688d9a3590aefd1d2f4bf4bd44eca")
@@ -28,4 +29,9 @@ class RMatrixstats(RPackage):
     version("0.54.0", sha256="8f0db4e181300a208b9aedbebfdf522a2626e6675d2662656efb8ba71b05a06f")
     version("0.52.2", sha256="39da6aa6b109f89a141dab8913d981abc4fbd3f8be9e206f92e382cc5270d2a5")
 
+    conflicts("r@4.5.0:", when="@:1.3.0")
+
+    depends_on("c", type="build")
+
     depends_on("r@2.12.0:", type=("build", "run"))
+    depends_on("r@3.4.0:", type=("build", "run"), when="@1.5.0:")

@@ -52,8 +52,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
 
     homepage = "https://upcxx.lbl.gov"
     maintainers("bonachea")
-    url = "https://bitbucket.org/berkeleylab/upcxx/downloads/upcxx-2021.3.0.tar.gz"
-    git = "https://bitbucket.org/berkeleylab/upcxx.git"
+    url = "https://github.com/BerkeleyLab/upcxx/releases/download/upcxx-2025.10.0/upcxx-2025.10.0.tar.gz"
+    git = "https://github.com/BerkeleyLab/upcxx.git"
 
     tags = ["e4s", "ecp"]
 
@@ -62,48 +62,25 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     version("develop", branch="develop")
     version("master", branch="master")
 
+    version("2025.10.0", sha256="bb43348d351777b7462e6bbadda358b426cd150e138ac08ee74649b91bba32ec")
     version("2023.9.0", sha256="6bad2976b4bfc0263b497daa967f448159c3c2259827c8376bc96c9bf9171a83")
-    version("2023.3.0", sha256="382af3c093decdb51f0533e19efb4cc7536b6617067b2dd89431e323704a1009")
-    version("2022.9.0", sha256="dbf15fd9ba38bfe2491f556b55640343d6303048a117c4e84877ceddb64e4c7c")
-    version("2022.3.0", sha256="72bccfc9dfab5c2351ee964232b3754957ecfdbe6b4de640e1b1387d45019496")
-    version(
-        "2021.9.0",
-        deprecated=True,
-        sha256="9299e17602bcc8c05542cdc339897a9c2dba5b5c3838d6ef2df7a02250f42177",
-    )
-    version(
-        "2021.3.0",
-        deprecated=True,
-        sha256="3433714cd4162ffd8aad9a727c12dbf1c207b7d6664879fc41259a4b351595b7",
-    )
-    version(
-        "2020.11.0",
-        deprecated=True,
-        sha256="f6f212760a485a9f346ca11bb4751e7095bbe748b8e5b2389ff9238e9e321317",
-        url="https://bitbucket.org/berkeleylab/upcxx/downloads/upcxx-2020.11.0-memory_kinds_prototype.tar.gz",
-    )
-    version(
-        "2020.10.0",
-        deprecated=True,
-        sha256="623e074b512bf8cad770a04040272e1cc660d2749760398b311f9bcc9d381a37",
-    )
-    version(
-        "2020.3.2",
-        deprecated=True,
-        sha256="978adc315d21089c739d5efda764b77fc9a2a7c5860f169fe5cd2ca1d840620f",
-    )
-    version(
-        "2020.3.0",
-        deprecated=True,
-        sha256="01be35bef4c0cfd24e9b3d50c88866521b9cac3ad4cbb5b1fc97aea55078810f",
-    )
+    with default_args(deprecated=True):
+        version(
+            "2023.3.0", sha256="382af3c093decdb51f0533e19efb4cc7536b6617067b2dd89431e323704a1009"
+        )
+        version(
+            "2022.9.0", sha256="dbf15fd9ba38bfe2491f556b55640343d6303048a117c4e84877ceddb64e4c7c"
+        )
+        version(
+            "2022.3.0", sha256="72bccfc9dfab5c2351ee964232b3754957ecfdbe6b4de640e1b1387d45019496"
+        )
     # Do NOT add older versions here.
     # UPC++ releases over 2 years old are not supported.
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("gmake", type="build")
 
-    patch("fix_configure_ldflags.patch", when="@2021.9.0:master")
+    patch("fix_configure_ldflags.patch", when="@:2023.9.0")
 
     variant("mpi", default=False, description="Enables MPI-based spawners and mpi-conduit")
 
@@ -112,27 +89,18 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
         default=False,
         description="Enables UPC++ support for the CUDA memory kind on NVIDIA GPUs.\n"
         + "NOTE: Requires CUDA Driver library be present on the build system",
-        when="@2019.3.0:",
-    )
-    conflicts(
-        "+cuda", when="@:2019.2", msg="UPC++ version 2019.3.0 or newer required for CUDA support"
     )
 
     variant(
         "rocm",
         default=False,
         description="Enables UPC++ support for the ROCm/HIP memory kind on AMD GPUs",
-        when="@2022.3.0:",
-    )
-    conflicts(
-        "+rocm", when="@:2022.2", msg="UPC++ version 2022.3.0 or newer required for ROCm support"
     )
 
     variant(
         "level_zero",
         default=False,
         description="Enables UPC++ support for the Level Zero memory kind on Intel GPUs",
-        when="@2023.3.0:",
     )
 
     variant(
@@ -145,6 +113,9 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
         "cross=none",
         when=is_CrayXC(),
         msg='cross=none is unacceptable on Cray XC. Please specify an appropriate "cross" value',
+    )
+    conflicts(
+        "@2025.10.0:", when=is_CrayXC(), msg="Cray XC support was removed in upcxx@2025.10.0"
     )
 
     # UPC++ always relies on GASNet-EX.
@@ -184,8 +155,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     ) -> None:
         self.set_variables(env)
 
-    def setup_dependent_package(self, module, dep_spec):
-        dep_spec.upcxx = self.prefix.bin.upcxx
+    def setup_dependent_package(self, module, dependent_spec):
+        dependent_spec.upcxx = self.prefix.bin.upcxx
 
     def install(self, spec, prefix):
         env = os.environ
@@ -213,9 +184,6 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
             # the C/C++ compilers must work post-install
             real_cc = join_path(env["CRAYPE_DIR"], "bin", "cc")
             real_cxx = join_path(env["CRAYPE_DIR"], "bin", "CC")
-            # workaround a bug in the UPC++ installer: (issue #346)
-            # this can be removed once the floor version reaches 2020.10.0
-            env["GASNET_CONFIGURE_ARGS"] += " --with-cc=" + real_cc + " --with-cxx=" + real_cxx
             if "+mpi" in spec:
                 env["GASNET_CONFIGURE_ARGS"] += " --with-mpicc=" + real_cc
         else:
@@ -236,17 +204,12 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
                 provider = "verbs;ofi_rxm"
 
             # Append the recommended options for Cray Shasta
-            # This list can be pruned once the floor version reaches 2022.9.0
-            options.append("--with-pmi-version=cray")
             if which("srun"):
                 options.append("--with-pmi-runcmd=srun -n %N -- %C")
             elif which("aprun"):
                 options.append("--with-pmi-runcmd=aprun -n %N %C")
-            options.append("--disable-ibv")
-            options.append("--enable-ofi")
             options.append("--with-default-network=ofi")
             options.append("--with-ofi-provider=" + provider)
-            env["GASNET_CONFIGURE_ARGS"] = "--with-ofi-spawner=pmi " + env["GASNET_CONFIGURE_ARGS"]
 
         if "+gasnet" in spec:
             options.append("--with-gasnet=" + spec["gasnet"].prefix.src)
@@ -303,7 +266,7 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
     def test_upcxx_install(self):
         """checking UPC++ compile+link for all installed backends"""
         test_install = join_path(self.prefix.bin, "test-upcxx-install.sh")
-        test_upcxx_install = which(test_install)
+        test_upcxx_install = which(test_install, required=True)
         out = test_upcxx_install(output=str.split, error=str.split)
         assert "SUCCESS" in out
 

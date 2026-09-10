@@ -19,30 +19,21 @@ class DlaFuture(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause")
 
-    version("0.10.0", sha256="cdee4e4fe5c5c08c5a7a5a3848175daa62884793988b4284c40df81cc2339c74")
-    version("0.9.0", sha256="0297afb46285745413fd4536d8d7fe123e3045d4899cc91eed501bcd4b588ea6")
-    version("0.8.0", sha256="4c30c33ee22417514d839a75d99ae4c24860078fb595ee24ce4ebf45fbce5e69")
-    version("0.7.3", sha256="8c829b72f4ea9c924abdb6fe2ac7489304be4056ab76b8eba226c33ce7b7dc0e")
-    version(
-        "0.7.1",
-        sha256="651129686b7fb04178f230c763b371192f9cb91262ddb9959f722449715bdfe8",
-        deprecated=True,
-    )
-    version(
-        "0.7.0",
-        sha256="40a62bc70b0a06246a16348ce6701ccfab1f0c1ace99684de4bfc6c90776f8c6",
-        deprecated=True,
-    )
-    version("0.6.0", sha256="85dfcee36ff28fa44da3134408c40ebd611bccff8a295982a7c78eaf982524d9")
-    version("0.5.0", sha256="f964ee2a96bb58b3f0ee4563ae65fcd136e409a7c0e66beda33f926fc9515a8e")
-    version("0.4.1", sha256="ba95f26475ad68da1f3a24d091dc1b925525e269e4c83c1eaf1d37d29b526666")
-    version("0.4.0", sha256="34fd0da0d1a72b6981bed0bba029ba0947e0d0d99beb3e0aad0a478095c9527d")
-    version("0.3.1", sha256="350a7fd216790182aa52639a3d574990a9d57843e02b92d87b854912f4812bfe")
-    version("0.3.0", sha256="9887ac0b466ca03d704a8738bc89e68550ed33509578c576390e98e76b64911b")
-    version("0.2.1", sha256="4c2669d58f041304bd618a9d69d9879a42e6366612c2fc932df3894d0326b7fe")
-    version("0.2.0", sha256="da73cbd1b88287c86d84b1045a05406b742be924e65c52588bbff200abd81a10")
-    version("0.1.0", sha256="f7ffcde22edabb3dc24a624e2888f98829ee526da384cd752b2b271c731ca9b1")
     version("master", branch="master")
+    version("0.10.0", sha256="cdee4e4fe5c5c08c5a7a5a3848175daa62884793988b4284c40df81cc2339c74")
+    with default_args(deprecated=True):
+        version("0.9.0", sha256="0297afb46285745413fd4536d8d7fe123e3045d4899cc91eed501bcd4b588ea6")
+        version("0.8.0", sha256="4c30c33ee22417514d839a75d99ae4c24860078fb595ee24ce4ebf45fbce5e69")
+        version("0.7.3", sha256="8c829b72f4ea9c924abdb6fe2ac7489304be4056ab76b8eba226c33ce7b7dc0e")
+        version("0.6.0", sha256="85dfcee36ff28fa44da3134408c40ebd611bccff8a295982a7c78eaf982524d9")
+        version("0.5.0", sha256="f964ee2a96bb58b3f0ee4563ae65fcd136e409a7c0e66beda33f926fc9515a8e")
+        version("0.4.1", sha256="ba95f26475ad68da1f3a24d091dc1b925525e269e4c83c1eaf1d37d29b526666")
+        version("0.4.0", sha256="34fd0da0d1a72b6981bed0bba029ba0947e0d0d99beb3e0aad0a478095c9527d")
+        version("0.3.1", sha256="350a7fd216790182aa52639a3d574990a9d57843e02b92d87b854912f4812bfe")
+        version("0.3.0", sha256="9887ac0b466ca03d704a8738bc89e68550ed33509578c576390e98e76b64911b")
+        version("0.2.1", sha256="4c2669d58f041304bd618a9d69d9879a42e6366612c2fc932df3894d0326b7fe")
+        version("0.2.0", sha256="da73cbd1b88287c86d84b1045a05406b742be924e65c52588bbff200abd81a10")
+        version("0.1.0", sha256="f7ffcde22edabb3dc24a624e2888f98829ee526da384cd752b2b271c731ca9b1")
 
     variant("shared", default=True, description="Build shared libraries.")
 
@@ -146,10 +137,6 @@ class DlaFuture(CMakePackage, CudaPackage, ROCmPackage):
     # Pedantic warnings, triggered by GCC 9 and 10, are always errors until 0.3.1:
     # https://github.com/eth-cscs/DLA-Future/pull/1043
     conflicts("%gcc@9:10", when="@:0.3.0")
-
-    # Compilation failure with ROCm introduced in 0.7.0 and fixed in 0.7.1:
-    # https://github.com/eth-cscs/DLA-Future/pull/1241
-    conflicts("+rocm ^hip@5.6:6.0", when="@0.7.0")
 
     depends_on("hdf5 +cxx+mpi+threadsafe+shared", when="+hdf5")
 

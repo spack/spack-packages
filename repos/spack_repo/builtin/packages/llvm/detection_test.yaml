@@ -182,3 +182,16 @@ paths:
       echo "InstalledDir: /Library/Developer/CommandLineTools/usr/bin"
   platforms: ["darwin"]
   results: []
+
+# ATfL should not be detected as upstream LLVM
+- layout:
+  - executables:
+    - "bin/clang"
+    - "bin/clang++"
+    script: |
+      echo "Arm Toolchain for Linux 20.1 clang version 20.1.0"
+      echo "Target: aarch64--linux-gnu"
+      echo "Thread model: posix"
+      echo "InstalledDir: /opt/arm/arm-toolchain-for-linux-20.1/bin"
+  platforms: ["linux"]
+  results: []

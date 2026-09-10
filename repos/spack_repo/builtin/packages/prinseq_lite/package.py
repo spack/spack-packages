@@ -35,6 +35,6 @@ class PrinseqLite(Package):
         install("prinseq-graphs-noPCA.pl", prefix.bin)
         install("prinseq-lite.pl", prefix.bin)
 
-        chmod = which("chmod")
+        chmod = which("chmod", required=True)
         chmod("+x", join_path(self.prefix.bin, "prinseq-graphs-noPCA.pl"))
         chmod("+x", join_path(self.prefix.bin, "prinseq-lite.pl"))

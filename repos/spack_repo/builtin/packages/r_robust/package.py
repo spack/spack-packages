@@ -26,6 +26,9 @@ class RRobust(RPackage):
     version("0.4-18.1", sha256="de31901882873ef89748bb6863caf55734431df5b3eb3c6663ed17ee2e4a4077")
     version("0.4-18", sha256="e4196f01bb3b0d768759d4411d524238b627eb8dc213d84cb30014e75480f8ac")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r-fit-models", type=("build", "run"))
     depends_on("r-lattice", type=("build", "run"))
     depends_on("r-mass", type=("build", "run"))

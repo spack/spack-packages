@@ -18,21 +18,12 @@ class BerkeleyDb(AutotoolsPackage):
 
     executables = [r"^db_load$"]  # One should be sufficient
 
-    license("UPL-1.0")
+    license("AGPL-3.0-only OR LicenseRef-Oracle-Proprietary", when="@6.0.20:")
+    license("Sleepycat", when="@:6.0.19", checked_by="alecbcs")
 
     version("18.1.40", sha256="0cecb2ef0c67b166de93732769abdeba0555086d51de1090df325e18ee8da9c8")
-    version(
-        "18.1.32",
-        sha256="fa1fe7de9ba91ad472c25d026f931802597c29f28ae951960685cde487c8d654",
-        deprecated=True,
-    )
     version("6.2.32", sha256="a9c5e2b004a5777aa03510cfe5cd766a4a3b777713406b02809c17c8e0e7a8fb")
     version("6.1.29", sha256="b3c18180e4160d97dd197ba1d37c19f6ea2ec91d31bbfaf8972d99ba097af17d")
-    version(
-        "6.0.35",
-        sha256="24421affa8ae436fe427ae4f5f2d1634da83d3d55a5ad6354a98eeedb825de55",
-        deprecated=True,
-    )
     version("5.3.28", sha256="e0a992d740709892e81f9d93f06daf305cf73fb81b545afe72478043172c3628")
 
     depends_on("c", type="build")  # generated
@@ -118,7 +109,7 @@ class BerkeleyDb(AutotoolsPackage):
         if not os.path.exists(installed_exe):
             raise SkipTest(f"{exe} is not installed")
 
-        exe = which(installed_exe)
+        exe = which(installed_exe, required=True)
         out = exe("-V", output=str.split, error=str.split)
         assert self.spec.version.string in out
 

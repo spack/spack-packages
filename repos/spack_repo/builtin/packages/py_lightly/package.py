@@ -36,29 +36,9 @@ class PyLightly(PythonPackage):
     version("1.4.7", sha256="dce719996d9b01b2a3c652e9cbab3ff80d078c4ed86d1adb39220d20e1f3fdf2")
     version("1.4.6", sha256="1c8b904a96fadaefbaa00296eea0ac1e8b50cb10e94595c74b0abada5f4f5a64")
     version("1.4.5", sha256="67b1de64950ff5bc35ef86fec3049f437ed1c9cb4a191c43b52384460207535f")
-    version(
-        "1.4.4",
-        sha256="e726120437ee61754da8e1c384d2ed27d9a7004e037c74d98e3debbc98cbd4a4",
-        deprecated=True,
-    )
-    version(
-        "1.4.3",
-        sha256="ff2cfded234bc5338519bdb2de774c59a55200159f4429b009b7a3923bc0be0e",
-        deprecated=True,
-    )
-    version(
-        "1.4.2",
-        sha256="bae451fcd04fbd3cc14b044a2583ae24591533d4a8a6ff51e5f1477f9a077648",
-        deprecated=True,
-    )
-    version(
-        "1.4.1",
-        sha256="4c64657639c66ee5c8b4b8d300fc9b5287dc7e14a260f3a2e04917dca7f57f5b",
-        deprecated=True,
-    )
 
     with default_args(type="build"):
-        depends_on("py-setuptools@21:", when="@1.4.2:")
+        depends_on("py-setuptools@21:")
         depends_on("py-setuptools-scm", when="@1.5.11:")
 
     with default_args(type=("build", "run")):
@@ -71,10 +51,8 @@ class PyLightly(PythonPackage):
         depends_on("py-six@1.10:")
         depends_on("py-tqdm@4.44:")
         depends_on("py-torch")
-        depends_on("py-torch@:1", when="@:1.4.1")
         depends_on("py-torchvision")
         depends_on("py-pytorch-lightning@1.0.4:")
-        depends_on("py-pytorch-lightning@1.0.4:1", when="@:1.4.1")
         depends_on("py-urllib3@1.25.3:", when="@1.4.8:")
         depends_on("py-urllib3@1.15.1:")
         depends_on("py-pydantic@1.10.5:", when="@1.5.11:")
@@ -83,13 +61,9 @@ class PyLightly(PythonPackage):
 
         # Historical dependencies
         depends_on("py-setuptools@21:", when="@1.4.8,1.4.15:1.4.25")
-        depends_on("py-setuptools@21:65.5.1", when="@:1.4.1")
 
         # https://github.com/lightly-ai/lightly/issues/1558
         depends_on("py-numpy@:1", when="@:1.5.10")
-
-        # https://github.com/lightly-ai/lightly/issues/1153
-        depends_on("py-torch+distributed", when="@:1.4.4")
 
     # https://github.com/microsoft/torchgeo/issues/1824
     conflicts("py-timm@:0.9.8", when="@1.4.26")

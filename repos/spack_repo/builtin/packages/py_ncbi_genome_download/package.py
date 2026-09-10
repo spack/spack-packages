@@ -16,6 +16,7 @@ class PyNcbiGenomeDownload(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.3.3", sha256="fb949f087f2cde1408414758678e714fb1a1f1b9196b3e8cac6bd3e8e395c996")
     version("0.3.1", sha256="74675e94f184b8d80429641b27ed6d46ed81028d95156337de6d09f8dd739c6e")
 
     depends_on("py-setuptools", type="build")

@@ -13,11 +13,13 @@ class Libxvmc(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/lib/libXvMC"
     xorg_mirror_path = "lib/libXvMC-1.0.9.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/lib/libXvMC.git"
 
     license("MIT")
 
     maintainers("wdconinc")
 
+    version("1.0.15", sha256="c48f6051b1df9bd190d2763cd0312d715e4509575926247110d8f840463bdc94")
     version("1.0.14", sha256="3ad5d2b991219e2bf9b2f85d40b12c16f1afec038715e462f6058af73a9b5ef8")
     version("1.0.13", sha256="e630b4373af8c67a7c8f07ebe626a1269a613d262d1f737b57231a06f7c34b4e")
     version("1.0.12", sha256="024c9ec4f001f037eeca501ee724c7e51cf287eb69ced8c6126e16e7fa9864b5")

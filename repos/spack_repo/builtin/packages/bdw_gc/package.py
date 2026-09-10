@@ -12,10 +12,11 @@ class BdwGc(AutotoolsPackage):
     collecting replacement for C malloc or C++ new."""
 
     homepage = "https://www.hboehm.info/gc/"
-    url = "https://github.com/ivmai/bdwgc/releases/download/v8.2.8/gc-8.2.8.tar.gz"
+    url = "https://github.com/bdwgc/bdwgc/releases/download/v8.2.12/gc-8.2.12.tar.gz"
 
     license("Xerox")
 
+    version("8.2.12", sha256="42e5194ad06ab6ffb806c83eb99c03462b495d979cda782f3c72c08af833cd4e")
     version("8.2.8", sha256="7649020621cb26325e1fb5c8742590d92fb48ce5c259b502faf7d9fb5dabb160")
     version("8.2.6", sha256="b9183fe49d4c44c7327992f626f8eaa1d8b14de140f243edb1c9dcff7719a7fc")
     version("8.2.4", sha256="3d0d3cdbe077403d3106bb40f0cbb563413d6efdbb2a7e1cd6886595dec48fc2")
@@ -41,9 +42,10 @@ class BdwGc(AutotoolsPackage):
         multi=False,
         description="Multithreading support",
     )
+    variant("cxx", default=False, description="Enable C++ support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("libatomic-ops", when="+libatomic-ops")
 
@@ -54,6 +56,7 @@ class BdwGc(AutotoolsPackage):
             "--enable-static",
             "--with-libatomic-ops={0}".format("yes" if "+libatomic-ops" in spec else "no"),
             "--enable-threads={0}".format(spec.variants["threads"].value),
+            "--enable-cplusplus={0}".format("yes" if "+cxx" in spec else "no"),
         ]
 
         return config_args

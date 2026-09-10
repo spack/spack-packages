@@ -21,6 +21,12 @@ class Tk(AutotoolsPackage, SourceforgePackage):
 
     license("TCL")
 
+    version("9.0.2", sha256="76fb852b2f167592fe8b41aa6549ce4e486dbf3b259a269646600e3894517c76")
+    version(
+        "8.6.17",
+        sha256="e4982df6f969c08bf9dd858a6891059b4a3f50dc6c87c10abadbbe2fc4838946",
+        preferred=True,
+    )
     version("8.6.11", sha256="5228a8187a7f70fa0791ef0f975270f068ba9557f57456f51eb02d9d4ea31282")
     version("8.6.10", sha256="63df418a859d0a463347f95ded5cd88a3dd3aaa1ceecaeee362194bc30f3e386")
     version("8.6.8", sha256="49e7bca08dde95195a27f594f7c850b088be357a7c7096e44e1158c7a5fd7b33")

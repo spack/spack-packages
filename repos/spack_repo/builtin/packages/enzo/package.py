@@ -15,7 +15,6 @@ class Enzo(MakefilePackage):
     git = "https://github.com/enzo-project/enzo-dev.git"
 
     version("main", branch="main")
-    version("master", branch="main", deprecated=True)
     version("2.6.1", sha256="280270accfc1ddb60e92cc98ca538a3e5787e8cc93ed58fb5c3ab75db8c4b048")
 
     depends_on("c", type="build")  # generated

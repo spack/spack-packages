@@ -45,6 +45,9 @@ class RFields(RPackage):
     version("11.6", sha256="8600d1d992c40668cc2ab01b3c17d0e1bd44a001ec7ba9f468bc0e9ef87c59db")
     version("9.9", sha256="262f03c630773b580c7162ab2a031c894ca489fd83989fd8a2f67573306e78e1")
 
+    depends_on("c", type="build")  # generated
+    depends_on("fortran", type="build")  # generated
+
     depends_on("r@3.0:", type=("build", "run"))
     depends_on("r@3.5.0:", type=("build", "run"), when="@14.1:")
     depends_on("r-spam", type=("build", "run"))

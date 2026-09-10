@@ -14,8 +14,17 @@ class Glx(BundlePackage):
 
     version("1.4")
 
+    # GLX is only supported on Linux-like platforms
+    conflicts("platform=windows")
+    conflicts("platform=darwin")
+
     depends_on("libglx")
     provides("gl@4.5")
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ):
+        env.prepend_path("OpenGL_ROOT", self.home)
 
     @property
     def home(self):

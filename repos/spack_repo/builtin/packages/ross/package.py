@@ -18,6 +18,7 @@ class Ross(CMakePackage):
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("8.1.1", sha256="e886cfc1cb825a9cf1a43cc177f5c10df37b564912a29c4a9007370946908fba")
     version("8.0.0", sha256="5339c9afcf77821fb6ebbcd93b8a1e651c7883e94dff250528815a08f84f1694")
     version("7.2.0", sha256="c937f4c7baa1918b6cd08f4eafae8cab44eddcd4aaa1175c23ff8562583ad726")
     version("7.1.1", sha256="550e3288cefedcbc7e6ca16cfbee0477b70399d63e94f554b60b32d714029722")

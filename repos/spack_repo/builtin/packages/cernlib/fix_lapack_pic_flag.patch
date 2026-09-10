@@ -1,0 +1,19 @@
+--- lapack/CMakeLists.txt
++++ lapack/CMakeLists.txt
+@@ -179,7 +179,7 @@ if (CERNLIB_BUILD_STATIC)
+   target_include_directories(lapack_static PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+   target_link_libraries(lapack_static PRIVATE blas_static)
+   install(TARGETS lapack_static DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libs)
+-  set_target_properties(lapack_static PROPERTIES POSITION_INDEPENDENT_CODE ON OUTPUT_NAME lapack)
++  set_target_properties(lapack_static PROPERTIES POSITION_INDEPENDENT_CODE ${CERNLIB_POSITION_INDEPENDENT_CODE} OUTPUT_NAME lapack)
+ endif()
+ 
+ if (CERNLIB_BUILD_SHARED)
+@@ -188,6 +188,6 @@ if (CERNLIB_BUILD_SHARED)
+   target_include_directories(lapack PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+   target_link_libraries(lapack PRIVATE blas)
+   install(TARGETS lapack DESTINATION ${CMAKE_INSTALL_LIBDIR} COMPONENT libs)
+-  set_target_properties(lapack  PROPERTIES POSITION_INDEPENDENT_CODE ${CERNLIB_POSITION_INDEPENDENT_CODE} OUTPUT_NAME lapack SOVERSION 1_${COMPSUFFIX}.${CERNLIB_VERSION_MAJOR})
++  set_target_properties(lapack  PROPERTIES POSITION_INDEPENDENT_CODE ON OUTPUT_NAME lapack SOVERSION 1_${COMPSUFFIX}.${CERNLIB_VERSION_MAJOR})
+   install_symlink(liblapack.so.1_${COMPSUFFIX}.${CERNLIB_VERSION_MAJOR} ${CMAKE_INSTALL_LIBDIR}/liblapack.so.1_${COMPSUFFIX})
+ endif()

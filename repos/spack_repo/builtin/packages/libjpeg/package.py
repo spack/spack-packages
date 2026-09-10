@@ -13,10 +13,11 @@ class Libjpeg(AutotoolsPackage):
     alongside various utilities for handling JPEG data."""
 
     homepage = "http://www.ijg.org"
-    url = "https://www.ijg.org/files/jpegsrc.v9d.tar.gz"
+    url = "https://www.ijg.org/files/jpegsrc.v10.tar.gz"
 
     license("BitTorrent-1.0")
 
+    version("10", sha256="8b9eaa13242690ebd03e1728ab1edf97a81a78ed6e83624d493655f31ac95ab5")
     version("9f", sha256="04705c110cb2469caa79fb71fba3d7bf834914706e9641a4589485c1f832565b")
     version("9e", sha256="4077d6a6a75aeb01884f708919d25934c93305e49f7e3f36db9129320e6f4f3d")
     version("9d", sha256="6c434a3be59f8f62425b2e3c077e785c9ce30ee5874ea1c270e843f273ba71ee")

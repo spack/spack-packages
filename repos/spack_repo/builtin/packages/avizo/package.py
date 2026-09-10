@@ -22,7 +22,9 @@ class Avizo(Package):
 
     manual_download = True
 
-    license("GPL-3.0")
+    license("LicenseRef-Thermofisher-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
 
     version(
         "2020.1",
@@ -69,7 +71,7 @@ class Avizo(Package):
 
     def install(self, spec, prefix):
         ver = self.version.joined
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh(f"Avizo-{ver}-Linux64-gcc{self.gcc_ver[self.version.string]}.bin", "--noexec", "--keep")
 
         with working_dir("Avizo"):

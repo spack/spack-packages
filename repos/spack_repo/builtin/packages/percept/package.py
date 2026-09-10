@@ -37,7 +37,7 @@ class Percept(CMakePackage):
     depends_on(
         "trilinos"
         "~shared+exodus+mpi+tpetra+epetra+epetraext+muelu+belos+ifpack2+amesos2"
-        "+zoltan+stk+boost~superlu-dist+superlu+hdf5+aztec+sacado"
+        "+zoltan+stk+boost~superlu-dist+hdf5+aztec+sacado"
         "~openmp+shards+intrepid"
         "@master,12.14.1:"
     )

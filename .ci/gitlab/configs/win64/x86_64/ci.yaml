@@ -1,4 +1,40 @@
 ci:
   pipeline-gen:
+  - match_behavior: first
+    submapping:
+    - match:
+      - abseil-cpp
+      - c-blosc
+      - ca-certificates-mozilla
+      - catch2
+      - cgns
+      - compiler-wrapper
+      - fast-float
+      - freetype
+      - gl2ps
+      - harfbuzz
+      - msmpi
+      - nasm
+      - netcdf-cxx4
+      - py-beautifulsoup4
+      - py-cython
+      - py-flit-core
+      - py-meson-python
+      - py-packaging
+      - py-pip
+      - py-pyproject-metadata
+      - py-setuptools
+      - py-soupsieve
+      - sqlite
+      - zlib
+      build-job-remove:
+        tags: [ "medium" ]
+      build-job:
+        tags: [ "small" ]
+        variables:
+          CI_JOB_SIZE: small
+          SPACK_BUILD_JOBS: "4"
+          KUBERNETES_CPU_REQUEST: 4000m
+          KUBERNETES_MEMORY_REQUEST: 8G
   - build-job:
-      tags: [x86_64-win]
+      tags: [ "x86_64-win", "medium" ]

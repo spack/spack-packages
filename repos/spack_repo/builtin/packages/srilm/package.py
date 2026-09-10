@@ -46,8 +46,8 @@ class Srilm(MakefilePackage):
         makefile.filter(r"# SRILM\s*=.*", "SRILM = {0}".format(self.build_directory))
 
         makefile_common = FileFilter("common/Makefile.common.variables")
-        makefile_common.filter(r"GAWK\s*=.*", "GAWK = {0}".format(which("gawk")))
-        makefile_common.filter(r"PERL\s*=.*", "PERL = {0}".format(which("perl")))
+        makefile_common.filter(r"GAWK\s*=.*", "GAWK = {0}".format(which("gawk", required=True)))
+        makefile_common.filter(r"PERL\s*=.*", "PERL = {0}".format(which("perl", required=True)))
         makefile_common.filter(
             r"PIC_FLAG\s*=.*", "PIC_FLAG = {0}".format(self.compiler.cc_pic_flag)
         )

@@ -46,5 +46,5 @@ class Libcircle(AutotoolsPackage):
     def autoreconf(self, spec, prefix):
         with working_dir(self.configure_directory):
             # Bootstrap with autotools
-            bash = which("bash")
+            bash = which("bash", required=True)
             bash("./autogen.sh")

@@ -1,0 +1,26 @@
+diff --git a/cmake/EnvVarForwarding.cmake b/cmake/EnvVarForwarding.cmake
+index a31ce6db266..258d458099e 100644
+--- a/cmake/EnvVarForwarding.cmake
++++ b/cmake/EnvVarForwarding.cmake
+@@ -42,6 +42,7 @@ set(_ENV_PASSTHROUGH
+   TORCH_XPU_ARCH_LIST
+   TRACING_BASED
+   PYTHON_LIB_REL_PATH
++  PYTHON_SIX_SOURCE_DIR
+ )
+ 
+ # Low-priority aliases: if the canonical var is not set, use the alias.
+diff --git a/cmake/External/nnpack.cmake b/cmake/External/nnpack.cmake
+index 8a4a310d629..2491d4e2cc2 100644
+--- a/cmake/External/nnpack.cmake
++++ b/cmake/External/nnpack.cmake
+@@ -46,6 +46,9 @@ if(ANDROID OR IOS OR ${CMAKE_SYSTEM_NAME} STREQUAL "Linux" OR ${CMAKE_SYSTEM_NAM
+ 
+   # Directories for NNPACK dependencies submoduled in Caffe2
+   set(PYTHON_PEACHPY_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/python-peachpy" CACHE STRING "PeachPy (Python package) source directory")
++  if(NOT DEFINED PYTHON_SIX_SOURCE_DIR AND DEFINED ENV{PYTHON_SIX_SOURCE_DIR})
++    set(PYTHON_SIX_SOURCE_DIR "$ENV{PYTHON_SIX_SOURCE_DIR}" CACHE STRING "six (Python package) source directory")
++  endif()
+   if(NOT DEFINED CPUINFO_SOURCE_DIR)
+     set(CPUINFO_SOURCE_DIR "${CAFFE2_THIRD_PARTY_ROOT}/cpuinfo" CACHE STRING "cpuinfo source directory")
+   endif()

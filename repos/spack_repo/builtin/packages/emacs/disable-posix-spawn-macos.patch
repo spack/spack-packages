@@ -1,0 +1,12 @@
+diff --git a/src/callproc.c b/src/callproc.c
+--- a/src/callproc.c
++++ b/src/callproc.c
+@@ -44,7 +44,7 @@ Copyright (C) 1985-1988, 1993-1995, 1999-2025 Free Software Foundation,
+      Haiku */                                              \
+   && !defined HAIKU
+ # include <spawn.h>
+-# define USABLE_POSIX_SPAWN 1
++# define USABLE_POSIX_SPAWN 0
+ #else
+ # define USABLE_POSIX_SPAWN 0
+ #endif

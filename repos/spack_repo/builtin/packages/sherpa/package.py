@@ -25,6 +25,8 @@ class Sherpa(CMakePackage, AutotoolsPackage):
 
     license("GPL-3.0-only")
 
+    version("3.0.3", sha256="57484a09a99ff1b58a89153675230e69cab9698179291fecd67a7bd26309c4ea")
+    version("3.0.2", sha256="bae13a2f1dc736cffb104ca0c3eefee7405fc3400421c8cc3887065131e92599")
     version("3.0.1", sha256="ff5f43e79a9a10919391242307a771eca0c57b0462c11bfb99ee4a0fe8c48c58")
     version("3.0.0", sha256="e460d8798b323c4ef663293a2c918b1463e9641b35703a54d70d25c852c67d36")
     version("2.2.15", sha256="0300fd719bf6a089b7dc5441f720e669ac1cb030045d87034a4733bee98e7bbc")
@@ -36,6 +38,8 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     build_system(
         conditional("cmake", when="@3:"), conditional("autotools", when="@:2"), default="cmake"
     )
+
+    conflicts("%gcc@15:", when="@:3.0.1")
 
     _cxxstd_values = (conditional("11", "14", "17", when="@:"), conditional("20", when="@3:"))
     variant(

@@ -31,7 +31,7 @@ class Bmake(Package):
         filter_file("GetDir /bmake", "GetDir " + self.stage.source_path, "boot-strap", string=True)
 
     def install(self, spec, prefix):
-        sh = which("sh")
+        sh = which("sh", required=True)
         sh("boot-strap", "op=configure")
         sh("boot-strap", "op=build")
         sh("boot-strap", "--prefix={0}".format(prefix), "op=install")

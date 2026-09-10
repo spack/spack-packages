@@ -32,9 +32,6 @@ class HsakmtRoct(CMakePackage):
     version("6.0.0", sha256="9f4e80bd0a714ce45326941b906a62298c62025eff186dc6c48282ce84c787c7")
     version("5.7.1", sha256="38bc3732886a52ca9cd477ec6fcde3ab17a0ba5dc8e2f7ac34c4de597bd00e8b")
     version("5.7.0", sha256="52293e40c4ba0c653d796e2f6109f5fb4c79f5fb82310ecbfd9a5432acf9da43")
-    with default_args(deprecated=True):
-        version("5.6.1", sha256="d60b355bfd21a08e0e36270fd56f98d052c3c6edca47da887fa32bf32759c29b")
-        version("5.6.0", sha256="cd009c5c09f664f046c428ba9843582ab468f7b88d560747eb949d8d7f8c5567")
 
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
@@ -47,8 +44,6 @@ class HsakmtRoct(CMakePackage):
     depends_on("libdrm")
 
     for ver in [
-        "5.6.0",
-        "5.6.1",
         "5.7.0",
         "5.7.1",
         "6.0.0",
@@ -97,10 +92,10 @@ class HsakmtRoct(CMakePackage):
             ]
             cmake = self.spec["cmake"].command
             cmake(*cc_options)
-            make = which("make")
+            make = which("make", required=True)
             make()
             os.environ["LD_LIBRARY_PATH"] = hsakmt_path
             os.environ["BIN_DIR"] = os.getcwd()
-            run_kfdtest = which(join_path("scripts", "run_kfdtest.sh"))
+            run_kfdtest = which(join_path("scripts", "run_kfdtest.sh"), required=True)
             run_kfdtest()
             make("clean")

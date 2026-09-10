@@ -84,6 +84,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
     @run_after("install")
     def install_source(self):
         prefix = self.spec.prefix
-        cp = which("cp")
+        cp = which("cp", required=True)
         cp("-r", os.path.join(self.stage.source_path, "src"), prefix)
         cp("-r", os.path.join(self.build_directory, "src"), prefix)

@@ -14,16 +14,17 @@ class RMinfi(RPackage):
 
     bioc = "minfi"
 
-    version("1.46.0", commit="1d063178fb27d577c260f8b7626b982c9a6585cc")
-    version("1.44.0", commit="7c89fefc2e174d43ed9891b3f30b51ee19e916a6")
-    version("1.42.0", commit="30fc7059460a9ec0be734fc26e608426ca9f5614")
-    version("1.40.0", commit="17fa2b5d6cdbef6cbfb690242bd3f660731431f1")
-    version("1.36.0", commit="94301da343226be7cd878c2a6c1bb529564785d6")
-    version("1.30.0", commit="a4c28e9388fe3b35e7d21a9669e39250ed6dcbcd")
-    version("1.28.4", commit="b5125b2f3e05d37d519eeb6fd44a60efdad388e7")
-    version("1.26.2", commit="ebb07b728b2453998d46e4e53d4fbf873e8e81fc")
-    version("1.24.0", commit="a4df428588ea86a1c79ddba76132014f0a39644e")
-    version("1.22.1", commit="b2faf84bcbb291e32d470a0e029450093527545b")
+    with default_args(get_full_repo=True):
+        version("1.46.0", commit="1d063178fb27d577c260f8b7626b982c9a6585cc")
+        version("1.44.0", commit="7c89fefc2e174d43ed9891b3f30b51ee19e916a6")
+        version("1.42.0", commit="30fc7059460a9ec0be734fc26e608426ca9f5614")
+        version("1.40.0", commit="17fa2b5d6cdbef6cbfb690242bd3f660731431f1")
+        version("1.36.0", commit="94301da343226be7cd878c2a6c1bb529564785d6")
+        version("1.30.0", commit="a4c28e9388fe3b35e7d21a9669e39250ed6dcbcd")
+        version("1.28.4", commit="b5125b2f3e05d37d519eeb6fd44a60efdad388e7")
+        version("1.26.2", commit="ebb07b728b2453998d46e4e53d4fbf873e8e81fc")
+        version("1.24.0", commit="a4df428588ea86a1c79ddba76132014f0a39644e")
+        version("1.22.1", commit="b2faf84bcbb291e32d470a0e029450093527545b")
 
     depends_on("r-biocgenerics@0.15.3:", type=("build", "run"))
     depends_on("r-genomicranges", type=("build", "run"))

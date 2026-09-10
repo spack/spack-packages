@@ -1,0 +1,13 @@
+--- a/bitcode2cpp.py	2023-02-28 08:53:24.000000000 +0100
++++ b/bitcode2cpp.py.fixed	2025-08-26 17:37:16.373912000 +0200
+@@ -22,8 +22,8 @@
+ target = re.sub(r".*builtins\\target-", "", target)
+ target = re.sub(".*builtins/", "", target)
+ target = re.sub(r".*builtins\\", "", target)
+-target = re.sub("\.ll$", "", target)
+-target = re.sub("\.c$", "", target)
++target = re.sub(r"\.ll$", "", target)
++target = re.sub(r"\.c$", "", target)
+ target = re.sub("-", "_", target)
+ 
+ llvm_as="llvm-as"

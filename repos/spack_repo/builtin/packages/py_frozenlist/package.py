@@ -16,16 +16,19 @@ class PyFrozenlist(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.8.0", sha256="3ede829ed8d842f6cd48fc7081d7a41001a56f1f38603f9d49bf3020d59a31ad")
     version("1.5.0", sha256="81d5af29e61b9c8348e876d442253723928dce6433e0e76cd925cd83f1b4b817")
     version("1.3.1", sha256="3a735e4211a04ccfa3f4833547acdf5d2f863bfeb01cfd3edaffbc251f15cec8")
     version("1.3.0", sha256="ce6f2ba0edb7b0c1d8976565298ad2deba6f8064d2bebb6ffce2ca896eb35b0b")
     version("1.2.0", sha256="68201be60ac56aff972dc18085800b6ee07973c49103a8aba669dee3d71079de")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.6.0:")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
-        depends_on("python@:3.13")
+        depends_on("python@:3.14")
+        depends_on("python@:3.13", when="@:1.7")
         depends_on("python@:3.12", when="@:1.4.1")
         depends_on("python@:3.11", when="@:1.4.0")
         depends_on("python@:3.10", when="@:1.3.1")

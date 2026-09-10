@@ -28,6 +28,7 @@ class Ispc(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.30.0", sha256="2ccf9791ebe3ae14db7d60f84d860284f6ef704417910a7df3a424e2b8e34d77")
     version("1.24.0", sha256="fac82c8f3f7ece2bc96620cef0b34e10b29462de9349447bcd8c3ba98cfdcd72")
     version("1.23.0", sha256="e268eabed9a9021b4402725ed1c120b8eca776ee4aaf50ddeb0e4adaadda05f9")
     version("1.22.0", sha256="1f115eeed7df5028c19c9b256887949ca88c29c146f641b031d8e080297f5acd")
@@ -58,6 +59,7 @@ class Ispc(CMakePackage):
     depends_on("llvm libcxx=none", when="platform=darwin", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=arm:", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=aarch64:", type="build")
+    depends_on("llvm@18:22", when="@1.30", type="build")
     depends_on("llvm@:18.1", when="@:1.24", type="build")
     depends_on("llvm@:17", when="@:1.23", type="build")
     depends_on("llvm@:15", when="@:1.20", type="build")
@@ -79,6 +81,23 @@ class Ispc(CMakePackage):
         "fix-linking-against-llvm-10.patch",
         when="@1.13.0:1.13",
         sha256="d3ccf547d3ba59779fd375e10417a436318f2200d160febb9f830a26f0daefdc",
+    )
+
+    # Turn a few regexp literals into raw strings, as otherwise some escape sequence fail
+    # to parse (shows warning). Patch based on ispc 1.22 version of bitcode2cpp.py
+    # in ispc github repo.
+    patch(
+        "ispc-1.19-regexp.patch",
+        when="@1.19",
+        sha256="dc5e5492442df91ba17877d84f062bc364140ee5620ed55b7beef87257030b74",
+    )
+
+    # Adds missing <cstdint> include, as otherwise uint32_t and friends aren't found
+    # and the build fails. Patch based on 1.19 -> 1.20 diff of ispc github repo
+    patch(
+        "stdint-fix.patch",
+        when="@1.19",
+        sha256="03303b2407718e340bfc574511f736ae0f6678e60db33f68147db29bdd806a1a",
     )
 
     # Fix build with Apple clang 15
@@ -105,7 +124,19 @@ class Ispc(CMakePackage):
         try:
             Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
-            filter_file("bit 32 64", "bit 64", "cmake/GenerateBuiltins.cmake")
+            # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
+            # For GitLab CI, we need to remove the 32-bit target from the build, as the GitLab
+            # Runners don't have 32-bit development installed and support Debian-based builds.
+            cmake_target_file = "cmake/GenerateBuiltins.cmake"
+            if self.spec.satisfies("@1.25:"):
+                filter_file("--target=x86_64-unknown-unknown", "", cmake_target_file)
+                filter_file("builtin_to_cpp(32 linux x86)", "", cmake_target_file, string=True)
+                filter_file('"x86,32"\n', "", "cmake/GenericTargets.cmake")
+                cmake_target_file = "cmake/CommonStdlibBuiltins.cmake"
+            filter_file("bit 32 64", "bit 64", cmake_target_file)
+
+        if self.spec.satisfies("@1.25:"):
+            filter_file("-isystem", "-isystem ", "cmake/GenerateBuiltins.cmake")
 
     def cmake_args(self):
         spec = self.spec

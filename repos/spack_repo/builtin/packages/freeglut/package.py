@@ -17,6 +17,7 @@ class Freeglut(CMakePackage, SourceforgePackage):
 
     license("MIT")
 
+    version("3.8.0", sha256="674dcaff25010e09e450aec458b8870d9e98c46f99538db457ab659b321d9989")
     version("3.6.0", sha256="9c3d4d6516fbfa0280edc93c77698fb7303e443c1aaaf37d269e3288a6c3ea52")
     version("3.2.2", sha256="c5944a082df0bba96b5756dddb1f75d0cd72ce27b5395c6c1dde85c2ff297a50")
     version("3.2.1", sha256="d4000e02102acaf259998c870e25214739d1f16f67f99cb35e4f46841399da68")
@@ -32,6 +33,11 @@ class Freeglut(CMakePackage, SourceforgePackage):
 
     # FreeGLUT does not support OSMesa
     conflicts("^osmesa")
+
+    # We need at least version 3.8.0 as from gcc15 onwards the default is C23
+    # which was only fixed with 3.8.0
+    # https://github.com/freeglut/freeglut/releases/tag/v3.8.0
+    conflicts("%gcc@15:", when="@:3.7.0")
 
     # FreeGLUT only works with GLX on linux
     with when("platform=linux"):

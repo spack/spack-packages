@@ -13,6 +13,7 @@ class PyDbf(PythonPackage):
 
     pypi = "dbf/dbf-0.96.005.tar.gz"
 
+    version("0.99.11", sha256="2169c05252c0efbe897f346f0683326ec25854beab1d0c6430df6e903a57b315")
     version("0.99.3", sha256="940272a72ac27d16a1db69aafef820684012cc3553ffe9875d5cd2e3a9cb69dc")
     version("0.97.11", sha256="8aa5a73d8b140aa3c511a3b5b204a67d391962e90c66b380dd048fcae6ddbb68")
     version("0.96.005", sha256="d6e03f1dca40488c37cf38be9cb28b694c46cec747a064dcb0591987de58ed02")
