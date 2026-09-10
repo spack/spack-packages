@@ -242,7 +242,7 @@ class MiopenHip(ROCmLibrary, CMakePackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def cmake_args(self):

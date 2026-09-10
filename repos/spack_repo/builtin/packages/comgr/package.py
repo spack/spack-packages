@@ -5,11 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Comgr(CMakePackage):
+class Comgr(ROCmLibrary, CMakePackage):
     """This provides various Lightning Compiler related services. It currently
     contains one library, the Code Object Manager (Comgr)"""
 
@@ -142,5 +143,5 @@ class Comgr(CMakePackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
