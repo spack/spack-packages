@@ -20,6 +20,7 @@ class Graphite2(CMakePackage):
 
     license("LGPL-2.1-or-later OR MPL-1.1")
 
+    version("1.3.15", sha256="c6bc8b4252724665297f7cad0c55897285c673f9b8e6db3522ace833593fe0b1")
     version("1.3.14", sha256="f99d1c13aa5fa296898a181dff9b82fb25f6cc0933dbaa7a475d8109bd54209d")
     version("1.3.13", sha256="dd63e169b0d3cf954b397c122551ab9343e0696fb2045e1b326db0202d875f06")
 
@@ -28,13 +29,16 @@ class Graphite2(CMakePackage):
 
     depends_on("python@3.6:", type="test")
     depends_on("freetype")
+    depends_on("cmake@3.5:", when="@1.3.15:", type="build")
+
+    conflicts("%cxx=gcc@16:", when="@:1.3.14")
 
     patch("regparm.patch")
 
     patch(
         "https://src.fedoraproject.org/rpms/graphite2/raw/deba28323b0a3b7a3dcfd06df1efc2195b102ed7/f/graphite2-1.3.14-gcc15.patch",
         sha256="4cff0ae949153596d26d5f8bfaa4ce80bcff23a157b34ff797c6d00b4268a4b1",
-        when="%gcc@15:",
+        when="@:1.3.14 %gcc@15:",
     )
 
     @run_after("install")
