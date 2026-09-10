@@ -166,6 +166,7 @@ class CompilerWrapper(Package):
         bin_dir = self.bin_dir()
         implicit_rpaths, env_paths = [], []
         extra_rpaths = []
+        prefix_map_arg = None
         for language, attr_name, wrapper_var_name, spack_var_name in _var_list:
             compiler_pkg = dependent_spec[language].package
             if not hasattr(compiler_pkg, attr_name):
