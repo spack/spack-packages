@@ -20,7 +20,7 @@ def msg(message: str, entries=()):
 
 def main():
     # Validate required environment variables
-    required_vars = ["GH_REPO", "GH_PR_NUMBER"]
+    required_vars = ["GH_REPO", "GH_PR_NUMBER", "MAINTAINER_ROLE"]
     missing_vars = [var for var in required_vars if var not in os.environ]
     if missing_vars:
         raise Exception(f"Missing required environment variables: {', '.join(missing_vars)}")
@@ -28,6 +28,7 @@ def main():
     repository = os.environ["GH_REPO"]
     pr_number = os.environ["GH_PR_NUMBER"]
     token = os.environ.get("GH_TOKEN", "")
+    maintainer_role = os.environ["MAINTAINER_ROLE"]
 
     headers = {"Accept": "application/vnd.github+json", "User-Agent": "spack-reviewers"}
     if token:
@@ -50,15 +51,10 @@ def main():
         )
     pull_request = pull_request_resp.json()
 
-    if pull_request["draft"]:
-        msg("skipping draft pull request")
+    # the workflow trigger already filters to merged PRs, but check again here just in case
+    if not pull_request["merged"]:
+        msg("pull request was not merged, skipping")
         return
-
-    existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
-    if existing_reviewers:
-        msg("existing reviewers:", existing_reviewers)
-    else:
-        msg("no existing reviewers")
 
     pull_request_files = session.get(f"{pr_url}/files", headers=headers, timeout=30)
     if pull_request_files.status_code != 200:
@@ -86,65 +82,45 @@ def main():
             msg(f"warning: {e}")
             pass
 
-    # filter maintainers to those who have triage permissions in the repo
-    # users without triage permissions are unable to review PRs
+    if not maintainers:
+        msg("no maintainers for changed packages")
+        return
+
+    # only invite maintainers who aren't collaborators: we don't want to modify existing perms
     collab_url = f"{base_url}/collaborators"
-    pingable_maintainers = {
+    non_collaborators = {
         maintainer
         for maintainer in maintainers
         if session.get(f"{collab_url}/{maintainer}", headers=headers, timeout=30).status_code
-        == 204
+        != 204
     }
 
-    non_collaborators = maintainers - pingable_maintainers
-    invalid_maintainers: set[str] = set()
-    if non_collaborators:
-        # 404 on the collaborator check above means non-collaborator or non-GH user
-        # find invalid GH usersnames by checking the /users API
-        invalid_maintainers = {
-            maintainer
-            for maintainer in non_collaborators
-            if session.get(
-                f"https://api.github.com/users/{maintainer}", headers=headers, timeout=30
-            ).status_code
-            != 200
-        }
+    if not non_collaborators:
+        msg("all maintainers are already collaborators")
+        return
 
-        pending_invite = non_collaborators - invalid_maintainers
-        if pending_invite:
-            # outside collaborator invites for package maintainers are sent by the
-            # invite-maintainers workflow when a PR touching their package merges, not here
-            msg(
-                "the following package maintainers cannot be added as reviewers "
-                "without collaborator status (invite may be pending):",
-                sorted(pending_invite),
-            )
+    msg(
+        f"inviting maintainers as outside collaborators ({maintainer_role}):",
+        sorted(non_collaborators),
+    )
 
-    author = pull_request["user"]["login"]
-    reviewers = (pingable_maintainers | existing_reviewers) - {author}
-
-    if existing_reviewers == reviewers:
-        msg("reviewers already up-to-date")
-    else:
-        added_reviewers = reviewers - existing_reviewers
-        if added_reviewers:
-            msg("adding reviewers:", added_reviewers)
-
-        if token:
-            resp = session.post(
-                f"{pr_url}/requested_reviewers",
-                json={"reviewers": list(reviewers)},
+    # invite as outside collaborators so they can perform PR reviews
+    # they will need to accept the invitation before they can review PRs / be pinged
+    if token:
+        for maintainer in sorted(non_collaborators):
+            invite_resp = session.put(
+                f"{collab_url}/{maintainer}",
+                json={"permission": maintainer_role},
                 headers=headers,
                 timeout=30,
             )
-            resp.raise_for_status()
-
-    # fail the triage run on each push if a maintainer's name is invalid
-    if invalid_maintainers:
-        raise Exception(
-            "the following maintainer entries are not valid GitHub usernames: "
-            f"{sorted(invalid_maintainers)}"
-        )
+            if invite_resp.status_code in (201, 204):
+                msg(f"invited {maintainer} as an outside collaborator ({maintainer_role})")
+            else:
+                msg(
+                    f"failed to invite {maintainer} as a collaborator "
+                    f"[{invite_resp.status_code}]: {invite_resp.text}"
+                )
 
 
 if __name__ == "__main__":
