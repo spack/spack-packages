@@ -19,16 +19,28 @@ class PyMpi4jax(PythonPackage, CudaPackage):
 
     license("MIT")
 
+    version("0.9.1", sha256="dc72ba69cc70250ef097f1ba62b2bfeabc2b328943f3b4e2fc27238915bebe34")
     version(
-        "0.3.11.post3", sha256="ad4c5840c81ead40b68f4885d705c06eeca22cd4e998790de589c6566db75a75"
+        "0.3.11.post3",
+        sha256="ad4c5840c81ead40b68f4885d705c06eeca22cd4e998790de589c6566db75a75",
+        deprecated=True,
     )
 
-    depends_on("python", type=("build", "link", "run"))
-    depends_on("py-setuptools@42:", type="build")
-    depends_on("py-cython@0.21:", type="build")
-    depends_on("py-mpi4py@3.0.1:", type=("build", "run"))
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-jax@0.3.25:", type=("build", "run"))
+    with default_args(type=("build", "link", "run")):
+        depends_on("python@3.10:", when="@0.9.1")
+        depends_on("python")
+
+    with default_args(type="build"):
+        depends_on("py-setuptools@82.0.1:", when="@0.9.1")
+        depends_on("py-setuptools@42:")
+        depends_on("py-cython@0.21:")
+
+    with default_args(type=("build", "run")):
+        depends_on("py-nanobind@2:", when="@0.9.1")
+        depends_on("py-mpi4py@3.0.1:")
+        depends_on("py-numpy")
+        depends_on("py-jax@0.6:", when="@0.9.1")
+        depends_on("py-jax@0.3.25:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if "+cuda" in self.spec:
