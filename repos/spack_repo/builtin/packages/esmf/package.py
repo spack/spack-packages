@@ -108,6 +108,7 @@ class Esmf(MakefilePackage, PythonExtension):
     depends_on("fortran", type="build")  # generated
 
     # Optional dependencies
+    depends_on("llvm-openmp", when="@9: +openmp %apple-clang", type=("build", "run"))
     depends_on("mpi", when="+mpi")
     depends_on("lapack@3:", when="+external-lapack")
     depends_on("netcdf-c@3.6:", when="+netcdf")
@@ -344,6 +345,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         if spec.satisfies("+openmp"):
             env.set("ESMF_OPENMP", "ON")
+            if "llvm-openmp" in spec:
+                openmp = spec["llvm-openmp"]
+                env.append_flags("ESMF_CXXCOMPILEOPTS", openmp.headers.include_flags)
+                env.append_flags("ESMF_CXXLINKOPTS", openmp.libs.ld_flags)
+                env.append_flags("ESMF_SL_LIBOPTS", openmp.libs.ld_flags)
         else:
             env.set("ESMF_OPENMP", "OFF")
 
