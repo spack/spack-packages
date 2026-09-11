@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import os
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -33,6 +31,12 @@ class Pumi(CMakePackage):
     # scorec/core develop branch and we prefer not to expose spack users
     # to the added instability.
     version("master", submodules=True, branch="master")
+    version(
+        "4.2.1", submodules=True, commit="a40922de30f09af63a0251a0d53f95c6cadd9199"
+    )  # tag 4.2.1
+    version(
+        "4.1.0", submodules=True, commit="a8e3aef58bfe86790782c4ae5e5c1bb5f232ff30"
+    )  # tag 4.1.0
     version(
         "2.2.9", submodules=True, commit="f87525cae7597322edfb2ccf1c7d4437402d9481"
     )  # tag 2.2.9
@@ -76,7 +80,7 @@ class Pumi(CMakePackage):
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("mpi")
-    depends_on("cmake@3:", type="build")
+    depends_on("cmake@3.12:", type="build")
     depends_on("zoltan", when="+zoltan")
     depends_on("zoltan+int64", when="+zoltan+int64")
     simbase = "+base"
@@ -117,6 +121,16 @@ class Pumi(CMakePackage):
                 args.append("-DSIM_DISCRETE=ON")
         return args
 
+    # copied from slate package
+    def mpi_launcher(self):
+        searchpath = [self.spec["mpi"].prefix.bin]
+        try:
+            searchpath.insert(0, self.spec["slurm"].prefix.bin)
+        except KeyError:
+            tty.debug("Slurm not found, ignoring.")
+        commands = ["srun", "mpirun", "mpiexec"]
+        return which(*commands, path=searchpath) or which(*commands)
+
     def test_partition(self):
         """Testing pumi mesh partitioning"""
         if self.spec.satisfies("@:2.2.6"):
@@ -131,18 +145,16 @@ class Pumi(CMakePackage):
             "pipe_2_.smb",
             "2",
         ]
-        mpiexe_list = ["mpirun", "mpiexec", "srun"]
-        for mpiexe in mpiexe_list:
-            tty.info(f"Attempting to build and launch with {os.path.basename(mpiexe)}")
-            try:
-                options = ["--immediate=30"] + options if mpiexe == "srun" else options
-                exe = which(mpiexe, required=True)
-                out = exe(*options, output=str.split, error=str.split)
-                assert "mesh pipe_2_.smb written" in out
-                return
-            except (Exception, ProcessError) as err:
-                tty.info(f"Skipping {mpiexe}: {str(err)}")
-        assert False, "No MPI executable was found"
+
+        launcher = self.mpi_launcher()
+        assert launcher is not None, (
+            "Cannot run tests due to absence of MPI launcher (srun, mpirun,"
+            "mpiexec) in {0}.".format(self.spec["mpi"].prefix.bin)
+        )
+        options += ["--immediate=30"] if launcher == "srun" else []
+        out = launcher(*options, output=str.split, error=str.split)
+        assert "mesh pipe_2_.smb written" in out
+        return
 
     def test_refine(self):
         """Testing pumi uniform mesh refinement"""
