@@ -19,7 +19,7 @@ class Transferbench(ROCmLibrary, CMakePackage):
     executables = ["TransferBench"]
 
     rocm_url_map = [
-        ("10.0.0", "https://github.com/ROCm/TransferBench/archive/refs/tags/v1.70.00.tar.gz"),
+        ("10.0.0", "https://github.com/ROCm/TransferBench/archive/refs/tags/v1.69.00.tar.gz"),
         (None, "https://github.com/ROCm/TransferBench/archive/refs/tags/rocm-{0}.tar.gz"),
     ]
 
@@ -27,7 +27,7 @@ class Transferbench(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
-    version("10.0.0", sha256="d0c696fc43670c5bc90971fc9ffef1c08134b000b71871a021c1bfbcd0a42edd")
+    version("10.0.0", sha256="3b24777b3e8600101125dedfe2ea169f6e5d3758abef4ed3db55288c1bf4fc4f")
     version("7.2.3", sha256="e36fb3943359f38c15a27bb692a91d669186005b70ea7d877af6a6580fc2c790")
     version("7.2.1", sha256="ff0dd90869eff77e00bb748149bcfa359d9c7d503c438f4bb64a88a7e39cbc3d")
     version("7.2.0", sha256="4be9d66044827d7b1950b4fd7ce50913d0926822e88e3441f472ca6a62086a15")
