@@ -255,6 +255,9 @@ class CompilerWrapper(Package):
                     "SPACK_BUILD_PREFIX_MAP_ARGS", prefix_map_arg.format(build_dir, "./build")
                     )
 
+        env.set("SPACK_ENABLE_NEW_DTAGS", self.enable_new_dtags)
+        env.set("SPACK_DISABLE_NEW_DTAGS", self.disable_new_dtags)
+                
         for item in env_paths:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
 
