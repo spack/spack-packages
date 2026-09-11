@@ -153,6 +153,8 @@ class Openblas(CMakePackage, MakefilePackage):
             when=_when_condition,
         )
 
+    variant("no_avx512", default=False, description="Disable AVX-512 vectorization")
+
     # virtual dependency
     provides("blas", "lapack")
     provides("lapack@3.9.1:", when="@0.3.15:")
@@ -535,6 +537,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         else:
             args.append("TARGET=" + microarch.name.upper())
+
+        # Disable AVX-512 vectorization of x86_64 architectures if requested
+        if self.spec.satisfies("+no_avx512") and self.spec.target.family == "x86_64":
+            args.append("NO_AVX512=1")
 
         return args
 
