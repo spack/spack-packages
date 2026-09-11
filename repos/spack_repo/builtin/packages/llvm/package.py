@@ -921,6 +921,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             env.set("FC", join_path(self.spec.prefix.bin, "flang"))
             env.set("F77", join_path(self.spec.prefix.bin, "flang"))
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+     ) -> None:
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+
     root_cmakelists_dir = "llvm"
 
     def cmake_args(self):

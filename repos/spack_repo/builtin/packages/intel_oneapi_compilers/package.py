@@ -539,6 +539,10 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         super().setup_dependent_build_environment(env, dependent_spec)
+
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+
         # workaround bug in icpx driver where it requires sycl-post-link is on the PATH
         # It is located in the same directory as the driver. Error message:
         #   clang++: error: unable to execute command:

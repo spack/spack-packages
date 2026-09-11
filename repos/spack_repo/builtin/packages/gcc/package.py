@@ -1149,6 +1149,15 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             env.set("FC", self.fortran)
             env.set("F77", self.fortran)
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        # Enable GNU build-id notes for debuginfo auto-discovery (ELF platforms
+        # only; not supported by Darwin's linker).
+        print(f">>> GCC setup_dependent_build_environment CALLED for {dependent_spec.name}")
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+            
     def detect_gdc(self):
         """Detect and return the path to GDC that belongs to the same instance of GCC that is used
         by self.compiler.
