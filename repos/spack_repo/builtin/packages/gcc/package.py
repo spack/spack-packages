@@ -196,7 +196,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     )
     variant(
         "build_type",
-        default="RelWithDebInfo",
+        default="Release",
         values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel"),
         description="CMake-like build type. "
         "Debug: -O0 -g; Release: -O3; "
