@@ -1154,7 +1154,6 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     ) -> None:
         # Enable GNU build-id notes for debuginfo auto-discovery (ELF platforms
         # only; not supported by Darwin's linker).
-        print(f">>> GCC setup_dependent_build_environment CALLED for {dependent_spec.name}")
         if self.spec.satisfies("platform=linux"):
             env.set("SPACK_BUILD_ID_ARGS", "--build-id")
             
