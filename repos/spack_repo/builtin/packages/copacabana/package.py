@@ -12,7 +12,7 @@ class Copacabana(Package):
     and packaging are written with, shared by a family of header-only libraries."""
 
     homepage = "https://github.com/jfalcou/copacabana"
-    url = "https://github.com/jfalcou/copacabana/archive/refs/tags/v7.tar.gz"
+    url = "https://github.com/jfalcou/copacabana/archive/refs/tags/v8.tar.gz"
     git = "https://github.com/jfalcou/copacabana.git"
 
     maintainers("jfalcou")
@@ -20,6 +20,7 @@ class Copacabana(Package):
     license("BSL-1.0")
 
     version("main", branch="main")
+    version("8", sha256="672c1ae677076e4d9d0f49ad18ce1b465914bca0ca6fa6eca5bf6a9a5c4bcdbe")
     version("7", sha256="c24436ebcdda92b87d02b28d4c6f9d5c20a58ac254725280d142e8d72e8c6412")
 
     # CPM fetches this at configure time from the projects using it. A consumer points

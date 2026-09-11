@@ -123,6 +123,7 @@ spack:
   - kokkos +openmp
   - kokkos-fft host_backend=fftw-openmp
   - kokkos-kernels +openmp
+  - kokkos-tools
   - libnrm
   - libquo
   - libunwind

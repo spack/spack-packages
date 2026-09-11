@@ -31,6 +31,7 @@ class KokkosTools(CMakePackage):
     depends_on("kokkos")
     depends_on("mpi", when="+mpi")
     depends_on("papi", when="+papi")
+    depends_on("rocprofiler-sdk", when="^kokkos +rocm")
 
     def cmake_args(self):
         # The plugins are intentionally disabled the time to properly introduce new variants
