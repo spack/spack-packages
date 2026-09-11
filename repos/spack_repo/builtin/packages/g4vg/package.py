@@ -44,4 +44,11 @@ class G4vg(CMakePackage):
             define("G4VG_BUILD_TESTS", False),
         ]
 
+        # When building with C++20 and Ninja, clang installations that
+        # lack clang-scan-deps (e.g., vanilla Ubuntu 24's clang-18) fail with
+        # CMAKE_CXX_COMPILER_CLANG_SCAN_DEPS-NOTFOUND errors.
+        # G4VG doesn't currently use C++20 modules, so we just disable
+        # this capability.
+        args.append(define("CMAKE_CXX_SCAN_FOR_MODULES", False))
+
         return args
