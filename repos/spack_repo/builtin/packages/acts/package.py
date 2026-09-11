@@ -50,6 +50,8 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("47.1.0", commit="e9e66df6c9abd699e6bf72227822f7372594cd49")
+    version("47.0.0", commit="26d85d671cdadb34fdbf1eb1aa3823b71dbbff01")
     version("46.8.1", commit="3ded307e142c6ce9e6c1fa205604582ff6aef920")
     version("46.8.0", commit="59d95bd56db22034219a526e7dff563622cc268d")
     version("46.7.0", commit="4e95978f8e23f863f9e7c6b219b5100531f4ba41")
@@ -222,6 +224,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("intel-tbb @2020.1:", when="+examples")
     depends_on("millepede@01-00-00:", when="+mille")
+    depends_on("millepede@01-00-05:", when="@47.1: +mille")
     depends_on("nlohmann-json @3.10.5:", when="+json")
     depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
@@ -260,6 +263,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("vecmem@1.17.0:", when="@42: +traccc")
     depends_on("vecmem@1.21.0:", when="@44.1: +traccc")
     depends_on("vecmem@1.24.0:", when="@46.4: +traccc")
+    depends_on("vecmem@1.25.0:", when="@47: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:
