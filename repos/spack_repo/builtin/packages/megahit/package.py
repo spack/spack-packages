@@ -36,6 +36,21 @@ class Megahit(CMakePackage, MakefilePackage):
     depends_on("bzip2", type="run", when="@1.2.9: build_system=cmake")
 
     patch("amd.patch", when="@1.1.4 target=aarch64:")
+    patch(
+        "https://raw.githubusercontent.com/bioconda/bioconda-recipes/master/recipes/megahit/0001-master.patch",
+        sha256="b124b8d834282a4edf65c8661066b34ee7ae43b65990271f85c018c5545b367d",
+        when="@1.2.9:",
+    )
+    patch(
+        "https://raw.githubusercontent.com/bioconda/bioconda-recipes/master/recipes/megahit/linux-aarch64-support-pr-368.patch",
+        sha256="f61e52de034080bc99b414e6f966da4aa6c0845ad3d02b705bb99bab71a3bbfc",
+        when="@1.2.9 target=aarch64:",
+    )
+    patch(
+        "https://raw.githubusercontent.com/bioconda/bioconda-recipes/master/recipes/megahit/gcc-13-support-pr-366.patch",
+        sha256="ee86d34bb41f51f76533804dcca7c942466e59cab745cfb2d836bb21400f0461",
+        when="@1.2.9: %c,cxx=gcc@13:",
+    )
 
 
 class MakefileBuilder(MakefileBuilder):
