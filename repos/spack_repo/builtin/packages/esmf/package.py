@@ -108,7 +108,7 @@ class Esmf(MakefilePackage, PythonExtension):
     depends_on("fortran", type="build")  # generated
 
     # Optional dependencies
-    depends_on("llvm-openmp", when="@9: +openmp %apple-clang", type=("build", "run"))
+    depends_on("llvm-openmp", when="@9: +openmp %apple-clang")
     depends_on("mpi", when="+mpi")
     depends_on("lapack@3:", when="+external-lapack")
     depends_on("netcdf-c@3.6:", when="+netcdf")
