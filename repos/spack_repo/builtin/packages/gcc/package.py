@@ -1092,6 +1092,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         spec_dir = glob.glob(f"{self.prefix.lib}/gcc/*/*")
         return spec_dir[0] if spec_dir else None
 
+    @property
+    def file_prefix_map_arg(self):
+        if self.spec.satisfies("@8:"):
+            return "-ffile-prefix-map={0}={1}"
+        return None
+
     @run_after("install")
     def write_specs_file(self):
         """(1) inject an rpath to its runtime library dir, (2) add a default programs search path
