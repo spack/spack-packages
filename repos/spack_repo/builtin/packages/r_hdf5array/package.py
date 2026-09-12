@@ -22,11 +22,13 @@ class RHdf5array(RPackage):
     bioc = "HDF5Array"
 
     with default_args(get_full_repo=True):
+        version("1.40.0", commit="6539afc72b0a9275feb16b8ce62508f6dfc1ecaf")  # bioc 3.23
+        version("1.36.0", commit="1e32d9f9fc78bddffd1600aee8e46d76fa296b71")  # bioc 3.21
         version("1.28.0", commit="8c839417c4a37c35330bd6f02b79dda9f48e76ae")
-        version("1.26.0", commit="38b7bd603f7281245605048d8d57237e00b74d79")
-        version("1.24.2", commit="fb213ba36631b04dfe754705f701f3a015c4fc82")
+        version("1.26.0", commit="38b7bd603f7281245605048d8d57237e00b74d79")  # bioc 3.16
+        version("1.24.2", commit="fb213ba36631b04dfe754705f701f3a015c4fc82")  # bioc 3.15
         version("1.24.1", commit="d002fe70c84baaadb62058ce467d6c1ea032d8f5")
-        version("1.22.1", commit="b3f091fbc159609e8e0792d2bf9fbef52c6ceede")
+        version("1.22.1", commit="b3f091fbc159609e8e0792d2bf9fbef52c6ceede")  # bioc 3.14
         version("1.18.0", commit="d5bd55d170cb384fdebdf60751e1e28483782caa")
         version("1.12.3", commit="21c6077f3f789748a18f2e579110576c5522e975")
         version("1.10.1", commit="0b8ae1dfb56e4203dd8e14781850370df46a5e2c")
@@ -34,27 +36,60 @@ class RHdf5array(RPackage):
         version("1.6.0", commit="95f2f8d3648143abe9dc77c76340c5edf4114c82")
         version("1.4.8", commit="79ab96d123c8da8f8ead81f678fe714c0958ff45")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("r@3.4:", type=("build", "run"))
-    depends_on("r-delayedarray@0.2.4:", type=("build", "run"))
-    depends_on("r-delayedarray@0.3.18:", type=("build", "run"), when="@1.6.0:")
-    depends_on("r-delayedarray@0.5.32:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-delayedarray@0.7.41:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-delayedarray@0.9.3:", type=("build", "run"), when="@1.12.3:")
-    depends_on("r-delayedarray@0.15.16:", type=("build", "run"), when="@1.18.0:")
-    depends_on("r-rhdf5", type=("build", "run"))
-    depends_on("r-rhdf5@2.25.6:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-rhdf5@2.31.6:", type=("build", "run"), when="@1.18.0:")
-    depends_on("r-matrix", type=("build", "run"), when="@1.18.0:")
-    depends_on("r-rhdf5filters", type=("build", "run"), when="@1.22.1:")
-    depends_on("r-biocgenerics", type=("build", "run"))
-    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@1.8.1:")
+
+    depends_on("r-biocgenerics@0.51.2:", type=("build", "run"), when="@1.33.7:")
     depends_on("r-biocgenerics@0.31.5:", type=("build", "run"), when="@1.18.0:")
-    depends_on("r-s4vectors", type=("build", "run"))
-    depends_on("r-s4vectors@0.21.6:", type=("build", "run"), when="@1.12.3:")
-    depends_on("r-s4vectors@0.27.13:", type=("build", "run"), when="@1.18.0:")
+    depends_on("r-biocgenerics@0.25.1:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-biocgenerics", type=("build", "run"))
+
+    depends_on("r-delayedarray@0.33.5:", type=("build", "run"), when="@1.35.12:")
+    depends_on("r-delayedarray@0.33.1:", type=("build", "run"), when="@1.35.1:")
+    depends_on("r-delayedarray@0.31.8:", type=("build", "run"), when="@1.33.4:")
+    depends_on("r-delayedarray@0.31.2:", type=("build", "run"), when="@1.33.3:")
+    depends_on("r-delayedarray@0.27.2:", type=("build", "run"), when="@1.29.2:")
+    depends_on("r-delayedarray@0.27.1:", type=("build", "run"), when="@1.29.1:")
+    depends_on("r-delayedarray@0.26.1:", type=("build", "run"), when="@1.28.1:")
+    depends_on("r-delayedarray@0.15.16:", type=("build", "run"), when="@1.18.0:")
+    depends_on("r-delayedarray@0.9.3:", type=("build", "run"), when="@1.12.3:")
+    depends_on("r-delayedarray@0.7.41:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-delayedarray@0.5.32:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-delayedarray@0.3.18:", type=("build", "run"), when="@1.6.0:")
+    depends_on("r-delayedarray@0.2.4:", type=("build", "run"))
+
+    depends_on("r-h5mread@1.3.3:", type=("build", "run"), when="@1.39.1:")
+    depends_on("r-h5mread@0.99.4:", type=("build", "run"), when="@1.35.8:")
+
     depends_on("r-iranges", type=("build", "run"))
-    depends_on("r-rhdf5lib", type=("build", "run"), when="@1.12.3:")
-    depends_on("gmake", type="build")
+
+    depends_on("r-matrix", type=("build", "run"), when="@1.18.0:")
+
+    depends_on("r-rhdf5@2.31.6:", type=("build", "run"), when="@1.18.0:")
+    depends_on("r-rhdf5@2.25.6:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-rhdf5", type=("build", "run"))
+
+    depends_on("r-rhdf5filters", type=("build", "run"), when="@1.22.1:")
+
+    depends_on("r-s4arrays@1.1.1:", type=("build", "run"), when="@1.29.1:")
+    depends_on("r-s4arrays@1.0.1:", type=("build", "run"), when="@1.28.1:")
+
+    depends_on("r-s4vectors@0.27.13:", type=("build", "run"), when="@1.18.0:")
+    depends_on("r-s4vectors@0.21.6:", type=("build", "run"), when="@1.12.3:")
+    depends_on("r-s4vectors", type=("build", "run"))
+
+    depends_on("r-sparsearray@1.7.5:", type=("build", "run"), when="@1.35.12:")
+    depends_on("r-sparsearray@1.5.42:", type=("build", "run"), when="@1.33.8:")
+    depends_on("r-sparsearray@1.5.22:", type=("build", "run"), when="@1.33.4:")
+    depends_on("r-sparsearray@1.5.8:", type=("build", "run"), when="@1.33.1:")
+
+    depends_on("curl", type=("build", "link"), when="^r-rhdf5lib@1.33.1:")
+
     depends_on("zlib-api")
+
+    # Historical dependencies
+
+    depends_on("r-rhdf5lib", type=("build", "run"), when="@1.12.3:1.35.7")
+
+    depends_on("gmake", type="build", when="@:1.35.7")
