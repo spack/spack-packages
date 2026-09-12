@@ -25,11 +25,9 @@ class Vtk(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "9.5.1",
-        sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
-        preferred=True,
-    )
+    version("9.6.2", sha256="aed12cec12a9609179bf66329070266627ca64244a10856a452b2a17ffb04a1d")
+    version("9.6.0", sha256="d77d180694faafdc816578b9a53651f6790e799615811bfbb91018661a3bb8f2")
+    version("9.5.1", sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
@@ -110,7 +108,8 @@ class Vtk(CMakePackage):
 
     # Based on PyPI wheel availability
     with when("+python"), default_args(type=("build", "link", "run")):
-        extends("python@:3.13")
+        extends("python@:3.14")
+        extends("python@:3.13", when="@:9.5")
         extends("python@:3.12", when="@:9.3")
         extends("python@:3.11", when="@:9.2")
         extends("python@:3.10", when="@:9.2.2")
@@ -186,13 +185,15 @@ class Vtk(CMakePackage):
     depends_on("hdf5+mpi", when="+mpi")
     depends_on("hdf5@1.8:", when="@8:9.0")
     depends_on("hdf5@1.10:", when="@9.1:")
+    depends_on("hdf5@1.14.6:", when="@9.6:")
     depends_on("jpeg")
     depends_on("jsoncpp")
     depends_on("libxml2")
     depends_on("lz4")
-    depends_on("netcdf-c@:4.9.2", when="io=exodusii")
-    depends_on("netcdf-c@:4.9.2~mpi", when="io=netcdf ~mpi")
-    depends_on("netcdf-c@:4.9.2+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-c@:4.9.3", when="io=exodusii")
+    depends_on("netcdf-c@:4.9.3~mpi", when="io=netcdf ~mpi")
+    depends_on("netcdf-c@:4.9.3+mpi", when="io=netcdf +mpi")
+    depends_on("netcdf-cxx4", when="io=netcdf @:8.1.2")
     depends_on("libpng")
     depends_on("libtiff")
     depends_on("zlib-api")
@@ -221,6 +222,7 @@ class Vtk(CMakePackage):
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
         depends_on("seacas@2024-06-27", when="@9.4:")
+        depends_on("seacas@2025-08-28", when="@9.6:")
 
     depends_on("nlohmann-json+multiple_headers", when="@9.2:")
     depends_on("scnlib", when="@9.5:")
@@ -352,6 +354,8 @@ class Vtk(CMakePackage):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
             )
+            if spec.satisfies("@9.6:"):
+                cmake_args.append(self.define("VTK_USE_MPI", "YES"))
 
         if spec.satisfies("raytracing=ospray"):
             cmake_args.append(self.define("VTK_MODULE_ENABLE_VTK_RenderingRayTracing", "YES"))
