@@ -38,6 +38,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
 
     stdcxx_libs = ("-lstdc++",)
 
+    file_prefix_map_arg = "-ffile-prefix-map={0}={1}"
+
     generator("ninja")
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
@@ -484,6 +486,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+
         for root, _, files in os.walk(self.prefix):
             if "libclang_rt.asan-x86_64.so" in files:
                 env.prepend_path("LD_LIBRARY_PATH", root)

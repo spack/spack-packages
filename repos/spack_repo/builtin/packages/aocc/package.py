@@ -167,6 +167,12 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "flang")
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+    
     compiler_version_regex = r"AOCC_(\d+[._]\d+[._]\d+)"
     fortran_names = ["flang"]
 
@@ -183,6 +189,13 @@ class Aocc(Package, LlvmDetection, CompilerPackage):
 
     opt_flags = ["-O0", "-O1", "-O2", "-O3", "-Ofast", "-Os", "-Oz", "-Og", "-O", "-O4"]
 
+    # AOCC is a Clang derivative; -ffile-prefix-map is supported across all
+    # packaged versions here (@3.2.0: is based on LLVM 13.0, well past the
+    # LLVM 10 introduction of this flag). If an older AOCC version is added
+    # to this package in the future, verify -ffile-prefix-map support before
+    # assuming it applies, earlier AOCC releases (2.x, LLVM <10) may not.
+    file_prefix_map_arg = "-ffile-prefix-map={0}={1}"
+    
     compiler_wrapper_link_paths = {
         "c": os.path.join("aocc", "clang"),
         "cxx": os.path.join("aocc", "clang++"),
