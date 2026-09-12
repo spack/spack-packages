@@ -55,6 +55,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("23.1.1", sha256="851b3d701a4fbdd9f69536d4acda578469e810ca7056687d6556443f5fd39557")
     version("23.1.0", sha256="d8657b2a7291e518407bf13c4b41c85ef2cded2d4354097a2f451644dfc817b0")
 
     # Previous stable series releases
