@@ -35,6 +35,32 @@ class Scafacos(AutotoolsPackage):
     depends_on("pfft")
     depends_on("pnfft")
 
+    def patch(self):
+        # configure (generated from package/configure.ac -- release
+        # tarballs ship the generated script, and this recipe does not
+        # run autoreconf) can populate SCAFACOS_PC_LIBS with a stray
+        # colon glued onto a linker flag (e.g. "-lmpi:"), picked up from
+        # a compiler wrapper's verbose link output when probing for
+        # extra Fortran/C++ runtime libs. That corrupts the "Libs:" line
+        # of the generated scafacos.pc -- either a dangling trailing
+        # colon, or (depending on exactly where it lands) the template's
+        # following "Libs.private:" line glued directly onto the same
+        # output line with no separator. Consumers resolving scafacos
+        # via pkg-config/CMake's FindPkgConfig then pass the malformed
+        # token to the linker literally, producing spurious
+        # "cannot find -l<garbage>" errors downstream (observed with
+        # lammps+scafacos). Colons never appear legitimately inside a
+        # well-formed -l/-L linker flag, so strip them from
+        # SCAFACOS_PC_LIBS specifically, right before configure's own
+        # whitespace-normalization pass. Root-caused and fixed upstream
+        # at the configure.ac level: https://github.com/scafacos/scafacos/pull/44
+        anchor = 'z= ; for x in ${SCAFACOS_PC_LIBS} ; do'
+        strip_colons = (
+            'SCAFACOS_PC_LIBS=`echo " ${SCAFACOS_PC_LIBS} " '
+            '| sed "s/:/ /g"`\n'
+        )
+        filter_file(anchor, strip_colons + anchor, "package/configure", string=True)
+
     def configure_args(self):
         args = [
             "--disable-doc",
