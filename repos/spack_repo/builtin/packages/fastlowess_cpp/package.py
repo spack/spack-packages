@@ -2,8 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+
+from spack.package import *
 
 
 class FastlowessCpp(CargoPackage):
@@ -11,9 +12,7 @@ class FastlowessCpp(CargoPackage):
     C++ bindings, implemented in Rust."""
 
     homepage = "https://github.com/thisisamirv/lowess-project"
-    url = (
-        "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
-    )
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     maintainers("thisisamirv")
