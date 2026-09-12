@@ -7,11 +7,12 @@ import os
 from spack_repo.builtin.build_systems import cmake
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Gromacs(CMakePackage, CudaPackage):
+class Gromacs(CMakePackage, CudaPackage, ROCmPackage):
     """GROMACS is a molecular dynamics package primarily designed for simulations
     of proteins, lipids and nucleic acids. It was originally developed in
     the Biophysical Chemistry department of University of Groningen, and is now
@@ -51,6 +52,8 @@ class Gromacs(CMakePackage, CudaPackage):
     # Exception: Otherwise, versions before 2022 will be removed when
     # 2025 is supported.
     version("main", branch="main")
+    version("2026.3", sha256="1094b7bbc6a3960223827114626657110b40096cdf9598a727935fc84ebf8aa0")
+    version("2026.2", sha256="d27e4455e8246177952366798631a0dad9f2e1f567400a6cb854a168dcc050dd")
     version("2026.1", sha256="d95a313f56db7e05ee3a21e50f582fdee5176c2f60b900bab2461fd95c5e81be")
     version("2026.0", sha256="229726f436cc515bfd8c4aa7af3a97b18072f71b5ebd0b08daf6565571e2d9eb")
     version("2025.4", sha256="ca17720b4a260eb73649211e9f6a940ee7543452129844213c3accb0a927a5c3")
@@ -96,6 +99,9 @@ class Gromacs(CMakePackage, CudaPackage):
     )
     depends_on("heffte +cuda", when="+heffte +cuda")
     depends_on("heffte +sycl", when="+heffte +sycl")
+    depends_on("heffte +sycl", when="+heffte +sycl ~rocm")
+    depends_on("heffte +rocm", when="+heffte +sycl +rocm")
+    depends_on("heffte +rocm", when="+heffte ~sycl +rocm")
     variant("opencl", default=False, description="Enable OpenCL support")
     variant("sycl", default=False, when="@2021:", description="Enable SYCL support")
     requires(
@@ -106,6 +112,18 @@ class Gromacs(CMakePackage, CudaPackage):
         msg="GROMACS SYCL support comes either from intel-oneapi-runtime or a "
         + "package that provides the virtual package `sycl`, such as AdaptiveCpp "
         + "plus a clang compiler.",
+    )
+    depends_on("llvm-amdgpu", when="+rocm")
+    depends_on("rocfft", when="~sycl+rocm")
+    for arch in ROCmPackage.amdgpu_targets:
+        depends_on(f"hipsycl+rocm amdgpu_target={arch}", when=f"+sycl+rocm amdgpu_target={arch}")
+    conflicts("+rocm", when="+cuda")
+    conflicts("+rocm", when="+opencl")
+    conflicts(
+        "+rocm",
+        when="@:2024.6",
+        msg="HIP backend: only main non-bonded kernels are offloaded on "
+        "2025.x; full offload support starts at 2026.",
     )
     variant(
         "intel-data-center-gpu-max",
@@ -597,8 +615,42 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 options.append("-DGMX_GPU:STRING=OpenCL")
             elif self.spec.satisfies("+sycl"):
                 options.append("-DGMX_GPU:STRING=SYCL")
+                if self.spec.satisfies("^hipsycl+rocm"):
+                    rocm_archs = self.spec.variants["amdgpu_target"].value
+                    options.append(
+                        f"-DCMAKE_C_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang"
+                    )
+                    options.append(
+                        f"-DCMAKE_CXX_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang++"
+                    )
+                    options.append("-DGMX_SYCL=ACPP")
+                    if self.spec.satisfies("^hipsycl@24.06:"):
+                        options.append("-DSYCL_CXX_FLAGS_EXTRA=-DACPP_ALLOW_INSTANT_SUBMISSION=1")
+                    else:
+                        options.append(
+                            "-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1"
+                        )
+                    options.append(f"-DACPP_TARGETS=hip:{','.join(rocm_archs)}")
+                    hipsycl_prefix = self.spec["hipsycl"].prefix
+                    options.append("-DCMAKE_PREFIX_PATH={0}".format(hipsycl_prefix))
+            elif self.spec.satisfies("+rocm"):
+                options.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+                options.append("-DGMX_GPU:STRING=HIP")
             else:
                 options.append("-DGMX_GPU:STRING=OFF")
+
+            # Properly handle CRAY MPICH link dependencies
+            if (
+                self.spec.satisfies("+mpi")
+                and self.spec.satisfies("^[virtuals=mpi] cray-mpich")
+                and (self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"))
+            ):
+                gtl = self.spec["cray-mpich"].package.gtl_lib
+                if gtl:
+                    ldflags = " ".join(gtl.get("ldflags", []))
+                    ldlibs = " ".join(gtl.get("ldlibs", []))
+                    options.append(f"-DCMAKE_EXE_LINKER_FLAGS={ldflags} {ldlibs}")
+
         else:
             if self.spec.satisfies("+cuda") or self.spec.satisfies("+opencl"):
                 options.append("-DGMX_GPU:BOOL=ON")
@@ -635,7 +687,17 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
             options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
-
+        if self.spec.satisfies("+rocm"):
+            if self.spec.satisfies("+heffte"):
+                # HeFFTe is only compatible with rocFFT
+                options.append("-DGMX_GPU_FFT_LIBRARY=rocFFT")
+                options.append(f"-DCMAKE_CXX_FLAGS=-I{self.spec['rocfft'].headers.directories[0]}")
+            else:
+                # VkFFT provides a portable GPU FFT backend which can be used on AMD and
+                # NVIDIA GPUs, this is the GROMACS default and offers good performance
+                options.append("-DGMX_GPU_FFT_LIBRARY=VkFFT")
+        elif self.spec.satisfies("+sycl"):
+            options.append("-DGMX_GPU_FFT_LIBRARY=VkFFT")
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")
             options.append("-DGMX_GPU_NB_NUM_CLUSTER_PER_CELL_X=1")
