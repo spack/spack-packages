@@ -20,61 +20,24 @@ class PyTorchvision(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.29.0", sha256="24be57d922927d8a2ac2e8f076f07c3447ddf8f1d25ddbb7b65578f36c9ab8e3")
     version("0.28.0", sha256="ecc4451241c8eeadc0c88213bd65c7932c9622d1d0034254b938f25362283ee9")
     version("0.27.1", sha256="705d5ab7d01af9ece3bfbb1486eed3c23a2f68414fcc9c9a88910fb3c018c3db")
     version("0.27.0", sha256="04c588d80e63903e1e4444db8a1c32dc56e4080ed48782555e1d00752d6edb17")
     version("0.26.0", sha256="fb95b6b78b3801c4d4d6332f7a5a0b6c624588e1b39e0d6fa145227b0c749403")
     version("0.25.0", sha256="a7ac1b3ab489d71f6e27edfad1e27616e4b8a9b1517e60fce4a950600d3510e8")
-    version("0.24.1", sha256="071da2078600bfec4886efab77358c9329abfedcf1488b05879b556cb9b84ba7")
-    version("0.24.0", sha256="f799cdd1d67a3edbcdc6af8fb416fe1b019b512fb426c0314302cd81518a0095")
-    version("0.23.0", sha256="db5a91569e5eb4a3b02e9eaad6080335f5ae3824890a697f5618541999f04027")
-    version("0.22.1", sha256="fa1b0a58e13c08329bcff8d52607b4e25944fd074c01dee1b501c8158fadcdec")
-    version("0.22.0", sha256="83ed8855cdfb138aba6f116f8fd8da8b83463170dad67a70f60327915ed12014")
-    version("0.21.0", sha256="0a4a967bbb7f9810f792cd0289a07fb98c8fb5d1303fae8b63e3a6b05d720058")
-    version("0.20.1", sha256="7e08c7f56e2c89859310e53d898f72bccc4987cd83e08cfd6303513da15a9e71")
-    version("0.20.0", sha256="b59d9896c5c957c6db0018754bbd17d079c5102b82b9be0b438553b40a7b6029")
-    version("0.19.1", sha256="083e75c467285595ec3eb3c7aa8493c19e53d7eb42f13046fb56a07c8897e5a8")
-    version("0.19.0", sha256="4c499d0a412b5a21d55ac3c0a37e80ecd7e1f002f2a7b6b3b38a2de2544acbb6")
-    version("0.18.1", sha256="347d472a9ceecc44e0bee1eda140d63cfaffc74a54ec07d4b98da7698ce75516")
-    version("0.18.0", sha256="3e61cbac33986a862a59cd733fd65da8b2c2a6160a66556cfa0e850f62fd43c7")
-    version("0.17.2", sha256="0f9304acd77aafb7cfaf3fd5e318b2986ecc73547394b971d710eacd59f3e78e")
-    version("0.17.1", sha256="a01c7bce4098c41b62cd3a08d87569113e25d12994b1370f0fd5f531952b6cef")
-    version("0.17.0", sha256="55e395d5c7d9bf7658c82ac633cac2224aa168e1bfe8bb5b2b2a296c792a3500")
-    version("0.16.2", sha256="8c1f2951e98d8ada6e5a468f179af4be9f56d2ebc3ab057af873da61669806d7")
-    version("0.16.1", sha256="d31fe52e4540750c8d372b0f38f1bfa81d8261193f2c2c06577332831d203c50")
-    version("0.16.0", sha256="79b30b082237e3ead21e74587cedf4a4d832f977cf7dfeccfb65f67988b12ceb")
-    version("0.15.2", sha256="1efcb80e0a6e42c54f07ee16167839b4d302aeeecc12839cc47c74b06a2c20d4")
-    version("0.15.1", sha256="689d23d4ebb0c7e54e8651c89b17155b64341c14ae4444a04ca7dc6f2b6a0a43")
-    version("0.14.1", sha256="ced67e1cf1f97e168cdf271851a4d0b6d382ab7936e7bcbb39aaa87239c324b6")
-    version("0.14.0", sha256="be1621c85c56eb40537cb74e6ec5d8e58ed8b69f8374a58bcb6ec413cb540c8b")
-    version("0.13.1", sha256="c32fab734e62c7744dadeb82f7510ff58cc3bca1189d17b16aa99b08afc42249")
-    version("0.13.0", sha256="2fe9139150800820d02c867a0b64b7c7fbc964d48d76fae235d6ef9215eabcf4")
-    version("0.12.0", sha256="99e6d3d304184895ff4f6152e2d2ec1cbec89b3e057d9c940ae0125546b04e91")
-    version("0.11.3", sha256="b4c51d27589783e6e6941ecaa67b55f6f41633874ec37f80b64a0c92c3196e0c")
-    version("0.11.2", sha256="55689c57c29f82438a133d0af3315991037be59c8e02471bdcaa31731154a714")
-    version("0.11.1", sha256="32a06ccf755e4d75006ce03701f207652747a63dbfdf65f0f20a1b6f93a2e834")
-    version("0.11.0", sha256="8e85acf8f5d39f27e92e610ccb506dac0bf4412bb366a318d2aa5f384cbd4d2c")
-    version("0.10.1", sha256="4d595cf0214c8adc817f8e3cd0043a027b52b481e05d67b04f4947fcb43d4277")
-    version("0.10.0", sha256="82bb2c2b03d8a65f4ea74bb0ee5566b0876a1992aceefb1e11475c7b5d2e857b")
-    version("0.9.2", sha256="b41fc99bbf18450750bcd1804393e7c09dc8d4873c6b7e544b11c70fda59cbc8")
-    version("0.9.1", sha256="79964773729880e0eee0e6af13f336041121d4cc8491a3e2c0e5f184cac8a718")
-    version("0.9.0", sha256="9351ed92aded632f8c7f59dfadac13c191a834babe682f5785ea47e6fcf6b472")
-    version("0.8.2", sha256="9a866c3c8feb23b3221ce261e6153fc65a98ce9ceaa71ccad017016945c178bf")
-
-    # Fix duplicate symbol error when building with ROCm
-    patch("torchvision-0.26.0-rocm-vision-duplicate-symbol.patch", when="@0.26.0 ^py-torch+rocm")
 
     desc = "Enable support for native encoding/decoding of {} formats in torchvision.io"
     variant("png", default=True, description=desc.format("PNG"))
     variant("jpeg", default=True, description=desc.format("JPEG"))
-    variant("webp", default=False, description=desc.format("WEBP"), when="@0.20:")
+    variant("webp", default=False, description=desc.format("WEBP"))
     variant("nvjpeg", default=False, description=desc.format("NVJPEG"))
     variant("video_codec", default=False, description=desc.format("video_codec"), when="@:0.25")
     variant("ffmpeg", default=False, description=desc.format("FFMPEG"), when="@:0.25")
 
     # torchvision does not yet support disabling giflib:
     # https://github.com/pytorch/vision/pull/8406#discussion_r1590926939
-    # variant("gif", default=False, description=desc.format("GIF"), when="@0.19:")
+    # variant("gif", default=False, description=desc.format("GIF"))
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -82,67 +45,23 @@ class PyTorchvision(PythonPackage):
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
         depends_on("python@3.10:3.15", when="@0.28:")
-        depends_on("python@3.10:3.14", when="@0.24:0.27")
-        depends_on("python@3.9:3.13", when="@0.21:0.23")
-        depends_on("python@3.8:3.12", when="@0.17:0.20")
-        depends_on("python@3.8:3.11", when="@0.15:0.16")
-        depends_on("python@:3.10", when="@0.12:0.14")
-        depends_on("python@:3.9", when="@0.8.2:0.11")
+        depends_on("python@3.10:3.14", when="@:0.27")
 
         # https://github.com/pytorch/vision#installation
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.14.0:", when="@0.29.0:")
         depends_on("py-torch@2.13.0", when="@0.28.0")
         depends_on("py-torch@2.12.1", when="@0.27.1")
         depends_on("py-torch@2.12.0", when="@0.27.0")
         depends_on("py-torch@2.11.0", when="@0.26.0")
         depends_on("py-torch@2.10.0", when="@0.25.0")
-        depends_on("py-torch@2.9.1", when="@0.24.1")
-        depends_on("py-torch@2.9.0", when="@0.24.0")
-        depends_on("py-torch@2.8.0", when="@0.23.0")
-        depends_on("py-torch@2.7.1", when="@0.22.1")
-        depends_on("py-torch@2.7.0", when="@0.22.0")
-        depends_on("py-torch@2.6.0", when="@0.21.0")
-        depends_on("py-torch@2.5.1", when="@0.20.1")
-        depends_on("py-torch@2.5.0", when="@0.20.0")
-        depends_on("py-torch@2.4.1", when="@0.19.1")
-        depends_on("py-torch@2.4.0", when="@0.19.0")
-        depends_on("py-torch@2.3.1", when="@0.18.1")
-        depends_on("py-torch@2.3.0", when="@0.18.0")
-        depends_on("py-torch@2.2.2", when="@0.17.2")
-        depends_on("py-torch@2.2.1", when="@0.17.1")
-        depends_on("py-torch@2.2.0", when="@0.17.0")
-        depends_on("py-torch@2.1.2", when="@0.16.2")
-        depends_on("py-torch@2.1.1", when="@0.16.1")
-        depends_on("py-torch@2.1.0", when="@0.16.0")
-        depends_on("py-torch@2.0.1", when="@0.15.2")
-        depends_on("py-torch@2.0.0", when="@0.15.1")
-        depends_on("py-torch@1.13.1", when="@0.14.1")
-        depends_on("py-torch@1.13.0", when="@0.14.0")
-        depends_on("py-torch@1.12.1", when="@0.13.1")
-        depends_on("py-torch@1.12.0", when="@0.13.0")
-        depends_on("py-torch@1.11.0", when="@0.12.0")
-        depends_on("py-torch@1.10.2", when="@0.11.3")
-        depends_on("py-torch@1.10.1", when="@0.11.2")
-        depends_on("py-torch@1.10.0", when="@0.11.1")
-        depends_on("py-torch@1.10.0", when="@0.11.0")
-        depends_on("py-torch@1.9.1", when="@0.10.1")
-        depends_on("py-torch@1.9.0", when="@0.10.0")
-        depends_on("py-torch@1.8.2", when="@0.9.2")
-        depends_on("py-torch@1.8.1", when="@0.9.1")
-        depends_on("py-torch@1.8.0", when="@0.9.0")
-        depends_on("py-torch@1.7.1", when="@0.8.2")
 
     depends_on("ninja", type="build")
 
     # setup.py
-    # https://setuptools.pypa.io/en/latest/history.html#v77-0-0
-    depends_on("py-setuptools@:76", type="build", when="@:0.21.0")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))
-    # https://github.com/pytorch/vision/issues/8460
-    depends_on("py-numpy@:1", when="@:0.18", type=("build", "run"))
-    depends_on("pil@5.3:", when="@0.10:", type=("build", "run"))
-    depends_on("pil@4.1.1:", type=("build", "run"))
+    depends_on("pil@5.3:", type=("build", "run"))
 
     # Extensions
     depends_on("libpng@1.6:", when="+png")
@@ -156,30 +75,21 @@ class PyTorchvision(PythonPackage):
     # https://github.com/pytorch/vision/pull/8406#discussion_r1590926939
     # depends_on("giflib", when="+gif")
 
-    # Historical dependencies
-    depends_on("py-requests", when="@0.12:0.17.0", type=("build", "run"))
-    depends_on("py-six", when="@:0.5", type=("build", "run"))
-    depends_on("py-typing-extensions", when="@0.12:0.14", type=("build", "run"))
-
     # https://github.com/pytorch/vision/issues/9307
     conflicts("^python@3.14.1")
-    # https://github.com/pytorch/vision/pull/5898
-    conflicts("^pil@10:", when="@:0.12")
     # https://github.com/pytorch/vision/issues/4146
     # https://github.com/pytorch/vision/issues/4934
     conflicts("^pil@8.3")
     # https://github.com/pytorch/pytorch/issues/65000
     conflicts("+ffmpeg", when="platform=darwin")
-    # https://github.com/pytorch/vision/issues/3367
-    conflicts("+ffmpeg", when="^python@3.9")
     # https://github.com/pytorch/vision/pull/7378
     conflicts("^ffmpeg@6:")
-    # https://github.com/pytorch/vision/issues/5616
-    # https://github.com/pytorch/vision/pull/5644
-    conflicts("^ffmpeg@5:", when="@:0.12")
 
     # Many of the datasets require additional dependencies to use.
     # These can be installed after the fact.
+
+    # Fix duplicate symbol error when building with ROCm
+    patch("torchvision-0.26.0-rocm-vision-duplicate-symbol.patch", when="@0.26.0 ^py-torch+rocm")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # The only documentation on building is what is found in setup.py and:
