@@ -33,6 +33,7 @@ class PyDistributed(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2026.7.1", sha256="f7c48ab6961734874521574d75898466703bce93f22f0cff5872c7e4ac6425d4")
     version("2026.3.0", sha256="4a8fc6102fededfbaae45288501276da2297a054d74eb6589f01b087c7f95c26")
     version("2025.7.0", sha256="5f8ec20d3cdfb286452831c6f9ebee84527e9323256c20dd2938d9c6e62c5c18")
     version("2025.3.0", sha256="84a68c91db2a106c752ca7845fba8cd92ad4f3545c0fb2d9b6dec0f44b225539")
@@ -93,9 +94,9 @@ class PyDistributed(PythonPackage):
         depends_on("py-sortedcontainers@:1,2.0.2:")
 
         depends_on("py-tblib@1.6:")
-        depends_on("py-tblib@1.6:3.1,3.2.2:", when="@2026.3.0")
+        depends_on("py-tblib@1.6:3.1,3.2.2:", when="@2026.3.0:")
 
-        depends_on("py-toolz@0.12.0:", when="@2026.3.0")
+        depends_on("py-toolz@0.12.0:", when="@2026.3.0:")
         depends_on("py-toolz@0.11.2:", when="@2024.8.1:")
         # Note that the setup.py is wrong for py-toolz, when="@2022.10.2".
         # See https://github.com/dask/distributed/pull/7309
@@ -108,9 +109,10 @@ class PyDistributed(PythonPackage):
         depends_on("py-tornado@6.0.3:", when="^python@3.8:")
         depends_on("py-tornado@5:", when="^python@:3.7")
 
-        depends_on("py-urllib3@1.26.5:", when="@2025.7.0:")
-        depends_on("py-urllib3@1.24.3:", when="@2023.4.1:")
-        depends_on("py-urllib3", when="@2022.10.2:")
+
+        depends_on("py-urllib3@1.26.5:", when="@2025.7.0:2026.3.0")
+        depends_on("py-urllib3@1.24.3:", when="@2023.4.1:2026.3.0")
+        depends_on("py-urllib3", when="@2022.10.2:2026.3.0")
 
         depends_on("py-zict@3.0.0:", when="@2024.7.1:")
         depends_on("py-zict@2.2.0:", when="@2023.4.1:")
