@@ -18,6 +18,7 @@ class PyMultiqc(PythonPackage):
     license("GPL-3.0-only", checked_by="A_N_Other")
     maintainers("ewels", "vladsavelyev")
 
+    version("1.35", sha256="5a4aa6480e6def2f9c0af2893358bf7ec5c304d606ecf613cd25ddcd0e244e77")
     version("1.28", sha256="3cb65ac9ca07b6146fb239e0bc42f5337808973cb37e1d9a8bd753eaf70ac7e7")
     version("1.23", sha256="4e84664000fec69a0952a0457a8d780dcc1ce9e36d14680dbdba5610b9766265")
 
