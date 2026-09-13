@@ -50,6 +50,14 @@ class Tfel(CMakePackage):
     version("rliv-2.0", branch="rliv-2.0")
     version("rliv-1.2", branch="rliv-1.2")
 
+    # Development versions used by the mfem-mgis package:
+    version(
+        "snapshot-for-mfemmgis-1.0.4",
+        tag="TFEL-5.2dev-MFEMMGIS-1.0.4",
+        commit="ae4ba465461b61da7ecffea06c5de7004ac267a3",
+    )
+    version("snapshot-for-mfemmgis-1.0.1", commit="4f8a0ff5878491e7dd16e453d9f960a6df35c03f")
+
     # released versions
     version("5.1.0", sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7")
     version("5.0.2", sha256="910612fd9b76d0708a05d2b68a0d83f9f89aecd2127b097e2923083acc504c45")

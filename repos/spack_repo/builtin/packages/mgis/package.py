@@ -36,6 +36,14 @@ class Mgis(CMakePackage):
     version("rliv-1.1", branch="rliv-1.1")
     version("rliv-1.0", branch="rliv-1.0")
 
+    # Development versions used by the mfem-mgis package:
+    version(
+        "snapshot-for-mfemmgis-1.0.4",
+        tag="MFrontGenericInterfaceSupport-3.2dev-MFEMMGIS-1.0.4",
+        commit="4dfbe893e1a0a48a3ae32f1e3ded88008955c0a4",
+    )
+    version("snapshot-for-mfemmgis-1.0.1", commit="dbb7d911180046cfe1d86d90e104acc82a358429")
+
     # released version
     version(
         "3.1.0",
@@ -126,6 +134,8 @@ class Mgis(CMakePackage):
     depends_on("tfel@rliv-3.3", when="@rliv-1.1")
     depends_on("tfel@rliv-3.2", when="@rliv-1.0")
     depends_on("tfel@master", when="@master")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.4", when="@snapshot-for-mfemmgis-1.0.4")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.1", when="@snapshot-for-mfemmgis-1.0.1")
 
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
 
