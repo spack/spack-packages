@@ -43,6 +43,7 @@ class Mgis(CMakePackage):
         commit="4dfbe893e1a0a48a3ae32f1e3ded88008955c0a4",
     )
     version("snapshot-for-mfemmgis-1.0.1", commit="dbb7d911180046cfe1d86d90e104acc82a358429")
+    version("snapshot-for-mfemmgis-1.0.0", commit="eb00a51e077aa5af2160fcb90f2cf61b97c16d2c")
 
     # released version
     version(
@@ -152,13 +153,14 @@ class Mgis(CMakePackage):
     depends_on("tfel@master", when="@master")
     depends_on("tfel@snapshot-for-mfemmgis-1.0.4", when="@snapshot-for-mfemmgis-1.0.4")
     depends_on("tfel@snapshot-for-mfemmgis-1.0.1", when="@snapshot-for-mfemmgis-1.0.1")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.0", when="@snapshot-for-mfemmgis-1.0.0")
 
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
 
     with when("@3.1:,snapshot-for-mfemmgis-1.0.4"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
 
-    with when("@1.0:3.0.99,snapshot-for-mfemmgis-1.0.1"):
+    with when("@1.0:3.0.99,snapshot-for-mfemmgis-1.0.0,snapshot-for-mfemmgis-1.0.1"):
         depends_on(
             "boost+python+numpy+exception+container", when="+python", type=("build", "link", "run")
         )
