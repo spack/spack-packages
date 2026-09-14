@@ -226,7 +226,7 @@ class Tfel(CMakePackage):
 
         extends("python", when="+python_bindings")
 
-    conflicts("%gcc@:7", when="@4:")
+    conflicts("%gcc@:7", when="@4:,snapshot-for-mfemmgis-1.0.1,snapshot-for-mfemmgis-1.0.4")
 
     def cmake_args(self):
         args = []
