@@ -215,10 +215,10 @@ class Tfel(CMakePackage):
         depends_on("python", type=("build", "link", "run"))
         depends_on("py-numpy", type=("build", "link", "run"))
 
-        with when("@5.1:"):
+        with when("@5.1:,snapshot-for-mfemmgis-1.0.4"):
             depends_on("py-pybind11", type=("build", "link", "run"))
 
-        with when("@2.0.4:5.0.99"):
+        with when("@2.0.4:5.0.99,snapshot-for-mfemmgis-1.0.1"):
             depends_on("boost+python+numpy+exception+container", type=("build", "link", "run"))
 
         with when("@rliv1.2:rliv5.0"):

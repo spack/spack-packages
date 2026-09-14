@@ -89,7 +89,7 @@ class Mgis(CMakePackage):
     variant("python", default=True, description="Enables python bindings")
     variant("static", default=False, description="Enables static libraries")
 
-    with when("@3.1:,rliv-3.1"):
+    with when("@3.1:,rliv-3.1,snapshot-for-mfemmgis-1.0.4"):
         variant("openmp", default=False, description="Enables openmp support")
         variant("mgis-function", default=True, description="Enables MGIS/Function")
         variant(
@@ -98,7 +98,7 @@ class Mgis(CMakePackage):
             description="use exceptions to report contract violation and error reporting",
         )
 
-    with when("@3.1:"):
+    with when("@3.1:,snapshot-for-mfemmgis-1.0.4"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
 
     # dependencies
@@ -139,10 +139,10 @@ class Mgis(CMakePackage):
 
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
 
-    with when("@3.1:"):
+    with when("@3.1:,snapshot-for-mfemmgis-1.0.4"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
 
-    with when("@1.0:3.0.99"):
+    with when("@1.0:3.0.99,snapshot-for-mfemmgis-1.0.1"):
         depends_on(
             "boost+python+numpy+exception+container", when="+python", type=("build", "link", "run")
         )
