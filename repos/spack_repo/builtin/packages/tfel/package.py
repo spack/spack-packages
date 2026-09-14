@@ -268,6 +268,11 @@ class Tfel(CMakePackage):
                 args.append("-Dpybind11_DIR={0}".format(self.spec["py-pybind11"].prefix))
 
             if "boost" in self.spec:
+                python = self.spec["python"].command
+                numpy_include = python(
+                    "-c", "import numpy; print(numpy.get_include())", output=str
+                ).strip()
+                args.append(self.define("NUMPY_INCLUDE_DIRS", numpy_include))
                 args.append("-DBOOST_ROOT={0}".format(self.spec["boost"].prefix))
                 args.append("-DBoost_NO_SYSTEM_PATHS=ON")
                 args.append("-DBoost_NO_BOOST_CMAKE=ON")
