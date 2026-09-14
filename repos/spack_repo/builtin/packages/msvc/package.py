@@ -54,6 +54,7 @@ class Msvc(Package, CompilerPackage):
     compiler_wrapper_link_paths = {"c": "", "cxx": "", "fortran": ""}
 
     provides("c", "cxx", "fortran")
+    provides("nmake")
     requires("platform=windows", msg="MSVC is only supported on Windows")
 
     @classmethod
@@ -93,7 +94,13 @@ class Msvc(Package, CompilerPackage):
         """Populates dependent module with tooling available from VS"""
         # We want these to resolve to the paths set by MSVC's VCVARs
         # so no paths
-        module.nmake = Executable("nmake")
+        #
+        # `nmake` is a virtual, so stand aside when the dependent picked a
+        # different provider (jom, say). Dependents that call nmake() without
+        # declaring the dependency have no provider at all, and still get ours.
+        nmake_providers = dependent_spec.dependencies(virtuals=("nmake",))
+        if not nmake_providers or any(p.name == self.name for p in nmake_providers):
+            module.nmake = Executable("nmake")
         module.msbuild = Executable("msbuild")
 
     def setup_dependent_build_environment(
