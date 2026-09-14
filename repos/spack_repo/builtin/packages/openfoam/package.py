@@ -393,6 +393,7 @@ class Openfoam(Package):
         values=("none", conditional("adios", "visualization", when="@2512:")),
         multi=True,
     )
+    depends_on("paraview+catalyst+python", when="@2512:modules=visualization")
     conflicts("modules=none", when="modules=adios")
     conflicts("modules=none", when="modules=visualization")
 
