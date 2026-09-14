@@ -26,6 +26,7 @@ class _4cMultiphysics(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("2026.3.0", sha256="d8fa2ca8a3815f8050f6d7f1c428ed65c4e4fea83a7079beffe4d6e11eddfb84")
     version("2026.2.0", sha256="57e05128934e06b67d5ae3c2d3402f80d1ddfc3975b1557670e5b1d3399a6c0b")
     version("2026.1.0", sha256="9d95607a0b7668c9712392c81863b6327b8922745705b62e07f605f1d6932646")
 
@@ -61,23 +62,39 @@ class _4cMultiphysics(CMakePackage):
 
     conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
 
+    conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
+    conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
+
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
-    patch("use-installed-googletest.patch", when="@2026.1.0:2026.2.0")
+    patch("use-installed-googletest.patch", when="@2026.1.0:2026.3.0")
+    patch("use-installed-googletest.patch", when="@main")
     patch("python-venv-no-downloads-2026.2.patch", when="@2026.1.0:2026.2.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@2026.3.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@main+python")
+
+    # GCC 14.2.0 hits an internal compiler error (ICE) in
+    # cxx_eval_indirect_ref (cp/constexpr.cc) while instantiating
+    # Core::LinAlg::einsum_sym on 4C's tensor templates
+    # (src/core/linalg/src/dense/4C_linalg_tensor_internals.hpp). Not
+    # confirmed on other 14.x point releases; narrow this once tested.
+    conflicts(
+        "%gcc@14:14",
+        msg="GCC 14.x hits an internal compiler error compiling 4C's tensor "
+        "templates; use GCC 13 or GCC 15 instead.",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.30:", type="build")
     depends_on("ninja", type="build")
-    requires("platform=linux")
 
     depends_on("mpi")
     depends_on("hdf5+mpi+hl")
     # Trilinos pulls in Fortran dependencies through MUMPS. A Fortran-capable
     # compiler must therefore be registered even though 4C has no Fortran sources.
     depends_on(
-        "trilinos@16.2.1+mpi+amesos+amesos2+belos+epetra+epetraext"
+        "trilinos@16.2+mpi+amesos+amesos2+belos+epetra+epetraext"
         "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
         "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
         "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
@@ -90,11 +107,15 @@ class _4cMultiphysics(CMakePackage):
     depends_on("zlib-api")
     depends_on("cli11@2.6.1")
     depends_on("magic-enum@0.9.7")
-    depends_on("googletest@1.15.2+gmock", when="@2026.1.0:2026.2.0")
+    depends_on("googletest@1.15.2+gmock", when="@2026.1.0:2026.3.0")
+    depends_on("googletest@1.15.2+gmock", when="@main")
 
     # 4C uses Qhull's deprecated non-reentrant libqhull API.
     depends_on("qhull@2019.1", when="+qhull")
     depends_on("vtk@9:+shared", when="+vtk")
+    # VTK only needs Mesa as an OpenGL provider. Avoid Mesa's optional LLVM
+    # backend, which is particularly prone to unusable auto-detected externals.
+    depends_on("mesa~llvm", when="+vtk platform=linux")
     depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
     depends_on(
         "dealii@9.6.2+trilinos+mpi~adol-c",
