@@ -76,6 +76,14 @@ class Augustus(MakefilePackage):
     # build bam2wig and 3.4.0+ links -lhts only.
     conflicts("^htslib@1.10:", when="@3.3.1-tag1:3.3.2 ^samtools@:1.2")
 
+    # Many sources use fixed-width integer types without including stdint.h, which they
+    # used to get transitively until gcc 13. Inject it rather than patching ~20 files.
+    # stdint.h, not cstdint: the latter is an error in the -ansi (C++98) Makefiles here.
+    def flag_handler(self, name, flags):
+        if name == "cxxflags":
+            flags.append("-include stdint.h")
+        return (flags, None, None)
+
     def edit(self, spec, prefix):
         # Set compile commands for each compiler and
         # Fix for using 'boost' on Spack. (only after ver.3.3.1-tag1)
