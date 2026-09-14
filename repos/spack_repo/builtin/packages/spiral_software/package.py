@@ -3,17 +3,19 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+import llnl.util.tty as tty
 
 from spack.package import *
 
 
-class SpiralSoftware(CMakePackage):
+class SpiralSoftware(CMakePackage, CudaPackage):
     """SPIRAL is a program generation system for linear transforms and other
     mathematical functions that produces very high performance code for a wide
     spectrum of hardware platforms."""
 
     homepage = "https://spiralgen.com"
-    url = "https://github.com/spiral-software/spiral-software/archive/refs/tags/8.5.1.tar.gz"
+    url = "https://github.com/spiral-software/spiral-software/archive/refs/tags/8.6.0.tar.gz"
     git = "https://github.com/spiral-software/spiral-software.git"
 
     maintainers("spiralgen")
@@ -22,6 +24,7 @@ class SpiralSoftware(CMakePackage):
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("8.6.0", sha256="0fd198a5b1509258b11f4b6946b5bff62a9cbe95b2c35c43d71642987d0b396b")
     version("8.5.1", sha256="845630a69c93c915435100fcb4c800e9f0b181a44bb1debbf8e3a68993ce7797")
     version("8.5.0", sha256="829345b8ca3ab0069a1a6e230f60ab03257060a8f05c021cee022e294eef592d")
     version("8.4.0", sha256="d0c58de65c678130eeee6b8b8b48061bbe463468990f66d9b452225ce46dee19")
@@ -55,6 +58,7 @@ class SpiralSoftware(CMakePackage):
         default=False,
         description="Install Spiral package for the Hybrid Control Operator Language (HCOL).",
     )
+    variant("cuda", default=False, description="Enable CUDA for Spiral support tools")
 
     # Dependencies
     depends_on("c", type="build")
@@ -62,6 +66,24 @@ class SpiralSoftware(CMakePackage):
 
     for pkg in ["fftx", "simt", "mpi", "jit", "hcol"]:
         depends_on(f"spiral-package-{pkg}", when=f"+{pkg}")
+
+    def cmake_args(self):
+        args = []
+        spec = self.spec
+
+        if spec.satisfies("+cuda"):
+            cuda_arch = spec.variants.get("cuda_arch", None)
+            if not cuda_arch or "none" in cuda_arch.value:
+                tty.warn(
+                    "Spiral-software is built with +cuda but no cuda_arch value was specified. "
+                    "You may want to rebuild with e.g., cuda_arch=70."
+                )
+            else:
+                arch_str = ";".join(cuda_arch.value)
+                args.append(f"-DCMAKE_CUDA_ARCHITECTURES={arch_str}")
+
+        print("Args = " + str(args))
+        return args
 
     def build(self, spec, prefix):
         with working_dir(self.build_directory):
