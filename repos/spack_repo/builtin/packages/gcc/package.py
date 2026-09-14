@@ -52,7 +52,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
         preferred=sys.platform == "darwin",
     )
-    version("13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5")
+    version("13.5.0", sha256="ec3df0015ed01411f91f9a9cd5b4da3070eb1222b02fadf4133c30c090399855")
     version("12.5.0", sha256="71cd373d0f04615e66c5b5b14d49c1a4c1a08efa7b30625cd240b11bab4062b3")
     version("11.5.0", sha256="a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478")
     version("10.5.0", sha256="25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1")
@@ -76,6 +76,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             "14.1.0", sha256="e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840"
         )
 
+        version(
+            "13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5"
+        )
         version(
             "13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
         )
