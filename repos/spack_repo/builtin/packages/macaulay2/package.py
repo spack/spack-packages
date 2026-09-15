@@ -74,13 +74,11 @@ class Macaulay2(AutotoolsPackage):
     depends_on("cohomcalg", type=("build", "run"))
     depends_on("csdp", type=("build", "run"))
     depends_on("gfan", type=("build", "run"))
+    depends_on("gfan@0.8beta:", type=("build", "run"), when="@1.26.06:")
     depends_on("lrslib", type=("build", "run"))
     depends_on("msolve", type=("build", "run"))
     depends_on("nauty", type=("build", "run"))
     depends_on("topcom", type=("build", "run"))
-
-    # drop minimum version of gfan (0.8 can't be built w/ older compilers)
-    patch("allow-older-gfan.patch", when="@1.26.06")
 
     configure_directory = "M2"
 
