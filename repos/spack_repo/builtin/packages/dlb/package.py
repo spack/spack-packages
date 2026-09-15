@@ -23,6 +23,7 @@ class Dlb(AutotoolsPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("3.8.0", sha256="4359842926e41fe782bb8970f0e27b1f2bd4d75faa67c141c0820dcd459ef12a")
     version("3.7.0", sha256="25155576f1b1a9e3753cc033b610b0e1eb809acf7e76b85cbadc769ff046913a")
     version("3.6.2", sha256="7f5703c72d57aad98a99e654f400bc20fc5213581f6ccfd2efd5ae26a0303141")
     version("3.6.1", sha256="d5f3b8af5ddf7cf9baa2e76bffb20e2ea2ad2980c4d36155ad186e7afc709377")
