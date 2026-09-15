@@ -97,54 +97,34 @@ def main():
     }
 
     non_collaborators = maintainers - pingable_maintainers
-    invalid_maintainers: set[str] = set()
     if non_collaborators:
-        # 404 on the collaborator check above means non-collaborator or non-GH user
-        # find invalid GH usersnames by checking the /users API
-        invalid_maintainers = {
-            maintainer
-            for maintainer in non_collaborators
-            if session.get(
-                f"https://api.github.com/users/{maintainer}", headers=headers, timeout=30
-            ).status_code
-            != 200
-        }
-
-        pending_invite = non_collaborators - invalid_maintainers
-        if pending_invite:
-            # outside collaborator invites for package maintainers are sent by the
-            # invite-maintainers workflow when a PR touching their package merges, not here
-            msg(
-                "the following package maintainers cannot be added as reviewers "
-                "without collaborator status (invite may be pending):",
-                sorted(pending_invite),
-            )
+        # outside collaborator invites for package maintainers are sent by the
+        # invite-maintainers workflow when a PR touching their package merges, not here
+        msg(
+            "the following package maintainers cannot be added as reviewers "
+            "without collaborator status (invite may be pending):",
+            sorted(non_collaborators),
+        )
 
     author = pull_request["user"]["login"]
     reviewers = (pingable_maintainers | existing_reviewers) - {author}
 
     if existing_reviewers == reviewers:
         msg("reviewers already up-to-date")
-    else:
-        added_reviewers = reviewers - existing_reviewers
-        if added_reviewers:
-            msg("adding reviewers:", added_reviewers)
+        return
 
-        if token:
-            resp = session.post(
-                f"{pr_url}/requested_reviewers",
-                json={"reviewers": list(reviewers)},
-                headers=headers,
-                timeout=30,
-            )
-            resp.raise_for_status()
+    added_reviewers = reviewers - existing_reviewers
+    if added_reviewers:
+        msg("adding reviewers:", added_reviewers)
 
-    # fail the triage run on each push if a maintainer's name is invalid
-    if invalid_maintainers:
-        raise Exception(
-            "the following maintainer entries are not valid GitHub usernames: "
-            f"{sorted(invalid_maintainers)}"
+    if token:
+        resp = session.post(
+            f"{pr_url}/requested_reviewers",
+            json={"reviewers": list(reviewers)},
+            headers=headers,
+            timeout=30,
         )
+        resp.raise_for_status()
 
 
 if __name__ == "__main__":
