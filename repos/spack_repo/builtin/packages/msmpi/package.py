@@ -25,12 +25,11 @@ class Msmpi(msbuild.MSBuildPackage):
     version("10.1.1", sha256="63c7da941fc4ffb05a0f97bd54a67968c71f63389a0d162d3182eabba1beab3d")
     version("10.0.0", sha256="cfb53cf53c3cf0d4935ab58be13f013a0f7ccb1189109a5b8eea0fcfdcaef8c1")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
     provides("mpi")
-
-    depends_on("c", type="build")
 
     depends_on("win-wdk")
     depends_on("networkdirect")
@@ -89,8 +88,7 @@ class MSBuildBuilder(msbuild.MSBuildBuilder):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # os.path.join interprets C: as an indicator of a relative path
         # so we need to use the traditional string join here
-        ifort_root = "\\".join(self.pkg.compiler.fc.split(os.path.sep)[:-2])
-        env.set("SPACK_IFORT", ifort_root)
+        env.set("FC", self.pkg.compiler.fc)
         env.prepend_path("IncludePath", self.spec["networkdirect"].prefix.include)
         env.set("ND_DIR", self.spec["networkdirect"].prefix.ndutil)
 
@@ -104,8 +102,6 @@ class MSBuildBuilder(msbuild.MSBuildBuilder):
     def msbuild_args(self):
         pkg = self.pkg
         args = ["-noLogo"]
-        ifort_bin = '"' + os.path.dirname(pkg.compiler.fc) + '"'
-        args.append(self.define("IFORT_BIN", ifort_bin))
         args.append(self.define("PlatformToolset", "v" + pkg["msvc"].platform_toolset_ver))
         args.append(self.define("VCToolsVersion", pkg["msvc"].msvc_version))
         args.append(
