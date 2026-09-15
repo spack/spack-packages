@@ -54,6 +54,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     version("develop", branch="master")
 
     version(
+        "4.10.0",
+        sha256="d01c26662ab96042ec5e3443a58ee9eb3c5c78c6632d899240b6e485f3a414cf",
+        url="https://bit.ly/4iEAcbE",
+        extension="tar.gz",
+    )
+
+    version(
         "4.9.0",
         sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
         url="https://bit.ly/mfem-4-9",
