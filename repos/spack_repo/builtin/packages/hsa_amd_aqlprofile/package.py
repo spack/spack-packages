@@ -5,11 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class HsaAmdAqlprofile(CMakePackage):
+class HsaAmdAqlprofile(ROCmLibrary, CMakePackage):
     """Architected Queuing Language Profiling Library
     AQLprofile is an open source library that enables advanced
     GPU profiling and tracing on AMD platforms"""
@@ -66,5 +67,5 @@ class HsaAmdAqlprofile(CMakePackage):
             if major < 7:
                 ver = None
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
