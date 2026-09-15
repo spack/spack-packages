@@ -81,7 +81,7 @@ spack:
       # Don't build GUI support or GLX rendering for HPC/container deployments
       require:
       - @5 +examples
-      - "~qt ^[virtuals=gl] osmesa" # Headless
+      - "~qt %[virtuals=gl] osmesa" # Headless
       - target=x86_64_v3
     boost:
       require:
