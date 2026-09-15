@@ -43,7 +43,7 @@ spack:
     vtk-m:
       require: "+examples target=neoverse_v2 %gcc"
     paraview:
-      require: "+examples target=neoverse_v2 %gcc"
+      require: "~qt +examples target=neoverse_v2 %gcc"
     boost:
       require: "cxxstd=17 target=neoverse_v2 %gcc"
 
