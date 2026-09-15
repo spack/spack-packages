@@ -52,6 +52,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("10.0.0", sha256="92dcfe3d2e1ca52b460c7f168d8d74e47cd17370fa8bdffb919174115f94ab0f")
     version("7.14.0", sha256="db365c1f0ab500eeee04a990d29d79a6bb667874f8069f7b69920ca62c352d2f")
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
     version("7.2.3", sha256="6239fa0c72b150cf0a325676264d3030a67389dec4fca7103f563a70c2b70114")
@@ -251,6 +252,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     for d_version, d_shasum in [
         ("7.13", "86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c"),
         ("7.14", "8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330"),
+        ("10.0", "f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec"),
     ]:
         resource(
             name="rocm-systems",
@@ -285,6 +287,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         ("7.2.3", "9e3836d7d6023843a72ecd3fbf3f09b1b6747a9e"),
         ("7.13.0", "29981f65241605e08b0ede4cfeb999fe3b723c6a"),
         ("7.14.0", "4015a331f5ffd6fc5c6fa7b03e08fb4a692491d7"),
+        ("10.0.0", "5c50cbd25a40f8b60e44a2ccc2f1ba3c9e0d0299"),
     ]:
         resource(
             name="spirv-headers",
@@ -297,6 +300,7 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     for d_version, d_shasum in [
         ("7.13", "22836583c72d40493517ee6932db487256958d3da9afa5b666d046e48477fcc6"),
         ("7.14", "dda1d2bf71c73b840b1a51f44f1bce6884ac0cd3aeee9269800cba533b92c2ee"),
+        ("10.0", "1c9c8caf29b60c75422736b31f0d0527a25a9da6d8d8b28e6491a44b4761a224"),
     ]:
         resource(
             name="spirv-llvm-translator",
