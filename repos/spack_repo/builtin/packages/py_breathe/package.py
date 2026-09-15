@@ -56,3 +56,6 @@ class PyBreathe(PythonPackage):
     # but it is not called directly. It is used directly by the examples, which
     # are not hooked up to this spack recipe.
     depends_on("doxygen@1.8.4:", type="run")
+    # Doxygen 1.9.7 introduced incompatibilities with Breathe up to version 4.36
+    # See https://github.com/breathe-doc/breathe/pull/934
+    depends_on("doxygen@:1.9.6", type="run", when="@:4.36")
