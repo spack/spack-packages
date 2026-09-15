@@ -50,6 +50,14 @@ class Tfel(CMakePackage):
     version("rliv-2.0", branch="rliv-2.0")
     version("rliv-1.2", branch="rliv-1.2")
 
+    # Development versions used by the mfem-mgis package:
+    version(
+        "snapshot-for-mfemmgis-1.0.4",
+        tag="TFEL-5.2dev-MFEMMGIS-1.0.4",
+        commit="ae4ba465461b61da7ecffea06c5de7004ac267a3",
+    )
+    version("snapshot-for-mfemmgis-1.0.1", commit="4f8a0ff5878491e7dd16e453d9f960a6df35c03f")
+
     # released versions
     version("5.1.0", sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7")
     version("5.0.2", sha256="910612fd9b76d0708a05d2b68a0d83f9f89aecd2127b097e2923083acc504c45")
@@ -207,10 +215,10 @@ class Tfel(CMakePackage):
         depends_on("python", type=("build", "link", "run"))
         depends_on("py-numpy", type=("build", "link", "run"))
 
-        with when("@5.1:"):
+        with when("@5.1:,snapshot-for-mfemmgis-1.0.4"):
             depends_on("py-pybind11", type=("build", "link", "run"))
 
-        with when("@2.0.4:5.0.99"):
+        with when("@2.0.4:5.0.99,snapshot-for-mfemmgis-1.0.1"):
             depends_on("boost+python+numpy+exception+container", type=("build", "link", "run"))
 
         with when("@rliv1.2:rliv5.0"):
@@ -218,7 +226,7 @@ class Tfel(CMakePackage):
 
         extends("python", when="+python_bindings")
 
-    conflicts("%gcc@:7", when="@4:")
+    conflicts("%gcc@:7", when="@4:,snapshot-for-mfemmgis-1.0.1,snapshot-for-mfemmgis-1.0.4")
 
     def cmake_args(self):
         args = []
@@ -260,6 +268,11 @@ class Tfel(CMakePackage):
                 args.append("-Dpybind11_DIR={0}".format(self.spec["py-pybind11"].prefix))
 
             if "boost" in self.spec:
+                python = self.spec["python"].command
+                numpy_include = python(
+                    "-c", "import numpy; print(numpy.get_include())", output=str
+                ).strip()
+                args.append(self.define("NUMPY_INCLUDE_DIRS", numpy_include))
                 args.append("-DBOOST_ROOT={0}".format(self.spec["boost"].prefix))
                 args.append("-DBoost_NO_SYSTEM_PATHS=ON")
                 args.append("-DBoost_NO_BOOST_CMAKE=ON")
