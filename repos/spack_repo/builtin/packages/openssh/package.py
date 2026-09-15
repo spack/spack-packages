@@ -99,6 +99,18 @@ class Openssh(AutotoolsPackage):
         when="@9.8p1:9 platform=darwin",
     )
 
+    # The macOS 27 SDK dropped the kSBXProfile* declarations from <sandbox.h>, so
+    # sandbox-darwin.c no longer compiles. Backport of upstream commit d4b4c304
+    # ("Require kSBXProfilePureComputation for OS X sandbox", 2026-08-15, not in any
+    # release up to 10.5p1): configure only selects the darwin sandbox when the constant
+    # is declared. Includes the matching Autoconf 2.71 regeneration of configure and
+    # config.h.in, since the tarball's configure is used as-is. The hunk order matters:
+    # configure refuses to run if configure.ac is newer than itself, so configure is
+    # patched after configure.ac. Keep for the bounded versions for as long as they
+    # are kept; later releases carry the fix.
+    # https://github.com/openssh/openssh-portable/commit/d4b4c304a202f5099f2f60be9af9ba266212bb74
+    patch("darwin-sandbox-require-ksbxprofile.patch", when="@10:10.5p1 platform=darwin")
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("-V", output=str, error=str).rstrip()
