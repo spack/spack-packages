@@ -92,6 +92,7 @@ class Git(AutotoolsPackage):
     variant("nls", default=True, description="Enable native language support")
     variant("man", default=True, description="Install manual pages")
     variant("subtree", default=True, description="Add git-subtree command and capability")
+    variant("ssh", default=False, description="Enable SSH transport support via Spack's openssh")
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
@@ -108,7 +109,7 @@ class Git(AutotoolsPackage):
     depends_on("perl", when="+perl")
     depends_on("perl@5.26.0:", when="@2.48: +perl")
     depends_on("zlib-api")
-    depends_on("openssh", type="run")
+    depends_on("openssh", type="run", when="+ssh")
     depends_on("tk", type=("build", "link"), when="+tcltk")
     depends_on("diffutils", type="build", when="@2.48:")
 
