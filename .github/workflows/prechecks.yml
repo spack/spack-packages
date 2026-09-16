@@ -80,6 +80,11 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
+      - name: Install Node.js for local workflow runs using act
+        if: ${{ github.actor == 'nektos/act' }}
+        run: |
+          apt-get update
+          apt-get install -y nodejs
       - uses: ./.github/actions/checkout-spack
 
       - name: Test package.py canonicalization
