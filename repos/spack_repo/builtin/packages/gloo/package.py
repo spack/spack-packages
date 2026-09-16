@@ -17,7 +17,8 @@ class Gloo(CMakePackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version("2026-02-12", commit="bcd1672ee07538123ea8f4fac76832efc58fb8ef")  # py-torch@2.13:
+    version("2026-06-10", commit="74cc005ae13f69c11d8a41e50b42025b6730e796")  # py-torch@2.14:
+    version("2026-02-12", commit="bcd1672ee07538123ea8f4fac76832efc58fb8ef")  # py-torch@2.13
     version("2025-12-02", commit="3135b0b41b67dde590eef0938a0bf3d6238df5f7")  # py-torch@2.11:2.12
     version("2025-08-21", commit="54cbae0d3a67fa890b4c3d9ee162b7860315e341")  # py-torch@2.9:2.10
     version("2025-06-04", commit="c7b7b022c124d9643957d9bd55f57ac59fce8fa2")  # py-torch@2.8
