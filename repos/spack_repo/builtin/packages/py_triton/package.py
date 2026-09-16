@@ -24,6 +24,10 @@ class PyTriton(PythonPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("python@3.9:3.13", when="@3.2.0:", type=("build", "run"))
+    depends_on("python@3.8:3.12", when="@3.0.0:3.1", type=("build", "run"))
+    depends_on("python@3.7:3.12", when="@2.2.0:2", type=("build", "run"))
+    depends_on("python@3.7:3.11", when="@2.1.0:2.1", type=("build", "run"))
 
     with default_args(type="build"):
         # https://github.com/triton-lang/triton/blob/v3.3.1/python/requirements.txt
