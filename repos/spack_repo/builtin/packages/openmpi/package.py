@@ -1026,6 +1026,12 @@ with '-Wl,-commons,use_dylibs' and without
         if self.spec.satisfies("@1.7:"):
             env.set("MPIFC", join_path(self.prefix.bin, "mpifort"))
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Open MPI 5.0 vendors Libevent 2.1.12. With an SDK 27+ configure
+        # accepts pipe2() as a weak import even though it needs macOS 27.
+        if self.spec.platform == "darwin" and self.spec.satisfies("@5 +internal-libevent"):
+            env.set("ac_cv_func_pipe2", "no")
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
