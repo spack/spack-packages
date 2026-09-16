@@ -146,11 +146,8 @@ class Seacas(CMakePackage):
         default=False,
         description="Enable ADIOS2. See https://github.com/ornladios/ADIOS2",
     )
-    # enabling cgns fails builds on Windows, see seacas CI default configuration
-    # https://github.com/sandialabs/seacas/blob/master/.appveyor.yml#L71
-    for plat in ["linux", "darwin", "freebsd"]:
-        with when(f"platform={plat}"):
-            variant("cgns", default=True, description="Enable CGNS.")
+
+    variant("cgns", default=True, description="Enable CGNS.")
 
     variant(
         "aws",
