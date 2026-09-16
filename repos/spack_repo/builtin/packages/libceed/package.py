@@ -124,6 +124,12 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
             if spec.satisfies("@:0.7") and "avx" in self.spec.target:
                 makeopts.append("AVX=1")
 
+        elif spec.satisfies("@0.13:"):
+            # Spack does not supply release optimization for Makefile packages.
+            # Let libCEED detect the remaining compiler-specific flags.
+            opt = "-g" if spec.satisfies("+debug") else "-O3"
+            makeopts += ["OPT=%s $(MARCHFLAG) $(OPT.$(CC_VENDOR)) $(OMP_SIMD_FLAG)" % opt]
+
         if spec.satisfies("@0.4:"):
             if spec.satisfies("+cuda"):
                 makeopts += ["CUDA_DIR=%s" % spec["cuda"].prefix]
