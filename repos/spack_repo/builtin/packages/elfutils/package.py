@@ -72,6 +72,15 @@ class Elfutils(AutotoolsPackage, SourcewarePackage):
         sha256="d786d49c28d7f0c8fc27bab39ca8714e5f4d128c7f09bb18533a8ec99b38dbf8",
     )
 
+    # Allow debuginfod_find_source() to accept "./"-relative filenames, as
+    # produced when Spack's compiler-wrapper -ffile-prefix-map targets a
+    # relative ./build root rather than an absolute one. Upstream requires
+    # filename[0] == '/'; without this, gdb's debuginfod client rejects
+    # any "./"-prefixed DW_AT_name with EINVAL before contacting the
+    # server at all. See debuginfod/debuginfod-client.c,
+    # debuginfod_query_server_by_buildid().
+    patch("elfutils-debuginfod-relative-source.patch", when="@0.181:+debuginfod")
+
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
