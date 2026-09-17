@@ -177,6 +177,12 @@ class Acts(CMakePackage, CudaPackage):
         description="Build python bindings for the examples",
         when="+examples",
     )
+    variant(
+        "scripts",
+        default=False,
+        description="Install the python example scripts (Examples/Scripts/Python)",
+        when="+python",
+    )
     variant("svg", default=False, description="Build ActSVG display plugin")
     variant("analysis", default=False, description="Build analysis applications in the examples")
 
@@ -386,7 +392,21 @@ class Acts(CMakePackage, CudaPackage):
 
         return args
 
+    @property
+    def scripts_dir(self):
+        return join_path(self.prefix.share.acts, "Examples", "Scripts", "Python")
+
+    @run_after("install", when="+scripts")
+    def install_scripts(self):
+        # The example scripts have no install rule upstream
+        install_tree(
+            join_path(self.stage.source_path, "Examples", "Scripts", "Python"),
+            self.scripts_dir,
+        )
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Acts installs in non-standard python path
         if self.spec.satisfies("+python"):
             env.prepend_path("PYTHONPATH", self.prefix.python)
+        if self.spec.satisfies("+scripts"):
+            env.set("ACTS_EXAMPLES_SCRIPTS", self.scripts_dir)
