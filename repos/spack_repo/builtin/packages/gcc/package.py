@@ -277,27 +277,29 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         depends_on("autogen@5.5.4:")
         depends_on("guile@1.4.1:")
 
-    # See https://go.dev/doc/install/gccgo#Releases
+    # See https://go.dev/doc/install/gccgo#Releases, and libgo/VERSION in the GCC sources.
+    # The "when" ranges must not overlap, since the constraints on the virtual are intersected.
     with when("languages=go"):
-        provides("go-or-gccgo-bootstrap@:1.0", when="@4.7.1:")
-        provides("go-or-gccgo-bootstrap@:1.2", when="@4.9:")
-        provides("go-or-gccgo-bootstrap@:1.4", when="@5:")
-        provides("go-or-gccgo-bootstrap@:1.6.1", when="@6:")
-        provides("go-or-gccgo-bootstrap@:1.8.1", when="@7:")
-        provides("go-or-gccgo-bootstrap@:1.10.1", when="@8:")
-        provides("go-or-gccgo-bootstrap@:1.12.2", when="@9:")
-        provides("go-or-gccgo-bootstrap@:1.14.6", when="@10:")
-        provides("go-or-gccgo-bootstrap@1.16.3:1.16.5", when="@11:")
-
-        provides("golang@:1.0", when="@4.7.1:")
-        provides("golang@:1.2", when="@4.9:")
-        provides("golang@:1.4", when="@5:")
-        provides("golang@:1.6.1", when="@6:")
-        provides("golang@:1.8.1", when="@7:")
-        provides("golang@:1.10.1", when="@8:")
-        provides("golang@:1.12.2", when="@9:")
-        provides("golang@:1.14.6", when="@10:")
-        provides("golang@1.16.3:1.16.5", when="@11:")
+        for gcc_versions, go_version in (
+            ("4.7.1:4.8.1", "1.0.1"),
+            ("4.8.2:4.8", "1.1.2"),
+            ("4.9", "1.2.1"),
+            ("5", "1.4.2"),
+            ("6", "1.6.1"),
+            ("7.1:7.2", "1.8.1"),
+            ("7.3:7", "1.8.3"),
+            ("8.1", "1.10"),
+            ("8.2:8", "1.10.3"),
+            ("9", "1.12.2"),
+            ("10.1", "1.14.2"),
+            ("10.2", "1.14.4"),
+            ("10.3:10", "1.14.6"),
+            ("11.1", "1.16.3"),
+            ("11.2:11", "1.16.5"),
+            ("12:", "1.18"),
+        ):
+            provides(f"go-or-gccgo-bootstrap@:{go_version}", when=f"@{gcc_versions}")
+            provides(f"golang@:{go_version}", when=f"@{gcc_versions}")
 
         # GCC 4.7.1 added full support for the Go 1.x programming language.
         conflicts("@:4.7.0")
