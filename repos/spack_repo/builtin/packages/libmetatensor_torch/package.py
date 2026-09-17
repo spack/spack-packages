@@ -17,6 +17,11 @@ class LibmetatensorTorch(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.10.6", sha256="0da1b982ffe5b82af6ee2673fb5f7cc9fd461b7d7c501d343c30ddc180b5c2fa")
+    version("0.10.5", sha256="cbdf2a7bd55880c815a64a0d2b6cb649df22ced29d730f384b63ba4433d0178d")
+    version("0.10.4", sha256="53177906cbe7eedb079d8427ef941809bb2fda331485b2610820af7b4b358d84")
+    version("0.10.3", sha256="e6062ebd0a88912544817138777e304ea0e50ca54b76bd3f30c77561ad0d0ac3")
+    version("0.10.2", sha256="b66c33cf27cba6e0788c6a665fef6b3148be72e835d6d86db2e2e7391ce12c3c")
     version("0.10.0", sha256="a0a25e061ae4fbf2a563e9fcceed68ac79b4d857e4c9803a1614d301dc3fdfcd")
     # 0.9.2 was yanked: broken logic for device checks
     version("0.9.1", sha256="fa21ae9f5111f3b40479e51ed55152154fc2c6eb30f38d9de6adad53938d0444")

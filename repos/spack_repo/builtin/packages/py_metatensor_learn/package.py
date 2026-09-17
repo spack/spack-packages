@@ -18,6 +18,10 @@ class PyMetatensorLearn(PythonPackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.6.2", sha256="5a9fa1c8173206005f80ade049b60fcde5d4c19d05f388243694aab88f182602")
+    version("0.6.1", sha256="08b67e469f27ae2b8ceb628701805eb8f89d025f64c2e6f18b821594dbe509a9")
+    version("0.6.0", sha256="c3f3726a3932b1ead7327b7fccbc9f251058894ff86fe39605cf601f187acdf4")
+    version("0.5.1", sha256="71a570ad569529098dc5e0f214fa8c459830fc401e10e0e44a2a4505cfe308c5")
     version("0.5.0", sha256="0b1d30ed217d70de7851ed1d48421515d9c6a1be7f50d9b1b43f92a689be51d0")
     version("0.4.0", sha256="78ab06157075d754789bf2c048fb2e2cbf75806bd0ef87f8191eae8cb9a4ef23")
     version("0.3.2", sha256="987f63228888882a6189137ddb89f913b2fde1072c3caa83a39b9f5d50388b51")
