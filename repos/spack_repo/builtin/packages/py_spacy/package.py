@@ -32,7 +32,7 @@ class PySpacy(PythonPackage):
     depends_on("py-thinc@7.4.0", type=("build", "run"), when="@2.2.4:2.2")
     depends_on("py-thinc@7.4.1", type=("build", "run"), when="@2.3.2")
     depends_on("py-thinc@7.4.1:7.4", type=("build", "run"), when="@2.3.7:")
-    depends_on("py-blis@0.4.0:0.4", type=("build", "run"))
+    depends_on("py-blis@0.4.0:0.4", type=("build", "run"), when="@:2.3.6")
     depends_on("py-blis@0.4.0:0.7", type=("build", "run"), when="@2.3.7:")
     depends_on("py-wasabi@0.4.0:1.0", type=("build", "run"))
     depends_on("py-srsly@1.0.2:1.0", type=("build", "run"))
