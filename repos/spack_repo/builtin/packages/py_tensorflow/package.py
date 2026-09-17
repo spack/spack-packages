@@ -41,7 +41,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     import_modules = ["tensorflow"]
 
     license("Apache-2.0")
-    maintainers("adamjstewart", "aweits")
+    maintainers("adamjstewart", "aweits", "afzpatel")
     tags = ["e4s"]
 
     version(
