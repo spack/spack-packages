@@ -24,6 +24,7 @@ class XxdStandalone(MakefilePackage):
 
     license("Vim")
 
+    version("9.2.1054", sha256="b0ad7bba02f4de81cf3ecbf23ef1ef3f69e9e9029203d6c9f7858e18d0669470")
     version("8.2.1201", sha256="39032fe866f44724b104468038dc9ac4ff2c00a4b18c9a1e2c27064ab1f1143d")
 
     depends_on("c", type="build")  # generated
