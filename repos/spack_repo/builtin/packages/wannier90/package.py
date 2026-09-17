@@ -4,54 +4,78 @@
 
 import os
 
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems import cmake, makefile
 
 from spack.package import *
 
 
-class Wannier90(MakefilePackage):
+class Wannier90(makefile.MakefilePackage, cmake.CMakePackage):
     """Wannier90 calculates maximally-localised Wannier functions (MLWFs).
 
     Wannier90 is released under the GNU General Public License.
     """
 
+    # Use Makefile for @:3 and CMake for @4:
+    # Makefile is technically supported for @4: but due to several changes,
+    # this is not currently implemented/supported by the Spack package
+    build_system(
+        conditional("makefile", when="@:3"),
+        conditional("cmake", when="@4:"),
+        default="cmake",
+    )
+
     homepage = "https://wannier.org"
     url = "https://github.com/wannier-developers/wannier90/archive/v3.1.0.tar.gz"
     git = "https://github.com/wannier-developers/wannier90.git"
 
-    license("GPL-2.0-or-later")
+    license("GPL-2.0-or-later", when="@:3", checked_by="RMeli")
+    license("LGPL-2.1-or-later", when="@4:", checked_by="RMeli")
 
     tags = ["e4s"]
 
     version("develop", branch="develop")
-    version("3.1.0", sha256="40651a9832eb93dec20a8360dd535262c261c34e13c41b6755fa6915c936b254")
-    version("3.0.0", sha256="f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b")
-    version("2.1.0", sha256="ee90108d4bc4aa6a1cf16d72abebcb3087cf6c1007d22dda269eb7e7076bddca")
-    version("2.0.1", sha256="05ea7cd421a219ce19d379ad6ae3d9b1a84be4ffb367506ffdfab1e729309e94")
+    version(
+        "4.0.2",
+        sha256="2d48b371eefa8b58a6c8088c1bdffc13fe3e761111e15c8566e2ee055d8bcdb0",
+    )
+    version(
+        "3.1.0",
+        sha256="40651a9832eb93dec20a8360dd535262c261c34e13c41b6755fa6915c936b254",
+    )
+    version(
+        "3.0.0",
+        sha256="f196e441dcd7b67159a1d09d2d7de2893b011a9f03aab6b30c4703ecbf20fe5b",
+    )
+    version(
+        "2.1.0",
+        sha256="ee90108d4bc4aa6a1cf16d72abebcb3087cf6c1007d22dda269eb7e7076bddca",
+    )
+    version(
+        "2.0.1",
+        sha256="05ea7cd421a219ce19d379ad6ae3d9b1a84be4ffb367506ffdfab1e729309e94",
+    )
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    variant("shared", default=True, description="Builds a shared version of the library")
+    variant("mpi", default=True, description="Build parallel version of Wannier90")
+    variant(
+        "pic",
+        default=True,
+        description="Build position independent code",
+        when="build_system=cmake",
+    )
+
+    depends_on("c", type="build")
+    depends_on("fortran", type="build")
+
+    depends_on("cmake@3.25:", type="build", when="build_system=cmake")
 
     depends_on("mpi", when="+mpi")
     depends_on("lapack")
     depends_on("blas")
 
-    parallel = False
-
-    variant("shared", default=True, description="Builds a shared version of the library")
-    variant("mpi", default=True, description="Build parallel version of Wannier90")
-
     @property
-    def build_targets(self):
-        targets = []
-        if "@:2" in self.spec:
-            targets = ["lib", "wannier", "post", "w90chk2chk", "w90vdw", "w90pov"]
-        if "@3:" in self.spec:
-            targets = ["wannier", "post", "lib", "w90chk2chk", "w90vdw"]
-            if "+shared" in self.spec:
-                targets.append("dynlib")
-
-        return targets
+    def libs(self):
+        return find_libraries("libwannier", self.prefix, shared=True, recursive=True)
 
     def url_for_version(self, version):
         if version > Version("2"):
@@ -59,6 +83,39 @@ class Wannier90(MakefilePackage):
         else:
             url = "https://wannier.org/code/wannier90-{0}.tar.gz"
         return url.format(version)
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        args = [
+            self.define_from_variant("WANNIER90_MPI", "mpi"),
+            self.define_from_variant("WANNIER90_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+            self.define("WANNIER90_INSTALL", True),
+            self.define("WANNIER90_TEST", False),
+            self.define("BLA_SIZEOF_INTEGER", 8 if "+ilp64" in self.spec["blas"] else 4),
+            self.define("BLAS_LIBRARIES", self.spec["blas"].libs.joined(";")),
+            self.define("LAPACK_LIBRARIES", self.spec["lapack"].libs.joined(";")),
+        ]
+        if "+mpi" in self.spec:
+            args.append(self.define("MPI_Fortran_COMPILER", self.spec["mpi"].mpifc))
+        return args
+
+
+class MakefileBuilder(makefile.MakefileBuilder):
+    parallel = False
+
+    @property
+    def build_targets(self):
+        targets = []
+        if "@:2" in self.spec:
+            targets = ["lib", "wannier", "post", "w90chk2chk", "w90vdw", "w90pov"]
+        if "@3" in self.spec:
+            targets = ["wannier", "post", "lib", "w90chk2chk", "w90vdw"]
+            if "+shared" in self.spec:
+                targets.append("dynlib")
+
+        return targets
 
     @property
     def makefile_name(self):
@@ -72,7 +129,7 @@ class Wannier90(MakefilePackage):
         abspath = join_path(self.stage.source_path, filename)
         return abspath
 
-    def edit(self, spec, prefix):
+    def edit(self, pkg, spec, prefix):
         lapack = self.spec["lapack"].libs
         blas = self.spec["blas"].libs
 
@@ -161,7 +218,7 @@ class Wannier90(MakefilePackage):
         if self.spec.satisfies("+mpi"):
             env.set("MPIFC", self.prefix.bin.mpifc)
 
-    def install(self, spec, prefix):
+    def install(self, pkg, spec, prefix):
         mkdirp(self.prefix.bin)
         mkdirp(self.prefix.lib)
         if "+shared" in spec:
@@ -173,19 +230,25 @@ class Wannier90(MakefilePackage):
         )
 
         install(
-            join_path(self.stage.source_path, "postw90.x"), join_path(self.prefix.bin, "postw90.x")
+            join_path(self.stage.source_path, "postw90.x"),
+            join_path(self.prefix.bin, "postw90.x"),
         )
 
         inst = []
+
         if "+shared" in spec:
-            inst.append("libwannier." + dso_suffix)
+            inst.append(f"libwannier.{dso_suffix}")
+
         # version 3 or 2 without the shared variant
         # also has a .a version of the library
         if "@3:" in spec or "~shared" in spec:
             inst.append("libwannier.a")
 
         for file in inst:
-            install(join_path(self.stage.source_path, file), join_path(self.prefix.lib, file))
+            install(
+                join_path(self.stage.source_path, file),
+                join_path(self.prefix.lib, file),
+            )
 
         install(
             join_path(self.stage.source_path, "w90chk2chk.x"),
@@ -204,12 +267,9 @@ class Wannier90(MakefilePackage):
             )
 
         install_tree(
-            join_path(self.stage.source_path, "pseudo"), join_path(self.prefix.bin, "pseudo")
+            join_path(self.stage.source_path, "pseudo"),
+            join_path(self.prefix.bin, "pseudo"),
         )
 
         for file in find(join_path(self.stage.source_path, "src/obj"), "*.mod"):
             install(file, self.prefix.modules)
-
-    @property
-    def libs(self):
-        return find_libraries("libwannier", self.prefix, shared=True, recursive=True)

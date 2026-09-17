@@ -26,17 +26,16 @@ class _4cMultiphysics(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("2026.3.0", sha256="d8fa2ca8a3815f8050f6d7f1c428ed65c4e4fea83a7079beffe4d6e11eddfb84")
     version("2026.2.0", sha256="57e05128934e06b67d5ae3c2d3402f80d1ddfc3975b1557670e5b1d3399a6c0b")
     version("2026.1.0", sha256="9d95607a0b7668c9712392c81863b6327b8922745705b62e07f605f1d6932646")
-    version("2025.3.0", sha256="31088a9392bf55eb8c1b5a3b8426e8ae2b367327cef01f8f34aff55cb1153180")
 
     # Keep these sources private to 4C until maintained packages are available
     # in the builtin repository. FetchContent consumes the staged source trees.
     resource(
         name="ryml",
-        git="https://github.com/biojppm/rapidyaml.git",
-        commit="47ec2fa184209687c20fd5bc05621e1cb1200311",
-        submodules=True,
+        url="https://github.com/biojppm/rapidyaml/releases/download/v0.9.0/rapidyaml-0.9.0-src.tgz",
+        sha256="e01c66b21dfbe3d7382ecab3dfe7efcdc47a068cd25fcc8279e8f462f69c995d",
         destination="spack-resources",
         placement="ryml",
     )
@@ -58,22 +57,44 @@ class _4cMultiphysics(CMakePackage):
     variant("fftw", default=False, description="Enable FFTW support")
     variant("mirco", default=False, description="Enable MIRCO support")
     variant("backtrace", default=False, description="Enable libbacktrace support")
+    variant("python", default=False, description="Enable Python build and test utilities")
+    variant("pybind11", default=False, description="Build the py4C Python bindings")
+
+    conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
+
+    conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
+    conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
 
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
+    patch("use-installed-googletest.patch", when="@2026.1.0:2026.3.0")
+    patch("use-installed-googletest.patch", when="@main")
+    patch("python-venv-no-downloads-2026.2.patch", when="@2026.1.0:2026.2.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@2026.3.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@main+python")
+
+    # GCC 14.2.0 hits an internal compiler error (ICE) in
+    # cxx_eval_indirect_ref (cp/constexpr.cc) while instantiating
+    # Core::LinAlg::einsum_sym on 4C's tensor templates
+    # (src/core/linalg/src/dense/4C_linalg_tensor_internals.hpp). Not
+    # confirmed on other 14.x point releases; narrow this once tested.
+    conflicts(
+        "%gcc@14:14",
+        msg="GCC 14.x hits an internal compiler error compiling 4C's tensor "
+        "templates; use GCC 13 or GCC 15 instead.",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.30:", type="build")
     depends_on("ninja", type="build")
-    requires("platform=linux")
 
     depends_on("mpi")
     depends_on("hdf5+mpi+hl")
     # Trilinos pulls in Fortran dependencies through MUMPS. A Fortran-capable
     # compiler must therefore be registered even though 4C has no Fortran sources.
     depends_on(
-        "trilinos@16.2.1+mpi+amesos+amesos2+belos+epetra+epetraext"
+        "trilinos@16.2+mpi+amesos+amesos2+belos+epetra+epetraext"
         "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
         "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
         "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
@@ -86,10 +107,15 @@ class _4cMultiphysics(CMakePackage):
     depends_on("zlib-api")
     depends_on("cli11@2.6.1")
     depends_on("magic-enum@0.9.7")
+    depends_on("googletest@1.15.2+gmock", when="@2026.1.0:2026.3.0")
+    depends_on("googletest@1.15.2+gmock", when="@main")
 
     # 4C uses Qhull's deprecated non-reentrant libqhull API.
     depends_on("qhull@2019.1", when="+qhull")
     depends_on("vtk@9:+shared", when="+vtk")
+    # VTK only needs Mesa as an OpenGL provider. Avoid Mesa's optional LLVM
+    # backend, which is particularly prone to unusable auto-detected externals.
+    depends_on("mesa~llvm", when="+vtk platform=linux")
     depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
     depends_on(
         "dealii@9.6.2+trilinos+mpi~adol-c",
@@ -103,6 +129,26 @@ class _4cMultiphysics(CMakePackage):
     depends_on("arborx@2.0.1+mpi", when="+arborx")
     depends_on("fftw", when="+fftw")
     depends_on("libbacktrace", when="+backtrace")
+    depends_on("python@3.12:", type=("build", "link", "run"), when="+python")
+    depends_on("python-venv", type=("build", "run"), when="+python")
+    depends_on("py-pip", type="build", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
+    depends_on("py-numpy", type=("build", "run"), when="+python")
+    depends_on("py-scipy", type=("build", "run"), when="+python")
+    depends_on("py-pytest", type=("build", "run"), when="+python")
+    depends_on("py-pyyaml", type=("build", "run"), when="+python")
+    # Newer jsonschema releases require the Rust-backed rpds-py package. 4C
+    # only uses the validator_for and RefResolver APIs available in 4.17.3.
+    depends_on("py-jsonschema@:4.17.3", type=("build", "run"), when="+python")
+    depends_on("vtk@9.4.2:9.6+python", type=("build", "run"), when="+python")
+    depends_on("py-pyvista", type=("build", "run"), when="+python")
+    depends_on("py-jinja2", type=("build", "run"), when="+python")
+    depends_on("py-matplotlib", type=("build", "run"), when="+python")
+    depends_on("py-myst-parser", type=("build", "run"), when="+python")
+    depends_on("py-nbsphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx-rtd-theme", type=("build", "run"), when="+python")
+    depends_on("py-pybind11", type=("build", "link", "run"), when="+pybind11")
 
     generator("ninja")
 
@@ -133,9 +179,9 @@ class _4cMultiphysics(CMakePackage):
             self.define_from_variant("FOUR_C_WITH_FFTW", "fftw"),
             self.define_from_variant("FOUR_C_WITH_MIRCO", "mirco"),
             self.define_from_variant("FOUR_C_WITH_BACKTRACE", "backtrace"),
-            self.define("FOUR_C_WITH_PYTHON", False),
-            self.define("FOUR_C_WITH_PYBIND11", False),
-            self.define("FOUR_C_ENABLE_PYTHON_BINDINGS", False),
+            self.define_from_variant("FOUR_C_WITH_PYTHON", "python"),
+            self.define_from_variant("FOUR_C_WITH_PYBIND11", "pybind11"),
+            self.define_from_variant("FOUR_C_ENABLE_PYTHON_BINDINGS", "pybind11"),
         ]
 
         roots = {
@@ -146,6 +192,8 @@ class _4cMultiphysics(CMakePackage):
             "arborx": ("FOUR_C_ARBORX_ROOT", "arborx"),
             "fftw": ("FOUR_C_FFTW_ROOT", "fftw"),
             "backtrace": ("FOUR_C_BACKTRACE_ROOT", "libbacktrace"),
+            "python": ("FOUR_C_PYTHON_ROOT", "python"),
+            "pybind11": ("FOUR_C_PYBIND11_ROOT", "py-pybind11"),
         }
         for variant, (variable, dependency) in roots.items():
             if "+" + variant in spec:

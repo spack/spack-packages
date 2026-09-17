@@ -92,6 +92,7 @@ spack:
   - kokkos +openmp
   - kokkos-kernels +openmp
   - kokkos-fft host_backend=fftw-openmp
+  - kokkos-tools
   - lammps
   - lbann
   - legion
@@ -205,6 +206,7 @@ spack:
   - kokkos +wrapper +cuda cuda_arch=90
   - kokkos-kernels +cuda cuda_arch=90 ^kokkos +wrapper +cuda cuda_arch=90
   - kokkos-fft device_backend=cufft ^kokkos +wrapper +cuda cuda_arch=90
+  - kokkos-tools ^kokkos +wrapper +cuda cuda_arch=90
   - libceed +cuda cuda_arch=90
   - magma +cuda cuda_arch=90
   - mfem +cuda cuda_arch=90

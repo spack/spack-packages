@@ -6,6 +6,7 @@ import os
 import pathlib
 import re
 import sys
+import warnings
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -760,10 +761,8 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     @property
     def kokkos_cxx(self) -> str:
-        if self.spec.satisfies("+wrapper"):
-            return self["kokkos-nvcc-wrapper"].kokkos_cxx
-        # Assumes build-time globals have been set already
-        return spack_cxx
+        warnings.warn("Trilinos.kokkos_cxx is deprecated. Use Kokkos.kokkos_cxx instead.")
+        return self["kokkos"].kokkos_cxx
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
