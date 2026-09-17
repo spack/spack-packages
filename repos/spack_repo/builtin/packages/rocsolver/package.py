@@ -79,6 +79,7 @@ class Rocsolver(ROCmLibrary, CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("hip-lang", type="build")
 
     depends_on("cmake@3.8:", type="build")
     depends_on("fmt@7:8.0.1", type="test")
@@ -122,6 +123,8 @@ class Rocsolver(ROCmLibrary, CMakePackage):
             depends_on(f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
 
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
@@ -164,7 +167,6 @@ class Rocsolver(ROCmLibrary, CMakePackage):
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
