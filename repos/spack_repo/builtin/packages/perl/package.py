@@ -71,6 +71,9 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
     variant("open", default=True, description="Support open.pm")
     variant("opcode", default=True, description="Support Opcode.pm")
 
+    "Adds the archive-tar-3.10.patch fixing `CVE-2026-42496`, `CVE-2026-42497` `CVE-2026-9538`"
+    patch("archive-tar-3.10.patch", when="@:5.42.2")
+
     resource(
         name="cpanm",
         url="http://search.cpan.org/CPAN/authors/id/M/MI/MIYAGAWA/App-cpanminus-1.7042.tar.gz",
