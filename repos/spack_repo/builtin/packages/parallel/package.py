@@ -45,13 +45,12 @@ class Parallel(AutotoolsPackage, GNUMirrorPackage):
         can fix up the path to the perl binary.
         """
         perl = self.spec["perl"].command
-        kwargs = {"ignore_absent": False, "backup": False, "string": False}
 
         with working_dir("src"):
             match = "^#!/usr/bin/env perl|^#!/usr/bin/perl.*"
             substitute = f"#!{perl}"
             files = ["parallel", "niceload", "parcat", "sql"]
-            filter_file(match, substitute, *files, **kwargs)
+            filter_file(match, substitute, *files)
             # Since scripts are run during installation, we need to add sbang
             for file in files:
                 filter_shebang(file)

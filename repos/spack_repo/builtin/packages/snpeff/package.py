@@ -40,8 +40,5 @@ class Snpeff(Package, SourceforgePackage):
             # Munge the helper script to explicitly point to java and the
             # jar file.
             java = self.spec["java"].prefix.bin.java
-            kwargs = {"backup": False}
-            filter_file("^java", java, script_path, **kwargs)
-            filter_file(
-                script + ".jar", join_path(prefix.bin, script + ".jar"), script_path, **kwargs
-            )
+            filter_file("^java", java, script_path)
+            filter_file(script + ".jar", join_path(prefix.bin, script + ".jar"), script_path)
