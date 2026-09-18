@@ -5,12 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rccl(CMakePackage):
+class Rccl(ROCmLibrary, CMakePackage):
     """RCCL (pronounced "Rickle") is a stand-alone library
     of standard collective communication routines for GPUs,
     implementing all-reduce, all-gather, reduce, broadcast,
@@ -202,7 +202,7 @@ class Rccl(CMakePackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

@@ -530,6 +530,9 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     compiler_version_argument = "--version"
     compiler_version_regex = r"roc-(\d+[._]\d+[._]\d+)"
     installed_dir_regex = r"InstalledDir:\s*(.+)"
+    # ROCm 7.13 and later no longer report roc-<version> in --version output.
+    # Fall back to /opt/rocm-<ver>/ or /opt/rocm/core-<ver>/
+    path_version_regex = r"/opt/rocm(?:/core)?-(\d+\.\d+(?:\.\d+)?)"
 
     @classmethod
     def determine_version(cls, exe):
@@ -550,10 +553,22 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
             if match:
                 version_str = match.group(1)
                 return version_str
+            return cls.determine_version_from_path(installed_dir)
         except ProcessError:
             pass
         except Exception as e:
             tty.debug(e)
+        return None
+
+    @classmethod
+    def determine_version_from_path(cls, path):
+        """Extract the ROCm version from /opt/rocm-<ver> or /opt/rocm/core-<ver>."""
+        match = re.search(cls.path_version_regex, path)
+        if match:
+            parts = match.group(1).split(".")
+            while len(parts) < 3:
+                parts.append("0")
+            return ".".join(parts)
         return None
 
     # Make sure that the compiler paths are in the LD_LIBRARY_PATH

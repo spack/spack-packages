@@ -403,7 +403,10 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"rocm: v(\d+)\.(\d+)", output)
         if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+            major, minor = int(match.group(1)), int(match.group(2))
+            if (major, minor) == (7, 15):
+                return "10.0.0"
+            ver = "{0}.{1}".format(major, minor)
         else:
             ver = None
         return ver
