@@ -15,6 +15,7 @@ class Tdls(CMakePackage):
     to be embedded in TFEL/MFront."""
 
     homepage = "https://trsxvz.github.io/TDLS/"
+    url = "https://github.com/trsxvz/TDLS/archive/refs/tags/v0.1.0.tar.gz"
     git = "https://github.com/trsxvz/TDLS.git"
 
     maintainers("trsxvz")
@@ -22,11 +23,29 @@ class Tdls(CMakePackage):
     license("BSD-3-Clause", checked_by="trsxvz")
 
     version("main", branch="main")
+    version("0.1.0", sha256="c10969df6d2e91d44c2200eaffad0db041938fad24d3455c65a2a69082d7eb0d")
 
     depends_on("cmake@3.21:", type="build")
+    # A compiler is only needed to build and run the test suites and the
+    # examples under --test. The compiler wrapper is not injected for a
+    # test-typed language dependency (spack/spack#45573), so the compiler
+    # of the spec is handed to CMake explicitly.
+    depends_on("cxx", type="test")
 
     def cmake_args(self):
-        return [
-            self.define("TDLS_BUILD_TESTS", False),
-            self.define("TDLS_BUILD_EXAMPLES", False),
+        args = [
+            self.define("TDLS_BUILD_TESTS", self.run_tests),
+            self.define("TDLS_BUILD_EXAMPLES", self.run_tests),
         ]
+        if self.run_tests:
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["cxx"].package.cxx))
+        return args
+
+    def check(self):
+        """Skip the target 'test', which does not build the test programs
+        (they stay out of 'all'); the target 'check' builds and runs them."""
+        with working_dir(self.build_directory):
+            if self.generator == "Unix Makefiles":
+                self._if_make_target_execute("check")
+            elif self.generator == "Ninja":
+                self._if_ninja_target_execute("check")
