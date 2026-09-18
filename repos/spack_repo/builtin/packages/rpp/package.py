@@ -24,15 +24,16 @@ class Rpp(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
-    def url_for_version(self, version):
-        if version >= Version("7.14.0"):
-            url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-7.14.tar.gz"
-        elif version >= Version("5.7.0"):
-            url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
-        return url.format(version)
+    rocm_url_map = [
+        (
+            "5.6.1",
+            "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz",
+        ),
+        ("7.2.4", "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
 
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version(
         "7.13.0", branch="release/therock-7.13", commit="8a9aa66aa8bc2186d3f12ce0ffa92f861047088d"
@@ -210,6 +211,7 @@ class Rpp(ROCmLibrary, CMakePackage):
                 "7.2.3",
                 "7.13.0",
                 "7.14.0",
+                "10.0.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):

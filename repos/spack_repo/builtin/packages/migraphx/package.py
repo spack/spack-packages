@@ -28,6 +28,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
     ]
 
     license("MIT")
+    version("10.0.0", sha256="f4e3e60230455f5c6edadf33b74b365640d958c70dde95ae6746814d3a5a1b56")
     version("7.14.0", sha256="9798b091a9660d5e7a889087956684416c43dabc4f315fd8937590b00d35034d")
     version(
         "7.13.0", branch="release/rocm-rel-7.13", commit="f066712b04f87e927217edee3fc630e856787eb2"
@@ -139,6 +140,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -186,10 +188,26 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         for tgt in itertools.chain(["auto"], amdgpu_targets):
             depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
             depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+
+    def patch(self):
+        # rocm_add_version_resource is not available in rocm-cmake 10.0.0+
+        # Comment out all calls to this function
+        if self.spec.satisfies("@10.0:"):
+            filter_file(
+                r"^(\s*)rocm_add_version_resource\(",
+                r"\1#rocm_add_version_resource(",
+                "src/CMakeLists.txt",
+                "src/api/CMakeLists.txt",
+                "src/driver/CMakeLists.txt",
+                "src/onnx/CMakeLists.txt",
+                "src/targets/gpu/CMakeLists.txt",
+                "src/targets/gpu/hiprtc/CMakeLists.txt",
+            )
 
     @property
     def cmake_python_hints(self):
