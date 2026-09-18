@@ -22,7 +22,7 @@ class Krona(Package):
 
     def patch(self):
         filter_file(
-            "my \$scriptPath = abs_path\('scripts'\);",  # noqa: W605
+            r"my \$scriptPath = abs_path\('scripts'\);",
             "my $scriptPath = '{0}';".format(join_path(self.spec.prefix, "scripts")),
             "install.pl",
         )
