@@ -44,7 +44,8 @@ class PyEquinox(PythonPackage, CudaPackage):
     version("0.11.3", sha256="a1273cc28c60d3131ac596f8a0f5c7dd384729e6cddae86e7be05f026880e8e0")
 
     depends_on("py-hatchling", type="build")
-    depends_on("python@3.10:3.12", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"), when="@0.11.11:")
+    depends_on("python@3.9:", type=("build", "run"), when="@0.11.3:")
 
     with default_args(type="run"):
         for arch in CudaPackage.cuda_arch_values:
