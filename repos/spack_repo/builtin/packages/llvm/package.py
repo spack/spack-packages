@@ -1277,6 +1277,16 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         # have to add rpaths to `bin/llvm-omp-*` and `share/gdb/python/ompd/ompdModule.so`.
         return ["libpython*.so.*", "libomp.so*", "libomptarget*.so*", "libunwind.so.*"]
 
+    def setup_dependent_package(self, module, dependent_spec):
+        """Set the llvm_config attribute for the dependent package to use"""
+        # This ensures that the dependent packages can find the correct llvm-config executable.
+        spec = self.spec
+        # Especially if llvm is external, it may have a versioned llvm-config executable.
+        spec.llvm_config = spec.prefix.bin.join(f"llvm-config-{spec.version.up_to(1)}")
+        if not os.path.exists(spec.llvm_config):
+            # Fall back to the unversioned llvm-config if the versioned one does not exist.
+            spec.llvm_config = self.prefix.bin.join("llvm-config")
+
 
 def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
     """Get the --gcc-install-dir=... flag, so that clang does not do a system scan for GCC."""
