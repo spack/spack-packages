@@ -65,7 +65,7 @@ class Pplacer(Package):
 
         opam = Executable(self.spec["opam"].prefix.bin.opam)
         opam_root = join_path(self.stage.source_path, ".opam")
-        opam("init", "--disable-sandboxing", f"--root={opam_root}", "--compiler=5.2.1")
+        opam("init", "--disable-sandboxing", "-y", f"--root={opam_root}", "--compiler=5.2.1")
         opam(
             "repo",
             "add",
@@ -89,8 +89,17 @@ class Pplacer(Package):
         with working_dir("mcl"):
             Executable("./configure")()
             make()
-        dune = Executable(join_path(opam_root, "5.2.1", "bin", "dune"))
-        dune("build")
+        opam_exec = Executable(self.spec["opam"].prefix.bin.opam)
+        opam_exec(
+            "exec",
+            "--root",
+            opam_root,
+            "--switch",
+            "5.2.1",
+            "--",
+            "dune",
+            "build",
+        )
         mkdirp(prefix.bin)
         install_tree("scripts", prefix.bin)
         to_remove = [
