@@ -42,7 +42,8 @@ class Tk(AutotoolsPackage, SourceforgePackage):
 
     depends_on("c", type="build")
 
-    depends_on("tcl@8.6:", type=("build", "link", "run"), when="@8.6:")
+    depends_on("tcl@8.6:8.6", type=("build", "link", "run"), when="@8.6:8.6")
+    depends_on("tcl@9.0:", type=("build", "link", "run"), when="@9.0:")
     depends_on("libx11")
     depends_on("libxft", when="+xft")
     depends_on("libxscrnsaver", when="+xss")
@@ -124,7 +125,12 @@ class Tk(AutotoolsPackage, SourceforgePackage):
 
     @property
     def libs(self):
-        return find_libraries([f"libtk{self.version.up_to(2)}"], root=self.prefix, recursive=True)
+        # Tk 9 is built against Tcl 9, and its library is named libtcl9tkX.Y
+        # instead of libtkX.Y (see TK_LIB_FILE in unix/configure)
+        name = "tcl9tk" if self.spec.satisfies("@9:") else "tk"
+        return find_libraries(
+            [f"lib{name}{self.version.up_to(2)}"], root=self.prefix, recursive=True
+        )
 
     def _find_script_dir(self):
         # Put more-specific prefixes first
