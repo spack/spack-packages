@@ -24,6 +24,10 @@ class Wxwidgets(AutotoolsPackage):
     git = "https://github.com/wxWidgets/wxWidgets.git"
 
     version("develop", branch="master")
+
+    # Note: for odd minor versions API and ABI compatibility are not guaranteed
+    version("3.3.3", sha256="81b09d6dd9f1ed9301f8c55a968a488d0491f264dc2bab19a7e407ac67009482")
+    version("3.2.11", sha256="6a129015bce2e914e4bf61ec4411854ad962801d47e92f2eb8340adb6a90af08")
     version("3.2.9", sha256="fb90f9538bffd6a02edbf80037a0c14c2baf9f509feac8f76ab2a5e4321f112b")
     version("3.2.8.1", sha256="ad0cf6c18815dcf1a6a89ad3c3d21a306cd7b5d99a602f77372ef1d92cb7d756")
     version("3.2.7", sha256="69a1722f874d91cd1c9e742b72df49e0fab02890782cf794791c3104cee868c6")
@@ -54,7 +58,9 @@ class Wxwidgets(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
-        options = ["--enable-unicode", "--disable-precomp-headers"]
+        options = ["--disable-precomp-headers"]
+        if spec.satisfies("@:3.2"):
+            options.append("--enable-unicode")
 
         if self.spec.satisfies("+opengl"):
             options.append("--with-opengl")
