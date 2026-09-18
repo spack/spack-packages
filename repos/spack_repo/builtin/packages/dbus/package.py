@@ -55,6 +55,11 @@ class Dbus(AutotoolsPackage, MesonPackage):
 
     variant("xml_docs", default=False, description="Build XML documentation")
     variant("system-socket", default="default", description="Location for the DBus system socket")
+    variant(
+        "localstatedir",
+        default="default",
+        description="Location for the local state directory (e.g. /var)",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="platform=windows")
@@ -84,6 +89,9 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         socket = self.spec.variants["system-socket"].value
         if socket != "default":
             args += ["--with-system-socket={0}".format(socket)]
+        localstatedir = self.spec.variants["localstatedir"].value
+        if localstatedir != "default":
+            args += ["--localstatedir={0}".format(localstatedir)]
         return args
 
 
@@ -94,4 +102,7 @@ class MesonBuilder(meson.MesonBuilder):
         socket = self.spec.variants["system-socket"].value
         if socket != "default":
             args += [f"-Dsystem_socket={socket}"]
+        localstatedir = self.spec.variants["localstatedir"].value
+        if localstatedir != "default":
+            args += [f"-Dlocalstatedir={localstatedir}"]
         return args
