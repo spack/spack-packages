@@ -19,6 +19,7 @@ class MpUnits(CMakePackage):
 
     license("MIT")
 
+    version("master", branch="master")
     version("2.5.0", tag="v2.5.0", commit="27d2def9082ce00d7eb4f75695dbead4a748f23f")
 
     root_cmakelists_dir = "src"
@@ -56,7 +57,11 @@ class MpUnits(CMakePackage):
     variant(
         "contracts",
         default="gsl-lite",
-        values=("none", conditional("gsl-lite", when="~freestanding")),
+        values=(
+            "none",
+            conditional("gsl-lite", when="~freestanding"),
+            conditional("std", when="@2.5.1: ~freestanding cxxstd=26"),
+        ),
         multi=False,
         description="Contract checking implementation",
     )
