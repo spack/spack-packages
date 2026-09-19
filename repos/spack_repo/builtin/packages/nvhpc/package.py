@@ -589,6 +589,21 @@ class Nvhpc(Package, CompilerPackage):
         # TODO: use other exes to determine default_cuda/install_type/blas/lapack/mpi variants
         return "~blas~lapack~mpi", {"compilers": cls.determine_compiler_paths(exes=exes)}
 
+
+    @property
+    def _compilers_prefix(self):
+        if str(self.prefix).endswith("compilers"):
+            return self.prefix
+        return Prefix(
+            join_path(self.prefix, "Linux_%s" % self.spec.target.family, self.version, "compilers")
+        )
+
+    @property
+    def _root_prefix(self):
+        if str(self.prefix).endswith("compilers"):
+            return Prefix(os.path.dirname(os.path.dirname(os.path.dirname(str(self.prefix)))))
+        return self.prefix
+
     def _version_prefix(self):
         return join_path(self.prefix, "Linux_%s" % self.spec.target.family, self.version)
 
@@ -632,9 +647,7 @@ class Nvhpc(Package, CompilerPackage):
         makelocalrc(*makelocalrc_args)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        prefix = Prefix(
-            join_path(self.prefix, "Linux_%s" % self.spec.target.family, self.version, "compilers")
-        )
+        prefix = self._compilers_prefix
 
         env.set("CC", join_path(prefix.bin, "nvc"))
         env.set("CXX", join_path(prefix.bin, "nvc++"))
@@ -649,7 +662,7 @@ class Nvhpc(Package, CompilerPackage):
         if "+mpi" in self.spec:
             mpi_prefix = Prefix(
                 join_path(
-                    self.prefix,
+                    self._root_prefix,
                     "Linux_%s" % self.spec.target.family,
                     self.version,
                     "comm_libs",
@@ -662,9 +675,7 @@ class Nvhpc(Package, CompilerPackage):
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        prefix = Prefix(
-            join_path(self.prefix, "Linux_%s" % self.spec.target.family, self.version, "compilers")
-        )
+        prefix = self._compilers_prefix
 
         env.prepend_path("LIBRARY_PATH", prefix.lib)
         env.prepend_path("LD_LIBRARY_PATH", prefix.lib)
@@ -672,7 +683,7 @@ class Nvhpc(Package, CompilerPackage):
         if "+mpi" in self.spec:
             mpi_prefix = Prefix(
                 join_path(
-                    self.prefix,
+                    self._root_prefix,
                     "Linux_%s" % self.spec.target.family,
                     self.version,
                     "comm_libs",
@@ -696,7 +707,7 @@ class Nvhpc(Package, CompilerPackage):
         if "+mpi" in self.spec or self.provides("mpi"):
             mpi_prefix = Prefix(
                 join_path(
-                    self.prefix,
+                    self._root_prefix,
                     "Linux_%s" % self.spec.target.family,
                     self.version,
                     "comm_libs",
