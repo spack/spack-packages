@@ -101,7 +101,7 @@ class Dd4hep(CMakePackage):
     )
     variant("lcio", default=False, description="Enable build with lcio")
     variant("edm4hep", default=True, description="Enable build with edm4hep", when="@1.24:")
-    variant("g4hepem", default=False, description="Enable build of G4HepEm plugin", when="@1.38:")
+    variant("g4hepem", default=False, description="Enable build of G4HepEm plugin", when="@1.38: +ddg4")
     variant("geant4units", default=False, description="Use geant4 units throughout")
     variant("tbb", default=False, description="Enable build with tbb")
     variant(
