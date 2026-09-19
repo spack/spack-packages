@@ -36,6 +36,7 @@ class Root(CMakePackage):
     version("develop", branch="master")
 
     # Production release series
+    version("6.40.04", sha256="44ada253b1935d34b6801222232d50731fe7c5e3cbcfab47734c85031cfbe4d3")
     version("6.40.02", sha256="f631eebee3dbea128f1415f4b784f5e83637a2b431193bce75f10385f71efc56")
     version("6.40.00", sha256="676f8fde8926ce05902be7f44ce7d492a4a2060022fcab0e3d1c44f6dc0fbde8")
     version("6.36.12", sha256="1243fc48b7c1358ebf69e6140a13d9c27e0fd84663632cc6217beda875a4a317")
@@ -370,6 +371,7 @@ class Root(CMakePackage):
     depends_on("xz")
     depends_on("zlib-api")
     depends_on("zstd")
+    depends_on("libxcrypt", when="platform=linux")
 
     # X-Graphics
     depends_on("libx11", when="+x")

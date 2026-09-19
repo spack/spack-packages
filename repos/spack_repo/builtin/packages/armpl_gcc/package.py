@@ -367,6 +367,9 @@ class ArmplGcc(Package):
     homepage = "https://developer.arm.com/tools-and-software/server-and-hpc/downloads/arm-performance-libraries"
     maintainers("paolotricerri")
 
+    redistribute(source=False, binary=False)
+    license("LicenseRef-ARM-Proprietary", checked_by="tgamblin")
+
     for ver, packages in _versions.items():
         key = get_os_or_pkg_manager(ver)
         sha256sum = packages.get(key)

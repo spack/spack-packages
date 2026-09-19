@@ -19,6 +19,7 @@ class PyScipy(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main", submodules=True)
+    version("1.18.1", sha256="52c4b7422442aba924d03ad4019852b08a92e64ea187b933135687bfe2747307")
     version("1.18.0", sha256="67b2ad2ad54c72ca6d04975a9b2df8c3638c34ddd5b28738e94fc2b57929d378")
     version("1.17.1", sha256="95d8e012d8cb8816c226aef832200b1d45109ed4464303e997c5b13122b297c0")
     version("1.17.0", sha256="2591060c8e648d8b96439e111ac41fd8342fdeff1876be2e19dea3fe8930454e")
@@ -55,7 +56,8 @@ class PyScipy(PythonPackage):
 
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.12:3.14", when="@1.18:")
+        depends_on("python@3.12:3.15", when="@1.18.1:")
+        depends_on("python@3.12:3.14", when="@1.18.0")
         depends_on("python@3.11:3.14", when="@1.16.1:1.17")
         depends_on("python@3.11:3.13", when="@1.16.0")
         depends_on("python@3.10:3.13", when="@1.14.1:1.15")
@@ -147,6 +149,7 @@ class PyScipy(PythonPackage):
 
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
+    conflicts("%gcc@:10.2", when="@1.18.1:", msg="SciPy requires GCC >= 10.3")
     conflicts("%gcc@:9.0", when="@1.14:", msg="SciPy requires GCC >= 9.1")
     conflicts("%gcc@:7", when="@1.10:", msg="SciPy requires GCC >= 8.0")
     conflicts("%gcc@:4.7", when="@:1.9", msg="SciPy requires GCC >= 4.8")

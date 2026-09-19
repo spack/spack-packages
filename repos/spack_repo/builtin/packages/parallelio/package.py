@@ -66,6 +66,7 @@ class Parallelio(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.7:", type="build")
+    depends_on("pkgconfig", type="build", when="@2.6.9:")
     depends_on("mpi", when="+mpi")
     depends_on("mpi-serial", when="~mpi")
     depends_on("netcdf-c +mpi", type="link", when="+mpi")

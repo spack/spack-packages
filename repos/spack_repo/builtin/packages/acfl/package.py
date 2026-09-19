@@ -331,6 +331,9 @@ class Acfl(Package, CompilerPackage):
 
     maintainers("paolotricerri")
 
+    redistribute(source=False, binary=False)
+    license("LicenseRef-ARM-Proprietary", checked_by="tgamblin")
+
     # Build Versions
     for ver, packages in _versions.items():
         acfl_os = get_os(ver)

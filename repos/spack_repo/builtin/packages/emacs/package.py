@@ -29,6 +29,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     sanity_check_is_dir = ["share/emacs"]
 
     version("master", branch="master")
+    version("31.1", sha256="3cad7fd1466c0e24867df8d2609da3ac75abc90d7c4c0175e410e9be46d4092a")
     version("30.2", sha256="1d79a4ba4d6596f302a7146843fe59cf5caec798190bcc07c907e7ba244b076d")
     version("30.1", sha256="54404782ea5de37e8fcc4391fa9d4a41359a4ba9689b541f6bc97dd1ac283f6c")
     version("29.4", sha256="1adb1b9a2c6cdb316609b3e86b0ba1ceb523f8de540cfdda2aec95b6a5343abf")
@@ -80,10 +81,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # Required dependencies
     depends_on("ncurses")
-    depends_on("pcre")
     depends_on("zlib-api")
     depends_on("libxml2")
-    depends_on("jpeg")
+    depends_on("gmp", when="@27:")
 
     # Optional dependencies
     depends_on("gnutls", when="+tls")
@@ -97,6 +97,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     # GUI dependencies
     with when("gui=x11"):
+        depends_on("jpeg")
         depends_on("libtiff")
         depends_on("libpng")
         depends_on("libxpm")
@@ -119,7 +120,20 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
     patch("disable-posix-spawn-macos.patch", when="@28:30.2 platform=darwin os=sonoma")
 
     def configure_args(self):
-        args = []
+        args = [
+            "--without-dbus",
+            "--without-selinux",
+            "--without-libsystemd",
+            "--without-gpm",
+            "--without-lcms2",
+            "--without-webp",
+            "--without-rsvg",
+            "--without-gsettings",
+            "--without-xaw3d",
+        ]
+
+        if self.spec.satisfies("@27:"):
+            args.append("--with-libgmp")
 
         gui = self.spec.variants["gui"].value
         if gui == "x11":
@@ -136,6 +150,7 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         args.extend(self.with_or_without("native-compilation", variant="native"))
         args.extend(self.with_or_without("gnutls", variant="tls"))
         args.extend(self.with_or_without("tree-sitter", variant="treesitter"))
+        args.extend(self.with_or_without("sqlite3", variant="sqlite"))
         args.extend(self.with_or_without("json"))
 
         return args
@@ -153,8 +168,11 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
         mkdir(apps_dir)
         move("nextstep/Emacs.app", apps_dir)
 
+    @when("@:30")
     def test_ctags(self):
-        """check ctags version"""
+        """check ctags version when Emacs <= v30. Emacs's ctags program
+        was removed in v31.1. Upstream recommends Universal Ctags
+        or `etags --ctags` as replacements."""
         self.run_version_check("ctags")
 
     def test_ebrowse(self):
@@ -175,6 +193,9 @@ class Emacs(AutotoolsPackage, GNUMirrorPackage):
 
     def run_version_check(self, bin):
         """Runs and checks output of the installed binary."""
+        if self.spec.version.isdevelop():
+            raise SkipTest("version check not supported for development builds")
+
         exe_path = join_path(self.prefix.bin, bin)
         if not os.path.exists(exe_path):
             raise SkipTest(f"{exe_path} is not installed")

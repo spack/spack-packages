@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import subprocess
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -565,10 +564,10 @@ cpp -P -traditional-cpp -undef \"$@\"
 
     # We can run some tests to make sure the build is working
     # but we can only do it if the pfunit variant is enabled
-    @when("+pfunit")
-    @run_after("build")
     @on_package_attributes(run_tests=True)
     def check(self):
+        if not self.spec.satisfies("+pfunit"):
+            return
         with working_dir(self.build_directory):
             # The test suite contains a lot of tests. We select only those
             # that are cheap. Note this requires MPI and 6 processes

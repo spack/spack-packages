@@ -18,6 +18,7 @@ class PyMypy(PythonPackage):
 
     license("MIT AND PSF-2.0", checked_by="tgamblin")
 
+    version("2.3.1", sha256="47c1b1207258513a9d93495f69c8be9de73916186f0e52703e8c461b7a623419")
     version("2.1.0", sha256="81e76ad12c2d804512e9b13240d1588316531bfba07558286078bfbce9613633")
     version("1.20.1", sha256="6fc3f4ecd52de81648fed1945498bf42fa2993ddfad67c9056df36ae5757f804")
     version("1.19.0", sha256="f6b874ca77f733222641e5c46e4711648c4037ea13646fd0cdc814c2eaec2528")
@@ -96,10 +97,12 @@ class PyMypy(PythonPackage):
         depends_on("py-tomli@1.1:", when="@0.950: ^python@:3.10")
         depends_on("py-tomli@1.1:", when="@0.930:0.949")
         depends_on("py-tomli@1.1:2", when="@0.920:0.929")
+        depends_on("py-librt@0.13.0:", when="@2.3.1:")
         depends_on("py-librt@0.11:", when="@2.1:")
         depends_on("py-librt@0.8.0:", when="@1.20.1:")
         depends_on("py-librt@0.6.2:", when="@1.19:")
-        depends_on("py-ast-serialize@0.3:0", when="@2:")
+        depends_on("py-ast-serialize@0.3:0", when="@2:2.1")
+        depends_on("py-ast-serialize@0.6:0", when="@2.3.1:")
 
         # Historical dependencies
         depends_on("py-types-typed-ast@1.5.8.5:1.5", when="@1.2:1.4")

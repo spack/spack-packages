@@ -152,16 +152,15 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
 
 class MakefileBuilder(makefile.MakefileBuilder):
-    def build(self, pkg, spec, prefix):
-        # include symbols by default
+    def _make_args(self, spec, prefix):
         make_args = [
-            "CC={0}".format(spack_cc),
-            "CXX={0}".format(spack_cxx),
-            "FC={0}".format(spack_fc),
-            "PREFIX=%s" % prefix,
+            f"CC={spack_cc}",
+            f"CXX={spack_cxx}",
+            f"FC={spack_fc}",
+            f"PREFIX={prefix}",
         ]
         if spec.satisfies("@1.17-cp2k"):
-            make_args += ["WRAP={0}".format(spec.variants["wrap"].value)]
+            make_args += [f"WRAP={spec.variants['wrap'].value}"]
 
         # JIT (AVX and later) makes MNK, M, N, or K spec. superfluous
         # make_args += ['MNK=1 4 5 6 8 9 13 16 17 22 23 24 26 32']
@@ -173,10 +172,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         blas_val = spec.variants["blas"].value
         if blas_val != "default":
-            make_args += ["BLAS={0}".format(blas_val)]
+            make_args += [f"BLAS={blas_val}"]
 
         if spec.satisfies("+large_jit_buffer"):
             make_args += ["CODE_BUF_MAXSIZE=262144"]
+
+        return make_args
+
+    def build(self, pkg, spec, prefix):
+        # include symbols by default
+        make_args = self._make_args(spec, prefix)
 
         if spec.satisfies("+shared"):
             make(*(make_args + ["STATIC=0"]))
@@ -185,6 +190,15 @@ class MakefileBuilder(makefile.MakefileBuilder):
         make(*make_args)
 
     def install(self, pkg, spec, prefix):
+        # The 2.x install target relocates installed libraries on macOS and
+        # Linux. The main-2023 snapshot predates this despite satisfying @2:.
+        if spec.satisfies("@2:") and not spec.satisfies("@main-2023-11"):
+            make_args = self._make_args(spec, prefix)
+            if spec.satisfies("+shared"):
+                make_args += ["STATIC=0"]
+            make("install", *make_args)
+            return
+
         install_tree("include", prefix.include)
 
         # move pkg-config files to their right place
@@ -194,6 +208,11 @@ class MakefileBuilder(makefile.MakefileBuilder):
 
         # always install libraries
         install_tree("lib", prefix.lib)
+
+        # The 1.x releases and main-2023 snapshot predate the relocation in
+        # the upstream install target.
+        if spec.satisfies("platform=darwin +shared"):
+            fix_darwin_install_name(prefix.lib)
 
         if spec.satisfies("+header-only"):
             install_tree("src", prefix.src)

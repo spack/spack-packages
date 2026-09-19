@@ -16,6 +16,7 @@ class PyGevent(PythonPackage):
 
     license("MIT")
 
+    version("26.8.0", sha256="96039f41bbde6dcd72559e5ffbd408a04f46774b47d991d4cf032da8fa79e5a0")
     version("26.5.0", sha256="1655eb04c1e20d71b2aa4a3c7528162dd58ff6cc46a037af1f01f534c80fefba")
     version("26.4.0", sha256="288d03addfccf0d1c67268358b6759b04392bf3bc35d26f3d9a45c82899c292d")
     version("25.5.1", sha256="582c948fa9a23188b890d0bc130734a506d039a2e5ad87dae276a456cc683e61")
@@ -33,21 +34,30 @@ class PyGevent(PythonPackage):
 
         depends_on("py-setuptools@40.8:", when="@1.5:")
         depends_on("py-setuptools@24.2:", when="@:1.4")
+        # https://github.com/gevent/gevent/commit/2a9cdcd19702154039aa0f074ee3cb11f63c239e
+        depends_on("py-setuptools@:80", when="@:26.4")
+        depends_on("py-cython@3.2.4:", when="@26.5:")
         depends_on("py-cython@3.2.1:", when="@26:")
         depends_on("py-cython@3.0.11:", when="@24.10.1:")
         depends_on("py-cython@3.0.8:", when="@24.2.1:")
         depends_on("py-cython@3.0.2:", when="@23.9.0:")
         depends_on("py-cython@3:", when="@20.5.1:")
         depends_on("py-cython@0.29.14:", when="@1.5:")
+        # https://github.com/gevent/gevent/issues/2076
+        depends_on("py-cython@:3.0", when="@:24.10.3")
+        # https://github.com/gevent/gevent/issues/1599
+        depends_on("py-cython@:2", when="@:20.5.0")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@26.8:")
         depends_on("python@3.9:", when="@24.10.1:")
         depends_on("python@3.8:", when="@23.7.0:")
         depends_on("python@:3.10", when="@:21.12")
 
+        depends_on("py-cffi@2.1.1:", when="@26.8:")
         depends_on("py-cffi@1.17.1:", when="@24.10.1:")
         depends_on("py-cffi@1.12.3:")
-        depends_on("py-greenlet@3.2.2:", when="@25.5.1:")  # setup.py
+        depends_on("py-greenlet@3.2.2:", when="@25.5.1:")
         depends_on("py-greenlet@3.0.3:", when="@24.2.1:")
         depends_on("py-greenlet@3:", when="@23.7: ^python@3.12:")
         depends_on("py-greenlet@2:", when="@22.10.2: ^python@:3.11")
@@ -57,12 +67,9 @@ class PyGevent(PythonPackage):
         depends_on("py-zope-event", when="@20.5.1:")
         depends_on("py-zope-interface", when="@20.5.1:")
 
-    # https://github.com/gevent/gevent/issues/2076
-    conflicts("^py-cython@3.1:", when="@:24.10.3")
-    # https://github.com/gevent/gevent/issues/1599
-    conflicts("^py-cython@3:", when="@:20.5.0")
-    # https://github.com/gevent/gevent/issues/2201
-    conflicts("py-setuptools@80:", when="@:26.4")
+        # Historical dependencies
+        depends_on("py-setuptools@40.8:", when="@20.5.1:23")
+        depends_on("py-setuptools", when="@:23")
 
     # Deprecated compiler options. upstream PR: https://github.com/gevent/gevent/pull/1896
     patch("icc.patch", when="@:21.12.0 %intel")

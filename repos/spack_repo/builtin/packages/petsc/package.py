@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.25.5", sha256="6d61c472db39006d261542d1a42f1fa6c52d6e89f9e77041386189aa8c24b490")
     version("3.25.4", sha256="12c990fb39a5764ac8311211d09c01ed80fb983136c75bf7b558312b2509dbbd")
     version("3.25.3", sha256="95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5")
     version("3.25.2", sha256="03fbcfb72e28dbd92eac042faf7a4ba7e75e602fd1c9af0676f78e0a762412ec")
@@ -230,6 +231,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # https://gitlab.com/petsc/petsc/-/merge_requests/8152
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+rocm")
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
+
+    # fixes build with: +complex ^cuda@13.3. Upstream fix: petsc!9532.
+    patch(
+        "https://gitlab.com/petsc/petsc/-/commit/c0f7467a2261011568d510ece23f14cad8dcaaa4.diff",
+        sha256="e91c9b9323f22fe8988f5707eb262290e850b81262cf41557dc552848313a6b8",
+        when="@3.16:3.25.5 +cuda +complex ^cuda@13.3:",
+    )
 
     # These require +mpi
     mpi_msg = "Requires +mpi"

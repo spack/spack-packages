@@ -52,7 +52,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         sha256="a7b39bc69cbf9e25826c5a60ab26477001f7c08d85cec04bc0e29cabed6f3cc9",
         preferred=sys.platform == "darwin",
     )
-    version("13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5")
+    version("13.5.0", sha256="ec3df0015ed01411f91f9a9cd5b4da3070eb1222b02fadf4133c30c090399855")
     version("12.5.0", sha256="71cd373d0f04615e66c5b5b14d49c1a4c1a08efa7b30625cd240b11bab4062b3")
     version("11.5.0", sha256="a6e21868ead545cf87f0c01f84276e4b5281d672098591c1c896241f09363478")
     version("10.5.0", sha256="25109543fdf46f397c347b5d8b7a2c7e5694a5a51cce4b9c6e1ea8a71ca307c1")
@@ -76,6 +76,9 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             "14.1.0", sha256="e283c654987afe3de9d8080bc0bd79534b5ca0d681a73a11ff2b5d3767426840"
         )
 
+        version(
+            "13.4.0", sha256="9c4ce6dbb040568fdc545588ac03c5cbc95a8dbf0c7aa490170843afb59ca8f5"
+        )
         version(
             "13.3.0", sha256="0845e9621c9543a13f484e94584a49ffc0129970e9914624235fc1d061a0c083"
         )
@@ -200,7 +203,7 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     )
     variant(
         "build_type",
-        default="RelWithDebInfo",
+        default="Release",
         values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel"),
         description="CMake-like build type. "
         "Debug: -O0 -g; Release: -O3; "
@@ -277,27 +280,42 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         depends_on("autogen@5.5.4:")
         depends_on("guile@1.4.1:")
 
-    # See https://go.dev/doc/install/gccgo#Releases
+    # See https://go.dev/doc/install/gccgo#Releases, and libgo/VERSION in the GCC sources.
+    # The "when" ranges must not overlap, since the constraints on the virtual are intersected.
     with when("languages=go"):
-        provides("go-or-gccgo-bootstrap@:1.0", when="@4.7.1:")
-        provides("go-or-gccgo-bootstrap@:1.2", when="@4.9:")
-        provides("go-or-gccgo-bootstrap@:1.4", when="@5:")
-        provides("go-or-gccgo-bootstrap@:1.6.1", when="@6:")
-        provides("go-or-gccgo-bootstrap@:1.8.1", when="@7:")
-        provides("go-or-gccgo-bootstrap@:1.10.1", when="@8:")
-        provides("go-or-gccgo-bootstrap@:1.12.2", when="@9:")
-        provides("go-or-gccgo-bootstrap@:1.14.6", when="@10:")
-        provides("go-or-gccgo-bootstrap@1.16.3:1.16.5", when="@11:")
+        provides("go-or-gccgo-bootstrap@:1.0.1", when="@4.7.1:4.8.1")
+        provides("go-or-gccgo-bootstrap@:1.1.2", when="@4.8.2:4.8")
+        provides("go-or-gccgo-bootstrap@:1.2.1", when="@4.9")
+        provides("go-or-gccgo-bootstrap@:1.4.2", when="@5")
+        provides("go-or-gccgo-bootstrap@:1.6.1", when="@6")
+        provides("go-or-gccgo-bootstrap@:1.8.1", when="@7.1:7.2")
+        provides("go-or-gccgo-bootstrap@:1.8.3", when="@7.3:7")
+        provides("go-or-gccgo-bootstrap@:1.10", when="@8.1")
+        provides("go-or-gccgo-bootstrap@:1.10.3", when="@8.2:8")
+        provides("go-or-gccgo-bootstrap@:1.12.2", when="@9")
+        provides("go-or-gccgo-bootstrap@:1.14.2", when="@10.1")
+        provides("go-or-gccgo-bootstrap@:1.14.4", when="@10.2")
+        provides("go-or-gccgo-bootstrap@:1.14.6", when="@10.3:10")
+        provides("go-or-gccgo-bootstrap@:1.16.3", when="@11.1")
+        provides("go-or-gccgo-bootstrap@:1.16.5", when="@11.2:11")
+        provides("go-or-gccgo-bootstrap@:1.18", when="@12:")
 
-        provides("golang@:1.0", when="@4.7.1:")
-        provides("golang@:1.2", when="@4.9:")
-        provides("golang@:1.4", when="@5:")
-        provides("golang@:1.6.1", when="@6:")
-        provides("golang@:1.8.1", when="@7:")
-        provides("golang@:1.10.1", when="@8:")
-        provides("golang@:1.12.2", when="@9:")
-        provides("golang@:1.14.6", when="@10:")
-        provides("golang@1.16.3:1.16.5", when="@11:")
+        provides("golang@:1.0.1", when="@4.7.1:4.8.1")
+        provides("golang@:1.1.2", when="@4.8.2:4.8")
+        provides("golang@:1.2.1", when="@4.9")
+        provides("golang@:1.4.2", when="@5")
+        provides("golang@:1.6.1", when="@6")
+        provides("golang@:1.8.1", when="@7.1:7.2")
+        provides("golang@:1.8.3", when="@7.3:7")
+        provides("golang@:1.10", when="@8.1")
+        provides("golang@:1.10.3", when="@8.2:8")
+        provides("golang@:1.12.2", when="@9")
+        provides("golang@:1.14.2", when="@10.1")
+        provides("golang@:1.14.4", when="@10.2")
+        provides("golang@:1.14.6", when="@10.3:10")
+        provides("golang@:1.16.3", when="@11.1")
+        provides("golang@:1.16.5", when="@11.2:11")
+        provides("golang@:1.18", when="@12:")
 
         # GCC 4.7.1 added full support for the Go 1.x programming language.
         conflicts("@:4.7.0")

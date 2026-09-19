@@ -21,6 +21,8 @@ class Meson(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.12.0", sha256="5ab1c86446d9dfe073f07141088cde545e43f8ddb2f97ebe3f600ab12e77ca1f")
+    version("1.11.2", sha256="09cc2faedc61262fc62abf57aa6c47c57a8c0730b950609a0711bbaf587bd133")
     version("1.11.1", sha256="1a2219422be4a66ad0e8daed125c2a3d5c963458e289203eae22edf3224f5d3e")
     version("1.10.2", sha256="4f3c6fe1d163fb6d5b52094035fc29d14cf4a254c3ac29544ba0a3d5a739c7ba")
     version("1.10.1", sha256="3d4768a76fc63dc4c562edc7892de17b54dfaa7309d148e805b0d763bc085e00")
@@ -49,6 +51,15 @@ class Meson(PythonPackage):
 
     # Python 3.12 detection support
     patch("python-3.12-support.patch", when="@1.1:1.2.2")
+
+    # search_version() could match a version-shaped substring embedded in
+    # unrelated text (e.g. a compiler's own install path, such as
+    # ".../gcc-11.4.1/...") in preference to the compiler's real version,
+    # silently corrupting capability detection (e.g. c_std/cpp_std support)
+    # for any compiler invoked from such a path. Planned to be fixed in version 1.12.1;
+    # backported here for older releases. Verified to apply cleanly back to
+    # 1.0.2.
+    patch("search_version_no_trailing_digits.patch", when="@1.0.2:1.12.0")
 
     executables = ["^meson$"]
 

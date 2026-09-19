@@ -16,6 +16,7 @@ class PyPysam(PythonPackage):
 
     license("MIT")
 
+    version("0.24.0", sha256="db0f86c15532ef5dad263748324f45d9a639668e3497d8cabce54ef47a1a78d9")
     version("0.23.3", sha256="9ebcb1f004b296fd139b103ec6fd7e415e80f89f194eb7d0d972ac6d11bbaf24")
     version("0.21.0", sha256="5c9645ddd87668e36ff0a1966391e26f9c403bf85b1bc06c53fe2fcd592da2ce")
     version("0.19.1", sha256="dee403cbdf232170c1e11cc24c76e7dd748fc672ad38eb0414f3b9d569b1448f")
@@ -27,19 +28,27 @@ class PyPysam(PythonPackage):
     version("0.7.7", sha256="c9f3018482eec99ee199dda3fdef2aa7424dde6574672a4c0d209a10985755cc")
 
     depends_on("c", type="build")  # generated
+
     depends_on("python@3.8:", type=("build", "run"))
+
     # pysam requires pkg-resources which is removed from setuptools in
     # version 82.0.0
-    depends_on("py-setuptools@:80", when="@:0.23", type="build")
+    depends_on("py-setuptools@:80", when="@:0.24", type="build")
     depends_on("py-setuptools@59:", when="@0.21:", type="build")
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython@0.29.12:3", when="@0.23.3:", type="build")
+
+    # pyproject.toml pins Cython>=3,<4 as of 0.24.0
+    depends_on("py-cython@3", when="@0.24:", type="build")
+    depends_on("py-cython@0.29.12:3", when="@0.23.3", type="build")
     depends_on("py-cython@0.29.30:2", when="@0.21", type="build")
     depends_on("py-cython@0.29.12:2", when="@0.18:0.19", type="build")
     depends_on("py-cython@0.21:2", when="@0.14:0.15", type="build")
     depends_on("py-cython@0.17:2", when="@0.7.7", type="build")
+
     depends_on("curl")
     depends_on("xz")
+
+    depends_on("htslib@1.24", when="@0.24.0:")
     depends_on("htslib@1.21", when="@0.23.3")
     depends_on("htslib@1.17", when="@0.21.0")
     depends_on("htslib@:1.6", when="@:0.13")
@@ -47,9 +56,11 @@ class PyPysam(PythonPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("LDFLAGS", self.spec["curl"].libs.search_flags)
+
         # this flag is supposed to be removed by cy_build.py, but for some reason isn't
         if self.spec.platform == "darwin":
             env.remove_flags("LDSHARED", "-bundle")
+
         # linking htslib, see:
         # http://pysam.readthedocs.org/en/latest/installation.html#external
         # https://github.com/pysam-developers/pysam/blob/v0.9.0/setup.py#L79

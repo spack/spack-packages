@@ -30,6 +30,18 @@ class PyNvidiaDali(PythonPackage):
     arch = platform.machine()
     if "linux" in system and arch == "x86_64":
         version(
+            "2.2.0-cuda130",
+            sha256="a957b654bd851f36b65ab8c99705bba40cf699d10a11cccecdc995523f739524",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-2.2.0-py3-none-manylinux_2_28_x86_64.whl",
+            expand=False,
+        )
+        version(
+            "2.2.0-cuda120",
+            sha256="5e540e78f108211d3fc7c295d08070f5184fad058fe8cf859c9843dd556402e4",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-2.2.0-py3-none-manylinux_2_28_x86_64.whl",
+            expand=False,
+        )
+        version(
             "1.53.0-cuda130",
             sha256="f8f0f0a6216de4d7ab933c35bbf74c20e849fb042fc816995ab5fe3f437da277",
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.53.0-py3-none-manylinux_2_28_x86_64.whl",
@@ -163,6 +175,18 @@ class PyNvidiaDali(PythonPackage):
         )
     elif "linux" in system and arch == "aarch64":
         version(
+            "2.2.0-cuda130",
+            sha256="115b2f19de9b01c49f66f020ee97fca209ea7c6636b402b874e5230c329ffdd4",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-2.2.0-py3-none-manylinux_2_28_aarch64.whl",
+            expand=False,
+        )
+        version(
+            "2.2.0-cuda120",
+            sha256="d7ead1a9a5e38ea6310dbffa4f038a2b52b76f95f06276cb54c5dc0cc4e19c36",
+            url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda120/nvidia_dali_cuda120-2.2.0-py3-none-manylinux_2_28_aarch64.whl",
+            expand=False,
+        )
+        version(
             "1.53.0-cuda130",
             sha256="59e4865bb37c616dd01efe7180d7e391a48e6f2fc0128c0f173404a694fb6dbc",
             url="https://developer.download.nvidia.com/compute/redist/nvidia-dali-cuda130/nvidia_dali_cuda130-1.53.0-py3-none-manylinux_2_28_aarch64.whl",
@@ -295,8 +319,13 @@ class PyNvidiaDali(PythonPackage):
             expand=False,
         )
 
-    cuda130_versions = ("@1.52.0-cuda130", "@1.53.0-cuda130")
+    cuda130_versions = (
+        "@2.2.0-cuda130",
+        "@1.53.0-cuda130",
+        "@1.52.0-cuda130",
+    )
     cuda120_versions = (
+        "@2.2.0-cuda120",
         "@1.53.0-cuda120",
         "@1.52.0-cuda120",
         "@1.50.0-cuda120",
@@ -329,7 +358,8 @@ class PyNvidiaDali(PythonPackage):
         depends_on("cuda@11", when=v, type=("build", "run"))
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.9:3.13", when="@1.50:1.52")
+        depends_on("python@3.10:3.14", when="@2:")
+        depends_on("python@3.9:3.13", when="@1.50:1.53")
         depends_on("python@3.8:3.13", when="@1.44:1.49")
         depends_on("python@3.8:3.12", when="@1.36:1.43")
         depends_on("python@3.6:3.11", when="@1.23:1.27")
@@ -338,25 +368,34 @@ class PyNvidiaDali(PythonPackage):
         depends_on("py-gast@0.3.3:0.6.0", when="@1.27:")
         depends_on("py-gast@0.2.1:0.4.0", when="@:1.26")
         depends_on("py-six@1.16:1.17", when="@1.41:")
-        depends_on("py-dm-tree@:0.1.9", when="@1.27: ^python@3.10:")
-        depends_on("py-dm-tree@:0.1.8", when="@1.27: ^python@:3.9")
-        depends_on("py-packaging@:25", when="@1.51:")
+        depends_on("py-optree", when="@2.1:")
+        depends_on("py-packaging@:26.2", when="@2.2:")
+        depends_on("py-packaging@:26", when="@2.1")
+        depends_on("py-packaging@:25", when="@1.51:2.0")
         depends_on("py-packaging@:24.2", when="@1.45:1.50")
+        depends_on("py-numpy", when="@2:")
         depends_on("py-nvtx", when="@1.52:")
         depends_on("py-makefun", when="@1.52:")
+        depends_on("py-libcst@1.8", when="@2.1:")
         # https://github.com/NVIDIA/DALI/blob/main/cmake/Dependencies.common.cmake
-        depends_on("py-nvidia-nvimagecodec@0.7.0:0.8.0", when="@1.53:")
-        depends_on("py-nvidia-nvimagecodec@0.6.0:0.7.0", when="@1.52")
-        depends_on("py-nvidia-nvimagecodec@0.5.0:0.6.0", when="@1.49:1.51")
-        depends_on("py-nvidia-nvimagecodec@0.4.1:0.5.0", when="@1.46:1.48")
-        depends_on("py-nvidia-nvimagecodec@0.3.0:0.4.0", when="@1.44:1.45")
+        depends_on("py-nvidia-nvimagecodec@0.8", when="@2.2:")
+        depends_on("py-nvidia-nvimagecodec@0.7", when="@1.53:2.1")
+        depends_on("py-nvidia-nvimagecodec@0.6", when="@1.52")
+        depends_on("py-nvidia-nvimagecodec@0.5", when="@1.49:1.51")
+        depends_on("py-nvidia-nvimagecodec@0.4.1:0.4", when="@1.46:1.48")
+        depends_on("py-nvidia-nvimagecodec@0.3", when="@1.44:1.45")
         depends_on("py-nvidia-nvimagecodec@0.3.0", when="@1.42:1.43")
         depends_on("py-nvidia-nvimagecodec@0.2.0", when="@1.36:1.41")
-        depends_on("py-nvidia-nvjpeg2k", when="@1.46:1.48")
-        depends_on("py-nvidia-nvtiff", when="@1.46:1.48")
+        depends_on("py-nvidia-nvcomp@5.2.0.13", when="@2.2")
         depends_on("py-nvidia-nvcomp@5.1.0.21", when="@1.53")
         depends_on("py-nvidia-nvcomp@5.0.0.6", when="@1.52")
         depends_on("py-nvidia-nvcomp@4", when="@1.50:1.51")
+
+    # Historical dependencies
+    depends_on("py-dm-tree@:0.1.9", type=("build", "run"), when="@1.27:2.1 ^python@3.10:")
+    depends_on("py-dm-tree@:0.1.8", type=("build", "run"), when="@1.27: ^python@:3.9")
+    depends_on("py-nvidia-nvjpeg2k", type=("build", "run"), when="@1.46:1.48")
+    depends_on("py-nvidia-nvtiff", type=("build", "run"), when="@1.46:1.48")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("WITH_DYNAMIC_NVIMGCODEC", "yes")

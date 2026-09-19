@@ -1,0 +1,23 @@
+diff --git a/setup.py b/setup.py
+index 7bf83fc..a9c8e5d 100644
+--- a/setup.py
++++ b/setup.py
+@@ -153,6 +153,10 @@ def make_C_extension():
+         + list(CSRS_DIR.glob("ops/quantized/cpu/*.cpp"))
+     )
+     mps_sources = list(CSRS_DIR.glob("ops/mps/*.mm"))
++
++    # Exclude vision_hip.cpp from main sources when building with ROCm to avoid duplicate symbols
++    if IS_ROCM:
++        sources = [s for s in sources if "vision_hip.cpp" not in str(s)]
+
+     if IS_ROCM:
+         from torch.utils.hipify import hipify_python
+@@ -161,6 +165,7 @@ def make_C_extension():
+             project_directory=str(ROOT_DIR),
+             output_directory=str(ROOT_DIR),
+             includes="torchvision/csrc/ops/cuda/*",
++            ignores=("torchvision/csrc/vision.cpp",),
+             show_detailed=True,
+             is_pytorch_extension=True,
+         )

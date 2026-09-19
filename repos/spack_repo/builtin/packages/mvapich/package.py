@@ -41,7 +41,7 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     variant("errs", default=False, description="Enable error messages at run-time")
     variant("fast", default=True, description="Enable compiler optimizations")
 
-    variant("regcache", default=True, description="Enable memory registration cache")
+    variant("regcache", default=True, when="@3.0", description="Enable memory registration cache")
 
     # Accepted values are:
     #   single      - No threads (MPI_THREAD_SINGLE)
@@ -78,7 +78,10 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     )
 
     variant(
-        "alloca", default=False, description="Use alloca to allocate temporary memory if available"
+        "alloca",
+        default=False,
+        when="@3.0",
+        description="Use alloca to allocate temporary memory if available",
     )
 
     variant(
@@ -150,9 +153,9 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
     def network_options(self):
         opts = []
         # From here on I can suppose that only one variant has been selected
-        if "netmod=ofi" in self.spec:
+        if self.spec.satisfies("netmod=ofi"):
             opts = ["--with-device=ch4:ofi"]
-        elif "netmod=ucx" in self.spec:
+        elif self.spec.satisfies("netmod=ucx"):
             opts = ["--with-device=ch4:ucx"]
         return opts
 
@@ -199,35 +202,41 @@ class Mvapich(MpichEnvironmentModifications, AutotoolsPackage):
             "--enable-shared",
             "--enable-romio",
             "--disable-silent-rules",
-            "--disable-new-dtags",
-            "--enable-fortran=all",
-            "--disable-cuda",
-            "--disable-hip",
             "--enable-threads={0}".format(spec.variants["threads"].value),
-            "--enable-wrapper-rpath={0}".format("no" if "~wrapperrpath" in spec else "yes"),
+            "--with-wrapper-dl-type={0}".format("none" if "~wrapperrpath" in spec else "rpath"),
         ]
 
-        args.extend(self.enable_or_disable("alloca"))
-        if "+debug" in self.spec:
+        if self.spec.satisfies("@3.0"):
             args.extend(
                 [
-                    "--enable-error-checking=runtime",
-                    "--enable-error-messages=all",
+                    "--disable-new-dtags",
+                    "--enable-fortran=all",
+                    "--disable-cuda",
+                    "--disable-hip",
+                ]
+            )
+            args.extend(self.enable_or_disable("alloca"))
+            if self.spec.satisfies("+regcache"):
+                args.append("--enable-registration-cache")
+            else:
+                args.append("--disable-registration-cache")
+        elif self.spec.satisfies("@4.0:"):
+            args.extend(["--without-cuda", "--without-hip"])
+
+        if self.spec.satisfies("+debug"):
+            args.extend(
+                [
                     # Permits debugging with TotalView
                     "--enable-g=dbg",
                     "--enable-debuginfo",
                 ]
             )
-        if "+errs" in self.spec:
+        if self.spec.satisfies("+errs"):
             args.extend(["--enable-error-checking=runtime", "--enable-error-messages=all"])
-        if "+fast" in self.spec:
+        if self.spec.satisfies("+fast"):
             args.append("--enable-fast=opt")
         else:
             args.append("--enable-fast=none")
-        if "+regcache" in self.spec:
-            args.append("--enable-registration-cache")
-        else:
-            args.append("--disable-registration-cache")
 
         ld = ""
         for path in itertools.chain(self.compiler.extra_rpaths, self.compiler.implicit_rpaths()):

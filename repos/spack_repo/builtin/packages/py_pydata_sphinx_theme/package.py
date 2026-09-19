@@ -15,6 +15,7 @@ class PyPydataSphinxTheme(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.20.0", sha256="0da172d41e19a66de875f4002f7054b385372ec65763852193791e658d50bb4a")
     version("0.16.1", sha256="a08b7f0b7f70387219dc659bff0893a7554d5eb39b59d3b8ef37b8401b7642d7")
     version("0.16.0", sha256="721dd26e05fa8b992d66ef545536e6cbe0110afb9865820a08894af1ad6f7707")
     version("0.15.4", sha256="7762ec0ac59df3acecf49fd2f889e1b4565dbce8b88b2e29ee06fdd90645a06d")
@@ -26,17 +27,25 @@ class PyPydataSphinxTheme(PythonPackage):
     version("0.14.2", sha256="53860c95686f2b4fd8823ff977116a0dd654cceb01ff63c415cfeb5f19736753")
     version("0.14.1", sha256="d8d4ac81252c16a002e835d21f0fea6d04cf3608e95045c816e8cc823e79b053")
 
-    depends_on("python@3.8:", type=("build", "run"))
-    depends_on("python@3.9:", type=("build", "run"), when="@0.15.0:")
+    with default_args(type="build"):
+        depends_on("py-sphinx-theme-builder@0.3.2:", when="@0.20:")
+        depends_on("py-sphinx-theme-builder")
 
-    depends_on("py-sphinx-theme-builder", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@0.20:")
+        depends_on("python@3.9:", when="@0.15:")
+        depends_on("python@3.8:")
+        depends_on("py-sphinx@8.2:9", when="@0.20:")
+        depends_on("py-sphinx@6.1:", when="@0.16:")
+        depends_on("py-sphinx@5:")
+        depends_on("py-beautifulsoup4")
+        depends_on("py-docutils@:0.16,0.17.1:")
+        depends_on("py-babel")
+        depends_on("py-pygments@2.7:")
+        depends_on("py-accessible-pygments")
+        depends_on("py-jinja2", when="@0.20:")
+        depends_on("py-requests", when="@0.20:")
 
-    depends_on("py-sphinx@5:", type=("build", "run"))
-    depends_on("py-sphinx@6.1:", type=("build", "run"), when="@0.16.0:")
-    depends_on("py-beautifulsoup4", type=("build", "run"))
-    depends_on("py-docutils@:0.16,0.17.1:", type=("build", "run"))
-    depends_on("py-packaging", type=("build", "run"), when="@:0.15")
-    depends_on("py-babel", type=("build", "run"))
-    depends_on("py-pygments@2.7:", type=("build", "run"))
-    depends_on("py-accessible-pygments", type=("build", "run"))
-    depends_on("py-typing-extensions", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-packaging", when="@:0.15")
+        depends_on("py-typing-extensions", when="@:0.16")

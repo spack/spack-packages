@@ -10,13 +10,14 @@ from spack.package import *
 class HadoopXrootd(MavenPackage):
     """Connector between Hadoop and XRootD protocols (EOS compatible)."""
 
-    homepage = "https://gitlab.cern.ch/db/hadoop-xrootd"
+    homepage = "https://gitlab.cern.ch/hadoop/utils/hadoop-xrootd"
     url = "https://lcgpackages.web.cern.ch/tarFiles/sources/hadoop-xrootd-v1.0.7.tar.gz"
 
     maintainers("haralmha")
 
     license("Apache-2.0")
 
+    version("1.0.10-0", sha256="1895bb3875ed03838de220e4c50d5519a4a8ef3b9c31da3be101c9aaa1b095fd")
     version("1.0.7", sha256="9a129dc14b3dc139aa4da7543f6392a5c80b41fea6bb9f6cd27db5acf6f5471f")
 
     depends_on("cxx", type="build")  # generated

@@ -15,6 +15,7 @@ class PySetuptoolsRust(PythonPackage):
 
     license("MIT")
 
+    version("1.13.0", sha256="f2afcf4baeee689910ce49cfa8aad4e08cce72f417449bcc32891b8664fdc726")
     version("1.12.0", sha256="d94a93f0c97751c17014565f07bdc324bee45d396cd1bba83d8e7af92b945f0c")
     version("1.11.1", sha256="7dabc4392252ced314b8050d63276e05fdc5d32398fc7d3cce1f6a6ac35b76c0")
     version("1.9.0", sha256="704df0948f2e4cc60c2596ad6e840ea679f4f43e58ed4ad0c1857807240eab96")

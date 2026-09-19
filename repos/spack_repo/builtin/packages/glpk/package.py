@@ -34,9 +34,8 @@ class Glpk(AutotoolsPackage, GNUMirrorPackage):
 
     # Do not define bool, true, or false for C23 compatibility
     patch(
-        "https://src.fedoraproject.org/rpms/glpk/raw/2f25ac1417ccd1a9e2773d63800d50a2ab326ede/f/glpk-5.0-bool.patch",
-        sha256="962e2526a1fab58cd3d577a786e714ca923086179bb94d9d4bf259f7e0f42c27",
-        when="%gcc@15:",
+        "https://salsa.debian.org/science-team/glpk/-/raw/2dd3b283654555100edde4d72fbe1b1a4883292a/debian/patches/gcc-15.patch",
+        sha256="f9a1fc747a8cf9a484e517fbc105d3e8e50ac588430614267444271d3411f0ac",
     )
 
     def configure_args(self):

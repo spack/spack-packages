@@ -118,8 +118,7 @@ class PyNbconvert(PythonPackage):
         expand=False,
     )
 
-    @run_before("install")
-    @when("@6:")
+    @run_before("install", when="@6:")
     def install_css(self):
         css = {
             # target filename: [subdir, source filename]

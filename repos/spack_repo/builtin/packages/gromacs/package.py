@@ -178,9 +178,11 @@ class Gromacs(CMakePackage, CudaPackage):
         msg="OpenMP not available for the Apple clang compiler",
     )
 
-    variant("openmp_max_threads", default="none", description="Max number of OpenMP threads")
-    conflicts(
-        "+openmp_max_threads", when="~openmp", msg="OpenMP is off but OpenMP Max threads is set"
+    variant(
+        "openmp_max_threads",
+        default="none",
+        description="Max number of OpenMP threads",
+        when="+openmp",
     )
     variant(
         "sve",

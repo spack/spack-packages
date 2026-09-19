@@ -24,6 +24,7 @@ noop:
   tags: [service_noop, spack]
   retry: 0
   allow_failure: true
+  timeout: 1 seconds
 workflow:
   rules:
   - when: always

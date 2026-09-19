@@ -32,6 +32,7 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
             url = "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
@@ -83,6 +84,7 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
     generator("ninja")
 
     for ver in [
+        "10.0.0",
         "7.14.0",
         "7.13.0",
         "7.2.3",
@@ -118,6 +120,15 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
     # Build is breaking on warning, -Werror, -Wunused-parameter. The patch is part of:
     # https://github.com/ROCm/composable_kernel/commit/959073842c0db839d45d565eb260fd018c996ce4
     patch("0001-mark-kernels-maybe-unused.patch", when="@6.2")
+
+    # Fix CMake error with set_source_files_properties COMPILE_FLAGS
+    # The offload_targets variable contains spaces and needs to be quoted
+    # PR: https://github.com/ROCm/rocm-libraries/pull/11440
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/17f401ff6fdb33828c505a70c7dad126ad437150.patch?full_index=1",
+        when="@7.14.0",
+        sha256="bd5b65d48b23a8fa489a302c32d6d2029a4ea76ece4b48ee9cb6b7b7840efa5c",
+    )
 
     @property
     def root_cmakelists_dir(self):

@@ -15,6 +15,9 @@ class PyX21(PythonPackage):
     homepage = "https://pypi.org/project/x21/"
     list_url = "https://pypi.org/simple/x21/"
 
+    license("LicenseRef-X21-Proprietary", checked_by="tgamblin")
+    redistribute(source=False, binary=False)
+
     def url_for_version(self, version):
         url = "https://pypi.io/packages/cp{1}/x/x21/x21-{0}-cp{1}-cp{1}-{2}.whl"
 

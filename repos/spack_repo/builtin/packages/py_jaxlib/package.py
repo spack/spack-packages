@@ -49,6 +49,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle")
 
+    version("0.11.1", sha256="ef9826243bcb8eae6d39ac71580bb39154fbeca51b40c2371aab5db1a797dfb4")
+    version("0.11.0", sha256="007ef373573ff2fb8a5485679b791581fda328754fd7ae491de3bcdb0fc70d07")
     version("0.10.2", sha256="fa7214ab31ed1cd418b4305807e9c4f3f175c783eeea40c28e0f77c3f4c24bc7")
     version("0.10.1", sha256="15983d01b0c858738b16b19b773459d22449992ce1ee97688cc532ea0047de9e")
     version("0.10.0", sha256="12ae17617d1346e2f98cfc48c1a000adc7389784eb119e8108a22dfd57cbb8c3")
@@ -135,7 +137,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
-        depends_on("bazel@7.7.0:7", when="@0.8.1:")
+        depends_on("bazel@7.7.1:7", when="@0.11.1:")
+        depends_on("bazel@7.7.0:7", when="@0.8.1:0.11.0")
         depends_on("bazel@7.4.1:7", when="@0.5.3:0.8.0")
         depends_on("bazel@6.5.0:6", when="@0.4.28:0.5.2")
         depends_on("bazel@6.1.2:6", when="@0.4.11:0.4.27")
@@ -152,11 +155,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
     with default_args(type=("build", "run")):
         # Based on PyPI wheels
+        depends_on("python@3.12:", when="@0.11:")
         depends_on("python@3.11:", when="@0.7:")
         depends_on("python@3.10:", when="@0.4.31:")
         depends_on("python@3.9:", when="@0.4.14:")
         depends_on("python@3.8:", when="@0.4.6:")
-        depends_on("python@:3.14")
+        depends_on("python@:3.15")
+        depends_on("python@:3.14", when="@:0.11.0")
         depends_on("python@:3.13", when="@:0.7.0")
         depends_on("python@:3.12", when="@:0.4.33")
         depends_on("python@:3.11", when="@:0.4.16")
@@ -186,6 +191,16 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-ml-dtypes@0.1:", when="@0.4.9:")
         depends_on("py-ml-dtypes@0.0.3:", when="@0.4.7:")
 
+    patch(
+        "https://github.com/jax-ml/jax/pull/39881.patch?full_index=1",
+        sha256="960a10a4530eadb65c8c894d43aa1b1d9095c01bfc5e7e96a47c8c2df2aba048",
+        when="@0.10.1:0.11.0",
+    )
+    # jax#39881 fixes abseil-cpp#2071 only via a bzlmod override in MODULE.bazel,
+    # but jaxlib builds with --noenable_bzlmod, so com_google_absl is actually
+    # resolved through XLA's WORKSPACE-based tf_http_archive instead. Apply the
+    # same fix along that path.
+    patch("absl-raw-hash-set-workspace.patch", when="@0.10.1:0.11.0")
     patch(
         "https://github.com/jax-ml/jax/commit/0899e024c68254ec520006f51511f9a5e696dc17.patch?full_index=1",
         sha256="c2509251a8708baf55e56c54fffc1725925720ff2365a0a186764f5dc50e611b",

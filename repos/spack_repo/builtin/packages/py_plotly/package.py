@@ -18,6 +18,7 @@ class PyPlotly(PythonPackage):
 
     license("MIT")
 
+    version("6.9.0", sha256="967ad33e8c704fed051800d11d985eb206a9c795c14206b30a6f463ed9c67d0d")
     version("6.3.0", sha256="8840a184d18ccae0f9189c2b9a2943923fd5cae7717b723f36eef78f444e5a73")
     version("5.20.0", sha256="bf901c805d22032cfa534b2ff7c5aa6b0659e037f19ec1e0cca7f585918b5c89")
     version("5.19.0", sha256="5ea91a56571292ade3e3bc9bf712eba0b95a1fb0a941375d978cc79432e055f4")

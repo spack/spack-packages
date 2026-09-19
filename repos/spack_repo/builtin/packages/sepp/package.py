@@ -17,11 +17,18 @@ class Sepp(Package):
 
     license("GPL-3.0-or-later")
 
+    def url_for_version(self, version):
+        if version >= Version("4.5.4"):
+            return f"https://github.com/smirarab/sepp/archive/refs/tags/v{version}.tar.gz"
+        return f"https://github.com/smirarab/sepp/archive/refs/tags/{version}.tar.gz"
+
+    version("4.5.5", sha256="af6b985bc16c96cd7c57bf78b3decce448f976aea612b3fad07b91697e4e1cfd")
     version("4.5.1", sha256="51e052569ae89f586a1a94c804f09fe1b7910a3ffff7664e2005f18c7d3f717b")
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools@:81", type="build")
     depends_on("py-dendropy@4:", type=("build", "run"))
+    depends_on("py-dendropy@4.6.0:", type=("build", "run"), when="@4.5.5:")
 
     depends_on("java@1.8:", type="run")
     depends_on("pasta@1:", type="run")

@@ -67,7 +67,7 @@ class PyNumba(PythonPackage):
         # min_numpy_build_version may be higher to ensure backwards-compatibility of wheels,
         # but this doesn't matter for Spack which always guarantees compatibility
         depends_on("py-numpy@1.22:2.4", when="@0.64:")
-        depends_on("py-numpy@1.22:2.3", when="@0.62:")
+        depends_on("py-numpy@1.22:2.3", when="@0.62:0.63")
         depends_on("py-numpy@1.24:2.2", when="@0.61.1:0.61.2")
         depends_on("py-numpy@1.24:2.1", when="@0.61.0")
         depends_on("py-numpy@1.22:2.0", when="@0.60")
