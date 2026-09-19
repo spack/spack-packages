@@ -63,6 +63,7 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("shared", default=True, description="Build shared libraries")
     variant("parmetis", default=True, description="Enable ParMETIS library")
+    variant("magma", default=False, description="Enable MAGMA library")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -77,12 +78,15 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("metis@5: ~int64", when="~int64")
         depends_on("parmetis ~int64", when="~int64")
     depends_on("cmake@3.18.1:", type="build", when="@7.1.0:")
+    depends_on("magma +cuda ~rocm", when="+magma +cuda")
+    depends_on("magma +rocm ~cuda", when="+magma +rocm")
     depends_on("hipblas", when="+rocm")
     depends_on("hipblas@:6", when="@:9.1.0 +rocm")
     depends_on("rocsolver", when="+rocm")
 
     conflicts("+rocm", when="+cuda")
     conflicts("+cuda", when="@:6.3")
+    conflicts("+magma", when="~cuda~rocm", msg="magma support requires +cuda or +rocm")
     # See https://github.com/xiaoyeli/superlu_dist/issues/87
     conflicts("^cuda@11.5.0:", when="@7.1.0:7.1 +cuda")
     # https://github.com/xiaoyeli/superlu_dist/pull/193
@@ -133,6 +137,11 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         append_from_variant("enable_openmp", "openmp")
         if "~openmp" in spec:
             append_define("CMAKE_DISABLE_FIND_PACKAGE_OpenMP", True)
+
+        append_from_variant("TPL_ENABLE_MAGMALIB", "magma")
+        if "+magma" in spec:
+            append_define("TPL_MAGMA_INCLUDE_DIRS", spec["magma"].prefix.include)
+            append_define("TPL_MAGMA_LIBRARIES", spec["magma"].libs.ld_flags)
 
         if "+cuda" in spec:
             append_define("TPL_ENABLE_CUDALIB", True)
