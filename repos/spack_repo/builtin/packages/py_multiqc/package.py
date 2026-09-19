@@ -18,11 +18,13 @@ class PyMultiqc(PythonPackage):
     license("GPL-3.0-only", checked_by="A_N_Other")
     maintainers("ewels", "vladsavelyev")
 
+    version("1.35", sha256="5a4aa6480e6def2f9c0af2893358bf7ec5c304d606ecf613cd25ddcd0e244e77")
     version("1.28", sha256="3cb65ac9ca07b6146fb239e0bc42f5337808973cb37e1d9a8bd753eaf70ac7e7")
     version("1.23", sha256="4e84664000fec69a0952a0457a8d780dcc1ce9e36d14680dbdba5610b9766265")
 
     depends_on("py-setuptools", type="build")
 
+    depends_on("py-boto3, type=("build", "run"), when="@1.29")
     depends_on("py-click", type=("build", "run"))
     depends_on("py-humanize", type=("build", "run"))
     depends_on("py-importlib-metadata", type=("build", "run"))
@@ -37,7 +39,7 @@ class PyMultiqc(PythonPackage):
     depends_on("py-pillow@10:", type=("build", "run"))
     depends_on("py-plotly@5.18:", type=("build", "run"))
     depends_on("py-pyyaml@4:", type=("build", "run"))
-    depends_on("py-pyaml-env", type=("build", "run"))
+depends_on("py-pyyaml@4:", type=("build", "run"))
     depends_on("py-pydantic@2.7.1:", type=("build", "run"))
     depends_on("py-python-dotenv", type=("build", "run"))
     depends_on("py-rich@10:", type=("build", "run"))
@@ -46,4 +48,8 @@ class PyMultiqc(PythonPackage):
     depends_on("py-spectra@0.0.10:", type=("build", "run"))
     depends_on("py-tiktoken", type=("build", "run"))
     depends_on("py-tqdm", type=("build", "run"))
+    depends_on("py-typeguard@4:", type=("build", "run"), when="@1.35:")
     depends_on("py-typeguard", type=("build", "run"))
+
+    # Historical Dependencies
+    depends_on("py-pyaml-env", type=("build", "run"), when="@:1.24")
