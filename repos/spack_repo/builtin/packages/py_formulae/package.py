@@ -15,7 +15,7 @@ class PyFormulae(PythonPackage):
     pypi = "formulae/formulae-0.7.0.tar.gz"
     git = "https://github.com/bambinos/formulae.git"
 
-    license("MIT", checked_by="github_user1")
+    license("MIT")
 
     version("0.7.0", sha256="c4b644adced7ae0627fc13fc8413b547e3477c2d046ed4704146ec7024ae6081")
 
