@@ -92,7 +92,7 @@ class Git(AutotoolsPackage):
     variant("nls", default=True, description="Enable native language support")
     variant("man", default=True, description="Install manual pages")
     variant("subtree", default=True, description="Add git-subtree command and capability")
-    variant("ssh", default=False, description="Enable SSH transport support via Spack's openssh")
+    variant("ssh", default=True, description="Enable SSH transport support via Spack's openssh")
 
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
