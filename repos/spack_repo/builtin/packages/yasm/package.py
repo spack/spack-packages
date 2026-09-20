@@ -32,6 +32,7 @@ class Yasm(AutotoolsPackage, CMakePackage):
     patch("libyasm_bitvect_c23_bool.patch")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="build_system=cmake")
 
     with when("build_system=autotools"):
         depends_on("autoconf", when="@develop")
