@@ -487,12 +487,16 @@ class CMakeBuilder(cmake.CMakeBuilder):
             else:
                 plugins.append("pw2qmcpack")
 
-        if "^armpl-gcc" in spec or "^acfl" in spec:
+        if "^armpl-gcc" in spec or "^acfl" in spec or "^cray-libsci" in spec:
             cmake_args.append(self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
             cmake_args.append(self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
             # Up to q-e@7.1 set BLA_VENDOR to All to force detection of vanilla scalapack
             if spec.satisfies("@:7.1"):
                 cmake_args.append(self.define("BLA_VENDOR", "All"))
+        
+        # Cray-libsci provides Scalapack with multiple libraries.
+        if "^cray-libsci" in spec:
+            cmake_args.append(self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";")))
 
         if plugins:
             cmake_args.append(self.define("QE_ENABLE_PLUGINS", plugins))
