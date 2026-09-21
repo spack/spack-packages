@@ -503,6 +503,20 @@ class Python(Package):
         return arch
 
     @property
+    def win_msbuild_params(self):
+        """
+        MSBuild property overrides forwarded through the Python build batch script.
+
+        Selects the appropriate platform toolset given the compiler for Python
+        Allows the underlying msbuild system to target the correct MSVC version
+        independent of the version Python's msbuild system targets
+        """
+        if not self.spec.satisfies("%msvc"):
+            return []
+        # build.bat requires arguments containing an '=' to be quoted
+        return ['"/p:PlatformToolset=v%s"' % self["msvc"].platform_toolset_ver]
+
+    @property
     def win_build_params(self):
         """
         Arguments must be passed to the Python build batch script
@@ -521,6 +535,9 @@ class Python(Package):
             args.append("--no-ssl")
         if self.spec.satisfies("~tkinter"):
             args.append("--no-tkinter")
+        # build.bat stops parsing its own flags at the first argument it does not
+        # recognize and forwards the rest to MSBuild, so these must come last
+        args.extend(self.win_msbuild_params)
         return args
 
     def win_installer(self, prefix):
