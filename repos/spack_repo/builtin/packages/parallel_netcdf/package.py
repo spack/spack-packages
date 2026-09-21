@@ -35,6 +35,8 @@ class ParallelNetcdf(AutotoolsPackage):
         return url
 
     version("master", branch="master")
+    version("1.15.1", sha256="169c6adab08ba49154f14261225992601c573971b823c2066008a8ff57973f8a")
+    version("1.15.0", sha256="39813fe91ec901c7cfca3212731edbb5201029ebf55caeaaaa08d9e33c6bad65")
     version("1.14.1", sha256="6f0f7221006c211fce9ddd2c008796b8c69dd717b2ad1be0b4027fc328fd3220")
     version("1.14.0", sha256="575f189fb01c53f93b3d6ae0e506f46e19694807c81af0b9548e947995acf704")
     version("1.13.0", sha256="aba0f1c77a51990ba359d0f6388569ff77e530ee574e40592a1e206ed9b2c491")
