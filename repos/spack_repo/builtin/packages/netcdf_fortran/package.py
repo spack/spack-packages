@@ -26,6 +26,8 @@ class NetcdfFortran(AutotoolsPackage):
 
     license("Apache-2.0")
 
+    version("4.6.4", sha256="98159c1e0f63b3b59bb5eda12f2d80126f5b1aad93032d1490989a5752e0df99")
+    version("4.6.3", sha256="f642050e90025e7bb25848cc8f818545e1d3bdeb73fe6d103a6f8dc000a1a3d6")
     version("4.6.2", sha256="df26b99d9003c93a8bc287b58172bf1c279676f8c10d6dd0daf8bc7204877096")
     version("4.6.1", sha256="b50b0c72b8b16b140201a020936aa8aeda5c79cf265c55160986cd637807a37a")
     version("4.6.0", sha256="198bff6534cc85a121adc9e12f1c4bc53406c403bda331775a1291509e7b2f23")
