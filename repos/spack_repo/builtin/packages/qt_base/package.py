@@ -240,7 +240,7 @@ class QtBase(QtPackage):
     depends_on("glu", when="+opengl", type=("build", "link"))
     depends_on("glx", when="+opengl platform=linux", type=("build", "link"))
     depends_on("sqlite", when="+sqlite")
-    depends_on("mariadb-c-client", when="+mysql")
+    depends_on("mysql-client", when="+mysql")
     depends_on("postgresql", when="+postgresql")
 
     # see qt/qtbase/src/gui/configure.cmake for dependencies and versions
