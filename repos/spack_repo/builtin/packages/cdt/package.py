@@ -17,6 +17,7 @@ class Cdt(CMakePackage):
 
     license("MPL-2.0-no-copyleft-exception", checked_by="jcortial-safran")
 
+    version("2.0.0", sha256="81ed0c7a8cbdc059b26948a160c3ce68c7a147976334093fe3175c8fa161a447")
     version("1.4.5", sha256="5b964a00147d17f5d6ffd9c800d4f12f1e540ce8e932655469f65aea9a3005d7")
     version("1.4.4", sha256="97e57bdd1cf8219dcc81634236a502390a20dda3599dd3414a74343b7f03427f")
     version("1.4.1", sha256="86df99eb5f02a73eeb8c6ea45765eed0d7f206e8d4d9f6479f77e3c590ae5bb3")
