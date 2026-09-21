@@ -10,7 +10,8 @@ from spack.package import *
 
 TUNE_VARIANTS_CP2K = ("cp2k-lmax-4", "cp2k-lmax-5", "cp2k-lmax-6", "cp2k-lmax-7")
 TUNE_VARIANTS_MOLGW = ("molgw-lmax-4", "molgw-lmax-5", "molgw-lmax-6", "molgw-lmax-7")
-TUNE_VARIANTS = tuple(["none"]) + TUNE_VARIANTS_CP2K + TUNE_VARIANTS_MOLGW
+TUNE_VARIANTS_ET = ("et")
+TUNE_VARIANTS = tuple(["none"]) + TUNE_VARIANTS_CP2K + TUNE_VARIANTS_MOLGW + TUNE_VARIANTS_ET
 
 
 class Libint(AutotoolsPackage):
@@ -200,6 +201,15 @@ class Libint(AutotoolsPackage):
                     f"--with-eri3-max-am={lmax}",
                     "--with-opt-am=2",
                     "--enable-contracted-ints",
+                ]
+            if tune_value.startswith("et"):
+                config_args += [
+                    "--enable-1body=1",
+                    "--enable-eri=1",
+                    "--enable-eri2=1",
+                    "--enable-eri3=1",
+                    "--with-max-am=6",
+                    "--with-opt-am=4",
                 ]
 
         return config_args
