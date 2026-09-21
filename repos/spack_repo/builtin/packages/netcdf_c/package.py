@@ -28,6 +28,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("4.10.1", sha256="33c27231c478c3b35da7c7758fbdd02da1fe407abcb16ddfe195f69d164f930d")
     version("4.10.0", sha256="ce160f9c1483b32d1ba8b7633d7984510259e4e439c48a218b95a023dc02fd4c")
     version("4.9.3", sha256="990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
     version("4.9.2", sha256="bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7")
