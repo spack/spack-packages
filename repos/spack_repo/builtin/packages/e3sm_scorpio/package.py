@@ -17,6 +17,15 @@ class E3smScorpio(CMakePackage):
 
     maintainers("xylar", "altheaden")
 
+    version("2.0.3", sha256="ff9570e250e6b75b723b778b17453d9bcc88d2a66674f1bcb0aaab65f321ff60")
+    version("2.0.2", sha256="68444fd641363388d0d06528ce7d9d0b33df3ae6103df122973d9963476e3319")
+    version("2.0.1", sha256="0a4006fd6f2ce03acbe0f69726cedb32bc1e0dfb5e170e9f8d7201c1125dbc99")
+    version("2.0.0", sha256="d82d0c5db34b4d83de0d40130340ad286432b00764d27f4694626e44c525ea80")
+    version("1.9.3", sha256="dfa3b4141c41ddaabc24ebe89660bfdf7db9fd5daea98e1b02224448fe363316")
+    version("1.9.2", sha256="d1dafd5a62b6b8ef9c325db686cecf825478dffb9d648d970a6258f903dcc251")
+    version("1.9.1", sha256="b26c9bde4b041e706b81a83fca30d12c3708d2fe89058eab81611ad38cf0c74f")
+    version("1.9.0", sha256="76373ee65f4bc562b8e52acc5d22cc725f36b9a3a679f7ee413a38ee25d6b2b9")
+    version("1.8.2", sha256="1acafe152482d1c083dec0e3fea9484f844e5ac1e67065cbd02d31aff5e740ff")
     version("1.8.1", sha256="3f4a8a9a6a66351063dfcd5813ef95934998c1f58eec7e81eeb497bb3d36fd60")
     version("1.8.0", sha256="972e2b2a337a34bfe0671a9111c5cafb712abe2e302f1db55953d13acf491876")
     version("1.7.0", sha256="01b479848520d1463d78227872c6cab316843fa09a296bd3f16da4c00c629a05")
@@ -79,5 +88,9 @@ class E3smScorpio(CMakePackage):
                 define_from_variant("PIO_USE_MALLOC", "malloc"),
             ]
         )
+
+        if spec["fortran"].name == "cce":
+            # force lowercase fortran modules
+            args.append(define("CMAKE_Fortran_FLAGS", "-em -ef"))
 
         return args
