@@ -29,7 +29,7 @@ class RXlconnect(RPackage):
     depends_on("r@2.10.0:", type=("build", "run"))
     depends_on("r@3.6.0:", type=("build", "run"), when="@1.0.6:")
     depends_on("java@6:")
-    depends_on("java@8:11", when="@1.0.1:")
+    depends_on("java@8:11", when="@1.0.1:1.0.4")
     depends_on("java@8:17", when="@1.0.5:")
     depends_on("r-rjava", type=("build", "run"))
     depends_on("r-rjava@1.0-1:", type=("build", "run"), when="@1.0.6:")

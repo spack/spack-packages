@@ -142,6 +142,7 @@ class Boost(Package):
         "mqtt5",
         "nowide",
         "openmethod",
+        "process",
         "program_options",
         "python",
         "random",
@@ -164,6 +165,7 @@ class Boost(Package):
     # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
         "openmethod": {"when": "@1.90:"},
+        "process": {"when": "@1.64:"},
         "mqtt5": {"when": "@1.88:"},
         "charconv": {"when": "@1.85:"},
         "cobalt": {"when": "@1.84:"},

@@ -766,7 +766,7 @@ with '-Wl,-commons,use_dylibs' and without
         with when("@5"):
             # When an external PMIx is used, also an external PRRTE should be used
             # https://github.com/open-mpi/ompi/issues/13275#issuecomment-2907903468
-            depends_on("prrte")
+            depends_on("prrte", type=("build", "link", "run"))
 
             # only prrte knows about schedulers
             # https://github.com/spack/spack-packages/pull/1145#issuecomment-3208378366
