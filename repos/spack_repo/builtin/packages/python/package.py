@@ -736,6 +736,14 @@ class Python(Package):
             else:
                 options = getattr(self, "configure_flag_args", [])
                 options += ["--prefix={0}".format(prefix)]
+
+                # Python drives Autoconf directly instead of using AutotoolsBuilder.
+                # Keep its macOS availability cache consistent with that builder.
+                deployment_target = os.environ.get("MACOSX_DEPLOYMENT_TARGET")
+                if spec.satisfies("platform=darwin") and deployment_target:
+                    if int(deployment_target.split(".", 1)[0]) < 27:
+                        options += ["ac_cv_func_dup3=no", "ac_cv_func_pipe2=no"]
+
                 options += self.configure_args()
                 configure(*options)
 

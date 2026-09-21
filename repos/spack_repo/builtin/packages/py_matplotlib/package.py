@@ -27,6 +27,7 @@ class PyMatplotlib(PythonPackage):
     license("PSF-2.0")
     maintainers("adamjstewart", "rgommers")
 
+    version("3.11.2", sha256="cec596316640f2b394b8f0daa0ea61a8eae82d017b620b9f202befb972a59ea4")
     version("3.11.1", sha256="69647db5746941c793d6e445a4cd349323ffb87d9cc958c2ad84a659b4832d30")
     version("3.11.0", sha256="68c0c7be01b30dcca3638934f7f591df73401235cbdbf0d1ab1c71e7db7f8b57")
     version("3.10.9", sha256="fd66508e8c6877d98e586654b608a0456db8d7e8a546eb1e2600efd957302358")
@@ -167,6 +168,7 @@ class PyMatplotlib(PythonPackage):
     depends_on("python", type=("build", "link", "run"))
     depends_on("py-contourpy@1.0.1:", when="@3.6:", type=("build", "run"))
     depends_on("py-cycler@0.10:", type=("build", "run"))
+    depends_on("py-fonttools@4.28.2:", when="@3.11.1:", type=("build", "run"))
     depends_on("py-fonttools@4.22:", when="@3.5:", type=("build", "run"))
     depends_on("py-kiwisolver@1.3.1:", when="@3.8.1:", type=("build", "run"))
     depends_on("py-kiwisolver@1.0.1:", type=("build", "run"))

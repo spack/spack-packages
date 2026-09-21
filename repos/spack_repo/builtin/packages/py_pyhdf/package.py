@@ -29,13 +29,13 @@ class PyPyhdf(PythonPackage):
     # Python versions
     depends_on("py-setuptools", type="build")
 
-    # Dependencies
-    depends_on("zlib-api", type=("build", "run"))
-    depends_on("hdf@4.2", type=("build", "run"))
+    # hdf4, libjpeg and zlib are (build+link)-time dependencies, unlike py-numpy
+    depends_on("zlib-api")
+    depends_on("hdf@4.2")
+    depends_on("jpeg")
     depends_on("py-numpy", type=("build", "run"))
     # https://github.com/fhs/pyhdf/issues/63
     depends_on("py-numpy@:1.24", when="@0.10.4", type=("build", "run"))
-    depends_on("jpeg", type=("build", "run"))
 
     def flag_handler(self, name, flags):
         if name == "cflags":
@@ -47,14 +47,10 @@ class PyPyhdf(PythonPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         inc_dirs = []
         lib_dirs = []
-        # Strip -I and -L from spec include_flags / search_flags
-        inc_dirs.append(self.spec["zlib-api"].headers.include_flags.lstrip("-I"))
-        inc_dirs.append(self.spec["hdf"].headers.include_flags.lstrip("-I"))
-        inc_dirs.append(self.spec["jpeg"].headers.include_flags.lstrip("-I"))
-        lib_dirs.append(self.spec["zlib-api"].libs.search_flags.lstrip("-L"))
-        lib_dirs.append(self.spec["hdf"].libs.search_flags.lstrip("-L"))
-        lib_dirs.append(self.spec["jpeg"].libs.search_flags.lstrip("-L"))
-        env.set("INCLUDE_DIRS", ":".join(inc_dirs))
-        env.set("LIBRARY_DIRS", ":".join(lib_dirs))
+        for dep in ("zlib-api", "hdf", "jpeg"):
+            inc_dirs.extend(self.spec[dep].headers.directories)
+            lib_dirs.extend(self.spec[dep].libs.directories)
+        env.set("INCLUDE_DIRS", ":".join(dedupe(inc_dirs)))
+        env.set("LIBRARY_DIRS", ":".join(dedupe(lib_dirs)))
         if self.spec["hdf"].satisfies("@:4.1"):
             env.set("NO_COMPRESS", "1")

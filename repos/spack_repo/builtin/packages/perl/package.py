@@ -222,6 +222,14 @@ class Perl(Package):  # Perl doesn't use Autotools, it should subclass Package
         if spec.version[1] % 2 == 1:
             config_args.append("-Dusedevel")
 
+        # The macOS 27 SDK exposes these functions as weak imports when
+        # targeting older macOS releases. Perl's Configure mistakes that for
+        # runtime availability and the resulting binary calls through NULL.
+        deployment_target = os.environ.get("MACOSX_DEPLOYMENT_TARGET")
+        if spec.satisfies("platform=darwin") and deployment_target:
+            if int(deployment_target.split(".", 1)[0]) < 27:
+                config_args.extend(["-Ud_dup3", "-Ud_pipe2"])
+
         return config_args
 
     def configure(self, spec, prefix):

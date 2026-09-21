@@ -558,8 +558,8 @@ class Dealii(CMakePackage, CudaPackage):
                     ]
                 )
             # Make sure we use the same compiler that Trilinos uses
-            if spec.satisfies("+trilinos"):
-                options.extend([self.define("CMAKE_CXX_COMPILER", self["trilinos"].kokkos_cxx)])
+            if spec.satisfies("+trilinos ^trilinos+kokkos ^kokkos+wrapper"):
+                options.extend([self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx)])
 
         # Complex support
         options.append(self.define_from_variant("DEAL_II_WITH_COMPLEX_VALUES", "complex"))

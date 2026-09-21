@@ -371,6 +371,7 @@ class Root(CMakePackage):
     depends_on("xz")
     depends_on("zlib-api")
     depends_on("zstd")
+    depends_on("libxcrypt", when="platform=linux")
 
     # X-Graphics
     depends_on("libx11", when="+x")

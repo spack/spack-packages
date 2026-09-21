@@ -157,7 +157,7 @@ class Papi(AutotoolsPackage, ROCmPackage):
         options = ["MPICC=:"]
         # Build a list of PAPI components
         components = filter(
-            lambda x: spec.variants[x].value,
+            lambda x: x in spec.variants and spec.variants[x].value,
             [
                 "example",
                 "infiniband",

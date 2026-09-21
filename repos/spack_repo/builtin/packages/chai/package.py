@@ -160,6 +160,7 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("disable_rm", default=False, description="Make ManagedArray a thin wrapper")
     variant(
         "cxxstd",
+        description="C++ standard to build with",
         default="20",
         values=(
             conditional("11", when="@:2.4"),
@@ -169,7 +170,6 @@ class Chai(CachedCMakePackage, CudaPackage, ROCmPackage):
             "23",
         ),
         multi=False,
-        description="C++ standard to build with",
     )
 
     # TODO: figure out gtest dependency and then set this default True

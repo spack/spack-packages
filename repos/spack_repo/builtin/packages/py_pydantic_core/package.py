@@ -11,11 +11,12 @@ from spack.package import *
 class PyPydanticCore(PythonPackage):
     """Core functionality for Pydantic validation and serialization"""
 
-    homepage = "https://github.com/pydantic/pydantic-core"
+    homepage = "https://github.com/pydantic/pydantic"
     pypi = "pydantic_core/pydantic_core-2.18.4.tar.gz"
 
     license("MIT", checked_by="qwertos")
 
+    version("2.46.4", sha256="62f875393d7f270851f20523dd2e29f082bcc82292d66db2b64ea71f64b6e1c1")
     version("2.41.5", sha256="08daa51ea16ad373ffd5e7606252cc32f07bc72b28284b6bc9c6df804816476e")
     version("2.41.4", sha256="70e47929a9d4a1905a67e4b687d5946026390568a8e952b92824118063cee4d5")
     version("2.27.1", sha256="62a763352879b84aa31058fc931884055fd75089cccbd9d58bb6afd01141b235")
@@ -28,6 +29,7 @@ class PyPydanticCore(PythonPackage):
         depends_on("rust@1.76:", when="@2.18")
 
         # pyproject.toml
+        depends_on("py-maturin@1.10:1", when="@2.46:")
         depends_on("py-maturin@1.9.4:1", when="@2.41:")
         depends_on("py-maturin@1")
 

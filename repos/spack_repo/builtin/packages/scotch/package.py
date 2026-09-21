@@ -21,6 +21,7 @@ class Scotch(CMakePackage, MakefilePackage):
 
     maintainers("AlexanderRichert-NOAA", "climbfuji")
 
+    version("7.0.15", sha256="5f8b558caa30eb5455fd896b763ad911822281c402e76b4afcd17c64eebc2898")
     version("7.0.14", sha256="35e9d27edba28497876be3c338ff2ac5fa2835a3f15ce8196085f3cb669491b1")
     version("7.0.13", sha256="6457d1f177fce9c07324b8c57ad1086402b0e61bd9ecf5c30b2b481944ea8fe7")
     version("7.0.12", sha256="870bf681e7e40b6b01c3890dbe7b27da2617660f1722541919a865a6729dcbf2")
