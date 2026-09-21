@@ -254,10 +254,15 @@ class FontUtil(AutotoolsPackage, XorgPackage):
         fonts = self.spec.variants["fonts"].value
         autoreconf = which("autoreconf", required=True)
 
+        configure = Executable("./configure")
+        destdir = join_path(self.stage.path, "dest")
         for font in fonts:
             fontroot = find(font, "*", recursive=False)
             with working_dir(fontroot[0]):
                 autoreconf(*autoconf_args)
-                configure = Executable("./configure")
                 configure(f"--prefix={self.prefix}")
-                make("install")
+                make("install", f"DESTDIR={destdir}")
+        install_tree(
+            join_path(destdir, self.prefix.lstrip("/")),
+            self.prefix,
+        )
