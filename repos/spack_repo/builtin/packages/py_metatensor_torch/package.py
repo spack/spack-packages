@@ -9,6 +9,12 @@ from spack_repo.builtin.build_systems.python import PythonPackage
 from spack.package import *
 
 VERSIONS = {
+    "0.10.6": "5462126fe8793999f349d52677e30a40795ffdc38db09aafedaddba23bc245c4",
+    "0.10.5": "c37d1fa6aa1a2c3ecf147d02f2092c2197dfbd6825263c9b1cbca966240d6f1c",
+    "0.10.4": "29e1521086c1a51204f2093ff6b2dc868a08f905008155a15c882306aecb0ae5",
+    "0.10.3": "81cf111f2b5cf2e3af2302725a72e564f706bbc0aea3fe575774806c769e2d07",
+    "0.10.2": "266a6cb685d5d106653b1db31321d40eb5c6b58973d3cd15d604ff572b8edf70",
+    "0.10.1": "107917c717ee9c2858d3de304f310c4e17f2ed77e6525960f6be52421e1d95ae",
     "0.10.0": "6381ef2db7d2db609d5b01de313336486150894b9d60ed1e758c67fa21b35a6e",
     # 0.9.2 was yanked: broken logic for device checks
     "0.9.1": "a924baf2146e597b6dd32eef425bc0f02598a542c0eae37872721b663fc458ec",
@@ -42,7 +48,11 @@ class PyMetatensorTorch(PythonPackage):
     depends_on("py-torch@2.1:", type=("build", "run"))
     depends_on("py-metatensor-core@0.1.13:0.1", type=("build", "run"), when="@0.7.6")
     depends_on("py-metatensor-core@0.1.15:0.1", type=("build", "run"), when="@0.8.0:0.8")
-    depends_on("py-metatensor-core@0.2", type=("build", "run"), when="@0.9.0:")
+    depends_on("py-metatensor-core@0.2:", type=("build", "run"), when="@0.9.0:0.9")
+    depends_on("py-metatensor-core@0.2.2:", type=("build", "run"), when="@0.10.0")
+    depends_on("py-metatensor-core@0.2.3", type=("build", "run"), when="@0.10.1")
+    depends_on("py-metatensor-core@0.2.4:", type=("build", "run"), when="@0.10.2:0.10.5")
+    depends_on("py-metatensor-core@0.2.5:", type=("build", "run"), when="@0.10.6:")
 
     # pyproject.toml
     depends_on("python@3.9:", type=("build", "run"))
