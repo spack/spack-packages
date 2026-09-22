@@ -88,6 +88,8 @@ class Pism(CMakePackage):
     depends_on("udunits")
     depends_on("proj")
     depends_on("everytrace", when="+everytrace")
+    depends_on("parallel-netcdf", when="+parallel-netcdf3")
+    depends_on("netcdf-c+mpi", when="+parallel-netcdf4")
 
     extends("python", when="+python")
     depends_on("python@2.7:2.8,3.3:", when="+python")
