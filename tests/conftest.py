@@ -105,6 +105,19 @@ def onerror(func, path, error_info):
     func(path)
 
 
+class MockStageRoot:
+    """Stand-in for ``spack.stage.stage_root`` returning a fixed directory.
+
+    Defined at module level so that it can be pickled into spawned build processes.
+    """
+
+    def __init__(self, path: str) -> None:
+        self.path = path
+
+    def __call__(self, config) -> str:
+        return self.path
+
+
 @pytest.fixture(scope="function", autouse=True)
 def mock_stage(tmp_path_factory: pytest.TempPathFactory, monkeypatch, request):
     """Establish the temporary build_stage for the mock archive."""
@@ -125,7 +138,7 @@ def mock_stage(tmp_path_factory: pytest.TempPathFactory, monkeypatch, request):
     source_path = new_stage / spack.stage._source_path_subdir
     source_path.mkdir(parents=True, exist_ok=True)
 
-    monkeypatch.setattr(spack.stage, "_stage_root", str(new_stage))
+    monkeypatch.setattr(spack.stage, "stage_root", MockStageRoot(str(new_stage)))
 
     yield str(new_stage)
 
@@ -217,10 +230,15 @@ class MockCacheFetcher:
         return "[mock fetch cache]"
 
 
+def mock_fetch_cache_for(config) -> MockCache:
+    """Stand-in for ``spack.caches.fetch_cache``, at module level so that it can be pickled."""
+    return MockCache()
+
+
 @pytest.fixture(autouse=True)
 def mock_fetch_cache(monkeypatch):
     """Substitutes FETCH_CACHE that raises on fetch."""
-    monkeypatch.setattr(spack.caches, "FETCH_CACHE", MockCache())
+    monkeypatch.setattr(spack.caches, "fetch_cache", mock_fetch_cache_for)
 
 
 @pytest.fixture(autouse=True, scope="session")
