@@ -43,7 +43,7 @@ class PyCwltool(PythonPackage):
     depends_on("py-ruamel-yaml@0.16:0.19",  when="@3.2:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.15:0.17.21", type=("build", "run"))
     depends_on("py-rdflib@4.2.2:7.6", when="@3.2:", type=("build", "run"))
-    depends_on("py-rdflib@4.2.2:6.2", type=("build", "run")
+    depends_on("py-rdflib@4.2.2:6.2", type=("build", "run"))
     depends_on("py-schema-salad@8.9:8", when="@3.2:", type=("build", "run"))
     depends_on("py-schema-salad@8.2.20211104054942:8", type=("build", "run"))
     depends_on("py-prov@1.5.1", type=("build", "run"))
