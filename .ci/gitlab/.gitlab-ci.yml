@@ -2,7 +2,9 @@ stages: [ "generate", "build" ]
 
 variables:
   SPACK_DISABLE_LOCAL_CONFIG: "1"
-  SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
+  SPACK_USER_CACHE_PATH: "/tmp/spack/_user_cache/"
+  SPACK_USER_CONFIG_PATH: "/tmp/spack/_config_dir/"
+  SPACK_PROJECT_CI_DIR: "/home/tipi"
   # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
   PR_MIRROR_FETCH_DOMAIN: "s3://spack-binaries-prs"
   PR_MIRROR_PUSH_DOMAIN: "s3://spack-binaries-prs"
@@ -12,16 +14,17 @@ variables:
   # SPACK_CI_DISABLE_STACKS:
   #   value: /^.*(cray).*$/
   #   expand: false
-  # SPACK_CI_ENABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
+  SPACK_CI_ENABLE_STACKS:
+    value: /^.*(engflow).*$/
+    expand: false
+
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
 .clone_spack: &clone_spack
-  - mkdir .ci/tmp
-  - mkdir .ci/tmp/spack
+  - mkdir -p .ci/tmp
+  - mkdir -p .ci/tmp/spack
   - cd .ci/tmp/spack
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
@@ -234,6 +237,17 @@ default:
   tags: ["spack", "public", "medium", "x86_64-win"]
   image: {
     name: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61",
+    entrypoint: [""]
+  }
+
+
+.generate-engflow:
+  variables:
+    SPACK_CI_TARGET: "x86_64_v3"
+  extends: [ ".generate-base" ]
+  tags: ["spack", "public", "medium", "x86_64_v3"]
+  image: {
+    name: "tipibuild/linux-kitware-paraview@sha256:e0417824c4d417eb4d363f08954d11b94f9e6eb4ec76cee391db72e1e281fb18",
     entrypoint: [""]
   }
 
@@ -855,6 +869,36 @@ windows-vis-build:
   needs:
     - artifacts: True
       job: windows-vis-generate
+
+#######################################
+# EngFlow Cache Testing Stack
+#######################################
+
+.engflow:
+  variables:
+    SPACK_CI_STACK_NAME: engflow
+    RBE_service: kernite.cluster.engflow.com:443
+    RBE_tls_client_auth_key: ${ENGFLOW_MTLS_KEY}
+    RBE_tls_client_auth_cert: ${ENGFLOW_MTLS_CERT}
+    TIPI_DISABLE_AR_RANLIB_DRIVER: "ON"
+    TIPI_CACHE_CONSUME_ONLY: "ON"
+    TIPI_CACHE_FORCE_ENABLE: "OFF"
+
+
+engflow-generate:
+  extends: [".generate-engflow", ".engflow"]
+
+engflow-build:
+  extends: [".build", ".engflow"]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/engflow/cloud-ci-pipeline.yml
+        job: engflow-generate
+  needs:
+    - artifacts: True
+      job: engflow-generate
+
 
 #######################################
 # Bootstrap x86_64-linux-gnu
