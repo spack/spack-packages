@@ -34,6 +34,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
     version(
         "7.14.0",
         tag="therock-7.14",
@@ -77,6 +78,10 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
     depends_on("py-sqlalchemy@2.0.42:", when="@7.1:")
     depends_on("py-textual-fspicker@0.4.3:", when="@7.1:")
     depends_on("fmt@12.1", when="@7.1:")
+    # nlohmann-json and googletest are needed for tarball releases that don't include submodules
+    # Version 7.14.0 uses git with submodules, so it doesn't need these
+    depends_on("nlohmann-json", when="@7.13,10:")
+    depends_on("googletest", when="@7.13,10:")
     for ver in [
         "6.3.2",
         "6.3.3",
@@ -93,6 +98,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -101,6 +107,7 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
     for ver in [
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on("rocprofiler-sdk", when=f"@{ver}")
 
@@ -118,10 +125,15 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++")
 
+        if self.spec.satisfies("@7.13,10:"):
+            env.append_flags("CXXFLAGS", f"-I{self.spec['nlohmann-json'].prefix.include}")
+            env.append_flags("CFLAGS", f"-I{self.spec['nlohmann-json'].prefix.include}")
+
     def cmake_args(self):
         args = [self.define("ENABLE_TESTS", self.run_tests)]
-        if self.spec.satisfies("@7.14:"):
+        if self.spec.satisfies("@7.13,10:"):
             args.append(self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"))
+            args.append(self.define("nlohmann_json_DIR", self.spec["nlohmann-json"].prefix))
         return args
 
     @run_before("cmake")
@@ -138,3 +150,30 @@ class RocprofilerCompute(ROCmLibrary, CMakePackage):
             mkdirp(pyyaml_vendor_path)
             # Create a dummy __init__.py to make it a valid Python package
             touch(join_path(pyyaml_vendor_path, "__init__.py"))
+
+            # For tarball versions (7.13, 10.0+), create external submodule directories
+            # to replace missing git submodules with system packages
+            # Version 7.14.0 uses git with submodules, so skip it
+            if self.spec.satisfies("@7.13,10:"):
+                external_base = join_path(
+                    self.stage.source_path, "projects/rocprofiler-compute/src/lib/external"
+                )
+
+                # For googletest and fmt, create dummy directories
+                for submod in ["googletest", "fmt"]:
+                    submod_path = join_path(external_base, submod)
+                    mkdirp(submod_path)
+                    touch(join_path(submod_path, "CMakeLists.txt"))
+
+                # For nlohmann_json, create a CMakeLists.txt that sets up an interface library
+                json_path = join_path(external_base, "json")
+                mkdirp(json_path)
+                json_cmake = join_path(json_path, "CMakeLists.txt")
+                with open(json_cmake, "w") as f:
+                    f.write(
+                        """# Wrapper to use system nlohmann_json as header-only
+add_library(nlohmann_json INTERFACE)
+target_include_directories(nlohmann_json INTERFACE {})
+target_compile_features(nlohmann_json INTERFACE cxx_std_11)
+""".format(self.spec["nlohmann-json"].prefix.include)
+                    )

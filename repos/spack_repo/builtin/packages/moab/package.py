@@ -95,7 +95,8 @@ class Moab(AutotoolsPackage):
     depends_on("cgm", when="+cgm")
     depends_on("metis", when="+metis")
     depends_on("parmetis", when="+parmetis")
-    depends_on("eigen", when="+eigen")
+    # MOAB does not enable the C++14 that Eigen 5 requires
+    depends_on("eigen@:3", when="+eigen")
     # FIXME it seems that zoltan needs to be built without fortran
     depends_on("zoltan~fortran", when="+zoltan")
     with when("+tempest"):
@@ -106,7 +107,7 @@ class Moab(AutotoolsPackage):
         depends_on("tempestremap@2.0.5", when="@5.2.1")
         depends_on("tempestremap@2.0.3", when="@5.2.0")
         depends_on("tempestremap@2.0.2", when="@5.1.0")
-        depends_on("eigen")
+        depends_on("eigen@:3")
 
     patch("tools-492.patch", when="@4.9.2")
 
