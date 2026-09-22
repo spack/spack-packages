@@ -47,7 +47,7 @@ class PyCwltool(PythonPackage):
     depends_on("py-prov@1.5.1", type=("build", "run"))
     depends_on("py-mypy-extensions", type=("build", "run"))
     depends_on("py-psutil@5.6.6:", type=("build", "run"))
-    depends_on("py-typing-extensions@4.1.0", when="@3.2:", type=("build", "run"))
+    depends_on("py-typing-extensions@4.1.0:", when="@3.2:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"))
     depends_on("py-coloredlogs", type=("build", "run"))
     depends_on("py-pydot@1.4.1:", type=("build", "run"))
