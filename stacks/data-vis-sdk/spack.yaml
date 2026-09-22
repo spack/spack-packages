@@ -61,9 +61,9 @@ spack:
   - visit_specs:
     - matrix:
       - - visit
-      - - ~gui ^[virtuals=gl] glx
-        - ~gui ^[virtuals=gl] osmesa
-        - +gui ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
+      - - ~gui %[virtuals=gl] glx
+        - ~gui %[virtuals=gl] osmesa
+        - +gui %[virtuals=gl] glx # GUI Support w/ GLX Rendering
 
   - hdf5_specs:
     - hdf5
