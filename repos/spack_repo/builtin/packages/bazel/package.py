@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
@@ -25,6 +26,8 @@ class Bazel(Package):
 
     license("Apache-2.0")
 
+    version("8.7.0", sha256="75ed5aa189fd687e6e7c289ad86a3851844965a6c1479b7a5ce9b846a6e461bc")
+    version("8.5.1", sha256="bf66a1cbaaafec32e1e103d0e07343082f1f0f3f20ad4c6b66c4eda3f690ed4d")
     version("7.7.1", sha256="6181b3570c2f657d989b1141fb0c1a08eb5f08106ca577dc7dc52e7d0238379a")
     version("7.7.0", sha256="277946818c77fff70be442864cecc41faac862b6f2d0d37033e2da0b1fee7e0f")
     version("7.6.2", sha256="320582db87133c6a7b58d93b6a97bb7d67916fe7940d60fbb4ecc36c7a48da6d")
@@ -91,7 +94,9 @@ class Bazel(Package):
     patch("bazelruleclassprovider-0.25.patch")
 
     # Inject include paths
-    patch("unix_cc_configure-3.0.patch")
+    patch("unix_cc_configure-3.0.patch", when="@:7")
+    patch("SPACK_INCLUDE_DIRS-0.8-code.patch", when="@8:")
+    patch("SPACK_INCLUDE_DIRS-0.8-test.patch", when="@8:")
 
     # Set CC and CXX
     patch("compile-0.29.patch")
@@ -284,6 +289,14 @@ java_binary(
 
             exe = Executable("bazel-bin/bazel-test")
             assert exe(output=str) == "Hi!\n"
+
+            # Test SPACK_INCLUDE_DIRS support (added using spack-specific patches)
+            if self.spec.satisfies("@8:"):
+                script1 = os.path.join(self.stage.source_path, "include_test/test1.sh")
+                script2 = os.path.join(self.stage.source_path, "include_test/test2.sh")
+                bash = which("bash", required=True)
+                bash(script1, bazel.path)
+                bash(script2, bazel.path)
 
     def setup_dependent_package(self, module, dependent_spec):
         module.bazel = Executable(self.command.path)
