@@ -126,6 +126,8 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
     depends_on("qrupdate", when="+qrupdate")
     depends_on("qscintilla", when="+qscintilla")
     depends_on("qt+opengl", when="+qt")
+    depends_on("gl", when="+qt")
+    depends_on("glu", when="+qt")
     depends_on("suite-sparse", when="+suitesparse")
     depends_on("zlib-api", when="+zlib")
 
@@ -327,7 +329,10 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
         else:
             config_args.append("--disable-java")
 
-        if "~opengl" and "~fltk" in spec:
+        # --without-opengl only makes sense when opengl, fltk, and qt are
+        # all disabled (qt+opengl forces GL regardless via the depends_on
+        # above).
+        if spec.satisfies("~opengl~fltk~qt"):
             config_args.extend(["--without-opengl", "--without-framework-opengl"])
         # TODO:  opengl dependency and package is missing?
 
