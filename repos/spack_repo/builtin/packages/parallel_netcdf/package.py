@@ -155,6 +155,18 @@ class ParallelNetcdf(AutotoolsPackage):
         if self.spec.satisfies("+fortran+shared%nag"):
             args.extend(["ac_cv_prog_fc_v=-Wl,-v", "ac_cv_prog_f77_v=-Wl,-v"])
 
+        # Starting 1.15.0, configure adds '-fvisibility=hidden' to FFLAGS and
+        # FCFLAGS if the Fortran compiler accepts it. GNU Fortran ignores the
+        # flag but Intel ifx honors it and also marks *undefined* references
+        # (e.g. all the nfmpi_* calls made from the Fortran 90 module) as
+        # hidden. When libpnetcdf.so is linked, the linker applies the most
+        # restrictive visibility, which hides the whole Fortran API and
+        # breaks linking of the Fortran benchmarks (and of user programs).
+        # The Fortran bindings contain nothing but the public API, so there
+        # is nothing to hide there. Tell configure the flag is not supported.
+        if self.spec.satisfies("@1.15:+fortran"):
+            args.append("ax_cv_check_fcflags___fvisibility_hidden=no")
+
         if self.spec.satisfies("+burstbuffer"):
             args.append("--enable-burst-buffering")
 
