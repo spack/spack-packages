@@ -39,8 +39,12 @@ class PyAbslPy(PythonPackage):
         # Historical dependencies
         depends_on("py-setuptools", when="@:2.2")
 
-    # Historical dependencies
-    depends_on("py-six", type=("build", "run"), when="@0")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@2.4:")
+        depends_on("python@3.6:", when="@1:")
+
+        # Historical dependencies
+        depends_on("py-six", type=("build", "run"), when="@0")
 
     def url_for_version(self, version):
         if self.spec.satisfies("@2.2:"):
