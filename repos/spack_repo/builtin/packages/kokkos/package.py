@@ -446,7 +446,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     def kokkos_cxx(self) -> str:
         if self.spec.satisfies("+wrapper"):
             return self["kokkos-nvcc-wrapper"].kokkos_cxx
-        return self["cxx"].cxx
+        return self["compiler-wrapper"].wrapper_for(self.spec, language="cxx")
 
     def cmake_args(self):
         spec = self.spec
