@@ -164,7 +164,7 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("cmake", type="build")
     depends_on("cmake@3.19:", type="build", when="@39:40.0")
     depends_on("cmake@3.29:", type="build", when="@40.1:")
-    depends_on("cppgsl")
+    depends_on("ms-gsl")
     depends_on("fmt")
     depends_on("fmt@:8", when="@:36.9")
     depends_on("fmt@:10", when="@:38")
