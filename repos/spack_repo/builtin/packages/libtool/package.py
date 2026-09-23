@@ -111,17 +111,20 @@ class Libtool(AutotoolsPackage, GNUMirrorPackage):
             join_path(self.prefix.bin, "libtoolize"), join_path(self.prefix.bin, "glibtoolize")
         )
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        """Wrapper until spack has a real implementation of setup_test_environment()"""
-        if self.run_tests:
-            self.setup_test_environment(env)
-
-    def setup_test_environment(self, env: EnvironmentModifications):
-        """When Fortran is not provided, a few tests need to be skipped"""
-        if self.compiler.f77 is None:
+    def _disable_fortran_if_absent(self, env: EnvironmentModifications) -> None:
+        # Setting the "no" sentinel makes libtool's configure skip
+        # the F77/FC tags entirely, so the C toolchain's shared-library support
+        # is preserved.
+        if not self.spec.dependencies(virtuals=("fortran",)):
             env.set("F77", "no")
-        if self.compiler.fc is None:
             env.set("FC", "no")
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        self._disable_fortran_if_absent(env)
+
+    def setup_test_environment(self, env: EnvironmentModifications) -> None:
+        """When Fortran is not provided, a few tests need to be skipped"""
+        self._disable_fortran_if_absent(env)
 
     @when("@2.4.6")
     def check(self):
