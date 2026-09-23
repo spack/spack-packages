@@ -44,7 +44,7 @@ spack:
       - target=x86_64_v3
     hip:
       require:
-      - '@5.7.1 +rocm'
+      - +rocm
       - target=x86_64_v3
     py-iminuit:
       require:
@@ -168,7 +168,29 @@ spack:
   - vecgeom +cuda cuda_arch=80
 
   # ROCm
-  - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+  - group: rocm
+    specs:
+    - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+    override:
+      packages:
+        all:
+          prefer:
+            - ~cuda
+            - +rocm
+            - amdgpu_target=gfx90a
+        'c:':
+          prefer:
+          - gcc
+        'cxx:':
+          prefer:
+          - gcc
+        'fortran:':
+          prefer:
+          - gcc
+    needs: [hip-compiler]
+  - group: hip-compiler
+    specs:
+    - llvm-amdgpu
 
   ci:
     pipeline-gen:

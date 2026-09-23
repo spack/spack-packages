@@ -34,6 +34,8 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("hip", when="+rocm")
+
     depends_on("cmake@3.22:", type="build")
 
     # TODO: Need to spec version of MPI v3 for use of the low-level MPI transport
@@ -217,6 +219,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
             options.append(
                 self.define("CMAKE_HIP_ARCHITECTURES", spec.variants["amdgpu_target"].value)
             )
+            options.append(self.define("ROCM_PATH", spec["hip"].prefix))
 
         maxdims = int(spec.variants["max_dims"].value)
         # TODO: sanity check if maxdims < 0 || > 9???
