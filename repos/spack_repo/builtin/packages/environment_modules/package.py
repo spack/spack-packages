@@ -14,12 +14,13 @@ class EnvironmentModules(Package):
     """
 
     homepage = "https://envmodules.io"
-    url = "https://github.com/envmodules/modules/releases/download/v5.6.2/modules-5.6.2.tar.gz"
+    url = "https://github.com/envmodules/modules/releases/download/v5.7.0/modules-5.7.0.tar.gz"
     git = "https://github.com/envmodules/modules.git"
 
     maintainers("xdelaruelle")
 
     version("main", branch="main")
+    version("5.7.0", sha256="0267e47602237ab3fa3b820b5c94332b2e4a551bc08ba7b9d9e68d0eec92b18d")
     version("5.6.2", sha256="a06dd0001aef2722564bba3ec7ff62bc52fb560565af8522728ac8296f98fd69")
     version("5.3.2", sha256="132ace718fa97183508c02bc77a5f7fef33d9edf28d9dc207ae4da0823172b3b")
     version("4.5.4", sha256="28b2dfcd53dc9c1b121851a9aae2fb1d1dc3519918fd1cddc7af8593d58116d0")

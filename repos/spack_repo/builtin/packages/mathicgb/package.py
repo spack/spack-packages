@@ -27,6 +27,8 @@ class Mathicgb(AutotoolsPackage):
     version("1.1", sha256="c756c2265df23fb7417f073cf09d63f05e093eb8136bf33904cec04eac24d5b3")
     version("1.0.2025.05.13", commit="de139564927563afef383174fd3cf8c93ee18ab3")
 
+    variant("tbb", default=False, description="Enable multithreading with TBB")
+
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
@@ -37,6 +39,7 @@ class Mathicgb(AutotoolsPackage):
 
     depends_on("mathic")
     depends_on("memtailor")
+    depends_on("tbb", when="+tbb")
 
     def configure_args(self):
-        return ["--enable-shared"]
+        return ["--enable-shared"] + self.with_or_without("tbb")

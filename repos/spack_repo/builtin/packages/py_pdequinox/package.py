@@ -3,13 +3,12 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
 
 
-class PyPdequinox(PythonPackage, CudaPackage):
+class PyPdequinox(PythonPackage):
     """A collection of neural architectures for emulating Partial Differential Equations (PDEs)
     in JAX agnostic to the spatial dimension (1D, 2D, 3D) and boundary conditions
     (Dirichlet, Neumann, Periodic). This package is built on top of Equinox."""
@@ -24,14 +23,10 @@ class PyPdequinox(PythonPackage, CudaPackage):
     version("0.1.0", sha256="07f7516fe26823e6c3b71f1ed5a170e97cc34ff1d1349435d4b7469adc540d3a")
 
     depends_on("py-setuptools", type="build")
-    depends_on("python@3.8:3.12", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"))
 
     with default_args(type="run"):
-        for arch in CudaPackage.cuda_arch_values:
-            cuda_specs = f"+cuda cuda_arch={arch}"
-            depends_on(f"py-jaxlib@0.4.13: {cuda_specs}", when=f"{cuda_specs}")
-
+        depends_on("py-equinox@0.11.3:")
         depends_on("py-jax@0.4.13:")
         depends_on("py-jaxtyping@0.2.20:")
         depends_on("py-typing-extensions@4.5.0:")
-        depends_on("py-equinox@0.11.3:")

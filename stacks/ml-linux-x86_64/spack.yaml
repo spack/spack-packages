@@ -139,6 +139,10 @@ spack:
             - amdgpu_target=gfx90a
             - +flash_attention
             - "%c,cxx=gcc"
+        py-jaxlib:
+          require:
+            - +rocm
+            - amdgpu_target=gfx90a
         hwloc:
           require:
             - ~rocm
