@@ -18,6 +18,7 @@ class Zsh(AutotoolsPackage):
 
     license("custom")
 
+    version("5.9.2", sha256="36fa734374b44783582cec09bcd67822e2f992c779ec1624ab5596df078d2f81")
     version("5.9", sha256="9b8d1ecedd5b5e81fbf1918e876752a7dd948e05c1a0dba10ab863842d45acd5")
     version("5.8.1", sha256="b6973520bace600b4779200269b1e5d79e5f505ac4952058c11ad5bbf0dd9919")
     version("5.8", sha256="dcc4b54cc5565670a65581760261c163d720991f0d06486da61f8d839b52de27")
@@ -45,7 +46,7 @@ class Zsh(AutotoolsPackage):
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
-    patch("pointer-types.patch", when="@5.6.2:")
+    patch("pointer-types.patch", when="@5.6.2:5.8.1,=5.9")
 
     def configure_args(self):
         args = []
