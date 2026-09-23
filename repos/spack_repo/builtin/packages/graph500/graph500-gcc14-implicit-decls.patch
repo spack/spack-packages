@@ -1,0 +1,37 @@
+graph500 3.0.0 predates GCC 14, which promoted -Wimplicit-function-declaration
+from a warning to an error (C99 removed implicit declarations; GCC 14 finally
+enforces it).  Two call sites rely on implicit declarations:
+
+  * src/bitmap_reference.h expands memset() in the CLEAN_VISITED() macro but
+    never includes <string.h>.
+  * src/main.c calls isisolated(), which is defined in src/csr_reference.c as
+    "int isisolated(int64_t v)" but is never declared in a header.  The
+    implicit declaration "int isisolated()" drops the int64_t parameter type,
+    which is a real (if latent on x86-64 SysV) ABI mismatch.
+
+Declare both properly instead of suppressing the diagnostic.
+
+diff -Naur a/src/bitmap_reference.h b/src/bitmap_reference.h
+--- a/src/bitmap_reference.h
++++ b/src/bitmap_reference.h
+@@ -8,6 +8,8 @@
+ /*           Andrew Lumsdaine                                              */
+ /*           Anton Korzh                                                   */
+ 
++#include <string.h>
++
+ #define ulong_bits 64
+ #define ulong_mask &63
+ #define ulong_shift >>6
+diff -Naur a/src/common.h b/src/common.h
+--- a/src/common.h
++++ b/src/common.h
+@@ -207,6 +207,8 @@
+ 						void* xmalloc(size_t nbytes); /* In utils.c */
+ 						void* xcalloc(size_t n, size_t unit); /* In utils.c */
+ 
++						int isisolated(int64_t v); /* In csr_reference.c */
++
+ 						int validate_result(int isbfs, const tuple_graph* const tg, const size_t nlocalverts, const int64_t root, int64_t* const pred, float * dist, int64_t* const edge_visit_count_ptr); /* In validate.c */
+ 
+ 						/* Definitions in each BFS file, using static global variables for internal
