@@ -15,6 +15,7 @@ class PyPox(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.3.7", sha256="0652f6f2103fe6d4ba638beb6fa8d3e8a68fd44bcb63315c614118515bcc3afb")
     version("0.3.5", sha256="8120ee4c94e950e6e0483e050a4f0e56076e590ba0a9add19524c254bd23c2d1")
     version("0.3.4", sha256="16e6eca84f1bec3828210b06b052adf04cf2ab20c22fd6fbef5f78320c9a6fed")
     version("0.3.3", sha256="e1ced66f2a0c92a58cf3646bc7ccb8b4773d40884b76f85eeda0670474871667")
@@ -26,14 +27,21 @@ class PyPox(PythonPackage):
     version("0.2.2", sha256="c0b88e59ef0e4f2fa4839e11bf90d2c32d6ceb5abaf01f0c8138f7558e6f87c1")
     version("0.2.1", sha256="580bf731fee233c58eac0974011b5bf0698efb7337b0a1696d289043b4fcd7f4")
 
-    depends_on("python@2.5:2.8,3.1:", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.6:", when="@0.3.0:", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-setuptools@42:", when="@0.3.1:")
+        depends_on("py-setuptools@0.6:")
 
-    depends_on("py-setuptools@0.6:", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@0.3.7:")
+        depends_on("python@3.8:", when="@0.3.4:")
+        depends_on("python@3.7:", when="@0.3.2:")
+        depends_on("python@2.7:2.8,3.7:", when="@0.3.1")
+        depends_on("python@2.7:2.8,3.6:", when="@0.3.0")
+        depends_on("python@2.5:2.8,3.1:", when="@:0.2.6")
 
     def url_for_version(self, version):
         url = "https://pypi.io/packages/source/p/pox/"
-        if Version("0.3.0") > version >= Version("0.2.4"):
+        if self.spec.satisfies("@0.2.4:0.2.6,0.3.1:"):
             url += "pox-{0}.tar.gz"
         else:
             url += "pox-{0}.zip"
