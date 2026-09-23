@@ -127,6 +127,9 @@ class Gnupg(AutotoolsPackage):
                     f"--with-npth-prefix={self.spec['npth'].prefix}",
                 ]
             )
+            # Otherwise configure enables tpm2daemon if it finds libtss2 on the host
+            if self.spec.satisfies("@2.3:"):
+                args.append("--disable-tpm2d")
             if self.spec["iconv"].name == "libiconv":
                 args.append(f"--with-libiconv-prefix={self.spec['iconv'].prefix}")
             else:
