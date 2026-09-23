@@ -1,0 +1,15 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -156,6 +156,12 @@
+     include(GNUInstallDirs)
+     include(CMakePackageConfigHelpers)
+     install(TARGETS ${INSTALL_TARGETS} EXPORT finufftTargets PUBLIC_HEADER)
++    if(FINUFFT_USE_CPU)
++        install(
++            FILES ${PROJECT_SOURCE_DIR}/include/finufft_common/defines.h
++            DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/finufft_common
++        )
++    endif()
+     install(EXPORT finufftTargets NAMESPACE finufft:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/finufft)
+     configure_package_config_file(
+         cmake/finufftConfig.cmake.in

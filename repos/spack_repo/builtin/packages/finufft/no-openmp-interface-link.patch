@@ -1,0 +1,12 @@
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -46,9 +46,6 @@
+ target_link_libraries(finufft PRIVATE $<BUILD_INTERFACE:finufft_fftlibs xsimd finufft_common>)
+ if(FINUFFT_USE_OPENMP)
+     target_link_libraries(finufft PRIVATE OpenMP::OpenMP_CXX)
+-    if(NOT FINUFFT_STATIC_LINKING)
+-        target_link_libraries(finufft INTERFACE OpenMP::OpenMP_CXX)
+-    endif()
+     target_link_options(finufft PRIVATE ${OpenMP_CXX_FLAGS})
+     target_include_directories(finufft PRIVATE $<BUILD_INTERFACE:${OpenMP_CXX_INCLUDE_DIR}>)
+ endif()
