@@ -283,6 +283,10 @@ class Python(Package):
     patch("fj-rpath-3.1.patch", when="@:3.9.7,3.10.0 %fj")
     patch("fj-rpath-3.9.patch", when="@3.9.8:3.9,3.10.1:3.11 %fj")
 
+    # Fix bad prompt in virtual-env in 3.12
+    # https://github.com/python/cpython/issues/132361
+    patch("python-3.12.10+-fix132361.patch", when="@3.12.10:3.12")
+
     # CPython tries to build an Objective-C file with GCC's C frontend
     # https://github.com/spack/spack/pull/16222
     # https://github.com/python/cpython/pull/13306
