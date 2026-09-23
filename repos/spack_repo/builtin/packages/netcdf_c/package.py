@@ -591,6 +591,10 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
 
         if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
             config_args.append("CC={0}".format(self.spec["mpi"].mpicc))
+            # MPICH-based MPIs define MPI_Comm_f2c and MPI_Info_f2c as macros, which the
+            # configure script's link test misses. Starting with 4.10.1, this is a hard error.
+            # See https://github.com/Unidata/netcdf-c/issues/3414
+            config_args.extend(["ac_cv_func_MPI_Comm_f2c=yes", "ac_cv_func_MPI_Info_f2c=yes"])
 
         # In general, we rely on the compiler wrapper to inject the required CPPFLAGS and LDFLAGS.
         # However, the injected LDFLAGS are invisible for the configure script and are added
