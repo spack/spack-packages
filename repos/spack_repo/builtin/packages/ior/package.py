@@ -30,6 +30,7 @@ class Ior(AutotoolsPackage):
     variant("ncmpi", default=False, description="support IO with NCMPI backend")
     variant("lustre", default=False, description="support configurable Lustre striping values")
     variant("aio", default=False, description="support AIO backend API", when="@4:")
+    variant("daos", default=False, description="support IO with the DAOS DFS and DAOS backends")
 
     depends_on("c", type="build")  # generated
 
@@ -43,6 +44,7 @@ class Ior(AutotoolsPackage):
     depends_on("parallel-netcdf", when="+ncmpi")
     depends_on("lustre", when="+lustre")
     depends_on("libaio", when="+aio")
+    depends_on("daos@2.2.0:", when="+daos")
 
     # The build for 3.2.0 fails if hdf5 is enabled
     # See https://github.com/hpc/ior/pull/124
@@ -90,5 +92,10 @@ class Ior(AutotoolsPackage):
             config_args.append("--with-aio")
         else:
             config_args.append("--without-aio")
+
+        if spec.satisfies("+daos"):
+            config_args.append("--with-daos=" + spec["daos"].prefix)
+        else:
+            config_args.append("--without-daos")
 
         return config_args
