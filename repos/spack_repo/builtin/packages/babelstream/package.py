@@ -265,6 +265,9 @@ class Babelstream(CMakePackage, CudaPackage, ROCmPackage, MakefilePackage):
     # CMake specific dependency
     with when("build_system=cmake"):
         depends_on("cmake@3.14.0:", type="build")
+        # BabelStream's CMakeLists.txt accepts only Release and Debug
+        conflicts("build_type=RelWithDebInfo", msg="BabelStream supports only Release and Debug")
+        conflicts("build_type=MinSizeRel", msg="BabelStream supports only Release and Debug")
 
     # This applies to all
     depends_on("opencl-c-headers", when="+ocl")
@@ -669,6 +672,15 @@ register_flag_optional(TARGET_PROCESSOR
         # not in ["kokkos", "raja", "acc", "hip"] then compiler forced true
         if set(model_list).intersection(["kokkos", "raja", "acc", "hip"]) is True:
             args.append("-DCMAKE_CXX_COMPILER_FORCED=True")
+
+        # BabelStream's default Release flags are "-O3 -march=native". Spack's
+        # compiler wrapper puts the target flags (e.g. -march=zen2) before the
+        # build system's flags, so -march=native silently replaces the spec's
+        # target with the build host's. That produces binaries that may not run on
+        # the target, and binary cache entries that do not match their spec. Keep
+        # BabelStream's optimization level and leave the architecture to Spack.
+        if self.spec.satisfies("build_type=Release"):
+            args.append(self.define("RELEASE_FLAGS", ["-O3"]))
 
         return args
 
