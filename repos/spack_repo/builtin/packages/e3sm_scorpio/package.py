@@ -15,7 +15,7 @@ class E3smScorpio(CMakePackage):
     homepage = "https://e3sm.org/scorpio-parallel-io-library/"
     url = "https://github.com/E3SM-Project/scorpio/archive/refs/tags/scorpio-v1.4.1.tar.gz"
 
-    maintainers("xylar", "altheaden")
+    maintainers("xylar", "andrewdnolan")
 
     version("2.0.3", sha256="ff9570e250e6b75b723b778b17453d9bcc88d2a66674f1bcb0aaab65f321ff60")
     version("2.0.2", sha256="68444fd641363388d0d06528ce7d9d0b33df3ae6103df122973d9963476e3319")
