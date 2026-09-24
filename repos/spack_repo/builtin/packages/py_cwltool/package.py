@@ -35,6 +35,7 @@ class PyCwltool(PythonPackage):
 
     depends_on("python@3.10:3", when="@3.2:", type=("build", "run"))
     depends_on("python@3.6:3", type=("build", "run"))
+    depends_on("py-setuptools@45:", when="@3.2:", type="build")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-requests@2.6.1:", type=("build", "run"))
@@ -58,6 +59,7 @@ class PyCwltool(PythonPackage):
     depends_on("py-cwl-utils@0.19:", type=("build", "run"))
     depends_on("py-spython@0.3.0:", when="@3.2:", type=("build", "run"))
     depends_on("py-rich-argparse", when="@3.2:", type=("build", "run"))
+    depends_on("py-pygments@2.20:", when="@3.2:", type=("build", "run"))
 
     # Historical Dependencies
     depends_on("py-bagit@1.6.4:", when="@:3.1", type=("build", "run"))
