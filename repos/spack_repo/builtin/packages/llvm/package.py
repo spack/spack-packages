@@ -930,8 +930,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
-        if spec.satisfies("%gcc"):
-            gcc = spec["gcc"]
+        # Very old spec files do not have a gcc dependency node
+        for gcc in spec.dependencies("gcc", deptype="build"):
             for language in ("c", "cxx", "fortran"):
                 pkg("*").depends_on(
                     f"gcc-runtime@{gcc.version}:",
