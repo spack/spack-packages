@@ -23,11 +23,17 @@ class Triangle(Package):
 
     version("1.6", sha256="1766327add038495fa3499e9b7cc642179229750f7201b94f8e1b7bee76f8480")
 
-    depends_on("libx11", type="link")
+    depends_on("libx11", type=("build", "link"))
+    depends_on("xproto", type="build")
     depends_on("gmake", type="build")
 
     def install(self, spec, prefix):
-        make()
+        x11 = spec["libx11"].prefix
+        xproto = spec["xproto"].prefix
+        cswitches = "-O -std=gnu17 -I{0} -I{1} -L{2}".format(x11.include, xproto.include, x11.lib)
+        if not spec.satisfies("platform=darwin"):
+            cswitches = "-DLINUX " + cswitches
+        make("CSWITCHES=" + cswitches)
         mkdirp(prefix.bin)
 
         install("triangle", prefix.bin)
