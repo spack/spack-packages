@@ -50,6 +50,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("bison@3:", type="build")
 
     depends_on("libpng")
+    depends_on("gettext")
 
     variant("shared", default=True, description="Build shared library")
     variant("pic", default=False, description="Enable position-independent code")
