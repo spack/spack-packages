@@ -20,7 +20,14 @@ class SuiteSparse(Package):
 
     license("Apache-2.0")
 
+    version("7.14.1", sha256="81e560e1f74546df139edb765b3f5bc865866da23062312ffe8fd821063c8397")
+    version("7.14.0", sha256="c552c4b4bb7d0978796e57263a73295bca0c6b41ad137b45b4f264cfe9300fcb")
+    version("7.13.1", sha256="b648b337036b7172af0021196185c68524799b0304a69e066afe2331c263d55d")
+    version("7.13.0", sha256="561c0e2559f9e11d889d9b5fa7340e62aa8a183703292a524d138c36b80d4b50")
+    version("7.12.3", sha256="158ee4ed2ce3fdcbf52c4e47e94b0d1a8ae13344b4a835991d78a3ad20f08086")
     version("7.12.2", sha256="679412daa5f69af96d6976595c1ac64f252287a56e98cc4a8155d09cc7fd69e8")
+    version("7.12.1", sha256="794ae22f7e38e2ac9f5cbb673be9dd80cdaff2cdf858f5104e082694f743b0ba")
+    version("7.12.0", sha256="1908d5a8813dabae78cacb47a1f656dda34d4647cf4384b5988836ed821e5bd4")
     version("7.10.1", sha256="9e2974e22dba26a3cffe269731339ae8e01365cfe921b06be6359902bd05862c")
     version("7.8.3", sha256="ce39b28d4038a09c14f21e02c664401be73c0cb96a9198418d6a98a7db73a259")
     version("7.7.0", sha256="529b067f5d80981f45ddf6766627b8fc5af619822f068f342aab776e683df4f3")
@@ -273,8 +280,11 @@ class SuiteSparse(Package):
                     f"-DSUITESPARSE_USE_CUDA={'ON' if '+cuda' in spec else 'OFF'}",
                 ]
             # https://github.com/DrTimothyAldenDavis/SuiteSparse/issues/1013
-            if spec.satisfies("@7.12"):
-                cmake_args += ["-DBLA_VENDOR=' '"]
+            if spec.satisfies("@7.12:"):
+                if spec.satisfies("^[virtuals=blas] openblas"):
+                    cmake_args += ["-DBLA_VENDOR=OpenBLAS"]
+                else:
+                    cmake_args += ["-DBLA_VENDOR=Generic"]
 
             make_args += [f"CMAKE_OPTIONS={' '.join(cmake_args)}"]
 
