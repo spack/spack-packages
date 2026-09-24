@@ -60,6 +60,7 @@ class MpUnits(CMakePackage):
         values=(
             "none",
             conditional("gsl-lite", when="~freestanding"),
+            conditional("ms-gsl", when="~freestanding"),
             conditional("std", when="@2.5.1: ~freestanding cxxstd=26"),
         ),
         multi=False,
@@ -75,6 +76,7 @@ class MpUnits(CMakePackage):
 
     depends_on("fmt@12.1.0:", when="~freestanding~std_format")
     depends_on("gsl-lite@1.0.1:", when="~freestanding contracts=gsl-lite")
+    depends_on("ms-gsl@4.2.0:", when="~freestanding contracts=ms-gsl")
 
     requires(
         "%gcc@12:",
