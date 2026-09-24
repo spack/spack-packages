@@ -1,0 +1,13 @@
+diff --git a/Lib/venv/scripts/common/activate b/Lib/venv/scripts/common/activate
+index 70673a265d4..f884498ac66 100644
+--- a/Lib/venv/scripts/common/activate
++++ b/Lib/venv/scripts/common/activate
+@@ -67,7 +67,7 @@ fi
+ 
+ if [ -z "${VIRTUAL_ENV_DISABLE_PROMPT:-}" ] ; then
+     _OLD_VIRTUAL_PS1="${PS1:-}"
+-    PS1="("__VENV_PROMPT__") ${PS1:-}"
++    PS1=__VENV_PROMPT__"${PS1:-}"
+     export PS1
+ fi
+ 
