@@ -15,6 +15,7 @@ class PyImagecorruptionsImaug(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.1.5", sha256="b55edda9f6eead3ee4ba8956cc65122ab47a9b71605bfe0f74d3bc9ee04ae955")
     version("1.1.3", sha256="dd103a5b7a1d1d8d173aec26fe8b4be93ef83de122bea4ad88c08695daa76d00")
 
     depends_on("py-setuptools", type=("build", "run"))
