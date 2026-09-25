@@ -81,8 +81,8 @@ class Libtiff(CMakePackage, AutotoolsPackage):
     variant("shared", default=True, description="Build shared")
     variant("pic", default=False, description="Enable position-independent code (PIC)")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     with when("build_system=cmake"):
         depends_on("cmake@3.9:", type="build")
@@ -115,6 +115,10 @@ class CMakeBuilder(CMakeBuilder):
         args += [self.define_from_variant("tiff-opengl", "opengl")]
         args += [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
         args += [self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic")]
+        if self.spec.satisfies("~zstd"):
+            # libtiff's zstd build config not honor disabling zstd:BOOL, forcibly disable it:
+            args += [self.define("ZSTD_INCLUDE_DIR", "/dev/null")]
+            args += [self.define("ZSTD_LIBRARY_RELEASE", "/dev/null")]
 
         # Remove empty strings
         args = [arg for arg in args if arg]
