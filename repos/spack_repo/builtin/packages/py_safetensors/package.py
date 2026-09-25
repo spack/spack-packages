@@ -10,11 +10,14 @@ from spack.package import *
 class PySafetensors(PythonPackage):
     """Fast and Safe Tensor serialization."""
 
-    homepage = "https://github.com/huggingface/safetensors"
+    homepage = "https://github.com/safetensors/safetensors"
     pypi = "safetensors/safetensors-0.3.1.tar.gz"
 
     maintainers("thomas-bouvier")
 
+    license("Apache-2.0")
+
+    version("0.8.0", sha256="fabaf3e0f18a6618d9b36560682562157f77c2b71fcffc7b432be2baed9d753d")
     version("0.6.2", sha256="43ff2aa0e6fa2dc3ea5524ac7ad93a9839256b8703761e76e2d0b2a3fa4f15d9")
     version("0.4.5", sha256="d73de19682deabb02524b3d5d1f8b3aaba94c72f1bbfc7911b9b9d5d391c0310")
     version("0.4.3", sha256="2f85fc50c4e07a21e95c24e07460fe6f7e2859d0ce88092838352b798ce711c2")
@@ -22,14 +25,15 @@ class PySafetensors(PythonPackage):
 
     depends_on("c", type="build")
 
-    depends_on("python@3.9:", when="@0.6:", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"), when="@0.8:")
+    depends_on("python@3.9:", type=("build", "run"), when="@0.6:")
     # Build errors with python@3.14
-    depends_on("python@3.7:3.13", when="@:0.4.5", type=("build", "run"))
+    depends_on("python@3.7:3.13", type=("build", "run"), when="@:0.4.5")
     # Based on PyPI wheel availability
-    depends_on("python@3.7:3.12", when="@:0.4.3", type=("build", "run"))
+    depends_on("python@3.7:3.12", type=("build", "run"), when="@:0.4.3")
     depends_on("py-maturin@1", type="build", when="@0.4.3:")
     depends_on("rust", type="build", when="@0.4.3:")
 
     # Historical dependencies
-    depends_on("py-setuptools", when="@0.3.1", type="build")
-    depends_on("py-setuptools-rust", when="@0.3.1", type="build")
+    depends_on("py-setuptools", type="build", when="@0.3.1")
+    depends_on("py-setuptools-rust", type="build", when="@0.3.1")
