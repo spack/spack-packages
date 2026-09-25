@@ -95,6 +95,11 @@ class Mumps(Package):
     conflicts("+parmetis", when="~metis", msg="You cannot use the parmetis variant without metis")
     conflicts("+ptscotch", when="~mpi", msg="You cannot use the ptscotch variant without mpi")
     conflicts("+blr_mt", when="~openmp", msg="You cannot use the blr_mt variant without openmp")
+    conflicts(
+        "^[virtuals=blas] openblas+ilp64",
+        when="~int64",
+        msg="mumps~int64 calls BLAS with 32-bit integers",
+    )
 
     @when("+incfort")
     def patch(self):
