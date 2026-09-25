@@ -64,6 +64,9 @@ class MfemMgis(CMakePackage):
     # the project is written in C++20 and documents gcc 11 as the minimum version
     conflicts("%gcc@:10")
 
+    # releases do not compile without MPI, fixed after 1.0.4
+    conflicts("~mpi", when="@:1.0.4")
+
     # 1.0.0 asserts that HYPRE_BigInt is a 32 bit integer
     conflicts("+int64", when="@1.0.0")
 
