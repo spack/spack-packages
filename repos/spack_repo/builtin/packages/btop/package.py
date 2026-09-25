@@ -22,15 +22,14 @@ class Btop(MakefilePackage, CMakePackage):
 
     version("1.4.7", sha256="933de2e4d1b2211a638be463eb6e8616891bfba73aef5d38060bd8319baeefc6")
     version("1.4.6", sha256="4beb90172c6acaac08c1b4a5112fb616772e214a7ef992bcbd461453295a58be")
-    with default_args(deprecated=True):
-        version("1.4.4", sha256="98d464041015c888c7b48de14ece5ebc6e410bc00ca7bb7c5a8010fe781f1dd8")
-        version("1.4.3", sha256="81b133e59699a7fd89c5c54806e16452232f6452be9c14b3a634122e3ebed592")
-        version("1.4.0", sha256="ac0d2371bf69d5136de7e9470c6fb286cbee2e16b4c7a6d2cd48a14796e86650")
-        version("1.3.2", sha256="331d18488b1dc7f06cfa12cff909230816a24c57790ba3e8224b117e3f0ae03e")
-        version("1.3.0", sha256="375e078ce2091969f0cd14030620bd1a94987451cf7a73859127a786006a32cf")
-        version(
-            "1.2.13", sha256="668dc4782432564c35ad0d32748f972248cc5c5448c9009faeb3445282920e02"
-        )
+    version("1.4.4", sha256="98d464041015c888c7b48de14ece5ebc6e410bc00ca7bb7c5a8010fe781f1dd8")
+    version("1.4.3", sha256="81b133e59699a7fd89c5c54806e16452232f6452be9c14b3a634122e3ebed592")
+    version("1.4.0", sha256="ac0d2371bf69d5136de7e9470c6fb286cbee2e16b4c7a6d2cd48a14796e86650")
+    version("1.3.2", sha256="331d18488b1dc7f06cfa12cff909230816a24c57790ba3e8224b117e3f0ae03e")
+    version("1.3.0", sha256="375e078ce2091969f0cd14030620bd1a94987451cf7a73859127a786006a32cf")
+    version("1.2.13", sha256="668dc4782432564c35ad0d32748f972248cc5c5448c9009faeb3445282920e02")
+
+    deprecated("@:1.4.6", reason="retired")
 
     build_system("makefile", conditional("cmake", when="@1.3.0:"), default="cmake")
 
