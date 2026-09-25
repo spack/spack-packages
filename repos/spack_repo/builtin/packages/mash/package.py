@@ -41,6 +41,15 @@ class Mash(AutotoolsPackage):
             )
             filter_file("CFLAGS += -include src/mash/memcpyLink.h", "", "Makefile.in", string=True)
 
+            # Fix missing <cstdint> include needed by newer GCC/libstdc++
+            if self.spec.satisfies("%gcc@12:"):
+                filter_file(
+                    '#include "version.h"',
+                    '#include "version.h"\n#include <cstdint>',
+                    "src/mash/Command.cpp",
+                    string=True,
+                )
+
     def configure_args(self):
         args = []
         args.append("--with-capnp=" + self.spec["capnproto"].prefix)
