@@ -19,6 +19,7 @@ class PyTorchdata(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("0.11.0", sha256="945c53a8587567624aaad2d66204fbae9acb9535696554c53ffeb83320c308b9")
     version("0.10.1", sha256="42f977c6a4a890848ef50c4ce3e01beeec04cc921e3ccc71d941f97de209bbfb")
     version("0.9.0", sha256="b547bbe848ad813cc5365fe0bb02051150bec6c7c4ee7bffd6b6d3d7bdeddd75")
     version("0.8.0", sha256="d5d27b264e79d7d00ad4998f14d097b770332d979672dceb6d038caf204f1208")
@@ -44,13 +45,14 @@ class PyTorchdata(PythonPackage):
 
     with default_args(type=("build", "run")):
         # https://github.com/pytorch/data#version-compatibility
-        depends_on("python@3.9:3.13", when="@0.10:")
-        depends_on("python@3.9:3.12", when="@0.9")
+        depends_on("python@3.9:3.13", when="@0.11:")
+        depends_on("python@3.9:3.12", when="@0.9:0.10")
         depends_on("python@3.8:3.12", when="@0.8")
         depends_on("python@3.8:3.11", when="@0.6:0.7")
         depends_on("python@3.7:3.10", when="@:0.5")
 
         depends_on("py-torch@main", when="@main")
+        depends_on("py-torch@2.6.0", when="@0.11:")
         depends_on("py-torch@2.5.0", when="@0.9:0.10")
         depends_on("py-torch@2.4.0", when="@0.8.0")
         depends_on("py-torch@2.1.1", when="@0.7.1")
