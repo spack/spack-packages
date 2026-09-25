@@ -50,7 +50,12 @@ class Fontconfig(AutotoolsPackage):
 
     def configure_args(self):
         font_path = join_path(self.spec["font-util"].prefix, "share", "fonts")
-        args = ["--enable-libxml2", "--disable-docs", f"--with-default-fonts={font_path}"]
+        args = [
+            "--enable-libxml2",
+            "--disable-docs",
+            f"--with-default-fonts={font_path}",
+            "--disable-cache-build",
+        ]
         ldflags = []
         libs = []
         deps = []
