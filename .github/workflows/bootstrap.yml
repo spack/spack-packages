@@ -69,6 +69,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
+      - name: Install Node.js for local workflow runs using act
+        if: ${{ github.actor == 'nektos/act' }}
+        run: |
+          yum update -y
+          yum install -y nodejs
       - uses: ./.github/actions/checkout-spack
       - name: Bootstrap clingo
         run: |
@@ -176,6 +181,7 @@ jobs:
 
   bootstrap-dev-rhel8:
     runs-on: ubuntu-latest
+    if: ${{ github.actor != 'nektos/act' }}
     container: registry.access.redhat.com/ubi8/ubi
     steps:
       - name: Install dependencies
@@ -187,6 +193,11 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           fetch-depth: 0
+      - name: Install Node.js for local workflow runs using act
+        if: ${{ github.actor == 'nektos/act' }}
+        run: |
+          yum update -y
+          yum install -y nodejs
       - uses: ./.github/actions/checkout-spack
         with:
           fetch-depth: 0
