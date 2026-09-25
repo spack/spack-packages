@@ -70,6 +70,10 @@ class MfemMgis(CMakePackage):
     # 1.0.0 asserts that HYPRE_BigInt is a 32 bit integer
     conflicts("+int64", when="@1.0.0")
 
+    # mfem@4.10: aborts when the 'Elasticity' strategy of HypreBoomerAMG is used
+    # without Ordering::byVDIM, backport of the fix made after the 1.0.4 release
+    patch("mfem-mgis-1.0-boomeramg-elasticity.patch", when="@:1.0.4")
+
     # missing include in a test, fixed upstream after the 1.0.1 release
     patch(
         "https://github.com/thelfer/mfem-mgis/commit/942dc5e9bd6de7535e466f13f93cdcbb53b6f414.patch?full_index=1",
