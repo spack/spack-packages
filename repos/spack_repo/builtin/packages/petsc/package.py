@@ -492,6 +492,12 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         lapack_blas = spec["lapack"].libs + spec["blas"].libs
         options.extend(["--with-blas-lapack-lib=%s" % lapack_blas.joined()])
 
+        # Avoid configure's runtime test for 64-bit BLAS indices (unreliable, e.g. with +cuda)
+        blas_lapack = (spec["blas"], spec["lapack"])
+        if all("ilp64" in s.variants for s in blas_lapack):
+            ilp64 = any(s.satisfies("+ilp64") for s in blas_lapack)
+            options.append(f"--known-64-bit-blas-indices={int(ilp64)}")
+
         if "+batch" in spec:
             options.append("--with-batch=1")
         if "+knl" in spec:
