@@ -1,0 +1,21 @@
+diff --git a/psz/src/utils/verinfo_nv.cu b/psz/src/utils/verinfo_nv.cu
+index d8dced1..f1ddeb8 100644
+--- a/psz/src/utils/verinfo_nv.cu
++++ b/psz/src/utils/verinfo_nv.cu
+@@ -101,11 +101,13 @@ void CUDA_devices()
+     cudaDeviceProp deviceProp;
+     cudaGetDeviceProperties(&deviceProp, dev);
+ 
++    int memoryClockRate = 0;
++    getCudaAttribute<int>(&memoryClockRate, CU_DEVICE_ATTRIBUTE_MEMORY_CLOCK_RATE, dev);
++
+     auto membw_GiBps = membw_base1024(
+-        deviceProp.memoryBusWidth, deviceProp.memoryClockRate * 1e3);
++        deviceProp.memoryBusWidth, memoryClockRate * 1e3);
+     auto membw_GBps = membw_base1000(
+-        deviceProp.memoryBusWidth, deviceProp.memoryClockRate * 1e3);
+-
++        deviceProp.memoryBusWidth, memoryClockRate * 1e3);
+     printf("- %s\n", deviceProp.name);
+     printf(
+         "  - %d multiprocessors; SM capability: %d.%d; warp size: %d\n",
