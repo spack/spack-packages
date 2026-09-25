@@ -159,7 +159,7 @@ class Xyce(CMakePackage):
 
         options = []
 
-        if "+mpi" in spec:
+        if spec.satisfies("+mpi"):
             options.append(self.define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx))
             options.append(self.define("CMAKE_C_COMPILER", spec["mpi"].mpicc))
         else:
@@ -172,18 +172,18 @@ class Xyce(CMakePackage):
         options.append(self.define_from_variant("Xyce_PLUGIN_SUPPORT", "plugin"))
         options.append(self.define("Trilinos_DIR", spec["trilinos"].prefix))
 
-        if "+pymi" in spec:
+        if spec.satisfies("+pymi"):
             pybind11 = spec["py-pybind11"]
             python = spec["python"]
             options.append("-DXyce_PYMI:BOOL=ON")
             options.append(f"-Dpybind11_DIR:PATH={pybind11.prefix}")
             options.append(f"-DPython_ROOT_DIR:FILEPATH={python.prefix}")
             options.append("-DPython_FIND_STRATEGY=LOCATION")
-        if "+verbose" in spec:
+        if spec.satisfies("+verbose"):
             options.append("-DXyce_VERBOSE_LINEAR=ON")
             options.append("-DXyce_VERBOSE_NONLINEAR=ON")
             options.append("-DXyce_VERBOSE_TIME=ON")
-        if "+fftw" in spec:
+        if spec.satisfies("+fftw"):
             options.append("-DXyce_USE_FFTW=ON")
             options.append(f"-DFFTW_ROOT:PATH={spec['fftw'].prefix}")
 
