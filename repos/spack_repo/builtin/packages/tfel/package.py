@@ -204,11 +204,28 @@ class Tfel(CMakePackage):
     variant("comsol", default=True, description="Enables comsol interface")
     variant("diana-fea", default=True, description="Enables DIANA-FEA interface")
 
+    # TDLS support is not part of any release yet
+    variant(
+        "tdls",
+        default=False,
+        when="@master",
+        description="Makes TDLS linear solvers available in TFEL/MFront",
+    )
+    variant(
+        "tdls_default",
+        default=False,
+        when="+tdls",
+        description="Uses TDLS as the default linear solver in MFront",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
     depends_on("java", when="+java")
+    # header-only, but tfel-config hard-codes its include path, which mfront
+    # uses to compile the generated behaviours
+    depends_on("tdls", when="+tdls", type=("build", "link", "run"))
     depends_on("python", when="+python", type=("build", "link", "run"))
 
     with when("+python_bindings"):
@@ -254,6 +271,15 @@ class Tfel(CMakePackage):
 
         args.append(self.define_from_variant("local-castem-header", "castem"))
         args.append(self.define_from_variant("enable-python-bindings", "python_bindings"))
+        # numpy is only used by the python bindings, but since 3.4.8 it is required
+        # as soon as python is enabled, unless numpy support is disabled
+        args.append(self.define_from_variant("enable-numpy-support", "python_bindings"))
+        args.append(self.define_from_variant("enable-tdls", "tdls"))
+        args.append(
+            self.define_from_variant(
+                "enable-tdls-as-default-linear-system-solver-in-mfront", "tdls_default"
+            )
+        )
 
         if ("+python" in self.spec) or ("+python_bindings" in self.spec):
             # Note: calls find_package(PythonLibs) before find_package(PythonInterp), so these
