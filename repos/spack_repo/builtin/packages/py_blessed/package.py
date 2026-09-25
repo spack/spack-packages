@@ -17,6 +17,7 @@ class PyBlessed(PythonPackage):
 
     license("MIT")
 
+    version("1.50.0", sha256="046c9b2a5283a9c5bc340ed23b7d1c1f10ef2d7fb30b14bae13ef7ffc1f3ba56")
     version("1.19.0", sha256="4db0f94e5761aea330b528e84a250027ffe996b5a94bf03e502600c9a5ad7a61")
     version("1.18.1", sha256="8b09936def6bc06583db99b65636b980075733e13550cb6af262ce724a55da23")
     version("1.18.0", sha256="1312879f971330a1b7f2c6341f2ae7e2cbac244bfc9d0ecfbbecd4b0293bc755")
@@ -35,6 +36,9 @@ class PyBlessed(PythonPackage):
     version("1.16.0", sha256="34b78e9b56c2ba2f6a9a625cc989d6cf4ae8ae87dcc4ed8ad144660ae4cf7784")
     version("1.15.0", sha256="777b0b6b5ce51f3832e498c22bc6a093b6b5f99148c7cbf866d26e2dec51ef21")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-wcwidth@0.1.4:", type=("build", "run"))
+    depends_on("py-setuptools", when="@:1.50.0", type="build")
+    depends_on("py-flit-core@3.11:4", when="@1.50.0:", type="build")
+    depends_on("py-jinxed@2.1:3", when="@1.50.0:", type=("build", "run"))
+    depends_on("py-wcwidth@0.8.3:", when="@1.50.0:", type=("build", "run"))
+    depends_on("py-wcwidth@0.1.4:", when="@:1.49", type=("build", "run"))
     depends_on("py-six@1.9.0:", type=("build", "run"))
