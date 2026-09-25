@@ -326,6 +326,24 @@ class Openblas(CMakePackage, MakefilePackage):
         when="@0.3.30 +dynamic_dispatch target=aarch64:",
     )
 
+    # Fix a stack overflow in the Haswell and Zen fallback GEMM kernels of DYNAMIC_ARCH builds
+    # on AVX-512 Zen 4/5 hosts (https://github.com/OpenMathLib/OpenBLAS/issues/6013, 6021)
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/a59a5c7605ac7ed225e7a43acb9fa4c24e91a22a.patch?full_index=1",
+        sha256="cea51fd1a445259e05a52f0dbfb1cdc3969290879af161dd2b8242bd81840eee",
+        when="@0.3.34 target=x86_64:",
+    )
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/a78196c5d7e0778b9dab394161b0e0a282836f4f.patch?full_index=1",
+        sha256="b047da5b27e9cef83551774d734b1d040eaae41bd0e6135ce2064ea9d7f94926",
+        when="@0.3.34 target=x86_64:",
+    )
+    patch(
+        "https://github.com/OpenMathLib/OpenBLAS/commit/0302a537b86eb1fff00ade38a1b14f62c28d68c2.patch?full_index=1",
+        sha256="7cf59b4a32af2f7934a7c63dbb4f600e8c7f2bdb4a3c1500dc0f24a89bb41367",
+        when="@0.3.34 target=x86_64:",
+    )
+
     # ilp64 and symbol suffixes are not supported with CMake build system
     requires("~ilp64", when="build_system=cmake")
     requires("symbol_suffix=none", when="build_system=cmake")
