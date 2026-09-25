@@ -65,6 +65,10 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     with when("+python"):
         extends("python")
         depends_on("python+shared~libxml2")
+        # For libxml2 >= 2.13, python bindings are built via standard python tools
+        depends_on("py-pip", type="build", when="@2.13:")
+        depends_on("py-setuptools", type="build", when="@2.13:")
+        depends_on("py-wheel", type="build", when="@2.13:")
 
     # XML Conformance Test Suites
     # See https://www.w3.org/XML/Test/ for information
@@ -203,6 +207,23 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
 class AnyBuilder(BaseBuilder):
     @run_after("install")
+    def install_python_bindings(self):
+        # Manually invoke pip in the python subdirectory
+        # for versions that dropped autotools python integration
+        if self.spec.satisfies("@2.13: +python"):
+            with working_dir("python"):
+                python_cmd = self.spec["python"].command
+                python_cmd(
+                    "-m",
+                    "pip",
+                    "install",
+                    "--no-build-isolation",
+                    "--no-deps",
+                    "--prefix={0}".format(self.prefix),
+                    ".",
+                )
+
+    @run_after("install")
     @on_package_attributes(run_tests=True)
     def import_module_test(self):
         if self.spec.satisfies("+python"):
@@ -227,19 +248,25 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         spec = self.spec
 
         args = [
-            "--with-lzma={0}".format(spec["xz"].prefix),
             "--with-iconv={0}".format(self._iconv_option()),
         ]
 
+        # In >= 2.13, lzma is handled via pkg-config and explicit paths throw a warning
+        if spec.satisfies("@:2.12"):
+            args.append("--with-lzma={0}".format(spec["xz"].prefix))
+
         if spec.satisfies("+python"):
-            args.extend(
-                [
-                    "--with-python={0}".format(spec["python"].home),
-                    "--with-python-install-dir={0}".format(python_platlib),
-                ]
-            )
+            # Autotools python configuration flags were removed in 2.13
+            if spec.satisfies("@:2.12"):
+                args.extend(
+                    [
+                        "--with-python={0}".format(spec["python"].home),
+                        "--with-python-install-dir={0}".format(python_platlib),
+                    ]
+                )
         else:
-            args.append("--without-python")
+            if spec.satisfies("@:2.12"):
+                args.append("--without-python")
 
         args.extend(self.with_or_without("http"))
 
