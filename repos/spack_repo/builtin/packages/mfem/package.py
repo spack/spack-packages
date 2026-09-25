@@ -195,11 +195,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant("libceed", default=False, description="Enable libCEED backend")
     variant("umpire", default=False, description="Enable Umpire support")
     variant("amgx", default=False, description="Enable NVIDIA AmgX solver support")
-    # cuDSS support was added after the MFEM 4.9 release.
     variant(
         "cudss",
         default=False,
-        when="@develop",
+        when="@4.10:",
         description="Enable NVIDIA cuDSS solver support",
     )
 
