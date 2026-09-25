@@ -1,0 +1,25 @@
+diff --git a/cmake/Modules/ConfigBinutils.cmake b/cmake/Modules/ConfigBinutils.cmake
+index 5077e8be..d0d05c59 100644
+--- a/cmake/Modules/ConfigBinutils.cmake
++++ b/cmake/Modules/ConfigBinutils.cmake
+@@ -72,12 +72,17 @@ mark_as_advanced(binutils_CONFIG_FLAGS)
+ string(REPLACE " " ";" _binutils_CONFIG_FLAGS "${binutils_CONFIG_FLAGS}")
+ 
+ include(ExternalProject)
++if(TIMEMORY_BINUTILS_DOWNLOAD_URL)
++    set(_TIMEMORY_BINUTILS_URLS ${TIMEMORY_BINUTILS_DOWNLOAD_URL})
++else()
++    set(_TIMEMORY_BINUTILS_URLS
++        https://ftpmirror.gnu.org/gnu/binutils/binutils-2.46.0.tar.gz
++        https://mirrors.kernel.org/sourceware/binutils/releases/binutils-2.46.0.tar.gz)
++endif()
+ externalproject_add(
+     binutils-external
+     PREFIX ${PROJECT_BINARY_DIR}/external/binutils
+-    URL ${TIMEMORY_BINUTILS_DOWNLOAD_URL}
+-        https://ftpmirror.gnu.org/gnu/binutils/binutils-2.46.0.tar.gz
+-        https://mirrors.kernel.org/sourceware/binutils/releases/binutils-2.46.0.tar.gz
++    URL ${_TIMEMORY_BINUTILS_URLS}
+     BUILD_IN_SOURCE 1
+     CONFIGURE_COMMAND
+         ${CMAKE_COMMAND} -E env CC=${CMAKE_C_COMPILER}

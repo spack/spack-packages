@@ -24,6 +24,8 @@ def submodules(package):
         "projects/rocprofiler-sdk/external/yaml-cpp",
         "projects/rocprofiler-sdk/external/json",
     ]
+    if package is not None and package.spec.satisfies("@7.13:"):
+        submodules.append("projects/rocprofiler-sdk/external/abseil-cpp")
     return submodules
 
 
@@ -197,7 +199,9 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     depends_on("fmt@:10", when="@7.2:7.13 ~internal-fmt")
     depends_on("fmt@:12.1", when="@7.14: ~internal-fmt")
     depends_on("glog", when="@7.2:")
-    depends_on("abseil-cpp", when="@7.13:")
+    depends_on("yaml-cpp@:0.8.0", when="@10.0")
+    depends_on("nlohmann-json", when="@10.0")
+    depends_on("elfio", when="@10.0")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
@@ -273,10 +277,47 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         sha256="18a3905f7917340387e3edc8e5766f31ab1af41f4ecc5665da6c769ca21c4ee8",
     )
 
+    resource(
+        name="abseil-cpp",
+        placement="projects/rocprofiler-sdk/external/abseil-cpp",
+        url="https://github.com/abseil/abseil-cpp/archive/refs/tags/20260107.1.tar.gz",
+        sha256="4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195",
+        when="@7.13:",
+    )
+
+    resource(
+        name="cereal",
+        placement="projects/rocprofiler-sdk/external/cereal",
+        url="https://github.com/jrmadsen/cereal/archive/40a30defcb8874270a04836d316502b08904b2bc.tar.gz",
+        sha256="4c16319af12ff9db849d3029e16badc2751a4c25f76cbe74517b513bca63a451",
+        when="@10.0",
+    )
+
+    resource(
+        name="ptl",
+        placement="projects/rocprofiler-sdk/external/ptl",
+        url="https://github.com/jrmadsen/PTL/archive/48df41625430d27ce43cf197fd467a8dda87cb45.tar.gz",
+        sha256="817af2307fc4b776fdf5984079d4d2631cf2c219ba1963502dd6fb41cb6b77a4",
+        when="@10.0",
+    )
+
+    resource(
+        name="perfetto",
+        placement="projects/rocprofiler-sdk/external/perfetto",
+        url="https://github.com/google/perfetto/archive/refs/tags/v44.0.tar.gz",
+        sha256="db4162ee6495b1fcc13ba7aca77d67f9fd1766d184743137a04af8b1e3906b9d",
+        when="@10.0",
+    )
+
     patch(
         "https://github.com/ROCm/rocm-systems/commit/ef7253365c420ca486f074b9e9119a222e30fea0.patch?full_index=1",
         sha256="05a71386d12d7fc98a40c025dc65a804556e01f381d1101ea244f35f29edd3d8",
         when="@7.2",
+    )
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/9446ab5e047a24df93c97d85c25cf3ac51993711.patch?full_index=1",
+        sha256="118f917da5b63ae85219d6f27d675d397bd2958807af67c9c5725967eea84007",
+        when="@10.0",
     )
 
     @property
@@ -298,7 +339,13 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
             args.append(self.define("ROCPROFILER_BUILD_GOTCHA", "OFF"))
             args.append(self.define("ROCPROFILER_BUILD_SQLITE3", "OFF"))
         if self.spec.satisfies("@7.14:"):
-            args.append(self.define("ROCPROFILER_BUILD_ABSEIL", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_ABSEIL", "ON"))
+        if self.spec.satisfies("@10.0:"):
+            args.append(self.define("ROCPROFILER_BUILD_YAML_CPP", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_ELFIO", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_JSON", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_DOCS", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_GHC_FS", "OFF"))
         return args
 
     def setup_run_environment(self, env):

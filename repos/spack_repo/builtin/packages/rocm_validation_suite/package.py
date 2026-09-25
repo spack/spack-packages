@@ -111,6 +111,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     patch("011_add_inc_and_lib_path_for_pciutils-10.0.patch", when="@10.0:")
     patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
     patch("013-add-hiprand-includes-7.13.patch", when="@7.13:")
+    patch("014-skip-external-downloads-10.0.patch", when="@10.0:")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
@@ -119,6 +120,24 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     depends_on("libdrm", when="@6.4:")
     depends_on("pciutils+shared", when="@6.4:")
     depends_on("numactl", when="@7.13:")
+
+    # needed for air-gapped environments
+    resource(
+        name="mxDataGenerator",
+        url="https://github.com/ROCm/mxDataGenerator/archive/12c016dc694139317feb2e23c59028fde70beaf4.tar.gz",
+        sha256="a0c0a78684da2d26ee883ccc632c8f51a4b00cfd3915707f9675cc8c0cf96483",
+        destination="deps",
+        placement="mxDataGenerator",
+        when="@10.0:",
+    )
+    resource(
+        name="TransferBench",
+        url="https://github.com/ROCm/TransferBench/archive/c78c4aec95e5e8317ddecdf6e224443f63473312.tar.gz",
+        sha256="714945ef60b5d386f938746c872a8d8f48dbc9036a2e1974c0ac04fc8d468d83",
+        destination="deps",
+        placement="TransferBench",
+        when="@10.0:",
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
@@ -309,6 +328,20 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
             # hipblaslt config file no longer sets this
             args.append(
                 self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include)
+            )
+
+        if self.spec.satisfies("@10.0:"):
+            args.append(
+                self.define(
+                    "MXDATAGENERATOR_INC_DIR",
+                    join_path(self.stage.source_path, "deps", "mxDataGenerator", "lib", "include"),
+                )
+            )
+            args.append(
+                self.define(
+                    "TRANSFERBENCH_INC_DIR",
+                    join_path(self.stage.source_path, "deps", "TransferBench", "src", "header"),
+                )
             )
 
         return args
