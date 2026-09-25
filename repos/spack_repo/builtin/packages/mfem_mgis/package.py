@@ -27,20 +27,29 @@ class MfemMgis(CMakePackage):
     version("1.0.1", sha256="74f0d4d1ecbb3a8a152289899eda5be6ab45c4735d44a58ec2db3a6b2fd7b97b")
     version("1.0.0", sha256="34ee7ee0751672ce195ef9e53d7d75205a19ff71da791faf76afbf67265ee1f6")
 
-    variant("mumps", default=True, description="Enable the MUMPS solver in MFEM")
+    variant("mpi", default=True, description="Enable MPI parallelism")
+    # mfem only supports MUMPS with MPI
+    variant("mumps", default=True, when="+mpi", description="Enable the MUMPS solver in MFEM")
     variant("int64", default=True, description="Use 64-bit integers in hypre and metis")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("mpi")
+    depends_on("mpi", when="+mpi")
     # FindMFEM.cmake shipped with mfem-mgis aborts if mfem lacks SuiteSparse
-    depends_on("mfem@4.8:+mpi+suite-sparse")
+    depends_on("mfem@4.8:+suite-sparse")
+    depends_on("mfem+mpi", when="+mpi")
+    depends_on("mfem~mpi", when="~mpi")
     depends_on("mfem+mumps", when="+mumps")
     depends_on("mfem~mumps", when="~mumps")
-    depends_on("hypre")
-    depends_on("hypre+int64", when="+int64")
-    depends_on("hypre~int64", when="~int64")
+    # hypre is only used by the parallel build
+    with when("+mpi"):
+        depends_on("hypre")
+        # mfem@:4.8 needs hypre@:2, only buildable with autotools: stating it
+        # keeps older solvers from picking mfem@develop to get cmake as default
+        depends_on("hypre build_system=autotools", when="^mfem@:4.8")
+        depends_on("hypre+int64", when="+int64")
+        depends_on("hypre~int64", when="~int64")
     depends_on("metis+int64", when="+int64")
     depends_on("metis~int64", when="~int64")
     depends_on("mgis")
@@ -67,6 +76,12 @@ class MfemMgis(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("MFEMMGIS_DIR", join_path(self.prefix.share, "mfem-mgis", "cmake"))
+        # needed by projects built on mfem-mgis@:1.0.3, whose CMake
+        # configuration file does not locate TFEL, MGIS and hypre
+        env.set("TFEL_DIR", self.spec["tfel"].prefix.share.tfel.cmake)
+        env.set("MFrontGenericInterface_DIR", self.spec["mgis"].prefix.share.mgis.cmake)
+        if self.spec.satisfies("+mpi"):
+            env.set("HYPRE_DIR", self.spec["hypre"].prefix)
 
     def check(self):
         """skip target 'test' which doesn't build the test programs used by tests"""
@@ -77,10 +92,12 @@ class MfemMgis(CMakePackage):
                 self._if_ninja_target_execute("check")
 
     def cmake_args(self):
-        return [
+        args = [
             self.define("USE_EXTERNAL_COMPILER_FLAGS", True),
             self.define("CMAKE_POSITION_INDEPENDENT_CODE", True),
             self.define("MFrontGenericInterface_DIR", self.spec["mgis"].prefix.share.mgis.cmake),
             self.define("TFEL_DIR", self.spec["tfel"].prefix.share.tfel.cmake),
-            self.define("HYPRE_DIR", self.spec["hypre"].prefix),
         ]
+        if self.spec.satisfies("+mpi"):
+            args.append(self.define("HYPRE_DIR", self.spec["hypre"].prefix))
+        return args
