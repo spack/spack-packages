@@ -78,7 +78,7 @@ class Dyninst(CMakePackage):
 
     patch(
         "https://github.com/dyninst/dyninst/commit/e03567db37547f9a848f68f5a0e2c58d2aa17fe9.patch?full_index=1",
-        when="@:13.0.0 %tbb@2021.1:",
+        when="@:13.0.0 ^[virtuals=tbb] intel-tbb@2021.1:",
         sha256="db3ede99643346b1beb9a2f7849e7aba3d36204093b97752c2bc0ec7e9e79290",
     )
 
