@@ -53,6 +53,7 @@ class Zfp(CMakePackage, CudaPackage):
     depends_on("cmake@3.9.0:", type="build")
     depends_on("cuda@7:", type=("build", "test", "run"), when="+cuda")
     depends_on("python", type=("build", "test", "run"), when="+python")
+    depends_on("python@:3.11", type=("build", "test", "run"), when="@:1.0.1 +python")
     depends_on("py-numpy", type=("build", "test", "run"), when="+python")
     depends_on("py-cython", type="build", when="+python")
 
