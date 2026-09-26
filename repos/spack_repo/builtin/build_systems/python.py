@@ -8,10 +8,10 @@ import re
 import shutil
 import stat
 import urllib
-
 from functools import lru_cache
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
+import spack.util.web as web_util
 from spack.package import (
     BuilderWithDefaults,
     ClassProperty,
@@ -40,7 +40,6 @@ from spack.package import (
     when,
     working_dir,
 )
-import spack.util.web as web_util
 
 
 def _flatten_dict(dictionary: Mapping[str, object]) -> Iterable[str]:
