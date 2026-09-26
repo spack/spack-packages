@@ -19,6 +19,18 @@ class Aotriton(CMakePackage):
 
     license("MIT")
     version(
+        "0.12.1b",
+        tag="0.12.1b",
+        commit="8fdb4a4353f95b88c9542f5e5637efc1e1e0e530",
+        submodules=True,
+    )
+    version(
+        "0.12b",
+        tag="0.12b",
+        commit="269036897bcee4292f4e928767df1e3dd0e3c8bd",
+        submodules=True,
+    )
+    version(
         "0.11.1b",
         tag="0.11.1b",
         commit="98371989e8a23267e284c94e95156a139e4b33c4",
@@ -149,6 +161,6 @@ class Aotriton(CMakePackage):
             self.spec["aotriton-llvm"].prefix.lib,
         ]
         args.append(self.define("CMAKE_INSTALL_RPATH", rpath_dirs))
-        if self.spec.satisfies("@0.11b"):
+        if self.spec.satisfies("@0.11b:"):
             args.append(self.define("AOTRITON_USE_TORCH", "OFF"))
         return args
