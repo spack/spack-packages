@@ -130,6 +130,22 @@ class PyMeshioplusplus(PythonPackage):
             return "ON" if spec.satisfies(variant) else "OFF"
 
         return {
+            # hdf5's shared library reaches the link line only through
+            # find_package(HDF5)'s imported target, so the directory CMake
+            # resolved it from never makes it into Spack's seeded install
+            # RPATH: the built _core extension has a DT_NEEDED on
+            # libhdf5.so.<abi> with no RPATH entry for it. `spack load` does not
+            # paper over the gap either -- for this spec it exports
+            # CMAKE_PREFIX_PATH, PATH and PKG_CONFIG_PATH but no
+            # LD_LIBRARY_PATH -- so `import meshioplusplus` fails with
+            # "ImportError: libhdf5.so.310: cannot open shared object file" on
+            # an otherwise correct +hdf5 build. use-link-path makes CMake add
+            # the directory of every external library it actually linked, which
+            # is where hdf5's was coming from. Verified by readelf on the
+            # installed extension plus a real import. meshioplusplus itself
+            # needs no equivalent: its libmeshioplusplus.so.0 already resolves
+            # hdf5 without it.
+            "cmake.define.CMAKE_INSTALL_RPATH_USE_LINK_PATH": "ON",
             "cmake.define.MESHIOPLUSPLUS_WITH_HDF5": onoff("+hdf5"),
             "cmake.define.MESHIOPLUSPLUS_WITH_NETCDF": onoff("+netcdf"),
             "cmake.define.MESHIOPLUSPLUS_WITH_ZLIB": onoff("+zlib"),
