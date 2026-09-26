@@ -15,7 +15,7 @@ class PyMeshioplusplus(PythonPackage):
     homepage = "https://github.com/loumalouomega/meshioplusplus"
     # 6.0.0 has no PyPI sdist, so build every version from the GitHub archive
     # (scikit-build-core builds fine from the source tree) for a uniform source.
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v9.10.0.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v16.21.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -24,8 +24,33 @@ class PyMeshioplusplus(PythonPackage):
 
     # Upstream's default branch moved from main to master at v7.0.0.
     version("master", branch="master")
+    # One version per C++ ABI generation, matching meshioplusplus: upstream's
+    # MESHIOPLUSPLUS_ABI_VERSION only moves for a layout change or an inline
+    # body edit in an installed C++ header, and this package builds the same
+    # headers as the pybind11 _core extension's link target, so a version not
+    # listed here is binary-compatible with its neighbours. ABI 8 and 9
+    # (v10.11.0, v10.12.0) were never tagged, hence the v10.6.0 -> v10.14.0
+    # jump. The C API is not involved here at all -- pyproject.toml's Python
+    # floor, numpy/rich requirements and scikit-build-core/pybind11 build
+    # requirements are unchanged across this whole range, so the dependency
+    # block below is identical for every version listed.
+    version("16.21.0", sha256="86bb461db6e01500aeaced5e8aee43a23d08c54eafc3e3b23c3fa6305b76907d")
+    version("16.16.0", sha256="3b58a8528ba6c10f612c870629ef7e5ede1ab5894235302f569b5270e8bb68bf")
+    version("16.14.0", sha256="14fd42e97694be41cf01ed3c4bd3ab2a12d59e71e98f74ef12dd026429542963")
+    version("16.1.0", sha256="54287229e2cfbcd3233e41921f0f43e517a157ddad2371b2300956d6902bf0b6")
+    version("15.1.0", sha256="d6bd51cacb91b0150ccf2f8c40796533f998bc72a79ff55c5cdac96895303134")
+    version("14.0.0", sha256="2124d51a7f201dcae6bbedeeb08571e6e3417d9545d374d035ace94a85e66186")
+    version("12.0.0", sha256="aefd1acc879ee4d122169250bfd3ba637c50343478a148e0ef4e7d25da0d8be7")
+    version("11.0.0", sha256="eb288606f336eba262ac562fd157d2022dc2b97961a08f19632bf49712dba1f7")
+    version("10.17.0", sha256="93e726b896fc076c146b3ef1c79358b91c90e2a1650fe31133ed1d474c37a3d5")
+    version("10.14.0", sha256="d5e1ed0621f636c7e229529106b8574b24c1525d21e7cedeaabe74b46ffa09c8")
+    version("10.6.0", sha256="44e53e14f7bb45350595b871429f35f3baac1e6c0a37f8287a7829eabda26fc0")
+    version("10.0.0", sha256="7da63717e57f4a1cf836d206aa3e0f09d1851595a54ab30bdbef963a66fa6b4a")
+    version("9.22.0", sha256="00c0953bb237ee3308bb2903c579e34d595ffa6b4b020d058c26dbcc5bddd64b")
     version("9.10.0", sha256="6006148e1afb57f6d9426209775c2c6b008d8e10bd3d80ff7c676af9a99fd5fa")
     version("9.4.1", sha256="dc57060303b90a18128e259c5266d48d4a80e68d535ac028467b3ac8d518d772")
+    version("9.2.0", sha256="f42ef3cb835ee563942661ce93a52f8616f135993ccaef31fb2a196a66bd7295")
+    version("9.1.0", sha256="c42c8d18dc53d7a63b2b400a3866843229b9b1afca96f64b389d5b874a6ba05d")
     version("9.0.0", sha256="8d7fdab4763a2174291e40c5da503bbb6d37b36591a54f7c0b1fa869eef54798")
     version("8.7.0", sha256="d8721aa4ed82ef2f7fe49062910826a7012f6823eb22d5290690c298eafe68ec")
     # v8.0.0: the WebAssembly build gained every core format; no change to the
@@ -105,6 +130,22 @@ class PyMeshioplusplus(PythonPackage):
             return "ON" if spec.satisfies(variant) else "OFF"
 
         return {
+            # hdf5's shared library reaches the link line only through
+            # find_package(HDF5)'s imported target, so the directory CMake
+            # resolved it from never makes it into Spack's seeded install
+            # RPATH: the built _core extension has a DT_NEEDED on
+            # libhdf5.so.<abi> with no RPATH entry for it. `spack load` does not
+            # paper over the gap either -- for this spec it exports
+            # CMAKE_PREFIX_PATH, PATH and PKG_CONFIG_PATH but no
+            # LD_LIBRARY_PATH -- so `import meshioplusplus` fails with
+            # "ImportError: libhdf5.so.310: cannot open shared object file" on
+            # an otherwise correct +hdf5 build. use-link-path makes CMake add
+            # the directory of every external library it actually linked, which
+            # is where hdf5's was coming from. Verified by readelf on the
+            # installed extension plus a real import. meshioplusplus itself
+            # needs no equivalent: its libmeshioplusplus.so.0 already resolves
+            # hdf5 without it.
+            "cmake.define.CMAKE_INSTALL_RPATH_USE_LINK_PATH": "ON",
             "cmake.define.MESHIOPLUSPLUS_WITH_HDF5": onoff("+hdf5"),
             "cmake.define.MESHIOPLUSPLUS_WITH_NETCDF": onoff("+netcdf"),
             "cmake.define.MESHIOPLUSPLUS_WITH_ZLIB": onoff("+zlib"),
