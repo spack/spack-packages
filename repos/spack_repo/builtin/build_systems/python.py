@@ -209,7 +209,6 @@ for module in sys.argv[1:]:
     def _get_pypi_info(self):
         """check pypi.org json api and return data"""
         if hasattr(self, "pypi") and self.pypi:
-
             ps = self.pypi.split("/")[0]
             api_url = f"https://pypi.org/pypi/{ps}/json"
             request = urllib.request.Request(
