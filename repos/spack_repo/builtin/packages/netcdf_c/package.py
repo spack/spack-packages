@@ -28,6 +28,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("4.10.1", sha256="33c27231c478c3b35da7c7758fbdd02da1fe407abcb16ddfe195f69d164f930d")
     version("4.10.0", sha256="ce160f9c1483b32d1ba8b7633d7984510259e4e439c48a218b95a023dc02fd4c")
     version("4.9.3", sha256="990f46d49525d6ab5dc4249f8684c6deeaf54de6fec63a187e9fb382cc0ffdff")
     version("4.9.2", sha256="bc104d101278c68b303359b3dc4192f81592ae8640f1aee486921138f7f88cb7")
@@ -590,6 +591,10 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
 
         if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
             config_args.append("CC={0}".format(self.spec["mpi"].mpicc))
+            # MPICH-based MPIs define MPI_Comm_f2c and MPI_Info_f2c as macros, which the
+            # configure script's link test misses. Starting with 4.10.1, this is a hard error.
+            # See https://github.com/Unidata/netcdf-c/issues/3414
+            config_args.extend(["ac_cv_func_MPI_Comm_f2c=yes", "ac_cv_func_MPI_Info_f2c=yes"])
 
         # In general, we rely on the compiler wrapper to inject the required CPPFLAGS and LDFLAGS.
         # However, the injected LDFLAGS are invisible for the configure script and are added
