@@ -295,7 +295,7 @@ class CachedCMakeBuilder(CMakeBuilder):
             # CUDA_FLAGS
             cuda_flags = []
 
-            if not spec.satisfies("cuda_arch=none"):
+            if "cuda_arch" in spec.variants and not spec.satisfies("cuda_arch=none"):
                 cuda_archs = ";".join(spec.variants["cuda_arch"].value)
                 entries.append(cmake_cache_string("CMAKE_CUDA_ARCHITECTURES", cuda_archs))
 
