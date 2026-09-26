@@ -18,8 +18,16 @@ class Denovogear(CMakePackage):
 
     license("GPL-3.0-or-later")
 
-    version("1.1.1", sha256="799fe99193e9cf12320893cf020a3251022f60a49de8677a1c5a18c578fe4be2")
-    version("1.1.0", sha256="f818f80cd67183294c8aae312cad8311e6a9abede1f687567bb079d29f79c005")
+    version(
+        "1.1.1",
+        sha256="799fe99193e9cf12320893cf020a3251022f60a49de8677a1c5a18c578fe4be2",
+        deprecated=True,
+    )
+    version(
+        "1.1.0",
+        sha256="f818f80cd67183294c8aae312cad8311e6a9abede1f687567bb079d29f79c005",
+        deprecated=True,
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

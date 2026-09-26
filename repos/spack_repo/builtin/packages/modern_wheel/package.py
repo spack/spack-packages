@@ -20,7 +20,11 @@ class ModernWheel(CMakePackage):
 
     license("MIT")
 
-    version("1.2", sha256="48612f698d7159f0eb10d93ddc3e2682b06a54d3a836ff227636be3261aed15e")
+    version(
+        "1.2",
+        sha256="48612f698d7159f0eb10d93ddc3e2682b06a54d3a836ff227636be3261aed15e",
+        deprecated=True,
+    )
     version("1.1", sha256="d8ba4891257b96108e9b9406a556f8ced3b71ce85c3fcdca6bfd9cc37bf010a3")
     version("1.0", sha256="b90a1e29af0b67dfa4c07f9c19b2d04fa78cd878b29a9c42bc766dabd6cb1b90")
 

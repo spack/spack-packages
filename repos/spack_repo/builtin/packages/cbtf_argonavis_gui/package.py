@@ -30,7 +30,7 @@ class CbtfArgonavisGui(QMakePackage):
 
     depends_on("qt@5.10.0:")
 
-    depends_on("boost@1.66.0:1.69.0")
+    depends_on("boost@1.66.0:")
 
     # TODO: replace this with an explicit list of components of Boost,
     # for instance depends_on('boost +filesystem')

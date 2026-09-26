@@ -27,16 +27,19 @@ class GpiSpace(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("latest", branch="main")
-    version("26.3", sha256="0f940bf8fd818998cdf5942cebdb187726f1f97ab8bf1a5b49192c503fdc7261")
-    version("24.12", sha256="9cd97b8e41b4494c14a90afff6b801f9cf3b5811205e39c33a481ab09db59920")
-    version("23.06", sha256="b4ee51f309c80c12a7842c0909041903608c6144535bc6faac3bbb8ff40e9213")
-    version("22.12", sha256="1c0ab9a1ada9dbbc0f80fb04ddbbb24ff900231f709cb99aa63f0d135a3ad398")
-    version("22.09", sha256="f938847205181081ed24896bba16302ac35bbf478b4ceecae5bb21d5a38c8556")
-    version("22.06", sha256="d89d8a7b574430c4f151a3768073fa44d32e5cc7606fbe0f58aeedf6f5fefc0b")
-    version("22.03", sha256="b01500b9480452aee865a0ef98cf40864f847b7e22ea572f9a6f0f5ac2ae9a1a")
-    version("21.12.1", sha256="6c49aca95a32e66fa1e34bef542c2f380e91f86c9c2b3b0d98921901bab7abce")
-    version("21.12", sha256="51794e2b593b8d1dc7d6310e17744842919bf44205b2cb7a79de2f2bbac3352a")
-    version("21.09", sha256="7f3861c2bfec15a4da46378ea38b304e1462ed315cd315b81ab2c2a8ba50dd3e")
+    with default_args(deprecated=True):
+        version("26.3", sha256="0f940bf8fd818998cdf5942cebdb187726f1f97ab8bf1a5b49192c503fdc7261")
+        version("24.12", sha256="9cd97b8e41b4494c14a90afff6b801f9cf3b5811205e39c33a481ab09db59920")
+        version("23.06", sha256="b4ee51f309c80c12a7842c0909041903608c6144535bc6faac3bbb8ff40e9213")
+        version("22.12", sha256="1c0ab9a1ada9dbbc0f80fb04ddbbb24ff900231f709cb99aa63f0d135a3ad398")
+        version("22.09", sha256="f938847205181081ed24896bba16302ac35bbf478b4ceecae5bb21d5a38c8556")
+        version("22.06", sha256="d89d8a7b574430c4f151a3768073fa44d32e5cc7606fbe0f58aeedf6f5fefc0b")
+        version("22.03", sha256="b01500b9480452aee865a0ef98cf40864f847b7e22ea572f9a6f0f5ac2ae9a1a")
+        version(
+            "21.12.1", sha256="6c49aca95a32e66fa1e34bef542c2f380e91f86c9c2b3b0d98921901bab7abce"
+        )
+        version("21.12", sha256="51794e2b593b8d1dc7d6310e17744842919bf44205b2cb7a79de2f2bbac3352a")
+        version("21.09", sha256="7f3861c2bfec15a4da46378ea38b304e1462ed315cd315b81ab2c2a8ba50dd3e")
 
     variant(
         "monitor",

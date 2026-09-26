@@ -28,7 +28,9 @@ class Fenics(CMakePackage):
         "2019.1.0.post0", sha256="61abdcdb13684ba2a3ba4afb7ea6c7907aa0896a46439d3af7e8848483d4392f"
     )
     version(
-        "2018.1.0.post1", sha256="425cc49b90e0f5c2ebdd765ba9934b1ada97e2ac2710d982d6d267a5e2c5982d"
+        "2018.1.0.post1",
+        sha256="425cc49b90e0f5c2ebdd765ba9934b1ada97e2ac2710d982d6d267a5e2c5982d",
+        deprecated=True,
     )
 
     dolfin_versions = ["2019.1.0", "2018.1.0"]

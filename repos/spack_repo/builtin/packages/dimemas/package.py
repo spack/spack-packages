@@ -15,7 +15,11 @@ class Dimemas(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
-    version("5.4.1", sha256="10ddca3745a56ebab5c1ba180f6f4bce5832c4deac50c1b1dc08271db5c7cafa")
+    version(
+        "5.4.1",
+        sha256="10ddca3745a56ebab5c1ba180f6f4bce5832c4deac50c1b1dc08271db5c7cafa",
+        deprecated=True,
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

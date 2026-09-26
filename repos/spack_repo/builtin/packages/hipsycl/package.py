@@ -28,10 +28,11 @@ class Hipsycl(CMakePackage, ROCmPackage):
     version("24.06.0", commit="fc51dae9006d6858fc9c33148cc5f935bb56b075", submodules=True)
     version("24.02.0", commit="974adc33ea5a35dd8b5be68c7a744b37482b8b64", submodules=True)
     version("23.10.0", commit="3952b468c9da89edad9dff953cdcab0a3c3bf78c", submodules=True)
-    version("0.9.4", commit="99d9e24d462b35e815e0e59c1b611936c70464ae", submodules=True)
-    version("0.9.3", commit="51507bad524c33afe8b124804091b10fa25618dc", submodules=True)
-    version("0.9.2", commit="49fd02499841ae884c61c738610e58c27ab51fdb", submodules=True)
-    version("0.9.1", commit="fe8465cd5399a932f7221343c07c9942b0fe644c", submodules=True)
+    with default_args(deprecated=True):
+        version("0.9.4", commit="99d9e24d462b35e815e0e59c1b611936c70464ae", submodules=True)
+        version("0.9.3", commit="51507bad524c33afe8b124804091b10fa25618dc", submodules=True)
+        version("0.9.2", commit="49fd02499841ae884c61c738610e58c27ab51fdb", submodules=True)
+        version("0.9.1", commit="fe8465cd5399a932f7221343c07c9942b0fe644c", submodules=True)
     version("0.8.0", commit="2daf8407e49dd32ebd1c266e8e944e390d28b22a", submodules=True)
     version("develop", branch="develop", submodules=True)
 
@@ -43,7 +44,8 @@ class Hipsycl(CMakePackage, ROCmPackage):
 
     depends_on("cmake@3.5:", type="build")
     depends_on("boost +filesystem", when="@:0.8")
-    depends_on("boost@1.67.0:1.69.0 +filesystem +fiber +context cxxstd=17", when="@0.9.1:")
+    depends_on("boost@1.67.0:1.69.0 +filesystem +fiber +context cxxstd=17", when="@0.9.1:0.9.4")
+    depends_on("boost@1.67.0: +filesystem +fiber +context cxxstd=17", when="@23.10.0:")
     depends_on("python@3:")
     depends_on("llvm@8: +clang", when="~cuda")
     depends_on("llvm@9: +clang", when="+cuda")
