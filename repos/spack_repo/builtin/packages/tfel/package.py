@@ -57,6 +57,7 @@ class Tfel(CMakePackage):
         commit="ae4ba465461b61da7ecffea06c5de7004ac267a3",
     )
     version("snapshot-for-mfemmgis-1.0.1", commit="4f8a0ff5878491e7dd16e453d9f960a6df35c03f")
+    version("snapshot-for-mfemmgis-1.0.0", commit="f2d62e8eae00235a2b794ff1a6c3b28b10c7b5b9")
 
     # released versions
     version("5.1.0", sha256="1afd98200de332e97e86d109ce0e1aaa8f18cc6c6c81daec3218809509cdfad7")
@@ -235,7 +236,7 @@ class Tfel(CMakePackage):
         with when("@5.1:,snapshot-for-mfemmgis-1.0.4"):
             depends_on("py-pybind11", type=("build", "link", "run"))
 
-        with when("@2.0.4:5.0.99,snapshot-for-mfemmgis-1.0.1"):
+        with when("@2.0.4:5.0.99,snapshot-for-mfemmgis-1.0.0,snapshot-for-mfemmgis-1.0.1"):
             depends_on("boost+python+numpy+exception+container", type=("build", "link", "run"))
 
         with when("@rliv1.2:rliv5.0"):
@@ -243,7 +244,7 @@ class Tfel(CMakePackage):
 
         extends("python", when="+python_bindings")
 
-    conflicts("%gcc@:7", when="@4:,snapshot-for-mfemmgis-1.0.1,snapshot-for-mfemmgis-1.0.4")
+    conflicts("%gcc@:7", when="@4:,snapshot-for-mfemmgis-1.0.0:snapshot-for-mfemmgis-1.0.4")
 
     def cmake_args(self):
         args = []
