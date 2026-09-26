@@ -38,14 +38,17 @@ class PyPyyaml(PythonPackage):
 
     variant("libyaml", default=True, description="Use libYAML bindings")
 
+    with when("+libyaml"):
+        depends_on("c", type="build")
+        depends_on("libyaml", type="link")
+        depends_on("py-cython", when="@6:", type="build")
+
     depends_on("python@2.7,3.5:", type=("build", "link", "run"))
     depends_on("python@3.6:", when="@6:", type=("build", "link", "run"))
-    depends_on("libyaml", when="+libyaml", type="link")
     # setuptools versions are not documented upstream, the when= constraint
     # should probably be set to a lower version.
     depends_on("py-setuptools@62:", type="build", when="@6.0.3:")
     depends_on("py-setuptools", type="build")
-    depends_on("py-cython", when="@6:+libyaml", type="build")
 
     # Includes "longintrepr.h" instead of Python.h
     conflicts("^python@3.11:", when="@:5.3")
