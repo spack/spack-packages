@@ -48,6 +48,7 @@ class Pixman(AutotoolsPackage, MesonPackage):
     depends_on("pkgconfig", type="build")
     depends_on("flex", type="build")
     depends_on("bison@3:", type="build")
+    depends_on("gettext", type=("build", "link"))
 
     depends_on("libpng")
 
