@@ -56,6 +56,17 @@ class Zfp(CMakePackage, CudaPackage):
     depends_on("py-numpy", type=("build", "test", "run"), when="+python")
     depends_on("py-cython", type="build", when="+python")
 
+    # The bundled scikit-build CMake modules use distutils.sysconfig to find the
+    # site-packages directory and the extension suffix; distutils was removed in
+    # Python 3.12. Backport of the corresponding scikit-build change (use
+    # sysconfig on Python >= 3.10). See spack/spack-packages#6710.
+    patch("python312-sysconfig.patch", when="@1.0.1:+python")
+    conflicts(
+        "^python@3.12:",
+        when="@:1.0.0+python",
+        msg="zfp <= 1.0.0 Python bindings need distutils, removed in Python 3.12",
+    )
+
     # Build targets
     variant("shared", default=True, description="Build shared libraries")
     variant("utilities", default=True, description="Build zfp utilities")
