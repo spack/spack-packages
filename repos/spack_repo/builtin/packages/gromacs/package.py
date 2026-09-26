@@ -350,7 +350,7 @@ class Gromacs(CMakePackage, CudaPackage):
 
     depends_on("cp2k@8.1:", when="+cp2k")
 
-    depends_on("nvhpc", when="+cufftmp")
+    depends_on("cufftmp", when="+cufftmp")
     depends_on("nvhpc", when="+nvshmem")
     depends_on("heffte", when="+heffte")
 
@@ -462,17 +462,7 @@ class Gromacs(CMakePackage, CudaPackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+cufftmp"):
-            env.append_path(
-                "LD_LIBRARY_PATH",
-                join_path(
-                    self.spec["nvhpc"].prefix,
-                    f"Linux_{self.spec.target.family}",
-                    self.spec["nvhpc"].version,
-                    "comm_libs",
-                    "nvshmem",
-                    "lib",
-                ),
-            )
+            env.append_path("LD_LIBRARY_PATH", self.spec["nvshmem"].prefix.lib)
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -627,10 +617,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if self.spec.satisfies("+cufftmp"):
             options.append("-DGMX_USE_CUFFTMP=ON")
-            options.append(
-                f"-DcuFFTMp_ROOT={self.spec['nvhpc'].prefix}/Linux_{self.spec.target.family}"
-                + f"/{self.spec['nvhpc'].version}/math_libs"
-            )
+            options.append(f"-DcuFFTMp_ROOT={self.spec['cufftmp'].prefix}")
 
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
@@ -792,14 +779,4 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+cufftmp"):
-            env.append_path(
-                "LD_LIBRARY_PATH",
-                join_path(
-                    self.spec["nvhpc"].prefix,
-                    f"Linux_{self.spec.target.family}",
-                    self.spec["nvhpc"].version,
-                    "comm_libs",
-                    "nvshmem",
-                    "lib",
-                ),
-            )
+            env.append_path("LD_LIBRARY_PATH", self.spec["nvshmem"].prefix.lib)
