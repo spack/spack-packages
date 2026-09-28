@@ -19,6 +19,8 @@ class PyScverseMisc(PythonPackage):
 
     depends_on("python@3.12:", type=("build", "run"))
 
+    variant("settings", default=False, description="Adds pydantic-settings support")
+
     with default_args(type="build"):
         depends_on("py-hatchling")
         depends_on("py-hatch-vcs")
@@ -26,3 +28,6 @@ class PyScverseMisc(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-session-info2")
         depends_on("py-typing-extensions", when="^python@:3.12")
+
+        depends_on("py-pydantic-settings", when="+settings")
+        depends_on("py-python-dotenv", when="+settings")
