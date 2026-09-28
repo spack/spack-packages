@@ -272,6 +272,13 @@ class Mumps(Package):
         if using_intel or using_oneapi:
             optl.append("-nofor-main")
 
+        if (
+            self.spec.satisfies("+mpi")
+            and self.spec.satisfies("^[virtuals=mpi] mpich@:4.0.0")
+            and self.spec.satisfies("@5.6.2:")
+        ):
+            optf.append("-DAVOID_MPI_IN_PLACE")
+
         makefile_conf.extend(
             [
                 "OPTC = {0}".format(" ".join(optc)),
