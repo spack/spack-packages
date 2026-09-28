@@ -68,6 +68,7 @@ class Mumps(Package):
         + "(warning: might not be supported by all multithread BLAS)",
     )
     variant("pkgconfig", default=False, description="Create unofficial pkgconfig files")
+    variant("avoid_mpi_in_place", default=False, description="Disable MPI_IN_PLACE")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -276,7 +277,7 @@ class Mumps(Package):
             self.spec.satisfies("+mpi")
             and self.spec.satisfies("^[virtuals=mpi] mpich@:4.0.0")
             and self.spec.satisfies("@5.6.2:")
-        ):
+        ) or self.spec.satisfies("+avoid_mpi_in_place"):
             optf.append("-DAVOID_MPI_IN_PLACE")
 
         makefile_conf.extend(
