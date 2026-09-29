@@ -25,4 +25,6 @@ class PyCheroot(PythonPackage):
     depends_on("py-more-itertools@2.6:", type=("build", "run"))
     depends_on("py-six@1.11.0:", type=("build", "run"))
     depends_on("py-jaraco-functools", when="@8.3.0:", type=("build", "run"))
+    # https://github.com/spack/spack-packages/issues/6760
+    depends_on("py-jaraco-functools@4", when="^py-setuptools@77:", type=("build", "run"))
     depends_on("python@2.7:2.8,3.4:", type=("build", "run"))
