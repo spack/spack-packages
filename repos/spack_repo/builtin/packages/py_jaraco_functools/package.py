@@ -18,7 +18,7 @@ class PyJaracoFunctools(PythonPackage):
     version(
         "4.6.0",
         url="https://files.pythonhosted.org/packages/source/j/jaraco.functools/jaraco_functools-4.6.0.tar.gz",
-        sha256="880c577ec9720b3a052d5bc611fb9f2269b3d87902ef42440df443b88e443280"
+        sha256="880c577ec9720b3a052d5bc611fb9f2269b3d87902ef42440df443b88e443280",
     )
     version("2.0", sha256="35ba944f52b1a7beee8843a5aa6752d1d5b79893eeb7770ea98be6b637bf9345")
 
