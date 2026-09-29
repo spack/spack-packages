@@ -14,27 +14,32 @@ rocm_arch="gfx908"
 spack_jobs=''
 # spack_jobs='-j 128'
 
-mfem='mfem@4.9.0'${compiler}
+mfem='mfem@4.10.0'${compiler}
 # mfem_dev='mfem@develop'${compiler}
-mfem_dev='mfem@4.9.0'${compiler}
+mfem_dev='mfem@4.10.0'${compiler}
 
 backends='+occa+raja+libceed'
 backends_specs='^occa~cuda ^raja~openmp'
 
 # ~fortran is needed for Cray Fortran linking with tcmalloc*
 conduit_spec='^conduit~fortran'
+# MUMPS spec
+mumps_spec='^mumps~openmp'
+# mumps_spec='^mumps~openmp~shared'
 # petsc spec
-petsc_spec='^petsc+mumps'
-petsc_spec_cuda='^petsc+cuda+mumps'
-petsc_spec_rocm='^petsc+rocm+mumps'
+petsc_spec='^petsc+mumps'" $mumps_spec"
+petsc_spec_cuda='^petsc+cuda+mumps'" $mumps_spec"
+petsc_spec_rocm='^petsc+rocm+mumps'" $mumps_spec"
 # strumpack spec without cuda (use version > 6.3.1)
 strumpack_spec='^strumpack~slate~openmp~cuda'
+### strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
 strumpack_cuda_spec='^strumpack+cuda~slate~openmp'
 strumpack_rocm_spec='^strumpack+rocm~slate~openmp~cuda'
 # superlu specs with cpu, cuda and rocm
 # - v8.2.1 on CPU and GPU stalls in ex11p; works when superlu::PARMETIS is
 #   replaced with superlu::METIS_AT_PLUS_A, at least on CPU
-superlu_spec='^superlu-dist@8.1.2'
+# superlu_spec='^superlu-dist@8.1.2'
+superlu_spec=''
 superlu_cuda_spec='^superlu-dist@8.1.2+cuda'
 superlu_rocm_spec='^superlu-dist@8.1.2+rocm'
 # FMS spec
@@ -84,7 +89,7 @@ builds2=(
     ${mfem}' precision=single'
     ${mfem}'+superlu-dist'" $superlu_spec"
     ${mfem}'+strumpack'" $strumpack_spec"
-    ${mfem}'+mumps'
+    ${mfem}'+mumps'" $mumps_spec"
     ${mfem}'+suite-sparse~mpi'
     ${mfem}'+suite-sparse'
     ${mfem}'+sundials~mpi ^sundials~mpi'
