@@ -25,6 +25,7 @@ class Bazel(Package):
 
     license("Apache-2.0")
 
+    version("8.8.0", sha256="71cea4e6df77d5d85e185db7f238d96db50132bf40c94e4978a35d92eaf42108")
     version("7.7.1", sha256="6181b3570c2f657d989b1141fb0c1a08eb5f08106ca577dc7dc52e7d0238379a")
     version("7.7.0", sha256="277946818c77fff70be442864cecc41faac862b6f2d0d37033e2da0b1fee7e0f")
     version("7.6.2", sha256="320582db87133c6a7b58d93b6a97bb7d67916fe7940d60fbb4ecc36c7a48da6d")
@@ -67,12 +68,13 @@ class Bazel(Package):
         "required for most builds using bazel with spack",
     )
 
-    # https://bazel.build/install/compile-source#bootstrap-unix-prereq
+    # https://github.com/bazelbuild/bazel/blob/master/docs/install/compile-source.mdx
     depends_on("bash", type="build")
     depends_on("zip", when="platform=linux", type=("build", "run"))
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("java@21", when="@7.2:", type=("build", "run"))
+    depends_on("java@25", when="@10:", type=("build", "run"))
+    depends_on("java@21", when="@7.2:9", type=("build", "run"))
     depends_on("java@11", when="@5.3:7.1", type=("build", "run"))
     depends_on("java@8,11", when="@:5.2", type=("build", "run"))
     depends_on("python+pythoncmd", type=("build", "run"))
@@ -91,7 +93,7 @@ class Bazel(Package):
     patch("bazelruleclassprovider-0.25.patch")
 
     # Inject include paths
-    patch("unix_cc_configure-3.0.patch")
+    patch("unix_cc_configure-3.0.patch", when="@:7")
 
     # Set CC and CXX
     patch("compile-0.29.patch")
