@@ -94,7 +94,8 @@ class NeicFinitefault(PythonPackage):
             resource
             for resource_spec, resource_list in self.resources.items()
             if self.spec.intersects(resource_spec)
-            for resource in resource_list if resource.name != "tectonicplates"
+            for resource in resource_list
+            if resource.name != "tectonicplates"
         ]
         for resource in relevant_resources:
             res_path = self.stage.source_path
