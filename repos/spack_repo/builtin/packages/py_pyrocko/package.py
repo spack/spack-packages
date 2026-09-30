@@ -21,14 +21,19 @@ class PyPyrocko(PythonPackage):
     version("2024.1.10", sha256="4fb2c72d0b036ce3c70bfd066e1ce4946eb93d9190d202e9fc689c1f29e4845f")
     version("2023.6.29", sha256="779a234592bfcfa1c96939fee53d0dfc5cadf111432a2679f08166cfd8bcae41")
 
+
     depends_on("c", type="build")  # generated
 
     depends_on("python@3.7:", type=("build", "run"))
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@:81", type="build")
+    depends_on("gmake", type="build")
 
     depends_on("py-numpy@1.16:", type=("build", "run"))
     depends_on("py-scipy@1:", type=("build", "run"))
     depends_on("py-pyyaml", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
+
+    def setup_build_environment(self, env):
+        env.set("MAKEFLAGS", "-j1")
