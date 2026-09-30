@@ -21,6 +21,7 @@ class PyScikitLearn(PythonPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("1.9.1", sha256="629cada3e33e2b9bf376cdc7614a47a4140b8aedc1d836579e359736fbd82977")
     version("1.9.0", sha256="8833266989d3a5110178a9fae30783675460724d0e1efb13b14901d2c660c557")
     version("1.8.0", sha256="9bccbb3b40e3de10351f8f5068e105d0f4083b1a65fa07b6634fbc401a6287fd")
     version("1.7.2", sha256="20e9e49ecd130598f1ca38a1d85090e1a600147b9c02fa6f15d69cb53d968fda")
@@ -61,7 +62,8 @@ class PyScikitLearn(PythonPackage):
 
     with default_args(type=("build", "link", "run")):
         # Based on PyPI wheel availability
-        depends_on("python@3.11:3.14", when="@1.8:")
+        depends_on("python@3.11:3.15", when="@1.9.1:")
+        depends_on("python@3.11:3.14", when="@1.8:1.9.0")
         depends_on("python@3.10:3.14", when="@1.7.2")
         depends_on("python@3.10:3.13", when="@1.7.0:1.7.1")
         depends_on("python@3.9:3.13", when="@1.5.2:1.6")

@@ -28,7 +28,8 @@ class PyZfitPhysics(PythonPackage):
 
     depends_on("py-setuptools@42:", type="build", when="@:0.7")
     depends_on("py-setuptools-scm@3.4:+toml", type="build", when="@:0.7")
-    depends_on("py-setuptools-scm-git-archive", type="build", when="@:0.7")
+    # setuptools-scm supports git now
+    # depends_on("py-setuptools-scm-git-archive", type="build", when="@:0.7")
 
     # TODO: remove "build" once fixed in spack that tests need "run", not "build"
     with default_args(type=("build", "run")):

@@ -33,6 +33,7 @@ class Rdc(CMakePackage):
             url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
     version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
@@ -103,6 +104,7 @@ class Rdc(CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -128,6 +130,7 @@ class Rdc(CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
@@ -145,6 +148,7 @@ class Rdc(CMakePackage):
         "7.2.3",
         "7.13.0",
         "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 

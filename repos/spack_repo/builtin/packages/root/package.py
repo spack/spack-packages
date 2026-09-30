@@ -371,6 +371,7 @@ class Root(CMakePackage):
     depends_on("xz")
     depends_on("zlib-api")
     depends_on("zstd")
+    depends_on("libxcrypt", when="platform=linux")
 
     # X-Graphics
     depends_on("libx11", when="+x")
@@ -388,6 +389,7 @@ class Root(CMakePackage):
     depends_on("gl2ps", when="+opengl")
     depends_on("gl", when="+opengl")
     depends_on("glu", when="+opengl")
+    depends_on("glx", when="+opengl platform=linux")
     depends_on("libglx", when="+opengl+x")
 
     # Qt

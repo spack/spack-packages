@@ -142,6 +142,7 @@ class Boost(Package):
         "mqtt5",
         "nowide",
         "openmethod",
+        "process",
         "program_options",
         "python",
         "random",
@@ -164,6 +165,7 @@ class Boost(Package):
     # https://www.boost.org/releases/1.69.0/#:~:text=Discontinued
     all_libs_opts = {
         "openmethod": {"when": "@1.90:"},
+        "process": {"when": "@1.64:"},
         "mqtt5": {"when": "@1.88:"},
         "charconv": {"when": "@1.85:"},
         "cobalt": {"when": "@1.84:"},
@@ -691,7 +693,7 @@ class Boost(Package):
             # Any lib that is in self.all_libs AND in the variants dictionary
             # AND is set to False should be added to options in a --without flag
             for lib in self.all_libs:
-                if lib not in self.spec.variants.dict or self.spec.satisfies(f"+{lib}"):
+                if lib not in self.spec.variants or self.spec.satisfies(f"+{lib}"):
                     continue
                 options.append(f"--without-{lib}")
 

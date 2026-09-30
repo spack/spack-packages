@@ -30,7 +30,7 @@ spack:
     paraview:
       # Don't build GUI support or GLX rendering for HPC/container deployments
       require:
-      - "@5.11: ~qt ^[virtuals=gl] osmesa"
+      - "@5.11: ~qt %[virtuals=gl] osmesa"
       - 'target=x86_64_v3'
 
     llvm-amdgpu:
@@ -245,6 +245,7 @@ spack:
   - heffte +rocm amdgpu_target=gfx90a
   - kokkos +rocm amdgpu_target=gfx90a
   - kokkos-fft device_backend=hipfft ^kokkos +rocm amdgpu_target=gfx90a
+  - kokkos-tools ^kokkos +rocm amdgpu_target=gfx90a
   - legion +rocm amdgpu_target=gfx90a %c,cxx=gcc
   - libceed +rocm amdgpu_target=gfx90a
   - mfem +rocm amdgpu_target=gfx90a

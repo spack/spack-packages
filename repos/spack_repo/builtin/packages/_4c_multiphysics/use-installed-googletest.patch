@@ -1,0 +1,22 @@
+Use the GoogleTest installation supplied by the package manager instead of
+downloading a private copy during CMake configuration.
+
+--- a/cmake/setup_tests.cmake
++++ b/cmake/setup_tests.cmake
+@@ -44,13 +44,9 @@ if(FOUR_C_WITH_GOOGLETEST)
+       )
+   endif()
+ 
+-  include(FetchContent)
+-  fetchcontent_declare(
+-    googletest
+-    GIT_REPOSITORY https://github.com/google/googletest.git
+-    GIT_TAG b514bdc898e2951020cbdca1304b75f5950d1f59 # v1.15.2
+-    )
+-  fetchcontent_makeavailable(googletest)
++  find_package(GTest 1.15.2 CONFIG REQUIRED)
++  add_library(gtest ALIAS GTest::gtest)
++  add_library(gmock ALIAS GTest::gmock)
+ 
+   math(EXPR UNITTEST_TIMEOUT "10*${FOUR_C_TEST_TIMEOUT_SCALE}")
+   message(STATUS "The scaled unit test timeout is ${UNITTEST_TIMEOUT} s.")

@@ -11,7 +11,7 @@ class Protobuf(CMakePackage):
     """Google's data interchange format."""
 
     homepage = "https://developers.google.com/protocol-buffers"
-    url = "https://github.com/protocolbuffers/protobuf/archive/v34.0.tar.gz"
+    url = "https://github.com/protocolbuffers/protobuf/archive/v36.1.tar.gz"
     maintainers("hyoklee")
 
     license("BSD-3-Clause")
@@ -30,6 +30,8 @@ class Protobuf(CMakePackage):
     #
     # Hence language runtime version has explicted also the protobuf version it is compatible with.
 
+    version("36.1", sha256="7a7baff8207a57f3fe5c233d432a09eba67bdfb55a3145839d0817cae8e807a4")
+    version("35.1", sha256="22775f9376938295efa2d59a59bde4cd075a42df5a9b4d27aa9b99fa6a413bd2")
     version("34.1", sha256="a83103b7ed3afaeedee9a212c8f65825444f58144f5e075b73c83f2b4ff27b62")
     version("34.0", sha256="61c47fabb1190e0acb2d47e67f31baac05d9b4ce69d7d1b43f6c83744f83898e")
     version("33.1", sha256="0c98bb704ceb4e68c92f93907951ca3c36130bc73f87264e8c0771a80362ac97")

@@ -25,6 +25,10 @@ class PyNanobind(PythonPackage):
 
     version("master", branch="master", submodules=True)
     version(
+        "3.0.1",
+        sha256="f7f0a889c8fb80deaacb95e918d88e05148850a32d2b8eda28446291b2bf7c35",
+    )
+    version(
         "2.15.0",
         sha256="3eace37a3b8cdadd531fcc6145263985b29821467161d34ff722b0644cf445b5",
     )
@@ -124,6 +128,7 @@ class PyNanobind(PythonPackage):
 
     depends_on("cxx", type="build")  # generated
 
+    depends_on("python@3.10:", when="@3:", type=("build", "run"))
     depends_on("python@3.8:", type=("build", "run"))
 
     depends_on("py-setuptools@42:", when="@:2.0", type="build")

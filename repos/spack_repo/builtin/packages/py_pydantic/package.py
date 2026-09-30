@@ -15,6 +15,7 @@ class PyPydantic(PythonPackage):
 
     license("MIT")
 
+    version("2.13.4", sha256="c40756b57adaa8b1efeeced5c196f3f3b7c435f90e84ea7f443901bec8099ef6")
     version("2.12.5", sha256="4d351024c75c0f085a9febbb665ce8c0c6ec5d30e903bdb6394b7ede26aebb49")
     version("2.12.4", sha256="0f8cb9555000a4b5b617f66bfd2566264c4984b27589d3b845685983e8ea85ac")
     version("2.10.1", sha256="a4daca2dc0aa429555e0656d6bf94873a7dc5f54ee42b1f5873d666fb3f35560")
@@ -44,7 +45,8 @@ class PyPydantic(PythonPackage):
     depends_on("py-typing-extensions@3.7.4.3:", type=("build", "run"))
     depends_on("py-annotated-types@0.6:", type=("build", "run"), when="@2.10:")
     depends_on("py-annotated-types@0.4.0:", type=("build", "run"), when="@2.7.4:")
-    depends_on("py-pydantic-core@2.41.5", type=("build", "run"), when="@2.12.4:")
+    depends_on("py-pydantic-core@2.46.4", type=("build", "run"), when="@2.13.4:")
+    depends_on("py-pydantic-core@2.41.5", type=("build", "run"), when="@2.12")
     depends_on("py-pydantic-core@2.27.1", type=("build", "run"), when="@2.10.1")
     depends_on("py-pydantic-core@2.23.2", type=("build", "run"), when="@2.9.0")
     depends_on("py-pydantic-core@2.18.4", type=("build", "run"), when="@2.7.4")

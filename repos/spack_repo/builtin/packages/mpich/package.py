@@ -79,6 +79,7 @@ class Mpich(MpichEnvironmentModifications, AutotoolsPackage, CudaPackage, ROCmPa
     license("mpich2")
 
     version("develop", submodules=True)
+    version("5.0.2", sha256="928c2f18d350a91443fe8024ad01ce2c6009e9c551e0a73e797fc567f119137d")
     version("5.0.1", sha256="8c1832a13ddacf071685069f5fadfd1f2877a29e1a628652892c65211b1f3327")
     version("5.0.0", sha256="e9350e32224283e95311f22134f36c98e3cd1c665d17fae20a6cc92ed3cffe11")
     version("4.3.2", sha256="47d774587a7156a53752218c811c852e70ac44db9c502dc3f399b4cb817e3818")
@@ -498,12 +499,10 @@ supported, and netmod is ignored if device is ch3:sock.""",
         return results
 
     def flag_handler(self, name, flags):
-        if name == "fflags":
+        if name == "fflags" and "fortran" in self.spec:
             # https://bugzilla.redhat.com/show_bug.cgi?id=1795817
             # https://github.com/spack/spack/issues/17934
-            # TODO: we should add the flag depending on the real Fortran compiler spec and not the
-            #  toolchain spec, which might be mixed.
-            if any(self.spec.satisfies(s) for s in ["%gcc@10:", "%apple-clang@11:", "%clang@11:"]):
+            if any(self.spec["fortran"].satisfies(s) for s in ["gcc@10:", "llvm@11:19.1.7"]):
                 # Note that the flag is not needed to build the package starting version 4.1
                 # (see https://github.com/pmodels/mpich/pull/5840) but we keep adding the flag here
                 # to avoid its presence in the MPI compiler wrappers.

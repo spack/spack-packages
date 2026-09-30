@@ -25,5 +25,8 @@ class PyQuestionary(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"), when="@2.1.0")
     depends_on("python@3.6:3.9", type=("build", "run"), when="@1.9.0")
 
-    depends_on("py-poetry@1.0.5:", type="build")
+    # 2.x declares poetry-core as its backend; only 1.x used full poetry, which pulls in
+    # py-keyring, py-cryptography and a Rust toolchain for a pure-Python build.
+    depends_on("py-poetry@1.0.5:", type="build", when="@:1")
+    depends_on("py-poetry-core", type="build", when="@2:")
     depends_on("py-prompt-toolkit@2.0:3", type=("build", "run"))

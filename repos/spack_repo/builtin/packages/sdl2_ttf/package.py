@@ -22,5 +22,6 @@ class Sdl2Ttf(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("sdl2")
+    depends_on("freetype")
 
     maintainers("georgemalerbo", "amklinv")

@@ -22,6 +22,7 @@ class PyGeopandas(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("1.2.0", sha256="72425b0dec1b77122b1e00f72c2b3b91f320cf0331ae236d37e26865e8808628")
     version("1.1.4", sha256="06f2890a07e1a239047daa14b486a7c6ae5ce82dcf7405e13c46bf31f5d0dd66")
     version("1.1.3", sha256="91a31989b6f566012838d21d5f8033f37dce882079ccb7cfdc40d5ccce7f284f")
     version("1.1.2", sha256="33f7b33565c46a45b8459a2ab699ec943fdbb5716e58e251b3c413cf7783106c")
@@ -71,6 +72,7 @@ class PyGeopandas(PythonPackage):
         depends_on("py-setuptools", when="@:1.1")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@1.2:")
         depends_on("py-numpy@2.0:", when="@1.2:")
         depends_on("py-numpy@1.24:", when="@1.1:")
         depends_on("py-numpy@1.22:", when="@0.14.4:")

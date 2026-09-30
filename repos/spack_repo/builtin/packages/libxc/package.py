@@ -64,6 +64,7 @@ class Libxc(AutotoolsPackage, CudaPackage, ROCmPackage, CMakePackage):
     generator("ninja")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="+cuda")
     depends_on("fortran", type="build", when="build_system=autotools")
     depends_on("fortran", type="build", when="build_system=cmake +fortran")
     depends_on("cmake@3.21:", type="build", when="@7.1: build_system=cmake")

@@ -22,6 +22,7 @@ class Edm4hep(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("1.1.1", sha256="14165219c74c48549cdd1ad7ea5e3cf0e7bed86688a1e037fde39a51d2e7edd0")
     version("1.1", sha256="a45c849e69ae23640086315547a3bf480aaab954168043c82ccf9a7d372bffdd")
     version("1.0", sha256="7bb76479883997ba39357b0db65d96d5f1201bc8a79b47866db8b44f76a231be")
     version("0.99.4", sha256="34a76e74a3199b96d8108425fdf894cafa7e4a71483d4893537c3026b4e666d6")
@@ -93,6 +94,12 @@ class Edm4hep(CMakePackage):
         "https://github.com/key4hep/EDM4hep/commit/18799dacfdaf5d746134c957de48607aa2665d75.patch?full_index=1",
         when="@0.99.1",
         sha256="374f0b7635c632e5a57d23ad163efab7370ab471c62e2713a41aa26e33d8f221",
+    )
+
+    patch(
+        "https://github.com/key4hep/EDM4hep/commit/f87de123bb1a56dfab7cdcb7f3cfb9dd51fc9313.patch?full_index=1",
+        when="@=1.1 %podio+arrow",
+        sha256="d4412d1340481a741893dd8684400eb3662c76f63d47cc940e38091c0ae9e766",
     )
 
     def cmake_args(self):
