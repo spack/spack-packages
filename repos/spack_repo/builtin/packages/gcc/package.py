@@ -785,6 +785,25 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             self.gnu_mirror_path = self.gnu_mirror_path.replace("xz", "bz2")
         return super().url_for_version(version)
 
+    @run_after_dependent(-1)  # Run after the last phase of the dependent
+    def install_sarif_files(self, dependent_pkg):
+        if not dependent_pkg.spec.satisfies(f"%[usages=+sarif]{self.spec}"):
+            return
+
+        dest = dependent_pkg.prefix.join(".spack").sarif
+        mkdirp(dest)
+
+        # Install with relative paths relative to the stage path (not src_path) because
+        # dependent_pkg.stage.path is the only guaranteed container of all dependent_pkg
+        # build files
+        for root, _, files in os.walk(dependent_pkg.stage.path):
+            rel_root = os.path.relpath(root, dependent_pkg.stage.path)
+            dest_subdir = os.path.join(dest, rel_root)
+            sarif_files = [f for f in files if f.endswith(".sarif")]
+            for filename in sarif_files:
+                mkdirp(dest_subdir)
+                install(os.path.join(root, filename), os.path.join(dest_subdir, filename))
+
     def setup_dependent_package(self, module, dependent_spec):
         # Extra flags are passed to the dependent through the compiler wrapper
         if not dependent_spec.satisfies("^compiler-wrapper"):
