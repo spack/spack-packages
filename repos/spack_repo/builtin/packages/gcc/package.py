@@ -213,6 +213,8 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
     with when("platform=linux"):
         variant("futex", default=True, description="Use linux futex")
 
+    usage("sarif", default=False, sticky=True, description="Generate sarif static analysis")
+
     # See https://gcc.gnu.org/install/prerequisites.html
 
     depends_on("c", type="build")
