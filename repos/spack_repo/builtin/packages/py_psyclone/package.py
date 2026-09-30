@@ -49,7 +49,6 @@ class PyPsyclone(PythonPackage):
     # Since psyclone 3.3, spack fails to install psyclone if starting from a spack build with
     # older versions of 'setuptools' or 'packaging'
     depends_on("py-setuptools@77:", type="build", when="@3.3:")
-    depends_on("py-packaging@24.2:", type=("build"), when="@3.3:")
     depends_on("py-pyparsing", type=("build", "run"))
     depends_on("py-graphviz", type=("build", "run"))
     depends_on("py-configparser", type=("build", "run"))
