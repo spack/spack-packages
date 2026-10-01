@@ -389,6 +389,7 @@ class Root(CMakePackage):
     depends_on("gl2ps", when="+opengl")
     depends_on("gl", when="+opengl")
     depends_on("glu", when="+opengl")
+    depends_on("glx", when="+opengl platform=linux")
     depends_on("libglx", when="+opengl+x")
 
     # Qt

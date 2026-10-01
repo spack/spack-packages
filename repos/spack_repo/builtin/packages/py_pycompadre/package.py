@@ -22,6 +22,7 @@ class PyPycompadre(PythonPackage):
     maintainers("kuberry")
 
     version("master", branch="master")
+    version("1.7.5", sha256="49a5ca7b1d2a7f357e09f3bd988746521fb6dcfac47685b4c328dd86fb952eb9")
     version("1.7.2", sha256="4b7c2944300fd025957be44a1114177dfa0aafcf9e613d830a94e020b2f1751e")
     version(
         "1.6.2",
