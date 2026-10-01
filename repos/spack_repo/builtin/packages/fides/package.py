@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage, CMakeBuilder
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Fides(CMakePackage):
+class Fides(CMakePackage, CudaPackage):
     """A library that provides a schema for ADIOS2 streams."""
 
     homepage = "https://gitlab.kitware.com/vtk/fides"
@@ -26,6 +27,8 @@ class Fides(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+
+    conflicts("+cuda", when="@:1.1")
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
@@ -56,5 +59,7 @@ class Fides(CMakePackage):
 
         if spec.satisfies("^vtk-m"):
             options.append(self.define("VTKm_DIR", spec["vtk-m"].prefix))
+
+        options.append(CMakeBuilder.define_cuda_architectures(self))
 
         return options
