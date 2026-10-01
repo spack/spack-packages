@@ -30,7 +30,7 @@ class PyPymatgen(PythonPackage):
         depends_on("py-cython@0.29.23:", when="@2022.1.7:")
         # https://github.com/materialsproject/pymatgen/commit/29b5b909e109cb04d4b118d0de5b3929819b9378
         depends_on("py-cython@:2", when="@:2023.7.16")
-
+        depends_on("py-numpy@2.1:", when="@2024.9.10:")
         depends_on("py-setuptools@77:", when="@2026.9.23:")
         depends_on("py-setuptools@43:")
         depends_on("py-setuptools-scm@8:", when="@2026.9.23:")
