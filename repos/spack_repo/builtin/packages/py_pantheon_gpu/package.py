@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -44,3 +46,32 @@ class PyPantheonGpu(PythonPackage):
 
     conflicts("platform=darwin", msg="Pantheon runs on Linux")
     conflicts("platform=windows", msg="Pantheon runs on Linux")
+
+    def test_version(self):
+        """pantheon --version names the installed version"""
+        pantheon = which(self.prefix.bin.pantheon)
+        out = pantheon("--version", output=str.split, error=str.split)
+        assert str(self.spec.version) in out
+
+    def test_cpu_backend(self):
+        """run one workload on the CPU backend and check its verification"""
+        # The CPU backend needs no GPU: it compiles one workload with the C++
+        # compiler and checks what it returns, which proves the kernel sources
+        # are in place. The compiled workload goes to the test stage, not to
+        # the installation.
+        if which("g++") is None:
+            raise SkipTest("g++ is needed to compile the workload")
+        pantheon = which(self.prefix.bin.pantheon)
+        with working_dir(self.test_suite.current_test_cache_dir, create=True):
+            out = pantheon(
+                "--platform",
+                "mock",
+                "--test",
+                "memory_read",
+                "--duration",
+                "1",
+                output=str.split,
+                error=str.split,
+                extra_env={"PANTHEON_BUILD_CACHE_DIR": join_path(os.getcwd(), "build-cache")},
+            )
+        assert "Verification: PASS" in out
