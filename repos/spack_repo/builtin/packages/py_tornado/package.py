@@ -15,8 +15,11 @@ class PyTornado(PythonPackage):
 
     license("Apache-2.0")
 
-    version("6.5.8", sha256="9452e1b208a8bd771e2cb1f2ff564985b9b214bdebbe622793e1799e0a6bd23f")
+    version("6.5.10", sha256="a6b1ccd08c04b4a06fb5aeb381be99de5ad1e5375c1785e31d78c880feb57687")
     with default_args(deprecated=True):
+        # https://github.com/tornadoweb/tornado/security/advisories/GHSA-chx6-46f5-w4vp
+        # https://github.com/tornadoweb/tornado/security/advisories/GHSA-3hv7-mjh2-fv65
+        version("6.5.8", sha256="9452e1b208a8bd771e2cb1f2ff564985b9b214bdebbe622793e1799e0a6bd23f")
         # https://github.com/tornadoweb/tornado/security/advisories/GHSA-mpf4-983q-p7j4
         # https://github.com/tornadoweb/tornado/security/advisories/GHSA-8423-8fgw-73vq
         version("6.5.7", sha256="66c513a76cda70d53907bc27cf1447557699c2e95aa48ba27a442ff61c3ddfc2")
