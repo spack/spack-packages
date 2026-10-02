@@ -443,6 +443,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
 
+    # https://github.com/bazelbuild/bazel/issues/31381
+    # https://github.com/llvm/llvm-project/pull/223362
+    patch("llvm-mirror.patch", when="@2.21.0")
+
     # https://github.com/tensorflow/tensorflow/issues/103590
     patch(
         "https://github.com/tensorflow/tensorflow/pull/104948.patch?full_index=1",
