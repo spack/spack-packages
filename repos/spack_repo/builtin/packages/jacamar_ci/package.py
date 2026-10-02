@@ -53,6 +53,12 @@ class JacamarCi(GoPackage):
         match = re.search(r"Version:\s*(\S+)", output)
         return match.group(1) if match else None
 
+    def setup_build_environment(self, env):
+        libseccomp = self.spec["libseccomp"]
+        env.append_flags(
+            "CGO_LDFLAGS", f"-L{libseccomp.prefix.lib} -Wl,-rpath,{libseccomp.prefix.lib}"
+        )
+
     def build(self, spec, prefix):
         make("VERSION={0}".format(spec.version), "build")
 
