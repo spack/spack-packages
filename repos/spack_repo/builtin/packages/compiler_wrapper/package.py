@@ -235,30 +235,30 @@ class CompilerWrapper(Package):
         for item in env_paths:
             env.prepend_path("SPACK_COMPILER_WRAPPER_PATH", item)
 
+    def wrapper_for(self, dependent_spec, language):
+        compiler_pkg = dependent_spec[language].package
+        if sys.platform != "win32":
+            # On non-Windows we return the appropriate path to the compiler wrapper
+            return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
+
+        # On Windows we return the real compiler
+        if language == "c":
+            return compiler_pkg.cc
+        elif language == "cxx":
+            return compiler_pkg.cxx
+        elif language == "fortran":
+            return compiler_pkg.fortran
+
     def setup_dependent_package(self, module, dependent_spec):
-        def _spack_compiler_attribute(*, language: str) -> str:
-            compiler_pkg = dependent_spec[language].package
-            if sys.platform != "win32":
-                # On non-Windows we return the appropriate path to the compiler wrapper
-                return str(self.bin_dir() / compiler_pkg.compiler_wrapper_link_paths[language])
-
-            # On Windows we return the real compiler
-            if language == "c":
-                return compiler_pkg.cc
-            elif language == "cxx":
-                return compiler_pkg.cxx
-            elif language == "fortran":
-                return compiler_pkg.fortran
-
         if dependent_spec.has_virtual_dependency("c"):
-            setattr(module, "spack_cc", _spack_compiler_attribute(language="c"))
+            setattr(module, "spack_cc", self.wrapper_for(dependent_spec, language="c"))
 
         if dependent_spec.has_virtual_dependency("cxx"):
-            setattr(module, "spack_cxx", _spack_compiler_attribute(language="cxx"))
+            setattr(module, "spack_cxx", self.wrapper_for(dependent_spec, language="cxx"))
 
         if dependent_spec.has_virtual_dependency("fortran"):
-            setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
-            setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
+            setattr(module, "spack_fc", self.wrapper_for(dependent_spec, language="fortran"))
+            setattr(module, "spack_f77", self.wrapper_for(dependent_spec, language="fortran"))
 
     @property
     def disable_new_dtags(self) -> str:

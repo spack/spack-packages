@@ -97,6 +97,6 @@ class KokkosFft(CMakePackage):
         ):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
         else:
-            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx or spack_cxx))
 
         return args

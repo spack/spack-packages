@@ -120,7 +120,9 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("ARBORX_ENABLE_MPI", "mpi"),
         ]
         if self.spec.satisfies("+cuda"):
-            options.append(self.define("CMAKE_CXX_COMPILER", kokkos_pkg.kokkos_cxx))
+            options.append(
+                self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx or spack_cxx)
+            )
         if self.spec.satisfies("+rocm"):
             options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
 
