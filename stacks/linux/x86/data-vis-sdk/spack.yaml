@@ -1,0 +1,83 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# Maintainers:
+# - kwryankrattiger
+
+spack:
+  view: false
+
+  include:
+  - ../base/config/
+  - ../hpc-libs/config/
+  - path: https://raw.githubusercontent.com/DAV-SDK/davsdk/refs/tags/v0.2.0/spack/configs/packages.yaml
+    sha256: "2da821c1b275912b16fbe7870d821345254ee8daebd3e0c490d9a8e0043c40d4"
+
+  concretizer:
+    unify: when_possible
+    reuse:
+      from:
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/base
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/hpc-libs
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/gpu
+
+  packages:
+    all:
+      target: ["x86_64_v3"]
+      require:
+      - target=x86_64_v3
+
+    mesa:
+      require:
+      - +glx +osmesa +opengl ~opengles +llvm
+
+    libglx:
+      require: [mesa +glx]
+
+    ospray:
+      require: [+denoiser +mpi]
+
+    paraview:
+      require: ["@6:", "+raytracing +fides"]
+
+    libllvm:
+      require: ["llvm"]
+
+    visit:
+      require: ["@3.4.1:"]
+
+  definitions:
+  # Test ParaView and VisIt builds with different GL backends
+  - paraview_specs:
+    - matrix:
+      - - paraview
+      - - +qt
+        - ~qt
+  - visit_specs:
+    - matrix:
+      - - visit
+      - - ~gui ^[virtuals=gl] glx
+        - ~gui ^[virtuals=gl] osmesa
+        - +gui ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
+
+  specs:
+    # Compression
+  - zfp
+
+    # Visualization
+  - ascent
+  - $paraview_specs
+  - $visit_specs
+  - vtk-m
+
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: {name: ghcr.io/spack/ubuntu-24.04:v2025-09-15, entrypoint: [""]}
+
+  cdash:
+    "build-group:": Data and Vis SDK

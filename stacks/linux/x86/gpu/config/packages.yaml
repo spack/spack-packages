@@ -1,0 +1,8 @@
+packages:
+  cuda:
+    prefer:
+      - "@13"
+
+  hip:
+    prefer:
+      - "@7.2.3"

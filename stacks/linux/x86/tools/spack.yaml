@@ -1,0 +1,38 @@
+spack:
+  include:
+    - ./config/
+    - ../base/config/
+
+  concretizer:
+    reuse:
+      from:
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/base
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/gpu
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/hpc-libs
+
+    unify: when_possible
+
+  definitions:
+    - peso-tools-sdk:
+      - darshan-runtime
+      - darshan-util
+      - dyninst
+      - hpctoolkit
+      - papi
+      - tau
+
+    - rocm-tools:
+      - matrix:
+          - rocprofiler-compute
+          - rocprofiler-compute-viewer
+          - rocprofiler-dev
+          - rocprofiler-register
+          - rocprofiler-sdk
+          - rocprofiler-system
+        - - "@7.2.3"
+
+    - intel-tools:
+      - intel-oneapi-vtune
