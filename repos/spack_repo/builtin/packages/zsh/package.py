@@ -42,10 +42,21 @@ class Zsh(AutotoolsPackage):
 
     depends_on("pcre")
     depends_on("ncurses")
+    depends_on("autoconf", type="build")
 
     conflicts("+lmod", when="~etcdir", msg="local etc required to setup env for lmod")
 
     patch("pointer-types.patch", when="@5.6.2:")
+
+    def flag_handler(self, name, flags):
+        if (
+            name == "cflags"
+            and self.spec.satisfies("%llvm@10:")
+            or self.spec.satisfies("%apple-clang@12:")
+        ):
+            flags.append("-Wno-implicit-function-declaration")
+            flags.append("-Wno-implicit-int")
+        return self.env_flags(name, flags)
 
     def configure_args(self):
         args = []
