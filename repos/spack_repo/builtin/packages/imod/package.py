@@ -24,6 +24,11 @@ class Imod(MakefilePackage, CudaPackage):
 
     version("5.2.3", revision="b520a584fca2")
 
+    # hg is needed by the version("5.2.3", revision=...) fetcher above.
+    depends_on("mercurial", type="build")
+
+    parallel = False
+
     variant("fftw", default=False, description="Use external FFTW?")
 
     depends_on("c", type="build")
@@ -31,7 +36,12 @@ class Imod(MakefilePackage, CudaPackage):
     depends_on("fortran", type="build")
     depends_on("java@17:")
 
-    depends_on("qt+opengl@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
+    # +gui: imod's own build needs Qt's gui/widgets modules for its viewer
+    # programs, or configure fails with "Unknown module(s) in QT: gui widgets".
+    # +sql: imod's help file (IMOD.qch) is a SQLite database, built via Qt's
+    # qcollectiongenerator/qhelpgenerator - without it Qt configures with
+    # -no-sql-sqlite and both tools fail to open it.
+    depends_on("qt+opengl+gui+sql@5.12:")  # Can do with 4.6:, but they themselves recommend 5.12+
     depends_on("cuda", when="+cuda")
     depends_on("libtiff@4:")
     depends_on("fftw@3:", when="+fftw")
@@ -60,8 +70,14 @@ class Imod(MakefilePackage, CudaPackage):
             filter_file(r"-arch sm_\d{2}", cuda_flags, "configure")
 
     def flag_handler(self, name: str, flags: List[str]):
+        if name == "cflags":
+            flags.append("-Wno-incompatible-pointer-types")
+            if self.spec.satisfies("@:5.2.3 %gcc@15:"):
+                flags.append("-std=gnu17")
         if name == "fflags":
             flags.append("-fallow-argument-mismatch")
+        if name == "ldflags":
+            flags.append("-lrt")
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
