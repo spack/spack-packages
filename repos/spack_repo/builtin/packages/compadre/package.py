@@ -89,11 +89,11 @@ class Compadre(CMakePackage):
         spec = self.spec
         if "^kokkos+cuda+wrapper" in spec:
             if "+mpi" in spec:
-                env.set("OMPI_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
-                env.set("MPICH_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
-                env.set("MPICXX_CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("OMPI_CXX", self["kokkos"].kokkos_cxx)
+                env.set("MPICH_CXX", self["kokkos"].kokkos_cxx)
+                env.set("MPICXX_CXX", self["kokkos"].kokkos_cxx)
             else:
-                env.set("CXX", self["kokkos-nvcc-wrapper"].kokkos_cxx)
+                env.set("CXX", self["kokkos"].kokkos_cxx)
 
         if "^kokkos+rocm" in spec:
             if "+mpi" in spec:

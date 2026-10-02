@@ -443,10 +443,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 spack_options.append(option)
 
     @property
-    def kokkos_cxx(self) -> str:
+    def kokkos_cxx(self):
         if self.spec.satisfies("+wrapper"):
             return self["kokkos-nvcc-wrapper"].kokkos_cxx
-        return self["compiler-wrapper"].wrapper_for(self.spec, language="cxx")
+        return None
 
     def cmake_args(self):
         spec = self.spec
