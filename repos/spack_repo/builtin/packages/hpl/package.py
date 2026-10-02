@@ -122,6 +122,19 @@ class Hpl(AutotoolsPackage):
 
     @when("@2.3:")
     def configure_args(self):
+        # configure's BLAS auto-probe tries a fixed, ordered list of
+        # candidates (libs1..libs9, ending with NVIDIA nvblas at libs9)
+        # before falling back to our explicit libs10 override below. If
+        # any dependency in the spec pulls in a CUDA-enabled library that
+        # happens to make nvblas reachable on the linker search path (e.g.
+        # a CUDA-enabled MPI), the libs9 candidate silently "wins" the
+        # probe before libs10 is ever tried, even though hpl itself has no
+        # CUDA dependency and nvblas does not provide the Fortran BLAS
+        # symbols configure/hpl actually link against (idamax_, dgemv_,
+        # etc.), producing undefined-symbol link errors. Neutralize the
+        # libs9 candidate so the probe always falls through to libs10,
+        # which is set from the real, Spack-selected BLAS provider above.
+        filter_file(r"^libs9=.*", "libs9=", "configure")
         filter_file(r"^libs10=.*", "libs10=%s" % self.spec["blas"].libs.ld_flags, "configure")
 
         cflags, ldflags = ["-O3", "-DHPL_PROGRESS_REPORT", "-DHPL_DETAILED_TIMING"], []
