@@ -44,7 +44,7 @@ class GuacamoleServer(AutotoolsPackage):
     depends_on("freerdp", when="+rdp")
     depends_on("libvncserver", when="+vnc")
     depends_on("libwebp", when="+webp")
-    
+
     def configure_args(self):
         args = []
         args += self.with_or_without("ssh")
@@ -52,4 +52,3 @@ class GuacamoleServer(AutotoolsPackage):
         args += self.with_or_without("vnc")
         args += self.with_or_without("webp")
         return args
-    
