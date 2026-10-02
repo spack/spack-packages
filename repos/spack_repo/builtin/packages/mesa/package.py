@@ -22,11 +22,12 @@ class Mesa(MesonPackage):
     license("MIT AND SGI-B-2.0 AND BSL-1.0")
 
     version("main", branch="main")
-    version(
-        "25.0.5",
-        sha256="c0d245dea0aa4b49f74b3d474b16542e4a8799791cd33d676c69f650ad4378d0",
-        preferred=True,
-    )
+    version("26.0.0", sha256="2a44e98e64d5c36cec64633de2d0ec7eff64703ee25b35364ba8fcaa84f33f72")
+    version("25.3.6", sha256="59217efeac3b64e7ced958324b9db7494f1e0741aeb22d780276514cc1b8f206")
+    version("25.2.8", sha256="097842f3e49d996868b38688db87b006f7d4541e93ce86d2f341d8b3e7be7c93")
+    version("25.1.9", sha256="412df33a1bb3c785ed698555a3972118a37c458e7accf6ae53f4bb87b3db454a")
+    version("25.0.7", sha256="592272df3cf01e85e7db300c449df5061092574d099da275d19e97ef0510f8a6")
+    version("25.0.5", sha256="c0d245dea0aa4b49f74b3d474b16542e4a8799791cd33d676c69f650ad4378d0")
     version("24.3.4", sha256="e641ae27191d387599219694560d221b7feaa91c900bcec46bf444218ed66025")
     version("23.3.6", sha256="cd3d6c60121dea73abbae99d399dc2facaecde1a8c6bd647e6d85410ff4b577b")
     version("23.3.3", sha256="518307c0057fa3cee8b58df78be431d4df5aafa7edc60d09278b2d7a0a80f3b4")
@@ -94,7 +95,9 @@ class Mesa(MesonPackage):
     )
 
     # Front ends
-    variant("osmesa", default=True, description="Enable the OSMesa frontend.", when="+opengl")
+    variant(
+        "osmesa", default=True, description="Enable the OSMesa frontend.", when="@:25.0 +opengl"
+    )
 
     is_linux = sys.platform.startswith("linux")
     variant("glx", default=is_linux, description="Enable the GLX frontend.", when="+opengl")
@@ -144,7 +147,7 @@ class Mesa(MesonPackage):
 
     # Require at least 1 front-end
     # TODO: Add egl to this conflict once made available
-    conflicts("~osmesa ~glx")
+    conflicts("@:25.0 ~osmesa ~glx")
 
     # Require at least 1 back-end
     # TODO: Add vulkan to this conflict once made available
@@ -216,28 +219,35 @@ class Mesa(MesonPackage):
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         spec = self.spec
-        args = [
-            "-Dvulkan-drivers=",
-            "-Dgallium-vdpau=disabled",
-            "-Dgallium-va=disabled",
-            "-Dgallium-xa=disabled",
-            "-Dgallium-nine=false",
-            "-Dgallium-opencl=disabled",
-            "-Dbuild-tests=false",
-            "-Dglvnd=false",
-        ]
+        args = ["-Dvulkan-drivers=", "-Dgallium-va=disabled", "-Dbuild-tests=false"]
+
+        if self.spec.satisfies("@:24.0"):
+            args.append("-Dglvnd=false")
+        else:
+            args.append("-Dglvnd=disabled")
+
         # gallium-xvmc was removed in @main and @2.23:
         if self.spec.satisfies("@:22.2"):
             args.append("-Dgallium-xvmc=disabled")
         # the option 'gallium-omx' is present in @24.2.4 and removed in @main
         if spec.satisfies("@:24.2.4"):
             args.append("-Dgallium-omx=disabled")
+        # gallium-xa, gallium-nine, gallium-opencl were removed in 25.2.0
+        if spec.satisfies("@:25.1"):
+            args.append("-Dgallium-nine=false")
+            args.append("-Dgallium-xa=disabled")
+            args.append("-Dgallium-opencl=disabled")
+        # gallium-vdpau was removed in 25.3.0
+        if spec.satisfies("@:25.2"):
+            args.append("-Dgallium-vdpau=disabled")
 
         args_platforms = []
         args_dri_drivers = []
 
-        # swrast includes softpipe and llvmpipe
-        if spec.satisfies("+llvm"):
+        # swrast includes softpipe and llvmpipe, but was removed in v26
+        if spec.satisfies("@26: +llvm"):
+            args_gallium_drivers = ["llvmpipe"]
+        elif spec.satisfies("@:25 +llvm"):
             args_gallium_drivers = ["swrast"]
         else:
             args_gallium_drivers = ["softpipe"]
@@ -249,16 +259,19 @@ class MesonBuilder(meson.MesonBuilder):
 
         num_frontends = 0
 
-        if spec.satisfies("@:20.3"):
-            osmesa_enable, osmesa_disable = ("gallium", "none")
-        else:
-            osmesa_enable, osmesa_disable = ("true", "false")
+        if spec.satisfies("@:25"):
+            # mesa 25.1 removed legacy osmesa
+            # mesa 26.0 removed the explicit osmesa option
+            if spec.satisfies("@:20.3"):
+                osmesa_enable, osmesa_disable = ("gallium", "none")
+            else:
+                osmesa_enable, osmesa_disable = ("true", "false")
 
-        if "+osmesa" in spec:
-            num_frontends += 1
-            args.append("-Dosmesa={0}".format(osmesa_enable))
-        else:
-            args.append("-Dosmesa={0}".format(osmesa_disable))
+            if "+osmesa" in spec:
+                num_frontends += 1
+                args.append("-Dosmesa={0}".format(osmesa_enable))
+            else:
+                args.append("-Dosmesa={0}".format(osmesa_disable))
 
         if "+glx" in spec:
             num_frontends += 1
