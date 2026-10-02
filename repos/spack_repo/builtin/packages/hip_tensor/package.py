@@ -129,6 +129,15 @@ class HipTensor(ROCmLibrary, CMakePackage, ROCmPackage):
             ver = None
         return ver
 
+    def cmake_args(self):
+        args = []
+        if "auto" not in self.spec.variants["amdgpu_target"]:
+            if self.spec.satisfies("@7.1:"):
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
+            else:
+                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+        return args
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@6.1"):
             env.set("CXX", self.spec["hipcc"].prefix.bin.hipcc)

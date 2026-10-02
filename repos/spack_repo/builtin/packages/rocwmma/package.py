@@ -81,6 +81,7 @@ class Rocwmma(ROCmLibrary, CMakePackage):
     depends_on("cmake@3.16:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
+    depends_on("googletest@1.16:", type="build", when="@10.0")
 
     generator("ninja")
 
@@ -193,4 +194,6 @@ class Rocwmma(ROCmLibrary, CMakePackage):
         else:
             # to be enabled later
             args.append(self.define("ROCWMMA_BUILD_BENCHMARK_TESTS", "OFF"))
+        if self.spec.satisfies("@10.0"):
+            args.append(self.define("ROCWMMA_USE_SYSTEM_GOOGLETEST", True))
         return args
