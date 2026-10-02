@@ -23,7 +23,6 @@ class GuacamoleServer(AutotoolsPackage):
     version("1.6.0", sha256="913b05d19beabed4a3066e6e2be3078783048f55c7a9d2e3a012897a8766c245")
 
     variant("ssh", default=True, description="SSH support")
-    variant("rdp", default=False, description="RDP support")
     variant("vnc", default=False, description="VNC support")
     variant("webp", default=False, description="WebP support")
 
@@ -41,14 +40,12 @@ class GuacamoleServer(AutotoolsPackage):
     depends_on("openssl", when="+ssh")
     depends_on("libssh2", when="+ssh")
     depends_on("pango", when="+ssh")
-    depends_on("freerdp", when="+rdp")
     depends_on("libvncserver", when="+vnc")
     depends_on("libwebp", when="+webp")
 
     def configure_args(self):
         args = []
         args += self.with_or_without("ssh")
-        args += self.with_or_without("rdp")
         args += self.with_or_without("vnc")
         args += self.with_or_without("webp")
         return args
