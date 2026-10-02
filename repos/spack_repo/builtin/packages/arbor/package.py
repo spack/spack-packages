@@ -13,13 +13,33 @@ class Arbor(CMakePackage, CudaPackage):
 
     homepage = "https://arbor-sim.org"
     git = "https://github.com/arbor-sim/arbor.git"
-    url = "https://github.com/arbor-sim/arbor/releases/download/v0.8.1/arbor-v0.8.1-full.tar.gz"
-
-    maintainers("thorstenhater", "brenthuisman")
+    url = "https://github.com/arbor-sim/arbor/archive/refs/tags/v0.12.2.tar.gz"
     license("BSD-3-Clause")
+    maintainers = ("thorstenhater",)
+    submodules = True
 
     version("master", branch="master")
-    version("develop")
+    version("develop", branch="master")
+    version(
+        "0.12.2",
+        sha256="406ece35f288b9ae500338a2b11df87eb9666829b4a42f38c350c9a1d8ab5b29",
+        url="https://github.com/arbor-sim/arbor/releases/download/v0.12.2/arbor-v0.12.2-full.tar.gz",
+    )
+    version(
+        "0.12.1",
+        sha256="6584ccfaef1c8f9eab6c8794d0f4f06745cbfb7c2d701815c74ed9e6a101a3dc",
+        url="https://github.com/arbor-sim/arbor/archive/refs/tags/v0.12.1.tar.gz",
+    )
+    version(
+        "0.11.0",
+        sha256="6df68b308dd629df993eda40319676cd43407ae211d0846100b0cf42e8c9ad22",
+        url="https://github.com/arbor-sim/arbor/archive/refs/tags/v0.11.0.tar.gz",
+    )
+    version(
+        "0.10.0",
+        sha256="72966b7a2f45ce259b8ba167ca3e4f5ab9f212136a300267aaac0c04ed3fe3fc",
+        url="https://github.com/arbor-sim/arbor/releases/download/v0.10.1/arbor-v0.10.0-full.tar.gz",
+    )
     version(
         "0.9.0",
         sha256="5f9740955c821aca81e23298c17ad64f33f635756ad9b4a0c1444710f564306a",
@@ -51,13 +71,21 @@ class Arbor(CMakePackage, CudaPackage):
         url="https://github.com/arbor-sim/arbor/releases/download/v0.5.2/arbor-v0.5.2-full.tar.gz",
     )
 
-    variant("assertions", default=False, description="Enable arb_assert() assertions in code.")
+    variant(
+        "assertions",
+        default=False,
+        description="Enable arb_assert() assertions in code.",
+    )
     variant("doc", default=False, description="Build documentation.")
     variant("mpi", default=False, description="Enable MPI support")
     variant("python", default=True, description="Enable Python frontend support")
+    variant("pystubs", default=True, when="@0.11:", description="Python stub generation")
     variant(
-        "vectorize", default=False, description="Enable vectorization of computational kernels"
+        "vectorize",
+        default=False,
+        description="Enable vectorization of computational kernels",
     )
+    variant("hwloc", default=False, description="support for thread pinning via HWLOC")
     variant(
         "gpu_rng",
         default=False,
@@ -72,39 +100,60 @@ class Arbor(CMakePackage, CudaPackage):
     conflicts("%cce@:9.1")
     conflicts("%intel")
 
+    depends_on("cmake@3.19:", type="build")
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-
-    depends_on("cmake@3.19:", type="build")
 
     # misc dependencies
     depends_on("fmt@7.1:", when="@0.5.3:")  # required by the modcc compiler
     depends_on("fmt@9.1:", when="@0.7.1:")
-    depends_on("googletest@1.12.1", when="@0.7.1:")
+    depends_on("fmt@10.2:", when="@0.9.1:")
+    depends_on("fmt@10.2:", when="@0.10.0:")
+    depends_on("fmt@12.0:", when="@0.12.0:")
+    depends_on("googletest@1.12.1:", when="@0.7.1:")
     depends_on("pugixml@1.11:", when="@0.7.1:")
-    depends_on("nlohmann-json@3.11.2")
-    depends_on("random123")
+    depends_on("pugixml@1.13:", when="@0.9.1:")
+    depends_on("pugixml@1.14:", when="@0.10.0:")
+    depends_on("pugixml@1.15:", when="@0.12.0:")
+    depends_on("nlohmann-json@3.11.3:")
+    depends_on("nlohmann-json@3.12:", when="@0.12.0:")
+    depends_on("random123@1.14.0:")
     with when("+cuda"):
         depends_on("cuda@10:")
         depends_on("cuda@11:", when="@0.7.1:")
+        depends_on("cuda@12:", when="@0.9.1:")
+        depends_on("cuda@12:", when="@0.10.0:")
 
     # mpi
     depends_on("mpi", when="+mpi")
     depends_on("py-mpi4py", when="+mpi+python", type=("build", "run"))
 
+    # hwloc
+    depends_on("hwloc@2:", when="+hwloc", type=("build", "run"))
+
     # python (bindings)
-    extends("python", when="+python")
-    depends_on("python@3.7:", when="+python", type=("build", "run"))
-    depends_on("py-numpy", when="+python", type=("build", "run"))
     with when("+python"):
+        extends("python")
+        depends_on("python@3.7:", type=("build", "run"))
+        depends_on("python@3.9:", when="@0.9.1:", type=("build", "run"))
+        depends_on("python@3.10:", when="@0.10.0:", type=("build", "run"))
+        depends_on("python@3.10:", when="@0.11.0:", type=("build", "run"))
+        depends_on("python@3.11:", when="@0.12.0:", type=("build", "run"))  #
+        depends_on("py-numpy", type=("build", "run"))
+        depends_on("py-numpy@2.0.0:", when="@0.12.0:", type=("build", "run"))
         depends_on("py-pybind11@2.6:", type="build")
         depends_on("py-pybind11@2.8.1:", when="@0.5.3:", type="build")
         depends_on("py-pybind11@2.10.1:", when="@0.7.1:", type="build")
+        depends_on("py-pybind11@2.11.1:", when="@0.9.1:", type="build")
+        depends_on("py-pybind11@2.10.1:", when="@0.7.1:", type="build")
+        depends_on("py-pybind11@3.0.2:", when="@0.12.0:", type="build")
+        depends_on("py-pybind11-stubgen@2.5:", when="+pystubs", type="build")
 
     # sphinx based documentation
-    depends_on("python@3.7:", when="+doc", type="build")
-    depends_on("py-sphinx", when="+doc", type="build")
-    depends_on("py-svgwrite", when="+doc", type="build")
+    with when("+doc"):
+        depends_on("python@3.11:", type="build")
+        depends_on("py-sphinx", type="build")
+        depends_on("py-svgwrite", type="build")
 
     @property
     def build_targets(self):
@@ -116,6 +165,7 @@ class Arbor(CMakePackage, CudaPackage):
             self.define_from_variant("ARB_WITH_MPI", "mpi"),
             self.define_from_variant("ARB_WITH_PYTHON", "python"),
             self.define_from_variant("ARB_VECTORIZE", "vectorize"),
+            self.define_from_variant("ARB_BUILD_PYTHON_STUBS", "pystubs"),
             self.define("ARB_ARCH", "none"),
             self.define("ARB_CXX_FLAGS_TARGET", microarchitecture_flags(self.spec, "cxx")),
         ]
