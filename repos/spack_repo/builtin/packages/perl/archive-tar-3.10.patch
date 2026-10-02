@@ -1,0 +1,1345 @@
+diff -ruN perl-5.42.2/cpan/Archive-Tar/CHANGES perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/CHANGES
+--- perl-5.42.2/cpan/Archive-Tar/CHANGES	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/CHANGES	2026-05-25 12:15:15.000000000 -0600
+@@ -0,0 +1,694 @@
++3.10  25/05/2026 (Stig Palmquist)
++- Added MAX_FILE_SIZE setting, defaulting to 1GB, for
++  extracting files
++
++3.08  22/05/2026 (Stig Palmquist)
++- Validate symlink and hardlink linkname in SECURE MODE
++
++3.06  10/05/2026
++- Hardlinks not extracted by default, added EXTRACT_HARDLINK flag
++- If hardlinks are extracted, they are now subject to the same rules
++  as symlinks with regards to chown and chmod
++
++3.04  25/02/2025 (Dan Church, Arne Johannessen && SISYPHUS)
++- Fix handling filenames with trailing whitespace
++- Allow --format=ustar option for ptar
++- GH#21402 Symlink tests on Windows
++
++3.02  13/04/2023 (Manfred Stock)
++- Test block sizes up to (2**31 - 1) bytes only (fix for 32bit perls)
++- Don't match on message from exception in symlink test
++- Improve formatting of $Archive::Tar::RESOLVE_SYMLINK documentation
++
++3.00  25/03/2023 (Chris Lindee, Reini Urban, Paul Bolle, Michiel Beijen, Paulo Custodio, Michael R. Davis && Manfred Stock)
++- RT #119949: Correctly concat prefix on directories
++- enabled t/90_symlink.t for all platforms with symlinks
++- Fix pod typo 'Archive::Tar::Files'
++- Update links under SEE ALSO
++- Skip symlink tests on Windows/msys2
++- Support extraction of large files
++
++2.40  27/07/2021 (KHW && ATOOMIC)
++- Generalize for EBCDIC
++- Update GitHub workflow with deprecated add-path
++
++2.38  25/06/2020 (ATOOMIC)
++- Avoid indirect calls
++- Add use warnings to bin/ptar*
++
++2.36  02/02/2020
++- Add xz test files to MANIFEST
++
++2.34  01/02/2020 (HEANEY && SKAJI)
++- Add xz support
++- Use 4 digit year in Time::Local call
++
++2.32  13/09/2018 (CBERRY)
++- Fix absolute path handling on VMS
++
++2.30  19/06/2018
++- skip white_space test on MSWin32 as Windows will report that both
++  files exist, which is obviously a 'feature'
++
++2.28  08/06/2018 (madroach, ARC, OCBNET, ppisar)
++- fix creating file with trailing whitespace on filename - fixes 103279
++- allow archiving with absolute pathnames - fixes 97748
++- small POD fix
++- Speed up extract when archive contains lots of files
++- CVE-2018-12015 directory traversal vulnerability [RT#125523]
++
++2.26  12/05/2017
++- '0' is a valid name for an archive, change 'iter' to check definedness
++
++2.24  16/12/2016 (SREZIC)
++- Handle tarballs compressed with pbzip2 (RT #119262)
++
++2.22  16/12/2016 (MANWAR)
++- Add missing strict/warnings pragma to Constants.pm
++
++2.20  15/12/2016 (AGRUNDMA)
++- Check for gzip/bzip2 before round tripping gz/bz2 files in tests
++
++2.18  07/11/2016 (JHI)
++- Capture also the STDERR when checking tar exe
++
++2.16  01/11/2016 (JHI && CBERRY)
++- Make roundtrip tar exe finding robust for crappy tars
++
++2.14  20/10/2016
++- Fix roundtrip test when tar executable is absent
++
++2.12  16/10/2016 (KHW && JKEENAN)
++- Fix pod in bin/ptar
++- Distinguish between archives with/without directory entries
++
++2.10  27/07/2016 (TONYC)
++- CVE-2016-1238: avoid loading optional modules from default .
++
++2.08  12/05/2016
++- Add the roundtrip test to MANIFEST
++
++2.06  24/04/2016 (ISHIGAKI && BOOK)
++- changed some of the "A"s in the UNPACK constant to "a"
++  to allow trailing whitespaces in an archived filename
++- roundtrip tests
++
++2.04  14/12/2014
++- RT#100903 enable ptargrep.t to work on VMS
++
++2.02  14/09/2014
++- Tests should now be able to be run in parallel
++
++2.00  15/06/2014 (TINITA)
++- Fix ptargrep for problems on MSWin32
++
++1.98  14/06/2014 (TINITA)
++- ptardiff and ptargrep should use prefix if defined
++
++1.96  24/10/2013
++- integrate Package::Constants into Constant module
++  and remove requirement on it.
++
++1.94  24/10/2013
++- install into site if >= 5.012
++
++1.93_02 22/10/2013 (XLAT)
++- [rt.cpan.org #78030] symlinks resolution on MSWin32
++
++1.92 18/09/2013 (David Steinbrunner)
++- typo fixes
++
++1.90 05/09/2012 (Tom Jones)
++- documentation fixes
++
++1.88 01/06/2012 (Markus Prosch)
++- resolved chown won't work on symlinks
++
++1.86 24/05/2012 (Mark Allen)
++- don't use tell on IO::Zlib handles RT#64339
++
++1.84 02/03/2012 (HMBRAND)
++- ptar now supports -T option [rt#75473]
++- ptar now supports dashless options [rt#75475]
++- auto-encode filenames marked as UTF-8 [rt#75474]
++
++1.82 21/11/2011 (CDRAKE)
++- Adjustments to handle files >8gb (>0777777777777 octal)
++- Feature to return the MD5SUM of files in the archive
++
++1.80 13/10/2011
++- patch from Rocky Bernstein to add file chown() method [rt#71221]
++
++1.78 08/09/2011
++- patch from Rocky Bernstein to add chown() method [rt#70623]
++- blead patch from Alexandr Ciornii to resolve [perl#78708]
++
++1.76 07/01/2011
++- upstream blead patches from Peter Acklam
++
++1.74 18/12/2010
++- Skip extracting pax extended headers, reported as
++  RT #64038
++
++1.72 18/11/2010
++- Apply patch from Grant McLean to update docs for
++  ptargrep
++
++1.70 15/11/2010
++- Add ptargrep utility courtesy of Grant McLean
++
++1.68 17/08/2010
++- Apply a patch from Colin Newell that checks whether long files can be created or
++  not in 02_methods.t. Hopefully resolves RT #57312 and RT #56163
++
++1.66 26/07/2010
++- Applied a patch from Alexandr Ciornii [RT#59699] to Makefile.PL which produces better META.yml
++- Apply a patch from Alexandr Ciornii to ptar [RT#59700]:
++
++    Adds option -C to allow archives created with ptar to be uploaded to
++    PAUSE in case of Windows or world +w permissions on unix.
++
++1.64 09/07/2010
++- Removed the PERL_CORE specific chdir from all the tests
++- Apply a patch from David Muir Sharnoff RT #58916,
++  "skip files via a callback and limit memory use when skipping files"
++- Apply a patch from Daphne Pfister RT #59150
++  "Assumes all references filename are IO::Handle's instead of trying to stringify."
++
++1.62 28/06/2010
++- Apply part of patch from https://bugzilla.redhat.com/attachment.cgi?id=426194
++  reported by Martin Cermak in RT #58636 relating to a Redhat ticket
++  https://bugzilla.redhat.com/show_bug.cgi?id=606813
++
++1.60 23/04/2010
++- Apply patch from Darrell K. [RT #54850] that makes write() and create_archive() close only handles
++  they opened.
++
++    When you pass a filehandle to Archive::Tar::write() or create_archive(),
++    it closes the filehandle after writing to it. I think it makes more
++    sense not to close a handle that A::T didn't open, since the application
++    may need to write additional data to it. (Consider sockets, package
++    files containing encapsulated tar archives, etc.)
++
++    Example:
++
++    $ perl -e 'use Archive::Tar; open(PKG, ">mypkg") or die "open: $!"; my
++    $tar = Archive::Tar->new; $tar->add_data("foo.txt","hello");
++    $tar->write(\*PKG); print PKG "more data" or die "print: $!";'
++    print: Bad file descriptor at -e line 1.
++
++- Fool the installer into replacing our scripts that were installed by core with versiononly set.
++
++1.58 17/02/2010
++- Apply a patch from toddr@null.net that addreses RT #54714
++
++  Subject: $@ not cleaned up after eval
++
++  This section of code seems to be trying to use future functionality
++  not yet present in IO::Zlib (tell). I was chasing another bug and getting very confused
++  by this population of $@. Could I request you cleanup $@ if you expect and/or don't care
++  about failure from this eval?
++
++1.56 03/02/2010
++- Apply a patch from Mark Swayne that addresses RT #50471;
++
++  Archive::Tar generates file headers with space padded numbers for size,
++  mtime and checksum. This format is incompatible with some versions of
++  the busybox implementation of tar (I am using 1.13.2), which requires 0
++  padded numbers (despite comments in the source that say otherwise).
++
++  I've included a patch that adds a control flag that enables zero padded
++  numbers in the header. It passes all tests with ActiveState Perl 5.8.8
++  on WinXP.
++
++1.54 10/09/2009
++- Apply a patch from Niko Tyni (ntyni@debian.org) that resolves RT #48879;
++
++    As seen in [rt.cpan.org #48879], although the recommended way of
++    retrieving the last error is to use an instance method ($tar->error),
++    the returned value is effectively global: an error in one Archive::Tar
++    instance changes the error string of another instance.
++
++    This change separates the error strings from each other while keeping
++    the (deprecated) global value of $Archive::Tar::error pointing to the
++    last error regardless of its instance.
++
++    We also support calling error() as a class method (Archive::Tar->error).
++    In this case it returns the global value, which matches the old behaviour.
++
++1.52 13/06/2009:
++- Apply documentation patch to describe IBM APAR issue IZ50240; AIX tar
++  does not always end a Tar archive with a 0x00 null block, which can
++  cause warnings from Archive::Tar.
++  This is a documentation patch only, and users of 1.50 need not upgrade.
++
++1.50 12/06/2009:
++- Apply patch in #46450: Support for --no-same-permissions style behavior
++  This facilitates leaving the +x bit, while still applying your umask on
++  the extracted file.
++
++1.48 20/04/2009:
++- Address #44680 (Improve error reporting on short corrupted archives)
++  Archives of less than 512 bytes would not have a clear error string set
++- Requires at least IO::Compres::* 2.015, to address: #43609: Memory
++  problem with A::T. Turns out 2.012 was leaking memory.
++
++1.46 05/03/2009:
++- Address: bug #43513: [PATCH] Accept wrong checksums from SunOS and HP-UX tar
++  like GNU tar does. See here for details:
++  http://www.gnu.org/software/tar/manual/tar.html#SEC139
++- make COMPRESS_BZIP and COMPRESS_GZIP constants actually work and fix their
++  documentation
++
++1.44 19/01/2009:
++- Address #41798: Nonempty $\ when writing a Tar file produces a
++  corrupt Tar file
++- Textual fix to Makefile.PL diagnostics
++
++1.42 13/12/2008:
++- Address #40426: Archive Tar to support direct Archive::Tar::File adds
++  It is now possible to add Archive::Tar::File objects via $tar->add_files
++- Address #40016 (Archive::Tar assumes $> won't change): CAN_CHOWN is now a
++  dynamic check upon extraction. This allows scripts to drop privileges when
++  desired
++- Address take 2 of #39933: [PATCH] handle ../ directory name on VMS
++  John M. sent in a better way to do directory name translation.
++
++1.40 13/10/2008:
++- Add $class->has_zlib_support and $class->has_bzip2_support to
++  discern which A::T can support
++- Address: #39933: [PATCH] handle ../ directory name on VMS (core patch)
++
++1.39_04 08/09/2008:
++- Address: #38932: pax_global_header extracted as file
++  Don't extract these special files, which are added by, among
++  others, git-generated tarballs. It holds a comment and is not
++  meant for extraction. This follows gnu tar 1.14 and later behaviour
++- Address: #19577: extract_file() drops volume part of extraction path
++  Windows users can now extract files to a different volume
++
++* important changes in verison 1.39_03 26/08/2008:
++- Because all the IO::Compress modules are interlinked, they must be
++  the same version when installed, or breakage will occur like shown
++  at this tester report:
++
++    http://www.nntp.perl.org/group/perl.cpan.testers/2008/08/msg2083310.html
++
++  Mailed the author to find a less fragile solution, but for now we require
++  all the individual modules, and all at the same version.
++
++1.39_02 25/08/2008:
++- Address #31806: Please add support for bzipped tar files.
++  Archive::Tar now supports reading/writing tar.bz2 files.
++- Since IO::Zlib is now core, it is now a default dependency.
++- Added Package::Constants as a dependency to ease the use of A::T::Constants
++- Dependency on IO::Compress::Bzip2 and IO::Uncompress::Bunzip2 is on
++  by default, but can be negated with the -n switch when building:
++  'perl Makefile.PL -n'
++- Improve documentation on the new ->iter function
++
++1.39_01 22/08/2008:
++- Address the second part mentioned in this report:
++  #30380: directory traversal vulnerability in Archive-Tar
++  Archives are no longer allowed to extract into symlinked directories,
++  unless Insecure Extract Mode is enabled (which is off by default).
++- Add regression tests for this behaviour
++- Address #33669 (Could not update timestamp warning on symlinks)
++  Don't update timestamps on symlinks, they'll modify the original
++- Apply core patch: [patch@33971] Archive::Tar was building corrupt
++  archives on VMS as supplied by John Malmberg
++- Address #37375: ptar should allow '-' as an archive_file name
++  Patch provided by glenn jackman
++- Add convenience method ->extract() to A::T::File
++- improve docs of A::T::File by adding rv & object in the header
++- Address #38580: [PATCH] Archive::Tar-&gt;iter
++  This adds an iterator to Archive::Tar, thanks to Gisle Aas
++
++1.38    14/12/2007:
++- Promote 1.37_01 to stable.
++
++1.37_01 11/11/2007:
++_ Address #30380: directory traversal vulnerability in Archive-Tar
++  - Add $INSECURE_EXTRACT_MODE which defaults to 0, disallowing
++    archives to extract files outside of cwd(). This is a backwards
++    incompatible change from 1.36 and before.
++  - Add a -I option to ptar to enable insecure extraction if needed
++
++1.36 16/9/2007:
++-   Portability fixes for VMS, as offered by Craig Berry.
++
++1.34 15/8/2007:
++-   Address #28687: Fwd: Unespected reaction of Archive::Tar
++    A::T didn't always handle filenames that evaluated to false
++    (like '0') gracefully. This patch adds a few 'or defined' check
++    to the A::T codebase and a test to ensure filenames like '0' are
++    handeled correctly.
++-   Apply #28407: Unicode and Archive::Tar - documentation patch as
++	FAQ patch
++
++1.32 25/7/2007:
++-   Apply #28407: Unicode and Archive::Tar - documentation patch as
++    FAQ patch
++-   Following a report from rgs that A::T 1.31 doesn't play nicely
++    with -Dmksymlinks under perl core, rewrite the symlink logic in
++    A::T::File->new to continue building an object when reading a
++    symlink fails, rather than refusing to read on a symlink (which
++    is obviously wrong)
++-   Quell warnings when a gid is not resolvable to a group name
++
++1.31 18/5/2007:
++-   No longer use the t/setup.t and t/cleanup.t files but just bundle
++    the binary files; this was done for core integration, but the new
++    uupacktool.pl script means we dont have to do this anymore
++_   Apply core perl Change 30997 by rgs@stcosmo on 2007/04/20 15:03:57
++-   Address: #27124: Unneeded warning sent when checking for file
++    inclusion contains_file() will no longer warn to STDERR when a file
++    is not contained in an archive and $WARN is set to 'true'.
++-   Address #26492: Dangling symlinks not preserved: Archive::Tar used
++    to complain about dangling symlinks, unlike standard gnu tar, which
++    would add them silently. This patch brings A::T's behaviour in line
++    with gnu tar
++-   Minor pod fixes
++
++1.30 8/2/2006:
++-   applied bleadperl patch: Subject: Change 27416:
++    Cleanup Archive-Tar temporary test files
++-   address #17985: INSTALLDIRS needs to be 'perl' for >= perl-5.9.3
++-   address #18296: Archive::Tar 1.29 PATCH for VMS to fix test case
++    failure in 99_pod.t
++    (it's actually a File::Find bug, but this patch works around that)
++-   address: #18720 ([PATCH] Archive::Tar creates POSIX style tar files
++    unnecessarily and by default, leading to compatibility problems
++    particularly with WinZip.)
++    patch rejected, docpatch added with FAQ and SEE ALSO
++-   apply performance patch from #20399 to enable the user to
++    avoid repeated calls to cwd() if desired.
++
++1.29 3/1/2006:
++-   integrate bleadperl patches to generate the source files for
++    testing, rather than bundling them
++-   make extract* methods accept a::t::file objects too
++-   address #17624: Unnecessary calls to cwd() -- cwd() is only
++    called when needed
++-   address #17935: Archive::Tar::write('file_name') should close
++    or return file handle. -- filehandles are now closed
++-   address #17395: [PATCH] allow extract() to select files by
++    regexes or substrings; patch did not get integrated, but a FAQ
++    on how to achieve this was added to the FAQ section
++-   address #17310 (Archive-Tar 1.26_01 not tolerant to Archives
++    with Garbage) -- Garbage protection should be much improved now
++
++1.28 19/1/2006:
++-   add pod to ptar and ptardiff so they have manpages generated
++-   integrate change 25333 by rgs@oregon on 2005/08/27 16:28:27
++    which fixes a failure in Archive::Tar tests when perl is built
++    with -Dmksymlinks
++-   integrate Change 26870 by craigb@craigb-brianor on
++    2006/01/17 04:03:01 holding vms specific patches
++-   mention 'full_name' as property type to list_archive
++-   address #14922 -- unable to reproduce, but add a test
++    case to make sure the issue doesn't occur
++-   apply the docpatch provided by:
++    #15935: File type constants are not documented
++-   document our lack of support for stringified archives and
++    compressed archives opened to a non-io-zlib fh
++-   1.27 was skipped due to PAUSE issues
++
++1.26 22/8/2005:
++-   the 'ptardiff' was not included in the exe_files section
++    of the makefile.pl, meaning it didn't get instaleld by default.
++
++1.25 20/8/2005:
++-   Move the changes into it's own file
++-   Add patch from abeltje to make tests pass on VMS. This is *just*
++    the tests -- code may need some extra work to be reliable  (#12678)
++-   Add faq about accessing 'tar.Z' files, as provided by Paul Marquess
++-   Add a warning if the read() call from new() fails to return data
++-   Address #13636, where heuristics were 'upgrading' a file to a
++    directory if the file had an @LongLink entry, and the shortened
++    filename ended in a '/'.
++-   Add ptardiff program as suggested by KWILLIAMS (#13658)
++
++1.24 3/5/2005:
++-   Fix a bug where alternate absolute extract paths would add an
++    extra directory upon extract (bug #11342)
++-   Added support for 'perlio' (available for perl5.8 and up).
++    See the Archive::Tar documentation for details
++
++1.23 3/12/2004:
++-   03_file.t wasn't present in the MANIFEST
++
++1.22 21/11/2004:
++
++This release holds only bugfixes.
++-   Make list_files() also return full_path() rather than name(),
++    as that would ignore the prefix field. This was found to break
++    PPM (bug #8537)
++
++1.21 9/11/2004:
++
++This release holds only bugfixes.
++-   Make the size of symlinks be 0 in tar headers, so the next entry
++    is not interpreted as contents of the symlink (bug #7937)
++-   Strip high bits from the mode of the file, as they are stored
++    differently in the tar header
++-   Make Archive::Tar be kinder to archives that contain garbage,
++    proceeding anyway as long as that's possible.
++
++1.20 8/11/2004:
++
++This release holds mostly bugfixes, in the form of a rewrite of
++the handling of the 'prefix' header field.
++-   Rewrote 02_methods.t to be more independant
++-   Rewrote the way 'prefix' headers are dealt with
++-   Require IO::String now to do archive stringification
++-   Add new method 'full_path' to A::T::Item objects
++    - this is used to fix bug 6938
++-   A::T->new now accepts both a class and an object to be friendlier
++    to users
++-   On tar read errors, binary chunks are no longer dumped to STDOUT,
++    but instead the error offset is reported
++
++1.09 22/5/2004:
++
++This release holds some bugfixes and also the return of bin/ptar
++-   Make new() comply with the documentation and return undef on
++    a read() failure.
++-   Re-adds bin/ptar, which disappeared from this distribution after
++    0.22 (sorry about that).
++-   Makes 'IO::Zlib' a default prerequisite. You can still disable
++    this by supplying the -n option to 'perl Makefile.PL'.
++
++1.08 5/1/2004:
++
++This release holds some bugfixes and extra tests over the 1.07 release:
++-   Fix a file renaming bug that forgot to carry over path info
++-   Fix a bug where adding dirs on win32 gave 'permission denied'
++-   Fix some documentation typos
++-   Add extra tests explicilty for Archive::Tar::File
++-   Move completely from FileHandle to IO::File
++
++1.07 17/10/2003:
++
++This release holds some bugfixes over the 1.06 release:
++-   Quell some annoying warnings about binmode on unopened filehandles
++-   Add tests for binary files included in a tarball
++
++1.06 15/10/2003:
++
++This release holds some bugfixes and new features over the 1.05 release.
++-   The chown() code somehow didn't make it into the 1.05 release
++-   Patch _get_handle() to treat all IO::File handles as binary.
++    This should make win32 users happy
++
++New feature added:
++-   A method called 'contains_file' that will tell you if a certain file
++    is already in the archive.
++
++1.05 23/8/2003:
++
++This release holds some bugfixes and new features over the 1.04 release.
++-   The Test::Harness that came with perl 5.6.0 was buggy, require
++    a higher version in the Makefile.PL
++-   Add a global variable $CHOWN that controls whether Archive::Tar
++    should attempt to chown() files or not when it can.
++
++1.04 27/7/2003:
++
++This release hold a bugfix over the 1.03 release:
++-   NULL-byte padding was done also on files that had no real content,
++    like symlinks, thus ending up with a number of bytes not dividable
++    by 512.
++
++1.03 26/6/2003:
++
++This release holds some bugfixes over the 1.02 release, mainly these:
++-   Always do a readlink on the full path, never just the file
++-   Make Archive::Tar write proper headers when dealing with symlinks
++    For this $Archive::Tar::FOLLOW_SYMLINKS is introduced
++
++1.02 12/6/2003:
++
++This release holds some bugfixes over the 1.01 release, mainly these:
++-   Silly thinko fix in File.pm
++-   Quell some warnings if files are empty
++-   The cache of previously added files was not being emptied
++
++Also, some new features are added:
++
++-   Archive::Tar::File objects now have a C<has_content> method.
++
++1.01 5/6/2003:
++
++This release holds some bugfixes over the 1.00 release, mainly these:
++
++-   Silence some warnings when writing directories to disk.
++-   A { } inside a map was interpreted as a block rather than a hashref
++    constructor -- now fixed.
++-   Fix write() to work again as advertised when passed no arguments.
++-   This also means glob support to write is now definitely not
++    available.
++-   Silly thinko of where splitpath() instead of splitdir() was used.
++
++Some new features/changes:
++
++-   Add a new method 'has_content' to Archive::Tar::File.
++-   Cygwin's tests will now also use the 'short' files, since cygwin
++    is built on top of an Win32 filesystem.
++
++1.00 31/5/2003:
++
++This release marks the new development track as 'stable'. Version got
++upped to '1.00'. Not many changes, merely lots of successful test
++reports constitute this version. However, a tiny fix regarding the
++reserved string 'VERSION' has been applied, as well as a few more FAQ
++entries have been added.
++
++0.99_06 5/5/2003:
++
++This release only entails a bug fix on 0.99_05 -- C<extract_archive>
++was dealing wrongly with special files such as hardlinks etc. This
++is now fixed.
++
++0.99_05 30/4/2003:
++
++Apparently windows has some issues with long path names.
++This version introduces an adapted test suite for Win32 machines.
++
++0.99_04 28/4/2003:
++
++Make Archive::Tar work happily on perl 5.005_03
++
++0.99_03 28/4/2003:
++
++This release only has bug fixes on 0.99_02.
++
++Fixed handling of long file names when extracting with
++C<extract_archive>
++
++Fixed handling of prefixes in tar headers that contain regex meta-
++characters.
++
++Fixed a few spurious warnings about comparing non-numbers.
++
++Expanded the test cases accordingly.
++
++
++0.99_02 26/3/2003:
++
++Added options to be passed to read, namely:
++	- extract (to extract while reading)
++	- limit (to limit the amount of files read from the archive)
++
++Implemented the '././@LongLink' support, which is GNU's way of
++dealing with filenames that are longer than 255 chars.
++
++Added a global variable $WARN which controls whether warnings get
++printed or just stored.
++
++Fixed a few small bugs that considered files named '0' or '' to not
++really be files and refuse to package them.
++
++0.99_01 16/3/2003:
++
++Total rewrite from the ground up. Removed as many as the nasty
++bits (no pun intended) as possible and tucked them away.
++No code from the old distribution remains.
++
++Cleaned up the API, introduced clean error handling and just
++generally removed a lot of cruft.
++
++Note that Archive::Tar now requires perl version 5.005_03 or higher
++to run.
++
++Introduced 2 new submodules:
++Archive::Tar::Constant
++    Simply holds all constants, like block length, tar headers etc
++
++Archive::Tar::File
++    Object class for all files in a tar archive, to make for easier
++    manipulataion of the archive in-memory.
++    See perldoc Archive::Tar::File after installation.
++
++Added a few features:
++write() now takes an optional 3rd paramater (prefix) which will allow
++you to tuck away all files in that sub directory.
++
++rename() is introduced, allowing for easy renaming of files in the
++archive.
++
++get_files() returns a file of all Archive::Tar::File objects in the
++current read-in archive.
++
++0.23, 21/1/2003:
++
++Bundled 0.072 and 0.22 to be able to work on Win32 and non-Win32
++platforms. Since the previous version is almost 3 years old, bundling
++seemed like the quickest way to get a working solution again.
++
++Archive::Tar now transparently Does The Right Thing depending what
++platform you are on -- Win32 users, read the Archive::Tar::Win32
++documentation!
++
++I also suppose this makes me the new maintainer...
++
++0.20:
++
++New class methods create_archive, extract_archive & list_archive.
++
++Archive::Tar no longer keeps the entire archive in memory after
++reading it.  This results in a major reduction in memory consumption.
++
++Added suport for character & block special files.  These files are
++currently created using mknod, so they will only be available on UNIX
++platforms.
++
++See the file ChangeLog for more complete details.
++
++* important changes for version 0.08
++
++Fixed (again) the MacOS support and included alpha support for
++block/character special files as well as improving symlink handling.
++
++NOTE: Archive::Tar is undergoing major work to extend the interface
++and lower memory consumpton.  Any changes to the existing interface
++should be extensions only.
++
++* important changes for version 0.072.
++
++Fixes a problem with systems that don't like open files being deleted.
++It also has an explicit copyright notice so folks like Debian can
++redistribute it in peace, and an new custodial maintainer due to
++Calle's suffering Carpal Tunnel Syndrome.
++
++Get better soon, Calle!
++
++* important changes for version 0.071
++
++It fixes a bunch of bugs, implements POSIX-style long pathnames and
++adds a couple of useful methods.  It has also been verified to work on
++Win32.
++
++This version also includes a small tar-lookalike program, ptar. There
++is no documentation beyond a usage message, but if you've ever used at
++Unix-style tar program it should be very familiar.
+diff -ruN perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar/Constant.pm perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar/Constant.pm
+--- perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar/Constant.pm	2026-01-18 09:32:22.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar/Constant.pm	2026-05-25 12:13:07.000000000 -0600
+@@ -8,7 +8,7 @@
+ BEGIN {
+     require Exporter;
+
+-    $VERSION    = '3.04';
++    $VERSION    = '3.10';
+     @ISA        = qw[Exporter];
+
+     require Time::Local if $^O eq "MacOS";
+diff -ruN perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar/File.pm perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar/File.pm
+--- perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar/File.pm	2026-01-18 09:32:22.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar/File.pm	2026-05-25 12:13:07.000000000 -0600
+@@ -11,7 +11,7 @@
+
+ use vars qw[@ISA $VERSION];
+ #@ISA        = qw[Archive::Tar];
+-$VERSION    = '3.04';
++$VERSION    = '3.10';
+
+ ### set value to 1 to oct() it during the unpack ###
+
+diff -ruN perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar.pm perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar.pm
+--- perl-5.42.2/cpan/Archive-Tar/lib/Archive/Tar.pm	2026-01-18 09:32:21.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/lib/Archive/Tar.pm	2026-05-25 12:13:07.000000000 -0600
+@@ -24,7 +24,7 @@
+ use vars qw[$DEBUG $error $VERSION $WARN $FOLLOW_SYMLINK $CHOWN $CHMOD
+             $DO_NOT_USE_PREFIX $HAS_PERLIO $HAS_IO_STRING $SAME_PERMISSIONS
+             $INSECURE_EXTRACT_MODE $ZERO_PAD_NUMBERS @ISA @EXPORT $RESOLVE_SYMLINK
+-            $EXTRACT_BLOCK_SIZE
++            $EXTRACT_BLOCK_SIZE $EXTRACT_HARDLINK $MAX_FILE_SIZE
+          ];
+
+ @ISA                    = qw[Exporter];
+@@ -32,7 +32,7 @@
+ $DEBUG                  = 0;
+ $WARN                   = 1;
+ $FOLLOW_SYMLINK         = 0;
+-$VERSION                = "3.04";
++$VERSION                = "3.10";
+ $CHOWN                  = 1;
+ $CHMOD                  = 1;
+ $SAME_PERMISSIONS       = $> == 0 ? 1 : 0;
+@@ -41,6 +41,8 @@
+ $ZERO_PAD_NUMBERS       = 0;
+ $RESOLVE_SYMLINK        = $ENV{'PERL5_AT_RESOLVE_SYMLINK'} || 'speed';
+ $EXTRACT_BLOCK_SIZE     = 1024 * 1024 * 1024;
++$EXTRACT_HARDLINK       = 0;
++$MAX_FILE_SIZE          = 1024 * 1024 * 1024;
+
+ BEGIN {
+     use Config;
+@@ -444,6 +446,14 @@
+
+             my $block = BLOCK_SIZE->( $entry->size );
+
++            if ( $MAX_FILE_SIZE && $entry->size > $MAX_FILE_SIZE ) {
++                $self->_error( qq[Entry '] . $entry->full_path .
++                    qq[' declared size ] . $entry->size .
++                    qq[ bytes exceeds \$Archive::Tar::MAX_FILE_SIZE ] .
++                    qq[($MAX_FILE_SIZE); refusing to allocate] );
++                next LOOP;
++            }
++
+             $data = $entry->get_content_by_ref;
+
+ 	    my $skip = 0;
+@@ -922,19 +932,19 @@
+     ### only update the timestamp if it's not a symlink; that will change the
+     ### timestamp of the original. This addresses bug #33669: Could not update
+     ### timestamp warning on symlinks
+-    if( not -l $full ) {
++    if( not -l $full and not ( $entry->is_hardlink and ON_UNIX and $EXTRACT_HARDLINK ) ) {
+         utime time, $entry->mtime - TIME_OFFSET, $full or
+             $self->_error( qq[Could not update timestamp] );
+     }
+
+-    if( $CHOWN && CAN_CHOWN->() and not -l $full ) {
++    if( $CHOWN && CAN_CHOWN->() and not -l $full and not ( $entry->is_hardlink and ON_UNIX and $EXTRACT_HARDLINK ) ) {
+         CORE::chown( $entry->uid, $entry->gid, $full ) or
+             $self->_error( qq[Could not set uid/gid on '$full'] );
+     }
+
+     ### only chmod if we're allowed to, but never chmod symlinks, since they'll
+     ### change the perms on the file they're linking too...
+-    if( $CHMOD and not -l $full ) {
++    if( $CHMOD and not -l $full and not ( $entry->is_hardlink and ON_UNIX and $EXTRACT_HARDLINK ) ) {
+         my $mode = $entry->mode;
+         unless ($SAME_PERMISSIONS) {
+             $mode &= ~(oct(7000) | umask);
+@@ -954,6 +964,19 @@
+     my $err;
+
+     if( $entry->is_symlink ) {
++        if( !$INSECURE_EXTRACT_MODE ) {
++            my $linkname = $entry->linkname;
++            if( File::Spec->file_name_is_absolute($linkname) ) {
++                $self->_error( qq[Symlink '] . $entry->full_path .
++                    qq[' has absolute target. Not extracting under SECURE EXTRACT MODE] );
++                return;
++            }
++            if( grep { $_ eq '..' } File::Spec->splitdir($linkname) ) {
++                $self->_error( qq[Symlink '] . $entry->full_path .
++                    qq[' target attempts traversal. Not extracting under SECURE EXTRACT MODE] );
++                return;
++            }
++        }
+         my $fail;
+         if( ON_UNIX ) {
+             symlink( $entry->linkname, $file ) or $fail++;
+@@ -967,8 +990,25 @@
+                 $entry->linkname .q[' failed] if $fail;
+
+     } elsif ( $entry->is_hardlink ) {
++        if( !$INSECURE_EXTRACT_MODE ) {
++            my $linkname = $entry->linkname;
++            if( File::Spec->file_name_is_absolute($linkname) ) {
++                $self->_error( qq[Hardlink '] . $entry->full_path .
++                    qq[' has absolute target '$linkname'. Not extracting ] .
++                    qq[under SECURE EXTRACT MODE: extraction itself chmods ] .
++                    qq[the shared inode.] );
++                return;
++            }
++            if( grep { $_ eq '..' } File::Spec->splitdir($linkname) ) {
++                $self->_error( qq[Hardlink '] . $entry->full_path .
++                    qq[' target '$linkname' attempts traversal. Not ] .
++                    qq[extracting under SECURE EXTRACT MODE: extraction ] .
++                    qq[itself chmods the shared inode.] );
++                return;
++            }
++        }
+         my $fail;
+-        if( ON_UNIX ) {
++        if( ON_UNIX && $EXTRACT_HARDLINK ) {
+             link( $entry->linkname, $file ) or $fail++;
+
+         } else {
+@@ -2118,6 +2158,12 @@
+ Note that this is a backwards incompatible change from version
+ C<1.36> and before.
+
++=head2 $Archive::Tar::EXTRACT_HARDLINK
++
++Prior to version C<3.06> Archive::Tar would honour hardlinks in
++archives. Version C<3.06> and onwards will skip hardlinks unless
++this flag is set. Exercise caution when enabling this.
++
+ =head2 $Archive::Tar::HAS_PERLIO
+
+ This variable holds a boolean indicating if we currently have
+@@ -2187,6 +2233,13 @@
+ bytes that can be written in one call to C<write(2)>, so if this is too large,
+ extraction may fail with an error.
+
++=head2 $Archive::Tar::MAX_FILE_SIZE
++
++This variable holds an upper bound on the per-entry declared size that
++C<Archive::Tar> will accept when reading an archive. Entries whose header
++claims a larger size are refused with an error before any read allocation.
++Defaults to 1 GiB. Set to 0 to disable the cap.
++
+ =cut
+
+ =head1 FAQ
+diff -ruN perl-5.42.2/cpan/Archive-Tar/Makefile.PL perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/Makefile.PL
+--- perl-5.42.2/cpan/Archive-Tar/Makefile.PL	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/Makefile.PL	2020-02-01 09:31:56.000000000 -0700
+@@ -0,0 +1,148 @@
++use ExtUtils::MakeMaker;
++use strict;
++use Getopt::Std;
++use Config;
++my $opt = {};
++getopts( 'nd', $opt );
++
++unless( $] >= 5.005_03 ) {
++    die qq[Archive::Tar requires perl version 5.005_03 or higher to run\n];
++}
++
++if( !eval { require IO::Compress::Bzip2; 1 } and !$opt->{n} ) {
++    warn    qq[You do not have IO::Compress::Bzip2 installed. This means you can ].
++            qq[not read or write bzip2 compressed archives!\n] .
++            qq[Note: you can disable this warning (and the prerequisite) ].
++            qq[by invoking Makefile.PL with '-n'\n];
++}
++
++if( !$opt->{d} and not eval { require Text::Diff; 1 } ) {
++    print   qq[\nArchive::Tar comes with a utility called 'ptardiff' which ].
++            qq[lets you run diffs against tar archives.\n\nHowever, this ].
++            qq[utility requires you to have Text::Diff installed.\n\n].
++            qq[To add Text::Diff as a prerequisite, please supply the ].
++            qq['-d' option when invoking this Makefile.PL.\n\n];
++}
++
++my $prereqs = {
++    'Test::More'                    => 0,
++    'File::Spec'                    => 0.82,
++    'Test::Harness'                 => 2.26,    # bug in older versions
++    'IO::Zlib'                      => 1.01,
++    # All these should be the same version, or breakage may occurr. See:
++    # http://www.nntp.perl.org/group/perl.cpan.testers/2008/08/msg2083310.html
++    # Requires at least 2.015, to address: #43609: Memory problem with A::T.
++    # Turns out 2.012 was leaking memory.
++    'IO::Compress::Base'            => 2.015,   # base class
++    'Compress::Zlib'                => 2.015,   # zlib
++    'IO::Compress::Gzip'            => 2.015,   # c::z needs this
++    'IO::Compress::Bzip2'           => 2.015,   # bzip2 support
++};
++
++
++unless ($Config{useperlio}) {
++    $prereqs->{'IO::String'} = 0;       # for better 'return stringified archive'
++}
++
++### ok, you didn't want IO::Zlib ###
++delete $prereqs->{'IO::Compress::Bzip2'} if $opt->{n};
++
++### so you want text::diff ###
++$prereqs->{'Text::Diff'} = 0 if $opt->{d};
++
++
++WriteMakefile1(
++    LICENSE => 'perl',
++    MIN_PERL_VERSION => '5.00503',
++    META_MERGE => {
++        "meta-spec" => { version => 2 },
++        resources => {
++            repository => {
++                type => 'git',
++                url => 'https://github.com/jib/archive-tar-new.git',
++                web => 'https://github.com/jib/archive-tar-new',
++            },
++        },
++        prereqs => {
++            runtime => {
++                recommends => {
++                    'IO::Compress::Xz' => 0,
++                    'IO::Uncompress::UnXz' => 0,
++                },
++            },
++        },
++    },
++    #BUILD_REQUIRES => {
++    #},
++
++    NAME            => 'Archive::Tar',
++    VERSION_FROM    => 'lib/Archive/Tar.pm', # finds $VERSION
++    dist            => { COMPRESS => 'gzip -9f', SUFFIX => 'gz' },
++    #EXE_FILES       => ['bin/ptar', 'bin/ptardiff'],
++    EXE_FILES       => [ _scripts() ],
++    PREREQ_PM       => $prereqs,
++    INSTALLDIRS     => ( $] >= 5.009003 && $] < 5.012 ? 'perl' : 'site' ),
++    AUTHOR          => 'Jos Boumans <kane[at]cpan.org>',
++    ABSTRACT        => 'Manipulates TAR archives',
++);
++
++sub _scripts {
++  my @scripts = glob('bin/*');
++  if ( $] >= 5.009003 ) {
++    require Config;
++    my $version = sprintf("%vd",$^V);
++    if ( $Config::Config{versiononly} and
++         $Config::Config{startperl} =~ /\Q$version\E$/ ) {
++         require File::Copy;
++         File::Copy::copy( $_, "$_$version" ) for @scripts;
++         @scripts = glob("bin/*$version");
++    }
++    if ( $] >= 5.012 && $Config::Config{installscript} ne $Config::Config{installsitescript} ) {
++      my $script = $Config::Config{installscript};
++      my $site   = $Config::Config{installsitescript};
++      warn <<"WARNING";
++###############################################################
++##
++##    Hi! Your script and sitescript locations are different
++##
++##    As your perl is v5.12.0 or greater the script included
++##    in this distribution will be installed into sitescript
++##
++##    You might want to check that the following location is
++##    in your PATH environment variable:
++##
++##    '$site'
++##
++##    Many thanks.
++##
++###############################################################
++
++WARNING
++      sleep 10;
++    }
++  }
++  return @scripts;
++}
++
++sub WriteMakefile1 {  #Written by Alexandr Ciornii, version 0.21. Added by eumm-upgrade.
++    my %params=@_;
++    my $eumm_version=$ExtUtils::MakeMaker::VERSION;
++    $eumm_version=eval $eumm_version;
++    die "EXTRA_META is deprecated" if exists $params{EXTRA_META};
++    die "License not specified" if not exists $params{LICENSE};
++    if ($params{BUILD_REQUIRES} and $eumm_version < 6.5503) {
++        #EUMM 6.5502 has problems with BUILD_REQUIRES
++        $params{PREREQ_PM}={ %{$params{PREREQ_PM} || {}} , %{$params{BUILD_REQUIRES}} };
++        delete $params{BUILD_REQUIRES};
++    }
++    delete $params{CONFIGURE_REQUIRES} if $eumm_version < 6.52;
++    delete $params{MIN_PERL_VERSION} if $eumm_version < 6.48;
++    delete $params{META_MERGE} if $eumm_version < 6.46;
++    delete $params{META_ADD} if $eumm_version < 6.46;
++    delete $params{LICENSE} if $eumm_version < 6.31;
++    delete $params{AUTHOR} if $] < 5.005;
++    delete $params{ABSTRACT_FROM} if $] < 5.005;
++    delete $params{BINARY_LOCATION} if $] < 5.005;
++
++    WriteMakefile(%params);
++}
+diff -ruN perl-5.42.2/cpan/Archive-Tar/MANIFEST perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/MANIFEST
+--- perl-5.42.2/cpan/Archive-Tar/MANIFEST	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/MANIFEST	2026-05-25 12:16:10.000000000 -0600
+@@ -0,0 +1,38 @@
++bin/ptar
++bin/ptardiff
++bin/ptargrep
++CHANGES
++lib/Archive/Tar.pm
++lib/Archive/Tar/Constant.pm
++lib/Archive/Tar/File.pm
++Makefile.PL
++MANIFEST			This list of files
++README
++t/01_use.t
++t/02_methods.t
++t/03_file.t
++t/04_resolved_issues.t
++t/05_iter.t
++t/06_error.t
++t/07_ptardiff.t
++t/08_ptargrep.t
++t/09_roundtrip.t
++t/10_ptar.t
++t/90_symlink.t
++t/99_pod.t
++t/src/header/signed.tar
++t/src/linktest/linktest_missing_dir.tar
++t/src/linktest/linktest_with_dir.tar
++t/src/long/b
++t/src/long/bar.tar
++t/src/long/foo.tbz
++t/src/long/foo.tgz
++t/src/long/foo.txz
++t/src/long/prefix-directory-concat.tar
++t/src/short/b
++t/src/short/bar.tar
++t/src/short/foo.tbz
++t/src/short/foo.tgz
++t/src/short/foo.txz
++META.yml                                 Module YAML meta-data (added by MakeMaker)
++META.json                                Module JSON meta-data (added by MakeMaker)
+diff -ruN perl-5.42.2/cpan/Archive-Tar/META.json perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/META.json
+--- perl-5.42.2/cpan/Archive-Tar/META.json	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/META.json	2026-05-25 12:16:10.000000000 -0600
+@@ -0,0 +1,61 @@
++{
++   "abstract" : "Manipulates TAR archives",
++   "author" : [
++      "Jos Boumans <kane[at]cpan.org>"
++   ],
++   "dynamic_config" : 1,
++   "generated_by" : "ExtUtils::MakeMaker version 7.78, CPAN::Meta::Converter version 2.150012",
++   "license" : [
++      "perl_5"
++   ],
++   "meta-spec" : {
++      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
++      "version" : 2
++   },
++   "name" : "Archive-Tar",
++   "no_index" : {
++      "directory" : [
++         "t",
++         "inc"
++      ]
++   },
++   "prereqs" : {
++      "build" : {
++         "requires" : {
++            "ExtUtils::MakeMaker" : "0"
++         }
++      },
++      "configure" : {
++         "requires" : {
++            "ExtUtils::MakeMaker" : "0"
++         }
++      },
++      "runtime" : {
++         "recommends" : {
++            "IO::Compress::Xz" : "0",
++            "IO::Uncompress::UnXz" : "0"
++         },
++         "requires" : {
++            "Compress::Zlib" : "2.015",
++            "File::Spec" : "0.82",
++            "IO::Compress::Base" : "2.015",
++            "IO::Compress::Bzip2" : "2.015",
++            "IO::Compress::Gzip" : "2.015",
++            "IO::Zlib" : "1.01",
++            "Test::Harness" : "2.26",
++            "Test::More" : "0",
++            "perl" : "5.005030"
++         }
++      }
++   },
++   "release_status" : "stable",
++   "resources" : {
++      "repository" : {
++         "type" : "git",
++         "url" : "https://github.com/jib/archive-tar-new.git",
++         "web" : "https://github.com/jib/archive-tar-new"
++      }
++   },
++   "version" : "3.10",
++   "x_serialization_backend" : "JSON::PP version 4.18"
++}
+diff -ruN perl-5.42.2/cpan/Archive-Tar/META.yml perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/META.yml
+--- perl-5.42.2/cpan/Archive-Tar/META.yml	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/META.yml	2026-05-25 12:16:10.000000000 -0600
+@@ -0,0 +1,36 @@
++---
++abstract: 'Manipulates TAR archives'
++author:
++  - 'Jos Boumans <kane[at]cpan.org>'
++build_requires:
++  ExtUtils::MakeMaker: '0'
++configure_requires:
++  ExtUtils::MakeMaker: '0'
++dynamic_config: 1
++generated_by: 'ExtUtils::MakeMaker version 7.78, CPAN::Meta::Converter version 2.150012'
++license: perl
++meta-spec:
++  url: http://module-build.sourceforge.net/META-spec-v1.4.html
++  version: '1.4'
++name: Archive-Tar
++no_index:
++  directory:
++    - t
++    - inc
++recommends:
++  IO::Compress::Xz: '0'
++  IO::Uncompress::UnXz: '0'
++requires:
++  Compress::Zlib: '2.015'
++  File::Spec: '0.82'
++  IO::Compress::Base: '2.015'
++  IO::Compress::Bzip2: '2.015'
++  IO::Compress::Gzip: '2.015'
++  IO::Zlib: '1.01'
++  Test::Harness: '2.26'
++  Test::More: '0'
++  perl: '5.005030'
++resources:
++  repository: https://github.com/jib/archive-tar-new.git
++version: '3.10'
++x_serialization_backend: 'CPAN::Meta::YAML version 0.020'
+diff -ruN perl-5.42.2/cpan/Archive-Tar/README perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/README
+--- perl-5.42.2/cpan/Archive-Tar/README	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/README	2013-05-12 09:20:37.000000000 -0600
+@@ -0,0 +1,17 @@
++This is the README file for Archive::Tar, the Perl module for creation
++and in-memory manipulation of tar files.
++
++* Installation
++
++Archive::Tar uses the standard perl module install process
++
++perl Makefile.PL
++make
++make test (optional but recommended)
++make install
++
++This module uses no C-coded parts in itself, but it will try to use
++the IO::Zlib module to read and write gzipped tarfiles.
++Archive::Tar will still work without IO::Zlib, it will just complain
++when you try to use a compressed archive or write one, since it
++obviously can't.
+diff -ruN perl-5.42.2/cpan/Archive-Tar/t/04_resolved_issues.t perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/04_resolved_issues.t
+--- perl-5.42.2/cpan/Archive-Tar/t/04_resolved_issues.t	2026-01-18 09:32:22.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/04_resolved_issues.t	2026-05-21 12:43:30.000000000 -0600
+@@ -220,6 +220,7 @@
+ 		}
+
+     { #use case 1 - in memory extraction
++      local $Archive::Tar::INSECURE_EXTRACT_MODE=1;
+ 			my $t=Archive::Tar->new;
+ 			$t->read( $archname );
+ 			my $r = eval{ $t->extract };
+@@ -231,6 +232,7 @@
+
+ 		{ #use case 2 - iter extraction
+ 		  #$DB::single = 2;
++      local $Archive::Tar::INSECURE_EXTRACT_MODE=1;
+ 			my $next=Archive::Tar->iter( $archname, 1 );
+ 			my $failed = 0;
+ 			#use Data::Dumper;
+diff -ruN perl-5.42.2/cpan/Archive-Tar/t/07_ptardiff.t perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/07_ptardiff.t
+--- perl-5.42.2/cpan/Archive-Tar/t/07_ptardiff.t	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/07_ptardiff.t	2014-09-14 11:58:22.000000000 -0600
+@@ -0,0 +1,50 @@
++use strict;
++use warnings;
++use Test::More;
++
++use File::Spec;
++use FindBin '$Bin';
++use Archive::Tar;
++
++# filenames
++my $tartest = File::Spec->catfile("t", "ptardiff");
++my $foo = File::Spec->catfile("t", "ptardiff", "foo");
++my $bar = File::Spec->catfile("t", "ptardiff", "bar");
++my $tarfile = File::Spec->catfile("t", "ptardiff.tar");
++my $ptardiff = File::Spec->catfile($Bin, "..", "bin", "ptardiff");
++my $cmd = "$^X $ptardiff $tarfile";
++
++eval { require Text::Diff; };
++plan skip_all => 'Text::Diff required to test ptardiff' if $@;
++plan tests => 1;
++
++# create directory/files
++mkdir $tartest;
++open my $fh, ">", $foo or die $!;
++print $fh "file foo\n";
++close $fh;
++open $fh, ">", $bar or die $!;
++print $fh "file bar\n";
++close $fh;
++
++# create archive
++my $tar = Archive::Tar->new;
++$tar->add_files($foo, $bar);
++$tar->write($tarfile);
++
++# change file
++open $fh, ">>", $foo or die $!;
++print $fh "added\n";
++close $fh;
++
++# see if ptardiff shows the changes
++my $out = qx{$cmd};
++cmp_ok($out, '=~', qr{^\+added$}m, "ptardiff shows added text");
++
++# cleanup
++END {
++    unlink $tarfile;
++    if ( -e $foo ) { unlink $foo or die $!; }
++    if ( -e $bar ) { unlink $bar or die $!; }
++    if ( -d $tartest ) { rmdir $tartest or die $!; }
++}
+diff -ruN perl-5.42.2/cpan/Archive-Tar/t/90_symlink.t perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/90_symlink.t
+--- perl-5.42.2/cpan/Archive-Tar/t/90_symlink.t	1969-12-31 17:00:00.000000000 -0700
++++ perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/90_symlink.t	2025-02-25 13:14:25.000000000 -0700
+@@ -0,0 +1,82 @@
++BEGIN { chdir 't' if -d 't' }
++
++use lib '../lib';
++
++use strict;
++use File::Spec;
++use File::Path;
++use Test::More;
++use Config;
++
++my $win32_symlink_enabled = 0;
++
++if($^O =~ /MSWin32/i && $Config{d_symlink}) {
++  # Creation of symlinks is available to this system,
++  # but might not have been enabled. We check on this
++  # by checking whether symlink() actually works.
++
++  if(-e '../Makefile.PL') {
++    symlink '../Makefile.PL', 'make.sym';
++    if(-e 'make.sym') {
++      $win32_symlink_enabled = 1;
++      unlink 'make.sym';
++    }
++  }
++  else {
++    warn "Cannot establish whether symlink() is enabled as Makefile.PL was not found";
++    $win32_symlink_enabled = 1; # We have no reason to assume otherwise.
++  }
++}
++
++### developer tests mostly
++if (($^O !~ /(linux|bsd|darwin|solaris|hpux|aix|
++              sunos|dynixptx|haiku|irix|next|dec_osf|svr4|sco_sv|unicos|
++            cygwin)/x and !$Config{d_symlink})
++            ||
++            ($^O =~ /MSWin/i and !$win32_symlink_enabled)) {
++  plan skip_all => "Skipping tests on this platform";
++}
++plan 'no_plan';
++
++my $Class   = 'Archive::Tar';
++my $Dir     = File::Spec->catdir( qw[src linktest] );
++my %Map     = (
++    File::Spec->catfile( $Dir, "linktest_with_dir.tar" ) => [
++        [ 0, qr/SECURE EXTRACT MODE/ ],
++        [ 1, qr/^$/ ]
++    ],
++    File::Spec->catfile( $Dir, "linktest_missing_dir.tar" ) => [
++        [ 0, qr/SECURE EXTRACT MODE/ ],
++        [ 0, qr/Could not create directory/ ],
++    ],
++);
++
++use_ok( $Class );
++
++{   while( my($file, $aref) = each %Map ) {
++
++        for my $mode ( 0, 1 ) {
++            my $expect = $aref->[$mode]->[0];
++            my $regex  = $aref->[$mode]->[1];
++
++            my $tar  = $Class->new( $file );
++            ok( $tar,                   "Object created from $file" );
++
++            ### damn warnings
++            local $Archive::Tar::INSECURE_EXTRACT_MODE = $mode;
++            local $Archive::Tar::INSECURE_EXTRACT_MODE = $mode;
++
++            ok( 1,                  "   Extracting with insecure mode: $mode" );
++
++            my $warning;
++            local $SIG{__WARN__} = sub { $warning .= "@_" };
++
++            my $rv = eval { $tar->extract } || 0;
++            ok( !$@,                "       No fatal error" );
++            is( !!$rv, !!$expect,   "       RV as expected" );
++            like( $warning, $regex, "       Error matches $regex" );
++
++            rmtree( 'linktest' );
++        }
++    }
++}
+Binary files perl-5.42.2/cpan/Archive-Tar/t/src/long/foo.txz and perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/src/long/foo.txz differ
+Binary files perl-5.42.2/cpan/Archive-Tar/t/src/short/foo.txz and perl-5.42.2-archive-tar-3.10/cpan/Archive-Tar/t/src/short/foo.txz differ
