@@ -1,0 +1,154 @@
+diff --git a/topaz/commands/denoise.py b/topaz/commands/denoise.py
+index 5dccfeb..1970c7a 100644
+--- a/topaz/commands/denoise.py
++++ b/topaz/commands/denoise.py
+@@ -537,7 +537,7 @@ def main(args):
+ 
+         for path in args.micrographs:
+             name,_ = os.path.splitext(os.path.basename(path))
+-            mic = np.array(load_image(path), copy=False).astype(np.float32)
++            mic = np.asarray(load_image(path)).astype(np.float32)
+ 
+             # process and denoise the micrograph
+             mic = denoise_image(mic, models, lowpass=lowpass, cutoff=cutoff, gaus=gaus
+diff --git a/topaz/commands/downsample.py b/topaz/commands/downsample.py
+index 7f2aac9..7d37508 100644
+--- a/topaz/commands/downsample.py
++++ b/topaz/commands/downsample.py
+@@ -21,7 +21,7 @@ def main(args):
+     path = args.file
+     im = load_image(path)
+     # convert PIL image to array
+-    im = np.array(im, copy=False).astype(np.float32)
++    im = np.asarray(im).astype(np.float32)
+ 
+     scale = args.scale # how much to downscale by
+     small = downsample(im, scale)
+diff --git a/topaz/commands/extract.py b/topaz/commands/extract.py
+index 6676618..f6881f1 100644
+--- a/topaz/commands/extract.py
++++ b/topaz/commands/extract.py
+@@ -377,7 +377,7 @@ def find_opt_radius(targets, target_scores, threshold, lo=0, hi=200, step=10
+ def stream_images(paths):
+     for path in paths:
+         image = load_image(path)
+-        image = np.array(image, copy=False)
++        image = np.asarray(image)
+         yield image
+ 
+ 
+diff --git a/topaz/commands/normalize.py b/topaz/commands/normalize.py
+index 27d87dc..e229a40 100644
+--- a/topaz/commands/normalize.py
++++ b/topaz/commands/normalize.py
+@@ -58,7 +58,7 @@ class Normalize:
+ 
+     def __call__(self, path):
+         # load the image
+-        x = np.array(load_image(path), copy=False).astype(np.float32)
++        x = np.asarray(load_image(path)).astype(np.float32)
+ 
+         if self.scale > 1:
+             x = downsample(x, self.scale)
+diff --git a/topaz/commands/segment.py b/topaz/commands/segment.py
+index 33603d6..88bb9e9 100644
+--- a/topaz/commands/segment.py
++++ b/topaz/commands/segment.py
+@@ -64,7 +64,7 @@ def main(args):
+ 
+         ## process image with the model
+         with torch.no_grad():
+-            X = torch.from_numpy(np.array(image, copy=False)).unsqueeze(0).unsqueeze(0)
++            X = torch.from_numpy(np.asarray(image)).unsqueeze(0).unsqueeze(0)
+             if use_cuda:
+                 X = X.cuda()
+             score = model(X).data[0,0].cpu().numpy()
+diff --git a/topaz/denoise.py b/topaz/denoise.py
+index 4861e08..b9452d8 100644
+--- a/topaz/denoise.py
++++ b/topaz/denoise.py
+@@ -945,7 +945,7 @@ class PairedImages:
+             self.y = [self.load_image(p) for p in y]
+ 
+     def load_image(self, path):
+-        x = np.array(load_image(path), copy=False)
++        x = np.asarray(load_image(path))
+         x = x.astype(np.float32) # make sure dtype is single precision
+         mu = x.mean()
+         std = x.std()
+@@ -1014,7 +1014,7 @@ class NoiseImages:
+             x = [self.load_image(p) for p in x]
+ 
+     def load_image(self, path):
+-        x = np.array(load_image(path), copy=False)
++        x = np.asarray(load_image(path))
+         mu = x.mean()
+         std = x.std()
+         x = (x - mu)/std
+diff --git a/topaz/utils/data/loader.py b/topaz/utils/data/loader.py
+index 2cbc82e..3ec8c6f 100644
+--- a/topaz/utils/data/loader.py
++++ b/topaz/utils/data/loader.py
+@@ -33,7 +33,7 @@ class ImageDirectoryLoader:
+             fp = image.fp
+             image.load()
+             fp.close()
+-            image = np.array(image, copy=False)
++            image = np.asarray(image)
+             if self.standardize:
+                 image = (image - image.mean())/image.std()
+         return Image.fromarray(image)
+@@ -62,7 +62,7 @@ def load_tiff(path, standardize=False):
+     image.load()
+     fp.close()
+     if standardize:
+-        image = np.array(image, copy=False)
++        image = np.asarray(image)
+         image = (image - image.mean())/image.std()
+         image = Image.fromarray(image)
+     return image
+@@ -72,7 +72,7 @@ def load_png(path, standardize=False):
+     fp = image.fp
+     image.load()
+     fp.close()
+-    x = np.array(image, copy=False)
++    x = np.asarray(image)
+     x = unquantize(x)
+     if standardize:
+         x = (x - x.mean())/x.std()
+@@ -84,7 +84,7 @@ def load_jpeg(path, standardize=False):
+     fp = image.fp
+     image.load()
+     fp.close()
+-    x = np.array(image, copy=False)
++    x = np.asarray(image)
+     x = unquantize(x)
+     if standardize:
+         x = (x - x.mean())/x.std()
+@@ -227,8 +227,8 @@ class SegmentedImageDataset:
+         label = self.labels[j][i]
+ 
+         if self.to_tensor:
+-            im = torch.from_numpy(np.array(im, copy=False))
+-            label = torch.from_numpy(np.array(label, copy=False)).float()
++            im = torch.from_numpy(np.asarray(im))
++            label = torch.from_numpy(np.asarray(label)).float()
+ 
+         return im, label
+ 
+diff --git a/topaz/utils/data/sampler.py b/topaz/utils/data/sampler.py
+index 5147f17..13916f3 100644
+--- a/topaz/utils/data/sampler.py
++++ b/topaz/utils/data/sampler.py
+@@ -218,9 +218,9 @@ class RandomImageTransforms:
+                     Y = Y.transpose(Image.FLIP_TOP_BOTTOM)
+ 
+         if self.to_tensor:
+-            X = torch.from_numpy(np.array(X, copy=False))
++            X = torch.from_numpy(np.asarray(X))
+             if type(Y) is Image.Image:
+-                Y = torch.from_numpy(np.array(Y, copy=False)).float()
++                Y = torch.from_numpy(np.asarray(Y)).float()
+ 
+         return X, Y
+ 
