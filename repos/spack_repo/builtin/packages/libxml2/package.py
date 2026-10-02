@@ -64,7 +64,12 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     # avoid cycle dependency for concretizer
     with when("+python"):
         extends("python")
+        depends_on("doxygen", type="build", when="@2.13:")
         depends_on("python+shared~libxml2")
+        # For libxml2 >= 2.13, python bindings are built via standard python tools
+        depends_on("py-pip", type="build", when="@2.13:")
+        depends_on("py-setuptools", type="build", when="@2.13:")
+        depends_on("py-wheel", type="build", when="@2.13:")
 
     # XML Conformance Test Suites
     # See https://www.w3.org/XML/Test/ for information
@@ -113,6 +118,45 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
                 "configure",
             )
             filter_file("-Wno-long-long -Wno-format-extra-args", "", "configure")
+
+        if self.spec.satisfies("@2.13: +python"):
+            self._fix_python_setup_include_order()
+
+    def _fix_python_setup_include_order(self):
+        setup_py_in = os.path.join("python", "setup.py.in")
+        with open(setup_py_in, "r") as f:
+            contents = f.read()
+
+        original_block = (
+            "includes_dir = [\n"
+            '"/usr/include",\n'
+            '"/usr/local/include",\n'
+            '"/opt/include",\n'
+            "os.path.join(ROOT,'include'),\n"
+            "HOME\n"
+            "];"
+        )
+        fixed_block = (
+            "includes_dir = [\n"
+            "os.path.join(ROOT,'include'),\n"
+            '"/usr/include",\n'
+            '"/usr/local/include",\n'
+            '"/opt/include",\n'
+            "HOME\n"
+            "];"
+        )
+
+        if original_block not in contents:
+            raise InstallError(
+                "Expected includes_dir block not found in {0}; "
+                "libxml2's python/setup.py.in may have changed upstream, "
+                "and this Spack patch needs to be updated to match.".format(setup_py_in)
+            )
+
+        contents = contents.replace(original_block, fixed_block)
+
+        with open(setup_py_in, "w") as f:
+            f.write(contents)
 
     def test_import(self):
         """import module test"""
@@ -203,6 +247,42 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
 class AnyBuilder(BaseBuilder):
     @run_after("install")
+    def install_python_bindings(self):
+        if self.spec.satisfies("build_system=cmake"):
+            return
+
+        # Manually invoke pip in the python subdirectory
+        # for versions that dropped autotools python integration
+        if self.spec.satisfies("@2.13: +python"):
+            doxygen = which("doxygen", required=True)
+            source_root = self.stage.source_path
+            doxyfile = os.path.join(source_root, "doc", "Doxyfile")
+            doxygen(
+                "-q",
+                doxyfile,
+                extra_env={
+                    "SOURCE_ROOT": source_root + os.sep,
+                    "BUILD_ROOT": source_root + os.sep,
+                },
+            )
+            with working_dir("python"):
+                python_cmd = self.spec["python"].command
+                pythonpath = os.getcwd()
+                existing_pythonpath = os.environ.get("PYTHONPATH")
+                if existing_pythonpath:
+                    pythonpath = os.pathsep.join([pythonpath, existing_pythonpath])
+                python_cmd(
+                    "-m",
+                    "pip",
+                    "install",
+                    "--no-build-isolation",
+                    "--no-deps",
+                    "--prefix={0}".format(self.prefix),
+                    ".",
+                    extra_env={"PYTHONPATH": pythonpath},
+                )
+
+    @run_after("install")
     @on_package_attributes(run_tests=True)
     def import_module_test(self):
         if self.spec.satisfies("+python"):
@@ -227,19 +307,25 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
         spec = self.spec
 
         args = [
-            "--with-lzma={0}".format(spec["xz"].prefix),
             "--with-iconv={0}".format(self._iconv_option()),
         ]
 
+        # In >= 2.13, lzma is handled via pkg-config and explicit paths throw a warning
+        if spec.satisfies("@:2.12"):
+            args.append("--with-lzma={0}".format(spec["xz"].prefix))
+
         if spec.satisfies("+python"):
-            args.extend(
-                [
-                    "--with-python={0}".format(spec["python"].home),
-                    "--with-python-install-dir={0}".format(python_platlib),
-                ]
-            )
+            # Autotools python configuration flags were removed in 2.13
+            if spec.satisfies("@:2.12"):
+                args.extend(
+                    [
+                        "--with-python={0}".format(spec["python"].home),
+                        "--with-python-install-dir={0}".format(python_platlib),
+                    ]
+                )
         else:
-            args.append("--without-python")
+            if spec.satisfies("@:2.12"):
+                args.append("--without-python")
 
         args.extend(self.with_or_without("http"))
 
@@ -260,6 +346,10 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define("LIBXML2_WITH_ZLIB", True),
             self.define("LIBXML2_WITH_TESTS", True),
         ]
+
+        if self.spec.satisfies("+python"):
+            args.append(self.define("LIBXML2_PYTHON_INSTALL_DIR", python_platlib))
+
         return args
 
 
