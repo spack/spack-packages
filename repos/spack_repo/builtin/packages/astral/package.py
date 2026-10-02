@@ -44,9 +44,8 @@ class Astral(Package):
         set_executable(script)
 
         java = self.spec["java"].prefix.bin.java
-        kwargs = {"ignore_absent": False, "backup": False, "string": False}
-        filter_file("^java", java, script, **kwargs)
-        filter_file("astral.jar", join_path(prefix.tools, jar_file), script, **kwargs)
+        filter_file("^java", java, script)
+        filter_file("astral.jar", join_path(prefix.tools, jar_file), script)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("ASTRAL_HOME", self.prefix.tools)
