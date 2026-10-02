@@ -23,8 +23,22 @@ class PyPymol(PythonPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("python+tkinter@2.7:", type=("build", "link", "run"), when="@2.3.0:2.4.0")
-    depends_on("python+tkinter@3.6:", type=("build", "link", "run"), when="@2.5.0:")
+    depends_on("python@2.7:", type=("build", "link", "run"), when="@2.3.0:2.4.0")
+    depends_on(
+        "cpython+tkinter",
+        type=("build", "link", "run"),
+        when="@2.3.0:2.4.0 ^[virtuals=python] cpython",
+    )
+    depends_on(
+        "pypy+tkinter", type=("build", "link", "run"), when="@2.3.0:2.4.0 ^[virtuals=python] pypy"
+    )
+    depends_on("python@3.6:", type=("build", "link", "run"), when="@2.5.0:")
+    depends_on(
+        "cpython+tkinter", type=("build", "link", "run"), when="@2.5.0: ^[virtuals=python] cpython"
+    )
+    depends_on(
+        "pypy+tkinter", type=("build", "link", "run"), when="@2.5.0: ^[virtuals=python] pypy"
+    )
     # in newer pip versions --install-option does not exist
     depends_on("py-pip@:23.0", type="build")
     depends_on("gl")

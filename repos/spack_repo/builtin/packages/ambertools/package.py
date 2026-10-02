@@ -57,7 +57,11 @@ class Ambertools(CMakePackage):
         type=("build", "run"),
     )
     # Python dependencies
-    depends_on("python@3.8:3.10 +tkinter", when="@22jlmrcc", type=("build", "run"))
+    depends_on("python@3.8:3.10", when="@22jlmrcc", type=("build", "run"))
+    depends_on(
+        "cpython+tkinter", when="@22jlmrcc ^[virtuals=python] cpython", type=("build", "run")
+    )
+    depends_on("pypy+tkinter", when="@22jlmrcc ^[virtuals=python] pypy", type=("build", "run"))
     depends_on("python@3.11:", when="@25:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy", type=("build", "run"))

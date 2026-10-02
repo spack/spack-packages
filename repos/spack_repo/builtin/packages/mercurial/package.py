@@ -39,7 +39,9 @@ class Mercurial(PythonPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
-    depends_on("python+bz2+ssl+zlib", type=("build", "run"))
+    depends_on("python", type=("build", "run"))
+    depends_on("cpython+bz2+ssl+zlib", type=("build", "run"), when="^[virtuals=python] cpython")
+    depends_on("pypy+bz2+ssl+zlib", type=("build", "run"), when="^[virtuals=python] pypy")
     depends_on("python@3.5:", when="@5.2:", type=("build", "run"))
     depends_on("python@3.6:", when="@6.2:", type=("build", "run"))
     depends_on("python@3.8:", when="@6.9:", type=("build", "run"))

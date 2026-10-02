@@ -49,7 +49,8 @@ class Htop(AutotoolsPackage):
     depends_on("automake", type="build", when="@3:")
     depends_on("libtool", type="build", when="@3:")
     depends_on("hwloc", when="+hwloc")
-    depends_on("python+pythoncmd", type="build")
+    depends_on("python", type="build")
+    depends_on("cpython+pythoncmd", when="^[virtuals=python] cpython", type="build")
 
     def configure_args(self):
         args = []

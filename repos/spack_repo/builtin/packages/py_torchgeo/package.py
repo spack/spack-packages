@@ -140,7 +140,8 @@ class PyTorchgeo(PythonPackage):
         # Required to download Source Cooperative datasets.
         depends_on("azcopy")
         # bz2 required to extract .tar.bz2 files, zlib required to extract .tar.gz files.
-        depends_on("python+bz2+zlib")
+        depends_on("cpython+bz2+zlib", when="^[virtuals=python] cpython")
+        depends_on("pypy+bz2+zlib", when="^[virtuals=python] pypy")
         # JPEG, JPEG2000, TIFF, compressed PNG support required for file I/O in several datasets.
         depends_on("py-pillow+jpeg+jpeg2000+tiff+zlib", when="^[virtuals=pil] py-pillow")
         depends_on("py-pillow-simd+jpeg+jpeg2000+tiff+zlib", when="^[virtuals=pil] py-pillow-simd")

@@ -34,7 +34,9 @@ class Vapor(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.17:", type="build")
-    depends_on("python+ssl", type="build")
+    depends_on("python", type="build")
+    depends_on("cpython+ssl", type="build", when="^[virtuals=python] cpython")
+    depends_on("pypy+ssl", type="build", when="^[virtuals=python] pypy")
     depends_on("py-scipy", type="build")
     depends_on("py-matplotlib", type="build")
     depends_on("py-numpy@1.21", type="build")

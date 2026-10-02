@@ -22,7 +22,8 @@ class PyNodeenv(PythonPackage):
     with default_args(type=("build", "run")):
         # https://github.com/ekalinin/nodeenv/commit/c1dffc5c64377cfcda9f2befd357e4791903bf39
         depends_on("python@:3.12", when="@:1.8")
-        depends_on("python +ssl", when="@1.5:")
+        depends_on("cpython+ssl", when="@1.5: ^[virtuals=python] cpython")
+        depends_on("pypy+ssl", when="@1.5: ^[virtuals=python] pypy")
         depends_on("py-setuptools", when="@1.7:")
 
     depends_on("py-setuptools", type="build")

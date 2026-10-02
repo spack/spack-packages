@@ -41,7 +41,8 @@ class PyWheel(Package, PythonExtension):
     version("0.26.0", sha256="c92ed3a2dd87c54a9e20024fb0a206fe591c352c745fff21e8f8c6cdac2086ea")
 
     extends("python")
-    depends_on("python +ctypes", type=("build", "run"))
+    depends_on("cpython+ctypes", type=("build", "run"), when="^[virtuals=python] cpython")
+    depends_on("pypy+ctypes", type=("build", "run"), when="^[virtuals=python] pypy")
     depends_on("python@3.9:", when="@0.46.0:", type=("build", "run"))
     depends_on("python@3.8:", when="@0.43.0:", type=("build", "run"))
     depends_on("python@3.7:", when="@0.38:", type=("build", "run"))
