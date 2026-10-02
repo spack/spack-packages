@@ -56,11 +56,13 @@ class Vecgeom(CMakePackage, CudaPackage):
         "1.2.10",
         url="https://gitlab.cern.ch/-/project/981/uploads/8e0a94013efdd1b2d4f44c3fbb10bcdf/VecGeom-v1.2.10.tar.gz",
         sha256="3e0934842694452e4cb4a265428cb99af1ecc45f0e2d28a32dfeaa0634c21e2a",
-            deprecated=True,
+        deprecated=True,
     )
-    version("1.1.20",
-            sha256="e1c75e480fc72bca8f8072ea00320878a9ae375eed7401628b15cddd097ed7fd",
-            deprecated=True)
+    version(
+        "1.1.20",
+        sha256="e1c75e480fc72bca8f8072ea00320878a9ae375eed7401628b15cddd097ed7fd",
+        deprecated=True,
+    )
 
     _cxxstd_values = (
         conditional("11", "14", when="@:1.1"),
@@ -82,14 +84,22 @@ class Vecgeom(CMakePackage, CudaPackage):
         "surface", default=False, when="@2:", description="Support surface frame representation"
     )
     variant(
-            "nav",
-            default="index",
-            values=("index", conditional("tuple", when="@2:"), conditional("path",
-                                                                    when="@:2.0 ~cuda")),
-            description="Navigation state implementation",
-            )
-    variant("maxdepth", default="4", values=("2","4","8"), when="nav=tuple", description="Tuple state size")
-            
+        "nav",
+        default="index",
+        values=(
+            "index",
+            conditional("tuple", when="@2:"),
+            conditional("path", when="@:2.0 ~cuda"),
+        ),
+        description="Navigation state implementation",
+    )
+    variant(
+        "maxdepth",
+        default="4",
+        values=("2", "4", "8"),
+        when="nav=tuple",
+        description="Tuple state size",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -152,14 +162,12 @@ class Vecgeom(CMakePackage, CudaPackage):
                 from_variant(prefix + "NAV", "nav"),
                 define("VECGEOM_SINGLE_PRECISION", False),
                 define("VECGEOM_BVH_SINGLE", False),
-                    define("VECGEOM_NAVTABLE_RECOMMEND", False),
+                define("VECGEOM_NAVTABLE_RECOMMEND", False),
             ])
             if spec.satisfies("nav=tuple"):
                 args.append(define("VECGEOM_NAVTUPLE_MAXDEPTH", spec.variants["maxdepth"].value))
         else:
-            args.append(define(prefix + "NAVINDEX",
-                               spec.satisfies("nav=index")))
-        
+            args.append(define(prefix + "NAVINDEX", spec.satisfies("nav=index")))
 
         if spec.satisfies("@1.1.19:"):
             args.append(from_variant("VECGEOM_ENABLE_CUDA", "cuda"))
@@ -179,12 +187,10 @@ class Vecgeom(CMakePackage, CudaPackage):
         build_tests = self.run_tests
         args.append(define("BUILD_TESTING", build_tests))
         if spec.satisfies("@:1.1"):
-            args.extend(
-                [
-                    define("CTEST", build_tests),
-                    define("GDMLTESTING", build_tests and "+gdml" in spec),
-                ]
-            )
+            args.extend([
+                define("CTEST", build_tests),
+                define("GDMLTESTING", build_tests and "+gdml" in spec),
+            ])
 
         # When building with C++20 and Ninja, clang installations that
         # lack clang-scan-deps (e.g., vanilla Ubuntu 24's clang-18) fail with
