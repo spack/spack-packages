@@ -416,7 +416,7 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     # FIXME: Allow packages to extend multiple packages
     # See https://github.com/spack/spack/issues/987
     extends("python", when="+python")
-    # extends('openjdk', when='+java')
+    # extends('java', when='+java')
     # extends('perl', when='+perl')
 
     # swig/python/pyproject.toml (3.9+)
