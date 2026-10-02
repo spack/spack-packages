@@ -37,3 +37,4 @@ class CargoC(CargoPackage):
     depends_on("rust@1.90:", type="build", when="@0.10.19:")
     depends_on("rust@1.89:", type="build", when="@0.10.17:")
     depends_on("rust@1.88:", type="build", when="@0.10.16:")
+    depends_on("openssl")

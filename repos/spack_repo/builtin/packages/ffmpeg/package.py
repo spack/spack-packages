@@ -95,6 +95,7 @@ class Ffmpeg(AutotoolsPackage):
     variant("sdl2", default=False, when="@3.2:", description="sdl2 support")
     variant("shared", default=True, description="build shared libraries")
     variant("libx264", default=False, description="H.264 encoding")
+    variant("libdrm", default=False, description="Build with libdrm")
 
     conflicts("@1", when="platform=darwin target=aarch64:", msg="requires gas-preprocessor")
 
@@ -133,8 +134,11 @@ class Ffmpeg(AutotoolsPackage):
     depends_on("x264", when="+libx264")
     depends_on("texinfo", when="+doc")
     depends_on("texinfo@:6", when="+doc @:4")
+    depends_on("libdrm", when="+libdrm")
 
     conflicts("%nvhpc")
+    conflicts("+libdrm", when="platform=darwin", msg="drm is linux only")
+    conflicts("+libdrm", when="platform=windows", msg="drm is linux only")
 
     # Solve build failure against vulkan headers 1.3.279
     patch(
@@ -244,6 +248,7 @@ class Ffmpeg(AutotoolsPackage):
             "libsnappy",
             "sdl2",
             "libaom",
+            "libdrm",
         ]
 
         if spec.satisfies("@4:"):

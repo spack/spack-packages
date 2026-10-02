@@ -29,7 +29,8 @@ class Cups(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     depends_on("gnutls")
+    depends_on("libxcrypt")
 
     def configure_args(self):
-        args = ["--enable-gnutls", "--with-components=core"]
+        args = ["--with-tls=gnutls", "--with-components=core"]
         return args
