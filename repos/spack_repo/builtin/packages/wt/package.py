@@ -14,11 +14,16 @@ class Wt(CMakePackage):
     Wt is a C++ library for developing web applications."""
 
     homepage = "https://www.webtoolkit.eu/wt"
-    url = "https://github.com/emweb/wt/archive/3.3.7.tar.gz"
+    url = "https://github.com/emweb/wt/archive/4.13.2.tar.gz"
     git = "https://github.com/emweb/wt.git"
 
     version("master", branch="master")
-    version("3.3.7", sha256="054af8d62a7c158df62adc174a6a57610868470a07e7192ee7ce60a18552851d")
+    version("4.13.2", sha256="10955bf9ffa912fb00314f0969e51128d25940effdeee9059d74257fcc5a6c16")
+    version(
+        "3.3.7",
+        sha256="054af8d62a7c158df62adc174a6a57610868470a07e7192ee7ce60a18552851d",
+        deprecated=True,
+    )
 
     # wt builds in parallel, but requires more than 5 GByte RAM per -j <njob>
     # which most machines do not provide and crash the build
@@ -45,16 +50,16 @@ class Wt(CMakePackage):
     # variant('fastcgi', default=False,
     #         description='FastCGI connector via libfcgi++')
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("pkgconfig", type="build")
-    depends_on("boost@1.46.1:1.65")
+    with when("@3"):
+        depends_on("boost@1.46.1:1.65")
+        depends_on(Boost.with_default_variants)
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost@1.71:+program_options+thread+filesystem+system", when="@4:")
+
     depends_on("openssl", when="+openssl")
     depends_on("libharu", when="+libharu")
     depends_on("sqlite", when="+sqlite")
@@ -64,20 +69,15 @@ class Wt(CMakePackage):
     depends_on("zlib-api", when="+zlib")
 
     def cmake_args(self):
-        cmake_args = [
-            "-DBUILD_EXAMPLES:BOOL=OFF",
-            "-DCONNECTOR_FCGI:BOOL=OFF",
-            "-DENABLE_OPENGL:BOOL=OFF",
-            "-DENABLE_QT4:BOOL=OFF",
+        return [
+            self.define("BUILD_EXAMPLES", False),
+            self.define("CONNECTOR_FCGI", False),
+            self.define("ENABLE_OPENGL", False),
+            self.define("ENABLE_QT4", False),
+            self.define_from_variant("ENABLE_SSL", "openssl"),
+            self.define_from_variant("ENABLE_HARU", "libharu"),
+            self.define_from_variant("ENABLE_PANGO", "pango"),
+            self.define_from_variant("ENABLE_SQLITE", "sqlite"),
+            self.define_from_variant("ENABLE_MYSQL", "mariadb"),
+            self.define_from_variant("ENABLE_POSTGRES", "postgresql"),
         ]
-        cmake_args.extend(
-            [
-                self.define_from_variant("ENABLE_SSL", "openssl"),
-                self.define_from_variant("ENABLE_HARU", "libharu"),
-                self.define_from_variant("ENABLE_PANGO", "pango"),
-                self.define_from_variant("ENABLE_SQLITE", "sqlite"),
-                self.define_from_variant("ENABLE_MYSQL", "mariadb"),
-                self.define_from_variant("ENABLE_POSTGRES", "postgresql"),
-            ]
-        )
-        return cmake_args
