@@ -82,7 +82,8 @@ class Spdlog(CMakePackage):
     depends_on("fmt@10.2.1:10", when="@1.14")
 
     # https://github.com/gabime/spdlog/releases/tag/v1.15.0
-    depends_on("fmt@11.0.2:11", when="@1.15.0")
+    # - Updated to not leave a hole in the version range for fmt
+    depends_on("fmt@11", when="@1.15.0")
 
     # https://github.com/gabime/spdlog/releases/tag/v1.15.1
     depends_on("fmt@11.1.3:11", when="@1.15.1")
@@ -94,7 +95,10 @@ class Spdlog(CMakePackage):
     depends_on("fmt@11.2.0:11", when="@1.15.3")
 
     # https://github.com/gabime/spdlog/releases/tag/v1.16.0
-    depends_on("fmt@12.0.0:12", when="@1.16.0:")
+    depends_on("fmt@12", when="@1.16.0:")
+
+    # https://github.com/gabime/spdlog/releases#release-v1.17.0
+    depends_on("fmt@12.1.0:12", when="@1.17.0:")
 
     # spdlog@1.11.0 with fmt@10  https://github.com/gabime/spdlog/pull/2694
     patch(
