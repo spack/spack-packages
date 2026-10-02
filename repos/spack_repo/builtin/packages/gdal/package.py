@@ -280,7 +280,10 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
 
     # Required dependencies
     # Versions come from gdal_check_package in cmake/helpers/CheckDependentLibraries.cmake
-    depends_on("pkgconfig", type="build")
+
+    for plat in ["linux", "darwin", "freebsd"]:
+        depends_on("pkgconfig", type="build", when=f"platform={plat}")
+
     depends_on("proj@6.3.1:", when="@3.9:")
     depends_on("proj@6:")
     depends_on("zlib-api")
@@ -522,7 +525,8 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
             class_paths = find(self.prefix, "*.jar")
             classpath = os.pathsep.join(class_paths)
             env.prepend_path("CLASSPATH", classpath)
-
+        if sys.platform == "win32":
+            return
         # `spack test run gdal+python` requires these for the Python bindings
         # to find the correct libraries
         libs = []
