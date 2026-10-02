@@ -83,3 +83,9 @@ class Upp(CMakePackage):
         if self.spec.satisfies("^[virtuals=fortran] intel-oneapi-compilers"):
             filter_file("Intel", "Intel|IntelLLVM", "CMakeLists.txt")
             filter_file("Intel", "Intel|IntelLLVM", "sorc/ncep_post.fd/CMakeLists.txt")
+        if self.spec.satisfies("^g2@4:"):
+            filter_file(
+                r"find_package\(g2 REQUIRED\)",
+                "find_package(g2c REQUIRED)\nfind_package(g2 REQUIRED)",
+                "CMakeLists.txt",
+            )
