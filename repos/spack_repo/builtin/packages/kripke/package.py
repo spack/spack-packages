@@ -19,7 +19,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["proxy-app"]
 
-    maintainers("vsrana01")
+    maintainers("rchen20")
 
     license("BSD-3-Clause")
 

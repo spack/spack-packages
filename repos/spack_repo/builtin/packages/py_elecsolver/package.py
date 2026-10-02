@@ -15,6 +15,7 @@ class PyElecsolver(PythonPackage):
 
     maintainers("williampiat3")
 
+    version("2.2.0", sha256="dbd5ba1ce2fff58e28a154a725a4a5574eb2bbb3cca07dda15fce0363eeedc1f")
     version("2.1.0", sha256="17a33dd4d6f8551904baa55c840d561cff00dc046b4bf7e11bad7e69722c4faa")
     version("2.0.1", sha256="126b02e90e01405109ddd52255a43015d5e0e634945c46baa13c6d41d0e4e05e")
 
@@ -23,11 +24,12 @@ class PyElecsolver(PythonPackage):
         depends_on("python@3.9:")
         depends_on("py-numpy")
         depends_on("py-scipy")
-        depends_on("py-networkx")
+        depends_on("py-networkx", when="@:2.1")
 
     # Optional/test deps
     depends_on("py-pytest", type="test")
     depends_on("py-python-mumps", type="test")
+    depends_on("py-networkx", type="test", when="@2.2:")
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
