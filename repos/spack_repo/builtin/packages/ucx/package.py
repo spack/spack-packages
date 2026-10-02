@@ -92,6 +92,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
         description="Build shared libs, static libs or both",
     )
     variant("logging", default=False, description="Enable logging")
+    variant("stats", default=False, description="Enable statistics counters (UCS_STATS)")
     variant("numa", default=True, when="@:1.14", description="Enable NUMA support")
     variant("openmp", default=True, description="Use OpenMP")
     variant(
@@ -297,6 +298,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
         args += self.with_or_without("java", activation_value="prefix")
         args += self.enable_or_disable("libs")
         args += self.enable_or_disable("logging")
+        args += self.enable_or_disable("stats")
         args += self.enable_or_disable("mt", variant="thread_multiple")
         args += self.with_or_without("openmp")
         args += self.enable_or_disable("optimizations")
