@@ -22,6 +22,7 @@ class PyTweedledum(PythonPackage):
 
     version("1.1.1", sha256="58d6f7a988b10c31be3faa1faf3e58288ef7e8159584bfa6ded45742f390309f")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools@42:", type="build")
@@ -31,3 +32,10 @@ class PyTweedledum(PythonPackage):
     depends_on("py-wheel", type="build")
     depends_on("eigen@3.3:")
     depends_on("nlohmann-json@3.9.0:")
+
+    # As of setuptools 61, the [project] section of pyproject.toml is used to comply with PEP 621.
+    # cf. https://setuptools.pypa.io/en/latest/userguide/pyproject_config.html#configuring-setuptools-using-pyproject-toml-files
+    # However, tweedledum relies on setup.py to build itself, using scikit-build as the backend.
+    # Removing the [project] section prevents the version of setuptools from being restricted.
+    def patch(self):
+        filter_file(r".*", "", "pyproject.toml", stop_at="[build-system]")
