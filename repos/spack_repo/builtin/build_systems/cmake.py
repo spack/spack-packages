@@ -7,7 +7,7 @@ import pathlib
 import platform
 import re
 import sys
-from typing import Any, List, Optional, Tuple
+from typing import Any, List, Optional, Tuple, Union
 
 from spack.package import (
     BuilderWithDefaults,
@@ -419,6 +419,10 @@ class CMakeBuilder(BuilderWithDefaults):
     def define(cmake_var: str, value: Any) -> str:
         return define(cmake_var, value)
 
+    @staticmethod
+    def define_path(cmake_var: str, value: Union[str, bytes, os.PathLike]) -> str:
+        return define_path(cmake_var, value)
+
     def define_from_variant(self, cmake_var: str, variant: Optional[str] = None) -> str:
         return define_from_variant(self.pkg, cmake_var, variant)
 
@@ -627,3 +631,9 @@ def define_cuda_architectures(pkg: PackageBase) -> str:
     if "cuda_arch" in pkg.spec.variants and pkg.spec.satisfies("%cmake@3.18:"):
         return define("CMAKE_CUDA_ARCHITECTURES", pkg.spec.variants["cuda_arch"].value)
     return ""
+
+
+def define_path(cmake_var: str, value: Union[str, bytes, os.PathLike]) -> str:
+    """Wrapper for `define` intended to take a path representation as a value
+    and covert that path into the format best suited for CMake command lines"""
+    return define(cmake_var, pathlib.Path(value).as_posix())
