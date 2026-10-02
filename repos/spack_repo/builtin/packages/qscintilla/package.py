@@ -33,6 +33,13 @@ class Qscintilla(QMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("qmake")
+    # QScintilla is a widgets library (QT += widgets printsupport), so it needs a
+    # real Qt build rather than a qmake-only or GUI-less provider, python bindings
+    # or not.
+    # Every version packaged here targets Qt5 or Qt6; without a floor the solver
+    # picks the cheapest Qt satisfying +gui, which is qt@3.
+    depends_on("qt@5: +gui", when="^[virtuals=qmake] qt")
+    depends_on("qt-base +gui +widgets", when="^[virtuals=qmake] qt-base")
     with when("+python"):
         depends_on("qt+opengl", when="^[virtuals=qmake] qt")
         depends_on("qt-base +opengl", when="^[virtuals=qmake] qt-base")
