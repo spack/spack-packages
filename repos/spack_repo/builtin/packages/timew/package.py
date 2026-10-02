@@ -23,3 +23,15 @@ class Timew(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
+
+    @run_after("install")
+    def install_completions(self):
+
+        mkdirp(bash_completion_path(self.prefix))
+        copy("completion/timew-completion.bash", bash_completion_path(self.prefix))
+
+        mkdirp(zsh_completion_path(self.prefix))
+        copy("completion/timew.zsh", zsh_completion_path(self.prefix))
+
+        mkdirp(fish_completion_path(self.prefix))
+        copy("completion/timew.fish", fish_completion_path(self.prefix))

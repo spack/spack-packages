@@ -45,3 +45,15 @@ class Task(CMakePackage):
             # causes release builds with the integration tests to fail.
             # See https://github.com/GothenburgBitFactory/taskwarrior/issues/3294
             filter_file('"taskchampion/integration-tests",', "", "Cargo.toml")
+
+    @run_after("install")
+    def install_completions(self):
+
+        mkdirp(bash_completion_path(self.prefix))
+        copy("scripts/bash/task.sh", bash_completion_path(self.prefix))
+
+        mkdirp(zsh_completion_path(self.prefix))
+        copy("scripts/zsh/_task", zsh_completion_path(self.prefix))
+
+        mkdirp(fish_completion_path(self.prefix))
+        copy("scripts/fish/task.fish", fish_completion_path(self.prefix))
