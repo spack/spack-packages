@@ -18,7 +18,7 @@ class Spack(Package):
 
     homepage = "https://spack.io/"
     git = "https://github.com/spack/spack.git"
-    url = "https://github.com/spack/spack/releases/download/v0.16.2/spack-0.16.2.tar.gz"
+    url = "https://github.com/spack/spack/releases/download/v1.2.1/spack-1.2.1.tar.gz"
     maintainers("haampie")
 
     tags = ["e4s"]
@@ -26,6 +26,23 @@ class Spack(Package):
     license("Apache-2.0 OR MIT")
 
     version("develop", branch="develop")
+    version("1.2.1", sha256="17c833b6935fceab87423f00b5548d38788656ebd5ef3ead8a628ced67f2c019")
+    version("1.2.0", sha256="8704e2be0e1d101dc84541b7723394d0caf513a74dd19af26a22d0c0110ffb7a")
+    version("1.1.1", sha256="a0160ae5e84adc81ac7832562a65ad79053d5c135996815dbb0d2eee6b2fca1c")
+    version("1.1.0", sha256="518474f546e87723c43b80143d83a51c065a8d54333c8140da6f48bc7d9e50c1")
+    version("1.0.4", sha256="6ee1b77427966eff67e1f04019a07f1a67e94f5e3441edd2719aba603f862b0f")
+    version("1.0.2", sha256="c0d4f142ba45160b7cb3fa0c6bb23633734cef689a4a193eb91d08c233ba1f1b")
+    version("1.0.1", sha256="dd1345427dbc9281f359bdb6d0d53cb38edb94fd2ebee3256fda441c8242205e")
+    version("1.0.0", sha256="70dceb9abdf1225d596714522a0fc4d0290e8c5496f1bae8192ffe611b60cfa1")
+    version("0.23.1", sha256="32ca622c49448a3b4e398eb1397d8ff9a6aa987a248de621261e24e65f287593")
+    version("0.23.0", sha256="ddb8220c46743e45c9484622370a1e17e193acba6a43230868c2dbc717e88b56")
+    version("0.22.5", sha256="7c27b0bce0d74c9e09db6efd70ed7e359d50c3c94b40c1bd2129ef3029bbaf94")
+    version("0.22.3", sha256="533738b657ff5cca65af72e9b3e970c12fc489a3b1a3916f87ec922aee08a0fb")
+    version("0.22.2", sha256="aef1a5ce16fe1a8bcced54c40012b19a0f4ade1cd9c5379aca081e96ec5b18ac")
+    version("0.22.1", sha256="374968461ea95fcf22f230aa818cf99cd79af4cd3d28fb0927d5444525b143b3")
+    version("0.22.0", sha256="81d0d25ba022d5a8b2f4852cefced92743fe0cae8c18a54e82bd0ec67ee96cac")
+    version("0.21.3", sha256="b4badebfd57c30524badb230894b6de07015cb18d0167344ac76671f11d68e02")
+    version("0.21.2", sha256="b1860537ba00c55fa0b2517ce9dbfe0e415600892c48e3dc4e15ee8da0f50dd3")
     version("0.21.1", sha256="9a66bc8b59d436d5c0bd7b052c36d2177b228665ece6c9a2c339c2acb3f9103e")
     version("0.21.0", sha256="98680e52591428dc194a021e673a79bdc7799f394c1217b3fc22c89465159a84")
     version("0.20.1", sha256="141be037b56e4b095840a95ac51c428c29dad078f7f88140ae6355b2a1b32dc3")
@@ -45,6 +62,7 @@ class Spack(Package):
     version("0.16.0", sha256="064b2532c70916c7684d4c7c973416ac32dd2ea15f5c392654c75258bfc8c6c2")
 
     variant("development_tools", default=False, description="Build development dependencies")
+    variant("docs", default=False, description="Build documentation dependencies")
     variant(
         "fetchers",
         values=any_combination_of("curl", "git", "mercurial", "subversion", "s3").with_default(
@@ -131,14 +149,32 @@ class Spack(Package):
 
     # Development tools
     with when("+development_tools"):
-        depends_on("py-isort@4.3.5:", type="run")
         depends_on("py-mypy@0.900:", type="run")
-        depends_on("py-black", type="run")
-        depends_on("py-flake8", type="run")
+
+        # `spack style` switched to ruff, dropping black, flake8, and isort in
+        # v1.2.0 (#52156).
+        with when("@:1.1"):
+            depends_on("py-isort@4.3.5:", type="run")
+            depends_on("py-black", type="run")
+            depends_on("py-flake8", type="run")
+        depends_on("py-ruff", type="run", when="@1.2:")
+
+    # Documentation tools
+    with when("+docs"):
         depends_on("py-sphinx@3.4:4.1.1,4.1.3:", type="run")
         depends_on("py-sphinxcontrib-programoutput", type="run")
-        depends_on("py-sphinx-rtd-theme", type="run")
         depends_on("graphviz", type="run")
+
+        # The HTML theme switched from sphinx-rtd-theme to furo in v1.1.0
+        # (#51071), which also pulled in additional sphinx extensions.
+        with when("@:1.0"):
+            depends_on("py-sphinx-rtd-theme", type="run")
+        with when("@1.1:"):
+            depends_on("py-furo", type="run")
+            depends_on("py-sphinx-copybutton", type="run")
+            depends_on("py-sphinx-last-updated-by-git", type="run")
+            depends_on("py-sphinx-sitemap", type="run")
+            depends_on("py-sphinxcontrib-svg2pdfconverter", type="run")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("SPACK_PYTHON", self.spec["python"].command.path)
