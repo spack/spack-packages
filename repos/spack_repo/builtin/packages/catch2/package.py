@@ -23,6 +23,16 @@ class Catch2(CMakePackage):
     version("develop", branch="devel")
 
     # Releases
+    version("3.16.0", sha256="0957cae5821b17ce07f0833aaa52b5137643a8382203221f363a8303c109af34")
+    version("3.15.3", sha256="b0299ae552918220a7a6e21e7de5b714777f4e8c883fb70c4bb23fe01df8c6e3")
+    version("3.15.2", sha256="acfae120892c2b67a74142d36d060c0caa96f1c3aaa8aabd96e19961163d0420")
+    version("3.15.1", sha256="be23a52b85cf04cd9587612147a10b023d59ed9757fa1843cc99e615d6c0893c")
+    version("3.15.0", sha256="9650c55e497759cc39b977e45524bc8acb15256061c112080916ab6cb0b1ea66")
+    version("3.14.0", sha256="ba2a939efead3c833c499cf487e185762f419a71d30158cd1b43c6079c586490")
+    version("3.13.0", sha256="650795f6501af514f806e78c554729847b98db6935e69076f36bb03ed2e985ef")
+    version("3.12.0", sha256="e077079f214afc99fee940d91c14cf1a8c1d378212226bb9f50efff75fe07b23")
+    version("3.11.0", sha256="82fa1cb59dc28bab220935923f7469b997b259eb192fb9355db62da03c2a3137")
+    version("3.10.0", sha256="fc4303a5c2738beaa727066e126b5a28837a812230a3c5826caa38e7ab99ca48")
     version("3.8.0", sha256="1ab2de20460d4641553addfdfe6acd4109d871d5531f8f519a52ea4926303087")
     version("3.7.1", sha256="c991b247a1a0d7bb9c39aa35faf0fe9e19764213f28ffba3109388e62ee0269c")
     version("3.6.0", sha256="485932259a75c7c6b72d4b874242c489ea5155d17efa345eb8cc72159f49f356")
@@ -123,6 +133,12 @@ class Catch2(CMakePackage):
         "pic", when="@3: ~shared", default=True, description="Build with position-independent code"
     )
     variant("shared", when="@3:", default=False, description="Build shared library")
+    variant(
+        "threadsafe",
+        when="@3.9:",
+        default=False,
+        description="Enable thread-safe assertion and message reporting",
+    )
 
     @when("@3:")
     def patch(self):
@@ -165,6 +181,8 @@ class Catch2(CMakePackage):
             )
             args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
+            if "+threadsafe" in spec:
+                args.append(self.define("CATCH_CONFIG_THREAD_SAFE_ASSERTIONS", True))
 
         return args
 
