@@ -16,6 +16,7 @@ class PyVirtualenv(PythonPackage):
 
     license("MIT")
 
+    version("21.14.3", sha256="cb5cd3a87f12a6cfdc0cef6bc8bead6138221767f7718e0c00fee5fb907f9858")
     version("21.4.1", sha256="2ca543c713b72840ceffd94e9bdedfbd09a661defa1f7f69e5429ad4059442e2")
     version("21.2.0", sha256="1720dc3a62ef5b443092e3f499228599045d7fea4c79199770499df8becf9098")
     version("20.35.3", sha256="4f1a845d131133bdff10590489610c98c168ff99dc75d6c96853801f7f67af44")
@@ -43,17 +44,21 @@ class PyVirtualenv(PythonPackage):
     version("13.0.1", sha256="36c2cfae0f9c6462264bb19c478fc6bab3478cf0575f1027452e975a1ed84dbd")
     version("1.11.6", sha256="3e7a4c151e2ee97f51db0215bfd2a073b04a91e9786df6cb67c916f16abe04f7")
 
-    depends_on("c", type="build")  # generated
-
     with default_args(type="build"):
+        depends_on("c")
+
         depends_on("py-hatch-vcs@0.4:", when="@20.39.1:")
         depends_on("py-hatch-vcs@0.3:", when="@20.18:")
+
+        depends_on("py-hatchling@1.28:", when="@21.8: ^python@3.10:")
+        depends_on("py-hatchling@1.27", when="@21.8: ^python@:3.9")
         depends_on("py-hatchling@1.27:", when="@20.39.1:")
         depends_on("py-hatchling@1.17.1:", when="@20.23.1:")
         depends_on("py-hatchling@1.14:", when="@20.22:")
         depends_on("py-hatchling@1.12.2:", when="@20.18:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@21.5:")
         depends_on("python@3.8:", when="@20.27:")
         depends_on("python@3.7:", when="@20.18:")
 
@@ -63,7 +68,8 @@ class PyVirtualenv(PythonPackage):
         depends_on("py-distlib@0.3.1:0", when="@20.0.26:20.16.2")
         depends_on("py-distlib@0.3.0:0", when="@20.0.0:20.0.25")
 
-        depends_on("py-filelock@3.24.2:3", when="@20.38: ^python@3.10:")
+        depends_on("py-filelock@3.24.2:4", when="@21.10: ^python@3.10:")
+        depends_on("py-filelock@3.24.2:3", when="@20.38:21.9 ^python@3.10:")
         depends_on("py-filelock@3.16.1:3.19.1", when="@20.38: ^python@:3.9")
         depends_on("py-filelock@3.12.2:3", when="@20.24.2:20.35.4")
         depends_on("py-filelock@3.11:3", when="@20.22:20.23.0")
@@ -71,11 +77,7 @@ class PyVirtualenv(PythonPackage):
         depends_on("py-filelock@3.2:3", when="@20.9:20.16.2")
         depends_on("py-filelock@3.0.0:3", when="@20.0:20.8")
 
-        depends_on("py-importlib-metadata@6.6:", when="@20.23.1: ^python@:3.7")
-        depends_on("py-importlib-metadata@6.4.1:", when="@20.22: ^python@:3.7")
-        depends_on("py-importlib-metadata@4.8.3:", when="@20.16.3: ^python@:3.7")
-        depends_on("py-importlib-metadata@0.12:", when="@20.2.1: ^python@:3.7")
-        depends_on("py-importlib-metadata@0.12:3", when="@20.0.0:20.2.0 ^python@:3.7")
+        depends_on("py-packaging@23.1:", when="@21.14:")
 
         depends_on("py-platformdirs@3.9.1:4", when="@20.24.7:")
         depends_on("py-platformdirs@3.9.1:3", when="@20.24.1:20.24.6")
@@ -83,10 +85,19 @@ class PyVirtualenv(PythonPackage):
         depends_on("py-platformdirs@2.4:2", when="@20.16.3:20.21")
         depends_on("py-platformdirs@2:2", when="@20.5:20.16.2")
 
+        depends_on("py-python-discovery@1.6:", when="@21.7.7:")
         depends_on("py-python-discovery@1.4:", when="@21.4:")
         depends_on("py-python-discovery@1:", when="@21:")
 
         depends_on("py-typing-extensions@4.13.2:", when="@20.34: ^python@:3.10")
+
+        # Historical dependencies:
+        with when("@:21.4 ^python@3.7"):
+            depends_on("py-importlib-metadata@6.6:", when="@20.23.1:")
+            depends_on("py-importlib-metadata@6.4.1:", when="@20.22:")
+            depends_on("py-importlib-metadata@4.8.3:", when="@20.16.3:")
+            depends_on("py-importlib-metadata@0.12:", when="@20.2.1:")
+            depends_on("py-importlib-metadata@0.12:3", when="@20.0.0:20.2.0")
 
     # Historical dependencies
     with when("@:20.17"):
