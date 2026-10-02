@@ -41,11 +41,35 @@ class _4cMultiphysics(CMakePackage):
     )
     resource(
         name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/84d9fa94b3cd2d358f9c498e716d50181ba626f2.tar.gz",
+        sha256="12bee3bba30e8e8a7965e961cb4924a5f11b8f173b74094ed7c66a7e38d98cb7",
+        destination="spack-resources",
+        placement="mirco",
+        when="@2026.1.0+mirco",
+    )
+    resource(
+        name="mirco",
         url="https://github.com/imcs-compsim/MIRCO/archive/b9d0c4ba27ff8463a3d2b17163fead8800b2650c.tar.gz",
         sha256="b3a16a0aeed5fcd778c8757d81af9070ec4964a5206f87b6257a402aa3fc4bfd",
         destination="spack-resources",
         placement="mirco",
-        when="+mirco",
+        when="@2026.2.0+mirco",
+    )
+    resource(
+        name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/8b049a6462eba5809d7cffe039a77f3bc5593767.tar.gz",
+        sha256="8b051f040b5151307d9007574690adf0194bc0a94a6bb81a6e1bc6286914ba63",
+        destination="spack-resources",
+        placement="mirco",
+        when="@2026.3.0+mirco",
+    )
+    resource(
+        name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/8b049a6462eba5809d7cffe039a77f3bc5593767.tar.gz",
+        sha256="8b051f040b5151307d9007574690adf0194bc0a94a6bb81a6e1bc6286914ba63",
+        destination="spack-resources",
+        placement="mirco",
+        when="@main+mirco",
     )
 
     variant("shared", default=True, description="Build shared libraries")
@@ -100,6 +124,14 @@ class _4cMultiphysics(CMakePackage):
         "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
         patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
     )
+    # Trilinos exposes MPI types in its C++ ABI, so oneAPI builds require
+    # Intel MPI regardless of 4C's compiler.
+    requires(
+        "^intel-oneapi-mpi",
+        when="^trilinos %c,cxx=oneapi",
+        msg="Trilinos built with oneAPI requires Intel MPI for a consistent MPI C++ ABI",
+    )
+
     # deal.II 9.6.2 uses bundled Boost 1.84. Keep 4C's compiled Boost.Graph
     # library and headers ABI-compatible with the deal.II headers.
     depends_on("boost@1.84.0+graph")
@@ -118,7 +150,10 @@ class _4cMultiphysics(CMakePackage):
     depends_on("mesa~llvm", when="+vtk platform=linux")
     depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
     depends_on(
-        "dealii@9.6.2+trilinos+mpi~adol-c",
+        "dealii@9.6.2~examples~examples_compile+hdf5+mpi+p4est+taskflow+threads+trilinos"
+        "~adol-c~arborx~arpack~assimp~cgal~ginkgo~gmsh~gsl~kokkos~metis~muparser"
+        "~netcdf~opencascade~petsc~scalapack~slepc~sundials~symengine~vtk"
+        " build_type=Release",
         patches=[
             patch("dealii-force-bundled-boost.patch"),
             patch("dealii-use-cxx20.patch"),
@@ -126,9 +161,26 @@ class _4cMultiphysics(CMakePackage):
         ],
         when="+dealii",
     )
+    requires(
+        "^intel-oneapi-mpi",
+        when="+dealii %c,cxx=oneapi",
+        msg="deal.II and Trilinos must use Intel MPI with oneAPI to preserve their MPI C++ ABI",
+    )
+    requires(
+        "^dealii~cgal",
+        when="+dealii",
+        msg="deal.II must disable CGAL when using the bundled Boost required by 4C",
+    )
+    # Taskflow 4.1 documents IntelLLVM support but omits it from its compiler
+    # dispatch. Add the missing branch without constraining GCC or Clang.
+    depends_on(
+        "taskflow@4.1.0",
+        patches=[patch("taskflow-4.1-intelllvm.patch")],
+        when="+dealii",
+    )
     depends_on("arborx@2.0.1+mpi", when="+arborx")
     depends_on("fftw", when="+fftw")
-    depends_on("libbacktrace", when="+backtrace")
+    depends_on("libbacktrace+shared", when="+backtrace")
     depends_on("python@3.12:", type=("build", "link", "run"), when="+python")
     depends_on("python-venv", type=("build", "run"), when="+python")
     depends_on("py-pip", type="build", when="+python")
