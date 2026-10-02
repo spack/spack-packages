@@ -1,0 +1,40 @@
+diff --git a/debuginfod/debuginfod-client.c b/debuginfod/debuginfod-client.c
+index f7d1256..7da53ae 100644
+--- a/debuginfod/debuginfod-client.c
++++ b/debuginfod/debuginfod-client.c
+@@ -1891,7 +1891,11 @@ debuginfod_query_server_by_buildid (debuginfod_client *c,
+     {
+       if (vfd >= 0)
+ 	dprintf (vfd, "checking filename\n");
+-      if (filename[0] != '/') // must start with /
++      /* Spack: also accept "./"-relative filenames, as produced when
++         -ffile-prefix-map maps compile-time paths to a relative ./build
++         root rather than an absolute one. See filename_offset below for
++         the corresponding request-URL construction. */
++      if (filename[0] != '/' && !(filename[0] == '.' && filename[1] == '/')) // must start with / or ./
+ 	{
+ 	  rc = -EINVAL;
+ 	  goto out;
+@@ -2150,7 +2154,12 @@ debuginfod_query_server_by_buildid (debuginfod_client *c,
+   size_t escaped_strlen = 0;
+   if (filename)
+     {
+-      escaped_string = curl_easy_escape(&target_handle, filename+1, 0);
++      /* Spack: skip past the leading "/" (absolute) or "./" (relative,
++         our addition above) before escaping, so the request URL doesn't
++         include a leading path separator or dot-slash. */
++      size_t filename_offset = (filename[0] == '/') ? 1 :
++                                (filename[0] == '.' && filename[1] == '/') ? 2 : 1;
++      escaped_string = curl_easy_escape(&target_handle, filename + filename_offset, 0);
+       if (!escaped_string)
+         {
+           rc = -ENOMEM;
+@@ -2188,7 +2197,7 @@ debuginfod_query_server_by_buildid (debuginfod_client *c,
+       data[i].target_handle = &target_handle;
+       data[i].client = c;
+ 
+-      if (filename) /* must start with / */
++      if (filename) /* must start with / or ./ */
+         {
+           /* PR28034 escape characters in completed url to %hh format. */
+           snprintf(data[i].url, PATH_MAX, "%s/%s/%s/%s", server_url,
