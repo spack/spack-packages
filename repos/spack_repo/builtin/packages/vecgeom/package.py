@@ -158,12 +158,14 @@ class Vecgeom(CMakePackage, CudaPackage):
 
         # Set nav flags
         if spec.satisfies("@2:"):
-            args.extend([
-                from_variant(prefix + "NAV", "nav"),
-                define("VECGEOM_SINGLE_PRECISION", False),
-                define("VECGEOM_BVH_SINGLE", False),
-                define("VECGEOM_NAVTABLE_RECOMMEND", False),
-            ])
+            args.extend(
+                [
+                    from_variant(prefix + "NAV", "nav"),
+                    define("VECGEOM_SINGLE_PRECISION", False),
+                    define("VECGEOM_BVH_SINGLE", False),
+                    define("VECGEOM_NAVTABLE_RECOMMEND", False),
+                ]
+            )
             if spec.satisfies("nav=tuple"):
                 args.append(define("VECGEOM_NAVTUPLE_MAXDEPTH", spec.variants["maxdepth"].value))
         else:
@@ -187,10 +189,12 @@ class Vecgeom(CMakePackage, CudaPackage):
         build_tests = self.run_tests
         args.append(define("BUILD_TESTING", build_tests))
         if spec.satisfies("@:1.1"):
-            args.extend([
-                define("CTEST", build_tests),
-                define("GDMLTESTING", build_tests and "+gdml" in spec),
-            ])
+            args.extend(
+                [
+                    define("CTEST", build_tests),
+                    define("GDMLTESTING", build_tests and "+gdml" in spec),
+                ]
+            )
 
         # When building with C++20 and Ninja, clang installations that
         # lack clang-scan-deps (e.g., vanilla Ubuntu 24's clang-18) fail with
