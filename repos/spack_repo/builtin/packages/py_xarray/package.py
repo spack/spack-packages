@@ -20,6 +20,7 @@ class PyXarray(PythonPackage):
     license("Apache-2.0")
     maintainers("Chrismarsh", "adamjstewart")
 
+    version("2026.9.0", sha256="6abc69694c22fa1f0fb2f357ff4e41d88beb4477ed71091f944b7dbf67ed54fe")
     version("2026.4.0", sha256="c4ac9a01a945d90d5b1628e2af045099a9d4943536d4f2ee3ae963c3b222d15b")
     version("2026.2.0", sha256="978b6acb018770554f8fd964af4eb02f9bcc165d4085dbb7326190d92aa74bcf")
     version("2025.7.1", sha256="2884bf5672b540fcc6ff8c20a3196bda0d78fbfb4d67398d60526e97c2faceef")
@@ -57,14 +58,17 @@ class PyXarray(PythonPackage):
     variant("viz", default=False, when="@2024.7:", description="Buid viz backends")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@80:", when="@2026.9:")
         depends_on("py-setuptools@77.0.3:", when="@2025.6:")
         depends_on("py-setuptools@42:", when="@0.17:")
         depends_on("py-setuptools@38.4:", when="@0.16:", type=("build", "run"))
         depends_on("py-setuptools")
+        depends_on("py-setuptools-scm@10:", when="@2026.9:")
         depends_on("py-setuptools-scm@8:", when="@2025.8:")
         depends_on("py-setuptools-scm@7:", when="@2023.7:")
         depends_on("py-setuptools-scm@3.4:+toml", when="@0.17:2022.3")
         depends_on("py-setuptools-scm", when="@0.15:")
+        depends_on("py-vcs-versioning", when="@2026.9:")
 
         # Historical dependencies
         depends_on("py-setuptools-scm-git-archive", when="@0.17:2022.3")
@@ -116,6 +120,7 @@ class PyXarray(PythonPackage):
         with when("+io"):
             depends_on("py-netcdf4@1.6:", when="@2025.7:")
             depends_on("py-netcdf4")
+            depends_on("py-h5netcdf@1.8:+h5py", when="@2026.9:")
             depends_on("py-h5netcdf@1.5:+h5py", when="@2026.4:")
             depends_on("py-h5netcdf@1.4:", when="@2026:")
             depends_on("py-h5netcdf")
@@ -157,3 +162,5 @@ class PyXarray(PythonPackage):
             depends_on("py-matplotlib")
             depends_on("py-nc-time-axis")
             depends_on("py-seaborn")
+
+    conflicts("py-numbagg@0.9.5")
