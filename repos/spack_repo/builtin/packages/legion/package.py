@@ -446,8 +446,17 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             options.append(self.define("Legion_USE_HIP", True))
             options.append(self.define("Legion_GPU_REDUCTIONS", True))
-            options.append(from_variant("Legion_HIP_TARGET", "hip_target"))
-            options.append(from_variant("Legion_HIP_ARCH", "amdgpu_target"))
+            if spec.satisfies("@26.09.0:"):
+                hip_target = self.spec.variants["hip_target"].value
+                hip_platform = {
+                    "ROCM": "amd",
+                    "CUDA": "nvidia",
+                }
+                options.append(self.define("CMAKE_HIP_PLATFORM", hip_platform[hip_target]))
+                options.append(from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
+            else:
+                options.append(from_variant("Legion_HIP_TARGET", "hip_target"))
+                options.append(from_variant("Legion_HIP_ARCH", "amdgpu_target"))
             options.append(from_variant("Legion_HIJACK_HIP", "hip_hijack"))
             options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
             if spec.satisfies("@23.03.0:23.12.0"):
