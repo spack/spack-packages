@@ -94,7 +94,9 @@ class Gaudi(CMakePackage, CudaPackage):
         "vtune", default=False, description="Build with Intel VTune profiler support", when="@:39"
     )
     variant("xercesc", default=False, description="Build with Xerces-C XML support")
-
+    variant(
+        "zstd", default=False, description="Build with zstd compression support", when="@40.6:"
+    )
     patch("fmt_fix.patch", when="@36.6:36.12 ^fmt@10:")
     # fix issues with catch2 3.1 and above
     patch(
@@ -207,6 +209,8 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("jemalloc", when="+jemalloc")
     depends_on("libunwind", when="+unwind")
     depends_on("xerces-c", when="+xercesc")
+    depends_on("zstd", when="+zstd")
+    depends_on("pkg-config", when="+zstd")
     # NOTE: pocl cannot be added as a minimal OpenCL implementation because
     #       ROOT does not like being exposed to LLVM symbols.
 
@@ -239,6 +243,7 @@ class Gaudi(CMakePackage, CudaPackage):
             self.define_from_variant("GAUDI_USE_UNWIND", "unwind"),
             self.define_from_variant("GAUDI_USE_XERCESC", "xercesc"),
             self.define_from_variant("GAUDI_USE_DOXYGEN", "docs"),
+            self.define_from_variant("GAUDI_USE_ZSTD", "zstd"),
             # needed to build core services like rndmsvc
             self.define("GAUDI_USE_CLHEP", True),
             # todo:
