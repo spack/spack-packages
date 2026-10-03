@@ -150,6 +150,42 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
         "either as a runtime (with just-build Clang) "
         "or as a project (with the compiler in use)",
     )
+    variant(
+        "cxx_stdlib",
+        default="platform",
+        values=("platform", "libstdc++", "libc++"),
+        when="+clang",
+        description="Default C++ standard library used by Clang",
+    )
+    variant(
+        "rtlib",
+        default="platform",
+        values=("platform", "libgcc", "compiler-rt"),
+        when="+clang",
+        description="Default runtime library used by Clang",
+    )
+    variant(
+        "unwindlib",
+        default="platform",
+        values=("platform", "none", "libgcc", "libunwind"),
+        when="+clang",
+        description="Default unwind library used by Clang",
+    )
+    conflicts(
+        "cxx_stdlib=libc++",
+        when="libcxx=none",
+        msg="cxx_stdlib=libc++ requires libc++ to be built",
+    )
+    conflicts(
+        "rtlib=compiler-rt",
+        when="compiler-rt=none",
+        msg="rtlib=compiler-rt requires compiler-rt to be built",
+    )
+    conflicts(
+        "unwindlib=libunwind",
+        when="libunwind=none",
+        msg="unwindlib=libunwind requires libunwind to be built",
+    )
 
     variant("offload", default=True, when="@19:", description="Build the Offload subproject")
     conflicts("+offload", when="~clang")
@@ -940,6 +976,14 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
                     type="link",
                     description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
                 )
+        if spec.satisfies("+clang cxx_stdlib=libc++"):
+            pkg("*").depends_on(
+                f"llvm-runtime@{spec.version}",
+                when=f"%[deptypes=build virtuals=cxx] "
+                     f"{spec.name}/{spec.dag_hash()}",
+                type="link",
+                description="Inject llvm-runtime when llvm uses libc++",
+            )
 
     root_cmakelists_dir = "llvm"
 
@@ -1147,6 +1191,24 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             cmake_args.append(define("DEFAULT_SYSROOT", _macos_sdk_path()))
             # without this libc++ headers are not fond during compiler-rt build
             cmake_args.append(define("LLVM_BUILD_EXTERNAL_COMPILER_RT", True))
+
+        if spec.satisfies("cxx_stdlib=libc++"):
+            cmake_args.append(define("CLANG_DEFAULT_CXX_STDLIB", "libc++"))
+        elif spec.satisfies("cxx_stdlib=libstdc++"):
+            cmake_args.append(define("CLANG_DEFAULT_CXX_STDLIB", "libstdc++"))
+
+        if "+clang" in spec:
+            clang_defaults = {
+                "CLANG_DEFAULT_CXX_STDLIB": "cxx_stdlib",
+                "CLANG_DEFAULT_RTLIB": "rtlib",
+                "CLANG_DEFAULT_UNWINDLIB": "unwindlib",
+            }
+            cmake_args.append(define("LLVM_USE_LINKER", "lld"))
+
+            for cmake_var, variant_name in clang_defaults.items():
+                value = spec.variants[variant_name].value
+                if value != "platform":
+                    cmake_args.append(define(cmake_var, value))
 
         # Semicolon seperated list of projects to enable
         cmake_args.append(define("LLVM_ENABLE_PROJECTS", projects))
