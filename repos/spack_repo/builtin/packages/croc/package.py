@@ -26,3 +26,7 @@ class Croc(GoPackage):
     depends_on("go@1.26.0:", type="build", when="@11.1.1:")
     depends_on("go@1.25.0:", type="build", when="@10.4.0:")
     depends_on("go@1.24.0:", type="build", when="@10.2.5:")
+
+    @property
+    def build_args(self) -> List[str]:
+        return ["-buildvcs=false"]
