@@ -235,6 +235,12 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
                     define("CMAKE_TRY_COMPILE_PLATFORM_VARIABLES", "CMAKE_CUDA_RUNTIME_LIBRARY"),
                 )
             )
+            cuda_arch = self.spec.variants["cuda_arch"].value
+            if cuda_arch[0] != "none":
+                args.append(define("CMAKE_CUDA_ARCHITECTURES", cuda_arch))
+
+        if self.spec.satisfies("^cmake@3.24:"):
+            args.append("--compile-no-warning-as-error")
 
         if self.spec.satisfies("+rocm"):
             args.extend(
