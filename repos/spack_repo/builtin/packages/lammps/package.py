@@ -38,11 +38,13 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     version("20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e")
     version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
     version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
-    version("20250722.6",
+    version(
+        "20250722.6",
         sha256="40780d0269c656ffa983a8e3e6ed047fedfe1d0b7344b77ace25bf8c7c535f01",
         preferred=True,
     )
-    version("20250722.5",
+    version(
+        "20250722.5",
         sha256="9d1eb62c47b8bb1c2003dfe5b5e82b3ebef4223b51593f9aec2410c5ec983977",
         deprecated=True,
     )
