@@ -165,7 +165,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         when="@:26.06.0 +rocm",
     )
     variant(
-        "hip_platform",
+        "hip_target",
         default="amd",
         values=("amd", "nvidia"),
         description="API used by HIP",
@@ -453,7 +453,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
             options.append(self.define("Legion_USE_HIP", True))
             options.append(self.define("Legion_GPU_REDUCTIONS", True))
             if spec.satisfies("@26.09.0:"):
-                options.append(from_variant("CMAKE_HIP_PLATFORM", "hip_platform"))
+                options.append(from_variant("CMAKE_HIP_PLATFORM", "hip_target"))
                 options.append(from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
             else:
                 options.append(from_variant("Legion_HIP_TARGET", "hip_target"))
