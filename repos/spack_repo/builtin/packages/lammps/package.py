@@ -33,98 +33,100 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     #   marked deprecated=True
     # * patch releases older than a stable release should be marked deprecated=True
     version("develop", branch="develop")
-    version("20260704", sha256="be9deffba169d140c337fd29570d3f5469332ece7e77280cce998f6caaad5534")
-    version("20260330", sha256="395f00e166836ac0164793d65ba0d957d79dd0848a79c36fa903855e8b49b7e0")
-    version("20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e")
-    version("20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e")
-    version("20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c")
+
+    # patch releases since last stable
+
+    # current stable release
     version(
-        "20250722.6",
-        sha256="40780d0269c656ffa983a8e3e6ed047fedfe1d0b7344b77ace25bf8c7c535f01",
+        "20260930",
+        sha256="56e6670161cc0e4c5a4816a95edc80c00c9507a98445d0756b9ad8b5eb29748e",
         preferred=True,
     )
+
+    # old stable versions (keeping last 2 as not deprecated)
     version(
-        "20250722.5",
-        sha256="9d1eb62c47b8bb1c2003dfe5b5e82b3ebef4223b51593f9aec2410c5ec983977",
-        deprecated=True,
-    )
-    version(
-        "20250722.4",
-        sha256="411088d9c03339e025f6a975e0a5741bb9e3f351cc39eda220ab22ac318fe2fb",
-        deprecated=True,
-    )
-    version(
-        "20250722.3",
-        sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef",
-        deprecated=True,
-    )
-    version(
-        "20250722.2",
-        sha256="fede484269cdb22f1cb738b4cd118a9bf9cb4bd3c85667f1e6a73a9fa5c2de6b",
-        deprecated=True,
-    )
-    version(
-        "20250722.1",
-        sha256="4ba3648fae360ea1d3106e08bce13e21f856318196f4965f2a09fd812d572928",
-        deprecated=True,
-    )
-    version(
-        "20250722",
-        sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26",
-        deprecated=True,
-    )
-    version(
-        "20250612",
-        sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7",
-        deprecated=True,
-    )
-    version(
-        "20250402",
-        sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca",
-        deprecated=True,
-    )
-    version(
-        "20250204",
-        sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1",
-        deprecated=True,
+        "20250722.6", sha256="40780d0269c656ffa983a8e3e6ed047fedfe1d0b7344b77ace25bf8c7c535f01"
     )
     version(
         "20240829.4", sha256="e7d6d60b94ada5acc2e1e9966ae12547fd550d6967d4511b8655c77e24878728"
     )
-    version(
-        "20230802.4",
-        sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b",
-        deprecated=True,
-    )
-    version(
-        "20220623.4",
-        sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf",
-        deprecated=True,
-    )
-    version(
-        "20210929.3",
-        sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e",
-        deprecated=True,
-    )
-    version(
-        "20201029",
-        sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726",
-        deprecated=True,
-    )
-    version(
-        "20200303",
-        sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1",
-        deprecated=True,
-    )
+
+    with default_args(deprecated=True):
+        # deprecated patch releases
+        version(
+            "20260902", sha256="df89defbca87aad40f6c55ab6fca05b910089d831774219ba5a8ddbb9fa4c5dc"
+        )
+        version(
+            "20260704", sha256="be9deffba169d140c337fd29570d3f5469332ece7e77280cce998f6caaad5534"
+        )
+        version(
+            "20260330", sha256="395f00e166836ac0164793d65ba0d957d79dd0848a79c36fa903855e8b49b7e0"
+        )
+        version(
+            "20260211", sha256="b9ba0e368ee5af93f038b913e09a02b777a365ac6aea141842ded9b98b1efa8e"
+        )
+        version(
+            "20251210", sha256="175afc62a7314970d56e93b54745f4e6132e8f688155fff3dd70b298ec077c0e"
+        )
+        version(
+            "20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c"
+        )
+        version(
+            "20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7"
+        )
+        version(
+            "20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca"
+        )
+        version(
+            "20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1"
+        )
+
+        # deprecated stable versions
+        version(
+            "20250722.5", sha256="9d1eb62c47b8bb1c2003dfe5b5e82b3ebef4223b51593f9aec2410c5ec983977"
+        )
+        version(
+            "20250722.4", sha256="411088d9c03339e025f6a975e0a5741bb9e3f351cc39eda220ab22ac318fe2fb"
+        )
+        version(
+            "20250722.3", sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef"
+        )
+        version(
+            "20250722.2", sha256="fede484269cdb22f1cb738b4cd118a9bf9cb4bd3c85667f1e6a73a9fa5c2de6b"
+        )
+        version(
+            "20250722.1", sha256="4ba3648fae360ea1d3106e08bce13e21f856318196f4965f2a09fd812d572928"
+        )
+        version(
+            "20250722", sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26"
+        )
+
+        # deprecated stable versions we want to keep longer
+        version(
+            "20230802.4", sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b"
+        )
+        version(
+            "20220623.4", sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf"
+        )
+        version(
+            "20210929.3", sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e"
+        )
+        version(
+            "20201029", sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726"
+        )
+        version(
+            "20200303", sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1"
+        )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     # ml-quip require Fortran, but not available in Spack
-    for fc_pkg in ("kim", "scafacos"):
+    for fc_pkg in ("kim", "scafacos", "qmmm-xtb"):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20260930",
         "20250722.6",
         "20250722.5",
         "20250722.4",
@@ -240,6 +242,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "python": {},
         "qeq": {},
         "qtb": {"when": "@20210702:"},
+        "qmmm-xtb": {"when": "@20260902:"},
         "reaction": {"when": "@20210702:"},
         "reax": {"when": "@:20181212"},
         "reaxff": {"when": "@20210702:"},
@@ -297,8 +300,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "user-vtk": {"when": "@20210527"},
         "user-yaff": {"when": "@20190201:20210527"},
         "voronoi": {},
-        "vtk": {"when": "@20210702:"},
+        "vtk": {"when": "@20210702:20260704"},
         "yaff": {"when": "@20210702:"},
+        # "fenix": {"when": "@20260902:"}, no fenix package
+        # "mbx": {"when": "@20260211:"}, no mbx package
+        # "ml-runner": {"when": "@20260902:"}, no runner package
         # "ml-quip": {"when": "@20210702:"}, no quip package
         # "user-quip": {"when": "@20190201:20210527"}, no quip package
     }
@@ -401,6 +407,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("netcdf-c+mpi", when="+netcdf")
     depends_on("blas", when="+user-atc")
     depends_on("blas", when="+atc")
+    depends_on("blas", when="+qmmm-xtb")
     depends_on("lapack", when="+user-atc")
     depends_on("lapack", when="+atc")
     depends_on("opencl", when="+opencl")
@@ -416,6 +423,9 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("mpi", when="+latboltz")
     depends_on("mpi", when="+user-h5md")
     depends_on("mpi", when="+h5md")
+    depends_on("pkg-config", when="+qmmm-xtb")
+    depends_on("xtb@6.7:", when="+qmmm-xtb")
+    depends_on("mctc-lib", when="+qmmm-xtb")
     depends_on("hdf5", when="+user-h5md")
     depends_on("hdf5", when="+h5md")
     depends_on("jpeg", when="+jpeg")
@@ -496,6 +506,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("+user-misc", when="~manybody")
     conflicts("+user-phonon", when="~kspace")
     conflicts("+phonon", when="~kspace")
+    conflicts("+qmmm-xtb", when="~kspace")
     conflicts("%gcc@9:", when="@:20200303+openmp")
     conflicts("+dielectric", when="~kspace")
     conflicts("+dielectric", when="@:20210702~user-misc")
