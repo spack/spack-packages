@@ -64,7 +64,9 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
     # avoid cycle dependency for concretizer
     with when("+python"):
         extends("python")
-        depends_on("python+shared~libxml2")
+        depends_on(
+            "cpython+shared~libxml2", when="^[virtuals=python] cpython", type=("build", "run")
+        )
 
     # XML Conformance Test Suites
     # See https://www.w3.org/XML/Test/ for information

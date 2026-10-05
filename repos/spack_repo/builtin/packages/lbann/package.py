@@ -224,11 +224,15 @@ class Lbann(CachedCMakePackage, CudaPackage, ROCmPackage):
     # and 2) to drive the front end model creation and launch
 
     # Core library support for Python Data Reader and extensible interface
-    depends_on("python@3: +shared", type=("run"), when="@:0.90,0.99: +python")
+    depends_on("python@3:", type=("run"), when="@:0.90,0.99: +python")
+    depends_on(
+        "cpython@3:+shared", type=("run"), when="@:0.90,0.99: +python ^[virtuals=python] cpython"
+    )
     extends("python", when="+python")
 
     # Python front end and possible extra packages
-    depends_on("python@3: +shared", type=("build", "run"), when="+pfe")
+    depends_on("python@3:", type=("build", "run"), when="+pfe")
+    depends_on("cpython@3:+shared", type=("build", "run"), when="+pfe ^[virtuals=python] cpython")
     extends("python", when="+pfe")
     depends_on("py-setuptools", type="build", when="+pfe")
     depends_on("py-protobuf@3.10.0:4.21.12", type=("build", "run"), when="+pfe")

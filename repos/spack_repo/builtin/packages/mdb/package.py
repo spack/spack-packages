@@ -20,7 +20,9 @@ class Mdb(PythonPackage):
 
     version("1.0.3", sha256="c45cffb320a51274519753b950b7b72cd91a8a5804941556120ed41bb8b491d8")
 
-    depends_on("python@3.10: +tkinter", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"))
+    depends_on("cpython@3.10:+tkinter", type=("build", "run"), when="^[virtuals=python] cpython")
+    depends_on("pypy@3.10:+tkinter", type=("build", "run"), when="^[virtuals=python] pypy")
     depends_on("py-pip", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 

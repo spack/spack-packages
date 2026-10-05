@@ -20,7 +20,8 @@ class PyTorchbenchmark(Package):
     version("main", branch="main")
 
     # README.md
-    depends_on("python@3.8:+pythoncmd", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"))
+    depends_on("cpython+pythoncmd", type=("build", "run"), when="^[virtuals=python] cpython")
     depends_on("git-lfs", type=("build", "run"))
     depends_on("py-torch", type=("build", "run"))
     depends_on("py-torchaudio", type=("build", "run"))

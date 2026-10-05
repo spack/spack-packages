@@ -77,7 +77,8 @@ class Bazel(Package):
     depends_on("java@21", when="@7.2:9", type=("build", "run"))
     depends_on("java@11", when="@5.3:7.1", type=("build", "run"))
     depends_on("java@8,11", when="@:5.2", type=("build", "run"))
-    depends_on("python+pythoncmd", type=("build", "run"))
+    depends_on("python", type=("build", "run"))
+    depends_on("cpython+pythoncmd", when="^[virtuals=python] cpython", type=("build", "run"))
 
     # https://github.com/bazelbuild/bazel/pull/27014
     # https://github.com/bazelbuild/bazel/pull/27160

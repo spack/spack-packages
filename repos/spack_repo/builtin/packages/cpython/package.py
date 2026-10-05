@@ -37,7 +37,7 @@ def make_pyvenv_cfg(python_pkg: Package, venv_prefix: str) -> str:
     return "\n".join(lines) + "\n"
 
 
-class Python(Package):
+class Cpython(Package):
     """The Python programming language."""
 
     homepage = "https://www.python.org/"
@@ -166,6 +166,48 @@ class Python(Package):
         version(
             "3.6.15", sha256="54570b7e339e2cfd72b29c7e2fdb47c0b7b18b7412e61de5b463fc087c13b043"
         )
+
+    for ver in [
+        "3.14.5",
+        "3.13.13",
+        "3.12.14",
+        "3.11.15",
+        "3.10.20",
+        "3.14.4",
+        "3.14.3",
+        "3.14.2",
+        "3.14.0",
+        "3.13.12",
+        "3.13.11",
+        "3.13.8",
+        "3.13.7",
+        "3.13.5",
+        "3.13.4",
+        "3.13.3",
+        "3.13.2",
+        "3.13.1",
+        "3.13.0",
+        "3.12.13",
+        "3.12.12",
+        "3.12.11",
+        "3.12.9",
+        "3.12.8",
+        "3.12.7",
+        "3.11.14",
+        "3.11.13",
+        "3.11.11",
+        "3.10.19",
+        "3.10.18",
+        "3.10.16",
+        "3.9.24",
+        "3.9.23",
+        "3.9.21",
+        "3.9.25",
+        "3.8.20",
+        "3.7.17",
+        "3.6.15",
+    ]:
+        provides(f"python@{ver}", when=f"@{ver}")
 
     extendable = True
 

@@ -86,7 +86,12 @@ class Lvarray(CMakePackage, CudaPackage):
 
     depends_on("caliper", when="+caliper")
 
-    depends_on("python +shared +pic", type=("build", "link", "run"), when="+pylvarray")
+    depends_on("python", type=("build", "link", "run"), when="+pylvarray")
+    depends_on(
+        "cpython+shared+pic",
+        type=("build", "link", "run"),
+        when="+pylvarray ^[virtuals=python] cpython",
+    )
     depends_on("py-numpy@1.19:", type=("build", "link", "run"), when="+pylvarray")
     depends_on("py-scipy@1.5.2:", type=("build", "run"), when="+pylvarray")
 

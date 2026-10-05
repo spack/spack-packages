@@ -111,7 +111,8 @@ class Amdlibflame(CMakePackage, LibflameBase):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("python+pythoncmd", type="build")
+    depends_on("python", type="build")
+    depends_on("cpython+pythoncmd", when="^[virtuals=python] cpython", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 
     for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:

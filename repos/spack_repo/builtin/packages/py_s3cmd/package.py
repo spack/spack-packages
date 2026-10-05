@@ -31,6 +31,7 @@ class PyS3cmd(PythonPackage):
     version("1.5.2", sha256="ff8a6764e8bdd7ed48a93e51b08222bea33469d248a90b8d25315b023717b42d")
 
     depends_on("py-setuptools", type="build")
-    depends_on("python@2.6:+pyexpat", type=("build", "run"))
+    depends_on("cpython@2.6:+pyexpat", type=("build", "run"), when="^[virtuals=python] cpython")
+    depends_on("pypy@2.6:+pyexpat", type=("build", "run"), when="^[virtuals=python] pypy")
     depends_on("py-python-dateutil", type=("build", "run"))
     depends_on("py-python-magic", type=("build", "run"))

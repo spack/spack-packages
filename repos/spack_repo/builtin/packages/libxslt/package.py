@@ -57,7 +57,7 @@ class Libxslt(CMakePackage, AutotoolsPackage):
     depends_on("libgcrypt", when="+crypto")
     conflicts("+crypto", when="platform=windows")
 
-    depends_on("python+shared", when="+python")
+    depends_on("cpython+shared", when="+python ^[virtuals=python] cpython")
     extends("python", when="+python")
 
     def url_for_version(self, version):
