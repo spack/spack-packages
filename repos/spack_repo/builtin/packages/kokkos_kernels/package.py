@@ -221,7 +221,9 @@ class KokkosKernels(CMakePackage, CudaPackage):
         ):
             options.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
         else:
-            options.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+            options.append(
+                self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx or spack_cxx)
+            )
 
         if self.run_tests:
             options.append(self.define("KokkosKernels_ENABLE_TESTS", True))

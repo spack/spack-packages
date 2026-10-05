@@ -153,7 +153,7 @@ class Triton(CMakePackage, CudaPackage, ROCmPackage):
 
         if "+cuda" in spec:
             if "%cxx=gcc" in spec:
-                compiler = self["kokkos"].kokkos_cxx
+                compiler = self["kokkos"].kokkos_cxx  # guaranteed kokkos+wrapper
             if "+native_launcher" in spec:
                 compiler_flags.append("-DTRITON_CUDA_LAUNCHER")
             compiler_flags.append(spec["mpi"].headers.cpp_flags)

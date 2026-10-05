@@ -271,7 +271,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
         if "+kokkos+cuda" in self.spec:
-            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx or spack_cxx))
 
         if "+kokkos" in self.spec:
             args.append(

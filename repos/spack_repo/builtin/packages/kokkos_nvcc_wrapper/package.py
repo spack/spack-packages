@@ -39,9 +39,10 @@ class KokkosNvccWrapper(Package):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         wrapper = join_path(self.prefix.bin, "nvcc_wrapper")
+        spack_wrapper = dependent_spec["compiler-wrapper"].wrapper_for(dependent_spec, "cxx")
         env.set("CUDA_ROOT", dependent_spec["cuda"].prefix)
-        env.set("NVCC_WRAPPER_DEFAULT_COMPILER", self.compiler.cxx)
-        env.set("KOKKOS_CXX", self.compiler.cxx)
+        env.set("NVCC_WRAPPER_DEFAULT_COMPILER", spack_wrapper)
+        env.set("KOKKOS_CXX", spack_wrapper)
         env.set("MPICH_CXX", wrapper)
         env.set("OMPI_CXX", wrapper)
         env.set("MPICXX_CXX", wrapper)  # HPE MPT
