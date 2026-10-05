@@ -66,8 +66,8 @@ class PyHeat(PythonPackage):
         depends_on("pil@6:", when=("+examples"), type=("build", "run"))
         depends_on("py-torchvision@0.18:", type=("build", "run"))
         depends_on("py-torch@2.3:2.11.0", type=("build", "run"))
-        
-        #variants
+
+        # variants
         depends_on("py-docutils@0.16:", when="+docutils", type=("build", "link", "run"))
         depends_on("py-h5py@2.8.0:", when="+hdf5", type=("build", "link", "run"))
         depends_on("py-netcdf4@1.5.6:", when="+netcdf", type=("build", "link", "run"))
@@ -128,5 +128,5 @@ class PyHeat(PythonPackage):
 
     with when("+rocm"):
         depends_on("py-torch+rocm", type=("build", "run"))
-    
+
     conflicts("+cuda+rocm")
