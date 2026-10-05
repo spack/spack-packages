@@ -19,6 +19,7 @@ class PySlepc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.26.0", sha256="07bf970c861736b9b977dfecd4ad46415d6c4a6f26b0ed128ecffae59613d6ff")
     version("3.25.2", sha256="28b750aade266d171a23b0ef2e471f24caa65ef69fba5d12147a916e35f5051e")
     version("3.25.1", sha256="d5ac5c132ff7f5450fc511a50bdd2fce20b30e7618f53b6d64207832de33c75e")
     version("3.25.0", sha256="8b81061b94a9c9a7586ff2b8cc1dfe40d373981b0c7d2a28bdad154bbc6f832e")
@@ -70,6 +71,7 @@ class PySlepc4py(PythonPackage):
     depends_on("py-petsc4py@main", when="@main", type=("build", "run"))
     depends_on("slepc@main", when="@main")
     for ver in [
+        "3.26",
         "3.25",
         "3.24",
         "3.23",

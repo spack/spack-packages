@@ -18,6 +18,7 @@ class PyLlvmlite(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("0.50.0", sha256="f2a2cd6ec9ffcc1b7147dea0d7a49efebf17a2b434e0c2844fe175999d571eb4")
     version("0.48.0", sha256="543b19f9ef8f3c7c60d1468191e4ee1b1537bf9f8a3d56f64c0ddd98de92edd2")
     version("0.47.0", sha256="62031ce968ec74e95092184d4b0e857e444f8fdff0b8f9213707699570c33ccc")
     version("0.46.0", sha256="227c9fd6d09dce2783c18b754b7cd9d9b3b3515210c46acc2d3c5badd9870ceb")
@@ -52,7 +53,8 @@ class PyLlvmlite(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
-        depends_on("python@3.10:3.14", when="@0.46:")
+        depends_on("python@3.10:3.15", when="@0.50:")
+        depends_on("python@3.10:3.14", when="@0.46:0.49")
         depends_on("python@3.10:3.13", when="@0.44:0.45")
         depends_on("python@3.9:3.12", when="@0.42:0.43")
         depends_on("python@3.8:3.11", when="@0.40:0.41")
