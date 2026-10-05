@@ -19,6 +19,10 @@ class Expat(AutotoolsPackage, CMakePackage):
 
     license("MIT")
     version(
+        "2.9.0",
+        sha256="775e8a68f81a748a401dc3168318d4a39484eb4f954726f21517c8f42c0ba984",
+    )
+    version(
         "2.8.5",
         sha256="952c03c33a6b337f12dae7a9b0f9dee86f867550d35c994d6bdaaddd37dc8454",
     )
