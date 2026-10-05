@@ -52,12 +52,8 @@ class Amber(CMakePackage, Package, CudaPackage):
         sha256="0478ccce892f3525e995e9c85458d552c6060b73dd28acd03c366e61ecf23a14",
         extension="tar.bz2",
     )
-    version(
-        "20", sha256="a4c53639441c8cc85adee397933d07856cc4a723c82c6bea585cd76c197ead75"
-    )
-    version(
-        "18", sha256="2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277"
-    )
+    version("20", sha256="a4c53639441c8cc85adee397933d07856cc4a723c82c6bea585cd76c197ead75")
+    version("18", sha256="2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277")
 
     build_system(
         conditional("cmake", when="@26:"),
@@ -189,9 +185,7 @@ class Amber(CMakePackage, Package, CudaPackage):
 
     variant("mpi", description="Build MPI executables", default=True)
     variant("openmp", description="Use OpenMP pragmas to parallelize", default=False)
-    variant(
-        "x11", description="Build programs that require X11", default=False, when="@:20"
-    )
+    variant("x11", description="Build programs that require X11", default=False, when="@:20")
     variant(
         "update",
         description="Update the sources prior compilation",
@@ -262,9 +256,7 @@ class Amber(CMakePackage, Package, CudaPackage):
         when="@:20 platform=cray",
         msg="x11 amber applications not available for cray",
     )
-    conflicts(
-        "+openmp", when="@:20 %clang", msg="OpenMP not available for the clang compiler"
-    )
+    conflicts("+openmp", when="@:20 %clang", msg="OpenMP not available for the clang compiler")
     conflicts(
         "+openmp",
         when="@:20 %apple-clang",
@@ -345,9 +337,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         else:
             external += ["blas", "lapack"]
             args.append(self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
-            args.append(
-                self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";"))
-            )
+            args.append(self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
             args.append(self.define("PMEMD_XRAY_CPU_FFT_BACKEND", "NONE"))
 
         if spec.satisfies("+plumed"):
