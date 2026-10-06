@@ -493,10 +493,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # Up to q-e@7.1 set BLA_VENDOR to All to force detection of vanilla scalapack
             if spec.satisfies("@:7.1"):
                 cmake_args.append(self.define("BLA_VENDOR", "All"))
-        
+
         # Cray-libsci provides Scalapack with multiple libraries.
         if "^cray-libsci" in spec:
-            cmake_args.append(self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";")))
+            cmake_args.append(
+                self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";"))
+            )
 
         if plugins:
             cmake_args.append(self.define("QE_ENABLE_PLUGINS", plugins))
