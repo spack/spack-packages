@@ -389,6 +389,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("pumi@2.2.6:", when="@4.4.0:+pumi")
     depends_on("gslib+mpi", when="+gslib+mpi")
     depends_on("gslib~mpi~mpiio", when="+gslib~mpi")
+    depends_on("gslib+shared", when="+gslib+shared")
     depends_on("gslib@1.0.5:1.0.6", when="@:4.2+gslib")
     depends_on("gslib@1.0.7:", when="@4.3.0:+gslib")
     depends_on("gslib@1.0.9:", when="@4.8.0:+gslib")

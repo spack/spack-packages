@@ -32,7 +32,7 @@ petsc_spec_cuda='^petsc+cuda+mumps'" $mumps_spec"
 petsc_spec_rocm='^petsc+rocm+mumps'" $mumps_spec"
 # strumpack spec without cuda (use version > 6.3.1)
 strumpack_spec='^strumpack~slate~openmp~cuda'
-### strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
+## strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
 strumpack_cuda_spec='^strumpack+cuda~slate~openmp'
 strumpack_rocm_spec='^strumpack+rocm~slate~openmp~cuda'
 # superlu specs with cpu, cuda and rocm
@@ -50,14 +50,16 @@ builds=(
     ${mfem}
     ${mfem}'~mpi~metis~zlib'
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
-        +gslib+sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +gslib+sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         +hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
         '"$conduit_spec"
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'~mpi \
-        '"$backends"'+suite-sparse+sundials+gslib+mpfr+netcdf \
+        '"$backends"'+suite-sparse+sundials+gslib+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
     ${mfem}' precision=single +mumps+petsc '"$petsc_spec"
@@ -65,19 +67,18 @@ builds=(
     # develop version, shared builds:
     ${mfem_dev}'+shared~static'
     ${mfem_dev}'+shared~static~mpi~metis~zlib'
-    # NOTE: Shared build with +gslib works on mac but not on linux
-    # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem_dev}'+shared~static \
         '"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
-        +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo+hiop \
+        +gslib+sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
         '"$conduit_spec"
-    # NOTE: Shared build with +gslib works on mac but not on linux
-    # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem_dev}'+shared~static~mpi \
-        '"$backends"'+suite-sparse+sundials+mpfr+netcdf \
+        '"$backends"'+suite-sparse+sundials+gslib+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
     ${mfem_dev}'+shared~static precision=single +mumps+petsc '"$petsc_spec"
@@ -98,7 +99,8 @@ builds2=(
     ${mfem}'+gslib'
     ${mfem}'+netcdf~mpi'
     ${mfem}'+netcdf'
-    ${mfem}'+mpfr'
+    # TODO: uncomment next line when PR #5534 is merged
+    # ${mfem}'+mpfr'
     ${mfem}'+gnutls'
     ${mfem}'+conduit~mpi'" $conduit_spec"
     ${mfem}'+conduit'" $conduit_spec"
