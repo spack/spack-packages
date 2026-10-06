@@ -16,12 +16,12 @@ class PyPymatgenCore(PythonPackage):
 
     homepage = "https://pymatgen.org/"
     pypi = "pymatgen_core/pymatgen_core-2026.8.13.tar.gz"
+    git = "https://github.com/materialsproject/pymatgen-core.git"
 
     license("MIT")
 
+    version("2026.9.23", sha256="1fda084950ddd7b0209c740e8a5002178e6ea933cce476880d2091bec1cd2a8b")
     version("2026.8.13", sha256="b3966eab5bdb6fce83ac417e22e4bafe331f3380caef439cbb284c929cf9548c")
-
-    depends_on("python@3.11:", type=("build", "run"))
 
     with default_args(type="build"):
         depends_on("py-cython@0.29.23:")
@@ -29,6 +29,8 @@ class PyPymatgenCore(PythonPackage):
         depends_on("py-setuptools-scm@8:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:")
+
         depends_on("py-bibtexparser@1")
         depends_on("py-joblib@1.3.2:")
         depends_on("py-lxml@6.1:")

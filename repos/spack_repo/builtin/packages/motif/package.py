@@ -62,6 +62,8 @@ class Motif(AutotoolsPackage):
         # for GCC 15 and newer which default to gnu23
         if name == "cflags" and self.spec.satisfies("%gcc@15:"):
             flags.append("-std=gnu17")
+        if name == "cflags" and self.spec.satisfies("%oneapi"):
+            flags.append("-Wno-incompatible-function-pointer-types")
         return (flags, None, None)
 
     def autoreconf(self, spec, prefix):

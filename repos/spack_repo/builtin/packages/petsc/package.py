@@ -24,6 +24,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.26.0", sha256="f5230023e6e22ee607802a13c82bc25f3d81e71654ad386a5b9bdff17fed93df")
+    version("3.25.6", sha256="00ac91c7ae96eae6a39d7380c7e869c1c7ddbc0c64a23a0b5fd3442227c7cdb9")
     version("3.25.5", sha256="6d61c472db39006d261542d1a42f1fa6c52d6e89f9e77041386189aa8c24b490")
     version("3.25.4", sha256="12c990fb39a5764ac8311211d09c01ed80fb983136c75bf7b558312b2509dbbd")
     version("3.25.3", sha256="95ce60df2c7f9c5044d6a544c41e996a512557f91df1a60bdb690b332904ebb5")
@@ -233,10 +235,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     patch("petsc_modifiable_lvalue.patch", when="@3.21.6:3.22.4+cuda")
 
     # fixes build with: +complex ^cuda@13.3. Upstream fix: petsc!9532.
+    # Included in petsc since 3.25.5, so this only patches versions up to 3.25.4.
     patch(
         "https://gitlab.com/petsc/petsc/-/commit/c0f7467a2261011568d510ece23f14cad8dcaaa4.diff",
         sha256="e91c9b9323f22fe8988f5707eb262290e850b81262cf41557dc552848313a6b8",
-        when="@3.16:3.25.5 +cuda +complex ^cuda@13.3:",
+        when="@3.16:3.25.4 +cuda +complex ^cuda@13.3:",
     )
 
     # These require +mpi
