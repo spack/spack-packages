@@ -1,0 +1,28 @@
+--- a/wrspice/Makefile.in
++++ b/wrspice/Makefile.in
+@@ -449,6 +449,9 @@
+ 	done
+ 	@$(INSTALL_BIN) mmjco/mmjco$(EXESUFFIX) $@
+ 	@$(INSTALL_SCRIPT) bin/wrspice.sh $@
++	-@if [ -f bin/wrspice$(EXESUFFIX) ]; then \
++	    $(INSTALL_BIN) bin/wrspice$(EXESUFFIX) $@; \
++	fi
+ 	-@if [ -n "$(EXESUFFIX)" ]; then \
+ 	    cp -f $(BASE)/util/program.bat $@/wrspice.bat; \
+ 	fi
+--- a/wrspice/bin/wrspice.sh
++++ b/wrspice/bin/wrspice.sh
+@@ -51,7 +51,13 @@
+ fi 
+ fi
+ # Otherwise, as in installed area, go to ../wrspice/bin.
+ mypath=$(dirname $mypath)/wrspice/bin
++# No-graphics build: fall back to the plain binary when no toolkit
++# subdirectory exists.
++if [ ! -x $mypath/$grpref/wrspice ]; then
++    $mypath/wrspice $*
++    exit $?
++fi
+ $mypath/$grpref/wrspice $*
+ exit $?
+ 
