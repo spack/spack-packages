@@ -19,6 +19,7 @@ class PyPlotly(PythonPackage):
     license("MIT")
 
     version("6.9.0", sha256="967ad33e8c704fed051800d11d985eb206a9c795c14206b30a6f463ed9c67d0d")
+    version("6.7.0", sha256="45eea0ff27e2a23ccd62776f77eb43aa1ca03df4192b76036e380bb479b892c6")
     version("6.3.0", sha256="8840a184d18ccae0f9189c2b9a2943923fd5cae7717b723f36eef78f444e5a73")
     version("5.20.0", sha256="bf901c805d22032cfa534b2ff7c5aa6b0659e037f19ec1e0cca7f585918b5c89")
     version("5.19.0", sha256="5ea91a56571292ade3e3bc9bf712eba0b95a1fb0a941375d978cc79432e055f4")
@@ -35,12 +36,13 @@ class PyPlotly(PythonPackage):
     # collections.MutableSequence moved to collections.abc.MutableSequence
     depends_on("python@:3.9", when="@2", type=("build", "run"))
 
-    depends_on("py-setuptools@61:", when="@6.1:", type="build")
-    depends_on("py-setuptools@40.8.0:", when="@5.14.1:", type="build")
-    depends_on("py-setuptools", type="build")
-    depends_on("py-hatch", when="@6.1:", type="build")
+    depends_on("py-setuptools@61:", when="@6.1:6.6", type="build")
+    depends_on("py-setuptools@40.8.0:", when="@5.14.1:6.6", type="build")
+    depends_on("py-setuptools", when="@:6.6", type="build")
+    depends_on("py-hatch", when="@6.1:6.6", type="build")
     # upper bound conflicts with py-setuptool@:60 in py-jupyter-packaging@0.10
-    depends_on("py-jupyter-packaging@0.10.0:", when="@6.1:", type="build")
+    depends_on("py-jupyter-packaging@0.10.0:", when="@6.1:6.6", type="build")
+    depends_on("py-hatchling@1.26:", when="@6.7:", type="build")
 
     depends_on("py-narwhals@1.15.1:", when="@6:", type=("build", "run"))
     depends_on("py-packaging", when="@5.14.1:", type=("build", "run"))
