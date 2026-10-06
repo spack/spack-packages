@@ -152,6 +152,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         description="Specify C (recommended) or C++ to compile PETSc",
         multi=False,
     )
+    variant(
+        "cxxstd",
+        default="auto",
+        values=("auto", "11", "14", "17", "20"),
+        description="Specify the C++ dialect to use (auto: let PETSc choose)",
+        multi=False,
+    )
     variant("fftw", default=False, description="Activates support for FFTW (only parallel)")
     variant("suite-sparse", default=False, description="Activates support for SuiteSparse")
     variant("knl", default=False, description="Build for KNL")
@@ -522,6 +529,14 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
+        if not spec.satisfies("cxxstd=auto"):
+            cxxstd = spec.variants["cxxstd"].value
+            options.append("--with-cxx-dialect=%s" % cxxstd)
+            if spec.satisfies("+cuda"):
+                options.append("--with-cuda-dialect=%s" % cxxstd)
+            if spec.satisfies("+rocm"):
+                options.append("--with-hip-dialect=%s" % cxxstd)
+
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -661,7 +676,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
-            if spec.satisfies("@3.10.3:3.15"):
+            if spec.satisfies("@3.10.3:3.15 cxxstd=auto"):
                 options.append("--with-cxx-dialect=C++11")
             if spec["superlu-dist"].satisfies("+rocm"):
                 # Suppress HIP header warning message, otherwise the PETSc
