@@ -93,6 +93,12 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         patch("netcdf-c-4.9.3_no_glob_deps.patch", when="@4.9.3 platform=windows")
         patch("netcdf-c-4.7-9.2_no_glob_deps.patch", when="@4.7:4.9.2 platform=windows")
 
+        # ncgen disables automatic install RPATH propagation, which can leave
+        # shared dependencies such as HDF5 unresolved at runtime.
+        patch(
+            "fix-ncgen-rpath.patch",
+            when="@4.9.2: +shared",
+        )
     # Some of the patches touch configure.ac and, therefore, require forcing the autoreconf stage:
     _force_autoreconf_when = []
     with when("build_system=autotools"):
