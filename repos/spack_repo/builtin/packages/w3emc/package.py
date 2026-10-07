@@ -69,7 +69,7 @@ class W3emc(CMakePackage):
     depends_on("netcdf-fortran", when="@2.7.3")
 
     # Apply patch for nvhpc support
-    patch("0001-fix-nvhpc-support.patch", when="@2.10:")
+    patch("0001-fix-nvhpc-support.patch", when="@2.10:2.13")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@:2.9"):
