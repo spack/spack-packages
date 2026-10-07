@@ -139,6 +139,9 @@ class OmegaH(CMakePackage, CudaPackage):
         # Single, broken CUDA version.
         conflicts("^cuda@11.2", msg="See https://github.com/sandialabs/omega_h/issues/366")
 
+        # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
+        conflicts("^cuda@13:", when="@:10.8.6-scorec")
+
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")
 
