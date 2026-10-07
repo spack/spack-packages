@@ -52,6 +52,7 @@ class PyShapely(PythonPackage):
         depends_on("py-cython@0.29.24:2", when="@:1")
         depends_on("py-meson-python@0.15:", when="@2.2:")
         depends_on("meson@1.2.1:", when="@2.2:")
+        depends_on("pkgconfig", when="@2.2:")
 
         # Historical dependencies
         depends_on("py-setuptools@61:", when="@2.0:2.1")
