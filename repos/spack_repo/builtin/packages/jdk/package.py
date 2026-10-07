@@ -37,12 +37,7 @@ class Jdk(Package):
     conflicts("platform=darwin")
     conflicts("platform=freebsd")
 
-    # FIXME:
-    # 1. `extends('java')` doesn't work, you need to use `extends('jdk')`
-    # 2. Packages cannot extend multiple packages, see #987
-    # 3. Update `YamlFilesystemView.merge` to allow a Package to completely
-    #    override how it is symlinked into a view prefix. Then, spack activate
-    #    can symlink all *.jar files to `prefix.lib.ext`
+    # FIXME: Packages cannot extend multiple packages, see #987
     extendable = True
 
     executables = ["^java$"]
