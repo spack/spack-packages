@@ -115,6 +115,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
+    depends_on("googletest@1.14:1", type="test", when="@5:")
+
     # device : (default value, when clause, description)
     devices_variants = {
         "cuda": [False, None, "Whether to build CUDA backend"],
@@ -159,7 +161,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
-        "tests": [False, None, "Build for tests"],
     }
 
     conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
@@ -514,6 +515,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         for arch in spack_microarches:
             options.append(self.define("Kokkos_ARCH_" + arch.upper(), True))
+
+        options.append(self.define("Kokkos_ENABLE_TESTS", self.run_tests))
 
         self.append_args("ENABLE", self.devices_variants.keys(), options)
         self.append_args("ENABLE", self.options_variants.keys(), options)
