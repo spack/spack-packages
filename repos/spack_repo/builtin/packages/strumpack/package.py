@@ -22,7 +22,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     iterative solvers."""
 
     homepage = "http://portal.nersc.gov/project/sparse/strumpack"
-    url = "https://github.com/pghysels/STRUMPACK/archive/refs/tags/v7.1.3.tar.gz"
+    url = "https://github.com/pghysels/STRUMPACK/archive/refs/tags/v8.1.0.tar.gz"
     git = "https://github.com/pghysels/STRUMPACK.git"
 
     tags = ["e4s"]
@@ -34,6 +34,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause-LBNL")
 
     version("master", branch="master")
+    version("8.1.0", sha256="f86a05d3ad9e87ad8a6e1008d15bf3e628f133bfe0a52d4268354a342cbe03d0")
     version("8.0.0", sha256="11cc8645d622a16510b39a20efc64f34862b41976152d17f9fbf3e91f899766c")
     version("7.2.0", sha256="6988c00c3213f13e53d75fb474102358f4fecf07a4b4304b7123d86fdc784639")
     version("7.1.3", sha256="c951f38ee7af20da3ff46429e38fcebd57fb6f12619b2c56040d6da5096abcb0")
@@ -102,6 +103,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hipsparse", type="link", when="@7.0.1: +rocm")
     depends_on("rocsolver", when="+rocm")
     depends_on("rocthrust", when="+rocm")
+    depends_on("rocprim", when="@8.1.0: +rocm")
     depends_on("slate", when="+slate")
     depends_on("magma+cuda", when="+magma+cuda")
     depends_on("magma+rocm", when="+magma+rocm")
@@ -205,6 +207,12 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
             if "none" not in rocm_archs:
                 hipcc_flags.append(f"--amdgpu-target={','.join(rocm_archs)}")
             args.append(f"-DHIP_HIPCC_FLAGS={' '.join(hipcc_flags)}")
+            if spec.satisfies("@8.1.0:"):
+                # https://github.com/pghysels/STRUMPACK/pull/143 stopped linking
+                # roc::rocthrust, so its (header-only) include paths are no longer
+                # propagated, but FrontHIP.hip still includes <thrust/complex.h>.
+                incs = [spec["rocthrust"].prefix.include, spec["rocprim"].prefix.include]
+                args.append(self.define("CMAKE_HIP_FLAGS", " ".join(f"-I{i}" for i in incs)))
 
         if "%cce" in spec:
             # Assume the proper Cray CCE module (cce) is loaded:
