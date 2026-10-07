@@ -18,6 +18,7 @@ class Time(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-only")
 
+    version("1.10", sha256="e8c29fb4ab599d8478e41e8618f50db8aede9c90af27d0d2ef28ae50d5de09c3")
     version("1.9", sha256="fbacf0c81e62429df3e33bda4cee38756604f18e01d977338e23306a3e3b521e")
 
     depends_on("c", type="build")  # generated
