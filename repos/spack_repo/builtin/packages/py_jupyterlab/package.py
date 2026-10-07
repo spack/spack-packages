@@ -18,6 +18,7 @@ class PyJupyterlab(PythonPackage):
 
     license("BSD-3-Clause", checked_by="lgarrison")
 
+    version("4.6.4", sha256="404f49b081819378524886c9db66dba57a5565981eff885830df1baba3a17df5")
     version("4.5.8", sha256="af54d7242cc689a1e6c3ad213cc9b6d9781787d9ec67c52ec9a8f4707088cadd")
     version("4.5.7", sha256="55a9822c4754da305f41e113452c68383e214dcf96de760146af89ce5d5117b0")
     version("4.5.6", sha256="642fe2cfe7f0f5922a8a558ba7a0d246c7bc133b708dfe43f7b3a826d163cf42")
@@ -41,24 +42,32 @@ class PyJupyterlab(PythonPackage):
     depends_on("node-js", type="run")
     depends_on("npm", type="run")
 
-    depends_on("py-hatchling@1.21.1:", when="@4.3.5:", type="build")
-    depends_on("py-hatchling@1.5:", when="@4:", type="build")
+    with default_args(type="build"):
+        depends_on("py-hatchling@1.21.1:", when="@4.3.5:")
+        depends_on("py-hatchling@1.5:", when="@4:")
+
+        # Historical dependencies
+        depends_on("py-jupyter-packaging@0.9:1", when="@3.4.8")
+        depends_on("py-jupyter-packaging@0.9:0", when="@3.0.15:3.4.2")
+        depends_on("py-pre-commit", when="@3.4:3.4.3")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@4.6:")
         depends_on("python@3.9:", when="@4.4:")
         depends_on("python@3.8:", when="@4:")
 
         # under [tool.hatch.build.hooks.jupyter-builder] in pyproject.toml
         depends_on("py-hatch-jupyter-builder@0.3.2:", when="@4:")
 
+        depends_on("py-jupyter-builder@1.0.2:", when="@4.6:")
         depends_on("py-async-lru@1:", when="@4:")
         depends_on("py-httpx@0.25:0", when="@4.3.5:")
-        depends_on("py-importlib-metadata@4.8.3:", when="@4: ^python@:3.9")
         depends_on("py-ipykernel@6.5.0:", when="@4.3.5:")
         depends_on("py-ipykernel", when="@4:")
         depends_on("py-jinja2@3.0.3:", when="@4:")
         depends_on("py-jupyter-core", when="@3:")
-        depends_on("py-jupyter-server@2.4:2", when="@4:")
+        depends_on("py-jupyter-server@2.19:2", when="@4.6:")
+        depends_on("py-jupyter-server@2.4:2", when="@4:4.5")
         depends_on("py-jupyter-lsp@2:", when="@4:")
         depends_on("py-jupyterlab-server@2.28:2", when="@4.5:")
         depends_on("py-jupyterlab-server@2.27.1:2", when="@4.1.7:4.4")
@@ -66,46 +75,45 @@ class PyJupyterlab(PythonPackage):
         depends_on("py-notebook-shim@0.2:", when="@4:")
         depends_on("py-packaging@23.2:", when="@4.5.8:")
         depends_on("py-packaging", when="@3:")
-        depends_on("py-setuptools@41.1:", when="@4.3.7:")
-        depends_on("py-setuptools@40.8.0:", when="@4.3.5:")
         depends_on("py-tomli@1.2.2:", when="@4.3.5: ^python@:3.10")
         depends_on("py-tomli", when="@4: ^python@:3.10")
         depends_on("py-tomli", when="@3.4.7:3")
         depends_on("py-tornado@6.2:", when="@4:")
         depends_on("py-traitlets", when="@4:")
+        depends_on("py-typing-extensions@4.4:", when="@4.6.2: ^python@:3.11")
+
+        # Historical dependencies
+        depends_on("py-importlib-metadata@4.8.3:", when="@4:4.5 ^python@:3.9")
+        depends_on("py-importlib-resources@1.4:", when="@4:4.3 ^python@:3.8")
+        depends_on("py-setuptools@41.1:", when="@4.3.7:4.5")
+        depends_on("py-setuptools@40.8.0:", when="@4.3.5:4.5")
+
+        with when("@:3"):
+            depends_on("py-setuptools", when="@:3")
+
+            depends_on("py-ipython", when="@3")
+            depends_on("py-tornado@6.1:", when="@3:")
+            depends_on("py-jupyterlab-server@2.10:2", when="@3.3:")
+            depends_on("py-jupyterlab-server@2.3:2", when="@3.0.9:3.2")
+            depends_on("py-jupyterlab-server@2.0:2", when="@3.0.0:3.0.8")
+            depends_on("py-jupyter-server@1.16:1", when="@3.4:")
+            depends_on("py-jupyter-server@1.4:1", when="@3.0.9:3.3")
+            depends_on("py-jupyter-server@1.2:1", when="@3.0.3:3.0.8")
+            depends_on("py-jupyter-server@1.1:1", when="@3.0.0:3.0.2")
+            depends_on("py-nbclassic", when="@3.4.4:")
+            depends_on("py-nbclassic@0.2.0:0", when="@3:3.4.3")
+            depends_on("py-notebook@:6", when="@3.4.8:")
+            # dependency on py-jinja2@2.1 seems to be a migration issue from the switch
+            # to setup.cfg in 3.0.15, leave it a 2.10
+            depends_on("py-jinja2@2.10:")
+
+        with when("@:2"):
+            depends_on("python@:3.9", when="@:2.1")
+            depends_on("py-notebook@4.3.1:")
+            depends_on("py-tornado@:5,6.0.3:")
+            depends_on("py-jupyterlab-server@1.1.5:1")
 
     conflicts("py-ipykernel@6.30.0")
-
-    # Historical dependencies
-    depends_on("py-importlib-resources@1.4:", when="@4: ^python@:3.8", type=("build", "run"))
-
-    with when("@:3"):
-        depends_on("py-setuptools", when="@:3", type=("build", "run"))
-        depends_on("py-jupyter-packaging@0.9:1", when="@3.4.8", type="build")
-        depends_on("py-jupyter-packaging@0.9:0", when="@3.0.15:3.4.2", type="build")
-        depends_on("py-pre-commit", when="@3.4:3.4.3", type="build")
-
-        depends_on("py-ipython", when="@3", type=("build", "run"))
-        depends_on("py-tornado@6.1:", when="@3:", type=("build", "run"))
-        depends_on("py-jupyterlab-server@2.10:2", when="@3.3:", type=("build", "run"))
-        depends_on("py-jupyterlab-server@2.3:2", when="@3.0.9:3.2", type=("build", "run"))
-        depends_on("py-jupyterlab-server@2.0:2", when="@3.0.0:3.0.8", type=("build", "run"))
-        depends_on("py-jupyter-server@1.16:1", when="@3.4:", type=("build", "run"))
-        depends_on("py-jupyter-server@1.4:1", when="@3.0.9:3.3", type=("build", "run"))
-        depends_on("py-jupyter-server@1.2:1", when="@3.0.3:3.0.8", type=("build", "run"))
-        depends_on("py-jupyter-server@1.1:1", when="@3.0.0:3.0.2", type=("build", "run"))
-        depends_on("py-nbclassic", when="@3.4.4:", type=("build", "run"))
-        depends_on("py-nbclassic@0.2.0:0", when="@3:3.4.3", type=("build", "run"))
-        depends_on("py-notebook@:6", when="@3.4.8:", type=("build", "run"))
-        # dependency on py-jinja2@2.1 seems to be a migration issue from the switch
-        # to setup.cfg in 3.0.15, leave it a 2.10
-        depends_on("py-jinja2@2.10:", type=("build", "run"))
-
-    with when("@:2"):
-        depends_on("python@:3.9", when="@:2.1", type=("build", "run"))
-        depends_on("py-notebook@4.3.1:", type=("build", "run"))
-        depends_on("py-tornado@:5,6.0.3:", type=("build", "run"))
-        depends_on("py-jupyterlab-server@1.1.5:1", type=("build", "run"))
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("JUPYTERLAB_DIR", self.prefix.share.jupyter.lab)
