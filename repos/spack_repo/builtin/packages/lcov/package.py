@@ -22,6 +22,7 @@ class Lcov(MakefilePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("2.6", sha256="67a45db99b8ef0260c3fac9a2e3749fd8fa350a15e235dd3c29b356d97755c75")
     version("2.5", sha256="7e5e5a154bd5f3557659c328cab376764e7abd238bb403c424472c296b175126")
     version("2.4", sha256="3457825c6b2fe4ef77c782b82a23875c84a3c955243823f05d8f2dec0d455820")
     version("2.3.2", sha256="6fed6cf48757d5083202be3356dfa6d64afa12d96d691745fad7e4c9ebe90bfa")
@@ -31,8 +32,19 @@ class Lcov(MakefilePackage):
     version("1.15", sha256="c1cda2fa33bec9aa2c2c73c87226cfe97de0831887176b45ee523c5e30f8053a")
     version("1.14", sha256="14995699187440e0ae4da57fe3a64adc0a3c5cf14feab971f8db38fb7d8f071a")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    variant(
+        "xs",
+        default=True,
+        when="@2.6:",
+        description="Build the C++ XS extension (for improved performance)",
+    )
+    variant(
+        "doc", default=True, when="@2.5:", description="Build man and HTML format documentation"
+    )
+
+    conflicts("~doc", when="@2.5", msg="documentation cannot be deactivated in lcov 2.5")
+
+    depends_on("cxx", type="build", when="+xs")
 
     # dependencies from
     # https://github.com/linux-test-project/lcov/blob/02ece21d54ccd16255d74f8b00f8875b6c15653a/README#L91-L111
@@ -64,15 +76,20 @@ class Lcov(MakefilePackage):
     depends_on("perl-time-hires", type=("run"))
     depends_on("perl-timedate", type=("run"))
 
-    # Required to build the documentation
-    with default_args(when="@2.5:"):
+    with default_args(when="+doc"):
         depends_on("py-sphinx", type=("build"))
         depends_on("py-sphinx-rtd-theme", type=("build"))
 
     def install(self, spec, prefix):
-        make(
-            "LCOV_PERL_PATH=%s" % self.spec["perl"].command.path,
-            "DESTDIR=",
-            "PREFIX=%s" % prefix,
-            "install",
-        )
+        env = {
+            "LCOV_PERL_PATH": self.spec["perl"].command.path,
+            "DESTDIR": "",
+            "PREFIX": prefix,
+        }
+
+        if spec.satisfies("~xs"):
+            env["LCOV_NO_XS"] = "1"
+        if spec.satisfies("~doc"):
+            env["LCOV_NO_DOC"] = "1"
+
+        make(*(f"{key}={value}" for key, value in env.items()), "install")
