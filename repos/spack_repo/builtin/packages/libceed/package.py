@@ -15,11 +15,12 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/CEED/libCEED"
     git = "https://github.com/CEED/libCEED.git"
 
-    maintainers("jedbrown", "v-dobrev", "tzanio", "jeremylt")
+    maintainers("jedbrown", "v-dobrev", "tzanio", "jeremylt", "zatkins-dev")
 
     license("BSD-2-Clause")
 
     version("develop", branch="main")
+    version("1.0.0", tag="v1.0.0", commit="8a374e8d5d8d33fd19ce69a93026384ec1046a86")
     version("0.12.0", tag="v0.12.0", commit="4018a20a98d451fac24765d3ddb936861647ce8d")
     version("0.11.0", tag="v0.11.0", commit="8ec64e9ae9d5df169dba8c8ee61d8ec8907b8f80")
     version("0.10.1", tag="v0.10.1", commit="74532b27052d94e943eb8bc76257fbd710103614")
