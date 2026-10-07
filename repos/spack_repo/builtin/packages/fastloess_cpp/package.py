@@ -7,8 +7,9 @@ import os
 import textwrap
 from typing import ClassVar, List
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+
+from spack.package import *
 
 
 class FastloessCpp(CargoPackage):
@@ -89,7 +90,8 @@ class FastloessCpp(CargoPackage):
         """Compile and run a linear fit against the installed C++ library."""
         source = "fastloess_spack_smoke.cpp"
         with open(source, "w", encoding="utf-8") as stream:
-            stream.write(textwrap.dedent("""\
+            stream.write(
+                textwrap.dedent("""\
                 #include <fastloess.hpp>
                 #include <cmath>
                 #include <vector>
@@ -113,7 +115,8 @@ class FastloessCpp(CargoPackage):
                     }
                     return 0;
                 }
-                """))
+                """)
+            )
 
         cxx = which(os.environ["CXX"])
         windows = self.spec.satisfies("platform=windows")
