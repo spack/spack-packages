@@ -20,7 +20,6 @@ class GuacamoleServer(AutotoolsPackage):
 
     version("1.6.0", sha256="913b05d19beabed4a3066e6e2be3078783048f55c7a9d2e3a012897a8766c245")
     version("1.5.5", sha256="50430c0f0f3b92f2cd3e60436fab0cedee8c1a9f762696a666016347039c731e")
-    version("1.6.0", sha256="913b05d19beabed4a3066e6e2be3078783048f55c7a9d2e3a012897a8766c245")
 
     variant("ssh", default=True, description="SSH support")
     variant("vnc", default=False, description="VNC support")
