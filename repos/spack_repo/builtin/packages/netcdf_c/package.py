@@ -160,7 +160,7 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         when="@:4.9",
     )
     # https://github.com/Unidata/netcdf-c/issues/3199
-    patch("cmakelists_mpi_symbols.patch", when="build_system=cmake")
+    patch("cmakelists_mpi_symbols.patch", when="@:4.10.0 build_system=cmake")
 
     # Address the CVE-2025-14933 vulnerability (https://github.com/advisories/GHSA-cg32-6v27-jr43).
     # See https://github.com/Unidata/netcdf-c/pull/3153
