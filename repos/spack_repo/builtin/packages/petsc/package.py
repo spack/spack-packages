@@ -133,6 +133,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
+    variant("superlu", default=False, description="Activates support for SuperLU (sequential)")
     variant(
         "superlu-dist",
         default=False,
@@ -265,6 +266,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
+    # SuperLU has no 64-bit integer support - use superlu-dist instead
+    conflicts("+superlu", when="+int64")
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -362,6 +365,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre@develop", when="@main+hypre")
     # hypre@3: requires umpire for +cuda/+rocm - petsc has to link it as well
     depends_on("umpire", when="@3.24:+hypre ^hypre+umpire")
+
+    depends_on("superlu@5.2.1:", when="+superlu")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
     depends_on("superlu-dist@6.1:+int64", when="@3.13.0:+superlu-dist+mpi+int64")
@@ -570,6 +575,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             "parmetis",
             ("kokkos", "kokkos", False, False),
             ("kokkos-kernels", "kokkos-kernels", False, False),
+            "superlu",
             ("superlu-dist", "superlu_dist", True, True),
             ("scotch", "ptscotch", True, True),
             (
