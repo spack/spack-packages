@@ -7,7 +7,6 @@ import json
 import os
 import platform
 import re
-import subprocess
 import sys
 from pathlib import Path
 from shutil import copy
@@ -218,6 +217,27 @@ class Python(Package):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    # Dependencies that are used on every platform. On Windows they are handed
+    # to PCbuild through the <dep>IncludeDir/<dep>Lib MSBuild properties added by
+    # the cpython-*-windows-system-libs patches below, so that CPython links them
+    # rather than downloading and compiling its own copies. See win_build_params.
+    depends_on("openssl", when="+ssl")
+    # https://docs.python.org/3/whatsnew/3.7.html#build-changes
+    depends_on("openssl@1.0.2:", when="+ssl")
+    # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
+    depends_on("openssl@1.1.1:", when="@3.10:+ssl")
+    depends_on("sqlite@3.0.8:", when="@:3.9+sqlite3")
+    # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
+    depends_on("sqlite@3.7.15:", when="@3.10:+sqlite3")
+    depends_on("zlib-api", when="+zlib")
+    depends_on("bzip2", when="+bz2")
+    depends_on("xz libs=shared", when="+lzma")
+    depends_on("zstd libs=shared", when="+zstd")
+
+    # PCbuild consumes libmpdec as an external source drop starting with 3.13.
+    # Older versions, and every POSIX build, use CPython's bundled copy.
+    depends_on("mpdecimal@2.5.1:", when="@3.13: platform=windows")
+
     if sys.platform != "win32":
         depends_on("gmake", type="build")
         depends_on("pkgconfig", type="build")
@@ -229,27 +249,20 @@ class Python(Package):
         # See detect_modules() in setup.py for details
         depends_on("readline", when="+readline")
         depends_on("ncurses", when="+readline")
-        depends_on("openssl", when="+ssl")
-        # https://docs.python.org/3/whatsnew/3.7.html#build-changes
-        depends_on("openssl@1.0.2:", when="+ssl")
-        # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
-        depends_on("openssl@1.1.1:", when="@3.10:+ssl")
-        depends_on("sqlite@3.0.8:", when="@:3.9+sqlite3")
-        # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
-        depends_on("sqlite@3.7.15:", when="@3.10:+sqlite3")
         depends_on("gdbm", when="+dbm")  # alternatively ndbm or berkeley-db
-        depends_on("zlib-api", when="+zlib")
-        depends_on("bzip2", when="+bz2")
-        depends_on("xz libs=shared", when="+lzma")
-        depends_on("zstd libs=shared", when="+zstd")
+        # PCbuild always builds pyexpat from the libexpat copy vendored in
+        # Modules/expat, and _uuid against the system rpcrt4.dll.
         depends_on("expat", when="+pyexpat")
+        depends_on("uuid", when="+uuid")
+        # TODO: Spack has no Windows build of libffi (upstream ships MSVC project
+        # files for aarch64 only), so on Windows _ctypes still uses the prebuilt
+        # libffi that PCbuild fetches. See build().
         depends_on("libffi", when="+ctypes")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
         depends_on("tk@8.5.12:", when="@3.11: +tkinter")
         depends_on("tk", when="+tkinter")
         depends_on("tcl@8.5.12:", when="@3.11: +tkinter")
         depends_on("tcl", when="+tkinter")
-        depends_on("uuid", when="+uuid")
         depends_on("tix", when="+tix")
         depends_on("libxcrypt", when="+crypt")
 
@@ -272,6 +285,14 @@ class Python(Package):
     patch("python-3.7.4+-distutils-C++-testsuite.patch", when="@3.7.4:3.11")
     patch("python-3.11-distutils-C++.patch", when="@3.11.0:3.11")
     patch("cpython-windows-externals.patch", when="@:3.9.6 platform=windows")
+
+    # Teach PCbuild to link an already built bzip2/liblzma/sqlite3/zlib (and
+    # libmpdec from 3.13, libzstd from 3.14) instead of compiling the sources it
+    # downloads into externals\, and make each of those extension modules
+    # individually optional. This is the Windows counterpart of the
+    # --with-system-* configure options. See win_build_params.
+    for _v in ("3.10", "3.11", "3.12", "3.13", "3.14"):
+        patch(f"cpython-{_v}-windows-system-libs.patch", when=f"@{_v} platform=windows")
     patch("tkinter-3.7.patch", when="@3.7 platform=darwin")
     # Patch the setup script to deny that tcl/x11 exists rather than allowing
     # autodetection of (possibly broken) system components
@@ -306,6 +327,17 @@ class Python(Package):
     # See https://github.com/python/cpython/issues/106424
     # datetime.now(timezone.utc) segfaults
     conflicts("@3.9:", when="%oneapi@2022.2.1:2023")
+
+    # Spack has no Windows build of tk, and _tkinter would otherwise fall back on
+    # the prebuilt Tcl/Tk that PCbuild downloads.
+    conflicts(
+        "+tkinter",
+        when="platform=windows",
+        msg="Spack cannot build tk on Windows yet; use python~tkinter there",
+    )
+    # zlib is compiled straight into pythoncore and binascii calls its crc32
+    # unconditionally; PCbuild itself warns that leaving zlib out is unsupported.
+    requires("+zlib", when="platform=windows", msg="python on Windows requires +zlib")
 
     # Used to cache various attributes that are expensive to compute
     _config_vars: Dict[str, Dict[str, str]] = {}
@@ -509,26 +541,101 @@ class Python(Package):
             arch = arch_map[arch]
         return arch
 
+    @staticmethod
+    def _msbuild_property(name, value):
+        # A semicolon separates properties on an MSBuild command line, so it has
+        # to be escaped inside a value.
+        return "/p:{}={}".format(name, str(value).replace(";", "%3B"))
+
+    def _system_lib_properties(self, name, dep):
+        """The <dep>IncludeDir/<dep>Lib pair that tells PCbuild to link an
+        already built dependency instead of compiling its vendored sources."""
+        return [
+            self._msbuild_property(name + "IncludeDir", dep.prefix.include),
+            self._msbuild_property(name + "Lib", ";".join(dep.libs)),
+        ]
+
     @property
     def win_build_params(self):
+        """MSBuild properties for ``PCbuild\\pcbuild.proj``.
+
+        A number of these toggle optional MSBuild Projects directly
+        corresponding to the python support of the same name. The rest point
+        CPython at the Spack prefix of each dependency it would otherwise
+        download into ``externals\\``: ``openssl.props`` upstream already
+        consumes an installed OpenSSL layout, and the ``<dep>IncludeDir`` /
+        ``<dep>Lib`` properties come from the cpython-*-windows-system-libs
+        patch.
         """
-        Arguments must be passed to the Python build batch script
-        in order to configure it to spec and system.
-        A number of these toggle optional MSBuild Projects
-        directly corresponding to the python support of the same
-        name.
-        """
-        args = []
-        args.append("-p %s" % self.plat_arch)
-        if self.spec.satisfies("+debug"):
-            args.append("-d")
-        if self.spec.satisfies("~ctypes"):
-            args.append("--no-ctypes")
-        if self.spec.satisfies("~ssl"):
-            args.append("--no-ssl")
-        if self.spec.satisfies("~tkinter"):
-            args.append("--no-tkinter")
+        spec = self.spec
+        define = self._msbuild_property
+
+        def toggle(name, variant):
+            return define(name, "true" if spec.satisfies("+" + variant) else "false")
+
+        args = [
+            define("Configuration", "Debug" if spec.satisfies("+debug") else "Release"),
+            define("Platform", self.plat_arch),
+            # PCbuild needs a host interpreter for code generation. Supplying
+            # Spack's own keeps pyproject.props from running find_python.bat,
+            # which NuGet-downloads one when it cannot find any.
+            define("PythonForBuild", sys.executable),
+            # Every "external" module now builds against a Spack dependency, so
+            # the module set is selected by the per-module toggles below instead.
+            define("IncludeExternals", "true"),
+            toggle("IncludeCTypes", "ctypes"),
+            toggle("IncludeSSL", "ssl"),
+            toggle("IncludeTkinter", "tkinter"),
+            # the Windows counterpart of --disable-test-modules
+            toggle("IncludeTests", "tests"),
+            toggle("IncludeBz2", "bz2"),
+            toggle("IncludeLzma", "lzma"),
+            toggle("IncludeSqlite3", "sqlite3"),
+        ]
+        if spec.satisfies("@3.14:"):
+            args.append(toggle("IncludeZstd", "zstd"))
+        if spec.satisfies("@3.13: +freethreading"):
+            args.append(define("DisableGil", "true"))
+
+        if spec.satisfies("+ssl"):
+            # openssl.props wants the include directory and the directory holding
+            # libcrypto.lib/libssl.lib. Its DLL copying is skipped because Spack's
+            # Windows runtime linkage handles that (see win_add_library_dependent).
+            args += [
+                define("opensslIncludeDir", spec["openssl"].prefix.include),
+                define("opensslOutDir", spec["openssl"].prefix.lib),
+                define("SkipCopySSLDLL", "true"),
+            ]
+            if spec.satisfies("@:3.11"):
+                # _ssl.c compiles applink.c, which an installed OpenSSL puts in
+                # the openssl/ subdirectory rather than at the include root.
+                args.append(
+                    define(
+                        "opensslApplink",
+                        os.path.join(spec["openssl"].prefix.include, "openssl", "applink.c"),
+                    )
+                )
+
+        # +zlib is required on Windows, see the requires() above
+        args += self._system_lib_properties("zlib", spec["zlib-api"])
+        if spec.satisfies("+bz2"):
+            args += self._system_lib_properties("bz2", spec["bzip2"])
+        if spec.satisfies("+lzma"):
+            args += self._system_lib_properties("lzma", spec["xz"])
+        if spec.satisfies("+sqlite3"):
+            args += self._system_lib_properties("sqlite3", spec["sqlite"])
+        if spec.satisfies("+zstd"):
+            args += self._system_lib_properties("zstd", spec["zstd"])
+        if spec.satisfies("@3.13:"):
+            args += self._system_lib_properties("mpdecimal", spec["mpdecimal"])
+
         return args
+
+    def win_add_library_dependent(self):
+        # The interpreter and python3XX.dll sit in the prefix root and the
+        # extension modules in DLLs, so neither is covered by the bin and lib
+        # directories WindowsSimulatedRPath links dependency DLLs into by default.
+        return [self.prefix, self.prefix.DLLs]
 
     def win_installer(self, prefix):
         """
@@ -754,24 +861,47 @@ class Python(Package):
                 options += self.configure_args()
                 configure(*options)
 
+    def fetch_prebuilt_libffi(self):
+        """Download the prebuilt libffi that ``_ctypes`` links against.
+
+        TODO: remove this once Spack can build libffi on Windows. It is the only
+        dependency PCbuild still has to fetch itself; ``PCbuild\\build.bat`` is
+        deliberately bypassed so that nothing else is downloaded.
+        """
+        pcbuild_root = os.path.join(self.stage.source_path, "PCbuild")
+        props = os.path.join(pcbuild_root, "python.props")
+        with open(props) as f:
+            match = re.search(r"<libffiDir[^>]*>\$\(ExternalsDir\)(libffi-[\d.]+)\\", f.read())
+        if not match:
+            raise InstallError("Could not determine the libffi version PCbuild expects")
+        Executable(sys.executable)(
+            os.path.join(pcbuild_root, "get_external.py"),
+            "--binary",
+            "--organization",
+            "python",
+            "--externals-dir",
+            os.path.join(self.stage.source_path, "externals"),
+            match.group(1),
+        )
+
     def build(self, spec, prefix):
         """Makes the build targets specified by
         :py:attr:``~.AutotoolsPackage.build_targets``
         """
-        # Windows builds use a batch script to drive
-        # configure and build in one step
+        # Windows has no configure step; PCbuild drives everything from MSBuild
         with working_dir(self.stage.source_path):
             if sys.platform == "win32":
-                pcbuild_root = os.path.join(self.stage.source_path, "PCbuild")
-                builder_cmd = os.path.join(pcbuild_root, "build.bat")
-                try:
-                    subprocess.check_output(  # novermin
-                        " ".join([builder_cmd] + self.win_build_params), stderr=subprocess.STDOUT
-                    )
-                except subprocess.CalledProcessError as e:
-                    raise ProcessError(
-                        "Process exited with status %d" % e.returncode,
-                        long_message=e.output.decode("utf-8"),
+                if spec.satisfies("+ctypes"):
+                    self.fetch_prebuilt_libffi()
+                # PCbuild\build.bat is deliberately not used: it always runs
+                # get_externals.bat, which downloads every dependency we now take
+                # from Spack, and it forwards only nine extra arguments to MSBuild.
+                with working_dir(os.path.join(self.stage.source_path, "PCbuild")):
+                    msbuild(
+                        "pcbuild.proj",
+                        "/t:Build",
+                        "/m:{0}".format(make_jobs),
+                        *self.win_build_params,
                     )
             else:
                 # See https://autotools.io/automake/silent.html
@@ -850,8 +980,9 @@ class Python(Package):
             if "+sqlite3" in spec:
                 self.command("-c", "import sqlite3")
 
-            # Ensure that dbm module works
-            if "+dbm" in spec:
+            # Ensure that dbm module works. PCbuild has no _dbm, so the variant
+            # is a no-op on Windows.
+            if "+dbm" in spec and sys.platform != "win32":
                 self.command("-c", "import dbm")
 
             # Ensure that zlib module works
