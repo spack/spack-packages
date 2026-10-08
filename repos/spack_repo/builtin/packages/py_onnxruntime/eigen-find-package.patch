@@ -1,0 +1,11 @@
+diff --git a/cmake/external/eigen.cmake b/cmake/external/eigen.cmake
+index 2f55860..9af82de 100644
+--- a/cmake/external/eigen.cmake
++++ b/cmake/external/eigen.cmake
+@@ -14,5 +14,6 @@ onnxruntime_fetchcontent_declare(
+     PATCH_COMMAND ${Patch_EXECUTABLE} --binary --ignore-whitespace -p1 < ${PATCH_EIGEN_S390X} &&
+                   ${Patch_EXECUTABLE} --binary --ignore-whitespace -p1 < ${PATCH_EIGEN_S390X_WERROR}
+     EXCLUDE_FROM_ALL
++    FIND_PACKAGE_ARGS NAMES Eigen3 eigen3
+ )
+ onnxruntime_fetchcontent_makeavailable(Eigen3)
