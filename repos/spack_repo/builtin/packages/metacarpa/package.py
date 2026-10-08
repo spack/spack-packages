@@ -23,7 +23,7 @@ class Metacarpa(MakefilePackage):
 
     depends_on("cxx", type="build")  # generated
 
-    depends_on("boost@1.60.0")
+    depends_on("boost@1.60:")
     depends_on(Boost.with_default_variants)
     depends_on("cmake")
     build_system = "Makefile"
