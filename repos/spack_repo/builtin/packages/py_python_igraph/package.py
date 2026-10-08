@@ -16,7 +16,8 @@ class PyPythonIgraph(PythonPackage):
 
     license("GPL-2.0-or-later")
 
-    version("0.7.0", sha256="64ac270e80a92066d489407be1900a329df8e26844430f941ecc88771188c471")
+    with default_args(deprecated=True):
+        version("0.7.0", sha256="64ac270e80a92066d489407be1900a329df8e26844430f941ecc88771188c471")
 
     depends_on("py-setuptools", type="build")
     depends_on("igraph")
