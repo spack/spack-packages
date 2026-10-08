@@ -37,7 +37,6 @@ class OfPrecice(Package):
 
     depends_on("openfoam+source")
     depends_on("precice")
-    depends_on("yaml-cpp")
     depends_on("pkgconfig", type="build")
 
     depends_on("precice@:2", when="@:1.2.3")
