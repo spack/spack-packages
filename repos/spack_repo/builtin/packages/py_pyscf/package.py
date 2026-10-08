@@ -45,6 +45,7 @@ class PyPyscf(PythonPackage):
     depends_on("cxx", type="build")
 
     # dependencies
+    depends_on("gmake", type="build")
     depends_on("cmake@3", type="build", when="@:2.13.0")
     depends_on("cmake@3.10:", type="build", when="@2.1:")
     depends_on("cmake@2.8:", type="build")
