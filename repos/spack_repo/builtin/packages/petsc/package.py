@@ -679,6 +679,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_inc += spec[pkg].headers.include_flags + " "
             for pkg in hip_lpkgs:
                 hip_lib += spec[pkg].libs.joined() + " "
+            if spec.satisfies("%gcc"):
+                # silence hipcc warnings from the gcc toolchain flags hip injects
+                hip_inc += "-w "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
         else:
