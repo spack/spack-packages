@@ -360,6 +360,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre@2.21:", when="@3.20:3.21+hypre")
     depends_on("hypre@2.31:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
+    # hypre@3: requires umpire for +cuda/+rocm - petsc has to link it as well
+    depends_on("umpire", when="@3.24:+hypre ^hypre+umpire")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
     depends_on("superlu-dist@6.1:+int64", when="@3.13.0:+superlu-dist+mpi+int64")
@@ -564,6 +566,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hip", "hip", True, False),
             "metis",
             "hypre",
+            "umpire",
             "parmetis",
             ("kokkos", "kokkos", False, False),
             ("kokkos-kernels", "kokkos-kernels", False, False),
