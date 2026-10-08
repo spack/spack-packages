@@ -16,9 +16,14 @@ class Pcre2(AutotoolsPackage, CMakePackage):
 
     homepage = "https://www.pcre.org"
     url = "https://github.com/PCRE2Project/pcre2/releases/download/pcre2-10.39/pcre2-10.39.tar.bz2"
+    submodules = True
 
     license("BSD-3-Clause AND PCRE2-exception", when="@10:", checked_by="wdconinc")
 
+    version(
+        "10.47",
+        sha256="47fe8c99461250d42f89e6e8fdaeba9da057855d06eb7fc08d9ca03fd08d7bc7",
+    )
     version("10.44", sha256="d34f02e113cf7193a1ebf2770d3ac527088d485d4e047ed10e5d217c6ef5de96")
     version("10.43", sha256="e2a53984ff0b07dfdb5ae4486bbb9b21cca8e7df2434096cc9bf1b728c350bcb")
     version("10.42", sha256="8d36cd8cb6ea2a4c2bb358ff6411b0c788633a2a45dabbf1aeb4b701d1b5e840")
@@ -49,6 +54,7 @@ class Pcre2(AutotoolsPackage, CMakePackage):
     with when("build_system=cmake"):
         depends_on("zlib")
         depends_on("bzip2")
+        depends_on("cmake@3.15:", type="build")
 
     @property
     def libs(self):
