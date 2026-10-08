@@ -42,7 +42,7 @@ default:
     # TODO: have multiple types of "PR" pipeline here.  It would be better if we could
     # TODO: keep just this one and use a regex to capture the target branch, but so
     # TODO: far gitlab doesn't support that.
-    PR_TARGET_REF_NAME: "develop"
+    PR_TARGET_REF_NAME: "releases/v2026.10"
     PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
     OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
 
