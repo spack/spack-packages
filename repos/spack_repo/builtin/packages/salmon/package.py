@@ -81,6 +81,13 @@ class Salmon(CMakePackage):
 
     conflicts("%gcc@:5.1", when="@0.14.1:")
 
+    def flag_handler(self, name, flags):
+        # GCC 14+ diagnoses errors in uninstantiated template bodies. The bundled
+        # Eigen and pufferfish/libdivide in older salmon releases trip this.
+        if name == "cxxflags" and self.spec.satisfies("@:1.10 %gcc@14:"):
+            flags.append("-Wno-template-body")
+        return (flags, None, None)
+
     # SalmonDependencies.camke
     resource(
         name="pufferfish",
