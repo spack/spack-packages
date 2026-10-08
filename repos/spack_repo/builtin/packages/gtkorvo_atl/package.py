@@ -19,6 +19,7 @@ class GtkorvoAtl(CMakePackage):
     maintainers("eisenhauer", "vicentebolea")
 
     version("master", branch="master")
+    version("2.4.1", sha256="1c5d5bf47abc3981547c8db553bf2b0fc1003e0e22ffa092b02ac30df2f336c9")
     version("2.3.0", sha256="8f5746bc2362fd7fe3aa1814f1704449972570f903b2391a7ae6e4efa4cd60be")
 
     with default_args(deprecated=True):
@@ -29,6 +30,7 @@ class GtkorvoAtl(CMakePackage):
     variant("shared", default=True, when="@2.3:", description="Build shared libraries")
 
     depends_on("c", type="build")  # generated
+    depends_on("cxx", type="build", when="@2.4:")
 
     depends_on("gtkorvo-cercs-env", when="@:2.2.1")
 
