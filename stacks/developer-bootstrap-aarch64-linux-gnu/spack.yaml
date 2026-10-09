@@ -1,0 +1,50 @@
+spack:
+  view: false
+
+  include:
+  - ../../.ci/gitlab/
+
+  packages:
+    all:
+      require:
+      - target=x86_64_v3
+      - ~cuda
+      - ~rocm
+      prefer:
+        - "%gcc"
+  concretizer:
+    unify: true
+    reuse: false
+    static_analysis: true
+  definitons:
+    - py-dev:
+      - py-ruff@0.16.10
+      - py-ty@0.0.85
+      - py-pytest@9.0.3
+    - python:
+      - python@3.10
+      - python@3.14
+  specs:
+  # spack developer tools
+  # pinned to versions CI uses
+  - group: rust
+    specs:
+    - rust@1.97.1
+  - group: dev-rust
+    needs: [rust]
+    specs:
+      - matrix
+        - - $py-dev
+        - - $^python
+    override:
+      packages:
+        all:
+          prefer:
+          - rust@1.97.1
+  ci:
+    pipeline-gen:
+    - build-job:
+        image: ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+
+  cdash:
+    build-group: Spack Development Tools aarch64-linux-gnu

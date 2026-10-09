@@ -499,6 +499,75 @@ developer-tools-darwin-build:
     - artifacts: True
       job: developer-tools-darwin-generate
 
+##########################################
+# Developer Tools needed to develop Spack
+# arm linux
+##########################################
+.developer-bootstrap-aarch-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-aarch64-linux-gnu
+
+developer-bootstrap-aarch64-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64"]
+  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+
+developer-bootstrap-aarch64-linux-gnu-build:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-aarch64-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-aarch64-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-aarch64-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# x86_64_v3 linux
+###########################################
+.developer-bootstrap-x86_64_v3-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-x86_64_v3-linux-gnu
+
+developer-bootstrap-x86_64_v3-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64"]
+  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+
+developer-bootstrap-x86_64_v3-linux-gnu-build:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-x86_64_v3-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# darwin
+###########################################
+.developer-bootstrap-darwin:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-darwin
+
+developer-bootstrap-darwin-generate:
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
+  extends: [ ".developer-bootstrap-darwin", ".generate-base"]
+
+developer-bootstrap-darwin-build:
+  extends: [ ".developer-bootstrap-darwin", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-darwin/cloud-ci-pipeline.yml
+        job: developer-bootstrap-darwin-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-darwin-generate
+
 #########################################
 # RADIUSS
 #########################################

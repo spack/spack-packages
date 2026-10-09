@@ -69,6 +69,8 @@ spack:
     - py-mypy
     - py-python-lsp-ruff
     - py-python-lsp-server
+    - py-ty
+    - py-ruff
     - typos
     - uncrustify
     - gopls
@@ -92,12 +94,6 @@ spack:
     - gmake
     - ninja
     - meson
-    # spack developer tools
-    # style
-    - "py-mypy@0.900: ^py-mypy-extensions@:1.0"
-    - py-pytest@9.0.3
-    - py-ruff@0.15.0
-    - py-ty@0.0.20
 
   ci:
     pipeline-gen:
