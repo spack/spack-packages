@@ -15,17 +15,22 @@ class PyDocket(PythonPackage):
 
     license("MIT")
 
+    version("0.17.7", sha256="5c77ec6731a167cdcb44174abf793fe63e7b6c1c1c8a799cc6ec7502b361ee77")
     version("0.16.6", sha256="b96c96ad7692827214ed4ff25fcf941ec38371314db5dcc1ae792b3e9d3a0294")
 
     depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-hatchling", type="build")
 
     depends_on("py-cloudpickle@3.1.1:", type=("build", "run"))
+    depends_on("py-croniter@6:", type=("build", "run"), when="@0.17.4:")
     depends_on("py-exceptiongroup@1.2:", when="^python@:3.10", type=("build", "run"))
+    depends_on("py-taskgroup@0.2.2:", type=("build", "run"), when="@0.17.2:")
     depends_on("py-fakeredis@2.32.1: +lua", type=("build", "run"))
     depends_on("py-opentelemetry-api@1.33.0:", type=("build", "run"))
-    depends_on("py-opentelemetry-exporter-prometheus@0.60b0:", type=("build", "run"))
-    depends_on("py-opentelemetry-instrumentation@0.60b0:", type=("build", "run"))
+    depends_on(
+        "py-opentelemetry-exporter-prometheus@0.60b0:", type=("build", "run"), when="@:0.16.6"
+    )
+    depends_on("py-opentelemetry-instrumentation@0.60b0:", type=("build", "run"), when="@:0.16.6")
     depends_on("py-prometheus-client@0.21.1:", type=("build", "run"))
     depends_on("py-key-value-aio@0.3: +memory +redis", type=("build", "run"))
     depends_on("py-python-json-logger@2.0.7:", type=("build", "run"))
