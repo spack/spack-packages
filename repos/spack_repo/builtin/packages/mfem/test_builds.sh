@@ -14,27 +14,32 @@ rocm_arch="gfx908"
 spack_jobs=''
 # spack_jobs='-j 128'
 
-mfem='mfem@4.9.0'${compiler}
+mfem='mfem@4.10.0'${compiler}
 # mfem_dev='mfem@develop'${compiler}
-mfem_dev='mfem@4.9.0'${compiler}
+mfem_dev='mfem@4.10.0'${compiler}
 
 backends='+occa+raja+libceed'
 backends_specs='^occa~cuda ^raja~openmp'
 
 # ~fortran is needed for Cray Fortran linking with tcmalloc*
 conduit_spec='^conduit~fortran'
+# MUMPS spec
+mumps_spec='^mumps~openmp'
+# mumps_spec='^mumps~openmp~shared'
 # petsc spec
-petsc_spec='^petsc+mumps'
-petsc_spec_cuda='^petsc+cuda+mumps'
-petsc_spec_rocm='^petsc+rocm+mumps'
+petsc_spec='^petsc+mumps'" $mumps_spec"
+petsc_spec_cuda='^petsc+cuda+mumps'" $mumps_spec"
+petsc_spec_rocm='^petsc+rocm+mumps'" $mumps_spec"
 # strumpack spec without cuda (use version > 6.3.1)
 strumpack_spec='^strumpack~slate~openmp~cuda'
+## strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
 strumpack_cuda_spec='^strumpack+cuda~slate~openmp'
 strumpack_rocm_spec='^strumpack+rocm~slate~openmp~cuda'
 # superlu specs with cpu, cuda and rocm
 # - v8.2.1 on CPU and GPU stalls in ex11p; works when superlu::PARMETIS is
 #   replaced with superlu::METIS_AT_PLUS_A, at least on CPU
-superlu_spec='^superlu-dist@8.1.2'
+# superlu_spec='^superlu-dist@8.1.2'
+superlu_spec=''
 superlu_cuda_spec='^superlu-dist@8.1.2+cuda'
 superlu_rocm_spec='^superlu-dist@8.1.2+rocm'
 # FMS spec
@@ -45,14 +50,16 @@ builds=(
     ${mfem}
     ${mfem}'~mpi~metis~zlib'
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
-        +gslib+sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +gslib+sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         +hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
         '"$conduit_spec"
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'~mpi \
-        '"$backends"'+suite-sparse+sundials+gslib+mpfr+netcdf \
+        '"$backends"'+suite-sparse+sundials+gslib+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
     ${mfem}' precision=single +mumps+petsc '"$petsc_spec"
@@ -60,19 +67,18 @@ builds=(
     # develop version, shared builds:
     ${mfem_dev}'+shared~static'
     ${mfem_dev}'+shared~static~mpi~metis~zlib'
-    # NOTE: Shared build with +gslib works on mac but not on linux
-    # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem_dev}'+shared~static \
         '"$backends"'+superlu-dist+strumpack+mumps+suite-sparse+petsc+slepc \
-        +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo+hiop \
+        +gslib+sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +hiop \
         '"$backends_specs $superlu_spec $strumpack_spec $petsc_spec"' \
         '"$conduit_spec"
-    # NOTE: Shared build with +gslib works on mac but not on linux
-    # TODO: add back '+gslib' when the above NOTE is addressed.
     # TODO: add back "+fms $fms_spec" when the FMS unit test is fixed
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem_dev}'+shared~static~mpi \
-        '"$backends"'+suite-sparse+sundials+mpfr+netcdf \
+        '"$backends"'+suite-sparse+sundials+gslib+netcdf \
         +zlib+gnutls+libunwind+conduit+ginkgo+hiop \
         '"$backends_specs $conduit_spec"' ^sundials~mpi'
     ${mfem_dev}'+shared~static precision=single +mumps+petsc '"$petsc_spec"
@@ -84,7 +90,7 @@ builds2=(
     ${mfem}' precision=single'
     ${mfem}'+superlu-dist'" $superlu_spec"
     ${mfem}'+strumpack'" $strumpack_spec"
-    ${mfem}'+mumps'
+    ${mfem}'+mumps'" $mumps_spec"
     ${mfem}'+suite-sparse~mpi'
     ${mfem}'+suite-sparse'
     ${mfem}'+sundials~mpi ^sundials~mpi'
@@ -93,7 +99,8 @@ builds2=(
     ${mfem}'+gslib'
     ${mfem}'+netcdf~mpi'
     ${mfem}'+netcdf'
-    ${mfem}'+mpfr'
+    # TODO: uncomment next line when PR #5534 is merged
+    # ${mfem}'+mpfr'
     ${mfem}'+gnutls'
     ${mfem}'+conduit~mpi'" $conduit_spec"
     ${mfem}'+conduit'" $conduit_spec"
