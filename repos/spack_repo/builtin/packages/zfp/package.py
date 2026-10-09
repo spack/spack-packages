@@ -46,6 +46,15 @@ class Zfp(CMakePackage, CudaPackage):
         url="https://github.com/LLNL/zfp/archive/0.5.1/zfp-0.5.1.tar.gz",
     )
 
+    # Fix zfp_stream_maximum_size() overflow when size_t is 32 bits
+    # https://github.com/LLNL/zfp/issues/270. Squash of the src/zfp.c changes from:
+    # https://github.com/LLNL/zfp/commit/fbe66153e78b8d230922076f6ad8ce9dac9f54c4
+    # https://github.com/LLNL/zfp/commit/b599b8f37e6d0cb6350b1e99133c43bcd48be125
+    # https://github.com/LLNL/zfp/commit/9036ae8c0df9f5a33c5651b9cf2f94be1a24f330
+    # https://github.com/LLNL/zfp/commit/33891268d6cf2f04649e6f1a89158b755e2a28d1
+    # https://github.com/LLNL/zfp/commit/d32673117b2be3064c64e7840dc4dadb9fcd4710
+    patch("stream-maximum-size-overflow.patch", when="@1.0.0:1.0.1")
+
     # Dependencies
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
