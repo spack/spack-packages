@@ -76,6 +76,8 @@ class Comgr(ROCmLibrary, CMakePackage):
     depends_on("ncurses", type="link")
     depends_on("python@3:", when="@6.4:")
 
+    requires("%c,cxx=llvm-amdgpu", when="%c")
+
     for ver in [
         "5.7.0",
         "5.7.1",
@@ -108,7 +110,6 @@ class Comgr(ROCmLibrary, CMakePackage):
     ]:
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}", type="build")
 
     @property
