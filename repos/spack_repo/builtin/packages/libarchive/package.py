@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import autotools, cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Libarchive(AutotoolsPackage):
+class Libarchive(AutotoolsPackage, CMakePackage):
     """libarchive: C library and command-line tools for reading and
     writing tar, cpio, zip, ISO, and other archive formats."""
 
@@ -25,6 +27,9 @@ class Libarchive(AutotoolsPackage):
     version("3.7.7", sha256="4cc540a3e9a1eebdefa1045d2e4184831100667e6d7d5b315bb1cbc951f8ddff")
     version("3.7.6", sha256="b4071807367b15b72777c2eaac80f42c8ea2d20212ab279514a19fe1f6f96ef4")
     version("3.7.5", sha256="37556113fe44d77a7988f1ef88bf86ab68f53d11e85066ffd3c70157cc5110f1")
+
+    build_system("cmake", "autotools", default="autotools")
+    requires("build_system=cmake", when="platform=windows")
 
     variant(
         "libs",
@@ -45,13 +50,13 @@ class Libarchive(AutotoolsPackage):
     variant(
         "xar",
         default="libxml2",
-        values=("libxml2", "expat"),
+        values=("libxml2", "expat", "win32xmllite"),
         description="What library to use for xar support",
     )
     variant(
         "crypto",
         default="openssl",
-        values=("mbedtls", "nettle", "openssl"),
+        values=("mbedtls", "nettle", "openssl", "cng"),
         description="What crypto library to use for mtree and xar hashes",
     )
     variant(
@@ -63,7 +68,9 @@ class Libarchive(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
-    depends_on("pkgconfig", type="build")
+
+    with when("build_system=autotools"):
+        depends_on("pkgconfig", type="build")
 
     depends_on("bzip2", when="compression=bz2lib")
     depends_on("lz4", when="compression=lz4")
@@ -81,15 +88,28 @@ class Libarchive(AutotoolsPackage):
 
     depends_on("iconv", when="+iconv")
 
+    # CNG crypto and Win32 XmlLite are Windows-native APIs; no external dependency
+    requires("platform=windows", when="crypto=cng")
+    requires("platform=windows", when="xar=win32xmllite")
+
     # NOTE: `make check` is known to fail with the Intel compilers
     # The build test suite cannot be built with Intel
 
+
+class AutotoolsBuilder(autotools.AutotoolsBuilder):
     def configure_args(self):
         spec = self.spec
         args = ["--without-libb2"]
         args += self.with_or_without("compression")
-        args += self.with_or_without("crypto")
         args += self.enable_or_disable("programs")
+
+        # Handle crypto explicitly: "cng" is Windows/CMake-only and unknown to configure
+        for opt in ("mbedtls", "nettle", "openssl"):
+            args.append(
+                "--with-{0}".format(opt)
+                if spec.satisfies(f"crypto={opt}")
+                else "--without-{0}".format(opt)
+            )
 
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
@@ -108,5 +128,42 @@ class Libarchive(AutotoolsPackage):
             args.append("--with-xml2")
         else:
             args.append("--without-xml2")
+
+        return args
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        spec = self.spec
+
+        args = [
+            self.define("ENABLE_LIBB2", False),  # TODO: libb2 not yet in Spack
+            self.define("BUILD_SHARED_LIBS", spec.satisfies("libs=shared")),
+            self.define_from_variant("ENABLE_ICONV", "iconv"),
+            # Compression
+            self.define("ENABLE_BZip2", spec.satisfies("compression=bz2lib")),
+            self.define("ENABLE_LZ4", spec.satisfies("compression=lz4")),
+            self.define("ENABLE_LZO", spec.satisfies("compression=lzo2")),
+            self.define("ENABLE_LZMA", spec.satisfies("compression=lzma")),
+            self.define("ENABLE_ZLIB", spec.satisfies("compression=zlib")),
+            self.define("ENABLE_ZSTD", spec.satisfies("compression=zstd")),
+            # Crypto
+            self.define("ENABLE_OPENSSL", spec.satisfies("crypto=openssl")),
+            self.define("ENABLE_NETTLE", spec.satisfies("crypto=nettle")),
+            self.define("ENABLE_MBEDTLS", spec.satisfies("crypto=mbedtls")),
+            # XAR
+            self.define("ENABLE_LIBXML2", spec.satisfies("xar=libxml2")),
+            self.define("ENABLE_EXPAT", spec.satisfies("xar=expat")),
+            # Programs
+            self.define("ENABLE_TAR", spec.satisfies("programs=bsdtar")),
+            self.define("ENABLE_CPIO", spec.satisfies("programs=bsdcpio")),
+            self.define("ENABLE_CAT", spec.satisfies("programs=bsdcat")),
+        ]
+
+        if spec.satisfies("platform=windows"):
+            args += [
+                self.define("ENABLE_CNG", spec.satisfies("crypto=cng")),
+                self.define("ENABLE_WIN32_XMLLITE", spec.satisfies("xar=win32xmllite")),
+            ]
 
         return args
