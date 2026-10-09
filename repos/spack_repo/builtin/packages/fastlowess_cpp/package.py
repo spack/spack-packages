@@ -20,7 +20,7 @@ class FastlowessCpp(CargoPackage):
     libraries with an owning C++ interface and a C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/lowess-project/cpp/"
-    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.0.0.tar.gz"
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     test_requires_compiler = True
