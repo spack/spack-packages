@@ -242,12 +242,16 @@ class CachedCMakeBuilder(CMakeBuilder):
             "# MPI",
             "#------------------{0}\n".format("-" * 60),
         ]
-
-        entries.append(cmake_cache_path("MPI_C_COMPILER", spec["mpi"].mpicc))
-        entries.append(cmake_cache_path("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
+        mpi = spec["mpi"]
+        has_wrapper = True
+        if hasattr(mpi.package, "has_wrapper") and not mpi.package.has_wrapper:
+            has_wrapper = False
+        if has_wrapper:
+            entries.append(cmake_cache_path("MPI_C_COMPILER", spec["mpi"].mpicc))
+            entries.append(cmake_cache_path("MPI_CXX_COMPILER", spec["mpi"].mpicxx))
 
         # not all MPIs have Fortran wrappers
-        if hasattr(spec["mpi"], "mpifc"):
+        if hasattr(spec["mpi"], "mpifc") and has_wrapper:
             entries.append(cmake_cache_path("MPI_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # Determine MPIEXEC
@@ -372,10 +376,11 @@ class CachedCMakeBuilder(CMakeBuilder):
         cache_entries = (
             self.std_initconfig_entries()
             + self.initconfig_compiler_entries()
-            + self.initconfig_mpi_entries()
             + self.initconfig_hardware_entries()
             + self.initconfig_package_entries()
         )
+        if spec.satisfies("^mpi"):
+            cache_entries += self.initconfig_mpi_entries()
 
         with open(self.cache_name, "w", encoding="utf-8") as f:
             for entry in cache_entries:
