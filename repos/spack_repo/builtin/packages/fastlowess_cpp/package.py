@@ -20,9 +20,7 @@ class FastlowessCpp(CargoPackage):
     libraries with an owning C++ interface and a C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/lowess-project/cpp/"
-    url = (
-        "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.0.0.tar.gz"
-    )
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.0.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     test_requires_compiler = True
@@ -99,7 +97,8 @@ class FastlowessCpp(CargoPackage):
         """Compile and run a linear fit against the installed C++ library."""
         source = "fastlowess_spack_smoke.cpp"
         with open(source, "w", encoding="utf-8") as stream:
-            stream.write(textwrap.dedent("""\
+            stream.write(
+                textwrap.dedent("""\
                 #include <fastlowess.hpp>
                 #include <cmath>
                 #include <vector>
@@ -122,13 +121,12 @@ class FastlowessCpp(CargoPackage):
                     }
                     return 0;
                 }
-                """))
+                """)
+            )
 
         cxx = which(os.environ["CXX"])
         windows = self.spec.satisfies("platform=windows")
-        executable = (
-            "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
-        )
+        executable = "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
         compiler_name = os.path.basename(os.environ["CXX"]).lower()
         if compiler_name in ("cl", "cl.exe", "clang-cl", "clang-cl.exe"):
             cxx(
