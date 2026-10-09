@@ -24,6 +24,8 @@ def submodules(package):
         "projects/rocprofiler-sdk/external/yaml-cpp",
         "projects/rocprofiler-sdk/external/json",
     ]
+    if package is not None and package.spec.satisfies("@7.13:"):
+        submodules.append("projects/rocprofiler-sdk/external/abseil-cpp")
     return submodules
 
 
@@ -197,7 +199,9 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     depends_on("fmt@:10", when="@7.2:7.13 ~internal-fmt")
     depends_on("fmt@:12.1", when="@7.14: ~internal-fmt")
     depends_on("glog", when="@7.2:")
-    depends_on("abseil-cpp", when="@7.13:")
+    depends_on("yaml-cpp@:0.8.0", when="@10.0:")
+    depends_on("nlohmann-json", when="@10.0:")
+    depends_on("elfio@3.12:", when="@10.0:")
 
     for ver in ["6.2.4", "6.3.0", "6.3.1", "6.3.2", "6.3.3", "6.4.0", "6.4.1", "6.4.2", "6.4.3"]:
         depends_on(f"aqlprofile@{ver}", when=f"@{ver}")
@@ -278,6 +282,11 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         sha256="05a71386d12d7fc98a40c025dc65a804556e01f381d1101ea244f35f29edd3d8",
         when="@7.2",
     )
+    patch(
+        "https://github.com/ROCm/rocm-systems/commit/9446ab5e047a24df93c97d85c25cf3ac51993711.patch?full_index=1",
+        sha256="118f917da5b63ae85219d6f27d675d397bd2958807af67c9c5725967eea84007",
+        when="@10.0",
+    )
 
     @property
     def root_cmakelists_dir(self):
@@ -298,7 +307,13 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
             args.append(self.define("ROCPROFILER_BUILD_GOTCHA", "OFF"))
             args.append(self.define("ROCPROFILER_BUILD_SQLITE3", "OFF"))
         if self.spec.satisfies("@7.14:"):
-            args.append(self.define("ROCPROFILER_BUILD_ABSEIL", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_ABSEIL", "ON"))
+        if self.spec.satisfies("@10.0:"):
+            args.append(self.define("ROCPROFILER_BUILD_YAML_CPP", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_ELFIO", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_JSON", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_DOCS", "OFF"))
+            args.append(self.define("ROCPROFILER_BUILD_GHC_FS", "OFF"))
         return args
 
     def setup_run_environment(self, env):
