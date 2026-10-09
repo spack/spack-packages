@@ -17,7 +17,8 @@ class Pipx(PythonPackage):
 
     maintainers("ebagrenrut")
 
-    version("1.16.6", sha256="1a2ace67be16262a3bc8d1d6eedc5d6b63119b2b9e4eadc1b280d8e9c25fd722")
+    version("1.17.2", sha256="e29d68d05f5b4707d3d3dbddb0adfc4ca4ddcd77052dbb8f4e1b5ad31629a07c")
+    version("1.16.7", sha256="a575ced25c507c1b1c978269f5684b5b291e81e3cd14eb3cee196a3c5b304732")
     version("1.15.0", sha256="193aab4983b787903e389d623e6347f697026c0d7a2ba0b4fbd5189bed22f19d")
     version("1.14.1", sha256="d11023138ac223d79e6d711ec738772c896d00366c46515a4948c3ede3389a24")
     version("1.13.0", sha256="d754c19d070893aab5d1ddb3d622ef57ec082b79f53c2664183165dbd2868c0e")
@@ -33,6 +34,12 @@ class Pipx(PythonPackage):
     version("1.3.3", sha256="6d5474e71e78c28d83570443e5418c56599aa8319a950ccf5984c5cb0a35f0a7")
     version("1.2.1", sha256="698777c05a97cca81df4dc6a71d9ca4ece2184c6f91dc7a0e4802ac51d86d32a")
     version("1.2.0", sha256="d1908041d24d525cafebeb177efb686133d719499cb55c54f596c95add579286")
+
+    with default_args(deprecated=True):
+        version(
+            "1.16.6",
+            sha256="1a2ace67be16262a3bc8d1d6eedc5d6b63119b2b9e4eadc1b280d8e9c25fd722",
+        )
 
     # pipx >= 1.12 will use uv by default, if it finds it, so it makes sense to enable
     # it as the default backend. If the user does not want to use the uv backend, they
@@ -66,6 +73,7 @@ class Pipx(PythonPackage):
 
     depends_on("py-importlib-metadata@3.3:", when="^python@:3.7", type=("build", "run"))
 
+    depends_on("py-packaging@26:", when="@1.17:", type=("build", "run"))
     depends_on("py-packaging@20:", type=("build", "run"))
 
     # When using uv backend, py-pip is needed for building, else it is needed for building and
@@ -74,6 +82,7 @@ class Pipx(PythonPackage):
     depends_on("py-pip", when="backend=pip", type=("build", "run"))
     depends_on("py-pip", when="@:1.11", type=("build", "run"))
 
+    depends_on("py-platformdirs@4.6:", when="@1.15.1:", type=("build", "run"))
     depends_on("py-platformdirs@2.1:", when="@1.3:", type=("build", "run"))
 
     depends_on("py-tomli@2:", when="@1.3: ^python@:3.10", type=("build", "run"))

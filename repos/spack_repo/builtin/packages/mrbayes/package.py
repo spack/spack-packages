@@ -18,6 +18,7 @@ class Mrbayes(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("3.2.8", sha256="d821f13341664d6f5d26931810f4bf5703f5dae08a78e2c51a7cabdd8cf9a613")
     version("3.2.7a", sha256="1a4670be84e6b968d59382328294db4c8ceb73e0c19c702265deec6f2177815c")
     version("3.2.7", sha256="39d9eb269969b501268d5c27f77687c6eaa2c71ccf15c724e6f330fc405f24b9")
 

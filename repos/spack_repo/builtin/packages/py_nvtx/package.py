@@ -19,8 +19,8 @@ class PyNvtx(PythonPackage):
     version("0.2.15", sha256="2287d3be05b85661deb386f878d1f536c2e532774aa9ec7a50c434942ed81ae5")
     version("0.2.10", sha256="58b89cd69079fda1ceef8441eec5c5c189d6a1ff94c090a3afe03aedd0bbd140")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("py-cython", type="build")
+    depends_on("py-setuptools@77:", type="build", when="@0.2.15:")
+    depends_on("py-cython@3.1:", type="build")
     depends_on("nvtx", when="@0.2.10")
 
     # Starting with version 0.2.11, the include directory is packaged in the sources.

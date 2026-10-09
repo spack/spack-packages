@@ -17,6 +17,7 @@ class PyGrpcio(PythonPackage):
 
     version("1.81.1", sha256="6fa10a767143a5e82e8eaab53918af0cd8909a57a27f8cb2288b80a613ac671b")
     version("1.78.1", sha256="27c625532d33ace45d57e775edf1982e183ff8641c72e4e91ef7ba667a149d72")
+    version("1.78.0", sha256="7382b95189546f375c174f53a5fa873cef91c4b8005faa05cc5b3beea9c4f1c5")
     version("1.75.0", sha256="b989e8b09489478c2d19fecc744a298930f40d8b27c3638afbfe84d22f36ce4e")
     version("1.71.0", sha256="2b85f7820475ad3edec209d3d89a7909ada16caab05d3f2e08a7e8ae3200a55c")
     version("1.64.0", sha256="257baf07f53a571c215eebe9679c3058a313fd1d1f7c4eede5a8660108c52d9c")
@@ -109,6 +110,12 @@ class PyGrpcio(PythonPackage):
     depends_on("zlib-api", when="@1.33.1:")
     depends_on("c-ares", when="@1.33.1:")
     depends_on("re2+shared", when="@1.34:")
+    # re2 has no upper bound by default. re2@2025-08-05: uses std::optional (C++17) in its
+    # public header re2/re2.h, but grpcio's own setup.py hardcodes -std=c++14 for this version
+    # bracket (matching the abseil-cpp cxxstd=14 pin below, shared with re2 on the same DAG
+    # node, which can't be raised to 17 without conflicting with other consumers). Cap this
+    # bracket to re2 versions that still use absl::optional.
+    depends_on("re2@:2024-07-02", when="@1.47:1.64")
     depends_on("abseil-cpp+shared cxxstd=17", when="@1.71:")
     depends_on("abseil-cpp+shared cxxstd=14", when="@1.47:1.64")
 

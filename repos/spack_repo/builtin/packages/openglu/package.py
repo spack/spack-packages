@@ -14,9 +14,9 @@ class Openglu(Package):
     homepage = "https://www.opengl.org/resources/libraries"
 
     provides("glu@:1.3", when="@1.3:")
-    provides("glu@:1.2", when="@1.2:")
-    provides("glu@:1.1", when="@1.1:")
-    provides("glu@:1.0", when="@1.0:")
+    provides("glu@:1.2", when="@1.2")
+    provides("glu@:1.1", when="@1.1")
+    provides("glu@:1.0", when="@1.0")
 
     # Override the fetcher method to throw a useful error message;
     # fixes an issue similar to Github issue (#7061), in which the

@@ -84,6 +84,8 @@ class Simgrid(CMakePackage):
     depends_on("boost@:1.69.0", when="@:3.21")
     depends_on("boost+exception")
 
+    depends_on("graphviz")
+
     conflicts(
         "%gcc@10:",
         when="@:3.23",

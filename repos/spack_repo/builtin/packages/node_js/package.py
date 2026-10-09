@@ -156,7 +156,7 @@ class NodeJs(Package):
     depends_on("zlib-api", when="+zlib")
 
     # https://github.com/nodejs/node/blob/main/BUILDING.md#supported-toolchains
-    conflicts("%gcc@:12.1", when="@23:")
+    conflicts("%gcc@:12", when="@23:")
     conflicts("%gcc@:10.0", when="@20:")
     conflicts("%gcc@:8.2", when="@16:")
     conflicts("%gcc@:6.2", when="@12:")

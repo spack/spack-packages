@@ -26,6 +26,7 @@ class Gmsh(CMakePackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("4.15.2", sha256="be3f66f225d27ba9fa014f07e83169285da8a051b0e8ab7103d88066b39bdd3e")
     version("4.15.1", sha256="eba8e4064f6586c8ca880f1cfdf697f4d70f026f398a93b458f247f7e4364fed")
     version("4.13.1", sha256="77972145f431726026d50596a6a44fb3c1c95c21255218d66955806b86edbe8d")
     version("4.13.0", sha256="c85f056ee549a433e814a61c385c97952bbfe514b442b999f6149fffb1e54f64")

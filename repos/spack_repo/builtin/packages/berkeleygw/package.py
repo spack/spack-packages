@@ -183,14 +183,11 @@ class Berkeleygw(MakefilePackage):
         if spec.satisfies("+mpi"):
             paraflags.append("-DMPI")
 
-        # We need to copy fflags in case we append to it (#34019):
-        cflags = spec.compiler_flags["cflags"][:]
-        fflags = spec.compiler_flags["fflags"][:]
-        cflags.append(self.compiler.cc_pic_flag)
-        fflags.append(self.compiler.fc_pic_flag)
+        cflags = [spec["c"].package.pic_flag]
+        fflags = [spec["fortran"].package.pic_flag]
         if spec.satisfies("+openmp"):
             paraflags.append("-DOMP")
-            fflags.append(self.compiler.openmp_flag)
+            fflags.append(spec["fortran"].package.openmp_flag)
 
         if spec.satisfies("+mpi"):
             buildopts.append("C_PARAFLAG=-DPARA")
@@ -217,7 +214,7 @@ class Berkeleygw(MakefilePackage):
 
         mathflags.append("-DUSEFFTW3")
         buildopts.append("FFTWINCLUDE=%s" % spec["fftw-api"].prefix.include)
-        fftwspec = spec["fftw-api:openmp" if "+openmp" in spec else "fftw-api"]
+        fftwspec = spec["fftw-api:openmp" if spec.satisfies("+openmp") else "fftw-api"]
         buildopts.append("FFTWLIB=%s" % fftwspec.libs.ld_flags)
 
         buildopts.append("LAPACKLIB=%s" % spec["lapack"].libs.ld_flags)
@@ -226,7 +223,7 @@ class Berkeleygw(MakefilePackage):
             mathflags.append("-DUSESCALAPACK")
             buildopts.append("SCALAPACKLIB=%s" % spec["scalapack"].libs.ld_flags)
 
-        if spec.satisfies("%intel"):
+        if spec.satisfies("%fortran=intel"):
             buildopts.append("COMPFLAG=-DINTEL")
             buildopts.append("MOD_OPT=-module ")
             buildopts.append("FCPP=cpp -C -P -ffreestanding")
@@ -241,11 +238,11 @@ class Berkeleygw(MakefilePackage):
                 buildopts.append("C_COMP=%s" % spack_cc)
                 buildopts.append("CC_COMP=%s" % spack_cxx)
             buildopts.append("FOPTS=%s" % " ".join(fflags))
-        elif spec.satisfies("%gcc"):
+        elif spec.satisfies("%fortran=gcc"):
             c_flags = "-std=c99"
             cxx_flags = "-std=c++0x"
             f90_flags = "-ffree-form -ffree-line-length-none -fno-second-underscore"
-            if spec.satisfies("%gcc@10:"):
+            if spec.satisfies("%fortran=gcc@10:"):
                 c_flags += " -fcommon"
                 cxx_flags += " -fcommon"
                 f90_flags += " -fallow-argument-mismatch"
@@ -254,7 +251,7 @@ class Berkeleygw(MakefilePackage):
             # std c11 prevents problems with linebreaks and fortran comments
             # containing // (which is interpreted as C++ style comment)
             buildopts.append(
-                "FCPP=%s -C -nostdinc -std=c11" % join_path(self.compiler.prefix, "bin", "cpp")
+                "FCPP=%s -C -nostdinc -std=c11" % join_path(spec["c"].prefix, "bin", "cpp")
             )
             if spec.satisfies("+mpi"):
                 buildopts.append("F90free=%s %s" % (spec["mpi"].mpifc, f90_flags))
@@ -265,7 +262,7 @@ class Berkeleygw(MakefilePackage):
                 buildopts.append("C_COMP=%s %s" % (spack_cc, c_flags))
                 buildopts.append("CC_COMP=%s %s" % (spack_cxx, cxx_flags))
             buildopts.append("FOPTS=%s" % " ".join(fflags))
-        elif spec.satisfies("%fj"):
+        elif spec.satisfies("%fortran=fj"):
             c_flags = "-std=c99"
             cxx_flags = "-std=c++0x"
             f90_flags = "-Free"
@@ -284,7 +281,7 @@ class Berkeleygw(MakefilePackage):
         else:
             raise InstallError(
                 "Spack does not yet have support for building "
-                "BerkeleyGW with compiler %s" % spec.compiler
+                "BerkeleyGW with compiler %s" % spec["fortran"]
             )
 
         if spec.satisfies("+hdf5"):

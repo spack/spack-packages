@@ -1,0 +1,16 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c5a9ca5..c06a645 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -80,6 +80,11 @@ elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
+   set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
+   set(CMAKE_Fortran_FLAGS_DEBUG "-ggdb -Wall")
+   set(fortran_d_flags "-fdefault-real-8")
++elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(NVHPC)$")
++  set(CMAKE_Fortran_FLAGS "-g ${CMAKE_Fortran_FLAGS}")
++  set(CMAKE_Fortran_FLAGS_RELEASE "-O2")
++  set(CMAKE_Fortran_FLAGS_DEBUG "-g")
++  set(fortran_d_flags "-r8")
+ endif()
+ 
+ # Deal with argument mismatch on GNU compilers version 10 or later.

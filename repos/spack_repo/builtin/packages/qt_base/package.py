@@ -202,6 +202,9 @@ class QtBase(QtPackage):
     variant("gui", default=True, description="Build the Qt GUI module and dependencies.")
     variant("shared", default=True, description="Build shared libraries.")
     variant("sql", default=True, description="Build with SQL support.")
+    variant("sqlite", default=True, description="Build with SQLite support.", when="+sql")
+    variant("mysql", default=False, description="Build with MySQL/MariaDB support.", when="+sql")
+    variant("postgresql", default=False, description="Build with PostgreSQL support.", when="+sql")
     variant("network", default=False, description="Build with SSL support.")
 
     # GUI-only dependencies
@@ -235,7 +238,10 @@ class QtBase(QtPackage):
     depends_on("dbus", when="+dbus")
     depends_on("gl", when="+opengl", type=("build", "link"))
     depends_on("glu", when="+opengl", type=("build", "link"))
-    depends_on("sqlite", when="+sql")
+    depends_on("glx", when="+opengl platform=linux", type=("build", "link"))
+    depends_on("sqlite", when="+sqlite")
+    depends_on("mysql-client", when="+mysql")
+    depends_on("postgresql", when="+postgresql")
 
     # see qt/qtbase/src/gui/configure.cmake for dependencies and versions
     with when("+gui"):
@@ -316,6 +322,9 @@ class QtBase(QtPackage):
                 # thread: default to on
                 self.define_qt_feature_from_variant("widgets"),  # note: private feature
                 self.define_qt_feature_from_variant("sql"),  # note: private feature
+                self.define_qt_feature_from_variant("sql_sqlite", "sqlite"),
+                self.define_qt_feature_from_variant("sql_mysql", "mysql"),
+                self.define_qt_feature_from_variant("sql_psql", "postgresql"),
                 # xml: default to on
             ]
         )

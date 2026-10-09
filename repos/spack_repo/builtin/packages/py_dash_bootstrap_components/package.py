@@ -17,7 +17,11 @@ class PyDashBootstrapComponents(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.0.4", sha256="c3206c0923774bbc6a6ddaa7822b8d9aa5326b0d3c1e7cd795cc975025fe2484")
     version("1.6.0", sha256="960a1ec9397574792f49a8241024fa3cecde0f5930c971a3fc81f016cbeb1095")
 
     depends_on("python@3.8:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+    depends_on("python@3.9:", when="@2.0.4:", type=("build", "run"))
+    depends_on("py-setuptools", when="@:1.6.0", type="build")
+    depends_on("py-hatchling", when="@2.0.4:", type="build")
+    depends_on("py-dash@3.0.4:", when="@2.0.4:", type=("build", "run"))

@@ -16,6 +16,9 @@ class PyTypesRasterio(PythonPackage):
     license("Apache-2.0")
 
     version(
+        "1.5.1.20260907", sha256="fd85801b2841516131fec1879775686907109ed7803dee0f624e5034a42b5ae1"
+    )
+    version(
         "1.5.0.20260810", sha256="45e2e43dc5c97eeaf2f3c9f8b89b3d269914d1cf2a0a2c32e6fe029ee79dd5e6"
     )
 
@@ -25,3 +28,4 @@ class PyTypesRasterio(PythonPackage):
         depends_on("python@3.12:")
         depends_on("py-numpy@2:")
         depends_on("py-click@8:")
+        depends_on("py-affine@3:", when="@1.5.1:")

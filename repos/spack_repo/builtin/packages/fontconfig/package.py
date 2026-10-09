@@ -50,13 +50,20 @@ class Fontconfig(AutotoolsPackage):
 
     def configure_args(self):
         font_path = join_path(self.spec["font-util"].prefix, "share", "fonts")
-        args = ["--enable-libxml2", "--disable-docs", f"--with-default-fonts={font_path}"]
+        args = [
+            "--enable-libxml2",
+            "--disable-docs",
+            f"--with-default-fonts={font_path}",
+            "--disable-cache-build",
+        ]
         ldflags = []
         libs = []
         deps = []
-        if self.spec["bzip2"].satisfies("~shared"):
+        # if freetype is an external, we can't access its DAG (bzip2 and libpng specs)
+        # we assume that the externals are shared libs
+        if not self.spec["freetype"].external and self.spec["bzip2"].satisfies("~shared"):
             deps.append("bzip2")
-        if not self.spec["libpng"].satisfies("libs=shared"):
+        if not self.spec["freetype"].external and not self.spec["libpng"].satisfies("libs=shared"):
             deps.append("libpng")
         if self.spec["libxml2"].satisfies("~shared"):
             deps.append("libxml-2.0")

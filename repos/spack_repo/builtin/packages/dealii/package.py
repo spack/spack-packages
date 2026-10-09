@@ -229,8 +229,8 @@ class Dealii(CMakePackage, CudaPackage):
     depends_on("netcdf-cxx", when="+netcdf+mpi")
     depends_on("opencascade", when="+opencascade")
     depends_on("p4est", when="+p4est+mpi")
-    depends_on("petsc+mpi~int64", when="+petsc+mpi~int64")
-    depends_on("petsc+mpi+int64", when="+petsc+mpi+int64")
+    depends_on("petsc@:3.24+mpi~int64", when="+petsc+mpi~int64")
+    depends_on("petsc@:3.24+mpi+int64", when="+petsc+mpi+int64")
     depends_on("scalapack", when="@9.0:+scalapack")
     depends_on("slepc", when="+slepc+petsc+mpi")
     depends_on("slepc~arpack", when="+slepc+petsc+mpi+int64")
@@ -558,8 +558,8 @@ class Dealii(CMakePackage, CudaPackage):
                     ]
                 )
             # Make sure we use the same compiler that Trilinos uses
-            if spec.satisfies("+trilinos"):
-                options.extend([self.define("CMAKE_CXX_COMPILER", self["trilinos"].kokkos_cxx)])
+            if spec.satisfies("+trilinos ^trilinos+kokkos ^kokkos+wrapper"):
+                options.extend([self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx)])
 
         # Complex support
         options.append(self.define_from_variant("DEAL_II_WITH_COMPLEX_VALUES", "complex"))

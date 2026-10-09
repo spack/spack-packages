@@ -23,7 +23,7 @@ class Mpt(BundlePackage):
 
     provides("mpi")
     provides("mpi@:3.1", when="@3:")
-    provides("mpi@:1.3", when="@1:")
+    provides("mpi@:1.3", when="@1:2")
 
     @property
     def libs(self):

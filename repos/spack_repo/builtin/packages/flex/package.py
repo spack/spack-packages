@@ -121,7 +121,9 @@ class Flex(AutotoolsPackage):
         return url
 
     def configure_args(self):
-        args = []
+        # Disable running the host's flex to be independent of it:
+        # --disable-bootstrap and setting LEX=: disables probing and running the host's flex.
+        args = ["--disable-bootstrap", "LEX=:"]
         args += self.enable_or_disable("nls")
         return args
 

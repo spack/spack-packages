@@ -38,10 +38,11 @@ class Mapl(CMakePackage):
 
     # Remember if there is a new ESMA_cmake, to update the resources too
     version(
-        "2.71.0",
-        sha256="0f763e1b74d227a06eff16daeb8d86425d75597f299d35cd3453a32f5c4864ef",
+        "2.72.0",
+        sha256="2eae091ba86fc0e4cdc1af3e8d942d2e5f728bd7f24840d6119961031b481784",
         preferred=True,
     )
+    version("2.71.0", sha256="0f763e1b74d227a06eff16daeb8d86425d75597f299d35cd3453a32f5c4864ef")
     version("2.70.0", sha256="c31a390f39260ef25620c9d0367dc111e354d1f3e83157209ee2aca03249d804")
     version("2.69.1", sha256="d34ba656c06a1ab0f306e22a8615a694f87c24626fc4cc8da3fe6f19fcbf3a4d")
     version("2.69.0", sha256="ba5d08dbcfd6765955b19d944748d93506df649c59781e7307c14ca2ef613d92")
@@ -161,9 +162,17 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.48.0",
+        commit="30e1c0c4193b26f5e7f0cea760c1980e986912b6",
+        when="@2.72:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v4.44.0",
         commit="3a024a54bb086a16d7ccbb5ff854d8be4b3c3a27",
-        when="@2.71:",
+        when="@2.71",
         placement="ESMA_cmake",
     )
     resource(

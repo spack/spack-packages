@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.16.0", sha256="2a335eac5061c77f9b0a770176f2d8dc7343f24b7c44bb7ec5e1f2f92cbe6a61")
     version("0.15.1", sha256="18095de0d271d9e3ad39fe65124b47a6dd269532ec40c360318a58888fc6f90e")
     version("0.15.0", sha256="1bcb7eda695e7e37bb37dd7ea40adcb614c2cfe71b2890201424b05c48fce331")
     version("0.14.0", sha256="8c239cea877cf52c3334de6d5c5d248eac85e6df27b9476047fd7ff3f78b85b5")
@@ -71,6 +72,7 @@ class Ddc(CMakePackage):
         depends_on("kokkos-fft device_backend=onemkl", when="^kokkos +sycl")
 
     with when("+splines"):
+        depends_on("ginkgo@1.9:", when="@0.16:")
         depends_on("ginkgo@1.8:")
         depends_on("ginkgo@:1")
         depends_on("kokkos-kernels@4.7:", when="@0.12:")
@@ -128,7 +130,6 @@ class Ddc(CMakePackage):
             self.define("DDC_BUILD_EXAMPLES", False),
             self.define("DDC_BUILD_DOCUMENTATION", False),
             self.define("DDC_BUILD_TESTS", self.run_tests),
-            self.define("DDC_Kokkos_DEPENDENCY_POLICY", "INSTALLED"),
             self.define_from_variant("DDC_BUILD_KERNELS_FFT", "fft"),
             self.define_from_variant("DDC_BUILD_KERNELS_SPLINES", "splines"),
             self.define_from_variant("DDC_BUILD_PDI_WRAPPER", "pdi"),
@@ -136,15 +137,16 @@ class Ddc(CMakePackage):
             self.define_from_variant("DDC_BUILD_DOUBLE_PRECISION", "double_precision"),
         ]
 
-        if self.run_tests:
-            args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
-
-        if self.spec.satisfies("+fft"):
-            args.append(self.define("DDC_KokkosFFT_DEPENDENCY_POLICY", "INSTALLED"))
+        if self.spec.satisfies("@:0.15"):
+            args.append(self.define("DDC_Kokkos_DEPENDENCY_POLICY", "INSTALLED"))
+            if self.run_tests:
+                args.append(self.define("DDC_GTest_DEPENDENCY_POLICY", "INSTALLED"))
+            if self.spec.satisfies("+fft"):
+                args.append(self.define("DDC_KokkosFFT_DEPENDENCY_POLICY", "INSTALLED"))
+            if self.spec.satisfies("+splines"):
+                args.append(self.define("DDC_KokkosKernels_DEPENDENCY_POLICY", "INSTALLED"))
 
         if self.spec.satisfies("+splines"):
-            args.append(self.define("DDC_KokkosKernels_DEPENDENCY_POLICY", "INSTALLED"))
-
             lapack_provider = self.spec["lapack"]
             if lapack_provider.name == "cray-libsci":
                 lapack_include_directories = ""

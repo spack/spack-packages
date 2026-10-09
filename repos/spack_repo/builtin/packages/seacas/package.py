@@ -146,11 +146,8 @@ class Seacas(CMakePackage):
         default=False,
         description="Enable ADIOS2. See https://github.com/ornladios/ADIOS2",
     )
-    # enabling cgns fails builds on Windows, see seacas CI default configuration
-    # https://github.com/sandialabs/seacas/blob/master/.appveyor.yml#L71
-    for plat in ["linux", "darwin", "freebsd"]:
-        with when(f"platform={plat}"):
-            variant("cgns", default=True, description="Enable CGNS.")
+
+    variant("cgns", default=True, description="Enable CGNS.")
 
     variant(
         "aws",
@@ -389,6 +386,11 @@ class Seacas(CMakePackage):
                 ]
             )
 
+            app_dependencies = {
+                "Exo2mat": ["+matio"],
+                "Mat2exo": ["+matio"],
+            }
+
             if "+applications" in spec:
                 # C / C++ applications
                 for app in (
@@ -408,7 +410,12 @@ class Seacas(CMakePackage):
                     "Slice",
                     "Zellij",
                 ):
-                    options.append(define(project_name_base + "_ENABLE_SEACAS" + app, True))
+                    can_enable = True
+                    deps = app_dependencies.get(app, [])
+                    for dep in deps:
+                        if not self.spec.satisfies(dep):
+                            can_enable = False
+                    options.append(define(project_name_base + "_ENABLE_SEACAS" + app, can_enable))
                 # Fortran-based applications
                 for app in ("Explore", "Grepos"):
                     options.append(

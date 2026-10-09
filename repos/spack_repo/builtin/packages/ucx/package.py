@@ -139,6 +139,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
     variant("verbs", default=False, description="Build OpenFabrics support")
     variant("xpmem", default=False, description="Enable XPMEM support")
     variant("gtest", default=False, description="Build and install Googletest")
+    variant("ze", default=False, description="Enable Intel GPU support")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -315,6 +316,7 @@ class Ucx(AutotoolsPackage, CudaPackage):
         args += self.with_or_without("knem", activation_value="prefix")
         args += self.with_or_without("rc")
         args += self.with_or_without("ud")
+        args += self.with_or_without("ze")
         args += self.with_or_without("xpmem", activation_value="prefix")
 
         # mlx5_dv

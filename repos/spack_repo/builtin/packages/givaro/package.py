@@ -33,3 +33,6 @@ class Givaro(AutotoolsPackage):
     depends_on("m4", type="build")
 
     depends_on("gmp")
+
+    def configure_args(self):
+        return [f"--with-gmp={self.spec['gmp'].prefix}"]

@@ -36,6 +36,15 @@ class Mgis(CMakePackage):
     version("rliv-1.1", branch="rliv-1.1")
     version("rliv-1.0", branch="rliv-1.0")
 
+    # Development versions used by the mfem-mgis package:
+    version(
+        "snapshot-for-mfemmgis-1.0.4",
+        tag="MFrontGenericInterfaceSupport-3.2dev-MFEMMGIS-1.0.4",
+        commit="4dfbe893e1a0a48a3ae32f1e3ded88008955c0a4",
+    )
+    version("snapshot-for-mfemmgis-1.0.1", commit="dbb7d911180046cfe1d86d90e104acc82a358429")
+    version("snapshot-for-mfemmgis-1.0.0", commit="eb00a51e077aa5af2160fcb90f2cf61b97c16d2c")
+
     # released version
     version(
         "3.1.0",
@@ -58,8 +67,16 @@ class Mgis(CMakePackage):
             url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-3.0.tar.gz",
         )
         version("2.2.1", sha256="a0e6af65f5fd2237f39306354ef786eadb0c6bc6868c23e2681e04a83e629ad2")
-        version("2.2.0", sha256="b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb")
-        version("2.1.0", sha256="f5b556aab130da0c423f395fe4c35d6bf509dd8fc958242f2e37ea788464aea9")
+        version(
+            "2.2.0",
+            sha256="b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-2.2.tar.gz",
+        )
+        version(
+            "2.1.0",
+            sha256="f5b556aab130da0c423f395fe4c35d6bf509dd8fc958242f2e37ea788464aea9",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-2.1.tar.gz",
+        )
         version(
             "2.0.0",
             sha256="cb427d77f2c79423e969815b948a8b44da33a4370d1760e8c1e22a569f3585e2",
@@ -67,8 +84,16 @@ class Mgis(CMakePackage):
         )
         version("1.2.2", sha256="dc24e85cc90ec656ed707eef3d511317ad800915014d9e4e9cf8818b406586d5")
         version("1.2.1", sha256="a2d7cae3a24546adcf1d1bf7f13f012170d359370f5b6b2c1730b19eb507601d")
-        version("1.2.0", sha256="ed82ab91cbe17c00ef36578dbfcb4d1817d4c956619b7cccbea3e3f1a3b31940")
-        version("1.1.0", sha256="06593d7a052678deaee87ef60b2213db7545c5be9823f261d3388b3978a0b7a5")
+        version(
+            "1.2.0",
+            sha256="ed82ab91cbe17c00ef36578dbfcb4d1817d4c956619b7cccbea3e3f1a3b31940",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-1.2.tar.gz",
+        )
+        version(
+            "1.1.0",
+            sha256="06593d7a052678deaee87ef60b2213db7545c5be9823f261d3388b3978a0b7a5",
+            url="https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/MFrontGenericInterfaceSupport-1.1.tar.gz",
+        )
         version(
             "1.0.0",
             sha256="279c98da00fa6855edf29c2b8f8bad6e7732298dc62ef67d028d6bbeaac043b3",
@@ -81,7 +106,7 @@ class Mgis(CMakePackage):
     variant("python", default=True, description="Enables python bindings")
     variant("static", default=False, description="Enables static libraries")
 
-    with when("@3.1:,rliv-3.1"):
+    with when("@3.1:,rliv-3.1,snapshot-for-mfemmgis-1.0.4"):
         variant("openmp", default=False, description="Enables openmp support")
         variant("mgis-function", default=True, description="Enables MGIS/Function")
         variant(
@@ -90,7 +115,7 @@ class Mgis(CMakePackage):
             description="use exceptions to report contract violation and error reporting",
         )
 
-    with when("@3.1:"):
+    with when("@3.1:,snapshot-for-mfemmgis-1.0.4"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
 
     # dependencies
@@ -126,13 +151,16 @@ class Mgis(CMakePackage):
     depends_on("tfel@rliv-3.3", when="@rliv-1.1")
     depends_on("tfel@rliv-3.2", when="@rliv-1.0")
     depends_on("tfel@master", when="@master")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.4", when="@snapshot-for-mfemmgis-1.0.4")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.1", when="@snapshot-for-mfemmgis-1.0.1")
+    depends_on("tfel@snapshot-for-mfemmgis-1.0.0", when="@snapshot-for-mfemmgis-1.0.0")
 
     depends_on("py-numpy", when="+python", type=("build", "link", "run"))
 
-    with when("@3.1:"):
+    with when("@3.1:,snapshot-for-mfemmgis-1.0.4"):
         depends_on("py-pybind11", when="+python", type=("build", "link", "run"))
 
-    with when("@1.0:3.0.99"):
+    with when("@1.0:3.0.99,snapshot-for-mfemmgis-1.0.0,snapshot-for-mfemmgis-1.0.1"):
         depends_on(
             "boost+python+numpy+exception+container", when="+python", type=("build", "link", "run")
         )

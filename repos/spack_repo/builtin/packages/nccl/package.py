@@ -120,6 +120,9 @@ class Nccl(MakefilePackage, CudaPackage):
         return [
             "CUDA_HOME={0}".format(self.spec["cuda"].prefix),
             "NVCC_GENCODE={0}".format(cuda_gencode),
+            # nccl.pc is generated at build time from PREFIX and only copied at install
+            # time, so PREFIX must be set here too (otherwise it defaults to /usr/local)
+            "PREFIX={0}".format(self.prefix),
         ]
 
     @property

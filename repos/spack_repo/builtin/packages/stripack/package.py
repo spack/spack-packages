@@ -34,15 +34,15 @@ class Stripack(MakefilePackage):
 
     depends_on("fortran", type="build")
 
+    build_targets = ["all"]
+
     @run_before("build")
     def run_mkmake(self):
         config = [
             "BUILDIR ?= " + join_path(self.build_directory, "build"),
             "DYLIB=" + dso_suffix,
-            "F90=" + self.compiler.fc,
-            "LD=" + self.compiler.fc,
-            "FFLAGS=" + self.compiler.fc_pic_flag,
-            "LDFLAGS=" + self.compiler.fc_pic_flag,
+            "F90=" + spack_fc,
+            "LD=" + spack_fc,
             ".SUFFIXES: .f .f90 .F90",
             "$(BUILDIR)/%.o: %.f90",
             "\t$(F90) $(FFLAGS) -c $< -o $@",
@@ -60,23 +60,27 @@ class Stripack(MakefilePackage):
             "VISIT_FFP_STRIPACK_PATH", join_path(self.spec.prefix.lib, "libstripack." + dso_suffix)
         )
 
-    def build(self, spec, prefix):
-        fflags = spec.compiler_flags["fflags"]
-        # Setting the double precision mode
-        # needed for the original Fortran 77 version
-        satisfies = spec.satisfies
-        if satisfies("%gcc") or satisfies("%clang") or satisfies("%flang"):
-            fflags += ["-fdefault-real-8", "-fdefault-double-8"]
-        elif satisfies("%intel") or satisfies("%oneapi") or satisfies("%aocc"):
-            fflags += ["-r8"]
-        elif satisfies("%xl") or satisfies("%xl_r"):
-            fflags += ["-qrealsize=8"]
-        elif satisfies("%fj"):
-            fflags += ["-CcdRR8"]
-        elif satisfies("%nvhpc"):
-            fflags += ["-r8"]
-        fflags += [self.compiler.fc_pic_flag]
-        make("all", "FFLAGS={0}".format(" ".join(fflags)))
+    def flag_handler(self, name, flags):
+        if name != "fflags":
+            return flags, None, None
+
+        spec = self.spec
+
+        # The original Fortran 77 version has to be built in double precision mode.
+        if spec.satisfies("%fortran=gcc") or spec.satisfies("%fortran=llvm"):
+            flags.extend(["-fdefault-real-8", "-fdefault-double-8"])
+        elif spec.satisfies("%fortran=xl"):
+            flags.append("-qrealsize=8")
+        elif spec.satisfies("%fortran=fj"):
+            flags.append("-CcdRR8")
+        elif any(
+            spec.satisfies(f"%fortran={compiler}")
+            for compiler in ("intel", "oneapi", "aocc", "nvhpc")
+        ):
+            flags.append("-r8")
+
+        flags.append(spec["fortran"].package.pic_flag)
+        return flags, None, None
 
     def install(self, spec, prefix):
         mkdirp(prefix.lib)

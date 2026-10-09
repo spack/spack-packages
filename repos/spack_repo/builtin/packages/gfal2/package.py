@@ -24,7 +24,6 @@ class Gfal2(CMakePackage):
     variant("gridftp", default=False, description="Enable gridftp plugin")
     variant("http", default=False, description="Enable http plugin")
     variant("sftp", default=False, description="Enable sftp plugin")
-    variant("sftp", default=False, description="Enable sftp plugin")
     variant("srm", default=False, description="Enable srm plugin")
     variant("xrootd", default=False, description="Enable xrootd plugin")
 
