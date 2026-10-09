@@ -81,4 +81,6 @@ class Rocshmem(ROCmLibrary, CMakePackage):
             args.append(self.define("USE_GPU_IB", False))
         if self.spec.satisfies("@7.1:"):
             args.append(self.define("ROCM_PATH", self.spec["rocm-core"].prefix))
+        # Enable position-independent code for shared library linking
+        args.append(self.define("CMAKE_POSITION_INDEPENDENT_CODE", True))
         return args
