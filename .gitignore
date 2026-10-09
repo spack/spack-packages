@@ -1,6 +1,14 @@
 /spack-core
 /pyrightconfig.json
 
+
+##########################
+# Spack-specific ignores #
+##########################
+.spack-env/
+spack.lock
+
+
 ###########################
 # Python-specific ignores #
 ###########################

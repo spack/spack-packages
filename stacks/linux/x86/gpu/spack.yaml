@@ -1,0 +1,90 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# Maintainers:
+# - kwryankrattiger
+
+spack:
+  include:
+    - ../base/config/
+
+  concretizer:
+    reuse:
+      from:
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/base
+
+    unify: when_possible
+
+  packages:
+    all:
+      prefer:
+      - target=x86_64_v3
+
+    llvm-amdgpu:
+      require:
+        - +rocm-device-libs +llvm_dylib
+
+    mesa:
+      require:
+        - +osmesa +glx +llvm
+
+  definitions:
+    - cuda:
+      - cuda@13
+      - nvhpc default_cuda=13.0
+
+    - gl-libs:
+      - mesa
+
+    - rocm:
+      - matrix:
+        - - llvm-amdgpu
+          - amdsmi
+          - comgr
+          - composable-kernel
+          - hip
+          - hipblas
+          - hipify-clang
+          - hiprand
+          - hipsolver
+          - hipsparse
+          - hsa-rocr-dev
+          - miopen-hip
+          - rccl
+          - rocblas
+          - rocfft
+          - rocm-cmake
+          - rocm-core
+          - rocm-dbgapi
+          - rocm-debug-agent
+          - rocm-opencl
+          - rocm-openmp-extras
+          - rocm-smi-lib
+          - rocprim
+          - rocrand
+          - rocsolver
+          - rocsparse
+          - rocthrust
+          - roctracer-dev
+          - roctracer-dev-api
+          - rocminfo
+          # - rocm-device-libs  # rocm-device-libs is provided by llvm-amdgpu
+          # rocprofiler tools are excluded from this stack for now
+          # - rocprofiler-dev
+          # - rocprofiler-sdk
+          # - rocprofiler-system
+        - - "@7.2.3"
+
+  specs:
+    - $cuda
+    - $gl-libs
+
+    - group: rocm-gfx90a
+      specs:
+        - $rocm
+      override:
+        packages:
+          all:
+            require: amdgpu_target=gfx90a

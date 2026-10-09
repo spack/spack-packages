@@ -1,0 +1,29 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# This packages config is used to describe the core runtimes to reuse in
+# the common stacks from the "base" stack.
+#
+# Maintainers:
+# - kwryankrattiger
+packages:
+  c:
+    prefer: &base-compiler
+      - "gcc@13.4.0"
+  cxx:
+    prefer: *base-compiler
+  fortran:
+    prefer: *base-compiler
+
+  python:
+    prefer:
+      - "@3.10.20"
+
+  clang:
+    prefer:
+      - "@16:"
+
+  llvm:
+    prefer:
+      - "@16:"
