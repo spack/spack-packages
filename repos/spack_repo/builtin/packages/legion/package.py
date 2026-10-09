@@ -32,6 +32,7 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
 
     maintainers("pmccormick", "streichler", "elliottslaughter", "rbberger")
     tags = ["e4s"]
+    version("26.09.1", tag="legion-26.09.1", commit="aea587e157abff12f7d089c81f29cd3a8b993a2b")
     version("26.09.0", tag="legion-26.09.0", commit="baf03d794b14587f800e5d65d1bcda2c6aaa3671")
     version("26.06.0", tag="legion-26.06.0", commit="c1096661a42f970904881366a94ff26c686fde61")
     version("26.03.0", tag="legion-26.03.0", commit="b95c7bfdbdf564eac57f9ace73c394acea4ac216")

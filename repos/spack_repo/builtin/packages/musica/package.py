@@ -19,7 +19,7 @@ class Musica(CMakePackage):
     """
 
     homepage = "https://github.com/NCAR/musica"
-    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.15.0.tar.gz"
+    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.17.1.tar.gz"
     git = "https://github.com/NCAR/musica.git"
 
     maintainers("kshores", "boulderdaze")
@@ -27,6 +27,7 @@ class Musica(CMakePackage):
     license("Apache-2.0", checked_by="kshores")
 
     # Versions
+    version("0.17.1", sha256="1f7dd45c295dbaa27e31b3f496c9a3095bb00d9173fb341ea9cf86fda2995de1")
     version("0.16.0", sha256="aec7be3f46abfd334f1842acf88434c1d3d872703714641fc5a4730892a1d947")
     version("0.15.0", sha256="48a01c082d8db8731add80c691c7794e7069927fa17ec21e093ad1774b8cd30b")
     version("0.14.5", sha256="31d9c75e8a4852f8f053f43a44313f3b392911056b72f63209eb2f091c7e486a")
@@ -44,6 +45,8 @@ class Musica(CMakePackage):
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("micm", default=True, description="Enable MICM support")
+    variant("miam", default=False, description="Enable MIAM support")
+    variant("miem", default=False, description="Enable MIEM support")
     variant("tuvx", default=True, description="Enable TUV-x support")
     variant("javascript", default=False, description="Build the JavaScript addon")
     variant("julia", default=False, description="Build the Julia wrapper")
@@ -56,12 +59,15 @@ class Musica(CMakePackage):
 
     # Dependencies
     depends_on("cmake@3.21:", type="build")
+    depends_on("cmake@3.24:", type="build", when="@0.14.2:")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("mpi", when="+mpi")
     depends_on("netcdf-fortran", when="+tuvx")
     depends_on("libcxxwrap-julia", when="+julia")
+    depends_on("node-js", type=("build", "run"), when="+javascript")
+    depends_on("npm", type="build", when="+javascript")
     depends_on("fmt", when="+fmt")
 
     def cmake_args(self):
@@ -72,6 +78,8 @@ class Musica(CMakePackage):
             self.define_from_variant("MUSICA_ENABLE_MPI", "mpi"),
             self.define_from_variant("MUSICA_ENABLE_OPENMP", "openmp"),
             self.define_from_variant("MUSICA_ENABLE_MICM", "micm"),
+            self.define_from_variant("MUSICA_ENABLE_MIAM", "miam"),
+            self.define_from_variant("MUSICA_ENABLE_MIEM", "miem"),
             self.define_from_variant("MUSICA_ENABLE_TUVX", "tuvx"),
             # CARMA defaults to ON upstream, but always fetches an unreleased,
             # commit-pinned CARMA-ACOM-dev tree at build time. Keep it OFF to avoid

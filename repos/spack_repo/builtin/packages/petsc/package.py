@@ -133,6 +133,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
+    variant("superlu", default=False, description="Activates support for SuperLU (sequential)")
     variant(
         "superlu-dist",
         default=False,
@@ -150,6 +151,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         default="C",
         values=("C", "C++"),
         description="Specify C (recommended) or C++ to compile PETSc",
+        multi=False,
+    )
+    variant(
+        "cxxstd",
+        default="auto",
+        values=("auto", "11", "14", "17", "20"),
+        description="Specify the C++ dialect to use (auto: let PETSc choose)",
         multi=False,
     )
     variant("fftw", default=False, description="Activates support for FFTW (only parallel)")
@@ -258,6 +266,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
+    # SuperLU has no 64-bit integer support - use superlu-dist instead
+    conflicts("+superlu", when="+int64")
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -353,6 +363,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre@2.21:", when="@3.20:3.21+hypre")
     depends_on("hypre@2.31:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
+    # hypre@3: requires umpire for +cuda/+rocm - petsc has to link it as well
+    depends_on("umpire", when="@3.24:+hypre ^hypre+umpire")
+
+    depends_on("superlu@5.2.1:", when="+superlu")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
     depends_on("superlu-dist@6.1:+int64", when="@3.13.0:+superlu-dist+mpi+int64")
@@ -522,6 +536,14 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
+        if not spec.satisfies("cxxstd=auto"):
+            cxxstd = spec.variants["cxxstd"].value
+            options.append("--with-cxx-dialect=%s" % cxxstd)
+            if spec.satisfies("+cuda"):
+                options.append("--with-cuda-dialect=%s" % cxxstd)
+            if spec.satisfies("+rocm"):
+                options.append("--with-hip-dialect=%s" % cxxstd)
+
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -549,9 +571,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hip", "hip", True, False),
             "metis",
             "hypre",
+            "umpire",
             "parmetis",
             ("kokkos", "kokkos", False, False),
             ("kokkos-kernels", "kokkos-kernels", False, False),
+            "superlu",
             ("superlu-dist", "superlu_dist", True, True),
             ("scotch", "ptscotch", True, True),
             (
@@ -655,13 +679,16 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_inc += spec[pkg].headers.include_flags + " "
             for pkg in hip_lpkgs:
                 hip_lib += spec[pkg].libs.joined() + " "
+            if spec.satisfies("%gcc"):
+                # silence hipcc warnings from the gcc toolchain flags hip injects
+                hip_inc += "-w "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
         else:
             options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
-            if spec.satisfies("@3.10.3:3.15"):
+            if spec.satisfies("@3.10.3:3.15 cxxstd=auto"):
                 options.append("--with-cxx-dialect=C++11")
             if spec["superlu-dist"].satisfies("+rocm"):
                 # Suppress HIP header warning message, otherwise the PETSc

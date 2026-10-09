@@ -22,6 +22,7 @@ class PyShapely(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.2.0", sha256="e8865e553d874a1ec4a032057ea81fca9def37b188cd8fb550af3b3480b3f88c")
     version("2.1.2", sha256="2ed4ecb28320a433db18a5bf029986aa8afcfd740745e78847e330d5d94922a9")
     version("2.1.1", sha256="500621967f2ffe9642454808009044c21e5b35db89ce69f8a2042c2ffd0e2772")
     version("2.1.0", sha256="2cbe90e86fa8fc3ca8af6ffb00a77b246b918c7cf28677b7c21489b678f6b02e")
@@ -44,15 +45,26 @@ class PyShapely(PythonPackage):
 
     depends_on("c", type="build")
 
-    # pyproject.toml
+    # pyproject.toml / meson.build
     with default_args(type="build"):
         depends_on("py-cython", when="@2.0.2:")
         depends_on("py-cython@0.29:0", when="@2.0.0:2.0.1")
         depends_on("py-cython@0.29.24:2", when="@:1")
-        depends_on("py-setuptools@61:", when="@2:")
+        depends_on("py-meson-python@0.15:", when="@2.2:")
+        depends_on("meson@1.2.1:", when="@2.2:")
+        depends_on("pkgconfig", when="@2.2:")
+
+        # Historical dependencies
+        depends_on("py-setuptools@61:", when="@2.0:2.1")
         depends_on("py-setuptools@:63", when="@:1")
 
+    conflicts("py-meson-python@0.22.0")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@2.2:")
+
     with default_args(type=("build", "link", "run")):
+        depends_on("py-numpy@1.26:", when="@2.2:")
         depends_on("py-numpy@1.21:", when="@2.1:")
         depends_on("py-numpy@1.14:2", when="@2.0.6:2.0")
         # https://github.com/shapely/shapely/issues/2098
@@ -61,7 +73,8 @@ class PyShapely(PythonPackage):
         depends_on("py-numpy@1.14:1", when="@2.0.0:2.0.3")
         depends_on("py-numpy@:1", when="@1")
 
-    # setup.py
+    # meson.build / setup.py
+    depends_on("geos@3.10:", when="@2.2:")
     depends_on("geos@3.9:", when="@2.1:")
     depends_on("geos@3.5:", when="@2:")
     depends_on("geos@3.3:", when="@:1")
