@@ -275,3 +275,8 @@ class Fftw(FftwBase):
     patch("pfft-3.3.5.patch", when="@3.3.5:3.3.8+pfft_patches", level=0)
     patch("pfft-3.3.4.patch", when="@3.3.4+pfft_patches", level=0)
     patch("intel-configure.patch", when="@3:3.3.8%intel", level=0)
+    # generic-simd256 used the stride check of the one-complex-per-vector ISAs, so aligned
+    # codelets ran on strided double-precision transforms and gave wrong results.
+    # https://github.com/FFTW/fftw3/pull/421
+    patch("generic-simd256-vstride-3.3.5.patch", when="@3.3.5:3.3.9")
+    patch("generic-simd256-vstride-3.3.10.patch", when="@3.3.10:3.3.11")
