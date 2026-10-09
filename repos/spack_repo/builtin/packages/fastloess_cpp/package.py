@@ -22,7 +22,7 @@ class FastloessCpp(CargoPackage):
     C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/loess-project/cpp/"
-    url = "https://github.com/thisisamirv/loess-project/archive/refs/tags/v3.0.0.tar.gz"
+    url = "https://github.com/thisisamirv/loess-project/archive/refs/tags/v2.0.0.tar.gz"
     git = "https://github.com/thisisamirv/loess-project.git"
 
     test_requires_compiler = True
@@ -38,7 +38,6 @@ class FastloessCpp(CargoPackage):
 
     # version() lines below are appended/updated by release-cpp.yml's
     # spack-release job on every release; keep newest first.
-    version("3.0.0", sha256="33940eaa0c6d972194225060d6ab95361e3664f685578855fe6f5da4cfad926e")
     version(
         "3.0.0",
         sha256="33940eaa0c6d972194225060d6ab95361e3664f685578855fe6f5da4cfad926e",
