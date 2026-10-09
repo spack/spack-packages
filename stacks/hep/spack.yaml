@@ -6,6 +6,7 @@ spack:
 
   concretizer:
     static_analysis: true
+    unify: when_possible
 
   config:
     # ROOT fails downloads frequently
