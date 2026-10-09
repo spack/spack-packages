@@ -19,7 +19,7 @@ class Rsync(AutotoolsPackage):
     as an improved copy command for everyday use."""
 
     homepage = "https://rsync.samba.org"
-    url = "https://download.samba.org/pub/rsync/src/rsync-3.4.2.tar.gz"
+    url = "https://download.samba.org/pub/rsync/src/rsync-3.5.1.tar.gz"
 
     maintainers("drkrynstrng")
 
