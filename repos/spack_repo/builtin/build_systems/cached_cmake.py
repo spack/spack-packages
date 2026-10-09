@@ -4,10 +4,21 @@
 import collections.abc
 import enum
 import os
+import pathlib
 import re
 from typing import Optional, Tuple
 
-from spack.package import Prefix, Spec, depends_on, install, mkdirp, run_after, tty, which_string
+from spack.package import (
+    Prefix,
+    Spec,
+    depends_on,
+    get_cmake_prefix_path,
+    install,
+    mkdirp,
+    run_after,
+    tty,
+    which_string,
+)
 
 from .cmake import CMakeBuilder, CMakePackage
 
@@ -18,16 +29,24 @@ def spec_uses_toolchain(spec):
     return using_toolchain
 
 
+def _cmake_cache_escape(value):
+    return str(value).replace("\\", "\\\\").replace('"', '\\"')
+
+
 def cmake_cache_path(name, value, comment="", force=False):
     """Generate a string for a cmake cache variable"""
     force_str = " FORCE" if force else ""
-    return 'set({0} "{1}" CACHE PATH "{2}"{3})\n'.format(name, value, comment, force_str)
+    return 'set({0} "{1}" CACHE PATH "{2}"{3})\n'.format(
+        name, _cmake_cache_escape(value), comment, force_str
+    )
 
 
 def cmake_cache_string(name, value, comment="", force=False):
     """Generate a string for a cmake cache variable"""
     force_str = " FORCE" if force else ""
-    return 'set({0} "{1}" CACHE STRING "{2}"{3})\n'.format(name, value, comment, force_str)
+    return 'set({0} "{1}" CACHE STRING "{2}"{3})\n'.format(
+        name, _cmake_cache_escape(value), comment, force_str
+    )
 
 
 def cmake_cache_option(name, boolean_value, comment="", force=False):
@@ -40,7 +59,9 @@ def cmake_cache_option(name, boolean_value, comment="", force=False):
 
 def cmake_cache_filepath(name, value, comment=""):
     """Generate a string for a cmake cache variable of type FILEPATH"""
-    return 'set({0} "{1}" CACHE FILEPATH "{2}")\n'.format(name, value, comment)
+    return 'set({0} "{1}" CACHE FILEPATH "{2}")\n'.format(
+        name, _cmake_cache_escape(value), comment
+    )
 
 
 class CachedCMakeBuilder(CMakeBuilder):
@@ -341,14 +362,20 @@ class CachedCMakeBuilder(CMakeBuilder):
         return entries
 
     def std_initconfig_entries(self):
-        cmake_prefix_path_env = os.environ["CMAKE_PREFIX_PATH"]
-        cmake_prefix_path = cmake_prefix_path_env.replace(os.pathsep, ";")
+        cmake_prefix_path = ";".join(
+            pathlib.Path(prefix).as_posix() for prefix in get_cmake_prefix_path(self.pkg)
+        )
+        env_rpaths = [
+            pathlib.Path(path).as_posix()
+            for var in ("SPACK_COMPILER_EXTRA_RPATHS", "SPACK_COMPILER_IMPLICIT_RPATHS")
+            for path in os.environ.get(var, "").split(os.pathsep)
+            if path
+        ]
         complete_rpath_list = ";".join(
             [
-                self.pkg.spec.prefix.lib,
-                self.pkg.spec.prefix.lib64,
-                *os.environ.get("SPACK_COMPILER_EXTRA_RPATHS", "").split(":"),
-                *os.environ.get("SPACK_COMPILER_IMPLICIT_RPATHS", "").split(":"),
+                pathlib.Path(self.pkg.spec.prefix.lib).as_posix(),
+                pathlib.Path(self.pkg.spec.prefix.lib64).as_posix(),
+                *env_rpaths,
             ]
         )
         return [
