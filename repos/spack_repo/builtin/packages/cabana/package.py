@@ -46,10 +46,8 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     variant("hypre", default=False, description="Build with HYPRE support")
     variant("silo", when="@0.4:", default=False, description="Build with SILO support")
     variant("hdf5", when="@0.6: +mpi", default=False, description="Build with HDF5 support")
-    variant(
-        "cajita", when="+mpi", default=False, description="Build Cajita subpackage (Grid in 0.6:)"
-    )
-    variant("grid", when="+mpi", default=False, description="Build Grid subpackage")
+    variant("cajita", when="@:0.5 +mpi", default=False, description="Build Cajita subpackage")
+    variant("grid", when="@0.6: +mpi", default=False, description="Build Grid subpackage")
     variant("testing", default=False, description="Build unit tests")
     variant("examples", default=False, description="Build tutorial examples")
     variant("performance_testing", default=False, description="Build performance tests")
@@ -68,27 +66,28 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("kokkos@4.1:4.6", when="@0.8.0")
     depends_on("kokkos@4.1:", when="@0.8.1:")
 
-    for _backend in set(_kokkos_backends) - {"cuda", "rocm"}:
+    for _backend in _kokkos_backends:
+        depends_on(f"kokkos~{_backend}", when=f"~{_backend}")
         depends_on(f"kokkos+{_backend}", when=f"+{_backend}")
 
     # Propagate cuda architectures down to Kokkos and optional submodules
     for _arch in CudaPackage.cuda_arch_values:
-        cuda_dep = f"+cuda cuda_arch={_arch}"
+        cuda_dep = f"cuda_arch={_arch}"
         depends_on(f"kokkos {cuda_dep}", when=cuda_dep)
         depends_on(f"heffte {cuda_dep}", when=f"+heffte {cuda_dep}")
         depends_on(f"arborx {cuda_dep}", when=f"+arborx {cuda_dep}")
         depends_on(f"hypre {cuda_dep}", when=f"+hypre {cuda_dep}")
 
     for _arch in ROCmPackage.amdgpu_targets:
-        rocm_dep = f"+rocm amdgpu_target={_arch}"
+        rocm_dep = f"amdgpu_target={_arch}"
         depends_on(f"kokkos {rocm_dep}", when=rocm_dep)
         depends_on(f"heffte {rocm_dep}", when=f"+heffte {rocm_dep}")
         depends_on(f"arborx {rocm_dep}", when=f"+arborx {rocm_dep}")
         depends_on(f"hypre {rocm_dep}", when=f"+hypre {rocm_dep}")
 
     # https://github.com/ECP-copa/Cabana/releases/tag/0.7.0
-    depends_on("kokkos+cuda_lambda@3.7:", when="+cuda@:0.6")
-    depends_on("kokkos+cuda_lambda@4.1:", when="+cuda@0.7:")
+    depends_on("kokkos@3.7: +cuda_lambda", when="@:0.6 +cuda")
+    depends_on("kokkos@4.1: +cuda_lambda", when="@0.7: +cuda")
 
     # Dependencies for subpackages
     depends_on("all-library", when="@0.5.0:+all")
@@ -124,22 +123,24 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         options = [self.define_from_variant("BUILD_SHARED_LIBS", "shared")]
 
-        enable = ["CAJITA", "TESTING", "EXAMPLES", "PERFORMANCE_TESTING"]
+        enable = ["TESTING", "EXAMPLES", "PERFORMANCE_TESTING"]
         require = ["ALL", "ARBORX", "HEFFTE", "HYPRE", "SILO", "HDF5"]
 
         # MPI was changed from ENABLE to REQUIRE in 0.4.0
         if self.spec.satisfies("@:0.3.0"):
-            enable += ["MPI"]
+            enable.append("MPI")
         else:
-            require += ["MPI"]
+            require.append("MPI")
 
         # Cajita was renamed Grid in 0.6
         if self.spec.satisfies("@0.6.0:"):
-            enable += ["GRID"]
+            enable.append("GRID")
+        else:
+            enable.append("CAJITA")
 
         for category, cname in zip([enable, require], ["ENABLE", "REQUIRE"]):
             for var in category:
-                cbn_option = "Cabana_{0}_{1}".format(cname, var)
+                cbn_option = f"Cabana_{cname}_{var}"
                 options.append(self.define_from_variant(cbn_option, var.lower()))
 
         # Attempt to disable find_package() calls for disabled options(if option supports it):
