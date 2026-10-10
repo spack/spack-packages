@@ -91,7 +91,8 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-vtune", when="+vtune")
 
     depends_on("cmake", type="build")
-    depends_on("python", type="build")
+    # ValueError: Cannot use capturing groups in re.Scanner
+    depends_on("python@:3.14", type="build")
 
     depends_on("python@3", when="+python", type=("build", "link", "run"))
     depends_on("py-pybind11", when="+python", type=("build", "link", "run"))

@@ -56,14 +56,18 @@ class Python(Package):
 
     license("0BSD")
 
-    version("3.14.5", sha256="9c22bfe9939a6c5418fc74b289a5f1cc41859ae82ac6b163016b5844bd0a86bc")
-    version("3.13.13", sha256="f9cde7b0e2ec8165d7326e2a0f59ea2686ce9d0c617dbbb3d66a7e54d31b74b9")
-    version("3.12.14", sha256="6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43")
-    version("3.11.15", sha256="f4de1b10bd6c70cbb9fa1cd71fc5038b832747a74ee59d599c69ce4846defb50")
-    version("3.10.20", sha256="4ff5fd4c5bab803b935019f3e31d7219cebd6f870d00389cea53b88bbe935d1a")
+    version("3.15.0", sha256="438596cac081036d3c1d532ab7e7335eeb35567bc961749a0d5797176db0db68")
+    version("3.14.8", sha256="a65b20a728f169f4e66ae143f40b1bd3d33c38d770251663f627c9767b79b210")
+    version("3.13.16", sha256="cfac63bddf956deafb1172ca131ae5dcaafd6f95056086e233fca205593ed427")
+    version("3.12.15", sha256="de1a241a519e0a3374fea98988d0b52c886743f9d953f23be8269cc7b59c5fab")
+    version("3.11.17", sha256="53cdee63ac4bf12387b7b33a53d3b1f8f4941cad73807a7b4fe91bb001ef004a")
+    version("3.10.22", sha256="9448b34d16f8e3db0964ac3ed9fb283197747543c2c021f283ffd2c8b7287357")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
+        version(
+            "3.14.5", sha256="9c22bfe9939a6c5418fc74b289a5f1cc41859ae82ac6b163016b5844bd0a86bc"
+        )
         version(
             "3.14.4", sha256="b4c059d5895f030e7df9663894ce3732bfa1b32cd3ab2883980266a45ce3cb3b"
         )
@@ -75,6 +79,9 @@ class Python(Package):
         )
         version(
             "3.14.0", sha256="88d2da4eed42fa9a5f42ff58a8bc8988881bd6c547e297e46682c2687638a851"
+        )
+        version(
+            "3.13.13", sha256="f9cde7b0e2ec8165d7326e2a0f59ea2686ce9d0c617dbbb3d66a7e54d31b74b9"
         )
         version(
             "3.13.12", sha256="12e7cb170ad2d1a69aee96a1cc7fc8de5b1e97a2bdac51683a3db016ec9a2996"
@@ -107,6 +114,9 @@ class Python(Package):
             "3.13.0", sha256="12445c7b3db3126c41190bfdc1c8239c39c719404e844babbd015a1bc3fafcd4"
         )
         version(
+            "3.12.14", sha256="6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43"
+        )
+        version(
             "3.12.13", sha256="0816c4761c97ecdb3f50a3924de0a93fd78cb63ee8e6c04201ddfaedca500b0b"
         )
         version(
@@ -125,6 +135,9 @@ class Python(Package):
             "3.12.7", sha256="73ac8fe780227bf371add8373c3079f42a0dc62deff8d612cd15a618082ab623"
         )
         version(
+            "3.11.15", sha256="f4de1b10bd6c70cbb9fa1cd71fc5038b832747a74ee59d599c69ce4846defb50"
+        )
+        version(
             "3.11.14", sha256="563d2a1b2a5ba5d5409b5ecd05a0e1bf9b028cf3e6a6f0c87a5dc8dc3f2d9182"
         )
         version(
@@ -132,6 +145,9 @@ class Python(Package):
         )
         version(
             "3.11.11", sha256="883bddee3c92fcb91cf9c09c5343196953cbb9ced826213545849693970868ed"
+        )
+        version(
+            "3.10.20", sha256="4ff5fd4c5bab803b935019f3e31d7219cebd6f870d00389cea53b88bbe935d1a"
         )
         version(
             "3.10.19", sha256="a078fb2d7a216071ebbe2e34b5f5355dd6b6e9b0cd1bacc4a41c63990c5a0eec"
