@@ -403,6 +403,18 @@ class CMakeBuilder(CMakeBuilder):
             args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
             args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
 
+        if "+umpire" in self.spec:
+            umpire = self.spec["umpire"]
+            umpire_opts = umpire.prefix.include
+            umpire_libs = umpire.libs
+            if "^camp" in umpire:
+                umpire_libs += umpire["camp"].libs
+            if "^fmt" in umpire:
+                umpire_libs += umpire["fmt"].libs
+
+            args.append(self.define("TPL_UMPIRE_INCLUDE_DIRS", umpire_opts))
+            args.append(self.define("TPL_UMPIRE_LIBRARIES", umpire_libs))
+
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)
         if cuda_arch_vals and cuda_arch_vals.value:
