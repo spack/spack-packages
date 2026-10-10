@@ -1343,7 +1343,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "+enzyme" in spec:
             options += ["ENZYME_DIR=%s" % spec["enzyme"].prefix]
 
-        if "+caliper" in spec: 
+        if "+caliper" in spec:
             options += [
                 "CALIPER_DIR=%s" % self.spec["caliper"].prefix,
                 "MFEM_USE_ADIAK=ON",
