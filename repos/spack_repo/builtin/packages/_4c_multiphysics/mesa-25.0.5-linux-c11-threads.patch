@@ -1,0 +1,19 @@
+Mesa 25.0.5 enables native C11 threads only on Android. On Linux with
+newer glibc, stdlib.h also declares once_flag and call_once, conflicting
+with Mesa's fallback definitions. Use the detected native C11 thread API
+on Linux as well; systems without thrd_create still use the fallback.
+
+diff --git a/meson.build b/meson.build
+--- a/meson.build
++++ b/meson.build
+@@ -1462,10 +1462,9 @@ endif
+ 
+ with_c11_threads = false
+ if cc.has_function('thrd_create', prefix: '#include <threads.h>')
+-  if with_platform_android
+-    # Current only Android's c11 <threads.h> are verified
++  if with_platform_android or host_machine.system() == 'linux'
+     pre_args += '-DHAVE_THRD_CREATE'
+     with_c11_threads = true
+   endif
+ endif
