@@ -2,12 +2,16 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import json
 import os
 import re
 import shutil
 import stat
+import urllib
+from functools import lru_cache
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
+import spack.util.web as web_util
 from spack.package import (
     BuilderWithDefaults,
     ClassProperty,
@@ -36,6 +40,7 @@ from spack.package import (
     when,
     working_dir,
 )
+from spack.version import StandardVersion
 
 
 def _flatten_dict(dictionary: Mapping[str, object]) -> Iterable[str]:
@@ -200,6 +205,59 @@ for module in sys.argv[1:]:
 """,
                 *self.import_modules,
             )
+
+    @lru_cache(maxsize=32)
+    def _get_pypi_info(self):
+        """check pypi.org json api and return data"""
+        if hasattr(self, "pypi") and self.pypi:
+            ps = self.pypi.split("/")[0]
+            api_url = f"https://pypi.org/pypi/{ps}/json"
+            request = urllib.request.Request(
+                api_url, headers={"User-Agent": web_util.SPACK_USER_AGENT, "Accept": "*/*"}
+            )
+            try:
+                with web_util.urlopen(request) as response:
+                    data = response.read()
+                    if data and data.startswith(b"{"):
+                        unpacked = json.loads(data)
+                        tty.debug(f"found entry for {ps} in pypi api")
+                        return unpacked
+            except web_util.DetailedHTTPError:
+                tty.warn(f"Unable to fetch PyPi json information for {ps}")
+
+        return None
+
+    def url_for_version(self, version):
+        """if we can find the url on pypi, return it."""
+        pypi_info = self._get_pypi_info()
+
+        if pypi_info:
+            if self.pypi.endswith(".whl"):
+                pkgtype = "bdist_wheel"
+            else:
+                pkgtype = "sdist"
+
+            if str(version) in pypi_info["releases"]:
+                tty.debug(f"found version {version} in pypi info")
+                ve = pypi_info["releases"][str(version)]
+                for i in range(len(ve)):
+                    if ve[i]["packagetype"] == pkgtype:
+                        sdi = i
+                        tty.debug(f"returning {ve[sdi]['url']}")
+                        return ve[sdi]["url"]
+        return None
+
+    def fetch_remote_versions(
+        self, concurrency: Optional[int] = None
+    ) -> Dict[StandardVersion, str]:
+        """if we can find the url on pypi, return it."""
+        pypi_info = self._get_pypi_info()
+        if pypi_info:
+            res = {}
+            for ver in pypi_info["releases"]:
+                res[StandardVersion.from_string(ver)] = self.url_for_version(ver)
+            return res
+        return super().fetch_remote_versions(concurrency)
 
 
 def _homepage(cls: "PythonPackage") -> Optional[str]:
