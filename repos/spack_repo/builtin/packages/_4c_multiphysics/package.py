@@ -122,7 +122,10 @@ class _4cMultiphysics(CMakePackage):
         "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
         "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
         "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
-        patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
+        patches=[
+            patch("trilinos-iocgns-extern-c-linkage.patch"),
+            patch("trilinos-16.2-sacado-clang-specialization.patch", when="@16.2 platform=darwin"),
+        ],
     )
     # Trilinos exposes MPI types in its C++ ABI, so oneAPI builds require
     # Intel MPI regardless of 4C's compiler.

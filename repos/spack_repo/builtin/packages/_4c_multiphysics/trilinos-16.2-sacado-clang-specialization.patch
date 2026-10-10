@@ -1,0 +1,65 @@
+Sacado's layout wrappers rely on specializations of standard type traits.
+Clang with libc++ diagnoses these declarations as invalid specializations.
+Limit diagnostic suppression to these declarations, preserving Sacado's
+layout comparisons and diagnostics elsewhere, including in header consumers.
+
+diff --git a/packages/sacado/src/Kokkos_LayoutContiguous.hpp b/packages/sacado/src/Kokkos_LayoutContiguous.hpp
+--- a/packages/sacado/src/Kokkos_LayoutContiguous.hpp
++++ b/packages/sacado/src/Kokkos_LayoutContiguous.hpp
+@@ -87,6 +87,13 @@ struct inner_layout< LayoutContiguous<Layout,Stride> > {
+ 
+ // FIXME This is evil and needs refactoring urgently.
+ // Make LayoutContiguous<Layout> equivalent to Layout
++#ifdef __clang__
++#if __has_warning("-Winvalid-specialization")
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Winvalid-specialization"
++#endif
++#endif
++
+ namespace std {
+ 
+   template <class Layout, unsigned Stride>
+@@ -114,6 +121,12 @@ namespace std {
+ #endif
+ }
+ 
++#ifdef __clang__
++#if __has_warning("-Winvalid-specialization")
++#pragma clang diagnostic pop
++#endif
++#endif
++
+ #if KOKKOS_VERSION >= 40499
+ #include "View/Kokkos_ViewMapping.hpp"
+ #else
+diff --git a/packages/sacado/src/Kokkos_LayoutNatural.hpp b/packages/sacado/src/Kokkos_LayoutNatural.hpp
+--- a/packages/sacado/src/Kokkos_LayoutNatural.hpp
++++ b/packages/sacado/src/Kokkos_LayoutNatural.hpp
+@@ -65,6 +65,13 @@ struct inner_layout< LayoutNatural<Layout> > {
+ } // namespace Kokkos
+ 
+ // Make LayoutNatural<Layout> equivalent to Layout
++#ifdef __clang__
++#if __has_warning("-Winvalid-specialization")
++#pragma clang diagnostic push
++#pragma clang diagnostic ignored "-Winvalid-specialization"
++#endif
++#endif
++
+ namespace std {
+ 
+   template <class Layout>
+@@ -79,6 +86,12 @@ namespace std {
+ 
+ }
+ 
++#ifdef __clang__
++#if __has_warning("-Winvalid-specialization")
++#pragma clang diagnostic pop
++#endif
++#endif
++
+ #if KOKKOS_VERSION >= 40499
+ #include "View/Kokkos_ViewMapping.hpp"
+ #else
