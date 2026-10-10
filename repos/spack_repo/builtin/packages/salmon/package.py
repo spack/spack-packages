@@ -1,12 +1,14 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+from spack_repo.builtin.build_systems import cargo, cmake
+from spack_repo.builtin.build_systems.cargo import CargoPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
 
 
-class Salmon(CMakePackage):
+class Salmon(CMakePackage, CargoPackage):
     """Salmon is a tool for quantifying the expression of transcripts using
     RNA-seq data."""
 
@@ -14,8 +16,14 @@ class Salmon(CMakePackage):
     url = "https://github.com/COMBINE-lab/salmon/archive/v0.8.2.tar.gz"
     maintainers("snehring")
 
-    license("GPL-3.0-only")
+    license("GPL-3.0-only", when="@0:1.11", checked_by="snehring")
+    license("BSD-3-Clause", when="@2:", checked_by="snehring")
 
+    build_system(
+        conditional("cmake", when="@:1.11"), conditional("cargo", when="@2:"), default="cargo"
+    )
+
+    version("2.8.0", sha256="298e6fe9980e4d60e4a4ca8f043d3446e6a1ed0777487331224151eb93ae7dd4")
     version("1.11.4", sha256="9410904fa787f1f9aca635626fcdca08f3af9b02f820963f9439e80fb56d23b8")
     version("1.10.3", sha256="a053fba63598efc4ade3684aa2c8e8e2294186927d4fcdf1041c36edc2aa0871")
     version("1.10.2", sha256="976989182160fef3afb4429ee8b85d8dd39ed6ca212bb14d6a65cde0e985fb98")
@@ -26,24 +34,18 @@ class Salmon(CMakePackage):
     version("0.9.1", sha256="3a32c28d217f8f0af411c77c04144b1fa4e6fd3c2f676661cc875123e4f53520")
     version("0.8.2", sha256="299168e873e71e9b07d63a84ae0b0c41b0876d1ad1d434b326a5be2dce7c4b91")
 
-    variant(
-        "build_type",
-        default="RELEASE",
-        description="CMake build type",
-        values=("DEBUG", "RELEASE"),
-    )
-
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(when="@0.8.2:1.11.4"):
+        depends_on("c", type="build")
+        depends_on("cxx", type="build")
 
     # 1.8.0 relies on tbb provided config, earlier versions make
     # assumptions about the layout of tbb files that are not true in
     # 2021.1 and later
     conflicts("^intel-tbb@2021.1:", when="@:1.7.0")
     conflicts("^intel-oneapi-tbb@2021.1:", when="@:1.7.0")
-    depends_on("tbb")
-    depends_on("intel-tbb@2021.4.0:", when="@1.11: %tbb=intel-tbb")
-    depends_on("intel-oneapi-tbb@2021.4.0:", when="@1.11: %tbb=intel-oneapi-tbb")
+    depends_on("tbb", when="@:1")
+    depends_on("intel-tbb@2021.4.0:", when="@1.11:1 %tbb=intel-tbb")
+    depends_on("intel-oneapi-tbb@2021.4.0:", when="@1.11:1 %tbb=intel-oneapi-tbb")
     depends_on(
         "boost@1.66.0:"
         "+program_options+exception+filesystem+system+chrono+serialization"
@@ -56,30 +58,31 @@ class Salmon(CMakePackage):
         "+random+graph+timer+iostreams+math+thread+container",
         when="@1.4.0:1.10.3",
     )
-    depends_on("boost@1.72.0:+atomic+filesystem+timer+chrono+program_options", when="@1.11.4:")
-    depends_on("cereal")
+    depends_on("boost@1.72.0:+atomic+filesystem+timer+chrono+program_options", when="@1.11.4:1")
+    depends_on("cereal", when="@:1")
     depends_on("jemalloc", when="@:1.10")
-    depends_on("xz")
+    depends_on("xz", when="@:1")
     depends_on("zlib-api", when="@:1.10")
     # it's explicitly looking for zlib-ng.h files, not normal compat includes
-    depends_on("zlib-ng~compat", when="@1.11:")
+    depends_on("zlib-ng~compat", when="@1.11:1")
     depends_on("bzip2")
     depends_on("libdivsufsort", when="@:1.10")
     depends_on("staden-io-lib~curl", when="@:1.10")
     # docs suggest libdeflate is slightly faster
     depends_on("staden-io-lib~curl+libdeflate~shared@1.15:", when="@1.10.3")
-    depends_on("libgff")
-    depends_on("pkgconfig")
-    depends_on("curl", when="@0.14.1:")
-    depends_on("htslib", when="@1.10.2:")
-    depends_on("mimalloc", when="@1.11:")
-    depends_on("catch2", type="test", when="@1.11:")
+    depends_on("libgff", when="@:1")
+    depends_on("libgff@2.0.1:", when="@1.11:1")
+    depends_on("pkgconfig", when="@:1")
+    depends_on("curl", when="@0.14.1:1")
+    depends_on("htslib", when="@1.10.2:1")
+    depends_on("mimalloc", when="@1.11:1")
+    depends_on("catch2", type="test", when="@1.11:1")
     # probably just for tests, but cmake looks anyway
-    depends_on("python@3:", type="build", when="@1.11:")
+    depends_on("python@3:", type="build", when="@1.11:1")
 
     patch("fix_hts.patch", when="@1.10.2")
 
-    conflicts("%gcc@:5.1", when="@0.14.1:")
+    conflicts("%gcc@:5.1", when="@0.14.1:1")
 
     def flag_handler(self, name, flags):
         # GCC 14+ diagnoses errors in uninstantiated template bodies. The bundled
@@ -149,6 +152,7 @@ class Salmon(CMakePackage):
         level=1,
     )
 
+    @when("@:1")
     def patch(self):
         # remove static linking to libstdc++
         filter_file("-static-libstdc++", "", "CMakeLists.txt", string=True)
@@ -183,7 +187,7 @@ class Salmon(CMakePackage):
 
         # filter file to remove boost_system dep if boost @1.69:
         # (or 1.89: when they removed the stub)
-        if self.spec.satisfies("@1.11.4:"):
+        if self.spec.satisfies("@1.11.4:1"):
             if self.spec.satisfies("%boost@1.89:"):
                 filter_file(
                     r"(^set\(_salmon_boost_components.*)( system)(.*\)$)",
@@ -197,6 +201,12 @@ class Salmon(CMakePackage):
                 join_path("cmake", "SalmonDependencies.cmake"),
             )
 
+
+class CargoBuilder(cargo.CargoBuilder):
+    build_directory = "crates/salmon-cli"
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         if self.spec.satisfies("@:1.10.3"):
             args = ["-DBOOST_ROOT=%s" % self.spec["boost"].prefix]
@@ -212,8 +222,8 @@ class Salmon(CMakePackage):
                 self.define(
                     "SALMON_FQFEEDER_SOURCE_DIR", join_path(self.stage.source_path, "fqfeeder")
                 ),
-                self.define("SALMON_ENABLE_TESTS", self.run_tests),
-                self.define("SALMON_ENABLE_BENCHMARKS", self.run_tests),
+                self.define("SALMON_ENABLE_TESTS", self.pkg.run_tests),
+                self.define("SALMON_ENABLE_BENCHMARKS", self.pkg.run_tests),
             ]
         return args
 
