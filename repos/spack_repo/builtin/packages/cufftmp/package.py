@@ -36,6 +36,8 @@ class Cufftmp(Package, CudaPackage):
     # https://docs.nvidia.com/cuda/cufftmp/license.html
     license("NVIDIA Software License Agreement")
 
+    skip_version_audit = ["platform=darwin", "platform=windows"]
+
     for ver, packages in _versions.items():
         package = packages.get(f"{platform.system()}-{platform.machine()}")
         if package:
@@ -55,4 +57,6 @@ class Cufftmp(Package, CudaPackage):
             depends_on(f"nvshmem cuda_arch={cuda_arch}")
 
     def install(self, spec, prefix):
-        install_tree(".", prefix)
+        install_tree("lib", prefix.lib)
+        install_tree("include", prefix.include.cufftmp)
+        install("LICENSE", prefix)
