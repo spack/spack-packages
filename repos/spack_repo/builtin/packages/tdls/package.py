@@ -15,7 +15,7 @@ class Tdls(CMakePackage):
     to be embedded in TFEL/MFront."""
 
     homepage = "https://trsxvz.github.io/TDLS/"
-    url = "https://github.com/trsxvz/TDLS/archive/refs/tags/v0.1.0.tar.gz"
+    url = "https://github.com/trsxvz/TDLS/archive/refs/tags/v0.2.0.tar.gz"
     git = "https://github.com/trsxvz/TDLS.git"
 
     maintainers("trsxvz")
@@ -23,6 +23,7 @@ class Tdls(CMakePackage):
     license("BSD-3-Clause", checked_by="trsxvz")
 
     version("main", branch="main")
+    version("0.2.0", sha256="666d72b26f896a61915ae49a7a239f9206ccbcc73e81b116ca85f9b95f22dcbc")
     version("0.1.0", sha256="c10969df6d2e91d44c2200eaffad0db041938fad24d3455c65a2a69082d7eb0d")
 
     depends_on("cmake@3.21:", type="build")
