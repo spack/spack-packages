@@ -54,7 +54,7 @@ class PyPip(Package, PythonExtension):
     version("10.0.1", sha256="717cdffb2833be8409433a93746744b59505f42146e8d37de6c62b430e25d6d7")
     version("9.0.1", sha256="690b762c0a8460c303c089d5d0be034fb15a5ea2b75bdf565f40421f542fefb0")
 
-    extends("python")
+    extends("python+zlib")
 
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@26.1:")
