@@ -89,7 +89,9 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("vecgeom@1.2:1", when="@:0.6 +vecgeom")
     depends_on("vecgeom@1.2:1,2.2:", when="@0.7: +vecgeom")
 
-    depends_on("python", type="build")
+    depends_on("python", when="@:0.5", type="build")
+    depends_on("python", when="+doc", type="build")
+    depends_on("python", type="test")
     depends_on("doxygen", type="build", when="+doc")
     depends_on("py-breathe", type="build", when="+doc")
     depends_on("py-sphinx", type="build", when="+doc")
