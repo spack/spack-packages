@@ -99,6 +99,8 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         # celeritas "public" standard
 
     # Ensure consistent CUDA architectures
+    depends_on("covfie ~cuda", when="+covfie ~cuda")
+    depends_on("vecgeom ~cuda", when="+vecgeom ~cuda")
     depends_on("vecgeom +cuda cuda_arch=none", when="+vecgeom +cuda cuda_arch=none")
     for _arch in CudaPackage.cuda_arch_values:
         for _pkg in ["covfie", "vecgeom"]:

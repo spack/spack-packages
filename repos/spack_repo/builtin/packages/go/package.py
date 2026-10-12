@@ -43,8 +43,10 @@ class Go(Package):
 
     license("BSD-3-Clause")
 
+    version("1.27.2", sha256="03495da2ba64894d40f5c4992e49454fa78b50690604ff92b6afff5081b76e62")
     version("1.27.1", sha256="4e408abae126d916b6164627193f2c54f0e3ca1312d693b86db45f862ab238b1")
     version("1.27.0", sha256="7002403d7cc44529ef6d26f69a44818263395ead7c16c05a5808ae047ebeb0e5")
+    version("1.26.9", sha256="9735d7dcdb65b35d3fa577f04064737c03b89cf1a2b71e6e69fe2f3c6f9fd4ca")
     version("1.26.8", sha256="4e39b98e42f946fa05ac8bc5b71877df97dbdb7cbb1a777b541667ad7117fd2e")
     version("1.26.7", sha256="0ed24eac755105085b89fe9cabc2742b91a0ad7b94b59d3ad364918ebc8956ad")
     version("1.26.6", sha256="a0721c54c688901448d77ad9b3ec7ea7c474730755ff891382e92ecb93ff2cb1")
