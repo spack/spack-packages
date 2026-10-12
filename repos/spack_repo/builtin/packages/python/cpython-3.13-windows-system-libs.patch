@@ -1,0 +1,240 @@
+--- a/PCbuild/_bz2.vcxproj
++++ b/PCbuild/_bz2.vcxproj
+@@ -92,15 +92,25 @@
+   <PropertyGroup>
+     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+   </PropertyGroup>
++  <!-- Setting bz2Lib to the full path of an already built libbz2, and
++       bz2IncludeDir to the directory containing bzlib.h, links that library
++       instead of compiling the bzip2 sources found in bz2Dir.  This is the
++       Windows equivalent of building against the system bzip2 on POSIX. -->
+   <ItemDefinitionGroup>
+     <ClCompile>
+-      <AdditionalIncludeDirectories>$(bz2Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(bz2Lib)' == ''">$(bz2Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(bz2Lib)' != ''">$(bz2IncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>WIN32;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <DisableSpecificWarnings>4244;4267;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+     </ClCompile>
++    <Link>
++      <AdditionalDependencies Condition="'$(bz2Lib)' != ''">$(bz2Lib);%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClCompile Include="..\Modules\_bz2module.c" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(bz2Lib)' == ''">
+     <ClCompile Include="$(bz2Dir)\blocksort.c" />
+     <ClCompile Include="$(bz2Dir)\bzlib.c" />
+     <ClCompile Include="$(bz2Dir)\compress.c" />
+@@ -109,7 +119,7 @@
+     <ClCompile Include="$(bz2Dir)\huffman.c" />
+     <ClCompile Include="$(bz2Dir)\randtable.c" />
+   </ItemGroup>
+-  <ItemGroup>
++  <ItemGroup Condition="'$(bz2Lib)' == ''">
+     <ClInclude Include="$(bz2Dir)\bzlib.h" />
+     <ClInclude Include="$(bz2Dir)\bzlib_private.h" />
+   </ItemGroup>
+--- a/PCbuild/_lzma.vcxproj
++++ b/PCbuild/_lzma.vcxproj
+@@ -91,13 +91,21 @@
+   <PropertyGroup>
+     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+   </PropertyGroup>
++  <!-- Setting lzmaLib to the full path of an already built liblzma, and
++       lzmaIncludeDir to the directory containing lzma.h, links that library
++       instead of building liblzma from the sources found in lzmaDir.  This is
++       the Windows equivalent of building against the system liblzma on POSIX.
++       LZMA_API_STATIC is only correct for the statically linked in-tree build. -->
+   <ItemDefinitionGroup>
+     <ClCompile>
+-      <AdditionalIncludeDirectories>$(lzmaDir)src/liblzma/api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+-      <PreprocessorDefinitions>WIN32;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;LZMA_API_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <AdditionalIncludeDirectories Condition="'$(lzmaLib)' == ''">$(lzmaDir)src/liblzma/api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(lzmaLib)' != ''">$(lzmaIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <PreprocessorDefinitions>WIN32;_FILE_OFFSET_BITS=64;_CRT_SECURE_NO_DEPRECATE;_CRT_NONSTDC_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions Condition="'$(lzmaLib)' == ''">LZMA_API_STATIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+     </ClCompile>
+     <Link>
+-      <AdditionalDependencies>$(OutDir)liblzma$(PyDebugExt).lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies Condition="'$(lzmaLib)' == ''">$(OutDir)liblzma$(PyDebugExt).lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies Condition="'$(lzmaLib)' != ''">$(lzmaLib);%(AdditionalDependencies)</AdditionalDependencies>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+@@ -111,7 +119,7 @@
+       <Project>{cf7ac3d1-e2df-41d2-bea6-1e2556cdea26}</Project>
+       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+     </ProjectReference>
+-    <ProjectReference Include="liblzma.vcxproj">
++    <ProjectReference Include="liblzma.vcxproj" Condition="'$(lzmaLib)' == ''">
+       <Project>{12728250-16eC-4dc6-94d7-e21dd88947f8}</Project>
+       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+     </ProjectReference>
+--- a/PCbuild/_sqlite3.vcxproj
++++ b/PCbuild/_sqlite3.vcxproj
+@@ -91,11 +91,20 @@
+   <PropertyGroup>
+     <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+   </PropertyGroup>
++  <!-- Setting sqlite3Lib to the full path of an already built sqlite3 import
++       library, and sqlite3IncludeDir to the directory containing sqlite3.h,
++       links that library instead of building sqlite3.vcxproj from the
++       amalgamation found in sqlite3Dir.  This is the Windows equivalent of
++       building against the system sqlite3 on POSIX. -->
+   <ItemDefinitionGroup>
+     <ClCompile>
+-      <AdditionalIncludeDirectories>$(sqlite3Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(sqlite3Lib)' == ''">$(sqlite3Dir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(sqlite3Lib)' != ''">$(sqlite3IncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>PY_SQLITE_HAVE_SERIALIZE;PY_SQLITE_ENABLE_LOAD_EXTENSION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+     </ClCompile>
++    <Link>
++      <AdditionalDependencies Condition="'$(sqlite3Lib)' != ''">$(sqlite3Lib);%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+     <ClInclude Include="..\Modules\_sqlite\connection.h" />
+@@ -127,7 +136,7 @@
+       <Project>{cf7ac3d1-e2df-41d2-bea6-1e2556cdea26}</Project>
+       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+     </ProjectReference>
+-    <ProjectReference Include="sqlite3.vcxproj">
++    <ProjectReference Include="sqlite3.vcxproj" Condition="'$(sqlite3Lib)' == ''">
+       <Project>{a1a295e5-463c-437f-81ca-1f32367685da}</Project>
+       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+     </ProjectReference>
+--- a/PCbuild/_decimal.vcxproj
++++ b/PCbuild/_decimal.vcxproj
+@@ -91,24 +91,40 @@
+   <PropertyGroup>
+     <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+   </PropertyGroup>
++  <!-- Setting mpdecimalLib to the full path of an already built libmpdec, and
++       mpdecimalIncludeDir to the directory containing its generated
++       mpdecimal.h, links that library instead of compiling the libmpdec
++       sources found in mpdecimalDir.  This is the Windows equivalent of the
++       configure option "with-system-libmpdec".  BUILD_LIBMPDEC and the
++       mpdecimal.h shim in Modules\_decimal\windows are only for the in-tree
++       build: an installed libmpdec ships the correct header and wants
++       dllimport. -->
+   <ItemDefinitionGroup>
+     <ClCompile>
+-      <PreprocessorDefinitions>BUILD_LIBMPDEC;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
++      <PreprocessorDefinitions Condition="'$(mpdecimalLib)' == ''">BUILD_LIBMPDEC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="'$(Platform)' == 'Win32'">CONFIG_32;PPRO;MASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="'$(Platform)'=='ARM'">CONFIG_32;ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="'$(Platform)'=='ARM64'">CONFIG_64;ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="'$(Platform)' == 'x64'">CONFIG_64;MASM;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+-      <AdditionalIncludeDirectories>..\Modules\_decimal;..\Modules\_decimal\windows;$(mpdecimalDir)\libmpdec;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories>..\Modules\_decimal;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(mpdecimalLib)' == ''">..\Modules\_decimal\windows;$(mpdecimalDir)\libmpdec;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="'$(mpdecimalLib)' != ''">$(mpdecimalIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+     </ClCompile>
++    <Link>
++      <AdditionalDependencies Condition="'$(mpdecimalLib)' != ''">$(mpdecimalLib);%(AdditionalDependencies)</AdditionalDependencies>
++    </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
++    <ClInclude Include="..\Modules\_decimal\docstrings.h" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(mpdecimalLib)' == ''">
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\basearith.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\bits.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\constants.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\convolute.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\crt.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\difradix2.h" />
+-    <ClInclude Include="..\Modules\_decimal\docstrings.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\fnt.h" />
+     <ClInclude Include="$(mpdecimalDir)\libmpdec\fourstep.h" />
+     <ClInclude Include="..\Modules\_decimal\windows\mpdecimal.h" />
+@@ -125,6 +141,8 @@
+   </ItemGroup>
+   <ItemGroup>
+     <ClCompile Include="..\Modules\_decimal\_decimal.c" />
++  </ItemGroup>
++  <ItemGroup Condition="'$(mpdecimalLib)' == ''">
+     <ClCompile Include="$(mpdecimalDir)\libmpdec\basearith.c" />
+     <ClCompile Include="$(mpdecimalDir)\libmpdec\constants.c" />
+     <ClCompile Include="$(mpdecimalDir)\libmpdec\context.c" />
+@@ -140,7 +158,7 @@
+     <ClCompile Include="$(mpdecimalDir)\libmpdec\sixstep.c" />
+     <ClCompile Include="$(mpdecimalDir)\libmpdec\transpose.c" />
+   </ItemGroup>
+-  <ItemGroup>
++  <ItemGroup Condition="'$(mpdecimalLib)' == ''">
+     <CustomBuild Include="$(mpdecimalDir)\libmpdec\vcdiv64.asm">
+       <ExcludedFromBuild Condition="'$(Platform)'=='Win32'">true</ExcludedFromBuild>
+       <ExcludedFromBuild Condition="'$(Platform)'=='ARM'">true</ExcludedFromBuild>
+--- a/PCbuild/pythoncore.vcxproj
++++ b/PCbuild/pythoncore.vcxproj
+@@ -97,11 +97,16 @@
+   <PropertyGroup>
+     <CustomBuildBeforeTargets>Link</CustomBuildBeforeTargets>
+   </PropertyGroup>
++  <!-- Setting zlibLib to the full path of an already built zlib, and
++       zlibIncludeDir to the directory containing zlib.h, links that library
++       instead of compiling the zlib sources shipped alongside CPython.  This
++       is the Windows equivalent of building against the system zlib on POSIX. -->
+   <ItemDefinitionGroup>
+     <ClCompile>
+       <AdditionalOptions>/Zm200  %(AdditionalOptions)</AdditionalOptions>
+       <AdditionalIncludeDirectories>$(PySourcePath)Modules\_hacl\include;$(PySourcePath)Modules\_hacl\internal;$(PySourcePath)Python;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+-      <AdditionalIncludeDirectories Condition="$(IncludeExternals)">$(zlibDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="$(IncludeExternals) and '$(zlibLib)' == ''">$(zlibDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
++      <AdditionalIncludeDirectories Condition="$(IncludeExternals) and '$(zlibLib)' != ''">$(zlibIncludeDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+       <PreprocessorDefinitions>_USRDLL;Py_BUILD_CORE;Py_BUILD_CORE_BUILTIN;Py_ENABLE_SHARED;MS_DLL_ID="$(SysWinVer)";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="$(IncludeExternals)">_Py_HAVE_ZLIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+       <PreprocessorDefinitions Condition="'$(UseJIT)' == 'true'">_Py_JIT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+@@ -109,6 +114,7 @@
+     </ClCompile>
+     <Link>
+       <AdditionalDependencies>version.lib;ws2_32.lib;pathcch.lib;bcrypt.lib;%(AdditionalDependencies)</AdditionalDependencies>
++      <AdditionalDependencies Condition="$(IncludeExternals) and '$(zlibLib)' != ''">$(zlibLib);%(AdditionalDependencies)</AdditionalDependencies>
+     </Link>
+   </ItemDefinitionGroup>
+   <ItemGroup>
+@@ -397,7 +403,7 @@
+     <ClInclude Include="..\Python\stdlib_module_names.h" />
+     <ClInclude Include="..\Python\thread_nt.h" />
+   </ItemGroup>
+-  <ItemGroup Condition="$(IncludeExternals)">
++  <ItemGroup Condition="$(IncludeExternals) and '$(zlibLib)' == ''">
+     <ClInclude Include="$(zlibDir)\crc32.h" />
+     <ClInclude Include="$(zlibDir)\deflate.h" />
+     <ClInclude Include="$(zlibDir)\inffast.h" />
+@@ -643,6 +649,8 @@
+   </ItemGroup>
+   <ItemGroup Condition="$(IncludeExternals)">
+     <ClCompile Include="..\Modules\zlibmodule.c" />
++  </ItemGroup>
++  <ItemGroup Condition="$(IncludeExternals) and '$(zlibLib)' == ''">
+     <ClCompile Include="$(zlibDir)\adler32.c" />
+     <ClCompile Include="$(zlibDir)\compress.c" />
+     <ClCompile Include="$(zlibDir)\crc32.c" />
+--- a/PCbuild/pcbuild.proj
++++ b/PCbuild/pcbuild.proj
+@@ -13,6 +13,9 @@
+     <IncludeCTypes Condition="'$(IncludeCTypes)' == ''">true</IncludeCTypes>
+     <IncludeSSL Condition="'$(IncludeSSL)' == ''">true</IncludeSSL>
+     <IncludeTkinter Condition="'$(IncludeTkinter)' == ''">true</IncludeTkinter>
++    <IncludeBz2 Condition="'$(IncludeBz2)' == ''">true</IncludeBz2>
++    <IncludeLzma Condition="'$(IncludeLzma)' == ''">true</IncludeLzma>
++    <IncludeSqlite3 Condition="'$(IncludeSqlite3)' == ''">true</IncludeSqlite3>
+     <IncludeUwp Condition="'$(IncludeUwp)' == ''">false</IncludeUwp>
+   </PropertyGroup>
+ 
+@@ -67,7 +70,9 @@
+     <ExtensionModules Include="_asyncio;_zoneinfo;_decimal;_elementtree;_multiprocessing;_overlapped;pyexpat;_queue;select;unicodedata;winsound;_uuid;_wmi" />
+     <ExtensionModules Include="_ctypes" Condition="$(IncludeCTypes)" />
+     <!-- Extension modules that require external sources -->
+-    <ExternalModules Include="_bz2;_lzma;_sqlite3" />
++    <ExternalModules Include="_bz2" Condition="$(IncludeBz2)" />
++    <ExternalModules Include="_lzma" Condition="$(IncludeLzma)" />
++    <ExternalModules Include="_sqlite3" Condition="$(IncludeSqlite3)" />
+     <!-- venv launchers -->
+     <Projects Include="venvlauncher.vcxproj;venvwlauncher.vcxproj" />
+     <!-- _ssl will build _socket as well, which may cause conflicts in parallel builds -->
