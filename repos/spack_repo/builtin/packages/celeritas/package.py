@@ -130,6 +130,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         from_variant = self.define_from_variant
         args = [
             from_variant("BUILD_SHARED_LIBS", "shared"),
+            from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             from_variant("CELERITAS_DEBUG", "debug"),
             from_variant("CELERITAS_BUILD_DOCS", "doc"),
             define("CELERITAS_BUILD_DEMOS", False),
