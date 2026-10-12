@@ -19,6 +19,7 @@ class PyPyscf(PythonPackage):
 
     license("Apache-2.0")
 
+    version("2.14.0", sha256="9b6ea3c2470baac9d0492d93b335542c04ab96277e79f1abcbe1cea0eb063c5f")
     version("2.13.0", sha256="5381c77568cc894df57f82aca1f025275322ac52b32b5aa86806a4649baa1eae")
     version("2.12.1", sha256="cae3b026a928ce866965242056a833a17e46b89035d2e3abbf5429a158da4d48")
     version("2.12.0", sha256="6c1ddb594ccc12f2b7411cfff977ab4b0cd0ade25cc454646cc26f93f97ce16e")
@@ -45,7 +46,7 @@ class PyPyscf(PythonPackage):
     depends_on("cxx", type="build")
 
     # dependencies
-    depends_on("cmake@3", type="build", when="@:2.13.0")
+    depends_on("cmake@3", type="build", when="@:2.14.0")
     depends_on("cmake@3.10:", type="build", when="@2.1:")
     depends_on("cmake@2.8:", type="build")
     depends_on("python@3.7:", type=("build", "run"), when="@2.13.0:")
@@ -68,18 +69,12 @@ class PyPyscf(PythonPackage):
     depends_on("blas")
     depends_on("libcint+coulomb_erf+f12")
     depends_on("libxc")
+    # libxc_itrf.c guards on XC_MAJOR_VERSION
+    depends_on("libxc@:5", when="@:2.1")
+    depends_on("libxc@:6", when="@2.2:2.7")
+    depends_on("libxc@:7", when="@2.8:")
     depends_on("xcfun")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # Tell PSCF where supporting libraries are located."
-        spec = self.spec
-
-        pyscf_search_dir = []
-        pyscf_search_dir.append(spec["blas"].prefix)
-        pyscf_search_dir.append(spec["libcint"].prefix)
-        pyscf_search_dir.append(spec["libcint"].prefix.lib64)
-        pyscf_search_dir.append(spec["libxc"].prefix)
-        pyscf_search_dir.append(spec["xcfun"].prefix)
-        pyscf_search_dir.append(spec["xcfun"].prefix.include.XCFun)
-
-        env.set("PYSCF_INC_DIR", ":".join(pyscf_search_dir))
+        # otherwise CMakeLists.txt downloads and builds its own copies of these
+        env.set("CMAKE_CONFIGURE_ARGS", "-DBUILD_LIBCINT=OFF -DBUILD_LIBXC=OFF -DBUILD_XCFUN=OFF")
