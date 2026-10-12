@@ -48,7 +48,7 @@ class Raxml(Package):
         if spec.satisfies("%gcc@13:"):
             filter_file(r"^#define (false|true) [01]$", "", "rmq.h")
             filter_file(r"^typedef int bool;$", "#include <stdbool.h>", "rmq.h")
-        
+
         mkdirp(prefix.bin)
         files = glob.iglob("Makefile.*")
         for file in files:
