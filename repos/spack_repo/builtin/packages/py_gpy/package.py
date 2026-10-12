@@ -15,7 +15,7 @@ class PyGpy(PythonPackage):
     maintainers("liuyangzhuan")
 
     license("BSD-3-Clause")
-    ## pypi url is loawer case for 1.14.2
+    ## pypi url is lower case for 1.14.2
     version(
         "1.14.2",
         sha256="3c6a102cd0939ca62aab27038acc7c9970559fbda653dbdccc5d8ad02bd1dbad",
