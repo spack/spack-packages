@@ -58,6 +58,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("covfie", default=True, when="@0.6:", description="Enable covfie magnetic fields")
     variant("debug", default=False, description="Enable runtime debug assertions")
+    variant("dd4hep", default=False, when="@0.7:", description="Enable dd4hep plugin")
     variant("doc", default=False, description="Build and install documentation")
     variant("geant4", default=True, description="Enable Geant4 integration")
     variant("hepmc3", default=True, description="Use HepMC3 I/O interfaces")
@@ -78,14 +79,15 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
+    depends_on("dd4hep +ddg4", when="+dd4hep")
+    depends_on("geant4@10.5:11.3", when="@0.5:0.6 +geant4")
     depends_on("geant4@10.5:11.2", when="@0.4.2:0.4 +geant4")
-    depends_on("geant4@10.5:", when="@0.5: +geant4")
     depends_on("g4vg@1.0.2:", when="@0.6: +geant4 +vecgeom")
     depends_on("hepmc3", when="+hepmc3")
-    depends_on("root", when="+root")
+    depends_on("root@6.28:", when="+root")
     depends_on("swig@4.1:", when="+swig")
     depends_on("vecgeom@1.2:1", when="@:0.6 +vecgeom")
-    depends_on("vecgeom@1.2:2", when="@0.7: +vecgeom")
+    depends_on("vecgeom@1.2:1,2.2:", when="@0.7: +vecgeom")
 
     depends_on("python", type="build")
     depends_on("doxygen", type="build", when="+doc")
@@ -94,8 +96,10 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
 
     with when("+cuda"):
         depends_on("thrust")
+        depends_on("cub", when="@0.7:")
     with when("+rocm"):
         depends_on("hiprand")
+        depends_on("hipcub", when="@0.7:")
         depends_on("rocprim")
         depends_on("rocrand")
         depends_on("rocthrust")
@@ -108,14 +112,13 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         # celeritas "public" standard
 
     # Ensure consistent CUDA architectures
-    depends_on("covfie ~cuda", when="+covfie ~cuda")
-    depends_on("vecgeom ~cuda", when="+vecgeom ~cuda")
-    depends_on("vecgeom +cuda cuda_arch=none", when="+vecgeom +cuda cuda_arch=none")
-    for _arch in CudaPackage.cuda_arch_values:
-        for _pkg in ["covfie", "vecgeom"]:
-            depends_on(f"{_pkg} +cuda cuda_arch={_arch}", when=f"+{_pkg} +cuda cuda_arch={_arch}")
+    conflicts("cuda_arch=none", when="+cuda", msg="Accelerator hardware choice is required")
+    for _pkg in ["covfie", "vecgeom"]:
+        depends_on(f"{_pkg} ~cuda", when=f"+{_pkg} ~cuda")  # May be technically too strict
+        depends_on(f"{_pkg} +cuda", when=f"+{_pkg} +cuda")
+        for _arch in CudaPackage.cuda_arch_values:
+            depends_on(f"{_pkg} cuda_arch={_arch}", when=f"+{_pkg} cuda_arch={_arch}")
 
-    conflicts("+rocm", when="+covfie", msg="HIP support is not yet available with covfie")
     conflicts("+rocm", when="+cuda", msg="AMD and NVIDIA accelerators are incompatible")
     conflicts("+rocm", when="+vecgeom", msg="HIP support is only available with ORANGE")
     for _arch in ["cuda", "rocm"]:
@@ -134,6 +137,23 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         when="@:0.6.2 +cuda ^cuda@13:",
     )
 
+    def celeritas_use_list(self) -> list[str]:
+        """This is extensible so that downstream subclasses (FNAL spack) can add
+        other packages that mainstream Spack does not know about.
+        """
+        return [
+            "covfie",
+            "CUDA",
+            "DD4hep",
+            "Geant4",
+            "HepMC3",
+            "OpenMP",
+            "Perfetto",
+            "ROOT",
+            "SWIG",
+            "VecGeom",
+        ]
+
     def cmake_args(self):
         define = self.define
         from_variant = self.define_from_variant
@@ -142,40 +162,27 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             from_variant("CELERITAS_DEBUG", "debug"),
             from_variant("CELERITAS_BUILD_DOCS", "doc"),
-            define("CELERITAS_BUILD_DEMOS", False),
             define("CELERITAS_BUILD_TESTS", False),
             from_variant("CELERITAS_USE_HIP", "rocm"),
             define("CELERITAS_USE_MPI", False),
-            define("CELERITAS_USE_Python", True),
         ]
 
         # NOTE: package names are stylized like the dependency asks: Find{pkg}.cmake
-        for pkg in [
-            "covfie",
-            "CUDA",
-            "Geant4",
-            "HepMC3",
-            "OpenMP",
-            "Perfetto",
-            "ROOT",
-            "SWIG",
-            "VecGeom",
-        ]:
+        for pkg in self.celeritas_use_list():
             args.append(from_variant("CELERITAS_USE_" + pkg, pkg.lower()))
 
         if self.spec.satisfies("+cuda"):
             args.append(CMakeBuilder.define_cuda_architectures(self))
         if self.spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
+            # TODO: update celeritas CMakeLists to link to these if found
             args.append(
                 define(
                     "CMAKE_HIP_FLAGS",
-                    " ".join(
-                        [
-                            f"-I{self.spec[p].prefix.include}"
-                            for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
-                        ]
-                    ),
+                    " ".join([
+                        f"-I{self.spec[p].prefix.include}"
+                        for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
+                    ]),
                 )
             )
 
@@ -183,14 +190,24 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
             # Explicitly activate JSON for older versions
             args.append(define("CELERITAS_USE_JSON", True))
 
+        if self.spec.satisfies("@:0.6"):
+            args.extend([
+                define("CELERITAS_BUILD_DEMOS", False),
+                define("CELERITAS_USE_Python", True),
+            ])
+
         if self.spec.satisfies("@0.6:"):
             # Protect against accidentally using vendored instead of spack
             args.extend(
-                (
                     define(f"CELERITAS_BUILTIN_{pkg}", False)
                     for pkg in ["covfie", "CLI11", "GTest", "nlohmann_json", "G4VG"]
-                )
             )
             # NOTE: Perfetto is always vendored!
 
         return args
+
+    @when("+dd4hep")
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        env.set("Celeritas_ROOT", self.prefix)
+        env.prepend_path(self.spec["dd4hep"].package.plugin_path_var,
+                         self.spec["celeritas"].libs.directories[0])
