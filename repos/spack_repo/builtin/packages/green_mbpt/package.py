@@ -9,8 +9,8 @@ from spack.package import *
 
 
 class GreenMbpt(CMakePackage, CudaPackage):
-    """GreenMbpt (green-mbpt) is a weak-coupling perturbation expansion solver for the simulation
-    of electronic structure in real materials using first principles Green's function methods.
+    """GreenMbpt (green-mbpt) provides weak-coupling perturbation expansion and self-energy
+    embedding solvers for electronic-structure simulations using Green's function methods.
     """
 
     # Homepage and source
@@ -22,6 +22,12 @@ class GreenMbpt(CMakePackage, CudaPackage):
     license("MIT", checked_by="egull")
 
     # Versions and checksums
+    version("1.0.0", sha256="cad56c46a1297088f3c484605b7d1dda36b6a7d80bc401d18fe9f7a4ad51acdc")
+    version(
+        "0.3.2-patch1",
+        sha256="d8406553cc19ffb75e4bf626427a1c1c63338930fbd678f6d0ee84032945f985",
+        url="https://github.com/Green-Phys/green-mbpt/archive/refs/tags/0.3.2-patch1.tar.gz",
+    )
     version("0.3.1", sha256="a7f80bf722fefeb275f66d348c3e756ac0e29b8dd3b67376696587b66e338521")
     version(
         "0.3.0",
@@ -43,12 +49,14 @@ class GreenMbpt(CMakePackage, CudaPackage):
     depends_on("cmake@3.27:", type="build")
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("git", type="build")
 
     # Other dependencies
     depends_on("mpi")
-    depends_on("eigen@:4.9.0")
+    depends_on("eigen@3.4.0:4.9.0")
     depends_on("hdf5@1.10.0: ~mpi+hl")
     depends_on("blas")
+    depends_on("lapack", when="@1.0.0")
 
     # CUDA variant dependency
     depends_on("cuda@12:12.9", when="+cuda")
@@ -65,6 +73,33 @@ class GreenMbpt(CMakePackage, CudaPackage):
             args.append(self.define("GPU_ARCHS", self.spec.variants["cuda_arch"].value[0]))
         return args
 
+    @run_after("install")
+    def install_ed_solver(self):
+        if not self.spec.satisfies("@1.0.0"):
+            return
+
+        source_dir = join_path(self.stage.source_path, "green-seet-solvers")
+        build_dir = join_path(source_dir, "spack-build")
+        install_dir = join_path(self.prefix, "seet_solvers")
+        git = which("git", required=True)
+        git("clone", "https://github.com/Green-Phys/green-seet-solvers.git", source_dir)
+
+        mpi = self.spec["mpi"]
+        args = [
+            self.define("CMAKE_C_COMPILER", mpi.mpicc),
+            self.define("CMAKE_CXX_COMPILER", mpi.mpicxx),
+            self.define("CMAKE_INSTALL_PREFIX", install_dir),
+            self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True),
+            self.define("Build_Tests", False),
+        ]
+
+        with working_dir(build_dir, create=True):
+            cmake(source_dir, *args)
+            make()
+            make("install")
+
     def setup_run_environment(self, env):
         # Set environment variable for GreenMbpt
         env.set("GREENMBPT_ROOT", self.prefix)
+        if self.spec.satisfies("@1.0.0"):
+            env.prepend_path("PATH", join_path(self.prefix, "seet_solvers", "bin"))
