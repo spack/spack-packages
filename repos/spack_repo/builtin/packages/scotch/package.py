@@ -21,6 +21,7 @@ class Scotch(CMakePackage, MakefilePackage):
 
     maintainers("AlexanderRichert-NOAA", "jcortial-safran")
 
+    version("7.0.17", sha256="d8bc97540e83520f5218ebc6ed44ee370e0faa1e9c68d5e3c4cd8db0c683d48b")
     version("7.0.16", sha256="76557a986c2bbcc08a122e21113f77266e08b584bc2d2d3a0dede39572d1af78")
     version("7.0.15", sha256="5f8b558caa30eb5455fd896b763ad911822281c402e76b4afcd17c64eebc2898")
     version("7.0.14", sha256="35e9d27edba28497876be3c338ff2ac5fa2835a3f15ce8196085f3cb669491b1")
