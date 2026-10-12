@@ -22,6 +22,7 @@ class Pi(Package):
 
     sanity_check_is_file = ["bin/pi"]
 
+    version("1.1.0", sha256="63b17b48b855e36e64c5013523acd48131ffcfa90ae48fe2f3e6fa9fe3d0da32")
     version("0.84.3", sha256="056f84c467450fb5700ad4df9c8cc669bf7f6046976eed7a19eadbc7553b6500")
     version("0.84.2", sha256="96a9efad258fa6fa89f661bbf830c356dd3baf6cd06c6543ce4e8253c143460e")
 
