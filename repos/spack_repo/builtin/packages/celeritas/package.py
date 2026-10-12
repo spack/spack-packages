@@ -55,7 +55,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         multi=False,
         description="C++ standard version",
     )
-    variant("covfie", default=False, when="@0.6:", description="Enable covfie magnetic fields")
+    variant("covfie", default=True, when="@0.6:", description="Enable covfie magnetic fields")
     variant("debug", default=False, description="Enable runtime debug assertions")
     variant("doc", default=False, description="Build and install documentation")
     variant("geant4", default=True, description="Enable Geant4 integration")
