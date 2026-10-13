@@ -80,8 +80,6 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
     depends_on("dd4hep +ddg4", when="+dd4hep")
-    depends_on("geant4@10.5:11.3", when="@0.5:0.6 +geant4")
-    depends_on("geant4@10.5:11.2", when="@0.4.2:0.4 +geant4")
     depends_on("g4vg@1.0.2:", when="@0.6: +geant4 +vecgeom")
     depends_on("hepmc3", when="+hepmc3")
     depends_on("root@6.28:", when="+root")
@@ -106,6 +104,10 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("rocrand")
         depends_on("rocthrust")
 
+    with when("+geant4"):
+        depends_on("geant4@10.5:", when="@0.7:")
+        depends_on("geant4@10.5:11.3", when="@0.5:0.6")
+        depends_on("geant4@10.5:11.2", when="@0.4.2:0.4")
     # Ensure consistent C++ standards
     for _std in _cxxstd_values:
         for _pkg in ["geant4", "root", "vecgeom"]:
