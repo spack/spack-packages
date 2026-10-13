@@ -181,10 +181,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
             args.append(
                 define(
                     "CMAKE_HIP_FLAGS",
-                    " ".join([
-                        f"-I{self.spec[p].prefix.include}"
-                        for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
-                    ]),
+                    " ".join(
+                        [
+                            f"-I{self.spec[p].prefix.include}"
+                            for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
+                        ]
+                    ),
                 )
             )
 
@@ -193,16 +195,18 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
             args.append(define("CELERITAS_USE_JSON", True))
 
         if self.spec.satisfies("@:0.6"):
-            args.extend([
-                define("CELERITAS_BUILD_DEMOS", False),
-                define("CELERITAS_USE_Python", True),
-            ])
+            args.extend(
+                [
+                    define("CELERITAS_BUILD_DEMOS", False),
+                    define("CELERITAS_USE_Python", True),
+                ]
+            )
 
         if self.spec.satisfies("@0.6:"):
             # Protect against accidentally using vendored instead of spack
             args.extend(
-                    define(f"CELERITAS_BUILTIN_{pkg}", False)
-                    for pkg in ["covfie", "CLI11", "GTest", "nlohmann_json", "G4VG"]
+                define(f"CELERITAS_BUILTIN_{pkg}", False)
+                for pkg in ["covfie", "CLI11", "GTest", "nlohmann_json", "G4VG"]
             )
             # NOTE: Perfetto is always vendored!
 
@@ -211,5 +215,6 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     @when("+dd4hep")
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("Celeritas_ROOT", self.prefix)
-        env.prepend_path(self.spec["dd4hep"].package.plugin_path_var,
-                         self.spec["celeritas"].libs.directories[0])
+        env.prepend_path(
+            self.spec["dd4hep"].package.plugin_path_var, self.spec["celeritas"].libs.directories[0]
+        )

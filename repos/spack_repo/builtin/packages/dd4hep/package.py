@@ -256,12 +256,7 @@ class Dd4hep(CMakePackage):
         # Plugin lookup mechanism is system-dependent and will hopefully change
         # in the future to be independent from dynamic linker
         # see e.g., https://github.com/AIDASoft/DD4hep/pull/1664
-        return (
-            "DYLD_LIBRARY_PATH"
-            if self.spec.satisfies("platform=darwin")
-            else "LD_LIBRARY_PATH"
-        )
-
+        return "DYLD_LIBRARY_PATH" if self.spec.satisfies("platform=darwin") else "LD_LIBRARY_PATH"
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # used p.ex. in ddsim to find DDDetectors dir
@@ -276,7 +271,6 @@ class Dd4hep(CMakePackage):
         # NOT currently implemented: downstream packages that depend on dd4hep
         # must currently use setup_run_environment
         pass
-
 
     def url_for_version(self, version):
         # dd4hep releases are dashes and padded with a leading zero
