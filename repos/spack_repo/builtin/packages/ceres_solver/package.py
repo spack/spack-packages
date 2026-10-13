@@ -53,6 +53,10 @@ class CeresSolver(CMakePackage):
                 ]
             )
 
+        # some incomplete autodetection happens with cuda installed
+        if self.spec.satisfies("@2.2.0:"):
+            args.append(self.define("USE_CUDA", False))
+
         if self.spec.satisfies("+suitesparse"):
             args.append("-DSUITESPARSE=ON")
         else:
