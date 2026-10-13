@@ -12,6 +12,9 @@ concurrency:
   cancel-in-progress: true
 
 
+permissions:
+  contents: read
+
 jobs:
   # Validate that the code can be run on all the Python versions supported by Spack
   validate:

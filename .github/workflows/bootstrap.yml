@@ -40,6 +40,9 @@ concurrency:
   group: bootstrap-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   distros-clingo-sources:
     if: github.repository == 'spack/spack-packages'

@@ -11,6 +11,9 @@ concurrency:
   group: audit-${{inputs.python_version}}-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # Run audits on all the packages in the built-in repository
   package-audits:
