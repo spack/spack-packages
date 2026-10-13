@@ -91,8 +91,8 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("SPFFT_FORTRAN", "fortran"),
             self.define_from_variant("SPFFT_STATIC", "static"),
             self.define("SPFFT_FFTW_LIB", "FFTW"),
-            self.define("FFTW_INCLUDE_DIRS", spec["fftw-api"].prefix.include),
-            self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api:float"].prefix.include),
+            self.define("FFTW_INCLUDE_DIRS", spec["fftw-api"].headers.directories),
+            self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api:float"].headers.directories),
             self.define("FFTW_LIBRARIES", spec["fftw-api"].libs.ld_flags),
             self.define("FFTWF_LIBRARIES", spec["fftw-api:float"].libs.ld_flags),
         ]
