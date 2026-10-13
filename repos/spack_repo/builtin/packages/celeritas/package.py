@@ -8,7 +8,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
-
 class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     """Celeritas is a new Monte Carlo transport code designed for
     high-performance (GPU-targeted) simulation of high-energy physics
@@ -139,7 +138,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         when="@:0.6.2 +cuda ^cuda@13:",
     )
 
-    def celeritas_use_list(self) -> list[str]:
+    def celeritas_use_list(self) -> List[str]:
         """This is extensible so that downstream subclasses (FNAL spack) can add
         other packages that mainstream Spack does not know about.
         """
