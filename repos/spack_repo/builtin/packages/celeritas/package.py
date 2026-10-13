@@ -82,11 +82,10 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hepmc3", when="+hepmc3")
     depends_on("root@6.28:", when="+root")
     depends_on("swig@4.1:", when="+swig")
-    depends_on("vecgeom@1.2:1", when="@:0.6 +vecgeom")
-    depends_on("vecgeom@1.2:1,2.2:", when="@0.7: +vecgeom")
 
     depends_on("python", when="@:0.5", type="build")
     depends_on("python", type="test")
+
     with default_args(when="+doc", type="build"):
         depends_on("doxygen")
         depends_on("python")
@@ -96,6 +95,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     with when("+cuda"):
         depends_on("thrust")
         depends_on("cub", when="@0.7:")
+
     with when("+rocm"):
         depends_on("hiprand")
         depends_on("hipcub", when="@0.7:")
@@ -107,6 +107,11 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("geant4@10.5:", when="@0.7:")
         depends_on("geant4@10.5:11.3", when="@0.5:0.6")
         depends_on("geant4@10.5:11.2", when="@0.4.2:0.4")
+
+    with when("+vecgeom"):
+        depends_on("vecgeom@1.2:1,2.2:", when="@0.7:")
+        depends_on("vecgeom@1.2:1", when="@:0.6")
+
     # Ensure consistent C++ standards
     for _std in _cxxstd_values:
         for _pkg in ["geant4", "root", "vecgeom"]:
