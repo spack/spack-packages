@@ -61,6 +61,13 @@ class Meson(PythonPackage):
     # 1.0.2.
     patch("search_version_no_trailing_digits.patch", when="@1.0.2:1.12.0")
 
+    # Fix built-in search logic for CUPTI when using a runfile-installed CUDA Toolkit
+    patch(
+        "https://github.com/mesonbuild/meson/commit/798913bc20e3529771c0ecab27bcd6d69a95e142.patch?full_index=1",
+        sha256="fa8bc848cd5e4f1e80b54af8318d9f9862ad5ec8eec67eec5959db88af5c67ea",
+        when="@1.10:1.12",
+    )
+
     executables = ["^meson$"]
 
     @classmethod
