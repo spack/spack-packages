@@ -8,6 +8,7 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
+
 class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     """Celeritas is a new Monte Carlo transport code designed for
     high-performance (GPU-targeted) simulation of high-energy physics
