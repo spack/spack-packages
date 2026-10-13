@@ -42,7 +42,7 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("openmp", default=True, description="Build with OpenMP support")
     variant("mpi", default=True, description="enable MPI")
-    variant("single_precision", default=False, description="Sinlge precision")
+    variant("single_precision", default=False, description="Single precision")
     variant("gpu_direct", default=False, description="GPU aware MPI")
     variant("static", default=False, description="build static library")
     variant("fortran", default=False, description="enable fortran")
@@ -90,12 +90,18 @@ class Spfft(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("SPFFT_GPU_DIRECT", "gpu_direct"),
             self.define_from_variant("SPFFT_FORTRAN", "fortran"),
             self.define_from_variant("SPFFT_STATIC", "static"),
-            self.define("SPFFT_FFTW_LIB", "FFTW"),
-            self.define("FFTW_INCLUDE_DIRS", spec["fftw-api"].headers.directories),
-            self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api:float"].headers.directories),
-            self.define("FFTW_LIBRARIES", spec["fftw-api"].libs.ld_flags),
-            self.define("FFTWF_LIBRARIES", spec["fftw-api:float"].libs.ld_flags),
         ]
+
+        if spec.satisfies("^[virtuals=fftw-api] intel-oneapi-mkl"):
+            args.append(self.define("SPFFT_FFTW_LIB", "MKL"))
+        else:
+            args += [
+                self.define("SPFFT_FFTW_LIB", "FFTW"),
+                self.define("FFTW_INCLUDE_DIRS", spec["fftw-api"].headers.directories),
+                self.define("FFTWF_INCLUDE_DIRS", spec["fftw-api:float"].headers.directories),
+                self.define("FFTW_LIBRARIES", spec["fftw-api"].libs.ld_flags),
+                self.define("FFTWF_LIBRARIES", spec["fftw-api:float"].libs.ld_flags),
+            ]
 
         if spec.satisfies("+cuda"):
             args += ["-DSPFFT_GPU_BACKEND=CUDA"]
