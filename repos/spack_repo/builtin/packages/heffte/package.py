@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -121,7 +121,10 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
 
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
-                args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
+                if self.spec.satisfies("@2.4:"):
+                    args.append(CMakeBuilder.define_hip_architectures(self))
+                else:
+                    args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
 
             # See https://github.com/ROCm/rocFFT/issues/322
             if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
