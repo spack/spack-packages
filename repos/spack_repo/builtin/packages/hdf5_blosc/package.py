@@ -3,27 +3,10 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import shutil
-import sys
 
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
-
-
-def _install_shlib(name, src, dst):
-    """Install a shared library from directory src to directory dst"""
-    if sys.platform == "darwin":
-        shlib0 = name + ".0.dylib"
-        shlib = name + ".dylib"
-        install(join_path(src, shlib0), join_path(dst, shlib0))
-        symlink(shlib0, join_path(dst, shlib))
-    else:
-        shlib000 = name + ".so.0.0.0"
-        shlib0 = name + ".so.0"
-        shlib = name + ".dylib"
-        install(join_path(src, shlib000), join_path(dst, shlib000))
-        symlink(shlib000, join_path(dst, shlib0))
-        symlink(shlib0, join_path(dst, shlib))
 
 
 class Hdf5Blosc(Package):
@@ -52,6 +35,8 @@ class Hdf5Blosc(Package):
         # make("install")
         # if sys.platform == "darwin":
         #     fix_darwin_install_name(prefix.lib)
+        plugins_dir = prefix.lib.hdf5_plugins
+        mkdirp(plugins_dir)
 
         libtool = spec["libtool"].command
 
@@ -63,7 +48,6 @@ class Hdf5Blosc(Package):
         # shlibext = "so" if sys.platform != "darwin" else "dylib"
 
         mkdirp(prefix.include)
-        mkdirp(prefix.lib)
 
         # Build and install filter
         with working_dir("src"):
@@ -75,7 +59,7 @@ class Hdf5Blosc(Package):
                 "-g",
                 "-O",
                 "-rpath",
-                prefix.lib,
+                plugins_dir,
                 "-o",
                 "libblosc_filter.la",
                 "blosc_filter.lo",
@@ -84,7 +68,12 @@ class Hdf5Blosc(Package):
                 "-L%s" % spec["hdf5"].prefix.lib,
                 "-lhdf5",
             )
-            _install_shlib("libblosc_filter", ".libs", prefix.lib)
+            libtool(
+                "--mode=install",
+                "cp",
+                "libblosc_filter.la",
+                join_path(plugins_dir, "libblosc_filter.la"),
+            )
 
             # Build and install plugin
             # The plugin requires at least HDF5 1.8.11:
@@ -97,18 +86,23 @@ class Hdf5Blosc(Package):
                     "-g",
                     "-O",
                     "-rpath",
-                    prefix.lib,
+                    plugins_dir,
                     "-o",
                     "libblosc_plugin.la",
                     "blosc_plugin.lo",
-                    "-L%s" % prefix.lib,
+                    "-L%s" % plugins_dir,
                     "-lblosc_filter",
                     "-L%s" % spec["c-blosc"].prefix.lib,
                     "-lblosc",
                     "-L%s" % spec["hdf5"].prefix.lib,
                     "-lhdf5",
                 )
-                _install_shlib("libblosc_plugin", ".libs", prefix.lib)
+                libtool(
+                    "--mode=install",
+                    "cp",
+                    "libblosc_plugin.la",
+                    join_path(plugins_dir, "libblosc_plugin.la"),
+                )
 
         if self.run_tests:
             self.check_install(spec)
@@ -203,17 +197,17 @@ Done.
         shutil.rmtree(checkdir)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib)
+        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib.hdf5_plugins)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib)
+        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib.hdf5_plugins)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib)
+        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib.hdf5_plugins)
 
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
-        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib)
+        env.append_path("HDF5_PLUGIN_PATH", self.spec.prefix.lib.hdf5_plugins)
