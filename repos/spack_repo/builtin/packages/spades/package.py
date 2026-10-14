@@ -43,9 +43,9 @@ class Spades(CMakePackage):
 
     # @4.3.0: -> src/cmake/deps.cmake
     conflicts("%gcc@:9.0", when="@4.3:")
-    
+
     conflicts("%gcc@7.1.0:", when="@:3.10.1")
-    
+
     root_cmakelists_dir = "src"
 
     def patch(self):
@@ -57,7 +57,7 @@ class Spades(CMakePackage):
                 "ext/src/ncbi/CMakeLists.txt",
                 string=True,
             )
-    
+
     def cmake_args(self):
         args = [self.define_from_variant("SPADES_USE_NCBISDK", "sra")]
         if self.spec.satisfies("+tools"):
