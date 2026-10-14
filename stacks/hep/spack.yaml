@@ -169,7 +169,8 @@ spack:
   - vecgeom +cuda cuda_arch=80
 
   # ROCm
-  - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+  # FIXME: incompatibility with 5.7.1 hip API to be patched shortly
+  # - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
 
   ci:
     pipeline-gen:
