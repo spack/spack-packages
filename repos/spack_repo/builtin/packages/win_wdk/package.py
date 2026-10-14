@@ -3,13 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
-import glob
 import os
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
+from spack.util.windows_registry import RegistryError
 
 
 class WinWdk(Package):
@@ -18,65 +18,21 @@ class WinWdk(Package):
     """
 
     homepage = "https://learn.microsoft.com/en-us/windows-hardware/drivers/"
+    has_code = False
     tags = ["windows", "windows-system"]
 
     # The wdk has many libraries and executables. Record one for detection purposes
     libraries = ["mmos.lib"]
 
-    version(
-        "10.0.26100",
-        sha256="cc3c968aca86e8ef72e178e100dc5be1290449df724139ffa94eebb99f840149",
-        url="https://download.microsoft.com/download/7e94e645-61e3-479b-811b-981b4c514d5d/KIT_BUNDLE_WDK_MEDIACREATION/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.22621",
-        sha256="a891543c0eaf610757ee7852f515c5ce89d0202f22a15dfa31c4d49f2bafdf27",
-        url="https://download.microsoft.com/download/7/b/f/7bfc8dbe-00cb-47de-b856-70e696ef4f46/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.19041",
-        sha256="5f4ea0c55af099f97cb569a927c3a290c211f17edcfc65009f5b9253b9827925",
-        url="https://download.microsoft.com/download/c/f/8/cf80b955-d578-4635-825c-2801911f9d79/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.18362",
-        sha256="c35057cb294096c63bbea093e5024a5fb4120103b20c13fa755c92f227b644e5",
-        url="https://download.microsoft.com/download/2/9/3/29376990-B744-43C5-AE5C-99405068D58B/WDK/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.17763",
-        sha256="e6e5a57bf0a58242363cd6ca4762f44739f19351efc06cad382cca944b097235",
-        url="https://download.microsoft.com/download/1/4/0/140EBDB7-F631-4191-9DC0-31C8ECB8A11F/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.17134",
-        sha256="48e636117bb7bfe66b1ade793cc8e885c42c880fadaee471782d31b5c4d13e9b",
-        url="https://download.microsoft.com/download/B/5/8/B58D625D-17D6-47A8-B3D3-668670B6D1EB/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.16299",
-        sha256="14efbcc849e5977417e962f1cd68357d21abf27393110b9d95983ad03fc22ef4",
-        url="https://download.microsoft.com/download/7/D/D/7DD48DE6-8BDA-47C0-854A-539A800FAA90/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.15063",
-        sha256="489b497111bc791d9021b3573bfd93086a28b598c7325ab255e81c6f5d80a820",
-        url="https://download.microsoft.com/download/4/E/0/4E07EAAD-E394-4EA8-B2B8-D46E46A409C5/wdk/wdksetup.exe",
-        expand=False,
-    )
-    version(
-        "10.0.14393",
-        sha256="0bfb2ac9db446e0d98c29ef7341a8c8e8e7aa24bc72b00c5704a88b13f48b3cb",
-        url="https://download.microsoft.com/download/8/1/6/816FE939-15C7-4185-9767-42ED05524A95/wdk/wdksetup.exe",
-        expand=False,
-    )
+    version("10.0.26100")
+    version("10.0.22621")
+    version("10.0.19041")
+    version("10.0.18362")
+    version("10.0.17763")
+    version("10.0.17134")
+    version("10.0.16299")
+    version("10.0.15063")
+    version("10.0.14393")
 
     variant(
         "plat", values=("x64", "x86", "arm", "arm64"), default="x64", description="Toolchain arch"
@@ -120,52 +76,34 @@ class WinWdk(Package):
             variants.append("plat=%s" % arch)
         return variants
 
+    @staticmethod
+    def windows_kits_root():
+        reg = WindowsRegistryView(
+            "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots",
+            root_key=HKEY.HKEY_LOCAL_MACHINE,
+        )
+        if not reg:
+            return None
+        try:
+            value = reg.get_value("KitsRoot10")
+            return value.value if value else None
+        except RegistryError:
+            return None
+
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         # This points to all core build extensions needed to build
         # drivers on Windows
-        env.set("WDKContentRoot", self.prefix)
-
-    @run_before("install")
-    def rename_downloaded_executable(self):
-        """WGL download is named by fetch based on name derived from Link redirection
-        This name is not properly formated so that Windows understands it as an executable
-        We rename so as to allow Windows to run the WGL installer"""
-        installer = glob.glob(os.path.join(self.stage.source_path, "linkid=**"))
-        fetch_size = len(installer)
-        if fetch_size > 1:
-            raise RuntimeError(
-                "Fetch has failed, ambiguous behavior, fetch has pulled too much. "
-                "Unable to determine installer path from:\n%s" % "\n".join(installer)
-            )
-        elif fetch_size < 1:
-            raise RuntimeError(
-                "Fetch has failed, nothing was fetched from:\n%s" % "\n".join(installer)
-            )
-        installer = installer[0]
-        os.rename(installer, os.path.join(self.stage.source_path, "wdksetup.exe"))
+        # The Kit is machine wide, so an external prefix may not be the registered Kits root
+        env.set("WDKContentRoot", self.windows_kits_root() or self.prefix)
 
     def install(self, spec, prefix):
-        install_args = ["/features", "+", "/quiet", "/installpath", self.prefix]
-        with working_dir(self.stage.source_path):
-            try:
-                Executable("wdksetup.exe")(*install_args)
-            except ProcessError as pe:
-                reg = WindowsRegistryView(
-                    "SOFTWARE\\Microsoft\\Windows Kits\\Installed Roots",
-                    root_key=HKEY.HKEY_LOCAL_MACHINE,
-                )
-                if not reg:
-                    # No Kits are available, failure was genuine
-                    raise pe
-                else:
-                    versions = [str(subkey) for subkey in reg.get_subkeys()]
-                    versions = ",".join(versions) if len(versions) > 1 else versions[0]
-                    plural = "s" if len(versions) > 1 else ""
-                    raise InstallError(
-                        "Cannot install WDK version %s. "
-                        "Version%s %s already present on system."
-                        "Please run `spack external find win-wdk` to use the WDK"
-                        % (self.version, plural, versions)
-                    )
+        raise RuntimeError(
+            "This package is not installable from Spack and should be installed on the system "
+            "prior to Spack use. The WDK is a component of the machine wide Windows Kits "
+            "installation and cannot be relocated into a Spack prefix. Install it from "
+            "https://learn.microsoft.com/en-us/windows-hardware/drivers/download-the-wdk "
+            "making sure to match the version of the Windows SDK already on the system, then "
+            "run `spack external find win-wdk` to make it available to Spack."
+        )
