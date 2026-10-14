@@ -24,3 +24,17 @@ class Metaeuk(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@2.8.12:", type="build")
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Same class of bug as spades: mmseqs2 (vendored inside metaeuk)
+        # uses fixed-width int types (uint32_t/uint64_t/...) all over the
+        # place but relies on getting <cstdint> transitively from whatever
+        # standard header happened to pull it in on older GCC -- GCC 14's
+        # libstdc++ doesn't. A static scan found 47 affected files, way
+        # too many to patch one by one and too easy for a 48th to slip
+        # through later. Force the header into every translation unit at
+        # the compiler level instead of chasing individual includes.
+        # <cstdint> is the C++ wrapper header, not visible to the plain C
+        # compiler -- the equivalent for .c files is <stdint.h>.
+        env.append_flags("CFLAGS", "-include stdint.h")
+        env.append_flags("CXXFLAGS", "-include cstdint")
