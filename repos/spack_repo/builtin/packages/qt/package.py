@@ -79,14 +79,41 @@ class Qt(Package):
             # We can use llvm or angle for this, but those are not hardware accelerated, so are not
             # as useful for things like paraview
             variant("webkit", default=False, description="Build the Webkit extension")
+            conflicts("+webkit", when="+qmake_only")
     variant("location", default=False, description="Build the Qt Location module.")
     variant("phonon", default=False, description="Build with phonon support.")
     variant("shared", default=True, description="Build shared libraries.")
     variant("sql", default=True, description="Build with SQL support.")
     variant("ssl", default=True, description="Build with OpenSSL support.")
     variant("tools", default=True, description="Build tools, including Qt Designer.")
+    variant(
+        "qmake_only",
+        default=False,
+        description="Build only qmake and QtCore, skipping every other Qt module",
+    )
 
-    provides("qmake")
+    # qmake is one of Qt's tools, so a build that omits them does not provide it.
+    # +qmake_only skips the tools directory but still builds and installs qmake itself.
+    provides("qmake", when="+tools")
+    provides("qmake", when="+qmake_only")
+
+    conflicts("+tools", when="+qmake_only")
+    conflicts("+qmake_only", when="@:4", msg="The minimal qmake build is only supported for Qt 5")
+    # A qmake-only build is qtbase with everything switched off, so no component
+    # that would pull in a dependency can be enabled alongside it.
+    for _component in (
+        "gui",
+        "sql",
+        "ssl",
+        "dbus",
+        "opengl",
+        "gtk",
+        "doc",
+        "examples",
+        "phonon",
+        "location",
+    ):
+        conflicts(f"+{_component}", when="+qmake_only")
 
     # Patches for qt@3
     patch("qt3-accept.patch", when="@3")
@@ -207,18 +234,20 @@ class Qt(Package):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
 
     # Build-only dependencies
     for plat in ["linux", "darwin", "freebsd"]:
         with when(f"platform={plat}"):
-            depends_on("pkgconfig", type="build")
-            depends_on("libsm", when="@3")
-            depends_on("glib", when="@4:")
-            depends_on("libmng")
-            depends_on("assimp@5.0.0:5", when="@5.5:+opengl")
-            depends_on("sqlite+column_metadata", when="+sql", type=("build", "run"))
-            depends_on("inputproto", when="@:5.8")
             depends_on("gmake", type="build")
+            with when("~qmake_only"):
+                depends_on("pkgconfig", type="build")
+                depends_on("libsm", when="@3")
+                depends_on("glib", when="@4:")
+                depends_on("libmng")
+                depends_on("assimp@5.0.0:5", when="@5.5:+opengl")
+                depends_on("sqlite+column_metadata", when="+sql", type=("build", "run"))
+                depends_on("inputproto", when="@:5.8")
 
     for plat in ["linux", "freebsd"]:
         with when(f"platform={plat} +gui"):
@@ -250,33 +279,37 @@ class Qt(Package):
             msg="Apple Silicon requires a very new version of qt",
         )
 
-    depends_on("python", when="@5.7.0:", type="build")
+    # A +qmake_only build configures qtbase with every feature disabled and Qt's own
+    # bundled copies of the few libraries it cannot do without, so none of the
+    # dependencies below apply to it.
+    with when("~qmake_only"):
+        depends_on("python", when="@5.7.0:", type="build")
 
-    # Dependencies, then variant- and version-specific dependencies
-    depends_on("icu4c@:74")  # @75: requires cxxstd 17 which is not modelled here
-    depends_on("jpeg")
-    depends_on("libtiff")
-    depends_on("libxml2")
-    depends_on("zlib-api")
-    depends_on("freetype", when="+gui")
-    depends_on("gtkplus", when="+gtk")
+        # Dependencies, then variant- and version-specific dependencies
+        depends_on("icu4c@:74")  # @75: requires cxxstd 17 which is not modelled here
+        depends_on("jpeg")
+        depends_on("libtiff")
+        depends_on("libxml2")
+        depends_on("zlib-api")
+        depends_on("freetype", when="+gui")
+        depends_on("gtkplus", when="+gtk")
 
-    depends_on("libpng@1.2.57", when="@3")
-    depends_on("pcre+multibyte", when="@5.0:5.8")
+        depends_on("libpng@1.2.57", when="@3")
+        depends_on("pcre+multibyte", when="@5.0:5.8")
 
-    with when("+ssl"):
-        depends_on("openssl")
-        depends_on("openssl@1.1.1:", when="@5.15.0:")
+        with when("+ssl"):
+            depends_on("openssl")
+            depends_on("openssl@1.1.1:", when="@5.15.0:")
 
-    depends_on("libpng", when="@4:")
-    depends_on("dbus", when="@4:+dbus")
-    depends_on("gl", when="@4:+opengl")
+        depends_on("libpng", when="@4:")
+        depends_on("dbus", when="@4:+dbus")
+        depends_on("gl", when="@4:+opengl")
 
-    depends_on("harfbuzz", when="@5:")
-    depends_on("double-conversion", when="@5.7:")
-    depends_on("pcre2+multibyte", when="@5.9:")
-    depends_on("llvm", when="@5.11: +doc")
-    depends_on("zstd@1.3:", when="@5.13:")
+        depends_on("harfbuzz", when="@5:")
+        depends_on("double-conversion", when="@5.7:")
+        depends_on("pcre2+multibyte", when="@5.9:")
+        depends_on("llvm", when="@5.11: +doc")
+        depends_on("zstd@1.3:", when="@5.13:")
 
     with when("+webkit"):
         patch(
@@ -784,6 +817,70 @@ class Qt(Package):
             config_args = self._quoted(config_args)
 
         configure(*config_args)
+
+    @when("+qmake_only")
+    def configure(self, spec, prefix):
+        """Configure a qtbase-only build that yields qmake, QtCore and the mkspecs.
+
+        Every optional feature is switched off and the handful of libraries qtbase
+        cannot do without are taken from Qt's bundled copies, so this build needs
+        nothing beyond a C/C++ compiler and a make implementation.
+
+        This deliberately bypasses ``common_config_args``, which dereferences
+        dependencies that a +qmake_only spec does not have.
+        """
+        config_args = [
+            "-prefix",
+            prefix,
+            "-opensource",
+            "-confirm-license",
+            "-{0}".format("debug" if "+debug" in spec else "release"),
+            "-{0}".format("shared" if "+shared" in spec else "static"),
+            "-optimized-qmake",
+            "-no-pch",
+            "-no-gui",
+            "-no-widgets",
+            "-no-opengl",
+            "-no-dbus",
+            "-no-openssl",
+            "-no-icu",
+            "-no-freetype",
+            "-no-harfbuzz",
+            "-no-libpng",
+            "-no-libjpeg",
+            # Bundled copies rather than Spack packages
+            "-qt-zlib",
+            "-qt-pcre",
+            "-nomake",
+            "examples",
+            "-nomake",
+            "tests",
+            "-nomake",
+            "tools",
+        ]
+
+        if spec.satisfies("@5.7:"):
+            config_args.append("-qt-doubleconversion")
+
+        comps = ["db2", "ibase", "oci", "tds", "mysql", "odbc", "psql", "sqlite", "sqlite2"]
+        config_args.extend("-no-sql-" + component for component in comps)
+
+        # Skip every module but qtbase. Which modules ship in the "everywhere"
+        # tarball varies across the 5.x series, so read them off the source tree
+        # rather than hard-coding a list.
+        for entry in sorted(os.listdir(self.stage.source_path)):
+            if entry.startswith("qt") and entry != "qtbase":
+                if os.path.isdir(os.path.join(self.stage.source_path, entry)):
+                    config_args.extend(["-skip", entry])
+
+        (_, qtplat) = self.get_mkspec()
+        if qtplat is not None:
+            config_args.extend(["-platform", qtplat])
+
+        if IS_WINDOWS:
+            Executable("configure.bat")(*self._quoted(config_args))
+        else:
+            configure(*config_args)
 
     @when("@5")
     def configure(self, spec, prefix):

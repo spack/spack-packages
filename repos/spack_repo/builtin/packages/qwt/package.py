@@ -41,6 +41,12 @@ class Qwt(QMakePackage):
         depends_on("qt-tools", when="+designer")
         depends_on("qt-base+opengl+widgets", when="+opengl")
     with when("^[virtuals=qmake] qt"):
+        # Qwt is a widgets library, so a qmake-only Qt cannot build it. The Qt6
+        # branch above states this via qt-svg; say it explicitly for Qt5 too.
+        depends_on("qt+gui")
+        # Qwt dropped Qt4 support in 6.2; without a floor the solver picks qt@4
+        # because it is the cheapest Qt that satisfies +gui.
+        depends_on("qt@5:", when="@6.2:")
         depends_on("qt+tools", when="+designer")
         depends_on("qt+opengl", when="+opengl")
 
