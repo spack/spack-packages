@@ -17,6 +17,10 @@ on:
       - reopened
       - ready_for_review
 
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
+
 jobs:
   pr:
     runs-on: ubuntu-latest
