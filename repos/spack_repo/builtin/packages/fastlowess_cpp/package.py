@@ -1,12 +1,10 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-# ruff: noqa: UP006
 # isort: skip_file
 
 import os
 import textwrap
-from typing import ClassVar, List  # noqa: UP035
 
 from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
@@ -20,15 +18,17 @@ class FastlowessCpp(CargoPackage):
     libraries with an owning C++ interface and a C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/lowess-project/cpp/"
-    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
+    url = (
+        "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
+    )
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     test_requires_compiler = True
-    sanity_check_is_file: ClassVar[List[str]] = [
+    sanity_check_is_file = (
         join_path("include", "fastlowess.hpp"),
         join_path("include", "fastlowess.h"),
-    ]
-    sanity_check_is_dir: ClassVar[List[str]] = ["include", "lib"]
+    )
+    sanity_check_is_dir = ("include", "lib")
 
     maintainers("thisisamirv")
 
@@ -97,8 +97,7 @@ class FastlowessCpp(CargoPackage):
         """Compile and run a linear fit against the installed C++ library."""
         source = "fastlowess_spack_smoke.cpp"
         with open(source, "w", encoding="utf-8") as stream:
-            stream.write(
-                textwrap.dedent("""\
+            stream.write(textwrap.dedent("""\
                 #include <fastlowess.hpp>
                 #include <cmath>
                 #include <vector>
@@ -121,12 +120,13 @@ class FastlowessCpp(CargoPackage):
                     }
                     return 0;
                 }
-                """)
-            )
+                """))
 
         cxx = which(os.environ["CXX"])
         windows = self.spec.satisfies("platform=windows")
-        executable = "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
+        executable = (
+            "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
+        )
         compiler_name = os.path.basename(os.environ["CXX"]).lower()
         if compiler_name in ("cl", "cl.exe", "clang-cl", "clang-cl.exe"):
             cxx(
