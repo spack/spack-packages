@@ -20,6 +20,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     license("BSD-2-Clause")
 
     version("develop", branch="main")
+    version("1.0.1", tag="v1.0.1", commit="cbcc9c934bce2efc324fbd2edf95032911109353")
     version("1.0.0", tag="v1.0.0", commit="8a374e8d5d8d33fd19ce69a93026384ec1046a86")
     version("0.12.0", tag="v0.12.0", commit="4018a20a98d451fac24765d3ddb936861647ce8d")
     version("0.11.0", tag="v0.11.0", commit="8ec64e9ae9d5df169dba8c8ee61d8ec8907b8f80")
@@ -35,20 +36,18 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     version("0.2", tag="v0.2", commit="113004cb41757b819325a4b3a8a7dfcea5156531")
     version("0.1", tag="v0.1", commit="74e0540e2478136394f75869675056eb6aba67cc")
 
-    variant("occa", default=False, description="Enable OCCA backends")
     variant("debug", default=False, description="Enable debug build")
     variant("libxsmm", default=False, description="Enable LIBXSMM backend", when="@0.3:")
     variant("magma", default=False, description="Enable MAGMA backend", when="@0.6:")
-
     variant("openmp", default=False, description="Enable OpenMP support")
-
     variant("shared", default=True, description="Build shared libraries")
+    variant("occa", default=False, description="Enable OCCA backends", when="@0.1:0.12.0")
 
     conflicts("+rocm", when="@:0.7")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
     depends_on("pkgconf", type="build")
 
     with when("+rocm"):
@@ -58,7 +57,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     conflicts("+occa", when="@0.9:")
 
     with when("+occa"):
-        depends_on("occa@1.1.0", when="@0.7:")
+        depends_on("occa@1.1.0", when="@0.7:0.12.0")
         depends_on("occa@1.0.8:", when="@0.4")
         depends_on("occa@1.0.0-alpha.5,develop", when="@:0.2")
         depends_on("occa+cuda", when="+cuda")
