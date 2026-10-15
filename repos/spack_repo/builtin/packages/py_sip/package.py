@@ -15,7 +15,8 @@ class PySip(PythonPackage):
     homepage = "https://www.riverbankcomputing.com/software/sip"
     pypi = "sip/sip-6.4.0.tar.gz"
 
-    license("GPL-2.0-or-later")
+    license("BSD-2-Clause", when="@6.8.4:")
+    license("GPL-2.0-or-later", when="@:6.8.3")
 
     version("6.17.1", sha256="34e2c1389e25394f5ba3c6b9d999d04373baf8d7161410536d444f48226d2f50")
     version("6.15.3", sha256="bb2516983f9f716d321e5157c00d0de0c12422eba73b8f43a44610a0f6622438")
