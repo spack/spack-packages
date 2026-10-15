@@ -289,7 +289,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             depends_on("viskores +fpic", when=f"+shared {vk_variant}")
 
         with when("+fides"):
-            depends_on("fides@1.3:")
+            depends_on("fides@1.3", when="@:6.1")
+            depends_on("fides@1.3.0-git.270", when="@6.2")
             depends_on("fides +mpi", when="+mpi")
 
         with when("+cuda"):
