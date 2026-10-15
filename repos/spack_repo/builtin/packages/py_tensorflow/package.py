@@ -181,6 +181,11 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     variant("mpi", default=False, description="Build with MPI support")
     variant("android", default=False, description="Configure for Android builds")
     variant("ios", default=False, description="Build with iOS support (macOS only)")
+    variant(
+        "libclang",
+        default=True,
+        description="Use py-libclang instead of LLVM's bundled Python clang bindings",
+    )
     variant("monolithic", default=False, description="Static monolithic build")
     variant("numa", default=False, description="Build with NUMA support")
     variant(
@@ -252,8 +257,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("py-gast@0.4.0", when="@2.5:2.6")
         depends_on("py-google-pasta@0.1.1:", when="@2.7:")
         depends_on("py-google-pasta@0.2:0", when="@2.4:2.6")
-        depends_on("py-libclang@13:", when="@2.9:")
-        depends_on("py-libclang@9.0.1:", when="@2.7:2.8")
+        depends_on("py-libclang@13:", when="@2.9: +libclang")
+        depends_on("py-libclang@9.0.1:", when="@2.7:2.8 +libclang")
+        depends_on("llvm@13: +clang+python", when="@2.9: ~libclang")
+        depends_on("llvm@9.0.1: +clang+python", when="@2.7:2.8 ~libclang")
         depends_on("py-opt-einsum@2.3.2:", when="@2.7:")
         depends_on("py-opt-einsum@3.3", when="@2.4:2.6")
         depends_on("py-packaging", when="@2.9:")
