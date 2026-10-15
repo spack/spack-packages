@@ -149,3 +149,9 @@ class Subversion(AutotoolsPackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"^svn, version\s+([\d\.]+)", output)
         return match.group(1) if match else None
+
+    def flag_handler(self, name, flags):
+        # added '//' comments which is invalid in c90
+        if self.spec.satisfies("%expat@2.8.5:") and name.lower() == "cflags":
+            flags.append("-std=c99")
+        return (None, None, flags)
