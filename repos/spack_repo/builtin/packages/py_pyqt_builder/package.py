@@ -13,7 +13,8 @@ class PyPyqtBuilder(PythonPackage):
     homepage = "https://www.riverbankcomputing.com/hg/PyQt-builder/"
     pypi = "PyQt-builder/pyqt_builder-1.18.2.tar.gz"
 
-    license("GPL-2.0-or-later")
+    license("BSD-2-Clause", when="@1.16:")
+    license("GPL-2.0-or-later", when="@:1.15")
 
     version("1.20.0", sha256="267ac1ee1593c67884f3c9cb6566f72a92ca28353050fc9d087433c28c74a889")
     version("1.19.1", sha256="6af6646ba29668751b039bfdced51642cb510e300796b58a4d68b7f956a024d8")
