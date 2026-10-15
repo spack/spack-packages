@@ -62,6 +62,8 @@ class Nekrs(Package, CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi")
     depends_on("git")
     depends_on("cmake")
+    # some deprecated apis this uses were removed in cuda@13:
+    depends_on("cuda@:12", when="@:23+cuda")
 
     def patch(self):
         with working_dir("scripts"):
