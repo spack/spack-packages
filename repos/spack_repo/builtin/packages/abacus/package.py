@@ -26,6 +26,8 @@ class Abacus(CMakePackage, MakefilePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
+    version("LTS", branch="LTS")
+
     # Version 3.10.1 is an "LTS" release that predates 3.9.0.19. Unfortunately,
     # the LTS branch is now less robust than development branch due to lack of
     # backport mechanism, so 3.9.0.27 is currently choosen as preferred.
@@ -64,6 +66,7 @@ class Abacus(CMakePackage, MakefilePackage):
     variant("libxc", default=True, description="Enable LibXC support")
     variant("libri", default=False, description="Enable LibRI support", when="@3: +mpi +lcao")
     variant("dftd4", default=False, description="Enable DFT-D4 support", when="@3.11:")
+    variant("plumed", default=False, description="Enable PLUMED support", when="@3.11:")
     variant("pexsi", default=False, description="Enable PEXSI support", when="+mpi +lcao")
     variant("json", default=False, description="Enable JSON output support", when="@3.11:")
 
@@ -76,7 +79,8 @@ class Abacus(CMakePackage, MakefilePackage):
     depends_on("elpa +mpi +openmp", when="+elpa +openmp")
     depends_on("elpa +mpi ~openmp", when="+elpa ~openmp")
     depends_on("libxc@5.1.7:", when="+libxc")
-    depends_on("dftd4@4.2:", when="+dftd4")
+    depends_on("dftd4@4.3: build_system=cmake", when="+dftd4")
+    depends_on("plumed@2:", when="+plumed")
     depends_on("libri", when="+libri")
     depends_on("libcomm", when="+libri")
     # Older releases require Cereal for LCAO builds
@@ -112,6 +116,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 self.define_from_variant("ENABLE_OPENMP", "openmp"),
                 self.define_from_variant("ENABLE_ELPA", "elpa"),
                 self.define_from_variant("ENABLE_DFTD4", "dftd4"),
+                self.define_from_variant("ENABLE_PLUMED", "plumed"),
                 self.define_from_variant("ENABLE_JSON", "json"),
             ]
 
