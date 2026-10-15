@@ -88,9 +88,11 @@ class Libunwind(AutotoolsPackage):
     # The libunwind releases contain the autotools generated files,
     # but the git repo snapshots do not.
     reconf_versions = "@master,1.6-stable,1.7-stable,1.8-stable,1.8.1,1.8.2,1.8.3"
+
     @property
     def force_autoreconf(self):
         return self.version in (Version("1.8.1"), Version("1.8.2"), Version("1.8.3"))
+
     depends_on("autoconf", type="build", when=reconf_versions)
     depends_on("automake", type="build", when=reconf_versions)
     depends_on("m4", type="build", when=reconf_versions)
@@ -118,6 +120,7 @@ class Libunwind(AutotoolsPackage):
     )
     patch("pr847.patch", when="@1.8.2:1.8.3,1.8-stable target=aarch64:")
     patch("pr847-1.8.1.patch", when="@1.8.1 target=aarch64:")
+
     def url_for_version(self, version):
         if version == Version("1.5.0"):
             return f"https://github.com/libunwind/libunwind/releases/download/v{version.up_to(2)}/libunwind-{version}.tar.gz"
