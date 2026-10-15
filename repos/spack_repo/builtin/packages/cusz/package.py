@@ -35,13 +35,11 @@ class Cusz(CMakePackage, CudaPackage):
     # these version of Cuda provide the CUB headers, but not CUB cmake configuration that we use.
     conflicts("^cuda@11.0.2:11.2.2")
 
-    # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
-    conflicts("^cuda@13:")
-
     depends_on("cub", when="^cuda@:10.2.89")
 
     patch("thrust-includes.patch", when="@0.10:0.14 ^cuda@12.8:")
     patch("thrust-includes-0.9.patch", when="@0.9 ^cuda@12.8:")
+    patch("cusz-cuda13-verinfo.patch", when="^cuda@13:")
     conflicts("^cuda@12.8:", when="@:0.8")
 
     def cmake_args(self):
