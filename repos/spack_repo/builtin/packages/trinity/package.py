@@ -26,6 +26,11 @@ class Trinity(MakefilePackage):
     license("BSD-3-Clause")
 
     version(
+        "2.15.2.FULL",
+        sha256="baab87e4878ad097e265c46de121414629bf88fa9342022baae5cac12432a15c",
+        url="https://github.com/trinityrnaseq/trinityrnaseq/releases/download/Trinity-v2.15.2/trinityrnaseq-v2.15.2.FULL.tar.gz",
+    )
+    version(
         "2.15.1.FULL",
         sha256="ba37e5f696d3d54e8749c4ba439901a3e97e14a4314a5229d7a069ad7b1ee580",
         url="https://github.com/trinityrnaseq/trinityrnaseq/releases/download/Trinity-v2.15.1/trinityrnaseq-v2.15.1.FULL.tar.gz",
@@ -59,6 +64,12 @@ class Trinity(MakefilePackage):
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
+
+    # 2.15.2 builds bamsifter's bundled htslib from git sources, whose
+    # configure requires these libraries (bzip2/lzma/zlib are not optional)
+    depends_on("zlib-api", when="@2.15.2")
+    depends_on("bzip2", when="@2.15.2")
+    depends_on("xz", when="@2.15.2")
 
     # There is no documented list of these deps, but they're in the Dockerfile
     #  and we have runtime errors without them
@@ -99,8 +110,31 @@ class Trinity(MakefilePackage):
     depends_on("r-sm", type="run")
 
     patch("2.15.1.patch", when="@2.15.1.FULL")
+    # 2.15.2: bamsifter's build_htslib.sh calls `git submodule` (no .git in a
+    # release tarball) and htscodecs' version.h is never generated.
+    patch("2.15.2.patch", when="@2.15.2.FULL")
+
+    def patch(self):
+        # -m64 is hard-coded in the CMake files and ParaFly's configure, but
+        # GCC rejects it on non-x86 targets (e.g. aarch64).
+        if not self.spec.satisfies("target=x86_64:"):
+            for f in (
+                join_path("Inchworm", "CMakeLists.txt"),
+                join_path("Chrysalis", "CMakeLists.txt"),
+                join_path("trinity-plugins", "ParaFly", "configure"),
+                join_path("trinity-plugins", "ParaFly", "configure.ac"),
+            ):
+                filter_file("-m64", "", f, string=True, ignore_absent=True)
 
     def build(self, spec, prefix):
+        if spec.satisfies("@2.15.2"):
+            # bundled htslib comes from git, so it lacks config.guess/config.sub
+            # and `autoconf` alone can't produce a working configure.
+            automake = Executable(spec["automake"].prefix.bin.automake)
+            libdir = automake("--print-libdir", output=str).strip()
+            htslib = join_path("trinity-plugins", "bamsifter", "htslib")
+            for f in ("config.guess", "config.sub"):
+                copy(join_path(libdir, f), join_path(htslib, f))
         make()
         make("trinity_essentials")
         make("plugins")
