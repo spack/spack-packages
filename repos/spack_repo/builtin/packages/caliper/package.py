@@ -88,6 +88,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("unwind@1.2:1", when="+libunwind")
     depends_on("elfutils", when="+libdw")
     depends_on("variorum", when="+variorum")
+    depends_on("variorum@:0.7", when="+variorum")
     depends_on("intel-oneapi-vtune", when="+vtune")
 
     depends_on("cmake", type="build")
@@ -279,6 +280,11 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         return []
+
+    def flag_handler(self, name: str, flags: List[str]):
+        if name in ("cflags", "cxxflags"):
+            flags.append("-fpermissive")
+        return (flags, None, None)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+python"):
