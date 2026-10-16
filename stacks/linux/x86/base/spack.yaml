@@ -1,0 +1,126 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# Maintainers:
+# - kwryankrattiger
+spack:
+  concretizer:
+    reuse: false
+    unify: when_possible
+
+  packages:
+    all:
+      require:
+      - target=x86_64_v3
+
+    gcc:
+      prefer:
+      - +binutils +bootstrap ~graphite +libsanitizer ~mold +strip
+      - +strip build_type=RelWithDebInfo
+      - languages=c,c++,fortran,lto
+
+    cmake:
+      require:
+        - ~qtgui
+
+    llvm:
+      require:
+      - +clang ~flang +lld +zstd ~gold +utils +llvm_dylib +link_llvm_dylib
+      - openmp=runtime +libomptarget +libomptarget_debug
+      - compiler-rt=runtime libcxx=runtime libunwind=runtime
+      - +polly +offload ~python ~z3
+      - +lldb +lua
+
+  definitions:
+  - utils:
+    - binutils+ld+gold+plugins       # support linking with built gcc
+    - patchelf
+    - elfutils
+
+  - languages:
+    - rust@1.96.1 +dev
+    - go@1.25.12
+    - r@4.5.3
+    - perl@5.42.2
+    - openjdk@21     # Restricted to 21 for Bazel build
+    # - rstudio  # This is currently unbuildable as it requires Python 2.7 via qtwebengine
+
+  - python:
+    - "python@3.13:" # General target version
+    - python@3.10.20 # compatibility version
+
+  - extra-compilers:
+    - "llvm@16:"
+
+  - build-systems:
+    - matrix:
+      - - cmake +ownlibs
+      - - '@3.31.12'
+        - '@4'
+
+    - autoconf
+    - automake
+    - gnuconfig
+    - gmake
+    - 'ninja@1.13:'      # Job server support in 1.13:
+    - npm@11.12.1
+    - node-js
+    - maven
+    - libtool
+    - gradle
+
+  # These build systems require python
+  # which creates a requirement to duplicate the DAG for each
+  - py_build_systems:
+    - py-pip
+    - py-wheel
+    - python-venv
+    - meson@1.11.1
+    - matrix:
+      - - py-setuptools
+      - - '@82'
+        - '@80'
+        - '@79'
+        - '@59'
+
+    - matrix:
+      - - bazel
+      - - '@7.7.1'
+        - '@6.5.0'
+
+  specs:
+    # Bootstrap the base compiler
+  - group: bootstrap-gcc
+    specs:
+    - gcc@13.4.0
+
+    # Bootstrap other language runtimes/compilers
+    # python/rust/etc.
+  - group: bootstrap-base-runtimes
+    needs: [bootstrap-gcc]
+    specs:
+    - $extra-compilers
+    - $build-systems
+    - $languages
+    - $python
+    - $utils
+    - matrix:
+      - - $py_build_systems
+      - - ^python@3.10.20
+    - matrix:
+      - - $py_build_systems
+      - - "^python@3.13:"
+      exclude:
+      - py-setuptools@59
+    override:
+      packages:
+        c:
+          prefer:
+          - gcc@13.4.0
+        cxx:
+          prefer:
+          - gcc@13.4.0
+        fortran:
+          prefer:
+          - gcc@13.4.0
