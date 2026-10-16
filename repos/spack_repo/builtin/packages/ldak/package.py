@@ -12,14 +12,17 @@ class Ldak(Package):
 
     homepage = "https://dougspeed.com/ldak/"
     url = "https://dougspeed.com/wp-content/uploads/source.zip"
+    git = "https://github.com/dougspeed/LDAK.git"
 
     maintainers("snehring")
 
     license("GPL-3.0-only")
 
     version("5.2", sha256="ba3de4eb4f2d664b3c2a54bef2eb66d1a498ac423179e97a5795d010161b1805")
+    version("7.01", commit="6572adccc93e85a66bb7648e46af21a5638467bf")
 
     variant("glpk", default=False, description="Use glpk instead of vendored qsopt")
+    variant("glpk", default=True, description="Use glpk instead of vendored qsopt", when="@7.01:")
 
     depends_on("c", type="build")
 
@@ -29,6 +32,7 @@ class Ldak(Package):
     depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
     depends_on("intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
     depends_on("glpk", when="+glpk")
+    depends_on("zstd", when="@7.01:")
 
     requires("target=x86_64:", when="~glpk", msg="bundled qsopt is only for x86_64")
     requires(
@@ -50,28 +54,51 @@ class Ldak(Package):
             (self.spec["lapack"].headers + self.spec["blas"].headers).include_flags,
             self.spec["zlib-api"].headers.include_flags,
         ]
+        defines = []
 
-        if self.spec.satisfies("~glpk"):
-            if self.spec.satisfies("platform=darwin"):
-                libs.append("libqsopt.mac.a")
+        source_path = self.stage.source_path
+        if self.spec.satisfies("@7.01:"):
+            source_path = join_path(source_path, "Source_Code")
+
+        with working_dir(source_path):
+            if self.spec.satisfies("~glpk"):
+                if self.spec.satisfies("platform=darwin"):
+                    libs.append("libqsopt.mac.a")
+                else:
+                    libs.append("libqsopt.linux.a")
             else:
-                libs.append("libqsopt.linux.a")
-        else:
-            includes.append(self.spec["glpk"].headers.include_flags)
-            libs.append(self.spec["glpk"].libs.link_flags)
-        if self.spec.satisfies("^mkl"):
-            filter_file("#define MKL.*", "#define MKL 1", "ldak.c")
-        if self.spec.satisfies("^openblas"):
-            filter_file("#define MKL.*", "#define MKL 2", "ldak.c")
-            filter_file("#if MKL==2", "#if MKL==2\n#include <cblas.h>\n", "ldak.c")
-        if self.spec.satisfies("+glpk"):
-            filter_file("#define MET.*", "#define MET 1", "ldak.c")
-            filter_file('#include"glpk.h"', "#include<glpk.h>", "ldak.c")
-            filter_file(r"weights\[", "tally3[", "weightfuns.c")
-        cc = Executable(spack_cc)
-        args = ["ldak.c", self.compiler.openmp_flag, "-o", "ldak"] + includes + libs
-        cc(*args)
+                includes.append(self.spec["glpk"].headers.include_flags)
+                libs.append(self.spec["glpk"].libs.link_flags)
+                defines.append("-DMET=1")
+            if self.spec.satisfies("^mkl"):
+                if self.spec.satisfies("@5.2"):
+                    filter_file("#define MKL.*", "#define MKL 1", "ldak.c")
+                defines.append("-DMKL=1")
+            if self.spec.satisfies("^openblas"):
+                if self.spec.satisfies("@5.2"):
+                    filter_file("#define MKL.*", "#define MKL 2", "ldak.c")
+                filter_file("#if MKL==2", "#if MKL==2\n#include <cblas.h>\n", "ldak.c")
+                filter_file("#include <blis.h>", "", "ldak.c", string=True)
+                filter_file(
+                    "bli_thread_set_num_threads(maxthreads);", "", "defaults.c", string=True
+                )
+                defines.append("-DMKL=2")
+            if self.spec.satisfies("+glpk"):
+                if self.spec.satisfies("@5.2"):
+                    filter_file("#define MET.*", "#define MET 1", "ldak.c")
+                    filter_file(r"weights\[", "tally3[", "weightfuns.c")
+                filter_file('#include"glpk.h"', "#include<glpk.h>", "ldak.c")
+            if self.spec.satisfies("@7.01:"):
+                libs.append(self.spec["zstd"].libs.link_flags)
+                includes.append(self.spec["zstd"].headers.include_flags)
+            cc = Executable(spack_cc)
+            args = ["ldak.c", self.compiler.openmp_flag, "-o", "ldak"] + defines + includes + libs
+            cc(*args)
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
-        install("ldak", prefix.bin.ldak)
+        source_path = self.stage.source_path
+        if self.spec.satisfies("@7.01:"):
+            source_path = join_path(source_path, "Source_Code")
+        with working_dir(source_path):
+            install("ldak", prefix.bin.ldak)
