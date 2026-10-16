@@ -36,6 +36,7 @@ class Swig(AutotoolsPackage, CMakePackage, SourceforgePackage):
     build_system("cmake", "autotools", default="autotools")
 
     version("master")
+    version("4.5.1", sha256="7fec50b27deddab5455a9633780b6341eddfb96215a7619e93a76eb27178f653")
     version("4.5.0", sha256="22ae0e887f8cca8031a325c67d005207653200b40e71edb3f88780e28e47d0ff")
     version("4.4.1", sha256="40162a706c56f7592d08fd52ef5511cb7ac191f3593cf07306a0a554c6281fcf")
     version("4.1.1", sha256="2af08aced8fcd65cdb5cc62426768914bedc735b1c250325203716f78e39ac9b")
