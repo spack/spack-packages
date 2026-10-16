@@ -28,12 +28,13 @@ class Liggghts(MakefilePackage):
     variant("gzip", default=True, description="Enable GZIP for some input and output files")
     variant("debug", default=False, description="Builds a debug version of the executable")
     variant("profile", default=False, description="Generate profiling code")
+    variant("vtk", default=False, description="Enable VTK output")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("vtk@6.1.0:8.2.0")
+    depends_on("vtk@6.1.0:8.2.0", when="+vtk")
     depends_on("mpi", when="+mpi")
     depends_on("jpeg", when="+jpeg")
     depends_on("zlib-api", when="+gzip")
@@ -56,17 +57,23 @@ class Liggghts(MakefilePackage):
         makefile = FileFilter(makefile_user)
         makefile_auto = FileFilter(os.path.join("src", "MAKE", "Makefile.auto"))
 
-        # Upstream misleadingly suggests that VTK is an optional
-        # dependency, but VTK is always needed to create an output file!
-        vtk = spec["vtk"]
-        makefile.filter(
-            r"^#(VTK_INC_USR=-I).*",
-            r"\1{0}".format(
-                # Glob for the VTK subdirectory like "vtk-8.1".
-                glob(os.path.join(vtk.prefix.include, "vtk*"))[0]
-            ),
-        )
-        makefile.filter(r"^#(VTK_LIB_USR=-L).*", r"\1{0}".format(vtk.prefix.lib))
+        # VTK is required for LIGGGHTS' native output files, but 3.8.0 only
+        # supports VTK up to 8.2, and all VTK versions <= 8.2 are deprecated
+        # in Spack. Keep the feature behind a variant so the default spec
+        # still concretizes; USE_VTK defaults to "ON" upstream, so turn it
+        # off when the variant is disabled.
+        if spec.satisfies("+vtk"):
+            vtk = spec["vtk"]
+            makefile.filter(
+                r"^#(VTK_INC_USR=-I).*",
+                r"\1{0}".format(
+                    # Glob for the VTK subdirectory like "vtk-8.1".
+                    glob(os.path.join(vtk.prefix.include, "vtk*"))[0]
+                ),
+            )
+            makefile.filter(r"^#(VTK_LIB_USR=-L).*", r"\1{0}".format(vtk.prefix.lib))
+        else:
+            makefile.filter(r"^(USE_VTK = ).*", r'\1"OFF"')
 
         if spec.satisfies("+mpi"):
             mpi = spec["mpi"]
