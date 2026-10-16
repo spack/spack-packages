@@ -21,6 +21,10 @@ class PyCwltool(PythonPackage):
         sha256="d0671d429f2e35d8009c77c17625a418bceaa8b236ff5ca2cd0bcfc867cf4bf4",
     )
     version(
+        "3.2.20260413085819",
+        sha256="fac1c83a703dfb836043f8330aa3aa98df06185b31cebddd35b389a113456c6d",
+    )
+    version(
         "3.1.20221201130942",
         sha256="0152d8cdf6acaf3620f557b442941f577bff2851d9e2e866e6051ea48a37bdbe",
     )
@@ -37,6 +41,7 @@ class PyCwltool(PythonPackage):
     depends_on("python@3.6:3", type=("build", "run"))
     depends_on("py-setuptools@45:", when="@3.2:", type="build")
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools-scm@8.0.4:", when="@3.1.20231016170136:", type="build")
 
     depends_on("py-requests@2.6.1:", type=("build", "run"))
     depends_on("py-ruamel-yaml@0.16:0.19", when="@3.2:", type=("build", "run"))
