@@ -1,0 +1,18 @@
+diff --git a/setup.py b/setup.py
+index f79c169..d86cc26 100755
+--- a/setup.py
++++ b/setup.py
+@@ -23,12 +23,10 @@ import platform
+ import sys
+ 
+ # from distutils.core import setup
+-from distribute_setup import use_setuptools
+ import shutil
+ from setuptools import find_packages
+-from distutils.core import setup, Command
++from setuptools import setup, Command
+ 
+-use_setuptools(version="0.6.24")
+ version = "4.5.5"
+ 
+ 
