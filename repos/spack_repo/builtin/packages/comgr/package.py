@@ -34,6 +34,7 @@ class Comgr(ROCmLibrary, CMakePackage):
             url = "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{0}.{1}.tar.gz"
             return url.format(version[0], version[1])
 
+    version("10.1.0", sha256="db317aadb90366b61af0fd93b0ccf3cefe70a18e4e37c23744d968ea6f900654")
     version("10.0.0", sha256="92dcfe3d2e1ca52b460c7f168d8d74e47cd17370fa8bdffb919174115f94ab0f")
     version("7.14.0", sha256="db365c1f0ab500eeee04a990d29d79a6bb667874f8069f7b69920ca62c352d2f")
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
@@ -105,6 +106,7 @@ class Comgr(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")

@@ -1,0 +1,19 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -558,6 +558,7 @@
+ 
+ ################################################################################
+ # mxDataGenerator Download
++if (NOT DEFINED MXDATAGENERATOR_INC_DIR)
+ configure_file(CMakeMXDataGeneratorDownload.cmake mxDataGenerator-download/CMakeLists.txt)
+   execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+       RESULT_VARIABLE result
+@@ -578,7 +579,6 @@
+   message(FATAL_ERROR "Config step for mxDataGenerator-src failed: ${result}")
+ endif()
+ 
+-if (NOT DEFINED MXDATAGENERATOR_INC_DIR)
+   set (MXDATAGENERATOR_INC_DIR "${CMAKE_BINARY_DIR}/mxDataGenerator-src/lib/include")
+   message ("MXDATAGENERATOR_INC_DIR ${MXDATAGENERATOR_INC_DIR}")
+ endif ()

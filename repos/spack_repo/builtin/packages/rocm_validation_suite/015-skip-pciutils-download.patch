@@ -1,0 +1,63 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index ec81059..e93dfab 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -589,18 +589,21 @@ endif ()
+ # (pci_dev struct layout changed between libpci 3.7.0/Ubuntu-22.04 and
+ #  3.10.0/Ubuntu-24.04; pinning to v3.7.0 and static linking eliminates the
+ #  runtime ABI mismatch and guarantees a clean build on Ubuntu 22.04 kernel headers)
+-configure_file(CMakePciutilsDownload.cmake pciutils-download/CMakeLists.txt)
+-execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+-    RESULT_VARIABLE result
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-download )
+-if(result)
+-  message(FATAL_ERROR "CMake step for pciutils failed: ${result}")
+-endif()
+-execute_process(COMMAND ${CMAKE_COMMAND} --build .
+-    RESULT_VARIABLE result
+-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-download )
+-if(result)
+-  message(FATAL_ERROR "Clone step for pciutils failed: ${result}")
++if (NOT DEFINED PCIUTILS_SRC_DIR)
++  configure_file(CMakePciutilsDownload.cmake pciutils-download/CMakeLists.txt)
++  execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
++      RESULT_VARIABLE result
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-download )
++  if(result)
++    message(FATAL_ERROR "CMake step for pciutils failed: ${result}")
++  endif()
++  execute_process(COMMAND ${CMAKE_COMMAND} --build .
++      RESULT_VARIABLE result
++      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-download )
++  if(result)
++    message(FATAL_ERROR "Clone step for pciutils failed: ${result}")
++  endif()
++  set(PCIUTILS_SRC_DIR "${CMAKE_BINARY_DIR}/pciutils-src")
+ endif()
+ 
+ # pciutils uses a Makefile; SHARED=no produces libpci.a (static archive only).
+@@ -610,7 +613,7 @@ endif()
+ execute_process(
+   COMMAND make lib/libpci.a SHARED=no ZLIB=no HWDB=no CFLAGS=-fPIC
+   RESULT_VARIABLE result
+-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-src
++  WORKING_DIRECTORY ${PCIUTILS_SRC_DIR}
+ )
+ if(result)
+   message(FATAL_ERROR "Build step for pciutils (libpci.a) failed: ${result}")
+@@ -618,13 +621,13 @@ endif()
+ 
+ # Arrange headers into include/pci/ so #include <pci/pci.h> resolves correctly
+ file(MAKE_DIRECTORY ${CMAKE_BINARY_DIR}/pciutils-install/include/pci)
+-file(GLOB PCIUTILS_HEADERS "${CMAKE_BINARY_DIR}/pciutils-src/lib/*.h")
++file(GLOB PCIUTILS_HEADERS "${PCIUTILS_SRC_DIR}/lib/*.h")
+ file(COPY ${PCIUTILS_HEADERS} DESTINATION "${CMAKE_BINARY_DIR}/pciutils-install/include/pci/")
+ 
+ # Imported target used by all modules via ${LIBPCI_TARGET}
+ add_library(pci-static STATIC IMPORTED GLOBAL)
+ set_target_properties(pci-static PROPERTIES
+-  IMPORTED_LOCATION "${CMAKE_BINARY_DIR}/pciutils-src/lib/libpci.a"
++  IMPORTED_LOCATION "${PCIUTILS_SRC_DIR}/lib/libpci.a"
+   INTERFACE_INCLUDE_DIRECTORIES "${CMAKE_BINARY_DIR}/pciutils-install/include"
+ )
+ set(LIBPCI_TARGET pci-static)

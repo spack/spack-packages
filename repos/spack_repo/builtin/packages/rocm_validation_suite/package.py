@@ -22,6 +22,14 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
+    # Version 10.1.0 uses v1.7.0 tag. TransferBench is a submodule at
+    # external/TransferBench; a GitHub tarball does not include it.
+    version(
+        "10.1.0",
+        tag="v1.7.0",
+        commit="cf0eff2d47c7bfc49553e2ae922d0f6d0f24bf44",
+        submodules=True,
+    )
     # Version 10.0.0 uses v1.6.0 tag
     version(
         "10.0.0",
@@ -108,9 +116,14 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     # https://github.com/ROCm/ROCmValidationSuite/pull/998
     patch("011_add_inc_and_lib_path_for_pciutils.patch", when="@7.0:7.2")
     patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13:7.14")
-    patch("011_add_inc_and_lib_path_for_pciutils-10.0.patch", when="@10.0:")
+    patch("011_add_inc_and_lib_path_for_pciutils-10.0.patch", when="@10.0")
+    patch("011_add_inc_and_lib_path_for_pciutils-10.1.patch", when="@10.1")
     patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
-    patch("013-add-hiprand-includes-7.13.patch", when="@7.13:")
+    patch("013-add-hiprand-includes-7.13.patch", when="@7.13:10.0")
+    patch("013-add-hiprand-includes-10.1.patch", when="@10.1:")
+    patch("014-skip-external-downloads-10.0.patch", when="@10.0")
+    patch("014-skip-external-downloads-10.1.patch", when="@10.1:")
+    patch("015-skip-pciutils-download.patch", when="@10.1:")
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
     depends_on("yaml-cpp~shared")
@@ -119,6 +132,34 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     depends_on("libdrm", when="@6.4:")
     depends_on("pciutils+shared", when="@6.4:")
     depends_on("numactl", when="@7.13:")
+
+    # needed for air-gapped environments
+    resource(
+        name="mxDataGenerator",
+        url="https://github.com/ROCm/mxDataGenerator/archive/12c016dc694139317feb2e23c59028fde70beaf4.tar.gz",
+        sha256="a0c0a78684da2d26ee883ccc632c8f51a4b00cfd3915707f9675cc8c0cf96483",
+        destination="deps",
+        placement="mxDataGenerator",
+        when="@10.0:",
+    )
+    resource(
+        name="TransferBench",
+        url="https://github.com/ROCm/TransferBench/archive/c78c4aec95e5e8317ddecdf6e224443f63473312.tar.gz",
+        sha256="714945ef60b5d386f938746c872a8d8f48dbc9036a2e1974c0ac04fc8d468d83",
+        destination="deps",
+        placement="TransferBench",
+        when="@10.0",
+    )
+    # RVS builds a static libpci.a from pciutils v3.7.0. The shared pciutils
+    # dependency is not a substitute: the pci_dev layout changed after 3.7.0.
+    resource(
+        name="pciutils",
+        url="https://github.com/pciutils/pciutils/archive/v3.7.0.tar.gz",
+        sha256="ea768aa0187ba349391c6c157445ecc2b42e7d671fc1ce8c53ff5ef513f1e2ab",
+        destination="deps",
+        placement="pciutils",
+        when="@10.1:",
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         spec = self.spec
@@ -189,6 +230,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -216,6 +258,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -239,6 +282,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
@@ -256,6 +300,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
@@ -309,6 +354,28 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
             # hipblaslt config file no longer sets this
             args.append(
                 self.define("hipblaslt_INCLUDE_DIR", self.spec["hipblaslt"].prefix.include)
+            )
+
+        if self.spec.satisfies("@10.0:"):
+            args.append(
+                self.define(
+                    "MXDATAGENERATOR_INC_DIR",
+                    join_path(self.stage.source_path, "deps", "mxDataGenerator", "lib", "include"),
+                )
+            )
+        if self.spec.satisfies("@10.0"):
+            args.append(
+                self.define(
+                    "TRANSFERBENCH_INC_DIR",
+                    join_path(self.stage.source_path, "deps", "TransferBench", "src", "header"),
+                )
+            )
+        if self.spec.satisfies("@10.1:"):
+            args.append(
+                self.define(
+                    "PCIUTILS_SRC_DIR",
+                    join_path(self.stage.source_path, "deps", "pciutils"),
+                )
             )
 
         return args
