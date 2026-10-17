@@ -1,0 +1,7 @@
+trilinos-16.2-sacado-clang-specialization.patch text eol=lf
+trilinos-16.2-deprecation-warnings.patch text eol=lf
+darwin-stacktrace-gnu-source.patch text eol=lf
+darwin-gauss-extrapolation-instantiation.patch text eol=lf
+darwin-face-element-instantiation.patch text eol=lf
+darwin-material-test-template-definitions.patch text eol=lf
+darwin-fiber-test-template-definitions.patch text eol=lf

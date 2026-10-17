@@ -1,0 +1,14 @@
+The solid-element fiber test adds optional vector values to InputParameterContainer.
+Include the template definitions at this caller rather than relying on incidental
+instantiations of add() in the shared library.
+
+--- a/unittests/solid_ele/4C_solid_ele_fiber_test.cpp
++++ b/unittests/solid_ele/4C_solid_ele_fiber_test.cpp
+@@ -8,6 +8,7 @@
+ #include <gtest/gtest.h>
+ 
++#include "4C_io_input_parameter_container.templates.hpp"
+ #include "4C_solid_ele_fibers.hpp"
+ #include "4C_unittest_utils_assertions_test.hpp"
+ #include "4C_utils_exceptions.hpp"
+ 

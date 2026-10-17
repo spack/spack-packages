@@ -1,0 +1,20 @@
+Darwin provides _Unwind_Backtrace without the GNU feature-test macro.
+Define Boost.Stacktrace's exemption for both its default unwind backend
+and the optional libbacktrace backend. The platform exemption must not
+depend on FOUR_C_WITH_BACKTRACE; keep backend selection unchanged.
+
+diff --git a/src/core/utils/src/exceptions/4C_utils_exceptions.cpp b/src/core/utils/src/exceptions/4C_utils_exceptions.cpp
+--- a/src/core/utils/src/exceptions/4C_utils_exceptions.cpp
++++ b/src/core/utils/src/exceptions/4C_utils_exceptions.cpp
+@@ -11,10 +11,10 @@
+ 
+ #ifdef FOUR_C_WITH_BACKTRACE
+ #define BOOST_STACKTRACE_USE_BACKTRACE
++#endif
+ #if defined(__APPLE__)
+ #define BOOST_STACKTRACE_GNU_SOURCE_NOT_REQUIRED
+ #endif
+-#endif
+ 
+ #include <boost/stacktrace.hpp>
+ #include <mpi.h>

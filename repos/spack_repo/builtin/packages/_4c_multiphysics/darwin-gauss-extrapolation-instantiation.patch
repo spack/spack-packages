@@ -1,0 +1,19 @@
+The core unit test calls the hex8/GaussIntegration extrapolation template
+directly, but its definition is private to this translation unit. Explicitly
+instantiate that specialization so optimized builds provide a callable symbol
+instead of relying on incidental emission through the assembly template.
+
+diff --git a/src/core/fem/src/general/utils/4C_fem_general_utils_gauss_point_extrapolation.cpp b/src/core/fem/src/general/utils/4C_fem_general_utils_gauss_point_extrapolation.cpp
+--- a/src/core/fem/src/general/utils/4C_fem_general_utils_gauss_point_extrapolation.cpp
++++ b/src/core/fem/src/general/utils/4C_fem_general_utils_gauss_point_extrapolation.cpp
+@@ -436,6 +436,10 @@
+   assemble_extrapolated_nodal_values(global_data, nodal_quantity, ele, nodal_average);
+ }
+ 
++template Core::LinAlg::SerialDenseMatrix
++Core::FE::evaluate_gauss_points_to_nodes_extrapolation_matrix<Core::FE::CellType::hex8,
++    Core::FE::GaussIntegration>(const Core::FE::GaussIntegration& intpoints);
++
+ template void Core::FE::extrapolate_gp_quantity_to_nodes_and_assemble<Core::FE::CellType::hex8,
+     Core::FE::IntegrationPoints3D>(const Core::Elements::Element& ele,
+     const Core::LinAlg::SerialDenseMatrix& gp_data, Core::LinAlg::MultiVector<double>& global_data,

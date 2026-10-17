@@ -1,0 +1,19 @@
+The geometry-pair unit test constructs quad4 patch face elements outside the
+factory translation unit. Explicitly instantiate both the base and derived
+classes so their out-of-line virtual methods are available to that caller.
+On Darwin, implicit instantiations can be emitted as weak_def_can_be_hidden;
+explicit instantiation makes the methods exported weak definitions instead.
+
+--- a/src/geometry_pair/4C_geometry_pair_element_faces.cpp
++++ b/src/geometry_pair/4C_geometry_pair_element_faces.cpp
+@@ -794,4 +794,10 @@
+   return nullptr;
+ }
+ 
++template class GeometryPair::FaceElementTemplate<GeometryPair::t_quad4,
++    GeometryPair::line_to_surface_patch_scalar_type>;
++
++template class GeometryPair::FaceElementPatchTemplate<GeometryPair::t_quad4,
++    GeometryPair::line_to_surface_patch_scalar_type>;
++
+ FOUR_C_NAMESPACE_CLOSE
