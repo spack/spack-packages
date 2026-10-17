@@ -75,9 +75,8 @@ class Rocsparse(ROCmLibrary, CMakePackage):
     version("5.7.1", sha256="4c09b182b371124675d4057246021b5ed45e2833fdbf265b37a9b06b668baf0a")
     version("5.7.0", sha256="a42f0eb531b015b719e2bdcdff0cfb214e9894f73107966260f26931f982ecbc")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.5:", type="build")
 

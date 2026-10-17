@@ -77,8 +77,7 @@ class Hipsparse(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
     conflicts("~cuda ~rocm", msg="CUDA or ROCm support is required")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("hip +cuda", when="+cuda")
 
