@@ -30,8 +30,6 @@ class Xosview(MakefilePackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
       env.set("PREFIX", prefix)
 
-    #def build(self, spec, prefix):
-        #make(f"CXX={spack_cxx}")
 
     def install(self, spec, prefix):
         make("install")
