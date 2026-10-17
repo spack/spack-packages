@@ -15,6 +15,7 @@ class PyPygobject(MesonPackage, PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("3.58.1", sha256="4c80598ade17fbaa7798e01a25d0bf29ce109740786026a074c5c62bb3e79d23")
     version("3.54.3", sha256="a8da09134a0f7d56491cf2412145e35aa74e91d760e8f337096a1cda0b92bae7")
     version("3.54.5", sha256="b6656f6348f5245606cf15ea48c384c7f05156c75ead206c1b246c80a22fb585")
     version(
@@ -45,12 +46,24 @@ class PyPygobject(MesonPackage, PythonPackage):
     depends_on("libffi@3.0.0:", when="@3.46.0:")
 
     depends_on("glib", when="@:3.46.0")
-    depends_on("gobject-introspection", when="@:3.46.0")
+    depends_on("gobject-introspection", when="@:3.50")
     depends_on("py-pycairo", type=("build", "run"), when="@:3.46.0")
     depends_on("libffi", when="@:3.46.0")
+
+    # Test dependencies
+    with default_args(type="test"):
+        depends_on("gobject-introspection", when="@3.51:")
+        depends_on("py-pytest@:8,9.0.1:", when="@3.47:")
+        depends_on("py-pytest-cov", when="@3.47:")
 
     def url_for_version(self, version):
         return f"https://download.gnome.org/sources/pygobject/{version.up_to(2)}/pygobject-{version}.tar.gz"
 
     def patch(self):
         filter_file(r"Pycairo_IMPORT", r"//Pycairo_IMPORT", "gi/pygi-foreign-cairo.c")
+
+    def meson_args(self):
+        args = super().meson_args()
+        perform_tests = "true" if self.run_tests else "false"
+        args.append(f"-Dtests={perform_tests}")
+        return args
