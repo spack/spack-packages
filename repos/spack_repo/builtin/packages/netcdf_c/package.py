@@ -169,6 +169,12 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         when="@:4.9",
     )
 
+    patch(
+        "https://github.com/Unidata/netcdf-c/commit/8f708dd81ca4138a6167247f2c4c892894e55e95.patch?full_index=1",
+        sha256="fc4c97d4fb043ae518773e6f29b00ff3ed6e70d0a272ae332090f3056387eff1",
+        when="@4.10:",
+    )
+
     def patch(self):
         """Fix bad code in ncgen/CMakeLists.txt that removes
         the rpath for dependencies like hdf5."""
