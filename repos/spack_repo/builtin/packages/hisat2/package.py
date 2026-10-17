@@ -21,6 +21,11 @@ class Hisat2(MakefilePackage):
     license("GPL-3.0-or-later")
 
     version(
+        "2.2.3",
+        sha256="b53107422e5b44ebea4b20b1a77bb9e240d6b92d654fcd7e6a6ab5d1aae86c45",
+        url="https://github.com/DaehwanKimLab/hisat2/archive/refs/tags/v2.2.3.tar.gz",
+    )
+    version(
         "2.2.1",
         sha256="48e933330d4d8470d2b3dfe7ec3918f2e98a75f7381891e23b7df1fb4f135eb1",
         url="https://cloud.biohpc.swmed.edu/index.php/s/fE9QCsX3NH4QwBi/download",
@@ -50,7 +55,15 @@ class Hisat2(MakefilePackage):
     depends_on("cxx")
 
     # patch to get SRA working
-    patch("sra.patch", when="+sra")
+    patch("sra.patch", when="@:2.2.1 +sra")
+
+    def edit(self, spec, prefix):
+        if spec.satisfies("target=aarch64:"):
+            filter_file(
+                r"^EXTRA_FLAGS \+= -std=c\+\+11",
+                "EXTRA_FLAGS += -std=c++11 -fsigned-char",
+                "Makefile",
+            )
 
     @when("+sra")
     def build(self, spec, prefix):
