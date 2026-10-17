@@ -28,3 +28,7 @@ class Dmtcp(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     patch("for_aarch64.patch", when="@2.6.0 target=aarch64:")
+
+    # src/mtcp builds mtcp_restart with an explicit -O0 after $(CFLAGS). Flags
+    # injected by the compiler wrapper come last and would override it.
+    flag_handler = build_system_flags
