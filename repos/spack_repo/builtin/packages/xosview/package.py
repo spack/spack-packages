@@ -13,7 +13,7 @@ class Xosview(MakefilePackage):
     url = "https://www.pogo.org.uk/~mark/xosview/releases/xosview-1.25.tar.gz"
     git = "https://github.com/hills/xosview"
 
-    supplier = "Mark Hills mark@xwax.org"
+    supplier = "Person: Mark Hills"
 
     maintainers("schallee")
 
