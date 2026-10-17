@@ -6,6 +6,7 @@ from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
+
 class Xosview(MakefilePackage):
     """Classic X11 system monitoring tool"""
 
