@@ -20,6 +20,7 @@ class PyFilelock(PythonPackage):
     license("Unlicense", when="@:3.22")
     license("MIT", when="@3.23:")
 
+    version("4.1.1", sha256="7ba0927482c5a814b0a7f391d029ccdb8010f576f0a74c0dcde1811e8bc4c1b6")
     version("3.29.1", sha256="d97e6b1b9757569626c58caa07dc4beb1613f4a2938b1e8cc81afca398906c9e")
     version("3.29.0", sha256="69974355e960702e789734cb4871f884ea6fe50bd8404051a3530bc07809cf90")
     version("3.25.2", sha256="b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694")
@@ -40,6 +41,7 @@ class PyFilelock(PythonPackage):
     version("2.0.9", sha256="0f91dce339c9f25d6f2e0733a17e4f9a47b139dffda52619a0e61e013e5c6782")
     version("2.0.8", sha256="7e48e4906de3c9a5d64d8f235eb3ae1050dfefa63fd65eaf318cc915c935212b")
 
+    depends_on("python@3.11:", when="@4.1.1:", type=("build", "run"))
     depends_on("python@3.10:", when="@3.20:", type=("build", "run"))
     depends_on("python@3.9:", when="@3.17:", type=("build", "run"))
     depends_on("python@3.8:", when="@3.12.3:", type=("build", "run"))
