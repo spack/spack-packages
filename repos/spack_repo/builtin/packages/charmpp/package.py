@@ -21,15 +21,29 @@ class Charmpp(Package):
 
     homepage = "https://charmplusplus.org"
     url = "https://charm.cs.illinois.edu/distrib/charm-6.8.2.tar.gz"
-    git = "https://github.com/UIUC-PPL/charm.git"
+    git = "https://github.com/charmplusplus/charm.git"
 
     maintainers("matthiasdiener")
     # relicensed from a non-commercial license to Apache-2.0 in May 2024, after v7.0.0
-    license("LicenseRef-Charmpp-Non-Commercial", when="@:7.0", checked_by="tgamblin")
-    license("Apache-2.0 WITH LLVM-exception", when="@7.1:", checked_by="tgamblin")
-    redistribute(source=False, binary=False, when="@:7.0")
+    license("LicenseRef-Charmpp-Non-Commercial", when="@6:7.0", checked_by="tgamblin")
+    license("Apache-2.0 WITH LLVM-exception", when="@7.1:,classic,recharm", checked_by="tgamblin")
+    redistribute(source=False, binary=False, when="@6:7.0")
 
-    version("main", branch="main")
+    # "classic" is the frozen classic Converse line (8.1.0 is its final
+    # release); "recharm" is the default branch and the Charm++ 9.0 line,
+    # built on the reconverse runtime (contrib/reconverse submodule, which
+    # GitHub's release tarballs do not contain, hence git versions).
+    # Neither name is an infinity version, so both sort below 6.5.1: version
+    # ranges in this file close their lower bound at 6 and list the git
+    # versions explicitly where they apply.
+    version(
+        "9.0.0-alpha1",
+        tag="v9.0.0-alpha1",
+        commit="592bb25f28b553f3a5d4242328c4507e76badadf",
+        submodules=True,
+    )
+    version("recharm", branch="recharm", submodules=True)
+    version("classic", branch="classic")
 
     version(
         "8.0.0",
@@ -53,7 +67,7 @@ class Charmpp(Package):
     # Support OpenMPI; see
     # <https://github.com/UIUC-PPL/charm/issues/1206>
     # Patch is no longer needed in versions 6.8.0+
-    patch("mpi.patch", when="@:6.7.1")
+    patch("mpi.patch", when="@6:6.7.1")
 
     # Patch for AOCC
     patch("charm_6.7.1_aocc.patch", when="@6.7.1 %aocc", level=1)
@@ -66,7 +80,7 @@ class Charmpp(Package):
     patch("nvhpc.patch", when="%nvhpc")
 
     # Ignore compiler warnings while configuring
-    patch("strictpass.patch", when="@:6.8.2")
+    patch("strictpass.patch", when="@6:6.8.2")
 
     # Support Cray Shasta with ARM
     patch("ofi-crayshasta-arm.patch", when="backend=ofi pmi=cray-pmi target=aarch64:")
@@ -91,7 +105,18 @@ class Charmpp(Package):
     variant(
         "backend",
         default=backend_default,
-        values=("mpi", "multicore", "netlrts", "verbs", "gni", "ucx", "ofi", "pami", "pamilrts"),
+        values=(
+            "mpi",
+            "multicore",
+            "netlrts",
+            "verbs",
+            "gni",
+            "ucx",
+            "ofi",
+            "pami",
+            "pamilrts",
+            "reconverse",
+        ),
         description="Set the backend to use",
     )
 
@@ -125,22 +150,22 @@ class Charmpp(Package):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build", when="+fortran")
     # Fortran is required for version earlier than 8.0.0
-    conflicts("~fortran", when="@:7")
+    conflicts("~fortran", when="@6:7")
     # charmpp build was failing with clang based compilers for -DNETWORK=mpi as discussed in
     # https://github.com/charmplusplus/charm/issues/3645
     # Fix was suggested in https://github.com/charmplusplus/charm/pull/3646 and the same has
     # been implemented in v8.0.0
-    conflicts("%fortran=intel-oneapi-compilers", when="@8: +fortran")
+    conflicts("%fortran=intel-oneapi-compilers", when="@8:,classic,recharm +fortran")
     conflicts(
         "%fortran=aocc@:4.2",
-        when="@8: +fortran",
+        when="@8:,classic,recharm +fortran",
         msg="Charm++ 8.x +fortran fails to build with AOCC 4.2.0 and earlier; "
         "use AOCC 5.0+ or charmpp@8: ~fortran",
     )
 
     # Versions 7.0.0+ use CMake by default when it's available. It's more
     # robust.
-    depends_on("cmake@3.4:", when="@7.0.0:", type="build")
+    depends_on("cmake@3.4:", when="@7.0.0:,classic,recharm", type="build")
 
     depends_on("mpi", when="backend=mpi")
     depends_on("papi", when="+papi")
@@ -148,6 +173,47 @@ class Charmpp(Package):
 
     depends_on("ucx", when="backend=ucx")
     depends_on("libfabric", when="backend=ofi")
+
+    # Reconverse runtime (Charm++ 9): communication through LCI v2, CPU
+    # affinity through hwloc. charm's ./build would download LCI at configure
+    # time; the recipe turns that off and builds against Spack's lci instead.
+    # v9.0.0-alpha1 pins LCI ca88ce2c (2026-08-18), which no LCI release
+    # contains (2.0.0-beta.1 is from 2025-05), so the dependency is lci@master.
+    depends_on("lci@master", when="backend=reconverse")
+    # LCI's default network backend (ibv) needs rdma-core, which is Linux-only.
+    depends_on("lci fabric=ofi", when="backend=reconverse platform=darwin")
+    depends_on("hwloc", when="backend=reconverse")
+    depends_on("cmake@3.12:", when="backend=reconverse", type="build")
+    requires(
+        "@9:,recharm",
+        when="backend=reconverse",
+        msg="The reconverse backend exists from Charm++ 9 (and the recharm branch) on",
+    )
+    conflicts("backend=reconverse", when="~smp", msg="The 'reconverse' backend always uses SMP")
+    # With --build-shared, libreconverse.dylib/.so is written to lib_so/ only,
+    # but charmc links it with -lreconverse against lib/, so linking the
+    # build's own test program fails (seen with v9.0.0-alpha1).
+    conflicts(
+        "+shared",
+        when="backend=reconverse",
+        msg="Charm++ 9.0.0-alpha1 cannot link with --build-shared on reconverse",
+    )
+    # TCharm, which AMPI and the LIBS/ChaNGa targets need, is not built on
+    # reconverse yet.
+    for _target in ("AMPI", "LIBS", "ChaNGa"):
+        conflicts(
+            f"build-target={_target}",
+            when="backend=reconverse",
+            msg="Only build-target=charm++ builds on the reconverse backend",
+        )
+    # Reconverse processes bootstrap through LCI (see the lci 'bootstrap' variant).
+    for _pmi in ("simplepmi", "slurmpmi2", "pmix", "cray-pmi"):
+        conflicts(
+            f"pmi={_pmi}",
+            when="backend=reconverse",
+            msg="The reconverse backend bootstraps through LCI; use lci bootstrap=... instead",
+        )
+
     depends_on("slurm@17-11-9-2:", when="pmi=slurmpmi2")
 
     # FIXME : As of now spack's OpenMPI recipe does not have a PMIx variant
@@ -167,7 +233,7 @@ class Charmpp(Package):
     conflicts("~tracing", "+papi")
 
     conflicts("backend=multicore", when="~smp", msg="The 'multicore' backend always uses SMP")
-    conflicts("backend=ucx", when="@:6.9")
+    conflicts("backend=ucx", when="@6:6.9")
 
     # Shared-lib builds with GCC are broken on macOS:
     # https://github.com/UIUC-PPL/charm/issues/3181
@@ -180,8 +246,8 @@ class Charmpp(Package):
     # comply with the C++20 standard:
     # https://en.cppreference.com/w/cpp/header/version. The conflict only occurs
     # on case-insensitive file systems, as typically used on macOS machines.
-    conflicts("@:6", when="platform=darwin %apple-clang@7:")
-    conflicts("@:6", when="platform=darwin %clang@7:")
+    conflicts("@6", when="platform=darwin %apple-clang@7:")
+    conflicts("@6", when="platform=darwin %clang@7:")
 
     @property
     def charmarch(self):
@@ -230,7 +296,7 @@ class Charmpp(Package):
             ("cnl", "x86_64", "mpi"): "mpi-crayxc",
         }
 
-        if self.spec.satisfies("@6.10:"):
+        if self.spec.satisfies("@6.10:,classic,recharm"):
             versions.update(
                 {
                     ("linux", "x86_64", "ucx"): "ucx-linux-x86_64",
@@ -239,7 +305,7 @@ class Charmpp(Package):
             )
 
         # Some versions were renamed/removed in 6.11
-        if self.spec.version < Version("6.11.0"):
+        if self.spec.satisfies("@6:6.10"):
             versions.update(
                 {
                     ("linux", "i386", "mpi"): "mpi-linux",
@@ -261,7 +327,7 @@ class Charmpp(Package):
                 }
             )
 
-        if self.spec.satisfies("@7:"):
+        if self.spec.satisfies("@7:,classic,recharm"):
             versions.update(
                 {
                     ("linux", "arm", "mpi"): "mpi-linux-arm7",
@@ -279,6 +345,16 @@ class Charmpp(Package):
                         ("linux", "aarch64", "ofi"): "ofi-crayshasta",
                     }
                 )
+
+        if self.spec.satisfies("backend=reconverse"):
+            # Reconverse is always SMP; there is no separate -smp target.
+            versions.update(
+                {
+                    ("linux", "x86_64", "reconverse"): "reconverse-linux-x86_64",
+                    ("linux", "aarch64", "reconverse"): "reconverse-linux-arm8",
+                    ("darwin", "arm", "reconverse"): "reconverse-darwin-arm8",
+                }
+            )
 
         if (plat, mach, comm) not in versions:
             raise InstallError(
@@ -330,7 +406,7 @@ class Charmpp(Package):
         # here.
         options = [os.path.basename(self.compiler.cc)]
 
-        if "@:6.8.2 %aocc" not in spec and spec.satisfies("+fortran"):
+        if "@6:6.8.2 %aocc" not in spec and spec.satisfies("+fortran"):
             options.append(os.path.basename(self.compiler.fc))
 
         options.append("-j%d" % make_jobs)
@@ -356,11 +432,20 @@ class Charmpp(Package):
             options.extend(["--basedir=%s" % spec["ucx"].prefix])
         if spec.satisfies("+papi"):
             options.extend(["papi", "--basedir=%s" % spec["papi"].prefix])
-        if "+smp" in spec and "backend=multicore" not in spec:
-            # The 'multicore' backend always uses SMP, so we don't have to
-            # append the 'smp' option when the 'multicore' backend is active. As
-            # of Charm++ v7.0.0 it is actually a build error to append 'smp'
-            # with the 'multicore' backend.
+        if spec.satisfies("backend=reconverse"):
+            # Use Spack's lci (found through CMAKE_PREFIX_PATH) instead of
+            # letting reconverse's CMake download one; Spack builds run
+            # without network access. This sets RECONVERSE_AUTOFETCH_LCI2=OFF.
+            options.append("--without-reconverse-fetch-lci")
+        if (
+            "+smp" in spec
+            and not spec.satisfies("backend=multicore")
+            and not spec.satisfies("backend=reconverse")
+        ):
+            # The 'multicore' and 'reconverse' backends always use SMP, so we
+            # don't have to append the 'smp' option for them. As of Charm++
+            # v7.0.0 it is actually a build error to append 'smp' with the
+            # 'multicore' backend; reconverse has no smp option file.
             options.append("smp")
         if spec.satisfies("+tcp"):
             if "backend=netlrts" not in spec:
@@ -384,7 +469,7 @@ class Charmpp(Package):
         if spec.satisfies("+tracing"):
             options.append("--enable-tracing")
 
-        if self.spec.satisfies("@8: ~fortran"):
+        if self.spec.satisfies("@8:,classic,recharm ~fortran"):
             options.append("--disable-fortran")
 
         # Call "make" via the build script
@@ -449,4 +534,7 @@ class Charmpp(Package):
         self.spec.mpicxx = self.prefix.bin.ampicxx
         self.spec.mpifc = self.prefix.bin.ampif90
         self.spec.mpif77 = self.prefix.bin.ampif77
-        self.spec.charmarch = self.charmarch + "-smp" if self.spec.satisfies("+smp") else ""
+        if self.spec.satisfies("backend=reconverse"):
+            self.spec.charmarch = self.charmarch
+        else:
+            self.spec.charmarch = self.charmarch + "-smp" if self.spec.satisfies("+smp") else ""
