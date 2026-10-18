@@ -406,7 +406,9 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("kokkos@4.5:", when="@:3.22 +kokkos")
     conflicts("kokkos-kernels@4.5:", when="@:3.22 +kokkos")
     conflicts(
-        "~openmp", when="+kokkos ^kokkos+openmp", msg="+kokkos with ^kokkos+openmp requires +openmp"
+        "~openmp",
+        when="+kokkos ^kokkos+openmp",
+        msg="+kokkos with ^kokkos+openmp requires +openmp",
     )
     for cuda_arch in CudaPackage.cuda_arch_values:
         depends_on(
