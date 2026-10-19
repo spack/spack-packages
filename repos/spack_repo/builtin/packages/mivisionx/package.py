@@ -246,16 +246,15 @@ class Mivisionx(ROCmLibrary, CMakePackage):
         ]:
             depends_on(f"rocm-core@{ver}", when=f"@{ver}")
             depends_on(f"hip@{ver}", when=f"@{ver}")
-            for tgt in itertools.chain(["auto"], amdgpu_targets):
-                depends_on(
-                    f"migraphx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-                )
-                depends_on(
-                    f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-                )
-                depends_on(f"rpp@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+            depends_on(f"migraphx@{ver}", when=f"@{ver}")
+            depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+            depends_on(f"rpp@{ver}", when=f"@{ver}")
             depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
+        for tgt in itertools.chain(["auto"], amdgpu_targets):
+            depends_on(f"migraphx amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+            depends_on(f"miopen-hip amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+            depends_on(f"rpp amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
         depends_on("python@3.5:", type="build")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
