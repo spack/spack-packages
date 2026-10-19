@@ -65,6 +65,9 @@ class Siesta(MakefilePackage, CMakePackage):
     patch("configure.patch", when="@:4.0")
 
     variant("mpi", default=True, description="Builds with mpi support")
+    variant(
+        "flook", default=True, when="@5:", description="Enable the FLOOK Lua scripting interface"
+    )
     variant("openmp", default=True, description="Enables OpenMP support")
     variant("netcdf", default=False, description="Compile with Netcdf")
     variant("metis", default=False, description="Activate Metis as a possible ordering library")
@@ -103,6 +106,10 @@ class Siesta(MakefilePackage, CMakePackage):
 
     with when("build_system=cmake"):
         depends_on("cmake@3.20:", type="build")
+        depends_on("git", type="build")
+        depends_on("pkgconfig", type="build")
+        depends_on("gmake", type="build", when="+flook")
+        depends_on("readline", when="+flook")
 
     def flag_handler(self, name, flags):
         if "%gcc@10:" in self.spec and name == "fflags":
@@ -265,7 +272,10 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
     def cmake_args(self):
         spec = self.spec
-        args = []
+        args = [
+            self.define_from_variant("SIESTA_WITH_MPI", "mpi"),
+            self.define_from_variant("SIESTA_WITH_FLOOK", "flook"),
+        ]
 
         args += ["-DBLAS_LIBRARIES={0}".format(self.spec["blas"].libs.link_flags)]
         args += ["-DLAPACK_LIBRARIES={0}".format(self.spec["lapack"].libs.link_flags)]
@@ -276,7 +286,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 "-DCMAKE_CXX_COMPILER=%s" % spec["mpi"].mpicxx,
                 "-DCMAKE_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
             ]
-            args += ["-DSIESTA_WITH_MPI=ON"]
             args += ["-DSCALAPACK_LIBRARY={0}".format(spec["scalapack"].libs.joined(";"))]
 
         if "+openmp" in spec:
