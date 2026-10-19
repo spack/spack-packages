@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from typing import Dict, Set
+
 from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage, define
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
-from typing import Dict, Set
 
 
 class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
@@ -162,7 +163,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/celeritas-project/celeritas/commit/8cd7fbf495e2e73c35bece489cd8dbd6026de997.patch?full_index=1",
         sha256="b67f42f79f78be32a8c77187733682ea8045dd42a4be36e6a526749bbc608f86",
-        when=f"@0.7.0 +rocm",
+        when="@0.7.0 +rocm",
     )
 
     # Fix ORANGE with CLHEP for 0.7.0
@@ -279,10 +280,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
             args.append(
                 define(
                     "CMAKE_HIP_FLAGS",
-                    " ".join([
-                        f"-I{self.spec[p].prefix.include}"
-                        for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
-                    ]),
+                    " ".join(
+                        [
+                            f"-I{self.spec[p].prefix.include}"
+                            for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
+                        ]
+                    ),
                 )
             )
 
