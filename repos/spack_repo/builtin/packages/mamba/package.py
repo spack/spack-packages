@@ -21,7 +21,6 @@ class Mamba(CMakePackage):
 
     version("2.3.0", sha256="671432a2b64719baba54c9efda3662d321a1cc9ff3eba49047b83ffda9acf661")
 
-
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.16:", type="build")
