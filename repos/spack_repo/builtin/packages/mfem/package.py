@@ -760,7 +760,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             else:
                 cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
-        cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
+        cuda_arch = None
+        if "+cuda" in spec:
+            cuda_arch = spec.variants["cuda_arch"].value
+            if any([arch == "none" for arch in cuda_arch]):
+                raise InstallError(f"Invalid cuda_arch: {cuda_arch}")
 
         cxxflags = list(spec.compiler_flags["cxxflags"])
 
@@ -786,7 +790,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                         nvcc_base_flags += " --expt-relaxed-constexpr"
                     cxxflags += [
                         nvcc_base_flags,
-                        "-arch=sm_%s" % cuda_arch,
+                        " ".join([
+                            f"-gencode arch=compute_{arch},code=sm_{arch}" for \
+                                arch in cuda_arch
+                        ]),
                         "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
                     ]
                 else:
@@ -794,7 +801,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     cxxflags += [
                         "-xcuda",
                         f"--cuda-path={spec['cuda'].prefix}",
-                        "--cuda-gpu-arch=sm_%s" % cuda_arch,
+                        " ".join([
+                            f"--cuda-gpu-arch=sm_{arch}" for arch in cuda_arch
+                        ]),
                     ]
 
             if cxxstd_flag:
@@ -1055,7 +1064,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 cuda_cxx = join_path(spec["cuda"].prefix, "bin", "nvcc")
             else:
                 cuda_cxx = spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]
-            options += [f"CUDA_CXX={cuda_cxx}", "CUDA_ARCH=sm_%s" % cuda_arch]
+            options += [f"CUDA_CXX={cuda_cxx}"]
+            if len(cuda_arch) == 1:
+                options += [f"CUDA_ARCH=sm_{cuda_arch[0]}"]
+            else:
+                if spec.satisfies("@:4.9"):
+                    raise InstallError("Multiple CUDA architectures require mfem@4.10:")
+                options += ["CUDA_ARCH=" + ",".join(cuda_arch)]
             # Check if we are using a CUDA installation where the math libs are
             # in a separate directory:
             culibs = ["libcusparse"]
