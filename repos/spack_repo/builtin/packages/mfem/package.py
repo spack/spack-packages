@@ -790,10 +790,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                         nvcc_base_flags += " --expt-relaxed-constexpr"
                     cxxflags += [
                         nvcc_base_flags,
-                        " ".join([
-                            f"-gencode arch=compute_{arch},code=sm_{arch}" for \
-                                arch in cuda_arch
-                        ]),
+                        " ".join(
+                            [f"-gencode arch=compute_{arch},code=sm_{arch}" for arch in cuda_arch]
+                        ),
                         "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
                     ]
                 else:
@@ -801,9 +800,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     cxxflags += [
                         "-xcuda",
                         f"--cuda-path={spec['cuda'].prefix}",
-                        " ".join([
-                            f"--cuda-gpu-arch=sm_{arch}" for arch in cuda_arch
-                        ]),
+                        " ".join([f"--cuda-gpu-arch=sm_{arch}" for arch in cuda_arch]),
                     ]
 
             if cxxstd_flag:
