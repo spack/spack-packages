@@ -20,6 +20,7 @@ class Generalbrokenlines(CMakePackage):
     license("LGPL-2.0-only", checked_by="paulgessinger")
 
     version("main", branch="main")
+    version("04-00-06", sha256="7d337ac9d7aaea669b224e300b63880c7d8fae7a1fc65eb5aa33dc6c39f9585d")
     version("04-00-05", sha256="d6090b1515dc33cd9532f1470e2038b7794258fbb8a411fa8a6e4520e933241b")
     version("04-00-04", sha256="e40401a77a828c81a9217d8df3201e7712ac86b4fd5058d526ae1e1f6664304f")
     version("04-00-03", sha256="e5361f8f3862f1567da43c965065f21b8ef7987568e65a50b91b300b40386af3")

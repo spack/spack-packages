@@ -11,6 +11,10 @@ concurrency:
   group: audit-${{inputs.python_version}}-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
+
 jobs:
   # Run audits on all the packages in the built-in repository
   package-audits:

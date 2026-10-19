@@ -17,6 +17,7 @@ class PyDask(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2026.7.1", sha256="5727484427665f051e86bf87d021a64d6411141cdc8a20bfe3c1ad2968cc06b7")
     version("2026.3.0", sha256="f7d96c8274e8a900d217c1ff6ea8d1bbf0b4c2c21e74a409644498d925eb8f85")
     version("2025.7.0", sha256="c3a0d4e78882e85ea81dbc71e6459713e45676e2d17e776c2f3f19848039e4cf")
     version("2025.5.0", sha256="3ec9175e53effe1c2b0086668352e0d5261c5ef6f71a410264eda83659d686ef")
@@ -81,6 +82,7 @@ class PyDask(PythonPackage):
         depends_on("py-partd@1.2.0:", when="@2023.4.0:")
         depends_on("py-partd@0.3.10:", when="@2021.3.1:")
 
+        depends_on("py-pyyaml@5.4.1:", when="@2026.7.1:")
         depends_on("py-pyyaml@5.3.1:", when="@2022.10.2:")
         depends_on("py-pyyaml")
 
@@ -152,6 +154,7 @@ class PyDask(PythonPackage):
 
         # Requirements for dask.distributed
         with when("+distributed"):
+            depends_on("py-distributed@2026.7.1", when="@2026.7.1")
             depends_on("py-distributed@2026.3.0:", when="@2026.3.0")
             depends_on("py-distributed@2025.7.0", when="@2025.7.0")
             depends_on("py-distributed@2025.3.0", when="@2025.3.0")

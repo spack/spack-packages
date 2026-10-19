@@ -26,6 +26,7 @@ class Geant4(CMakePackage):
 
     maintainers("drbenmorgan", "sethrj")
 
+    version("11.4.3", sha256="718752c1829cbfcf174f0e539d60ee3f76843b894444e61d2228d66a6887ef6e")
     version("11.4.2", sha256="f9d5c7d108ae6be644d12997e0289e23e5d2da18df1cab9aaacd9b76412dfec6")
     version("11.4.1", sha256="99dcf5f9d4f806fb8c4fde85cb2674a42e4ca19833143464ff7efa55c1852140")
     version("11.4.0", sha256="a6d78cf70ba46902cb74ff65d09dc2d1e46b4ab9325862f84e439f0d4ec329fb")
@@ -233,6 +234,10 @@ class Geant4(CMakePackage):
     patch("columns-11.patch", when="@11:11.2.2")
     # Fix navigation errors with twisted tubes: https://bugzilla-geant4.kek.jp/show_bug.cgi?id=2619
     patch("twisted-tubes.patch", when="@11.2.0:11.2.2")
+    # Fix duplicate ion creation (PART122 "already registered") with libc++ >= 22:
+    # G4IonTable assumes std::multimap::find returns the first of several equal keys
+    # (fixed upstream in 11.4.3)
+    patch("g4iontable-multimap-lower-bound.patch", when="@11.2:11.4.2")
 
     # NVHPC: "thread-local declaration follows non-thread-local declaration"
     conflicts("%nvhpc", when="+threads")

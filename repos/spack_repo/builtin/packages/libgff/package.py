@@ -17,7 +17,18 @@ class Libgff(CMakePackage):
     # notify when the package is updated.
     maintainers("ajxander12")
 
+    version("2.0.1", sha256="96d2bda64aaf9cf7b6c1a42205e408b0ef2a353ba42dad560db215e7ec105e2e")
     version("2.0.0", sha256="7656b19459a7ca7d2fd0fcec4f2e0fd0deec1b4f39c703a114e8f4c22d82a99c")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+
+    @when("@2.0.1")
+    def patch(self):
+        filter_file("set(ver_patch 0)", "set(ver_patch 1)", "CMakeLists.txt", string=True)
+        filter_file(
+            "set(LIB_GFF_VERSION 2.0.0)",
+            "set(LIB_GFF_VERSION 2.0.1)",
+            "libgffConfig.cmake.in",
+            string=True,
+        )

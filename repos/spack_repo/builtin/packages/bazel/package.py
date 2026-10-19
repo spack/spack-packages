@@ -224,6 +224,13 @@ class Bazel(Package):
         else:
             args.append("--host_javabase=@local_jdk//:jdk")
 
+        # Without Xcode.app bazel falls back to -target *-apple-macosx10.11,
+        # which the macOS 27 SDK libc++ rejects. Pass the real OS version.
+        if self.spec.satisfies("platform=darwin"):
+            macos = str(macos_version())
+            args.append(f"--macos_minimum_os={macos}")
+            args.append(f"--host_macos_minimum_os={macos}")
+
         resource_stages = self.stage[1:]
         for _resource in resource_stages:
             try:
