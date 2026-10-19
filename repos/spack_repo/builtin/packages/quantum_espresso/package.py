@@ -26,6 +26,7 @@ class QuantumEspresso(CMakePackage, Package):
     license("GPL-2.0-only")
 
     version("develop", branch="develop")
+    version("7.6", sha256="945c8f16ab330c8f0b30f4de1a9a088b85038476fcd819394e641f4d2d8b7d51")
     version("7.5", sha256="7e1f7a9a21b63192f5135218bee20a5321b66582e4756536681b76e9c59b3cc8")
     version("7.4.1", sha256="6ef9c53dbf0add2a5bf5ad2a372c0bff935ad56c4472baa001003e4f932cab97")
     version("7.4", sha256="b15dcfe25f4fbf15ccd34c1194021e90996393478226e601d876f7dea481d104")
@@ -487,12 +488,18 @@ class CMakeBuilder(cmake.CMakeBuilder):
             else:
                 plugins.append("pw2qmcpack")
 
-        if "^armpl-gcc" in spec or "^acfl" in spec:
+        if "^armpl-gcc" in spec or "^acfl" in spec or "^cray-libsci" in spec:
             cmake_args.append(self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
             cmake_args.append(self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
             # Up to q-e@7.1 set BLA_VENDOR to All to force detection of vanilla scalapack
             if spec.satisfies("@:7.1"):
                 cmake_args.append(self.define("BLA_VENDOR", "All"))
+
+        # Cray-libsci provides Scalapack with multiple libraries.
+        if "^cray-libsci" in spec:
+            cmake_args.append(
+                self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";"))
+            )
 
         if plugins:
             cmake_args.append(self.define("QE_ENABLE_PLUGINS", plugins))

@@ -1,3 +1,218 @@
+# Spack packages v2026.10.0
+
+This release brings new packages, package version updates,
+and version deprecations that are not made available via backports to previous releases.
+
+## Spack version compatibility
+
+This release continues to use the v2.2 Package API. This is the Package API
+version used by the Spack v1.0.0 release. Any Spack version 1.0.0 or newer
+is compatible with this release of the packages repo.
+
+This release was tested against Spack v1.2.0 (dbd3112a92ff1f1b2ede3917ae876477e66b9904)
+and the environments used to generate the binary caches use new features
+that may not be in the latest Spack 1.2 release. The binary caches themselves are
+compatible with any Spack v1.0.0 or newer (any Spack that supports the v3
+URL build cache layout).
+
+See the [Package API
+Documentation](https://spack.readthedocs.io/en/latest/package_api.html)
+for full details on package versioning and compatibility.
+
+## Package statistics
+
+There are now 9095 packages in the spack-packages builtin repo. This
+is up from 8917 in the previous release.
+
+## New and removed packages
+
+This release contains a number of deprecations to address CVEs in a number
+of projects.
+
+In addition to new deprecations, package versions deprecated prior to
+the v2026.06 release may have be removed.
+
+### New packages
+
+*  4c-multiphysics
+*  arcane-framework
+*  ast-grep
+*  bali-phy
+*  bun
+*  calculix
+*  calculix-adapter
+*  cccl
+*  coolprop
+*  copacabana
+*  csh
+*  darma-magistrate
+*  darma-vt
+*  eventanalysis
+*  exacmech
+*  fastloess-cpp
+*  fastlowess-cpp
+*  github-copilot
+*  gmgpolar
+*  gyselalibxx
+*  kind
+*  kratos-multiphysics
+*  krona
+*  libcomm
+*  libfci
+*  libri
+*  libvncserver
+*  libwignernj
+*  libxs
+*  lielab
+*  linbox
+*  lo2s
+*  macaulay2
+*  maxbin
+*  meshioplusplus
+*  metal-cpp
+*  mfem-mgis
+*  miniprot
+*  mlx
+*  mp-units
+*  ms-gsl
+*  multichase
+*  noahmp
+*  nvbench
+*  nvidia-libmathdx
+*  opam-num
+*  opam-ocamlbuild
+*  opam-ocamlfind
+*  opencode
+*  openms
+*  perl-file-copy-recursive-reduced
+*  perl-findbin-libs
+*  perl-statistics-r
+*  perl-statistics-regression
+*  pi
+*  polyclipper
+*  polytope
+*  portaudio
+*  proteus
+*  py-acpype
+*  py-albumentationsx
+*  py-ale-py
+*  py-annotated-doc
+*  py-anthropic
+*  py-array-api-compat
+*  py-arviz-base
+*  py-arviz-plots
+*  py-arviz-stats
+*  py-atb
+*  py-cgsmiles
+*  py-compressed-tensors
+*  py-ctypes-dlpack
+*  py-cylc-uiserver
+*  py-deisa-ray
+*  py-depyf
+*  py-dirscape
+*  py-docplex
+*  py-dotmatch
+*  py-dram-bio
+*  py-farama-notifications
+*  py-formulae
+*  py-fortdepend
+*  py-grpcio-reflection
+*  py-gvec
+*  py-gymnasium
+*  py-hatch-docstring-description
+*  py-hddm-wfpt
+*  py-httpx-aiohttp
+*  py-httpx-sse
+*  py-ijson
+*  py-interegular
+*  py-iops-benchmark
+*  py-jupyter-builder
+*  py-kraken-biom
+*  py-legacy-api-wrap
+*  py-llguidance
+*  py-lm-format-enforcer
+*  py-mcp
+*  py-melissa-online
+*  py-meshioplusplus
+*  py-nest-asyncio2
+*  py-nir
+*  py-nodetop
+*  py-numkong
+*  py-openai-harmony
+*  py-outlines-core
+*  py-partial-json-parser
+*  py-pcpp
+*  py-pre-commit-hooks
+*  py-pybase64
+*  py-pycountry
+*  py-pygame-ce
+*  py-pykdtree
+*  py-pylibjpeg
+*  py-pymatgen-core
+*  py-pymc
+*  py-pyresample
+*  py-pyside6
+*  py-pytensor
+*  py-pytest-lazy-fixtures
+*  py-pyvers
+*  py-pyyaml-ft
+*  py-qiskit
+*  py-rapidu
+*  py-restrictedpython
+*  py-scikit-bio
+*  py-scmver
+*  py-session-info2
+*  py-slurmate
+*  py-slurmpast
+*  py-slurmwatch
+*  py-sounddevice
+*  py-sphinx-autoapi
+*  py-sphinx-last-updated-by-git
+*  py-sphinx-sitemap
+*  py-sphinxcontrib-svg2pdfconverter
+*  py-sse-starlette
+*  py-stable-baselines3
+*  py-stim
+*  py-tensordict
+*  py-treescope
+*  py-types-protobuf
+*  py-types-rasterio
+*  py-warp-lang
+*  py-xarray-einstats
+*  qt-3d
+*  qt-websockets
+*  r-apex
+*  r-collections
+*  r-duckdb
+*  r-gage
+*  r-languageserver
+*  r-lintr
+*  r-made4
+*  r-org-dr-eg-db
+*  r-org-mm-eg-db
+*  r-rslurm
+*  r-rwiener
+*  r-s4arrays
+*  r-sankeyd3
+*  r-seqinfo
+*  r-sparsearray
+*  r-swath2stats
+*  r-ucsc-utils
+*  r-xmlparsedata
+*  rapidxml
+*  rocprof-trace-decoder
+*  sniper
+*  snls
+*  spooles
+*  spy
+*  tdls
+*  timg
+*  tpp
+*  triton
+*  truchas-pbf
+*  xad
+
+
 # Spack packages v2026.06.0
 
 The v2026.06.0 release of the spack packages is released along with version 1.2 of

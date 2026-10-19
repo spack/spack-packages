@@ -17,11 +17,14 @@ class Gsibec(CMakePackage):
     url = "https://github.com/GEOS-ESM/GSIbec/archive/refs/tags/v1.4.1.tar.gz"
     list_url = "https://github.com/GEOS-ESM/GSIbec/tags"
 
-    maintainers("mathomp4", "danholdaway")
+    maintainers("mathomp4", "rickgrubin-tomorrow")
 
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("1.5.0", sha256="56c0e76a6e2400c73b54a1435be7c365414a1bcf5b07aee52020d4b6f38631dc")
+    version("1.4.4", sha256="4353a23b758a85fdb3a8ecac910eba24d06a67fd71dc95ca27b94303e46b7da5")
+    version("1.4.3", sha256="d0dcd4d0497fa30ce1eb206386bea6389e054bcc54068117eed7590ffde316cd")
     version("1.4.2", sha256="b17bc0b32c8f0f8b36dcf2fea94915841d52baa7e68119d56f0729f7709f7163")
     version("1.4.1", sha256="f624c1af36b5023fc35f5a5b0cec4b5649f6a7df933148da432a25b53e5b5c87")
     version("1.4.0", sha256="aa512995c32bd4a9998584a62707abed299fe34af4e9dbf5b44aebd335376e54")

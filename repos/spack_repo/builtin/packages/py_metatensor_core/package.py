@@ -8,6 +8,8 @@ from spack.package import *
 
 # Necessary to pin each version to libmetatensor
 VERSIONS = {
+    "0.2.5": "1e24dc11620f108ce99009021f9245694dab755bced2e39bdd83452a03cd9a61",
+    "0.2.4": "79765886c4939bc13e91760c117e90e2dc47fe5f761116a8c226565fcbc92def",
     "0.2.3": "08a8f175af6bdd04cc9d54d867b88ddc9528803446859d4b67c197dcdfa7fdc1",
     "0.2.2": "817af5c6eed636ce4eb0931c9be1a7581a2386189a9138b5a9535f8e5b2fcada",
     "0.2.0": "30200451eb70e635fdef5dfd46476d0303b1757b1e34c23f9c9e568c9d188545",
@@ -29,7 +31,6 @@ class PyMetatensorCore(PythonPackage):
 
     depends_on("python@3.9:", type=("run", "build"))
     depends_on("python@3.10:", when="@0.1.19:", type=("run", "build"))
-    depends_on("py-numpy", type=("run", "build"))
 
     for ver, sha in VERSIONS.items():
         version(ver, sha256=sha)
@@ -38,6 +39,8 @@ class PyMetatensorCore(PythonPackage):
     # pyproject.toml
     depends_on("py-setuptools@77:", type="build")
     depends_on("py-packaging@23:", type="build")
+    depends_on("py-numpy", type=("run", "build"))
+    depends_on("py-ctypes-dlpack", type=("run", "build"), when="@0.2.4:")
     # CMakeLists.txt
     depends_on("cmake@3.16:", type="build")
     depends_on("cmake@3.22:", type="build", when="@0.1.18:")

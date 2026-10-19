@@ -30,7 +30,7 @@ class PyMsgpack(PythonPackage):
     version("0.6.0", sha256="4478a5f68142414084cd43af8f21cef9619ad08bb3c242ea505330dade6ca9ea")
 
     with default_args(type="build"):
-        depends_on("cxx")
+        depends_on("c")
 
         depends_on("py-setuptools@80.9.0:", when="@1.1.2:")
         depends_on("py-setuptools@75.3:", when="@1.1.1:")

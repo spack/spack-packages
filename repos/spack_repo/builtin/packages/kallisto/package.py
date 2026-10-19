@@ -49,7 +49,7 @@ class Kallisto(CMakePackage):
     # https://github.com/pachterlab/kallisto/pull/506
     patch(
         "https://github.com/pachterlab/kallisto/commit/a5caefb.patch?full_index=1",
-        sha256="a7002ce51d4dfeab8bce3e1d696ad034328b38e6d794de0c1400d07fb77e018a",
+        sha256="e29be49cc52a18f78b13b381f2d97cdf047ea45ba6b61b94caa54d46e195d0e2",
         when="@0.50.1:",
     )
 

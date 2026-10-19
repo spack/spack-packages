@@ -17,6 +17,8 @@ class Libmetatensor(CMakePackage):
     maintainers("HaoZeke", "Luthaf", "RMeli")
     license("BSD-3-Clause", checked_by="HaoZeke")
 
+    version("0.2.5", sha256="b1f478b68ee84de9fca339a6f88cbc9f5e68585494ff41df52f7b708437edddf")
+    version("0.2.4", sha256="e38d749567a5779ffdfe48c3bf2cd7e5b7ea118ae378b6313d27335e7b86844f")
     version("0.2.3", sha256="61e9f894c7591c81b8aa4794fc48ee0be07264881cc2642bae31654f7da65331")
     version("0.2.2", sha256="a104512516c8761080075e3ba7c023fcc1bb3430df7c67b25bded359a729e2ff")
     version("0.2.0", sha256="809a799b1c8d58b7ede3868d6ebe4123924ba31e4637481f9ca5c8a0ed14be17")

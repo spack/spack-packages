@@ -16,6 +16,8 @@ class PyDnaio(PythonPackage):
 
     license("MIT")
 
+    version("1.2.4", sha256="a7570311f29e8b3c1ea39a60f57b7baf8dad8f2508595c58d4278c5571463166")
+    version("1.2.3", sha256="aad456d9f6272339958b2c5af32fd64d77a50aca12e394e7a143b4129d49b0b9")
     version("1.2.0", sha256="d0528c23516fe4e947970bdef33c423f0a30ab3b083bd4f6f049fd66d8cef803")
     version("0.10.0", sha256="de51a50948f00b864297d74eddb588fbee5ac229855754e77564d18b24619d18")
     version("0.9.1", sha256="a1a14181995b27197b7e2b8897994a3107c649b9fc2dfe263caff3c455b0d0c4")
@@ -23,10 +25,14 @@ class PyDnaio(PythonPackage):
     version("0.3", sha256="47e4449affad0981978fe986684fc0d9c39736f05a157f6cf80e54dae0a92638")
 
     depends_on("python@3.7:", type=("build", "run"), when="@0.9.1:")
+    depends_on("python@3.9:", type=("build", "run"), when="@1.2.3:")
+    depends_on("python@3.10:", type=("build", "run"), when="@1.2.4:")
     # build deps
     depends_on("py-setuptools@52:", type="build")
+    depends_on("py-setuptools@78:", type="build", when="@1.2.4:")
     depends_on("py-setuptools-scm@6.2:", type="build", when="@0.4:")
     depends_on("py-cython@0.29.20:", type="build", when="@0.9.1:")
+    depends_on("py-cython@3.1:", type="build", when="@1.2.4:")
     # run deps
     depends_on("py-xopen@1.4.0:", type=("build", "run"), when="@0.9.1:")
     depends_on("py-xopen@0.8.2:", type=("build", "run"), when="@0.4:")

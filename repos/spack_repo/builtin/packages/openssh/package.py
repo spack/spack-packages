@@ -146,7 +146,7 @@ class Openssh(AutotoolsPackage):
 
     def install(self, spec, prefix):
         """Install generates etc/sshd_config, but it fails in parallel mode"""
-        make("install", parallel=False)
+        make("install-nokeys", parallel=False)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Until spack supports a real implementation of setup_test_environment()"""
