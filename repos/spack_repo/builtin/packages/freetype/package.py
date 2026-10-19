@@ -22,7 +22,9 @@ class Freetype(AutotoolsPackage, CMakePackage):
 
     license("FTL OR GPL-2.0-or-later")
 
+    version("2.15.0", sha256="9186627467a616d9a9e3e574748ac0c45fa77398e6364edef3041a8ba8d92f64")
     version("2.14.3", sha256="e61b31ab26358b946e767ed7eb7f4bb2e507da1cfefeb7a8861ace7fd5c899a1")
+
     with default_args(deprecated=True):
         # Multiple CVEs, not yet published
         version(

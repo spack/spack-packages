@@ -300,16 +300,28 @@ class PyNumpy(PythonPackage):
             The string "mkl-dynamic-[i]lp64-[seq,tbb,iomp,gomp]"
         """
         lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
-        if spec.satisfies("threads=none"):
-            threads = "seq"
-        elif spec.satisfies("threads=tbb"):
+        if spec.satisfies("threads=tbb"):
             threads = "tbb"
         elif spec.satisfies("threads=openmp"):
             threads = "gomp" if spec.satisfies("%gcc") else "iomp"
         else:
-            raise InstallError("Unknown 'threads' variant for the Intel MKL libaray")
+            threads = "seq"
 
         return "mkl-dynamic-" + lp64_or_ilp64 + "-" + threads
+
+    def _blas_lapack_pkg_config_nvpl(self, name, spec) -> str:
+        """Determine pkg-config name from NVPL configuration
+
+        Returns:
+            The string "nvpl-[name]-[i]lp64-[seq,gomp]"
+        """
+        lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
+        if spec.satisfies("threads=openmp"):
+            threads = "gomp"
+        else:
+            threads = "seq"
+
+        return f"nvpl-{name}-{lp64_or_ilp64}-{threads}"
 
     def blas_lapack_pkg_config(self) -> Tuple[str, str, str]:
         """Convert library names to pkg-config names.
@@ -326,6 +338,12 @@ class PyNumpy(PythonPackage):
 
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
+
+        if spec["blas"].name == "nvpl-blas":
+            blas = self._blas_lapack_pkg_config_nvpl("blas", spec["blas"])
+
+        if spec["lapack"].name == "nvpl-lapack":
+            lapack = self._blas_lapack_pkg_config_nvpl("lapack", spec["lapack"])
 
         if spec["blas"].name == "blis":
             blas = "blis"
