@@ -829,6 +829,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 all_hypre_libs += hypre["lapack"].libs + hypre["blas"].libs
             if "+umpire" in hypre:
                 all_hypre_headers += hypre["umpire"].headers
+                all_hypre_libs += hypre["umpire"].libs
 
             hypre_gpu_libs = ""
             if "+cuda" in hypre:

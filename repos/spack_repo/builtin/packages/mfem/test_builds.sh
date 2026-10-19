@@ -8,8 +8,8 @@ mfem_src_dir=$HOME/mfem-spack
 
 # Set a compiler to test with, e.g. '%gcc', '%clang', etc.
 compiler=''
-cuda_arch="70"
-rocm_arch="gfx908"
+cuda_arch="90"
+rocm_arch="gfx942"
 
 spack_jobs=''
 # spack_jobs='-j 128'
@@ -30,18 +30,15 @@ mumps_spec='^mumps~openmp'
 petsc_spec='^petsc+mumps'" $mumps_spec"
 petsc_spec_cuda='^petsc+cuda+mumps'" $mumps_spec"
 petsc_spec_rocm='^petsc+rocm+mumps'" $mumps_spec"
-# strumpack spec without cuda (use version > 6.3.1)
-strumpack_spec='^strumpack~slate~openmp~cuda'
+# strumpack spec
+strumpack_spec='^strumpack~slate~openmp'
 ## strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
-strumpack_cuda_spec='^strumpack+cuda~slate~openmp'
-strumpack_rocm_spec='^strumpack+rocm~slate~openmp~cuda'
+strumpack_cuda_spec='^strumpack+cuda+slate~openmp'
+strumpack_rocm_spec='^strumpack+rocm~slate~openmp'
 # superlu specs with cpu, cuda and rocm
-# - v8.2.1 on CPU and GPU stalls in ex11p; works when superlu::PARMETIS is
-#   replaced with superlu::METIS_AT_PLUS_A, at least on CPU
-# superlu_spec='^superlu-dist@8.1.2'
 superlu_spec=''
-superlu_cuda_spec='^superlu-dist@8.1.2+cuda'
-superlu_rocm_spec='^superlu-dist@8.1.2+rocm'
+superlu_cuda_spec='^superlu-dist+cuda'
+superlu_rocm_spec='^superlu-dist+rocm'
 # FMS spec
 fms_spec='^libfms+conduit'
 
@@ -121,7 +118,7 @@ builds2=(
     ${mfem_dev}' precision=single'
     ${mfem_dev}'+superlu-dist'" $superlu_spec"
     ${mfem_dev}'+strumpack'" $strumpack_spec"
-    ${mfem_dev}'+mumps'
+    ${mfem_dev}'+mumps'" $mumps_spec"
     ${mfem_dev}'+suite-sparse~mpi'
     ${mfem_dev}'+suite-sparse'
     ${mfem_dev}'+sundials~mpi ^sundials~mpi'
@@ -130,7 +127,8 @@ builds2=(
     ${mfem_dev}'+gslib'
     ${mfem_dev}'+netcdf~mpi'
     ${mfem_dev}'+netcdf'
-    ${mfem_dev}'+mpfr'
+    # TODO: uncomment next line when PR #5534 is merged
+    # ${mfem_dev}'+mpfr'
     ${mfem_dev}'+gnutls'
     ${mfem_dev}'+conduit~mpi'" $conduit_spec"
     ${mfem_dev}'+conduit'" $conduit_spec"
@@ -163,9 +161,10 @@ builds_cuda=(
     # hypre without cuda:
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: restore '+libceed' when the libCEED CUDA unit tests take less time.
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib+petsc+slepc \
-        +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp'" $strumpack_cuda_spec"' \
         '"$superlu_cuda_spec $petsc_spec_cuda $conduit_spec"
 
@@ -180,9 +179,10 @@ builds_cuda=(
     # TODO: add back "+petsc+slepc $petsc_spec_cuda" when it works.
     # NOTE: PETSc tests may need PETSC_OPTIONS="-use_gpu_aware_mpi 0"
     # TODO: add back "+sundials" when it's supported with '^hypre+cuda'.
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'+cuda+openmp+raja+occa cuda_arch='"${cuda_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib \
-        +pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+cuda+openmp ^hypre+cuda \
         '" $strumpack_cuda_spec $superlu_cuda_spec $conduit_spec"
 
@@ -257,9 +257,10 @@ builds_rocm=(
         ^raja+rocm~openmp ^occa~cuda~openmp ^hypre+rocm'
 
     # hypre without rocm:
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'+rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib+petsc+slepc \
-        +sundials+pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +sundials+pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+rocm~openmp ^occa~cuda'" $strumpack_rocm_spec"' \
         '"$superlu_rocm_spec $petsc_spec_rocm $conduit_spec"
 
@@ -272,9 +273,10 @@ builds_rocm=(
     # hypre with rocm:
     # TODO: add back "+petsc+slepc $petsc_spec_rocm" when it works.
     # TODO: add back "+sundials" when it's supported with '^hypre+rocm'.
+    # TODO: add back "+mpfr" when PR #5534 is merged
     ${mfem}'+rocm+openmp+raja+occa+libceed amdgpu_target='"${rocm_arch}"' \
         +superlu-dist+strumpack+suite-sparse+gslib \
-        +pumi+mpfr+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
+        +pumi+netcdf+zlib+gnutls+libunwind+conduit+ginkgo \
         ^raja+rocm~openmp ^occa~cuda ^hypre+rocm \
         '"$strumpack_rocm_spec $superlu_rocm_spec $conduit_spec"
 
