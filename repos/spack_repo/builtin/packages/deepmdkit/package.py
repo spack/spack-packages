@@ -38,7 +38,7 @@ class Deepmdkit(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("cmake@3.25.2:", type="build")
+    depends_on("cmake@3.25.2:", type="build", when="@3.1.1:")
 
     depends_on("py-torch", when="+pytorch")
 
