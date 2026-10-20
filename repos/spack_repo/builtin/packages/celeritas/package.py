@@ -282,18 +282,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
-            # TODO: update celeritas CMakeLists to link to these if found
-            args.append(
-                define(
-                    "CMAKE_HIP_FLAGS",
-                    " ".join(
-                        [
-                            f"-I{self.spec[p].prefix.include}"
-                            for p in ["hiprand", "rocprim", "rocrand", "rocthrust"]
-                        ]
-                    ),
-                )
-            )
+            # TODO: this will be fixed in 0.7.1
+            deps = ["hiprand", "rocprim", "rocrand", "rocthrust"]
+            if self.spec.satisfies("@0.7.0"):
+                deps.append("hipcub")
+            include_paths = [self.spec[d].prefix.include for d in deps]
+            args.append(define("CMAKE_HIP_FLAGS", " ".join(f"-I{p}" for p in include_paths)))
 
         builtin_packages = []
         if self.spec.satisfies("@0.6:"):
