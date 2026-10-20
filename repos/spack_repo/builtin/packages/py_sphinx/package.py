@@ -16,6 +16,7 @@ class PySphinx(PythonPackage):
     license("BSD-2-Clause")
     maintainers("adamjstewart")
 
+    version("9.1.1", sha256="48b627f02908f22c601b3ba9c7b17265b4f315dd05c8bc64cd4da41183f44fbc")
     version("9.1.0", sha256="7741722357dd75f8190766926071fed3bdc211c74dd2d7d4df5404da95930ddb")
     version("9.0.4", sha256="594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3")
     version("9.0.3", sha256="98ea46e18e3fbfe222c2aebd1988b52fb20afd0dd430f8b7ce06f64d2f53300f")
@@ -129,6 +130,8 @@ class PySphinx(PythonPackage):
         depends_on("python@3.10:", when="@8:")
         depends_on("python@3.9:", when="@7.2:")
         depends_on("python@3.8:", when="@6:")
+        # https://github.com/sphinx-doc/sphinx/commit/378a332a8fb7cc608d51c17e3732e57ef3ab0543
+        depends_on("python@:3.15", when="@:9.1.0")
         # https://github.com/sphinx-doc/sphinx/issues/13701
         depends_on("python@:3.13", when="@:8")
         # https://github.com/sphinx-doc/sphinx/issues/10440
