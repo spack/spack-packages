@@ -17,7 +17,6 @@ class PyBlack(PythonPackage):
     pypi = "black/black-22.1.0.tar.gz"
 
     license("MIT", checked_by="tgamblin")
-    maintainers("spack/spack-releasers")
 
     version("26.3.1", sha256="2c50f5063a9641c7eed7795014ba37b0f5fa227f3d408b968936e24bc0566b07")
     with default_args(deprecated=True):

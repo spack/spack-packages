@@ -187,11 +187,11 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"hipblaslt@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
-            )
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(
+            f"hipblaslt amdgpu_target={tgt}", when=f"@6.3.0: +hipblaslt amdgpu_target={tgt}"
+        )
 
     for ver in [
         "6.4.0",

@@ -16,7 +16,7 @@ class Msmc2(MakefilePackage):
     homepage = "https://github.com/stschiff/msmc2"
     url = "https://github.com/stschiff/msmc2/archive/v2.1.1.tar.gz"
 
-    maintainers("robqiao")
+    maintainers("manifestoso")
 
     license("GPL-3.0-or-later")
 

@@ -101,25 +101,23 @@ class RocmExamples(CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"hipcub@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"hipsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(
-                f"hiprand@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"rocthrust@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
-            depends_on(
-                f"rocsolver@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
+        depends_on(f"hipcub@{ver}", when=f"@{ver}")
+        depends_on(f"hipsolver@{ver}", when=f"@{ver}")
+        depends_on(f"hipblas@{ver}", when=f"@{ver}")
+        depends_on(f"hiprand@{ver}", when=f"@{ver} +rocm")
+        depends_on(f"rocblas@{ver}", when=f"@{ver} +rocm")
+        depends_on(f"rocthrust@{ver}", when=f"@{ver} +rocm")
+        depends_on(f"rocsparse@{ver}", when=f"@{ver} +rocm")
+        depends_on(f"rocsolver@{ver}", when=f"@{ver} +rocm")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"hipcub amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"hipsolver amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"hipblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"hiprand amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        depends_on(f"rocblas amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        depends_on(f"rocthrust amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        depends_on(f"rocsparse amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
+        depends_on(f"rocsolver amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
     for ver in [
         "6.3.0",
@@ -141,20 +139,22 @@ class RocmExamples(CMakePackage):
         "7.14.0",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"hipfft@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(
-                f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
+        depends_on(f"hipfft@{ver}", when=f"@{ver}")
+        depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"hipfft amdgpu_target={tgt}", when=f"@6.3.0: amdgpu_target={tgt}")
+        depends_on(f"rocfft amdgpu_target={tgt}", when=f"@6.3.0: +rocm amdgpu_target={tgt}")
 
     for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0"]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"hipsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"hip-tensor@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"rocwmma@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(
-                f"rocprofiler-sdk@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
+        depends_on(f"hipsparse@{ver}", when=f"@{ver}")
+        depends_on(f"hip-tensor@{ver}", when=f"@{ver}")
+        depends_on(f"rocwmma@{ver}", when=f"@{ver}")
+        depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"hipsparse amdgpu_target={tgt}", when=f"@7.2.0: amdgpu_target={tgt}")
+        depends_on(f"hip-tensor amdgpu_target={tgt}", when=f"@7.2.0: amdgpu_target={tgt}")
+        depends_on(f"rocwmma amdgpu_target={tgt}", when=f"@7.2.0: amdgpu_target={tgt}")
+        depends_on(f"rocprofiler-sdk amdgpu_target={tgt}", when=f"@7.2.0: amdgpu_target={tgt}")
 
     depends_on("hip+cuda", when="+cuda")
     depends_on("hipcub+cuda", when="+cuda")
