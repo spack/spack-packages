@@ -14,9 +14,7 @@ class PyCudaBindings(PythonPackage):
 
     homepage = "https://github.com/NVIDIA/cuda-python"
     git = "https://github.com/NVIDIA/cuda-python"
-    url = (
-        "https://github.com/NVIDIA/cuda-python/releases/download/v12.9.1/cuda-python-v12.9.1.tar.gz"
-    )
+    url = "https://github.com/NVIDIA/cuda-python/releases/download/v12.9.1/cuda-python-v12.9.1.tar.gz"
 
     version("13.4.4", sha256="d8820a3377ee3a4508c41bf0914a513e3d77b67bc72582d2c1dc6ebc63bcb545")
     version("13.4.3", sha256="a5d776ed2d81ebf43b1b5d8c00d0e75644779e84c1d13b551cf1af98a049a73a")
