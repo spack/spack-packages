@@ -66,20 +66,18 @@ class BclConvert(Package):
 
     def install(self, spec, prefix):
         rpm = self.stage.archive_file
-    
-        bsdtar = Executable(
-            join_path(spec["libarchive"].prefix.bin, "bsdtar")
-        )
-    
+
+        bsdtar = Executable(join_path(spec["libarchive"].prefix.bin, "bsdtar"))
+
         with working_dir("rpm-extract", create=True):
             bsdtar("-xf", rpm)
-    
+
             mkdirp(prefix.bin)
             install(
                 join_path("usr", "bin", "bcl-convert"),
                 prefix.bin,
             )
-    
+
         set_executable(join_path(prefix.bin, "bcl-convert"))
 
     def setup_run_environment(self, env):
