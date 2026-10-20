@@ -238,9 +238,10 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rccl@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rccl@{ver}", when=f"@{ver}")
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"rccl amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     for ver in [
         "6.4.0",
@@ -258,8 +259,9 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rocdecode@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rocdecode@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"rocdecode amdgpu_target={tgt}", when=f"@6.4.0: amdgpu_target={tgt}")
 
     # rocprof-trace-decoder dependency from version 10.0.0
     for ver in ["10.0.0"]:
