@@ -20,8 +20,13 @@ class PyAiohttp(PythonPackage):
     license("Apache-2.0 AND MIT", when="@3.13:")
     license("Apache-2.0", when="@:3.12")
 
-    version("3.14.3", sha256="9491196535a88924a60afd5b5f434b5b203b6cc616250878dbdb223a8f7844bc")
+    version("3.14.5", sha256="5558a7f5a05af9ecf744af91e5baefc436f93c9333e656c27ec253f9a6bbe178")
     with default_args(deprecated=True):
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-2g87-pp6c-29x5
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-9xw5-w5jj-pvcg
+        version(
+            "3.14.3", sha256="9491196535a88924a60afd5b5f434b5b203b6cc616250878dbdb223a8f7844bc"
+        )
         # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-cq5v-8q36-5273
         version(
             "3.14.1", sha256="307f2cff90a764d329e77040603fa032db89c5c24fdad50c4c15334cba744035"
