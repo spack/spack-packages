@@ -31,12 +31,14 @@ class PyCudaBindings(PythonPackage):
     depends_on("cuda@12.9", when="@12.9")
     depends_on("cuda@12.8", when="@12.8.0")
     depends_on("cuda@11.8", when="@11.8.7")
-    depends_on("python@3.9:", type=("build", "run"))
-    depends_on("py-cython", type="build")
-    depends_on("py-pyclibrary", type=("build", "run"))
-    depends_on("py-pywin32", when="platform=windows", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@77.0.0:", when="@12.9.0", type="build")
+    depends_on("py-cython", type="build")
+    depends_on("python@3.9:", type=("build", "run"))
+    depends_on("py-pyclibrary", type=("build", "run"))
+    depends_on("py-pywin32", when="platform=windows", type=("build", "run"))
+
+    depends_on("py-cuda-pathfinder@1.1:1", when="@12.9.1:")
 
     build_directory = "cuda_bindings"
 
