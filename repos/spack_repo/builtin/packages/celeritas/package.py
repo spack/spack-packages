@@ -94,8 +94,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@3.27:", type="build", when="+covfie")
 
-    # FIXME: precompiled required due to IWYU errors from transitive includes
-    depends_on("cli11~precompiled", when="@0.6:")
+    depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
     depends_on("dd4hep +ddg4", when="+dd4hep")
@@ -165,6 +164,12 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         "https://github.com/celeritas-project/celeritas/commit/8cd7fbf495e2e73c35bece489cd8dbd6026de997.patch?full_index=1",
         sha256="b67f42f79f78be32a8c77187733682ea8045dd42a4be36e6a526749bbc608f86",
         when="@0.7.0 +rocm",
+    )
+    # Fix transitive dependencies from cli11
+    patch(
+        "https://github.com/celeritas-project/celeritas/commit/a235144051e0f7b0ad728afd28f7a23f913511bf.patch?full_index=1",
+        sha256="67488edc65e3fbcdca3f798f8de6c2d9262a021223514590cb4f98c049863e91",
+        when="@0.6:0.7.0 ^cli11+precompiled",
     )
 
     # Fix ORANGE with CLHEP for 0.7.0
