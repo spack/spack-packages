@@ -103,7 +103,6 @@ class PyAiohttp(PythonPackage):
         depends_on("py-propcache@0.2:", when="@3.11:")
         depends_on("py-typing-extensions@4.4:", when="@3.14: ^python@:3.12")
         depends_on("py-typing-extensions@3.6.5:", when="@3.7")
-        depends_on("py-yarl@1.17:1", when="@3.11:")
         depends_on("py-yarl@1.25.1:1", when="@3.14.4:")
         depends_on("py-yarl@1.17:1", when="@3.11:")
         depends_on("py-yarl@1.12:1", when="@3.10:")
