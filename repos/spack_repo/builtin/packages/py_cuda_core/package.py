@@ -16,24 +16,20 @@ class PyCudaCore(PythonPackage):
 
     version("0.5.1", sha256="c58f780e6b996bda0d2e64d0e21afa9d1193739ba290b1ec1323822551a589d5")
 
-    depends_on("python@3.10:", type=("build", "run"))
     depends_on("py-cython@3.2:3.2", type="build")
-    depends_on("py-pyclibrary", type=("build", "run"))
-    depends_on("py-pywin32", when="platform=windows", type=("build", "run"))
     depends_on("py-setuptools@77.0.0:", type="build")
-    depends_on("py-numpy", type="run")
+    depends_on("py-pyclibrary", type=("build", "run"))
+    depends_on("python@3.10:", type=("build", "run"))
+    depends_on("py-pywin32", when="platform=windows", type=("build", "run"))
     depends_on("py-cuda-bindings", type=("build", "run"))
+    depends_on("py-numpy", type="run")
     
     build_directory = "cuda_core"
 
     def setup_build_environment(self, env):
         bindings_version = str(self.spec["py-cuda-bindings"].version)
         cuda_major = bindings_version.split(".")[0]
-
         cuda_prefix = self.spec["cuda"].prefix
 
         env.set("CUDA_CORE_BUILD_MAJOR", cuda_major)
-        env.set("CUDA_PATH", cuda_prefix)
-        env.set("CUDA_HOME", cuda_prefix)
-
         env.append_path("LIBRARY_PATH", cuda_prefix.lib64)
