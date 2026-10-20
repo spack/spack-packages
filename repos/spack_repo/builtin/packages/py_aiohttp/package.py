@@ -82,13 +82,14 @@ class PyAiohttp(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
         depends_on("pkgconfig", when="@3.12:")
+        depends_on("py-setuptools@77:", when="@3.14.4:")
         depends_on("py-setuptools@67:", when="@3.13.1:")
         depends_on("py-setuptools@46.4:")
 
-    depends_on("python@3.9:", when="@3.11:", type=("build", "run"))
-    depends_on("python@3.8:", when="@3.9:", type=("build", "run"))
-
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@3.14:")
+        depends_on("python@3.9:", when="@3.11:")
+        depends_on("python@3.8:", when="@3.9:")
         depends_on("py-aiohappyeyeballs@2.5:", when="@3.12:")
         depends_on("py-aiohappyeyeballs@2.3:", when="@3.10:")
         depends_on("py-aiosignal@1.4.0:", when="@3.12:")
@@ -97,13 +98,18 @@ class PyAiohttp(PythonPackage):
         depends_on("py-async-timeout@3", when="@:3.7.4 ^python@:3.10")
         depends_on("py-attrs@17.3:")
         depends_on("py-frozenlist@1.1.1:", when="@3.8.1:")
-        depends_on("py-multidict@4.5:6", when="@3.6.3:")
+        depends_on("py-multidict@4.5:7", when="@3.14.5:")
+        depends_on("py-multidict@4.5:6", when="@3.6.3:3.14.4")
         depends_on("py-propcache@0.2:", when="@3.11:")
+        depends_on("py-typing-extensions@4.4:", when="@3.14: ^python@:3.12")
+        depends_on("py-typing-extensions@3.6.5:", when="@3.7")
         depends_on("py-yarl@1.17:1", when="@3.11:")
+        depends_on("py-yarl@1.25.1:1", when="@3.14.4:")
+        depends_on("py-yarl@1.17:1", when="@3.11:")
+        depends_on("py-yarl@1.12:1", when="@3.10:")
         depends_on("py-yarl@1")
 
         # Historical dependencies
         depends_on("py-chardet@2.0:3", when="@:3.7")
         depends_on("py-charset-normalizer@2:3", when="@3.8.4:3.12")
         depends_on("py-charset-normalizer@2", when="@3.8.0:3.8.3")
-        depends_on("py-typing-extensions@3.6.5:", when="@3.7")
