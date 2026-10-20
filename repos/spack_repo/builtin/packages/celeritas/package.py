@@ -74,7 +74,8 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@3.27:", type="build", when="+covfie")
 
-    depends_on("cli11", when="@0.6:")
+    # FIXME: precompiled required due to IWYU errors from transitive includes
+    depends_on("cli11~precompiled", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
     depends_on("dd4hep +ddg4", when="+dd4hep")
