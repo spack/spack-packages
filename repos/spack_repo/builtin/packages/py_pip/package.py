@@ -28,6 +28,7 @@ class PyPip(Package, PythonExtension):
 
     version("26.2.2", sha256="fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70")
     # older versions include emSign intermediate certificates with exposed private keys
+    # https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62
     with default_args(deprecated=True):
         version("26.2.1", sha256="71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e")
         version("26.1.2", sha256="382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab")
