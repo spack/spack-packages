@@ -21,6 +21,7 @@ class PyCertifi(PythonPackage):
         "2026.10.19", sha256="035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae"
     )
     # older versions include emSign intermediate certificates with exposed private keys
+    # https://github.com/astral-sh/uv/security/advisories/GHSA-hq85-5cpj-mr62
     with default_args(deprecated=True):
         version(
             "2026.2.25", sha256="e887ab5cee78ea814d3472169153c2d12cd43b14bd03329a39a9c6e2e80bfba7"
