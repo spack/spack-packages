@@ -25,7 +25,7 @@ class PyCudaCore(PythonPackage):
     depends_on("py-pywin32", when="platform=windows", type=("build", "run"))
     depends_on("py-cuda-bindings", type=("build", "run"))
     depends_on("py-numpy", type="run")
-    
+
     build_directory = "cuda_core"
 
     def setup_build_environment(self, env):
