@@ -23,7 +23,7 @@ class Php(AutotoolsPackage):
     version("8.4.27", sha256="ae5896236c1b5bba6c36dcdd2e30c87ccda595d28650d18e6c007eebb0db68ab")
     version("8.3.36", sha256="132154b55122efe74ed55c6a51486dcf6a7797a2a8df66e5361c2bb6f0f1b527")
 
-    # CVE-2026-109618 (GHSA-w8hw-w9fx-j79w), CVE-2026-109619 (GHSA-6wmf-4rv5-p3rp)
+    # CVE-2026-109618, CVE-2026-109619
     with default_args(deprecated=True):
         version(
             "8.3.12", sha256="d5d4e6ffc6d6b2f02a87c45741623e08045ec6509ade44a1033e0f8bbb374119"
