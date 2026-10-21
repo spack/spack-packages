@@ -16,6 +16,8 @@ class PyCudaCore(PythonPackage):
 
     version("0.5.1", sha256="c58f780e6b996bda0d2e64d0e21afa9d1193739ba290b1ec1323822551a589d5")
 
+    license("Apache-2.0")
+
     depends_on("py-cython@3.2:3.2", type="build")
     depends_on("py-setuptools@77.0.0:", type="build")
     depends_on("py-pyclibrary", type=("build", "run"))
