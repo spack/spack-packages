@@ -32,15 +32,12 @@ class Php(AutotoolsPackage):
             "7.4.33", sha256="dfbb2111160589054768a37086bda650a0041c89878449d078684d70d6a0e411"
         )
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
+    # buildconf only runs autoconf/autoheader; libtool.m4 is bundled in build/
+    depends_on("autoconf@2.68:", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("bison", type="build")
+    depends_on("bison@3:", type="build")
     depends_on("re2c", type="build")
     depends_on("bash", type="build")
     depends_on("libiconv", when="@8:")
