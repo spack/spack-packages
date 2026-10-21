@@ -22,6 +22,11 @@ class Kraken2(Package, CMakePackage):
 
     license("MIT")
 
+    version(
+        "2.17.2",
+        sha256="84ff95cd6d8a4c9e93ab6bf1d9b3892099baaefb0277bcf2edc3eb4948566035",
+        url="https://github.com/DerrickWood/kraken2/archive/2.17.2.tar.gz",
+    )
     version("2.17.1", sha256="4dc64ead045b5ae9180731c260046aa37b6642244be085a9ba9b15db78ab442d")
     version("2.1.2", sha256="e5f431e8bc3d5493a79e1d8125f4aacbad24f9ea2cc9657b66da06a32bef6ff3")
     version("2.1.1", sha256="8f3e928cdb32b9e8e6f55b44703d1557b2a5fc3f30f63e8d16e465e19a81dee4")
@@ -45,6 +50,7 @@ class Kraken2(Package, CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("gmake", type="build", when="build_system=generic")
+    depends_on("zlib-api", when="build_system=cmake")
 
     depends_on("perl", type=("build", "run"))
     depends_on("rsync", type=("run"))
