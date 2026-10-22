@@ -27,6 +27,9 @@ class KokkosComm(CMakePackage):
     variant("mpi", description="Enable MPI backend", default=True)
     variant("nccl", description="Enable NCCL backend", default=False)
 
+    # At least one backend must be enabled
+    conflicts("~mpi~nccl")
+    
     # Mandatory dependencies
     depends_on("cxx", type="build")
     depends_on("cmake@3.25:", type="build")
