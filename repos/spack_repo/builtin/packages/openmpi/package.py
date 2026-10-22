@@ -453,6 +453,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
             "1.0", sha256="cf75e56852caebe90231d295806ac3441f37dc6d9ad17b1381791ebb78e21564"
         )  # libmpi.so.0.0.0
 
+    patch("fix-integer-kind-8.patch", when="@5.0:5.0.10")
     patch("ad_lustre_rwcontig_open_source.patch", when="@1.6.5")
     patch("llnl-platforms.patch", when="@1.6.5")
     patch("configure.patch", when="@1.10.1")

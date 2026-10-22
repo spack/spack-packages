@@ -107,7 +107,7 @@ class Julia(MakefilePackage):
         depends_on("libblastrampoline@5.13.1:5")
         depends_on("libgit2@1.9")
         depends_on("libssh2@1.11:1")
-        depends_on("llvm@18.1.8 +lld shlib_symbol_version=JL_LLVM_18.0")
+        depends_on("llvm@18.1.8 +lld shlib_symbol_version=JL_LLVM_18.1")
         depends_on("openssl@3.5.1:3.5")
         depends_on("openlibm@0.8.7:0.8", when="+openlibm")
         depends_on("nghttp2@1.64")

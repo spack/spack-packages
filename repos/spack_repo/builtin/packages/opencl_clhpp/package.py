@@ -33,6 +33,15 @@ class OpenclClhpp(CMakePackage):
 
     root_cmakelists_dir = "include"
 
+    def cmake_args(self):
+        # Disable testing the headers
+        return [
+            "-DBUILD_DOCS=OFF",
+            "-DBUILD_TESTS=OFF",
+            "-DBUILD_EXAMPLES=OFF",
+            "-DBUILD_TESTING=OFF",
+        ]
+
     @run_after("install")
     def post_install(self):
         if sys.platform == "darwin":

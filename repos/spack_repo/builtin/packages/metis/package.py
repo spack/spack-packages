@@ -20,9 +20,9 @@ class Metis(CMakePackage, MakefilePackage):
     recursive-bisection, multilevel k-way, and multi-constraint partitioning schemes.
     """
 
-    homepage = "http://glaros.dtc.umn.edu/gkhome/metis/metis/overview"
-    url = "http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz"
-    list_url = "http://glaros.dtc.umn.edu/gkhome/fsroot/sw/metis/OLD"
+    homepage = "http://papers.karypis.org/glaros/software/metis/overview.html#metis---serial-graph-partitioning-and-fill-reducing-matrix-ordering"
+    url = "http://papers.karypis.org/glaros/files/sw/metis/metis-5.1.0.tar.gz"
+    list_url = "http://papers.karypis.org/glaros/files/sw/metis/OLD"
 
     # not a metis developer, just package reviewer!
     maintainers("mthcrts")

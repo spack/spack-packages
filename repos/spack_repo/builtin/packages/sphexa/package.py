@@ -16,7 +16,7 @@ class Sphexa(CMakePackage, CudaPackage, ROCmPackage):
     homepage = "https://github.com/sphexa-org/sphexa"
     url = "https://github.com/sphexa-org/sphexa/archive/v0.0.0.tar.gz"
     git = "https://github.com/sphexa-org/sphexa.git"
-    maintainers = ["sekelle"]
+    maintainers("sekelle")
 
     license("MIT")
 

@@ -500,6 +500,7 @@ class Wrf(Package):
         # and the custom compile script will always return zero regardless of
         # success or failure
         result_buf = csh(
+            "-f",
             "./compile",
             "-j",
             num_jobs,

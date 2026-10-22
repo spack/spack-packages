@@ -16,7 +16,7 @@ class _3dtk(CMakePackage):
     plane extraction software, etc. Several file formats for the point clouds
     are natively supported, new formats can be implemented easily."""
 
-    homepage = "https://slam6d.sourceforge.net/"
+    homepage = "https://slam6d.sourceforge.io/"
     # Repo seems to be in the process of switching to git:
     # https://github.com/3DTK/3DTK
 

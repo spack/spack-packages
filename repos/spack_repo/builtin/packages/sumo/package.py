@@ -30,6 +30,7 @@ class Sumo(CMakePackage):
     variant("gl2ps", default=False, description="gl2ps support")
     variant("eigen", default=False, description="eigen support")
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     extends("python")

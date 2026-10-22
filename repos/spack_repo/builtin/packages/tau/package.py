@@ -271,6 +271,7 @@ class Tau(Package):
     patch("tau-rocm-disable-llvm-plugin.patch", when="@2.33.2 +rocm")
     # https://github.com/UO-OACISS/tau2/commit/523df968dd17ffad74f0d944ecbb958ba0e8c6e8
     patch("tau-rocm-disable-rocprofiler-default.patch", when="@2.34.0 +rocm")
+    patch("cuptipc.patch", when="@2.34.1:2.35.1 +cuda")
 
     filter_compiler_wrappers("Makefile", relative_root="include")
     filter_compiler_wrappers("Makefile.tau*", relative_root="lib")
@@ -281,6 +282,11 @@ class Tau(Package):
 
         if self.spec.satisfies("%oneapi"):
             useropt.append("-Wno-error=implicit-function-declaration")
+
+        if "+dyninst" in spec and self.spec.satisfies("@2.32.1:2.35.2"):
+            tbb = spec["intel-tbb"]
+            if tbb.satisfies("@2021.1:"):
+                useropt.append("-DDYNINST_TBB_HAS_VERSION_H")
 
         ##########
         # Selecting a compiler with TAU configure is quite tricky:

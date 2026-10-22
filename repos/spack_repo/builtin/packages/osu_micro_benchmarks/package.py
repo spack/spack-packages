@@ -77,7 +77,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
                 config_args.append("NVCCFLAGS=" + " ".join(self.cuda_flags(cuda_arch)))
 
         if "+rocm" in spec:
-            config_args.extend(["--with-rocm=%s" % spec["hip"].prefix])
+            config_args.extend(["--enable-rocm", "--with-rocm=%s" % spec["hip"].prefix])
             if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["rccl"].prefix])
             rocm_arch = spec.variants["amdgpu_target"].value
