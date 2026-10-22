@@ -115,10 +115,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
+    depends_on("googletest@1.14:1", type="test", when="@5:")
+
     # device : (default value, when clause, description)
     devices_variants = {
         "cuda": [False, None, "Whether to build CUDA backend"],
         "openmp": [False, None, "Whether to build OpenMP backend"],
+        "openacc": [False, None, "Whether to build OpenACC backend"],
         "threads": [False, None, "Whether to build the C++ threads backend"],
         "serial": [False, None, "Whether to build serial backend"],
         "rocm": [False, None, "Whether to build HIP backend"],
@@ -128,6 +131,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     requires(
         "+serial", when="~hpx ~openmp ~threads", msg="Kokkos requires at least one host backend"
     )
+    requires("~cuda~rocm~sycl", when="+openacc", msg="Can not mix other GPU backends with OpenACC")
+    # only NVHPC compilers are currently supported
+    requires("%cxx=nvhpc", when="+openacc")
 
     tpls_variants = {
         "hpx": [False, None, "Whether to enable the HPX library"],
@@ -159,7 +165,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
-        "tests": [False, None, "Build for tests"],
     }
 
     conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
@@ -235,15 +240,16 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+cuda", when="cuda_arch=none")
 
     # Kokkos support only one cuda_arch at a time
-    variant(
-        "cuda_arch",
-        description="CUDA architecture",
-        values=("none",) + CudaPackage.cuda_arch_values,
-        default="none",
-        multi=False,
-        sticky=True,
-        when="+cuda",
-    )
+    for cond in ("+cuda", "+openacc"):
+        variant(
+            "cuda_arch",
+            description="CUDA architecture",
+            values=("none",) + CudaPackage.cuda_arch_values,
+            default="none",
+            multi=False,
+            sticky=True,
+            when=cond,
+        )
 
     # Since Kokkos supports only one amdgpu_target at a time, the multi-value property is disabled.
     variant(
@@ -402,8 +408,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     filter_compiler_wrappers("kokkos_launch_compiler", relative_root="bin")
     for libdir in ("lib", "lib64"):
         filter_compiler_wrappers(
-            "KokkosConfigCommon.cmake",
-            relative_root=os.path.join(libdir, "cmake", "Kokkos"),
+            "KokkosConfigCommon.cmake", relative_root=os.path.join(libdir, "cmake", "Kokkos")
         )
 
     # sanity check
@@ -471,7 +476,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             )
 
         spack_microarches = []
-        if spec.satisfies("+cuda"):
+        if spec.satisfies("+cuda") or spec.satisfies("+openacc"):
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch != "none":
                 kokkos_arch_name, cond = self.spack_cuda_arch_map[cuda_arch]
@@ -514,6 +519,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         for arch in spack_microarches:
             options.append(self.define("Kokkos_ARCH_" + arch.upper(), True))
+
+        options.append(self.define("Kokkos_ENABLE_TESTS", self.run_tests))
 
         self.append_args("ENABLE", self.devices_variants.keys(), options)
         self.append_args("ENABLE", self.options_variants.keys(), options)

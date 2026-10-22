@@ -182,6 +182,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         extension="tar.gz",
     )
 
+    variant("caliper", default=False, description="Build Caliper support")
+
     variant("static", default=True, description="Build static library")
     variant("shared", default=False, description="Build shared library")
     variant("mpi", default=True, sticky=True, description="Enable MPI parallelism")
@@ -195,11 +197,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant("libceed", default=False, description="Enable libCEED backend")
     variant("umpire", default=False, description="Enable Umpire support")
     variant("amgx", default=False, description="Enable NVIDIA AmgX solver support")
-    # cuDSS support was added after the MFEM 4.9 release.
     variant(
         "cudss",
         default=False,
-        when="@develop",
+        when="@4.10:",
         description="Enable NVIDIA cuDSS solver support",
     )
 
@@ -343,6 +344,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("hipsparse", when="@4.4.0:+rocm")
     depends_on("hipblas", when="@4.8.0:+rocm")
     depends_on("hipcub", when="@4.9.0:+rocm")
+
+    depends_on("caliper", when="+caliper")
 
     with when("+mpi"):
         depends_on("hypre")
@@ -713,6 +716,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "MFEM_USE_EXCEPTIONS=%s" % yes_no("+exceptions"),
             "MFEM_USE_MUMPS=%s" % yes_no("+mumps"),
             "MFEM_USE_CUDSS=%s" % yes_no("+cudss"),
+            "MFEM_USE_CALIPER=%s" % yes_no("+caliper"),
         ]
         if spec.satisfies("@4.7.0:"):
             options += ["MFEM_PRECISION=%s" % spec.variants["precision"].value]
@@ -1337,6 +1341,11 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
         if "+enzyme" in spec:
             options += ["ENZYME_DIR=%s" % spec["enzyme"].prefix]
+
+        if "+caliper" in spec:
+            options += ["CALIPER_DIR=%s" % self.spec["caliper"].prefix]
+            if "+adiak" in spec["caliper"]:
+                options += ["ADIAK_DIR=%s" % self.spec["adiak"].prefix]
 
         return options
 

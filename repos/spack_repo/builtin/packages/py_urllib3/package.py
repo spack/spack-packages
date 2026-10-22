@@ -17,9 +17,13 @@ class PyUrllib3(PythonPackage):
 
     license("MIT")
 
-    version("2.7.0", sha256="231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c")
+    version("2.8.0", sha256="63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63")
 
     with default_args(deprecated=True):
+        # https://github.com/urllib3/urllib3/security/advisories/GHSA-vxq7-64xx-v4gw
+        # https://github.com/urllib3/urllib3/security/advisories/GHSA-8988-9cw3-xx77
+        # https://github.com/urllib3/urllib3/security/advisories/GHSA-gh4c-6fx4-qh6g
+        version("2.7.0", sha256="231e0ec3b63ceb14667c67be60f2f2c40a518cb38b03af60abc813da26505f4c")
         # https://github.com/urllib3/urllib3/security/advisories/GHSA-mf9v-mfxr-j63j
         # https://github.com/urllib3/urllib3/security/advisories/GHSA-qccp-gfcp-xxvc
         version("2.6.3", sha256="1b62b6884944a57dbe321509ab94fd4d3b307075e0c2eae991ac71ee15ad38ed")

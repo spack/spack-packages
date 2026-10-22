@@ -23,6 +23,7 @@ class Deepmdkit(CMakePackage):
 
     maintainers("mkrack")
 
+    version("3.2.0", sha256="37a86e487c9d4fd3dff497cbbb3cdecc346b01a3381dc65545ffe5182aa5e030")
     version("3.1.3", sha256="4387128aab98d9819b3484957a8857030f805cbab90c035c509ea87a72b182fa")
     version("3.1.2", sha256="8042a4939c5c0eba4f1c8adc530a83343630c42f9e268dff372c03ae0ec3f1f2")
     version("3.1.0", sha256="45f13df9ed011438d139a7f61416b8d7940f63c47fcde53180bfccd60c9d22ee")
@@ -37,6 +38,7 @@ class Deepmdkit(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("cmake@3.25.2:", type="build", when="@3.1.1:")
 
     depends_on("py-torch", when="+pytorch")
 
@@ -53,6 +55,9 @@ class Deepmdkit(CMakePackage):
             self.define_from_variant("ENABLE_JAX", "jax"),
             self.define_from_variant("BUILD_TESTING", "build_testing"),
             self.define_from_variant("ENABLE_NATIVE_OPTIMIZATION", "native_optimization"),
-            self.define_from_variant("DP_USING_C_AP", "dp_using_c_api"),
+            self.define_from_variant("DP_USING_C_API", "dp_using_c_api"),
         ]
+        # The PyTorch headers require C++20 starting with version 2.14
+        if self.spec.satisfies("+pytorch ^py-torch@2.14:"):
+            args.append(self.define("CMAKE_CXX_STANDARD", "20"))
         return args

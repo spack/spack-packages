@@ -83,13 +83,15 @@ class Hip(ROCmLibrary, CMakePackage):
     test_requires_compiler = True
 
     with when("+rocm"):
+        # OpenGL is required at build time (FindOpenGL) by rocclr
+        # and can be used at runtime (dlopen) for finding hip devices.
+        # Newer versions of HIP (at least 7.14) link against it but older (5.7)
+        # do not.
         depends_on("gl@4.5:")
         depends_on("py-cppheaderparser", type="build")
         depends_on("libx11", when="+asan")
         depends_on("xproto", when="+asan")
-        # hipcc likes to add `-lnuma` by default :(
-        # ref https://github.com/ROCm/HIP/pull/2202
-        depends_on("numactl")
+        depends_on("numactl")  # required by rocr-runtime
 
         for ver in [
             "5.7.0",
@@ -392,13 +394,23 @@ class Hip(ROCmLibrary, CMakePackage):
 
     @classmethod
     def determine_version(cls, lib):
+        # TheRock 7.13+ encodes the ROCm major and minor versions directly in
+        # the library name, followed by a HIP build number. 7.15 maps to 10.0.
+        match = re.search(r"lib\S*\.so\.7\.15\.\d+(?:-|$)", lib)
+        if match:
+            return "10.0.0"
+
+        match = re.search(r"lib\S*\.so\.(7)\.(1[34])\.\d+(?:-|$)", lib)
+        if match:
+            return "{0}.{1}.0".format(int(match.group(1)), int(match.group(2)))
+
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
         if match:
             ver = "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def set_variables(self, env):

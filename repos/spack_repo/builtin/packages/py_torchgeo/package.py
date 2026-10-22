@@ -10,14 +10,15 @@ from spack.package import *
 class PyTorchgeo(PythonPackage):
     """TorchGeo: datasets, samplers, transforms, and pre-trained models for geospatial data."""
 
-    homepage = "https://github.com/microsoft/torchgeo"
+    homepage = "https://github.com/torchgeo/torchgeo"
     pypi = "torchgeo/torchgeo-0.1.0.tar.gz"
-    git = "https://github.com/microsoft/torchgeo.git"
+    git = "https://github.com/torchgeo/torchgeo.git"
 
     license("MIT")
     maintainers("adamjstewart", "calebrob6", "isaaccorley", "nilsleh", "ashnair1", "robmarkcole")
 
     version("main", branch="main")
+    version("0.10.1", sha256="9dfb36737e1ddb4156cd51244bf4247c4a2bafd0d177e7b6d59288ca8ae848b7")
     version("0.10.0", sha256="fc0357a4d6847cbd7cd5baa0f6a48b61c9a7b83f11d2d1a4c8c9d35de9f0bc26")
     with default_args(deprecated=True):
         # CVE coming soon
@@ -194,7 +195,8 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-ruff@0.2:")
         depends_on("py-ty@0.0.62:", when="@0.10:")
         depends_on("py-types-geopandas@1:", when="@0.10:")
-        depends_on("py-types-rasterio@1.5.0.20260728:", when="@0.10:")
+        depends_on("py-types-rasterio@1.5.1:", when="@0.10.1:")
+        depends_on("py-types-rasterio@1.5.0.20260728:", when="@0.10.0")
         depends_on("py-types-requests@2.25:", when="@0.9:")
         depends_on("py-types-requests@2.23:", when="@0.8.1:")
         depends_on("py-types-shapely@2.0.2:", when="@0.9:")
@@ -212,6 +214,7 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-pytest@7.3.2:", when="@0.9:")
         depends_on("py-pytest@7.3:")
         depends_on("py-pytest-cov@4:")
+        depends_on("py-pytest-xdist@3.0.2:", when="@0.10.1:")
         depends_on("py-pytest-socket@0.3.4:", when="@0.9:")
 
     # https://github.com/torchgeo/torchgeo/pull/3052

@@ -26,6 +26,7 @@ class PyPip(Package, PythonExtension):
 
     license("MIT")
 
+    version("26.2.1", sha256="71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e")
     version("26.1.2", sha256="382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab")
     version("26.1", sha256="4e8486d821d814b77319acb7b9e8bf5a4ee7590a643e7cb21029f209be8573c1")
     version("26.0.1", sha256="bdb1b08f4274833d62c1aa29e20907365a2ceb950410df15fc9521bad440122b")
@@ -53,7 +54,7 @@ class PyPip(Package, PythonExtension):
     version("10.0.1", sha256="717cdffb2833be8409433a93746744b59505f42146e8d37de6c62b430e25d6d7")
     version("9.0.1", sha256="690b762c0a8460c303c089d5d0be034fb15a5ea2b75bdf565f40421f542fefb0")
 
-    extends("python")
+    extends("python+zlib")
 
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@26.1:")

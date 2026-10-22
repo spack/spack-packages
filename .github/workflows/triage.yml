@@ -10,6 +10,16 @@ on:
   pull_request_target:
     branches:
       - develop
+    # the default types are opened, synchronize, and reopened but we also want RFR
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
 
 jobs:
   pr:
@@ -23,7 +33,7 @@ jobs:
         with:
           ref: develop # DO NOT CHANGE
 
-      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
+      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510  # v3.3.0
         id: generate-spackbot-token
         with:
           client-id: ${{ secrets.SPACKBOT_TRIAGE_CLIENT_ID }}

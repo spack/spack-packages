@@ -25,6 +25,10 @@ class PyNanobind(PythonPackage):
 
     version("master", branch="master", submodules=True)
     version(
+        "3.1.0",
+        sha256="6661e3dc1434d78781ccf7913442d90361dab395c3424efadb63bbb6ddea7ea3",
+    )
+    version(
         "3.0.1",
         sha256="f7f0a889c8fb80deaacb95e918d88e05148850a32d2b8eda28446291b2bf7c35",
     )

@@ -413,11 +413,9 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("zstd", when="+zstd")
 
     # Language bindings
-    # FIXME: Allow packages to extend multiple packages
-    # See https://github.com/spack/spack/issues/987
     extends("python", when="+python")
-    # extends('openjdk', when='+java')
-    # extends('perl', when='+perl')
+    extends("java", when="+java")
+    extends("perl", when="+perl")
 
     # swig/python/pyproject.toml (3.9+)
     # swig/python/setup.py.in (3.5-3.8)
