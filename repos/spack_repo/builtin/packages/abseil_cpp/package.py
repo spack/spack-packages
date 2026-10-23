@@ -22,6 +22,9 @@ class AbseilCpp(CMakePackage):
         "20260107.1", sha256="4314e2a7cbac89cac25a2f2322870f343d81579756ceff7f431803c2c9090195"
     )
     version(
+        "20250814.0", sha256="9b2b72d4e8367c0b843fa2bcfa2b08debbe3cee34f7aaa27de55a6cbb3e843db"
+    )
+    version(
         "20240722.0", sha256="f50e5ac311a81382da7fa75b97310e4b9006474f9560ac46f54a9967f07d4ae3"
     )
     version(
