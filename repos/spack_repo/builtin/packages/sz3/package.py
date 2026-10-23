@@ -17,6 +17,10 @@ class Sz3(CMakePackage):
     tags = ["e4s"]
 
     version("master")
+    version("3.4.0", commit="592df793eb596d952242aa9fec9cbe5e68782aae")
+    version("3.3.2", commit="0ebe6fa26b0aa2e274d13b78df81a81e2db1b268")
+    version("3.3.0", commit="5d2fd2638bc3512c0b4aed594d6e8a130d0d3ed2")
+    version("3.2.1", commit="61816ba1276a83b4f9aa3ee0f8299eb7b0b3528a")
     version("3.2.0", commit="b3dab4018425803a55d8073dc55dade7fa46b7b4")
     version("3.1.8", commit="e308ebf8528c233286874b920c72c0a6c0218fb2")
     version("3.1.7", commit="c49fd17f2d908835c41000c1286c510046c0480e")
@@ -31,22 +35,30 @@ class Sz3(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+    depends_on("cmake@3.18:", type="build")
+    depends_on("cmake@3.19:", type="build", when="@3.4:")
+    depends_on("pkgconfig", type="build", when="@:3.3")
+
     depends_on("zstd")
-    depends_on("gsl")
-    depends_on("pkgconfig")
+    depends_on("gsl", when="@:3.3")
     depends_on("hdf5", when="+hdf5")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if "+hdf5" in self.spec:
+        if self.spec.satisfies("+hdf5 @3.4:"):
+            env.prepend_path("HDF5_PLUGIN_PATH", self.prefix.lib.plugin)
+        elif self.spec.satisfies("+hdf5"):
             env.prepend_path("HDF5_PLUGIN_PATH", self.prefix.lib64)
 
     def cmake_args(self):
-        return [
+        args = [
             "-DSZ3_USE_BUNDLED_ZSTD=OFF",
             "-DSZ3_DEBUG_TIMINGS=OFF",
             self.define_from_variant("BUILD_MDZ", "mdz"),
             self.define_from_variant("BUILD_H5Z_FILTER", "hdf5"),
         ]
+        if self.spec.satisfies("@3.4:"):
+            args.append(self.define("H5Z_SZ3_PLUGIN_INSTALL_DIR", self.prefix.lib.plugin))
+        return args
 
     def test_sz3_smoke_test(self):
         """Run sz3 smoke test"""
