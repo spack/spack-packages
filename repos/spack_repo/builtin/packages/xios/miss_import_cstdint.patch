@@ -1,0 +1,17 @@
+--- a/src/filter_graph_types.hpp
++++ b/src/filter_graph_types.hpp
+@@ -5,6 +5,7 @@
+ #include <memory>
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace xios
+ {
+@@ -263,4 +264,4 @@ namespace xios
+ 
+ }
+ 
+-#endif //__XIOS_FilterGraphTypes__
+\ No newline at end of file
++#endif //__XIOS_FilterGraphTypes__
