@@ -17,12 +17,14 @@ class Pango(MesonPackage):
     url = "http://ftp.gnome.org/pub/GNOME/sources/pango/1.40/pango-1.40.3.tar.xz"
     list_url = "http://ftp.gnome.org/pub/gnome/sources/pango/"
     list_depth = 1
+    git = "https://github.com/GNOME/pango.git"
 
     license("LGPL-2.1-or-later")
 
     # Do not upgrade to v1.90.x. It is a development release in preparation for
     # v2.0 that will break API and ABI compatibility. For more information see
     # https://download.gnome.org/sources/pango/1.90/pango-1.90.0.news
+    version("1.58.2", sha256="342385b6ca3b7c73455d7c80a13b7dbe4489e00bc3bd4c5bd6ed4dce421e374a")
     version("1.54.0", sha256="8a9eed75021ee734d7fc0fdf3a65c3bba51dfefe4ae51a9b414a60c70b2d1ed8")
     version("1.52.2", sha256="d0076afe01082814b853deec99f9349ece5f2ce83908b8e58ff736b41f78a96b")
     version("1.50.13", sha256="5cdcf6d761d26a3eb9412b6cb069b32bd1d9b07abf116321167d94c2189299fd")
@@ -35,43 +37,58 @@ class Pango(MesonPackage):
 
     variant("X", default=False, description="Enable an X toolkit")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
 
-    depends_on("meson@0.50:", type="build", when="@1.44.4:")
-    depends_on("meson@0.54:", type="build", when="@1.48.0:")
-    depends_on("meson@0.55.3:", type="build", when="@1.48.1:")
-    depends_on("meson@0.60:", type="build", when="@1.50.13:")
-    depends_on("meson@0.63:", type="build", when="@1.54:")
-    depends_on("pkgconfig", type="build")
-    depends_on("harfbuzz")
+        depends_on("gmake")
+        depends_on("meson@1.2:", when="@1.55:")
+        depends_on("meson@0.63:", when="@1.54:")
+        depends_on("meson@0.50:", when="@1.44.4:")
+        depends_on("meson@0.54:", when="@1.48.0:")
+        depends_on("meson@0.55.3:", when="@1.48.1:")
+        depends_on("meson@0.60:", when="@1.50.13:")
+        depends_on("meson@0.63:", when="@1.54:")
+        depends_on("pkgconfig")
+
+    depends_on("glib@2.88:", when="@1.58.2:")
+    depends_on("glib@2.62:", when="@1.48.1:")
+    depends_on("glib@2.60:")
+
+    depends_on("gobject-introspection@1.83.2:", when="@1.56.4:")
+    depends_on("gobject-introspection")
+
+    depends_on("fribidi@1.0.6:", when="@1.49:")
+    depends_on("fribidi@0.19.7:")
+
+    depends_on("harfbuzz@11:", when="@1.58:")
+    depends_on("harfbuzz@2.6.0:", when="@1.49:")
+    depends_on("harfbuzz@2.2.0:", when="@1.48:")
+    depends_on("harfbuzz@2:")
     for plat in ["linux", "darwin", "freebsd"]:
         depends_on("harfbuzz +gobject", when=f"platform={plat}")
     depends_on("harfbuzz+coretext", when="platform=darwin")
+
+    depends_on("fontconfig@2.17.0:", when="@1.57:")
+    depends_on("fontconfig@2.13.0:", when="@1.49:")
+    depends_on("fontconfig@2.11.91:")
+
+    depends_on("libxft@2.0.0:", when="+X")
+    depends_on("libxft", when="+X")
+
+    depends_on("cairo@1.18:", when="@1.56:")
+    depends_on("cairo@1.12.10:")
     depends_on("cairo+ft+fc")
     # quartz needed even when ~X on the new cairo versions
     requires("^cairo+quartz", when="^cairo@1.17.8: platform=darwin")
     depends_on("cairo~X", when="~X")
     depends_on("cairo+X", when="+X")
-    depends_on("libxft", when="+X")
-    depends_on("glib")
-    depends_on("gobject-introspection")
-    depends_on("fontconfig")
+
     depends_on("freetype@2:")
     depends_on("libffi")
 
-    depends_on("cairo@1.12.10:")
-    depends_on("fontconfig@2.11.91:")
-    depends_on("libxft@2.0.0:", when="+X")
-    depends_on("fribidi@0.19.7:")
-    depends_on("harfbuzz@2.0.0:")
-    depends_on("glib@2.62:")
-    depends_on("harfbuzz@2.2.0:", when="@1.48")
-    depends_on("fontconfig@2.13.0:", when="@1.49:")
-    depends_on("fribidi@1.0.6:", when="@1.49:")
-    depends_on("harfbuzz@2.6.0:", when="@1.49:")
-    depends_on("json-glib@1.6.0:", when="@1.49:")
-    depends_on("gmake", type="build")
+    # Historical dependecies
+    depends_on("json-glib@1.6.0:", when="@1.49.4")
 
     def url_for_version(self, version):
         url = "http://ftp.gnome.org/pub/GNOME/sources/pango/{0}/pango-{1}.tar.xz"
