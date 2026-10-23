@@ -27,6 +27,13 @@ class Libgcrypt(AutotoolsPackage):
     version("1.10.4", sha256="d6d2f835a79711ceba54b53d1081d388d24fb0341d79a268a6557e12908a90a0")
     version("1.10.3", sha256="8b0870897ac5ac67ded568dcfadf45969cfa8a6beb0fd60af2a9eadc2a3272aa")
 
+    deprecated(
+        "@1.8.8:1.10.3,1.11.0:1.11.2,1.12.0:1.12.1",
+        reason="vuln",
+        severity="medium",
+        labels=["CVE-2026-41989"],
+    )
+
     depends_on("c", type="build")
 
     depends_on("libgpg-error@1.27:")
