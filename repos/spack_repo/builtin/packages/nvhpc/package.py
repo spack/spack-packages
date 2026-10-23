@@ -720,6 +720,28 @@ class Nvhpc(Package, CompilerPackage):
             self.spec.mpifc = join_path(mpi_prefix.bin, "mpif90")
 
     @property
+    def headers(self):
+        hdrs = find_headers("*", self.prefix.include, recursive=True)
+        # nvidia Open MPI installs Fortran modules (mpi_f08.mod) in libdir;
+        # there is no clean way to determine the path to the Open MPI lib
+        # directory from the package version --> query the MPI wrapper.
+        if "+mpi" in self.spec or self.provides("mpi"):
+            mpi_prefix = Prefix(
+                join_path(
+                    self.prefix,
+                    "Linux_%s" % self.spec.target.family,
+                    self.version,
+                    "comm_libs",
+                    "mpi",
+                )
+            )
+            mpifc = Executable(join_path(mpi_prefix.bin, "mpif90"))
+            flags = mpifc("--showme:compile", output=str, error=str).split()
+            incdirs = [f[2:] for f in flags if f.startswith("-I")]
+            hdrs.directories = list(set(dict.fromkeys(hdrs.directories + incdirs)))
+        return hdrs
+
+    @property
     def libs(self):
         prefix = Prefix(
             join_path(self.prefix, "Linux_%s" % self.spec.target.family, self.version, "compilers")
