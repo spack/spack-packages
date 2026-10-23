@@ -16,6 +16,8 @@ class PyJunitXml(PythonPackage):
 
     license("MIT")
 
+    version("1.9", sha256="de16a051990d4e25a3982b2dd9e89d671067548718866416faec14d9de56db9f")
+    version("1.8", sha256="602f1c480a19d64edb452bf7632f76b5f2cb92c1938c6e071dcda8ff9541dc21")
     version("1.7", sha256="5bc851b53e3e2153dcc62278ce2aa796a8ae9208f1dec36d1507b5af445ce355")
 
     depends_on("py-setuptools", type="build")
