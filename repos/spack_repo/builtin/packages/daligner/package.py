@@ -19,8 +19,7 @@ class Daligner(MakefilePackage):
 
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")
-        kwargs = {"ignore_absent": False, "backup": False, "string": True}
-        makefile.filter("cp $(ALL) ~/bin", "cp $(ALL) {0}".format(prefix.bin), **kwargs)
+        makefile.filter("cp $(ALL) ~/bin", "cp $(ALL) {0}".format(prefix.bin), string=True)
         # He changed the Makefile in commit dae119.
         # You'll need this instead if/when he cuts a new release
         # or if you try to build from the tip of master.
