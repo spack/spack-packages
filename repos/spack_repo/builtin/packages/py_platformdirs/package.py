@@ -17,6 +17,7 @@ class PyPlatformdirs(PythonPackage):
 
     license("MIT")
 
+    version("4.13.0", sha256="1aa0b0d3f224c1f07c295121e312a5a24a180d6ae5a8425ea1784b3e3863e9c0")
     version("4.10.0", sha256="31e761a6a0ca04faf7353ea759bdba55652be214725111e5aac52dfa29d4bef7")
     version("4.9.6", sha256="3bfa75b0ad0db84096ae777218481852c0ebc6c727b3168c1b9e0118e458cf0a")
     version("4.4.0", sha256="ca753cf4d81dc309bc67b0ea38fd15dc97bc30ce419a7f58d13eb3bf14c4febf")
@@ -55,6 +56,7 @@ class PyPlatformdirs(PythonPackage):
         depends_on("py-setuptools-scm@5:+toml", when="@:2.5.1")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@4.13:")
         depends_on("python@3.10:", when="@4.5:")
         depends_on("python@3.9:", when="@4.3.7:")
         depends_on("python@3.7:", when="@2.4.1:")

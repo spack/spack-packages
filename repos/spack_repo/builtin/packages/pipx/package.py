@@ -17,7 +17,7 @@ class Pipx(PythonPackage):
 
     maintainers("ebagrenrut")
 
-    version("1.17.2", sha256="e29d68d05f5b4707d3d3dbddb0adfc4ca4ddcd77052dbb8f4e1b5ad31629a07c")
+    version("1.17.14", sha256="ab8982c2e8e7f885eeba1cc76ab499ba93056b9eb71520af050679b53c3a6c67")
     version("1.16.7", sha256="a575ced25c507c1b1c978269f5684b5b291e81e3cd14eb3cee196a3c5b304732")
     version("1.15.0", sha256="193aab4983b787903e389d623e6347f697026c0d7a2ba0b4fbd5189bed22f19d")
     version("1.14.1", sha256="d11023138ac223d79e6d711ec738772c896d00366c46515a4948c3ede3389a24")
@@ -37,6 +37,10 @@ class Pipx(PythonPackage):
 
     with default_args(deprecated=True):
         version(
+            "1.17.2",
+            sha256="e29d68d05f5b4707d3d3dbddb0adfc4ca4ddcd77052dbb8f4e1b5ad31629a07c",
+        )
+        version(
             "1.16.6",
             sha256="1a2ace67be16262a3bc8d1d6eedc5d6b63119b2b9e4eadc1b280d8e9c25fd722",
         )
@@ -52,27 +56,35 @@ class Pipx(PythonPackage):
         when="@1.12:",
     )
 
+    depends_on("python@3.11:", when="@1.17.13:", type=("build", "run"))
     depends_on("python@3.10:", when="@1.11.2:", type=("build", "run"))
     depends_on("python@3.9:", when="@1.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@1.3:1.7", type=("build", "run"))
     depends_on("python@3.7:", type=("build", "run"))
 
-    depends_on("py-argcomplete@1.9.4:", type=("build", "run"))
+    depends_on("py-argcomplete@3.7.2:", when="@1.17.11:", type=("build", "run"))
+    depends_on("py-argcomplete@2.9.4:", type=("build", "run"))
 
+    depends_on("py-colorama@0.4.6:", when="@1.17.11: platform=windows", type=("build", "run"))
     depends_on("py-colorama@0.4.4:", when="platform=windows", type=("build", "run"))
 
+    depends_on("py-docutils@0.21.2:", when="@1.17.14:", type="build")
     depends_on("py-docutils@0.21:", when="@1.15.1:", type="build")
 
+    depends_on("py-filelock@4.0.9:", when="@1.17.11:", type="run")
     depends_on("py-filelock@3.16:", when="@1.15.1:", type="run")
 
+    depends_on("py-hatch-vcs@0.5:", when="@1.17.11:", type="build")
     depends_on("py-hatch-vcs@0.4:", when="@1.3.2:", type="build")
 
+    depends_on("py-hatchling@1.32.4:", when="@1.17.11:", type="build")
     depends_on("py-hatchling@1.27:", when="@1.9:", type="build")
     depends_on("py-hatchling@1.18:", when="@1.3.2:", type="build")
     depends_on("py-hatchling@0.15:", when="@:1.3.1", type="build")
 
     depends_on("py-importlib-metadata@3.3:", when="^python@:3.7", type=("build", "run"))
 
+    depends_on("py-packaging@26.3:", when="@1.17.11:", type=("build", "run"))
     depends_on("py-packaging@26:", when="@1.17:", type=("build", "run"))
     depends_on("py-packaging@20:", type=("build", "run"))
 
@@ -82,14 +94,18 @@ class Pipx(PythonPackage):
     depends_on("py-pip", when="backend=pip", type=("build", "run"))
     depends_on("py-pip", when="@:1.11", type=("build", "run"))
 
+    depends_on("py-platformdirs@4.12.2:", when="@1.17.11:", type=("build", "run"))
     depends_on("py-platformdirs@4.6:", when="@1.15.1:", type=("build", "run"))
     depends_on("py-platformdirs@2.1:", when="@1.3:", type=("build", "run"))
 
+    depends_on("py-tomli@2.4.1:", when="@1.17.11: ^python@:3.10", type=("build", "run"))
     depends_on("py-tomli@2:", when="@1.3: ^python@:3.10", type=("build", "run"))
 
+    depends_on("py-userpath@1.9.2:", when="@1.17.11:", type=("build", "run"))
     # Avoid broken py-userpath 1.9.0
     depends_on("py-userpath@1.6.0:1.8.0,1.9.1:", type=("build", "run"))
 
+    depends_on("py-uv@0.12.22:", when="@1.17.11: backend=uv", type="run")
     depends_on("py-uv@0.9.17:", when="@1.15.1: backend=uv", type="run")
     depends_on("py-uv@0.4:", when="@1.12: backend=uv", type="run")
 
