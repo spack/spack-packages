@@ -109,6 +109,7 @@ class Comgr(ROCmLibrary, CMakePackage):
         # llvm libs are linked statically, so this *could* be a build dep
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
+        depends_on(f"rocm-device-libs@{ver}", when=f"@{ver}", type="build")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}", type="build")
 
     @property
