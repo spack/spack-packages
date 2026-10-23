@@ -11,11 +11,52 @@ import spack.repo
 
 IS_PACKAGE_CHANGE = re.compile(r"repos/spack_repo/builtin/packages/([^/]+)/.*$")
 
+# hidden marker used to find our own ping comments so maintainers are only tagged once per PR
+PING_MARKER = "<!-- spack-reviewers:ping -->"
+PINGED_USER = re.compile(r"@([A-Za-z0-9-]+)")
+
 
 def msg(message: str, entries=()):
     print(message, flush=True)
     for entry in entries:
         print(f"    {entry}", flush=True)
+
+
+def ping_non_collaborators(session, headers, comments_url, maintainer_packages, token):
+    """Tag maintainers who can't be requested as reviewers."""
+    pinged = set()
+    url = f"{comments_url}?per_page=100"
+    while url:
+        resp = session.get(url, headers=headers, timeout=30)
+        resp.raise_for_status()
+        for comment in resp.json():
+            # only trust markers from bots so PR participants can't suppress pings
+            if comment["user"]["type"] == "Bot" and PING_MARKER in comment["body"]:
+                pinged.update(PINGED_USER.findall(comment["body"]))
+        url = resp.links.get("next", {}).get("url")
+
+    to_ping = sorted(maintainer_packages.keys() - pinged)
+    if not to_ping:
+        msg("non-collaborator maintainers already tagged")
+        return
+
+    msg("tagging non-collaborator maintainers:", to_ping)
+    mentions = " ".join(f"@{user}" for user in to_ping)
+    packages = sorted({pkg for user in to_ping for pkg in maintainer_packages[user]})
+    package_list = "\n".join(f"* {pkg}" for pkg in packages)
+    body = f"""{PING_MARKER}
+{mentions} can you review this PR?
+
+This PR modifies the following package(s), for which you are listed as a maintainer:
+
+{package_list}
+
+Once this PR is merged, you'll be invited to this repository as a collaborator so that \
+you can be requested as a reviewer on future PRs."""
+
+    if token:
+        resp = session.post(comments_url, json={"body": body}, headers=headers, timeout=30)
+        resp.raise_for_status()
 
 
 def main():
@@ -78,13 +119,15 @@ def main():
         msg("no changed packages")
         return
 
-    maintainers: set[str] = set()
+    maintainer_packages: dict[str, set[str]] = {}
     for package in changed_packages:
         try:
-            maintainers.update(spack.repo.PATH.get_pkg_class(package).maintainers)
+            for maintainer in spack.repo.PATH.get_pkg_class(package).maintainers:
+                maintainer_packages.setdefault(maintainer, set()).add(package)
         except spack.repo.UnknownPackageError as e:
             msg(f"warning: {e}")
             pass
+    maintainers = set(maintainer_packages)
 
     # filter maintainers to those who have triage permissions in the repo
     # users without triage permissions are unable to review PRs
@@ -96,14 +139,29 @@ def main():
         == 204
     }
 
-    if maintainers != pingable_maintainers:
+    non_collaborators = maintainers - pingable_maintainers
+    if non_collaborators:
+        # outside collaborator invites for package maintainers are sent by the
+        # invite-maintainers workflow when a PR touching their package merges, not here
         msg(
             "the following package maintainers cannot be added as reviewers "
-            "(no collaborator status):",
-            sorted(maintainers - pingable_maintainers),
+            "without collaborator status (invite may be pending):",
+            sorted(non_collaborators),
         )
 
     author = pull_request["user"]["login"]
+
+    # non-collaborators can't be requested as reviewers, so tag them in a comment instead
+    non_collaborators.discard(author)
+    if non_collaborators:
+        ping_non_collaborators(
+            session,
+            headers,
+            pull_request["comments_url"],
+            {user: maintainer_packages[user] for user in non_collaborators},
+            token,
+        )
+
     reviewers = (pingable_maintainers | existing_reviewers) - {author}
 
     if existing_reviewers == reviewers:
