@@ -543,9 +543,10 @@ supported, and netmod is ignored if device is ch3:sock.""",
         if self.spec.satisfies("@:4.2 ~hwloc"):
             config_args += self.enable_or_disable("levelzero", variant="level_zero")
 
-        # see https://github.com/pmodels/mpich/issues/5530
+        # Share the mpif.h COMMON-block sentinels with Fortran clients such as
+        # MUMPS. A two-level namespace gives MPI_IN_PLACE distinct addresses.
         if spec.platform == "darwin":
-            config_args.append("--enable-two-level-namespace")
+            config_args.append("--disable-two-level-namespace")
 
         # hwloc configure option changed in 4.0
         if spec.satisfies("@4.0:"):
