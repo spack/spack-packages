@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import glob
 import os
 import re
 import shutil
@@ -392,6 +393,22 @@ class PythonPipBuilder(BuilderWithDefaults):
             args.append(pkg.stage.archive_file)
         else:
             args.append(".")
+
+        # For develop packages, remove stale build artifacts that cause pip
+        # to use cached/outdated files instead of rebuilding from source.
+        if spec.is_develop:
+            bd = self.build_directory
+            for artifact in (
+                join_path(bd, "build"),
+                join_path(bd, "dist"),
+                *glob.glob(join_path(bd, "*.egg-info")),
+            ):
+                if os.path.isdir(artifact) and not os.path.islink(artifact):
+                    tty.debug(f"Removing stale build artifact: {artifact}")
+                    shutil.rmtree(artifact)
+                elif os.path.lexists(artifact):
+                    tty.debug(f"Removing stale build artifact: {artifact}")
+                    os.unlink(artifact)
 
         with working_dir(self.build_directory):
             pip(*args)
