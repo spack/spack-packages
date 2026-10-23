@@ -1,0 +1,43 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+new file mode 100644
+index 0000000..5974207
+--- /dev/null
++++ b/CMakeLists.txt
+@@ -0,0 +1,8 @@
++cmake_minimum_required(VERSION 3.14)
++project(Warp)
++
++add_subdirectory(NativeAcceleration)
++add_subdirectory(LibTorchSharp)
++
++install(TARGETS NativeAcceleration DESTINATION lib)
++install(TARGETS LibTorchSharp DESTINATION lib)
+diff --git a/LibTorchSharp/CMakeLists.txt b/LibTorchSharp/CMakeLists.txt
+index e709380..e06b0c8 100644
+--- a/LibTorchSharp/CMakeLists.txt
++++ b/LibTorchSharp/CMakeLists.txt
+@@ -1,4 +1,5 @@
+ cmake_minimum_required (VERSION 3.0)
++PROJECT(LibTorchSharp LANGUAGES CUDA CXX)
+ 
+ set(CMAKE_CXX_STANDARD 11)
+ set(CMAKE_INSTALL_PREFIX $ENV{__CMakeBinDir})
+diff --git a/NativeAcceleration/CMakeLists.txt b/NativeAcceleration/CMakeLists.txt
+index 12c67a4..a9fb41c 100644
+--- a/NativeAcceleration/CMakeLists.txt
++++ b/NativeAcceleration/CMakeLists.txt
+@@ -22,7 +22,7 @@ INCLUDE_DIRECTORIES("${CMAKE_CUDA_TOOLKIT_INCLUDE_DIRECTORIES}")
+ 
+ FILE(GLOB_RECURSE SOURCES src/*.cu src/*.cpp gtom/src/*.cu gtom/src/*.cpp liblion/*.cpp liblion/*.cc)
+ 
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -w -fPIC -mavx2 -mf16c")
++SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++1y -w -fPIC")
+ SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+ 
+ add_compile_definitions("FLOAT_PRECISION")
+@@ -40,3 +40,5 @@ ADD_LIBRARY(NativeAcceleration SHARED ${SOURCES})
+ set_target_properties(NativeAcceleration PROPERTIES CUDA_ARCHITECTURES "52;61;75;86")
+ 
+ TARGET_LINK_LIBRARIES(NativeAcceleration ${FFTW_LIBRARIES} libtiff.so libcudart.so libcufft.so libcublas.so libcurand.so ${CMAKE_THREAD_LIBS_INIT})
++
++# INSTALL(TARGETS NativeAcceleration LIBRARY DESTINATION lib)
