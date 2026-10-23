@@ -11,7 +11,7 @@ import subprocess
 import sys
 from pathlib import Path
 from shutil import copy
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -219,6 +219,7 @@ class Python(Package):
 
     # Optional Python modules
     variant("readline", default=sys.platform != "win32", description="Build readline module")
+    variant("curses", default=sys.platform != "win32", description="Build curses modules")
     variant("ssl", default=True, description="Build ssl module")
     variant("sqlite3", default=True, description="Build sqlite3 module")
     variant("dbm", default=True, description="Build dbm module")
@@ -250,10 +251,12 @@ class Python(Package):
         depends_on("iconv", when="~libxml2")
         depends_on("gettext ~libxml2", when="~libxml2 ^[virtuals=iconv] libiconv")
 
-        # Optional dependencies
-        # See detect_modules() in setup.py for details
+        # Optional dependencies and the minimum versions they require
+        # https://docs.python.org/3/using/configure.html#optional-module-requirements
         depends_on("readline", when="+readline")
-        depends_on("ncurses", when="+readline")
+        # python's configure looks for ncurses regardless of readline
+        # use, model this to prevent system ncurses being linked
+        depends_on("ncurses", when="+curses")
         depends_on("openssl", when="+ssl")
         # https://docs.python.org/3/whatsnew/3.7.html#build-changes
         depends_on("openssl@1.0.2:", when="+ssl")
@@ -262,13 +265,15 @@ class Python(Package):
         depends_on("sqlite@3.0.8:", when="@:3.9+sqlite3")
         # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
         depends_on("sqlite@3.7.15:", when="@3.10:+sqlite3")
+        depends_on("sqlite@3.15.2:", when="@3.13:+sqlite3")
         depends_on("gdbm", when="+dbm")  # alternatively ndbm or berkeley-db
         depends_on("zlib-api", when="+zlib")
         depends_on("bzip2", when="+bz2")
         depends_on("xz libs=shared", when="+lzma")
-        depends_on("zstd libs=shared", when="+zstd")
+        depends_on("zstd@1.4.5: libs=shared", when="+zstd")
         depends_on("expat", when="+pyexpat")
         depends_on("libffi", when="+ctypes")
+        depends_on("mpdecimal@2.5.0:2", when="@3.13:")
         # https://docs.python.org/3/whatsnew/3.11.html#build-changes
         depends_on("tk@8.5.12:", when="@3.11: +tkinter")
         depends_on("tk", when="+tkinter")
@@ -335,6 +340,35 @@ class Python(Package):
     # Used to cache various attributes that are expensive to compute
     _config_vars: Dict[str, Dict[str, str]] = {}
 
+    # Map stdlib python modules to their Spack variants and the versions for which Python supports
+    # configuring these modules, so we can align the python builds with what we expect
+    # from the concretized python
+    #
+    # Python's configure only took over building these modules from setup.py in 3.11, and a
+    # few of them stayed in setup.py until 3.12, hence the version range on each entry
+    # These modules are disabled by setting a value, different from a more traditional --with-<pkg>
+    # config option. Modules configured with that more traditional approach are handled as we
+    # normally would
+
+    # (variant, versions in which configure controls the module, module names)
+    stdlib_modules: List[Tuple[str, str, List[str]]] = [
+        ("bz2", "@3.11:", ["_bz2"]),
+        ("crypt", "@3.11:3.12", ["_crypt"]),
+        ("curses", "@3.12:", ["_curses", "_curses_panel"]),
+        ("ctypes", "@3.12:", ["_ctypes"]),
+        ("lzma", "@3.11:", ["_lzma"]),
+        ("pyexpat", "@3.11:", ["pyexpat", "_elementtree"]),
+        ("readline", "@3.12:", ["readline"]),
+        ("sqlite3", "@3.11:", ["_sqlite3"]),
+        ("ssl", "@3.11:", ["_ssl", "_hashlib"]),
+        ("tkinter", "@3.12:", ["_tkinter"]),
+        ("uuid", "@3.11:", ["_uuid"]),
+        # NOTE: binascii is built unconditionally and uses zlib for an optimized crc32 when
+        # configure finds it, so ~zlib still leaves a detected system zlib linked into it.
+        ("zlib", "@3.11:", ["zlib"]),
+        ("zstd", "@3.14:", ["_zstd"]),
+    ]
+
     # An in-source build with --enable-optimizations fails for python@3.X
     build_directory = "spack-build"
 
@@ -374,6 +408,7 @@ class Python(Package):
 
         for module in [
             "readline",
+            "curses",
             "sqlite3",
             "dbm",
             "zlib",
@@ -712,6 +747,12 @@ class Python(Package):
         else:
             config_args.append("--without-system-expat")
 
+        # From 3.13 --with-system-libmpdec defaults to yes and will take any libmpdec it finds on
+        # the system, so pass it explicitly to pin _decimal to spack mpdecimal. Earlier
+        # versions vendor libmpdec with no configure option for system
+        if spec.satisfies("@3.13:"):
+            config_args.append("--with-system-libmpdec")
+
         if self.version < Version("3.12.0"):
             if "+ctypes" in spec:
                 config_args.append("--with-system-ffi")
@@ -733,9 +774,17 @@ class Python(Package):
         if "+freethreading" in spec:
             config_args.append("--disable-gil")
 
-        # Disable tkinter module in the configure script for Python 3.12 onwards if ~tkinter
-        if spec.satisfies("@3.12:") and spec.satisfies("~tkinter"):
-            config_args.append("py_cv_module__tkinter=n/a")
+        # Explicitly disable the extension modules that our variants turn off
+        # see stdlib_modules definition for more details
+        for variant_name, when, modules in self.stdlib_modules:
+            if variant_name in spec.variants and spec.satisfies(f"{when} ~{variant_name}"):
+                config_args.extend(f"py_cv_module_{module}=n/a" for module in modules)
+
+        # In 3.10 and 3.11 setup.py still builds the readline module
+        # --with-readline=no is the only tuning
+        # defaults to true
+        if spec.satisfies("@3.10:3.11 ~readline"):
+            config_args.append("--with-readline=no")
 
         # Disable the nis module in the configure script for Python 3.11 and 3.12. It is deleted
         # in Python 3.13. See ``def patch`` for disabling the nis module in Python 3.10 and older.
@@ -752,7 +801,11 @@ class Python(Package):
         if cflags:
             config_args.append("CFLAGS={0}".format(" ".join(cflags)))
 
-        if self.version >= Version("3.12.0") and sys.platform == "darwin":
+        # Setting both of these makes configure skip pkg-conf for curses,
+        # ensures _curses is built against the spack ncurses
+        # args are only used by configure once _curses moved out of setup.py in 3.12.
+        if self.version >= Version("3.12.0") and spec.satisfies("+curses"):
+            config_args.append("CURSES_CFLAGS=-I{0}".format(spec["ncurses"].prefix.include))
             config_args.append("CURSES_LIBS={0}".format(spec["ncurses"].libs.link_flags))
 
         return config_args
