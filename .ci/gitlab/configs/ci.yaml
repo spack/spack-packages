@@ -139,23 +139,29 @@ ci:
       after_script:: []
 
   - any-job:
+      id_tokens:
+        SITE_ID_TOKEN:
+          aud: https://gitlab.spack.io
       tags: ["spack"]
       image: "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18"
       variables:
         # Disable local configs to avoid issues on shell runners
         SPACK_DISABLE_LOCAL_CONFIG: "1"
-        REMOTE_SCRIPT_CLONE_SPACK_SHA256: da9ce276f9c0fbcaaa78a90c6047588fc468a7d945e9b199309bfb8edf2c5190
-        REMOTE_SCRIPT_REF: e1c30b77cd582a0aed5ff432a31fc1202427c80c
       before_script:
       - - export SPACK_USER_CACHE_PATH="${CI_PROJECT_DIR}/tmp/_user_cache/"
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
-      # Clone the other repo
-      - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
-        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256  clone_spack.sh" > digest.txt
-        - sha256sum -c digest.txt
-        - sh clone_spack.sh
+      # Jacamar places CI_PROJECT_DIR under CUSTOM_CI_BUILDS_DIR.
+      - - git init "${CI_PROJECT_DIR}"
+        - git -C "${CI_PROJECT_DIR}" config remote.origin.url "${CI_REPOSITORY_URL}"
+        - git -C "${CI_PROJECT_DIR}" fetch --depth 1 origin "${CI_COMMIT_SHA}"
+        - git -C "${CI_PROJECT_DIR}" checkout --force FETCH_HEAD
+      # Clone Spack alongside the packages checkout.
+      - - git init "${SPACK_CI_SPACK_ROOT}"
+        - git -C "${SPACK_CI_SPACK_ROOT}" config remote.origin.url "https://github.com/${SPACK_CHECKOUT_REPO}.git"
+        - git -C "${SPACK_CI_SPACK_ROOT}" fetch --depth 1 origin "${SPACK_CHECKOUT_VERSION}"
+        - git -C "${SPACK_CI_SPACK_ROOT}" checkout --force FETCH_HEAD
       - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch

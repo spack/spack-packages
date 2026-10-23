@@ -17,7 +17,16 @@ variables:
   #   expand: false
 
 default:
+  id_tokens:
+    SITE_ID_TOKEN:
+      aud: https://gitlab.spack.io
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
+
+.checkout_repository: &checkout_repository
+  - git init "${CI_PROJECT_DIR}"
+  - git -C "${CI_PROJECT_DIR}" config remote.origin.url "${CI_REPOSITORY_URL}"
+  - git -C "${CI_PROJECT_DIR}" fetch --depth 1 origin "${CI_COMMIT_SHA}"
+  - git -C "${CI_PROJECT_DIR}" checkout --force FETCH_HEAD
 
 .clone_spack: &clone_spack
   - mkdir .ci/tmp
@@ -163,7 +172,11 @@ default:
 # Generate without tags for cases using external runners
 .generate-base:
   extends: [ ".base-job", ".generate-common" ]
+  variables:
+    CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
+    GIT_STRATEGY: "none"
   before_script:
+    - *checkout_repository
     # Check if bypass for noop is set
     - |
       [ ! -z ${NOOP_JOB} ] && \
@@ -186,26 +199,30 @@ default:
 .generate-x86_64:
   variables:
     SPACK_CI_TARGET: "x86_64_v3"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "x86_64_v3"]
+  tags: ["litmus", "public", "medium", "x86_64_v3"]
 
 .generate-aarch64:
   variables:
     SPACK_CI_TARGET: "aarch64"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64"]
+  tags: ["litmus", "public", "medium", "aarch64"]
 
 .generate-neoverse_v1:
   variables:
     SPACK_CI_TARGET: "neoverse_v1"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64", "neoverse_v1"]
+  tags: ["litmus", "public", "medium", "aarch64", "neoverse_v1"]
 
 .generate-neoverse-v2:
   variables:
     SPACK_CI_TARGET: "neoverse_v2"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "neoverse_v2"]
+  tags: ["litmus", "public", "medium", "neoverse_v2"]
 
 .generate-win64:
   extends: [ ".base-job", ".generate-common" ]
@@ -530,7 +547,8 @@ radiuss-build:
 .tags-x86_64_v4:
   variables:
     SPACK_CI_TARGET: "x86_64_v4"
-  tags: ["spack", "public", "medium", "x86_64_v4"]
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
+  tags: ["litmus", "public", "medium", "x86_64_v4"]
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
@@ -762,10 +780,14 @@ aws-pcluster-neoverse_v1-build:
 .generate-cray:
   extends: [ ".generate-common", ".base-job" ]
   variables:
+    CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
+    GIT_STRATEGY: "none"
     # Override concretization pool for metal runners
     SPACK_CONCRETIZE_JOBS: 16
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
 
   before_script:
+    - *checkout_repository
     - echo $PATH
     - module avail
     - module list
