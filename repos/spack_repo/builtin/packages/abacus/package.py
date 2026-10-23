@@ -2,16 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import re
 
-from spack_repo.builtin.build_systems import cmake, makefile
+from spack_repo.builtin.build_systems import cmake
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.makefile import MakefilePackage
 
 from spack.package import *
 
 
-class Abacus(CMakePackage, MakefilePackage):
+class Abacus(CMakePackage):
     """ABACUS (Atomic-orbital Based Ab-initio Computation at UStc)
     is an open-source computer code package aiming
     for large-scale electronic-structure simulations
@@ -26,6 +24,8 @@ class Abacus(CMakePackage, MakefilePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
+    version("LTS", branch="LTS")
+
     # Version 3.10.1 is an "LTS" release that predates 3.9.0.19. Unfortunately,
     # the LTS branch is now less robust than development branch due to lack of
     # backport mechanism, so 3.9.0.27 is currently choosen as preferred.
@@ -36,62 +36,47 @@ class Abacus(CMakePackage, MakefilePackage):
         preferred=True,
     )
     version("3.9.0.19", sha256="c985af3d8ac6edb5767b7a094ac2fd2e0ea70b46cf353cd5a4b60096b289939d")
-    version(
-        "2.2.3",
-        sha256="88dbf6a3bdd907df3e097637ec8e51fde13e2f5e0b44f3667443195481320edf",
-        deprecated=True,
-    )
-    version(
-        "2.2.2",
-        sha256="4a7cf2ec6e43dd5c53d5f877a941367074f4714d93c1977a719782957916169e",
-        deprecated=True,
-    )
-    version(
-        "2.2.1",
-        sha256="14feca1d8d1ce025d3f263b85ebfbebc1a1efff704b6490e95b07603c55c1d63",
-        deprecated=True,
-    )
-    version(
-        "2.2.0",
-        sha256="09d4a2508d903121d29813a85791eeb3a905acbe1c5664b8a88903f8eda64b8f",
-        deprecated=True,
-    )
+
+    build_system("cmake")
 
     variant("mpi", default=True, description="Enable MPI support")
     variant("openmp", default=True, description="Enable OpenMP support")
     variant("lcao", default=True, description="Enable LCAO algorithm")
     variant("elpa", default=True, description="Enable ELPA support", when="+mpi")
     variant("libxc", default=True, description="Enable LibXC support")
-    variant("libri", default=False, description="Enable LibRI support", when="@3: +mpi +lcao")
+    variant("libri", default=False, description="Enable LibRI support", when="+mpi +lcao")
     variant("dftd4", default=False, description="Enable DFT-D4 support", when="@3.11:")
+    variant("plumed", default=False, description="Enable PLUMED support", when="@3.11:")
     variant("pexsi", default=False, description="Enable PEXSI support", when="+mpi +lcao")
     variant("json", default=False, description="Enable JSON output support", when="@3.11:")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+    depends_on("cmake@3.16:", type="build")
+
+    depends_on("blas")
+    depends_on("lapack")
+
     depends_on("mpi", when="+mpi")
+    depends_on("scalapack", when="+mpi")
+
     depends_on("fftw precision=float,double +openmp", when="+openmp")
     depends_on("fftw precision=float,double ~openmp", when="~openmp")
     depends_on("elpa +mpi +openmp", when="+elpa +openmp")
     depends_on("elpa +mpi ~openmp", when="+elpa ~openmp")
+
     depends_on("libxc@5.1.7:", when="+libxc")
-    depends_on("dftd4@4.2:", when="+dftd4")
+    depends_on("dftd4@4.3: build_system=cmake", when="+dftd4")
+    depends_on("plumed@2:", when="+plumed")
     depends_on("libri", when="+libri")
     depends_on("libcomm", when="+libri")
     # Older releases require Cereal for LCAO builds
     # Current versions use it only with LibRI
-    depends_on("cereal", when="@:2")
-    depends_on("cereal", when="@3:3.10 +lcao")
+    depends_on("cereal", when="@:3.10 +lcao")
     depends_on("cereal", when="@3.11: +libri")
     depends_on("pexsi@2.0:", when="+pexsi")
     depends_on("nlohmann-json@3.12:", when="+json")
-    depends_on("openblas", when="build_system=cmake")
-    depends_on("scalapack", when="+mpi build_system=cmake")
-    depends_on("mkl", when="build_system=makefile")
-    depends_on("cmake@3.16:", type="build", when="build_system=cmake")
-
-    build_system(conditional("cmake", when="@3:"), "makefile", default="cmake")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -112,6 +97,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 self.define_from_variant("ENABLE_OPENMP", "openmp"),
                 self.define_from_variant("ENABLE_ELPA", "elpa"),
                 self.define_from_variant("ENABLE_DFTD4", "dftd4"),
+                self.define_from_variant("ENABLE_PLUMED", "plumed"),
                 self.define_from_variant("ENABLE_JSON", "json"),
             ]
 
@@ -127,55 +113,3 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 self.define_from_variant("USE_ELPA", "elpa"),
             ]
         return args
-
-
-class MakefileBuilder(makefile.MakefileBuilder):
-    @property
-    def build_directory(self):
-        return join_path(self.stage.source_path, "source")
-
-    def edit(self, pkg, spec, prefix):
-        if spec.satisfies("+openmp"):
-            inc_var = "_openmp-"
-            system_var = "ELPA_LIB = -L${ELPA_LIB_DIR} -lelpa_openmp -Wl,-rpath=${ELPA_LIB_DIR}"
-        else:
-            inc_var = "-"
-            system_var = "ELPA_LIB = -L${ELPA_LIB_DIR} -lelpa -Wl,-rpath=${ELPA_LIB_DIR}"
-
-        tempInc = f"""
-FORTRAN = ifort
-CPLUSPLUS = icpc
-CPLUSPLUS_MPI = mpiicpc
-LAPACK_DIR = $(MKLROOT)
-FFTW_DIR = {spec["fftw"].prefix}
-ELPA_DIR = {spec["elpa"].prefix}
-ELPA_INCLUDE = -I${{ELPA_DIR}}/include/elpa{inc_var}{spec["elpa"].version}
-CEREAL_DIR = {spec["cereal"].prefix}
-OBJ_DIR = obj
-OBJ_DIR_serial = obj
-NP      = 14
-"""
-
-        with open(join_path(self.build_directory, "Makefile.vars"), "w") as f:
-            f.write(tempInc)
-
-        lineList = []
-        Pattern1 = re.compile("^ELPA_INCLUDE_DIR")
-        Pattern2 = re.compile("^ELPA_LIB\\s*= ")
-        with open(join_path(self.build_directory, "Makefile.system"), "r") as f:
-            while True:
-                line = f.readline()
-                if not line:
-                    break
-                elif Pattern1.search(line) or Pattern2.search(line):
-                    pass
-                else:
-                    lineList.append(line)
-        with open(join_path(self.build_directory, "Makefile.system"), "w") as f:
-            f.writelines(lineList)
-
-        with open(join_path(self.build_directory, "Makefile.system"), "a") as f:
-            f.write(system_var)
-
-    def install(self, pkg, spec, prefix):
-        install_tree("bin", prefix.bin)
