@@ -178,6 +178,7 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("cxi-driver", when="fabrics=cxi")
     depends_on("xpmem", when="fabrics=xpmem")
     depends_on("gdrcopy", when="+gdrcopy")
+    depends_on("kdreg2", when="+kdreg")
 
     depends_on("m4", when="@main", type="build")
     depends_on("autoconf", when="@main", type="build")
