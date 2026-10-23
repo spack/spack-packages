@@ -46,12 +46,106 @@ class Masurca(Package):
                 m = join_path("global-1", makefile)
                 filter_file("-minline-all-stringops", "", m)
 
+            filter_file(
+                r"make -C ${MINIMAP2_DIR}",
+                r"make -C ${MINIMAP2_DIR} arm_neon=1 aarch64=1",
+                join_path("Flye", "Makefile"),
+                string=True,
+                ignore_absent=True,
+            )
+
+        if self.spec.satisfies("%gcc@13:"):
+            for misc in ("SuperReads", "PacBio"):
+                filter_file(
+                    "#include <algorithm>",
+                    "#include <algorithm>\n#include <cstdint>",
+                    join_path("global-1", misc, "include", "misc.hpp"),
+                    string=True,
+                    ignore_absent=True,
+                )
+
+            filter_file(
+                '#include "const_iterator_traits.hpp"',
+                "#include <cstdint>\n#include <iterator>\n#include <type_traits>\n"
+                '#include "const_iterator_traits.hpp"',
+                join_path("global-1", "MUMmer", "include", "mummer", "48bit_iterator.hpp"),
+                string=True,
+                ignore_absent=True,
+            )
+
+            for src in (
+                "getSuperReadInsertCountsFromReadPlacementFile.cc",
+                "getSuperReadInsertCountsFromReadPlacementFileTwoPasses.cc",
+            ):
+                filter_file(
+                    r"bool operator()(const char *s1, const char *s2) {",
+                    r"bool operator()(const char *s1, const char *s2) const {",
+                    join_path("global-1", "SuperReads", "src2", src),
+                    string=True,
+                    ignore_absent=True,
+                )
+
+            hashfn = join_path("global-1", "SOAPdenovo2", "standardPregraph", "hashFunction.c")
+            x86 = "#if defined(__x86_64__) || defined(__i386__)"
+            filter_file(
+                r"static uint32_t cpuid ( uint32_t functionInput )",
+                x86 + "\nstatic uint32_t cpuid ( uint32_t functionInput )",
+                hashfn,
+                string=True,
+                ignore_absent=True,
+            )
+            filter_file(
+                r"static inline int crc32cTable (",
+                "#endif\n\nstatic inline int crc32cTable (",
+                hashfn,
+                string=True,
+                ignore_absent=True,
+            )
+            filter_file(
+                r"uint32_t ecx = cpuid ( 1 );",
+                x86 + "\n\tuint32_t ecx = cpuid ( 1 );\n#else\n\tuint32_t ecx = 0;\n#endif",
+                hashfn,
+                string=True,
+                ignore_absent=True,
+            )
+
+            filter_file(
+                r"inline int * update_posmap(",
+                r"static inline int * update_posmap(",
+                join_path("global-1", "samtools", "padding.c"),
+                string=True,
+                ignore_absent=True,
+            )
+
+            for header in (
+                join_path("src", "sequence", "sequence_container.h"),
+                join_path("src", "polishing", "subs_matrix.h"),
+            ):
+                filter_file(
+                    "#pragma once",
+                    "#pragma once\n\n#include <cstdint>",
+                    join_path("Flye", header),
+                    string=True,
+                    ignore_absent=True,
+                )
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@4:"):
             env.set("DEST", self.prefix)
 
+        env.append_flags(
+            "CFLAGS",
+            "-std=gnu17 "
+            "-Wno-error=implicit-function-declaration "
+            "-Wno-error=implicit-int "
+            "-Wno-error=int-conversion "
+            "-Wno-error=incompatible-pointer-types",
+        )
+
     def install(self, spec, prefix):
         installer = Executable("./install.sh")
         installer()
-        if self.spec.satisfies("@:4"):
+        # For @4: install.sh installs straight into $DEST (= prefix), so only
+        # older versions need the source tree copied over.
+        if self.spec.satisfies("@:3"):
             install_tree(".", prefix)
