@@ -79,7 +79,11 @@ class Charliecloud(AutotoolsPackage):
     with when("+squashfuse"):
         depends_on("libfuse@3:", type=("build", "run", "link"))
         depends_on("pkgconfig", type="build", when="@0.37:")
-        depends_on("squashfuse@0.1.105:0.2.0,0.4.0:", type="link", when="@0.36:")
+        depends_on("squashfuse@0.1.105:0.2.0,0.4.0:", type="link", when="@0.36:0.43")
+        # 0.44 enabled multi-threaded FUSE, which the Charliecloud maintainers report
+        # older SquashFUSE seems not to support well; see
+        # https://github.com/spack/spack-packages/issues/5400
+        depends_on("squashfuse@0.4.0:", type="link", when="@0.44:")
         depends_on("squashfuse@0.1.105:0.2.0,0.4.0", type="link", when="@0.35")
 
     with when("+cdi"):
