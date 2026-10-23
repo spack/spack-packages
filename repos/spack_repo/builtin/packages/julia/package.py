@@ -27,6 +27,8 @@ class Julia(MakefilePackage):
     maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
+    version("1.13.0", sha256="4900257173dedd8dd15fb99c541fe0e2faeb31a6f8ebd787ffeb7eef717d0947")
+
     version("1.12.7", sha256="12ca8defc0b59097239bd19b3cd080de3e593d3a82f55548bac090fe6b9bbbd9")
     version("1.12.6", sha256="5440ad37977af766a075e5cc9c430b66ba958ede69a70ccf308bb7d8e1d69478")
     version("1.12.5", sha256="9e0dee015ef631ce93ddcf8166a8f5f4cae39e923d8f38a54a832091d0475004")
@@ -98,9 +100,24 @@ class Julia(MakefilePackage):
     depends_on("libuv-julia@1.44.2", when="@1.8.2:1.9")
     depends_on("libuv-julia@1.44.3", when="@1.10")
     depends_on("libuv-julia@1.48.0", when="@1.11")
-    depends_on("libuv-julia@1.48.1rc1", when="@1.12:")
+    depends_on("libuv-julia@1.48.1rc1", when="@1.12")
+    depends_on("libuv-julia@1.48.1rc2", when="@1.13:")
 
     depends_on("suite-sparse@5.4:5.10", when="@:1.9")
+
+    with when("@1.13"):
+        # libssh2.so.1, libpcre2-8.so.0, libsll.so.3,
+        # libopenlibm.so.4, libblastrampoline.so.5, libgit2.so.1.11, libnghttp2.so.14,
+        # libcurl.so.4
+        depends_on("libblastrampoline@5.15:5")
+        depends_on("libgit2@1.11")
+        depends_on("libssh2@1.11.1:1")
+        depends_on("llvm@20.1.8 +lld shlib_symbol_version=JL_LLVM_20.1")
+        depends_on("openssl@3.5.6:3.5")
+        depends_on("openlibm@0.8.7:0.8", when="+openlibm")
+        depends_on("nghttp2@1.67.1")
+        depends_on("curl@8.16:")
+        depends_on("suite-sparse@7.10.1")
 
     with when("@1.12"):
         # libssh2.so.1, libpcre2-8.so.0, libsll.so.3,
@@ -225,6 +242,14 @@ class Julia(MakefilePackage):
         patches=patch(
             "https://raw.githubusercontent.com/spack/patches/4d9ce09c4793f4899a588741fdc459530e26b313/julia/900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e.patch",
             sha256="900363d08b2090bb44240aa33c1ee26558a183016db4fb7e048be4c1665c436e",
+        ),
+    )
+    depends_on(
+        "llvm",
+        when="%llvm@20.1.8",
+        patches=patch(
+            "https://raw.githubusercontent.com/spack/patches/4d9ce09c4793f4899a588741fdc459530e26b313/julia/182a02d35396db706f3d9e4691f0d9aefcee763f6ac30aad96bff7754f0bf22e.patch",
+            sha256="182a02d35396db706f3d9e4691f0d9aefcee763f6ac30aad96bff7754f0bf22e",
         ),
     )
 
