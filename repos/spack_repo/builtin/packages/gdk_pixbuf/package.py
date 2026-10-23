@@ -25,6 +25,7 @@ class GdkPixbuf(MesonPackage):
     variant("tiff", default=False, description="Enable TIFF support(partially broken)")
     # Man page creation was getting docbook errors, see issue #18853
     variant("man", default=False, description="Enable man page creation")
+    variant("xpm", default=True, description="Enable xpm creation")
 
     depends_on("c", type="build")
 
@@ -64,6 +65,8 @@ class GdkPixbuf(MesonPackage):
         args = [f"-Dman={'true' if self.spec.satisfies('+man') else 'false'}"]
         if self.spec.satisfies("@2.42.9:"):
             args.append(f"-Dtests={'true' if self.run_tests else 'false'}")
+        if self.spec.satisfies("+xpm"):
+            args.append(f"-Dothers={'enabled'}")
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
