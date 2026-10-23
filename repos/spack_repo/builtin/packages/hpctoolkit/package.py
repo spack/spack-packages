@@ -264,6 +264,12 @@ class Hpctoolkit(AutotoolsPackage, MesonPackage):
         msg="avoid elfutils 0.191 (known critical errors in hpcstruct for CUDA binaries)",
     )
 
+    conflicts(
+        "%meson@:1.9 %cmake@:3.23",
+        when="@2025: +cuda",
+        msg="CUPTI dependency requires either Meson >=1.10 or CMake >=3.24",
+    )
+
     # https://gitlab.com/hpctoolkit/hpctoolkit/-/issues/897
     conflicts(
         "%cmake@3.30:3.31",
