@@ -323,6 +323,56 @@ force_pipeline_status:
 #       job: my-stack-generate
 
 ########################################
+# Linux x86 Base pipeline
+########################################
+.lx86-base:
+  variables:
+    SPACK_CI_STACK_NAME: linux/x86/base
+
+lx86-base-generate:
+  extends: [ ".lx86-base", ".generate-x86_64"]
+  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4:2024.03.01
+
+lx86-base-build:
+  extends: [ ".lx86-base", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/linux/x86/base/cloud-ci-pipeline.yml
+        job: lx86-base-generate
+  needs:
+    - artifacts: True
+      job: lx86-base-generate
+
+########################################
+# Linux x86 HPC Libraries pipeline
+########################################
+.lx86-hpc-libs:
+  variables:
+    SPACK_CI_STACK_NAME: linux/x86/hpc-libs
+
+lx86-hpc-libs-generate:
+  extends: [ ".lx86-hpc-libs", ".generate-x86_64"]
+  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4:2024.03.01
+  needs:
+    - artifacts: True
+      job: lx86-base-generate
+
+lx86-hpc-libs-build:
+  extends: [ ".lx86-hpc-libs", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/linux/x86/hpc-libs/cloud-ci-pipeline.yml
+        job: lx86-hpc-libs-generate
+  needs:
+    # Wait for previous build finish
+    - artifacts: false
+      job: lx86-base-build
+    - artifacts: True
+      job: lx86-hpc-libs-generate
+
+########################################
 # E4S pipeline
 ########################################
 .e4s:
@@ -629,7 +679,7 @@ tutorial-build:
 #################################
 .ml-linux-x86_64:
   variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64
+    SPACK_CI_STACK_NAME: linux/x86/ml
 
 ml-linux-x86_64-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
@@ -640,7 +690,7 @@ ml-linux-x86_64-build:
   trigger:
     << : *trigger_build
     include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64/cloud-ci-pipeline.yml
+      - artifact: jobs_scratch_dir/linux/x86/ml/cloud-ci-pipeline.yml
         job: ml-linux-x86_64-generate
   needs:
     - artifacts: True
