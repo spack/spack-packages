@@ -26,6 +26,7 @@ class PyPip(Package, PythonExtension):
 
     license("MIT")
 
+    version("26.2.2", sha256="fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70")
     version("26.2.1", sha256="71138adf1f4ca900cdb7d289c21b7494329f2332b6d85f0e1c42108c0384ed3e")
     version("26.1.2", sha256="382ff9f685ee3bc25864f820aa50505825f10f5458ffff07e30a6d96e5715cab")
     version("26.1", sha256="4e8486d821d814b77319acb7b9e8bf5a4ee7590a643e7cb21029f209be8573c1")
