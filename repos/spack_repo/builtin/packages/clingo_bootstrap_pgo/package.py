@@ -15,6 +15,7 @@ class ClingoBootstrapPgo(Package):
 
     maintainers("haampie")
 
+    version("1.1.0", commit="207d0c38df87263f1af43b13a8b1a423f7b0c5a8")
     version("1.0.0", commit="64bec625ae06b32b7f5f01bccf9d27d0432a018f")
 
     def install(self, spec, prefix):
