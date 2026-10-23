@@ -42,6 +42,7 @@ class Zlib(MakefilePackage, Package):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("nmake", type="build", when="platform=windows")
 
     conflicts("build_system=makefile", when="platform=windows")
 
