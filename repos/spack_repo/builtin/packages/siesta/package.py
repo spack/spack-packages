@@ -63,6 +63,9 @@ class Siesta(MakefilePackage, CMakePackage):
     )
 
     patch("configure.patch", when="@:4.0")
+
+    # Workaround for linking errors due to GCC bug 125383
+    # https://gitlab.com/siesta-project/siesta/-/merge_requests/557
     patch(
         "https://gitlab.com/siesta-project/siesta/-/commit/bb6d7f5493c19078ecc236cf36b8672eeaf228c8.diff",
         sha256="b98931c3cf945b0e7cf03f761bb34fce58d08dc1fc71087bb5722568470ca4f5",
