@@ -167,7 +167,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("umpire")
     depends_on("umpire+mpi", when="+mpi")
-    depends_on("umpire@2026.07.1:", when="@2026.07.0:")
+    depends_on("umpire@2026.07.2:", when="@2026.07.0:")
     depends_on("umpire@2025.12", when="@0.15.3")
     depends_on("umpire@2025.09", when="@0.15.2")
     depends_on("umpire@2025.03", when="@0.15.0")
@@ -177,7 +177,7 @@ class Care(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("umpire@2022.10.0", when="@0.10.0")
 
     depends_on("raja")
-    depends_on("raja@2026.07:", when="@2026.07.0:")
+    depends_on("raja@2026.07.1:", when="@2026.07.0:")
     depends_on("raja@2025.12", when="@0.15.3")
     depends_on("raja@2025.09", when="@0.15.2")
     depends_on("raja@2025.03", when="@0.15.0")
