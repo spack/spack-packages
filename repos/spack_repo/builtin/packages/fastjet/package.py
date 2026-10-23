@@ -16,11 +16,7 @@ class Fastjet(CMakePackage, AutotoolsPackage):
     """
 
     homepage = "http://fastjet.fr/"
-    # The server that hosts fastjet.fr rejects range request
-    # which causes spack to fail during fetching. Until this is fixed, use
-    # a mirror instead of the upstream url
-    # url  = "http://fastjet.fr/repo/fastjet-3.4.0.tar.gz"
-    url = "https://lcgpackages.web.cern.ch/tarFiles/sources/fastjet-3.3.4.tar.gz"
+    url = "http://fastjet.fr/repo/fastjet-3.4.0.tar.gz"
     git = "https://gitlab.com/fastjet/fastjet.git"
 
     tags = ["hep"]
@@ -31,6 +27,8 @@ class Fastjet(CMakePackage, AutotoolsPackage):
 
     build_system(conditional("cmake", when="@3.5.0:"), "autotools", default="cmake")
 
+    version("3.5.3", sha256="279cce38e6ba01811b2f1913e582e50c3845acf68e97f92413ed45ac4bb8de9c")
+    version("3.5.2", sha256="0b8884a394186a39bd27cef0645a65dd0398d695ae20d29e0559294ee2a44de7")
     version("3.5.1", sha256="9a4154163e72041dee3fdde9cb24e814625e178091a8734a6ad5375e5371b423")
     version("3.5.0", sha256="42d0cacffb204b1160591d507489ee50375a279efb173f8da426ca1bde9d4c29")
     version("3.4.3", sha256="cc175471bfab8656b8c6183a8e5e9ad05d5f7506e46f3212a9a8230905b8f6a3")
