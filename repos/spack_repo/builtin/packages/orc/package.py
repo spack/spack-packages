@@ -25,7 +25,9 @@ class Orc(CMakePackage):
     depends_on("zlib-api")
     depends_on("zlib@1.2.11:", when="^[virtuals=zlib-api] zlib")
     depends_on("pcre")
-    depends_on("protobuf@3.5.1:")
+    # ORC 1.6.x hard-codes C++11; Protobuf 22+ requires C++14.
+    # Include the legacy 3.x names for Protobuf releases through 21.
+    depends_on("protobuf@3.5.1:3.21,21")
     depends_on("zstd@1.4.5:")
     depends_on("googletest@1.8.0:")
     depends_on("snappy@1.1.7:")
