@@ -25,6 +25,7 @@ class Bazel(Package):
 
     license("Apache-2.0")
 
+    version("9.3.0", sha256="2574404ada2d6dbbda58b02aa88b17c479763790e18cb875078c40c849cf6710")
     version("8.8.0", sha256="71cea4e6df77d5d85e185db7f238d96db50132bf40c94e4978a35d92eaf42108")
     version("7.7.1", sha256="6181b3570c2f657d989b1141fb0c1a08eb5f08106ca577dc7dc52e7d0238379a")
     version("7.7.0", sha256="277946818c77fff70be442864cecc41faac862b6f2d0d37033e2da0b1fee7e0f")
@@ -46,20 +47,22 @@ class Bazel(Package):
     version("6.0.0", sha256="7bc0c5145c19a56d82a08fce6908c5e1a0e75e4fbfb3b6f12b4deae7f4b38cbc")
     version("5.4.0", sha256="a1c62d9bcb4e03106ddf0b7bd96196ba246e1c9b7a935daf8d9beda8bbdcb8a1")
     version("5.3.2", sha256="3880ad919592d1e3e40c506f13b32cd0a2e26f129d87cb6ba170f1801d7d7b82")
-    version("5.3.1", sha256="18486e7152ca26b26585e9b2a6f49f332b116310d3b7e5b70583f1f1f24bb8ae")
-    version("5.3.0", sha256="ee801491ff0ec3a562422322a033c9afe8809b64199e4a94c7433d4e14e6b921")
-    version("5.2.0", sha256="820a94dbb14071ed6d8c266cf0c080ecb265a5eea65307579489c4662c2d582a")
-    version("5.1.1", sha256="7f5d3bc1d344692b2400f3765fd4b5c0b636eb4e7a8a7b17923095c7b56a4f78")
-    version("5.1.0", sha256="4de301f509fc6d0cbc697b2017384ecdc94df8f36245bbcbedc7ea6780acc9f5")
-    version("5.0.0", sha256="072dd62d237dbc11e0bac02e118d8c2db4d0ba3ba09f1a0eb1e2a460fb8419db")
     version("4.2.4", sha256="d5ba2ef28da5275f22e832aaa7f9319c61ea5db9b6a3e23b28a6a64ad03078f3")
     version("4.2.3", sha256="b0e84d0538f3ec2b95a49bae31a5066f0967281a3ca99965016fbe178acd2d3d")
-    version("4.2.2", sha256="9981d0d53a356c4e87962847750a97c9e8054e460854748006c80f0d7e2b2d33")
-    version("4.2.1", sha256="12ea7aa11e2bdb12de1dceb9939a22e96f5a480437cb17c123379d8e0fdf5e82")
-    version("4.2.0", sha256="74814b63920aaee47dbbbee7082e5c4317e4eebaf07e03c5fb5626e1716f1034")
-    version("4.1.0", sha256="f377d755c96a50f6bd2f423562598d822f43356783330a0b780ad442864d6eeb")
-    version("4.0.0", sha256="d350f80e70654932db252db380d2ec0144a00e86f8d9f2b4c799ffdb48e9cdd1")
-    version("3.7.2", sha256="de255bb42163a915312df9f4b86e5b874b46d9e8d4b72604b5123c3a845ed9b1")
+    with default_args(deprecated=True):
+        # https://github.com/bazelbuild/bazel/security/advisories/GHSA-mxr8-q875-rhwq
+        version("5.3.1", sha256="18486e7152ca26b26585e9b2a6f49f332b116310d3b7e5b70583f1f1f24bb8ae")
+        version("5.3.0", sha256="ee801491ff0ec3a562422322a033c9afe8809b64199e4a94c7433d4e14e6b921")
+        version("5.2.0", sha256="820a94dbb14071ed6d8c266cf0c080ecb265a5eea65307579489c4662c2d582a")
+        version("5.1.1", sha256="7f5d3bc1d344692b2400f3765fd4b5c0b636eb4e7a8a7b17923095c7b56a4f78")
+        version("5.1.0", sha256="4de301f509fc6d0cbc697b2017384ecdc94df8f36245bbcbedc7ea6780acc9f5")
+        version("5.0.0", sha256="072dd62d237dbc11e0bac02e118d8c2db4d0ba3ba09f1a0eb1e2a460fb8419db")
+        version("4.2.2", sha256="9981d0d53a356c4e87962847750a97c9e8054e460854748006c80f0d7e2b2d33")
+        version("4.2.1", sha256="12ea7aa11e2bdb12de1dceb9939a22e96f5a480437cb17c123379d8e0fdf5e82")
+        version("4.2.0", sha256="74814b63920aaee47dbbbee7082e5c4317e4eebaf07e03c5fb5626e1716f1034")
+        version("4.1.0", sha256="f377d755c96a50f6bd2f423562598d822f43356783330a0b780ad442864d6eeb")
+        version("4.0.0", sha256="d350f80e70654932db252db380d2ec0144a00e86f8d9f2b4c799ffdb48e9cdd1")
+        version("3.7.2", sha256="de255bb42163a915312df9f4b86e5b874b46d9e8d4b72604b5123c3a845ed9b1")
 
     variant(
         "nodepfail",
