@@ -174,6 +174,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "armv8.1a": ("ARMV81", None),
         "armv8.4a": ("ARMV84", "@4.7.00:"),
         "neoverse_v2": ("ARMV9_GRACE", "@4.7.04:4,5.1:"),
+        "olympus": ("ARMV9_VERA", "@5.3:"),
         "u74mc": ("RISCV_U74MC", "@4.7.00:"),
         "a64fx": ("A64FX", None),
         "thunderx2": ("ARMV8_THUNDERX2", None),
@@ -233,6 +234,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "90": ("hopper90", None),
         "100": ("blackwell100", "@4.7.00:"),
         "103": ("blackwell103", "@5.1.0:"),
+        "107": ("rubin107", "@5.3:"),
         "120": ("blackwell120", "@4.7.00:"),
         "121": ("blackwell121", "@5.1.0:"),
     }
