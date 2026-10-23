@@ -2,9 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import itertools
 import os
-import re
 import sys
 from subprocess import Popen
 
@@ -15,29 +13,6 @@ from spack_repo.builtin.build_systems.rocm import ROCmPackage
 from spack.package import *
 
 IS_WINDOWS = sys.platform == "win32"
-
-
-# This is (more or less) the mapping hard-coded in VTK-m logic
-# see https://gitlab.kitware.com/vtk/vtk-m/-/blob/v2.1.0/CMake/VTKmDeviceAdapters.cmake?ref_type=tags#L221-247
-supported_cuda_archs = {
-    "20": "fermi",
-    "21": "fermi",
-    "30": "kepler",
-    "32": "kepler",
-    "35": "kepler",
-    "37": "kepler",
-    "50": "maxwel",
-    "52": "maxwel",
-    "53": "maxwel",
-    "60": "pascal",
-    "61": "pascal",
-    "62": "pascal",
-    "70": "volta",
-    "72": "volta",
-    "75": "turing",
-    "80": "ampere",
-    "86": "ampere",
-}
 
 
 # This is a list of paraview variants that require the viskores library.
@@ -237,22 +212,19 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         for _arch in ("10", "11", "12", "13"):
             conflicts(f"cuda_arch={_arch}", when="+cuda", msg="ParaView requires cuda_arch >= 20")
 
-        # Starting from cmake@3.18, CUDA architecture managament can be delegated to CMake.
-        # Hence, it is possible to rely on it instead of relying on custom logic updates from
-        # VTK-m for newer architectures (wrt mapping).
-        pattern = re.compile(r"\d+")
-        for _arch in CudaPackage.cuda_arch_values:
-            _number = re.match(pattern, _arch).group()
-            if int(_number) > 86:
-                conflicts("cmake@:3.17", when=f"cuda_arch={_arch}")
+        # CUDA architectures are passed to VTK-m through CMAKE_CUDA_ARCHITECTURES
+        depends_on("cmake@3.18:", type="build", when="+cuda")
 
         # We only support one single Architecture
-        for _arch, _other_arch in itertools.permutations(CudaPackage.cuda_arch_values, 2):
-            conflicts(
-                "cuda_arch={0}".format(_arch),
-                when="cuda_arch={0}".format(_other_arch),
-                msg="Paraview only accepts one architecture value",
-            )
+        variant(
+            "cuda_arch",
+            description="CUDA architecture",
+            values=("none", *CudaPackage.cuda_arch_values),
+            default="none",
+            multi=False,
+            sticky=True,
+            when="+cuda",
+        )
 
         # Dependencies for vendored VTK-m
         depends_on("hip@5.2:", when="+rocm")
@@ -619,27 +591,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             else:
                 cmake_args.append("-DPARAVIEW_USE_VISKORES:BOOL=OFF")
 
-        # VTK-m expects cuda_arch to be the arch name vs. the arch version.
         if spec.satisfies("@5 +cuda"):
-            if spec["cmake"].satisfies("@3.18:"):
-                cmake_args.append(
-                    self.define(
-                        "CMAKE_CUDA_ARCHITECTURES", ";".join(spec.variants["cuda_arch"].value)
-                    )
-                )
-            else:
-                # ParaView/VTK-m only accepts one arch, default to first element
-                requested_arch = spec.variants["cuda_arch"].value[0]
-
-                if requested_arch == "none":
-                    cuda_arch_value = "native"
-                else:
-                    try:
-                        cuda_arch_value = supported_cuda_archs[requested_arch]
-                    except KeyError:
-                        raise InstallError("Incompatible cuda_arch=" + requested_arch)
-
-                cmake_args.append(self.define("VTKm_CUDA_Architecture", cuda_arch_value))
+            cmake_args.append(self.define_from_variant("CMAKE_CUDA_ARCHITECTURES", "cuda_arch"))
 
         if "darwin" in spec.architecture:
             cmake_args.extend(
