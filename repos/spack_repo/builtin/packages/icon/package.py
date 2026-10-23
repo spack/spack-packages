@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from collections import defaultdict
+from itertools import chain
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
+from spack.spec import Spec
 
 
 class Icon(AutotoolsPackage):
@@ -146,71 +148,77 @@ class Icon(AutotoolsPackage):
     for __x in nvidia_targets.keys():
         depends_on("cuda", when="gpu={0}".format(__x))
 
-    def configure_args(self):
-        args = ["--disable-rpaths"]
-        flags = defaultdict(list)
-        libs = LibraryList([])
+    EN_DIS_ABLE_FLAGS = (
+        "atmo",
+        "les",
+        "upatmo",
+        "ocean",
+        "jsbach",
+        "waves",
+        "aes",
+        "nwp",
+        "ecrad",
+        "rte-rrtmgp",
+        "openmp",
+        "mpi-gpu",
+        "parallel-netcdf",
+        "cdi-pio",
+        "yaxt",
+        "mixed-precision",
+        "single-precision",
+        "single-precision-ecrad",
+        "comin",
+    )
 
-        for x in [
-            "atmo",
-            "les",
-            "upatmo",
-            "ocean",
-            "jsbach",
-            "waves",
-            "aes",
-            "nwp",
-            "ecrad",
-            "rte-rrtmgp",
-            "openmp",
-            "mpi-gpu",
-            "parallel-netcdf",
-            "cdi-pio",
-            "yaxt",
-            "mixed-precision",
-            "single-precision",
-            "single-precision-ecrad",
-            "comin",
-        ]:
-            args += self.enable_or_disable(x)
+    def __init__(self, spec: Spec) -> None:
+        super().__init__(spec)
+        self.single_args: list[str] = []
+        self.flags: dict(str, list[str]) = defaultdict(list)
+        self.config_libs: LibraryList = LibraryList([])
+
+    def set_configure_args(self) -> None:
+        self.single_args.append("--disable-rpaths")
+
+        for x in self.EN_DIS_ABLE_FLAGS:
+            self.single_args.extend(self.enable_or_disable(x))
 
         if self.spec.satisfies("+art"):
-            args.append("--enable-art")
-            libs += self.spec["libxml2"].libs
+            self.single_args.append("--enable-art")
+            self.config_libs += self.spec["libxml2"].libs
         else:
-            args.append("--disable-art")
+            self.single_args.append("--disable-art")
 
         if self.spec.satisfies("+coupling"):
-            args.append("--enable-coupling")
-            libs += self.spec["libfyaml"].libs
+            self.single_args.append("--enable-coupling")
+            self.config_libs += self.spec["libfyaml"].libs
         else:
-            args.append("--disable-coupling")
+            self.single_args.append("--disable-coupling")
 
         serialization = self.spec.variants["serialization"].value
         if serialization == "none":
-            args.append("--disable-serialization")
+            self.single_args.append("--disable-serialization")
         else:
-            args.extend(
+            self.single_args.extend(
                 [
                     "--enable-serialization={0}".format(serialization),
                     "SB2PP={0}".format(self.spec["serialbox"].pp_ser),
                 ]
             )
-            libs += self.spec["serialbox:fortran"].libs
+            self.config_libs += self.spec["serialbox:fortran"].libs
 
         if self.spec.satisfies("+grib2"):
-            args.append("--enable-grib2")
-            libs += self.spec["eccodes:c"].libs
+            self.single_args.append("--enable-grib2")
+            self.config_libs += self.spec["eccodes:c"].libs
         else:
-            args.append("--disable-grib2")
+            self.single_args.append("--disable-grib2")
 
-        libs += self.spec["lapack:fortran"].libs
-        libs += self.spec["blas:fortran"].libs
-        libs += self.spec["netcdf-fortran"].libs
-        libs += self.spec["netcdf-c"].libs
+        self.config_libs += self.spec["lapack:fortran"].libs
+        self.config_libs += self.spec["blas:fortran"].libs
+        self.config_libs += self.spec["netcdf-fortran"].libs
+        self.config_libs += self.spec["netcdf-c"].libs
 
         if self.spec.satisfies("+mpi"):
-            args.extend(
+            self.single_args.extend(
                 [
                     "--enable-mpi",
                     # We cannot provide a universal value for MPI_LAUNCH, therefore we have to
@@ -221,45 +229,45 @@ class Icon(AutotoolsPackage):
                 ]
             )
         else:
-            args.append("--disable-mpi")
+            self.single_args.append("--disable-mpi")
 
         gpu = self.spec.variants["gpu"].value
 
         if gpu in self.nvidia_targets:
-            args.append("--enable-gpu=openacc+cuda")
-            flags["CUDAFLAGS"] = [
+            self.single_args.append("--enable-gpu=openacc+cuda")
+            self.flags["CUDAFLAGS"] = [
                 "-g",
                 "-O3",
                 "-arch=sm_{0}".format(self.nvidia_targets[gpu]),
                 "-ccbin={0}".format(spack_cxx),
             ]
-            libs += self.spec["cuda"].libs
+            self.config_libs += self.spec["cuda"].libs
         else:
-            args.append("--disable-gpu")
+            self.single_args.append("--disable-gpu")
 
         if gpu in self.nvidia_targets or self.spec.satisfies("+comin"):
-            flags["ICON_LDFLAGS"].extend(self.compiler.stdcxx_libs)
+            self.flags["ICON_LDFLAGS"].extend(self.compiler.stdcxx_libs)
 
         if self.compiler.name == "gcc":
-            flags["CFLAGS"].append("-g")
-            flags["ICON_CFLAGS"].append("-O3")
-            flags["ICON_BUNDLED_CFLAGS"].append("-O2")
-            flags["FCFLAGS"].append("-g")
-            flags["ICON_FCFLAGS"].append("-O2")
+            self.flags["CFLAGS"].append("-g")
+            self.flags["ICON_CFLAGS"].append("-O3")
+            self.flags["ICON_BUNDLED_CFLAGS"].append("-O2")
+            self.flags["FCFLAGS"].append("-g")
+            self.flags["ICON_FCFLAGS"].append("-O2")
             if self.spec.satisfies("+ocean"):
-                flags["ICON_OCEAN_FCFLAGS"].extend(["-O3", "-fno-tree-loop-vectorize"])
-                args.extend(
+                self.flags["ICON_OCEAN_FCFLAGS"].extend(["-O3", "-fno-tree-loop-vectorize"])
+                self.single_args.extend(
                     ["--enable-fcgroup-OCEAN", "ICON_OCEAN_PATH=src/hamocc:src/ocean:src/sea_ice"]
                 )
 
         elif self.compiler.name in ["intel", "oneapi"]:
-            args.append("--enable-intel-consistency")
+            self.single_args.append("--enable-intel-consistency")
 
-            flags["CFLAGS"].extend(["-g", "-ftz", "-fma", "-ip", "-qno-opt-dynamic-align"])
-            flags["ICON_CFLAGS"].append("-O3")
-            flags["ICON_BUNDLED_CFLAGS"].append("-O2")
-            flags["FCFLAGS"].extend(["-g", "-fp-model source"])
-            flags["ICON_FCFLAGS"].extend(
+            self.flags["CFLAGS"].extend(["-g", "-ftz", "-fma", "-ip", "-qno-opt-dynamic-align"])
+            self.flags["ICON_CFLAGS"].append("-O3")
+            self.flags["ICON_BUNDLED_CFLAGS"].append("-O2")
+            self.flags["FCFLAGS"].extend(["-g", "-fp-model source"])
+            self.flags["ICON_FCFLAGS"].extend(
                 [
                     "-O3",
                     "-ftz",
@@ -272,41 +280,55 @@ class Icon(AutotoolsPackage):
             )
 
             if self.spec.satisfies("+coupling%oneapi"):
-                flags["ICON_YAC_CFLAGS"].extend(["-O2", "-fp-model precise"])
+                self.flags["ICON_YAC_CFLAGS"].extend(["-O2", "-fp-model precise"])
 
             if self.spec.satisfies("+ocean"):
-                flags["ICON_OCEAN_FCFLAGS"].extend(
+                self.flags["ICON_OCEAN_FCFLAGS"].extend(
                     ["-O3", "-assume norealloc_lhs", "-reentrancy threaded"]
                 )
-                args.extend(
+                self.single_args.extend(
                     ["--enable-fcgroup-OCEAN", "ICON_OCEAN_PATH=src/hamocc:src/ocean:src/sea_ice"]
                 )
 
                 if self.spec.satisfies("+openmp"):
-                    flags["ICON_OCEAN_FCFLAGS"].extend(["-DOCE_SOLVE_OMP"])
+                    self.flags["ICON_OCEAN_FCFLAGS"].extend(["-DOCE_SOLVE_OMP"])
 
             if self.spec.satisfies("+ecrad"):
-                flags["ICON_ECRAD_FCFLAGS"].extend(["-qno-opt-dynamic-align", "-no-fma", "-fpe0"])
+                self.flags["ICON_ECRAD_FCFLAGS"].extend(["-qno-opt-dynamic-align", "-no-fma", "-fpe0"])
 
         elif self.compiler.name == "nvhpc":
-            flags["CFLAGS"].extend(["-g", "-O2"])
-            flags["FCFLAGS"].extend(
+            self.flags["CFLAGS"].extend(["-g", "-O2"])
+            self.flags["FCFLAGS"].extend(
                 ["-g", "-O2", "-Mrecursive", "-Mallocatable=03", "-Mstack_arrays"]
             )
 
             if gpu in self.nvidia_targets:
-                flags["FCFLAGS"].extend(
+                self.flags["FCFLAGS"].extend(
                     ["-acc=gpu", "-gpu=cc{0}".format(self.nvidia_targets[gpu])]
                 )
 
             if self.spec.satisfies("+coupling%nvhpc@:23.9"):
-                args.append("yac_cv_fc_is_contiguous_works=yes")
+                self.single_args.append("yac_cv_fc_is_contiguous_works=yes")
 
         else:
-            flags["CFLAGS"].extend(["-g", "-O2"])
-            flags["FCFLAGS"].extend(["-g", "-O2"])
+            self.flags["CFLAGS"].extend(["-g", "-O2"])
+            self.flags["FCFLAGS"].extend(["-g", "-O2"])
 
-        args.extend(["{0}={1}".format(name, " ".join(value)) for name, value in flags.items()])
-        args.append("LIBS={0}".format(libs.link_flags))
-
-        return args
+    def configure_args(self) -> list[str]:
+        # Populate self.single_args and self.flags
+        self.set_configure_args()
+        self.flags["LIBS"].append(self.config_libs.link_flags)
+        # De-duplicate
+        self.single_args = list(dedupe(self.single_args))
+        for key, values in self.flags.items():
+            self.flags[key] = list(dedupe(values))
+        # Return final list
+        return [
+            *chain(
+                self.single_args,
+                (
+                    "{0}={1}".format(name, " ".join(values))
+                    for name, values in self.flags.items()
+                ),
+            )
+        ]
