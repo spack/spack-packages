@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
+from typing import Dict, Set
+
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage, define
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -49,13 +51,6 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     _cxxstd_values = ("17", "20")
 
     # Note: cuda and rocm variants are defined by mixin classes
-    variant(
-        "cxxstd",
-        default="17",
-        values=_cxxstd_values,
-        multi=False,
-        description="C++ standard version",
-    )
     variant("covfie", default=True, when="@0.6:", description="Enable covfie magnetic fields")
     variant("debug", default=False, description="Enable runtime debug assertions")
     variant("dd4hep", default=False, when="@0.7:", description="Enable dd4hep plugin")
@@ -69,13 +64,37 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     variant("swig", default=False, when="@:0.4", description="Generate SWIG Python bindings")
     variant("vecgeom", default=True, description="Use VecGeom geometry")
 
+    # Multi-value variants
+    variant(
+        "cxxstd",
+        default="17",
+        values=_cxxstd_values,
+        multi=False,
+        description="C++ standard version",
+    )
+    variant(
+        "real_type",
+        default="double",
+        values=("double", "float"),
+        multi=False,
+        when="@0.4:",
+        description="Floating point precision",
+    )
+    variant(
+        "units",
+        default="clhep",  # Match Geant4 by default
+        values=("cgs", "clhep", "si"),
+        multi=False,
+        when="@0.5:",
+        description="Native unit system",
+    )
+
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.22:", type="build")
     depends_on("cmake@3.27:", type="build", when="+covfie")
 
-    # FIXME: precompiled required due to IWYU errors from transitive includes
-    depends_on("cli11~precompiled", when="@0.6:")
+    depends_on("cli11", when="@0.6:")
     depends_on("nlohmann-json")
     depends_on("covfie@0.13:", when="+covfie")
     depends_on("dd4hep +ddg4", when="+dd4hep")
@@ -85,6 +104,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("swig@4.1:", when="+swig")
 
     depends_on("python", when="@:0.5", type="build")
+    depends_on("googletest", type="test")
     depends_on("python", type="test")
 
     with default_args(when="+doc", type="build"):
@@ -128,11 +148,37 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         for _arch in CudaPackage.cuda_arch_values:
             depends_on(f"{_pkg} cuda_arch={_arch}", when=f"+{_pkg} cuda_arch={_arch}")
 
-    conflicts("+rocm ^hip@:5", when="@0.7:", msg="HIP API inconsistency: to be patched shortly")
     conflicts("+rocm", when="+cuda", msg="AMD and NVIDIA accelerators are incompatible")
     conflicts("+rocm", when="+vecgeom", msg="HIP support is only available with ORANGE")
     for _arch in ["cuda", "rocm"]:
         conflicts("+perfetto", when=f"+{_arch}", msg="Perfetto is only used for CPU profiling")
+
+    conflicts(
+        "+vecgeom",
+        when="real_type=float",
+        msg="VecGeom is not currently compatible with single-precision",
+    )
+
+    # Fix HIP for 0.7.0
+    patch(
+        "https://github.com/celeritas-project/celeritas/commit/8cd7fbf495e2e73c35bece489cd8dbd6026de997.patch?full_index=1",
+        sha256="b67f42f79f78be32a8c77187733682ea8045dd42a4be36e6a526749bbc608f86",
+        when="@0.7.0 +rocm",
+    )
+    # Fix transitive dependencies from cli11
+    patch(
+        "https://github.com/celeritas-project/celeritas/commit/a235144051e0f7b0ad728afd28f7a23f913511bf.patch?full_index=1",
+        sha256="67488edc65e3fbcdca3f798f8de6c2d9262a021223514590cb4f98c049863e91",
+        when="@0.6:0.7.0 ^cli11+precompiled",
+    )
+
+    # Fix ORANGE with CLHEP for 0.7.0
+    for _units in ["clhep", "si"]:
+        patch(
+            "https://github.com/celeritas-project/celeritas/commit/515b365e2de4c43b081bc7749612c5daacba2f9b.patch?full_index=1",
+            sha256="fefa84f9a95d596382a70a21c1375db7e08765646f99ec2a40f0ff2ba6875c09",
+            when=f"@:0.7.0 ~vecgeom units={_units}",
+        )
 
     # geant4@11.3.0 now returns const G4Element::GetElementTable()
     patch(
@@ -147,74 +193,110 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         when="@:0.6.2 +cuda ^cuda@13:",
     )
 
-    def celeritas_use_list(self) -> List[str]:
-        """This is extensible so that downstream subclasses (FNAL spack) can add
-        other packages that mainstream Spack does not know about.
+    def celer_variant_packages(self) -> Set[str]:
+        """List user-configurable package names using `find_package` capitalization.
+        This can be subclassed by HEP experiment-specific versions of this package.
         """
-        return [
-            "covfie",
+        result = {
             "CUDA",
             "DD4hep",
             "Geant4",
             "HepMC3",
+            "HIP",
             "OpenMP",
             "Perfetto",
             "ROOT",
-            "SWIG",
             "VecGeom",
-        ]
+        }
+        version = self.spec.version
+        if version >= Version("0.6"):
+            result.add("covfie")
+
+        if version >= Version("0.7"):
+            result.add("DD4hep")
+
+        if version < Version("0.5"):
+            result.add("SWIG")
+
+        return result
+
+    def celer_package_to_variant(self, package_name: str) -> str:
+        """Return the variant name corresponding to a package."""
+        if package_name == "HIP":
+            return "rocm"
+        return package_name.lower()
+
+    def celer_force_packages(self) -> Dict[str, bool]:
+        """List packages that are always disabled/enabled and have no variant."""
+        result = {"LArSoft": False, "MPI": False}
+        if self.spec.satisfies("@:0.4"):
+            # Explicitly activate JSON for older versions
+            result["JSON"] = True
+        if self.spec.satisfies("@:0.6"):
+            # Explicitly activate Python: automatic for newer version
+            result["Python"] = True
+        return result
 
     def cmake_args(self):
-        define = self.define
         from_variant = self.define_from_variant
         args = [
             from_variant("BUILD_SHARED_LIBS", "shared"),
             from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
             from_variant("CELERITAS_DEBUG", "debug"),
             from_variant("CELERITAS_BUILD_DOCS", "doc"),
-            define("CELERITAS_BUILD_TESTS", False),
-            from_variant("CELERITAS_USE_HIP", "rocm"),
-            define("CELERITAS_USE_MPI", False),
+            from_variant("CELERITAS_REAL_TYPE", "real_type"),
         ]
 
-        # NOTE: package names are stylized like the dependency asks: Find{pkg}.cmake
-        for pkg in self.celeritas_use_list():
-            args.append(from_variant("CELERITAS_USE_" + pkg, pkg.lower()))
+        def append_celer_arg(ext: str, value):
+            args.append(self.define("CELERITAS_" + ext, value))
+
+        append_celer_arg("BUILD_TESTS", self.run_tests)
+        if self.spec.satisfies("@0.5:"):
+            # Units need special casing due to uppercase:
+            units = self.spec.variants["units"].value
+            # Set e.g., -DCELERITAS_UNITS:STRING=CLHEP
+            append_celer_arg("UNITS", units.upper())
+
+        if self.spec.satisfies("@0.6:"):
+            # Always build app front ends and celer-config
+            append_celer_arg("BUILD_APPS", True)
+
+        if self.spec.satisfies("@:0.6"):
+            # Never build old example apps
+            append_celer_arg("BUILD_DEMOS", False)
+
+        # Get list of CMake packages and construct from spack variants
+        for pkg in sorted(self.celer_variant_packages()):
+            variant = self.celer_package_to_variant(pkg)
+            if not self.has_variant(variant):
+                raise KeyError(f'Invalid variant "{variant}"')
+            value = self.spec.variants[variant].value
+            append_celer_arg("USE_" + pkg, value)
+
+        # Set list of always-off or -on packages
+        for pkg, value in sorted(self.celer_force_packages().items()):
+            append_celer_arg("USE_" + pkg, value)
 
         if self.spec.satisfies("+cuda"):
             args.append(CMakeBuilder.define_cuda_architectures(self))
+
         if self.spec.satisfies("+rocm"):
             args.append(CMakeBuilder.define_hip_architectures(self))
-            # TODO: update celeritas CMakeLists to link to these if found
-            rocm_pkg_list = ["hiprand", "rocprim", "rocrand", "rocthrust"]
-            if self.spec.satisfies("@0.7:"):
-                rocm_pkg_list.append("hipcub")
-            args.append(
-                define(
-                    "CMAKE_HIP_FLAGS",
-                    " ".join([f"-I{self.spec[p].prefix.include}" for p in rocm_pkg_list]),
-                )
-            )
+            # TODO: this will be fixed in 0.7.1
+            deps = ["hiprand", "rocprim", "rocrand", "rocthrust"]
+            if self.spec.satisfies("@0.7.0"):
+                deps.append("hipcub")
+            include_paths = [self.spec[d].prefix.include for d in deps]
+            args.append(define("CMAKE_HIP_FLAGS", " ".join(f"-I{p}" for p in include_paths)))
 
-        if self.spec.satisfies("@:0.4"):
-            # Explicitly activate JSON for older versions
-            args.append(define("CELERITAS_USE_JSON", True))
-
-        if self.spec.satisfies("@:0.6"):
-            args.extend(
-                [
-                    define("CELERITAS_BUILD_DEMOS", False),
-                    define("CELERITAS_USE_Python", True),
-                ]
-            )
-
+        builtin_packages = []
         if self.spec.satisfies("@0.6:"):
+            # NOTE: Perfetto is always vendored so must be omitted
+            builtin_packages += ["covfie", "CLI11", "GTest", "nlohmann_json", "G4VG"]
+
+        for pkg in builtin_packages:
             # Protect against accidentally using vendored instead of spack
-            args.extend(
-                define(f"CELERITAS_BUILTIN_{pkg}", False)
-                for pkg in ["covfie", "CLI11", "GTest", "nlohmann_json", "G4VG"]
-            )
-            # NOTE: Perfetto is always vendored!
+            append_celer_arg(f"BUILTIN_{pkg}", False)
 
         return args
 

@@ -76,6 +76,12 @@ class Gromacs(CMakePackage, CudaPackage):
     depends_on("fortran", type="build", when="@:4.5.5")  # No core Fortran code since 4.6
     depends_on("fortran", type="build", when="+cp2k")  # Need Fortan compiler for CP2K
 
+    # inferred from the install guide and experimentation
+    depends_on("cuda@7:12", when="@2019.6 +cuda")
+    depends_on("cuda@11:12", when="@2024 +cuda")
+    depends_on("cuda@12.1:12", when="@2025.0:2025.2 +cuda")
+    depends_on("cuda@12.1:", when="@2025.3: +cuda")
+
     variant(
         "mpi", default=True, description="Activate MPI support (disable for Thread-MPI support)"
     )
