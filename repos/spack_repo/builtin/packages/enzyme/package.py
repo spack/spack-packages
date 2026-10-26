@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -58,22 +60,43 @@ class Enzyme(CMakePackage):
     depends_on("cmake@3.13:", type="build")
 
     def cmake_args(self):
-        args = ["-DLLVM_DIR=" + self.llvm_prefix + "/lib/cmake/llvm"]
-        return args
+        llvm_dir = join_path(self.llvm_prefix, "lib", "cmake", "llvm")
+        if not os.path.isdir(llvm_dir):
+            # e.g. Debian/Ubuntu system LLVM registered at prefix /usr
+            llvm_dir = self.llvm_config("--cmakedir", output=str).strip()
+        return [self.define("LLVM_DIR", llvm_dir)]
+
+    @property
+    def llvm_spec(self):
+        return self.spec["libllvm"]
 
     @property
     def llvm_prefix(self):
-        spec = self.spec
-        if spec.satisfies("%libllvm=llvm"):
-            return spec["llvm"].prefix
-        if spec.satisfies("%libllvm=llvm-amdgpu"):
-            return spec["llvm-amdgpu"].prefix
-        raise InstallError("Unknown 'libllvm' provider!")
+        return self.llvm_spec.prefix
+
+    @property
+    def llvm_config(self):
+        llvm = self.llvm_spec
+        llvm_config = which(
+            f"llvm-config-{llvm.version.up_to(1)}",
+            "llvm-config",
+            path=str(llvm.prefix.bin),
+            required=True,
+        )
+        # A shared prefix such as /usr can hold several LLVMs; make sure this llvm-config
+        # belongs to the one in the spec. llvm-amdgpu is versioned by ROCm, so skip it.
+        if llvm.satisfies("llvm"):
+            found = Version(llvm_config("--version", output=str).strip())
+            if found.up_to(1) != llvm.version.up_to(1):
+                raise InstallError(
+                    f"{llvm_config.path} reports LLVM {found}, "
+                    f"but the spec requires {llvm.version}"
+                )
+        return llvm_config
 
     @property
     def llvm_version(self):
-        llvm_config = Executable(self.llvm_prefix + "/bin/llvm-config")
-        return Version(llvm_config("--version", output=str))
+        return Version(self.llvm_config("--version", output=str).strip())
 
     @property
     def libs(self):
