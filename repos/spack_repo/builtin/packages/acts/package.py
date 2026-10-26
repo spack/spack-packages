@@ -199,11 +199,9 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("acts-dd4hep", when="@19 +dd4hep")
     with when("+svg"):
-        # https://github.com/acts-project/actsvg/issues/94
         depends_on("actsvg@0.4.51:")
         depends_on("actsvg@0.4.56:", when="@41.1:")
-        # TODO: This should be when-constrained when the issue is fixed in ACTS.
-        depends_on("actsvg@:0.4.56")
+        depends_on("actsvg@:0.4.56", when="@:47.4")
         depends_on("actsvg@0.4.57:", when="@47.5:")
     # The version number of algebra plugins was not correct before v0.28.0.
     depends_on("acts-algebra-plugins @0.28:", when="+traccc @:46.3.0")
@@ -243,6 +241,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("millepede@01-00-00:", when="+mille")
     depends_on("millepede@01-00-05:", when="@47.1: +mille")
     depends_on("millepede@01-01-01:", when="@48: +mille")
+    depends_on("millepede@01-01-02:", when="@48.2: +mille")
     depends_on("nlohmann-json @3.10.5:", when="+json")
     depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
