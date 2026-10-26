@@ -110,6 +110,11 @@ class Pango(MesonPackage):
         else:
             args.append("-Dgtk_doc=false")
 
+        # gobject-introspection detection was changed
+        # auto only works if documentation is enabled
+        if spec.satisfies("@1.57.1:"):
+            args.append("-Dintrospection=enabled")
+
         return args
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
