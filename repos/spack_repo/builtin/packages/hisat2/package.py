@@ -59,13 +59,10 @@ class Hisat2(MakefilePackage):
     # patch to get SRA working
     patch("sra.patch", when="@:2.2.1 +sra")
 
-    def edit(self, spec, prefix):
-        if spec.satisfies("target=aarch64:"):
-            filter_file(
-                r"^EXTRA_FLAGS \+= -std=c\+\+11",
-                "EXTRA_FLAGS += -std=c++11 -fsigned-char",
-                "Makefile",
-            )
+    def flag_handler(self, name, flags):
+        if name == "cxxflags" and self.spec.satisfies("target=aarch64:"):
+            flags.append("-fsigned-char")
+        return (flags, None, None)
 
     @when("+sra")
     def build(self, spec, prefix):
