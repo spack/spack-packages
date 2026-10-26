@@ -205,6 +205,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # GPU-related dependencies and conflicts
     gpu_pkgs = ["magma", "umpire", "superlu-dist"]
+    conflicts("+umpire", when="~cuda~rocm")
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
@@ -402,6 +403,10 @@ class CMakeBuilder(CMakeBuilder):
         if spec.satisfies("+magma"):
             args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
             args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
+
+        if "+umpire" in self.spec:
+            args.append(self.define("TPL_UMPIRE_INCLUDE_DIRS", self.spec["umpire"].prefix.include))
+            args.append(self.define("TPL_UMPIRE_LIBRARIES", self.spec["umpire"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)

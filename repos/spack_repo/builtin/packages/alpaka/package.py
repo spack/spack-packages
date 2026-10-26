@@ -21,6 +21,7 @@ class Alpaka(CMakePackage, CudaPackage):
     license("MPL-2.0-no-copyleft-exception")
 
     version("develop", branch="develop")
+    version("2.2.0", sha256="b38dc3f461da261a746956bd84ae85c62a9b3ef13c078c94bceb9783ae94d1f2")
     version("2.1.1", sha256="2d30a43594c55067297947b0ec83300e4f2899497464c5cc6f142c823f3ea1b2")
     # 2.1.0 is deprecated due to the buffer/view arrow operator bug
     # see https://github.com/alpaka-group/alpaka/pull/2600

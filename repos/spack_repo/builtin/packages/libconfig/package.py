@@ -17,6 +17,9 @@ class Libconfig(AutotoolsPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.8.2", sha256="8e71983761b08c65b15b769b3ec1d980036c461fdfd415c7183378a4b3eac8f4")
+    version("1.8.1", sha256="e95798d2992a66ecd547ce3651d7e10642ff2211427c43a7238186ff4c372627")
+    version("1.8", sha256="22e13253e652ec583ba0dd5b474bd9c7bd85dc724f2deb0d76a6299c421358ef")
     version("1.7.3", sha256="68757e37c567fd026330c8a8449aa5f9cac08a642f213f2687186b903bd7e94e")
     version("1.7.2", sha256="f67ac44099916ae260a6c9e290a90809e7d782d96cdd462cac656ebc5b685726")
     version("1.7.1", sha256="d288e6ae817f4ef78df43cdb2647f768dc97899ee82fcc41f857e8eb9fd7fbdb")
@@ -30,3 +33,6 @@ class Libconfig(AutotoolsPackage):
     depends_on("automake", type=("build"))
     depends_on("libtool", type=("build"))
     depends_on("texinfo", type="build")
+
+    # Before 1.8, the bundled parser uses pre-C23 syntax, and C23 is the default since GCC 15
+    conflicts("%gcc@15:", when="@:1.7")
