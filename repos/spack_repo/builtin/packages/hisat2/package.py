@@ -54,6 +54,8 @@ class Hisat2(MakefilePackage):
 
     depends_on("cxx")
 
+    conflicts("target=aarch64:", when="@:2.2.1")
+    
     # patch to get SRA working
     patch("sra.patch", when="@:2.2.1 +sra")
 
