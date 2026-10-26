@@ -341,7 +341,6 @@ class Acts(CMakePackage, CudaPackage):
             enable_cmake_variant("MEMORY_PROFILING", "profilemem"),
             plugin_cmake_variant("PODIO", "podio"),
             example_cmake_variant("PYTHIA8", "pythia8"),
-            example_cmake_variant("PYTHON_BINDINGS", "python"),
             example_cmake_variant("ROOT", "root"),
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
@@ -365,6 +364,12 @@ class Acts(CMakePackage, CudaPackage):
 
         if spec.satisfies("+python"):
             args.append("-DACTS_USE_SYSTEM_PYBIND11=ON")
+
+        # ACTS_BUILD_EXAMPLES_PYTHON_BINDINGS was deprecated in v45 and removed in v47
+        if spec.satisfies("@45:"):
+            args.append(cmake_variant("PYTHON_BINDINGS", "python"))
+        else:
+            args.append(example_cmake_variant("PYTHON_BINDINGS", "python"))
 
         if spec.satisfies("+svg"):
             args.append("-DACTS_USE_SYSTEM_ACTSVG=ON")
