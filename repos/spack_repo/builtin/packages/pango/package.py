@@ -48,7 +48,6 @@ class Pango(MesonPackage):
         depends_on("meson@0.54:", when="@1.48.0:")
         depends_on("meson@0.55.3:", when="@1.48.1:")
         depends_on("meson@0.60:", when="@1.50.13:")
-        depends_on("meson@0.63:", when="@1.54:")
         depends_on("pkgconfig")
 
     depends_on("glib@2.88:", when="@1.58.2:")
