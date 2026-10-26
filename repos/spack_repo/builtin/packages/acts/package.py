@@ -198,6 +198,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("boost @1.77:", when="@42:")
     depends_on("boost @1.78:", when="@45:")
     depends_on("cmake @3.14:", type="build")
+    depends_on("cmake @3.19:", type="build", when="@47:")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
