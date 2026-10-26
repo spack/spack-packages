@@ -56,6 +56,18 @@ class Patchelf(AutotoolsPackage):
     # GCC 7.5 doesn't have __cpp_deduction_guides >= 201606
     patch("513.patch", when="@0.18: %gcc@:7")
 
+    # 0.19.2 can map .dynamic read-only in executables, which crash in ld.so
+    patch(
+        "https://github.com/NixOS/patchelf/pull/672.patch?full_index=1",
+        sha256="da56dff6b52314f5dab02b88f2dd6209dde6454fc67e3b36a5b8f0d53638443a",
+        when="@0.19.2",
+    )
+
+    @when("@0.19.2")
+    def patch(self):
+        # Keep make from re-running automake after the PR changed tests/Makefile.am
+        touch(join_path("tests", "Makefile.in"))
+
     def url_for_version(self, version):
         if version < Version("0.12"):
             return "https://nixos.org/releases/patchelf/patchelf-{0}/patchelf-{1}.tar.gz".format(
