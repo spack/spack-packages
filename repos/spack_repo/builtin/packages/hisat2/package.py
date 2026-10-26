@@ -57,7 +57,7 @@ class Hisat2(MakefilePackage):
     conflicts("target=aarch64:", when="@:2.2.1")
 
     # patch to get SRA working
-    patch("sra.patch", when="@:2.2.1 +sra")
+    patch("sra.patch", when="+sra")
 
     def flag_handler(self, name, flags):
         if name == "cxxflags" and self.spec.satisfies("target=aarch64:"):
