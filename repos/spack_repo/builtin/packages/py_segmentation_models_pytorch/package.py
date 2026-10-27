@@ -18,7 +18,8 @@ class PySegmentationModelsPytorch(PythonPackage):
 
     version("0.6.0", sha256="5f90a7a43fac608f85a9dce66f65297d887605da9c2caafb44aa875c30180424")
     with default_args(deprecated=False):
-        # Multiple incoming CVEs
+        # https://github.com/qubvel-org/segmentation_models.pytorch/security/advisories/GHSA-w865-hrqq-h4r5
+        # https://github.com/qubvel-org/segmentation_models.pytorch/security/advisories/GHSA-35hf-6hc4-cgj6
         version("0.5.0", sha256="cabba8aced6ef7bdcd6288dd9e1dc2840848aa819d539c455bd07aeceb2fdf96")
         version("0.4.0", sha256="8833e63f0846090667be6fce05a2bbebbd1537776d3dea72916aa3db9e22e55b")
 
