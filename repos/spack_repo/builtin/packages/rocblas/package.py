@@ -72,9 +72,9 @@ class Rocblas(ROCmLibrary, CMakePackage):
     conflicts("+asan", when="os=centos7")
     conflicts("+asan", when="os=centos8")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("cmake@3.16.8:", type="build")
 
@@ -187,11 +187,11 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"hipblaslt@{ver} amdgpu_target={tgt}",
-                when=f"@{ver} +hipblaslt amdgpu_target={tgt}",
-            )
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(
+            f"hipblaslt amdgpu_target={tgt}", when=f"@6.3.0: +hipblaslt amdgpu_target={tgt}"
+        )
 
     for ver in [
         "6.4.0",
@@ -300,7 +300,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def cmake_args(self):

@@ -13,7 +13,7 @@ class FluidnumericsSelf(CMakePackage):
     homepage = "https://self.fluidnumerics.com"
     url = "https://github.com/FluidNumerics/SELF/archive/refs/tags/v0.0.1.tar.gz"
 
-    maintainers("fluidnumerics_joe", "garrettbyrd")
+    maintainers("fluidnumericsJoe", "garrettbyrd")
 
     license("BSD-3-Clause-Attribution", checked_by="fluidnumerics_joe")
 

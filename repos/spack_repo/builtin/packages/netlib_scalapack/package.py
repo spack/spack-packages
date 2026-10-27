@@ -139,7 +139,8 @@ class NetlibScalapack(ScalapackBase):
     # a separated package
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@2.2:"):
+        # 2.0.0 was never tagged on GitHub, so 2.0.x has to stay on netlib.org
+        if self.spec.satisfies("@2.1:"):
             return super().url_for_version(version)
         url_fmt = "https://www.netlib.org/scalapack/scalapack-{0}.tgz"
         return url_fmt.format(version)

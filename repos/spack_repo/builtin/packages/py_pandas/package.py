@@ -23,6 +23,7 @@ class PyPandas(PythonPackage):
 
     tags = ["e4s"]
 
+    version("3.1.0", sha256="ecb9b2d8a817b1e1ba1fdb90c0abe9eab31b4fdf2562b7a56b86ac66ace17e49")
     version("3.0.6", sha256="66b07ef7315a31bfe1089cd3d71a7de781c9dca986762d0b4fe7c0ef17465d10")
     version("3.0.5", sha256="dca3734d6ab7c906e6730f0788b0a1dbb9f2467731f9711f77995c8e9d62d712")
     version("3.0.4", sha256="62f6062586d159663825f06e70ef49cd1572d45824cb63a9559f3ffd1d0d2a20")
@@ -80,11 +81,13 @@ class PyPandas(PythonPackage):
     depends_on("cxx", type="build")
 
     with default_args(type="build"):
+        depends_on("py-meson-python@0.19.0:", when="@3.1:")
         depends_on("py-meson-python@0.17.1:", when="@3.0:")
         depends_on("py-meson-python@0.13.1:", when="@2.1:")
+        depends_on("meson@1.2.3:", when="@3.1:")
         depends_on("meson@1.2.1:", when="@2.1.1:")
         depends_on("meson@1.0.1:", when="@2.1.0")
-        depends_on("py-cython@3.1.0:", when="@3.0.1:")
+        depends_on("py-cython@3.1.1:", when="@3.0.1:")
         depends_on("py-cython@3.0.5:3", when="@2.2:")
         depends_on("py-cython@0.29.33:2", when="@2.0:2.1")
         depends_on("py-cython@0.29.32:2", when="@1.4.4:1")
@@ -111,6 +114,7 @@ class PyPandas(PythonPackage):
         depends_on("python@:3.10", when="@:1.4")
         depends_on("python@:3.9", when="@:1.3.2")
 
+        depends_on("py-numpy@2.0.2:", when="@3.1:")
         depends_on("py-numpy@1.26.0:", when="@3.0:")
         depends_on("py-numpy@1.22.4:", when="@2.1:")
         depends_on("py-numpy@1.20.3:", when="@1.5:")
@@ -120,7 +124,8 @@ class PyPandas(PythonPackage):
         depends_on("py-numpy@1.15.4:", when="@1.1")
         # https://github.com/pandas-dev/pandas/issues/55519
         depends_on("py-numpy@:1", when="@:2.2.1")
-        depends_on("py-python-dateutil@2.8.2:", when="@2:")
+        depends_on("py-python-dateutil@2.9.0:", when="@3.1:")
+        depends_on("py-python-dateutil@2.8.2:", when="@2.0:")
         depends_on("py-python-dateutil@2.8.1:", when="@1.4:")
         depends_on("py-python-dateutil@2.7.3:", when="@1.1:")
         depends_on("py-python-dateutil")
@@ -135,16 +140,19 @@ class PyPandas(PythonPackage):
 
     with default_args(type="run"):
         with when("+performance"):
+            depends_on("py-bottleneck@1.5.0:", when="@3.1:")
             depends_on("py-bottleneck@1.4.2:", when="@3.0:")
             depends_on("py-bottleneck@1.3.6:", when="@2.2:")
             depends_on("py-bottleneck@1.3.4:", when="@2.1:")
             depends_on("py-bottleneck@1.3.2:", when="@1.5:")
             depends_on("py-bottleneck@1.3.1:", when="@1.4:")
             depends_on("py-bottleneck@1.2.1:", when="@0.25:")
+            depends_on("py-numba@0.61.2:", when="@3.1:")
             depends_on("py-numba@0.60.0:", when="@3.0:")
             depends_on("py-numba@0.56.4:", when="@2.2:")
             depends_on("py-numba@0.55.2:", when="@2.1:")
             depends_on("py-numba@0.53.1:", when="@2.0:")
+            depends_on("py-numexpr@2.11.0:", when="@3.1:")
             depends_on("py-numexpr@2.10.2:", when="@3.0:")
             depends_on("py-numexpr@2.8.4:", when="@2.2:")
             depends_on("py-numexpr@2.8.0:", when="@2.1:")
@@ -162,15 +170,18 @@ class PyPandas(PythonPackage):
             depends_on("py-openpyxl@3.0.10:", when="@2.1:")
             depends_on("py-openpyxl@3.0.7:", when="@1.5:")
             depends_on("py-openpyxl@3.0.3:", when="@1.4:")
+            depends_on("py-python-calamine@0.4.0:", when="@3.1:")
             depends_on("py-python-calamine@0.3.0:", when="@3.0:")
             depends_on("py-python-calamine@0.1.7:", when="@2.2:")
             depends_on("py-pyxlsb@1.0.10:", when="@2.2:")
             depends_on("py-pyxlsb@1.0.9:", when="@2.1:")
             depends_on("py-pyxlsb@1.0.8:", when="@1.5:")
             depends_on("py-pyxlsb@1.0.6:", when="@1.4:")
+            depends_on("py-xlrd@2.0.2:", when="@3.1:")
             depends_on("py-xlrd@2.0.1:", when="@2.2:")
             depends_on("py-xlrd@2.0.1:", when="@1.4:")
             depends_on("py-xlwt@1.3.0:", when="@1.4:1.5")
+            depends_on("py-xlsxwriter@3.2.5:", when="@3.1:")
             depends_on("py-xlsxwriter@3.2.0:", when="@3.0:")
             depends_on("py-xlsxwriter@3.0.5:", when="@2.2:")
             depends_on("py-xlsxwriter@3.0.3:", when="@2.1:")
@@ -181,3 +192,5 @@ class PyPandas(PythonPackage):
             depends_on("py-pyarrow@13.0.0:", when="@3.0:")
             depends_on("py-pyarrow@10.0.1:")
             depends_on("arrow+parquet")
+
+    conflicts("py-numexpr@2.14.1")

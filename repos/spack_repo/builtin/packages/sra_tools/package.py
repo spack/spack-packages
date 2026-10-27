@@ -14,6 +14,7 @@ class SraTools(CMakePackage):
     homepage = "https://github.com/ncbi/sra-tools"
     git = "https://github.com/ncbi/sra-tools.git"
 
+    version("3.4.1", tag="3.4.1", commit="ded4303eb477047590b219f6a2e8397b12d58cc0")
     version("3.3.0", tag="3.3.0", commit="a7fff20b1a8c1dcf1586dd1a32460b9d2dfb9392")
     version("3.0.3", tag="3.0.3", commit="01f0aa21bb20b84c68ea34404d43da680811e27a")
     version("3.0.0", tag="3.0.0", commit="bd2053a1049e64207e75f4395fd1be7f1572a5aa")
@@ -23,10 +24,12 @@ class SraTools(CMakePackage):
 
     depends_on("openjdk")
     depends_on("flex@2.6:")
-    depends_on("libxml2@:2.13")
+    depends_on("libxml2@:2.13", when="@:3.3.0")  # Older versions break with newer libxml2
+    depends_on("libxml2", when="@3.4.1:")  # Constraint is no longer needed here
     depends_on("ncbi-vdb")
     depends_on("ncbi-vdb@3.0.2:", when="@3.0.3:")
     depends_on("ncbi-vdb@3.3.0:", when="@3.3.0:")
+    depends_on("ncbi-vdb@3.4.1:", when="@3.4.1:")
 
     variant("internal", default=False, description="Build internal tools", when="@3.0.1:")
     variant("loaders", default=False, description="Build loaders", when="@3.0.1:")

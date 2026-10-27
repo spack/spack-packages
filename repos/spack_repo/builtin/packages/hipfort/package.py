@@ -52,8 +52,8 @@ class Hipfort(ROCmLibrary, CMakePackage):
     version("5.7.0", sha256="57b04d59f61683a1b141d6d831d10c9fdecea483991ec02d14c14e441e935c05")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
     depends_on("cmake@3.18:", type="build", when="@7.0:")
     depends_on("cmake@3.5:", type="build", when="@6.3:6.4")
     depends_on("cmake@3.0.2:", type="build")

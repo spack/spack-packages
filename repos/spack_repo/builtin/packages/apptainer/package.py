@@ -38,8 +38,19 @@ class Apptainer(SingularityBase):
     )
 
     version("main", branch="main", get_full_repo=True)  # apptainer version uses git describe
-    version("1.5.3", sha256="5a3bf360a5240086324aa7f7005ab7eeee91095e2091078b3f9783eaf6e7288a")
-    version("1.5.0", sha256="36d67d57ef959397fa4f59169cf7deb92220537160e761e0c1cff84624ad81e3")
+    version("1.5.4", sha256="ec1f51e696ba384f90bc7ab2c7a438fee70da98763d001b8f3175d14a91cfcf6")
+    # local privilege escalation for suid enabled builds in the 1.5.x series
+    # https://github.com/apptainer/apptainer/security/advisories/GHSA-4wg8-vhjg-jq8p
+    version(
+        "1.5.3",
+        sha256="5a3bf360a5240086324aa7f7005ab7eeee91095e2091078b3f9783eaf6e7288a",
+        deprecated=True,
+    )
+    version(
+        "1.5.0",
+        sha256="36d67d57ef959397fa4f59169cf7deb92220537160e761e0c1cff84624ad81e3",
+        deprecated=True,
+    )
     version("1.4.4", sha256="eb806e22dabfb6549c398b55e50c747e4c51b57f8879da9e29813de40af54b48")
     version("1.4.3", sha256="dfb85b8ad48bd366245c7f6a1d0b56d2ce480cfdf18d7a64397098184b4ade90")
     version("1.4.2", sha256="6dda1dd2ca8e42ed7f498d2bc8574f01d7ad3db68494e453639d76aef4424d1d")
@@ -101,10 +112,12 @@ class Apptainer(SingularityBase):
     def flag_handler(self, name, flags):
         # The package does not build with C dialects newer than gnu17, so set gnu17
         # for GCC 15 and newer which default to gnu23
-        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
-            flags.append("-std=gnu17")
-        # Certain go modules this build pulls in cannot be built with anything
-        # other than -O0. Best to just discard any injected flags.
+        if name == "cflags":
+            # injected -O flags break compilation of some go modules
+            # eg libseccomp-golang
+            flags = [f for f in flags if not f.startswith("-O")]
+            if self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
         return (flags, None, None)
 
     # They started vendoring the fuse bits and assume they'll be in the

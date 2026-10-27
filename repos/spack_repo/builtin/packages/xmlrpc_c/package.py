@@ -12,10 +12,11 @@ class XmlrpcC(AutotoolsPackage):
     C or C++."""
 
     homepage = "https://sourceforge.net/projects/xmlrpc-c/"
-    url = "https://sourceforge.net/projects/xmlrpc-c/files/Xmlrpc-c%20Super%20Stable/1.51.06/xmlrpc-c-1.51.06.tgz"
+    url = "https://sourceforge.net/projects/xmlrpc-c/files/Xmlrpc-c%20Super%20Stable/1.64.04/xmlrpc-c-1.64.04.tgz"
 
     license("BSD-3-Clause AND MIT", checked_by="tgamblin")
 
+    version("1.64.04", sha256="509c3a3bffb77c81e2c364175ac70b95b799e5b695cc37d4bf833ec28fdfe0b6")
     version("1.51.06", sha256="06dcd87d9c88374559369ffbe83b3139cf41418c1a2d03f20e08808085f89fd0")
 
     variant("curl", default=False, description="Build the XMLRPC curl client")

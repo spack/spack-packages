@@ -17,6 +17,7 @@ class Googletest(CMakePackage):
     maintainers("sethrj")
 
     version("main", branch="main")
+    version("1.18.0", sha256="6e3191c1455468b3fc35a417fb565c1c5071aee1b7e7f85e30cf48a98d37d8b5")
     version("1.17.0", sha256="65fab701d9829d38cb77c14acdc431d2108bfdbf8979e40eb8ae567edf10b27c")
     version("1.15.2", sha256="7b42b4d6ed48810c5362c265a17faebe90dc2373c885e5216439d37927f02926")
     version("1.15.0", sha256="7315acb6bf10e99f332c8a43f00d5fbb1ee6ca48c52f6b936991b216c586aaad")

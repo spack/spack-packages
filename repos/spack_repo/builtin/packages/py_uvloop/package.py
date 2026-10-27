@@ -25,6 +25,8 @@ class PyUvloop(PythonPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("python@3.8:", when="@0.19:", type=("build", "run"))
+    # uvloop 0.16.0 does not support Python 3.11
+    depends_on("python@:3.10", when="@:0.16", type=("build", "run"))
     depends_on("python@3.7:", when="@0.15:", type=("build", "run"))
     depends_on("python@3.5:", type=("build", "run"))
 

@@ -149,3 +149,9 @@ class Subversion(AutotoolsPackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"^svn, version\s+([\d\.]+)", output)
         return match.group(1) if match else None
+
+    def flag_handler(self, name, flags):
+        # expat 2.9.0 added '//' comments to expat.h; subversion's configure forces -std=c90
+        if name == "cflags" and self.spec.satisfies("%expat@2.9:"):
+            flags.append("-std=c99")
+        return (flags, None, None)

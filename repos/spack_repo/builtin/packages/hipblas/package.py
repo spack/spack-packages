@@ -78,8 +78,8 @@ class Hipblas(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
     conflicts("~cuda ~rocm", msg="CUDA or ROCm support is required")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("cmake@3.5:", type="build")
 
@@ -196,7 +196,7 @@ class Hipblas(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

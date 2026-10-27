@@ -227,9 +227,8 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
     conflicts("%clang", when="+internal-tbb")
     extends("python", when="+python")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
@@ -413,7 +412,10 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"rocm: v(\d+)\.(\d+)", output)
         if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+            major, minor = int(match.group(1)), int(match.group(2))
+            if (major, minor) == (7, 15):
+                return "10.0.0"
+            ver = "{0}.{1}".format(major, minor)
         else:
             ver = None
         return ver

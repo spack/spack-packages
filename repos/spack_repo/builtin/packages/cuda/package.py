@@ -23,6 +23,16 @@ from spack.package import *
 #    format returned by platform.system() and 'arch' by platform.machine()
 
 _versions = {
+    "13.4.2": {
+        "Linux-aarch64": (
+            "e67e8fb132232f63cd8ae43ab5c89bf90b8e47686b2e3e1e2c55435c43148542",
+            "https://developer.download.nvidia.com/compute/cuda/13.4.2/local_installers/cuda_13.4.2_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "528ab064b61c7620d1620c1f331f30712409f0bdf4b8ed775f872eef96688dbd",
+            "https://developer.download.nvidia.com/compute/cuda/13.4.2/local_installers/cuda_13.4.2_linux.run",
+        ),
+    },
     "13.4.1": {
         "Linux-aarch64": (
             "b5f51c726a1e02a0d97a6fd9be2e3e8a95e0d200a031f6ce108559735276c66b",

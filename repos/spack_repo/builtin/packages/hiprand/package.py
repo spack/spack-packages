@@ -82,8 +82,7 @@ class Hiprand(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("asan", default=False, description="Build with address-sanitizer enabled or disabled")
 
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.10.2:", type="build")
     depends_on("hip +cuda", when="+cuda")
@@ -148,7 +147,7 @@ class Hiprand(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def cmake_args(self):
