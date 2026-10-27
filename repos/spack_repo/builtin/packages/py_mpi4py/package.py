@@ -47,7 +47,7 @@ class PyMpi4py(PythonPackage):
 
     depends_on("py-setuptools@40.9:", type="build")
     depends_on("py-setuptools@42:", when="@4:", type="build")
-    # Master is now on setuptools@77:
+    depends_on("py-setuptools@77:", when="@master", type="build")
 
     depends_on("py-cython@3:", when="@4:", type="build")
     depends_on("py-cython@0.27:2", when="@:3.1.6", type="build")
