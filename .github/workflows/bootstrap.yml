@@ -3,34 +3,34 @@ name: Bootstrap
 on:
   # This Workflow can be triggered manually
   workflow_dispatch:
-  pull_request:
-    branches:
-      - develop
-      - releases/**
-    paths:
-      # CI
-      - '.ci/**'
-      - '.github/**'
-      # Build Systems
-      - 'repos/spack_repo/builtin/build_systems/**'
-      # Clingo
-      - 'repos/spack_repo/builtin/packages/clingo/**'
-      # GnuPG
-      - 'repos/spack_repo/builtin/packages/gnupg/**'
-      - 'repos/spack_repo/builtin/packages/libassuan/**'
-      - 'repos/spack_repo/builtin/packages/libgcrypt/**'
-      - 'repos/spack_repo/builtin/packages/libgpg-error/**'
-      - 'repos/spack_repo/builtin/packages/libksba/**'
-      - 'repos/spack_repo/builtin/packages/npth/**'
-      - 'repos/spack_repo/builtin/packages/pinentry/**'
-      # Dev dependencies
-      - 'repos/spack_repo/builtin/packages/python/**'
-      - 'repos/spack_repo/builtin/packages/python-venv/**'
-      - 'repos/spack_repo/builtin/packages/py-mypy/**'
-      - 'repos/spack_repo/builtin/packages/py-pytest/**'
-      - 'repos/spack_repo/builtin/packages/py-ruff/**'
-      - 'repos/spack_repo/builtin/packages/py-setuptools/**'
-      - 'repos/spack_repo/builtin/packages/py-wheel/**'
+  # pull_request:
+  #   branches:
+  #     - develop
+  #     - releases/**
+  #   paths:
+  #     # CI
+  #     - '.ci/**'
+  #     - '.github/**'
+  #     # Build Systems
+  #     - 'repos/spack_repo/builtin/build_systems/**'
+  #     # Clingo
+  #     - 'repos/spack_repo/builtin/packages/clingo/**'
+  #     # GnuPG
+  #     - 'repos/spack_repo/builtin/packages/gnupg/**'
+  #     - 'repos/spack_repo/builtin/packages/libassuan/**'
+  #     - 'repos/spack_repo/builtin/packages/libgcrypt/**'
+  #     - 'repos/spack_repo/builtin/packages/libgpg-error/**'
+  #     - 'repos/spack_repo/builtin/packages/libksba/**'
+  #     - 'repos/spack_repo/builtin/packages/npth/**'
+  #     - 'repos/spack_repo/builtin/packages/pinentry/**'
+  #     # Dev dependencies
+  #     - 'repos/spack_repo/builtin/packages/python/**'
+  #     - 'repos/spack_repo/builtin/packages/python-venv/**'
+  #     - 'repos/spack_repo/builtin/packages/py-mypy/**'
+  #     - 'repos/spack_repo/builtin/packages/py-pytest/**'
+  #     - 'repos/spack_repo/builtin/packages/py-ruff/**'
+  #     - 'repos/spack_repo/builtin/packages/py-setuptools/**'
+  #     - 'repos/spack_repo/builtin/packages/py-wheel/**'
 
   schedule:
     # nightly at 5:16 AM
