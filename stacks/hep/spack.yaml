@@ -168,7 +168,7 @@ spack:
   - recola
   - rivet
   - root ~cuda
-  - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
+  - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia +python ~recola ~rivet +root +ufo cxxstd=20
   - tauola +hepmc3 +lhapdf cxxstd=20
   - thepeg hepmc=3 ~rivet
   - vecgeom ~cuda
