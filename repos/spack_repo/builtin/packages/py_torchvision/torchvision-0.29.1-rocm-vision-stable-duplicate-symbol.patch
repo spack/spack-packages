@@ -1,0 +1,15 @@
+diff --git a/setup.py b/setup.py
+index 7bf83fc..a9c8e5d 100644
+--- a/setup.py
++++ b/setup.py
+@@ -209,6 +209,10 @@ def make_C_stable_extension():
+         + list(CSRS_DIR.glob("ops/quantized/cpu/*.cpp"))
+     )
+     mps_sources = list(CSRS_DIR.glob("ops/mps/*.mm"))
++
++    # Exclude vision_stable.cpp from main sources when building with ROCm to avoid duplicate symbols
++    if IS_ROCM:
++        sources = [s for s in sources if "vision_stable.cpp" not in str(s)]
+
+     if IS_ROCM:
+         cuda_sources = list(CSRS_DIR.glob("ops/hip/*.hip"))
