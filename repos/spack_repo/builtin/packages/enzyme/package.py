@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -25,6 +27,7 @@ class Enzyme(CMakePackage):
     root_cmakelists_dir = "enzyme"
 
     version("main", branch="main")
+    version("0.0.303", sha256="0ca3114d008e524cd3b13152bbc172794b20af643d1628161655373eba4554de")
     version("0.0.266", sha256="174fd65b7aabf6b964582a3785dd638a1ffbf17c195ebd99288e60e58e620236")
     version("0.0.206", sha256="600fd2db370fb40abb6411e0e80df524aea03f2c1ad50a2765ecaab9e1115c77")
     version("0.0.196", sha256="2b9cfcb7c34e56fc8191423042df06241cf32928eefbb113ac3c5199e3361cb2")
@@ -58,7 +61,14 @@ class Enzyme(CMakePackage):
     depends_on("cmake@3.13:", type="build")
 
     def cmake_args(self):
-        args = ["-DLLVM_DIR=" + self.llvm_prefix + "/lib/cmake/llvm"]
+        args = ["-DLLVM_DIR=" + self.llvm_cmakedir]
+        for lit in ["llvm-lit", "lit"]:
+            lit_path = f"{self.llvm_prefix}/bin/{lit}"
+            if os.access(lit_path, os.R_OK):
+                args += [f"-DLLVM_EXTERNAL_LIT={lit_path}"]
+        clang_dir = f"{self.llvm_cmakedir}/../clang"
+        if os.access(clang_dir, os.R_OK):
+            args += [f"-DClang_DIR={clang_dir}"]
         return args
 
     @property
@@ -74,6 +84,11 @@ class Enzyme(CMakePackage):
     def llvm_version(self):
         llvm_config = Executable(self.llvm_prefix + "/bin/llvm-config")
         return Version(llvm_config("--version", output=str))
+
+    @property
+    def llvm_cmakedir(self):
+        llvm_config = Executable(self.llvm_prefix + "/bin/llvm-config")
+        return llvm_config("--cmakedir", output=str).strip()
 
     @property
     def libs(self):
