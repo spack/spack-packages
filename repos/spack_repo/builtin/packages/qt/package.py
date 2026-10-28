@@ -253,7 +253,12 @@ class Qt(Package):
     depends_on("python", when="@5.7.0:", type="build")
 
     # Dependencies, then variant- and version-specific dependencies
-    depends_on("icu4c@:74")  # @75: requires cxxstd 17 which is not modelled here
+    depends_on("icu4c")
+    # icu4c@75: requires cxxstd 17 which is not modelled here; only relevant
+    # for older compilers, newer ones default to C++17 anyway
+    depends_on("icu4c@:74", when="%gcc@:10")
+    # mapbox-gl-native in qtlocation forces C++14
+    depends_on("icu4c@:74", when="@5.11: +location")
     depends_on("jpeg")
     depends_on("libtiff")
     depends_on("libxml2")
@@ -848,8 +853,7 @@ class Qt(Package):
             config_args.extend(["-skip", "wayland"])
 
         if "~location" in spec:
-            if version >= Version("5.15"):
-                config_args.extend(["-skip", "qtlocation"])
+            config_args.extend(["-skip", "qtlocation"])
 
         if IS_WINDOWS:
             config_args.extend(["-skip", "qtspeech"])
