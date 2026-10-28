@@ -17,6 +17,7 @@ class Exiv2(CMakePackage):
 
     license("GPL-2.0-or-later")
 
+    version("0.28.9", sha256="700b76b97695b2fab4ef8c79619c68ae57d09e0c130724791cafbd39e0eb4aef")
     version("0.27.6", sha256="f16ee5ff08b6994c66106109417857f13e711fca100ac43c6a403d4f02b59602")
     version("0.27.5", sha256="1da1721f84809e4d37b3f106adb18b70b1b0441c860746ce6812bb3df184ed6c")
     version("0.27.4", sha256="9fb2752c92f63c9853e0bef9768f21138eeac046280f40ded5f37d06a34880d9")
@@ -30,7 +31,10 @@ class Exiv2(CMakePackage):
             "0.27.2", sha256="3dbcaf01fbc5b98d42f091d1ff0d4b6cd9750dc724de3d9c0d113948570b2934"
         )
 
+    depends_on("c", type="build", when="@0.28.0:")
     depends_on("cxx", type="build")  # generated
 
     depends_on("zlib-api", type="link")
     depends_on("expat@2.2.6:", type="link")
+    depends_on("brotli", when="@0.28.0:")
+    depends_on("libinih", when="@0.28.0:")
