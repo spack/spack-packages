@@ -1009,12 +1009,16 @@ class Python(Package):
         ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
-        root = self.prefix.bin if sys.platform != "win32" else self.prefix
+        roots = [self.prefix.bin]
+        if sys.platform == "win32":
+            roots.append(self.prefix)
+            roots.append(self.prefix.Scripts)
 
         for filename in filenames:
-            path = os.path.join(root, filename)
-            if is_exe(path):
-                return Executable(path)
+            for root in roots:
+                path = os.path.join(root, filename)
+                if is_exe(path):
+                    return Executable(path)
 
         # Give a last try at rhel8 platform python
         platform_python = os.path.join(self.prefix, "libexec", "platform-python")
