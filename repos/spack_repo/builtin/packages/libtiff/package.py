@@ -41,7 +41,12 @@ class Libtiff(CMakePackage, AutotoolsPackage):
     license("libtiff")
 
     version("4.7.2", sha256="672bd7d10aee4606171afb864f3570b83340f6a33e2c186dc0512f7145ffdf6a")
-    version("4.7.1", sha256="f698d94f3103da8ca7438d84e0344e453fe0ba3b7486e04c5bf7a9a3fabe9b69")
+    # https://www.cvedetails.com/cve/CVE-2026-4775/
+    version(
+        "4.7.1",
+        sha256="f698d94f3103da8ca7438d84e0344e453fe0ba3b7486e04c5bf7a9a3fabe9b69",
+        deprecated=True,
+    )
     # https://www.cvedetails.com/cve/CVE-2025-61145/
     # https://www.cvedetails.com/cve/CVE-2025-61144/
     # https://www.cvedetails.com/cve/CVE-2025-61143/
