@@ -22,7 +22,7 @@ class Snap(MakefilePackage):
 
     license("Unlicense")
 
-    version("master")
+    version("main")
 
     variant("openmp", default=False, description="Build with OpenMP support")
     variant("opt", default=True, description="Build with debugging")
@@ -45,7 +45,12 @@ class Snap(MakefilePackage):
                 makefile.filter("MPI = yes", "MPI = no")
             if "~openmp" in spec:
                 makefile.filter("OPENMP = yes", "OPENMP = no")
-            makefile.filter("FFLAGS =.*", "FFLAGS =")
+
+            makefile.filter("OMPFLAG = -fopenmp", f"OMPFLAG = {self.compiler.openmp_flag}")
+            if self.spec.satisfies("%gcc@10:"):
+                makefile.filter("FFLAGS =.*", "FFLAGS = $(OMPFLAG) -fallow-argument-mismatch")
+            else:
+                makefile.filter("FFLAGS =.*", "FFLAGS = $(OMPFLAG)")
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
