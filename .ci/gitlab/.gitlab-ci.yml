@@ -12,9 +12,9 @@ variables:
   # SPACK_CI_DISABLE_STACKS:
   #   value: /^.*(cray).*$/
   #   expand: false
-  # SPACK_CI_ENABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
+  SPACK_CI_ENABLE_STACKS:
+    value: /^.*(developer-tools-aarch64).*$/
+    expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
@@ -193,7 +193,7 @@ default:
   variables:
     SPACK_CI_TARGET: "aarch64"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64"]
+  tags: ["spack", "public", "medium", "aarch64-test"]
 
 .generate-neoverse_v1:
   variables:
