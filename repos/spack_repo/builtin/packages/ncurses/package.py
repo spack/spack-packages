@@ -241,19 +241,16 @@ class Ncurses(AutotoolsPackage, GNUMirrorPackage):
     @property
     def libs(self):
         nowide, wide = self.query_parameter_options()
-        if not (nowide or wide):
-            # default (both)
-            nowide = True
-            wide = True
+        if not nowide and not wide:
+            wide = True  # default to wide if not specified
 
         libs = ["libncurses"]
-        if "+termlib" in self.spec:
+        if self.spec.satisfies("+termlib"):
             libs.append("libtinfo")
-        wlibs = [lib + "w" for lib in libs]
 
         libraries = []
         if nowide:
             libraries.extend(libs)
         if wide:
-            libraries.extend(wlibs)
+            libraries.extend([lib + "w" for lib in libs])
         return find_libraries(libraries, root=self.prefix, recursive=True)
