@@ -167,7 +167,11 @@ class CompilerPackage(PackageBase):
     verbose_flags: str = "-v"
     #: Flag to activate OpenMP support
     openmp_flag: str = "-fopenmp"
-
+    #: Format string for the compiler's file-prefix-remapping flag, taking
+    #: {0}=old prefix, {1}=new prefix, e.g. "-ffile-prefix-map={0}={1}".
+    #: None if the compiler has no equivalent capability.
+    file_prefix_map_arg: Optional[str] = None
+    
     implicit_rpath_libs: List[str] = []
 
     def standard_flag(self, *, language: str, standard: str) -> str:

@@ -720,6 +720,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             languages.append("fortran")
         return languages
 
+    @property
+    def file_prefix_map_arg(self):
+        if self.spec.satisfies("@10: +clang"):
+            return "-ffile-prefix-map={0}={1}"
+        return None
+
     @classproperty
     def executables(cls):
         return super().executables + [r"^ld\.lld(-\d+)?$", r"^lldb(-\d+)?$"]
@@ -943,6 +949,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
                     type="link",
                     description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
                 )
+
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+     ) -> None:
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
 
     root_cmakelists_dir = "llvm"
 
