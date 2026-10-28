@@ -31,7 +31,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
 
     version("4.0.3", sha256="325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9")
     version("3.6.5", sha256="a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98")
-    # spack bootstrap builds from prebuild dev tools (built on python@3.14.3 → openssl@3.6.1)
+    # spack bootstrap builds from prebuild dev tools (built on python@3.14.3 ^openssl@3.6.1)
     # version 3.6.1 can only be deprecated once the dev tools are rebuilt
     version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
     version("3.5.9", sha256="603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a")
