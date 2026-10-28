@@ -1,6 +1,8 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import sys
+
 from spack.package import (
     BuilderWithDefaults,
     PackageBase,
@@ -10,6 +12,7 @@ from spack.package import (
     depends_on,
     register_builder,
     run_after,
+    when,
     working_dir,
 )
 
@@ -31,8 +34,12 @@ class QMakePackage(PackageBase):
 
     build_system("qmake")
 
-    depends_on("qmake", type="build", when="build_system=qmake")
-    depends_on("gmake", type="build")
+    with when("build_system=qmake"):
+        depends_on("qmake", type="build")
+        # qmake generates an NMake makefile on Windows and a GNU one everywhere else
+        depends_on("nmake", type="build", when="platform=windows")
+        for _plat in ("linux", "darwin", "freebsd"):
+            depends_on("gmake", type="build", when=f"platform={_plat}")
 
 
 @register_builder("qmake")
@@ -72,15 +79,22 @@ class QMakeBuilder(BuilderWithDefaults):
         with working_dir(self.build_directory):
             pkg.module.qmake(*self.qmake_args())
 
+    def _make(self, pkg: QMakePackage, *args: str) -> None:
+        """Drive the makefile qmake generated with the platform's make implementation."""
+        if sys.platform == "win32":
+            pkg.module.nmake(*args)
+        else:
+            pkg.module.make(*args)
+
     def build(self, pkg: QMakePackage, spec: Spec, prefix: Prefix) -> None:
         """Make the build targets"""
         with working_dir(self.build_directory):
-            pkg.module.make()
+            self._make(pkg)
 
     def install(self, pkg: QMakePackage, spec: Spec, prefix: Prefix) -> None:
         """Make the install targets"""
         with working_dir(self.build_directory):
-            pkg.module.make("install")
+            self._make(pkg, "install")
 
     def check(self):
         """Search the Makefile for a ``check:`` target and runs it if found."""
