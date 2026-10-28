@@ -10,6 +10,9 @@ import sys
 # KUBERNETES_MEMORY_REQUEST: 5M
 NOOP_JOB = """
 noop:
+  id_tokens:
+    SITE_ID_TOKEN:
+      aud: https://gitlab.spack.io
   image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
   variables:
     CI_OIDC_REQUIRED: 0

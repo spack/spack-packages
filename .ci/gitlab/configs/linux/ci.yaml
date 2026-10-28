@@ -1,5 +1,27 @@
 ci:
   pipeline-gen:
+  - any-job-remove:
+      tags: ["spack"]
+  - any-job:
+      tags: ["litmus"]
+      variables:
+        CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
+        GIT_STRATEGY: "empty"
+  - copy-job:
+      variables:
+        SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c 1"
+  - cleanup-job:
+      variables:
+        SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c 1"
+  - noop-job:
+      variables:
+        SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c 1"
+  - reindex-job:
+      variables:
+        SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c 1"
+  - signing-job:
+      variables:
+        SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c 1"
   - build-job:
       before_script-:
       # Test package relocation on linux using a modified prefix

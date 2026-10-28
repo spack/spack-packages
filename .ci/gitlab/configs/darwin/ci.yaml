@@ -4,6 +4,10 @@ ci:
   - openmpi
   - py-mpi4py
   pipeline-gen:
+  - any-job:
+      variables:
+        CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
+        GIT_STRATEGY: "empty"
   - match_behavior: first
     submapping:
     - match:
