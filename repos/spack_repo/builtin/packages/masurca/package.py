@@ -1,11 +1,51 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# MaSuRCA 4.1.4 does not compile with modern compilers (confirmed: AOCC and
+# GCC 14 both fail here; the community reports the same with GCC 13, see
+# references below). The vendored source code (MUMmer/PacBio/SuperReads/
+# CA8, fairly old) is missing standard C++ includes (<cstdint>,
+# <algorithm>) in a number of files -- older GCC tolerated this via
+# transitive includes, modern compilers do not.
+#
+# Iteration history (kept as a comment so this isn't "simplified" back to
+# something already known to fail):
+# 1) Patching files one by one (the file list from issue 359) fixed the
+#    first error, but more affected files kept turning up that issue
+#    didn't cover (intervalList.H, overlapStoreBuild.C, likely others) --
+#    enumerating files by hand doesn't scale.
+# 2) Forcing <cstdint> and <algorithm> globally via CXXFLAGS (-include)
+#    covers all affected files at once. <cstdint> globally caused no side
+#    effects. <algorithm> globally caused one: "reference to 'prev' is
+#    ambiguous" in metagenomics_ovl_analyses.C, which declares a
+#    file-static "int prev;" that collides with std::prev once
+#    <algorithm>/<iterator> brings it into scope (via a transitive "using
+#    namespace std").
+# 3) Final fix: keep both includes global (covers all affected files,
+#    known or not), and rename that one file-static "prev" variable
+#    (internal linkage, safe to rename) to resolve the only known
+#    collision.
+#
+# References:
+#   https://github.com/alekseyzimin/masurca/issues/370 (exact same error
+#     reported independently with GCC 14)
+#   https://github.com/alekseyzimin/masurca/issues/359 ("[Resolved]",
+#     the community fix this was originally based on, file-by-file)
+#   https://github.com/alekseyzimin/masurca/issues/352 (same problem
+#     reported with GCC 13)
+
+import re
 
 from spack_repo.builtin.build_systems.generic import Package
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
+
+# File with the global "prev" variable that collides with std::prev once
+# <algorithm> is forced (see note above). Path verified against the real
+# tarball.
+_PREV_CONFLICT_FILE = "CA8/src/AS_ENV/metagenomics_ovl_analyses.C"
 
 
 class Masurca(Package):
@@ -46,9 +86,33 @@ class Masurca(Package):
                 m = join_path("global-1", makefile)
                 filter_file("-minline-all-stringops", "", m)
 
+        # Rename the "prev" variable in this one file (see note above) so
+        # it doesn't collide with std::prev once <algorithm> is forced
+        # globally. \b...\b word boundaries so "prevp"/"prevd" (distinct
+        # variables that also exist in this file) are left untouched.
+        f = join_path("global-1", _PREV_CONFLICT_FILE)
+        with open(f, "r+", encoding="utf-8") as fh:
+            content = fh.read()
+            new_content = re.sub(r"\bprev\b", "prev_masurca_local", content)
+            if new_content != content:
+                fh.seek(0)
+                fh.write(new_content)
+                fh.truncate()
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@4:"):
             env.set("DEST", self.prefix)
+
+        # <cstdint> and <algorithm> globally -- see note above the class
+        # for why (upstream source is missing these includes in several
+        # files, enumerating them individually doesn't scale). "-include
+        # <header>" is a standard flag (gcc, clang/AOCC), injects it into
+        # every compiled file without touching the source tree directly.
+        # <algorithm> is C++-only, so it does not go in CFLAGS (would
+        # break real .c file compilation).
+        env.append_flags("CFLAGS", "-include stdint.h")
+        env.append_flags("CXXFLAGS", "-include cstdint")
+        env.append_flags("CXXFLAGS", "-include algorithm")
 
     def install(self, spec, prefix):
         installer = Executable("./install.sh")
