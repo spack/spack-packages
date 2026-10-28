@@ -17,6 +17,7 @@ class Busybox(MakefilePackage):
 
     license("GPL-2.0-only")
 
+    version("1.38.0", sha256="34f9ea6ff8636f2c9241153b9114eefa9e65674a45318ae1ef95bb5f31c53bb2")
     version("1.37.0", sha256="3311dff32e746499f4df0d5df04d7eb396382d7e108bb9250e7b519b837043a4")
 
     # CVE-2022-48174
@@ -45,8 +46,9 @@ class Busybox(MakefilePackage):
 
     def build(self, spec, prefix):
         make("defconfig")
+        # tc does not build with the headers of Linux 6.8 and later, which removed CBQ
+        filter_file(r"^CONFIG_TC=y$", "# CONFIG_TC is not set", ".config")
         make(f"CC={spack_cc}")
 
     def install(self, spec, prefix):
-        make("install", f"CC={spack_cc}")
-        install_tree(".", prefix)
+        make("install", f"CC={spack_cc}", f"CONFIG_PREFIX={prefix}")
