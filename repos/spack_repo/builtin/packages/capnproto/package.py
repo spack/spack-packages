@@ -59,6 +59,13 @@ class Capnproto(AutotoolsPackage):
 
     configure_directory = "c++"
 
+    def flag_handler(self, name, flags):
+        # Releases before 1.0 do not compile as C++20 (ambiguous comparison operators
+        # in capnp/blob.h), which is the default standard since GCC 16.
+        if name == "cxxflags" and self.spec.satisfies("@:0"):
+            flags.append(self["cxx"].standard_flag(language="cxx", standard="14"))
+        return (flags, None, None)
+
     def configure_args(self):
         args = []
 
