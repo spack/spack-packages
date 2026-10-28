@@ -69,35 +69,35 @@ class Must(CMakePackage):
 
         # check to see if the testing variant is enabled
         if spec.satisfies("+test"):
-            cmake_args.extend(["-DENABLE TESTS=On"])
+            cmake_args.extend(["-DENABLE_TESTS=On"])
 
         # check to see if the TypeArt variant is enabled
         if spec.satisfies("+typeart"):
-            cmake_args.extend(["-DENABLE TYPEART=On"])
+            cmake_args.extend(["-DENABLE_TYPEART=On"])
 
         # check to see if the Thread Sanitizer variant is enabled
         if spec.satisfies("+tsan"):
-            cmake_args.extend(["-DENABLE TSAN=On"])
+            cmake_args.extend(["-DENABLE_TSAN=On"])
         else:
             # if the Thread Sanitizer variant is disabled
             # send corresponding cmake argument to the cmake command
             if spec.satisfies("~tsan"):
-                cmake_args.extend(["-DENABLE TSAN=Off"])
+                cmake_args.extend(["-DENABLE_TSAN=Off"])
 
         # Since MUST version 1.8, MUST is configured with
         # backward-cpp support enabled by default. To install
         # MUST without backward-cpp support, the CMake variable
-        # -DUSE BACKWARD=Off must be explicitly set during the
+        # -DUSE_BACKWARD=Off must be explicitly set during the
         # configuration of MUST
         if spec.satisfies("~backward"):
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
+            cmake_args.extend(["-DUSE_BACKWARD=Off"])
 
         if spec.satisfies("+stackwalker"):
-            cmake_args.extend(["-DUSE CALLPATH=On"])
-            cmake_args.extend(["-DSTACKWALKER INSTALL PREFIX=%s" % spec["dyninst"].prefix])
-            cmake_args.extend(["-DUSE BACKWARD=Off"])
+            cmake_args.extend(["-DUSE_CALLPATH=On"])
+            cmake_args.extend(["-DSTACKWALKER_INSTALL_PREFIX=%s" % spec["dyninst"].prefix])
+            cmake_args.extend(["-DUSE_BACKWARD=Off"])
         else:
             if spec.satisfies("+backward"):
-                cmake_args.extend(["-DUSE BACKWARD=On"])
+                cmake_args.extend(["-DUSE_BACKWARD=On"])
 
         return cmake_args
