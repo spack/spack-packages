@@ -94,6 +94,9 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch("hipcc.patch", when="+rocm @2025.01.001:2025.06.001")
     # Suppress debug output to stderr for non-debug builds
     patch("elpa-2026.02.001-wantDebug.patch", when="@2026.02.001:")
+    # Width-1 tail block: heap corruption (1 rank) and cross-solve deadlock (2 ranks)
+    # for na == 1 mod bandwidth, from ELPA branch bugfix_elpa2_65_65_64 (cp2k/cp2k#4484)
+    patch("elpa-2026.02.002-nx1-tail-block.patch", when="@2026.02.002")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
