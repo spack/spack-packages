@@ -533,7 +533,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     patch(
         "https://github.com/open-mpi/ompi/commit/b878c7d974dae767246ad20ef9124a331d0f59a4.patch?full_index=1",
         sha256="1dcebafdb310203f3b62456a5ba67e1a21ad3a88aaf40326734885d7b0d776f9",
-        when="@5.0.0:5.0.10 +openshmem",
+        when="@4.1.5:4.1.8,5.0.0:5.0.10",
     )
 
     FABRICS = (
