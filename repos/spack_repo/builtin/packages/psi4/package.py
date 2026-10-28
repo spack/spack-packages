@@ -71,25 +71,37 @@ class Psi4(CMakePackage):
         spec = self.spec
         prefix = spec.prefix
 
-        kwargs = {"ignore_absent": True, "backup": False, "string": True}
-
         cc_files = ["bin/psi4-config"]
         cxx_files = ["bin/psi4-config", "include/psi4/psiconfig.h"]
         template = "share/psi4/plugin/Makefile.template"
 
         for filename in cc_files:
             filter_file(
-                os.environ["CC"], self.compiler.cc, os.path.join(prefix, filename), **kwargs
+                os.environ["CC"],
+                self.compiler.cc,
+                os.path.join(prefix, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         for filename in cxx_files:
             filter_file(
-                os.environ["CXX"], self.compiler.cxx, os.path.join(prefix, filename), **kwargs
+                os.environ["CXX"],
+                self.compiler.cxx,
+                os.path.join(prefix, filename),
+                ignore_absent=True,
+                string=True,
             )
 
         # The binary still keeps track of the compiler used to install Psi4
         # and uses it when creating a plugin template
-        filter_file("@PLUGIN_CXX@", self.compiler.cxx, os.path.join(prefix, template), **kwargs)
+        filter_file(
+            "@PLUGIN_CXX@",
+            self.compiler.cxx,
+            os.path.join(prefix, template),
+            ignore_absent=True,
+            string=True,
+        )
 
         # The binary links to the build include directory instead of the
         # installation include directory:
@@ -109,5 +121,6 @@ class Psi4(CMakePackage):
                 )
             ),
             os.path.join(prefix, template),
-            **kwargs,
+            ignore_absent=True,
+            string=True,
         )

@@ -82,8 +82,7 @@ class Vcftools(AutotoolsPackage):
                 "vcf-tstv",
                 "vcf-validator",
             ]
-            kwargs = {"ignore_absent": True, "backup": False, "string": False}
-            filter_file(match, substitute, *files, **kwargs)
+            filter_file(match, substitute, *files, ignore_absent=True)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@0.1.16:"):
