@@ -56,7 +56,6 @@ class PySphinxcontribBibtex(PythonPackage):
         depends_on("py-docutils@0.8:", when="@2.1.0:2.6")
         depends_on("py-docutils@0.20:", when="@2.7.0:")
 
-
     conflicts("^py-docutils@0.18:0.19", when="@2.6.5")
 
     def url_for_version(self, version):
