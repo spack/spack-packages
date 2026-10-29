@@ -37,4 +37,4 @@ ci:
           KUBERNETES_CPU_REQUEST: 4000m
           KUBERNETES_MEMORY_REQUEST: 8G
   - build-job:
-      tags: [ "x86_64-win", "medium" ]
+      tags: [ "x86_64-win-uo-frank", "medium" ]
