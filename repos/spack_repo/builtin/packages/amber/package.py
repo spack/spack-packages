@@ -218,7 +218,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("mpi", when="+mpi")
 
     # Amber 18 / 20
-    depends_on("parallel-netcdf", when="@20")  # when='AmberTools@21:'
+    depends_on("parallel-netcdf", when="@20:")  # when='AmberTools@21:'
     depends_on("tcsh", type=("build"), when="@20")  # when='AmberTools@21:'
     # Cuda dependencies
     # /AmberTools/src/configure2:1329
