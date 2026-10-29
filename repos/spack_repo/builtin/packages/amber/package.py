@@ -326,7 +326,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         if spec.satisfies("+mkl"):
             external.append("mkl")
-            args.append(self.define("MKL_MULTI_THREADED", False))
+            args.append(self.define("MKL_MULTI_THREADED", True))
             args.append(self.define("PMEMD_XRAY_CPU_FFT_BACKEND", "MKL"))
         else:
             external += ["blas", "lapack"]
