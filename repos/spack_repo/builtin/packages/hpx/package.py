@@ -27,6 +27,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("stable", tag="stable", commit="103a7b8e3719a0db948d1abde29de0ff91e070be")
+    version("2.0.0", tag="v2.0.0", commit="c8a2b59c1100ac975222927b2a85192f406e1ba2")
     version("1.11.0", sha256="01ec47228a2253b41e318bb09c83325a75021eb6ef3262400fbda30ac7389279")
     version("1.10.0", sha256="5720ed7d2460fa0b57bd8cb74fa4f70593fe8675463897678160340526ec3c19")
     version("1.9.1", sha256="1adae9d408388a723277290ddb33c699aa9ea72defadf3f12d4acc913a0ff22d")
@@ -51,7 +52,14 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "cxxstd",
         default="17",
-        values=cxxstds,
+        values=(
+            conditional("11", when="@:1"),
+            conditional("14", when="@:1"),
+            conditional("17", when="@:1"),
+            "20",
+            "23",
+            conditional("26", when="@2:"),
+        ),
         description="Use the specified C++ standard when building.",
     )
 
@@ -91,6 +99,12 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
         description="Use Boost.Context as the underlying coroutines"
         " context switch implementation.",
     )
+    variant(
+        "thrust",
+        default=True,
+        description="Enable support for NVIDIA Thrust integration",
+        when="@2: +cuda",
+    )
 
     variant("tools", default=False, description="Build HPX tools")
     variant("examples", default=False, description="Build examples")
@@ -107,6 +121,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Other dependecies
     depends_on("hwloc")
+    depends_on("stdexec", when="@2:")
     depends_on(Boost.with_default_variants)
     depends_on("boost +context", when="+generic_coroutines")
     for cxxstd in cxxstds:
@@ -130,6 +145,11 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Only ROCm or CUDA maybe be enabled at once
     conflicts("+rocm", when="+cuda")
+
+    # Restrictions for 2.X
+    with when("@2:"):
+        conflicts("%gcc@:11")
+        conflicts("%clang@:15")
 
     # Restrictions for 1.9.X
     with when("@1.9:"):
@@ -259,6 +279,8 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
             self.define("BUILD_SHARED_LIBS", True),
             self.define("HPX_DATASTRUCTURES_WITH_ADAPT_STD_TUPLE", False),
             self.define("HPX_WITH_PKGCONFIG", False),
+            self.define("HPX_WITH_CXX_MODULES", False),  # TODO
+            self.define_from_variant("HPX_WITH_THRUST", "thrust"),
         ]
 
         # Enable unity builds when available
