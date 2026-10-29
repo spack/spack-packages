@@ -274,6 +274,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         spec = self.pkg.spec
         if spec.satisfies("+nccl"):
             # FindNCCL.cmake looks in $NCCL_HOME/{include,lib}
+            env.set("NCCL", True)
             env.set("NCCL_HOME", spec["nccl"].prefix)
         if spec.satisfies("+mkl"):
             # FindMKL.cmake picks the MKL root up from the environment
