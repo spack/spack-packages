@@ -178,12 +178,11 @@ class Amber(CMakePackage, Package, CudaPackage):
 
     variant("mpi", description="Build MPI executables", default=True)
     variant("openmp", description="Use OpenMP pragmas to parallelize", default=False)
-    variant("x11", description="Build programs that require X11", default=False, when="@:20")
+    variant("x11", description="Build programs that require X11", default=False)
     variant(
         "update",
         description="Update the sources prior compilation",
         default=False,
-        when="@:20",
     )
     variant(
         "nccl",
