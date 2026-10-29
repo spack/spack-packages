@@ -52,6 +52,7 @@ class PyTornado(PythonPackage):
         version("4.4", sha256="3176545b6cb2966870db4def4f646da6ab7a0c19400576969c57279a7561ab02")
 
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.11:", when="@6.6:")
         depends_on("python@3.9:", when="@6.5:")
         depends_on("python@3.8:", when="@6.3:")
 
