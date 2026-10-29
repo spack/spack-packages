@@ -185,6 +185,24 @@ class Amber(CMakePackage, Package, CudaPackage):
         default=False,
     )
     variant(
+        "pmemd_only",
+        default=False,
+        when="@26:",
+        description="Only build the pmemd engines, skipping the rest of AmberTools",
+    )
+    variant(
+        "python",
+        default=False,
+        when="@26:",
+        description="Build the Amber Python components (uses Spack's Python)",
+    )
+    variant(
+        "perl",
+        default=False,
+        when="@26:",
+        description="Build the Amber Perl components",
+    )
+    variant(
         "nccl",
         default=False,
         when="@26: +cuda",
@@ -244,6 +262,19 @@ class Amber(CMakePackage, Package, CudaPackage):
     # PLUMED >= 2.5 is required for build-time linking.
     depends_on("plumed@2.5:", when="+plumed")
 
+    # xleap (BUILD_GUI) needs m4 and the X development libraries
+    # (see cmake/GUIConfig.cmake)
+    depends_on("m4", type="build", when="@26: +x11")
+    depends_on("libx11", when="@26: +x11")
+    depends_on("libxt", when="@26: +x11")
+    depends_on("perl", type=("build", "run"), when="@26: +perl")
+    depends_on("python@3:", type=("build", "run"), when="@26: +python")
+    depends_on("py-numpy", type=("build", "run"), when="@26: +python")
+    depends_on("py-scipy", type=("build", "run"), when="@26: +python")
+    depends_on("py-matplotlib", type=("build", "run"), when="@26: +python")
+    depends_on("py-cython", type="build", when="@26: +python")
+    depends_on("py-setuptools", type="build", when="@26: +python")
+
     conflicts(
         "+x11",
         when="@:20 platform=cray",
@@ -275,7 +306,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         spec = self.pkg.spec
         if spec.satisfies("+nccl"):
             # FindNCCL.cmake looks in $NCCL_HOME/{include,lib}
-            env.set("NCCL", True)
+            # -DNCCL=TRUE itself is passed in cmake_args.
             env.set("NCCL_HOME", spec["nccl"].prefix)
         if spec.satisfies("+mkl"):
             # FindMKL.cmake picks the MKL root up from the environment
@@ -304,14 +335,16 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             "-Wno-dev",
             self.define("COMPILER", self._compiler_id()),
-            self.define("PMEMD_ONLY", True),
-            self.define("BUILD_PYTHON", False),
-            self.define("BUILD_PERL", False),
-            self.define("BUILD_GUI", False),
+            self.define_from_variant("PMEMD_ONLY", "pmemd_only"),
+            self.define_from_variant("BUILD_PYTHON", "python"),
+            self.define_from_variant("BUILD_PERL", "perl"),
+            # Always passed explicitly: Amber's default can be TRUE, in which case
+            # configure fails when m4/X11 are missing (cmake/GUIConfig.cmake)
+            self.define_from_variant("BUILD_GUI", "x11"),
             self.define("DOWNLOAD_MINICONDA", False),
-            self.define("CHECK_UPDATES", False),
+            self.define_from_variant("CHECK_UPDATES", "update"),
+            self.define_from_variant("APPLY_UPDATES", "update"),
             self.define("INSTALL_TESTS", False),
-            self.define("PGM", False),
             self.define("USE_FFT", True),
             self.define_from_variant("MPI", "mpi"),
             self.define_from_variant("OPENMP", "openmp"),
