@@ -25,7 +25,7 @@ class Amber(CMakePackage, Package, CudaPackage):
 
     * ``Amber18.tar.bz2`` (+ ``AmberTools19.tar.bz2``)
     * ``Amber20.tar.bz2`` (+ ``AmberTools21.tar.bz2``)
-    * ``pmemd26_tar.bz2``
+    * ``pmemd26.tar.bz2``
 
     Note: Only certain versions of ambertools are compatible with amber.
     Only the latter version of ambertools for each amber version is supported."""
