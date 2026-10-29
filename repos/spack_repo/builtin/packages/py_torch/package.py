@@ -32,6 +32,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.15.0", tag="v2.15.0", commit="31a77fc9c0a7c6fff15a1ff58c743f53b1a9d457")
     version("2.14.1", tag="v2.14.1", commit="5c4886908584029761b579af026dcfb627c84070")
     version("2.14.0", tag="v2.14.0", commit="2b3ec34829036a65cd9d1398ea72a0167dc37470")
     version("2.13.0", tag="v2.13.0", commit="cf30153c4c131c8164ee7798e5022d810682e2cb")
@@ -131,8 +132,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.15", when="@2.13:")
-        depends_on("python@3.10:3.14", when="@:2.12")
+        depends_on("python@3.11:3.15", when="@2.15:")
+        depends_on("python@3.10:3.14", when="@:2.14")
 
     # pyproject.toml
     with default_args(type="build"):
@@ -141,6 +142,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-packaging")
         depends_on("py-pyyaml")
         depends_on("py-scikit-build-core@1:", when="@2.14:")
+        depends_on("py-typing-extensions@4.13:", when="@2.15:")
         depends_on("py-typing-extensions@4.10:")
         depends_on("py-six")
 
@@ -154,6 +156,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # METADATA Requires-Dist in wheel files
     with default_args(type="run"):
         depends_on("py-filelock")
+        depends_on("py-typing-extensions@4.13:", when="@2.15:")
         depends_on("py-typing-extensions@4.10:")
         depends_on("py-setuptools@77.0.3:", when="@2.13:")
         depends_on("py-setuptools@:81", when="@:2.12")
@@ -169,7 +172,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # third_party
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
-    depends_on("nvtx@3.5.0", when="@2.14:")
+    depends_on("nvtx@3.6.0", when="@2.15:")
+    depends_on("nvtx@3.5.0", when="@2.14")
     depends_on("nvtx@3.3.0", when="@:2.13")
     # https://github.com/pytorch/pytorch/issues/60332
     # depends_on("xnnpack@2024-12-03", when="+xnnpack")
@@ -217,9 +221,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("+nccl+cuda"):
         depends_on("nccl@2.23:", when="@2.13:")
         depends_on("nccl@2.7:")
+    depends_on("magma+cuda", when="+magma+cuda")
+    depends_on("magma+rocm", when="+magma+rocm")
     # https://github.com/pytorch/pytorch/pull/178065
-    depends_on("magma@:2.9+cuda", when="+magma+cuda")
-    depends_on("magma@:2.9+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/180388
+    depends_on("magma@:2.9+cuda", when="@:2.12+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="@:2.12+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
