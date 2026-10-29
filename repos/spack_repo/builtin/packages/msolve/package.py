@@ -22,6 +22,7 @@ class Msolve(AutotoolsPackage):
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("0.11.0", sha256="0f4e8276cacc26eb6abef47982dcb39a6d98d17c5a20b34488d6fd8676d4822d")
     version("0.10.1", sha256="ce0743cc33d1dc8484193268d9220e8624ed015e521903b9228b3b38a5981291")
     version("0.10.0", sha256="213caf0d0e19447d0adbc3bc946c03ba5054da79495c207b9cd8577fddf86a4c")
     version("0.9.5", sha256="92b94775cd5a046de307e2ad0fc576d2631e43fbd0eb7749517a033d7e77ddf4")

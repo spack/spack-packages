@@ -89,6 +89,14 @@ class Ucc(AutotoolsPackage, CudaPackage, ROCmPackage):
             args.extend(["CPPFLAGS=" + cppflags, "LDFLAGS=" + ldflags])
             args.append("--with-rocm=" + self.spec["hip"].prefix)
             args.append("--with-ucx=" + self.spec["ucx"].prefix)
+            # Forward amdgpu_target as explicit --offload-arch flags. Without
+            # this UCC defaults to --with-rocm-arch=all, which appends
+            # --offload-arch=native (requires a GPU on the build host and
+            # omits some archs).
+            amdgpu_targets = self.spec.variants["amdgpu_target"].value
+            if amdgpu_targets != ("none",):
+                offload = " ".join("--offload-arch=" + t for t in amdgpu_targets)
+                args.append("--with-rocm-arch=" + offload)
             args.extend(self.with_or_without("rccl", activation_value="prefix"))
         else:
             args.append("--without-rocm")

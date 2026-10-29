@@ -20,6 +20,7 @@ class AsciinemaAgg(CargoPackage):
     git = "https://github.com/asciinema/agg.git"
 
     license("GPL-3.0-or-later")
+    maintainers("CISSSCO")
 
     version("1.9.0", sha256="8170119502ad2c1c697e5cd4d050d87c425ecee726c5f6c3c2140703bcb31bb3")
     version("1.8.1", sha256="9a2a7e6ca2748befb6a4c1c3eff437ae6029fde99ec882a951b3671aa30eacdb")

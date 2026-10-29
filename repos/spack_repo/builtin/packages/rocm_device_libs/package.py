@@ -52,11 +52,11 @@ class RocmDeviceLibs(ROCmLibrary, CMakePackage):
     version("5.7.1", sha256="703de8403c0bd0d80f37c970a698f10f148daf144d34f982e4484d04f7c7bbef")
     version("5.7.0", sha256="0f8780b9098573f1c456bdc84358de924dcf00604330770a383983e1775bf61e")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3.13.4:", type="build")
+    depends_on("cmake@:3", type="build", when="@:7.1")
 
     depends_on("zlib-api", type="link")
     depends_on("texinfo", type="link")

@@ -8,6 +8,10 @@ concurrency:
   group: unit_tests-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
+
 jobs:
   # Run unit tests with different configurations on linux
   ubuntu:
@@ -15,24 +19,31 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         on_develop:
         - ${{ github.ref == 'refs/heads/develop' }}
         include:
         - python-version: '3.7'
           os: ubuntu-22.04
           on_develop: ${{ github.ref == 'refs/heads/develop' }}
-        exclude:
+        # actions/setup-python has no Python 3.8/3.9 builds for Ubuntu 26.04 (ubuntu-latest)
         - python-version: '3.8'
-          os: ubuntu-latest
-          on_develop: false
+          os: ubuntu-24.04
+          on_develop: ${{ github.ref == 'refs/heads/develop' }}
         - python-version: '3.9'
-          os: ubuntu-latest
-          on_develop: false
+          os: ubuntu-24.04
+          on_develop: ${{ github.ref == 'refs/heads/develop' }}
+        exclude:
         - python-version: '3.10'
           os: ubuntu-latest
           on_develop: false
         - python-version: '3.11'
+          os: ubuntu-latest
+          on_develop: false
+        - python-version: '3.12'
+          os: ubuntu-latest
+          on_develop: false
+        - python-version: '3.13'
           os: ubuntu-latest
           on_develop: false
 

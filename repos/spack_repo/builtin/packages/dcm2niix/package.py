@@ -17,6 +17,9 @@ class Dcm2niix(CMakePackage):
     license("BSD-3-Clause AND MIT", checked_by="Markus92")
 
     version(
+        "1.0.20260724", sha256="be6478b15aaf1e0c396df242e272a6a695966dc916672f519844ad1682b59e59"
+    )
+    version(
         "1.0.20250506", sha256="1b24658678b6c24141e58760dbea9fe2786ffdd736bcc37a36d9cdabc731bafa"
     )
     version(
@@ -34,13 +37,17 @@ class Dcm2niix(CMakePackage):
     # In practice, the app is what we want anyways
     root_cmakelists_dir = "console"
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-
     variant("jp2k", default=False, description="Enable JPEG2000 support")
     variant("jpegls", default=False, description="Enable JPEG-LS support")
 
-    depends_on("pkgconfig", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
+        depends_on("cmake@3.5:", when="@20241208:")
+        depends_on("cmake@2.8.12:", when="@20220720:")
+
+        depends_on("pkgconfig")
 
     depends_on("openjpeg", when="+jp2k")
     depends_on("zlib-api")

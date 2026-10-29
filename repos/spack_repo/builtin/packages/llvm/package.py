@@ -55,6 +55,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("23.1.4", sha256="3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db")
+    version("23.1.3", sha256="791b560dee8f65fdf7b19ad5db0b4ac627467824d8b687957d8a437b806103f0")
     version("23.1.2", sha256="75788d759e6987a910975b902f554dc77c08b076b945b2cebde54116d8e831ca")
     version("23.1.1", sha256="851b3d701a4fbdd9f69536d4acda578469e810ca7056687d6556443f5fd39557")
     version("23.1.0", sha256="d8657b2a7291e518407bf13c4b41c85ef2cded2d4354097a2f451644dfc817b0")
@@ -931,8 +933,8 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
-        if spec.satisfies("%gcc"):
-            gcc = spec["gcc"]
+        # Very old spec files do not have a gcc dependency node
+        for gcc in spec.dependencies("gcc", deptype="build"):
             for language in ("c", "cxx", "fortran"):
                 pkg("*").depends_on(
                     f"gcc-runtime@{gcc.version}:",
