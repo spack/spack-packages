@@ -44,14 +44,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     # binaries built from them.
     redistribute(source=False, binary=False)
 
-    # Amber26: PMEMD-only source distribution. The archive is named
-    # ``pmemd26_tar.bz2``; Spack would otherwise treat it as a bare bzip2 file
-    # instead of a tarball, so spell out the extension.
-    version(
-        "26",
-        sha256="0478ccce892f3525e995e9c85458d552c6060b73dd28acd03c366e61ecf23a14",
-        extension="tar.bz2",
-    )
+    version("26", sha256="0478ccce892f3525e995e9c85458d552c6060b73dd28acd03c366e61ecf23a14")
     version("20", sha256="a4c53639441c8cc85adee397933d07856cc4a723c82c6bea585cd76c197ead75")
     version("18", sha256="2060897c0b11576082d523fb63a51ba701bc7519ff7be3d299d5ec56e8e6e277")
 
