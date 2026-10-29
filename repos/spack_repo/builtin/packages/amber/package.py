@@ -227,6 +227,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("gmake", type="build", when="@:20")
 
     # Amber 26+
+    depends_on("fftw-api@3", when="@26:")
     depends_on("cmake@3.8.1:", type="build", when="@26:")
     depends_on("netcdf-c", when="@26:")
     # MKL replaces BLAS/LAPACK when enabled.
@@ -311,7 +312,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define("CHECK_UPDATES", False),
             self.define("INSTALL_TESTS", False),
             self.define("PGM", False),
-            self.define("USE_FFT", False),
+            self.define("USE_FFT", True),
             self.define_from_variant("MPI", "mpi"),
             self.define_from_variant("OPENMP", "openmp"),
             self.define("PMEMD_OMP_MPI", spec.satisfies("+mpi+openmp")),
