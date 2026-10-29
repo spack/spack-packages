@@ -12,6 +12,7 @@ class PySphinxcontribBibtex(PythonPackage):
 
     pypi = "sphinxcontrib-bibtex/sphinxcontrib-bibtex-0.3.5.tar.gz"
 
+    version("2.7.0", sha256="fee700f7aae29bb8f654c62913f00d34ac44fc0b8ca0fa67ac922ff4453addee")
     version("2.6.5", sha256="9b3224dd6fece9268ebd8c905dc0a83ff2f6c54148a9235fe70e9d1e9ff149c0")
     version("2.5.0", sha256="71b42e5db0e2e284f243875326bf9936aa9a763282277d75048826fef5b00eaa")
     version("2.4.2", sha256="65b023ee47f35f1f03ac4d71c824e67c624c7ecac1bb26e83623271a01f9da86")
@@ -22,25 +23,38 @@ class PySphinxcontribBibtex(PythonPackage):
     version("1.0.0", sha256="629612b001f86784669d65e662377a482052decfd9a0a17c46860878eef7b9e0")
     version("0.3.5", sha256="c93e2b4a0d14f0ab726f95f0a33c1675965e9df3ed04839635577b8f978206cd")
 
-    depends_on("python@3.5:", type=("build", "run"), when="@1:")
-    depends_on("python@3.6:", type=("build", "run"), when="@2:")
     depends_on("py-setuptools", type="build")
-    depends_on("py-latexcodec@0.3.0:", type=("build", "run"), when="@:0.3.6")
-    depends_on("py-pybtex@0.17:", type=("build", "run"), when="@:1")
-    depends_on("py-pybtex@0.20:", type=("build", "run"), when="@2:2.3")
-    depends_on("py-pybtex@0.24:", type=("build", "run"), when="@2.4:")
-    depends_on("py-pybtex@0.25:", type=("build", "run"), when="@2.6.5:")
-    depends_on("py-pybtex-docutils@0.2.0:", type=("build", "run"), when="@:1")
-    depends_on("py-pybtex-docutils@0.2.2:", type=("build", "run"), when="@2:")
-    depends_on("py-pybtex-docutils@1.0.0:", type=("build", "run"), when="@2.2:")
-    depends_on("py-six@1.4.1:", type=("build", "run"), when="@0.3.5")
-    depends_on("py-sphinx@1.0:", type=("build", "run"), when="@:1")
-    depends_on("py-sphinx@2.0:", type=("build", "run"), when="@2.0.0:")
-    depends_on("py-sphinx@2.1:", type=("build", "run"), when="@2.1.3:")
-    depends_on("py-sphinx@3.5:", type=("build", "run"), when="@2.6.5:")
-    depends_on("py-oset@0.1.3:", type=("build", "run"), when="@:2.0.0")
-    depends_on("py-docutils@0.8:", type=("build", "run"), when="@2.1.0:")
-    depends_on("py-importlib-metadata@3.6:", when="@2.5.0: ^python@:3.9", type=("build", "run"))
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.5:", when="@1")
+        depends_on("python@3.6:", when="@2:2.6")
+        depends_on("python@3.10:", when="@2.7.0:")
+
+        depends_on("py-importlib-metadata@3.6:", when="@2.5.0:2.6 ^python@:3.9")
+
+        depends_on("py-six@1.4.1:", when="@0.3.5")
+        depends_on("py-latexcodec@0.3.0:", when="@0.3.5")
+
+        depends_on("py-pybtex@0.17:", when="@:1")
+        depends_on("py-pybtex@0.20:", when="@2:2.3")
+        depends_on("py-pybtex@0.24:", when="@2.4:2.5")
+        depends_on("py-pybtex@0.25:", when="@2.6.5:")
+
+        depends_on("py-pybtex-docutils@0.2.0:", when="@:1")
+        depends_on("py-pybtex-docutils@0.2.2:", when="@2:")
+        depends_on("py-pybtex-docutils@1.0.0:", when="@2.2:2.6")
+        depends_on("py-pybtex-docutils@1.0.2:", when="@2.7.0:")
+
+        depends_on("py-sphinx@1.0:", when="@:1")
+        depends_on("py-sphinx@2.0:", when="@2.0.0:2.0")
+        depends_on("py-sphinx@2.1:", when="@2.1.3:2.5")
+        depends_on("py-sphinx@3.5:", when="@2.6.5:2.6")
+        depends_on("py-sphinx@7.5:", when="@2.7.0:")
+
+        depends_on("py-oset@0.1.3:", when="@:2.0.0")
+
+        depends_on("py-docutils@0.8:", when="@2.1.0:2.6")
+        depends_on("py-docutils@0.20:", when="@2.7.0:")
 
     conflicts("^py-docutils@0.18:0.19", when="@2.6.5")
 
