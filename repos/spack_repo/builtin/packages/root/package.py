@@ -212,11 +212,6 @@ class Root(CMakePackage):
     variant("fortran", default=False, description="Enable the Fortran components of ROOT")
     variant("graphviz", default=False, description="Enable graphviz support")
     variant("gdml", default=True, description="Enable GDML writer and reader")
-    variant(
-        "gminimal",
-        default=True,
-        description="Ignore most of Root's feature defaults except for basic graphic options",
-    )
     variant("geom", default=True, description="Enable support for the geometry library")
     conflicts("~geom", when="@:6.33", msg="geom is always enabled through 6.33")
     variant("geombuilder", default=False, description="Enable support for the geombuilder library")
@@ -645,9 +640,10 @@ class Root(CMakePackage):
         options += [
             define("fail-on-missing", True),
             define_from_variant("fortran"),
-            define_from_variant("gminimal"),
+            define("gminimal", False),
             define("gnuinstall", True),
             define("libcxx", False),
+            define("minimal", False),
             define("roottest", False),
             define_from_variant("runtime_cxxmodules", "cxxmodules"),
             define_from_variant("rpath"),
@@ -747,7 +743,6 @@ class Root(CMakePackage):
             define("krb5", False),
             define("ldap", False),
             define_from_variant("mathmore", "math"),
-            define("minimal", False),
             define_from_variant("minuit"),
             define_from_variant("mlp"),
             define("monalisa", False),
