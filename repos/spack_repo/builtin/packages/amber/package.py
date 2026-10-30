@@ -185,12 +185,6 @@ class Amber(CMakePackage, Package, CudaPackage):
         default=False,
     )
     variant(
-        "pmemd_only",
-        default=False,
-        when="@26:",
-        description="Only build the pmemd engines, skipping the rest of AmberTools",
-    )
-    variant(
         "python",
         default=False,
         when="@26:",
@@ -335,7 +329,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             "-Wno-dev",
             self.define("COMPILER", self._compiler_id()),
-            self.define_from_variant("PMEMD_ONLY", "pmemd_only"),
+            self.define("PMEMD_ONLY", True),
             self.define_from_variant("BUILD_PYTHON", "python"),
             self.define_from_variant("BUILD_PERL", "perl"),
             # Always passed explicitly: Amber's default can be TRUE, in which case
