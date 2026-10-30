@@ -1,0 +1,69 @@
+From 9486cad1380630ecf96bd7767d511406eee58cee Mon Sep 17 00:00:00 2001
+From: Victor Mateevitsi <vmateevitsi@anl.gov>
+Date: Wed, 28 Oct 2026 17:02:09 +0000
+Subject: [PATCH] Enable SYCL backends for camp/RAJA and Ascent's build under
+ enable_sycl=ON
+
+Ported from the maintainer's SYCL_build_fixes branch:
+
+- build_ascent.sh: pass -DENABLE_SYCL=ON to camp; build RAJA extra
+  args as a bash array and add a SYCL branch (-DENABLE_SYCL=ON plus
+  -fsycl/-fsycl-device-code-split/-fsycl-max-parallel-link-jobs).
+  Without these, a SYCL build would configure CPU-only RAJA/camp and
+  dray would silently lose its GPU backend.
+- build_ascent.sh: when enable_sycl=ON, the generated
+  ascent-config.cmake now sets BLT_CXX_STD=c++17, KOKKOS_DIR, and
+  CMAKE_CXX_FLAGS with -fsycl (Ascent's own CMake has no ENABLE_SYCL
+  option; the flags must come in through the host config).
+- src/libs/vtkh/vtkh.cpp: KokkosDeviceCount() had no SYCL case and
+  returned an uninitialized count for Kokkos+SYCL builds. Add a
+  KOKKOS_ENABLE_SYCL branch using sycl::device::get_devices(), and an
+  #else guard so a backend-less Kokkos config errors loudly instead.
+---
+ src/libs/vtkh/vtkh.cpp | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/src/libs/vtkh/vtkh.cpp b/src/libs/vtkh/vtkh.cpp
+index bd6f0747..552721a3 100644
+--- a/src/libs/vtkh/vtkh.cpp
++++ b/src/libs/vtkh/vtkh.cpp
+@@ -15,6 +15,10 @@
+ #include <hip.h>
+ #endif
+ 
++#ifdef KOKKOS_ENABLE_SYCL
++#include <sycl/sycl.hpp>
++#endif
++
+ 
+ #include <sstream>
+ 
+@@ -344,9 +348,7 @@ KokkosDeviceCount()
+             throw Error(msg.str());
+         }
+     }
+-    #endif
+-
+-    #ifdef KOKKOS_ENABLE_CUDA
++    #elif defined(KOKKOS_ENABLE_CUDA)
+         // kokkos + cuda case
+         {
+             cudaError_t res = cudaGetDeviceCount(&device_count);
+@@ -359,6 +361,14 @@ KokkosDeviceCount()
+                 throw Error(msg.str());
+             }
+         }
++    #elif defined(KOKKOS_ENABLE_SYCL)
++        // kokkos + sycl case
++        {
++            device_count =
++              static_cast<int>(sycl::device::get_devices(sycl::info::device_type::gpu).size());
++        }
++    #else
++        throw Error("Cannot fetch Kokkos device count: no HIP, CUDA, or SYCL backend found");
+     #endif
+ #else
+     throw Error("Cannot fetch Kokkos device count: Viskores lacks Kokkos support");
+-- 
+2.43.0
+
