@@ -155,6 +155,14 @@ class Libfabric(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@1.9.0",
     )
 
+    # For versions 1.21:1.22 with the CXI provider:
+    # Allow libfabric to build with both new and older cxi-driver
+    patch(
+        "https://github.com/ofiwg/libfabric/commit/f98fbcb09bd86e9b8da14ef37cd2cb3dfb7188f4.patch?full_index=1",
+        sha256="a86eec1034d75e08ca045f40c955b598638aaaf84386cc2df532d5ecbe7995b3",
+        when="@1.21:1.22 fabrics=cxi",
+    )
+
     # Fix for the inline assembly problem for the Nvidia compilers
     # https://github.com/ofiwg/libfabric/pull/7665
     patch("nvhpc-symver.patch", when="@1.6.0:1.14.0 %nvhpc")
