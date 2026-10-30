@@ -49,16 +49,20 @@ class Acts(CMakePackage, CudaPackage):
     license("MPL-2.0")
 
     # Supported Acts versions
+    # NOTE: Versions 47.5.0 and newer are built from the source archive attached
+    # to the GitHub release, which ships the pre-generated code. The archives
+    # GitHub generates for a tag do not, and neither does a git checkout, so
+    # do not add these versions by commit or the ACTS configure step will fail.
     version("main", branch="main")
-    version("48.3.0", commit="fcdebde24e8d4252ffb2a392075ac80e68837ae2")
-    version("48.2.0", commit="06260f63c68226ca4a009c402b702fffb46f95c7")
-    version("48.1.0", commit="843f8b3691f350b753bd7c35494664d9feecc9d7")
-    version("48.0.1", commit="549edcd134c2b64a6078463b67dcfb60ac2a656c")
-    version("48.0.0", commit="fe3de884e4c70d742f9f1e3ad416933f5fc13116")
-    version("47.7.0", commit="2790f1b05c0c94cb3b569cbb18262b24867c7855")
-    version("47.6.1", commit="31c5b149fa08c9f224938b3d16e8a65f2bc010da")
-    version("47.6.0", commit="2829969d6bfa8b0e60e4969bff9a58a325cf41ae")
-    version("47.5.0", commit="45b86a5cfef5db9ab71184264700d0fa28a92637")
+    version("48.3.0", sha256="df50eee0789079acaa64fa8b1d8333428d77e1d9f2ab653c0c45f6e457fffa4a")
+    version("48.2.0", sha256="a0dc7b5ff588de55c1e80b6254b1f065c54e751a29001970a2d96d46b5d21e85")
+    version("48.1.0", sha256="29f7434dcdae60c0d029e3135b56ee1f866ec3894ddfd05920f9f0bb2c5b0da5")
+    version("48.0.1", sha256="cb9b196345119cbdbb73e4f53fae6c3ce6480560f9fd47a7164a17b51629a694")
+    version("48.0.0", sha256="0117aee534a8b0b52851818ebcf69f8c7b5487982669a4ca33731e0e90e47100")
+    version("47.7.0", sha256="1b0484698715c38cf32055d0a2ff6ea50771d541b728dc58b2e9a086d4c858e9")
+    version("47.6.1", sha256="817c7a10b26ab239b3cec9093057826274880f61bd0b8d5afd6944210d9257e5")
+    version("47.6.0", sha256="7f0f5658f4b918d6048a0b13ec01cd6fac9ef6d808cd0f7addbc70ee060d9ae9")
+    version("47.5.0", sha256="5234b28511147e96481fb355886c207f1b7e43e67f0092a589e6e1ef6067f1ce")
     version("47.4.0", commit="a0542a7f42a020e81b5216efd111ee9d417a7166")
     version("47.3.0", commit="b9803498c1cbcd273cda861022bb270bf6e73fac")
     version("47.2.0", commit="faaa032800ea10a3bb5fbcffbec350bcc49ab038")
@@ -262,17 +266,24 @@ class Acts(CMakePackage, CudaPackage):
     # installation which, in turn, causes the ACTS build to fail. Until a more
     # robust solution is available we pretend that these packages are also
     # run- and link-time dependencies.
-    depends_on("python@3.12:", when="@44:")
-    depends_on("py-numpy @2.2", when="@44:")
+    #
+    # Release archives from 47.5.0 onwards ship the pre-generated code, so these
+    # dependencies are only needed by the code generators when building main.
+    # Without them, only the plugins below still need Python: CMake requires it
+    # to find DD4hep, and Traccc generates its kernels and metadata with it.
+    depends_on("python@3.12:", when="@44:47.4,main")
+    depends_on("python", when="@47.5: +dd4hep")
+    depends_on("python", when="@47.5: +traccc", type="build")
+    depends_on("py-numpy @2.2", when="@44:47.4,main")
     depends_on("py-onnxruntime@1.12:", when="+onnx")
-    depends_on("py-particle @0.24", when="@44:")
+    depends_on("py-particle @0.24", when="@44:47.4,main")
     depends_on("py-pybind11 @2.13.1:", when="+python")
     depends_on("py-pybind11 @3.0.1:", when="+python @45.3:")
     depends_on("py-pytest", when="+python +unit_tests")
     depends_on("py-setuptools", when="@44:44.1.0")
-    depends_on("py-sympy @1.13", when="@44:")
+    depends_on("py-sympy @1.13", when="@44:47.4,main")
     # TODO: Clarify version on next release
-    depends_on("py-hatchling", when="@44.1.1:")
+    depends_on("py-hatchling", when="@44.1.1:47.4,main")
     depends_on("py-torch", when="+gnn +torch")
 
     with when("+root"):
@@ -310,6 +321,12 @@ class Acts(CMakePackage, CudaPackage):
     # The ODD package is fetched via the internet by the build system, which
     # cannot be disabled.
     conflicts("+odd", when="@44.2.0:")
+
+    def url_for_version(self, version):
+        return (
+            "https://github.com/acts-project/acts/releases/download/"
+            f"v{version}/acts-v{version}.tar.gz"
+        )
 
     def cmake_args(self):
         spec = self.spec
@@ -410,6 +427,11 @@ class Acts(CMakePackage, CudaPackage):
             args.append(self.define_from_variant("ACTS_GNN_ENABLE_ONNX", "onnx"))
             if spec.satisfies("@44:"):
                 args.append(self.define_from_variant("ACTS_GNN_ENABLE_TORCH", "torch"))
+
+        # Fail at configure time rather than silently running the generators,
+        # whose Python dependencies are not available for these versions.
+        if spec.satisfies("@47.5:") and not spec.satisfies("@main"):
+            args.append(self.define("ACTS_CODEGEN_REQUIRE_PREBUILT", True))
 
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
