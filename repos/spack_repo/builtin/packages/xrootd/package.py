@@ -118,8 +118,10 @@ class Xrootd(CMakePackage):
     depends_on("pkgconfig", type="build", when="+davix")
     depends_on("libxml2", when="+http")
     depends_on("uuid", when="@4.11.0:")
-    depends_on("openssl")
     depends_on("openssl@1.1.1:", when="@6:")
+    # openssl@4 support was added in
+    # https://github.com/xrootd/xrootd/pull/2802 released in 6.1
+    depends_on("openssl@:3", when="@:6.0")
     depends_on("python", when="+python")
     depends_on("py-setuptools", type="build", when="@:5.5 +python")
     depends_on("py-pip", type="build", when="@5.6: +python")

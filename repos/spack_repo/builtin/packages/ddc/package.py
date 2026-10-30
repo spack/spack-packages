@@ -21,6 +21,7 @@ class Ddc(CMakePackage):
     license("MIT", checked_by="tpadioleau")
 
     version("main", branch="main", no_cache=True)
+    version("0.17.0", sha256="90a96ee1e5e0521847a754822baf1179af6f62a12eb3103d640a872eea12a109")
     version("0.16.0", sha256="2a335eac5061c77f9b0a770176f2d8dc7343f24b7c44bb7ec5e1f2f92cbe6a61")
     version("0.15.1", sha256="18095de0d271d9e3ad39fe65124b47a6dd269532ec40c360318a58888fc6f90e")
     version("0.15.0", sha256="1bcb7eda695e7e37bb37dd7ea40adcb614c2cfe71b2890201424b05c48fce331")
@@ -63,7 +64,8 @@ class Ddc(CMakePackage):
 
     with when("+fft"):
         depends_on("kokkos-fft@0.3:")
-        depends_on("kokkos-fft@:1")
+        depends_on("kokkos-fft@:2")
+        depends_on("kokkos-fft@:1", when="@:0.16")
         depends_on("kokkos-fft@:0", when="@:0.10")
         depends_on("kokkos-fft host_backend=fftw-serial", when="^kokkos ~openmp")
         depends_on("kokkos-fft host_backend=fftw-openmp", when="^kokkos +openmp")

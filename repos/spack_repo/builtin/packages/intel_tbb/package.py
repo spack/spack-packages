@@ -33,6 +33,7 @@ class IntelTbb(CMakePackage, MakefilePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("2023.2.0", sha256="80cb62e62defeee67ea1885a6f72d97ac81404f8fde9cded62fb51524808a30c")
     version("2023.1.0", sha256="191288b52e1e6b17198000b64d77d194bb65e791be46ebc606e9b091781e2070")
     version("2023.0.0", sha256="f8767b971ec6aea25dde58ae0f593e94e7aa75a739a86f67967012f69e2199b1")
     version("2022.3.0", sha256="01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a")

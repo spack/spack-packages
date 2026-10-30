@@ -22,6 +22,7 @@ class File(AutotoolsPackage):
 
     license("BSD-2-Clause")
 
+    version("5.48", sha256="ed14656883b23a364b4057c05595d93252da9bc473d30106519519d0da141283")
     version("5.46", sha256="c9cc77c7c560c543135edc555af609d5619dbef011997e988ce40a3d75d86088")
     version("5.45", sha256="fc97f51029bb0e2c9f4e3bffefdaf678f0e039ee872b9de5c002a6d09c784d82")
     version("5.44", sha256="3751c7fba8dbc831cb8d7cc8aff21035459b8ce5155ef8b0880a27d028475f3b")

@@ -26,6 +26,7 @@ class Stdexec(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.23.1:", type="build")
+    depends_on("rapids-cmake", type="build")
 
     conflicts("%gcc@:10")
     conflicts("%clang@:12")
@@ -36,6 +37,10 @@ class Stdexec(CMakePackage):
 
     def cmake_args(self):
         return [
+            self.define(
+                "FETCHCONTENT_SOURCE_DIR_RAPIDS-CMAKE",
+                join_path(self.spec["rapids-cmake"].prefix.lib.cmake, "rapids-cmake"),
+            ),
             self.define("STDEXEC_BUILD_TESTS", self.run_tests),
             self.define("STDEXEC_BUILD_EXAMPLES", False),
         ]

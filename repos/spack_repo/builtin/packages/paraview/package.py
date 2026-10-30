@@ -554,6 +554,10 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("^[virtuals=gl] egl"):
             cmake_args.append("-DVTK_OPENGL_HAS_EGL:BOOL=ON")
 
+        # TODO: Set up Wayland (which allows EGL in a desktop window) correctly.
+        if spec.satisfies("@6.2:"):
+            cmake_args.append("-DVTK_USE_Wayland:BOOL=OFF")
+
         # Disable patched externals
         if spec.satisfies("@5.12:"):
             cmake_args.append("-DVTK_MODULE_USE_EXTERNAL_VTK_fast_float:BOOL=OFF")

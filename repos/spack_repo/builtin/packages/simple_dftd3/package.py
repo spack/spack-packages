@@ -25,6 +25,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("1.7.0", sha256="4d733eb6dbe8266fcfad67cef31de932a079f7c911f24f4b6efc594cd3d28803")
     version("1.6.0", sha256="534919ebc44bb59de323513f41d1c1fba5f457008323d2e67087351a76c8fd9f")
     version("1.5.0", sha256="64a3cb126acddb0aaffd87b1e54f35eca0c30f63bc675cdb8ad523373c7c396f")
     version("1.4.0", sha256="c548629115c3d5f180d06a70bc29dcf42e4018fbc9e4ba7c99abc1cdbfda7c1e")
@@ -42,6 +43,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
 
     variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
+    variant("mpi", default=False, description="Enable MPI support", when="@1.6:")
     variant(
         "python",
         default=False,
@@ -57,6 +59,7 @@ class SimpleDftd3(MesonPackage, CMakePackage):
     depends_on("py-setuptools", type="build", when="+python")
     depends_on("python@3.6:", when="+python")
     depends_on("pkgconfig", type="build")
+    depends_on("mpi", when="+mpi")
     depends_on("blas")
 
     for build_system in ["cmake", "meson"]:
@@ -69,16 +72,26 @@ class SimpleDftd3(MesonPackage, CMakePackage):
 
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
-        return [
+        args = [
             "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
             "-Dpython={0}".format(str("+python" in self.spec).lower()),
         ]
+        if self.spec.satisfies("@1.6:"):
+            args += [
+                "-Dmpi={0}".format("enabled" if "+mpi" in self.spec else "disabled"),
+            ]
+        return args
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [
+        args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("WITH_OpenMP", "openmp"),
         ]
+        if self.spec.satisfies("@1.6:"):
+            args += [
+                self.define_from_variant("SDFTD3_WITH_MPI", "mpi"),
+            ]
+        return args

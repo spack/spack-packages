@@ -50,6 +50,20 @@ class Acts(CMakePackage, CudaPackage):
 
     # Supported Acts versions
     version("main", branch="main")
+    version("48.3.0", commit="fcdebde24e8d4252ffb2a392075ac80e68837ae2")
+    version("48.2.0", commit="06260f63c68226ca4a009c402b702fffb46f95c7")
+    version("48.1.0", commit="843f8b3691f350b753bd7c35494664d9feecc9d7")
+    version("48.0.1", commit="549edcd134c2b64a6078463b67dcfb60ac2a656c")
+    version("48.0.0", commit="fe3de884e4c70d742f9f1e3ad416933f5fc13116")
+    version("47.7.0", commit="2790f1b05c0c94cb3b569cbb18262b24867c7855")
+    version("47.6.1", commit="31c5b149fa08c9f224938b3d16e8a65f2bc010da")
+    version("47.6.0", commit="2829969d6bfa8b0e60e4969bff9a58a325cf41ae")
+    version("47.5.0", commit="45b86a5cfef5db9ab71184264700d0fa28a92637")
+    version("47.4.0", commit="a0542a7f42a020e81b5216efd111ee9d417a7166")
+    version("47.3.0", commit="b9803498c1cbcd273cda861022bb270bf6e73fac")
+    version("47.2.0", commit="faaa032800ea10a3bb5fbcffbec350bcc49ab038")
+    version("47.1.0", commit="e9e66df6c9abd699e6bf72227822f7372594cd49")
+    version("47.0.0", commit="26d85d671cdadb34fdbf1eb1aa3823b71dbbff01")
     version("46.8.1", commit="3ded307e142c6ce9e6c1fa205604582ff6aef920")
     version("46.8.0", commit="59d95bd56db22034219a526e7dff563622cc268d")
     version("46.7.0", commit="4e95978f8e23f863f9e7c6b219b5100531f4ba41")
@@ -185,17 +199,17 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("acts-dd4hep", when="@19 +dd4hep")
     with when("+svg"):
-        # https://github.com/acts-project/actsvg/issues/94
         depends_on("actsvg@0.4.51:")
         depends_on("actsvg@0.4.56:", when="@41.1:")
-        # TODO: This should be when-constrained when the issue is fixed in ACTS.
-        depends_on("actsvg@:0.4.56")
+        depends_on("actsvg@:0.4.56", when="@:47.4")
+        depends_on("actsvg@0.4.57:", when="@47.5:")
     # The version number of algebra plugins was not correct before v0.28.0.
     depends_on("acts-algebra-plugins @0.28:", when="+traccc @:46.3.0")
     depends_on("boost @1.71: +filesystem +program_options +test")
     depends_on("boost @1.77:", when="@42:")
     depends_on("boost @1.78:", when="@45:")
     depends_on("cmake @3.14:", type="build")
+    depends_on("cmake @3.19:", type="build", when="@47:")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
@@ -204,12 +218,14 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.26:", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
-    depends_on("detray @0.75.3:", when="+traccc")
-    depends_on("detray @0.101.0:", when="@42.1: +traccc")
-    depends_on("detray @0.103.0:", when="@44.1: +traccc")
-    depends_on("detray @1.0.1:", when="@46.4: +traccc")
+    with when("@:46"):
+        depends_on("detray @0.75.3:", when="+traccc")
+        depends_on("detray @0.101.0:", when="@42.1: +traccc")
+        depends_on("detray @0.103.0:", when="@44.1: +traccc")
+        depends_on("detray @1.0.1:", when="@46.4: +traccc")
     depends_on("edm4hep @0.7:", when="+edm4hep")
     depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
+    depends_on("edm4hep @0.99:", when="@48: +edm4hep")
     depends_on("edm4hep @:0", when="@:44 +edm4hep")
     depends_on("eigen @3.4:3")
     depends_on("geant4", when="+fatras_geant4")
@@ -222,7 +238,12 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
     depends_on("hepmc3 +rootio", when="@45.1: +hepmc3 +examples +root")
     depends_on("intel-tbb @2020.1:", when="+examples")
-    depends_on("millepede@01-00-00:", when="+mille")
+    depends_on("mille@01-00-00:", when="+mille")
+    depends_on("mille@01-00-05:", when="@47.1: +mille")
+    depends_on("mille@01-01-01:", when="@48: +mille")
+    depends_on("mille@01-01-02:", when="@48.2: +mille")
+    depends_on("millepede@05-01-05:", when="@47.1: +mille")
+    depends_on("millepede@05-01-06:", when="@48.2: +mille")
     depends_on("nlohmann-json @3.10.5:", when="+json")
     depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
@@ -261,6 +282,9 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("vecmem@1.17.0:", when="@42: +traccc")
     depends_on("vecmem@1.21.0:", when="@44.1: +traccc")
     depends_on("vecmem@1.24.0:", when="@46.4: +traccc")
+    depends_on("vecmem@1.25.0:", when="@47: +traccc")
+    depends_on("vecmem@1.27.0:", when="@47.5: +traccc")
+    depends_on("vecmem@1.28.0:", when="@48.2: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:
@@ -270,7 +294,7 @@ class Acts(CMakePackage, CudaPackage):
             depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +root")
 
     # When the traccc plugin is enabled, detray should match the Acts scalars
-    with when("+traccc"):
+    with when("+traccc @:46"):
         for _scalar in _scalar_values:
             depends_on(f"detray scalar={_scalar}", when=f"scalar={_scalar}")
 
@@ -336,7 +360,6 @@ class Acts(CMakePackage, CudaPackage):
             enable_cmake_variant("MEMORY_PROFILING", "profilemem"),
             plugin_cmake_variant("PODIO", "podio"),
             example_cmake_variant("PYTHIA8", "pythia8"),
-            example_cmake_variant("PYTHON_BINDINGS", "python"),
             example_cmake_variant("ROOT", "root"),
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
@@ -360,6 +383,12 @@ class Acts(CMakePackage, CudaPackage):
 
         if spec.satisfies("+python"):
             args.append("-DACTS_USE_SYSTEM_PYBIND11=ON")
+
+        # ACTS_BUILD_EXAMPLES_PYTHON_BINDINGS was deprecated in v45 and removed in v47
+        if spec.satisfies("@45:"):
+            args.append(cmake_variant("PYTHON_BINDINGS", "python"))
+        else:
+            args.append(example_cmake_variant("PYTHON_BINDINGS", "python"))
 
         if spec.satisfies("+svg"):
             args.append("-DACTS_USE_SYSTEM_ACTSVG=ON")

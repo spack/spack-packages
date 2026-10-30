@@ -12,13 +12,14 @@ class AtSpi2Core(MesonPackage):
     Assistive Technologies available on the GNOME platform and a library
     against which applications can be linked."""
 
-    homepage = "https://www.linuxfromscratch.org/blfs/view/cvs/x/at-spi2-core.html"
+    homepage = "https://gitlab.gnome.org/GNOME/at-spi2-core"
     url = "http://ftp.gnome.org/pub/gnome/sources/at-spi2-core/2.28/at-spi2-core-2.38.0.tar.xz"
     list_url = "http://ftp.gnome.org/pub/gnome/sources/at-spi2-core"
     list_depth = 1
 
     license("LGPL-2.1-or-later")
 
+    version("2.62.1", sha256="cca6b6a86e4389d89b370288761ce2385ddeceb10c4412da78689bc30c88af2d")
     version("2.54.0", sha256="d7eee7e75beddcc272cedc2b60535600f3aae6e481589ebc667afc437c0a6079")
     version("2.52.0", sha256="0ac3fc8320c8d01fa147c272ba7fa03806389c6b03d3c406d0823e30e35ff5ab")
     version("2.51.91", sha256="1344bd5c1732b55fcf3df9e3b87569f60984ae83ce75881b5a057c69f8d73e34")
@@ -30,18 +31,29 @@ class AtSpi2Core(MesonPackage):
     version("2.36.0", sha256="88da57de0a7e3c60bc341a974a80fdba091612db3547c410d6deab039ca5c05a")
     version("2.28.0", sha256="42a2487ab11ce43c288e73b2668ef8b1ab40a0e2b4f94e80fca04ad27b6f1c87")
 
+    variant(
+        "dbus_glib",
+        default=False,
+        when="@2.59.1:",
+        description="Use dbus-glib for main loop integration instead of the bundled copy",
+    )
+
     depends_on("c", type="build")  # generated
 
+    depends_on("meson@0.64.0:", type="build", when="@2.47:")
     depends_on("meson@0.46.0:", type="build")
+    depends_on("glib@2.67.4:", when="@2.45:")
     depends_on("glib@2.56.1:")
-    depends_on("glib@2.68.1:", when="@2.51.91:")
     depends_on("dbus@1.12.8:")
     depends_on("dbus@1.12.20:", when="@2.51.91:")
+    depends_on("dbus-glib@0.104:", when="+dbus_glib")
     depends_on("gettext")
     depends_on("libx11")
     depends_on("libxi")
-    depends_on("libxml2", type="build", when="@2.47:")
+    depends_on("libxml2@2.9.1:", type="build", when="@2.45:")
     depends_on("libxtst")
+    # optional since 2.59.90, enables pointer monitoring in AtspiDeviceX11
+    depends_on("libxres", when="@2.59.90:")
     depends_on("recordproto")
     depends_on("inputproto")
     depends_on("fixesproto")
@@ -53,6 +65,16 @@ class AtSpi2Core(MesonPackage):
     @when("@2.40.1:")
     def patch(self):
         filter_file(r"dbus_broker.found\(\)", "false", "bus/meson.build")
+
+    def meson_args(self):
+        args = []
+        if self.spec.satisfies("@2.58:"):
+            # used to install the gi overrides (Atspi.py)
+            args.append(f"-Dpython={self.spec['python'].command.path}")
+        if self.spec.satisfies("@2.59.1:"):
+            dbus_glib = "enabled" if self.spec.satisfies("+dbus_glib") else "disabled"
+            args.append(f"-Ddbus_glib={dbus_glib}")
+        return args
 
     def url_for_version(self, version):
         """Handle gnome's version-based custom URLs."""

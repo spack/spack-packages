@@ -23,7 +23,7 @@ class MctcLib(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
-
+    version("0.7.0", sha256="b625a4e04a41eecdf437a123e66930d770674bc2e3f9a5af330c32b62013a457")
     version("0.6.1", sha256="0499733af21015c022e8af0b5c477d779d27b58843c2a4c47644a683df2f3e42")
     version("0.5.2", sha256="a82c92deee73ee00d5ded3bb13f59677b0c543a272f488125a364a62ef943fb9")
     version("0.5.1", sha256="a93ea3e50a1950745df01601bfd672d485f0367660f7076dbe73e422e7d4e2ac")

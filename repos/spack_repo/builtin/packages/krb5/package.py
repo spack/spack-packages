@@ -39,6 +39,13 @@ class Krb5(AutotoolsPackage):
     )
     patch("freebsd-link.patch", when="platform=freebsd")
 
+    # fix openssl@4 support
+    patch(
+        "https://github.com/krb5/krb5/commit/5e4e8452328804948d042235bbf58ca457795857.patch?full_index=1",
+        sha256="4969b469f2ae6bdb69e264bac2e676c95dc9f289f5279f85cfdfbee7a0c6e287",
+        when="@:1.22.2",
+    )
+
     configure_directory = "src"
     build_directory = "src"
 

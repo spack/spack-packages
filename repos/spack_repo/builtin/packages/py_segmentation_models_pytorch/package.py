@@ -16,19 +16,28 @@ class PySegmentationModelsPytorch(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
-    version("0.5.0", sha256="cabba8aced6ef7bdcd6288dd9e1dc2840848aa819d539c455bd07aeceb2fdf96")
-    version("0.4.0", sha256="8833e63f0846090667be6fce05a2bbebbd1537776d3dea72916aa3db9e22e55b")
+    version("0.6.0", sha256="5f90a7a43fac608f85a9dce66f65297d887605da9c2caafb44aa875c30180424")
+    with default_args(deprecated=False):
+        # https://github.com/qubvel-org/segmentation_models.pytorch/security/advisories/GHSA-w865-hrqq-h4r5
+        # https://github.com/qubvel-org/segmentation_models.pytorch/security/advisories/GHSA-35hf-6hc4-cgj6
+        version("0.5.0", sha256="cabba8aced6ef7bdcd6288dd9e1dc2840848aa819d539c455bd07aeceb2fdf96")
+        version("0.4.0", sha256="8833e63f0846090667be6fce05a2bbebbd1537776d3dea72916aa3db9e22e55b")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@77:", when="@0.6:")
         depends_on("py-setuptools@61:")
 
     with default_args(type=("build", "run")):
         depends_on("py-huggingface-hub@0.24:")
+        depends_on("py-numpy@1.21.2:", when="@0.6:")
         depends_on("py-numpy@1.19.3:")
+        depends_on("pil@8.4:", when="@0.6:")
         depends_on("pil@8:")
         depends_on("py-safetensors@0.3.1:", when="@0.5:")
         depends_on("py-timm@0.9:")
+        depends_on("py-torch@1.11:", when="@0.6:")
         depends_on("py-torch@1.8:")
+        depends_on("py-torchvision@0.12:")
         depends_on("py-torchvision@0.9:")
         depends_on("py-tqdm@4.42.1:")
 

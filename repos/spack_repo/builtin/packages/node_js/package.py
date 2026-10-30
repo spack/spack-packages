@@ -153,6 +153,9 @@ class NodeJs(Package):
     # depends_on('bash-completion', when="+bash-completion")
     depends_on("icu4c", when="+icu4c")
     depends_on("openssl@1.1:", when="+openssl")
+    # OpenSSL 4 support (opaque ASN1_STRING, const X509 APIs) added in
+    # https://github.com/nodejs/node/pull/62410, released in 24.15.0 and 25.9.0
+    depends_on("openssl@:3", when="@:24.14,25.0:25.8 +openssl")
     depends_on("zlib-api", when="+zlib")
 
     # https://github.com/nodejs/node/blob/main/BUILDING.md#supported-toolchains

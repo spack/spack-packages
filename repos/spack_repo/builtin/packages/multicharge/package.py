@@ -23,6 +23,7 @@ class Multicharge(CMakePackage, MesonPackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("0.6.0", sha256="4d883d42d5faf826b99e552ac9eab4c4fd8c3c5b12aced66c295b78006222ede")
     version("0.5.0", sha256="fc6dee93fd6957a516137205f5a6754b218904bc38bf60f5a509f2a1b14735be")
     version("0.4.0", sha256="16aea6d8ba2f81ced3de1153cb3d73083aa7ca43c3b2b6ee9799127bab5d60d1")
     version("0.3.1", sha256="180541714c26804a2d66edd892c8cd4cb40a21acbaf7edb24aaf04d580368b97")
@@ -36,6 +37,7 @@ class Multicharge(CMakePackage, MesonPackage):
     depends_on("lapack")
     depends_on("mctc-lib build_system=cmake", when="build_system=cmake")
     depends_on("mctc-lib build_system=meson", when="build_system=meson")
+    depends_on("mctc-lib@0.7:", when="@0.6:")
     depends_on("mctc-lib@0.4:", when="@0.4:")
     depends_on("mctc-lib@0.3:0.4", when="@0.3")
 

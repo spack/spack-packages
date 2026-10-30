@@ -55,8 +55,7 @@ class RocmGdb(ROCmLibrary, AutotoolsPackage):
     version("5.7.0", sha256="94fba57b2f17b593de61f7593b404fabc00b054d38567be57d12cf7654b7969a")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
 
     depends_on("cmake@3:", type="build")
     depends_on("texinfo", type="build")

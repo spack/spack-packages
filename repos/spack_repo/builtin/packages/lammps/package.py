@@ -655,7 +655,10 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
                 cuda_arch = spec.variants["cuda_arch"].value
                 if cuda_arch != "none":
-                    args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
+                    if spec.satisfies("@develop"):
+                        args.append(self.define("GPU_ARCH", f"{cuda_arch[0]}"))
+                    else:
+                        args.append(self.define("GPU_ARCH", f"sm_{cuda_arch[0]}"))
                 args.append(self.define_from_variant("CUDA_MPS_SUPPORT", "cuda_mps"))
             elif spec.satisfies("+opencl"):
                 # LAMMPS downloads and bundles its own OpenCL ICD Loader by default
