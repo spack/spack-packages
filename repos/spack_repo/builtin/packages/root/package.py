@@ -196,14 +196,12 @@ class Root(CMakePackage):
 
     variant("aqua", default=_is_macos, description="Enable native macOS (Cocoa) interface")
     variant("arrow", default=False, description="Enable Arrow interface")
-    variant("cuda", default=False, description="Enable CUDA support")
-    variant("cudnn", default=False, description="Enable cuDNN support")
     # C++ module support in ROOT seemingly not currently working in macOS,
     # will lead to build errors if turned on
     # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
     variant("cxxmodules", default=not _is_macos, description="Enable C++ modules")
     variant("daos", default=False, description="Enable RNTuple support for DAOS storage")
-    variant("davix", default=True, description="Compile with external Davix")
+    variant("davix", default=True, description="Compile with Davix")
     variant("dcache", default=False, description="Enable support for dCache")
     variant("emacs", default=False, description="Enable Emacs support")
     variant("examples", default=True, description="Install examples")
@@ -214,11 +212,6 @@ class Root(CMakePackage):
     variant("fortran", default=False, description="Enable the Fortran components of ROOT")
     variant("graphviz", default=False, description="Enable graphviz support")
     variant("gdml", default=True, description="Enable GDML writer and reader")
-    variant(
-        "gminimal",
-        default=True,
-        description="Ignore most of Root's feature defaults except for basic graphic options",
-    )
     variant("geom", default=True, description="Enable support for the geometry library")
     conflicts("~geom", when="@:6.33", msg="geom is always enabled through 6.33")
     variant("geombuilder", default=False, description="Enable support for the geombuilder library")
@@ -274,27 +267,31 @@ class Root(CMakePackage):
     variant("tmva", default=False, description="Build TMVA multi variate analysis library")
     variant(
         "tmva-cpu",
+        when="+tmva +tbb",
         default=True,
-        description="Build TMVA with CPU support for deep learning (requires BLAS)",
+        description="Build TMVA with CPU support for deep learning (requires BLAS, TBB)",
     )
     variant(
         "tmva-cudnn",
-        when="@6.34.00:",
+        when="@6.34.00: +tmva-gpu",
         default=True,
         description="Enable support for cuDNN in TMVA",
     )
     variant(
         "tmva-gpu",
+        when="+tmva",
         default=False,
         description="Build TMVA with GPU support for deep learning (requires CUDA)",
     )
     variant(
         "tmva-pymva",
+        when="+tmva",
         default=False,
         description="Enable support for Python in TMVA (requires numpy)",
     )
     variant(
         "tmva-sofie",
+        when="+tmva",
         default=False,
         description="Build TMVA with support for sofie - "
         "fast inference code generation (requires protobuf 3)",
@@ -416,9 +413,6 @@ class Root(CMakePackage):
     # Optional dependencies
     depends_on("arrow", when="+arrow")
     depends_on("civetweb +shared", when="+http")
-    depends_on("cuda", when="+cuda")
-    depends_on("cuda", when="+cudnn")
-    depends_on("cudnn", when="+cudnn")
     depends_on("daos", when="+daos")
     depends_on("davix @0.7.1:", when="+davix")
     depends_on("dcap", when="+dcache")
@@ -479,19 +473,13 @@ class Root(CMakePackage):
 
     # Incompatible variants
     if _is_macos:
-        conflicts("+opengl", when="~x ~aqua", msg="root+opengl requires X or Aqua")
         # https://github.com/root-project/root/issues/7160
         conflicts("+aqua", when="~opengl", msg="+aqua requires OpenGL to be enabled")
-    else:
-        conflicts("+opengl", when="~x", msg="root+opengl requires X")
+    conflicts("+opengl", when="~x ~aqua", msg="root+opengl requires X or Aqua")
+    conflicts("+tiff", when="~x ~aqua", msg="TIFF requires asimage")
     conflicts("+math", when="~gsl", msg="root+math requires GSL")
     conflicts("+tmva", when="~gsl", msg="root+tmva requires GSL")
     conflicts("+tmva", when="~mlp", msg="root+tmva requires MLP")
-    conflicts("+tmva-cpu", when="~tmva", msg="root+tmva-cpu requires TMVA")
-    conflicts("+tmva-gpu", when="~tmva", msg="root+tmva-gpu requires TMVA")
-    conflicts("+tmva-gpu", when="~cuda", msg="root+tmva-gpu requires CUDA")
-    conflicts("+tmva-pymva", when="~tmva", msg="root+tmva-pymva requires TMVA")
-    conflicts("+tmva-sofie", when="~tmva", msg="root+tmva-sofie requires TMVA")
     conflicts("~http", when="+webgui", msg="root+webgui requires HTTP")
     conflicts("cxxstd=11", msg="ROOT requires at least C++14")
     conflicts("cxxstd=14", when="@6.30.00:", msg="This version of root requires at least C++17")
@@ -651,9 +639,10 @@ class Root(CMakePackage):
         options += [
             define("fail-on-missing", True),
             define_from_variant("fortran"),
-            define_from_variant("gminimal"),
+            define("gminimal", False),
             define("gnuinstall", True),
             define("libcxx", False),
+            define("minimal", False),
             define("roottest", False),
             define_from_variant("runtime_cxxmodules", "cxxmodules"),
             define_from_variant("rpath"),
@@ -702,6 +691,9 @@ class Root(CMakePackage):
             define("builtin_zlib", False),
         ]
 
+        if self.spec.satisfies("+builtin_llvm"):
+            options.append(define("LLVM_INCLUDE_TESTS", False))
+
         if self.spec.satisfies("@:6.32"):
             options.append(
                 define(
@@ -717,13 +709,15 @@ class Root(CMakePackage):
                 define("builtin_png", False),
             ]
 
+        has_gui = any(f"+{var}" in self.spec for var in ("x", "aqua"))
+
         # Features
         options += [
             define("afdsmrgd", False),
             define("afs", False),
             define("alien", False),
             define_from_variant("arrow"),
-            define("asimage", True),
+            define("asimage", has_gui),
             define("bonjour", False),
             define("castor", False),
             define("ccache", False),
@@ -753,7 +747,6 @@ class Root(CMakePackage):
             define("krb5", False),
             define("ldap", False),
             define_from_variant("mathmore", "math"),
-            define("minimal", False),
             define_from_variant("minuit"),
             define_from_variant("mlp"),
             define("monalisa", False),
@@ -786,8 +779,6 @@ class Root(CMakePackage):
             define_from_variant("xrootd"),
         ]
 
-        options.append(define_from_variant("cuda"))
-
         # Necessary due to name change of variant (webui->webgui)
         # https://github.com/root-project/root/commit/d631c542909f2f793ca7b06abc622e292dfc4934
         options.append(define_from_variant("webgui", "webgui"))
@@ -796,7 +787,6 @@ class Root(CMakePackage):
         options.append(define_from_variant("tmva-cpu"))
         options.append(define_from_variant("tmva-gpu"))
         options.append(define_from_variant("tmva-pymva"))
-        options.append(define_from_variant("cudnn"))
         options.append(define_from_variant("pyroot", "python"))
         options.append(define_from_variant("tmva-sofie"))
 
@@ -806,7 +796,6 @@ class Root(CMakePackage):
         if self.spec.satisfies("@6.34:"):
             options += [
                 define_from_variant("tmva-cudnn", "tmva-cudnn"),
-                define_from_variant("tmva-cudnn", "cudnn"),
                 define_from_variant("tpython"),
             ]
 
@@ -818,7 +807,9 @@ class Root(CMakePackage):
             ]
 
         if self.spec.satisfies("@6.36:"):
-            options.append(define_from_variant("asimage_tiff", "tiff"))
+            # asimage requires x11 or cocoa; in 6.40 it defaults to 'on' even
+            # when ignored
+            options.append(define("asimage_tiff", "+tiff" in self.spec))
 
         # #################### Compiler options ####################
 
