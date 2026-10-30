@@ -691,6 +691,9 @@ class Root(CMakePackage):
             define("builtin_zlib", False),
         ]
 
+        if self.spec.satisfies("+builtin_llvm"):
+            options.append(define("LLVM_INCLUDE_TESTS", False))
+
         if self.spec.satisfies("@:6.32"):
             options.append(
                 define(
