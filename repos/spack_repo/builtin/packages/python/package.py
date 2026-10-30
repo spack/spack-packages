@@ -56,6 +56,7 @@ class Python(Package):
 
     license("0BSD")
 
+    version("3.15.2", sha256="f74e1db0eabd651cd01e4e2a00201bd41866abe74869ab716f9bf33cbbaa0943")
     version("3.15.1", sha256="133d85e118dc32621cda1d9d1d7d9694fe0c5e82bc339a7d528c109fe8b36387")
     version("3.14.9", sha256="8b47e85ee67e93945e93620a051a8f44bfc1e9735ed67075d166f4a74b7a060b")
     version("3.13.17", sha256="9cb057caa588f122577a5054a22531cd9c23ab6706f1a19bc95a55380a895177")
