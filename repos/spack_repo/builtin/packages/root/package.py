@@ -196,8 +196,6 @@ class Root(CMakePackage):
 
     variant("aqua", default=_is_macos, description="Enable native macOS (Cocoa) interface")
     variant("arrow", default=False, description="Enable Arrow interface")
-    variant("cuda", default=False, description="Enable CUDA support")
-    variant("cudnn", default=False, description="Enable cuDNN support")
     # C++ module support in ROOT seemingly not currently working in macOS,
     # will lead to build errors if turned on
     # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
@@ -280,13 +278,13 @@ class Root(CMakePackage):
     )
     variant(
         "tmva-cudnn",
-        when="@6.34.00: +cuda +tmva",
+        when="@6.34.00: +tmva-gpu",
         default=True,
         description="Enable support for cuDNN in TMVA",
     )
     variant(
         "tmva-gpu",
-        when="+cuda +tmva",
+        when="+tmva",
         default=False,
         description="Build TMVA with GPU support for deep learning (requires CUDA)",
     )
@@ -420,9 +418,6 @@ class Root(CMakePackage):
     # Optional dependencies
     depends_on("arrow", when="+arrow")
     depends_on("civetweb +shared", when="+http")
-    depends_on("cuda", when="+cuda")
-    depends_on("cuda", when="+cudnn")
-    depends_on("cudnn", when="+cudnn")
     depends_on("daos", when="+daos")
     depends_on("davix @0.7.1:", when="+davix")
     depends_on("dcap", when="+dcache")
@@ -785,8 +780,6 @@ class Root(CMakePackage):
             define_from_variant("xrootd"),
         ]
 
-        options.append(define_from_variant("cuda"))
-
         # Necessary due to name change of variant (webui->webgui)
         # https://github.com/root-project/root/commit/d631c542909f2f793ca7b06abc622e292dfc4934
         options.append(define_from_variant("webgui", "webgui"))
@@ -795,7 +788,6 @@ class Root(CMakePackage):
         options.append(define_from_variant("tmva-cpu"))
         options.append(define_from_variant("tmva-gpu"))
         options.append(define_from_variant("tmva-pymva"))
-        options.append(define_from_variant("cudnn"))
         options.append(define_from_variant("pyroot", "python"))
         options.append(define_from_variant("tmva-sofie"))
 
@@ -805,7 +797,6 @@ class Root(CMakePackage):
         if self.spec.satisfies("@6.34:"):
             options += [
                 define_from_variant("tmva-cudnn", "tmva-cudnn"),
-                define_from_variant("tmva-cudnn", "cudnn"),
                 define_from_variant("tpython"),
             ]
 
