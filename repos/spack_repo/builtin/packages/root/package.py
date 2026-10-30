@@ -473,11 +473,10 @@ class Root(CMakePackage):
 
     # Incompatible variants
     if _is_macos:
-        conflicts("+opengl", when="~x ~aqua", msg="root+opengl requires X or Aqua")
         # https://github.com/root-project/root/issues/7160
         conflicts("+aqua", when="~opengl", msg="+aqua requires OpenGL to be enabled")
-    else:
-        conflicts("+opengl", when="~x", msg="root+opengl requires X")
+    conflicts("+opengl", when="~x ~aqua", msg="root+opengl requires X or Aqua")
+    conflicts("+tiff", when="~x ~aqua", msg="TIFF requires asimage")
     conflicts("+math", when="~gsl", msg="root+math requires GSL")
     conflicts("+tmva", when="~gsl", msg="root+tmva requires GSL")
     conflicts("+tmva", when="~mlp", msg="root+tmva requires MLP")
@@ -707,13 +706,15 @@ class Root(CMakePackage):
                 define("builtin_png", False),
             ]
 
+        has_gui = any(f"+{var}" in self.spec for var in ("x", "aqua"))
+
         # Features
         options += [
             define("afdsmrgd", False),
             define("afs", False),
             define("alien", False),
             define_from_variant("arrow"),
-            define("asimage", True),
+            define("asimage", has_gui),
             define("bonjour", False),
             define("castor", False),
             define("ccache", False),
@@ -803,7 +804,9 @@ class Root(CMakePackage):
             ]
 
         if self.spec.satisfies("@6.36:"):
-            options.append(define_from_variant("asimage_tiff", "tiff"))
+            # asimage requires x11 or cocoa; in 6.40 it defaults to 'on' even
+            # when ignored
+            options.append(define("asimage_tiff", "+tiff" in self.spec))
 
         # #################### Compiler options ####################
 
