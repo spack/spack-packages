@@ -272,9 +272,9 @@ class Root(CMakePackage):
     variant("tmva", default=False, description="Build TMVA multi variate analysis library")
     variant(
         "tmva-cpu",
-        when="+tmva",
+        when="+tmva +tbb",
         default=True,
-        description="Build TMVA with CPU support for deep learning (requires BLAS)",
+        description="Build TMVA with CPU support for deep learning (requires BLAS, TBB)",
     )
     variant(
         "tmva-cudnn",
