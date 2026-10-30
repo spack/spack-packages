@@ -385,6 +385,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # TODO deprecation of some versions in 4: remove
     # Patches
     patch("sycl_bhalft_test.patch", when="@4.2.00 +sycl")
+    # oneAPI 2026.x removed the USM address-space template arguments that
+    # kokkos 4.7.00's SYCL backend still used; without this the +sycl
+    # build fails with oneAPI 2026.x compilers (Aurora default stack).
+    patch("kokkos-4.7.00-sycl-oneapi-2026-usm-fix.patch", when="@4.7.00 +sycl %oneapi@2026:")
     # adds amd_gfx940 support to Kokkos 4.2.00 (upstreamed in https://github.com/kokkos/kokkos/pull/6671)
     patch(
         "https://github.com/rbberger/kokkos/commit/293319c5844f4d8eea51eb9cd1457115a5016d3f.patch?full_index=1",
