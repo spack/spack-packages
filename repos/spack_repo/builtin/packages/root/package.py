@@ -274,27 +274,31 @@ class Root(CMakePackage):
     variant("tmva", default=False, description="Build TMVA multi variate analysis library")
     variant(
         "tmva-cpu",
+        when="+tmva",
         default=True,
         description="Build TMVA with CPU support for deep learning (requires BLAS)",
     )
     variant(
         "tmva-cudnn",
-        when="@6.34.00:",
+        when="@6.34.00: +cuda +tmva",
         default=True,
         description="Enable support for cuDNN in TMVA",
     )
     variant(
         "tmva-gpu",
+        when="+cuda +tmva",
         default=False,
         description="Build TMVA with GPU support for deep learning (requires CUDA)",
     )
     variant(
         "tmva-pymva",
+        when="+tmva",
         default=False,
         description="Enable support for Python in TMVA (requires numpy)",
     )
     variant(
         "tmva-sofie",
+        when="+tmva",
         default=False,
         description="Build TMVA with support for sofie - "
         "fast inference code generation (requires protobuf 3)",
@@ -487,11 +491,6 @@ class Root(CMakePackage):
     conflicts("+math", when="~gsl", msg="root+math requires GSL")
     conflicts("+tmva", when="~gsl", msg="root+tmva requires GSL")
     conflicts("+tmva", when="~mlp", msg="root+tmva requires MLP")
-    conflicts("+tmva-cpu", when="~tmva", msg="root+tmva-cpu requires TMVA")
-    conflicts("+tmva-gpu", when="~tmva", msg="root+tmva-gpu requires TMVA")
-    conflicts("+tmva-gpu", when="~cuda", msg="root+tmva-gpu requires CUDA")
-    conflicts("+tmva-pymva", when="~tmva", msg="root+tmva-pymva requires TMVA")
-    conflicts("+tmva-sofie", when="~tmva", msg="root+tmva-sofie requires TMVA")
     conflicts("~http", when="+webgui", msg="root+webgui requires HTTP")
     conflicts("cxxstd=11", msg="ROOT requires at least C++14")
     conflicts("cxxstd=14", when="@6.30.00:", msg="This version of root requires at least C++17")
