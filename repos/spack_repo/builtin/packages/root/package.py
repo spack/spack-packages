@@ -201,7 +201,7 @@ class Root(CMakePackage):
     # See https://root-forum.cern.ch/t/build-error-on-macos-macports-with-unctrl-h-ncurses-h/40239/22
     variant("cxxmodules", default=not _is_macos, description="Enable C++ modules")
     variant("daos", default=False, description="Enable RNTuple support for DAOS storage")
-    variant("davix", default=True, description="Compile with external Davix")
+    variant("davix", default=True, description="Compile with Davix")
     variant("dcache", default=False, description="Enable support for dCache")
     variant("emacs", default=False, description="Enable Emacs support")
     variant("examples", default=True, description="Install examples")
