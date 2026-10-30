@@ -129,7 +129,13 @@ spack:
           require:
           - ~rocm target=x86_64_v3
         gl:
-          require: "osmesa"
+          require: "glx"
+        boost:
+          require:
+          - "%c,cxx=gcc"
+        zip:
+          require:
+          - "%c=gcc"
         py-torch:
           require:
             - target=x86_64_v3
@@ -146,6 +152,19 @@ spack:
         hwloc:
           require:
             - ~rocm
+        c::
+          prefer:
+          - gcc
+        cxx::
+          prefer:
+          - gcc
+        fortran::
+          prefer:
+          - gcc
+    needs: [hip-compiler]
+  - group: hip-compiler
+    specs:
+    - llvm-amdgpu
 
   ci:
     pipeline-gen:
