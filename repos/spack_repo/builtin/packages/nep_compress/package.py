@@ -13,7 +13,7 @@ class NepCompress(CMakePackage):
     NetCDF-C's BZIP2 filter."""
 
     homepage = "https://captainkirk99.github.io/nep-compress/"
-    url = "https://github.com/captainkirk99/nep-compress/archive/refs/tags/v1.1.0.tar.gz"
+    url = "https://github.com/captainkirk99/nep-compress/archive/refs/tags/v1.2.0.tar.gz"
     git = "https://github.com/captainkirk99/nep-compress.git"
 
     maintainers("edhartnett")
@@ -21,7 +21,7 @@ class NepCompress(CMakePackage):
     license("MIT", checked_by="edhartnett")
 
     version("main", branch="main")
-    version("1.1.0", sha256="1f55bf23d6fb6552c14d868416f71c194843f5d7c011d7571fedfd64a2a45e1e")
+    version("1.2.0", sha256="de1d83d9fee6d3dddce1798d9811626b576d75a6d75367dc268e88fbe7631349")
 
     variant("lz4", default=True, description="Build the LZ4 API and HDF5 filter plugin")
     variant(
@@ -38,8 +38,7 @@ class NepCompress(CMakePackage):
     depends_on("cmake@3.18:", type=("build", "test"))
     depends_on("pkgconfig", type=("build", "test"))
 
-    depends_on("netcdf-c@4.10.0:", when="@1.2:")
-    depends_on("netcdf-c@4.10.1:", when="@:1.1")
+    depends_on("netcdf-c@4.10.0:")
     depends_on("netcdf-c+shared", when="+bzip2")
     depends_on("hdf5@1.14:+hl")
     depends_on("lz4", when="+lz4")
@@ -58,7 +57,7 @@ class NepCompress(CMakePackage):
         ]
         if spec.satisfies("+bzip2"):
             args.append(self.define("NEPCOMPRESS_BZIP2_PLUGIN_DIR", plugins))
-        if self.run_tests and spec.satisfies("@1.2: ^netcdf-c+shared+zstd"):
+        if self.run_tests and spec.satisfies("^netcdf-c+shared+zstd"):
             args.append(self.define("NEPCOMPRESS_ZSTD_PLUGIN_DIR", plugins))
         return args
 
