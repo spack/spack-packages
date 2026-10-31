@@ -17,8 +17,8 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     """C++ runtime system for parallel and distributed applications."""
 
     homepage = "https://hpx.stellar-group.org/"
-    url = "https://github.com/STEllAR-GROUP/hpx/archive/v0.0.0.tar.gz"
-    git = "https://github.com/STEllAR-GROUP/hpx.git"
+    url = "https://github.com/TheHPXProject/hpx/archive/v0.0.0.tar.gz"
+    git = "https://github.com/TheHPXProject/hpx.git"
     maintainers("msimberg", "albestro", "teonnik", "hkaiser", "diehlpk")
 
     license("BSL-1.0")
@@ -27,6 +27,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("stable", tag="stable", commit="103a7b8e3719a0db948d1abde29de0ff91e070be")
+    version("2.0.0", sha256="c755ab893e9fdcbc896c6eb735ad411cc78b9314e916d87119c3cd5304928211")
     version("1.11.0", sha256="01ec47228a2253b41e318bb09c83325a75021eb6ef3262400fbda30ac7389279")
     version("1.10.0", sha256="5720ed7d2460fa0b57bd8cb74fa4f70593fe8675463897678160340526ec3c19")
     version("1.9.1", sha256="1adae9d408388a723277290ddb33c699aa9ea72defadf3f12d4acc913a0ff22d")
@@ -52,6 +53,15 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
         "cxxstd",
         default="17",
         values=cxxstds,
+        when="@:1",
+        description="Use the specified C++ standard when building.",
+    )
+    # HPX 2.0 requires at least C++20
+    variant(
+        "cxxstd",
+        default="20",
+        values=("20", "23", "26"),
+        when="@2:",
         description="Use the specified C++ standard when building.",
     )
 
@@ -112,6 +122,9 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     for cxxstd in cxxstds:
         depends_on(f"boost cxxstd={cxxstd}", when=f"cxxstd={cxxstd}")
         depends_on(f"asio cxxstd={cxxstd}", when=f"@1.7: cxxstd={cxxstd}")
+    # the asio package has no C++26 value, C++23 is fine for its headers
+    depends_on("boost cxxstd=26", when="cxxstd=26")
+    depends_on("asio cxxstd=23", when="cxxstd=26")
 
     depends_on("gperftools", when="malloc=tcmalloc")
     depends_on("jemalloc", when="malloc=jemalloc")
@@ -121,6 +134,10 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="networking=mpi")
     depends_on("mpi", when="+async_mpi")
     depends_on("lci", when="networking=lci")
+    # the LCI parcelport of HPX 2.0 requires LCI 2.0, that of HPX 1.x (and of
+    # the old stable tag, which Spack orders after all numbered versions) LCI 1.x
+    depends_on("lci@:1", when="@:1,stable networking=lci")
+    depends_on("lci@2:", when="@2:2,master: networking=lci")
 
     depends_on("cuda", when="+async_cuda")
 
@@ -130,6 +147,14 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Only ROCm or CUDA maybe be enabled at once
     conflicts("+rocm", when="+cuda")
+
+    # Restrictions for 2.0.X
+    with when("@2:"):
+        conflicts("%gcc@:11")
+        conflicts("%clang@:15")
+        # compilers that know -std=c++26 (or c++2c)
+        conflicts("%gcc@:13", when="cxxstd=26")
+        conflicts("%clang@:16", when="cxxstd=26")
 
     # Restrictions for 1.9.X
     with when("@1.9:"):
@@ -171,9 +196,10 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Patches and one-off conflicts
 
-    # Asio 1.34.0 removed io_context::work, used by HPX:
+    # Asio 1.34.0 removed io_context::work, used by HPX before 2.0:
     # https://github.com/chriskohlhoff/asio/commit/a70f2df321ff40c1809773c2c09986745abf8d20.
-    conflicts("^asio@1.34:")
+    conflicts("^asio@1.34:", when="@:1")
+    conflicts("^asio@1.34:", when="@stable")
 
     # Certain Asio headers don't compile with nvcc from 1.17.0 onwards with
     # C++17. Starting with CUDA 11.3 they compile again.
@@ -217,8 +243,8 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     def url_for_version(self, version):
         if version >= Version("1.9.0"):
-            return "https://github.com/STEllAR-GROUP/hpx/archive/v{}.tar.gz".format(version)
-        return "https://github.com/STEllAR-GROUP/hpx/archive/{}.tar.gz".format(version)
+            return "https://github.com/TheHPXProject/hpx/archive/v{}.tar.gz".format(version)
+        return "https://github.com/TheHPXProject/hpx/archive/{}.tar.gz".format(version)
 
     def instrumentation_args(self):
         args = []
@@ -233,8 +259,13 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
         format_max_cpu_count = lambda max_cpu_count: (
             "" if max_cpu_count == "auto" else max_cpu_count
         )
+        # HPX 2.0 rejects HPX_WITH_CXX17 and deprecates the other HPX_WITH_CXXAB
+        if spec.satisfies("@2:"):
+            args += [self.define_from_variant("HPX_WITH_CXX_STANDARD", "cxxstd")]
+        else:
+            args += [self.define("HPX_WITH_CXX{0}".format(spec.variants["cxxstd"].value), True)]
+
         args += [
-            self.define("HPX_WITH_CXX{0}".format(spec.variants["cxxstd"].value), True),
             self.define_from_variant("HPX_WITH_MALLOC", "malloc"),
             self.define_from_variant("HPX_WITH_CUDA", "cuda"),
             self.define_from_variant("HPX_WITH_HIP", "rocm"),
