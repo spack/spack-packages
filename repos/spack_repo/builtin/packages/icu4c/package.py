@@ -17,10 +17,13 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
     C/C++ interface."""
 
     homepage = "http://site.icu-project.org/"
-    url = "https://github.com/unicode-org/icu/releases/download/release-65-1/icu4c-65_1-src.tgz"
+    url = (
+        "https://github.com/unicode-org/icu/releases/download/release-79.1/icu4c-79.1-sources.tgz"
+    )
 
     license("Unicode-TOU")
 
+    version("79.1", sha256="06fa63ecb521048f8082f12ad988f6b678d90cbd88aafce24cbc94902b191d99")
     version("76.1", sha256="dfacb46bfe4747410472ce3e1144bf28a102feeaa4e3875bac9b4c6cf30f4f3e")
     version("75.1", sha256="cb968df3e4d2e87e8b11c49a5d01c787bd13b9545280fc6642f826527618caef")
     version("74.2", sha256="68db082212a96d6f53e35d60f47d38b962e9f9d207a74cfac78029ae8ff5e08c")
@@ -74,8 +77,11 @@ class Icu4c(AutotoolsPackage, MSBuildPackage):
     )
 
     def url_for_version(self, version):
-        url = "https://github.com/unicode-org/icu/releases/download/release-{0}/icu4c-{1}-src.tgz"
-        return url.format(version.dashed, version.underscored)
+        if version > Version("78"):
+            return super().url_for_version(version)
+        else:
+            url = "https://github.com/unicode-org/icu/releases/download/release-{0}/icu4c-{1}-src.tgz"
+            return url.format(version.dashed, version.underscored)
 
     def flag_handler(self, name, flags):
         if name == "cxxflags" and not self.spec.platform == "windows":
