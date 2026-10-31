@@ -28,6 +28,8 @@ class PyPygraphviz(PythonPackage):
     depends_on("python@3.8:", when="@1.10:", type=("build", "run"))
     depends_on("python@3.10:", when="@1.12:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    # Graphviz 14 changed gvRenderData's length argument to size_t*.
+    depends_on("graphviz@:13", when="@:1.14")
     depends_on("graphviz")
 
     def url_for_version(self, version):
