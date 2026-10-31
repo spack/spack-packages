@@ -33,6 +33,7 @@ class Pandoc(Package):
     if system == "linux" and machine == "aarch64":
         url = "https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-linux-arm64.tar.gz"
 
+        version("3.13", sha256="21e1d4ba09bd0b334590d204580fd4f6629b21be4ab6a32b26cc98982e9e0c68")
         version(
             "3.7.0.2", sha256="4ef2997ff0fa7f86ada5a217722f4f732293e38518b4442ececce16628bd0e44"
         )
@@ -46,6 +47,7 @@ class Pandoc(Package):
     elif system == "linux":
         url = "https://github.com/jgm/pandoc/releases/download/2.14.0.3/pandoc-2.14.0.3-linux-amd64.tar.gz"
 
+        version("3.13", sha256="38aa33b325a2bc96a4c39409631212db55702f564250bcdbead180b3bf646389")
         version(
             "3.7.0.2", sha256="8f8f67fdd540b6519326b0ac49d5c55c5d5d15e43920e80a086e02c8aff83268"
         )
@@ -67,6 +69,7 @@ class Pandoc(Package):
     elif system == "darwin" and machine == "aarch64":
         url = "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-arm64-macOS.zip"
 
+        version("3.13", sha256="f436d18bebbfb3ddd326597686dacab9fac5dc23bd060495020f35a28a43a7c3")
         version(
             "3.7.0.2", sha256="66a579bd8aae83de0bbeba43900953b075a6a3caaa7d1bfc19173e8f95d2ea17"
         )
@@ -74,6 +77,7 @@ class Pandoc(Package):
     elif system == "darwin":
         url = "https://github.com/jgm/pandoc/releases/download/3.7.0.2/pandoc-3.7.0.2-x86_64-macOS.zip"
 
+        version("3.13", sha256="1823278715aa405aaf21b59cde5dc789346aa8d4fc307467f9a9ee84162bedc5")
         version(
             "3.7.0.2", sha256="5495af2c548bd49fe00c28a7f6dadaa1348e6338b92368d3d6e29fd3e16061d1"
         )
