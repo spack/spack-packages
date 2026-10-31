@@ -113,9 +113,8 @@ class Pfunit(CMakePackage):
     depends_on("fargparse@1.8.0:", when="@4.10.0:")
     depends_on("fargparse")
 
-    depends_on("cmake@3.12:3", type="build", when="@:4.11")
-    depends_on("cmake@3.12:", type="build", when="@4.12")
-    depends_on("cmake@3.24:", type="build", when="@4.13:")
+    depends_on("cmake@3.24:", type="build")
+    depends_on("cmake@:3", type="build", when="@:4.11")
 
     # CMake 3.25.0 has an issue with pFUnit
     # https://gitlab.kitware.com/cmake/cmake/-/issues/24203
@@ -137,6 +136,18 @@ class Pfunit(CMakePackage):
         # spack needs to put them in a standard location:
         for file in glob.glob("*/CMakeLists.txt"):
             filter_file(r".*/mod($|[^\w].*)", "", file)
+
+        if self.spec.satisfies("platform=darwin %fortran=clang"):
+            # pFUnit's macOS override passes a ranlib option that LLVM ranlib
+            # rejects (https://github.com/Goddard-Fortran-Ecosystem/pFUnit/issues/581).
+            # CMake's default archive rule is valid. This is a no-op once pFUnit
+            # no longer applies the override to LLVMFlang.
+            filter_file(
+                "if (APPLE)",
+                'if (APPLE AND NOT CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")',
+                "CMakeLists.txt",
+                string=True,
+            )
 
     def url_for_version(self, version):
         url_base = "https://github.com/Goddard-Fortran-Ecosystem/pFUnit"
