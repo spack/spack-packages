@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle", "afzpatel")
 
+    version("0.12.0", sha256="341203199c5f331beefb73ecb3a8eec239b44e58aca63c5fdf85b0c97a638b1d")
     version("0.11.2", sha256="12dd77d86ec5a316be6038c9a597a1479bce13c828722a249b022e774b2eff75")
     version("0.11.1", sha256="ef9826243bcb8eae6d39ac71580bb39154fbeca51b40c2371aab5db1a797dfb4")
     version("0.11.0", sha256="007ef373573ff2fb8a5485679b791581fda328754fd7ae491de3bcdb0fc70d07")
@@ -142,7 +143,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
-        depends_on("bazel@8.7.0:8", when="@0.11.2:")
+        depends_on("bazel@9.2.0:9", when="@0.12:")
+        depends_on("bazel@8.7.0:8", when="@0.11.2")
         depends_on("bazel@7.7.1:7", when="@0.11.1")
         depends_on("bazel@7.7.0:7", when="@0.8.1:0.11.0")
         depends_on("bazel@7.4.1:7", when="@0.5.3:0.8.0")
