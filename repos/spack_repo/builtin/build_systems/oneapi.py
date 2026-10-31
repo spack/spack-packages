@@ -121,6 +121,13 @@ class IntelOneApiPackage(Package):
             bash.add_default_env("HOME", join_path(self.stage.path, "home"))
             # Installer checks $XDG_RUNTIME_DIR/.bootstrapper_lock_file as well
             bash.add_default_env("XDG_RUNTIME_DIR", join_path(self.stage.path, "runtime"))
+            # Installer uses /tmp/<user> as a temporary directory and deletes
+            # files/directories below it. When doing parallel builds, it sometimes
+            # deletes files/directories belonging to other package builds, breaking
+            # them in the process. TMPDIR has to exist if set explicitly.
+            installer_tmp = join_path(self.stage.path, "tmp")
+            mkdirp(installer_tmp)
+            bash.add_default_env("TMPDIR", installer_tmp)
 
             bash(
                 installer_path,
