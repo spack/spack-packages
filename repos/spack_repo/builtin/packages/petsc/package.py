@@ -206,9 +206,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("hwloc", default=False, description="Activates support for hwloc")
     variant("kokkos", default=False, description="Activates support for kokkos and kokkos-kernels")
     variant("fortran", default=True, description="Activates fortran support")
-    # Install-time footprint is dominated by ~8 k tutorial/example files.
-    # Give packagers a switch to trim them away (‘spack install petsc ~examples’)
-    # while preserving current behaviour by default.
     variant("examples", default=True, description="Install test and tutorial example sources")
     variant(
         "fortran-bindings", default=True, when="+fortran", description="Activates fortran bindings"
