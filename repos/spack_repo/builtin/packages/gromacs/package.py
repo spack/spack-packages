@@ -767,14 +767,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
         else:
             # we rely on the fftw-api@3
             options.append("-DGMX_FFT_LIBRARY=fftw3")
-            if self.spec.satisfies("^[virtuals=fftw-api] amdfftw"):
-                options.append("-DGMX_FFT_LIBRARY=fftw3")
-                options.append(
-                    "-DFFTWF_INCLUDE_DIRS={0}".format(self.spec["amdfftw"].headers.directories[0])
-                )
-                options.append(
-                    "-DFFTWF_LIBRARIES={0}".format(self.spec["amdfftw"].libs.joined(";"))
-                )
+            if self.spec.satisfies("^[virtuals=fftw-api] amdfftw") or self.spec.satisfies(
+                "^[virtuals=fftw-api] aocl-fftw"
+            ):
+                fftw = self.spec["fftw-api"]
+                options.append("-DFFTWF_INCLUDE_DIRS={0}".format(fftw.headers.directories[0]))
+                options.append("-DFFTWF_LIBRARIES={0}".format(fftw.libs.joined(";")))
             elif self.spec.satisfies("^armpl-gcc"):
                 options.append(
                     "-DFFTWF_INCLUDE_DIR={0}".format(self.spec["armpl-gcc"].headers.directories[0])

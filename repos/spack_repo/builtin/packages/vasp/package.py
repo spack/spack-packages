@@ -52,7 +52,9 @@ class Vasp(MakefilePackage, CudaPackage):
     depends_on("fftw-api")
     depends_on("fftw+openmp", when="+openmp ^[virtuals=fftw-api] fftw")
     depends_on("amdfftw+openmp", when="+openmp ^[virtuals=fftw-api] amdfftw")
+    depends_on("aocl-fftw+openmp", when="+openmp ^[virtuals=fftw-api] aocl-fftw")
     depends_on("amdblis threads=openmp", when="+openmp ^[virtuals=blas] amdblis")
+    depends_on("aocl-blas threads=openmp", when="+openmp ^[virtuals=blas] aocl-blas")
     depends_on("openblas threads=openmp", when="+openmp ^[virtuals=blas] openblas")
     depends_on("mpi", type=("build", "link", "run"))
     # fortran oddness requires the below
@@ -157,7 +159,7 @@ class Vasp(MakefilePackage, CudaPackage):
         elif spec.satisfies("%aocc"):
             cpp_options.extend(['-DHOST=\\"LinuxAMD\\"', "-Dshmem_bcast_buffer", "-DNGZhalf"])
             fflags.extend(["-fno-fortran-main", "-Mbackslash", "-ffunc-args-alias"])
-            if spec.satisfies("^amdfftw@4.0:"):
+            if spec.satisfies("^amdfftw@4.0:") or spec.satisfies("^aocl-fftw@4.0:"):
                 cpp_options.extend(["-Dfftw_cache_plans", "-Duse_fftw_plan_effort"])
             if spec.satisfies("+openmp"):
                 if spec.satisfies("@6.3.2:"):

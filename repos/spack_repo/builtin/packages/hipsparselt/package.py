@@ -172,7 +172,7 @@ class Hipsparselt(ROCmLibrary, CMakePackage, ROCmPackage):
     depends_on("py-joblib")
     depends_on("googletest@1.10.0:", type="test")
     depends_on("netlib-lapack@3.7.1:", type="test")
-    depends_on("amdblis", type="test", when="@7.2:")
+    depends_on("aocl-blas", type="test", when="@7.2:")
     depends_on("python-venv", when="@7.0:")
     depends_on("py-pyyaml+libyaml", when="@7.1:")
     depends_on("py-packaging", when="@7.1:")

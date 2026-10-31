@@ -26,7 +26,7 @@ _targets = {
 
 class BlisBase(MakefilePackage):
     """Base class for building BLIS, shared with the AMD optimized version
-    of the library in the 'amdblis' package.
+    of the library in the 'aocl-blas' package ('amdblis' is a deprecated alias).
     """
 
     maintainers("jeffhammond")

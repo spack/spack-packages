@@ -292,10 +292,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
             "flexiblas": "FlexiBLAS",
             "libflame": "FLAME",
             "amdlibflame": "FLAME",
+            "aocl-lapack": "FLAME",
             "nvhpc": "NVHPC",
             "cray-libsci": "SciLib",
             "blis": "BLIS",
             "amdblis": "BLIS",
+            "aocl-blas": "BLIS",
             "essl": "ESSL",
         }
 

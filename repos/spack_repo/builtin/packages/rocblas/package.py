@@ -79,7 +79,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
     depends_on("cmake@3.16.8:", type="build")
 
     depends_on("googletest@1.10.0:", type="test")
-    depends_on("amdblis", type="test")
+    depends_on("aocl-blas", type="test")
 
     for ver in [
         "6.2.0",
@@ -316,10 +316,10 @@ class Rocblas(ROCmLibrary, CMakePackage):
         if self.run_tests:
             args.append(self.define("LINK_BLIS", "ON"))
             args.append(
-                self.define("BLIS_INCLUDE_DIR", self.spec["amdblis"].prefix + "/include/blis/")
+                self.define("BLIS_INCLUDE_DIR", self.spec["aocl-blas"].prefix + "/include/blis/")
             )
             args.append(
-                self.define("BLAS_LIBRARY", self.spec["amdblis"].prefix + "/lib/libblis.a")
+                self.define("BLAS_LIBRARY", self.spec["aocl-blas"].prefix + "/lib/libblis.a")
             )
             if self.spec.satisfies("@:7.1"):
                 args.append(

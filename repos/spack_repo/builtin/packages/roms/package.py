@@ -94,7 +94,7 @@ class Roms(MakefilePackage):
     depends_on("hdf5+fortran")
     depends_on("zlib-api")
     depends_on("curl")
-    depends_on("amdlibm", when="%aocc")
+    depends_on("aocl-libm", when="%aocc")
 
     # Note: you cannot set USE_OpenMP and USE_MPI at the same time
     conflicts("+mpi+openmp")
@@ -149,7 +149,7 @@ class Roms(MakefilePackage):
         filter_file(r"\sFFLAGS :=.*$", " FFLAGS := {0}".format(" ".join(fflags)), make_aocc)
         filter_file("-fallow-argument-mismatch", "", make_aocc, string=True)
         filter_file(
-            r"\sLIBS :=.*", " LIBS := {0}".format(spec["amdlibm"].libs.ld_flags), make_aocc
+            r"\sLIBS :=.*", " LIBS := {0}".format(spec["aocl-libm"].libs.ld_flags), make_aocc
         )
         filter_file(r"\sFREEFLAGS :=.*", " FREEFLAGS := -ffree-form", make_aocc)
 

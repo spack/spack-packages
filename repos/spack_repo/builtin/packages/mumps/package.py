@@ -249,14 +249,14 @@ class Mumps(Package):
                 optf.append("-fallow-argument-mismatch")
 
         # As of version 5.2.0, MUMPS is able to take advantage
-        # of the GEMMT BLAS extension. MKL and amdblis are the only
-        # known BLAS implementation supported.
+        # of the GEMMT BLAS extension. MKL, aocl-blas and its deprecated
+        # amdblis alias are the only known BLAS implementations supported.
         if self.spec.satisfies("^[virtuals=blas] intel-oneapi-mkl") and self.spec.satisfies(
             "@5.2.0:"
         ):
             optf.append("-DGEMMT_AVAILABLE")
 
-        if "@5.2.0: ^amdblis@3.0:" in self.spec:
+        if "@5.2.0: ^amdblis@3.0:" in self.spec or "@5.2.0: ^aocl-blas@3.0:" in self.spec:
             optf.append("-DGEMMT_AVAILABLE")
 
         if "+openmp" in self.spec:

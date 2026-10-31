@@ -61,6 +61,7 @@ class Openmx(MakefilePackage):
     # Need OpenMP threaded BLAS libraries
     requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
     requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+    requires("^aocl-blas threads=openmp", when="^[virtuals=blas] aocl-blas")
     requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
 
     patch("for_aarch64.patch", when="@3.8 target=aarch64:")

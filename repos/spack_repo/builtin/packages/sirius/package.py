@@ -177,6 +177,7 @@ class Sirius(CMakePackage, CudaPackage, ROCmPackage):
     # Propagate openmp to blas
     depends_on("openblas threads=openmp", when="+openmp ^[virtuals=blas,lapack] openblas")
     depends_on("amdblis threads=openmp", when="+openmp ^[virtuals=blas] amdblis")
+    depends_on("aocl-blas threads=openmp", when="+openmp ^[virtuals=blas] aocl-blas")
     depends_on("blis threads=openmp", when="+openmp ^[virtuals=blas] blis")
     depends_on(
         "intel-oneapi-mkl threads=openmp",

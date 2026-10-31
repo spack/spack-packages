@@ -82,7 +82,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
     depends_on("blas")
     depends_on("lapack")
-    for blas in ("openblas", "amdblis", "blis"):
+    for blas in ("openblas", "amdblis", "aocl-blas", "blis"):
         depends_on(f"{blas} threads=openmp", when=f"+openmp ^[virtuals=blas] {blas}")
         depends_on(f"{blas} threads=none", when=f"~openmp ^[virtuals=blas] {blas}")
     depends_on("scalapack", when="+mpi")

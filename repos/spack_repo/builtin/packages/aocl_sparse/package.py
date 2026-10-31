@@ -61,15 +61,27 @@ class AoclSparse(CMakePackage):
 
     for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@={vers}"):
-            depends_on(f"amdblis@={vers}")
-            depends_on(f"amdlibflame@={vers}")
+            depends_on(f"aocl-blas@={vers}")
+            depends_on(f"aocl-lapack@={vers}")
             if Version(vers) >= Version("4.2"):
                 depends_on(f"aocl-utils@={vers}")
 
-    depends_on("amdblis threads=openmp", when="+openmp")
-    depends_on("amdlibflame threads=openmp", when="+openmp")
-    depends_on("amdblis threads=none", when="~openmp")
-    depends_on("amdlibflame threads=none", when="~openmp")
+    depends_on("aocl-blas threads=openmp", when="+openmp")
+    depends_on("aocl-lapack threads=openmp", when="+openmp")
+    depends_on("aocl-blas threads=none", when="~openmp")
+    depends_on("aocl-lapack threads=none", when="~openmp")
+    # These are deprecated aliases of aocl-blas and aocl-lapack. Requesting one
+    # alongside the canonical dependency installs two copies of the same library.
+    conflicts(
+        "^amdblis",
+        when="^aocl-blas",
+        msg="use aocl-blas; amdblis is a deprecated alias",
+    )
+    conflicts(
+        "^amdlibflame",
+        when="^aocl-lapack",
+        msg="use aocl-lapack; amdlibflame is a deprecated alias",
+    )
     depends_on("boost", when="+benchmarks")
     depends_on("boost", when="@2.2")
     depends_on("cmake@3.22:", when="@:5.0", type="build")
@@ -113,11 +125,13 @@ class AoclSparse(CMakePackage):
             args.append(self.define_from_variant("BUILD_ILP64", "ilp64"))
 
         if spec.satisfies("@4.0:"):
-            args.append(f"-DAOCL_BLIS_LIB={self.spec['amdblis'].libs}")
-            args.append("-DAOCL_BLIS_INCLUDE_DIR={0}/blis".format(spec["amdblis"].prefix.include))
-            args.append(f"-DAOCL_LIBFLAME={spec['amdlibflame'].libs}")
+            args.append(f"-DAOCL_BLIS_LIB={self.spec['aocl-blas'].libs}")
             args.append(
-                "-DAOCL_LIBFLAME_INCLUDE_DIR={0}".format(spec["amdlibflame"].prefix.include)
+                "-DAOCL_BLIS_INCLUDE_DIR={0}/blis".format(spec["aocl-blas"].prefix.include)
+            )
+            args.append(f"-DAOCL_LIBFLAME={spec['aocl-lapack'].libs}")
+            args.append(
+                "-DAOCL_LIBFLAME_INCLUDE_DIR={0}".format(spec["aocl-lapack"].prefix.include)
             )
 
         if spec.satisfies("@4.2:"):

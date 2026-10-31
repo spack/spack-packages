@@ -67,17 +67,29 @@ class AoclDa(CMakePackage):
         with when(f"@={vers}"):
             depends_on(f"aocl-utils@={vers} +shared", when="+shared")
             depends_on(f"aocl-utils@={vers} ~shared", when="~shared")
-            depends_on(f"amdblis@={vers} libs=shared", when="+shared")
-            depends_on(f"amdblis@={vers} libs=static", when="~shared")
-            depends_on(f"amdlibflame@={vers} +shared", when="+shared")
-            depends_on(f"amdlibflame@={vers} ~shared", when="~shared")
+            depends_on(f"aocl-blas@={vers} libs=shared", when="+shared")
+            depends_on(f"aocl-blas@={vers} libs=static", when="~shared")
+            depends_on(f"aocl-lapack@={vers} +shared", when="+shared")
+            depends_on(f"aocl-lapack@={vers} ~shared", when="~shared")
             depends_on(f"aocl-sparse@={vers} +shared", when="+shared")
             depends_on(f"aocl-sparse@={vers} ~shared", when="~shared")
 
-    depends_on("amdblis threads=openmp", when="+openmp")
-    depends_on("amdlibflame threads=openmp", when="+openmp")
-    depends_on("amdblis threads=none", when="~openmp")
-    depends_on("amdlibflame threads=none", when="~openmp")
+    depends_on("aocl-blas threads=openmp", when="+openmp")
+    depends_on("aocl-lapack threads=openmp", when="+openmp")
+    depends_on("aocl-blas threads=none", when="~openmp")
+    depends_on("aocl-lapack threads=none", when="~openmp")
+    # These are deprecated aliases of aocl-blas and aocl-lapack. Requesting one
+    # alongside the canonical dependency installs two copies of the same library.
+    conflicts(
+        "^amdblis",
+        when="^aocl-blas",
+        msg="use aocl-blas; amdblis is a deprecated alias",
+    )
+    conflicts(
+        "^amdlibflame",
+        when="^aocl-lapack",
+        msg="use aocl-lapack; amdlibflame is a deprecated alias",
+    )
     depends_on("aocl-sparse +openmp", when="+openmp")
     depends_on("aocl-sparse ~openmp", when="~openmp")
 
@@ -108,10 +120,10 @@ class AoclDa(CMakePackage):
         args.append(f"-DUTILS_LIB={spec['aocl-utils'].libs}")
         args.append(f"-DUTILS_CPUID_LIB={spec['aocl-utils'].libs}")
         args.append(f"-DUTILS_CORE_LIB={spec['aocl-utils'].libs}")
-        args.append(f"-DBLAS_LIB={spec['amdblis'].libs}")
-        args.append("-DBLAS_INCLUDE_DIR={0}/blis".format(spec["amdblis"].prefix.include))
-        args.append(f"-DLAPACK_LIB={spec['amdlibflame'].libs}")
-        args.append("-DLAPACK_INCLUDE_DIR={0}".format(spec["amdlibflame"].prefix.include))
+        args.append(f"-DBLAS_LIB={spec['aocl-blas'].libs}")
+        args.append("-DBLAS_INCLUDE_DIR={0}/blis".format(spec["aocl-blas"].prefix.include))
+        args.append(f"-DLAPACK_LIB={spec['aocl-lapack'].libs}")
+        args.append("-DLAPACK_INCLUDE_DIR={0}".format(spec["aocl-lapack"].prefix.include))
         args.append(f"-DSPARSE_LIB={spec['aocl-sparse'].libs}")
         args.append("-DSPARSE_INCLUDE_DIR={0}".format(spec["aocl-sparse"].prefix.include))
         args.append(self.define_from_variant("BUILD_EXAMPLES", "examples"))
