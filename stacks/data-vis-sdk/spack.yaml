@@ -58,6 +58,11 @@ spack:
       - - paraview
       - - +qt
         - ~qt
+  - vtk_specs:
+    - matrix:
+      - - vtk
+      - - +qt
+        - ~qt
   - visit_specs:
     - matrix:
       - - visit
@@ -85,6 +90,7 @@ spack:
   - ascent
   - $paraview_specs
   - $visit_specs
+  - $vtk_specs
   - vtk-m
 
   ci:
