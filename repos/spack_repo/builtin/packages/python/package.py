@@ -262,6 +262,9 @@ class Python(Package):
         depends_on("openssl@1.0.2:", when="+ssl")
         # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
         depends_on("openssl@1.1.1:", when="@3.10:+ssl")
+        # undefined symbol: TLSv1_method
+        # fixed for 3.15 (https://github.com/python/cpython/issues/148600)
+        depends_on("openssl@:3", when="@:3.14+ssl")
         depends_on("sqlite@3.0.8:", when="@:3.9+sqlite3")
         # https://docs.python.org/3.10/whatsnew/3.10.html#build-changes
         depends_on("sqlite@3.7.15:", when="@3.10:+sqlite3")

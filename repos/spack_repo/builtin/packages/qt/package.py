@@ -265,7 +265,8 @@ class Qt(Package):
     depends_on("pcre+multibyte", when="@5.0:5.8")
 
     with when("+ssl"):
-        depends_on("openssl")
+        # error: invalid use of incomplete type 'ASN1_INTEGER' {aka 'struct asn1_string_st'}
+        depends_on("openssl@:3")
         depends_on("openssl@1.1.1:", when="@5.15.0:")
 
     depends_on("libpng", when="@4:")
