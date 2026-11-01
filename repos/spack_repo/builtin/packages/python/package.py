@@ -61,7 +61,6 @@ class Python(Package):
     version("3.13.17", sha256="9cb057caa588f122577a5054a22531cd9c23ab6706f1a19bc95a55380a895177")
     version("3.12.15", sha256="de1a241a519e0a3374fea98988d0b52c886743f9d953f23be8269cc7b59c5fab")
     version("3.11.17", sha256="53cdee63ac4bf12387b7b33a53d3b1f8f4941cad73807a7b4fe91bb001ef004a")
-    version("3.10.22", sha256="9448b34d16f8e3db0964ac3ed9fb283197747543c2c021f283ffd2c8b7287357")
 
     # Deprecated because newer bug fix patch releases exist
     with default_args(deprecated=True):
@@ -179,6 +178,9 @@ class Python(Package):
 
     # EOL versions we still want to be able to install
     with default_args(deprecated=True):
+        version(
+            "3.10.22", sha256="9448b34d16f8e3db0964ac3ed9fb283197747543c2c021f283ffd2c8b7287357"
+        )
         version(
             "3.9.25", sha256="a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2"
         )
