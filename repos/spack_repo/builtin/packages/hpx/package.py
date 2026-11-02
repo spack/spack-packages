@@ -101,6 +101,12 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
         description="Use Boost.Context as the underlying coroutines"
         " context switch implementation.",
     )
+    variant(
+        "thrust",
+        default=True,
+        description="Enable support for NVIDIA Thrust integration",
+        when="@2: +cuda",
+    )
 
     variant("tools", default=False, description="Build HPX tools")
     variant("examples", default=False, description="Build examples")
@@ -291,6 +297,13 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
             self.define("HPX_DATASTRUCTURES_WITH_ADAPT_STD_TUPLE", False),
             self.define("HPX_WITH_PKGCONFIG", False),
         ]
+
+        if spec.satisfies("@2:"):
+            # HPX 2.0 fetches stdexec (a pinned commit, which it patches) while
+            # it is configured: Spack has no stdexec version that works with it
+            args += [self.define("HPX_WITH_CXX_MODULES", False)]
+            if spec.satisfies("+cuda"):
+                args += [self.define_from_variant("HPX_WITH_THRUST", "thrust")]
 
         # Enable unity builds when available
         if spec.satisfies("@1.7:"):
