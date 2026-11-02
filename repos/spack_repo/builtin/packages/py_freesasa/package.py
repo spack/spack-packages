@@ -14,7 +14,7 @@ class PyFreesasa(PythonPackage):
     """
 
     homepage = "https://freesasa.github.io/"
-    url="https://files.pythonhosted.org/packages/52/fc/1b28f7973952934737387172ef0a40c0ea7cb9a6132264c3e731760f8efa/freesasa-2.2.1.tar.gz"
+    url = "https://files.pythonhosted.org/packages/52/fc/1b28f7973952934737387172ef0a40c0ea7cb9a6132264c3e731760f8efa/freesasa-2.2.1.tar.gz"
     pypi = "freesasa/freesasa"
 
     license("MIT")
