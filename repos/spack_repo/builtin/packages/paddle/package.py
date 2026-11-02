@@ -16,7 +16,7 @@ class Paddle(CMakePackage):
     maintainers("fpruvost")
 
     version("master", branch="master", submodules=True)
-    version("0.3.7", tag="0.3.7", submodules=True)
+    version("0.3.9", tag="0.3.9", submodules=True)
 
     variant("parmetis", default=False, description="Enable ParMETIS ordering")
     variant("tests", default=False, description="Enable tests")
