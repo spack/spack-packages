@@ -15,7 +15,7 @@ class PyMeshioplusplus(PythonPackage):
     homepage = "https://github.com/loumalouomega/meshioplusplus"
     # 6.0.0 has no PyPI sdist, so build every version from the GitHub archive
     # (scikit-build-core builds fine from the source tree) for a uniform source.
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v17.13.0.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v18.0.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -34,7 +34,10 @@ class PyMeshioplusplus(PythonPackage):
     # floor, numpy/rich requirements and pybind11 build requirement are
     # unchanged across this whole range; only scikit-build-core's floor moved
     # to 0.11 at v17.11.0, which the dependency block below follows.
-    # v17.13.0 is the latest release and the first tagged ABI 33; it keeps 33
+    # v18.0.0 is the latest release and the first tagged ABI 37 (the Python
+    # floor moved to 3.10; the OpenCASCADE code now lives behind the provider
+    # registry but the source build with +occt is unchanged).
+    # v17.13.0 is the first tagged ABI 33; it keeps 33
     # (the new mesh_cad header is a pure addition). The ABI 33 break came in
     # v17.12.0, which was never tagged (FitCadOptions grew from 224 to 288
     # bytes and FitCadResult gained members; the C structs kept their sizes).
@@ -44,6 +47,7 @@ class PyMeshioplusplus(PythonPackage):
     # first tagged ABI 31 (SegmentOptions grew; the C structs kept their
     # sizes). v17.4.0 through v17.8.0 share ABI 30 with v17.3.0 and so need no
     # separate line.
+    version("18.0.0", sha256="36a33b3498e9d62b1606a803429fcc6936678c3385f4f3855fdb3048552f49f9")
     version("17.13.0", sha256="4fa094ba3a2a0cf2d5579f5635377efe6f6b5f4437f884dc4e9a1a25d6f43a5a")
     version("17.11.0", sha256="24ec1cf7b31be1602dc56b4deffbba4e3856d80c55f08e2423c6fef3580daf83")
     version("17.10.0", sha256="102ac6dcfc6ea70665ca09f3d3e3df1876073fc7a72e00aae6cf9303d53f4815")
@@ -151,7 +155,9 @@ class PyMeshioplusplus(PythonPackage):
     depends_on("py-scikit-build-core@0.11:", type="build", when="@17.11:")
     depends_on("py-pybind11@2.11:", type="build")
 
-    depends_on("python@3.8:", type=("build", "link", "run"))
+    depends_on("python@3.8:", type=("build", "link", "run"), when="@:17")
+    # v18.0.0 dropped Python 3.8 and 3.9.
+    depends_on("python@3.10:", type=("build", "link", "run"), when="@18:")
     depends_on("py-numpy@1.20:", type=("build", "run"))
     depends_on("py-rich", type="run")
 
