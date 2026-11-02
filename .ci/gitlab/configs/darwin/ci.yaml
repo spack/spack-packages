@@ -6,7 +6,6 @@ ci:
   pipeline-gen:
   - any-job:
       variables:
-        CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
         GIT_STRATEGY: "empty"
   - match_behavior: first
     submapping:
@@ -24,9 +23,8 @@ ci:
   - build-job:
       timeout: 240 minutes
       tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
-      variables:
-        SPACK_GNUPGHOME: ${CI_PROJECT_DIR}/.gpg
       before_script:
-      - mkdir ${SPACK_GNUPGHOME}
+      - export SPACK_GNUPGHOME="${CI_PROJECT_DIR}/.gpg"
+      - mkdir "${SPACK_GNUPGHOME}"
   - build-job-remove:
       image:: macos-run-on-metal

@@ -22,12 +22,6 @@ default:
       aud: https://gitlab.spack.io
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
-.checkout_repository: &checkout_repository
-  - git init "${CI_PROJECT_DIR}"
-  - git -C "${CI_PROJECT_DIR}" config remote.origin.url "${CI_REPOSITORY_URL}"
-  - git -C "${CI_PROJECT_DIR}" fetch --depth 1 origin "${CI_COMMIT_SHA}"
-  - git -C "${CI_PROJECT_DIR}" checkout --force FETCH_HEAD
-
 .clone_spack: &clone_spack
   - mkdir .ci/tmp
   - mkdir .ci/tmp/spack
@@ -38,6 +32,20 @@ default:
   - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
   - cd ${CI_PROJECT_DIR}
+
+.checkout_repository: &checkout_repository
+  # Only the job shell uses /tmp; Jacamar and artifact uploads keep the shared directory.
+  - export SPACK_CI_SHARED_PROJECT_DIR="${CI_PROJECT_DIR}"
+  - CI_PROJECT_DIR=$(mktemp -d /tmp/spack-ci.XXXXXXXXXX)
+  - export CI_PROJECT_DIR
+  - cd "${CI_PROJECT_DIR}"
+  - export CI_PROJECT_DIR="$(pwd -P)"
+  - git init
+  - git config remote.origin.url "${CI_REPOSITORY_URL}"
+  - git fetch --depth 1 origin "${CI_COMMIT_SHA}"
+  - git checkout --force FETCH_HEAD
+  - *clone_spack
+  - . "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/local_workspace.sh"
 
 .trigger_build: &trigger_build
   strategy: depend
@@ -173,8 +181,7 @@ default:
 .generate-base:
   extends: [ ".base-job", ".generate-common" ]
   variables:
-    CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
-    GIT_STRATEGY: "none"
+    GIT_STRATEGY: "empty"
   before_script:
     - *checkout_repository
     # Check if bypass for noop is set
@@ -189,7 +196,6 @@ default:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
   after_script:
@@ -780,8 +786,7 @@ aws-pcluster-neoverse_v1-build:
 .generate-cray:
   extends: [ ".generate-common", ".base-job" ]
   variables:
-    CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
-    GIT_STRATEGY: "none"
+    GIT_STRATEGY: "empty"
     # Override concretization pool for metal runners
     SPACK_CONCRETIZE_JOBS: 16
     SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
@@ -796,7 +801,6 @@ aws-pcluster-neoverse_v1-build:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
   after_script:

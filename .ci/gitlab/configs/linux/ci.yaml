@@ -5,7 +5,6 @@ ci:
   - any-job:
       tags: ["litmus"]
       variables:
-        CUSTOM_CI_BUILDS_DIR: "/tmp/spackbot"
         GIT_STRATEGY: "empty"
   - copy-job:
       variables:
