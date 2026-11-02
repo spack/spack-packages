@@ -131,7 +131,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         "external_vtk",
         default=False,
         description="Build against an external VTK instead of the one bundled with ParaView",
-        when="@6.1:",
+        when="@6.2:",
     )
     variant("catalyst", default=False, description="Enable Catalyst 1")
     variant(
@@ -310,7 +310,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
                 depends_on(f"viskores amdgpu_target={target}", when=f"amdgpu_target={target}")
 
     with when("+external_vtk"):
-        # ParaView 6.1 requires VTK >= 9.6.1
         depends_on("vtk@9.7:")
         depends_on("vtk +python", when="+python")
         depends_on("vtk +qt", when="+qt")
