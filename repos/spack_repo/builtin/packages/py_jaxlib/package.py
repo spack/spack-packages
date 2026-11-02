@@ -253,6 +253,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             # concretizer will not try to use v0.7.0 to avoid taking a penalty on requirements
             requires("%c,cxx=apple-clang", "%c,cxx=llvm", when="platform=darwin")
 
+    # FIXME: requires lld workarounds and XLA patching
+    conflicts("+rocm", when="@0.12:")
+
     conflicts(
         "cuda_arch=none",
         when="+cuda",
