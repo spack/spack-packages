@@ -17,6 +17,9 @@ class TruchasPbf(CMakePackage):
 
     version("develop", branch="master")
     version("keyholing", branch="keyholing")
+    version("26.07", tag="26.07")
+    version("26.10", tag="26.10")
+    version("26.11", tag="26.11")
 
     ### Variants #################################
     # variant("unit", default=False, description="Enable Unit Tests")
