@@ -329,7 +329,8 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
             libs += find_libraries("libmpi_ilp64", self.component_prefix.lib.release)
         libs += find_libraries(["libmpicxx", "libmpifort"], self.component_prefix.lib)
         libs += find_libraries("libmpi", self.component_prefix.lib.release)
-        libs += find_system_libraries(["libdl", "librt", "libpthread"])
+        # Let the linker resolve system libraries without searching unrelated SDK sysroots.
+        libs += LibraryList(["dl", "rt", "pthread"])
 
         # Find libfabric for libmpi.so
         if self.spec.satisfies("+external-libfabric"):

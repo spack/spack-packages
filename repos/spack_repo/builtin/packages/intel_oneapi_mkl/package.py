@@ -269,7 +269,8 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
 
         libs = self._find_mkl_libs(shared)
 
-        system_libs = find_system_libraries(["libpthread", "libm", "libdl"])
+        # Let the linker resolve system libraries without searching unrelated SDK sysroots.
+        system_libs = LibraryList(["pthread", "m", "dl"])
         if shared:
             return libs + system_libs
         else:
