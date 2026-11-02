@@ -243,16 +243,16 @@ class Wrf(Package):
         sha256="27c7268f6c84b884d21e4afad0bab8554b06961cf4d6bfd7d0f5a457dcfdffb1",
         when="@4.3.1",
     )
-    # Add ARM compiler support
+    # Add ARM compiler support (included upstream since 4.5.2)
     patch(
         "https://github.com/wrf-model/WRF/commit/4a084e03575da65f254917ef5d8eb39074abd3fc.patch?full_index=1",
         sha256="2d06d709074ded9bd6842aa83c0dfdad5a4e4e2df99e2e5d4a82579f0486117e",
-        when="@4.5: %arm",
+        when="@4.5.0:4.5.1 %arm",
     )
     patch(
         "https://github.com/wrf-model/WRF/commit/6087d9192f7f91967147e50f5bc8b9e49310cf98.patch?full_index=1",
         sha256="7c6487aefaa6cda0fff3976e78da07b09d2ba6c005d649f35a0f8f1694a0b2bb",
-        when="@4.5: %arm",
+        when="@4.5.0:4.5.1 %arm",
     )
 
     depends_on("c", type="build")  # generated
