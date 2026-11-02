@@ -78,10 +78,14 @@ class DotnetCoreSdk(Package):
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # for apps built with this SDK to find the runtime
         env.set("DOTNET_ROOT", self.prefix)
+        if self.spec.satisfies("platform=windows"):
+            env.prepend_path("PATH", self.prefix)
         if self.spec.satisfies("~telemetry"):
             env.set("DOTNET_CLI_TELEMETRY_OPTOUT", "1")
 
     def install(self, spec, prefix):
-        mkdirp("bin")
-        symlink("../dotnet", "bin/dotnet")
+        # dotnet.exe finds the SDK next to it, so on Windows there is no bin/
+        if not spec.satisfies("platform=windows"):
+            mkdirp("bin")
+            symlink("../dotnet", "bin/dotnet")
         install_tree(".", prefix)
