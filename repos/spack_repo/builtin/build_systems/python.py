@@ -11,7 +11,6 @@ import urllib
 from functools import lru_cache
 from typing import Dict, Iterable, List, Mapping, Optional, Tuple
 
-import spack.util.web as web_util
 from spack.package import (
     BuilderWithDefaults,
     ClassProperty,
@@ -39,6 +38,7 @@ from spack.package import (
     tty,
     when,
     working_dir,
+    web_util,
 )
 from spack.version import StandardVersion
 
