@@ -33,7 +33,7 @@ class Meshioplusplus(CMakePackage):
     """
 
     homepage = "https://github.com/loumalouomega/meshioplusplus"
-    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v17.13.0.tar.gz"
+    url = "https://github.com/loumalouomega/meshioplusplus/archive/refs/tags/v18.0.0.tar.gz"
     git = "https://github.com/loumalouomega/meshioplusplus.git"
 
     maintainers("loumalouomega")
@@ -58,7 +58,10 @@ class Meshioplusplus(CMakePackage):
     # *tagged* release of each ABI -- which is why ABI 6 opens at v9.22.0
     # rather than the v9.20.0 that introduced mPatchTypes.
     #
-    # v17.13.0 is the latest release and the first tagged ABI 33; it keeps 33
+    # v18.0.0 is the latest release and the first tagged ABI 37 (read from
+    # abi_version.hpp at the tag; the changelog entry still says 36).
+    version("18.0.0", sha256="36a33b3498e9d62b1606a803429fcc6936678c3385f4f3855fdb3048552f49f9")
+    # v17.13.0 is the first tagged ABI 33; it keeps 33
     # (the new mesh_cad header is a pure addition). The ABI 33 break came in
     # v17.12.0, which was never tagged: FitCadOptions grew from 224 to 288
     # bytes and FitCadResult gained members (the C structs kept their sizes).
