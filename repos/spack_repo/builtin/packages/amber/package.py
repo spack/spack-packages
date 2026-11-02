@@ -1,4 +1,4 @@
-# Copyright Spack Project Developers. See COPYRIGHT file for details.
+f# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
@@ -175,6 +175,8 @@ class Amber(CMakePackage, Package, CudaPackage):
 
     # Workaround to use NVIDIA compilers to build the bundled Boost
     patch("nvhpc-boost.patch", when="@18:20 %nvhpc")
+
+    patch("openmp26.patch", when="@26+openmp")
 
     variant("mpi", description="Build MPI executables", default=True)
     variant("openmp", description="Use OpenMP pragmas to parallelize", default=False)
