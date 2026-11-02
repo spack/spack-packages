@@ -17,6 +17,7 @@ class Wps(Package):
     url = "https://github.com/wrf-model/WPS/archive/v4.2.tar.gz"
     maintainers("MichaelLaufer")
 
+    version("4.7.0", sha256="5232d20d7556338391b66aba45824d4fcd6c42712ebe9325f359f3c6cf043808")
     version("4.6.0", sha256="ca7bbfc6c28a107c6eb00ded70e693f5c9a3926ecde7656f49e306c9eb9a309b")
     version("4.5", sha256="3cb29107f85b81af05b7dd494e5d4a13cf1b33b87d7e2911a64a7abc59bf55f3")
     version("4.4", sha256="fe9c8d8a9a4abbf800b30e6cbb378604c6040e4536f5594b8e2dae43e942e2b3")
@@ -40,7 +41,8 @@ class Wps(Package):
     patch("patches/4.3/arch.configure.defaults.patch", when="@=4.3")
     patch("patches/4.3.1/arch.configure.defaults.patch", when="@4.3.1")
     patch("patches/4.4/configure.patch", when="@4.4:4.5")
-    patch("patches/4.6/configure.patch", when="@4.6:")
+    patch("patches/4.6/configure.patch", when="@4.6")
+    patch("patches/4.7/configure.patch", when="@4.7:")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
