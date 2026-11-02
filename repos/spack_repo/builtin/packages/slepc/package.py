@@ -71,9 +71,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
-    # Default installation contains ~1 k tutorial/example files.
-    # Give packagers a switch to trim them away (‘spack install slepc ~examples’)
-    # while preserving current behaviour by default.
+
     variant("examples", default=True, description="Install test and tutorial example sources")
 
     depends_on("c", type="build")  # generated
