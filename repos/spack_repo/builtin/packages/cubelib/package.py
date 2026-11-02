@@ -37,7 +37,7 @@ class Cubelib(AutotoolsPackage):
     def clean_compiler(self, compiler):
         renames = {
             "cce": "cray",
-            "rocmcc": "amdclang",
+            "llvm-amdgpu": "amdclang",
             "intel-oneapi-compilers": "oneapi",
             "llvm": "clang",
         }

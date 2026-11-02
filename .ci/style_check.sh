@@ -35,5 +35,8 @@ info "running ruff format"
 python_files | xargs -0 -n 100 ruff format $format_flags || error=1
 info "running ruff check"
 python_files | xargs -0 -n 100 ruff check $check_flags || error=1
+info "checking for non-ASCII characters"
+non_ascii=$(python_files | xargs -0 env LC_ALL=C grep -Hn "$(printf '#.*[\200-\377]')" || true)
+[ -n "$non_ascii" ] && printf "%s\n" "$non_ascii" && error=1
 [ "$error" = "1" ] && die "style checks failed"
 info "style checks passed"

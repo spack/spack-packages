@@ -333,7 +333,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     depends_on("z3@4.7.1:", when="+z3")
 
     # openmp dependencies
-    depends_on("perl-data-dumper", type=("build"))
+    depends_on("perl-data-dumper", type="build", when="@:19")  # see llvm-project/#95307
     depends_on("hwloc")
     depends_on("hwloc@2.0.1:", when="@13")
     with when("@:15"):
@@ -924,12 +924,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             env.append_flags("LDFLAGS", intel_libs.ld_flags)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("+clang"):
-            env.set("CC", join_path(self.spec.prefix.bin, "clang"))
-            env.set("CXX", join_path(self.spec.prefix.bin, "clang++"))
-        if self.spec.satisfies("+flang"):
-            env.set("FC", join_path(self.spec.prefix.bin, "flang"))
-            env.set("F77", join_path(self.spec.prefix.bin, "flang"))
+        if self.cc:
+            env.set("CC", self.cc)
+        if self.cxx:
+            env.set("CXX", self.cxx)
+        if self.fortran:
+            env.set("FC", self.fortran)
+            env.set("F77", self.fortran)
 
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
