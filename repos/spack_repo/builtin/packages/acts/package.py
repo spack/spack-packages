@@ -54,6 +54,7 @@ class Acts(CMakePackage, CudaPackage):
     # GitHub generates for a tag do not, and neither does a git checkout, so
     # do not add these versions by commit or the ACTS configure step will fail.
     version("main", branch="main")
+    version("48.4.0", sha256="b322feb813c732ca6d4702b9cadb18f23d477f5dc14d94e1b56afb3fb2265fa0")
     version("48.3.0", sha256="df50eee0789079acaa64fa8b1d8333428d77e1d9f2ab653c0c45f6e457fffa4a")
     version("48.2.0", sha256="a0dc7b5ff588de55c1e80b6254b1f065c54e751a29001970a2d96d46b5d21e85")
     version("48.1.0", sha256="29f7434dcdae60c0d029e3135b56ee1f866ec3894ddfd05920f9f0bb2c5b0da5")
