@@ -58,6 +58,7 @@ spack:
       - - paraview
       - - +qt
         - ~qt
+    - paraview +external_vtk ~qt
   - vtk_specs:
     - matrix:
       - - vtk
