@@ -246,6 +246,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("blas", when="@26: ~mkl")
     depends_on("lapack", when="@26: ~mkl")
     depends_on("mkl", when="+mkl")
+    depends_on("intel-oneapi-mkl threads=openmp", when="+openmp ^[virtuals=mkl] intel-oneapi-mkl")
     # Amber's CudaConfig.cmake only knows how to configure CUDA 7.5 - 12.8
     # (and hard-codes the -gencode list per CUDA version). Anything older than
     # 11.0 lacks the targets Amber26 expects.
