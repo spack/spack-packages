@@ -26,7 +26,11 @@ class _7zip(MakefilePackage, NMakePackage):
     license("LGPL-2.1-or-later AND BSD-3-Clause AND BSD-2-Clause")
 
     version("26.05", sha256="0b6080b8c3e7a579161d2d495224c0e51c467576cb4c7048b0ab485ef44cc22e")
-    version("21.07", sha256="213d594407cb8efcba36610b152ca4921eda14163310b43903d13e68313e1e39")
+    version(
+        "21.07",
+        sha256="213d594407cb8efcba36610b152ca4921eda14163310b43903d13e68313e1e39",
+        deprecated=True,
+    )
 
     build_system("makefile", conditional("nmake", when="platform=windows"), default="makefile")
 
