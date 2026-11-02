@@ -303,9 +303,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # FindNCCL.cmake looks in $NCCL_HOME/{include,lib}
             # -DNCCL=TRUE itself is passed in cmake_args.
             env.set("NCCL_HOME", spec["nccl"].prefix)
-        if spec.satisfies("+mkl"):
-            # FindMKL.cmake picks the MKL root up from the environment
-            env.set("MKLROOT", spec["mkl"].prefix)
 
     def _compiler_id(self):
         spec = self.pkg.spec
