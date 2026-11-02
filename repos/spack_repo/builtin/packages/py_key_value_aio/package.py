@@ -14,13 +14,15 @@ class PyKeyValueAio(PythonPackage):
     homepage = "https://github.com/strawgate/py-key-value"
     pypi = "py_key_value_aio/py_key_value_aio-0.4.4.tar.gz"
 
+    version("0.4.5", sha256="c6563a2c6abe5da5e20f4f9e875c2a9b425a2244a54fadbf46cf140a9eea45d7")
     version("0.4.4", sha256="e3012e6243ed7cc09bb05457bd4d03b1ba5c2b1ca8700096b3927db79ffbbe55")
 
     variant("memory", default=False, description="Enable memory backend")
     variant("redis", default=False, description="Enable redis backend")
 
     depends_on("python@3.10:", type=("build", "run"))
-    depends_on("py-uv-build@0.8.2:0.8", type="build")
+    depends_on("py-uv-build@0.11.4:0.11", type="build", when="@0.4.5:")
+    depends_on("py-uv-build@0.8.2:0.8", type="build", when="@:0.4.4")
 
     depends_on("py-beartype@0.20:", type=("build", "run"))
     depends_on("py-typing-extensions@4.15:", type=("build", "run"))
