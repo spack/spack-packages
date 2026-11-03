@@ -113,14 +113,15 @@ class Rocalution(CMakePackage, ROCmLibrary):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocprim@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            rocblas_tgt = tgt if tgt != "gfx900:xnack-" else "gfx900"
-            depends_on(
-                f"rocblas@{ver} amdgpu_target={rocblas_tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
-            depends_on(f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"rocrand@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rocblas@{ver}", when=f"@{ver}")
+        depends_on(f"rocsparse@{ver}", when=f"@{ver}")
+        depends_on(f"rocrand@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        rocblas_tgt = tgt if tgt != "gfx900:xnack-" else "gfx900"
+        depends_on(f"rocblas amdgpu_target={rocblas_tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocsparse amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocrand amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     depends_on("googletest@1.10.0:", type="test")
 

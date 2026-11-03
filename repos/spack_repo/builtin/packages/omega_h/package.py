@@ -22,6 +22,11 @@ class OmegaH(CMakePackage, CudaPackage):
     tags = ["e4s"]
     version("main", branch="main")
     version(
+        "master-scorec",
+        branch="master",
+        git="https://github.com/SCOREC/omega_h.git",
+    )
+    version(
         "11.2.0-scorec",
         commit="6b26c685cf3a62f595d5f21f05deb0525ae48c6f",
         git="https://github.com/SCOREC/omega_h.git",
@@ -140,7 +145,7 @@ class OmegaH(CMakePackage, CudaPackage):
         conflicts("^cuda@11.2", msg="See https://github.com/sandialabs/omega_h/issues/366")
 
         # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
-        conflicts("^cuda@13:")
+        conflicts("^cuda@13:", when="@:10.8.6-scorec")
 
     # https://github.com/SCOREC/omega_h/pull/118
     conflicts("@10.5:10.8.5 +cuda~kokkos")

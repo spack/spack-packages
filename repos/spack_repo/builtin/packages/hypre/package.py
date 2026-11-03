@@ -137,6 +137,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         description="C++ language standard (for GPU builds)",
     )
 
+    # Sync compute stream before GPU-aware MPI in device matvec (hypre-space/hypre#1629)
+    patch(
+        "https://github.com/hypre-space/hypre/commit/5d0282f44490f406ea532ea6778fe914df677346.patch?full_index=1",
+        sha256="8b11d35c29215d462b8e727775e8771d808806ced107e1675082ed80b9ba84fb",
+        when="@2.33.0:3.2.0 +gpu-aware-mpi",
+    )
+
     # Patch to fix GPU+TPLs and freebsd build issues
     patch(
         "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
@@ -205,6 +212,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # GPU-related dependencies and conflicts
     gpu_pkgs = ["magma", "umpire", "superlu-dist"]
+    conflicts("+umpire", when="~cuda~rocm")
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
@@ -402,6 +410,10 @@ class CMakeBuilder(CMakeBuilder):
         if spec.satisfies("+magma"):
             args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
             args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
+
+        if "+umpire" in self.spec:
+            args.append(self.define("TPL_UMPIRE_INCLUDE_DIRS", self.spec["umpire"].prefix.include))
+            args.append(self.define("TPL_UMPIRE_LIBRARIES", self.spec["umpire"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)
