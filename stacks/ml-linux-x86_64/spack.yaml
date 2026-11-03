@@ -132,12 +132,6 @@ spack:
           - ~rocm target=x86_64_v3
         gl:
           require: "glx"
-        boost:
-          require:
-          - "%c,cxx=gcc"
-        zip:
-          require:
-          - "%c=gcc"
         py-torch:
           require:
             - target=x86_64_v3
