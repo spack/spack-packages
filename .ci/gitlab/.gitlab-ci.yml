@@ -142,6 +142,8 @@ default:
       --forward-variable SPACK_CI_SPACK_ROOT
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
   artifacts:
     when: always
     paths:
@@ -198,9 +200,6 @@ default:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
 
 .generate-x86_64:
   variables:
@@ -803,9 +802,6 @@ aws-pcluster-neoverse_v1-build:
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
 
 .generate-cray-rhel:
   tags: [ "cray-rhel-x86_64_v3", "public" ]
