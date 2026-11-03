@@ -18,6 +18,7 @@ class PyLightly(PythonPackage):
 
     license("MIT")
 
+    version("1.6.0", sha256="57d036d02ddf737f6b0bfb2f43f289f6e34efc99b137c275295b29f631254377")
     version("1.5.11", sha256="2c19c0e5841b7477323ef3ffca234a60a57c0aaf6753a55c2a75d72cde9c0719")
     version("1.5.0", sha256="db49e2bafe3bc70df7f3248ad08bef4948e957c1bc5cde3769ec2b190b51eedb")
     version("1.4.26", sha256="7bbcf0a358f23659eb4089043c559c4584ef339266b1c0a9a2598c3100f2f3b8")
@@ -42,25 +43,25 @@ class PyLightly(PythonPackage):
         depends_on("py-setuptools-scm", when="@1.5.11:")
 
     with default_args(type=("build", "run")):
-        depends_on("py-certifi@14.05.14:")
         depends_on("py-hydra-core@1:")
-        depends_on("py-lightly-utils@0.0")
         depends_on("py-numpy@1.18.1:")
-        depends_on("py-python-dateutil@2.5.3:")
-        depends_on("py-requests@2.23:")
-        depends_on("py-six@1.10:")
         depends_on("py-tqdm@4.44:")
         depends_on("py-torch")
         depends_on("py-torchvision")
         depends_on("py-pytorch-lightning@1.0.4:")
-        depends_on("py-urllib3@1.25.3:", when="@1.4.8:")
-        depends_on("py-urllib3@1.15.1:")
-        depends_on("py-pydantic@1.10.5:", when="@1.5.11:")
-        depends_on("py-pydantic@1.10.5:1", when="@1.4.8:1.5.0")
-        depends_on("py-aenum@3.1.11:", when="@1.4.8:")
 
         # Historical dependencies
+        depends_on("py-aenum@3.1.11:", when="@1.4.8:1.5")
+        depends_on("py-certifi@14.05.14:", when="@:1.5")
+        depends_on("py-lightly-utils@0.0", when="@:1.5")
+        depends_on("py-pydantic@1.10.5:", when="@1.5.11:1.5")
+        depends_on("py-pydantic@1.10.5:1", when="@1.4.8:1.5.0")
+        depends_on("py-python-dateutil@2.5.3:", when="@:1.5")
+        depends_on("py-requests@2.23:", when="@:1.5")
         depends_on("py-setuptools@21:", when="@1.4.8,1.4.15:1.4.25")
+        depends_on("py-six@1.10:", when="@:1.5")
+        depends_on("py-urllib3@1.25.3:", when="@1.4.8:1.5")
+        depends_on("py-urllib3@1.15.1:", when="@:1.4.7")
 
         # https://github.com/lightly-ai/lightly/issues/1558
         depends_on("py-numpy@:1", when="@:1.5.10")

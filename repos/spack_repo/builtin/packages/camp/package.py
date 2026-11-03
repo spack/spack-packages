@@ -20,11 +20,17 @@ class Camp(CMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/LLNL/camp.git"
     url = "https://github.com/LLNL/camp/archive/v0.1.0.tar.gz"
 
-    maintainers("adrienbernede", "kab163", "trws")
+    maintainers("adrienbernede", "smithsg84", "trws")
 
     license("BSD-3-Clause")
 
     version("main", branch="main", submodules=False)
+    version(
+        "2026.07.2",
+        tag="v2026.07.2",
+        commit="b4edd077937245c120e25e6080be8caee5926347",
+        submodules=False,
+    )
     version(
         "2026.07.1",
         tag="v2026.07.1",

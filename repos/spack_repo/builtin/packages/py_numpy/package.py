@@ -23,6 +23,7 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.4", sha256="9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a")
     version("2.5.3", sha256="df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563")
     version("2.5.2", sha256="d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860")
     version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
@@ -299,16 +300,28 @@ class PyNumpy(PythonPackage):
             The string "mkl-dynamic-[i]lp64-[seq,tbb,iomp,gomp]"
         """
         lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
-        if spec.satisfies("threads=none"):
-            threads = "seq"
-        elif spec.satisfies("threads=tbb"):
+        if spec.satisfies("threads=tbb"):
             threads = "tbb"
         elif spec.satisfies("threads=openmp"):
             threads = "gomp" if spec.satisfies("%gcc") else "iomp"
         else:
-            raise InstallError("Unknown 'threads' variant for the Intel MKL libaray")
+            threads = "seq"
 
         return "mkl-dynamic-" + lp64_or_ilp64 + "-" + threads
+
+    def _blas_lapack_pkg_config_nvpl(self, name, spec) -> str:
+        """Determine pkg-config name from NVPL configuration
+
+        Returns:
+            The string "nvpl-[name]-[i]lp64-[seq,gomp]"
+        """
+        lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
+        if spec.satisfies("threads=openmp"):
+            threads = "gomp"
+        else:
+            threads = "seq"
+
+        return f"nvpl-{name}-{lp64_or_ilp64}-{threads}"
 
     def blas_lapack_pkg_config(self) -> Tuple[str, str, str]:
         """Convert library names to pkg-config names.
@@ -325,6 +338,12 @@ class PyNumpy(PythonPackage):
 
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
+
+        if spec["blas"].name == "nvpl-blas":
+            blas = self._blas_lapack_pkg_config_nvpl("blas", spec["blas"])
+
+        if spec["lapack"].name == "nvpl-lapack":
+            lapack = self._blas_lapack_pkg_config_nvpl("lapack", spec["lapack"])
 
         if spec["blas"].name == "blis":
             blas = "blis"

@@ -19,6 +19,8 @@ class G4adept(CMakePackage, CudaPackage):
 
     license("Apache-2.0", checked_by="wdconinc")
 
+    version("0.4.1", sha256="feceb76687034baeef50ad035d1a0ca58fa783b3c9d6916d9ebabea5ee09ac07")
+    version("0.3.5", sha256="f9301a46f6a6537cffde2a51c739ce0daa79f92f7086913c33aa686d6b57f581")
     version("0.3.0", sha256="e179d0b600beeeb34357c767bbc22498715ca6719917abbc14221fde39fb2885")
     version("0.2.0", sha256="4075ebb652b17d6cf94b341fdc64df088ce9538b0aba433e413606d5cb51c618")
 
@@ -42,13 +44,19 @@ class G4adept(CMakePackage, CudaPackage):
 
     depends_on("veccore@0.5.2:")
     depends_on("vecgeom@2: +cuda +gdml")
+    depends_on("vecgeom@:2.0", when="@:0.3")
     depends_on("xerces-c")
     depends_on("geant4 ~vecgeom")
     depends_on("g4vg@1.0.3:")
+    depends_on("g4vg@1.0.6:", when="@0.3.2:")
+    depends_on("g4vg@1.0.7:", when="@0.4:")
     depends_on("g4hepem +cuda +early_tracking_exit")
+    depends_on("googletest@1.17:", type="test", when="@0.4.0:")
     depends_on("hepmc3", type="test")
 
     with when("+covfie"):
+        depends_on("covfie@0.15.3:")
+        depends_on("covfie@0.15.5:", when="@0.3.2:")
         for arch in CudaPackage.cuda_arch_values:
             depends_on(f"covfie +cuda cuda_arch={arch}", when=f"+cuda cuda_arch={arch}")
 

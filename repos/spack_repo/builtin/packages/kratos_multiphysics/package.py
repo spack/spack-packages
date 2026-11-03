@@ -18,7 +18,7 @@ class KratosMultiphysics(CMakePackage, PythonExtension):
     url = "https://github.com/KratosMultiphysics/Kratos/archive/refs/tags/v10.4.3.tar.gz"
     git = "https://github.com/KratosMultiphysics/Kratos.git"
 
-    maintainers("loumalouomega", "pooyandadvand", "riccardorossi")
+    maintainers("loumalouomega", "pooyan-dadvand", "riccardorossi")
 
     license("BSD-4-Clause", checked_by="loumalouomega")
 
