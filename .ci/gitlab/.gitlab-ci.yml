@@ -29,7 +29,7 @@ default:
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
   - echo ${SPACK_CHECKOUT_VERSION}
-  - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+  - git fetch --depth 2 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
   - cd ${CI_PROJECT_DIR}
 
@@ -42,7 +42,7 @@ default:
   - export CI_PROJECT_DIR="$(pwd -P)"
   - git init
   - git config remote.origin.url "${CI_REPOSITORY_URL}"
-  - git fetch --depth 1 origin "${CI_COMMIT_SHA}"
+  - git fetch --depth 2 origin "${CI_COMMIT_SHA}"
   - git checkout --force FETCH_HEAD
   - *clone_spack
   - . "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/local_workspace.sh"

@@ -156,11 +156,11 @@ ci:
       # Check out both repositories locally, retaining the layout used by dotenv.
       - - git init "${CI_PROJECT_DIR}"
         - git -C "${CI_PROJECT_DIR}" config remote.origin.url "${CI_REPOSITORY_URL}"
-        - git -C "${CI_PROJECT_DIR}" fetch --depth 1 origin "${CI_COMMIT_SHA}"
+        - git -C "${CI_PROJECT_DIR}" fetch --depth 2 origin "${CI_COMMIT_SHA}"
         - git -C "${CI_PROJECT_DIR}" checkout --force FETCH_HEAD
       - - git init .ci/tmp/spack
         - git -C .ci/tmp/spack config remote.origin.url "https://github.com/${SPACK_CHECKOUT_REPO}.git"
-        - git -C .ci/tmp/spack fetch --depth 1 origin "${SPACK_CHECKOUT_VERSION}"
+        - git -C .ci/tmp/spack fetch --depth 2 origin "${SPACK_CHECKOUT_VERSION}"
         - git -C .ci/tmp/spack checkout --force FETCH_HEAD
       - - . "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/local_workspace.sh"
         - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
