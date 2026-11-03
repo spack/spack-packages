@@ -119,6 +119,8 @@ spack:
     - $tensorflow_specs
     - $xgboost_specs
     override:
+      concretizer:
+        unify: when_possible
       packages:
         all:
           require:
@@ -165,6 +167,10 @@ spack:
   - group: hip-compiler
     specs:
     - llvm-amdgpu
+    # Without this, the dependent rocm spec group above will fail because by
+    # default this spec group will choose python@3.14 (not compatible with any
+    # py-tensorflow version)
+    - python@3.13
 
   ci:
     pipeline-gen:
