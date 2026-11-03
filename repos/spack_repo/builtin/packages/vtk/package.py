@@ -26,6 +26,7 @@ class Vtk(CMakePackage):
     license("BSD-3-Clause")
 
     version("9.7.0", sha256="affdb7a15ec34ee0174407f911ab70b646c7af01161818bbab4e1160b7eff720")
+    version("9.6.2", sha256="aed12cec12a9609179bf66329070266627ca64244a10856a452b2a17ffb04a1d")
     version("9.5.1", sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
@@ -233,7 +234,8 @@ class Vtk(CMakePackage):
         # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
         # and to be safe against other issues, make them build with this version only:
         depends_on("seacas@2022-10-14", when="@9.2:9.3")
-        depends_on("seacas@2024-06-27", when="@9.4:")
+        depends_on("seacas@2024-06-27", when="@9.4:9.5")
+        depends_on("seacas@2025-08-28", when="@9.6:")
 
     depends_on("nlohmann-json+multiple_headers", when="@9.2:")
     depends_on("scnlib", when="@9.5:")
