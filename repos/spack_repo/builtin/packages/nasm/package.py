@@ -65,6 +65,17 @@ class Nasm(AutotoolsPackage, Package):
                 "configure",
             )
 
+        if self.spec.satisfies("@3.02"):
+            # Windows SDK headers like <stringapiset.h> are only guaranteed to work
+            # when pulled in through the normal <windows.h> pipeline, which sets up
+            # SDK-internal architecture macros
+            filter_file(
+                r"#include <stringapiset\.h>",
+                "#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n#include <stringapiset.h>",
+                "nasmlib/file.c",
+                string=False,
+            )
+
 
 class GenericBuilder(generic.GenericBuilder):
     def install(self, pkg, spec, prefix):
