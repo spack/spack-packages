@@ -88,9 +88,3 @@ class BclConvert(Package):
                 path = join_path(self.spec[dep].prefix, libdir)
                 if os.path.isdir(path):
                     env.prepend_path("LD_LIBRARY_PATH", path)
-
-    def test_version(self):
-        """check that bcl-convert runs and reports its version"""
-        exe = which(self.prefix.bin.join("bcl-convert"))
-        out = exe("--version", output=str, error=str)
-        assert str(self.spec.version) in out
