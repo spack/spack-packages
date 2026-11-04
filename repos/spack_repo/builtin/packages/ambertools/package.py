@@ -148,8 +148,6 @@ class Ambertools(CMakePackage):
         flags_make = join_path(resp_dir, "flags.make")
         link_txt = join_path(resp_dir, "link.txt")
         if os.path.exists(flags_make):
-            filter_file(
-                r"^(Fortran_FLAGS = .*)$", r"\1 -mcmodel=large -fno-pie", flags_make
-            )
+            filter_file(r"^(Fortran_FLAGS = .*)$", r"\1 -mcmodel=large -fno-pie", flags_make)
         if os.path.exists(link_txt):
             filter_file(r"-o resp ", "-no-pie -o resp ", link_txt)
