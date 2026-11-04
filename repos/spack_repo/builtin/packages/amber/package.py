@@ -57,6 +57,11 @@ class Amber(CMakePackage, Package, CudaPackage):
     for ver, ambertools_ver, ambertools_checksum in (
         # (version amber, version ambertools, sha256sum)
         (
+            "26",
+            "26",
+            "5d46eef3c2bb7d5bf9e8c0c38add34406ea67e3f0e4097ac9d11d8a544538c9c",
+        ),
+        (
             "20",
             "21",
             "f55fa930598d5a8e9749e8a22d1f25cab7fcf911d98570e35365dd7f262aaafd",
@@ -305,6 +310,24 @@ class CMakeBuilder(cmake.CMakeBuilder):
             # FindNCCL.cmake looks in $NCCL_HOME/{include,lib}
             # -DNCCL=TRUE itself is passed in cmake_args.
             env.set("NCCL_HOME", spec["nccl"].prefix)
+
+    @run_before("cmake")
+    def merge_ambertools(self):
+        """Overlay the AmberTools26 resource onto the pmemd26 source tree.
+
+        Files that already exist in the pmemd sources (e.g. the top-level
+        CMakeLists.txt) are kept, only missing files are added.
+        """
+        root = self.pkg.stage.source_path
+        tools = join_path(root, "ambertools_tmpdir")
+        for dirpath, _, filenames in os.walk(tools):
+            dest_dir = join_path(root, os.path.relpath(dirpath, tools))
+            mkdirp(dest_dir)
+            for name in filenames:
+                dest = join_path(dest_dir, name)
+                if not os.path.lexists(dest):
+                    shutil.copy2(join_path(dirpath, name), dest, follow_symlinks=False)
+        shutil.rmtree(tools)
 
     def _compiler_id(self):
         spec = self.pkg.spec
