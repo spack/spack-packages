@@ -91,8 +91,8 @@ class Duckdb(CMakePackage):
     depends_on("openssl", when="+httpfs")
     depends_on("icu4c", when="@:1.5 ~icu")
 
-    # Autoloading installs before it loads, which fails for an extension that is only in a
-    # search directory. The patch also skips that install.
+    # Also turns off the automatic install by default, which fails for an extension that is
+    # only in a later search directory. An explicit INSTALL still works.
     patch("extension_env.patch", when="@2.0.0 +extension_env")
 
     with when("+python"):
