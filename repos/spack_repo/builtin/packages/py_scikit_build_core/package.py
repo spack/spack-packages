@@ -84,7 +84,6 @@ class PyScikitBuildCore(PythonPackage):
         depends_on("py-build@0.8:", when="@0.9:")
         depends_on("py-build +virtualenv", when="@:0.8")
         depends_on("py-cattrs@22.2:")
-        depends_on("py-fastjsonschema@2.16.2:", when="@0.12:")
         depends_on("py-filelock@3.8:", when="@0.12:")
         depends_on("py-hatch-fancy-pypi-readme@23.2:", when="@0.12:")
         depends_on("py-importlib-metadata", when="^python@:3.7")
@@ -110,6 +109,7 @@ class PyScikitBuildCore(PythonPackage):
         depends_on("py-wheel")
 
     # excluding 2.22.0 when python_version<3.10
+    depends_on("py-fastjsonschema@2.16.2:", when="@0.12:", type="test")
     conflicts("^py-fastjsonschema@2.22.0", when="@1.1.1: ^python@:3.9")
 
     @run_after("install")
