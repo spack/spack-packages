@@ -220,6 +220,8 @@ class Seacas(CMakePackage):
     depends_on("hdf5+hl+mpi", when="+mpi")
 
     depends_on("fmt@10:", when="@2024-08-15:")
+    # fmt 12.2 no longer provides fmt::format through the headers these versions include
+    depends_on("fmt@:12.1", when="@2024-08-15:2025-08-28")
     depends_on("fmt@10.2.1:10", when="@2024-03-11:2024-07-10")
     depends_on("fmt@10.1.0:10", when="@2023-10-24:2023-11-27")
     depends_on("fmt@9.1.0", when="@2022-10-14:2023-05-30")
