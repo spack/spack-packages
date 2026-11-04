@@ -70,7 +70,9 @@ class Deno(Package):
 
     for ver in deno_versions:
         if system in deno_versions[ver] and machine in deno_versions[ver][system]:
-            version(ver, sha256=deno_versions[ver][system][machine])
+            # All versions released with v2026.10.1 are deprecated
+            # The next packages release containes the updated versions.
+            version(ver, sha256=deno_versions[ver][system][machine], deprecated=True)
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
