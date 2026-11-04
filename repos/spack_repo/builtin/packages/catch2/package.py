@@ -182,8 +182,11 @@ class Catch2(CMakePackage):
             )
             args.append(self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"))
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
-            if "+threadsafe" in spec:
-                args.append(self.define("CATCH_CONFIG_THREAD_SAFE_ASSERTIONS", True))
+            if spec.satisfies("@3.9:"):
+                option = "CATCH_CONFIG_THREAD_SAFE_ASSERTIONS"
+                if spec.satisfies("@:3.11"):
+                    option = "CATCH_CONFIG_EXPERIMENTAL_THREAD_SAFE_ASSERTIONS"
+                args.append(self.define_from_variant(option, "threadsafe"))
 
         return args
 
