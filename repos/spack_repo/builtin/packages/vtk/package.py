@@ -159,9 +159,9 @@ class Vtk(CMakePackage):
     depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
 
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
-    depends_on("qt+opengl", when="@:9.5 +qt")
-    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.6: +qt")
-    depends_on("qt-declarative", when="@9.6: +qt")
+    depends_on("qt+opengl", when="@:9.4 +qt")
+    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.5: +qt")
+    depends_on("qt-declarative", when="@9.5: +qt")
 
     depends_on("boost", when="io=xdmf")
     depends_on("boost+mpi", when="io=xdmf +mpi")
@@ -433,7 +433,7 @@ class Vtk(CMakePackage):
         if "darwin" in spec.architecture:
             cmake_args.extend(["-DCMAKE_MACOSX_RPATH=ON"])
 
-        if spec.satisfies("@9.6: +qt"):
+        if spec.satisfies("@9.5: +qt"):
             cmake_args.append(self.define("VTK_QT_VERSION", "6"))
 
         if "+qt" in spec:
