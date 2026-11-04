@@ -18,6 +18,8 @@ class Duckdb(CMakePackage):
     license("MIT")
     maintainers("glentner", "teaguesterling")
 
+    extendable = True
+
     version("master", branch="master")
     version("2.0.0", sha256="7e89053255046bfb26afbd7f524a2fb84df7dbef496aa911ea35e4a1182fdc00")
     version("1.5.6", sha256="1fadcbe9e69e1470f9093b6bcde08daf477d729c449e59a807f45c346622099b")
@@ -47,6 +49,19 @@ class Duckdb(CMakePackage):
     variant("extension_autoload", default=False, description="Enable extension auto-loading")
     variant("extension_autoinstall", default=False, description="Enable extension auto-installing")
     variant("extension_repo", default=True, description="Copy extensions to prefix")
+    variant(
+        "extension_directories",
+        default="none",
+        values=str,
+        description="Extra directory to search for extensions, after ~/.duckdb/extensions",
+        when="@1.5:",
+    )
+    variant(
+        "extension_env",
+        default=False,
+        description="Also search DUCKDB_EXTENSION_DIRECTORIES, set to the prefix or view on load",
+        when="@2.0.0",
+    )
 
     # Extensions
     variant("autocomplete", default=True, description="Include autocomplete for CLI in build")
@@ -76,6 +91,10 @@ class Duckdb(CMakePackage):
     depends_on("openssl", when="+httpfs")
     depends_on("icu4c", when="@:1.5 ~icu")
 
+    # Autoloading installs before it loads, which fails for an extension that is only in a
+    # search directory. The patch also skips that install.
+    patch("extension_env.patch", when="@2.0.0 +extension_env")
+
     with when("+python"):
         extends("python")
         depends_on("py-pip", type="build")
@@ -85,6 +104,12 @@ class Duckdb(CMakePackage):
         if self.spec.satisfies("+python"):
             env.set("SETUPTOOLS_SCM_PRETEND_VERSION", f"{self.spec.version}")
             env.set("PIP_PREFIX", self.prefix)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+extension_env"):
+            env.append_path(
+                "DUCKDB_EXTENSION_DIRECTORIES", self.prefix.lib.duckdb.extensions, separator=";"
+            )
 
     def cmake_args(self):
         extensions = ("autocomplete", "icu", "json", "parquet", "tpch", "fts", "httpfs")
@@ -97,6 +122,15 @@ class Duckdb(CMakePackage):
             self.define("ENABLE_EXTENSION_AUTOLOADING", "1"),  # string, not boolean
             self.define("ENABLE_EXTENSION_AUTOINSTALL", "1"),  # string, not boolean
         ]
+        if self.spec.satisfies("@1.5:"):
+            extension_directory = self.spec.variants["extension_directories"].value
+            if extension_directory != "none":
+                # The first directory is where INSTALL writes, so keep the writable default first
+                args.append(
+                    self.define(
+                        "EXTENSION_DIRECTORIES", ["~/.duckdb/extensions", extension_directory]
+                    )
+                )
         if self.spec.satisfies("+python"):
             args.append(self.define("BUILD_PYTHON", "1"))
         if self.spec.satisfies("+tpce"):

@@ -1,0 +1,32 @@
+--- a/src/main/extension/extension_install.cpp
++++ b/src/main/extension/extension_install.cpp
+@@ -75,6 +75,12 @@
+ #endif
+ 	string dirs_string(DUCKDB_EXTENSION_DIRECTORIES);
+ 
++	// Search these after the compiled-in folders, so that INSTALL keeps writing to the first (writable) folder
++	auto env_dirs = FileSystem::GetEnvVariable("DUCKDB_EXTENSION_DIRECTORIES");
++	if (!env_dirs.empty()) {
++		dirs_string += ";" + env_dirs;
++	}
++
+ 	// Skip if empty
+ 	if (dirs_string.empty()) {
+ 		return default_folders;
+--- a/src/main/extension/extension_helper.cpp
++++ b/src/main/extension/extension_helper.cpp
+@@ -386,7 +386,13 @@
+ 	try {
+ 		auto &fs = FileSystem::GetLocal(db);
+ #ifndef DUCKDB_WASM
+-		if (Settings::Get<AutoinstallKnownExtensionsSetting>(db)) {
++		// An extension that is already in a search directory must load from there, not be installed over it
++		bool found_locally = false;
++		for (const auto &directory : GetExtensionDirectoryPath(db, fs)) {
++			auto file_name = ApplyExtensionAlias(extension_name) + ".duckdb_extension";
++			found_locally = found_locally || fs.FileExists(fs.JoinPath(directory, file_name));
++		}
++		if (!found_locally && Settings::Get<AutoinstallKnownExtensionsSetting>(db)) {
+ 			auto autoinstall_repo = GetAutoinstallRepository(db);
+ 			ExtensionInstallOptions options;
+ 			options.repository = autoinstall_repo;
