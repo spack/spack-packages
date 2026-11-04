@@ -108,7 +108,7 @@ class NodeJs(Package):
     conflicts(
         "~openssl",
         when="@20:22.23.3,24:24.22.0,26:26.22.0",
-        msg="eMudhra certs bundled with these versions. Require OpenSSL certs instead."
+        msg="eMudhra certs bundled with these versions. Require OpenSSL certs instead.",
     )
 
     variant("debug", default=False, description="Include debugger support")
