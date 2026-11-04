@@ -19,8 +19,6 @@ class Php(AutotoolsPackage):
 
     license("PHP-3.01")
 
-    version("8.5.12", sha256="914702592c81f85cb3f6c2bca0cbe4217d3fe5f5a4b8ca34a8f93f74a3575fc7")
-    version("8.4.27", sha256="ae5896236c1b5bba6c36dcdd2e30c87ccda595d28650d18e6c007eebb0db68ab")
     version("8.3.36", sha256="132154b55122efe74ed55c6a51486dcf6a7797a2a8df66e5361c2bb6f0f1b527")
 
     # CVE-2026-109618, CVE-2026-109619
