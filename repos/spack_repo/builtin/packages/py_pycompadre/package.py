@@ -77,7 +77,7 @@ class PyPycompadre(PythonPackage):
     depends_on("python@3.6:", type=("build", "link", "run"), when="@1.6")
     depends_on("python@3.10:", type=("build", "link", "run"), when="@1.7:")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@61.0:", type="build")
     depends_on("py-cython@0.23:", type="build")
 
     depends_on("py-pybind11", type="build", when="@:1.6")
