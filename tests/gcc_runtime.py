@@ -9,6 +9,7 @@ from spack_repo.builtin.packages.gcc_runtime.package import get_elf_libraries
 
 
 @pytest.mark.regression
+@pytest.mark.not_on_windows("ELF linker scripts and sh compiler stub are not supported on Windows")
 @pytest.mark.parametrize(
     "name,script,soname",
     [
