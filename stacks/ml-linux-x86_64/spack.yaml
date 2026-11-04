@@ -127,6 +127,9 @@ spack:
             - ~cuda
             - +rocm
             - amdgpu_target=gfx90a
+        bazel:
+          require:
+          - one_of: ["%c,cxx=gcc", "%c,cxx=clang"]
         eigen:
           require:
           - ~rocm target=x86_64_v3
