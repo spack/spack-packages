@@ -41,9 +41,7 @@ _versions = {
 
 
 def _should_deprecate_version(version: str) -> bool:
-    major_version_to_deprecate = 20
-    major_version = int(version.split(".")[0])
-    return major_version < major_version_to_deprecate
+    return Version(version) < Version("26.7.2-1")
 
 
 class Miniforge3(Package):
