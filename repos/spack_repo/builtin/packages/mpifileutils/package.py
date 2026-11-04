@@ -66,7 +66,7 @@ class Mpifileutils(CMakePackage):
     depends_on("daos", when="+daos")
     depends_on("bzip2")
     depends_on("libcap")
-    depends_on("openssl")
+    depends_on("openssl", when="@:12.0.0")
     depends_on("cmake@3.1:", type="build")
 
     def flag_handler(self, name, flags):
