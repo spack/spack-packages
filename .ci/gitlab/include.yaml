@@ -36,18 +36,18 @@ include:
   - path: configs/cray-rhel/
     when: '"rhel" in os and env.get("CRAYPE_VERSION")'
 
-  # === Linux/Cray ===
-  # Configs basis for linux and cray
-  - path: configs/linux
-    when: platform == "linux"
-
-  # === Per-package resource requests (Only used for Linux on Kubernetes) ===
+  # === Per-package resource requests (Only used for Linux) ===
   - when: 'platform == "linux" and env.get("SPACK_CI_GENERATE")'
     git: https://gitlab.spack.io/spack/resource-requests
     branch: main
     paths:
     - ci.yaml
     optional: true
+
+  # === Linux/Cray ===
+  # Configs basis for linux and cray
+  - path: configs/linux
+    when: platform == "linux"
 
   # === Generic ===
   - configs

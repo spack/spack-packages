@@ -53,7 +53,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         "cudss",
         default=False,
         description="Build with cuDSS sparse direct solver",
-        when="@0.18:",
+        when="@0.19:",
     )
     variant("slepc", default=True, description="Build with SLEPc eigenvalue solver")
     variant("arpack", default=False, description="Build with ARPACK eigenvalue solver")
@@ -111,12 +111,12 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts(
         "~superlu-dist~strumpack~mumps",
-        when="@:0.17",
+        when="@:0.18",
         msg="Need at least one sparse direct solver",
     )
     conflicts(
         "~superlu-dist~strumpack~mumps~cudss",
-        when="@0.18:",
+        when="@0.19:",
         msg="Need at least one sparse direct solver",
     )
     conflicts(
@@ -247,14 +247,6 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
                     sha256="530532da3ae8815d004bb6ce19f6f08a1248c3d585503551c90d0eeae7fb3f87",
                     when="@:4.9",
                 ),
-                # https://github.com/mfem/mfem/pull/5124
-                patch(
-                    "https://raw.githubusercontent.com/awslabs/palace/"
-                    "b22f654ab36fe01f1f3176349c60626efed1a6a2/extern/patch/mfem/"
-                    "mfem_pr5124_cudss.diff",
-                    sha256="d0b5893ec7925cbc8a70cc5eba2abe037754b99b5bb366c4bae90f0583d22290",
-                    when="@4.9.0 +cudss",
-                ),
                 # https://github.com/mfem/mfem/pull/5415
                 # Pulled directly from the PR head commit. Remove once merged
                 # upstream and MFEM is bumped.
@@ -308,7 +300,7 @@ class Palace(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mfem+libunwind", when="build_type=Debug")
         depends_on("eigen@3.5:", type="build")
 
-    with when("@0.18:"):
+    with when("@0.19:"):
         depends_on("mfem+cudss", when="+cudss")
         depends_on("cudss+mpi", when="+cudss")
 

@@ -56,6 +56,7 @@ class RocmDeviceLibs(ROCmLibrary, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.13.4:", type="build")
+    depends_on("cmake@:3", type="build", when="@:7.1")
 
     depends_on("zlib-api", type="link")
     depends_on("texinfo", type="link")
