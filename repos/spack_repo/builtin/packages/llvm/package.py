@@ -333,7 +333,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     depends_on("z3@4.7.1:", when="+z3")
 
     # openmp dependencies
-    depends_on("perl-data-dumper", type=("build"))
+    depends_on("perl-data-dumper", type="build", when="@:19")  # see llvm-project/#95307
     depends_on("hwloc")
     depends_on("hwloc@2.0.1:", when="@13")
     with when("@:15"):

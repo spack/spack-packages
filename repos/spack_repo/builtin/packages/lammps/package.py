@@ -462,7 +462,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("hipcub", when="~kokkos +rocm")
     depends_on("hipcub@:6", when="@:20250722 ~kokkos +rocm")
     depends_on("llvm-amdgpu ", when="+rocm", type="build")
-    depends_on("rocm-openmp-extras", when="+rocm +openmp", type="build")
+    # Only needed for llvm-amdgpu@:7.2; later versions build OpenMP.
+    depends_on("rocm-openmp-extras", when="+rocm +openmp ^llvm-amdgpu@:7.2", type="build")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type="build")
     depends_on("gsl@2.6:", when="+rheo")
     depends_on("tbb", when="+intel %oneapi")
@@ -655,7 +656,10 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                 args.append(self.define_from_variant("GPU_PREC", "gpu_precision"))
                 cuda_arch = spec.variants["cuda_arch"].value
                 if cuda_arch != "none":
-                    args.append(self.define("GPU_ARCH", "sm_{0}".format(cuda_arch[0])))
+                    if spec.satisfies("@develop"):
+                        args.append(self.define("GPU_ARCH", f"{cuda_arch[0]}"))
+                    else:
+                        args.append(self.define("GPU_ARCH", f"sm_{cuda_arch[0]}"))
                 args.append(self.define_from_variant("CUDA_MPS_SUPPORT", "cuda_mps"))
             elif spec.satisfies("+opencl"):
                 # LAMMPS downloads and bundles its own OpenCL ICD Loader by default

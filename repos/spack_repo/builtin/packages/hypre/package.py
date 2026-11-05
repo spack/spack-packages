@@ -42,6 +42,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Package versions
     version("develop", branch="master")
+    version("3.2.1", sha256="3083cf943e1dab54517acae36afad72a4ada2c72c9567e525fc9c6efedb14e0c")
     version("3.2.0", sha256="5273205a310fb6aa3ae506ce216760fb67b30e02024874f3cdb8b811e4801de7")
     version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
@@ -135,6 +136,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         values=("11", "14", "17", "20", "23"),
         multi=False,
         description="C++ language standard (for GPU builds)",
+    )
+
+    # Sync compute stream before GPU-aware MPI in device matvec (hypre-space/hypre#1629)
+    patch(
+        "https://github.com/hypre-space/hypre/commit/5d0282f44490f406ea532ea6778fe914df677346.patch?full_index=1",
+        sha256="8b11d35c29215d462b8e727775e8771d808806ced107e1675082ed80b9ba84fb",
+        when="@2.33.0:3.2.0 +gpu-aware-mpi",
     )
 
     # Patch to fix GPU+TPLs and freebsd build issues
