@@ -31,6 +31,14 @@ class Futhark(Package):
     maintainers("felsenhower")
 
     version(
+        "0.28.2",
+        sha256="3b582c5cbd4a63261ea70bbf0b39f547bfcf95e2c66f635ac0a87e81f0403fcf",
+    )
+    version(
+        "0.28.1",
+        sha256="044a8ef2f55e3a8eb18d367dfa85438e958e61dedfd0f6621b507eb9d6fff281",
+    )
+    version(
         "0.27.1",
         sha256="11248f098643487627f69695be29d96dee351a56d3f27f3715da7cf0638a0b8f",
     )
@@ -105,6 +113,7 @@ class Futhark(Package):
     depends_on("cuda", when="+cuda", type="run")
     depends_on("hip", when="+hip", type="run")
     depends_on("ispc", when="+ispc", type="run")
+    depends_on("ispc@1.31:", when="@0.28.1: +ispc", type="run")
     depends_on("python", when="+python", type="run")
     depends_on("py-pyopencl", when="+pyopencl", type="run")
 
