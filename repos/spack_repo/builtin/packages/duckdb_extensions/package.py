@@ -122,15 +122,15 @@ class DuckdbExtensionPackage(Package):
         target = prefix.lib.duckdb.extensions
         mkdirp(target)
         duckdb("-c", f"{self._setting()} INSTALL {name} FROM {self.repository};")
-        self._check_binary(*glob.glob(join_path(target, "*", "*", f"{name}.duckdb_extension")))
+        (binary,) = glob.glob(join_path(target, "*", "*", f"{name}.duckdb_extension"))
+        self._check_binary(binary)
         self._check_load(duckdb)
+        # After this step, the drop_redundant_rpaths hook removes a RUNPATH entry for a directory
+        # that does not exist, which makes the signature invalid. It skips a read-only file.
+        os.chmod(binary, 0o444)
 
     def test_load(self):
-        """check that DuckDB accepts the installed extension
-
-        A Spack hook runs after the install step, and it edits a binary with a RUNPATH
-        entry. The edit makes the signature invalid, so such an extension cannot be packaged.
-        """
+        """check that DuckDB accepts the installed extension, after the Spack hooks have run"""
         self._check_load(which(self.spec["duckdb"].prefix.bin.duckdb))
 
 
