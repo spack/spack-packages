@@ -19,6 +19,7 @@ class Cdt(CMakePackage):
         "MPL-2.0 AND BSD-3-Clause AND Apache-2.0 WITH LLVM-exception", checked_by="jcortial-safran"
     )
 
+    version("2.0.2", sha256="43e22918907f354a300674222d63595afe121ec16ced8f6d2bac90a3db88892b")
     version("2.0.1", sha256="5e3c45715e55b5f2d4390082c8c1ac026f635ddee233516fdcf94b197954367d")
     version("2.0.0", sha256="81ed0c7a8cbdc059b26948a160c3ce68c7a147976334093fe3175c8fa161a447")
     version("1.4.5", sha256="5b964a00147d17f5d6ffd9c800d4f12f1e540ce8e932655469f65aea9a3005d7")
