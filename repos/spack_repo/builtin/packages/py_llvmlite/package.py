@@ -77,7 +77,7 @@ class PyLlvmlite(PythonPackage):
     # "malloc: pointer being freed was not allocated" / "Abort trap: 6".
     # Requiring the platform C++ runtime keeps a single libc++ in the process.
     # See https://github.com/spack/spack-packages/issues/5403
-    depends_on("llvm libcxx=none libunwind=none", when="platform=darwin")
+    requires("%libllvm=llvm libcxx=none libunwind=none", when="platform=darwin")
 
     for t in [
         "arm:",
