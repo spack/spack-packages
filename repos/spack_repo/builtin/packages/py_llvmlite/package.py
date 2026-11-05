@@ -79,19 +79,6 @@ class PyLlvmlite(PythonPackage):
     # See https://github.com/spack/spack-packages/issues/5403
     requires("%libllvm=llvm libcxx=none libunwind=none", when="platform=darwin")
 
-    for t in [
-        "arm:",
-        "ppc:",
-        "ppc64:",
-        "ppc64le:",
-        "ppcle:",
-        "sparc:",
-        "sparc64:",
-        "x86:",
-        "x86_64:",
-    ]:
-        depends_on("llvm@10.0", when=f"@0.34:0.36 target={t}")
-
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):
             env.set("CXX_FLTO_FLAGS", "{0}".format(self.compiler.cxx_pic_flag))
