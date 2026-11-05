@@ -16,7 +16,8 @@ class Ldzip(MakefilePackage):
 
     maintainers("teaguesterling")
 
-    license("MIT", checked_by="teaguesterling")
+    # cpp/external/CLI11.hpp, which the binary compiles in, is BSD-3-Clause
+    license("MIT AND BSD-3-Clause")
 
     version("main", branch="main")
     # The project has no tags or releases
