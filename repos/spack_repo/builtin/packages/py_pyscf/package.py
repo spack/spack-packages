@@ -48,6 +48,7 @@ class PyPyscf(PythonPackage):
     # dependencies
     depends_on("gmake", type="build")
     depends_on("cmake@3", type="build", when="@:2.14.0")
+    depends_on("cmake@3.22:", type="build", when="@2.10:")
     depends_on("cmake@3.10:", type="build", when="@2.1:")
     depends_on("cmake@2.8:", type="build")
     depends_on("python@3.7:", type=("build", "run"), when="@2.13.0:")
@@ -77,5 +78,20 @@ class PyPyscf(PythonPackage):
     depends_on("xcfun")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # otherwise CMakeLists.txt downloads and builds its own copies of these
-        env.set("CMAKE_CONFIGURE_ARGS", "-DBUILD_LIBCINT=OFF -DBUILD_LIBXC=OFF -DBUILD_XCFUN=OFF")
+        spec = self.spec
+        if spec.satisfies("@:1"):
+            # 1.7.x setup.py searches these paths itself and ignores CMAKE_CONFIGURE_ARGS
+            pyscf_search_dir = [
+                spec["blas"].prefix,
+                spec["libcint"].prefix,
+                spec["libcint"].prefix.lib64,
+                spec["libxc"].prefix,
+                spec["xcfun"].prefix,
+                spec["xcfun"].prefix.include.XCFun,
+            ]
+            env.set("PYSCF_INC_DIR", ":".join(pyscf_search_dir))
+        else:
+            # otherwise CMakeLists.txt downloads and builds its own copies of these
+            env.set(
+                "CMAKE_CONFIGURE_ARGS", "-DBUILD_LIBCINT=OFF -DBUILD_LIBXC=OFF -DBUILD_XCFUN=OFF"
+            )
