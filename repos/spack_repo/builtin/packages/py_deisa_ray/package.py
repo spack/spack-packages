@@ -15,6 +15,7 @@ class PyDeisaRay(PythonPackage):
 
     license("MIT")
 
+    version("0.1.9", sha256="c9541cc9396a64e1d8e2472b95750301048911f3230291390da5f1f722d7c1e4")
     version("0.1.8", sha256="a1fc0169c9b4176c38a03123afca3660f70d85c38ac905e9526ba48108497261")
     version("0.1.7", sha256="b2d0d020882a3ee557df2ddbcc33715fedb7dd848e0248591778909b7d133705")
 
