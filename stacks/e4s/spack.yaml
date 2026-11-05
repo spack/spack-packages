@@ -34,6 +34,8 @@ spack:
     binutils:
       variants: +ld +gold +headers +libiberty ~nls
     hdf5:
+      require:
+      - "@1.12:"
       prefer:
       - +fortran +hl +shared
     libfabric:
