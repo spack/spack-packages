@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbBigquery(DuckdbExtensionPackage):
+class DuckdbBigquery(DuckdbCommunityExtensionPackage):
     """Adds support for querying Google BigQuery."""
 
     homepage = "https://github.com/hafenkran/duckdb-bigquery"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

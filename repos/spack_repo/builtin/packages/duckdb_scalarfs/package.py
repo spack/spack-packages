@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbScalarfs(DuckdbExtensionPackage):
+class DuckdbScalarfs(DuckdbCommunityExtensionPackage):
     """Adds virtual filesystems for working with scalars."""
 
     homepage = "https://github.com/teaguesterling/duckdb_scalarfs"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbH3(DuckdbExtensionPackage):
+class DuckdbH3(DuckdbCommunityExtensionPackage):
     """Adds hierarchical hexagonal indexing for geospatial data."""
 
     homepage = "https://github.com/isaacbrodsky/h3-duckdb"
 
     license("Apache-2.0")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

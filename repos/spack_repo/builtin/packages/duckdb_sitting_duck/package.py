@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbSittingDuck(DuckdbExtensionPackage):
+class DuckdbSittingDuck(DuckdbCommunityExtensionPackage):
     """Adds parsing of source code ASTs with tree-sitter grammars."""
 
     homepage = "https://github.com/teaguesterling/sitting_duck"
 
     license("Apache-2.0")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

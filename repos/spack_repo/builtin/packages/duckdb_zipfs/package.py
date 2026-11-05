@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbZipfs(DuckdbExtensionPackage):
+class DuckdbZipfs(DuckdbCommunityExtensionPackage):
     """Adds support for reading files within zip archives."""
 
     homepage = "https://github.com/isaacbrodsky/duckdb-zipfs"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

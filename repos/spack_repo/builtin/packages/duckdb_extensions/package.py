@@ -31,8 +31,8 @@ class DuckdbExtensionPackage(Package):
     does not stop a network attacker who serves an older signed binary, so this class
     also checks the sha256 of the binary before the first load:
 
-    * +pinned (default) compares with the checksums attribute. An install fails if
-      DuckDB publishes a new binary, until the package has the new checksum.
+    * +pinned compares with the checksums attribute. An install fails if DuckDB publishes
+      a new binary, until the package has the new checksum. This is the default here.
     * ~pinned gets whichever binary is current, and compares with an HTTPS download of
       the same file. Two installs of one spec can get different binaries.
     """
@@ -132,6 +132,18 @@ class DuckdbExtensionPackage(Package):
     def test_load(self):
         """check that DuckDB accepts the installed extension, after the Spack hooks have run"""
         self._check_load(which(self.spec["duckdb"].prefix.bin.duckdb))
+
+
+class DuckdbCommunityExtensionPackage(DuckdbExtensionPackage):
+    """Base class for a package that installs one signed DuckDB community extension.
+
+    DuckDB replaces a community binary at the same URL for each release of the extension,
+    so a pin soon has no binary that can satisfy it. Thus ~pinned is the default here.
+    """
+
+    repository = "community"
+
+    variant("pinned", default=False, description="Require the binary that the package records")
 
 
 class DuckdbExtensions(BundlePackage):

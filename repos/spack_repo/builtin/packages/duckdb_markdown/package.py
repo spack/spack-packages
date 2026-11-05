@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbMarkdown(DuckdbExtensionPackage):
+class DuckdbMarkdown(DuckdbCommunityExtensionPackage):
     """Adds support for reading and writing Markdown files."""
 
     homepage = "https://github.com/teaguesterling/duckdb_markdown"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

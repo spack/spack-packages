@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbRustySheet(DuckdbExtensionPackage):
+class DuckdbRustySheet(DuckdbCommunityExtensionPackage):
     """Adds a reader for Excel, WPS and OpenDocument spreadsheets."""
 
     homepage = "https://github.com/redraiment/rusty-sheet"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

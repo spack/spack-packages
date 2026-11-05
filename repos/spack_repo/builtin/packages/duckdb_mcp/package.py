@@ -2,19 +2,18 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbMcp(DuckdbExtensionPackage):
+class DuckdbMcp(DuckdbCommunityExtensionPackage):
     """Adds support for the Model Context Protocol."""
 
     homepage = "https://github.com/teaguesterling/duckdb_mcp"
 
     license("Apache-2.0")
 
-    repository = "community"
     extension_name = "duckdb_mcp"
 
     checksums = {

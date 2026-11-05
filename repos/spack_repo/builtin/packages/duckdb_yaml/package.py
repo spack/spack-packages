@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbYaml(DuckdbExtensionPackage):
+class DuckdbYaml(DuckdbCommunityExtensionPackage):
     """Adds support for reading YAML files, and a YAML type."""
 
     homepage = "https://github.com/teaguesterling/duckdb_yaml"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbUrlpattern(DuckdbExtensionPackage):
+class DuckdbUrlpattern(DuckdbCommunityExtensionPackage):
     """Adds the WHATWG URLPattern API for matching URLs."""
 
     homepage = "https://github.com/teaguesterling/duckdb_urlpattern"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {

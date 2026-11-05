@@ -2,19 +2,17 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbExtensionPackage
+from spack_repo.builtin.packages.duckdb_extensions.package import DuckdbCommunityExtensionPackage
 
 from spack.package import *
 
 
-class DuckdbCacheHttpfs(DuckdbExtensionPackage):
+class DuckdbCacheHttpfs(DuckdbCommunityExtensionPackage):
     """Adds a read cache for the httpfs filesystem."""
 
     homepage = "https://github.com/dentiny/duck-read-cache-fs"
 
     license("MIT")
-
-    repository = "community"
 
     checksums = {
         "2.0.0": {
