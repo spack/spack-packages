@@ -44,6 +44,24 @@ class Cdt(CMakePackage):
         default=False,
         description="Instantiate templates for float and double and compiled into a library",
     )
+    variant(
+        "callbacks",
+        default=False,
+        description="Enable user callbacks during triangulation",
+        when="@1.4.2:",
+    )
+    variant(
+        "no_exceptions",
+        default=False,
+        description="Disable exceptions: instead of throwing the library will terminate",
+        when="@1.4.2:",
+    )
+    variant(
+        "precise_constructions",
+        default=False,
+        description="Disable fast-math and floating-point contraction in constructions",
+        when="@2.0.0:",
+    )
     variant("shared", default=True, description="Compile as a shared library")
 
     depends_on("cxx", type="build")  # generated
@@ -61,5 +79,10 @@ class Cdt(CMakePackage):
             self.define_from_variant("CDT_USE_BOOST", "boost"),
             self.define_from_variant("CDT_USE_64_BIT_INDEX_TYPE", "64_bit_index"),
             self.define_from_variant("CDT_USE_AS_COMPILED_LIBRARY", "compiled"),
+            self.define_from_variant("CDT_ENABLE_CALLBACK_HANDLER", "callbacks"),
+            self.define_from_variant("CDT_DISABLE_EXCEPTIONS", "no_exceptions"),
+            self.define_from_variant(
+                "CDT_ENSURE_PRECISE_MATH_IN_CONSTRUCTIONS", "precise_constructions"
+            ),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
