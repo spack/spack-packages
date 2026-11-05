@@ -62,12 +62,12 @@ class PyLlvmlite(PythonPackage):
         depends_on("python@:3.9", when="@0.36:0.37")
 
     # https://github.com/numba/llvmlite#compatibility
-    depends_on("llvm@22", when="@0.48:")
-    depends_on("llvm@20", when="@0.45:0.47")
-    depends_on("llvm@15:16", when="@0.44")
-    depends_on("llvm@14", when="@0.41:0.43")
-    depends_on("llvm@11:14", when="@0.40")
-    depends_on("llvm@11", when="@0.37:0.39")
+    depends_on("libllvm@22", when="@0.48:")
+    depends_on("libllvm@20", when="@0.45:0.47")
+    depends_on("libllvm@15:16", when="@0.44")
+    depends_on("libllvm@14", when="@0.41:0.43")
+    depends_on("libllvm@11:14", when="@0.40")
+    depends_on("libllvm@11", when="@0.37:0.39")
 
     # On macOS, llvmlite must link the platform (system) libc++. If the LLVM
     # dependency ships its own libc++/libunwind runtime (libcxx=runtime,
