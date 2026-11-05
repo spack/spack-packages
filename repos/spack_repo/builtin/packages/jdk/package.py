@@ -10,6 +10,40 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 
+def remove_emsign_certs(jdk_pkg: Package):
+    bad_certs = (
+        "emsignrootcag1",
+        "emsignrootcag2",
+        "emsigneccrootcag3",
+        "comodoaaaca",
+    )
+    cacerts = ["-storepass", "changeit"]
+    if jdk_pkg.spec.satisfies("@11:"):
+        cacerts.append("-cacerts")
+    else:
+        keystore_root = jdk_pkg.home.jre.lib.security.cacerts
+        cacerts.extend(["-keystore", keystore_root])
+
+    failed_to_remove = []
+    for cert in bad_certs:
+        # Try to remove the cert
+        try:
+            jdk_pkg.keytool(*cacerts, "-delete", "-alias", f"{cert} [jdk]")
+        except ProcessError:
+            # This will fail if the cert doesn't exist so don't raise here
+            pass
+
+    # Verify that the cert does not exist
+    out = jdk_pkg.keytool(*cacerts, "-list", output=str)
+    failed_to_remove = []
+    for cert in bad_certs:
+        if cert in out:
+            failed_to_remove.append(cert)
+
+    if failed_to_remove:
+        raise SpackError("Failed to remove bad certs: " + ", ".join(failed_to_remove))
+
+
 class Jdk(Package):
     """The Java Development Kit (JDK) released by Oracle Corporation in the
     form of a binary product aimed at Java developers. Includes a complete JRE
@@ -97,8 +131,16 @@ class Jdk(Package):
 
         return find_libraries(["libjvm"], root=self.home, recursive=True)
 
+    @property
+    def keytool(self):
+        return Executable(self.home.bin.keytool)
+
     def install(self, spec, prefix):
         install_tree(".", prefix)
+
+    @run_after("install")
+    def remove_emsign_certs(self):
+        remove_emsign_certs(self)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """Set JAVA_HOME."""
