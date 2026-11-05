@@ -63,6 +63,10 @@ class Duckdb(CMakePackage):
         when="@2.0.0",
     )
 
+    # Extensions that a version always links statically. An extension package must not provide
+    # these. Update this table for each new version, and check the duckdb-extensions variants.
+    builtin_extensions = {"@2.0.0": ["core_functions", "icu", "json", "parquet", "shell"]}
+
     # Extensions
     variant("autocomplete", default=True, description="Include autocomplete for CLI in build")
     variant("json", default=True, description="Include JSON support in build")
@@ -136,3 +140,21 @@ class Duckdb(CMakePackage):
         if self.spec.satisfies("+tpce"):
             args.append(self.define("BUILD_TPCE", "1"))
         return args
+
+    def test_builtin_extensions(self):
+        """check which extensions this version links statically"""
+        for when, names in self.builtin_extensions.items():
+            if self.spec.satisfies(when):
+                break
+        else:
+            raise SkipTest("This version has no record of its built-in extensions")
+        # The query fails on a difference, so that the test does not depend on the output format
+        duckdb = which(self.prefix.bin.duckdb)
+        duckdb(
+            "-c",
+            f"SELECT CASE WHEN found = {sorted(names)} AND versions = ['v{self.spec.version}']"
+            " THEN 'ok' ELSE error('Built-in extensions differ: ' || found::VARCHAR"
+            " || ' at ' || versions::VARCHAR) END FROM (SELECT list_sort(list(extension_name))"
+            " AS found, list_distinct(list(extension_version)) AS versions"
+            " FROM duckdb_extensions() WHERE install_mode = 'STATICALLY_LINKED');",
+        )
