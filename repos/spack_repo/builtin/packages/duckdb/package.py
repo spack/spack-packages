@@ -72,7 +72,7 @@ class Duckdb(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("python@3.7:")
+    depends_on("python@3.7:", type="build")
     depends_on("openssl", when="+httpfs")
     depends_on("icu4c", when="@:1.5 ~icu")
 
