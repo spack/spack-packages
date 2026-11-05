@@ -40,8 +40,13 @@ spack:
     ospray:
       require: [+denoiser +mpi]
 
+    # TEMPORARY: override the DAV-SDK paraview pin (@6.0 only) to test +external_vtk@6.2
     paraview:
-      require: ["@6:", "+raytracing +fides"]
+      require::
+      - "+adios2+examples+mpi+openpmd+hdf5+python+kits+shared+catalyst+libcatalyst"
+      - "@6.2:"
+      - "+raytracing +fides"
+      - "^ospray@2.10"
 
     libllvm:
       require: ["llvm"]
