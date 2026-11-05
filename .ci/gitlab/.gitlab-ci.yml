@@ -712,52 +712,6 @@ hep-build:
     - artifacts: True
       job: hep-generate
 
-#####################
-# AWS ParallelCluster
-#####################
-
-.aws-pcluster-generate:
-  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10", "entrypoint": [""] }
-
-# X86_64_V4 (one pipeline per target)
-.aws-pcluster-x86_64_v4:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-x86_64_v4
-
-aws-pcluster-x86_64_v4-generate:
-  extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
-
-aws-pcluster-x86_64_v4-build:
-  extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-x86_64_v4/cloud-ci-pipeline.yml
-        job: aws-pcluster-x86_64_v4-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-x86_64_v4-generate
-
-# Neoverse_v1 (one pipeline per target)
-.aws-pcluster-neoverse_v1:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-neoverse_v1
-
-aws-pcluster-neoverse_v1-generate:
-  # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
-  extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
-
-aws-pcluster-neoverse_v1-build:
-  extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-neoverse_v1/cloud-ci-pipeline.yml
-        job: aws-pcluster-neoverse_v1-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-neoverse_v1-generate
-
 # Cray definitions
 .generate-cray:
   extends: [ ".generate-common", ".base-job" ]
