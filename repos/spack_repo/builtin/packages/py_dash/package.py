@@ -17,10 +17,19 @@ class PyDash(PythonPackage):
 
     license("MIT")
 
+    version("4.4.1", sha256="9356ca7856bc496c12c5b6de5978aaf783e090d07450ee395ade1c0c2cbdf816")
     version("3.4.0", sha256="3944beb32000ee8b22cd7fbb33545a0a43e25916c63aa41ba59ee5611997815e")
     version("2.17.1", sha256="ee2d9c319de5dcc1314085710b72cd5fa63ff994d913bf72979b7130daeea28e")
 
     depends_on("python@3.8:", type=("build", "run"))
+    depends_on("python@3.9:", when="@4.4.1:", type=("build", "run"))
+    depends_on("py-nest-asyncio", when="@4.4.1:", type=("build", "run"))
+    depends_on("py-janus@1.0.0:", when="@4.4.1:", type=("build", "run"))
+    depends_on("py-pydantic@2.10.0:", when="@4.4.1:", type=("build", "run"))
+    depends_on("py-comm", when="@4.4.1:", type=("build", "run"))
+
+    depends_on("py-setuptools", when="@4.4.1:", type="run")
+
     depends_on("py-setuptools", type="build")
     depends_on("py-typing-extensions")
     depends_on("py-typing-extensions@4.1.1:", when="@3:")

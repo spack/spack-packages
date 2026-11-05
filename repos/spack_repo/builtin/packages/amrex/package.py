@@ -29,6 +29,7 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="development")
+    version("26.10", sha256="204e9c7c11d21f55e766e5f8a9999d7cfcfc770ba78a84aa3bd26a1da11dfa43")
     version("26.09", sha256="ad541286a62128477154a702f6b1cf918e0156078036c408e9d720451d5fd90c")
     version("26.08", sha256="12e242e47929afd38e9f974393003c3b65f98fa7fb6d5218019aac5b46917b25")
     version("26.07", sha256="d95e355ca7c5653078bd57721c28cbbda4c56b4465636b10ff680cab8ee6e56b")
@@ -338,6 +339,15 @@ class Amrex(CMakePackage, CudaPackage, ROCmPackage):
 
     # Fix release number in amrex-v26.04
     patch("amrex-26.04-changelog.patch", when="@26.04")
+
+    # Install AMReX_TracerParticle_mod_K.H, which AMReX_TracerParticles.cpp includes
+    # but the CMake install list omitted until 26.08 (AMReX PR #5542). The header
+    # lives in Src/Particle, so only +particles builds need it.
+    patch(
+        "https://github.com/AMReX-Codes/amrex/commit/950d60e482846f77431aa7513a876694b48e585c.patch?full_index=1",
+        sha256="c5b7a10eb5c420404dbe4abb7a2717ef5688c47a7a0ab994782bb4053c3cc1e2",
+        when="@24.10:26.07 +particles",
+    )
 
     def url_for_version(self, version):
         if version >= Version("20.05"):

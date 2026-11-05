@@ -443,6 +443,17 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
 
+    # https://github.com/bazelbuild/bazel/issues/31381
+    # https://github.com/llvm/llvm-project/pull/223362
+    patch("llvm-mirror.patch", when="@2.21.0")
+
+    # https://github.com/tensorflow/tensorflow/issues/111876
+    patch(
+        "https://github.com/tensorflow/tensorflow/pull/128220.patch?full_index=1",
+        sha256="c8e7001fe05d14956f171b129fcc625f3ddfcf4552577535c09171ea20b9bd90",
+        when="@2.21",
+    )
+
     # https://github.com/tensorflow/tensorflow/issues/103590
     patch(
         "https://github.com/tensorflow/tensorflow/pull/104948.patch?full_index=1",
@@ -949,11 +960,6 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 if disabled_targets:
                     with open(".tf_configure.bazelrc", mode="a") as f:
                         f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
-
-        # Support for host_copt customization on macOS arm64 seems to be broken?
-        # https://github.com/tensorflow/tensorflow/issues/111876
-        if spec.satisfies("@2.21: platform=darwin target=aarch64:"):
-            filter_file("build:opt --host_copt=.*", "", ".tf_configure.bazelrc")
 
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install

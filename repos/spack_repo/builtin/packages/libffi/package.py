@@ -18,6 +18,7 @@ class Libffi(AutotoolsPackage):
 
     license("MIT")
 
+    version("3.8.0", sha256="7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4")
     version("3.5.2", sha256="f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc")
     version("3.4.8", sha256="bc9842a18898bfacb0ed1252c4febcc7e78fa139fd27fdc7a3e30d9d9356119b")
     version("3.4.7", sha256="138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d")

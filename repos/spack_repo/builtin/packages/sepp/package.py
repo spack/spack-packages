@@ -36,6 +36,8 @@ class Sepp(Package):
 
     extends("python")
 
+    patch("distutils-removal.patch", when="%python@3.12:")
+
     def install(self, spec, prefix):
         dirs = ["sepp", "tools"]
         for d in dirs:

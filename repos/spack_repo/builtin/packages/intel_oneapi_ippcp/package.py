@@ -23,7 +23,7 @@ class IntelOneapiIppcp(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/ipp.html"

@@ -17,12 +17,15 @@ class Getorganelle(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("1.7.7.1", sha256="cf8e14766de43967182be839de20c9d1709b60fae38a0b3d175742dfad7a5d44")
     version("1.7.7.0", sha256="dd351b5cd33688adfcd8bff9794ae0cc0ce01a572dac2bcf6c9d7db77b3e4883")
     version("1.7.5.0", sha256="c498196737726cb4c0158f23037bf301a069f5028ece729bb4d09c7d915df93d")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@1.16.4:", type=("build", "run"))
     depends_on("py-scipy@1.3.0:", type=("build", "run"))
+    # scipy 1.12 removed the numpy aliases (scipy.inf, scipy.log) these versions import
+    depends_on("py-scipy@:1.11", type=("build", "run"), when="@:1.7.7.0")
     depends_on("py-sympy@1.4:", type=("build", "run"))
     depends_on("py-requests", type=("build", "run"))
 

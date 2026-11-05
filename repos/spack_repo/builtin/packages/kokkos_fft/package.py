@@ -63,7 +63,9 @@ class KokkosFft(CMakePackage):
 
     depends_on("fftw@3.3:3 ~mpi precision=float,double")
     requires("^fftw +openmp", when="host_backend=fftw-openmp")
-    depends_on("cuda@11:12", when="device_backend=cufft")
+    depends_on("cuda@11:", when="device_backend=cufft")
+    depends_on("cuda@:13", when="device_backend=cufft")
+    depends_on("cuda@:12", when="@:1 device_backend=cufft")
     with when("device_backend=hipfft"):
         depends_on("hipfft@5.3:")
         depends_on("hipfft@:7", when="@:1")

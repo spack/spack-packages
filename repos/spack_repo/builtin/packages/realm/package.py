@@ -25,6 +25,7 @@ class Realm(CMakePackage, CudaPackage, ROCmPackage):
     maintainers("elliottslaughter", "rbberger")
 
     version("main", branch="main")
+    version("26.9.1", tag="v26.9.1", commit="14d69ddcc5982e450098da5b22075bc1a6db1fde")
     version("26.7.1", tag="v26.7.1", commit="76631cdb7380033619958ad37ec3c94e7129095b")
 
     # unreleased versions, bundled with legion
