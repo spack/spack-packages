@@ -11,6 +11,7 @@ class KokkosFft(CMakePackage):
     """Kokkos-FFT: FFT interfaces for Kokkos C++ Performance Portability Programming EcoSystem"""
 
     homepage = "https://github.com/kokkos/kokkos-fft"
+    git = "https://github.com/kokkos/kokkos-fft.git"
     url = "https://github.com/kokkos/kokkos-fft/archive/refs/tags/v0.3.0.tar.gz"
 
     maintainers("cedricchevalier19", "tpadioleau", "yasahi-hpc")
