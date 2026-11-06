@@ -34,7 +34,8 @@ class Bun(Package):
                 "x86_64": "4183df3374623e5bab315c547cfa0974533cd457d86b73b639f7a87974cd6633",
                 "arm64": "d8b96221828ad6f97ac7ac0ab7e95872341af763001e8803e8267652c2652620",
             },
-        }
+            "deprecated": True,
+        },
     }
 
     zip_name = {
@@ -47,7 +48,11 @@ class Bun(Package):
 
     for ver in bun_versions:
         if system in bun_versions[ver] and machine in bun_versions[ver][system]:
-            version(ver, sha256=bun_versions[ver][system][machine])
+            version(
+                ver,
+                sha256=bun_versions[ver][system][machine],
+                deprecated=bun_versions[ver].get("deprecated", False),
+            )
 
     def url_for_version(self, version):
         target = self.zip_name.get(self.system, {}).get(self.machine)
