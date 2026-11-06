@@ -61,12 +61,6 @@ class Libarchive(AutotoolsPackage):
         description="What executables to build",
     )
     variant("iconv", default=True, description="Support iconv")
-    variant(
-        "pic",
-        default=False,
-        when="libs=static",
-        description="Build the static library with position-independent code",
-    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -98,8 +92,8 @@ class Libarchive(AutotoolsPackage):
         args += self.with_or_without("crypto")
         args += self.enable_or_disable("programs")
 
-        if spec.satisfies("+pic"):
-            args.append("--with-pic")
+        # So that a shared object can link libarchive.a
+        args.append("--with-pic")
 
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
