@@ -22,7 +22,8 @@ class RS4vectors(RPackage):
     bioc = "S4Vectors"
 
     with default_args(get_full_repo=True):
-        version("0.50.1", commit="dfc837c68d33d9dfb2ba620c8cad386b8a730fa2")  # bioc 3.23
+        version("0.50.2", commit="9bd354f3a5b9fd19f549b472e24518328aa2abf3")  # bioc 3.23
+        version("0.50.1", commit="dfc837c68d33d9dfb2ba620c8cad386b8a730fa2")
         version("0.46.0", commit="f4a665d66e3d84099b551ae03840c727a374c178")  # bioc 3.21
         version("0.38.0", commit="e80c24e1481033741147a0677fb42ce455e7da74")
         version("0.36.0", commit="af58701957ffdd9209031dd6a8dee3acdc58e999")
