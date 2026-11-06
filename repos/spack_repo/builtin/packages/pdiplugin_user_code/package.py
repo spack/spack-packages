@@ -10,8 +10,8 @@ from ..pdi.package import Pdi
 
 
 class PdipluginUserCode(CMakePackage):
-    """The user-code plugin for the PDI librarie enables one to call a
-    user-defined function when a specified event occur or certain data becomes
+    """The user-code plugin for the PDI library enables one to call a
+    user-defined function when a specified event occurs or certain data becomes
     available"""
 
     homepage = "https://pdi.dev"
@@ -37,9 +37,6 @@ class PdipluginUserCode(CMakePackage):
     depends_on("pkgconfig", type=("build"))
 
     root_cmakelists_dir = "plugins/user_code"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [

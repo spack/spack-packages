@@ -30,14 +30,29 @@ class Pdi(CMakePackage):
     # and the last patch version of the previous 2 minors
     # all the rest is marked as deprecated
     version("develop", branch="main", no_cache=True)
-    version("1.11.0", sha256="a3e5ed6f890a8599d67e1666a14a6c5b1084a0cbb8a748bf40fc53df47d39410")
+    version("1.12.0", sha256="f0d2f63fb1b384e39e72cf48389edadf34c92efea22d88b18acae8df492c43aa")
+    version("1.11.2", sha256="0334134e2f3c8b4663529e2d71843bb3d996f9d5a4494e7144d107467510d4a8")
+    version(
+        "1.11.1",
+        sha256="31570353930424ebc471e6c4639b0c5207991f8f05ea817821fbddc854af6db5",
+        deprecated=True,
+    )
+    version(
+        "1.11.0",
+        sha256="a3e5ed6f890a8599d67e1666a14a6c5b1084a0cbb8a748bf40fc53df47d39410",
+        deprecated=True,
+    )
     version("1.10.1", sha256="f2409611310255360867e3c74d44e055f45c87071ef8881665ff30a7940e1449")
     version(
         "1.10.0",
         sha256="8bda1ed83bdb152a047a45a48f896466e7ebf5163030405c15dbfa4e2e788143",
         deprecated=True,
     )
-    version("1.9.3", sha256="ab390e51e3b7298d6b09484a443dc267651aed5978c711f8804848b19ab1527e")
+    version(
+        "1.9.3",
+        sha256="ab390e51e3b7298d6b09484a443dc267651aed5978c711f8804848b19ab1527e",
+        deprecated=True,
+    )
     version(
         "1.9.2",
         sha256="0430d5898980435e5602b67188264621a27f71969ff886efaa2e6d43a45caac4",
@@ -91,18 +106,23 @@ class Pdi(CMakePackage):
     depends_on("paraconf@1: +shared", type=("link", "run"))
     depends_on("paraconf +fortran", type=("link", "run"), when="+fortran")
     depends_on("pkgconfig", type=("build"))
+    # zpp, used for the Fortran API and the documentation, is a Python script
+    depends_on("python@3.10:3", type=("build"), when="@1.10.0: +fortran")
+    depends_on("python@3.10:3", type=("build"), when="@1.10.0: +docs")
+    depends_on("python@3", type=("build"), when="+fortran")
+    depends_on("python@3", type=("build"), when="+docs")
     depends_on("python@3.10.6:3", type=("build", "link", "run"), when="@1.10.0: +python")
     depends_on("python@3.8.2:3", type=("build", "link", "run"), when="+python")
     depends_on(
         "python@3:3.11.9", type=("build", "link", "run"), when="@:1.8.2 +python"
     )  # Needs distutils.
     extends("python", when="+python")
-    depends_on("py-pybind11@2.9.1:2", type=("link"), when="@1.10.0: +python")
-    depends_on("py-pybind11@2.4.3:2", type=("link"), when="+python")
+    depends_on("py-pybind11@2.9.1:3", type=("link"), when="@1.10.0: +python")
+    depends_on("py-pybind11@2.4.3:3", type=("link"), when="+python")
     depends_on("py-numpy@1.21.5:2", type=("run"), when="@1.10.0: +python")
     depends_on("py-numpy@1.17.4:2", type=("run"), when="+python")
     depends_on(
-        "py-setuptools", type=("build", "link"), when="@1.8.3: +python^python@3.12:"
+        "py-setuptools", type=("build"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.
     depends_on("spdlog@1.9.2:1", type=("link"), when="@1.10.0:")
     depends_on("spdlog@1.5:1", type=("link"))
@@ -120,13 +140,6 @@ class Pdi(CMakePackage):
             content = f.read()
             f.seek(0)
             f.write(f"{sbang_shebang_line()}\n{content}")
-
-    @staticmethod
-    def version_url(version):
-        return f"https://github.com/pdidev/pdi/archive/refs/tags/{version}.tar.gz"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [
