@@ -256,8 +256,8 @@ class Visit(CMakePackage):
             if "@3:%gcc" in self.spec:
                 flags.append("-fpermissive")
 
-            # VisIt < 3.5 still uses the hdf5 1.8 api
-            if "@:3.4 +hdf5" in self.spec and "@1.10:" in self.spec["hdf5"]:
+            # VisIt still uses the hdf5 1.8 api
+            if "+hdf5" in self.spec and "@1.10:" in self.spec["hdf5"]:
                 flags.append("-DH5_USE_18_API")
 
         elif name == "ldlibs":
