@@ -247,6 +247,9 @@ class Amber(CMakePackage, Package, CudaPackage):
 
     # Amber 26+
     depends_on("fftw-api@3", when="@26:")
+    depends_on("fftw-api@3", when="@26:")
+    depends_on("fftw@3 +mpi", when="@26: ^[virtuals=fftw-api] fftw")
+    depends_on("intel-oneapi-mkl +cluster", when="@26:+mkl+mpi ^[virtuals=fftw-apil] intel-oneapi-mkl")
     depends_on("cmake@3.8.1:", type="build", when="@26:")
     depends_on("netcdf-c", when="@26:")
     # MKL replaces BLAS/LAPACK when enabled.
