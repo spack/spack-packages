@@ -326,8 +326,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             mkdirp(dest_dir)
             for name in filenames:
                 dest = join_path(dest_dir, name)
-                if not os.path.lexists(dest):
-                    shutil.copy2(join_path(dirpath, name), dest, follow_symlinks=False)
+                shutil.copy2(join_path(dirpath, name), dest, follow_symlinks=False)
         shutil.rmtree(tools)
 
     def _compiler_id(self):
