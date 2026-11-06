@@ -142,9 +142,8 @@ class Visit(CMakePackage):
     depends_on("vtk +opengl2", when="@:3.4")
     depends_on("vtk@8.1:8", when="@:3.3")
     depends_on("vtk@9.2.6", when="@3.4")
-    depends_on("vtk@9.5:", when="@3.5:")
+    depends_on("vtk@9.5", when="@3.5:")
     depends_on("vtk +qt", when="+gui")
-    depends_on("vtk@9.7:", when="@3.5: +gui")  # first vtk using Qt6
     depends_on("vtk +python", when="+python")
     depends_on("vtk +mpi", when="+mpi")
     depends_on("vtk ~mpi", when="~mpi")
