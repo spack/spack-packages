@@ -19,6 +19,7 @@ class Nvtx(Package, PythonExtension):
     license("Apache-2.0")
 
     version("develop", branch="dev")
+    version("3.6.0", sha256="da1939acb9f82b68b6fc9e1b8d392cc52a5fddae60d09e3e5e20fce40e3d7f83")
     version("3.5.0", sha256="f244c5eec33f9769123a755dda1e9b80339345ab278cf9542ff34677c88804b5")
     version("3.4.0", sha256="99a3e97d7fe90d5195e87256492bf9cd42476d72cbc79ba477011a2384b88f92")
     version("3.3.0", sha256="67d0cda2f9d19a89684592dab40c0bf2c2b13d5d588e51392076c0890a64b6c0")
