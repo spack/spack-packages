@@ -3,11 +3,13 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Precice(CMakePackage):
+class Precice(CMakePackage, CudaPackage, ROCmPackage):
     """preCICE (Precise Code Interaction Coupling Environment) is a
     coupling library for partitioned multi-physics simulations.
     Partitioned means that preCICE couples existing programs (solvers)
@@ -24,6 +26,7 @@ class Precice(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
+    version("3.4.1", sha256="ef4713c938a1b2000d0b071175e1b45f9ec55c7aec4bbe7b65c3992edcc74ac7")
     version("3.4.0", sha256="1155178da7271c404947d1ff64b6e5028a82575fd532baa26bd6418de5ef2623")
     version("3.3.1", sha256="c52b22bd7669baec3ff903eba9bf102154629634652125a60b109a5b7e803ab5")
     version("3.3.0", sha256="300df9dbaec066c1d0f93f2dbf055705110d297bca23fc0f20a99847a55a24f4")
@@ -59,6 +62,24 @@ class Precice(CMakePackage):
     variant("petsc", default=True, description="Enable PETSc support")
     variant("python", default=False, description="Enable Python support", when="@2:")
     variant("shared", default=True, description="Build shared libraries")
+    variant(
+        "kokkos-kernels",
+        default=False,
+        description="Enable performance-portable mapping support via Kokkos Kernels",
+        when="@3.4.1:",
+    )
+    variant(
+        "sycl",
+        default=False,
+        description="Enable SYCL backend preCICE Mappings.",
+        when="+kokkos-kernels",
+    )
+    variant(
+        "openmp",
+        default=False,
+        description="Enable OpenMP backend preCICE Mappings.",
+        when="+kokkos-kernels",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -117,6 +138,7 @@ class Precice(CMakePackage):
     depends_on("petsc@3.6:", when="+petsc")
     depends_on("petsc@3.12:", when="+petsc@2.1.0:")
     depends_on("petsc@3.15:", when="+petsc@3.2:")
+    depends_on("petsc~kokkos", when="+petsc")  # untested
 
     depends_on("python@3:", when="+python", type=("build", "run"))
     depends_on("py-numpy@1.17:", when="+python", type=("build", "run"))
@@ -141,6 +163,20 @@ class Precice(CMakePackage):
         when="@2.3.0",
         sha256="6a38783eec984a59991f0895d411212e0ba1ebd2ec2c8f53f962df8facbc0344",
     )
+
+    with when("+kokkos-kernels"):
+        depends_on("kokkos")
+        depends_on("kokkos+openmp", when="+openmp")
+        depends_on("kokkos+rocm", when="+rocm")
+        depends_on("kokkos+sycl", when="+sycl")
+        depends_on("kokkos+cuda+wrapper+cuda_constexpr", when="+cuda")
+
+        depends_on("kokkos-kernels")
+        depends_on("kokkos-kernels+openmp+execspace_openmp", when="+openmp")
+        depends_on(
+            "kokkos-kernels+cuda+execspace_cuda+memspace_cudaspace~memspace_cudauvmspace",
+            when="+cuda",
+        )
 
     def xsdk_tpl_args(self):
         return [
@@ -180,6 +216,14 @@ class Precice(CMakePackage):
         else:
             cmake_args.append("-DPYTHON=OFF")
 
+        if spec.satisfies("@3.4.1:"):
+            cmake_args.append(
+                self.define_from_variant(
+                    "PRECICE_FEATURE_KOKKOS_KERNELS_MAPPING", "kokkos-kernels"
+                )
+            )
+
+        # cmake_args.append("-DPRECICE_BUILD_UNITY:BOOL=OFF")
         # The xSDK installation policies were implemented after 1.5.2.
         # The TPL arguments were removed in 3.0.0.
         if spec.satisfies("@1.6:3"):
