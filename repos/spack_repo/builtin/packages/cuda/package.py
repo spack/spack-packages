@@ -143,6 +143,16 @@ _versions = {
             "https://developer.download.nvidia.com/compute/cuda/13.0.0/local_installers/cuda_13.0.0_580.65.06_linux.run",
         ),
     },
+    "12.9.2": {
+        "Linux-aarch64": (
+            "bd35ec0cbdbc838fcb2c6746e4f50745eaf216c91ef75e5227880260efff3856",
+            "https://developer.download.nvidia.com/compute/cuda/12.9.2/local_installers/cuda_12.9.2_575.57.08_linux_sbsa.run",
+        ),
+        "Linux-x86_64": (
+            "8639beb33a5ef63d8747e33ba1537aee934c947e9cd33bb7466ad466b127e9f4",
+            "https://developer.download.nvidia.com/compute/cuda/12.9.2/local_installers/cuda_12.9.2_575.57.08_linux.run",
+        ),
+    },
     "12.9.1": {
         "Linux-aarch64": (
             "64f47ab791a76b6889702425e0755385f5fa216c5a9f061875c7deed5f08cdb6",
@@ -846,10 +856,18 @@ class Cuda(Package):
     conflicts("glibc@:2.26", when="@12.8:")
 
     conflicts(
-        "glibc@2.42:",
-        when="@:13.0",
+        "glibc@2.41:",
+        when="@:12.9.1,13.0 target=x86_64:",
         msg="Incompatible exception specification of some C23 functions (cospi, "
-        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
+        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in "
+        "cuda@13.1. cuda@12.9.2 has a patch.",
+    )
+
+    conflicts(
+        "glibc@2.41:",
+        when=" @:13.0 target=aarch64:",
+        msg="Incompatible exception specification of some C23 functions (cospi, "
+        "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in "
         "cuda@13.1.",
     )
 
@@ -979,6 +997,24 @@ class Cuda(Package):
             arguments.append("--toolkitpath=%s" % prefix)  # Where to install
 
         install_shell(*arguments)
+
+        # CUDA 12 is the last to support Pascal and Maxwell GPUs.
+        # Unfortunately CUDA 12 is not compatible with newer glibc (eg. Ubuntu 26.04),
+        # so a patch is desired.
+        #
+        # A patch for ARM should be also possible, but it is currently not provided.
+        # A conflict is triggered instead.
+
+        if spec.satisfies("@12.9.2 target=x86_64:"):
+            patch_file = join_path(
+                self.package_dir, "12.9.2-backport-glibc-compat-from-13.2.2-x86_64.patch"
+            )
+
+            patch_cmd = which("patch", required=True)
+
+            patch_cmd(
+                "-p1", "-d", os.path.join(prefix, "targets", "x86_64-linux"), "-i", patch_file
+            )
 
         try:
             os.remove("/tmp/cuda-installer.log")
