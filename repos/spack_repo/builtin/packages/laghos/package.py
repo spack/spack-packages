@@ -2,10 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+from spack.package import *
 
 
 class Laghos(MakefilePackage, CudaPackage, ROCmPackage):
@@ -87,14 +88,20 @@ class Laghos(MakefilePackage, CudaPackage, ROCmPackage):
 
     depends_on("hypre~rocm", when="~rocm")
     depends_on("mfem~rocm", when="~rocm")
-    
+
     with when("+rocm"):
         depends_on("hypre+rocm+umpire")
         depends_on("mfem+rocm+umpire")
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on("hypre amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
-            depends_on("mfem amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
-            depends_on("umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
+            depends_on(
+                "hypre amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
+            depends_on(
+                "mfem amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
+            depends_on(
+                "umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
 
     depends_on("hypre+gpu-aware-mpi", when="+gpu-aware-mpi")
 
