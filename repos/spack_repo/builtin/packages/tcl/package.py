@@ -243,5 +243,12 @@ class NMakeBuilder(AnyBuilder, nmake.NMakeBuilder):
     def makefile_name(self):
         return "makefile.vc"
 
+    def nmake_args(self):
+        # Keep the Tcl script library on disk (rather than embedded into
+        # tclsh/tcl86t.dll) so find_script_dir()/TCL_LIBRARY can find
+        # init.tcl. Versions without the embed/zipfs machinery at all just
+        # ignore this OPTS value.
+        return [self.define("OPTS", "noembed")]
+
     def nmake_install_args(self):
         return [self.define("INSTALLDIR", self.spec.prefix)]
