@@ -24,6 +24,17 @@ class RustBootstrap(Package):
     # should update these binary releases as bootstrapping requirements are
     # modified by new releases of Rust.
     rust_releases = {
+        "1.98.0": {
+            "darwin": {
+                "x86_64": "a3717fb569beab7060699dc237c90fce3d9d1efb72bec333ec8a116525100361",
+                "aarch64": "5395f380bd220890b89b7e8ce137f3965cf0625b6f561af11e97c8d5c8743c3b",
+            },
+            "linux": {
+                "x86_64": "ed8ee2df70909c88cbaf87a6cfa3920dac00b537de12a6abe6906641e0f5952f",
+                "aarch64": "ac9283184301aeed06ecc9f5aa4c1be7041e18a1b197b6cb6c5d162d98f566da",
+                "powerpc64le": "f126e0ecf916494d05faa694076f8d821a04b65018749a886bb71155e30dfd66",
+            },
+        },
         "1.96.0": {
             "darwin": {
                 "x86_64": "63a6d717a5e5392ac43f0a1593e7aabe6128c8685d318cb890603b1688cb3339",
@@ -226,6 +237,10 @@ class RustBootstrap(Package):
     depends_on("zlib-ng +shared", when="^[virtuals=zlib-api] zlib-ng")
     depends_on("zlib +shared", when="^[virtuals=zlib-api] zlib")
     depends_on("patchelf@0.13:", when="platform=linux", type="build")
+
+    # https://github.com/rust-lang/rust/issues/157750
+    # rust <= 1.97 builds proc-macro dylibs that dyld on macOS 27+ cannot load.
+    conflicts("@:1.97", when="platform=darwin os=goldengate")
 
     def url_for_version(self, version):
         if self.os not in ("linux", "darwin"):
