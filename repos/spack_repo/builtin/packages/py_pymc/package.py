@@ -20,6 +20,7 @@ class PyPymc(PythonPackage):
     license("Apache-2.0")
 
     version("6.3.2", sha256="3cd58e55249b3650786e2c717078de5595811e17187a666868072d15e3a931a1")
+    version("5.25.1", sha256="9e739315c0547336b4c11127aae8b3750145b29cdd8e21609196594aa29c21f8")
     version(
         "3.8",
         sha256="1bb2915e4a29877c681ead13932b0b7d276f7f496e9c3f09ba96b977c99caf00",
@@ -32,10 +33,13 @@ class PyPymc(PythonPackage):
 
     with default_args(type=("build", "run")):
         depends_on("python@3.12:", when="@6:")
+        depends_on("python@3.10:", when="@5.25.1")
         depends_on("python@3.5.4:")
 
         depends_on("py-arviz@1.1:1", when="@5.28.5:")
+        depends_on("py-arviz@0.13:", when="@5.25.1")
         depends_on("py-arviz@0.4.1:")
+
         depends_on("py-cachetools@4.2.1:6", when="@3.11.2:")
         depends_on("py-cloudpickle", when="@4:")
         depends_on("py-numpy@1.25:", when="@5.19:")
@@ -45,6 +49,8 @@ class PyPymc(PythonPackage):
         depends_on("py-pandas@0.24.0:", when="@3.11:")
         depends_on("py-pandas@0.18.0:")
         depends_on("py-pytensor@3.2.2:3.3", when="@6.3.1:")
+        depends_on("py-pytensor@2.31.7:2.31", when="@5.25.1")
+
         depends_on("py-rich@13.7.1:", when="@5.13:")
         depends_on("py-scipy@1.4.1:", when="@4:")
         depends_on("py-scipy@0.18.1:")
