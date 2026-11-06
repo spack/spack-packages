@@ -62,6 +62,13 @@ class MariadbCClient(CMakePackage):
     version("2.2.0", sha256="3825b068d38bc19d6ad1eaecdd74bcd49d6ddd9d00559fb150e4e851a55bbbd4")
     version("2.1.0", sha256="568050b89463af7610d458669fd9eee06dcc9405689aca8a526ac8c013b59167")
 
+    variant(
+        "static_plugins",
+        default=False,
+        description="Build the authentication plugins that MySQL 8 uses into the library, so that"
+        " a program that links the static library does not need the plugin modules",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -94,6 +101,16 @@ class MariadbCClient(CMakePackage):
 
     def cmake_args(self):
         args = ["-DWITH_EXTERNAL_ZLIB=ON", "-DWITH_MYSQLCOMPAT=ON"]
+        if self.spec.satisfies("+static_plugins"):
+            # The same plugins as the static build of the vcpkg port. client_ed25519 stays a
+            # module, because the vcpkg port records that a static build of it fails.
+            for plugin in (
+                "CACHING_SHA2_PASSWORD",
+                "SHA256_PASSWORD",
+                "DIALOG",
+                "MYSQL_CLEAR_PASSWORD",
+            ):
+                args.append(self.define(f"CLIENT_PLUGIN_{plugin}", "STATIC"))
         return args
 
     @property
