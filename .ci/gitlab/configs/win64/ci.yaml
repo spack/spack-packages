@@ -19,6 +19,7 @@ ci:
       # UO runners mount intermediate ci public key (verification), AWS runners mount public/private (signing/verification)
       - If (Test-Path -path C:\\key\intermediate_ci_signing_key.gpg) { spack.ps1 gpg trust -y C:\\key\intermediate_ci_signing_key.gpg }
       - If (Test-Path -path C:\\key\spack_public_key.gpg) { spack.ps1 gpg trust -y C:\\key\spack_public_key.gpg }
+      - spack.ps1 gpg list --signing
 
       script::
       - spack.ps1 env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
