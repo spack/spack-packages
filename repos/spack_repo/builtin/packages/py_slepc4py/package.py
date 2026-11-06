@@ -19,6 +19,7 @@ class PySlepc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.26.1", sha256="52ca65bbb09668ee957569b93308c643a423ea280a6e07e9933054b91c1f9f38")
     version("3.26.0", sha256="07bf970c861736b9b977dfecd4ad46415d6c4a6f26b0ed128ecffae59613d6ff")
     version("3.25.2", sha256="28b750aade266d171a23b0ef2e471f24caa65ef69fba5d12147a916e35f5051e")
     version("3.25.1", sha256="d5ac5c132ff7f5450fc511a50bdd2fce20b30e7618f53b6d64207832de33c75e")
