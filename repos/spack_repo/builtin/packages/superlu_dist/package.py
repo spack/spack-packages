@@ -63,6 +63,25 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
     )
     variant("shared", default=True, description="Build shared libraries")
     variant("parmetis", default=True, description="Enable ParMETIS library")
+    variant("magma", default=False, description="Enable MAGMA library")
+    # Note: the "amd" branch version sorts below all numeric versions, so
+    # "@5:9.1" excludes it while "@:9.1" would not.
+    variant(
+        "cxxstd",
+        default="11",
+        description="C++ (and CUDA) language standard",
+        values=("11", "14", "17", "20"),
+        multi=False,
+        when="@5:9.1",
+    )
+    variant(
+        "cxxstd",
+        default="17",
+        description="C++ (and CUDA) language standard",
+        values=("11", "14", "17", "20"),
+        multi=False,
+        when="@9.2:,amd",
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -77,16 +96,22 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("metis@5: ~int64", when="~int64")
         depends_on("parmetis ~int64", when="~int64")
     depends_on("cmake@3.18.1:", type="build", when="@7.1.0:")
+    depends_on("magma +cuda ~rocm", when="+magma +cuda")
+    depends_on("magma +rocm ~cuda", when="+magma +rocm")
     depends_on("hipblas", when="+rocm")
     depends_on("hipblas@:6", when="@:9.1.0 +rocm")
     depends_on("rocsolver", when="+rocm")
 
     conflicts("+rocm", when="+cuda")
     conflicts("+cuda", when="@:6.3")
+    conflicts("+magma", when="~cuda~rocm", msg="magma support requires +cuda or +rocm")
     # See https://github.com/xiaoyeli/superlu_dist/issues/87
     conflicts("^cuda@11.5.0:", when="@7.1.0:7.1 +cuda")
     # https://github.com/xiaoyeli/superlu_dist/pull/193
     conflicts("^cuda@13:", when="@:9.1 +cuda")
+    # CUDA 13 (CCCL) requires C++17 or newer
+    conflicts("cxxstd=11", when="+cuda ^cuda@13:")
+    conflicts("cxxstd=14", when="+cuda ^cuda@13:")
 
     patch("xl-611.patch", when="@:6.1.1 %xl")
     patch("xl-611.patch", when="@:6.1.1 %xl_r")
@@ -116,6 +141,7 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         append_define("TPL_LAPACK_LIBRARIES", spec["lapack"].libs.ld_flags)
         append_define("TPL_ENABLE_LAPACKLIB", True)
         append_define("USE_XSDK_DEFAULTS", True)
+        append_from_variant("CMAKE_CXX_STANDARD", "cxxstd")
 
         append_from_variant("TPL_ENABLE_PARMETISLIB", "parmetis")
         if "+parmetis" in spec:
@@ -134,11 +160,16 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
         if "~openmp" in spec:
             append_define("CMAKE_DISABLE_FIND_PACKAGE_OpenMP", True)
 
+        append_from_variant("TPL_ENABLE_MAGMALIB", "magma")
+        if spec.satisfies("+magma"):
+            append_define("TPL_MAGMA_INCLUDE_DIRS", spec["magma"].prefix.include)
+            append_define("TPL_MAGMA_LIBRARIES", spec["magma"].libs.ld_flags)
+
         if "+cuda" in spec:
             append_define("TPL_ENABLE_CUDALIB", True)
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch[0] != "none":
-                append_define("CMAKE_CUDA_ARCHITECTURES", ";".join(cuda_arch))
+                append_define("CMAKE_CUDA_ARCHITECTURES", cuda_arch[0])
             if spec.satisfies("^cuda@13:"):
                 append_define("CMAKE_CXX_STANDARD", "17")
 
@@ -161,8 +192,6 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
 
     def flag_handler(self, name, flags):
         flags = list(flags)
-        if name == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
         if (
             name == "cflags"
             and (self.spec.satisfies("%xl") or self.spec.satisfies("%xl_r"))
