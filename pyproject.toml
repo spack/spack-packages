@@ -40,6 +40,7 @@ builtins = [
     "spack_cxx",
     "spack_f77",
     "spack_fc",
+    "spack_hipcxx",
     "static_to_shared_library",
     # defined in packages or build systems, e.g. -- these can be removed over time
     "aclocal",
