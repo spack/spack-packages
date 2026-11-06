@@ -20,12 +20,16 @@ class PyIpyvuetify(PythonPackage):
 
     maintainers("jeremyfix")
 
+    version("3.0.0", sha256="265402700632d2c31257824cd266211cdbae755b80343a145881f97acdcb53ab")
     version("1.9.0", sha256="9c537e218299de32194b1da949d6b96bffe6c00f36bb6035409f2485feb881e7")
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools@40.8.0:", type="build")
-
-    depends_on("py-jupyter-packaging@0.7.9:0.7", type="build")
-    depends_on("py-jupyterlab@3", type="build")
+    depends_on("py-jupyterlab@3:", type="build")
     depends_on("py-pynpm", type="build")
-    depends_on("py-ipyvue@1.7:1", type=("build", "run"))
+
+    depends_on("py-jupyter-packaging@0.7.9:0.7.12", when="@1.9.0", type="build")
+    depends_on("py-ipyvue@1.7:1", when="@1.9.0", type=("build", "run"))
+
+    depends_on("py-ipyvue@3:", when="@3:", type=("build", "run"))
+    depends_on("py-jupyter-builder@1.0.0:", when="@3:", type=("build", "run"))
