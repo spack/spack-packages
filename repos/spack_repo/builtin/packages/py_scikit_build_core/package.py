@@ -20,6 +20,7 @@ class PyScikitBuildCore(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.1.1", sha256="e347a59193c878ac56a363e57506938652a6dd8c965790cb1cbc6bc7e8d5abad")
     version("1.0.3", sha256="a4d7a05978ee37975c37743510c8991e2debce7ef83afb0a07c0c576fd4f16e8")
     version(
         "0.12.2",
@@ -44,6 +45,7 @@ class PyScikitBuildCore(PythonPackage):
     depends_on("fortran", type="build")  # generated
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1.1:")
         depends_on("python@:3.14", when="@:0.12")
         depends_on("python@3.8:", when="@0.11:")
         depends_on("python@3.7:")
@@ -60,7 +62,7 @@ class PyScikitBuildCore(PythonPackage):
         depends_on("py-exceptiongroup", when="^python@:3.10")
         depends_on("py-importlib-metadata@1:", when="@0.9: ^python@:3.7")
         depends_on("py-importlib-metadata", when="@0.3.0: ^python@:3.7")
-        depends_on("py-importlib-resources@1.3:", when="^python@:3.8")
+        depends_on("py-importlib-resources@1.3:", when="@:1.0.3 ^python@:3.8")
         depends_on("py-packaging@23.2:", when="@0.10:")
         depends_on("py-packaging@21.3:", when="@0.9")
         depends_on("py-packaging@20.9:")
@@ -82,7 +84,6 @@ class PyScikitBuildCore(PythonPackage):
         depends_on("py-build@0.8:", when="@0.9:")
         depends_on("py-build +virtualenv", when="@:0.8")
         depends_on("py-cattrs@22.2:")
-        depends_on("py-fastjsonschema@2.16.2:", when="@0.12:")
         depends_on("py-filelock@3.8:", when="@0.12:")
         depends_on("py-hatch-fancy-pypi-readme@23.2:", when="@0.12:")
         depends_on("py-importlib-metadata", when="^python@:3.7")
@@ -106,6 +107,10 @@ class PyScikitBuildCore(PythonPackage):
         depends_on("py-virtualenv", when="@0.6:")
         depends_on("py-wheel@0.40:", when="@0.9:")
         depends_on("py-wheel")
+
+    # excluding 2.22.0 when python_version<3.10
+    depends_on("py-fastjsonschema@2.16.2:", when="@0.12:", type="test")
+    conflicts("^py-fastjsonschema@2.22.0", when="@1.1.1: ^python@:3.9")
 
     @run_after("install")
     @on_package_attributes(run_tests=True)
