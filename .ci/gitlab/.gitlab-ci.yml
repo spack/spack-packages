@@ -17,6 +17,9 @@ variables:
   #   expand: false
 
 default:
+  id_tokens:
+    SITE_ID_TOKEN:
+      aud: https://gitlab.spack.io
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
 .clone_spack: &clone_spack
@@ -26,9 +29,23 @@ default:
   - git init
   - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
   - echo ${SPACK_CHECKOUT_VERSION}
-  - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+  - git fetch --depth 2 origin ${SPACK_CHECKOUT_VERSION}
   - git checkout FETCH_HEAD
   - cd ${CI_PROJECT_DIR}
+
+.checkout_repository: &checkout_repository
+  # Only the job shell uses /tmp; Jacamar and artifact uploads keep the shared directory.
+  - export SPACK_CI_SHARED_PROJECT_DIR="${CI_PROJECT_DIR}"
+  - CI_PROJECT_DIR=$(mktemp -d /tmp/spack-ci.XXXXXXXXXX)
+  - export CI_PROJECT_DIR
+  - cd "${CI_PROJECT_DIR}"
+  - export CI_PROJECT_DIR="$(pwd -P)"
+  - git init
+  - git config remote.origin.url "${CI_REPOSITORY_URL}"
+  - git fetch --depth 2 origin "${CI_COMMIT_SHA}"
+  - git checkout --force FETCH_HEAD
+  - *clone_spack
+  - . "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/local_workspace.sh"
 
 .trigger_build: &trigger_build
   strategy: depend
@@ -125,6 +142,8 @@ default:
       --forward-variable SPACK_CI_SPACK_ROOT
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
   artifacts:
     when: always
     paths:
@@ -163,7 +182,10 @@ default:
 # Generate without tags for cases using external runners
 .generate-base:
   extends: [ ".base-job", ".generate-common" ]
+  variables:
+    GIT_STRATEGY: "empty"
   before_script:
+    - *checkout_repository
     # Check if bypass for noop is set
     - |
       [ ! -z ${NOOP_JOB} ] && \
@@ -176,36 +198,36 @@ default:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
 
 .generate-x86_64:
   variables:
     SPACK_CI_TARGET: "x86_64_v3"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "x86_64_v3"]
+  tags: ["litmus", "public", "medium", "x86_64_v3"]
 
 .generate-aarch64:
   variables:
     SPACK_CI_TARGET: "aarch64"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64"]
+  tags: ["litmus", "public", "medium", "aarch64"]
 
 .generate-neoverse_v1:
   variables:
     SPACK_CI_TARGET: "neoverse_v1"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64", "neoverse_v1"]
+  tags: ["litmus", "public", "medium", "aarch64", "neoverse_v1"]
 
 .generate-neoverse-v2:
   variables:
     SPACK_CI_TARGET: "neoverse_v2"
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
   extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "neoverse_v2"]
+  tags: ["litmus", "public", "medium", "neoverse_v2"]
 
 .generate-win64:
   extends: [ ".base-job", ".generate-common" ]
@@ -599,7 +621,8 @@ radiuss-build:
 .tags-x86_64_v4:
   variables:
     SPACK_CI_TARGET: "x86_64_v4"
-  tags: ["spack", "public", "medium", "x86_64_v4"]
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
+  tags: ["litmus", "public", "medium", "x86_64_v4"]
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
@@ -785,10 +808,13 @@ hep-build:
 .generate-cray:
   extends: [ ".generate-common", ".base-job" ]
   variables:
+    GIT_STRATEGY: "empty"
     # Override concretization pool for metal runners
     SPACK_CONCRETIZE_JOBS: 16
+    SCHEDULER_PARAMETERS: "-q cts2 -n 1 -c ${SPACK_CONCRETIZE_JOBS}"
 
   before_script:
+    - *checkout_repository
     - echo $PATH
     - module avail
     - module list
@@ -797,12 +823,8 @@ hep-build:
     - nproc || true
     - cat /proc/loadavg || true
     - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
     - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
     - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
 
 .generate-cray-rhel:
   tags: [ "cray-rhel-x86_64_v3", "public" ]
