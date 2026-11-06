@@ -444,6 +444,23 @@ class DuckdbExtensions(BundlePackage):
 
     The variants exclude extensions that DuckDB links statically, such as json and parquet.
     They also exclude autocomplete and tpch, because a DuckDB build can provide those files.
+
+    To use the extensions, install them in an environment with a view:
+
+        spack:
+          specs:
+          - duckdb-extensions@2.0.0 +httpfs +fts +spatial
+          view: true
+
+    DuckDB finds them through DUCKDB_EXTENSION_DIRECTORIES. duckdb+extension_env sets this
+    variable when you activate the environment, or when you use spack load.
+
+    * @2.0.0 installs the binaries that DuckDB published. It works from a mirror.
+    * @latest installs the binaries that DuckDB publishes now, so it needs network access.
+    * +site_signed builds each extension from source and signs it with your key. The duckdb in
+      the spec must trust that key: see its extension_keys and extension_key variants.
+
+    The base class DuckdbExtensionBase describes each mode and its limits.
     """
 
     homepage = "https://duckdb.org/docs/stable/core_extensions/overview"
