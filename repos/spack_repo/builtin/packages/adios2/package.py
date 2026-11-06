@@ -30,7 +30,15 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     version("master", branch="master")
-    version("2.12.1", sha256="71edd8f721448311852122fca8d83ae497b43846e5bfcdfd275dc06bb7f3d0c5")
+    version(
+        "2.13.0-rc1",
+        sha256="975cf73b4b7adc13f9e862410e7cf75eba2720a97603a8147f1059b4615c1e8d",
+    )
+    version(
+        "2.12.1",
+        sha256="71edd8f721448311852122fca8d83ae497b43846e5bfcdfd275dc06bb7f3d0c5",
+        preferred=True,
+    )
     version("2.12.0", sha256="c59aeb75f3ea9949c4ae2d597115536ee593dedb50592784917ba8d29c8a3b34")
     version("2.11.0", sha256="0a2bd745e3f39745f07587e4a5f92d72f12fa0e2be305e7957bdceda03735dbf")
     version("2.10.2", sha256="14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e")
@@ -64,6 +72,12 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("sz", default=True, description="Enable SZ2 compression")
     variant("sz3", default=True, when="@2.12:", description="Enable SZ3 compression")
     variant("mgard", default=not IS_WINDOWS, when="@2.8:", description="Enable MGARD compression")
+    variant(
+        "mgard-mdr",
+        default=False,
+        when="@2.12:",
+        description="Enable MGARD Multi-precision data refactoring",
+    )
 
     # Rransport engines
     variant("sst", default=True, description="Enable the SST staging engine")
@@ -100,6 +114,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     variant("fortran", default=True, description="Enable the Fortran bindings")
 
     conflicts("+shared", when="~pic")
+    conflicts("+mgard-mdr", when="~mgard")
 
     # Requires mature C++11 implementations
     conflicts("%gcc@:4.7")
@@ -193,6 +208,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("mgard@1.6.0:", when="@2.10:")
         depends_on("mgard@compat-2023-01-10:", when="@2.9")
         depends_on("mgard@compat-2022-11-18:", when="@:2.8")
+        depends_on("mgard+mdr", when="+mgard-mdr")
 
     depends_on("libsodium@1.0.4:", when="@2.9: +encryption")
 
@@ -268,6 +284,12 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
         when="@2.12.0",
     )
 
+    patch(
+        "https://github.com/ornladios/ADIOS2/commit/6610374b152c76e477b19baf163c03e66a2782ec.patch?full_index=1",
+        sha256="453de22b249246d5dcb4c765522faa81a85aa54575301595ced27717b707022b",
+        when="@2.12",
+    )
+
     @when("%fj")
     def patch(self):
         """add fujitsu mpi commands #16864"""
@@ -300,6 +322,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
             from_variant("ADIOS2_USE_Fortran", "fortran"),
             from_variant("ADIOS2_USE_HDF5", "hdf5"),
             from_variant("ADIOS2_USE_MGARD", "mgard"),
+            from_variant("ADIOS2_USE_MGARD_MDR", "mgard-mdr"),
             from_variant("ADIOS2_USE_MPI", "mpi"),
             from_variant("ADIOS2_USE_PNG", "png"),
             from_variant("ADIOS2_USE_Python", "python"),

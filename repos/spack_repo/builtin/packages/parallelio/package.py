@@ -122,6 +122,15 @@ class Parallelio(CMakePackage):
         if spec.satisfies("%nag"):
             # NAG cannot pass Spack's padded build rpath through its linker.
             args.append(define("CMAKE_SKIP_RPATH", True))
+        if spec.satisfies("platform=darwin %fortran=clang"):
+            # CMake's generic Darwin rule sends -install_name directly to the
+            # compiler driver, but LLVM Flang requires linker flags via -Xlinker.
+            # Not needed once CMake includes the fix (cmake/cmake#27558, MR !12546).
+            args.append(
+                define(
+                    "CMAKE_SHARED_LIBRARY_SONAME_Fortran_FLAG", "-Xlinker -install_name -Xlinker "
+                )
+            )
         if spec.satisfies("+ncint"):
             args.extend([define("PIO_ENABLE_NETCDF_INTEGRATION", True)])
         if spec.satisfies("+pnetcdf"):

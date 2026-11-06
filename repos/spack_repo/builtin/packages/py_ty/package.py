@@ -16,6 +16,7 @@ class PyTy(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("0.0.85", sha256="ef442cbc2fd6dad02eb00dee4213c1e0f18e09bcbeec2cdce6aa802603c5c6bb")
     version("0.0.72", sha256="ec2b8066b618df18cab4cb8e992f8da45d360332acb23fa34df7fa29cd1b9d3a")
     version("0.0.30", sha256="c982207640e7d75331b81031ebfb884ab858ed26ab16d7c086ac4942e2771846")
     version("0.0.29", sha256="e7936cca2f691eeda631876c92809688dbbab68687c3473f526cd83b6a9228d8")
@@ -41,6 +42,7 @@ class PyTy(PythonPackage):
         depends_on("c")
         depends_on("gmake")
         # ruff/Cargo.toml
+        depends_on("rust@1.97:", when="@0.0.85:")
         depends_on("rust@1.95:", when="@0.0.60:")
         depends_on("rust@1.92:", when="@0.0.25:")
         depends_on("rust@1.91:", when="@0.0.15:")
