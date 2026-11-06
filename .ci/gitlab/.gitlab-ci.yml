@@ -37,7 +37,7 @@ default:
 
 .common_pr_vars: &common_pr_vars
     SPACK_PIPELINE_TYPE: "spack_pull_request"
-    SPACK_PRUNE_UNTOUCHED_DEPENDENT_DEPTH: "1"
+    SPACK_PRUNE_UNTOUCHED_DEPENDENT_DEPTH: "0"
     # TODO: Change sync script to include target in branch name.  Then we could
     # TODO: have multiple types of "PR" pipeline here.  It would be better if we could
     # TODO: keep just this one and use a regex to capture the target branch, but so
