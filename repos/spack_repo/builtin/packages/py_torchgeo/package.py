@@ -10,6 +10,7 @@ from spack.package import *
 class PyTorchgeo(PythonPackage):
     """TorchGeo: datasets, samplers, transforms, and pre-trained models for geospatial data."""
 
+    # This comment is a release branch change only see. #7480
     homepage = "https://github.com/torchgeo/torchgeo"
     pypi = "torchgeo/torchgeo-0.1.0.tar.gz"
     git = "https://github.com/torchgeo/torchgeo.git"
