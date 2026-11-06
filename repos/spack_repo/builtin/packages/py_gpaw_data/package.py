@@ -17,8 +17,15 @@ class PyGpawData(PythonPackage):
 
     license("GPL-3.0-or-later", checked_by="alikhamze")
 
+    version("1.2.1", sha256="5ded7ef43ca9b53332ad2fe9d7951dd36e6fba221662227fd24abf748b904c27")
+    version("1.1.0", sha256="d6d2f2450cd6b22aa421738fce21c9c83b7f534cbc3bb4081ce5593fd9487173")
     version("1.0.1", sha256="28212110aa04daae333ef1260b281d70b818ad9cf4282078624ee3fc7a8fc05c")
 
-    depends_on("python@3.9:", type=("build", "run"))
+    with when("@1.2.1"):
+        depends_on("python@3.11:", type=("build", "run"))
+    with when("@1.1.0"):
+        depends_on("python@3.10:", type=("build", "run"))
+    with when("@1.0.1"):
+        depends_on("python@3.9:", type=("build", "run"))
 
     depends_on("py-setuptools", type="build")
