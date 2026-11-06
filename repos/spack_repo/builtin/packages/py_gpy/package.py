@@ -15,7 +15,12 @@ class PyGpy(PythonPackage):
     maintainers("liuyangzhuan")
 
     license("BSD-3-Clause")
-
+    ## pypi url is lower case for 1.14.2
+    version(
+        "1.14.2",
+        sha256="3c6a102cd0939ca62aab27038acc7c9970559fbda653dbdccc5d8ad02bd1dbad",
+        url="https://files.pythonhosted.org/packages/source/g/gpy/gpy-1.14.2.tar.gz",
+    )
     version("1.13.2", sha256="a38256b4dda536a5b5e6134a3924b42d454e987ee801fb6fc8b55a922da27920")
     version("1.10.0", sha256="a2b793ef8d0ac71739e7ba1c203bc8a5afa191058b42caa617e0e29aa52aa6fb")
     version("1.9.9", sha256="04faf0c24eacc4dea60727c50a48a07ddf9b5751a3b73c382105e2a31657c7ed")
@@ -26,7 +31,10 @@ class PyGpy(PythonPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-numpy@1.7:", type=("build", "run"))
+    ## @:1.13.0 do no support numpy@2:
+    depends_on("py-numpy@1.7:1.26", type=("build", "run"), when="@:1.13")
+    ## @1.14.0 is official support of numpy@2:
+    depends_on("py-numpy@2:", type=("build", "run"), when="@1.14:")
     depends_on("py-scipy@0.16:", type=("build", "run"))
     depends_on("py-scipy@1.3:", when="@1.10.0:", type=("build", "run"))
     depends_on("py-six", type=("build", "run"))
