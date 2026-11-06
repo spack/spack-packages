@@ -1,0 +1,22 @@
+--- a/include/deal.II/lac/sparse_direct.h
++++ b/include/deal.II/lac/sparse_direct.h
+@@ -628,7 +628,7 @@
+    * that ownership of the array remains in the current class rather than with
+    * the caller of this function.
+    */
+-  int *
++  types::mumps_index *
+   get_icntl();
+ 
+ private:
+--- a/source/lac/sparse_direct.cc
++++ b/source/lac/sparse_direct.cc
+@@ -1538,7 +1538,7 @@
+ 
+ 
+ 
+-int *
++types::mumps_index *
+ SparseDirectMUMPS::get_icntl()
+ {
+   return id.icntl;

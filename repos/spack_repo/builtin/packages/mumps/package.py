@@ -345,11 +345,12 @@ class Mumps(Package):
             if sys.platform == "darwin":
                 # Building dylibs with mpif90 causes segfaults on 10.8 and
                 # 10.10. Use gfortran. (Homebrew)
+                # Share Fortran MPI sentinels with libmpifort and mumps_common.
                 makefile_conf.extend(
                     [
                         "LIBEXT=.dylib",
                         "AR=%s -dynamiclib -Wl,-install_name -Wl,%s/$(notdir $@)"
-                        " -undefined dynamic_lookup %s -o "
+                        " -Wl,-flat_namespace -undefined dynamic_lookup %s -o "
                         % (os.environ["FC"], prefix.lib, inject_libs),
                         "RANLIB=echo",
                     ]
