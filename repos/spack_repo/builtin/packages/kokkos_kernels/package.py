@@ -121,6 +121,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     )
     variant("serial", default=False, description="Enable serial backend")
     variant("openmp", default=False, description="Enable OpenMP backend")
+    variant("openacc", default=False, description="Enable OpenACC backend")
     variant("threads", default=False, description="Enable C++ threads backend")
     variant(
         "ordinals", default="int", values=["int", "int64_t"], multi=True, description="Ordinals"
@@ -141,6 +142,17 @@ class KokkosKernels(CMakePackage, CudaPackage):
         description="Scalars",
     )
 
+    for cond in ("+cuda", "+openacc"):
+        variant(
+            "cuda_arch",
+            description="CUDA architecture",
+            values=("none",) + CudaPackage.cuda_arch_values,
+            default="none",
+            multi=False,
+            sticky=True,
+            when=cond,
+        )
+
     depends_on("cxx", type="build")
     for tpl in ("blas", "mkl"):
         depends_on("c", type="build", when=f"+{tpl}")
@@ -156,6 +168,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+serial", when="+serial")
     depends_on("kokkos+cuda", when="+cuda")
     depends_on("kokkos+openmp", when="+openmp")
+    depends_on("kokkos+openacc", when="+openacc")
     depends_on("kokkos+threads", when="+threads")
     depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
@@ -243,6 +256,13 @@ class KokkosKernels(CMakePackage, CudaPackage):
             options.append(self.define(f"KokkosKernels_INST_{val.upper()}", True))
         layout_value = spec.variants["layouts"].value
         options.append(self.define(f"KokkosKernels_INST_LAYOUT{layout_value.upper()}", True))
+
+        # NVHPC's OpenACC link driver (pgacclnk) misreads "-Wl,-soname,<name>" and
+        # passes <name> to ld as an input, so relinking (e.g. during "make install")
+        # fails with "input file ... is the same as output file" once the soname
+        # symlink exists. The "-soname=<name>" form is unaffected.
+        if spec.satisfies("+openacc %cxx=nvhpc"):
+            options.append(self.define("CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG", "-Wl,-soname="))
 
         # kokkos_launch_compiler strips the Spack compiler wrapper on TUs
         # tagged -DKOKKOS_DEPENDENCE, which loses SPACK_CXXFLAGS injected by
