@@ -276,6 +276,10 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("py-matplotlib", type=("build", "run"), when="@26: +python")
     depends_on("py-cython", type="build", when="@26: +python")
     depends_on("py-setuptools", type="build", when="@26: +python")
+    # needed by ambertools
+    depends_on("arpack-ng", when="@26:")
+    depends_on("arpack-ng+mpi", when="@26: +mpi")
+    depends_on("netlib-xblas+fortran", when="@26:")
 
     conflicts(
         "+x11",
