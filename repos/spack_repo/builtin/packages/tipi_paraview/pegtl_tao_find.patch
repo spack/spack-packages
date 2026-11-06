@@ -1,0 +1,20 @@
+diff --git a/VTK/CMake/FindPEGTL.cmake b/VTK/CMake/FindPEGTL.cmake
+index fbc3e15a..88d995b9 100644
+--- a/VTK/CMake/FindPEGTL.cmake
++++ b/VTK/CMake/FindPEGTL.cmake
+@@ -21,13 +21,12 @@
+ #  PEGTL::PEGTL
+ 
+ find_path(PEGTL_INCLUDE_DIR
+-  NAMES pegtl/version.hpp
+-  PATH_SUFFIXES tao
++  NAMES tao/pegtl/version.hpp
+   DOC "Path to PEGTL headers")
+ mark_as_advanced(PEGTL_INCLUDE_DIR)
+ 
+ if (PEGTL_INCLUDE_DIR)
+-  file(STRINGS "${PEGTL_INCLUDE_DIR}/pegtl/version.hpp" _pegtl_version_header
++  file(STRINGS "${PEGTL_INCLUDE_DIR}/tao/pegtl/version.hpp" _pegtl_version_header
+     REGEX "TAO_PEGTL_VERSION")
+   string(REGEX MATCH "define[ \t]+TAO_PEGTL_VERSION[ \t]+\"([0-9.]+)\"" _pegtl_version_match "${_pegtl_version_header}")
+   set(PEGTL_VERSION "${CMAKE_MATCH_1}")
