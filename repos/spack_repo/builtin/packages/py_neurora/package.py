@@ -15,6 +15,7 @@ class PyNeurora(PythonPackage):
 
     license("MIT")
 
+    version("2.0.1", sha256="0a415e86f78f80eccdc8f92c619db8921723983bbd23757ca7015c4f95ad35ab")
     version("1.1.6.12", sha256="cdd2708f7d8320a795d4dd23d2ea174de8c81e9568a58a9ddde7a1245e0ba5d4")
     version("1.1.6.10", sha256="cdfed753b9d2e227cd15e3215fc0297ad5df0b131ef87a849e3fcec90788c514")
     version("1.1.6.9", sha256="052d826e17d6a40171d487b188bd68863e36e41e37740da5eec33562241e36ce")
@@ -23,11 +24,17 @@ class PyNeurora(PythonPackage):
     version("1.1.5.16", sha256="5ae296a5baf658b67e9754a172f5fb321c2077007455f93db6bb2aaeb3e23cd7")
 
     depends_on("py-setuptools", type="build")
-    depends_on("py-numpy", type=("build", "run"))
-    depends_on("py-scipy@1.6.2:", type=("build", "run"))
-    depends_on("py-mne", type=("build", "run"))
-    depends_on("py-nibabel", type=("build", "run"))
-    depends_on("py-matplotlib", type=("build", "run"))
-    depends_on("py-nilearn", type=("build", "run"))
-    depends_on("py-scikit-learn", type=("build", "run"))
-    depends_on("py-scikit-image", type=("build", "run"))
+
+    with default_args(type=("build", "run")):
+        depends_on("py-numpy")
+        depends_on("py-scipy@1.6.2:")
+        depends_on("py-mne")
+        depends_on("py-nibabel")
+        depends_on("py-matplotlib")
+        depends_on("py-nilearn")
+        depends_on("py-scikit-learn")
+        depends_on("py-scikit-image")
+        depends_on("py-joblib", when="@2.0.1:")
+        depends_on("py-tqdm", when="@2.0.1:")
+        depends_on("py-pandas", when="@2.0.1:")
+        depends_on("py-pingouin", when="@2.0.1:")
