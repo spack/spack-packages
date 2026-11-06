@@ -23,3 +23,6 @@ class PyQudida(PythonPackage):
     depends_on("py-scikit-learn@0.19.1:", type=("build", "run"))
     depends_on("py-typing-extensions", type=("build", "run"))
     depends_on("opencv@4.0.1:+python3", type=("build", "run"))
+
+    # ModuleNotFoundError: No module named 'pkg_resources'
+    conflicts("py-setuptools@82:")
