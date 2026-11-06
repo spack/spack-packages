@@ -233,6 +233,14 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     patch("tile-iterator-comparison-fix-2024.02.patch", when="@2024.02.0:2024.02.2")
 
+    # oneAPI 2026.x device pass requires SYCL_EXTERNAL to be defined; raja
+    # v2025.09.0's SYCL compat header misses it, breaking +sycl builds with
+    # oneAPI 2026.x compilers (e.g. the Aurora default stack).
+    patch(
+        "raja-v2025.09.0-sycl-oneapi-2026-external-fix.patch",
+        when="@2025.09.0 +sycl %oneapi@2026:",
+    )
+
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
@@ -514,6 +522,21 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
         )
 
         entries.append(cmake_cache_option("RAJA_ENABLE_SYCL", spec.satisfies("+sycl")))
+
+        if spec.satisfies("+sycl"):
+            # RAJA v2025.09.0 does not add the SYCL compile flags itself
+            # (its MemUtils_SYCL.cpp needs -fsycl to find <sycl/sycl.hpp>);
+            # consumers are expected to pass them (this mirrors what
+            # ascent's build system does for RAJA SYCL builds).
+            entries.append(
+                cmake_cache_string(
+                    "CMAKE_CXX_FLAGS",
+                    " ".join(spec.compiler_flags["cxxflags"]) + " -fsycl"
+                    " -fsycl-device-code-split=per_kernel"
+                    " -fsycl-max-parallel-link-jobs=128"
+                    " -flink-huge-device-code",
+                )
+            )
         entries.append(
             cmake_cache_option("RAJA_ENABLE_NV_TOOLS_EXT", spec.satisfies("+gpu-profiling +cuda"))
         )
