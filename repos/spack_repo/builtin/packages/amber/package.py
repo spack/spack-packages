@@ -363,7 +363,8 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             "-Wno-dev",
             self.define("COMPILER", self._compiler_id()),
-            self.define("PMEMD_ONLY", True),
+            self.define("PMEMD_ONLY", False),
+            self.define("BUILD_SHARED_LIBS", True),
             self.define_from_variant("BUILD_PYTHON", "python"),
             self.define_from_variant("BUILD_PERL", "perl"),
             # Always passed explicitly: Amber's default can be TRUE, in which case
