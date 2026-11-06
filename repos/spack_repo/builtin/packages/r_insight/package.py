@@ -24,6 +24,7 @@ class RInsight(RPackage):
 
     license("GPL-3.0-only")
 
+    version("1.7.0", sha256="eaeb3c9d23d9478e0902c3d7c30f57a20a2d346d89ad4d7427a274ad4fbe38db")
     version("0.20.3", sha256="b60e189849cd3c368e9c2b2174e89c2dfbba3b34e84feb8a20af1bb758116bb2")
     version("0.19.1", sha256="1042629644c66b1a372fd4471d38adccc0c3a329879ef685b14b65575c1c98eb")
     version("0.18.6", sha256="ab0dc3c8ec765f2e93f7bcc3a7abb05140f71db24d50bf8cdd595a5a4e771cae")
