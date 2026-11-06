@@ -68,10 +68,12 @@ class Spdk(AutotoolsPackage):
 
     depends_on("dpdk@22.11:", when="+dpdk")
     depends_on("fio@3.33", when="+fio")
+    depends_on("libiscsi", when="+iscsi-initiator")
     depends_on("libaio")
     depends_on("meson")
     depends_on("nasm@2.12.02:", type="build")
     depends_on("numactl")
+    depends_on("pmdk", when="+pmdk")
     depends_on("py-pyelftools")
     depends_on("rdma-core", when="+rdma")
     depends_on("uuid")
