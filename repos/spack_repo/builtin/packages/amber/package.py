@@ -318,9 +318,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
     @run_before("cmake")
     def merge_ambertools(self):
         """Overlay the AmberTools26 resource onto the pmemd26 source tree.
-
-        Files that already exist in the pmemd sources (e.g. the top-level
-        CMakeLists.txt) are kept, only missing files are added.
         """
         root = self.pkg.stage.source_path
         tools = join_path(root, "ambertools_tmpdir")
