@@ -15,13 +15,17 @@ class PerlHttpDaemon(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("6.17", sha256="16281580c40e23108d028434698b5d7d53637bf904c9df822481e253cbec920c")
     version("6.16", sha256="b38d092725e6fa4e0c4dc2a47e157070491bafa0dbe16c78a358e806aa7e173d")
     version("6.01", sha256="43fd867742701a3f9fcc7bd59838ab72c6490c0ebaf66901068ec6997514adc2")
 
-    depends_on("perl-lwp-mediatypes", type=("build", "run"))
-    depends_on("perl-http-message", type=("build", "run"))
-    depends_on("perl-http-date", type=("build", "run"))
     depends_on("perl-module-build-tiny", type="build")
+
+    with default_args(type=("build", "run")):
+        depends_on("perl-http-date")
+        depends_on("perl-http-message")
+        depends_on("perl-io-socket-ip", when="@6.13:")
+        depends_on("perl-lwp-mediatypes")
 
     def url_for_version(self, version):
         if self.spec.satisfies("@6.02:"):
