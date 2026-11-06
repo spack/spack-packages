@@ -7,11 +7,12 @@ import os
 from spack_repo.builtin.build_systems import cmake
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class Gromacs(CMakePackage, CudaPackage):
+class Gromacs(CMakePackage, CudaPackage, ROCmPackage):
     """GROMACS is a molecular dynamics package primarily designed for simulations
     of proteins, lipids and nucleic acids. It was originally developed in
     the Biophysical Chemistry department of University of Groningen, and is now
@@ -105,6 +106,8 @@ class Gromacs(CMakePackage, CudaPackage):
     )
     depends_on("heffte +cuda", when="+heffte +cuda")
     depends_on("heffte +sycl", when="+heffte +sycl")
+    depends_on("heffte +sycl", when="+heffte +sycl ~rocm")
+    depends_on("heffte +rocm", when="+heffte +rocm")
     variant("opencl", default=False, description="Enable OpenCL support")
     variant("sycl", default=False, when="@2021:", description="Enable SYCL support")
     requires(
@@ -115,6 +118,18 @@ class Gromacs(CMakePackage, CudaPackage):
         msg="GROMACS SYCL support comes either from intel-oneapi-runtime or a "
         + "package that provides the virtual package `sycl`, such as AdaptiveCpp "
         + "plus a clang compiler.",
+    )
+    depends_on("llvm-amdgpu", when="+rocm")
+    depends_on("rocfft", when="+rocm+heffte")
+    for arch in ROCmPackage.amdgpu_targets:
+        depends_on(f"hipsycl+rocm amdgpu_target={arch}", when=f"+sycl+rocm amdgpu_target={arch}")
+    conflicts("+rocm", when="+cuda")
+    conflicts("+rocm", when="+opencl")
+    conflicts(
+        "+rocm",
+        when="@:2024.6",
+        msg="HIP backend: only main non-bonded kernels are offloaded on "
+        "2025.x; full offload support starts at 2026.",
     )
     variant(
         "intel-data-center-gpu-max",
@@ -483,6 +498,18 @@ class Gromacs(CMakePackage, CudaPackage):
                 ),
             )
 
+    def flag_handler(self, name, flags):
+        if (
+            name in ("ldflags", "ldlibs")
+            and self.spec.satisfies("+mpi ^[virtuals=mpi] cray-mpich")
+            and (self.spec.satisfies("+cuda") or self.spec.satisfies("+rocm"))
+        ):
+            gtl = self.spec["cray-mpich"].package.gtl_lib
+            # hipcc is not wrapped, we need to pass the flags via the build
+            # system.
+            return (None, None, flags + gtl.get(name, []))
+        return (flags, None, None)
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
     @run_after("build")
@@ -606,6 +633,29 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 options.append("-DGMX_GPU:STRING=OpenCL")
             elif self.spec.satisfies("+sycl"):
                 options.append("-DGMX_GPU:STRING=SYCL")
+                if self.spec.satisfies("^hipsycl+rocm"):
+                    rocm_archs = self.spec.variants["amdgpu_target"].value
+                    options.append(
+                        f"-DCMAKE_C_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang"
+                    )
+                    options.append(
+                        f"-DCMAKE_CXX_COMPILER={self.spec['llvm-amdgpu'].prefix}/bin/clang++"
+                    )
+                    options.append("-DGMX_SYCL=ACPP")
+
+                    # These flags are not necessary with gromacs@2025: or hipsycl@25.10:
+                    if self.spec.satisfies("^hipsycl@24.06:"):
+                        options.append("-DSYCL_CXX_FLAGS_EXTRA=-DACPP_ALLOW_INSTANT_SUBMISSION=1")
+                    else:
+                        options.append(
+                            "-DSYCL_CXX_FLAGS_EXTRA=-DHIPSYCL_ALLOW_INSTANT_SUBMISSION=1"
+                        )
+                    options.append(f"-DACPP_TARGETS=hip:{','.join(rocm_archs)}")
+                    hipsycl_prefix = self.spec["hipsycl"].prefix
+                    options.append("-DCMAKE_PREFIX_PATH={0}".format(hipsycl_prefix))
+            elif self.spec.satisfies("+rocm"):
+                options.append(self.define_from_variant("GMX_HIP_TARGET_ARCH", "amdgpu_target"))
+                options.append("-DGMX_GPU:STRING=HIP")
             else:
                 options.append("-DGMX_GPU:STRING=OFF")
         else:
@@ -644,7 +694,11 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+heffte"):
             options.append("-DGMX_USE_HEFFTE=on")
             options.append(f"-DHeffte_ROOT={self.spec['heffte'].prefix}")
-
+        if self.spec.satisfies("+rocm"):
+            if self.spec.satisfies("+heffte"):
+                # HeFFTe is only compatible with rocFFT
+                options.append("-DGMX_GPU_FFT_LIBRARY=rocFFT")
+                options.append(f"-DCMAKE_CXX_FLAGS=-I{self.spec['rocfft'].headers.directories[0]}")
         if self.spec.satisfies("+intel-data-center-gpu-max"):
             options.append("-DGMX_GPU_NB_CLUSTER_SIZE=8")
             options.append("-DGMX_GPU_NB_NUM_CLUSTER_PER_CELL_X=1")
