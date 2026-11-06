@@ -82,6 +82,21 @@ class Gnuplot(AutotoolsPackage):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%gcc@7:"):
             env.set("LDFLAGS", "-Wl,--copy-dt-needed-entries")
+        # ld.lld (used by clang/aocc toolchains) does not support
+        # --copy-dt-needed-entries at all ("unknown argument"), which
+        # breaks even the most basic configure check ("C compiler cannot
+        # create executables"). Unlike GNU ld, lld does not resolve
+        # symbols through transitive shared-library dependencies, which is
+        # what --copy-dt-needed-entries works around for GNU ld in the
+        # first place (hence "undefined symbol: libiconv_open" without
+        # it). The real fix for lld is to link -liconv explicitly rather
+        # than try to imitate the GNU ld flag.
+        if self.spec.satisfies("%clang") or self.spec.satisfies("%aocc"):
+            iconv_prefix = self.spec["iconv"].prefix
+            env.append_flags(
+                "LDFLAGS", "-L{0} -Wl,-rpath,{0}".format(iconv_prefix.lib)
+            )
+            env.append_flags("LIBS", "-liconv")
 
     def configure_args(self):
         # see https://github.com/Homebrew/homebrew-core/blob/master/Formula/gnuplot.rb
