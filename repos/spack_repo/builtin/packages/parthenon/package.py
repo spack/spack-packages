@@ -70,9 +70,7 @@ class Parthenon(CMakePackage):
             self.define_from_variant("PARTHENON_ENABLE_ASCENT", "ascent"),
             self.define("PARTHENON_DISABLE_MPI", not spec.variants["mpi"].value),
             self.define("PARTHENON_DISABLE_HDF5", not spec.variants["hdf5"].value),
-            self.define(
-                "PARTHENON_DISABLE_HDF5_COMPRESSION", not spec.variants["compression"].value
-            ),
+            self.define("PARTHENON_DISABLE_HDF5_COMPRESSION", spec.satisfies("~compression")),
             self.define("PARTHENON_DISABLE_SPARSE", not spec.variants["sparse"].value),
             self.define("PARTHENON_DISABLE_EXAMPLES", not spec.variants["examples"].value),
             self.define("BUILD_TESTING", self.run_tests),
