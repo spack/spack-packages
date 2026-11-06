@@ -63,6 +63,14 @@ class Vtk(CMakePackage):
     variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("mpi", default=True, description="Enable MPI support")
+    variant(
+        "threads",
+        default="stdthread",
+        values=("stdthread", "tbb", "openmp", "none"),
+        multi=False,
+        description="Multi-threading backend (SMP implementation)",
+        when="@9:",
+    )
     variant("examples", default=False, description="Enable building & installing the VTK examples")
     variant("versioned_install", default=True, description="Include version in library filenames")
     variant("shared", default=True, description="Builds a shared version of the library")
@@ -171,6 +179,7 @@ class Vtk(CMakePackage):
     depends_on(Boost.with_default_variants, when="io=xdmf")
     depends_on("ffmpeg", when="io=ffmpeg")
     depends_on("mpi", when="+mpi")
+    depends_on("tbb", when="threads=tbb")
 
     depends_on("adios2+mpi", when="io=adios2 +mpi")
     depends_on("adios2~mpi", when="io=adios2 ~mpi")
@@ -346,6 +355,16 @@ class Vtk(CMakePackage):
         cmake_args.append(
             self.define("VTK_MODULE_ENABLE_VTK_netcdf", "YES" if "netcdf-c" in spec else "NO")
         )
+
+        if spec.satisfies("@9:"):
+            smp_types = {
+                "stdthread": "STDThread",
+                "tbb": "TBB",
+                "openmp": "OpenMP",
+                "none": "Sequential",
+            }
+            smp = smp_types[spec.variants["threads"].value]
+            cmake_args.append(self.define("VTK_SMP_IMPLEMENTATION_TYPE", smp))
 
         if spec.satisfies("+mpi"):
             cmake_args.append(
