@@ -25,6 +25,7 @@ class PyFreesasa(PythonPackage):
     )
 
     # Build dependencies
+    depends_on("c", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-cython@0.29.13:", type="build")
 
