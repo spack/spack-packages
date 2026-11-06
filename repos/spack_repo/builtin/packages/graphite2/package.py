@@ -33,6 +33,9 @@ class Graphite2(CMakePackage):
 
     depends_on("python@3.6:", type="test")
     depends_on("freetype")
+    depends_on("cmake@3.5:", when="@1.3.15:", type="build")
+
+    conflicts("%cxx=gcc@16:", when="@:1.3.14")
 
     patch("regparm.patch")
 
