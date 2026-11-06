@@ -652,7 +652,7 @@ class Openmpi(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("internal-hwloc", default=False, description="Use internal hwloc")
     variant("internal-pmix", default=False, description="Use internal pmix and prrte", when="@3:")
     variant("internal-libevent", default=False, description="Use internal libevent")
-    variant("openshmem", default=False, description="Enable building OpenSHMEM")
+    variant("openshmem", default=True, description="Enable building OpenSHMEM")
     variant("debug", default=False, description="Make debug build", when="build_system=autotools")
 
     variant(
@@ -1325,9 +1325,6 @@ with '-Wl,-commons,use_dylibs' and without
             # Workaround compiler issues
             config_args.append("CFLAGS=-O1")
 
-        if "+openshmem" in spec:
-            config_args.append("--enable-oshmem")
-
         if "+wrapper-rpath" in spec:
             config_args.append("--enable-wrapper-rpath")
 
@@ -1340,6 +1337,8 @@ with '-Wl,-commons,use_dylibs' and without
         else:
             config_args.append("--disable-wrapper-rpath")
             config_args.append("--disable-wrapper-runpath")
+
+        config_args.extend(self.enable_or_disable("oshmem", variant="openshmem"))
 
         config_args.extend(self.enable_or_disable("mpi-cxx", variant="cxx"))
         config_args.extend(self.enable_or_disable("cxx-exceptions", variant="cxx_exceptions"))
