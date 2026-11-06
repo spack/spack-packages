@@ -11,7 +11,7 @@ class PyGpawData(PythonPackage):
     """Data package for PAW files and other data files for the GPAW DFT code."""
 
     homepage = "https://gpaw.readthedocs.io/"
-    pypi = "gpaw_data/gpaw_data-1.2.1-py3-none-any.whl"
+    url = "https://files.pythonhosted.org/packages/2b/68/2e8639afacbead047ad2688b36b8a5b96c87b49a23e07bd0af3d1d9efb8e/gpaw_data-1.2.1-py3-none-any.whl"
 
     maintainers("alikhamze")
 
