@@ -45,6 +45,7 @@ class Metis(CMakePackage, MakefilePackage):
     build_system(
         conditional("cmake", when="@5:"), conditional("makefile", when="@:4"), default="cmake"
     )
+    requires("build_system=cmake", when="platform=windows")
     variant("shared", default=True, description="Build shared libraries")
     with when("build_system=cmake"):
         variant("gdb", default=False, description="Enable gdb support")
@@ -75,6 +76,17 @@ class Metis(CMakePackage, MakefilePackage):
             "3b4ca7cd0c15eeebf1ea6c44dd3ec37dfa3b0c1d",
             sha256="3c9c41d133f427865f7b9d86c29e4ea8feab3caba6441895644e5205ecb6d916",
             when="+petsc_patches",
+        )
+        patch("gklib_nomisleadingindentation_warning.patch", when="%gcc@6:")
+        # Ensure appropriate linkage on MSVC
+        patch("windows_msvc_build.patch", when="~petsc_patches platform=windows")
+        # more guarded MSVC INFINITY fallback. From suitesparse-metis-for-windows.
+        patch(
+            "https://github.com/jlblancoc/suitesparse-metis-for-windows/commit/"
+            "9a03e86252f61459b5fd7a44731dea27f5fef6ea.patch?full_index=1",
+            sha256="efe0552db743f8678eb22abb671310c33ce499ab9d4f8626976660114cc65e1d",
+            level=2,
+            when="~petsc_patches platform=windows",
         )
 
     with when("build_system=makefile"):
@@ -289,15 +301,20 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
                 install(join_path(self.stage.source_path, directory, "*.h"), inc_dist)
 
     def check(self):
-        # On some systems, the installed binaries for METIS cannot
-        # be executed without first being read.
-        ls = which("ls", required=True)
-        ls("-a", "-l", self.prefix.bin)
+        # check() runs after build but before install, so exercise the
+        # programs from the build tree rather than the (not yet populated) prefix.
+        programs = join_path(self.build_directory, "programs")
 
-        graphchk = Executable(join_path(self.prefix.bin, "graphchk"))
-        gpmetis = Executable(join_path(self.prefix.bin, "gpmetis"))
-        ndmetis = Executable(join_path(self.prefix.bin, "ndmetis"))
-        mpmetis = Executable(join_path(self.prefix.bin, "mpmetis"))
+        # On some systems, the binaries for METIS cannot
+        # be executed without first being read.
+        if not self.spec.satisfies("platform=windows"):
+            ls = which("ls", required=True)
+            ls("-a", "-l", programs)
+
+        graphchk = Executable(join_path(programs, "graphchk"))
+        gpmetis = Executable(join_path(programs, "gpmetis"))
+        ndmetis = Executable(join_path(programs, "ndmetis"))
+        mpmetis = Executable(join_path(programs, "mpmetis"))
         for f in ["4elt", "copter2", "mdual"]:
             graph = join_path(self.stage.source_path, "graphs", "%s.graph" % f)
             graphchk(graph)
