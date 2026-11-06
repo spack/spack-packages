@@ -123,6 +123,13 @@ class IntelTbb(CMakePackage, MakefilePackage):
 
     variant("tm", default=True, description="Enable use of transactional memory on x86")
 
+    variant(
+        "tcm",
+        default=True,
+        description="Build the Thread Composability Manager",
+        when="@2023.2.0:",
+    )
+
     # Testing version ranges inside when clauses was fixed in e9ee9eaf.
     # See: #8957 and #13989.
 
@@ -220,6 +227,9 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
 
         if spec.satisfies("@2021.6.0:"):
             options.append(self.define_from_variant("TBB_ENABLE_IPO", "ipo"))
+
+        if spec.satisfies("@2023.2.0:"):
+            options.append(self.define_from_variant("TCM_BUILD", "tcm"))
 
         if spec.variants["cxxstd"].value != "default":
             options.append(self.define("CMAKE_CXX_STANDARD", spec.variants["cxxstd"].value))
