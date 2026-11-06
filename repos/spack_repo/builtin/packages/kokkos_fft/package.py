@@ -11,11 +11,14 @@ class KokkosFft(CMakePackage):
     """Kokkos-FFT: FFT interfaces for Kokkos C++ Performance Portability Programming EcoSystem"""
 
     homepage = "https://github.com/kokkos/kokkos-fft"
+    git = "https://github.com/kokkos/kokkos-fft.git"
     url = "https://github.com/kokkos/kokkos-fft/archive/refs/tags/v0.3.0.tar.gz"
 
     maintainers("cedricchevalier19", "tpadioleau", "yasahi-hpc")
 
     license("Apache-2.0 WITH LLVM-exception OR MIT", checked_by="cedricchevalier19")
+
+    version("main", branch="main")
 
     version("2.0.0", sha256="f2c1f7b848e68aa214f2dea7820c22e729564167a4d4010170b01c81ad3a0714")
     version("1.1.0", sha256="71a87f562ad5163a6e6da2979974b3bec1f6482d0a651a17ef882b4bca347782")
