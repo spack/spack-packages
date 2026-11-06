@@ -22,14 +22,21 @@ class Mash(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    patch("gcc-11.patch", when="%gcc@11:")
-
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
     depends_on("capnproto")
     depends_on("gsl")
+
+    patch("gcc-11.patch", when="%gcc@11:")
+
+    # Fix missing <cstdint> include needed by newer GCC/libstdc++
+    patch(
+        "https://patch-diff.githubusercontent.com/raw/marbl/Mash/pull/192.patch?full_index=1",
+        sha256="b5a44b078fdf15cda8a535b30b209252ab8f9aff9fcbeb10edf2aa4a2d7d32eb",
+        when="%gcc@12:",
+    )
 
     def patch(self):
         if self.spec.satisfies("target=aarch64:"):
@@ -40,13 +47,6 @@ class Mash(AutotoolsPackage):
                 string=True,
             )
             filter_file("CFLAGS += -include src/mash/memcpyLink.h", "", "Makefile.in", string=True)
-
-            # Fix missing <cstdint> include needed by newer GCC/libstdc++
-            if self.spec.satisfies("%gcc@12:"):
-                patch(
-                    "https://patch-diff.githubusercontent.com/raw/marbl/Mash/pull/192.patch?full_index=1",
-                    sha256sum="b5a44b078fdf15cda8a535b30b209252ab8f9aff9fcbeb10edf2aa4a2d7d32eb",
-                )
 
     def configure_args(self):
         args = []
