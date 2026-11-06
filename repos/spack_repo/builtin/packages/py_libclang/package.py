@@ -35,7 +35,7 @@ class PyLibclang(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     for ver in ["9", "10", "11", "13", "14", "15", "16", "17", "18"]:
-        depends_on("llvm+clang@" + ver, when="@" + ver, type=("build", "run", "link"))
+        depends_on("llvm@{0}+clang".format(ver), when="@" + ver, type=("build", "run", "link"))
 
     def setup_run_environment(self, env):
         env.prepend_path("LD_LIBRARY_PATH", self.spec["llvm"].libs.directories[0])
