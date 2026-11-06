@@ -26,8 +26,11 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
-    version("10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4")
+    version("10.6p1", sha256="a9dc9565dffe8640f64d863cd29a32bc4a3dbdec0566a7fc44c5d6ee767d5f39")
     with default_args(deprecated=True):
+        version(
+            "10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4"
+        )
         # https://www.cvedetails.com/cve/CVE-2026-35414/
         # https://www.cvedetails.com/cve/CVE-2026-35387/
         # https://www.cvedetails.com/cve/CVE-2026-35386/
