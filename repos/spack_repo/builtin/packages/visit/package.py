@@ -249,6 +249,16 @@ class Visit(CMakePackage):
         if "+netcdf" in self.spec:
             filter_file(r"(set\(NETCDF_CXX_DIR)", r"#\1", "src/CMake/FindNetcdf.cmake")
 
+        # The OpenPMD plugin forces the hdf5 1.8 api in its headers, but these call the
+        # five argument signature of H5Oget_info_by_name (PMDParticle keeps the 1.8 one)
+        if self.spec.satisfies("@3.5: +hdf5"):
+            for header in ("PMDIteration.h", "PMDFile.h"):
+                filter_file(
+                    r"^#define H5_USE_18_API",
+                    "",
+                    join_path("src/databases/OpenPMD/OpenPMDClasses", header),
+                )
+
     def flag_handler(self, name, flags):
         if name in ("cflags", "cxxflags"):
             # NOTE: This is necessary in order to allow VisIt to compile a couple
@@ -256,9 +266,10 @@ class Visit(CMakePackage):
             if "@3:%gcc" in self.spec:
                 flags.append("-fpermissive")
 
-            # VisIt < 3.5 still uses the hdf5 1.8 api
-            if "@:3.4 +hdf5" in self.spec and "@1.10:" in self.spec["hdf5"]:
-                flags.append("-DH5_USE_18_API")
+            # VisIt < 3.5 still uses the hdf5 1.8 api, 3.5 needs the 1.12 one
+            if "+hdf5" in self.spec and "@1.10:" in self.spec["hdf5"]:
+                api = "18" if self.spec.satisfies("@:3.4") else "112"
+                flags.append(f"-DH5_USE_{api}_API")
 
         elif name == "ldlibs":
             # Python support is missing a pthread dependency
