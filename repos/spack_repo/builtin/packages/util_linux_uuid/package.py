@@ -19,6 +19,7 @@ class UtilLinuxUuid(AutotoolsPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    version("2.42.4", sha256="af3241e7776964dcb6bb9a811ca7b0d93000b563e2ae2a8df8f80a7cd6e04d56")
     version("2.41", sha256="c014b5861695b603d0be2ad1e6f10d5838b9d7859e1dd72d01504556817d8a87")
     version("2.40.4", sha256="5b3b1435c02ba201ebaa5066bb391965a614b61721155dfb7f7b6569e95b0627")
     version("2.40.3", sha256="6d72589a24b7feccdf8db20336bb984f64c7cfc2ceb044ef01cac5dce480284e")
