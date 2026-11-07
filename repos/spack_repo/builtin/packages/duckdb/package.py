@@ -102,6 +102,10 @@ class Duckdb(CMakePackage):
             self.define("ENABLE_EXTENSION_AUTOLOADING", "1"),  # string, not boolean
             self.define("ENABLE_EXTENSION_AUTOINSTALL", "1"),  # string, not boolean
         ]
+        if self.spec.satisfies("@2:"):
+            # The default profile adds -march=x86-64-v3 or armv8-a, whatever the target of the
+            # spec. NONE leaves the target flags to the compiler wrapper of Spack.
+            args.append(self.define("DUCKDB_OPTIMIZATION_PROFILE", "NONE"))
         commit = self.release_commits.get(str(self.spec.version))
         if commit:
             args.append(self.define("GIT_COMMIT_HASH", commit))
