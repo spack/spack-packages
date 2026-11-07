@@ -160,6 +160,14 @@ class DuckdbExtensionBase(Package):
         description="Sign the build with DUCKDB_EXTENSION_PRIVATE_KEY, so it loads from any place",
         when="~prebuilt",
     )
+    variant(
+        "link_dependencies",
+        default="static",
+        values=("static", "shared"),
+        description="Link the libraries of Spack dependencies statically, or as shared libraries"
+        " that the extension finds through its RUNPATH",
+        when="~prebuilt ~site_signed",
+    )
     # DuckDB finds these extensions in a view only through DUCKDB_EXTENSION_DIRECTORIES
     extends("duckdb+extension_env")
     depends_on("duckdb@2.0.0", when="@2.0.0")
@@ -175,6 +183,10 @@ class DuckdbExtensionBase(Package):
         depends_on("gmake", type="build")
         depends_on("openssl", type="build")
         depends_on("python", type="build")
+    depends_on("openssl", type="link", when="link_dependencies=shared")
+
+    def _links_shared(self):
+        return self.spec.satisfies("link_dependencies=shared")
 
     @property
     def has_code(self):
@@ -187,7 +199,7 @@ class DuckdbExtensionBase(Package):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # The wrappers of Spack add a RUNPATH with the prefix. A build cache rewrites that path
         # when it relocates a file, and this makes the signature invalid.
-        if self.spec.satisfies("~prebuilt"):
+        if self.spec.satisfies("~prebuilt") and not self._links_shared():
             for name in ("RPATH_DIRS", "STORE_RPATH_DIRS", "COMPILER_EXTRA_RPATHS"):
                 env.set(f"SPACK_{name}", "")
 
@@ -253,10 +265,38 @@ class DuckdbExtensionBase(Package):
             elf = parse_elf(source, interpreter=False, dynamic_section=True)
         needed = [name.decode() for name in elf.dt_needed_strs]
         external = [name for name in needed if not _SYSTEM_LIBRARY.match(name)]
+        if self._links_shared():
+            self._check_runpath(binary, elf, external)
+            return
         if external or elf.has_rpath:
             raise InstallError(
                 f"{self.name} links {external or 'a RUNPATH'}. A source build needs an extension"
                 " with no shared dependencies. The recipe must declare static dependencies."
+            )
+
+    def _check_runpath(self, binary, elf, external):
+        """Fails if a shared library that the binary needs is not in a prefix of a dependency.
+
+        The host must not supply a library. A build cache rewrites a RUNPATH entry only if it
+        is in the store.
+        """
+        runpath = elf.dt_rpath_str.decode().split(":") if elf.has_rpath else []
+        # The wrappers also add the lib directories of this prefix
+        prefixes = [dep.prefix for dep in self.spec.traverse()]
+        outside = [d for d in runpath if d and not any(d.startswith(f"{p}/") for p in prefixes)]
+        if outside:
+            raise InstallError(
+                f"{self.name} has RUNPATH entries outside its dependencies: {outside}"
+            )
+        missing = [
+            name
+            for name in external
+            if not any(os.path.exists(join_path(d, name)) for d in runpath if d)
+        ]
+        if missing:
+            raise InstallError(
+                f"{self.name} links {missing}, which no RUNPATH entry holds. The recipe must"
+                " declare these dependencies with a link type."
             )
 
     def _remove_store_paths(self, binary):
@@ -344,9 +384,12 @@ class DuckdbExtensionBase(Package):
 
         # A signature prevents a later edit, so dependencies must be static. project() resets this
         # setting, so it must apply after project(). The host must not supply a library.
+        # With link_dependencies=shared, there is no signature, and a build cache rewrites the
+        # RUNPATH. Then CMake can take the shared library of a dependency.
         static_first = join_path(build_dir, "static_first.cmake")
         with open(static_first, "w") as output:
-            output.write('set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so")\n')
+            if not self._links_shared():
+                output.write('set(CMAKE_FIND_LIBRARY_SUFFIXES ".a" ".so")\n')
 
         # The extension links the static library of DuckDB, so nothing compiles DuckDB here
         lib = spec["duckdb"].prefix.lib
@@ -354,7 +397,9 @@ class DuckdbExtensionBase(Package):
         libraries = " ".join(f"-l{a}" for a in archives if a != "duckdb_static")
         # These go at the end of the link line, because the linker reads a static library in order
         late_libraries = " ".join(
-            find_libraries(f"lib{library}", spec[dep].prefix, shared=False, recursive=True)[0]
+            find_libraries(
+                f"lib{library}", spec[dep].prefix, shared=self._links_shared(), recursive=True
+            )[0]
             for dep, library in self.source_link_libraries
         )
         with working_dir(build_dir):
