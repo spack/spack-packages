@@ -17,6 +17,7 @@ class PerlBioEnsemblIo(Package):
     license("APACHE-2.0", checked_by="teaguesterling")
 
     for vers, sha in [
+        ("116", "80e6ae0e53b869bbacdb71e0d4244a0797ef646785e1b8578990fe48ba3cb70d"),
         ("113", "2e914af0096af98e5a99986600adeba4e07d5775e708df2fcd033034f2e13272"),
         ("112", "ccbffe7c15318075463db46be348655a5914762e05ff47da2d72a4c99414d39a"),
         ("111", "f81d4c1aea88aac7105aaa3fec548e39b79f129c7abc08b55be7d0345aa5482c"),
@@ -34,6 +35,7 @@ class PerlBioEnsemblIo(Package):
     depends_on("perl-bio-ensembl")
     depends_on("perl-bioperl@1.6.924")
     depends_on("perl-compress-bzip2")
+    depends_on("perl-dbd-sqlite", when="@116:")
     depends_on("perl-json")
     depends_on("perl-try-tiny")
     depends_on("perl-uri")
