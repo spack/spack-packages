@@ -86,6 +86,11 @@ class Duckdb(CMakePackage):
             env.set("SETUPTOOLS_SCM_PRETEND_VERSION", f"{self.spec.version}")
             env.set("PIP_PREFIX", self.prefix)
 
+    #: The commit of each release. A release archive has no git metadata, so the build would
+    #: report the placeholder 0123456789 as its source_id. A client that links libduckdb, such
+    #: as r-duckdb, compares this commit with the commit of its own headers.
+    release_commits = {"2.0.0": "d54cbbe3df17e8e5ce68312f483b4155836112aa"}
+
     def cmake_args(self):
         extensions = ("autocomplete", "icu", "json", "parquet", "tpch", "fts", "httpfs")
         args = [
@@ -97,6 +102,9 @@ class Duckdb(CMakePackage):
             self.define("ENABLE_EXTENSION_AUTOLOADING", "1"),  # string, not boolean
             self.define("ENABLE_EXTENSION_AUTOINSTALL", "1"),  # string, not boolean
         ]
+        commit = self.release_commits.get(str(self.spec.version))
+        if commit:
+            args.append(self.define("GIT_COMMIT_HASH", commit))
         if self.spec.satisfies("+python"):
             args.append(self.define("BUILD_PYTHON", "1"))
         if self.spec.satisfies("+tpce"):
