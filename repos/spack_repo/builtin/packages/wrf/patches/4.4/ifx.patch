@@ -31,14 +31,14 @@ index 6aa210d7..a3224d34 100644
 +ESMF_LDFLAG     =       $(CPLUSPLUSLIB)
 +FCOPTIM         =       -O3
 +FCREDUCEDOPT	=       $(FCOPTIM)
-+FCNOOPT		=       -O3
++FCNOOPT		=       -O0 -fno-inline -no-ip
 +FCDEBUG         =       # -g $(FCNOOPT) -traceback # -fpe0 -check noarg_temp_created,bounds,format,output_conversion,pointers,uninit -ftrapuv -unroll0 -u
 +FORMAT_FIXED    =       -FI
 +FORMAT_FREE     =       -FR
 +FCSUFFIX        =
 +BYTESWAPIO      =       -convert big_endian
 +RECORDLENGTH    =       -assume byterecl
-+FCBASEOPTS_NO_G =       -O3 -flto -w -ftz -align array64byte -fno-alias $(FORMAT_FREE) $(BYTESWAPIO) -fp-model fast=2 -fimf-use-svml=true -vec-threshold0
++FCBASEOPTS_NO_G =       -flto -w -ftz -align array64byte -fno-alias $(FORMAT_FREE) $(BYTESWAPIO) -fp-model fast=2 -fimf-use-svml=true -vec-threshold0
 +FCBASEOPTS      =       $(FCBASEOPTS_NO_G) $(FCDEBUG)
 +MODULE_SRCH_FLAG =     
 +TRADFLAG        =      -traditional-cpp
