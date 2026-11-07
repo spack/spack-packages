@@ -15,6 +15,7 @@ class PerlHttpDate(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("6.08", sha256="b57d80ca6d821c6949ca48b27467d45aba7a9c77346562306facca781a003e44")
     version("6.06", sha256="7b685191c6acc3e773d1fc02c95ee1f9fae94f77783175f5e78c181cc92d2b52")
     version("6.02", sha256="e8b9941da0f9f0c9c01068401a5e81341f0e3707d1c754f8e11f42a7e629e333")
 

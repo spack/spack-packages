@@ -24,6 +24,7 @@ class PyKornia(PythonPackage):
         "adamjstewart",
     )
 
+    version("0.9.0", sha256="65e82219b10e73289fb8cb3c739879d917e6908c0a977b1d65f388cba1741f71")
     version("0.8.3", sha256="c06887374eaf39fb614a77ca054383e6cc2092cb7225e45437111b4984d0f866")
     version("0.8.2", sha256="5411b2ce0dd909d1608016308cd68faeef90f88c47f47e8ecd40553fd4d8b937")
     version("0.8.1", sha256="9ce5a54a11df661794934a293f89f8b8d49e83dd09b0b9419f6082ab07afe433")
@@ -56,10 +57,15 @@ class PyKornia(PythonPackage):
         depends_on("py-setuptools", when="@:0.6.10")
 
     with default_args(type=("build", "run")):
+        depends_on("py-kornia-rs@0.2.0:", when="@0.9.0:")
         depends_on("py-kornia-rs@0.1.9:", when="@0.8.1:")
-        depends_on("py-kornia-rs@0.1:", when="@0.7.2:")
-        depends_on("py-packaging", when="@0.6:")
-        depends_on("py-torch@2:", when="@0.8.2:")
+        depends_on("py-kornia-rs@0.1.0:", when="@0.7.2:")
+        depends_on("py-numpy@1.21:", when="@0.9.0:")
+        depends_on("py-torch@2.5.1:", when="@0.9.0:")
+        depends_on("py-torch@2.0.0:", when="@0.8.2:")
         depends_on("py-torch@1.9.1:", when="@0.6.9:")
-        depends_on("py-torch@1.8.1:", when="@0.6:")
+        depends_on("py-torch@1.8.1:", when="@0.6.0:")
         depends_on("py-torch@1.6.0:")
+
+        # Historical requirements
+        depends_on("py-packaging", when="@0.6:0.8")

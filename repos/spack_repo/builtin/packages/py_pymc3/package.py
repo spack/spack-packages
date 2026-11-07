@@ -11,14 +11,21 @@ class PyPymc3(PythonPackage):
     """PyMC3 is a Python package for Bayesian statistical modeling and
     Probabilistic Machine Learning focusing on advanced Markov chain Monte
     Carlo (MCMC) and variational inference (VI) algorithms. Its flexibility and
-    extensibility make it applicable to a large suite of problems."""
+    extensibility make it applicable to a large suite of problems.
+
+    This package has been renamed to py-pymc.
+    """
 
     homepage = "https://github.com/pymc-devs/pymc3"
     pypi = "pymc3/pymc3-3.8.tar.gz"
 
     license("Apache-2.0")
 
-    version("3.8", sha256="1bb2915e4a29877c681ead13932b0b7d276f7f496e9c3f09ba96b977c99caf00")
+    version(
+        "3.8",
+        sha256="1bb2915e4a29877c681ead13932b0b7d276f7f496e9c3f09ba96b977c99caf00",
+        deprecated=True,
+    )
 
     depends_on("python@3.5.4:", type=("build", "run"))
     depends_on("py-setuptools", type="build")

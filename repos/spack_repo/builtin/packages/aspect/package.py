@@ -20,6 +20,7 @@ class Aspect(CMakePackage):
     license("GPL-2.0-only")
 
     version("develop", branch="main")
+    version("3.1.0", sha256="3f7c3e2f23f4de3d48b624aaec5223fa263893f45a461c5943e800dce4095f8d")
     version("3.0.0", sha256="15c62575603f88f2061dafe06e37a47a2347d5242ea8328854304a0bd54b8888")
     version("2.5.0", sha256="31ea8da84b81ccc8225ca90f1f4687445e38f4ac9bab6ad5b57ba4e5e3567b3d")
     version("2.4.0", sha256="cfdabc468e325620171d65cf41f5753e638def39a0bc795246bc72d73af410e9")
@@ -35,16 +36,20 @@ class Aspect(CMakePackage):
         description="The build type to build",
         values=("Debug", "Release"),
     )
-    variant("gui", default=False, description="Enable the deal.II parameter GUI")
+    variant("gui", default=False, when="@:2.5", description="Enable the deal.II parameter GUI")
     variant("fpe", default=False, description="Enable floating point exception checks")
     variant("opendap", default=False, description="Enable OPeNDAP support for remote file access")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("cmake@3.13.4:", type="build", when="@3.0:")
 
     depends_on("dealii+p4est+trilinos+mpi")
-    depends_on("dealii+p4est+trilinos+mpi+sundials", when="@3.0")
+    depends_on("dealii@9.6:", when="@3.1:")
+    depends_on("dealii@9.5:", when="@3.0:")
+    depends_on("dealii@9.4:", when="@2.5:")
+    depends_on("dealii+p4est+trilinos+mpi+sundials", when="@3.0:")
     depends_on("dealii-parameter-gui", when="+gui")
     depends_on("libdap4", when="+opendap")
 

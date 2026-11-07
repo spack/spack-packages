@@ -24,7 +24,7 @@ class Libkml(CMakePackage):
     variant("java", default=False, description="Build java bindings")
     variant("python", default=False, description="Build python bindings")
 
-    extends("openjdk", when="+java")
+    extends("java", when="+java")
     extends("python", when="+python")
 
     depends_on("c", type="build")  # generated

@@ -22,6 +22,7 @@ class Less(AutotoolsPackage):
 
     depends_on("c", type="build")
 
+    version("710", sha256="d1008fb78dcae1323ddab664bcb352a61f022b1b131bd8018548e021d975ec7a")
     version("692", sha256="61300f603798ecf1d7786570789f0ff3f5a1acf075a6fb9f756837d166e37d14")
     version("668", sha256="2819f55564d86d542abbecafd82ff61e819a3eec967faa36cd3e68f1596a44b8")
     version("661", sha256="2b5f0167216e3ef0ffcb0c31c374e287eb035e4e223d5dae315c2783b6e738ed")

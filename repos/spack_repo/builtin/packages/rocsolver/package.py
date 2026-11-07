@@ -120,9 +120,11 @@ class Rocsolver(ROCmLibrary, CMakePackage):
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rocsparse@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rocsparse@{ver}", when=f"@{ver}")
+        depends_on(f"rocblas@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"rocsparse amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     @property
     def root_cmakelists_dir(self):
@@ -138,7 +140,7 @@ class Rocsolver(ROCmLibrary, CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     def cmake_args(self):
         args = [

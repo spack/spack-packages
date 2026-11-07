@@ -61,14 +61,16 @@ ci:
 
   - signing-job:
       image:
-        name: ghcr.io/spack/notary@sha256:a1e2575e12a1d60083a65f0a1b35abf0df85d7086e7f8b10c2a9926614a46127
+        name: ghcr.io/spack/notary@sha256:600180c9d2edf53d77f5cadaa1395c7ebe924228d947e579594995cf5cc52155
         entrypoint: [""]
       tags: ["aws"]
       script:
       - - export BUILD_CACHE="${SPACK_BUILDCACHE_DESTINATION}/${SPACK_BUILDCACHE_RELATIVE_SPECS_URL}"
         - mkdir -p /tmp/input /tmp/output
         - aws s3 sync --exclude "*" --include "*spec.manifest.json" ${BUILD_CACHE} /tmp/input
-        - /sign.sh
+        # sign.sh signs every good manifest even when it rejects some, so upload
+        # those before failing the job
+        - /sign.sh || sign_status=$?
         - aws s3 sync --exclude "*" --include "*spec.manifest.json" /tmp/output ${BUILD_CACHE}
         - |+
           for keyfile in $( find /tmp/public_keys -type f );
@@ -76,6 +78,7 @@ ci:
             spack gpg trust -y $keyfile
           done
         - spack gpg publish --update-index --mirror-url ${SPACK_BUILDCACHE_DESTINATION}
+        - exit ${sign_status:-0}
       id_tokens:
         GITLAB_OIDC_TOKEN:
           aud: "${OIDC_TOKEN_AUDIENCE}"
@@ -116,7 +119,7 @@ ci:
 
   - reindex-job:
       tags: ["service", "x86_64"]
-      image: "ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01"
+      image: "ghcr.io/spack/ubuntu-24.04:v2025-09-15"
       variables:
         CI_JOB_SIZE: "medium"
         KUBERNETES_CPU_REQUEST: "4000m"
