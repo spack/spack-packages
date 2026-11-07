@@ -43,12 +43,17 @@ class Regenie(CMakePackage):
     depends_on("lzma")
     depends_on("libdeflate")
     depends_on("python")
+    # CMakeLists.txt supports only MKL or OpenBLAS. With OpenBLAS it defines
+    # EIGEN_USE_LAPACKE, and libopenblas provides LAPACK and LAPACKE. Do not add a
+    # separate lapack: netlib-lapack@3.12 needs BLAS symbols with a _64_ suffix,
+    # which openblas~ilp64 does not provide (#2745).
     depends_on("openblas threads=openmp")
-    depends_on("lapack")
     depends_on("bgen+headers+libs", when="~bgen-bundled-deps")
     depends_on("bgen+full-source", when="+bgen-bundled-deps")
     depends_on("boost+iostreams", when="+with-boostio")
-    depends_on("eigen@3.4:", when="~bundled-eigen")
+    # Masks.cpp does not compile with eigen@3.4.1 (ArrayBase::max/min with an int),
+    # and lbfgspp rejects eigen@5 in find_package(Eigen3 3.0). regenie vendors 3.4.0.
+    depends_on("eigen@3.4.0", when="~bundled-eigen")
     depends_on("cxxopts@3", when="~bundled-cxxopts")
     depends_on("cxxopts@3.0", when="~bundled-cxxopts+bgen-bundled-deps")
     depends_on("lbfgspp", when="~bundled-lbfgspp")
@@ -99,30 +104,12 @@ class Regenie(CMakePackage):
         )
 
         # https://github.com/spack/spack-packages/issues/2745
-        # libblas needs to be defined before lapack
-        # and the lapack library name can vary
-        # TODO: This may need more thoughtful handling for non-BLAS providers
-        lapack = self.spec["lapack"]
-        if lapack.satisfies("openblas"):
-            lapack_flag = ""
-        else:
-            lapack_flag = " -llapacke"
-
-        # Don't require finding a lapack library if we are not linking it explicitly
-        # e.g., openblas includes it in libblas
-        if not lapack_flag:
-            filter_file(
-                "find_library(LAPACK_LIB lapack REQUIRED)",
-                "find_package(LAPACK)",
-                "CMakeLists.txt",
-                string=True,
-            )
-
+        # openblas provides LAPACK and LAPACKE in libopenblas, so link only that.
+        # A separate liblapack or liblapacke from another provider can need
+        # BLAS symbols that openblas does not have.
+        filter_file("find_library(LAPACK_LIB lapack REQUIRED)", "", "CMakeLists.txt", string=True)
         filter_file(
-            "${LAPACK_LIB} -llapacke ${BLAS_LIB}",
-            "${BLAS_LIB} ${LAPACK_LIB}" + lapack_flag,
-            "CMakeLists.txt",
-            string=True,
+            "${LAPACK_LIB} -llapacke ${BLAS_LIB}", "${BLAS_LIB}", "CMakeLists.txt", string=True
         )
 
         # Record any libraries that will be statically linked by default
