@@ -41,7 +41,7 @@
  namespace duckdb {
  
  //===--------------------------------------------------------------------===//
-@@ -467,6 +477,174 @@
+@@ -467,6 +477,184 @@
  	                                     signature_key_fingerprint);
  }
  
@@ -114,13 +114,23 @@
 +	if (!(info.st_mode & S_IWGRP)) {
 +		return true;
 +	}
-+	auto user = getpwuid(uid);
-+	auto group = getgrgid(info.st_gid);
-+	if (!user || !group || string(group->gr_name) != user->pw_name) {
++	// Group write is safe only for the private group of the user: the primary group of the user, with the name of
++	// the user, and no other members. Another account that has this group as its primary group is not found here.
++	struct passwd user, *user_result = nullptr;
++	struct group group, *group_result = nullptr;
++	char user_buffer[16384], group_buffer[16384];
++	if (getpwuid_r(uid, &user, user_buffer, sizeof(user_buffer), &user_result) != 0 || !user_result) {
 +		return false;
 +	}
-+	for (auto member = group->gr_mem; member && *member; member++) {
-+		if (string(*member) != user->pw_name) {
++	if (info.st_gid != user.pw_gid) {
++		return false;
++	}
++	if (getgrgid_r(info.st_gid, &group, group_buffer, sizeof(group_buffer), &group_result) != 0 || !group_result ||
++	    string(group.gr_name) != user.pw_name) {
++		return false;
++	}
++	for (auto member = group.gr_mem; member && *member; member++) {
++		if (string(*member) != user.pw_name) {
 +			return false;
 +		}
 +	}
@@ -216,7 +226,7 @@
  bool ExtensionHelper::TryInitialLoad(DatabaseInstance &db, FileSystem &fs, const string &extension,
                                       const string &repository_name, bool core_only, ExtensionInitResult &result,
                                       string &error) {
-@@ -604,6 +782,10 @@
+@@ -604,6 +792,10 @@
  		return false;
  	}
  
@@ -227,7 +237,7 @@
  	auto handle = fs.OpenFile(filename, FileFlags::FILE_FLAGS_READ);
  
  	// Parse the extension metadata from the extension binary
-@@ -640,7 +822,7 @@
+@@ -640,7 +832,7 @@
  		}
  	}
  
@@ -236,7 +246,7 @@
  		bool signature_valid;
  		// The recorded origin (from the .info) determines which keys could have signed the extension, but without an
  		// explicit FROM a bare load - which is also how autoloading loads - trusts only the fixed core/community keys,
-@@ -686,7 +868,7 @@
+@@ -686,7 +878,7 @@
  		}
  	}
  
