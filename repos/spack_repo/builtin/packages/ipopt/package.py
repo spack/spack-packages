@@ -68,7 +68,7 @@ class Ipopt(AutotoolsPackage):
     conflicts("~mumps", when="~coinhsl")
 
     patch("ipopt_ppc_build.patch", when="arch=ppc64le")
-    patch("ipopt_mumps_mpi_comm_option.patch", when="+mumps")
+    patch("ipopt_mumps_mpi_comm_option.patch", when="@3.14.8: +mumps")
 
     flag_handler = build_system_flags
     build_directory = "spack-build"
