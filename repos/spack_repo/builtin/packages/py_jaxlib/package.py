@@ -419,4 +419,4 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         python(*args)
 
         for whl in glob.glob(join_path("dist", "*.whl")):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", whl)
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", whl)
