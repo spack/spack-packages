@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
@@ -19,6 +20,11 @@ class Stat(AutotoolsPackage):
     tags = ["e4s"]
 
     version("develop", branch="develop")
+    version(
+        "4.3.0",
+        sha256="f65d110e944a016b52c9af16fedd6823fb2db2da1607c8f540c114c0a71aa231",
+        url="https://github.com/llnl/STAT/releases/download/v4.3.0/stat-4.3.0.tar.gz",
+    )
     version(
         "4.2.3",
         sha256="cec7824e43d4c1f2cd24bdf074ef27b47d89ce9abda2b5bc37eed6396c4adf37",
@@ -73,12 +79,17 @@ class Stat(AutotoolsPackage):
     # we depend on mpa@master for bug fixes since launchmon 1.0.2
     depends_on("launchmon@1.2.0:")
     depends_on("mrnet")
-    depends_on("python@:3.11")
-    depends_on("py-xdot@1.0", when="+gui")
-    depends_on("py-pygments", when="+gui")
-    depends_on("pango", when="+gui")
-    depends_on("swig")
+    depends_on("python", when="@4.3.0:")
+    depends_on("python@:3.11", when="@:4.2.3")
+    depends_on("py-xdot@1.6:", when="+gui @4.3.0:", type=("run"))
+    depends_on("py-xdot@1.0", when="+gui @:4.2.3", type=("run"))
+    depends_on("py-pygments", when="+gui", type=("run"))
+    depends_on("pango", when="+gui", type=("run"))
+    depends_on("swig@4.0:", when="^python@3.12:")
+    depends_on("swig", type=("build"))
     depends_on("mpi", when="+examples")
+    depends_on("glib", type=("build", "run"), when="+gui")
+    depends_on("gtkplus", type=("build", "run"), when="+gui")
 
     # TODO: replace this with an explicit list of components of Boost,
     # for instance depends_on('boost +filesystem')
@@ -90,6 +101,20 @@ class Stat(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
+
+        # we need to find all the dependent python site-package directories
+        # for STAT's configuration so they can be added to PYTHONPATH in the
+        # STAT executable scripts
+        stat_python_path = ""
+        py_version = self.spec["python"].version.up_to(2)
+        platlib = "lib64/python%s/site-packages" % py_version
+        purelib = "lib/python%s/site-packages" % py_version
+        for dep in spec.traverse(deptype=("run")):
+            site_packages = {dep.prefix.join(platlib), dep.prefix.join(purelib)}
+            for sp in site_packages:
+                if os.path.exists(sp):
+                    stat_python_path += sp + ":"
+
         args = [
             "--with-launchmon=%s" % spec["launchmon"].prefix,
             "--with-mrnet=%s" % spec["mrnet"].prefix,
@@ -98,7 +123,9 @@ class Stat(AutotoolsPackage):
             "--with-python=%s" % spec["python"].command.path,
             "--with-boost=%s" % spec["boost"].prefix,
         ]
-        if self.spec.satisfies("@4.2.2:") and spec["glib"].satisfies("@2.0:2.99"):
+        if (spec.satisfies("@4.3.0:") or spec.satisfies("@develop")) and spec.satisfies("+gui"):
+            args.append("--with-python-path=%s" % stat_python_path)
+        if (spec.satisfies("@4.2.2:") or spec.satisfies("@develop")) and spec["glib"].satisfies("@2.0:2.99"):
             args.append(
                 "STAT_GSETTINGS_SCHEMA_DIR=%s"
                 % spec["gtkplus"].prefix.join("share/glib-2.0/schemas")
