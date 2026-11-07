@@ -166,7 +166,12 @@ class DuckdbExtensionBase(Package):
         values=("static", "shared"),
         description="Link the libraries of Spack dependencies statically, or as shared libraries"
         " that the extension finds through its RUNPATH",
-        when="~prebuilt ~site_signed",
+        when="~prebuilt",
+    )
+    conflicts(
+        "link_dependencies=shared",
+        when="+site_signed",
+        msg="A build cache rewrites the RUNPATH of a shared link, which makes a signature invalid",
     )
     # DuckDB finds these extensions in a view only through DUCKDB_EXTENSION_DIRECTORIES
     extends("duckdb+extension_env")
@@ -187,6 +192,16 @@ class DuckdbExtensionBase(Package):
 
     def _links_shared(self):
         return self.spec.satisfies("link_dependencies=shared")
+
+    def _link_library(self, prefix, library):
+        """Returns the file of a library to link: the static archive, or with
+        link_dependencies=shared the shared library if there is one. Some libraries, such as
+        pgcommon_shlib of postgresql, are only static archives."""
+        for shared in (True, False) if self._links_shared() else (False,):
+            found = find_libraries(f"lib{library}", prefix, shared=shared, recursive=True)
+            if found:
+                return found[0]
+        raise InstallError(f"{self.name}: no lib{library} in {prefix}")
 
     @property
     def has_code(self):
@@ -397,9 +412,7 @@ class DuckdbExtensionBase(Package):
         libraries = " ".join(f"-l{a}" for a in archives if a != "duckdb_static")
         # These go at the end of the link line, because the linker reads a static library in order
         late_libraries = " ".join(
-            find_libraries(
-                f"lib{library}", spec[dep].prefix, shared=self._links_shared(), recursive=True
-            )[0]
+            self._link_library(spec[dep].prefix, library)
             for dep, library in self.source_link_libraries
         )
         with working_dir(build_dir):

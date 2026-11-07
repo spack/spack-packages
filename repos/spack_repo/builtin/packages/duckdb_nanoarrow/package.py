@@ -22,8 +22,12 @@ class DuckdbNanoarrow(DuckdbCommunityExtensionPackage):
     license("MIT")
 
     with when("~prebuilt"):
-        depends_on("lz4 libs:=static +pic", type="build")
         depends_on("zstd build_system=cmake", type="build")
+    with when("link_dependencies=static"):
+        depends_on("lz4 libs:=static +pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("lz4 libs=shared", type="link")
+        depends_on("zstd", type="link")
 
     published_binaries(
         "nanoarrow",
