@@ -349,6 +349,8 @@ class DuckdbExtensionBase(Package):
                 "-DBUILD_EXTENSIONS_ONLY=TRUE",
                 "-DBUILD_SHELL=FALSE",
                 "-DBUILD_UNITTESTS=FALSE",
+                # The default profile adds -march=x86-64-v3, whatever the target of the spec
+                "-DDUCKDB_OPTIMIZATION_PROFILE=NONE",
                 f"-DCMAKE_PROJECT_INCLUDE={static_first}",
                 "-DCMAKE_IGNORE_PREFIX_PATH=/;/usr;/usr/local",
                 "-DCMAKE_SKIP_RPATH=ON",
