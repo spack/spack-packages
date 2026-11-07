@@ -2,15 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import sys
-
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 
 from spack.package import *
 
 
 class UtilLinuxUuid(AutotoolsPackage):
-    """Util-linux is a suite of essential utilities for any Linux system."""
+    """libuuid library from util-linux"""
 
     homepage = "https://github.com/util-linux/util-linux"
     url = "https://www.kernel.org/pub/linux/utils/util-linux/v2.29/util-linux-2.29.2.tar.gz"
@@ -19,6 +17,7 @@ class UtilLinuxUuid(AutotoolsPackage):
 
     license("BSD-3-Clause", checked_by="wdconinc")
 
+    # This package should be updated in tandem with util-linux
     version("2.42.4", sha256="af3241e7776964dcb6bb9a811ca7b0d93000b563e2ae2a8df8f80a7cd6e04d56")
     version("2.41", sha256="c014b5861695b603d0be2ad1e6f10d5838b9d7859e1dd72d01504556817d8a87")
     version("2.40.4", sha256="5b3b1435c02ba201ebaa5066bb391965a614b61721155dfb7f7b6569e95b0627")
@@ -30,14 +29,13 @@ class UtilLinuxUuid(AutotoolsPackage):
     version("2.36.2", sha256="f5dbe79057e7d68e1a46fc04083fc558b26a49499b1b3f50e4f4893150970463")
     version("2.36", sha256="82942cd877a989f6d12d4ce2c757fb67ec53d8c5cd9af0537141ec5f84a2eea3")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     conflicts("%gcc@:4", when="@2.37:")
 
     depends_on("pkgconfig", type="build")
 
-    if sys.platform not in ["darwin", "win32"]:
-        provides("uuid")
+    provides("uuid", when="platform=linux")
 
     def url_for_version(self, version):
         url = "https://www.kernel.org/pub/linux/utils/util-linux/v{0}/util-linux-{1}.tar.gz"
