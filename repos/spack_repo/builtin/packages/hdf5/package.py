@@ -229,6 +229,13 @@ class Hdf5(CMakePackage):
         when="@2.1.0",
     )
 
+    # https://github.com/HDFGroup/hdf5/pull/6732
+    patch(
+        "https://github.com/HDFGroup/hdf5/commit/4330843236419724970187f7a643421ccfddc762.patch?full_index=1",
+        sha256="bda988b77844cf15c39bad116683afa0436660576ce49f39a2ff93fdb50a230c",
+        when="@2.1.0:2.1.1 +mpi +fortran +hl",
+    )
+
     # HDF5 searches for zlib CMake config files before it falls back to
     # FindZLIB.cmake. We don't build zlib with CMake by default, so have to
     # delete the first search, otherwise it may find a system zlib. See
