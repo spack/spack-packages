@@ -92,6 +92,9 @@ class Libarchive(AutotoolsPackage):
         args += self.with_or_without("crypto")
         args += self.enable_or_disable("programs")
 
+        # So that a shared object can link libarchive.a
+        args.append("--with-pic")
+
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
                 args.append(f"--with-libiconv-prefix={spec['iconv'].prefix}")
