@@ -14,6 +14,11 @@ class PyDuckdb(PythonPackage):
     the DuckDB sources and links them statically, so this shares nothing with
     the duckdb package; a database written by one is read by the other as long
     as the reader's version is at least the writer's.
+
+    From 2.0.0, engine=shared (the default) links libduckdb of the duckdb
+    package instead. The module then has the patches and variants of that
+    duckdb, and shares one engine with r-duckdb and the C API.
+    engine=standalone builds the copy in the sdist.
     """
 
     homepage = "https://duckdb.org/docs/stable/clients/python/overview"
@@ -22,18 +27,46 @@ class PyDuckdb(PythonPackage):
 
     license("MIT")
 
+    version("2.0.0", sha256="09de511ef0dc76a5213e8d3d87a8b89bb4d3e8a6fe73a9f60dc001269946b44f")
     version("1.5.5", sha256="72f33ee57ca7595b23957671a2cc7f7fe2be0ecc2d68f63abedcfcaa3a5c1238")
     version("1.5.2", sha256="638da0d5102b6cb6f7d47f83d0600708ac1d3cb46c5e9aaabc845f9ba4d69246")
     version("1.4.5", sha256="783779bde612172b06c250b5f34f7fc29471833545f2894aadedbffbbcc49013")
 
+    variant(
+        "engine",
+        default="shared",
+        values=("shared", "standalone"),
+        description="Link libduckdb of the duckdb package, or build the engine in the sdist",
+        when="@2:",
+    )
+
     depends_on("cxx", type="build")
     depends_on("cmake@3.29:", type="build")
     depends_on("python@3.10:", type=("build", "run"))
+    depends_on("python@3.11:", type=("build", "run"), when="@2:")
     depends_on("py-scikit-build-core@0.11.4:", type="build")
-    depends_on("py-pybind11@2.6:", type="build")
     depends_on("py-setuptools-scm@8:", type="build")
+    with when("@:1"):
+        depends_on("py-pybind11@2.6:", type="build")
+    with when("@2:"):
+        depends_on("py-nanobind@3:", type="build")
+        depends_on("py-numpy@2:", type="build")
+        depends_on("ninja", type="build")
+
+    # The module compiles against the headers in the sdist, so libduckdb must be the same version
+    depends_on("duckdb@2.0.0", type=("build", "link", "run"), when="@2.0.0 engine=shared")
+    patch("external_engine.patch", when="@2.0.0 engine=shared")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # An sdist has no git metadata, where the version scheme would
         # otherwise fall back to 0.0.1.dev1.
         env.set("OVERRIDE_GIT_DESCRIBE", f"v{self.spec.version}")
+
+    def config_settings(self, spec, prefix):
+        settings = {}
+        if spec.satisfies("engine=shared"):
+            settings["cmake.define.DUCKDB_PY_EXTERNAL_ENGINE"] = "ON"
+            settings["cmake.define.DuckDB_DIR"] = spec["duckdb"].prefix.lib.cmake.DuckDB
+            # The install step of CMake replaces the RPATH, so keep the directory of libduckdb
+            settings["cmake.define.CMAKE_INSTALL_RPATH_USE_LINK_PATH"] = "ON"
+        return settings
