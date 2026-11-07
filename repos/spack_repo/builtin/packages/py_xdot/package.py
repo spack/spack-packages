@@ -17,6 +17,7 @@ class PyXdot(PythonPackage):
     maintainers("lee218llnl")
 
     version("master", branch="master")
+    version("1.6", sha256="ebddefc3e3aa9fd8b2e2ed884ed844043f843428b79dccda831803add55cc51d")
     version("1.2", sha256="3df91e6c671869bd2a6b2a8883fa3476dbe2ba763bd2a7646cf848a9eba71b70")
     version("1.0", sha256="7e067896d729af82f1fd0758e265f129944d469c30f550e3f15dbdb751cc42a1")
     version("0.9", sha256="a33701664ecfefe7c7313a120a587e87334f3a566409bc451538fcde5edd6907")
@@ -27,6 +28,7 @@ class PyXdot(PythonPackage):
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-pygobject", type=("build", "run"))
     depends_on("py-pycairo", type=("build", "run"))
+    depends_on("py-packaging", type=("build", "run"))
     depends_on("pango", type=("build", "run"))
     depends_on("harfbuzz", type=("build", "run"))
     depends_on("atk", type=("build", "run"))
