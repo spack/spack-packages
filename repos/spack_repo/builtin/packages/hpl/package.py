@@ -30,6 +30,12 @@ class Hpl(AutotoolsPackage):
 
     depends_on("mpi@1.1:")
     depends_on("blas")
+    # HPL built with AOCC links AMD's optimized libm (-lamdlibm). Depend on
+    # aocl-libm explicitly (it installs a libamdlibm compatibility symlink) so
+    # the library is a Spack-managed node on the link path instead of being
+    # resolved implicitly from the AOCC runtime. Only the autotools-based
+    # @2.3: build injects this link flag.
+    depends_on("aocl-libm", when="@2.3: %aocc@3:")
 
     # 2.3 adds support for openmpi 4
     conflicts("^openmpi@4.0.0:", when="@:2.2")
@@ -133,8 +139,11 @@ class Hpl(AutotoolsPackage):
 
         if self.spec.satisfies("%aocc"):
             if self.spec.satisfies("%aocc@3:"):
+                # Link the Spack-managed aocl-libm (exposes libamdlibm).
+                ldflags.append("-L{0}".format(self.spec["aocl-libm"].prefix.lib))
                 ldflags.extend(["-lamdlibm", "-lm"])
             if self.spec.satisfies("%aocc@4:"):
+                # libamdalloc ships with the AOCC compiler runtime.
                 ldflags.append("-lamdalloc")
 
         if self.spec["blas"].name == "fujitsu-ssl2" and (

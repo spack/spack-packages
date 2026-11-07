@@ -245,7 +245,9 @@ class Flamemaster(CMakePackage):
         args.append("-DEIGEN_INTEGRATION:BOOL=%s" % ("ON" if "+eigen" in spec else "OFF"))
         args.append("-DINSTALL_EIGEN:BOOL=%s" % ("ON" if "+eigen" in spec else "OFF"))
 
-        if spec.satisfies("[virtuals=lapack] ^amdlibflame"):
+        if spec.satisfies("[virtuals=lapack] ^amdlibflame") or spec.satisfies(
+            "[virtuals=lapack] ^aocl-lapack"
+        ):
             args.append("-DBLA_VENDOR=FLAME")
 
         args.append("-DFLAMEMASTER_INSTALL_PREFIX:PATH={0}".format(spec.prefix))

@@ -46,33 +46,45 @@ class AmdAocl(BundlePackage):
     depends_on("lapack")
     depends_on("blas")
 
-    requires("^[virtuals=scalapack] amdscalapack")
-    requires("^[virtuals=lapack] amdlibflame")
-    requires("^[virtuals=blas] amdblis")
+    requires("^[virtuals=scalapack] aocl-scalapack")
+    requires("^[virtuals=lapack] aocl-lapack")
+    requires("^[virtuals=blas] aocl-blas")
+    # These are deprecated aliases of aocl-blas and aocl-lapack. Requesting one
+    # alongside the canonical dependency installs two copies of the same library.
+    conflicts(
+        "^amdblis",
+        when="^aocl-blas",
+        msg="use aocl-blas; amdblis is a deprecated alias",
+    )
+    conflicts(
+        "^amdlibflame",
+        when="^aocl-lapack",
+        msg="use aocl-lapack; amdlibflame is a deprecated alias",
+    )
 
     with when("+openmp"):
-        depends_on("amdblis threads=openmp")
-        depends_on("amdfftw +openmp")
-        depends_on("amdlibflame threads=openmp")
+        depends_on("aocl-blas threads=openmp")
+        depends_on("aocl-fftw +openmp")
+        depends_on("aocl-lapack threads=openmp")
         depends_on("aocl-sparse +openmp")
         depends_on("aocl-da +openmp")
         depends_on("aocl-compression +openmp")
 
     with when("~openmp"):
-        depends_on("amdblis threads=none")
-        depends_on("amdfftw ~openmp")
-        depends_on("amdlibflame threads=none")
+        depends_on("aocl-blas threads=none")
+        depends_on("aocl-fftw ~openmp")
+        depends_on("aocl-lapack threads=none")
         depends_on("aocl-sparse ~openmp")
         depends_on("aocl-da ~openmp")
         depends_on("aocl-compression ~openmp")
 
     for vers in ["2.2", "3.0", "3.1", "3.2", "4.0", "4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@={vers}"):
-            depends_on(f"amdblis@={vers}")
-            depends_on(f"amdfftw@={vers}")
-            depends_on(f"amdlibflame@={vers}")
-            depends_on(f"amdlibm@={vers}")
-            depends_on(f"amdscalapack@={vers}")
+            depends_on(f"aocl-blas@={vers}")
+            depends_on(f"aocl-fftw@={vers}")
+            depends_on(f"aocl-lapack@={vers}")
+            depends_on(f"aocl-libm@={vers}")
+            depends_on(f"aocl-scalapack@={vers}")
             depends_on(f"aocl-sparse@={vers}")
             if Version(vers) >= Version("4.2"):
                 depends_on(f"aocl-compression@={vers}")
