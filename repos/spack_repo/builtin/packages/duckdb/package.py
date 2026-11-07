@@ -121,6 +121,23 @@ class Duckdb(CMakePackage):
         msg="extension_keys=site needs extension_key=<sha256 of the public key>",
     )
 
+    variant(
+        "trust_unsigned_extension_directories",
+        default="none",
+        values=("none", "store"),
+        description="Load an unsigned extension if its real path is in the store of this duckdb",
+        when="@2.0.0",
+    )
+    # A service that runs SQL from others, as a user that can write files where others put them,
+    # must not use this: such a file can be a store, and LOAD can then run its code.
+    variant(
+        "trust_owned_spack_stores",
+        default=False,
+        description="Also load an unsigned extension from a Spack store that only root or the user"
+        " can write, such as a user store that chains to this one",
+        when="@2.0.0 trust_unsigned_extension_directories=store",
+    )
+
     # Extensions that a version always links statically. An extension package must not provide
     # these. Update this table for each new version, and check the duckdb-extensions variants.
     builtin_extensions = {"@2.0.0": ["core_functions", "icu", "json", "parquet", "shell"]}
@@ -156,6 +173,8 @@ class Duckdb(CMakePackage):
     # Also turns off the automatic install by default, which fails for an extension that is
     # only in a later search directory. An explicit INSTALL still works.
     patch("extension_env.patch", when="@2.0.0 +extension_env")
+
+    patch("extension_trust.patch", when="@2.0.0 trust_unsigned_extension_directories=store")
 
     # A build with the default keys does not need this patch
     for _keys in (
@@ -229,6 +248,14 @@ class Duckdb(CMakePackage):
                         "EXTENSION_DIRECTORIES", ["~/.duckdb/extensions", extension_directory]
                     )
                 )
+        if self.spec.satisfies("trust_unsigned_extension_directories=store"):
+            # The root of the store that holds the code that loads, found at load time. An
+            # extension that loads another extension has its own copy of that code. A
+            # downstream store of the user did not exist when this duckdb was built.
+            directories = ["$SPACK_STORE"]
+            if self.spec.satisfies("+trust_owned_spack_stores"):
+                directories.append("$OWNED_SPACK_STORE")
+            args.append(self.define("TRUSTED_EXTENSION_DIRECTORIES", directories))
         if self.spec.satisfies("+python"):
             args.append(self.define("BUILD_PYTHON", "1"))
         if self.spec.satisfies("+tpce"):

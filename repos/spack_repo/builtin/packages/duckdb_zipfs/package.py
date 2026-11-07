@@ -34,5 +34,5 @@ class DuckdbZipfs(DuckdbCommunityExtensionPackage):
         git="https://github.com/isaacbrodsky/duckdb-zipfs.git",
         commit="fd9fec45453caef9bd1a89a7f6d92e421da63ca8",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

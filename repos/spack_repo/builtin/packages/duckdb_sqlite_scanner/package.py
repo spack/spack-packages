@@ -34,5 +34,5 @@ class DuckdbSqliteScanner(DuckdbExtensionPackage):
         commit="e223dc01493414cef6d5960744f1e048d59fc592",
         submodules=lambda package: ["database-connector"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

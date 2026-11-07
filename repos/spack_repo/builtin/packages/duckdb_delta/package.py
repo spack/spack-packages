@@ -33,5 +33,5 @@ class DuckdbDelta(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-delta.git",
         commit="9dcfb65b99fcafaa068222c2490abc143da4cc8e",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

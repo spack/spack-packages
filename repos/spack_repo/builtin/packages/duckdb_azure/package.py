@@ -33,5 +33,5 @@ class DuckdbAzure(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-azure.git",
         commit="906e92458c33309e5d9413e14a85aad7b4d2275f",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

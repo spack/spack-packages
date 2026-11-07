@@ -17,7 +17,7 @@ class DuckdbPostgresScanner(DuckdbExtensionPackage):
 
     license("MIT")
 
-    site_signed_link_libraries = [
+    source_link_libraries = [
         ("postgresql", "pgcommon_shlib"),
         ("postgresql", "pgport_shlib"),
         ("openssl", "ssl"),
@@ -25,7 +25,7 @@ class DuckdbPostgresScanner(DuckdbExtensionPackage):
         ("zlib-api", "z"),
     ]
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("postgresql", type="build")
         depends_on("zlib-api", type="build")
 
@@ -46,5 +46,5 @@ class DuckdbPostgresScanner(DuckdbExtensionPackage):
         commit="c0f5a3c0c4b68b02afbf669d36d7f0e503985c88",
         submodules=lambda package: ["database-connector"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

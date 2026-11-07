@@ -35,5 +35,5 @@ class DuckdbDucklake(DuckdbExtensionPackage):
         git="https://github.com/duckdb/ducklake.git",
         commit="417a9117f590e8141742ac0579d02f6a90162e37",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

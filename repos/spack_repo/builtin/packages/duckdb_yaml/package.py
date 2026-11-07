@@ -17,7 +17,7 @@ class DuckdbYaml(DuckdbCommunityExtensionPackage):
 
     license("MIT")
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("yaml-cpp~shared+pic", type="build")
 
     published_binaries(
@@ -37,5 +37,5 @@ class DuckdbYaml(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_yaml.git",
         commit="0c4bb9048be18b08db271b87e82b868f0a25f196",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )
