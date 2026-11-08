@@ -17,8 +17,10 @@ class DuckdbYaml(DuckdbCommunityExtensionPackage):
 
     license("MIT")
 
-    with when("~prebuilt"):
+    with when("link_dependencies=static"):
         depends_on("yaml-cpp~shared+pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("yaml-cpp+shared", type="link")
 
     published_binaries(
         "yaml",

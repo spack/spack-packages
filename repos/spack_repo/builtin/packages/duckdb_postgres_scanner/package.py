@@ -28,6 +28,9 @@ class DuckdbPostgresScanner(DuckdbExtensionPackage):
     with when("~prebuilt"):
         depends_on("postgresql", type="build")
         depends_on("zlib-api", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("postgresql", type="link")
+        depends_on("zlib-api", type="link")
 
     published_binaries(
         "postgres_scanner",

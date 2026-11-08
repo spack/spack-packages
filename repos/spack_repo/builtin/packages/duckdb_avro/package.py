@@ -18,10 +18,16 @@ class DuckdbAvro(DuckdbExtensionPackage):
     license("MIT")
 
     with when("~prebuilt"):
-        depends_on("jansson~shared", type="build")
-        depends_on("snappy~shared+pic", type="build")
         depends_on("xz", type="build")
         depends_on("zlib-api", type="build")
+    with when("link_dependencies=static"):
+        depends_on("jansson~shared", type="build")
+        depends_on("snappy~shared+pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("jansson+shared", type="link")
+        depends_on("snappy+shared", type="link")
+        depends_on("xz", type="link")
+        depends_on("zlib-api", type="link")
 
     published_binaries(
         "avro",
