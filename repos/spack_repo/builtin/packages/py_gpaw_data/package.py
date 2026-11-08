@@ -12,7 +12,9 @@ class PyGpawData(PythonPackage):
 
     homepage = "https://gpaw.readthedocs.io/"
     # Only wheels provided on pypi and no releases or release tags on gitlab
-    url = "https://files.pythonhosted.org/packages/py3/g/gpaw_data/gpaw_data-1.2.1-py3-none-any.whl"
+    url = (
+        "https://files.pythonhosted.org/packages/py3/g/gpaw_data/gpaw_data-1.2.1-py3-none-any.whl"
+    )
 
     maintainers("alikhamze")
 
