@@ -17,6 +17,13 @@ class DuckdbIceberg(DuckdbExtensionPackage):
 
     license("MIT")
 
+    # From the CMakeLists: find_package(roaring CONFIG). The aws-sdk-cpp in vcpkg.json is for
+    # the aws extension that iceberg's own CI builds in, which this build does not configure.
+    with when("link_dependencies=static"):
+        depends_on("croaring~shared+pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("croaring+shared", type="link")
+
     published_binaries(
         "iceberg",
         "2.0.0",
