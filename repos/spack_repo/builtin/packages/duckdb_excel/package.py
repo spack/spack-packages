@@ -17,6 +17,17 @@ class DuckdbExcel(DuckdbExtensionPackage):
 
     license("MIT")
 
+    # From vcpkg.json: expat, and minizip-ng with its zlib feature
+    with when("~prebuilt"):
+        depends_on("zlib-api", type="build")
+    with when("link_dependencies=static"):
+        depends_on("expat~shared", type="build")
+        depends_on("minizip-ng~shared+pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("expat+shared", type="link")
+        depends_on("minizip-ng+shared", type="link")
+        depends_on("zlib-api", type="link")
+
     published_binaries(
         "excel",
         "2.0.0",
@@ -27,6 +38,12 @@ class DuckdbExcel(DuckdbExtensionPackage):
             "osx_arm64": "a9e38c4bf55bd482073f2d40c3a0c1334fadfa819ca1b7a0eb599a38936c4fd1",
         },
     )
+
+    def source_cmake_args(self):
+        # The sources include "minizip-ng/mz.h", as vcpkg installs it. Spack's minizip-ng, like
+        # upstream, exports only include/minizip-ng, so add its include directory too.
+        include = self.spec["minizip-ng"].prefix.include
+        return [f"-DCMAKE_CXX_STANDARD_INCLUDE_DIRECTORIES={include}"]
 
     resource(
         name="extension_source",
