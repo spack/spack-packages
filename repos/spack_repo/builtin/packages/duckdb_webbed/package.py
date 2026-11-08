@@ -21,8 +21,13 @@ class DuckdbWebbed(DuckdbCommunityExtensionPackage):
 
     with when("~prebuilt"):
         depends_on("libiconv", type="build")
-        depends_on("libxml2~shared+pic", type="build")
         depends_on("zlib-api", type="build")
+    with when("link_dependencies=static"):
+        depends_on("libxml2~shared+pic", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("libiconv", type="link")
+        depends_on("libxml2+shared", type="link")
+        depends_on("zlib-api", type="link")
 
     published_binaries(
         "webbed",

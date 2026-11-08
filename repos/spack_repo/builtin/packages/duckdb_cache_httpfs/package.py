@@ -22,6 +22,9 @@ class DuckdbCacheHttpfs(DuckdbCommunityExtensionPackage):
     with when("~prebuilt"):
         depends_on("curl~nghttp2", type="build")
         depends_on("zlib-api", type="build")
+    with when("link_dependencies=shared"):
+        depends_on("curl", type="link")
+        depends_on("zlib-api", type="link")
 
     published_binaries(
         "cache_httpfs",
