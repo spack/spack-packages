@@ -82,6 +82,9 @@ class Libarchive(AutotoolsPackage):
 
     depends_on("iconv", when="+iconv")
 
+    # configure links libacl if it finds one, so take it from Spack, not the host
+    depends_on("acl", when="platform=linux")
+
     # NOTE: `make check` is known to fail with the Intel compilers
     # The build test suite cannot be built with Intel
 
