@@ -147,7 +147,7 @@ class PyAmrex(CMakePackage, PythonExtension, CudaPackage, ROCmPackage):
     tests_src_dir = "tests/"
 
     def cmake_args(self):
-        pip_args = PythonPipBuilder.std_args(self) + [f"--prefix={self.prefix}"]
+        pip_args = PythonPipBuilder.std_args() + [f"--prefix={self.prefix}"]
         idx = pip_args.index("install")
         # Docs: https://pyamrex.readthedocs.io/en/24.10/install/cmake.html#build-options
 
