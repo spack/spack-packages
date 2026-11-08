@@ -21,7 +21,7 @@ class DuckdbNanoarrow(DuckdbCommunityExtensionPackage):
 
     license("MIT")
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("lz4 libs:=static +pic", type="build")
         depends_on("zstd build_system=cmake", type="build")
 
@@ -43,7 +43,7 @@ class DuckdbNanoarrow(DuckdbCommunityExtensionPackage):
         url="https://github.com/apache/arrow-nanoarrow/archive/665794510011c07d4a6932b248608c2c02113796.zip",
         sha256="a81178c68929c74e97cff6b02f9a9f77fc656966ad7dbc4ae858cb45496d6b6f",
         placement="nanoarrow_c",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )
 
     resource(
@@ -52,9 +52,9 @@ class DuckdbNanoarrow(DuckdbCommunityExtensionPackage):
         commit="e390b9b4f8a41e64e41488888defb27d8f1e1421",
         submodules=lambda package: ["arrow-testing"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )
 
-    def site_signed_cmake_args(self):
+    def source_cmake_args(self):
         source = join_path(self.stage.source_path, "nanoarrow_c")
         return [f"-DFETCHCONTENT_SOURCE_DIR_NANOARROW={source}"]

@@ -34,5 +34,5 @@ class DuckdbUrlpattern(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_urlpattern.git",
         commit="0e14b580454ea92ff0120bdbac9ab836c407bd1b",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

@@ -33,5 +33,5 @@ class DuckdbExcel(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-excel.git",
         commit="81bb84b115b97cc4edec4827714cac80da0127e1",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

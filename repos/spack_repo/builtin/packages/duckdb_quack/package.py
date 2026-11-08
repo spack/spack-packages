@@ -33,5 +33,5 @@ class DuckdbQuack(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-quack.git",
         commit="f96420ed46aee9c42064bdb99ddfd1230d6c0086",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

@@ -17,7 +17,7 @@ class DuckdbAvro(DuckdbExtensionPackage):
 
     license("MIT")
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("jansson~shared", type="build")
         depends_on("snappy~shared+pic", type="build")
         depends_on("xz", type="build")
@@ -42,5 +42,5 @@ class DuckdbAvro(DuckdbExtensionPackage):
         commit="345c3f4e821940233b0b889e815582e5a5a33dfe",
         submodules=lambda package: ["third_party/avro-c"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

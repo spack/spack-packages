@@ -34,5 +34,5 @@ class DuckdbBigquery(DuckdbCommunityExtensionPackage):
         git="https://github.com/hafenkran/duckdb-bigquery.git",
         commit="5439a6a58439af4c05064f80a28b159c5a1424e7",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

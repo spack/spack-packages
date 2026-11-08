@@ -34,5 +34,5 @@ class DuckdbScalarfs(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_scalarfs.git",
         commit="16a2637eaab656d3b94e7a25f612573f8e056769",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

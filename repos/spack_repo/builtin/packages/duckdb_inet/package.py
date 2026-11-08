@@ -35,5 +35,5 @@ class DuckdbInet(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-inet.git",
         commit="fe7f60bb60245197680fb07ecd1629a1dc3d91c8",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

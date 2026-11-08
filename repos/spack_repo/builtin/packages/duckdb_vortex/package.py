@@ -35,5 +35,5 @@ class DuckdbVortex(DuckdbExtensionPackage):
         commit="f56da1b2736ff2032db5c09a540303408c93f195",
         submodules=lambda package: ["vcpkg"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

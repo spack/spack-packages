@@ -17,9 +17,9 @@ class DuckdbHttpfs(DuckdbExtensionPackage):
 
     license("MIT")
 
-    site_signed_link_libraries = [("zlib-api", "z")]
+    source_link_libraries = [("zlib-api", "z")]
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("curl~nghttp2", type="build")
         depends_on("zlib-api", type="build")
 
@@ -39,5 +39,5 @@ class DuckdbHttpfs(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-httpfs.git",
         commit="77392a72077a85897db2519fae11e2c0da972b8a",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

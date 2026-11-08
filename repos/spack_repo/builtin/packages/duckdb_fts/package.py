@@ -35,5 +35,5 @@ class DuckdbFts(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-fts.git",
         commit="2266e67d01c737cb65114e77c7c672e58869a635",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

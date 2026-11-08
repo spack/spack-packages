@@ -33,5 +33,5 @@ class DuckdbVss(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-vss.git",
         commit="3685131eacaf0d467d430be5c4e5e7d1d483437a",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )
