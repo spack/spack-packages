@@ -35,5 +35,5 @@ class DuckdbPlinkingDuck(DuckdbCommunityExtensionPackage):
         commit="73daba06dd3ad4ab4d0a1a32b33bd18f6fa48db9",
         submodules=lambda package: ["third_party/plink-ng"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

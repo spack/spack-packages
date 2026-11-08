@@ -35,5 +35,5 @@ class DuckdbMcp(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_mcp.git",
         commit="6b2b1dc899e1b5834ed6ee2f574e309f445e23b1",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

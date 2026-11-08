@@ -33,5 +33,5 @@ class DuckdbDuckTails(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duck_tails.git",
         commit="2b20b7d21c864817538e347e82f70fed76598f4d",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

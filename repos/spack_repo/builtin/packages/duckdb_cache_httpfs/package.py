@@ -17,9 +17,9 @@ class DuckdbCacheHttpfs(DuckdbCommunityExtensionPackage):
 
     license("MIT")
 
-    site_signed_link_libraries = [("openssl", "ssl"), ("openssl", "crypto"), ("zlib-api", "z")]
+    source_link_libraries = [("openssl", "ssl"), ("openssl", "crypto"), ("zlib-api", "z")]
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("curl~nghttp2", type="build")
         depends_on("zlib-api", type="build")
 
@@ -41,5 +41,5 @@ class DuckdbCacheHttpfs(DuckdbCommunityExtensionPackage):
         commit="62191f711413bb3cf50257b60dd4b44b2de0e3a0",
         submodules=lambda package: ["duckdb-httpfs"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

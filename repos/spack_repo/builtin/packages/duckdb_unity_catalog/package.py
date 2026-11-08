@@ -33,5 +33,5 @@ class DuckdbUnityCatalog(DuckdbExtensionPackage):
         git="https://github.com/duckdb/unity_catalog.git",
         commit="cc59382f5292997293a57c2ab336c9aa97c05f2d",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

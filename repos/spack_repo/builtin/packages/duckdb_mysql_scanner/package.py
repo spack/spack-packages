@@ -34,5 +34,5 @@ class DuckdbMysqlScanner(DuckdbExtensionPackage):
         commit="f7fc0d42716534aa5ad48626d21ced9807b33967",
         submodules=lambda package: ["database-connector"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

@@ -32,5 +32,5 @@ class DuckdbLance(DuckdbExtensionPackage):
         git="https://github.com/lance-format/lance-duckdb.git",
         commit="86118537da79138e6ec5c7358f2384c7ae650ab0",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

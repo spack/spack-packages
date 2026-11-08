@@ -17,9 +17,9 @@ class DuckdbWebbed(DuckdbCommunityExtensionPackage):
 
     license("MIT")
 
-    site_signed_link_libraries = [("libiconv", "iconv"), ("zlib-api", "z")]
+    source_link_libraries = [("libiconv", "iconv"), ("zlib-api", "z")]
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("libiconv", type="build")
         depends_on("libxml2~shared+pic", type="build")
         depends_on("zlib-api", type="build")
@@ -41,5 +41,5 @@ class DuckdbWebbed(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_webbed.git",
         commit="18c22232ebdb387014f4e024c5e41a2326358c88",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

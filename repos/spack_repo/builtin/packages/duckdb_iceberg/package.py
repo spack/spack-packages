@@ -29,7 +29,7 @@ class DuckdbIceberg(DuckdbExtensionPackage):
     )
 
     # The iceberg extension loads avro when it initializes
-    for _when in ("@2.0.0", "@latest", "+site_signed", "~site_signed"):
+    for _when in ("@2.0.0", "@latest", "+prebuilt", "~prebuilt ~site_signed", "+site_signed"):
         depends_on(f"duckdb-avro{_when}", type=("build", "run"), when=_when)
 
     resource(
@@ -37,5 +37,5 @@ class DuckdbIceberg(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-iceberg.git",
         commit="4c0c0874c48ec82a3e29910554891d04bcc0e988",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

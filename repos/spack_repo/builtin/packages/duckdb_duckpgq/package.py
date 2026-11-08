@@ -34,5 +34,5 @@ class DuckdbDuckpgq(DuckdbCommunityExtensionPackage):
         git="https://github.com/cwida/duckpgq-extension.git",
         commit="9c11bc192a071c9e44cef16cced90a22d7d7db2c",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

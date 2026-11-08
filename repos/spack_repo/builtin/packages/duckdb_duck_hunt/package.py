@@ -35,5 +35,5 @@ class DuckdbDuckHunt(DuckdbCommunityExtensionPackage):
         commit="72149b4fdabdfbf4bb231c81123832c428cc93a3",
         submodules=lambda package: ["test/samples/ghalogs", "test/samples/loghub"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

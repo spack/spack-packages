@@ -34,5 +34,5 @@ class DuckdbGcs(DuckdbCommunityExtensionPackage):
         git="https://github.com/northpolesec/duckdb-gcs.git",
         commit="f55eef6635f5b613d7cb90a98fe2ed7afcd0f0c8",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

@@ -34,5 +34,5 @@ class DuckdbRustySheet(DuckdbCommunityExtensionPackage):
         git="https://github.com/redraiment/rusty-sheet.git",
         commit="40dfb2862ca8f595fa83a4fe79d2ff9ef3084ca4",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

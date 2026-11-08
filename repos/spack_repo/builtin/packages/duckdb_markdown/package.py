@@ -34,5 +34,5 @@ class DuckdbMarkdown(DuckdbCommunityExtensionPackage):
         git="https://github.com/teaguesterling/duckdb_markdown.git",
         commit="6fc7013de640191ea5248897df3b60a7bc07db67",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

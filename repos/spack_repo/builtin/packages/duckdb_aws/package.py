@@ -33,5 +33,5 @@ class DuckdbAws(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-aws.git",
         commit="16ae9c135300f750478d648c2496f2952a6f2827",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

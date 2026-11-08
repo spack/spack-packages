@@ -33,5 +33,5 @@ class DuckdbSqlsmith(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-sqlsmith.git",
         commit="00c4e5796c4e3e1f98ff4adec55d87326d2d2f3c",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

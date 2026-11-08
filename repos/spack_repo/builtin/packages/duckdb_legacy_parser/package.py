@@ -33,5 +33,5 @@ class DuckdbLegacyParser(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-legacy-parser.git",
         commit="bcdf276132fe3a09afcc707c1cdff39096989404",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

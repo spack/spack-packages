@@ -55,7 +55,7 @@ def published_binaries(name, version, checksums, repository="core"):
             sha256=sha256,
             expand=False,
             placement="published_binary",
-            when=f"@{version} ~site_signed {_PLATFORM_SPECS[platform]}",
+            when=f"@{version} +prebuilt {_PLATFORM_SPECS[platform]}",
         )
 
 
@@ -99,7 +99,13 @@ class DuckdbExtensionBase(Package):
     binary at the origin, because both downloads get it. Two installs of one spec can get
     different binaries.
 
-    +site_signed builds the extension from source, and signs it with a key of your own:
+    ~prebuilt builds the extension from source, and does not sign it. This needs duckdb
+    trust_unsigned_extension_directories=store: that duckdb loads an unsigned extension only if
+    its real path is in the store of the duckdb. A build cache can move the store, because no
+    signature becomes invalid. A copy of the file outside the store does not load.
+
+    ~prebuilt +site_signed builds the extension from source, and signs it with a key of your own.
+    The file then loads from any place:
 
     * Build duckdb with extension_keys=...,site and extension_key=<sha256>, where the
       sha256 is of the DER public key. Set DUCKDB_EXTENSION_PUBLIC_KEY for that build.
@@ -107,29 +113,30 @@ class DuckdbExtensionBase(Package):
       does not go into the spec, the prefix or a build cache. The build of the extension runs
       as the same user, so its code can obtain this key. Thus code that you build can sign
       other code that this DuckDB will load. Use one key for one level of trust.
-    * A recipe declares the static Spack packages that its extension needs. CMake does not look
-      on the host for a library. An extension with a dependency that is not declared fails in
-      its build, or in a check of what the binary links.
 
-    For an air gap, put numbered versions and +site_signed sources in a mirror, or install
+    In both source builds, a recipe declares the static Spack packages that its extension needs.
+    CMake does not look on the host for a library. An extension with a dependency that is not
+    declared fails in its build, or in a check of what the binary links.
+
+    For an air gap, put numbered versions and ~prebuilt sources in a mirror, or install
     from a build cache that a connected host made. These installs do not use the network.
     """
 
     maintainers("teaguesterling")
 
-    # The source of DuckDB. Spack needs a main archive to fetch resources, and +site_signed
+    # The source of DuckDB. Spack needs a main archive to fetch resources, and ~prebuilt
     # needs its build system for extensions.
     url = "https://github.com/duckdb/duckdb/archive/refs/tags/v2.0.0.tar.gz"
 
     #: DuckDB extension repository to install from
     repository = "core"
 
-    #: Dependencies whose static library +site_signed must link, which CMake does not find itself.
+    #: Dependencies whose static library ~prebuilt must link, which CMake does not find itself.
     #: Each is a dependency name and a library name.
-    site_signed_link_libraries: List[Tuple[str, str]] = []
+    source_link_libraries: List[Tuple[str, str]] = []
 
-    def site_signed_cmake_args(self):
-        """Returns other CMake arguments for +site_signed, such as a source directory for a
+    def source_cmake_args(self):
+        """Returns other CMake arguments for ~prebuilt, such as a source directory for a
         CMake FetchContent declaration that a resource supplies"""
         return []
 
@@ -141,19 +148,27 @@ class DuckdbExtensionBase(Package):
     version("latest")
 
     variant(
+        "prebuilt",
+        default=True,
+        sticky=True,
+        description="Install the binary that DuckDB publishes and signs, not a build from source",
+    )
+    variant(
         "site_signed",
         default=False,
         sticky=True,
-        description="Build from source, and sign with DUCKDB_EXTENSION_PRIVATE_KEY",
+        description="Sign the build with DUCKDB_EXTENSION_PRIVATE_KEY, so it loads from any place",
+        when="~prebuilt",
     )
     # DuckDB finds these extensions in a view only through DUCKDB_EXTENSION_DIRECTORIES
     extends("duckdb+extension_env")
     depends_on("duckdb@2.0.0", when="@2.0.0")
     depends_on("duckdb extension_keys=site", when="+site_signed")
+    depends_on("duckdb trust_unsigned_extension_directories=store", when="~prebuilt ~site_signed")
 
-    conflicts("+site_signed", when="@latest", msg="@latest is a binary that DuckDB publishes")
+    conflicts("~prebuilt", when="@latest", msg="@latest is a binary that DuckDB publishes")
 
-    with when("+site_signed"):
+    with when("~prebuilt"):
         depends_on("c", type="build")
         depends_on("cxx", type="build")
         depends_on("cmake", type="build")
@@ -172,7 +187,7 @@ class DuckdbExtensionBase(Package):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # The wrappers of Spack add a RUNPATH with the prefix. A build cache rewrites that path
         # when it relocates a file, and this makes the signature invalid.
-        if self.spec.satisfies("+site_signed"):
+        if self.spec.satisfies("~prebuilt"):
             for name in ("RPATH_DIRS", "STORE_RPATH_DIRS", "COMPILER_EXTRA_RPATHS"):
                 env.set(f"SPACK_{name}", "")
 
@@ -240,7 +255,7 @@ class DuckdbExtensionBase(Package):
         external = [name for name in needed if not _SYSTEM_LIBRARY.match(name)]
         if external or elf.has_rpath:
             raise InstallError(
-                f"{self.name} links {external or 'a RUNPATH'}. +site_signed needs an extension"
+                f"{self.name} links {external or 'a RUNPATH'}. A source build needs an extension"
                 " with no shared dependencies. The recipe must declare static dependencies."
             )
 
@@ -302,11 +317,13 @@ class DuckdbExtensionBase(Package):
         with open(target, "wb") as output:
             output.write(content + signature)
 
-    def _install_site_signed(self, spec, prefix):
+    def _install_from_source(self, spec, prefix):
         # This keeps the path out of the build environment and its logs, but it is not a boundary.
         # The build runs as the same user, so it can read /proc/<parent>/environ, and then the key.
         key = os.environ.pop("DUCKDB_EXTENSION_PRIVATE_KEY", None)
-        if not key:
+        if not spec.satisfies("+site_signed"):
+            key = None
+        elif not key:
             raise InstallError("Set DUCKDB_EXTENSION_PRIVATE_KEY to the path of the private key")
         name = self.extension_name
         source_dir = self.stage.source_path
@@ -338,7 +355,7 @@ class DuckdbExtensionBase(Package):
         # These go at the end of the link line, because the linker reads a static library in order
         late_libraries = " ".join(
             find_libraries(f"lib{library}", spec[dep].prefix, shared=False, recursive=True)[0]
-            for dep, library in self.site_signed_link_libraries
+            for dep, library in self.source_link_libraries
         )
         with working_dir(build_dir):
             Executable(spec["cmake"].prefix.bin.cmake)(
@@ -358,7 +375,7 @@ class DuckdbExtensionBase(Package):
                 # no recipe declared. So a download fails here too, and a resource supplies it.
                 "-DFETCHCONTENT_FULLY_DISCONNECTED=ON",
                 f"-DCMAKE_CXX_STANDARD_LIBRARIES={late_libraries}",
-                *self.site_signed_cmake_args(),
+                *self.source_cmake_args(),
                 f"-DCMAKE_SHARED_LINKER_FLAGS=-L{lib}",
                 f"-DDUCKDB_EXTRA_LINK_FLAGS=-Wl,--start-group {libraries} -Wl,--end-group",
             )
@@ -370,6 +387,10 @@ class DuckdbExtensionBase(Package):
             binary = join_path(target_dir, f"{name}.duckdb_extension")
             built = join_path("extension", name, f"{name}.duckdb_extension")
             self._check_portable(built)
+            if key is None:
+                # No signature, so a build cache can rewrite the store paths
+                install(built, binary)
+                return binary
             self._remove_store_paths(built)
             self._sign(key, built, binary, build_dir)
         return binary
@@ -419,8 +440,8 @@ class DuckdbExtensionBase(Package):
         return binary
 
     def install(self, spec, prefix):
-        if spec.satisfies("+site_signed"):
-            binary = self._install_site_signed(spec, prefix)
+        if spec.satisfies("~prebuilt"):
+            binary = self._install_from_source(spec, prefix)
         elif spec.satisfies("@latest"):
             binary = self._install_published(spec, prefix)
         else:
@@ -438,7 +459,7 @@ class DuckdbExtensionBase(Package):
 class DuckdbExtensionPackage(DuckdbExtensionBase):
     """Base class for a package that installs one DuckDB core extension."""
 
-    depends_on("duckdb extension_keys=core", when="~site_signed")
+    depends_on("duckdb extension_keys=core", when="+prebuilt")
 
 
 class DuckdbCommunityExtensionPackage(DuckdbExtensionBase):
@@ -453,7 +474,7 @@ class DuckdbCommunityExtensionPackage(DuckdbExtensionBase):
 
     version("latest", preferred=True)
 
-    depends_on("duckdb extension_keys=community", when="~site_signed")
+    depends_on("duckdb extension_keys=community", when="+prebuilt")
 
 
 class DuckdbExtensions(BundlePackage):
@@ -474,8 +495,10 @@ class DuckdbExtensions(BundlePackage):
 
     * @2.0.0 installs the binaries that DuckDB published. It works from a mirror.
     * @latest installs the binaries that DuckDB publishes now, so it needs network access.
-    * +site_signed builds each extension from source and signs it with your key. The duckdb in
-      the spec must trust that key: see its extension_keys and extension_key variants.
+    * ~prebuilt builds each extension from source, with no signature. The duckdb in the spec
+      loads these files only from its own store: see trust_unsigned_extension_directories.
+    * ~prebuilt +site_signed builds each extension from source and signs it with your key. The
+      duckdb in the spec must trust that key: see its extension_keys and extension_key variants.
 
     The base class DuckdbExtensionBase describes each mode and its limits.
     """
@@ -488,15 +511,22 @@ class DuckdbExtensions(BundlePackage):
     version("latest")
 
     variant(
+        "prebuilt",
+        default=True,
+        sticky=True,
+        description="Install the binaries that DuckDB publishes, not builds from source",
+    )
+    variant(
         "site_signed",
         default=False,
         sticky=True,
-        description="Build the extensions from source, and sign them with your own key",
+        description="Sign the builds with your own key, so they load from any place",
+        when="~prebuilt",
     )
     depends_on("duckdb+extension_env", type="run")
     depends_on("duckdb@2.0.0", type="run", when="@2.0.0")
 
-    conflicts("+site_signed", when="@latest", msg="@latest is a binary that DuckDB publishes")
+    conflicts("~prebuilt", when="@latest", msg="@latest is a binary that DuckDB publishes")
 
     for _name in (
         "avro",
@@ -525,5 +555,5 @@ class DuckdbExtensions(BundlePackage):
     ):
         variant(_name, default=_name == "httpfs", description=f"Install the {_name} extension")
         _package = f"duckdb-{_name.replace('_', '-')}"
-        for _when in ("@2.0.0", "@latest", "+site_signed", "~site_signed"):
+        for _when in ("@2.0.0", "@latest", "+prebuilt", "~prebuilt ~site_signed", "+site_signed"):
             depends_on(f"{_package}{_when}", type="run", when=f"+{_name} {_when}")

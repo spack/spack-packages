@@ -34,5 +34,5 @@ class DuckdbH3(DuckdbCommunityExtensionPackage):
         commit="ae1c424773752f775e0549971818454f61255291",
         submodules=lambda package: ["h3"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

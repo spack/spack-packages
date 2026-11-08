@@ -33,5 +33,5 @@ class DuckdbMssql(DuckdbCommunityExtensionPackage):
         git="https://github.com/hugr-lab/mssql-extension.git",
         commit="bfd347ffa89dc520eb0fb82c857b3c7af12673dc",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

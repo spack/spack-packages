@@ -35,5 +35,5 @@ class DuckdbSittingDuck(DuckdbCommunityExtensionPackage):
         commit="cee95ef6eeb33aa6c25527769d3ebf97898aa994",
         submodules=lambda package: ["third_party/tree-sitter"],
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

@@ -34,5 +34,5 @@ class DuckdbSpatial(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-spatial.git",
         commit="a3dbcd1781ec26c3a1be9bd622be05b376d6f47a",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )

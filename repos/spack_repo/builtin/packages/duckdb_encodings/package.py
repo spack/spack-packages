@@ -33,5 +33,5 @@ class DuckdbEncodings(DuckdbExtensionPackage):
         git="https://github.com/duckdb/duckdb-encodings.git",
         commit="2d1447a890302d9dff23ac7c8119ddce53ee65ff",
         placement="extension_source",
-        when="@2.0.0 +site_signed",
+        when="@2.0.0 ~prebuilt",
     )
