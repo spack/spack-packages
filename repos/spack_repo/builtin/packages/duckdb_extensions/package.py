@@ -441,6 +441,21 @@ class DuckdbExtensionPackage(DuckdbExtensionBase):
     depends_on("duckdb extension_keys=core", when="~site_signed")
 
 
+class DuckdbCommunityExtensionPackage(DuckdbExtensionBase):
+    """Base class for a package that installs one DuckDB community extension.
+
+    DuckDB replaces a community binary at the same URL for each release of the extension,
+    so the sha256 of a numbered version soon fails unless a mirror has that binary. Thus
+    @latest is the default here.
+    """
+
+    repository = "community"
+
+    version("latest", preferred=True)
+
+    depends_on("duckdb extension_keys=community", when="~site_signed")
+
+
 class DuckdbExtensions(BundlePackage):
     """Selects core DuckDB extensions, with one variant for each extension.
 
