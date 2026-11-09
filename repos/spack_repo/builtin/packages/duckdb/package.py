@@ -42,8 +42,8 @@ class Duckdb(CMakePackage):
     version("1.1.0", sha256="d9be2c6d3a5ebe2b3d33044fb2cb535bb0bd972a27ae38c4de5e1b4caa4bf68d")
 
     # Build Options
-    # v2.0.0 removed the ICU library and always statically links the icu extension
-    variant("icu", default=False, description="Compile with bundled ICU library", when="@:1.5")
+    # v2.0.0 has no ICU library: its icu extension uses generated data and is always built in
+    variant("icu", default=False, description="Build the icu extension", when="@:1.5")
     variant("extension_autoload", default=False, description="Enable extension auto-loading")
     variant("extension_autoinstall", default=False, description="Enable extension auto-installing")
     variant("extension_repo", default=True, description="Copy extensions to prefix")
@@ -74,7 +74,9 @@ class Duckdb(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("python@3.7:", type="build")
     depends_on("openssl", when="+httpfs")
-    depends_on("icu4c", when="@:1.5 ~icu")
+    # 1.3 adds WITH_INTERNAL_ICU; before it, the icu extension builds only the vendored ICU 66.
+    # DuckDB 1.x builds as C++11, and the headers of ICU 75 and newer need C++17.
+    depends_on("icu4c@:74", when="@1.3:1.5 +icu")
 
     with when("+python"):
         extends("python")
@@ -109,6 +111,8 @@ class Duckdb(CMakePackage):
         commit = self.release_commits.get(str(self.spec.version))
         if commit:
             args.append(self.define("GIT_COMMIT_HASH", commit))
+        if self.spec.satisfies("@1.3:1.5 +icu"):
+            args.append(self.define("WITH_INTERNAL_ICU", False))
         if self.spec.satisfies("+python"):
             args.append(self.define("BUILD_PYTHON", "1"))
         if self.spec.satisfies("+tpce"):
