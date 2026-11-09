@@ -95,6 +95,9 @@ class Libarchive(AutotoolsPackage):
         # So that a shared object can link libarchive.a
         args.append("--with-pic")
 
+        # Otherwise configure links any libacl it finds, including the host's
+        args.append("--disable-acl")
+
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
                 args.append(f"--with-libiconv-prefix={spec['iconv'].prefix}")
