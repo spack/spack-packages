@@ -30,4 +30,5 @@ class PyJproperties(PythonPackage):
         depends_on("py-six@1.10:1", when="@2.0.0")
         depends_on("py-six@1.12:1", when="@2.1.0")
         depends_on("py-six@1.13:1", when="@2.1.1:")
-        depends_on("py-setuptools-scm@3.3:3", when="@2.1.1:")
+        # setup.py pins setuptools_scm<4, but newer versions build it, and :3 caps python at 3.10
+        depends_on("py-setuptools-scm@3.3:", when="@2.1.1:")
