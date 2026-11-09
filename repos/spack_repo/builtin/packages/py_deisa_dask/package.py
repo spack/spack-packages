@@ -44,6 +44,7 @@ class PyDeisaDask(PythonPackage):
     depends_on("py-toolz", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"), when="@0.5.1:")
 
-    depends_on("py-mpi4py", type=("build", "run"), when="@0.7.0: +mpi")
+    depends_on("py-mpi4py", type=("build", "run"), when="@0.5.1:0.6 +mpi")
+    depends_on("py-mpi4py", type=("build", "run"), when="@0.7.0:")
 
     depends_on("py-pytest-benchmark", type=("build", "run"), when="+benchmark")
