@@ -49,6 +49,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("test", default=False, description="Build C++ test binaries")
     variant("cuda", default=not is_darwin, description="Use CUDA")
     variant("rocm", default=False, description="Use ROCm")
+    variant("xpu", default=not is_darwin, description="Use Intel XPU")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
     variant("kineto", default=True, description="Use Kineto profiling library", when="@:2.10")
@@ -256,6 +257,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("hipsparselt@7.0:")
         depends_on("aotriton@0.11b", when="@2.11:")
         depends_on("aotriton@0.10b", when="@:2.10")
+    with when("+xpu"):
+        requires("+mkldnn", msg="+xpu needs the headers set up by +mkldnn")
 
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
@@ -374,8 +377,11 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # Spack logs have trouble handling colored output
         env.set("COLORIZE_OUTPUT", "OFF")
 
-        # Currently there are no variants/dependencies for Intel GPU support
-        env.set("USE_XPU", "OFF")
+        # Handle Intel XPU support. Note this requires
+        # a oneAPI compiler in the build-time environment
+        # which is not expressed in the Spack spec,
+        # (which can use any otherwise suitable compiler)
+        enable_or_disable("xpu")
 
         enable_or_disable("test", keyword="BUILD")
         enable_or_disable("caffe2", keyword="BUILD")
