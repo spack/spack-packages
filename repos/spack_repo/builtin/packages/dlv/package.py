@@ -7,8 +7,8 @@ from spack_repo.builtin.build_systems.go import GoPackage
 from spack.package import *
 
 
-class Delve(GoPackage):
-    """Delve is a debugger for the Go programming language."""
+class Dlv(GoPackage):
+    """dlv (pronounced "delve") is a debugger for the Go programming language."""
 
     homepage = "https://github.com/go-delve/delve"
     url = "https://github.com/go-delve/delve/archive/refs/tags/v1.27.2.tar.gz"
