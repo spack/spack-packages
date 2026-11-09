@@ -23,6 +23,7 @@ class Mathic(AutotoolsPackage):
 
     license("LGPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.6", sha256="b1dd88cdd8bf09af2539d0b345e647129d8fd55c92b6d824b6ecc53efd531028")
     version("1.5", sha256="42acb4886bdae84e3117aca52ec63b64693cbd0c7e3ca288fc789661d556ea20")
     version("1.4", sha256="722ab0cc970a251040597975d7700576060f031b2dc4f4465ff59d5bc604ede0")
     version("1.3", sha256="cb0503e2ade2090bd04cc247d11f127c51703082cba0b6e14116faf2c93e4050")
