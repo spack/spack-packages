@@ -194,7 +194,7 @@ spack:
   ci:
     pipeline-gen:
     - build-job:
-        image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+        image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
   cdash:
     build-group: HEP
