@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import os
+
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
@@ -125,7 +126,9 @@ class Stat(AutotoolsPackage):
         ]
         if (spec.satisfies("@4.3.0:") or spec.satisfies("@develop")) and spec.satisfies("+gui"):
             args.append("--with-python-path=%s" % stat_python_path)
-        if (spec.satisfies("@4.2.2:") or spec.satisfies("@develop")) and spec["glib"].satisfies("@2.0:2.99"):
+        if (spec.satisfies("@4.2.2:") or spec.satisfies("@develop")) and spec["glib"].satisfies(
+            "@2.0:2.99"
+        ):
             args.append(
                 "STAT_GSETTINGS_SCHEMA_DIR=%s"
                 % spec["gtkplus"].prefix.join("share/glib-2.0/schemas")
