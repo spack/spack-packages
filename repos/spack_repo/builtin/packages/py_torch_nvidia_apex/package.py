@@ -20,6 +20,7 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("26.09", sha256="fe1a01a672e18784dc3b832bbe38a99ccf23af3b5ead047081e4e7070e4f2f50")
     version("24.04.01", sha256="065bc5c0146ee579d5db2b38ca3949da4dc799b871961a2c9eb19e18892166ce")
     version("23.08", tag="23.08")
     version("23.07", tag="23.07")
@@ -58,29 +59,26 @@ class PyTorchNvidiaApex(PythonPackage, CudaPackage):
     requires("^cudnn@8.4:", when="+fused_conv_bias_relu")
     requires("^nccl@2.10:", when="+nccl_p2p_cuda")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-
-    with default_args(type=("build")):
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
         depends_on("py-setuptools")
-        depends_on("py-packaging")
-        depends_on("py-pip")
+    with default_args(type="link"):
+        depends_on("py-pybind11")
+    with default_args(type="run"):
+        depends_on("py-packaging@20.7:")
+    with default_args(type=("build", "link")):
+        depends_on("cuda@9:", when="+cuda")
     with default_args(type=("build", "link", "run")):
         depends_on("python@3:")
         depends_on("py-torch@0.4:")
         for _arch in CudaPackage.cuda_arch_values:
             depends_on(f"py-torch+cuda cuda_arch={_arch}", when=f"+cuda cuda_arch={_arch}")
 
-    depends_on("py-pybind11", type=("build", "link", "run"))
-    depends_on("cuda@9:", when="+cuda")
-
-    # https://github.com/NVIDIA/apex/issues/1498
-    # https://github.com/NVIDIA/apex/pull/1499
-    patch("1499.patch", when="@2020-10-19")
     patch(
         "https://github.com/NVIDIA/apex/pull/1879.patch?full_index=1",
         sha256="8e2e21aa883d93e6c0ea0fecb812c8de906b2e77bcffeeb716adabd1dd76650e",
-        when="@23.05:2019",
+        when="@23.05:",
     )
 
     patch(
