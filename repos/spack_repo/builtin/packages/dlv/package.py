@@ -15,6 +15,8 @@ class Dlv(GoPackage):
 
     license("MIT")
 
+    maintainers("ebagrenrut")
+
     version("1.27.2", sha256="8ea5979dfc5978c9690dc1dd533a830815441dd33617f4a61bcdff7d2c3c7e90")
 
     depends_on("go@1.25:", type=("build", "run"))
