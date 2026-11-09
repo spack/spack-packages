@@ -20,12 +20,10 @@ class PyMelissaOnline(PythonPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop", preferred=True)
-    version("3.1.1", sha256="acdffb2431e4fa5456a3b4044ca1371758ea3e234038b856ad1a342a22bf111f")
-    version(
-        "3.0.0",
-        sha256="9146ac9eff2ae029a189a0fc944b1857f3fd9230000e151a693e73e10943486c",
-        deprecated=True,
-    )
+    version("3.2.0", sha256="04a76113f6db7938bc6d079a6fcf5e1b1ae4a714beca8fe2dd80a3598bb26b6c")
+    with default_args(deprecated=True):
+        version("3.1.1", sha256="acdffb2431e4fa5456a3b4044ca1371758ea3e234038b856ad1a342a22bf111f")
+        version("3.0.0", sha256="9146ac9eff2ae029a189a0fc944b1857f3fd9230000e151a693e73e10943486c")
 
     variant(
         "launcher_only",
@@ -46,12 +44,13 @@ class PyMelissaOnline(PythonPackage):
     )
     requires("platform=linux", msg="Melissa is only supported on Linux Systems.")
 
-    depends_on("python@3.11:3.14", type=("build", "run"))
+    depends_on("python@3.11:", type=("build", "run"))
 
     # basic build-time dependencies
     with default_args(type="build"):
         depends_on("py-pip@23.1:")
-        depends_on("py-scikit-build-core@0.11:")
+        depends_on("py-scikit-build-core@1.1.1:")
+        depends_on("py-scikit-build-core@0.11:", when="@:3.1")
         depends_on("cmake@3.24:")
         depends_on("ninja")
 
@@ -80,7 +79,8 @@ class PyMelissaOnline(PythonPackage):
             depends_on("mpi")
             depends_on("py-mpi4py@3.1.6:")
             depends_on("conduit@0.9.7:+mpi+python+fortran+shared~hdf5~examples")
-            depends_on("libzmq@4.2:4")
+            depends_on("libzmq@4.3.5:4")
+            depends_on("libzmq@4.2:4", when=":@3.1")
         # ======================================================
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
