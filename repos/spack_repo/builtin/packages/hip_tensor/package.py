@@ -103,13 +103,12 @@ class HipTensor(ROCmLibrary, CMakePackage, ROCmPackage):
         "7.14.0",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"composable-kernel@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}"
-            )
+        depends_on(f"composable-kernel@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"composable-kernel amdgpu_target={tgt}", when=f"@6.1.0: amdgpu_target={tgt}")
 
     @property
     def root_cmakelists_dir(self):

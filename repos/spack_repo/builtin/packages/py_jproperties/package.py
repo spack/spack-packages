@@ -18,6 +18,7 @@ class PyJproperties(PythonPackage):
 
     license("BSD", checked_by="teaguesterling")
 
+    version("2.1.2", sha256="036fcd52c10a8a1c21e6fa2a1c292c93892e759b76490acc4809213a36ddc329")
     version("2.1.1", sha256="40b71124e8d257e8954899a91cd2d5c0f72e0f67f1b72048a5ba264567604f29")
     version("2.1.0", sha256="504d7b8d3b2f5f0f52c22c1f72bd50576dca17b01b4cd00d4359c6b0607a59ce")
     version("2.0.0", sha256="b6709652f5c602e5271f519cf14cb9bf5d5a101df06e6c1d300123477a239588")
@@ -28,5 +29,6 @@ class PyJproperties(PythonPackage):
         depends_on("python@2.7,3:")
         depends_on("py-six@1.10:1", when="@2.0.0")
         depends_on("py-six@1.12:1", when="@2.1.0")
-        depends_on("py-six@1.13:1", when="@2.1.1")
-        depends_on("py-setuptools-scm@3.3:3", when="@2.1.1")
+        depends_on("py-six@1.13:1", when="@2.1.1:")
+        # setup.py pins setuptools_scm<4, but newer versions build it, and :3 caps python at 3.10
+        depends_on("py-setuptools-scm@3.3:", when="@2.1.1:")

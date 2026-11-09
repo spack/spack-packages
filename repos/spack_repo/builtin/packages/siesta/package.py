@@ -64,6 +64,14 @@ class Siesta(MakefilePackage, CMakePackage):
 
     patch("configure.patch", when="@:4.0")
 
+    # Workaround for linking errors due to GCC bug 125383
+    # https://gitlab.com/siesta-project/siesta/-/merge_requests/557
+    patch(
+        "https://gitlab.com/siesta-project/siesta/-/commit/bb6d7f5493c19078ecc236cf36b8672eeaf228c8.diff",
+        sha256="b98931c3cf945b0e7cf03f761bb34fce58d08dc1fc71087bb5722568470ca4f5",
+        when="@5.2.2:5.4.2 %gcc@14.1:14.4,15.1:15.3,16.1:16.2",
+    )
+
     variant("mpi", default=True, description="Builds with mpi support")
     variant("openmp", default=True, description="Enables OpenMP support")
     variant("netcdf", default=False, description="Compile with Netcdf")

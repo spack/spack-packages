@@ -16,6 +16,7 @@ class DbusGlib(AutotoolsPackage):
 
     license("AFL-2.1 OR GPL-2.0-or-later")
 
+    version("0.116", sha256="e3f3d4487e2883800770ed5899ed111bdc4ba7056af34a255c4c46ad8a2486f3")
     version("0.112", sha256="7d550dccdfcd286e33895501829ed971eeb65c614e73aadb4a08aeef719b143a")
     version("0.110", sha256="7ce4760cf66c69148f6bd6c92feaabb8812dee30846b24cd0f7395c436d7e825")
 
@@ -23,5 +24,5 @@ class DbusGlib(AutotoolsPackage):
 
     depends_on("pkgconfig", type="build")
     depends_on("expat")
-    depends_on("glib")
+    depends_on("glib@2.6:")
     depends_on("dbus")

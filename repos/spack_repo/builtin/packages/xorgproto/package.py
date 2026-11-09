@@ -17,6 +17,7 @@ class Xorgproto(MesonPackage, XorgPackage):
 
     license("OTHER", checked_by="teaguesterling")
 
+    version("2026.1", sha256="7fa90e48cbaca6bc4c99d176e88c5c147ab0ed42358e14a0869ee9c8a610ae7e")
     version("2024.1", sha256="4f6b9b4faf91e5df8265b71843a91fc73dc895be6210c84117a996545df296ce")
 
     depends_on("meson@0.56:", type="build")

@@ -33,6 +33,7 @@ class IntelTbb(CMakePackage, MakefilePackage):
     license("Apache-2.0")
 
     version("master", branch="master")
+    version("2023.2.0", sha256="80cb62e62defeee67ea1885a6f72d97ac81404f8fde9cded62fb51524808a30c")
     version("2023.1.0", sha256="191288b52e1e6b17198000b64d77d194bb65e791be46ebc606e9b091781e2070")
     version("2023.0.0", sha256="f8767b971ec6aea25dde58ae0f593e94e7aa75a739a86f67967012f69e2199b1")
     version("2022.3.0", sha256="01598a46c1162c27253a0de0236f520fd8ee8166e9ebb84a4243574f88e6e50a")
@@ -121,6 +122,13 @@ class IntelTbb(CMakePackage, MakefilePackage):
     )
 
     variant("tm", default=True, description="Enable use of transactional memory on x86")
+
+    variant(
+        "tcm",
+        default=True,
+        description="Build the Thread Composability Manager",
+        when="@2023.2.0:",
+    )
 
     # Testing version ranges inside when clauses was fixed in e9ee9eaf.
     # See: #8957 and #13989.
@@ -219,6 +227,9 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
 
         if spec.satisfies("@2021.6.0:"):
             options.append(self.define_from_variant("TBB_ENABLE_IPO", "ipo"))
+
+        if spec.satisfies("@2023.2.0:"):
+            options.append(self.define_from_variant("TCM_BUILD", "tcm"))
 
         if spec.variants["cxxstd"].value != "default":
             options.append(self.define("CMAKE_CXX_STANDARD", spec.variants["cxxstd"].value))

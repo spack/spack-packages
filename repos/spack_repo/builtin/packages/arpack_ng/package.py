@@ -76,6 +76,16 @@ class ArpackNg(CMakePackage, AutotoolsPackage):
     depends_on("blas")
     depends_on("lapack")
     depends_on("mpi", when="+mpi")
+    conflicts(
+        "^[virtuals=lapack] openblas+ilp64",
+        when="+mpi",
+        msg="parallel arpack-ng does not support ilp64",
+    )
+    conflicts(
+        "^[virtuals=lapack] intel-oneapi-mkl+ilp64",
+        when="+mpi",
+        msg="parallel arpack-ng does not support ilp64",
+    )
 
     with when("build_system=autotools"):
         depends_on("automake", type="build")

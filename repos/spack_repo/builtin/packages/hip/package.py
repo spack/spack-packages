@@ -83,13 +83,15 @@ class Hip(ROCmLibrary, CMakePackage):
     test_requires_compiler = True
 
     with when("+rocm"):
+        # OpenGL is required at build time (FindOpenGL) by rocclr
+        # and can be used at runtime (dlopen) for finding hip devices.
+        # Newer versions of HIP (at least 7.14) link against it but older (5.7)
+        # do not.
         depends_on("gl@4.5:")
         depends_on("py-cppheaderparser", type="build")
         depends_on("libx11", when="+asan")
         depends_on("xproto", when="+asan")
-        # hipcc likes to add `-lnuma` by default :(
-        # ref https://github.com/ROCm/HIP/pull/2202
-        depends_on("numactl")
+        depends_on("numactl")  # required by rocr-runtime
 
         for ver in [
             "5.7.0",

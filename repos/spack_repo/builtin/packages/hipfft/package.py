@@ -119,10 +119,9 @@ class Hipfft(ROCmLibrary, CMakePackage, CudaPackage, ROCmPackage):
         "10.0.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(
-                f"rocfft@{ver} amdgpu_target={tgt}", when=f"@{ver} +rocm amdgpu_target={tgt}"
-            )
+        depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"rocfft amdgpu_target={tgt}", when=f"+rocm amdgpu_target={tgt}")
 
     # https://github.com/ROCm/rocFFT/pull/85)
     patch("001-remove-submodule-and-sync-shared-files-from-rocFFT.patch", when="@6.0.0")

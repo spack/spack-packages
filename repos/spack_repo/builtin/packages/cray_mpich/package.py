@@ -122,6 +122,8 @@ class CrayMpich(MpichEnvironmentModifications, Package, CudaPackage, ROCmPackage
     @property
     def headers(self):
         hdrs = find_headers("mpi", self.prefix.include, recursive=True)
+        if len(hdrs) < 1:
+            raise NoHeadersError("Could not find mpi.h for cray_mpich.")
         hdrs.directories = os.path.dirname(hdrs[0])
         return hdrs
 

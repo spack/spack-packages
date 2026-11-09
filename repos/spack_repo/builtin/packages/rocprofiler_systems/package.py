@@ -227,9 +227,8 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
     conflicts("%clang", when="+internal-tbb")
     extends("python", when="+python")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
