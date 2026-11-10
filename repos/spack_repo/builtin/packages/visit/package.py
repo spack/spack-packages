@@ -154,7 +154,7 @@ class Visit(CMakePackage):
 
     # VisIt doesn't work with later versions of qt.
     depends_on("qt+gui+opengl", when="+gui")
-    depends_on("qt@5:5.14", when="+gui")
+    depends_on("qt@5:5.15", when="+gui") # finding it works OK with 5.15
     depends_on("qwt+opengl", when="+gui")
 
     # python@3.8 doesn't work with older VisIt.

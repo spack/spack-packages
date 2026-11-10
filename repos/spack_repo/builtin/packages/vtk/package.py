@@ -106,7 +106,7 @@ class Vtk(CMakePackage):
     # We cannot build with both osmesa and qt in spack
     conflicts("^osmesa", when="+qt")
 
-    conflicts("%gcc@13", when="@9.2")
+    # conflicts("%gcc@13", when="@9.2") # finding this not necessary
 
     # Based on PyPI wheel availability
     with when("+python"), default_args(type=("build", "link", "run")):
