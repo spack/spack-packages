@@ -29,11 +29,10 @@ class X3d2(CMakePackage, CudaPackage):
         default=True,
         description="Use double precision (off gives single precision, also in 2decomp-fft)",
     )
-    # The GPU backends use their own FFT path. Only the CPU build needs 2decomp-fft.
     variant(
         "decomp2d",
         default=True,
-        when="+mpi ~cuda",
+        when="+mpi",
         description="Build the Poisson FFT solver with 2decomp-fft",
     )
     variant("adios2", default=False, description="Enable ADIOS2 I/O")
@@ -46,6 +45,19 @@ class X3d2(CMakePackage, CudaPackage):
         description=(
             "Use the OpenMP target offload backend instead of the CUDA backend (needs +cuda)"
         ),
+    )
+
+    variant(
+        "adios2_gpu",
+        default=False,
+        when="+adios2 +cuda ~omp_tgt",
+        description="Pass the GPU memory to ADIOS2 directly (needs ADIOS2 with CUDA)",
+    )
+    variant(
+        "fp_trap",
+        default=False,
+        when="+cuda ~omp_tgt build_type=Debug",
+        description="Trap the floating point exceptions in the CUDA debug build",
     )
 
     # AMD GPU support for OMP_TGT is planned. Follow the current development in
@@ -71,6 +83,7 @@ class X3d2(CMakePackage, CudaPackage):
     with when("+decomp2d"):
         depends_on("2decomp-fft+double", when="+double")
         depends_on("2decomp-fft~double", when="~double")
+        depends_on("2decomp-fft %fortran=nvhpc", when="+cuda")
 
     with when("+cuda"):
         requires("%fortran=nvhpc", msg="x3d2 +cuda needs nvfortran (%fortran=nvhpc)")
@@ -82,6 +95,8 @@ class X3d2(CMakePackage, CudaPackage):
                 conflicts(
                     "cuda_arch=" + arch, msg="x3d2 BACKEND_ARCH takes ccNN only, not cc" + arch
                 )
+            # ADIOS2 must use the same GPU architecture as x3d2.
+            depends_on(f"adios2 +cuda cuda_arch={arch}", when=f"+adios2_gpu cuda_arch={arch}")
         # `setup_build_environment` points NVCOMPILER_*_LIBS_HOME at the NVHPC directories.
         # These directories belong to the CUDA version that the SDK includes.
         # This version is 12.8 for nvhpc@25.3.
@@ -132,6 +147,8 @@ class X3d2(CMakePackage, CudaPackage):
             self.define("SINGLE_PREC", spec.satisfies("~double")),
             self.define("WITH_2DECOMPFFT", spec.satisfies("+decomp2d")),
             self.define_from_variant("WITH_ADIOS2", "adios2"),
+            self.define_from_variant("WITH_ADIOS2_GPU_AWARE", "adios2_gpu"),
+            self.define_from_variant("CUDA_DEBUG_FP_TRAP", "fp_trap"),
             self.define("ENABLE_BACKEND", backend),
         ]
         if spec.satisfies("+mpi"):
@@ -147,13 +164,17 @@ class X3d2(CMakePackage, CudaPackage):
             cuda_arch = spec.variants["cuda_arch"].value
             if len(cuda_arch) != 1:
                 raise InstallError("x3d2 accepts exactly one cuda_arch value")
-            args.append(self.define("BACKEND_ARCH", "cc" + cuda_arch[0]))
+            args += [
+                self.define("BACKEND_ARCH", "cc" + cuda_arch[0]),
+                self.define("BACKEND_CUDA_VERSION", str(spec["cuda"].version.up_to(2))),
+            ]
         if spec.satisfies("+adios2"):
             # Spack does not fetch ADIOS2, so the build always uses the Spack installation.
             args += [
                 self.define("USE_SYSTEM_ADIOS2", True),
                 self.define("ADIOS2_ROOT_DIR", spec["adios2"].prefix),
-                self.define("WITH_ADIOS2_GPU_AWARE", False),
+                # The tests of the GPU ADIOS2 path need to know that ADIOS2 has CUDA.
+                self.define("ADIOS2_WITH_CUDA", spec.satisfies("^adios2 +cuda")),
             ]
         # These options stay at the upstream defaults. They only set test runs:
         # WITH_NIGHTLY_REGRESSION, CMAKE_CTEST_NPROCS, CMAKE_CTEST_ARGUMENTS and
