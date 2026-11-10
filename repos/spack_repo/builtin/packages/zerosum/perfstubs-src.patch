@@ -1,0 +1,18 @@
+--- a/src/CMakeLists.txt   2026-11-10 08:58:48.131736208 -0800
++++ b/src/CMakeLists.txt      2026-11-10 09:01:11.088868635 -0800
+@@ -58,7 +58,14 @@
+
+ if (ZeroSum_WITH_PerfStubs)
+     add_definitions(-DPERFSTUBS_USE_TIMERS)
+-    set(PERFSTUBS_LIB perfstubs)
++
++    if(PERFSTUBS_EXTERNAL)
++        include_directories(${PERFSTUBS_INCLUDE_DIR})
++        set(PERFSTUBS_LIB ${PERFSTUBS_LIBRARY})
++    else()
++        set(PERFSTUBS_LIB perfstubs)
++    endif()
++
+ endif ()
+
+ set(GPU_SOURCE zerosum_nogpu.cpp)
