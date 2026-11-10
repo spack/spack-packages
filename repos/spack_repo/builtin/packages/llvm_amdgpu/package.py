@@ -657,6 +657,10 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
     def _fortran_path(self):
         return os.path.join(self.spec.prefix.bin, "amdflang")
 
+    def archspec_name(self) -> str:
+        """llvm-amdgpu uses the same optimization flags as clang"""
+        return "clang"
+
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
         """Callback function to inject runtime-related rules into the solver.
