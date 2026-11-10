@@ -42,8 +42,17 @@ class X3d2(CMakePackage, CudaPackage):
     variant(
         "omp_tgt",
         default=False,
+        description="Use the OpenMP target offload backend instead of the CUDA backend",
+    )
+    # The OMP_TGT backend on AMD and Intel GPUs is not tested. No build host has these GPUs.
+    variant(
+        "backend_arch",
+        default="none",
+        values=str,
+        when="+omp_tgt ~cuda",
         description=(
-            "Use the OpenMP target offload backend instead of the CUDA backend (needs +cuda)"
+            "GPU architecture of the OMP_TGT backend on AMD and Intel GPUs, for example gfx942, "
+            "spir64 or pvc (this path is not tested)"
         ),
     )
 
@@ -60,14 +69,11 @@ class X3d2(CMakePackage, CudaPackage):
         description="Trap the floating point exceptions in the CUDA debug build",
     )
 
-    # AMD GPU support for OMP_TGT is planned. Follow the current development in
-    # https://github.com/xcompact3d/x3d2
-    conflicts(
-        "~cuda",
-        when="+omp_tgt",
-        msg="x3d2 +omp_tgt needs +cuda and a cuda_arch value, "
-        "the recipe supports OMP_TGT on NVIDIA GPUs only (AMD and Intel OMP_TGT are not packaged)",
-    )
+    with when("+omp_tgt ~cuda"):
+        conflicts(
+            "backend_arch=none", msg="x3d2 +omp_tgt needs +cuda cuda_arch=NN or backend_arch"
+        )
+        conflicts("%fortran=nvhpc", msg="use +cuda cuda_arch=NN with the nvhpc compiler")
 
     with default_args(type="build"):
         depends_on("fortran")
@@ -138,9 +144,11 @@ class X3d2(CMakePackage, CudaPackage):
     def cmake_args(self):
         spec = self.spec
         backend = (
-            "OFF"
-            if spec.satisfies("~cuda")
-            else ("OMP_TGT" if spec.satisfies("+omp_tgt") else "CUDA")
+            "OMP_TGT"
+            if spec.satisfies("+omp_tgt")
+            else "CUDA"
+            if spec.satisfies("+cuda")
+            else "OFF"
         )
         args = [
             self.define_from_variant("WITH_MPI", "mpi"),
@@ -160,6 +168,8 @@ class X3d2(CMakePackage, CudaPackage):
             ]
         if spec.satisfies("+decomp2d"):
             args.append(self.define("decomp2d_install_dir", spec["2decomp-fft"].prefix))
+        if spec.satisfies("+omp_tgt ~cuda"):
+            args.append(self.define_from_variant("BACKEND_ARCH", "backend_arch"))
         if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             if len(cuda_arch) != 1:
