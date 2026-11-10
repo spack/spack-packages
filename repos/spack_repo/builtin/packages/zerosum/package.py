@@ -42,7 +42,6 @@ class Zerosum(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-
     depends_on("cmake", type="build")
     depends_on("hwloc", when="+hwloc")
     depends_on("mpi", when="+mpi")
@@ -51,10 +50,10 @@ class Zerosum(CMakePackage):
     depends_on("hip", when="+hip")
     depends_on("sycl", when="+sycl")
     depends_on("libzmq")
-    
+
     depends_on("perfstubs", when="+perfstubs")
     depends_on("fortran", type="build", when="+perfstubs")
-    
+
     patch("perfstubs-root.patch", when="@main +perfstubs")
     patch("perfstubs-src.patch", when="@main +perfstubs")
 
@@ -67,7 +66,6 @@ class Zerosum(CMakePackage):
 
     def cmake_args(self):
         args = [
-            
             self.define_from_variant("ZeroSum_WITH_HWLOC", "hwloc"),
             self.define_from_variant("ZeroSum_WITH_MPI", "mpi"),
             self.define_from_variant("ZeroSum_WITH_CUDA", "cuda"),

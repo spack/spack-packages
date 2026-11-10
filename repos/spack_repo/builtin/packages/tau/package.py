@@ -166,8 +166,10 @@ class Tau(Package):
         description="Use of Legacy L0 profiler. Option required for old drivers/GPU.",
         when="@2.35:",
     )
-    variant("apex", default=False, description="Compile TAU with APEX support", when ="@2.36:")
-    variant("zerosum", default=False, description="Compile TAU with ZeroSum support", when ="@2.36:")
+    variant("apex", default=False, description="Compile TAU with APEX support", when="@2.36:")
+    variant(
+        "zerosum", default=False, description="Compile TAU with ZeroSum support", when="@2.36:"
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -534,12 +536,12 @@ class Tau(Package):
 
         if "+perfetto" in spec:
             options.append("-perfetto")
-        
+
         if "+apex" in spec:
-          options.append("-apex=%s" % spec["apex"].prefix)
-          
+            options.append("-apex=%s" % spec["apex"].prefix)
+
         if "+zerosum" in spec:
-          options.append("-zerosum=%s" % spec["zerosum"].prefix)
+            options.append("-zerosum=%s" % spec["zerosum"].prefix)
 
         compiler_specific_options = self.set_compiler_options(spec)
         options.extend(compiler_specific_options)
