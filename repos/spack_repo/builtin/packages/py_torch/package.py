@@ -320,6 +320,19 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 string=True,
             )
 
+        if self.spec.satisfies("+rocm @2.13:"):
+            # Unlike torch_cpu/torch_hip, torch_rocshmem has no dependency on the
+            # ATen codegen target even though its sources include ATen headers, so
+            # a parallel build can start compiling it before ATen/core/TensorBody.h
+            # is generated and fail with "file not found".
+            filter_file(
+                "add_library(torch_rocshmem SHARED ${TORCH_ROCSHMEM_SRCS})",
+                "add_library(torch_rocshmem SHARED ${TORCH_ROCSHMEM_SRCS})\n"
+                "        add_dependencies(torch_rocshmem ATEN_CPU_FILES_GEN_TARGET)",
+                "caffe2/CMakeLists.txt",
+                string=True,
+            )
+
     def flag_handler(self, name, flags):
         # Enable ISA extensions required by PyTorch 2.14 FBGEMM/QuantUtilsAvx512
         if name == "cxxflags" and self.spec.satisfies("@2.14: +nnpack target=x86_64_v4:"):
