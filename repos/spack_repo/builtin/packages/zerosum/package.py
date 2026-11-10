@@ -42,6 +42,7 @@ class Zerosum(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
+
     depends_on("cmake", type="build")
     depends_on("hwloc", when="+hwloc")
     depends_on("mpi", when="+mpi")
@@ -49,6 +50,13 @@ class Zerosum(CMakePackage):
     depends_on("cuda", when="+cuda")
     depends_on("hip", when="+hip")
     depends_on("sycl", when="+sycl")
+    depends_on("libzmq")
+    
+    depends_on("perfstubs", when="+perfstubs")
+    depends_on("fortran", type="build", when="+perfstubs")
+    
+    patch("perfstubs-root.patch", when="@main +perfstubs")
+    patch("perfstubs-src.patch", when="@main +perfstubs")
 
     # GCC has no support for OMPT, and doesn't plan to add it any time soon.
     # For that reason, we let the user know this support is not allowed.
@@ -59,7 +67,7 @@ class Zerosum(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define_from_variant("ZeroSum_WITH_PerfStubs", "perfstubs"),
+            
             self.define_from_variant("ZeroSum_WITH_HWLOC", "hwloc"),
             self.define_from_variant("ZeroSum_WITH_MPI", "mpi"),
             self.define_from_variant("ZeroSum_WITH_CUDA", "cuda"),
@@ -68,10 +76,16 @@ class Zerosum(CMakePackage):
             self.define_from_variant("ZeroSum_WITH_OPENMP", "openmp"),
             self.define_from_variant("ZeroSum_WITH_OMPT", "ompt"),
         ]
+        args.append(self.define("ZeroMQ_ROOT", self.spec["libzmq"].prefix))
 
         if "+cuda" in self.spec:
             args.append(self.define("CUDAToolkit_ROOT", self.spec["cuda"].prefix))
         if "+hip" in self.spec:
-            args.append(self.define("ROCM_ROOT}", self.spec["hip"].prefix))
+            args.append(self.define("ROCM_ROOT", self.spec["hip"].prefix))
+        if "+perfstubs" in self.spec:
+            args.append(self.define_from_variant("ZeroSum_WITH_PerfStubs", "perfstubs"))
+            args.append(self.define("PerfStubs_ROOT", self.spec["perfstubs"].prefix))
+        else:
+            args.append(self.define("ZeroSum_WITH_PerfStubs", False))
 
         return args
