@@ -96,7 +96,7 @@ class PyTorchvision(PythonPackage):
     # Exclude vision_stable.cpp from hipification
     patch(
         "torchvision-0.29-rocm-vision-stable-duplicate-symbol.patch",
-        when="@0.29 ^py-torch+rocm",
+        when="@0.29: ^py-torch+rocm",
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
