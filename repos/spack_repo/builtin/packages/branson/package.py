@@ -18,6 +18,8 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
     url = "https://github.com/lanl/branson/archive/refs/tags/0.90.tar.gz"
     git = "https://github.com/LANL/branson.git"
 
+    maintainers("alexrlongne")
+
     tags = ["proxy-app"]
 
     license("MIT")
