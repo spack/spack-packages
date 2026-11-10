@@ -21,7 +21,7 @@ class Ppl(Package):
     solver, and primitives for termination analysis via the automatic
     synthesis of linear ranking functions."""
 
-    homepage = "https://bugseng.com/products/ppl/"
+    homepage = "https://bugseng.com/ppl"
     url = "http://bugseng.com/products/ppl/download/ftp/releases/1.1/ppl-1.1.tar.gz"
 
     license("GPL-3.0-or-later")
