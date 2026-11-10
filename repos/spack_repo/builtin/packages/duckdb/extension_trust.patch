@@ -1,0 +1,257 @@
+--- a/src/main/extension/CMakeLists.txt
++++ b/src/main/extension/CMakeLists.txt
+@@ -17,6 +17,21 @@
+   duckdb_main_extension
+   PRIVATE "DUCKDB_EXTENSION_DIRECTORIES=\"${EXT_DIR_ESCAPED}\"")
+ 
++# Directories from which an unsigned extension loads. An entry can start with
++# $ORIGIN, the directory of the binary or library that holds this code, or with
++# $SPACK_STORE, the root of the Spack store that holds that file. The entry
++# $OWNED_SPACK_STORE trusts any Spack store that only root or the user can write.
++set(TRUSTED_EXTENSION_DIRECTORIES
++    ""
++    CACHE STRING "Trusted directories for unsigned extensions (;-separated)")
++if(TRUSTED_EXTENSION_DIRECTORIES)
++  string(REPLACE ";" "\;" TRUSTED_DIR_ESCAPED
++                 "${TRUSTED_EXTENSION_DIRECTORIES}")
++  target_compile_definitions(
++    duckdb_main_extension
++    PRIVATE "DUCKDB_TRUSTED_EXTENSION_DIRECTORIES=\"${TRUSTED_DIR_ESCAPED}\"")
++endif()
++
+ set(ALL_OBJECT_FILES
+     ${ALL_OBJECT_FILES} $<TARGET_OBJECTS:duckdb_main_extension>
+     PARENT_SCOPE)
+--- a/src/main/extension/extension_load.cpp
++++ b/src/main/extension/extension_load.cpp
+@@ -18,6 +18,16 @@
+ #include <thread>
+ #endif // DUCKDB_NO_THREADS
+ 
++#if defined(DUCKDB_TRUSTED_EXTENSION_DIRECTORIES) && !defined(_WIN32)
++#include <climits>
++#include <cstdlib>
++#include <dlfcn.h>
++#include <grp.h>
++#include <pwd.h>
++#include <sys/stat.h>
++#include <unistd.h>
++#endif
++
+ namespace duckdb {
+ 
+ //===--------------------------------------------------------------------===//
+@@ -467,6 +477,184 @@
+ 	                                     signature_key_fingerprint);
+ }
+ 
++#if defined(DUCKDB_TRUSTED_EXTENSION_DIRECTORIES) && !defined(_WIN32)
++static bool TrustedRealPath(const string &path, string &result) {
++	char buffer[PATH_MAX];
++	if (!realpath(path.c_str(), buffer)) {
++		return false;
++	}
++	result = buffer;
++	return true;
++}
++
++//! The real path of the file that holds this code: the duckdb binary, libduckdb in a client, or an extension that
++//! links its own copy of this code to load the extensions it needs
++static bool TrustedCodeFile(string &file) {
++	Dl_info info;
++	// For the main program, dladdr can give argv[0], which can be a relative name. Do not resolve that against
++	// the current directory.
++	if (dladdr(reinterpret_cast<void *>(&TrustedCodeFile), &info) && info.dli_fname && info.dli_fname[0] == '/' &&
++	    TrustedRealPath(info.dli_fname, file)) {
++		return true;
++	}
++#ifdef __linux__
++	return TrustedRealPath("/proc/self/exe", file);
++#else
++	return false;
++#endif
++}
++
++//! $ORIGIN is the directory of that file. $SPACK_STORE is its nearest parent directory that has a .spack-db
++//! directory: the root of the Spack store that holds the file.
++static bool TrustedAnchor(const string &file, const string &name, string &result) {
++	auto slash = file.rfind('/');
++	if (slash == string::npos || slash == 0) {
++		return false;
++	}
++	result = file.substr(0, slash);
++	if (name == "$ORIGIN") {
++		return true;
++	}
++	while (!result.empty()) {
++		struct stat marker;
++		if (stat((result + "/.spack-db").c_str(), &marker) == 0 && S_ISDIR(marker.st_mode)) {
++			return true;
++		}
++		slash = result.rfind('/');
++		if (slash == string::npos) {
++			return false;
++		}
++		result = result.substr(0, slash);
++	}
++	return false;
++}
++
++//! True if only root or the current user can write the path: its owner is one of them, and group and others cannot
++//! write it. Group write is allowed for the private group of the user, with no other members, as Debian's OpenSSH
++//! allows. Sticky directories are allowed only above the store root, where nobody else can rename the store.
++static bool OnlyUserCanWrite(const struct stat &info, bool allow_sticky) {
++	auto uid = geteuid();
++	if (info.st_uid != 0 && info.st_uid != uid) {
++		return false;
++	}
++	if (allow_sticky && S_ISDIR(info.st_mode) && (info.st_mode & S_ISVTX)) {
++		return true;
++	}
++	if (info.st_mode & S_IWOTH) {
++		return false;
++	}
++	if (!(info.st_mode & S_IWGRP)) {
++		return true;
++	}
++	// Group write is safe only for the private group of the user: the primary group of the user, with the name of
++	// the user, and no other members. Another account that has this group as its primary group is not found here.
++	struct passwd user, *user_result = nullptr;
++	struct group group, *group_result = nullptr;
++	char user_buffer[16384], group_buffer[16384];
++	if (getpwuid_r(uid, &user, user_buffer, sizeof(user_buffer), &user_result) != 0 || !user_result) {
++		return false;
++	}
++	if (info.st_gid != user.pw_gid) {
++		return false;
++	}
++	if (getgrgid_r(info.st_gid, &group, group_buffer, sizeof(group_buffer), &group_result) != 0 || !group_result ||
++	    string(group.gr_name) != user.pw_name) {
++		return false;
++	}
++	for (auto member = group.gr_mem; member && *member; member++) {
++		if (string(*member) != user.pw_name) {
++			return false;
++		}
++	}
++	return true;
++}
++
++//! True if the real path is in a Spack store that only root or the current user can write. That user can already
++//! load any file with -unsigned, so this gives them nothing new. A store that another user can write is refused.
++static bool InOwnedSpackStore(const string &real_path) {
++	auto slash = real_path.rfind('/');
++	if (slash == string::npos || slash == 0) {
++		return false;
++	}
++	// Find the store root: the nearest parent with a .spack-db directory
++	string root = real_path.substr(0, slash);
++	while (true) {
++		struct stat marker;
++		if (stat((root + "/.spack-db").c_str(), &marker) == 0 && S_ISDIR(marker.st_mode)) {
++			break;
++		}
++		slash = root.rfind('/');
++		if (slash == string::npos || slash == 0) {
++			return false;
++		}
++		root = root.substr(0, slash);
++	}
++	// Check the file, each directory up to the root, and each directory above the root
++	string path = real_path;
++	bool in_store = true;
++	while (true) {
++		struct stat info;
++		if (stat(path.empty() ? "/" : path.c_str(), &info) != 0 || !OnlyUserCanWrite(info, !in_store)) {
++			return false;
++		}
++		if (path.empty()) {
++			return true;
++		}
++		if (path == root) {
++			in_store = false;
++		}
++		path = path.substr(0, path.rfind('/'));
++	}
++}
++
++//! True if the real path of the file is in one of the compiled-in trusted directories. An entry can start with
++//! $ORIGIN or $SPACK_STORE, see TrustedAnchor. The entry $OWNED_SPACK_STORE trusts the store that holds the file, if
++//! only root or the current user can write it. Only the compiled-in list is trusted: a
++//! search directory, a setting or a direct LOAD can find a file, but cannot make a place trusted.
++static bool TrustedExtensionPath(const string &filename, string &real_path) {
++	if (!TrustedRealPath(filename, real_path)) {
++		return false;
++	}
++	string code_file;
++	bool have_code_file = TrustedCodeFile(code_file);
++	for (auto &entry : StringUtil::Split(DUCKDB_TRUSTED_EXTENSION_DIRECTORIES, ';')) {
++		if (entry == "$OWNED_SPACK_STORE") {
++			if (InOwnedSpackStore(real_path)) {
++				return true;
++			}
++			continue;
++		}
++		string directory = entry;
++		for (string name : {"$SPACK_STORE", "$ORIGIN"}) {
++			if (StringUtil::StartsWith(directory, name)) {
++				string anchor;
++				if (!have_code_file || !TrustedAnchor(code_file, name, anchor)) {
++					directory.clear();
++					break;
++				}
++				directory = anchor + directory.substr(name.size());
++				break;
++			}
++		}
++		string real_directory;
++		if (directory.empty() || directory[0] != '/' || !TrustedRealPath(directory, real_directory)) {
++			continue;
++		}
++		if (real_directory != "/") {
++			real_directory += "/";
++		}
++		if (StringUtil::StartsWith(real_path, real_directory)) {
++			return true;
++		}
++	}
++	return false;
++}
++#else
++static bool TrustedExtensionPath(const string &, string &) {
++	return false;
++}
++#endif
++
+ bool ExtensionHelper::TryInitialLoad(DatabaseInstance &db, FileSystem &fs, const string &extension,
+                                      const string &repository_name, bool core_only, ExtensionInitResult &result,
+                                      string &error) {
+@@ -604,6 +792,10 @@
+ 		return false;
+ 	}
+ 
++	// An unsigned extension loads if its real path is in a trusted directory. Then dlopen gets that real path.
++	string trusted_path;
++	bool trusted_location = TrustedExtensionPath(filename, trusted_path);
++
+ 	auto handle = fs.OpenFile(filename, FileFlags::FILE_FLAGS_READ);
+ 
+ 	// Parse the extension metadata from the extension binary
+@@ -640,7 +832,7 @@
+ 		}
+ 	}
+ 
+-	if (!Settings::Get<AllowUnsignedExtensionsSetting>(db)) {
++	if (!Settings::Get<AllowUnsignedExtensionsSetting>(db) && !trusted_location) {
+ 		bool signature_valid;
+ 		// The recorded origin (from the .info) determines which keys could have signed the extension, but without an
+ 		// explicit FROM a bare load - which is also how autoloading loads - trusts only the fixed core/community keys,
+@@ -686,7 +878,7 @@
+ 		}
+ 	}
+ 
+-	auto lib_hdl = provider.OpenLibrary(filename, filebase);
++	auto lib_hdl = provider.OpenLibrary(trusted_location ? trusted_path : filename, filebase);
+ 
+ 	// Initialize the ExtensionInitResult
+ 	result.filebase = lowercase_extension_name;
