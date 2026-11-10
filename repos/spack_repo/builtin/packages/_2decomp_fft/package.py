@@ -36,13 +36,26 @@ class _2decompFft(CMakePackage):
     )
     variant("halo_debug", default=False, description="Enable the halo debug checks")
     variant("even", default=False, description="Pad the MPI all-to-all transpose operations")
+    variant("adios2", default=False, description="Use ADIOS2 for the I/O")
+    variant("caliper", default=False, description="Enable the Caliper profiler")
 
     with default_args(type="build"):
         depends_on("fortran")
         depends_on("cmake@3.21:")
 
+        with when("+adios2"):
+            depends_on("c")
+            depends_on("cxx")
+
+        with when("+caliper"):
+            depends_on("c")
+            depends_on("cxx")
+
     depends_on("mpi")
     depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
+
+    depends_on("adios2 +mpi +fortran", when="+adios2")
+    depends_on("caliper +fortran +mpi", when="+caliper")
 
     def patch(self):
         # Remove the hardcoded host flags. Then the Spack target flags apply.
@@ -59,6 +72,8 @@ class _2decompFft(CMakePackage):
         # The test run parameters `PROW`, `PCOL`, `NX`, `NY` and `NZ` keep the upstream defaults.
         return [
             self.define("BUILD_TARGET", "mpi"),
+            self.define("IO_BACKEND", "adios2" if "+adios2" in self.spec else "mpi"),
+            self.define("ENABLE_PROFILER", "caliper" if "+caliper" in self.spec else "OFF"),
             self.define("FFT_Choice", "generic"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("DOUBLE_PRECISION", "double"),
