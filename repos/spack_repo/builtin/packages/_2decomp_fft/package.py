@@ -36,6 +36,13 @@ class _2decompFft(CMakePackage):
     )
     variant("halo_debug", default=False, description="Enable the halo debug checks")
     variant("even", default=False, description="Pad the MPI all-to-all transpose operations")
+    variant(
+        "fft",
+        default="generic",
+        values=("generic", "fftw", "fftw_f03", "mkl", "cufft"),
+        multi=False,
+        description="The FFT library",
+    )
     variant("adios2", default=False, description="Use ADIOS2 for the I/O")
     variant("caliper", default=False, description="Enable the Caliper profiler")
 
@@ -54,6 +61,23 @@ class _2decompFft(CMakePackage):
     depends_on("mpi")
     depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
 
+    depends_on("intel-oneapi-mkl +envmods", when="fft=mkl")
+
+    for fft in ("fftw", "fftw_f03"):
+        with when(f"fft={fft}"):
+            # Upstream links the FFTW library that matches the precision of the build.
+            depends_on("fftw@3:")
+            depends_on("fftw precision=double", when="+double")
+            depends_on("fftw precision=float", when="~double")
+            # Upstream downloads the FindFFTW module at configure time. Supply a pinned copy.
+            resource(
+                name="findfftw",
+                git="https://github.com/egpbos/findFFTW.git",
+                commit="d449ea0bcbf94a4a1c3dbb2108aa57609a4967ff",
+                placement="findFFTW",
+            )
+            patch("fftw-module.patch")
+
     depends_on("adios2 +mpi +fortran", when="+adios2")
     depends_on("caliper +fortran +mpi", when="+caliper")
 
@@ -70,11 +94,17 @@ class _2decompFft(CMakePackage):
 
     def cmake_args(self):
         # The test run parameters `PROW`, `PCOL`, `NX`, `NY` and `NZ` keep the upstream defaults.
+        spec = self.spec
+        mkl_dir = (
+            join_path(spec["intel-oneapi-mkl"].package.component_prefix, "lib", "cmake", "mkl")
+            if "intel-oneapi-mkl" in spec
+            else None
+        )
         return [
             self.define("BUILD_TARGET", "mpi"),
             self.define("IO_BACKEND", "adios2" if "+adios2" in self.spec else "mpi"),
             self.define("ENABLE_PROFILER", "caliper" if "+caliper" in self.spec else "OFF"),
-            self.define("FFT_Choice", "generic"),
+            self.define_from_variant("FFT_Choice", "fft"),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("DOUBLE_PRECISION", "double"),
             self.define_from_variant("SINGLE_PRECISION_OUTPUT", "single_output"),
@@ -83,4 +113,6 @@ class _2decompFft(CMakePackage):
             self.define_from_variant("EVEN", "even"),
             # FindMPI must use the Spack compiler wrapper and not search `PATH`.
             self.define("MPI_Fortran_COMPILER", self.spec["mpi"].mpifc),
+            *([self.define("FFTW_ROOT", spec["fftw"].prefix)] if "fftw" in spec else []),
+            *([self.define("MKL_DIR", mkl_dir)] if mkl_dir else []),
         ]
