@@ -1,0 +1,35 @@
+--- a/CMakeLists.txt 2026-11-10 08:49:58.787406550 -0800
++++ b/CMakeLists.txt      2026-11-10 08:50:48.875212855 -0800
+@@ -104,7 +104,30 @@
+ enable_testing()
+
+ if (ZeroSum_WITH_PerfStubs)
+-    add_git_submodule(perfstubs TRUE)
++    if(DEFINED PerfStubs_ROOT AND EXISTS "${PerfStubs_ROOT}")
++
++        message(STATUS "Using external PerfStubs from ${PerfStubs_ROOT}")
++
++        find_path(PERFSTUBS_INCLUDE_DIR
++            NAMES perfstubs_api/timer.h
++            HINTS
++                ${PerfStubs_ROOT}/include
++            REQUIRED)
++
++        find_library(PERFSTUBS_LIBRARY
++            NAMES perfstubs
++            HINTS
++                ${PerfStubs_ROOT}/lib
++                ${PerfStubs_ROOT}/lib64
++            REQUIRED)
++
++        set(PERFSTUBS_EXTERNAL TRUE)
++
++    else()
++
++        add_git_submodule(perfstubs TRUE)
++
++    endif()
+ endif (ZeroSum_WITH_PerfStubs)
+
+ #####  LM Sensors #####
+ 
