@@ -134,6 +134,8 @@ class Visit(CMakePackage):
 
     depends_on("cmake@3.14.7:", type="build")
     depends_on("cmake@3.24:", type="build", when="@3.4:")
+    # 3.5.0 sets policy CMP0033 to OLD and uses export_library_dependencies (removed in 4.0)
+    depends_on("cmake@:3", type="build", when="@3.5.0")
     depends_on("mpi", when="+mpi")
     conflicts("mpi", when="~mpi")
 
