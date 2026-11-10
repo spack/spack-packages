@@ -253,7 +253,7 @@ class Warpx(CMakePackage, PythonExtension):
             args.append("-DWarpX_openpmd_internal=OFF")
 
         if "+python" in spec:
-            pip_args = PythonPipBuilder.std_args(self) + [f"--prefix={self.prefix}"]
+            pip_args = PythonPipBuilder.std_args() + [f"--prefix={self.prefix}"]
             idx = pip_args.index("install")
             # Docs: https://warpx.readthedocs.io/en/latest/install/cmake.html#build-options
             args.extend(
