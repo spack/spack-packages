@@ -17,6 +17,25 @@ class X3d2(CMakePackage, CudaPackage):
     # The version is fixed to this commit until the first release.
     version("main", commit="3431b7947143b959d04d2b63c549f1b94b52efa6")
 
+    variant(
+        "build_type",
+        default="Release",
+        description="The build type to build",
+        values=("Release", "Debug"),
+    )
+    variant("mpi", default=True, description="Build with MPI (off gives a single serial rank)")
+    variant(
+        "double",
+        default=True,
+        description="Use double precision (off gives single precision, also in 2decomp-fft)",
+    )
+    # The GPU backends use their own FFT path. Only the CPU build needs 2decomp-fft.
+    variant(
+        "decomp2d",
+        default=True,
+        when="+mpi ~cuda",
+        description="Build the Poisson FFT solver with 2decomp-fft",
+    )
     variant("adios2", default=False, description="Enable ADIOS2 I/O")
 
     # The `CudaPackage` class provides the `cuda` and `cuda_arch` variants.
@@ -46,10 +65,12 @@ class X3d2(CMakePackage, CudaPackage):
         depends_on("cmake@3.20:")
         depends_on("python@3:")
 
-    depends_on("mpi")
-    depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
-    # The GPU backends use their own FFT path. Only the CPU build needs 2decomp-fft.
-    depends_on("2decomp-fft+double", when="~cuda")
+    depends_on("mpi", when="+mpi")
+    depends_on("mpich+fortran", when="+mpi ^[virtuals=mpi] mpich")
+
+    with when("+decomp2d"):
+        depends_on("2decomp-fft+double", when="+double")
+        depends_on("2decomp-fft~double", when="~double")
 
     with when("+cuda"):
         requires("%fortran=nvhpc", msg="x3d2 +cuda needs nvfortran (%fortran=nvhpc)")
@@ -68,7 +89,9 @@ class X3d2(CMakePackage, CudaPackage):
         depends_on("cuda@12.8", when="%fortran=nvhpc@25.3")
 
     with when("+adios2"):
-        depends_on("adios2@2.12: ~libcatalyst +fortran +mpi")
+        depends_on("adios2@2.12: ~libcatalyst +fortran")
+        depends_on("adios2 +mpi", when="+mpi")
+        depends_on("adios2 ~mpi", when="~mpi")
         # The libmgard that GCC builds links libgomp.
         # In the GPU backends, libgomp clashes with libnvomp
         # (ctest fails with "libgomp: TODO"). Build adios2 with nvhpc and without mgard.
@@ -105,28 +128,36 @@ class X3d2(CMakePackage, CudaPackage):
             else ("OMP_TGT" if spec.satisfies("+omp_tgt") else "CUDA")
         )
         args = [
-            self.define("WITH_MPI", True),
-            self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
-            self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
-            # CMake FindMPI must not read PATH, so pass the Fortran wrapper too.
-            self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
-            self.define("WITH_2DECOMPFFT", spec.satisfies("~cuda")),
+            self.define_from_variant("WITH_MPI", "mpi"),
+            self.define("SINGLE_PREC", spec.satisfies("~double")),
+            self.define("WITH_2DECOMPFFT", spec.satisfies("+decomp2d")),
             self.define_from_variant("WITH_ADIOS2", "adios2"),
             self.define("ENABLE_BACKEND", backend),
         ]
-        if spec.satisfies("~cuda"):
+        if spec.satisfies("+mpi"):
+            args += [
+                self.define("MPI_C_COMPILER", spec["mpi"].mpicc),
+                self.define("MPI_CXX_COMPILER", spec["mpi"].mpicxx),
+                # CMake FindMPI must not read PATH, so pass the Fortran wrapper too.
+                self.define("MPI_Fortran_COMPILER", spec["mpi"].mpifc),
+            ]
+        if spec.satisfies("+decomp2d"):
             args.append(self.define("decomp2d_install_dir", spec["2decomp-fft"].prefix))
-        else:
+        if spec.satisfies("+cuda"):
             cuda_arch = spec.variants["cuda_arch"].value
             if len(cuda_arch) != 1:
                 raise InstallError("x3d2 accepts exactly one cuda_arch value")
             args.append(self.define("BACKEND_ARCH", "cc" + cuda_arch[0]))
         if spec.satisfies("+adios2"):
+            # Spack does not fetch ADIOS2, so the build always uses the Spack installation.
             args += [
                 self.define("USE_SYSTEM_ADIOS2", True),
                 self.define("ADIOS2_ROOT_DIR", spec["adios2"].prefix),
                 self.define("WITH_ADIOS2_GPU_AWARE", False),
             ]
+        # These options stay at the upstream defaults. They only set test runs:
+        # WITH_NIGHTLY_REGRESSION, CMAKE_CTEST_NPROCS, CMAKE_CTEST_ARGUMENTS and
+        # FLANG_OPENMP_RUNTIME_DIR.
         return args
 
     def install(self, spec, prefix):
