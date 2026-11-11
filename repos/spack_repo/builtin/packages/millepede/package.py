@@ -104,7 +104,7 @@ class CMakeBuilder(CMakeBuilder):
             self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"),
         ]
 
-        if "~mkl" in self.spec:  # ← only for OpenBLAS
+        if "~mkl" in self.spec:  # only for OpenBLAS
             libs = self.spec["openblas"].libs.joined()
             args += [self.define("BLAS_LIBRARIES", libs), self.define("LAPACK_LIBRARIES", libs)]
 
