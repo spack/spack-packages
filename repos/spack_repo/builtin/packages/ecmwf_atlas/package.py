@@ -51,6 +51,7 @@ class EcmwfAtlas(CMakePackage):
     depends_on("ecbuild@3.8:", type=("build"), when="@0.41.0:")
     depends_on("eckit@:1.23", when="@:0.33")
     depends_on("eckit@1.24:", when="@0.34:")
+    # boost is only needed by CGAL (up to 0.34)
     depends_on("boost cxxstd=14 visibility=hidden", when="@0.26.0:0.33.99", type=("build", "run"))
     depends_on("boost cxxstd=17 visibility=hidden", when="@0.34", type=("build", "run"))
     variant("fckit", default=True, description="Enable fckit")
@@ -81,14 +82,6 @@ class EcmwfAtlas(CMakePackage):
     depends_on("fftw-api", when="+fftw")
     variant("tesselation", default=False, description="Enable tesselation", when="@0.35.0:")
     depends_on("qhull", when="+tesselation")
-    variant(
-        "cgal",
-        default=False,
-        description="Enable CGAL backend for Delaunay triangulation",
-        when="@0.35.0:",
-    )
-    depends_on("cgal", when="+cgal")
-    depends_on("boost@1.45:", when="+cgal", type=("build", "link"))
 
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
 
@@ -104,7 +97,6 @@ class EcmwfAtlas(CMakePackage):
         if self.spec.satisfies("@0.35:"):
             args.append(self.define_from_variant("ENABLE_ECTRANS", "trans"))
             args.append(self.define_from_variant("ENABLE_TESSELATION", "tesselation"))
-            args.append(self.define_from_variant("ENABLE_CGAL", "cgal"))
         if self.spec.satisfies("~shared"):
             args.append("-DBUILD_SHARED_LIBS=OFF")
         return args
