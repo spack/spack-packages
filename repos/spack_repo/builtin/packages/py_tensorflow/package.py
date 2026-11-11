@@ -1064,10 +1064,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             )
             with working_dir(buildpath):
                 wheel = glob.glob("*.whl")[0]
-                pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", wheel)
+                pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", wheel)
         else:
             buildpath = join_path(self.stage.source_path, "spack-build")
             with working_dir(buildpath):
-                pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+                pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
 
         remove_linked_tree(tmp_path)
