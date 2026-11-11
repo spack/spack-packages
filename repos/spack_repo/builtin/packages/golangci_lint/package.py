@@ -5,11 +5,11 @@
 from datetime import datetime, timezone
 import tarfile
 
+from spack.package import *
 from spack_repo.builtin.build_systems.go import (
     GoBuilder as BuiltinGoBuilder,
     GoPackage as BuiltinGoPackage,
 )
-from spack.package import *
 
 
 class GolangciLint(BuiltinGoPackage):
