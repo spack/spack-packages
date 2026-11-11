@@ -15,7 +15,7 @@ class Sratoolkit(Package):
     homepage = "https://trace.ncbi.nlm.nih.gov/Traces/sra"
     url = "https://ftp-trace.ncbi.nlm.nih.gov/sra/sdk/3.0.0/sratoolkit.3.0.0-centos_linux64.tar.gz"
 
-    maintainers("robqiao")
+    maintainers("manifestoso")
 
     version("3.4.1", sha256="f4850a32975596ca0755d928b166ecb0095918284ea992fba10f1acb3fcff64d")
     version("3.0.0", sha256="89d11fc284e32d38b6639c551df6d658075cd268913f8ba2af65026e4a161dfe")

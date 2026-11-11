@@ -2,12 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
+from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
 from spack.package import *
 
 
-class SandiaMicroBenchmarks(MakefilePackage):
+class SandiaMicroBenchmarks(MakefilePackage, CudaPackage, ROCmPackage):
     """Sandia Micro Benchmarks test HPC networking, including messaging rate performance, across
     several different HPC networking protocols, including MPI, RMA, and SHMEM. There is also a test
     for MPI implementation overhead."""
@@ -34,6 +36,11 @@ class SandiaMicroBenchmarks(MakefilePackage):
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
+        make_args = []
+        if self.spec.satisfies("+cuda"):
+            make_args.append("CUDA=1")
+        elif self.spec.satisfies("+rocm"):
+            make_args.append("ROCM=1")
         for target in self.build_targets:
-            make(target)
+            make(*make_args, target)
             install(target, prefix.bin)

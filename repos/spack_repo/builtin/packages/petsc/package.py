@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.26.1", sha256="a4dc46c1b4403545ac2274741ce10801366c4a9a7b2683b678d18f6663b93496")
     version("3.26.0", sha256="f5230023e6e22ee607802a13c82bc25f3d81e71654ad386a5b9bdff17fed93df")
     version("3.25.6", sha256="00ac91c7ae96eae6a39d7380c7e869c1c7ddbc0c64a23a0b5fd3442227c7cdb9")
     version("3.25.5", sha256="6d61c472db39006d261542d1a42f1fa6c52d6e89f9e77041386189aa8c24b490")
@@ -133,6 +134,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     # Mumps is disabled by default, because it depends on Scalapack
     # which is not portable to all HPC systems
     variant("mumps", default=False, description="Activates support for MUMPS (only parallel)")
+    variant("superlu", default=False, description="Activates support for SuperLU (sequential)")
     variant(
         "superlu-dist",
         default=False,
@@ -150,6 +152,13 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         default="C",
         values=("C", "C++"),
         description="Specify C (recommended) or C++ to compile PETSc",
+        multi=False,
+    )
+    variant(
+        "cxxstd",
+        default="auto",
+        values=("auto", "11", "14", "17", "20"),
+        description="Specify the C++ dialect to use (auto: let PETSc choose)",
         multi=False,
     )
     variant("fftw", default=False, description="Activates support for FFTW (only parallel)")
@@ -197,9 +206,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("hwloc", default=False, description="Activates support for hwloc")
     variant("kokkos", default=False, description="Activates support for kokkos and kokkos-kernels")
     variant("fortran", default=True, description="Activates fortran support")
-    # Install-time footprint is dominated by ~8 k tutorial/example files.
-    # Give packagers a switch to trim them away (‘spack install petsc ~examples’)
-    # while preserving current behaviour by default.
     variant("examples", default=True, description="Install test and tutorial example sources")
     variant(
         "fortran-bindings", default=True, when="+fortran", description="Activates fortran bindings"
@@ -258,6 +264,8 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     conflicts("+p4est", when="~mpi", msg=mpi_msg)
     conflicts("+ptscotch", when="~mpi", msg=mpi_msg)
     conflicts("+superlu-dist", when="~mpi", msg=mpi_msg)
+    # SuperLU has no 64-bit integer support - use superlu-dist instead
+    conflicts("+superlu", when="+int64")
     conflicts("+kokkos", when="~mpi", msg=mpi_msg)
     conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
 
@@ -353,6 +361,10 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("hypre@2.21:", when="@3.20:3.21+hypre")
     depends_on("hypre@2.31:", when="@3.22:+hypre")
     depends_on("hypre@develop", when="@main+hypre")
+    # hypre@3: requires umpire for +cuda/+rocm - petsc has to link it as well
+    depends_on("umpire", when="@3.24:+hypre ^hypre+umpire")
+
+    depends_on("superlu@5.2.1:", when="+superlu")
 
     depends_on("superlu-dist@6.1:~int64", when="@3.13.0:+superlu-dist+mpi~int64")
     depends_on("superlu-dist@6.1:+int64", when="@3.13.0:+superlu-dist+mpi+int64")
@@ -391,6 +403,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("kokkos-kernels", when="+kokkos")
     conflicts("kokkos@4.5:", when="@:3.22 +kokkos")
     conflicts("kokkos-kernels@4.5:", when="@:3.22 +kokkos")
+    conflicts(
+        "~openmp",
+        when="+kokkos ^kokkos+openmp",
+        msg="+kokkos with ^kokkos+openmp requires +openmp",
+    )
     for cuda_arch in CudaPackage.cuda_arch_values:
         depends_on(
             "kokkos+cuda+cuda_lambda cuda_arch=%s" % cuda_arch,
@@ -522,6 +539,14 @@ class Petsc(Package, CudaPackage, ROCmPackage):
         if spec.satisfies("@:3.22 ^cuda@12.8:"):
             options.append("CUDAPPFLAGS=-Wno-deprecated-gpu-targets")
 
+        if not spec.satisfies("cxxstd=auto"):
+            cxxstd = spec.variants["cxxstd"].value
+            options.append("--with-cxx-dialect=%s" % cxxstd)
+            if spec.satisfies("+cuda"):
+                options.append("--with-cuda-dialect=%s" % cxxstd)
+            if spec.satisfies("+rocm"):
+                options.append("--with-hip-dialect=%s" % cxxstd)
+
         if spec.satisfies("clanguage=C++"):
             options.append("--with-clanguage=C++")
         else:
@@ -549,9 +574,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
             ("hip", "hip", True, False),
             "metis",
             "hypre",
+            "umpire",
             "parmetis",
             ("kokkos", "kokkos", False, False),
             ("kokkos-kernels", "kokkos-kernels", False, False),
+            "superlu",
             ("superlu-dist", "superlu_dist", True, True),
             ("scotch", "ptscotch", True, True),
             (
@@ -655,13 +682,16 @@ class Petsc(Package, CudaPackage, ROCmPackage):
                 hip_inc += spec[pkg].headers.include_flags + " "
             for pkg in hip_lpkgs:
                 hip_lib += spec[pkg].libs.joined() + " "
+            if spec.satisfies("%gcc"):
+                # silence hipcc warnings from the gcc toolchain flags hip injects
+                hip_inc += "-w "
             options.append("HIPPPFLAGS=%s" % hip_inc)
             options.append("--with-hip-lib=%s -L%s -lamdhip64" % (hip_lib, spec["hip"].prefix.lib))
         else:
             options.append("--with-hipc=0")
 
         if "superlu-dist" in spec:
-            if spec.satisfies("@3.10.3:3.15"):
+            if spec.satisfies("@3.10.3:3.15 cxxstd=auto"):
                 options.append("--with-cxx-dialect=C++11")
             if spec["superlu-dist"].satisfies("+rocm"):
                 # Suppress HIP header warning message, otherwise the PETSc

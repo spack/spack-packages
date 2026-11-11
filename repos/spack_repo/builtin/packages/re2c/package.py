@@ -9,7 +9,8 @@ from spack.package import *
 
 
 class Re2c(AutotoolsPackage, CMakePackage):
-    """re2c: a free and open-source lexer generator for C and C++"""
+    """Lexer generator for C, C++, D, Go, Haskell, Java, JS, OCaml, Python,
+    Rust, Swift, V and Zig."""
 
     homepage = "https://re2c.org/index.html"
     url = "https://github.com/skvadrik/re2c/releases/download/1.2.1/re2c-1.2.1.tar.xz"
@@ -17,6 +18,7 @@ class Re2c(AutotoolsPackage, CMakePackage):
 
     license("Public-Domain")
 
+    version("4.6", sha256="75bf2696445e831d0d44e0d9f2909eeffc18c09757f222b2fb025f7e59fe130b")
     version("4.4", sha256="6b6b865924447ef992d5db4e52fb9307e5f65f26edd43efa91395da810f4280a")
     version("3.1", sha256="0ac299ad359e3f512b06a99397d025cfff81d3be34464ded0656f8a96676c029")
     version("3.0", sha256="b3babbbb1461e13fe22c630a40c43885efcfbbbb585830c6f4c0d791cf82ba0b")
@@ -31,6 +33,7 @@ class Re2c(AutotoolsPackage, CMakePackage):
     depends_on("python@3.7:", when="@3.1:", type="build")
 
     with when("build_system=cmake"):
+        depends_on("cmake@3.15:", type="build", when="@4.0.1:")
         depends_on("cmake@3.12:", type="build")
 
 

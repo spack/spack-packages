@@ -6,6 +6,7 @@ spack:
 
   concretizer:
     static_analysis: true
+    unify: when_possible
 
   config:
     # ROOT fails downloads frequently
@@ -36,13 +37,15 @@ spack:
       - target=x86_64_v3
     celeritas:
       require:
-      - +geant4 +hepmc3 +root +shared cxxstd=20
+      - +geant4 +shared
       - target=x86_64_v3
     geant4:
       require:
       - +opengl +qt +threads +x11
       - target=x86_64_v3
     hip:
+      # NOTE: *very* expensive: we should set buildable to false and install 
+      # externally, or ensure components are shared across other stacks
       require:
       - '@5.7.1 +rocm'
       - target=x86_64_v3
@@ -54,13 +57,16 @@ spack:
       require:
       - '@1.26:'
       - target=x86_64_v3
+    qmake:
+      require:
+      - qt-base
     rivet:
       require:
       - hepmc=3
       - target=x86_64_v3
     root:
       require:
-      - +arrow ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +opengl +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran ~vc +vdt ~veccore +webgui +x +xml +xrootd # cxxstd=20
+      - +arrow ~builtin_llvm ~daos +davix +dcache +emacs +examples +fftw +fits +fortran +gdml +graphviz +gsl +http +math +minuit +mlp +opengl +pythia8 +python +r +roofit +root7 +rpath ~shadow +spectrum +sqlite +ssl +tbb +tmva +tmva-cpu +unuran ~vc +vdt ~veccore +webgui +x +xml +xrootd # cxxstd=20
       # note: root cxxstd=20 not concretizable within sherpa
       # ~vc ~veccore since PCM integration broken with runtime_cxxmodules=ON
       - target=x86_64_v3
@@ -73,6 +79,8 @@ spack:
     geant4-data:
       buildable: false
       externals:
+      - spec: geant4-data@11.4.0
+        prefix: /usr
       - spec: geant4-data@11.3.0
         prefix: /usr
       - spec: geant4-data@11.2.2
@@ -84,6 +92,15 @@ spack:
       - spec: geant4-data@11.0.0
         prefix: /usr
 
+    ## Declare external OpenGL needed for ROCm (if built)
+    #libglx:
+    #  require: [opengl]
+    #opengl:
+    #  buildable: false
+    #  externals:
+    #    - prefix: /usr/
+    #      spec: opengl@4.5
+
   specs:
   # CPU
   - acts ~cuda
@@ -91,7 +108,7 @@ spack:
   - alpgen
   - ampt
   - apfel +lhapdf +python
-  - celeritas ~cuda +openmp ~rocm +vecgeom +covfie
+  - celeritas ~cuda ~rocm +covfie +hepmc3 +openmp +root +vecgeom cxxstd=20
   - cepgen
   - cernlib +shared
   - collier
@@ -107,8 +124,7 @@ spack:
   - form
   #- garfieldpp
   - gaudi +aida +examples +heppdt +xercesc
-  - geant4 ~vtk ^[virtuals=qmake] qt
-  - geant4 ~vtk ^[virtuals=qmake] qt-base
+  - geant4 ~vtk
   #- genie +atmo
   - geomodel +examples +fullsimlight +geomodelg4 +hepmc3 +pythia +tools ~visualization
   - hepmc
@@ -152,7 +168,6 @@ spack:
   - recola
   - rivet
   - root ~cuda
-  - root ~builtin_llvm
   - sherpa +analysis ~blackhat +gzip +hepmc3 +hepmc3root +lhapdf +lhole +openloops +pythia ~python ~recola ~rivet +root +ufo cxxstd=20
   - tauola +hepmc3 +lhapdf cxxstd=20
   - thepeg hepmc=3 ~rivet
@@ -163,12 +178,18 @@ spack:
 
   # CUDA
   #- acts +cuda +traccc cuda_arch=80
-  #- celeritas +cuda ~openmp +vecgeom cuda_arch=80 +covfie
+  - celeritas +cuda cuda_arch=80 ~openmp +covfie +vecgeom cxxstd=20
+  - g4adept +cuda cuda_arch=80 +covfie
   - root +cuda +cudnn +tmva-gpu
   - vecgeom +cuda cuda_arch=80
 
-  # ROCm
-  - celeritas +rocm amdgpu_target=gfx90a ~openmp ~vecgeom # only available with ORANGE
+  # ROCm is disabled because it's so expensive to build, but celeritas 0.7.0 
+  # does work
+  # TODO: share buildcache
+  # - ROCm 5.7.1 is not fully compatible with C++20
+  # - covfie requires ROCm 6
+  # - Disable ROOT and HepMC3 to minimize stack duplication with cxxstd=17
+  #- celeritas +rocm ~openmp ~vecgeom ~covfie ~root ~hepmc3 amdgpu_target=gfx90a  cxxstd=17
 
   ci:
     pipeline-gen:
