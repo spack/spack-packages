@@ -192,6 +192,23 @@ class CompilerWrapper(Package):
 
             isa_arg = microarchitecture_flags(dependent_spec, language)
 
+            if (
+                dependent_spec.satisfies("+rocm")
+                and language == "hip-lang"
+                and hasattr(compiler_pkg, "gpu_architecture_flags")
+            ):
+                gpu_flags = compiler_pkg.gpu_architecture_flags(dependent_spec)
+                if gpu_flags:
+                    if isa_arg:
+                        isa_arg = f"{isa_arg} {gpu_flags}"
+                    else:
+                        isa_arg = gpu_flags
+
+            if compiler_pkg.name == "llvm-amdgpu" and language == "fortran":
+                # Special case: llvm-amdgpu is clang-based, but its flang
+                # implementation may not accept clang-based architecture flags
+                isa_arg = None
+
             if isa_arg:
                 env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
 

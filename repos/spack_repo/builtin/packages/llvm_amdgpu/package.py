@@ -661,6 +661,21 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         """llvm-amdgpu uses the same optimization flags as clang"""
         return "clang"
 
+    def gpu_architecture_flags(self, spec):
+        """Return --offload-arch flags for the GPU architectures specified in amdgpu_target.
+
+        Args:
+            spec: The spec that may have amdgpu_target values
+
+        Returns:
+            String containing --offload-arch flags for each GPU target, or None
+        """
+        if spec.satisfies("+rocm") and "amdgpu_target" in spec.variants:
+            targets = spec.variants["amdgpu_target"].value
+            if targets and targets != "none":
+                flags = " ".join([f"--offload-arch={target}" for target in targets])
+                return flags
+
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
         """Callback function to inject runtime-related rules into the solver.
