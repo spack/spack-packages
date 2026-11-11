@@ -21,9 +21,7 @@ concurrency:
 
 jobs:
   bump:
-    # if: github.repository == 'spack/spack-packages'
-    # REMOVE
-    if: github.repository == 'kwryankrattiger/spack-packages'
+    if: github.repository == 'spack/spack-packages'
     runs-on: ubuntu-latest
     env:
       # BUMP_BRANCH: ci/bump-spack-core
