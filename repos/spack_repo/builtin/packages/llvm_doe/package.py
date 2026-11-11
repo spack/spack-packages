@@ -226,7 +226,7 @@ class LlvmDoe(CMakePackage, CudaPackage):
             # on some port and would hang Spack during detection.
             # clang-cl and clang-cpp are dev tools that we don't
             # need to test
-            if any(x in exe for x in ("vscode", "cpp", "-cl", "-gpu")):
+            if any(x in exe for x in ("vscode", "cpp", "-cl", "-gpu", "-dap", "-server", "-mcp")):
                 continue
             result.append(exe)
         return result

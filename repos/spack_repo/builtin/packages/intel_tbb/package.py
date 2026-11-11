@@ -21,11 +21,11 @@ class IntelTbb(CMakePackage, MakefilePackage):
     """
 
     homepage = "https://www.threadingbuildingblocks.org/"
-    url_prefix = "https://github.com/oneapi-src/oneTBB/"
-    url = url_prefix + "archive/v2020.1.tar.gz"
-    git = "https://github.com/oneapi-src/oneTBB.git"
+    url_prefix = "https://github.com/uxlfoundation/oneTBB/"
+    url = url_prefix + "archive/v2023.2.0.tar.gz"
+    git = "https://github.com/uxlfoundation/oneTBB.git"
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     # Note: when adding new versions, please check and update the
     # patches, filters and url_for_version() below as needed.
