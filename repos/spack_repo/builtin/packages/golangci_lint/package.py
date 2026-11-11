@@ -5,9 +5,10 @@
 import tarfile
 from datetime import datetime, timezone
 
-from spack.package import *
 from spack_repo.builtin.build_systems.go import GoBuilder as BuiltinGoBuilder
 from spack_repo.builtin.build_systems.go import GoPackage as BuiltinGoPackage
+
+from spack.package import *
 
 
 class GolangciLint(BuiltinGoPackage):
