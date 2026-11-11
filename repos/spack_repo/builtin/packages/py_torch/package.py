@@ -259,6 +259,9 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("aotriton@0.10b", when="@:2.10")
     with when("+xpu"):
         requires("+mkldnn", msg="+xpu needs the headers set up by +mkldnn")
+        depends_on("intel-oneapi-runtime")
+# Doesn't work, probably because it requires %oneapi
+#        requires("sycl")
 
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
@@ -377,11 +380,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         # Spack logs have trouble handling colored output
         env.set("COLORIZE_OUTPUT", "OFF")
 
-        # Handle Intel XPU support. Note this requires
-        # a oneAPI compiler in the build-time environment
-        # which is not expressed in the Spack spec,
-        # (which can use any otherwise suitable compiler)
+        # Handle Intel XPU support. The oneAPI compiler is found via
+        # intel-oneapi-runtime but any otherwise compatible compiler
+        # can be used for the rest of the compilation.
         enable_or_disable("xpu")
+        if self.spec.satisifes("^intel-oneapi-runtime"):
+            env.set("SYCL_XPU_COMPILER"), self.spec["intel-oneapi-runtime"].TODO
 
         enable_or_disable("test", keyword="BUILD")
         enable_or_disable("caffe2", keyword="BUILD")
