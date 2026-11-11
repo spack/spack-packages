@@ -192,6 +192,9 @@ class Eckit(CMakePackage):
             self.define("ENABLE_RSYNC", False),
             # Disable "prototyping code that may never see the light of day":
             self.define("ENABLE_SANDBOX", False),
+            # Disable OpenFAM and mock implementation (eckit >= 2.2)
+            self.define("ENABLE_OPENFAM_MOCK", False),
+            self.define("ENABLE_OPENFAM", False),
         ]
 
         # Static build of eckit not working, many places in eckit's build
