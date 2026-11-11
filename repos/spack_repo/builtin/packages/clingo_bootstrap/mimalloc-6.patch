@@ -6,12 +6,12 @@ which no longer has libclingo/ but lib/c-api/ instead.
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -109,6 +109,7 @@ endif()
+@@ -117,6 +117,7 @@ if(MSVC)
  endif()
-
+ 
  find_package(RE2C "3.0" REQUIRED)
 +find_package(mimalloc REQUIRED)
-
+ 
  add_subdirectory(third_party)
  add_subdirectory(lib libclingo)
 diff --git a/lib/c-api/CMakeLists.txt b/lib/c-api/CMakeLists.txt
@@ -29,12 +29,12 @@ diff --git a/lib/c-api/CMakeLists.txt b/lib/c-api/CMakeLists.txt
 diff --git a/lib/c-api/src/main.cc b/lib/c-api/src/main.cc
 --- a/lib/c-api/src/main.cc
 +++ b/lib/c-api/src/main.cc
-@@ -1,6 +1,8 @@
- #include "control.hh" // IWYU pragma: keep
+@@ -3,6 +3,8 @@
  #include "lib.hh"     // IWYU pragma: keep
  #include "opts.hh"
-+
+ 
 +#include <mimalloc-new-delete.h>
-
++
  #include <clingo/app.h>
-
+ 
+ #include <clingo/control/solver.hh>
