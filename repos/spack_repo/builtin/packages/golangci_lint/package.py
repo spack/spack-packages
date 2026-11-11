@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import tarfile
 from datetime import datetime, timezone
+import tarfile
 
 from spack_repo.builtin.build_systems.go import (
     GoBuilder as BuiltinGoBuilder,
     GoPackage as BuiltinGoPackage,
 )
-
 from spack.package import *
 
 
@@ -29,10 +28,10 @@ class GolangciLint(BuiltinGoPackage):
 
     depends_on("go@1.26:", type="build")
 
-
     class GoBuilder(BuiltinGoBuilder):
         """This custom GoBuilder allows us to override the build_directory
         and ldflags properties while adding a commit_id property."""
+
         @property
         def build_directory(self):
             return join_path(self.stage.source_path, "cmd", self.pkg.name)
@@ -54,7 +53,7 @@ class GolangciLint(BuiltinGoPackage):
                         if commit_id:
                             return commit_id.strip()
 
-            except Exception as e:
+            except Exception:
                 tty.warn("Could not extract git commit ID from source archive")
 
             return "(unknown)"
@@ -64,5 +63,5 @@ class GolangciLint(BuiltinGoPackage):
             return [
                 f"-X main.version={self.pkg.version}",
                 f"-X main.commit={self.commit_id}",
-                f"-X main.date={datetime.now(timezone.utc).isoformat(timespec="seconds")}",
+                f"-X main.date={datetime.now(timezone.utc).isoformat(timespec='seconds')}",
             ]
