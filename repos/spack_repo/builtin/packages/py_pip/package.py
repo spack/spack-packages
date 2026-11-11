@@ -146,7 +146,7 @@ class PyPip(Package, PythonExtension):
             script = os.path.join(self.stage.source_path, "pip.pyz")
         else:
             script = os.path.join(whl, "pip")
-        python(script, *PythonPipBuilder.std_args(self), f"--prefix={prefix}", whl)
+        python(script, *PythonPipBuilder.std_args(), f"--prefix={prefix}", whl)
 
     def setup_dependent_package(self, module, dependent_spec: Spec):
         setattr(module, "pip", python.with_default_args("-m", "pip"))
