@@ -260,8 +260,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("+xpu"):
         requires("+mkldnn", msg="+xpu needs the headers set up by +mkldnn")
         depends_on("intel-oneapi-runtime")
-# Doesn't work, probably because it requires %oneapi
-#        requires("sycl")
+    # Doesn't work, probably because it requires %oneapi
+    #        requires("sycl")
 
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
