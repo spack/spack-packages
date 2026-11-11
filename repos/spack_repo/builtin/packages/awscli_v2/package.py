@@ -17,6 +17,7 @@ class AwscliV2(PythonPackage):
     license("Apache-2.0")
     maintainers("climbfuji", "teaguesterling")
 
+    version("2.39.6", sha256="d4cfa933d7ed916f9eca693ee9e863c0560021bd61bcf9f04963c56870313b4f")
     version("2.35.16", sha256="55754646274f224b19b0daeb9f01e4232a3e6e46665f3c1fdb425b2f026ade7d")
     version("2.24.24", sha256="d7b135ef02c96d50d81c0b5eb2723cf474cfda8e1758cccabbcaa6c14f281419")
     version("2.22.4", sha256="56c6170f3be830afef2dea60fc3fd7ed14cf2ca2efba055c085fe6a7c4de358e")
@@ -25,7 +26,7 @@ class AwscliV2(PythonPackage):
 
     # The patch makes completion-index generation optional for environments
     # where importing the full CLI command set during the wheel build hangs.
-    patch("skip-autocomplete-index.patch", when="@2.35.16")
+    patch("skip-autocomplete-index.patch", when="@2.35.16:")
 
     with default_args(type="build"):
         depends_on("py-flit-core@3.7.1:", when="@2.22:")
@@ -47,8 +48,10 @@ class AwscliV2(PythonPackage):
         # Upper bound relaxed for Python 3.13 support
         # depends_on("py-ruamel-yaml-clib@0.2:0.2.8", when="@2.22:")
         depends_on("py-ruamel-yaml-clib@0.2:0.2.7", when="@:2.15")
-        depends_on("py-prompt-toolkit@3.0.24:3.0.38")
+        depends_on("py-prompt-toolkit@3.0.24:3.0.51", when="@2.39:")
+        depends_on("py-prompt-toolkit@3.0.24:3.0.38", when="@:2.35")
         depends_on("py-distro@1.5:1.8")
+        depends_on("py-awscrt@0.38.1", when="@2.39.6")
         depends_on("py-awscrt@0.35.0", when="@2.35.16")
         depends_on("py-awscrt@0.19.18:0.22.0", when="@2.22:2.35.15")
         depends_on("py-awscrt@0.19.18:0.19.19", when="@2.15")
@@ -56,6 +59,7 @@ class AwscliV2(PythonPackage):
         depends_on("py-python-dateutil@2.1:2.9.0", when="@2.22:")
         depends_on("py-python-dateutil@2.1:2.8.2", when="@:2.15")
         depends_on("py-jmespath@0.7.1:1.0")
+        depends_on("py-wcwidth@:0.2", when="@2.39:")
 
         # For Python 3.10 and newer, support urllib3 v1 and v2
         depends_on("py-urllib3@1.25.4:2.99", when="^python@3.10:")
