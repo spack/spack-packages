@@ -1,9 +1,10 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class _2decompFft(CMakePackage):
+class _2decompFft(CMakePackage, CudaPackage):
     """2DECOMP&FFT is a Fortran library for 2D pencil decomposition and distributed FFTs."""
 
     homepage = "https://github.com/2decomp-fft/2decomp-fft"
@@ -43,6 +44,25 @@ class _2decompFft(CMakePackage):
         multi=False,
         description="The FFT library",
     )
+    # The `CudaPackage` class provides the `cuda` and `cuda_arch` variants. The `cuda` variant
+    # selects the GPU target of the library.
+    variant("openacc", default=True, when="+cuda", description="Use OpenACC in the GPU target")
+    variant(
+        "managed",
+        default=False,
+        when="+cuda",
+        description="Use the automatic GPU memory management of NVHPC",
+    )
+    variant(
+        "nccl",
+        default=False,
+        when="+cuda",
+        description=(
+            "Use the NCCL library of NVHPC for the collective communication. "
+            "This build fails with 2decomp-fft 2.0.3.2 and nvhpc 25.3 because "
+            "`decomp_2d_nccl.f90` does not declare `cudastreamcreate`. This path is not verified"
+        ),
+    )
     variant("adios2", default=False, description="Use ADIOS2 for the I/O")
     variant("caliper", default=False, description="Enable the Caliper profiler")
 
@@ -57,6 +77,16 @@ class _2decompFft(CMakePackage):
         with when("+caliper"):
             depends_on("c")
             depends_on("cxx")
+
+        # The CMake CUDA language check runs nvcc, and nvcc runs the C++ compiler as the linker.
+        depends_on("cxx", when="+cuda")
+
+    with when("+cuda"):
+        requires("%fortran=nvhpc", msg="2decomp-fft +cuda needs nvfortran (%fortran=nvhpc)")
+        conflicts("cuda_arch=none", msg="2decomp-fft +cuda needs a cuda_arch value")
+        conflicts("+even", msg="2decomp-fft +cuda does not support +even")
+
+    requires("+cuda", when="fft=cufft", msg="2decomp-fft fft=cufft needs +cuda")
 
     depends_on("mpi")
     depends_on("mpich+fortran", when="^[virtuals=mpi] mpich")
@@ -92,16 +122,39 @@ class _2decompFft(CMakePackage):
         ):
             filter_file(flag, "", file, string=True)
 
+    def setup_build_environment(self, env):
+        # The cuda package sets NVHPC_CUDA_HOME for its dependents.
+        # Then NVHPC cannot find its own comm_libs and math_libs for that CUDA version.
+        # The Fortran compiler does not find `mpif.h`.
+        # Point NVCOMPILER_COMM_LIBS_HOME and NVCOMPILER_MATH_LIBS_HOME at these directories.
+        if self.spec.satisfies("+cuda"):
+            nvhpc = self.spec["nvhpc"]
+            cuda_version = self.spec["cuda"].version.up_to(2)
+            nvhpc_root = join_path(
+                nvhpc.prefix, f"Linux_{nvhpc.target.family}", str(nvhpc.version)
+            )
+            for lib in ("COMM", "MATH"):
+                env.set(
+                    f"NVCOMPILER_{lib}_LIBS_HOME",
+                    join_path(nvhpc_root, f"{lib.lower()}_libs", str(cuda_version)),
+                )
+
     def cmake_args(self):
         # The test run parameters `PROW`, `PCOL`, `NX`, `NY` and `NZ` keep the upstream defaults.
         spec = self.spec
+        if "+cuda" in spec and len(spec.variants["cuda_arch"].value) != 1:
+            raise InstallError("2decomp-fft accepts exactly one cuda_arch value")
         mkl_dir = (
             join_path(spec["intel-oneapi-mkl"].package.component_prefix, "lib", "cmake", "mkl")
             if "intel-oneapi-mkl" in spec
             else None
         )
         return [
-            self.define("BUILD_TARGET", "mpi"),
+            self.define("BUILD_TARGET", "gpu" if "+cuda" in spec else "mpi"),
+            self.define_from_variant("ENABLE_CUDA", "cuda"),
+            self.define_from_variant("ENABLE_OPENACC", "openacc"),
+            self.define_from_variant("ENABLE_MANAGED", "managed"),
+            self.define_from_variant("ENABLE_NCCL", "nccl"),
             self.define("IO_BACKEND", "adios2" if "+adios2" in self.spec else "mpi"),
             self.define("ENABLE_PROFILER", "caliper" if "+caliper" in self.spec else "OFF"),
             self.define_from_variant("FFT_Choice", "fft"),
@@ -113,6 +166,12 @@ class _2decompFft(CMakePackage):
             self.define_from_variant("EVEN", "even"),
             # FindMPI must use the Spack compiler wrapper and not search `PATH`.
             self.define("MPI_Fortran_COMPILER", self.spec["mpi"].mpifc),
+            # Upstream detects the GPU of the build host if this option is missing.
+            *(
+                [self.define("CUDA_ARCH_COMP", spec.variants["cuda_arch"].value[0])]
+                if "+cuda" in spec
+                else []
+            ),
             *([self.define("FFTW_ROOT", spec["fftw"].prefix)] if "fftw" in spec else []),
             *([self.define("MKL_DIR", mkl_dir)] if mkl_dir else []),
         ]
