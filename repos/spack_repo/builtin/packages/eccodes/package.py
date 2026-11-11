@@ -139,6 +139,9 @@ class Eccodes(CMakePackage):
     conflicts("+openmp", when="+pthreads", msg="Cannot enable both POSIX threads and OMP")
 
     depends_on("eckit", when="+geo")
+    depends_on("eckit@1.30:", when="@2.40: +geo")
+    depends_on("eckit@2.1:", when="@2.47.3: +geo")
+    depends_on("eckit@2.3:", when="@2.49: +geo")
 
     conflicts(
         "+netcdf",
