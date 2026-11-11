@@ -673,6 +673,8 @@ class LlvmAmdgpu(CMakePackage, LlvmDetection, CompilerPackage):
         if spec.satisfies("+rocm") and "amdgpu_target" in spec.variants:
             targets = spec.variants["amdgpu_target"].value
             if targets and targets != "none":
+                if isinstance(targets, str):
+                    targets = (targets,)
                 flags = " ".join([f"--offload-arch={target}" for target in targets])
                 return flags
 
