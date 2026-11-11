@@ -53,7 +53,8 @@ class PyPythran(PythonPackage):
     depends_on("py-setuptools@62:", when="@0.15:", type=("build", "run"))
     depends_on("py-setuptools", type=("build", "run"))
     depends_on("py-ply@3.4:", type=("build", "run"))
-    depends_on("py-gast@0.6", when="@0.17:", type=("build", "run"))
+    depends_on("py-gast@0.7", when="@0.19:", type=("build", "run"))
+    depends_on("py-gast@0.6", when="@0.17:0.18", type=("build", "run"))
     depends_on("py-gast@0.5", when="@0.15:0.16", type=("build", "run"))
     # upper bound due to https://github.com/scipy/scipy/issues/18390
     depends_on("py-gast@0.5:0.5.3", when="@0.9.12:0.12", type=("build", "run"))
@@ -66,7 +67,8 @@ class PyPythran(PythonPackage):
     depends_on("py-numpy@:2.4", when="@:0.18.0", type=("build", "run"))
     # https://github.com/serge-sans-paille/pythran/issues/2189
     depends_on("py-numpy@:1", when="@:0.15", type=("build", "run"))
-    depends_on("py-beniget@0.4", when="@0.9.12:", type=("build", "run"))
+    depends_on("py-beniget@0.5", when="@0.19:", type=("build", "run"))
+    depends_on("py-beniget@0.4", when="@0.9.12:0.18", type=("build", "run"))
     depends_on("py-beniget@0.3", when="@0.9.7:0.9.11", type=("build", "run"))
     depends_on("py-beniget@0.2.1:0.2", when="@0.9.6", type=("build", "run"))
     depends_on("py-beniget@0.2:", when="@0.9.4:0.9.5", type=("build", "run"))

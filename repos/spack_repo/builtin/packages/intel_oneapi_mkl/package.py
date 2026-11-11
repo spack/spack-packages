@@ -23,10 +23,17 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
     math.
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onemkl.html"
+    )
+
+    version(
+        "2026.2.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/97415287-271a-4d14-967f-72e2d9ceeb1e/intel-onemkl-2026.2.0.890_offline.sh",
+        sha256="e4d3326c0691d861db54501f0dc10cb665d60f2f236b08bbbfa3dbe37bbaa5d8",
+        expand=False,
     )
 
     version(
@@ -262,7 +269,8 @@ class IntelOneapiMkl(IntelOneApiLibraryPackage):
 
         libs = self._find_mkl_libs(shared)
 
-        system_libs = find_system_libraries(["libpthread", "libm", "libdl"])
+        # Let the linker resolve system libraries without searching unrelated SDK sysroots.
+        system_libs = LibraryList(["pthread", "m", "dl"])
         if shared:
             return libs + system_libs
         else:

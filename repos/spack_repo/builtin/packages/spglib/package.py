@@ -21,6 +21,7 @@ class Spglib(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("2.8.0", sha256="161562fa082da85a8ecda0339ddaac3714470434de60eb67978a960872cacf78")
     version("2.7.0", sha256="b22fc9abae9716c574fbc6d55cfc53ed654a714fccc5657a26ff5d18114bd8bd")
     version("2.6.0", sha256="c65af71136c915352eb82444b165ec83289877eb8e46593033f199801b43dbf7")
     version("2.5.0", sha256="b6026f5e85106c0c9ee57e54b9399890d0f29982e20e96ede0428b3efbe6b914")
