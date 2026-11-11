@@ -81,7 +81,12 @@ class EcmwfAtlas(CMakePackage):
     depends_on("fftw-api", when="+fftw")
     variant("tesselation", default=False, description="Enable tesselation", when="@0.35.0:")
     depends_on("qhull", when="+tesselation")
-    variant("cgal", default=False, description="Enable CGAL mesh generation", when="@0.35.0:")
+    variant(
+        "cgal",
+        default=False,
+        description="Enable CGAL backend for Delaunay triangulation",
+        when="@0.35.0:",
+    )
     depends_on("cgal", when="+cgal")
     depends_on("boost@1.45:", when="+cgal", type=("build", "link"))
 
