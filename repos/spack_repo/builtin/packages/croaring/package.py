@@ -17,7 +17,7 @@ class Croaring(CMakePackage):
 
     maintainers("teaguesterling")
 
-    license("(Apache-2.0 OR MIT) AND BSD-3-Clause")
+    license("Apache-2.0 OR MIT")
 
     version("5.5.5", sha256="f78a93b8cf373fe4a3d31075cf2b3dc21dcfd7bbbc17674df35071ec8e461aef")
     version("4.7.1", sha256="56657dab885c3dd1d3ff3b4a795a5ae05cb0a70c0f53d0093b0c281af30aa8ac")
