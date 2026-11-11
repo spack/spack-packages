@@ -15,7 +15,7 @@ class PyPingouin(PythonPackage):
     pypi = "pingouin/pingouin-0.7.0.tar.gz"
     git = "https://github.com/raphaelvallat/pingouin.git"
 
-    license("GPL-3.0-or-later")
+    license("GPL-3.0")
 
     version("0.7.0", sha256="19d180d2fe9663ec91908f3bf6c81cef32564f55c34aa186ad5b2cd9cad33ee3")
 
