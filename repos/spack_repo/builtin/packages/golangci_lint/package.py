@@ -23,4 +23,4 @@ class GoLangCiLint(GoPackage):
 
     depends_on("go@1.26:", type="build")
 
-    build_args = [join_path(self.stage.source_path, "cmd", self.pkg.name)]
+    build_args = [join_path(self.stage.source_path, "cmd", "golangci-lint")]
