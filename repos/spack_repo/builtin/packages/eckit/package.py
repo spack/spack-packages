@@ -128,6 +128,7 @@ class Eckit(CMakePackage):
     depends_on("openssl", when="+ssl")
 
     depends_on("curl", when="+curl")
+    depends_on("curl@7.61:", when="@2.1: +curl")
 
     depends_on("jemalloc", when="+jemalloc")
 
