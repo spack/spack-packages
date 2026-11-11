@@ -49,7 +49,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("test", default=False, description="Build C++ test binaries")
     variant("cuda", default=not is_darwin, description="Use CUDA")
     variant("rocm", default=False, description="Use ROCm")
-    variant("xpu", default=not is_darwin, description="Use Intel XPU")
+    variant("xpu", default=False, description="Use Intel XPU")
     variant("cudnn", default=not is_darwin, description="Use cuDNN", when="+cuda")
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
     variant("kineto", default=True, description="Use Kineto profiling library", when="@:2.10")
