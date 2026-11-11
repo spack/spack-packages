@@ -10,6 +10,7 @@ from spack_repo.builtin.build_systems.go import GoPackage as BuiltinGoPackage
 
 from spack.package import *
 
+
 class GolangciLint(BuiltinGoPackage):
     """golangci-lint is a fast Go linters runner. It runs linters in parallel,
     uses caching, supports YAML configuration, integrates with all major IDEs,
