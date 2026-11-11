@@ -32,7 +32,7 @@ class PyDecorator(PythonPackage):
     depends_on("python@3.5:", when="@5.0.1:", type=("build", "run"))
     depends_on("python@2.6:2.8,3.2:", type=("build", "run"))
 
-    depends_on("py-setuptools@77:", when="@5.3.1:", type="build")
     # uses pyproject.toml only
+    depends_on("py-setuptools@77:", when="@5.3.1:", type="build")
     depends_on("py-setuptools@61:", when="@5.2.1:", type="build")
     depends_on("py-setuptools", type="build")
