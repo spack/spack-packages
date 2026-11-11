@@ -23,7 +23,7 @@ class Stat(AutotoolsPackage):
     version("develop", branch="develop")
     version(
         "4.3.0",
-        sha256="f65d110e944a016b52c9af16fedd6823fb2db2da1607c8f540c114c0a71aa231",
+        sha256="896a3dacad612f93090d0dc4ab2c453ee2ca4dd3c47e396186727d9ad0519ef5",
         url="https://github.com/llnl/STAT/releases/download/v4.3.0/stat-4.3.0.tar.gz",
     )
     version(
