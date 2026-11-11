@@ -21,4 +21,4 @@ class Dlv(GoPackage):
 
     depends_on("go@1.25:", type=("build", "run"))
 
-    build_args = [join_path(".", "cmd", "dlv")]
+    build_directory = join_path(".", "cmd", "dlv")
