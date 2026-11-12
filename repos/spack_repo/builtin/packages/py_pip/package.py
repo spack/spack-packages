@@ -92,7 +92,8 @@ class PyPip(Package, PythonExtension):
         )
         version("9.0.1", sha256="690b762c0a8460c303c089d5d0be034fb15a5ea2b75bdf565f40421f542fefb0")
 
-    extends("python+zlib")
+    # pip needs zlib and expat as python modules
+    extends("python+zlib+pyexpat")
 
     with default_args(type=("build", "run")):
         depends_on("python@3.10:", when="@26.1:")
@@ -145,7 +146,7 @@ class PyPip(Package, PythonExtension):
             script = os.path.join(self.stage.source_path, "pip.pyz")
         else:
             script = os.path.join(whl, "pip")
-        python(script, *PythonPipBuilder.std_args(self), f"--prefix={prefix}", whl)
+        python(script, *PythonPipBuilder.std_args(), f"--prefix={prefix}", whl)
 
     def setup_dependent_package(self, module, dependent_spec: Spec):
         setattr(module, "pip", python.with_default_args("-m", "pip"))

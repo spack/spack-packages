@@ -5,8 +5,6 @@
 
 ###
 # Stacks without maintainers will ping infrastructure maintainers
-# /stacks/aws-pcluster-neoverse_v1/
-# /stacks/aws-pcluster-x86_64_v4/
 
 ###
 # Stacks with maintainers

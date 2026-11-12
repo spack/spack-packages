@@ -21,7 +21,14 @@ class Patchelf(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
-    version("0.19.2", sha256="78cb26bda2b89fababfe189c2f6507240340f1aa45dec2eb49a39473a50ceea1")
+    version("0.19.3", sha256="fac76a3c0b730e8d53ea1d10cd6015322d78c9900af91736f2cca51d5837b612")
+    # patchelf 0.19.2 breaks rewriting RPATHs sometimes:
+    # https://github.com/NixOS/patchelf/pull/672
+    version(
+        "0.19.2",
+        sha256="78cb26bda2b89fababfe189c2f6507240340f1aa45dec2eb49a39473a50ceea1",
+        deprecated=True,
+    )
     # patchelf 0.18 breaks libraries:
     # https://github.com/spack/spack/issues/39252
     # https://github.com/spack/spack/pull/40938
