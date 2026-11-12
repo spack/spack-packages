@@ -32,9 +32,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     )
     version("2025.12.0", submodules=False, commit="01f6f85c02ceffcd2bc06e42cee997867dd142c5")
     version("2025.07.0", submodules=False, commit="8cf38433a6a11e0dcd17864e649b2d045159ee9c")
-    version(
-        "1.2.7.0", submodules=False, commit="db920c1f5e1dcbb9e949d120e7d86efcdb777635"
-    )
+    version("1.2.7.0", submodules=False, commit="db920c1f5e1dcbb9e949d120e7d86efcdb777635")
     version(
         "1.2.7", submodules=True, tag="v1.2.7", commit="ddcac43cdad999f0346eb682065ef0af1847029d"
     )
@@ -71,7 +69,11 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
 
     variant("mpi", default=True, description="Build with MPI.")
     variant("chai", default=True, description="Build with CHAI/Umpire.")
-    variant("direct-device-plane", default=False, description="Use direct device allocator in Umpire for plane fields")
+    variant(
+        "direct-device-plane",
+        default=False,
+        description="Use direct device allocator in Umpire for plane fields",
+    )
     variant("openmp", default=False, description="Build with OpenMP enabled.")
     variant("caliper", default=False, description="Build with Caliper support enabled.")
     variant("gpu-aware-mpi", default=False, description="Enable GPU-aware MPI")
@@ -86,7 +88,6 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja@2025.12.0 ~examples~exercises cxxstd=17", when="@2025.12.0")
     depends_on("raja@2024.07.0 ~examples~exercises cxxstd=14", when="@1.2.7.0,2025.07.0")
     depends_on("raja@:2024.02.1~exercises~examples", when="@:1.2.7")
-
 
     with when("+chai"):
         depends_on("chai+mpi", when="+mpi")
@@ -122,8 +123,12 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire~rocm", when="~rocm")
         with when("+rocm @1.2.5:"):
             for arch in ROCmPackage.amdgpu_targets:
-                depends_on("umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
-                depends_on("chai amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
+                depends_on(
+                    "umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                )
+                depends_on(
+                    "chai amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                )
 
         conflicts("^blt@0.7:", when="^chai@:2024.07.0")
 
@@ -149,7 +154,9 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
         depends_on("umpire+rocm")
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on("umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
+            depends_on(
+                "umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
 
     depends_on("raja+openmp", when="+openmp")
     depends_on("raja~openmp", when="~openmp")
@@ -164,7 +171,9 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja~rocm", when="~rocm")
     with when("+rocm"):
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on("raja amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
+            depends_on(
+                "raja amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
 
     # googletest folder version hasn't been updated in over 5 years
     # and is commented out in later releases
@@ -179,11 +188,11 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
                 env.set("CUDAHOSTCXX", self.compiler.cxx)
 
     def setup_run_environment(self, env):
-      super().setup_run_environment(env)
+        super().setup_run_environment(env)
 
-      if self.compiler.extra_rpaths:
-        for rpath in self.compiler.extra_rpaths:
-          env.prepend_path("LD_LIBRARY_PATH", rpath)
+        if self.compiler.extra_rpaths:
+            for rpath in self.compiler.extra_rpaths:
+                env.prepend_path("LD_LIBRARY_PATH", rpath)
 
     def cmake_args(self):
         spec = self.spec
@@ -217,7 +226,11 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
 
         args.append(self.define_from_variant("ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))
         if "+gpu-aware-mpi" in spec:
-            args.append(self.define_from_variant("ENABLE_DIRECT_UMPIRE_PLANE_STORAGE", "direct-device-plane"))
+            args.append(
+                self.define_from_variant(
+                    "ENABLE_DIRECT_UMPIRE_PLANE_STORAGE", "direct-device-plane"
+                )
+            )
         args.append(self.define_from_variant("ENABLE_OPENMP", "openmp"))
         args.append(self.define_from_variant("ENABLE_CALIPER", "caliper"))
 
