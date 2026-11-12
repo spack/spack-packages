@@ -2,8 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from datetime import datetime, timezone
 import tarfile
+from datetime import UTC, datetime
 
 from spack_repo.builtin.build_systems.go import GoBuilder as BuiltinGoBuilder
 from spack_repo.builtin.build_systems.go import GoPackage as BuiltinGoPackage
@@ -52,8 +52,8 @@ class GolangciLint(BuiltinGoPackage):
                         if commit_id:
                             return commit_id.strip()
 
-            except Exception:
-                tty.warn("Could not extract git commit ID from source archive")
+            except Exception as e:
+                tty.warn(f"Could not extract git commit ID from source archive: {e}")
 
             return "(unknown)"
 
@@ -62,5 +62,5 @@ class GolangciLint(BuiltinGoPackage):
             return [
                 f"-X main.version={self.pkg.version}",
                 f"-X main.commit={self.commit_id}",
-                f"-X main.date={datetime.now(timezone.utc).isoformat(timespec='seconds')}",
+                f"-X main.date={datetime.now(UTC).isoformat(timespec='seconds')}",
             ]
