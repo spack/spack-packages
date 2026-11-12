@@ -124,12 +124,8 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire~rocm", when="~rocm")
         with when("+rocm @1.2.5:"):
             for arch in ROCmPackage.amdgpu_targets:
-                depends_on(
-                    f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}"
-                )
-                depends_on(
-                    f"chai amdgpu_target={arch}", when=f"amdgpu_target={arch}"
-                )
+                depends_on(f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}")
+                depends_on(f"chai amdgpu_target={arch}", when=f"amdgpu_target={arch}")
 
         conflicts("^blt@0.7:", when="^chai@:2024.07.0")
 
@@ -155,9 +151,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
         depends_on("umpire+rocm")
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on(
-                f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}"
-            )
+            depends_on(f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}")
 
     depends_on("raja+openmp", when="+openmp")
     depends_on("raja~openmp", when="~openmp")
@@ -172,9 +166,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja~rocm", when="~rocm")
     with when("+rocm"):
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on(
-                f"raja amdgpu_target={arch}", when=f"amdgpu_target={arch}"
-            )
+            depends_on(f"raja amdgpu_target={arch}", when=f"amdgpu_target={arch}")
 
     # googletest folder version hasn't been updated in over 5 years
     # and is commented out in later releases
