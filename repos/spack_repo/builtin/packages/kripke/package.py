@@ -2,11 +2,11 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+from spack.package import *
 
 
 class Kripke(CMakePackage, CudaPackage, ROCmPackage):
@@ -117,18 +117,18 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
 
         with when("+cuda"):
             for sm_ in CudaPackage.cuda_arch_values:
-                depends_on("umpire cuda_arch={0}".format(sm_), when="cuda_arch={0}".format(sm_))
-                depends_on("chai cuda_arch={0}".format(sm_), when="cuda_arch={0}".format(sm_))
+                depends_on(f"umpire cuda_arch={sm_}", when=f"cuda_arch={sm_}")
+                depends_on(f"chai cuda_arch={sm_}", when=f"cuda_arch={sm_}")
 
         depends_on("umpire+rocm", when="+rocm")
         depends_on("umpire~rocm", when="~rocm")
         with when("+rocm @1.2.5:"):
             for arch in ROCmPackage.amdgpu_targets:
                 depends_on(
-                    "umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                    f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}"
                 )
                 depends_on(
-                    "chai amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                    f"chai amdgpu_target={arch}", when=f"amdgpu_target={arch}"
                 )
 
         conflicts("^blt@0.7:", when="^chai@:2024.07.0")
@@ -146,7 +146,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
         depends_on("umpire+cuda")
         for sm_ in CudaPackage.cuda_arch_values:
-            depends_on("umpire cuda_arch={0}".format(sm_), when="cuda_arch={0}".format(sm_))
+            depends_on(f"umpire cuda_arch={sm_}", when=f"cuda_arch={sm_}")
 
     with when("+rocm~chai"):
         depends_on("umpire@2026.07.2: ~examples", when="@develop")
@@ -156,7 +156,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("umpire+rocm")
         for arch in ROCmPackage.amdgpu_targets:
             depends_on(
-                "umpire amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}"
             )
 
     depends_on("raja+openmp", when="+openmp")
@@ -166,14 +166,14 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("raja~cuda", when="~cuda")
     with when("+cuda"):
         for sm_ in CudaPackage.cuda_arch_values:
-            depends_on("raja cuda_arch={0}".format(sm_), when="cuda_arch={0}".format(sm_))
+            depends_on(f"raja cuda_arch={sm_}", when=f"cuda_arch={sm_}")
 
     depends_on("raja+rocm", when="+rocm")
     depends_on("raja~rocm", when="~rocm")
     with when("+rocm"):
         for arch in ROCmPackage.amdgpu_targets:
             depends_on(
-                "raja amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+                f"raja amdgpu_target={arch}", when=f"amdgpu_target={arch}"
             )
 
     # googletest folder version hasn't been updated in over 5 years
@@ -198,9 +198,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     def cmake_args(self):
         spec = self.spec
         args = []
-        if spec.satisfies("@develop"):
-            blt_cxx_std = "c++20"
-        elif spec.satisfies("@1.2.8"):
+        if spec.satisfies("@develop") or spec.satisfies("@1.2.8"):
             blt_cxx_std = "c++20"
         elif spec.satisfies("@2025.12.0"):
             blt_cxx_std = "c++17"
@@ -248,8 +246,8 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
             rocm_archs = spec.variants["amdgpu_target"].value
             if "none" not in rocm_archs:
                 arch_str = ",".join(rocm_archs)
-                args.append("-DHIP_HIPCC_FLAGS=--amdgpu-target={0}".format(arch_str))
-                args.append("-DCMAKE_HIP_ARCHITECTURES={0}".format(arch_str))
+                args.append(f"-DHIP_HIPCC_FLAGS=--amdgpu-target={arch_str}")
+                args.append(f"-DCMAKE_HIP_ARCHITECTURES={arch_str}")
 
         args.append(self.define_from_variant("ENABLE_CUDA", "cuda"))
         if "+cuda" in spec:
@@ -260,8 +258,8 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(self.define("CMAKE_CUDA_HOST_COMPILER", self.compiler.cxx))
             if not spec.satisfies("cuda_arch=none"):
                 cuda_arch = spec.variants["cuda_arch"].value
-                args.append("-DCUDA_ARCH={0}".format(cuda_arch[0]))
-                args.append("-DCMAKE_CUDA_ARCHITECTURES={0}".format(cuda_arch[0]))
+                args.append(f"-DCUDA_ARCH={cuda_arch[0]}")
+                args.append(f"-DCMAKE_CUDA_ARCHITECTURES={cuda_arch[0]}")
             if "+mpi" in spec:
                 args.append(
                     "-DCMAKE_CUDA_FLAGS=--extended-lambda -I=%s"
