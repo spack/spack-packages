@@ -19,6 +19,7 @@ class Gnupg(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.5.24", sha256="bf149d01a2b9fcc0e4589b8ae8697d3d5c557ea48ed95a3fa55dd3b1187e6039")
     version("2.5.21", sha256="e3af2c8caa46a66a9329fa7c6880af260451914d819595beabc2c26597b31352")
     version("2.4.9", sha256="dd17ab2e9a04fd79d39d853f599cbc852062ddb9ab52a4ddeb4176fd8b302964")
     version("2.3.8", sha256="540b7a40e57da261fb10ef521a282e0021532a80fd023e75fb71757e8a4969ed")
