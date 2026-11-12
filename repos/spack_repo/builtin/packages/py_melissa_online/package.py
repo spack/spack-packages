@@ -20,7 +20,7 @@ class PyMelissaOnline(PythonPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop", preferred=True)
-    version("3.2.0", sha256="04a76113f6db7938bc6d079a6fcf5e1b1ae4a714beca8fe2dd80a3598bb26b6c")
+    version("3.2.2", sha256="")
     with default_args(deprecated=True):
         version("3.1.1", sha256="acdffb2431e4fa5456a3b4044ca1371758ea3e234038b856ad1a342a22bf111f")
         version("3.0.0", sha256="9146ac9eff2ae029a189a0fc944b1857f3fd9230000e151a693e73e10943486c")
@@ -60,6 +60,7 @@ class PyMelissaOnline(PythonPackage):
         depends_on("py-psutil@5.4:")
         depends_on("py-jsonschema@4.5:")
         depends_on("py-python-rapidjson@1.8:")
+        depends_on("py-cloudpickle@2.2.0:")
 
         # monitoring dependencies
         depends_on("py-requests@2.32:")
@@ -78,7 +79,9 @@ class PyMelissaOnline(PythonPackage):
         with default_args(type=("build", "run")):
             depends_on("mpi")
             depends_on("py-mpi4py@3.1.6:")
-            depends_on("conduit@0.9.7:+mpi+python+fortran+shared~hdf5~examples")
+            depends_on("conduit@0.9.11:")
+            depends_on("conduit@0.9.7:", when="@:3.1")
+            depends_on("conduit+mpi+python+fortran+shared~hdf5~examples")
             depends_on("libzmq@4.3.5:4")
             depends_on("libzmq@4.2:4", when=":@3.1")
         # ======================================================
@@ -89,8 +92,8 @@ class PyMelissaOnline(PythonPackage):
         with default_args(type="run"):
             depends_on("py-pyzmq@22.3.0:")
             depends_on("py-numpy@1.21:")
-            depends_on("py-cloudpickle@2.2.0:")
-            depends_on("py-iterative-stats@0.1.2:")
+            depends_on("py-iterative-stats@0.2.1:")
+            depends_on("py-iterative-stats@0.1.2:", when="@:3.1")
             depends_on("py-scipy@1.10.0:")
             depends_on("py-matplotlib")
             depends_on("py-tensorboardx@2.6:", when="metric_logger=tensorboard")
