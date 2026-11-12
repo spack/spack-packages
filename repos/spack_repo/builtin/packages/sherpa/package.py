@@ -44,7 +44,9 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     conflicts("%gcc@15:", when="@:3.0.1")
 
     _cxxstd_values = (
-        conditional("11", "14", "17", when="@:"), conditional("20", when="@3:"), conditional("23", when="@3:")
+        conditional("11", "14", "17", when="@:"),
+        conditional("20", when="@3:"),
+        conditional("23", when="@3:"),
     )
     variant(
         "cxxstd",
@@ -96,7 +98,11 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="@:2")
     depends_on("fortran", type="build", when="@3: +internal_pdfs")
-    conflicts("%fortran=clang", when="@:3.0.5 +internal_pdfs", msg="Internal PDFs cannot be compiled with flang")
+    conflicts(
+        "%fortran=clang",
+        when="@:3.0.5 +internal_pdfs",
+        msg="Internal PDFs cannot be compiled with flang",
+    )
 
     # autotools dependencies are needed at runtime to compile processes
     depends_on("autoconf", when="@:2")
