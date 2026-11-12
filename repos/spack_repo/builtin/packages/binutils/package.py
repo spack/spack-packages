@@ -52,6 +52,17 @@ class Binutils(AutotoolsPackage, GNUMirrorPackage):
     version("2.31.1", sha256="ffcc382695bf947da6135e7436b8ed52d991cf270db897190f19d6f9838564d0")
     version("2.30", sha256="efeade848067e9a03f1918b1da0d37aaffa0b0127a06b5e9236229851d9d0c09")
 
+    deprecated(
+        "@:2.45.1",
+        reason="vuln",
+        severity="high",
+        labels=["CVE-2025-11082", "CVE-2025-11083", "CVE-2025-69649", "CVE-2025-69650"],
+    )
+    # XCOFF support is built only for ppc64le among the targets we configure explicitly
+    deprecated(
+        "@:2.46.1 target=ppc64le:", reason="vuln", severity="high", labels=["CVE-2026-6846"]
+    )
+
     variant("plugins", default=True, description="enable plugins, needed for gold linker")
     # When you build ld.gold you automatically get ld, even when you add the
     # --disable-ld flag

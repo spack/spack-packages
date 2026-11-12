@@ -73,17 +73,16 @@ class Cmake(Package):
     version("3.0.2", sha256="6b4ea61eadbbd9bec0ccb383c29d1f4496eacc121ef7acf37c7a24777805693e")
     version("2.8.10.2", sha256="ce524fb39da06ee6d47534bbcec6e0b50422e18b62abc4781a4ba72ea2910eb1")
 
-    with default_args(deprecated=True):
-        version("4.4.3", sha256="c46400618b4f1f2b43507f24fb22f3ae830c3416cf23b776e16e1d413aa892f0")
-        version("4.4.2", sha256="1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d")
-        version("4.4.1", sha256="95d4721f3625fb0d9d6ca480dd59a46c84b4c157f7fadd2e9b179ef9c871174d")
-        version("4.3.4", sha256="fdeff897b9eb49d764539f2b1edc6eb7e1440df325678a97c1978499e931adda")
-        version("4.3.3", sha256="cba4bb7a44edf2877bb6f059932896383babe435b3a8c3b5df48b4aa41c9bb85")
-        version("4.2.4", sha256="93e02d41330250d12362541c63963a469e7c24fb894fab6dbb30082a0a1f0edd")
-        version("4.2.3", sha256="7efaccde8c5a6b2968bad6ce0fe60e19b6e10701a12fce948c2bf79bac8a11e9")
-        version(
-            "3.31.11", sha256="c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9"
-        )
+    version("4.4.3", sha256="c46400618b4f1f2b43507f24fb22f3ae830c3416cf23b776e16e1d413aa892f0")
+    version("4.4.2", sha256="1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d")
+    version("4.4.1", sha256="95d4721f3625fb0d9d6ca480dd59a46c84b4c157f7fadd2e9b179ef9c871174d")
+    version("4.3.4", sha256="fdeff897b9eb49d764539f2b1edc6eb7e1440df325678a97c1978499e931adda")
+    version("4.3.3", sha256="cba4bb7a44edf2877bb6f059932896383babe435b3a8c3b5df48b4aa41c9bb85")
+    version("4.2.4", sha256="93e02d41330250d12362541c63963a469e7c24fb894fab6dbb30082a0a1f0edd")
+    version("4.2.3", sha256="7efaccde8c5a6b2968bad6ce0fe60e19b6e10701a12fce948c2bf79bac8a11e9")
+    version("3.31.11", sha256="c0a3b3f2912b2166f522d5010ffb6029d8454ee635f5ad7a3247e0be7f9a15c9")
+
+    deprecated("@3.31.11,4.2.3:4.2.4,4.3.3:4.3.4,4.4.1:4.4.3", reason="retired")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
