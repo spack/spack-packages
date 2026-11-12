@@ -16,6 +16,7 @@ class Npth(AutotoolsPackage):
 
     license("LGPL-2.0-or-later")
 
+    version("1.8", sha256="8bd24b4f23a3065d6e5b26e98aba9ce783ea4fd781069c1b35d149694e90ca3e")
     version("1.7", sha256="8589f56937b75ce33b28d312fccbf302b3b71ec3f3945fde6aaa74027914ad05")
     version("1.6", sha256="1393abd9adcf0762d34798dc34fdcf4d0d22a8410721e76f1e3afcd1daa4e2d1")
     version("1.5", sha256="294a690c1f537b92ed829d867bee537e46be93fbd60b16c04630fbbfcd9db3c2")
