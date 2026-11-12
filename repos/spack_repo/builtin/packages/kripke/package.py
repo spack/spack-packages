@@ -26,7 +26,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     version(
         "1.2.8",
         submodules=False,
-        tag="v1.2.8-ATS6",
+        tag="v1.2.8",
         commit="46563d6d19afe7fdf65fc564638c7ec13615866f",
     )
     version("2025.12.0", submodules=False, commit="01f6f85c02ceffcd2bc06e42cee997867dd142c5")
