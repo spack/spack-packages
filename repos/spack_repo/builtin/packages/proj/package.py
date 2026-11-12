@@ -26,6 +26,7 @@ class Proj(CMakePackage, AutotoolsPackage):
 
     license("MIT")
 
+    version("9.7.1", sha256="6c097dc803c561929cdfcc46e4bf9945ea977611fb31493ad14e88edaeae260f")
     version("9.7.0", sha256="65705ecd987b50bf63e15820ce6bd17c042feaabda981249831bd230f6689709")
     version("9.4.1", sha256="ffe20170ee2b952207adf8a195e2141eab12cda181e49fdeb54425d98c7171d7")
     version("9.4.0", sha256="3643b19b1622fe6b2e3113bdb623969f5117984b39f173b4e3fb19a8833bd216")
