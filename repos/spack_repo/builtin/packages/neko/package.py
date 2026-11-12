@@ -21,6 +21,7 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause", checked_by="njansson")
 
     version("develop", branch="develop")
+    version("1.1.1", sha256="70649f95b5d6cd147213fb82f8a630e551069e781fbe06dff054b6896ed21423")
     version("1.1.0", sha256="e234f5ea1d899e8aa02f1132542fb1ba4bc8718ae735c74df893e19c38d0a1fa")
     version("1.0.4", sha256="0a5778aaaff13155cf50db50af81684a52296de34bedf6f12fecce9dcf8d5ae3")
     version("1.0.3", sha256="29f01e671c4eccc919ed4e3cb912d0b0d1345d73a5c66f2c237ca342ac35e61b")
@@ -39,6 +40,7 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     variant("xsmm", default=False, description="Build with support for libxsmm")
     variant("gslib", default=False, when="@:0.9.1", description="Build with support for gslib")
     variant("hdf5", default=False, when="@0.9.0:", description="Build with support for HDF5")
+    variant("openmp", default=False, when="@0.9.0:", description="Build with support for OpenMP")
 
     # Requires cuda or rocm enabled MPI
     variant("device-mpi", default=False, description="Build with support for device-aware MPI")
@@ -66,6 +68,19 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("hdf5+fortran+mpi", when="+hdf5")
     depends_on("libtool", type="build", when="@0.9.0:")
 
+    @when("%nvhpc")
+    def patch(self):
+        # Work around an nvfortran issue with the bge() intrinsic,
+        # using the patch shipped in the Neko source tree
+        Executable("patch")("-p1", "-i", "patches/nvhpc_bge.patch")
+
+    @when("@1.1.1,develop %fj")
+    def patch(self):
+        # Work around a memory leak in the Fujitsu Fortran runtime, using the
+        # script shipped in the Neko source tree. Must run before autoreconf,
+        # as it edits src/.depends, which automake inlines into Makefile.in
+        Executable("sh")("patches/fujitsu_memleak.sh")
+
     def configure_args(self):
         args = []
         args.append("--with-blas={0}".format(self.spec["blas"].libs.ld_flags))
@@ -78,6 +93,7 @@ class Neko(AutotoolsPackage, CudaPackage, ROCmPackage):
         args += self.with_or_without("cuda", activation_value="prefix")
         rocm_fn = lambda x: self.spec["hip"].prefix
         args += self.with_or_without("hip", variant="rocm", activation_value=rocm_fn)
+        args += self.enable_or_disable("openmp", variant="openmp")
         args += self.enable_or_disable("device-mpi", variant="device-mpi")
         args += self.enable_or_disable("shared", variant="shared")
 
