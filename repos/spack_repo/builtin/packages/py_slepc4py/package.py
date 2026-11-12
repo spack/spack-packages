@@ -59,6 +59,7 @@ class PySlepc4py(PythonPackage):
     version("3.15.0", sha256="2f5f5cc25ab4dd3782046c65e97265b39be0cf9cc74c5c0100c3c580c3c32395")
 
     patch("ldshared.patch", when="@:3.18")
+    patch("ldshared-3.21-3.23.0.patch", when="@3.21:3.23.0")
 
     depends_on("c", type="build")
 
