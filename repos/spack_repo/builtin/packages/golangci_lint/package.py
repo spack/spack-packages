@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import tarfile
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 
 from spack_repo.builtin.build_systems.go import GoBuilder as BuiltinGoBuilder
 from spack_repo.builtin.build_systems.go import GoPackage as BuiltinGoPackage
@@ -62,5 +62,5 @@ class GolangciLint(BuiltinGoPackage):
             return [
                 f"-X main.version={self.pkg.version}",
                 f"-X main.commit={self.commit_id}",
-                f"-X main.date={datetime.now(UTC).isoformat(timespec='seconds')}",
+                f"-X main.date={datetime.now(timezone.utc).isoformat(timespec='seconds')}",
             ]
