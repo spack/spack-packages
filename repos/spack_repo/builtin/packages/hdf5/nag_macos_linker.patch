@@ -1,0 +1,12 @@
+--- a/config/cmake/HDF5Macros.cmake
++++ b/config/cmake/HDF5Macros.cmake
+@@ -30,7 +30,7 @@
+     endif ()
+     if (CMAKE_C_OSX_CURRENT_VERSION_FLAG)
+-      set_property(TARGET ${libtarget} APPEND PROPERTY
+-          LINK_FLAGS "${CMAKE_C_OSX_CURRENT_VERSION_FLAG}${PACKAGE_CURRENT} ${CMAKE_C_OSX_COMPATIBILITY_VERSION_FLAG}${PACKAGE_COMPATIBILITY}"
++      set_property(TARGET ${libtarget} APPEND PROPERTY
++          LINK_FLAGS "-Wl,-current_version -Wl,${PACKAGE_CURRENT} -Wl,-compatibility_version -Wl,${PACKAGE_COMPATIBILITY}"
+       )
+     endif ()
+   endif ()
