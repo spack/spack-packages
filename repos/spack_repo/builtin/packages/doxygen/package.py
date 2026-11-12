@@ -97,17 +97,22 @@ class Doxygen(CMakePackage):
     depends_on("cmake@3.14:", type="build", when="@1.10:")
 
     depends_on("python", type="build")  # 2 or 3 OK; used in CMake build
-    depends_on("iconv")
-    depends_on("flex", type="build")
-    depends_on("bison", type="build")
-    # code.l just checks subminor version <=2.5.4 or >=2.5.33
-    # but does not recognize 2.6.x as newer...could be patched if needed
-    depends_on("flex@2.5.39", type="build", when="@1.8.10")
-    depends_on("bison@2.7:", type="build", when="@1.8.10:")
+    for plat in ["linux", "darwin", "freebsd"]:
+        with when(f"platform={plat}"):
+            depends_on("iconv")
+            depends_on("flex", type="build")
+            depends_on("bison", type="build")
+            # code.l just checks subminor version <=2.5.4 or >=2.5.33
+            # but does not recognize 2.6.x as newer...could be patched if needed
+            depends_on("flex@2.5.39", type="build", when="@1.8.10")
+            depends_on("bison@2.7:", type="build", when="@1.8.10:")
+    with when("platform=windows"):
+        depends_on("winbison", type="build")
 
     # originally bundled dependencies
     depends_on("spdlog", when="@1.9.8:")
     depends_on("sqlite", when="@1.10:")
+    depends_on("fmt", when="@1.14:")
 
     # optional dependencies
     depends_on("graphviz", when="+graphviz", type="run")
@@ -163,8 +168,16 @@ class Doxygen(CMakePackage):
             )
 
     def cmake_args(self):
-        return [
+        args = [
             self.define("use_sys_spdlog", self.spec.satisfies("@1.9.8:")),
             self.define("use_sys_sqlite3", self.spec.satisfies("@1.10:")),
             self.define("use_sys_fmt", self.spec.satisfies("@1.14:")),
         ]
+        if self.spec.satisfies("@1.14:"):
+            args.append(
+                self.define(
+                    "fmt_DIR",
+                    join_path(self.spec["fmt"].prefix, "lib", "cmake", "fmt"),
+                )
+            )
+        return args
