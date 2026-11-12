@@ -250,6 +250,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("shared", default=True, description="Enable Shared libs")
     variant("openmp", default=False, description="Build with OpenMP support")
     variant("omptarget", default=False, description="Build with OpenMP 4.5 support")
+    variant("sycl", default=False, description="Build with SYCL support")
     variant("deviceconst", default=False, description="Enables support for constant device memory")
     variant("examples", default=False, description="Build Umpire Examples")
     variant(
@@ -308,6 +309,8 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("camp")
     depends_on("camp+openmp", when="+openmp")
+    depends_on("camp+sycl", when="+sycl")
+    depends_on("camp~sycl", when="~sycl")
     depends_on("camp~cuda", when="~cuda")
     depends_on("camp~rocm", when="~rocm")
     depends_on("camp@2026.07.2:", when="@2026.07.2:")
@@ -360,6 +363,8 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("+deviceconst", when="~rocm~cuda")
     conflicts("~openmp", when="+omptarget", msg="OpenMP target requires OpenMP")
     conflicts("+cuda", when="+rocm")
+    conflicts("+sycl", when="+rocm", msg="SYCL and ROCm backends cannot be combined")
+    conflicts("+sycl", when="+omptarget", msg="SYCL and OpenMP target cannot be combined")
     conflicts(
         "+rocm", when="+omptarget", msg="Cant support both rocm and openmp device backends at once"
     )
@@ -611,7 +616,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
         return entries
 
     def cmake_args(self):
-        return []
+        return [self.define_from_variant("ENABLE_SYCL", "sycl")]
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         for library in ["lib", "lib64"]:
