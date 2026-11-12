@@ -25,7 +25,7 @@ class RajaPerf(CachedCMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/LLNL/RAJAPerf.git"
     tags = ["radiuss"]
 
-    maintainers("davidbeckingsale", "adrienbernede")
+    maintainers("davidbeckingsale", "adrienbernede", "smithsg84", "rhornung67")
 
     license("BSD-3-Clause")
 
