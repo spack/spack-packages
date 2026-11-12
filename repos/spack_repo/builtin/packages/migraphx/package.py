@@ -28,6 +28,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
     ]
 
     license("MIT")
+    version("10.1.0", sha256="4d2bae69bbd1748bbbdc2030ee49285b48438cd3820418e465a5fec06c364c4a")
     version("10.0.0", sha256="f4e3e60230455f5c6edadf33b74b365640d958c70dde95ae6746814d3a5a1b56")
     version("7.14.0", sha256="9798b091a9660d5e7a889087956684416c43dabc4f315fd8937590b00d35034d")
     version(
@@ -141,6 +142,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
@@ -191,6 +193,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
