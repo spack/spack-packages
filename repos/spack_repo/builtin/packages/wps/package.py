@@ -40,6 +40,7 @@ class Wps(Package):
     patch("patches/4.3/arch.configure.defaults.patch", when="@=4.3")
     patch("patches/4.3.1/arch.configure.defaults.patch", when="@4.3.1")
     patch("patches/4.4/configure.patch", when="@4.4:4.5")
+    patch("patches/4.5/init-is_subgrid_var.patch", when="@4.5:4.6")
     patch("patches/4.6/configure.patch", when="@4.6:")
 
     depends_on("c", type="build")  # generated

@@ -1,0 +1,12 @@
+diff --git a/geogrid/src/output_module.F b/geogrid/src/output_module.F
+index 072ca547..6d48ed6c 100644
+--- a/geogrid/src/output_module.F
++++ b/geogrid/src/output_module.F
+@@ -469,6 +469,7 @@ subroutine init_output_fields(nest_num, grid_type, &
+       ifieldstatus = 0
+       nfields = 0
+       optstatus = 0
++      is_subgrid_var = .false.
+       do while (ifieldstatus == 0)
+    
+          call get_next_output_fieldname(nest_num, fieldname, ndims, &
