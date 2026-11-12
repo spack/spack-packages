@@ -19,6 +19,14 @@ class PyTuiview(PythonPackage):
 
     maintainers("neilflood", "gillins")
 
+    version("1.3.7", sha256="59873be438369dfeed73e26c033eab44728e38b17f6c8d8ad3fae416d4ba9ec2")
+    version("1.3.6", sha256="bb3c810fbb33fa216de5f30e2f81eb91ab38a0b7fee07f6845b5ae2d4cea3051")
+    version("1.3.5", sha256="ccb1366a20bc807e25c092d4a48520c347287a75afcd23684bf74879fc48397e")
+    version("1.3.4", sha256="b3872540ccfa30bc8e16c2e6fbcf582b0945b308ba6bbd74b9a0f19a9b759604")
+    version("1.3.3", sha256="08b011e30bcd74ee095c0afe2be022d0840af51aee00c7c66fe908a74c9f402e")
+    version("1.3.2", sha256="fe7a5a049a2402a0ff0c0e8d6f536da01e487b86e944c8ddd404978c729135ac")
+    version("1.3.1", sha256="ee67ea42e757bf80547da8b8ee0adf78da3b94b31a5180a60f793f84087ffb96")
+    version("1.3.0", sha256="acea6ff07a74a6c161d335e270251990dea977217c1a490da359f8c3aa130ac5")
     version("1.2.14", sha256="80cf4ac607b37bb9d7348b3d40e1e18910323f7ad47e79ae850cbb4750775f7c")
     version("1.2.13", sha256="48c8d4175c324f70941dc49c5a119882c9d501bd20bc13c76bc2455dee5236a5")
     version("1.2.12", sha256="3f0c1673f2f861db01726f3d7f6f1dde4a42ec57894a79b89457c398768dd25f")
@@ -33,6 +41,7 @@ class PyTuiview(PythonPackage):
 
     # pip silently replaces distutils with setuptools
     depends_on("py-setuptools", type="build")
-    depends_on("py-pyqt5", type=("build", "run"))
+    depends_on("py-pyqt5", type=("build", "run"), when="@:1.2.14")
+    depends_on("py-pyside6", type=("build", "run"), when="@1.3.0:")
     depends_on("py-numpy", type=("build", "link", "run"))
     depends_on("gdal+geos+python", type=("build", "run"))

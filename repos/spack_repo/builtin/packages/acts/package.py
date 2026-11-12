@@ -49,7 +49,33 @@ class Acts(CMakePackage, CudaPackage):
     license("MPL-2.0")
 
     # Supported Acts versions
+    # NOTE: Versions 47.5.0 and newer are built from the source archive attached
+    # to the GitHub release, which ships the pre-generated code. The archives
+    # GitHub generates for a tag do not, and neither does a git checkout, so
+    # do not add these versions by commit or the ACTS configure step will fail.
     version("main", branch="main")
+    version("48.5.0", sha256="adbd1d2c1a75de23e36b0fe02b72065224ae0da58b16a719c2ed0a15b195c76f")
+    version("48.4.0", sha256="b322feb813c732ca6d4702b9cadb18f23d477f5dc14d94e1b56afb3fb2265fa0")
+    version("48.3.0", sha256="df50eee0789079acaa64fa8b1d8333428d77e1d9f2ab653c0c45f6e457fffa4a")
+    version("48.2.0", sha256="a0dc7b5ff588de55c1e80b6254b1f065c54e751a29001970a2d96d46b5d21e85")
+    version("48.1.0", sha256="29f7434dcdae60c0d029e3135b56ee1f866ec3894ddfd05920f9f0bb2c5b0da5")
+    version("48.0.1", sha256="cb9b196345119cbdbb73e4f53fae6c3ce6480560f9fd47a7164a17b51629a694")
+    version("48.0.0", sha256="0117aee534a8b0b52851818ebcf69f8c7b5487982669a4ca33731e0e90e47100")
+    version("47.7.0", sha256="1b0484698715c38cf32055d0a2ff6ea50771d541b728dc58b2e9a086d4c858e9")
+    version("47.6.1", sha256="817c7a10b26ab239b3cec9093057826274880f61bd0b8d5afd6944210d9257e5")
+    version("47.6.0", sha256="7f0f5658f4b918d6048a0b13ec01cd6fac9ef6d808cd0f7addbc70ee060d9ae9")
+    version("47.5.0", sha256="5234b28511147e96481fb355886c207f1b7e43e67f0092a589e6e1ef6067f1ce")
+    version("47.4.0", commit="a0542a7f42a020e81b5216efd111ee9d417a7166")
+    version("47.3.0", commit="b9803498c1cbcd273cda861022bb270bf6e73fac")
+    version("47.2.0", commit="faaa032800ea10a3bb5fbcffbec350bcc49ab038")
+    version("47.1.0", commit="e9e66df6c9abd699e6bf72227822f7372594cd49")
+    version("47.0.0", commit="26d85d671cdadb34fdbf1eb1aa3823b71dbbff01")
+    version("46.8.1", commit="3ded307e142c6ce9e6c1fa205604582ff6aef920")
+    version("46.8.0", commit="59d95bd56db22034219a526e7dff563622cc268d")
+    version("46.7.0", commit="4e95978f8e23f863f9e7c6b219b5100531f4ba41")
+    version("46.6.0", commit="7791df44925fadd1de375c42c41d36a6f82602d4")
+    version("46.5.0", commit="34edd48852f766e1b9d94d3dc996e27476339f1b")
+    version("46.4.0", commit="4f0e5d8ce158728ff275a733b720d087065563bd")
     version("46.3.0", commit="4f0e5d8ce158728ff275a733b720d087065563bd")
     version("46.2.0", commit="fcecf616be7ddd240700f65a1508f21811ee4167")
     version("46.1.0", commit="d6d17c9c2b28a54141477438d63176a8af2d3c76")
@@ -81,7 +107,7 @@ class Acts(CMakePackage, CudaPackage):
     variant(
         "benchmarks", default=False, description="Build the performance benchmarks", when="@0.16:"
     )
-    _cxxstd_values = (conditional("20", when="@24:"),)
+    _cxxstd_values = (conditional("20", when="@24:"), conditional("23", when="@46:"))
     _cxxstd_common = {
         "values": _cxxstd_values,
         "multi": False,
@@ -179,40 +205,53 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("cxx", type="build")
     depends_on("acts-dd4hep", when="@19 +dd4hep")
     with when("+svg"):
-        # https://github.com/acts-project/actsvg/issues/94
         depends_on("actsvg@0.4.51:")
         depends_on("actsvg@0.4.56:", when="@41.1:")
-        # TODO: This should be when-constrained when the issue is fixed in ACTS.
-        depends_on("actsvg@:0.4.56")
+        depends_on("actsvg@:0.4.56", when="@:47.4")
+        depends_on("actsvg@0.4.57:", when="@47.5:")
     # The version number of algebra plugins was not correct before v0.28.0.
-    depends_on("acts-algebra-plugins @0.28:", when="+traccc")
+    depends_on("acts-algebra-plugins @0.28:", when="+traccc @:46.3.0")
     depends_on("boost @1.71: +filesystem +program_options +test")
     depends_on("boost @1.77:", when="@42:")
     depends_on("boost @1.78:", when="@45:")
     depends_on("cmake @3.14:", type="build")
+    depends_on("cmake @3.19:", type="build", when="@47:")
     depends_on("covfie @0.10:", when="+traccc")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
+    depends_on("covfie @0.13.0:", when="+traccc @42:")
+    depends_on("covfie @0.15.2:", when="+traccc @44.1:")
+    depends_on("covfie @0.16.0:", when="+traccc @48.5:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.26:", when="@42: +dd4hep")
     depends_on("dd4hep +ddg4", when="+dd4hep +geant4 +examples")
-    depends_on("detray @0.75.3:", when="+traccc")
-    depends_on("detray @0.101.0:", when="@42.1: +traccc")
+    with when("@:46"):
+        depends_on("detray @0.75.3:", when="+traccc")
+        depends_on("detray @0.101.0:", when="@42.1: +traccc")
+        depends_on("detray @0.103.0:", when="@44.1: +traccc")
+        depends_on("detray @1.0.1:", when="@46.4: +traccc")
     depends_on("edm4hep @0.7:", when="+edm4hep")
     depends_on("edm4hep @0.10.5:", when="@42: +edm4hep")
+    depends_on("edm4hep @0.99:", when="@48: +edm4hep")
     depends_on("edm4hep @:0", when="@:44 +edm4hep")
     depends_on("eigen @3.4:3")
     depends_on("geant4", when="+fatras_geant4")
     depends_on("geant4", when="+geant4")
     depends_on("geomodel @6.3.0: +geomodelg4", when="+geomodel")
-    depends_on("geomodel @6.8.0:", when="@43.1: +geomodel ")
-    depends_on("git-lfs", when="@12.0.0:")
+    depends_on("geomodel @6.8.0:", when="@43.1: +geomodel")
+    depends_on("geomodel @6.16.0:", when="@48.5: +geomodel")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")
     depends_on("hepmc3 @3.2.4:", when="@42: +hepmc3")
+    depends_on("hepmc3 +rootio", when="@45.1: +hepmc3 +examples +root")
     depends_on("intel-tbb @2020.1:", when="+examples")
-    depends_on("millepede@01-00-00:", when="+mille")
+    depends_on("mille@01-00-00:", when="+mille")
+    depends_on("mille@01-00-05:", when="@47.1: +mille")
+    depends_on("mille@01-01-01:", when="@48: +mille")
+    depends_on("mille@01-01-02:", when="@48.2: +mille")
+    depends_on("millepede@05-01-05:", when="@47.1: +mille")
+    depends_on("millepede@05-01-06:", when="@48.2: +mille")
     depends_on("nlohmann-json @3.10.5:", when="+json")
     depends_on("nlohmann-json @3.11.3:", when="@45: +json")
     depends_on("torch-scatter", when="+gnn")
@@ -231,17 +270,24 @@ class Acts(CMakePackage, CudaPackage):
     # installation which, in turn, causes the ACTS build to fail. Until a more
     # robust solution is available we pretend that these packages are also
     # run- and link-time dependencies.
-    depends_on("python@3.12:", when="@44:")
-    depends_on("py-numpy @2.2", when="@44:")
+    #
+    # Release archives from 47.5.0 onwards ship the pre-generated code, so these
+    # dependencies are only needed by the code generators when building main.
+    # Without them, only the plugins below still need Python: CMake requires it
+    # to find DD4hep, and Traccc generates its kernels and metadata with it.
+    depends_on("python@3.12:", when="@44:47.4,main")
+    depends_on("python", when="@47.5: +dd4hep")
+    depends_on("python", when="@47.5: +traccc", type="build")
+    depends_on("py-numpy @2.2", when="@44:47.4,main")
     depends_on("py-onnxruntime@1.12:", when="+onnx")
-    depends_on("py-particle @0.24", when="@44:")
+    depends_on("py-particle @0.24", when="@44:47.4,main")
     depends_on("py-pybind11 @2.13.1:", when="+python")
     depends_on("py-pybind11 @3.0.1:", when="+python @45.3:")
     depends_on("py-pytest", when="+python +unit_tests")
     depends_on("py-setuptools", when="@44:44.1.0")
-    depends_on("py-sympy @1.13", when="@44:")
+    depends_on("py-sympy @1.13", when="@44:47.4,main")
     # TODO: Clarify version on next release
-    depends_on("py-hatchling", when="@44.1.1:")
+    depends_on("py-hatchling", when="@44.1.1:47.4,main")
     depends_on("py-torch", when="+gnn +torch")
 
     with when("+root"):
@@ -249,6 +295,11 @@ class Acts(CMakePackage, CudaPackage):
         depends_on("root @6.28:", when="@42:")
 
     depends_on("vecmem@1.17.0:", when="@42: +traccc")
+    depends_on("vecmem@1.21.0:", when="@44.1: +traccc")
+    depends_on("vecmem@1.24.0:", when="@46.4: +traccc")
+    depends_on("vecmem@1.25.0:", when="@47: +traccc")
+    depends_on("vecmem@1.27.0:", when="@47.5: +traccc")
+    depends_on("vecmem@1.28.0:", when="@48.2: +traccc")
 
     # ACTS imposes requirements on the C++ standard values used by ROOT
     for _cxxstd in _cxxstd_values:
@@ -258,7 +309,7 @@ class Acts(CMakePackage, CudaPackage):
             depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value} +root")
 
     # When the traccc plugin is enabled, detray should match the Acts scalars
-    with when("+traccc"):
+    with when("+traccc @:46"):
         for _scalar in _scalar_values:
             depends_on(f"detray scalar={_scalar}", when=f"scalar={_scalar}")
 
@@ -274,6 +325,12 @@ class Acts(CMakePackage, CudaPackage):
     # The ODD package is fetched via the internet by the build system, which
     # cannot be disabled.
     conflicts("+odd", when="@44.2.0:")
+
+    def url_for_version(self, version):
+        return (
+            "https://github.com/acts-project/acts/releases/download/"
+            f"v{version}/acts-v{version}.tar.gz"
+        )
 
     def cmake_args(self):
         spec = self.spec
@@ -324,7 +381,7 @@ class Acts(CMakePackage, CudaPackage):
             enable_cmake_variant("MEMORY_PROFILING", "profilemem"),
             plugin_cmake_variant("PODIO", "podio"),
             example_cmake_variant("PYTHIA8", "pythia8"),
-            example_cmake_variant("PYTHON_BINDINGS", "python"),
+            example_cmake_variant("ROOT", "root"),
             self.define_from_variant("ACTS_CUSTOM_SCALARTYPE", "scalar"),
             plugin_cmake_variant("ACTSVG", "svg"),
             plugin_cmake_variant("TGEO", "root"),
@@ -348,6 +405,12 @@ class Acts(CMakePackage, CudaPackage):
         if spec.satisfies("+python"):
             args.append("-DACTS_USE_SYSTEM_PYBIND11=ON")
 
+        # ACTS_BUILD_EXAMPLES_PYTHON_BINDINGS was deprecated in v45 and removed in v47
+        if spec.satisfies("@45:"):
+            args.append(cmake_variant("PYTHON_BINDINGS", "python"))
+        else:
+            args.append(example_cmake_variant("PYTHON_BINDINGS", "python"))
+
         if spec.satisfies("+svg"):
             args.append("-DACTS_USE_SYSTEM_ACTSVG=ON")
 
@@ -369,6 +432,16 @@ class Acts(CMakePackage, CudaPackage):
             if spec.satisfies("@44:"):
                 args.append(self.define_from_variant("ACTS_GNN_ENABLE_TORCH", "torch"))
 
+        # Fail at configure time rather than silently running the generators,
+        # whose Python dependencies are not available for these versions.
+        if spec.satisfies("@47.5:") and not spec.satisfies("@main"):
+            args.append(self.define("ACTS_CODEGEN_REQUIRE_PREBUILT", True))
+
         args.append(self.define_from_variant("CMAKE_CXX_STANDARD", "cxxstd"))
 
         return args
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        # Acts installs in non-standard python path
+        if self.spec.satisfies("+python"):
+            env.prepend_path("PYTHONPATH", self.prefix.python)

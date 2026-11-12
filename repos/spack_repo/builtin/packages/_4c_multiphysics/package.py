@@ -1,0 +1,212 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+
+from spack.package import *
+
+
+class _4cMultiphysics(CMakePackage):
+    """4C is a parallel multiphysics research code."""
+
+    homepage = "https://www.4c-multiphysics.org/"
+    url = "https://github.com/4C-multiphysics/4C/archive/refs/tags/v2025.3.0.tar.gz"
+    git = "https://github.com/4C-multiphysics/4C.git"
+
+    maintainers(
+        "bgoderbauer",
+        "c-p-schmidt",
+        "georghammerl",
+        "isteinbrecher",
+        "lauraengelhardt",
+        "mayrmt",
+        "rjoussen",
+    )
+    license("LGPL-3.0-or-later")
+
+    version("main", branch="main")
+    version("2026.3.0", sha256="d8fa2ca8a3815f8050f6d7f1c428ed65c4e4fea83a7079beffe4d6e11eddfb84")
+    version("2026.2.0", sha256="57e05128934e06b67d5ae3c2d3402f80d1ddfc3975b1557670e5b1d3399a6c0b")
+    version("2026.1.0", sha256="9d95607a0b7668c9712392c81863b6327b8922745705b62e07f605f1d6932646")
+
+    # Keep these sources private to 4C until maintained packages are available
+    # in the builtin repository. FetchContent consumes the staged source trees.
+    resource(
+        name="ryml",
+        url="https://github.com/biojppm/rapidyaml/releases/download/v0.9.0/rapidyaml-0.9.0-src.tgz",
+        sha256="e01c66b21dfbe3d7382ecab3dfe7efcdc47a068cd25fcc8279e8f462f69c995d",
+        destination="spack-resources",
+        placement="ryml",
+    )
+    resource(
+        name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/b9d0c4ba27ff8463a3d2b17163fead8800b2650c.tar.gz",
+        sha256="b3a16a0aeed5fcd778c8757d81af9070ec4964a5206f87b6257a402aa3fc4bfd",
+        destination="spack-resources",
+        placement="mirco",
+        when="+mirco",
+    )
+
+    variant("shared", default=True, description="Build shared libraries")
+    variant("qhull", default=True, description="Enable Qhull support")
+    variant("vtk", default=False, description="Enable VTK support")
+    variant("gmsh", default=False, description="Enable Gmsh support")
+    variant("dealii", default=False, description="Enable deal.II support")
+    variant("arborx", default=False, description="Enable ArborX support")
+    variant("fftw", default=False, description="Enable FFTW support")
+    variant("mirco", default=False, description="Enable MIRCO support")
+    variant("backtrace", default=False, description="Enable libbacktrace support")
+    variant("python", default=False, description="Enable Python build and test utilities")
+    variant("pybind11", default=False, description="Build the py4C Python bindings")
+
+    conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
+
+    conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
+    conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
+
+    patch("identify-release-dealii.patch", when="+dealii")
+    patch("link-installed-arborx.patch", when="+arborx")
+    patch("use-installed-googletest.patch", when="@2026.1.0:2026.3.0")
+    patch("use-installed-googletest.patch", when="@main")
+    patch("python-venv-no-downloads-2026.2.patch", when="@2026.1.0:2026.2.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@2026.3.0+python")
+    patch("python-venv-no-downloads-2026.3.patch", when="@main+python")
+
+    # GCC 14.2.0 hits an internal compiler error (ICE) in
+    # cxx_eval_indirect_ref (cp/constexpr.cc) while instantiating
+    # Core::LinAlg::einsum_sym on 4C's tensor templates
+    # (src/core/linalg/src/dense/4C_linalg_tensor_internals.hpp). Not
+    # confirmed on other 14.x point releases; narrow this once tested.
+    conflicts(
+        "%gcc@14:14",
+        msg="GCC 14.x hits an internal compiler error compiling 4C's tensor "
+        "templates; use GCC 13 or GCC 15 instead.",
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("cmake@3.30:", type="build")
+    depends_on("ninja", type="build")
+
+    depends_on("mpi")
+    depends_on("hdf5+mpi+hl")
+    # Trilinos pulls in Fortran dependencies through MUMPS. A Fortran-capable
+    # compiler must therefore be registered even though 4C has no Fortran sources.
+    depends_on(
+        "trilinos@16.2+mpi+amesos+amesos2+belos+epetra+epetraext"
+        "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
+        "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
+        "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
+        patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
+    )
+    # deal.II 9.6.2 uses bundled Boost 1.84. Keep 4C's compiled Boost.Graph
+    # library and headers ABI-compatible with the deal.II headers.
+    depends_on("boost@1.84.0+graph")
+    depends_on("cln")
+    depends_on("zlib-api")
+    depends_on("cli11@2.6.1")
+    depends_on("magic-enum@0.9.7")
+    depends_on("googletest@1.15.2+gmock", when="@2026.1.0:2026.3.0")
+    depends_on("googletest@1.15.2+gmock", when="@main")
+
+    # 4C uses Qhull's deprecated non-reentrant libqhull API.
+    depends_on("qhull@2019.1", when="+qhull")
+    depends_on("vtk@9:+shared", when="+vtk")
+    # VTK only needs Mesa as an OpenGL provider. Avoid Mesa's optional LLVM
+    # backend, which is particularly prone to unusable auto-detected externals.
+    depends_on("mesa~llvm", when="+vtk platform=linux")
+    depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
+    depends_on(
+        "dealii@9.6.2+trilinos+mpi~adol-c",
+        patches=[
+            patch("dealii-force-bundled-boost.patch"),
+            patch("dealii-use-cxx20.patch"),
+            patch("dealii-petsc-3.25-domain-flags.patch"),
+        ],
+        when="+dealii",
+    )
+    depends_on("arborx@2.0.1+mpi", when="+arborx")
+    depends_on("fftw", when="+fftw")
+    depends_on("libbacktrace", when="+backtrace")
+    depends_on("python@3.12:", type=("build", "link", "run"), when="+python")
+    depends_on("python-venv", type=("build", "run"), when="+python")
+    depends_on("py-pip", type="build", when="+python")
+    depends_on("py-setuptools", type="build", when="+python")
+    depends_on("py-numpy", type=("build", "run"), when="+python")
+    depends_on("py-scipy", type=("build", "run"), when="+python")
+    depends_on("py-pytest", type=("build", "run"), when="+python")
+    depends_on("py-pyyaml", type=("build", "run"), when="+python")
+    # Newer jsonschema releases require the Rust-backed rpds-py package. 4C
+    # only uses the validator_for and RefResolver APIs available in 4.17.3.
+    depends_on("py-jsonschema@:4.17.3", type=("build", "run"), when="+python")
+    depends_on("vtk@9.4.2:9.6+python", type=("build", "run"), when="+python")
+    depends_on("py-pyvista", type=("build", "run"), when="+python")
+    depends_on("py-jinja2", type=("build", "run"), when="+python")
+    depends_on("py-matplotlib", type=("build", "run"), when="+python")
+    depends_on("py-myst-parser", type=("build", "run"), when="+python")
+    depends_on("py-nbsphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx", type=("build", "run"), when="+python")
+    depends_on("py-sphinx-rtd-theme", type=("build", "run"), when="+python")
+    depends_on("py-pybind11", type=("build", "link", "run"), when="+pybind11")
+
+    generator("ninja")
+
+    def cmake_args(self):
+        spec = self.spec
+        args = [
+            self.define_from_variant("FOUR_C_BUILD_SHARED_LIBS", "shared"),
+            self.define("FOUR_C_ENABLE_DEVELOPER_MODE", False),
+            self.define("FOUR_C_ENABLE_METADATA_GENERATION", False),
+            self.define("FETCHCONTENT_TRY_FIND_PACKAGE_MODE", "ALWAYS"),
+            self.define("FOUR_C_HDF5_ROOT", spec["hdf5"].prefix),
+            self.define("FOUR_C_MPI_ROOT", spec["mpi"].prefix),
+            self.define("FOUR_C_TRILINOS_ROOT", spec["trilinos"].prefix),
+            self.define("FOUR_C_BOOST_ROOT", spec["boost"].prefix),
+            self.define("FOUR_C_CLN_ROOT", spec["cln"].prefix),
+            self.define(
+                "FETCHCONTENT_SOURCE_DIR_RYML",
+                join_path(self.stage.source_path, "spack-resources", "ryml"),
+            ),
+            self.define("FOUR_C_MAGIC_ENUM_ROOT", spec["magic-enum"].prefix),
+            self.define("FOUR_C_ZLIB_ROOT", spec["zlib-api"].prefix),
+            self.define("FOUR_C_CLI11_ROOT", spec["cli11"].prefix),
+            self.define_from_variant("FOUR_C_WITH_QHULL", "qhull"),
+            self.define_from_variant("FOUR_C_WITH_VTK", "vtk"),
+            self.define_from_variant("FOUR_C_WITH_GMSH", "gmsh"),
+            self.define_from_variant("FOUR_C_WITH_DEAL_II", "dealii"),
+            self.define_from_variant("FOUR_C_WITH_ARBORX", "arborx"),
+            self.define_from_variant("FOUR_C_WITH_FFTW", "fftw"),
+            self.define_from_variant("FOUR_C_WITH_MIRCO", "mirco"),
+            self.define_from_variant("FOUR_C_WITH_BACKTRACE", "backtrace"),
+            self.define_from_variant("FOUR_C_WITH_PYTHON", "python"),
+            self.define_from_variant("FOUR_C_WITH_PYBIND11", "pybind11"),
+            self.define_from_variant("FOUR_C_ENABLE_PYTHON_BINDINGS", "pybind11"),
+        ]
+
+        roots = {
+            "qhull": ("FOUR_C_QHULL_ROOT", "qhull"),
+            "vtk": ("FOUR_C_VTK_ROOT", "vtk"),
+            "gmsh": ("FOUR_C_GMSH_ROOT", "gmsh"),
+            "dealii": ("FOUR_C_DEAL_II_ROOT", "dealii"),
+            "arborx": ("FOUR_C_ARBORX_ROOT", "arborx"),
+            "fftw": ("FOUR_C_FFTW_ROOT", "fftw"),
+            "backtrace": ("FOUR_C_BACKTRACE_ROOT", "libbacktrace"),
+            "python": ("FOUR_C_PYTHON_ROOT", "python"),
+            "pybind11": ("FOUR_C_PYBIND11_ROOT", "py-pybind11"),
+        }
+        for variant, (variable, dependency) in roots.items():
+            if "+" + variant in spec:
+                args.append(self.define(variable, spec[dependency].prefix))
+
+        if "+arborx" in spec:
+            args.append(self.define("FOUR_C_ARBORX_FIND_INSTALLED", True))
+        if "+mirco" in spec:
+            args.append(
+                self.define(
+                    "FETCHCONTENT_SOURCE_DIR_MIRCO",
+                    join_path(self.stage.source_path, "spack-resources", "mirco"),
+                )
+            )
+
+        return args

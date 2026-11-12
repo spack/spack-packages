@@ -15,21 +15,28 @@ concurrency:
   group: ci-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
+
 jobs:
   # Check which files have been updated by the PR
   changes:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
     # Set job outputs to values from filter step
     outputs:
       core: ${{ steps.filter.outputs.core }}
       packages: ${{ steps.filter.outputs.packages }}
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         if: ${{ github.event_name == 'push' || github.event_name == 'merge_group' }}
         with:
           fetch-depth: 0
             # For pull requests it's not necessary to checkout the code
-      - uses: dorny/paths-filter@fbd0ab8f3e69293af611ebaee6363fc25e6d187d  # v4.0.1
+      - uses: dorny/paths-filter@ceb8a2b8f2d89434be7ff52d3de7ec3738c5cc9d  # v4.0.3
         id: filter
         with:
           # For merge group events, compare against the target branch (main)

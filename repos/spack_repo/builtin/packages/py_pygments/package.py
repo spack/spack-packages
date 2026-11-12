@@ -16,6 +16,7 @@ class PyPygments(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.20.0", sha256="6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f")
     # MINOR, not possible to fix, not worth deprecating
     # https://www.cvedetails.com/cve/CVE-2026-4539/
     version("2.19.2", sha256="636cb2477cec7f8952536970bc533bc43743542f70392ae026374600add5b887")
@@ -48,6 +49,7 @@ class PyPygments(PythonPackage):
         version("2.0.2", sha256="7320919084e6dac8f4540638a46447a3bd730fca172afc17d2c03eed22cf4f51")
         version("2.0.1", sha256="5e039e1d40d232981ed58914b6d1ac2e453a7e83ddea22ef9f3eeadd01de45cb")
 
+    depends_on("python@3.9:", when="@2.20:", type="build")
     depends_on("python@3.8:", when="@2.18:", type="build")
     depends_on("python@3.7:", when="@2.15:", type="build")
     depends_on("py-hatchling", when="@2.17:", type="build")

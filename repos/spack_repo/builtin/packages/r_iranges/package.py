@@ -20,8 +20,10 @@ class RIranges(RPackage):
     bioc = "IRanges"
 
     with default_args(get_full_repo=True):
+        version("2.46.0", commit="db589cc82f235a7be2d5f2bc6971af1fa2fd03b5")  # bioc 3.23
+        version("2.42.0", commit="d942b61c969dd5410e09ad089f5dc584dd9b7cf9")  # bioc 3.21
         version("2.34.0", commit="dcddf934384e05dccffb2a8a808147c963ff0c3e")
-        version("2.32.0", commit="2b5c9fc706c8cdc96f0c46508087863df1502f81")
+        version("2.32.0", commit="2b5c9fc706c8cdc96f0c46508087863df1502f81")  # bioc 3.16
         version("2.30.1", commit="ead506a14d6cc89ac2f14b55a4b04496755e4e50")
         version("2.30.0", commit="9b5f3ca12812fb76c23b1550aa3a794384384d9b")
         version("2.28.0", commit="d85ee908a379e12d1e32599e999c71ab37c25e57")
@@ -33,21 +35,30 @@ class RIranges(RPackage):
         version("2.12.0", commit="1b1748655a8529ba87ad0f223f035ef0c08e7fcd")
         version("2.10.5", commit="b00d1d5025e3c480d17c13100f0da5a0132b1614")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("r@3.1.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@2.24.1:")
-    depends_on("r-biocgenerics@0.21.1:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.23.3:", type=("build", "run"), when="@2.12.0:")
-    depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@2.14.12:")
-    depends_on("r-biocgenerics@0.36.0:", type=("build", "run"), when="@2.24.1:")
+    depends_on("r@3.1.0:", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.53.2:", type=("build", "run"), when="@2.41.1:")
     depends_on("r-biocgenerics@0.39.2:", type=("build", "run"), when="@2.28.0:")
-    depends_on("r-s4vectors@0.13.17:", type=("build", "run"))
-    depends_on("r-s4vectors@0.15.5:", type=("build", "run"), when="@2.12.0:")
-    depends_on("r-s4vectors@0.18.2:", type=("build", "run"), when="@2.14.12:")
-    depends_on("r-s4vectors@0.19.11:", type=("build", "run"), when="@2.16.0:")
-    depends_on("r-s4vectors@0.21.9:", type=("build", "run"), when="@2.18.3:")
-    depends_on("r-s4vectors@0.25.14:", type=("build", "run"), when="@2.22.2:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@2.24.1:")
-    depends_on("r-s4vectors@0.29.19:", type=("build", "run"), when="@2.28.0:")
+    depends_on("r-biocgenerics@0.36.0:", type=("build", "run"), when="@2.24.1:")
+    depends_on("r-biocgenerics@0.25.3:", type=("build", "run"), when="@2.14.12:")
+    depends_on("r-biocgenerics@0.23.3:", type=("build", "run"), when="@2.12.0:")
+    depends_on("r-biocgenerics@0.21.1:", type=("build", "run"))
+
+    depends_on("r-s4vectors@0.47.6:", type=("build", "run"), when="@2.43.7:")
+    depends_on("r-s4vectors@0.47.5:", type=("build", "run"), when="@2.43.6:")
+    depends_on("r-s4vectors@0.47.4:", type=("build", "run"), when="@2.43.3:")
+    depends_on("r-s4vectors@0.45.4:", type=("build", "run"), when="@2.41.3:")
+    depends_on("r-s4vectors@0.45.2:", type=("build", "run"), when="@2.41.1:")
+    depends_on("r-s4vectors@0.43.2:", type=("build", "run"), when="@2.39.2:")
     depends_on("r-s4vectors@0.33.3:", type=("build", "run"), when="@2.30.0:")
+    depends_on("r-s4vectors@0.29.19:", type=("build", "run"), when="@2.28.0:")
+    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@2.24.1:")
+    depends_on("r-s4vectors@0.25.14:", type=("build", "run"), when="@2.22.2:")
+    depends_on("r-s4vectors@0.21.9:", type=("build", "run"), when="@2.18.3:")
+    depends_on("r-s4vectors@0.19.11:", type=("build", "run"), when="@2.16.0:")
+    depends_on("r-s4vectors@0.18.2:", type=("build", "run"), when="@2.14.12:")
+    depends_on("r-s4vectors@0.15.5:", type=("build", "run"), when="@2.12.0:")
+    depends_on("r-s4vectors@0.13.17:", type=("build", "run"))

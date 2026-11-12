@@ -19,6 +19,8 @@ class RVctrs(RPackage):
 
     license("MIT")
 
+    version("0.7.3", sha256="b45078413e06ac624dddb7221a3a43908b405c8abec09822cb86638d30b0435b")
+    version("0.7.2", sha256="46452f7f5f800e10ad09c287c488a4f6d887c28ef14bcff4bae4f56e6ba57fce")
     version("0.7.1", sha256="2f93519dfcffabc08bc508c2f47b5c23151cc667250b08a8b90be367ef1317c0")
     version("0.6.5", sha256="43167d2248fd699594044b5c8f1dbb7ed163f2d64761e08ba805b04e7ec8e402")
     version("0.6.4", sha256="8a80192356e724d21bd89a0ce3e5835856fd5bb1651e7fc205c6fee58fd001c8")
@@ -55,8 +57,19 @@ class RVctrs(RPackage):
     depends_on("r-rlang@1.0.6:", type=("build", "run"), when="@0.5.0:")
     depends_on("r-rlang@1.1.0:", type=("build", "run"), when="@0.6.2:")
     depends_on("r-rlang@1.1.7:", type=("build", "run"), when="@0.7.0:")
+    depends_on("r-backports", type=("build", "run"), when="@0.2")
 
     # Historical dependencies
     depends_on("r-digest", type=("build", "run"), when="@:0.3.6")
     depends_on("r-zeallot", type=("build", "run"), when="@:0.2.0")
     depends_on("r-ellipsis@0.2.0:", type=("build", "run"), when="@:0.3.8")
+
+    # Versions <= 0.7.2 use R_NamespaceRegistry which was removed in r@4.6.0
+    conflicts("r@4.6:", when="@:0.7.2")
+
+    def flag_handler(self, name, flags):
+        # 0.2.0's utils.h lacks `extern` on tentative definitions, fixed in 0.3.5;
+        # GCC 10+ defaults to -fno-common, causing multiple-definition link errors.
+        if name == "cflags" and self.spec.satisfies("@0.2 %gcc@10:"):
+            flags.append("-fcommon")
+        return (flags, None, None)

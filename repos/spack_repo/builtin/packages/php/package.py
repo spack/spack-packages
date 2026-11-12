@@ -19,18 +19,25 @@ class Php(AutotoolsPackage):
 
     license("PHP-3.01")
 
-    version("8.3.12", sha256="d5d4e6ffc6d6b2f02a87c45741623e08045ec6509ade44a1033e0f8bbb374119")
-    version("7.4.33", sha256="dfbb2111160589054768a37086bda650a0041c89878449d078684d70d6a0e411")
+    version("8.5.12", sha256="914702592c81f85cb3f6c2bca0cbe4217d3fe5f5a4b8ca34a8f93f74a3575fc7")
+    version("8.4.27", sha256="ae5896236c1b5bba6c36dcdd2e30c87ccda595d28650d18e6c007eebb0db68ab")
+    version("8.3.36", sha256="132154b55122efe74ed55c6a51486dcf6a7797a2a8df66e5361c2bb6f0f1b527")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    # CVE-2026-109618, CVE-2026-109619
+    with default_args(deprecated=True):
+        version(
+            "8.3.12", sha256="d5d4e6ffc6d6b2f02a87c45741623e08045ec6509ade44a1033e0f8bbb374119"
+        )
+        version(
+            "7.4.33", sha256="dfbb2111160589054768a37086bda650a0041c89878449d078684d70d6a0e411"
+        )
 
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
-    depends_on("m4", type="build")
+    depends_on("c", type="build")
+
+    # buildconf only runs autoconf/autoheader; libtool.m4 is bundled in build/
+    depends_on("autoconf@2.68:", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("bison", type="build")
+    depends_on("bison@3:", type="build")
     depends_on("re2c", type="build")
     depends_on("bash", type="build")
     depends_on("libiconv", when="@8:")

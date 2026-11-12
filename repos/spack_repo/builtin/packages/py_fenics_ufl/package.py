@@ -22,6 +22,7 @@ class PyFenicsUfl(PythonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main", no_cache=True)
+    version("2026.1.0", sha256="72c0e4ac3d2f648f30f860fd4e895d96415a77318cb4551c5dbc53dc644b7c96")
     version(
         "2025.2.0.post0", sha256="2182fed6d0fc41fd97244d73fe6aa95e50725e5ba8fe1b3b0f3f4d0215b45534"
     )
@@ -66,6 +67,7 @@ class PyFenicsUfl(PythonPackage):
         )
         version("2016.2.0", tag="ufl-2016.2.0", commit="962d56f65821fb9c50ca4a5a858882c472243431")
 
+    depends_on("python@3.11:", when="@2026.1.0:", type=("build", "run"))
     depends_on("python@3.10:", when="@2025.2.0:", type=("build", "run"))
     depends_on("python@3.9:", when="@2025.1.0:", type=("build", "run"))
     depends_on("python@3.8:", when="@2023.2.0:", type=("build", "run"))

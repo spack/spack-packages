@@ -29,7 +29,7 @@ class PyOdcGeo(PythonPackage):
         depends_on("py-shapely")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/o/odc-geo/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/o/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.4.4"):
             name = "odc_geo"
         else:

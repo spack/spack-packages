@@ -172,6 +172,9 @@ class Hdf(AutotoolsPackage):
             ):
                 flags.append("-Wno-error=implicit-int")
 
+            if self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
+
         return flags, None, None
 
     def configure_args(self):

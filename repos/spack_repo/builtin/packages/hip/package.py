@@ -6,24 +6,34 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Hip(CMakePackage):
+class Hip(ROCmLibrary, CMakePackage):
     """HIP is a C++ Runtime API and Kernel Language that allows developers to
     create portable applications for AMD and NVIDIA GPUs from
     single source code."""
 
     homepage = "https://github.com/ROCm/HIP"
     git = "https://github.com/ROCm/HIP.git"
-    url = "https://github.com/ROCm/HIP/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
     maintainers("srekolam", "renjithravindrankannath", "haampie", "afzpatel")
     libraries = ["libamdhip64"]
 
     license("MIT")
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/HIP/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+
+    version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e6ab65cb2a236eee0e1f2738457367dffc3ce1e8dfb050ac22b7712e35aa896e")
     version("7.2.1", sha256="40a27fc18d08ea4f28b5e0990d38a3fec10ff491a2d5adb647b3faa5016873de")
     version("7.2.0", sha256="4a22fcd0baf8df47d2e234f887f5bc03d522ce78928f82d1b0669a55897c4205")
@@ -73,13 +83,15 @@ class Hip(CMakePackage):
     test_requires_compiler = True
 
     with when("+rocm"):
+        # OpenGL is required at build time (FindOpenGL) by rocclr
+        # and can be used at runtime (dlopen) for finding hip devices.
+        # Newer versions of HIP (at least 7.14) link against it but older (5.7)
+        # do not.
         depends_on("gl@4.5:")
         depends_on("py-cppheaderparser", type="build")
         depends_on("libx11", when="+asan")
         depends_on("xproto", when="+asan")
-        # hipcc likes to add `-lnuma` by default :(
-        # ref https://github.com/ROCm/HIP/pull/2202
-        depends_on("numactl")
+        depends_on("numactl")  # required by rocr-runtime
 
         for ver in [
             "5.7.0",
@@ -121,6 +133,9 @@ class Hip(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -153,6 +168,9 @@ class Hip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -175,6 +193,9 @@ class Hip(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 
@@ -246,7 +267,6 @@ class Hip(CMakePackage):
             placement="rocm-systems",
             when=f"@{d_version}",
         )
-
     # Add hipcc sources thru the below
     for d_version, d_shasum in [
         ("5.7.1", "d47d27ef2b5de7f49cdfd8547832ac9b437a32e6fc6f0e9c1646f4b704c90aee"),
@@ -312,7 +332,9 @@ class Hip(CMakePackage):
 
     @property
     def root_cmakelists_dir(self):
-        if self.spec.satisfies("@7.2:"):
+        if self.spec.satisfies("@7.13:"):
+            return "projects/clr"
+        elif self.spec.satisfies("@7.2:"):
             return "rocm-systems/projects/clr"
         else:
             return "clr"
@@ -372,13 +394,23 @@ class Hip(CMakePackage):
 
     @classmethod
     def determine_version(cls, lib):
+        # TheRock 7.13+ encodes the ROCm major and minor versions directly in
+        # the library name, followed by a HIP build number. 7.15 maps to 10.0.
+        match = re.search(r"lib\S*\.so\.7\.15\.\d+(?:-|$)", lib)
+        if match:
+            return "10.0.0"
+
+        match = re.search(r"lib\S*\.so\.(7)\.(1[34])\.\d+(?:-|$)", lib)
+        if match:
+            return "{0}.{1}.0".format(int(match.group(1)), int(match.group(2)))
+
         match = re.search(r"lib\S*\.so\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
         if match:
             ver = "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
         else:
-            ver = None
+            ver = super().determine_version(lib)
         return ver
 
     def set_variables(self, env):
@@ -515,7 +547,9 @@ class Hip(CMakePackage):
         self.spec.hipcc = join_path(self.prefix.bin, "hipcc")
 
     def patch(self):
-        if self.spec.satisfies("@7.2:"):
+        if self.spec.satisfies("@7.13:"):
+            clr_dir = "projects/clr"
+        elif self.spec.satisfies("@7.2:"):
             clr_dir = "rocm-systems/projects/clr"
         else:
             clr_dir = "clr"
@@ -534,8 +568,9 @@ class Hip(CMakePackage):
                 string=True,
             )
         perl = self.spec["perl"].command
-        with working_dir(f"{clr_dir}/hipamd/bin"):
-            filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
+        if self.spec.satisfies("@:7.2"):
+            with working_dir(f"{clr_dir}/hipamd/bin"):
+                filter_file("^#!/usr/bin/perl", f"#!{perl}", "roc-obj-extract", "roc-obj-ls")
         if self.spec.satisfies("@5.7"):
             with working_dir("hipcc/bin"):
                 filter_shebang("hipconfig")
@@ -595,15 +630,31 @@ class Hip(CMakePackage):
             args.append(self.define("HIP_PLATFORM", "nvidia"))
             if self.spec.satisfies("@:7.1"):
                 hipnv_path = f"{self.stage.source_path}/hipother/hipnv"
+            elif self.spec.satisfies("@7.13:"):
+                hipnv_path = f"{self.stage.source_path}/projects/hipother/hipnv"
             else:
                 hipnv_path = f"{self.stage.source_path}/rocm-systems/projects/hipother/hipnv"
             args.append(self.define("HIPNV_DIR", hipnv_path))
 
-        args.append(self.define("HIP_COMMON_DIR", self.stage.source_path))
+        # HIP 7.13+ sources provide the CLR projects directly.
+        if self.spec.satisfies("@7.13.0:"):
+            hip_common_dir = self.stage.source_path + "/projects/hip"
+            rocclr_path = self.stage.source_path + "/projects/clr/rocclr"
+            opencl_path = self.stage.source_path + "/projects/clr/opencl"
+        elif self.spec.satisfies("@7.2:"):
+            hip_common_dir = self.stage.source_path
+            rocclr_path = self.stage.source_path + "/rocm-systems/rocclr"
+            opencl_path = self.stage.source_path + "/rocm-systems/opencl"
+        else:
+            hip_common_dir = self.stage.source_path
+            rocclr_path = self.stage.source_path + "/clr/rocclr"
+            opencl_path = self.stage.source_path + "/clr/opencl"
+
+        args.append(self.define("HIP_COMMON_DIR", hip_common_dir))
         args.append(self.define("HIP_CATCH_TEST", "OFF"))
         args.append(self.define("CMAKE_INSTALL_LIBDIR", "lib"))
-        args.append(self.define("ROCCLR_PATH", self.stage.source_path + "/clr/rocclr"))
-        args.append(self.define("AMD_OPENCL_PATH", self.stage.source_path + "/clr/opencl"))
+        args.append(self.define("ROCCLR_PATH", rocclr_path))
+        args.append(self.define("AMD_OPENCL_PATH", opencl_path))
         args.append(self.define("CLR_BUILD_HIP", True))
         args.append(self.define("CLR_BUILD_OCL", False))
         if self.spec.satisfies("@5.7"):

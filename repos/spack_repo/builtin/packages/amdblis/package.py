@@ -5,6 +5,7 @@
 import os
 
 from spack_repo.builtin.packages.blis.package import BlisBase
+from spack_repo.builtin.packages.blis.package import _targets as blis_targets
 
 from spack.package import *
 
@@ -36,6 +37,7 @@ class Amdblis(BlisBase):
 
     license("BSD-3-Clause")
 
+    version("5.3", sha256="0d456548174a5a71df1225b5648d802d53d0351187ae2f829ecf5122f3aeab9e")
     version("5.2", sha256="c553bd543eedc87920df9b82634ae4c02662145ed737f51fdf4c9bca5e588028")
     version("5.1", sha256="4ab210cea8753f4be9646a3ad8e6b42c7d19380084a66312497c97278b8c76a4")
     version("5.0", sha256="5abb34972b88b2839709d0af8785662bc651c7806ccfa41d386d93c900169bc2")
@@ -103,6 +105,24 @@ class Amdblis(BlisBase):
 
         return args
 
+    def _targets_for_spec(self):
+        amd = {}
+        if self.spec.satisfies("@5.0:"):
+            amd["zen5"] = None
+        if self.spec.satisfies("@4.0:"):
+            amd["zen4"] = None
+        return {**amd, **blis_targets}
+
+    def edit(self, spec, prefix):
+        target = "auto"
+        for spack_target, blis_target in self._targets_for_spec().items():
+            if self.spec.satisfies(f"target={spack_target}:"):
+                target = blis_target or spack_target
+                break
+        # To ensure the target should always be the last argument for base and derived class
+        config_args = self.configure_args() + [target]
+        configure("--prefix={0}".format(prefix), *config_args)
+
     @run_after("install")
     def create_symlink(self):
         with working_dir(self.prefix.lib):
@@ -110,6 +130,14 @@ class Amdblis(BlisBase):
                 symlink("libblis-mt.a", "libblis.a")
             if os.path.isfile("libblis-mt.so"):
                 symlink("libblis-mt.so", "libblis.so")
+
+        # Since AOCL 5.1, OpenMP builds install blis-mt.pc instead of blis.pc.
+        # Create a compatibility symlink because some consumers (e.g. py-scipy)
+        # expect to discover BLIS via blis.pc.
+        if self.spec.satisfies("@5.1: threads=openmp"):
+            with working_dir(self.prefix.share.pkgconfig):
+                if os.path.isfile("blis-mt.pc") and not os.path.exists("blis.pc"):
+                    symlink("blis-mt.pc", "blis.pc")
 
     @property
     def libs(self):

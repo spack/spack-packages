@@ -1,0 +1,44 @@
+Fix CGNS `ctx_cgio` link failure in SEACAS/Iocgns with GCC 15.
+
+Iocgns_DatabaseIO.C hand-declares the CGNS-internal global `ctx_cgio`
+(from the private header `cgio_internal_type.h`) inside an unnamed
+namespace. A name declared in an unnamed namespace has internal linkage,
+which overrides the `extern "C"` language linkage. GCC 15 consequently
+emits a mangled reference instead of the plain C symbol exported by CGNS.
+Move the declaration to global scope so it retains external C linkage.
+
+Upstream report: https://github.com/sandialabs/seacas/issues/889
+
+--- a/packages/seacas/libraries/ioss/src/cgns/Iocgns_DatabaseIO.C
++++ b/packages/seacas/libraries/ioss/src/cgns/Iocgns_DatabaseIO.C
+@@ -78,9 +78,13 @@
+
+ // extern char hdf5_access[64];
+
+-namespace {
+-  extern "C" {
+-  // From private CGNS header: `cgio_internal_type.h`
++// NOTE: this block must remain at global scope. A variable declared in an
++// unnamed namespace has internal linkage, which overrides the `extern "C"`
++// language linkage: the compiler then emits a mangled reference to
++// `(anonymous namespace)::ctx_cgio` instead of the plain C symbol
++// `ctx_cgio` that libcgns actually exports, and the link fails.
++extern "C" {
++// From private CGNS header: `cgio_internal_type.h`
+   typedef struct _cgns_io_ctx_t
+   {
+     /* Flag indicating if HDF5 file accesses is PARALLEL or NATIVE */
+@@ -97,8 +101,10 @@
+ #endif
+   } cgns_io_ctx_t;
+
+-  extern cgns_io_ctx_t ctx_cgio; /* located in cgns_io.c */
+-  }
++extern cgns_io_ctx_t ctx_cgio; /* located in cgns_io.c */
++}
++
++namespace {
+
+   // There is a bug in the CGNS library (4.4.0 and before) where it
+   // has a global symbol `ctx_cgio` which controls whether
+

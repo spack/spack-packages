@@ -20,7 +20,9 @@ class Scalasca(AutotoolsPackage):
     homepage = "https://www.scalasca.org"
     url = "https://apps.fz-juelich.de/scalasca/releases/scalasca/2.1/dist/scalasca-2.1.tar.gz"
     list_url = "https://scalasca.org/scalasca/front_content.php?idart=1072"
+    maintainers("marcschluetter")
 
+    version("2.6.2", sha256="17e72fd908be43879955e4ed49c2732d4dbda7d295fec2d8b3af7ddafe1202a0")
     version("2.6.1", sha256="a0dbc3de82a6c0fe598de9e340513cff2882c199410a632d3a7f073ba921c7e7")
     version("2.6", sha256="b3f9cb1d58f3e25090a39da777bae8ca2769fd10cbd6dfb9a4887d873ee2441e")
     version("2.5", sha256="7dfa01e383bfb8a4fd3771c9ea98ff43772e415009d9f3c5f63b9e05f2dde0f6")

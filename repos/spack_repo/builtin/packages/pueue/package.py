@@ -17,10 +17,12 @@ class Pueue(CargoPackage):
 
     license("Apache-2.0 AND MIT")
 
+    version("4.0.4", sha256="236a47a1cc74721998f4de3eff5062efe8e73c56c05aa19e64fef2e5ee55700f")
     version("4.0.2", sha256="059ee9688cb8b1ce46284f5ad58de21911b6af50098d29598085d2b9dbd432ab")
     version("4.0.1", sha256="7bbe552700041b2e9cd360b69c328d6932ad57d0e0a480a8992fab3a2737cdf8")
 
     depends_on("c", type="build")
+    depends_on("rust@1.87:", type="build", when="@4.0.3:")
     depends_on("rust@1.85:", type="build")
 
     @property

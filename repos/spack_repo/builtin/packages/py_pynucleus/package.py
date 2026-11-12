@@ -62,7 +62,7 @@ class PyPynucleus(PythonPackage):
     def install_python(self):
         for subpackage in ["packageTools", "base", "metisCy", "fem", "multilevelSolver", "nl"]:
             with working_dir(subpackage):
-                pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+                pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
 
     @run_after("install")
     def install_additional_files(self):

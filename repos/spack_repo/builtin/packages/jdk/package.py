@@ -10,6 +10,40 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 
+def remove_emsign_certs(jdk_pkg: Package):
+    bad_certs = (
+        "emsignrootcag1",
+        "emsignrootcag2",
+        "emsigneccrootcag3",
+        "comodoaaaca",
+    )
+    cacerts = ["-storepass", "changeit"]
+    if jdk_pkg.spec.satisfies("@11:"):
+        cacerts.append("-cacerts")
+    else:
+        keystore_root = jdk_pkg.home.jre.lib.security.cacerts
+        cacerts.extend(["-keystore", keystore_root])
+
+    failed_to_remove = []
+    for cert in bad_certs:
+        # Try to remove the cert
+        try:
+            jdk_pkg.keytool(*cacerts, "-delete", "-alias", f"{cert} [jdk]")
+        except ProcessError:
+            # This will fail if the cert doesn't exist so don't raise here
+            pass
+
+    # Verify that the cert does not exist
+    out = jdk_pkg.keytool(*cacerts, "-list", output=str)
+    failed_to_remove = []
+    for cert in bad_certs:
+        if cert in out:
+            failed_to_remove.append(cert)
+
+    if failed_to_remove:
+        raise SpackError("Failed to remove bad certs: " + ", ".join(failed_to_remove))
+
+
 class Jdk(Package):
     """The Java Development Kit (JDK) released by Oracle Corporation in the
     form of a binary product aimed at Java developers. Includes a complete JRE
@@ -23,16 +57,10 @@ class Jdk(Package):
 
     redistribute(source=False, binary=False)
 
-    version(
-        "21.0.2",
-        sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f",
-        url="https://download.oracle.com/java/21/latest/jdk-21_linux-x64_bin.tar.gz",
-    )
-    version(
-        "17.0.10",
-        sha256="e4fb2df9a32a876afb0a6e17f54c594c2780e18badfa2e8fc99bc2656b0a57b1",
-        url="https://download.oracle.com/java/17/latest/jdk-17_linux-x64_bin.tar.gz",
-    )
+    version("21.0.11", sha256="e1c25a83f9e2e374c93e0c29cc3d98a947621ae0fefa4a8d932951eb160c47c3")
+    version("21.0.2", sha256="9f1f4a7f25ef6a73255657c40a6d7714f2d269cf15fb2ff1dc9c0c8b56623a6f")
+    version("17.0.12", sha256="311f1448312ecab391fe2a1b2ac140d6e1c7aea6fbf08416b466a58874f2b40f")
+    version("17.0.10", sha256="e4fb2df9a32a876afb0a6e17f54c594c2780e18badfa2e8fc99bc2656b0a57b1")
 
     provides("java@21", when="@21")
     provides("java@17", when="@17")
@@ -43,15 +71,14 @@ class Jdk(Package):
     conflicts("platform=darwin")
     conflicts("platform=freebsd")
 
-    # FIXME:
-    # 1. `extends('java')` doesn't work, you need to use `extends('jdk')`
-    # 2. Packages cannot extend multiple packages, see #987
-    # 3. Update `YamlFilesystemView.merge` to allow a Package to completely
-    #    override how it is symlinked into a view prefix. Then, spack activate
-    #    can symlink all *.jar files to `prefix.lib.ext`
+    # FIXME: Packages cannot extend multiple packages, see #987
     extendable = True
 
     executables = ["^java$"]
+
+    def url_for_version(self, version):
+        url = "https://download.oracle.com/java/{0}/archive/jdk-{1}_linux-x64_bin.tar.gz"
+        return url.format(version.up_to(1), version)
 
     @classmethod
     def determine_version(cls, exe):
@@ -99,8 +126,16 @@ class Jdk(Package):
 
         return find_libraries(["libjvm"], root=self.home, recursive=True)
 
+    @property
+    def keytool(self):
+        return Executable(self.home.bin.keytool)
+
     def install(self, spec, prefix):
         install_tree(".", prefix)
+
+    @run_after("install")
+    def remove_emsign_certs(self):
+        remove_emsign_certs(self)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """Set JAVA_HOME."""

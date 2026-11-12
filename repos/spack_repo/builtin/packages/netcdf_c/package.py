@@ -158,6 +158,27 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
         sha256="5adacbeb7021ba59e6cdb23bb0095c720b9da925b276418c66d5eb9c8ddb0d56",
         when="@:4.9",
     )
+    # https://github.com/Unidata/netcdf-c/issues/3199
+    patch("cmakelists_mpi_symbols.patch", when="build_system=cmake")
+
+    # Address the CVE-2025-14933 vulnerability (https://github.com/advisories/GHSA-cg32-6v27-jr43).
+    # See https://github.com/Unidata/netcdf-c/pull/3153
+    patch(
+        "https://github.com/Unidata/netcdf-c/commit/0e0cb290673fa5a8056df603a95d6bdc7865e9c4.patch?full_index=1",
+        sha256="5adacbeb7021ba59e6cdb23bb0095c720b9da925b276418c66d5eb9c8ddb0d56",
+        when="@:4.9",
+    )
+
+    def patch(self):
+        """Fix bad code in ncgen/CMakeLists.txt that removes
+        the rpath for dependencies like hdf5."""
+        if self.spec.satisfies("build_system=cmake"):
+            filter_file(
+                "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)",
+                "SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)",
+                "ncgen/CMakeLists.txt",
+                string=True,
+            )
 
     variant("mpi", default=True, description="Enable parallel I/O for netcdf-4")
     variant("parallel-netcdf", default=False, description="Enable parallel I/O for classic files")
@@ -171,6 +192,9 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
     variant("nczarr_zip", default=False, description="Enable NCZarr zipfile format storage")
     variant("optimize", default=True, description="Enable -O2 for a more optimized lib")
     variant("logging", default=False, description="Enable logging")
+    variant("utilities", default=True, description="Build command-line utilities")
+    variant("tests", default=True, description="Build test programs")
+    variant("examples", default=True, description="Build example programs")
 
     variant("szip", default=True, description="Enable Szip compression plugin")
     variant("blosc", default=True, description="Enable Blosc compression plugin")
@@ -346,6 +370,18 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
                     flags.append("-O2")
         return flags, None, None
 
+    def patch(self):
+        # Needed due to the patch applied to fix CVE-2025-14933.
+        # A `#include <stdint.h>` is introduced in version 4.8.1.
+        # Refer to https://github.com/spack/spack-packages/issues/5524
+        if self.spec.satisfies("@:4.8.0"):
+            filter_file(
+                "#define NCCONFIGURE_H 1",
+                "#define NCCONFIGURE_H 1\n\n#ifdef HAVE_STDINT_H\n#include <stdint.h>\n#endif",
+                "include/ncconfigure.h",
+                string=True,
+            )
+
     @property
     def libs(self):
         shared = "+shared" in self.spec
@@ -386,7 +422,7 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
         base_cmake_args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant(nc + "ENABLE_BYTERANGE", "byterange"),
-            self.define(nc + "BUILD_UTILITIES", True),
+            self.define_from_variant(nc + "BUILD_UTILITIES", "utilities"),
             self.define(nc + "ENABLE_NETCDF_4", True),
             self.define_from_variant(nc + "ENABLE_DAP", "dap"),
             self.define_from_variant(nc + "ENABLE_HDF4", "hdf4"),
@@ -394,7 +430,17 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             self.define_from_variant(nc + "ENABLE_FSYNC", "fsync"),
             self.define(nc + "ENABLE_LARGE_FILE_SUPPORT", True),
             self.define_from_variant("NETCDF_ENABLE_LOGGING", "logging"),
+            self.define_from_variant(nc + "ENABLE_TESTS", "tests"),
+            self.define_from_variant(nc + "ENABLE_UNIT_TESTS", "tests"),
+            self.define_from_variant(nc + "ENABLE_EXAMPLES", "examples"),
+            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define_from_variant(nc + "ENABLE_NCZARR_ZIP", "nczarr_zip"),
+            self.define_from_variant("ENABLE_NCZARR_ZIP", "nczarr_zip"),
         ]
+        if any(self.spec.satisfies(s) for s in ["+mpi", "+parallel-netcdf", "^hdf5+mpi~shared"]):
+            base_cmake_args.append(
+                self.define("CMAKE_C_COMPILER", pathlib.Path(self.spec["mpi"].mpicc).as_posix())
+            )
         if "+parallel-netcdf" in self.pkg.spec:
             base_cmake_args.append(self.define(nc + "ENABLE_PNETCDF", True))
         if self.pkg.spec.satisfies("@4.3.1:"):
@@ -426,6 +472,15 @@ class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
             base_cmake_args.append(
                 self.define("PLUGIN_INSTALL_DIR", pathlib.Path(self.prefix.plugins).as_posix())
             )
+
+        # With static hdf+external-xdr we need to specify spack's libtirpc explicitly
+        # to avoid undefined references to xdr functions. Fixes spack-packages#5738:
+        if self.spec.satisfies("+hdf4"):
+            if self.spec["hdf"].satisfies("~shared +external-xdr ^libtirpc"):
+                tirpc = f"-L{self.spec['libtirpc'].prefix.lib} -ltirpc"
+                base_cmake_args.append(self.define("CMAKE_EXE_LINKER_FLAGS", tirpc))
+                base_cmake_args.append(self.define("CMAKE_MODULE_LINKER_FLAGS", tirpc))
+
         return base_cmake_args
 
     @run_after("install")
@@ -477,10 +532,13 @@ class AutotoolsBuilder(AnyBuilder, autotools.AutotoolsBuilder):
     def configure_args(self):
         config_args = [
             "--enable-v2",
-            "--enable-utilities",
             "--enable-static",
             "--enable-largefile",
         ]
+
+        config_args += self.enable_or_disable("utilities")
+        config_args += self.enable_or_disable("test", variant="tests")
+        config_args += self.enable_or_disable("examples")
 
         if self.spec.satisfies("@4.8.0:"):
             config_args.append("--enable-hdf5")

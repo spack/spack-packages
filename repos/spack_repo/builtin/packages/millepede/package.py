@@ -24,6 +24,10 @@ class Millepede(MakefilePackage, CMakePackage):
     license("LGPL-2.0-only")
 
     version("main", branch="main")
+    version("05-01-07", sha256="da12ea524d75129d87aded7afd3f39bfb76cc1fe8a5def7557e16ccd0d2d6a74")
+    version("05-01-06", sha256="4162b8f6861b6a52ca4d6a781d6632f6f64832c672c5f8a169ff21e91d35389a")
+    version("05-01-05", sha256="c567c8f486194c1edf9e04c53c15f22635120be13e1de19c428f2eb088ae3222")
+    version("05-01-04", sha256="6e8c1a3589d91251b87578ff046e9b58268cfcd2fdf4d98a77e45f1c8d43e864")
     version("05-01-03", sha256="18f707a1b372f07420e26969f503518b6dd067642f5eab45f05728aa7ff742ec")
     version("05-01-02", sha256="fd7991487682e8b28cac6a036b905fedc19ec0ac9e26fd85e2514b22a75e3343")
     version("05-01-01", sha256="b6a316e4b1ebf93cbf72ddd57a157e09f4446e4677352ef288748731ac2c0297")
@@ -56,7 +60,7 @@ class Millepede(MakefilePackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
-    requires("%gcc", msg="Millepede hardcodes gcc/g++/gfortran")
+    requires("%gcc", msg="Millepede hardcodes gcc/g++/gfortran", when="@:05-01-03")
 
     depends_on("zlib-api", when="+zlib")
 

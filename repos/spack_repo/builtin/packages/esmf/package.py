@@ -18,9 +18,24 @@ class Esmf(MakefilePackage, PythonExtension):
     related Earth science applications. The ESMF defines an architecture for
     composing complex, coupled modeling systems and includes data structures
     and utilities for developing individual models.
+
     The National Unified Operational Prediction Capability (NUOPC) Layer
     defines a common model architecture to support interoperable ESMF components.
-    The NUOPC Layer is included with the ESMF package."""
+    The NUOPC Layer is included with the ESMF package.
+
+    ESMX (Earth System Modeling eXecutable) extends this infrastructure by
+    providing a unified, runtime executable layer. It simplifies the deployment
+    of NUOPC-compliant components by allowing users to configure, drive, and
+    execute coupled earth system models dynamically via YAML configuration files,
+    reducing the need to write custom top-level application and driver code.
+    ESMX is included with the ESMF package.
+
+    ESMPy is a Python interface to the ESMF gridding engine. It allows for
+    high-performance, parallel regridding of fields between structured grids,
+    unstructured meshes, and observational data streams directly within Python
+    workflows. This bridges native ESMF capabilities with the broader Python
+    data science ecosystem.
+    ESMPy is included with the ESMF package."""
 
     homepage = "https://earthsystemmodeling.org/"
     url = "https://github.com/esmf-org/esmf/archive/v8.4.1.tar.gz"
@@ -234,13 +249,13 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("ESMF_COMPILER", "gfortranclang")
         elif spec["fortran"].name == "llvm":
             env.set("ESMF_COMPILER", "llvm")
-        elif self.pkg.compiler.name == "nag":
+        elif spec["fortran"].name == "nag":
             env.set("ESMF_COMPILER", "nag")
-        elif self.pkg.compiler.name == "nvhpc":
+        elif spec["fortran"].name == "nvhpc":
             env.set("ESMF_COMPILER", "nvhpc")
-        elif self.pkg.compiler.name == "cce":
+        elif spec["fortran"].name == "cce":
             env.set("ESMF_COMPILER", "cce")
-        elif self.pkg.compiler.name == "aocc":
+        elif spec["fortran"].name == "aocc":
             env.set("ESMF_COMPILER", "aocc")
         else:
             msg = "The compiler you are building with, "

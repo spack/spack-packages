@@ -86,6 +86,7 @@ from spack.package import (
     join_path,
     variant,
 )
+from spack.version import Version
 
 
 class ROCmPackage(PackageBase):
@@ -218,6 +219,29 @@ class ROCmPackage(PackageBase):
 
 class ROCmLibrary(PackageBase):
     """Helpers for detecting ROCm versions from an external installation."""
+
+    # URL mapping configuration - can be overridden in subclasses
+    # Format: list of (version_max, url_template) tuples, checked in order
+    # version_max=None means "all remaining versions"
+    # url_template uses {0} for full version, {1} for major, {2} for minor
+    rocm_url_map = None
+
+    def url_for_version(self, version):
+        """Generate URL based on rocm_url_map configuration.
+
+        Can be overridden for packages with special requirements.
+        """
+        if self.rocm_url_map is None:
+            raise NotImplementedError(
+                f"{self.__class__.__name__} must define rocm_url_map or override url_for_version"
+            )
+
+        for version_threshold, url_template in self.rocm_url_map:
+            if version_threshold is None or version <= Version(version_threshold):
+                return url_template.format(version, version[0], version[1])
+
+        # Fallback to last template if no match
+        return self.rocm_url_map[-1][1].format(version, version[0], version[1])
 
     @classmethod
     def determine_version(cls, path):

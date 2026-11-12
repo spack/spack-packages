@@ -32,9 +32,18 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Support both CMake and Autotools. CMake is available and default only for v3+.
     build_system(conditional("cmake", when="@3:"), "autotools", default="cmake")
+    # CMake support exists only for @3:.
+    requires("build_system=cmake", when="platform=windows")
+    conflicts(
+        "platform=windows",
+        when="@:2",
+        msg="Hypre versions before 3.0 use Autotools only and cannot be built on Windows",
+    )
 
     # Package versions
     version("develop", branch="master")
+    version("3.2.1", sha256="3083cf943e1dab54517acae36afad72a4ada2c72c9567e525fc9c6efedb14e0c")
+    version("3.2.0", sha256="5273205a310fb6aa3ae506ce216760fb67b30e02024874f3cdb8b811e4801de7")
     version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")
     version("2.33.0", sha256="0f9103c34bce7a5dcbdb79a502720fc8aab4db9fd0146e0791cde7ec878f27da")
@@ -129,6 +138,13 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
         description="C++ language standard (for GPU builds)",
     )
 
+    # Sync compute stream before GPU-aware MPI in device matvec (hypre-space/hypre#1629)
+    patch(
+        "https://github.com/hypre-space/hypre/commit/5d0282f44490f406ea532ea6778fe914df677346.patch?full_index=1",
+        sha256="8b11d35c29215d462b8e727775e8771d808806ced107e1675082ed80b9ba84fb",
+        when="@2.33.0:3.2.0 +gpu-aware-mpi",
+    )
+
     # Patch to fix GPU+TPLs and freebsd build issues
     patch(
         "https://github.com/hypre-space/hypre/pull/1463.patch?full_index=1",
@@ -197,6 +213,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # GPU-related dependencies and conflicts
     gpu_pkgs = ["magma", "umpire", "superlu-dist"]
+    conflicts("+umpire", when="~cuda~rocm")
     conflicts("+unified-memory", when="~cuda~rocm~sycl")
     conflicts("+gpu-profiling", when="~cuda~rocm~sycl")
     conflicts("+gpu-aware-mpi", when="~cuda~rocm~sycl")
@@ -394,6 +411,10 @@ class CMakeBuilder(CMakeBuilder):
         if spec.satisfies("+magma"):
             args.append(self.define("TPL_MAGMA_INCLUDE_DIRS", self.spec["magma"].prefix.include))
             args.append(self.define("TPL_MAGMA_LIBRARIES", self.spec["magma"].libs))
+
+        if "+umpire" in self.spec:
+            args.append(self.define("TPL_UMPIRE_INCLUDE_DIRS", self.spec["umpire"].prefix.include))
+            args.append(self.define("TPL_UMPIRE_LIBRARIES", self.spec["umpire"].libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)

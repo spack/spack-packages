@@ -49,7 +49,7 @@ class Mothur(MakefilePackage):
         filter_file(r"^.*DMOTHUR_TOOLS.*$", "", "Makefile")
         filter_file(r"^.*DMOTHUR_FILES.*$", "", "Makefile")
         filter_file(r"(\$\(skipUchime\))", r"\1, source/", "Makefile")
-        if spec.satisfies("@1.40.5"):
+        if spec.satisfies("@1.40:"):
             filter_file(
                 r"^(#define writer_h)", "\\1 \n#include<memory>", join_path("source", "writer.h")
             )

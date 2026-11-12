@@ -19,6 +19,7 @@ class Damaris(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.14.0", tag="v1.14.0", commit="b7847dd4d9d1c80bc137956b1e40b91969c4e0fd")
     version("1.13.0", tag="v1.13.0", commit="22cea534be36d49e68c78f553d72426bdc8da013")
     version("1.12.1", tag="v1.12.1", commit="34473ed117445f97a26091890f8ffd111a1d8b9c")
     version("1.12.0", tag="v1.12.0", commit="62599496ea208788530a952fdf0037495a6b6270")

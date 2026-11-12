@@ -17,6 +17,8 @@ class RBiocparallel(RPackage):
     bioc = "BiocParallel"
 
     with default_args(get_full_repo=True):
+        version("1.46.0", commit="a331dfd2695daec754304505bdbd7358eef009fa")  # bioc 3.23
+        version("1.42.2", commit="dbadae1fcbb3141202376d65c9a1224736c8825c")  # bioc 3.21
         version("1.34.0", commit="f3bbc0a2d38da034c50ca1e4704fc4ee99a2dc9e")
         version("1.32.1", commit="6c85dbad596a74a6d3022173a4a11c6b81a4a2c2")
         version("1.30.4", commit="1229ebe9f6d8305f9f61e562464f83f9ba86e699")
@@ -29,11 +31,15 @@ class RBiocparallel(RPackage):
         version("1.12.0", commit="2143a9addceed0151a27b95c70aadd2add5cbace")
         version("1.10.1", commit="a76c58cf99fd585ba5ea33065649e68f1afe0a7d")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
+    depends_on("r@4.1:", type=("build", "run"), when="@1.41.4:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.28.3:")
+
+    depends_on("r-bh@1.87:", type=("build", "run"), when="@1.40.1,1.41.4:")
+    depends_on("r-bh", type=("build", "run"), when="@1.12.0:")
+
+    depends_on("r-codetools", type=("build", "run"), when="@1.30.4:")
+    depends_on("r-cpp11", type=("build", "run"), when="@1.32.1:")
     depends_on("r-futile-logger", type=("build", "run"))
     depends_on("r-snow", type=("build", "run"))
-    depends_on("r-codetools", type=("build", "run"), when="@1.30.4:")
-    depends_on("r-bh", type=("build", "run"), when="@1.12.0:")
-    depends_on("r-cpp11", type=("build", "run"), when="@1.32.1:")

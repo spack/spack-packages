@@ -88,6 +88,9 @@ class Grads(AutotoolsPackage):
             if any(spec.satisfies(s) for s in strict_compilers):
                 flags.append("-Wno-error=implicit-function-declaration")
 
+            if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+                flags.append("-std=gnu17")
+
         return (flags, None, None)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:

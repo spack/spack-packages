@@ -17,10 +17,14 @@ class Libgcrypt(AutotoolsPackage):
 
     license("LGPL-2.1-or-later AND GPL-2.0-or-later")
 
+    version("1.12.4", sha256="d77f68f48879510e79a2f65977ccc68981781ea0923e5bdffac2a193ea3d660e")
+    version("1.12.3", sha256="98d1b0b3202d2b03fa754a35aa3cbbfcf526a3260d8d2ee213748001b1043006")
     version("1.12.2", sha256="7ce33c2492221a0436f96a8500215e9f3e3dcb5fd26a757cd415e7a843babd5e")
     version("1.12.0", sha256="0311454e678189bad62a7e9402a9dd793025efff6e7449898616e2fc75e0f4f5")
+    version("1.11.3", sha256="2c6d562e894b2b06eefbc427d12d51ee9d3e50e90012ad6596b4cb3e421a95f2")
     version("1.11.2", sha256="6ba59dd192270e8c1d22ddb41a07d95dcdbc1f0fb02d03c4b54b235814330aac")
     version("1.11.1", sha256="24e91c9123a46c54e8371f3a3a2502f1198f2893fbfbf59af95bc1c21499b00e")
+    version("1.10.4", sha256="d6d2f835a79711ceba54b53d1081d388d24fb0341d79a268a6557e12908a90a0")
     version("1.10.3", sha256="8b0870897ac5ac67ded568dcfadf45969cfa8a6beb0fd60af2a9eadc2a3272aa")
 
     depends_on("c", type="build")
@@ -39,7 +43,17 @@ class Libgcrypt(AutotoolsPackage):
         # flags, and the build system ensures that
         return (None, flags, None)
 
-    patch("o_flag_munging-1.10.patch", when="@1.10")
+    # Fixed upstream in 1.10.4
+    patch("o_flag_munging-1.10.patch", when="@1.10.0:1.10.3")
+
+    def configure_args(self):
+        args = []
+        # Since 1.12.3 the aarch64 assembly does not build with Apple's assembler. MacPorts uses
+        # --disable-asm too:
+        # https://github.com/macports/macports-ports/blob/8949faaf0324208a6e920fa721a9576082c00fe1/devel/libgcrypt/Portfile
+        if self.spec.satisfies("@1.12.3: platform=darwin target=aarch64:"):
+            args.append("--disable-asm")
+        return args
 
     def check(self):
         # Without this hack, `make check` fails on macOS when SIP is enabled

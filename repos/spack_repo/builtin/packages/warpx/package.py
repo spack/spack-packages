@@ -17,7 +17,7 @@ class Warpx(CMakePackage, PythonExtension):
     """
 
     homepage = "https://ecp-warpx.github.io"
-    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.04.tar.gz"
+    url = "https://github.com/BLAST-WarpX/warpx/archive/refs/tags/26.11.tar.gz"
     git = "https://github.com/BLAST-WarpX/warpx.git"
 
     maintainers("ax3l", "dpgrote", "EZoni", "RemiLehe")
@@ -26,6 +26,13 @@ class Warpx(CMakePackage, PythonExtension):
     license("BSD-3-Clause-LBNL")
 
     version("develop", branch="development")
+    version("26.11", sha256="32a40e81fdeb189cc7dfb7d1278a0974d31880b8a1d0a4dbe216e790147f32fd")
+    version("26.10", sha256="63401a099c186f6e56e487b9c1da5e5c05bf8a582b1fbef399f9947fa8427141")
+    version("26.09", sha256="ea0c0c01883a8b8cc8c60dcce60c0c103b2abf873d6a63bffcf41c8762ae5be0")
+    version("26.08", sha256="fa430d90de6d7d51811f7eb170797f55ccf0e7a344bfbc1c81f0fdba53986530")
+    version("26.07", sha256="960d2387dfc08735f89e87060b4ff9e702b4cc3aae7e930ad8adbdd09b1eb4b2")
+    version("26.06", sha256="260869743fa5995fcdce964ebb3996efe5fd4126da753c6bdc645e2f9722364e")
+    version("26.05", sha256="4cbbbaa444b96252b9f7e2cacd6329ac5b287595f8aa34052f6dc5c16ac34595")
     version("26.04", sha256="484175b83b7752c2de1d947b181f2e1406d27dda95b4f51dbf7fcbc78c5a4bc4")
     version("26.03", sha256="7f857a2189dc9bf428825f2c17e74c6404d73e616a59d2f94d8d3692acb5d26d")
     version("26.01", sha256="c3b34a93e350e068c07e3107784885562cfa5c93ce3fd65fed002e5a6353d63d")
@@ -34,7 +41,22 @@ class Warpx(CMakePackage, PythonExtension):
     version("25.04", sha256="374136fbf566d65307dfe95ae12686ccaf3e649d2f66a79cd856585986c94ac7")
 
     depends_on("amrex build_system=cmake +linear_solvers +pic +particles +shared +tiny_profile")
-    for v in ["develop", "26.04", "26.03", "26.01", "25.12", "25.11", "25.04"]:
+    for v in [
+        "develop",
+        "26.11",
+        "26.10",
+        "26.09",
+        "26.08",
+        "26.07",
+        "26.06",
+        "26.05",
+        "26.04",
+        "26.03",
+        "26.01",
+        "25.12",
+        "25.11",
+        "25.04",
+    ]:
         depends_on(f"amrex@{v}", when=f"@{v}")
         depends_on(f"py-amrex@{v}", when=f"@{v} +python", type=("build", "run"))
 
@@ -186,7 +208,8 @@ class Warpx(CMakePackage, PythonExtension):
         depends_on("py-mpi4py@2.1.0:", type=("build", "run"), when="+mpi")
         depends_on("py-periodictable@1.5:1", type=("build", "run"))
         depends_on("py-picmistandard@0.33.0", type=("build", "run"), when="@25.01:25.10")
-        depends_on("py-picmistandard@0.34.0", type=("build", "run"), when="@25.11:")
+        depends_on("py-picmistandard@0.34.0", type=("build", "run"), when="@25.11:26.10")
+        depends_on("py-picmistandard@0.35.0", type=("build", "run"), when="@26.11:")
         depends_on("py-pip@23:", type="build")
         depends_on("py-setuptools@42:", type="build")
         depends_on("py-pybind11@2.12.0:", type=("build", "link"))
@@ -233,7 +256,7 @@ class Warpx(CMakePackage, PythonExtension):
             args.append("-DWarpX_openpmd_internal=OFF")
 
         if "+python" in spec:
-            pip_args = PythonPipBuilder.std_args(self) + [f"--prefix={self.prefix}"]
+            pip_args = PythonPipBuilder.std_args() + [f"--prefix={self.prefix}"]
             idx = pip_args.index("install")
             # Docs: https://warpx.readthedocs.io/en/latest/install/cmake.html#build-options
             args.extend(

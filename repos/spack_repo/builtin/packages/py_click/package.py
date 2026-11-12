@@ -16,6 +16,8 @@ class PyClick(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.5.1", sha256="9bbfada76703fd1d784b83eea012e3e8c6a001a876543ef104fa56aaaeb072b4")
+    version("8.5.0", sha256="ba0d2089de75ea0310e2dde03160e6ca10009947fb95a182f9b54021bb272e34")
     version("8.3.1", sha256="12ff4785d337a1bb490bb7e9c2b1ee5da3112e94a8622f26a6c77f5d2fc6842a")
     version("8.2.1", sha256="27c491cc05d968d271d5a1db13e3b5a184636d9d930f148c50b038f0d0646202")
     version("8.1.8", sha256="ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a")
@@ -31,13 +33,16 @@ class PyClick(PythonPackage):
     )
     version("6.6", sha256="cc6a19da8ebff6e7074f731447ef7e112bd23adf3de5c597cf9989f2fd8defe9")
 
-    depends_on("python@3.10:", when="@8.2:", type=("build", "run"))
-    # Needed to ensure that Spack can bootstrap black with Python 3.6
-    depends_on("python@3.7:", when="@8.1:", type=("build", "run"))
-    with when("@8.1.8:"):
-        depends_on("py-flit-core@:3", type="build")
-    with when("@:8.1.7"):
-        depends_on("py-setuptools", type="build")
+    with default_args(type="build"):
+        depends_on("py-flit-core@3.11:3", when="@8.3.1:")
+        depends_on("py-flit-core@:3", when="@8.1.8:")
+        depends_on("py-setuptools", when="@:8.1.7")
 
-    depends_on("py-importlib-metadata", when="@8: ^python@:3.7", type=("build", "run"))
-    depends_on("py-colorama", when="@8: platform=windows", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@8.2:")
+        # Needed to ensure that Spack can bootstrap black with Python 3.6
+        depends_on("python@3.7:", when="@8.1:")
+
+        # Historical dependencies
+        depends_on("py-importlib-metadata", when="@8:8.1 ^python@:3.7")
+        depends_on("py-colorama", when="@8:8.4 platform=windows")

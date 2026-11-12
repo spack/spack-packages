@@ -17,10 +17,24 @@ class IntelOneapiTbb(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onetbb.html"
+    )
+
+    version(
+        "2023.2.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/7ce6360b-a464-48b3-a4e2-07f41a208f8b/intel-onetbb-2023.2.0.495_offline.sh",
+        sha256="6ed27906f59b6bec54bc654f046556ce242896c998fc64fa57ad51d0991cb6bc",
+        expand=False,
+    )
+
+    version(
+        "2023.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/d93b2767-7739-4b1c-8cfc-084b52f31447/intel-onetbb-2023.1.0.157_offline.sh",
+        sha256="ca12a1dcfebd119bd5f832a39d560e8740d441949e87a11213d82a84ef4df324",
+        expand=False,
     )
 
     version(

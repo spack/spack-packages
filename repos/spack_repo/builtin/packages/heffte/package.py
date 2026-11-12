@@ -2,7 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+import os
+
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -52,6 +54,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     variant("magma", default=False, description="Use helper methods from the UTK MAGMA library")
     variant("python", default=False, description="Install the Python bindings")
     variant("fortran", default=False, description="Install the Fortran modules")
+    variant("benchmarks", default=False, description="Install the heFFTe benchmarks")
 
     depends_on("python@3.0:", when="+python", type=("build", "run"))
     depends_on("py-mpi4py", when="+python", type=("build", "run"))
@@ -65,7 +68,9 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi", type=("build", "run"))
 
-    depends_on("fftw@3.3.8:", when="+fftw", type=("build", "run"))
+    # Only the fftw@3.3.8: backend implementation is verified in current testing.
+    # Alternative fftw-api providers such as amdfftw and cray-fftw have not been tested.
+    depends_on("fftw-api", when="+fftw", type=("build", "run"))
     depends_on("intel-oneapi-mkl", when="+mkl", type=("build", "run"))
     # mkl renamed dfti.hpp to dft.hpp in 2026.0, which breaks heffte@2.4.1 and earlier
     conflicts("^intel-oneapi-mkl@2026.0:", when="@:2.4.1")
@@ -100,23 +105,26 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
         ]
 
-        if self.spec.satisfies("+cuda") and self.spec.satisfies("@:2.3.0"):
+        if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
-            if len(cuda_arch) > 0 or cuda_arch[0] != "none":
-                nvcc_flags = ""
-                for nvflag in self.cuda_flags(cuda_arch):
-                    nvcc_flags += "{0};".format(nvflag)
+            if "none" not in cuda_arch:
+                if self.spec.satisfies("@:2.3.0"):
+                    nvcc_flags = ""
+                    for nvflag in self.cuda_flags(cuda_arch):
+                        nvcc_flags += "{0};".format(nvflag)
 
-                args.append("-DCUDA_NVCC_FLAGS={0}".format(nvcc_flags))
-                archs = ";".join(cuda_arch)
-                args.append("-DCMAKE_CUDA_ARCHITECTURES=%s" % archs)
+                    args.append("-DCUDA_NVCC_FLAGS={0}".format(nvcc_flags))
+                args.append(CMakeBuilder.define_cuda_architectures(self))
 
         if self.spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
 
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
-                args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
+                if self.spec.satisfies("@2.4:"):
+                    args.append(CMakeBuilder.define_hip_architectures(self))
+                else:
+                    args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
 
             # See https://github.com/ROCm/rocFFT/issues/322
             if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
@@ -131,6 +139,25 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
         install_tree(
             self.prefix.share.heffte.testing, join_path(install_test_root(self), "testing")
         )
+
+    @run_after("install")
+    def install_benchmarks(self):
+        if self.spec.satisfies("+benchmarks"):
+            # install the benchmarks alongside the examples
+            benchmark_dir = self.prefix.share.heffte.benchmarks
+            os.makedirs(benchmark_dir)
+
+            # v2.1.0 has a smaller set of benchmarks than later versions
+            if self.spec.satisfies("@:2.1.0"):
+                benchmarks = ["speed3d_c2c", "speed3d_r2c"]
+            else:
+                benchmarks = ["speed3d_c2c", "speed3d_r2c", "speed3d_r2r", "convolution"]
+
+            for bm in benchmarks:
+                # Spack builds inside self.build_directory
+                bm_path = os.path.join(self.build_directory, "benchmarks", bm)
+                if os.path.exists(bm_path):
+                    install(bm_path, benchmark_dir)
 
     def test_make_test(self):
         """build and run make(test)"""

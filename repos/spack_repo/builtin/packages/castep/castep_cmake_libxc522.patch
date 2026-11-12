@@ -1,0 +1,16 @@
+diff --git a/LibSource/libxc-5.2.2/CMakeLists.txt b/LibSource/libxc-5.2.2/CMakeLists.txt
+index 82ffad4..9c2fbbb 100644
+--- a/LibSource/libxc-5.2.2/CMakeLists.txt
++++ b/LibSource/libxc-5.2.2/CMakeLists.txt
+@@ -536,9 +536,9 @@ if(ENABLE_FORTRAN)
+     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+-  install(FILES "${PROJECT_BINARY_DIR}/xc_f03_lib_m.mod"
++  install(FILES "${CASTEP_BINARY_DIR}/mod/xc_f03_lib_m.mod"
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${NAMESPACE_INSTALL_INCLUDEDIR})
+-  install(FILES "${PROJECT_BINARY_DIR}/xc_f90_lib_m.mod"
++  install(FILES "${CASTEP_BINARY_DIR}/mod/xc_f90_lib_m.mod"
+     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}${NAMESPACE_INSTALL_INCLUDEDIR})
+   if(NOT MSVC)
+     install(FILES ${PROJECT_BINARY_DIR}/libxcf03.pc

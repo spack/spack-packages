@@ -1,0 +1,52 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+
+from spack_repo.builtin.build_systems.cmake import CMakePackage
+
+from spack.package import *
+
+
+class Tdls(CMakePackage):
+    """TDLS (Tiny Device-callable Linear Solvers) is a header-only C++20
+    library of direct solvers for small dense linear systems, developed
+    by CEA. The solvers are callable from host code as well as inside
+    CUDA, HIP, SYCL, Kokkos, stdpar or OpenMP kernels, and are designed
+    to be embedded in TFEL/MFront."""
+
+    homepage = "https://trsxvz.github.io/TDLS/"
+    url = "https://github.com/trsxvz/TDLS/archive/refs/tags/v0.3.0.tar.gz"
+    git = "https://github.com/trsxvz/TDLS.git"
+
+    maintainers("trsxvz")
+
+    license("BSD-3-Clause", checked_by="trsxvz")
+
+    version("main", branch="main")
+    version("0.3.0", sha256="5b8f01d92b30a2dfaca906b5482954e9bae04492f88e1f71f563ac165a03a572")
+    version("0.2.0", sha256="666d72b26f896a61915ae49a7a239f9206ccbcc73e81b116ca85f9b95f22dcbc")
+    version("0.1.0", sha256="c10969df6d2e91d44c2200eaffad0db041938fad24d3455c65a2a69082d7eb0d")
+
+    depends_on("cmake@3.21:", type="build")
+    depends_on("cxx", type="test")
+
+    def cmake_args(self):
+        args = [
+            self.define("TDLS_BUILD_TESTS", self.run_tests),
+            self.define("TDLS_BUILD_EXAMPLES", self.run_tests),
+        ]
+        if self.run_tests:
+            # A compiler is only needed to build and run the test suites and the
+            # examples under --test. The compiler wrapper is not injected for a
+            # test-typed language dependency (spack/spack#45573), so the compiler
+            # of the spec is handed to CMake explicitly.
+            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["cxx"].package.cxx))
+        return args
+
+    def check(self):
+        """Use the 'check' target to perform tests."""
+        with working_dir(self.build_directory):
+            if self.generator == "Unix Makefiles":
+                self._if_make_target_execute("check", jobs_env="CTEST_PARALLEL_LEVEL")
+            elif self.generator == "Ninja":
+                self._if_ninja_target_execute("check", jobs_env="CTEST_PARALLEL_LEVEL")

@@ -11,14 +11,31 @@ class PyResampy(PythonPackage):
     """Efficient sample rate conversion in python"""
 
     homepage = "https://github.com/bmcfee/resampy"
-    pypi = "resampy/resampy-0.2.2.tar.gz"
+    pypi = "resampy/resampy-0.4.3.tar.gz"
 
     license("ISC")
 
+    version("0.4.3", sha256="a0d1c28398f0e55994b739650afef4e3974115edbe96cd4bb81968425e916e47")
     version("0.2.2", sha256="62af020d8a6674d8117f62320ce9470437bb1d738a5d06cd55591b69b463929e")
 
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@1.10:", type=("build", "run"))
     depends_on("py-scipy@0.13:", type=("build", "run"))
     depends_on("py-numba@0.32:", type=("build", "run"))
-    depends_on("py-six@1.3:", type=("build", "run"))
+    depends_on("py-six@1.3:", type=("build", "run"), when="@:0.2")
+
+    with when("@0.3:"), default_args(type="build"):
+        depends_on("py-setuptools@48:")
+        depends_on("py-wheel@0.29:")
+
+    with when("@0.3:"), default_args(type=("build", "run")):
+        depends_on("py-numpy@1.17:")
+        depends_on("py-numba@0.53:")
+        depends_on("py-scipy@1.1:")
+        depends_on("py-importlib-resources", when="@0.4.3: ^python@:3.8")
+
+    conflicts(
+        "^python@3.12:",
+        when="@:0.2",
+        msg="python@3.12 dropped imp, use py-resampy >= 0.3.0 for 3.12 support",
+    )

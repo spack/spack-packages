@@ -33,6 +33,24 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop", submodules=False)
     version(
+        "2026.07.2",
+        tag="v2026.07.2",
+        commit="356dd9cf245360c07f9a09fbe39a9f3c83e77f0c",
+        submodules=False,
+    )
+    version(
+        "2026.07.1",
+        tag="v2026.07.1",
+        commit="5639f6c1fd4ca1fed7f0f1f48dcbbfbd00899484",
+        submodules=False,
+    )
+    version(
+        "2026.07.0",
+        tag="v2026.07.0",
+        commit="3731bf9d712df59c22a22f5ab923b71c4279e9b0",
+        submodules=False,
+    )
+    version(
         "2025.12.0",
         tag="v2025.12.0",
         commit="0372fbd6e1f17d7e6dd72693f8b857f3ec7559e9",
@@ -235,6 +253,19 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("deviceconst", default=False, description="Enables support for constant device memory")
     variant("examples", default=False, description="Build Umpire Examples")
     variant(
+        "cxxstd",
+        default="20",
+        description="C++ standard to build with",
+        values=(
+            conditional("11", when="@:6.0.0"),
+            conditional("14", when="@:2025.03.1"),
+            conditional("17", when="@:2025.12.0"),
+            "20",
+            "23",
+        ),
+        multi=False,
+    )
+    variant(
         "tests",
         default="none",
         values=("none", "basic", "benchmarks"),
@@ -279,7 +310,9 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+openmp", when="+openmp")
     depends_on("camp~cuda", when="~cuda")
     depends_on("camp~rocm", when="~rocm")
-    depends_on("camp@2025.12:", when="@2025.12:")
+    depends_on("camp@2026.07.2:", when="@2026.07.2:")
+    depends_on("camp@2026.07.1", when="@2026.07.0:2026.07.1")
+    depends_on("camp@2025.12", when="@2025.12")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")
     depends_on("camp@2024.07", when="@2024.07")
@@ -295,9 +328,11 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi", when="+mpi")
 
     depends_on("fmt@12.1.0", when="@2026:")
-    depends_on("fmt@9.1:11.0", when="@2024.02.0:2025")
+    # Capped at 12.1 to avoid a regression (no operator "~") in 12.2.
+    # https://github.com/fmtlib/fmt/issues/4811
+    depends_on("fmt@9.1:12.1", when="@2024.02.0:2025")
     # We need c++ 17 only with intel
-    depends_on("fmt@9.1:11.0 cxxstd=17", when="@2024.02.0: %intel@19.1")
+    depends_on("fmt@9.1:12.1 cxxstd=17", when="@2024.02.0: %intel@19.1")
 
     with when("@5.0.0:"):
         with when("+cuda"):
@@ -325,7 +360,6 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
     conflicts("+deviceconst", when="~rocm~cuda")
     conflicts("~openmp", when="+omptarget", msg="OpenMP target requires OpenMP")
     conflicts("+cuda", when="+rocm")
-    conflicts("+tools", when="+rocm")
     conflicts(
         "+rocm", when="+omptarget", msg="Cant support both rocm and openmp device backends at once"
     )
@@ -362,6 +396,10 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
             self.spec.compiler.version,
             self.spec.dag_hash(8),
         )
+
+    @property
+    def cxx_std(self):
+        return self.spec.variants["cxxstd"].value
 
     def initconfig_compiler_entries(self):
         spec = self.spec
@@ -502,6 +540,7 @@ class Umpire(CachedCMakePackage, CudaPackage, ROCmPackage):
 
         entries.append(cmake_cache_string("CMAKE_BUILD_TYPE", spec.variants["build_type"].value))
         entries.append(cmake_cache_option("BUILD_SHARED_LIBS", spec.satisfies("+shared")))
+        entries.append(cmake_cache_string("BLT_CXX_STD", f"c++{self.cxx_std}"))
         entries.append(cmake_cache_option("ENABLE_WARNINGS_AS_ERRORS", spec.satisfies("+werror")))
 
         # Generic options that have a prefixed equivalent in Umpire CMake

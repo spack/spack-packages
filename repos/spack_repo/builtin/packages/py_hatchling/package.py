@@ -16,8 +16,11 @@ class PyHatchling(PythonPackage):
 
     license("MIT", checked_by="tgamblin")
 
+    version("1.33.0", sha256="4c422bd4d554fcff5de5b73e9596f85e41e9f97f7e553d8f7595ecb31a627bef")
+    version("1.32.4", sha256="c4468f73144c054d2aab4ef0f0378c43b9878bf07f8ffd6b79690e970d375f07")
     version("1.29.0", sha256="793c31816d952cee405b83488ce001c719f325d9cda69f1fc4cd750527640ea6")
     version("1.27.0", sha256="971c296d9819abb3811112fc52c7a9751c8d381898f36533bb16f9791e941fd6")
+    version("1.26.3", sha256="b672a9c36a601a06c4e88a1abb1330639ee8e721e0535a37536e546a667efc7a")
     version("1.25.0", sha256="7064631a512610b52250a4d3ff1bd81551d6d1431c4eb7b72e734df6c74f4262")
     version("1.24.2", sha256="41ddc27cdb25db9ef7b68bef075f829c84cb349aa1bff8240797d012510547b0")
     version("1.21.0", sha256="5c086772357a50723b825fd5da5278ac7e3697cdf7797d07541a6c90b6ff754c")
@@ -51,6 +54,8 @@ class PyHatchling(PythonPackage):
         depends_on("py-pluggy@1:")
 
         depends_on("py-tomli@1.2.2:", when="^python@:3.10")
+
+        depends_on("py-tomlkit@0.11.1:", when="@1.32:")
 
         depends_on("py-trove-classifiers", when="@1.14:")
 

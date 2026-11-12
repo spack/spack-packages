@@ -5,12 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class RoctracerDev(CMakePackage, ROCmPackage):
+class RoctracerDev(ROCmLibrary, CMakePackage, ROCmPackage):
     """ROC-tracer library: Runtimes Generic Callback/Activity APIs.
     The goal of the implementation is to provide a generic independent from
     specific runtime profiler to trace API and asyncronous activity."""
@@ -23,13 +23,14 @@ class RoctracerDev(CMakePackage, ROCmPackage):
     libraries = ["libroctracer64"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/roctracer/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
+    version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
+    version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
     version("7.2.3", sha256="e90cfd8694af28a56433c8827a581ee12a4ba835f0d952436741d9e0f3f8685b")
     version("7.2.1", sha256="201f19174eafbace2f7abf0d1178ebb17db878191276aba6d23f0e1758b0e10f")
     version("7.2.0", sha256="728ea7e9bf16e6ed217a0fd1a8c9afaba2dae2e7908fa4e27201e67c803c5638")
@@ -105,6 +106,9 @@ class RoctracerDev(CMakePackage, ROCmPackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -119,7 +123,7 @@ class RoctracerDev(CMakePackage, ROCmPackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+asan"):

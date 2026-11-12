@@ -26,6 +26,8 @@ class Pelican(GoPackage):
 
     depends_on("go@1.25:", type="build")
 
+    build_directory = "cmd"
+
     @run_before("build", when="@:7.24")
     def create_frontend_placeholder(self):
         # web_ui/ui.go uses //go:embed frontend/out/*, which requires at least one
@@ -36,26 +38,18 @@ class Pelican(GoPackage):
         mkdirp(out_dir)
         touch(join_path(out_dir, "placeholder"))
 
-    build_directory = "cmd"
+    @property
+    def ldflags(self):
+        return [f"-X github.com/pelicanplatform/pelican/version.version={self.spec.version}"]
 
     @property
     def build_args(self):
         # Build only the CLI client binary (no web frontend embedded)
-        args = super().build_args
-        version_ldflag = (
-            f"-X github.com/pelicanplatform/pelican/version.version={self.spec.version}"
-        )
-        if "-ldflags" in args:
-            args[args.index("-ldflags") + 1] += f" {version_ldflag}"
-        else:
-            args.extend(["-ldflags", version_ldflag])
-        args.extend(["-tags", "forceposix,client"])
-        return args
+        return ["-tags", "forceposix,client"]
 
     @run_after("build", when="+server")
     def build_server(self):
-        args = list(self.build_args)
-        args[args.index("-tags") + 1] = "forceposix,server"
+        args = [*self.std_build_args, "-tags", "forceposix,server"]
         args[args.index("-o") + 1] = "pelican-server"
         with working_dir(self.build_directory):
             go("build", *args)

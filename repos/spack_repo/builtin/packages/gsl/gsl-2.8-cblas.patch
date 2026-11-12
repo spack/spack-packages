@@ -1,5 +1,5 @@
  Makefile.am                     |   8 +-
- ax_cblas.m4                     |  69 +++++
+ ax_cblas.m4                     |  70 +++++
  bspline/Makefile.am             |   2 +-
  configure.ac                    |  10 +
  eigen/Makefile.am               |   2 +-
@@ -56,7 +56,7 @@ new file mode 100644
 index 0000000..6ef143a
 --- /dev/null
 +++ b/ax_cblas.m4
-@@ -0,0 +1,69 @@
+@@ -0,0 +1,70 @@
 +AC_DEFUN([AX_CBLAS],[
 +
 +  ext_cblas=no
@@ -101,13 +101,14 @@ index 0000000..6ef143a
 +
 +   	CFLAGS_sav="$CFLAGS"
 +   	CFLAGS="$CFLAGS $CBLAS_CFLAGS"
-+   	AC_CHECK_HEADER(cblas.h, ,
-+		[AC_MSG_ERROR([
-+	   	*** Header file cblas.h not found.
-+	   	*** If you installed cblas header in a non standard place,
++   	AC_CHECK_HEADER([cblas.h], [],
++		[AC_CHECK_HEADER([mkl.h], [],
++		 [AC_MSG_ERROR([
++	   	*** Neither cblas.h nor mkl.h header file found.
++	   	*** If you installed CBLAS headers in a non standard place,
 +	   	*** specify its install prefix using the following option
 +	   	***  --with-cblas-external-cflags="-I<include_dir>"])
-+	 	])
++	 	 ])])
 +   	CFLAGS="$CFLAGS_sav"
 +
 +   	LIBS_sav="$LIBS"

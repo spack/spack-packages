@@ -15,8 +15,18 @@ class E3smScorpio(CMakePackage):
     homepage = "https://e3sm.org/scorpio-parallel-io-library/"
     url = "https://github.com/E3SM-Project/scorpio/archive/refs/tags/scorpio-v1.4.1.tar.gz"
 
-    maintainers("xylar", "altheaden")
+    maintainers("xylar", "andrewdnolan")
 
+    version("2.0.4", sha256="310cf4901f114458d3b0dd72eb5b326187e112c4b9a8e5bd83606a5fcfa3a162")
+    version("2.0.3", sha256="ff9570e250e6b75b723b778b17453d9bcc88d2a66674f1bcb0aaab65f321ff60")
+    version("2.0.2", sha256="68444fd641363388d0d06528ce7d9d0b33df3ae6103df122973d9963476e3319")
+    version("2.0.1", sha256="0a4006fd6f2ce03acbe0f69726cedb32bc1e0dfb5e170e9f8d7201c1125dbc99")
+    version("2.0.0", sha256="d82d0c5db34b4d83de0d40130340ad286432b00764d27f4694626e44c525ea80")
+    version("1.9.3", sha256="dfa3b4141c41ddaabc24ebe89660bfdf7db9fd5daea98e1b02224448fe363316")
+    version("1.9.2", sha256="d1dafd5a62b6b8ef9c325db686cecf825478dffb9d648d970a6258f903dcc251")
+    version("1.9.1", sha256="b26c9bde4b041e706b81a83fca30d12c3708d2fe89058eab81611ad38cf0c74f")
+    version("1.9.0", sha256="76373ee65f4bc562b8e52acc5d22cc725f36b9a3a679f7ee413a38ee25d6b2b9")
+    version("1.8.2", sha256="1acafe152482d1c083dec0e3fea9484f844e5ac1e67065cbd02d31aff5e740ff")
     version("1.8.1", sha256="3f4a8a9a6a66351063dfcd5813ef95934998c1f58eec7e81eeb497bb3d36fd60")
     version("1.8.0", sha256="972e2b2a337a34bfe0671a9111c5cafb712abe2e302f1db55953d13acf491876")
     version("1.7.0", sha256="01b479848520d1463d78227872c6cab316843fa09a296bd3f16da4c00c629a05")
@@ -30,9 +40,6 @@ class E3smScorpio(CMakePackage):
     version("1.6.0", sha256="fcc18b7eaf0dae4fc83e17a7ca2fc695f476fa96539881e37406efbcb821947d")
     version("1.4.2", sha256="e41b2725b2389df48b91932224a0dfb8c8fe6e98c7a49e1dfd65f7d49f7ffa81")
     version("1.4.1", sha256="7cb4589410080d7e547ef17ddabe68f749e6af019c1d0e6ee9f11554f3ff6b1a")
-
-    variant("timing", default=False, description="Enable timing")
-    variant("mpi", default=True, description="Enable MPI")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -82,5 +89,9 @@ class E3smScorpio(CMakePackage):
                 define_from_variant("PIO_USE_MALLOC", "malloc"),
             ]
         )
+
+        if spec["fortran"].name == "cce":
+            # force lowercase fortran modules
+            args.append(define("CMAKE_Fortran_FLAGS", "-em -ef"))
 
         return args

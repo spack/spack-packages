@@ -21,6 +21,7 @@ class SalomeMedcoupling(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    version("9.16.0", sha256="e2bc58f58252ffc215aa5bb61daf3bc3e3fd1ce6e8a7c427b8545696531542a9")
     version("9.15.0", sha256="4ec97fc881f12e71965ea73422319aac6f69319c5c688eb165329dce826cbbb8")
     version("9.14.0", sha256="d4699b564fe1a113663649b9ff1c353314509763a5aca756569e6f4de8940049")
     version("9.13.0", sha256="54d010df0d8a66c7cf7b39a40e28aac16bc0bc20faf97c5190d0a2df4941e15e")
@@ -47,12 +48,12 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("cmake@2.8.11:3", type="build")
 
     depends_on("rpc")
-    depends_on("libxml2@2.9.1:")
+    depends_on("libxml2@2.9.12:")
     depends_on("cppunit", type="test")
     depends_on("python@3.6.5:", when="@:9.12")
     depends_on("python@3.9.14:", when="@9.13:")
     depends_on("py-scipy@0.19.1:1.14", type=("build", "run"))
-    depends_on("py-numpy@1.15.1:1", type=("build", "run"))
+    depends_on("py-numpy@1.22.2:1", type=("build", "run"))
     depends_on("boost+python+numpy@1.58.0:", when="@:9.12")
     depends_on("boost+python+numpy@1.71.0:", when="@9.13:")
     depends_on("swig@3.0.12:", when="@:9.10", type="build")
@@ -63,7 +64,7 @@ class SalomeMedcoupling(CMakePackage):
     depends_on("scotch@6.1.2:", when="@9.13: +scotch")
     depends_on("mpi", when="+mpi")
 
-    for _min_ver in range(11, 16):
+    for _min_ver in range(11, 17):
         _ver = f"9.{_min_ver}.0"
         depends_on(f"salome-configuration@{_ver}", when=f"@{_ver}")
 
@@ -71,12 +72,16 @@ class SalomeMedcoupling(CMakePackage):
         for _static_variant, _shared_variant in (("~static", "+shared"), ("+static", "~shared")):
             for _int64_variant in ("~int64", "+int64"):
                 depends_on(
+                    f"med@6.0.1{_mpi_variant}{_shared_variant}{_int64_variant}",
+                    when=f"@9.16:{_mpi_variant}{_static_variant}{_int64_variant}",
+                )
+                depends_on(
                     f"med@4.2.0{_mpi_variant}{_shared_variant}{_int64_variant}",
-                    when=f"@9.15.0:{_mpi_variant}{_static_variant}{_int64_variant}",
+                    when=f"@9.15{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
                 depends_on(
                     f"med@4.1.1{_mpi_variant}{_shared_variant}{_int64_variant}",
-                    when=f"@9.11.0:9.14.0{_mpi_variant}{_static_variant}{_int64_variant}",
+                    when=f"@9.11:9.14{_mpi_variant}{_static_variant}{_int64_variant}",
                 )
 
     def check(self):

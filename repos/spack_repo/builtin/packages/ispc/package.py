@@ -28,6 +28,7 @@ class Ispc(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("1.32.0", sha256="0b0db8a074e8029dfc4b31484304f5d4f05bf9fa95759a302e7d7eda41a61bfd")
     version("1.30.0", sha256="2ccf9791ebe3ae14db7d60f84d860284f6ef704417910a7df3a424e2b8e34d77")
     version("1.24.0", sha256="fac82c8f3f7ece2bc96620cef0b34e10b29462de9349447bcd8c3ba98cfdcd72")
     version("1.23.0", sha256="e268eabed9a9021b4402725ed1c120b8eca776ee4aaf50ddeb0e4adaadda05f9")
@@ -52,24 +53,25 @@ class Ispc(CMakePackage):
     depends_on("python", type="build")
     depends_on("bison", type="build")
     depends_on("flex", type="build")
-    depends_on("ncurses", type="link")
-    depends_on("zlib-api", type="link")
-    depends_on("tbb", type="link", when="platform=linux @1.20:")
     depends_on("llvm+clang", type="build")
     depends_on("llvm libcxx=none", when="platform=darwin", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=arm:", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=aarch64:", type="build")
-    depends_on("llvm@18:22", when="@1.30", type="build")
-    depends_on("llvm@:18.1", when="@:1.24", type="build")
-    depends_on("llvm@:17", when="@:1.23", type="build")
-    depends_on("llvm@:15", when="@:1.20", type="build")
-    depends_on("llvm@:14", when="@:1.18", type="build")
-    depends_on("llvm@:12", when="@:1.16", type="build")
-    depends_on("llvm@:11", when="@:1.15", type="build")
-    depends_on("llvm@:10", when="@:1.14", type="build")
-    depends_on("llvm@13:", when="@1.19:", type="build")
-    depends_on("llvm@11:", when="@1.16:", type="build")
-    depends_on("llvm@10:", when="@1.13:", type="build")
+    # from src/ispc_version.h
+    depends_on("llvm@20:24.0", when="@1.32", type="build")
+    depends_on("llvm@18.1:23.0", when="@1.30", type="build")
+    depends_on("llvm@14:19.0", when="@1.24", type="build")
+    depends_on("llvm@14:18.0", when="@1.22:1.23", type="build")
+    depends_on("llvm@13:18.0", when="@1.21", type="build")
+    depends_on("llvm@13:15.0", when="@1.19:1.20", type="build")
+    depends_on("llvm@10:14.0", when="@1.17:1.18", type="build")
+    depends_on("llvm@10:13.0", when="@1.16", type="build")
+    depends_on("llvm@8:12.0", when="@1.14:1.15", type="build")
+    depends_on("llvm@6:11.0", when="@1.13", type="build")
+
+    depends_on("ncurses")
+    depends_on("zlib-api")
+    depends_on("tbb", when="platform=linux @1.20:")
 
     patch(
         "don-t-assume-that-ncurses-zlib-are-system-libraries.patch",
@@ -115,7 +117,7 @@ class Ispc(CMakePackage):
     )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("@1.18.0:"):
+        if self.spec.satisfies("@1.18:1.24"):
             env.append_flags("LDFLAGS", "-lz")
 
     def patch(self):
@@ -125,11 +127,24 @@ class Ispc(CMakePackage):
             Executable(self.compiler.cc)("-m32", "-shared", "check-m32.c", error=str)
         except ProcessError:
             # https://github.com/ispc/ispc/commit/3e03dffa8b58e77ea628d614f65763a8fdd90c18
+            # For GitLab CI, we need to remove the 32-bit target from the build, as the GitLab
+            # Runners don't have 32-bit development installed and support Debian-based builds.
+            cmake_target_file = "cmake/GenerateBuiltins.cmake"
             if self.spec.satisfies("@1.25:"):
+                filter_file("--target=x86_64-unknown-unknown", "", cmake_target_file)
+                filter_file("builtin_to_cpp(32 linux x86)", "", cmake_target_file, string=True)
+                filter_file('"x86,32"\n', "", "cmake/GenericTargets.cmake")
                 cmake_target_file = "cmake/CommonStdlibBuiltins.cmake"
-            else:
-                cmake_target_file = "cmake/GenerateBuiltins.cmake"
             filter_file("bit 32 64", "bit 64", cmake_target_file)
+
+        if self.spec.satisfies("@1.25:"):
+            filter_file("-isystem", "-isystem ", "cmake/GenerateBuiltins.cmake")
+
+            filter_file(
+                r'(run_llvm_config\(LLVM_SYSTEM_LIBS "--system-libs"\))',
+                "\\1\n    find_package(ZLIB REQUIRED)\n    list(APPEND LINK_LIBRARIES ZLIB::ZLIB)",
+                "CMakeLists.txt",
+            )
 
     def cmake_args(self):
         spec = self.spec
@@ -143,6 +158,13 @@ class Ispc(CMakePackage):
             args.append("-DARM_ENABLED=OFF")
         elif spec.satisfies("target=aarch64:"):
             args.append("-DARM_ENABLED=ON")
+
+        # /lib64/libstdc++.so.6: version `GLIBCXX_3.4.29' not found
+        # /lib64/libstdc++.so.6: version `CXXABI_1.3.15' not found
+        # /lib64/libstdc++.so.6: version `GLIBCXX_3.4.26' not found
+        args.append(self.define("CMAKE_C_COMPILER", spack_cc))
+        args.append(self.define("CMAKE_CXX_COMPILER", spack_cxx))
+
         return args
 
     @run_after("install")

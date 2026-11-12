@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.python import PythonExtension, PythonPipBuilder
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
@@ -157,6 +157,14 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     # https://github.com/microsoft/onnxruntime/pull/25200
     patch("pr25200-fix-linker-flags.patch", when="@1.21:1.22")
 
+    # optimizer_api.h uses uint8_t/int32_t without including <cstdint>, which
+    # newer libstdc++ no longer provides transitively
+    patch(
+        "https://github.com/microsoft/onnxruntime/commit/f7619dc93f592ddfc10f12f7145f9781299163a0.patch?full_index=1",
+        sha256="c0d1112d5ad4bae4260c0b1b13eb1397d87fdcec8c21c02467f31e6e0db1b906",
+        when="@1.17:1.22",
+    )
+
     dynamic_cpu_arch_values = ("NOAVX", "AVX", "AVX2", "AVX512")
 
     variant(
@@ -227,6 +235,11 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
                     define("CMAKE_TRY_COMPILE_PLATFORM_VARIABLES", "CMAKE_CUDA_RUNTIME_LIBRARY"),
                 )
             )
+            if not self.spec.satisfies("cuda_arch=none"):
+                args.append(CMakeBuilder.define_cuda_architectures(self))
+
+        if self.spec.satisfies("^cmake@3.24:"):
+            args.append("--compile-no-warning-as-error")
 
         if self.spec.satisfies("+rocm"):
             args.extend(
@@ -240,10 +253,16 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
                     define("onnxruntime_USE_COMPOSABLE_KERNEL", "OFF"),
                 )
             )
+
+        if self.spec.satisfies("platform=darwin"):
+            # avoid onnxruntime's vendored protoc
+            args.append(
+                define("ONNX_CUSTOM_PROTOC_EXECUTABLE", self.spec["protobuf"].prefix.bin.protoc)
+            )
         return args
 
     @run_after("install")
     def install_python(self):
         """Install everything from build directory."""
         with working_dir(self.build_directory):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

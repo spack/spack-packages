@@ -154,13 +154,16 @@ class Lci(CMakePackage):
     depends_on("python@3.8:", type="build", when="@2:")
 
     def cmake_args(self):
+        # The deprecated variants override the bootstrap value used below.
+        bootstrap = self.spec.variants["bootstrap"].value
+
         if not self.spec.satisfies("enable-pm=auto"):
             warnings.warn(
                 "The 'enable-pm' variant is deprecated, use 'bootstrap' instead.",
                 DeprecationWarning,
                 stacklevel=2,
             )
-            self.spec.variants["bootstrap"].value = self.spec.variants["enable-pm"].value
+            bootstrap = self.spec.variants["enable-pm"].value
 
         if not self.spec.satisfies("default-pm=auto"):
             warnings.warn(
@@ -168,7 +171,7 @@ class Lci(CMakePackage):
                 DeprecationWarning,
                 stacklevel=2,
             )
-            self.spec.variants["bootstrap"].value = self.spec.variants["default-pm"].value
+            bootstrap = self.spec.variants["default-pm"].value
 
         args = [
             self.define_from_variant("LCI_WITH_EXAMPLES", "examples"),
@@ -181,8 +184,8 @@ class Lci(CMakePackage):
             self.define_from_variant("LCI_USE_TCMALLOC", "tcmalloc"),
         ]
 
-        if not self.spec.satisfies("bootstrap=auto"):
-            if self.spec.satisfies("bootstrap=cray"):
+        if "auto" not in bootstrap:
+            if "cray" in bootstrap:
                 args.extend(
                     [
                         self.define("LCI_PMI_BACKEND_DEFAULT", "pmi1"),
@@ -192,19 +195,11 @@ class Lci(CMakePackage):
             else:
                 args.extend(
                     [
-                        self.define(
-                            "LCT_PMI_BACKEND_ENABLE_PMI1", self.spec.satisfies("bootstrap=pmi1")
-                        ),
-                        self.define(
-                            "LCT_PMI_BACKEND_ENABLE_PMI2", self.spec.satisfies("bootstrap=pmi2")
-                        ),
-                        self.define(
-                            "LCT_PMI_BACKEND_ENABLE_MPI", self.spec.satisfies("bootstrap=mpi")
-                        ),
-                        self.define(
-                            "LCT_PMI_BACKEND_ENABLE_PMIX", self.spec.satisfies("bootstrap=pmix")
-                        ),
-                        self.define_from_variant("LCI_PMI_BACKEND_DEFAULT", "bootstrap"),
+                        self.define("LCT_PMI_BACKEND_ENABLE_PMI1", "pmi1" in bootstrap),
+                        self.define("LCT_PMI_BACKEND_ENABLE_PMI2", "pmi2" in bootstrap),
+                        self.define("LCT_PMI_BACKEND_ENABLE_MPI", "mpi" in bootstrap),
+                        self.define("LCT_PMI_BACKEND_ENABLE_PMIX", "pmix" in bootstrap),
+                        self.define("LCI_PMI_BACKEND_DEFAULT", sorted(bootstrap)),
                     ]
                 )
 

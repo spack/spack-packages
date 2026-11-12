@@ -19,10 +19,35 @@ class Expat(AutotoolsPackage, CMakePackage):
 
     license("MIT")
     version(
+        "2.9.0",
+        sha256="775e8a68f81a748a401dc3168318d4a39484eb4f954726f21517c8f42c0ba984",
+    )
+    # deprecate all releases before 2.9.0 because of various security issues
+    version(
+        "2.8.5",
+        sha256="952c03c33a6b337f12dae7a9b0f9dee86f867550d35c994d6bdaaddd37dc8454",
+        deprecated=True,
+    )
+    version(
+        "2.8.4",
+        sha256="963250a823c16a498582b4ad82ad0f88926be0769675d3b6956be4d769a1cd8f",
+        deprecated=True,
+    )
+    version(
+        "2.8.3",
+        sha256="b4cc2483927d5e90bf8c40b44a6b95b368b42a8a96e25883fce188b48a92b670",
+        deprecated=True,
+    )
+    version(
+        "2.8.2",
+        sha256="69e7f52417d85b1c2b7fe855e176eec55d0b2d7d92d691372d833a1c7df7923b",
+        deprecated=True,
+    )
+    version(
         "2.8.1",
         sha256="f5833dd2e1cd7739ec9182804a1a29c4f0cc7c2f26b633d3a2188b7766a88ecb",
+        deprecated=True,
     )
-    # deprecate all releases before 2.8.1 because of various security issues
     version(
         "2.8.0",
         sha256="586494499ac3ad46d87f3beda7b1f770c1c8026a9b60e151593f8b29089a52ca",
@@ -78,6 +103,12 @@ class Expat(AutotoolsPackage, CMakePackage):
         when="build_system=cmake",
     )
 
+    variant(
+        "pic",
+        default=True,
+        description="Build position-independent code",
+    )
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
@@ -95,6 +126,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         if spec.satisfies("+libbsd"):
             args.append("--with-libbsd")
         return args
+        args.append("--with-pic" if "+pic" in spec else "--without-pic")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -102,6 +134,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args = [
             self.define("EXPAT_BUILD_DOCS", False),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+            self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
 
         if self.spec.satisfies("+libbsd"):

@@ -138,7 +138,7 @@ class SuperluDist(CMakePackage, CudaPackage, ROCmPackage):
             append_define("TPL_ENABLE_CUDALIB", True)
             cuda_arch = spec.variants["cuda_arch"].value
             if cuda_arch[0] != "none":
-                append_define("CMAKE_CUDA_ARCHITECTURES", cuda_arch[0])
+                append_define("CMAKE_CUDA_ARCHITECTURES", ";".join(cuda_arch))
             if spec.satisfies("^cuda@13:"):
                 append_define("CMAKE_CXX_STANDARD", "17")
 

@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import itertools
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
@@ -19,7 +21,15 @@ class Rocal(ROCmLibrary, CMakePackage):
     maintainers("afzpatel", "srekolam", "renjithravindrankannath")
     libraries = ["librocal"]
 
+    rocm_url_map = [(None, "https://github.com/ROCm/rocAL/archive/refs/tags/rocm-{0}.tar.gz")]
+
     license("MIT")
+    version(
+        "10.0.0",
+        git="https://github.com/ROCm/rocAL.git",
+        branch="release/therock-10.0",
+        commit="d890cbd65325182d0a6b3405af35aae3316bb4dc",
+    )
     version("7.2.3", sha256="3998d8dfe979fc23243c26a0953e95211fb384ad0de223c063148440c634b8f7")
     version("7.2.1", sha256="1c6fc36e6f2a9dd04d1c61b533aef8ce0c90b5ba2aa78ce283534a5d056e7edc")
     version("7.2.0", sha256="0de82b955229ed3883e237f0ffd23b4052aa78a1308873185662ab46ca01e711")
@@ -74,11 +84,13 @@ class Rocal(ROCmLibrary, CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "10.0.0",
     ]:
-        for tgt in ROCmPackage.amdgpu_targets:
-            depends_on(f"mivisionx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"mivisionx@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rpp@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"mivisionx amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     patch(
         "https://github.com/ROCm/rocAL/commit/357dfcb25b9ff959615efa45736d4368cf7b51fd.patch?full_index=1",

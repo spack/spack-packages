@@ -39,7 +39,7 @@ class PyPoetryCore(PythonPackage):
         depends_on("py-importlib-metadata@1.7:1", when="@:1.0 ^python@:3.7")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/p/poetry-core/{0}-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/p/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.4"):
             letter = "poetry_core"
         else:

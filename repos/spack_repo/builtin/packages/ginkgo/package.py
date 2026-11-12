@@ -94,6 +94,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("papi@7.1.0: +sde", when="+sde")
 
     depends_on("googletest", type="test")
+    depends_on("nlohmann-json@3.9:3", type="test")
+    depends_on("yaml-cpp@0.8:0", type="test")
     depends_on("numactl", type="test", when="+hwloc")
 
     depends_on("intel-oneapi-mkl", when="+sycl")

@@ -45,4 +45,4 @@ class PyMoreItertools(PythonPackage):
             name = "more_itertools"
         else:
             name = "more-itertools"
-        return f"https://files.pythonhosted.org/packages/source/m/more-itertools/{name}-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/m/{name}/{name}-{version}.tar.gz"

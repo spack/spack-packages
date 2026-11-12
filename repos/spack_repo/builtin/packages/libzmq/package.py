@@ -16,8 +16,6 @@ class Libzmq(AutotoolsPackage):
     url = "https://github.com/zeromq/libzmq/releases/download/v4.3.5/zeromq-4.3.5.tar.gz"
     git = "https://github.com/zeromq/libzmq.git"
 
-    maintainers("dennisklein")
-
     license("MPL-2.0")
 
     version("master", branch="master")

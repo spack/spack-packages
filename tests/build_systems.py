@@ -5,6 +5,7 @@
 import os
 import pathlib
 import platform
+import re
 import shutil
 
 import pytest
@@ -26,6 +27,17 @@ from spack.package import (
 )
 
 DATA_PATH = pathlib.Path(__file__).parent / "data"
+
+
+def build_log_contents(exc_info) -> str:
+    """Return the concatenated build logs referenced by an ``InstallError``."""
+    contents = []
+    # The first line is a header, every line after it is "<spec>: <log path>".
+    for line in str(exc_info.value).splitlines()[1:]:
+        _, _, log_path = line.rpartition(": ")
+        with open(log_path.strip(), encoding="utf-8") as f:
+            contents.append(f.read())
+    return "\n".join(contents)
 
 
 @pytest.fixture
@@ -211,9 +223,11 @@ class TestAutotoolsPackage:
         monkeypatch.setattr(spack.platforms.test.Test, "default", "x86_64")
         s = concretize_one("autotools-config-replacement +patch_config_files ~gnuconfig")
 
-        msg = "Cannot patch config files: missing dependencies: gnuconfig"
-        with pytest.raises(Exception, match=msg):
+        with pytest.raises(InstallError) as exc_info:
             PackageInstaller([s.package]).install()
+
+        msg = "Cannot patch config files: missing dependencies: gnuconfig"
+        assert re.search(msg, build_log_contents(exc_info))
 
     @pytest.mark.disable_clean_stage_check
     def test_broken_external_gnuconfig(self, mutable_database, tmp_path: pathlib.Path):
@@ -226,10 +240,6 @@ class TestAutotoolsPackage:
         (tmp_path / "env" / "spack.yaml").write_text(
             f"""\
 spack:
-  # temporarily pin to the old installer for this test since the resulting
-  # error messaging has changed. Coordinate with @haampie on a fix.
-  config:
-    installer: old
   specs:
   - 'autotools-config-replacement +patch_config_files +gnuconfig'
   packages:
@@ -242,11 +252,13 @@ spack:
             encoding="utf-8",
         )
 
-        msg = "Spack could not find `config.guess`.*misconfigured as an external package"
         with Environment(str(tmp_path / "env")) as e:
             e.concretize()
-            with pytest.raises(Exception, match=msg):
+            with pytest.raises(InstallError) as exc_info:
                 e.install_all()
+
+        msg = "Spack could not find `config.guess`.*misconfigured as an external package"
+        assert re.search(msg, build_log_contents(exc_info), re.DOTALL)
 
 
 @pytest.mark.usefixtures("config", "mock_packages")

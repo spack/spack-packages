@@ -27,7 +27,10 @@ class PyPycparser(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
 
-        depends_on("py-setuptools@69:", when="@3:")
+        # Upstream repo indicates py-setuptools@69, but a newer version
+        # is required to compile this package.
+        # See: https://github.com/spack/spack-packages/pull/5356
+        depends_on("py-setuptools@77:", when="@3:")
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):

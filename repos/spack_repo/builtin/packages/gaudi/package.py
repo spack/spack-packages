@@ -18,6 +18,10 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("40.6", sha256="674b7f4063f6cb4678e92ffad8e11bd5c25523efc42eb4b66b20c539ed6844dc")
+    version("40.5", sha256="3b8cc6f0d677f24eff51d5f51f31880320f4761ab8ebdb57e968397ca53f0e04")
+    version("40.4", sha256="dd288f066e09237f2968a2390e80bef5580e0075896116f4d729b9b609bc25c8")
+    version("40.3", sha256="134b2f2be08a605e85669fd753c92ac1a982209285c0aa7c23887126f19a0a33")
     version("40.2", sha256="93bf0ae5e33d7d3a5aa36504840ed62aeab9f6f8ddddd4ea1b23bc5455b51e41")
     version("40.1", sha256="f02010c865717d397b8fc8b8bf5d904e711ee2e416f3d12330cf04deaa7a4343")
     version("40.0", sha256="0cfe696967067b23382968a5c5ab1b4b7f38a7dd3ee2e321d1bff0dd8f99d2f9")
@@ -63,6 +67,7 @@ class Gaudi(CMakePackage, CudaPackage):
         conditional("14", when="@:38"),
         conditional("17", when="@:38"),
         conditional("20", when="@38:"),
+        conditional("23", when="@40:"),
     )
     _cxxstd_common = {
         "values": _cxxstd_values,
@@ -89,7 +94,9 @@ class Gaudi(CMakePackage, CudaPackage):
         "vtune", default=False, description="Build with Intel VTune profiler support", when="@:39"
     )
     variant("xercesc", default=False, description="Build with Xerces-C XML support")
-
+    variant(
+        "zstd", default=False, description="Build with zstd compression support", when="@40.6:"
+    )
     patch("fmt_fix.patch", when="@36.6:36.12 ^fmt@10:")
     # fix issues with catch2 3.1 and above
     patch(
@@ -160,12 +167,16 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("cmake", type="build")
     depends_on("cmake@3.19:", type="build", when="@39:40.0")
     depends_on("cmake@3.29:", type="build", when="@40.1:")
-    depends_on("cppgsl")
+    depends_on("ms-gsl")
     depends_on("fmt")
     depends_on("fmt@:8", when="@:36.9")
     depends_on("fmt@:10", when="@:38")
     depends_on("fmt@:11", when="@:39")
-    depends_on("fmt@:10", type="test")  # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
+    with when("@36.15:40.3"):
+        # GaudiKernel/tests/src/test_PropertyHolder.cpp
+        # https://gitlab.cern.ch/gaudi/Gaudi/-/issues/345
+        depends_on("fmt@:10", type="test")
+        depends_on("fmt@:10", when="+examples")
     depends_on("intel-tbb@:2020.3", when="@:37.0")
     depends_on("tbb", when="@37.1:")
     depends_on("uuid")
@@ -198,6 +209,8 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("jemalloc", when="+jemalloc")
     depends_on("libunwind", when="+unwind")
     depends_on("xerces-c", when="+xercesc")
+    depends_on("zstd", when="+zstd")
+    depends_on("pkg-config", when="+zstd")
     # NOTE: pocl cannot be added as a minimal OpenCL implementation because
     #       ROOT does not like being exposed to LLVM symbols.
 
@@ -230,6 +243,7 @@ class Gaudi(CMakePackage, CudaPackage):
             self.define_from_variant("GAUDI_USE_UNWIND", "unwind"),
             self.define_from_variant("GAUDI_USE_XERCESC", "xercesc"),
             self.define_from_variant("GAUDI_USE_DOXYGEN", "docs"),
+            self.define_from_variant("GAUDI_USE_ZSTD", "zstd"),
             # needed to build core services like rndmsvc
             self.define("GAUDI_USE_CLHEP", True),
             # todo:
@@ -259,6 +273,9 @@ class Gaudi(CMakePackage, CudaPackage):
             env.prepend_path("GAUDI_PLUGIN_PATH", lib_path)
 
     def url_for_version(self, version):
+        if version.isdevelop():
+            return f"https://gitlab.cern.ch/gaudi/Gaudi/-/archive/{version}/Gaudi-{version}.tar.gz"
+
         major = str(version[0])
         minor = str(version[1])
         url = "https://gitlab.cern.ch/gaudi/Gaudi/-/archive/v{0}r{1}/Gaudi-v{0}r{1}.tar.gz".format(

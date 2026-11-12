@@ -1,0 +1,22 @@
+diff --git a/gcc/config.gcc b/gcc/config.gcc.new
+index 087aaa7..ad8fc1f 100644
+--- a/gcc/config.gcc
++++ b/gcc/config.gcc.new
+@@ -4132,7 +4132,7 @@ if test x$with_arch = x ; then
+       with_arch=mips2
+       ;;
+     nvptx-*)
+-      with_arch=sm_52
++      with_arch=sm_75
+       ;;
+   esac
+ 
+@@ -5593,7 +5593,7 @@ case "${target}" in
+ 	nvptx-*)
+ 		supported_defaults=arch
+ 
+-		nvptx_multilibs_default=sm_52
++		nvptx_multilibs_default=sm_75
+ 
+ 		case "x${with_multilib_list}" in
+ 		x | xno)

@@ -45,6 +45,20 @@ class Lrslib(MakefilePackage):
         url = "http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-0{0}.tar.gz"
         return url.format(version.joined)
 
+    # macos support, based on:
+    # https://github.com/macports/macports-ports/blob/master/math/lrslib/Portfile
+    @when("@7.3:")
+    def edit(self, spec, prefix):
+        filter_file(r"install -t (\S+) (.*)", r"install \2 \1", "makefile")
+
+        if spec.satisfies("platform=darwin"):
+            filter_file(
+                "-shared -Wl,-soname=",
+                f"-dynamiclib -install_name {prefix.lib}/",
+                "makefile",
+                string=True,
+            )
+
     @property
     def build_targets(self):
         if self.spec.satisfies("@:6.2"):

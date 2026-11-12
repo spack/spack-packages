@@ -30,7 +30,7 @@ class PyRichClick(PythonPackage):
     depends_on("py-typing-extensions@4", type=("build", "run"), when="@1.8.0:")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/r/rich-click/{0}-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/r/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.8.0"):
             name = "rich_click"
         else:

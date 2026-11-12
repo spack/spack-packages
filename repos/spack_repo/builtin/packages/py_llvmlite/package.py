@@ -14,8 +14,12 @@ class PyLlvmlite(PythonPackage):
     pypi = "llvmlite/llvmlite-0.23.0.tar.gz"
     git = "https://github.com/numba/llvmlite.git"
 
+    maintainers("mathomp4")
+
     license("BSD-2-Clause")
 
+    version("0.50.0", sha256="f2a2cd6ec9ffcc1b7147dea0d7a49efebf17a2b434e0c2844fe175999d571eb4")
+    version("0.48.0", sha256="543b19f9ef8f3c7c60d1468191e4ee1b1537bf9f8a3d56f64c0ddd98de92edd2")
     version("0.47.0", sha256="62031ce968ec74e95092184d4b0e857e444f8fdff0b8f9213707699570c33ccc")
     version("0.46.0", sha256="227c9fd6d09dce2783c18b754b7cd9d9b3b3515210c46acc2d3c5badd9870ceb")
     version("0.45.1", sha256="09430bb9d0bb58fc45a45a57c7eae912850bedc095cd0810a57de109c69e1c32")
@@ -49,7 +53,8 @@ class PyLlvmlite(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
-        depends_on("python@3.10:3.14", when="@0.46:")
+        depends_on("python@3.10:3.15", when="@0.50:")
+        depends_on("python@3.10:3.14", when="@0.46:0.49")
         depends_on("python@3.10:3.13", when="@0.44:0.45")
         depends_on("python@3.9:3.12", when="@0.42:0.43")
         depends_on("python@3.8:3.11", when="@0.40:0.41")
@@ -57,23 +62,22 @@ class PyLlvmlite(PythonPackage):
         depends_on("python@:3.9", when="@0.36:0.37")
 
     # https://github.com/numba/llvmlite#compatibility
-    depends_on("llvm@20", when="@0.45:")
-    depends_on("llvm@15:16", when="@0.44")
-    depends_on("llvm@14", when="@0.41:0.43")
-    depends_on("llvm@11:14", when="@0.40")
-    depends_on("llvm@11", when="@0.37:0.39")
-    for t in [
-        "arm:",
-        "ppc:",
-        "ppc64:",
-        "ppc64le:",
-        "ppcle:",
-        "sparc:",
-        "sparc64:",
-        "x86:",
-        "x86_64:",
-    ]:
-        depends_on("llvm@10.0", when=f"@0.34:0.36 target={t}")
+    depends_on("libllvm@22", when="@0.48:")
+    depends_on("libllvm@20", when="@0.45:0.47")
+    depends_on("libllvm@15:16", when="@0.44")
+    depends_on("libllvm@14", when="@0.41:0.43")
+    depends_on("libllvm@11:14", when="@0.40")
+    depends_on("libllvm@11", when="@0.37:0.39")
+
+    # On macOS, llvmlite must link the platform (system) libc++. If the LLVM
+    # dependency ships its own libc++/libunwind runtime (libcxx=runtime,
+    # libunwind=runtime), both that runtime and the system libc++ get loaded
+    # into the host Python process at JIT time. C++ objects allocated by one
+    # runtime are then freed by the other, producing crashes such as
+    # "malloc: pointer being freed was not allocated" / "Abort trap: 6".
+    # Requiring the platform C++ runtime keeps a single libc++ in the process.
+    # See https://github.com/spack/spack-packages/issues/5403
+    requires("%libllvm=llvm libcxx=none libunwind=none", when="platform=darwin")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):

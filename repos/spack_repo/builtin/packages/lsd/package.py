@@ -22,3 +22,5 @@ class Lsd(CargoPackage):
 
     depends_on("rust@1.63:")
     depends_on("c", type="build")
+
+    build_args = ["--locked"]

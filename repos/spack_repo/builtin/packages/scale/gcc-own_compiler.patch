@@ -1,0 +1,51 @@
+diff --git a/sysdep/Makedef.Linux64-gnu-ompi b/sysdep/Makedef.Linux64-gnu-ompi
+index 2376c285a..93ede18ff 100644
+--- a/sysdep/Makedef.Linux64-gnu-ompi
++++ b/sysdep/Makedef.Linux64-gnu-ompi
+@@ -12,7 +12,7 @@ SFC = gfortran
+ MODDIROPT = -J
+ 
+ FFLAGS_CORE = -cpp -m64                                                                     \
+-              -std=f2003 -fall-intrinsics -pedantic-errors -fimplicit-none -fmodule-private \
++              -std=f2003 -fall-intrinsics -fallow-argument-mismatch -fimplicit-none -fmodule-private \
+               -fconvert=big-endian -frecord-marker=4 -ffree-form -ffree-line-length-none
+ 
+ FFLAGS_FAST  = -O3 $(FFLAGS_CORE)                                       \
+diff --git a/sysdep/Makedef.Linux64-gnu-ompi-torque b/sysdep/Makedef.Linux64-gnu-ompi-torque
+index 0a16b46bc..3777b5998 100644
+--- a/sysdep/Makedef.Linux64-gnu-ompi-torque
++++ b/sysdep/Makedef.Linux64-gnu-ompi-torque
+@@ -12,7 +12,7 @@ SFC = gfortran
+ MODDIROPT = -J
+ 
+ FFLAGS_CORE = -cpp -m64                                                                     \
+-              -std=f2003 -fall-intrinsics -pedantic-errors -fimplicit-none -fmodule-private \
++              -std=f2003 -fall-intrinsics -fallow-argument-mismatch -fimplicit-none -fmodule-private \
+               -fconvert=big-endian -frecord-marker=4 -ffree-form -ffree-line-length-none
+ 
+ FFLAGS_FAST  = -O3 $(FFLAGS_CORE)                                       \
+diff --git a/sysdep/Makedef.LinuxARM-gnu-ompi b/sysdep/Makedef.LinuxARM-gnu-ompi
+index 1fef7ca4c..73532170a 100644
+--- a/sysdep/Makedef.LinuxARM-gnu-ompi
++++ b/sysdep/Makedef.LinuxARM-gnu-ompi
+@@ -12,7 +12,7 @@ SFC = gfortran
+ MODDIROPT = -J
+ 
+ FFLAGS_CORE = -cpp                                                                          \
+-              -std=f2003 -fall-intrinsics -pedantic-errors -fimplicit-none -fmodule-private \
++              -std=f2003 -fall-intrinsics -fallow-argument-mismatch -fimplicit-none -fmodule-private \
+               -fconvert=big-endian -frecord-marker=4 -ffree-form -ffree-line-length-none
+ 
+ FFLAGS_FAST  = -O3 $(FFLAGS_CORE)                                       \
+diff --git a/sysdep/Makedef.MacOSX-gnu-ompi b/sysdep/Makedef.MacOSX-gnu-ompi
+index ce12b1bad..17b53310b 100644
+--- a/sysdep/Makedef.MacOSX-gnu-ompi
++++ b/sysdep/Makedef.MacOSX-gnu-ompi
+@@ -12,7 +12,7 @@ SFC = gfortran
+ MODDIROPT = -J
+ 
+ FFLAGS_CORE = -cpp -m64                                                                     \
+-              -std=f2003 -fall-intrinsics -pedantic-errors -fimplicit-none -fmodule-private \
++              -std=f2003 -fall-intrinsics -fallow-argument-mismatch -fimplicit-none -fmodule-private \
+               -fconvert=big-endian -frecord-marker=4 -ffree-form -ffree-line-length-none    \
+               -ffpe-summary=none

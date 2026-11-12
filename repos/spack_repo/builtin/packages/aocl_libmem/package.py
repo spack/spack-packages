@@ -34,6 +34,7 @@ class AoclLibmem(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("5.3", sha256="15ca49e5874d84a039f680dfc0cef849c983cbc982c321161ce8b2c4fd359be6")
     version("5.2", sha256="06b56596fe32a4528a93d18a827bd5cbd814115d16390c6f2ae93d6b5715d41d")
     version("5.1", sha256="e03bc712a576b3e14ae433a696558e121dc67aac7fc1b4dca9b727605784e994")
     version("5.0", sha256="d3148db1a57fec4f3468332c775cade356e8133bf88385991964edd7534b7e22")

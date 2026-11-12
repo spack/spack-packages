@@ -22,6 +22,7 @@ class PyDatalad(PythonPackage):
     pypi = "datalad/datalad-0.14.6.tar.gz"
     git = "https://github.com/datalad/datalad.git"
 
+    version("1.5.0", sha256="30dcbb393170bff55348496d8a17cb641874f7fef2cc347ce94b30aa4d3c3588")
     version("1.4.0", sha256="4f663b76eb5ffc560d747c9c4bcfe23e59afc62a0029557dac4f53ceec638833")
     version("1.2.3", sha256="48f19d3e4fc7b2725240e6c47d6710f3bc46ad6b42455ff76dd3f6e34226f39f")
     version("1.2.1", sha256="4d9f7ffe7a8a7b7eced97ba3d2d2257d527d4218c73ddf7e74eb343cf970d925")
@@ -107,6 +108,7 @@ class PyDatalad(PythonPackage):
             depends_on("py-pytest@7", when="@0.17.0:0.17.8")
             depends_on("py-pytest-cov", when="@0.17.9:")
             depends_on("py-pytest-cov@3", when="@0.17.0:0.17.8")
+            depends_on("py-pytest-reportlog", when="@1.5:")
             depends_on("py-pytest-retry", when="@1.2.2:")
             depends_on("py-pytest-fail-slow@0.2:0", when="@0.17:")
             depends_on("py-types-python-dateutil", when="@0.17.4:")

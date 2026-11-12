@@ -19,6 +19,8 @@ class Nvtx(Package, PythonExtension):
     license("Apache-2.0")
 
     version("develop", branch="dev")
+    version("3.6.0", sha256="da1939acb9f82b68b6fc9e1b8d392cc52a5fddae60d09e3e5e20fce40e3d7f83")
+    version("3.5.0", sha256="f244c5eec33f9769123a755dda1e9b80339345ab278cf9542ff34677c88804b5")
     version("3.4.0", sha256="99a3e97d7fe90d5195e87256492bf9cd42476d72cbc79ba477011a2384b88f92")
     version("3.3.0", sha256="67d0cda2f9d19a89684592dab40c0bf2c2b13d5d588e51392076c0890a64b6c0")
     version("3.2.1", sha256="737c3035f0e43a2252e7cd94c3f26e11e169f624236efe31794f044ce44a70af")
@@ -46,6 +48,11 @@ class Nvtx(Package, PythonExtension):
         setup = FileFilter("python/setup.py")
         setup.filter("include_dirs=include_dirs", f"include_dirs=['{include_dir}']", string=True)
 
+    def flag_handler(self, name, flags):
+        if name == "cflags" and self.spec.satisfies("@3.2: %gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def install(self, spec, prefix):
         install_tree("c/include", prefix.include)
         install("c/CMakeLists.txt", prefix)
@@ -55,4 +62,4 @@ class Nvtx(Package, PythonExtension):
         install("./nvtx-config.cmake", prefix)  # added by the patch above
 
         with working_dir(self.build_directory):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

@@ -20,8 +20,10 @@ class RFgsea(RPackage):
     license("MIT")
 
     with default_args(get_full_repo=True):
-        version("1.26.0", commit="102b439e2208ae415dc19d3d1ac8936f9c5999f1")
-        version("1.24.0", commit="ac74ccd935c15623b8584caa791835aec514144b")
+        version("1.38.0", commit="1fe46448457d30235f6de4ab963026aed4a8edf0")  # bioc 3.23
+        version("1.34.2", commit="6b80a59a37de433caaa735cb003177ccd3294b8a")  # bioc 3.21
+        version("1.26.0", commit="102b439e2208ae415dc19d3d1ac8936f9c5999f1")  # bioc 3.17
+        version("1.24.0", commit="ac74ccd935c15623b8584caa791835aec514144b")  # bioc 3.16
         version("1.22.0", commit="e4e203aa64faa984e0406fed5d87a422d9df92f2")
         version("1.20.0", commit="b704f81687dc16afdaafc6d30108c62a067856b2")
         version("1.16.0", commit="9d9df596c7e160afa18e067b7637cfc465494318")
@@ -31,9 +33,11 @@ class RFgsea(RPackage):
         version("1.4.1", commit="73de5ff364e520ac99507a9ee5a61a0d23d3c44e")
         version("1.2.1", commit="99b04eef664204d0dca4b9f8027cd7eefb006b72")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build")
 
+    depends_on("r@4.1:", type=("build", "run"), when="@1.27.1:")
     depends_on("r@3.3:", type=("build", "run"))
+
     depends_on("r-rcpp", type=("build", "run"))
     depends_on("r-data-table", type=("build", "run"))
     depends_on("r-biocparallel", type=("build", "run"))

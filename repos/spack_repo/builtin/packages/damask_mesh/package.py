@@ -18,6 +18,7 @@ class DamaskMesh(CMakePackage):
 
     license("AGPL-3.0-or-later")
 
+    version("3.1.0", sha256="d1ba65a167aab221c13f003507aba17f663c53af94fc1cd4a47408008329def1")
     version("3.0.2", sha256="82f9b3aefde87193c12a7c908f42b711b278438f6cad650918989e37fb6dbde4")
     version("3.0.1", sha256="3db1231f6763356e71b3bb91f66f1abb4fdae2721ce85754fc468446f3d74882")
     version("3.0.0", sha256="aaebc65b3b10e6c313132ee97cfed427c115079b7e438cc0727c5207e159019f")
@@ -43,9 +44,11 @@ class DamaskMesh(CMakePackage):
         "3.0.0-alpha4", sha256="0bb8bde43b27d852b1fb6e359a7157354544557ad83d87987b03f5d629ce5493"
     )
 
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
+    depends_on("petsc@3.21:3.25", when="@3.1.0")
     depends_on("petsc@3.21:3.23", when="@3.0.2")
     depends_on("petsc@3.21:3.22", when="@3.0.1")
     depends_on("petsc@3.21", when="@3.0.0-beta2")
@@ -56,11 +59,13 @@ class DamaskMesh(CMakePackage):
     depends_on("petsc@3.14.0:3.14,3.15.1:3.16", when="@3.0.0-alpha5")
     depends_on("petsc@3.14.0:3.14,3.15.1:3.15", when="@3.0.0-alpha4")
     depends_on("pkgconfig", type="build")
-    depends_on("cmake@3.10:", type="build")
+    depends_on("cmake@3.28:", when="@3.1.0", type="build")
+    depends_on("cmake@3.10:", when="@:3.0.2", type="build")
     depends_on("petsc+mpi+hdf5")
     depends_on("hdf5@1.12:+mpi+fortran", when="@3.0.0-alpha7:")
     depends_on("hdf5@1.10:+mpi+fortran")
     depends_on("libfyaml", when="@3.0.0-alpha7:")
+    depends_on("boost+program_options", when="@3.1.0")
 
     # relax Fortran source limit to 132 char to enable PETSc macro expansion. created by @MarDiehl
     patch("long-lines.patch", when="@3.0.0-alpha7")
@@ -74,7 +79,10 @@ class DamaskMesh(CMakePackage):
     )
 
     def cmake_args(self):
-        return [self.define("DAMASK_SOLVER", "mesh")]
+        if self.spec.satisfies("@3.1.0:"):
+            return [self.define("MESH", "ON")]
+        else:
+            return [self.define("DAMASK_SOLVER", "mesh")]
 
     @run_after("install")
     @on_package_attributes(run_tests=True)

@@ -18,7 +18,7 @@ class _7zip(SourceforgePackage, Package):
     """7-Zip is a file archiver for Windows"""
 
     homepage = "https://sourceforge.net/projects/sevenzip/"
-    sourceforge_mirror_path = "sevenzip/files/7z2107-src.tar.xz"
+    sourceforge_mirror_path = "project/sevenzip/7-Zip/21.07/7z2107-src.tar.xz"
     tags = ["windows"]
 
     executables = ["7z"]

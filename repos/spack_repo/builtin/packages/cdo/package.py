@@ -21,6 +21,31 @@ class Cdo(AutotoolsPackage):
     maintainers("skosukhin", "Try2Code")
 
     version(
+        "2.6.6",
+        sha256="ed95f4ba9e5125e93a7c190185700e8cfb91da66991288a6d4a526e84d735f66",
+        url="https://code.mpimet.mpg.de/attachments/download/30251/cdo-2.6.6.tar.gz",
+    )
+    version(
+        "2.6.5",
+        sha256="bbb58a519b463aa54477346794754a9936f2f09059a83fa9c82e76f1a13a5caf",
+        url="https://code.mpimet.mpg.de/attachments/download/30247/cdo-2.6.5.tar.gz",
+    )
+    version(
+        "2.6.4",
+        sha256="988d94f80d723506bd061fbdfecdce2412afab37f7b5cf01a379a458a8799234",
+        url="https://code.mpimet.mpg.de/attachments/download/30242/cdo-2.6.4.tar.gz",
+    )
+    version(
+        "2.6.3",
+        sha256="889ece29314b48cbf47ba14ab5f1779886f128767f6d22dfcc7fad1e62f2d017",
+        url="https://code.mpimet.mpg.de/attachments/download/30224/cdo-2.6.3.tar.gz",
+    )
+    version(
+        "2.6.2",
+        sha256="d59f57a3b33a063023b2b0ef8f38165e0bcf426d3b843031c5078e76832e957b",
+        url="https://code.mpimet.mpg.de/attachments/download/30213/cdo-2.6.2.tar.gz",
+    )
+    version(
         "2.6.1",
         sha256="ccf5f3bd5800f703c031bb5b10ae0cd3feac34d8eba7956661ff1ba6deb5985f",
         url="https://code.mpimet.mpg.de/attachments/download/30210/cdo-2.6.1.tar.gz",

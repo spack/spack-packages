@@ -24,6 +24,13 @@ class RRcpparmadillo(RPackage):
 
     cran = "RcppArmadillo"
 
+    version("15.4.0-1", sha256="fae8ea3e61b8c2006d0b140e9a6c4001b7de78c3afd1eaa54c6cd2ea80ac198d")
+    version("15.2.7-1", sha256="f7a20f66b1364b596b632a57adbe932910d48a3bc158a4e550d7eed00147966e")
+    version("15.0.2-2", sha256="f8895e85d70ddeabb1d4ec7567f81ed6fd95f9e8715d0791afd07c8382315f4e")
+    version("14.6.3-1", sha256="55f853a065903ad740ea5a3b53f22c71ffdeba1906dbb49d9c181da7a3e50fc7")
+    version("14.4.3-1", sha256="114f56058c3e29017f4028e63e2af2ebf56f28ee4362792358a571786de8a438")
+    version("14.2.3-1", sha256="931ccbc53e1c0f598f7d226134028a5fb531cfd94db941982a813003095226df")
+    version("14.0.2-1", sha256="9b728aab93f04a46891208ee0f15824a69fe5f91f6108d0d23101a98450c46f9")
     version("14.0.0-1", sha256="80c4d4fadc3ed92712affc50279de4c5f2e1f7ee777ad1f1b3f9f3e94a64ba90")
     version(
         "0.12.4.0.0", sha256="f6db54c465abc0a570a0da6f737d9fdf2187287fb235ce487b1903b5177482cb"
@@ -63,5 +70,8 @@ class RRcpparmadillo(RPackage):
     depends_on("cxx", type="build")
 
     depends_on("r@3.3.0:", type=("build", "run"), when="@0.8.500.0:")
-    depends_on("r-rcpp@0.11.0:", type=("build", "run"))
+
+    depends_on("r-rcpp@1.1.1:", type=("build", "run"), when="@15.2.4-1.2:")
+    depends_on("r-rcpp@1.0.12:", type=("build", "run"), when="@14.1.99-1:")
     depends_on("r-rcpp@1.0.8:", type=("build", "run"), when="@0.12.8.4.0:")
+    depends_on("r-rcpp@0.11.0:", type=("build", "run"))

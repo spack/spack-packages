@@ -15,6 +15,7 @@ class Cubew(AutotoolsPackage):
 
     maintainers("swat-jsc", "wrwilliams")
 
+    version("4.9.1", sha256="c2e43089bb24bf27bb07eb1a3b4114df8040372e4ba247788d99bc872d23d8ea")
     version("4.9", sha256="4ef74e81c569bf53117459cba5a1ea52b5dac739493fa83be39678840cd2acdd")
     version("4.8.2", sha256="4f3bcf0622c2429b8972b5eb3f14d79ec89b8161e3c1cc5862ceda417d7975d2")
     version("4.8.1", sha256="42cbd743d87c16e805c8e28e79292ab33de259f2cfba46f2682cb35c1bc032d6")

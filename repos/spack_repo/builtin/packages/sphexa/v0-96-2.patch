@@ -1,0 +1,58 @@
+diff --git a/domain/test/performance/CMakeLists.txt b/domain/test/performance/CMakeLists.txt
+index 1af2eff0..65b370dd 100644
+--- a/domain/test/performance/CMakeLists.txt
++++ b/domain/test/performance/CMakeLists.txt
+@@ -2,11 +2,11 @@ include(cstone_add_performance_test)
+ 
+ cstone_add_performance_test(octree.cpp octree_perf)
+ cstone_add_performance_test(peers.cpp peers_perf)
+-cstone_add_performance_test(hilbert.cpp hilbert_perf)
+ 
+ if(CMAKE_CUDA_COMPILER)
++    cstone_add_performance_test(hilbert.cpp hilbert_perf)
+     # link to cudart to get thrust includes
+-    target_link_libraries(hilbert_perf PRIVATE CUDA::cudart)
++    target_link_libraries(hilbert_perf PRIVATE ThrustOMP CUDA::cudart)
+ endif ()
+ 
+ if(CMAKE_CUDA_COMPILER OR CMAKE_HIP_COMPILER)
+diff --git a/domain/test/unit_cuda/traversal/groups.cu b/domain/test/unit_cuda/traversal/groups.cu
+index 486bf6ad..56c6c7c2 100644
+--- a/domain/test/unit_cuda/traversal/groups.cu
++++ b/domain/test/unit_cuda/traversal/groups.cu
+@@ -46,7 +46,7 @@ TEST(TargetGroups, t0)
+     EXPECT_EQ(hgroups, ref);
+ }
+ 
+-__device__ constexpr util::array<int, 2> laneSeg(int idx, int warpSize_) { return {idx % warpSize, idx / warpSize_}; }
++__device__ constexpr util::array<int, 2> laneSeg(int idx, int warpSize_) { return {idx % warpSize_, idx / warpSize_}; }
+ 
+ //! @brief test input setup for findSplits
+ template<size_t N>
+diff --git a/physics/Disk/include/CMakeLists.txt b/physics/Disk/include/CMakeLists.txt
+index 9ef6afd5..af2d6868 100644
+--- a/physics/Disk/include/CMakeLists.txt
++++ b/physics/Disk/include/CMakeLists.txt
+@@ -3,14 +3,16 @@ if (CMAKE_HIP_COMPILER)
+     set_source_files_properties(central_force_gpu.cu accretion_gpu.cu beta_cooling_gpu.cu PROPERTIES LANGUAGE HIP)
+ endif ()
+ 
++set(testname disk_gpu)
+ if (CMAKE_CUDA_COMPILER OR CMAKE_HIP_COMPILER)
+-    add_library(disk_gpu OBJECT central_force_gpu.cu accretion_gpu.cu beta_cooling_gpu.cu)
+-    target_include_directories(disk_gpu PRIVATE ${CSTONE_DIR} ${SPH_DIR})
++    add_library(${testname} OBJECT central_force_gpu.cu accretion_gpu.cu beta_cooling_gpu.cu)
++    target_include_directories(${testname} PRIVATE ${CSTONE_DIR} ${SPH_DIR})
+     if (CMAKE_CUDA_COMPILER)
+-        target_link_libraries(disk_gpu PRIVATE CUDA::cudart)
++        target_link_libraries(${testname} PRIVATE CUDA::cudart)
+     else ()
+-        target_link_libraries(disk_gpu PRIVATE hip::host)
+-        target_compile_definitions(disk_gpu PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
+-        set_target_properties(${exename} PROPERTIES LINKER_LANGUAGE CXX)
++        set_target_properties(${testname} PROPERTIES LINKER_LANGUAGE CXX)
++        target_compile_definitions(${testname} PRIVATE THRUST_DEVICE_SYSTEM=THRUST_DEVICE_SYSTEM_HIP)
++        target_link_libraries(${testname} PRIVATE hip::host cstone_thrust_incl)
+     endif ()
++    add_test(NAME ${testname} COMMAND ${testname})
+ endif ()

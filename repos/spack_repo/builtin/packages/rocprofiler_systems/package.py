@@ -5,6 +5,7 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
@@ -15,20 +16,27 @@ def submodules(package):
         "projects/rocprofiler-systems/external/perfetto",
         "projects/rocprofiler-systems/external/elfio",
         "projects/rocprofiler-systems/external/dyninst",
-        "projects/rocprofiler-systems/external/PTL",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
-        "projects/rocprofiler-systems/examples/openmp/external/ompvv",
     ]
+    if package is not None and package.spec.satisfies("@:7.2"):
+        submodules.append("projects/rocprofiler-systems/external/PTL")
+    if package is not None and package.spec.satisfies("@:7.13"):
+        submodules.append("projects/rocprofiler-systems/examples/openmp/external/ompvv")
     return submodules
 
 
-class RocprofilerSystems(CMakePackage):
+class RocprofilerSystems(ROCmLibrary, CMakePackage):
     """Application Profiling, Tracing, and Analysis"""
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocm-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
 
@@ -36,6 +44,24 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
 
+    version(
+        "10.0.0",
+        tag="therock-10.0",
+        commit="6b0e43f341195e203754e08f850e437ff2fc09f9",
+        submodules=submodules,
+    )
+    version(
+        "7.14.0",
+        tag="therock-7.14",
+        commit="2b22ab0195cc1461cd9abf3b969e9dd7c10af350",
+        submodules=submodules,
+    )
+    version(
+        "7.13.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="therock-7.13",
+        submodules=submodules,
+    )
     version(
         "7.2.3",
         tag="rocm-7.2.3",
@@ -183,16 +209,26 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
-    variant("internal-dyninst", default=False, description="build internal dyninst")
+    variant(
+        "internal-dyninst",
+        default=False,
+        when="@:7.2",
+        description="build internal dyninst",
+    )
+    variant(
+        "internal-dyninst",
+        default=True,
+        when="@7.13:",
+        description="build internal dyninst",
+    )
     variant("internal-tbb", default=False, description="build internal tbb")
 
     conflicts("%rocmcc", when="+internal-tbb")
     conflicts("%clang", when="+internal-tbb")
     extends("python", when="+python")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
@@ -209,8 +245,10 @@ class RocprofilerSystems(CMakePackage):
         when="@7.1.1:",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
-    depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
+    depends_on("intel-tbb@2019:2020.3", when="@:7.13 ~internal-tbb")
+    depends_on("intel-tbb@2019:2021.3", when="@7.14: ~internal-tbb")
     depends_on("sqlite", when="@7.1:")
+    depends_on("tcl", type="build", when="@7.1:")
     depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
@@ -249,6 +287,9 @@ class RocprofilerSystems(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -264,10 +305,24 @@ class RocprofilerSystems(CMakePackage):
             "7.2.0",
             "7.2.1",
             "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
         ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0", "7.2.1", "7.2.3"]:
+        for ver in [
+            "7.0.0",
+            "7.0.2",
+            "7.1.0",
+            "7.1.1",
+            "7.2.0",
+            "7.2.1",
+            "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
+        ]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
@@ -280,7 +335,7 @@ class RocprofilerSystems(CMakePackage):
     patch(
         "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
         sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
-        when="%rocmcc",
+        when="@:7.1 %rocmcc",
         working_dir="external/timemory",
     )
 
@@ -347,7 +402,7 @@ class RocprofilerSystems(CMakePackage):
         return args
 
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("@6.3:7.1"):
+        if self.spec.satisfies("@6.3:7.1") or self.spec.satisfies("@7.14:"):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)
@@ -357,7 +412,10 @@ class RocprofilerSystems(CMakePackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"rocm: v(\d+)\.(\d+)", output)
         if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+            major, minor = int(match.group(1)), int(match.group(2))
+            if (major, minor) == (7, 15):
+                return "10.0.0"
+            ver = "{0}.{1}".format(major, minor)
         else:
             ver = None
         return ver

@@ -1,0 +1,20 @@
+--- a/gcc/config.gcc	2025-05-23 06:02:04.272197204 -0500
++++ b/gcc/config.gcc.new	2026-08-03 17:25:30.299382587 -0500
+@@ -4105,7 +4105,7 @@
+       with_arch=mips2
+       ;;
+     nvptx-*)
+-      with_arch=sm_30
++      with_arch=sm_75
+       ;;
+   esac
+ 
+@@ -5569,7 +5569,7 @@
+ 				;;
+ 			sm_35 | sm_53 | sm_70 | sm_75 | sm_80 )
+ 				# OK, but we'd like 'sm_30', too.
+-				TM_MULTILIB_CONFIG="$TM_MULTILIB_CONFIG sm_30"
++				TM_MULTILIB_CONFIG="$TM_MULTILIB_CONFIG"
+ 				;;
+ 			* )
+ 				echo "Unknown arch used in --with-arch=$with_arch" 1>&2

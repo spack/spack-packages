@@ -14,11 +14,13 @@ class PyPytecplot(PythonPackage):
     Tecplot 360 macro language is helpful, but not required."""
 
     homepage = "https://www.tecplot.com/docs/pytecplot/"
-    pypi = "pytecplot/pytecplot-1.4.2.zip"
+    pypi = "pytecplot/pytecplot-1.4.2.tar.gz"
 
     license("Frameworx-1.0")
 
-    version("1.4.2", sha256="586a2ee947314ddd2f28be5523911dd298465b8f6a9145ba351866d5d695ef0d")
+    version("1.7.4", sha256="cb4456f004267140a35925a4b46c41a20ec15051fcb2404ab3d6077d6cec18a7")
+    with default_args(deprecated=True):
+        version("1.4.2", sha256="586a2ee947314ddd2f28be5523911dd298465b8f6a9145ba351866d5d695ef0d")
 
     variant("extras", default=False, description="Enable extra functionality.")
 

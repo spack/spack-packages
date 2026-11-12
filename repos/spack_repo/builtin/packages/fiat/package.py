@@ -20,6 +20,7 @@ class Fiat(CMakePackage):
     license("Apache-2.0")
 
     version("main", branch="main", no_cache=True)
+    version("2.0.0", sha256="12d3e96a6b5690557aacaba6ad45175da4c5792b19f9e1cae8a0fa792a33417b")
     version("1.6.2", sha256="772394f531fabc6965997407309074481ff2e2b1bca78da9e041acfe01d3a085")
     version("1.6.1", sha256="fec30ac572d626d8f1a8bd0d03c41aac156e6911f9f822e5f7e5991aff91ba37")
     version("1.5.1", sha256="50834bf5d8cb4bde92df9028f799aeba411a0a16e55ca33da10a329b5d7f55ea")
@@ -51,7 +52,7 @@ class Fiat(CMakePackage):
 
     patch("intel_warnings_v110.patch", when="@:1.1.0")
     patch("intel_warnings_v120.patch", when="@1.2.0:1.5.0")
-    patch("intel_warnings_v151.patch", when="@1.5.1:")
+    patch("intel_warnings_v151.patch", when="@1.5.1:1.6.99")
 
     def cmake_args(self):
         args = [

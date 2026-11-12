@@ -5,12 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class Rocfft(CMakePackage):
+class Rocfft(ROCmLibrary, CMakePackage):
     """Radeon Open Compute FFT library"""
 
     homepage = "https://github.com/ROCm/rocFFT/"
@@ -21,13 +21,14 @@ class Rocfft(CMakePackage):
     libraries = ["librocfft"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/rocFFT/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocFFT/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
     version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
     version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
@@ -80,6 +81,8 @@ class Rocfft(CMakePackage):
     depends_on("cmake@3.16:", type="build")
     depends_on("python@3.6:", type="build")
     depends_on("sqlite@3.36:")
+    depends_on("sqlite@3.50.2:", when="@7.1:")
+    depends_on("sqlite@3.51.3:", when="@7.13:")
 
     depends_on("googletest@1.10.0:", type="test")
     depends_on("fftw@3.3.8:", type="test")
@@ -114,6 +117,9 @@ class Rocfft(CMakePackage):
         "7.2.0",
         "7.2.1",
         "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
@@ -167,7 +173,7 @@ class Rocfft(CMakePackage):
             return "{0}.{1}.{2}".format(
                 int(match.group(1)), int(match.group(2)), int(match.group(3))
             )
-        return None
+        return super().determine_version(lib)
 
     def cmake_args(self):
         args = [

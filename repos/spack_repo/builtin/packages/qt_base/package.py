@@ -81,7 +81,9 @@ class QtPackage(CMakePackage):
         # are not read from the environment
         for v in ["QT_ADDITIONAL_PACKAGES_PREFIX_PATH", "QT_ADDITIONAL_SBOM_DOCUMENT_PATHS"]:
             if v in os.environ:
-                args.append(self.define(v, os.environ[v].split(":")))
+                p = os.environ[v].split(os.pathsep)
+                p = [x.replace("\\", "/") for x in p]
+                args.append(self.define(v, p))
 
         return args
 
@@ -143,7 +145,6 @@ class QtPackage(CMakePackage):
         # Qt components typically install cmake config files in a single prefix,
         # so we have to point dependencies to the cmake config files.
         env.prepend_path("QT_ADDITIONAL_PACKAGES_PREFIX_PATH", self.spec.prefix)
-
         # Qt creates SBOM files based on the used SBOM files in the prefix, and
         # in additional paths for other components.
         if self.spec.satisfies("@6.9:"):
@@ -160,6 +161,7 @@ class QtBase(QtPackage):
 
     license("BSD-3-Clause")
 
+    version("6.11.2", sha256="06cd7aa6b3ab19cb5a1664a2891ef0df960f78c97fa31b80b1d6d7ee70688414")
     version("6.11.1", sha256="e20852bd45cdef5da5175f3634e285e03e2be7ca437f3d2b7e1a2af7321bca7a")
     version("6.10.2", sha256="95271bc1f32db239723f597ab1899e624e3b22a16678b88520dee51ad5035faa")
     version("6.10.1", sha256="088c248d7dfbcba1e60fc4fa7a46406c6c638687cd3dbd412cdd13fc21198df9")
@@ -201,7 +203,10 @@ class QtBase(QtPackage):
     variant("gui", default=True, description="Build the Qt GUI module and dependencies.")
     variant("shared", default=True, description="Build shared libraries.")
     variant("sql", default=True, description="Build with SQL support.")
-    variant("network", default=False, description="Build with SSL support.")
+    variant("sqlite", default=True, description="Build with SQLite support.", when="+sql")
+    variant("mysql", default=False, description="Build with MySQL/MariaDB support.", when="+sql")
+    variant("postgresql", default=False, description="Build with PostgreSQL support.", when="+sql")
+    variant("network", default=False, description="Build with network support.")
 
     # GUI-only dependencies
     variant(
@@ -223,8 +228,7 @@ class QtBase(QtPackage):
     depends_on("cmake@3.21:", type="build", when="~shared")
     depends_on("cmake@3.21:", type="build", when="platform=darwin")
     depends_on("double-conversion")
-    depends_on("icu4c")
-    depends_on("libxml2")
+    depends_on("icu4c", when="platform=linux,darwin")
     depends_on("pcre2+multibyte")
     depends_on("zlib-api")
     depends_on("zstd")
@@ -233,16 +237,23 @@ class QtBase(QtPackage):
         depends_on("at-spi2-core", when="+accessibility")
     depends_on("dbus", when="+dbus")
     depends_on("gl", when="+opengl", type=("build", "link"))
-    depends_on("glu", when="+opengl", type=("build", "link"))
-    depends_on("sqlite", when="+sql")
+    depends_on("glx", when="+opengl platform=linux", type=("build", "link"))
+    depends_on("sqlite", when="+sqlite")
+    depends_on("mysql-client", when="+mysql")
+    depends_on("postgresql", when="+postgresql")
 
+    # see qt/qtbase/src/gui/configure.cmake for dependencies and versions
     with when("+gui"):
-        depends_on("fontconfig")
-        depends_on("freetype")
-        depends_on("harfbuzz")
         depends_on("jpeg")
         depends_on("libpng")
+        with when("platform=darwin"):
+            depends_on("fontconfig")
+            depends_on("freetype")
+            depends_on("harfbuzz@2.6:")
         with when("platform=linux"):
+            depends_on("fontconfig")
+            depends_on("freetype")
+            depends_on("harfbuzz@2.6:")
             depends_on("libxkbcommon")
             depends_on("libxcb@1.13:")  # requires xinput
             depends_on("libxrender")
@@ -255,8 +266,10 @@ class QtBase(QtPackage):
             depends_on("xcb-util-wm")
 
     with when("+network"):
-        depends_on("openssl")
+        with when("platform=darwin"):
+            depends_on("openssl")
         with when("platform=linux"):
+            depends_on("openssl")
             depends_on("libproxy", type=("link", "run"))
 
     # Qt6 requires newer compilers: see https://github.com/spack/spack/issues/34418
@@ -314,6 +327,9 @@ class QtBase(QtPackage):
                 # thread: default to on
                 self.define_qt_feature_from_variant("widgets"),  # note: private feature
                 self.define_qt_feature_from_variant("sql"),  # note: private feature
+                self.define_qt_feature_from_variant("sql_sqlite", "sqlite"),
+                self.define_qt_feature_from_variant("sql_mysql", "mysql"),
+                self.define_qt_feature_from_variant("sql_psql", "postgresql"),
                 # xml: default to on
             ]
         )
@@ -323,7 +339,8 @@ class QtBase(QtPackage):
         if "+dbus" in spec:
             features.append("dbus_linked")
         if "+network" in spec:
-            features.extend(["openssl_linked", "openssl"])
+            if sys.platform == "linux" or sys.platform == "darwin":
+                features.extend(["openssl_linked", "openssl"])
             if sys.platform == "linux":
                 features.append("libproxy")
         for k in features:
@@ -336,7 +353,7 @@ class QtBase(QtPackage):
 
         # INPUT_* arguments: undefined/no/qt/system
         sys_inputs = ["doubleconversion"]
-        if "+sql" in spec:
+        if "+sqlite" in spec:
             sys_inputs.append("sqlite")
         for k in sys_inputs:
             args.append(self.define("INPUT_" + k, "system"))
@@ -352,12 +369,18 @@ class QtBase(QtPackage):
             sys_features += [
                 ("jpeg", True),
                 ("png", True),
-                ("sqlite", True),
-                ("freetype", True),
-                ("harfbuzz", True),
-                ("textmarkdownreader", False),
             ]
-            with when("platform=linux"):
+            if "+sqlite" in spec:
+                sys_features += [
+                    ("sqlite", True),
+                ]
+            if sys.platform == "linux" or sys.platform == "darwin":
+                sys_features += [
+                    ("freetype", True),
+                    ("harfbuzz", True),
+                    ("textmarkdownreader", False),
+                ]
+            if sys.platform == "linux":
                 sys_features += [("xcb_xinput", True)]
         if "+network" in spec:
             sys_features += [("proxies", True)]

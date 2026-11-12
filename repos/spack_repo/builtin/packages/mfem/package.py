@@ -54,6 +54,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     version("develop", branch="master")
 
     version(
+        "4.10.0",
+        sha256="d01c26662ab96042ec5e3443a58ee9eb3c5c78c6632d899240b6e485f3a414cf",
+        url="https://bit.ly/4iEAcbE",
+        extension="tar.gz",
+    )
+
+    version(
         "4.9.0",
         sha256="6904974c8d5a6bcd127419c7b7adff873170d397ed2f0bccdf438e940e713af2",
         url="https://bit.ly/mfem-4-9",
@@ -175,6 +182,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         extension="tar.gz",
     )
 
+    variant("caliper", default=False, description="Build Caliper support")
+
     variant("static", default=True, description="Build static library")
     variant("shared", default=False, description="Build shared library")
     variant("mpi", default=True, sticky=True, description="Enable MPI parallelism")
@@ -188,6 +197,12 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     variant("libceed", default=False, description="Enable libCEED backend")
     variant("umpire", default=False, description="Enable Umpire support")
     variant("amgx", default=False, description="Enable NVIDIA AmgX solver support")
+    variant(
+        "cudss",
+        default=False,
+        when="@4.10:",
+        description="Enable NVIDIA cuDSS solver support",
+    )
 
     variant(
         "threadsafe",
@@ -261,6 +276,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
     conflicts("+cuda+rocm")
     conflicts("+amgx", when="~cuda")
+    conflicts("+cudss", when="~cuda")
     conflicts("+mpi~cuda ^hypre+cuda")
     conflicts("+mpi~rocm ^hypre+rocm")
 
@@ -322,12 +338,15 @@ class Mfem(Package, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+strumpack")
+    depends_on("fortran", type="build", when="+mumps")
     depends_on("gmake", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("hipsparse", when="@4.4.0:+rocm")
     depends_on("hipblas", when="@4.8.0:+rocm")
     depends_on("hipcub", when="@4.9.0:+rocm")
+
+    depends_on("caliper", when="+caliper")
 
     with when("+mpi"):
         depends_on("hypre")
@@ -374,6 +393,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("pumi@2.2.6:", when="@4.4.0:+pumi")
     depends_on("gslib+mpi", when="+gslib+mpi")
     depends_on("gslib~mpi~mpiio", when="+gslib~mpi")
+    depends_on("gslib+shared", when="+gslib+shared")
     depends_on("gslib@1.0.5:1.0.6", when="@:4.2+gslib")
     depends_on("gslib@1.0.7:", when="@4.3.0:+gslib")
     depends_on("gslib@1.0.9:", when="@4.8.0:+gslib")
@@ -422,7 +442,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         depends_on(
             f"slepc+rocm amdgpu_target={gfx}", when=f"+rocm+slepc amdgpu_target={gfx} ^petsc+rocm"
         )
-    depends_on("mumps@5.1.1:", when="+mumps")
+    depends_on("mumps+mpi@5.1.1:", when="+mumps")
     depends_on("mpfr", when="+mpfr")
     depends_on("netcdf-c@4.1.3:", when="+netcdf")
     depends_on("unwind", when="+libunwind")
@@ -433,6 +453,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("libfms@0.2.0:", when="+fms")
     depends_on("ginkgo@1.4.0:1.8", when="@:4.7+ginkgo")
     depends_on("ginkgo@1.9.0:", when="@4.8:+ginkgo")
+    depends_on("ginkgo+mpi@1.11.0:", when="@4.10:+ginkgo+mpi")
     conflicts("cxxstd=11", when="^ginkgo")
     conflicts("cxxstd=14", when="^ginkgo@1.9:")
     for sm_ in CudaPackage.cuda_arch_values:
@@ -476,7 +497,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("raja@0.13.0", when="@4.3.0+raja")
     depends_on("raja@0.14.0:2022.03", when="@4.4.0:4.5.0+raja")
     depends_on("raja@2022.10.3:", when="@4.5.2:+raja")
-    conflicts("cxxstd=11", when="^raja@2022.03.0:")
+    conflicts("cxxstd=11", when="^raja@0.14.0:")
+    conflicts("cxxstd=14", when="^raja@2025.09.0:")
+    conflicts("cxxstd=17", when="^raja@2026.07.0:")
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
             "raja+cuda cuda_arch={0}".format(sm_), when="+raja+cuda cuda_arch={0}".format(sm_)
@@ -509,6 +532,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
     depends_on("umpire@2.0.0:2.1.0", when="@:4.3.0+umpire")
     depends_on("umpire@3.0.0:", when="@4.4.0:+umpire")
     conflicts("cxxstd=11", when="^umpire@2022.03.0:")
+    conflicts("cxxstd=14", when="^umpire@2025.09.0:")
+    conflicts("cxxstd=17", when="^umpire@2026.07:")
     for sm_ in CudaPackage.cuda_arch_values:
         depends_on(
             "umpire+cuda cuda_arch={0}".format(sm_), when="+umpire+cuda cuda_arch={0}".format(sm_)
@@ -527,6 +552,10 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         depends_on(
             "amgx~mpi cuda_arch={0}".format(sm_), when="+amgx~mpi cuda_arch={0}".format(sm_)
         )
+
+    depends_on("cudss@0.6:0.7.1+mpi", when="+cudss+mpi")
+    depends_on("cudss@0.5:0.7.1~mpi", when="+cudss~mpi")
+
     depends_on("enzyme@0.0.176:", when="+enzyme")
     requires("%cxx=llvm", when="+enzyme~rocm")
     depends_on("cuda+allow-unsupported-compilers", when="+enzyme+cuda")
@@ -693,6 +722,8 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             "MFEM_MPIEXEC_NP=%s" % mfem_mpiexec_np,
             "MFEM_USE_EXCEPTIONS=%s" % yes_no("+exceptions"),
             "MFEM_USE_MUMPS=%s" % yes_no("+mumps"),
+            "MFEM_USE_CUDSS=%s" % yes_no("+cudss"),
+            "MFEM_USE_CALIPER=%s" % yes_no("+caliper"),
         ]
         if spec.satisfies("@4.7.0:"):
             options += ["MFEM_PRECISION=%s" % spec.variants["precision"].value]
@@ -714,8 +745,14 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             cxxstd = "14"
         if self.spec.satisfies("^ginkgo@1.9.0:"):
             cxxstd = "17"
+        if self.spec.satisfies("^umpire@2025.09.0:"):
+            cxxstd = "17"
         if self.spec.satisfies("@4.9.0:"):
             cxxstd = "17"
+        if self.spec.satisfies("^raja@2026.07.0:"):
+            cxxstd = "20"
+        if self.spec.satisfies("^umpire@2026.07:"):
+            cxxstd = "20"
         cxxstd_req = spec.variants["cxxstd"].value
         if cxxstd_req != "auto":
             # Constraints for valid standard level should be imposed during
@@ -728,9 +765,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             else:
                 cxxstd_flag = self["cxx"].standard_flag(language="cxx", standard=cxxstd)
 
-        cuda_arch = None if "~cuda" in spec else spec.variants["cuda_arch"].value
+        cuda_arch = None
+        if "+cuda" in spec:
+            cuda_arch = spec.variants["cuda_arch"].value
+            if any([arch == "none" for arch in cuda_arch]):
+                raise InstallError(f"Invalid cuda_arch: {cuda_arch}")
 
-        cxxflags = spec.compiler_flags["cxxflags"].copy()
+        cxxflags = list(spec.compiler_flags["cxxflags"])
 
         if cxxflags:
             # Add opt/debug flags if they are not present in global cxx flags
@@ -754,7 +795,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                         nvcc_base_flags += " --expt-relaxed-constexpr"
                     cxxflags += [
                         nvcc_base_flags,
-                        "-arch=sm_%s" % cuda_arch,
+                        " ".join(
+                            [f"-gencode arch=compute_{arch},code=sm_{arch}" for arch in cuda_arch]
+                        ),
                         "-ccbin %s" % (spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]),
                     ]
                 else:
@@ -762,7 +805,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                     cxxflags += [
                         "-xcuda",
                         f"--cuda-path={spec['cuda'].prefix}",
-                        "--cuda-gpu-arch=sm_%s" % cuda_arch,
+                        " ".join([f"--cuda-gpu-arch=sm_{arch}" for arch in cuda_arch]),
                     ]
 
             if cxxstd_flag:
@@ -797,6 +840,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 all_hypre_libs += hypre["lapack"].libs + hypre["blas"].libs
             if "+umpire" in hypre:
                 all_hypre_headers += hypre["umpire"].headers
+                all_hypre_libs += hypre["umpire"].libs
 
             hypre_gpu_libs = ""
             if "+cuda" in hypre:
@@ -852,23 +896,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             sp_lib = [ld_flags_from_library_list(strumpack.libs)]
             # Parts of STRUMPACK use fortran, so we need to link with the
             # fortran library and also the MPI fortran library:
-            if "~shared" in strumpack:
-                if os.path.basename(env["FC"]) == "gfortran":
-                    gfortran = Executable(env["FC"])
-                    libext = "dylib" if sys.platform == "darwin" else "so"
-                    libfile = os.path.abspath(
-                        gfortran("-print-file-name=libgfortran.%s" % libext, output=str).strip()
-                    )
-                    gfortran_lib = LibraryList(libfile)
-                    sp_lib += [ld_flags_from_library_list(gfortran_lib)]
-                if "+mpi" in strumpack:
-                    mpi = strumpack["mpi"]
-                    if ("^mpich" in strumpack) or ("^mvapich2" in strumpack):
-                        sp_lib += [ld_flags_from_dirs([mpi.prefix.lib], ["mpifort"])]
-                    elif "^openmpi" in strumpack:
-                        sp_lib += [ld_flags_from_dirs([mpi.prefix.lib], ["mpi_mpifh"])]
-                    elif "^spectrum-mpi" in strumpack:
-                        sp_lib += [ld_flags_from_dirs([mpi.prefix.lib], ["mpi_ibm_mpifh"])]
+            extra_fortran_lib = self.extra_fortran_lib(strumpack)
+            if extra_fortran_lib:
+                sp_lib += [ld_flags_from_library_list(extra_fortran_lib)]
             if "+openmp" in strumpack:
                 # The "+openmp" in the spec means strumpack will TRY to find
                 # OpenMP; if not found, we should not add any flags -- how do
@@ -882,7 +912,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             if "^netlib-scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
                 sp_opt += ["-I%s" % scalapack.prefix.include]
-                sp_lib += [ld_flags_from_dirs([scalapack.prefix.lib], ["scalapack"])]
+                sp_lib += [ld_flags_from_library_list(scalapack.libs)]
             elif "^scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
                 sp_opt += [scalapack.headers.cpp_flags]
@@ -1036,7 +1066,13 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 cuda_cxx = join_path(spec["cuda"].prefix, "bin", "nvcc")
             else:
                 cuda_cxx = spec["mpi"].mpicxx if "+mpi" in spec else env["CXX"]
-            options += [f"CUDA_CXX={cuda_cxx}", "CUDA_ARCH=sm_%s" % cuda_arch]
+            options += [f"CUDA_CXX={cuda_cxx}"]
+            if len(cuda_arch) == 1:
+                options += [f"CUDA_ARCH=sm_{cuda_arch[0]}"]
+            else:
+                if spec.satisfies("@:4.9"):
+                    raise InstallError("Multiple CUDA architectures require mfem@4.10:")
+                options += ["CUDA_ARCH=" + ",".join(cuda_arch)]
             # Check if we are using a CUDA installation where the math libs are
             # in a separate directory:
             culibs = ["libcusparse"]
@@ -1053,6 +1089,33 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 if not cuda_libs:
                     raise InstallError("Required CUDA libraries not found: %s" % culibs)
                 options += ["CUDA_LIB=%s" % ld_flags_from_library_list(cuda_libs)]
+
+        if "+cudss" in spec:
+            cudss = spec["cudss"]
+            cudss_libs = find_libraries("libcudss", cudss.prefix.lib, shared=True, recursive=True)
+            if not cudss_libs:
+                raise InstallError("Required cuDSS library not found")
+            options += [
+                "CUDSS_OPT=-I%s" % cudss.prefix.include,
+                "CUDSS_LIB=%s" % ld_flags_from_library_list(cudss_libs),
+            ]
+
+            # cudss+mpi builds this provider-specific layer against the same MPI
+            # dependency as MFEM. Requiring the provider-neutral filename avoids
+            # accidentally selecting NVIDIA's prebuilt Open MPI layer for MPICH.
+            if "+mpi" in spec:
+                comm_libs = find_libraries(
+                    "libcudss_commlayer_mpi", cudss.prefix.lib, shared=True, recursive=True
+                )
+                if not comm_libs:
+                    raise InstallError("Required cuDSS MPI communication layer not found")
+                options += ["MFEM_CUDSS_COMM_LIB=%s" % comm_libs[0]]
+            if "+openmp" in spec:
+                thread_libs = find_libraries(
+                    "libcudss_mtlayer_gomp", cudss.prefix.lib, shared=True, recursive=True
+                )
+                if thread_libs:
+                    options += ["MFEM_CUDSS_THREADING_LIB=%s" % thread_libs[0]]
 
         if "+rocm" in spec:
             amdgpu_target = ",".join(spec.variants["amdgpu_target"].value)
@@ -1280,16 +1343,26 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         if "+mumps" in spec:
             mumps = spec["mumps"]
             mumps_opt = ["-I%s" % mumps.prefix.include]
+            mumps_lib = mumps.libs
             if "+openmp" in mumps:
                 if not self.spec.satisfies("%apple-clang"):
                     mumps_opt += [xcompiler + self["cxx"].openmp_flag]
+            if "^scalapack" in mumps:
+                scalapack = mumps["scalapack"]
+                mumps_lib += scalapack.libs
+            mumps_lib += self.extra_fortran_lib(mumps)
             options += [
                 "MUMPS_OPT=%s" % " ".join(mumps_opt),
-                "MUMPS_LIB=%s" % ld_flags_from_library_list(mumps.libs),
+                "MUMPS_LIB=%s" % ld_flags_from_library_list(mumps_lib),
             ]
 
         if "+enzyme" in spec:
             options += ["ENZYME_DIR=%s" % spec["enzyme"].prefix]
+
+        if "+caliper" in spec:
+            options += ["CALIPER_DIR=%s" % self.spec["caliper"].prefix]
+            if "+adiak" in spec["caliper"]:
+                options += ["ADIAK_DIR=%s" % self.spec["adiak"].prefix]
 
         return options
 
@@ -1501,6 +1574,30 @@ class Mfem(Package, CudaPackage, ROCmPackage):
         flags += ["-L%s" % dir for dir in pkg_dirs_list if not self.is_sys_lib_path(dir)]
         flags += ["-l%s" % lib for lib in pkg_libs_list]
         return " ".join(flags)
+
+    def extra_fortran_lib(self, spec):
+        ef_libs = LibraryList([])
+        if "+shared" in spec:
+            return ef_libs
+        if "+mpi" in spec:
+            mpi = spec["mpi"]
+            mpi_lib_name = None
+            if ("^mpich" in spec) or ("^mvapich2" in spec):
+                mpi_lib_name = "libmpifort"
+            elif "^openmpi" in spec:
+                mpi_lib_name = "libmpi_mpifh"
+            elif "^spectrum-mpi" in spec:
+                mpi_lib_name = "libmpi_ibm_mpifh"
+            if mpi_lib_name:
+                ef_libs += find_libraries(mpi_lib_name, root=mpi.prefix, recursive=True)
+        if os.path.basename(env["FC"]) == "gfortran":
+            gfortran = Executable(env["FC"])
+            libext = "dylib" if sys.platform == "darwin" else "so"
+            libfile = os.path.abspath(
+                gfortran("-print-file-name=libgfortran.%s" % libext, output=str).strip()
+            )
+            ef_libs += LibraryList(libfile)
+        return ef_libs
 
     def all_headers(self, root_spec):
         all_hdrs = HeaderList([])

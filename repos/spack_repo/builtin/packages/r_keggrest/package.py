@@ -17,8 +17,10 @@ class RKeggrest(RPackage):
     bioc = "KEGGREST"
 
     with default_args(get_full_repo=True):
+        version("1.52.2", commit="873423d620049e78e3ce2a9ad4a627367185f8fc")  # bioc 3.23
+        version("1.48.1", commit="ffe12f60ec875629deb927b786c7aad4c385b68b")  # bioc 3.21
         version("1.40.0", commit="1bdb0b57d7e9b708da14d2847c2a17ca35500b21")
-        version("1.38.0", commit="4dfbff9f6662227bd49d64d18a342f469dd88ad3")
+        version("1.38.0", commit="4dfbff9f6662227bd49d64d18a342f469dd88ad3")  # bioc 3.16
         version("1.36.3", commit="1827cde76863aa80c83264a0dd95514654358df3")
         version("1.36.0", commit="591818bbc9195bfd0657cf4f5c7c771ea7f86830")
         version("1.34.0", commit="2056750dc202fa04a34b84c6c712e884c7cad2bd")
@@ -30,6 +32,7 @@ class RKeggrest(RPackage):
         version("1.16.1", commit="ed48de0def57a909894e237fa4731c4a052d8849")
 
     depends_on("r@3.5.0:", when="@1.30.1:", type=("build", "run"))
+
+    depends_on("r-biostrings", type=("build", "run"))
     depends_on("r-httr", type=("build", "run"))
     depends_on("r-png", type=("build", "run"))
-    depends_on("r-biostrings", type=("build", "run"))

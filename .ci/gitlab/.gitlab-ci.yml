@@ -59,6 +59,7 @@ default:
 ########################################
 .base-job:
   variables:
+    SPACK_CI_BUILDCACHE_VIEW: "append"
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
     SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
     SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
@@ -133,6 +134,7 @@ default:
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
   variables:
+    SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
     KUBERNETES_CPU_REQUEST: 8000m
     KUBERNETES_MEMORY_REQUEST: 16G
@@ -151,6 +153,8 @@ default:
       - runner_unsupported
       - stale_schedule
       - job_execution_timeout
+      - server_timeout_running
+      - server_timeout_canceling
       - archived_failure
       - unmet_prerequisites
       - scheduler_failure
@@ -495,6 +499,75 @@ developer-tools-darwin-build:
     - artifacts: True
       job: developer-tools-darwin-generate
 
+##########################################
+# Developer Tools needed to develop Spack
+# arm linux
+##########################################
+.developer-bootstrap-aarch64-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-aarch64-linux-gnu
+
+developer-bootstrap-aarch64-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64"]
+  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+
+developer-bootstrap-aarch64-linux-gnu-build:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-aarch64-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-aarch64-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-aarch64-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# x86_64_v3 linux
+###########################################
+.developer-bootstrap-x86_64_v3-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-x86_64_v3-linux-gnu
+
+developer-bootstrap-x86_64_v3-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64"]
+  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+
+developer-bootstrap-x86_64_v3-linux-gnu-build:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-x86_64_v3-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# darwin
+###########################################
+.developer-bootstrap-darwin:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-darwin
+
+developer-bootstrap-darwin-generate:
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
+  extends: [ ".developer-bootstrap-darwin", ".generate-base"]
+
+developer-bootstrap-darwin-build:
+  extends: [ ".developer-bootstrap-darwin", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-darwin/cloud-ci-pipeline.yml
+        job: developer-bootstrap-darwin-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-darwin-generate
+
 #########################################
 # RADIUSS
 #########################################
@@ -526,7 +599,7 @@ radiuss-build:
 .tags-x86_64_v4:
   variables:
     SPACK_CI_TARGET: "x86_64_v4"
-  tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
+  tags: ["spack", "public", "medium", "x86_64_v4"]
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
@@ -607,7 +680,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
+  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -707,52 +780,6 @@ hep-build:
   needs:
     - artifacts: True
       job: hep-generate
-
-#####################
-# AWS ParallelCluster
-#####################
-
-.aws-pcluster-generate:
-  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10", "entrypoint": [""] }
-
-# X86_64_V4 (one pipeline per target)
-.aws-pcluster-x86_64_v4:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-x86_64_v4
-
-aws-pcluster-x86_64_v4-generate:
-  extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
-
-aws-pcluster-x86_64_v4-build:
-  extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-x86_64_v4/cloud-ci-pipeline.yml
-        job: aws-pcluster-x86_64_v4-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-x86_64_v4-generate
-
-# Neoverse_v1 (one pipeline per target)
-.aws-pcluster-neoverse_v1:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-neoverse_v1
-
-aws-pcluster-neoverse_v1-generate:
-  # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
-  extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
-
-aws-pcluster-neoverse_v1-build:
-  extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-neoverse_v1/cloud-ci-pipeline.yml
-        job: aws-pcluster-neoverse_v1-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-neoverse_v1-generate
 
 # Cray definitions
 .generate-cray:

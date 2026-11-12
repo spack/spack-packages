@@ -14,14 +14,17 @@ class Libaec(CMakePackage):
     the SZIP library.
     """
 
-    homepage = "https://gitlab.dkrz.de/k202009/libaec"
-    url = "https://gitlab.dkrz.de/api/v4/projects/k202009%2Flibaec/repository/archive.tar.gz?sha=v1.0.2"
-    list_url = "https://gitlab.dkrz.de/k202009/libaec/tags"
+    homepage = "https://gitlab.dkrz.de/dkrz-sw/libaec"
+    url = "https://gitlab.dkrz.de/api/v4/projects/dkrz-sw%2Flibaec/repository/archive.tar.gz?sha=v1.0.2"
+    list_url = "https://gitlab.dkrz.de/dkrz-sw/libaec/tags"
 
     provides("szip")
 
     license("BSD-2-Clause")
 
+    version("1.1.7", sha256="ebe1078cf6f19e81878c67329b2ded0d6eeda0b33df9279bb2d4ccd6893878b6")
+    version("1.1.6", sha256="f5d60808bf9223b7f8dad95b96f5ba7c4e49af4b7d5a3eeac7d8489ee1a0ed67")
+    version("1.1.5", sha256="f237648cbe93086b2ebf20c77b08cc06d5bcd9554cc66e80fa5be2f4051f24b7")
     version("1.1.4", sha256="95439e861968cb0638a10b0bbdb37c9a10df1b22c5ee0293902acdbc68140f53")
     version("1.1.3", sha256="453de44eb6ea2500843a4cf4d2e97d1be251d2df7beae6c2ebe374edcb11e378")
     version("1.1.2", sha256="dc03ddbc9dabf806af1036e2c7bde44bbb1a2a6e0b186d46a6ca06390622afb9")

@@ -18,8 +18,9 @@ class RSummarizedexperiment(RPackage):
     bioc = "SummarizedExperiment"
 
     with default_args(get_full_repo=True):
+        version("1.38.1", commit="421e175e3615d643b694e0bcb3bc579c74b3ed71")  # bioc 3.21
         version("1.30.0", commit="a2843fbced9fc345c9061b2e52244f3263326e2e")
-        version("1.28.0", commit="ba55dac12224f0aafe8f52f1397611b5efb41626")
+        version("1.28.0", commit="ba55dac12224f0aafe8f52f1397611b5efb41626")  # bioc 3.16
         version("1.26.1", commit="c8cbd3b4f0fa1d686c4d7ce5b8614a24c74b2074")
         version("1.24.0", commit="d37f19383d03c107a8a41c0df2326e28efe46b28")
         version("1.20.0", commit="874aa87a481e4076a0ec3369f55c9c0a1ab8025e")
@@ -30,28 +31,46 @@ class RSummarizedexperiment(RPackage):
         version("1.8.1", commit="9d8a29aa9c78bbc7dcc6472537e13fc0d11dc1f7")
         version("1.6.5", commit="ec69cd5cfbccaef148a9f6abdfb3e22e888695d0")
 
-    depends_on("r@3.2:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.24.0:")
+    depends_on("r@3.2:", type=("build", "run"))
+
     depends_on("r-matrixgenerics@1.1.3:", type=("build", "run"))
-    depends_on("r-genomicranges@1.27.22:", type=("build", "run"))
-    depends_on("r-genomicranges@1.29.14:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-genomicranges@1.31.17:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-genomicranges@1.33.6:", type=("build", "run"), when="@1.12.0:")
+
+    depends_on("r-genomicranges@1.55.2:", type=("build", "run"), when="@1.33.3:")
     depends_on("r-genomicranges@1.41.5:", type=("build", "run"), when="@1.20.0:")
+    depends_on("r-genomicranges@1.33.6:", type=("build", "run"), when="@1.12.0:")
+    depends_on("r-genomicranges@1.31.17:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-genomicranges@1.29.14:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-genomicranges@1.27.22:", type=("build", "run"))
+
     depends_on("r-biobase", type=("build", "run"))
     depends_on("r-matrix", type=("build", "run"))
-    depends_on("r-biocgenerics@0.15.3:", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.51.3:", type=("build", "run"), when="@1.35.3:")
+    depends_on("r-biocgenerics@0.51.2:", type=("build", "run"), when="@1.35.2:")
     depends_on("r-biocgenerics@0.37.0:", type=("build", "run"), when="@1.24.0:")
-    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
-    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.10.1:")
-    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.20.0:")
+    depends_on("r-biocgenerics@0.15.3:", type=("build", "run"))
+
+    depends_on("r-s4arrays@1.1.1:", type=("build", "run"), when="@1.31.1:")
+    depends_on("r-s4arrays@1.0.1:", type=("build", "run"), when="@1.30.1:")
+
     depends_on("r-s4vectors@0.33.7:", type=("build", "run"), when="@1.26.1:")
-    depends_on("r-iranges@2.7.2:", type=("build", "run"))
-    depends_on("r-iranges@2.11.17:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-iranges@2.13.16:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-s4vectors@0.27.12:", type=("build", "run"), when="@1.20.0:")
+    depends_on("r-s4vectors@0.17.25:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-s4vectors@0.13.13:", type=("build", "run"))
+
     depends_on("r-iranges@2.23.9:", type=("build", "run"), when="@1.20.0:")
-    depends_on("r-genomeinfodb@1.11.4:", type=("build", "run"))
+    depends_on("r-iranges@2.13.16:", type=("build", "run"), when="@1.10.1:")
+    depends_on("r-iranges@2.11.17:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-iranges@2.7.2:", type=("build", "run"))
+
     depends_on("r-genomeinfodb@1.13.1:", type=("build", "run"), when="@1.8.1:")
-    depends_on("r-delayedarray@0.1.9:", type=("build", "run"))
-    depends_on("r-delayedarray@0.3.20:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-genomeinfodb@1.11.4:", type=("build", "run"))
+
+    depends_on("r-delayedarray@0.31.12:", type=("build", "run"), when="@1.35.2:")
+    depends_on("r-delayedarray@0.27.1:", type=("build", "run"), when="@1.31.1:")
+    depends_on("r-delayedarray@0.26.3:", type=("build", "run"), when="@1.30.2:")
+    depends_on("r-delayedarray@0.26.1:", type=("build", "run"), when="@1.30.1:")
     depends_on("r-delayedarray@0.15.10:", type=("build", "run"), when="@1.20.0:")
+    depends_on("r-delayedarray@0.3.20:", type=("build", "run"), when="@1.8.1:")
+    depends_on("r-delayedarray@0.1.9:", type=("build", "run"))

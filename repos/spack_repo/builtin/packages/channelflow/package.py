@@ -32,7 +32,8 @@ class Channelflow(CMakePackage):
     )
     variant("python", default=False, description="Build python bindings")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("eigen")
     depends_on("fftw")

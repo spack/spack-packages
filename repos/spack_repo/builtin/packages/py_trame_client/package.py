@@ -26,5 +26,5 @@ class PyTrameClient(PythonPackage):
     depends_on("py-trame-common@0.2:", type=("build", "run"), when="@3.11.2")
 
     def url_for_version(self, version):
-        sep = "_" if version >= Version("3.5.1") else "-"
-        return f"https://files.pythonhosted.org/packages/source/t/trame{sep}client/trame{sep}client-{version}.tar.gz"
+        name = "trame_client" if version >= Version("3.5.1") else "trame-client"
+        return f"https://files.pythonhosted.org/packages/source/t/{name}/{name}-{version}.tar.gz"

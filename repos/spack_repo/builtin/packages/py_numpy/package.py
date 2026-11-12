@@ -23,6 +23,11 @@ class PyNumpy(PythonPackage):
     license("BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0")
 
     version("main", branch="main")
+    version("2.5.4", sha256="9a94cf751c9ad8ebaa835bcd3d40dacf8534ad086b88c38029b65123c7999d2a")
+    version("2.5.3", sha256="df2d5874ff183595a4ba404edd04f6bd9b5505c1d7708573f6a6c17489a67563")
+    version("2.5.2", sha256="d482d171c406ae88c5b19cad3b6a1c4c5209f886ab74bc44c2c865c23f52d860")
+    version("2.5.1", sha256="a48a113e6afea91f5608793bafa7ef2ad481fefbda87ec5069f483de61cb9fa3")
+    version("2.5.0", sha256="5a129578019311b6e56bdd714250f19b518f7dceeeb8d1af5490f4942d3f891c")
     version("2.4.6", sha256="f3a3570c4a2a16746ac2c31a7c7c7b0c186b95ce902e33db6f28094ed7387dda")
     version("2.4.5", sha256="ca670567a5683b7c1670ec03e0ddd5862e10934e92a70751d68d7b7b74ca7f9f")
     version("2.4.4", sha256="2d390634c5182175533585cc89f3608a4682ccb173cc9bb940b2881c8d6f8fa0")
@@ -94,7 +99,9 @@ class PyNumpy(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.11:3.14", when="@2.3.2:")
+        depends_on("python@3.12:3.15", when="@2.5.2:")
+        depends_on("python@3.12:3.14", when="@2.5.0:2.5.1")
+        depends_on("python@3.11:3.14", when="@2.3.2:2.4")
         depends_on("python@3.11:3.13", when="@2.3.0:2.3.1")
         depends_on("python@3.10:3.13", when="@2.1:2.2")
         depends_on("python@3.9:3.12", when="@1.26:2.0")
@@ -111,6 +118,7 @@ class PyNumpy(PythonPackage):
         # Build dependencies (do not include upper bound unless known issues)
         depends_on("py-meson-python@0.18:", when="@2.4:")
         depends_on("py-meson-python@0.15:", when="@1.26.4:")
+        depends_on("py-cython@3.1.0:", when="@2.5.2:")
         depends_on("py-cython@3.0.6:", when="@2:")
         depends_on("py-cython@0.29.34:", when="@1.26:")
         depends_on("py-cython@0.29.34:2", when="@1.25")
@@ -157,7 +165,7 @@ class PyNumpy(PythonPackage):
     # Add Fujitsu Fortran compiler
     patch("add_fj_compiler.patch", when="@1.19.3:1.19.5%fj")
 
-    patch("check_executables.patch", when="@1.20.0:")
+    patch("check_executables.patch", when="@1.20.0:2.4")
     patch("check_executables2.patch", when="@1.19.0:1.19.5")
 
     # Fix atomic_load const issue
@@ -199,10 +207,17 @@ class PyNumpy(PythonPackage):
 
     # meson.build
     # https://docs.scipy.org/doc/scipy/dev/toolchain.html#compilers
+    conflicts("%gcc@:10.2", when="@2.5.1:", msg="NumPy requires GCC >= 10.3")
     conflicts("%gcc@:9.2", when="@2.3:", msg="NumPy requires GCC >= 9.3")
     conflicts("%gcc@:8.3", when="@1.26:", msg="NumPy requires GCC >= 8.4")
     conflicts("%gcc@:6.4", when="@1.23:", msg="NumPy requires GCC >= 6.5")
     conflicts("%gcc@:4.7", msg="NumPy requires GCC >= 4.8")
+    conflicts(
+        "%msvc@:19.34",
+        when="@2.5:",
+        msg="NumPy requires at least vc142 (default with Visual Studio 2019) "
+        "when building with MSVC",
+    )
     conflicts(
         "%msvc@:19.19",
         when="@1.26:",
@@ -268,6 +283,14 @@ class PyNumpy(PythonPackage):
             if gcc_version <= Version("5.1"):
                 flags.append(self.compiler.c99_flag)
 
+        if self.spec.satisfies("@1.26 ^intel-oneapi-compilers@2025.2") and name in (
+            "cflags",
+            "cxxflags",
+            "fflags",
+        ):
+            flags = [flag for flag in flags if not flag.startswith("-O")]
+            flags.append("-O1")
+
         return (flags, None, None)
 
     def _blas_lapack_pkg_config_mkl(self, spec) -> str:
@@ -277,16 +300,28 @@ class PyNumpy(PythonPackage):
             The string "mkl-dynamic-[i]lp64-[seq,tbb,iomp,gomp]"
         """
         lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
-        if spec.satisfies("threads=none"):
-            threads = "seq"
-        elif spec.satisfies("threads=tbb"):
+        if spec.satisfies("threads=tbb"):
             threads = "tbb"
         elif spec.satisfies("threads=openmp"):
             threads = "gomp" if spec.satisfies("%gcc") else "iomp"
         else:
-            raise InstallError("Unknown 'threads' variant for the Intel MKL libaray")
+            threads = "seq"
 
         return "mkl-dynamic-" + lp64_or_ilp64 + "-" + threads
+
+    def _blas_lapack_pkg_config_nvpl(self, name, spec) -> str:
+        """Determine pkg-config name from NVPL configuration
+
+        Returns:
+            The string "nvpl-[name]-[i]lp64-[seq,gomp]"
+        """
+        lp64_or_ilp64 = "ilp64" if spec.satisfies("+ilp64") else "lp64"
+        if spec.satisfies("threads=openmp"):
+            threads = "gomp"
+        else:
+            threads = "seq"
+
+        return f"nvpl-{name}-{lp64_or_ilp64}-{threads}"
 
     def blas_lapack_pkg_config(self) -> Tuple[str, str, str]:
         """Convert library names to pkg-config names.
@@ -303,6 +338,12 @@ class PyNumpy(PythonPackage):
 
         if spec["lapack"].name in ["intel-mkl", "intel-parallel-studio", "intel-oneapi-mkl"]:
             lapack = self._blas_lapack_pkg_config_mkl(spec["lapack"])
+
+        if spec["blas"].name == "nvpl-blas":
+            blas = self._blas_lapack_pkg_config_nvpl("blas", spec["blas"])
+
+        if spec["lapack"].name == "nvpl-lapack":
+            lapack = self._blas_lapack_pkg_config_nvpl("lapack", spec["lapack"])
 
         if spec["blas"].name == "blis":
             blas = "blis"
@@ -499,8 +540,7 @@ class PyNumpy(PythonPackage):
                 write_library_dirs(f, lapack_lib_dirs)
                 f.write("include_dirs = {0}\n".format(lapack_header_dirs))
 
-    @when("@:1.25")
-    @run_before("install")
+    @run_before("install", when="@:1.25")
     def set_blas_lapack(self):
         self.blas_lapack_site_cfg()
 

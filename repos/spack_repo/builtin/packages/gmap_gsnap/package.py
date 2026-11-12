@@ -20,6 +20,9 @@ class GmapGsnap(AutotoolsPackage):
     license("Apache-2.0")
 
     version(
+        "2025-07-31", sha256="cc7212446683785a5b94aba79861212360d421ea409cd7cbf287f1dc63ed844d"
+    )
+    version(
         "2023-07-20", sha256="19e70eebd9b282d8596721812d071efed188b6d5000627b9948f0486f87fe68f"
     )
     version(
@@ -74,9 +77,11 @@ class GmapGsnap(AutotoolsPackage):
         "simd",
         description="CPU support.",
         values=(
-            conditional("avx2", "sse42", "avx512", "sse2", when="target=x86_64:"),
             conditional("arm", when="@2023-02-17: target=aarch64:"),
-            conditional("avx512", "avx512bw", when="@2023-03-24: target=x86_64:"),
+            conditional("avx512", "avx512bw", when="@2023-03-24: target=x86_64_v4:"),
+            conditional("avx2", when="target=x86_64_v3:"),
+            conditional("sse42", when="target=x86_64_v2:"),
+            conditional("sse2", when="target=x86_64:"),
         ),
         multi=True,
         default="avx2",

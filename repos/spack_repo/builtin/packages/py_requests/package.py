@@ -17,6 +17,7 @@ class PyRequests(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("2.34.2", sha256="f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed")
     version("2.33.1", sha256="18817f8c57c6263968bc123d237e3b8b08ac046f5456bd1e307ee8f4250d3517")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2026-25645/

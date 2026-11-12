@@ -19,12 +19,15 @@ class PyMaturin(PythonPackage):
 
     license("Apache-2.0 OR MIT")
 
+    version("1.16.0", sha256="13e69ca12542999d8c5467131de72a49bb76e4c284b9a45c5783df7c0fcb3a8a")
+    version("1.14.1", sha256="9d6577a62cd08e0ceba7a0db06fb098e0c9b1b3429bad747a4f3a18215a1b3df")
     version("1.13.1", sha256="9a87ff3b8e4d1c6eac33ebfe8e261e8236516d98d45c0323550621819b5a1a2f")
     version("1.10.2", sha256="259292563da89850bf8f7d37aa4ddba22905214c1e180b1c8f55505dfd8c0e81")
     version("1.9.6", sha256="2c2ae37144811d365509889ed7220b0598487f1278c2441829c3abf56cc6324a")
     version("1.9.1", sha256="97b52fb19d20c1fdc70e4efdc05d79853a4c9c0051030c93a793cd5181dc4ccd")
     version("1.8.3", sha256="304762f86fd53a8031b1bf006d12572a2aa0a5235485031113195cc0152e1e12")
     version("1.8.2", sha256="e31abc70f6f93285d6e63d2f4459c079c94c259dd757370482d2d4ceb9ec1fa0")
+    version("1.7.8", sha256="649c6ef3f0fa4c5f596140d761dc5a4d577c485cc32fb5b9b344a8280352880d")
     version("1.6.0", sha256="b955025c24c8babc808db49e0ff90db8b4b1320dcc16b14eb26132841737230d")
     version("1.5.1", sha256="3dd834ece80edb866af18cbd4635e0ecac40139c726428d5f1849ae154b26dca")
     version("1.4.0", sha256="ed12e1768094a7adeafc3a74ebdb8dc2201fa64c4e7e31f14cfc70378bf93790")
@@ -44,6 +47,7 @@ class PyMaturin(PythonPackage):
         depends_on("py-tomli@1.1:", when="^python@:3.10")
         # from Cargo.toml
         for rust, maturin in [
+            ("1.89", "1.13.2"),
             ("1.88", "1.12.0"),
             ("1.83", "1.10.2"),
             ("1.74", "1.7.0"),

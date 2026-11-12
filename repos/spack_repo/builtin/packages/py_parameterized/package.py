@@ -11,8 +11,13 @@ class PyParameterized(PythonPackage):
     """Parameterized testing with any Python test framework."""
 
     homepage = "https://github.com/wolever/parameterized"
-    pypi = "parameterized/parameterized-0.7.1.tar.gz"
+    pypi = "parameterized/parameterized-0.8.1.tar.gz"
 
-    version("0.7.1", sha256="6a94dbea30c6abde99fd4c2f2042c1bf7f980e48908bf92ead62394f93cf57ed")
+    version("0.9.0", sha256="7fc905272cefa4f364c1a3429cbbe9c0f98b793988efb5bf90aac80f08db09b1")
+    version("0.8.1", sha256="41bbff37d6186430f77f900d777e5bb6a24928a1c46fb1de692f8b52b8833b5c")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@57:", type="build")
+
+    with when("@0.9.0:"):
+        depends_on("python@3.7:")
+        depends_on("py-setuptools@61.2:", type="build")

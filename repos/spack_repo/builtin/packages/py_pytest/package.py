@@ -17,6 +17,7 @@ class PyPytest(PythonPackage):
     license("MIT")
     maintainers("adamjstewart")
 
+    version("9.1.1", sha256="1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313")
     version("9.0.3", sha256="b86ada508af81d19edeb213c681b1d48246c1a91d304c6c81a427674c17eb91c")
 
     # Despite suffering from a security vulnerability, we keep these versions to enable developers

@@ -22,11 +22,16 @@ class Hpcviewer(Package):
     """
 
     homepage = "https://hpctoolkit.org"
-    maintainers("mwkrentel")
+    maintainers("laksono")
 
     skip_version_audit = ["platform=windows"]
 
     darwin_sha = {
+        (
+            "2026.2.1",
+            "aarch64",
+        ): "f27b4aca1a4304fa41886a3cfa12846628569361bf4f153a583140ea675f518f",
+        ("2026.2.1", "x86_64"): "5df40b9f4e892192923ad0e5d4e2f2cc5562b386317bad0fe954ee896cf10d79",
         (
             "2026.1.1",
             "aarch64",
@@ -70,6 +75,15 @@ class Hpcviewer(Package):
     }
 
     viewer_sha = {
+        (
+            "2026.2.1",
+            "aarch64",
+        ): "97fe1456484f745727bb475df473813fccbb70c8174857664285622cc27668e2",
+        (
+            "2026.2.1",
+            "ppc64le",
+        ): "903f2f00adf2d52a48db187fbc47b4f8d206ea1792374a4fe57086887044bc99",
+        ("2026.2.1", "x86_64"): "2798710ef2fa2d49a6f28b1db32a1b114275870d0aaa7bbb24fa3da97af0b9a9",
         (
             "2026.1.1",
             "aarch64",

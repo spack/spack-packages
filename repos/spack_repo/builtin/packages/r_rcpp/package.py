@@ -24,6 +24,8 @@ class RRcpp(RPackage):
 
     cran = "Rcpp"
 
+    version("1.1.2", sha256="2746cf2fb188e5f0a84dbf5c8f68915b54564ed33e5754572f174e7b32e7f4f3")
+    version("1.1.1-1.1", sha256="32e5d5fee4080c8ca315f31b74c3eaa6367a1900e92e860e00390c9565f5fbe1")
     version("1.1.1", sha256="da0c616a71c82150397259516b2ea7558dbd31a5b4a217423ec9666b3a0fcfb7")
     version("1.0.13-1", sha256="1d1fc623d27082b5749f9584a9204de410134b6412a192157a3e42e2ba43969a")
     version("1.0.13", sha256="21fec650c113e57935fd86c7d1be190811f1ae036c1ee203bfbbf3ad5cdb22ce")
@@ -62,3 +64,6 @@ class RRcpp(RPackage):
 
     # https://github.com/RcppCore/Rcpp/issues/1341
     conflicts("^r@4.4.2", when="@=1.0.13", msg="Rcpp@1.0.13 fails to compile under R@4.4.2")
+
+    # https://github.com/RcppCore/Rcpp/issues/1473
+    conflicts("^r@4.6:", when="@:1.0,=1.1.1", msg="Rcpp@:1.1.1 fails to compile under R@4.6")

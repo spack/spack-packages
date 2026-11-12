@@ -19,6 +19,9 @@ class Fastplong(MakefilePackage):
 
     license("MIT", checked_by="emwjacobson")
 
+    version("0.7.0", sha256="c0afdf30f06e61e9837de30377894074b108cbd79b7a018501545806878e2b68")
+    version("0.6.0", sha256="d4c81c6e80adc558293e1d3d78faab5bf11eb0a248b87accb288406faaede823")
+    version("0.5.0", sha256="6e1937a10107cb500c6bc62aa6df796890fb31aadad2fdc54cb84f8efaf7bf96")
     version("0.4.1", sha256="9d957babfaa216512a542a39dd1b0389384b3d444b55353032e7b707c2cfc969")
 
     depends_on("cxx", type="build")

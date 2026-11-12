@@ -16,6 +16,13 @@ class Scorep(AutotoolsPackage):
     homepage = "https://www.vi-hps.org/projects/score-p"
     url = "https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/tags/scorep-7.1/scorep-7.1.tar.gz"
     maintainers("wrwilliams")
+    version(
+        "master",
+        url="https://perftools.pages.jsc.fz-juelich.de/cicd/scorep/branches/master/latest.tar.gz",
+        no_cache=True,
+    )
+    version("10.1", sha256="39edf6790c4af25679ab46e361091f177d40ad8f8cfff1b4bf81e775fc59f0c1")
+    version("10.0", sha256="1e96fe2414bfc9eb868619501a5f62943b554eb1358628610e8e9e01036dacf2")
     version("9.4", sha256="bea58d8c47a7512eca0a5858179377f3f0861f30eafb342a29aa97c05de8f623")
     version("9.3", sha256="5498b31b1d6c04b08a9d408320a7515e884538d248de58b6dd11b48c8f364112")
     version("9.2", sha256="be3eaee99cdd0145e518c1aa959126df45e25b61579a007d062748b2844c499c")
@@ -32,6 +39,16 @@ class Scorep(AutotoolsPackage):
         when="@7:8.4 +gcc-plugin",
         sha256="d20b3046ba6a89ad9c106bcf372bceb1bd9ab780d4c7dd9e7373f0099b92d933",
     )
+    patch(
+        "https://gitlab.com/score-p/scorep/-/commit/c9144450ace151a2cf52babf055d54cc7fa54945.diff",
+        when="@10.0 +mpi",
+        sha256="be03b1dedc72bbc18aa10a5415139d11f2a979ece0ae9a7385307853913a4590",
+    )
+    patch(
+        "https://gitlab.com/score-p/scorep/-/commit/6d5534de9746e76a28dd9452c3efaa45890067cd.diff",
+        when="@10.0 +mpi",
+        sha256="20946ff71fb226bbe76b4f6dfff6cea127211d58162247d8e0bebba745917e7d",
+    )
 
     # Variants
     variant("mpi", default=True, description="Enable MPI support")
@@ -43,7 +60,16 @@ class Scorep(AutotoolsPackage):
     variant("hip", default=False, description="Enable ROCm/HIP support", when="@8.0:")
     variant("gcc-plugin", default=True, description="Enable gcc-plugin", when="%gcc")
     variant(
-        "llvm-plugin", default=True, description="Enable LLVM compiler plugin", when="@9.0: ^llvm"
+        "llvm-plugin",
+        default=True,
+        description="Enable LLVM compiler plugin",
+        when="@9.0: %c,cxx=llvm",
+    )
+    variant(
+        "xray",
+        default=False,
+        description="Enable instrumetation via LLVM XRay",
+        when="@10.0: %c,cxx=llvm",
     )
     variant(
         "binutils",
@@ -58,6 +84,24 @@ class Scorep(AutotoolsPackage):
     variant(
         "gotcha", default=True, description="Enable library wrapping with libgotcha", when="@9:"
     )
+    # Score-P tarballs contain the component revisions selected by Score-P.
+    # Bundled mode builds and installs these components in Score-P's prefix,
+    # treating them as part of Score-P rather than separate Spack dependencies.
+    # Require bundled mode for master, which may need component changes
+    # not yet available in released versions.
+    variant(
+        "bundled",
+        default=False,
+        description=(
+            "Build and install Score-P's bundled OTF2, CubeLib, CubeW and "
+            "OPARI2 in the Score-P prefix"
+        ),
+    )
+    requires(
+        "+bundled",
+        when="@=master",
+        msg="Build master with the component sources shipped in its tarball (+bundled).",
+    )
     # Dependencies for SCORE-P are quite tight. See the homepage for more
     # information. Starting with scorep 4.0 / cube 4.4, Score-P only depends on
     # two components of cube -- cubew and cubelib.
@@ -67,46 +111,66 @@ class Scorep(AutotoolsPackage):
     depends_on("cxx", type=("build", "run"))
     depends_on("fortran", type=("build", "run"), when="+fortran")
 
+    # SCOREP 10
+    with when("~bundled"):
+        depends_on("otf2@3.2:", when="@10:")
+
     # SCOREP 9
     depends_on("gotcha@1.0.8:", type="link", when="+gotcha")
-    depends_on("otf2@3.1:", when="@9:")
-    depends_on("cubew@4.9:", when="@9:")
-    depends_on("cubelib@4.9:", when="@9:")
-    depends_on("opari2@2.0.9", when="@9:")
+    with when("~bundled"):
+        depends_on("otf2@3.1:", when="@9:")
+        depends_on("cubew@4.9:", when="@9:")
+        depends_on("cubelib@4.9:", when="@9:")
+        depends_on("opari2@2.0.9:", when="@9:")
 
     # SCOREP 8
     depends_on("binutils", type="link", when="@8:")
-    depends_on("otf2@3:", when="@8:")
-    depends_on("cubew@4.8.2:4.8", when="@8.3:8")
-    depends_on("cubelib@4.8.2:4.8", when="@8.3:8")
-    depends_on("cubew@4.8", when="@8:8.2")
-    depends_on("cubelib@4.8", when="@8:8.2")
+    with when("~bundled"):
+        depends_on("otf2@3:", when="@8:")
+        depends_on("cubew@4.8.2:4.8", when="@8.3:8")
+        depends_on("cubelib@4.8.2:4.8", when="@8.3:8")
+        depends_on("cubew@4.8", when="@8:8.2")
+        depends_on("cubelib@4.8", when="@8:8.2")
     # fall through to Score-P 7's OPARI2, no new release
     # SCOREP 7
-    depends_on("otf2@2.3:2.3.99", when="@7.0:7")
-    depends_on("cubew@4.6:4.7.99", when="@7.0:7")
-    depends_on("cubelib@4.6:4.7.99", when="@7.0:7")
-    depends_on("opari2@2.0.6:", when="@7:")
-
+    with when("~bundled"):
+        depends_on("otf2@2.3:2.3.99", when="@7.0:7")
+        depends_on("cubew@4.6:4.7.99", when="@7.0:7")
+        depends_on("cubelib@4.6:4.7.99", when="@7.0:7")
+        depends_on("opari2@2.0.6:", when="@7:")
+    # Preserve Cube's compression support through a Spack dependency.
+    depends_on("zlib-api", when="+bundled")
     # Conditional dependencies for variants
     depends_on("mpi@2.2:", type=("build", "run"), when="+mpi")
-    depends_on("mpi", type=("build", "run"), when="+mpi")
     depends_on("papi", when="+papi")
     depends_on("pdt", when="+pdt")
     depends_on("llvm", when="+unwind")
     depends_on("libunwind", when="+unwind")
+    # Older CUDA support progressively gets phased out
+    # Expect 13+ to be the requirement for Score-P 11
+    # due to the user defined activity records.
+    # --wrwilliams JUN26
+    depends_on("cuda@11.6:", when="@10.0+cuda")
     depends_on("cuda@7:", when="@8.0:+cuda")
     depends_on("cuda", when="+cuda")
     depends_on("hip@4.2:", when="+hip")
-    depends_on("rocprofiler-dev", when="+hip")
-    depends_on("rocm-smi-lib", when="+hip")
-
+    # Score-P 10 introduces rocprofiler-sdk based instrumentation
+    # Technically there is a major version of overlap but as this
+    # has not been a variant, I'm just cutting over now.
+    # --wrwilliams JUN2026
+    depends_on("rocprofiler-dev", when="@:9+hip")
+    depends_on("rocm-smi-lib", when="@:9+hip")
+    depends_on("rocprofiler-sdk", when="@10:+hip")
     # Score-P requires a case-sensitive file system, and therefore
     # does not work on macOS
     # https://github.com/spack/spack/issues/1609
     conflicts("platform=darwin")
     # Score-P first has support for ROCm 6.x as of v8.4
     conflicts("hip@6.0:", when="@:8.3+hip")
+
+    # XRay-based instrumentation is mutually exclusive
+    # with the LLVM instrumentation plugin
+    conflicts("+xray", when="+llvm-plugin")
 
     # Utility function: extract the first directory in `root` where
     # we find `libname`. Used to handle CUDA irregular layouts.
@@ -132,22 +196,24 @@ class Scorep(AutotoolsPackage):
 
     def configure_args(self):
         spec = self.spec
-        config_args = [
-            "--with-otf2=%s" % spec["otf2"].prefix.bin,
-            "--with-opari2=%s" % spec["opari2"].prefix.bin,
-            "--enable-shared",
-        ]
+        components = ("otf2", "cubelib", "cubew", "opari2")
+        config_args = ["--enable-shared"]
+
+        if "+bundled" in spec:
+            config_args.extend(f"--without-{name}" for name in components)
+
+            # Preserve Cube's compression support through a Spack dependency.
+            zlib_prefix = spec["zlib-api"].prefix
+            config_args.extend(
+                [f"--with-frontend-zlib={zlib_prefix}", f"--with-backend-zlib={zlib_prefix}"]
+            )
+        else:
+            config_args.extend(f"--with-{name}={spec[name].prefix.bin}" for name in components)
 
         # cname must match one of these:
         # --with-nocross-compiler-suite=(gcc|ibm|intel|oneapi|nvhpc|pgi|clang|aocc|amdclang|cray)
         cname = self.clean_compiler(spec.compiler.name)
         config_args.extend(["--with-nocross-compiler-suite={0}".format(cname)])
-
-        if self.version >= Version("4.0"):
-            config_args.append("--with-cubew=%s" % spec["cubew"].prefix.bin)
-            config_args.append("--with-cubelib=%s" % spec["cubelib"].prefix.bin)
-        else:
-            config_args.append("--with-cube=%s" % spec["cube"].prefix.bin)
 
         if "+papi" in spec:
             config_args.append("--with-papi-header=%s" % spec["papi"].prefix.include)
@@ -179,6 +245,7 @@ class Scorep(AutotoolsPackage):
         config_args.extend(self.enable_or_disable("gcc-plugin"))
         config_args.extend(self.enable_or_disable("mpi_f08"))
         config_args.extend(self.enable_or_disable("fortran"))
+        config_args.extend(self.enable_or_disable("xray"))
 
         if "~shmem" in spec:
             config_args.append("--without-shmem")

@@ -1,0 +1,74 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -859,6 +859,7 @@
+ 	AC_CHECK_LIB([sandbox], [sandbox_apply], [
+ 	    SSHDLIBS="$SSHDLIBS -lsandbox"
+ 	])
++	AC_CHECK_DECLS(kSBXProfilePureComputation, [], [], [#include <sandbox.h>])
+ 	# proc_pidinfo()-based closefrom() replacement.
+ 	AC_CHECK_HEADERS([libproc.h])
+ 	AC_CHECK_FUNCS([proc_pidinfo])
+@@ -3974,10 +3975,12 @@
+ 
+ if test "x$sandbox_arg" = "xdarwin" || \
+      ( test -z "$sandbox_arg" && test "x$ac_cv_func_sandbox_init" = "xyes" && \
+-       test "x$ac_cv_header_sandbox_h" = "xyes") ; then
++       test "x$ac_cv_header_sandbox_h" = "xyes" && \
++       test "x$ac_cv_have_decl_kSBXProfilePureComputation" = "xyes") ; then
+ 	test "x$ac_cv_func_sandbox_init" != "xyes" -o \
+-	     "x$ac_cv_header_sandbox_h" != "xyes" && \
+-		AC_MSG_ERROR([Darwin seatbelt sandbox requires sandbox.h and sandbox_init function])
++	     "x$ac_cv_header_sandbox_h" != "xyes" -o \
++	     "x$ac_cv_have_decl_kSBXProfilePureComputation" != "xyes" && \
++		AC_MSG_ERROR([Darwin seatbelt sandbox requires sandbox.h, sandbox_init() and kSBXProfilePureComputation])
+ 	SANDBOX_STYLE="darwin"
+ 	AC_DEFINE([SANDBOX_DARWIN], [1], [Sandbox using Darwin sandbox_init(3)])
+ elif test "x$sandbox_arg" = "xseccomp_filter" || \
+--- a/configure
++++ b/configure
+@@ -12371,8 +12371,18 @@
+ then :
+ 
+ 	    SSHDLIBS="$SSHDLIBS -lsandbox"
++
++fi
+ 
++	ac_fn_check_decl "$LINENO" "kSBXProfilePureComputation" "ac_cv_have_decl_kSBXProfilePureComputation" "#include <sandbox.h>
++" "$ac_c_undeclared_builtin_options" "CFLAGS"
++if test "x$ac_cv_have_decl_kSBXProfilePureComputation" = xyes
++then :
++  ac_have_decl=1
++else $as_nop
++  ac_have_decl=0
+ fi
++printf "%s\n" "#define HAVE_DECL_KSBXPROFILEPURECOMPUTATION $ac_have_decl" >>confdefs.h
+ 
+ 	# proc_pidinfo()-based closefrom() replacement.
+ 	ac_fn_c_check_header_compile "$LINENO" "libproc.h" "ac_cv_header_libproc_h" "$ac_includes_default"
+@@ -21230,10 +21240,12 @@
+ 
+ if test "x$sandbox_arg" = "xdarwin" || \
+      ( test -z "$sandbox_arg" && test "x$ac_cv_func_sandbox_init" = "xyes" && \
+-       test "x$ac_cv_header_sandbox_h" = "xyes") ; then
++       test "x$ac_cv_header_sandbox_h" = "xyes" && \
++       test "x$ac_cv_have_decl_kSBXProfilePureComputation" = "xyes") ; then
+ 	test "x$ac_cv_func_sandbox_init" != "xyes" -o \
+-	     "x$ac_cv_header_sandbox_h" != "xyes" && \
+-		as_fn_error $? "Darwin seatbelt sandbox requires sandbox.h and sandbox_init function" "$LINENO" 5
++	     "x$ac_cv_header_sandbox_h" != "xyes" -o \
++	     "x$ac_cv_have_decl_kSBXProfilePureComputation" != "xyes" && \
++		as_fn_error $? "Darwin seatbelt sandbox requires sandbox.h, sandbox_init() and kSBXProfilePureComputation" "$LINENO" 5
+ 	SANDBOX_STYLE="darwin"
+ 
+ printf "%s\n" "#define SANDBOX_DARWIN 1" >>confdefs.h
+--- a/config.h.in
++++ b/config.h.in
+@@ -380,4 +380,8 @@
+ 
++/* Define to 1 if you have the declaration of `kSBXProfilePureComputation',
++   and to 0 if you don't. */
++#undef HAVE_DECL_KSBXPROFILEPURECOMPUTATION
++
+ /* Define to 1 if you have the declaration of `le32toh', and to 0 if you
+    don't. */
+ #undef HAVE_DECL_LE32TOH

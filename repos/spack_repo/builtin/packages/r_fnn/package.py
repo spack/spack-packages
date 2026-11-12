@@ -16,6 +16,7 @@ class RFnn(RPackage):
 
     cran = "FNN"
 
+    version("1.1.4.1", sha256="73d97487fd3eac8ae90f32fd439f1689b1923b5688d83fd57fd2faeea70cb854")
     version("1.1.4", sha256="db4db5a348c6051fe547193c282b6e5cc839f68f51e0afccf4939f35e9a2fc27")
     version("1.1.3.2", sha256="d701a13487979ebb07a071f4cc83fcf4daea5832d1f3923bce1e0d671dfe0e87")
     version("1.1.3.1", sha256="52b0e20611481a95bced40be4126f44b002fd3a9c4c9674bb34db4e1e3b5be5a")
@@ -32,3 +33,9 @@ class RFnn(RPackage):
 
     depends_on("r@3.0.0:", type=("build", "run"))
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.1.4:")
+
+    conflicts(
+        "^r@4.5.0:",
+        when="@:1.1.3,=1.1.4",
+        msg="r@4.5.0: dropped Calloc/Free for R_Call/R_Free; need r-fnn@1.1.4.1: to support",
+    )

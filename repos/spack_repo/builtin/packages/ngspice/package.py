@@ -23,22 +23,23 @@ class Ngspice(AutotoolsPackage):
 
     # Master version by default adds the experimental adms feature
     version("master", branch="master")
+    version("46", sha256="a0d1699af1940b06649276dcd6ff5a566c8c0cad01b2f7b5e99dedbb4d64c19b")
     version("45.2", sha256="ba8345f4c3774714c10f33d7da850d361cec7d14b3a295d0dc9fd96f7423812d")
     version("44", sha256="3865d13ab44f1f01f68c7ac0e0716984e45dce5a86d126603c26d8df30161e9b")
-    version("43", sha256="14dd6a6f08531f2051c13ae63790a45708bd43f3e77886a6a84898c297b13699")
-    version("42", sha256="737fe3846ab2333a250dfadf1ed6ebe1860af1d8a5ff5e7803c772cc4256e50a")
-    version("41", sha256="1ce219395d2f50c33eb223a1403f8318b168f1e6d1015a7db9dbf439408de8c4")
-    version("40", sha256="e303ca7bc0f594e2d6aa84f68785423e6bf0c8dad009bb20be4d5742588e890d")
-    version("39", sha256="bf94e811eaad8aaf05821d036a9eb5f8a65d21d30e1cab12701885e09618d771")
-    version("38", sha256="2c3e22f6c47b165db241cf355371a0a7558540ab2af3f8b5eedeeb289a317c56")
-    version("37", sha256="9beea6741a36a36a70f3152a36c82b728ee124c59a495312796376b30c8becbe")
-    version("34", sha256="2263fffc6694754972af7072ef01cfe62ac790800dad651bc290bfcae79bd7b5")
-    version("33", sha256="b99db66cc1c57c44e9af1ef6ccb1dcbc8ae1df3e35acf570af578f606f8541f1")
-    version("32", sha256="3cd90c4e94516d87c5b4d02a3a6405b1136b25d05c871d4fee1fd7c4c0d03ef2")
-    version("31", sha256="845f3b0c962e47ded051dfbc134c3c1e4ac925c9f0ce1cb3df64eb9b9da5c282")
-    version("30", sha256="08fe0e2f3768059411328a33e736df441d7e6e7304f8dad0ed5f28e15d936097")
-    version("29", sha256="8d6d0ffbc15f248eb6ec3bde3b9d1397fbc95cb677e1c6a14ff46065c7f95c4a")
-    version("27", sha256="0c08c7d57a2e21cf164496f3237f66f139e0c78e38345fbe295217afaf150695")
+    with default_args(deprecated=True):
+        version("43", sha256="14dd6a6f08531f2051c13ae63790a45708bd43f3e77886a6a84898c297b13699")
+        version("42", sha256="737fe3846ab2333a250dfadf1ed6ebe1860af1d8a5ff5e7803c772cc4256e50a")
+        version("41", sha256="1ce219395d2f50c33eb223a1403f8318b168f1e6d1015a7db9dbf439408de8c4")
+        version("40", sha256="e303ca7bc0f594e2d6aa84f68785423e6bf0c8dad009bb20be4d5742588e890d")
+        version("39", sha256="bf94e811eaad8aaf05821d036a9eb5f8a65d21d30e1cab12701885e09618d771")
+        version("38", sha256="2c3e22f6c47b165db241cf355371a0a7558540ab2af3f8b5eedeeb289a317c56")
+        version("37", sha256="9beea6741a36a36a70f3152a36c82b728ee124c59a495312796376b30c8becbe")
+        version("34", sha256="2263fffc6694754972af7072ef01cfe62ac790800dad651bc290bfcae79bd7b5")
+        version("33", sha256="b99db66cc1c57c44e9af1ef6ccb1dcbc8ae1df3e35acf570af578f606f8541f1")
+        version("32", sha256="3cd90c4e94516d87c5b4d02a3a6405b1136b25d05c871d4fee1fd7c4c0d03ef2")
+        version("31", sha256="845f3b0c962e47ded051dfbc134c3c1e4ac925c9f0ce1cb3df64eb9b9da5c282")
+        version("30", sha256="08fe0e2f3768059411328a33e736df441d7e6e7304f8dad0ed5f28e15d936097")
+        version("29", sha256="8d6d0ffbc15f248eb6ec3bde3b9d1397fbc95cb677e1c6a14ff46065c7f95c4a")
 
     # kicad needs build=lib, i.e. --with--ngshared
     variant(
@@ -64,8 +65,14 @@ class Ngspice(AutotoolsPackage):
     variant("fft", default=True, description="Use external fftw lib")
     variant("osdi", default=False, description="Use osdi/OpenVAF")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
+        # Needed for autoreconf:
+        depends_on("autoconf", when="@45:")
+        depends_on("automake", when="@45:")
+        depends_on("libtool", when="@45:")
 
     depends_on("fftw-api@3", when="+fft")
     with when("+fft+openmp"):
@@ -88,10 +95,6 @@ class Ngspice(AutotoolsPackage):
 
     depends_on("readline", when="+readline build=bin")
 
-    # Needed for autoreconf:
-    depends_on("bison", type="build", when="@master")
-    depends_on("flex", type="build", when="@master")
-
     # INSTALL indicates dependency on these :
     depends_on("freetype", when="+X build=bin")
     depends_on("libxrender", when="+X build=bin")
@@ -102,11 +105,6 @@ class Ngspice(AutotoolsPackage):
     depends_on("libxaw", when="+X build=bin")
     depends_on("libx11", when="+X build=bin")
 
-    # Need autotools when building on master:
-    depends_on("autoconf", type="build", when="@master")
-    depends_on("automake", type="build", when="@master")
-    depends_on("libtool", type="build", when="@master")
-
     depends_on("adms", when="@master")
 
     conflicts(
@@ -114,9 +112,8 @@ class Ngspice(AutotoolsPackage):
         when="@32:",
         msg="Failure to compile recent release with old gcc due to hicum2",
     )
-    conflicts("@28", msg="This release does not compile")
 
-    @when("@master")
+    @when("@45:")
     def autoreconf(self, spec, prefix):
         Executable("./autogen.sh")("--adms")
 

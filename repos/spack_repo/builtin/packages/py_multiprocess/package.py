@@ -15,6 +15,7 @@ class PyMultiprocess(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.70.19", sha256="952021e0e6c55a4a9fe4cd787895b86e239a40e76802a789d6305398d3975897")
     version("0.70.17", sha256="4ae2f11a3416809ebc9a48abfc8b14ecce0652a0944731a1493a3c1ba44ff57a")
     version("0.70.16", sha256="161af703d4652a0e1410be6abccecde4a7ddffd19341be0a7011b94aeb171ac1")
     version("0.70.15", sha256="f20eed3036c0ef477b07a4177cf7c1ba520d9a2677870a4f47fe026f0cd6787e")
@@ -34,19 +35,25 @@ class PyMultiprocess(PythonPackage):
         url="https://files.pythonhosted.org/packages/multiprocess/multiprocess-0.70.4.zip",
     )
 
-    depends_on("python@2.5:2.8,3.1:", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.6:", when="@0.70.12.2:", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.7:", when="@0.70.13:", type=("build", "run"))
-    depends_on("python@3.7:", when="@0.70.14:", type=("build", "run"))
-    depends_on("python@3.8:", when="@0.70.16:", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-setuptools@0.42:", when="@0.70.13:")
+        depends_on("py-setuptools@0.6:")
 
-    depends_on("py-setuptools@0.6:", type="build")
-    depends_on("py-dill@0.2.6:", type=("build", "run"))
-    depends_on("py-dill@0.2.9:", type=("build", "run"), when="@0.70.7:")
-    depends_on("py-dill@0.3.1:", type=("build", "run"), when="@0.70.9:")
-    depends_on("py-dill@0.3.4:", type=("build", "run"), when="@0.70.12.2:")
-    depends_on("py-dill@0.3.5.1:", type=("build", "run"), when="@0.70.13:")
-    depends_on("py-dill@0.3.6:", type=("build", "run"), when="@0.70.14:")
-    depends_on("py-dill@0.3.7:", type=("build", "run"), when="@0.70.15:")
-    depends_on("py-dill@0.3.8:", type=("build", "run"), when="@0.70.16:")
-    depends_on("py-dill@0.3.9:", type=("build", "run"), when="@0.70.17:")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@0.70.19:")
+        depends_on("python@3.8:", when="@0.70.16:")
+        depends_on("python@3.7:", when="@0.70.14:")
+        depends_on("python@2.7:2.8,3.7:", when="@0.70.13")
+        depends_on("python@2.7:2.8,3.6:", when="@0.70.12.2")
+        depends_on("python@2.5:2.8,3.1:", when="@:0.70.9")
+
+        depends_on("py-dill@0.4.1:", when="@0.70.19:")
+        depends_on("py-dill@0.3.9:", when="@0.70.17:")
+        depends_on("py-dill@0.3.8:", when="@0.70.16:")
+        depends_on("py-dill@0.3.7:", when="@0.70.15:")
+        depends_on("py-dill@0.3.6:", when="@0.70.14:")
+        depends_on("py-dill@0.3.5.1:", when="@0.70.13:")
+        depends_on("py-dill@0.3.4:", when="@0.70.12.2:")
+        depends_on("py-dill@0.3.1:", when="@0.70.9:")
+        depends_on("py-dill@0.2.9:", when="@0.70.7:")
+        depends_on("py-dill@0.2.6:")

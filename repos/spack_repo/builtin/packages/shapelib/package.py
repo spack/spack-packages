@@ -24,3 +24,12 @@ class Shapelib(CMakePackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+
+    # Tests require internet access during build because upstream fetches
+    # GoogleTest and Google Benchmark via CMake FetchContent. Disabled by default
+    # to support offline and air-gapped builds.
+    variant("tests", default=False, description="Build tests (requires internet access)")
+
+    def cmake_args(self):
+        args = [self.define_from_variant("BUILD_TESTING", "tests")]
+        return args

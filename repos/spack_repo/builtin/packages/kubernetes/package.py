@@ -19,13 +19,17 @@ class Kubernetes(Package):
 
     license("Apache-2.0")
 
+    version("1.36.2", sha256="ffbc46612cf32ad08a3b606de064b63afc350ae1dd1a691e99b5cd127d716c26")
     version("1.36.1", sha256="1ebfa65cc95fbeb2ef4aad6832a3fae4edb88516e43b6437b69a40895803e0e8")
+    version("1.35.6", sha256="2705457cc1a6f9e09f2849e317eb6117d6f0af6dbabefe6f839fbb9df62c6e5f")
     version("1.35.5", sha256="c058972b598acb8fe08bc23e630e7e7582d86050bc78468c3026396a53ebc64b")
     version("1.35.4", sha256="46a0dead69674fb2bdf33f5ef1deadab123a96becfafef6043f399ae53761f4f")
     version("1.35.3", sha256="4374809bf135137568135384209f160acdab7372f2608fa60ca3513782db4f03")
+    version("1.34.9", sha256="a6949a78bd93f97dd2b0b2abf736eb2907a9b1a9739bf71d340f7aa95a799ce2")
     version("1.34.8", sha256="1eae3875e830dd72c1b600cdd4c12aca95449a951a95dcea368a9cb4bdf88ed4")
     version("1.34.7", sha256="764f22a1c1f6e90c2de1b3075a8c34f6d365d6f08c56eefe7020e5da20bdd3a3")
     version("1.34.6", sha256="cc88a9e51d05c048876a474feb6e353fd9e9fe64bb95f5cfced27a0b29d28790")
+    version("1.33.13", sha256="6956d572684a8364c9172e102985bcf2aff03289db777900cf5bf18e7883d39e")
     version("1.33.12", sha256="4a33a8f8a098f245eefc39b5dd1e62feb81bcb76b470ca454a88fef6a688b6f6")
     version("1.33.11", sha256="52461ed85b0a0ac693f5d1841e90b8c65e91e9341c253c168968db2b9d53048e")
     version("1.33.10", sha256="a4dd3abd7da2f4f50ffe79583682a1f990856903b5d200948c12e69e632dd8ff")

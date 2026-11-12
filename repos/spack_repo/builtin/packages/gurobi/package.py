@@ -62,8 +62,7 @@ class Gurobi(Package):
 
     # the Python package installation was deprecated after version 10,
     # to be superseded by pip/conda installs
-    @when("@:10")
-    @run_after("install")
+    @run_after("install", when="@:10")
     def gurobipy(self):
         with working_dir("linux64"):
             python("setup.py", "install", "--prefix={0}".format(self.prefix))

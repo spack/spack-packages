@@ -62,7 +62,8 @@ class Adios(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
-    depends_on("autoconf", type="build")
+    # autoconf@2.73: defaults to -std=gnu23, which breaks "typedef int bool;" in the sources
+    depends_on("autoconf@:2.72", type="build")
     depends_on("automake", type="build")
     depends_on("m4", type="build")
     depends_on("libtool", type="build")

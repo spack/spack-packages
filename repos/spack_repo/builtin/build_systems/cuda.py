@@ -53,6 +53,9 @@ class CudaPackage(PackageBase):
         "103",
         "103a",
         "103f",
+        "107",
+        "107a",
+        "107f",
         "110",
         "110a",
         "110f",
@@ -179,6 +182,12 @@ class CudaPackage(PackageBase):
     depends_on("cuda@12.9:", when="cuda_arch=121")
     depends_on("cuda@12.9:", when="cuda_arch=121a")
     depends_on("cuda@12.9:", when="cuda_arch=121f")
+
+    # Rubin support:
+    depends_on("cuda@13.4:", when="cuda_arch=107")
+    depends_on("cuda@13.4:", when="cuda_arch=107a")
+    depends_on("cuda@13.4:", when="cuda_arch=107f")
+
     # From the NVIDIA install guide we know of conflicts for particular
     # platforms (linux, darwin), architectures (x86, powerpc) and compilers
     # (gcc, clang). We don't restrict %gcc and %clang conflicts to
@@ -212,6 +221,7 @@ class CudaPackage(PackageBase):
         conflicts("%gcc@14:", when="%cuda@:12.6")
         conflicts("%gcc@15:", when="%cuda@:12.9")
         conflicts("%gcc@16:", when="%cuda@:13.3")
+        conflicts("%gcc@17:", when="%cuda@:13.4")
         conflicts("%clang@12:", when="%cuda@:11.4.0")
         conflicts("%clang@13:", when="%cuda@:11.5")
         conflicts("%clang@14:", when="%cuda@:11.7")
@@ -223,6 +233,7 @@ class CudaPackage(PackageBase):
         conflicts("%clang@20:", when="%cuda@:12.9")
         conflicts("%clang@21:", when="%cuda@:13.0")
         conflicts("%clang@22:", when="%cuda@:13.3")
+        conflicts("%clang@23:", when="%cuda@:13.4")
 
         # https://gist.github.com/ax3l/9489132#gistcomment-3860114
         conflicts("%gcc@10", when="%cuda@:11.4.0")

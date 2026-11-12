@@ -15,6 +15,7 @@ class JsonC(CMakePackage):
 
     license("MIT")
 
+    version("0.19", sha256="37ad0249902e301bd9052bf712e511fcc6acff4ecaad4b5900aad9ce564e26de")
     version("0.18", sha256="876ab046479166b869afc6896d288183bbc0e5843f141200c677b3e8dfb11724")
     version("0.16", sha256="8e45ac8f96ec7791eaf3bb7ee50e9c2100bbbc87b8d0f1d030c5ba8a0288d96b")
     version("0.15", sha256="b8d80a1ddb718b3ba7492916237bbf86609e9709fb007e7f7d4322f02341a4c6")

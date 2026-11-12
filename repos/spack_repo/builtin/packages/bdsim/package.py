@@ -24,6 +24,7 @@ class Bdsim(CMakePackage):
     license("GPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.7.8", sha256="4c43a8d53f92efcfdf00476c0298dfdb22f32926d5a7f635c8cd545c6bb04fbc")
     version("1.7.7", sha256="8923a197c97984e32651f877c35c3f759ca8d20b661aaec200b83dbd72e4d7d9")
     version("1.7.6", sha256="7740d9fb3bcc9856a36b74130fae68def878d86c6f7e4a54c9d7a2db8dd770bc")
     version("1.7.0", sha256="519bdede40470907d3305556ed5cf9523a2d7c0446db764338741d0ca43a86b4")

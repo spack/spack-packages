@@ -8,6 +8,10 @@ concurrency:
   group: unit_tests-${{github.ref}}-${{github.event.pull_request.number || github.run_number}}
   cancel-in-progress: true
 
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
+
 jobs:
   # Run unit tests with different configurations on linux
   ubuntu:
@@ -15,30 +19,37 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        python-version: ['3.8', '3.9', '3.10', '3.11', '3.12']
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
         on_develop:
         - ${{ github.ref == 'refs/heads/develop' }}
         include:
         - python-version: '3.7'
           os: ubuntu-22.04
           on_develop: ${{ github.ref == 'refs/heads/develop' }}
-        exclude:
+        # actions/setup-python has no Python 3.8/3.9 builds for Ubuntu 26.04 (ubuntu-latest)
         - python-version: '3.8'
-          os: ubuntu-latest
-          on_develop: false
+          os: ubuntu-24.04
+          on_develop: ${{ github.ref == 'refs/heads/develop' }}
         - python-version: '3.9'
-          os: ubuntu-latest
-          on_develop: false
+          os: ubuntu-24.04
+          on_develop: ${{ github.ref == 'refs/heads/develop' }}
+        exclude:
         - python-version: '3.10'
           os: ubuntu-latest
           on_develop: false
         - python-version: '3.11'
           os: ubuntu-latest
           on_develop: false
+        - python-version: '3.12'
+          os: ubuntu-latest
+          on_develop: false
+        - python-version: '3.13'
+          os: ubuntu-latest
+          on_develop: false
 
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install System packages
@@ -62,8 +73,8 @@ jobs:
         os: ["macos-15", "macos-15-intel"]
         python-version: ["3.11"]
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Python packages
@@ -82,8 +93,8 @@ jobs:
           powershell Invoke-Expression -Command "./.ci/windows_test_setup.ps1"; {0}
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  # v6.0.2
-    - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405  # v6.2.0
+    - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+    - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
       with:
         python-version: 3.9
     - name: Install Python packages

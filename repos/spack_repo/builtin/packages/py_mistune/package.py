@@ -15,15 +15,26 @@ class PyMistune(PythonPackage):
 
     license("BSD-3-Clause")
 
-    # https://github.com/lepture/mistune/security/advisories/GHSA-8g87-j6q8-g93x
-    version("3.2.1", sha256="7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28")
+    version("3.3.3", sha256="c4c6c0c840b8637a2e9b8b6d607eb7c8f00888bf14c754409bcd339e848c2477")
     with default_args(deprecated=True):
+        # https://github.com/lepture/mistune/security/advisories/GHSA-jxhr-4j38-fpxg
+        # https://github.com/lepture/mistune/security/advisories/GHSA-f32h-38gf-rg5r
+        # https://github.com/lepture/mistune/security/advisories/GHSA-x2gr-6qf2-fc9x
+        # https://github.com/lepture/mistune/security/advisories/GHSA-3q64-rw38-243v
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8mpj-m6qm-5qr8
+        # https://github.com/lepture/mistune/security/advisories/GHSA-2hm2-hc3v-44h9
+        # https://github.com/lepture/mistune/security/advisories/GHSA-96vr-jm8v-g22j
+        # https://github.com/lepture/mistune/security/advisories/GHSA-ffq3-xpv3-j92q
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8ppg-4vv7-9p53
+        # https://github.com/lepture/mistune/security/advisories/GHSA-8g87-j6q8-g93x
+        version("3.2.1", sha256="7c8e5501d38bac1582e067e46c8343f17d57ea1aaa735823f3aba1fd59c88a28")
         # https://github.com/lepture/mistune/security/advisories/GHSA-8mp2-v27r-99xp
         # https://github.com/lepture/mistune/security/advisories/GHSA-hjph-f4mc-wx4c
         # https://github.com/lepture/mistune/security/advisories/GHSA-58cw-g322-p94v
         # https://github.com/lepture/mistune/security/advisories/GHSA-v87v-83h2-53w7
         version("3.2.0", sha256="708487c8a8cdd99c9d90eb3ed4c3ed961246ff78ac82f03418f5183ab70e398a")
         version("3.1.4", sha256="b5a7f801d389f724ec702840c11d8fc48f2b33519102fc7ee739e8177b672164")
+        version("3.0.0", sha256="b28444efe542cc9bb9f19fb133740ab020fe5e14fe6ffcce9576d24fbd1e5b20")
         version("2.0.5", sha256="0246113cb2492db875c6be56974a7c893333bf26cd92891c85f63151cee09d34")
         version("2.0.4", sha256="9ee0a66053e2267aba772c71e06891fa8f1af6d4b01d5e84e267b4570d4d9808")
         version("2.0.2", sha256="6fc88c3cb49dba8b16687b41725e661cf85784c12e8974a29b9d336dd596c3a1")

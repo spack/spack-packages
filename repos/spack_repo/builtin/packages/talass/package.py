@@ -15,7 +15,7 @@ class Talass(CMakePackage):
     < StreamingTopology and any of the subsets can be build stand-
     alone."""
 
-    homepage = "http://www.cedmav.org/research/topology/72-talass.html"
+    homepage = "https://bitbucket.org/cedmav/talass"
     git = "https://bitbucket.org/cedmav/talass.git"
 
     maintainers("lpottier")
@@ -43,7 +43,10 @@ class Talass(CMakePackage):
         description="Number of bits used for the local index space",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+
+    conflicts("%gcc@13:", msg="GCC 13+ is not supported by Talass source code")
 
     root_cmakelists_dir = "StreamingTopology"
 

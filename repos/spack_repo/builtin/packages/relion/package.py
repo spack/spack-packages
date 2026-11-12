@@ -46,12 +46,6 @@ class Relion(CMakePackage, CudaPackage):
     variant("cuda", default=True, description="enable compute on gpu")
     variant("double", default=True, description="double precision (cpu) code")
     variant("double-gpu", default=False, description="double precision gpu")
-    variant(
-        "python",
-        default=True,
-        description="Include py-relion Python tools (torch, napari, etc.)",
-        when="@5:",
-    )
 
     # if built with purpose=cluster then relion will link to gpfs libraries
     # if that's not desirable then use purpose=desktop
@@ -111,8 +105,7 @@ class Relion(CMakePackage, CudaPackage):
     conflicts("cuda@13:", when="@:5.0.0 +cuda")
     depends_on("tbb", when="+altcpu")
     depends_on("mkl", when="+mklfft")
-    depends_on("ctffind@4.1:4", type="run", when="@5")
-    depends_on("ctffind@:4", type="run")
+    depends_on("ctffind@4.1:4", type="run")
     depends_on("motioncor2", type="run", when="+external_motioncor2")
 
     # ghostscript is only needed at runtime for merging EPS diagnostic plots
@@ -122,15 +115,6 @@ class Relion(CMakePackage, CudaPackage):
     depends_on("pbzip2", type="run", when="@5:")
     depends_on("xz", type="run", when="@5:")
     depends_on("zstd", type="run", when="@5:")
-
-    # py-relion is now gated behind +python variant
-    for arch in CudaPackage.cuda_arch_values:
-        depends_on(
-            f"py-relion@5.0.1 +cuda cuda_arch={arch}",
-            type=("build", "run"),
-            when=f"@5.0.1 +python +cuda cuda_arch={arch}",
-        )
-    depends_on("py-relion@5.0.1 ~cuda", type=("build", "run"), when="@5.0.1 +python ~cuda")
 
     patch("0002-Simple-patch-to-fix-intel-mkl-linking.patch", when="@:3.1.1 os=ubuntu18.04")
     patch(

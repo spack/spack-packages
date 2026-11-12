@@ -54,12 +54,20 @@ class NodeJs(Package):
 
     # LTS (recommended for most users) - even major number
     version(
-        "24.14.1",
-        sha256="8298cf1f5774093ca819f41b8dd392fd2cff058688b4d5c8805026352e2d31b3",
+        "26.12.1",
+        sha256="717244a8d757672ec86aae5077fca31e50f84b094441ec51bdf397aab12c304e",
         preferred=True,
     )
+    version(
+        "26.3.0",
+        sha256="a3350c1adda81e921c1dae03cbdf0547c29b5ec43b5e00ac66f043a5c76bc74c",
+    )
+    version("24.22.1", sha256="001773d9bd53fbd27a25efd42aa6a9693ebfe500998ca9bec635e9b6ee79bc91")
+    version("24.17.0", sha256="66a10e05fa7875ff1d7d669de405ea6ce8725f2352bd07550f520dea2f880825")
+    version("24.14.1", sha256="8298cf1f5774093ca819f41b8dd392fd2cff058688b4d5c8805026352e2d31b3")
     version("24.13.0", sha256="54cb58921b4ce2831c6690ee823a3d39cfbf2b75f4e556c4c2bde90f3d8fd1ca")
     version("24.2.0", sha256="da739aedc45729436587cda9f063b28c1d881a32ba149b0a2f4e8aff55a18929")
+    version("22.23.4", sha256="4dd79de8cdc85d65cb32f48a75aee1067bf00bf94b96ecc8e4c2f82f6f0272c2")
     version("22.22.2", sha256="f4b9606f33aef725a77b6292460102b48b80902571a8bb94cd769837ee0577df")
     version("22.16.0", sha256="108f250ff79cc103b464b3ef41fa60f4866e4e6c962117171adaac7325ebdab2")
     version("20.20.2", sha256="8cb85a81f75169eb811f7b2512cf17a646826430debbe016a7461f31e286fdef")
@@ -95,6 +103,12 @@ class NodeJs(Package):
         "14.15.1",
         sha256="a1120472bf55aea745287693a6651e16973e1008c9d6107df350126adf9716fe",
         deprecated=True,
+    )
+
+    conflicts(
+        "~openssl",
+        when="@20:22.23.3,24:24.22.0,26:26.22.0",
+        msg="node-js~openssl bundles compromised eMudhra certs. Us node-js+openssl instead.",
     )
 
     variant("debug", default=False, description="Include debugger support")
@@ -151,10 +165,13 @@ class NodeJs(Package):
     # depends_on('bash-completion', when="+bash-completion")
     depends_on("icu4c", when="+icu4c")
     depends_on("openssl@1.1:", when="+openssl")
+    # OpenSSL 4 support (opaque ASN1_STRING, const X509 APIs) added in
+    # https://github.com/nodejs/node/pull/62410, released in 24.15.0 and 25.9.0
+    depends_on("openssl@:3", when="@:24.14,25.0:25.8 +openssl")
     depends_on("zlib-api", when="+zlib")
 
     # https://github.com/nodejs/node/blob/main/BUILDING.md#supported-toolchains
-    conflicts("%gcc@:12.1", when="@23:")
+    conflicts("%gcc@:12", when="@23:")
     conflicts("%gcc@:10.0", when="@20:")
     conflicts("%gcc@:8.2", when="@16:")
     conflicts("%gcc@:6.2", when="@12:")
@@ -256,6 +273,11 @@ class NodeJs(Package):
                     "--shared-openssl",
                     "--shared-openssl-includes={0}".format(self.spec["openssl"].prefix.include),
                     "--shared-openssl-libpath={0}".format(self.spec["openssl"].prefix.lib),
+                    # Always prefer the CA store from our OpenSSL dependency
+                    # over the bundled Mozilla snapshot.  The OPENSSLDIR baked
+                    # into the shared library already points to the right certs
+                    # (mozilla, system, or none) as chosen by the openssl spec.
+                    "--openssl-use-def-ca-store",
                 ]
             )
 

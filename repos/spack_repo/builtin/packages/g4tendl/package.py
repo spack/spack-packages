@@ -4,15 +4,15 @@
 
 
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4tendl(Package):
+class G4tendl(Package, Geant4DataPackage):
     """Optional Geant4 data for incident particles."""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4TENDL.1.3.tar.gz"
 
     tags = ["hep"]
 
@@ -23,22 +23,8 @@ class G4tendl(Package):
     version("1.3.2", sha256="3b2987c6e3bee74197e3bd39e25e1cc756bb866c26d21a70f647959fc7afb849")
     version("1.3", sha256="52ad77515033a5d6f995c699809b464725a0e62099b5e55bf07c8bdd02cd3bce")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4PARTICLEHPDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4PARTICLEHPDATA", install_path)
-
-    def url_for_version(self, version):
-        """Handle version string."""
-        return "http://geant4-data.web.cern.ch/geant4-data/datasets/G4TENDL.%s.tar.gz" % version
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "G4TENDL{0}".format(spec.version)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "G4TENDL"

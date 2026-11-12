@@ -37,3 +37,5 @@ class RFs(RPackage):
 
         # Historical dependencies
         depends_on("r-rcpp", when="@:1.3.1")
+
+    depends_on("libuv", when="@2.1.0:")

@@ -93,8 +93,8 @@ class BigdftCore(AutotoolsPackage, CudaPackage):
             f"--with-chess-incs={spec['bigdft-chess'].headers.include_flags}",
             f"--with-psolver-libs={spec['bigdft-psolver'].libs.ld_flags}",
             f"--with-psolver-incs={spec['bigdft-psolver'].headers.include_flags}",
-            f"--with-libABINIT-libs={spec['bigdft-libabinit'].libs.ld_flags}",
-            f"--with-libABINIT-incs={spec['bigdft-libabinit'].headers.include_flags}",
+            f"--with-libabinit-libs={spec['bigdft-libabinit'].libs.ld_flags}",
+            f"--with-libabinit-incs={spec['bigdft-libabinit'].headers.include_flags}",
             f"--with-libgain-libs={spec['libgain'].libs.ld_flags}",
             f"--with-libgain-incs={spec['libgain'].headers.include_flags}",
             f"--with-libxc-libs={spec['libxc'].libs.ld_flags} {spec['libxc'].libs.ld_flags}f90",
@@ -126,6 +126,14 @@ class BigdftCore(AutotoolsPackage, CudaPackage):
             args.append("--enable-cuda-gpu")
             args.append(f"--with-cuda-path={spec['cuda'].prefix}")
             args.append(f"--with-cuda-libs={spec['cuda'].libs.link_flags}")
+
+            cuda_arch = [x for x in spec.variants["cuda_arch"].value if x and x != "none"]
+            if cuda_arch:
+                args.append(
+                    "NVCC_FLAGS={0} --compiler-options {1}".format(
+                        " ".join(self.cuda_flags(cuda_arch)), self.compiler.cxx_pic_flag
+                    )
+                )
 
         if spec.satisfies("+openbabel"):
             args.append("--enable-openbabel")

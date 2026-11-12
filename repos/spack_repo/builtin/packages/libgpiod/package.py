@@ -3,52 +3,69 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.build_systems.meson import MesonPackage
 
 from spack.package import *
 
 
-class Libgpiod(AutotoolsPackage):
+class Libgpiod(AutotoolsPackage, MesonPackage):
     """C library and tools for interacting with the linux GPIO character device
     (gpiod stands for GPIO device)"""
 
     homepage = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/about/"
+    url = "https://mirrors.edge.kernel.org/pub/software/libs/libgpiod/libgpiod-2.3.1.tar.xz"
     git = "https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod"
 
     maintainers("davekeeshan")
 
     license("LGPL-2.1-or-later")
 
+    # libgpiod switched from autotools to meson in the 2.3 release series
+    build_system(
+        conditional("autotools", when="@:2.2"), conditional("meson", when="@2.3:"), default="meson"
+    )
+
     version("master", branch="master")
-    version("2.2.3", sha256="70de4639856620571f99d851cf1acd48f6462b62ccba929f1a0235ec76b4e4dc")
-    version("2.2.2", sha256="02794831a65adab942620dd3e8f038ff881c3c127d7d26841d94caa8caea793f")
-    version("2.2.1", sha256="c6054a64a12681beeb0ce5200867754843bb68465b06c543f132ad984aee3f83")
-    version("2.2.0", sha256="ae35329db7027c740e90c883baf27c26311f0614e6a7b115771b28188b992aec")
-    version("2.1.3", sha256="8d80ea022ae78122aa525308e7423b83064bff278fcd9cd045b94b4f81f8057d")
-    version("2.1.2", sha256="b1bdf1e3f75238695f93e442062bafc069170f2bf4f0cd4b8e049ca67131a1f0")
-    version("2.1.1", sha256="0af43a6089d69f9d075cf67ca2ae5972b9081e38e6b3d46cea37d67e2df6fb9b")
-    version("2.1.0", sha256="fd6ed4b2c674fe6cc3b481880f6cde1eea79e296e95a139b85401eaaea6de3fc")
-    version("2.0.2", sha256="3532e1dbaffdc2c5965a761a0750f2691ee49aad273ddbbd93acf6a727b1b65c")
-    version("2.0.1", sha256="b6eda55356160a8e73906e3d48e959ef81296787d764975b10f257e9660668e9")
-    version("2.0.0", sha256="62071ac22872d9b936408e4a067d15edcdd61dce864ace8725eacdaefe23b898")
-    version("1.6.5", sha256="1473d3035b506065393a4569763cf6b5c98e59c8f865326374ebadffa2578f3a")
-    version("1.6.4", sha256="829d4ac268df07853609d67cfc7f476e9aa736cb2a68a630be99e8fad197be0a")
-    version("1.6.3", sha256="eb446070be1444fd7d32d32bbca53c2f3bbb0a21193db86198cf6050b7a28441")
+    version("2.3.1", sha256="e3a358a90a9204ff16f92b6f4028ed91460b1926f10589eb54b3566484650a30")
+    version("2.3.0", sha256="cb71db463aec2604ac520c95bf04eff1839d86bdc9a2dfd67ef879fbb10426ea")
+    version("2.2.5", sha256="0df1bb2be89d9091a167b9f702f8f31d89863e8d84997aad09ee4aba12fe78c5")
+    version("2.2.4", sha256="13207176b0eb9b3e0f02552d5f49f5a6a449343ce47416158bb484d9d3019592")
+    version("2.2.3", sha256="70012b0262e4b90f140431efa841ca89643b02ea6c09f507e23cec664a51b71a")
+    version("2.2.2", sha256="7e3bff0209d75fbca2e9fcff1fd5f07cc58b543e129e08b6d4bb1e4a56cfec0d")
+    version("2.2.1", sha256="0e948049c309b87c220fb24ee0d605d7cd5b72f22376e608470903fffa2d4b18")
+    version("2.2.0", sha256="ee29735890eb1cc0e4b494001da5163d1a9c4735343201d22485db313601ca07")
+    version("2.1.3", sha256="2be4c0b03e995d236c0e476e14aeb475d7b431dd1439609b6d65c540f91eaf58")
+    version("2.1.2", sha256="7a148a5a7d1c97a1abb40474b9a392b6edd7a42fe077dfd7ff42cfba24308548")
+    version("2.1.1", sha256="b21913f469d3135680d5516f00fdf9f81d5e564e19ffb690927ea7f1d7e312cb")
+    version("2.1.0", sha256="fa4024a080121c958502f9a46a5bda44bea85e7a4dd7fcb3dead463b6fc4261c")
+    version("2.0.2", sha256="c3c923dc63b7b1b02639c9179c81e3d9febf0887bbaa59775990229cdbedb88b")
+    version("2.0.1", sha256="b5367d28d045b36007a4ffd42cceda4c358737ef4f2ce22b0c1d05ec57a38392")
+    version("2.0.0", sha256="f74cbf82038b3cb98ebeb25bce55ee2553be28194002d2a9889b9268cce2dd07")
+    version("1.6.5", sha256="ae280f697bf035a1fb780c9972e5c81d0d2712b7ab6124fb3fba24619daa72bc")
+    version("1.6.4", sha256="7b146e12f28fbca3df7557f176eb778c5ccf952ca464698dba8a61b2e1e3f9b5")
+    version("1.6.3", sha256="841be9d788f00bab08ef22c4be5c39866f0e46cb100a3ae49ed816ac9c5dddc7")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
-    depends_on("autoconf", type="build")
-    depends_on("autoconf-archive", type="build")
-    depends_on("automake", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on("libtool", type="build")
-
-    def autoreconf(self, spec, prefix):
-        Executable("./autogen.sh")()
 
     def url_for_version(self, version):
+        # Release tarballs for x.y.0 drop the trailing ".0" (e.g. 2.3, not 2.3.0)
+        base = "https://mirrors.edge.kernel.org/pub/software/libs/libgpiod"
         if version[2] == 0:
-            return f"https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-v{version.up_to(1)}.tar.gz"
-        else:
-            return f"https://git.kernel.org/pub/scm/libs/libgpiod/libgpiod.git/snapshot/libgpiod-v{version}.tar.gz"
+            return f"{base}/libgpiod-{version.up_to(2)}.tar.xz"
+        return f"{base}/libgpiod-{version}.tar.xz"
+
+
+class MesonBuilder(meson.MesonBuilder):
+    def meson_args(self):
+        return [
+            "-Dtools=enabled",
+            "-Dtests=disabled",
+            "-Dexamples=disabled",
+            "-Dbindings-cxx=disabled",
+            "-Dgpioset-interactive=disabled",
+        ]

@@ -23,6 +23,7 @@ class Fckit(CMakePackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("0.14.3", sha256="d441688e581140e725e590a35f649e9a3031fe5dd5fed63377709362e595835f")
     version("0.14.2", sha256="e12b3a2101c39ec478f1208962ef4c3d0f95ef3ef2d4ff39c804c48f8dfb147b")
     version("0.14.1", sha256="b15c3a30d4c6aaf9b97d8930bf1b7fd94b015746c421daeb3e648170b30bcbcb")
     version("0.13.2", sha256="990623eb4eb999145f2d852da9fbd71a69e2e0be601c655c274e8382750dfda2")
@@ -51,7 +52,7 @@ class Fckit(CMakePackage):
     depends_on("eckit@:1.23 +mpi", when="@:0.10 +eckit")
     # https://github.com/ecmwf/fckit/pull/84
     depends_on("eckit@1.24:1.33 +mpi", when="@0.11:0.14.1 +eckit")
-    depends_on("eckit@2: +mpi", when="@0.14.2: +eckit")
+    depends_on("eckit@1.26: +mpi", when="@0.14.2: +eckit")
 
     variant("openmp", default=True, description="Use OpenMP?")
     depends_on("llvm-openmp", when="+openmp %apple-clang", type=("build", "run"))

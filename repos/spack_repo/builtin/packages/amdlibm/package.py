@@ -32,6 +32,7 @@ class Amdlibm(SConsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("5.3", sha256="bbd97cbb3745afbeb203f6cdddadb410ea32f2fbcac807bcd0c27e6b7d1133e4")
     version("5.2", sha256="5cec8d30dc1083923c332c80808eda637ebd385b02a0cebf65ce72b5c8cbc029")
     version("5.1", sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e")
     version("5.0", sha256="ba1d50c068938c9a927e37e5630f683b6149d7d5a95efffeb76e7c9a8bcb2b5e")
@@ -46,10 +47,10 @@ class Amdlibm(SConsPackage, CMakePackage):
     variant("verbose", default=False, description="Building with verbosity", when="@:4.1")
 
     # Build system
-    # - For version 5.2: both 'cmake' and 'scons' are supported, with 'cmake' as default.
+    # - For version 5.2+: both 'cmake' and 'scons' are supported, with 'cmake' as default.
     # - For version 5.1: both 'scons' and 'cmake' are supported, with 'scons' as default.
     # - For versions below 5.1: only 'scons' is supported.
-    with when("@5.2"):
+    with when("@5.2:"):
         build_system("cmake", "scons", default="cmake")
 
     with when("@:5.1"):
@@ -63,7 +64,7 @@ class Amdlibm(SConsPackage, CMakePackage):
     depends_on("scons@3.1.2:4.8.1", type=("build"))
     depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
     depends_on("mpfr", type=("link"))
-    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 

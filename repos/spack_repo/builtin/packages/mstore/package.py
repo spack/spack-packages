@@ -24,9 +24,11 @@ class Mstore(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("0.4.0", sha256="683d42d33b16f839ced63e2cc651bcf82621c75a43208afe798606ffa0d40a83")
     version("0.3.0", sha256="8cbae54a47339de0f47457d7d0931fb5ac23a6cfc8b54872b925528cf5138523")
     version("0.2.0", sha256="932ec27cb327f7bfcdc316ae7d39a13cff03b95946bda79b52fd2fa43c4fd4d4")
 
+    variant("shared", default=True, description="Build shared libraries")
     variant("openmp", default=True, description="Use OpenMP parallelisation")
 
     depends_on("c", type="build")
@@ -41,9 +43,15 @@ class Mstore(MesonPackage, CMakePackage):
 
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
-        return ["-Dopenmp={0}".format(str("+openmp" in self.spec).lower())]
+        return [
+            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
+            "-Dopenmp={0}".format(str("+openmp" in self.spec).lower()),
+        ]
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
-        return [self.define_from_variant("WITH_OpenMP", "openmp")]
+        return [
+            self.define_from_variant("WITH_OpenMP", "openmp"),
+            self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
+        ]

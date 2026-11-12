@@ -118,11 +118,17 @@ class Prrte(AutotoolsPackage):
         config_args = ["--enable-shared", "--enable-static", "--disable-sphinx"]
 
         # libevent
-        config_args.append("--with-libevent={0}".format(spec["libevent"].prefix))
+        config_args.append(f"--with-libevent={spec['libevent'].prefix}")
+
+        if spec["libevent"].libs.directories:
+            libevent_libdir = spec["libevent"].libs.directories[0]
+        else:
+            libevent_libdir = spec["libevent"].prefix.lib
+        config_args.append(f"--with-libevent-libdir={libevent_libdir}")
         # hwloc
-        config_args.append("--with-hwloc={0}".format(spec["hwloc"].prefix))
+        config_args.append(f"--with-hwloc={spec['hwloc'].prefix}")
         # pmix
-        config_args.append("--with-pmix={0}".format(spec["pmix"].prefix))
+        config_args.append(f"--with-pmix={spec['pmix'].prefix}")
 
         # schedulers
         # see prte_check_X.m4 files in

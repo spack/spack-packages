@@ -36,6 +36,7 @@ class Dd4hep(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.38", sha256="8a11c42cfd2026faae421260bc3dea9f61c78ebacd1f9ba1b0ca3ff054425ffd")
     version("1.37", sha256="ade63b28c13d8e265ef95185326bc311fdf76cd3afe1a2bc44c7ff3f6a19409c")
     version("1.36", sha256="89c60c035fba04c94ee6ea68d4caecfe4c3c7edbb46aec9e613e6af9826fba2f")
     version("1.35", sha256="d15c6fbc762e8863a7c5b222a661baae8e9e30263554a9e5c24c593c1effd00b")
@@ -100,6 +101,9 @@ class Dd4hep(CMakePackage):
     )
     variant("lcio", default=False, description="Enable build with lcio")
     variant("edm4hep", default=True, description="Enable build with edm4hep", when="@1.24:")
+    variant(
+        "g4hepem", default=False, description="Enable build of G4HepEm plugin", when="@1.38: +ddg4"
+    )
     variant("geant4units", default=False, description="Use geant4 units throughout")
     variant("tbb", default=False, description="Enable build with tbb")
     variant(
@@ -151,6 +155,7 @@ class Dd4hep(CMakePackage):
     depends_on("imagemagick", when="+doc")
     depends_on("xerces-c", when="+xercesc")
     depends_on("assimp@5.0.2:", when="+ddcad")
+    depends_on("g4hepem", when="+g4hepem")
     depends_on("hepmc3", when="+hepmc3")
     depends_on("hepmc3@3.2.6:", when="+hepmc3-gz")
     depends_on("bzip2", when="+hepmc3-gz")
@@ -210,6 +215,7 @@ class Dd4hep(CMakePackage):
             self.define_from_variant("DD4HEP_USE_EDM4HEP", "edm4hep"),
             self.define_from_variant("DD4HEP_USE_XERCESC", "xercesc"),
             self.define_from_variant("DD4HEP_USE_TBB", "tbb"),
+            self.define_from_variant("DD4HEP_USE_G4HEPEM", "g4hepem"),
             self.define_from_variant("DD4HEP_USE_GEANT4", "ddg4"),
             self.define_from_variant("DD4HEP_USE_LCIO", "lcio"),
             self.define_from_variant("DD4HEP_USE_HEPMC3", "hepmc3"),
@@ -244,6 +250,14 @@ class Dd4hep(CMakePackage):
         args.append(self.define("DD4HEP_BUILD_PACKAGES", " ".join(enabled_packages)))
         return args
 
+    @property
+    def plugin_path_var(self):
+        # Equivalent to root_library_path in ROOT
+        # Plugin lookup mechanism is system-dependent and will hopefully change
+        # in the future to be independent from dynamic linker
+        # see e.g., https://github.com/AIDASoft/DD4hep/pull/1664
+        return "DYLD_LIBRARY_PATH" if self.spec.satisfies("platform=darwin") else "LD_LIBRARY_PATH"
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # used p.ex. in ddsim to find DDDetectors dir
         env.set("DD4hepINSTALL", self.prefix)
@@ -251,19 +265,22 @@ class Dd4hep(CMakePackage):
         env.set("DD4hep_DIR", self.prefix)
         env.set("DD4hep_ROOT", self.prefix)
         if len(self.libs.directories) > 0:
-            # Plugin lookup mechanism is system-dependent
-            libvar = (
-                "DYLD_LIBRARY_PATH"
-                if self.spec.satisfies("platform=darwin")
-                else "LD_LIBRARY_PATH"
-            )
-            env.prepend_path(libvar, self.libs.directories[0])
+            env.prepend_path(self.plugin_path_var, self.libs.directories[0])
+
+    def setup_dependent_run_environment(self, env: EnvironmentModifications, dependent_spec):
+        # NOT currently implemented: downstream packages that depend on dd4hep
+        # must currently use setup_run_environment
+        pass
 
     def url_for_version(self, version):
         # dd4hep releases are dashes and padded with a leading zero
         # the patch version is omitted when 0
         # so for example v01-12-01, v01-12 ...
         base_url = self.url.rsplit("/", 1)[0]
+
+        if version.isdevelop():
+            return f"{base_url}/refs/heads/{version}.tar.gz"
+
         if len(version) == 1:
             major = version[0]
             minor, patch = 0, 0

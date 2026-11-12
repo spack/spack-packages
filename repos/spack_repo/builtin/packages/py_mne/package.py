@@ -18,6 +18,7 @@ class PyMne(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.13.2", sha256="729829e35010a7273cce8608d61d930c973fbead6edc1a70316c01e3a5551521")
     version("1.12.1", sha256="244f844057f28a4da2509039dba637832ffb65f678ca76fc667312c493b12044")
     version("1.12.0", sha256="29ff8331ba58626b5ce361dee66c0de5e331a0fd8217ac7543fb552ce667f522")
     version("1.11.0", sha256="0a89b8fc44133b81218a35cdcba74ad0f8ae2e265136249b365b9ce04864c688")
@@ -39,7 +40,7 @@ class PyMne(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-hatch-vcs", when="@1.7:")
-        depends_on("py-hatchling@1.27", when="@1.12:")
+        depends_on("py-hatchling@1.27:", when="@1.12:")
         depends_on("py-hatchling", when="@1.7:")
 
         # Historical dependencies
@@ -48,6 +49,7 @@ class PyMne(PythonPackage):
         depends_on("py-setuptools-scm@6.2:", when="@1.4:1.6")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@1.13:")
         depends_on("python@3.10:", when="@1.9:")
         depends_on("python@3.9:", when="@1.7:")
         depends_on("python@3.8:", when="@1.4:")
@@ -56,15 +58,21 @@ class PyMne(PythonPackage):
         # specified in README.rst (marked with *)
         depends_on("py-decorator@5.1:", when="@1:")
         depends_on("py-decorator", when="@1:")
+
         depends_on("py-jinja2@3.1", when="@1.12:")
         depends_on("py-jinja2", when="@1:")
+
         depends_on("py-lazy-loader@0.3:", when="@1.6.1:")
+
+        depends_on("py-matplotlib@3.9:", when="@1.13:")
         depends_on("py-matplotlib@3.8:", when="@1.11:")
         depends_on("py-matplotlib@3.7:", when="@1.10:")
         depends_on("py-matplotlib@3.5:", when="@1.6.1:")
         depends_on("py-matplotlib@3.4:", when="@1.4:")  # *
         depends_on("py-matplotlib@3.1:", when="@1:")  # *
-        depends_on("py-numpy@1.26:2", when="@1.11:")
+
+        depends_on("py-numpy@2.1:2", when="@1.13:")
+        depends_on("py-numpy@1.26:2", when="@1.11:1.12")
         depends_on("py-numpy@1.25:2", when="@1.6.1:1.10")
         depends_on("py-numpy@1.21.2:", when="@1.6.1:1.7")
         depends_on("py-numpy@1.20.2:", when="@1.4:1.7")  # *
@@ -72,8 +80,12 @@ class PyMne(PythonPackage):
         depends_on("py-numpy@1.15.4:", when="@0.23:1.7")
         depends_on("py-numpy@1.11.3:", when="@:1.7")
         depends_on("py-numpy@:1", when="@:1.6")
+
         depends_on("py-packaging", when="@1:")
+
         depends_on("py-pooch@1.5:", when="@1:")
+
+        depends_on("py-scipy@1.14:", when="@1.13:")
         depends_on("py-scipy@1.13:", when="@1.12:")
         depends_on("py-scipy@1.11:", when="@1.10:")
         depends_on("py-scipy@1.7.1:", when="@1.6.1:")
@@ -81,6 +93,7 @@ class PyMne(PythonPackage):
         depends_on("py-scipy@1.4.1:", when="@1:")  # *
         depends_on("py-scipy@1.1.0:", when="@0.23:")
         depends_on("py-scipy@0.17.1:")
+
         depends_on("py-tqdm@4.66:", when="@1.12:")
         depends_on("py-tqdm", when="@1:")
 

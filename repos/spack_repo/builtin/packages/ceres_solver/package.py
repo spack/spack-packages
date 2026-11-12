@@ -53,6 +53,11 @@ class CeresSolver(CMakePackage):
                 ]
             )
 
+        # ceres 2.2 enables CUDA by default if it finds a toolkit on the host, and
+        # this recipe has no cuda dependency. Newer ceres renamed this to WITH_CUDA.
+        if self.spec.satisfies("@2.2"):
+            args.append(self.define("USE_CUDA", False))
+
         if self.spec.satisfies("+suitesparse"):
             args.append("-DSUITESPARSE=ON")
         else:
@@ -67,5 +72,14 @@ class CeresSolver(CMakePackage):
             args.append("-DBUILD_EXAMPLES=ON")
         else:
             args.append("-DBUILD_EXAMPLES=OFF")
+
+        # Use glog's exported CMake config rather than ceres' FindGlog.cmake so
+        # that the imported target carries the correct include/link paths.
+        args.append(self.define("GLOG_PREFER_EXPORTED_GLOG_CMAKE_CONFIGURATION", True))
+        if self.spec.satisfies("platform=windows"):
+            # Test binaries link gmock_main which pulls in gflags; gflags may be
+            # built with a different CXX ABI than the test binary, causing linker
+            # errors.
+            args.append(self.define("BUILD_TESTING", False))
 
         return args

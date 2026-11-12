@@ -17,6 +17,9 @@ class PyTroveClassifiers(PythonPackage):
     license("Apache-2.0")
 
     version(
+        "2026.6.1.19", sha256="c5132b4b61a829d11cfbd2d72e97f20a45ed6edb95e45c5efdeb5e00836b2745"
+    )
+    version(
         "2026.4.28.13", sha256="c85bb8a53c3de7330d1699b844ed9fb809a602a09ac15dc79ad6d1a509be0676"
     )
     version(
@@ -39,8 +42,8 @@ class PyTroveClassifiers(PythonPackage):
 
     def url_for_version(self, version):
         if version >= Version("2024.5.17"):
-            sep = "_"
+            name = "trove_classifiers"
         else:
-            sep = "-"
+            name = "trove-classifiers"
 
-        return f"https://files.pythonhosted.org/packages/source/t/trove{sep}classifiers/trove{sep}classifiers-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/t/{name}/{name}-{version}.tar.gz"

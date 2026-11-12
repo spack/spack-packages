@@ -26,8 +26,11 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
-    version("10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4")
+    version("10.6p1", sha256="a9dc9565dffe8640f64d863cd29a32bc4a3dbdec0566a7fc44c5d6ee767d5f39")
     with default_args(deprecated=True):
+        version(
+            "10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4"
+        )
         # https://www.cvedetails.com/cve/CVE-2026-35414/
         # https://www.cvedetails.com/cve/CVE-2026-35387/
         # https://www.cvedetails.com/cve/CVE-2026-35386/
@@ -99,6 +102,18 @@ class Openssh(AutotoolsPackage):
         when="@9.8p1:9 platform=darwin",
     )
 
+    # The macOS 27 SDK dropped the kSBXProfile* declarations from <sandbox.h>, so
+    # sandbox-darwin.c no longer compiles. Backport of upstream commit d4b4c304
+    # ("Require kSBXProfilePureComputation for OS X sandbox", 2026-08-15, not in any
+    # release up to 10.5p1): configure only selects the darwin sandbox when the constant
+    # is declared. Includes the matching Autoconf 2.71 regeneration of configure and
+    # config.h.in, since the tarball's configure is used as-is. The hunk order matters:
+    # configure refuses to run if configure.ac is newer than itself, so configure is
+    # patched after configure.ac. Keep for the bounded versions for as long as they
+    # are kept; later releases carry the fix.
+    # https://github.com/openssh/openssh-portable/commit/d4b4c304a202f5099f2f60be9af9ba266212bb74
+    patch("darwin-sandbox-require-ksbxprofile.patch", when="@10:10.5p1 platform=darwin")
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("-V", output=str, error=str).rstrip()
@@ -134,7 +149,7 @@ class Openssh(AutotoolsPackage):
 
     def install(self, spec, prefix):
         """Install generates etc/sshd_config, but it fails in parallel mode"""
-        make("install", parallel=False)
+        make("install-nokeys", parallel=False)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Until spack supports a real implementation of setup_test_environment()"""

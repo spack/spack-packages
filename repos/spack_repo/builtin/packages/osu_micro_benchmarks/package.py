@@ -23,6 +23,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
 
     maintainers("natshineman", "harisubramoni", "MatthewLieber")
 
+    version("7.5.3", sha256="ab7f970659e14c9246f3eac43828573f519eabf34fff9734e6f831a862caea6b")
     version("7.5.2", sha256="618de3d0b1122f73a9229177d2da1e5cd62e431190580cb915f2605849cbbbdc")
     version("7.5.1", sha256="160d0d5e3c3cb022520ecb247e9875bb0973b1d3cadccd6c17624f8407c52e22")
     version("7.5", sha256="1cf84ac5419456202757a757c5f9a4f5c6ecd05c65783c7976421cfd6020b3b3")
@@ -77,7 +78,7 @@ class OsuMicroBenchmarks(AutotoolsPackage, CudaPackage, ROCmPackage):
                 config_args.append("NVCCFLAGS=" + " ".join(self.cuda_flags(cuda_arch)))
 
         if "+rocm" in spec:
-            config_args.extend(["--with-rocm=%s" % spec["hip"].prefix])
+            config_args.extend(["--enable-rocm", "--with-rocm=%s" % spec["hip"].prefix])
             if spec.satisfies("+xccl"):
                 config_args.extend(["--enable-rcclomb", "--with-rccl=%s" % spec["rccl"].prefix])
             rocm_arch = spec.variants["amdgpu_target"].value

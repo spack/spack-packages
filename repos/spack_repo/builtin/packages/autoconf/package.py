@@ -19,6 +19,7 @@ class Autoconf(AutotoolsPackage, GNUMirrorPackage):
     license("GPL-3.0-or-later WITH Autoconf-exception-3.0", when="@2.62:", checked_by="tgamblin")
     license("GPL-2.0-or-later WITH Autoconf-exception-2.0", when="@:2.59", checked_by="tgamblin")
 
+    version("2.73", sha256="259ddfa3bddc799cfb81489cc0f17dfdf1bd6d1505dda53c0f45ff60d6a4f9a7")
     version("2.72", sha256="afb181a76e1ee72832f6581c0eddf8df032b83e2e0239ef79ebedc4467d92d6e")
     version("2.71", sha256="431075ad0bf529ef13cb41e9042c542381103e80015686222b8a9d4abef42a1c")
     version("2.70", sha256="f05f410fda74323ada4bdc4610db37f8dbd556602ba65bc843edb4d4d4a1b2b7")

@@ -1,0 +1,25 @@
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -56,6 +56,7 @@ option(64BIT       "Build 64-bit (r8) FMS library"        OFF)
+ option(FPIC        "Build with position independent code" OFF)
+ option(SHARED_LIBS "Build shared/dynamic libraries"       OFF)
+ option(OPENACC     "Build FMS with OpenACC support"       OFF)
++option(UNIT_TESTS  "Build FMS tests"                      OFF)
+ 
+ # Options for compiler definitions
+ option(INTERNAL_FILE_NML     "Enable compiler definition -DINTERNAL_FILE_NML"      ON)
+@@ -584,6 +585,7 @@ install(
+   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+ 
+ ### Unit Testing
++if(UNIT_TESTS)
+ include(CTest)
+ 
+ # TODO autotools also checks if srun is available
+@@ -1004,6 +1006,7 @@ set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+ 
+ set(CMAKE_CTEST_ARGUMENTS "--output-on-failure")
+ 
++endif()
+ ### Package config
+ include(CMakePackageConfigHelpers)

@@ -33,10 +33,11 @@ class OpenspeedshopUtils(CMakePackage):
 
     maintainers("jgalarowicz")
 
-    version("develop", branch="master")
-    version("2.4.2.1", branch="2.4.2.1")
-    version("2.4.2", branch="2.4.2")
-    version("2.4.1", branch="2.4.1")
+    with default_args(deprecated=True):
+        version("develop", branch="master")
+        version("2.4.2.1", branch="2.4.2.1")
+        version("2.4.2", branch="2.4.2")
+        version("2.4.1", branch="2.4.1")
 
     variant(
         "runtime", default=False, description="build only the runtime libraries and collectors."

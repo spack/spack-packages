@@ -16,6 +16,8 @@ class RAnnotationdbi(RPackage):
     bioc = "AnnotationDbi"
 
     with default_args(get_full_repo=True):
+        version("1.74.0", commit="c7dbd19487bbf100ad1a6ab58b475c5ec001cc4b")  # bioc 3.23
+        version("1.70.0", commit="a8184e6a1b0bc175040118c73fd22062ddcd3392")  # bioc 3.21
         version("1.62.0", commit="7ca03a0332d0a284ea27d16edb7b386c86cf99ea")
         version("1.60.0", commit="cd61bd1b1538e2f1f411fd7087820749ecf39da8")
         version("1.58.0", commit="05fcf7a28a6b15b195da23474d7ba89bd0cfd891")
@@ -28,12 +30,19 @@ class RAnnotationdbi(RPackage):
         version("1.38.2", commit="67d46facba8c15fa5f0eb47c4e39b53dbdc67c36")
 
     depends_on("r@2.7.0:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.15.10:", type=("build", "run"))
-    depends_on("r-biocgenerics@0.23.1:", type=("build", "run"), when="@1.40.0:")
-    depends_on("r-biocgenerics@0.29.2:", type=("build", "run"), when="@1.46.1:")
+
     depends_on("r-biobase@1.17.0:", type=("build", "run"))
-    depends_on("r-iranges", type=("build", "run"))
+
+    depends_on("r-biocgenerics@0.29.2:", type=("build", "run"), when="@1.46.1:")
+    depends_on("r-biocgenerics@0.23.1:", type=("build", "run"), when="@1.40.0:")
+    depends_on("r-biocgenerics@0.15.10:", type=("build", "run"))
+
     depends_on("r-dbi", type=("build", "run"))
-    depends_on("r-rsqlite", type=("build", "run"))
-    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
+
+    depends_on("r-iranges", type=("build", "run"))
+
     depends_on("r-keggrest", type=("build", "run"), when="@1.56.2:")
+
+    depends_on("r-rsqlite", type=("build", "run"))
+
+    depends_on("r-s4vectors@0.9.25:", type=("build", "run"))
