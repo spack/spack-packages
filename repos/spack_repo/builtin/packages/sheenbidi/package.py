@@ -17,6 +17,7 @@ class Sheenbidi(MesonPackage):
 
     license("Apache-2.0")
 
+    version("3.0.0", sha256="86c56014034739ba39a24c23eb00323b0bf6f737354f665786015fca842af786")
     version("2.7", sha256="620f732141fd62354361f921a67ba932c44d94e73f127379a0c73ad40c7fa6e0")
     version("2.6", sha256="f538f51a7861dd95fb9e3f4ad885f39204b5c670867019b5adb7c4b410c8e0d9")
 

@@ -115,6 +115,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
+    depends_on("googletest@1.14:1", type="test", when="@5:")
+
     # device : (default value, when clause, description)
     devices_variants = {
         "cuda": [False, None, "Whether to build CUDA backend"],
@@ -163,7 +165,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "deprecated_code": [False, "@:4", "Whether to enable deprecated code"],
         "hpx_async_dispatch": [False, "@:4", "Whether HPX supports asynchronous dispath"],
         "tuning": [False, None, "Create bindings for tuning tools"],
-        "tests": [False, None, "Build for tests"],
     }
 
     conflicts("~debug_dualview_modify_check", when="@4.7:")  # always enable from 4.7.00
@@ -173,6 +174,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "armv8.1a": ("ARMV81", None),
         "armv8.4a": ("ARMV84", "@4.7.00:"),
         "neoverse_v2": ("ARMV9_GRACE", "@4.7.04:4,5.1:"),
+        "olympus": ("ARMV9_VERA", "@5.3:"),
         "u74mc": ("RISCV_U74MC", "@4.7.00:"),
         "a64fx": ("A64FX", None),
         "thunderx2": ("ARMV8_THUNDERX2", None),
@@ -232,6 +234,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "90": ("hopper90", None),
         "100": ("blackwell100", "@4.7.00:"),
         "103": ("blackwell103", "@5.1.0:"),
+        "107": ("rubin107", "@5.3:"),
         "120": ("blackwell120", "@4.7.00:"),
         "121": ("blackwell121", "@5.1.0:"),
     }
@@ -518,6 +521,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         for arch in spack_microarches:
             options.append(self.define("Kokkos_ARCH_" + arch.upper(), True))
+
+        options.append(self.define("Kokkos_ENABLE_TESTS", self.run_tests))
 
         self.append_args("ENABLE", self.devices_variants.keys(), options)
         self.append_args("ENABLE", self.options_variants.keys(), options)

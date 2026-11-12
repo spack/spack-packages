@@ -24,6 +24,7 @@ class Fish(CMakePackage):
     license("GPL-2.0-only")
 
     version("master", branch="master")
+    version("4.9.3", sha256="20998a25f73217ddcc19f499055fd587e9912d1ad6e7109120fbcf2871f0b98c")
     version("4.2.0", sha256="6c43be5a9274963c06ba4cd55a109dfcc4d5d3a8054ed0e0a3666388581ec252")
     version("4.1.2", sha256="52873934fc1ee21a1496e9f4521409013e540f77cbf29142a1b17ab93ffaafac")
     version("4.1.1", sha256="aaf567cac98aa92fed9db3280801e2de45306169c8915e0fff1a61c07e56d2c1")
@@ -41,9 +42,11 @@ class Fish(CMakePackage):
     version("3.6.0", sha256="97044d57773ee7ca15634f693d917ed1c3dc0fa7fde1017f1626d60b83ea6181")
     version("3.5.1", sha256="a6d45b3dc5a45dd31772e7f8dfdfecabc063986e8f67d60bd7ca60cc81db6928")
     version("3.4.1", sha256="b6f23b3843b04db6b0a90fea1f6f0d0e40cc027b4a732098200863f2864a94ea")
-    version("3.3.1", sha256="b5b4ee1a5269762cbbe993a4bd6507e675e4100ce9bbe84214a5eeb2b19fae89")
-    version("3.1.2", sha256="d5b927203b5ca95da16f514969e2a91a537b2f75bec9b21a584c4cd1c7aa74ed")
-    version("3.1.0", sha256="e5db1e6839685c56f172e1000c138e290add4aa521f187df4cd79d4eab294368")
+    with default_args(deprecated=True):
+        # https://github.com/fish-shell/fish-shell/security/advisories/GHSA-pj5f-6vxj-f5mq
+        version("3.3.1", sha256="b5b4ee1a5269762cbbe993a4bd6507e675e4100ce9bbe84214a5eeb2b19fae89")
+        version("3.1.2", sha256="d5b927203b5ca95da16f514969e2a91a537b2f75bec9b21a584c4cd1c7aa74ed")
+        version("3.1.0", sha256="e5db1e6839685c56f172e1000c138e290add4aa521f187df4cd79d4eab294368")
     version("3.0.0", sha256="ea9dd3614bb0346829ce7319437c6a93e3e1dfde3b7f6a469b543b0d2c68f2cf")
 
     variant("docs", default=False, description="Build documentation")
@@ -86,4 +89,7 @@ class Fish(CMakePackage):
         return url.format(version, ext)
 
     def cmake_args(self):
-        return [self.define_from_variant("BUILD_DOCS", "docs")]
+        if self.spec.satisfies("@4.3:"):
+            return [self.define_from_variant("WITH_DOCS", "docs")]
+        else:
+            return [self.define_from_variant("BUILD_DOCS", "docs")]

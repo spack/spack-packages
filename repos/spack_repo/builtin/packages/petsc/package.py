@@ -24,6 +24,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("3.26.1", sha256="a4dc46c1b4403545ac2274741ce10801366c4a9a7b2683b678d18f6663b93496")
     version("3.26.0", sha256="f5230023e6e22ee607802a13c82bc25f3d81e71654ad386a5b9bdff17fed93df")
     version("3.25.6", sha256="00ac91c7ae96eae6a39d7380c7e869c1c7ddbc0c64a23a0b5fd3442227c7cdb9")
     version("3.25.5", sha256="6d61c472db39006d261542d1a42f1fa6c52d6e89f9e77041386189aa8c24b490")
@@ -205,9 +206,6 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     variant("hwloc", default=False, description="Activates support for hwloc")
     variant("kokkos", default=False, description="Activates support for kokkos and kokkos-kernels")
     variant("fortran", default=True, description="Activates fortran support")
-    # Install-time footprint is dominated by ~8 k tutorial/example files.
-    # Give packagers a switch to trim them away (‘spack install petsc ~examples’)
-    # while preserving current behaviour by default.
     variant("examples", default=True, description="Install test and tutorial example sources")
     variant(
         "fortran-bindings", default=True, when="+fortran", description="Activates fortran bindings"
@@ -405,6 +403,11 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("kokkos-kernels", when="+kokkos")
     conflicts("kokkos@4.5:", when="@:3.22 +kokkos")
     conflicts("kokkos-kernels@4.5:", when="@:3.22 +kokkos")
+    conflicts(
+        "~openmp",
+        when="+kokkos ^kokkos+openmp",
+        msg="+kokkos with ^kokkos+openmp requires +openmp",
+    )
     for cuda_arch in CudaPackage.cuda_arch_values:
         depends_on(
             "kokkos+cuda+cuda_lambda cuda_arch=%s" % cuda_arch,

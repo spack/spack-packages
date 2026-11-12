@@ -13,14 +13,14 @@ class OneapiLevelZero(CMakePackage):
     Applications that need low-level control of a oneAPI level zero
     device link against the loader. The loader depends on a separately
     installed level zero driver. See
-    https://dgpu-docs.intel.com/technologies/level-zero.html for
-    information on how to install the driver.
+    https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2026-2/overview.html
+    for information on how to install the driver.
     """
 
-    homepage = "https://dgpu-docs.intel.com/technologies/level-zero.html"
-    url = "https://github.com/oneapi-src/level-zero/archive/refs/tags/v1.7.15.tar.gz"
+    homepage = "https://www.intel.com/content/www/us/en/docs/dpcpp-cpp-compiler/developer-guide-reference/2026-2/intel-oneapi-level-zero.html"
+    url = "https://github.com/oneapi-src/level-zero/archive/refs/tags/v1.35.0.tar.gz"
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     license("MIT")
 

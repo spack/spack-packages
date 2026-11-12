@@ -88,10 +88,8 @@ class Javafx(Package):
 
     maintainers("snehring")
 
-    extends("openjdk")
-
-    depends_on("openjdk@17:", when="@20:21")
-    depends_on("openjdk@11:", when="@17")
+    extends("java@17:", when="@20:21")
+    extends("java@11:", when="@17")
 
     conflicts("target=ppc64le:", msg="JavaFX is not available for ppc64le")
     conflicts("target=ppc64:", msg="JavaFX is not available for ppc64")
