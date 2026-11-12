@@ -158,9 +158,9 @@ class Vtk(CMakePackage):
     depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
 
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
-    depends_on("qt+opengl", when="@:9.6 +qt")
-    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.7: +qt")
-    depends_on("qt-declarative", when="@9.7: +qt")
+    depends_on("qt+opengl", when="@:9.4 +qt")
+    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.5: +qt")
+    depends_on("qt-declarative", when="@9.5: +qt")
 
     depends_on("boost", when="io=xdmf")
     depends_on("boost+mpi", when="io=xdmf +mpi")
@@ -213,8 +213,13 @@ class Vtk(CMakePackage):
 
     # VTK introduced Seacas IOSS dependency on 9.1
     with when("@9.1: io=ioss"):
-        depends_on("seacas+mpi", when="+mpi")
+        depends_on("seacas+mpi", when="+mpi platform=linux")
+        depends_on("seacas+mpi", when="+mpi platform=darwin")
         depends_on("seacas~mpi", when="~mpi")
+        # seacas executables use MPI but are linked without MPI libs on Windows
+        depends_on("seacas~mpi~tests", when="platform=windows")
+        # seacas CGNS parallel I/O includes the unix-only sys/select.h
+        depends_on("seacas~cgns", when="platform=windows")
         depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
         # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
         # and to be safe against other issues, make them build with this version only:
@@ -426,7 +431,7 @@ class Vtk(CMakePackage):
         if "darwin" in spec.architecture:
             cmake_args.extend(["-DCMAKE_MACOSX_RPATH=ON"])
 
-        if spec.satisfies("@9.7: +qt"):
+        if spec.satisfies("@9.5: +qt"):
             cmake_args.append(self.define("VTK_QT_VERSION", "6"))
 
         if "+qt" in spec:
