@@ -29,6 +29,7 @@ class Tau(Package):
     license("MIT")
 
     version("master", branch="master")
+    version("2.36", sha256="fc6b60fde6867e8b89a347cbe07160d781b555c18d749b30040580387a3a05f0")
     version("2.35.2", sha256="e3dfe11fc71198c2e43d9ad6b238c00711a30a071f48a7ba52b4a81bea694659")
     version("2.35.1", sha256="fee7c0ae49c370c23489b7c14b312af4611bb06cdb212464a2b0798721e9811f")
     version("2.35", sha256="b13c6a0579da59853f8e6482d5f3aaed482bc1306c4eb91411c1568f647bf348")

@@ -48,6 +48,8 @@ class Prrte(AutotoolsPackage):
     # both of which are included pre-built in tarballs.
     # https://github.com/openpmix/prrte/issues/2438
     depends_on("python@3.7:", type="build", when="@develop")
+    # Regenerate the embedded help table after restoring the 4.1.0 warning topics.
+    depends_on("python@3.7:", type="build", when="@=4.1.0")
 
     depends_on("pmix")
     depends_on("pmix@6.1:", when="@4.1:")
@@ -85,6 +87,8 @@ class Prrte(AutotoolsPackage):
     depends_on("pbs", when="schedulers=tm")
     depends_on("slurm", when="schedulers=slurm")
 
+    patch("restore-binding-warnings.patch", when="@=4.1.0")
+
     # fixes a segfault in v4.1.0 for some Apple ARM architectures
     # https://github.com/openpmix/prrte/pull/2417
     patch(
@@ -112,6 +116,18 @@ class Prrte(AutotoolsPackage):
         with working_dir(self.configure_directory):
             perl = spec["perl"].command
             perl("autogen.pl")
+
+        if spec.satisfies("@=4.1.0"):
+            # The generated C table does not depend on the help text in Makefile.am.
+            # Do not use --purge: 4.1.0's scanner misses the warning helper calls.
+            source = self.stage.source_path
+            spec["python"].command(
+                join_path(source, "src", "util", "prte-convert-help.py"),
+                "--root",
+                source,
+                "--out",
+                join_path(source, "src", "util", "prte_show_help_content.c"),
+            )
 
     def configure_args(self):
         spec = self.spec
