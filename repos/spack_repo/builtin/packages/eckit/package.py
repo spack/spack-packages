@@ -196,6 +196,8 @@ class Eckit(CMakePackage):
             # rsync support requires https://github.com/librsync/librsync and
             # will be added later:
             self.define("ENABLE_RSYNC", False),
+            # Disable shapefile support in eckit::geo (eckit >= 1.29):
+            self.define("ENABLE_GEO_AREA_SHAPEFILE", False),
             # Disable "prototyping code that may never see the light of day":
             self.define("ENABLE_SANDBOX", False),
             # Disable OpenFAM and mock implementation (eckit >= 2.2)
