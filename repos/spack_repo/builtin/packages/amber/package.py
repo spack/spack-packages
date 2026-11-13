@@ -182,6 +182,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     patch("nvhpc-boost.patch", when="@18:20 %nvhpc")
 
     patch("openmp26.patch", when="@26+openmp")
+    patch("ambertools-distutils.patch", when="@26:+python", working_dir="ambertools_tmpdir")
 
     variant("mpi", description="Build MPI executables", default=True)
     variant("openmp", description="Use OpenMP pragmas to parallelize", default=False)
