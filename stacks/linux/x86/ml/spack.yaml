@@ -1,21 +1,48 @@
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
+#
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
+# Maintainers:
+# - adamstewart
 spack:
   view: false
 
   include:
-  - ../../.ci/gitlab/
+  - ../base/spack.lock
+  # - ../../../.ci/gitlab/
+  - ../base/config/
+  - ../hpc-libs/config/
+  - ../gpu/config/
+
+  concretizer:
+    unify: when_possible
+    reuse:
+      from:
+      - type: environment
+        path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/base
+      - type: environment
+        path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/hpc-libs
+      - type: environment
+        path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/gpu
+
   packages:
     all:
-      target: ["x86_64_v3"]
+      target: [x86_64_v3]
       require:
       - target=x86_64_v3
     mpi:
-      require: openmpi
+      require:
+      - openmpi
     python:
-      require: "@3.13: target=x86_64_v3"
+      require:
+      - '@3.13: target=x86_64_v3'
     py-jaxlib:
-      require: "target=x86_64_v3 %c,cxx=clang"
+      require:
+      - target=x86_64_v3 %c,cxx=clang
     py-tensorflow:
-      require: "target=x86_64_v3 %c,cxx=clang"
+      require:
+      - one_of:
+        - target=x86_64_v3 ~rocm %c,cxx=clang
+        - target=x86_64_v3 +rocm %c,cxx=gcc
 
   definitions:
   - hugging_face_specs:
@@ -69,10 +96,10 @@ spack:
       packages:
         all:
           require:
-            - ~cuda
-            - ~rocm
+          - ~cuda
+          - ~rocm
         py-torch:
-          require: "target=x86_64_v3 %c,cxx=gcc"
+          require: target=x86_64_v3 %c,cxx=gcc
 
   - group: ml-linux-x86_64-cuda
     specs:
@@ -90,22 +117,22 @@ spack:
       packages:
         all:
           require:
-            - ~rocm
-            - +cuda
-            - cuda_arch=80
+          - ~rocm
+          - +cuda
+          - cuda_arch=80
         llvm:
           # https://github.com/spack/spack/issues/27999
           require:
-            - ~cuda
-            - target=x86_64_v3
+          - ~cuda
+          - target=x86_64_v3
         py-torch:
           require:
-            - target=x86_64_v3
-            - ~rocm
-            - +cuda
-            - cuda_arch=80
-            - ~flash_attention
-            - "%c,cxx=gcc"
+          - target=x86_64_v3
+          - ~rocm
+          - +cuda
+          - cuda_arch=80
+          - ~flash_attention
+          - '%c,cxx=gcc'
 
   - group: ml-linux-x86_64-rocm
     specs:
@@ -122,14 +149,14 @@ spack:
       packages:
         all:
           require:
-            - ~cuda
-            - +rocm
-            - amdgpu_target=gfx90a
+          - ~cuda
+          - +rocm
+          - amdgpu_target=gfx90a
         eigen:
           require:
           - ~rocm target=x86_64_v3
         gl:
-          require: "osmesa"
+          require: osmesa
         py-torch:
           require:
             - target=x86_64_v3

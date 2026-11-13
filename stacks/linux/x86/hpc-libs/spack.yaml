@@ -1,0 +1,151 @@
+spack:
+  include:
+    - ./config/
+    - ../base/config/
+
+  concretizer:
+    reuse:
+      from:
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/base
+        - type: environment
+          path: ${SPACK_CONCRETE_ENV_DIR}/linux/x86/gpu
+
+    unify: when_possible
+
+  packages:
+    all:
+      require:
+      - target=x86_64_v3
+
+    ###############################################################################################
+    # Using the Data and Vis Integration spec for core IO packages
+    # Extracted from https://github.com/DAV-SDK/davsdk/blob/main/spack/configs/packages.yaml
+    adios2:
+      require:
+        - +shared+mpi+python+sst+dataman+hdf5+zfp
+    hdf5:
+      require:
+        - +shared+mpi
+    parallel-netcdf:
+      require:
+        - +shared
+    ascent:
+      require:
+        - +adios2+openmp+mpi+python+shared+vtkh+test
+      conflict:
+        - "@develop"
+    conduit:
+      require:
+        - ~hdf5_compat
+    libcatalyst:
+      require:
+        - +mpi
+    ###############################################################################################
+
+    # Prefer intel-oneapi
+    ipp:
+      prefer:
+        - intel-oneapi-tbb
+    tbb:
+      prefer:
+        - intel-oneapi-tbb
+
+  definitions:
+    - intel-oneapi:
+      - intel-oneapi-dal
+      - intel-oneapi-tbb
+      - intel-oneapi-ipp
+
+    - mpi-gpu-aware:
+      - mpich
+      - openmpi
+      # - mvapich # TODO: Enable CUDA/ROCm variants
+
+    - intel-mpi:
+      - intel-oneapi-mpi
+      - intel-oneapi-ccl
+
+    - blas_lapack:
+      - openblas
+      - netlib-xblas
+      - netlib-lapack
+      - flexiblas
+
+    - scalapack:
+      - intel-oneapi-mkl
+      - matrix:
+        - - netlib-scalapack
+        - - ^openblas
+
+    - parallel-io:
+        - "hdf5@1.14"
+        - hdf5-vol-async
+        - hdf5-vol-cache
+        - hdf5-vol-log
+        - "hdf5@1.8" # Compatibility
+        - ascent
+        - adios2
+        - netcdf-c
+        - netcdf-cxx
+        - netcdf-fortran
+        - parallel-netcdf
+
+  specs:
+    - group: mpi-libs
+      specs:
+        - mvapich
+        - matrix:
+          - - $mpi-gpu-aware
+          - - ~cuda ~rocm
+        - $intel-mpi
+
+    - group: mpi-cuda
+      specs:
+        - matrix:
+          - - $mpi-gpu-aware
+          - - +cuda ~rocm
+          - - cuda_arch=80
+            - cuda_arch=90
+            - cuda_arch=100
+
+    - group: mpi-rocm
+      specs:
+        - matrix:
+          - - $mpi-gpu-aware
+          - - ~cuda +rocm
+          - - amdgpu_target=gfx90a
+
+    - group: blas-libs
+      specs:
+        - $blas_lapack
+
+    - group: mpich-abi
+      needs: [mpi-libs, blas-libs]
+      specs:
+        - matrix:
+          - - $parallel-io
+            - $scalapack
+          - - ^mpich
+        - mpich
+
+      override:
+        packages:
+          mpi:
+            prefer:
+            - mpich
+
+    - group: openmpi-abi
+      needs: [mpi-libs, blas-libs]
+      specs:
+        - matrix:
+          - - $parallel-io
+            - $scalapack
+          - - ^openmpi
+        - openmpi
+
+      override:
+        packages:
+          mpi:
+            prefer:
+            - openmpi
