@@ -31,6 +31,7 @@ class Hip(ROCmLibrary, CMakePackage):
         (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
 
+    version("10.1.0", sha256="31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19")
     version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
     version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")
@@ -83,13 +84,15 @@ class Hip(ROCmLibrary, CMakePackage):
     test_requires_compiler = True
 
     with when("+rocm"):
+        # OpenGL is required at build time (FindOpenGL) by rocclr
+        # and can be used at runtime (dlopen) for finding hip devices.
+        # Newer versions of HIP (at least 7.14) link against it but older (5.7)
+        # do not.
         depends_on("gl@4.5:")
         depends_on("py-cppheaderparser", type="build")
         depends_on("libx11", when="+asan")
         depends_on("xproto", when="+asan")
-        # hipcc likes to add `-lnuma` by default :(
-        # ref https://github.com/ROCm/HIP/pull/2202
-        depends_on("numactl")
+        depends_on("numactl")  # required by rocr-runtime
 
         for ver in [
             "5.7.0",
@@ -134,6 +137,7 @@ class Hip(ROCmLibrary, CMakePackage):
             "7.13.0",
             "7.14.0",
             "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
             depends_on(f"comgr@{ver}", when=f"@{ver}")
@@ -169,6 +173,7 @@ class Hip(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hipcc@{ver}", when=f"@{ver}")
 
@@ -194,6 +199,7 @@ class Hip(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"rocprofiler-register@{ver}", when=f"@{ver}")
 

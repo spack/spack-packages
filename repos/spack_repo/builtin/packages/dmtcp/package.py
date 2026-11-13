@@ -20,6 +20,11 @@ class Dmtcp(AutotoolsPackage):
 
     maintainers("karya0")
     version("main", branch="main")
+    version(
+        "4.2.0",
+        sha256="043410566fd7c09f21e0ec485cf72e9481722629ea877650142b7505e0d7f2d2",
+        url="https://github.com/dmtcp/dmtcp/archive/refs/tags/v4.2.0.tar.gz",
+    )
     version("3.2.0", sha256="d6954423769027ecfdcc4ff7e382d01974f64aa395a90775276f65df81117d55")
     version("3.0.0", sha256="2c7e95e1dbc55db33433bfee48a65f274298e98f246a36ab6dad1e0694750d37")
     version("2.6.0", sha256="3ed62a86dd0cb9c828b93ee8c7c852d6f9c96a0efa48bcfe867521adf7bced68")

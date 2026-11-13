@@ -20,26 +20,52 @@ class PyFilelock(PythonPackage):
     license("Unlicense", when="@:3.22")
     license("MIT", when="@3.23:")
 
-    version("3.29.1", sha256="d97e6b1b9757569626c58caa07dc4beb1613f4a2938b1e8cc81afca398906c9e")
-    version("3.29.0", sha256="69974355e960702e789734cb4871f884ea6fe50bd8404051a3530bc07809cf90")
-    version("3.25.2", sha256="b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694")
-    version("3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58")
-    version("3.12.4", sha256="2e6f249f1f3654291606e046b09f1fd5eac39b360664c27f5aad072012f8bcbd")
-    version("3.12.0", sha256="fc03ae43288c013d2ea83c8597001b1129db351aad9c57fe2409327916b8e718")
-    version("3.8.0", sha256="55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc")
-    version("3.5.0", sha256="137b661e657f7850eec9def2a001efadba3414be523b87cd3f9a037372d80a15")
-    version("3.4.0", sha256="93d512b32a23baf4cac44ffd72ccf70732aeff7b8050fcaf6d3ec406d954baf4")
-    version("3.0.12", sha256="18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59")
-    version("3.0.4", sha256="011327d4ed939693a5b28c0fdf2fd9bda1f68614c1d6d0643a89382ce9843a71")
-    version("3.0.3", sha256="7d8a86350736aa0efea0730e6a7f774195cbb1c2d61134c15f6be576399e87ff")
-    version("3.0.0", sha256="b3ad481724adfb2280773edd95ce501e497e88fa4489c6e41e637ab3fd9a456c")
-    version("2.0.13", sha256="d05079e7d7cae7576e192749d3461999ca6b0843d35b0f79f1fa956b0f6fc7d8")
-    version("2.0.12", sha256="eb4314a9a032707a914b037433ce866d4ed363fce8605d45f0c9d2cd6ac52f98")
-    version("2.0.11", sha256="e9e370efe86c30b19a2c8c36dd9fcce8e5ce294ef4ed6ac86664b666eaf852ca")
-    version("2.0.10", sha256="c73bf706d8a0c5722de0b745495fed9cda0e46c0eabb44eb18ee3f00520fa85f")
-    version("2.0.9", sha256="0f91dce339c9f25d6f2e0733a17e4f9a47b139dffda52619a0e61e013e5c6782")
-    version("2.0.8", sha256="7e48e4906de3c9a5d64d8f235eb3ae1050dfefa63fd65eaf318cc915c935212b")
+    version("4.2.4", sha256="c6d8663535e1650ee430507b4ffbac7b464dd64b7647ea0112a9f406499d163d")
+    with default_args(deprecated=True):
+        # https://github.com/tox-dev/filelock/security
+        version(
+            "3.29.1", sha256="d97e6b1b9757569626c58caa07dc4beb1613f4a2938b1e8cc81afca398906c9e"
+        )
+        version(
+            "3.29.0", sha256="69974355e960702e789734cb4871f884ea6fe50bd8404051a3530bc07809cf90"
+        )
+        version(
+            "3.25.2", sha256="b64ece2b38f4ca29dd3e810287aa8c48182bbecd1ae6e9ae126c9b35f1382694"
+        )
+        version(
+            "3.19.1", sha256="66eda1888b0171c998b35be2bcc0f6d75c388a7ce20c3f3f37aa8e96c2dddf58"
+        )
+        version(
+            "3.12.4", sha256="2e6f249f1f3654291606e046b09f1fd5eac39b360664c27f5aad072012f8bcbd"
+        )
+        version(
+            "3.12.0", sha256="fc03ae43288c013d2ea83c8597001b1129db351aad9c57fe2409327916b8e718"
+        )
+        version("3.8.0", sha256="55447caa666f2198c5b6b13a26d2084d26fa5b115c00d065664b2124680c4edc")
+        version("3.5.0", sha256="137b661e657f7850eec9def2a001efadba3414be523b87cd3f9a037372d80a15")
+        version("3.4.0", sha256="93d512b32a23baf4cac44ffd72ccf70732aeff7b8050fcaf6d3ec406d954baf4")
+        version(
+            "3.0.12", sha256="18d82244ee114f543149c66a6e0c14e9c4f8a1044b5cdaadd0f82159d6a6ff59"
+        )
+        version("3.0.4", sha256="011327d4ed939693a5b28c0fdf2fd9bda1f68614c1d6d0643a89382ce9843a71")
+        version("3.0.3", sha256="7d8a86350736aa0efea0730e6a7f774195cbb1c2d61134c15f6be576399e87ff")
+        version("3.0.0", sha256="b3ad481724adfb2280773edd95ce501e497e88fa4489c6e41e637ab3fd9a456c")
+        version(
+            "2.0.13", sha256="d05079e7d7cae7576e192749d3461999ca6b0843d35b0f79f1fa956b0f6fc7d8"
+        )
+        version(
+            "2.0.12", sha256="eb4314a9a032707a914b037433ce866d4ed363fce8605d45f0c9d2cd6ac52f98"
+        )
+        version(
+            "2.0.11", sha256="e9e370efe86c30b19a2c8c36dd9fcce8e5ce294ef4ed6ac86664b666eaf852ca"
+        )
+        version(
+            "2.0.10", sha256="c73bf706d8a0c5722de0b745495fed9cda0e46c0eabb44eb18ee3f00520fa85f"
+        )
+        version("2.0.9", sha256="0f91dce339c9f25d6f2e0733a17e4f9a47b139dffda52619a0e61e013e5c6782")
+        version("2.0.8", sha256="7e48e4906de3c9a5d64d8f235eb3ae1050dfefa63fd65eaf318cc915c935212b")
 
+    depends_on("python@3.11:", when="@4.1.1:", type=("build", "run"))
     depends_on("python@3.10:", when="@3.20:", type=("build", "run"))
     depends_on("python@3.9:", when="@3.17:", type=("build", "run"))
     depends_on("python@3.8:", when="@3.12.3:", type=("build", "run"))

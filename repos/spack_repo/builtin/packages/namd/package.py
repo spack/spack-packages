@@ -115,7 +115,10 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     # https://www.ks.uiuc.edu/Research/namd/2.13/features.html
     # https://www.ks.uiuc.edu/Research/namd/2.14/features.html
     depends_on("cuda@6.5.14:7.5.18", when="@2.12 +cuda")
-    depends_on("cuda@8.0.61:", when="@2.13: +cuda")
+    depends_on("cuda@8.0.61:11", when="@2.13:2.14 +cuda")
+    # https://www.ks.uiuc.edu/Research/namd/3.0/announce.html
+    depends_on("cuda@9.1:12", when="@3:3.0.3 +cuda")
+    depends_on("cuda@9.1:", when="@3.0.4: +cuda")
 
     def _copy_arch_file(self, lib):
         config_filename = "arch/{0}.{1}".format(self.arch, lib)

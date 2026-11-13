@@ -25,6 +25,7 @@ class HipifyClang(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/HIPIFY/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/HIPIFY/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.1.0", sha256="257f545d98e214599bdb372e40029f63ad2f5de6a6f890d27a4172d66d98f448")
     version("10.0.0", sha256="cd8c4722cddb4049ffb4240b3ad1aee85245abae4ccfac7d2d030e3546e72b46")
     version("7.14.0", sha256="3120249147bed499ddb6fbf8322698df574d7523f188fb02a032e2b940492af6")
     version("7.13.0", sha256="3fd97715dee4e21042472f8137dde8d1b5cd0573ff8eae1663ca407b843588b3")
@@ -96,6 +97,7 @@ class HipifyClang(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")

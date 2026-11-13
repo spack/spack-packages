@@ -14,6 +14,9 @@ ci:
         - cd ${CI_PROJECT_DIR}
       - fsutil 8dot3name set C:\ 0
       - . ${SPACK_CI_SPACK_ROOT}\share\spack\setup-env.ps1
+      # AWS runners mount E4S public key (verification), UO runners mount public/private (signing/verification)
+      - If (Test-Path -path C:\\key\e4s.gpg) { spack.ps1 gpg trust -y C:\\key\e4s.gpg }
+      # UO runners mount intermediate ci public key (verification), AWS runners mount public/private (signing/verification)
       - If (Test-Path -path C:\\key\intermediate_ci_signing_key.gpg) { spack.ps1 gpg trust -y C:\\key\intermediate_ci_signing_key.gpg }
       - If (Test-Path -path C:\\key\spack_public_key.gpg) { spack.ps1 gpg trust -y C:\\key\spack_public_key.gpg }
 

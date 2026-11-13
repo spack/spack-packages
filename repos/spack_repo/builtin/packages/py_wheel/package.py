@@ -62,4 +62,4 @@ class PyWheel(Package, PythonExtension):
         # To build wheel from source, you need setuptools and wheel already installed.
         # We get around this by using a pre-built wheel, see:
         # https://discuss.python.org/t/bootstrapping-a-specific-version-of-pip/12306
-        pip(*PythonPipBuilder.std_args(self), f"--prefix={prefix}", self.stage.archive_file)
+        pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", self.stage.archive_file)

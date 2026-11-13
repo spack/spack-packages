@@ -17,6 +17,8 @@ class Branson(CMakePackage):
     url = "https://github.com/lanl/branson/archive/0.82.tar.gz"
     git = "https://github.com/lanl/branson.git"
 
+    maintainers("alexrlongne")
+
     tags = ["proxy-app"]
 
     license("MIT")

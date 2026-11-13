@@ -18,6 +18,7 @@ class PyCylcRose(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("1.7.2", sha256="ec2ddcb410d65d233743e5646d0aa360bef7ff28aa89eac111a2f4365efccade")
     version("1.5.1", sha256="280449bc8d2bc0426468b13c0f0602e8ca231c690ece5444af5bd55f6be60284")
     with default_args(deprecated=True):
         version("1.4.2", sha256="d215e2b58fabde66a82f131088b8a3e5add7fab82b226a0b7aa3cc2079ff62e9")
@@ -34,6 +35,12 @@ class PyCylcRose(PythonPackage):
     with when("@1.4.2"):
         depends_on("py-metomi-rose@2.3", type=("build", "run"))
         depends_on("py-cylc-flow@8.3.5:8.3", type=("build", "run"))
+        depends_on("py-ansimarkup", type=("build", "run"))
+
+    with when("@1.7"):
+        depends_on("python@3.12:", type=("build", "run"))
+        depends_on("py-metomi-rose@2.6:2.7", type=("build", "run"))
+        depends_on("py-cylc-flow@8.6", type=("build", "run"))
         depends_on("py-ansimarkup", type=("build", "run"))
 
     with when("@1.5.1"):

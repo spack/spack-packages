@@ -23,6 +23,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
 
     rocm_url_map = [(None, "https://github.com/ROCm/hipfort/archive/rocm-{0}.tar.gz")]
 
+    version("10.1.0", sha256="13ab80ea91183f36d37c16ca21a5bf685bec7bfa9912212778e5558ca8a86310")
     version("10.0.0", sha256="ba79c33ba7d22c97e39d57ef3839c0fada164d8d6dd936fd9ddb35a5909d4d81")
     version("7.14.0", sha256="1e062c9899ec8cdb7e8a889f4d043871d843449f938985f22ed92933afd54c31")
     version("7.2.3", sha256="21cb7049a1696a3f91666e5dcae184c496846c26618da3263affb7659fa659f5")
@@ -52,8 +53,8 @@ class Hipfort(ROCmLibrary, CMakePackage):
     version("5.7.0", sha256="57b04d59f61683a1b141d6d831d10c9fdecea483991ec02d14c14e441e935c05")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
     depends_on("cmake@3.18:", type="build", when="@7.0:")
     depends_on("cmake@3.5:", type="build", when="@6.3:6.4")
     depends_on("cmake@3.0.2:", type="build")
@@ -90,6 +91,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
         "7.2.3",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hip@{ver}", type="build", when=f"@{ver}")
 

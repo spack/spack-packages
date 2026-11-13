@@ -15,12 +15,16 @@ class Paraconf(CMakePackage):
     git = "https://github.com/pdidev/paraconf.git"
     url = "https://github.com/pdidev/paraconf/archive/1.0.3.tar.gz"
 
-    license("MIT", when="@1.0.2:")
-    license("BSD-3-Clause", when="@:1.0.1")
+    license("MIT", when="@1.0.3:")
+    license("BSD-3-Clause", when="@:1.0.2")
 
     maintainers("jbigot")
 
     version("develop", branch="main", no_cache=True)
+    version("1.2.1", sha256="2ff116724fe11643684996fefeef9d02ef302956b92cbc3130756376d78736f6")
+    version("1.2.0", sha256="0eacef94a5d4b3b0b0dc5503d18ecebd452ed41c9e4a5b19904984bbf0b72d40")
+    version("1.1.1", sha256="60dbe8d72c5226258aa3308fd830e29504b25b587f642e428962d7023e8088d8")
+    version("1.1.0", sha256="382db6a36a3e22d64abeccd4483aadae2d1dfaf9b1aac99fb1320e46ccbb147e")
     version("1.0.4", sha256="aa27493f7a256fe13a72d0ce85a2e6118a34dba67d96c0c74bd4fe68a82bdfba")
     version("1.0.3", sha256="462c487b1c9681ad0fd04cde611a9b9d969c3ab2504e2573c5ca88d1b7afa203")
     version("1.0.2", sha256="063c7e180c91f06543c4e05de39380882c05d1bd64881177b3b11ee831018a6f")
@@ -82,12 +86,13 @@ class Paraconf(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build", when="@1.0.3 +example")
+    depends_on("cxx", type="build", when="@1.2: +tests")
     depends_on("fortran", type="build", when="+fortran")
 
     depends_on("cmake@3.5:", type=("build"))
     depends_on("cmake@3.10:", type=("build"), when="@1.0.1:")
     depends_on("cmake@3.22:", type=("build"), when="@1.0.2:")
-    depends_on("pkgconfig", type=("build", "link"))
+    depends_on("pkgconfig", type=("build", "run"))
     depends_on("libyaml@0.1.7:", type=("link", "run"))
     depends_on("libyaml@0.2.2:", type=("link", "run"), when="@1.0.2:")
 

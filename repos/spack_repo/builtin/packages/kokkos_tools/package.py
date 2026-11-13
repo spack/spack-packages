@@ -16,7 +16,7 @@ class KokkosTools(CMakePackage):
         "https://github.com/kokkos/kokkos-tools/releases/download/5.2.0/kokkos-tools-5.2.0.tar.gz"
     )
 
-    maintainers("jennfshr", "vlkale", "rbberger")
+    maintainers("jennfshr", "rbberger", "JBludau")
     license("Apache-2.0 WITH LLVM-exception")
 
     version("develop", branch="develop")
