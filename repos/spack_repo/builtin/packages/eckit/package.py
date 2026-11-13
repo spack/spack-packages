@@ -133,6 +133,7 @@ class Eckit(CMakePackage):
 
     depends_on("jemalloc", when="+jemalloc")
 
+    # eckit 1.28.6 decreased the minimum PROJ version from 9.2 to 9.1.1
     depends_on("proj@9.1.1:", when="+proj")
     depends_on("proj@9.2:", when="@:1.28.5 +proj")
 
