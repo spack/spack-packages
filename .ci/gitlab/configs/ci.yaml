@@ -11,7 +11,8 @@ ci:
       before_script-:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - - touch ${SPACK_USER_CACHE_PATH}/cache/*/*  # bump mtime of cache so it is not invalidated
+      # Refresh restored cache entries; an empty cache is valid on the first run.
+      - - find "${SPACK_USER_CACHE_PATH}/cache" -type f -exec touch {} +
       - - spack env activate --without-view ${SPACK_CONCRETE_ENV_DIR}
         - spack repo list
         - spack compiler list
@@ -26,13 +27,8 @@ ci:
         - spack config blame mirrors
         - spack spec "/${SPACK_JOB_SPEC_DAG_HASH}"
       - - spack --color=always ci rebuild -j ${SPACK_BUILD_JOBS} --tests --timeout 300 > >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_out.txt) 2> >(tee ${SPACK_ARTIFACTS_ROOT}/user_data/pipeline_err.txt >&2)
-      after_script:
       - - cat /proc/loadavg || true
         - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-      - - time ${SPACK_CI_SPACK_ROOT}/bin/spack python ${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/aggregate_package_logs.spack.py
-          --prefix /home/software/spack:${CI_PROJECT_DIR}/opt/spack
-          --log install_times.json
-          ${SPACK_ARTIFACTS_ROOT}/user_data/install_times.json || true
       variables:
         CI_JOB_SIZE: "default"
         SPACK_BUILD_JOBS: "4"
@@ -142,23 +138,33 @@ ci:
       after_script:: []
 
   - any-job:
+      id_tokens:
+        SITE_ID_TOKEN:
+          aud: https://gitlab.spack.io
       tags: ["spack"]
       image: "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18"
       variables:
         # Disable local configs to avoid issues on shell runners
         SPACK_DISABLE_LOCAL_CONFIG: "1"
-        REMOTE_SCRIPT_CLONE_SPACK_SHA256: da9ce276f9c0fbcaaa78a90c6047588fc468a7d945e9b199309bfb8edf2c5190
-        REMOTE_SCRIPT_REF: e1c30b77cd582a0aed5ff432a31fc1202427c80c
       before_script:
-      - - export SPACK_USER_CACHE_PATH="${CI_PROJECT_DIR}/tmp/_user_cache/"
+      - - export SPACK_CI_SHARED_PROJECT_DIR="${CI_PROJECT_DIR}"
+        - CI_PROJECT_DIR=$(mktemp -d /tmp/spack-ci.XXXXXXXXXX)
+        - export CI_PROJECT_DIR
+        - cd "${CI_PROJECT_DIR}"
+        - export CI_PROJECT_DIR="$(pwd -P)"
       - - uname -a || true
         - grep -E "vendor|model name" /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
         - nproc || true
-      # Clone the other repo
-      - - curl -LSsO https://raw.githubusercontent.com/spack/spack-packages/$REMOTE_SCRIPT_REF/.ci/gitlab/scripts/common/clone_spack.sh
-        - echo "$REMOTE_SCRIPT_CLONE_SPACK_SHA256  clone_spack.sh" > digest.txt
-        - sha256sum -c digest.txt
-        - sh clone_spack.sh
-      - - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
+      # Check out both repositories locally, retaining the layout used by dotenv.
+      - - git init "${CI_PROJECT_DIR}"
+        - git -C "${CI_PROJECT_DIR}" config remote.origin.url "${CI_REPOSITORY_URL}"
+        - git -C "${CI_PROJECT_DIR}" fetch --depth 2 origin "${CI_COMMIT_SHA}"
+        - git -C "${CI_PROJECT_DIR}" checkout --force FETCH_HEAD
+      - - git init .ci/tmp/spack
+        - git -C .ci/tmp/spack config remote.origin.url "https://github.com/${SPACK_CHECKOUT_REPO}.git"
+        - git -C .ci/tmp/spack fetch --depth 2 origin "${SPACK_CHECKOUT_VERSION}"
+        - git -C .ci/tmp/spack checkout --force FETCH_HEAD
+      - - . "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts/common/local_workspace.sh"
+        - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
         - spack --version
         - spack arch
