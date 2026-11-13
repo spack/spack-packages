@@ -29,4 +29,5 @@ class PyCloudpickle(PythonPackage):
     depends_on("python@3.8:", type=("build", "run"), when="@3:")
     depends_on("python@:3.13", type=("build", "run"), when="@:3.0")
     depends_on("py-setuptools", type="build", when="@:2")
-    depends_on("py-flit-core", type="build", when="@3:")
+    # https://github.com/cloudpipe/cloudpickle/issues/597
+    depends_on("py-flit-core@:3", type="build", when="@3:")
