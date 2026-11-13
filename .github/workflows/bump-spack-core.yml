@@ -1,0 +1,100 @@
+name: bump-spack-core
+on:
+  schedule:
+    # Run every Sunday at 6:17 UTC
+    - cron: '17 6 * * 0'
+  # REMOVE: runs in the fork, where GITHUB_TOKEN can push to the PR branch
+  push:
+    branches:
+      - rk/ci/weekly-spack-core-bump
+  workflow_dispatch:
+
+# Default permissions for this workflow are restrictive; the PR is pushed/opened with the spackbot app token.
+permissions:
+  # contents: read
+  # REMOVE
+  contents: write
+
+concurrency:
+  group: bump-spack-core
+  cancel-in-progress: false
+
+jobs:
+  bump:
+    if: github.repository == 'spack/spack-packages'
+    runs-on: ubuntu-latest
+    env:
+      # BUMP_BRANCH: ci/bump-spack-core
+      # REMOVE
+      BUMP_BRANCH: ${{ github.ref_name }}
+    steps:
+      # - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510  # v3.3.0
+      #   id: generate-spackbot-token
+      #   with:
+      #     client-id: ${{ secrets.SPACKBOT_TRIAGE_CLIENT_ID }}
+      #     private-key: ${{ secrets.SPACKBOT_TRIAGE_PRIVATE_KEY }}
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          # ref: develop
+          # token: ${{ steps.generate-spackbot-token.outputs.token }}
+          # REMOVE: commit on top of the PR branch instead of develop
+          ref: ${{ github.ref_name }}
+          token: ${{ github.token }}
+
+      - name: Find latest Spack develop commit
+        id: shas
+        run: |
+          source .ci/env
+          new_sha="$(git ls-remote "https://github.com/${SPACK_CHECKOUT_REPO}" refs/heads/develop | cut -f1)"
+          if [[ ! "${new_sha}" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "Failed to resolve develop of ${SPACK_CHECKOUT_REPO}: '${new_sha}'"
+            exit 1
+          fi
+          echo "repo=${SPACK_CHECKOUT_REPO}" >> "$GITHUB_OUTPUT"
+          echo "old=${SPACK_CHECKOUT_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "new=${new_sha}" >> "$GITHUB_OUTPUT"
+          echo "Current: ${SPACK_CHECKOUT_VERSION}"
+          echo "Latest:  ${new_sha}"
+
+      - name: Update .ci/env and open PR
+        if: steps.shas.outputs.old != steps.shas.outputs.new
+        env:
+          # GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
+          # APP_SLUG: ${{ steps.generate-spackbot-token.outputs.app-slug }}
+          # REMOVE
+          GH_TOKEN: ${{ github.token }}
+          APP_SLUG: github-actions
+          GH_REPO: ${{ github.repository }}
+          SPACK_REPO: ${{ steps.shas.outputs.repo }}
+          OLD_SHA: ${{ steps.shas.outputs.old }}
+          NEW_SHA: ${{ steps.shas.outputs.new }}
+        run: |
+          sed -i "s/^SPACK_CHECKOUT_VERSION=.*/SPACK_CHECKOUT_VERSION=${NEW_SHA}/" .ci/env
+          git diff --exit-code .ci/env && { echo "No change to .ci/env"; exit 1; }
+
+          bot_user="${APP_SLUG}[bot]"
+          bot_id="$(gh api "/users/${bot_user}" --jq .id)"
+          git config user.name "${bot_user}"
+          git config user.email "${bot_id}+${bot_user}@users.noreply.github.com"
+
+          title="Bump Spack Core: ${OLD_SHA} to ${NEW_SHA}"
+          body="$(printf 'Routine core bump.\nChanges: https://github.com/%s/compare/%s...%s\n' "${SPACK_REPO}" "${OLD_SHA}" "${NEW_SHA}")"
+
+          git checkout -B "${BUMP_BRANCH}"
+          git commit -m "${title}" -m "${body}" .ci/env
+          # git push --force origin "${BUMP_BRANCH}"
+          # REMOVE: plain push so the workflow commits on the PR branch are kept
+          git push origin "${BUMP_BRANCH}"
+
+          # REMOVE: the fork token cannot edit the upstream PR, so just show what would be set
+          printf 'Would set PR title: %s\nWould set PR body:\n%s\n' "${title}" "${body}"
+          exit 0
+
+          # Reuse the PR from a previous week if it was never merged
+          pr="$(gh pr list --head "${BUMP_BRANCH}" --base develop --state open --json number --jq '.[0].number')"
+          if [ -n "${pr}" ]; then
+            gh pr edit "${pr}" --title "${title}" --body "${body}"
+          else
+            gh pr create --base develop --head "${BUMP_BRANCH}" --title "${title}" --body "${body}"
+          fi
