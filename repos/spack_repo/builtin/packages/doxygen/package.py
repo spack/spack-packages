@@ -164,6 +164,7 @@ class Doxygen(CMakePackage):
 
     def cmake_args(self):
         return [
+            self.define("BISON_EXECUTABLE", self.spec["bison"].prefix.bin.bison),
             self.define("use_sys_spdlog", self.spec.satisfies("@1.9.8:")),
             self.define("use_sys_sqlite3", self.spec.satisfies("@1.10:")),
             self.define("use_sys_fmt", self.spec.satisfies("@1.14:")),
