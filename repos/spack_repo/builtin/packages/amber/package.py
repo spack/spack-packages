@@ -404,7 +404,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             self.define_from_variant("CUDA", "cuda"),
         ]
 
-        external = ["netcdf", "netcdf-fortran", "arpack", "fftw"]
+        external = ["netcdf", "netcdf-fortran", "arpack", "fftw", "mpi4py"]
 
         args.append(self.define("NetCDF_INCLUDES_F90", netcdf_f.prefix.include))
         args.append(self.define("NetCDF_LIBRARIES_F90", netcdf_f.libs[0]))
