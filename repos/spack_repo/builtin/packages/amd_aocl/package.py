@@ -49,18 +49,6 @@ class AmdAocl(BundlePackage):
     requires("^[virtuals=scalapack] aocl-scalapack")
     requires("^[virtuals=lapack] aocl-lapack")
     requires("^[virtuals=blas] aocl-blas")
-    # These are deprecated aliases of aocl-blas and aocl-lapack. Requesting one
-    # alongside the canonical dependency installs two copies of the same library.
-    conflicts(
-        "^amdblis",
-        when="^aocl-blas",
-        msg="use aocl-blas; amdblis is a deprecated alias",
-    )
-    conflicts(
-        "^amdlibflame",
-        when="^aocl-lapack",
-        msg="use aocl-lapack; amdlibflame is a deprecated alias",
-    )
 
     with when("+openmp"):
         depends_on("aocl-blas threads=openmp")

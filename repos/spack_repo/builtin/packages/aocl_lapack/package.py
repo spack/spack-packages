@@ -111,6 +111,10 @@ class AoclLapack(CMakePackage, LibflameBase):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    # LibflameBase depends on the blas virtual with no provider. A direct
+    # depends_on("aocl-blas") does not bind that virtual, so pin the provider.
+    requires("^[virtuals=blas] aocl-blas")
+
     depends_on("python+pythoncmd", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 

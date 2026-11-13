@@ -70,18 +70,6 @@ class AoclSparse(CMakePackage):
     depends_on("aocl-lapack threads=openmp", when="+openmp")
     depends_on("aocl-blas threads=none", when="~openmp")
     depends_on("aocl-lapack threads=none", when="~openmp")
-    # These are deprecated aliases of aocl-blas and aocl-lapack. Requesting one
-    # alongside the canonical dependency installs two copies of the same library.
-    conflicts(
-        "^amdblis",
-        when="^aocl-blas",
-        msg="use aocl-blas; amdblis is a deprecated alias",
-    )
-    conflicts(
-        "^amdlibflame",
-        when="^aocl-lapack",
-        msg="use aocl-lapack; amdlibflame is a deprecated alias",
-    )
     depends_on("boost", when="+benchmarks")
     depends_on("boost", when="@2.2")
     depends_on("cmake@3.22:", when="@:5.0", type="build")
