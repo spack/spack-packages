@@ -22,6 +22,7 @@ class PyProteus(PythonPackage):
     license("MIT")
 
     version("main", branch="main")
+    version("1.9.1", tag="1.9.1", commit="2f4579ad5a714ad6c49e691932647dbfab27f3e2")
     version("1.9.0", commit="48f54a60c12b5d7e1456dba69d25800ae73c0444")
 
     variant("pumi", default=True, description="Enable PUMI mesh adaptation support")
