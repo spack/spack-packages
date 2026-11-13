@@ -273,7 +273,7 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("libx11", when="@26: +x11")
     depends_on("libxt", when="@26: +x11")
     depends_on("perl", type=("build", "run"), when="@26: +perl")
-    depends_on("python@3:", type=("build", "run"), when="@26: +python")
+    depends_on("python@3:3.12", type=("build", "run"), when="@26: +python")
     depends_on("py-numpy", type=("build", "run"), when="@26: +python")
     depends_on("py-scipy", type=("build", "run"), when="@26: +python")
     depends_on("py-matplotlib", type=("build", "run"), when="@26: +python")
