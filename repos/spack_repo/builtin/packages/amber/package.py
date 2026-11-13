@@ -250,7 +250,9 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("fftw-api@3", when="@26:")
     depends_on("fftw-api@3", when="@26:")
     depends_on("fftw@3 +mpi", when="@26: ^[virtuals=fftw-api] fftw")
-    depends_on("intel-oneapi-mkl +cluster", when="@26:+mkl+mpi ^[virtuals=fftw-apil] intel-oneapi-mkl")
+    depends_on(
+        "intel-oneapi-mkl +cluster", when="@26:+mkl+mpi ^[virtuals=fftw-apil] intel-oneapi-mkl"
+    )
     depends_on("cmake@3.8.1:", type="build", when="@26:")
     depends_on("netcdf-c", when="@26:")
     # MKL replaces BLAS/LAPACK when enabled.
@@ -325,19 +327,23 @@ class Amber(CMakePackage, Package, CudaPackage):
         env.set("AMBERHOME", self.prefix)
         if self.spec.satisfies("@:20 +cuda"):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib)
-            
+
             if self.spec.satisfies("+python"):
                 env.prepend_path("PYTHONPATH", join_path(self.python_lib_dir, "site-packages"))
 
-
     def patch(self):
-            if self.spec.satisfies("@26:"):
-                with working_dir("ambertools_tmpdir"):
-                    # remove add_subdirectory for non-existent directory
-                    filter_file("add_subdirectory(benchmarks)", "", "CMakeLists.txt", string=True)
-                    if self.spec.satisfies("+mpi"):
-                        # help the FindFFTW functions by telling them how to link to our mpi
-                        filter_file(r"(fftw_mpi_init FFTW_MPI_WORKS)", f"\\1 {self.spec['mpi'].libs.ld_flags}", join_path("cmake","jedbrown", "FindFFTW.cmake"))
+        if self.spec.satisfies("@26:"):
+            with working_dir("ambertools_tmpdir"):
+                # remove add_subdirectory for non-existent directory
+                filter_file("add_subdirectory(benchmarks)", "", "CMakeLists.txt", string=True)
+                if self.spec.satisfies("+mpi"):
+                    # help the FindFFTW functions by telling them how to link to our mpi
+                    filter_file(
+                        r"(fftw_mpi_init FFTW_MPI_WORKS)",
+                        f"\\1 {self.spec['mpi'].libs.ld_flags}",
+                        join_path("cmake", "jedbrown", "FindFFTW.cmake"),
+                    )
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
     """Amber 26+ (PMEMD-only source distribution)."""
@@ -351,8 +357,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
     @run_before("cmake")
     def merge_ambertools(self):
-        """Overlay the AmberTools26 resource onto the pmemd26 source tree.
-        """
+        """Overlay the AmberTools26 resource onto the pmemd26 source tree."""
         root = self.pkg.stage.source_path
         tools = join_path(root, "ambertools_tmpdir")
         for dirpath, _, filenames in os.walk(tools):
