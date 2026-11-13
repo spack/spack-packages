@@ -20,6 +20,7 @@ class Metkit(CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.22.0", sha256="0850be0098515ba468663248072773ca444fe82e2451b9c32a84e99719ff6b64")
     version("1.17.0", sha256="0fb4cae8cf440f6589b426cbddf8fd37434bc59e178b34df6b7633bfdbb47de3")
     version(
         "1.16.3-levelist",
@@ -58,6 +59,7 @@ class Metkit(CMakePackage):
 
     depends_on("eccodes@2.5:", when="+grib")
     depends_on("eccodes@2.27:", when="@1.10.2: +grib")
+    depends_on("eccodes@2.46:", when="@1.18: +grib")
 
     depends_on("odc", when="+odb")
 
