@@ -673,7 +673,13 @@ class MakefileBuilder(makefile.MakefileBuilder):
         with working_dir(self.build_directory):
             # Due to the verbosity of the command line and number of object
             # files created, we suppress makefile command echoing via `-s`.
-            make("-s", *self.make_defs)
+            # A bare "make" builds "all", which includes the test suite, so tests
+            # run (and can fail the build) outside the run_tests hooks below.
+            # Build the library targets one at a time: as three goals of one
+            # make they race in "ar" ("error reading zlatm5.o: file truncated").
+            # See https://github.com/spack/spack-packages/issues/6278
+            for target in ("libs", "netlib", "shared"):
+                make("-s", target, *self.make_defs)
 
     def edit(self, pkg, spec, prefix):
         # https://github.com/spack/spack-packages/pull/5883#issuecomment-5189054355
