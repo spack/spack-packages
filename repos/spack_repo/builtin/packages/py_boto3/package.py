@@ -15,6 +15,7 @@ class PyBoto3(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.43.126", sha256="5fda4a3dd2782c134a01d1678911962c2860dd8de8cd10bef168ba1507b371a9")
     version("1.43.17", sha256="8cf48babdd52ff0e2d891dc661143780b361d3776a3be06cd719da0696995074")
     version("1.42.85", sha256="1cd3dcbfaba85c6071ba9397c1804b6a94a1a97031b8f1993fdba27c0c5d6eba")
     version("1.40.64", sha256="b92d6961c352f2bb8710c9892557d4b0e11258b70967d4e740e1c97375bcd779")
@@ -47,6 +48,7 @@ class PyBoto3(PythonPackage):
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):
+        depends_on("py-botocore@1.43.126:1.43", when="@1.43.126")
         depends_on("py-botocore@1.43.17:1.43", when="@1.43.17")
         depends_on("py-botocore@1.42.85:1.42", when="@1.42.85")
         depends_on("py-botocore@1.40.64:1.40", when="@1.40.64")
@@ -68,7 +70,8 @@ class PyBoto3(PythonPackage):
         depends_on("py-jmespath@0.7.1:1")
         depends_on("py-jmespath@0.7.1:0", when="@:1.20")
 
-        depends_on("py-s3transfer@0.18", when="@1.43:")
+        depends_on("py-s3transfer@0.19", when="@1.43.31:")
+        depends_on("py-s3transfer@0.18", when="@1.43:1.43.30")
         depends_on("py-s3transfer@0.16", when="@1.42:1.42")
         depends_on("py-s3transfer@0.14", when="@1.40.27:1.41.0")
         depends_on("py-s3transfer@0.10", when="@1.34.6:1.35")

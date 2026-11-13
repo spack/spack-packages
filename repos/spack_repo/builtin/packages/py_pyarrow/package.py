@@ -71,6 +71,8 @@ class PyPyarrow(PythonPackage):
         depends_on("py-cython@0.29.22:", when="@8:")
         depends_on("py-cython@0.29:", when="@0.15:")
 
+        # https://github.com/apache/arrow/pull/49161
+        depends_on("py-cython@:3.2", when="@:22")
         # https://github.com/cython/cython/commit/4d8a3c9701ec78d08cd7923e3936d191d036f0e9
         depends_on("py-cython@:3.0", when="@:16")
         depends_on("py-cython@:2", when="@:13")
