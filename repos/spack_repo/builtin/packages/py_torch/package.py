@@ -292,7 +292,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     patch("fj-ssl2_1.11.patch", when="^fujitsu-ssl2")
 
     # https://github.com/pytorch/pytorch/pull/188263
-    patch("air_gapped_nnpack_cmake_2.12.patch", when="@2.12:2.14")
+    patch("air_gapped_nnpack_cmake_2.12.patch", when="@2.12:2.15")
     patch("air_gapped_nnpack_cmake_2.11.patch", when="@:2.11")
 
     # Backport the generic environment forwarding fix from PyTorch PR 188242.
