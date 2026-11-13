@@ -30,6 +30,7 @@ class Pdi(CMakePackage):
     # and the last patch version of the previous 2 minors
     # all the rest is marked as deprecated
     version("develop", branch="main", no_cache=True)
+    version("1.13.0", sha256="77b3e71ff2cf92db30f849d7c4a49d68ab4fa8ef590d81b658eab8ac251be988")
     version("1.12.0", sha256="f0d2f63fb1b384e39e72cf48389edadf34c92efea22d88b18acae8df492c43aa")
     version("1.11.2", sha256="0334134e2f3c8b4663529e2d71843bb3d996f9d5a4494e7144d107467510d4a8")
     version(
@@ -42,7 +43,11 @@ class Pdi(CMakePackage):
         sha256="a3e5ed6f890a8599d67e1666a14a6c5b1084a0cbb8a748bf40fc53df47d39410",
         deprecated=True,
     )
-    version("1.10.1", sha256="f2409611310255360867e3c74d44e055f45c87071ef8881665ff30a7940e1449")
+    version(
+        "1.10.1",
+        sha256="f2409611310255360867e3c74d44e055f45c87071ef8881665ff30a7940e1449",
+        deprecated=True,
+    )
     version(
         "1.10.0",
         sha256="8bda1ed83bdb152a047a45a48f896466e7ebf5163030405c15dbfa4e2e788143",
@@ -89,7 +94,7 @@ class Pdi(CMakePackage):
         deprecated=True,
     )
 
-    variant("benchs", default=False, description="Build benchmarks")
+    variant("benchs", default=False, description="Build benchmarks", when="@:1.12")
     variant("docs", default=False, description="Build documentation")
     variant("tests", default=False, description="Build tests")
     variant("fortran", default=True, description="Enable Fortran support")
@@ -142,10 +147,12 @@ class Pdi(CMakePackage):
             f.write(f"{sbang_shebang_line()}\n{content}")
 
     def cmake_args(self):
-        return [
-            self.define_from_variant("BUILD_BENCHMARKING", "benchs"),
+        args = [
             self.define_from_variant("BUILD_DOCUMENTATION", "docs"),
             self.define_from_variant("BUILD_FORTRAN", "fortran"),
             self.define_from_variant("BUILD_PYTHON", "python"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
+        if self.spec.satisfies("@:1.12"):
+            args.append(self.define_from_variant("BUILD_BENCHMARKING", "benchs"))
+        return args
