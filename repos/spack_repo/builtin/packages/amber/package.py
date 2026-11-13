@@ -316,6 +316,10 @@ class Amber(CMakePackage, Package, CudaPackage):
         msg="Amber26 only builds an OpenMP pmemd together with MPI (pmemd.OMP.MPI)",
     )
 
+    @property
+    def python_lib_dir(self):
+        return join_path(self.prefix.lib, f"python{self.spec['python'].version.up_to(2)}")
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("AMBER_PREFIX", self.prefix)
         env.set("AMBERHOME", self.prefix)
