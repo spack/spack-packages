@@ -4,6 +4,7 @@
 
 import os
 import platform
+import re
 
 from spack_repo.builtin.build_systems.generic import Package
 
@@ -56,8 +57,18 @@ class Orca(Package):
         if sha_val:
             version(ver, sha256=sha_val, deprecated=packages.get("deprecated", False))
 
+    variant(
+        "bind_libs",
+        default=False,
+        when="platform=linux",
+        description="Link executables to their libraries by absolute path, instead of "
+        "searching for them in LD_LIBRARY_PATH on every launch",
+    )
+
     depends_on("libevent", type="run")
     depends_on("libpciaccess", type="run")
+    # patchelf 0.17.2 and unpatched 0.19.2 produce executables that crash in ld.so
+    depends_on("patchelf@0.19.1:", type="build", when="+bind_libs")
 
     # Map Orca version with the required OpenMPI version
     # OpenMPI@4.1.1 has issues in pmix environments, hence 4.1.2 here
@@ -109,8 +120,65 @@ class Orca(Package):
             mpirun_srun = join_path(os.path.dirname(__file__), "mpirun_srun.sh")
             install(mpirun_srun, prefix.bin.mpirun)
 
+    @property
+    def _library_dirs(self):
+        """Directories where the ORCA executables find their libraries without
+        bind_libraries, in LD_LIBRARY_PATH order"""
+        spec = self.spec
+        return [
+            spec["openmpi"].prefix.lib,
+            spec["libpciaccess"].prefix.lib,
+            spec["libevent"].prefix.lib,
+            self.prefix.bin,
+        ]
+
+    @when("~bind_libs")
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.prepend_path("LD_LIBRARY_PATH", self.prefix.bin)
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["libevent"].prefix.lib)
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["libpciaccess"].prefix.lib)
-        env.prepend_path("LD_LIBRARY_PATH", self.spec["openmpi"].prefix.lib)
+        for path in reversed(self._library_dirs):
+            env.prepend_path("LD_LIBRARY_PATH", path)
+
+    @run_after("install", when="+bind_libs")
+    def bind_libraries(self):
+        """Replace the library names in DT_NEEDED with absolute paths.
+
+        ORCA runs its executables very frequently, and each launch looks for every
+        library in the RPATH and LD_LIBRARY_PATH directories, which generates a lot of
+        metadata traffic on shared filesystems. The dynamic loader opens libraries
+        with an absolute path directly. The libraries they need in turn (e.g. those
+        of Open MPI) are added to the executables too, so they're already loaded when
+        requested by name."""
+        # Only bind libraries installed by Spack or found through the old
+        # LD_LIBRARY_PATH (e.g. an external openmpi), leave system libraries alone
+        prefixes = [self.prefix] + self._library_dirs
+        prefixes += [
+            dep.prefix
+            for dep in self.spec.traverse(root=False, deptype=("link", "run"))
+            if not dep.external
+        ]
+        prefixes = tuple(os.path.join(p, "") for p in prefixes)
+
+        ldd = which("ldd", required=True)
+        patchelf = which("patchelf", required=True)
+        env = {"LD_LIBRARY_PATH": ":".join(self._library_dirs)}
+        for name in sorted(os.listdir(self.prefix.bin)):
+            exe = join_path(self.prefix.bin, name)
+            if not os.path.isfile(exe) or os.path.islink(exe):
+                continue
+            out = ldd(exe, output=str, error=str, fail_on_error=False, extra_env=env)
+            libs = re.findall(r"^\s*(\S+) => (/\S+)", out, re.MULTILINE)
+            if not libs:
+                continue  # not a dynamic executable
+
+            needed = patchelf("--print-needed", exe, output=str).split()
+            args = []
+            for lib, path in libs:
+                if not path.startswith(prefixes):
+                    continue
+                if lib in needed:
+                    args.extend(["--replace-needed", lib, path])
+                else:
+                    args.extend(["--add-needed", path])
+            if not args:
+                continue
+            # The RPATH ($ORIGIN/lib) only holds ORCA libraries, which are bound now
+            patchelf(*args, "--remove-rpath", exe)

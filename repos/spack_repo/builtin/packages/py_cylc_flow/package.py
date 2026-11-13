@@ -18,6 +18,7 @@ class PyCylcFlow(PythonPackage):
 
     license("GPL-3.0-only")
 
+    version("8.6.6", sha256="1ed390e5ea58d50c487fe79cfb84edadf9b1f950daf19a00bafd105e68356bcc")
     version("8.6.4", sha256="ba65eee781b26986030ab2ab6bd44bed5c77f4164ae02f5b093b3e452cab35a7")
     version("8.5.4", sha256="3997e51bb31905027d96374e29d0e61eb84bd7dd816cd6c426eae3467a984bb2")
     version("8.4.2", sha256="6d0b3129c9779db764fc6e4b4c397a5b117accdf4e9089cd5edcd5023618aa17")

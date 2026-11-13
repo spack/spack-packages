@@ -13,10 +13,11 @@ class Composyx(CMakePackage):
 
     homepage = "https://gitlab.inria.fr/composyx/composyx"
     git = "https://gitlab.inria.fr/composyx/composyx.git"
-    url = "https://gitlab.inria.fr/api/v4/projects/52455/packages/generic/source/v1.4.1/composyx-1.4.1.tar.gz"
+    url = "https://gitlab.inria.fr/api/v4/projects/52455/packages/generic/source/v1.7.1/composyx-1.7.1.tar.gz"
     maintainers("fpruvost")
 
     version("main", branch="main", submodules=True)
+    version("1.7.1", sha256="832f68bb18aa4fee5422b3fbc57cc5896a44a90070236653e035c94e728adec6")
     version("1.4.1", sha256="7b51c1686aebefc8c2d704e07a13083a44d5862c09c7b3892d6982c6e133f300")
     version("1.4.0", sha256="8b8e29b80284c65ca0c18774628ddaeca503e8b0345e295c1f1f823607395818")
     version("1.3.1", sha256="738a69c5df2d146c3cba56df6730478b3d206b9dde898e6cc759c4cb5930aea7")

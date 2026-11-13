@@ -21,11 +21,11 @@ class IntelTbb(CMakePackage, MakefilePackage):
     """
 
     homepage = "https://www.threadingbuildingblocks.org/"
-    url_prefix = "https://github.com/oneapi-src/oneTBB/"
-    url = url_prefix + "archive/v2020.1.tar.gz"
-    git = "https://github.com/oneapi-src/oneTBB.git"
+    url_prefix = "https://github.com/uxlfoundation/oneTBB/"
+    url = url_prefix + "archive/v2023.2.0.tar.gz"
+    git = "https://github.com/uxlfoundation/oneTBB.git"
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     # Note: when adding new versions, please check and update the
     # patches, filters and url_for_version() below as needed.
@@ -122,6 +122,15 @@ class IntelTbb(CMakePackage, MakefilePackage):
     )
 
     variant("tm", default=True, description="Enable use of transactional memory on x86")
+
+    variant(
+        "tcm",
+        default=True,
+        description="Build the Thread Composability Manager",
+        when="@2023.2.0:",
+    )
+    # https://github.com/uxlfoundation/oneTBB/issues/2241
+    conflicts("+tcm", when="platform=darwin", msg="TCM does not support macOS")
 
     # Testing version ranges inside when clauses was fixed in e9ee9eaf.
     # See: #8957 and #13989.
@@ -220,6 +229,9 @@ class CMakeBuilder(cmake.CMakeBuilder, SetupEnvironment):
 
         if spec.satisfies("@2021.6.0:"):
             options.append(self.define_from_variant("TBB_ENABLE_IPO", "ipo"))
+
+        if spec.satisfies("@2023.2.0:"):
+            options.append(self.define_from_variant("TCM_BUILD", "tcm"))
 
         if spec.variants["cxxstd"].value != "default":
             options.append(self.define("CMAKE_CXX_STANDARD", spec.variants["cxxstd"].value))

@@ -105,4 +105,4 @@ class Tamaas(SConsPackage):
         scons("install-lib", *args)
 
         if spec.satisfies("+python"):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={prefix}", "build-release/python")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", "build-release/python")

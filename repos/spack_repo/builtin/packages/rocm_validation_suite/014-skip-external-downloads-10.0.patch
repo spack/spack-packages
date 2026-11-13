@@ -1,0 +1,36 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 1f705e4..a1b2c3d 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -556,6 +556,7 @@ endif()
+ 
+ ################################################################################
+ # mxDataGenerator Download
++if (NOT DEFINED MXDATAGENERATOR_INC_DIR)
+ configure_file(CMakeMXDataGeneratorDownload.cmake mxDataGenerator-download/CMakeLists.txt)
+   execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+       RESULT_VARIABLE result
+@@ -576,7 +577,6 @@ endif()
+   message(FATAL_ERROR "Config step for mxDataGenerator-src failed: ${result}")
+ endif()
+ 
+-if (NOT DEFINED MXDATAGENERATOR_INC_DIR)
+   set (MXDATAGENERATOR_INC_DIR "${CMAKE_BINARY_DIR}/mxDataGenerator-src/lib/include")
+   message ("MXDATAGENERATOR_INC_DIR ${MXDATAGENERATOR_INC_DIR}")
+ endif ()
+@@ -584,6 +584,7 @@ endif ()
+ 
+ ################################################################################
+ # TransferBench Download
++if (NOT DEFINED TRANSFERBENCH_INC_DIR)
+ configure_file(CMakeTransferBenchDownload.cmake TransferBench-download/CMakeLists.txt)
+ 
+ execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+@@ -600,7 +601,6 @@ endif()
+   message(FATAL_ERROR "Build step for TransferBench failed: ${result}")
+ endif()
+ 
+-if (NOT DEFINED TRANSFERBENCH_INC_DIR)
+   set (TRANSFERBENCH_INC_DIR "${CMAKE_BINARY_DIR}/TransferBench-src/src/header")
+   message ("TRANSFERBENCH_INC_DIR ${TRANSFERBENCH_INC_DIR}")
+ endif ()

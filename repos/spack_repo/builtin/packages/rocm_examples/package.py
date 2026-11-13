@@ -24,6 +24,9 @@ class RocmExamples(CMakePackage):
     license("MIT")
 
     version(
+        "10.1.0", branch="release/therock-10.1", commit="fa0d558d6f92107f54e242dd473f675bcf613e2a"
+    )
+    version(
         "10.0.0", branch="release/therock-10.0", commit="316a181036f180d20db40621945a2888539a9665"
     )
     version(
@@ -98,6 +101,7 @@ class RocmExamples(CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
@@ -138,6 +142,7 @@ class RocmExamples(CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
@@ -145,7 +150,7 @@ class RocmExamples(CMakePackage):
         depends_on(f"hipfft amdgpu_target={tgt}", when=f"@6.3.0: amdgpu_target={tgt}")
         depends_on(f"rocfft amdgpu_target={tgt}", when=f"@6.3.0: +rocm amdgpu_target={tgt}")
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0"]:
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
         depends_on(f"hip-tensor@{ver}", when=f"@{ver}")
         depends_on(f"rocwmma@{ver}", when=f"@{ver}")
@@ -161,6 +166,8 @@ class RocmExamples(CMakePackage):
     depends_on("hipsolver+cuda", when="+cuda")
     depends_on("hipblas+cuda", when="+cuda")
     depends_on("hipfft+cuda", when="@6.3: +cuda")
+
+    depends_on("libtiff", when="@10.1:")
 
     patch(
         "https://github.com/ROCm/rocm-examples/commit/669fc3e90ce95567464e80d7925f45cb525c81db.patch?full_index=1",
@@ -228,4 +235,6 @@ class RocmExamples(CMakePackage):
         # Disable rocDecode examples in 7.13 due to upstream path issues
         if self.spec.satisfies("@7.13:"):
             args.append(self.define("ROCM_EXAMPLES_ENABLE_ROCDECODE", False))
+        if self.spec.satisfies("@10.1:"):
+            args.append(self.define("CMAKE_DISABLE_FIND_PACKAGE_Tiff", True))
         return args
