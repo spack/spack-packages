@@ -60,7 +60,9 @@ class Doxygen(CMakePackage):
 
     variant("mscgen", default=False, description="Build with support for code graphs from mscgen.")
 
-    variant("libclang", default=False, description="Build with support for clang-assisted parsing.")
+    variant(
+        "libclang", default=False, description="Build with support for clang-assisted parsing."
+    )
 
     tags = ["build-tools"]
 
