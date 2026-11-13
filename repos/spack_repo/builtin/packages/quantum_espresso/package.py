@@ -77,6 +77,42 @@ class QuantumEspresso(CMakePackage, Package):
     with when("build_system=cmake"):
         depends_on("cmake@3.14.0:", type="build")
 
+        # QE's CMake clones these submodules at configure time, which fails offline.
+        # Stage them as git checkouts, as QE's external/initialize_external_repos.sh
+        # does. patch() fails the build if a release records different commits.
+        resource(
+            name="wannier90",
+            git="https://github.com/wannier-developers/wannier90.git",
+            commit="1d6b187374a2d50b509e5e79e2cab01a79ff7ce1",  # v3.1.0
+            destination="spack-submodules",
+            placement="wannier90",
+            when="@7.1:7",
+        )
+        resource(
+            name="devxlib",
+            git="https://gitlab.com/max-centre/components/devicexlib.git",
+            commit="a6b89ef77b1ceda48e967921f1f5488d2df9226d",  # 0.1.0
+            destination="spack-submodules",
+            placement="devxlib",
+            when="@7.1:7",
+        )
+        resource(
+            name="mbd",
+            git="https://github.com/libmbd/libmbd.git",
+            commit="82005cbb65bdf5d32ca021848eec8f19da956a77",  # 0.10.3
+            destination="spack-submodules",
+            placement="mbd",
+            when="@7.1:7.3",
+        )
+        resource(
+            name="mbd",
+            git="https://github.com/libmbd/libmbd.git",
+            commit="89a3cc199c0a200c9f0f688c3229ef6b9a8d63bd",
+            destination="spack-submodules",
+            placement="mbd",
+            when="@7.4:7",
+        )
+
     variant("libxc", default=False, description="Uses libxc")
     depends_on("libxc", when="+libxc")
     depends_on("libxc@5.1.2:~shared", when="@:7.5+libxc")
@@ -445,6 +481,25 @@ class QuantumEspresso(CMakePackage, Package):
 
     # gipaw.x will only be installed with cmake if the qe-gipaw version is >= 5c4a4ce.
     patch("gipaw-eccee44.patch", when="@7.2+gipaw build_system=cmake")
+
+    @when("@7.1:7 build_system=cmake")
+    def patch(self):
+        # The tarball has an empty external/<name> for each submodule, which a resource
+        # can't be placed over, so rename the staged checkouts onto them.
+        with open(join_path("external", "submodule_commit_hash_records")) as f:
+            recorded = {
+                name: commit for commit, name in (line.split() for line in f if line.strip())
+            }
+        git = which("git", required=True)
+        for name in ("wannier90", "devxlib", "mbd"):
+            staged = join_path("spack-submodules", name)
+            commit = git("-C", staged, "rev-parse", "HEAD", output=str).strip()
+            if commit != recorded.get(name):
+                raise InstallError(
+                    f"QE {self.version} records {name} at {recorded.get(name)}, but the "
+                    f"package stages {commit}: update the {name} resource in package.py"
+                )
+            rename(staged, join_path("external", name))
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
