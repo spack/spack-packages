@@ -325,6 +325,10 @@ class Amber(CMakePackage, Package, CudaPackage):
         env.set("AMBERHOME", self.prefix)
         if self.spec.satisfies("@:20 +cuda"):
             env.prepend_path("LD_LIBRARY_PATH", self.spec["cuda"].prefix.lib)
+            
+            if self.spec.satisfies("+python"):
+                env.prepend_path("PYTHONPATH", join_path(self.python_lib_dir, "site-packages"))
+
 
  def patch(self):
         if self.spec.satisfies("@26:"):
