@@ -325,7 +325,11 @@ class Rocblas(ROCmLibrary, CMakePackage):
                 )
 
         if "+tensile" in self.spec:
-            args.append(self.define("Tensile_COMPILER", env["HIPCXX"]))
+            args.append(
+                self.define(
+                    "Tensile_COMPILER", self.spec["llvm-amdgpu"].prefix + "/bin/amdclang++"
+                )
+            )
             args += [
                 self.define("Tensile_LOGIC", "asm_full"),
                 self.define("BUILD_WITH_TENSILE_HOST", "@3.7.0:" in self.spec),
