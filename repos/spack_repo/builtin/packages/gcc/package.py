@@ -233,8 +233,10 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         depends_on("flex", type="build")
         # dependencies required for git versions
         depends_on("m4@1.4.6:", type="build")
-        depends_on("automake@1.15.1:", type="build")
-        depends_on("autoconf@2.69:", type="build")
+        # Regenerating configure / Makefile.in requires exactly these versions (the case since
+        # GCC 9), see _GCC_AUTOCONF_VERSION in config/override.m4. Update when master moves on.
+        depends_on("automake@1.15.1", type="build")
+        depends_on("autoconf@2.69", type="build")
 
     depends_on("gmp@4.3.2:")
 

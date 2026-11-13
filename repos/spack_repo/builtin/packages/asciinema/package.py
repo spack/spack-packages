@@ -17,6 +17,7 @@ class Asciinema(CargoPackage):
     git = "https://github.com/asciinema/asciinema.git"
 
     license("GPL-3.0-or-later")
+    maintainers("CISSSCO")
 
     version("3.2.1", sha256="e7e49a09c664a76afc5bc25ca09871eb090bfbe68a2ddbc72750d3cb215d36f1")
     version("3.2.0", sha256="247c7c87481f38d7788c1fb1be12021c778676c0d0ab37e529ec528f87f487ce")

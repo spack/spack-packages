@@ -32,6 +32,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     tags = ["e4s"]
 
     version("main", branch="main")
+    version("2.15.0", tag="v2.15.0", commit="31a77fc9c0a7c6fff15a1ff58c743f53b1a9d457")
     version("2.14.1", tag="v2.14.1", commit="5c4886908584029761b579af026dcfb627c84070")
     version("2.14.0", tag="v2.14.0", commit="2b3ec34829036a65cd9d1398ea72a0167dc37470")
     version("2.13.0", tag="v2.13.0", commit="cf30153c4c131c8164ee7798e5022d810682e2cb")
@@ -52,9 +53,6 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     variant("fbgemm", default=True, description="Use FBGEMM (quantized 8-bit server operators)")
     variant("kineto", default=True, description="Use Kineto profiling library", when="@:2.10")
     variant(
-        "kineto", default=True, description="Use Kineto profiling library", when="@2.11: ~rocm"
-    )
-    variant(
         "kineto",
         default=False,
         description="Disable Kineto from 2.11 on ROCm",
@@ -69,13 +67,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         when="platform=darwin",
     )
     variant("nccl", default=True, description="Use NCCL", when="+cuda platform=linux")
-    variant("nccl", default=True, description="Use NCCL", when="@:2.10 +rocm platform=linux")
-    variant(
-        "nccl",
-        default=False,
-        description="Disable NCCL from 2.11 on rocm",
-        when="@2.11: +rocm platform=linux",
-    )
+    variant("nccl", default=True, description="Use NCCL", when="+rocm platform=linux")
     # Requires AVX2: https://discuss.pytorch.org/t/107518
     variant("nnpack", default=True, description="Use NNPACK", when="target=x86_64_v3:")
     variant("numa", default=True, description="Use NUMA", when="platform=linux")
@@ -104,8 +96,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     conflicts("+cuda+rocm")
     conflicts("+gloo+rocm")
-    conflicts("+rocm", when="@2.12:", msg="Rocm doesn't support py-torch 2.12+ releases")
-    conflicts("+tensorpipe", when="+rocm ^hip@:5.1", msg="TensorPipe not supported until ROCm 5.2")
+    conflicts("@2.12,2.14.0+nccl", when="+rocm", msg="ROCm 2.12 & 2.14.0 doesn't support NCCL")
 
     # https://github.com/pytorch/pytorch/issues/77811
     conflicts("+qnnpack", when="platform=darwin target=aarch64:")
@@ -131,8 +122,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.15", when="@2.13:")
-        depends_on("python@3.10:3.14", when="@:2.12")
+        depends_on("python@3.11:3.15", when="@2.15:")
+        depends_on("python@3.10:3.14", when="@:2.14")
 
     # pyproject.toml
     with default_args(type="build"):
@@ -141,6 +132,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("py-packaging")
         depends_on("py-pyyaml")
         depends_on("py-scikit-build-core@1:", when="@2.14:")
+        depends_on("py-typing-extensions@4.13:", when="@2.15:")
         depends_on("py-typing-extensions@4.10:")
         depends_on("py-six")
 
@@ -154,6 +146,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # METADATA Requires-Dist in wheel files
     with default_args(type="run"):
         depends_on("py-filelock")
+        depends_on("py-typing-extensions@4.13:", when="@2.15:")
         depends_on("py-typing-extensions@4.10:")
         depends_on("py-setuptools@77.0.3:", when="@2.13:")
         depends_on("py-setuptools@:81", when="@:2.12")
@@ -169,7 +162,8 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     # third_party
     depends_on("fp16@2020-05-14")
     depends_on("fxdiv@2020-04-17")
-    depends_on("nvtx@3.5.0", when="@2.14:")
+    depends_on("nvtx@3.6.0", when="@2.15:")
+    depends_on("nvtx@3.5.0", when="@2.14")
     depends_on("nvtx@3.3.0", when="@:2.13")
     # https://github.com/pytorch/pytorch/issues/60332
     # depends_on("xnnpack@2024-12-03", when="+xnnpack")
@@ -217,9 +211,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
     with when("+nccl+cuda"):
         depends_on("nccl@2.23:", when="@2.13:")
         depends_on("nccl@2.7:")
+    depends_on("magma+cuda", when="+magma+cuda")
+    depends_on("magma+rocm", when="+magma+rocm")
     # https://github.com/pytorch/pytorch/pull/178065
-    depends_on("magma@:2.9+cuda", when="+magma+cuda")
-    depends_on("magma@:2.9+rocm", when="+magma+rocm")
+    # https://github.com/pytorch/pytorch/pull/180388
+    depends_on("magma@:2.9+cuda", when="@:2.12+magma+cuda")
+    depends_on("magma@:2.9+rocm", when="@:2.12+magma+rocm")
     depends_on("numactl", when="+numa")
     depends_on("llvm-openmp@19:", when="+openmp %apple-clang")
     depends_on("valgrind", when="+valgrind")
@@ -237,7 +234,7 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("hiprand")
         depends_on("hipsolver")
         depends_on("rocm-core")
-        depends_on("amdsmi", when="@2.12")
+        depends_on("amdsmi", when="@2.12:")
         depends_on("rocfft")
         depends_on("rocblas")
         depends_on("miopen-hip")
@@ -247,8 +244,12 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("hipblaslt@7.0:")
         depends_on("rocminfo")
         depends_on("hipsparselt@7.0:")
-        depends_on("aotriton@0.11b", when="@2.11:")
+        depends_on("rocshmem@7.14:", when="@2.13:")
+        depends_on("hipblas-common@7.14:", when="@2.13:")
+        depends_on("hipfile@7.14:", when="@2.14:")
         depends_on("aotriton@0.10b", when="@:2.10")
+        depends_on("aotriton@0.11b", when="@2.11:2.12")
+        depends_on("aotriton@0.12b:", when="@2.13:")
 
     depends_on("mpi", when="+mpi")
     depends_on("ucc", when="+ucc")
@@ -316,6 +317,19 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
                 '"Roctracer include directory" FORCE)\n'
                 "endif()",
                 "cmake/public/LoadHIP.cmake",
+                string=True,
+            )
+
+        if self.spec.satisfies("+rocm @2.13:"):
+            # Unlike torch_cpu/torch_hip, torch_rocshmem has no dependency on the
+            # ATen codegen target even though its sources include ATen headers, so
+            # a parallel build can start compiling it before ATen/core/TensorBody.h
+            # is generated and fail with "file not found".
+            filter_file(
+                "add_library(torch_rocshmem SHARED ${TORCH_ROCSHMEM_SRCS})",
+                "add_library(torch_rocshmem SHARED ${TORCH_ROCSHMEM_SRCS})\n"
+                "        add_dependencies(torch_rocshmem ATEN_CPU_FILES_GEN_TARGET)",
+                "caffe2/CMakeLists.txt",
                 string=True,
             )
 
@@ -420,8 +434,10 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             env.set("TORCHINDUCTOR_CK_DIR", self.spec["composable-kernel"].prefix)
             env.set("AOTRITON_INSTALLED_PREFIX", self.spec["aotriton"].prefix)
             env.prepend_path("CPATH", self.spec["aotriton"].prefix.include)
-            if self.spec.satisfies("^hip@5.2.0:"):
-                env.set("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)
+            if self.spec.satisfies("@2.13:"):
+                env.prepend_path("CPATH", self.spec["hipblas-common"].prefix.include)
+                env.prepend_path("CPATH", self.spec["hipblaslt"].prefix.include)
+            env.set("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip)
 
         enable_or_disable("cudnn")
         if "+cudnn" in self.spec:

@@ -28,6 +28,7 @@ class Migraphx(ROCmLibrary, CMakePackage):
     ]
 
     license("MIT")
+    version("10.1.0", sha256="4d2bae69bbd1748bbbdc2030ee49285b48438cd3820418e465a5fec06c364c4a")
     version("10.0.0", sha256="f4e3e60230455f5c6edadf33b74b365640d958c70dde95ae6746814d3a5a1b56")
     version("7.14.0", sha256="9798b091a9660d5e7a889087956684416c43dabc4f315fd8937590b00d35034d")
     version(
@@ -141,13 +142,16 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"rocblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"miopen-hip@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"rocblas@{ver}", when=f"@{ver}")
+        depends_on(f"miopen-hip@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"rocblas amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
+        depends_on(f"miopen-hip amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     for ver in ["6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2", "6.2.0", "6.2.1", "6.2.4"]:
         depends_on(f"rocmlir@{ver}", when=f"@{ver}")
@@ -189,10 +193,13 @@ class Migraphx(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"hipblas@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
-            depends_on(f"hipblaslt@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"hipblas@{ver}", when=f"@{ver}")
+        depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"hipblas amdgpu_target={tgt}", when=f"@6.3.0: amdgpu_target={tgt}")
+        depends_on(f"hipblaslt amdgpu_target={tgt}", when=f"@6.3.0: amdgpu_target={tgt}")
 
     def patch(self):
         # rocm_add_version_resource is not available in rocm-cmake 10.0.0+

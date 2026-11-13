@@ -135,7 +135,7 @@ class PyDgl(CMakePackage, PythonExtension, CudaPackage):
 
     def install(self, spec, prefix):
         with working_dir("python"):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
 
         # Older versions do not install correctly
         if self.spec.satisfies("@:0.4.3"):

@@ -1,0 +1,433 @@
+diff -ruN a181/include/tdep-aarch64/libunwind_i.h b181/include/tdep-aarch64/libunwind_i.h
+--- a181/include/tdep-aarch64/libunwind_i.h	2024-02-20 11:54:51.000000000 -0800
++++ b181/include/tdep-aarch64/libunwind_i.h	2026-10-12 11:59:00.259223078 -0700
+@@ -333,4 +333,21 @@
+                               struct dwarf_reg_state *rs);
+ extern int tdep_getcontext_trace (unw_context_t *);
+ 
++typedef enum frame_record_location
++  {
++    NONE,           /* frame record creation has not been detected, use LR */
++    AT_SP_OFFSET,   /* frame record creation has been detected, but FP
++                       update not detected */
++    AT_FP,          /* frame record creation and FP update detected */
++  } frame_record_location_t;
++
++typedef struct frame_state
++  {
++    frame_record_location_t loc;
++    int32_t offset;
++  } frame_state_t;
++
++#define get_frame_state UNW_OBJ(get_frame_state)
++HIDDEN frame_state_t get_frame_state (unw_cursor_t *cursor);
++
+ #endif /* AARCH64_LIBUNWIND_I_H */
+diff -ruN a181/src/aarch64/Gstep.c b181/src/aarch64/Gstep.c
+--- a181/src/aarch64/Gstep.c	2024-02-20 11:54:51.000000000 -0800
++++ b181/src/aarch64/Gstep.c	2026-10-12 12:58:32.756946337 -0700
+@@ -150,20 +150,6 @@
+     }
+ }
+ 
+-typedef enum frame_record_location
+-  {
+-    NONE,           /* frame record creation has not been detected, use LR */
+-    AT_SP_OFFSET,   /* frame record creation has been detected, but FP
+-                       update not detected */
+-    AT_FP,          /* frame record creation and FP update detected */
+-  } frame_record_location_t;
+-
+-typedef struct frame_state
+-  {
+-    frame_record_location_t loc;
+-    int32_t offset;
+-  } frame_state_t;
+-
+ /* Recognise when a frame record storing FP+LR has been created and whether FP
+    has been updated to point to the frame record. For example:
+   4183d4:       a9bd7bfd        stp     x29, x30, [sp,#-48]!    <= FP+LR stored
+@@ -177,7 +163,7 @@
+   41844c:       a8c37bfd        ldp     x29, x30, [sp],#48      <= FP+LR retrieved
+   418450:       d65f03c0        ret
+ */
+-static frame_state_t
++frame_state_t
+ get_frame_state (unw_cursor_t *cursor)
+ {
+   struct cursor *c = (struct cursor *) cursor;
+@@ -400,7 +386,7 @@
+   unw_word_t proc_start_ip;
+   unw_word_t proc_end_ip;
+ 
+-  a = unw_get_accessors_int (c->as);
++  a = unw_get_accessors (c->as);
+   if (c->as->big_endian || !a->get_proc_ip_range)
+     {
+       return false;
+@@ -458,7 +444,7 @@
+ {
+   uint32_t size;
+   unw_addr_space_t as = dwarf->as;
+-  unw_accessors_t *a = unw_get_accessors_int (as);
++  unw_accessors_t *a = unw_get_accessors (as);
+   void *arg = dwarf->as_arg;
+   unw_word_t res_addr = sc_addr + LINUX_SC_RESERVED_OFF;
+ 
+diff -ruN a181/src/Makefile.am b181/src/Makefile.am
+--- a181/src/Makefile.am	2024-02-21 05:39:50.000000000 -0800
++++ b181/src/Makefile.am	2026-10-12 11:59:30.878619200 -0700
+@@ -31,6 +31,13 @@
+ COMMON_SO_LDFLAGS = $(LDFLAGS_NOSTARTFILES)
+ 
+ #
++# Base for internal headers and libraries. These will get built up through
++# various build option processing below.
++#
++noinst_HEADERS =
++noinst_LTLIBRARIES =
++
++#
+ # Which libraries to build and install
+ #
+ # Order is important here. The names of the libraries need to end up in reverse
+@@ -42,6 +49,7 @@
+ endif
+ if ARCH_AARCH64
+  lib_LTLIBRARIES += libunwind-aarch64.la
++ noinst_LTLIBRARIES += libunwind-arch-aarch64.la
+ endif
+ if ARCH_ARM
+  lib_LTLIBRARIES += libunwind-arm.la
+@@ -93,8 +101,12 @@
+  lib_LTLIBRARIES += libunwind-setjmp.la
+ endif
+ 
+-noinst_HEADERS =
+-noinst_LTLIBRARIES =
++#
++# A convenience library for the local libunwind, shared with various unit
++# tests to expose internal seams for testing.
++#
++noinst_LTLIBRARIES += libunwind-local.la
++libunwind_local_la_LIBADD =
+ 
+ if USE_ELF32
+ libunwind_elf_libs = libunwind-elf32.la
+@@ -216,7 +228,8 @@
+ 	$(libunwind_libadd)
+ 
+ ### libunwind:
+-libunwind_la_LIBADD =
++libunwind_la_SOURCES =
++libunwind_la_LIBADD  = libunwind-local.la
+ 
+ # List of arch-independent files needed by both local-only and generic
+ # libraries:
+@@ -330,7 +343,7 @@
+ if !REMOTE_ONLY
+  noinst_LTLIBRARIES += libunwind-dwarf-local.la
+ endif
+- libunwind_la_LIBADD += libunwind-dwarf-local.la
++ libunwind_local_la_LIBADD += libunwind-dwarf-local.la
+ endif
+ 
+ noinst_HEADERS += elf32.h elf64.h elfxx.h
+@@ -343,7 +356,7 @@
+ libunwind_elfxx_la_LIBADD  = $(LIBLZMA) $(LIBZ)
+ 
+ noinst_LTLIBRARIES += $(libunwind_elf_libs)
+-libunwind_la_LIBADD += $(libunwind_elf_libs)
++libunwind_local_la_LIBADD += $(libunwind_elf_libs)
+ 
+ if OS_LINUX
+  libunwind_la_SOURCES_os               = os-linux.c dl-iterate-phdr.c
+@@ -403,65 +416,68 @@
+ ### target AArch64:
+ # The list of files that go into libunwind and libunwind-aarch64:
+ noinst_HEADERS += aarch64/init.h aarch64/ucontext_i.h aarch64/unwind_i.h
+-libunwind_la_SOURCES_aarch64_common =          \
+-	$(libunwind_la_SOURCES_common)         \
+-	aarch64/is_fpreg.c                     \
+-	aarch64/regname.c
++libunwind_la_SOURCES_aarch64_common =         \
++    $(libunwind_la_SOURCES_common)            \
++    aarch64/is_fpreg.c                        \
++    aarch64/regname.c
+ 
+ # The list of files that go into libunwind:
+ if ARCH_AARCH64
+-libunwind_la_SOURCES =                         \
+-	$(libunwind_la_SOURCES_aarch64_common) \
+-	$(libunwind_la_SOURCES_local)          \
+-	$(libunwind_la_SOURCES_aarch64_os_local)   \
+-	aarch64/getcontext.S                   \
+-	aarch64/Lapply_reg_state.c             \
+-	aarch64/Lcreate_addr_space.c           \
+-	aarch64/Lget_proc_info.c               \
+-	aarch64/Lget_save_loc.c                \
+-	aarch64/Lglobal.c                      \
+-	aarch64/Linit.c                        \
+-	aarch64/Linit_local.c                  \
+-	aarch64/Linit_remote.c                 \
+-	aarch64/Lis_signal_frame.c             \
+-	aarch64/Lregs.c                        \
+-	aarch64/Lreg_states_iterate.c          \
+-	aarch64/Lresume.c                      \
+-	aarch64/Lstash_frame.c                 \
+-	aarch64/Lstep.c                        \
+-	aarch64/Ltrace.c
+-
+-libunwind_setjmp_la_SOURCES +=                 \
+-	aarch64/longjmp.S                      \
+-	aarch64/siglongjmp.S
++libunwind_local_la_SOURCES =                  \
++    $(libunwind_la_SOURCES_aarch64_common)    \
++    $(libunwind_la_SOURCES_local)             \
++    $(libunwind_la_SOURCES_aarch64_os_local)  \
++    aarch64/getcontext.S                      \
++    aarch64/Lapply_reg_state.c                \
++    aarch64/Lcreate_addr_space.c              \
++    aarch64/Lget_proc_info.c                  \
++    aarch64/Lget_save_loc.c                   \
++    aarch64/Lglobal.c                         \
++    aarch64/Linit.c                           \
++    aarch64/Linit_local.c                     \
++    aarch64/Linit_remote.c                    \
++    aarch64/Lis_signal_frame.c                \
++    aarch64/Lregs.c                           \
++    aarch64/Lreg_states_iterate.c             \
++    aarch64/Lresume.c                         \
++    aarch64/Lstash_frame.c                    \
++    aarch64/Lstep.c                           \
++    aarch64/Ltrace.c
++
++libunwind_setjmp_la_SOURCES +=                \
++    aarch64/longjmp.S                         \
++    aarch64/siglongjmp.S
+ endif ARCH_AARCH64
+ 
+-libunwind_aarch64_la_SOURCES =                 \
+-	$(libunwind_la_SOURCES_aarch64_common) \
+-	$(libunwind_la_SOURCES_generic)        \
+-	$(libunwind_la_SOURCES_aarch64_os)     \
+-	aarch64/Gapply_reg_state.c             \
+-	aarch64/Gcreate_addr_space.c           \
+-	aarch64/Gget_proc_info.c               \
+-	aarch64/Gget_save_loc.c                \
+-	aarch64/Gglobal.c                      \
+-	aarch64/Ginit.c                        \
+-	aarch64/Ginit_local.c                  \
+-	aarch64/Ginit_remote.c                 \
+-	aarch64/Gis_signal_frame.c             \
+-	aarch64/Gregs.c                        \
+-	aarch64/Greg_states_iterate.c          \
+-	aarch64/Gresume.c                      \
+-	aarch64/Gstash_frame.c                 \
+-	aarch64/Gstep.c                        \
+-	aarch64/Gtrace.c
+-libunwind_aarch64_la_LDFLAGS =                 \
+-	$(COMMON_SO_LDFLAGS)                   \
+-	-version-info $(SOVERSION)
+-libunwind_aarch64_la_LIBADD =                  \
+-	libunwind-dwarf-generic.la             \
+-	libunwind-elf64.la                     \
+-	$(libunwind_libadd)
++libunwind_aarch64_la_SOURCES =
++libunwind_arch_aarch64_la_SOURCES =           \
++    $(libunwind_la_SOURCES_aarch64_common)    \
++    $(libunwind_la_SOURCES_generic)           \
++    $(libunwind_la_SOURCES_aarch64_os)        \
++    aarch64/Gapply_reg_state.c                \
++    aarch64/Gcreate_addr_space.c              \
++    aarch64/Gget_proc_info.c                  \
++    aarch64/Gget_save_loc.c                   \
++    aarch64/Gglobal.c                         \
++    aarch64/Ginit.c                           \
++    aarch64/Ginit_local.c                     \
++    aarch64/Ginit_remote.c                    \
++    aarch64/Gis_signal_frame.c                \
++    aarch64/Gregs.c                           \
++    aarch64/Greg_states_iterate.c             \
++    aarch64/Gresume.c                         \
++    aarch64/Gstash_frame.c                    \
++    aarch64/Gstep.c                           \
++    aarch64/Gtrace.c
++libunwind_aarch64_la_LDFLAGS =                \
++    $(COMMON_SO_LDFLAGS)                      \
++    -version-info $(SOVERSION)
++libunwind_arch_aarch64_la_LIBADD =            \
++    libunwind-dwarf-generic.la                \
++    libunwind-elf64.la                        \
++    $(libunwind_libadd)
++libunwind_aarch64_la_LIBADD =                 \
++    libunwind-arch-aarch64.la
+ 
+ ### target ARMv7:
+ # The list of files that go into libunwind and libunwind-arm:
+@@ -475,7 +491,7 @@
+ 
+ # The list of files that go into libunwind:
+ if ARCH_ARM
+-libunwind_la_SOURCES = \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_arm_common)     \
+ 	$(libunwind_la_SOURCES_arm_os_local)   \
+ 	$(libunwind_la_SOURCES_local)          \
+@@ -538,7 +554,7 @@
+ 
+ if ARCH_HPPA
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_hppa_common)    \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	hppa/getcontext.S                      \
+@@ -614,7 +630,7 @@
+ 	"$(srcdir)/ia64/mk_cursor_i" mk_Lcursor_i.s > Lcursor_i.h
+ 
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_ia64_common)    \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	ia64/dyn_info_list.S                   \
+@@ -689,7 +705,7 @@
+ 
+ if ARCH_LOONGARCH64
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_loongarch64_common) \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	loongarch64/getcontext.S               \
+@@ -748,7 +764,7 @@
+ 
+ if ARCH_MIPS
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_mips_common)    \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	mips/getcontext.S                      \
+@@ -824,7 +840,7 @@
+ 
+ if ARCH_PPC32
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_ppc32_common)   \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	$(libunwind_la_SOURCES_ppc)            \
+@@ -876,7 +892,7 @@
+ 
+ if ARCH_PPC64
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_ppc64_common)   \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	$(libunwind_la_SOURCES_ppc)            \
+@@ -928,7 +944,7 @@
+ 
+ if ARCH_RISCV
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_riscv_common)   \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	riscv/getcontext.S                     \
+@@ -988,7 +1004,7 @@
+ 
+ if ARCH_S390X
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_s390x_common)   \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	s390x/getcontext.S                     \
+@@ -1046,7 +1062,7 @@
+ 
+ if ARCH_SH
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_sh_common)      \
+ 	$(libunwind_la_SOURCES_local)          \
+ 	sh/Lapply_reg_state.c                  \
+@@ -1102,7 +1118,7 @@
+ 
+ if ARCH_X86
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_x86_common)     \
+ 	$(libunwind_la_SOURCES_x86_os_local)   \
+ 	$(libunwind_la_SOURCES_local)          \
+@@ -1162,7 +1178,7 @@
+ 
+ if ARCH_X86_64
+ # The list of files that go into libunwind:
+-libunwind_la_SOURCES =                         \
++libunwind_local_la_SOURCES =               \
+ 	$(libunwind_la_SOURCES_x86_64_common)  \
+ 	$(libunwind_la_SOURCES_x86_64_os_local)\
+ 	$(libunwind_la_SOURCES_local)          \
+diff -ruN a181/tests/aarch64-test-frame-record.c b181/tests/aarch64-test-frame-record.c
+--- a181/tests/aarch64-test-frame-record.c	2024-02-20 11:54:51.000000000 -0800
++++ b181/tests/aarch64-test-frame-record.c	2026-10-12 11:59:00.277223899 -0700
+@@ -8,7 +8,6 @@
+ 
+ int unw_is_signal_frame (unw_cursor_t *cursor) { return 0; }
+ int dwarf_step (struct dwarf_cursor *c) { return 0; }
+-#include "aarch64/Gstep.c"
+ 
+ static int procedure_size;
+ 
+diff -ruN a181/tests/Makefile.am b181/tests/Makefile.am
+--- a181/tests/Makefile.am	2026-10-12 11:58:48.101668744 -0700
++++ b181/tests/Makefile.am	2026-10-12 11:59:19.527101615 -0700
+@@ -62,6 +62,7 @@
+ 
+ else
+  LIBUNWIND_local = $(top_builddir)/src/libunwind.la
++ LIBUNWIND_internal = $(top_builddir)/src/libunwind-local.la
+ if ARCH_IA64
+  noinst_PROGRAMS_arch += ia64-test-dyn1
+  check_SCRIPTS_arch +=	run-ia64-test-dyn1
+@@ -85,7 +86,8 @@
+ 
+ if ARCH_AARCH64
+   check_PROGRAMS_arch += Garm64-test-sve-signal Larm64-test-sve-signal   \
+-                         aarch64-test-plt aarch64-test-frame-record
++                         aarch64-test-plt \
++                         Laarch64-test-frame-record Gaarch64-test-frame-record
+ endif
+ 
+  check_PROGRAMS_cdep +=	Gtest-bt Ltest-bt \
+@@ -237,7 +239,8 @@
+ Garm64_test_sve_signal_SOURCES = Garm64-test-sve-signal.c
+ Larm64_test_sve_signal_SOURCES = Larm64-test-sve-signal.c
+ aarch64_test_plt_SOURCES = aarch64-test-plt.c
+-aarch64_test_frame_record_SOURCES = aarch64-test-frame-record.c
++Laarch64_test_frame_record_SOURCES = aarch64-test-frame-record.c
++Gaarch64_test_frame_record_SOURCES = aarch64-test-frame-record.c
+ 
+ if COMPILER_SUPPORTS_MARCH_ARMV8_A_SVE
+  Garm64_test_sve_signal_CFLAGS = -fno-inline -march=armv8-a+sve
+@@ -267,6 +270,7 @@
+ Ltest_mem_validate_SOURCES = Ltest-mem-validate.c
+ 
+ LIBUNWIND = $(top_builddir)/src/libunwind-$(arch).la
++LIBUNWIND_arch = $(top_builddir)/src/libunwind-arch-$(arch).la
+ LIBUNWIND_ptrace = $(top_builddir)/src/libunwind-ptrace.la
+ LIBUNWIND_coredump = $(top_builddir)/src/libunwind-coredump.la
+ 
+@@ -349,4 +353,6 @@
+ Garm64_test_sve_signal_LDADD = $(LIBUNWIND) $(LIBUNWIND_local)
+ Larm64_test_sve_signal_LDADD = $(LIBUNWIND_local)
+ aarch64_test_plt_LDADD = $(LIBUNWIND)
+-aarch64_test_frame_record_LDADD = $(LIBUNWIND)
++Laarch64_test_frame_record_CFLAGS = $(AM_CFLAGS) -DUNW_LOCAL_ONLY
++Laarch64_test_frame_record_LDADD = $(LIBUNWIND_internal)
++Gaarch64_test_frame_record_LDADD = $(LIBUNWIND_arch)
