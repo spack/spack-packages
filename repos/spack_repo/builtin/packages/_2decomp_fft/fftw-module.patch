@@ -1,0 +1,27 @@
+--- a/cmake/fft/fft.cmake	2026-11-10 12:15:27
++++ b/cmake/fft/fft.cmake	2026-11-10 12:15:27
+@@ -33,23 +33,8 @@
+ # OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ message(STATUS "SET UP FFT")
+ if(${FFT_Choice} MATCHES "fftw")
+-  configure_file(${CMAKE_SOURCE_DIR}/cmake/fft/downloadFindFFTW.cmake.in findFFTW-download/CMakeLists.txt)
+-  execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+-          RESULT_VARIABLE result
+-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/findFFTW-download )
+-  if(result)
+-      message(FATAL_ERROR "CMake step for findFFTW failed: ${result}")
+-      else()
+-      message("CMake step for findFFTW completed (${result}).")
+-  endif()
+-  execute_process(COMMAND ${CMAKE_COMMAND} --build .
+-          RESULT_VARIABLE result
+-          WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/findFFTW-download )
+-  if(result)
+-      message(FATAL_ERROR "Build step for findFFTW failed: ${result}")
+-  endif()
+   
+-  set(findFFTW_DIR ${CMAKE_CURRENT_BINARY_DIR}/findFFTW-src)
++  set(findFFTW_DIR ${CMAKE_SOURCE_DIR}/findFFTW)
+   
+   set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${findFFTW_DIR}")
+   find_package(FFTW)
