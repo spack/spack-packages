@@ -15,6 +15,7 @@ class Xios(Package):
 
     homepage = "https://ipsl.pages.in2p3.fr/projets/xios-projects/xios"
     git = "https://gitlab.in2p3.fr/ipsl/projets/xios-projects/xios.git"
+    version("3.0.6.0", tag="xios-3.0.6.0")
     version("2.6", branch="xios-2.6.x")
 
     variant(
@@ -33,6 +34,7 @@ class Xios(Package):
     patch("llvm_bug_17782.patch", when="@1.1: %clang")
 
     patch("earcut_missing_include_2.6.patch", when="@2.6")
+    patch("miss_import_cstdint.patch", when="@3")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
