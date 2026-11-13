@@ -236,8 +236,8 @@ class MesonBuilder(meson.MesonBuilder):
         args_platforms = []
         args_dri_drivers = []
 
-        # swrast includes softpipe and llvmpipe
-        if spec.satisfies("+llvm"):
+        # The separate softpipe option was introduced in Mesa 24.2.
+        if spec.satisfies("+llvm") or spec.satisfies("@:24.1"):
             args_gallium_drivers = ["swrast"]
         else:
             args_gallium_drivers = ["softpipe"]
