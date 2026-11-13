@@ -21,6 +21,8 @@ class Charliecloud(AutotoolsPackage):
 
     version("main", branch="main")
     version("0.45.2", sha256="c3c8c46fc70c6ca1213855b8e735d49978ddfb7bf6132017e1717975e8dea0e8")
+    version("0.45.1", sha256="a6508dfae168d646c40f709f0516ce2dfc0123c058f7af0c3e1aa2602300320a")
+    version("0.45", sha256="7ff265669751e2593ffed832cc3d98efddd367f306390feeb7714192d54b90bd")
     version("0.44", sha256="2a01ecbb6cb2cfe0495338484fdba1ea63e44a48caff0d77ddd602f9e12177cf")
     version("0.43", sha256="540c8d1ac5d6194116abd96f12fad5d3079f82e9fbceca2704e5ecadb3e04299")
     version("0.42", sha256="201c10ace23d076513c34b7226bea340190e38eee5f97f7ca42d30c18db90cbb")
