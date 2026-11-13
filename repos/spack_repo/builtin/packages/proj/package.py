@@ -63,7 +63,11 @@ class Proj(CMakePackage, AutotoolsPackage):
     variant("curl", default=True, when="@7:", description="Enable curl support")
     variant("shared", default=True, description="Enable shared libraries")
     variant("pic", default=False, description="Enable position-independent code (PIC)")
-    variant("grids", default=True, when="@7:", description="Install the PROJ-data grid files")
+    variant(
+        "grids",
+        default=True,
+        description="Install transformation grids (proj-datumgrid/PROJ-data)",
+    )
 
     # https://github.com/OSGeo/PROJ#distribution-files-and-format
     # https://github.com/OSGeo/PROJ-data
@@ -82,7 +86,7 @@ class Proj(CMakePackage, AutotoolsPackage):
         url="https://download.osgeo.org/proj/proj-datumgrid-1.8.tar.gz",
         sha256="3ff6618a0acc9f0b9b4f6a62e7ff0f7bf538fb4f74de47ad04da1317408fcc15",
         placement=join_path("share", "proj"),
-        when="@:6",
+        when="@:6 +grids",
     )
 
     patch(
@@ -153,10 +157,9 @@ class AnyBuilder(BaseBuilder):
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("PROJ_LIB", join_path(self.pkg.stage.source_path, "nad"))
 
-    @run_after("install")
+    @run_after("install", when="+grids")
     def install_datum_grids(self):
-        if self.spec.satisfies("@:6") or self.spec.satisfies("+grids"):
-            install_tree(join_path("share", "proj"), self.prefix.share.proj)
+        install_tree(join_path("share", "proj"), self.prefix.share.proj)
 
 
 class CMakeBuilder(AnyBuilder, cmake.CMakeBuilder):
