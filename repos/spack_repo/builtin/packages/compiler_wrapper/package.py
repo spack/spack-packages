@@ -28,6 +28,7 @@ class CompilerWrapper(Package):
 
     homepage = "https://github.com/spack/spack"
     url = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
+    git = "https://github.com/scheibelp/compiler-wrapper.git"
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
@@ -38,6 +39,7 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
+        version("1.2.0", commit="7817f1d394559b1080d2e789bd7a6544e6730a3a")
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
@@ -117,6 +119,7 @@ class CompilerWrapper(Package):
             ("rocmcc", "amdclang"),
             ("rocmcc", "amdclang++"),
             ("rocmcc", "amdflang"),
+            ("rocmcc", "spackhip"),
             ("xl", "xlc"),
             ("xl", "xlc++"),
             ("xl", "xlf"),
@@ -157,6 +160,9 @@ class CompilerWrapper(Package):
             _var_list.append(("fortran", "fortran", "F77", "SPACK_F77"))
             _var_list.append(("fortran", "fortran", "FC", "SPACK_FC"))
 
+        if dependent_spec.has_virtual_dependency("hip-lang"):
+            _var_list.append(("hip-lang", "hip", "HIPCXX", "SPACK_HIPCXX"))
+
         # The package is not used as a compiler, so skip this setup
         if not _var_list:
             return
@@ -185,6 +191,23 @@ class CompilerWrapper(Package):
             env.set(f"SPACK_{wrapper_var_name}_RPATH_ARG", compiler_pkg.rpath_arg)
 
             isa_arg = microarchitecture_flags(dependent_spec, language)
+
+            if (
+                dependent_spec.satisfies("+rocm")
+                and language == "hip-lang"
+                and hasattr(compiler_pkg, "gpu_architecture_flags")
+            ):
+                gpu_flags = compiler_pkg.gpu_architecture_flags(dependent_spec)
+                if gpu_flags:
+                    if isa_arg:
+                        isa_arg = f"{isa_arg} {gpu_flags}"
+                    else:
+                        isa_arg = gpu_flags
+
+            if compiler_pkg.name == "llvm-amdgpu" and language == "fortran":
+                # Special case: llvm-amdgpu is clang-based, but its flang
+                # implementation may not accept clang-based architecture flags
+                isa_arg = None
 
             if isa_arg:
                 env.set(f"SPACK_TARGET_ARGS_{attr_name.upper()}", isa_arg)
@@ -259,6 +282,9 @@ class CompilerWrapper(Package):
         if dependent_spec.has_virtual_dependency("fortran"):
             setattr(module, "spack_fc", _spack_compiler_attribute(language="fortran"))
             setattr(module, "spack_f77", _spack_compiler_attribute(language="fortran"))
+
+        if dependent_spec.has_virtual_dependency("hip-lang"):
+            setattr(module, "spack_hipcxx", _spack_compiler_attribute(language="hip-lang"))
 
     @property
     def disable_new_dtags(self) -> str:

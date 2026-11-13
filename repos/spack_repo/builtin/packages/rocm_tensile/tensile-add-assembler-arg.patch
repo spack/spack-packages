@@ -1,0 +1,12 @@
+diff --git a/shared/tensile/Tensile/cmake/TensileConfig.cmake b/shared/tensile/Tensile/cmake/TensileConfig.cmake
+index 1111111..2222222 100644
+--- a/shared/tensile/Tensile/cmake/TensileConfig.cmake
++++ b/shared/tensile/Tensile/cmake/TensileConfig.cmake
+@@ -192,6 +192,7 @@ function(TensileCreateLibraryFiles
+ 
+   if(Tensile_COMPILER)
+     set(Options ${Options} "--cxx-compiler=${Tensile_COMPILER}")
++    set(Options ${Options} "--assembler=${Tensile_COMPILER}")
+   endif()
+ 
+   if(Tensile_COMPILER_PATH)

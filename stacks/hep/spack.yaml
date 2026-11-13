@@ -47,7 +47,7 @@ spack:
       # NOTE: *very* expensive: we should set buildable to false and install 
       # externally, or ensure components are shared across other stacks
       require:
-      - '@5.7.1 +rocm'
+      - +rocm
       - target=x86_64_v3
     py-iminuit:
       require:
@@ -186,10 +186,32 @@ spack:
   # ROCm is disabled because it's so expensive to build, but celeritas 0.7.0 
   # does work
   # TODO: share buildcache
-  # - ROCm 5.7.1 is not fully compatible with C++20
-  # - covfie requires ROCm 6
-  # - Disable ROOT and HepMC3 to minimize stack duplication with cxxstd=17
-  #- celeritas +rocm ~openmp ~vecgeom ~covfie ~root ~hepmc3 amdgpu_target=gfx90a  cxxstd=17
+  #- group: rocm
+  #  specs:
+  #  # - ROCm 5.7.1 is not fully compatible with C++20
+  #  # - covfie requires ROCm 6
+  #  # - Disable ROOT and HepMC3 to minimize stack duplication with cxxstd=17
+  #  - celeritas +rocm ~openmp ~vecgeom ~covfie ~root ~hepmc3 amdgpu_target=gfx90a  cxxstd=17
+  #  override:
+  #    packages:
+  #      all:
+  #        prefer:
+  #          - ~cuda
+  #          - +rocm
+  #          - amdgpu_target=gfx90a
+  #      'c:':
+  #        prefer:
+  #        - gcc
+  #      'cxx:':
+  #        prefer:
+  #        - gcc
+  #      'fortran:':
+  #        prefer:
+  #        - gcc
+  #  needs: [hip-compiler]
+  #- group: hip-compiler
+  #  specs:
+  #  - llvm-amdgpu
 
   ci:
     pipeline-gen:
