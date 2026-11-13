@@ -330,14 +330,14 @@ class Amber(CMakePackage, Package, CudaPackage):
                 env.prepend_path("PYTHONPATH", join_path(self.python_lib_dir, "site-packages"))
 
 
- def patch(self):
-        if self.spec.satisfies("@26:"):
-            with working_dir("ambertools_tmpdir"):
-                # remove add_subdirectory for non-existent directory
-                filter_file("add_subdirectory(benchmarks)", "", "CMakeLists.txt", string=True)
-                if self.spec.satisfies("+mpi"):
-                    # help the FindFFTW functions by telling them how to link to our mpi
-                    filter_file(r"(fftw_mpi_init FFTW_MPI_WORKS)", f"\\1 {self.spec['mpi'].libs.ld_flags}", join_path("cmake","jedbrown", "FindFFTW.cmake"))
+    def patch(self):
+            if self.spec.satisfies("@26:"):
+                with working_dir("ambertools_tmpdir"):
+                    # remove add_subdirectory for non-existent directory
+                    filter_file("add_subdirectory(benchmarks)", "", "CMakeLists.txt", string=True)
+                    if self.spec.satisfies("+mpi"):
+                        # help the FindFFTW functions by telling them how to link to our mpi
+                        filter_file(r"(fftw_mpi_init FFTW_MPI_WORKS)", f"\\1 {self.spec['mpi'].libs.ld_flags}", join_path("cmake","jedbrown", "FindFFTW.cmake"))
 
 class CMakeBuilder(cmake.CMakeBuilder):
     """Amber 26+ (PMEMD-only source distribution)."""
