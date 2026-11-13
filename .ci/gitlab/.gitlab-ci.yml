@@ -578,7 +578,7 @@ developer-bootstrap-darwin-build:
 radiuss-generate:
   extends: [ ".radiuss", ".generate-x86_64" ]
   image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
     entrypoint: ['']
 
 radiuss-build:
@@ -610,7 +610,7 @@ radiuss-build:
 radiuss-aarch64-generate:
   extends: [ ".radiuss-aarch64", ".generate-aarch64" ]
   image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
     entrypoint: ['']
 
 radiuss-aarch64-build:
@@ -702,7 +702,7 @@ tutorial-build:
 
 ml-linux-x86_64-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 ml-linux-x86_64-build:
   extends: [ ".build", ".ml-linux-x86_64" ]
@@ -724,7 +724,7 @@ ml-linux-x86_64-build:
 
 ml-linux-aarch64-generate:
   extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 ml-linux-aarch64-build:
   extends: [ ".build", ".ml-linux-aarch64" ]
@@ -768,7 +768,7 @@ ml-darwin-aarch64-mps-build:
 
 hep-generate:
   extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 hep-build:
   extends: [ ".hep", ".build" ]
@@ -889,7 +889,7 @@ windows-vis-build:
 
 bootstrap-x86_64-linux-gnu-generate:
   extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 bootstrap-x86_64-linux-gnu-build:
   extends: [ .build, .bootstrap-x86_64-linux-gnu ]
