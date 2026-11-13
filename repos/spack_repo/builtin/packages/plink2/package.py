@@ -21,6 +21,9 @@ class Plink2(MakefilePackage):
     maintainers("teaguesterling")
 
     version(
+        "2.0.0-b.1.3", sha256="e36dde2aad1f4b8980c8454f4b6a744016a1e4298eef8c130ffd433d92eaec23"
+    )
+    version(
         "2.0.0-a.6.9", sha256="492fc1e87b60b2209b7c3c1d616a01c1126978424cf795184d013ecf8a47e028"
     )
     version("2.00a5.11", sha256="8b664baa0b603f374123c32818ea2f053272840ba60e998d06cb864f3a6f1c38")
@@ -58,8 +61,15 @@ class Plink2(MakefilePackage):
             )
 
     def build(self, spec, prefix):
+        args = []
+        if spec.satisfies("@2.0.0-b.1.3:"):
+            # The Makefile now sets STATIC_ZSTD with ?= and hard-codes
+            # BLASLIBS ?= -llapacke -llapack -lopenblas, so the filters in edit()
+            # no longer match. Variables on the make command line override both.
+            blas_libs = spec["lapack"].libs + spec["blas"].libs
+            args = ["STATIC_ZSTD=", "BLASFLAGS=", f"BLASLIBS={blas_libs.ld_flags}"]
         with working_dir(self.build_directory):
-            make()
+            make(*args)
 
     def install(self, spec, prefix):
         mkdir(prefix.bin)
