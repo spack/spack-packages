@@ -34,8 +34,9 @@ class PyLibclang(PythonPackage):
     depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
 
+    # clang.cindex only uses libclang's stable C API, so newer LLVM works too
     for ver in ["9", "10", "11", "13", "14", "15", "16", "17", "18"]:
-        depends_on("llvm+clang@" + ver, when="@" + ver, type=("build", "run", "link"))
+        depends_on(f"llvm+clang@{ver}:", when=f"@{ver}", type=("build", "run", "link"))
 
     def setup_run_environment(self, env):
         env.prepend_path("LD_LIBRARY_PATH", self.spec["llvm"].libs.directories[0])
