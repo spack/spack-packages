@@ -284,6 +284,20 @@ class Amber(CMakePackage, Package, CudaPackage):
     depends_on("arpack-ng", when="@26:")
     depends_on("arpack-ng+mpi", when="@26: +mpi")
     depends_on("netlib-xblas+fortran", when="@26:")
+    # ambertools python deps
+    with default_args(type=("build", "run"), when="+python"):
+        depends_on("py-pandas")
+        depends_on("py-numba")
+        depends_on("py-gemmi")
+        depends_on("py-biopython")
+        depends_on("py-rich")
+        depends_on("py-freesasa")
+        depends_on("py-scikit-learn")
+        depends_on("py-sympy")
+        depends_on("py-pydantic")
+        depends_on("py-psutil")
+        depends_on("py-networkx")
+        depends_on("py-mpi4py", when="+python+mpi")
 
     conflicts(
         "+x11",
