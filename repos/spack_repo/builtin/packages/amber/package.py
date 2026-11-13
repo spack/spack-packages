@@ -431,6 +431,12 @@ class CMakeBuilder(cmake.CMakeBuilder):
 
         return args
 
+    @run_after("install")
+    def cleanup(self):
+        # remove unnecessary (and incorrect) link to python
+        if self.spec.satisfies("+python"):
+            os.remove(join_path(self.prefix.bin, "amber.python"))
+
 
 class GenericBuilder(generic.GenericBuilder):
     """Amber 18 / 20 (classic Amber + AmberTools ``./configure`` build)."""
