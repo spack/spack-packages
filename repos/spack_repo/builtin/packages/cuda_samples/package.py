@@ -51,31 +51,47 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
     # freeimage is deprecated. Use --deprecated for cuda-samples+freeimage
     variant("freeimage", default=False, description="add samples using freeimage")
     variant("freeglut", default=False, description="add samples using freeglut")
+    variant(
+        "cuda_arch",
+        default="none",
+        multi=True,
+        description="Build for which GPU architectures",
+    )
 
     with default_args(type="build"):
         depends_on("c")
         depends_on("cxx")
         depends_on("cmake@3.10:")
 
-    depends_on("gl")
-    depends_on("mesa-glu")
-    depends_on("freeglut", when="+freeglut")
-    depends_on("freeimage", when="+freeimage")
+    with default_args(type=("build", "link")):
+        depends_on("gl")
+        depends_on("mesa-glu")
+        depends_on("freeglut", when="+freeglut")
+        depends_on("freeimage", when="+freeimage")
+    
     for v, _ in _ver_map.items():
-        depends_on("cuda@" + v, when="@" + v)
+        depends_on("cuda@" + v, when="@" + v, type=("build", "link", "run"))
 
+    # CUDA headers before the fix declare sinpi/cospi/sinpif/cospif without
+    # noexcept, which clashes with glibc >= 2.41's <math.h>.
+    conflicts(
+		"^glibc@2.41:",
+        when="^cuda@:12.5.1",
+        msg="CUDA <= 12.5.1 headers clash with glibc 2.41 "
+            "(sinpi/cospi exception specification mismatch); "
+            "use a newer CUDA or an older libc",
+    )
     conflicts("%gcc@15:", when="@:12", msg="GCC 15 is not supported for CUDA <= 12")
     conflicts("%gcc@16:", when="@:13.3", msg="GCC 16 is not supported for CUDA <= 13.3")
-    conflicts(
-        "cuda_arch=none",
-        when="@:12.5+cuda",
-        msg="Please specify cuda_arch as variant for installation.\n"
-        "cuda_arch is the compute_cap you desire, which can be queried via \n"
-        "nvidia-smi --query-gpu=name,compute_cap --format=csv",
-    )
 
     @when("@:12.5")
     def setup_build_environment(self, env):
+        env.set("CUDA_PATH", self.spec["cuda"].prefix)
+
+        cuda_arch = self.spec.variants["cuda_arch"].value
+        if cuda_arch != ("none",):
+            arch_list = " ".join(cuda_arch)
+            env.set("SMS", arch_list)
         spec = self.spec
         glu = spec["mesa-glu"]
         env.append_flags("CPPFLAGS", f"-I{glu.prefix.include}")
@@ -96,11 +112,18 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
             freeimg = spec["freeimage"]
             env.append_flags("CPPFLAGS", f"-I{freeimg.prefix.include}")
             env.append_flags("LDFLAGS", f"-L{freeimg.prefix.lib}")
-        env.set("CUDA_PATH", spec["cuda"].prefix)
-        env.set("SMS", spec.variants["cuda_arch"].value[0])
 
     @when("@12.8:")
     def cmake_args(self):
+        args = []
+
+        cuda_arch = self.spec.variants["cuda_arch"].value
+        if cuda_arch != ("none",):
+            arch_list = ";".join(cuda_arch)
+            args.append(
+                f"-DCMAKE_CUDA_ARCHITECTURES={arch_list}"
+            )
+
         spec = self.spec
         glu = spec["mesa-glu"]
         gl_headers = ";".join(spec["gl"].headers.directories + glu.headers.directories)
@@ -110,6 +133,8 @@ class CudaSamples(CMakePackage, MakefilePackage, CudaPackage):
         args = [
             self.define("CUDAToolkit_ROOT", spec["cuda"].prefix),
             self.define("GLU_INCLUDE_DIR", glu.prefix.include),
+			self.define("CMAKE_CUDA_FLAGS", f"-I{glu.prefix.include}"),
+			self.define("CMAKE_CXX_FLAGS", f"-I{glu.prefix.include}"),
             self.define("GLU_LIBRARY", glu.libs[0]),
             self.define("OPENGL_INCLUDE_DIR", gl_headers),
             self.define("OPENGL_glu_LIBRARY", glu.libs[0]),
