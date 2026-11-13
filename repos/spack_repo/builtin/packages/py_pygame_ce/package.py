@@ -30,7 +30,7 @@ class PyPygameCe(PythonPackage):
     depends_on("py-meson-python@:0.18.0", type="build")
     depends_on("meson@:1.10.0", type="build")
     depends_on("ninja@:1.13.0", type="build")
-    depends_on("pkgconf", type="build")
+    depends_on("pkgconfig", type="build")
     depends_on("py-cython@:3.2.4", type="build")
     depends_on("py-astroid@:3", type="build")
     depends_on("py-sphinx@:8.2.3", type="build")

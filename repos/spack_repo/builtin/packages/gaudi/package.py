@@ -210,7 +210,7 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("libunwind", when="+unwind")
     depends_on("xerces-c", when="+xercesc")
     depends_on("zstd", when="+zstd")
-    depends_on("pkg-config", when="+zstd")
+    depends_on("pkgconfig", when="+zstd")
     # NOTE: pocl cannot be added as a minimal OpenCL implementation because
     #       ROOT does not like being exposed to LLVM symbols.
 
