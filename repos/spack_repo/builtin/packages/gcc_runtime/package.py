@@ -160,7 +160,8 @@ def _drop_libgfortran_zlib(lib_dir: str) -> None:
 def get_elf_libraries(compiler, libraries):
     """Get the GCC runtime libraries for ELF binaries"""
     cc = Executable(compiler.cc)
-    lib_regex = re.compile(rb"\blib[a-z-_]+\.so\.\d+\b")
+    # Allow '+' (libstdc++) and digits in library names
+    lib_regex = re.compile(rb"\blib[a-z0-9_+-]+\.so\.\d+\b")
     path_and_install_name = []
 
     for name in libraries:
