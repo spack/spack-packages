@@ -35,7 +35,8 @@ class PyKorniaRs(PythonPackage):
     # PyO3 has tight coupling with CPython version
     # Assume Python versions aren't supported until wheels are available on PyPI
     with default_args(type=("build", "run")):
-        depends_on("python@:3.14")
+        depends_on("python@:3.15")
+        depends_on("python@:3.14", when="@:0.2.0")
         depends_on("python@:3.13", when="@:0.1.9")
         depends_on("python@:3.12", when="@:0.1.7")
         depends_on("python@:3.11", when="@:0.1.0")
@@ -46,8 +47,10 @@ class PyKorniaRs(PythonPackage):
         depends_on("py-maturin@1", when="@0.1.6:")
         depends_on("py-maturin@1.3.2:", when="@:0.1.5")
 
-        # kornia-py/Cargo.toml
-        depends_on("rust@1.76:", when="@0.1.7:0.1.10")
+        # Cargo.toml
+        depends_on("rust@1.89:", when="@0.1.15:")
+        depends_on("rust@1.82:", when="@0.1.11:")
+        depends_on("rust@1.76:", when="@0.1.7:")
 
         # rav1e needs rustdoc
         depends_on("rust+dev")
