@@ -18,6 +18,7 @@ class PyArviz(PythonPackage):
     license("Apache-2.0")
 
     version("1.3.0", sha256="9e332c0a0da370cb1c00823678065e9b0462fbdf1efa0f38c37485cc78c8a576")
+    version("0.21.0", sha256="ad5c99b998b750e585bdd1f3ba11e3f8729e01d06dc7fdc251450039e88cfd71")
     version("0.6.1", sha256="435edf8db49c41a8fa198f959e7581063006c49a4efdef4755bb778db6fd4f72")
 
     with default_args(type="build"):
@@ -40,3 +41,16 @@ class PyArviz(PythonPackage):
             depends_on("py-pandas@0.23:")
             depends_on("py-xarray@0.11:")
             depends_on("py-netcdf4")
+
+        with when("@0.21.0"):
+            depends_on("python@3.10:")
+            depends_on("py-setuptools@60:")
+            depends_on("py-h5netcdf@1.0.2:")
+            depends_on("py-matplotlib@3.5:")
+            depends_on("py-numpy@1.23:")
+            depends_on("py-packaging")
+            depends_on("py-pandas@1.5:")
+            depends_on("py-scipy@1.9:")
+            depends_on("py-typing-extensions@4.1:")
+            depends_on("py-xarray@2022.6:")
+            depends_on("py-xarray-einstats@0.3:")
