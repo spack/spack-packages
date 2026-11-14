@@ -34,7 +34,7 @@ class PyAwscrt(PythonPackage):
     # call is unconditional. From 0.38.1 a feature probe selects ASN1_STRING_get0_data(),
     # but the probe links libcrypto.a, which needs zlib, and fails. With openssl@4 the
     # build succeeds and "import _awscrt" fails with an undefined symbol.
-    depends_on("openssl@:3", type=("build", "link"), when="platform=linux")
+    depends_on("openssl@:3", type=("build", "link"))
     depends_on("py-setuptools", type=("build"))
     # awscrt>=0.29 requires setuptools.command.bdist_wheel introduced in v71.
     depends_on("py-setuptools@75.3.1:", when="@0.29:", type=("build"))
