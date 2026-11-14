@@ -84,6 +84,8 @@ class Libgit2(CMakePackage):
     )
 
     variant("mmap", default=True, description="Enable mmap support", when="@1.1.1:")
+    variant("shared", default=True, description="Build a shared library")
+    variant("pic", default=True, description="Build position-independent code")
 
     # Build Dependencies
     depends_on("c", type="build")  # generated
@@ -98,7 +100,9 @@ class Libgit2(CMakePackage):
     depends_on("openssl", when="https=system platform=linux")
     depends_on("openssl", when="https=openssl")
     depends_on("curl", when="+curl")
-    depends_on("pcre", when="@0.99:")
+    # ~shared uses the bundled regex library (a copy of PCRE), so the static library does
+    # not depend on a shared one
+    depends_on("pcre", when="@0.99: +shared")
 
     conflicts("+curl", when="@0.28:")
 
@@ -128,6 +132,22 @@ class Libgit2(CMakePackage):
         # The curl backed is not supported after 0.27.x
         if self.spec.satisfies("@:0.27 +curl"):
             args.append(f"-DCURL={'ON' if '+curl' in self.spec else 'OFF'}")
+
+        if self.spec.satisfies("~shared"):
+            args.extend(
+                [
+                    self.define("BUILD_SHARED_LIBS", False),
+                    self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
+                    # The exported CMake target lists the libraries of each dependency by
+                    # path. These select static or bundled copies, so that a consumer of
+                    # the static library does not link a shared library.
+                    self.define("OPENSSL_USE_STATIC_LIBS", True),
+                    self.define("REGEX_BACKEND", "builtin"),
+                    self.define("USE_BUNDLED_ZLIB", True),
+                    self.define("USE_HTTP_PARSER", "builtin"),
+                    self.define("CMAKE_DISABLE_FIND_PACKAGE_GSSAPI", True),
+                ]
+            )
 
         # Control tests
         args.append(self.define("BUILD_CLAR", self.run_tests))
