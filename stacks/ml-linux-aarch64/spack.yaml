@@ -108,6 +108,7 @@ spack:
             require:
               - ~rocm
               - +cuda
+              - ~nccl
               - cuda_arch=80
               - target=aarch64
               - "%c,cxx=clang"

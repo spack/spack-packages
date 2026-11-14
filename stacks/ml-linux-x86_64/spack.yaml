@@ -103,6 +103,7 @@ spack:
             - ~rocm
             - +cuda
             - cuda_arch=80
+            - ~nccl
             - target=x86_64_v3
             - "%c,cxx=clang"
         py-torch:
