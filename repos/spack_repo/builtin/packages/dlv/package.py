@@ -13,12 +13,12 @@ class Dlv(GoPackage):
     homepage = "https://github.com/go-delve/delve"
     url = "https://github.com/go-delve/delve/archive/refs/tags/v1.27.2.tar.gz"
 
-    license("MIT")
-
     maintainers("ebagrenrut")
+
+    license("MIT")
 
     version("1.27.2", sha256="8ea5979dfc5978c9690dc1dd533a830815441dd33617f4a61bcdff7d2c3c7e90")
 
     depends_on("go@1.25:", type=("build", "run"))
 
-    build_directory = join_path(".", "cmd", "dlv")
+    build_directory = "cmd/dlv"
