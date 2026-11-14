@@ -19,6 +19,7 @@ class Spiner(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
+    version("2.0.0", commit="107ff0e612b348501f228af49c3193391bdb5cb4", tag="v2.0.0")
     version("1.7.0", commit="5ebeb5cf76ce9f65471d888280e74353f63cdccb", tag="v1.7.0")
     version("1.6.4", commit="3c0ea89be32065b3be9f897652acc7a7d81e133a", tag="1.6.4")
 
@@ -42,10 +43,12 @@ class Spiner(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.23:", when="@1.6.0:", type="build")
+    depends_on("cmake@3.24:", when="@2.0.0:", type="build")
     depends_on("catch2@3.7.1:", when="@1.6.3:", type="test")
-    depends_on("catch2@2.13.4:2.13.9", type="test")
+    depends_on("catch2@2.13.4:2.13.9", when="@:1.6.2", type="test")
     depends_on("ports-of-call@1.5.1:", when="@1.6.0:")
     depends_on("ports-of-call@2.0.0:", when="@1.7.0:")
+    depends_on("ports-of-call@3.1.1:", when="@2.0.0:")
     depends_on("ports-of-call@main", when="@main")
 
     depends_on("kokkos@3.3.00:", when="+kokkos")
