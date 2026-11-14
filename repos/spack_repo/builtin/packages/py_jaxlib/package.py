@@ -373,7 +373,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             if spec.satisfies("@:0.4.35"):
                 args.append("--enable_cuda")
             if spec.satisfies("@0.4.32:"):
+                # cuda_clang_local relies on --crosstool_top, which C++ toolchain
+                # resolution ignores: register the CUDA crosstool explicitly.
                 args.append("--bazel_options=--extra_toolchains=@local_config_cuda//crosstool:all")
+                # local_config_cuda only generates the nvcc wrapper if TF_NVCC_CLANG=1
+                # is visible to repository rules; JAX sets it via --action_env, which
+                # Bazel >= 9 no longer passes to repository rules.
+                args.append("--bazel_options=--repo_env=TF_NVCC_CLANG=1")
                 # CUDA file hierarchy does not match what XLA expects, use vendored CUDA for now
                 # https://github.com/jax-ml/jax/issues/23689
                 # args.extend(
