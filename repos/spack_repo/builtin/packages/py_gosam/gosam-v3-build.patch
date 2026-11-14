@@ -1,0 +1,18 @@
+--- a/meson.build
++++ b/meson.build
+@@ -34,15 +34,6 @@
+ 	add_global_link_arguments('--disable-new-dtags', language: ['fortran', 'c', 'cpp'])
+ endif
+ 
+-run_command(
+-    'wget',
+-    '--user=anonymous',
+-    '--password=anonymous',
+-    '-Psubprojects/packagecache',
+-    'http://qgraf.tecnico.ulisboa.pt/v3.4/qgraf-3.4.2.tgz',
+-    check: true
+-    )
+-
+ subproject('avh_olo')
+ if get_option('golem95')
+     subproject('golem95')
