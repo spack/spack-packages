@@ -15,6 +15,7 @@ class PyBidskit(PythonPackage):
 
     license("MIT")
 
+    version("2026.5.29", sha256="d2a99f41bfe6358d82dede25c96467e8e91fde7041e6a5decb2be1bacd60018e")
     version("2025.11.7", sha256="fc478bc5eb5b4808aa4ff2df2d5def54dbf8411313e16a2a2f639adbf0965a56")
     version("2025.1.30", sha256="91daa1041b07b029da2e720b91270be9ab39c42ccbb6e8d8bb302441ea1a1bf5")
     version("2023.9.7", sha256="029d9aecbbcb2df733858ceb3e6d5dd5013c36e431e40fb522a580adc7b667a5")
@@ -23,13 +24,17 @@ class PyBidskit(PythonPackage):
         "2022.10.13", sha256="576b92cef187032c73f64e2e6a5b0be0c06771442048a33c55e224b3df0aae3a"
     )
 
-    depends_on("python@3.10:3", type=("build", "run"), when="@2024.11.7:")
-    depends_on("python@3.7:3", type=("build", "run"))
-
     with default_args(type="build"):
         depends_on("py-poetry-core@2", when="@2025.11.7:")
 
+        # Historical dependencies
+        depends_on("py-setuptools", when="@:2025.1.30")
+
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:3", when="@2024.11.7:")
+        depends_on("python@3.7:3")
+
+        depends_on("py-pydicom@2.4.5:", when="@2026.5.29:")
         # ignore upper version limits, because it works with newer versions as well
         depends_on("py-pydicom@2.3.1:", when="@2025.1.30:")
         depends_on("py-pydicom@2.2:")
@@ -37,12 +42,12 @@ class PyBidskit(PythonPackage):
         depends_on("py-numpy@1.26.3:", when="@2025.1.30:")
         depends_on("py-numpy@1.21:")
 
-    # still a dependency in newer versions, otherwise bidskit will throw an error message
-    depends_on("py-pybids@0.15:", type=("build", "run"))
+        # still a dependency in newer versions, otherwise there will throw an
+        # error when executing the bidskit binary
+        depends_on("py-pybids@0.15:")
 
-    # version requirement comes from error message when using bidskit
-    depends_on("dcm2niix@1.0.20220720:", type=("build", "run"))
+        # version requirement comes from error message when using bidskit
+        depends_on("dcm2niix@1.0.20220720:")
 
-    # Historical dependencies
-    depends_on("py-setuptools@72.1:", type=("build", "run"), when="@2025.1.30")
-    depends_on("py-setuptools", type="build", when="@:2025.1.30")
+        # Historical dependencies
+        depends_on("py-setuptools@72.1:", when="@2025.1.30")
