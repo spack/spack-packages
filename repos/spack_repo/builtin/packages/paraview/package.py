@@ -125,6 +125,12 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         description="Enable openPMD support (w/ ADIOS2/HDF5)",
         when="@5.9: +python",
     )
+    variant(
+        "external_vtk",
+        default=False,
+        description="Build against an external VTK instead of the one bundled with ParaView",
+        when="@6.2:",
+    )
     variant("catalyst", default=False, description="Enable Catalyst 1")
     variant(
         "libcatalyst",
@@ -300,6 +306,18 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
             depends_on("viskores +rocm")
             for target in ROCmPackage.amdgpu_targets:
                 depends_on(f"viskores amdgpu_target={target}", when=f"amdgpu_target={target}")
+
+    with when("+external_vtk"):
+        depends_on("vtk@9.7:")
+        depends_on("vtk +python", when="+python")
+        depends_on("vtk +qt", when="+qt")
+        depends_on("vtk +mpi", when="+mpi")
+        depends_on("vtk ~mpi", when="~mpi")
+        depends_on("vtk +shared", when="+shared")
+        depends_on("vtk ~shared", when="~shared")
+        depends_on("vtk io=adios2", when="+adios2")
+        depends_on("vtk io=fides", when="+fides")
+        depends_on("vtk raytracing=ospray", when="+raytracing")
 
     depends_on("ospray@2.1:2", when="+raytracing")
     depends_on("openimagedenoise", when="+raytracing")
@@ -504,6 +522,7 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
         cmake_args = [
             "-DBUILD_TESTING:BOOL=OFF",
             "-DOpenGL_GL_PREFERENCE:STRING=LEGACY",
+            self.define_from_variant("PARAVIEW_USE_EXTERNAL_VTK", "external_vtk"),
             "-DVTK_MODULE_USE_EXTERNAL_ParaView_vtkcatalyst:BOOL=OFF",
             "-DVTK_MODULE_USE_EXTERNAL_VTK_ioss:BOOL=OFF",
             "-DVTK_MODULE_USE_EXTERNAL_VTK_exprtk:BOOL=OFF",
