@@ -380,6 +380,10 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                 # is visible to repository rules; JAX sets it via --action_env, which
                 # Bazel >= 9 no longer passes to repository rules.
                 args.append("--bazel_options=--repo_env=TF_NVCC_CLANG=1")
+                # The legacy CUDA crosstool links with the C driver and only adds
+                # -lstdc++, so libm must be requested explicitly (e.g. for flatc).
+                args.append("--bazel_options=--linkopt=-lm")
+                args.append("--bazel_options=--host_linkopt=-lm")
                 # CUDA file hierarchy does not match what XLA expects, use vendored CUDA for now
                 # https://github.com/jax-ml/jax/issues/23689
                 # args.extend(
