@@ -54,6 +54,7 @@ class Ispc(CMakePackage):
     depends_on("bison", type="build")
     depends_on("flex", type="build")
     depends_on("llvm+clang", type="build")
+    depends_on("llvm+gold", type="build", when="+ipo")
     depends_on("llvm libcxx=none", when="platform=darwin", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=arm:", type="build")
     depends_on("llvm targets=arm,aarch64", when="target=aarch64:", type="build")
