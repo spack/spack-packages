@@ -34,11 +34,12 @@ class PdipluginPycall(CMakePackage):
         depends_on("pdi+python@" + str(v), type=("link", "run"), when="@" + str(v))
     depends_on("py-setuptools", type=("build"), when="@1.8.3: ^python@3.12:")
     depends_on("pkgconfig", type=("build"))
+    depends_on("python@3.10:", type=("build", "link", "run"), when="@1.10.0:")
+    depends_on("python@3.8.2:", type=("build", "link", "run"))
+    depends_on("py-pybind11@2.9:", type=("build", "link"), when="@1.10.0:")
+    depends_on("py-pybind11@2.4.3:", type=("build", "link"))
 
     root_cmakelists_dir = "plugins/pycall"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [
