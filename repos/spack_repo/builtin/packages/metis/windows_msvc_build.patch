@@ -1,0 +1,59 @@
+
+
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -4,11 +4,7 @@
+ set(GKLIB_PATH "${CMAKE_SOURCE_DIR}/GKlib" CACHE PATH "path to GKlib")
+ set(SHARED FALSE CACHE BOOL "build a shared library")
+
+-if(MSVC)
+-  set(METIS_INSTALL FALSE)
+-else()
+-  set(METIS_INSTALL TRUE)
+-endif()
++set(METIS_INSTALL TRUE)
+
+ # Configure libmetis library.
+ if(SHARED)
+--- a/libmetis/CMakeLists.txt
++++ b/libmetis/CMakeLists.txt
+@@ -8,10 +8,18 @@
+   target_link_libraries(metis m)
+ endif()
+
++# Programs use internal symbols not exported from metis.dll; link them statically.
++if(WIN32 AND SHARED)
++  add_library(metis_internal STATIC ${GKlib_sources} ${metis_sources})
++  set_target_properties(metis_internal PROPERTIES EXCLUDE_FROM_ALL TRUE)
++  # metis.h only dllexports METIS_API when _WINDLL is defined.
++  target_compile_definitions(metis PRIVATE _WINDLL)
++endif()
++
+ if(METIS_INSTALL)
+   install(TARGETS metis
+     LIBRARY DESTINATION lib
+-    RUNTIME DESTINATION lib
++    RUNTIME DESTINATION bin
+     ARCHIVE DESTINATION lib)
+   install(FILES gklib_defs.h DESTINATION include)
+   install(FILES gklib_rename.h DESTINATION include)
+--- a/programs/CMakeLists.txt
++++ b/programs/CMakeLists.txt
+@@ -8,8 +8,17 @@
+ add_executable(m2gmetis m2gmetis.c cmdline_m2gmetis.c io.c)
+ add_executable(graphchk graphchk.c io.c)
+ add_executable(cmpfillin cmpfillin.c io.c smbfactor.c)
++if(TARGET metis_internal)
++  set(METIS_PROGRAMS_LIBRARY metis_internal)
++else()
++  set(METIS_PROGRAMS_LIBRARY metis)
++endif()
+ foreach(prog gpmetis ndmetis mpmetis m2gmetis graphchk cmpfillin)
+-  target_link_libraries(${prog} metis)
++  target_link_libraries(${prog} ${METIS_PROGRAMS_LIBRARY})
++  # io.c's 1.28MB stack buffer overflows MSVC's 1MB default stack.
++  if(MSVC)
++    set_target_properties(${prog} PROPERTIES LINK_FLAGS "/STACK:8388608")
++  endif()
+ #  target_link_libraries(${prog} metis profiler)
+ endforeach(prog)
