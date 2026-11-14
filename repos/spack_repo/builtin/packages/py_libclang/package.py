@@ -37,6 +37,8 @@ class PyLibclang(PythonPackage):
     # clang.cindex only uses libclang's stable C API, so newer LLVM works too
     for ver in ["9", "10", "11", "13", "14", "15", "16", "17", "18"]:
         depends_on(f"llvm+clang@{ver}:", when=f"@{ver}", type=("build", "run", "link"))
+    # except that LLVM 15 renumbered CXCursor_TranslationUnit from 300 to 350
+    depends_on("llvm@:14", when="@:14", type=("build", "run", "link"))
 
     def setup_run_environment(self, env):
         env.prepend_path("LD_LIBRARY_PATH", self.spec["llvm"].libs.directories[0])
