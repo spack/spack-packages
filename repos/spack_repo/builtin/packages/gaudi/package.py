@@ -18,6 +18,7 @@ class Gaudi(CMakePackage, CudaPackage):
     tags = ["hep"]
 
     version("master", branch="master")
+    version("41.0", sha256="9d42bdc976927e470ccd712eb0bcd5cfdaa27e82fda896576cbeb023b23ecb7d")
     version("40.6", sha256="674b7f4063f6cb4678e92ffad8e11bd5c25523efc42eb4b66b20c539ed6844dc")
     version("40.5", sha256="3b8cc6f0d677f24eff51d5f51f31880320f4761ab8ebdb57e968397ca53f0e04")
     version("40.4", sha256="dd288f066e09237f2968a2390e80bef5580e0075896116f4d729b9b609bc25c8")
@@ -191,7 +192,7 @@ class Gaudi(CMakePackage, CudaPackage):
     for _cxxstd in _cxxstd_values:
         for _v in _cxxstd:
             depends_on(f"root cxxstd={_v.value}", when=f"cxxstd={_v.value}")
-    depends_on("zlib-api")
+    depends_on("zlib-api", when="@:40")
     depends_on("py-pytest-cov", when="@39:")
 
     # Testing dependencies
@@ -210,7 +211,7 @@ class Gaudi(CMakePackage, CudaPackage):
     depends_on("libunwind", when="+unwind")
     depends_on("xerces-c", when="+xercesc")
     depends_on("zstd", when="+zstd")
-    depends_on("pkg-config", when="+zstd")
+    depends_on("pkg-config", when="@40.6:40 +zstd")
     # NOTE: pocl cannot be added as a minimal OpenCL implementation because
     #       ROOT does not like being exposed to LLVM symbols.
 
