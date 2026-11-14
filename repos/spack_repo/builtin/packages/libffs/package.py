@@ -22,6 +22,7 @@ class Libffs(CMakePackage):
     maintainers("eisenhauer", "vicentebolea")
 
     version("develop", branch="master")
+    version("3.3.1", sha256="8912df79b417b2bb3bd9801d84b3395fa90e26a17ee45776dbef4c03e49a985b")
     version("3.2.0", sha256="885578babae52394c3cabb4479b7a87053443d61b1c0975f777a22c3fd104d8c")
 
     with default_args(deprecated=True):
@@ -40,6 +41,8 @@ class Libffs(CMakePackage):
     depends_on("gtkorvo-cercs-env", type="build", when="@:1.4")
     depends_on("gtkorvo-atl")
     depends_on("gtkorvo-dill")
+    # 3.2 and older look for dill 3.x only, and would build without code generation on dill 4
+    depends_on("gtkorvo-dill@:3", when="@:3.2")
 
     def cmake_args(self):
         args = ["-DTARGET_CNL=1"]
