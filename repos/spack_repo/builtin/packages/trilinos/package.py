@@ -697,6 +697,11 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         when="@=17.0.0 +stk",
     )
 
+    # GCC 15: ctx_cgio declared in an unnamed namespace gets internal linkage
+    # https://github.com/sandialabs/seacas/issues/889
+    # https://github.com/sandialabs/seacas/pull/907
+    patch("trilinos-iocgns-extern-c-linkage.patch", when="@16.2:17.3 +exodus")
+
     def flag_handler(self, name, flags):
         spec = self.spec
         is_cce = spec.satisfies("%cce")
