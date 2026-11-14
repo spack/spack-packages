@@ -1,0 +1,18 @@
+--- a/trinity-plugins/bamsifter/build_htslib.sh
++++ b/trinity-plugins/bamsifter/build_htslib.sh
+@@ -3,12 +3,12 @@
+ set -e -v
+ 
+ cd htslib
+-git submodule init && git submodule update
++# htscodecs is bundled as plain sources (no .git), so htslib's Makefile never
++# generates its version header; write it here.
++echo "#define HTSCODECS_VERSION_TEXT \"`sed -n 's/^AC_INIT(htscodecs, *\([0-9.]*\)).*/\1/p' htscodecs/configure.ac`\"" > htscodecs/htscodecs/version.h
+ mkdir -p build
+ autoheader
+ autoconf
+ ./configure --prefix=`pwd`/build/
+ make
+ make install
+-
+-
