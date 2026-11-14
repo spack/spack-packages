@@ -16,6 +16,7 @@ class Relax(CMakePackage):
 
     tags = ["hep"]
 
+    # version("6.1.2")  # or otherwise spack checksum will add it
     version("root6", sha256="1d24b1a0884bbe99d60f7d02fea45d59695c158ab5e53516ac3fb780eb460bb4")
 
     depends_on("cxx", type="build")  # generated

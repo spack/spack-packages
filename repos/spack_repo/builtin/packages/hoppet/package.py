@@ -32,3 +32,6 @@ class Hoppet(AutotoolsPackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+
+    with when("build_system=cmake"):
+        depends_on("cmake@3.15:", type="build")
