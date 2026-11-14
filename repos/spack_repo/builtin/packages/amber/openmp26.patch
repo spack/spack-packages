@@ -1,0 +1,60 @@
+--- a/src/pmemd/src/dihedrals.i	2026-02-13 16:39:02.000000000 +0000
++++ b/src/pmemd/src/dihedrals.i	2026-10-30 19:54:59.947259602 +0000
+@@ -97,7 +97,8 @@
+   !$omp& shared (dihed_cnt,dihed,x,gbl_ipn,gbl_pn,frc,epl,omplk,&
+   !$omp& gmul,tm24,tm06,tenm3,zero,one,gbl_gamc,gbl_pk,gbl_gams, &
+   !$omp& ti_mode,ti_lst,ti_sc_lst,ti_weights,ti_ene, &
+-  !$omp& epl_arr, mytaskid, gbl_atm_owner_map) 
++  !$omp& epl_arr, mytaskid, gbl_atm_owner_map, ti_item_weights, &
++  !$omp& gti_bat_sc)
+   !$omp do 
+ #endif
+ #endif
+--- a/src/pmemd/src/bonds.i 2026-02-13 16:39:02.000000000 +0000
++++ b/src/pmemd/src/bonds.i 2026-10-30 20:02:43.255557809 +0000
+@@ -46,7 +46,7 @@
+   !$omp& ti_region,dfw,xa,ya,za,da_press,da_pull,df_press,df_pull) &
+   !$omp& shared (bond_cnt, bond,gbl_req, gbl_rk, ti_mode, ti_lst, &
+   !$omp& ti_sc_lst, ti_ene, ti_weights,frc,omplk,lbe_arr,gbl_rpresseq,&
+-  !$omp& gbl_rpulleq,gbl_rpressk,gbl_rpullk)
++  !$omp& gbl_rpulleq,gbl_rpressk,gbl_rpullk,gti_bat_sc,ti_item_weights)
+ !$omp do
+ #  endif
+ #endif
+--- a/src/pmemd/src/extra_pnts_nb14.i 2026-04-11 14:46:33.000000000 +0000
++++ b/src/pmemd/src/extra_pnts_nb14.i  2026-10-30 20:20:56.733697201 +0000
+@@ -127,7 +127,7 @@
+   !$omp& idegauss,gbl_gbeta,gbl_aexp,gbl_cexp,gbl_rmin, &
+   !$omp& gbl_cn1_ti,gbl_cn2_ti,gbl_aexp_ti,gbl_cexp_ti, &
+   !$omp& gbl_dalpha,gbl_dbeta,de_fp_lambda,ti_ene_delta,ti_item_weights, &
+-  !$omp& ti_item_dweights) 
++  !$omp& ti_item_dweights, sigma_max, gbl_qterm_orig, gbl_dgbeta, elec_fp_lambda) 
+   !$omp do 
+ #endif
+ #endif
+--- a/src/pmemd/src/rattle.i 2026-02-13 16:39:02.000000000 +0000
++++ b/src/pmemd/src/rattle.i 2026-10-30 20:29:45.711647581 +0000
+@@ -104,10 +104,10 @@
+ #ifdef GBorn
+ if(master) then
+     !$omp parallel default (none) &
+-    !$omp& private(my_bond_idx,i,j,rpij2,m,xpij,ns,toler,diff,xij,rrpr, &
++    !$omp& private(my_bond_idx,i,j,rpij2,m,ns,toler,diff,xij,rrpr,rvdot,vij, &
+     !$omp& select_bond_cnt, &
+     !$omp& winvi,winvj,acor,xh,my_thread_id) &
+-    !$omp& shared(my_nonfastwat_bond_cnt,skips,zero,xp,ntb,box_half_min_sq, &
++    !$omp& shared(my_nonfastwat_bond_cnt,skips,zero,ntb,box_half_min_sq, &
+     !$omp& atm_igroup, my_nonfastwat_bond_dat, ibelly_lcl,gbl_atm_tid_map,&
+     !$omp& box_half,pbc_box,tol_lcl,x,master,imin,iter_cnt,atm_mass_inv,done, &
+     !$omp& usemidpoint,my_nonfastwat_bond_cnt_midpoint, my_nonfastwat_bond_dat_midpoint, &
+--- a/src/pmemd/src/runmd.F90 2026-04-11 14:46:40.000000000 +0000
++++ b/src/pmemd/src/runmd.F90 2026-10-30 21:04:01.911936247 +0000
+@@ -2881,7 +2881,7 @@
+ #ifdef MPI
+ #ifdef _OPENMP_
+         !$omp parallel default(none) &
+-        !$omp& shared(vel,crd,dtx_inv,my_atm_cnt,frc) &
++        !$omp& shared(vel,crd,dtx_inv,my_atm_cnt,frc,ischeme,xold) &
+         !$omp& private(atm_lst_idx,j)
+         !$omp do
+ #endif /*_OPENMP_*/

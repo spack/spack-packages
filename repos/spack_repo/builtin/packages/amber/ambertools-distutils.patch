@@ -1,0 +1,125 @@
+--- ./AmberTools/src/tcpb-cpp/pytcpb/setup.py	2026-11-05 16:29:20.848235507 -0600
++++ ./AmberTools/src/tcpb-cpp/pytcpb/setup.py.patched	2026-11-11 15:42:08.469775498 -0600
+@@ -15,9 +15,8 @@
+ except ImportError:
+     from distutils.core import setup, Extension
+ 
+-from distutils.command.clean import clean as Clean
+ 
+-class CleanCommand(Clean):
++class CleanCommand():
+     """python setup.py clean
+     """
+     # lightly adapted from scikit-learn package
+@@ -35,7 +34,6 @@
+                     shutil.rmtree(os.path.join(dirpath, dirname))
+ 
+     def run(self):
+-        Clean.run(self)
+         if os.path.exists('build'):
+             shutil.rmtree('build')
+         self._clean('./')
+@@ -55,7 +53,7 @@
+ 
+     # See if we have the Python development headers.  If not, don't build the
+     # optimized prmtop parser extension
+-    from distutils import sysconfig
++    from setuptools import sysconfig
+     if not is_pypy and not os.path.exists(
+             os.path.join(sysconfig.get_config_vars()['INCLUDEPY'], 'Python.h')):
+         extensions = []
+--- ./AmberTools/src/pdb4amber/pdb4amber/utils.py	2026-01-22 22:18:02.000000000 -0600
++++ ./AmberTools/src/pdb4amber/pdb4amber/utils.py.patched	2026-11-05 16:29:08.890130564 -0600
+@@ -36,5 +36,5 @@
+ 
+ 
+ def which(program):
+-    from distutils.spawn import find_executable
++    from setuptools.spawn import find_executable
+     return find_executable(program)
+--- ./AmberTools/src/pytraj/base_setup/base_setup.py	2026-11-05 16:30:32.029860186 -0600
++++ ./AmberTools/src/pytraj/base_setup/base_setup.py.patched	2026-11-11 15:38:17.015824606 -0600
+@@ -7,7 +7,6 @@
+ import subprocess
+ from glob import glob
+ from subprocess import CalledProcessError
+-from distutils.command.clean import clean as Clean
+ 
+ # local, call from pytraj root folder
+ from scripts.install_libcpptraj import ensure_gnu
+@@ -562,11 +561,10 @@
+ 
+ 
+ # Custom clean command to remove build artifacts
+-class CleanCommand(Clean):
++class CleanCommand():
+     description = "Remove build artifacts from the source tree"
+ 
+     def run(self):
+-        Clean.run(self)
+         if os.path.exists('build'):
+             shutil.rmtree('build')
+         for dirpath, dirnames, filenames in os.walk('pytraj'):
+--- ./AmberTools/src/pytraj/scripts/base_setup.py	2026-04-24 15:41:14.000000000 -0500
++++ ./AmberTools/src/pytraj/scripts/base_setup.py.patched	2026-11-11 15:39:39.590520616 -0600
+@@ -7,7 +7,6 @@
+ import subprocess
+ from glob import glob
+ from subprocess import CalledProcessError
+-from distutils.command.clean import clean as Clean
+ 
+ # local, call from pytraj root folder
+ from scripts.install_libcpptraj import ensure_gnu
+@@ -562,11 +561,10 @@
+ 
+ 
+ # Custom clean command to remove build artifacts
+-class CleanCommand(Clean):
++class CleanCommand():
+     description = "Remove build artifacts from the source tree"
+ 
+     def run(self):
+-        Clean.run(self)
+         if os.path.exists('build'):
+             shutil.rmtree('build')
+         for dirpath, dirnames, filenames in os.walk('pytraj'):
+--- ./AmberTools/src/parmed/setup.py	2026-01-22 22:18:02.000000000 -0600
++++ ./AmberTools/src/parmed/setup.py.patched	2026-11-11 15:40:30.754951874 -0600
+@@ -11,7 +11,6 @@
+ from setuptools import setup, Extension
+ kws = {"entry_points" : {"console_scripts" : ["parmed = parmed.scripts:clapp"]}}
+ 
+-from distutils.command.clean import clean as Clean
+ 
+ def prepare_env_for_osx():
+     """ Prepares the environment for OS X building """
+@@ -38,7 +37,7 @@
+         swvers = subprocess.run("sw_vers -productVersion".split(), capture_output=True)
+         os.environ["MACOSX_DEPLOYMENT_TARGET"] = ".".join(swvers.stdout.decode("utf-8").strip().split(".")[:2])
+ 
+-class CleanCommand(Clean):
++class CleanCommand():
+     """python setup.py clean """
+     # lightly adapted from scikit-learn package
+     description = "Remove build artifacts from the source tree"
+@@ -55,7 +54,6 @@
+                     shutil.rmtree(os.path.join(dirpath, dirname))
+ 
+     def run(self):
+-        Clean.run(self)
+         if os.path.exists('build'):
+             shutil.rmtree('build')
+         self._clean('./')
+--- a/cmake/PythonBuildConfig.cmake	2026-04-23 22:09:07.000000000 -0500
++++ b/cmake/PythonBuildConfig.cmake	2026-11-05 17:11:44.230024729 -0600
+@@ -79,10 +79,6 @@
+ 		
+ 		# --------------------------------------------------------------------
+ 		# this one has a different error message
+-		check_python_package(distutils.sysconfig HAVE_DISTUTILS_SYSCONFIG)
+-		if(NOT HAVE_DISTUTILS_SYSCONFIG)
+-			message(FATAL_ERROR "You need to install the Python development headers!")
+-		endif()
+ 	endif()
+ 		
+ 	#-------------------------------------------------------------------------------
