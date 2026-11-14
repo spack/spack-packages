@@ -104,6 +104,13 @@ spack:
             require:
               - ~cuda
               - target=aarch64
+          py-jaxlib:
+            require:
+              - ~rocm
+              - +cuda
+              - cuda_arch=80
+              - target=aarch64
+              - "%c,cxx=clang"
           py-torch:
             require:
               - ~rocm
