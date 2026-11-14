@@ -14,16 +14,24 @@ class Swiftsim(AutotoolsPackage):
     particle based simulations.
     """
 
-    homepage = "http://icc.dur.ac.uk/swift/"
-    url = "https://gitlab.cosma.dur.ac.uk/api/v4/projects/swift%2Fswiftsim/repository/archive.tar.gz?sha=v0.9.0"
+    homepage = "https://swift.strw.leidenuniv.nl"
+    url = "https://github.com/SWIFTSIM/SWIFT/archive/refs/tags/v2026.04.tar.gz"
+    git = "https://github.com/SWIFTSIM/SWIFT.git"
 
     license("GPL-3.0-only")
 
-    version("0.9.0", sha256="5b4477289c165838c3823ef47a2a94eff7129927babbf5eb8785f8e4bf686117")
-    version("0.7.0", sha256="d570e83e1038eb31bc7ae95d1903a2371fffbca90d08f60b6b32bb0fd8a6f516")
-    version("0.3.0", sha256="dd26075315cb2754dc1292e8d838bbb83739cff7f068a98319b80b9c2b0f84bc")
+    version("master", branch="master")
+
+    version("2026.04", sha256="0e183c53975de24306027789e3cf2ae9e6ee59403d516da8f3e03eaa2c1ff2c9")
+    version("2026.01", sha256="5febdd40c3b129a907476960fc398ac5d1f65c5f8670f9cd605dd3ae52d8cd61")
+    version("2025.01", sha256="c8353f4cfe0184e98e026f05a1754fed165509da572dbf8ad3eaface4b919253")
+    version("1.0.0", sha256="d02c6d5616bae01725494c91ce25a37b18c6d6abb25b63b8e89e0a1f9b32ecca")
+    version("0.9.0", sha256="11eab2dc48f94ad0774140b4090c74342cc614326ab20aa8aa492207235c402e")
 
     variant("mpi", default=True, description="Enable distributed memory parallelism")
+    variant(
+        "fftw", default=True, description="Enable FFTW support, used for perioodic gravity forces."
+    )
 
     depends_on("c", type="build")  # generated
 
@@ -38,18 +46,23 @@ class Swiftsim(AutotoolsPackage):
     depends_on("metis")
     depends_on("hdf5~mpi", when="~mpi")
     depends_on("hdf5+mpi", when="+mpi")
-
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        # Needed to be able to download from the Durham gitlab repository
-        tty.warn('Setting "GIT_SSL_NO_VERIFY=1"')
-        tty.warn("This is needed to clone SWIFT repository")
-        env.set("GIT_SSL_NO_VERIFY", "1")
+    depends_on("fftw-api@3.3:", when="+fftw")
 
     def configure_args(self):
-        return [
-            "--enable-mpi" if "+mpi" in self.spec else "--disable-mpi",
+
+        args = [
             "--with-metis={0}".format(self.spec["metis"].prefix),
             "--disable-dependency-tracking",
             "--enable-optimization",
             "--enable-compiler-warnings=yes",
         ]
+        args.extend(self.enable_or_disable("mpi"))
+        args.extend(
+            self.with_or_without("fftw", activation_value=lambda x: self.spec["fftw-api"].prefix)
+        )
+
+        # Vector code doesnt support aarch64.
+        if self.spec.satisfies("target=aarch64:"):
+            args.append("--disable-vec")
+
+        return args
