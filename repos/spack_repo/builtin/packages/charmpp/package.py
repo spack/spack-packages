@@ -35,6 +35,13 @@ class Charmpp(Package):
     # charmpp@git.classic.
     version("main", branch="recharm", submodules=True)
 
+    # The release asset, unlike GitHub's tag archive, includes the
+    # contrib/reconverse submodule.
+    version(
+        "9.0.0-beta1",
+        sha256="4cd573c53f6595cfd69a0f5d90270bb4cfa6fb39ad035fc32b5c9a9816807eaa",
+        url="https://github.com/charmplusplus/charm/releases/download/v9.0.0-beta1/charm-9.0.0-beta1.tar.gz",
+    )
     version(
         "8.1.0",
         sha256="cc078d3c2fbffcdae04dad00b6c3fc71dce27fb359edb39739c720b8867e6f7e",
@@ -172,7 +179,7 @@ class Charmpp(Package):
     # Reconverse runtime (Charm++ 9): communication through LCI v2, CPU
     # affinity through hwloc. charm's ./build would download LCI at configure
     # time; the recipe turns that off and builds against Spack's lci instead.
-    # v9.0.0-alpha1 pins LCI ca88ce2c (2026-08-18), which no LCI release
+    # v9.0.0-beta1 pins LCI a8127fa2 (2026-11-06), which no LCI release
     # contains (2.0.0-beta.1 is from 2025-05), so the dependency is lci@master.
     depends_on("lci@master", when="backend=reconverse")
     # LCI's default network backend (ibv) needs rdma-core, which is Linux-only.
@@ -182,7 +189,8 @@ class Charmpp(Package):
     requires(
         "@9:",
         when="backend=reconverse",
-        msg="The reconverse backend exists from Charm++ 9 (and the recharm branch, version main) on",
+        msg="The reconverse backend exists from Charm++ 9 "
+        "(and the recharm branch, version main) on",
     )
     # Charm++ 9 is the reconverse-based line: the classic machine layers are
     # removed from it (charmplusplus/charm#4056), so the only backend there is
@@ -190,26 +198,18 @@ class Charmpp(Package):
     requires(
         "backend=reconverse",
         when="@9:",
-        msg="Charm++ 9 (version main is the recharm branch) builds only on the reconverse backend; "
-        "use @git.classic or an 8.x release for the classic machine layers",
+        msg="Charm++ 9 (version main is the recharm branch) builds only on the reconverse "
+        "backend; use @git.classic or an 8.x release for the classic machine layers",
     )
     conflicts("backend=reconverse", when="~smp", msg="The 'reconverse' backend always uses SMP")
     # With --build-shared, libreconverse.dylib/.so is written to lib_so/ only,
     # but charmc links it with -lreconverse against lib/, so linking the
-    # build's own test program fails (seen with v9.0.0-alpha1).
+    # build's own test program fails (charmplusplus/charm#4049).
     conflicts(
         "+shared",
         when="backend=reconverse",
-        msg="Charm++ 9.0.0-alpha1 cannot link with --build-shared on reconverse",
+        msg="Charm++ 9 on reconverse cannot link with --build-shared (charmplusplus/charm#4049)",
     )
-    # TCharm, which AMPI and the LIBS/ChaNGa targets need, is not built on
-    # reconverse yet.
-    for _target in ("AMPI", "LIBS", "ChaNGa"):
-        conflicts(
-            f"build-target={_target}",
-            when="backend=reconverse",
-            msg="Only build-target=charm++ builds on the reconverse backend",
-        )
     # Reconverse processes bootstrap through LCI (see the lci 'bootstrap' variant).
     for _pmi in ("simplepmi", "slurmpmi2", "pmix", "cray-pmi"):
         conflicts(
@@ -367,6 +367,18 @@ class Charmpp(Package):
             )
 
         return versions[(plat, mach, comm)]
+
+    def patch(self):
+        if self.spec.satisfies("backend=reconverse"):
+            # Reconverse calls LCT functions (LCT_pmi_abort) but links only
+            # LCI::lci, and an installed LCI's LCI::lci target does not pull in
+            # liblct, so linking libreconverse fails on macOS.
+            filter_file(
+                "target_link_libraries(reconverse PUBLIC LCI::lci)",
+                "target_link_libraries(reconverse PUBLIC LCI::lci LCI::lct)",
+                join_path("contrib", "reconverse", "src", "comm_backend", "lci", "CMakeLists.txt"),
+                string=True,
+            )
 
     # FIXME: backend=mpi also provides mpi, but spack does not support
     # depends_on("mpi") and provides("mpi") in the same package currently.
