@@ -139,8 +139,9 @@ class Hpl(AutotoolsPackage):
 
         if self.spec.satisfies("%aocc"):
             if self.spec.satisfies("%aocc@3:"):
-                # aocl-libm is a link dependency, so the compiler wrapper adds
-                # its -L and RPATH. -lamdlibm selects the compatibility symlink.
+                # aocl-libm is a link dependency, so Spack's compiler wrapper
+                # adds its library path and RPATH. -lamdlibm selects the
+                # libamdlibm.so compatibility symlink.
                 ldflags.extend(["-lamdlibm", "-lm"])
             if self.spec.satisfies("%aocc@4:"):
                 # libamdalloc ships with the AOCC compiler runtime.
