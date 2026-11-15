@@ -26,6 +26,13 @@ class Libfci(CMakePackage):
     version("main", branch="main")
     version("0.1.0", sha256="63e8bd632e55f4b99dbaa3e905cdcd3c5dbc17aefdca1391b855f34a792bb29a")
 
+    # Fix fermionic signs on platforms where plain char is unsigned (e.g. aarch64)
+    patch(
+        "https://github.com/DCM-Uni-Paderborn/libfci/commit/b7bbc6f072e6940afc2f63c517d05248d1fde4b9.patch?full_index=1",
+        sha256="1e314d894f3dda3cfd52a7eca575c7c7411b20b9ae02c0a4f9b725c7d86e2f91",
+        when="@0.1.0",
+    )
+
     variant("openmp", default=True, description="Build with OpenMP parallelisation support")
     variant("shared", default=True, description="Build shared libraries (otherwise static)")
 
