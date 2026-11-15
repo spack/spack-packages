@@ -18,6 +18,7 @@ class Mille(CMakePackage):
     license("LGPL-2.0-only", checked_by="paulgessinger")
 
     version("main", branch="main")
+    version("01-01-04", sha256="40b4d702208b33683d390b4684ccc90f6df0805fd96a92e33fefa12b93387dfe")
     version("01-01-03", sha256="3e93f8dbe3a4265e4205d9a2a7fe96358b6d7988969b47999ec175a660a9bdee")
     version("01-01-02", sha256="4ab4bdc0da51c9647642debf86828b3b42e968cea8b5935c824dd9b562cbc3ac")
     version("01-01-01", sha256="cd96069d42ab1afd799e1eecd82c0a98e9dd2d0f42a0f86942dead1664381f3d")
