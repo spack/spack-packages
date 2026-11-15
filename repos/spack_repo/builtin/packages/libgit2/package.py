@@ -85,7 +85,7 @@ class Libgit2(CMakePackage):
 
     variant("mmap", default=True, description="Enable mmap support", when="@1.1.1:")
     variant("shared", default=True, description="Build a shared library")
-    variant("pic", default=True, description="Build position-independent code")
+    variant("pic", default=True, description="Build position-independent code", when="~shared")
 
     # Build Dependencies
     depends_on("c", type="build")  # generated
