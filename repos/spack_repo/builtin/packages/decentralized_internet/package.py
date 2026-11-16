@@ -15,7 +15,7 @@ class DecentralizedInternet(MakefilePackage):
 
     license("MIT")
 
-    maintainers("Lonero-Team", "Mentors4edu")
+    maintainers("Mentors4edu")
     version("4.2.3", sha256="2922b9128b411ece2f04d07942a453f1e772548aa27b3936c9f9bcfbc0737058")
 
     depends_on("c", type="build")  # generated
