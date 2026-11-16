@@ -36,6 +36,7 @@ class Elmerfem(CMakePackage):
     variant("zoltan", default=False, description="Enable Zoltan support.")
     variant("lua", default=False, description="Enable Lua support.")
     variant("scatt2d", default=False, description="Build Scattered2DDataInterpolator solver.")
+    variant("mmg", default=False, when="@26:,ice,devel", description="Enable MMG mesh adaptation.")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -57,11 +58,17 @@ class Elmerfem(CMakePackage):
     depends_on("lua@5.1.5", when="+lua")
     depends_on("nn-c", when="+scatt2d")
     depends_on("csa-c", when="+scatt2d")
+    depends_on("mmg+shared", when="+mmg")
 
     def cmake_args(self):
         spec = self.spec
 
         args = ["-DWITH_ElmerIce=ON", "-DWITH_CONTRIB=ON"]
+
+        if "mmg" in spec.variants:
+            args.append(self.define_from_variant("WITH_MMG", "mmg"))
+            if spec.satisfies("+mmg"):
+                args.append(self.define("MMG_ROOT", spec["mmg"].prefix))
 
         if spec.satisfies("+gui"):
             args.append("-DWITH_ELMERGUI:BOOL=TRUE")
