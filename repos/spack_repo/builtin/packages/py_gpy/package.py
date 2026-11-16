@@ -36,7 +36,7 @@ class PyGpy(PythonPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("py-setuptools", type="build")
-    ## @:1.13.0 do no support numpy@2:
+    # @:1.13 do not support numpy@2:
     depends_on("py-numpy@1.7:1.26", type=("build", "run"), when="@:1.13")
     ## @1.14.0 is official support of numpy@2:
     depends_on("py-numpy@2:", type=("build", "run"), when="@1.14:")
