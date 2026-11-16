@@ -137,6 +137,35 @@ class TestAutotoolsPackage:
         options = s.package.with_or_without("lorem-ipsum", variant="lorem_ipsum")
         assert "--without-lorem-ipsum" in options
 
+    @pytest.mark.parametrize("method", ["with_or_without", "enable_or_disable"])
+    @pytest.mark.parametrize("variant", ["autofoo", "autobar"])
+    def test_auto_leaves_features_unchanged(self, default_mock_concretization, method, variant):
+        s = default_mock_concretization(f"pkg-a {variant}=auto")
+        configure_options = getattr(s.package, method)
+
+        assert configure_options(variant) == []
+        assert configure_options("renamed-feature", variant=variant) == []
+
+        def activate(value):
+            pytest.fail("auto must not evaluate activation values")
+
+        assert configure_options(variant, activation_value=activate) == []
+
+    @pytest.mark.parametrize(
+        "method,enable,disable",
+        [("with_or_without", "with", "without"), ("enable_or_disable", "enable", "disable")],
+    )
+    @pytest.mark.parametrize("value", ["bar", "bar,baz"])
+    def test_auto_explicit_features(
+        self, default_mock_concretization, method, enable, disable, value
+    ):
+        s = default_mock_concretization(f"pkg-a autofoo={value}")
+        options = getattr(s.package, method)("autofoo", activation_value=lambda value: "selected")
+        assert options == [
+            f"--{enable}-bar=selected",
+            f"--{enable}-baz=selected" if value == "bar,baz" else f"--{disable}-baz",
+        ]
+
     def test_none_is_allowed(self, default_mock_concretization):
         s = default_mock_concretization("pkg-a foo=none")
         options = s.package.with_or_without("foo")

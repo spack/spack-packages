@@ -21,6 +21,9 @@ class PkgA(autotools.AutotoolsPackage):
 
     variant("foobar", values=("bar", "baz", "fee"), default="bar", description="", multi=False)
 
+    variant("autofoo", values=auto_or_any_combination_of("bar", "baz"), description="")
+    variant("autobar", default="auto", values=("auto", "bar", "baz"), description="")
+
     variant("lorem_ipsum", description="", default=False)
 
     variant("bvv", default=True, description="The good old BV variant")
