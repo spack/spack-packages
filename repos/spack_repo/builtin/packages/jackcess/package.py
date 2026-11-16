@@ -26,8 +26,7 @@ class Jackcess(Package):
         url="https://sourceforge.net/projects/jackcess/files/jackcess/Older%20Releases/1.2.14.3/jackcess-1.2.14.3.jar",
     )
 
-    extends("openjdk")
-    depends_on("java", type="run")
+    extends("java", type="run")
     depends_on("commons-lang@2.6", when="@2.1.12", type="run")
     depends_on("commons-lang@2.4", when="@1.2.14.3", type="run")
     depends_on("commons-logging@1.1.3", when="@2.1.12", type="run")

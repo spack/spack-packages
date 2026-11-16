@@ -15,6 +15,7 @@ class PyPyzmq(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("27.2.0", sha256="54d4259d1bfae24ecdb5ca79f7acc2eac6c286a02d6a0ae617797cb45f0726d3")
     version("27.1.0", sha256="ac0765e3d44455adb6ddbf4417dcce460fc40a05978c08efdf2948072f6db540")
     version("26.2.0", sha256="070672c258581c8e4f640b5159297580a9974b026043bd4ab0470be9ed324f1f")
     version("26.1.1", sha256="a7db05d8b7cd1a8c6610e9e9aa55d525baae7a44a43e18bc3260eb3f92de96c6")
@@ -53,6 +54,8 @@ class PyPyzmq(PythonPackage):
 
     # https://github.com/zeromq/pyzmq/issues/1915
     conflicts("^py-cython@3.1:", when="@:25")
+    # Cython 3.3 rejects redeclared annotated variables
+    conflicts("^py-cython@3.3:", when="@:27.1")
 
     # Historical dependencies
     depends_on("py-setuptools@:59", type="build", when="@17:18.0")

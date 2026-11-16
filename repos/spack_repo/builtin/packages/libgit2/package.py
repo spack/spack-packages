@@ -17,6 +17,7 @@ class Libgit2(CMakePackage):
     homepage = "https://libgit2.github.com/"
     url = "https://github.com/libgit2/libgit2/archive/v0.26.0.tar.gz"
 
+    version("1.9.7", sha256="1a4fbe7589e814777ae76b64734ad80f4ecad22cd33a22682a2aaea4ae5375e7")
     version("1.9.1", sha256="14cab3014b2b7ad75970ff4548e83615f74d719afe00aa479b4a889c1e13fc00")
     version("1.9.0", sha256="75b27d4d6df44bd34e2f70663cfd998f5ec41e680e1e593238bbe517a84c7ed2")
     version("1.8.0", sha256="9e1d6a880d59026b675456fbb1593c724c68d73c34c0d214d6eb848e9bbd8ae4")
@@ -87,8 +88,8 @@ class Libgit2(CMakePackage):
     # Build Dependencies
     depends_on("c", type="build")  # generated
 
+    depends_on("cmake@3.5.1:", type="build", when="@0.99:")
     depends_on("cmake@2.8:", type="build", when="@:0.28")
-    depends_on("cmake@3.5:", type="build", when="@0.99:")
     depends_on("pkgconfig", type="build")
     depends_on("python", type="test")
 

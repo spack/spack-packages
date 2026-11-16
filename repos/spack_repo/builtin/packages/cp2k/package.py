@@ -353,6 +353,7 @@ class Cp2k(MakefilePackage, CMakePackage, CudaPackage, ROCmPackage):
     with when("+openmp"):
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
         depends_on("amdfftw+openmp", when="^[virtuals=fftw-api] amdfftw")
+        depends_on("aocl-fftw+openmp", when="^[virtuals=fftw-api] aocl-fftw")
         depends_on("cray-fftw+openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         depends_on("openblas threads=openmp", when="^[virtuals=blas] openblas")
@@ -1240,7 +1241,9 @@ class MakefileBuilder(makefile.MakefileBuilder):
             content += " " + self.spec["fftw-api"].libs.ld_flags
 
             fftw = self.spec["fftw-api"]
-            if fftw.name in ["fftw", "amdfftw", "cray-fftw"] and fftw.satisfies("+openmp"):
+            if fftw.name in ["fftw", "amdfftw", "aocl-fftw", "cray-fftw"] and fftw.satisfies(
+                "+openmp"
+            ):
                 content += " -lfftw3_omp"
 
             content += "\n"

@@ -33,6 +33,7 @@ class Rpp(ROCmLibrary, CMakePackage):
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
 
+    version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
     version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version(
@@ -98,6 +99,7 @@ class Rpp(ROCmLibrary, CMakePackage):
     patch("0001-include-half-openmp-through-spack-package.patch", when="@:5.7")
     patch("0002-declare-handle-in-header.patch", when="@:6.4")
     patch("0003-include-half-through-spack-package.patch", when="@6.0:6.3")
+    patch("0004-add-half.patch", when="@10.1:")
 
     # adds half.hpp include directory and modifies how the libjpegturbo
     # library is linked for the rpp unit test
@@ -212,6 +214,7 @@ class Rpp(ROCmLibrary, CMakePackage):
                 "7.13.0",
                 "7.14.0",
                 "10.0.0",
+                "10.1.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):

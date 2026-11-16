@@ -15,7 +15,7 @@ class FeqParse(CMakePackage):
     homepage = "https://feqparse.fluidnumerics.com"
     url = "https://github.com/FluidNumerics/feq-parse/archive/v2.0.1.tar.gz"
 
-    maintainers("fluidnumerics-joe")
+    maintainers("fluidnumericsJoe")
 
     license("3-Clause BSD")
 

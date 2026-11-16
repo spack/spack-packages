@@ -7,6 +7,7 @@ import platform
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.jdk.package import remove_emsign_certs
 
 from spack.package import *
 
@@ -496,12 +497,7 @@ class Openjdk(Package):
 
     conflicts("target=ppc64:", msg="openjdk is not available for ppc64 (big endian)")
 
-    # FIXME:
-    # 1. `extends('java')` doesn't work, you need to use `extends('openjdk')`
-    # 2. Packages cannot extend multiple packages, see #987
-    # 3. Update `YamlFilesystemView.merge` to allow a Package to completely
-    #    override how it is symlinked into a view prefix. Then, spack activate
-    #    can symlink all *.jar files to `prefix.lib.ext`
+    # FIXME: Packages cannot extend multiple packages, see #987
     extendable = True
 
     executables = ["^java$"]
@@ -554,9 +550,20 @@ class Openjdk(Package):
 
         return find_libraries(["libjvm"], root=self.home, recursive=True)
 
+    @property
+    def keytool(self):
+        return Executable(self.home.bin.keytool)
+
     def install(self, spec, prefix):
         top_dir = "Contents/Home/" if platform.system() == "Darwin" else "."
         install_tree(top_dir, prefix)
+
+    @run_after("install")
+    def remove_emsign_certs(self):
+        if self.spec.variants["certs"].value == "system":
+            return
+
+        remove_emsign_certs(self)
 
     @run_after("install")
     def link_system_certs(self):

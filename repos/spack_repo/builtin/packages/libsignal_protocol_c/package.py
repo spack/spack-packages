@@ -13,7 +13,7 @@ class LibsignalProtocolC(CMakePackage):
     homepage = "https://signal.org/en/"
     url = "https://github.com/signalapp/libsignal-protocol-c/archive/refs/tags/v2.3.3.tar.gz"
 
-    maintainers("pwablito")
+    maintainers("spenpw")
 
     license("GPL-3.0-only")
 

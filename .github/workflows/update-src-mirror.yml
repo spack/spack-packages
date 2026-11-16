@@ -47,7 +47,7 @@ jobs:
 
           echo "Creating mirror for:"
           echo "$SPECS"
-          spack -c concretizer:unify:false mirror create -d src-mirror $SPECS
+          spack -c concretizer:unify:false mirror create -d --deprecated src-mirror $SPECS
           echo "new-specs=true" >> $GITHUB_OUTPUT
 
       - name: Configure AWS credentials

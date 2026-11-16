@@ -86,10 +86,11 @@ class Rocal(ROCmLibrary, CMakePackage):
         "7.2.3",
         "10.0.0",
     ]:
-        for tgt in itertools.chain(["auto"], amdgpu_targets):
-            depends_on(f"mivisionx@{ver} amdgpu_target={tgt}", when=f"@{ver} amdgpu_target={tgt}")
+        depends_on(f"mivisionx@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
         depends_on(f"rpp@{ver}", when=f"@{ver}")
+    for tgt in itertools.chain(["auto"], amdgpu_targets):
+        depends_on(f"mivisionx amdgpu_target={tgt}", when=f"amdgpu_target={tgt}")
 
     patch(
         "https://github.com/ROCm/rocAL/commit/357dfcb25b9ff959615efa45736d4368cf7b51fd.patch?full_index=1",

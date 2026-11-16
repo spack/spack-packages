@@ -32,6 +32,15 @@ class Openloops(Package):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
 
+    # OpenLoops requires gfortran 4.6 or later, or ifort
+    requires(
+        "%fortran=gcc",
+        "%fortran=intel",
+        "%fortran=intel-oneapi-compilers",
+        policy="one_of",
+        msg="OpenLoops requires gfortran or ifort",
+    )
+
     # conflicts because there is a scons 3.0.5 in 2.1.2
     conflicts("^python@3.12:", when="@:2.1.2")
 

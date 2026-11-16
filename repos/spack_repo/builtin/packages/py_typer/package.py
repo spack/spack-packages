@@ -15,6 +15,7 @@ class PyTyper(PythonPackage):
 
     license("MIT", checked_by="lgarrison")
 
+    version("0.27.3", sha256="d0396f770a560ab1b0a8504e13b5f254b728cedb05c61cf0359e944e50ce8901")
     version("0.20.1", sha256="68585eb1b01203689c4199bc440d6be616f0851e9f0eb41e4a778845c5a0fd5b")
     version("0.15.1", sha256="a0588c0a7fa68a1978a069818657778f86abe6ff5ea6abf472f940a08bfe4f0a")
     version("0.12.5", sha256="f592f089bedcc8ec1b974125d64851029c3b1af145f04aca64d69410f0c9b722")
@@ -22,17 +23,27 @@ class PyTyper(PythonPackage):
     version("0.7.0", sha256="ff797846578a9f2a201b53442aedeb543319466870fbe1c701eab66dd7681165")
     version("0.5.0", sha256="4c285a5585c94d32c305444af934f0078b6a8ba91464f3f85807c91cd499d195")
 
-    with when("@0.12.5:"):
-        depends_on("python@3.7:", type=("build", "run"))
-        depends_on("py-pdm-backend", type="build")
-        depends_on("py-click@8:8.1.8", when="@:0.23.2", type=("build", "run"))
-        depends_on("py-click@8.2.1:", when="@0.23.2:", type=("build", "run"))
-        depends_on("py-shellingham@1.3:", type=("build", "run"))
-        depends_on("py-rich@10.11:", type=("build", "run"))
+    with default_args(type="build"):
+        depends_on("py-pdm-backend", when="@0.11:")
 
-    with when("@:0.9.0"):
-        depends_on("python@3.6:", type=("build", "run"))
-        depends_on("py-flit-core@2.0:2", type="build")
-        depends_on("py-click@7.1.1:8", type=("build", "run"))
+        # Historical dependencies
+        depends_on("py-flit-core@2.0:2", when="@:0.10")
 
-    depends_on("py-typing-extensions@3.7.4.3:", type=("build", "run"), when="@0.9.0:")
+    # dependencies and versions differ between pypi and git repo
+    # taken the onces from pypi
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@0.24:")
+        depends_on("python@3.8:", when="@0.19.1:")
+        depends_on("python@3.7:", when="@0.11:")
+        depends_on("python@3.6:")
+
+        depends_on("py-shellingham@1.3:", when="@0.12.1:")
+        depends_on("py-rich@13.8:", when="@0.25:")
+        depends_on("py-rich@10.11:", when="@0.12.1:")
+        depends_on("py-annotated-doc@0.0.2:", when="@0.21.2:")
+        depends_on("py-colorama", when="@0.26: platform=windows")
+
+        # Historical dependencies
+        depends_on("py-click@8:", when="@0.11:0.23")
+        depends_on("py-click@7.1.1:8", when="@:0.10")
+        depends_on("py-typing-extensions@3.7.4.3:", when="@0.9.0:0.21.1")

@@ -116,6 +116,7 @@ class Protobuf(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("abseil-cpp@20250512.1:", when="@35.1:")
     depends_on("abseil-cpp cxxstd=17", when="@32.1:")
     depends_on("abseil-cpp@20230125.3:", when="@22.5:")
     # https://github.com/protocolbuffers/protobuf/issues/11828#issuecomment-1433557509

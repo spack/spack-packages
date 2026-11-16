@@ -25,5 +25,5 @@ class PyCmseq(PythonPackage):
     depends_on("samtools@1.2:", type=("build", "run"))
     depends_on("py-pysam", type=("build", "run"))
     depends_on("py-pandas", type=("build", "run"))
-    depends_on("py-biopython@:1.76", type=("build", "run"))
-    depends_on("py-setuptools@:57", type=("build"))
+    depends_on("py-biopython", type=("build", "run"))
+    depends_on("py-setuptools", type=("build"))

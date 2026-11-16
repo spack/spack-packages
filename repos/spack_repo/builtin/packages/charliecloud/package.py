@@ -12,7 +12,7 @@ class Charliecloud(AutotoolsPackage):
 
     maintainers("j-ogas", "reidpr", "loshak")
     homepage = "https://charliecloud.io/"
-    url = "https://gitlab.com/charliecloud/charliecloud/-/releases/v0.44/downloads/charliecloud-0.44.tar.gz"
+    url = "https://gitlab.com/charliecloud/charliecloud/-/releases/v0.45.2/downloads/charliecloud-0.45.2.tar.gz"
     git = "https://gitlab.com/charliecloud/charliecloud.git"
 
     tags = ["e4s"]
@@ -20,6 +20,9 @@ class Charliecloud(AutotoolsPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("0.45.2", sha256="c3c8c46fc70c6ca1213855b8e735d49978ddfb7bf6132017e1717975e8dea0e8")
+    version("0.45.1", sha256="a6508dfae168d646c40f709f0516ce2dfc0123c058f7af0c3e1aa2602300320a")
+    version("0.45", sha256="7ff265669751e2593ffed832cc3d98efddd367f306390feeb7714192d54b90bd")
     version("0.44", sha256="2a01ecbb6cb2cfe0495338484fdba1ea63e44a48caff0d77ddd602f9e12177cf")
     version("0.43", sha256="540c8d1ac5d6194116abd96f12fad5d3079f82e9fbceca2704e5ecadb3e04299")
     version("0.42", sha256="201c10ace23d076513c34b7226bea340190e38eee5f97f7ca42d30c18db90cbb")
@@ -79,7 +82,11 @@ class Charliecloud(AutotoolsPackage):
     with when("+squashfuse"):
         depends_on("libfuse@3:", type=("build", "run", "link"))
         depends_on("pkgconfig", type="build", when="@0.37:")
-        depends_on("squashfuse@0.1.105:0.2.0,0.4.0:", type="link", when="@0.36:")
+        depends_on("squashfuse@0.1.105:0.2.0,0.4.0:", type="link", when="@0.36:0.43")
+        # 0.44 enabled multi-threaded FUSE, which the Charliecloud maintainers report
+        # older SquashFUSE seems not to support well; see
+        # https://github.com/spack/spack-packages/issues/5400
+        depends_on("squashfuse@0.4.0:", type="link", when="@0.44:")
         depends_on("squashfuse@0.1.105:0.2.0,0.4.0", type="link", when="@0.35")
 
     with when("+cdi"):

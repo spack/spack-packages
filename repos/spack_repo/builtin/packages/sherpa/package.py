@@ -25,6 +25,8 @@ class Sherpa(CMakePackage, AutotoolsPackage):
 
     license("GPL-3.0-only")
 
+    version("3.0.5", sha256="6c3804d48e1955ee82f713b3d3ffd16b013a9912752f488aab0ba6c1b1634288")
+    version("3.0.4", sha256="a9ddc4ee35087c5a669cf6fae151ea72bcc6882270aa7e7c7a37f9574ceea197")
     version("3.0.3", sha256="57484a09a99ff1b58a89153675230e69cab9698179291fecd67a7bd26309c4ea")
     version("3.0.2", sha256="bae13a2f1dc736cffb104ca0c3eefee7405fc3400421c8cc3887065131e92599")
     version("3.0.1", sha256="ff5f43e79a9a10919391242307a771eca0c57b0462c11bfb99ee4a0fe8c48c58")
@@ -41,7 +43,11 @@ class Sherpa(CMakePackage, AutotoolsPackage):
 
     conflicts("%gcc@15:", when="@:3.0.1")
 
-    _cxxstd_values = (conditional("11", "14", "17", when="@:"), conditional("20", when="@3:"))
+    _cxxstd_values = (
+        conditional("11", "14", "17", when="@:"),
+        conditional("20", when="@3:"),
+        conditional("23", when="@3:"),
+    )
     variant(
         "cxxstd",
         default="11",
@@ -92,6 +98,11 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="@:2")
     depends_on("fortran", type="build", when="@3: +internal_pdfs")
+    conflicts(
+        "%fortran=clang",
+        when="@:3.0.5 +internal_pdfs",
+        msg="Internal PDFs cannot be compiled with flang",
+    )
 
     # autotools dependencies are needed at runtime to compile processes
     depends_on("autoconf", when="@:2")
@@ -101,9 +112,14 @@ class Sherpa(CMakePackage, AutotoolsPackage):
     depends_on("texinfo", type="build")
     depends_on("sqlite")
 
-    depends_on("mpi", when="+mpi")
-    depends_on("python", when="+python")
-    depends_on("swig", when="+python", type="build")
+    with when("+mpi"):
+        depends_on("mpi")
+        depends_on("mpich +fortran", when="^[virtuals=mpi] mpich")
+        depends_on("openmpi +fortran", when="^[virtuals=mpi] openmpi")
+    with when("+python"):
+        depends_on("python")
+        depends_on("swig", type="build")
+        depends_on("swig@:4.4", type="build", when="@:3.0.5")
     depends_on("hepmc", when="+hepmc2")
     depends_on("hepmc3", when="+hepmc3")
     depends_on("hepmc3 +rootio", when="+hepmc3root")

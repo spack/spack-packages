@@ -17,7 +17,7 @@ class Examl(MakefilePackage):
     homepage = "https://github.com/stamatak/ExaML"
     url = "https://github.com/stamatak/ExaML/archive/v3.0.22.tar.gz"
 
-    maintainers("robqiao")
+    maintainers("manifestoso")
 
     license("GPL-3.0-only")
 

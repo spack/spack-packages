@@ -19,6 +19,7 @@ class Krb5(AutotoolsPackage):
 
     license("MIT", checked_by="wdconinc")
 
+    version("1.22.3", sha256="fe90af8441ad9fa9b064b8e53077cefb782a96f8a68276b031dc54af1789ff0b")
     version("1.22.2", sha256="3243ffbc8ea4d4ac22ddc7dd2a1dc54c57874c40648b60ff97009763554eaf13")
     version("1.21.3", sha256="b7a4cd5ead67fb08b980b21abd150ff7217e85ea320c9ed0c6dadd304840ad35")
 
@@ -38,6 +39,13 @@ class Krb5(AutotoolsPackage):
         "shared", default=True, description="install shared libraries if True, static if false"
     )
     patch("freebsd-link.patch", when="platform=freebsd")
+
+    # fix openssl@4 support
+    patch(
+        "https://github.com/krb5/krb5/commit/5e4e8452328804948d042235bbf58ca457795857.patch?full_index=1",
+        sha256="4969b469f2ae6bdb69e264bac2e676c95dc9f289f5279f85cfdfbee7a0c6e287",
+        when="@:1.22.2",
+    )
 
     configure_directory = "src"
     build_directory = "src"

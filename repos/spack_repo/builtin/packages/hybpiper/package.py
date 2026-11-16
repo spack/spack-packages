@@ -23,6 +23,7 @@ class Hybpiper(PythonPackage, Package):
 
     license("GPL-3.0-or-later")
 
+    version("2.3.4", sha256="2b4233af37f508342a420112a71416d5518b3fae7aec086680f35ee49e051180")
     version("2.1.8", sha256="ff358a560d6dbbec4fdac67457451cb4e6ca21b8661044c43902aa013d805e47")
     version("1.3.1", sha256="7ca07a9390d1ca52c72721774fa220546f18d3fa3b58500f68f3b2d89dbc0ecf")
     version("1.2.0", sha256="34c7b324e9bcacb6ccfe87dc50615d6f93866433b61a59291707efa858b6df57")
@@ -35,6 +36,7 @@ class Hybpiper(PythonPackage, Package):
 
     depends_on("python@2.7:", type=("build", "run"))
     depends_on("python@3.9:", type=("build", "run"), when="@2.1:")
+    depends_on("py-setuptools", type="build", when="@2.1:")
 
     depends_on("py-biopython", type=("build", "run"))
     depends_on("py-biopython@1.80:", type=("build", "run"), when="@2.1:")
@@ -56,7 +58,7 @@ class Hybpiper(PythonPackage, Package):
     depends_on("mafft", when="@2.1:")
     depends_on("parallel")
     depends_on("samtools")
-    depends_on("samtools@1.14", when="@2.1:")
+    depends_on("samtools@1.14:", when="@2.1:")
     depends_on("spades")
     depends_on("spades@3.15.4:", when="@2.1:")
 

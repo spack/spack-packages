@@ -25,11 +25,8 @@ class Vtk(CMakePackage):
 
     license("BSD-3-Clause")
 
-    version(
-        "9.5.1",
-        sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f",
-        preferred=True,
-    )
+    version("9.7.0", sha256="affdb7a15ec34ee0174407f911ab70b646c7af01161818bbab4e1160b7eff720")
+    version("9.5.1", sha256="14443661c7b095d05b4e376fb3f40613f173e34fc9d4658234e9ec1d624a618f")
     version("9.5.0", sha256="04ae86246b9557c6b61afbc534a6df099244fbc8f3937f82e6bc0570953af87d")
     version("9.4.1", sha256="c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529")
     version("9.3.1", sha256="8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8")
@@ -66,6 +63,14 @@ class Vtk(CMakePackage):
     variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("mpi", default=True, description="Enable MPI support")
+    variant(
+        "threads",
+        default="stdthread",
+        values=("stdthread", "tbb", "openmp", "none"),
+        multi=False,
+        description="Multi-threading backend (SMP implementation)",
+        when="@9:",
+    )
     variant("examples", default=False, description="Enable building & installing the VTK examples")
     variant("versioned_install", default=True, description="Include version in library filenames")
     variant("shared", default=True, description="Builds a shared version of the library")
@@ -161,7 +166,9 @@ class Vtk(CMakePackage):
     depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
 
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
-    depends_on("qt+opengl", when="+qt")
+    depends_on("qt+opengl", when="@:9.4 +qt")
+    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.5: +qt")
+    depends_on("qt-declarative", when="@9.5: +qt")
 
     depends_on("boost", when="io=xdmf")
     depends_on("boost+mpi", when="io=xdmf +mpi")
@@ -172,6 +179,7 @@ class Vtk(CMakePackage):
     depends_on(Boost.with_default_variants, when="io=xdmf")
     depends_on("ffmpeg", when="io=ffmpeg")
     depends_on("mpi", when="+mpi")
+    depends_on("tbb", when="threads=tbb")
 
     depends_on("adios2+mpi", when="io=adios2 +mpi")
     depends_on("adios2~mpi", when="io=adios2 ~mpi")
@@ -214,8 +222,13 @@ class Vtk(CMakePackage):
 
     # VTK introduced Seacas IOSS dependency on 9.1
     with when("@9.1: io=ioss"):
-        depends_on("seacas+mpi", when="+mpi")
+        depends_on("seacas+mpi", when="+mpi platform=linux")
+        depends_on("seacas+mpi", when="+mpi platform=darwin")
         depends_on("seacas~mpi", when="~mpi")
+        # seacas executables use MPI but are linked without MPI libs on Windows
+        depends_on("seacas~mpi~tests", when="platform=windows")
+        # seacas CGNS parallel I/O includes the unix-only sys/select.h
+        depends_on("seacas~cgns", when="platform=windows")
         depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
         # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
         # and to be safe against other issues, make them build with this version only:
@@ -348,6 +361,16 @@ class Vtk(CMakePackage):
             self.define("VTK_MODULE_ENABLE_VTK_netcdf", "YES" if "netcdf-c" in spec else "NO")
         )
 
+        if spec.satisfies("@9:"):
+            smp_types = {
+                "stdthread": "STDThread",
+                "tbb": "TBB",
+                "openmp": "OpenMP",
+                "none": "Sequential",
+            }
+            smp = smp_types[spec.variants["threads"].value]
+            cmake_args.append(self.define("VTK_SMP_IMPLEMENTATION_TYPE", smp))
+
         if spec.satisfies("+mpi"):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
@@ -427,6 +450,9 @@ class Vtk(CMakePackage):
         if "darwin" in spec.architecture:
             cmake_args.extend(["-DCMAKE_MACOSX_RPATH=ON"])
 
+        if spec.satisfies("@9.5: +qt"):
+            cmake_args.append(self.define("VTK_QT_VERSION", "6"))
+
         if "+qt" in spec:
             # https://github.com/martijnkoopman/Qt-VTK-viewer/blob/master/doc/Build-VTK.md
             # The content of the above link changes over time with versions.
@@ -453,7 +479,7 @@ class Vtk(CMakePackage):
             # NOTE: The following definitions are required in order to allow
             # VTK to build with qt~webkit versions (see the documentation for
             # more info: http://www.vtk.org/Wiki/VTK/Tutorials/QtSetup).
-            if "~webkit" in spec["qt"]:
+            if spec.satisfies("^qt~webkit"):
                 cmake_args.extend(
                     [
                         "-DVTK_GROUP_ENABLE_Qt:STRING=NO",

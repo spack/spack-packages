@@ -18,7 +18,7 @@ class IntelOneapiRuntime(Package):
     has_code = False
     license("https://intel.ly/393CijO")
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     tags = ["runtime"]
 

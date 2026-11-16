@@ -26,7 +26,7 @@ class IntelOneapiItac(IntelOneApiPackage):
 
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/trace-analyzer.html"
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     version(
         "2022.4.0",

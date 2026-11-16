@@ -25,6 +25,7 @@ class Sqlite(AutotoolsPackage, NMakePackage):
 
     license("blessing")
 
+    version("3.54.1", sha256="926ef8d3eab93fbf6e06011901273eec076b25594a4e1cdadd50c987f4f6d64e")
     version("3.53.1", sha256="83e6b2020a034e9a7ad4a72feea59e1ad52f162e09cbd26735a3ffb98359fc4f")
     version("3.51.2", sha256="fbd89f866b1403bb66a143065440089dd76100f2238314d92274a082d4f2b7bb")
     version("3.50.4", sha256="a3db587a1b92ee5ddac2f66b3edb41b26f9c867275782d46c3a088977d6a5b18")

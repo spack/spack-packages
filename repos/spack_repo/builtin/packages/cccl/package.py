@@ -30,6 +30,10 @@ class Cccl(CMakePackage, CudaPackage):
         checked_by="gusser93",
     )
 
+    version("3.5.0", sha256="57fbcdfdc4b3c35397a2be27d360eef8b7a8275acce8b498254906c55d4495b4")
+    version("3.4.3", sha256="3871f7589dc0fa38d74b164ff81b298e1551d5478a06fe20c6947d7328f9fd53")
+    version("3.4.2", sha256="e7734fd0c6d4ad97f78ad400b0f39a47b5f8ce5ab5250fe393ef4652ca3333e3")
+    version("3.4.1", sha256="e18f4d7ca197131128aa1439ae20e35a0b875ef0da115d3282c8218dbdb4f81a")
     version("3.4.0", sha256="7d3f36c6236b4a9fd6e40a0520aa516e0dcbe157aa6345966eb25f35bc4cdc77")
     version("3.3.4", sha256="9d5ae91a71f971c69a16ec139c6882c2c19f74a862c3d90ceaa3c9e8f327e5a6")
     version("3.3.3", sha256="7aed8bd89049bb75261cc9633e4471e1fcf5fbb5eb5b1aeb3f82ee07e9f60395")

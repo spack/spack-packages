@@ -39,6 +39,7 @@ class Latex2html(AutotoolsPackage):
     depends_on("perl", type=("build", "run"))
     # Provides pdfcrop scheme=full
     depends_on("texlive", type=("build", "run"))
+    depends_on("texlive+dvipng", type=("build", "run"), when="+png")
 
     depends_on("netpbm", type=("build", "run"))
     # Provides pdftocairo
@@ -106,13 +107,15 @@ class Latex2html(AutotoolsPackage):
             "initex",
             "latex",
             "dvips",
-            "dvipng",
             "pdflatex",
             "lualatex",
             "dvilualatex",
             "kpsewhich",
             "mktexlsr",
         ]
+        if spec.satisfies("+png"):
+            lats.append("dvipng")
+
         for p in lats:
             exe = join_path(spec["texlive"].prefix.bin, self.tex_arch(), p)
             if os.path.exists(exe):

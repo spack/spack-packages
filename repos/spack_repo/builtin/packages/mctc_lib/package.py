@@ -23,7 +23,7 @@ class MctcLib(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
-
+    version("0.7.0", sha256="b625a4e04a41eecdf437a123e66930d770674bc2e3f9a5af330c32b62013a457")
     version("0.6.1", sha256="0499733af21015c022e8af0b5c477d779d27b58843c2a4c47644a683df2f3e42")
     version("0.5.2", sha256="a82c92deee73ee00d5ded3bb13f59677b0c543a272f488125a364a62ef943fb9")
     version("0.5.1", sha256="a93ea3e50a1950745df01601bfd672d485f0367660f7076dbe73e422e7d4e2ac")
@@ -35,7 +35,21 @@ class MctcLib(MesonPackage, CMakePackage):
     version("0.3.1", sha256="a5032a0bbbbacc952037c5215b71aa6b438767a84bafb60fda25ba43c8835513")
     version("0.3.0", sha256="81f3edbf322e6e28e621730a796278498b84af0f221f785c537a315312059bf0")
 
-    variant("shared", default=True, description="Build shared libraries")
+    variant(
+        "shared",
+        default=True,
+        description="Build shared libraries",
+        when="build_system=cmake",
+    )
+    # redefine since mctc-lib does not seem to support building both at once
+    variant(
+        "default_library",
+        default="shared",
+        values=("shared", "static"),
+        multi=False,
+        description="Build shared libs or static libs",
+        when="build_system=meson",
+    )
     variant("json", default=False, description="Enable support for JSON")
     variant("openmp", default=False, description="Enable OpenMP support")
 
@@ -67,7 +81,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
 class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         return [
-            "-Ddefault_library={0}".format("shared" if "+shared" in self.spec else "static"),
             "-Djson={0}".format("enabled" if "+json" in self.spec else "disabled"),
             "-Dopenmp={0}".format("true" if "+openmp" in self.spec else "false"),
         ]

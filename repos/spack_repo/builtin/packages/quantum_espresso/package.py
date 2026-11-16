@@ -87,8 +87,10 @@ class QuantumEspresso(CMakePackage, Package):
     with when("+openmp"):
         requires("^fftw+openmp", when="^[virtuals=fftw-api] fftw")
         requires("^amdfftw+openmp", when="^[virtuals=fftw-api] amdfftw")
+        requires("^aocl-fftw+openmp", when="^[virtuals=fftw-api] aocl-fftw")
         requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
         requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+        requires("^aocl-blas threads=openmp", when="^[virtuals=blas] aocl-blas")
         requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         requires("^armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         requires("^acfl threads=openmp", when="^[virtuals=blas] acfl")
@@ -286,6 +288,7 @@ class QuantumEspresso(CMakePackage, Package):
     )
 
     conflicts("~openmp", when="^amdlibflame", msg="amdlibflame requires OpenMP")
+    conflicts("~openmp", when="^aocl-lapack", msg="aocl-lapack requires OpenMP")
 
     # QMCPACK converter patches for QE 6.8, 6.7, 6.4.1, 6.4, and 6.3
     conflicts(
@@ -488,12 +491,18 @@ class CMakeBuilder(cmake.CMakeBuilder):
             else:
                 plugins.append("pw2qmcpack")
 
-        if "^armpl-gcc" in spec or "^acfl" in spec:
+        if "^armpl-gcc" in spec or "^acfl" in spec or "^cray-libsci" in spec:
             cmake_args.append(self.define("BLAS_LIBRARIES", spec["blas"].libs.joined(";")))
             cmake_args.append(self.define("LAPACK_LIBRARIES", spec["lapack"].libs.joined(";")))
             # Up to q-e@7.1 set BLA_VENDOR to All to force detection of vanilla scalapack
             if spec.satisfies("@:7.1"):
                 cmake_args.append(self.define("BLA_VENDOR", "All"))
+
+        # Cray-libsci provides Scalapack with multiple libraries.
+        if "^cray-libsci" in spec:
+            cmake_args.append(
+                self.define("SCALAPACK_LIBRARIES", spec["scalapack"].libs.joined(";"))
+            )
 
         if plugins:
             cmake_args.append(self.define("QE_ENABLE_PLUGINS", plugins))
@@ -555,13 +564,14 @@ class GenericBuilder(generic.GenericBuilder):
                 fftw_ld_flags = spec["fftw"].libs.ld_flags
             options.append("FFT_LIBS={0}".format(fftw_ld_flags))
 
-        if "^amdfftw" in spec:
-            fftw_prefix = spec["amdfftw"].prefix
+        if "^amdfftw" in spec or "^aocl-fftw" in spec:
+            fftw = spec["fftw-api"]
+            fftw_prefix = fftw.prefix
             options.append("FFTW_INCLUDE={0}".format(fftw_prefix.include))
             if "+openmp" in spec:
-                fftw_ld_flags = spec["amdfftw:openmp"].libs.ld_flags
+                fftw_ld_flags = spec["{0}:openmp".format(fftw.name)].libs.ld_flags
             else:
-                fftw_ld_flags = spec["amdfftw"].libs.ld_flags
+                fftw_ld_flags = fftw.libs.ld_flags
             options.append("FFT_LIBS={0}".format(fftw_ld_flags))
 
         # External BLAS and LAPACK requires the correct link line into

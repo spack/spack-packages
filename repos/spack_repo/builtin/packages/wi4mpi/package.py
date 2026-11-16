@@ -13,7 +13,7 @@ class Wi4mpi(CMakePackage):
 
     homepage = "https://github.com/cea-hpc/wi4mpi"
     url = "https://github.com/wi4mpi/wi4mpi/releases/download/v4.0.1/wi4mpi-4.0.1.tar.gz"
-    maintainers("adrien-cotte", "marcjoos-cea")
+    maintainers("adrien-cotte", "marc-joos")
 
     license("CECILL-B")
 

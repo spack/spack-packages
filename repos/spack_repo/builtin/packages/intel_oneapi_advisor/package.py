@@ -22,12 +22,18 @@ class IntelOneapiAdvisor(IntelOneApiLibraryPackageWithSdk):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/advisor.html"
     )
 
+    version(
+        "2026.0.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/766bc168-4208-4388-821b-0e589fd449d9/intel-advisor-2026.0.1.62_offline.sh",
+        sha256="e17281717e704612755b9332e2216b131ec8a0d339fa9d4c55cc557aa2c43010",
+        expand=False,
+    )
     version(
         "2026.0.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/68057580-a03d-4490-87e2-b2a6092b6675/intel-advisor-2026.0.0.266_offline.sh",
