@@ -15,6 +15,7 @@ class PerlModuleBuildTiny(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("0.053", sha256="3726d622da6f655e88fdf89e4fd597709c44970b47de65082003e8d86b5e193a")
     version("0.048", sha256="79a73e506fb7badabdf79137a45c6c5027daaf6f9ac3dcfb9d4ffcce92eb36bd")
     version("0.044", sha256="cb053a3049cb717dbf4fd7f3c7ab7c0cb1015b22e2d93f38b1ffc47c078322fd")
     version("0.039", sha256="7d580ff6ace0cbe555bf36b86dc8ea232581530cbeaaea09bccb57b55797f11c")

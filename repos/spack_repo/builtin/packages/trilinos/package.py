@@ -54,6 +54,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("17.3.0", sha256="8094740da60bf75b675ad556ed00e337c8547be0dc9603893c4894f4abf0396b")
     version("17.2.1", sha256="b1d076c9c474893ddb340f0e2418a2dec50f52edaf134b54e4c01c5c53032eae")
     version(
         "17.2.0",
@@ -527,6 +528,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels+cusparse", when="+cusparse")
         depends_on("kokkos~complex_align")
         depends_on("kokkos@=5.2.2", when="@master:")
+        depends_on("kokkos@=5.2.2", when="@17.3.0")
         depends_on("kokkos@=5.2.1", when="@17.2.1")
         depends_on("kokkos@=5.2.1", when="@17.2.0")
         depends_on("kokkos@=5.1.1", when="@17.1.2")
@@ -541,6 +543,7 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos@=4.2.01", when="@15.1:15")
         depends_on("kokkos@=4.1.00", when="@14.4:15.0")
         depends_on("kokkos-kernels@=5.2.2", when="@master:")
+        depends_on("kokkos-kernels@=5.2.2", when="@17.3.0")
         depends_on("kokkos-kernels@=5.2.1", when="@17.2.1")
         depends_on("kokkos-kernels@=5.2.1", when="@17.2.0")
         depends_on("kokkos-kernels@=5.1.1", when="@17.1.2")

@@ -49,7 +49,8 @@ class Libxslt(CMakePackage, AutotoolsPackage):
 
     depends_on("pkgconfig", type="build")
     depends_on("iconv")
-    depends_on("libxml2")
+    depends_on("libxml2@2.6.27:")
+    depends_on("libxml2@2.15.1:", when="@1.1.44:")
     depends_on("libxml2+python", when="+python")
     depends_on("xz")
     depends_on("zlib-api")

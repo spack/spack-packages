@@ -15,6 +15,8 @@ class Seqkit(GoPackage):
 
     license("MIT", checked_by="A-N-Other")
 
+    version("2.14.0", sha256="7df95904ce438c1a1a7b1fc06f20479a169e69209ac59abae8e80c60a1e65d60")
+    version("2.13.0", sha256="55405cc338962f770279d718c1dabec293a51dde4989c0c2590da3c303105471")
     version("2.10.0", sha256="5ebb8bd72b52a0b17064c7afda54a784bd71940fa28ca03114334af550734437")
     version("2.8.2", sha256="9cf1e744b785fa673af5a7a1ce2f96d52dc03e14b6537097df86aa6266204556")
     version("2.7.0", sha256="b5c723ffd4640659860fc70a71c218d8f53bea0eae571cecc98eff04c7291e02")
@@ -22,6 +24,11 @@ class Seqkit(GoPackage):
     version("2.5.1", sha256="76d105921f918be20e616fbb607fe0fb2db603535a254ec0f853cb36bef817da")
     version("2.4.0", sha256="c319f3d5feb7c99309e654042432959f01bbc5f7e4c71f55dc9854df46c73c7f")
 
+    # go.mod's "go" directive is a hard minimum since Go 1.21
     depends_on("go@1.17:", type="build")
+    depends_on("go@1.23.0:", type="build", when="@2.10.1:")
+    depends_on("go@1.24.0:", type="build", when="@2.11:")
+    depends_on("go@1.25.5:", type="build", when="@2.13:")
+    depends_on("go@1.25.14:", type="build", when="@2.14:")
 
     build_directory = "seqkit"

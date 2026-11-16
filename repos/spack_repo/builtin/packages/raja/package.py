@@ -37,12 +37,18 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     git = "https://github.com/LLNL/RAJA.git"
     tags = ["radiuss", "e4s"]
 
-    maintainers("adrienbernede", "davidbeckingsale", "kab163")
+    maintainers("adrienbernede", "davidbeckingsale", "smithsg84", "johnbowen42")
 
     license("BSD-3-Clause")
 
     version("develop", branch="develop", submodules=submodules)
     version("main", branch="main", submodules=submodules)
+    version(
+        "2026.07.1",
+        tag="v2026.07.1",
+        commit="a7230d0fd7b2d8df7433f8f0464e833db42d38df",
+        submodules=submodules,
+    )
     version(
         "2026.07.0",
         tag="v2026.07.0",
@@ -230,7 +236,7 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=False, description="Build OpenMP backend")
     variant("shared", default=False, description="Build shared libs")
     variant("desul", default=False, description="Build desul atomics backend")
-    variant("vectorization", default=True, description="Build SIMD/SIMT intrinsics support")
+    variant("vectorization", default=False, description="Build SIMD/SIMT intrinsics support")
     variant(
         "omptask", default=False, description="Build OpenMP task variants of internal algorithms"
     )
@@ -299,7 +305,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
     depends_on("camp+omptarget", when="+omptarget")
     depends_on("camp+sycl", when="+sycl")
 
-    depends_on("camp@2026.07.1:", when="@2026.07.0:")
+    depends_on("camp@2026.07.2:", when="@2026.07.1:")
+    depends_on("camp@2026.07.1", when="@2026.07.0")
     depends_on("camp@2025.12", when="@2025.12.0:2025.12.2")
     depends_on("camp@2025.09", when="@2025.09")
     depends_on("camp@2025.03", when="@2025.03")

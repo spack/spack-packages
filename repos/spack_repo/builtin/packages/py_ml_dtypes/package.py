@@ -14,14 +14,25 @@ class PyMlDtypes(PythonPackage):
     homepage = "https://github.com/jax-ml/ml_dtypes"
     pypi = "ml_dtypes/ml_dtypes-0.3.1.tar.gz"
     git = "https://github.com/jax-ml/ml_dtypes.git"
-    submodules = True
 
     license("Apache-2.0")
 
+    version("0.6.0", tag="v0.6.0", commit="6bc762dd106292e1aa0d5de98d3867d6b642f209")
     version("0.5.1", tag="v0.5.1", commit="560866cfbb44990c9c68b82e878bf8ee7972a595")
     version("0.4.0", tag="v0.4.0", commit="9fc7e6773acb66fa496ed8d476a008a489a4da49")
     version("0.3.1", tag="v0.3.1", commit="bbeedd470ecac727c42e97648c0f27bfc312af30")
     version("0.2.0", tag="v0.2.0", commit="5b9fc9ad978757654843f4a8d899715dbea30e88")
+
+    # ml_dtypes depends on eigen, but the build system relies on a submodule vendor
+    # patch that out so Spack can supply an eigen
+    # in 0.6.0 ml_dtypes added CMake support so the patch target changes
+    patch("third-party-eigen.patch", when="@0.2.0:0.5.1")
+    # https://github.com/jax-ml/ml_dtypes/pull/421
+    patch(
+        "https://github.com/jax-ml/ml_dtypes/commit/47362b2c84eab14d54bfe04f39bde69814cafd22.patch?full_index=1",
+        sha256="f892b05b1eb19551dad6f6c1cc6cdf382e60f8291bb081ef2720301af1c3fe28",
+        when="@0.6.0:",
+    )
 
     depends_on("cxx", type="build")
 
@@ -31,4 +42,19 @@ class PyMlDtypes(PythonPackage):
     depends_on("py-numpy@:1", when="@:0.3", type=("build", "link", "run"))
     # Build dependencies are overconstrained, older versions work just fine
     depends_on("py-pybind11", when="@:0.3.1", type=("build", "link"))
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools", when="@:0.5", type="build")
+    depends_on("py-scikit-build-core", when="@0.6.0:", type="build")
+    depends_on("cmake@3.15:", when="@0.6.0:", type="build")
+    # upstream vendors an unreleased snapshot, but requires features
+    # from 5.0
+    depends_on("eigen@5.0:", type="build")
+    depends_on("eigen@5.0.1:", when="@0.6.0:", type="build")
+
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("@:0.5"):
+            env.set("EIGEN_DIR", self.spec["eigen"].prefix.include.eigen3)
+
+    def config_settings(selfs, spec, prefix):
+        if spec.satisfies("@0.6.0:"):
+            return {"cmake.define.VENDOR_EIGEN": "OFF"}
+        return {}

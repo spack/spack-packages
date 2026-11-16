@@ -25,7 +25,6 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://lanl.github.io/singularity-eos/main/index.html"
     git = "https://github.com/lanl/singularity-eos.git"
-    url = "https://github.com/lanl/singularity-eos/archive/refs/tags/release-1.6.1.tar.gz"
 
     maintainers("rbberger", "Yurlungur")
 
@@ -33,15 +32,17 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("main", branch="main")
     version("1.12.1", commit="760ac3f8e106addc13dad8a47b9d4ad75e44ea48", tag="release-1.12.1")
-    version("1.12.0", commit="e32a25bed7b73baa7a5684c0183d2c369e16693c", tag="release-1.12.0")
     version("1.11.1", commit="7365053a5bd59839ac47e6133426620540aca7e3", tag="release-1.11.1")
-    version("1.11.0", commit="c996f6505161618f9ca9663942e0beef738b0ecc", tag="release-1.11.0")
-    version("1.10.0", commit="82df6cff9ca8b16f8468f20b9d1eaeff60ac53c7", tag="release-1.10.0")
-    version("1.9.2", commit="9e7de3eccd610e0654e9a05d673ef7b24d32cf31", tag="release-1.9.2")
-    version("1.9.1", commit="1be18426a2c9c26f969bc14a73b482d5beca0217", tag="release-1.9.1")
-    version("1.9.0", commit="cfb7d4bf9fac557d53793a6717e52377b586d77a", tag="release-1.9.0")
-    version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
-    version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
+
+    with default_args(deprecated=True):
+        version("1.12.0", commit="e32a25bed7b73baa7a5684c0183d2c369e16693c", tag="release-1.12.0")
+        version("1.11.0", commit="c996f6505161618f9ca9663942e0beef738b0ecc", tag="release-1.11.0")
+        version("1.10.0", commit="82df6cff9ca8b16f8468f20b9d1eaeff60ac53c7", tag="release-1.10.0")
+        version("1.9.2", commit="9e7de3eccd610e0654e9a05d673ef7b24d32cf31", tag="release-1.9.2")
+        version("1.9.1", commit="1be18426a2c9c26f969bc14a73b482d5beca0217", tag="release-1.9.1")
+        version("1.9.0", commit="cfb7d4bf9fac557d53793a6717e52377b586d77a", tag="release-1.9.0")
+        version("1.8.0", commit="4f363a371f4896f3304fdc1f5facd52d8a9718c1", tag="release-1.8.0")
+        version("1.7.0", commit="b5d7d8cd5c8525cc9d51a71102a645b9c1df6d6e", tag="release-1.7.0")
 
     # https://github.com/lanl/singularity-eos/pull/647
     patch(
@@ -51,10 +52,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     # https://github.com/lanl/singularity-eos/pull/643
-    patch(
-        "fix-header-only-install.patch",
-        when="@1.9.0:1.11.1",
-    )
+    patch("fix-header-only-install.patch", when="@1.9.0:1.11.1")
 
     # build with kokkos, kokkos-kernels for offloading support
     variant("kokkos", default=False, description="Enable kokkos")
@@ -178,7 +176,7 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("kokkos-kernels" + _flag, when="+kokkos-kernels" + _flag)
 
     depends_on("kokkos+pic", when="+kokkos-kernels")
-    depends_on("kokkos+cuda_lambda", when="+cuda+kokkos")
+    requires("^kokkos+cuda_lambda", when="+cuda+kokkos ^kokkos@4")
 
     for _flag in list(CudaPackage.cuda_arch_values):
         depends_on("kokkos cuda_arch=" + _flag, when="+cuda+kokkos cuda_arch=" + _flag)
@@ -267,11 +265,16 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
                     variant_path = join_path(*parts)
                 args.append(self.define("SINGULARITY_VARIANT", variant_path))
 
-        if "+rocm" in self.spec:
+        if "+rocm" in self.spec and not self.spec.satisfies("^kokkos %cxx=llvm-amdgpu"):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
-        if "+kokkos+cuda" in self.spec:
-            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+
+        if self.spec.satisfies("%cxx=llvm ^kokkos+cuda~wrapper %cxx=llvm") or self.spec.satisfies(
+            "%cxx=llvm-amdgpu ^kokkos+rocm~wrapper %cxx=llvm-amdgpu"
+        ):
+            # explicitly disable launch compiler in these cases to avoid not getting
+            # Spack wrapper rpaths
+            args.append(self.define("Kokkos_LAUNCH_COMPILER", False))
 
         if "+kokkos" in self.spec:
             args.append(

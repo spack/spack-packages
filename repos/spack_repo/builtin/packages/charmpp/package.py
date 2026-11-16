@@ -21,7 +21,7 @@ class Charmpp(Package):
 
     homepage = "https://charmplusplus.org"
     url = "https://charm.cs.illinois.edu/distrib/charm-6.8.2.tar.gz"
-    git = "https://github.com/UIUC-PPL/charm.git"
+    git = "https://github.com/charmplusplus/charm.git"
 
     maintainers("matthiasdiener")
     # relicensed from a non-commercial license to Apache-2.0 in May 2024, after v7.0.0
@@ -29,7 +29,11 @@ class Charmpp(Package):
     license("Apache-2.0 WITH LLVM-exception", when="@7.1:", checked_by="tgamblin")
     redistribute(source=False, binary=False, when="@:7.0")
 
-    version("main", branch="main")
+    # "main" is the development head: the recharm branch, the Charm++ 9.0 line
+    # built on the reconverse runtime (contrib/reconverse submodule), whose build
+    # targets this recipe does not support yet. The frozen classic Converse line
+    # (8.1.0 is its final release) is reachable as charmpp@git.classic.
+    version("main", branch="recharm", submodules=True)
 
     version(
         "8.1.0",

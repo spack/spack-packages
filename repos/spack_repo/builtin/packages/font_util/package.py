@@ -16,6 +16,7 @@ class FontUtil(AutotoolsPackage, XorgPackage):
 
     license("custom")
 
+    version("1.4.2", sha256="6ccf9a65f4c229c611680251f1125f4c9a2071eeb13433c66ac146fe2d4c0d6c")
     version("1.4.1", sha256="f029ae80cdd75d89bee7f7af61c21e07982adfb9f72344a158b99f91f77ef5ed")
     version("1.4.0", sha256="30b90fe52347916be9b08f95f717f17c9c1f58bef8cabb49014d0fdd2b0df643")
     version("1.3.2", sha256="f115a3735604de1e852a4bf669be0269d8ce8f21f8e0e74ec5934b31dadc1e76")

@@ -80,7 +80,7 @@ class PyTensorflowHub(Package):
         )
 
         with working_dir(insttmp_path):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
 
         remove_linked_tree(tmp_path)
         remove_linked_tree(insttmp_path)

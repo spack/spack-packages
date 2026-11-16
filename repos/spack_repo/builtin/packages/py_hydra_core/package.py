@@ -15,8 +15,10 @@ class PyHydraCore(PythonPackage):
 
     license("MIT")
 
-    version("1.3.7", sha256="d4ff629c7e23b64a9db5fe5b027cf7c55b633b737f03be51ef41b77ed016f75e")
+    version("1.3.8", sha256="18d5dfb841734a936507e75e7b8390b406ed22494f7fb8b4b7b7c122102de3d5")
     with default_args(deprecated=True):
+        # https://github.com/hydra-ecosystem/hydra/security/advisories/GHSA-757g-8w3h-hp29
+        version("1.3.7", sha256="d4ff629c7e23b64a9db5fe5b027cf7c55b633b737f03be51ef41b77ed016f75e")
         # https://github.com/hydra-ecosystem/hydra/security/advisories/GHSA-mwj6-rfh8-7qf4
         # https://github.com/hydra-ecosystem/hydra/security/advisories/GHSA-rqx7-p7vv-w7hr
         # https://github.com/hydra-ecosystem/hydra/security/advisories/GHSA-c3wx-c55w-pxjq

@@ -24,6 +24,9 @@ class KynemaSgf(CMakePackage, CudaPackage, ROCmPackage):
 
     license("BSD-3-Clause")
 
+    version("4.2.0", tag="v4.2.0", commit="0ee09c22b9afeca06231e4910276c0ba05fb52dd")
+    version("4.1.0", tag="v4.1.0", commit="b844bcc23cbf317467d82074c3fbe0145a5e3fa6")
+    version("4.0.0", tag="v4.0.0", commit="f596712bd056297cfc7a9ff36f2e58237a69788b")
     version("main", branch="main")
 
     variant("hypre", default=False, description="Enable Hypre integration")

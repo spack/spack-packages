@@ -11,10 +11,11 @@ class Fontconfig(AutotoolsPackage):
     """Fontconfig is a library for configuring/customizing font access"""
 
     homepage = "https://www.freedesktop.org/wiki/Software/fontconfig/"
-    url = "https://www.freedesktop.org/software/fontconfig/release/fontconfig-2.12.3.tar.gz"
+    url = "https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/2.18.3/fontconfig-2.18.3.tar.xz"
 
     license("MIT")
 
+    version("2.18.3", sha256="4f7b554a38cdf78c033f666c8871f3749e14a094f65a07f630c91ed0b43d35e3")
     version("2.15.0", sha256="f5f359d6332861bd497570848fcb42520964a9e83d5e3abe397b6b6db9bcaaf4")
     version("2.14.2", sha256="3ba2dd92158718acec5caaf1a716043b5aa055c27b081d914af3ccb40dce8a55")
     version("2.13.94", sha256="246d1640a7e54fba697b28e4445f4d9eb63dda1b511d19986249368ee7191882")
@@ -23,6 +24,8 @@ class Fontconfig(AutotoolsPackage):
     version("2.12.3", sha256="ffc3cbf6dd9fcd516ee42f48306a715e66698b238933d6fa7cef02ea8b3b818e")
     version("2.12.1", sha256="a9f42d03949f948a3a4f762287dbc16e53a927c91a07ee64207ebd90a9e5e292")
     version("2.11.1", sha256="b6b066c7dce3f436fdc0dfbae9d36122b38094f4f53bd8dffd45e195b0540d8d")
+
+    variant("pic", default=False, description="Enable position-independent code (PIC)")
 
     depends_on("c", type="build")  # generated
 
@@ -36,17 +39,24 @@ class Fontconfig(AutotoolsPackage):
     depends_on("uuid", when="@2.13.1:")
     depends_on("python@3:", type="build", when="@2.13.93:")
 
-    variant("pic", default=False, description="Enable position-independent code (PIC)")
+    def url_for_version(self, version):
+        if version >= Version("2.17"):
+            return f"https://gitlab.freedesktop.org/api/v4/projects/890/packages/generic/fontconfig/{version}/fontconfig-{version}.tar.xz"
+        else:
+            return f"https://www.freedesktop.org/software/fontconfig/release/fontconfig-{version}.tar.gz"
 
+    @when("@:2.17")
     def patch(self):
         """Make test/run-test.sh compatible with dash"""
         filter_file("SIGINT SIGTERM SIGABRT EXIT", "2 15 6 0", "test/run-test.sh")
 
     # Resolve known issue with tarballs 2.12.3 - 2.13.0 plus
     # https://gitlab.freedesktop.org/fontconfig/fontconfig/-/issues/10
+    # fixed in 2.13.1
     @run_before("configure")
     def _rm_offending_header(self):
-        force_remove(join_path("src", "fcobjshash.h"))
+        if self.spec.satisfies("@:2.13.0"):
+            force_remove(join_path("src", "fcobjshash.h"))
 
     def configure_args(self):
         font_path = join_path(self.spec["font-util"].prefix, "share", "fonts")
