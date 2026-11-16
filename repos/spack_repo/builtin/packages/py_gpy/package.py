@@ -38,7 +38,7 @@ class PyGpy(PythonPackage):
     depends_on("py-setuptools", type="build")
     # @:1.13 do not support numpy@2:
     depends_on("py-numpy@1.7:1.26", type=("build", "run"), when="@:1.13")
-    ## @1.14.0 is official support of numpy@2:
+    # @1.14.0 makes numpy 2 a requirement:
     depends_on("py-numpy@2:", type=("build", "run"), when="@1.14:")
     depends_on("py-scipy@0.16:", type=("build", "run"))
     depends_on("py-scipy@1.3:", when="@1.10.0:", type=("build", "run"))
@@ -53,7 +53,7 @@ class PyGpy(PythonPackage):
 
     @run_before("install",when="@:1.14")
     def touch_sources(self):
-        # This packages uses deprecated build_ext, for which we cannot
+        # For @:1.14 this packages used deprecated build_ext, for which we cannot
         # automatically force recythonization.
         # See also https://github.com/SheffieldML/GPy/pull/1020
         for src in find(".", "*.pyx"):
