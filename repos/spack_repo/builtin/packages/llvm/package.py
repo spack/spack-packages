@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import glob
 import os
 import re
 
@@ -1254,9 +1255,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             cfg_files.append("flang.cfg")
         gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self.compiler)
         if gcc_install_dir_flag:
+            gcc_rpath_flag = get_gcc_rpath_flag(spec)
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # rpath the GCC runtime libraries, like gcc's own specs file does
+                    if gcc_rpath_flag:
+                        print(gcc_rpath_flag, file=f)
                     # make sure LLVM prefers binutils prefix over system default
                     if self.spec.satisfies("^binutils"):
                         print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
@@ -1293,6 +1298,19 @@ def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
         return None
     libgcc_dir = os.path.dirname(libgcc_path)
     return f"--gcc-install-dir={libgcc_dir}" if os.path.exists(libgcc_dir) else None
+
+
+def get_gcc_rpath_flag(spec: Spec) -> Optional[str]:
+    """Get the linker-only $-Wl,-rpath,... flag for the runtime libraries of a Spack-built GCC."""
+    if not spec.satisfies("@20: %cxx=gcc"):
+        return None
+    gcc = spec["cxx"]
+    if gcc.external:
+        return None
+    for libdir in (gcc.prefix.lib64, gcc.prefix.lib):
+        if glob.glob(os.path.join(libdir, "libgcc_s.*")):
+            return f"$-Wl,-rpath,{libdir}"
+    return None
 
 
 def get_llvm_targets_to_build(spec):
