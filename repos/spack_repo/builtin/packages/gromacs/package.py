@@ -124,6 +124,18 @@ class Gromacs(CMakePackage, CudaPackage):
     )
     variant("nosuffix", default=False, description="Disable default suffixes")
     variant(
+        "binary_suffix",
+        default="auto",
+        values=any,
+        description="Executable suffix (auto uses defaults; none disables the suffix)",
+    )
+    variant(
+        "libs_suffix",
+        default="auto",
+        values=any,
+        description="Library suffix (auto uses defaults; none disables the suffix)",
+    )
+    variant(
         "build_type",
         default="Release",
         description="The build type to build",
@@ -385,11 +397,6 @@ class Gromacs(CMakePackage, CudaPackage):
     # https://gitlab.com/gromacs/gromacs/-/merge_requests/4965
     patch("pr4965-2025.0.patch", when="@2025.0")
 
-    filter_compiler_wrappers(
-        "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
-    )
-    filter_compiler_wrappers("*.cmake", relative_root=os.path.join("share", "cmake", "gromacs"))
-
     def patch(self):
         # Otherwise build fails with GCC 11 (11.2)
         if self.spec.satisfies("@2018:2020.6"):
@@ -473,8 +480,32 @@ class Gromacs(CMakePackage, CudaPackage):
         if self.spec.satisfies("+cufftmp"):
             env.append_path("LD_LIBRARY_PATH", self.spec["nvshmem"].prefix.lib)
 
+    def _suffix(self, variant):
+        suffix = self.spec.variants[variant].value if variant in self.spec.variants else "auto"
+        if suffix != "auto":
+            return "" if suffix == "none" else suffix
+        if "+nosuffix" in self.spec:
+            return ""
+        return ("_mpi" if "+mpi" in self.spec else "") + ("_d" if "+double" in self.spec else "")
+
+    @property
+    def libs(self):
+        suffix = self._suffix("libs_suffix")
+        if "+mdrun_only" in self.spec:
+            suffix = "_mdrun" + suffix
+        return find_libraries(
+            "libgromacs" + suffix,
+            root=self.prefix,
+            shared="+shared" in self.spec,
+            recursive=True,
+        )
+
 
 class CMakeBuilder(cmake.CMakeBuilder):
+    filter_compiler_wrappers(
+        "*.cmake", relative_root=os.path.join("share", "cmake"), recursive=True
+    )
+
     @run_after("build")
     def build_test_binaries(self):
         """Build the test binaries.
@@ -577,8 +608,19 @@ class CMakeBuilder(cmake.CMakeBuilder):
         if self.spec.satisfies("+double"):
             options.append("-DGMX_DOUBLE:BOOL=ON")
 
-        if self.spec.satisfies("+nosuffix"):
+        custom_suffix = any(
+            name in self.spec.variants and self.spec.variants[name].value != "auto"
+            for name in ("binary_suffix", "libs_suffix")
+        )
+        if self.spec.satisfies("+nosuffix") or custom_suffix:
             options.append("-DGMX_DEFAULT_SUFFIX:BOOL=OFF")
+        if custom_suffix:
+            options.extend(
+                [
+                    self.define("GMX_BINARY_SUFFIX", self.pkg._suffix("binary_suffix")),
+                    self.define("GMX_LIBS_SUFFIX", self.pkg._suffix("libs_suffix")),
+                ]
+            )
 
         if self.spec.satisfies("~shared"):
             options.append("-DBUILD_SHARED_LIBS:BOOL=OFF")
