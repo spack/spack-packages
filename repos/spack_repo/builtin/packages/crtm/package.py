@@ -90,7 +90,6 @@ class Crtm(CMakePackage):
     depends_on("ecbuild", type=("build"), when="@v2.4")
     depends_on("ecbuild", type=("build"), when="@v3")
 
-    conflicts("%oneapi", when="@2")
     conflicts("%oneapi", when="@v2.4-jedi")
     conflicts("%oneapi", when="@=v2.4.1-jedi")
     conflicts("%oneapi", when="@=v2.4.1-jedi.1")
