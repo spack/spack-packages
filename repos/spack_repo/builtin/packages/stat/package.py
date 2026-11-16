@@ -124,7 +124,7 @@ class Stat(AutotoolsPackage):
             "--with-python=%s" % spec["python"].command.path,
             "--with-boost=%s" % spec["boost"].prefix,
         ]
-        if "+gui" in spec:
+        if spec.satisfies("+gui"):
             if spec.satisfies("@4.3.0:"):
                 args.append("--with-python-path=%s" % stat_python_path)
             if spec.satisfies("@4.2.2:") and spec["glib"].satisfies("@2.0:2.99"):
