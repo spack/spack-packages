@@ -86,7 +86,7 @@ class Stat(AutotoolsPackage):
     depends_on("py-xdot@1.0", when="+gui @:4.2.3", type=("run"))
     depends_on("py-pygments", when="+gui", type=("run"))
     depends_on("pango", when="+gui", type=("run"))
-    depends_on("swig@4.0:", when="^python@3.12:")
+    depends_on("swig@4.0:", type="build", when="^python@3.12:")
     depends_on("swig", type=("build"))
     depends_on("mpi", when="+examples")
     depends_on("glib", type=("build", "run"), when="+gui")
