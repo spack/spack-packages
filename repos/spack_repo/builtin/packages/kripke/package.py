@@ -31,8 +31,6 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         tag="v1.2.8",
         commit="46563d6d19afe7fdf65fc564638c7ec13615866f",
     )
-    version("2025.12.0", submodules=False, commit="01f6f85c02ceffcd2bc06e42cee997867dd142c5")
-    version("2025.07.0", submodules=False, commit="8cf38433a6a11e0dcd17864e649b2d045159ee9c")
     version("1.2.7.0", submodules=False, commit="db920c1f5e1dcbb9e949d120e7d86efcdb777635")
     version(
         "1.2.7", submodules=True, tag="v1.2.7", commit="ddcac43cdad999f0346eb682065ef0af1847029d"
@@ -82,34 +80,29 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("mpi", when="+mpi")
-    depends_on("blt", type="build", when="@:1.2.7")
+    depends_on("blt@:0.6.1", type="build", when="@:1.2.6")
+    depends_on("blt@0.6.2:", type="build", when="@1.2.7:")
 
-    depends_on("raja@2026.07.1: ~examples~exercises cxxstd=20", when="@develop")
-    depends_on("raja@2026.07.1 ~examples~exercises cxxstd=20", when="@1.2.8")
-    depends_on("raja@2025.12.0 ~examples~exercises cxxstd=17", when="@2025.12.0")
-    depends_on("raja@2024.07.0 ~examples~exercises cxxstd=14", when="@1.2.7.0,2025.07.0")
-    depends_on("raja@:2024.02.1~exercises~examples", when="@:1.2.7")
+    depends_on("raja@2026.07.1: cxxstd=20", when="@develop")
+    depends_on("raja@2026.07.1 cxxstd=20", when="@1.2.8")
+    depends_on("raja@2024.07.0 cxxstd=14", when="@1.2.7.0")
+    depends_on("raja@:2024.02.1", when="@:1.2.6,=1.2.7")
+    depends_on("raja~exercises~examples")
 
     with when("+chai"):
         depends_on("chai+mpi", when="+mpi")
 
-        depends_on("chai@2026.07.1: ~examples +raja cxxstd=20", when="@develop")
-        depends_on("chai@2026.07.1 ~examples +raja cxxstd=20", when="@1.2.8")
-        depends_on("chai@2025.12.0 ~examples +raja cxxstd=17", when="@2025.12.0")
-        depends_on("chai@2024.07.0 ~examples +raja cxxstd=14", when="@1.2.7.0,2025.07.0")
-        depends_on("chai~examples+raja", when="@:1.2.7")
+        depends_on("chai@2026.07.1: cxxstd=20", when="@develop")
+        depends_on("chai@2026.07.1 cxxstd=20", when="@1.2.8")
+        depends_on("chai@2024.07.0 cxxstd=14", when="@1.2.7.0")
+        depends_on("chai~examples")
+        depends_on("chai+raja")
         depends_on("chai+openmp", when="+openmp")
         depends_on("chai~openmp", when="~openmp")
         depends_on("chai+cuda", when="+cuda")
         depends_on("chai~cuda", when="~cuda")
         depends_on("chai~rocm", when="~rocm")
-        depends_on("fmt@9.1", when="^chai@2024.07.0")
 
-        depends_on("umpire@2026.07.2: ~examples", when="@develop")
-        depends_on("umpire@2026.07.2 ~examples", when="@1.2.8")
-        depends_on("umpire@2025.12.0 ~examples", when="@2025.12.0")
-        depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
-        depends_on("umpire~examples", when="@:1.2.7")
         depends_on("umpire+openmp", when="+openmp")
         depends_on("umpire~openmp", when="~openmp")
         depends_on("umpire+cuda", when="+cuda")
@@ -133,22 +126,19 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("adiak@0.4:", when="+caliper")
     conflicts("^blt@:0.3.6", when="+rocm")
 
-    depends_on("blt@0.6.2:", type="build", when="@1.2.7:")
+    for c in ["+cuda~chai", "+rocm~chai", "+chai"]:
+        with when(c):
+            depends_on("umpire@2026.07.2:", when="@develop")
+            depends_on("umpire@2026.07.2", when="@1.2.8")
+            depends_on("umpire@2024.07.0", when="@1.2.7.0")
+            depends_on("umpire~examples")
 
     with when("+cuda~chai"):
-        depends_on("umpire@2026.07.2: ~examples", when="@develop")
-        depends_on("umpire@2026.07.2 ~examples", when="@1.2.8")
-        depends_on("umpire@2025.12.0 ~examples", when="@2025.12.0")
-        depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
         depends_on("umpire+cuda")
         for sm_ in CudaPackage.cuda_arch_values:
             depends_on(f"umpire cuda_arch={sm_}", when=f"cuda_arch={sm_}")
 
     with when("+rocm~chai"):
-        depends_on("umpire@2026.07.2: ~examples", when="@develop")
-        depends_on("umpire@2026.07.2 ~examples", when="@1.2.8")
-        depends_on("umpire@2025.12.0 ~examples", when="@2025.12.0")
-        depends_on("umpire@2024.07.0 ~examples", when="@1.2.7.0,2025.07.0")
         depends_on("umpire+rocm")
         for arch in ROCmPackage.amdgpu_targets:
             depends_on(f"umpire amdgpu_target={arch}", when=f"amdgpu_target={arch}")
@@ -174,11 +164,11 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env):
         spec = self.spec
-        if "+cuda" in spec:
-            if "+mpi" in spec:
+        if spec.satisfies("+cuda"):
+            if spec.satisfies("+mpi"):
                 env.set("CUDAHOSTCXX", self.spec["mpi"].mpicxx)
             else:
-                env.set("CUDAHOSTCXX", self.compiler.cxx)
+                env.set("CUDAHOSTCXX", spack_cxx)
 
     def setup_run_environment(self, env):
         super().setup_run_environment(env)
@@ -192,9 +182,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         args = []
         if spec.satisfies("@develop") or spec.satisfies("@1.2.8"):
             blt_cxx_std = "c++20"
-        elif spec.satisfies("@2025.12.0"):
-            blt_cxx_std = "c++17"
-        elif spec.satisfies("@:2025.7.0"):
+        elif spec.satisfies("@:1.2.7.0"):
             blt_cxx_std = "c++14"
 
         args.extend(
@@ -207,7 +195,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         )
 
         args.append(self.define_from_variant("ENABLE_CHAI", "chai"))
-        if "+chai" in spec:
+        if spec.satisfies("+chai"):
             args.extend(
                 [
                     "-Dchai_DIR=%s" % self.spec["chai"].prefix,
@@ -216,7 +204,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
             )
 
         args.append(self.define_from_variant("ENABLE_GPU_AWARE_MPI", "gpu-aware-mpi"))
-        if "+gpu-aware-mpi" in spec:
+        if spec.satisfies("+gpu-aware-mpi"):
             args.append(
                 self.define_from_variant(
                     "ENABLE_DIRECT_UMPIRE_PLANE_STORAGE", "direct-device-plane"
@@ -226,12 +214,12 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
         args.append(self.define_from_variant("ENABLE_CALIPER", "caliper"))
 
         args.append(self.define_from_variant("ENABLE_MPI", "mpi"))
-        if "+mpi" in spec:
+        if spec.satisfies("+mpi"):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["mpi"].mpicxx))
             args.append("-DMPI_CXX_LINK_FLAGS='%s'" % self.spec["mpi"].libs.ld_flags)
 
         args.append(self.define_from_variant("ENABLE_HIP", "rocm"))
-        if "+rocm" in spec:
+        if spec.satisfies("+rocm"):
             # Set up the hip macros needed by the build
             args.append("-Dumpire_DIR=%s" % self.spec["umpire"].prefix + "/lib64/cmake/umpire")
             args.append("-DHIP_ROOT_DIR={0}".format(spec["hip"].prefix))
@@ -242,9 +230,9 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(f"-DCMAKE_HIP_ARCHITECTURES={arch_str}")
 
         args.append(self.define_from_variant("ENABLE_CUDA", "cuda"))
-        if "+cuda" in spec:
+        if spec.satisfies("+cuda"):
             args.append("-Dumpire_DIR=%s" % self.spec["umpire"].prefix + "/lib64/cmake/umpire")
-            if "+mpi" in spec:
+            if spec.satisfies("+mpi"):
                 args.append(self.define("CMAKE_CUDA_HOST_COMPILER", self.spec["mpi"].mpicxx))
             else:
                 args.append(self.define("CMAKE_CUDA_HOST_COMPILER", self.compiler.cxx))
@@ -252,7 +240,7 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
                 cuda_arch = spec.variants["cuda_arch"].value
                 args.append(f"-DCUDA_ARCH={cuda_arch[0]}")
                 args.append(f"-DCMAKE_CUDA_ARCHITECTURES={cuda_arch[0]}")
-            if "+mpi" in spec:
+            if spec.satisfies("+mpi"):
                 args.append(
                     "-DCMAKE_CUDA_FLAGS=--extended-lambda -I=%s"
                     % (self.spec["mpi"].prefix.include)
