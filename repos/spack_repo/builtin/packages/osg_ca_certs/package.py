@@ -21,6 +21,12 @@ class OsgCaCerts(Package):
 
     releases = [
         {
+            "osg_version": "1.148",
+            "igtf_version": "1.148",
+            "osg_commit": "ef93c02ace5b87230701ed74ae9ea56fe2e41ae6",
+            "igtf_sha256": "cddff93e8cfc104c10a3f70e4a615b4712040846e24aa0c00b11a6defe13a262",
+        },
+        {
             "osg_version": "1.141",
             "igtf_version": "1.141",
             "osg_commit": "cfd488b20855b42682eebcce7692ca6e25ae2e86",
