@@ -90,7 +90,7 @@ class Bricks(CMakePackage):
 
         with working_dir(source_dir):
             cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
-            cmake(".")
+            cmake(".", self.define("CMAKE_PREFIX_PATH", self.prefix))
 
             cmake("--build", ".")
 
