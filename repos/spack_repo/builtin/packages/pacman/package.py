@@ -22,20 +22,13 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
 
     version("0.1.2", sha256="8da7c647fcdae42cecf8846d9fc4f872c21aa0f989dbb869a850df8e1642d2e9")
 
+    variant("serial", default=True, description="Build the Serial host Backend")
+    variant("openmp", default=False, description="Build the OpenMP host Backend")
+    variant("threads", default=False, description="Build the C++ Threads host Backend")
     variant("sycl", default=False, description="Build the SYCL device Backend")
     variant("python", default=True, description="Build the Python interface")
     variant("fortran", default=False, description="Build the Fortran interface")
-    variant("tests", default=False, description="Build the test suite")
-
-    # A build carries at most one device Backend
-    for _a, _b in (("cuda", "rocm"), ("cuda", "sycl"), ("rocm", "sycl")):
-        conflicts(
-            f"+{_a} +{_b}",
-            msg=f"+{_a} and +{_b} are mutually exclusive: PACMAN builds at most one device "
-            "Backend (pick one of +cuda, +rocm, +sycl)",
-        )
-
-    conflicts("+cuda", when="cuda_arch=none", msg="+cuda requires a cuda_arch value")
+    #variant("tests", default=False, description="Build the test suite")
 
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
@@ -51,6 +44,17 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"kokkos~{_backend}", when=f"~{_backend}")
         depends_on(f"arborx~{_backend}", when=f"~{_backend}")
     depends_on("kokkos-kernels~cuda", when="~cuda")
+
+    # PACMAN instantiates every execution space Kokkos enables, so the host Backends of
+    # Kokkos match the variants exactly. ArborX defaults to +serial, which would force
+    # kokkos+serial; it has no Threads variant. kokkos-kernels host variants only
+    # forward to Kokkos and are left alone.
+    for _backend in ("serial", "openmp", "threads"):
+        depends_on(f"kokkos+{_backend}", when=f"+{_backend}")
+        depends_on(f"kokkos~{_backend}", when=f"~{_backend}")
+    for _backend in ("serial", "openmp"):
+        depends_on(f"arborx+{_backend}", when=f"+{_backend}")
+        depends_on(f"arborx~{_backend}", when=f"~{_backend}")
 
     for _arch in CudaPackage.cuda_arch_values:
         _cuda_dep = f"+cuda cuda_arch={_arch}"
@@ -72,6 +76,9 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("py-pybind11", type="build")
         depends_on("py-numpy", type=("build", "run"))
 
+    # rocm requires an amdgpu_target value and conflicts with none but not cuda
+    conflicts("+cuda", when="cuda_arch=none", msg="+cuda requires a cuda_arch value")
+
     def cmake_args(self):
         if self.spec.satisfies("+rocm"):
             cxx = self.spec["hip"].hipcc
@@ -82,12 +89,22 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CMAKE_CXX_COMPILER", cxx),
             self.define_from_variant("BUILD_PYTHON_INTERFACE", "python"),
             self.define_from_variant("BUILD_FORTRAN_INTERFACE", "fortran"),
-            self.define_from_variant("BUILD_TESTS", "tests"),
+            self.define("BUILD_TESTS", self.run_tests)
         ]
 
         if self.spec.satisfies("+python"):
             python = self.spec["python"].command.path
             args.append(self.define("Python_EXECUTABLE", python))
+
+        # With hipcc as the C++ compiler, FindOpenMP detects -fopenmp=libomp but no runtime
+        # library, and for Clang that flag is applied at compile time only: libomp never
+        # reaches the link lines and executables fail with undefined __kmpc_* symbols.
+        # Name the ROCm LLVM OpenMP runtime explicitly so OpenMP::OpenMP_CXX links it.
+        if self.spec.satisfies("+rocm +openmp"):
+            libomp = find_libraries("libomp", self.spec["llvm-amdgpu"].prefix.lib, shared=True)
+            if libomp:
+                args.append(self.define("OpenMP_CXX_LIB_NAMES", "omp"))
+                args.append(self.define("OpenMP_omp_LIBRARY", libomp[0]))
 
         # CMake drops the CUDA library directory from the RPATH as an nvcc implicit link
         # directory, so the CUDA libraries kokkos-kernels links would not be found at run
@@ -98,3 +115,4 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(self.define(f"CMAKE_{kind}_LINKER_FLAGS", rpath))
 
         return args
+
