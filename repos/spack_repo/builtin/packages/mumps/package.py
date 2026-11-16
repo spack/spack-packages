@@ -324,6 +324,8 @@ class Mumps(Package):
         if "+shared" in self.spec:
             # All Mumps libraries will be linked with 'inject_libs'.
             inject_libs = []
+            if "+openmp" in self.spec:
+                inject_libs += [self.compiler.openmp_flag]
             if "+mpi" in self.spec:
                 inject_libs += [self.spec["scalapack"].libs.ld_flags]
             if "+ptscotch" in self.spec or "+scotch" in self.spec:
