@@ -588,7 +588,13 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
             if self.v2_layout
             else self.component_prefix.linux.join("bin-llvm")
         )
-        if all(os.path.isfile(join_path(tool_dir, tool)) for tool in ("llvm-ar", "llvm-ranlib")):
+        is_compiler = any(
+            edge.spec == self.spec and set(edge.virtuals).intersection(("c", "cxx", "fortran"))
+            for edge in dependent_spec.edges_to_dependencies(name=self.name)
+        )
+        if is_compiler and all(
+            os.path.isfile(join_path(tool_dir, tool)) for tool in ("llvm-ar", "llvm-ranlib")
+        ):
             env.prepend_path("PATH", tool_dir)
 
         # workaround bug in icpx driver where it requires sycl-post-link is on the PATH
