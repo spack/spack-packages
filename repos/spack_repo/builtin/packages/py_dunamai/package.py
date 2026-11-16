@@ -15,6 +15,7 @@ class PyDunamai(PythonPackage):
 
     license("MIT")
 
+    version("1.26.5", sha256="b1435d8d2b0aceef240cde8e8f6ba910e85b1aa0e22fa9e21454d2d22fb0a89c")
     version("1.26.1", sha256="3b46007bd65b00b4824ead0a1aee365fd22d0ec2b9c219497d4fd48f52860c8b")
     version("1.25.0", sha256="a7f8360ea286d3dbaf0b6a1473f9253280ac93d619836ad4514facb70c0719d1")
     version("1.21.2", sha256="05827fb5f032f5596bfc944b23f613c147e676de118681f3bb1559533d8a65c4")

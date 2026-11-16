@@ -102,6 +102,7 @@ class Swig(AutotoolsPackage, CMakePackage, SourceforgePackage):
         for _target in ["ppc64le", "aarch64"]:
             depends_on("automake@1.15:", type="build", when=f"target={_target}:")
         depends_on("pkgconfig", type="build")
+        depends_on("zlib-api")
 
     conflicts("%nvhpc", when="@:4.0.2")
 

@@ -27,6 +27,7 @@ class RocmTensile(ROCmLibrary, CMakePackage):
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
 
+    version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
     version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
@@ -122,12 +123,47 @@ class RocmTensile(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"rocm-cmake@{ver}", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"comgr@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", type="build", when=f"@{ver}")
+
+    for ver in [
+        "5.7.0",
+        "5.7.1",
+        "6.0.0",
+        "6.0.2",
+        "6.1.0",
+        "6.1.1",
+        "6.1.2",
+        "6.2.0",
+        "6.2.1",
+        "6.2.4",
+        "6.3.0",
+        "6.3.1",
+        "6.3.2",
+        "6.3.3",
+        "6.4.0",
+        "6.4.1",
+        "6.4.2",
+        "6.4.3",
+        "7.0.0",
+        "7.0.2",
+        "7.1.0",
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
+    ]:
         depends_on(f"rocm-smi-lib@{ver}", type="build", when=f"@{ver}")
+
+    for ver in ["10.1.0"]:
+        depends_on(f"amdsmi@{ver}", type="build", when=f"@{ver}")
 
     for ver in [
         "5.7.0",
@@ -166,7 +202,7 @@ class RocmTensile(ROCmLibrary, CMakePackage):
             return "Tensile/Source"
 
     patch("0004-replace_rocm_smi.patch", when="@6.4:7.2")
-    patch("0004-replace_rocm_smi_7_13.patch", when="@7.13:")
+    patch("0004-replace_rocm_smi_7_13.patch", when="@7.13:10.0")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):

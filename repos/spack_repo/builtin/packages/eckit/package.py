@@ -22,6 +22,12 @@ class Eckit(CMakePackage):
 
     license("Apache-2.0")
 
+    version("2.5.0", sha256="7403a175ba3e91d4a7a1a06957b7d490a44d76eb2fc5a51c0e7f1a147bb9cf7e")
+    version("2.4.0", sha256="a166da74cab7841ddab749c802ea62daeb6d744e2b9829cc497930f886b7f175")
+    version("2.3.0", sha256="0b894ebef7c5e935d45ea56bab1b18ff7cadd6ab146b9e27e593c55525fd03c4")
+    version("2.2.0", sha256="8973a330b907f3328039c495e7874a6760e354361f07f287f1d14513b22023a2")
+    version("2.1.0", sha256="bb7e888498b39925d724019f02c14b981761e7c94de899b5322cffe025d1e3d6")
+    version("2.0.8", sha256="b85120d4d9f8440d763f5ed34ccb92b24663a5c72988f7ef9a107ba7a5439cc5")
     version("2.0.7", sha256="376aa865b317d9533c1c88e1a7d15ca248420cc8a048570f3fe216e123991b51")
     version("2.0.2", sha256="46b9c1f90e0b565698c5c79c54676401d33738ec82995c025d5d5aabeb13ad2b")
     version("1.33.0", sha256="a15f89df0cdaa2d8a74843a1e72a7b3b304958a4fe119b51eec5efadbf113d4f")
@@ -86,6 +92,7 @@ class Eckit(CMakePackage):
         description="Enable support for Unicode characters in Yaml/JSON parsers",
     )
     variant("aio", default=True, description="Enable asynchronous IO")
+    variant("proj", default=False, description="Support PROJ-based projections", when="@1.27:")
     variant("fismahigh", default=False, description="Apply patching for FISMA-high compliance")
 
     depends_on("c", type="build")
@@ -122,8 +129,13 @@ class Eckit(CMakePackage):
     depends_on("openssl", when="+ssl")
 
     depends_on("curl", when="+curl")
+    depends_on("curl@7.61:", when="@2.1: +curl")
 
     depends_on("jemalloc", when="+jemalloc")
+
+    # eckit 1.28.6 decreased the minimum PROJ version from 9.2 to 9.1.1
+    depends_on("proj@9.1.1:", when="+proj")
+    depends_on("proj@9.2:", when="@:1.28.5 +proj")
 
     # The package enables LAPACK backend (together with MKL backend)
     # when='linalg=mkl'. This leads to two identical installations when:
@@ -168,6 +180,7 @@ class Eckit(CMakePackage):
             self.define_from_variant("ENABLE_JEMALLOC", "jemalloc"),
             self.define_from_variant("ENABLE_UNICODE", "unicode"),
             self.define_from_variant("ENABLE_AIO", "aio"),
+            self.define_from_variant("ENABLE_PROJ", "proj"),
             self.define("ENABLE_TESTS", self.run_tests),
             # Unconditionally disable additional unit/performance tests, since
             # they download additional data (~1.6GB):
@@ -184,8 +197,13 @@ class Eckit(CMakePackage):
             # rsync support requires https://github.com/librsync/librsync and
             # will be added later:
             self.define("ENABLE_RSYNC", False),
+            # Disable shapefile support in eckit::geo (eckit >= 1.29):
+            self.define("ENABLE_GEO_AREA_SHAPEFILE", False),
             # Disable "prototyping code that may never see the light of day":
             self.define("ENABLE_SANDBOX", False),
+            # Disable OpenFAM and mock implementation (eckit >= 2.2)
+            self.define("ENABLE_OPENFAM_MOCK", False),
+            self.define("ENABLE_OPENFAM", False),
         ]
 
         # Static build of eckit not working, many places in eckit's build

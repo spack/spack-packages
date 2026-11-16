@@ -99,6 +99,9 @@ class PyGpaw(PythonPackage, CudaPackage):
     depends_on("openmpi +cuda", when="+cuda +mpi", type=("build", "link", "run"))
     conflicts("cuda_arch=none", when="+cuda", msg="CUDA arch required when building cuda variant.")
     conflicts("elpa", when="+cuda", msg="CUDA and ELPA have not been tested together.")
+    conflicts(
+        "+openmp", when="%apple-clang", msg="Apple Clang does not (natively) support OpenMP."
+    )
     # Fixed elpa version due to compilation/linking errors on older and newer versions.
     # Tested for versions @23.6.1:25.1.0
     depends_on("elpa@2022.11.001", when="+elpa")
