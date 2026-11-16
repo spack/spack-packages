@@ -1086,6 +1086,13 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(define_tpl_enable("Kokkos"))
         if spec.satisfies("@15.1: +kokkos"):
             options.append(define_tpl_enable("KokkosKernels", True))
+        if spec.satisfies("@14.4.0: +kokkos +cuda ~wrapper"):
+            # kokkos_launch_compiler sends C++ commands that use Kokkos to the compiler Kokkos
+            # was built with, so that a regular C++ compiler can stay CMAKE_CXX_COMPILER while
+            # Kokkos code goes to nvcc_wrapper. With ~wrapper, clang compiles CUDA itself and
+            # gets the CUDA flags from the Kokkos target, so keep CMAKE_CXX_COMPILER (the MPI or
+            # Spack compiler wrapper, whose flags the redirect would drop).
+            options.append(define("Kokkos_LAUNCH_COMPILER", False))
 
         # MPI settings
         options.append(define_tpl_enable("MPI"))
