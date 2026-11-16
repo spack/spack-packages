@@ -108,7 +108,7 @@ class Eccodes(CMakePackage):
         description="List of extra definitions to install",
     )
 
-    variant("geo", default=False, description="Enable eckit::geo")
+    variant("eckit_geo", default=False, when="@2.40:", description="Build eckit::geo backend")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -138,10 +138,15 @@ class Eccodes(CMakePackage):
 
     conflicts("+openmp", when="+pthreads", msg="Cannot enable both POSIX threads and OMP")
 
-    depends_on("eckit", when="+geo")
-    depends_on("eckit@1.30:", when="@2.40: +geo")
-    depends_on("eckit@2.1:", when="@2.47.3: +geo")
-    depends_on("eckit@2.3:", when="@2.49: +geo")
+    # eckit builds eckit_geo by default from 1.30
+    with when("+eckit_geo"):
+        depends_on("eckit@1.30:1.32", when="@2.40:2.43")
+        depends_on("eckit@1.31:1.32", when="@2.44:2.45")
+        depends_on("eckit@1.33:", when="@2.46:2.47.2")
+        depends_on("eckit@2.1:", when="@2.47.3:2.48")
+        depends_on("eckit@2.3:", when="@2.49:")
+        # eccodes uses eckit ORCA/ICON/FESOM grids, which eckit 1.31 to 2.0 builds only with LZ4
+        requires("^eckit compression=lz4", when="@2.44:2.48 ^eckit@1.31:2.0")
 
     conflicts(
         "+netcdf",
@@ -342,8 +347,8 @@ class Eccodes(CMakePackage):
             self.define_from_variant("ENABLE_ECCODES_THREADS", "pthreads"),
             self.define_from_variant("ENABLE_ECCODES_OMP_THREADS", "openmp"),
             self.define_from_variant("ENABLE_MEMFS", "memfs"),
-            self.define_from_variant("ENABLE_GEOGRAPHY", "geo"),
-            self.define_from_variant("ENABLE_ECKIT_GEO", "geo"),
+            self.define("ENABLE_GEOGRAPHY", True),
+            self.define_from_variant("ENABLE_ECKIT_GEO", "eckit_geo"),
             self.define(
                 "ENABLE_PYTHON{0}".format("2" if self.spec.satisfies("@2.20.0:") else ""), False
             ),
