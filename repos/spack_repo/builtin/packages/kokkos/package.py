@@ -22,7 +22,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     test_requires_compiler = True
 
-    maintainers("cedricchevalier19", "nmm0", "lucbv", "tpadioleau")
+    maintainers("cedricchevalier19", "nmm0", "lucbv", "tpadioleau", "JBludau")
 
     license("Apache-2.0 WITH LLVM-exception")
 

@@ -25,6 +25,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.26.1", sha256="d9b8bb27f6402e72e9d8f7ae9a1de241ff772b55d0bf265e8e10c61750f49cb9")
     version("3.26.0", sha256="a2f4cc2af76d55c078c30ad8bc66b44736dac921a7912266eb44136fc1b6029d")
     version("3.25.2", sha256="65795612fd50efd77d151bb884b0075429fe12c532963e38081988a5ed6efbd5")
     version("3.25.1", sha256="906ddbe15a20774c23ddcdf13a5054889d00a26c3c37463447ee593c757d03ee")
@@ -70,9 +71,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     variant("arpack", default=False, description="Enables Arpack wrappers")
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
-    # Default installation contains ~1 k tutorial/example files.
-    # Give packagers a switch to trim them away (‘spack install slepc ~examples’)
-    # while preserving current behaviour by default.
+
     variant("examples", default=True, description="Install test and tutorial example sources")
 
     depends_on("c", type="build")  # generated
