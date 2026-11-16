@@ -1243,9 +1243,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             if self.spec.satisfies("+clang"):
                 install_tree("clang/bindings/python", python_platlib)
 
-        with working_dir(self.build_directory):
-            install_tree("bin", join_path(self.prefix, "libexec", "llvm"))
-
         cfg_files = []
         if spec.satisfies("+clang"):
             cfg_files.extend(("clang.cfg", "clang++.cfg"))
