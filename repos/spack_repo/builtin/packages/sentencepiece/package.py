@@ -30,3 +30,8 @@ class Sentencepiece(CMakePackage):
     depends_on("cmake@3.10:", when="@0.2.1:", type="build")
     depends_on("cmake@3.1:", type="build")
     depends_on("gperftools")  # optional, 10-40% performance improvement
+
+    def cmake_args(self):
+        # 0.2.x checks this never-defined variable when generating sentencepiece.pc,
+        # which wrongly requires protobuf-lite and breaks dependents' pkg-config probes.
+        return [self.define("SPM_USE_BUILTIN_PROTOBUF", True)]
