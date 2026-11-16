@@ -16,9 +16,6 @@ class PyGpy(PythonPackage):
 
     license("BSD-3-Clause")
 
-    def url_for_version(self, version):
-        name = "gpy" if version >= Version("1.14.2") else "GPy"
-        return f"https://files.pythonhosted.org/packages/source/g/gpy/{name}-{version}.tar.gz"
 
     version("1.15.0", sha256="5f47700d7a1d6154367bad3f84c0482b8817713d94d5c128495aa9180d7349ec")
     version("1.14.2", sha256="3c6a102cd0939ca62aab27038acc7c9970559fbda653dbdccc5d8ad02bd1dbad")
@@ -46,6 +43,10 @@ class PyGpy(PythonPackage):
     with when("+plotting"):
         depends_on("py-matplotlib@3.0:", type=("build", "run"))
         depends_on("py-plotly@1.8.6:", type=("build", "run"))
+
+    def url_for_version(self, version):
+            name = "gpy" if version >= Version("1.14.2") else "GPy"
+            return f"https://files.pythonhosted.org/packages/source/g/gpy/{name}-{version}.tar.gz"
 
     @run_before("install", when="@:1.14")
     def touch_sources(self):
