@@ -25,23 +25,28 @@ from spack.repo import use_repositories
     ],
 )
 @pytest.mark.parametrize(
-    "compiler_spec,gnu_fortran",
+    "compiler_spec,gnu_languages",
     [
-        ("%c=gcc %fortran=gcc", True),
-        ("%c=intel-oneapi-compilers %fortran=gcc", True),
-        ("%c=gcc %fortran=intel-oneapi-compilers", False),
-        ("%c=gcc %fortran=intel-oneapi-compilers-classic", False),
-        ("%c=gcc", False),
+        ("%c,cxx,fortran=gcc", ("c", "cxx", "fortran")),
+        ("%c=intel-oneapi-compilers %cxx,fortran=gcc", ("cxx", "fortran")),
+        ("%c,fortran=gcc %cxx=intel-oneapi-compilers", ("c", "fortran")),
+        ("%c,cxx=gcc %fortran=intel-oneapi-compilers", ("c", "cxx")),
+        ("%c,cxx,fortran=intel-oneapi-compilers", ()),
+        ("%c,cxx,fortran=intel-oneapi-compilers-classic", ()),
+        ("%c=gcc", ("c",)),
+        ("%cxx=gcc", ("cxx",)),
+        ("%fortran=gcc", ("fortran",)),
+        ("", ()),
     ],
 )
-def test_mpi_wrappers_follow_dependent_fortran(
-    tmp_path, monkeypatch, variants, c_wrappers, intel_fortran, compiler_spec, gnu_fortran
+def test_mpi_wrappers_follow_dependent_compilers(
+    tmp_path, monkeypatch, variants, c_wrappers, intel_fortran, compiler_spec, gnu_languages
 ):
-    """A reused binary MPI must select modules for each dependent's Fortran compiler."""
+    """A reused binary MPI must select each dependent's language wrappers independently."""
     repo = Path(__file__).parents[1] / "repos/spack_repo/builtin"
     with use_repositories(str(repo)) as repos:
-        # The MPI installation's C compiler says nothing about the consumer's
-        # Fortran module format (including when that consumer also uses GCC C).
+        # The MPI installation's C compiler does not determine its consumers'
+        # language providers or Fortran module formats.
         spec = Spec("intel-oneapi-mpi@=2021.18.0 " + variants + " %c=gcc")
         spec.external_path = str(tmp_path)
         spec._mark_concrete()
@@ -64,8 +69,10 @@ def test_mpi_wrappers_follow_dependent_fortran(
         values = {}
         env.apply_modifications(values)
 
-        fortran = ["mpif77", "mpif90", "mpifc"] if gnu_fortran else intel_fortran
-        names = c_wrappers + fortran
+        names = [
+            "mpicc" if "c" in gnu_languages else c_wrappers[0],
+            "mpicxx" if "cxx" in gnu_languages else c_wrappers[1],
+        ] + (["mpif77", "mpif90", "mpifc"] if "fortran" in gnu_languages else intel_fortran)
         paths = [str(mpi.component_prefix.bin.join(name)) for name in names]
         assert [values[key] for key in ("MPICC", "MPICXX", "MPIF77", "MPIF90", "MPIFC")] == paths
         assert [spec.mpicc, spec.mpicxx, spec.mpif77, spec.mpifc] == [

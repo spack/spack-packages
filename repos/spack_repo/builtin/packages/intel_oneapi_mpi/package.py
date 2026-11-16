@@ -289,12 +289,17 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
 
     def wrapper_paths(self, dependent_spec=None):
         names = self.wrapper_names()
-        if dependent_spec is not None and dependent_spec.satisfies("%fortran=gcc"):
-            # mpiifx/mpiifort still use Intel .mod files when I_MPI_F90 selects
-            # gfortran. The generic wrappers select the matching GNU modules.
-            # Use the dependent's Fortran compiler: this binary MPI installation
-            # can be shared by packages using different compiler families.
-            names[2:] = ["mpif77", "mpif90", "mpifc"]
+        if dependent_spec is not None:
+            # Select each language independently for mixed compiler specs and
+            # reused binary MPI installations. Intel wrapper names retain Intel
+            # compiler defaults in installed consumers; their Fortran wrappers
+            # also retain Intel .mod paths when I_MPI_F90 selects gfortran.
+            if dependent_spec.satisfies("%c=gcc"):
+                names[0] = "mpicc"
+            if dependent_spec.satisfies("%cxx=gcc"):
+                names[1] = "mpicxx"
+            if dependent_spec.satisfies("%fortran=gcc"):
+                names[2:] = ["mpif77", "mpif90", "mpifc"]
         return [self.component_prefix.bin.join(name) for name in names]
 
     def setup_dependent_package(self, module, dependent_spec):
