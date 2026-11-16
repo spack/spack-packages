@@ -117,7 +117,7 @@ class Crtm(CMakePackage):
                 filter_file(
                     "-fbacktrace", "-fbacktrace -ffree-line-length-none", "libsrc/CMakeLists.txt"
                 )
-            if self.spec.satisfies("%oneapi"):
+            if self.spec.satisfies("@2 %oneapi"):
                 filter_file("Intel", "IntelLLVM", "libsrc/CMakeLists.txt")
                 filter_file("Intel", "IntelLLVM", "CMakeLists.txt")
                 filter_file('"Intel"', '"IntelLLVM"', "cmake/crtm_compiler_flags.cmake")
