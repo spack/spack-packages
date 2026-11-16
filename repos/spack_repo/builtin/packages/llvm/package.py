@@ -531,6 +531,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             # fix sanitizer-common build with glibc 2.31
             # see https://reviews.llvm.org/D70662
             patch("sanitizer-ipc_perm_mode.patch", when="@5:9")
+            # glibc 2.42 removed struct termio; fixed upstream in LLVM 20.1.6.
+            patch(
+                "https://github.com/llvm/llvm-project/commit/59978b21ad9c65276ee8e14f26759691b8a65763.patch?full_index=1",
+                sha256="1a66127a4b148b5387ef37322beb2be07d10f67b9748f2b7dd5e1fcf08f08195",
+                when="@19:20.1.5 platform=linux",
+            )
     del compiler_rt_as
 
     # Backport from llvm upstream gcc ppc const expr long double issue
