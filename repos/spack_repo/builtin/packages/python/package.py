@@ -58,7 +58,7 @@ class Python(Package):
 
     version("3.15.2", sha256="f74e1db0eabd651cd01e4e2a00201bd41866abe74869ab716f9bf33cbbaa0943")
     version("3.15.1", sha256="133d85e118dc32621cda1d9d1d7d9694fe0c5e82bc339a7d528c109fe8b36387")
-    version("3.14.9", sha256="8b47e85ee67e93945e93620a051a8f44bfc1e9735ed67075d166f4a74b7a060b")
+    version("3.14.10", sha256="9e4996c19ae5a3df31f10c37723661f71d3455d73bd005f79df7098e5cc13192")
     version("3.13.17", sha256="9cb057caa588f122577a5054a22531cd9c23ab6706f1a19bc95a55380a895177")
     version("3.12.15", sha256="de1a241a519e0a3374fea98988d0b52c886743f9d953f23be8269cc7b59c5fab")
     version("3.11.17", sha256="53cdee63ac4bf12387b7b33a53d3b1f8f4941cad73807a7b4fe91bb001ef004a")
@@ -68,6 +68,9 @@ class Python(Package):
     with default_args(deprecated=True):
         version(
             "3.15.0", sha256="438596cac081036d3c1d532ab7e7335eeb35567bc961749a0d5797176db0db68"
+        )
+        version(
+            "3.14.9", sha256="8b47e85ee67e93945e93620a051a8f44bfc1e9735ed67075d166f4a74b7a060b"
         )
         version(
             "3.14.8", sha256="a65b20a728f169f4e66ae143f40b1bd3d33c38d770251663f627c9767b79b210"
