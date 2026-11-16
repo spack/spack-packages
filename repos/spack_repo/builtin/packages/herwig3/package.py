@@ -103,9 +103,9 @@ class Herwig3(AutotoolsPackage):
 
         # Pythia8 is auto-detected even if not where Herwig3 uses it
         if self.spec.satisfies("^evtgen+pythia8"):
-            args.append("--with-pythia=" + self.spec["pythia8"].prefix) 
+            args.append("--with-pythia=" + self.spec["pythia8"].prefix)
         else:
-            args.append("--without-pythia") 
+            args.append("--without-pythia")
 
         return args
 
