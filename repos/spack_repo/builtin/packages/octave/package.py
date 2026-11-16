@@ -249,7 +249,9 @@ class Octave(AutotoolsPackage, GNUMirrorPackage):
                         "--with-fftw3f={0}".format(spec[fftw_string].libs.ld_flags),
                     ]
                 )
-            elif spec.satisfies("^[virtuals=fftw-api] amdfftw"):
+            elif spec.satisfies("^[virtuals=fftw-api] amdfftw") or spec.satisfies(
+                "^[virtuals=fftw-api] aocl-fftw"
+            ):
                 specAmdfftw = spec[fftw_string].token[0]
                 AMD_FFTW3_LIBS = "-lfftw3"
                 AMD_FFTW3F_LIBS = "-lfftw3f"
