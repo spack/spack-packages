@@ -51,7 +51,7 @@ class PyGpy(PythonPackage):
         depends_on("py-matplotlib@3.0:", type=("build", "run"))
         depends_on("py-plotly@1.8.6:", type=("build", "run"))
 
-    @run_before("install",when="@:1.14")
+    @run_before("install", when="@:1.14")
     def touch_sources(self):
         # For @:1.14 this packages used deprecated build_ext, for which we cannot
         # automatically force recythonization.
