@@ -15,6 +15,11 @@ class PyGpy(PythonPackage):
     maintainers("liuyangzhuan")
 
     license("BSD-3-Clause")
+    version(
+        "1.15.0",
+        sha256="5f47700d7a1d6154367bad3f84c0482b8817713d94d5c128495aa9180d7349ec",
+        url="https://files.pythonhosted.org/packages/source/g/gpy/gpy-1.15.0.tar.gz",
+    )
     ## pypi url is lower case for 1.14.2
     version(
         "1.14.2",
@@ -46,7 +51,7 @@ class PyGpy(PythonPackage):
         depends_on("py-matplotlib@3.0:", type=("build", "run"))
         depends_on("py-plotly@1.8.6:", type=("build", "run"))
 
-    @run_before("install")
+    @run_before("install",when="@:1.14")
     def touch_sources(self):
         # This packages uses deprecated build_ext, for which we cannot
         # automatically force recythonization.
