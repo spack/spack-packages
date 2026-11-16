@@ -19,7 +19,7 @@ class PyDarshan(PythonPackage):
 
     # NOTE: don't forget to update the version array further down that sets the appropriate
     #       darshan-util dependency
-    version("3.6.0", sha256="8a06f5f033d410ee4f845e70038a78bdd69a38dbd6ae622e87b7a719d7b0aaa6")
+    version("3.6.0", sha256="4689346ec12e242362e41fede0519a0478b9984774f4a721c87cb5b10dcab198")
     version("3.5.0", sha256="4b2214bd715d261a7d37e54a5aedd6b38b9990aaee61bb55d741cb795b728020")
     version("3.4.7.0", sha256="e4e37c2707c5526a865bf4813b248ae4c327664538772e95c946f3b0079dc347")
     version("3.4.6.0", sha256="a105ec5c9bcd4a20469470ca51db8016336ede34a1c33f4488d1ba263a73c378")
