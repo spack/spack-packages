@@ -5,8 +5,9 @@
 import os
 import textwrap
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+
+from spack.package import *
 
 
 class FastlowessCpp(CargoPackage):
@@ -17,9 +18,7 @@ class FastlowessCpp(CargoPackage):
     libraries with an owning C++ interface and a C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/lowess-project/cpp/"
-    url = (
-        "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.1.0.tar.gz"
-    )
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.1.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     test_requires_compiler = True
@@ -129,9 +128,7 @@ class FastlowessCpp(CargoPackage):
 
         cxx = which(os.environ["CXX"])
         windows = self.spec.satisfies("platform=windows")
-        executable = (
-            "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
-        )
+        executable = "fastlowess_spack_smoke.exe" if windows else "fastlowess_spack_smoke"
         compiler_name = os.path.basename(os.environ["CXX"]).lower()
         if compiler_name in ("cl", "cl.exe", "clang-cl", "clang-cl.exe"):
             cxx(
