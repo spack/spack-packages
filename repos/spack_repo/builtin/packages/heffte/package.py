@@ -58,7 +58,6 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     variant(
         "gpu-aware-mpi",
         default=True,
-        when="@2.4.1:",
         description="Use GPU-aware MPI with GPU backends",
     )
 
@@ -68,7 +67,6 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-numba", when="+python+cuda", type=("build", "run"))
     extends("python", when="+python", type=("build", "run"))
 
-    conflicts("^openmpi~cuda", when="@:2.4.0+cuda")
     for mpi in ("openmpi", "mpich", "cray-mpich"):
         for backend in ("cuda", "rocm"):
             conflicts(
@@ -118,8 +116,7 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
         ]
 
-        if "gpu-aware-mpi" in self.spec.variants:
-            args.append(self.define("Heffte_DISABLE_GPU_AWARE_MPI", "~gpu-aware-mpi" in self.spec))
+        args.append(self.define("Heffte_DISABLE_GPU_AWARE_MPI", "~gpu-aware-mpi" in self.spec))
 
         if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
