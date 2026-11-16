@@ -55,6 +55,12 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     variant("python", default=False, description="Install the Python bindings")
     variant("fortran", default=False, description="Install the Fortran modules")
     variant("benchmarks", default=False, description="Install the heFFTe benchmarks")
+    variant(
+        "gpu-aware-mpi",
+        default=True,
+        when="@2.4.1:",
+        description="Use GPU-aware MPI with GPU backends",
+    )
 
     depends_on("python@3.0:", when="+python", type=("build", "run"))
     depends_on("py-mpi4py", when="+python", type=("build", "run"))
@@ -62,7 +68,14 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("py-numba", when="+python+cuda", type=("build", "run"))
     extends("python", when="+python", type=("build", "run"))
 
-    conflicts("^openmpi~cuda", when="+cuda")  # +cuda requires CUDA enabled OpenMPI
+    conflicts("^openmpi~cuda", when="@:2.4.0+cuda")
+    for mpi in ("openmpi", "mpich", "cray-mpich"):
+        for backend in ("cuda", "rocm"):
+            conflicts(
+                f"^{mpi}~{backend}",
+                when=f"+{backend}+gpu-aware-mpi",
+                msg=f"GPU-aware MPI requires {mpi}+{backend}; use ~gpu-aware-mpi for host staging",
+            )
     conflicts("~cuda~rocm", when="+magma")  # magma requires CUDA or HIP
     conflicts("+rocm", when="@:2.1.0")  # heffte+rocm is in in development in spack
 
@@ -104,6 +117,9 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_FORTRAN", "fortran"),
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
         ]
+
+        if "gpu-aware-mpi" in self.spec.variants:
+            args.append(self.define("Heffte_DISABLE_GPU_AWARE_MPI", "~gpu-aware-mpi" in self.spec))
 
         if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
