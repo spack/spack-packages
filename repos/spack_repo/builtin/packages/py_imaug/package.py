@@ -25,7 +25,7 @@ class PyImaug(PythonPackage):
     with default_args(type=("build", "run")):
         depends_on("py-six")
         depends_on("py-numpy@1.21:")
-        depends_on("py-numpy@2.3:", when="^python@3.14:")
+        depends_on("py-numpy@2.3:", when="@0.4.3: ^python@3.14:")
         depends_on("py-scipy")
         depends_on("pil")
         depends_on("py-matplotlib")
