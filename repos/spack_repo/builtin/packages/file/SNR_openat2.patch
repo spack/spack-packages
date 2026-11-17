@@ -1,0 +1,12 @@
+--- file-5.48/src/seccomp.c	2026-06-07 15:41:27.000000000 -0700
++++ file-5.48.new/src/seccomp.c	2026-11-17 06:00:49.105446152 -0800
+@@ -213,7 +213,9 @@
+ 	ALLOW_RULE(writev);
+ 
+ 	/* Newer variants we don't use. ENOSYS lets glibc fall back. */
++#ifdef __SNR_openat2    
+ 	ERRNO_RULE(openat2);
++#endif
+ 	ERRNO_RULE(faccessat2);
+ 	ERRNO_RULE(close_range);
+ 
