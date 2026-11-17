@@ -24,6 +24,7 @@ class LinaroForge(Package):
     maintainers("kenche-linaro")
 
     if platform.machine() == "aarch64":
+        version("26.1", sha256="330ffee09d30105562291cbc9e415c621d0c0e839d32a673c7f13e186bee8902")
         version(
             "26.0.3", sha256="b76137ec53b265ae597c8b764237fcb5f2598bf1179b598179f40be2f074f47d"
         )
@@ -68,79 +69,74 @@ class LinaroForge(Package):
         )
         version("24.1", sha256="e297d0c19c95d4db842187eb38882db094094ec667d854aaf396e11a81bffe0b")
         version(
-            "24.0.6", sha256="a7f9f71e4352be3680854611fe433a9974fcb8a327ac65ca3bc950c956eac6e4"
-        )
-        version(
-            "24.0.5", sha256="fc0c80ce9f66c6966faaca77de0f13e26da564c853e5bfc1e8acd17b65bc2ba0"
-        )
-        version(
-            "24.0.4", sha256="d126e4690f7c9bf21e541721dac51dcee1f336a882211426bf98a15d80671e3d"
-        )
-        version(
-            "24.0.3", sha256="5030c5c23824963f82e94ed606e47cce802393fa4cb7757966818baa7012aa21"
-        )
-        version(
-            "24.0.2", sha256="8346eb0375910498a83baff6833256c8221c2c06737670687bcf9f1497d9ede9"
-        )
-        version(
-            "24.0.1", sha256="d9d8e8fd56894032ea98a5ff7885c16c0522a192d9cbf4e131581c65e34efb82"
-        )
-        version("24.0", sha256="ee631177f5289127f0d3d99b600d437b4bd40c34c1c15388288b72543dc420ad")
-        version(
-            "23.1.2", sha256="8c01f4768a8f784f0bfa78c82dbd39e5077bbc6880b6f3c3704019eecfca5b3a"
-        )
-        version(
-            "23.1.1", sha256="6e95a9c9f894caad073e58590733c4ce4489aec0d8db6553050e71a59e41e6f8"
-        )
-        version("23.1", sha256="c9889b95729f97bcffaf0f15b930efbd27081b7cf2ebc958eede3a186cc4d93a")
-        version(
-            "23.0.4",
-            sha256="a19e6b247badaa52f78815761f71fb95a565024b7f79bdfb2f602f18b47a881c",
+            "24.0.6",
+            sha256="a7f9f71e4352be3680854611fe433a9974fcb8a327ac65ca3bc950c956eac6e4",
             deprecated=True,
         )
         version(
-            "23.0.3",
-            sha256="a7e23ef2a187f8e2d6a6692cafb931c9bb614abf58e45ea9c2287191c4c44f02",
+            "24.0.5",
+            sha256="fc0c80ce9f66c6966faaca77de0f13e26da564c853e5bfc1e8acd17b65bc2ba0",
             deprecated=True,
         )
         version(
-            "23.0.2",
-            sha256="698fda8f7cc05a06909e5dcc50b9956f94135d7b12e84ffb21999a5b45c70c74",
+            "24.0.4",
+            sha256="d126e4690f7c9bf21e541721dac51dcee1f336a882211426bf98a15d80671e3d",
             deprecated=True,
         )
         version(
-            "23.0.1",
-            sha256="552e4a3f408ed4eb5f1bfbb83c94530ee8733579c56c3e98050c0ad2d43eb433",
+            "24.0.3",
+            sha256="5030c5c23824963f82e94ed606e47cce802393fa4cb7757966818baa7012aa21",
             deprecated=True,
         )
         version(
-            "23.0",
-            sha256="7ae20bb27d539751d1776d1e09a65dcce821fc6a75f924675439f791261783fb",
+            "24.0.2",
+            sha256="8346eb0375910498a83baff6833256c8221c2c06737670687bcf9f1497d9ede9",
+            deprecated=True,
+        )
+        version(
+            "24.0.1",
+            sha256="d9d8e8fd56894032ea98a5ff7885c16c0522a192d9cbf4e131581c65e34efb82",
+            deprecated=True,
+        )
+        version(
+            "24.0",
+            sha256="ee631177f5289127f0d3d99b600d437b4bd40c34c1c15388288b72543dc420ad",
+            deprecated=True,
+        )
+        version(
+            "23.1.2",
+            sha256="8c01f4768a8f784f0bfa78c82dbd39e5077bbc6880b6f3c3704019eecfca5b3a",
+            deprecated=True,
+        )
+        version(
+            "23.1.1",
+            sha256="6e95a9c9f894caad073e58590733c4ce4489aec0d8db6553050e71a59e41e6f8",
+            deprecated=True,
+        )
+        version(
+            "23.1",
+            sha256="c9889b95729f97bcffaf0f15b930efbd27081b7cf2ebc958eede3a186cc4d93a",
             deprecated=True,
         )
     elif platform.machine() == "ppc64le":
         # N.B. support for ppc64le was dropped in 24.0
         version(
-            "23.1.2", sha256="5c588a6b7391d75cced4016936d0c5a00023431269339432738ff33b860487b3"
+            "23.1.2",
+            sha256="5c588a6b7391d75cced4016936d0c5a00023431269339432738ff33b860487b3",
+            deprecated=True,
         )
         version(
-            "23.1.1", sha256="9d4dfa440ef1cc9c6a7cb4f7eeec49fc77f0b6b75864fbe018a41783ac5fc5df"
-        )
-        version("23.1", sha256="39a522c1d9a29f0a35bba5201f3e23c56d87543410505df30c85128816dd455b")
-        version(
-            "23.0.4", sha256="927c1ba733cf63027243060586b196f8262e545d898712044c359a6af6fc5795"
+            "23.1.1",
+            sha256="9d4dfa440ef1cc9c6a7cb4f7eeec49fc77f0b6b75864fbe018a41783ac5fc5df",
+            deprecated=True,
         )
         version(
-            "23.0.3", sha256="5ff9770f4bc4a2df4bac8a2544a9d6bad9fba2556420fa2e659e5c21e741caf7"
+            "23.1",
+            sha256="39a522c1d9a29f0a35bba5201f3e23c56d87543410505df30c85128816dd455b",
+            deprecated=True,
         )
-        version(
-            "23.0.2", sha256="181b157bdfc8609b49addf63023f920ebb609dbc9a126e9dc26605188b756ff0"
-        )
-        version(
-            "23.0.1", sha256="08cffef2195ea96872d56e827f320eed40aaa82fd3b62d4c661a598fb2fb3a47"
-        )
-        version("23.0", sha256="0962c7e0da0f450cf6daffe1156e1f59e02c9f643df458ec8458527afcde5b4d")
     elif platform.machine() == "x86_64":
+        version("26.1", sha256="b86acae14344ccc991ad17972f5457475a46664bdd85a73e4b3b249e3f3cc0a8")
         version(
             "26.0.3", sha256="a141a0acf89c6bd5ada44f9045933eaeb874d9526f2873111459636cb36aa0a3"
         )
@@ -165,6 +161,9 @@ class LinaroForge(Package):
             "25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be"
         )
         version(
+            "25.0.4", sha256="ee93a414f6183165cd8addf926a4a586668ce29930f34edd43d33c750646f0be"
+        )
+        version(
             "25.0.3", sha256="4d6abe4f46356339e0df789229f19b92c1ba13b794ce426a2e73e5aed319a6f6"
         )
         version(
@@ -185,54 +184,53 @@ class LinaroForge(Package):
         )
         version("24.1", sha256="0b96878ab73c20b39c4730ed15f24ca86dc5985637ff5d8e68f55e1e802e5fe3")
         version(
-            "24.0.6", sha256="eab198b964862b4664359ccbec1edb27c2dd3b9fa82bcb4e14fc616a2b0341da"
-        )
-        version(
-            "24.0.5", sha256="da0d4d6fa9120b5e7c4a248795b7f5da32c4987588ecb7406213c8c9846af2bc"
-        )
-        version(
-            "24.0.4", sha256="001e7b7cd796d8e807971b99a9ca233c24f8fcd6eee4e9b4bbb0ec8560d44f08"
-        )
-        version(
-            "24.0.3", sha256="1796559fb86220d5e17777215d3820f4b04aba271782276b81601d5065284526"
-        )
-        version(
-            "24.0.2", sha256="e2ad12273d568560e948a9bcdd49b830a2309f247b146bf36579053f99ec59a3"
-        )
-        version(
-            "24.0.1", sha256="70aa6b610d181c12be10e57d2fd3439261e2c6cb23d9f1f33303b85f04cb7bf2"
-        )
-        version("24.0", sha256="5976067e3de14d0838e1069021a4a4a96d048824454668779473ff0776d66a01")
-        version(
-            "23.1.2", sha256="675d2d8e4510afefa0405eecb46ac8bf440ff35a5a40d5507dc12d29678a22bf"
-        )
-        version(
-            "23.1.1", sha256="6dcd39fc582088eb4b13233ae1e9b38e12bfa07babf77d89b869473a3c2b66e6"
-        )
-        version("23.1", sha256="31185d5f9855fd03701089907cdf7b38eb72c484ee730f8341decbbd8f9b5930")
-        version(
-            "23.0.4",
-            sha256="41a81840a273ea9a232efb4f031149867c5eff7a6381d787e18195f1171caac4",
+            "24.0.6",
+            sha256="eab198b964862b4664359ccbec1edb27c2dd3b9fa82bcb4e14fc616a2b0341da",
             deprecated=True,
         )
         version(
-            "23.0.3",
-            sha256="f2a010b94838f174f057cd89d12d03a89ca946163536eab178dd1ec877cdc27f",
+            "24.0.5",
+            sha256="da0d4d6fa9120b5e7c4a248795b7f5da32c4987588ecb7406213c8c9846af2bc",
             deprecated=True,
         )
         version(
-            "23.0.2",
-            sha256="565f0c073c6c8cbb06c062ca414e3f6ff8c6ca6797b03d247b030a9fbc55a5b1",
+            "24.0.4",
+            sha256="001e7b7cd796d8e807971b99a9ca233c24f8fcd6eee4e9b4bbb0ec8560d44f08",
             deprecated=True,
         )
         version(
-            "23.0.1",
-            sha256="1d681891c0c725363f0f45584c9b79e669d5c9782158453b7d24b4b865d72755",
+            "24.0.3",
+            sha256="1796559fb86220d5e17777215d3820f4b04aba271782276b81601d5065284526",
             deprecated=True,
         )
         version(
-            "23.0",
-            sha256="f4ab12289c992dd07cb1a15dd985ef4713d1f9c0cf362ec5e9c995cca9b1cf81",
+            "24.0.2",
+            sha256="e2ad12273d568560e948a9bcdd49b830a2309f247b146bf36579053f99ec59a3",
+            deprecated=True,
+        )
+        version(
+            "24.0.1",
+            sha256="70aa6b610d181c12be10e57d2fd3439261e2c6cb23d9f1f33303b85f04cb7bf2",
+            deprecated=True,
+        )
+        version(
+            "24.0",
+            sha256="5976067e3de14d0838e1069021a4a4a96d048824454668779473ff0776d66a01",
+            deprecated=True,
+        )
+        version(
+            "23.1.2",
+            sha256="675d2d8e4510afefa0405eecb46ac8bf440ff35a5a40d5507dc12d29678a22bf",
+            deprecated=True,
+        )
+        version(
+            "23.1.1",
+            sha256="6dcd39fc582088eb4b13233ae1e9b38e12bfa07babf77d89b869473a3c2b66e6",
+            deprecated=True,
+        )
+        version(
+            "23.1",
+            sha256="31185d5f9855fd03701089907cdf7b38eb72c484ee730f8341decbbd8f9b5930",
             deprecated=True,
         )
 

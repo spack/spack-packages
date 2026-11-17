@@ -20,8 +20,10 @@ class Deno(PythonPackage):
 
     license("MIT")
 
-    version("2.9.7", sha256="79f4b7acdd9a37e98a4d1e0ca08d71c4e55f6c0cb13bd1e0946fa9b5497be2d9")
-    version("2.8.1", sha256="fb65e568bef30b1a7e63f033713f1a6792a8456e339febdb7d638c6bb2c4c008")
+    version("2.9.8", sha256="f050f14d259f1e6f39a86aa8dd85f787df2311fc8ceb0be57485a127567ae137")
+    with default_args(deprecated=True):
+        version("2.9.7", sha256="79f4b7acdd9a37e98a4d1e0ca08d71c4e55f6c0cb13bd1e0946fa9b5497be2d9")
+        version("2.8.1", sha256="fb65e568bef30b1a7e63f033713f1a6792a8456e339febdb7d638c6bb2c4c008")
 
     system = platform.system().lower()
     machine = platform.machine().lower()

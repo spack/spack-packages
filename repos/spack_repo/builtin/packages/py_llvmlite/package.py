@@ -62,12 +62,12 @@ class PyLlvmlite(PythonPackage):
         depends_on("python@:3.9", when="@0.36:0.37")
 
     # https://github.com/numba/llvmlite#compatibility
-    depends_on("llvm@22", when="@0.48:")
-    depends_on("llvm@20", when="@0.45:0.47")
-    depends_on("llvm@15:16", when="@0.44")
-    depends_on("llvm@14", when="@0.41:0.43")
-    depends_on("llvm@11:14", when="@0.40")
-    depends_on("llvm@11", when="@0.37:0.39")
+    depends_on("libllvm@22", when="@0.48:")
+    depends_on("libllvm@20", when="@0.45:0.47")
+    depends_on("libllvm@15:16", when="@0.44")
+    depends_on("libllvm@14", when="@0.41:0.43")
+    depends_on("libllvm@11:14", when="@0.40")
+    depends_on("libllvm@11", when="@0.37:0.39")
 
     # On macOS, llvmlite must link the platform (system) libc++. If the LLVM
     # dependency ships its own libc++/libunwind runtime (libcxx=runtime,
@@ -77,20 +77,7 @@ class PyLlvmlite(PythonPackage):
     # "malloc: pointer being freed was not allocated" / "Abort trap: 6".
     # Requiring the platform C++ runtime keeps a single libc++ in the process.
     # See https://github.com/spack/spack-packages/issues/5403
-    depends_on("llvm libcxx=none libunwind=none", when="platform=darwin")
-
-    for t in [
-        "arm:",
-        "ppc:",
-        "ppc64:",
-        "ppc64le:",
-        "ppcle:",
-        "sparc:",
-        "sparc64:",
-        "x86:",
-        "x86_64:",
-    ]:
-        depends_on("llvm@10.0", when=f"@0.34:0.36 target={t}")
+    requires("%libllvm=llvm libcxx=none libunwind=none", when="platform=darwin")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("%fj"):

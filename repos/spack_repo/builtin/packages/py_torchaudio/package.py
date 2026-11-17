@@ -19,6 +19,7 @@ class PyTorchaudio(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("2.11.1", tag="v2.11.1", commit="455331b1b3bb4aabfe3228f6f911fc3f11ae93b1")
     version("2.11.0", tag="v2.11.0", commit="34c52a67e8941bbd8e6adaca0eb0b9eabec11d78")
     version("2.10.0", tag="v2.10.0", commit="27b7ebdebd2d2e4d34a2f5c05b0fb26efbd1da63")
 
@@ -30,8 +31,8 @@ class PyTorchaudio(PythonPackage):
         depends_on("python@3.10:")
 
         depends_on("py-torch@main", when="@main")
-        depends_on("py-torch@2.11:", when="@2.11.0")
-        depends_on("py-torch@2.10:", when="@2.10.0")
+        depends_on("py-torch@2.11:", when="@2.11:")
+        depends_on("py-torch@2.10:", when="@2.10")
 
     # CMakelists.txt
     depends_on("cmake@3.18:", type="build")

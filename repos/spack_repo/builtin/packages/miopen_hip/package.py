@@ -28,6 +28,7 @@ class MiopenHip(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
     version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
     version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
@@ -87,7 +88,7 @@ class MiopenHip(ROCmLibrary, CMakePackage):
     # for instance depends_on('boost +filesystem')
     # See https://github.com/spack/spack/pull/22303 for reference
     depends_on(Boost.with_default_variants)
-    depends_on("boost@1.67.0:1.73.0")
+    depends_on("boost@1.67.0:1.73.0", when="@:10.0")
     depends_on("bzip2")
     depends_on("sqlite")
     depends_on("half@1")
@@ -154,6 +155,7 @@ class MiopenHip(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -188,6 +190,7 @@ class MiopenHip(ROCmLibrary, CMakePackage):
         "7.13.0",
         "7.14.0",
         "10.0.0",
+        "10.1.0",
     ]:
         depends_on(f"hipblas@{ver}", when=f"@{ver}")
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")

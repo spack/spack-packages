@@ -21,6 +21,7 @@ class PyFlitCore(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("4.2.0", sha256="84e4e4d8fdd45ba2613800a3ebc6834de26d47ec9746efc3719f94181137b460")
     version("3.12.0", sha256="18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2")
     version("3.11.0", sha256="6ceeee3219e9d2ea282041f3e027c441597b450b33007cb81168e887b6113a8f")
     version("3.10.1", sha256="66e5b87874a0d6e39691f0e22f09306736b633548670ad3c09ec9db03c5662f7")
@@ -38,12 +39,14 @@ class PyFlitCore(PythonPackage):
     version("2.3.0", sha256="a50bcd8bf5785e3a7d95434244f30ba693e794c5204ac1ee908fc07c4acdbf80")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.8:", when="@4:")
         depends_on("python@3.6:", when="@3.4:")
         depends_on("python@3.4:", when="@3.0:")
         depends_on("python@2.7,3.4:", when="@2.3:")
         # https://github.com/pypa/flit/pull/684
         depends_on("python@:3.13", when="@:3.9")
 
+    # Historical dependencies
     # flit_core/build_thyself.py
     depends_on("py-tomli", when="@3.4:3.5", type="run")
     depends_on("py-toml", when="@3.1:3.3", type="run")

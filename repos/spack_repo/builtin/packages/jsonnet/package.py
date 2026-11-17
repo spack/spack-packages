@@ -55,7 +55,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
     @run_after("install")
     def python_install(self):
         if self.pkg.spec.satisfies("+python"):
-            pip(*PythonPipBuilder.std_args(self.pkg), f"--prefix={self.pkg.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.pkg.prefix}", ".")
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
@@ -69,4 +69,4 @@ class CMakeBuilder(cmake.CMakeBuilder):
     @run_after("install")
     def python_install(self):
         if self.pkg.spec.satisfies("+python"):
-            pip(*PythonPipBuilder.std_args(self.pkg), f"--prefix={self.pkg.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.pkg.prefix}", ".")

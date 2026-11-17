@@ -2,144 +2,24 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.packages.netlib_scalapack.package import ScalapackBase
+from spack_repo.builtin.packages.aocl_scalapack.package import AoclScalapack
 
 from spack.package import *
 
 
-class Amdscalapack(ScalapackBase):
-    """
-    ScaLAPACK is a library of high-performance linear algebra routines
-    for parallel distributed memory machines. It depends on external
-    libraries including BLAS and LAPACK for Linear Algebra computations.
+class Amdscalapack(AoclScalapack):
+    """ScaLAPACK (AMD Optimized version).
 
-    AMD's optimized version of ScaLAPACK enables using BLIS and
-    LibFLAME library that have optimized dense matrix functions and
-    solvers for AMD EPYC processor family CPUs.
-
-    LICENSING INFORMATION: By downloading, installing and using this software,
-    you agree to the terms and conditions of the AMD AOCL-ScaLAPACK license
-    agreement.  You may obtain a copy of this license agreement from
-    https://www.amd.com/en/developer/aocl/scalapack/eula/scalapack-libraries-4-2-eula.html
-    https://www.amd.com/en/developer/aocl/scalapack/eula/scalapack-libraries-eula.html
+    This package has been renamed to ``aocl-scalapack`` to match the upstream
+    AOCL naming. It is kept as a thin, fully deprecated alias so existing specs
+    that reference ``amdscalapack`` continue to resolve. Build logic is
+    inherited from :class:`AoclScalapack`; use ``aocl-scalapack`` for new work.
     """
 
     _name = "amdscalapack"
-    homepage = "https://www.amd.com/en/developer/aocl/scalapack.html"
-    git = "https://github.com/amd/aocl-scalapack"
 
-    maintainers("amd-toolchain-support")
-
-    tags = ["e4s"]
-
-    license("BSD-3-Clause-Open-MPI")
-
-    version("5.3", sha256="2bd0ef1d8bbd9990a8bc7b33ad7c32db788f39b9730b110d15737837111eacff")
-    version("5.2", sha256="ff01f0f39c9e6d44fa493e1c68d9862d2600f425e9caaec1fe5179c10debf1d9")
-    version("5.1", sha256="92f6f6b2081e27731c8b9e96c742203777cc7f2a848b96ca7511f4d259142b37")
-    version("5.0", sha256="a33cf16c51cfd65c7acb5fbdb8884a5c147cdefea73931b07863c56d54f812cc")
-    version("4.2", sha256="c6e9a846c05cdc05252b0b5f264164329812800bf13f9d97c77114dc138e6ccb")
-    version("4.1", sha256="b2e51c3604e5869d1faaef2e52c92071fcb3de1345aebb2ea172206622067ad9")
-    version("4.0", sha256="f02913b5984597b22cdb9a36198ed61039a1bf130308e778dc31b2a7eb88b33b")
-    version("3.2", sha256="9e00979bb1be39d627bdacb01774bc043029840d542fafc934d16fec3e3b0892")
-    version("3.1", sha256="4c2ee2c44644a0feec0c6fc1b1a413fa9028f14d7035d43a398f5afcfdbacb98")
-    version("3.0", sha256="6e6f3578f44a8e64518d276e7580530599ecfa8729f568303ed2590688e7096f")
-    version("2.2", sha256="2d64926864fc6d12157b86e3f88eb1a5205e7fc157bf67e7577d0f18b9a7484c")
-
-    depends_on("c", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
-    depends_on("amdblis", when="^[virtuals=blas] amdblis")
-    depends_on("amdlibflame", when="^[virtuals=lapack] amdlibflame")
-
-    variant("ilp64", default=False, description="Build with ILP64 support")
-
-    conflicts("+ilp64", when="@:3.0", msg="ILP64 is supported from 3.1 onwards")
-    requires("target=x86_64:", msg="AMD scalapack available only on x86_64")
-
-    patch("clang-hollerith.patch", when="@=4.0 %clang@16:")
-
-    def patch(self):
-        # Flang-New gets confused and thinks it finds Hollerith constants
-        if self.spec.satisfies("%clang@16:"):
-            filter_file("-cpp", "", "CMakeLists.txt")
-        # remove the C-style comments in header file that cause issues with flang
-        if self.spec.satisfies("@4.2: %clang@18:"):
-            which("sed", required=True)(
-                "-i",
-                "1,23d",
-                join_path(self.stage.source_path, "FRAMEWORK", "SL_Context_fortran_include.h"),
-            )
-
-    def url_for_version(self, version):
-        vers = "https://github.com/amd/{0}/archive/{1}.tar.gz"
-        if version >= Version("3.1"):
-            return vers.format("aocl-scalapack", version)
-        else:
-            return vers.format("scalapack", version)
-
-    def flag_handler(self, name, flags):
-        (flags, _, _) = super().flag_handler(name, flags)
-        # remove a flag set in ScalapackBase that is not working
-        if self.spec.satisfies("%gcc@14:"):
-            if "-std=gnu89" in flags:
-                flags.remove("-std=gnu89")
-        return (flags, None, None)
-
-    def cmake_args(self):
-        """cmake_args function"""
-        args = super().cmake_args()
-        spec = self.spec
-
-        if spec.satisfies("%gcc@10:"):
-            args.extend(["-DCMAKE_Fortran_FLAGS={0}".format("-fallow-argument-mismatch")])
-
-        if spec.satisfies("%clang@16:"):
-            flags = "-cpp -fno-implicit-none"
-            if spec.satisfies("%clang@18"):
-                flags += " -flang-experimental-polymorphism"
-            if spec.satisfies("%clang@18:"):
-                flags += " -I{0}".format(join_path(self.stage.source_path, "FRAMEWORK"))
-            args.extend(["-DCMAKE_Fortran_FLAGS={0}".format(flags)])
-
-        if spec.satisfies("@2.2"):
-            args.extend(
-                [
-                    "-DUSE_DOTC_WRAPPER:BOOL=%s"
-                    % ("ON" if spec.satisfies("%aocc ^amdblis") else "OFF")
-                ]
-            )
-
-        # -DENABLE_ILP64:BOOL=ON
-        args.extend([self.define_from_variant("ENABLE_ILP64", "ilp64")])
-
-        # -DUSE_F2C:BOOL=ON
-        args.extend([self.define("USE_F2C", spec.satisfies("@:3.0"))])
-
-        if self.spec.satisfies("%clang@16:") or self.spec.satisfies("%aocc@4.1.0:"):
-            c_flags = []
-            c_flags.append("-Wno-implicit-function-declaration")
-            c_flags.append("-Wno-deprecated-non-prototype")
-            c_flags.append("-Wno-incompatible-pointer-types")
-            args.append(self.define("CMAKE_C_FLAGS", " ".join(c_flags)))
-        elif self.spec.satisfies("%gcc@14:"):
-            args.append(self.define("CMAKE_C_FLAGS", "-Wno-incompatible-pointer-types"))
-
-        # link libflame library
-        args.extend(["-DLAPACK_LIBRARIES={0}".format(self.spec["lapack"].libs)])
-
-        args.extend(
-            [
-                "-DLAPACK_FOUND=true",
-                "-DUSE_OPTIMIZED_LAPACK_BLAS=true",
-                "-DCMAKE_C_COMPILER=%s" % spec["mpi"].mpicc,
-                "-DCMAKE_Fortran_COMPILER=%s" % spec["mpi"].mpifc,
-            ]
-        )
-
-        return args
-
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        if self.spec.external:
-            env.prepend_path("LD_LIBRARY_PATH", self.prefix.lib)
+    # Redeclare every AoclScalapack version as deprecated. A hand-copied list would
+    # miss a version added only to the canonical package, and Spack would then
+    # expose it here without deprecated=True.
+    for v, vargs in AoclScalapack.versions.items():
+        version(str(v), **dict(vargs, deprecated=True))

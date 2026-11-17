@@ -291,7 +291,7 @@ class Sgpp(SConsPackage):
     @run_after("install")
     def python_install(self):
         if "+python" in self.spec:
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
         # Install docs
         if "+doc" in self.spec:
             install_tree("doc", self.prefix.doc)

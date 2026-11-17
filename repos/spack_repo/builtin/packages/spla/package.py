@@ -72,12 +72,14 @@ class Spla(CMakePackage):
     with when("+openmp"):
         requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
         requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+        requires("^aocl-blas threads=openmp", when="^[virtuals=blas] aocl-blas")
         requires("^blis threads=openmp", when="^[virtuals=blas] blis")
         requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
 
     # Fix CMake find module for AMD BLIS,
     # which uses a different library name for the multi-threaded version
-    patch("0001-amd_blis.patch", when="@1.3.0:1.4.0 ^amdblis")
+    patch("0001-aocl_blas.patch", when="@1.3.0:1.4.0 ^amdblis")
+    patch("0001-aocl_blas.patch", when="@1.3.0:1.4.0 ^aocl-blas")
 
     def cmake_args(self):
         spec = self.spec
@@ -99,7 +101,7 @@ class Spla(CMakePackage):
             args += [self.define_from_variant("SPLA_OMP", "openmp")]
             if spec["blas"].name == "openblas":
                 args += ["-DSPLA_HOST_BLAS=OPENBLAS"]
-            elif spec["blas"].name in ["amdblis", "blis"]:
+            elif spec["blas"].name in ["amdblis", "aocl-blas", "blis"]:
                 args += ["-DSPLA_HOST_BLAS=BLIS"]
             elif spec["blas"].name == "atlas":
                 args += ["-DSPLA_HOST_BLAS=ATLAS"]

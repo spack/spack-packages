@@ -63,6 +63,14 @@ class Vtk(CMakePackage):
     variant("python", default=False, description="Enable Python support", when="@9.0.2:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("mpi", default=True, description="Enable MPI support")
+    variant(
+        "threads",
+        default="stdthread",
+        values=("stdthread", "tbb", "openmp", "none"),
+        multi=False,
+        description="Multi-threading backend (SMP implementation)",
+        when="@9:",
+    )
     variant("examples", default=False, description="Enable building & installing the VTK examples")
     variant("versioned_install", default=True, description="Include version in library filenames")
     variant("shared", default=True, description="Builds a shared version of the library")
@@ -158,9 +166,9 @@ class Vtk(CMakePackage):
     depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
 
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
-    depends_on("qt+opengl", when="@:9.6 +qt")
-    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.7: +qt")
-    depends_on("qt-declarative", when="@9.7: +qt")
+    depends_on("qt+opengl", when="@:9.4 +qt")
+    depends_on("qt-base+accessibility+gui+opengl+widgets+sql", when="@9.5: +qt")
+    depends_on("qt-declarative", when="@9.5: +qt")
 
     depends_on("boost", when="io=xdmf")
     depends_on("boost+mpi", when="io=xdmf +mpi")
@@ -171,6 +179,7 @@ class Vtk(CMakePackage):
     depends_on(Boost.with_default_variants, when="io=xdmf")
     depends_on("ffmpeg", when="io=ffmpeg")
     depends_on("mpi", when="+mpi")
+    depends_on("tbb", when="threads=tbb")
 
     depends_on("adios2+mpi", when="io=adios2 +mpi")
     depends_on("adios2~mpi", when="io=adios2 ~mpi")
@@ -213,8 +222,13 @@ class Vtk(CMakePackage):
 
     # VTK introduced Seacas IOSS dependency on 9.1
     with when("@9.1: io=ioss"):
-        depends_on("seacas+mpi", when="+mpi")
+        depends_on("seacas+mpi", when="+mpi platform=linux")
+        depends_on("seacas+mpi", when="+mpi platform=darwin")
         depends_on("seacas~mpi", when="~mpi")
+        # seacas executables use MPI but are linked without MPI libs on Windows
+        depends_on("seacas~mpi~tests", when="platform=windows")
+        # seacas CGNS parallel I/O includes the unix-only sys/select.h
+        depends_on("seacas~cgns", when="platform=windows")
         depends_on("seacas@2021-05-12:2022-10-14", when="@9.1")
         # vtk@9.2: need Ioss::Utils::get_debug_stream() which only 2022-10-14 provides,
         # and to be safe against other issues, make them build with this version only:
@@ -347,6 +361,16 @@ class Vtk(CMakePackage):
             self.define("VTK_MODULE_ENABLE_VTK_netcdf", "YES" if "netcdf-c" in spec else "NO")
         )
 
+        if spec.satisfies("@9:"):
+            smp_types = {
+                "stdthread": "STDThread",
+                "tbb": "TBB",
+                "openmp": "OpenMP",
+                "none": "Sequential",
+            }
+            smp = smp_types[spec.variants["threads"].value]
+            cmake_args.append(self.define("VTK_SMP_IMPLEMENTATION_TYPE", smp))
+
         if spec.satisfies("+mpi"):
             cmake_args.append(
                 self.define("VTK_MODULE_ENABLE_VTK_IOParallelNetCDF", netcdf_enabled)
@@ -426,7 +450,7 @@ class Vtk(CMakePackage):
         if "darwin" in spec.architecture:
             cmake_args.extend(["-DCMAKE_MACOSX_RPATH=ON"])
 
-        if spec.satisfies("@9.7: +qt"):
+        if spec.satisfies("@9.5: +qt"):
             cmake_args.append(self.define("VTK_QT_VERSION", "6"))
 
         if "+qt" in spec:
