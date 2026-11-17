@@ -10,7 +10,6 @@ from spack.package import *
 class PyHttpx2Jsfetch(PythonPackage):
     """httpx2 transports for Emscripten/Pyodide, backed by the JavaScript fetch API."""
 
-    homepage = "https://www.example.com"
     pypi = "httpx2_jsfetch/httpx2_jsfetch-1.0.tar.gz"
 
     license("BSD-3-Clause")
