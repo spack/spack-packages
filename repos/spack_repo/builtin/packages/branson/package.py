@@ -64,7 +64,6 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("mpi@2:")
 
     depends_on("metis", when="+metis")
-    depends_on("parmetis", when="@:0.81 +metis")
     depends_on("caliper", when="+caliper")
     depends_on("adiak", when="+caliper")
 
