@@ -13,7 +13,7 @@ class PyTruststore(PythonPackage):
     homepage = "https://github.com/sethmlarson/truststore"
     pypi = "truststore/truststore-0.10.5.tar.gz"
 
-    license("UNKNOWN", checked_by="github_user1")
+    license("MIT")
 
     version("0.10.5", sha256="30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd")
 
