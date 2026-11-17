@@ -16,7 +16,7 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
 
     homepage = "https://github.com/lanl/branson"
     url = "https://github.com/lanl/branson/archive/refs/tags/0.90.tar.gz"
-    git = "https://github.com/LANL/branson.git"
+    git = "https://github.com/lanl/branson.git"
 
     maintainers("alexrlongne")
 
