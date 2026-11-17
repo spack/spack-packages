@@ -282,5 +282,5 @@ class PyKeras(PythonPackage):
         build_pip_package("--src", buildpath)
 
         with working_dir(buildpath):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
         remove_linked_tree(self.tmp_path)

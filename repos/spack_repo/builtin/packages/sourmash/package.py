@@ -36,7 +36,7 @@ class Sourmash(PythonPackage):
         cargo = Executable("cargo")
         cargo("build", "--release")
         # install python package
-        pip(*PythonPipBuilder.std_args(self), f"--prefix={prefix}", ".")
+        pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", ".")
         # move sourmash.so into expected place
         site_packages = join_path(python_platlib, "sourmash")
         lib_ext = "dylib" if spec.platform == "Darwin" else "so"

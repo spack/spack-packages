@@ -10,6 +10,10 @@ from spack_repo.builtin.build_systems.generic import Package
 from spack.package import *
 
 _versions = {
+    "26.9.4-1": {
+        "Linux-x86_64": ("571b410272cc434f28bc6c5c49ca8ffd4a4d1bcba9f57f1b6baccdb46446cfcc",),
+        "Linux-aarch64": ("1f4e2f1898c054dd35133f778b92794116c28af330e5d5936d56d5f765401db4",),
+    },
     "26.3.2-3": {
         "Linux-x86_64": ("848194851a98903134187fbb4ab50efe87b003e0c0f808f97644b7524a62bf2c",),
         "Linux-aarch64": ("2c113a69297e612b01ca0f320c22a3107a11f2ab9b573d79ac868a175945ce29",),
@@ -41,9 +45,7 @@ _versions = {
 
 
 def _should_deprecate_version(version: str) -> bool:
-    major_version_to_deprecate = 20
-    major_version = int(version.split(".")[0])
-    return major_version < major_version_to_deprecate
+    return Version(version) < Version("26.7.2-1")
 
 
 class Miniforge3(Package):

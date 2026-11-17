@@ -120,8 +120,17 @@ class PyPip(Package, PythonExtension):
         name="pip-bootstrap",
         url="https://bootstrap.pypa.io/pip/zipapp/pip-23.1.pyz",
         checksum="d9f2fe58c472f9107964df35954f8b74e68c307497a12364b00dc28f36f96816",
-        when="platform=windows ^python@3.12:",
+        when="platform=windows ^python@3.12:3.14",
         placement={"pip-23.1.pyz": "pip.pyz"},
+        expand=False,
+    )
+
+    resource(
+        name="pip-bootstrap",
+        url="https://bootstrap.pypa.io/pip/zipapp/pip-26.2.2.pyz",
+        checksum="e5ef64ef63ff89a746014ad81658b76c1940385fdcdbc4fcbfa6e3ef1887352d",
+        when="platform=windows ^python@3.15:",
+        placement={"pip-26.2.2.pyz": "pip.pyz"},
         expand=False,
     )
 
@@ -146,7 +155,7 @@ class PyPip(Package, PythonExtension):
             script = os.path.join(self.stage.source_path, "pip.pyz")
         else:
             script = os.path.join(whl, "pip")
-        python(script, *PythonPipBuilder.std_args(self), f"--prefix={prefix}", whl)
+        python(script, *PythonPipBuilder.std_args(), f"--prefix={prefix}", whl)
 
     def setup_dependent_package(self, module, dependent_spec: Spec):
         setattr(module, "pip", python.with_default_args("-m", "pip"))

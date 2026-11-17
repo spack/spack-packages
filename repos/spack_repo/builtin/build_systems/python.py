@@ -284,7 +284,7 @@ class PythonPipBuilder(BuilderWithDefaults):
     install_time_test_callbacks = ["test_imports"]
 
     @staticmethod
-    def std_args(cls) -> List[str]:
+    def std_args() -> List[str]:
         return [
             # Verbose
             "-vvv",
@@ -369,7 +369,7 @@ class PythonPipBuilder(BuilderWithDefaults):
         pip = spec["python"].command
         pip.add_default_arg("-m", "pip")
 
-        args = PythonPipBuilder.std_args(pkg) + [f"--prefix={prefix}"]
+        args = PythonPipBuilder.std_args() + [f"--prefix={prefix}"]
         config_settings = self.config_settings(spec, prefix)
 
         # Pass -jN for compile-args if supported and needed

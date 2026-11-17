@@ -302,7 +302,7 @@ class IntelOneApiStaticLibraryList(LibraryList):
     paths, as recommended by oneapi documentation.
 
     Allow both static and dynamic libraries to be supplied by the
-    package.
+    package. Bare library names are resolved by the linker.
     """
 
     def __init__(self, static_libs, dynamic_libs):
@@ -319,8 +319,13 @@ class IntelOneApiStaticLibraryList(LibraryList):
 
     @property
     def link_flags(self):
-        return "-Wl,--start-group {0} -Wl,--end-group {1}".format(
-            " ".join(self.static_libs.libraries), self.dynamic_libs.link_flags
+        libraries = [
+            lib if os.path.isabs(lib) else LibraryList([lib]).link_flags
+            for lib in self.static_libs.libraries
+        ]
+        return (
+            f"-Wl,--start-group {' '.join(libraries)} -Wl,--end-group "
+            f"{self.dynamic_libs.link_flags}"
         )
 
     @property

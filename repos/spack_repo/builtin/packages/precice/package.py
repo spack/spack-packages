@@ -24,6 +24,7 @@ class Precice(CMakePackage):
     license("LGPL-3.0-or-later")
 
     version("develop", branch="develop")
+    version("3.5.0", sha256="cf60ae64b5f738a45c5bc06e39321c3b3a987f4115b401a30246222194797e99")
     version("3.4.0", sha256="1155178da7271c404947d1ff64b6e5028a82575fd532baa26bd6418de5ef2623")
     version("3.3.1", sha256="c52b22bd7669baec3ff903eba9bf102154629634652125a60b109a5b7e803ab5")
     version("3.3.0", sha256="300df9dbaec066c1d0f93f2dbf055705110d297bca23fc0f20a99847a55a24f4")
@@ -82,6 +83,7 @@ class Precice(CMakePackage):
     depends_on("cmake@3.10.2:", type="build", when="@1.4:")
     depends_on("cmake@3.16.3:", type="build", when="@2.4:")
     depends_on("cmake@3.22.1:", type="build", when="@3.2:")
+    depends_on("cmake@3.28.3:", type="build", when="@3.5:")
     depends_on("pkgconfig", type="build", when="@2.2:")
 
     # Boost components
@@ -89,12 +91,14 @@ class Precice(CMakePackage):
     depends_on("boost+filesystem", when="@:3.0.0")
     # Boost 1.69 removed signals
     depends_on("boost@:1.68+signals", when="@:2.3")
+    depends_on("boost+shared")  # incompatible with static Boost.Log
 
     # Baseline versions
     depends_on("boost@1.60.0:")
     depends_on("boost@1.65.1:", when="@1.4:")
     depends_on("boost@1.71.0:", when="@2.4:")
     depends_on("boost@1.74.0:", when="@3.2:")
+    depends_on("boost@1.83.0:", when="@3.5:")
 
     # Forward compatibility
     depends_on("boost@:1.72", when="@:2.0.2")
@@ -117,10 +121,12 @@ class Precice(CMakePackage):
     depends_on("petsc@3.6:", when="+petsc")
     depends_on("petsc@3.12:", when="+petsc@2.1.0:")
     depends_on("petsc@3.15:", when="+petsc@3.2:")
+    depends_on("petsc@3.19:", when="+petsc@3.5:")
 
     depends_on("python@3:", when="+python", type=("build", "run"))
     depends_on("py-numpy@1.17:", when="+python", type=("build", "run"))
     depends_on("py-numpy@1.21.5:", when="+python@3.2:", type=("build", "run"))
+    depends_on("py-numpy@1.26.4:", when="+python@3.5:", type=("build", "run"))
 
     # We require C++14 compiler support
     conflicts("%gcc@:4")

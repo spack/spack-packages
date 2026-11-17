@@ -16,7 +16,7 @@ class OneapiIgc(Package):
     homepage = "https://github.com/intel/intel-graphics-compiler"
     has_code = False
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     version("1.0.10409")
     version("1.0.8744")

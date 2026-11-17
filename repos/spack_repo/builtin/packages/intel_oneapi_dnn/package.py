@@ -26,6 +26,12 @@ class IntelOneapiDnn(IntelOneApiLibraryPackage):
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onednn.html"
     )
+    version(
+        "2026.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/46452a4a-7b7f-49f2-be4c-602a900180bb/intel-onednn-2026.1.0.625_offline.sh",
+        sha256="38c2585bc01b62e011cc1678e090be68ed1574c7a9fc9d775b09cb6ebd041427",
+        expand=False,
+    )
 
     version(
         "2026.0.1",

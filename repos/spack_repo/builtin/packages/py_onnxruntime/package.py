@@ -265,4 +265,4 @@ class PyOnnxruntime(CMakePackage, PythonExtension, ROCmPackage, CudaPackage):
     def install_python(self):
         """Install everything from build directory."""
         with working_dir(self.build_directory):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

@@ -26,6 +26,13 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/mpi-library.html"
 
     version(
+        "2021.19.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2e543b5d-c46a-4fe1-bee9-5c9631f7fb06/intel-mpi-2021.19.0.568_offline.sh",
+        sha256="522614302c6b84dd209c8f1a294b42ec4a9ef0421f51628bc461c8dbaa76dbfd",
+        expand=False,
+    )
+
+    version(
         "2021.18.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f62e2cfe-82a9-480f-b6ca-51ad7cc799fc/intel-mpi-2021.18.0.749_offline.sh",
         sha256="a2afb95b3b9f85b9ddd32171e940a7b7cc02d7bbd6dca9d77a7bd405f3d62b73",
@@ -322,7 +329,8 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
             libs += find_libraries("libmpi_ilp64", self.component_prefix.lib.release)
         libs += find_libraries(["libmpicxx", "libmpifort"], self.component_prefix.lib)
         libs += find_libraries("libmpi", self.component_prefix.lib.release)
-        libs += find_system_libraries(["libdl", "librt", "libpthread"])
+        # Let the linker resolve system libraries without searching unrelated SDK sysroots.
+        libs += LibraryList(["dl", "rt", "pthread"])
 
         # Find libfabric for libmpi.so
         if self.spec.satisfies("+external-libfabric"):

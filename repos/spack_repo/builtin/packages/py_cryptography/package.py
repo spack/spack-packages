@@ -14,8 +14,9 @@ class PyCryptography(PythonPackage):
     homepage = "https://github.com/pyca/cryptography"
     pypi = "cryptography/cryptography-1.8.1.tar.gz"
 
-    license("Apache-2.0")
+    license("Apache-2.0 OR BSD-3-Clause")
 
+    version("50.0.2", sha256="7b46165bb56eb4704e2eaaf86f3c940d19154535d9b0ca7d6d590b04060e00d5")
     version("50.0.0", sha256="eeac2acb5a20ed25e0ad6d1df9891a520b78b404266b6d11778f25d5d691a6c9")
     with default_args(deprecated=True):
         # https://github.com/pyca/cryptography/security/advisories/GHSA-g6cj-pr64-35w5
@@ -90,6 +91,7 @@ class PyCryptography(PythonPackage):
     depends_on("rust@1.41:", type="build")
     depends_on("pkgconfig", when="@40:", type="build")
 
+    depends_on("py-cffi@2.1:", when="@50: ^python@3.15:", type=("build", "run"))
     depends_on("py-cffi@2.0:", when="@48:", type=("build", "run"))
     depends_on("py-cffi@1.14:", when="@45:", type=("build", "run"))
     depends_on("py-cffi@1.12:", type=("build", "run"))

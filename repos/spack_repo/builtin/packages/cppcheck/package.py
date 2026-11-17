@@ -11,18 +11,18 @@ class Cppcheck(CMakePackage):
     """A tool for static C/C++ code analysis."""
 
     homepage = "https://cppcheck.sourceforge.net/"
-    url = "https://github.com/danmar/cppcheck/archive/2.17.0.tar.gz"
+    url = "https://github.com/cppcheck-opensource/cppcheck/archive/refs/tags/2.22.0.tar.gz"
 
     maintainers("white238")
 
     license("GPL-3.0-or-later")
 
+    version("2.22.0", sha256="d74945deb2d50393430e07596b766f8a779512c7f60dac2a30ea64e059ece57b")
     version("2.18.0", sha256="dc74e300ac59f2ef9f9c05c21d48ae4c8dd1ce17f08914dd30c738ff482e748f")
     version("2.17.1", sha256="bfd681868248ec03855ca7c2aea7bcb1f39b8b18860d76aec805a92a967b966c")
 
     variant("rules", default=False, description="Enable rules (requires PCRE)")
 
-    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("pcre", when="+rules", type="build")
@@ -33,4 +33,5 @@ class Cppcheck(CMakePackage):
         return [
             self.define("BUILD_TESTS", self.run_tests),
             self.define_from_variant("HAVE_RULES", "rules"),
+            self.define("USE_MATCHCOMPILER", True),
         ]
