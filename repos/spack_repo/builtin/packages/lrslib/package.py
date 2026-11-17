@@ -13,11 +13,12 @@ class Lrslib(MakefilePackage):
     reverse search algorithm for vertex enumeration/convex hull
     problems and comes with a choice of three arithmetic packages"""
 
-    homepage = "http://cgm.cs.mcgill.ca/~avis/C/lrs.html"
-    url = "http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-062.tar.gz"
+    homepage = "https://cgm.cs.mcgill.ca/~avis/C/lrs.html"
+    url = "https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-062.tar.gz"
 
     license("GPL-2.0-only")
 
+    version("7.3a", sha256="7fb16ad5c2b7380ef8deaecbfaf53599eef074fd225012aa431b76ee0bded6a6")
     version("7.3", sha256="c49a4ebd856183473d1d5a62785fcdfe1057d5d671d4b96f3a1250eb1afe4e83")
     version("6.2", sha256="adf92f9c7e70c001340b9c28f414208d49c581df46b550f56ab9a360348e4f09")
     version("6.1", sha256="6d5b30ee67e1fdcd6bf03e14717616f18912d59b3707f6d53f9c594c1674ec45")
@@ -42,7 +43,7 @@ class Lrslib(MakefilePackage):
     patch("multiple-definitions.patch", when="@:6.2")
 
     def url_for_version(self, version):
-        url = "http://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-0{0}.tar.gz"
+        url = "https://cgm.cs.mcgill.ca/~avis/C/lrslib/archive/lrslib-0{0}.tar.gz"
         return url.format(version.joined)
 
     # macos support, based on:
