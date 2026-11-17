@@ -35,6 +35,7 @@ class FflasFfpack(AutotoolsPackage):
     for pkg in [
         "acfl",
         "amdblis",
+        "aocl-blas",
         "armpl-gcc",
         "atlas",
         "blis",

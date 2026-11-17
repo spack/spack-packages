@@ -13,7 +13,7 @@ class Fvtkhdf(CMakePackage):
     maintainers("nncarlson")
 
     homepage = "https://github.com/nncarlson/fvtkhdf"
-    url = "https://github.com/nncarlson/fvtkhdf/releases/download/v0.6.0/fvtkhdf-0.6.0.tar.gz"
+    url = "https://github.com/nncarlson/fvtkhdf/releases/download/v0.7.0/fvtkhdf-0.7.0.tar.gz"
     git = "https://github.com/nncarlson/fvtkhdf.git"
 
     license("BSD-2-Clause")
@@ -22,6 +22,8 @@ class Fvtkhdf(CMakePackage):
         "platform=windows", msg="This package is not supported on native Windows; use WSL instead."
     )
 
+    version("0.7.0", sha256="bf32b5b5314eca7074d9fac0a128d56ca360b9dd66fac49081eae982e437239e")
+    version("0.6.1", sha256="72d44c0b715d84d73b73310f8f654bb10495a820b07915e43ca9aa490bfa06d8")
     version("0.6.0", sha256="3b3eb63cd4cfd29fbadb39f8518a751e64f385ac7c8e4bf3da0407e62728db2e")
     version("0.5.1", sha256="e7bf499335a2f29a44b34b0c833fb19574a934702eaa6bc6b38e82fc443bf50a")
 

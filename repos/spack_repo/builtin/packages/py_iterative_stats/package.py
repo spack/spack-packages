@@ -17,16 +17,20 @@ class PyIterativeStats(PythonPackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version("0.1.2", sha256="40874dde372a648623b79c45ce9f1259c8616c8d5d0aafacefe65bfbb88f4525")
-    version("0.1.1", sha256="c2be6045e720aa7ff5c8dbbcd01d082d1b66f2c2a8613ad825528535e3ce0436")
-    version("0.1.0", sha256="bb4f378a8fa117d1f24e9ea5ac0f1bd13c04b1ab3693a148ba936ffb237f2fba")
-    version("0.0.4", sha256="7e838aa79de867b0e312be8cdf9319bb70824b624c684e968636cc8d4c9d5712")
+    version("0.2.1", sha256="1655f2f7d45c1220f885f8966c311d565e45860be2960802a72c835e1eb5a476")
+    with default_args(deprecated=True):
+        version("0.1.2", sha256="40874dde372a648623b79c45ce9f1259c8616c8d5d0aafacefe65bfbb88f4525")
+        version("0.1.1", sha256="c2be6045e720aa7ff5c8dbbcd01d082d1b66f2c2a8613ad825528535e3ce0436")
+        version("0.1.0", sha256="bb4f378a8fa117d1f24e9ea5ac0f1bd13c04b1ab3693a148ba936ffb237f2fba")
+        version("0.0.4", sha256="7e838aa79de867b0e312be8cdf9319bb70824b624c684e968636cc8d4c9d5712")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.8:3.10", when="@:0.1.0")
-        depends_on("python@3.9:3.12", when="@0.1.1")
+        depends_on("python@3.11:", when="@0.2:")
         depends_on("python@3.11:3.14", when="@0.1.2:")
+        depends_on("python@3.9:3.12", when="@0.1.1")
+        depends_on("python@3.8:3.10", when="@:0.1.0")
         depends_on("py-pyyaml@6.0:")
+        depends_on("py-numpy@1.26:", when="@0.2:")
         depends_on("py-numpy@1.26:2", when="@0.1.2:")
         depends_on("py-numpy@1.19:1", when="@:0.1.1")
 

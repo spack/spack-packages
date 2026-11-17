@@ -20,6 +20,7 @@ class Btop(MakefilePackage, CMakePackage):
 
     license("Apache-2.0")
 
+    version("1.4.8", sha256="67e07c21b770a6d884c5e50ba1d2cfc90732ea57459367d8732ec7ecbeb3be5f")
     version("1.4.7", sha256="933de2e4d1b2211a638be463eb6e8616891bfba73aef5d38060bd8319baeefc6")
     version("1.4.6", sha256="4beb90172c6acaac08c1b4a5112fb616772e214a7ef992bcbd461453295a58be")
     with default_args(deprecated=True):
@@ -47,7 +48,7 @@ class Btop(MakefilePackage, CMakePackage):
     patch("link-dl.patch", when="+gpu @:1.4.0")
     # gcc does not define _GNU_SOURCE by default, making asprintf undeclared in the bundled
     # intel_gpu_top C code. See https://github.com/aristocratos/btop/issues/1565
-    patch("gnu-source.patch", when="+gpu @1.3.0:")
+    patch("gnu-source.patch", when="+gpu @1.3.0:1.4.7")
 
     requires("%gcc@11:", "%clang@16:", policy="one_of", msg="C++ 20 is required")
     requires("%gcc@14:", "%clang@19:", policy="one_of", msg="C++ 23 is required", when="@1.4.6:")

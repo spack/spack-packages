@@ -129,6 +129,8 @@ class IntelTbb(CMakePackage, MakefilePackage):
         description="Build the Thread Composability Manager",
         when="@2023.2.0:",
     )
+    # https://github.com/uxlfoundation/oneTBB/issues/2241
+    conflicts("+tcm", when="platform=darwin", msg="TCM does not support macOS")
 
     # Testing version ranges inside when clauses was fixed in e9ee9eaf.
     # See: #8957 and #13989.
