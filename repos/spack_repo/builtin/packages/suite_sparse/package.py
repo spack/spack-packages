@@ -123,6 +123,10 @@ class SuiteSparse(Package):
         if name in ("cflags", "cxxflags"):
             if self.spec.satisfies("^openblas ~shared threads=openmp"):
                 flags.append(self.compiler.openmp_flag)
+        if name == "cflags" and self.spec.satisfies("%c=oneapi"):
+            # Avoid division by zero in inactive SIMD lanes in UMFPACK when
+            # applications enable floating-point traps.
+            flags.append("-fp-model=strict")
         return (flags, None, None)
 
     def symbol_suffix_blas(self, spec, args):
