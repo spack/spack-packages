@@ -1,12 +1,12 @@
-# Copyright 2023 Lawrence Livermore National Security, LLC and other
-# Benchpark Project Developers. See the top-level COPYRIGHT file for details.
+# Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
-# SPDX-License-Identifier: Apache-2.0
+# SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+
+from spack.package import *
 
 
 class Branson(CMakePackage, CudaPackage, ROCmPackage):
@@ -22,7 +22,7 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
 
     tags = ["proxy-app"]
 
-    license("MIT")
+    license("BSD-3-Clause")
 
     version("develop", branch="develop")
 
