@@ -32,4 +32,3 @@ class RGlmmtmb(RPackage):
         depends_on("r-reformulas@0.4.3.1:")
         depends_on("r-pbkrtest")
         depends_on("r-sandwich")
-
