@@ -34,6 +34,8 @@ class Nasm(AutotoolsPackage, Package):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("zlib-api")
+
     # Fix compilation with GCC 8
     # https://bugzilla.nasm.us/show_bug.cgi?id=3392461
     patch(

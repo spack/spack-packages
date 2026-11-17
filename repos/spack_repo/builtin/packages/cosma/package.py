@@ -120,6 +120,7 @@ class Cosma(CMakePackage):
                 [
                     ("^[virtuals=blas] blis", "BLIS"),
                     ("^[virtuals=blas] amdblis", "BLIS"),
+                    ("^[virtuals=blas] aocl-blas", "BLIS"),
                     ("^[virtuals=blas] atlas", "ATLAS"),
                 ]
             )
