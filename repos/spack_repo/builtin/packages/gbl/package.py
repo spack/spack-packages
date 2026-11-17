@@ -30,7 +30,7 @@ class Gbl(CMakePackage):
     depends_on("eigen", type=("build", "link"))
     depends_on("root", type=("build", "link"), when="+root")
     depends_on("mille", when="@04-00-00:")
-    depends_on("mille +root", when=("+root", "@04-00-00:"))
+    depends_on("mille +root", when=("@04-00-00: +root"))
 
     root_cmakelists_dir = "cpp"
 
