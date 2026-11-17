@@ -134,10 +134,10 @@ class Stat(AutotoolsPackage):
                 )
         else:
             args.append("--disable-gui")
-        if "+fgfs" in spec:
+        if spec.satisfies("+fgfs"):
             args.append("--with-fgfs=%s" % spec["fast-global-file-status"].prefix)
-        if "+dysect" in spec:
+        if spec.satisfies("+dysect"):
             args.append("--enable-dysectapi")
-        if "~examples" in spec:
+        if spec.satisfies("~examples"):
             args.append("--disable-examples")
         return args
