@@ -17,7 +17,6 @@ class Gbl(CMakePackage):
     tags = ["hep"]
 
     version("main", branch="main")
-    
     version("04-00-08", sha256="e70c0ce60f2b7c14568a6598b3b6d6fff263de4dfa37ec4422e8f3b970081437")
     version("03-01-04", sha256="67b3756b74bcd61c47a4a30108f28f86eaa0fe9afeb0d240c253d332f3a989b0")
     version("02-04-01", commit="1061b643c6656fbf7ceba579997eb43f0a9e9d3c")
