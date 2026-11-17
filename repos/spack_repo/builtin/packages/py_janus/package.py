@@ -16,9 +16,11 @@ class PyJanus(PythonPackage):
 
     license("APACHE-2.0", checked_by="teaguesterling")
 
+    version("2.0.0", sha256="0970f38e0e725400496c834a368a67ee551dc3b5ad0a257e132f5b46f2e77770")
     version("1.0.0", sha256="df976f2cdcfb034b147a2d51edfc34ff6bfb12d4e2643d3ad0e10de058cb1612")
     version("0.7.0", sha256="f10dcf5776e8d49cc30ec86d5eb7268eeec39abaa24fe0332ee8fb8fa3611845")
 
+    depends_on("python@3.9:", type=("build", "run"), when="@2:")
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-setuptools@51:", type="build")
     depends_on("py-wheel@0.36:", type="build")

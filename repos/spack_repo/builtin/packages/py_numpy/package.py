@@ -349,11 +349,11 @@ class PyNumpy(PythonPackage):
             blas = "blis"
 
         # Handle AMD BLIS: use multithreaded pkg-config name for @5.1: when threading is enabled
-        if spec["blas"].name == "amdblis":
+        if spec["blas"].name in ("amdblis", "aocl-blas"):
             blas = "blis"
-            if spec["amdblis"].satisfies("@5.1:") and (
-                spec["amdblis"].satisfies("threads=openmp")
-                or spec["amdblis"].satisfies("threads=pthreads")
+            if spec["blas"].satisfies("@5.1:") and (
+                spec["blas"].satisfies("threads=openmp")
+                or spec["blas"].satisfies("threads=pthreads")
             ):
                 blas = "blis-mt"
 
@@ -474,7 +474,7 @@ class PyNumpy(PythonPackage):
                 write_library_dirs(f, lapackblas_lib_dirs)
                 f.write("include_dirs = {0}\n".format(lapackblas_header_dirs))
 
-            if "^blis" in spec or "^amdblis" in spec:
+            if "^blis" in spec or "^amdblis" in spec or "^aocl-blas" in spec:
                 f.write("[blis]\n")
                 f.write("libraries = {0}\n".format(blas_lib_names))
                 write_library_dirs(f, blas_lib_dirs)
@@ -489,7 +489,7 @@ class PyNumpy(PythonPackage):
                 if symbol_suffix != "none":
                     f.write("symbol_suffix = {0}\n".format(symbol_suffix))
 
-            if "^libflame" in spec or "^amdlibflame" in spec:
+            if "^libflame" in spec or "^amdlibflame" in spec or "^aocl-lapack" in spec:
                 f.write("[flame]\n")
                 f.write("libraries = {0}\n".format(lapack_lib_names))
                 write_library_dirs(f, lapack_lib_dirs)
@@ -561,7 +561,7 @@ class PyNumpy(PythonPackage):
         # https://numpy.org/doc/1.25/user/building.html#blas
         if spec["blas"].name == "intel-oneapi-mkl":
             blas = "mkl"
-        elif spec["blas"].name == "blis" or spec["blas"].name == "amdblis":
+        elif spec["blas"].name in ("blis", "amdblis", "aocl-blas"):
             blas = "blis"
         elif spec["blas"].name == "openblas":
             blas = "openblas"
@@ -579,7 +579,7 @@ class PyNumpy(PythonPackage):
             lapack = "mkl"
         elif spec["lapack"].name == "openblas":
             lapack = "openblas"
-        elif spec["lapack"].name == "libflame" or spec["lapack"].name == "amdlibflame":
+        elif spec["lapack"].name in ("libflame", "amdlibflame", "aocl-lapack"):
             lapack = "flame"
         elif spec["lapack"].name == "atlas":
             lapack = "atlas"

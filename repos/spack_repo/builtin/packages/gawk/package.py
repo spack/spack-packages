@@ -33,6 +33,7 @@ class Gawk(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("5.4.1", sha256="07f6f7342b7febe4313fc2c2542ad93d64fe20ad8717200109f105a826f5fd37")
     version("5.4.0", sha256="3dd430f0cd3b4428c6c3f6afc021b9cd3c1f8c93f7a688dc268ca428a90b4ac1")
     version("5.3.2", sha256="f8c3486509de705192138b00ef2c00bbbdd0e84c30d5c07d23fc73a9dc4cc9cc")
     version("5.3.1", sha256="694db764812a6236423d4ff40ceb7b6c4c441301b72ad502bb5c27e00cd56f78")

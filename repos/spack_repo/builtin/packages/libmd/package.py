@@ -17,6 +17,7 @@ class Libmd(AutotoolsPackage):
 
     maintainers("haampie")
 
+    version("1.3.0", sha256="fc0f1eb6b6766470326f2c014693809190e67dba84274a6fbae9d4912d066706")
     version("1.1.0", sha256="1bd6aa42275313af3141c7cf2e5b964e8b1fd488025caf2f971f43b00776b332")
     version("1.0.4", sha256="f51c921042e34beddeded4b75557656559cf5b1f2448033b4c1eec11c07e530f")
     version("1.0.3", sha256="5a02097f95cc250a3f1001865e4dbba5f1d15554120f95693c0541923c52af4a")

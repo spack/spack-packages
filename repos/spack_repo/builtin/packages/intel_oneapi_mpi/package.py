@@ -26,6 +26,13 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/mpi-library.html"
 
     version(
+        "2021.19.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/2e543b5d-c46a-4fe1-bee9-5c9631f7fb06/intel-mpi-2021.19.0.568_offline.sh",
+        sha256="522614302c6b84dd209c8f1a294b42ec4a9ef0421f51628bc461c8dbaa76dbfd",
+        expand=False,
+    )
+
+    version(
         "2021.18.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f62e2cfe-82a9-480f-b6ca-51ad7cc799fc/intel-mpi-2021.18.0.749_offline.sh",
         sha256="a2afb95b3b9f85b9ddd32171e940a7b7cc02d7bbd6dca9d77a7bd405f3d62b73",
@@ -280,11 +287,23 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         else:
             return ["mpiicx", "mpiicpx", "mpiifx", "mpiifx", "mpiifx"]
 
-    def wrapper_paths(self):
-        return [self.component_prefix.bin.join(name) for name in self.wrapper_names()]
+    def wrapper_paths(self, dependent_spec=None):
+        names = self.wrapper_names()
+        if dependent_spec is not None:
+            # Select each language independently for mixed compiler specs and
+            # reused binary MPI installations. Intel wrapper names retain Intel
+            # compiler defaults in installed consumers; their Fortran wrappers
+            # also retain Intel .mod paths when I_MPI_F90 selects gfortran.
+            if dependent_spec.satisfies("%c=gcc"):
+                names[0] = "mpicc"
+            if dependent_spec.satisfies("%cxx=gcc"):
+                names[1] = "mpicxx"
+            if dependent_spec.satisfies("%fortran=gcc"):
+                names[2:] = ["mpif77", "mpif90", "mpifc"]
+        return [self.component_prefix.bin.join(name) for name in names]
 
     def setup_dependent_package(self, module, dependent_spec):
-        wrappers = self.wrapper_paths()
+        wrappers = self.wrapper_paths(dependent_spec)
         self.spec.mpicc = wrappers[0]
         self.spec.mpicxx = wrappers[1]
         self.spec.mpif77 = wrappers[2]
@@ -306,7 +325,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
                 env.set(var_name, getattr(dependent_module, attr_name))
 
         # Set compiler wrappers for dependent build stage
-        wrappers = self.wrapper_paths()
+        wrappers = self.wrapper_paths(dependent_spec)
         env.set("MPICC", wrappers[0])
         env.set("MPICXX", wrappers[1])
         env.set("MPIF77", wrappers[2])
@@ -322,7 +341,8 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
             libs += find_libraries("libmpi_ilp64", self.component_prefix.lib.release)
         libs += find_libraries(["libmpicxx", "libmpifort"], self.component_prefix.lib)
         libs += find_libraries("libmpi", self.component_prefix.lib.release)
-        libs += find_system_libraries(["libdl", "librt", "libpthread"])
+        # Let the linker resolve system libraries without searching unrelated SDK sysroots.
+        libs += LibraryList(["dl", "rt", "pthread"])
 
         # Find libfabric for libmpi.so
         if self.spec.satisfies("+external-libfabric"):

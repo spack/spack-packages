@@ -42,6 +42,7 @@ class Hypre(CMakePackage, AutotoolsPackage, CudaPackage, ROCmPackage):
 
     # Package versions
     version("develop", branch="master")
+    version("3.2.1", sha256="3083cf943e1dab54517acae36afad72a4ada2c72c9567e525fc9c6efedb14e0c")
     version("3.2.0", sha256="5273205a310fb6aa3ae506ce216760fb67b30e02024874f3cdb8b811e4801de7")
     version("3.1.0", sha256="a6879ae9375d95c26afd97141d61e7a8092807333bf40cd180b385aed7351b2d")
     version("3.0.0", sha256="d9dbfa34ebd07af1641f04b06338c7808b1f378e2d7d5d547514db9f11dffc26")

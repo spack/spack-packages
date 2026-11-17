@@ -18,10 +18,11 @@ class Zig(CMakePackage):
 
     license("MIT")
 
+    version("0.17.1", tag="0.17.1", commit="be248cc1fdc3cc654f9ec8ba68514bcb93b204fe")
     version("0.16.0", tag="0.16.0", commit="24fdd5b7a4c1c8b5deb5b56756b9dbc8e08c86a8")
-    version("0.15.2", tag="0.15.2", commit="e4cbd752c8c05f131051f8c873cff7823177d7d3")
 
     with default_args(deprecated=True):
+        version("0.15.2", tag="0.15.2", commit="e4cbd752c8c05f131051f8c873cff7823177d7d3")
         version("0.15.1", tag="0.15.1", commit="3db960767d12b6214bcf43f1966a037c7a586a12")
         version("0.14.1", tag="0.14.1", commit="d03a147ea0a590ca711b3db07106effc559b0fc6")
         version("0.14.0", tag="0.14.0", commit="5ad91a646a753cc3eecd8751e61cf458dadd9ac4")
@@ -44,6 +45,7 @@ class Zig(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
 
+    depends_on("llvm@22", when="@0.17")
     depends_on("llvm@21", when="@0.16")
     depends_on("llvm@20", when="@0.15")
     depends_on("llvm@19", when="@0.14")

@@ -49,7 +49,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-    depends_on("pkgconf", type="build")
+    depends_on("pkgconfig", type="build")
 
     with when("+rocm"):
         depends_on("hip@3.8.0:", when="@0.8:")
@@ -172,7 +172,7 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+libxsmm"):
                 makeopts += ["XSMM_DIR=%s" % spec["libxsmm"].prefix]
-                makeopts += ["BLAS_LIB=%s" % spec["blas"].libs]
+                makeopts += ["BLAS_LIB=%s" % spec["blas"].libs.joined()]
 
             if spec.satisfies("+magma"):
                 makeopts += ["MAGMA_DIR=%s" % spec["magma"].prefix]

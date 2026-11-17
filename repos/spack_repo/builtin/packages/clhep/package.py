@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -87,7 +88,7 @@ class Clhep(CMakePackage):
         filter_file(
             "SET CMP0042 OLD",
             "SET CMP0042 NEW",
-            "%s/CLHEP/CMakeLists.txt" % self.stage.source_path,
+            os.path.join(self.stage.source_path, "CMakeLists.txt"),
         )
 
     def cmake_args(self):

@@ -18,6 +18,7 @@ class Mepo(PythonPackage):
 
     license("Apache-2.0", checked_by="mathomp4")
 
+    version("2.6.0", sha256="506da99e4f25c088cb3411bb0b5ea650952e6cdcdd421edb6c1d128b6e8ae9f6")
     version("2.5.0", sha256="2a38b3acf9c47ae26c6e2d1b7c110af36740d7f6d48f3c078a8203719c14118d")
     version("2.4.0", sha256="70088348f0671bd339b93dc22bbd0c8325387193a799218c794990987a848d1a")
     version("2.3.2", sha256="82affbf7e40856c6d8e8b3c4998ab4ea4d37c0baac73ddc1d698bce0d73a5082")

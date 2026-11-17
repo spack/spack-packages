@@ -25,6 +25,7 @@ class Nasm(AutotoolsPackage, Package):
 
     license("BSD-2-Clause")
 
+    version("3.02", sha256="f504227b2f529e658d41629075f0503b38d67d790af345f34eba4af60c6a5998")
     version("2.16.03", sha256="5bc940dd8a4245686976a8f7e96ba9340a0915f2d5b88356874890e207bdb581")
     version("2.15.05", sha256="9182a118244b058651c576baa9d0366ee05983c4d4ae1d9ddd3236a9f2304997")
     version("2.14.02", sha256="b34bae344a3f2ed93b2ca7bf25f1ed3fb12da89eeda6096e3551fd66adeae9fc")
@@ -32,6 +33,8 @@ class Nasm(AutotoolsPackage, Package):
     version("2.11.06", sha256="3a72476f3cb45294d303f4d34f20961b15323ac24e84eb41bc130714979123bb")
 
     depends_on("c", type="build")  # generated
+
+    depends_on("zlib-api")
 
     # Fix compilation with GCC 8
     # https://bugzilla.nasm.us/show_bug.cgi?id=3392461
@@ -43,7 +46,6 @@ class Nasm(AutotoolsPackage, Package):
     )
 
     with when("platform=windows"):
-        depends_on("perl")
         patch("msvc.mak.patch", when="@2.15.05")
 
     conflicts("%intel@:14", when="@2.14:", msg="Intel <= 14 lacks support for C11")
@@ -62,6 +64,17 @@ class Nasm(AutotoolsPackage, Package):
                 r'CFLAGS="\$pa_add_flags__old_flags -Werror=.*"',
                 'CFLAGS="$pa_add_flags__old_flags"',
                 "configure",
+            )
+
+        if self.spec.satisfies("@3.02"):
+            # Windows SDK headers like <stringapiset.h> are only guaranteed to work
+            # when pulled in through the normal <windows.h> pipeline, which sets up
+            # SDK-internal architecture macros
+            filter_file(
+                r"#include <stringapiset\.h>",
+                "#define WIN32_LEAN_AND_MEAN\n#include <windows.h>\n#include <stringapiset.h>",
+                "nasmlib/file.c",
+                string=False,
             )
 
 

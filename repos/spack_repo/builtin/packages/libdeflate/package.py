@@ -19,6 +19,7 @@ class Libdeflate(MakefilePackage, CMakePackage):
 
     license("MIT")
 
+    version("1.26", sha256="bba03fffc5538576213675ce6968fcff6ce2e67d82e4d5febea2d05f9f13cf85")
     version("1.25", sha256="d11473c1ad4c57d874695e8026865e38b47116bbcb872bfc622ec8f37a86017d")
     version("1.18", sha256="225d982bcaf553221c76726358d2ea139bb34913180b20823c782cede060affd")
     version("1.14", sha256="89e7df898c37c3427b0f39aadcf733731321a278771d20fc553f92da8d4808ac")
@@ -37,6 +38,7 @@ class Libdeflate(MakefilePackage, CMakePackage):
     depends_on("gzip")
 
     with when("build_system=cmake"):
+        depends_on("cmake@3.10:", type="build", when="@1.23:")
         depends_on("cmake@3.7:", type="build")
 
 
