@@ -33,7 +33,7 @@ petsc_spec_rocm='^petsc+rocm+mumps'" $mumps_spec"
 # strumpack spec
 strumpack_spec='^strumpack~slate~openmp'
 ## strumpack_spec='^strumpack~slate~openmp~cuda~butterflypack'
-strumpack_cuda_spec='^strumpack+cuda+slate~openmp'
+strumpack_cuda_spec='^strumpack+cuda+slate+openmp'
 strumpack_rocm_spec='^strumpack+rocm~slate~openmp'
 # superlu specs with cpu, cuda and rocm
 superlu_spec=''
