@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -26,6 +28,9 @@ class Musica(CMakePackage):
 
     license("Apache-2.0", checked_by="kshores")
 
+    # The stand-alone test compiles a small program against the install
+    test_requires_compiler = True
+
     # Versions
     version("0.17.1", sha256="1f7dd45c295dbaa27e31b3f496c9a3095bb00d9173fb341ea9cf86fda2995de1")
     version("0.16.0", sha256="aec7be3f46abfd334f1842acf88434c1d3d872703714641fc5a4730892a1d947")
@@ -45,30 +50,29 @@ class Musica(CMakePackage):
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("micm", default=True, description="Enable MICM support")
-    variant("miam", default=False, description="Enable MIAM support")
-    variant("miem", default=False, description="Enable MIEM support")
+    variant("miam", default=True, description="Enable MIAM support", when="@0.16.0:")
+    variant("miem", default=True, description="Enable MIEM support", when="@0.16.1:")
     variant("tuvx", default=True, description="Enable TUV-x support")
     variant("javascript", default=False, description="Build the JavaScript addon")
     variant("julia", default=False, description="Build the Julia wrapper")
     variant("shared", default=False, description="Build MUSICA as shared libraries")
-    variant(
-        "fmt",
-        default=True,
-        description="Use the fmt library instead of the standard library for formatting",
-    )
 
     # Dependencies
     depends_on("cmake@3.21:", type="build")
     depends_on("cmake@3.24:", type="build", when="@0.14.2:")
+    # mechanism_configuration needs C++23, and CMake only knows the NVHPC C++23 flag from 3.31
+    depends_on("cmake@3.31:", type="build", when="@0.16.0: %nvhpc")
+    # The stand-alone test also reads the installed .pc files
+    depends_on("pkgconfig", type=("build", "test"))
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("mpi", when="+mpi")
+    depends_on("netcdf-c", when="+miem")
     depends_on("netcdf-fortran", when="+tuvx")
     depends_on("libcxxwrap-julia", when="+julia")
     depends_on("node-js", type=("build", "run"), when="+javascript")
     depends_on("npm", type="build", when="+javascript")
-    depends_on("fmt", when="+fmt")
 
     def cmake_args(self):
         args = [
@@ -91,6 +95,61 @@ class Musica(CMakePackage):
             self.define_from_variant("MUSICA_ENABLE_JAVASCRIPT", "javascript"),
             self.define_from_variant("MUSICA_ENABLE_JULIA", "julia"),
             self.define_from_variant("MUSICA_BUILD_SHARED_LIBS", "shared"),
-            self.define_from_variant("MUSICA_USE_FMT", "fmt"),
         ]
         return args
+
+    @run_after("install", when="@0.17.0:")
+    def setup_standalone_test(self):
+        """Save the test project and a small mechanism for `spack test run musica`."""
+        cache_extra_test_sources(self, ["src/test/spack", "configs/v1/chapman"])
+
+    def test_installation(self):
+        """Build and run a small C++ and Fortran program against the install."""
+        if not self.spec.satisfies("@0.17.0:"):
+            raise SkipTest("src/test/spack is not in this release")
+        source_dir = join_path(self.test_suite.current_test_cache_dir, "src", "test", "spack")
+        build_dir = join_path(source_dir, "build")
+        config = join_path(
+            self.test_suite.current_test_cache_dir, "configs", "v1", "chapman", "config.json"
+        )
+
+        # Tests run without the build environment, so point CMake and pkg-config
+        # at every dependency, the way a user's module setup would.
+        prefixes = [str(self.prefix)]
+        pc_dirs = []
+        for dep in self.spec.traverse(root=False):
+            if str(dep.prefix) not in prefixes:
+                prefixes.append(str(dep.prefix))
+            for libdir in (dep.prefix.lib, dep.prefix.lib64):
+                pc_dir = join_path(libdir, "pkgconfig")
+                if os.path.isdir(pc_dir) and pc_dir not in pc_dirs:
+                    pc_dirs.append(pc_dir)
+        if pc_dirs:
+            existing = os.environ.get("PKG_CONFIG_PATH", "")
+            if existing:
+                pc_dirs.append(existing)
+            os.environ["PKG_CONFIG_PATH"] = ":".join(pc_dirs)
+
+        cmake = self.spec["cmake"].command
+        ctest = Executable(self.spec["cmake"].prefix.bin.ctest)
+
+        args = [
+            "-S",
+            source_dir,
+            "-B",
+            build_dir,
+            self.define("CMAKE_PREFIX_PATH", prefixes),
+            self.define("TEST_FORTRAN", self.spec.satisfies("+fortran")),
+            self.define("TEST_MICM", self.spec.satisfies("+micm")),
+            self.define("TEST_MIEM", self.spec.satisfies("+miem")),
+            self.define("TEST_CONFIG", config),
+        ]
+
+        with test_part(self, "test_installation_cmake", purpose="configure consumer project"):
+            cmake(*args)
+
+        with test_part(self, "test_installation_build", purpose="build consumer project"):
+            cmake("--build", build_dir)
+
+        with test_part(self, "test_installation_ctest", purpose="run consumer project"):
+            ctest("--test-dir", build_dir, "--output-on-failure")

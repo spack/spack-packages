@@ -24,6 +24,9 @@ class Which(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("c", type="build")  # generated
 
+    # https://lists.gnu.org/archive/html/which-bugs/2025-03/msg00000.html
+    patch("c23-getopt.patch", when="@2.23:2.25")
+
     executables = ["which"]
 
     @classmethod

@@ -31,6 +31,7 @@ class Yafyaml(CMakePackage):
 
     version("main", branch="main")
 
+    version("1.7.3", sha256="3ba435441f816d090ba222100122b8c98d144adb62478299da6ef35ab83308d5")
     version("1.7.2", sha256="788404c262077a7e49a0d9fd343c8063aff2a72dc884b8c4d81b168c2b6cd982")
     version("1.6.0", sha256="4eb4834c40e70eb1d81669e4397fe09e9f08dde292feb3a889362debdbf9d339")
     version("1.5.1", sha256="c9e7f873fdcb579fca53196f3a1ad68149dc6e980e6533e1119687f5a7463cc1")

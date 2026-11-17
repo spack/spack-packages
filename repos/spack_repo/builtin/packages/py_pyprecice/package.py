@@ -22,6 +22,12 @@ class PyPyprecice(PythonPackage):
 
     # Always prefer final version of release candidate
     version("develop", branch="develop")
+    version("3.5.0", sha256="10f95debb97f6008676fb1b106a3c01af752ce3658ba31d58288dccc458f4b16")
+    version("3.4.0", sha256="074b2a3a5072b786ec70ba9b2c6c403d07c8592ff80fdb2b5836b32b441b6a68")
+    version("3.3.1", sha256="7ac05da395cab9549a6c87a858cd4bc4776ca55190bc37007c10e5814d22fc57")
+    version("3.3.0", sha256="a6134aef935877ef6a6db84e94dad93fade136e1c7b81212feb7273311583e6c")
+    version("3.2.1", sha256="6e1d5097bb895e40f437ad36b2a6e0ee34770ad617cb9e4e96a6ad84f7bbfa3e")
+    version("3.2.0", sha256="01847e7922b3c473c50d8c8cc48985aa468a2ab351e92093b5d73c11b32cbb1b")
     version("3.1.1", sha256="112fccfbb223eb8df341221531f89943a14f75ee1e44dfb3276ebb38f21047de")
     version("3.1.0", sha256="8d9bd9e28859001ab503a1e2f90e54b3c000079f04c14dc7c0c04c61c5666641")
     version("3.0.0.0", sha256="7e2c4b106a231b0df2a430d86d4a7b295f85adbe3478c425f863d1a4bebee9f7")
@@ -70,6 +76,10 @@ class PyPyprecice(PythonPackage):
 
     for ver in [
         "develop",
+        "3.5",
+        "3.4",
+        "3.3",
+        "3.2",
         "3.1",  # only consider major.minor from 3.1.0. See https://github.com/precice/python-bindings/pull/199
         "3.0.0",
         "2.5.0",

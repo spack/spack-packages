@@ -22,6 +22,7 @@ class Fluxbox(AutotoolsPackage):
     version("1.3.7", sha256="c99e2baa06fff1e96342b20415059d12ff1fa2917ade0173c75b2fa570295b9f")
 
     depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
 
     # Referenced:https://sourceforge.net/p/fluxbox/bugs/1171/
     patch("fix_zero_comparison.patch")

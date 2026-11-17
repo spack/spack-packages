@@ -11,7 +11,8 @@ from spack.package import *
 
 class ScalapackBase(CMakePackage):
     """Base class for building ScaLAPACK, shared with the AMD optimized version
-    of the library in the 'amdscalapack' package.
+    of the library in the 'aocl-scalapack' package ('amdscalapack' is a
+    deprecated alias).
     """
 
     variant("shared", default=True, description="Build the shared library version")
