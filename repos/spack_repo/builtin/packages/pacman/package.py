@@ -28,7 +28,6 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
     variant("sycl", default=False, description="Build the SYCL device Backend")
     variant("python", default=True, description="Build the Python interface")
     variant("fortran", default=False, description="Build the Fortran interface")
-    #variant("tests", default=False, description="Build the test suite")
 
     depends_on("cxx", type="build")
     depends_on("fortran", type="build", when="+fortran")
