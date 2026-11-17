@@ -15,6 +15,7 @@ class PyScverseMisc(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.1.8", sha256="1a96d1ea0e6f4baf0d1d4cc1688727613bac5227f91268d19c0e0aa1202792ec")
     version("0.1.6", sha256="2310c2a0d2159311f1b44759cbd2f83b543362556396d93cb70cff01647ec835")
 
     depends_on("python@3.12:", type=("build", "run"))
