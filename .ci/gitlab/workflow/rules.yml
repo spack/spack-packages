@@ -1,0 +1,102 @@
+variables:
+  SPACK_DISABLE_LOCAL_CONFIG: "1"
+  SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
+  SPACK_CI_BUILDCACHE_VIEW: "append"
+  # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
+  PR_MIRROR_FETCH_DOMAIN: "s3://spack-binaries-prs"
+  PR_MIRROR_PUSH_DOMAIN: "s3://spack-binaries-prs"
+  # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
+  PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
+  PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
+  # SPACK_CI_DISABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
+  # SPACK_CI_ENABLE_STACKS:
+  #   value: /^.*(cray).*$/
+  #   expand: false
+
+.common_pr_vars: &common_pr_vars
+    SPACK_PIPELINE_TYPE: "spack_pull_request"
+    SPACK_PRUNE_UNTOUCHED_DEPENDENT_DEPTH: "1"
+    # TODO: Change sync script to include target in branch name.  Then we could
+    # TODO: have multiple types of "PR" pipeline here.  It would be better if we could
+    # TODO: keep just this one and use a regex to capture the target branch, but so
+    # TODO: far gitlab doesn't support that.
+    PR_TARGET_REF_NAME: "develop"
+    PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
+    OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
+
+workflow:
+  name: "${SPACK_WORKFLOW_NAME}"
+  auto_cancel:
+    on_new_commit: interruptible 
+  rules:
+    - if: $CI_PROJECT_NAME == "spack" && $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
+      # Skip release pipelines for spack/spack. Release caches are only made for releases from
+      # spack/spack-packages
+      when: never
+
+    - if: $CI_COMMIT_TAG =~ /^v.*/ || $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
+      # Don't run a pipeline for snapshot tags
+      when: never
+
+    - if: $CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
+      # Pipelines on develop/release branches only rebuild what is missing from the mirror
+      when: on_success
+      variables:
+        SPACK_PIPELINE_TYPE: "spack_protected_branch"
+        SPACK_PRUNE_UNTOUCHED: "False"
+        SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
+        SPACK_REQUIRE_SIGNING: "True"
+        OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
+        SPACK_WORKFLOW_NAME: "Protected ${CI_COMMIT_REF_NAME} Pipeline"
+
+      auto_cancel:
+        on_new_commit: none
+        on_job_failure: interruptible
+
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
+      # Pipelines on PR branches rebuild only what's missing, and do extra pruning
+      when: on_success
+      variables:
+        <<: *common_pr_vars
+        SPACK_WORKFLOW_NAME: "Packages PR Pipeline [[ ${CI_COMMIT_REF_NAME} ]]"
+        SPACK_PRUNE_UNTOUCHED: "True"
+
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
+      # Pipelines on PR branches rebuild only what's missing, and do extra pruning
+      when: always
+      variables:
+        <<: *common_pr_vars
+        SPACK_WORKFLOW_NAME: "Core PR Pipeline [[ ${CI_COMMIT_REF_NAME} ]]"
+        SPACK_PRUNE_UNTOUCHED: "False"
+
+.package_on_change: &package_on_change
+    paths:
+      - .ci/env
+      - .ci/gitlab/**/*
+      - repos/spack_repo/**/*
+      - stacks/$SPACK_CI_STACK_NAME/**/*
+    compare_to: HEAD~1
+
+.status_job_rules:
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
+      changes: *package_on_change
+      when: never
+    - if: $CI_PROJECT_NAME == "spack"
+      when: never
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
+      when: always
+    - when: never
+
+.stack_rules:
+  rules:
+    - if: $SPACK_CI_DISABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME =~ $SPACK_CI_DISABLE_STACKS
+      when: never
+    - if: $SPACK_CI_ENABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME !~ $SPACK_CI_ENABLE_STACKS
+      when: never
+    - if: $SPACK_CI_STACK_NAME == "tutorial" && SPACK_PIPELINE_TYPE == "spack_protected_branch"
+      variables:
+        PIPELINE_MIRROR_TEMPLATE: "stack-single-src-protected-mirrors.yaml.in"
+    - changes: *package_on_change

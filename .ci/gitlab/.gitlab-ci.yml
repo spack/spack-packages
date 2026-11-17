@@ -1,249 +1,151 @@
 stages: [ "generate", "build" ]
 
-variables:
-  SPACK_DISABLE_LOCAL_CONFIG: "1"
-  SPACK_USER_CACHE_PATH: "${CI_PROJECT_DIR}/tmp/_user_cache/"
-  # PR_MIRROR_FETCH_DOMAIN: "https://binaries-prs.spack.io"
-  PR_MIRROR_FETCH_DOMAIN: "s3://spack-binaries-prs"
-  PR_MIRROR_PUSH_DOMAIN: "s3://spack-binaries-prs"
-  # PROTECTED_MIRROR_FETCH_DOMAIN: "https://binaries.spack.io"
-  PROTECTED_MIRROR_FETCH_DOMAIN: "s3://spack-binaries"
-  PROTECTED_MIRROR_PUSH_DOMAIN: "s3://spack-binaries"
-  # SPACK_CI_DISABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
-  # SPACK_CI_ENABLE_STACKS:
-  #   value: /^.*(cray).*$/
-  #   expand: false
+include:
+  - ./workflow/rules.yml
+  ###############################################
+  # Spack Project Stacks
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: tutorial
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: build-systems
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: bootstrap-x86_64_v3-linux-gnu
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: bootstrap-aarch64-darwin
+      os: darwin
+      target: aarch64
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-bootstrap-x86_64_v3-linux-gnu
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-bootstrap-aarch64-linux-gnu
+      os:  linux
+      target: aarch64
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-bootstrap-darwin
+      os: darwin
+      target: aarch64
+  ###############################################
+  # E4S
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s 
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s-neoverse-v2
+      os:  linux
+      target: neoverse-v2
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s-rocm-external
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s-oneapi
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s-cray-rhel
+      os: cray-rhel
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: e4s-cray-sles
+      os: cray-rhel
+      target: zen4
+  ###############################################
+  # DOE Stacks
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: radiuus
+      os:  linux
+      target: x86_64_v3 
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: radiuus-aarch64
+      os:  linux
+      target: aarch64
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: data-vis-sdk
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: tools-sdk
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: windows-vis
+      os: windows
+      target: x86_64_v3
+  ###############################################
+  # Developer tools
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-tools-x86_64_v3-linux-gnu
+      os:  linux
+      target: x86_64_v3
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-tools-aarch64-linux-gnu
+      os:  linux
+      target: aarch64
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: developer-tools-darwin
+      os: darwin
+      target: aarch64
+  ###############################################
+  # Machine Learning
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: ml-linux-x86_64
+      os:  linux
+      target: x86_64_v4
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: ml-linux-aarch64
+      os:  linux
+      target: aarch64
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: ml-darwin-aarch64
+      os: darwin
+      target: aarch64
+  ###############################################
+  # HEP
+  - component: ./workflow/stack-job.yml
+    inputs:
+      name: hep
+      os: linux 
+      target: x86_64_v3
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }
 
-.clone_spack: &clone_spack
-  - mkdir .ci/tmp
-  - mkdir .ci/tmp/spack
-  - cd .ci/tmp/spack
-  - git init
-  - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
-  - echo ${SPACK_CHECKOUT_VERSION}
-  - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
-  - git checkout FETCH_HEAD
-  - cd ${CI_PROJECT_DIR}
-
-.trigger_build: &trigger_build
-  strategy: depend
-  forward:
-    pipeline_variables: true
-
-.common_pr_vars: &common_pr_vars
-    SPACK_PIPELINE_TYPE: "spack_pull_request"
-    SPACK_PRUNE_UNTOUCHED_DEPENDENT_DEPTH: "1"
-    # TODO: Change sync script to include target in branch name.  Then we could
-    # TODO: have multiple types of "PR" pipeline here.  It would be better if we could
-    # TODO: keep just this one and use a regex to capture the target branch, but so
-    # TODO: far gitlab doesn't support that.
-    PR_TARGET_REF_NAME: "develop"
-    PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
-    OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
-
-.package_on_change: &package_on_change
-    paths:
-      - .ci/env
-      - .ci/gitlab/**/*
-      - repos/spack_repo/**/*
-      - stacks/$SPACK_CI_STACK_NAME/**/*
-    compare_to: HEAD~1
-
-  ########################################
-# Job templates
-########################################
-.base-job:
-  variables:
-    SPACK_CI_BUILDCACHE_VIEW: "append"
-    PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
-    SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
-    SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
-
-  rules:
-    - if: $SPACK_CI_DISABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME =~ $SPACK_CI_DISABLE_STACKS
-      when: never
-    - if: $SPACK_CI_ENABLE_STACKS =~ /.+/ && $SPACK_CI_STACK_NAME !~ $SPACK_CI_ENABLE_STACKS
-      when: never
-    - if: $CI_PROJECT_NAME == "spack" && $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
-      # Skip release pipelines for spack/spack. Release caches are only made for releases from
-      # spack/spack-packages
-      when: never
-    - if: $CI_COMMIT_REF_NAME == "develop" || $CI_COMMIT_REF_NAME =~ /^releases\/v.*/
-      # Pipelines on develop/release branches only rebuild what is missing from the mirror
-      when: on_success
-      variables:
-        SPACK_PIPELINE_TYPE: "spack_protected_branch"
-        SPACK_PRUNE_UNTOUCHED: "False"
-        SPACK_COPY_BUILDCACHE: "${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}"
-        SPACK_REQUIRE_SIGNING: "True"
-        OIDC_TOKEN_AUDIENCE: "protected_binary_mirror"
-    - if: $CI_COMMIT_TAG =~ /^v.*/ || $CI_COMMIT_TAG =~ /^develop-[\d]{4}-[\d]{2}-[\d]{2}$/
-      when: always
-      variables:
-        NOOP_JOB: 1
-    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
-      # Pipelines on PR branches rebuild only what's missing, and do extra pruning
-      when: on_success
-      variables:
-        <<: *common_pr_vars
-        SPACK_PRUNE_UNTOUCHED: "True"
-      changes: *package_on_change
-
-    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
-      # Pipelines on PR branches rebuild only what's missing, and do extra pruning
-      when: always
-      variables:
-        <<: *common_pr_vars
-        SPACK_PRUNE_UNTOUCHED: "False"
-
-.generate-common:
-  stage: generate
-  script:
-    - spack --version
-    - spack env activate --without-view ${SPACK_CI_PACKAGES_ROOT}/stacks/${SPACK_CI_STACK_NAME}
-    - spack repo list
-    - spack compiler find
-    - spack audit configs
-    - spack python ${SPACK_CI_SCRIPTS_ROOT}/common/expand_vars.py
-      "${SPACK_CI_CONFIG_ROOT}/${PIPELINE_MIRROR_TEMPLATE}"
-      "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
-    - spack config add -f "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
-    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir"
-    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-    - spack
-      config blame > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
-    - spack -v  --color=always
-      ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
-      --forward-variable SPACK_CHECKOUT_VERSION
-      --forward-variable SPACK_CHECKOUT_REPO
-      --forward-variable SPACK_CI_PACKAGES_ROOT
-      --forward-variable SPACK_CI_SPACK_ROOT
-      --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
-  artifacts:
-    when: always
-    paths:
-      - "${CI_PROJECT_DIR}/jobs_scratch_dir"
-      - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/patches"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
-      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
-  variables:
-    SPACK_CI_GENERATE: "generate"
-    SPACK_CONCRETIZE_JOBS: 8
-    KUBERNETES_CPU_REQUEST: 8000m
-    KUBERNETES_MEMORY_REQUEST: 16G
-    # avoid moving targets like branches and tags
-    SPACK_CONCRETIZER_REQUIRE_CHECKSUM: 1
-  interruptible: true
-  timeout: 60 minutes
-  # Retry for everything but "legitimate build failures" (script_failure)
-  retry:
-    max: 2
-    when:
-      - unknown_failure
-      - api_failure
-      - stuck_or_timeout_failure
-      - runner_system_failure
-      - runner_unsupported
-      - stale_schedule
-      - job_execution_timeout
-      - server_timeout_running
-      - server_timeout_canceling
-      - archived_failure
-      - unmet_prerequisites
-      - scheduler_failure
-      - data_integrity_failure
-
-# Generate without tags for cases using external runners
-.generate-base:
-  extends: [ ".base-job", ".generate-common" ]
-  before_script:
-    # Check if bypass for noop is set
-    - |
-      [ ! -z ${NOOP_JOB} ] && \
-      python3 ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py \
-      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
-    - |
-      [ ! -z ${NOOP_JOB} ] && exit 0
-    - uname -a || true
-    - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-    - nproc || true
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
-    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-    - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-
-.generate-x86_64:
-  variables:
-    SPACK_CI_TARGET: "x86_64_v3"
-  extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "x86_64_v3"]
-
-.generate-aarch64:
-  variables:
-    SPACK_CI_TARGET: "aarch64"
-  extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64"]
-
-.generate-neoverse_v1:
-  variables:
-    SPACK_CI_TARGET: "neoverse_v1"
-  extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "aarch64", "neoverse_v1"]
-
-.generate-neoverse-v2:
-  variables:
-    SPACK_CI_TARGET: "neoverse_v2"
-  extends: [ ".generate-base" ]
-  tags: ["spack", "public", "medium", "neoverse_v2"]
-
-.generate-win64:
-  extends: [ ".base-job", ".generate-common" ]
-  before_script:
-    - $ErrorActionOld=$ErrorActionPreference
-    - $ErrorActionPreference="SilentlyContinue"
-    - |
-      If ( $NOOP_JOB )
-      {
-          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
-      }
-    - |
-      If ( $NOOP_JOB ) { exit 0 }
-    - python -c"import psutil;print(psutil.getloadavg())"
-    - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
-    - $ErrorActionPreference=$ErrorActionOld
-    - *clone_spack
-    - . $SPACK_CI_SPACK_ROOT\share\spack\setup-env.ps1
-    - spack arch
-  after_script:
-    - $ErrorActionOld=$ErrorActionPreference
-    - $ErrorActionPreference="SilentlyContinue"
-    - python -c"import psutil;print(psutil.getloadavg())"
-    - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
-    - $ErrorActionPreference=$ErrorActionOld
-
-  tags: ["spack", "public", "medium", "x86_64-win"]
-  image: {
-    name: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61",
-    entrypoint: [""]
-  }
-
-.build:
-  extends: [ ".base-job" ]
-  stage: build
-
-
-# Inject the dotenv file
+#####################################################
+# Setup jobs to ensure correct status reporting
+#####################################################
 dotenv:
   stage: .pre
   variables:
@@ -263,15 +165,7 @@ dotenv:
   - cat env
 
 force_pipeline_status:
-  rules:
-    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
-      changes: *package_on_change
-      when: never
-    - if: $CI_PROJECT_NAME == "spack"
-      when: never
-    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
-      when: always
-    - when: never
+  extends: [.status_job_rules]
   stage: generate
   tags: ["spack", "service_noop"]
   retry: 0
@@ -285,641 +179,3 @@ force_pipeline_status:
     KUBERNETES_MEMORY_REQUEST: "5M"
   script:
   - echo "This job is a placeholder job to ensure a pipeline status is posted even if no jobs are run"
-
-########################################
-# TEMPLATE FOR ADDING ANOTHER PIPELINE
-########################################
-#
-# First add a new spack.yml defining the pipeline to run in
-# stacks/my-stack/spack.yaml
-#
-# Then add the following entries at the bottom of this file.
-#
-# Note that when extending other jobs, gitlab does not merge lists (nor
-# does it merge dictionary values in the case of key conflicts).  So lists
-# and duplicated dictionary keys are simply overridden.  For this reason,
-# you should inlclude your custom definitions at the end of the of the
-# extends list.
-#
-########################################
-# My Stack Pipeline
-########################################
-# .my-stack:
-#   variables:
-#     SPACK_CI_STACK_NAME: my-stack
-#
-# my-stack-generate:
-#   extends: [ ".generate", ".my-stack" ]
-#
-# my-stack-build:
-#   extends: [ ".build", ".my-stack" ]
-#   trigger:
-#     <<: *trigger_build
-#     include:
-#       - artifact: jobs_scratch_dir/my-stack/cloud-ci-pipeline.yml
-#         job: my-stack-generate
-#   needs:
-#     - artifacts: True
-#       job: my-stack-generate
-
-########################################
-# E4S pipeline
-########################################
-.e4s:
-  variables:
-    SPACK_CI_STACK_NAME: e4s
-
-e4s-generate:
-  extends: [ ".e4s", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4:2024.03.01
-
-e4s-build:
-  extends: [ ".e4s", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s/cloud-ci-pipeline.yml
-        job: e4s-generate
-  needs:
-    - artifacts: True
-      job: e4s-generate
-
-########################################
-# E4S Neoverse V2
-########################################
-.e4s-neoverse-v2:
-  variables:
-    SPACK_CI_STACK_NAME: e4s-neoverse-v2
-
-e4s-neoverse-v2-generate:
-  extends: [ ".e4s-neoverse-v2", ".generate-neoverse-v2" ]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-arm64-gcc-11.4:2024.03.01
-
-e4s-neoverse-v2-build:
-  extends: [ ".e4s-neoverse-v2", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s-neoverse-v2/cloud-ci-pipeline.yml
-        job: e4s-neoverse-v2-generate
-  needs:
-    - artifacts: True
-      job: e4s-neoverse-v2-generate
-
-########################################
-# E4S ROCm External pipeline
-########################################
-.e4s-rocm-external:
-  variables:
-    SPACK_CI_STACK_NAME: e4s-rocm-external
-
-e4s-rocm-external-generate:
-  extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.3-1778518886
-
-e4s-rocm-external-build:
-  extends: [ ".e4s-rocm-external", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s-rocm-external/cloud-ci-pipeline.yml
-        job: e4s-rocm-external-generate
-  needs:
-    - artifacts: True
-      job: e4s-rocm-external-generate
-
-########################################
-# E4S OneAPI Pipeline
-########################################
-.e4s-oneapi:
-  variables:
-    SPACK_CI_STACK_NAME: e4s-oneapi
-
-e4s-oneapi-generate:
-  extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
-
-e4s-oneapi-build:
-  extends: [ ".e4s-oneapi", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s-oneapi/cloud-ci-pipeline.yml
-        job: e4s-oneapi-generate
-  needs:
-    - artifacts: True
-      job: e4s-oneapi-generate
-
-#########################################
-# Build tests for different build-systems
-#########################################
-.build_systems:
-  variables:
-    SPACK_CI_STACK_NAME: build_systems
-
-build_systems-generate:
-  extends: [ ".build_systems", ".generate-x86_64"]
-
-build_systems-build:
-  extends: [ ".build_systems", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/build_systems/cloud-ci-pipeline.yml
-        job: build_systems-generate
-  needs:
-    - artifacts: True
-      job: build_systems-generate
-
-###########################################
-# Build tests for different developer tools
-###########################################
-.developer-tools-x86_64_v3-linux-gnu:
-  variables:
-    SPACK_CI_STACK_NAME: developer-tools-x86_64_v3-linux-gnu
-
-developer-tools-x86_64_v3-linux-gnu-generate:
-  extends: [ ".developer-tools-x86_64_v3-linux-gnu", ".generate-x86_64"]
-  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
-
-developer-tools-x86_64_v3-linux-gnu-build:
-  extends: [ ".developer-tools-x86_64_v3-linux-gnu", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-tools-x86_64_v3-linux-gnu/cloud-ci-pipeline.yml
-        job: developer-tools-x86_64_v3-linux-gnu-generate
-  needs:
-    - artifacts: True
-      job: developer-tools-x86_64_v3-linux-gnu-generate
-
-###########################################
-# Build tests for different developer tools
-# aarch64
-###########################################
-.developer-tools-aarch64-linux-gnu:
-  variables:
-    SPACK_CI_STACK_NAME: developer-tools-aarch64-linux-gnu
-
-developer-tools-aarch64-linux-gnu-generate:
-  extends: [ ".developer-tools-aarch64-linux-gnu", ".generate-aarch64"]
-  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
-
-developer-tools-aarch64-linux-gnu-build:
-  extends: [ ".developer-tools-aarch64-linux-gnu", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-tools-aarch64-linux-gnu/cloud-ci-pipeline.yml
-        job: developer-tools-aarch64-linux-gnu-generate
-  needs:
-    - artifacts: True
-      job: developer-tools-aarch64-linux-gnu-generate
-
-###########################################
-# Build tests for different developer tools
-# darwin
-###########################################
-.developer-tools-darwin:
-  variables:
-    SPACK_CI_STACK_NAME: developer-tools-darwin
-
-developer-tools-darwin-generate:
-  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
-  extends: [ ".developer-tools-darwin", ".generate-base"]
-
-developer-tools-darwin-build:
-  extends: [ ".developer-tools-darwin", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-tools-darwin/cloud-ci-pipeline.yml
-        job: developer-tools-darwin-generate
-  needs:
-    - artifacts: True
-      job: developer-tools-darwin-generate
-
-##########################################
-# Developer Tools needed to develop Spack
-# arm linux
-##########################################
-.developer-bootstrap-aarch64-linux-gnu:
-  variables:
-    SPACK_CI_STACK_NAME: developer-bootstrap-aarch64-linux-gnu
-
-developer-bootstrap-aarch64-linux-gnu-generate:
-  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64"]
-  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
-
-developer-bootstrap-aarch64-linux-gnu-build:
-  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-bootstrap-aarch64-linux-gnu/cloud-ci-pipeline.yml
-        job: developer-bootstrap-aarch64-linux-gnu-generate
-  needs:
-    - artifacts: True
-      job: developer-bootstrap-aarch64-linux-gnu-generate
-
-###########################################
-# Developer tools needed to develop Spack
-# x86_64_v3 linux
-###########################################
-.developer-bootstrap-x86_64_v3-linux-gnu:
-  variables:
-    SPACK_CI_STACK_NAME: developer-bootstrap-x86_64_v3-linux-gnu
-
-developer-bootstrap-x86_64_v3-linux-gnu-generate:
-  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64"]
-  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
-
-developer-bootstrap-x86_64_v3-linux-gnu-build:
-  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-bootstrap-x86_64_v3-linux-gnu/cloud-ci-pipeline.yml
-        job: developer-bootstrap-x86_64_v3-linux-gnu-generate
-  needs:
-    - artifacts: True
-      job: developer-bootstrap-x86_64_v3-linux-gnu-generate
-
-###########################################
-# Developer tools needed to develop Spack
-# darwin
-###########################################
-.developer-bootstrap-darwin:
-  variables:
-    SPACK_CI_STACK_NAME: developer-bootstrap-darwin
-
-developer-bootstrap-darwin-generate:
-  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
-  extends: [ ".developer-bootstrap-darwin", ".generate-base"]
-
-developer-bootstrap-darwin-build:
-  extends: [ ".developer-bootstrap-darwin", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/developer-bootstrap-darwin/cloud-ci-pipeline.yml
-        job: developer-bootstrap-darwin-generate
-  needs:
-    - artifacts: True
-      job: developer-bootstrap-darwin-generate
-
-#########################################
-# RADIUSS
-#########################################
-.radiuss:
-  variables:
-    SPACK_CI_STACK_NAME: radiuss
-
-radiuss-generate:
-  extends: [ ".radiuss", ".generate-x86_64" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-    entrypoint: ['']
-
-radiuss-build:
-  extends: [ ".radiuss", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/radiuss/cloud-ci-pipeline.yml
-        job: radiuss-generate
-  needs:
-    - artifacts: True
-      job: radiuss-generate
-
-########################################
-# RADIUSS for CUDA
-########################################
-
-.tags-x86_64_v4:
-  variables:
-    SPACK_CI_TARGET: "x86_64_v4"
-  tags: ["spack", "public", "medium", "x86_64_v4"]
-
-# Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
-
-.radiuss-aarch64:
-  variables:
-    SPACK_CI_STACK_NAME: radiuss-aarch64
-
-radiuss-aarch64-generate:
-  extends: [ ".radiuss-aarch64", ".generate-aarch64" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-    entrypoint: ['']
-
-radiuss-aarch64-build:
-  extends: [ ".radiuss-aarch64", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/radiuss-aarch64/cloud-ci-pipeline.yml
-        job: radiuss-aarch64-generate
-  needs:
-    - artifacts: True
-      job: radiuss-aarch64-generate
-
-########################################
-# ECP Data & Vis SDK
-########################################
-.data-vis-sdk:
-  variables:
-    SPACK_CI_STACK_NAME: data-vis-sdk
-
-data-vis-sdk-generate:
-  extends: [ ".data-vis-sdk", ".generate-x86_64"]
-  variables:
-    # Override concretization pool because of memory requests
-    SPACK_CONCRETIZE_JOBS: 3
-  image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
-
-data-vis-sdk-build:
-  extends: [ ".data-vis-sdk", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/data-vis-sdk/cloud-ci-pipeline.yml
-        job: data-vis-sdk-generate
-  needs:
-    - artifacts: True
-      job: data-vis-sdk-generate
-
-########################################
-# TOOLS SDK
-########################################
-.tools-sdk:
-  variables:
-    SPACK_CI_STACK_NAME: tools-sdk
-
-tools-sdk-generate:
-  extends: [ ".tools-sdk", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
-
-tools-sdk-build:
-  extends: [ ".tools-sdk", ".build" ]
-  trigger:
-    include:
-      - artifact: jobs_scratch_dir/tools-sdk/cloud-ci-pipeline.yml
-        job: tools-sdk-generate
-    strategy: depend
-  needs:
-    - artifacts: True
-      job: tools-sdk-generate
-
-########################################
-# Spack Tutorial
-########################################
-.tutorial:
-  variables:
-    SPACK_CI_STACK_NAME: tutorial
-
-tutorial-generate:
-  extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
-
-tutorial-build:
-  extends: [ ".tutorial", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/tutorial/cloud-ci-pipeline.yml
-        job: tutorial-generate
-  needs:
-    - artifacts: True
-      job: tutorial-generate
-
-#################################
-# Machine Learning - Linux x86_64
-#################################
-.ml-linux-x86_64:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-x86_64
-
-ml-linux-x86_64-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-x86_64-build:
-  extends: [ ".build", ".ml-linux-x86_64" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-x86_64/cloud-ci-pipeline.yml
-        job: ml-linux-x86_64-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-x86_64-generate
-
-##################################
-# Machine Learning - Linux aarch64
-##################################
-.ml-linux-aarch64:
-  variables:
-    SPACK_CI_STACK_NAME: ml-linux-aarch64
-
-ml-linux-aarch64-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
-
-ml-linux-aarch64-build:
-  extends: [ ".build", ".ml-linux-aarch64" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-linux-aarch64/cloud-ci-pipeline.yml
-        job: ml-linux-aarch64-generate
-  needs:
-    - artifacts: True
-      job: ml-linux-aarch64-generate
-
-#########################################
-# Machine Learning - Darwin aarch64 (MPS)
-#########################################
-.ml-darwin-aarch64-mps:
-  variables:
-    SPACK_CI_STACK_NAME: ml-darwin-aarch64-mps
-
-ml-darwin-aarch64-mps-generate:
-  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
-  extends: [ ".ml-darwin-aarch64-mps", ".generate-base"]
-
-ml-darwin-aarch64-mps-build:
-  extends: [ ".ml-darwin-aarch64-mps", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/ml-darwin-aarch64-mps/cloud-ci-pipeline.yml
-        job: ml-darwin-aarch64-mps-generate
-  needs:
-    - artifacts: True
-      job: ml-darwin-aarch64-mps-generate
-
-########################################
-# High Energy Physics (HEP) - Linux x86_64 (CPU)
-########################################
-.hep:
-  variables:
-    SPACK_CI_STACK_NAME: hep
-
-hep-generate:
-  extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-
-hep-build:
-  extends: [ ".hep", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/hep/cloud-ci-pipeline.yml
-        job: hep-generate
-  needs:
-    - artifacts: True
-      job: hep-generate
-
-# Cray definitions
-.generate-cray:
-  extends: [ ".generate-common", ".base-job" ]
-  variables:
-    # Override concretization pool for metal runners
-    SPACK_CONCRETIZE_JOBS: 16
-
-  before_script:
-    - echo $PATH
-    - module avail
-    - module list
-    - uname -a || true
-    - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
-    - nproc || true
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-    - *clone_spack
-    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
-    - spack arch
-  after_script:
-    - cat /proc/loadavg || true
-    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
-
-.generate-cray-rhel:
-  tags: [ "cray-rhel-x86_64_v3", "public" ]
-  extends: [ ".generate-cray" ]
-
-.generate-cray-sles:
-  tags: [ "cray-sles-zen4", "public" ]
-  extends: [ ".generate-cray" ]
-
-
-#######################################
-# E4S - Cray RHEL
-#######################################
-.e4s-cray-rhel:
-  variables:
-    SPACK_CI_STACK_NAME: e4s-cray-rhel
-
-e4s-cray-rhel-generate:
-  extends: [ ".generate-cray-rhel", ".e4s-cray-rhel" ]
-
-e4s-cray-rhel-build:
-  extends: [ ".build", ".e4s-cray-rhel" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s-cray-rhel/cloud-ci-pipeline.yml
-        job: e4s-cray-rhel-generate
-  needs:
-    - artifacts: True
-      job: e4s-cray-rhel-generate
-
-#######################################
-# E4S - Cray SLES
-#######################################
-.e4s-cray-sles:
-  variables:
-    SPACK_CI_STACK_NAME: e4s-cray-sles
-
-.e4s-cray-sles-generate:
-  extends: [ ".generate-cray-sles", ".e4s-cray-sles" ]
-
-.e4s-cray-sles-build:
-  extends: [ ".build", ".e4s-cray-sles" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/e4s-cray-sles/cloud-ci-pipeline.yml
-        job: e4s-cray-sles-generate
-  needs:
-    - artifacts: True
-      job: e4s-cray-sles-generate
-
-#######################################
-# Windows Visualization Tools
-#######################################
-.windows-vis:
-  variables:
-    SPACK_CI_STACK_NAME: windows-vis
-    # TODO: windows runners are currently m5.2xlarge with a max 8 vCPU and 32GiB MEM
-    # setting request to half of the available allocation to allow room for overhead.
-    KUBERNETES_CPU_REQUEST: 4000m
-    KUBERNETES_MEMORY_REQUEST: 16G
-
-windows-vis-generate:
-  extends: [ ".generate-win64", ".windows-vis" ]
-
-windows-vis-build:
-  extends: [ ".build", ".windows-vis"]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/windows-vis/cloud-ci-pipeline.yml
-        job: windows-vis-generate
-  needs:
-    - artifacts: True
-      job: windows-vis-generate
-
-#######################################
-# Bootstrap x86_64-linux-gnu
-#######################################
-.bootstrap-x86_64-linux-gnu:
-  variables:
-    SPACK_CI_STACK_NAME: bootstrap-x86_64-linux-gnu
-
-bootstrap-x86_64-linux-gnu-generate:
-  extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
-
-bootstrap-x86_64-linux-gnu-build:
-  extends: [ .build, .bootstrap-x86_64-linux-gnu ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/bootstrap-x86_64-linux-gnu/cloud-ci-pipeline.yml
-        job: bootstrap-x86_64-linux-gnu-generate
-  needs:
-    - artifacts: True
-      job: bootstrap-x86_64-linux-gnu-generate
-
-#######################################
-# Bootstrap aarch64-darwin
-#######################################
-.bootstrap-aarch64-darwin:
-  variables:
-    SPACK_CI_STACK_NAME: bootstrap-aarch64-darwin
-
-bootstrap-aarch64-darwin-generate:
-  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
-  extends: [.bootstrap-aarch64-darwin, .generate-base]
-
-bootstrap-aarch64-darwin-build:
-  extends: [.bootstrap-aarch64-darwin, .build]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/bootstrap-aarch64-darwin/cloud-ci-pipeline.yml
-        job: bootstrap-aarch64-darwin-generate
-  needs:
-    - artifacts: true
-      job: bootstrap-aarch64-darwin-generate
