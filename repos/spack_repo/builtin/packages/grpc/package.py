@@ -14,8 +14,12 @@ class Grpc(CMakePackage):
 
     license("Apache-2.0 AND BSD-3-Clause AND MIT")
 
-    version("1.85.0", sha256="78d933f81e66d88c9f7a5ac419aa929691ef62b61d32a92f69c16aabf21ffabe")
-    version("1.84.1", sha256="e3cd1dbeedc989a6bf863bc1f0762a7cd1feff5cfae7d520481a541ad23ca85e")
+    version("1.85.2", sha256="a2d40910e72038dd5e7a0dbe785ec2a1944992fd4559cb4c67b892124a7b03c4")
+    version("1.84.3", sha256="c75a91397231e4e7cc3e6b98d9e169db0636c1c854489c5e6a11b0494e8c554d")
+    version("1.83.2", sha256="c0abd89d9870cb61e3ba83fdd4acf7ab2726156a3975c94689a654a3e0ce9918")
+    version("1.82.3", sha256="bdb04cdb00491ad9cbb40fd979c1f8d5eaea4ab545819cfb5e1edeee6fa024c")
+    version("1.81.2", sha256="9d583a7b05705b2b911efc6011e65dcc3246277ece2a953e4432b6df093be294")
+    version("1.80.1", sha256="96041a694ba3ec445059a95bf2b9c805b6763c255e669a30e1156e8e2ea24fc9")
 
     with default_args(deprecated=True):
         # https://emudhra.we-have-a-problem.com/#patched-tools
