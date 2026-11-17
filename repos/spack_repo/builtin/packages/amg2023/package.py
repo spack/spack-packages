@@ -84,7 +84,9 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
         with when("+umpire"):
             depends_on("hypre+umpire")
         for arch in ROCmPackage.amdgpu_targets:
-            depends_on("hypre amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch))
+            depends_on(
+                "hypre amdgpu_target={0}".format(arch), when="amdgpu_target={0}".format(arch)
+            )
             depends_on(
                 "umpire amdgpu_target={0}".format(arch),
                 when="+umpire amdgpu_target={0}".format(arch),
