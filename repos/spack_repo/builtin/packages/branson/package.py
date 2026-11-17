@@ -85,7 +85,7 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
         args.append(f"-DCMAKE_C_COMPILER={spec['mpi'].mpicc}")
         args.append(f"-DCMAKE_CXX_COMPILER={spec['mpi'].mpicxx}")
         args.append(f"-DCMAKE_Fortran_COMPILER={spec['mpi'].mpifc}")
-        args.append(f"-DCMAKE_CXX_STANDARD=17")
+        args.append("-DCMAKE_CXX_STANDARD=17")
         args.append(f"-DMPI_C_COMPILER={spec['mpi'].mpicc}")
         args.append(f"-DMPI_CXX_COMPILER={spec['mpi'].mpicxx}")
 
