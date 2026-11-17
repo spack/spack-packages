@@ -1701,10 +1701,7 @@ class CMakeBuilder(CMakeBuilder):
             self.define_from_variant("MFEM_PRECISION", "precision"),
             self.define("MFEM_ENABLE_TESTING", True),
         ]
-        if "+shared" in self.spec:
-            args.append(self.define("BUILD_SHARED_LIBS", True))
-        else:
-            args.append(self.define("BUILD_SHARED_LIBS", False))
+        args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
 
         # CMakeBuilder.std_args() does not forward cuda_arch or amdgpu_target
         if "+cuda" in self.spec:
