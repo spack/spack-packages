@@ -318,7 +318,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_dg2": "@4.7.00:",
         "intel_xehp": None,
         "intel_pvc": None,
-        "intel_bmg": "@5.3.0"
+        "intel_bmg": "@5.3:"
     }
     variant(
         "intel_gpu_arch",
@@ -335,7 +335,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
-    depends_on("mdspan", when="@5.3:")
+
+    # TODO: for minor and major add lockstep release
+    depends_on("mdspan@5.3", when="@5.3")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
