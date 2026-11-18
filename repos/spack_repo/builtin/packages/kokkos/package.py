@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.3.0", sha256="71590c348be05d83b12b3b21ccac36072be0006e23ada3ff4cb91f018cfbb042")
     version("5.2.2", sha256="d6557aaef39302282a15f9c770433d1fcdf4e961dfd6d9ed726b9d0d0f546b9f")
     version("5.2.1", sha256="3f754c99aa6130b1dd6520d904db7b2fd44ed618cd91e0dfd921956f23f6812d")
     version("5.2.0", sha256="54993e0682d80b78939bbf260490f8cf31428bb883c0309961369997f15d94df")
@@ -266,15 +267,16 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
-        "gfx900": ("vega900", None),
-        "gfx906": ("vega906", None),
-        "gfx908": ("vega908", None),
-        "gfx90a": ("vega90A", None),
+        "gfx900": ("vega900", "@3.7.02"),
+        "gfx906": ("vega906", "@:5.2"),
+        "gfx908": ("vega908", "@:5.2"),
+        "gfx90a": ("vega90A", "@:5.2"),
+        "gfx936": ("amd_gfx936", "@5.3.0:"),
         "gfx940": ("amd_gfx940", "@4.3.00:"),
         "gfx942": ("amd_gfx942", "@4.2.00:"),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
-        "gfx1030": ("navi1030", None),
-        "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1030": ("navi1030", "@:5.2"),
+        "gfx1100": ("navi1100", "@4.1.00:5.2"),
         "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
         "gfx1151": ("amd_gfx1151", "@5.2.0:"),
@@ -315,6 +317,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_dg2": "@4.7.00:",
         "intel_xehp": None,
         "intel_pvc": None,
+        "intel_bmg": "@5.3.0"
     }
     variant(
         "intel_gpu_arch",
