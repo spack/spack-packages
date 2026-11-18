@@ -30,7 +30,14 @@ class Ior(AutotoolsPackage):
     version("3.0.1", sha256="0cbefbcdb02fb13ba364e102f9e7cc2dcf761698533dac25de446a3a3e81390d")
 
     variant("aio", default=False, description="Support I/O with the AIO backend API", when="@4:")
+    variant("cuda", default=False, description="Support CUDA GPU memory buffers", when="@4:")
     variant("daos", default=False, description="Support I/O with the DAOS DFS and DAOS backends")
+    variant(
+        "gpudirect",
+        default=False,
+        description="Support GPUDirect Storage (cuFile) I/O from GPU memory",
+        when="@4:",
+    )
     variant("hdf5", default=False, description="Support I/O with the HDF5 backend")
     variant("lustre", default=False, description="Support configurable Lustre striping values")
     variant("ncmpi", default=False, description="Support I/O with the NCMPI backend")
@@ -43,10 +50,13 @@ class Ior(AutotoolsPackage):
     depends_on("pkgconfig", type="build", when="@4.0.0:")
     depends_on("mpi")
     depends_on("libaio", when="+aio")
+    depends_on("cuda", when="+cuda")
     depends_on("daos@2.2.0:", when="+daos")
     depends_on("hdf5+mpi", when="+hdf5")
     depends_on("lustre", when="+lustre")
     depends_on("parallel-netcdf", when="+ncmpi")
+
+    requires("+cuda", when="+gpudirect", msg="ior+gpudirect requires +cuda")
 
     # The build for 3.2.0 fails if hdf5 is enabled
     # See https://github.com/hpc/ior/pull/124
@@ -78,6 +88,32 @@ class Ior(AutotoolsPackage):
             config_args.append("--with-aio")
         else:
             config_args.append("--without-aio")
+
+        # 4.0.0 autodetects CUDA/GPUDirect but only builds the GPU code for an explicit
+        # "yes" (plain "yes": any other value is used as a path prefix), see hpc/ior#486
+        if spec.satisfies("@4.0.0"):
+            config_args.extend(
+                [
+                    "--with-cuda=yes" if spec.satisfies("+cuda") else "--without-cuda",
+                    (
+                        "--with-gpuDirect=yes"
+                        if spec.satisfies("+gpudirect")
+                        else "--without-gpuDirect"
+                    ),
+                ]
+            )
+            if spec.satisfies("+gpudirect"):
+                config_args.append("--with-nvcc=" + spec["cuda"].prefix.bin.nvcc)
+                # the nvcc-built utilities-gpu.o needs libstdc++, which mpicc does not link
+                config_args.append("LIBS=-lstdc++")
+        # GPU build reworked after 4.0.0 (hpc/ior#539)
+        elif spec.satisfies("@4:"):
+            if spec.satisfies("+cuda"):
+                config_args.append("--with-cuda=" + spec["cuda"].prefix)
+            else:
+                config_args.extend(["--without-cuda", "--without-hip"])
+            backend = "cufile" if spec.satisfies("+gpudirect") else "none"
+            config_args.append("--with-gpu-direct-backend=" + backend)
 
         if spec.satisfies("+daos"):
             config_args.append("--with-daos=" + spec["daos"].prefix)
