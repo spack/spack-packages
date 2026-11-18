@@ -587,6 +587,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
+        # NVHPC's OpenACC link driver (pgacclnk) misreads "-Wl,-soname,<name>" and
+        # passes <name> to ld as an input, so relinking (e.g. during "make install")
+        # fails with "input file ... is the same as output file" once the soname
+        # symlink exists. The "-soname=<name>" form is unaffected.
+        if self.spec.satisfies("+openacc %cxx=nvhpc"):
+            options.append(self.define("CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG", "-Wl,-soname="))
+
         # Remove duplicate options
         return dedupe(options)
 
