@@ -18,15 +18,20 @@ class Mdspan(CMakePackage):
     maintainers("tpadioleau", "nmm0")
 
     version("stable", branch="stable")
+    version("5.3.0",
+            sha256="ba71517536c646b9160c10e7d83e6aad5663e3289a1f619deb6a3760f252ffae",
+            url="https://github.com/kokkos/mdspan/archive/5.3.0.tar.gz")
     version("0.6.0", sha256="d6b7b9d4f472106df1d28729bd8383a8a7ea7938adf9f82d3be9c151344830d9")
 
-    variant(
-        "cxxstd", default="17", values=["14", "17", "20"], multi=False, description="C++ standard"
-    )
+    # TODO: Update supported C++ standards when needed
+    # Note that mdspan currently has a "detect" mode, not sure we want to replicate that here
+    with default_args(multi=False, description="C++ standard"):
+        variant("cxxstd", default="17", values=("14", "17", "20"), when="@0.6.0")
+        variant("cxxstd", default="20", values=("14", "17", "20", "23", "26"), when="@5.3:")
     variant(
         "stdheaders",
         default=False,
-        when="@stable",
+        when="@5.3:",
         description="Whether to install headers to emulate standard library headers and namespace",
     )
 
