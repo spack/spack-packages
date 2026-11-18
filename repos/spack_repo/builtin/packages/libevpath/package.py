@@ -21,6 +21,7 @@ class Libevpath(CMakePackage):
     maintainers("eisenhauer", "vicentebolea")
 
     version("develop", branch="master")
+    version("5.1.3", sha256="d3f585542bc579a3746700def094b3161134d447b44eaf895bf0d5332dfa903e")
     version("5.0.0", sha256="e55a3f888352b5deeb1a56e3e1b524cf5dc1226c3172163e418626d75a0ee297")
 
     with default_args(deprecated=True):
@@ -39,6 +40,8 @@ class Libevpath(CMakePackage):
     depends_on("gtkorvo-enet", when="@4.4.0: +enet_transport")
     depends_on("gtkorvo-enet@1.3.13", when="@:4.2.4 +enet_transport")
     depends_on("libffs")
+    # 5.0 requires dill 3.x when FFS has code generation, so it fails to configure with dill 4
+    depends_on("gtkorvo-dill@:3", when="@:5.0")
 
     def cmake_args(self):
         args = ["-DTARGET_CNL=1"]
