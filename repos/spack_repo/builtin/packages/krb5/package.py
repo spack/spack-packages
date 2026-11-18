@@ -47,6 +47,13 @@ class Krb5(AutotoolsPackage):
         when="@:1.22.2",
     )
 
+    # fix libgssrpc link failure where libc lacks secure_getenv (e.g. macOS)
+    patch(
+        "https://github.com/krb5/krb5/commit/76d5e90c8a686235b27c6b3934f8295a9c619e5e.patch?full_index=1",
+        sha256="502874f64d4a0863e3ae89e79dbb150270b3122673cb8b7b8354ca718c88fdd4",
+        when="@1.22.3",
+    )
+
     configure_directory = "src"
     build_directory = "src"
 
