@@ -77,41 +77,42 @@ class QuantumEspresso(CMakePackage, Package):
     with when("build_system=cmake"):
         depends_on("cmake@3.14.0:", type="build")
 
-        # QE's CMake clones these submodules at configure time, which fails offline.
-        # Stage them as git checkouts, as QE's external/initialize_external_repos.sh
-        # does. patch() fails the build if a release records different commits.
-        resource(
-            name="wannier90",
-            git="https://github.com/wannier-developers/wannier90.git",
-            commit="1d6b187374a2d50b509e5e79e2cab01a79ff7ce1",  # v3.1.0
-            destination="spack-submodules",
-            placement="wannier90",
-            when="@7.1:7",
-        )
-        resource(
-            name="devxlib",
-            git="https://gitlab.com/max-centre/components/devicexlib.git",
-            commit="a6b89ef77b1ceda48e967921f1f5488d2df9226d",  # 0.1.0
-            destination="spack-submodules",
-            placement="devxlib",
-            when="@7.1:7",
-        )
-        resource(
-            name="mbd",
-            git="https://github.com/libmbd/libmbd.git",
-            commit="82005cbb65bdf5d32ca021848eec8f19da956a77",  # 0.10.3
-            destination="spack-submodules",
-            placement="mbd",
-            when="@7.1:7.3",
-        )
-        resource(
-            name="mbd",
-            git="https://github.com/libmbd/libmbd.git",
-            commit="89a3cc199c0a200c9f0f688c3229ef6b9a8d63bd",
-            destination="spack-submodules",
-            placement="mbd",
-            when="@7.4:7",
-        )
+    # QE 7.1+ clones these submodules at configure time (CMake) or in install/extlibs_makefile
+    # (make), which fails offline. Stage them as git checkouts, as QE's
+    # external/initialize_external_repos.sh does; both skip a directory that has a .git.
+    # patch() fails the build if a release records different commits.
+    resource(
+        name="wannier90",
+        git="https://github.com/wannier-developers/wannier90.git",
+        commit="1d6b187374a2d50b509e5e79e2cab01a79ff7ce1",  # v3.1.0
+        destination="spack-submodules",
+        placement="wannier90",
+        when="@7.1:7",
+    )
+    resource(
+        name="devxlib",
+        git="https://gitlab.com/max-centre/components/devicexlib.git",
+        commit="a6b89ef77b1ceda48e967921f1f5488d2df9226d",  # 0.1.0
+        destination="spack-submodules",
+        placement="devxlib",
+        when="@7.1:7",
+    )
+    resource(
+        name="mbd",
+        git="https://github.com/libmbd/libmbd.git",
+        commit="82005cbb65bdf5d32ca021848eec8f19da956a77",  # 0.10.3
+        destination="spack-submodules",
+        placement="mbd",
+        when="@7.1:7.3",
+    )
+    resource(
+        name="mbd",
+        git="https://github.com/libmbd/libmbd.git",
+        commit="89a3cc199c0a200c9f0f688c3229ef6b9a8d63bd",
+        destination="spack-submodules",
+        placement="mbd",
+        when="@7.4:7",
+    )
 
     variant("libxc", default=False, description="Uses libxc")
     depends_on("libxc", when="+libxc")
@@ -482,7 +483,7 @@ class QuantumEspresso(CMakePackage, Package):
     # gipaw.x will only be installed with cmake if the qe-gipaw version is >= 5c4a4ce.
     patch("gipaw-eccee44.patch", when="@7.2+gipaw build_system=cmake")
 
-    @when("@7.1:7 build_system=cmake")
+    @when("@7.1:7")
     def patch(self):
         # The tarball has an empty external/<name> for each submodule, which a resource
         # can't be placed over, so rename the staged checkouts onto them.
