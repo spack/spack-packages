@@ -74,7 +74,6 @@ class PyNapari(PythonPackage):
         depends_on("py-scipy@1.5.4:")
         depends_on("py-superqt@0.7.4:", when="@0.6:")
         depends_on("py-superqt@0.4.1:")
-        depends_on("py-sphinx@4.3.0:4", when="@0.4:0.5")
         depends_on("py-tifffile@2022.7.28:", when="@0.6:")
         depends_on("py-tifffile@2020.2.16:")
         depends_on("py-toolz@0.11.0:", when="@0.6:")
