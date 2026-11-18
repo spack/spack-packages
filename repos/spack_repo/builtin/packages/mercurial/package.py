@@ -87,6 +87,57 @@ class Mercurial(PythonPackage):
             install("zsh_completion", contrib.zsh_completion)
 
     @run_after("install")
+    def make_hg_self_sufficient(self):
+        """Insert this package's own site-packages into hg's sys.path.
+
+        Only needed from 7.0 on. Through 6.9.5, the installed `hg` script
+        self-located its own library directory via a `@LIBDIR@` placeholder
+        that setup.py substituted with an absolute path at install time
+        (`sys.path.insert(0, libdir)`), independent of the calling
+        environment. 7.0 (2025-03-25) is the first PEP 517-compliant
+        release ("Mercurial's setup.py can no longer be called directly" -
+        see relnotes/7.0): the standard wheel/PyPA-build install this
+        recipe now uses doesn't do that substitution, and the `@LIBDIR@`
+        block is gone from the script entirely - confirmed by diffing the
+        `hg` launcher between the mercurial-6.9.5 and mercurial-7.0
+        release tarballs. From 7.0 on, hg relies on ordinary Python import
+        resolution instead, i.e. on its own site-packages already being on
+        sys.path.
+
+        hg's shebang points at the shared build venv, which doesn't have
+        this package's site-packages on its default sys.path. Spack's own
+        HgFetchStrategy also unconditionally clears PYTHONPATH before
+        invoking hg (lib/spack/spack/fetch_strategy.py) - a fix from 2017
+        (PR #3834) for the opposite problem (a *different* package's
+        PYTHONPATH leaking into hg's sys.path), safe back when hg could
+        still self-locate via @LIBDIR@. Combined, hg@7.0: fails with
+        "abort: couldn't find mercurial libraries" as a build dependency
+        elsewhere (e.g. imod's hg-based fetch) unless it can find its own
+        libraries without relying on the caller's environment.
+        """
+        if not self.spec.satisfies("@7.0:"):
+            return
+        # python_platlib (injected by python's setup_dependent_package) is
+        # already this package's own absolute site-packages path, computed
+        # from the actual platform-specific layout (e.g. lib64/... on
+        # RHEL/Fedora system Pythons, lib/.../dist-packages on Debian/Ubuntu)
+        # rather than assuming the common lib/pythonX.Y/site-packages form.
+        site_packages = python_platlib
+        hg_script = self.prefix.bin.hg
+        with open(hg_script) as f:
+            lines = f.readlines()
+        # Insert after the last `from __future__ import` line (must remain
+        # the first real statement in the file) rather than after the
+        # shebang - hg's script has a multi-line copyright header first.
+        insert_at = 1
+        for i, line in enumerate(lines):
+            if line.startswith("from __future__ import"):
+                insert_at = i + 1
+        lines.insert(insert_at, f"import sys; sys.path.insert(0, {str(site_packages)!r})\n")
+        with open(hg_script, "w") as f:
+            f.writelines(lines)
+
+    @run_after("install")
     def configure_certificates(self):
         """Configuration of HTTPS certificate authorities
         https://www.mercurial-scm.org/wiki/CACertificates"""
