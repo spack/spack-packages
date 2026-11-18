@@ -28,7 +28,6 @@ class PyXdot(PythonPackage):
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-pygobject", type=("build", "run"))
     depends_on("py-pycairo", type=("build", "run"))
-    depends_on("py-packaging", type=("build", "run"))
     depends_on("pango", type=("build", "run"))
     depends_on("harfbuzz", type=("build", "run"))
     depends_on("atk", type=("build", "run"))

@@ -42,6 +42,9 @@ class File(AutotoolsPackage):
     depends_on("zlib-api")
     depends_on("zstd", when="@5.44:")
 
+    # file-5.48 introduced the use of the __SNR_openat2 macro
+    patch("SNR_openat2.patch", when="@5.48")
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("--version", output=str, error=str)
