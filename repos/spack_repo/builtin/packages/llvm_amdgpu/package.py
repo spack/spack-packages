@@ -663,6 +663,29 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
         """llvm-amdgpu uses the same optimization flags as clang"""
         return "clang"
 
+    def archspec_version(self) -> str:
+        """Map ROCm version to equivalent LLVM/clang version for archspec.
+
+        llvm-amdgpu uses ROCm versioning (e.g., 7.0.0) but is based on specific
+        LLVM versions (e.g., LLVM 20). archspec needs the LLVM version to determine
+        which target architectures are supported.
+        """
+        if self.spec.satisfies("@7.13:"):
+            return "23.0.0"
+        elif self.spec.satisfies("@7.2"):
+            return "22.0.0"
+        elif self.spec.satisfies("@7.0:7.1"):
+            return "20.0.0"
+        elif self.spec.satisfies("@6.4"):
+            return "19.0.0"
+        elif self.spec.satisfies("@6.2:6.3"):
+            return "18.0.0"
+        elif self.spec.satisfies("@5.7:6.1"):
+            return "17.0.0"
+        else:
+            # Fallback to package version for older/unknown versions
+            return self.spec.version.dotted_numeric_string
+
     def gpu_architecture_flags(self, spec):
         """Return --offload-arch flags for the GPU architectures specified in amdgpu_target.
 
