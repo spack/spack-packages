@@ -334,6 +334,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+    depends_on("mdspan", when="@5.3:")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -589,6 +590,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # TODO deprecation v4: remove
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
+
+        if self.spec.satisfies("@5.3:"):
+            options.append(
+                self.define_from_variant("Kokkos_ENABLE_MDSPAN_EXTERNAL", True)
+            )
 
         # Remove duplicate options
         return dedupe(options)
