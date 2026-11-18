@@ -191,6 +191,21 @@ class Viskores(CMakePackage, CudaPackage, ROCmPackage):
             if "+rocm" in spec:
                 options.append(CMakeBuilder.define_hip_architectures(self))
 
+            # sycl support (via kokkos): viskores' device module is large
+            # enough that whole-program device code segfaults the
+            # oneAPI 2026.x IGC/ocloc; per-kernel device code split avoids
+            # it. -fsycl itself arrives through kokkos' exported flags.
+            if "+sycl" in spec:
+                options.append(
+                    "-DCMAKE_CXX_FLAGS="
+                    + " ".join(spec.compiler_flags["cxxflags"])
+                    + " -fPIC -fp-model=precise"
+                    " -Wno-unused-command-line-argument -Wno-deprecated-declarations"
+                    " -fsycl-device-code-split=per_kernel"
+                    " -fsycl-max-parallel-link-jobs=128"
+                    " -flink-huge-device-code"
+                )
+
         return options
 
     def test_smoke_test(self):
