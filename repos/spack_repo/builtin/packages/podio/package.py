@@ -40,6 +40,7 @@ class Podio(CMakePackage):
         conditional("17", when="@:1.2"),
         conditional("20", when="@0.14.1:"),
         conditional("23", when="@1.3:"),
+        conditional("26", when="@1.10:"),
     )
     variant(
         "cxxstd",
