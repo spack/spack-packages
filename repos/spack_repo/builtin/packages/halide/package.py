@@ -19,6 +19,7 @@ class Halide(CMakePackage, PythonExtension):
 
     maintainers("wraith1995", "alexreinking")
     version("main", branch="main")
+    version("22.1.0", sha256="35b59f91be6189645abf33078b1954740a434d97aaeaeaf5f15d162d86b74f6e")
     version("21.0.0", sha256="aa6b6f5e89709ca6bc754ce72b8b13b2abce0d6b001cb2516b1c6f518f910141")
     version("19.0.0", sha256="83bae1f0e24dc44d9d85014d5cd0474df2dd03975680894ce3fafd6e97dffee2")
     version("18.0.0", sha256="1176b42a3e2374ab38555d9316c78e39b157044b5a8e765c748bf3afd2edb351")
@@ -100,6 +101,7 @@ class Halide(CMakePackage, PythonExtension):
     depends_on("llvm@17.0.0:18", type=("link", "run"), when="@18.0.0:18")
     depends_on("llvm@19.0.0:19", type=("link", "run"), when="@19.0.0:19")
     depends_on("llvm@21.0.0:21", type=("link", "run"), when="@21.0.0:21")
+    depends_on("llvm@21.0.0:23", type=("link", "run"), when="@22.0.0:22")
 
     for v in _values:
         depends_on(
@@ -117,13 +119,18 @@ class Halide(CMakePackage, PythonExtension):
     depends_on("flatbuffers@23.5.26:~shared", type="build", when="@19:+serialization")
 
     depends_on("doxygen", type="build", when="+docs")
+    # Halide 22 builds its documentation with Sphinx, whose extensions are not
+    # all packaged in Spack.
+    conflicts("+docs", when="@22:", msg="Building the Halide 22+ documentation is not supported")
 
     depends_on("python@3.8:", type=("build", "link", "run"), when="+python")
     depends_on("python@3.9:", type=("build", "link", "run"), when="@21:+python")
+    depends_on("python@3.12:", type=("build", "link", "run"), when="@22:+python")
     # See https://github.com/halide/Halide/blob/main/requirements.txt
     depends_on("py-pybind11@2.6.2", type="build", when="@14.0.0:17+python")
     depends_on("py-pybind11@2.10.4", type="build", when="@18.0.0:19+python")
-    depends_on("py-pybind11@2.11.1:", type="build", when="@21:+python")
+    depends_on("py-pybind11@2.11.1:", type="build", when="@21.0.0:21+python")
+    depends_on("py-nanobind@2.11:", type="build", when="@22:+python")
     depends_on("py-setuptools@43:", type="build", when="+python")
     depends_on("py-scikit-build", type="build", when="@:18+python")
     depends_on("py-wheel", type="build", when="+python")
@@ -154,8 +161,9 @@ class Halide(CMakePackage, PythonExtension):
             # pulled in through FetchContent by default and several options were
             # renamed. Spack builds offline, so disable FetchContent and supply
             # FlatBuffers/pybind11 through find_package (i.e. from Spack).
+            if spec.satisfies("@:21"):
+                args += [self.define("Halide_USE_FETCHCONTENT", False)]
             args += [
-                self.define("Halide_USE_FETCHCONTENT", False),
                 # The in-process WebAssembly JIT executor (wabt) is fetched via
                 # FetchContent upstream. Disable it; ahead-of-time codegen to the
                 # wasm target still works through LLVM/LLD. This replaces the old
@@ -182,9 +190,16 @@ class Halide(CMakePackage, PythonExtension):
                 args += [self.define("TARGET_{0}".format(target[0]), target[1])]
 
         if spec.satisfies("+python"):
-            args += [self.define("Halide_INSTALL_PYTHONDIR", python_platlib)]
             if spec.satisfies("@:18"):
-                args += [self.define("PYBIND11_USE_FETCHCONTENT", False)]
+                args += [
+                    self.define("Halide_INSTALL_PYTHONDIR", python_platlib),
+                    self.define("PYBIND11_USE_FETCHCONTENT", False),
+                ]
+            else:
+                # Halide 19+ installs the module directly into this directory.
+                args += [
+                    self.define("Halide_INSTALL_PYTHONDIR", join_path(python_platlib, "halide"))
+                ]
         return args
 
 

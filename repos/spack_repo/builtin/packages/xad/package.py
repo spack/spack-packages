@@ -11,12 +11,13 @@ class Xad(CMakePackage):
     """XAD is a high-performance C++ automatic differentiation library."""
 
     homepage = "https://auto-differentiation.github.io/"
-    url = "https://github.com/auto-differentiation/xad/archive/refs/tags/v2.1.0.tar.gz"
+    url = "https://github.com/auto-differentiation/xad/archive/refs/tags/v2.2.0.tar.gz"
 
     maintainers("JohnyMarley")
 
     license("AGPL-3.0-or-later", checked_by="JohnyMarley")
 
+    version("2.2.0", sha256="56fea3b124b3f2dc182029e73fb93ea61f44b75d93621e32b88dafce301c5d69")
     version("2.1.0", sha256="110729586b1a097c9e4a7ec34c48e60f3aec7ec61ef192a417ce0774cc32be43")
 
     depends_on("cmake@3.15:", type="build")
