@@ -87,6 +87,14 @@ class PythonVenv(Package):
     def libs(self):
         return LibraryList([])
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        """Put the extension's own site-packages on PYTHONPATH. They do not exist yet
+        when the build environment is set up, and install-time tests import from them."""
+        for directory in {self.platlib, self.purelib}:
+            env.prepend_path("PYTHONPATH", os.path.join(dependent_spec.prefix, directory))
+
     def setup_dependent_run_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
