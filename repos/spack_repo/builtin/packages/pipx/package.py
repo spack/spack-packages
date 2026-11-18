@@ -17,7 +17,7 @@ class Pipx(PythonPackage):
 
     maintainers("ebagrenrut")
 
-    version("1.18.9", sha256="7f85f40e5fb7a7edc367dff92c7dcd511aecfb17ccbef070a8a1ea067ecc1a49")
+    version("1.18.16", sha256="06795f5cd689f3ea36b574a7d1ddfc7b4c1ebee66116db7b70ded868f95d5057")
     version("1.17.14", sha256="ab8982c2e8e7f885eeba1cc76ab499ba93056b9eb71520af050679b53c3a6c67")
     version("1.16.7", sha256="a575ced25c507c1b1c978269f5684b5b291e81e3cd14eb3cee196a3c5b304732")
     version("1.15.0", sha256="193aab4983b787903e389d623e6347f697026c0d7a2ba0b4fbd5189bed22f19d")
@@ -27,6 +27,10 @@ class Pipx(PythonPackage):
     version("1.11.2", sha256="f6e445c7bfceee9566c4dfc78e4d91b9b97e511681cdd61da5bd4cc181b20997")
 
     with default_args(deprecated=True):
+        version(
+            "1.18.9",
+            sha256="7f85f40e5fb7a7edc367dff92c7dcd511aecfb17ccbef070a8a1ea067ecc1a49",
+        )
         version(
             "1.17.2",
             sha256="e29d68d05f5b4707d3d3dbddb0adfc4ca4ddcd77052dbb8f4e1b5ad31629a07c",

@@ -67,11 +67,11 @@ ci:
       script:
       - - export BUILD_CACHE="${SPACK_BUILDCACHE_DESTINATION}/${SPACK_BUILDCACHE_RELATIVE_SPECS_URL}"
         - mkdir -p /tmp/input /tmp/output
-        - aws s3 sync --exclude "*" --include "*spec.manifest.json" ${BUILD_CACHE} /tmp/input
+        - aws s3 sync --only-show-errors --exclude "*" --include "*spec.manifest.json" ${BUILD_CACHE} /tmp/input
         # sign.sh signs every good manifest even when it rejects some, so upload
         # those before failing the job
         - /sign.sh || sign_status=$?
-        - aws s3 sync --exclude "*" --include "*spec.manifest.json" /tmp/output ${BUILD_CACHE}
+        - aws s3 sync --no-progress --exclude "*" --include "*spec.manifest.json" /tmp/output ${BUILD_CACHE}
         - |+
           for keyfile in $( find /tmp/public_keys -type f );
           do

@@ -287,11 +287,23 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
         else:
             return ["mpiicx", "mpiicpx", "mpiifx", "mpiifx", "mpiifx"]
 
-    def wrapper_paths(self):
-        return [self.component_prefix.bin.join(name) for name in self.wrapper_names()]
+    def wrapper_paths(self, dependent_spec=None):
+        names = self.wrapper_names()
+        if dependent_spec is not None:
+            # Select each language independently for mixed compiler specs and
+            # reused binary MPI installations. Intel wrapper names retain Intel
+            # compiler defaults in installed consumers; their Fortran wrappers
+            # also retain Intel .mod paths when I_MPI_F90 selects gfortran.
+            if dependent_spec.satisfies("%c=gcc"):
+                names[0] = "mpicc"
+            if dependent_spec.satisfies("%cxx=gcc"):
+                names[1] = "mpicxx"
+            if dependent_spec.satisfies("%fortran=gcc"):
+                names[2:] = ["mpif77", "mpif90", "mpifc"]
+        return [self.component_prefix.bin.join(name) for name in names]
 
     def setup_dependent_package(self, module, dependent_spec):
-        wrappers = self.wrapper_paths()
+        wrappers = self.wrapper_paths(dependent_spec)
         self.spec.mpicc = wrappers[0]
         self.spec.mpicxx = wrappers[1]
         self.spec.mpif77 = wrappers[2]
@@ -313,7 +325,7 @@ class IntelOneapiMpi(IntelOneApiLibraryPackage):
                 env.set(var_name, getattr(dependent_module, attr_name))
 
         # Set compiler wrappers for dependent build stage
-        wrappers = self.wrapper_paths()
+        wrappers = self.wrapper_paths(dependent_spec)
         env.set("MPICC", wrappers[0])
         env.set("MPICXX", wrappers[1])
         env.set("MPIF77", wrappers[2])

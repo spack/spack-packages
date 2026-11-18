@@ -31,8 +31,9 @@ class Cmake(Package):
     license("BSD-3-Clause")
 
     version("master", branch="master")
-    version("4.4.4", sha256="bd24c30d80a7744ae84b845ff080cc8453b06c622ef01066564108e9cefc44cf")
-    version("4.3.5", sha256="24fc974191ef48da4ff309671fdb5989f43e07ecde0e2589eaf9d72672d8612b")
+    version("4.5.0", sha256="424352d6133e8455e020da787008e8dc67abb18820af3532572ab35657e49213")
+    version("4.4.5", sha256="a0c54c88abb8078dd8eccadb717fc6bb194bf18e7d44c86309910288886e04e2")
+    version("4.3.6", sha256="52203d4b31fdb20e8b8b630b98f6381f1d037fd2c1eb758d4271455f132d1eed")
     version("4.2.8", sha256="f1fbcf2756029e14fb4ff37b4582d6c81a51f43d5ffa7b0849fccbf53cf39bf9")
     version("4.1.5", sha256="50ce77215cf266630fa5de97c360f4c313bb79f94b35236b63c1216de3196356")
     version("4.0.6", sha256="9ebe11be8d304336d62a3e71ca36c18f0a4e40036b97c533d63cf730364b6528")
@@ -74,9 +75,11 @@ class Cmake(Package):
     version("2.8.10.2", sha256="ce524fb39da06ee6d47534bbcec6e0b50422e18b62abc4781a4ba72ea2910eb1")
 
     with default_args(deprecated=True):
+        version("4.4.4", sha256="bd24c30d80a7744ae84b845ff080cc8453b06c622ef01066564108e9cefc44cf")
         version("4.4.3", sha256="c46400618b4f1f2b43507f24fb22f3ae830c3416cf23b776e16e1d413aa892f0")
         version("4.4.2", sha256="1db9e61e60b6e0874c86386340b910382f3c5e75b9fbfb44d122063129a2789d")
         version("4.4.1", sha256="95d4721f3625fb0d9d6ca480dd59a46c84b4c157f7fadd2e9b179ef9c871174d")
+        version("4.3.5", sha256="24fc974191ef48da4ff309671fdb5989f43e07ecde0e2589eaf9d72672d8612b")
         version("4.3.4", sha256="fdeff897b9eb49d764539f2b1edc6eb7e1440df325678a97c1978499e931adda")
         version("4.3.3", sha256="cba4bb7a44edf2877bb6f059932896383babe435b3a8c3b5df48b4aa41c9bb85")
         version("4.2.4", sha256="93e02d41330250d12362541c63963a469e7c24fb894fab6dbb30082a0a1f0edd")

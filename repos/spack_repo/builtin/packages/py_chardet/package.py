@@ -17,6 +17,7 @@ class PyChardet(PythonPackage):
     license("MIT", when="@7.0:7.2")
     license("LGPL-2.1-or-later", when="@:6")
 
+    version("7.7.0", sha256="0ba38a05201b0abf7570c12d8af45c30b2af835bd5cc52bfc7105082eda82c1e")
     version("7.4.1", sha256="cda41132a45dfbf6984dade1f531a4098c813caf266c66cc446d90bb9369cabd")
     version("7.3.0", sha256="e6bf602bb8a070524a19bac1cff2a10d62c71b09606f066251282870fa1466e5")
     version("7.0.1", sha256="6fce895c12c5495bb598e59ae3cd89306969b4464ec7b6dd609b9c86e3397fe3")

@@ -19,6 +19,8 @@ class UtilLinux(AutotoolsPackage):
 
     license("GPL-2.0-only", checked_by="wdconinc")
 
+    # This package should be updated in tandem with util-linux-uuid
+    version("2.42.4", sha256="af3241e7776964dcb6bb9a811ca7b0d93000b563e2ae2a8df8f80a7cd6e04d56")
     version("2.42.1", sha256="36d2cfa2ae336732e144c36ceafdf3ed86319f5d7413a49bedb0a773e7833fe3")
     version("2.41.4", sha256="843d7bfb2c9a3413cd9ba4f6d7580e73761b06f7264832d5a2fcb5cc1563b938")
 
@@ -71,7 +73,7 @@ class UtilLinux(AutotoolsPackage):
         )
         version("2.25", sha256="7e43273a9e2ab99b5a54ac914fddf5d08ba7ab9b114c550e9f03474672bd23a1")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     depends_on("python@2.7:", type="build")
     depends_on("pkgconfig", type="build")
