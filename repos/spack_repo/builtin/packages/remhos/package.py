@@ -107,7 +107,7 @@ class Remhos(MakefilePackage, CudaPackage, ROCmPackage):
         targets.append("MFEM_DIR=%s" % spec["mfem"].prefix)
         targets.append("CONFIG_MK=%s" % spec["mfem"].package.config_mk)
         targets.append("TEST_MK=%s" % spec["mfem"].package.test_mk)
-        if "+caliper" in self.spec:
+        if spec.satisfies("+caliper"):
             targets.append("CALIPER_DIR=%s" % spec["caliper"].prefix)
             targets.append("ADIAK_DIR=%s" % spec["adiak"].prefix)
         return targets
