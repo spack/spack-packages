@@ -275,7 +275,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx942": ("amd_gfx942", "@4.2.00:"),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": (lambda spec: "amd_gfx1030" if spec.satisfies("@4.2:") else "navi1030", None),
-        "gfx1100": (lambda spec: "amd_gfx1100" if spec.satisfies("@4.2:") else "navi1100", "@4.1.00:"),
+        "gfx1100": (
+            lambda spec: "amd_gfx1100" if spec.satisfies("@4.2:") else "navi1100",
+            "@4.1.00:",
+        ),
         "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
         "gfx1151": ("amd_gfx1151", "@5.2.0:"),
@@ -318,7 +321,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_dg2": "@4.7.00:",
         "intel_xehp": None,
         "intel_pvc": None,
-        "intel_bmg": "@5.3:"
+        "intel_bmg": "@5.3:",
     }
     variant(
         "intel_gpu_arch",
@@ -508,7 +511,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                     else:
                         arch_name_or_fun, cond = self.amdgpu_arch_map[amdgpu_target]
 
-                    kokkos_arch_name = arch_name_or_fun(self.spec) if callable(arch_name_or_fun) else arch_name_or_fun
+                    kokkos_arch_name = (
+                        arch_name_or_fun(self.spec)
+                        if callable(arch_name_or_fun)
+                        else arch_name_or_fun
+                    )
 
                     if cond and not self.spec.satisfies(cond):
                         raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
@@ -597,9 +604,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
 
         if self.spec.satisfies("@5.3:"):
-            options.append(
-                self.define("Kokkos_ENABLE_MDSPAN_EXTERNAL", True)
-            )
+            options.append(self.define("Kokkos_ENABLE_MDSPAN_EXTERNAL", True))
 
         # Remove duplicate options
         return dedupe(options)
