@@ -51,16 +51,12 @@ class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("py-torchvision", type=("build", "run"))
     depends_on("py-torchaudio", type=("build", "run"))
 
-    # find_package(Torch) triggers torch's Caffe2Config.cmake, which does
-    # find_package(Protobuf) at configure time. py-torch is a build-only dep,
-    # so its own protobuf dep is not put on CMAKE_PREFIX_PATH here; declare
-    # protobuf explicitly so CMake can find it.
-    depends_on("protobuf", when="^py-torch~custom-protobuf", type="build")
-
     with when("~cuda~rocm"):
         # PyTorch is imported at build time to read metadata
-        depends_on("py-torch@2.13.0 +kineto +gloo", type="build", when="@0.28.0")
-        depends_on("py-torch@2.10.0 +kineto +gloo", type="build", when="@0.16.0")
+        # find_package(Torch) requires torch's link closure (protobuf, abseil,
+        # gloo, ...) on CMAKE_PREFIX_PATH, hence the link deptype.
+        depends_on("py-torch@2.13.0 +kineto +gloo", type=("build", "link"), when="@0.28.0")
+        depends_on("py-torch@2.10.0 +kineto +gloo", type=("build", "link"), when="@0.16.0")
         depends_on("sleef", type=("build", "run", "link"))
         # oneDNN source. vLLM's cmake/cpu_extension.cmake fetches oneDNN via
         # FetchContent and compiles private headers from src/ (e.g.
@@ -89,8 +85,13 @@ class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
             "https://developer.nvidia.com/cuda-gpus",
         )
 
-        depends_on("py-torch@2.9.1 +gloo", when="@0.16.0", type="build")
-        depends_on("py-torch +cuda +gloo +cudnn +cusparselt +kineto +nccl", type="build")
+        # Same link deptype as in the ~cuda~rocm block: torch's link closure
+        # must be findable through find_package(Torch).
+        depends_on("py-torch@2.9.1 +gloo", when="@0.16.0", type=("build", "link"))
+        depends_on(
+            "py-torch +cuda +gloo +cudnn +cusparselt +kineto +nccl",
+            type=("build", "link"),
+        )
         depends_on("py-triton@3.5.0:", type=("build", "run"))
         depends_on("py-flashinfer@0.6.16.post3", type="run", when="@0.28.0")
         depends_on("py-pybind11", type="build", when="@0.28.0")
@@ -100,7 +101,7 @@ class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
             depends_on(
                 "py-torch cuda_arch=%s" % cuda_arch,
                 when="cuda_arch=%s" % cuda_arch,
-                type="build",
+                type=("build", "link"),
             )
             depends_on(
                 "nccl cuda_arch=%s" % cuda_arch,
