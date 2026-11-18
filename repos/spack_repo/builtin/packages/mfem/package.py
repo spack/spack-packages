@@ -1782,7 +1782,9 @@ class CMakeBuilder(CMakeBuilder):
                 libs += self.spec[dep.name].libs
             except NoLibrariesError:
                 # Libraries not named after the package, e.g. ButterflyPACK's
-                libs += find_libraries("lib*", dep.prefix.lib, shared="~shared" not in dep)
+                for libdir in (dep.prefix.lib, dep.prefix.lib64):
+                    if os.path.isdir(libdir):
+                        libs += find_libraries("lib*", libdir, shared="~shared" not in dep)
         return libs + self.pkg.extra_fortran_lib(self.spec[name])
 
     @run_after("build")
