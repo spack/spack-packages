@@ -74,6 +74,10 @@ class Ior(AutotoolsPackage):
         when="+lustre @:3",
     )
 
+    # 4.0.0 configure treats "yes" as a prefix (-Lyes/lib64, rpath yes/lib64); fixed in
+    # hpc/ior#539, unreleased
+    patch("ior-4.0.0-with-cuda-prefix.patch", when="@4.0.0")
+
     @run_before("autoreconf")
     def bootstrap(self):
         Executable("./bootstrap")()
@@ -89,8 +93,8 @@ class Ior(AutotoolsPackage):
         else:
             config_args.append("--without-aio")
 
-        # 4.0.0 autodetects CUDA/GPUDirect but only builds the GPU code for an explicit
-        # "yes" (plain "yes": any other value is used as a path prefix), see hpc/ior#486
+        # 4.0.0 only builds the GPU code for an explicit plain "yes" (hpc/ior#486); the
+        # compiler wrappers supply the cuda paths
         if spec.satisfies("@4.0.0"):
             config_args.extend(
                 [
