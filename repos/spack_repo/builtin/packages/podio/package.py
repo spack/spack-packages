@@ -57,6 +57,14 @@ class Podio(CMakePackage):
         description="Use the specified C++ standard when building.",
         when="@1.2:",
     )
+    variant(
+        "cxxstd",
+        default="23",
+        values=_cxxstd_values,
+        multi=False,
+        description="Use the specified C++ standard when building",
+        when="@1.10:",
+    )
     variant("sio", default=False, description="Build the SIO I/O backend")
     variant("rntuple", default=False, description="Build the RNTuple backend")
     variant(
