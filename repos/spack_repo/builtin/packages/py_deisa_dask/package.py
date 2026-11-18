@@ -17,6 +17,7 @@ class PyDeisaDask(PythonPackage):
 
     license("MIT")
 
+    version("0.7.1", sha256="3bd09971cea5e58c745a4101e81c943e7e3167806835ddafe8d6a4072d50f336")
     version("0.7.0", sha256="87743c0a9e33c0b2cb6251dac12e3b879406a2ba0f0613ee0c1f48bdad02792f")
     version("0.6.3", sha256="b2e2ab10a2e9be1a38e624252dd1d7cd82eb4cfd6d95f8ee0771d1fc00d75023")
     version("0.6.2", sha256="3aa89f4e0fafcb87b7a20a7c1ac13234ae61554c3da330dfcbced6a841cc7c82")
