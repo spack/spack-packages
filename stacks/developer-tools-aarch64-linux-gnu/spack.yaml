@@ -9,6 +9,9 @@ spack:
       - target=aarch64
       prefer:
       - '%gcc'
+    zlib:
+      require:
+      - '@1.2.12'
 
   concretizer:
     unify: true
