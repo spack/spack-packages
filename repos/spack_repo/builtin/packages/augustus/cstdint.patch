@@ -1,0 +1,49 @@
+--- a/auxprogs/homGeneMapping/include/sqliteDB.hh    2026-07-14 18:30:54.427118315 +0000
++++ b/auxprogs/homGeneMapping/include/sqliteDB.hh 2026-07-14 18:32:43.140850329 +0000
+@@ -10,6 +10,7 @@
+ #ifndef __SQLITEDB_H__
+ #define __SQLITEDB_H__
+
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ #include <sqlite3.h>
+--- a/auxprogs/homGeneMapping/src/sqliteDB.cc      2026-07-14 18:31:10.264225061 +0000
++++ b/auxprogs/homGeneMapping/src/sqliteDB.cc   2026-07-14 18:33:19.025091519 +0000
+@@ -11,6 +11,7 @@
+  **********************************************************************/
+
+
++#include <cstdint>
+ #include "sqliteDB.hh"
+
+ #include <iostream>
+--- a/include/sqliteDB.hh  2026-07-14 18:31:19.741288934 +0000
++++ b/include/sqliteDB.hh       2026-07-14 18:33:42.991252612 +0000
+@@ -8,6 +8,7 @@
+ #ifndef __SQLITEDB_H__
+ #define __SQLITEDB_H__
+
++#include <cstdint>
+ #include <string>
+ #include <vector>
+ #include <sqlite3.h>
+--- a/src/load2sqlitedb.cc 2026-07-14 18:31:28.222346098 +0000
++++ b/src/load2sqlitedb.cc      2026-07-14 18:34:04.667398307 +0000
+@@ -14,6 +14,7 @@
+ #include "projectio.hh"
+
+ // standard C/C++ includes
++#include <cstdint>
+ #include <string>
+ #include <iostream>
+ #include <fstream>
+--- a/src/sqliteDB.cc      2026-07-14 18:31:36.900404586 +0000
++++ b/src/sqliteDB.cc   2026-07-14 18:34:20.165502478 +0000
+@@ -10,6 +10,7 @@
+ #include "sqliteDB.hh"
+ #include "hints.hh"
+
++#include <cstdint>
+ #include <iostream>
+ #include <stdlib.h>
