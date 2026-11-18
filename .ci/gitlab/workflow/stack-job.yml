@@ -1,0 +1,41 @@
+#############################
+# Spack Stack Job Template
+#############################
+---
+spec:
+  inputs:
+    name:
+      description: "The name of the stack"
+    os:
+      description: "The system target"
+    target:
+      description: "The system target"
+---
+
+include:
+  - rules.yml
+  - job.yml
+
+#############################
+# Generate Job
+#############################
+"$[[ inputs.name ]]-generate":
+  extends: [ .stack_rules, ".generate-$[[ inputs.os ]]-$[[ inputs.target ]]" ]
+  variables:
+    SPACK_CI_STACK_NAME: "$[[ inputs.name ]]"
+  image: ghcr.io/spack/spack/ubuntu22.04-runner-arm64-gcc-11.4:2024.03.01
+
+#############################
+# Build Job
+#############################
+"$[[ inputs.name ]]-build":
+  extends: [ .stack_rules, .build ]
+  variables:
+    SPACK_CI_STACK_NAME: "$[[ inputs.name ]]"
+  trigger:
+    include:
+      - artifact: "jobs_scratch_dir/$[[ inputs.name ]]/cloud-ci-pipeline.yml"
+        job: "$[[ inputs.name ]]-generate"
+  needs:
+    - artifacts: True
+        job: "$[[ inputs.name ]]-generate"

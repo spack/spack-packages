@@ -1,0 +1,215 @@
+.clone_spack: &clone_spack
+  - mkdir .ci/tmp
+  - mkdir .ci/tmp/spack
+  - cd .ci/tmp/spack
+  - git init
+  - git remote add origin https://github.com/${SPACK_CHECKOUT_REPO}.git
+  - echo ${SPACK_CHECKOUT_VERSION}
+  - git fetch --depth 1 origin ${SPACK_CHECKOUT_VERSION}
+  - git checkout FETCH_HEAD
+  - cd ${CI_PROJECT_DIR}
+
+########################################
+# Job templates
+########################################
+.base-job:
+  variables:
+    PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
+    SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
+    SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
+
+########################################
+# Build Job Template
+########################################
+.build:
+  extends: [ ".base-job" ]
+  trigger:
+    strategy: depend
+    forward:
+      pipeline_variables: true
+  stage: build
+
+########################################
+# Generate Job Templates
+########################################
+.generate-common:
+  stage: generate
+  script:
+    - spack --version
+    - spack env activate --without-view ${SPACK_CI_PACKAGES_ROOT}/stacks/${SPACK_CI_STACK_NAME}
+    - spack repo list
+    - spack compiler find
+    - spack audit configs
+    - spack python ${SPACK_CI_SCRIPTS_ROOT}/common/expand_vars.py
+      "${SPACK_CI_CONFIG_ROOT}/${PIPELINE_MIRROR_TEMPLATE}"
+      "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
+    - spack config add -f "${SPACK_CI_CONFIG_ROOT}/mirrors.yaml"
+    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir"
+    - mkdir "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+    - spack
+      config blame > "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/spack.yaml.blame"
+    - spack -v  --color=always
+      ci generate --check-index-only -j ${SPACK_CONCRETIZE_JOBS}
+      --forward-variable SPACK_CHECKOUT_VERSION
+      --forward-variable SPACK_CHECKOUT_REPO
+      --forward-variable SPACK_CI_PACKAGES_ROOT
+      --forward-variable SPACK_CI_SPACK_ROOT
+      --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+  artifacts:
+    when: always
+    paths:
+      - "${CI_PROJECT_DIR}/jobs_scratch_dir"
+      - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/patches"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
+      - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
+  variables:
+    SPACK_CI_GENERATE: "generate"
+    SPACK_CONCRETIZE_JOBS: 8
+    KUBERNETES_CPU_REQUEST: 8000m
+    KUBERNETES_MEMORY_REQUEST: 16G
+    # avoid moving targets like branches and tags
+    SPACK_CONCRETIZER_REQUIRE_CHECKSUM: 1
+  interruptible: true
+  timeout: 60 minutes
+  # Retry for everything but "legitimate build failures" (script_failure)
+  retry:
+    max: 2
+    when:
+      - unknown_failure
+      - api_failure
+      - stuck_or_timeout_failure
+      - runner_system_failure
+      - runner_unsupported
+      - stale_schedule
+      - job_execution_timeout
+      - server_timeout_running
+      - server_timeout_canceling
+      - archived_failure
+      - unmet_prerequisites
+      - scheduler_failure
+      - data_integrity_failure
+
+# Generate without tags for cases using external runners
+.generate-sh:
+  extends: [ ".base-job", ".generate-common" ]
+  before_script:
+    # Check if bypass for noop is set
+    - |
+      [ ! -z ${NOOP_JOB} ] && \
+      python3 ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py \
+      "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+    - |
+      [ ! -z ${NOOP_JOB} ] && exit 0
+    - uname -a || true
+    - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
+    - nproc || true
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
+    - *clone_spack
+    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
+    - spack arch
+  after_script:
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
+
+
+.generate-ps1:
+  extends: [ ".base-job", ".generate-common" ]
+  before_script:
+    - $ErrorActionOld=$ErrorActionPreference
+    - $ErrorActionPreference="SilentlyContinue"
+    - |
+      If ( $NOOP_JOB )
+      {
+          python ${SPACK_CI_SCRIPTS_ROOT}/common/noop_job.py "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
+      }
+    - |
+      If ( $NOOP_JOB ) { exit 0 }
+    - python -c"import psutil;print(psutil.getloadavg())"
+    - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
+    - $ErrorActionPreference=$ErrorActionOld
+    - *clone_spack
+    - . $SPACK_CI_SPACK_ROOT\share\spack\setup-env.ps1
+    - spack arch
+  after_script:
+    - $ErrorActionOld=$ErrorActionPreference
+    - $ErrorActionPreference="SilentlyContinue"
+    - python -c"import psutil;print(psutil.getloadavg())"
+    - (Get-WmiObject Win32_PhysicalMemory | measure-object Capacity -sum).sum/1kb
+    - $ErrorActionPreference=$ErrorActionOld
+
+.generate-uo-cray:
+  extends: [ ".generate-common", ".base-job" ]
+  image: {}
+  variables:
+    # Override concretization pool for metal runners
+    SPACK_CONCRETIZE_JOBS: 16
+
+  before_script:
+    - echo $PATH
+    - module avail
+    - module list
+    - uname -a || true
+    - grep -E 'vendor|model name' /proc/cpuinfo 2>/dev/null | sort -u || head -n10 /proc/cpuinfo 2>/dev/null || true
+    - nproc || true
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
+    - *clone_spack
+    - . "${SPACK_CI_SPACK_ROOT}/share/spack/setup-env.sh"
+    - spack arch
+  after_script:
+    - cat /proc/loadavg || true
+    - cat /proc/meminfo | grep 'MemTotal\|MemFree' || true
+
+#############################################
+# Generate Job configs
+#############################################
+.generate-linux-x86_64_v3:
+  variables:
+    SPACK_CI_TARGET: "x86_64_v3"
+  extends: [ ".generate-sh" ]
+  tags: ["spack", "public", "medium", "x86_64_v3"]
+
+.generate-linux-x86_64_v4:
+  variables:
+    SPACK_CI_TARGET: "x86_64_v4"
+  extends: [ ".generate-sh" ]
+  tags: ["spack", "public", "medium", "x86_64_v4"]
+
+.generate-linux-aarch64:
+  variables:
+    SPACK_CI_TARGET: "aarch64"
+  extends: [ ".generate-sh" ]
+  tags: ["spack", "public", "medium", "aarch64"]
+
+.generate-linux-neoverse_v1:
+  variables:
+    SPACK_CI_TARGET: "neoverse_v1"
+  extends: [ ".generate-sh" ]
+  tags: ["spack", "public", "medium", "aarch64", "neoverse_v1"]
+
+.generate-linux-neoverse-v2:
+  variables:
+    SPACK_CI_TARGET: "neoverse_v2"
+  extends: [ ".generate-sh" ]
+  tags: ["spack", "public", "medium", "neoverse_v2"]
+
+.generate-darwin-aarch64:
+  extends: [ ".generate-sh" ]
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
+
+.generate-windows-x86_64:
+  tags: ["spack", "public", "medium", "x86_64-win"]
+  image:
+    name: "ghcr.io/johnwparent/windows-server21h2:sha-1c12b61",
+    entrypoint: [""]
+
+.generate-cray-rhel-x86_64_v3:
+  tags: [ "cray-rhel-x86_64_v3", "public" ]
+  extends: [ ".generate-uo-cray" ]
+
+.generate-cray-sles-zen4:
+  tags: [ "cray-sles-zen4", "public" ]
+  extends: [ ".generate-uo-cray" ]
