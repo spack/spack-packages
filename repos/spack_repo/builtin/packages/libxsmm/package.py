@@ -186,16 +186,16 @@ class MakefileBuilder(makefile.MakefileBuilder):
         if spec.satisfies("+shared"):
             make(*(make_args + ["STATIC=0"]))
 
-        # builds static libraries by default
-        make(*make_args)
+        # STATIC=1 must be explicit: without it, libxsmm 2.x builds both static and shared
+        # libraries (BUILD=2), so ~shared would still install shared libraries.
+        make(*(make_args + ["STATIC=1"]))
 
     def install(self, pkg, spec, prefix):
         # The 2.x install target relocates installed libraries on macOS and
         # Linux. The main-2023 snapshot predates this despite satisfying @2:.
         if spec.satisfies("@2:") and not spec.satisfies("@main-2023-11"):
             make_args = self._make_args(spec, prefix)
-            if spec.satisfies("+shared"):
-                make_args += ["STATIC=0"]
+            make_args += ["STATIC=0" if spec.satisfies("+shared") else "STATIC=1"]
             make("install", *make_args)
             return
 
