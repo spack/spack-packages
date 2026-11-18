@@ -268,14 +268,14 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
         "gfx900": ("vega900", "@3.7.02"),
-        "gfx906": ("vega906", "@:5.2"),
-        "gfx908": ("vega908", "@:5.2"),
-        "gfx90a": ("vega90A", "@:5.2"),
+        "gfx906": (lambda spec: "amd_gfx906" if spec.satisfies("@4.2:") else "vega906", None),
+        "gfx908": (lambda spec: "amd_gfx908" if spec.satisfies("@4.2:") else "vega908", None),
+        "gfx90a": (lambda spec: "amd_gfx90a" if spec.satisfies("@4.2:") else "vega90A", None),
         "gfx940": ("amd_gfx940", "@4.3.00:"),
         "gfx942": ("amd_gfx942", "@4.2.00:"),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
-        "gfx1030": ("navi1030", "@:5.2"),
-        "gfx1100": ("navi1100", "@4.1.00:5.2"),
+        "gfx1030": (lambda spec: "amd_gfx1030" if spec.satisfies("@4.2:") else "navi1030", None),
+        "gfx1100": (lambda spec: "amd_gfx1100" if spec.satisfies("@4.2:") else "navi1100", "@4.1.00:"),
         "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
         "gfx1151": ("amd_gfx1151", "@5.2.0:"),
@@ -504,9 +504,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             if amdgpu_target != "none":
                 if amdgpu_target in self.amdgpu_arch_map:
                     if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                        kokkos_arch_name, cond = self.amdgpu_apu_arch_map[amdgpu_target]
+                        arch_name_or_fun, cond = self.amdgpu_apu_arch_map[amdgpu_target]
                     else:
-                        kokkos_arch_name, cond = self.amdgpu_arch_map[amdgpu_target]
+                        arch_name_or_fun, cond = self.amdgpu_arch_map[amdgpu_target]
+
+                    kokkos_arch_name = arch_name_or_fun(self.spec) if callable(arch_name_or_fun) else arch_name_or_fun
 
                     if cond and not self.spec.satisfies(cond):
                         raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
