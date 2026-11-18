@@ -46,6 +46,11 @@ class Sniper(CMakePackage):
     depends_on("boost@1.67:+python", when="+python", type=("build", "link"))
     depends_on("python@3:", when="+python", type=("build", "link", "run"))
 
+    # RootWriter's Python bindings require PyROOT and TPython. ROOT made
+    # TPython separately configurable starting with version 6.34.
+    depends_on("root+python", when="+root +python")
+    requires("^root+tpython", when="+root +python ^root@6.34:")
+
     conflicts("+root cxxstd=11", msg="ROOT requires at least C++14")
     conflicts("+root cxxstd=14", msg="Supported ROOT versions require C++17")
     depends_on("root@5.18: cxxstd=17", when="+root cxxstd=17", type=("build", "link", "run"))
