@@ -31,6 +31,10 @@ class Numdiff(AutotoolsPackage):
     def configure_args(self):
         spec = self.spec
         args = []
+        # Fix for GCC 15+ defaulting to C23 where 'false', 'true', 'bool' are keywords
+        # Force C17 standard to avoid conflicts with legacy code
+        cflags = "-std=c17"
+        
         if "+nls" in spec:
             args.append("--enable-nls")
         else:
