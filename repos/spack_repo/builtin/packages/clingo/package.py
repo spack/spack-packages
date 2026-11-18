@@ -26,7 +26,7 @@ class Clingo(CMakePackage):
     # Development version for clingo 6
     version("develop", branch="wip-20", submodules=True)
 
-    version("master", branch="master", submodules=True)
+    version("master", branch="master", submodules=True, deprecated=True)
     version("spack", commit="2a025667090d71b2c9dce60fe924feb6bde8f667", submodules=True)
 
     version("5.8.3", sha256="25d22cc25f95a8e7a8bac94cbe24b812574de9320250bdcb9d7f7e9e58c2a0d0")
