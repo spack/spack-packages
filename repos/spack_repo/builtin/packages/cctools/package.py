@@ -57,8 +57,7 @@ class Cctools(AutotoolsPackage):
         before = "#if defined(__linux__) && defined(SYS_memfd_create)"
         after = "#if defined(__linux__) && defined(SYS_memfd_create) && defined(__NR_memfd_create)"
         f = "dttools/src/memfdexe.c"
-        kwargs = {"ignore_absent": False, "backup": True, "string": True}
-        filter_file(before, after, f, **kwargs)
+        filter_file(before, after, f, backup=True, string=True)
         if self.spec.satisfies("%fj"):
             makefiles = ["chirp/src/Makefile", "grow/src/Makefile"]
             for m in makefiles:

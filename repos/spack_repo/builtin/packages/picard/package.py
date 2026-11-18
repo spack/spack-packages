@@ -197,9 +197,8 @@ class Picard(Package):
         # Munge the helper script to explicitly point to java and the
         # jar file.
         java = self.spec["java"].prefix.bin.java
-        kwargs = {"ignore_absent": False, "backup": False, "string": False}
-        filter_file("^java", java, script, **kwargs)
-        filter_file("picard.jar", join_path(prefix.bin, "picard.jar"), script, **kwargs)
+        filter_file("^java", java, script)
+        filter_file("picard.jar", join_path(prefix.bin, "picard.jar"), script)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         """The Picard docs suggest setting this as a convenience."""
