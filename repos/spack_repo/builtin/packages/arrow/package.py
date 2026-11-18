@@ -154,6 +154,12 @@ class Arrow(CMakePackage, CudaPackage):
         sha256="ca55e18c4eaaf59bcb145ada2aa5b556b8b87a93415ace059166716864145ceb",
         when="@19:23.0 platform=darwin",
     )
+    patch(
+        "https://github.com/apache/arrow/pull/50450.patch?full_index=1",
+        sha256="19dece8e737943ab653709f8170778226c39524e5fa5c07921c5ed18447eaabb",
+        when="@16: platform=windows",
+    )
+
     conflicts("%apple-clang@21:", when="@:18")
 
     def patch(self):
