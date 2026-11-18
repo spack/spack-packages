@@ -22,6 +22,12 @@ class Grpc(CMakePackage):
     version("1.80.1", sha256="96041a694ba3ec445059a95bf2b9c805b6763c255e669a30e1156e8e2ea24fc9")
 
     with default_args(deprecated=True):
+       version(
+            "1.85.0", sha256="78d933f81e66d88c9f7a5ac419aa929691ef62b61d32a92f69c16aabf21ffabe"
+        )
+        version(
+            "1.84.1", sha256="e3cd1dbeedc989a6bf863bc1f0762a7cd1feff5cfae7d520481a541ad23ca85e"
+        )
         # https://emudhra.we-have-a-problem.com/#patched-tools
         version(
             "1.83.1", sha256="60caa8397426d8a500e3e57ab6a49d1cb5aa62a36f2591eb9da3d77fa38ad8c9"
