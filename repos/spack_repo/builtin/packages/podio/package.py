@@ -87,7 +87,7 @@ class Podio(CMakePackage):
         when="@1.8: +arrow",
     )
 
-    depends_on("c", type="build")
+    depends_on("c", type="build", when="@:1.2")
     depends_on("cxx", type="build")
 
     depends_on("root@6.08.06: cxxstd=17", when="+root cxxstd=17")
