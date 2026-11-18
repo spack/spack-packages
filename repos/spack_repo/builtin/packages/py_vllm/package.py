@@ -51,6 +51,12 @@ class PyVllm(PythonPackage, CudaPackage, ROCmPackage):
     depends_on("py-torchvision", type=("build", "run"))
     depends_on("py-torchaudio", type=("build", "run"))
 
+    # find_package(Torch) triggers torch's Caffe2Config.cmake, which does
+    # find_package(Protobuf) at configure time. py-torch is a build-only dep,
+    # so its own protobuf dep is not put on CMAKE_PREFIX_PATH here; declare
+    # protobuf explicitly so CMake can find it.
+    depends_on("protobuf", when="^py-torch~custom-protobuf", type="build")
+
     with when("~cuda~rocm"):
         # PyTorch is imported at build time to read metadata
         depends_on("py-torch@2.13.0 +kineto +gloo", type="build", when="@0.28.0")
