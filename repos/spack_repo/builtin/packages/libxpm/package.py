@@ -36,6 +36,8 @@ class Libxpm(AutotoolsPackage, XorgPackage):
 
     depends_on("gettext")
     depends_on("libx11")
+    depends_on("kbproto")
+    depends_on("libxcb")
 
     depends_on("xproto", type="build")
     depends_on("ncompress", when="@3.5.15")
