@@ -697,6 +697,12 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
         when="@=17.0.0 +stk",
     )
 
+    # `using std::malloc; using std::free;` at global scope imports every std::malloc/free into
+    # the global namespace, which conflicts if std has its own (e.g. clang CUDA's device-side
+    # ones). Include <stdlib.h> for the global names instead.
+    patch("triutils-using-std-free.patch", when="@:16")
+    patch("16-2-tpetra-iohb-using-std-free.patch", when="@16.2")
+
     def flag_handler(self, name, flags):
         spec = self.spec
         is_cce = spec.satisfies("%cce")
