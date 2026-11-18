@@ -111,6 +111,7 @@ class Podio(CMakePackage):
     depends_on("arrow", type=("build", "link"), when="+arrow")
     depends_on("arrow+parquet", type=("build", "link"), when="+parquet")
     depends_on("fmt@9:", type=("build", "link"), when="@1.3:")
+    depends_on("fmt@10:", type=("build", "link"), when="@1.10:")
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
     depends_on("catch2@3.3:", type=("test"), when="@1.2: cxxstd=17")
