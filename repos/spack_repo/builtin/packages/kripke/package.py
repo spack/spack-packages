@@ -170,13 +170,6 @@ class Kripke(CMakePackage, CudaPackage, ROCmPackage):
             else:
                 env.set("CUDAHOSTCXX", spack_cxx)
 
-    def setup_run_environment(self, env):
-        super().setup_run_environment(env)
-
-        if self.compiler.extra_rpaths:
-            for rpath in self.compiler.extra_rpaths:
-                env.prepend_path("LD_LIBRARY_PATH", rpath)
-
     def cmake_args(self):
         spec = self.spec
         args = []
