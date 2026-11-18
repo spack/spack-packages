@@ -21,6 +21,7 @@ class PyRustworkx(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.18.1", sha256="30affe6ee52a6257a01152418f9c1686ca114e7ab4a3bf87bb87fe35b7350f3e")
     version("0.15.1", sha256="0e0cc86599f979285b2ab9c357276f3272f3fcb3b2df5651a6bf9704c570d4c1")
     version("0.15.0", sha256="41a50586c48367c80eebc26809105c0c47db47b1d12a5078efa94d8d1f3850a4")
     version("0.14.2", sha256="bd649322c0649b71fa18cc70a9af027b549560415fa860d6894736029c277b13")
@@ -32,9 +33,14 @@ class PyRustworkx(PythonPackage):
     version("0.12.1", sha256="13a19a2f64dff086b3bffffb294c4630100ecbc13634b4995d9d36a481ae130e")
     version("0.12.0", sha256="0b871e1463a6677d0fd2fc00adfb774283045d38740bd1b7ea5a1a729de06aa1")
 
+    depends_on("python@3.10:", type=("build", "run"), when="@0.18")
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-rust", type="build")
-    depends_on("py-numpy@1.16:", type=("build", "run"))
+    depends_on("py-numpy@1.16:2", type=("build", "run"))
 
     depends_on("rust", type="build")
+    depends_on("py-maturin@1.9:1", type=("build"), when="@0.18")
+
+    def patch(self):
+        filter_file("locked = true", "locked = false", "pyproject.toml")
