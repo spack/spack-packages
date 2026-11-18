@@ -26,6 +26,7 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version("main", branch="main")
+    version("1.3.1", sha256="39b308bdd73bbfe1e8effd814874f27923243526485735b5e66e5d842f0c0ff8")
     version("1.2.0", sha256="7be541bdb5905361e24bfb098314f946fe89f7b10f587d91e2397d821434b48b")
     version("1.1.3", sha256="17ed0baf9c2dcf30c789fdae530e006ae3ff2d2c9006989b1e6348e4ae50cef9")
     version("1.1.2", sha256="b2c4a7791305481af9e1bd358c1215efa4506c91c943cddca3780a1ccbc27810")
@@ -42,7 +43,7 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("+rocm", when="+cuda", msg="FFTX only supports one GPU backend at a time")
     # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
-    conflicts("^cuda@13:", when="+cuda")
+    conflicts("^cuda@13:", when="@:1.2 +cuda")
 
     @run_before("cmake")
     def create_lib_source_code(self):
