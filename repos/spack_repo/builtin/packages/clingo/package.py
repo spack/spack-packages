@@ -29,6 +29,7 @@ class Clingo(CMakePackage):
     version("master", branch="master", submodules=True)
     version("spack", commit="2a025667090d71b2c9dce60fe924feb6bde8f667", submodules=True)
 
+    version("5.8.3", sha256="25d22cc25f95a8e7a8bac94cbe24b812574de9320250bdcb9d7f7e9e58c2a0d0")
     version("5.8.2", sha256="af961e4e8122b9e1fa325ae20c98f0a17b2087e2c777832ae6e47025ec921331")
     version("5.8.1", sha256="28fe78322cefb92e0f68f350777e19407d07bbb5179ca725fc6f77d538f0d19a")
     version("5.8.0", sha256="4ddd5975e79d7a0f8d126039f1b923a371b1a43e0e0687e1537a37d6d6d5cc7c")
