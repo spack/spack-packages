@@ -1112,6 +1112,12 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
         spec_dir = glob.glob(f"{self.prefix.lib}/gcc/*/*")
         return spec_dir[0] if spec_dir else None
 
+    @property
+    def file_prefix_map_arg(self):
+        if self.spec.satisfies("@8:"):
+            return "-ffile-prefix-map={0}={1}"
+        return None
+
     @run_after("install")
     def write_specs_file(self):
         """(1) inject an rpath to its runtime library dir, (2) add a default programs search path
@@ -1200,6 +1206,14 @@ class Gcc(AutotoolsPackage, GNUMirrorPackage, CompilerPackage):
             env.set("FC", self.fortran)
             env.set("F77", self.fortran)
 
+    def setup_dependent_build_environment(
+        self, env: EnvironmentModifications, dependent_spec: Spec
+    ) -> None:
+        # Enable GNU build-id notes for debuginfo auto-discovery (ELF platforms
+        # only; not supported by Darwin's linker).
+        if self.spec.satisfies("platform=linux"):
+            env.set("SPACK_BUILD_ID_ARGS", "--build-id")
+            
     def detect_gdc(self):
         """Detect and return the path to GDC that belongs to the same instance of GCC that is used
         by self.compiler.
