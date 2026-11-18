@@ -7,19 +7,7 @@ import textwrap
 
 from spack_repo.builtin.build_systems.cargo import CargoPackage
 
-from spack.package import (
-    Executable,
-    depends_on,
-    find_headers,
-    find_libraries,
-    install,
-    join_path,
-    license,
-    maintainers,
-    mkdirp,
-    version,
-    which,
-)
+from spack.package import *
 
 
 class FastloessCpp(CargoPackage):
