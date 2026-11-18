@@ -485,6 +485,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
 
     # See https://github.com/spack/spack/issues/39252
     depends_on("patchelf@:0.17", type="build", when="@:2024.1")
+    depends_on("patchelf", type="build", when="@2025.0:2025.0.4")
     # Add the nvidia variant
     variant("nvidia", default=False, description="Install NVIDIA plugin for OneAPI")
     conflicts("@:2022.2.1", when="+nvidia", msg="Codeplay NVIDIA plugin requires newer release")
@@ -581,6 +582,21 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         super().setup_dependent_build_environment(env, dependent_spec)
+        # CMake finds IPO tools through PATH when compiler wrappers hide their location.
+        tool_dir = (
+            self._llvm_bin.compiler
+            if self.v2_layout
+            else self.component_prefix.linux.join("bin-llvm")
+        )
+        is_compiler = any(
+            edge.spec == self.spec and set(edge.virtuals).intersection(("c", "cxx", "fortran"))
+            for edge in dependent_spec.edges_to_dependencies(name=self.name)
+        )
+        if is_compiler and all(
+            os.path.isfile(join_path(tool_dir, tool)) for tool in ("llvm-ar", "llvm-ranlib")
+        ):
+            env.prepend_path("PATH", tool_dir)
+
         # workaround bug in icpx driver where it requires sycl-post-link is on the PATH
         # It is located in the same directory as the driver. Error message:
         #   clang++: error: unable to execute command:
@@ -648,7 +664,12 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         # patching everything and just patching the binaries that have
         # a problem.
 
-        # 2024.2 no longer needs patching
+        # The 2025.0 LTO plugin cannot find libraries installed beside it.
+        if self.spec.satisfies("@2025.0:2025.0.4"):
+            patchelf = which("patchelf", required=True)
+            patchelf("--add-rpath", "$ORIGIN", self.component_prefix.lib.join("icx-lto.so"))
+
+        # Keep installer-provided rpaths for other releases since 2024.2.
         if self.spec.satisfies("@2024.2:"):
             return
 
