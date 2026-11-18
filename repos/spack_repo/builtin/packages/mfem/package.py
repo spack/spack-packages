@@ -911,7 +911,9 @@ class Mfem(Package, CudaPackage, ROCmPackage):
                 sp_lib += [ld_flags_from_library_list(parmetis.libs)]
             if "^netlib-scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
-                sp_opt += ["-I%s" % scalapack.prefix.include]
+                include_dir = join_path(scalapack.prefix, "include")
+                if os.path.isdir(include_dir):
+                    sp_opt += ["-I%s" % include_dir]
                 sp_lib += [ld_flags_from_library_list(scalapack.libs)]
             elif "^scalapack" in strumpack:
                 scalapack = strumpack["scalapack"]
