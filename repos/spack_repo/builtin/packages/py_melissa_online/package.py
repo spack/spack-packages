@@ -20,12 +20,10 @@ class PyMelissaOnline(PythonPackage):
     license("BSD-3-Clause")
 
     version("develop", branch="develop", preferred=True)
-    version("3.1.1", sha256="acdffb2431e4fa5456a3b4044ca1371758ea3e234038b856ad1a342a22bf111f")
-    version(
-        "3.0.0",
-        sha256="9146ac9eff2ae029a189a0fc944b1857f3fd9230000e151a693e73e10943486c",
-        deprecated=True,
-    )
+    version("3.2.2", sha256="")
+    with default_args(deprecated=True):
+        version("3.1.1", sha256="acdffb2431e4fa5456a3b4044ca1371758ea3e234038b856ad1a342a22bf111f")
+        version("3.0.0", sha256="9146ac9eff2ae029a189a0fc944b1857f3fd9230000e151a693e73e10943486c")
 
     variant(
         "launcher_only",
@@ -46,12 +44,13 @@ class PyMelissaOnline(PythonPackage):
     )
     requires("platform=linux", msg="Melissa is only supported on Linux Systems.")
 
-    depends_on("python@3.11:3.14", type=("build", "run"))
+    depends_on("python@3.11:", type=("build", "run"))
 
     # basic build-time dependencies
     with default_args(type="build"):
         depends_on("py-pip@23.1:")
-        depends_on("py-scikit-build-core@0.11:")
+        depends_on("py-scikit-build-core@1.1.1:")
+        depends_on("py-scikit-build-core@0.11:", when="@:3.1")
         depends_on("cmake@3.24:")
         depends_on("ninja")
 
@@ -61,6 +60,7 @@ class PyMelissaOnline(PythonPackage):
         depends_on("py-psutil@5.4:")
         depends_on("py-jsonschema@4.5:")
         depends_on("py-python-rapidjson@1.8:")
+        depends_on("py-cloudpickle@2.2.0:")
 
         # monitoring dependencies
         depends_on("py-requests@2.32:")
@@ -79,8 +79,11 @@ class PyMelissaOnline(PythonPackage):
         with default_args(type=("build", "run")):
             depends_on("mpi")
             depends_on("py-mpi4py@3.1.6:")
-            depends_on("conduit@0.9.7:+mpi+python+fortran+shared~hdf5~examples")
-            depends_on("libzmq@4.2:4")
+            depends_on("conduit@0.9.11:")
+            depends_on("conduit@0.9.7:", when="@:3.1")
+            depends_on("conduit+mpi+python+fortran+shared~hdf5~examples")
+            depends_on("libzmq@4.3.5:4")
+            depends_on("libzmq@4.2:4", when=":@3.1")
         # ======================================================
 
         # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -89,8 +92,8 @@ class PyMelissaOnline(PythonPackage):
         with default_args(type="run"):
             depends_on("py-pyzmq@22.3.0:")
             depends_on("py-numpy@1.21:")
-            depends_on("py-cloudpickle@2.2.0:")
-            depends_on("py-iterative-stats@0.1.2:")
+            depends_on("py-iterative-stats@0.2.1:")
+            depends_on("py-iterative-stats@0.1.2:", when="@:3.1")
             depends_on("py-scipy@1.10.0:")
             depends_on("py-matplotlib")
             depends_on("py-tensorboardx@2.6:", when="metric_logger=tensorboard")
