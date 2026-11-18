@@ -40,7 +40,7 @@ class Podio(CMakePackage):
         conditional("17", when="@:1.2"),
         conditional("20", when="@0.14.1:"),
         conditional("23", when="@1.3:"),
-        conditional("26", when="@1.10:"),
+        # conditional("26", when="@1.10:"), # TODO: needs root with cxxstd=26
     )
     variant(
         "cxxstd",
@@ -99,7 +99,8 @@ class Podio(CMakePackage):
     depends_on("root@6.34: +root7", when="@1.10: +rntuple")
     for cxxstd in _cxxstd_values:
         depends_on(
-            "root cxxstd={}".format(cxxstd[0].value), when="cxxstd={}".format(cxxstd[0].value)
+            "root cxxstd={}".format(cxxstd[0].value),
+            when="+root cxxstd={}".format(cxxstd[0].value),
         )
 
     depends_on("cmake@3.12:", type="build")
