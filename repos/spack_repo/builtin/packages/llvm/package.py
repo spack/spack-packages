@@ -535,7 +535,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             patch(
                 "https://github.com/llvm/llvm-project/commit/59978b21ad9c65276ee8e14f26759691b8a65763.patch?full_index=1",
                 sha256="1a66127a4b148b5387ef37322beb2be07d10f67b9748f2b7dd5e1fcf08f08195",
-                when="@19:20.1.5 platform=linux",
+                when="@19:20.1.5 %glibc@2.42:",
             )
     del compiler_rt_as
 
