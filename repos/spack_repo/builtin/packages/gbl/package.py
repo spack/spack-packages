@@ -19,10 +19,9 @@ class Gbl(CMakePackage):
     version("main", branch="main")
     version("04-00-08", sha256="e70c0ce60f2b7c14568a6598b3b6d6fff263de4dfa37ec4422e8f3b970081437")
     version("03-01-04", sha256="67b3756b74bcd61c47a4a30108f28f86eaa0fe9afeb0d240c253d332f3a989b0")
-    version("02-04-01", commit="1061b643c6656fbf7ceba579997eb43f0a9e9d3c")
-    version("02-01-03", commit="8acaade19c20e9ef23d1244a555fead6ef149c33")
+    version("02-04-01", commit="1061b643c6656fbf7ceba579997eb43f0a9e9d3c",deprecated=True,msg="The 02 GBL versions are no longer actively maintained - please consider switching to @04")
+    version("02-01-03", commit="8acaade19c20e9ef23d1244a555fead6ef149c33",deprecated=True,msg="The 02 GBL versions are no longer actively maintained - please consider switching to @04")
 
-    deprecated("@02", reason="unspecified", msg="The 02 GBL versions are no longer actively maintained - please consider switching to @04")
 
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build", when="@:04-00-00")
