@@ -1,6 +1,25 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+#
+# Ascent package for spack, extended for the Aurora v0.9.6 SYCL deployment
+# (ticket 10, ascent-v096-aurora-upgrade). Based on the spack builtin
+# recipe, with these changes:
+#
+#   - version 0.9.6
+#   - +sycl variant: viskores + kokkos SYCL backend (Intel Data Center GPU
+#     Max via intel_gpu_arch=intel_pvc), raja/umpire/camp SYCL backends,
+#     and the SYCL compile/link flags ascent's own build script uses
+#   - +64bit_ids variant -> viskores +64bitids (ABI-relevant: ascent has no
+#     own 64-bit option; it inherits viskores' index types)
+#   - viskores (not vtk-m) for @0.9.5:, matching ascent's own TPL switch
+#   - conduit 0.9.8: for @0.9.6, with hdf5+silo+zfp (the validated TPL set)
+#   - python 3.12 allowed for @0.9.6 (validated with 3.12.12)
+#   - the three ascent source fixes from the validated aurora-v0.9.6-sycl
+#     work (vtkh SYCL device count, png encoder clamp, mpi relay_load test)
+#
+# Site build reference: ascent-v096-upgrade/build_ascent_aurora_prod.sh
+# (validated install /soft/visualization/ascent/release/v0.9.6).
 
 import glob
 import os
@@ -64,11 +83,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version("develop", branch="develop", submodules=True)
 
     version(
-        "0.9.5",
-        tag="v0.9.5",
-        commit="1c32d88b01439263cb4e473756a222824bb75abb",
+        "0.9.6",
+        tag="v0.9.6",
+        commit="76d9405206455b73fec2ad9188206eccff4a0331",
         submodules=True,
         preferred=True,
+    )
+
+    version(
+        "0.9.5", tag="v0.9.5", commit="1c32d88b01439263cb4e473756a222824bb75abb", submodules=True
     )
 
     version(
@@ -82,27 +105,21 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     version(
         "0.9.2", tag="v0.9.2", commit="b842516d12640e4a0d9433a18c7249440ef6fc3d", submodules=True
     )
-
     version(
         "0.9.1", tag="v0.9.1", commit="027a2fe184f65a4923817a8cdfed0b0c61c2c75a", submodules=True
     )
-
     version(
         "0.9.0", tag="v0.9.0", commit="a31c88c579c8d0026e0025de8bace0cf22f6305b", submodules=True
     )
-
     version(
         "0.8.0", tag="v0.8.0", commit="08504374908518e013d7fe8d8882cfb1c2378e3b", submodules=True
     )
-
     version(
         "0.7.1", tag="v0.7.1", commit="79d35b2f48e92eb151313f0217e9bd7c15779582", submodules=True
     )
-
     version(
         "0.7.0", tag="v0.7.0", commit="cfed1b0a469e4dcc970fd7e0bcd78b522d97ea53", submodules=True
     )
-
     version(
         "0.6.0", tag="v0.6.0", commit="9ade37b0a9ea495e45adb25cda7498c0bf9465c5", submodules=True
     )
@@ -135,6 +152,20 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     variant("fides", default=False, description="Build Fides filter support")
     variant("occa", default=False, description="Build with OCCA support")
     variant("catalyst", default=False, description="Build with Catalyst support")
+
+    # sycl support (Intel GPU Max / PVC via kokkos SYCL backend)
+    variant("sycl", default=False, description="Build with SYCL support (Intel GPUs)")
+
+    # 64-bit ids: ascent has no own cmake option; the index types come from
+    # viskores, so this propagates viskores +64bitids (ABI-relevant)
+    variant("64bit_ids", default=False, description="Enable 64-bit ids (viskores index types)")
+
+    # raja_enable_vectorization (ascent's build script default: ON)
+    variant(
+        "raja_vectorization",
+        default=True,
+        description="Enable RAJA SIMD/SIMT intrinsics support",
+    )
 
     # caliper
     variant("caliper", default=False, description="Build Caliper support")
@@ -173,6 +204,15 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         sha256="0dc417d8a454d235cdeb9e0f0bb527dc3c42a1eb6ae80e8bd5b33ead19198329",
     )
 
+    # SYCL device count in vtkh (aurora-v0.9.6-sycl commit 9486cad1, PR #1804)
+    patch("ascent-vtkh-sycl-device-count.patch", when="@0.9.6")
+    # png encoder float->byte clamp (aurora-v0.9.6-sycl commit b0246578,
+    # PR #1805). The two regenerated baseline PNGs are binary hunks and are
+    # not included; relevant only with +test (see ticket 10 notes).
+    patch("ascent-png-encoder-clamp.patch", when="@0.9.6")
+    # t_ascent_mpi_relay_load rank sync + tolerance (commit 962ff510, PR #1806)
+    patch("ascent-mpi-relay-load-test-fix.patch", when="@0.9.6")
+
     ##########################################################################
     # package dependencies
     ###########################################################################
@@ -193,8 +233,13 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("conduit@0.9.1:0.9.3", when="@0.9.3")
     depends_on("conduit@0.9.4", when="@0.9.4")
     depends_on("conduit@0.9.5", when="@0.9.5")
+    depends_on("conduit@0.9.8:", when="@0.9.6")
+    # the validated Aurora v0.9.6 build uses conduit with hdf5, silo and
+    # zfp support (ascent's SetupConduit detects and uses all three)
+    depends_on("conduit+hdf5+silo+zfp", when="@0.9.6")
     depends_on("conduit+fortran", when="+fortran")
     depends_on("conduit+python", when="+python", type=("build", "link", "run"))
+    depends_on("conduit~python", when="~python")
     depends_on("conduit+mpi", when="+mpi")
     depends_on("conduit~mpi", when="~mpi")
 
@@ -205,9 +250,10 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     # causes duplicate state issues when running compiled python modules.
     with when("+python"):
         depends_on("python+shared", type=("build", "link", "run"))
-
         # https://github.com/Alpine-DAV/ascent/issues/1628
-        depends_on("python@:3.11", type=("build", "link", "run"))
+        depends_on("python@:3.11", when="@:0.9.5")
+        # v0.9.6 is validated with python 3.12 (Aurora default stack)
+        depends_on("python@3.9:", when="@0.9.6:")
 
         extends("python")
         depends_on("py-numpy", type=("build", "link", "run"))
@@ -231,17 +277,25 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     #######################
     with when("+raja"):
         depends_on("raja")
-        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:")
+        depends_on("raja@2024.02.1:2025.03.1", when="@0.9.3:0.9.5")
+        depends_on("raja@2025.09.0:", when="@0.9.6:")
+        depends_on("raja+vectorization", when="+raja_vectorization")
+        depends_on("raja~vectorization", when="~raja_vectorization")
         depends_on("raja+openmp", when="+openmp")
         depends_on("raja~openmp", when="~openmp")
         depends_on("raja+rocm", when="+rocm")
         depends_on("raja~rocm", when="~rocm")
+        depends_on("raja+sycl", when="+sycl")
+        depends_on("raja~sycl", when="~sycl")
 
     with when("+umpire"):
         depends_on("umpire")
         depends_on("umpire@:6", when="@:0.8")
         depends_on("umpire@:2023.06.0", when="@:0.9.2")
-        depends_on("umpire@2024.02.1:2025.03.1", when="@0.9.3:")
+        depends_on("umpire@2024.02.1:2025.03.1", when="@0.9.3:0.9.5")
+        depends_on("umpire@2025.09.0:", when="@0.9.6:")
+        depends_on("umpire+sycl", when="+sycl")
+        depends_on("umpire~sycl", when="~sycl")
 
     #######################
     # BabelFlow
@@ -250,9 +304,9 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("parallelmergetree", when="+babelflow+mpi")
 
     #######################
-    # VTK-m
+    # VTK-m (ascent @:0.9.4) / Viskores (ascent @0.9.5:)
     #######################
-    with when("+vtkh"):
+    with when("+vtkh @:0.9.4"):
         depends_on("vtk-m +doubleprecision ~64bitids")
         depends_on("vtk-m@2.1:", when="@0.9.3:")
         depends_on("vtk-m@2.0:", when="@0.9.2:")
@@ -291,8 +345,33 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         depends_on("vtk-m@:1.7", when="@:0.8.0")
         depends_on("vtk-m+testlib", when="@:0.8.0 +test")
 
-    propagate_hip_arch("vtk-m", "+vtkh")
-    propagate_hip_arch("kokkos", "+vtkh")
+    with when("+vtkh @0.9.5:"):
+        # ascent switched from vtk-m to viskores in v0.9.5
+        depends_on("viskores +doubleprecision")
+        depends_on("viskores@1.0.0:")
+        depends_on("viskores~tbb")
+        depends_on("viskores+openmp", when="+openmp")
+        depends_on("viskores~openmp", when="~openmp")
+        depends_on("viskores~cuda", when="~cuda")
+        depends_on("viskores+cuda", when="+cuda")
+        depends_on("viskores~rocm", when="~rocm")
+        depends_on("viskores+fpic")
+        depends_on("viskores+shared", when="+shared")
+        depends_on("viskores~shared+fpic", when="~shared")
+        # 64-bit ids are an ABI choice (ascent inherits viskores' index
+        # types), so they must match for everything built against ascent
+        depends_on("viskores+64bitids", when="+64bit_ids")
+        # SYCL is provided through viskores' kokkos backend
+        depends_on("viskores+kokkos+sycl", when="+sycl")
+        depends_on("kokkos+sycl cxxstd=17 intel_gpu_arch=intel_pvc", when="+sycl")
+        with when("+rocm"):
+            depends_on("viskores+kokkos+rocm")
+            depends_on("kokkos+rocm cxxstd=17")
+
+    propagate_hip_arch("viskores", "+vtkh @0.9.5:")
+    propagate_hip_arch("kokkos", "+vtkh @0.9.5:")
+    propagate_hip_arch("vtk-m", "+vtkh @:0.9.4")
+    propagate_hip_arch("kokkos", "+vtkh @:0.9.4")
     propagate_hip_arch("raja", "+raja")
     propagate_hip_arch("umpire", "+umpire")
     propagate_cuda_arch("vtk-h", "@:0.8.0 +vtkh")
@@ -354,7 +433,11 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+fortran", when="+rocm")
     conflicts("+rocm", when="@:0.9.2")
 
-    @when("+rocm")
+    conflicts("+sycl", when="+cuda", msg="SYCL and CUDA backends cannot be combined")
+    conflicts("+sycl", when="+rocm", msg="SYCL and ROCm backends cannot be combined")
+    conflicts("+sycl", when="@:0.9.5", msg="SYCL support added for ascent 0.9.6")
+
+    @when("+rocm @:0.9.4")
     def patch(self):
         # VTK-m external interface sets -std=c++14 (VTK-m 2.2), we need
         # to override this since Kokkos requires -std=c++17.
@@ -363,6 +446,13 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
                 """target_compile_options(vtkm_compiled_filters PUBLIC
                 $<$<OR:$<COMPILE_LANGUAGE:CXX>,$<COMPILE_LANGUAGE:HIP>>:-std=c++17>)"""
             )
+
+    requires(
+        "%oneapi",
+        policy="one_of",
+        when="+sycl",
+        msg=("SYCL GPU backend requires the oneAPI (icx) compiler."),
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("CTEST_OUTPUT_ON_FAILURE", "1")
@@ -391,15 +481,26 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
         install_prefix = spec.prefix
         example_src_dir = join_path(install_prefix, "examples", "ascent", "using-with-cmake")
-        print("Checking using-with-cmake example...")
-        with working_dir("check-ascent-using-with-cmake-example", create=True):
-            cmake_args = [
-                "-DASCENT_DIR={0}".format(install_prefix),
-                "-DCONDUIT_DIR={0}".format(spec["conduit"].prefix),
+        if spec.satisfies("@0.9.5:"):
+            # ascent 0.9.5+ builds vtk-h in-tree; viskores is the external
+            tpl_args = ["-DVISKORES_DIR={0}".format(spec["viskores"].prefix)]
+        else:
+            tpl_args = [
                 "-DVTKM_DIR={0}".format(spec["vtk-m"].prefix),
                 "-DVTKH_DIR={0}".format(spec["vtk-h"].prefix),
-                example_src_dir,
             ]
+        print("Checking using-with-cmake example...")
+        with working_dir("check-ascent-using-with-cmake-example", create=True):
+            cmake_args = (
+                [
+                    "-DASCENT_DIR={0}".format(install_prefix),
+                    "-DCONDUIT_DIR={0}".format(spec["conduit"].prefix),
+                ]
+                + tpl_args
+                + [
+                    example_src_dir,
+                ]
+            )
             cmake(*cmake_args)
             make()
             example = Executable("./ascent_render_example")
@@ -522,6 +623,24 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("%oneapi@2025:"):
             cxxflags += " -Wno-error=missing-template-arg-list-after-template-kw"
             cxxflags += " -Wno-missing-template-arg-list-after-template-kw"
+        if spec.satisfies("+sycl"):
+            # parity with ascent's build_ascent.sh SYCL case (which also
+            # feeds -flink-huge-device-code, aurora-v0.9.6-sycl f2573e45):
+            # kokkos adds its own -fsycl when Kokkos_ENABLE_SYCL=ON, but
+            # ascent's own (dray/apcomp) device code needs the flags too.
+            # -DDESUL_ATOMICS_ENABLE_SYCL: when raja/umpire are also in the
+            # DAG their bundled (empty-config) desul headers shadow kokkos'
+            # generated desul Config.hpp, which would otherwise switch on
+            # desul SYCL atomics (kokkos 4.7.00 SYCL headers call
+            # desul::ensure_sycl_lock_arrays_on_device unconditionally).
+            cxxflags += (
+                " -fPIC -fp-model=precise -fsycl"
+                " -fsycl-device-code-split=per_kernel"
+                " -fsycl-max-parallel-link-jobs=128"
+                " -flink-huge-device-code"
+                " -DDESUL_ATOMICS_ENABLE_SYCL"
+            )
+            cfg.write(cmake_cache_entry("BLT_CXX_STD", "c++17"))
         if cxxflags:
             cfg.write(cmake_cache_entry("CMAKE_CXX_FLAGS", cxxflags))
         fflags = " ".join(spec.compiler_flags["fflags"])
@@ -691,6 +810,19 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             cfg.write(cmake_cache_entry("ENABLE_HIP", "OFF"))
 
         #######################
+        # SYCL
+        #######################
+
+        cfg.write("# SYCL Support\n")
+
+        # ascent has no ENABLE_SYCL option: the SYCL backends live in
+        # kokkos/raja/umpire/camp (selected via their +sycl variants) and
+        # the flags ride CMAKE_CXX_FLAGS above. Ascent's cmake does need
+        # the kokkos install dir when viskores uses the kokkos backend.
+        if spec.satisfies("+sycl"):
+            cfg.write(cmake_cache_entry("KOKKOS_DIR", spec["kokkos"].prefix))
+
+        #######################
         # VTK-h (and deps)
         #######################
         cfg.write("# vtk-h support \n")
@@ -702,14 +834,24 @@ class Ascent(CMakePackage, CudaPackage, ROCmPackage):
             else:
                 cfg.write(cmake_cache_entry("VTKH_DIR", spec["vtk-h"].prefix))
 
-            cfg.write("# vtk-m from spack\n")
-            cfg.write(cmake_cache_entry("VTKM_DIR", spec["vtk-m"].prefix))
+            if self.spec.satisfies("@0.9.5:"):
+                cfg.write("# viskores from spack\n")
+                cfg.write(cmake_cache_entry("VISKORES_DIR", spec["viskores"].prefix))
 
-            if spec.satisfies("+cuda"):
-                cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "ON"))
-                cfg.write(cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"]))
+                if spec.satisfies("+cuda"):
+                    cfg.write(cmake_cache_entry("Viskores_ENABLE_CUDA", "ON"))
+                    cfg.write(cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"]))
+                else:
+                    cfg.write(cmake_cache_entry("Viskores_ENABLE_CUDA", "OFF"))
             else:
-                cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "OFF"))
+                cfg.write("# vtk-m from spack\n")
+                cfg.write(cmake_cache_entry("VTKM_DIR", spec["vtk-m"].prefix))
+
+                if spec.satisfies("+cuda"):
+                    cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "ON"))
+                    cfg.write(cmake_cache_entry("CMAKE_CUDA_HOST_COMPILER", env["SPACK_CXX"]))
+                else:
+                    cfg.write(cmake_cache_entry("VTKm_ENABLE_CUDA", "OFF"))
 
         else:
             if self.spec.satisfies("@0.8.1:"):
