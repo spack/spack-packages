@@ -17,13 +17,13 @@ class Mtsniper(CMakePackage):
     """
 
     homepage = "https://github.com/SNiPER-Framework/mt.sniper"
-    git = "https://github.com/SNiPER-Framework/mt.sniper.git"
+    url = "https://github.com/SNiPER-Framework/mt.sniper/archive/refs/tags/v0.9.1.tar.gz"
 
     maintainers("guangzhuangzhao")
 
     license("LGPL-3.0-or-later", checked_by="guangzhuangzhao")
 
-    version("0.9.1", commit="8f6ae172ebb604a134447732263a9c4fa551b437")
+    version("0.9.1", sha256="0677ea3932aa671027e4a67d5f7e2bf81eaa2a1be92296844907027a8d7b0640")
 
     variant(
         "cxxstd",
