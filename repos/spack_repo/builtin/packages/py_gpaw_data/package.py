@@ -24,11 +24,9 @@ class PyGpawData(PythonPackage):
     version("1.1.0", sha256="d6d2f2450cd6b22aa421738fce21c9c83b7f534cbc3bb4081ce5593fd9487173")
     version("1.0.1", sha256="f7a724a77c5974c51e6071f134e465c2aa97307ddff155f26b6a8e4d6f03edcf")
 
-    with when("@1.2.1"):
-        depends_on("python@3.11:", type=("build", "run"))
-    with when("@1.1.0"):
-        depends_on("python@3.10:", type=("build", "run"))
-    with when("@1.0.1"):
-        depends_on("python@3.9:", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@1.2.1")
+        depends_on("python@3.10:", when="@1.1.0")
+        depends_on("python@3.9:", when="@1.0.1")
 
     depends_on("py-setuptools", type="build")
