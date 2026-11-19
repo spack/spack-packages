@@ -22,6 +22,8 @@ class Gbl(CMakePackage):
     version("02-04-01", commit="1061b643c6656fbf7ceba579997eb43f0a9e9d3c")
     version("02-01-03", commit="8acaade19c20e9ef23d1244a555fead6ef149c33")
 
+    deprecated("@02", reason="unspecified", msg="The 02 GBL versions are no longer actively maintained - please consider switching to @04")
+
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build", when="@:04-00-00")
     depends_on("fortran", type="build")  # generated
