@@ -12,7 +12,8 @@ class Gbl(CMakePackage):
 
     homepage = "https://millepede.pages.desy.de/general-broken-lines/"
     git = "https://gitlab.desy.de/millepede/general-broken-lines"
-    url = "https://gitlab.desy.de/millepede/general-broken-lines/-/archive/V04-00-08/general-broken-lines-V04-00-08.tar.gz"
+    urls = ["https://gitlab.desy.de/millepede/general-broken-lines/-/archive/V04-00-08/general-broken-lines-V04-00-08.tar.gz", 
+                  "https://github.com/GeneralBrokenLines/GeneralBrokenLines/archive/refs/tags/V04-00-08.tar.gz"]
 
     tags = ["hep"]
 
