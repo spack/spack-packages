@@ -89,6 +89,7 @@ class Xz(MSBuildPackage, AutotoolsPackage, SourceforgePackage):
             root=self.prefix,
             recursive=True,
             shared=self.spec.satisfies("libs=shared"),
+            runtime=False,
         )
 
     @classmethod
