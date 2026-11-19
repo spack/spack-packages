@@ -19,10 +19,16 @@ class Gbl(CMakePackage):
     version("main", branch="main")
     version("04-00-08", sha256="7243542f43d5950513c62e39c4a0e1a76fc94ae534a84748d808f3a277bbd43d")
     version("03-01-04", sha256="ba7926d9a79a60aa8b5eb812ba950e0b3df36b6d96b667cdddb5515d3d91f0b3")
-    version("02-04-01", commit="dcd972fbf246248e3010610400f80486748f96c0dc399011ebdb7efd1fd44c81",
-    deprecated=True)
-    version("02-01-03", commit="d54049a2cad6ead3e65d5e2639edf338dbcd9408103ec93c4716de33b63691e6",
-    deprecated=True)
+    version(
+        "02-04-01",
+        commit="dcd972fbf246248e3010610400f80486748f96c0dc399011ebdb7efd1fd44c81",
+        deprecated=True,
+    )
+    version(
+        "02-01-03",
+        commit="d54049a2cad6ead3e65d5e2639edf338dbcd9408103ec93c4716de33b63691e6",
+        deprecated=True,
+    )
 
     depends_on("cxx", type="build")  # generated
     depends_on("c", type="build", when="@:04-00-00")
