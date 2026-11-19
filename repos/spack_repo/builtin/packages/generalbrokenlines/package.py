@@ -27,12 +27,7 @@ class Generalbrokenlines(CMakePackage):
     version("04-00-01", sha256="69e75cc58d27a93f03553e1cbaa982afeba6229d42db4ae640a2c4af0011179d")
     version("04-00-00", sha256="136d73f9c7d31de110af6eb4dd3329afdd1a9ff1befb3b85b94aaac1395ff6f0")
 
-    patch(
-        "https://github.com/GeneralBrokenLines/GeneralBrokenLines/compare/"
-        "6e60cdf1f1a296ce0a4e08833ebbfa58e9ad2787...5e50e02a5bcede7049950321a59d5d0b44efd071.diff",
-        sha256="4a468d657bea522b8130a4607224d668ed76c9bad7a99fb2f4dc0ca242d8878f",
-        when="@4.0.0",
-    )
+    patch("cmake-dependencies.patch", when="@4.0.0")
 
     variant("root", default=False, description="Enable ROOT support")
 
