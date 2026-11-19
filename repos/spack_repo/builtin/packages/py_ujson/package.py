@@ -14,6 +14,7 @@ class PyUjson(PythonPackage):
     homepage = "https://github.com/esnme/ultrajson"
     pypi = "ujson/ujson-1.35.tar.gz"
 
+    version("5.8.0", sha256="78e318def4ade898a461b3d92a79f9441e7e0e4d2ad5419abed4336d702c7425")
     version("5.7.0", sha256="e788e5d5dcae8f6118ac9b45d0b891a0d55f7ac480eddcb7f07263f2bcf37b23")
     version("4.0.2", sha256="c615a9e9e378a7383b756b7e7a73c38b22aeb8967a8bfbffd4741f7ffd043c4d")
     version("1.35", sha256="f66073e5506e91d204ab0c614a148d5aa938bdbf104751be66f8ad7a222f5f86")
