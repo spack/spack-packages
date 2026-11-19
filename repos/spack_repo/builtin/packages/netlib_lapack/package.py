@@ -271,6 +271,13 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 ]
             )
 
+        if self.spec.satisfies("%cce"):
+            # Apply compiler flags for Cray Compiler Environment
+            # Use flags from spec if provided, otherwise use defaults for CCE
+            fflags = self.spec.compiler_flags.get("fflags", [])
+            if fflags:
+                args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
+        
         # deprecated routines are commonly needed by, for example, suitesparse
         # Note that OpenBLAS spack is built with deprecated routines
         args.append(self.define("BUILD_DEPRECATED", True))
