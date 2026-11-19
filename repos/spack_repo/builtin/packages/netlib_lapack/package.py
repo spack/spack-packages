@@ -125,7 +125,7 @@ class NetlibLapack(CMakePackage):
     #   Correct path to mangling config.
     #   Patches version 3.9.0.
     patch("cblas-mangling-3.9.0-cce.patch", when="@3.9.0 %cce@13:")
-    
+
     # https://github.com/Reference-LAPACK/lapack/issues/228
     patch("undefined_declarations.patch", when="@3.8.0:3.8")
 
@@ -277,7 +277,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             fflags = self.spec.compiler_flags.get("fflags", [])
             if fflags:
                 args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
-        
+
         # deprecated routines are commonly needed by, for example, suitesparse
         # Note that OpenBLAS spack is built with deprecated routines
         args.append(self.define("BUILD_DEPRECATED", True))
