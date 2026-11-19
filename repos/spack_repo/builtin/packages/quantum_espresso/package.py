@@ -1,6 +1,8 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
+
 from spack_repo.builtin.build_systems import cmake, generic
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.generic import Package
@@ -533,6 +535,8 @@ class GenericBuilder(generic.GenericBuilder):
         else:
             options.append("--enable-parallel=no")
             options.append("CC={0}".format(env["SPACK_CC"]))
+            # Bare name, so configure doesn't take the first Fortran compiler on PATH.
+            options.append("F90={0}".format(os.path.basename(env["SPACK_FC"])))
 
         options.append("F77={0}".format(env["SPACK_F77"]))
 
