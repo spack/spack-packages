@@ -23,14 +23,14 @@ class Gbl(CMakePackage):
     version("02-01-03", commit="8acaade19c20e9ef23d1244a555fead6ef149c33")
 
     depends_on("cxx", type="build")  # generated
-    depends_on("c", type="build", when="@:04-00-00")  # generated
+    depends_on("c", type="build", when="@:04-00-00")
     depends_on("fortran", type="build")  # generated
 
     variant("root", default=True, description="Support ROOT for user I/O")
     depends_on("eigen", type=("build", "link"))
     depends_on("root", type=("build", "link"), when="+root")
     depends_on("mille", when="@04-00-00:")
-    depends_on("mille +root", when=("@04-00-00: +root"))
+    depends_on("mille +root", when="@04-00-00: +root")
 
     root_cmakelists_dir = "cpp"
 
