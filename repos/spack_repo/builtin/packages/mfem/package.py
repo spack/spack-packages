@@ -880,7 +880,7 @@ class Mfem(Package, CudaPackage, ROCmPackage):
             lapack_blas = spec["lapack"].libs + spec["blas"].libs
             superlu_deps = [superlu]
             superlu_libs = ["superlu_dist"]
-            if "^parmetis" in superlu:
+            if superlu.satisfies("^parmetis"):
                 superlu_deps.append(superlu["parmetis"])
                 superlu_libs.append("parmetis")
             options += [
