@@ -133,7 +133,8 @@ class Qscintilla(QMakePackage):
                 tomlfile.write(
                     f"\n[tool.sip.project]\n"
                     f'abi-version = "{sip_abi_version}"\n'
-                    f'sip-include-dirs = ["{sip_inc_dir}"]\n')
+                    f'sip-include-dirs = ["{sip_inc_dir}"]\n'
+                )
                 # add widgets and printsupport to Qsci.pro
                 # also add link statement to fix "undefined symbol _Z...Qsciprinter...
                 # without no-as-needed this can be dropped from linking stage
