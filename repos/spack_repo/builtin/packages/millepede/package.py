@@ -46,12 +46,7 @@ class Millepede(MakefilePackage, CMakePackage):
     )
 
     # Fix LAPACK handling
-    patch(
-        "https://github.com/millepede-project/millepede-ii/compare/"
-        "2726f54142c6c3bd0911250e14fceb7174a0deff...8088a7d373e01c224da018f06203da27e22cae32.diff",
-        sha256="bc8547ff70c27884648ebe7b2a6819ccbdf3a7f7707691220c561a246ec9933b",
-        when="@5.0.0",
-    )
+    patch("fix-lapack.patch", when="@5.0.0")
 
     variant("zlib", default=True, description="Enable zlib support")
     variant("root", default=False, description="Enable ROOT support")

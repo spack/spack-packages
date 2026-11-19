@@ -1,0 +1,329 @@
+diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
+index 550c819..2e46d3d 100644
+--- a/.gitlab-ci.yml
++++ b/.gitlab-ci.yml
+@@ -24,13 +24,13 @@ stages:          # List of stages for jobs, and their order of execution
+ variables:  
+   GIT_SUBMODULE_STRATEGY: recursive
+ 
+-build-job:       # This job runs in the build stage, which runs first.
++build-job:       
+   image: ${CI_REGISTRY_IMAGE}/mp2dev_base 
+   stage: build
+   script:
+     - mkdir build install
+     - cd build  
+-    - cmake -DCMAKE_INSTALL_PREFIX=../install ../ 
++    - cmake -DCMAKE_INSTALL_PREFIX=../install -DBUILD_TESTS=on ../ 
+     - make 
+     - make install
+     - echo "Compile complete."
+@@ -40,7 +40,7 @@ build-job:       # This job runs in the build stage, which runs first.
+       - install/
+       - build/ 
+ 
+-doc-job:       # This job runs in the build stage, which runs first.
++doc-job:  
+   image: ${CI_REGISTRY_IMAGE}/mp2dev_base 
+   stage: build
+   script:
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 360d86c..f0bc25f 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -12,7 +12,7 @@ set(CMAKE_CXX_COMPILER ${gpp_loc})
+ 
+ 
+ PROJECT(millepedeII LANGUAGES Fortran C CXX)
+-set(millepedeII_VERSION 05.00.00)
++set(millepedeII_VERSION 05.01.00)
+ include(CTest)
+ 
+ if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+@@ -33,16 +33,29 @@ endif()
+ option(DEBUG "Debug" OFF)
+ option(SUPPORT_ROOT "build ROOT file I/O and root plotting scripts" ON)
+ option(SUPPORT_OPENMP "Support OPENMP" ON)
+-option(LAPACK_OPENBLAS "Use LAPACK with OpenBLAS" ON)
+-option(LAPACK_MKL "Use LAPACK with MKL. Define MKL_DIR if installed in a nonstandard location." OFF)
++option(SUPPORT_LAPACK "Support LAPACK. Will auto-discover, prioritising MKL > OpenBLAS > others. Overridden by the specific options below" ON)
++option(LAPACK_OPENBLAS "Require LAPACK with OpenBLAS" OFF)
++option(LAPACK_MKL "Require LAPACK with MKL. Define MKL_DIR if installed in a nonstandard location." OFF)
+ option(PARDISO "Support Intel oneMKL PARDISO. Define MKL_DIR if installed in a nonstandard location." OFF)
+ option(SCOREP "Add SCORE-P instrumentation. Define SCOREP_DIR if installed in a nonstandard location." OFF)
+-
+-
+-set(useLP_OPENBLAS false)
+-if (LAPACK_OPENBLAS)
+-    find_package( LAPACK REQUIRED )
+-    set(useLP_OPENBLAS true)
++option(BUILD_TESTS "compile unit tests" OFF)
++
++# if requesting PARDISO, we need MKL
++if (PARDISO) 
++    set (SUPPORT_LAPACK True)
++    set (LAPACK_MKL True)
++endif() 
++
++# get LAPACK if required
++if (SUPPORT_LAPACK)
++    include("cmake/getLAPACK.cmake")
++    if (NOT LAPACK_FOUND)
++        if (${LAPACK_OPENBLAS} OR ${LAPACK_MKL})
++            message( FATAL_ERROR "LAPACK not found but explicitly required")
++        else()
++            message ("No LAPACK library found - will build without.")
++        endif()
++    endif()
+ endif()
+ 
+ set(build_ROOT_comps false)
+@@ -60,22 +73,12 @@ if(SUPPORT_ROOT)
+     endif()
+ endif()
+ 
+-
+-if (LAPACK_MKL)
+-    find_package( MKL REQUIRED )
+-    set(useLP_OPENBLAS false)
+-endif()
+-
+-
+-
+ # Destination targets for build results
+ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/lib)
+ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+ set(CMAKE_Fortran_MODULE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/modules)
+ 
+-
+-
+ if (DEBUG)
+     message("Setting flags for debug build")    
+     set(CMAKE_Fortran_FLAGS "-Wall -fautomatic -fno-backslash -O3  -g -fcheck=all -fbacktrace -cpp -ffpe-trap=zero,overflow,underflow")
+@@ -102,32 +105,22 @@ target_link_libraries(pede INTERFACE MilleF)
+ message ("Will include ${Mille_MODULE_DIRS}")
+ target_include_directories(pede PRIVATE ${Mille_MODULE_DIRS})
+ 
+-# Special setup implementing build options
+ 
+-# ===== LAPACK with MKL ===== 
+-if (LAPACK_MKL)
+-    message ("Building with LAPACK support via MKL")
+-    target_include_directories(pede PUBLIC $<TARGET_PROPERTY:MKL::MKL,INTERFACE_INCLUDE_DIRECTORIES>)
+-    target_link_libraries(pede PUBLIC mkl_rt)
+-    target_compile_definitions(pede PUBLIC LAPACK64=\"MKL\")
+-    target_link_directories(pede PUBLIC ${MKL_ROOT}/lib/${MKL_ARCH})
++if (SUPPORT_LAPACK AND ${LAPACK_FOUND})
++    target_link_libraries(pede PUBLIC LAPACK::LAPACK)
++    message ("Building with LAPACK support via ${LAPACK_FLAVOUR}")
++    target_compile_definitions(pede PUBLIC LAPACK64=\"${LAPACK_FLAVOUR}\")
+     if (PARDISO)
+         message ("Using Intel oneMKL PARDISO")
+         target_compile_definitions(pede PUBLIC PARDISO)
+-        target_include_directories(pede PUBLIC ${MKL_ROOT}/include)
++        # needed for mkl_pardiso.f90 module
++        target_include_directories(pede PUBLIC $<TARGET_PROPERTY:MKL::MKL,INTERFACE_INCLUDE_DIRECTORIES>)
+     endif()
+ endif()
+-# ===== LAPACK with OpenMP ===== 
+-if (useLP_OPENBLAS)
+-    message ("Building with LAPACK support via OpenBLAS")
+-    target_link_libraries(pede PUBLIC openblasp64)
+-    target_compile_definitions(pede PUBLIC LAPACK64=\"OPENBLAS\")
+-endif()
+ 
+ if (build_ROOT_comps)
+     message ("Found ROOT - will build histogram reader and ROOT I/O lib") 
+ 
+-    set(CMAKE_CXX_STANDARD ${ROOT_CXX_STANDARD})
+     # histogrammer 
+     add_executable(readPedeHists)
+     target_sources(readPedeHists PRIVATE util/readPedeHists.cpp)
+@@ -242,4 +235,6 @@ install(FILES ${millepedeII_BINARY_DIR}/cmake/millepedeIIConfig.cmake
+ 
+ 
+ # Unit tests 
++if (BUILD_TESTS)
+ subdirs(test)
++endif()
+diff --git a/cmake/getLAPACK.cmake b/cmake/getLAPACK.cmake
+new file mode 100644
+index 0000000..2636fde
+--- /dev/null
++++ b/cmake/getLAPACK.cmake
+@@ -0,0 +1,62 @@
++# set which LAPACK versions we allow
++if (LAPACK_MKL)
++set (__LP_ALLOW_MKL True)
++set (__LP_ALLOW_BLAS False) 
++set (__LP_ALLOW_OTHER False)
++elseif (LAPACK_OPENBLAS)
++set (__LP_ALLOW_MKL False)
++set (__LP_ALLOW_BLAS True) 
++set (__LP_ALLOW_OTHER False)
++else() 
++set (__LP_ALLOW_MKL True)
++set (__LP_ALLOW_BLAS True) 
++set (__LP_ALLOW_OTHER True)
++endif()
++
++# always require int64 interface. 
++set(BLA_SIZEOF_INTEGER 8) 
++
++# MKL prioritised over OPENBLAS
++if (LAPACK_MKL) 
++    set (LAPACK_OPENBLAS False)
++endif()
++
++# PARDISO requires MKL as an explicit dependency
++if (PARDISO)
++    find_package( MKL REQUIRED )
++endif()
++
++# Now check possible LAPACK sources by descending priority 
++
++# first: MKL 
++if (${__LP_ALLOW_MKL})
++    set (BLA_VENDOR Intel10_64_dyn)
++    find_package(LAPACK QUIET )
++    if (LAPACK_FOUND) 
++        set (LAPACK_FLAVOUR "MKL")
++    endif()
++endif() 
++
++# then, OpenBLAS
++if ( (NOT LAPACK_FOUND) AND ${__LP_ALLOW_BLAS}) 
++    set (BLA_VENDOR OpenBLAS)
++    find_package(LAPACK QUIET )
++    if (LAPACK_FOUND) 
++        set (LAPACK_FLAVOUR "OPENBLAS")
++    endif() 
++endif() 
++
++# Finally, anything else we can find 
++if (NOT LAPACK_FOUND AND ${__LP_ALLOW_OTHER})
++    unset(BLA_VENDOR) 
++    find_package(LAPACK QUIET )
++    if (LAPACK_FOUND) 
++        set (LAPACK_FLAVOUR "OTHER")
++    endif() 
++endif()
++
++if (LAPACK_FOUND) 
++message("Found LAPACK: ${LAPACK_LIBRARIES}")
++endif()
++
++
+diff --git a/cmake/getMille.cmake b/cmake/getMille.cmake
+index e3dfdcf..00db93c 100644
+--- a/cmake/getMille.cmake
++++ b/cmake/getMille.cmake
+@@ -5,7 +5,7 @@ include(FetchContent)
+ # Flag to adapt config file creation later on 
+ set(MILLE_AS_SUBDIR True) 
+ 
+-set(Recommended_Mille_Version V01-00-00)
++set(Recommended_Mille_Version V01-00-02)
+ 
+ FetchContent_Declare(Mille 
+     URL https://gitlab.desy.de/millepede/mille/-/archive/${Recommended_Mille_Version}/mille-${Recommended_Mille_Version}.tar.gz
+diff --git a/doc/changeLog.md b/doc/changeLog.md
+index 902b713..d9b813e 100644
+--- a/doc/changeLog.md
++++ b/doc/changeLog.md
+@@ -3,6 +3,7 @@
+ # Full list of recent changes
+ 
+ Changes are presented in reverse chronological order.
++-  2026-03-19: Updates to the build system - more flexible LAPACK discovery. Fixed PARDISO compilation. 
+ -  2026-01-21: Fix an FPE in debug builds (no impact on fit outcome) 
+ -  2025-12-11: Fix a rare crash in cToRoot when converting very large binaries 
+ -  2025-12-01: Added support to write and read ROOT binaries, added unit tests for I/O components. 
+diff --git a/doc/installationPage.md b/doc/installationPage.md
+index 5e336e1..4239634 100644
+--- a/doc/installationPage.md
++++ b/doc/installationPage.md
+@@ -22,6 +22,11 @@ Optionally, the package can be compiled to use
+ 
+ Instrumentation for profiling using [SCORE-P](https://www.vi-hps.org/projects/score-p/overview/overview.html) is implemented and can also be enabled during the build if desired. 
+ 
++For the LAPACK libraries, 64-bit integer interface are required. 
++By default, the build routine tries to find LAPACK on the system and will enable the corresponding features if successful.
++If multiple LAPACK installations are found, by default MKL is preferred over OpenBLAS which takes priority over all others. 
++See the configuration options below for how to enforce a strict requirement of a certain LAPACK flavour. 
++
+ ### Documentation
+ 
+ To build the documentation, [doxygen](https://www.doxygen.nl/) version 1.9.8 or later is required to correctly generate internal links between the pages. 
+@@ -36,7 +41,7 @@ This is for example available in the `gitlab.desy.de:5555/millepede/millepede-ii
+ Download the software package from the DESY \c gitlab server to
+     \a target directory, e.g. (shallow clone):
+ 
+-         git clone --depth 1 --branch V05-00-00 \
++         git clone --depth 1 --branch V05-01-00 \
+              https://gitlab.desy.de/millepede/millepede-ii.git target
+ 
+ Then compile using the following steps:
+@@ -49,6 +54,19 @@ Then compile using the following steps:
+ You can pass additional options / flags to CMake: 
+ - `-DCMAKE_INSTALL_PREFIX=<...>`: Set the install location for the binaries. The default is a subfolder `MillePedeInstall` within your build folder. 
+ - `-DDEBUG=on`: Enable debug build 
++- `-SUPPORT_LAPACK=off`: Disable (default: on) LAPACK support. 
++- `-DLAPACK_OPENBLAS=on`: Require (default: off) the use of OpenBLAS for LAPACK. Will throw a fatal error if OpenBLAS is not found. 
++- `-DLAPACK_MKL=on`: Require (default: off) the use of Intel MKL for LAPACK. Priority over OpenBLAS if that flag is set as well. If you have a nonstandard installation, set `MKL_DIR` to point to your MKL installation (the standard intel oneAPI setup scripts will do this for you).  Will throw a fatal error if MKL is not found. 
++- `-DPARDISO=on`: Enable (default: off) support for Intel PARDISO. Depends on MKL (and will enable the corresponding hard requirement automatically).  
++- `-DSCOREP=on`: Enable (default: off) instrumentation for profiling with SCORE_P. If you have a nonstandard installation, set `SCOREP_DIR` to point to your Score-P installation. 
++- `-DSUPPORT_OPENMP=off`: Disable (default: on) support for parallelisation with OpenMP.
++- `-DSUPPORT_ROOT=off`: Disable (default: on) support for ROOT for file access and histogramming, if ROOT is found. 
++
++
++##### Before V05-01-00 
++Up to and including V05-00-00, the build options were slightly different: 
++- `-DCMAKE_INSTALL_PREFIX=<...>`: Set the install location for the binaries. The default is a subfolder `MillePedeInstall` within your build folder. 
++- `-DDEBUG=on`: Enable debug build 
+ - `-DLAPACK_OPENBLAS=off`: Disable (default: on) LAPACK support using OpenBLAS 
+ - `-DLAPACK_MKL=on`: Enable (default: off) LAPACK support using Intel MKL. Disables OpenBLAS if set. If you have a nonstandard installation, set `MKL_DIR` to point to your MKL installation (the standard intel oneAPI setup scripts will do this for you). 
+ - `-DPARDISO=on`: Enable (default: off) support for Intel PARDISO. 
+diff --git a/doc/releases.md b/doc/releases.md
+index 869d56e..8b12e7c 100644
+--- a/doc/releases.md
++++ b/doc/releases.md
+@@ -2,6 +2,14 @@
+  
+ ## Version history
+ 
++### Version V05-01-00 (new)
++
++New way of looking up LAPACK during build (change to build flags)
++
++Clean-up of ROOT dependency and compiler version treatment. 
++
++Bugfix to PARDISO builds - now compiles successfully. 
++
+ ### Version V05-00-00 (new)
+ 
+ Retire Makefile build, adopt external Mille package
+diff --git a/src/mplapack.f90 b/src/mplapack.f90
+index 53c7da9..d58d371 100644
+--- a/src/mplapack.f90
++++ b/src/mplapack.f90
+@@ -21,6 +21,10 @@
+ !! 675 Mass Ave, Cambridge, MA 02139, USA.
+ !!
+ 
++#ifdef PARDISO
++    INCLUDE 'mkl_pardiso.f90'
++#endif
++
+ MODULE mplapack    
+     USE mpmod
+     USE mpdalc
+@@ -552,7 +556,6 @@ SUBROUTINE lpavat(t)
+     END SUBROUTINE lpavat
+ 
+ #ifdef PARDISO
+-    INCLUDE 'mkl_pardiso.f90'
+     !===============================================================================
+     ! Copyright 2004-2022 Intel Corporation.
+     !
