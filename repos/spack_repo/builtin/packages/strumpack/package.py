@@ -123,6 +123,8 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+rocm", when="+cuda")
     conflicts("+slate", when="@:5.1.1")
     conflicts("+slate", when="~mpi")
+    # SLATE requires OpenMP, and its CMake targets also build STRUMPACK with OpenMP
+    conflicts("+slate", when="~openmp", msg="SLATE requires OpenMP")
     conflicts("+magma", when="~rocm~cuda")
 
     patch("intel-19-compile.patch", when="@3.1.1")
