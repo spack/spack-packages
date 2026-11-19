@@ -27,10 +27,11 @@ class Qgis(CMakePackage):
 
     # Prefer latest LTR
     version(
-        "3.44.8",
-        sha256="146e197f34f1f9ede8cfdf5b9cc4d76667771720a302172c32d4117367356e96",
+        "3.44.15",
+        sha256="1b508175a27272c68ca0f71f27d2b14711ab47b8ee2c003b56e36138420a75bc",
         preferred=True,
     )
+    version("3.44.8", sha256="146e197f34f1f9ede8cfdf5b9cc4d76667771720a302172c32d4117367356e96")
     version("3.44.7", sha256="1ab06f40600c84e928b4fe22a66997d80973201b10769e7a636e5be83459b814")
     version("3.40.6", sha256="dd68d39a2a29326031195bed2125e8b0fa7112fe9ee74d5f9850d06b02cef6a8")
     version("3.40.1", sha256="53110464c9f5ba5562c437e1563ab36dad2f218e6e7d1c0cfbe5b6effe241c8e")
@@ -127,7 +128,12 @@ class Qgis(CMakePackage):
     depends_on("exiv2")
     depends_on("expat@1.95:")
     depends_on("gdal@2.1.0: +python", type=("build", "link", "run"))
-    depends_on("gdal@3.2.0: +python", type=("build", "link", "run"), when="@3.28:")
+
+    # GDAL 3.13 makes GDALGetMetadata() const-correct by changing its return type to CSLConstList
+    # invalid conversion from 'CSLConstList' {aka 'const char* const*'} to 'char**'
+    # https://gdal.org/en/stable/user/migration_guide.html#from-gdal-3-12-to-gdal-3-13
+    depends_on("gdal@3.2.0:3.12 +python", type=("build", "link", "run"), when="@3.28:")
+
     depends_on("geos@3.4.0:")
 
     # https://github.com/libspatialindex/libspatialindex/issues/276
@@ -149,6 +155,8 @@ class Qgis(CMakePackage):
     depends_on("py-pyqt4", when="@2")
     depends_on("py-pyqt5@5.3:", when="@3")
     depends_on("py-sip", type="build")
+    # https://github.com/qgis/QGIS/commit/1756d84f290e7f80e70067d60c22d63580d55d11
+    depends_on("py-sip@:6.10", type="build", when="@:3.44.13")
     depends_on("py-pyqt-builder", type="build", when="^py-sip@5:")
     depends_on("py-requests", type=("build", "run"))  # TODO: is build dependency necessary?
     depends_on("python@3.0.0:", type=("build", "run"), when="@3")
