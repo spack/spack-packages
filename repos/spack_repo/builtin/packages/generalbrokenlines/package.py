@@ -13,23 +13,24 @@ class Generalbrokenlines(CMakePackage):
     trajectory based on the propagation in a magnetic field (and average energy
     loss)."""
 
-    homepage = "https://gitlab.desy.de/millepede/general-broken-lines"
-    url = "https://gitlab.desy.de/millepede/general-broken-lines/-/archive/V04-00-00/general-broken-lines-V04-00-00.tar.gz"
-    git = "https://gitlab.desy.de/millepede/general-broken-lines.git"
+    homepage = "https://github.com/GeneralBrokenLines/GeneralBrokenLines"
+    url = "https://github.com/GeneralBrokenLines/GeneralBrokenLines/archive/refs/tags/V04-00-00.tar.gz"
+    git = "https://github.com/GeneralBrokenLines/GeneralBrokenLines.git"
 
     license("LGPL-2.0-only", checked_by="paulgessinger")
 
     version("main", branch="main")
-    version("04-00-06", sha256="7d337ac9d7aaea669b224e300b63880c7d8fae7a1fc65eb5aa33dc6c39f9585d")
-    version("04-00-05", sha256="d6090b1515dc33cd9532f1470e2038b7794258fbb8a411fa8a6e4520e933241b")
-    version("04-00-04", sha256="e40401a77a828c81a9217d8df3201e7712ac86b4fd5058d526ae1e1f6664304f")
-    version("04-00-03", sha256="e5361f8f3862f1567da43c965065f21b8ef7987568e65a50b91b300b40386af3")
-    version("04-00-01", sha256="d3ab79babd953a8cffd7fca6a3753be923dd64d28e50eae89ee2b910c3d9d599")
-    version("04-00-00", sha256="ac2818cd7b8f84cb75c721521320f6c85ff8423bcf9b6be6d2bfee6e205a07db")
+    version("04-00-06", sha256="e14fa97daf16834999f0b9764b2041da3a0510c15f6304874fc2df48e197b420")
+    version("04-00-05", sha256="d3e574b1838a9d28d52ce0b206c73ec8dc57e5a3b81257571e39556d0d18bb82")
+    version("04-00-04", sha256="040c0d8425d89f735967cf312780e0f56f36f714eaf105c2a63dbd7ea2ce19b7")
+    version("04-00-03", sha256="b2f18f396dca5a9b9c27fa7b7962cd433e8a6ae5d7869a9a8e0e4010f48fd37b")
+    version("04-00-01", sha256="69e75cc58d27a93f03553e1cbaa982afeba6229d42db4ae640a2c4af0011179d")
+    version("04-00-00", sha256="136d73f9c7d31de110af6eb4dd3329afdd1a9ff1befb3b85b94aaac1395ff6f0")
 
     patch(
-        "https://gitlab.desy.de/millepede/general-broken-lines/-/merge_requests/2.diff",
-        sha256="9578a86fcbb4dcd6bca14e9d6531c545b1ea798944b8d47d858ca20d58f6bd64",
+        "https://github.com/GeneralBrokenLines/GeneralBrokenLines/compare/"
+        "6e60cdf1f1a296ce0a4e08833ebbfa58e9ad2787...5e50e02a5bcede7049950321a59d5d0b44efd071.diff",
+        sha256="4a468d657bea522b8130a4607224d668ed76c9bad7a99fb2f4dc0ca242d8878f",
         when="@4.0.0",
     )
 

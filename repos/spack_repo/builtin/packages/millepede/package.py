@@ -17,38 +17,39 @@ class Millepede(MakefilePackage, CMakePackage):
         conditional("cmake", when="@5:"), conditional("makefile", when="@:4"), default="cmake"
     )
 
-    homepage = "https://gitlab.desy.de/millepede/millepede-ii"
-    url = "https://gitlab.desy.de/millepede/millepede-ii/-/archive/V05-00-00/millepede-ii-V05-00-00.tar.gz"
-    git = "https://gitlab.desy.de/millepede/millepede-ii.git"
+    homepage = "https://github.com/millepede-project/millepede-ii"
+    url = "https://github.com/millepede-project/millepede-ii/archive/refs/tags/V05-00-00.tar.gz"
+    git = "https://github.com/millepede-project/millepede-ii.git"
 
     license("LGPL-2.0-only")
 
     version("main", branch="main")
-    version("05-01-08", sha256="bea24620df1aafae1513bec6f7ea77f51de4dab542abfeb0cab078b6c170d65e")
-    version("05-01-07", sha256="da12ea524d75129d87aded7afd3f39bfb76cc1fe8a5def7557e16ccd0d2d6a74")
-    version("05-01-06", sha256="4162b8f6861b6a52ca4d6a781d6632f6f64832c672c5f8a169ff21e91d35389a")
-    version("05-01-05", sha256="c567c8f486194c1edf9e04c53c15f22635120be13e1de19c428f2eb088ae3222")
-    version("05-01-04", sha256="6e8c1a3589d91251b87578ff046e9b58268cfcd2fdf4d98a77e45f1c8d43e864")
-    version("05-01-03", sha256="18f707a1b372f07420e26969f503518b6dd067642f5eab45f05728aa7ff742ec")
-    version("05-01-02", sha256="fd7991487682e8b28cac6a036b905fedc19ec0ac9e26fd85e2514b22a75e3343")
-    version("05-01-01", sha256="b6a316e4b1ebf93cbf72ddd57a157e09f4446e4677352ef288748731ac2c0297")
-    version("05-01-00", sha256="fec88805d33004f9ca03733dc14f7b30f888cd3a48e3cdf4333d74b42242d3d3")
-    version("05-00-00", sha256="df8ffb2ffae3c4f32177824026f79ed3b824536f5ef581643aaae09da308aca6")
+    version("05-01-08", sha256="8b409e7f45fbe1dc7aa6ce574983919f813d25aac5dd1129cac07fbec9d6a9ff")
+    version("05-01-07", sha256="25ad3d9a7f951e58668189cd063f5e3c5b3099af7697c8a58c0427c1c19769d1")
+    version("05-01-06", sha256="d9570fbdb0fce44a12c6bf5db41e8c734777acf2019f7d8381fb9ad55e2da1de")
+    version("05-01-05", sha256="037bbfcd3aca2d6497a5609f35bc4a96258d285290996468241dcedd9aa9d172")
+    version("05-01-04", sha256="035fd1eefb1c564c63e362efb288688e41db367add1f2be240c3c3119d273690")
+    version("05-01-03", sha256="edc32b7ab9001471819e359789b378787c79c605a54d00d986078f5b7efb9491")
+    version("05-01-02", sha256="bef40f38840cd8b3139e5631fc7f21705279abb0c913ff2fa345f73f55b3ebca")
+    version("05-01-01", sha256="cb1dbb11170688365fcdfcf44da8602cadc9268c11936930b26cf6b75fbae02f")
+    version("05-01-00", sha256="21aed50c06dffa2ced705c4012f4c7ac7851b144154470153500aef48e083e36")
+    version("05-00-00", sha256="1d78bfcc40fe4b87001e3445c90f62c1b70959e2582ef1b20cac9f0947b81add")
     version(
         "04-13-03",
-        sha256="669a6e46a6f02ba3c78b2760e2ffb2c90d25b582ccd1a5c0770eef81c7bcbbe9",
+        sha256="4b2c38a1bbfba2cbc40073eb9bdc9430e0ac5f6b0801b3efafdf1a0b1d4670a8",
         deprecated=True,
     )
     version(
         "04-11-01",
-        sha256="9869eb84d8d07cecfab15c396f3faa36aef10906e39f8641c48b58e0325b3205",
+        sha256="fa98a6616b35ead7b838b7db412ed6be82b733320396f0e511c767c91030e195",
         deprecated=True,
     )
 
     # Fix LAPACK handling
     patch(
-        "https://gitlab.desy.de/millepede/millepede-ii/-/merge_requests/48.diff",
-        sha256="4b151e220012b53bf3ae2c82cd5f736df870b2332e7cfdec60ce13e6788af86a",
+        "https://github.com/millepede-project/millepede-ii/compare/"
+        "2726f54142c6c3bd0911250e14fceb7174a0deff...8088a7d373e01c224da018f06203da27e22cae32.diff",
+        sha256="bc8547ff70c27884648ebe7b2a6819ccbdf3a7f7707691220c561a246ec9933b",
         when="@5.0.0",
     )
 
