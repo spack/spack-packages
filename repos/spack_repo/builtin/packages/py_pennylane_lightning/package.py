@@ -116,7 +116,7 @@ class CMakeBuilder(cmake.CMakeBuilder):
             python("setup.py", "build_ext", *args)
 
     def install(self, pkg, spec, prefix):
-        pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+        pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
         super().install(pkg, spec, prefix)
 
     @run_after("install")

@@ -62,7 +62,8 @@ class Duckdb(CMakePackage):
     )
 
     # APIs
-    variant("python", default=True, description="Build with Python driver")
+    # The Python client moved to the duckdb/duckdb-python repository in v1.4.0
+    variant("python", default=True, description="Build with Python driver", when="@:1.3")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")

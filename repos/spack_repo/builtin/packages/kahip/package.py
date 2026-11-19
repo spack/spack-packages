@@ -53,6 +53,10 @@ class Kahip(CMakePackage):
 
     patch("cstdint.patch")
 
-    @when("@3.13:")
     def cmake_args(self):
-        return [self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic")]
+        # Upstream forces '-march=native' via add_definitions() unless
+        # NONATIVEOPTIMIZATIONS is set, overriding Spack's target flags.
+        return [
+            self.define("NONATIVEOPTIMIZATIONS", True),
+            self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic"),
+        ]

@@ -78,6 +78,9 @@ class Geant4Data(BundlePackage):
 
     tags = ["hep"]
 
+    # Note: since we build geant4 in CI (see e.g. stacks/hep/spack.yaml), and since
+    # data files are immutable, please add a non-buildable external version entry in
+    # the CI stack definitions when adding new versions.
     version("11.4.0")
     version("11.3.0")
     version("11.2.2")

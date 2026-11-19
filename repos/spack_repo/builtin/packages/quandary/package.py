@@ -36,6 +36,7 @@ class Quandary(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cxx", type="build")
     depends_on("c", type="build")
+    depends_on("pkgconfig", type="build")
 
     depends_on("petsc~hypre~metis~fortran")
     depends_on("petsc+debug", when="build_type=Debug")

@@ -51,8 +51,11 @@ class PyPysam(PythonPackage):
     depends_on("htslib@1.24", when="@0.24.0:")
     depends_on("htslib@1.21", when="@0.23.3")
     depends_on("htslib@1.17", when="@0.21.0")
+    depends_on("htslib@1.15.1", when="@0.19.1")
+    depends_on("htslib@1.14", when="@0.18.0")
+    depends_on("htslib@1.9", when="@0.15")
+    depends_on("htslib@1.7", when="@0.14.1")
     depends_on("htslib@:1.6", when="@:0.13")
-    depends_on("htslib")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("LDFLAGS", self.spec["curl"].libs.search_flags)

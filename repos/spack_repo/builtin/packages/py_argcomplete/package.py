@@ -15,6 +15,7 @@ class PyArgcomplete(PythonPackage):
 
     license("Apache-2.0")
 
+    version("3.7.2", sha256="aad8b69a0b9969edb62db0d1752354c0d50717b10e0cbb00e2a958381b9fc6b9")
     version("3.6.3", sha256="62e8ed4fd6a45864acc8235409461b72c9a28ee785a2011cc5eb78318786c89c")
     version("3.6.2", sha256="d0519b1bc867f5f4f4713c41ad0aba73a4a5f007449716b16f385f2166dc6adf")
     version("3.5.0", sha256="4349400469dccfb7950bb60334a680c58d88699bff6159df61251878dc6bf74b")
@@ -25,6 +26,8 @@ class PyArgcomplete(PythonPackage):
     version("1.12.3", sha256="2c7dbffd8c045ea534921e63b0be6fe65e88599990d8dc408ac8c542b72a5445")
     version("1.12.0", sha256="2fbe5ed09fd2c1d727d4199feca96569a5b50d44c71b16da9c742201f7cc295c")
     version("1.1.1", sha256="cca45b5fe07000994f4f06a0b95bd71f7b51b04f81c3be0b4ea7b666e4f1f084")
+
+    depends_on("python@3.10:", when="@3.7.2:")
 
     depends_on("py-hatchling", when="@3.5.3:", type="build")
     depends_on("py-hatch-vcs", when="@3.5.3:", type="build")

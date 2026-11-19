@@ -18,7 +18,7 @@ class Grabix(MakefilePackage):
     homepage = "https://github.com/arq5x/grabix"
     url = "https://github.com/arq5x/grabix/archive/v0.1.7.tar.gz"
 
-    maintainers("robqiao")
+    maintainers("manifestoso")
 
     license("MIT")
 

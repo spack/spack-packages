@@ -11,7 +11,7 @@ from spack.package import *
 
 class FftwBase(AutotoolsPackage):
     """Base class for building Fftw, shared with the AMD optimized version
-    of the library in the 'amdfftw' package.
+    of the library in the 'aocl-fftw' package ('amdfftw' is a deprecated alias).
     """
 
     variant(

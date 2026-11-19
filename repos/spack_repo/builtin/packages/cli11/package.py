@@ -17,6 +17,7 @@ class Cli11(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("2.7.2", sha256="46eef3101da70852ec7af026e09d485ccee81813331c8c6052d39344443b83da")
     version("2.7.1", sha256="c02abe5c5fed9b9c9192bff3c74d2c0d19755253f9ca9e3c44484c1cf5ce6568")
     version("2.6.1", sha256="377691f3fac2b340f12a2f79f523c780564578ba3d6eaf5238e9f35895d5ba95")
     version("2.5.0", sha256="17e02b4cddc2fa348e5dbdbb582c59a3486fa2b2433e70a0c3bacb871334fd55")
@@ -33,11 +34,7 @@ class Cli11(CMakePackage):
     variant("pic", default=True, description="Produce position-independent code")
 
     # When it is precompiled, CLI11_COMPILE gets defined
-    # https://github.com/CLIUtils/CLI11/blob/bb9bd85e3b8129571b084911affc6f0e9ae6be25/src/CMakeLists.txt#L6
-    # which causes cli11 to look for <imp/> which
-    # is not installed when the static lib is created. The itention seems to be to use
-    # precompiled via add_subdirectory(CLI11).
-    variant("precompiled", default=False, description="Library is compiled into a static library")
+    variant("precompiled", default=True, description="Library is compiled into a static library")
 
     depends_on("cxx", type="build")
 
@@ -57,8 +54,3 @@ class Cli11(CMakePackage):
         if self.spec.satisfies("@2.7:"):
             args.append(self.define("CLI11_MODULES", False))
         return args
-
-    @when("@2.3:")
-    def install(self, spec, prefix):
-        super().install(spec, prefix)
-        install_tree("include/CLI/impl", join_path(prefix.include, "CLI/impl"))

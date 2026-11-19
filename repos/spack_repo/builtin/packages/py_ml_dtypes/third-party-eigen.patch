@@ -1,0 +1,32 @@
+Allow the Eigen include directory to be overridden via the EIGEN_DIR
+environment variable, instead of hardcoding the vendored third_party/eigen
+submodule, so that a packaged Eigen can be supplied instead.
+
+Generated with two lines of context so that it applies without fuzz to both
+the pybind11-based setup.py (0.2.0, 0.3.1) and the setuptools-based one
+(0.4.0, 0.5.1), which differ in the imports surrounding the first hunk.
+
+diff --git a/setup.py b/setup.py
+index c67f665..638cc2d 100644
+--- a/setup.py
++++ b/setup.py
+@@ -16,4 +16,5 @@
+ 
+ import fnmatch
++import os
+ import platform
+ import numpy as np
+@@ -35,4 +36,6 @@ else:
+ exclude = ["third_party*"]
+ 
++EIGEN_DIR = os.environ.get("EIGEN_DIR", "third_party/eigen")
++
+ 
+ class build_py(build_py_orig):  # pylint: disable=invalid-name
+@@ -59,5 +62,5 @@ setup(
+             ],
+             include_dirs=[
+-                "third_party/eigen",
++                EIGEN_DIR,
+                 "ml_dtypes",
+                 np.get_include(),

@@ -49,6 +49,7 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
     maintainers("adamjstewart", "jonas-eschle", "afzpatel")
 
+    version("0.12.0", sha256="341203199c5f331beefb73ecb3a8eec239b44e58aca63c5fdf85b0c97a638b1d")
     version("0.11.2", sha256="12dd77d86ec5a316be6038c9a597a1479bce13c828722a249b022e774b2eff75")
     version("0.11.1", sha256="ef9826243bcb8eae6d39ac71580bb39154fbeca51b40c2371aab5db1a797dfb4")
     version("0.11.0", sha256="007ef373573ff2fb8a5485679b791581fda328754fd7ae491de3bcdb0fc70d07")
@@ -134,6 +135,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         depends_on("rocprofiler-sdk", when="@0.8.1:")
         depends_on("rocm-smi-lib", when="@0.11:0.11.1")
         depends_on("amdsmi", when="@0.11.2:")
+        depends_on("libdrm", when="@0.12:")
+        depends_on("numactl", when="@0.12:")
         depends_on("py-nanobind")
 
     with default_args(type="build"):
@@ -142,7 +145,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
 
         # Bazel tends to be backwards-compatible within major versions
         # .bazelversion
-        depends_on("bazel@8.7.0:8", when="@0.11.2:")
+        depends_on("bazel@9.2.0:9", when="@0.12:")
+        depends_on("bazel@8.7.0:8", when="@0.11.2")
         depends_on("bazel@7.7.1:7", when="@0.11.1")
         depends_on("bazel@7.7.0:7", when="@0.8.1:0.11.0")
         depends_on("bazel@7.4.1:7", when="@0.5.3:0.8.0")
@@ -243,6 +247,9 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         when="@0.11.1 +rocm",
         working_dir="xla",
     )
+    # https://github.com/openxla/xla/pull/52224
+    # Teach the bzlmod XLA pin to merge TF_ROCM_SYSDEPS_PATHS under lib/rocm_sysdeps.
+    patch("rocm-sysdeps.patch", when="@0.12: +rocm")
 
     with when("@0.7.1:"):
         with default_args(msg="Clang is the only acceptable compiler."):
@@ -313,6 +320,13 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
             for pkg_dep in rocm_dependencies:
                 env.prepend_path("TF_ROCM_MULTIPLE_PATHS", spec[pkg_dep].prefix)
                 env.prune_duplicate_paths("TF_ROCM_MULTIPLE_PATHS")
+
+            if spec.satisfies("@0.12.0:"):
+                # XLA looks for these under lib/rocm_sysdeps. Their prefixes are
+                # merged there from TF_ROCM_SYSDEPS_PATHS.
+                for dep in ("libdrm", "numactl"):
+                    env.prepend_path("TF_ROCM_SYSDEPS_PATHS", spec[dep].prefix)
+                env.prune_duplicate_paths("TF_ROCM_SYSDEPS_PATHS")
 
             if spec.satisfies("@0.11:"):
                 # xla is not compatible with multiple ROCm paths if a singular ROCM_PATH is set
@@ -392,6 +406,11 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
                         "--bazel_options=--config=rocm_clang_local",
                     ]
                 )
+            if spec.satisfies("@0.12:"):
+                # Links pass -fuse-ld=lld, which Bazel does not find on PATH.
+                lld = join_path(spec["llvm-amdgpu"].prefix.bin, "ld.lld")
+                args.append(f"--bazel_options=--host_linkopt=-fuse-ld={lld}")
+                args.append(f"--bazel_options=--linkopt=-fuse-ld={lld}")
             if spec.satisfies("@0.4.38:") and not spec["hip"].external:
                 args.append("--bazel_options=--@local_config_rocm//rocm:rocm_path_type=multiple")
             if spec.satisfies("@0.4.38:0.5.2"):
@@ -414,4 +433,4 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
         python(*args)
 
         for whl in glob.glob(join_path("dist", "*.whl")):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", whl)
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", whl)

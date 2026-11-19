@@ -16,6 +16,8 @@ class PySphinx(PythonPackage):
     license("BSD-2-Clause")
     maintainers("adamjstewart")
 
+    version("9.2.0", sha256="90470459f3cab15d9dfed146c71cf77694b0445df17b2e0e69059cb9f7fc9ee4")
+    version("9.1.1", sha256="48b627f02908f22c601b3ba9c7b17265b4f315dd05c8bc64cd4da41183f44fbc")
     version("9.1.0", sha256="7741722357dd75f8190766926071fed3bdc211c74dd2d7d4df5404da95930ddb")
     version("9.0.4", sha256="594ef59d042972abbc581d8baa577404abe4e6c3b04ef61bd7fc2acbd51f3fa3")
     version("9.0.3", sha256="98ea46e18e3fbfe222c2aebd1988b52fb20afd0dd430f8b7ce06f64d2f53300f")
@@ -123,12 +125,18 @@ class PySphinx(PythonPackage):
         depends_on("py-flit-core@3.10:", when="@8.2:")
         depends_on("py-flit-core@3.7:", when="@5.2:")
 
+        # Historical dependencies
+        depends_on("py-setuptools", when="@4.4:5.1")
+
     with default_args(type=("build", "run")):
+        depends_on("python@3.13:", when="@9.2:")
         depends_on("python@3.12:", when="@9.1:")
         depends_on("python@3.11:", when="@8.2:")
         depends_on("python@3.10:", when="@8:")
         depends_on("python@3.9:", when="@7.2:")
         depends_on("python@3.8:", when="@6:")
+        # https://github.com/sphinx-doc/sphinx/commit/378a332a8fb7cc608d51c17e3732e57ef3ab0543
+        depends_on("python@:3.15", when="@:9.1.0")
         # https://github.com/sphinx-doc/sphinx/issues/13701
         depends_on("python@:3.13", when="@:8")
         # https://github.com/sphinx-doc/sphinx/issues/10440
@@ -151,12 +159,14 @@ class PySphinx(PythonPackage):
         depends_on("py-jinja2@3:", when="@5.2:")
         depends_on("py-jinja2@2.3:2", when="@:4.0.1")
         depends_on("py-jinja2@2.3:")
+        depends_on("py-pygments@2.19:", when="@9.2:")
         depends_on("py-pygments@2.17:", when="@7.4:")
         depends_on("py-pygments@2.14:", when="@7.2:")
         depends_on("py-pygments@2.13:", when="@6.0.1:")
         depends_on("py-pygments@2.12:", when="@5.2:")
         depends_on("py-pygments@2:")
-        depends_on("py-docutils@0.21:0.22", when="@9.1:")
+        depends_on("py-docutils@0.21:0.23", when="@9.2:")
+        depends_on("py-docutils@0.21:0.22", when="@9.1")
         depends_on("py-docutils@0.20:0.22", when="@9.0")
         depends_on("py-docutils@0.20:0.21", when="@7.4:8")
         depends_on("py-docutils@0.18.1:0.21", when="@7.3")
@@ -167,31 +177,34 @@ class PySphinx(PythonPackage):
         depends_on("py-docutils@0.14:0.18", when="@5.0")
         depends_on("py-docutils@0.14:0.17", when="@4")
         depends_on("py-docutils@0.12:0.16", when="@:3")
+        depends_on("py-snowballstemmer@3.0.1:", when="@9.2:")
         depends_on("py-snowballstemmer@2.2:", when="@7.4:")
         depends_on("py-snowballstemmer@2:", when="@5.2:")
         depends_on("py-snowballstemmer@1.1:")
+        depends_on("py-babel@2.18:", when="@9.2:")
         depends_on("py-babel@2.13:", when="@7.4:")
         depends_on("py-babel@2.9:", when="@5.2:")
         depends_on("py-babel@1.3:")
+        depends_on("py-alabaster@1:", when="@9.2:")
         depends_on("py-alabaster@0.7.14:", when="@8:")
         depends_on("py-alabaster@0.7.14:0.7", when="@7.3:7.4")
         depends_on("py-alabaster@0.7", when="@:7.2")
         depends_on("py-imagesize@1.3:", when="@5.2:")
         depends_on("py-imagesize", when="@1.4:")
+        depends_on("py-requests@2.32.5:", when="@9.2:")
         depends_on("py-requests@2.30:", when="@7.4:")
         depends_on("py-requests@2.25:", when="@6:")
         depends_on("py-requests@2.5:", when="@2:")
         depends_on("py-requests@2.4:", when="@1.5.2:")
+        depends_on("py-roman-numerals@3:", when="@9.2:")
         depends_on("py-roman-numerals@1:", when="@9:")
+        depends_on("py-packaging@25:", when="@9.2:")
         depends_on("py-packaging@23:", when="@7.4:")
         depends_on("py-packaging@21:", when="@5.2:")
         depends_on("py-packaging", when="@1.7:")
         depends_on("py-colorama@0.4.6:", when="@7.4: platform=windows")
         depends_on("py-colorama@0.4.5:", when="@5.2: platform=windows")
         depends_on("py-colorama@0.3.5:", when="platform=windows")
-
-    # Historical dependencies
-    depends_on("py-setuptools", when="@4.4:5.1", type="build")
 
     with default_args(type=("build", "run")):
         depends_on("py-importlib-metadata@6:", when="@7.4: ^python@:3.9")

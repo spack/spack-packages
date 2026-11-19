@@ -18,6 +18,8 @@ class Fabulous(CMakePackage):
     maintainers("fpruvost")
 
     version("master", branch="master", submodules=True)
+    version("1.1.6", sha256="514cdc9580c493beee3128d69a9b830b9f3c177fc1765b1961b247089f60ac85")
+    version("1.1.5", sha256="81afd6ceed4e755cdd3e9cd76feedec57d061bb2797ed50f3afb4c9741ada2aa")
     version("1.1.4", sha256="bdfad5addb6df40b811bc076eacf71555f6a6291fe043e8eb9f9b0a4ee9720c5")
     version("1.1.3", sha256="a75a5461984360286c26b104c1d01ac6cf7c3151bfaa42d8e980eb072981f3ef")
 

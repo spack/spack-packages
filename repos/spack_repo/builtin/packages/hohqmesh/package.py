@@ -14,7 +14,7 @@ class Hohqmesh(CMakePackage):
     git = "https://github.com/trixi-framework/HOHQMesh.git"
     url = "https://github.com/trixi-framework/HOHQMesh/archive/v1.0.0.tar.gz"
 
-    maintainers("fluidnumerics-joe")
+    maintainers("fluidnumericsJoe")
 
     license("MIT")
 

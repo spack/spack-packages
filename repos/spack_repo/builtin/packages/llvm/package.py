@@ -1,6 +1,7 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import glob
 import os
 import re
 
@@ -25,7 +26,7 @@ class LlvmDetection(PackageBase):
         reject = re.compile(
             r"-(vscode|cpp|cl|ocl|gpu|tidy|rename|scan-deps|format|refactor|offload|"
             r"check|query|doc|move|extdef|apply|reorder|change-namespace|"
-            r"include-fixer|import-test|dap|server|PerfectShuffle)"
+            r"include-fixer|import-test|dap|server|mcp|PerfectShuffle)"
         )
         return [x for x in exes_in_prefix if not reject.search(x)]
 
@@ -55,6 +56,9 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("23.1.5", sha256="70642a7e44e63c0ceff6624e5fd077b87766e4ed0bcd4a3ea8e3ffa3827ba538")
+    version("23.1.4", sha256="3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db")
+    version("23.1.3", sha256="791b560dee8f65fdf7b19ad5db0b4ac627467824d8b687957d8a437b806103f0")
     version("23.1.2", sha256="75788d759e6987a910975b902f554dc77c08b076b945b2cebde54116d8e831ca")
     version("23.1.1", sha256="851b3d701a4fbdd9f69536d4acda578469e810ca7056687d6556443f5fd39557")
     version("23.1.0", sha256="d8657b2a7291e518407bf13c4b41c85ef2cded2d4354097a2f451644dfc817b0")
@@ -331,7 +335,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     depends_on("z3@4.7.1:", when="+z3")
 
     # openmp dependencies
-    depends_on("perl-data-dumper", type=("build"))
+    depends_on("perl-data-dumper", type="build", when="@:19")  # see llvm-project/#95307
     depends_on("hwloc")
     depends_on("hwloc@2.0.1:", when="@13")
     with when("@:15"):
@@ -922,12 +926,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             env.append_flags("LDFLAGS", intel_libs.ld_flags)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        if self.spec.satisfies("+clang"):
-            env.set("CC", join_path(self.spec.prefix.bin, "clang"))
-            env.set("CXX", join_path(self.spec.prefix.bin, "clang++"))
-        if self.spec.satisfies("+flang"):
-            env.set("FC", join_path(self.spec.prefix.bin, "flang"))
-            env.set("F77", join_path(self.spec.prefix.bin, "flang"))
+        if self.cc:
+            env.set("CC", self.cc)
+        if self.cxx:
+            env.set("CXX", self.cxx)
+        if self.fortran:
+            env.set("FC", self.fortran)
+            env.set("F77", self.fortran)
 
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
@@ -1238,9 +1243,6 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             if self.spec.satisfies("+clang"):
                 install_tree("clang/bindings/python", python_platlib)
 
-        with working_dir(self.build_directory):
-            install_tree("bin", join_path(self.prefix, "libexec", "llvm"))
-
         cfg_files = []
         if spec.satisfies("+clang"):
             cfg_files.extend(("clang.cfg", "clang++.cfg"))
@@ -1250,9 +1252,13 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             cfg_files.append("flang.cfg")
         gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self.compiler)
         if gcc_install_dir_flag:
+            gcc_rpath_flag = get_gcc_rpath_flag(spec)
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # rpath the GCC runtime libraries, like gcc's own specs file does
+                    if gcc_rpath_flag:
+                        print(gcc_rpath_flag, file=f)
                     # make sure LLVM prefers binutils prefix over system default
                     if self.spec.satisfies("^binutils"):
                         print(f"-B{self.spec['binutils'].prefix.bin}", file=f)
@@ -1289,6 +1295,19 @@ def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
         return None
     libgcc_dir = os.path.dirname(libgcc_path)
     return f"--gcc-install-dir={libgcc_dir}" if os.path.exists(libgcc_dir) else None
+
+
+def get_gcc_rpath_flag(spec: Spec) -> Optional[str]:
+    """Get the linker-only $-Wl,-rpath,... flag for the runtime libraries of a Spack-built GCC."""
+    if not spec.satisfies("@20: %cxx=gcc"):
+        return None
+    gcc = spec["cxx"]
+    if gcc.external:
+        return None
+    for libdir in (gcc.prefix.lib64, gcc.prefix.lib):
+        if glob.glob(os.path.join(libdir, "libgcc_s.*")):
+            return f"$-Wl,-rpath,{libdir}"
+    return None
 
 
 def get_llvm_targets_to_build(spec):

@@ -15,4 +15,5 @@ class PerlExtutilsHelpers(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("0.028", sha256="c8574875cce073e7dc5345a7b06d502e52044d68894f9160203fcaab379514fe")
     version("0.026", sha256="de901b6790a4557cf4ec908149e035783b125bf115eb9640feb1bc1c24c33416")

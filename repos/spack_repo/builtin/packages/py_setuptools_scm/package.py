@@ -16,6 +16,7 @@ class PySetuptoolsScm(PythonPackage):
 
     license("MIT")
 
+    version("10.3.4", sha256="a69f28bfc245608781205e912faae437c2b2165773afa4e7b979d77447a69dd2")
     version("9.2.2", sha256="1c674ab4665686a0887d7e24c03ab25f24201c213e82ea689d2f3e169ef7ef57")
     version("8.2.1", sha256="51cfdd1deefc9b8c08d1a61e940a59c4dec39eb6c285d33fa2f1b4be26c7874d")
     version("8.2.0", sha256="a18396a1bc0219c974d1a74612b11f9dce0d5bd8b1dc55c65f6ac7fd609e8c28")
@@ -33,52 +34,41 @@ class PySetuptoolsScm(PythonPackage):
     variant("toml", default=True, description="Build with TOML support")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.8:", when="@8:")
-        depends_on("python@3.7:", when="@7:")
-        depends_on("python@3.6:", when="@6:")
-        depends_on("python@2.7:2.8,3.5:", when="@4:")
-        depends_on("python@2.7:2.8,3.4:")
-
         depends_on("python@:3.10", when="@:7.0.5")
+
+        depends_on("py-vcs-versioning@2.5:2", when="@10:")
+
+        depends_on("py-packaging@20:", when="@6.3:")
 
         depends_on("py-setuptools@61:", when="@8:")
         depends_on("py-setuptools@45:", when="@6:")
         depends_on("py-setuptools@42:", when="@5:")
         depends_on("py-setuptools@34.4:")
-
         # use of vendored pkg_resources
         depends_on("py-setuptools@:80", when="@:6")
 
-        depends_on("py-tomli@1:2.0.2", when="@8.2.0: ^python@:3.10")
+        depends_on("py-tomli@1:", when="@10: ^python@:3.10")
+        depends_on("py-tomli@1:2.0.2", when="@8.2.0:9 ^python@:3.10")
         depends_on("py-tomli@1:", when="@7.1.0:8.1.0 ^python@:3.10")
         depends_on("py-tomli@1:", when="@7.0.0:7.0.5")
         depends_on("py-tomli@1:", when="+toml @6.3.0:6.4.2")
         depends_on("py-toml", when="+toml @6.1.1:6.2.0")
 
-        depends_on("py-rich", when="@8.0.0:8.0.3")
-
-        depends_on("py-importlib-metadata@4.6:", when="@8.0.0:8.0.2 ^python@:3.9")
-        depends_on("py-importlib-metadata", when="@7 ^python@:3.7")
-
-        depends_on("py-typing-extensions", when="@8.1.0: ^python@:3.9")
+        depends_on("py-typing-extensions@4.1:", when="@10: ^python@:3.10")
+        depends_on("py-typing-extensions", when="@8.1.0:9 ^python@:3.9")
         depends_on("py-typing-extensions", when="@8.0.4")
         depends_on("py-typing-extensions", when="@8.0.0:8.0.3 ^python@:3.10")
         depends_on("py-typing-extensions", when="@7")
 
-        depends_on("py-packaging@24:", when="@7.1:")
-        # https://github.com/pypa/setuptools/issues/4483#issuecomment-2236528158
-        depends_on("py-packaging@22:", when="@7: ^py-setuptools@71:")
-        depends_on("py-packaging@20:", when="@6.3:")
-
-        depends_on("py-wheel", when="@3.4.0:6.4.2")
-
         depends_on("git")
 
-    with default_args(type=("run")):
-        depends_on("py-typing-extensions", when="@8.1: ^python@:3.10")
-        depends_on("py-typing-extensions", when="@7:8.0.4")
+        # Historical dependencies
+        depends_on("py-importlib-metadata@4.6:", when="@8.0.0:8.0.2 ^python@:3.9")
+        depends_on("py-importlib-metadata", when="@7 ^python@:3.7")
 
-        depends_on("py-importlib-metadata", when="@7: ^python@:3.7")
+        depends_on("py-rich", when="@8.0.0:8.0.3")
+
+        depends_on("py-wheel", when="@3.4.0:6.4.2")
 
     def url_for_version(self, version):
         # setuptools_scm-7.1.0.tar.gz with an underscore became

@@ -27,7 +27,7 @@ class Erf(CMakePackage, CudaPackage):
 
     test_requires_compiler = True
 
-    maintainers("larenspear")
+    maintainers("jmsexton03", "larenspear")
 
     license("BSD-3-Clause", checked_by="larenspear")
 

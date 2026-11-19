@@ -20,6 +20,7 @@ class Libmicrohttpd(AutotoolsPackage, GNUMirrorPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("1.0.10", sha256="04bfe8ef75db7d629a33de767599765cecadc56274a39822d5d081030d577685")
     version("1.0.2", sha256="df324fcd0834175dab07483133902d9774a605bfa298025f69883288fd20a8c7")
     version("1.0.1", sha256="a89e09fc9b4de34dde19f4fcb4faaa1ce10299b9908db1132bbfa1de47882b94")
     version("0.9.77", sha256="9e7023a151120060d2806a6ea4c13ca9933ece4eacfc5c9464d20edddb76b0a0")

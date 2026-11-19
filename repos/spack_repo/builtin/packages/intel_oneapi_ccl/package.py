@@ -19,7 +19,7 @@ class IntelOneapiCcl(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     # oneAPI Collective Communications Library
     homepage = (
@@ -27,6 +27,13 @@ class IntelOneapiCcl(IntelOneApiLibraryPackage):
     )
 
     depends_on("intel-oneapi-mpi")
+
+    version(
+        "2022.2.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b1419e87-5a3b-4267-beb7-881f2d25ca4f/intel-oneccl-2022.2.0.438_offline.sh",
+        sha256="2eb0d8f12fddf178d4463b21a7fde5eeecef28c472a18299b34869fbd06f6611",
+        expand=False,
+    )
 
     version(
         "2022.1.0",

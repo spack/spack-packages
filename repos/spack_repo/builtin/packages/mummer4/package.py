@@ -15,6 +15,8 @@ class Mummer4(AutotoolsPackage):
         "https://github.com/mummer4/mummer/releases/download/v4.0.0beta2/mummer-4.0.0beta2.tar.gz"
     )
 
+    license("Artistic-2.0")
+
     version("4.0.1", sha256="bc20ae2701a0b2e323e4e515b7cfa18a0f0cb34a4ff5844b289b2de0154e3d3e")
     version("4.0.0rc1", sha256="85006adb2d6539c2f738c3e3bb14b58bb6f62cd6c6ca5ede884a87ae76e07d1d")
     version(
@@ -30,5 +32,5 @@ class Mummer4(AutotoolsPackage):
     depends_on("awk", type="run")
     depends_on("sed", type="run")
 
-    # Adds missing inclusion of <cstdint>
-    patch("48bit_index.patch", level=0, when="%gcc@13:")
+    # Adds missing inclusion of <cstdint>; included upstream from 4.0.0
+    patch("48bit_index.patch", level=0, when="@:4.0.0rc1 %gcc@13:")

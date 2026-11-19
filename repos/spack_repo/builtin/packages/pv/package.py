@@ -18,6 +18,7 @@ class Pv(AutotoolsPackage):
     license("GPL-3.0-or-later", when="@1.8.0:", checked_by="RemiLacroix-IDRIS")
     license("Artistic-2.0", when="@:1.7.24", checked_by="RemiLacroix-IDRIS")
 
+    version("1.12.7", sha256="5326ed7ee95ef18039390c0b17891ac28985ac7c7a4235070fab767c1fe37bd8")
     version("1.8.5", sha256="d22948d06be06a5be37336318de540a2215be10ab0163f8cd23a20149647b780")
     version("1.6.20", sha256="b5f1ee79a370c5287e092b6e8f1084f026521fe0aecf25c44b9460b870319a9e")
     version("1.6.6", sha256="94defb4183ae07c44219ba298d43c4991d6e203c29f74393d72ecad3b090508a")

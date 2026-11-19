@@ -23,6 +23,7 @@ class Dftd4(MesonPackage, CMakePackage):
     build_system("cmake", "meson", default="meson")
 
     version("main", branch="main")
+    version("4.3.1", sha256="32c0b498a7b07b1552e727333d9c83ab627d1bdf4ff46b7b8b31af9159fb2928")
     version("4.3.0", sha256="e94c5d021c0a4b4aa9b5587e36fda2f398271dc2dc1abfbe097fdb04022bef35")
     version("4.2.0", sha256="467e024071510ad82b862c66c383c2ebc164fc1140e15dfc79f48d2f999fd184")
     version("4.1.1", sha256="c8e6388d7d7d748dbcf91117f35aa50108492d4fd2266d60782cf85a16651887")
@@ -68,7 +69,9 @@ class Dftd4(MesonPackage, CMakePackage):
 
     depends_on("mctc-lib@0.3", when="@:3.7")
     depends_on("mctc-lib@0.6:", when="@4.3:")
+    depends_on("mctc-lib@0.7:", when="@4.4:")
     depends_on("multicharge@0.3", when="@:3.7")
+    depends_on("multicharge@0.6:", when="@4.3.1:")
     extends("python", when="+python")
 
     def url_for_version(self, version):

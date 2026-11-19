@@ -4,7 +4,7 @@
 
 import os
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
 
@@ -105,23 +105,26 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
         ]
 
-        if self.spec.satisfies("+cuda") and self.spec.satisfies("@:2.3.0"):
+        if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
-            if len(cuda_arch) > 0 or cuda_arch[0] != "none":
-                nvcc_flags = ""
-                for nvflag in self.cuda_flags(cuda_arch):
-                    nvcc_flags += "{0};".format(nvflag)
+            if "none" not in cuda_arch:
+                if self.spec.satisfies("@:2.3.0"):
+                    nvcc_flags = ""
+                    for nvflag in self.cuda_flags(cuda_arch):
+                        nvcc_flags += "{0};".format(nvflag)
 
-                args.append("-DCUDA_NVCC_FLAGS={0}".format(nvcc_flags))
-                archs = ";".join(cuda_arch)
-                args.append("-DCMAKE_CUDA_ARCHITECTURES=%s" % archs)
+                    args.append("-DCUDA_NVCC_FLAGS={0}".format(nvcc_flags))
+                args.append(CMakeBuilder.define_cuda_architectures(self))
 
         if self.spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
 
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
-                args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
+                if self.spec.satisfies("@2.4:"):
+                    args.append(CMakeBuilder.define_hip_architectures(self))
+                else:
+                    args.append("-DCMAKE_CXX_FLAGS={0}".format(self.hip_flags(rocm_arch)))
 
             # See https://github.com/ROCm/rocFFT/issues/322
             if self.spec.satisfies("^cmake@3.21.0:3.21.2"):

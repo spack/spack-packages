@@ -26,6 +26,7 @@ class Hipcc(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/llvm-project/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.1.0", sha256="db317aadb90366b61af0fd93b0ccf3cefe70a18e4e37c23744d968ea6f900654")
     version("10.0.0", sha256="92dcfe3d2e1ca52b460c7f168d8d74e47cd17370fa8bdffb919174115f94ab0f")
     version("7.14.0", sha256="db365c1f0ab500eeee04a990d29d79a6bb667874f8069f7b69920ca62c352d2f")
     version("7.13.0", sha256="49f5e3d743b51aae87807cd44b00c2aa9fdeb7e78e2fa84f21d69b8be573e161")
@@ -55,9 +56,8 @@ class Hipcc(ROCmLibrary, CMakePackage):
     version("5.7.1", sha256="d47d27ef2b5de7f49cdfd8547832ac9b437a32e6fc6f0e9c1646f4b704c90aee")
     version("5.7.0", sha256="9f839bf7226e5e26f3150f8ba6eca507ab9a668e68b207736301b3bb9040c973")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("numactl")
 

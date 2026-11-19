@@ -21,6 +21,7 @@ class Tblite(CMakePackage, MesonPackage):
     license("LGPL-3.0-or-later")
 
     version("main", branch="main")
+    version("0.8.0", sha256="2d00fd612b3fcbb69365de53577080457ceae221cd151be52e7a9977b4832ad3")
     version("0.7.0", sha256="3a7cb4602101e828caf41c38ca5e30f82de82d0d26d5db40168acdcad3462b92")
     version("0.6.0", sha256="372281aedb89234168d00eb691addb303197a9462a9c55d145c835f2cf5e8b42")
     version("0.5.0", sha256="e8a70b72ed0a0db0621c7958c63667a9cd008c97c868a4a417ff1bc262052ea8")
@@ -36,11 +37,16 @@ class Tblite(CMakePackage, MesonPackage):
     variant("hdf5", default=False, description="Enable HDF5 support", when="@0.7.0:")
     # variant("ddx", default=False, description="Enable DDX support", when="@0.7.0:")
 
+    variant("mpi", default=False, description="Enable MPI support", when="@0.8:")
+    variant("scalapack", default=False, description="Enable ScaLAPACK support", when="+mpi")
+
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
     depends_on("blas")
     depends_on("lapack")
+    depends_on("mpi", when="+mpi")
+    depends_on("scalapack", when="+scalapack")
     depends_on("trexio", when="+trexio")
     depends_on("hdf5", when="+hdf5")
     # depends_on("ddx", when="+ddx")
@@ -56,6 +62,7 @@ class Tblite(CMakePackage, MesonPackage):
         depends_on(f"toml-f build_system={build_system}", when=f"build_system={build_system}")
 
     depends_on("dftd4@:3.7", when="@:0.5")
+    depends_on("mctc-lib@0.7:", when="@0.8:")
     depends_on("meson@0.57.2:", type="build", when="build_system=meson")  # mesonbuild/meson#8377
     depends_on("pkgconfig", type="build")
     depends_on("py-cffi", when="+python")
@@ -88,6 +95,11 @@ class MesonBuilder(meson.MesonBuilder):
                 "-Dhdf5={0}".format("enabled" if "+hdf5" in self.spec else "disabled"),
                 "-Dddx=false",
             ]
+        if self.spec.satisfies("@0.8.0:"):
+            args += [
+                "-Dmpi={0}".format("enabled" if "+mpi" in self.spec else "disabled"),
+                "-Dscalapack={0}".format("enabled" if "+scalapack" in self.spec else "disabled"),
+            ]
         return args
 
 
@@ -102,5 +114,10 @@ class CMakeBuilder(cmake.CMakeBuilder):
                 self.define_from_variant("TBLITE_WITH_TREXIO", "trexio"),
                 self.define_from_variant("TBLITE_WITH_HDF5", "hdf5"),
                 self.define("TBLITE_WITH_DDX", False),
+            ]
+        if self.spec.satisfies("@0.8.0:"):
+            args += [
+                self.define_from_variant("TBLITE_WITH_MPI", "mpi"),
+                self.define_from_variant("TBLITE_WITH_SCALAPACK", "scalapack"),
             ]
         return args

@@ -23,6 +23,7 @@ class PyJax(PythonPackage):
 
     tags = ["e4s"]
 
+    version("0.12.0", sha256="320f52f19953fc08d224e9993632ac16b5ba2e5cfce926a30a253a7bee45e22a")
     version("0.11.2", sha256="540dc0bed96bd5a0d8acca15cf16198fea98ef2fc151d40bdf1ace49eb76efd9")
     version("0.11.1", sha256="43e0d45b1dac002eca04c2de73298395225dd0d4651e3f573a540eaa18abfd80")
     version("0.11.0", sha256="a2feb7cfa48bb35d36b8ecec16a4ec24044dec01935f779b28b017213697b195")
@@ -96,6 +97,7 @@ class PyJax(PythonPackage):
         depends_on("py-ml-dtypes@0.2:", when="@0.4.14:")
         depends_on("py-ml-dtypes@0.1:", when="@0.4.9:")
         depends_on("py-ml-dtypes@0.0.3:", when="@0.4.7:")
+        depends_on("py-numpy@2.2:", when="@0.12:")
         depends_on("py-numpy@2.1:", when="@0.11:")
         depends_on("py-numpy@2.0:", when="@0.7.2:")
         depends_on("py-numpy@1.26:", when="@0.6.2:")
@@ -120,6 +122,7 @@ class PyJax(PythonPackage):
         # jax/_src/lib/__init__.py
         # https://github.com/google/jax/commit/8be057de1f50756fe7522f7e98b2f30fad56f7e4
         for v in [
+            "0.12.0",
             "0.11.2",
             "0.11.1",
             "0.11.0",

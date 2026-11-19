@@ -20,6 +20,8 @@ class Pandorasdk(CMakePackage):
     maintainers("jmcarcell", "wdconinc")
 
     version("master", branch="master")
+    version("5.2.0", sha256="dbdc0a62b76a0dea0c7e53f2420849d621c042a8bd509cfd1d7dc02ebe43873e")
+    version("5.1.0", sha256="67f7d1d32e132bbbeb11716bae3ffcab437642ef2914e8bb0f7f396cff2941bb")
     version("5.0.0", sha256="d4f57bd5d9aa8a2a588816fc1da2b78e0704405b48674ae18d597d99769c0142")
     version("4.1.0", sha256="30f544c7f8981f40e7544e004db8d67bd2399a3c067a4010da3b012182c6fd25")
     version("4.0.2", sha256="9c8e051dbfd3be711dc7940658b78558277e2ec1c6305c0f7c7bb271abd3e4a8")

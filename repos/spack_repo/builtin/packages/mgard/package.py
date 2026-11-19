@@ -82,6 +82,12 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
         "timing", when="@compat-2022-11-18:", default=False, description="Enable profile timings"
     )
     variant(
+        "mdr",
+        when="@1.5:",
+        default=True,
+        description="Enable multi-precision data refactoring",
+    )
+    variant(
         "unstructured",
         when="@compat-2022-11-18:",
         default=False,
@@ -109,6 +115,8 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("hipcub", when="+rocm")
     with when("+openmp"):
         depends_on("llvm-openmp", when="%apple-clang")
+    with when("+mdr"):
+        depends_on("mpi")
 
     conflicts("cuda_arch=none", when="+cuda")
     conflicts(
@@ -177,5 +185,8 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define_from_variant("MGARD_ENABLE_TIMING", "timing"))
             args.append(self.define_from_variant("MGARD_ENABLE_SERIAL", "serial"))
             args.append(self.define_from_variant("MGARD_ENABLE_UNSTRUCTURED", "unstructured"))
+
+        if self.spec.satisfies("@1.5:"):
+            args.append(self.define_from_variant("MGARD_ENABLE_MDR", "mdr"))
 
         return args

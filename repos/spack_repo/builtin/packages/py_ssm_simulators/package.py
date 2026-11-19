@@ -18,10 +18,14 @@ class PySsmSimulators(PythonPackage):
 
     license("MIT")
 
+    version("0.15.0", sha256="2d9be260e0d7041c8dc4b3fbf1ea84021eaac15eaf52b4f2239408500ea12812")
     version("0.14.0", sha256="521d260491ba894a57945518bf362919888ea482188b0082839ce0c0aa17a840")
+
+    variant("gsl", default=False, description="Enable gsl support")
 
     with default_args(type="build"):
         depends_on("cxx")
+        depends_on("gmake@4.4:")
 
         depends_on("py-setuptools")
         depends_on("py-cython@0.29.23:")
@@ -40,3 +44,11 @@ class PySsmSimulators(PythonPackage):
         depends_on("py-pyyaml@6.0.2:")
         depends_on("py-tqdm@4.67.1:")
         depends_on("py-cloudpickle")
+
+        depends_on("gsl", when="+gsl")
+
+    def setup_build_environment(self, env):
+        # explicitly disable GSL if not used, because some system throw
+        # PermissionsDenied error instead of FileNotFound when gsl-config is
+        # called but not available
+        env.set("SSMS_FORCE_GSL", "1" if self.spec.satisfies("+gsl") else "0")

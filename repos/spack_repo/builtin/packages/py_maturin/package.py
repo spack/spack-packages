@@ -19,6 +19,7 @@ class PyMaturin(PythonPackage):
 
     license("Apache-2.0 OR MIT")
 
+    version("1.16.0", sha256="13e69ca12542999d8c5467131de72a49bb76e4c284b9a45c5783df7c0fcb3a8a")
     version("1.14.1", sha256="9d6577a62cd08e0ceba7a0db06fb098e0c9b1b3429bad747a4f3a18215a1b3df")
     version("1.13.1", sha256="9a87ff3b8e4d1c6eac33ebfe8e261e8236516d98d45c0323550621819b5a1a2f")
     version("1.10.2", sha256="259292563da89850bf8f7d37aa4ddba22905214c1e180b1c8f55505dfd8c0e81")

@@ -319,6 +319,15 @@ class Hdf5(CMakePackage):
     # will include the patch code changes.
     patch("hdf5_1_14_0_config_find_mpi.patch", when="@1.14.0")
 
+    # Fix empty MPI_Fortran_INCLUDE_DIRS for high-level Fortran interface
+    # (hl/fortran) when building with a non-wrapper Fortran compiler.  See
+    # https://github.com/HDFGroup/hdf5/pull/6732
+    #
+    # Version 1.14.4 was when 'use mpi_f08' was introduced.  The PR
+    # https://github.com/HDFGroup/hdf5/pull/3959 landed as commit 30b0f89f869
+    # on the 1.14.x line and commit d79667eb0c5 on the 2.x line
+    patch("hl-fortran-mpi-f08-module-path.patch", when="@1.14.4:2.2.0")
+
     # The argument 'buf_size' of the C function 'h5fget_file_image_c' is
     # declared as intent(in) though it is modified by the invocation. As a
     # result, aggressive compilers such as Fujitsu's may do a wrong

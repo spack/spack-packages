@@ -22,6 +22,7 @@ class KynemaDriver(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0")
 
+    version("2.2.0", tag="v2.2.0", commit="7667b274b8e154f84219a700b48dab7e1cd4b473")
     version("main", branch="main")
 
     variant("kynema_sgf_gpu", default=False, description="Enable Kynema-SGF on the GPU")

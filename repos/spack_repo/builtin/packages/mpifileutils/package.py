@@ -28,6 +28,7 @@ class Mpifileutils(CMakePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="main")
+    version("0.12.1", sha256="2f9ffec18e42920f10880c404786a941ee9de7f676f9910c8fea720741e08af8")
     version("0.12", sha256="adfcfd2c15ad5ef827bb19def2dd094bff4e2aab7ba47e1efc5d1b0b7ba1bf2f")
     version("0.11.1", sha256="e2cba53309b5b3ee581b6ff82e4e66f54628370cce694c34224ed947fece32d4")
     version("0.11", sha256="f5dc1b39077b3c04f79b2c335c4fd80306f8c57ecfbcacbb82cf532caf02b5fd")
@@ -65,7 +66,7 @@ class Mpifileutils(CMakePackage):
     depends_on("daos", when="+daos")
     depends_on("bzip2")
     depends_on("libcap")
-    depends_on("openssl")
+    depends_on("openssl", when="@:12.0.0")
     depends_on("cmake@3.1:", type="build")
 
     def flag_handler(self, name, flags):

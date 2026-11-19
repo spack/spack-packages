@@ -29,16 +29,22 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
 
     license("Apache-2.0")
 
+    version("4.0.3", sha256="325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9")
+    version("3.6.5", sha256="a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98")
+    # spack bootstrap builds from prebuild dev tools (built on python@3.14.3 ^openssl@3.6.1)
+    # version 3.6.1 can only be deprecated once the dev tools are rebuilt
     version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
-    version("3.5.5", sha256="b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89")
-    version("3.4.4", sha256="7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010")
+    version("3.5.9", sha256="603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a")
+    version("3.4.8", sha256="9de9ce2f29e584044ae07ab93fc601637be01fdc91d109c5a655ec7419e6022b")
     version("3.3.6", sha256="22db04f3c8f9a808c9795dcf7d2713ff40c12c410ea2d1f6435c6c9c8558958b")
     version("3.2.6", sha256="89681a9ddaa9ed7cf25ea8ef61338db805200bae47d00510490623547380c148")
     version("3.0.19", sha256="fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072")
 
     with default_args(deprecated=True):
         version("3.6.0", sha256="b6a5f44b7eb69e3fa35dbf15524405b44837a481d43d81daddde3ff21fcbb8e9")
+        version("3.5.5", sha256="b28c91532a8b65a1f983b4c28b7488174e4a01008e29ce8e69bd789f28bc2a89")
         version("3.5.4", sha256="967311f84955316969bdb1d8d4b983718ef42338639c621ec4c34fddef355e99")
+        version("3.4.4", sha256="7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010")
         version("3.4.3", sha256="fa727ed1399a64e754030a033435003991aee36bda9a5b080995cb2ac5cf7f37")
         version("3.4.1", sha256="002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3")
         version("3.3.5", sha256="9d62c00a5a6903740c8703f0e006257f429d565d3b91ac1a9bd4a4c700002e01")

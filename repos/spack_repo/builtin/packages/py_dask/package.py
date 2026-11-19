@@ -157,6 +157,7 @@ class PyDask(PythonPackage):
             depends_on("py-distributed@2026.7.1", when="@2026.7.1")
             depends_on("py-distributed@2026.3.0:", when="@2026.3.0")
             depends_on("py-distributed@2025.7.0", when="@2025.7.0")
+            depends_on("py-distributed@2025.5.0", when="@2025.5.0")
             depends_on("py-distributed@2025.3.0", when="@2025.3.0")
             depends_on("py-distributed@2024.7.1", when="@2024.7.1")
             depends_on("py-distributed@2024.12.1", when="@2024.12.1")

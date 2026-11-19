@@ -49,7 +49,7 @@ class Frontistr(FrontistrBase):
     homepage = "https://www.frontistr.com/"
     git = "https://gitlab.com/FrontISTR-Commons/FrontISTR.git"
 
-    maintainers("hiroshi.okuda", "kgoto", "morita", "inagaki", "michioga")
+    maintainers("kgoto", "morita", "inagaki", "michioga")
 
     license("MIT")
 

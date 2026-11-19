@@ -42,7 +42,7 @@ class PyTfdlpack(CMakePackage, PythonExtension):
 
     def install(self, spec, prefix):
         with working_dir("python"):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # Prevent TensorFlow from taking over the whole GPU

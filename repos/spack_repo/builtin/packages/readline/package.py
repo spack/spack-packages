@@ -33,7 +33,9 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("ncurses")
 
-    # TODO: patches below are not managed by the GNUMirrorPackage base class
+    # Patches below are not fetched through the GNUMirrorPackage base class (it only
+    # manages the main tarball URL), so we point them at ftpmirror.gnu.org ourselves,
+    # for the same reliability reasons GNUMirrorPackage uses the mirror redirector.
     for verstr, num, checksum in [
         ("8.3", "001", "21f0a03106dbe697337cd25c70eb0edbaa2bdb6d595b45f83285cdd35bac84de"),
         ("8.3", "002", "e27364396ba9f6debf7cbaaf1a669e2b2854241ae07f7eca74ca8a8ba0c97472"),
@@ -73,7 +75,7 @@ class Readline(AutotoolsPackage, GNUMirrorPackage):
     ]:
         ver = Version(verstr)
         patch(
-            f"https://ftp.gnu.org/gnu/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
+            f"https://ftpmirror.gnu.org/gnu/readline/readline-{ver}-patches/readline{ver.joined}-{num}",
             level=0,
             when=f"@{ver}",
             sha256=checksum,

@@ -22,6 +22,7 @@ class Pkgconf(AutotoolsPackage):
 
     maintainers("CodingYayaToure")
 
+    version("3.0.10", sha256="9371b2f6372da574d4c6dc96fe9b1463037bcf6afcb6671c1555afde7b17e2de")
     version("2.5.1", sha256="cd05c9589b9f86ecf044c10a2269822bc9eb001eced2582cfffd658b0a50c243")
     version("2.3.0", sha256="3a9080ac51d03615e7c1910a0a2a8df08424892b5f13b0628a204d3fcce0ea8b")
     version("2.2.0", sha256="b06ff63a83536aa8c2f6422fa80ad45e4833f590266feb14eaddfe1d4c853c69")

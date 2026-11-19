@@ -12,12 +12,13 @@ class Mpl(CMakePackage):
 
     homepage = "https://rabauke.github.io/mpl/html/"
     git = "https://github.com/rabauke/mpl.git"
-    url = "https://github.com/rabauke/mpl/archive/refs/tags/v0.4.0.tar.gz"
+    url = "https://github.com/rabauke/mpl/archive/refs/tags/v0.5.0.tar.gz"
     maintainers("rabauke")
 
     license("BSD-3-Clause")
 
     version("develop", branch="master")
+    version("0.5.0", tag="v0.5.0", commit="014f3efdc8e7a5c1a9549a593b0c50bf821770fb")
     version("0.4.0", tag="v0.4.0", commit="a7469769a3e183104594252c45c8026d3d6f87ec")
     version("0.3.0", tag="v0.3.0", commit="e6bd4926914127f3609a14474aa4a9c4fabbff0b")
     version("0.2.1", tag="v0.2.1", commit="5bee297b453d7b66a803453bfc6884611a36c4d0")

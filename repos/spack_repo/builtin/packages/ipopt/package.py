@@ -104,6 +104,11 @@ class Ipopt(AutotoolsPackage):
             mumps_flags = "-ldmumps -lmumps_common -lpord"
             if "^mumps~mpi" in spec:
                 mumps_flags = mumps_flags + " -lmpiseq"
+            if "^mumps+mpi" in spec:
+                env["CC"] = spec["mpi"].mpicc
+                env["CXX"] = spec["mpi"].mpicxx
+                env["F77"] = spec["mpi"].mpif77
+                env["FC"] = spec["mpi"].mpifc
             mumps_libcmd = "-L%s " % mumps_dir.lib + mumps_flags
             if spec.satisfies("@:3.12.13"):
                 args.extend(

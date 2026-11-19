@@ -20,6 +20,11 @@ class Dmtcp(AutotoolsPackage):
 
     maintainers("karya0")
     version("main", branch="main")
+    version(
+        "4.2.0",
+        sha256="043410566fd7c09f21e0ec485cf72e9481722629ea877650142b7505e0d7f2d2",
+        url="https://github.com/dmtcp/dmtcp/archive/refs/tags/v4.2.0.tar.gz",
+    )
     version("3.2.0", sha256="d6954423769027ecfdcc4ff7e382d01974f64aa395a90775276f65df81117d55")
     version("3.0.0", sha256="2c7e95e1dbc55db33433bfee48a65f274298e98f246a36ab6dad1e0694750d37")
     version("2.6.0", sha256="3ed62a86dd0cb9c828b93ee8c7c852d6f9c96a0efa48bcfe867521adf7bced68")
@@ -28,3 +33,7 @@ class Dmtcp(AutotoolsPackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     patch("for_aarch64.patch", when="@2.6.0 target=aarch64:")
+
+    # src/mtcp builds mtcp_restart with an explicit -O0 after $(CFLAGS). Flags
+    # injected by the compiler wrapper come last and would override it.
+    flag_handler = build_system_flags

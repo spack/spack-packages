@@ -15,6 +15,7 @@ class PyElecsolver(PythonPackage):
 
     maintainers("williampiat3")
 
+    version("2.2.1", sha256="49c2bc6d30b2bc969012e155c101e43134a0a74652458e2aff658f25df627c7d")
     version("2.2.0", sha256="dbd5ba1ce2fff58e28a154a725a4a5574eb2bbb3cca07dda15fce0363eeedc1f")
     version("2.1.0", sha256="17a33dd4d6f8551904baa55c840d561cff00dc046b4bf7e11bad7e69722c4faa")
     version("2.0.1", sha256="126b02e90e01405109ddd52255a43015d5e0e634945c46baa13c6d41d0e4e05e")

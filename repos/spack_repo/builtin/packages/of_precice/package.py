@@ -22,6 +22,7 @@ class OfPrecice(Package):
 
     version("develop", branch="develop")
     version("master", branch="master")
+    version("1.4.0", sha256="399c89ab0fc5dfcff87f77433dddb60d4de0b2071de9b78b0e756e4079fd6a21")
     version("1.3.1", sha256="b5af9f9ea92c20141b93bb54d99ef1386a7caced5289f0fb0144955267e2a000")
     version("1.2.3", sha256="e5fbbc633a573cd1a952a98f7f05078a384078a8ea9cd166825148538a23683e")
     version("1.2.2", sha256="9d2d8d372b39c4e672e6311e92545d335c52c8eb3cefea34a794572523583aa5")
@@ -36,7 +37,6 @@ class OfPrecice(Package):
 
     depends_on("openfoam+source")
     depends_on("precice")
-    depends_on("yaml-cpp")
     depends_on("pkgconfig", type="build")
 
     depends_on("precice@:2", when="@:1.2.3")

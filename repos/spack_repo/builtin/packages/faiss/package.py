@@ -161,7 +161,7 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
 
         if self.spec.satisfies("+python"):
             with working_dir("python"):
-                pip(*PythonPipBuilder.std_args(pkg), f"--prefix={prefix}", ".")
+                pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", ".")
 
         if "+tests" not in self.spec:
             return

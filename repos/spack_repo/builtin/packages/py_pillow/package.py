@@ -45,7 +45,9 @@ class PyPillowBase(PythonPackage):
     # Required dependencies
     # https://pillow.readthedocs.io/en/stable/installation/python-support.html
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.10:3.14", when="@12:")
+        depends_on("python@3.11:3.15", when="@13:")
+        depends_on("python@3.10:3.15", when="@12.3")
+        depends_on("python@3.10:3.14", when="@12.0:12.2")
         depends_on("python@3.9:3.14", when="@11.3")
         depends_on("python@3.9:3.13", when="@11.0:11.2")
         depends_on("python@3.8:3.13", when="@10.4")
@@ -157,8 +159,12 @@ class PyPillow(PyPillowBase):
     license("MIT-CMU", when="@11:")
     license("HPND", when="@:10")
 
-    version("12.3.0", sha256="3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce")
+    version("13.0.0", sha256="cdcd1ba258178f7356d74170c9a81ba4eab6a5d55748bc402a5a2a6fe6be3510")
     with default_args(deprecated=True):
+        # https://pillow.readthedocs.io/en/stable/releasenotes/13.0.0.html#security
+        version(
+            "12.3.0", sha256="3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce"
+        )
         # https://www.cve.org/CVERecord?id=CVE-2026-55798
         # https://www.cve.org/CVERecord?id=CVE-2026-54059
         # https://www.cve.org/CVERecord?id=CVE-2026-54060
@@ -251,6 +257,7 @@ class PyPillow(PyPillowBase):
     depends_on("c", type="build")
 
     for ver in [
+        "13.0.0",
         "12.3.0",
         "12.2.0",
         "12.1.1",
