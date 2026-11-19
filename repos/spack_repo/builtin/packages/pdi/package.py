@@ -96,7 +96,6 @@ class Pdi(CMakePackage):
 
     variant("benchs", default=False, description="Build benchmarks", when="@:1.12")
     variant("docs", default=False, description="Build documentation")
-    variant("tests", default=False, description="Build tests")
     variant("fortran", default=True, description="Enable Fortran support")
     variant("python", default=True, description="Enable Python support")
 
@@ -124,8 +123,8 @@ class Pdi(CMakePackage):
     extends("python", when="+python")
     depends_on("py-pybind11@2.9.1:3", type=("link"), when="@1.10.0: +python")
     depends_on("py-pybind11@2.4.3:3", type=("link"), when="+python")
-    depends_on("py-numpy@1.21.5:2", type=("run"), when="@1.10.0: +python")
-    depends_on("py-numpy@1.17.4:2", type=("run"), when="+python")
+    depends_on("py-numpy@1.21.5:2", type=("run", "test"), when="@1.10.0: +python")
+    depends_on("py-numpy@1.17.4:2", type=("run", "test"), when="+python")
     depends_on(
         "py-setuptools", type=("build"), when="@1.8.3: +python^python@3.12:"
     )  # Needs distutils.
@@ -151,7 +150,7 @@ class Pdi(CMakePackage):
             self.define_from_variant("BUILD_DOCUMENTATION", "docs"),
             self.define_from_variant("BUILD_FORTRAN", "fortran"),
             self.define_from_variant("BUILD_PYTHON", "python"),
-            self.define_from_variant("BUILD_TESTING", "tests"),
+            self.define("BUILD_TESTING", self.run_tests),
         ]
         if self.spec.satisfies("@:1.12"):
             args.append(self.define_from_variant("BUILD_BENCHMARKING", "benchs"))
