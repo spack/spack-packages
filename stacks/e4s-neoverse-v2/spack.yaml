@@ -94,7 +94,7 @@ spack:
   - kokkos-fft host_backend=fftw-openmp
   - kokkos-tools
   - lammps
-  - lbann
+  - lbann ~pfe  # +pfe: py-protobuf@:4.21 conflicts with %gcc@14:
   - legion
   - libceed
   - libnrm
