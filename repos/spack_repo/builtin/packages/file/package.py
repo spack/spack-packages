@@ -44,7 +44,7 @@ class File(AutotoolsPackage):
 
     # file-5.48 introduced the use of the __SNR_openat2 macro which is defined
     # starting in glibc 2.43
-    conflicts("glibc@:2.42", when="@5.48")
+    requires("glibc@2.43:", when="@5.48:")
 
     @classmethod
     def determine_version(cls, exe):
