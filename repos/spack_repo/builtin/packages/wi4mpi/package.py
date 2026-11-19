@@ -108,7 +108,8 @@ class Wi4mpi(CMakePackage):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
-    depends_on("mpi", when="@:3.5 mode=preload")
+    depends_on("mpi", when="@:3.5")
+    depends_on("mpi", when="mode=preload")
 
     provides("mpi", when="mode=interface")
 
