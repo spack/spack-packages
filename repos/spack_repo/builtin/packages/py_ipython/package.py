@@ -103,8 +103,8 @@ class PyIpython(PythonPackage):
         depends_on("py-traitlets@5.13:", when="@8.22.1:")
         depends_on("py-traitlets@5:", when="@8:")
         depends_on("py-traitlets@4.2:")
-        depends_on("py-typing-extensions@4.6:", when="@8.24:9.10 ^python@:3.11")
-        depends_on("py-typing-extensions", when="@8.23:9.10 ^python@:3.11")
+        depends_on("py-typing-extensions@4.6:", when="@8.24:9.10,9.13: ^python@:3.11")
+        depends_on("py-typing-extensions", when="@8.23:9.10,9.13: ^python@:3.11")
         depends_on("py-typing-extensions", when="@8.12:9.10 ^python@:3.9")
 
         # Historical dependencies
