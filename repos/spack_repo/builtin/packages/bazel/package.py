@@ -25,6 +25,7 @@ class Bazel(Package):
 
     license("Apache-2.0")
 
+    version("9.3.2", sha256="53a1cc021ac515b667ab8bf2114b50184fbfc492cd35ff4584b40617a64c7413")
     version("9.3.0", sha256="2574404ada2d6dbbda58b02aa88b17c479763790e18cb875078c40c849cf6710")
     version("8.8.0", sha256="71cea4e6df77d5d85e185db7f238d96db50132bf40c94e4978a35d92eaf42108")
     version("7.7.1", sha256="6181b3570c2f657d989b1141fb0c1a08eb5f08106ca577dc7dc52e7d0238379a")
