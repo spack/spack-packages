@@ -50,6 +50,7 @@ class Conduit(CachedCMakePackage):
     version("master", branch="develop", submodules=True)
     # note: 2021-05-05 latest tagged release is now preferred instead of develop
     version("0.9.8", sha256="4f6e95b517030ee24d42e6065e295447647fa621c232b8c4590291852d9d26b1")
+    version("0.9.9", sha256="53cb6258de9b846ccc5a05205db36e88209fe45c5b786a1f0c0ae63a4302148b")
     version("0.9.7", sha256="e207016e453dd360b2d9a5a1245e53a9aa26ed83fdfb02cc08fc7bfed664f923")
     version("0.9.6", sha256="370780082f095ebcb5c43067b650c78325088df726488dc5c6d414e7037c847d")
     version("0.9.5", sha256="d93294efbf0936da5a27941e13486aa1a04a74a59285786a2303eed19a24265a")
@@ -193,7 +194,13 @@ class Conduit(CachedCMakePackage):
     depends_on("zfp  bsws=8", when="+zfp")
 
     # hdf5 zfp plugin when both hdf5 and zfp are on
-    depends_on("h5z-zfp~fortran", when="+hdf5+zfp")
+    variant(
+        "h5z_zfp",
+        default=False,
+        description="Build the h5z-zfp HDF5 filter plugin (opt-in; h5z-zfp 1.1.1 "
+        "does not configure against hdf5 2.0.0)",
+    )
+    depends_on("h5z-zfp~fortran", when="+hdf5+zfp+h5z_zfp")
 
     #######################
     # Parmetis
@@ -374,7 +381,7 @@ class Conduit(CachedCMakePackage):
             entries.append(cmake_cache_path("ADIOS_DIR", spec["adios"].prefix))
         if spec.satisfies("+zfp"):
             entries.append(cmake_cache_path("ZFP_DIR", spec["zfp"].prefix))
-        if spec.satisfies("+hdf5+zfp"):
+        if spec.satisfies("+hdf5+zfp+h5z_zfp"):
             entries.append(cmake_cache_path("H5ZZFP_DIR", spec["h5z-zfp"].prefix))
         if spec.satisfies("+parmetis"):
             entries.append(cmake_cache_path("PARMETIS_DIR", spec["parmetis"].prefix))
