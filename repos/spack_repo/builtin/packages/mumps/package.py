@@ -51,6 +51,15 @@ class Mumps(Package):
         description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
         when="@5.6.2: +mpi",
     )
+    # Off by default for shared libraries on macOS: they are linked without MPI, so each has its
+    # own copy of the Fortran MPI_IN_PLACE sentinel (a COMMON block), and MPI recognizes only
+    # one copy per process.
+    variant(
+        "mpi_in_place",
+        default=False,
+        description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
+        when="@5.6.2: +mpi +shared platform=darwin",
+    )
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")
     variant(
         "ptscotch", default=False, description="Activate PT-Scotch as a possible ordering library"
