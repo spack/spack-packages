@@ -23,6 +23,7 @@ class PyIpython(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("9.18.1", sha256="6319c0f5372c196397899479e6db1783dd7937abae06815d1317e8d5d51aaaaf")
     version("9.12.0", sha256="01daa83f504b693ba523b5a407246cabde4eb4513285a3c6acaff11a66735ee4")
     version("9.5.0", sha256="129c44b941fe6d9b82d36fc7a7c18127ddb1d6f02f78f867f402e2e3adde3113")
     version("8.28.0", sha256="0d0d15ca1e01faeb868ef56bc7ee5a0de5bd66885735682e8a322ae289a13d1a")
@@ -54,12 +55,6 @@ class PyIpython(PythonPackage):
     version("5.8.0", sha256="4bac649857611baaaf76bc82c173aa542f7486446c335fe1a6c05d0d491c8906")
     version("5.1.0", sha256="7ef4694e1345913182126b219aaa4a0047e191af414256da6772cf249571b961")
 
-    depends_on("python@3.12:", when="@9.11:", type=("build", "run"))
-    depends_on("python@3.11:", when="@9:", type=("build", "run"))
-    depends_on("python@3.10:", when="@8.19:", type=("build", "run"))
-    depends_on("python@3.9:", when="@8.13.1:", type=("build", "run"))
-    depends_on("python@3.8: +sqlite3", when="@8:", type=("build", "run"))
-
     with default_args(type="build"):
         depends_on("py-setuptools@80:", when="@9.11:")
         depends_on("py-setuptools@61.2:", when="@8.22:")
@@ -68,10 +63,15 @@ class PyIpython(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        # python restriction was loosened again in 9.13 to allow python@3.11:
+        depends_on("python@3.12:", when="@9.11:9.12")
+        depends_on("python@3.11:", when="@9:")
+        depends_on("python@3.10:", when="@8.19:")
+        depends_on("python@3.9:", when="@8.13.1:")
+        depends_on("python@3.8: +sqlite3", when="@8:")
+
         depends_on("py-colorama@0.4.4:", when="@9.7: platform=windows")
         depends_on("py-colorama", when="platform=windows")
-        depends_on("py-decorator@5.1:", when="@9.11:")
-        depends_on("py-decorator")
         depends_on("py-ipython-pygments-lexers@1:", when="@9:")
         depends_on("py-ipython-pygments-lexers", when="@9:")
         depends_on("py-jedi@0.18.2:", when="@9.11:")
@@ -79,8 +79,8 @@ class PyIpython(PythonPackage):
         depends_on("py-jedi@0.10:", when="@7.5:7.17,7.19")
         depends_on("py-matplotlib-inline@0.1.6:", when="@9.11:")
         depends_on("py-matplotlib-inline", when="@7.23:")
-        depends_on("py-pexpect@4.5:", when="@9.11: platform=linux")
-        depends_on("py-pexpect@4.5:", when="@9.11: platform=darwin")
+        depends_on("py-pexpect@4.7:", when="@9.11: platform=linux")
+        depends_on("py-pexpect@4.7:", when="@9.11: platform=darwin")
         depends_on("py-pexpect@4.4:", when="@7.18: platform=linux")
         depends_on("py-pexpect@4.4:", when="@7.18: platform=darwin")
         depends_on("py-pexpect", when="platform=linux")
@@ -94,6 +94,7 @@ class PyIpython(PythonPackage):
         depends_on("py-prompt-toolkit@2.0.0:2", when="@7.0.0:7.5.0")
         depends_on("py-prompt-toolkit@1.0.4:1", when="@:7.0.0")
         depends_on("py-prompt-toolkit@1.0.3:1", when="@:7.0.0")
+        depends_on("py-psutil@7:", when="@9.13:")
         depends_on("py-pygments@2.14:", when="@9.11:")
         depends_on("py-pygments@2.4:", when="@8.1:")
         depends_on("py-pygments")
@@ -102,14 +103,16 @@ class PyIpython(PythonPackage):
         depends_on("py-traitlets@5.13:", when="@8.22.1:")
         depends_on("py-traitlets@5:", when="@8:")
         depends_on("py-traitlets@4.2:")
+        depends_on("py-typing-extensions@4.6:", when="@8.24:9.10 ^python@:3.11")
+        depends_on("py-typing-extensions", when="@8.23:9.10 ^python@:3.11")
+        depends_on("py-typing-extensions", when="@8.12:9.10 ^python@:3.9")
 
         # Historical dependencies
         depends_on("py-appnope", when="@:8.17 platform=darwin")
         depends_on("py-backcall", when="@7.3.0:8.16")
         depends_on("py-black", when="@8.0")
+        depends_on("py-decorator@5.1:", when="@9.11:9.15")
+        depends_on("py-decorator", when="@:9.15")
         depends_on("py-exceptiongroup", when="@8.15:8 ^python@:3.10")
         depends_on("py-pickleshare", when="@:8.16")
         depends_on("py-simplegeneric@0.8:", when="@:7.0.0")
-        depends_on("py-typing-extensions@4.6:", when="@8.24:9.10 ^python@:3.11")
-        depends_on("py-typing-extensions", when="@8.23:9.10 ^python@:3.11")
-        depends_on("py-typing-extensions", when="@8.12:9.10 ^python@:3.9")
