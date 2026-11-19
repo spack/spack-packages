@@ -439,6 +439,9 @@ class Gdal(CMakePackage, AutotoolsPackage, PythonExtension):
     depends_on("perl", type=("build", "run"), when="+perl")
     depends_on("swig@4:", type="build", when="+perl")
 
+    # https://github.com/OSGeo/gdal/blob/release/3.13/NEWS.md
+    requires("^swig@4:4.4", when="@:3.12")
+
     # https://gdal.org/development/rfc/rfc88_googletest.html
     depends_on("googletest@1.10:", type="test")
 
