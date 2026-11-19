@@ -102,6 +102,7 @@ class Wi4mpi(CMakePackage):
         multi=False,
         values=("preload", "interface"),
         description="Which mode to use, 'preload' or 'interface'",
+        when="@3.6:",
     )
 
     depends_on("c", type="build")  # generated
