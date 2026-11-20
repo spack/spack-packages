@@ -3,9 +3,46 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+import base64
+import binascii
+import hashlib
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
+
+PEM_BEGIN = "-----BEGIN PUBLIC KEY-----"
+PEM_END = "-----END PUBLIC KEY-----"
+
+
+def extension_public_key(fingerprint):
+    """Returns the PEM public key in DUCKDB_EXTENSION_PUBLIC_KEY, after a check of its sha256.
+
+    The spec holds only the sha256, so a different key gets a different hash. The file is
+    outside of the spec, and it does not go into a build cache.
+    """
+    path = os.environ.get("DUCKDB_EXTENSION_PUBLIC_KEY")
+    if not path:
+        raise InstallError("Set DUCKDB_EXTENSION_PUBLIC_KEY to the path of the PEM public key")
+    with open(path) as source:
+        lines = source.read().strip().splitlines()
+    if len(lines) < 3 or lines[0] != PEM_BEGIN or lines[-1] != PEM_END:
+        raise InstallError(f"The file {path} is not one PEM public key")
+    try:
+        der = base64.b64decode("".join(lines[1:-1]), validate=True)
+    except binascii.Error as error:
+        raise InstallError(f"The file {path} is not one PEM public key: {error}")
+    actual = hashlib.sha256(der).hexdigest()
+    if actual != fingerprint:
+        raise InstallError(f"The sha256 of the key in {path} is {actual}, not {fingerprint}")
+    # An extension signature has 256 bytes, so only RSA-2048 fits
+    if len(der) != 294:
+        raise InstallError(f"The key in {path} is not an RSA-2048 public key")
+    # Build from the verified bytes, so that no other text in the file reaches the C++ header
+    body = base64.b64encode(der).decode()
+    rows = [body[i : i + 64] for i in range(0, len(body), 64)]
+    return "\n".join([PEM_BEGIN, *rows, PEM_END, ""])
 
 
 class Duckdb(CMakePackage):
@@ -62,6 +99,27 @@ class Duckdb(CMakePackage):
         default=False,
         description="Also search DUCKDB_EXTENSION_DIRECTORIES, set to the prefix or view on load",
         when="@2.0",
+    )
+
+    variant(
+        "extension_keys",
+        values=("core", "community", "site"),
+        default="core,community",
+        multi=True,
+        description="Which signing keys to trust for extensions",
+        when="@2.0.0",
+    )
+    variant(
+        "extension_key",
+        default="none",
+        values=str,
+        description="sha256 of the DER public key to trust for site, as DuckDB reports it",
+        when="@2.0.0 extension_keys=site",
+    )
+    conflicts(
+        "extension_key=none",
+        when="extension_keys=site",
+        msg="extension_keys=site needs extension_key=<sha256 of the public key>",
     )
 
     variant(
@@ -123,10 +181,34 @@ class Duckdb(CMakePackage):
     patch("extension_trust.patch", when="@2.0.0 trust_unsigned_extension_directories=store")
     patch("extension_trust-2.0.1.patch", when="@2.0.1 trust_unsigned_extension_directories=store")
 
+    # A build with the default keys does not need this patch
+    for _keys in (
+        "core",
+        "community",
+        "site",
+        "core,site",
+        "community,site",
+        "core,community,site",
+    ):
+        patch("extension_keys.patch", when=f"@2.0.0 extension_keys:={_keys}")
+
     with when("+python"):
         extends("python")
         depends_on("py-pip", type="build")
         depends_on("py-setuptools-scm", type="build")
+
+    def patch(self):
+        keys = self.spec.variants.get("extension_keys")
+        if keys is None or set(keys.value) == {"core", "community"}:
+            return
+        lines = ["#pragma once"]
+        for name in ("core", "community"):
+            lines.append(f"#define DUCKDB_EXTENSION_KEYS_{name.upper()} {int(name in keys.value)}")
+        if "site" in keys.value:
+            pem = extension_public_key(self.spec.variants["extension_key"].value)
+            lines.append(f'#define DUCKDB_EXTENSION_KEYS_SITE R"({pem})"')
+        with open("src/include/duckdb/main/extension_keys.hpp", "w") as header:
+            header.write("\n".join(lines) + "\n")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("+python"):
