@@ -92,6 +92,13 @@ class Conduit(CachedCMakePackage):
     variant("shared", default=True, description="Build Conduit as shared libs")
     variant("test", default=True, description="Enable Conduit unit tests")
     variant("utilities", default=True, description="Build Conduit utilities")
+    variant(
+        "cxxstd",
+        default="auto",
+        values=("auto", "11", "14", "17", "20"),
+        multi=False,
+        description="C++ standard; auto preserves the project's default",
+    )
 
     # variants for python support
     variant("python", default=False, description="Build Conduit Python support")
@@ -266,6 +273,9 @@ class Conduit(CachedCMakePackage):
     def initconfig_compiler_entries(self):
         spec = self.spec
         entries = super().initconfig_compiler_entries()
+        cxxstd = spec.variants["cxxstd"].value
+        if cxxstd != "auto":
+            entries.append(cmake_cache_string("BLT_CXX_STD", "c++{0}".format(cxxstd)))
         f_compiler = getattr(self.compiler, "fc", None)
         cpp_compiler = getattr(self.compiler, "cxx", "")
         rpaths = list(self.compiler.extra_rpaths)
