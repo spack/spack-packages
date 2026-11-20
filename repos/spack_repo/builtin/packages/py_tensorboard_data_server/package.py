@@ -20,6 +20,7 @@ class PyTensorboardDataServer(PythonPackage):
     version("0.7.0", commit="f1cb31c86d871e0258250248ab9488575410e784")
     version("0.6.1", commit="6acf0be88b5727e546dd64a8b9b12d790601d561")
 
+    depends_on("c", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("rust+dev", type="build")
     depends_on("rust@:1.89+dev", type="build", when="@:0.6")

@@ -22,6 +22,7 @@ class PyQiskitTerra(PythonPackage):
     version("0.22.2", sha256="efd212cd98479ebedc8cc1f93d4eb8039f21c07bd39a62065b584e02d72e632d")
     version("0.18.3", sha256="8737c8f1f4c6f29ec2fb02d73023f4854a396c33f78f4629a861a3e48fc789cc")
 
+    depends_on("c", type="build")
     depends_on("py-setuptools", type="build")
     depends_on("py-numpy@1.17:", type=("build", "run"))
     depends_on("py-ply@3.10:", type=("build", "run"))
