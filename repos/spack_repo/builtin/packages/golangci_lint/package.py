@@ -25,8 +25,6 @@ class GolangciLint(GoPackage):
     # values used when tracking its version.
     version("2.15.0", tag="v2.15.0", commit="25c5369a93aacb8cccea0d46e1569ca4a194564d")
 
-    with default_args(type="build"):
-        depends_on("git")
-        depends_on("go@1.26:")
+    depends_on("go@1.26:", type="build")
 
     build_directory = "cmd/golangci-lint"
