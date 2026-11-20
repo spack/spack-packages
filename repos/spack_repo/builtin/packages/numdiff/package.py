@@ -28,6 +28,12 @@ class Numdiff(AutotoolsPackage):
     depends_on("gettext", when="+nls")
     depends_on("gmp", when="+gmp")
 
+    def flag_handler(self, name, flags):
+        # gcc@15: defaults to -std=gnu23, causing errors with "typedef enum {...} bool;"
+        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def configure_args(self):
         spec = self.spec
         args = []
