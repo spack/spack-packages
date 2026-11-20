@@ -3,9 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
 import pathlib
-import platform
 import re
-import struct
 import subprocess
 
 from spack_repo.builtin.build_systems import compiler
@@ -27,7 +25,7 @@ def get_latest_valid_fortran_pth():
 
 
 def varsall_from_cl(cl: os.PathLike):
-    varsall_path = f"VC\\Auxiliary\\Build\\vcvarsall.bat"
+    varsall_path = "VC\\Auxiliary\\Build\\vcvarsall.bat"
     for dir in pathlib.Path(cl).resolve().parents:
         candidate_path = dir / varsall_path
         if candidate_path.exists():
