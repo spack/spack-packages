@@ -25,9 +25,7 @@ class PySpdxTools(PythonPackage):
         depends_on("py-setuptools@61.2:")
         depends_on("py-setuptools-scm@3.4.3: +toml")
 
-    depends_on("python@3.10:", type=("build", "run"))
-
-    with default_args(type="run"):
+    with default_args(type=("build", "run")):
         depends_on("py-beartype")
         depends_on("py-click")
         depends_on("py-license-expression")
@@ -39,3 +37,6 @@ class PySpdxTools(PythonPackage):
         depends_on("py-xmltodict")
 
         depends_on("py-networkx", when="+viz")
+        depends_on("py-pygraphviz", when="+viz")
+
+        depends_on("python@3.10:")
