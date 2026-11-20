@@ -51,8 +51,8 @@ This PR modifies the following package(s), for which you are listed as a maintai
 
 {package_list}
 
-Once this PR is merged, you'll be invited to this repository as a collaborator so that \
-you can be requested as a reviewer on future PRs."""
+You will be invited to the spack-packages repository as a collaborator once this \
+PR is merged and will be added as a reviewer on future PRs."""
 
     if token:
         resp = session.post(comments_url, json={"body": body}, headers=headers, timeout=30)
@@ -126,7 +126,6 @@ def main():
                 maintainer_packages.setdefault(maintainer, set()).add(package)
         except spack.repo.UnknownPackageError as e:
             msg(f"warning: {e}")
-            pass
     maintainers = set(maintainer_packages)
 
     # filter maintainers to those who have triage permissions in the repo
