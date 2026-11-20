@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os
+import re
 from typing import Iterable
 
 from spack.package import (
@@ -177,7 +178,7 @@ class PerlBuilder(BuilderWithDefaults):
     @run_after("configure")
     def fix_shebang(self):
         if self.build_method == "Build.PL":
-            pattern = "#!{0}".format(self.spec["perl"].command.path)
+            pattern = r"^#!\s*{0}".format(re.escape(self.spec["perl"].command.path))
             repl = "#!/usr/bin/env perl"
             filter_file(pattern, repl, "Build", backup=False)
 
