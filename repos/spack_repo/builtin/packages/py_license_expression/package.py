@@ -27,4 +27,3 @@ class PyLicenseExpression(PythonPackage):
     depends_on("python@3.9:", type=("build", "run"))
 
     depends_on("py-boolean-py@4:", type="run")
-
