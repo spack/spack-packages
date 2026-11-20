@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
+import pathlib
 import re
 import subprocess
 
@@ -21,6 +22,14 @@ def get_latest_valid_fortran_pth():
     sort_fn = lambda fc_ver: Version(fc_ver)
     sort_fc_ver = sorted(list(FC_PATH.keys()), key=sort_fn)
     return FC_PATH[sort_fc_ver[-1]] if sort_fc_ver else None
+
+
+def varsall_from_cl(cl: os.PathLike):
+    varsall_path = "VC\\Auxiliary\\Build\\vcvarsall.bat"
+    for dir in pathlib.Path(cl).resolve().parents:
+        candidate_path = dir / varsall_path
+        if candidate_path.exists():
+            return candidate_path
 
 
 class Msvc(Package, CompilerPackage):
@@ -142,16 +151,28 @@ class Msvc(Package, CompilerPackage):
         # and stores their path, but their respective VCVARS
         # file must be invoked before useage.
         env_cmds = []
-        compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
-        vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvars64.bat")
+        vcvarsall = varsall_from_cl(self.cc)
+
         # get current platform architecture and format for vcvars argument
-        arch = host_platform().default.lower()
-        arch = arch.replace("-", "_")
-        if self.spec.satisfies("target=x86_64:"):
-            arch = "amd64"
+        # vcvars target/host arch arguments are in the form of
+        # host-arc_target-arch, so in vcvars terms x86_64 is not the 64bit
+        # extension of x86, it's a 32bit host with a 64bit target, which, will
+        # run on a 64bit host, but is not accurate, and doesn't scale to arm.
+        # compose a proper vcvars arch string
+
+        def compute_arch(target_arch):
+            if "arm" in target_arch:
+                return "arm"
+            if "aarch" in target_arch:
+                return "arm64"
+            return "x64" if "64" in target_arch else "x86"
+
+        # convert understanding of target and host to vcvars terms
+        arch = compute_arch(self.spec.target.family.name)
+        # vcvars target host string
 
         msvc_version = Version(re.search(Msvc.compiler_version_regex, self.cc).group(1))
-        self.vcvars_call = VCVarsInvocation(vcvars_script_path, arch, msvc_version)
+        self.vcvars_call = VCVarsInvocation(vcvarsall, arch, msvc_version)
         env_cmds.append(self.vcvars_call)
 
         def get_oneapi_root(pth: str):
