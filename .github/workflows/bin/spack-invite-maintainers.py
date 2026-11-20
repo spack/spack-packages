@@ -18,6 +18,20 @@ def msg(message: str, entries=()):
         print(f"    {entry}", flush=True)
 
 
+def get_expired_invitations(session, headers, base_url):
+    """Return expired invitations on the repo."""
+    expired = {}
+    url = f"{base_url}/invitations?per_page=100"
+    while url:
+        resp = session.get(url, headers=headers, timeout=30)
+        resp.raise_for_status()
+        for invitation in resp.json():
+            if invitation.get("expired") and invitation.get("invitee"):
+                expired[invitation["invitee"]["login"].lower()] = invitation["id"]
+        url = resp.links.get("next", {}).get("url")
+    return expired
+
+
 def main():
     # Validate required environment variables
     required_vars = ["GH_REPO", "GH_PR_NUMBER", "MAINTAINER_ROLE"]
@@ -107,7 +121,22 @@ def main():
     # invite as outside collaborators so they can perform PR reviews
     # they will need to accept the invitation before they can review PRs / be pinged
     if token:
+        expired_invitations = get_expired_invitations(session, headers, base_url)
         for maintainer in sorted(non_collaborators):
+            # delete an expired invitation first so a fresh one is sent
+            invitation_id = expired_invitations.get(maintainer.lower())
+            if invitation_id is not None:
+                delete_resp = session.delete(
+                    f"{base_url}/invitations/{invitation_id}", headers=headers, timeout=30
+                )
+                if delete_resp.status_code != 204:
+                    msg(
+                        f"failed to delete expired invitation for {maintainer} "
+                        f"[{delete_resp.status_code}]: {delete_resp.text}"
+                    )
+                    continue
+                msg(f"deleted expired invitation for {maintainer}")
+
             invite_resp = session.put(
                 f"{collab_url}/{maintainer}",
                 json={"permission": maintainer_role},
