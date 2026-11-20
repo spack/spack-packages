@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 import os.path
+import pathlib
 import platform
 import re
 import struct
@@ -23,6 +24,14 @@ def get_latest_valid_fortran_pth():
     sort_fn = lambda fc_ver: Version(fc_ver)
     sort_fc_ver = sorted(list(FC_PATH.keys()), key=sort_fn)
     return FC_PATH[sort_fc_ver[-1]] if sort_fc_ver else None
+
+
+def varsall_from_cl(cl: os.PathLike):
+    varsall_path = f"VC\\Auxiliary\\Build\\vcvarsall.bat"
+    for dir in pathlib.Path(cl).resolve().parents:
+        candidate_path = dir / varsall_path
+        if candidate_path.exists():
+            return candidate_path
 
 
 class Msvc(Package, CompilerPackage):
@@ -144,8 +153,7 @@ class Msvc(Package, CompilerPackage):
         # and stores their path, but their respective VCVARS
         # file must be invoked before useage.
         env_cmds = []
-        compiler_root = os.path.join(os.path.dirname(self.cc), "../../../../../..")
-        vcvars_script_path = os.path.join(compiler_root, "Auxiliary", "Build", "vcvarsall.bat")
+        vcvarsall = varsall_from_cl(self.cc)
 
         # get current platform architecture and format for vcvars argument
         # vcvars target/host arch arguments are in the form of
@@ -157,7 +165,7 @@ class Msvc(Package, CompilerPackage):
         # get spec target
         spec_target_arch = self.spec.target.family.name
         # get host bitness
-        host_machine_type = platform.machine().lower()
+        host_machine_type = 
 
         # generic check for arm arch
         check_arm = lambda x: "arm" in x or "aarch" in x
@@ -181,7 +189,7 @@ class Msvc(Package, CompilerPackage):
         arch = f"{host_arch}_{target_arch}"
 
         msvc_version = Version(re.search(Msvc.compiler_version_regex, self.cc).group(1))
-        self.vcvars_call = VCVarsInvocation(vcvars_script_path, arch, msvc_version)
+        self.vcvars_call = VCVarsInvocation(vcvarsall, arch, msvc_version)
         env_cmds.append(self.vcvars_call)
 
         def get_oneapi_root(pth: str):
