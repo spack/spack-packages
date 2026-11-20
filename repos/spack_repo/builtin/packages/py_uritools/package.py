@@ -12,13 +12,13 @@ class PyUritools(PythonPackage):
     references, largely replacing the Python Standard Library's urllib.parse module."""
 
     homepage = "https://github.com/tkem/uritools/"
-    pypi = "uritools/uritools-7.0.0.tar.gz"
+    pypi = "uritools/uritools-7.0.1.tar.gz"
 
     maintainers("ebagrenrut")
 
     license("MIT")
 
-    version("7.0.0", sha256="110b773e3f8fbaebcdcbe1377d04e418b1985adf69deeca4ed569f3e328cbf48")
+    version("7.0.1", sha256="abf09f899b925fad05407d7f39061318c6be62cce065db727a024daadf96eebf")
 
     with default_args(type="build"):
         depends_on("py-setuptools@80:")
