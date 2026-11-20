@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import cmake
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
@@ -32,3 +33,8 @@ class Hoppet(AutotoolsPackage, CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
+
+
+class CMakeBuilder(cmake.CMakeBuilder):
+    def cmake_args(self):
+        return [self.define("HOPPET_ENABLE_TESTING", self.pkg.run_tests)]
