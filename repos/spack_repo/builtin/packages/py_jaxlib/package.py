@@ -251,8 +251,8 @@ class PyJaxlib(PythonPackage, CudaPackage, ROCmPackage):
     )
     # https://github.com/openxla/xla/pull/52224
     # Teach the bzlmod XLA pin to merge TF_ROCM_SYSDEPS_PATHS under lib/rocm_sysdeps.
-    conflicts("+rocm", when="@0.12.1:", msg="ROCm not yet supported")
     patch("rocm-sysdeps.patch", when="@0.12.0 +rocm")
+    patch("rocm-sysdeps-0.12.1.patch", when="@0.12.1 +rocm")
 
     with when("@0.7.1:"):
         with default_args(msg="Clang is the only acceptable compiler."):
