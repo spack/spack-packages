@@ -79,7 +79,7 @@ class Pmix(AutotoolsPackage):
     depends_on("automake@1.13.4:", type="build", when="@master")
     depends_on("libtool@2.4.2:", type="build", when="@master")
     depends_on("flex@2.5.39:", type="build", when="@master")
-    depends_on("perl", type="build", when="@master")
+    depends_on("perl", type="build", when="@6:")
     depends_on("python@3.7:", type="build", when="+docs")
     depends_on("py-sphinx@5:", type="build", when="+docs")
     depends_on("py-recommonmark", type="build", when="+docs")

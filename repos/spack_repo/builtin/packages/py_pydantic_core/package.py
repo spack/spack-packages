@@ -23,6 +23,7 @@ class PyPydanticCore(PythonPackage):
     version("2.23.2", sha256="95d6bf449a1ac81de562d65d180af5d8c19672793c81877a2eda8fde5d08f2fd")
     version("2.18.4", sha256="ec3beeada09ff865c344ff3bc2f427f5e6c26401cc6113d77e372c3fdac73864")
 
+    depends_on("c", type="build")
     with default_args(type="build"):
         # Cargo.toml
         depends_on("rust@1.75:", when="@2.27:")

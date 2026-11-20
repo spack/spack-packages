@@ -1,0 +1,17 @@
+--- a/src/Util/ODESolve.F
++++ b/src/Util/ODESolve.F
+@@ -14,7 +14,13 @@
+ 	subroutine ODESolve(nvar, f, ystart, x1, x2, eps, h1, userarg)
+ 	implicit none
+ 	integer nvar
+-	external f, userarg
++	external userarg
++	interface
++	  subroutine f(dy, y, t, flag)
++	  RealType dy(*), y(*), t
++	  integer flag
++	  end
++	end interface
+ 	RealType ystart(*), x1, x2, eps, h1
+ 
+ #include "FH.h"

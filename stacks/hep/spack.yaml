@@ -191,10 +191,5 @@ spack:
   # - Disable ROOT and HepMC3 to minimize stack duplication with cxxstd=17
   #- celeritas +rocm ~openmp ~vecgeom ~covfie ~root ~hepmc3 amdgpu_target=gfx90a  cxxstd=17
 
-  ci:
-    pipeline-gen:
-    - build-job:
-        image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-
   cdash:
     build-group: HEP

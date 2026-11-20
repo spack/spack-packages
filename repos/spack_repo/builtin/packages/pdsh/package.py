@@ -32,10 +32,11 @@ class Pdsh(AutotoolsPackage):
         when="@2.33:",
         # when="@8c173e645dfc5cb6619c4d0647f3fe495ad4ce7f:",
     )  # first commit after 2924dd8ff07b31a81c4a81254ae1e1f81b39595e (shortly after pdsh-2.32)
+    patch("c23-provisional-stdc-version.patch", when="@2.33:")
 
     # ## conflict when patch cannot be applied before and at
     # ## commit 2924dd8ff07b31a81c4a81254ae1e1f81b39595e
-    conflicts("%gcc@15:", when="@:2.32")
+    conflicts("%gcc@14:", when="@:2.32")
 
     variant("ssh", default=True, description="Build with ssh module")
     variant("static_modules", default=True, description="Build with static modules")

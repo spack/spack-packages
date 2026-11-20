@@ -147,12 +147,5 @@ spack:
           require:
             - ~rocm
 
-  ci:
-    pipeline-gen:
-    - build-job:
-        image:
-          name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-          entrypoint: ['']
-
   cdash:
     build-group: Machine Learning

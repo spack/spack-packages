@@ -31,6 +31,7 @@ class Rempi(AutotoolsPackage):
     depends_on("libpciaccess", type="link")
 
     patch("include-string.patch", when="@1.1.0")
+    patch("example-include-unistd.patch", when="@1.1.0")
 
     def flag_handler(self, name, flags):
         if name == "cflags":

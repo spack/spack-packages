@@ -18,6 +18,7 @@ class PyOrmsgpack(PythonPackage):
     version("1.12.2", sha256="944a2233640273bee67521795a73cf1e959538e0dfb7ac635505010455e53b33")
     version("1.7.0", sha256="6b4c98839cb7fc2a212037d2258f3a22857155249eb293d45c45cb974cfba834")
 
+    depends_on("c", type="build")
     depends_on("py-maturin@1", type="build")
     depends_on("rust@1.81:", type="build", when="@1.9:")
     depends_on("rust@1.70:", type="build")

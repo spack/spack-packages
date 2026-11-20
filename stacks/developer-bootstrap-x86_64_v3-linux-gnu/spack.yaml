@@ -45,10 +45,6 @@ spack:
         all:
           prefer:
           - rust@1.97.1
-  ci:
-    pipeline-gen:
-    - build-job:
-        image: ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
 
   cdash:
     build-group: Spack Development Tools x86_64_v3-linux-gnu

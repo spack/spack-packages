@@ -207,6 +207,7 @@ class Gasnet(Package, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("gmake", type="build")
+    depends_on("perl", type=("build", "run"))
 
     depends_on("mpi", when="+mpi_compat")
     depends_on("mpi", when="conduits=mpi")
