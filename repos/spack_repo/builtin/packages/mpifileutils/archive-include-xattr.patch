@@ -1,0 +1,12 @@
+--- a/src/common/mfu_flist_archive.c
++++ b/src/common/mfu_flist_archive.c
+@@ -32,9 +32,7 @@
+ 
+ #include <unistd.h>
+ 
+-#if DCOPY_USE_XATTRS
+ #include <sys/xattr.h>
+-#endif
+ 
+ #ifdef LUSTRE_SUPPORT
+ #include <lustre/lustreapi.h>
