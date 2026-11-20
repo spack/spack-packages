@@ -134,6 +134,11 @@ class RdmaCore(CMakePackage):
         cmake_args = [
             "-DCMAKE_INSTALL_SYSCONFDIR={0}".format(self.spec.prefix.etc),
             "-DCMAKE_INSTALL_RUNDIR=/var/run",
+            # libudev and libsystemd are optional and not dependencies of this
+            # package, so do not let CMake pick them up from the host: a host
+            # with libudev.so but without libudev.h fails in rdma-ndd.
+            self.define("CMAKE_DISABLE_FIND_PACKAGE_UDev", True),
+            self.define("CMAKE_DISABLE_FIND_PACKAGE_Systemd", True),
         ]
 
         cmake_args.append(self.define_from_variant("ENABLE_STATIC", "static"))
