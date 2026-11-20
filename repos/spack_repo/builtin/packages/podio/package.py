@@ -21,6 +21,7 @@ class Podio(CMakePackage):
     tags = ["hep", "key4hep"]
 
     version("master", branch="master")
+    version("1.10", sha256="1342ca8885e1e04c478fff7557ae5505ac66fda17adecff7e8f82e7c409199de")
     version("1.9", sha256="47aaabd0b1044e2100202437453da8b67c3e529621d85bbe79e024594a5be83a")
     version("1.8", sha256="b6e2ffed29ae0821951179496e69e2be42eb7dbaf55f8080258447f3812c4a73")
     version("1.7", sha256="4a62ed2fdd9cebb5fc1799ea17237979b2d435797f1201fa8031fd99e9e47c15")
@@ -39,6 +40,7 @@ class Podio(CMakePackage):
         conditional("17", when="@:1.2"),
         conditional("20", when="@0.14.1:"),
         conditional("23", when="@1.3:"),
+        # conditional("26", when="@1.10:"), # TODO: needs root with cxxstd=26
     )
     variant(
         "cxxstd",
@@ -56,13 +58,27 @@ class Podio(CMakePackage):
         description="Use the specified C++ standard when building.",
         when="@1.2:",
     )
+    variant(
+        "cxxstd",
+        default="23",
+        values=_cxxstd_values,
+        multi=False,
+        description="Use the specified C++ standard when building",
+        when="@1.10:",
+    )
     variant("sio", default=False, description="Build the SIO I/O backend")
-    variant("rntuple", default=False, description="Build the RNTuple backend")
+    variant(
+        "root",
+        default=True,
+        description="Build the ROOT based backend and python bindings",
+        when="@1.10:",
+    )
+    variant("rntuple", default=False, description="Build the RNTuple backend", when="+root")
     variant(
         "datasource",
         default=False,
         description="Build the RDataSource for reading podio collections",
-        when="@1.0.2:",
+        when="@1.0.2: +root",
     )
     variant("arrow", default=False, description="Build the Arrow I/O backend", when="@1.8:")
     variant(
@@ -72,17 +88,19 @@ class Podio(CMakePackage):
         when="@1.8: +arrow",
     )
 
-    depends_on("c", type="build")
+    depends_on("c", type="build", when="@:1.2")
     depends_on("cxx", type="build")
 
-    depends_on("root@6.08.06: cxxstd=17", when="cxxstd=17")
+    depends_on("root@6.08.06: cxxstd=17", when="+root cxxstd=17")
     depends_on("root@6.14:", when="+datasource")
     depends_on("root@6.28.04: +root7", when="+rntuple")
-    depends_on("root@6.28:")
+    depends_on("root@6.28:", when="+root")
     depends_on("root@6.32: +root7", when="@1.3: +rntuple")
+    depends_on("root@6.34: +root7", when="@1.10: +rntuple")
     for cxxstd in _cxxstd_values:
         depends_on(
-            "root cxxstd={}".format(cxxstd[0].value), when="cxxstd={}".format(cxxstd[0].value)
+            "root cxxstd={}".format(cxxstd[0].value),
+            when="+root cxxstd={}".format(cxxstd[0].value),
         )
 
     depends_on("cmake@3.12:", type="build")
@@ -94,6 +112,7 @@ class Podio(CMakePackage):
     depends_on("arrow", type=("build", "link"), when="+arrow")
     depends_on("arrow+parquet", type=("build", "link"), when="+parquet")
     depends_on("fmt@9:", type=("build", "link"), when="@1.3:")
+    depends_on("fmt@10:", type=("build", "link"), when="@1.10:")
     depends_on("catch2@3.1:", type=("test"))
     depends_on("catch2@3.4:", type=("test"), when="cxxstd=20")
     depends_on("catch2@3.3:", type=("test"), when="@1.2: cxxstd=17")
@@ -127,6 +146,7 @@ class Podio(CMakePackage):
 
     def cmake_args(self):
         args = [
+            self.define_from_variant("ENABLE_ROOT", "root"),
             self.define_from_variant("ENABLE_SIO", "sio"),
             self.define_from_variant("ENABLE_ARROW", "arrow"),
             self.define_from_variant("ENABLE_RNTUPLE", "rntuple"),
@@ -144,16 +164,17 @@ class Podio(CMakePackage):
             env.prepend_path("PYTHONPATH", self.prefix.python)
 
         env.prepend_path("LD_LIBRARY_PATH", self.spec["podio"].libs.directories[0])
-        if "+sio" in self.spec:
+        if self.spec.satisfies("+sio +root"):
             # sio needs to be on LD_LIBRARY_PATH for ROOT to be able to
             # dynamicaly load the python bindings library
             env.prepend_path("LD_LIBRARY_PATH", self.spec["sio"].libs.directories[0])
 
         # Frame header needs to be available for python bindings
-        env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
+        if "+root" in self.spec:
+            env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
 
         # Pythonizations require Python.h accessible for ACLiC
-        if self.spec.satisfies("@1.5:"):
+        if self.spec.satisfies("@1.5: +root"):
             env.prepend_path("ROOT_INCLUDE_PATH", self.spec["python"].headers.directories[0])
 
     def setup_dependent_build_environment(
@@ -163,8 +184,9 @@ class Podio(CMakePackage):
             env.prepend_path("PYTHONPATH", self.prefix.python)
 
         env.prepend_path("LD_LIBRARY_PATH", self.spec["podio"].libs.directories[0])
-        env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
-        if self.spec.satisfies("+sio"):
+        if self.spec.satisfies("+root"):
+            env.prepend_path("ROOT_INCLUDE_PATH", self.prefix.include)
+        if self.spec.satisfies("+sio +root"):
             # sio needs to be on LD_LIBRARY_PATH for ROOT to be able to
             # dynamicaly load the python libraries also in dependent build
             # environments since the import structure has changed with
