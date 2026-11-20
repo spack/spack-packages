@@ -341,6 +341,8 @@ class Wrf(Package):
         filter_file("^#!/bin/csh -f", "#!/usr/bin/env csh", *files)
         filter_file("^#!/bin/csh", "#!/usr/bin/env csh", *files)
 
+        filter_file("/lib/cpp", "cpp", *glob.glob("arch/configure*.defaults"), string=True)
+
     @run_before("configure", when="%aocc@4:")
     def create_aocc_config(self):
         param = {
