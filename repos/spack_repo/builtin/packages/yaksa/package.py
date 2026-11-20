@@ -43,6 +43,8 @@ class Yaksa(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("m4", type="build")
     depends_on("python@3:", type="build")
 
+    patch("atomic-var-init.patch")
+
     # fix for error: no member named 'memoryType' in 'struct hipPointerAttribute_t'
     patch(
         "https://github.com/pmodels/yaksa/commit/5ebbadb7771d194f3819e3dd1ac8b5b467024afb.patch?full_index=1",
