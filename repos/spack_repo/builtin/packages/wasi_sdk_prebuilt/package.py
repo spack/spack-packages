@@ -18,6 +18,7 @@ class WasiSdkPrebuilt(Package):
 
     license("APACHE-2.0", checked_by="teaguesterling")
 
+    version("34.0", sha256="b761e3a0721dbae9c09a0059e5fdb2bf917d1b4a8a7b430fb3b5aafb0984b2c4")
     version("25.0", sha256="52640dde13599bf127a95499e61d6d640256119456d1af8897ab6725bcf3d89c")
     version("24.0", sha256="c6c38aab56e5de88adf6c1ebc9c3ae8da72f88ec2b656fb024eda8d4167a0bc5")
     version("23.0", sha256="521838d92816c92a731dee9246b0364eb00e300c5e2336e6dfa38f26a6494b06")
@@ -36,7 +37,10 @@ class WasiSdkPrebuilt(Package):
         base = "https://github.com/WebAssembly/wasi-sdk/releases/download"
         major = version.up_to(1)
         full = version.up_to(2)
-        return f"{base}/wasi-sdk-{major}/wasi-sdk-{full}-linux.tar.gz"
+        # From 23.0, the release assets are named per architecture.
+        # The checksums above are for the x86_64 assets.
+        platform = "x86_64-linux" if version >= Version("23") else "linux"
+        return f"{base}/wasi-sdk-{major}/wasi-sdk-{full}-{platform}.tar.gz"
 
     def install(self, spec, prefix):
         install_tree("share/wasi-sysroot", prefix)
