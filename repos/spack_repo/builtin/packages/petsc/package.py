@@ -399,6 +399,7 @@ class Petsc(Package, CudaPackage, ROCmPackage):
     depends_on("libyaml", when="+libyaml")
     depends_on("hwloc", when="+hwloc")
     depends_on("kokkos", when="+kokkos")
+    depends_on("kokkos+pic", when="+kokkos+shared")
     depends_on("kokkos~complex_align", when="+kokkos+complex")
     depends_on("kokkos-kernels", when="+kokkos")
     conflicts("kokkos@4.5:", when="@:3.22 +kokkos")
