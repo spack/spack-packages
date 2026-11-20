@@ -931,10 +931,10 @@ class Python(Package):
         ]
         ext = "" if sys.platform != "win32" else ".exe"
         filenames = [f"python{ver}{ext}" for ver in suffixes]
-        roots = [self.prefix.bin]
         if sys.platform == "win32":
-            roots.append(self.prefix)
-            roots.append(self.prefix.Scripts)
+            roots = [self.prefix, self.prefix.Scripts]
+        else:
+            roots = [self.prefix.bin]
 
         for filename in filenames:
             for root in roots:
