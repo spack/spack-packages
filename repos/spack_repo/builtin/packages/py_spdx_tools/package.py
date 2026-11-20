@@ -19,7 +19,11 @@ class PySpdxTools(PythonPackage):
 
     version("0.8.5", sha256="be600beb2f762f0116025e05490d399e724f668bef84025a7c421bb266688bdb")
 
-    variant("viz", default=False, description="Support graph generation via networkx")
+    variant(
+        "viz",
+        default=False,
+        description="Support graph generation via networkx and pygraphviz",
+    )
 
     with default_args(type="build"):
         depends_on("py-setuptools@61.2:")
