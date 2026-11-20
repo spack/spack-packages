@@ -104,6 +104,8 @@ class Vtk(CMakePackage):
 
     patch("vtk_9_1_2_improve_cstdint_includes.patch", when="@9.1:9.2")
 
+    patch("vtk_9.4_llvm23_transitive_include.patch", when="@:9.4 %llvm@23:")
+
     # Patch for paraview 5.10: +hdf5 ^hdf5@1.13.2:
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9690
     # patch seems to effectively been added to vtk@9.2.3 (e81a2fe)
