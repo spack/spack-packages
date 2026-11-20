@@ -72,14 +72,23 @@ def main():
     # only invite maintainers who aren't collaborators: we don't want to modify existing perms
     base_url = f"https://api.github.com/repos/{repository}"
     collab_url = f"{base_url}/collaborators"
-    non_collaborators = sorted(
-        maintainer
-        for maintainer in maintainers
-        if session.get(f"{collab_url}/{maintainer}", headers=headers, timeout=30).status_code
-        != 204
-    )
+    non_collaborators = []
+    failed = []
+    for maintainer in sorted(maintainers):
+        resp = session.get(f"{collab_url}/{maintainer}", headers=headers, timeout=30)
+        if resp.status_code == 404:
+            non_collaborators.append(maintainer)
+        elif resp.status_code != 204:
+            msg(
+                f"failed to check collaborator status for {maintainer} "
+                f"[{resp.status_code}]: {resp.text}"
+            )
+            failed.append(maintainer)
 
     if not non_collaborators:
+        if failed:
+            msg("failed to invite:", failed)
+            sys.exit(1)
         msg("all maintainers are already collaborators")
         return
 
@@ -88,7 +97,6 @@ def main():
     # invite as outside collaborators so they can perform PR reviews
     # they will need to accept the invitation before they can review PRs / be pinged
     expired_invitations = get_expired_invitations(session, headers, base_url)
-    failed = []
     for maintainer in non_collaborators:
         # delete an expired invitation first so a fresh one is sent
         invitation_id = expired_invitations.get(maintainer.lower())
