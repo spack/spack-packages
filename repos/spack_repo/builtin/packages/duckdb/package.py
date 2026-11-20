@@ -69,7 +69,7 @@ class Duckdb(CMakePackage):
         default="none",
         values=("none", "store"),
         description="Load an unsigned extension if its real path is in the store of this duckdb",
-        when="@2.0.0",
+        when="@2.0",
     )
     # A service that runs SQL from others, as a user that can write files where others put them,
     # must not use this: such a file can be a store, and LOAD can then run its code.
@@ -78,7 +78,7 @@ class Duckdb(CMakePackage):
         default=False,
         description="Also load an unsigned extension from a Spack store that only root or the user"
         " can write, such as a user store that chains to this one",
-        when="@2.0.0 trust_unsigned_extension_directories=store",
+        when="@2.0 trust_unsigned_extension_directories=store",
     )
 
     # Extensions that a version always links statically. An extension package must not provide
@@ -119,7 +119,9 @@ class Duckdb(CMakePackage):
     # only in a later search directory. An explicit INSTALL still works.
     patch("extension_env.patch", when="@2.0 +extension_env")
 
+    # The same change, with the context of each release
     patch("extension_trust.patch", when="@2.0.0 trust_unsigned_extension_directories=store")
+    patch("extension_trust-2.0.1.patch", when="@2.0.1 trust_unsigned_extension_directories=store")
 
     with when("+python"):
         extends("python")
