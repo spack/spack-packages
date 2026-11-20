@@ -26,6 +26,8 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
     version("main", branch="main")
+    version("1.3.1", sha256="39b308bdd73bbfe1e8effd814874f27923243526485735b5e66e5d842f0c0ff8")
+    version("1.3.0", sha256="ec3593c35b8c97301f31d6cbc6572f80548683b2f36f7923316ce0a3969e6f0e")
     version("1.2.0", sha256="7be541bdb5905361e24bfb098314f946fe89f7b10f587d91e2397d821434b48b")
     version("1.1.3", sha256="17ed0baf9c2dcf30c789fdae530e006ae3ff2d2c9006989b1e6348e4ae50cef9")
     version("1.1.2", sha256="b2c4a7791305481af9e1bd358c1215efa4506c91c943cddca3780a1ccbc27810")
@@ -35,6 +37,7 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("spiral-software+fftx+simt+jit+mpi")
     # depend only on spiral-software, but spiral-software must be installed with variants:
@@ -62,7 +65,10 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
 
     def cmake_args(self):
         spec = self.spec
-        args = ["-DSPIRAL_HOME:STRING={0}".format(spec["spiral-software"].prefix)]
+        args = [
+            "-DSPIRAL_HOME:STRING={0}".format(spec["spiral-software"].prefix),
+            "-DBUILD_EXAMPLES=OFF",
+        ]
         args.append("-DCMAKE_INSTALL_PREFIX:PATH={0}".format(self.prefix))
         if spec.satisfies("+rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
