@@ -33,6 +33,7 @@ class PrunersNinja(AutotoolsPackage):
     depends_on("libtool", type="build")
 
     patch("pruners-mutli-def-a-pr3-fix.patch", when="@:1.0.1")
+    patch("test-include-string.patch", when="@1.0.0:1.0.2")
 
     def flag_handler(self, name, flags):
         if name == "cflags":
