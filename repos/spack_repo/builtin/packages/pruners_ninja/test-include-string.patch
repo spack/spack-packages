@@ -1,0 +1,10 @@
+--- a/test/ninja_test_pingpong.c
++++ b/test/ninja_test_pingpong.c
+@@ -25,6 +25,7 @@
+ #include <sys/time.h>
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <string.h>
+ 
+ 
+ #include "mpi.h"
