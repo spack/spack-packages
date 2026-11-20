@@ -25,6 +25,7 @@ class Exmcutils(AutotoolsPackage):
     version("0.5.6", sha256="296ba85cc828bd816c7c4de9453f589da37f32854a58ffda3586b6f371a23abf")
 
     depends_on("c", type="build")  # generated
+    depends_on("gnuconfig", type="build")
 
     @property
     def configure_directory(self):
@@ -33,6 +34,11 @@ class Exmcutils(AutotoolsPackage):
         else:
             return "."
 
+    def autoreconf(self, spec, prefix):
+        for f in ("config.guess", "config.sub"):
+            copy(join_path(spec["gnuconfig"].prefix, f), f)
+
+    @when("@master")
     def autoreconf(self, spec, prefix):
         which("bash", required=True)("bootstrap")
 
