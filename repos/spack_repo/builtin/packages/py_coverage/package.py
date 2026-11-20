@@ -16,6 +16,7 @@ class PyCoverage(PythonPackage):
     license("Apache-2.0")
     maintainers("adamjstewart")
 
+    version("7.17.2", sha256="d05a1bef52f4d7f1b484a1cf46a8929e50963f910e51396373f06cd3b6248f38")
     version("7.12.0", sha256="fc11e0a4e372cb5f282f16ef90d4a585034050ccda536451901abfb19a57f40c")
     version("7.10.7", sha256="f4ab143ab113be368a3e9b795f9cd7906c5ef407d6173fe9675a902e1fffc239")
     version("7.10.0", sha256="2768885aef484b5dcde56262cbdfba559b770bfc46994fe9485dc3614c7a5867")
@@ -40,12 +41,14 @@ class PyCoverage(PythonPackage):
     depends_on("c", type="build")
 
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.11:", when="@7.17:")
         depends_on("python@3.10:", when="@7.11:")
         depends_on("python@3.9:", when="@7.6.2:")
         depends_on("python@3.8:", when="@7.3:")
         depends_on("python@3.7:", when="@6.3:")
         depends_on("python")
 
+    depends_on("py-setuptools@64:", type="build", when="@7.13:")
     depends_on("py-setuptools", type="build")
 
     with default_args(type=("build", "run")):
