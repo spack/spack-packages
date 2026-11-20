@@ -203,6 +203,8 @@ class RocmTensile(ROCmLibrary, CMakePackage):
 
     patch("0004-replace_rocm_smi.patch", when="@6.4:7.2")
     patch("0004-replace_rocm_smi_7_13.patch", when="@7.13:10.0")
+    # Fix for ROCm 10.0: TensileCreateLibrary now requires --assembler argument
+    patch("tensile-add-assembler-arg.patch", when="@10.0:")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@7.1:"):
