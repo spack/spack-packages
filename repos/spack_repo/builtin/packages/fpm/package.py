@@ -26,6 +26,7 @@ class Fpm(Package):
 
     license("MIT")
 
+    version("0.14.0", sha256="80d4caa2438ab68794685ad18e46605beef0d44beb4c7c3f34de7c14a4fde40e")
     version("0.13.0", sha256="2c81b448efe9f6a93f4c3cfd7131a42249cd611121857f2bae15b8e2d69ff9a7")
     version("0.12.0", sha256="b519b614c693dc26f553f0eb902fc707adab9d1759f17ff098412c14d6b290fe")
     version("0.11.0", sha256="f6c998c9afd39eb42c7e80a306cfbed5faa77eaa42eb4f75b93864c338db1795")
@@ -81,4 +82,7 @@ class Fpm(Package):
 
     def install_args(self):
         args = ["--prefix={0}".format(self.prefix)]
+        # From 0.14.0, install.sh builds with OpenMP unless told otherwise
+        if self.spec.satisfies("@0.14.0: ~openmp"):
+            args.append("--no-openmp")
         return args
