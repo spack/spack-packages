@@ -1,0 +1,24 @@
+C++20 does not permit template-ids in destructor declarators.
+Keep the v0.9.1 buffer implementation unchanged and fix only the syntax.
+
+diff --git a/SniperMuster/SniperMuster/GlobalBuffer.h b/SniperMuster/SniperMuster/GlobalBuffer.h
+--- a/SniperMuster/SniperMuster/GlobalBuffer.h
++++ b/SniperMuster/SniperMuster/GlobalBuffer.h
+@@ -106,5 +106,5 @@ GlobalBuffer<T>::GlobalBuffer(int capacity, int cordon)
+ template <typename T>
+-GlobalBuffer<T>::~GlobalBuffer<T>()
++GlobalBuffer<T>::~GlobalBuffer()
+ {
+     delete[] m_store;
+ }
+diff --git a/SniperMuster/SniperMuster/GlobalStream.h b/SniperMuster/SniperMuster/GlobalStream.h
+--- a/SniperMuster/SniperMuster/GlobalStream.h
++++ b/SniperMuster/SniperMuster/GlobalStream.h
+@@ -78,6 +78,6 @@ GlobalStream<T>::GlobalStream(const std::string &name)
+ template <typename T>
+-GlobalStream<T>::~GlobalStream<T>()
++GlobalStream<T>::~GlobalStream()
+ {
+     LogInfo << "releasing GlobalBuffer of " << objName() << std::endl;
+     delete m_buf;
+ }
