@@ -31,7 +31,7 @@ class PyAwscrt(PythonPackage):
 
     depends_on("cmake@3.1:", type=("build"))
     # The bundled s2n calls ASN1_STRING_data(), which OpenSSL 4 removed.
-    depends_on("openssl@:3", type=("build", "link"), when="platform=linux")
+    depends_on("openssl@:3", type=("build", "link"))
     depends_on("py-setuptools", type=("build"))
     # awscrt>=0.29 requires setuptools.command.bdist_wheel introduced in v71.
     depends_on("py-setuptools@75.3.1:", when="@0.29:", type=("build"))
