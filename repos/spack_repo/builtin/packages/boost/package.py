@@ -507,6 +507,9 @@ class Boost(Package):
         working_dir="libs/context",
     )
 
+    # Fix clang CUDA build of Boost.Math round.hpp: https://github.com/boostorg/math/pull/1658
+    patch("math-iround-gpu-enabled.patch", when="@1.87:1.92")
+
     def patch(self):
         # Disable SSSE3 and AVX2 when using the NVIDIA compiler
         if self.spec.satisfies("%nvhpc"):
