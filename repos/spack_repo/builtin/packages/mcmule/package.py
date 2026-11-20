@@ -21,6 +21,8 @@ class Mcmule(MesonPackage):
 
     maintainers("wdconinc")
 
+    tags = ["hep"]
+
     license("GPL-3.0-or-later", checked_by="wdconinc")
 
     # OpenLoops, COLLIER, handyG, alphaQED and pymule are vendored as git
