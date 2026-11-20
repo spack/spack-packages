@@ -17,6 +17,7 @@ class PyJupyterlabWidgets(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.17", sha256="40ac1e9955acf116c4d995d9bfa082d86ad9ec6d91c4f134827cf5e0a5eb75e0")
     version("3.0.16", sha256="45fa36d9c6422cf2559198e4db481aa243c7a32d9926b500781c830c80f7ecf8")
     version("3.0.3", sha256="6aa1bc0045470d54d76b9c0b7609a8f8f0087573bae25700a370c11f82cb38c8")
     version("1.1.0", sha256="c2a9bd3789f120f64d73268c066ed3b000c56bc1dda217be5cdc43e7b4ebad3f")
