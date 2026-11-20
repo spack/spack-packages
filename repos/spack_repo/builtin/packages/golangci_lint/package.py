@@ -2,11 +2,9 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import tarfile
-from datetime import datetime, timezone
+from spack_repo.builtin.build_systems.go import GoPackage
 
 from spack.package import *
-from spack_repo.builtin.build_systems.go import GoPackage
 
 
 class GolangciLint(GoPackage):
