@@ -13,6 +13,8 @@ spack:
       require: target=x86_64_v3
     cmake:
       variants: ~ownlibs
+    papi::
+      require: +example +shared ~static_tools  # +static_tools needs a static libc
 
   concretizer:
     unify: when_possible
