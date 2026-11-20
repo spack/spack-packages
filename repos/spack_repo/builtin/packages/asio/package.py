@@ -56,7 +56,7 @@ class Asio(AutotoolsPackage):
     # https://github.com/chriskohlhoff/asio/pull/995
     conflicts(
         "%gcc@12:",
-        when="@:1.22.0",
+        when="@1.17:1.22.0",
         msg="asio v1.22.1 fixed missing includes necessary for gcc v12 and above",
     )
 
