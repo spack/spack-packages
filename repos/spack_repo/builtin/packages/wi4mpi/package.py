@@ -145,6 +145,13 @@ class Wi4mpi(CMakePackage):
         env.set("WI4MPI_FC", self.compiler.fc)
 
     @when("mode=interface")
+    def setup_dependent_build_environment(self, env, dependent_spec):
+        env.set("MPICC", join_path(self.prefix.bin, "mpicc"))
+        env.set("MPICXX", join_path(self.prefix.bin, "mpicxx"))
+        env.set("MPIF77", join_path(self.prefix.bin, "mpif77"))
+        env.set("MPIF90", join_path(self.prefix.bin, "mpif90"))
+
+    @when("mode=interface")
     def setup_dependent_package(self, module, dependent_spec):
         self.spec.mpicc = join_path(self.prefix.bin, "mpicc")
         self.spec.mpicxx = join_path(self.prefix.bin, "mpicxx")
