@@ -107,14 +107,14 @@ class Duckdb(CMakePackage):
         default="core,community",
         multi=True,
         description="Which signing keys to trust for extensions",
-        when="@2.0.0",
+        when="@2.0",
     )
     variant(
         "extension_key",
         default="none",
         values=str,
         description="sha256 of the DER public key to trust for site, as DuckDB reports it",
-        when="@2.0.0 extension_keys=site",
+        when="@2.0 extension_keys=site",
     )
     conflicts(
         "extension_key=none",
@@ -190,7 +190,7 @@ class Duckdb(CMakePackage):
         "community,site",
         "core,community,site",
     ):
-        patch("extension_keys.patch", when=f"@2.0.0 extension_keys:={_keys}")
+        patch("extension_keys.patch", when=f"@2.0 extension_keys:={_keys}")
 
     with when("+python"):
         extends("python")
