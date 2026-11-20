@@ -61,12 +61,12 @@ class Duckdb(CMakePackage):
         "extension_env",
         default=False,
         description="Also search DUCKDB_EXTENSION_DIRECTORIES, set to the prefix or view on load",
-        when="@2.0.0",
+        when="@2.0",
     )
 
     # Extensions that a version always links statically. An extension package must not provide
     # these. Update this table for each new version, and check the duckdb-extensions variants.
-    builtin_extensions = {"@2.0.0": ["core_functions", "icu", "json", "parquet", "shell"]}
+    builtin_extensions = {"@2.0": ["core_functions", "icu", "json", "parquet", "shell"]}
 
     # Extensions
     variant("autocomplete", default=True, description="Include autocomplete for CLI in build")
@@ -100,7 +100,7 @@ class Duckdb(CMakePackage):
 
     # Also turns off the automatic install by default, which fails for an extension that is
     # only in a later search directory. An explicit INSTALL still works.
-    patch("extension_env.patch", when="@2.0.0 +extension_env")
+    patch("extension_env.patch", when="@2.0 +extension_env")
 
     with when("+python"):
         extends("python")
