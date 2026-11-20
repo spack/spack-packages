@@ -17,6 +17,8 @@ class Kfparticle(CMakePackage):
 
     maintainers("wdconinc")
 
+    tags = ["hep"]
+
     license("GPL-3.0-only", checked_by="wdconinc")
 
     version(
