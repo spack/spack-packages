@@ -19,6 +19,7 @@ class PerlBioEnsembl(Package):
 
     license("APACHE-2.0", checked_by="teaguesterling")
 
+    version("116", sha256="31335918c1b3423e45682a8d25cded2394ac75632302f4048ff1fe8679f0b5f1")
     version("113", sha256="9afb88ac23b188104da881efe9b4dbf2f71129484167014b880de77e9bb74f3a")
     version("112", sha256="7c2c5265abe74b462cd4f8b26f140a4c4945cd0e2971f40711afbb4b38db5997")
     version("111", sha256="346c47c75a6fa8dcfd9f9d22e9f1e0ccc35b2fb99f75980a0c74d892e4ab2b6d")

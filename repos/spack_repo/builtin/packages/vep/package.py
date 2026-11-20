@@ -22,6 +22,7 @@ class Vep(Package):
 
     license("APACHE-2.0", checked_by="teaguesterling")
 
+    version("116.3", sha256="019093bc72ea8edf03d4fa06485533721220d45afc073c8293c94c29d94d124c")
     version("113.3", sha256="af3af9d0ecb8a73fec04ff694bcd2ee31a1ef963fe073dc5f47a996f1407e142")
     version("112.0", sha256="46dd08838fd94ecbfaa931266c78570748a3cb39668b6e43c3608e6cd0aff93f")
     version("111.0", sha256="9cb326a1fa0054ce1a417f8fd4f2325ba605c40ec10eefbf87f461c264a89407")
@@ -60,7 +61,7 @@ class Vep(Package):
     # This is a workaround for the VEP installer which downloads
     # and manually installs dependent packages
     with default_args(type=("build", "run"), when="~vep_installer"):
-        for ver in ["110", "111", "112", "113"]:
+        for ver in ["110", "111", "112", "113", "116"]:
             depends_on(f"perl-bio-ensembl@{ver}", when=f"@{ver}")
             depends_on(f"perl-bio-ensembl-variation@{ver}", when=f"@{ver}")
             depends_on(f"perl-bio-ensembl-funcgen@{ver}", when=f"@{ver}")
