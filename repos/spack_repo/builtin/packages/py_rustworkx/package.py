@@ -32,6 +32,7 @@ class PyRustworkx(PythonPackage):
     version("0.12.1", sha256="13a19a2f64dff086b3bffffb294c4630100ecbc13634b4995d9d36a481ae130e")
     version("0.12.0", sha256="0b871e1463a6677d0fd2fc00adfb774283045d38740bd1b7ea5a1a729de06aa1")
 
+    depends_on("c", type="build")
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools-rust", type="build")

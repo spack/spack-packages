@@ -28,6 +28,7 @@ class CargoPackage(PackageBase):
     build_system("cargo")
 
     with when("build_system=cargo"):
+        depends_on("c", type="build")
         depends_on("rust", type="build")
 
 
