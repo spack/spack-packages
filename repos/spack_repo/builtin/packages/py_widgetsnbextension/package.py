@@ -14,6 +14,7 @@ class PyWidgetsnbextension(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("4.0.16", sha256="adeea0ae78f0856ee4945f413299801b82a0a01416303301f39a704282a37b73")
     version("4.0.15", sha256="de8610639996f1567952d763a5a41af8af37f2575a41f9852a38f947eb82a3b9")
     version("4.0.3", sha256="34824864c062b0b3030ad78210db5ae6a3960dfb61d5b27562d6631774de0286")
     version("3.6.0", sha256="e84a7a9fcb9baf3d57106e184a7389a8f8eb935bf741a5eb9d60aa18cc029a80")
@@ -28,5 +29,7 @@ class PyWidgetsnbextension(PythonPackage):
 
     depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
     depends_on("python@3.7:", when="@4.0.3:", type=("build", "run"))
+
+    # Historical dependencies
     depends_on("py-notebook@4.2.0:", when="@1.2.6", type=("build", "run"))
     depends_on("py-notebook@4.4.1:", type=("build", "run"), when="@3.3.0:3")
