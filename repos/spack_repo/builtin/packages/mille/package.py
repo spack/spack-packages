@@ -11,23 +11,23 @@ class Mille(CMakePackage):
     """Mille is the I/O component used by the Millepede-II package
     and supported by the GeneralBrokenLines track fitter."""
 
-    homepage = "https://gitlab.desy.de/millepede/mille"
-    url = "https://gitlab.desy.de/millepede/mille/-/archive/V01-00-05/mille-V01-00-05.tar.gz"
-    git = "https://gitlab.desy.de/millepede/mille.git"
+    homepage = "https://github.com/millepede-project/mille"
+    url = "https://github.com/millepede-project/mille/archive/refs/tags/V01-00-05.tar.gz"
+    git = "https://github.com/millepede-project/mille.git"
 
     license("LGPL-2.0-only", checked_by="paulgessinger")
 
     version("main", branch="main")
-    version("01-01-04", sha256="1dd7c97719b7badbc0d4185d5fdddd8d482b76aed4ee65851b6ca8f032d7623d")
-    version("01-01-03", sha256="3e93f8dbe3a4265e4205d9a2a7fe96358b6d7988969b47999ec175a660a9bdee")
-    version("01-01-02", sha256="4ab4bdc0da51c9647642debf86828b3b42e968cea8b5935c824dd9b562cbc3ac")
-    version("01-01-01", sha256="cd96069d42ab1afd799e1eecd82c0a98e9dd2d0f42a0f86942dead1664381f3d")
-    version("01-01-00", sha256="57eb5ec11fc9506038151d2a4abcf0d891d05a3f7de526cdb99bf51461cd324b")
-    version("01-00-05", sha256="00efaa82631482f3ead7bec548a09a80938c08950f84cdbc2e7bb47de9186228")
-    version("01-00-04", sha256="9d3f9113609c1b1328dd0dde10730c7cbccb95e1637bb82ab88d32cda8a5cca2")
-    version("01-00-03", sha256="1953e2a341fed3a1c431c954d6e8f1c823926bc2886bdc209d859d2cb9dac6d8")
-    version("01-00-02", sha256="bb232672003a8f13f848635e49a261acb79de26634e4ba76347358f209b5de05")
-    version("01-00-00", sha256="ae4bf37de8d835aa8adc2960bb795a2080233a4c8af3d4b55adf395e20df0f3e")
+    version("01-01-04", sha256="40b4d702208b33683d390b4684ccc90f6df0805fd96a92e33fefa12b93387dfe")
+    version("01-01-03", sha256="f8962ad6cedab87a45fe5d40341f29712bbabcddd33375414a89dc2b11ac86ad")
+    version("01-01-02", sha256="b765224b516d2c1840c84905b9df697858564b5851fd6926b8fe1d2d8a063505")
+    version("01-01-01", sha256="415da5f7da0c477985be6a807c175013a862f9685e568cb2632d533c37f246be")
+    version("01-01-00", sha256="8535bf002453cc30a3719ca0347b07008c57a8d31a810c926c8c857539935fc9")
+    version("01-00-05", sha256="2dec8402201938c7b2d7680db30aff19fd06dd06a420dbde45f57de2ce50d2ff")
+    version("01-00-04", sha256="cfd9d87f45b78aa0fc43d128d8ba25a81d0123b705aea7dc666548e561ce3e74")
+    version("01-00-03", sha256="ecfb238ededdc88785d20ecb913149796001fcf670f55200ca6c68e63026b7b2")
+    version("01-00-02", sha256="b91af335c9797170ad3cebe4621532d16b72dc7c344ded47830eeea00ee0ad95")
+    version("01-00-00", sha256="0da735a8948c26b4b3ad81ef0ff1515826a7f7a30186a09fb973981c8eef5172")
 
     requires("%gcc", msg="Mille hardcodes gcc/g++/gfortran", when="@:01-00-03")
 
