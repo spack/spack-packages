@@ -1,0 +1,31 @@
+--- a/src/gpu/logger.cpp
++++ b/src/gpu/logger.cpp
+@@ -6,6 +6,7 @@
+ ////////////////////////////////////////////////////////////////////////////////
+ #include "h2/gpu/logger.hpp"
+ 
++#include <algorithm>
+ #include <memory>
+ #include <stdexcept>
+ 
+--- a/src/utils/Logger.cpp
++++ b/src/utils/Logger.cpp
+@@ -14,6 +14,7 @@
+ #include <spdlog/sinks/stdout_color_sinks.h>
+ #include "spdlog/sinks/basic_file_sink.h"
+ 
++#include <algorithm>
+ #include <cstdlib>
+ #include <unordered_map>
+ #include <sstream>
+--- a/src/utils/logging/hostname_pattern.hpp
++++ b/src/utils/logging/hostname_pattern.hpp
+@@ -10,6 +10,8 @@
+ 
+ #include "spdlog/pattern_formatter.h"
+ 
++#include <algorithm>
++
+ #include <unistd.h>
+ 
+ #include <sys/types.h>
