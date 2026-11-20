@@ -353,6 +353,8 @@ supported, and netmod is ignored if device is ch3:sock.""",
     # +argobots variant requires Argobots
     depends_on("argobots", when="+argobots")
 
+    depends_on("perl", type=("build", "run"))
+
     # building from git requires regenerating autotools files
     depends_on("automake@1.15:", when="@develop", type="build")
     depends_on("libtool@2.4.4:", when="@develop", type="build")
