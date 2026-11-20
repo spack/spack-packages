@@ -12,13 +12,14 @@ class Duckdb(CMakePackage):
     """DuckDB is an in-process SQL OLAP Database Management System."""
 
     homepage = "https://duckdb.org"
-    url = "https://github.com/duckdb/duckdb/archive/refs/tags/v2.0.0.tar.gz"
+    url = "https://github.com/duckdb/duckdb/archive/refs/tags/v2.0.1.tar.gz"
     git = "https://github.com/duckdb/duckdb.git"
 
     license("MIT")
     maintainers("glentner", "teaguesterling")
 
     version("master", branch="master")
+    version("2.0.1", sha256="1deae9d4917bd069c46c25c6ddbe51a2ef06cc7c12e6a10132af4fa0fb834a14")
     version("2.0.0", sha256="7e89053255046bfb26afbd7f524a2fb84df7dbef496aa911ea35e4a1182fdc00")
     version("1.5.6", sha256="1fadcbe9e69e1470f9093b6bcde08daf477d729c449e59a807f45c346622099b")
     version("1.5.5", sha256="f33155ff962e6e1e08fd1e9caffa487d4325aa60999e2eabc76feff534d6558b")
@@ -42,7 +43,7 @@ class Duckdb(CMakePackage):
     version("1.1.0", sha256="d9be2c6d3a5ebe2b3d33044fb2cb535bb0bd972a27ae38c4de5e1b4caa4bf68d")
 
     # Build Options
-    # v2.0.0 has no ICU library: its icu extension uses generated data and is always built in
+    # v2.0 has no ICU library: its icu extension uses generated data and is always built in
     variant("icu", default=False, description="Build the icu extension", when="@:1.5")
     variant("extension_autoload", default=False, description="Enable extension auto-loading")
     variant("extension_autoinstall", default=False, description="Enable extension auto-installing")
@@ -91,7 +92,10 @@ class Duckdb(CMakePackage):
     #: The commit of each release. A release archive has no git metadata, so the build would
     #: report the placeholder 0123456789 as its source_id. A client that links libduckdb, such
     #: as r-duckdb, compares this commit with the commit of its own headers.
-    release_commits = {"2.0.0": "d54cbbe3df17e8e5ce68312f483b4155836112aa"}
+    release_commits = {
+        "2.0.1": "8d78114e90a53823803660bf821f6073ac87da8c",
+        "2.0.0": "d54cbbe3df17e8e5ce68312f483b4155836112aa",
+    }
 
     def cmake_args(self):
         extensions = ("autocomplete", "icu", "json", "parquet", "tpch", "fts", "httpfs")
