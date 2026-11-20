@@ -27,5 +27,11 @@ class Feynhiggs(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    # gfortran 14.4, 15.3 and 16.1-16.2 emit an undefined reference to f_ in ODESolve, because
+    # the dummy procedure f is only called from a contained procedure. This is GCC PR125383,
+    # a regression from r14-12039 / r16-3178 that is fixed on trunk but not yet in a release.
+    # An explicit interface for f avoids it and is valid with any compiler.
+    patch("ODESolve-interface.patch", when="@2.18.1")
+
     def configure_args(self):
         return ["FFLAGS=-fPIC", "CFLAGS=-fPIC"]
