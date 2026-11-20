@@ -22,11 +22,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
 
     version("main", branch="main")
     # Upstream stopped tagging after v2.2.2, so newer versions are pinned by commit.
-    version(
-        "2.3.3",
-        commit="6b4d6b38e0f1bec7ca2344badeaa795665a38b7f",
-        preferred=True,
-    )
+    version("2.3.3", commit="6b4d6b38e0f1bec7ca2344badeaa795665a38b7f")
     version(
         "2.2.2",
         sha256="ee0a6bae8b541e1a1dd3465cf1e7d0bf4ee70b030662c55f2b583d678bb33fa9",
@@ -63,11 +59,6 @@ class Aretomo3(MakefilePackage, CudaPackage):
         if self.spec.satisfies("^cuda@13:"):
             return "makefile13"
         return "makefile12"
-
-    def setup_build_environment(self, env):
-        tiff = self.spec["libtiff"]
-        env.prepend_path("LIBRARY_PATH", tiff.prefix.lib)
-        env.prepend_path("LIBRARY_PATH", tiff.prefix.lib64)
 
     @property
     def build_directory(self):
@@ -122,7 +113,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
         # Add libtiff link flags
         makefile.filter(
             r"-ltiff",
-            f"-L{tiff.prefix.lib} -ltiff",
+            f"{tiff.libs.search_flags} -ltiff",
         )
 
     def build(self, spec, prefix):
