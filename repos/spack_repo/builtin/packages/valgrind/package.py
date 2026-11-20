@@ -75,6 +75,7 @@ clang: error: unknown argument: '-static-libubsan'
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("perl", type=("build", "run"))
 
     depends_on("mpi", when="+mpi")
     depends_on("boost+exception+chrono+system+atomic+thread", when="+boost")
