@@ -97,11 +97,9 @@ class Wi4mpi(CMakePackage):
         values=("Debug", "Release", "RelWithDebInfo"),
     )
     variant(
-        "mode",
-        default="preload",
-        multi=False,
-        values=("preload", "interface"),
-        description="Which mode to use, 'preload' or 'interface'",
+        "interface_mode",
+        default=False,
+        description="Enable wi4mpi as an MPI provider",
         when="@3.6:",
     )
 
@@ -109,9 +107,8 @@ class Wi4mpi(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
     depends_on("mpi", when="@:3.5")
-    depends_on("mpi", when="mode=preload")
 
-    provides("mpi", when="mode=interface")
+    provides("mpi", when="+interface_mode")
 
     # Since v4.0.0, release archives include pre-generated code in the "build" directory,
     # so the build_directory must be named "build" (earlier versions also work with this setting)
@@ -144,14 +141,14 @@ class Wi4mpi(CMakePackage):
         env.set("WI4MPI_CXX", self.compiler.cxx)
         env.set("WI4MPI_FC", self.compiler.fc)
 
-    @when("mode=interface")
+    @when("+interface_mode")
     def setup_dependent_build_environment(self, env, dependent_spec):
         env.set("MPICC", join_path(self.prefix.bin, "mpicc"))
         env.set("MPICXX", join_path(self.prefix.bin, "mpicxx"))
         env.set("MPIF77", join_path(self.prefix.bin, "mpif77"))
         env.set("MPIF90", join_path(self.prefix.bin, "mpif90"))
 
-    @when("mode=interface")
+    @when("+interface_mode")
     def setup_dependent_package(self, module, dependent_spec):
         self.spec.mpicc = join_path(self.prefix.bin, "mpicc")
         self.spec.mpicxx = join_path(self.prefix.bin, "mpicxx")
