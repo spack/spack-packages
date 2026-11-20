@@ -17,6 +17,7 @@ class PyJson5(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.17.3", sha256="8d0278ad34ebaa9c3af76d9519274811830224a2d1cd5af156dbd067f461b8a4")
     version("0.14.0", sha256="b3f492fad9f6cdbced8b7d40b28b9b1c9701c5f561bef0d33b81c2ff433fefcb")
     version("0.12.1", sha256="b2743e77b3242f8d03c143dd975a6ec7c52e2f2afe76ed934e53503dd4ad4990")
     version("0.9.14", sha256="9ed66c3a6ca3510a976a9ef9b8c0787de24802724ab1860bc0153c7fdd589b02")
