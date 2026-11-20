@@ -5,9 +5,10 @@
 # Talk to @alecbcs if you have questions/are not sure of a change's
 # possible impact to security.
 #
-# Two jobs on purpose: find-maintainers imports package.py files (arbitrary
-# code) with only a read-only token; invite holds the admin-capable app token
-# and never loads Spack or package code.
+# This workflow is split into two jobs to limit token exposure. The
+# find-maintainers job imports package.py files, which can run arbitrary
+# code, so it only gets a read-only token. The invite job holds the
+# admin-capable app token and never loads Spack or package code.
 #-----------------------------------------------------------------------
 name: invite-maintainers
 on:

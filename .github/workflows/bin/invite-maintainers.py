@@ -2,7 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-# Runs with an admin-capable token: deliberately imports no Spack or package code.
+# This script runs with an admin-capable token, so it intentionally does not
+# import Spack or any package code.
 
 import os
 import re
@@ -10,7 +11,9 @@ import sys
 
 import requests
 
-# MAINTAINERS comes from a job that imported package.py files; trust nothing from it
+# MAINTAINERS is generated from a job that imports package.py files.
+# Although those files were merged into develop, we still validate usernames
+# to limit chances of a rogue username containing dangerous escape characters.
 VALID_USERNAME = re.compile(r"^[A-Za-z0-9][A-Za-z0-9-]{0,38}$")
 
 
@@ -21,7 +24,7 @@ def msg(message: str, entries=()):
 
 
 def get_expired_invitations(session, headers, base_url):
-    """Map lowercased invitee login -> id for every expired invitation on the repo."""
+    """Return expired invitation ids on the repo, keyed by lowercased invitee login."""
     expired = {}
     url = f"{base_url}/invitations?per_page=100"
     while url:
