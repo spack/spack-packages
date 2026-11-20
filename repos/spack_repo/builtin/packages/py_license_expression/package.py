@@ -20,6 +20,8 @@ class PyLicenseExpression(PythonPackage):
 
     version("30.4.4", sha256="73448f0aacd8d0808895bdc4b2c8e01a8d67646e4188f887375398c761f340fd")
 
-    depends_on("py-setuptools@50:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@50:")
+        depends_on("py-setuptools-scm@6: +toml")
 
-    depends_on("python@3.10:", type=("build", "run"))
+    depends_on("python@3.9:", type=("build", "run"))
