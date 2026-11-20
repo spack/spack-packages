@@ -1,0 +1,83 @@
+#-----------------------------------------------------------------------
+# DO NOT modify unless you really know what you are doing.
+#
+# See https://stackoverflow.com/a/74959635 for more info.
+# Talk to @alecbcs if you have questions/are not sure of a change's
+# possible impact to security.
+#
+# This workflow is split into two jobs to limit token exposure. The
+# find-maintainers job imports package.py files, which can run arbitrary
+# code, so it only gets a read-only token. The invite job holds the
+# admin-capable app token and never loads Spack or package code.
+#-----------------------------------------------------------------------
+name: invite-maintainers
+on:
+  pull_request_target:
+    types: [closed]
+    branches:
+      - develop
+
+jobs:
+  find-maintainers:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    outputs:
+      maintainers: ${{ steps.find.outputs.maintainers }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: develop # DO NOT CHANGE
+          persist-credentials: false
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+      - uses: ./.github/actions/checkout-spack
+
+      - name: Install Python dependencies
+        run: pip install -r .github/workflows/requirements/invite/requirements.txt
+
+      - name: Find maintainers of changed packages
+        id: find
+        run: |
+          . spack-core/share/spack/setup-env.sh
+          spack-python .github/workflows/bin/spack-find-maintainers.py
+        env:
+          GH_PR_NUMBER: ${{ github.event.number }}
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ github.token }}
+
+  invite:
+    needs: find-maintainers
+    if: needs.find-maintainers.outputs.maintainers != ''
+    runs-on: ubuntu-latest
+    environment: maintainer-invites
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+        with:
+          ref: develop # DO NOT CHANGE
+          persist-credentials: false
+          sparse-checkout: .github
+
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97  # v7.0.0
+
+      - name: Install Python dependencies
+        run: pip install -r .github/workflows/requirements/invite/requirements.txt
+
+      - uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1  # v3.2.0
+        id: generate-spackbot-token
+        with:
+          client-id: ${{ secrets.SPACKBOT_MAINTAINERS_CLIENT_ID }}
+          private-key: ${{ secrets.SPACKBOT_MAINTAINERS_PRIVATE_KEY }}
+          permission-administration: write
+
+      - name: Invite package maintainers as outside collaborators
+        run: python3 .github/workflows/bin/invite-maintainers.py
+        env:
+          GH_REPO: ${{ github.repository }}
+          GH_TOKEN: ${{ steps.generate-spackbot-token.outputs.token }}
+          MAINTAINERS: ${{ needs.find-maintainers.outputs.maintainers }}
+          MAINTAINER_ROLE: "Package Maintainer"
