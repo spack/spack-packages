@@ -1,0 +1,59 @@
+--- a/cmake/duckdb_loader.cmake
++++ b/cmake/duckdb_loader.cmake
+@@ -168,8 +168,12 @@
+     )
+   endif()
+ 
+-  # Link to the DuckDB static library
+-  target_link_libraries(${target_name} INTERFACE duckdb_static)
++  # Link to the DuckDB static library, or to the libduckdb of an installed DuckDB
++  if(DUCKDB_PY_EXTERNAL_ENGINE)
++    target_link_libraries(${target_name} INTERFACE duckdb)
++  else()
++    target_link_libraries(${target_name} INTERFACE duckdb_static)
++  endif()
+ 
+   # Enable position independent code for shared library builds
+   set_target_properties(${target_name}
+@@ -257,6 +261,26 @@
+ 
+ function(duckdb_add_library target_name)
+   _duckdb_validate_source_path()
++  if(DUCKDB_PY_EXTERNAL_ENGINE)
++    # An installed DuckDB of the same version supplies libduckdb, which has its
++    # extensions and capabilities in it. The headers still come from
++    # DUCKDB_SOURCE_PATH, because an install does not have the third-party
++    # headers that leak through the API.
++    find_package(DuckDB CONFIG REQUIRED)
++    message(STATUS "DuckDB engine: ${DuckDB_DIR}")
++    # The engine's CMake defines duckdb_resolve_architecture_flags, which the
++    # top level calls. NONE leaves the target flags to the caller, as for the
++    # installed engine.
++    if(NOT DEFINED DUCKDB_OPTIMIZATION_PROFILE)
++      set(DUCKDB_OPTIMIZATION_PROFILE
++          NONE
++          PARENT_SCOPE)
++      set(DUCKDB_OPTIMIZATION_PROFILE NONE)
++    endif()
++    include("${DUCKDB_SOURCE_PATH}/scripts/architecture_flags.cmake")
++    _duckdb_create_interface_target(${target_name})
++    return()
++  endif()
+   _duckdb_print_summary()
+ 
+   # Add DuckDB subdirectory - it will use our variables
+@@ -267,6 +291,14 @@
+ endfunction()
+ 
+ function(duckdb_python_link_extensions target_name)
++  if(DUCKDB_PY_EXTERNAL_ENGINE)
++    # libduckdb registers its own extensions, so the loader registers none
++    set(loader
++        "${CMAKE_CURRENT_BINARY_DIR}/${target_name}_static_extension_loader.cpp")
++    _duckdb_python_write_static_extension_loader("${loader}")
++    target_sources(${target_name} PRIVATE "${loader}")
++    return()
++  endif()
+   # Statically link the extensions in LINK_EXTENSIONS into target_name. Which
+   # extensions are linked is a link-time decision: BUILD_EXTENSIONS configures
+   # the extension targets, LINK_EXTENSIONS picks from them, and changing it only
