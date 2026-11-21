@@ -741,6 +741,10 @@ To resolve this problem, please try the following:
         if variant not in spec.variants:
             return []
 
+        # Leave feature detection to configure when auto is selected.
+        if spec.variants[variant].value in ("auto", ("auto",)):
+            return []
+
         # Create a list of pairs. Each pair includes a configuration
         # option and whether or not that option is activated
         vdef = self.pkg.get_variant(variant)
@@ -787,6 +791,8 @@ To resolve this problem, please try the following:
     ) -> List[str]:
         """Inspects a variant and returns the arguments that activate
         or deactivate the selected feature(s) for the configure options.
+
+        When the variant is set to ``auto``, return no configure options.
 
         This function works on all type of variants. For bool-valued variants
         it will return by default ``--with-{name}`` or ``--without-{name}``.
