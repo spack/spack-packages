@@ -26,7 +26,6 @@ class Exodusii(CMakePackage):
     homepage = "https://sandialabs.github.io/seacas/"
     git = "https://github.com/sandialabs/seacas.git"
     url = "https://github.com/sandialabs/seacas/archive/refs/tags/v2019-08-20.zip"
-    maintainers("gsjaardema")
 
     license("BSD-3-Clause")
 
