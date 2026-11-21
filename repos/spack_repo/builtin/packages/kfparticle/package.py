@@ -43,6 +43,7 @@ class Kfparticle(CMakePackage):
 
     variant("fixtarget", default=False, description="Compile for fixed target geometry")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")
 
     depends_on("cmake@3.16:", type="build", when="@1.1-alice8:")
