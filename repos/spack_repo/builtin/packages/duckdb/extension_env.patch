@@ -1,0 +1,34 @@
+--- a/src/main/extension/extension_install.cpp
++++ b/src/main/extension/extension_install.cpp
+@@ -75,6 +75,12 @@
+ #endif
+ 	string dirs_string(DUCKDB_EXTENSION_DIRECTORIES);
+ 
++	// Search these after the compiled-in folders, so that INSTALL keeps writing to the first (writable) folder
++	auto env_dirs = FileSystem::GetEnvVariable("DUCKDB_EXTENSION_DIRECTORIES");
++	if (!env_dirs.empty()) {
++		dirs_string += ";" + env_dirs;
++	}
++
+ 	// Skip if empty
+ 	if (dirs_string.empty()) {
+ 		return default_folders;
+--- a/src/main/extension/extension_helper.cpp
++++ b/src/main/extension/extension_helper.cpp
+@@ -21,6 +21,16 @@
+ namespace duckdb {
+ 
+ void ExtensionHelper::RegisterLinkedExtensions(DBConfig &config) {
++	// Signed extensions carry their own copy of this code, and use it to load the extensions they depend on. That copy
++	// does not see the folders that DefaultExtensionFolders adds, and it installs before it loads. It does read these
++	// stored settings, so store them here. An automatic install is off because it would fail for a dependency that is
++	// already in a later folder.
++	if (config.options.extension_directories.empty() && Settings::Get<ExtensionDirectorySetting>(config).empty()) {
++		config.options.extension_directories = DefaultExtensionFolders(*config.file_system);
++	}
++	if (!config.user_settings.IsSet(AutoinstallKnownExtensionsSetting::SettingIndex)) {
++		config.SetOption(AutoinstallKnownExtensionsSetting::SettingIndex, Value::BOOLEAN(false));
++	}
+ 	for (auto &linked : LinkedExtensionRegistry::Get()) {
+ 		bool present = false;
+ 		for (auto &existing : config.linked_extensions) {

@@ -12,13 +12,20 @@ class Duckdb(CMakePackage):
     """DuckDB is an in-process SQL OLAP Database Management System."""
 
     homepage = "https://duckdb.org"
-    url = "https://github.com/duckdb/duckdb/archive/refs/tags/v0.9.2.tar.gz"
+    url = "https://github.com/duckdb/duckdb/archive/refs/tags/v2.0.1.tar.gz"
     git = "https://github.com/duckdb/duckdb.git"
 
     license("MIT")
     maintainers("glentner", "teaguesterling")
 
+    extendable = True
+
     version("master", branch="master")
+    version("2.0.1", sha256="1deae9d4917bd069c46c25c6ddbe51a2ef06cc7c12e6a10132af4fa0fb834a14")
+    version("2.0.0", sha256="7e89053255046bfb26afbd7f524a2fb84df7dbef496aa911ea35e4a1182fdc00")
+    version("1.5.6", sha256="1fadcbe9e69e1470f9093b6bcde08daf477d729c449e59a807f45c346622099b")
+    version("1.5.5", sha256="f33155ff962e6e1e08fd1e9caffa487d4325aa60999e2eabc76feff534d6558b")
+    version("1.5.4", sha256="99c36e4bf415f295e19ed67401adb72e075e63e6a0dc3a14312c986e29781fd0")
     version("1.5.2", sha256="6d8612fc87115cf4d3512a934ada5d1669db29378b4cc8e226fdfa8f5c537385")
     version("1.5.1", sha256="2de9901f05d445e6a24b79127fd70f2e4fbd552b44dc1dc668aca07fbf97f716")
     version("1.5.0", sha256="fb039699c5a91dec9876540aed7904b6b4e713b800014840dbf641168147a556")
@@ -38,10 +45,28 @@ class Duckdb(CMakePackage):
     version("1.1.0", sha256="d9be2c6d3a5ebe2b3d33044fb2cb535bb0bd972a27ae38c4de5e1b4caa4bf68d")
 
     # Build Options
-    variant("icu", default=False, description="Compile with bundled ICU library")
+    # v2.0 has no ICU library: its icu extension uses generated data and is always built in
+    variant("icu", default=False, description="Build the icu extension", when="@:1.5")
     variant("extension_autoload", default=False, description="Enable extension auto-loading")
     variant("extension_autoinstall", default=False, description="Enable extension auto-installing")
     variant("extension_repo", default=True, description="Copy extensions to prefix")
+    variant(
+        "extension_directories",
+        default="none",
+        values=str,
+        description="Extra directory to search for extensions, after ~/.duckdb/extensions",
+        when="@1.5:",
+    )
+    variant(
+        "extension_env",
+        default=False,
+        description="Also search DUCKDB_EXTENSION_DIRECTORIES, set to the prefix or view on load",
+        when="@2.0",
+    )
+
+    # Extensions that a version always links statically. An extension package must not provide
+    # these. Update this table for each new version, and check the duckdb-extensions variants.
+    builtin_extensions = {"@2.0": ["core_functions", "icu", "json", "parquet", "shell"]}
 
     # Extensions
     variant("autocomplete", default=True, description="Include autocomplete for CLI in build")
@@ -67,9 +92,15 @@ class Duckdb(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("python@3.7:")
+    depends_on("python@3.7:", type="build")
     depends_on("openssl", when="+httpfs")
-    depends_on("icu4c", when="~icu")
+    # 1.3 adds WITH_INTERNAL_ICU; before it, the icu extension builds only the vendored ICU 66.
+    # DuckDB 1.x builds as C++11, and the headers of ICU 75 and newer need C++17.
+    depends_on("icu4c@:74", when="@1.3:1.5 +icu")
+
+    # Also turns off the automatic install by default, which fails for an extension that is
+    # only in a later search directory. An explicit INSTALL still works.
+    patch("extension_env.patch", when="@2.0 +extension_env")
 
     with when("+python"):
         extends("python")
@@ -80,6 +111,20 @@ class Duckdb(CMakePackage):
         if self.spec.satisfies("+python"):
             env.set("SETUPTOOLS_SCM_PRETEND_VERSION", f"{self.spec.version}")
             env.set("PIP_PREFIX", self.prefix)
+
+    def setup_run_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+extension_env"):
+            env.append_path(
+                "DUCKDB_EXTENSION_DIRECTORIES", self.prefix.lib.duckdb.extensions, separator=";"
+            )
+
+    #: The commit of each release. A release archive has no git metadata, so the build would
+    #: report the placeholder 0123456789 as its source_id. A client that links libduckdb, such
+    #: as r-duckdb, compares this commit with the commit of its own headers.
+    release_commits = {
+        "2.0.1": "8d78114e90a53823803660bf821f6073ac87da8c",
+        "2.0.0": "d54cbbe3df17e8e5ce68312f483b4155836112aa",
+    }
 
     def cmake_args(self):
         extensions = ("autocomplete", "icu", "json", "parquet", "tpch", "fts", "httpfs")
@@ -92,8 +137,44 @@ class Duckdb(CMakePackage):
             self.define("ENABLE_EXTENSION_AUTOLOADING", "1"),  # string, not boolean
             self.define("ENABLE_EXTENSION_AUTOINSTALL", "1"),  # string, not boolean
         ]
+        if self.spec.satisfies("@2:"):
+            # The default profile adds -march=x86-64-v3 or armv8-a, whatever the target of the
+            # spec. NONE leaves the target flags to the compiler wrapper of Spack.
+            args.append(self.define("DUCKDB_OPTIMIZATION_PROFILE", "NONE"))
+        commit = self.release_commits.get(str(self.spec.version))
+        if commit:
+            args.append(self.define("GIT_COMMIT_HASH", commit))
+        if self.spec.satisfies("@1.3:1.5 +icu"):
+            args.append(self.define("WITH_INTERNAL_ICU", False))
+        if self.spec.satisfies("@1.5:"):
+            extension_directory = self.spec.variants["extension_directories"].value
+            if extension_directory != "none":
+                # The first directory is where INSTALL writes, so keep the writable default first
+                args.append(
+                    self.define(
+                        "EXTENSION_DIRECTORIES", ["~/.duckdb/extensions", extension_directory]
+                    )
+                )
         if self.spec.satisfies("+python"):
             args.append(self.define("BUILD_PYTHON", "1"))
         if self.spec.satisfies("+tpce"):
             args.append(self.define("BUILD_TPCE", "1"))
         return args
+
+    def test_builtin_extensions(self):
+        """check which extensions this version links statically"""
+        for when, names in self.builtin_extensions.items():
+            if self.spec.satisfies(when):
+                break
+        else:
+            raise SkipTest("This version has no record of its built-in extensions")
+        # The query fails on a difference, so that the test does not depend on the output format
+        duckdb = which(self.prefix.bin.duckdb)
+        duckdb(
+            "-c",
+            f"SELECT CASE WHEN found = {sorted(names)} AND versions = ['v{self.spec.version}']"
+            " THEN 'ok' ELSE error('Built-in extensions differ: ' || found::VARCHAR"
+            " || ' at ' || versions::VARCHAR) END FROM (SELECT list_sort(list(extension_name))"
+            " AS found, list_distinct(list(extension_version)) AS versions"
+            " FROM duckdb_extensions() WHERE install_mode = 'STATICALLY_LINKED');",
+        )
