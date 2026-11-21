@@ -28,6 +28,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     version("develop", branch="develop")
 
+    version("5.3.0", sha256="f1875cacec93d4d4cbd6f391a38994abb67ccffea5ecee2b4be7a8191941ef88")
     version("5.2.2", sha256="d6557aaef39302282a15f9c770433d1fcdf4e961dfd6d9ed726b9d0d0f546b9f")
     version("5.2.1", sha256="3f754c99aa6130b1dd6520d904db7b2fd44ed618cd91e0dfd921956f23f6812d")
     version("5.2.0", sha256="54993e0682d80b78939bbf260490f8cf31428bb883c0309961369997f15d94df")
@@ -266,21 +267,26 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     # amdgpu_target : (cmake_arch_option, condition)
     amdgpu_arch_map = {
-        "gfx900": ("vega900", None),
-        "gfx906": ("vega906", None),
-        "gfx908": ("vega908", None),
-        "gfx90a": ("vega90A", None),
+        "gfx900": ("vega900", "@3.7.02"),
+        "gfx906": (lambda spec: "amd_gfx906" if spec.satisfies("@4.2:") else "vega906", None),
+        "gfx908": (lambda spec: "amd_gfx908" if spec.satisfies("@4.2:") else "vega908", None),
+        "gfx90a": (lambda spec: "amd_gfx90a" if spec.satisfies("@4.2:") else "vega90A", None),
         "gfx940": ("amd_gfx940", "@4.3.00:"),
         "gfx942": ("amd_gfx942", "@4.2.00:"),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
-        "gfx1030": ("navi1030", None),
-        "gfx1100": ("navi1100", "@4.1.00:"),
+        "gfx1030": (lambda spec: "amd_gfx1030" if spec.satisfies("@4.2:") else "navi1030", None),
+        "gfx1100": (
+            lambda spec: "amd_gfx1100" if spec.satisfies("@4.2:") else "navi1100",
+            "@4.1.00:",
+        ),
         "gfx1101": ("amd_gfx1101", "@5.2.0:"),
         "gfx1103": ("amd_gfx1103", "@4.5.00:"),
         "gfx1151": ("amd_gfx1151", "@5.2.0:"),
         "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
+    # Unmapped amdgpu_targets:
+    # ("hygon_gfx936", "@5.3.0:")
     amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
     amd_support_conflict_msg = (
         "{0} is not supported; "
@@ -315,6 +321,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "intel_dg2": "@4.7.00:",
         "intel_xehp": None,
         "intel_pvc": None,
+        "intel_bmg": "@5.3:",
     }
     variant(
         "intel_gpu_arch",
@@ -331,6 +338,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("intel-oneapi-dpl", when="+sycl")
     depends_on("rocthrust", when="@4.3: +rocm")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+
+    # TODO: for minor and major add lockstep release
+    depends_on("mdspan@5.3", when="@5.3")
 
     for opt, (dflt, when, desc) in options_variants.items():
         variant(opt, default=dflt, description=desc, when=when)
@@ -497,9 +507,15 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             if amdgpu_target != "none":
                 if amdgpu_target in self.amdgpu_arch_map:
                     if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                        kokkos_arch_name, cond = self.amdgpu_apu_arch_map[amdgpu_target]
+                        arch_name_or_fun, cond = self.amdgpu_apu_arch_map[amdgpu_target]
                     else:
-                        kokkos_arch_name, cond = self.amdgpu_arch_map[amdgpu_target]
+                        arch_name_or_fun, cond = self.amdgpu_arch_map[amdgpu_target]
+
+                    kokkos_arch_name = (
+                        arch_name_or_fun(self.spec)
+                        if callable(arch_name_or_fun)
+                        else arch_name_or_fun
+                    )
 
                     if cond and not self.spec.satisfies(cond):
                         raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
@@ -586,6 +602,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         # TODO deprecation v4: remove
         if self.version == Version("4.7.00"):
             options.append(self.define("Kokkos_ENABLE_IMPL_VIEW_LEGACY", True))
+
+        if self.spec.satisfies("@5.3:"):
+            options.append(self.define("Kokkos_ENABLE_MDSPAN_EXTERNAL", True))
 
         # Remove duplicate options
         return dedupe(options)
