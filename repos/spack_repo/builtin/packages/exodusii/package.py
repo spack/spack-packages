@@ -26,11 +26,16 @@ class Exodusii(CMakePackage):
     homepage = "https://sandialabs.github.io/seacas/"
     git = "https://github.com/sandialabs/seacas.git"
     url = "https://github.com/sandialabs/seacas/archive/refs/tags/v2019-08-20.zip"
-    maintainers("gsjaardema")
 
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version(
+        "2026-11-12", sha256="203612af2780045588054c3df8dbbd10409ef7f7605b237784a91e5e68bff16a"
+    )
+    version(
+        "2026-08-11", sha256="5564b2df1ccdefe60be82dcbb25e61e2929b24ba6e10e4614d075802f7c726ef"
+    )
     version(
         "2025-10-14", sha256="d2442cff8ba963cd538f75fb4d7eb50b3f5c75cb01c8603af8185481f25db042"
     )
