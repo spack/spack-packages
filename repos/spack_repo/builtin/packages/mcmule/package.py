@@ -95,7 +95,6 @@ class MesonBuilder(meson.MesonBuilder):
                 ),
             )
         super().build(pkg, spec, prefix)
-    # The bundled pymule preprocessor imports mesonbuild at build time
 
     def meson_args(self):
         args = [
