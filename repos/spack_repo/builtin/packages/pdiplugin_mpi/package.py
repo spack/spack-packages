@@ -23,10 +23,12 @@ class PdipluginMpi(CMakePackage):
     for v in Pdi.versions:
         version(str(v), **Pdi.versions[v])
 
+    variant("fortran", default=True, description="Enable Fortran (for tests only)")
     variant("tests", default=False, description="Build tests")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("fortran", type="build", when="+fortran +tests")
 
     depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
@@ -34,15 +36,14 @@ class PdipluginMpi(CMakePackage):
     for v in Pdi.versions:
         depends_on("pdi@" + str(v), type=("link", "run"), when="@" + str(v))
     depends_on("pkgconfig", type=("build"))
+    depends_on("pdi +fortran", type=("link", "run"), when="+fortran +tests")
 
     root_cmakelists_dir = "plugins/mpi"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [
             "-DINSTALL_PDIPLUGINDIR:PATH={:s}".format(self.prefix.lib),
+            self.define_from_variant("BUILD_FORTRAN", "fortran"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]
 

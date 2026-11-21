@@ -18,6 +18,7 @@ class PyCylcUiserver(PythonPackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.9.4", sha256="9ce306b2bb0de0e3ff7dceaa337405e7df2eabd678f88b7eb510f4a67dd8adc2")
     version("1.9.1", sha256="106551a19cbd5de85e8a59a549e1846598ee37e22171bd127a1676dccacc2792")
     version("1.7.1", sha256="a841437b43873e198ffad0a496ee95efb14a6fd8eadb0b9182827ebac24dfdc7")
 
@@ -26,11 +27,11 @@ class PyCylcUiserver(PythonPackage):
     depends_on("py-wheel", type="build")
     depends_on("py-setuptools@40.9.0:", type="build")
 
-    depends_on("py-cylc-flow@8.6.4:8.6", when="@1.9.1", type=("build", "run"))
+    depends_on("py-cylc-flow@8.6.4:8.6", when="@1.9", type=("build", "run"))
     depends_on("py-cylc-flow@8.5", when="@1.7.1", type=("build", "run"))
 
     depends_on("py-ansimarkup@1.0.0:", type=("build", "run"))
-    depends_on("py-cherrypy", when="@1.9.1", type=("build", "run"))
+    depends_on("py-cherrypy", when="@1.9", type=("build", "run"))
     depends_on("py-graphene", type=("build", "run"))
     depends_on("py-jupyter-server@2.13:", type=("build", "run"))
     depends_on("py-packaging", type=("build", "run"))

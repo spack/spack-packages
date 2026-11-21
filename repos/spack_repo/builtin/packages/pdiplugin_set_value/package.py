@@ -10,8 +10,8 @@ from ..pdi.package import Pdi
 
 
 class PdipluginSetValue(CMakePackage):
-    """The trace plugin is intended to generate a trace of  what happens in PDI
-    "data store"."""
+    """The Set_value plugin for the PDI library sets the values of data and
+    metadata descriptors from the YAML configuration."""
 
     homepage = "https://pdi.dev"
     git = "https://github.com/pdidev/pdi.git"
@@ -38,9 +38,6 @@ class PdipluginSetValue(CMakePackage):
     depends_on("spdlog@1.5:1", type=("link"))
 
     root_cmakelists_dir = "plugins/set_value"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [

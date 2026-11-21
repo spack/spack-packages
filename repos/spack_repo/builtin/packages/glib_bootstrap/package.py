@@ -27,6 +27,7 @@ class GlibBootstrap(MesonPackage):
     license("LGPL-2.1-or-later")
 
     # Even minor versions are stable, odd minor versions are development, only add even numbers
+    version("2.90.1", sha256="93c941aa17d5eb1d53fe838365f29a8b4e539c222a256d974ec8f30fc413e396")
     version("2.88.4", sha256="25fd169f3b2f91fe2391ad297883ce0fcf30c69fc789ffd1c9672d1332b1c5a8")
     version("2.88.2", sha256="cf3f215a640c8a4257f14317586b8f1fdd25a10a93cb4bdda147c0f9ad88e74f")
     version("2.88.1", sha256="51ab804c56f6eab3e5045c774d1290ac5e4c923d4f9a3d8e33123bee45c1840e")

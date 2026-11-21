@@ -219,6 +219,13 @@ class CompilerWrapper(Package):
                 getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
             )
 
+        # Keep string literals over 255 bytes intact with GCC on x86_64, for relocation
+        for language, flags in (("c", "CFLAGS"), ("cxx", "CXXFLAGS"), ("fortran", "FFLAGS")):
+            if dependent_spec.satisfies(f"%{language}=gcc@16: target=x86_64:"):
+                env.append_flags(f"SPACK_ALWAYS_{flags}", "-mmove-max=128")
+            elif dependent_spec.satisfies(f"%{language}=gcc@12: target=x86_64:"):
+                env.append_flags(f"SPACK_ALWAYS_{flags}", "-mstore-max=128")
+
         if implicit_rpaths:
             # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,
             # the compiler used in ccld mode will account for rpaths from other compilers too.

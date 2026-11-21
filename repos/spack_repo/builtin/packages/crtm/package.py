@@ -90,7 +90,6 @@ class Crtm(CMakePackage):
     depends_on("ecbuild", type=("build"), when="@v2.4")
     depends_on("ecbuild", type=("build"), when="@v3")
 
-    conflicts("%oneapi", when="@2")
     conflicts("%oneapi", when="@v2.4-jedi")
     conflicts("%oneapi", when="@=v2.4.1-jedi")
     conflicts("%oneapi", when="@=v2.4.1-jedi.1")
@@ -118,6 +117,10 @@ class Crtm(CMakePackage):
                 filter_file(
                     "-fbacktrace", "-fbacktrace -ffree-line-length-none", "libsrc/CMakeLists.txt"
                 )
+        if self.spec.satisfies("@2 %oneapi"):
+            filter_file(r"\bIntel\b", "IntelLLVM", "libsrc/CMakeLists.txt")
+            filter_file(r"\bIntel\b", "IntelLLVM", "CMakeLists.txt")
+            filter_file('"Intel"', '"IntelLLVM"', "cmake/crtm_compiler_flags.cmake")
         if not self.run_tests:
             filter_file(r"add_subdirectory\(test\)", "# disable testing", "CMakeLists.txt")
 

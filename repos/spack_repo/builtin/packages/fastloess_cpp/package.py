@@ -1,13 +1,13 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-# isort: skip_file
 
 import os
 import textwrap
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+
+from spack.package import *
 
 
 class FastloessCpp(CargoPackage):
@@ -19,7 +19,7 @@ class FastloessCpp(CargoPackage):
     C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/loess-project/cpp/"
-    url = "https://github.com/thisisamirv/loess-project/archive/refs/tags/v2.0.0.tar.gz"
+    url = "https://github.com/thisisamirv/loess-project/archive/refs/tags/v3.1.0.tar.gz"
     git = "https://github.com/thisisamirv/loess-project.git"
 
     test_requires_compiler = True
@@ -35,18 +35,10 @@ class FastloessCpp(CargoPackage):
 
     # version() lines below are appended/updated by release-cpp.yml's
     # spack-release job on every release; keep newest first.
-    version(
-        "3.0.0",
-        sha256="33940eaa0c6d972194225060d6ab95361e3664f685578855fe6f5da4cfad926e",
-    )
-    version(
-        "2.0.0",
-        sha256="9a6b5bfd879b321af54e4cae016716b74499a50d0cecb8e3665ce1ed9703968c",
-    )
-    version(
-        "1.1.0",
-        sha256="ba786a2984431bb18480f055fc29dc52c4f0c69f44a961be35541bca07549869",
-    )
+    version("3.1.0", sha256="2717bcc34a1ac03d8aca0b266f5d041d814102c5994f31dbfedd8538a3e172f6")
+    version("3.0.0", sha256="33940eaa0c6d972194225060d6ab95361e3664f685578855fe6f5da4cfad926e")
+    version("2.0.0", sha256="9a6b5bfd879b321af54e4cae016716b74499a50d0cecb8e3665ce1ed9703968c")
+    version("1.1.0", sha256="ba786a2984431bb18480f055fc29dc52c4f0c69f44a961be35541bca07549869")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -64,7 +56,7 @@ class FastloessCpp(CargoPackage):
         # bindings/cpp is a member of the repo's Cargo workspace, so the
         # build output lands in target/release at the workspace root, not
         # under bindings/cpp/target -- build by package name instead of cd'ing.
-        cargo("build", "--release", "--lib", "-p", "fastloess-cpp")
+        self.module.cargo("build", "--release", "--lib", "-p", "fastloess-cpp")
 
     def install(self, spec, prefix):
         mkdirp(prefix.include)
@@ -136,25 +128,13 @@ class FastloessCpp(CargoPackage):
             link_flags = (
                 [join_path(self.prefix.lib, "fastloess_cpp.dll.lib")]
                 if windows
-                else [
-                    f"-L{self.prefix.lib}",
-                    "-lfastloess_cpp",
-                    f"-Wl,-rpath,{self.prefix.lib}",
-                ]
+                else [f"-L{self.prefix.lib}", "-lfastloess_cpp", f"-Wl,-rpath,{self.prefix.lib}"]
             )
-            cxx(
-                "-std=c++17",
-                f"-I{self.prefix.include}",
-                source,
-                *link_flags,
-                "-o",
-                executable,
-            )
+            cxx("-std=c++17", f"-I{self.prefix.include}", source, *link_flags, "-o", executable)
 
         smoke = Executable(join_path(os.getcwd(), executable))
         if windows:
             smoke.add_default_env(
-                "PATH",
-                os.pathsep.join([str(self.prefix.bin), os.environ.get("PATH", "")]),
+                "PATH", os.pathsep.join([str(self.prefix.bin), os.environ.get("PATH", "")])
             )
         smoke()
