@@ -47,20 +47,33 @@ and omit the unsupported sphinx-multibuild and PyVista Jupyter extras.
 \ No newline at end of file
 --- a/utilities/four_c_python/src/four_c_common_utils/io.py
 +++ b/utilities/four_c_python/src/four_c_common_utils/io.py
-@@ -5,10 +5,9 @@
+@@ -5,10 +5,23 @@
  #
  # SPDX-License-Identifier: LGPL-3.0-or-later
  
 -import ryml
  import pathlib
 -import json
--import re
+ import re
 +
 +import yaml
++
++
++class _SafeLoader(yaml.SafeLoader):
++    pass
++
++
++_SafeLoader.add_implicit_resolver(
++    "tag:yaml.org,2002:float",
++    re.compile(
++        r"^[-+]?(?:[0-9]+(?:\.[0-9]*)?|\.[0-9]+)[eE][-+]?[0-9]+$"
++    ),
++    list("-+0123456789."),
++)
  
  
  def load_yaml(path_to_yaml_file: str | pathlib.Path) -> dict:
-@@ -16,16 +15,4 @@
+@@ -16,16 +29,4 @@
      Duplicated from fourcipp.
      """
  
@@ -77,7 +90,7 @@ and omit the unsupported sphinx-multibuild and PyVista Jupyter extras.
 -    data = json.loads(json_str)
 -
 -    return data
-+    return yaml.safe_load(pathlib.Path(path_to_yaml_file).read_text())
++    return yaml.load(pathlib.Path(path_to_yaml_file).read_text(), Loader=_SafeLoader)
 --- a/utilities/four_c_python/src/four_c_metadata/validate_test_input_files.py
 +++ b/utilities/four_c_python/src/four_c_metadata/validate_test_input_files.py
 @@ -6,7 +6,7 @@

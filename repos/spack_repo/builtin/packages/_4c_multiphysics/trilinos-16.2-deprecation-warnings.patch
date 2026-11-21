@@ -1,0 +1,22 @@
+Match the package-specific API deprecation warning defaults in 4C's Trilinos
+dependency scripts: Amesos, AztecOO, Epetra, EpetraExt, Ifpack, ML, Thyra, Xpetra.
+The global warning default and other packages remain unchanged. Explicit cache
+overrides remain supported and deprecated APIs remain available.
+
+--- a/cmake/tribits/core/package_arch/TribitsGlobalMacros.cmake
++++ b/cmake/tribits/core/package_arch/TribitsGlobalMacros.cmake
+@@ -428,6 +428,14 @@
+     "Show warnings about deprecated code"
+     )
+ 
++  foreach(four_c_trilinos_package Amesos AztecOO Epetra EpetraExt Ifpack ML Thyra Xpetra)
++    advanced_set(${four_c_trilinos_package}_SHOW_DEPRECATED_WARNINGS OFF
++      CACHE BOOL
++      "Show warnings about deprecated code in ${four_c_trilinos_package}"
++      )
++  endforeach()
++  unset(four_c_trilinos_package)
++
+   advanced_set(${PROJECT_NAME}_HIDE_DEPRECATED_CODE OFF
+     CACHE BOOL
+     "Show warnings about deprecated code"
