@@ -119,9 +119,22 @@ class Qscintilla(QMakePackage):
             copy(ftoml, "pyproject.toml")
             sip_inc_dir = join_path(self[py_pyqtx].module.python_platlib, pyqtx, "bindings")
 
+            # Build the bindings against the same SIP ABI as the runtime sip
+            # module (py-pyqt5-sip / py-pyqt6-sip). Otherwise py-pyqt-builder >= 1.20
+            # defaults the ABI to the latest known one (12.20 for
+            # Qt5), which an older runtime sip module cannot load, so
+            # `import PyQt5.Qsci` fails at module load ("the sip module implements API v12.0 to
+            # v12.17 but the PyQt5.Qsci module requires API v12.20").
+            rt_sip = f"{py_pyqtx}-sip"
+            sip_abi_version = str(self[rt_sip].version.up_to(2))
+
             with open("pyproject.toml", "a") as tomlfile:
                 # https://pyqt-builder.readthedocs.io/en/latest/pyproject_toml.html
-                tomlfile.write(f'\n[tool.sip.project]\nsip-include-dirs = ["{sip_inc_dir}"]\n')
+                tomlfile.write(
+                    f"\n[tool.sip.project]\n"
+                    f'abi-version = "{sip_abi_version}"\n'
+                    f'sip-include-dirs = ["{sip_inc_dir}"]\n'
+                )
                 # add widgets and printsupport to Qsci.pro
                 # also add link statement to fix "undefined symbol _Z...Qsciprinter...
                 # without no-as-needed this can be dropped from linking stage
