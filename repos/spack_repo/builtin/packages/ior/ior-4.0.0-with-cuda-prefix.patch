@@ -1,0 +1,30 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -83,8 +83,11 @@
+         [], [with_cuda=check])
+ 
+ AS_IF([test "x$with_cuda" != xno], [
+-        LDFLAGS="$LDFLAGS -L$with_cuda/lib64 -Wl,--enable-new-dtags -Wl,-rpath=$with_cuda/lib64"
+-        CPPFLAGS="$CPPFLAGS -I$with_cuda/include"
++        # "check" and "yes" are switches, not install prefixes
++        AS_CASE([$with_cuda], [check|yes], [], [
++                LDFLAGS="$LDFLAGS -L$with_cuda/lib64 -Wl,--enable-new-dtags -Wl,-rpath=$with_cuda/lib64"
++                CPPFLAGS="$CPPFLAGS -I$with_cuda/include"
++        ])
+ 
+         AC_CHECK_HEADERS([cuda_runtime.h], [AC_DEFINE([HAVE_CUDA], [], [CUDA GPU API found])], [
+                 if test "x$with_cuda" != xcheck; then
+@@ -106,8 +109,11 @@
+         [], [with_gpuDirect=check])
+ 
+ AS_IF([test "x$with_gpuDirect" != xno], [
+-        LDFLAGS="$LDFLAGS -L$with_gpuDirect/lib64 -Wl,--enable-new-dtags -Wl,-rpath=$with_gpuDirect/lib64"
+-        CPPFLAGS="$CPPFLAGS -I$with_gpuDirect/include"
++        # "check" and "yes" are switches, not install prefixes
++        AS_CASE([$with_gpuDirect], [check|yes], [], [
++                LDFLAGS="$LDFLAGS -L$with_gpuDirect/lib64 -Wl,--enable-new-dtags -Wl,-rpath=$with_gpuDirect/lib64"
++                CPPFLAGS="$CPPFLAGS -I$with_gpuDirect/include"
++        ])
+ 
+         AC_CHECK_HEADERS([cufile.h], [AC_DEFINE([HAVE_GPU_DIRECT], [], [GPUDirect API found])], [
+                 if test "x$with_gpuDirect" != xcheck; then
