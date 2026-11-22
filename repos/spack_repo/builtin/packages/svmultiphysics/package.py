@@ -59,7 +59,7 @@ class Svmultiphysics(CMakePackage):
             self.define("MPI_C_COMPILER", mpi.mpicc),
             self.define("MPI_CXX_COMPILER", mpi.mpicxx),
         ]
-        if "+trilinos" in self.spec:
+        if self.spec.satisfies("+trilinos"):
             # Upstream otherwise falls back to FSILS if Trilinos discovery fails.
             solver_args.extend(
                 [
@@ -72,7 +72,7 @@ class Svmultiphysics(CMakePackage):
             self.define_from_variant("SV_USE_TRILINOS", "trilinos"),
             self.define("SV_ADDITIONAL_CMAKE_ARGS", solver_args),
         ]
-        if "+petsc" in self.spec:
+        if self.spec.satisfies("+petsc"):
             args.append(self.define("SV_PETSC_DIR", self.spec["petsc"].prefix))
         return args
 

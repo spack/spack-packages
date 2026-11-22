@@ -24,14 +24,8 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
 
     maintainers("failed33")
 
-    version(
-        "2.20.2",
-        sha256="033f6e61e707283df708d3eda3c5930146bb7f8acd3a0469ab707e77cba30199",
-    )
-    version(
-        "2.20.1",
-        sha256="3372e0d66321c2173899e1db4841c6c4f3c16ffb99067c36dba04e8a34e35d39",
-    )
+    version("2.20.2", sha256="033f6e61e707283df708d3eda3c5930146bb7f8acd3a0469ab707e77cba30199")
+    version("2.20.1", sha256="3372e0d66321c2173899e1db4841c6c4f3c16ffb99067c36dba04e8a34e35d39")
 
     variant("pardiso", default=False, description="Use Intel oneMKL PARDISO")
     variant("pastix", default=False, description="Use the ILP64 GPU PaStiX4CalculiX solver")
@@ -75,6 +69,7 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
     patch("calculix-adapter-i8.patch", when="@=2.20.1,=2.20.2 +pastix")
     patch("calculix-adapter-i8-mesh-2.20.1.patch", when="@=2.20.1 +pastix")
     patch("calculix-adapter-i8-mesh-2.20.2.patch", when="@=2.20.2 +pastix")
+    # Fixed in v2.20.2. See https://github.com/precice/calculix-adapter/issues/152.
     patch("calculix-adapter-numelements-init.patch", when="@=2.20.1")
 
     @property

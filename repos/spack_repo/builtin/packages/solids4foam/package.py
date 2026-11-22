@@ -25,21 +25,20 @@ class Solids4foam(Package):
 
     version("2.4", tag="v2.4", commit="1341312f951caf4d8fcc69499c6ce1a588826156")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
-    depends_on("gmake", type="build")
-
-    depends_on("openfoam@2312:+source")
-    depends_on("openfoam~int64 precision=dp", when="+petsc")
-    # ThirdParty/Allwmake can download Eigen unless given EIGEN_DIR.
-    depends_on("eigen", when="~no_eigen")
-
+    variant("eigen", default=True, description="Build with Eigen")
     variant(
         "petsc",
         default=True,
         description="Enable PETSc SNES solvers and monolithic coupling",
     )
-    variant("no_eigen", default=False, description="Build without Eigen (S4F_NO_USE_EIGEN)")
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("gmake", type="build")
+    depends_on("openfoam@2312:+source")
+    depends_on("openfoam~int64 precision=dp", when="+petsc")
+    # ThirdParty/Allwmake can download Eigen unless given EIGEN_DIR.
+    depends_on("eigen", when="+eigen")
 
     # The assembly passes OpenFOAM label and scalar arrays directly to PETSc.
     depends_on("petsc@3.15:+double+mpi+mumps+hypre~complex~int64", when="+petsc")
@@ -64,7 +63,7 @@ class Solids4foam(Package):
                 'export PETSC_DIR="%s"\n' % spec["petsc"].prefix,
                 'export PETSC_ARCH=""\n',
             ]
-        if spec.satisfies("+no_eigen"):
+        if spec.satisfies("~eigen"):
             lines.append("export S4F_NO_USE_EIGEN=1\n")
         else:
             lines.append('export EIGEN_DIR="%s"\n' % spec["eigen"].prefix.include.eigen3)

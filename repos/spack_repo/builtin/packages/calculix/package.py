@@ -19,14 +19,8 @@ class Calculix(MakefilePackage):
 
     maintainers("failed33")
 
-    version(
-        "2.23",
-        sha256="9c88385c10fb04f5dc6c4e98027a51bebdd8aee3920e05190d6c1dd08357d6e7",
-    )
-    version(
-        "2.20",
-        sha256="63bf6ea09e7edcae93e0145b1bb0579ea7ae82e046f6075a27c8145b72761bcf",
-    )
+    version("2.23", sha256="9c88385c10fb04f5dc6c4e98027a51bebdd8aee3920e05190d6c1dd08357d6e7")
+    version("2.20", sha256="63bf6ea09e7edcae93e0145b1bb0579ea7ae82e046f6075a27c8145b72761bcf")
 
     depends_on("c", type="build")
     depends_on("fortran", type="build")
@@ -109,6 +103,7 @@ class Calculix(MakefilePackage):
         mkdirp(prefix.bin)
         with working_dir(self.build_directory):
             install(self.executable, join_path(prefix.bin, "ccx"))
+            # Keep the installed sources for consumers of the existing package layout.
             install_tree(
                 ".",
                 join_path(prefix, "share", "CalculiX", self.build_directory),

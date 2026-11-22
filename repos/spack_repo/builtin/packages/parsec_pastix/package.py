@@ -11,7 +11,7 @@ from spack.package import *
 
 
 class ParsecPastix(CMakePackage, CudaPackage):
-    """PaRSEC fork with the ABI required by PaStiX4CalculiX."""
+    """PaRSEC fork from the pastix-6.0.2 tag required by PaStiX4CalculiX."""
 
     homepage = "https://bitbucket.org/mfaverge/parsec"
     git = "https://bitbucket.org/mfaverge/parsec.git"
@@ -19,7 +19,7 @@ class ParsecPastix(CMakePackage, CudaPackage):
     license("BSD-3-Clause-Open-MPI")
     maintainers("failed33")
 
-    version("6.0.2", commit="b580d208094e6cb4106e41d5eeec84f304a090b8")
+    version("6.0.2", tag="pastix-6.0.2", commit="b580d208094e6cb4106e41d5eeec84f304a090b8")
 
     variant(
         "cuda",

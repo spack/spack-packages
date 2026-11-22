@@ -19,13 +19,12 @@ class Pastix4calculix(CMakePackage, CudaPackage):
     license("CECILL-2.0")
     maintainers("failed33")
 
-    # Upstream tag: ccx_2.18.
-    version("2021.09.22", commit="d6b493bc431ecf860b3578a2ee6a25f392eb44be")
+    version("2.18", tag="ccx_2.18", commit="d6b493bc431ecf860b3578a2ee6a25f392eb44be")
 
     variant("cuda", default=True, description="GPU acceleration (required)")
     for arch in CudaPackage.cuda_arch_values:
         if arch not in ("70", "72", "75", "80", "86", "89", "90"):
-            conflicts(f"cuda_arch={arch}", when="+cuda", msg="Unsupported by this PaRSEC fork")
+            conflicts(f"cuda_arch={arch}", when="+cuda", msg="Architecture unsupported by PaRSEC")
     conflicts("~cuda", msg="PaStiX4CalculiX requires CUDA")
     conflicts(
         "cuda_arch=none",
@@ -53,9 +52,9 @@ class Pastix4calculix(CMakePackage, CudaPackage):
             when=f"+cuda cuda_arch={arch}",
         )
 
-    patch("pastix4calculix-cuda12.patch", when="@=2021.09.22")
+    patch("pastix4calculix-cuda12.patch", when="@=2.18")
     # A failed precision generation leaves undefined bvec_* symbols at link time.
-    patch("pastix4calculix-py3.patch", when="@=2021.09.22")
+    patch("pastix4calculix-py3.patch", when="@=2.18")
 
     @run_before("cmake")
     def disable_examples_and_tests(self):
