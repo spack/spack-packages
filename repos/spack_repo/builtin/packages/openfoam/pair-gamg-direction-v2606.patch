@@ -1,0 +1,161 @@
+diff --git a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomerate.C b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomerate.C
+index 455f968..e610a6d 100644
+--- a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomerate.C
++++ b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomerate.C
+@@ -173,6 +173,7 @@ void Foam::pairGAMGAgglomeration::agglomerate
+ 
+     label nPairLevels = 0;
+     label nCreatedLevels = startLevel;
++    bool forward = true;
+ 
+     while (nCreatedLevels < maxLevels_ - 1)
+     {
+@@ -193,7 +194,8 @@ void Foam::pairGAMGAgglomeration::agglomerate
+             nCoarseCells,
+             fineMesh.lduAddr(),
+             faceWeights,
+-            renumber_
++            renumber_,
++            forward
+         );
+ 
+         if
+@@ -262,6 +264,28 @@ Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
+     const scalarField& faceWeights,
+     const bool renumber
+ )
++{
++    bool forward = true;
++
++    return agglomerate
++    (
++        nCoarseCells,
++        fineMatrixAddressing,
++        faceWeights,
++        renumber,
++        forward
++    );
++}
++
++
++Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
++(
++    label& nCoarseCells,
++    const lduAddressing& fineMatrixAddressing,
++    const scalarField& faceWeights,
++    const bool renumber,
++    bool& forward
++)
+ {
+     const label nFineCells = fineMatrixAddressing.size();
+ 
+@@ -374,7 +398,7 @@ Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
+         (
+             visitOrder.size()
+           ? visitOrder[cellfi]
+-          : forward_ ? cellfi : nFineCells - cellfi - 1
++          : forward ? cellfi : nFineCells - cellfi - 1
+         );
+ 
+         if (coarseCellMap[celli] < 0)
+@@ -459,7 +483,7 @@ Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
+         (
+             visitOrder.size()
+           ? visitOrder[cellfi]
+-          : forward_ ? cellfi : nFineCells - cellfi - 1
++          : forward ? cellfi : nFineCells - cellfi - 1
+         );
+ 
+         if (coarseCellMap[celli] < 0)
+@@ -495,7 +519,7 @@ Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
+         const labelList oldToNew(invert(newToOld.size(), newToOld));
+         coarseCellMap = UIndirectList<label>(oldToNew, coarseCellMap)();
+     }
+-    else if (!forward_)
++    else if (!forward)
+     {
+         forAll(coarseCellMap, celli)
+         {
+@@ -505,7 +529,7 @@ Foam::tmp<Foam::labelField> Foam::pairGAMGAgglomeration::agglomerate
+ 
+     // Reverse the map ordering for the next level
+     // to improve the next level of agglomeration
+-    forward_ = !forward_;
++    forward = !forward;
+ 
+     return tcoarseCellMap;
+ }
+diff --git a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.C b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.C
+index 02f6893..2d41489 100644
+--- a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.C
++++ b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.C
+@@ -33,7 +33,6 @@ License
+ namespace Foam
+ {
+     defineTypeNameAndDebug(pairGAMGAgglomeration, 0);
+-    bool pairGAMGAgglomeration::forward_(true);
+ }
+ 
+ 
+diff --git a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.H b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.H
+index dc38fb4..3be3b6a 100644
+--- a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.H
++++ b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGAgglomerations/pairGAMGAgglomeration/pairGAMGAgglomeration.H
+@@ -62,10 +62,6 @@ class pairGAMGAgglomeration
+         //- Apply renumbering after clustering
+         bool renumber_;
+ 
+-        //- Direction of cell loop for the current level
+-        static bool forward_;
+-
+-
+ protected:
+ 
+     // Protected Member Functions
+@@ -112,6 +108,16 @@ public:
+             const bool renumber
+         );
+ 
++        //- Calculate and return agglomeration, updating the supplied direction
++        static tmp<labelField> agglomerate
++        (
++            label& nCoarseCells,
++            const lduAddressing& fineMatrixAddressing,
++            const scalarField& faceWeights,
++            const bool renumber,
++            bool& forward
++        );
++
+         //- Agglomerate from a starting level. Starting level is usually 0
+         //- (initial mesh) but sometimes >0 (restarting after processor
+         //- agglomeration)
+diff --git a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGProcAgglomerations/procFacesGAMGProcAgglomeration/procFacesGAMGProcAgglomeration.C b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGProcAgglomerations/procFacesGAMGProcAgglomeration/procFacesGAMGProcAgglomeration.C
+index eb05e65..76e3dbc 100644
+--- a/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGProcAgglomerations/procFacesGAMGProcAgglomeration/procFacesGAMGProcAgglomeration.C
++++ b/src/OpenFOAM/matrices/lduMatrix/solvers/GAMG/GAMGProcAgglomerations/procFacesGAMGProcAgglomeration/procFacesGAMGProcAgglomeration.C
+@@ -523,12 +523,14 @@ Foam::procFacesGAMGProcAgglomeration::processorAgglomeration
+         // and there are no algorithms that rely on the ordering of
+         // the processors.
+         label nCoarseProcs;
++        bool forward = true;
+         fineToCoarse = pairGAMGAgglomeration::agglomerate
+         (
+             nCoarseProcs,
+             singleCellMeshPtr(),
+             faceWeights,
+-            false  // no need for renumber
++            false,  // no need for renumber
++            forward
+         );
+ 
+         // Keep on agglomerating until we've reached the limit. (nCoarsest is
+@@ -565,7 +567,8 @@ Foam::procFacesGAMGProcAgglomeration::processorAgglomeration
+                 nCoarseProcs,
+                 singleCellMeshPtr(),
+                 coarseFaceWeights,
+-                false  // no need for renumber
++                false,  // no need for renumber
++                forward
+             );
+             faceWeights.transfer(coarseFaceWeights);
+ 
