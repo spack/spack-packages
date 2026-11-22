@@ -1,0 +1,35 @@
+--- a/adapter/PreciceInterface.h
++++ b/adapter/PreciceInterface.h
+@@ -36,13 +36,13 @@
+   char *       elementsMeshName;
+ 
+   int     numElements;
+-  int *   elementIDs;
++  ITG *   elementIDs;
+   int *   elemIPID;
+   int     elementSetID;
+   double *elemIPCoordinates;
+   int     numIPTotal;
+ 
+-  int *   faceIDs;
++  ITG *   faceIDs;
+   double *faceCenterCoordinates;
+   int     faceSetID;
+   char *  faceCentersMeshName;
+--- a/adapter/PreciceInterface.c
++++ b/adapter/PreciceInterface.c
+@@ -611,12 +611,12 @@
+     interface->elemIPID[j] = j;
+   }
+ 
+-  int numElements = interface->numElements;
++  ITG numElements = interface->numElements;
+ 
+   enum ElemType elemType = findSimulationMeshType(sim);
+ 
+   // Gauss point extraction is supported only for tetrahedra and hexahedra elements.
+-  int nodesPerElement;
++  ITG nodesPerElement;
+   if (elemType == TETRAHEDRA) {
+     nodesPerElement = 4;
+   } else if (elemType == HEXAHEDRA) {

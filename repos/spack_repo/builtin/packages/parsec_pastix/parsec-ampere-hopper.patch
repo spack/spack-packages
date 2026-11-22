@@ -1,0 +1,35 @@
+diff --git a/parsec/devices/cuda/dev_cuda.c b/parsec/devices/cuda/dev_cuda.c
+index 3341e59..1c3d34d 100644
+--- a/parsec/devices/cuda/dev_cuda.c
++++ b/parsec/devices/cuda/dev_cuda.c
+@@ -71,7 +71,7 @@ parsec_cuda_memory_reserve( gpu_device_t* gpu_device,
+ static int
+ parsec_cuda_memory_release( gpu_device_t* gpu_device );
+ 
+-static int cuda_legal_compute_capabilitites[] = {10, 11, 12, 13, 20, 21, 30, 32, 35, 37, 50, 52, 53, 60, 61, 62, 70};
++static int cuda_legal_compute_capabilitites[] = {10, 11, 12, 13, 20, 21, 30, 32, 35, 37, 50, 52, 53, 60, 61, 62, 70, 72, 75, 80, 86, 89, 90};
+ 
+ /* look up how many FMA per cycle in single/double, per cuda MP
+  * precision.
+@@ -121,6 +121,21 @@ static int parsec_cuda_device_lookup_cudamp_floprate(int major, int minor, int *
+         *trate = 512;
+         *srate = 64;
+         *drate = 32;
++    } else if (major == 7) {            /* 7.2 / 7.5 Turing */
++        *hrate = 128;
++        *trate = 512;
++        *srate = 64;
++        *drate = 32;
++    } else if (major == 8) {            /* 8.0 A100, 8.6 Ampere, 8.9 Ada */
++        *hrate = 256;
++        *trate = 512;
++        *srate = 64;
++        *drate = 32;
++    } else if (major >= 9) {            /* 9.0 Hopper (H100) and newer */
++        *hrate = 512;
++        *trate = 1024;
++        *srate = 128;
++        *drate = 64;
+     } else {
+         parsec_debug_verbose(3, parsec_debug_output, "Unsupported GPU %d, %d, skipping.", major, minor);
+         return PARSEC_ERROR;

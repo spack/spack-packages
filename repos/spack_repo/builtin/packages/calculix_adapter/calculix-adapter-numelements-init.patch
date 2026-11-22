@@ -1,0 +1,15 @@
+--- a/adapter/PreciceInterface.c
++++ b/adapter/PreciceInterface.c
+@@ -486,6 +486,12 @@
+   interface->writeData             = NULL;
+   interface->readData              = NULL;
+ 
++  // numElements is set only when a face-centers mesh or nearest-projection
++  // connectivity is configured; a nodes-only FSI coupling configures neither, so
++  // ConfigureCouplingData would otherwise malloc faceCenterData from an
++  // uninitialised int -> garbage size -> heap corruption.
++  interface->numElements = 0;
++
+   // Initialize preCICE mesh name as NULL
+   interface->couplingMeshName = NULL;
+ 

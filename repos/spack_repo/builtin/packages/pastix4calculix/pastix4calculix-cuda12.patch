@@ -1,0 +1,245 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b6629a7..53c1644 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -41,18 +41,15 @@
+ set( RP_PASTIX_PRECISIONS  "p;s;d;c;z" )
+ include(RulesPrecisions)
+-set(CUDA_TOOLKIT_ROOT_DIR $ENV{CUDA_TOOLKIT_ROOT_DIR})
+ ### System parameter detection
+ include(CheckSystem)
+
+ # Set the RPATH config
+ # --------------------
+-SET(CMAKE_EXE_LINKER_FLAGS " -lstdc++ -fopenmp -D_GNU_SOURCE ")
+-SET(CMAKE_C_FLAGS $ENV{SCRIPT_OUT})
+-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -march=native -fopenmp -I/yaprod/cae-opensource/SLE12/packages/cuda-10.1.105/include -D_GNU_SOURCE ")
+-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I/yaprod/cae-opensource/SLE12/packages/cuda-10.1.105/targets/x86_64-linux/include -D_GNU_SOURCE ")
++SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -lstdc++")
++SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c11 -fopenmp -D_GNU_SOURCE ")
++SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GNU_SOURCE ")
+ SET(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} ")
+
+-SET(CMAKE_AR  "gcc-ar")
+ #SET(CMAKE_RANLIB "gcc-ranlib")
+ SET(CMAKE_C_ARCHIVE_CREATE "<CMAKE_AR> qcs <TARGET> <LINK_FLAGS> <OBJECTS>")
+ SET(CMAKE_C_ARCHIVE_FINISH   true)
+@@ -280,7 +280,7 @@ if( PASTIX_WITH_CUDA )
+         endif()
+         set(CMAKE_REQUIRED_INCLUDES  "${saved_include}")
+         set(CMAKE_REQUIRED_LIBRARIES "${saved_libs}")
+-        list(APPEND CUDA_NVCC_FLAGS -O3 -arch=sm_35 -lcusparse -w )
++        list(APPEND CUDA_NVCC_FLAGS -O3 -lcusparse -w )
+         
+ 		set(CUDA_SEPARABLE_COMPILATION ON)
+
+diff --git a/cmake_modules/morse_cmake/modules/find/LibrariesAbsolutePath.cmake b/cmake_modules/morse_cmake/modules/find/LibrariesAbsolutePath.cmake
+index eb59c11..516ad43 100644
+--- a/cmake_modules/morse_cmake/modules/find/LibrariesAbsolutePath.cmake
++++ b/cmake_modules/morse_cmake/modules/find/LibrariesAbsolutePath.cmake
+@@ -42,6 +42,10 @@ macro(LIBRARIES_ABSOLUTE_PATH lib_list hints_paths)
+       # if already an absolute path, nothing special to do
+       list(APPEND ${lib_list} ${_library})
+     else()
++      if(TARGET "${_library}" OR "${_library}" MATCHES "::")
++        list(APPEND ${lib_list} "${_library}")
++        continue()
++      endif()
+       # replace pattern -lfoo -> foo
+       string(REGEX REPLACE "^-l" "" _library "${_library}")
+       # remove extensions if exist
+diff --git a/kernels/gpus/LightSpMV-1.0/src/SpMVCSR.h b/kernels/gpus/LightSpMV-1.0/src/SpMVCSR.h
+index 27a9ca9..0bec3ca 100644
+--- a/kernels/gpus/LightSpMV-1.0/src/SpMVCSR.h
++++ b/kernels/gpus/LightSpMV-1.0/src/SpMVCSR.h
+@@ -24,8 +24,8 @@ __device__ inline T shfl_down_64bits(T var, int64_t srcLane,
+ 	int2 a = *reinterpret_cast<int2*>(&var);
+
+ 	/*exchange the data*/
+-	a.x = __shfl_down(a.x, srcLane, width);
+-	a.y = __shfl_down(a.y, srcLane, width);
++	a.x = __shfl_down_sync(0xffffffff, a.x, srcLane, width);
++	a.y = __shfl_down_sync(0xffffffff, a.y, srcLane, width);
+ 	
+ 	return *reinterpret_cast<T*>(&a);
+ }
+@@ -72,7 +72,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 		row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 	}
+ 	/*broadcast the value to other threads in the same warp and compute the row index of each vector*/
+-	row = __shfl(row, 0) + warpVectorId;
++	row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -110,7 +110,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 		}
+ 		/*intra-vector reduction*/
+ 		for (i = THREADS_PER_VECTOR >> 1; i > 0; i >>= 1) {
+-			sum += __shfl_down(sum, i, THREADS_PER_VECTOR);
++			sum += __shfl_down_sync(0xffffffff, sum, i, THREADS_PER_VECTOR);
+ 		}
+
+ 		/*save the results and get a new row*/
+@@ -124,7 +124,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 		}
+ 		/*broadcast the row index to the other threads in the same warp and compute the row index of each vetor*/
+-		row = __shfl(row, 0) + warpVectorId;
++		row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	}/*while*/
+ }
+@@ -149,7 +149,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 		row = atomicAdd(cudaRowCounter, 1);
+ 	}
+ 	/*broadcast the value to other lanes from lane 0*/
+-	row = __shfl(row, 0, THREADS_PER_VECTOR);
++	row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -187,7 +187,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 		}
+ 		/*intra-vector reduction*/
+ 		for (i = THREADS_PER_VECTOR >> 1; i > 0; i >>= 1) {
+-			sum += __shfl_down(sum, i, THREADS_PER_VECTOR);
++			sum += __shfl_down_sync(0xffffffff, sum, i, THREADS_PER_VECTOR);
+ 		}
+
+ 		/*save the results and get a new row*/
+@@ -198,7 +198,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			/*get a new row index*/
+ 			row = atomicAdd(cudaRowCounter, 1);
+ 		}
+-		row = __shfl(row, 0, THREADS_PER_VECTOR);
++		row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+ 	}/*while*/
+ }
+
+@@ -224,7 +224,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 		}
+ 		/*broadcast the value to other threads in the same warp and compute the row index of each vector*/
+-		row = __shfl(row, 0) + warpVectorId;
++		row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 		/*check the row range*/
+ 		while (row < _cudaNumRows) {
+@@ -263,7 +263,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			/*intra-vector reduction*/
+ 			sum *= alpha;
+ 			for (i = THREADS_PER_VECTOR >> 1; i > 0; i >>= 1) {
+-				sum += __shfl_down(sum, i, THREADS_PER_VECTOR);
++				sum += __shfl_down_sync(0xffffffff, sum, i, THREADS_PER_VECTOR);
+ 			}
+
+ 			/*save the results and get a new row*/
+@@ -277,7 +277,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 				row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 			}
+ 			/*broadcast the row index to the other threads in the same warp and compute the row index of each vetor*/
+-			row = __shfl(row, 0) + warpVectorId;
++			row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 		}/*while*/
+ 	}
+@@ -302,7 +302,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			row = atomicAdd(cudaRowCounter, 1);
+ 		}
+ 		/*broadcast the value to other lanes from lane 0*/
+-		row = __shfl(row, 0, THREADS_PER_VECTOR);
++		row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+
+ 		/*check the row range*/
+ 		while (row < _cudaNumRows) {
+@@ -341,7 +341,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 			/*intra-vector reduction*/
+ 			sum *= alpha;
+ 			for (i = THREADS_PER_VECTOR >> 1; i > 0; i >>= 1) {
+-				sum += __shfl_down(sum, i, THREADS_PER_VECTOR);
++				sum += __shfl_down_sync(0xffffffff, sum, i, THREADS_PER_VECTOR);
+ 			}
+
+ 			/*save the results and get a new row*/
+@@ -352,7 +352,7 @@ template < typename T, int64_t THREADS_PER_VECTOR, int64_t MAX_NUM_VECTORS_PER_B
+ 				/*get a new row index*/
+ 				row = atomicAdd(cudaRowCounter, 1);
+ 			}
+-			row = __shfl(row, 0, THREADS_PER_VECTOR);
++			row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+ 		}/*while*/
+ 	}
+
+@@ -377,7 +377,7 @@ __global__ void csr64DynamicVector(unsigned long long* __restrict cudaRowCounter
+ 		row = atomicAdd(cudaRowCounter, 1);
+ 	}
+ 	/*broadcast the value to other lanes from lane 0*/
+-	row = __shfl(row, 0, THREADS_PER_VECTOR);
++	row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -426,7 +426,7 @@ __global__ void csr64DynamicVector(unsigned long long* __restrict cudaRowCounter
+ 			/*get a new row index*/
+ 			row = atomicAdd(cudaRowCounter, 1);
+ 		}
+-		row = __shfl(row, 0, THREADS_PER_VECTOR);
++		row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+ 	}/*while*/
+ }
+
+@@ -452,7 +452,7 @@ __global__ void csr64DynamicWarp(unsigned long long* __restrict cudaRowCounter,
+ 		row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 	}
+ 	/*broadcast the value to other threads in the same warp*/
+-	row = __shfl(row, 0) + warpVectorId;
++	row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -505,7 +505,7 @@ __global__ void csr64DynamicWarp(unsigned long long* __restrict cudaRowCounter,
+ 			row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 		}
+ 		/*broadcast the value to other threads in the same warp*/
+-		row = __shfl(row, 0) + warpVectorId;
++		row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	}/*while*/
+ }
+@@ -531,7 +531,7 @@ __global__ void csr64DynamicVectorBLAS(unsigned long long* __restrict cudaRowCou
+ 		row = atomicAdd(cudaRowCounter, 1);
+ 	}
+ 	/*broadcast the value to other lanes from lane 0*/
+-	row = __shfl(row, 0, THREADS_PER_VECTOR);
++	row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -581,7 +581,7 @@ __global__ void csr64DynamicVectorBLAS(unsigned long long* __restrict cudaRowCou
+ 			/*get a new row index*/
+ 			row = atomicAdd(cudaRowCounter, 1);
+ 		}
+-		row = __shfl(row, 0, THREADS_PER_VECTOR);
++		row = __shfl_sync(0xffffffff, row, 0, THREADS_PER_VECTOR);
+ 	}/*while*/
+ }
+
+@@ -608,7 +608,7 @@ __global__ void csr64DynamicWarpBLAS(unsigned long long* __restrict cudaRowCount
+ 	}
+ 	/*broadcast the value to other threads in the same warp*/
+
+-	row = __shfl(row, 0) + warpVectorId;
++	row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	/*check the row range*/
+ 	while (row < _cudaNumRows) {
+@@ -662,7 +662,7 @@ __global__ void csr64DynamicWarpBLAS(unsigned long long* __restrict cudaRowCount
+ 			row = atomicAdd(cudaRowCounter, 32 / THREADS_PER_VECTOR);
+ 		}
+ 		/*broadcast the value to other threads in the same warp*/
+-		row = __shfl(row, 0) + warpVectorId;
++		row = __shfl_sync(0xffffffff, row, 0) + warpVectorId;
+
+ 	}/*while*/
+ }

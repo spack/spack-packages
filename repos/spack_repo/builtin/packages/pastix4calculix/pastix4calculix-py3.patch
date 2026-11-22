@@ -1,0 +1,159 @@
+Use UTF-8 explicitly, avoid identity substitutions, and keep diagnostics off stdout in
+both copies of the precision generator. Remove the unused import of Python’s imp module.
+
+diff --git a/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py b/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
+index 5921fe1..e02e0b9 100644
+--- a/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
++++ b/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
+@@ -35,7 +35,7 @@ EXTS = ['.c','.cpp','.h','.hpp','.f','.jdf','.f90','.F90','.f77','.F77','.cu','.
+ 
+ def check_gen(file, work, rex):
+   """Reads the file and determines if the file needs generation."""
+-  fd = open(path.realpath(file), 'r');
++  fd = open(path.realpath(file), 'r', encoding='utf-8');
+   lines = fd.readlines();
+   fd.close();
+   for line in lines:
+@@ -202,7 +202,7 @@ class Conversion:
+         shutil.copy(self.files_in[i], self.files_out[i]);
+         continue;
+       if data is None or name is None: continue;
+-      fd = open(self.files_out[i], 'w');
++      fd = open(self.files_out[i], 'w', encoding='utf-8');
+       fd.write(data);
+       fd.close();
+ 
+@@ -234,6 +234,7 @@ class Conversion:
+       """If requested replacement type does not exist,
+       return unaltered contents."""
+       return data;
++    if prec_to == prec_from: return data;
+     for i in range(1,len(work)):
+       """Requested replacements were found,
+       execute replacements for each entry."""
+@@ -247,7 +248,7 @@ class Conversion:
+           replace = replace.replace('\)',')');
+         data = re.sub(search, replace, data);
+       except:
+-        print('Bad replacement pair ',i,'in',sub_type);
++        print('Bad replacement pair ',i,'in',sub_type, file=sys.stderr);
+         continue;
+     return data;
+ 
+diff --git a/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py b/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
+index 4e6cccf..091ab29 100755
+--- a/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
++++ b/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
+@@ -19,7 +19,7 @@ import re;
+ import shlex;
+ import os;
+ import shutil;
+-import imp;
++# import imp  # removed: unused, and removed from Python 3.12
+ from os import path;
+ from optparse import OptionParser,OptionGroup;
+ from datetime import datetime;
+@@ -47,7 +47,7 @@ class GenConversion:
+     else:
+       lfile = path.join(self.srcdir, file);
+     """Reads the file and determines if the file needs generation."""
+-    for line in open(path.realpath(lfile), 'r'):
++    for line in open(path.realpath(lfile), 'r', encoding='utf-8'):
+       m = self.rex.match(line);
+       if m is None: continue;
+       else:
+@@ -105,6 +105,7 @@ class GenConversion:
+       """If requested replacement type does not exist,
+       return unaltered contents."""
+       return data;
++    if prec_to == prec_from: return data;
+     for i in range(1,len(work)):
+       """Requested replacements were found,
+       execute replacements for each entry."""
+@@ -118,7 +119,7 @@ class GenConversion:
+           replace = replace.replace('\)',')');
+         data = re.sub(search, replace, data);
+       except:
+-        print('Bad replacement pair ', i, 'in', sub_type);
++        print('Bad replacement pair ', i, 'in', sub_type, file=sys.stderr);
+         continue;
+     return data;
+ 
+diff --git a/spm/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py b/spm/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
+index 5921fe1..e02e0b9 100644
+--- a/spm/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
++++ b/spm/cmake_modules/morse_cmake/modules/precision_generator/Conversion.py
+@@ -35,7 +35,7 @@ EXTS = ['.c','.cpp','.h','.hpp','.f','.jdf','.f90','.F90','.f77','.F77','.cu','.
+ 
+ def check_gen(file, work, rex):
+   """Reads the file and determines if the file needs generation."""
+-  fd = open(path.realpath(file), 'r');
++  fd = open(path.realpath(file), 'r', encoding='utf-8');
+   lines = fd.readlines();
+   fd.close();
+   for line in lines:
+@@ -202,7 +202,7 @@ class Conversion:
+         shutil.copy(self.files_in[i], self.files_out[i]);
+         continue;
+       if data is None or name is None: continue;
+-      fd = open(self.files_out[i], 'w');
++      fd = open(self.files_out[i], 'w', encoding='utf-8');
+       fd.write(data);
+       fd.close();
+ 
+@@ -234,6 +234,7 @@ class Conversion:
+       """If requested replacement type does not exist,
+       return unaltered contents."""
+       return data;
++    if prec_to == prec_from: return data;
+     for i in range(1,len(work)):
+       """Requested replacements were found,
+       execute replacements for each entry."""
+@@ -247,7 +248,7 @@ class Conversion:
+           replace = replace.replace('\)',')');
+         data = re.sub(search, replace, data);
+       except:
+-        print('Bad replacement pair ',i,'in',sub_type);
++        print('Bad replacement pair ',i,'in',sub_type, file=sys.stderr);
+         continue;
+     return data;
+ 
+diff --git a/spm/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py b/spm/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
+index 4e6cccf..091ab29 100755
+--- a/spm/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
++++ b/spm/cmake_modules/morse_cmake/modules/precision_generator/genDependencies.py
+@@ -19,7 +19,7 @@ import re;
+ import shlex;
+ import os;
+ import shutil;
+-import imp;
++# import imp  # removed: unused, and removed from Python 3.12
+ from os import path;
+ from optparse import OptionParser,OptionGroup;
+ from datetime import datetime;
+@@ -47,7 +47,7 @@ class GenConversion:
+     else:
+       lfile = path.join(self.srcdir, file);
+     """Reads the file and determines if the file needs generation."""
+-    for line in open(path.realpath(lfile), 'r'):
++    for line in open(path.realpath(lfile), 'r', encoding='utf-8'):
+       m = self.rex.match(line);
+       if m is None: continue;
+       else:
+@@ -105,6 +105,7 @@ class GenConversion:
+       """If requested replacement type does not exist,
+       return unaltered contents."""
+       return data;
++    if prec_to == prec_from: return data;
+     for i in range(1,len(work)):
+       """Requested replacements were found,
+       execute replacements for each entry."""
+@@ -118,7 +119,7 @@ class GenConversion:
+           replace = replace.replace('\)',')');
+         data = re.sub(search, replace, data);
+       except:
+-        print('Bad replacement pair ', i, 'in', sub_type);
++        print('Bad replacement pair ', i, 'in', sub_type, file=sys.stderr);
+         continue;
+     return data;
+ 
