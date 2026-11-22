@@ -417,8 +417,8 @@ class Openfoam(Package):
     # introduced by the restriction within scotch!
     depends_on("flex@:2.6.1,2.6.4:")
     depends_on("cmake", type="build")
-    # The wmake parallel build uses GNU Make's FIFO jobserver.
-    depends_on("gmake@4.4:", when="@2606:", type=("build", "run"))
+    # wmake calls make directly. The dependency lets Spack select a compatible jobserver.
+    depends_on("gmake", type=("build", "run"))
     depends_on("m4", type="build")
     depends_on("json-c")
     depends_on("libyaml")
@@ -459,7 +459,7 @@ class Openfoam(Package):
         when="@1806",
         sha256="531146be868dd0cda70c1cf12a22110a38a30fd93b5ada6234be3d6c9256c6cf",
     )
-    # https://gitlab.com/openfoam/core/openfoam/-/issues/3596
+    # Backport https://gitlab.com/openfoam/core/openfoam/-/merge_requests/882.
     patch("pair-gamg-direction-v2512.patch", when="@=2512")
     patch("pair-gamg-direction-v2606.patch", when="@=2606")
 
@@ -570,9 +570,6 @@ class Openfoam(Package):
         if minimal:
             # pre-build or minimal environment
             self.setup_minimal_environment(env)
-
-        if self.spec.satisfies("@2606: ^gmake@4.4:"):
-            env.prepend_path("PATH", self.spec["gmake"].prefix.bin)
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec
