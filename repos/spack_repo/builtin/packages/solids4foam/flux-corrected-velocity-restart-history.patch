@@ -1,0 +1,259 @@
+diff --git a/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.C b/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.C
+index bb45f30b..39b75346 100644
+--- a/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.C
++++ b/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.C
+@@ -27,6 +27,8 @@ License
+ #include "EulerDdtScheme.H"
+ #include "backwardDdtScheme.H"
+ #include "addToRunTimeSelectionTable.H"
++#include "fluxCorrectedVelocityFvPatchVectorField.H"
++#include "compatibilityFunctions.H"
+ 
+ // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
+ 
+@@ -43,6 +45,121 @@ namespace Foam
+             return runTime.controlDict().subOrEmptyDict("fluid")
+                 .lookupOrDefault<word>("region", region);
+         }
++
++
++        // Minimal concrete regIOobject, used to read a field file as a
++        // dictionary through the file handler, so that the collated and
++        // distributed cases are handled and the stream format is taken from
++        // the header. Note: regIOobject is abstract, and localIOdictionary,
++        // which serves the same purpose, is not available in foam-extend
++        class fieldFileReader
++        :
++            public regIOobject
++        {
++        public:
++
++            fieldFileReader(const IOobject& io)
++            :
++                regIOobject(io)
++            {}
++
++            //- Never called: the file is only read
++            virtual bool writeData(Ostream&) const
++            {
++                return false;
++            }
++        };
++
++
++        // Restore the fluxCorrectedVelocity boundary values of an old-time
++        // level of U from the "value" entries written to disk
++        // The condition is derived from zeroGradient and so discards the
++        // "value" entry that it writes when the field is read: the normal
++        // component of the patch value is replaced by the zero-gradient
++        // extrapolation. Unlike for the current time level, the value cannot
++        // be re-derived from phi, as the old-time levels of phi are not
++        // written. Nothing is restored, and no error is raised, if the field
++        // was not read from disk or if the entries are not available: the
++        // old-time level is then a synthesised copy of the current level
++        void restoreWrittenFluxCorrectedVelocity(volVectorField& U)
++        {
++            IOobject fieldIO
++            (
++                U.name(),
++                U.instance(),
++                U.db(),
++                IOobject::MUST_READ,
++                IOobject::NO_WRITE,
++                false // do not register
++            );
++
++#ifdef OPENFOAM_NOT_EXTEND
++            if (!fieldIO.typeHeaderOk<volVectorField>(false))
++#else
++            if (!fieldIO.headerOk())
++#endif
++            {
++                return;
++            }
++
++            fieldFileReader fieldReader(fieldIO);
++            const dictionary fieldDict
++            (
++                fieldReader.readStream(volVectorField::typeName)
++            );
++            fieldReader.close();
++
++            if (!fieldDict.found("boundaryField"))
++            {
++                return;
++            }
++
++            const dictionary& boundaryDict = fieldDict.subDict("boundaryField");
++
++            forAll(U.boundaryField(), patchI)
++            {
++                fvPatchVectorField& Up = boundaryFieldRef(U)[patchI];
++
++                if (!isA<fluxCorrectedVelocityFvPatchVectorField>(Up))
++                {
++                    continue;
++                }
++
++                const word& patchName = Up.patch().name();
++
++                if (!boundaryDict.found(patchName))
++                {
++                    WarningIn
++                    (
++                        "Foam::restoreWrittenFluxCorrectedVelocity"
++                        "(volVectorField&)"
++                    )   << "No entry for patch " << patchName << " in "
++                        << U.name() << ": the "
++                        << fluxCorrectedVelocityFvPatchVectorField::typeName
++                        << " history of this patch is not restored" << endl;
++
++                    continue;
++                }
++
++                const dictionary& patchDict = boundaryDict.subDict(patchName);
++
++                if (!patchDict.found("value"))
++                {
++                    WarningIn
++                    (
++                        "Foam::restoreWrittenFluxCorrectedVelocity"
++                        "(volVectorField&)"
++                    )   << "No value entry for patch " << patchName << " in "
++                        << U.name() << ": the "
++                        << fluxCorrectedVelocityFvPatchVectorField::typeName
++                        << " history of this patch is not restored" << endl;
++
++                    continue;
++                }
++
++                Up == vectorField("value", patchDict, Up.size());
++            }
++        }
+     }
+ }
+ 
+@@ -90,6 +207,89 @@ void Foam::fluidModel::makePimpleControl() const
+ }
+ 
+ 
++void Foam::fluidModel::correctFluxCorrectedVelocityBoundaries()
++{
++    volVectorField& U = UPtr_();
++    const surfaceScalarField& phi = phiPtr_();
++
++    // Check if any patch uses the fluxCorrectedVelocity condition
++    bool fluxCorrectedFound = false;
++    forAll(U.boundaryField(), patchI)
++    {
++        if
++        (
++            isA<fluxCorrectedVelocityFvPatchVectorField>
++            (
++                U.boundaryField()[patchI]
++            )
++        )
++        {
++            fluxCorrectedFound = true;
++            break;
++        }
++    }
++
++    if (!fluxCorrectedFound)
++    {
++        return;
++    }
++
++    // The current time level is re-derived from phi, which does persist its
++    // boundary values. When phi is a mass flux, the density is required to
++    // convert it to a velocity; rho is created by the derived fluidModel, i.e.
++    // after this function is called, so the correction is skipped in that case
++    // and the derived model is free to correct the values once rho is
++    // available. Note that this is a no-op on a fresh start, where phi is
++    // calculated from U
++    if (phi.dimensions() == dimVolume/dimTime)
++    {
++        forAll(U.boundaryField(), patchI)
++        {
++            fvPatchVectorField& Up = boundaryFieldRef(U)[patchI];
++
++            if (!isA<fluxCorrectedVelocityFvPatchVectorField>(Up))
++            {
++                continue;
++            }
++
++            // As in fluxCorrectedVelocityFvPatchVectorField::evaluate(): a
++            // zero-gradient extrapolation with the normal component replaced
++            // by the flux
++            const fvPatch& p = Up.patch();
++            const vectorField n(p.nf());
++            const vectorField UzeroGrad(Up.patchInternalField());
++
++            Up == vectorField
++            (
++                UzeroGrad
++              - n*(n & UzeroGrad)
++              + n*phi.boundaryField()[patchI]/p.magSf()
++            );
++        }
++    }
++    else
++    {
++        WarningIn("Foam::fluidModel::correctFluxCorrectedVelocityBoundaries()")
++            << "The " << phi.name() << " field is not a volumetric flux: the "
++            << fluxCorrectedVelocityFvPatchVectorField::typeName
++            << " boundary values of " << U.name() << " are not corrected"
++            << endl;
++    }
++
++    // The old-time levels of phi are not written, so the old-time levels of U
++    // cannot be re-derived in the same way; instead, the "value" entries
++    // written by the fluxCorrectedVelocity condition are read back
++    volVectorField* UOldPtr = &U;
++
++    for (label levelI = 0; levelI < U.nOldTimes(); levelI++)
++    {
++        UOldPtr = &(UOldPtr->oldTime());
++
++        restoreWrittenFluxCorrectedVelocity(*UOldPtr);
++    }
++}
++
++
+ // * * * * * * * * * * * * Protected Member Functions  * * * * * * * * * * * //
+ 
+ void Foam::fluidModel::updateRobinFsiInterface
+@@ -749,6 +949,11 @@ Foam::fluidModel::fluidModel
+ 
+     if (!constructNull)
+     {
++        // Restore the fluxCorrectedVelocity boundary values, which are lost
++        // when U and its old-time levels are read on restart; performed before
++        // the gradients are calculated so that they see the corrected values
++        correctFluxCorrectedVelocityBoundaries();
++
+         gradUPtr_() = fvc::grad(UPtr_());
+         gradpPtr_() = fvc::grad(pPtr_());
+ 
+diff --git a/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.H b/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.H
+index 59a0e095..a6251a7f 100644
+--- a/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.H
++++ b/src/solids4FoamModels/fluidModels/fluidModel/fluidModel.H
+@@ -201,6 +201,17 @@ class fluidModel
+         uniformDimensionedVectorField readG() const;
+ #endif
+ 
++        //- Restore the fluxCorrectedVelocity boundary values of U and of its
++        //  old-time levels
++        //  The fluxCorrectedVelocity condition is derived from zeroGradient
++        //  and so does not read the "value" entry that it writes: on restart,
++        //  the normal component of the patch value is replaced by the
++        //  zero-gradient extrapolation, and a restarted run then differs from
++        //  a continuous one. The current time level is re-derived from phi,
++        //  which does persist its boundary values, whereas the old-time
++        //  levels, for which phi is not written, are read back from disk
++        void correctFluxCorrectedVelocityBoundaries();
++
+         //- Disallow default bitwise copy construct
+         fluidModel(const fluidModel&);
+ 
