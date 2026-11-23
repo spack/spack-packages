@@ -182,7 +182,7 @@ class Nektar(CMakePackage):
     def install(self, spec, prefix):
         super(Nektar, self).install(spec, prefix)
         if "+python" in spec:
-            python = which("python")
+            python = spec["python"].command
             if spec.satisfies("@master") or spec.satisfies("@5.6.0:"):
                 python_build_directory = os.path.join(self.build_directory, "python")
             else:
