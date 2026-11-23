@@ -27,7 +27,7 @@ class ShrinkArray(CMakePackage):
     versions still provide these names, deprecated."""
 
     homepage = "https://github.com/cea-hpc/shrink-array"
-    url = "https://github.com/cea-hpc/shrink-array/archive/refs/tags/v0.3.0.tar.gz"
+    url = "https://github.com/cea-hpc/shrink-array/archive/refs/tags/v0.4.0.tar.gz"
     git = "https://github.com/cea-hpc/shrink-array.git"
 
     maintainers("phil12692")
@@ -35,6 +35,7 @@ class ShrinkArray(CMakePackage):
     license("Apache-2.0")
 
     version("develop", branch="develop")
+    version("0.4.0", sha256="0ce2504792d1a3bbd618ec3223a90036adf1d50548930482281f835b08b115cd")
     version("0.3.0", sha256="d223c1d83fc4ac339980f6883bb6ed170f9e84c14b048e655c657647cc33d16c")
     version("0.2.1", sha256="323fdc97caed6b1c59b589e73a7f92d0b68e20ac8657c36c4aad9109c9d60b6c")
     version("0.2.0", sha256="179938b68b55c8b74a6d01b1a2e8443902e798c5867b651a7576d86c2ab1fb5f")
