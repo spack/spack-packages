@@ -1,0 +1,67 @@
+--- pcre-8.38/CMakeLists.txt.orig	2026-11-23 14:25:00.858863370 -0500
++++ pcre-8.38/CMakeLists.txt	2026-11-23 14:26:57.113972895 -0500
+@@ -193,9 +193,9 @@
+ ENDIF(MSVC)
+ 
+ # bzip2 lib
+-IF(BZIP2_FOUND)
++IF(BZip2_FOUND)
+   OPTION (PCRE_SUPPORT_LIBBZ2 "Enable support for linking pcregrep with libbz2." ON)
+-ENDIF(BZIP2_FOUND)
++ENDIF(BZip2_FOUND)
+ IF(PCRE_SUPPORT_LIBBZ2)
+   INCLUDE_DIRECTORIES(${BZIP2_INCLUDE_DIR})
+ ENDIF(PCRE_SUPPORT_LIBBZ2)
+@@ -209,17 +209,17 @@
+ ENDIF(PCRE_SUPPORT_LIBZ)
+ 
+ # editline lib
+-IF(EDITLINE_FOUND)
++IF(Editline_FOUND)
+   OPTION (PCRE_SUPPORT_LIBEDIT  "Enable support for linking pcretest with libedit." OFF)
+-ENDIF(EDITLINE_FOUND)
++ENDIF(Editline_FOUND)
+ IF(PCRE_SUPPORT_LIBEDIT)
+   INCLUDE_DIRECTORIES(${EDITLINE_INCLUDE_DIR})
+ ENDIF(PCRE_SUPPORT_LIBEDIT)
+ 
+ # readline lib
+-IF(READLINE_FOUND)
++IF(Readline_FOUND)
+   OPTION (PCRE_SUPPORT_LIBREADLINE  "Enable support for linking pcretest with libreadline." ON)
+-ENDIF(READLINE_FOUND)
++ENDIF(Readline_FOUND)
+ IF(PCRE_SUPPORT_LIBREADLINE)
+   INCLUDE_DIRECTORIES(${READLINE_INCLUDE_DIR})
+ ENDIF(PCRE_SUPPORT_LIBREADLINE)
+@@ -958,21 +958,21 @@
+   ELSE(ZLIB_FOUND)
+     MESSAGE(STATUS "  Link pcregrep with libz ......... : Library not found" )
+   ENDIF(ZLIB_FOUND)
+-  IF(BZIP2_FOUND)
++  IF(BZip2_FOUND)
+     MESSAGE(STATUS "  Link pcregrep with libbz2 ....... : ${PCRE_SUPPORT_LIBBZ2}")
+-  ELSE(BZIP2_FOUND)
++  ELSE(BZip2_FOUND)
+     MESSAGE(STATUS "  Link pcregrep with libbz2 ....... : Library not found" )
+-  ENDIF(BZIP2_FOUND)
+-  IF(EDITLINE_FOUND)
++  ENDIF(BZip2_FOUND)
++  IF(Editline_FOUND)
+     MESSAGE(STATUS "  Link pcretest with libeditline .. : ${PCRE_SUPPORT_LIBEDIT}")
+-  ELSE(EDITLINE_FOUND)
++  ELSE(Editline_FOUND)
+     MESSAGE(STATUS "  Link pcretest with libeditline .. : Library not found" )
+-  ENDIF(EDITLINE_FOUND)
+-  IF(READLINE_FOUND)
++  ENDIF(Editline_FOUND)
++  IF(Readline_FOUND)
+     MESSAGE(STATUS "  Link pcretest with libreadline .. : ${PCRE_SUPPORT_LIBREADLINE}")
+-  ELSE(READLINE_FOUND)
++  ELSE(Readline_FOUND)
+     MESSAGE(STATUS "  Link pcretest with libreadline .. : Library not found" )
+-  ENDIF(READLINE_FOUND)
++  ENDIF(Readline_FOUND)
+   MESSAGE(STATUS "  Support Valgrind .................: ${PCRE_SUPPORT_VALGRIND}")
+   MESSAGE(STATUS "  Support coverage .................: ${PCRE_SUPPORT_COVERAGE}")
+ 
