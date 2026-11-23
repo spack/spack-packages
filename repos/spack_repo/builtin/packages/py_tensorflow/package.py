@@ -212,6 +212,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # tensorflow/tools/pip_package/build_pip_package.sh
         depends_on("patchelf", when="@2.13: platform=linux")
+        # tensorflow/lite/acceleration/configuration/BUILD
+        depends_on("perl", when="@2.13:")
         # https://github.com/tensorflow/tensorflow/issues/60179#issuecomment-1491238631
         depends_on("coreutils", when="@2.13: platform=darwin")
         # XLA requires xxd now
@@ -1074,6 +1076,9 @@ toolchain(
         if spec.satisfies("@2.17:"):
             self.write_python_toolchain()
             args.append("--extra_toolchains=//spack_python:toolchain")
+
+        if spec.satisfies("@2.21:"):
+            args.append("--config=clang_local")
 
         if self.spec.satisfies("@2.18.0-rocm-enhanced: +rocm"):
             buildpath = join_path(
