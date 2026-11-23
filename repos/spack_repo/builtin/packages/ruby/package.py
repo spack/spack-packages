@@ -25,6 +25,7 @@ class Ruby(AutotoolsPackage, NMakePackage):
 
     license("Ruby AND BSD-2-Clause AND MIT", checked_by="tgamblin")
 
+    version("4.0.10", sha256="b53eef3371fa5d3e3b74340edcd015f06d5d8853968d4e539a5264fce41ed9f1")
     version("4.0.9", sha256="c35350682ff050b79702d57ade4516e7336063f510155d19fb2fb5b3f3909511")
     version("3.3.5", sha256="3781a3504222c2f26cb4b9eb9c1a12dbf4944d366ce24a9ff8cf99ecbce75196")
     version("3.3.4", sha256="fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34")
@@ -57,6 +58,11 @@ class Ruby(AutotoolsPackage, NMakePackage):
             depends_on("tk", when="@:2.3")
             depends_on("readline", when="+readline")
             depends_on("zlib-api")
+            depends_on("openssl")
+            # Spack only provides OpenSSL 3+, so Ruby <= 3.0 needs an external OpenSSL 1.x.
+            conflicts("^openssl@3:", when="@:3.0", msg="Ruby <= 3.0 requires OpenSSL 1.x")
+            # OpenSSL 4 support starts with Ruby 4.0.
+            depends_on("openssl@:3", when="@:3")
             depends_on("libyaml", when="@3:")
             with when("+yjit"):
                 depends_on("rust@1.58:")
@@ -127,8 +133,19 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
             args.append("--with-tk=%s" % self.spec["tk"].prefix)
         if self.spec.satisfies("%fj"):
             args.append("--disable-dtrace")
+        if "^openssl" in self.spec:
+            # Ruby 3.3+ only looks in <dir>/lib with --with-openssl-dir, but
+            # OpenSSL may install into lib64.
+            openssl = self.spec["openssl"]
+            args.append(f"--with-openssl-include={openssl.prefix.include}")
+            args.append(f"--with-openssl-lib={openssl.libs.directories[0]}")
         args.extend(self.enable_or_disable("yjit"))
         return args
+
+    @run_after("install")
+    def check_openssl(self):
+        """Ruby silently skips extensions that fail to configure."""
+        Executable(self.prefix.bin.ruby)("-ropenssl", "-e", "")
 
     @run_after("install")
     def post_install(self):
