@@ -27,7 +27,7 @@ class PyCharsetNormalizer(PythonPackage):
 
     with default_args(type="build"):
         depends_on("py-setuptools@68:84.2", when="@3.5.3:")
-        depends_on("py-setuptools@68:81", when="@3.4.4:")
+        depends_on("py-setuptools@68:81", when="@3.4.4")
         depends_on("py-setuptools")
 
         # Historical dependencies
