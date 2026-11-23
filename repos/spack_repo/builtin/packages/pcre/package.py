@@ -61,6 +61,7 @@ class Pcre(AutotoolsPackage, CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     with when("build_system=cmake"):
+        depends_on("cmake@:3", type="test")
         depends_on("zlib")
         depends_on("bzip2")
 
