@@ -106,14 +106,11 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Other dependecies
     depends_on("hwloc")
-    depends_on("boost")
+    depends_on("boost+filesystem")
     depends_on("boost+atomic+regex", when="@:1.2")
-    depends_on("boost+filesystem", when="@:1.3")
     depends_on("boost+program_options", when="@:1.5")
     depends_on("boost+system", when="@:1.6")
     depends_on("boost+iostreams", when="@1.5:1.6")
-    depends_on("boost+filesystem", when="cxxstd=11")
-    depends_on("boost+filesystem", when="cxxstd=14")
     depends_on("boost+regex", when="+tools")
     for cxxstd in cxxstds:
         depends_on(f"boost cxxstd={cxxstd}", when=f"cxxstd={cxxstd}")

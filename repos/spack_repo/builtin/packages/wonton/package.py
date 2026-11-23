@@ -72,7 +72,7 @@ class Wonton(CMakePackage):
     # NVidia thrust library
     depends_on("thrust@1.8.3", when="+thrust")
 
-    depends_on("boost", when="@:1.2.10 ~thrust")
+    depends_on("boost", when="~thrust")
 
     # CUDA library
     depends_on("cuda", when="+cuda")
