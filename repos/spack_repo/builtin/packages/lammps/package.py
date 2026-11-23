@@ -72,15 +72,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         version(
             "20250910", sha256="475d5cda1b289ca3b3dcc97c1ee199f67fa6ad736951213e9b6ec08069d70f0c"
         )
-        version(
-            "20250612", sha256="b3fe6dc57115edb89d022879fe676503ec88b4e12cfee3488cc2f43cb0957ba7"
-        )
-        version(
-            "20250402", sha256="5087ebd6b00cd44a7d73303d49685668f6effa76dc375912f7f75db558b39bca"
-        )
-        version(
-            "20250204", sha256="a4cb0a58451d47ac31ee3e1f148d92f445298d6e27f2d06f161b9b4168d79eb1"
-        )
 
         # deprecated stable versions
         version(
@@ -91,35 +82,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         )
         version(
             "20250722.4", sha256="411088d9c03339e025f6a975e0a5741bb9e3f351cc39eda220ab22ac318fe2fb"
-        )
-        version(
-            "20250722.3", sha256="07f487cc33fc8f2ec4a449b7bce570e52b5a46608075e0276d26e0e232511bef"
-        )
-        version(
-            "20250722.2", sha256="fede484269cdb22f1cb738b4cd118a9bf9cb4bd3c85667f1e6a73a9fa5c2de6b"
-        )
-        version(
-            "20250722.1", sha256="4ba3648fae360ea1d3106e08bce13e21f856318196f4965f2a09fd812d572928"
-        )
-        version(
-            "20250722", sha256="38d7ab508433f33a53e11f0502aa0253945ce45d5595baf69665961c0a76da26"
-        )
-
-        # deprecated stable versions we want to keep longer
-        version(
-            "20230802.4", sha256="6eed007cc24cda80b5dd43372b2ad4268b3982bb612669742c8c336b79137b5b"
-        )
-        version(
-            "20220623.4", sha256="42541b4dbd0d339d16ddb377e76d192bc3d1d5712fdf9e2cdc838fc980d0a0cf"
-        )
-        version(
-            "20210929.3", sha256="e4c274f0dc5fdedc43f2b365156653d1105197a116ff2bafe893523cdb22532e"
-        )
-        version(
-            "20201029", sha256="759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726"
-        )
-        version(
-            "20200303", sha256="a1a2e3e763ef5baecea258732518d75775639db26e60af1634ab385ed89224d1"
         )
 
     depends_on("c", type="build")
@@ -135,16 +97,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "20250722.6",
         "20250722.5",
         "20250722.4",
-        "20250722.3",
-        "20250722.2",
-        "20250722.1",
-        "20250722",
         "20240829.4",
-        "20230802.4",
-        "20220623.4",
-        "20210929.3",
-        "20201029",
-        "20200303",
     }
 
     def url_for_version(self, version):
