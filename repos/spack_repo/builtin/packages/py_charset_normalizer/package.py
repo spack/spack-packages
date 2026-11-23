@@ -38,7 +38,7 @@ class PyCharsetNormalizer(PythonPackage):
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
         depends_on("python@3.7:3.15", when="@3.5:")
-        depends_on("python@3.7:3.14", when="@3.4.3:3.4")
+        depends_on("python@3.8:3.14", when="@3.4.3:3.4")
         depends_on("python@3.7:3.13", when="@3.4.0:3.4.2")
         depends_on("python@3.7:3.12", when="@3.2:3.3")
         depends_on("python@3.7:3.11", when="@3.1")
