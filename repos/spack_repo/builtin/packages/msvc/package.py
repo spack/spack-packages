@@ -5,6 +5,7 @@ import os.path
 import pathlib
 import re
 import subprocess
+from typing import Optional
 
 from spack_repo.builtin.build_systems import compiler
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
@@ -24,12 +25,13 @@ def get_latest_valid_fortran_pth():
     return FC_PATH[sort_fc_ver[-1]] if sort_fc_ver else None
 
 
-def varsall_from_cl(cl: os.PathLike):
-    varsall_path = "VC\\Auxiliary\\Build\\vcvarsall.bat"
+def varsall_from_cl(cl: os.PathLike) -> Optional[pathlib.Path]:
+    varsall_path = r"VC\Auxiliary\Build\vcvarsall.bat"
     for dir in pathlib.Path(cl).resolve().parents:
         candidate_path = dir / varsall_path
         if candidate_path.exists():
             return candidate_path
+    return None
 
 
 class Msvc(Package, CompilerPackage):
@@ -152,6 +154,11 @@ class Msvc(Package, CompilerPackage):
         # file must be invoked before useage.
         env_cmds = []
         vcvarsall = varsall_from_cl(self.cc)
+        if not vcvarsall:
+            raise RuntimeError(
+                "Cannot initialize msvc environment;"
+                " likely a corrupted or incomplete VS installation"
+            )
 
         # get current platform architecture and format for vcvars argument
         # vcvars target/host arch arguments are in the form of
