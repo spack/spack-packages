@@ -450,7 +450,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.7.01:", when="@20251210: +kokkos")
     depends_on("kokkos@5.0.2:", when="@20260211: +kokkos")
     depends_on("kokkos@5.1.0:", when="@20260704: +kokkos")
-    depends_on("kokkos@5.2.1:", when="@20260930: +kokkos")
+    depends_on("kokkos@5.2.1:", when="@20260902: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
