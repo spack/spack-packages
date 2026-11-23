@@ -49,7 +49,8 @@ class Mlx(CMakePackage, CudaPackage):
 
     extends("python", when="+python")
 
-    depends_on("metal-cpp", type="build", when="+metal")
+    # metal-cpp 27 defines std::hash<NS::SharedPtr<T>>, which mlx also defines
+    depends_on("metal-cpp@:26", type="build", when="+metal")
     depends_on("metal-cpp@26.4", type="build", when="@0.31.2 +metal")
     depends_on("metal-cpp@26.4", type="build", when="@0.32.4 +metal")
 
@@ -68,6 +69,17 @@ class Mlx(CMakePackage, CudaPackage):
     conflicts("cuda_arch=none", when="+cuda", msg="A CUDA arch must be selected")
 
     requires("+shared", when="+python", msg="Python bindings require shared libraries")
+
+    @when("+metal")
+    def patch(self):
+        # The compiled-in fallback location of mlx.metallib points into the
+        # build directory. Static builds rely on it, since the metallib is not
+        # next to the binary that links libmlx.a. Use the installed metallib.
+        filter_file(
+            r'METAL_PATH="\$\{MLX_METAL_PATH\}/mlx\.metallib"',
+            f'METAL_PATH="{self.prefix.lib}/mlx.metallib"',
+            join_path("mlx", "backend", "metal", "CMakeLists.txt"),
+        )
 
     def cmake_args(self):
         spec = self.spec
@@ -96,6 +108,12 @@ class Mlx(CMakePackage, CudaPackage):
 
         if spec.satisfies("+metal"):
             args.append(f"-DFETCHCONTENT_SOURCE_DIR_METAL_CPP={spec['metal-cpp'].prefix.include}")
+
+            # Deployment targets >= 27 select Metal 4.1, where the implicit
+            # address space of `this` changed; the kernels of older versions
+            # only compile with Metal 4.0 (fixed upstream in v0.32.1).
+            if spec.satisfies("@:0.32.0") and macos_version() >= Version("27"):
+                args.append(self.define("CMAKE_OSX_DEPLOYMENT_TARGET", "26.2"))
 
         if spec.satisfies("+python"):
             args.append(self.define("MLX_BUILD_PYTHON_STUBS", True))
