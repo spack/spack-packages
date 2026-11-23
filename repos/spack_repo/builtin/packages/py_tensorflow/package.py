@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
+import os
 import subprocess
 import sys
 import tempfile
@@ -968,6 +969,35 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                     with open(".tf_configure.bazelrc", mode="a") as f:
                         f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
 
+    def write_python_toolchain(self):
+        # Shebangs are limited to 256 bytes, the python prefix can be longer.
+        shebang = join_path(self.stage.path, "python3")
+        if not os.path.lexists(shebang):
+            symlink(python.path, shebang)
+        mkdirp("spack_python")
+        with open(join_path("spack_python", "BUILD"), "w") as f:
+            f.write(
+                f"""\
+load("@rules_python//python:py_runtime.bzl", "py_runtime")
+load("@rules_python//python:py_runtime_pair.bzl", "py_runtime_pair")
+
+py_runtime(
+    name = "py3",
+    interpreter_path = "{python.path}",
+    python_version = "PY3",
+    stub_shebang = "#!{shebang}",
+)
+
+py_runtime_pair(name = "pair", py3_runtime = ":py3")
+
+toolchain(
+    name = "toolchain",
+    toolchain = ":pair",
+    toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+)
+"""
+            )
+
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install
         mkdirp(python_platlib)
@@ -1040,6 +1070,10 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 args.append("--config=numa")
 
         args.append("--config=v2")
+
+        if spec.satisfies("@2.17:"):
+            self.write_python_toolchain()
+            args.append("--extra_toolchains=//spack_python:toolchain")
 
         if self.spec.satisfies("@2.18.0-rocm-enhanced: +rocm"):
             buildpath = join_path(
