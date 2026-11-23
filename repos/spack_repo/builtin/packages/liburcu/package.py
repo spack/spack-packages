@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class Liburcu(UserspaceRcu):
-    """liburcu, the userspace RCU (read-copy-update) library.
+    __doc__ = f"""{UserspaceRcu.__doc__}
 
     This package is a duplicate of ``userspace-rcu``, the upstream project name.
     It is kept as a thin, fully deprecated alias so existing specs that
