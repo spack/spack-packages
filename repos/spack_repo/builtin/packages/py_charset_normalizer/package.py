@@ -12,10 +12,11 @@ class PyCharsetNormalizer(PythonPackage):
     maintained alternative to Chardet."""
 
     homepage = "https://github.com/jawah/charset_normalizer"
-    pypi = "charset-normalizer/charset-normalizer-2.0.7.tar.gz"
+    pypi = "charset_normalizer/charset_normalizer-3.5.3.tar.gz"
 
     license("MIT")
 
+    version("3.5.3", sha256="a250888753faa289e2997962fbb17c4960cbdb58575533ca6fceee68c224bdff")
     version("3.4.4", sha256="94537985111c35f28720e43603b8e7b43a6ecfb2ce1d3058bbe955b73404e21a")
     version("3.4.2", sha256="5baececa9ecba31eff645232d59845c07aa030f0c81ee70184a90d35099a0e63")
     version("3.3.0", sha256="63563193aec44bce707e0c5ca64ff69fa72ed7cf34ce6e11d5127555756fd2f6")
@@ -25,6 +26,7 @@ class PyCharsetNormalizer(PythonPackage):
     version("2.0.7", sha256="e019de665e2bcf9c2b64e2e5aa025fa991da8720daa3c1138cadd2fd1856aed0")
 
     with default_args(type="build"):
+        depends_on("py-setuptools@68:84.2", when="@3.5.3:")
         depends_on("py-setuptools@68:81", when="@3.4.4:")
         depends_on("py-setuptools")
 
@@ -35,7 +37,8 @@ class PyCharsetNormalizer(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):
-        depends_on("python@3.8:3.14", when="@3.4.3:")
+        depends_on("python@3.7:3.15", when="@3.5:")
+        depends_on("python@3.7:3.14", when="@3.4.3:3.4")
         depends_on("python@3.7:3.13", when="@3.4.0:3.4.2")
         depends_on("python@3.7:3.12", when="@3.2:3.3")
         depends_on("python@3.7:3.11", when="@3.1")
