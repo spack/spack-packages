@@ -29,7 +29,6 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
     version("20261006", sha256="0ce8fe631cde79932d30f2c8f9ee08d160bc2c2ffba6ece8fa029f30256ecc71")
         "20261006",
         sha256="0ce8fe631cde79932d30f2c8f9ee08d160bc2c2ffba6ece8fa029f30256ecc71",
-        preferred=True,
     )
     version("20240511", branch="20240511")
 
