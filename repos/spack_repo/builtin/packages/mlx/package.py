@@ -51,8 +51,7 @@ class Mlx(CMakePackage, CudaPackage):
 
     # metal-cpp 27 defines std::hash<NS::SharedPtr<T>>, which mlx also defines
     depends_on("metal-cpp@:26", type="build", when="+metal")
-    depends_on("metal-cpp@26.4", type="build", when="@0.31.2 +metal")
-    depends_on("metal-cpp@26.4", type="build", when="@0.32.4 +metal")
+    depends_on("metal-cpp@26.4", type="build", when="@0.31.2: +metal")
 
     depends_on("python@3.8:", type=("build", "run"), when="+python")
     depends_on("py-numpy", type=("build", "run"), when="+python")
