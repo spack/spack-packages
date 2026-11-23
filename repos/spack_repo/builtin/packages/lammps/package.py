@@ -130,7 +130,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "bpm": {"when": "@20220504:"},
         "brownian": {"when": "@20210702:"},
         "cg-dna": {"when": "@20210702:"},
-        "cg-sdk": {"when": "@20210702:20220623"},
         "cg-spica": {"when": "@20220803:"},
         "class2": {},
         "colloid": {},
@@ -164,14 +163,13 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "kokkos": {"when": "@20201029:"},
         "kspace": {"default": True},
         "latboltz": {"when": "@20210702:"},
-        "latte": {"when": "@20170922:20230328"},
         "lepton": {"when": "@20230208:"},
         "machdyn": {"when": "@20210702:"},
         "manifold": {"when": "@20210702:"},
         "manybody": {"default": True},
         "mc": {},
         "mdi": {"when": "@20210702:"},
-        "meam": {"when": "@:20181212,20210702:"},
+        "meam": {"when": "@20210702:"},
         "mesont": {"when": "@20210702:"},
         "mgpt": {"when": "@20210702:"},
         "misc": {},
@@ -182,11 +180,9 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "ml-rann": {"when": "@20210702:20260704"},
         "ml-snap": {"when": "@20210702:"},
         "ml-uf3": {"when": "@20240627:"},
-        "mliap": {"when": "@20200630:20210527"},
         "mofff": {"when": "@20210702:"},
         "molecule": {"default": True},
         "molfile": {"when": "@20210702:"},
-        "mpiio": {"when": "@:20230802.1"},
         "netcdf": {"when": "@20210702:"},
         "openmp-package": {},
         "opt": {},
@@ -202,7 +198,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "qtb": {"when": "@20210702:"},
         "qmmm-xtb": {"when": "@20260902:"},
         "reaction": {"when": "@20210702:"},
-        "reax": {"when": "@:20181212"},
         "reaxff": {"when": "@20210702:"},
         "rheo": {"when": "@20240829:"},
         "replica": {},
@@ -210,53 +205,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "scafacos": {"when": "@20210702:"},
         "shock": {},
         "smtbq": {"when": "@20210702:"},
-        "snap": {"when": "@:20210527"},
         "sph": {"when": "@20210702:"},
         "spin": {"when": "@20180629:"},
         "srd": {},
         "tally": {"when": "@20210702:"},
         "uef": {"when": "@20210702:"},
-        "user-adios": {"when": "@20190228:20210527"},
-        "user-atc": {"when": "@:20210527"},
-        "user-awpmd": {"when": "@:20210527"},
-        "user-bocs": {"when": "@20180511:20210527"},
-        "user-brownian": {"when": "@20210514:20210527"},
-        "user-cgsdk": {"when": "@20170504:20210527"},
-        "user-colvars": {"when": "@:20210527"},
-        "user-diffraction": {"when": "@:20210527"},
-        "user-dpd": {"when": "@:20210527"},
-        "user-drude": {"when": "@:20210527"},
-        "user-eff": {"when": "@:20210527"},
-        "user-fep": {"when": "@:20210527"},
-        "user-h5md": {"when": "@:20210527"},
-        "user-hdnnp": {"when": "@20210527"},
-        "user-intel": {"when": "@:20210527"},
-        "user-lb": {"when": "@:20210527"},
-        "user-manifold": {"when": "@:20210527"},
-        "user-meamc": {"when": "@20170706:20210527"},
-        "user-mesodpd": {"when": "@20200319:20210527"},
-        "user-mesont": {"when": "@20200615:20210527"},
-        "user-mgpt": {"when": "@:20210527"},
-        "user-misc": {"when": "@:20210702"},
-        "user-mofff": {"when": "@20180205:20210527"},
-        "user-molfile": {"when": "@:20210527"},
-        "user-netcdf": {"when": "@20170504:20210527"},
-        "user-omp": {"when": "@:20210527"},
-        "user-phonon": {"when": "@:20210527"},
-        "user-plumed": {"when": "@20181109:20210527"},
-        "user-ptm": {"when": "@20181010:20210527"},
-        "user-qtb": {"when": "@:20210527"},
-        "user-rann": {"when": "@20210527"},
-        "user-reaction": {"when": "@20200319:20210527"},
-        "user-reaxc": {"when": "@:20210527"},
-        "user-sdpd": {"when": "@20181109:20210527"},
-        "user-smd": {"when": "@:20210527"},
-        "user-smtbq": {"when": "@:20210527"},
-        "user-sph": {"when": "@:20210527"},
-        "user-tally": {"when": "@:20210527"},
-        "user-uef": {"when": "@20171023:20210527"},
-        "user-vtk": {"when": "@20210527"},
-        "user-yaff": {"when": "@20190201:20210527"},
         "voronoi": {},
         "vtk": {"when": "@20210702:20260704"},
         "yaff": {"when": "@20210702:"},
@@ -264,7 +217,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         # "mbx": {"when": "@20260211:"}, no mbx package
         # "ml-runner": {"when": "@20260902:"}, no runner package
         # "ml-quip": {"when": "@20210702:"}, no quip package
-        # "user-quip": {"when": "@20190201:20210527"}, no quip package
     }
 
     for pkg_name, pkg_options in supported_packages.items():
@@ -282,12 +234,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     variant("curl", default=False, description="Build with curl support", when="@20240829:")
     variant("openmp", default=True, description="Build with OpenMP")
     variant("opencl", default=False, description="Build with OpenCL")
-    variant(
-        "exceptions",
-        default=False,
-        description="Build with lammps exceptions",
-        when="@:20230802.1",
-    )
     variant(
         "cuda_mps",
         default=False,
@@ -349,7 +295,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("cmake@3.16:", when="@20231121:", type="build")
     depends_on("cmake@3.20:", when="@20250910:", type="build")
     depends_on("mpi", when="+mpi")
-    depends_on("mpi", when="+mpiio")
     depends_on("fftw-api@3", when="+kspace fft=fftw3")
     depends_on("heffte", when="+heffte")
     depends_on("heffte+fftw", when="+heffte fft=fftw3")
@@ -361,30 +306,18 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("nvpl-fft", when="+kspace fft=nvpl")
     depends_on("nvpl-fft", when="+kokkos+kspace fft_kokkos=nvpl")
     depends_on("voropp", when="+voronoi")
-    depends_on("netcdf-c+mpi", when="+user-netcdf")
     depends_on("netcdf-c+mpi", when="+netcdf")
-    depends_on("blas", when="+user-atc")
     depends_on("blas", when="+atc")
     depends_on("blas", when="+qmmm-xtb")
-    depends_on("lapack", when="+user-atc")
     depends_on("lapack", when="+atc")
     depends_on("opencl", when="+opencl")
-    depends_on("latte@1.0.1", when="@:20180222+latte")
-    depends_on("latte@1.1.1:", when="@20180316:20180628+latte")
-    depends_on("latte@1.2.1:", when="@20180629:20200505+latte")
-    depends_on("latte@1.2.2:", when="@20200602:20230328+latte")
-    depends_on("blas", when="+latte")
-    depends_on("lapack", when="+latte")
     depends_on("python", when="+python")
     depends_on("python@3.6:", when="@20250402: +python")
-    depends_on("mpi", when="+user-lb")
     depends_on("mpi", when="+latboltz")
-    depends_on("mpi", when="+user-h5md")
     depends_on("mpi", when="+h5md")
     depends_on("pkg-config", when="+qmmm-xtb")
     depends_on("xtb@6.7:", when="+qmmm-xtb")
     depends_on("mctc-lib", when="+qmmm-xtb")
-    depends_on("hdf5", when="+user-h5md")
     depends_on("hdf5", when="+h5md")
     depends_on("jpeg", when="+jpeg")
     depends_on("kim-api", when="+kim")
@@ -404,14 +337,10 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@5.0.2:", when="@20260211: +kokkos")
     depends_on("kokkos@5.1.0:", when="@20260704: +kokkos")
     depends_on("kokkos@5.2.1:", when="@20260902: +kokkos")
-    depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
-    depends_on("plumed", when="+user-plumed")
     depends_on("plumed", when="+plumed")
-    depends_on("eigen@3", when="+user-smd")
     depends_on("eigen@3", when="+machdyn")
     depends_on("pace", when="+ml-pace")
-    depends_on("py-cython", when="+mliap+python", type="build")
     depends_on("py-cython", when="+ml-iap+python", type="build")
     depends_on("py-mdi", when="+mdi", type=("build", "run"))
     depends_on("py-pip", when="+python", type="build")
@@ -420,13 +349,11 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("py-numpy", when="+python", type=("build", "run"))
     depends_on("py-mpi4py", when="+python+mpi", type=("build", "run"))
     depends_on("py-setuptools@42:", when="@20220217:+python", type=("build", "run"))
-    for _n2p2_cond in ("+user-hdnnp", "+ml-hdnnp"):
-        with when(_n2p2_cond):
-            depends_on("n2p2@2.1.4:")
-            depends_on("n2p2+shared", when="+lib")
+    with when("+ml-hdnnp"):
+        depends_on("n2p2@2.1.4:")
+        depends_on("n2p2+shared", when="+lib")
     depends_on("scafacos", when="+scafacos")
     depends_on("scafacos cflags=-fPIC cxxflags=-fPIC fflags=-fPIC", when="+scafacos+lib")
-    depends_on("vtk", when="+user-vtk")
     depends_on("vtk", when="+vtk")
     depends_on("hipcub", when="~kokkos +rocm")
     depends_on("hipcub@:6", when="@:20260704 ~kokkos +rocm")
@@ -458,32 +385,15 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     )
     conflicts("+cuda", when="+opencl")
     conflicts("+rocm", when="+opencl")
-    conflicts("+body", when="+poems@:20180628")
     conflicts("+python", when="~lib")
     conflicts("+qeq", when="~manybody")
-    conflicts("+user-atc", when="~manybody")
     conflicts("+atc", when="~manybody")
-    conflicts("+user-misc", when="~manybody")
-    conflicts("+user-phonon", when="~kspace")
     conflicts("+phonon", when="~kspace")
     conflicts("+qmmm-xtb", when="~kspace")
-    conflicts("%gcc@9:", when="@:20200303+openmp")
     conflicts("+dielectric", when="~kspace")
-    conflicts("+dielectric", when="@:20210702~user-misc")
     conflicts("+dielectric", when="@20210728:~extra-pair")
     conflicts("+electrode", when="~kspace")
-    conflicts("+mliap", when="~snap")
     conflicts("+ml-iap", when="~ml-snap")
-    conflicts(
-        "+user-adios +mpi",
-        when="^adios2~mpi",
-        msg="With +user-adios, mpi setting for adios2 and lammps must be the same",
-    )
-    conflicts(
-        "+user-adios ~mpi",
-        when="^adios2+mpi",
-        msg="With +user-adios, mpi setting for adios2 and lammps must be the same",
-    )
     conflicts(
         "+adios +mpi",
         when="^adios2~mpi",
@@ -493,11 +403,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "+adios ~mpi",
         when="^adios2+mpi",
         msg="With +adios, mpi setting for adios2 and lammps must be the same",
-    )
-    conflicts(
-        "~kokkos+rocm",
-        when="@:20220602",
-        msg="ROCm builds of the GPU package not maintained prior to version 20220623",
     )
     conflicts("+intel", when="%aocc@:3.2.9999", msg="+intel with AOCC requires version 4 or newer")
     conflicts("fft=nvpl", when="@:20240829", msg="fft=nvpl requires newer LAMMPS version")
@@ -510,13 +415,6 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         msg="fft_kokkos=mkl_gpu requires newer LAMMPS version",
     )
 
-    # Backport of https://github.com/lammps/lammps/pull/3726
-    conflicts("+kokkos+rocm+kspace", when="@:20210929.3")
-    patch(
-        "https://github.com/lammps/lammps/commit/ebb8eee941e52c98054fdf96ea78ee4d5f606f47.patch?full_index=1",
-        sha256="3dedd807f63a21c543d1036439099f05c6031fd98e7cb1ea7825822fc074106e",
-        when="@20220623.3:20230208 +kokkos +rocm +kspace",
-    )
     # Fixed in https://github.com/lammps/lammps/pull/4305
     patch(
         "https://github.com/lammps/lammps/commit/49bdc3e26449634f150602a66d0dab34d09dbc0e.patch?full_index=1",
@@ -530,33 +428,12 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         when="@20221103:20250402 +openmp %apple-clang",
     )
 
-    # Older LAMMPS does not compile with Kokkos 4.x/5.x
-    conflicts(
-        "^kokkos@4:",
-        when="@:20230802.1",
-        msg="LAMMPS is incompatible with Kokkos 4.x until @20230802.1",
-    )
+    # Older LAMMPS does not compile with Kokkos 5.x
     conflicts(
         "^kokkos@5:",
         when="@:20251210",
         msg="LAMMPS is incompatible with Kokkos 5.x until @20260211",
     )
-
-    patch("lib.patch", when="@20170901")
-    patch("660.patch", when="@20170922")
-    patch("gtest_fix.patch", when="@:20210310 %aocc@3.2.0")
-
-    # This patch merged to LAMMPS trunk at 20221222 and backported to
-    # stable version 20220623.4. We still patch all other affected
-    # versions here
-    patch("intel-aocc.patch", when="@20220324:20220623.3,20220803:20221103 +intel %aocc")
-
-    patch(
-        "https://github.com/lammps/lammps/commit/562300996285fdec4ef74542383276898555af06.patch?full_index=1",
-        sha256="e6f1b62bbfdc79d632f4cea98019202d0dd25aa4ae61a70df1164cb4f290df79",
-        when="@20200721 +cuda",
-    )
-    patch("hip_cmake.patch", when="@20220623:20221222 ~kokkos+rocm")
 
     # Add large potential files
     resource(
@@ -589,16 +466,9 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     def cmake_args(self):
         spec = self.spec
 
-        mpi_prefix = "ENABLE"
-        pkg_prefix = "ENABLE"
-        if spec.satisfies("@20180629:"):
-            mpi_prefix = "BUILD"
-            pkg_prefix = "PKG"
-
         args = [
             self.define_from_variant("BUILD_SHARED_LIBS", "lib"),
-            self.define_from_variant("LAMMPS_EXCEPTIONS", "exceptions"),
-            self.define_from_variant("{}_MPI".format(mpi_prefix), "mpi"),
+            self.define_from_variant("BUILD_MPI", "mpi"),
             self.define_from_variant("BUILD_OMP", "openmp"),
             self.define_from_variant("BUILD_TOOLS", "tools"),
             self.define("ENABLE_TESTING", self.run_tests),
@@ -710,7 +580,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
 
         for pkg, params in self.supported_packages.items():
             if "when" not in params or spec.satisfies(params["when"]):
-                opt = "{0}_{1}".format(pkg_prefix, pkg.replace("-package", "").upper())
+                opt = "PKG_{0}".format(pkg.replace("-package", "").upper())
                 args.append(self.define(opt, "+{0}".format(pkg) in spec))
 
         if spec.satisfies("+kspace"):
@@ -726,30 +596,24 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             # for transposing 3d FFT data.
             args.append(self.define("FFT_SINGLE", spec.satisfies("fftw_precision=single")))
 
-        if spec.satisfies("+user-adios") or spec.satisfies("+adios"):
+        if spec.satisfies("+adios"):
             args.append(self.define("ADIOS2_DIR", self.spec["adios2"].prefix))
-        if spec.satisfies("+user-plumed") or spec.satisfies("+plumed"):
+        if spec.satisfies("+plumed"):
             args.append(self.define("DOWNLOAD_PLUMED", False))
             if "+shared" in self.spec["plumed"]:
                 args.append(self.define("PLUMED_MODE", "shared"))
             else:
                 args.append(self.define("PLUMED_MODE", "static"))
-        if spec.satisfies("+user-smd") or spec.satisfies("+machdyn"):
+        if spec.satisfies("+machdyn"):
             args.append(self.define("DOWNLOAD_EIGEN3", False))
             args.append(self.define("EIGEN3_INCLUDE_DIR", self.spec["eigen"].prefix.include))
-        if spec.satisfies("+user-hdnnp") or spec.satisfies("+ml-hdnnp"):
+        if spec.satisfies("+ml-hdnnp"):
             args.append(self.define("DOWNLOAD_N2P2", False))
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
 
         if spec.satisfies("+rocm"):
             args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
-            if spec.satisfies("@:20231121"):
-                if spec.satisfies("^hip@:5.4"):
-                    args.append(self.define("HIP_PATH", f"{spec['hip'].prefix}/hip"))
-                elif spec.satisfies("^hip@5.5:"):
-                    args.append(self.define("HIP_PATH", spec["hip"].prefix))
-            else:
-                args.append(self.define("HIP_PATH", spec["hip"].prefix))
+            args.append(self.define("HIP_PATH", spec["hip"].prefix))
 
         return args
 
