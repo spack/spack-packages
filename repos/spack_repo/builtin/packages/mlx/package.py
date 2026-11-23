@@ -28,6 +28,7 @@ class Mlx(CMakePackage, CudaPackage):
     license("MIT")
 
     version("main", branch="main")
+    version("0.32.4", commit="36969c094354086e15d2a327a9c50feb20b9cf11", tag="v0.32.4")
     version("0.31.2", commit="68cf2fddd8de5edd8ab3d926391772b2e2cedad8", tag="v0.31.2")
 
     depends_on("c", type="build")
@@ -50,6 +51,7 @@ class Mlx(CMakePackage, CudaPackage):
 
     depends_on("metal-cpp", type="build", when="+metal")
     depends_on("metal-cpp@26.4", type="build", when="@0.31.2 +metal")
+    depends_on("metal-cpp@26.4", type="build", when="@0.32.4 +metal")
 
     depends_on("python@3.8:", type=("build", "run"), when="+python")
     depends_on("py-numpy", type=("build", "run"), when="+python")
