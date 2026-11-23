@@ -32,12 +32,8 @@ class Slurm(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("26-05-6-1", sha256="a36aa250f506989bb13abec1279026f16af3a423d376453790df4ca7efc42bee")
-    version("26-05-1-1", sha256="432362d3ced66476a8edb61b6c06b6f0c0c1b3bbbf40589fae94de0664c803b5")
     version("25-11-9-1", sha256="c1aa51d19899cd874b0d40c30bd9a1a380ed1643ed1d351d6d3c8b4b33afed06")
-    version("25-11-6-1", sha256="2e305a5cc051d08ded4d710e349636b6a054da2c371bbce85797744b693ca790")
     version("25-05-9-1", sha256="55678d04efa91cc919277f290f9f50d84ded1185b0ea93125ac304e8a0270a73")
-    version("25-05-8-1", sha256="3f77fa80fdcec1e8a47f146bf0b34a6a6c2435f13dad26aea758a7a0f8c82954")
-    version("25-05-1-1", sha256="b568c761a6c9d72358addb3bb585456e73e80a02214ce375d2de8534f9ddb585")
     version("24-11-6-1", sha256="282708483326f381eb001a14852a1a82e65e18f37b62b7a5f4936c0ed443b600")
     version(
         "23-11-11-1", sha256="e9234e664ce30be206f73c0ff1a5f33e0ce32be35ece812eac930fcaa9da2c2f"
@@ -57,6 +53,23 @@ class Slurm(AutotoolsPackage):
     version("21-08-8-2", sha256="876d7dfa716990d7e579cfb9c6ffc123258e03a1450e993ade596d2ee90afcdd")
     version("21-08-8-1", sha256="47d4dd2f391abcb856ecfddb51145c86ead89554f24efb586c59f0e38491ff36")
     version("20-11-9-1", sha256="98d36f3487e95af610db305a3ee1c1a7d370a3e1efef9fabee8b0edb98a6604b")
+
+    # CVE-2026-65107, CVE-2026-65108, CVE-2026-65109, CVE-2026-65138, CVE-2026-65139,
+    # CVE-2026-65140, CVE-2026-65165 (fixed in 26.05.4, 25.11.8, 25.05.9) and
+    # CVE-2026-65168 (fixed in 25.11.8, 25.05.9)
+    with default_args(deprecated=True):
+        version(
+            "26-05-1-1", sha256="432362d3ced66476a8edb61b6c06b6f0c0c1b3bbbf40589fae94de0664c803b5"
+        )
+        version(
+            "25-11-6-1", sha256="2e305a5cc051d08ded4d710e349636b6a054da2c371bbce85797744b693ca790"
+        )
+        version(
+            "25-05-8-1", sha256="3f77fa80fdcec1e8a47f146bf0b34a6a6c2435f13dad26aea758a7a0f8c82954"
+        )
+        version(
+            "25-05-1-1", sha256="b568c761a6c9d72358addb3bb585456e73e80a02214ce375d2de8534f9ddb585"
+        )
 
     variant("gtk", default=False, description="Enable GTK+ support")
     variant("mariadb", default=False, description="Use MariaDB instead of MySQL")
