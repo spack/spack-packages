@@ -35,7 +35,6 @@ class Nektar(CMakePackage):
     variant("tinyxml", default=True, description="Builds with external tinyxml support")
     variant("hdf5", default=True, description="Builds with hdf5 support", when="@5.10.0:")
     variant("hdf5", default=False, description="Builds with hdf5 support", when="@:5.9")
-    variant("hdf5", default=False, description="Builds with hdf5 support")
     variant("scotch", default=True, description="Builds with scotch partitioning support")
     variant("demos", default=False, description="Build demonstration codes")
     variant("python", default=True, description="Enable python support")
@@ -181,13 +180,12 @@ class Nektar(CMakePackage):
 
     def install(self, spec, prefix):
         super(Nektar, self).install(spec, prefix)
-        if "+python" in spec:
+        if spec.satisfies("+python"):
             python = spec["python"].command
             if spec.satisfies("@5.6.0:"):
                 python_build_directory = os.path.join(self.build_directory, "python")
             else:
                 python_build_directory = self.build_directory
-            print("Installing Python bindings using " + python_build_directory + "/setup.py")
             with working_dir(python_build_directory):
                 python("setup.py", "install", "--prefix", prefix)
 
