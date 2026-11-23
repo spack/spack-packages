@@ -225,7 +225,12 @@ class Hipsparselt(ROCmLibrary, CMakePackage, ROCmPackage):
 
     def patch(self):
         purelib = self.spec["python"].package.purelib
-        joblib_path = os.path.join(self.spec["py-joblib"].prefix, purelib)
+        # py-joblib@1.6: no longer vendors cloudpickle
+        joblib_path = ":".join(
+            os.path.join(self.spec[dep].prefix, purelib)
+            for dep in ("py-joblib", "py-cloudpickle")
+            if dep in self.spec
+        )
         if not self.spec["hip"].external:
             if self.spec.satisfies("@6.4:7.1") and self.run_tests:
                 filter_file(
