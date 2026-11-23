@@ -19,6 +19,11 @@ class MetalCpp(Package):
     maintainers("rbberger")
 
     version(
+        "27.0.1",
+        tag="release/metal-cpp_macOS27.0.1_iOS27.0.1",
+        commit="8cdde68ae36a636c84cbb48ebcbc8f3b60251ea0",
+    )
+    version(
         "27",
         tag="release/metal-cpp_macOS27_iOS27",
         commit="27c4382b7151d55a51692cdcb27aaa98752240de",
