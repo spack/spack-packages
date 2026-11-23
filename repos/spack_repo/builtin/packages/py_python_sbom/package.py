@@ -21,6 +21,7 @@ class PyPythonSbom(PythonPackage):
 
     license("MIT")
 
+    version("0.5.0", sha256="fc7b2c46fa40f52e587ac59cada775e83dcac231fafa90b7a71c3554527ddfb6")
     version("0.3.1", sha256="37d0fa3d0a16fddc3d88099e147e164ddb3055e8bc3424506ef41dd80f723a73")
 
     variant(
