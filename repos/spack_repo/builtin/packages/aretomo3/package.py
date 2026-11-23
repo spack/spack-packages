@@ -45,7 +45,7 @@ class Aretomo3(MakefilePackage, CudaPackage):
         msg="CUDA 13+ requires @2.3: (makefile13 not in older releases)",
     )
     # LibSrc/Lib ships prebuilt x86-64 static libraries
-    conflicts("target=aarch64:", msg="AreTomo3 links prebuilt x86-64 libraries")
+    requires("target=x86_64:", msg="AreTomo3 links prebuilt x86-64 libraries")
 
     @property
     def _makefile_name(self):
