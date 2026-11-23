@@ -37,7 +37,7 @@ class Pplacer(Package):
             depends_on("m4")
             depends_on("opam")
             depends_on("patch")
-            depends_on("pkgconf")
+            depends_on("pkgconfig")
         depends_on("gsl")
         depends_on("sqlite@3")
         depends_on("zlib-api")

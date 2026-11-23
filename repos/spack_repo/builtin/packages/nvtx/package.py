@@ -62,4 +62,4 @@ class Nvtx(Package, PythonExtension):
         install("./nvtx-config.cmake", prefix)  # added by the patch above
 
         with working_dir(self.build_directory):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

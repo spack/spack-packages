@@ -22,6 +22,7 @@ class Babl(MesonPackage):
 
     license("LGPL-3.0-or-later")
 
+    version("0.1.128", sha256="e676507b421d414d49db8627415dc1eadbd787536baa7d6fe94a1f1971cbe73e")
     version("0.1.108", sha256="26defe9deaab7ac4d0e076cab49c2a0d6ebd0df0c31fd209925a5f07edee1475")
     version("0.1.106", sha256="d325135d3304f088c134cc620013acf035de2e5d125a50a2d91054e7377c415f")
     version("0.1.102", sha256="a88bb28506575f95158c8c89df6e23686e50c8b9fea412bf49fe8b80002d84f0")

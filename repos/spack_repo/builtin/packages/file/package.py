@@ -57,6 +57,7 @@ class File(AutotoolsPackage):
             "--enable-xzlib",
             "--enable-zstdlib",
             "--disable-lzlib",
+            "--disable-libseccomp",
         ]
         args += self.enable_or_disable("static")
         return args

@@ -813,4 +813,4 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
                 os.environ["LAMMPS_VERSION_FILE"] = join_path(
                     self.stage.source_path, "src", "version.h"
                 )
-                pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+                pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

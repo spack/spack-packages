@@ -59,4 +59,4 @@ class PyTensorboardDataServer(PythonPackage):
             )
 
         wheel = glob.glob("*.whl")[0]
-        pip(*PythonPipBuilder.std_args(self), f"--prefix={prefix}", wheel)
+        pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", wheel)

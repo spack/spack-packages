@@ -141,4 +141,4 @@ class PySetuptools(Package, PythonExtension):
         #
         # We work around this issue by installing setuptools from wheels
         whl = self.stage.archive_file
-        python("-m", "pip", *PythonPipBuilder.std_args(self), f"--prefix={prefix}", whl)
+        python("-m", "pip", *PythonPipBuilder.std_args(), f"--prefix={prefix}", whl)

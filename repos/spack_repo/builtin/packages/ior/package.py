@@ -40,7 +40,7 @@ class Ior(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("pkgconf", type="build", when="@4.0.0:")
+    depends_on("pkgconfig", type="build", when="@4.0.0:")
     depends_on("mpi")
     depends_on("libaio", when="+aio")
     depends_on("daos@2.2.0:", when="+daos")

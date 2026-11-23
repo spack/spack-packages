@@ -18,14 +18,15 @@ class PyFormulae(PythonPackage):
     license("MIT")
 
     version("0.7.0", sha256="c4b644adced7ae0627fc13fc8413b547e3477c2d046ed4704146ec7024ae6081")
-
-    depends_on("python@3.8:", type=("build", "run"))
+    version("0.6.2", sha256="c256c37bf40b5d61acc56faa174b97bc81b80722bdad97f4692dcc24b360af7f")
 
     with default_args(type="build"):
         depends_on("py-setuptools@61:")
         depends_on("py-setuptools-scm@8:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.8:")
+
         depends_on("py-numpy@1.16:")
         depends_on("py-packaging")
         depends_on("py-pandas@1:")

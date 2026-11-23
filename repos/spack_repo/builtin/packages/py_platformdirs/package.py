@@ -75,6 +75,6 @@ class PyPlatformdirs(PythonPackage):
 class PythonPipBuilder(python.PythonPipBuilder):
     @when("+wheel")
     def install(self, pkg, spec, prefix):
-        args = list(filter(lambda x: x != "--no-index", self.std_args(self.pkg)))
+        args = list(filter(lambda x: x != "--no-index", self.std_args()))
         args += [f"--prefix={prefix}", self.spec.format("platformdirs=={version}")]
         pip(*args)

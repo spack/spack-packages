@@ -19,6 +19,7 @@ class Cdt(CMakePackage):
         "MPL-2.0 AND BSD-3-Clause AND Apache-2.0 WITH LLVM-exception", checked_by="jcortial-safran"
     )
 
+    version("2.0.2", sha256="43e22918907f354a300674222d63595afe121ec16ced8f6d2bac90a3db88892b")
     version("2.0.1", sha256="5e3c45715e55b5f2d4390082c8c1ac026f635ddee233516fdcf94b197954367d")
     version("2.0.0", sha256="81ed0c7a8cbdc059b26948a160c3ce68c7a147976334093fe3175c8fa161a447")
     version("1.4.5", sha256="5b964a00147d17f5d6ffd9c800d4f12f1e540ce8e932655469f65aea9a3005d7")
@@ -43,6 +44,24 @@ class Cdt(CMakePackage):
         default=False,
         description="Instantiate templates for float and double and compiled into a library",
     )
+    variant(
+        "callbacks",
+        default=False,
+        description="Enable user callbacks during triangulation",
+        when="@1.4.2:",
+    )
+    variant(
+        "no_exceptions",
+        default=False,
+        description="Disable exceptions: instead of throwing the library will terminate",
+        when="@1.4.2:",
+    )
+    variant(
+        "precise_constructions",
+        default=False,
+        description="Disable fast-math and floating-point contraction in constructions",
+        when="@2.0.0:",
+    )
     variant("shared", default=True, description="Compile as a shared library")
 
     depends_on("cxx", type="build")  # generated
@@ -60,5 +79,10 @@ class Cdt(CMakePackage):
             self.define_from_variant("CDT_USE_BOOST", "boost"),
             self.define_from_variant("CDT_USE_64_BIT_INDEX_TYPE", "64_bit_index"),
             self.define_from_variant("CDT_USE_AS_COMPILED_LIBRARY", "compiled"),
+            self.define_from_variant("CDT_ENABLE_CALLBACK_HANDLER", "callbacks"),
+            self.define_from_variant("CDT_DISABLE_EXCEPTIONS", "no_exceptions"),
+            self.define_from_variant(
+                "CDT_ENSURE_PRECISE_MATH_IN_CONSTRUCTIONS", "precise_constructions"
+            ),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]

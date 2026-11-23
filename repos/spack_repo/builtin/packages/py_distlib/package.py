@@ -15,6 +15,7 @@ class PyDistlib(PythonPackage):
 
     license("PSF-2.0")
 
+    version("0.4.4", sha256="ca4175b4ac7f71223cc30ed7248c45d2b38c2439d8ee6e498ab67ed63cf3508d")
     version("0.4.0", sha256="feec40075be03a04501a973d81f633735b4b69f98b05450592310c0f401a4e0d")
     version("0.3.9", sha256="a60f20dea646b8a33f3e7772f74dc0b2d0772d2837ee1342a00645c81edf9403")
     version("0.3.8", sha256="1530ea13e350031b6312d8580ddb6b27a104275a31106523b8f123787f494f64")
@@ -23,12 +24,14 @@ class PyDistlib(PythonPackage):
     version("0.3.4", sha256="e4b58818180336dc9c529bfb9a0b58728ffc09ad92027a3f30b7cd91e3458579")
     version("0.3.3", sha256="d982d0751ff6eaaab5e2ec8e691d949ee80eddf01a62eaa96ddb11531fe16b05")
 
-    depends_on("c", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
 
-    # pip silently replaces distutils with setuptools
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@44:", when="@0.3.6:", type="build")
-    depends_on("py-wheel@0.29.0:", when="@0.3.6:", type="build")
+        # pip silently replaces distutils with setuptools
+        depends_on("py-setuptools@68:", when="@0.4.2:")
+        depends_on("py-setuptools@44:", when="@0.3.6:")
+        depends_on("py-setuptools")
+        depends_on("py-wheel@0.29.0:", when="@0.3.6:")
 
     def url_for_version(self, version):
         url = "https://files.pythonhosted.org/packages/source/d/distlib/distlib-{0}.{1}"

@@ -19,6 +19,7 @@ class PyInstaller(Package, PythonExtension):
     )
     list_url = "https://pypi.org/simple/installer/"
 
+    version("1.1.0", sha256="f55f5728ff61d3dd54dbc5a397cf3f7307cb64b180c20b72afbebf01c9e2c8a0")
     version("1.0.0", sha256="7b46327ded20d8544bfe2d8561618bbcd12d88e7e3645333af1ed141d8bc1bfe")
     version("0.7.0", sha256="05d1933f0a5ba7d8d6296bb6d5018e7c94fa473ceb10cf198a92ccea19c27b53")
     version("0.6.0", sha256="ae7c62d1d6158b5c096419102ad0d01fdccebf857e784cee57f94165635fe038")

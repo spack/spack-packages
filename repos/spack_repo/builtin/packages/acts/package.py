@@ -54,6 +54,7 @@ class Acts(CMakePackage, CudaPackage):
     # GitHub generates for a tag do not, and neither does a git checkout, so
     # do not add these versions by commit or the ACTS configure step will fail.
     version("main", branch="main")
+    version("48.5.0", sha256="adbd1d2c1a75de23e36b0fe02b72065224ae0da58b16a719c2ed0a15b195c76f")
     version("48.4.0", sha256="b322feb813c732ca6d4702b9cadb18f23d477f5dc14d94e1b56afb3fb2265fa0")
     version("48.3.0", sha256="df50eee0789079acaa64fa8b1d8333428d77e1d9f2ab653c0c45f6e457fffa4a")
     version("48.2.0", sha256="a0dc7b5ff588de55c1e80b6254b1f065c54e751a29001970a2d96d46b5d21e85")
@@ -219,6 +220,7 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("covfie @0.13.0:", when="+traccc @42:")
     depends_on("covfie @0.15.2:", when="+traccc @44.1:")
+    depends_on("covfie @0.16.0:", when="+traccc @48.5:")
     depends_on("cuda @12:", when="+traccc")
     depends_on("dd4hep @1.21: +dddetectors +ddrec", when="+dd4hep")
     depends_on("dd4hep @1.26:", when="@42: +dd4hep")
@@ -236,7 +238,8 @@ class Acts(CMakePackage, CudaPackage):
     depends_on("geant4", when="+fatras_geant4")
     depends_on("geant4", when="+geant4")
     depends_on("geomodel @6.3.0: +geomodelg4", when="+geomodel")
-    depends_on("geomodel @6.8.0:", when="@43.1: +geomodel ")
+    depends_on("geomodel @6.8.0:", when="@43.1: +geomodel")
+    depends_on("geomodel @6.16.0:", when="@48.5: +geomodel")
     depends_on("gperftools", when="+profilecpu")
     depends_on("gperftools", when="+profilemem")
     depends_on("hepmc3 @3.2.1:", when="+hepmc3")

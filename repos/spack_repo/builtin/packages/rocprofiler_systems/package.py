@@ -14,15 +14,17 @@ def submodules(package):
     submodules = [
         "projects/rocprofiler-systems/external/timemory",
         "projects/rocprofiler-systems/external/perfetto",
-        "projects/rocprofiler-systems/external/elfio",
         "projects/rocprofiler-systems/external/dyninst",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
+        "projects/rocprofiler-systems/external/onetbb",
     ]
     if package is not None and package.spec.satisfies("@:7.2"):
         submodules.append("projects/rocprofiler-systems/external/PTL")
     if package is not None and package.spec.satisfies("@:7.13"):
         submodules.append("projects/rocprofiler-systems/examples/openmp/external/ompvv")
+    if package is not None and package.spec.satisfies("@:10.0"):
+        submodules.append("projects/rocprofiler-systems/external/elfio")
     return submodules
 
 
@@ -44,6 +46,12 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+    version(
+        "10.1.0",
+        tag="therock-10.1",
+        commit="7da43026e4f2ef7600433c38c820732f7a205d22",
+        submodules=submodules,
+    )
     version(
         "10.0.0",
         tag="therock-10.0",
@@ -225,7 +233,25 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
 
     conflicts("%rocmcc", when="+internal-tbb")
     conflicts("%clang", when="+internal-tbb")
+    conflicts("~rocm", when="@7.13:")
     extends("python", when="+python")
+
+    resource(
+        name="gotcha",
+        url="https://github.com/ROCm/GOTCHA/archive/6ef1232a0acc99f3340c2ca4c5d23890e9b8a459.tar.gz",
+        sha256="b8bf9b65dc85a89b76e95385fc8c73ce5369a0af161b4b86a5b4bff8c4b6605c",
+        destination="projects/rocprofiler-systems/external/timemory/external",
+        placement="gotcha-resource",
+        when="@10.0:",
+    )
+    resource(
+        name="binutils",
+        url="https://ftpmirror.gnu.org/gnu/binutils/binutils-2.46.0.tar.bz2",
+        sha256="0f3152632a2a9ce066f20963e9bb40af7cf85b9b6c409ed892fd0676e84ecd12",
+        expand=False,
+        placement="binutils",
+        when="@10.0",
+    )
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -263,6 +289,11 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     depends_on("sqlite", when="@7.1:")
+    depends_on("spdlog", when="@10:")
+    depends_on("nlohmann-json", when="@10:")
+    depends_on("libiberty", when="@10:")
+    depends_on("yaml-cpp@:0.8.0", when="@10:")
+
     with when("+rocm"):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -290,6 +321,7 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
             "7.13.0",
             "7.14.0",
             "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -308,6 +340,7 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
             "7.13.0",
             "7.14.0",
             "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
@@ -322,8 +355,12 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
             "7.13.0",
             "7.14.0",
             "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+
+        for ver in ["10.0.0", "10.1.0"]:
+            depends_on(f"profiler-hub@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
     patch(
@@ -338,6 +375,8 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
         when="@:7.1 %rocmcc",
         working_dir="external/timemory",
     )
+    # Single-URL ExternalProject: CMake strips file:// then rejects path+URL lists.
+    patch("0002-binutils-single-url-10.0.patch", when="@10.0")
 
     @property
     def root_cmakelists_dir(self):
@@ -345,6 +384,17 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
             return "."
         else:
             return "projects/rocprofiler-systems"
+
+    def patch(self):
+        if self.spec.satisfies("@10.0:"):
+            # The timemory submodule ships an empty external/gotcha directory, and Spack
+            # will not copy a resource over a path that already exists.
+            external_dir = join_path(
+                "projects", "rocprofiler-systems", "external", "timemory", "external"
+            )
+            gotcha_dir = join_path(external_dir, "gotcha")
+            remove_linked_tree(gotcha_dir)
+            rename(join_path(external_dir, "gotcha-resource"), gotcha_dir)
 
     def cmake_args(self):
         spec = self.spec
@@ -399,6 +449,26 @@ class RocprofilerSystems(ROCmLibrary, CMakePackage):
             args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
         if spec.satisfies("@7.2:"):
             args.append(self.define("libunwind_ROOT", self.spec["libunwind"].prefix))
+        if spec.satisfies("@10.0:"):
+            args.append(self.define("ROCPROFSYS_BUILD_SQLITE3", False))
+            args.append(self.define("ROCPROFSYS_BUILD_SPDLOG", False))
+            args.append(self.define("ROCPROFSYS_BUILD_NLOHMANN_JSON", False))
+            args.append(self.define("ROCPROFSYS_BUILD_LIBIBERTY", False))
+            args.append(self.define("ROCPROFSYS_BUILD_ELFUTILS", False))
+            args.append(
+                self.define(
+                    "TIMEMORY_BINUTILS_DOWNLOAD_URL",
+                    join_path(
+                        self.stage.source_path,
+                        "binutils",
+                        "binutils-2.46.0.tar.bz2",
+                    ),
+                )
+            )
+            args.append(self.define("TIMEMORY_BUILD_YAML", False))
+            args.append(self.define("TIMEMORY_BUILD_GOOGLE_TEST", False))
+            args.append(self.define("TIMEMORY_BUILD_OMPT", False))
+            args.append(self.define("TIMEMORY_BUILD_DYNINST", False))
         return args
 
     def flag_handler(self, name, flags):

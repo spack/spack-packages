@@ -19,6 +19,7 @@ class Mumps(Package):
 
     maintainers("jcortial-safran")
 
+    version("5.9.2", sha256="652d28a91c7ff886b4a5ea122df4e5d014bdb2eba0545e581be4d8fa50c0ff19")
     version("5.9.1", sha256="659c9b57646b5a003ac618baa1faf9dd2044e46c732b3daaccbc7158003e1b46")
     version("5.9.0", sha256="02c6efdb91749ec0f82351d40f3f860547272a1eb1d899126a4265b4d6bcc4ca")
     version("5.8.2", sha256="eb515aa688e6dbab414bb6e889ff4c8b23f1691a843c68da5230a33ac4db7039")
@@ -44,6 +45,12 @@ class Mumps(Package):
         version("5.0.1", sha256="50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0")
 
     variant("mpi", default=True, description="Compile MUMPS with MPI support")
+    variant(
+        "mpi_in_place",
+        default=True,
+        description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
+        when="@5.6.2: +mpi",
+    )
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")
     variant(
         "ptscotch", default=False, description="Activate PT-Scotch as a possible ordering library"
@@ -249,14 +256,14 @@ class Mumps(Package):
                 optf.append("-fallow-argument-mismatch")
 
         # As of version 5.2.0, MUMPS is able to take advantage
-        # of the GEMMT BLAS extension. MKL and amdblis are the only
-        # known BLAS implementation supported.
+        # of the GEMMT BLAS extension. MKL, aocl-blas and its deprecated
+        # amdblis alias are the only known BLAS implementations supported.
         if self.spec.satisfies("^[virtuals=blas] intel-oneapi-mkl") and self.spec.satisfies(
             "@5.2.0:"
         ):
             optf.append("-DGEMMT_AVAILABLE")
 
-        if "@5.2.0: ^amdblis@3.0:" in self.spec:
+        if "@5.2.0: ^amdblis@3.0:" in self.spec or "@5.2.0: ^aocl-blas@3.0:" in self.spec:
             optf.append("-DGEMMT_AVAILABLE")
 
         if "+openmp" in self.spec:
@@ -276,6 +283,15 @@ class Mumps(Package):
         # prevents this.
         if using_intel or using_oneapi:
             optl.append("-nofor-main")
+
+        # MUMPS uses MPI_IN_PLACE in some collective MPI operations. In case of
+        # MPI environments where MPI_IN_PLACE is failing, it is possible to
+        # avoid the use of MPI_IN_PLACE at the cost of more temporary memory
+        # allocation and possibly less efficient code.
+        if self.spec.satisfies("~mpi_in_place"):
+            avoid_mpi_in_place_flag = "-DAVOID_MPI_IN_PLACE"
+            optf.append(avoid_mpi_in_place_flag)
+            optc.append(avoid_mpi_in_place_flag)
 
         makefile_conf.extend(
             [
@@ -323,6 +339,8 @@ class Mumps(Package):
         if "+shared" in self.spec:
             # All Mumps libraries will be linked with 'inject_libs'.
             inject_libs = []
+            if "+openmp" in self.spec:
+                inject_libs += [self.compiler.openmp_flag]
             if "+mpi" in self.spec:
                 inject_libs += [self.spec["scalapack"].libs.ld_flags]
             if "+ptscotch" in self.spec or "+scotch" in self.spec:

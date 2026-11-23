@@ -27,6 +27,7 @@ class Texinfo(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
+    version("7.3", sha256="4fc30d71e00416f0b4884994f1db9db2901f03603f8e69d92dd46fa018d998d7")
     version("7.2", sha256="e86de7dfef6b352aa1bf647de3a6213d1567c70129eccbf8977706d9c91919c8")
     version("7.1", sha256="dd5710b3a53ac002644677a06145748e260592a35be182dc830ebebb79c5d5a0")
     version("7.0.3", sha256="3cc5706fb086b895e1dc2b407aade9f95a3a233ff856273e2b659b089f117683")

@@ -25,8 +25,13 @@ class IntelOneapiIppcp(IntelOneApiLibraryPackage):
 
     maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
-    homepage = (
-        "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/ipp.html"
+    homepage = "https://www.intel.com/content/www/us/en/developer/tools/oneapi/crypto-library/overview.html"
+
+    version(
+        "2026.2.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/d45dc8de-ce72-4188-9d74-4476e52d6c6c/intel-cryptography-primitives-library-2026.2.0.180_offline.sh",
+        sha256="938bb51881295c2035948e795e61406cc4fc2bb072e486a4fa673c46efc16873",
+        expand=False,
     )
 
     version(
