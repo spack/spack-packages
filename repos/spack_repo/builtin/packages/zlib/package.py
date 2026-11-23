@@ -50,7 +50,7 @@ class Zlib(MakefilePackage, Package):
     license("Zlib")
 
     def patch(self):
-        if self.spec.satisfies("target=aarch64"):
+        if self.spec.satisfies("platform=windows target=aarch64"):
             filter_file(r"-base:0x5A4C0000", "", "win32\\Makefile.msc")
 
     @classmethod
