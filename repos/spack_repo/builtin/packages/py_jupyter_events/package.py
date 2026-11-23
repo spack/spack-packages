@@ -13,6 +13,7 @@ class PyJupyterEvents(PythonPackage):
     homepage = "https://github.com/jupyter/jupyter_events"
     pypi = "jupyter_events/jupyter_events-0.6.3.tar.gz"
 
+    version("0.12.1", sha256="faff25f77218335752f35f23c5fe6e4a392a7bd99a5939ccb9b8fbf594636cf3")
     version("0.12.0", sha256="fc3fce98865f6784c9cd0a56a20644fc6098f21c8c33834a8d9fe383c17e554b")
     version("0.10.0", sha256="670b8229d3cc882ec782144ed22e0d29e1c2d639263f92ca8383e66682845e22")
     version("0.6.3", sha256="9a6e9995f75d1b7146b436ea24d696ce3a35bfa8bfe45e0c33c334c79464d0b3")
