@@ -17,11 +17,13 @@ class Topaz(PythonPackage):
 
     license("GPL-3.0-or-later")
 
+    version("0.3.21", sha256="3a67a28f4d84f690e2555452bb8f57c88b1c8a0dd11688c1d3fc9307ff782122")
     version("0.3.18", sha256="a68a426bea0c0999a714f868694d7a5f07cfb0456098e99ac3e7b33865abcd7b")
 
-    depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@61:", type="build")
     with default_args(type=("build", "run")):
-        depends_on("python@3.8:3.12")
+        depends_on("python@3.8:3.13", when="@0.3.21:")
+        depends_on("python@3.8:3.12", when="@:0.3.20")
         depends_on("py-torch@1:")
         depends_on("py-torchvision")
         depends_on("py-numpy@1.11:")
@@ -32,3 +34,4 @@ class Topaz(PythonPackage):
         depends_on("py-future")
         depends_on("py-tqdm@4.65.0:")
         depends_on("py-h5py@3.7.0:")
+        depends_on("py-psutil@5.8.0:", when="@0.3.19:")
