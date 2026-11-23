@@ -5,7 +5,6 @@
 import glob
 
 from spack_repo.builtin.build_systems.makefile import MakefilePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -47,10 +46,9 @@ class Augustus(MakefilePackage):
     depends_on("bamtools")
     depends_on("gsl")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost")
+    depends_on("boost+iostreams", when="@=3.3,3.4.0:")
+    depends_on("boost+serialization", when="@3.4.0:")
     depends_on("zlib-api")
     depends_on("htslib")
     depends_on("htslib@1.10:", when="@3.4.0:")

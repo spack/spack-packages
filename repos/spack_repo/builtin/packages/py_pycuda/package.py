@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.python import PythonPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -26,15 +25,11 @@ class PyPycuda(PythonPackage):
 
     depends_on("cxx", type="build")  # generated
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
     # TODO: for versions before 2024.1.2, find out the exact requirements with version constraints
     # and enter them below. See https://github.com/spack/spack/pull/48547
     depends_on("python@3.6:3", type=("build", "run"), when="@2020.1:")
     depends_on("python@3.8:3", type=("build", "run"), when="@2024.1.2:")
-    depends_on("boost+python")
+    depends_on("boost+python+thread")
     depends_on("cuda", type=("build", "run"))
     depends_on("cuda@:8.0.61", when="@2016.1.2")
     depends_on("py-appdirs@1.4.0:", type=("build", "run"), when="@:2021.1")

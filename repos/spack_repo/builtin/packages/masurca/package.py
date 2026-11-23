@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.generic import Package
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -33,7 +32,7 @@ class Masurca(Package):
     depends_on("gmake", type="build")
 
     depends_on("perl", type=("build", "run"))
-    depends_on(Boost.with_default_variants)
+    depends_on("boost")
     depends_on("zlib-api")
     patch("arm.patch", when="target=aarch64:")
 

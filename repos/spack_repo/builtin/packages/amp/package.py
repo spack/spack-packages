@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -41,10 +40,7 @@ class Amp(CMakePackage):
     depends_on("blas")
     depends_on("lapack")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="+boost")
+    depends_on("boost+date_time+system+thread", when="+boost")
     depends_on("hdf5", when="+hdf5")
     depends_on("hypre", when="+hypre")
     depends_on("libmesh", when="+libmesh")

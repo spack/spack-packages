@@ -4,7 +4,6 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -70,12 +69,8 @@ class PyEspresso(CMakePackage):
 
     depends_on("cmake@3.0:", type="build")
     depends_on("mpi")
-    depends_on("boost+serialization+filesystem+system+python+mpi")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost+mpi+python+serialization+test")
+    depends_on("boost+filesystem+system", when="@:4")
     extends("python")
     depends_on("py-cython@0.23:", type="build")
     depends_on("py-numpy", type=("build", "run"))

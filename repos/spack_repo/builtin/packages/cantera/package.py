@@ -5,7 +5,6 @@
 import os
 
 from spack_repo.builtin.build_systems.scons import SConsPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -183,10 +182,8 @@ class Cantera(SConsPackage):
     depends_on("blas", when="+blas-lapack")
     depends_on("lapack", when="+blas-lapack")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost")
+    depends_on("boost+thread", when="@:2.2")
 
     # Python module dependencies
     extends("python", when="+python")

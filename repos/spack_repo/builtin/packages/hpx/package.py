@@ -8,7 +8,6 @@ import sys
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -107,8 +106,15 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
 
     # Other dependecies
     depends_on("hwloc")
-    depends_on(Boost.with_default_variants)
-    depends_on("boost +context", when="+generic_coroutines")
+    depends_on("boost")
+    depends_on("boost+atomic+regex", when="@:1.2")
+    depends_on("boost+filesystem", when="@:1.3")
+    depends_on("boost+program_options", when="@:1.5")
+    depends_on("boost+system", when="@:1.6")
+    depends_on("boost+iostreams", when="@1.5:1.6")
+    depends_on("boost+filesystem", when="cxxstd=11")
+    depends_on("boost+filesystem", when="cxxstd=14")
+    depends_on("boost+regex", when="+tools")
     for cxxstd in cxxstds:
         depends_on(f"boost cxxstd={cxxstd}", when=f"cxxstd={cxxstd}")
         depends_on(f"asio cxxstd={cxxstd}", when=f"@1.7: cxxstd={cxxstd}")
@@ -204,7 +210,7 @@ class Hpx(CMakePackage, CudaPackage, ROCmPackage):
     # for additional information see:
     # https://github.com/spack/spack/pull/17654
     # https://github.com/STEllAR-GROUP/hpx/issues/4829
-    depends_on("boost+context", when="+generic_coroutines")
+    depends_on("boost+chrono+context+thread", when="+generic_coroutines")
 
     _msg_generic_coroutines_platform = "This platform requires +generic_coroutines"
     conflicts("~generic_coroutines", when="platform=darwin", msg=_msg_generic_coroutines_platform)

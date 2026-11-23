@@ -7,7 +7,6 @@ import glob
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -174,10 +173,6 @@ class Vtk(CMakePackage):
     depends_on("boost", when="io=xdmf")
     depends_on("boost+mpi", when="io=xdmf +mpi")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="io=xdmf")
     depends_on("ffmpeg", when="io=ffmpeg")
     depends_on("mpi", when="+mpi")
     depends_on("tbb", when="threads=tbb")

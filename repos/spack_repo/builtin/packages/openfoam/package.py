@@ -44,7 +44,6 @@ import os
 import re
 
 from spack_repo.builtin.build_systems.generic import Package
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -400,10 +399,8 @@ class Openfoam(Package):
     depends_on("zlib-api")
     depends_on("fftw-api")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost")
+    depends_on("boost+system", when="@:2512")
 
     # Earlier versions of OpenFOAM may not work with CGAL 5.6. I do
     # not know which OpenFOAM added support for 5.x and conservatively

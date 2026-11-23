@@ -5,7 +5,6 @@
 import numbers
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -54,8 +53,6 @@ class Abyss(AutotoolsPackage):
     depends_on("mpi")
     depends_on("boost@:1.50.0,1.53.0:", when="@2.0.2:")
     depends_on("boost@:1.50.0,1.53.0:1.59.0", when="@:1.5.2")
-    # Maintainers: Is boost really a dependency? In what conditions?
-    depends_on(Boost.with_default_variants)
     depends_on("sparsehash")
     depends_on("sqlite")
     depends_on("libtool")

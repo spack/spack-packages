@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -81,10 +80,7 @@ class Gunrock(CMakePackage, CudaPackage):
     depends_on("lcov", when="+code_coverage")
     depends_on("boost@1.58.0:", when="+boost")
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="+boost")
+    depends_on("boost+chrono+filesystem+system+timer", when="@0.3:1.0 +boost")
     depends_on("metis", when="+metis")
 
     conflicts(

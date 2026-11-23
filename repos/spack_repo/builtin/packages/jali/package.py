@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -38,9 +37,7 @@ class Jali(CMakePackage):
 
     depends_on("mpi")
 
-    # Fixme: Can the maintainers please confirm if this is a required dependency
-    depends_on("boost")
-    depends_on(Boost.with_default_variants)
+    depends_on("boost+filesystem+program_options+regex+system", when="@:1.1.5")
     depends_on("mstk@3.3.5: +exodusii+parallel~use_markers partitioner=all", when="+mstk")
 
     depends_on("zoltan -fortran")

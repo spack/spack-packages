@@ -4,7 +4,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -166,8 +165,7 @@ class Rpp(ROCmLibrary, CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("cmake@3.5:", type="build")
     depends_on("pkgconfig", type="build")
-    depends_on(Boost.with_default_variants)
-    depends_on("boost@1.72.0:1.85.0")
+    depends_on("boost@1.72.0:1.85.0+filesystem+system", when="@:5.7")
     depends_on("bzip2")
     depends_on("half")
     depends_on("hwloc")
