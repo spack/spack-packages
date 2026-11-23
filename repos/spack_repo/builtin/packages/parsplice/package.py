@@ -40,7 +40,6 @@ class Parsplice(CMakePackage):
     depends_on("mpi")
     depends_on("eigen@3:")
     depends_on("lammps+lib@20170901:")
-    depends_on("lammps+lib+exceptions", when="@multisplice")
 
     def cmake_args(self):
         spec = self.spec
