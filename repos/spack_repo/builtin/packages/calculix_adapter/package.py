@@ -24,7 +24,17 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
 
     maintainers("failed33")
 
-    version("2.20.2", sha256="033f6e61e707283df708d3eda3c5930146bb7f8acd3a0469ab707e77cba30199")
+    # Use the last upstream adapter release as the default until the port is released.
+    version(
+        "2.20.2",
+        sha256="033f6e61e707283df708d3eda3c5930146bb7f8acd3a0469ab707e77cba30199",
+        preferred=True,
+    )
+    version(
+        "2.24-port",
+        url="https://github.com/precice/calculix-adapter/archive/refs/tags/v2.20.2.tar.gz",
+        sha256="033f6e61e707283df708d3eda3c5930146bb7f8acd3a0469ab707e77cba30199",
+    )
     version("2.20.1", sha256="3372e0d66321c2173899e1db4841c6c4f3c16ffb99067c36dba04e8a34e35d39")
 
     variant("pardiso", default=False, description="Use Intel oneMKL PARDISO")
@@ -40,13 +50,22 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
     depends_on("fortran", type="build")
     depends_on("pkgconfig", type="build")
 
-    # preCICE replaces parts of the CCX 2.20 source tree.
+    # The adapter builds against the CCX sources for its supported release.
     resource(
         name="calculix",
         url="https://www.dhondt.de/ccx_2.20.src.tar.bz2",
         sha256="63bf6ea09e7edcae93e0145b1bb0579ea7ae82e046f6075a27c8145b72761bcf",
         placement="calculix",
+        when="@=2.20.1,=2.20.2",
     )
+    resource(
+        name="calculix-224",
+        url="https://www.dhondt.de/ccx_2.24.src.tar.bz2",
+        sha256="99fb4f9b0ec19b100a914c3a097ea1e7f0c22f715b96338acc4a66b63306a2e2",
+        placement="calculix",
+        when="@=2.24-port",
+    )
+    depends_on("patch", when="@=2.24-port", type="build")
     depends_on("spooles", when="~pardiso ~pastix")
     depends_on("yaml-cpp", when="@:2.20.1")
     depends_on("arpack-ng~mpi")
@@ -64,8 +83,19 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
     for arch in CudaPackage.cuda_arch_values:
         depends_on(f"pastix4calculix+cuda cuda_arch={arch}", when=f"+pastix cuda_arch={arch}")
 
-    patch("calculix-pastix-gpu.patch", working_dir="calculix", when="+pastix")
-    patch("calculix-pastix-rebuild-csc.patch", working_dir="calculix", when="+pastix")
+    patch("ccx224-adapter-port.patch", when="@=2.24-port")
+    patch("calculix-pastix-gpu-ccx224.patch", working_dir="calculix", when="@=2.24-port +pastix")
+    patch(
+        "calculix-pastix-rebuild-csc-ccx224.patch",
+        working_dir="calculix",
+        when="@=2.24-port +pastix",
+    )
+    patch("calculix-pastix-gpu.patch", working_dir="calculix", when="@=2.20.1,=2.20.2 +pastix")
+    patch(
+        "calculix-pastix-rebuild-csc.patch",
+        working_dir="calculix",
+        when="@=2.20.1,=2.20.2 +pastix",
+    )
     patch("calculix-adapter-i8.patch", when="@=2.20.1,=2.20.2 +pastix")
     patch("calculix-adapter-i8-mesh-2.20.1.patch", when="@=2.20.1 +pastix")
     patch("calculix-adapter-i8-mesh-2.20.2.patch", when="@=2.20.2 +pastix")
@@ -74,7 +104,8 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
 
     @property
     def ccx_source(self):
-        return join_path(self.stage.source_path, "calculix", "ccx_2.20", "src")
+        ccx_version = "2.24" if self.spec.satisfies("@=2.24-port") else "2.20"
+        return join_path(self.stage.source_path, "calculix", f"ccx_{ccx_version}", "src")
 
     @property
     def build_targets(self):
@@ -107,7 +138,8 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
                 mkl.libs.ld_flags,
             ]
         elif spec.satisfies("+pastix"):
-            cflags.append("-DPASTIX -DLONGLONG -DPASTIX_FP32 -DPASTIX_GPU")
+            integer_flag = "-DINTSIZE64" if spec.satisfies("@=2.24-port") else "-DLONGLONG"
+            cflags.append(f"-DPASTIX {integer_flag} -DPASTIX_FP32 -DPASTIX_GPU")
             fflags.append("-fdefault-integer-8")
             pastix = spec["pastix4calculix"]
             cuda = spec["cuda"]
@@ -150,6 +182,13 @@ class CalculixAdapter(MakefilePackage, CudaPackage):
     def edit(self, spec, prefix):
         # The upstream Makefile lists bin as a peer prerequisite of the objects.
         mkdirp("bin")
+        if spec.satisfies("@=2.24-port"):
+            filter_file(
+                '__DATE__ " " __TIME__',
+                '"unknown"',
+                join_path(self.ccx_source, "buildinfo.c"),
+                string=True,
+            )
         if spec.satisfies("@:2.20.1"):
             filter_file("g++ -std=c++11", "$(CXX) -std=c++11", "Makefile", string=True)
 

@@ -1,0 +1,14 @@
+--- a/ccx_2.24/src/pastix.c
++++ b/ccx_2.24/src/pastix.c
+@@ -775,9 +775,8 @@
+ 	pastix_csc_conversion(ad, au, adb, aub, sigma, icol, irow, neq, nzs, symmetryflag, inputformat, jq, nzs3);
+ 	pastix_cleanup(neq,symmetryflag);
+ 	pastix_init(ad, au, adb, aub, sigma, icol, irow, neq, nzs, symmetryflag, inputformat, jq, nzs3);
+-    gpu = 0;
+-    piparm[IPARM_GPU_NBR]=0;
+-    pastix_data->piparm[IPARM_GPU_NBR]=0;
++    piparm[IPARM_GPU_NBR]=(int) gpu;
++    pastix_data->piparm[IPARM_GPU_NBR]=(int) gpu;
+ 	pastix_factor(ad, au, adb, aub, sigma, icol, irow, neq, nzs, symmetryflag, inputformat, jq, nzs3);
+ }
+ 

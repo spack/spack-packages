@@ -19,6 +19,7 @@ class Calculix(MakefilePackage):
 
     maintainers("failed33")
 
+    version("2.24", sha256="99fb4f9b0ec19b100a914c3a097ea1e7f0c22f715b96338acc4a66b63306a2e2")
     version("2.23", sha256="9c88385c10fb04f5dc6c4e98027a51bebdd8aee3920e05190d6c1dd08357d6e7")
     version("2.20", sha256="63bf6ea09e7edcae93e0145b1bb0579ea7ae82e046f6075a27c8145b72761bcf")
 
@@ -53,14 +54,14 @@ class Calculix(MakefilePackage):
             "-Wno-error=implicit-int -Wno-error=incompatible-pointer-types"
         )
         cflags = (
-            "-Wall -O2 -fopenmp {1} -I{0} -DARCH=Linux -DSPOOLES -DARPACK "
-            "-DMATRIXSTORAGE -DNETWORKOUT".format(spec["spooles"].prefix.include, legacy)
+            f"-Wall -O2 -fopenmp {legacy} -I{spec['spooles'].prefix.include} "
+            "-DARCH=Linux -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT"
         )
         fflags = "-Wall -O2 -fopenmp -cpp"
         if spec.satisfies("%gcc@10:"):
             # gfortran 10+ rejects CalculiX's legacy argument-mismatch patterns.
             fflags += " -fallow-argument-mismatch"
-        libs = "{0} {1} {2} -lpthread -lm -lc".format(
+        libs = "{} {} {} -lpthread -lm -lc".format(
             spec["arpack-ng"].libs.ld_flags,
             spec["lapack"].libs.ld_flags,
             spec["blas"].libs.ld_flags,
@@ -85,18 +86,20 @@ class Calculix(MakefilePackage):
             )
 
             # Avoid stamping build time into the shipped sources and executable.
+            if spec.satisfies("@2.24:"):
+                filter_file('__DATE__ " " __TIME__', '"unknown"', "buildinfo.c", string=True)
+            else:
+                filter_file(
+                    f"./date.pl; $(CC) $(CFLAGS) -c {self.executable}.c; ",
+                    "",
+                    "Makefile",
+                    string=True,
+                )
             filter_file(
-                f"./date.pl; $(CC) $(CFLAGS) -c {self.executable}.c; ",
-                "",
-                "Makefile",
-                string=True,
-            )
-            filter_file(
-                f"$(OCCXMAIN) {self.executable}.a $(LIBS) -fopenmp",
+                rf"\$\(OCCXMAIN\) {self.executable.replace('.', r'[.]')}\.a +\$\(LIBS\) -fopenmp",
                 f"$(OCCXMAIN) -Wl,--start-group {self.executable}.a {spooles_a} "
                 "-Wl,--end-group $(LIBS) -fopenmp",
                 "Makefile",
-                string=True,
             )
 
     def install(self, spec, prefix):
