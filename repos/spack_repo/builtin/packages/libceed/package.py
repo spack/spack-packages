@@ -172,7 +172,9 @@ class Libceed(MakefilePackage, CudaPackage, ROCmPackage):
 
             if spec.satisfies("+libxsmm"):
                 makeopts += ["XSMM_DIR=%s" % spec["libxsmm"].prefix]
-                makeopts += ["BLAS_LIB=%s" % spec["blas"].libs.ld_flags]
+                # Since 1.0, libCEED links LIBXSMM through its pkg-config file
+                if spec.satisfies("@:0.12"):
+                    makeopts += ["BLAS_LIB=%s" % spec["blas"].libs.ld_flags]
 
             if spec.satisfies("+magma"):
                 makeopts += ["MAGMA_DIR=%s" % spec["magma"].prefix]
