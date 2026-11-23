@@ -128,6 +128,11 @@ class Pmix(AutotoolsPackage):
             config_args.append("--disable-sphinx")
 
         config_args.append("--with-zlib=" + spec["zlib-api"].prefix)
+        # configure only searches <prefix>/lib{,64}, which misses multiarch
+        # library directories of an external zlib, e.g. /usr/lib/x86_64-linux-gnu
+        zlib_libdirs = spec["zlib-api"].libs.directories
+        if zlib_libdirs:
+            config_args.append("--with-zlib-libdir=" + zlib_libdirs[0])
 
         config_args.append("--with-libevent=" + spec["libevent"].prefix)
         config_args.append("--with-hwloc=" + spec["hwloc"].prefix)
