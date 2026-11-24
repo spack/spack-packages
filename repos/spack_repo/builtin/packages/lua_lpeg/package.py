@@ -60,6 +60,7 @@ class LuaBuilder(lua.LuaBuilder):
 
             variables = {
                 LIBFLAG = "-shared -fPIC -undefined dynamic_lookup -all_load"
+                        " -Wl,-headerpad_max_install_names"
             }
             """
             )
