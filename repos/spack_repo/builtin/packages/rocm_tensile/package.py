@@ -91,8 +91,9 @@ class RocmTensile(ROCmLibrary, CMakePackage):
 
     depends_on("cmake@3:", type="build")
     depends_on("msgpack-c@3:")
-    depends_on("boost", type=("build", "link"))
-    depends_on(Boost.with_default_variants)
+    with when("@:7.2"):
+        depends_on("boost", type=("build", "link"))
+        depends_on(Boost.with_default_variants)
 
     for ver in [
         "5.7.0",
