@@ -116,7 +116,9 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
             self.define_from_variant("Heffte_ENABLE_PYTHON", "python"),
         ]
 
-        args.append(self.define("Heffte_DISABLE_GPU_AWARE_MPI", "~gpu-aware-mpi" in self.spec))
+        args.append(
+            self.define("Heffte_DISABLE_GPU_AWARE_MPI", self.spec.satisfies("~gpu-aware-mpi"))
+        )
 
         if self.spec.satisfies("+cuda"):
             cuda_arch = self.spec.variants["cuda_arch"].value
