@@ -16,6 +16,7 @@ class Csvtk(GoPackage):
 
     license("MIT")
 
+    version("0.39.0", sha256="4c6cdae73e9ef357f2b511a9ff0c055d7abe6140afaf67e668008558425b1723")
     version("0.38.0", sha256="0b2ed4c03b6082179b6c0d117a6d8e74d9bf53f334bb15d952fa059f58206d06")
     version("0.37.0", sha256="90068a24f055076d65f54b18fa796b5322ffe728687d972038bb2ffa2ca07be8")
     version("0.36.0", sha256="0acea7e49c8af12ed76b11ec562ffc05a2fff28cb3c4e7b032e9271f13599ec8")
