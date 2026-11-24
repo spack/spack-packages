@@ -226,7 +226,7 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("libcatalyst@2", when="+libcatalyst")
 
     depends_on("xrootd", when="+xrootd")
-    conflicts("^xrootd@:5 +davix", when="+xrootd")
+    conflicts("%xrootd+davix")
 
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")
