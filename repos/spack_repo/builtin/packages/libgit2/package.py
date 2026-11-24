@@ -100,8 +100,7 @@ class Libgit2(CMakePackage):
     depends_on("openssl", when="https=system platform=linux")
     depends_on("openssl", when="https=openssl")
     depends_on("curl", when="+curl")
-    # ~shared uses the bundled regex library (a copy of PCRE), so the static library does
-    # not depend on a shared one
+    # avoid using the vendored pcre for both shared and static builds
     depends_on("pcre +shared", when="@0.99: +shared")
     depends_on("pcre +static", when="@0.99: ~shared")
     
