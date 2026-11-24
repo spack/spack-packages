@@ -15,7 +15,7 @@ class Psblas(AutotoolsPackage):
     # Url for your package's homepage here.
     homepage = "https://psctoolkit.github.io/"
     git = "https://github.com/sfilippone/psblas3.git"
-    url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0.tar.gz"
+    url = "https://github.com/sfilippone/psblas3/archive/refs/tags/v3.9.0-1.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
     maintainers("cirdans-home", "sfilippone")
@@ -24,11 +24,11 @@ class Psblas(AutotoolsPackage):
     license("BSD-3-Clause", checked_by="cirdans-home")
 
     version("develop", branch="development")
-    version(
-        "3.9.0",
-        sha256="ce523ed2d266fb6dc8723c45a2bcbf40a1c67b7ca61cd9408032a73af7cf8605",
-        preferred=True,
-    )
+    version("3.9.0-1", 
+            sha256="5d62f036115670e8479fce09bcc5f4a78621262b0c2bda09a833807b5488bc5b",
+            preferred=True,
+            )
+    version("3.9.0", sha256="ce523ed2d266fb6dc8723c45a2bcbf40a1c67b7ca61cd9408032a73af7cf8605")
     version("3.9.0-rc3", sha256="7744b3a2cb5d2d3b90e740d905590ee9b8d69c02148dce10ee1b8dc7667e53b1")
     version("3.9.0-rc1", sha256="7a7091ce52582b6fc442e8793e36461be36c0947272ea803ad72736ec2d56da8")
     version("3.8.1-2", sha256="285ddb7c9a793ea7ecb428d68cf23f4cc04f1c567631aa84bc2bedb65a3d1b0c")
