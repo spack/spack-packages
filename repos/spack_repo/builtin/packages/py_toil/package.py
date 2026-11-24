@@ -32,11 +32,6 @@ class PyToil(PythonPackage):
             "It also supports storing workflow state."
         ),
     )
-    # variant(
-    #     "google",
-    #     default=False,
-    #     description="Experimental. Stores workflow state in 'Google Cloud Storage'.",
-    # )
     variant(
         "cwl",
         default=False,
@@ -44,15 +39,6 @@ class PyToil(PythonPackage):
             "Provides support for running workflows written using the 'Common Workflow Language'."
         ),
     )
-    # variant(
-    #     "mesos",
-    #     default=False,
-    #     description=(
-    #         "Provides support for running Toil on an 'Apache Mesos' cluster. "
-    #         "Note that running Toil on other batch systems does not require an extra."
-    #     ),
-    # )  # deprecated
-    # variant("htcondor", default=False, description="Support for the htcondor batch system.")
     variant(
         "encryption",
         default=False,
@@ -87,9 +73,6 @@ class PyToil(PythonPackage):
         depends_on("py-ruamel-yaml-clib@0.2.6:", when="+cwl")
         depends_on("py-cachecontrol+filecache", when="+cwl")
         depends_on("py-cwl-utils@0.41:", when="+cwl")
-        # depends_on("py-apache-libclouds@3.6.1:4", when="+google")  ## not yet in spack
-        # depends_on("py-google-cloud-storage@2:2.8", when="+google")
-        # depends_on("py-google-auth@2.18.1:2", when="+google")
         depends_on("py-pynacl@1.4:1", when="+encryption")
 
     @property
