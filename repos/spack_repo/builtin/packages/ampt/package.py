@@ -37,6 +37,12 @@ class Ampt(MakefilePackage):
         url="https://myweb.ecu.edu/linz/ampt/ampt-v1.26t9b-v2.26t9b.zip",
     )
 
+    depends_on("fortran", type="build")
+
+    @property
+    def build_targets(self):
+        return ["F77={0}".format(spack_fc)]
+
     def install(self, spec, prefix):
         mkdir(prefix.bin)
         mkdir(prefix.share)
