@@ -17,6 +17,7 @@ class Cdi(AutotoolsPackage):
     url = "https://gitlab.dkrz.de/mpim-sw/libcdi/-/archive/cdi-2.4.0/download.tar.gz"
     git = "https://gitlab.dkrz.de/mpim-sw/libcdi"
 
+    version("2.6.6", sha256="26eb34b8b8fcf0b91852b4059700fd2eeecd86b79e895f6b5fa0b0c9dff2aee7")
     version("2.5.4", sha256="605d4a9192e9657d87bdbe544e31c96b81890e9acdfc137ecc8581721ce5390f")
     version("2.5.3", sha256="e6a97e4af7a18afcc8caee13e2018c61e6885d871fd20441b51d7eae123c8305")
     version("2.5.1.1", sha256="922a62c85ea7b7445f13821ec69516ce36f8ef0965e5fa6e6e560db57f264763")
@@ -42,7 +43,7 @@ class Cdi(AutotoolsPackage):
     # starting from 2.5.1 the provided cmake config file looks for `cdi` instead of `libcdi`,
     # but autotools still builds `cdi`.
     # cmake build system is going to build `libcdi` in future releases.
-    patch("cmake-config-libname.patch", when="@2.5.1: build_system=autotools")
+    patch("cmake-config-libname.patch", when="@2.5.1:2.6.5 build_system=autotools")
 
     def configure_args(self):
         args = []
