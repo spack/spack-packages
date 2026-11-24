@@ -11,7 +11,8 @@ from spack.package import *
 
 class ScalapackBase(CMakePackage):
     """Base class for building ScaLAPACK, shared with the AMD optimized version
-    of the library in the 'amdscalapack' package.
+    of the library in the 'aocl-scalapack' package ('amdscalapack' is a
+    deprecated alias).
     """
 
     variant("shared", default=True, description="Build the shared library version")
@@ -22,7 +23,8 @@ class ScalapackBase(CMakePackage):
     depends_on("mpi")
     depends_on("lapack")
     depends_on("blas")
-    depends_on("cmake", when="@2.0.0:", type="build")
+    depends_on("cmake", when="@2.0.0:2.2.2", type="build")
+    depends_on("cmake@3.26:", when="@2.2.3:", type="build")
 
     # See: https://github.com/Reference-ScaLAPACK/scalapack/issues/9
     patch("cmake_fortran_mangle.patch", when="@2.0.2:2.0")
@@ -138,7 +140,8 @@ class NetlibScalapack(ScalapackBase):
     # a separated package
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@2.2:"):
+        # 2.0.0 was never tagged on GitHub, so 2.0.x has to stay on netlib.org
+        if self.spec.satisfies("@2.1:"):
             return super().url_for_version(version)
         url_fmt = "https://www.netlib.org/scalapack/scalapack-{0}.tgz"
         return url_fmt.format(version)

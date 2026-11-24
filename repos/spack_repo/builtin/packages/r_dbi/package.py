@@ -16,6 +16,9 @@ class RDbi(RPackage):
 
     cran = "DBI"
 
+    license("LGPL-2.1-or-later AND LGPL-3.0-or-later")
+
+    version("1.3.0", sha256="13def8e90cbe41205a0dfcf585a6a7ea79ce10d45969789e82613c7ce3d5fb18")
     version("1.2.3", sha256="cf6708a7566a80929f06575aa345fae354714159ed5fab5db14306fc5d0d2dbe")
     version("1.1.3", sha256="38bb33753da5bddb78893a5228a5d269dae3bf16f21dc5d9853ac9c24d31428d")
     version("1.1.2", sha256="56ec377d471c76ac234ddfd313bd01a050c99fb6fa5f704f5333b34a5d714f58")

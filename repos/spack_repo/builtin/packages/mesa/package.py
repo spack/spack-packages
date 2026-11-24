@@ -74,6 +74,7 @@ class Mesa(MesonPackage):
     depends_on("expat")
     depends_on("zlib-api")
     depends_on("libxml2")
+    depends_on("dri2proto")
 
     # Internal options
     variant("llvm", default=True, description="Enable LLVM.")
@@ -100,7 +101,7 @@ class Mesa(MesonPackage):
 
     # TODO: effectively deal with EGL.  The implications of this have not been
     # worked through yet
-    # variant('egl', default=False, description="Enable the EGL frontend.")
+    variant("egl", default=False, description="Enable the EGL frontend.")
 
     # TODO: Effectively deal with hardware drivers
     # The implication of this is enabling DRI, among other things, and
@@ -115,6 +116,11 @@ class Mesa(MesonPackage):
     # provides('egl@1.5', when='+egl')
 
     # Variant dependencies
+    with when("+egl"):
+        depends_on("libdrm")
+        depends_on("libxfixes")
+        depends_on("libxxf86vm")
+
     with when("+llvm"):
         depends_on("libllvm@6:")
         depends_on("libllvm@:11", when="@:20")
@@ -272,7 +278,6 @@ class MesonBuilder(meson.MesonBuilder):
             args.extend(["-Degl=enabled", "-Dgbm=enabled"])
             if spec.satisfies("@:24.2.4"):
                 args.extend(["-Ddri3=enabled"])
-            args_platforms.append("surfaceless")
         else:
             args.extend(["-Degl=disabled", "-Dgbm=disabled"])
             if spec.satisfies("@:24.2.4"):

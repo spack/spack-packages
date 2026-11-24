@@ -32,9 +32,7 @@ if url is not None:
             when='+data',
             sha256='{2}',
             destination='nltk_data/{3}',
-            placement='{0}')""".format(
-                    name, url, output_checksum, subdir
-                )
+            placement='{0}')""".format(name, url, output_checksum, subdir)
             )
         else:
             print("""bad {0}""".format(url))

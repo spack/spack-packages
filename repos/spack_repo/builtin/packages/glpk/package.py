@@ -32,6 +32,12 @@ class Glpk(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("gmp", when="+gmp")
 
+    # Do not define bool, true, or false for C23 compatibility
+    patch(
+        "https://salsa.debian.org/science-team/glpk/-/raw/2dd3b283654555100edde4d72fbe1b1a4883292a/debian/patches/gcc-15.patch",
+        sha256="f9a1fc747a8cf9a484e517fbc105d3e8e50ac588430614267444271d3411f0ac",
+    )
+
     def configure_args(self):
         options = []
 

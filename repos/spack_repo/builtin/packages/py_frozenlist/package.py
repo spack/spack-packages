@@ -23,6 +23,7 @@ class PyFrozenlist(PythonPackage):
     version("1.2.0", sha256="68201be60ac56aff972dc18085800b6ee07973c49103a8aba669dee3d71079de")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.6.0:")
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "run")):

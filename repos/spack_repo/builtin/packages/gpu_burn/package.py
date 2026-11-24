@@ -20,6 +20,7 @@ class GpuBurn(MakefilePackage, CudaPackage):
     version("1.1", sha256="9876dbf7ab17b3072e9bc657034ab39bdedb219478f57c4e93314c78ae2d6376")
     version("1.0", sha256="d55994f0bee8dabf021966dbe574ef52be1e43386faeee91318dd4ebb36aa74a")
 
+    depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
 
     # This package uses CudaPackage to pick up the cuda_arch variant. A side

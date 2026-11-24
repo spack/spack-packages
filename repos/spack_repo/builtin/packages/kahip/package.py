@@ -20,7 +20,7 @@ class Kahip(CMakePackage):
     geared towards efficient partitioning of social networks.
     """
 
-    homepage = "http://algo2.iti.kit.edu/documents/kahip/index.html"
+    homepage = "https://algo2.iti.kit.edu/documents/kahip/index.html"
     url = "https://github.com/KaHIP/KaHIP/archive/v3.14.tar.gz"
     git = "https://github.com/KaHIP/KaHIP.git"
     maintainers("ma595")
@@ -53,6 +53,10 @@ class Kahip(CMakePackage):
 
     patch("cstdint.patch")
 
-    @when("@3.13:")
     def cmake_args(self):
-        return [self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic")]
+        # Upstream forces '-march=native' via add_definitions() unless
+        # NONATIVEOPTIMIZATIONS is set, overriding Spack's target flags.
+        return [
+            self.define("NONATIVEOPTIMIZATIONS", True),
+            self.define_from_variant("DETERMINISTIC_PARHIP", "deterministic"),
+        ]

@@ -22,6 +22,7 @@ class RCowplot(RPackage):
 
     license("GPL-2.0-only")
 
+    version("1.2.0", sha256="431d582a4fb68f005f45e0d963c19daad826289374b429b05fe168ef6f231aa1")
     version("1.1.3", sha256="8756971af5c50381cf00ec7ed622fd5cf3d70f534bdfa3ebadd157b5aef5b273")
     version("1.1.1", sha256="c7dce625b456dffc59ba100c816e16226048d12fdd29a7335dc1f6f6e12eed48")
     version("1.0.0", sha256="70f9a7c46d10f409d1599f1afc9fd3c947051cf2b430f01d903c64ef1e6c98a5")
@@ -31,13 +32,16 @@ class RCowplot(RPackage):
     version("0.9.0", sha256="d5632f78294c3678c08d3eb090abe1eec5cc9cd15cb5d96f9c43794ead098cb5")
     version("0.8.0", sha256="a617fde25030fe764f20967fb753a953d73b47745a2146c97c2565eb4d06700d")
 
-    depends_on("r@3.3.0:", type=("build", "run"))
-    depends_on("r@3.5.0:", type=("build", "run"), when="@1.0.0:")
-    depends_on("r-ggplot2@2.1.1:", type=("build", "run"))
-    depends_on("r-ggplot2@2.2.1:", type=("build", "run"), when="@1.1.1:")
-    depends_on("r-ggplot2@3.4.0:", type=("build", "run"), when="@1.1.2:")
-    depends_on("r-gtable", type=("build", "run"))
-    depends_on("r-rlang", type=("build", "run"), when="@1.0.0:")
-    depends_on("r-scales", type=("build", "run"))
+    with default_args(type=("build", "run")):
+        depends_on("r@3.5.0:", when="@1.0.0:")
+        depends_on("r@3.3.0:")
+        depends_on("r-ggplot2@3.5.2:", when="@1.2:")
+        depends_on("r-ggplot2@3.4.0:", when="@1.1.2:")
+        depends_on("r-ggplot2@2.2.1:", when="@1.1.1:")
+        depends_on("r-ggplot2@2.1.1:")
+        depends_on("r-gtable")
+        depends_on("r-rlang", when="@1.0.0:")
+        depends_on("r-scales")
 
-    depends_on("r-plyr@1.8.2:", type=("build", "run"), when="@:0.9.9")
+        # Historical dependencies
+        depends_on("r-plyr@1.8.2:", when="@:0.9.9")

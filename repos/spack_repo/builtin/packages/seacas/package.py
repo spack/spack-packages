@@ -28,7 +28,7 @@ class Seacas(CMakePackage):
     homepage = "https://sandialabs.github.io/seacas/"
     git = "https://github.com/sandialabs/seacas.git"
     url = "https://github.com/sandialabs/seacas/archive/v2019-08-20.tar.gz"
-    maintainers("gsjaardema")
+    maintainers("tokusanya")
 
     license("BSD-3-Clause")
 
@@ -146,11 +146,8 @@ class Seacas(CMakePackage):
         default=False,
         description="Enable ADIOS2. See https://github.com/ornladios/ADIOS2",
     )
-    # enabling cgns fails builds on Windows, see seacas CI default configuration
-    # https://github.com/sandialabs/seacas/blob/master/.appveyor.yml#L71
-    for plat in ["linux", "darwin", "freebsd"]:
-        with when(f"platform={plat}"):
-            variant("cgns", default=True, description="Enable CGNS.")
+
+    variant("cgns", default=True, description="Enable CGNS.")
 
     variant(
         "aws",
@@ -223,6 +220,8 @@ class Seacas(CMakePackage):
     depends_on("hdf5+hl+mpi", when="+mpi")
 
     depends_on("fmt@10:", when="@2024-08-15:")
+    # fmt 12.2 no longer provides fmt::format through the headers these versions include
+    depends_on("fmt@:12.1", when="@2024-08-15:2025-08-28")
     depends_on("fmt@10.2.1:10", when="@2024-03-11:2024-07-10")
     depends_on("fmt@10.1.0:10", when="@2023-10-24:2023-11-27")
     depends_on("fmt@9.1.0", when="@2022-10-14:2023-05-30")
@@ -277,6 +276,18 @@ class Seacas(CMakePackage):
 
     conflicts("@2024-06-27 platform=windows")
 
+    # Require mpi +fortran only when +fortran
+    conflicts(
+        "^mpich ~fortran",
+        when="+fortran ^[virtuals=mpi] mpich",
+        msg="MPICH Fortran support required for SEACAS Fortran support.",
+    )
+    conflicts(
+        "^openmpi ~fortran",
+        when="+fortran ^[virtuals=mpi] openmpi",
+        msg="OpenMPI Fortran support required for SEACAS Fortran support.",
+    )
+
     # Remove use of variable in array assignment (triggers c2057 on MSVC)
     # See https://github.com/sandialabs/seacas/issues/438
     patch(
@@ -296,6 +307,8 @@ class Seacas(CMakePackage):
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.prepend_path("PYTHONPATH", self.prefix.lib)
+        if self.spec.satisfies("+legacy"):
+            env.set("ACCESS", self.prefix)
 
     def cmake_args(self):
         spec = self.spec
@@ -344,10 +357,11 @@ class Seacas(CMakePackage):
                 [
                     define("CMAKE_C_COMPILER", spec["mpi"].mpicc),
                     define("CMAKE_CXX_COMPILER", spec["mpi"].mpicxx),
-                    define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc),
                     define("MPI_BASE_DIR", spec["mpi"].prefix),
                 ]
             )
+            if "+fortran" in spec:
+                options.append(define("CMAKE_Fortran_COMPILER", spec["mpi"].mpifc))
 
         # ########## What applications should be built #############
         # Check whether they want everything; if so, do the easy way...
@@ -374,6 +388,11 @@ class Seacas(CMakePackage):
                 ]
             )
 
+            app_dependencies = {
+                "Exo2mat": ["+matio"],
+                "Mat2exo": ["+matio"],
+            }
+
             if "+applications" in spec:
                 # C / C++ applications
                 for app in (
@@ -393,7 +412,12 @@ class Seacas(CMakePackage):
                     "Slice",
                     "Zellij",
                 ):
-                    options.append(define(project_name_base + "_ENABLE_SEACAS" + app, True))
+                    can_enable = True
+                    deps = app_dependencies.get(app, [])
+                    for dep in deps:
+                        if not self.spec.satisfies(dep):
+                            can_enable = False
+                    options.append(define(project_name_base + "_ENABLE_SEACAS" + app, can_enable))
                 # Fortran-based applications
                 for app in ("Explore", "Grepos"):
                     options.append(
@@ -517,3 +541,16 @@ class Seacas(CMakePackage):
         if not self.spec.dependencies("parallel"):
             return
         symlink(self.spec["parallel"].prefix.bin.parallel, self.prefix.bin.parallel)
+
+    @run_after("install")
+    @on_package_attributes(run_tests=True)
+    def run_ctest_after_install(self):
+        ctestjobs = min(make_jobs, 8)
+        with working_dir(self.build_directory):
+            ctest("-j", str(ctestjobs), "--output-on-failure")
+
+    def check(self):
+        # Currently the seacas tests run by ctest only succeed after
+        # installation has been completed, so we do not want to run
+        # the tests here after the build before the install
+        return

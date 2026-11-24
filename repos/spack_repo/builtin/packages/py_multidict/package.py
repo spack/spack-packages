@@ -16,7 +16,10 @@ class PyMultidict(PythonPackage):
 
     license("Apache-2.0")
 
-    version("6.7.0", sha256="c6e99d9a65ca282e578dfea819cfa9c0a62b2499d8677392e09feaf305e9e6f5")
+    version("7.1.0", sha256="61a4e5d81b8d4e4ad61964b230129e7a2b914793d96289029078fc9009f074ec")
+    with default_args(deprecated=True):
+        # https://github.com/aio-libs/multidict/security/advisories/GHSA-54p9-h82j-f925
+        version("6.7.0", sha256="c6e99d9a65ca282e578dfea819cfa9c0a62b2499d8677392e09feaf305e9e6f5")
     version("6.6.4", sha256="d2d4e4787672911b48350df02ed3fa3fffdc2f2e8ca06dd6afdf34189b76a9dd")
     version("6.1.0", sha256="22ae2ebf9b0c69d206c003e2f6a914ea33f0a932d4aa16f236afc049d9958f4a")
     version("6.0.4", sha256="3666906492efb76453c0e7b97f2cf459b0682e7402c0489a95484965dbc1da49")
@@ -28,7 +31,8 @@ class PyMultidict(PythonPackage):
 
     # Based on PyPI wheel availability
     with default_args(type=("build", "link", "run")):
-        depends_on("python@3.9:3.14", when="@6.7:")
+        depends_on("python@3.10:3.15", when="@6.8:")
+        depends_on("python@3.9:3.14", when="@6.7")
         depends_on("python@3.9:3.13", when="@6.2:6.6")
         depends_on("python@3.8:3.13", when="@6.1")
         depends_on("python@3.7:3.12", when="@6.0.5")
@@ -37,5 +41,8 @@ class PyMultidict(PythonPackage):
         depends_on("python@3.6:3.10", when="@5.2")
         depends_on("python@3.6:3.9", when="@:5.1")
 
-    depends_on("py-setuptools@40:", type="build")
+    with default_args(type="build"):
+        depends_on("py-setuptools@77:", when="@7.1:")
+        depends_on("py-setuptools@40:")
+
     depends_on("py-typing-extensions@4.1:", when="@6.1: ^python@:3.10", type=("build", "run"))

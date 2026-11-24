@@ -1,0 +1,33 @@
+From 32db65f768caebf4eb8c58420fc4ebe35a606111 Mon Sep 17 00:00:00 2001
+From: Howard Pritchard <howardp@lanl.gov>
+Date: Mon, 24 Mar 2025 11:33:42 -0600
+Subject: [PATCH] fortran:fix integer kind=8 problem
+
+user reported problem on the ompi-users mail list.
+
+https://www.mail-archive.com/users@lists.open-mpi.org//msg35382.html
+
+Signed-off-by: Howard Pritchard <howardp@lanl.gov>
+---
+ ompi/mpi/fortran/use-mpi-f08/bindings/mpi-f-interfaces-bind.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ompi/mpi/fortran/use-mpi-f08/bindings/mpi-f-interfaces-bind.h b/ompi/mpi/fortran/use-mpi-f08/bindings/mpi-f-interfaces-bind.h
+index 2de875ade72..bbc6b1ad252 100644
+--- a/ompi/mpi/fortran/use-mpi-f08/bindings/mpi-f-interfaces-bind.h
++++ b/ompi/mpi/fortran/use-mpi-f08/bindings/mpi-f-interfaces-bind.h
+@@ -4005,12 +4005,12 @@ end subroutine ompi_session_get_info_f
+ 
+ subroutine ompi_session_get_nth_pset_f(session, info, n, pset_len, pset_name, ierror, pset_name_len) &
+    BIND(C, name="ompi_session_get_nth_pset_f")
+-   use, intrinsic :: ISO_C_BINDING, only : C_CHAR, C_INT
++   use, intrinsic :: ISO_C_BINDING, only : C_CHAR
+    implicit none
+    INTEGER, INTENT(IN) :: session
+    INTEGER, INTENT(IN) :: info
+    INTEGER, INTENT(IN) :: n
+-   INTEGER(KIND=C_INT), VALUE, INTENT(IN) :: pset_name_len
++   INTEGER, VALUE, INTENT(IN) :: pset_name_len
+    INTEGER, INTENT(INOUT) :: pset_len
+    CHARACTER(KIND=C_CHAR), DIMENSION(*), INTENT(OUT) :: pset_name
+    INTEGER, INTENT(out) :: ierror

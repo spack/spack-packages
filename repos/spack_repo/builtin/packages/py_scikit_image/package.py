@@ -138,11 +138,9 @@ class PyScikitImage(PythonPackage):
     conflicts("py-imageio@2.35.0")
 
     def url_for_version(self, version):
-        url = (
-            "https://files.pythonhosted.org/packages/source/s/scikit-image/scikit{}image-{}.tar.gz"
-        )
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.20"):
-            sep = "_"
+            name = "scikit_image"
         else:
-            sep = "-"
-        return url.format(sep, version)
+            name = "scikit-image"
+        return url.format(name, version)

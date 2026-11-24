@@ -26,6 +26,7 @@ class ROrdinal(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("2026.7-26", sha256="8b5210c33fd20a877c92310a56a3a77812ed250f645e3ff9a20cec3ac81fc02f")
     version(
         "2023.12-4.1", sha256="2c9dcfa438c964ff1825033d0759d25f404a2a4c5252b81e40f19cffc18e38b1"
     )
@@ -37,11 +38,12 @@ class ROrdinal(RPackage):
     )
     version("2019.4-25", sha256="2812ad7a123cae5dbe053d1fe5f2d9935afc799314077eac185c844e3c9d79df")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("r@2.13.0:", type=("build", "run"))
-    depends_on("r-ucminf", type=("build", "run"))
-    depends_on("r-mass", type=("build", "run"))
-    depends_on("r-matrix", type=("build", "run"))
-    depends_on("r-numderiv", type=("build", "run"))
-    depends_on("r-nlme", type=("build", "run"), when="@2022.11-16:")
+    with default_args(type=("build", "run")):
+        depends_on("r@2.13.0:")
+        depends_on("r-ucminf")
+        depends_on("r-mass")
+        depends_on("r-matrix")
+        depends_on("r-numderiv")
+        depends_on("r-nlme", when="@2022.11-16:")

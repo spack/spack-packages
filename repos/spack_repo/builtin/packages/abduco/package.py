@@ -20,10 +20,10 @@ class Abduco(MakefilePackage):
     license("ISC")
 
     version("0.6", sha256="647d0381418f43a38f861d151b0efb2e3458ec651914e7d477956768b0af9bb7")
-    version("0.5", sha256="bf22226a4488355a7001a5dabbd1e8e3b7e7645efd1519274b956fcb8bcff086")
-    version("0.4", sha256="bda3729df116ce41f9a087188d71d934da2693ffb1ebcf33b803055eb478bcbb")
+    version("0.5", sha256="0f7515455d982ca42fd0af4f9bf917c526345a80b929b6d69aaddf9915a8a9b8")
+    version("0.4", sha256="6e22a535f96ec4999cde13654698504b724dc21c58b98763fda40d18e9bab121")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
     def install(self, spec, prefix):
         make(f"PREFIX={prefix}", "install")

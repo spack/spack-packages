@@ -16,6 +16,7 @@ class PyReportlab(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("4.4.10", sha256="5cbbb34ac3546039d0086deb2938cdec06b12da3cdb836e813258eb33cd28487")
     version("4.4.9", sha256="7cf487764294ee791a4781f5a157bebce262a666ae4bbb87786760a9676c9378")
     version("4.4.4", sha256="cb2f658b7f4a15be2cc68f7203aa67faef67213edd4f2d4bdd3eb20dab75a80d")
     version("4.0.4", sha256="7f70b3b56aff5f11cb4136c51a0f5a56fe6e4c8fbbac7b903076db99a8ef31c1")

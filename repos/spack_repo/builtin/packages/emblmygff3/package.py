@@ -21,11 +21,14 @@ class Emblmygff3(PythonPackage):
 
     license("GPL-3.0-or-later")
 
+    version("2.4", sha256="1a559f5c870959b40d7ee1a9752c7495ef52d4753f42e9a495fb816c734629a9")
     version("2.2", sha256="225b2b50da9064f779e164b2859506d7540d11fa78f7d41b5c0d94f02f7845c5")
     version("2.1", sha256="64aef403bc64088eca504b69acffb3fb16ec4448cd3d6c9692b7baf276b92fd2")
 
-    depends_on("py-setuptools", type="build")
-    depends_on("python@3.8.0:", type=("build", "run"))
-    depends_on("py-biopython@1.78:", type=("build", "run"))
-    depends_on("py-bcbio-gff@0.6.4:", type=("build", "run"))
-    depends_on("py-numpy@1.22:", type=("build", "run"))
+    depends_on("py-setuptools@:81", type="build")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.8.0:")
+        depends_on("python@3.9:", when="@2.4:")
+        depends_on("py-biopython@1.78:")
+        depends_on("py-bcbio-gff@0.6.4:")
+        depends_on("py-numpy@1.22:")

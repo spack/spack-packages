@@ -29,3 +29,5 @@ class Mergiraf(CargoPackage):
     version("0.6.0", sha256="548b0ae3d811d6410beae9e7294867c7e6d791cf9f68ddda5c24e287f7978030")
 
     depends_on("rust@1.89:", type="build", when="@0.12:")
+
+    depends_on("c", type="build")

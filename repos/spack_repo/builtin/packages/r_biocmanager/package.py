@@ -14,6 +14,7 @@ class RBiocmanager(RPackage):
 
     cran = "BiocManager"
 
+    version("1.30.27", sha256="acbfdcf09602c8279085556ca54531c2ada0ac3c1775d54ce2c3b9a3dc03fbb5")
     version("1.30.24", sha256="645c423bb144dbd476cb308678bd36e06c1a3494115f157166dd3f59955ec7d1")
     version("1.30.20", sha256="b9e72d7687abbd785a69fecb530ec86ad92257a6be95b8e15953b193a516d5ea")
     version("1.30.19", sha256="6897ab1c58ab2fa3108e22d70bc4150c683bb4ac29355ba7886b88acc30c18e2")

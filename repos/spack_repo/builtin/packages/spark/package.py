@@ -22,10 +22,12 @@ class Spark(Package):
     variant("hadoop", default=False, description="Build with Hadoop")
 
     depends_on("java", type=("build", "run"))
+    depends_on("java@17:24,25.0.3:", when="@4:", type=("build", "run"))
     depends_on("hadoop", when="+hadoop", type=("build", "run"))
 
     license("Apache-2.0")
 
+    version("4.2.0", sha256="3dcf92bd1d7044428252e3ff3e77d8cc189fc1b598124dbc54614e1049cb0929")
     version("3.5.1", sha256="5548c02625676fa97cb6b8072f131ed0b860a09d1e86be4e025d0cbfa869bc4a")
     version("3.4.3", sha256="85caa74671d46640a2ecccc5248ef673842b507b9843aeebccd6891721b6673f")
     version("3.3.4", sha256="793205ff45ce2cb4d91bb2c2724c14fb2a2a49754b93f36c60c4f47e100c2b10")

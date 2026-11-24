@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -16,7 +18,7 @@ class Enzyme(CMakePackage):
     """
 
     homepage = "https://enzyme.mit.edu"
-    url = "https://github.com/wsmoses/Enzyme/archive/v0.0.172.tar.gz"
+    url = "https://github.com/wsmoses/Enzyme/archive/v0.0.266.tar.gz"
     list_url = "https://github.com/wsmoses/Enzyme/releases"
     git = "https://github.com/wsmoses/Enzyme"
 
@@ -25,6 +27,8 @@ class Enzyme(CMakePackage):
     root_cmakelists_dir = "enzyme"
 
     version("main", branch="main")
+    version("0.0.303", sha256="0ca3114d008e524cd3b13152bbc172794b20af643d1628161655373eba4554de")
+    version("0.0.266", sha256="174fd65b7aabf6b964582a3785dd638a1ffbf17c195ebd99288e60e58e620236")
     version("0.0.206", sha256="600fd2db370fb40abb6411e0e80df524aea03f2c1ad50a2765ecaab9e1115c77")
     version("0.0.196", sha256="2b9cfcb7c34e56fc8191423042df06241cf32928eefbb113ac3c5199e3361cb2")
     version("0.0.186", sha256="125e612df0b6b82b07e1e13218c515bc54e04aa1407e57f4f31d3abe995f4714")
@@ -52,11 +56,19 @@ class Enzyme(CMakePackage):
     depends_on("libllvm@11:16", when="@0.0.80:0.0.99")
     depends_on("libllvm@11:19", when="@0.0.100:0.0.148")
     depends_on("libllvm@15:19", when="@0.0.149:0.0.185")
-    depends_on("libllvm@15:20", when="@0.0.186:")
+    depends_on("libllvm@15:20", when="@0.0.186:0.0.196")
+    depends_on("libllvm@15:21", when="@0.0.197:")
     depends_on("cmake@3.13:", type="build")
 
     def cmake_args(self):
-        args = ["-DLLVM_DIR=" + self.llvm_prefix + "/lib/cmake/llvm"]
+        args = ["-DLLVM_DIR=" + self.llvm_cmakedir]
+        for lit in ["llvm-lit", "lit"]:
+            lit_path = f"{self.llvm_prefix}/bin/{lit}"
+            if os.access(lit_path, os.R_OK):
+                args += [f"-DLLVM_EXTERNAL_LIT={lit_path}"]
+        clang_dir = f"{self.llvm_cmakedir}/../clang"
+        if os.access(clang_dir, os.R_OK):
+            args += [f"-DClang_DIR={clang_dir}"]
         return args
 
     @property
@@ -72,6 +84,11 @@ class Enzyme(CMakePackage):
     def llvm_version(self):
         llvm_config = Executable(self.llvm_prefix + "/bin/llvm-config")
         return Version(llvm_config("--version", output=str))
+
+    @property
+    def llvm_cmakedir(self):
+        llvm_config = Executable(self.llvm_prefix + "/bin/llvm-config")
+        return llvm_config("--cmakedir", output=str).strip()
 
     @property
     def libs(self):

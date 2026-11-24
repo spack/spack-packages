@@ -11,7 +11,7 @@ class FairsoftBundle(BundlePackage):
     """Bundle package providing default environment for FAIR software"""
 
     homepage = "https://github.com/FairRootGroup/FairSoft"
-    maintainers("dennisklein", "fuhlig1", "jezwilkinson")
+    maintainers("fuhlig1", "jezwilkinson")
 
     # Releases:
     version("2025-05")
@@ -25,7 +25,9 @@ class FairsoftBundle(BundlePackage):
     # Pin some variants:
     depends_on("geant4 ~threads", when="~mt")
     depends_on("geant4 +threads", when="+mt")
-    depends_on("geant4 ~qt~vecgeom~opengl~x11~motif")
+    depends_on("geant4 ~vecgeom")
+    depends_on("geant4 ~qt~opengl", when="~graphics")
+    depends_on("geant4 ~x11", when="~graphics platform=linux")
 
     # ensure that OpenBLAS uses CMake build system (default Makefile causes issues on some Macs)
     depends_on("openblas build_system=cmake ~dynamic_dispatch")

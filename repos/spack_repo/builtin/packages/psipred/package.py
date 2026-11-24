@@ -18,6 +18,9 @@ class Psipred(MakefilePackage):
 
     license_url = "http://bioinfadmin.cs.ucl.ac.uk/downloads/psipred/LICENSE"
 
+    license("LicenseRef-UCL-Proprietary", checked_by="tgamblin")
+    redistribute(source=False, binary=False)
+
     version("4.02", sha256="b4009b6a5f8b76c6d60ac91c4a743512d844864cf015c492fb6d1dc0d092c467")
 
     depends_on("c", type="build")  # generated

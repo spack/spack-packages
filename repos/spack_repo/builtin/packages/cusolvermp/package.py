@@ -44,6 +44,8 @@ class Cusolvermp(Package, CudaPackage):
 
     maintainers("albestro")
 
+    redistribute(source=False, binary=False)
+
     # https://docs.nvidia.com/cuda/cusolvermp/license.html
     license("NVIDIA Software License Agreement")
 

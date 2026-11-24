@@ -17,6 +17,7 @@ class PyDecorator(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("5.3.1", sha256="4cbcdd55a6efadb9dbea26b858f4fb3264567b52d69ca0d25b721b553f60ea82")
     version("5.2.1", sha256="65f266143752f734b0a7cc83c46f4618af75b8c5911b00ccb61d0ac9b6da0360")
     version("5.1.1", sha256="637996211036b6385ef91435e4fae22989472f9d571faba8927ba8253acbc330")
     version("5.1.0", sha256="e59913af105b9860aa2c8d3272d9de5a56a4e608db9a2f167a8480b323d529a7")
@@ -32,5 +33,6 @@ class PyDecorator(PythonPackage):
     depends_on("python@2.6:2.8,3.2:", type=("build", "run"))
 
     # uses pyproject.toml only
+    depends_on("py-setuptools@77:", when="@5.3.1:", type="build")
     depends_on("py-setuptools@61:", when="@5.2.1:", type="build")
     depends_on("py-setuptools", type="build")

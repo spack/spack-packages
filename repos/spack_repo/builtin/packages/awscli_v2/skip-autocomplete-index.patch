@@ -1,0 +1,11 @@
+--- a/backends/pep517.py
++++ b/backends/pep517.py
+@@ -188,6 +188,7 @@ def _rewrite_shebang(path):
+ 
+ def _inject_wheel_extras(whl_path):
+     with _extracted_wheel_dir(whl_path) as extracted_wheel_dir:
+-        _build_and_inject_ac_index(BUILD_DIR, extracted_wheel_dir)
++        if os.environ.get("AWSCLI_SKIP_AUTOCOMPLETE_INDEX") != "1":
++            _build_and_inject_ac_index(BUILD_DIR, extracted_wheel_dir)
+         _inject_scripts(extracted_wheel_dir)
+ 

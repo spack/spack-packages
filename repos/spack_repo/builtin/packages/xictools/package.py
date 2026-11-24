@@ -21,12 +21,15 @@ class Xictools(MakefilePackage):
 
     # See README.md for details
     license(
-        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC",
+        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC "
+        "AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC",
         when="~gpl",
         checked_by="kllrak",
     )
     license(
-        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND Minpack",
+        "Apache-2.0 AND Spencer-94 AND BSD-4-Clause-UC "
+        "AND https://www.rle.mit.edu/cpg/copyright_disclaimer.htm AND HPND-UC"
+        "AND LGPL-2.0-or-later AND LGPL-2.1-or-later AND GPL-3.0-or-later AND Minpack",
         when="+gpl",
         checked_by="kllrak",
     )
@@ -69,6 +72,38 @@ class Xictools(MakefilePackage):
     # and https://github.com/wrcad/xictools/issues/28
     parallel = False
 
+    # Use xcrun to locate the macOS SDK instead of assuming a full Xcode
+    # install; machines with only Command Line Tools hardcode a nonexistent
+    # sysroot otherwise.
+    patch("darwin-sdk-path.patch", when="@4: platform=darwin")
+
+    # IMdev::NewDraw is only defined under WIN32 or WITH_X11; the vtable
+    # emitted in hcimlib.o references it, so no-graphics builds fail to
+    # link without a stub.
+    patch("ginterf-imdev-newdraw-stub.patch", when="@4: ~qt")
+
+    # install_bin only installs the wrspice binary from bin/GTK2, bin/QT5,
+    # or bin/QT6; in a no-graphics build the binary is bin/wrspice and is
+    # never installed, and the wrapper script has no fallback for it.
+    patch("wrspice-nogfx-install.patch", when="@4: ~qt")
+
+    # mmjco hardcodes g++ and MacPorts /opt/local paths; use the
+    # configured compiler and let the environment provide GSL.
+    patch("mmjco-cxx-gsl.patch", when="@4:")
+
+    # admsXml is K&R-era C; autoconf 2.7x configure appends -std=gnu23,
+    # which breaks prototype-less declarations.  Force gnu89.
+    patch("adms-c89.patch", when="@4:")
+
+    # mmjco's REPL passes fgets() output to get_av() unchecked; NULL at
+    # EOF segfaults.  Exit the loop instead.
+    patch("mmjco-eof-segv.patch", when="@4:")
+
+    # Linux/aarch64 build fixes: __arm64__ is Apple-only (use
+    # __aarch64__ too), mcontext_t has no gregs on aarch64 glibc, and the
+    # Linux branch hardcoded ARCH="x86_64".
+    patch("linux-aarch64-build-fixes.patch", when="@4:")
+
     # Remove stray include that breaks building +qt~gpl
     patch("qtmain.cc.patch", when="@4:")
 
@@ -85,7 +120,6 @@ class Xictools(MakefilePackage):
     patch("Makefile.in.patch", when="@4:")
 
     def edit(self, spec: Spec, prefix: Prefix) -> None:
-
         # Copy Makefile.sample to Makefile
         shutil.copy("Makefile.sample", "Makefile")
 
@@ -126,6 +160,13 @@ class Xictools(MakefilePackage):
         makefile.filter(r"^SUBDIRS\s*=.*", f"SUBDIRS = {' '.join(subdirs)}")
 
         make("config")
+
+    def setup_build_environment(self, env):
+        # mmjco's Makefile defaults GSL/INCLUDE to the MacPorts prefix;
+        # point them at the Spack-built gsl instead (they are ?=).
+        gsl = self.spec["gsl"].prefix
+        env.set("GSL", f"-L{gsl.lib}")
+        env.set("INCLUDE", f"-I{gsl.include}")
 
     def setup_run_environment(self, env):
         env.prepend_path("PATH", join_path(self.prefix, "xictools", "bin"))

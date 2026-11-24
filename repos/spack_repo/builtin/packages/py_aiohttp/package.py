@@ -20,8 +20,31 @@ class PyAiohttp(PythonPackage):
     license("Apache-2.0 AND MIT", when="@3.13:")
     license("Apache-2.0", when="@:3.12")
 
-    version("3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1")
+    version("3.14.5", sha256="5558a7f5a05af9ecf744af91e5baefc436f93c9333e656c27ec253f9a6bbe178")
     with default_args(deprecated=True):
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-2g87-pp6c-29x5
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-9xw5-w5jj-pvcg
+        version(
+            "3.14.3", sha256="9491196535a88924a60afd5b5f434b5b203b6cc616250878dbdb223a8f7844bc"
+        )
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-cq5v-8q36-5273
+        version(
+            "3.14.1", sha256="307f2cff90a764d329e77040603fa032db89c5c24fdad50c4c15334cba744035"
+        )
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-xcgm-r5h9-7989
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-g3cq-j2xw-wf74
+        # https://github.com/aio-libs/aiohttp/security/advisories/GHSA-63hw-fmq6-xxg2
+        version(
+            "3.14.0", sha256="2882de819734c715fd1b9c11c97e09fa020d14438203d1d354d8ed1702791c9b"
+        )
+        # https://www.cve.org/CVERecord?id=CVE-2026-47265
+        # https://www.cve.org/CVERecord?id=CVE-2026-34993
+        version(
+            "3.13.5", sha256="9d98cc980ecc96be6eb4c1994ce35d28d8b1f5e5208a23b421187d1209dbb7d1"
+        )
+        version(
+            "3.13.3", sha256="a949eee43d3782f2daae4f4a2819b2cb9b0c5d3b7f7a927067cc84dafdbb9f88"
+        )
         # https://www.cvedetails.com/cve/CVE-2025-69230/
         # https://www.cvedetails.com/cve/CVE-2025-69229/
         # https://www.cvedetails.com/cve/CVE-2025-69228/
@@ -59,10 +82,14 @@ class PyAiohttp(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
         depends_on("pkgconfig", when="@3.12:")
+        depends_on("py-setuptools@77:", when="@3.14.4:")
         depends_on("py-setuptools@67:", when="@3.13.1:")
         depends_on("py-setuptools@46.4:")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@3.14:")
+        depends_on("python@3.9:", when="@3.11:")
+        depends_on("python@3.8:", when="@3.9:")
         depends_on("py-aiohappyeyeballs@2.5:", when="@3.12:")
         depends_on("py-aiohappyeyeballs@2.3:", when="@3.10:")
         depends_on("py-aiosignal@1.4.0:", when="@3.12:")
@@ -71,13 +98,17 @@ class PyAiohttp(PythonPackage):
         depends_on("py-async-timeout@3", when="@:3.7.4 ^python@:3.10")
         depends_on("py-attrs@17.3:")
         depends_on("py-frozenlist@1.1.1:", when="@3.8.1:")
-        depends_on("py-multidict@4.5:6", when="@3.6.3:")
+        depends_on("py-multidict@4.5:7", when="@3.14.5:")
+        depends_on("py-multidict@4.5:6", when="@3.6.3:3.14.4")
         depends_on("py-propcache@0.2:", when="@3.11:")
+        depends_on("py-typing-extensions@4.4:", when="@3.14: ^python@:3.12")
+        depends_on("py-typing-extensions@3.6.5:", when="@3.7")
+        depends_on("py-yarl@1.25.1:1", when="@3.14.4:")
         depends_on("py-yarl@1.17:1", when="@3.11:")
+        depends_on("py-yarl@1.12:1", when="@3.10:")
         depends_on("py-yarl@1")
 
         # Historical dependencies
         depends_on("py-chardet@2.0:3", when="@:3.7")
         depends_on("py-charset-normalizer@2:3", when="@3.8.4:3.12")
         depends_on("py-charset-normalizer@2", when="@3.8.0:3.8.3")
-        depends_on("py-typing-extensions@3.6.5:", when="@3.7")

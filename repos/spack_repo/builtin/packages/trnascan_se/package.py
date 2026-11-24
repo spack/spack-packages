@@ -10,8 +10,8 @@ from spack.package import *
 class TrnascanSe(AutotoolsPackage):
     """Seaching for tRNA genes in genomic sequence"""
 
-    homepage = "http://lowelab.ucsc.edu/tRNAscan-SE/"
-    url = "http://trna.ucsc.edu/software/trnascan-se-2.0.0.tar.gz"
+    homepage = "https://lowelab.ucsc.edu/tRNAscan-SE/"
+    url = "https://trna.ucsc.edu/software/trnascan-se-2.0.0.tar.gz"
 
     license("GPL-3.0-or-later")
 

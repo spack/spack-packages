@@ -79,7 +79,7 @@ class Pmix(AutotoolsPackage):
     depends_on("automake@1.13.4:", type="build", when="@master")
     depends_on("libtool@2.4.2:", type="build", when="@master")
     depends_on("flex@2.5.39:", type="build", when="@master")
-    depends_on("perl", type="build", when="@master")
+    depends_on("perl", type="build", when="@6:")
     depends_on("python@3.7:", type="build", when="+docs")
     depends_on("py-sphinx@5:", type="build", when="+docs")
     depends_on("py-recommonmark", type="build", when="+docs")
@@ -128,6 +128,11 @@ class Pmix(AutotoolsPackage):
             config_args.append("--disable-sphinx")
 
         config_args.append("--with-zlib=" + spec["zlib-api"].prefix)
+        # configure only searches <prefix>/lib{,64}, which misses multiarch
+        # library directories of an external zlib, e.g. /usr/lib/x86_64-linux-gnu
+        zlib_libdirs = spec["zlib-api"].libs.directories
+        if zlib_libdirs:
+            config_args.append("--with-zlib-libdir=" + zlib_libdirs[0])
 
         config_args.append("--with-libevent=" + spec["libevent"].prefix)
         config_args.append("--with-hwloc=" + spec["hwloc"].prefix)

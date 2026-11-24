@@ -25,6 +25,7 @@ class Librsvg(AutotoolsPackage, MesonPackage):
         default="meson",
     )
 
+    version("2.63.4", sha256="31f07d9350dad3f8964fd613c31309ac160fdef13dfac59df6fd082de78d6e8f")
     version("2.61.0", sha256="dbd0db40a1179a382fbb8cc930837671b973d722ba106a3dee2aad0fd858e2c4")
     version("2.60.0", sha256="0b6ffccdf6e70afc9876882f5d2ce9ffcf2c713cbaaf1ad90170daa752e1eec3")
     version("2.59.2", sha256="ecd293fb0cc338c170171bbc7bcfbea6725d041c95f31385dc935409933e4597")
@@ -87,7 +88,7 @@ class Librsvg(AutotoolsPackage, MesonPackage):
     # Historical dependencies
     depends_on("libcroco@0.6.1:", when="@:2.44.14")
 
-    patch("gdk-pixbuf-query-loaders-install.patch", when="@2.59:")
+    patch("gdk-pixbuf-query-loaders-install.patch", when="@2.59:2.61")
 
     def url_for_version(self, version):
         url = "https://download.gnome.org/sources/librsvg/"

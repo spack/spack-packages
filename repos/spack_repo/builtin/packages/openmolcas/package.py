@@ -19,6 +19,7 @@ class Openmolcas(CMakePackage):
 
     license("LGPL-2.1-or-later")
 
+    version("26.02", sha256="3d19b8cdfc031bb86c2c958f1b30077301b20a73723a0910a2f67bb7ce5d5fea")
     version("23.06", sha256="31727161c15ea588217c6511a3007792c74c35391849fa0296c2288d836cf951")
     version("21.02", sha256="d0b9731a011562ff4740c0e67e48d9af74bf2a266601a38b37640f72190519ca")
     version("19.11", sha256="8ebd1dcce98fc3f554f96e54e34f1e8ad566c601196ee68153763b6c0a04c7b9")
@@ -30,12 +31,13 @@ class Openmolcas(CMakePackage):
 
     depends_on("hdf5")
     depends_on("lapack")
-    depends_on("openblas+ilp64")
+    depends_on("openblas+ilp64 symbol_suffix=none")
     depends_on("python@3.7:", type=("build", "run"))
     depends_on("py-pyparsing", type=("build", "run"))
     depends_on("py-six", type=("build", "run"))
     depends_on("mpi", when="+mpi")
     depends_on("globalarrays", when="+mpi")
+    depends_on("openmpi@4", when="@:23.06+mpi %mpi=openmpi")
 
     patch("CMakeLists.txt.patch", when="target=aarch64:")
 

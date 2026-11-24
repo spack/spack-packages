@@ -17,6 +17,8 @@ class RRlang(RPackage):
 
     license("MIT")
 
+    version("1.3.0", sha256="80aa537d49e72265f443a15e8936128af583caa5e572086518b503cbf064279c")
+    version("1.2.0", sha256="8f808ad4f6c1ba37d81b6a4a2cdb4a7d4d30d5bee4ba3e9924352d85a3874357")
     version("1.1.7", sha256="123c91e7eaacd3514a368a31c30617d36a874def37f6cafdacc0c7d1409be373")
     version("1.1.4", sha256="f2d74527508bf3287102470beb27de0d234c3cbba399c28d3312f2c83c64a6e1")
     version("1.1.2", sha256="2a0ee1dc6e5c59b283c32db5e74e869922a336197cb406fe92622b6ec66f8092")
@@ -40,6 +42,7 @@ class RRlang(RPackage):
     version("0.1.1", sha256="5901f95d68728a7d9bb1c2373a20ce6e4ad222f66e397e7735e9eff987c73c3f")
 
     depends_on("c", type="build")
+    depends_on("cxx", type="build", when="@1.0.0:1.0.6")
 
     depends_on("r@3.1.0:", type=("build", "run"))
     depends_on("r@3.2.0:", type=("build", "run"), when="@0.4.0:")
@@ -47,3 +50,9 @@ class RRlang(RPackage):
     depends_on("r@3.4.0:", type=("build", "run"), when="@1.0.2:")
     depends_on("r@3.5.0:", type=("build", "run"), when="@1.1.0:")
     depends_on("r@4.0.0:", type=("build", "run"), when="@1.1.7:")
+
+    # Versions <= 1.1 use R_NamespaceRegistry which was removed in r@4.6.0
+    conflicts("r@4.6:", when="@:1.1")
+
+    # > multiple definition of `r_ops_precedence'
+    conflicts("%gcc@10:", when="@0.2")

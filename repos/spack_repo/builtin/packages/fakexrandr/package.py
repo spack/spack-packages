@@ -35,9 +35,7 @@ class Fakexrandr(MakefilePackage):
 #define XRANDR_PATCH {2}
 #define REAL_XRANDR_LIB "{3}"
 #define FAKEXRANDR_INSTALL_DIR "{4}"
-""".format(
-                    version[0], version[1], version[2], spec["libxrandr"].libs[0], prefix.lib
-                )
+""".format(version[0], version[1], version[2], spec["libxrandr"].libs[0], prefix.lib)
             )
 
         # Also need to hack Makefile

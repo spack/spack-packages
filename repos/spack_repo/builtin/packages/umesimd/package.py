@@ -25,4 +25,5 @@ class Umesimd(CMakePackage):
     version("0.3.2", sha256="90399fa64489ca4d492a57a49582f5b827d4710a691f533822fd61edc346e8f6")
     version("0.3.1", sha256="9bab8b4c70e11dbdd864a09053225c74cfabb801739e09a314ddeb1d84a43f0a")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")

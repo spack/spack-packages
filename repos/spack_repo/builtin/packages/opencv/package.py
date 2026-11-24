@@ -26,6 +26,7 @@ class Opencv(CMakePackage, CudaPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("4.13.0", sha256="1d40ca017ea51c533cf9fd5cbde5b5fe7ae248291ddf2af99d4c17cf8e13017d")
     with default_args(deprecated=True):
         # https://www.cvedetails.com/cve/CVE-2025-53644/
         version(
@@ -96,6 +97,7 @@ class Opencv(CMakePackage, CudaPackage):
         "4.8.1",
         "4.9.0",
         "4.10.0",
+        "4.13.0",
     ]
     for cv in contrib_vers:
         resource(
@@ -113,7 +115,7 @@ class Opencv(CMakePackage, CudaPackage):
     patch("opencv3.2_cmake.patch", when="@3.2:3.4.1")
 
     # do not prepend system paths
-    patch("cmake_no-system-paths.patch")
+    patch("cmake_no-system-paths.patch", when="@:4.10")
 
     patch("opencv4.1.1_clp_cmake.patch", when="@4.1.1:")
     patch("opencv4.0.0_clp_cmake.patch", when="@4.0.0:4.1.0")
@@ -667,6 +669,7 @@ class Opencv(CMakePackage, CudaPackage):
         "android_mediandk",
         "android_native_camera",
         "avfoundation",
+        "avif",
         "cap_ios",
         "carotene",
         "clp",
@@ -793,6 +796,7 @@ class Opencv(CMakePackage, CudaPackage):
     depends_on("jasper", when="+jasper")
     depends_on("jpeg", when="+jpeg")
     depends_on("lapack", when="+lapack")
+    depends_on("libavif", when="+avif")
     depends_on("onnx", when="+onnx")
     depends_on("opencl", when="+opencl")
     depends_on("openexr", when="+openexr")

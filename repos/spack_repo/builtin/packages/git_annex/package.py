@@ -35,7 +35,9 @@ class GitAnnex(Package):
     # - $ ls -l git-annex/linux/current/
     #   gives for example for amd64
     #   git-annex-standalone-amd64.tar.gz ->
-    #       ../../../.git/annex/objects/KM/Ff/SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz/SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz
+    #   ../../../.git/annex/objects/KM/Ff/
+    #   SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz/
+    #   SHA256E-s51276461--a1cef631ef2cc0c977580eacaa1294d7617727df99214920ca6e8f3172bae03e.tar.gz
     # - exchange "../../../" with "https://downloads.kitenet.net" and you have the link
     # the version to the link can be found in
     # git-annex/linux/current/git-annex-standalone-amd64.tar.gz.info
@@ -54,6 +56,11 @@ class GitAnnex(Package):
 
     if platform.system() == "Linux" and platform.machine() == "aarch64":
         # git-annex-standalone-arm64.tar.gz
+        version(
+            "10.20261020",
+            sha256="ffa83d006ea77995e199028290f9f55fd0a9ae283a557f3be37f720deb4cc5a2",
+            url="http://archive.org/download/git-annex-builds/SHA256E-s64927094--ffa83d006ea77995e199028290f9f55fd0a9ae283a557f3be37f720deb4cc5a2.tar.gz",
+        )
         version(
             "10.20230408",
             sha256="4efc0636eae3a8e55ccbdd638339b00f39d5691a8f44874dcb0b90ce1425cc47",
@@ -76,6 +83,11 @@ class GitAnnex(Package):
 
     elif platform.system() == "Linux":
         # git-annex-standalone-amd64.tar.gz
+        version(
+            "10.20261020",
+            sha256="9948ec4cc4f6b382f551c91c4c829f4bb0226116cc1722ccf696ad7853566a9f",
+            url="http://archive.org/download/git-annex-builds/SHA256E-s65431451--9948ec4cc4f6b382f551c91c4c829f4bb0226116cc1722ccf696ad7853566a9f.tar.gz",
+        )
         version(
             "10.20230408",
             sha256="5c322c5c5b35e5835bb94c97be143d2717de1e8fb66f7b037720f7dd1d9cc71f",

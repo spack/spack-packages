@@ -32,6 +32,9 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
 
     maintainers("pmccormick", "streichler", "elliottslaughter", "rbberger")
     tags = ["e4s"]
+    version("26.09.1", tag="legion-26.09.1", commit="aea587e157abff12f7d089c81f29cd3a8b993a2b")
+    version("26.09.0", tag="legion-26.09.0", commit="baf03d794b14587f800e5d65d1bcda2c6aaa3671")
+    version("26.06.0", tag="legion-26.06.0", commit="c1096661a42f970904881366a94ff26c686fde61")
     version("26.03.0", tag="legion-26.03.0", commit="b95c7bfdbdf564eac57f9ace73c394acea4ac216")
     version("25.12.0", tag="legion-25.12.0", commit="6f710cb46590b04ad299362819fdecb3a4e429ca")
     version("25.09.0", tag="legion-25.09.0", commit="8759d840099a138b5f395e86c841848520b34b73")
@@ -68,6 +71,8 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("realm+rocm", when="@25.09.0: +rocm")
     depends_on("realm+cuda_unsupported_compiler", when="@25.09.0: +cuda_unsupported_compiler")
 
+    depends_on("realm@26.9.1:", when="@26.09:")
+    depends_on("realm@26.7.1:", when="@26.06:")
     depends_on("realm@26:", when="@26:")
     depends_on("realm@25:", when="@25.09.0:")
 
@@ -362,6 +367,10 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         "sysomp", default=False, description="Use system OpenMP implementation instead of Realm's"
     )
 
+    @property
+    def parallel(self):
+        return not self.spec.satisfies("@:26.06 +rocm")
+
     def flag_handler(self, name, flags):
         if name == "cxxflags":
             if self.spec.satisfies("%oneapi@2025:") or self.spec.satisfies("%cxx=clang@20:"):
@@ -438,8 +447,17 @@ class Legion(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+rocm"):
             options.append(self.define("Legion_USE_HIP", True))
             options.append(self.define("Legion_GPU_REDUCTIONS", True))
-            options.append(from_variant("Legion_HIP_TARGET", "hip_target"))
-            options.append(from_variant("Legion_HIP_ARCH", "amdgpu_target"))
+            if spec.satisfies("@26.09.0:"):
+                hip_target = self.spec.variants["hip_target"].value
+                hip_platform = {
+                    "ROCM": "amd",
+                    "CUDA": "nvidia",
+                }
+                options.append(self.define("CMAKE_HIP_PLATFORM", hip_platform[hip_target]))
+                options.append(from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
+            else:
+                options.append(from_variant("Legion_HIP_TARGET", "hip_target"))
+                options.append(from_variant("Legion_HIP_ARCH", "amdgpu_target"))
             options.append(from_variant("Legion_HIJACK_HIP", "hip_hijack"))
             options.append(from_variant("CMAKE_HIP_STANDARD", "cxxstd"))
             if spec.satisfies("@23.03.0:23.12.0"):

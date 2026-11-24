@@ -19,6 +19,14 @@ class PyGensim(PythonPackage):
 
     license("LGPL-2.1-only")
 
+    # Using the tarball from github as the one from pypi contains c and cpp
+    # files generated using cython version 0.29.32. These will not compile
+    # with python@3.12: or py-numpy@1.26:
+    version(
+        "4.4.0",
+        url="https://github.com/piskvorky/gensim/archive/refs/tags/4.4.0.tar.gz",
+        sha256="0c1c8984f18512aba04332b45dc58698ac277dfa1d314a190a3f07edc48c31ac",
+    )
     version("4.3.1", sha256="8b5f11c0e6a5308086b48e8f6841223a4fa1a37d513684612b7ee854b533015f")
     version("3.8.3", sha256="786adb0571f75114e9c5f7a31dd2e6eb39a9791f22c8757621545e2ded3ea367")
     version("3.8.1", sha256="33277fc0a8d7b0c7ce70fcc74bb82ad39f944c009b334856c6e86bf552b1dfdc")
@@ -29,15 +37,21 @@ class PyGensim(PythonPackage):
 
     depends_on("python@2.7:2.8,3.5:", type=("build", "run"))
     depends_on("python@3.8:", type=("build", "run"), when="@4.3.1:")
+    depends_on("python@3.9:", type=("build", "run"), when="@4.4:")
     depends_on("py-setuptools", type="build")
 
     depends_on("py-cython", type=("build", "run"), when="@4.3.1:")
+    depends_on("py-cython@3.1.3:", type=("build", "run"), when="@4.4.0:")
 
-    depends_on("py-numpy@1.11.3:", type=("build", "run"))
-    depends_on("py-numpy@1.18.5:", type=("build", "run"), when="@4.3.1:")
+    # Upper version limit related to: https://github.com/piskvorky/gensim/issues/3541
+    depends_on("py-numpy@1.11.3:1.25", type=("build", "run"), when="@:3.8.3")
+    depends_on("py-numpy@1.18.5:1.25", type=("build", "run"), when="@4.3.1")
+    depends_on("py-numpy@1.18.5:", type=("build", "run"), when="@4.4:")
 
-    depends_on("py-scipy@0.18.1:", type=("build", "run"))
-    depends_on("py-scipy@1.7.0:", type=("build", "run"), when="@4.3.1:")
+    # Upper version limit related to: https://github.com/piskvorky/gensim/issues/3525
+    depends_on("py-scipy@0.18.1:1.12", type=("build", "run"), when="@:3.8.3")
+    depends_on("py-scipy@1.7.0:1.12", type=("build", "run"), when="@4.3.1")
+    depends_on("py-scipy@1.7.0:", type=("build", "run"), when="@4.4:")
 
     depends_on("py-six@1.5.0:", type=("build", "run"), when="@:3.8.3")
 
@@ -45,4 +59,5 @@ class PyGensim(PythonPackage):
     depends_on("py-smart-open@1.8.1:", when="@3.8.1:", type=("build", "run"))
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("GENSIM_CYTHON_REQUIRES", "Cython=={0}".format(self.spec["py-cython"].version))
+        if self.spec.satisfies("^py-cython"):
+            env.set("GENSIM_CYTHON_REQUIRES", "Cython=={0}".format(self.spec["py-cython"].version))

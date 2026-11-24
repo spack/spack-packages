@@ -16,6 +16,7 @@ class Crmc(CMakePackage):
     # Original URL has non-recognized certificate + is password-protected
     # url = "https://devel-ik.fzk.de/wsvn/mc/crmc/tags/crmc.v1.7.0/?op=dl"
     url = "https://lcgpackages.web.cern.ch/lcgpackages/tarFiles/sources/MCGeneratorsTarFiles/crmc.v1.7.0.tar.gz"
+    git = "https://gitlab.iap.kit.edu/AirShowerPhysics/crmc"
 
     version("2.0.1", sha256="c607733c7534b188c9aede9e18cd7d4eac4f0a37d6728c1f406c434f74aed743")
     # Version 1.7.0 has issues linking phojet, devs contacted but no response

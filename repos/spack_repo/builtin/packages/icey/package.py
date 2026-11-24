@@ -12,11 +12,12 @@ class Icey(CMakePackage):
     signalling, TURN, and media servers."""
 
     homepage = "https://0state.com/icey/"
-    url = "https://github.com/nilstate/icey/archive/refs/tags/2.4.2.tar.gz"
+    url = "https://github.com/nilstate/icey/archive/refs/tags/2.5.1.tar.gz"
     git = "https://github.com/nilstate/icey.git"
 
     license("LGPL-2.1-or-later")
 
+    version("2.5.1", sha256="2df5f802db160212de78a1bdfba01c9275b5d5d0ca8f58b00298779d50a5e02a")
     version("2.4.2", sha256="306a9ca401c0f0ce0a33d4482b6ca95fa3036821d5347ca2c12ac17b0ada63bf")
 
     variant("ffmpeg", default=True, description="Enable icey::av with FFmpeg")

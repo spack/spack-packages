@@ -42,6 +42,7 @@ class N2p2(MakefilePackage):
     depends_on("doxygen", type="build", when="+doc")
     depends_on("texlive", type="build", when="+doc")
     depends_on("py-cython", type=("build", "run"))
+    depends_on("py-setuptools", type="build")
     depends_on("py-breathe", type="build", when="+doc")
     depends_on("py-sphinx", type="build", when="+doc")
     depends_on("py-sphinx-rtd-theme", type="build", when="+doc")
@@ -67,7 +68,7 @@ class N2p2(MakefilePackage):
         blas_libs = self.spec["blas"].libs
         makefile.filter("PROJECT_CC=.*", f"PROJECT_CC={spack_cxx}")
         makefile.filter("PROJECT_MPICC=.*", f"PROJECT_MPICC={self.spec['mpi'].mpicxx}")
-        makefile.filter("PROJECT_CFLAGS=.*", f"PROJECT_CFLAGS={self.compiler.cxx11_flag}")
+        makefile.filter("PROJECT_CFLAGS=.*", f"PROJECT_CFLAGS={self.compiler.cxx14_flag}")
         makefile.filter(
             "PROJECT_LDFLAGS_BLAS.*", f"PROJECT_LDFLAGS_BLAS={blas_libs.ld_flags} -lgsl -lgslcblas"
         )

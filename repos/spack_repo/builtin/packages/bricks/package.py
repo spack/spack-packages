@@ -41,7 +41,7 @@ class Bricks(CMakePackage):
     depends_on("autoconf", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
-    depends_on("opencl-clhpp", when="+cuda")
+    depends_on("opencl-clhpp@:2", when="+cuda")
     # See https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517 for CUDA 13
     depends_on("cuda@:12", when="+cuda")
     depends_on("mpi")
@@ -53,6 +53,9 @@ class Bricks(CMakePackage):
         args = [self.define_from_variant("BRICK_USE_OPENCL", "cuda")]
         if self.spec.satisfies("+cuda"):
             args.append(f"-DOCL_ROOT:STRING={self.spec['opencl-clhpp'].prefix}")
+        else:
+            # Skip check_language(CUDA), which otherwise picks up a system CUDA compiler.
+            args.append(self.define("CMAKE_CUDA_COMPILER", "NOTFOUND"))
         return args
 
     def flag_handler(self, name, flags):
@@ -90,7 +93,7 @@ class Bricks(CMakePackage):
 
         with working_dir(source_dir):
             cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
-            cmake(".")
+            cmake(".", self.define("CMAKE_PREFIX_PATH", self.prefix))
 
             cmake("--build", ".")
 

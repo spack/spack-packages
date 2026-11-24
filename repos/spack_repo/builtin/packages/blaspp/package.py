@@ -68,6 +68,7 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.15.0:", type="build")
+    depends_on("cmake@3.21:", when="@2025.05.28:", type="build")
     depends_on("blas")
     depends_on("lapack")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
@@ -117,6 +118,11 @@ class Blaspp(CMakePackage, CudaPackage, ROCmPackage):
             "-DBLAS_LIBRARIES=%s" % spec["blas"].libs.joined(";"),
             "-DLAPACK_LIBRARIES=%s" % spec["lapack"].libs.joined(";"),
         ]
+
+        # Older releases only link precompiled CUDA libraries.
+        if spec.satisfies("@2025.05.28:+cuda") and not spec.satisfies("cuda_arch=none"):
+            cuda_arch = spec.variants["cuda_arch"].value
+            args.append(self.define("CMAKE_CUDA_ARCHITECTURES", ";".join(cuda_arch)))
 
         if spec["blas"].name == "cray-libsci":
             args.append(self.define("BLA_VENDOR", "CRAY"))

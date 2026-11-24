@@ -10,6 +10,16 @@ on:
   pull_request_target:
     branches:
       - develop
+    # the default types are opened, synchronize, and reopened but we also want RFR
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+# Default permissions for this workflow are restrictive; individual jobs can overwrite if they need additional access.
+permissions:
+  contents: read
 
 jobs:
   pr:
@@ -19,17 +29,17 @@ jobs:
       pull-requests: write
       issues: write
     steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
         with:
           ref: develop # DO NOT CHANGE
 
-      - uses: actions/create-github-app-token@f8d387b68d61c58ab83c6c016672934102569859
+      - uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc  # v3.4.0
         id: generate-spackbot-token
         with:
-          app-id: ${{ secrets.SPACKBOT_TRIAGE_APP_ID }}
+          client-id: ${{ secrets.SPACKBOT_TRIAGE_CLIENT_ID }}
           private-key: ${{ secrets.SPACKBOT_TRIAGE_PRIVATE_KEY }}
 
-      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
       - uses: ./.github/actions/checkout-spack
 
       - name: Install Python dependencies
@@ -45,6 +55,7 @@ jobs:
           LABELS_CONFIG: .github/labels.yml
 
       - name: Tag Maintainers on PR
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dont-ping-maintainers') }}
         run: |
           . spack-core/share/spack/setup-env.sh
           spack-python .github/workflows/bin/spack-reviewers.py

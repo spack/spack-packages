@@ -126,8 +126,7 @@ class Nest(CMakePackage):
 
         return args
 
-    @when("@:2.14.0+modules")
-    @run_after("install")
+    @run_after("install", when="@:2.14.0+modules")
     def install_headers(self):
         # copy source files to installation folder for older versions
         # (these are needed for modules to build against)

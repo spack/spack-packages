@@ -19,6 +19,7 @@ class PyCartopy(PythonPackage):
     maintainers("adamjstewart")
 
     version("main", branch="main")
+    version("0.26.0", sha256="b87a35835f30333760cc46194bd90b6a4958d12f488f50131d4c4c0962ad9c3c")
     version("0.25.0", sha256="55f1a390e5f3f075b221c7d91fb10258ad978db786c7930eba06eb45d28753fe")
     version("0.24.1", sha256="01c910d5634c69a7efdec46e0a17d473d2328767f001d4dc0b5c4b48e585c8bd")
     version("0.24.0", sha256="e044e0e0fa76bb7afde937bec541743dcbf6b6f23b933a21ebddcd20cfffb755")
@@ -50,6 +51,7 @@ class PyCartopy(PythonPackage):
 
     # Based on wheel availability on PyPI
     with default_args(type=("build", "link", "run")):
+        depends_on("python@3.11:3.15", when="@0.26:")
         depends_on("python@3.10:3.14", when="@0.24.1:0.25.0")
         depends_on("python@3.10:3.12", when="@0.24.0")
         depends_on("python@3.9:3.12", when="@0.23")
@@ -63,6 +65,7 @@ class PyCartopy(PythonPackage):
         depends_on("py-setuptools@77.0.3:", when="@0.25:")
         depends_on("py-setuptools@40.6:", when="@0.19:")
         depends_on("py-setuptools@0.7.2:")
+        depends_on("py-cython@3:", when="@0.26:")
         depends_on("py-cython@0.29.24:", when="@0.22:")
         depends_on("py-cython@0.29.13:", when="@0.20:")
         depends_on("py-cython@0.29.2:", when="@0.19:")
@@ -74,6 +77,7 @@ class PyCartopy(PythonPackage):
         depends_on("py-setuptools-scm", when="@0.19:")
 
     with default_args(type=("build", "link", "run")):
+        depends_on("py-numpy@1.26:", when="@0.26:")
         depends_on("py-numpy@1.23:", when="@0.24:")
         depends_on("py-numpy@1.21:", when="@0.22:0.23")
         depends_on("py-numpy@1.18:", when="@0.20:21")
@@ -84,6 +88,7 @@ class PyCartopy(PythonPackage):
         depends_on("py-numpy@:1", when="@:0.22")
 
     with default_args(type=("build", "run")):
+        depends_on("py-matplotlib@3.8:", when="@0.26:")
         depends_on("py-matplotlib@3.6:", when="@0.24:")
         depends_on("py-matplotlib@3.5:", when="@0.23:")
         depends_on("py-matplotlib@3.4:", when="@0.22:")
@@ -98,16 +103,19 @@ class PyCartopy(PythonPackage):
         depends_on("py-shapely@1.5.6:1", when="@:0.19")
         depends_on("py-packaging@21:", when="@0.24:")
         depends_on("py-packaging@20:", when="@0.22:")
+        depends_on("py-pyshp@2.3.1:", when="@0.26:")
         depends_on("py-pyshp@2.3:", when="@0.23:")
         depends_on("py-pyshp@2.1:", when="@0.20:")
         depends_on("py-pyshp@2:", when="@0.19:")
         depends_on("py-pyshp@1.1.4:")
+        depends_on("py-pyproj@3.6:", when="@0.26:")
         depends_on("py-pyproj@3.3.1:", when="@0.23:")
         depends_on("py-pyproj@3.1:", when="@0.22:")
         depends_on("py-pyproj@3:", when="@0.20:")
 
     with default_args(type="run"):
         with when("+ows"):
+            depends_on("py-owslib@0.29:", when="@0.26:")
             depends_on("py-owslib@0.27:", when="@0.24:")
             depends_on("py-owslib@0.20:", when="@0.22:")
             depends_on("py-owslib@0.18:", when="@0.20:")
@@ -120,6 +128,7 @@ class PyCartopy(PythonPackage):
             depends_on("pil@9.1:", when="@0.24:")
             depends_on("pil@6.1:", when="@0.20:")
             depends_on("pil@1.7.8:")
+            depends_on("py-scipy@1.11:", when="@0.26:")
             depends_on("py-scipy@1.9:", when="@0.24:")
             depends_on("py-scipy@1.3.1:", when="@0.20:")
             depends_on("py-scipy@0.10:")

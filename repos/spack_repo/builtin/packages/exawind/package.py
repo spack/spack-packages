@@ -22,7 +22,6 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
 
     license("Apache-2.0")
 
-    version("master", branch="main")
     version("2.1.0", tag="v2.1.0", commit="b726a1128f02edb72f504130830d44622710225a")
     version("2.0.0", tag="v2.0.0", commit="d25aa549c7cbd9d6213541cd4b046bd9c0c54652")
     version("1.2.0", tag="v1.2.0", commit="4c49c7775c580b6bd2556e6c00fd13c08737d5eb")
@@ -33,7 +32,6 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
     variant("nalu_wind_gpu", default=False, description="Enable Nalu-Wind on the GPU")
     variant("sycl", default=False, description="Enable SYCL backend for AMR-Wind")
     variant("gpu-aware-mpi", default=False, description="gpu-aware-mpi")
-    variant("kynema", default=False, description="Couple with Kynema structural solver")
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
@@ -70,7 +68,6 @@ class Exawind(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("yaml-cpp@0.6:")
     depends_on("tioga~nodegid")
     depends_on("openfast+cxx@2.6.0:")
-    depends_on("nalu-wind+kynema", when="+kynema")
     depends_on("amr-wind+sycl", when="+amr_wind_gpu+sycl")
     depends_on("kokkos-nvcc-wrapper", type="build", when="+cuda")
     depends_on("mpi")

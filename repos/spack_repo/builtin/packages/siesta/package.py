@@ -26,6 +26,12 @@ class Siesta(MakefilePackage, CMakePackage):
     git = "https://gitlab.com/siesta-project/siesta"
 
     version(
+        "5.4.2",
+        url="https://gitlab.com/siesta-project/siesta/-/releases/5.4.2/downloads/siesta-5.4.2.tar.gz",
+        sha256="9cd855bd2702b69785588931aa06e4c1b1036f11b5ef7b01ecc29a7218a38d3f",
+    )
+
+    version(
         "5.0.1",
         url="https://gitlab.com/siesta-project/siesta/-/archive/5.0.1/siesta-5.0.1.tar.gz",
         sha256="800a22a831c1d36c6f5fe4aa9c49ee510cbd49a0b2f87b3c8bf3edb6ebd0193a",
@@ -58,6 +64,14 @@ class Siesta(MakefilePackage, CMakePackage):
 
     patch("configure.patch", when="@:4.0")
 
+    # Workaround for linking errors due to GCC bug 125383
+    # https://gitlab.com/siesta-project/siesta/-/merge_requests/557
+    patch(
+        "https://gitlab.com/siesta-project/siesta/-/commit/bb6d7f5493c19078ecc236cf36b8672eeaf228c8.diff",
+        sha256="b98931c3cf945b0e7cf03f761bb34fce58d08dc1fc71087bb5722568470ca4f5",
+        when="@5.2.2:5.4.2 %gcc@14.1:14.4,15.1:15.3,16.1:16.2",
+    )
+
     variant("mpi", default=True, description="Builds with mpi support")
     variant("openmp", default=True, description="Enables OpenMP support")
     variant("netcdf", default=False, description="Compile with Netcdf")
@@ -78,6 +92,10 @@ class Siesta(MakefilePackage, CMakePackage):
         description="The build type to build",
         values=("Debug", "Release", "RelWithDebInfo", "MinSizeRel", "check"),
     )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("fortran", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("blas")

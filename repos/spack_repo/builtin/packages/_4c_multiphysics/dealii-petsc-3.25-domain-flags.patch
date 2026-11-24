@@ -1,0 +1,20 @@
+Support PETSc 3.25's split SNES domain error flags.
+
+PETSc 3.25 replaced SNES::domainerror with separate function and objective
+domain error flags. Backport deal.II's upstream compatibility guard.
+
+--- a/source/lac/petsc_compatibility.cc
++++ b/source/lac/petsc_compatibility.cc
+@@ -70,7 +70,12 @@ namespace PETScWrappers
+ #  if DEAL_II_PETSC_VERSION_GTE(3, 11, 0)
+     snes->jacobiandomainerror = PETSC_FALSE;
+ #  endif
++#  if DEAL_II_PETSC_VERSION_GTE(3, 25, 0)
++    snes->functiondomainerror  = PETSC_FALSE;
++    snes->objectivedomainerror = PETSC_FALSE;
++#  else
+     snes->domainerror = PETSC_FALSE;
++#  endif
+   }
+ 
+   void

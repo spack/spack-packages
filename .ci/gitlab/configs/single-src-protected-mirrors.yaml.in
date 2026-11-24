@@ -1,6 +1,13 @@
 mirrors:
+  # Look at the no view top level to avoid rebuilding the world
+  buildcache-noview:
+    fetch: ${PROTECTED_MIRROR_FETCH_DOMAIN}/${CI_COMMIT_REF_NAME}
+    push: ${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}
+    source: False
+    binary: True
   buildcache-destination:
-    fetch: ${PROTECTED_MIRROR_FETCH_DOMAIN}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
-    push: ${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}/${SPACK_CI_STACK_NAME}
+    fetch: ${PROTECTED_MIRROR_FETCH_DOMAIN}/${CI_COMMIT_REF_NAME}
+    push: ${PROTECTED_MIRROR_PUSH_DOMAIN}/${CI_COMMIT_REF_NAME}
+    view: ${SPACK_CI_STACK_NAME}
     source: False
     binary: True

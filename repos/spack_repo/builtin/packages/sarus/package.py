@@ -98,7 +98,5 @@ class Sarus(CMakePackage):
 
                 https://sarus.readthedocs.io/en/stable/install/post-installation.html#security-related
 
-            """.format(
-                script_sh
-            )
+            """.format(script_sh)
         )

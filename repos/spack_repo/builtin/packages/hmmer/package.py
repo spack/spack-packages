@@ -16,6 +16,10 @@ class Hmmer(Package):
     homepage = "http://www.hmmer.org"
     url = "http://eddylab.org/software/hmmer/hmmer-3.3.tar.gz"
 
+    license("GPL-2.0-or-later", when="@:2")
+    license("GPL-3.0-or-later", when="@3.0:3.1")
+    license("BSD-3-Clause", when="@3.2:")
+
     version("3.4", sha256="ca70d94fd0cf271bd7063423aabb116d42de533117343a9b27a65c17ff06fbf3")
     version("3.3.2", sha256="92fee9b5efe37a5276352d3502775e7c46e9f7a0ee45a331eacb2a0cac713c69")
     version("3.3", sha256="0186bf40af67032666014971ed8ddc3cf2834bebc2be5b3bc0304a93e763736c")
@@ -56,3 +60,8 @@ class Hmmer(Package):
             make("check")
 
         make("install")
+
+        # make install leaves out the bundled Easel tools (esl-reformat, esl-sfetch, ...)
+        if spec.satisfies("@3:"):
+            with working_dir("easel"):
+                make("install")

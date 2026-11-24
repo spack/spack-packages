@@ -22,12 +22,32 @@ class IntelOneapiIpp(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/ipp.html"
     )
 
+    version(
+        "2026.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f633ac03-a56c-4581-a968-48bac7289bbd/intel-ipp-2026.1.0.770_offline.sh",
+        sha256="718062331af8af21e2298efdde061a133ac75805894d3951d318a15b97935fdb",
+        expand=False,
+    )
+
+    version(
+        "2026.0.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/1bf493cd-8dd6-4168-be51-a0c7fe171f70/intel-ipp-2026.0.1.62_offline.sh",
+        sha256="e4ce172388068b1efcf66af71e7d4791c3a088336fafbb160cd5dbeb194d1b59",
+        expand=False,
+    )
+
+    version(
+        "2026.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/c72ad2c1-1c92-4e74-923f-a8ca1332c0cb/intel-ipp-2026.0.0.718_offline.sh",
+        sha256="3cc52d7a057e67efd5dc691055b3a0abee7a77aa760d958282b115b9148b9238",
+        expand=False,
+    )
     version(
         "2022.3.1",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f5ea6a8e-1b2d-4184-bf58-45c612fb2ee1/intel-ipp-2022.3.1.9_offline.sh",

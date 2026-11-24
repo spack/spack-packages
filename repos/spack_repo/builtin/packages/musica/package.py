@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
+
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 
 from spack.package import *
@@ -19,14 +21,19 @@ class Musica(CMakePackage):
     """
 
     homepage = "https://github.com/NCAR/musica"
-    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.15.0.tar.gz"
+    url = "https://github.com/NCAR/musica/archive/refs/tags/v0.17.1.tar.gz"
     git = "https://github.com/NCAR/musica.git"
 
     maintainers("kshores", "boulderdaze")
 
     license("Apache-2.0", checked_by="kshores")
 
+    # The stand-alone test compiles a small program against the install
+    test_requires_compiler = True
+
     # Versions
+    version("0.17.1", sha256="1f7dd45c295dbaa27e31b3f496c9a3095bb00d9173fb341ea9cf86fda2995de1")
+    version("0.16.0", sha256="aec7be3f46abfd334f1842acf88434c1d3d872703714641fc5a4730892a1d947")
     version("0.15.0", sha256="48a01c082d8db8731add80c691c7794e7069927fa17ec21e093ad1774b8cd30b")
     version("0.14.5", sha256="31d9c75e8a4852f8f053f43a44313f3b392911056b72f63209eb2f091c7e486a")
     version("0.14.4", sha256="8de573c1cf9100087efa6ae4871f0d0bd8b41e75a67e43b62761410e5740d0d6")
@@ -38,29 +45,111 @@ class Musica(CMakePackage):
     version("0.10.1", sha256="edefab03a676a449761997734e6c5b654b2c4f92ce8f1cc66ef63b8ae8ccccf1")
 
     # Options from CMake
+    variant("fortran", default=False, description="Build Fortran interface")
+    variant("tests", default=False, description="Enable tests")
     variant("mpi", default=False, description="Enable MPI support")
     variant("openmp", default=False, description="Enable OpenMP support")
-    variant("tests", default=True, description="Enable tests")
-    variant("fortran", default=False, description="Build Fortran interface")
     variant("micm", default=True, description="Enable MICM support")
+    variant("miam", default=True, description="Enable MIAM support", when="@0.16.0:")
+    variant("miem", default=True, description="Enable MIEM support", when="@0.16.1:")
     variant("tuvx", default=True, description="Enable TUV-x support")
+    variant("javascript", default=False, description="Build the JavaScript addon")
+    variant("julia", default=False, description="Build the Julia wrapper")
+    variant("shared", default=False, description="Build MUSICA as shared libraries")
 
     # Dependencies
     depends_on("cmake@3.21:", type="build")
+    depends_on("cmake@3.24:", type="build", when="@0.14.2:")
+    # mechanism_configuration needs C++23, and CMake only knows the NVHPC C++23 flag from 3.31
+    depends_on("cmake@3.31:", type="build", when="@0.16.0: %nvhpc")
+    # The stand-alone test also reads the installed .pc files
+    depends_on("pkgconfig", type=("build", "test"))
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("fortran", type="build")
     depends_on("mpi", when="+mpi")
+    depends_on("netcdf-c", when="+miem")
     depends_on("netcdf-fortran", when="+tuvx")
+    depends_on("libcxxwrap-julia", when="+julia")
+    depends_on("node-js", type=("build", "run"), when="+javascript")
+    depends_on("npm", type="build", when="+javascript")
 
     def cmake_args(self):
         args = [
+            self.define_from_variant("MUSICA_BUILD_FORTRAN_INTERFACE", "fortran"),
+            self.define("MUSICA_ENABLE_INSTALL", True),
+            self.define_from_variant("MUSICA_ENABLE_TESTS", "tests"),
             self.define_from_variant("MUSICA_ENABLE_MPI", "mpi"),
             self.define_from_variant("MUSICA_ENABLE_OPENMP", "openmp"),
-            self.define_from_variant("MUSICA_ENABLE_TESTS", "tests"),
-            self.define_from_variant("MUSICA_BUILD_FORTRAN_INTERFACE", "fortran"),
             self.define_from_variant("MUSICA_ENABLE_MICM", "micm"),
+            self.define_from_variant("MUSICA_ENABLE_MIAM", "miam"),
+            self.define_from_variant("MUSICA_ENABLE_MIEM", "miem"),
             self.define_from_variant("MUSICA_ENABLE_TUVX", "tuvx"),
-            self.define("MUSICA_ENABLE_INSTALL", True),
+            # CARMA defaults to ON upstream, but always fetches an unreleased,
+            # commit-pinned CARMA-ACOM-dev tree at build time. Keep it OFF to avoid
+            # network access and unmanaged BLAS/LAPACK/netCDF dependencies.
+            self.define("MUSICA_ENABLE_CARMA", False),
+            # Always bundle C++ dependencies (MICM, TUV-x, etc.), since Spack builds
+            # MUSICA standalone rather than as a subproject.
+            self.define("MUSICA_BUNDLE_DEPENDENCIES", True),
+            self.define_from_variant("MUSICA_ENABLE_JAVASCRIPT", "javascript"),
+            self.define_from_variant("MUSICA_ENABLE_JULIA", "julia"),
+            self.define_from_variant("MUSICA_BUILD_SHARED_LIBS", "shared"),
         ]
         return args
+
+    @run_after("install", when="@0.17.0:")
+    def setup_standalone_test(self):
+        """Save the test project and a small mechanism for `spack test run musica`."""
+        cache_extra_test_sources(self, ["src/test/spack", "configs/v1/chapman"])
+
+    def test_installation(self):
+        """Build and run a small C++ and Fortran program against the install."""
+        if not self.spec.satisfies("@0.17.0:"):
+            raise SkipTest("src/test/spack is not in this release")
+        source_dir = join_path(self.test_suite.current_test_cache_dir, "src", "test", "spack")
+        build_dir = join_path(source_dir, "build")
+        config = join_path(
+            self.test_suite.current_test_cache_dir, "configs", "v1", "chapman", "config.json"
+        )
+
+        # Tests run without the build environment, so point CMake and pkg-config
+        # at every dependency, the way a user's module setup would.
+        prefixes = [str(self.prefix)]
+        pc_dirs = []
+        for dep in self.spec.traverse(root=False):
+            if str(dep.prefix) not in prefixes:
+                prefixes.append(str(dep.prefix))
+            for libdir in (dep.prefix.lib, dep.prefix.lib64):
+                pc_dir = join_path(libdir, "pkgconfig")
+                if os.path.isdir(pc_dir) and pc_dir not in pc_dirs:
+                    pc_dirs.append(pc_dir)
+        if pc_dirs:
+            existing = os.environ.get("PKG_CONFIG_PATH", "")
+            if existing:
+                pc_dirs.append(existing)
+            os.environ["PKG_CONFIG_PATH"] = ":".join(pc_dirs)
+
+        cmake = self.spec["cmake"].command
+        ctest = Executable(self.spec["cmake"].prefix.bin.ctest)
+
+        args = [
+            "-S",
+            source_dir,
+            "-B",
+            build_dir,
+            self.define("CMAKE_PREFIX_PATH", prefixes),
+            self.define("TEST_FORTRAN", self.spec.satisfies("+fortran")),
+            self.define("TEST_MICM", self.spec.satisfies("+micm")),
+            self.define("TEST_MIEM", self.spec.satisfies("+miem")),
+            self.define("TEST_CONFIG", config),
+        ]
+
+        with test_part(self, "test_installation_cmake", purpose="configure consumer project"):
+            cmake(*args)
+
+        with test_part(self, "test_installation_build", purpose="build consumer project"):
+            cmake("--build", build_dir)
+
+        with test_part(self, "test_installation_ctest", purpose="run consumer project"):
+            ctest("--test-dir", build_dir, "--output-on-failure")

@@ -16,7 +16,7 @@ class Poplddecay(MakefilePackage):
     homepage = "https://github.com/BGI-shenzhen/PopLDdecay"
     url = "https://github.com/BGI-shenzhen/PopLDdecay/archive/v3.41.tar.gz"
 
-    maintainers("robqiao")
+    maintainers("manifestoso")
 
     license("MIT")
 

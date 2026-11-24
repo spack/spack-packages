@@ -15,27 +15,34 @@ class PyFlax(PythonPackage):
 
     license("Apache-2.0")
 
+    version("0.12.9", sha256="2870e491c32ad3360a40838b1b33cf1a8ae7f18a118681a767b08ad648ffc567")
     version("0.8.5", sha256="4a9cb7950ece54b0addaa73d77eba24e46138dbe783d01987be79d20ccb2b09b")
     version("0.8.1", sha256="ce3d99e9b4c0d2e4d9fc28bc56cced8ba953adfd695aabd24f096b4c8a7e2f92")
     version("0.7.3", sha256="e9dbc7eb6c80d31277f97b626c07978d2a84f1bb635cf05957a02a3a496493e6")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.12:", when="@0.12.9:")
+        depends_on("python@3.9:", when="@0.8:")
 
     with default_args(type="build"):
         depends_on("py-setuptools")
         depends_on("py-setuptools-scm")
 
     with default_args(type=("build", "run")):
-        depends_on("python@3.9:", when="@0.8:")
-        depends_on("py-numpy@1.26.0:", when="@0.8: ^python@3.12:")
-        depends_on("py-numpy@1.23.2:", when="@0.8: ^python@3.11:")
-        depends_on("py-numpy@1.22:", when="@0.8:")
-        depends_on("py-numpy@1.12:")
+        depends_on("py-jax@0.11.1:", when="@0.12.9:")
         depends_on("py-jax@0.4.27:", when="@0.8.5:")
         depends_on("py-jax@0.4.19:", when="@0.8:")
         depends_on("py-jax@0.4.2:")
         depends_on("py-msgpack")
+        depends_on("py-numpy@1.23.2:", when="@0.12.9:")
+        depends_on("py-numpy@1.26.0:", when="@0.8 ^python@3.12:")
+        depends_on("py-numpy@1.23.2:", when="@0.8 ^python@3.11:")
+        depends_on("py-numpy@1.22:", when="@0.8")
+        depends_on("py-numpy@1.12:")
         depends_on("py-optax")
         depends_on("py-orbax-checkpoint")
-        depends_on("py-tensorstore")
-        depends_on("py-rich@11.1:")
-        depends_on("py-typing-extensions@4.2:")
         depends_on("py-pyyaml@5.4.1:")
+        depends_on("py-rich@11.1:")
+        depends_on("py-tensorstore")
+        depends_on("py-treescope@0.1.7:", when="@0.12.9:")
+        depends_on("py-typing-extensions@4.2:")

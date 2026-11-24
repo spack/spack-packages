@@ -75,7 +75,6 @@ class Hdfview(Package):
         env.set("JAVA_HOME ", self.spec["java"].prefix)
 
     def url_for_version(self, version):
-
         # the new versions have a complex https://objects.githubusercontent.com url so use the
         # github release
         if version > Version("3.3.0"):

@@ -20,6 +20,7 @@ class PyBiopython(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.87", sha256="8456c803459b679a9712422e5a7fd9809f2f089bf69bb085f3b077946ac9bdbf")
     version("1.86", sha256="93a50b586a4d2cec68ab2f99d03ef583c5761d8fba5535cb8e81da781d0d92ff")
     version("1.85", sha256="5dafab74059de4e78f49f6b5684eddae6e7ce46f09cfa059c1d1339e8b1ea0a6")
     version("1.84", sha256="60fbe6f996e8a6866a42698c17e552127d99a9aab3259d6249fbaabd0e0cc7b4")
@@ -32,9 +33,9 @@ class PyBiopython(PythonPackage):
     version("1.70", sha256="4a7c5298f03d1a45523f32bae1fffcff323ea9dce007fb1241af092f5ab2e45b")
     version("1.65", sha256="6d591523ba4d07a505978f6e1d7fac57e335d6d62fb5b0bcb8c40bdde5c8998e")
 
-    depends_on("c", type="build")  # generated
+    depends_on("c", type="build")
 
-    depends_on("python@3.10", type=("build", "run"), when="@1.86:")
+    depends_on("python@3.10:", type=("build", "run"), when="@1.86:")
     depends_on("python@3.9:", type=("build", "run"), when="@1.84:")
     depends_on("python@3.8:", type=("build", "run"), when="@1.83:")
     depends_on("python@3.6:", type=("build", "run"), when="@1.77:")
@@ -42,7 +43,10 @@ class PyBiopython(PythonPackage):
     depends_on("python@2.7,3.4:3.9", type=("build", "run"), when="@1.70:1.74")
     depends_on("python@2.7,3.3:3.9", type=("build", "run"), when="@1.69")
     depends_on("python@2.6:2.7,3.3:3.9", type=("build", "run"), when="@1.63:1.68")
+
     depends_on("py-numpy", type=("build", "run"))
     # https://github.com/biopython/biopython/issues/4676
     depends_on("py-numpy@:1", when="@:1.83", type=("build", "run"))
+
+    depends_on("py-setuptools@74.1:", type="build", when="@1.87:")
     depends_on("py-setuptools", type="build")

@@ -32,9 +32,7 @@ class PySphinxcontribHtmlhelp(PythonPackage):
     depends_on("py-setuptools", when="@:2.0.0", type="build")
 
     def url_for_version(self, version):
-        url = (
-            "https://files.pythonhosted.org/packages/source/s/sphinxcontrib-htmlhelp/{}-{}.tar.gz"
-        )
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("2.0.2"):
             name = "sphinxcontrib_htmlhelp"
         else:

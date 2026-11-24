@@ -13,7 +13,7 @@ class Totalview(Package):
     Select the version associated with your machine architecture'
     '."""
 
-    homepage = "https://totalview.io"
+    homepage = "https://www.perforce.com/products/totalview"
     maintainers("dshrader", "suzannepaterno")
     license_required = True
     license_comment = "#"
@@ -23,6 +23,24 @@ class Totalview(Package):
     # As the install of Totalview is via multiple tarballs, the base install
     # will be the documentation.  The architecture-specific tarballs are added
     # as resources dependent on the specific architecture used.
+
+    version(
+        "2026.2-x86-64",
+        sha256="2c45d2f95e50abe1183e66bab218a53d15ec436d400e3f999554f4941e11fb95",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.2/totalview_2026.2.14_linux_x86-64.tar",
+    )
+
+    version(
+        "2026.2-powerle",
+        sha256="ff79d7d16ff629cdf3f2c800141fb9e34b20082ce63393cefaed637bd549f2cf",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.2/totalview_2026.2.14_linux_powerle.tar",
+    )
+
+    version(
+        "2026.2-linux-arm64",
+        sha256="45124d00de046d18aecaa36ab28bca6eb0aa39b9af47e54d4e8136cb3ed5b3af",
+        url="https://dslwuu69twiif.cloudfront.net/totalview/2026.2/totalview_2026.2.14_linux_arm64.tar",
+    )
 
     version(
         "2026.1-x86-64",
@@ -192,7 +210,8 @@ class Totalview(Package):
             join_path(self.prefix, "toolworks", "totalview.{0}".format(self.version), "bin"),
         )
         env.prepend_path(
-            "TVROOT", join_path(self.prefix, "toolworks", "totalview.{0}".format(self.version))
+            "TVROOT",
+            join_path(self.prefix, "toolworks", "totalview.{0}".format(self.version)),
         )
         env.prepend_path("TVDSVRLAUNCHCMD", "ssh")
 

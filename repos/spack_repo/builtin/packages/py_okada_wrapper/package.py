@@ -17,15 +17,20 @@ class PyOkadaWrapper(PythonPackage):
 
     license("MIT", checked_by="snehring")
 
+    version("24.6.15", sha256="c19bacfc4336c59d94e3ece3ed378fe2ae3496a165412c47e08164fe8b66f307")
     version(
         "18.12.07.3", sha256="ee296ad6e347c8df400f6f3d1badc371925add8d1af33854634c2fe1a2b2c855"
     )
 
+    depends_on("c", type="build")
     depends_on("fortran", type="build")  # generated
 
-    # https://github.com/tbenthompson/okada_wrapper/issues/8
-    depends_on("python@3:3.11", type=("build", "run"))
+    depends_on("py-meson-python", type="build", when="@24.6.15:")
 
-    depends_on("py-setuptools", type="build")
+    # https://github.com/tbenthompson/okada_wrapper/issues/8
+    depends_on("python@3:3.11", type=("build", "run"), when="@18.12.07.3")
+    depends_on("python@3.8:", type=("build", "run"), when="@24.6.15")
+
+    depends_on("py-setuptools", type="build", when="@18.12.07.3")
 
     depends_on("py-numpy", type=("build", "run"))

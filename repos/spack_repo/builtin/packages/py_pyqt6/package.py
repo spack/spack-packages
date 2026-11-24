@@ -16,6 +16,7 @@ class PyPyqt6(SIPPackage):
 
     license("GPL-3.0-or-later")
 
+    version("6.11.0", sha256="45dd60aa69976de1918b5ced6b4e7b6a25abd2a919ecef5fd5826ecc76718889")
     version("6.10.0", sha256="710ecfd720d9a03b2c684881ae37f528e11d17e8f1bf96431d00a6a73f308e36")
     version("6.9.1", sha256="50642be03fb40f1c2111a09a1f5a0f79813e039c15e78267e6faaf8a96c1c3a6")
     version("6.7.0", sha256="3d31b2c59dc378ee26e16586d9469842483588142fc377280aad22aaf2fa6235")
@@ -23,23 +24,29 @@ class PyPyqt6(SIPPackage):
     version("6.5.2", sha256="1487ee7350f9ffb66d60ab4176519252c2b371762cbe8f8340fd951f63801280")
     version("6.5.1", sha256="e166a0568c27bcc8db00271a5043936226690b6a4a74ce0a5caeb408040a97c3")
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("cxx")
 
-    # pyproject.toml
-    depends_on("python@3.9:", type=("build", "run"), when="@6.8:")
-    depends_on("python@3.8:", type=("build", "run"), when="@6.7:")
-    depends_on("py-sip@6.13.1:6", type="build", when="@6.10:")
-    depends_on("py-sip@6.12:6", type="build", when="@6.9.1:")
-    depends_on("py-sip@6.8:6", type="build", when="@6.7:")
-    depends_on("py-sip@6.5:6", type="build", when="@:6.6")
-    depends_on("py-pyqt-builder@1.19:1", type="build", when="@6.10:")
-    depends_on("py-pyqt-builder@1.17:1", type="build", when="@6.8:")
-    depends_on("py-pyqt-builder@1.15:1", type="build")
+        # pyproject.toml
+        depends_on("py-sip@6.15:6", when="@6.10:")
+        depends_on("py-sip@6.13.1:6", when="@6.10:")
+        depends_on("py-sip@6.12:6", when="@6.9.1:")
+        depends_on("py-sip@6.8:6", when="@6.7:")
+        depends_on("py-sip@6.5:6", when="@:6.6")
+        depends_on("py-pyqt-builder@1.19:1", when="@6.10:")
+        depends_on("py-pyqt-builder@1.17:1", when="@6.8:")
+        depends_on("py-pyqt-builder@1.15:1")
 
-    # PKG-INFO
-    depends_on("py-pyqt6-sip@13.8:13", type=("build", "run"), when="@6.7.1:")
-    depends_on("py-pyqt6-sip@13.6:13", type=("build", "run"), when="@6.5.3:6.7.2")
-    depends_on("py-pyqt6-sip@13.4:13", type=("build", "run"), when="@:6.5.2")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@6.11:")
+        depends_on("python@3.9:", when="@6.8:")
+        depends_on("python@3.8:", when="@6.7:")
+
+        # PKG-INFO
+        depends_on("py-pyqt6-sip@13.11:13", when="@6.11:")
+        depends_on("py-pyqt6-sip@13.8:13", when="@6.7.1:")
+        depends_on("py-pyqt6-sip@13.6:13", when="@6.5.3:6.7.2")
+        depends_on("py-pyqt6-sip@13.4:13", when="@:6.5.2")
 
     # README
     depends_on("qt-base@6+gui+accessibility")

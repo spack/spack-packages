@@ -80,6 +80,10 @@ class OracleInstantClient(Package):
     homepage = "https://www.oracle.com/database/technologies/instant-client.html"
     url = "https://download.oracle.com/otn_software/linux/instantclient/211000/instantclient-basic-linux.x64-21.1.0.0.0.zip"
 
+    license("LicenseRef-Oracle-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     releases = oracleclient_releases()
     for release in releases:
         oracle_version = release["version"]

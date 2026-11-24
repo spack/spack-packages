@@ -27,7 +27,8 @@ class BookleafCpp(CMakePackage):
     variant("silo", default=False, description="Use Silo")
     variant("caliper", default=False, description="Use Caliper")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("caliper", when="+caliper")
     depends_on("parmetis", when="+parmetis")

@@ -25,6 +25,10 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     test_requires_compiler = True
 
     version("main", branch="main")
+    version("3.26.1", sha256="d9b8bb27f6402e72e9d8f7ae9a1de241ff772b55d0bf265e8e10c61750f49cb9")
+    version("3.26.0", sha256="a2f4cc2af76d55c078c30ad8bc66b44736dac921a7912266eb44136fc1b6029d")
+    version("3.25.2", sha256="65795612fd50efd77d151bb884b0075429fe12c532963e38081988a5ed6efbd5")
+    version("3.25.1", sha256="906ddbe15a20774c23ddcdf13a5054889d00a26c3c37463447ee593c757d03ee")
     version("3.25.0", sha256="ba2d1cd42d637a7577cab63b0f9e910921fdd60db58290dd1041d60152655f78")
     version("3.24.3", sha256="3f13421f3fcd68fd720a143088506e0f91e24243844703997597eee793225452")
     version("3.24.2", sha256="6f1f7e45b9bbd15631562f193284832ae4e9655eb3af7f1ba59bdf8bdaefb638")
@@ -68,6 +72,8 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     variant("blopex", default=False, description="Enables BLOPEX wrappers")
     variant("hpddm", default=False, description="Enables HPDDM wrappers")
 
+    variant("examples", default=True, description="Install test and tutorial example sources")
+
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -79,6 +85,7 @@ class Slepc(Package, CudaPackage, ROCmPackage):
     # Cannot mix release and development versions of SLEPc and PETSc:
     depends_on("petsc@main", when="@main")
     for ver in [
+        "3.26",
         "3.25",
         "3.24",
         "3.23",
@@ -174,7 +181,9 @@ class Slepc(Package, CudaPackage, ROCmPackage):
         if self.run_tests:
             make("test", parallel=False)
 
-        make("install", parallel=False)
+        # SLEPc provides a lighter target that omits docs/examples.
+        target = "install" if "+examples" in spec else "install-lib"
+        make(target, parallel=False)
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         # set SLEPC_DIR & PETSC_DIR in the module file

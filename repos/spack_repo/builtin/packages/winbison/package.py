@@ -19,7 +19,7 @@ class Winbison(CMakePackage):
     url = "https://github.com/lexxmark/winflexbison/archive/v2.5.25.tar.gz"
     tags = ["windows"]
 
-    executables = [r"^bison(.*)?$"]
+    executables = [r"^win_bison(.*)?$"]
 
     license("GFDL-1.3-only")
 
@@ -36,6 +36,8 @@ class Winbison(CMakePackage):
     version("2.5.15", sha256="a5ea5b98bb8d4054961f7bc82f458b4a9ef60c5e2dedcaba23a8e4363c2e6dfc")
     version("2.5.14", sha256="2ace5c964fb4b45279544669950412dbe4e86908c03bd5ebc8c8d306e458e97d")
     version("2.4.12", sha256="fcffc223897e14f2b5dce2db1c832f297cc43a1204e4b3fd713f1dc410e956e4")
+
+    provides("yacc")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

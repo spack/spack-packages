@@ -4,15 +4,15 @@
 
 
 from spack_repo.builtin.build_systems.generic import Package
+from spack_repo.builtin.packages.geant4_data.package import Geant4DataPackage
 
 from spack.package import *
 
 
-class G4radioactivedecay(Package):
+class G4radioactivedecay(Package, Geant4DataPackage):
     """Geant4 data files for radio-active decay hadronic processes"""
 
     homepage = "https://geant4.web.cern.ch"
-    url = "https://geant4-data.web.cern.ch/geant4-data/datasets/G4RadioactiveDecay.5.1.1.tar.gz"
 
     tags = ["hep"]
 
@@ -27,25 +27,14 @@ class G4radioactivedecay(Package):
     version("5.1.1", sha256="f7a9a0cc998f0d946359f2cb18d30dff1eabb7f3c578891111fc3641833870ae")
     version("4.0", sha256="ed2053bddee507920a29a27db4364fbef255b951597686b0410d5458e9b38cb5")
 
-    def install(self, spec, prefix):
-        mkdirp(join_path(prefix.share, "data"))
-        install_path = join_path(prefix.share, "data", self.g4datasetname)
-        install_tree(self.stage.source_path, install_path)
+    #: G4-prefixed environment variable
+    g4envvar = "G4RADIOACTIVEDATA"
 
-    def setup_dependent_run_environment(
-        self, env: EnvironmentModifications, dependent_spec: Spec
-    ) -> None:
-        install_path = join_path(self.prefix.share, "data", self.g4datasetname)
-        env.set("G4RADIOACTIVEDATA", install_path)
+    #: Directory name inside 'share' before version is appended
+    g4dirname = "RadioactiveDecay"
 
     def url_for_version(self, version):
         """Handle version string."""
-        return (
-            "http://geant4-data.web.cern.ch/geant4-data/datasets/G4RadioactiveDecay.%s.tar.gz"
-            % version
-        )
-
-    @property
-    def g4datasetname(self):
-        spec = self.spec
-        return "RadioactiveDecay{0}".format(spec.version)
+        datasets_url = Geant4DataPackage.datasets_url
+        prefix = "G4"
+        return f"{datasets_url}/{prefix}{self.g4dirname}.{version}.tar.gz"

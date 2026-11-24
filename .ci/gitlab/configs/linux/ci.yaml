@@ -13,6 +13,8 @@ ci:
       - wrf
       build-job:
         tags: [ "spack", "huge" ]
+        # 12h for long ROCm/ML rebuilds (maximum allowed for AWS runners)
+        timeout: 720 minutes
         variables:
           CI_JOB_SIZE: huge
           SPACK_BUILD_JOBS: "12"

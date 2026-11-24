@@ -55,7 +55,8 @@ class PyZfit(PythonPackage):
     depends_on("py-hatch-vcs", type="build", when="@0.26:")
 
     depends_on("py-setuptools@42:", type="build", when="@:0.25")
-    depends_on("py-setuptools-scm-git-archive", type="build", when="@:0.25")
+    # setuptools-scm supports git now
+    # depends_on("py-setuptools-scm-git-archive", type="build", when="@:0.25")
     depends_on("py-setuptools-scm@3.4:+toml", type="build", when="@:0.25")
 
     variant("nlopt", default=False, description="Enable nlopt support")

@@ -11,10 +11,11 @@ class PyNumexpr(PythonPackage):
     """Fast numerical expression evaluator for NumPy"""
 
     homepage = "https://github.com/pydata/numexpr"
-    url = "https://github.com/pydata/numexpr/archive/v2.7.0.tar.gz"
+    pypi = "numexpr/numexpr-2.14.1.tar.gz"
 
     license("MIT", checked_by="lgarrison")
 
+    version("2.14.1", sha256="4be00b1086c7b7a5c32e31558122b7b80243fe098579b170967da83f3152b48b")
     version("2.10.2", sha256="7e61a8aa4dacb15787b31c31bd7edf90c026d5e6dbe727844c238726e8464592")
     version("2.9.0", sha256="4df4163fcab20030137e8f2aa23e88e1e42e6fe702387cfd95d7675e1d84645e")
     version("2.8.8", sha256="10b377c6ec6d9c01349d00e16dd82e6a6f4439c8c2b1945e490df1436c1825f5")
@@ -29,20 +30,26 @@ class PyNumexpr(PythonPackage):
     version("2.5", sha256="4ca111a9a27c9513c2e2f5b70c0a84ea69081d7d8e4512d4c3f26a485292de0d")
     version("2.4.6", sha256="2681faf55a3f19ba4424cc3d6f0a10610ebd49f029f8453f0ba64dd5c0fe4e0f")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
 
-    depends_on("python@3.7:", when="@2.8.3:", type=("build", "run"))
-    depends_on("python@3.9:", when="@2.8.7:", type=("build", "run"))
-    depends_on("py-setuptools", type="build")
+        depends_on("py-setuptools@77:", when="@2.12:")
+        depends_on("py-setuptools")
 
-    depends_on("py-numpy@2:", when="@2.10.2:", type="build")
-    depends_on("py-numpy@1.23:", when="@2.10.2:", type="run")
-    depends_on("py-numpy@1.13.3:1.25", type=("build", "run"), when="@2.8.3:2.9")
-    # https://github.com/pydata/numexpr/issues/397
-    depends_on("py-numpy@1.7:1.22", type=("build", "run"), when="@:2.7")
-    # https://github.com/pydata/numexpr/pull/478
-    depends_on("py-numpy@:1", when="@:2.9", type=("build", "run"))
+        depends_on("py-numpy@2:", when="@2.10.2:")
 
-    # Historical dependencies
-    depends_on("py-packaging", type=("build", "run"), when="@2.8.3")
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@2.11:")
+        depends_on("python@3.9:", when="@2.8.7:")
+        depends_on("python@3.7:", when="@2.8.3:")
+
+        depends_on("py-numpy@1.23:", when="@2.10.2:")
+        depends_on("py-numpy@1.13.3:1.25", when="@2.8.3:2.9")
+        # https://github.com/pydata/numexpr/issues/397
+        depends_on("py-numpy@1.7:1.22", when="@:2.7")
+        # https://github.com/pydata/numexpr/pull/478
+        depends_on("py-numpy@:1", when="@:2.9")
+
+        # Historical dependencies
+        depends_on("py-packaging", when="@2.8.3")

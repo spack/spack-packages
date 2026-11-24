@@ -17,9 +17,10 @@ class RTximeta(RPackage):
 
     bioc = "tximeta"
 
-    version("1.20.0", commit="c9cf6d6a80ca5129b91d723867aca0aec12e8299")
-    version("1.18.3", commit="3caed00397476cfe9c379f4bc5a361023fdd6ffa")
-    version("1.18.0", commit="8f87d53bbd6f2d97821dd8f7fdd54624928f862d")
+    with default_args(get_full_repo=True):
+        version("1.20.0", commit="c9cf6d6a80ca5129b91d723867aca0aec12e8299")
+        version("1.18.3", commit="3caed00397476cfe9c379f4bc5a361023fdd6ffa")
+        version("1.18.0", commit="8f87d53bbd6f2d97821dd8f7fdd54624928f862d")
 
     depends_on("r", type=("build", "run"))
     depends_on("r-annotationdbi", type=("build", "run"))

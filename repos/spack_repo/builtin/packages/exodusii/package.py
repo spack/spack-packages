@@ -126,6 +126,7 @@ class Exodusii(CMakePackage):
                 from_variant("BUILD_TESTING", "tests"),
                 from_variant("CMAKE_INSTALL_RPATH_USE_LINK_PATH", "shared"),
                 from_variant("BUILD_SHARED_LIBS", "shared"),
+                from_variant("SEACASExodus_ENABLE_SHARED", "shared"),
                 from_variant("SEACASExodus_ENABLE_THREADSAFE", "thread_safe"),
                 from_variant("TPL_ENABLE_Pthread", "thread_safe"),
                 from_variant(project_name_base + "_ENABLE_Fortran", "fortran"),

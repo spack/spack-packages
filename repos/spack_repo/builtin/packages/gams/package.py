@@ -17,6 +17,10 @@ class Gams(Package):
     homepage = "https://www.gams.com/"
     manual_download = True
 
+    license("LicenseRef-GAMS-Proprietary", checked_by="alecbcs")
+
+    redistribute(source=False, binary=False)
+
     version("27.2", md5="4f3f3484a4389661e0522a4cfe0289fd", expand=False)
 
     def url_for_version(self, version):

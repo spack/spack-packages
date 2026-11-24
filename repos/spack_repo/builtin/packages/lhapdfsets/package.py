@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import fnmatch
 import os
 
 from spack_repo.builtin.build_systems.bundle import BundlePackage
@@ -32,29 +33,47 @@ class Lhapdfsets(BundlePackage):
 
     variant(
         "sets",
-        description="Individiual lhapdf sets to install (all, default, or comma-separated list)",
+        description=(
+            "Individual lhapdf sets or patterns to install (all, default, or comma-separated list)"
+        ),
         multi=True,
         default="default",
     )
+
+    def available_sets(self):
+        with open(join_path(os.path.dirname(__file__), "pdfsets.index")) as index:
+            return [line.split()[1] for line in index]
+
+    def resolve_sets(self, requested_sets):
+        available_sets = self.available_sets()
+        default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
+        resolved_sets = []
+        seen_sets = set()
+
+        for requested_set in requested_sets:
+            if requested_set == "all":
+                matches = available_sets
+            elif requested_set == "default":
+                matches = default_sets
+            else:
+                matches = [
+                    available_set
+                    for available_set in available_sets
+                    if fnmatch.fnmatchcase(available_set, requested_set)
+                ]
+
+            for match in matches:
+                if match not in seen_sets:
+                    seen_sets.add(match)
+                    resolved_sets.append(match)
+
+        return resolved_sets
 
     def install(self, spec, prefix):
         mkdirp(self.prefix.share.lhapdfsets)
         tar = which("tar", required=True)
         curl = which("curl", required=True)
-        sets = self.spec.variants["sets"].value
-        if len(sets) == 1:
-            if sets[0] == "all":
-                # parse set names from index file
-                all_sets = [
-                    _line.split()[1]
-                    for _line in open(
-                        join_path(os.path.dirname(__file__), "pdfsets.index")
-                    ).readlines()
-                ]
-                sets = all_sets
-            elif sets[0] == "default":
-                default_sets = ["MMHT2014lo68cl", "MMHT2014nlo68cl", "CT14lo", "CT14nlo"]
-                sets = default_sets
+        sets = self.resolve_sets(self.spec.variants["sets"].value)
 
         with working_dir(self.prefix.share.lhapdfsets):
             for s in sets:

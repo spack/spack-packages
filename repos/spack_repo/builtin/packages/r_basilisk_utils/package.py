@@ -22,6 +22,7 @@ class RBasiliskUtils(RPackage):
 
     license("GPL-3.0-only")
 
-    version("1.12.0", commit="8314f9a72ecc0f20b180431aec93647320de8c2c")
+    with default_args(get_full_repo=True):
+        version("1.12.0", commit="8314f9a72ecc0f20b180431aec93647320de8c2c")
 
     depends_on("r-dir-expiry", type=("build", "run"))

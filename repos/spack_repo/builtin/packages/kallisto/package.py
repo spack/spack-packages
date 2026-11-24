@@ -46,6 +46,13 @@ class Kallisto(CMakePackage):
     patch("limits.patch", when="@:0.46")
     patch("htslib_configure.patch", when="@0.44.0:0.48.0^autoconf@2.70:")
 
+    # https://github.com/pachterlab/kallisto/pull/506
+    patch(
+        "https://github.com/pachterlab/kallisto/commit/a5caefb.patch?full_index=1",
+        sha256="e29be49cc52a18f78b13b381f2d97cdf047ea45ba6b61b94caa54d46e195d0e2",
+        when="@0.50.1:",
+    )
+
     @run_before("cmake")
     def autoreconf(self):
         # Versions of autoconf greater than 2.69 need config.guess and

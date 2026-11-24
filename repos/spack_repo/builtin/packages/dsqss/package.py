@@ -24,7 +24,8 @@ class Dsqss(CMakePackage):
 
     variant("mpi", default=True, description="build mpi support")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("mpi", when="+mpi")
     depends_on("python", type=("build", "run"))

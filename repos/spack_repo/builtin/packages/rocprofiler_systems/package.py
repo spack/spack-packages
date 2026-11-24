@@ -5,6 +5,7 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
@@ -13,22 +14,31 @@ def submodules(package):
     submodules = [
         "projects/rocprofiler-systems/external/timemory",
         "projects/rocprofiler-systems/external/perfetto",
-        "projects/rocprofiler-systems/external/elfio",
         "projects/rocprofiler-systems/external/dyninst",
-        "projects/rocprofiler-systems/external/PTL",
         "projects/rocprofiler-systems/external/papi",
         "projects/rocprofiler-systems/external/pybind11",
-        "projects/rocprofiler-systems/examples/openmp/external/ompvv",
+        "projects/rocprofiler-systems/external/onetbb",
     ]
+    if package is not None and package.spec.satisfies("@:7.2"):
+        submodules.append("projects/rocprofiler-systems/external/PTL")
+    if package is not None and package.spec.satisfies("@:7.13"):
+        submodules.append("projects/rocprofiler-systems/examples/openmp/external/ompvv")
+    if package is not None and package.spec.satisfies("@:10.0"):
+        submodules.append("projects/rocprofiler-systems/external/elfio")
     return submodules
 
 
-class RocprofilerSystems(CMakePackage):
+class RocprofilerSystems(ROCmLibrary, CMakePackage):
     """Application Profiling, Tracing, and Analysis"""
 
     homepage = "https://github.com/ROCm/rocprofiler-systems"
     git = "https://github.com/ROCm/rocm-systems.git"
-    url = "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-6.4.3.tar.gz"
+
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/rocprofiler-systems/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
     executables = ["rocprof-sys-sample"]
     tags = ["rocm"]
 
@@ -36,6 +46,43 @@ class RocprofilerSystems(CMakePackage):
 
     license("MIT")
 
+    version(
+        "10.1.0",
+        tag="therock-10.1",
+        commit="7da43026e4f2ef7600433c38c820732f7a205d22",
+        submodules=submodules,
+    )
+    version(
+        "10.0.0",
+        tag="therock-10.0",
+        commit="6b0e43f341195e203754e08f850e437ff2fc09f9",
+        submodules=submodules,
+    )
+    version(
+        "7.14.0",
+        tag="therock-7.14",
+        commit="2b22ab0195cc1461cd9abf3b969e9dd7c10af350",
+        submodules=submodules,
+    )
+    version(
+        "7.13.0",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="therock-7.13",
+        submodules=submodules,
+    )
+    version(
+        "7.2.3",
+        tag="rocm-7.2.3",
+        commit="c2d94761153e1033a91744842dfc66eddd631fde",
+        submodules=submodules,
+    )
+    version(
+        "7.2.1",
+        git="https://github.com/ROCm/rocm-systems.git",
+        tag="rocm-7.2.1",
+        commit="e1a6bc5663304b9c586b3254b8920f2981057804",
+        submodules=submodules,
+    )
     version(
         "7.2.0",
         git="https://github.com/ROCm/rocm-systems.git",
@@ -170,16 +217,44 @@ class RocprofilerSystems(CMakePackage):
             "(target application can use any MPI installation)"
         ),
     )
-    variant("internal-dyninst", default=False, description="build internal dyninst")
+    variant(
+        "internal-dyninst",
+        default=False,
+        when="@:7.2",
+        description="build internal dyninst",
+    )
+    variant(
+        "internal-dyninst",
+        default=True,
+        when="@7.13:",
+        description="build internal dyninst",
+    )
     variant("internal-tbb", default=False, description="build internal tbb")
 
     conflicts("%rocmcc", when="+internal-tbb")
     conflicts("%clang", when="+internal-tbb")
+    conflicts("~rocm", when="@7.13:")
     extends("python", when="+python")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    resource(
+        name="gotcha",
+        url="https://github.com/ROCm/GOTCHA/archive/6ef1232a0acc99f3340c2ca4c5d23890e9b8a459.tar.gz",
+        sha256="b8bf9b65dc85a89b76e95385fc8c73ce5369a0af161b4b86a5b4bff8c4b6605c",
+        destination="projects/rocprofiler-systems/external/timemory/external",
+        placement="gotcha-resource",
+        when="@10.0:",
+    )
+    resource(
+        name="binutils",
+        url="https://ftpmirror.gnu.org/gnu/binutils/binutils-2.46.0.tar.bz2",
+        sha256="0f3152632a2a9ce066f20963e9bb40af7cf85b9b6c409ed892fd0676e84ecd12",
+        expand=False,
+        placement="binutils",
+        when="@10.0",
+    )
+
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     # hard dependencies
     depends_on("cmake@3.16:", type="build")
@@ -196,8 +271,10 @@ class RocprofilerSystems(CMakePackage):
         when="@7.1.1:",
     )
     depends_on("libiberty+pic", when="+internal-dyninst")
-    depends_on("intel-tbb@2019:2020.3", when="~internal-tbb")
+    depends_on("intel-tbb@2019:2020.3", when="@:7.13 ~internal-tbb")
+    depends_on("intel-tbb@2019:2021.3", when="@7.14: ~internal-tbb")
     depends_on("sqlite", when="@7.1:")
+    depends_on("tcl", type="build", when="@7.1:")
     depends_on("elfutils")
     depends_on("m4")
     depends_on("texinfo")
@@ -212,6 +289,11 @@ class RocprofilerSystems(CMakePackage):
     depends_on("automake", when="+rocm")
     depends_on("libtool", when="+rocm")
     depends_on("sqlite", when="@7.1:")
+    depends_on("spdlog", when="@10:")
+    depends_on("nlohmann-json", when="@10:")
+    depends_on("libiberty", when="@10:")
+    depends_on("yaml-cpp@:0.8.0", when="@10:")
+
     with when("+rocm"):
         for ver in ["6.3.0", "6.3.1", "6.3.2", "6.3.3"]:
             depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
@@ -234,6 +316,12 @@ class RocprofilerSystems(CMakePackage):
             "7.1.0",
             "7.1.1",
             "7.2.0",
+            "7.2.1",
+            "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"hip@{ver}", when=f"@{ver}")
 
@@ -247,11 +335,32 @@ class RocprofilerSystems(CMakePackage):
             "7.1.0",
             "7.1.1",
             "7.2.0",
+            "7.2.1",
+            "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
+            "10.1.0",
         ]:
             depends_on(f"rocprofiler-sdk@{ver}", when=f"@{ver}")
 
-        for ver in ["7.0.0", "7.0.2", "7.1.0", "7.1.1", "7.2.0"]:
+        for ver in [
+            "7.0.0",
+            "7.0.2",
+            "7.1.0",
+            "7.1.1",
+            "7.2.0",
+            "7.2.1",
+            "7.2.3",
+            "7.13.0",
+            "7.14.0",
+            "10.0.0",
+            "10.1.0",
+        ]:
             depends_on(f"amdsmi@{ver}", when=f"@{ver}")
+
+        for ver in ["10.0.0", "10.1.0"]:
+            depends_on(f"profiler-hub@{ver}", when=f"@{ver}")
 
     # Fix GCC 13 build failure caused by a missing include of <array> in dyninst
     patch(
@@ -263,9 +372,11 @@ class RocprofilerSystems(CMakePackage):
     patch(
         "https://github.com/ROCm/timemory/commit/b5e41aa9e4b83ab0868211d81924ac4f639bd998.patch?full_index=1",
         sha256="2696f59dd9b6e74bf44bfcc56a0536c3f1f3845c29fac18f0224dee72bd9225f",
-        when="%rocmcc",
+        when="@:7.1 %rocmcc",
         working_dir="external/timemory",
     )
+    # Single-URL ExternalProject: CMake strips file:// then rejects path+URL lists.
+    patch("0002-binutils-single-url-10.0.patch", when="@10.0")
 
     @property
     def root_cmakelists_dir(self):
@@ -273,6 +384,17 @@ class RocprofilerSystems(CMakePackage):
             return "."
         else:
             return "projects/rocprofiler-systems"
+
+    def patch(self):
+        if self.spec.satisfies("@10.0:"):
+            # The timemory submodule ships an empty external/gotcha directory, and Spack
+            # will not copy a resource over a path that already exists.
+            external_dir = join_path(
+                "projects", "rocprofiler-systems", "external", "timemory", "external"
+            )
+            gotcha_dir = join_path(external_dir, "gotcha")
+            remove_linked_tree(gotcha_dir)
+            rename(join_path(external_dir, "gotcha-resource"), gotcha_dir)
 
     def cmake_args(self):
         spec = self.spec
@@ -327,10 +449,30 @@ class RocprofilerSystems(CMakePackage):
             args.append(self.define_from_variant("DYNINST_BUILD_TBB", "internal-tbb"))
         if spec.satisfies("@7.2:"):
             args.append(self.define("libunwind_ROOT", self.spec["libunwind"].prefix))
+        if spec.satisfies("@10.0:"):
+            args.append(self.define("ROCPROFSYS_BUILD_SQLITE3", False))
+            args.append(self.define("ROCPROFSYS_BUILD_SPDLOG", False))
+            args.append(self.define("ROCPROFSYS_BUILD_NLOHMANN_JSON", False))
+            args.append(self.define("ROCPROFSYS_BUILD_LIBIBERTY", False))
+            args.append(self.define("ROCPROFSYS_BUILD_ELFUTILS", False))
+            args.append(
+                self.define(
+                    "TIMEMORY_BINUTILS_DOWNLOAD_URL",
+                    join_path(
+                        self.stage.source_path,
+                        "binutils",
+                        "binutils-2.46.0.tar.bz2",
+                    ),
+                )
+            )
+            args.append(self.define("TIMEMORY_BUILD_YAML", False))
+            args.append(self.define("TIMEMORY_BUILD_GOOGLE_TEST", False))
+            args.append(self.define("TIMEMORY_BUILD_OMPT", False))
+            args.append(self.define("TIMEMORY_BUILD_DYNINST", False))
         return args
 
     def flag_handler(self, name, flags):
-        if self.spec.satisfies("@6.3:"):
+        if self.spec.satisfies("@6.3:7.1") or self.spec.satisfies("@7.14:"):
             if name == "ldflags":
                 flags.append("-lintl")
         return (flags, None, None)
@@ -340,7 +482,10 @@ class RocprofilerSystems(CMakePackage):
         output = Executable(exe)("--version", output=str, error=str)
         match = re.search(r"rocm: v(\d+)\.(\d+)", output)
         if match:
-            ver = "{0}.{1}".format(int(match.group(1)), int(match.group(2)))
+            major, minor = int(match.group(1)), int(match.group(2))
+            if (major, minor) == (7, 15):
+                return "10.0.0"
+            ver = "{0}.{1}".format(major, minor)
         else:
             ver = None
         return ver

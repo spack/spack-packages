@@ -36,7 +36,7 @@ class AotritonLlvm(CMakePackage, CudaPackage, CompilerPackage):
     depends_on("libxml2", type="link")
     depends_on("py-pybind11")
     depends_on("pkgconfig", type="build")
-    depends_on("py-nanobind", when="@0.10")
+    depends_on("py-nanobind@2.4:2", when="@0.10")
 
     root_cmakelists_dir = "llvm"
 

@@ -64,6 +64,13 @@ class Flex(AutotoolsPackage):
         when="@2.6.4",
     )
 
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # libfl leaves yylex undefined, so it only links as a dylib when libtool passes
+        # -undefined dynamic_lookup, which it does only for MACOSX_DEPLOYMENT_TARGET=10.*
+        # See https://github.com/spack/spack-packages/pull/5525
+        if self.spec.platform == "darwin":
+            env.set("MACOSX_DEPLOYMENT_TARGET", "10.16")
+
     def flag_handler(self, name, flags):
         spec = self.spec
         if name == "cflags":
@@ -114,7 +121,9 @@ class Flex(AutotoolsPackage):
         return url
 
     def configure_args(self):
-        args = []
+        # Disable running the host's flex to be independent of it:
+        # --disable-bootstrap and setting LEX=: disables probing and running the host's flex.
+        args = ["--disable-bootstrap", "LEX=:"]
         args += self.enable_or_disable("nls")
         return args
 

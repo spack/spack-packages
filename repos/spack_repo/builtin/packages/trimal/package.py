@@ -11,11 +11,12 @@ class Trimal(MakefilePackage):
     """A tool for automated alignment trimming in large-scale
     phylogenetic analyses"""
 
-    homepage = "https://github.com/scapella/trimal"
-    url = "https://github.com/scapella/trimal/archive/v1.4.1.tar.gz"
+    homepage = "https://github.com/inab/trimal"
+    url = "https://github.com/inab/trimal/archive/v1.5.1.tar.gz"
 
     license("GPL-3.0-or-later")
 
+    version("1.5.1", sha256="58751054861b152e92214ff8c01a132071230614e8e777a7c9280d03648cde3b")
     version("1.4.1", sha256="cb8110ca24433f85c33797b930fa10fe833fa677825103d6e7f81dd7551b9b4e")
 
     depends_on("cxx", type="build")  # generated

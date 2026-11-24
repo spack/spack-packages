@@ -1,0 +1,14 @@
+diff --git a/warp/native/clang/clang.cpp.orig b/warp/native/clang/clang.cpp
+index c5b2f9d..e3bf1f7 100644
+--- a/warp/native/clang/clang.cpp.orig
++++ b/warp/native/clang/clang.cpp
+@@ -110,8 +110,7 @@ static const HostCpuInfo& get_host_cpu_info()
+         HostCpuInfo result;
+         result.name = llvm::sys::getHostCPUName().str();
+ 
+-        llvm::StringMap<bool> feature_map;
+-        llvm::sys::getHostCPUFeatures(feature_map);
++        auto feature_map = llvm::sys::getHostCPUFeatures();
+ 
+         for (const auto& f : feature_map) {
+             // Skip avx10.1-256: getHostCPUFeatures() reports it on Intel Granite Rapids,

@@ -17,6 +17,7 @@ class PyApacheTvmFfi(PythonPackage):
     license("Apache-2.0")
 
     version("main", branch="main")
+    version("0.1.11", sha256="153cd2c5a9717804cb0bcd9b2709f22a1e5f80ed05b5a490faf5949b136eedba")
     version("0.1.6", sha256="53088126f7fce11823ddf0fb101e968a90298d79fd68829c0a981f25467a574c")
     version("0.1.5", sha256="21bc35cb9d9fdec54061b802a2b432fd1155d2733da94df8678ff21bab1d9a2f")
     version("0.1.4", sha256="1a6e635b671e962bbc3bf1bc97bfd82e4c0f1bedf27c8d183bb282664974d0d3")

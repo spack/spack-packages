@@ -44,7 +44,7 @@ class PyLightningUtilities(PythonPackage):
         depends_on("py-setuptools@:81", when="@:0.15.2")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/l/lightning-utilities/{}-{}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/l/{0}/{0}-{1}.tar.gz"
         if version >= Version("0.11.3"):
             name = "lightning_utilities"
         else:

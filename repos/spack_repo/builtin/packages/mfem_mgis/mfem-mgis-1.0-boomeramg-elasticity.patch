@@ -1,0 +1,14 @@
+diff --git a/src/LinearSolverFactory.cxx b/src/LinearSolverFactory.cxx
+index 57a06ac8a1..7d65e9cdda 100644
+--- a/src/LinearSolverFactory.cxx
++++ b/src/LinearSolverFactory.cxx
+@@ -34,3 +34,8 @@ namespace mfem_mgis {
+       if (strategy == "Elasticity") {
+-        amg->SetElasticityOptions(&fespace);
++        if (fespace.GetOrdering() == mfem::Ordering::byVDIM) {
++          amg->SetElasticityOptions(&fespace);
++        } else {
++          // the elasticity version of BoomerAMG requires Ordering::byVDIM
++          amg->SetSystemsOptions(fespace.GetMesh()->Dimension(), true);
++        }
+       } else if (strategy == "System") {

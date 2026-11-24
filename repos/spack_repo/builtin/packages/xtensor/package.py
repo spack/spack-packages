@@ -48,7 +48,14 @@ class Xtensor(CMakePackage):
     depends_on("xtl@0.3.3:0.3", when="@0.13.1")
     depends_on("xsimd", when="@develop")
 
-    depends_on("xsimd@13.2.0:", when="@0.26.0: +xsimd")
+    # NOTE: exploratory tightening (not yet upstreamed) while packaging
+    # py-proteus -- the upstream depends_on() here is an open-ended lower
+    # bound, but xtensor@0.27.1's CMakeLists.txt find_package(xsimd) call
+    # rejects xsimd@14 ("compatible with requested version 13.2.0" not
+    # satisfied by 14.3.0), so the concretizer needs an explicit upper
+    # bound to avoid picking an incompatible xsimd.
+    depends_on("xsimd@13.2.0:13", when="@0.26.0:0.27 +xsimd")
+    depends_on("xsimd@13.2.0:", when="@0.28.0: +xsimd")
     depends_on("xsimd@11.0.0:", when="@0.25 +xsimd")
     depends_on("xsimd@10.0.0:", when="@0.24.4:0.24 +xsimd")
     depends_on("xsimd@9.0.1:", when="@0.24.3:0.24 +xsimd")

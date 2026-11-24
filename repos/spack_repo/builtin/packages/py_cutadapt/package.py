@@ -18,6 +18,11 @@ class PyCutadapt(PythonPackage):
 
     license("MIT")
 
+    version("5.2", sha256="2394deead42ecae5fe0fdf369e35f3e2afed770e14059582272779c2e8295d3c")
+    version("5.1", sha256="6bc76345c0a45f6b680cb1164e48eb1f81815c764ec471284ab6234c6653b937")
+    version("5.0", sha256="cd66872b6635c068cf223f72fb0cc93b2454088a3e807a550bb36f717d25ae29")
+    version("4.9", sha256="da3b45775b07334d2e2580a7b154d19ea7e872f0da813bb1ac2a4da712bfc223")
+    version("4.8", sha256="ac852f6b5f2d1147d0d34bef2eaa5879776f81c69a35dd328a701aae39ec6034")
     version("4.7", sha256="8738a35b363eaf615665a4e7d1b4beb385cd93fb7ffdcf82cd4ab6457acc879b")
     version("4.4", sha256="4554157c673022e1c433fcd6e3b803008fef60c8e71c01215e4aa04b0f09fe83")
     version("4.3", sha256="319de860f975977e080ea42d9d255322060693ca39b7be51187831311702fe29")
@@ -28,6 +33,10 @@ class PyCutadapt(PythonPackage):
     version("2.5", sha256="ced79e49b93e922e579d0bb9d21298dcb2d7b7b1ea721feed484277e08b1660b")
     version("1.13", sha256="aa9f2c1f33dc081fe94f42b1250e4382b8fb42cabbf6e70a76ff079f211d5fc0")
 
+    # version 5 deps
+    depends_on("python@3.9:", type=("build", "run"), when="@5:")
+    depends_on("py-setuptools@78:", type="build", when="@5.1:")
+    depends_on("py-dnaio@1.2.3:", type=("build", "run"), when="@5:")
     # version 4 deps
     depends_on("python@3.8:", type=("build", "run"), when="@4.7:")
     depends_on("python@3.7:", type=("build", "run"), when="@4.1:4.6")

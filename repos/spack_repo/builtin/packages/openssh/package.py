@@ -26,14 +26,35 @@ class Openssh(AutotoolsPackage):
 
     license("SSH-OpenSSH")
 
-    version("10.2p1", sha256="ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2")
-    version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
-    version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
-    version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
-    version("9.6p1", sha256="910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c")
-    version("9.5p1", sha256="f026e7b79ba7fb540f75182af96dc8a8f1db395f922bbc9f6ca603672686086b")
-    version("9.4p1", sha256="3608fd9088db2163ceb3e600c85ab79d0de3d221e59192ea1923e23263866a85")
-    version("9.3p1", sha256="e9baba7701a76a51f3d85a62c383a3c9dcd97fa900b859bc7db114c1868af8a8")
+    version("10.6p2", sha256="9ae44872090cf2f06b3cf9ff147e7f16f309671340763ed2f99248398ae29d5b")
+    version("10.6p1", sha256="a9dc9565dffe8640f64d863cd29a32bc4a3dbdec0566a7fc44c5d6ee767d5f39")
+    with default_args(deprecated=True):
+        version(
+            "10.3p1", sha256="56682a36bb92dcf4b4f016fd8ec8e74059b79a8de25c15d670d731e7d18e45f4"
+        )
+        # https://www.cvedetails.com/cve/CVE-2026-35414/
+        # https://www.cvedetails.com/cve/CVE-2026-35387/
+        # https://www.cvedetails.com/cve/CVE-2026-35386/
+        # https://www.cvedetails.com/cve/CVE-2026-35385/
+        version(
+            "10.2p1", sha256="ccc42c0419937959263fa1dbd16dafc18c56b984c03562d2937ce56a60f798b2"
+        )
+        # https://www.cvedetails.com/cve/CVE-2025-32728/
+        # https://www.cvedetails.com/cve/CVE-2025-26466/
+        # https://www.cvedetails.com/cve/CVE-2025-26465/
+        version("9.9p1", sha256="b343fbcdbff87f15b1986e6e15d6d4fc9a7d36066be6b7fb507087ba8f966c02")
+        # https://www.cvedetails.com/cve/CVE-2024-6387/
+        version("9.8p1", sha256="dd8bd002a379b5d499dfb050dd1fa9af8029e80461f4bb6c523c49973f5a39f3")
+        # https://www.cvedetails.com/cve/CVE-2024-39894/
+        version("9.7p1", sha256="490426f766d82a2763fcacd8d83ea3d70798750c7bd2aff2e57dc5660f773ffd")
+        version("9.6p1", sha256="910211c07255a8c5ad654391b40ee59800710dd8119dd5362de09385aa7a777c")
+        # https://www.cvedetails.com/cve/CVE-2023-51385/
+        # https://www.cvedetails.com/cve/CVE-2023-51384/
+        # https://www.cvedetails.com/cve/CVE-2023-48795/
+        version("9.5p1", sha256="f026e7b79ba7fb540f75182af96dc8a8f1db395f922bbc9f6ca603672686086b")
+        version("9.4p1", sha256="3608fd9088db2163ceb3e600c85ab79d0de3d221e59192ea1923e23263866a85")
+        # https://www.cvedetails.com/cve/CVE-2023-38408/
+        version("9.3p1", sha256="e9baba7701a76a51f3d85a62c383a3c9dcd97fa900b859bc7db114c1868af8a8")
 
     variant(
         "gssapi", default=True, description="Enable authentication via Kerberos through GSSAPI"
@@ -82,6 +103,18 @@ class Openssh(AutotoolsPackage):
         when="@9.8p1:9 platform=darwin",
     )
 
+    # The macOS 27 SDK dropped the kSBXProfile* declarations from <sandbox.h>, so
+    # sandbox-darwin.c no longer compiles. Backport of upstream commit d4b4c304
+    # ("Require kSBXProfilePureComputation for OS X sandbox", 2026-08-15, not in any
+    # release up to 10.5p1): configure only selects the darwin sandbox when the constant
+    # is declared. Includes the matching Autoconf 2.71 regeneration of configure and
+    # config.h.in, since the tarball's configure is used as-is. The hunk order matters:
+    # configure refuses to run if configure.ac is newer than itself, so configure is
+    # patched after configure.ac. Keep for the bounded versions for as long as they
+    # are kept; later releases carry the fix.
+    # https://github.com/openssh/openssh-portable/commit/d4b4c304a202f5099f2f60be9af9ba266212bb74
+    patch("darwin-sandbox-require-ksbxprofile.patch", when="@10:10.5p1 platform=darwin")
+
     @classmethod
     def determine_version(cls, exe):
         output = Executable(exe)("-V", output=str, error=str).rstrip()
@@ -117,7 +150,7 @@ class Openssh(AutotoolsPackage):
 
     def install(self, spec, prefix):
         """Install generates etc/sshd_config, but it fails in parallel mode"""
-        make("install", parallel=False)
+        make("install-nokeys", parallel=False)
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         """Until spack supports a real implementation of setup_test_environment()"""

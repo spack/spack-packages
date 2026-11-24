@@ -24,5 +24,5 @@ class PyCircus(PythonPackage):
     depends_on("py-flit-core@3.4:3", type="build")
 
     depends_on("py-psutil", type=("build", "run"))
-    depends_on("py-pyzmq@17.0:", type=("build", "run"))
+    depends_on("py-pyzmq@17.0: +green", type=("build", "run"))
     depends_on("py-tornado@5.0.2:", type=("build", "run"))

@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
-from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 
 from spack.package import *
 
 
-class ComposableKernel(CMakePackage):
+class ComposableKernel(ROCmLibrary, CMakePackage):
     """Composable Kernel: Performance Portable Programming Model
     for Machine Learning Tensor Operators."""
 
@@ -18,15 +17,20 @@ class ComposableKernel(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
+    libraries = ["libdevice_contraction_operations.a", "libdevice_conv_operations.a"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"
-        return url.format(version)
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/composable_kernel/archive/refs/tags/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
+    version("7.13.0", sha256="ae19ac6c8a86d0e1685d937409390506fa0f80f3cb82ea3e3b76071898c25771")
+    version("7.2.3", sha256="300cc50720d40bad7c7ed1f6d67e8c5ebecaba62c07a6ea1cc5813c0ea2e41b5")
+    version("7.2.1", sha256="bc5140deec3b1c93c13796a8a6d2cb7e50aa87fd89f60f87c8d801d66f2fd156")
     version("7.2.0", sha256="8ad5f4a11f1ed8a7b927f2e65f24083ca6ce902a42021a66a815190a91ccb654")
     version("7.1.1", sha256="e1174a4b6faa12ef31dac0324547fd49aca09fee380bd89ecd49a44bb34b72cc")
     version("7.1.0", sha256="03c7fffcad2aed373486315266fdf9dd400a280d383b543ff48ebd3acb3f985f")
@@ -74,6 +78,12 @@ class ComposableKernel(CMakePackage):
     generator("ninja")
 
     for ver in [
+        "10.1.0",
+        "10.0.0",
+        "7.14.0",
+        "7.13.0",
+        "7.2.3",
+        "7.2.1",
         "7.2.0",
         "7.1.1",
         "7.1.0",
@@ -106,6 +116,15 @@ class ComposableKernel(CMakePackage):
     # https://github.com/ROCm/composable_kernel/commit/959073842c0db839d45d565eb260fd018c996ce4
     patch("0001-mark-kernels-maybe-unused.patch", when="@6.2")
 
+    # Fix CMake error with set_source_files_properties COMPILE_FLAGS
+    # The offload_targets variable contains spaces and needs to be quoted
+    # PR: https://github.com/ROCm/rocm-libraries/pull/11440
+    patch(
+        "https://github.com/ROCm/rocm-libraries/commit/17f401ff6fdb33828c505a70c7dad126ad437150.patch?full_index=1",
+        when="@7.14.0",
+        sha256="bd5b65d48b23a8fa489a302c32d6d2029a4ea76ece4b48ee9cb6b7b7840efa5c",
+    )
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.2:"):
@@ -132,10 +151,14 @@ class ComposableKernel(CMakePackage):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.run_tests:
             args.append(self.define("BUILD_TESTING", "ON"))
-        elif self.spec.satisfies("@:6.1"):
+        else:
+            args.append(self.define("BUILD_TESTING", "OFF"))
+        if self.spec.satisfies("@:6.1"):
             args.append(self.define("INSTANCES_ONLY", "ON"))
         if self.spec.satisfies("@:5.7"):
             args.append(self.define("CMAKE_CXX_FLAGS", "-O3"))
         if self.spec.satisfies("@6.2:"):
             args.append(self.define("BUILD_DEV", "OFF"))
+        if self.spec.satisfies("@7.14:"):
+            args.append(self.define("BUILD_CK_EXAMPLES", "OFF"))
         return args

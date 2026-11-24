@@ -19,6 +19,7 @@ class Raxml(Package):
 
     license("GPL-3.0-or-later")
 
+    version("8.2.13", sha256="28e500793324bd7d330b396ef27ea49c9186fa5e1edb3d5439036dc6c33e6067")
     version("8.2.12", sha256="338f81b52b54e16090e193daf36c1d4baa9b902705cfdc7f4497e3e09718533b")
     version("8.2.11", sha256="08cda74bf61b90eb09c229e39b1121c6d95caf182708e8745bd69d02848574d7")
 
@@ -30,7 +31,7 @@ class Raxml(Package):
     depends_on("mpi", when="+mpi")
     depends_on("gmake", type="build")
 
-    patch("nox86.patch")
+    patch("nox86.patch", when="@:8.2.12")
 
     # Compiles with either GCC or ICC.
     conflicts("%cce")
@@ -44,6 +45,10 @@ class Raxml(Package):
     parallel = False
 
     def install(self, spec, prefix):
+        if spec.satisfies("%gcc@13:"):
+            filter_file(r"^#define (false|true) [01]$", "", "rmq.h")
+            filter_file(r"^typedef int bool;$", "#include <stdbool.h>", "rmq.h")
+
         mkdirp(prefix.bin)
         files = glob.iglob("Makefile.*")
         for file in files:
@@ -52,7 +57,7 @@ class Raxml(Package):
             if spec.satisfies("+mpi"):
                 makefile.filter("mpicc", self.spec["mpi"].mpicc)
 
-        if spec.target.family == "x86_64":
+        if spec.target.family == "x86_64" or spec.satisfies("@8.2.13:"):
             if spec.satisfies("+mpi +pthreads") and "avx" in spec.target:
                 make("-f", "Makefile.AVX.HYBRID.gcc")
                 install("raxmlHPC-HYBRID-AVX", prefix.bin)

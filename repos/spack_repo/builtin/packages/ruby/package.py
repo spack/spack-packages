@@ -25,6 +25,7 @@ class Ruby(AutotoolsPackage, NMakePackage):
 
     license("Ruby AND BSD-2-Clause AND MIT", checked_by="tgamblin")
 
+    version("4.0.9", sha256="c35350682ff050b79702d57ade4516e7336063f510155d19fb2fb5b3f3909511")
     version("3.3.5", sha256="3781a3504222c2f26cb4b9eb9c1a12dbf4944d366ce24a9ff8cf99ecbce75196")
     version("3.3.4", sha256="fe6a30f97d54e029768f2ddf4923699c416cdbc3a6e96db3e2d5716c7db96a34")
     version("3.3.2", sha256="3be1d100ebf2a0ce60c2cd8d22cd9db4d64b3e04a1943be2c4ff7b520f2bcb5b")
@@ -57,6 +58,10 @@ class Ruby(AutotoolsPackage, NMakePackage):
             depends_on("readline", when="+readline")
             depends_on("zlib-api")
             depends_on("libyaml", when="@3:")
+            # Ruby 3.0 does not support OpenSSL 3. Support for OpenSSL 4 was backported to the
+            # openssl gem bundled with Ruby 3.3.12, 3.4.10 and 4.0.6.
+            depends_on("openssl", when="@3.1:")
+            depends_on("openssl@:3", when="@3.1:3.3.11,3.4.0:3.4.9,4.0.0:4.0.5")
             with when("+yjit"):
                 depends_on("rust@1.58:")
 
@@ -120,6 +125,10 @@ class SetupEnvironment:
 class AutotoolsBuilder(autotools.AutotoolsBuilder, SetupEnvironment):
     def configure_args(self):
         args = []
+        if self.spec.satisfies("^openssl"):
+            openssl = self.spec["openssl"]
+            args.append("--with-openssl-include=%s" % openssl.headers.directories[0])
+            args.append("--with-openssl-lib=%s" % openssl.libs.directories[0])
         if "+readline" in self.spec:
             args.append("--with-readline-dir=%s" % self.spec["readline"].prefix)
         if "^tk" in self.spec:

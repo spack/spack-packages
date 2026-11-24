@@ -19,18 +19,22 @@ class XtensorPython(CMakePackage):
     license("BSD-3-Clause")
 
     version("develop", branch="master")
+    version("0.28.0", sha256="3be09f2bc284e5a468937ad411a9976f9ab7ea5d0df40f5b1964a3694e7ee931")
     version("0.23.1", sha256="450b25f5c739df174b2a50774b89e68b23535fdc37cb55bd542ffdb7c78991ab")
     version("0.17.0", sha256="30f2e8c99376e38f942d62c0d2959bc1e52a562a4f8cc5e27ddc4d572a25e34c")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("xtensor", when="@develop")
+    depends_on("xtensor@0.26.0:", when="@0.28.0")
     depends_on("xtensor@0.20.6:0.20", when="@0.23.1")
     depends_on("xtensor@0.15.1:0.15", when="@0.17.0")
     depends_on("xtl", when="@develop")
     depends_on("xtl@0.6.4:0.6", when="@0.23.1")
     depends_on("xtl@0.4.0:0.4", when="@0.17.0")
-    depends_on("py-pybind11@2.2.1:2.2")
+    depends_on("py-pybind11@2.6.1:", when="@0.28.0")
+    depends_on("py-pybind11@2.2.1:2.2", when="@:0.23.1")
 
     depends_on("py-numpy")
     depends_on("python", type=("build", "link", "run"))

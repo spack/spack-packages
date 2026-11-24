@@ -12,6 +12,7 @@ spack:
     deprecated: true  # allow old python versions
 
   specs:
+  - clingo-bootstrap +optimized ^python@3.14
   - clingo-bootstrap +optimized ^python@3.13
   - clingo-bootstrap +optimized ^python@3.12
   - clingo-bootstrap +optimized ^python@3.11
@@ -19,6 +20,7 @@ spack:
   - clingo-bootstrap +optimized ^python@3.9
   - clingo-bootstrap +optimized ^python@3.8
 
+  - clingo-bootstrap@spack +optimized ^python@3.14
   - clingo-bootstrap@spack +optimized ^python@3.13
   - clingo-bootstrap@spack +optimized ^python@3.12
   - clingo-bootstrap@spack +optimized ^python@3.11

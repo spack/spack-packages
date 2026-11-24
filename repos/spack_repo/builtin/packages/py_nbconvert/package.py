@@ -16,24 +16,51 @@ class PyNbconvert(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("7.17.1", sha256="34d0d0a7e73ce3cbab6c5aae8f4f468797280b01fd8bd2ca746da8569eddd7d2")
-    version("7.16.6", sha256="576a7e37c6480da7b8465eefa66c17844243816ce1ccc372633c6b71c3c0f582")
-    version("7.16.4", sha256="86ca91ba266b0a448dc96fa6c5b9d98affabde2867b363258703536807f9f7f4")
-    version("7.16.3", sha256="a6733b78ce3d47c3f85e504998495b07e6ea9cf9bf6ec1c98dda63ec6ad19142")
-    version("7.16.2", sha256="8310edd41e1c43947e4ecf16614c61469ebc024898eb808cce0999860fc9fb16")
-    version("7.16.1", sha256="e79e6a074f49ba3ed29428ed86487bf51509d9aab613bd8522ac08f6d28fd7fd")
-    version("7.16.0", sha256="813e6553796362489ae572e39ba1bff978536192fb518e10826b0e8cadf03ec8")
-    version("7.15.0", sha256="ff3f54a1a5e1e024beb9fde8946d05b6d0bf68cd14b5f2f9dc5b545c8bc71055")
-    version("7.14.2", sha256="a7f8808fd4e082431673ac538400218dd45efd076fbeb07cc6e5aa5a3a4e949e")
-    version("7.14.1", sha256="20cba10e0448dc76b3bebfe1adf923663e3b98338daf77b97b42511ef5a88618")
-    version("7.4.0", sha256="51b6c77b507b177b73f6729dba15676e42c4e92bcb00edc8cc982ee72e7d89d7")
-    version("7.0.0", sha256="fd1e361da30e30e4c5a5ae89f7cae95ca2a4d4407389672473312249a7ba0060")
-    version("6.5.1", sha256="2c01f3f518fee736c3d3f999dd20e0a16febba17a0d60a3b0fd28fbdec14115d")
-    version("6.5.0", sha256="223e46e27abe8596b8aed54301fadbba433b7ffea8196a68fd7b1ff509eee99d")
-    version("6.4.2", sha256="eb2803db18f6facce6bf3b01b684fe47907994bd156d15eaccdf011e3d7f8164")
-    version("6.3.0", sha256="5e77d6203854944520105e38f2563a813a4a3708e8563aa598928a3b5ee1081a")
-    version("6.2.0", sha256="16ceecd0afaa8fd26c245fa32e2c52066c02f13aa73387fffafd84750baea863")
-    version("6.0.1", sha256="db94117fbac29153834447e31b30cda337d4450e46e0bdb1a36eafbbf4435156")
+    version("7.17.2", sha256="344a218e8595117ce37396ed025d994f146d076226ebac59255a2fa085ab24d8")
+    with default_args(deprecated=True):
+        # https://github.com/jupyter/nbconvert/security/advisories/GHSA-pjvx-prjx-h659
+        version(
+            "7.17.1", sha256="34d0d0a7e73ce3cbab6c5aae8f4f468797280b01fd8bd2ca746da8569eddd7d2"
+        )
+        # https://github.com/jupyter/nbconvert/security/advisories/GHSA-4c99-qj7h-p3vg
+        # https://github.com/jupyter/nbconvert/security/advisories/GHSA-7jqv-fw35-gmx9
+        # https://github.com/jupyter/nbconvert/security/advisories/GHSA-xm59-rqc7-hhvf
+        version(
+            "7.16.6", sha256="576a7e37c6480da7b8465eefa66c17844243816ce1ccc372633c6b71c3c0f582"
+        )
+        version(
+            "7.16.4", sha256="86ca91ba266b0a448dc96fa6c5b9d98affabde2867b363258703536807f9f7f4"
+        )
+        version(
+            "7.16.3", sha256="a6733b78ce3d47c3f85e504998495b07e6ea9cf9bf6ec1c98dda63ec6ad19142"
+        )
+        version(
+            "7.16.2", sha256="8310edd41e1c43947e4ecf16614c61469ebc024898eb808cce0999860fc9fb16"
+        )
+        version(
+            "7.16.1", sha256="e79e6a074f49ba3ed29428ed86487bf51509d9aab613bd8522ac08f6d28fd7fd"
+        )
+        version(
+            "7.16.0", sha256="813e6553796362489ae572e39ba1bff978536192fb518e10826b0e8cadf03ec8"
+        )
+        version(
+            "7.15.0", sha256="ff3f54a1a5e1e024beb9fde8946d05b6d0bf68cd14b5f2f9dc5b545c8bc71055"
+        )
+        version(
+            "7.14.2", sha256="a7f8808fd4e082431673ac538400218dd45efd076fbeb07cc6e5aa5a3a4e949e"
+        )
+        version(
+            "7.14.1", sha256="20cba10e0448dc76b3bebfe1adf923663e3b98338daf77b97b42511ef5a88618"
+        )
+        version("7.4.0", sha256="51b6c77b507b177b73f6729dba15676e42c4e92bcb00edc8cc982ee72e7d89d7")
+        version("7.0.0", sha256="fd1e361da30e30e4c5a5ae89f7cae95ca2a4d4407389672473312249a7ba0060")
+        version("6.5.1", sha256="2c01f3f518fee736c3d3f999dd20e0a16febba17a0d60a3b0fd28fbdec14115d")
+        # https://github.com/jupyter/nbconvert/security/advisories/GHSA-9jmq-rx5f-8jwq
+        version("6.5.0", sha256="223e46e27abe8596b8aed54301fadbba433b7ffea8196a68fd7b1ff509eee99d")
+        version("6.4.2", sha256="eb2803db18f6facce6bf3b01b684fe47907994bd156d15eaccdf011e3d7f8164")
+        version("6.3.0", sha256="5e77d6203854944520105e38f2563a813a4a3708e8563aa598928a3b5ee1081a")
+        version("6.2.0", sha256="16ceecd0afaa8fd26c245fa32e2c52066c02f13aa73387fffafd84750baea863")
+        version("6.0.1", sha256="db94117fbac29153834447e31b30cda337d4450e46e0bdb1a36eafbbf4435156")
 
     variant("serve", default=True, description="Include a webserver")
 
@@ -118,8 +145,7 @@ class PyNbconvert(PythonPackage):
         expand=False,
     )
 
-    @run_before("install")
-    @when("@6:")
+    @run_before("install", when="@6:")
     def install_css(self):
         css = {
             # target filename: [subdir, source filename]

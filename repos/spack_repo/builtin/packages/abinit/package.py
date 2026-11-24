@@ -32,6 +32,7 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     license("Apache-2.0")
 
     maintainers("downloadico")
+    version("10.8.3", sha256="cfad7f1c1bfa90c2fac3dca02f8d4d1c7aaf7d6e0d3bba24c091185d559c503b")
     version("10.6.5", sha256="9ae9b563137e08302d830a58a8bc3df2d8d0f78afeca2029b451636651d18f74")
     version("10.6.3", sha256="aceefc4289873097bb6b9dc4ec05efd897b9c052eb860746f6d778f4cd14317d")
     version("10.4.7", sha256="161c60ef90686c19e0718363eb5a17bfa29494e5fbdc59be45a7342e20349768")
@@ -109,8 +110,10 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     with when("+openmp"):
         requires("^fftw+openmp", when="^[virtuals=fftw-api] fftw")
         requires("^amdfftw+openmp", when="^[virtuals=fftw-api] amdfftw")
+        requires("^aocl-fftw+openmp", when="^[virtuals=fftw-api] aocl-fftw")
         requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
         requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+        requires("^aocl-blas threads=openmp", when="^[virtuals=blas] aocl-blas")
         requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         requires("^armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         requires("^acfl threads=openmp", when="^[virtuals=blas] acfl")
@@ -230,7 +233,7 @@ class Abinit(AutotoolsPackage, CudaPackage, ROCmPackage):
     # need openmp threading for abinit+openmp
     # TODO: The logic here can be reversed with the new concretizer. Instead of
     # using `conflicts`, `depends_on` could be used instead.
-    for fftw in ["amdfftw", "cray-fftw", "fujitsu-fftw", "fftw"]:
+    for fftw in ["amdfftw", "aocl-fftw", "cray-fftw", "fujitsu-fftw", "fftw"]:
         conflicts("+openmp", when=f"^{fftw}~openmp", msg=f"Need to request {fftw} +openmp")
 
     with when("+openmp"):

@@ -61,9 +61,9 @@ class PySentrySdk(PythonPackage):
     depends_on("py-httpx@0.16.0:", type=("build", "run"), when="+httpx")
 
     def url_for_version(self, version):
-        url = "https://files.pythonhosted.org/packages/source/s/sentry-sdk/sentry{0}sdk-{1}.tar.gz"
+        url = "https://files.pythonhosted.org/packages/source/s/{0}/{0}-{1}.tar.gz"
         if version >= Version("1.45.1"):
-            dash = "_"
+            name = "sentry_sdk"
         else:
-            dash = "-"
-        return url.format(dash, version)
+            name = "sentry-sdk"
+        return url.format(name, version)

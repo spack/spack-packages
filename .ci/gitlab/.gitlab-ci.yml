@@ -46,11 +46,20 @@ default:
     PIPELINE_MIRROR_TEMPLATE: "multi-src-mirrors.yaml.in"
     OIDC_TOKEN_AUDIENCE: "pr_binary_mirror"
 
+.package_on_change: &package_on_change
+    paths:
+      - .ci/env
+      - .ci/gitlab/**/*
+      - repos/spack_repo/**/*
+      - stacks/$SPACK_CI_STACK_NAME/**/*
+    compare_to: HEAD~1
+
   ########################################
 # Job templates
 ########################################
 .base-job:
   variables:
+    SPACK_CI_BUILDCACHE_VIEW: "append"
     PIPELINE_MIRROR_TEMPLATE: "single-src-protected-mirrors.yaml.in"
     SPACK_CI_CONFIG_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/configs"
     SPACK_CI_SCRIPTS_ROOT: "${SPACK_CI_PACKAGES_ROOT}/.ci/gitlab/scripts"
@@ -83,6 +92,7 @@ default:
       variables:
         <<: *common_pr_vars
         SPACK_PRUNE_UNTOUCHED: "True"
+      changes: *package_on_change
 
     - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack"
       # Pipelines on PR branches rebuild only what's missing, and do extra pruning
@@ -116,6 +126,7 @@ default:
       --artifacts-root "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
       --output-file "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}/cloud-ci-pipeline.yml"
   artifacts:
+    when: always
     paths:
       - "${CI_PROJECT_DIR}/jobs_scratch_dir"
       - "${CI_PROJECT_DIR}/jobs_scratch_dir/${SPACK_CI_STACK_NAME}"
@@ -123,6 +134,7 @@ default:
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/providers"
       - "${CI_PROJECT_DIR}/tmp/_user_cache/cache/tags"
   variables:
+    SPACK_CI_GENERATE: "generate"
     SPACK_CONCRETIZE_JOBS: 8
     KUBERNETES_CPU_REQUEST: 8000m
     KUBERNETES_MEMORY_REQUEST: 16G
@@ -141,6 +153,8 @@ default:
       - runner_unsupported
       - stale_schedule
       - job_execution_timeout
+      - server_timeout_running
+      - server_timeout_canceling
       - archived_failure
       - unmet_prerequisites
       - scheduler_failure
@@ -248,6 +262,30 @@ dotenv:
   - python3 write_dotenv.py .ci/env
   - cat env
 
+force_pipeline_status:
+  rules:
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/ && $CI_PROJECT_NAME == "spack-packages"
+      changes: *package_on_change
+      when: never
+    - if: $CI_PROJECT_NAME == "spack"
+      when: never
+    - if: $CI_COMMIT_REF_NAME =~ /^pr[\d]+_.*$/
+      when: always
+    - when: never
+  stage: generate
+  tags: ["spack", "service_noop"]
+  retry: 0
+  allow_failure: true
+  image: busybox@sha256:37f7b378a29ceb4c551b1b5582e27747b855bbfaa73fa11914fe0df028dc581f
+  variables:
+    CI_OIDC_REQUIRED: 0
+    GIT_STRATEGY: "none"
+    CI_JOB_SIZE: "small"
+    KUBERNETES_CPU_REQUEST: "100m"
+    KUBERNETES_MEMORY_REQUEST: "5M"
+  script:
+  - echo "This job is a placeholder job to ensure a pipeline status is posted even if no jobs are run"
+
 ########################################
 # TEMPLATE FOR ADDING ANOTHER PIPELINE
 ########################################
@@ -337,7 +375,7 @@ e4s-neoverse-v2-build:
 
 e4s-rocm-external-generate:
   extends: [ ".e4s-rocm-external", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.0-1772831027
+  image: ghcr.io/spack/e4s-rocm-base-x86_64:v7.2.3-1778518886
 
 e4s-rocm-external-build:
   extends: [ ".e4s-rocm-external", ".build" ]
@@ -359,7 +397,7 @@ e4s-rocm-external-build:
 
 e4s-oneapi-generate:
   extends: [ ".e4s-oneapi", ".generate-x86_64"]
-  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1772472165
+  image: ghcr.io/spack/e4s-oneapi-base-x86_64:v2025.3-1777667538
 
 e4s-oneapi-build:
   extends: [ ".e4s-oneapi", ".build" ]
@@ -461,6 +499,75 @@ developer-tools-darwin-build:
     - artifacts: True
       job: developer-tools-darwin-generate
 
+##########################################
+# Developer Tools needed to develop Spack
+# arm linux
+##########################################
+.developer-bootstrap-aarch64-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-aarch64-linux-gnu
+
+developer-bootstrap-aarch64-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64"]
+  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+
+developer-bootstrap-aarch64-linux-gnu-build:
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-aarch64-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-aarch64-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-aarch64-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# x86_64_v3 linux
+###########################################
+.developer-bootstrap-x86_64_v3-linux-gnu:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-x86_64_v3-linux-gnu
+
+developer-bootstrap-x86_64_v3-linux-gnu-generate:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64"]
+  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+
+developer-bootstrap-x86_64_v3-linux-gnu-build:
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-x86_64_v3-linux-gnu/cloud-ci-pipeline.yml
+        job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-x86_64_v3-linux-gnu-generate
+
+###########################################
+# Developer tools needed to develop Spack
+# darwin
+###########################################
+.developer-bootstrap-darwin:
+  variables:
+    SPACK_CI_STACK_NAME: developer-bootstrap-darwin
+
+developer-bootstrap-darwin-generate:
+  tags: [ "macos-tahoe", "apple-clang-17", "aarch64-macos" ]
+  extends: [ ".developer-bootstrap-darwin", ".generate-base"]
+
+developer-bootstrap-darwin-build:
+  extends: [ ".developer-bootstrap-darwin", ".build" ]
+  trigger:
+    << : *trigger_build
+    include:
+      - artifact: jobs_scratch_dir/developer-bootstrap-darwin/cloud-ci-pipeline.yml
+        job: developer-bootstrap-darwin-generate
+  needs:
+    - artifacts: True
+      job: developer-bootstrap-darwin-generate
+
 #########################################
 # RADIUSS
 #########################################
@@ -471,7 +578,7 @@ developer-tools-darwin-build:
 radiuss-generate:
   extends: [ ".radiuss", ".generate-x86_64" ]
   image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
     entrypoint: ['']
 
 radiuss-build:
@@ -492,7 +599,7 @@ radiuss-build:
 .tags-x86_64_v4:
   variables:
     SPACK_CI_TARGET: "x86_64_v4"
-  tags: ["spack", "public", "aws", "medium", "x86_64_v4"]
+  tags: ["spack", "public", "medium", "x86_64_v4"]
 
 # Parallel Pipeline for aarch64 (reuses override image, but generates and builds on aarch64)
 
@@ -503,7 +610,7 @@ radiuss-build:
 radiuss-aarch64-generate:
   extends: [ ".radiuss-aarch64", ".generate-aarch64" ]
   image:
-    name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
     entrypoint: ['']
 
 radiuss-aarch64-build:
@@ -573,7 +680,7 @@ tools-sdk-build:
 
 tutorial-generate:
   extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-22.04:2026-03-10
+  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -595,7 +702,7 @@ tutorial-build:
 
 ml-linux-x86_64-generate:
   extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 ml-linux-x86_64-build:
   extends: [ ".build", ".ml-linux-x86_64" ]
@@ -617,7 +724,7 @@ ml-linux-x86_64-build:
 
 ml-linux-aarch64-generate:
   extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
-  image: ghcr.io/spack/ubuntu-24.04:v2025-09-15
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 ml-linux-aarch64-build:
   extends: [ ".build", ".ml-linux-aarch64" ]
@@ -661,7 +768,7 @@ ml-darwin-aarch64-mps-build:
 
 hep-generate:
   extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 hep-build:
   extends: [ ".hep", ".build" ]
@@ -673,52 +780,6 @@ hep-build:
   needs:
     - artifacts: True
       job: hep-generate
-
-#####################
-# AWS ParallelCluster
-#####################
-
-.aws-pcluster-generate:
-  image: { "name": "ghcr.io/spack/pcluster-amazonlinux-2:2026-03-10", "entrypoint": [""] }
-
-# X86_64_V4 (one pipeline per target)
-.aws-pcluster-x86_64_v4:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-x86_64_v4
-
-aws-pcluster-x86_64_v4-generate:
-  extends: [ ".aws-pcluster-x86_64_v4", ".generate-base", ".tags-x86_64_v4", ".aws-pcluster-generate"]
-
-aws-pcluster-x86_64_v4-build:
-  extends: [ ".aws-pcluster-x86_64_v4", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-x86_64_v4/cloud-ci-pipeline.yml
-        job: aws-pcluster-x86_64_v4-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-x86_64_v4-generate
-
-# Neoverse_v1 (one pipeline per target)
-.aws-pcluster-neoverse_v1:
-  variables:
-    SPACK_CI_STACK_NAME: aws-pcluster-neoverse_v1
-
-aws-pcluster-neoverse_v1-generate:
-  # TODO: Use updated runner tags: https://github.com/spack/spack-infrastructure/pull/694/files
-  extends: [ ".aws-pcluster-neoverse_v1", ".generate-neoverse_v1", ".aws-pcluster-generate"]
-
-aws-pcluster-neoverse_v1-build:
-  extends: [  ".aws-pcluster-neoverse_v1", ".build" ]
-  trigger:
-    << : *trigger_build
-    include:
-      - artifact: jobs_scratch_dir/aws-pcluster-neoverse_v1/cloud-ci-pipeline.yml
-        job: aws-pcluster-neoverse_v1-generate
-  needs:
-    - artifacts: True
-      job: aws-pcluster-neoverse_v1-generate
 
 # Cray definitions
 .generate-cray:
@@ -828,7 +889,7 @@ windows-vis-build:
 
 bootstrap-x86_64-linux-gnu-generate:
   extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
 
 bootstrap-x86_64-linux-gnu-build:
   extends: [ .build, .bootstrap-x86_64-linux-gnu ]

@@ -30,7 +30,11 @@ class Xeus(CMakePackage):
     conflicts("%clang@:3.6")
     conflicts("%intel@:17")
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+        depends_on("openssl")
+        depends_on("pkgconfig")
 
     depends_on("libzmq@4.2.5:-libsodium")
     depends_on("cppzmq@4.7.1:", when="@1.0.4:")

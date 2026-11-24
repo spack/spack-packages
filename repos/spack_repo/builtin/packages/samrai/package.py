@@ -9,6 +9,7 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     CachedCMakeBuilder,
     CachedCMakePackage,
     cmake_cache_option,
+    cmake_cache_path,
     cmake_cache_string,
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
@@ -27,11 +28,13 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     """
 
     homepage = "https://computing.llnl.gov/projects/samrai"
-    url = "https://github.com/llnl/SAMRAI/releases/download/v-4-5-0/SAMRAI-v4.5.0.tar.gz"
+    url = "https://github.com/llnl/SAMRAI/releases/download/v-4-6-1/SAMRAI-v4.6.1.tar.gz"
     list_url = homepage
     git = "https://github.com/LLNL/SAMRAI.git"
 
-    # using build_system 'cached_cmake' -- assets SAMRAI-v4.5.0.tar.gz
+    # using build_system 'cached_cmake' -- assets SAMRAI-v4.6.1.tar.gz
+    version("4.6.1", sha256="0ad6f49672f09d01c1d6c500af09613b25519185f01ac4fa406c13b530c5b106")
+    version("4.6.0", sha256="4dd69d648d9fd1d948fa33d9be1ea29d40e3df04ac3ff6f485501a9d19ec32f2")
     version("4.5.0", sha256="1209a5be43d4aecfc2761f821f311cd54c9def45286edca3f4f0cc19dd8ba2ee")
     version("4.3.0", sha256="b124f5a44cbdf44e21341de47161357684a67aaca39b2ab2cf68b6edb794149b")
     version("4.2.1", sha256="dbd0b1f2c7f6c8eba2dc7e3535a73c97cbde929e8c08cecdbca8a98e2edf3bc1")
@@ -84,7 +87,10 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     variant(
         "cxxstd",
         default="20",
-        values=("11", "14", "17", "20"),
+        values=(
+            conditional("11", "14", "17", when="@:4.5"),
+            "20",
+        ),
         multi=False,
         description="C++ standard",
         when="@4:",
@@ -152,11 +158,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
             flags.append("-lz")
         return (flags, None, None)
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        spec = self.spec
-        if "+cuda" in spec:
-            env.set("CUDAHOSTCXX", spack_cxx)
-
     def check(self):
         if self.spec.satisfies("+tests"):
             with working_dir(self.build_directory):
@@ -167,7 +168,10 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         return []
 
 
-class CachedCMakeBuilder(CachedCMakeBuilder):
+class CMakeBuilder(CachedCMakeBuilder):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDAHOSTCXX", spack_cxx)
 
     @property
     def libs(self):
@@ -259,16 +263,20 @@ class CachedCMakeBuilder(CachedCMakeBuilder):
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
+    def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        if self.spec.satisfies("+cuda"):
+            env.set("CUDAHOSTCXX", spack_cxx)
+
     def configure_args(self):
         options = []
         options.extend(
             [
-                "--with-CXX=%s" % self.spec["mpi"].mpicxx,
-                "--with-CC=%s" % self.spec["mpi"].mpicc,
-                "--with-F77=%s" % self.spec["mpi"].mpifc,
-                "--with-M4=%s" % self.spec["m4"].prefix,
-                "--with-hdf5=%s" % self.spec["hdf5"].prefix,
-                "--with-zlib=%s" % self.spec["zlib-api"].prefix,
+                f"--with-CXX={self.spec['mpi'].mpicxx}",
+                f"--with-CC={self.spec['mpi'].mpicc}",
+                f"--with-F77={self.spec['mpi'].mpifc}",
+                f"--with-M4={self.spec['m4'].prefix}",
+                f"--with-hdf5={self.spec['hdf5'].prefix}",
+                f"--with-zlib={self.spec['zlib-api'].prefix}",
                 "--without-blas",
                 "--without-lapack",
                 "--with-hypre=no",
@@ -286,13 +294,13 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
             options.extend(["--enable-opt", "--disable-debug"])
 
         if "+silo" in self.spec:
-            options.append("--with-silo=%s" % self.spec["silo"].prefix)
+            options.append(f"--with-silo={self.spec['silo'].prefix}")
 
         if "+shared" in self.spec:
             options.append("--enable-shared")
 
         if self.spec.satisfies("@3.0:3.11"):
-            options.append("--with-boost=%s" % self.spec["boost"].prefix)
+            options.append(f"--with-boost={self.spec['boost'].prefix}")
 
         return options
 

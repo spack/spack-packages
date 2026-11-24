@@ -59,4 +59,4 @@ class PyOrTools(CMakePackage):
         with working_dir(self.build_directory):
             make("install")
         with working_dir(join_path(self.build_directory, "python")):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

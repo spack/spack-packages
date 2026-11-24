@@ -19,7 +19,7 @@ class IntelOneapiCcl(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     # oneAPI Collective Communications Library
     homepage = (
@@ -28,6 +28,26 @@ class IntelOneapiCcl(IntelOneApiLibraryPackage):
 
     depends_on("intel-oneapi-mpi")
 
+    version(
+        "2022.2.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b1419e87-5a3b-4267-beb7-881f2d25ca4f/intel-oneccl-2022.2.0.438_offline.sh",
+        sha256="2eb0d8f12fddf178d4463b21a7fde5eeecef28c472a18299b34869fbd06f6611",
+        expand=False,
+    )
+
+    version(
+        "2022.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/bc26d315-1c3c-4270-92e1-6b67c130cc06/intel-oneccl-2022.1.0.145_offline.sh",
+        sha256="cc0933af9ae933764989b113f2bbf22b7fd12cd89514b4df8db8da28f1ea2512",
+        expand=False,
+    )
+
+    version(
+        "2022.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/999f135f-9aeb-4aff-be1b-3bdf5bfabab1/intel-oneccl-2022.0.0.49303_offline.sh",
+        sha256="d2200991d5137fe22199c8139f672c36742fff4e2ff9835d8bcc9600b74e9397",
+        expand=False,
+    )
     version(
         "2021.17.2",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/c477188f-0ba1-4213-8945-22f16ebc8ecb/intel-oneccl-2021.17.2.6_offline.sh",

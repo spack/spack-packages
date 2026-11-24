@@ -19,6 +19,8 @@ class Goma(CMakePackage):
 
     license("GPL-2.0-or-later")
 
+    version("7.11.0", commit="2199db68972439251026ed52bbaad7bb2b25ec14")
+    version("7.10.1", commit="e6a765f8f8df4038651259515ad24199a2fa932d")
     version("7.8.2", commit="968790728b7544f6e362792748c3842d6c5e2bd9")
     version("7.7.0", commit="936caf27cab74023d8dfd792cc5411b8c92f2a04")
     version("7.6.1", commit="c799e935009b85e00979fa8b248952194f6ade7a")

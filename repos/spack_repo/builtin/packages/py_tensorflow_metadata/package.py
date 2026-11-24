@@ -30,8 +30,8 @@ class PyTensorflowMetadata(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
         depends_on("cxx")
-        depends_on("bazel@6.5:", when="@1.17.1:")
-        depends_on("bazel@0.24.1:")
+        depends_on("bazel@6.5:7", when="@1.17.1:")
+        depends_on("bazel@0.24.1:7")
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):

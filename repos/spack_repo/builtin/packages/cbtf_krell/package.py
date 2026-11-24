@@ -19,10 +19,11 @@ class CbtfKrell(CMakePackage):
 
     maintainers("jgalarowicz")
 
-    version("develop", branch="master")
-    version("1.9.4.1", branch="1.9.4.1")
-    version("1.9.4", branch="1.9.4")
-    version("1.9.3", branch="1.9.3")
+    with default_args(deprecated=True):
+        version("develop", branch="master")
+        version("1.9.4.1", branch="1.9.4.1")
+        version("1.9.4", branch="1.9.4")
+        version("1.9.3", branch="1.9.3")
 
     # MPI variants
     variant(

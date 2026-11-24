@@ -32,7 +32,7 @@ class Hztool(AutotoolsPackage):
     depends_on("fortran", type="build")
 
     def patch(self):
-        filter_file("-fno-automatic", "-fno-automatic -fallow-argument-mismatch", "configure.ac")
+        filter_file("-fno-automatic", "-fno-automatic -fallow-argument-mismatch", "configure")
 
     def configure_args(self):
         args = []

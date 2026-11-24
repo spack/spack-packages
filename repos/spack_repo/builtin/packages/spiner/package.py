@@ -12,7 +12,6 @@ class Spiner(CMakePackage):
     Performance portable routines for generic, tabulated, multi-dimensional data"""
 
     homepage = "https://github.com/lanl/spiner"
-    url = "https://github.com/lanl/spiner/archive/refs/tags/v1.7.0.tar.gz"
     git = "https://github.com/lanl/spiner.git"
 
     maintainers("rbberger")
@@ -20,18 +19,14 @@ class Spiner(CMakePackage):
     license("BSD-3-Clause")
 
     version("main", branch="main")
-    version("1.7.0", sha256="effe6844fd895c4790eeebcb3f3bc7b3d4a7380554acfcc528d8d8296e88a9ba")
-    version("1.6.4", sha256="a51de69e438f5e3893958736d246c41ca87fd6442ee1e0a9cc5d442861ac5404")
-    version("1.6.3", sha256="f78c50e0b4d7c4fd3f380432f12a528941e2bee5171d6f200e9a52bbcea940e9")
-    version("1.6.2", sha256="91fb403ce3b151fbdf8b6ff5aed0d8dde1177749f5633951027b100ebc7080d3")
-    version("1.6.1", sha256="52774322571d3b9b0dc3c6b255257de9af0e8e6170834360f2252c1ac272cbe7")
-    version("1.6.0", sha256="afa5526d87c78c1165ead06c09c5c2b9e4a913687443e5adff7b709ea4dd7edf")
+    version("1.7.0", commit="5ebeb5cf76ce9f65471d888280e74353f63cdccb", tag="v1.7.0")
+    version("1.6.4", commit="3c0ea89be32065b3be9f897652acc7a7d81e133a", tag="1.6.4")
 
-    def url_for_version(self, version):
-        if version < Version("1.7"):
-            return f"https://github.com/lanl/spiner/archive/refs/tags/{version}.tar.gz"
-        else:
-            return f"https://github.com/lanl/spiner/archive/refs/tags/v{version}.tar.gz"
+    with default_args(deprecated=True):
+        version("1.6.3", commit="c379f5d2cce9625a60b149192ec43c8cff7b74b1", tag="1.6.3")
+        version("1.6.2", commit="a0f4a214f42fe1e9aeb757f4cdeb7cd2b6eb65f7", tag="1.6.2")
+        version("1.6.1", commit="24df4e52e98ca4b82539016268eec367d5b7d184", tag="1.6.1")
+        version("1.6.0", commit="bf7ab6043d1253c7cad9bf7ba54c48194df730d6", tag="1.6.0")
 
     # When overriding/overloading varaints, the last variant is always used, except for
     # "when" clauses. Therefore, call the whens FIRST then the non-whens.
@@ -54,7 +49,8 @@ class Spiner(CMakePackage):
     depends_on("ports-of-call@main", when="@main")
 
     depends_on("kokkos@3.3.00:", when="+kokkos")
-    requires("^kokkos+cuda_lambda+cuda_constexpr", when="+kokkos ^kokkos+cuda")
+    requires("^kokkos+cuda_constexpr", when="+kokkos ^kokkos+cuda")
+    requires("^kokkos+cuda_lambda", when="+kokkos ^kokkos@4+cuda")
 
     depends_on("hdf5+hl~mpi", when="+hdf5~mpi")
     depends_on("hdf5+hl+mpi", when="+hdf5+mpi")
@@ -83,9 +79,15 @@ class Spiner(CMakePackage):
                     "CMAKE_CUDA_ARCHITECTURES", self.spec["kokkos"].variants["cuda_arch"].value
                 )
             )
-        if self.spec.satisfies("^kokkos+rocm"):
+        if self.spec.satisfies("^kokkos+rocm") and not self.spec.satisfies(
+            "^kokkos+rocm %cxx=llvm-amdgpu"
+        ):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
-        if self.spec.satisfies("^kokkos+cuda"):
-            args.append(self.define("CMAKE_CXX_COMPILER", self["kokkos"].kokkos_cxx))
+        if self.spec.satisfies("%cxx=llvm ^kokkos+cuda~wrapper %cxx=llvm") or self.spec.satisfies(
+            "%cxx=llvm-amdgpu ^kokkos+rocm~wrapper %cxx=llvm-amdgpu"
+        ):
+            # explicitly disable launch compiler in these cases to avoid not getting
+            # Spack wrapper rpaths
+            args.append(self.define("Kokkos_LAUNCH_COMPILER", False))
         return args

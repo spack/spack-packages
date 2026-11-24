@@ -2,14 +2,14 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
 from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
 
-class Rpp(CMakePackage):
+class Rpp(ROCmLibrary, CMakePackage):
     """Radeon Performance Primitives (RPP) library is a comprehensive high-
     performance computer vision library for AMD (CPU and GPU) with HIP
     and OPENCL back-ends"""
@@ -20,15 +20,27 @@ class Rpp(CMakePackage):
 
     tags = ["rocm"]
     maintainers("srekolam", "afzpatel")
+    libraries = ["librpp"]
+
     license("MIT")
 
-    def url_for_version(self, version):
-        if version >= Version("5.7.0"):
-            url = "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"
-        else:
-            url = "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz"
-        return url.format(version)
+    rocm_url_map = [
+        (
+            "5.6.1",
+            "https://github.com/GPUOpen-ProfessionalCompute-Libraries/rpp/archive/{0}.tar.gz",
+        ),
+        ("7.2.4", "https://github.com/ROCm/rpp/archive/refs/tags/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
 
+    version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
+    version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
+    version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
+    version(
+        "7.13.0", branch="release/therock-7.13", commit="8a9aa66aa8bc2186d3f12ce0ffa92f861047088d"
+    )
+    version("7.2.3", sha256="348c08e5079e5f68403570e593d4c2f72e4bdaafdd38a0e57725353a16b6a66e")
+    version("7.2.1", sha256="5132d89449fcb94940414d157f5a21b2de9ac4a63237235d96cabca882baf503")
     version("7.2.0", sha256="9240e325cd5adf7aa9842851d638394a25d3a784a6a206e8e96d7ae4d59b8d35")
     version("7.1.1", sha256="3a13444acc86d307ff559b0282f11ec57ae5c89dec52a2f9f85e3757d9e66e35")
     version("7.1.0", sha256="65d815f4957b27c1f994d4d905a107536fe90ffa4c229c015c241687f11fe2c0")
@@ -52,6 +64,15 @@ class Rpp(CMakePackage):
     version("6.0.0", sha256="3626a648bc773520f5cd5ca15f494de6e74b422baf32491750ce0737c3367f15")
     version("5.7.1", sha256="36fff5f1c52d969c3e2e0c75b879471f731770f193c9644aa6ab993fb8fa4bbf")
     version("5.7.0", sha256="1c612cde3c3d3840ae75ee5c1ee59bd8d61b1fdbf84421ae535cda863470fc06")
+
+    amdgpu_targets = ROCmPackage.amdgpu_targets
+
+    variant(
+        "amdgpu_target",
+        description="AMD GPU architecture",
+        values=auto_or_any_combination_of(*amdgpu_targets),
+        sticky=True,
+    )
 
     variant(
         "build_type",
@@ -78,6 +99,7 @@ class Rpp(CMakePackage):
     patch("0001-include-half-openmp-through-spack-package.patch", when="@:5.7")
     patch("0002-declare-handle-in-header.patch", when="@:6.4")
     patch("0003-include-half-through-spack-package.patch", when="@6.0:6.3")
+    patch("0004-add-half.patch", when="@10.1:")
 
     # adds half.hpp include directory and modifies how the libjpegturbo
     # library is linked for the rpp unit test
@@ -187,6 +209,12 @@ class Rpp(CMakePackage):
                 "7.1.0",
                 "7.1.1",
                 "7.2.0",
+                "7.2.1",
+                "7.2.3",
+                "7.13.0",
+                "7.14.0",
+                "10.0.0",
+                "10.1.0",
             ]:
                 depends_on("hip@" + ver, when="@" + ver)
         with when("@:1.2"):
@@ -208,6 +236,13 @@ class Rpp(CMakePackage):
             env.set("CFLAGS", "-fsanitize=address -shared-libasan")
             env.set("CXXFLAGS", "-fsanitize=address -shared-libasan")
             env.set("LDFLAGS", "-fuse-ld=lld")
+
+    @property
+    def root_cmakelists_dir(self):
+        if self.spec.satisfies("@7.14:"):
+            return "projects/rpp"
+        else:
+            return "."
 
     def cmake_args(self):
         spec = self.spec
@@ -232,4 +267,6 @@ class Rpp(CMakePackage):
                         "CMAKE_CXX_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                     )
                 )
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
         return args

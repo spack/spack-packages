@@ -20,7 +20,7 @@ class SlurmDrmaa(AutotoolsPackage):
     url = "https://github.com/natefoo/slurm-drmaa/releases/download/1.1.2/slurm-drmaa-1.1.2.tar.gz"
     git = "https://github.com/natefoo/slurm-drmaa.git"
 
-    maintainers("pwablito")
+    maintainers("spenpw")
 
     license("GPL-3.0-or-later")
 

@@ -14,6 +14,61 @@ from spack.package import *
 
 versions = [
     {
+        "version": "2026.2.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/7f238c79-537b-428e-94ce-c42a2802709d/intel-dpcpp-cpp-compiler-2026.2.0.612_offline.sh",
+            "sha256": "a0f6520589100d81a9bd0a0dbc6bedda1643d58236e30492a43b9a5ed0a0997f",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/f2267e6f-5a6a-431e-a3c9-cca1a8cc6534/intel-fortran-compiler-2026.2.0.606_offline.sh",
+            "sha256": "a5d9891fba5d0575a1df9947f943f4aeb47b0db447124f7bdf5b641a21a0f14e",
+        },
+    },
+    {
+        "version": "2026.1.1",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e5d4469d-33c1-4d48-8b45-48de1e6fb9e9/intel-dpcpp-cpp-compiler-2026.1.1.22_offline.sh",
+            "sha256": "cccd051581eef75ddf5561b31874a3ecc8caad925608e6e50dec1589978fff9c",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/09a1aab3-8441-4a4e-a243-1c1c8e15598c/intel-fortran-compiler-2026.1.1.19_offline.sh",
+            "sha256": "bd933a006380c9e0a529a181c2f64ed24a02ba7d0100d243eea393670fde01c4",
+        },
+    },
+    {
+        "version": "2026.1.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/eb43fd3f-7cff-46a4-ab14-a2d3b60c4899/intel-dpcpp-cpp-compiler-2026.1.0.118_offline.sh",
+            "sha256": "65d81ec1f249fb2cb7267fc787b21cf618b4f553c06b9e19d0981b30f25ae227",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/87bd1c07-e474-4f38-9492-e44e15ea7a52/intel-fortran-compiler-2026.1.0.104_offline.sh",
+            "sha256": "3779081508ebc099e99717eccd9de615c57fde292dc4f93e18955a103835f58d",
+        },
+    },
+    {
+        "version": "2026.0.0",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/e2f4cda3-8891-4d0e-bf60-00d19c4e3e27/intel-dpcpp-cpp-compiler-2026.0.0.564_offline.sh",
+            "sha256": "4a40e1919aaf5e473290d1bdbff98a41ee0ee69baef3f5ed7040c34a94344bb8",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/176ca159-bee8-44f2-9164-db26f95de382/intel-fortran-compiler-2026.0.0.573_offline.sh",
+            "sha256": "f98ea7e1c1b397440dfd34c347c1567924b478c56e7a3b6a3a1628c8f48ad70b",
+        },
+    },
+    {
+        "version": "2025.3.3",
+        "cpp": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/7d055984-4f45-4538-96c8-58433f93fb18/intel-dpcpp-cpp-compiler-2025.3.3.17_offline.sh",
+            "sha256": "562e3f4fe1f0409bbc818986adaff049e1c129e78f120b9b8f356a48206b1c2b",
+        },
+        "ftn": {
+            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/5f818460-689a-410c-8457-b007bad5a970/intel-fortran-compiler-2025.3.3.15_offline.sh",
+            "sha256": "96a695d13111535ed562e1427a8fa1840fe76ebbb879d7300645f28d2e45cfbd",
+        },
+    },
+    {
         "version": "2025.3.2",
         "cpp": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0d61d48a-4fe8-4cb2-bd9d-94d2c19c6227/intel-dpcpp-cpp-compiler-2025.3.2.26_offline.sh",
@@ -22,39 +77,6 @@ versions = [
         "ftn": {
             "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/3e53d136-2870-4836-adb1-892b558fa34a/intel-fortran-compiler-2025.3.2.25_offline.sh",
             "sha256": "c64d20d70a277b1249d2ba9221be7245a843f3988df9076b4456619fe5929278",
-        },
-    },
-    {
-        "version": "2025.3.1",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/5adfc398-db78-488c-b98f-78461b3c5760/intel-dpcpp-cpp-compiler-2025.3.1.16_offline.sh",
-            "sha256": "b0e8920fa390302133b0e92784389ae383806d8414c48ae8b9e2f2ed1ad72471",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/724303ca-6927-4327-a560-e0aabb55b010/intel-fortran-compiler-2025.3.1.16_offline.sh",
-            "sha256": "13138cca7df96469d7f707428de6e2cf23a98a49ac01ea0b80c7623c0f474d43",
-        },
-    },
-    {
-        "version": "2025.3.0",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/44809add-596f-4484-9cd1-cc032460e241/intel-dpcpp-cpp-compiler-2025.3.0.322_offline.sh",
-            "sha256": "a85dc98ac76d16522d387cf62dc3b712b863779cb74520d8e37ea282ea02ef63",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/b3aa3ab5-c79d-4af4-8801-983ef00b90fd/intel-fortran-compiler-2025.3.0.325_offline.sh",
-            "sha256": "ede518607ce625051321989c843af9cebdbdc9ab07c8dbb2f011463e4e18678b",
-        },
-    },
-    {
-        "version": "2025.2.2",
-        "cpp": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/95aea65e-ead3-402f-838c-53d9f7bbaf3c/intel-dpcpp-cpp-compiler-2025.2.2.10_offline.sh",
-            "sha256": "f143aa4df3ce4add7efb795ae53482120407009607bc8924fb25b9325b5ed39f",
-        },
-        "ftn": {
-            "url": "https://registrationcenter-download.intel.com/akdlm/IRC_NAS/05fdb0f1-5c91-4bdc-af11-cf7afe0c02fe/intel-fortran-compiler-2025.2.2.10_offline.sh",
-            "sha256": "8ddd51baab30e3370ab41ce2ad38d4c3a1455d2354715ccc7392d4b655ba6bc9",
         },
     },
     {
@@ -408,7 +430,7 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
     """Intel oneAPI Compilers. Includes: icx, icpx, ifx, and ifort.
     Releases before 2024.0 include icc/icpc"""
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = "https://software.intel.com/content/www/us/en/develop/tools/oneapi.html"
 
@@ -463,12 +485,19 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
 
     # See https://github.com/spack/spack/issues/39252
     depends_on("patchelf@:0.17", type="build", when="@:2024.1")
+    depends_on("patchelf", type="build", when="@2025.0:2025.0.4")
     # Add the nvidia variant
     variant("nvidia", default=False, description="Install NVIDIA plugin for OneAPI")
     conflicts("@:2022.2.1", when="+nvidia", msg="Codeplay NVIDIA plugin requires newer release")
     # Add the amd variant
     variant("amd", default=False, description="Install AMD plugin for OneAPI")
     conflicts("@:2022.2.1", when="+amd", msg="Codeplay AMD plugin requires newer release")
+
+    variant(
+        "fix_rt_linkage",
+        default=False,
+        description="Fix unresolved symbols from libc/libm in runtime libraries libirc/libimf",
+    )
 
     depends_on("gcc languages=c,c++", type="run")
 
@@ -553,6 +582,21 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         self, env: EnvironmentModifications, dependent_spec: Spec
     ) -> None:
         super().setup_dependent_build_environment(env, dependent_spec)
+        # CMake finds IPO tools through PATH when compiler wrappers hide their location.
+        tool_dir = (
+            self._llvm_bin.compiler
+            if self.v2_layout
+            else self.component_prefix.linux.join("bin-llvm")
+        )
+        is_compiler = any(
+            edge.spec == self.spec and set(edge.virtuals).intersection(("c", "cxx", "fortran"))
+            for edge in dependent_spec.edges_to_dependencies(name=self.name)
+        )
+        if is_compiler and all(
+            os.path.isfile(join_path(tool_dir, tool)) for tool in ("llvm-ar", "llvm-ranlib")
+        ):
+            env.prepend_path("PATH", tool_dir)
+
         # workaround bug in icpx driver where it requires sycl-post-link is on the PATH
         # It is located in the same directory as the driver. Error message:
         #   clang++: error: unable to execute command:
@@ -620,7 +664,12 @@ class IntelOneapiCompilers(IntelOneApiPackage, CompilerPackage):
         # patching everything and just patching the binaries that have
         # a problem.
 
-        # 2024.2 no longer needs patching
+        # The 2025.0 LTO plugin cannot find libraries installed beside it.
+        if self.spec.satisfies("@2025.0:2025.0.4"):
+            patchelf = which("patchelf", required=True)
+            patchelf("--add-rpath", "$ORIGIN", self.component_prefix.lib.join("icx-lto.so"))
+
+        # Keep installer-provided rpaths for other releases since 2024.2.
         if self.spec.satisfies("@2024.2:"):
             return
 

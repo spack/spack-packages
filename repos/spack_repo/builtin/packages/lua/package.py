@@ -300,6 +300,31 @@ class Lua(LuaImplPackage):
                         dest_path = "liblua{0}{1}.{2}".format(joiner, version_str, dso_suffix)
                         symlink(src_path, dest_path)
 
+        # internal headers are needed for some tools like elmerfem-ice
+        internal_headers = [
+            "lapi.h",
+            "lobject.h",
+            "llimits.h",
+            "ldebug.h",
+            "lstate.h",
+            "ltm.h",
+            "lzio.h",
+            "lmem.h",
+            "ldo.h",
+            "lfunc.h",
+            "lgc.h",
+            "lstring.h",
+            "ltable.h",
+            "lundump.h",
+            "lvm.h",
+            "lcode.h",
+            "llex.h",
+            "lopcodes.h",
+            "lparser.h",
+        ]
+        for header in internal_headers:
+            install(join_path("src", header), prefix.include)
+
     @run_after("install")
     def generate_pkg_config(self):
         mkdirp(self.prefix.lib.pkgconfig)

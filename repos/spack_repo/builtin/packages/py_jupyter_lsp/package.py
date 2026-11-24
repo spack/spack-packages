@@ -15,6 +15,7 @@ class PyJupyterLsp(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.3.1", sha256="fdf8a4aa7d85813976d6e29e95e6a2c8f752701f926f2715305249a3829805a6")
     version("2.3.0", sha256="458aa59339dc868fb784d73364f17dbce8836e906cd75fd471a325cba02e0245")
     version("2.2.0", sha256="8ebbcb533adb41e5d635eb8fe82956b0aafbf0fd443b6c4bfa906edeeb8635a1")
 
@@ -29,6 +30,4 @@ class PyJupyterLsp(PythonPackage):
             name = "jupyter_lsp"
         else:
             name = "jupyter-lsp"
-        return (
-            f"https://files.pythonhosted.org/packages/source/j/jupyter-lsp/{name}-{version}.tar.gz"
-        )
+        return f"https://files.pythonhosted.org/packages/source/j/{name}/{name}-{version}.tar.gz"

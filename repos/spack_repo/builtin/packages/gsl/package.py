@@ -66,7 +66,6 @@ class Gsl(AutotoolsPackage, GNUMirrorPackage):
     def configure_args(self):
         configure_args = []
         if self.spec.satisfies("+external-cblas"):
-
             inc = self.spec["blas"].headers.include_flags
             # openblas can install the headers into include/openblas which trips up the autoconf
             if self.spec["blas"].name == "openblas":

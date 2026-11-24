@@ -18,11 +18,13 @@ class Xkbcomp(AutotoolsPackage, XorgPackage):
 
     homepage = "https://gitlab.freedesktop.org/xorg/app/xkbcomp"
     xorg_mirror_path = "app/xkbcomp-1.3.1.tar.gz"
+    git = "https://gitlab.freedesktop.org/xorg/app/xkbcomp.git"
 
     license("MIT")
 
     maintainers("wdconinc")
 
+    version("1.5.0", sha256="d070694dd8d94714aa1da3e3590b75084a4b183da3980866aedd68835954b97c")
     version("1.4.7", sha256="00cecc490fcbe2f789cf13c408c459673c2c33ab758d802677321cffcda35373")
     version("1.4.6", sha256="b216a2c8c0eab83f3dc4a3d5ee2bdf7827b30e49c8907035d0f222138eca0987")
     version("1.4.5", sha256="e88a4d86b9925ea1e8685dd5ea29c815abafb8ddf19bf5f1a1e0650839252c23")

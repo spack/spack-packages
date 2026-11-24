@@ -24,14 +24,29 @@ class Pbzip2(MakefilePackage):
     version("1.1.13", sha256="8fd13eaaa266f7ee91f85c1ea97c86d9c9cc985969db9059cdebcb1e1b7bdbe6")
 
     depends_on("cxx", type="build")
-    depends_on("bzip2 +shared", type=("build", "run"))
+    depends_on("bzip2 +shared", type=("build", "link", "run"))
 
     def edit(self, spec, prefix):
         makefile = FileFilter("Makefile")
         makefile.filter("PREFIX = .*", f"PREFIX = {prefix}")
 
-    def flag_handler(self, name: str, flags: List[str]):
-        if name == "cxxflags":
-            if self.spec.satisfies("%cxx=clang") or self.spec.satisfies("%cxx=apple-clang"):
-                flags.append("-Wno-reserved-user-defined-literal")
-        return (flags, None, None)
+        # This Makefile assigns CXXFLAGS/LDFLAGS with plain `=`, so neither
+        # depends_on-provided include paths nor flag_handler()-injected
+        # flags reach the compiler - patch the Makefile text directly
+        # instead, the same way PREFIX is handled above.
+        extra_cxxflags = ""
+        # bzip2's include path is never seen otherwise ("bzlib.h file not found").
+        bzip2_prefix = spec["bzip2"].prefix
+        extra_cxxflags += f" -I{bzip2_prefix.include}"
+        # pbzip2 uses C99 PRIuMAX macros without the C++11-required space
+        # (e.g. "%"PRIuMAX). Clang-based compilers treat this as an error.
+        if (
+            self.spec.satisfies("%cxx=clang")
+            or self.spec.satisfies("%cxx=apple-clang")
+            or self.spec.satisfies("%cxx=oneapi")
+            or self.spec.satisfies("%cxx=aocc")  # AMD's compiler is clang-based too
+        ):
+            extra_cxxflags += " -Wno-reserved-user-defined-literal"
+
+        makefile.filter(r"^CXXFLAGS = -O2$", f"CXXFLAGS = -O2{extra_cxxflags}")
+        makefile.filter(r"^LDFLAGS =$", f"LDFLAGS = -L{bzip2_prefix.lib}")

@@ -15,11 +15,13 @@ class Ripgrep(CargoPackage):
 
     homepage = "https://github.com/BurntSushi/ripgrep"
     url = "https://github.com/BurntSushi/ripgrep/archive/11.0.2.tar.gz"
+    supplier = "Person: Andrew Gallant"
 
-    maintainers("alecbcs")
+    maintainers("alecbcs", "mcmehrtens")
 
-    license("MIT OR Unlicense")
+    license("MIT OR Unlicense", checked_by="mcmehrtens")
 
+    version("15.2.0", sha256="7605249d3eb0d5f170e3414498e3344e26b1e7a147aec518b57090b80036a562")
     version("15.1.0", sha256="046fa01a216793b8bd2750f9d68d4ad43986eb9c0d6122600f993906012972e8")
     version("14.1.1", sha256="4dad02a2f9c8c3c8d89434e47337aa654cb0e2aa50e806589132f186bf5c2b66")
     version("14.1.0", sha256="33c6169596a6bbfdc81415910008f26e0809422fda2d849562637996553b2ab6")

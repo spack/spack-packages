@@ -21,11 +21,14 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     url = "file://{0}/NAMD_2.12_Source.tar.gz".format(os.getcwd())
     git = "https://charm.cs.illinois.edu/gerrit/namd.git"
     manual_download = True
+
     redistribute(source=False, binary=False)
+    license("LicenseRef-NAMD-Proprietary", checked_by="tgamblin")
 
     maintainers("jcphill")
 
     version("master", branch="master")
+    version("3.0.3", sha256="374537dd2c724116cbf45e3f72438f236012fd2664cb43e84de08c7fb9267424")
     version("3.0.2", sha256="0916700dec3342165b7ba2c3b5f99dcff767879d2a4931b5028dba47acd68bd5")
     version("3.0.1", sha256="3be0854545c45e58afb439a96708e127aef435d30113cc89adbab8f4b6888733")
     version(
@@ -39,8 +42,9 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     variant(
         "fftw",
         default="3",
-        values=("none", "2", "3", "mkl", "amdfftw"),
-        description="Enable the use of FFTW/FFTW3/MKL FFT/AMDFFTW",
+        values=("none", "2", "3", "mkl", "amdfftw", "aocl-fftw"),
+        description="Enable the use of FFTW/FFTW3/MKL FFT/AOCL-FFTW "
+        "(amdfftw is the deprecated alias of the preferred aocl-fftw)",
     )
 
     variant(
@@ -92,6 +96,7 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     depends_on("fftw@3:", when="fftw=3")
 
     depends_on("amdfftw", when="fftw=amdfftw")
+    depends_on("aocl-fftw", when="fftw=aocl-fftw")
 
     depends_on("mkl", when="fftw=mkl")
 
@@ -112,7 +117,10 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
     # https://www.ks.uiuc.edu/Research/namd/2.13/features.html
     # https://www.ks.uiuc.edu/Research/namd/2.14/features.html
     depends_on("cuda@6.5.14:7.5.18", when="@2.12 +cuda")
-    depends_on("cuda@8.0.61:", when="@2.13: +cuda")
+    depends_on("cuda@8.0.61:11", when="@2.13:2.14 +cuda")
+    # https://www.ks.uiuc.edu/Research/namd/3.0/announce.html
+    depends_on("cuda@9.1:12", when="@3:3.0.3 +cuda")
+    depends_on("cuda@9.1:", when="@3.0.4: +cuda")
 
     def _copy_arch_file(self, lib):
         config_filename = "arch/{0}.{1}".format(self.arch, lib)
@@ -281,9 +289,9 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
             opts.append("--without-fftw")
         elif fftw_version == "mkl":
             self._append_option(opts, "mkl")
-        elif fftw_version == "amdfftw":
+        elif fftw_version in ("amdfftw", "aocl-fftw"):
             self._copy_arch_file("fftw3")
-            opts.extend(["--with-fftw3", "--fftw-prefix", spec["amdfftw"].prefix])
+            opts.extend(["--with-fftw3", "--fftw-prefix", spec[fftw_version].prefix])
         else:
             _fftw = "fftw{0}".format("" if fftw_version == "2" else "3")
 
@@ -314,8 +322,18 @@ class Namd(MakefilePackage, CudaPackage, ROCmPackage):
 
         if "+rocm" in spec:
             self._copy_arch_file("hip")
+            # Enable cross-compilation
+            filter_file(
+                r"HIPCCOPTS \+= -march=native",
+                r"HIPCCOPTS += ",
+                join_path("arch", self.arch + ".hip"),
+            )
             opts.append("--with-hip")
             opts.extend(["--rocm-prefix", os.environ["ROCM_PATH"]])
+
+            # Fix hip compilation
+            if spec.satisfies("@3.0.1"):
+                filter_file(r"__syncwarp", r"__syncthreads", "src/SequencerCUDAKernel.cu")
 
             if "+single_node_gpu" in spec:
                 opts.extend(["--with-single-node-hip"])

@@ -1,0 +1,78 @@
+--- lapack/SRC/second.f	2026-07-21 12:39:38.694282918 +0200
++++ lapack/SRC/second.f	2026-07-21 12:40:56.671997850 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME
+-      EXTERNAL           ETIME
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME( TARRAY )
+--- lapack/SRC/dsecnd.f	2026-07-21 12:39:57.595939285 +0200
++++ lapack/SRC/dsecnd.f	2026-07-21 12:41:12.168032327 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME
+-      EXTERNAL           ETIME
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME( TARRAY )
+--- lapack/INSTALL/second.f	2026-07-21 12:39:38.694282918 +0200
++++ lapack/INSTALL/second.f	2026-07-21 12:41:26.347063875 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME
+-      EXTERNAL           ETIME
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME( TARRAY )
+--- lapack/INSTALL/dsecnd.f	2026-07-21 12:39:57.595939285 +0200
++++ lapack/INSTALL/dsecnd.f	2026-07-21 12:42:01.380141824 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME
+-      EXTERNAL           ETIME
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME( TARRAY )
+--- lapack/INSTALL/second.f.RS6K	2026-07-21 12:39:38.694306324 +0200
++++ lapack/INSTALL/second.f.RS6K	2026-07-21 12:42:13.333168420 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME_
+-      EXTERNAL           ETIME_
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME_( TARRAY )
+--- lapack/INSTALL/dsecnd.f.RS6K	2026-07-21 12:39:57.596043873 +0200
++++ lapack/INSTALL/dsecnd.f.RS6K	2026-07-21 12:41:47.021109875 +0200
+@@ -19,10 +19,6 @@
+ *     .. Local Arrays ..
+       REAL               TARRAY( 2 )
+ *     ..
+-*     .. External Functions ..
+-      REAL               ETIME_
+-      EXTERNAL           ETIME_
+-*     ..
+ *     .. Executable Statements ..
+ *
+       T1 = ETIME_( TARRAY )

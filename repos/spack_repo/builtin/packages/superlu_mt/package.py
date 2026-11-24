@@ -20,6 +20,7 @@ class SuperluMt(Package):
     git = "https://github.com/xiaoyeli/superlu_mt"
 
     version("master", branch="master")
+    version("4.0.2", tag="v4.0.2", commit="efbf5220dfad9e54ec2e256eb329d0cff5af2aa5")
     version("4.0.1", tag="v4.0.1", commit="1300aec2a46327ecdd34fc7460d56e86e5431f79")
     version("3.1", sha256="407b544b9a92b2ed536b1e713e80f986824cf3016657a4bfc2f3e7d2a76ecab6")
 

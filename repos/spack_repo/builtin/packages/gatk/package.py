@@ -20,8 +20,10 @@ class Gatk(Package):
     list_url = "https://github.com/broadinstitute/gatk/releases"
     maintainers("snehring")
 
-    license("Unlicense")
+    license("BSD-3-Clause", when="@4.0:4.1")
+    license("Apache-2.0", when="@4.2:")
 
+    version("4.7.0.0", sha256="d093d2693b1626361a413ca59d6d4a0bf968717f280a8fd9ce060b25eb2ed1db")
     version("4.5.0.0", sha256="dc1a4471e8bb566397db9894ca18acbf8f40f3fc312c8fad9a8c5390c218e916")
     version("4.4.0.0", sha256="444600f7b38b46ad0b3606b7d40ce921e0ff1910a50165872f1c73c7c4a1a390")
     version("4.3.0.0", sha256="e2c27229b34c3e22445964adf00639a0909887bbfcc040f6910079177bc6e2dd")

@@ -1,0 +1,48 @@
+diff --git a/Utilities/CASTEPconv/castepconv.py b/Utilities/CASTEPconv/castepconv.py
+index 17f7c33d5..d9104d153 100755
+--- a/Utilities/CASTEPconv/castepconv.py
++++ b/Utilities/CASTEPconv/castepconv.py
+@@ -209,9 +209,9 @@ __CASTEP_FINEGMAX__ = "size of   fine   gmax                          :"
+ __CASTEP_ENERGY__ = "Final energy, E             ="
+ __CASTEP_ENERGY_FIX__ = "Final energy ="
+ 
+-_CASTEP_FORCERE = re.compile('[\*]+[a-zA-Z\s]+Forces\s+[\*]+')
+-_CASTEP_FORCEENDRE = re.compile('\*[\s]+\*')
+-_CASTEP_STRESSRE = re.compile('[\*]+[a-zA-Z\s]+Stress Tensor\s+[\*]+')
++_CASTEP_FORCERE = re.compile(r'[\*]+[a-zA-Z\s]+Forces\s+[\*]+')
++_CASTEP_FORCEENDRE = re.compile(r'\*[\s]+\*')
++_CASTEP_STRESSRE = re.compile(r'[\*]+[a-zA-Z\s]+Stress Tensor\s+[\*]+')
+ _CASTEP_STRESSENDRE = _CASTEP_FORCEENDRE
+ 
+ # A definition for an entry in the pseudopotential block
+@@ -403,7 +403,7 @@ def strip_cellfile(fname):
+     # Read pseudopotentials
+     ppot = []
+     if stripped.freeform_present("species_pot"):
+-        pspotline_regex = re.compile("[0-9\.]+\|[0-9\.]+\|[0-9\.]+\|")
++        pspotline_regex = re.compile(r"[0-9\.]+\|[0-9\.]+\|[0-9\.]+\|")
+         pot_block = stripped.freeform_block("species_pot")
+         try:
+             for l in pot_block:
+diff --git a/Utilities/CASTEPconv/cconv/io_freeform.py b/Utilities/CASTEPconv/cconv/io_freeform.py
+index 15f5e2436..2fb0b72af 100755
+--- a/Utilities/CASTEPconv/cconv/io_freeform.py
++++ b/Utilities/CASTEPconv/cconv/io_freeform.py
+@@ -59,7 +59,7 @@ class keyword(object):
+             self.key = key
+ 
+         try:
+-            typmatch = re.findall('(S|I|R|P|D|L|V|W|B):(B|I|E|D)', typ.upper())
++            typmatch = re.findall(r'(S|I|R|P|D|L|V|W|B):(B|I|E|D)', typ.upper())
+             if len(typmatch) != 1:
+                 raise TypeError()
+             else:
+@@ -180,7 +180,7 @@ class io_freeform_file(object):
+                 # Empty line... skip
+                 continue
+ 
+-            lsplit = re.split('\s*[:=]*\s+', l, 1)
++            lsplit = re.split(r'\s*[:=]*\s+', l, 1)
+ 
+             # Are we reading a block or not?
+ 

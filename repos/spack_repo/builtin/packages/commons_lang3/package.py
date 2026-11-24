@@ -28,8 +28,7 @@ class CommonsLang3(Package):
     version("3.12.0", sha256="33012465dfcb7f790aca333e09ebf105e2a5fb95c2c638b3df790d3efa908e28")
     version("3.7", sha256="94dc8289ce90b77b507d9257784d9a43b402786de40c164f6e3990e221a2a4d2")
 
-    extends("openjdk")
-    depends_on("java@7:", type="run")
+    extends("java@7:", type="run")
 
     def install(self, spec, prefix):
         install(f"commons-lang3-{self.version}.jar", prefix)

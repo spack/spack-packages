@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-
 import subprocess
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
@@ -29,8 +28,6 @@ class Mapl(CMakePackage):
         "mathomp4",
         "tclune",
         "climbfuji",
-        "edwardhartnett",
-        "Hang-Lei-NOAA",
         "AlexanderRichert-NOAA",
     )
 
@@ -40,6 +37,19 @@ class Mapl(CMakePackage):
     version("main", branch="main")
 
     # Remember if there is a new ESMA_cmake, to update the resources too
+    version(
+        "2.74.0",
+        sha256="d6d1e21c04735f830528f1c4a0a196399a2aacbc82ea3a616d48eab7f7ef67cd",
+        preferred=True,
+    )
+    version("2.73.0", sha256="1f35304f1717ddb68f12be50c51332eca8aee408478ead314d1d143cb58fdef5")
+    version("2.72.0", sha256="2eae091ba86fc0e4cdc1af3e8d942d2e5f728bd7f24840d6119961031b481784")
+    version("2.71.0", sha256="0f763e1b74d227a06eff16daeb8d86425d75597f299d35cd3453a32f5c4864ef")
+    version("2.70.0", sha256="c31a390f39260ef25620c9d0367dc111e354d1f3e83157209ee2aca03249d804")
+    version("2.69.1", sha256="d34ba656c06a1ab0f306e22a8615a694f87c24626fc4cc8da3fe6f19fcbf3a4d")
+    version("2.69.0", sha256="ba5d08dbcfd6765955b19d944748d93506df649c59781e7307c14ca2ef613d92")
+    version("2.68.0", sha256="ccba8339569d4a8f64fd2435bcde1b09a41c6a54aae798eb8d4cc44a30e2a495")
+    version("2.67.0", sha256="fb8899c13fdf5145f16745a8ca6f88807c7a39423e17f745663d719348fc05e5")
     version("2.66.0", sha256="2b64472177119bcf91e3f39ebc3f253b3de54ea10b687e58d3fb0f9b2db1ed86")
     version("2.65.0", sha256="94cb2fd2432aea4e6a7231a02efd89f85928c52e3fd17ce7db4a359952899935")
     version("2.64.2", sha256="8e6ab418d5ab468ab3751dc277351a42ee87f6e0eee3ef13fef29062cd773c2d")
@@ -154,9 +164,57 @@ class Mapl(CMakePackage):
     resource(
         name="esma_cmake",
         git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.52.0",
+        commit="9833af50b572898eaf0e534ae6c212fbae20b863",
+        when="@2.73:",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.48.0",
+        commit="30e1c0c4193b26f5e7f0cea760c1980e986912b6",
+        when="@2.72",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.44.0",
+        commit="3a024a54bb086a16d7ccbb5ff854d8be4b3c3a27",
+        when="@2.71",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.40.0",
+        commit="bfea7ae9482f508f66f7964cf98908c7a6c63ce8",
+        when="@2.70",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.37.0",
+        commit="267dc7326176c27d90cb40a6dab0419655a385ad",
+        when="@2.69",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
+        tag="v4.36.0",
+        commit="55e58a5319e00ca30fc4f18a91757227e0389e6b",
+        when="@2.68",
+        placement="ESMA_cmake",
+    )
+    resource(
+        name="esma_cmake",
+        git="https://github.com/GEOS-ESM/ESMA_cmake.git",
         tag="v3.72.0",
         commit="e01a441a7528f70584bb0f4ab6df35bee75d9c74",
-        when="@2.66:",
+        when="@2.66:2.67",
         placement="ESMA_cmake",
     )
     resource(
@@ -293,6 +351,11 @@ class Mapl(CMakePackage):
     # ifx 2025.0 and newer due to bugs in ifx.
     conflicts("^[virtuals=fortran] intel-oneapi-compilers@2025:", when="@:2.50")
 
+    # Flang is only supported from MAPL 2.67 onwards,
+    # and only flang 22.1.0 and newer due to bugs in flang.
+    conflicts("^[virtuals=fortran] llvm@22.1.0:", when="@:2.66")
+    conflicts("^[virtuals=fortran] llvm@:21")
+
     variant("flap", default=False, description="Build with FLAP support", when="@:2.39")
     variant("pflogger", default=True, description="Build with pFlogger support")
     variant("fargparse", default=True, description="Build with fArgParse support")
@@ -344,7 +407,8 @@ class Mapl(CMakePackage):
     depends_on("udunits", when="@2.48:")
 
     # gFTL dependency
-    depends_on("gftl@1.16.0:", when="@2.63:")
+    depends_on("gftl@1.17.0:", when="@2.68:")
+    depends_on("gftl@1.16.0:", when="@2.63:2.67")
     depends_on("gftl@1.15.2:", when="@2.55:2.62")
     depends_on("gftl@1.14.0:", when="@2.48:2.54")
     depends_on("gftl@1.13.0:", when="@2.45:2.47")
@@ -353,7 +417,8 @@ class Mapl(CMakePackage):
     depends_on("gftl@1.5.5:1.9", when="@:2.39")
 
     # gFTL-Shared dependency
-    depends_on("gftl-shared@1.11.0:", when="@2.63:")
+    depends_on("gftl-shared@1.12.0:", when="@2.68:")
+    depends_on("gftl-shared@1.11.0:", when="@2.63:2.67")
     depends_on("gftl-shared@1.10.0:", when="@2.55:2.62")
     depends_on("gftl-shared@1.9.0:", when="@2.48:2.54")
     depends_on("gftl-shared@1.8.0:", when="@2.45:2.47")
@@ -369,7 +434,8 @@ class Mapl(CMakePackage):
     depends_on("yafyaml@1.0-beta5", when="@:2.22+extdata2g")
 
     # pflogger dependency
-    depends_on("pflogger@1.17.0: +mpi", when="@2.63:+pflogger")
+    depends_on("pflogger@1.18.0: +mpi", when="@2.68:+pflogger")
+    depends_on("pflogger@1.17.0: +mpi", when="@2.63:2.67+pflogger")
     depends_on("pflogger@1.16.1: +mpi", when="@2.55:2.62+pflogger")
     depends_on("pflogger@1.15.0: +mpi", when="@2.48:2.54+pflogger")
     depends_on("pflogger@1.14.0: +mpi", when="@2.45:2.47+pflogger")
@@ -388,7 +454,8 @@ class Mapl(CMakePackage):
     depends_on("fargparse@1.4.1:1.4", when="@:2.39+fargparse")
 
     # pfunit dependency
-    depends_on("pfunit@4.13.0: +mpi +fhamcrest", when="@2.63:+pfunit")
+    depends_on("pfunit@4.16.0: +mpi +fhamcrest", when="@2.68:+pfunit")
+    depends_on("pfunit@4.13.0: +mpi +fhamcrest", when="@2.63:2.67+pfunit")
     depends_on("pfunit@4.11.1: +mpi +fhamcrest", when="@2.55:2.62+pfunit")
     depends_on("pfunit@4.10: +mpi +fhamcrest", when="@2.48:2.54+pfunit")
     depends_on("pfunit@4.9: +mpi +fhamcrest", when="@2.45:2.47+pfunit")
@@ -486,7 +553,7 @@ class Mapl(CMakePackage):
             nc_pc_cmd = ["nc-config", "--static", "--libs"]
             nc_flags = subprocess.check_output(nc_pc_cmd, encoding="utf8").strip()
             filter_file(
-                "(target_link_libraries[^)]+PUBLIC )", r"\1 %s " % nc_flags, "pfio/CMakeLists.txt"
+                "(target_link_libraries[^)]+PUBLIC )", rf"\1 {nc_flags} ", "pfio/CMakeLists.txt"
             )
 
         # https://community.intel.com/t5/Intel-Fortran-Compiler/Regression-with-fpp-2025-2-0/td-p/1703735
@@ -516,10 +583,10 @@ cpp -P -traditional-cpp -undef \"$@\"
 
     # We can run some tests to make sure the build is working
     # but we can only do it if the pfunit variant is enabled
-    @when("+pfunit")
-    @run_after("build")
     @on_package_attributes(run_tests=True)
     def check(self):
+        if not self.spec.satisfies("+pfunit"):
+            return
         with working_dir(self.build_directory):
             # The test suite contains a lot of tests. We select only those
             # that are cheap. Note this requires MPI and 6 processes

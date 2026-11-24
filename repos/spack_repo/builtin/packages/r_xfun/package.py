@@ -17,6 +17,7 @@ class RXfun(RPackage):
 
     license("MIT")
 
+    version("0.57", sha256="5a0cded15fe21273c6d83dd9b72a1c798a1b43841c2166b563723c2ee4b7f475")
     version("0.47", sha256="999874fdbf4df2e686a3cb134bfef782c0d3eb0141006191ca1eda94ce232c4b")
     version("0.39", sha256="d0ecaabb243dd3496da6029932fcdd4772914843de7ffd0b78a172efde1356c9")
     version("0.34", sha256="50e76c1febb988c044e44fb78e1abc1ba681173c9ff3c336f4c0ad71e6a2853d")

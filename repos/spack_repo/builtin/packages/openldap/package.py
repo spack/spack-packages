@@ -78,6 +78,18 @@ class Openldap(AutotoolsPackage):
     # Newer C compilers (>= Clang 16 and >= GCC 14) reject some constructs removed in C99
     conflicts("%gcc@14:", when="@:2.6.4", msg="Newer C compilers required 2.6.5 or newer")
 
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            # Old configure tests use pre-C99 constructs (implicit int in
+            # main(), implicit exit() declaration) that newer Clang treats as
+            # hard errors, breaking e.g. the POSIX regex check on macOS
+            if self.spec.satisfies("@:2.6.4 %apple-clang@12:") or self.spec.satisfies(
+                "@:2.6.4 %clang@16:"
+            ):
+                flags.append("-Wno-error=implicit-function-declaration")
+                flags.append("-Wno-error=implicit-int")
+        return (flags, None, None)
+
     # Ref: https://www.linuxfromscratch.org/blfs/view/svn/server/openldap.html
     @when("+client_only")
     def configure_args(self):

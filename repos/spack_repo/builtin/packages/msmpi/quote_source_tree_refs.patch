@@ -132,7 +132,7 @@ index 9eb7dff..884fd63 100644
    <ItemDefinitionGroup>
      <PostBuildEvent>
 -      <Command>robocopy $(OutDir) $(BinariesBuildTypeArchDirectory)\$(MPI_SDK_DESTINATION)\lib msmpi.lib
-+      <Command>robocopy "$(OutDir)" "$(BinariesBuildTypeArchDirectory)\$(MPI_SDK_DESTINATION)\lib" msmpi.lib
++      <Command>robocopy "$(OutDir)." "$(BinariesBuildTypeArchDirectory)\$(MPI_SDK_DESTINATION)\lib" msmpi.lib
  set rc=%errorlevel%
  if not %rc%==1 exit %rce% else exit 0</Command>
      </PostBuildEvent>

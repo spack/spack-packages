@@ -17,6 +17,7 @@ class RHms(RPackage):
 
     license("MIT")
 
+    version("1.1.4", sha256="efc525f797b62b3740d06c6fa8202593ab5aa4fc1edeefb76b6eb9be89e87b94")
     version("1.1.3", sha256="e626f4c60af46efd53ea631b316a103e089470d8fd63c0e0c0efb99364990282")
     version("1.1.2", sha256="1ee6a9847336aaf58d3fcee5b56c290c2204e1213b6628862818419b2302bded")
     version("1.1.1", sha256="6b5f30db1845c70d27b5de33f31caa487cdd0787cd80a4073375e5f482269062")
@@ -24,13 +25,17 @@ class RHms(RPackage):
     version("0.5.0", sha256="a87872665c3bf3901f597d78c152e7805f7129e4dbe27397051de4cf1a76561b")
     version("0.3", sha256="9368259cbc1094ce0e4cf61544875ec30088ef690d6667e6b0b564218ab3ff88")
 
-    depends_on("r-lifecycle", type=("build", "run"), when="@1.0.0:")
-    depends_on("r-pkgconfig", type=("build", "run"), when="@0.5.0:")
-    depends_on("r-rlang", type=("build", "run"), when="@0.5.0:")
-    depends_on("r-rlang@1.0.2:", type=("build", "run"), when="@1.1.3:")
-    depends_on("r-vctrs@0.2.0:", type=("build", "run"), when="@0.5.0:")
-    depends_on("r-vctrs@0.2.1:", type=("build", "run"), when="@1.0.0:")
-    depends_on("r-vctrs@0.3.8:", type=("build", "run"), when="@1.1:")
-    depends_on("r-ellipsis", type=("build", "run"), when="@1.0.0:1.1.2")
-    depends_on("r-ellipsis@0.3.2", type=("build", "run"), when="@1.1:1.1.2")
-    depends_on("r-ellipsis@0.3.2:", type=("build", "run"), when="@1.1.2:1.1.2")
+    with default_args(type=("build", "run")):
+        depends_on("r-cli", when="@1.1.4:")
+        depends_on("r-lifecycle", when="@1.0.0:")
+        depends_on("r-pkgconfig", when="@0.5.0:")
+        depends_on("r-rlang@1.0.2:", when="@1.1.3:")
+        depends_on("r-rlang", when="@0.5.0:")
+        depends_on("r-vctrs@0.3.8:", when="@1.1:")
+        depends_on("r-vctrs@0.2.1:", when="@1.0.0:")
+        depends_on("r-vctrs@0.2.0:", when="@0.5.0:")
+
+        # Historical dependencies
+        depends_on("r-ellipsis@0.3.2:", when="@1.1.2")
+        depends_on("r-ellipsis@0.3.2", when="@1.1:1.1.2")
+        depends_on("r-ellipsis", when="@1.0.0:1.1.2")

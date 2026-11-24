@@ -177,7 +177,7 @@ class Qt(Package):
         "https://github.com/qt/qtbase/commit/cdf64b0e47115cc473e1afd1472b4b09e130b2a5.patch?full_index=1",
         sha256="2b881ffb2808f8fa79f51f8bec71be91a886bcdc59b1d7b6986cba26ed18d1d3",
         working_dir="qtbase",
-        when="@5.12.1: %apple-clang@15:",
+        when="@5.12.1:5.15.17 %apple-clang@15:",
     )
     conflicts("%apple-clang@15:", when="@:5.12.0")
 
@@ -253,7 +253,12 @@ class Qt(Package):
     depends_on("python", when="@5.7.0:", type="build")
 
     # Dependencies, then variant- and version-specific dependencies
-    depends_on("icu4c@:74")  # @75: requires cxxstd 17 which is not modelled here
+    depends_on("icu4c")
+    # icu4c@75: requires cxxstd 17 which is not modelled here; only relevant
+    # for older compilers, newer ones default to C++17 anyway
+    depends_on("icu4c@:74", when="%gcc@:10")
+    # mapbox-gl-native in qtlocation forces C++14
+    depends_on("icu4c@:74", when="@5.11: +location")
     depends_on("jpeg")
     depends_on("libtiff")
     depends_on("libxml2")
@@ -265,7 +270,8 @@ class Qt(Package):
     depends_on("pcre+multibyte", when="@5.0:5.8")
 
     with when("+ssl"):
-        depends_on("openssl")
+        # error: invalid use of incomplete type 'ASN1_INTEGER' {aka 'struct asn1_string_st'}
+        depends_on("openssl@:3")
         depends_on("openssl@1.1.1:", when="@5.15.0:")
 
     depends_on("libpng", when="@4:")
@@ -660,10 +666,13 @@ class Qt(Package):
 
         if "+gui" in spec:
             use_spack_dep("freetype")
+
             if spec.satisfies("platform=linux") or spec.satisfies("platform=freebsd"):
                 config_args.append("-fontconfig")
-            # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
-            config_args.append("-no-vulkan")
+
+            if spec.satisfies("@5.10:5"):
+                # Avoid sporadic vkconvenience bug by explicitly disabling vulkan
+                config_args.append("-no-vulkan")
         else:
             config_args.append("-no-freetype")
             config_args.append("-no-gui")
@@ -845,8 +854,7 @@ class Qt(Package):
             config_args.extend(["-skip", "wayland"])
 
         if "~location" in spec:
-            if version >= Version("5.15"):
-                config_args.extend(["-skip", "qtlocation"])
+            config_args.extend(["-skip", "qtlocation"])
 
         if IS_WINDOWS:
             config_args.extend(["-skip", "qtspeech"])

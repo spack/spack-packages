@@ -34,8 +34,50 @@ class Roms(MakefilePackage):
         "roms_application",
         default="benchmark",
         description="Makefile to include its associated header file",
-        values=("upwelling", "benchmark"),
+        values=(
+            "basin",
+            "benchmark",
+            "bio_toy",
+            "bl_test",
+            "canyon",
+            "channel",
+            "channel_neck",
+            "coupling_test",
+            "damee_4",
+            "dogbone",
+            "double_gyre",
+            "estuary_test",
+            "flt_test",
+            "grav_adj",
+            "inlet_test",
+            "kelvin",
+            "lab_canyon",
+            "lake_jersey",
+            "lake_signell",
+            "lmd_test",
+            "mixed_layer",
+            "overflow",
+            "riverplume1",
+            "riverplume2",
+            "seamount",
+            "sed_test1",
+            "sed_toy",
+            "shoreface",
+            "soliton",
+            "test_chan",
+            "test_head",
+            "upwelling",
+            "wc13",
+            "weddell",
+            "windbasin",
+            "none",
+        ),
         multi=False,
+    )
+    variant(
+        "custom_application",
+        default="none",
+        description="Path to custom application header file (use roms_application=none with this)",
     )
     variant(
         "debug",
@@ -52,10 +94,27 @@ class Roms(MakefilePackage):
     depends_on("hdf5+fortran")
     depends_on("zlib-api")
     depends_on("curl")
-    depends_on("amdlibm", when="%aocc")
+    depends_on("aocl-libm", when="%aocc")
 
     # Note: you cannot set USE_OpenMP and USE_MPI at the same time
     conflicts("+mpi+openmp")
+
+    @run_before("edit")
+    def validate_application_config(self):
+        """Validate application configuration before starting build"""
+        custom_app = self.spec.variants["custom_application"].value
+        roms_app = self.spec.variants["roms_application"].value
+
+        # Validate that custom_application and roms_application are not both set
+        if custom_app != "none" and roms_app != "none":
+            raise InstallError(
+                "Cannot specify both custom_application and a built-in roms_application. "
+                "Set roms_application=none when using custom_application."
+            )
+
+        # Validate the custom header file exists
+        if custom_app != "none" and not os.path.isfile(custom_app):
+            raise InstallError("Custom application header file not found: {0}".format(custom_app))
 
     def _copy_arch_file(self, lib):
         """AOCC compiler takes gfortran's makefile as reference"""
@@ -90,7 +149,7 @@ class Roms(MakefilePackage):
         filter_file(r"\sFFLAGS :=.*$", " FFLAGS := {0}".format(" ".join(fflags)), make_aocc)
         filter_file("-fallow-argument-mismatch", "", make_aocc, string=True)
         filter_file(
-            r"\sLIBS :=.*", " LIBS := {0}".format(spec["amdlibm"].libs.ld_flags), make_aocc
+            r"\sLIBS :=.*", " LIBS := {0}".format(spec["aocl-libm"].libs.ld_flags), make_aocc
         )
         filter_file(r"\sFREEFLAGS :=.*", " FREEFLAGS := -ffree-form", make_aocc)
 
@@ -112,7 +171,19 @@ class Roms(MakefilePackage):
 
         makefile = FileFilter("makefile")
 
-        app_type = self.selected_roms_application
+        # Handle custom application header file
+        custom_app = self.spec.variants["custom_application"].value
+
+        if custom_app != "none":
+            # Extract application name from filename (remove .h extension)
+            custom_app_name = os.path.splitext(os.path.basename(custom_app))[0]
+
+            # Copy custom header to ROMS/Include directory
+            copy(custom_app, join_path("ROMS", "Include", "{0}.h".format(custom_app_name)))
+
+            app_type = custom_app_name
+        else:
+            app_type = self.selected_roms_application
 
         makefile.filter(
             r"ROMS_APPLICATION.*?=.*", "ROMS_APPLICATION = {0}".format(app_type.upper())

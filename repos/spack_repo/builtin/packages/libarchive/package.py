@@ -18,6 +18,7 @@ class Libarchive(AutotoolsPackage):
 
     license("BSD-2-Clause AND BSD-3-Clause AND Public-Domain")
 
+    version("3.8.10", sha256="a1bffbe5152cfe869751179e7b16648c87c461cb8c46eee75062efbe164cc57c")
     version("3.8.5", sha256="8a60f3a7bfd59c54ce82ae805a93dba65defd04148c3333b7eaa2102f03b7ffd")
     version("3.8.0", sha256="191b5b24811499d5c2e5efa3248975fa6daa5e6a227700cc7b8e54d6d7c06eef")
     version("3.7.9", sha256="aa90732c5a6bdda52fda2ad468ac98d75be981c15dde263d7b5cf6af66fd009f")
@@ -89,8 +90,13 @@ class Libarchive(AutotoolsPackage):
         args = ["--without-libb2"]
         args += self.with_or_without("compression")
         args += self.with_or_without("crypto")
-        args += self.with_or_without("xar")
         args += self.enable_or_disable("programs")
+
+        # So that a shared object can link libarchive.a
+        args.append("--with-pic")
+
+        # Otherwise configure links any libacl it finds, including the host's
+        args.append("--disable-acl")
 
         if spec.satisfies("+iconv"):
             if spec["iconv"].name == "libiconv":
@@ -99,5 +105,15 @@ class Libarchive(AutotoolsPackage):
                 args.append("--without-libiconv-prefix")
         else:
             args.append("--without-iconv")
+
+        if spec.satisfies("xar=expat"):
+            args.append("--with-expat")
+        else:
+            args.append("--without-expat")
+
+        if spec.satisfies("xar=libxml2"):
+            args.append("--with-xml2")
+        else:
+            args.append("--without-xml2")
 
         return args

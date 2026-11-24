@@ -38,7 +38,9 @@ class Sensei(CMakePackage):
 
     variant("shared", default=True, description="Enables shared libraries")
     variant("ascent", default=False, description="Build with ParaView-Catalyst support")
-    variant("catalyst", default=False, description="Build with ParaView-Catalyst support")
+    variant(
+        "catalyst", default=False, description="Build with ParaView-Catalyst support", when="@5:"
+    )
     variant("libsim", default=False, description="Build with VisIt-Libsim support")
     variant("vtkio", default=False, description="Enable adaptors to write to VTK XML format")
     variant("adios2", default=False, description="Enable ADIOS2 adaptors and endpoints")
@@ -47,7 +49,7 @@ class Sensei(CMakePackage):
         "vtkm",
         default=False,
         description="Enable VTKm adaptors and endpoints",
-        when="@4: +catalyst",
+        when="@5: +catalyst",
     )
     variant("python", default=False, description="Enable Python bindings", when="@3:")
     variant(
@@ -64,18 +66,17 @@ class Sensei(CMakePackage):
     depends_on("paraview+hdf5", when="+catalyst+hdf5")
     depends_on("paraview+python", when="+catalyst+python")
 
-    depends_on("paraview@5.5.0:5.5.2", when="@:2.1.1 +catalyst")
-    depends_on("paraview@5.6:5.7", when="@3:3.2.1 +catalyst")
-    depends_on("paraview@5.7:5.9", when="@3.2.2 +catalyst")
-    depends_on("paraview@5.7:5.10", when="@4:4 +catalyst")
+    depends_on("paraview", when="@5:5 +catalyst")
 
     # Visit Dep
     depends_on("visit", when="+libsim")
 
     # VTK Dep
-    depends_on("vtk@8:8", when="@:3 ~catalyst")
-    depends_on("vtk+python", when="@:3 ~catalyst+python")
-    depends_on("vtk@9:", when="@4: +vtkio ~catalyst")
+    depends_on("vtk@8:8", when="@:3")
+    depends_on("vtk+python", when="@:3 +python")
+    depends_on("vtk+python", when="@5: ~catalyst +python")
+    depends_on("vtk@9:", when="@4:4 +vtkio")
+    depends_on("vtk@9:", when="@5: +vtkio ~catalyst")
 
     # VTK-m
     depends_on("paraview use_vtkm=on", when="+vtkm")

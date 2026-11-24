@@ -72,4 +72,4 @@ class Cmor(AutotoolsPackage):
         make("install")
 
         if spec.satisfies("+python"):
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={prefix}", ".")

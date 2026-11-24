@@ -19,6 +19,10 @@ class PySlepc4py(PythonPackage):
     license("BSD-2-Clause")
 
     version("main", branch="main")
+    version("3.26.1", sha256="52ca65bbb09668ee957569b93308c643a423ea280a6e07e9933054b91c1f9f38")
+    version("3.26.0", sha256="07bf970c861736b9b977dfecd4ad46415d6c4a6f26b0ed128ecffae59613d6ff")
+    version("3.25.2", sha256="28b750aade266d171a23b0ef2e471f24caa65ef69fba5d12147a916e35f5051e")
+    version("3.25.1", sha256="d5ac5c132ff7f5450fc511a50bdd2fce20b30e7618f53b6d64207832de33c75e")
     version("3.25.0", sha256="8b81061b94a9c9a7586ff2b8cc1dfe40d373981b0c7d2a28bdad154bbc6f832e")
     version("3.24.3", sha256="7b814fd5561838b1e0a4821d5e83e6aad061cd57b3ce50549598caa2e65b13c0")
     version("3.24.2", sha256="cbcff24004e35cdb17587c534d68329b6467574df93028d04596bfaf3baccbb7")
@@ -56,6 +60,7 @@ class PySlepc4py(PythonPackage):
     version("3.15.0", sha256="2f5f5cc25ab4dd3782046c65e97265b39be0cf9cc74c5c0100c3c580c3c32395")
 
     patch("ldshared.patch", when="@:3.18")
+    patch("ldshared-3.21-3.23.0.patch", when="@3.21:3.23.0")
 
     depends_on("c", type="build")
 
@@ -68,6 +73,7 @@ class PySlepc4py(PythonPackage):
     depends_on("py-petsc4py@main", when="@main", type=("build", "run"))
     depends_on("slepc@main", when="@main")
     for ver in [
+        "3.26",
         "3.25",
         "3.24",
         "3.23",

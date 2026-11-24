@@ -22,6 +22,13 @@ class Capnproto(AutotoolsPackage):
 
     version("master", branch="master")
 
+    version("1.5.0", sha256="d5ebdf858e9885c33d4b3f765006d68bd66e9b002bf4d607ff4317ef9c1aac6a")
+    version("1.4.0", sha256="d14a9149b79c055fee9d5aa778defe8e8cee0d2a11f0729865cd30dcc345eef2")
+    version("1.3.0", sha256="01ab2ba7f52fcc3c51a10e22935aae56f3bc5e99b726b7e507fe6700cb12147d")
+    version("1.2.0", sha256="763ecaa78e900101bc40c1c3397991413ff26996415b891ca9c310987fbdf3fb")
+    version("1.1.0", sha256="c0a0d78a07e821f7bae26c7fcac20a9202eb3d639a673b2606b76092a1f35b6b")
+    version("1.0.2", sha256="3cfd0ed58080d78b3a3381305489f2175cdaf1ef1cb55425d8fc8246a76bdff3")
+    version("0.10.4", sha256="c6f25940688c87ddb24e0c4e475c3213d9b044aad2ba305439cc8c224f559da6")
     version("0.10.2", sha256="756262841fa66260c9969e900701cc86720c2548584fb96c8153348fd7edfe69")
     version("0.10.0", sha256="0e46a72d086830762c001116c0a146098fbdce3cd40665a0ffd4742962d42bfd")
     version("0.9.1", sha256="daf49f794560f715e2f4651c842aaece2d065d4216834c5c3d3254962e35b535")

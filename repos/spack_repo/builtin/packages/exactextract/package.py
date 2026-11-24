@@ -55,4 +55,4 @@ class Exactextract(CMakePackage, PythonExtension):
     def install_python(self):
         if self.spec.satisfies("+python"):
             # build the python library
-            pip(*PythonPipBuilder.std_args(self), f"--prefix={self.prefix}", ".")
+            pip(*PythonPipBuilder.std_args(), f"--prefix={self.prefix}", ".")

@@ -22,6 +22,7 @@ class Compadre(CMakePackage):
     maintainers("kuberry")
 
     version("master", branch="master")
+    version("1.7.5", sha256="49a5ca7b1d2a7f357e09f3bd988746521fb6dcfac47685b4c328dd86fb952eb9")
     version("1.7.3", sha256="982f918daa5d8ad46145b9fb91ae0c1ecbdc722bc030367cba51901c8fd4c3fe")
     version("1.7.2", sha256="4b7c2944300fd025957be44a1114177dfa0aafcf9e613d830a94e020b2f1751e")
     version(

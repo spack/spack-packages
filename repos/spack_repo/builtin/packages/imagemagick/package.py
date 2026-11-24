@@ -22,6 +22,7 @@ class Imagemagick(AutotoolsPackage):
 
     variant("ghostscript", default=False, description="Compile with Ghostscript support")
     variant("rsvg", default=False, description="Enable RSVG support")
+    variant("zlib", default=False, description="Enable zlib support")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -37,6 +38,7 @@ class Imagemagick(AutotoolsPackage):
     depends_on("libtiff@4:")
     depends_on("ghostscript", when="+ghostscript")
     depends_on("ghostscript-fonts", when="+ghostscript")
+    depends_on("zlib-api", when="+zlib")
 
     def configure_args(self):
         args = []
@@ -48,6 +50,7 @@ class Imagemagick(AutotoolsPackage):
         else:
             args.append("--without-gslib")
         args.extend(self.with_or_without("rsvg"))
+        args.extend(self.with_or_without("zlib"))
         return args
 
     @property

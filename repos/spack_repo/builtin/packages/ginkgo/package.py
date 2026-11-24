@@ -80,7 +80,7 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("rocthrust", when="+rocm")
     # https://github.com/ginkgo-project/ginkgo/issues/1983
-    depends_on("rocthrust@:7.1", when="@:1.11 +rocm")
+    depends_on("rocthrust@:7.1", when="@:1.10 +rocm")
     depends_on("hipsparse", when="+rocm")
     depends_on("hipblas", when="+rocm")
     depends_on("rocrand", when="+rocm")
@@ -94,6 +94,8 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("papi@7.1.0: +sde", when="+sde")
 
     depends_on("googletest", type="test")
+    depends_on("nlohmann-json@3.9:3", type="test")
+    depends_on("yaml-cpp@0.8:0", type="test")
     depends_on("numactl", type="test", when="+hwloc")
 
     depends_on("intel-oneapi-mkl", when="+sycl")
@@ -102,6 +104,13 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     conflicts("%gcc@:5.2.9")
     conflicts("+rocm", when="@:1.1.1")
+
+    # Allows ROCm 7.2 and newer
+    patch(
+        "https://github.com/ginkgo-project/ginkgo/commit/a79688934fe18f61020b9f6740cc9c3b6fc10748.patch?full_index=1",
+        sha256="fdaec2d426a8844ed62fae6fddc1abc914c871e18a5924818ff790dc1d469acb",
+        when="@1.11.0 +rocm",
+    )
 
     # ROCm 4.1.0 breaks platform settings which breaks Ginkgo's HIP support.
     conflicts("^hip@4.1.0:", when="@:1.3.0")
@@ -126,6 +135,9 @@ class Ginkgo(CMakePackage, CudaPackage, ROCmPackage):
 
     # https://github.com/ginkgo-project/ginkgo/pull/1926
     conflicts("^cuda@13:", when="@:1.10.0 +cuda")
+
+    # https://github.com/ginkgo-project/ginkgo/pull/2002
+    conflicts("^cuda@13.2:", when="@1.11.0 +cuda")
 
     # error due to change in warpSize constant definition in ROCm 7.0 prior to v.1.11.0
     # https://github.com/ginkgo-project/ginkgo/pull/1954

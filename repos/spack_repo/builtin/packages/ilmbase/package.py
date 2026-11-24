@@ -36,4 +36,5 @@ class Ilmbase(AutotoolsPackage):
         url="http://download.savannah.nongnu.org/releases/openexr/ilmbase-0.9.0.tar.gz",
     )
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")

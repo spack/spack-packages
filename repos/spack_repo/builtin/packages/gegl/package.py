@@ -38,6 +38,7 @@ class Gegl(MesonPackage):
     depends_on("glib")
     depends_on("gobject-introspection")
     depends_on("json-glib")
+    depends_on("libpng")
 
     def setup_dependent_build_environment(
         self, env: EnvironmentModifications, dependent_spec: Spec

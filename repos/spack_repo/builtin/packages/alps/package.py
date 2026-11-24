@@ -16,18 +16,20 @@ class Alps(CMakePackage):
     algorithm for many others.
     """
 
-    homepage = "https://github.com/ALPSim/ALPS"
-    url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v2.3.4-beta.2.tar.gz"
+    homepage = "https://alps.comp-phys.org"
+    url = "https://github.com/ALPSim/ALPS/archive/refs/tags/v3.0.0.tar.gz"
+    git = "https://github.com/ALPSim/ALPS.git"
 
     maintainers("Ooolab", "egull", "Sinan81")
 
-    license("BSL-1.0", when="@:2.3.3", checked_by="Sinan81")
-    license("MIT", when="@2.3.4:", checked_by="Ooolab")
+    # v2.3.3's LICENSE.txt is already the MIT license
+    license("MIT", checked_by="egull")
 
+    version("master", branch="master")
+    version("3.0.0", sha256="ea44545afc570de7df8c01f093b769adf344f72579968b700e4e93df9eedb0ea")
     version(
         "2.3.4-beta.2",
         sha256="ca2e1307630e6fccac279ab7711036f7c6dee43c386fd6f24cfc77c86a3c7f1c",
-        preferred=True,
     )
     version("2.3.3", sha256="73d8c9038d00c7f768f65474b2a657d5c49daf105ddfcaef7d16737500b5d02f")
 
@@ -35,27 +37,62 @@ class Alps(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
+    # No fortran: ALPS_BUILD_FORTRAN defaults OFF and is not enabled here
+
+    depends_on("cmake@3.18:", type="build")
+    depends_on("cmake@3.22:", type="build", when="@3:")
+
+    # --- Boost, two schemes ---
+    # @3: consumes an externally built (Spack) Boost via ALPS_USE_SYSTEM_BOOST.
+    # Spack's infinity-version ordering means that @master also satisfies @3:.
+    # Compiled Boost with all required library components.
+    # Minimum 1.69: boost::system became header-only in 1.69; ALPS_USE_SYSTEM_BOOST
+    # omits it from the explicit link list, which is only valid for Boost >= 1.69.
     depends_on(
-        "boost@1.80:", type="build"
-    )  # Just for headers. Note that the checksums are listed below
+        "boost@1.69:"
+        "+filesystem+serialization+system+program_options"
+        "+regex+thread+date_time+chrono+timer+iostreams+test+python",
+        type=("build", "link"),
+        when="@3:",
+    )
+    depends_on("boost+mpi", when="@3: +mpi")
+    depends_on("boost~mpi", when="@3: ~mpi")
+    # Boost >= 1.87 supports NumPy 2. Older Boost can auto-detect NumPy and
+    # compile its incompatible NumPy module even when boost~numpy is requested.
+    requires("^boost@1.87:", when="@3: ^py-numpy@2:")
+    requires("^boost+numpy", when="@3: ^boost@1.87:")
+    requires("^boost+numpy", when="@3: ^boost@1.69:1.86 ^py-numpy@:1")
+
+    # Legacy 2.x releases compile Boost from a source tree staged as a resource;
+    # this dependency only selects which source tarball resource is staged
+    # (see the resource table below). Upper bound must match the last entry
+    # in that table.
+    depends_on("boost@1.80:1.90", type="build", when="@:2.3.4")
+
     depends_on("fftw")
+    # Keep the DAG truly serial for ~mpi: fftw defaults to +mpi, which would
+    # otherwise pull in an MPI that ALPS's CMake then finds and links.
+    depends_on("fftw~mpi", when="~mpi")
+    depends_on("blas")
     depends_on("lapack")
-    depends_on("python", type=("build", "link", "run"))
+    depends_on("python@3.9:", type=("build", "link", "run"))
     depends_on("py-numpy", type=("build", "run"))
     depends_on("py-scipy", type=("build", "run"))
     depends_on("py-matplotlib", type=("build", "run"))
     depends_on("mpi", when="+mpi")
-    depends_on("hdf5+mpi+hl", when="+mpi")
-    depends_on("hdf5~mpi+hl", when="~mpi")
+    # Serial HDF5 even for +mpi: ALPS's CMakeLists warns "ALPS does not use
+    # parallel HDF5. The standard version is preferred."
+    depends_on("hdf5~mpi+hl")
     depends_on("zlib-api")
 
     extends("python")
 
+    # Boost source tree for legacy 2.x releases, which build Boost themselves.
     # See https://github.com/ALPSim/ALPS/issues/6#issuecomment-2604912169
     # for why this is needed
     for boost_version, boost_checksum in (
         # boost version, shasum
+        ("1.90.0", "49551aff3b22cbc5c5a9ed3dbc92f0e23ea50a0f7325b0d198b705e8ee3fc305"),
         ("1.89.0", "85a33fa22621b4f314f8e85e1a5e2a9363d22e4f4992925d4bb3bc631b5a0c7a"),
         ("1.88.0", "46d9d2c06637b219270877c9e16155cbd015b6dc84349af064c088e9b5b12f7b"),
         ("1.87.0", "af57be25cb4c4f4b413ed692fe378affb4352ea50fbe294a11ef548f4d527d89"),
@@ -68,7 +105,7 @@ class Alps(CMakePackage):
         ("1.80.0", "1e19565d82e43bc59209a168f5ac899d3ba471d55c7610c677d4ccf2c9c500c0"),
     ):
         resource(
-            when="^boost@{0}".format(boost_version),
+            when="@:2.3.4 ^boost@{0}".format(boost_version),
             name="boost_source_files",
             url="https://downloads.sourceforge.net/project/boost/boost/{0}/boost_{1}.tar.bz2".format(
                 boost_version, boost_version.replace(".", "_")
@@ -78,8 +115,12 @@ class Alps(CMakePackage):
             placement="boost_source_files",
         )
 
-    # Patch for >=Boost 1.88.0 compatibility
+    # Patch for >=Boost 1.88.0 compatibility (legacy 2.x releases only; the
+    # 3.x sources already carry these fixes)
     def patch(self):
+        if self.spec.satisfies("@3:"):
+            return
+
         # Only apply patch for Boost versions greater than 1.87
         # Check if boost dependency is specified and get its version
         if "boost" not in self.spec:
@@ -129,56 +170,68 @@ class Alps(CMakePackage):
             )
 
     def cmake_args(self):
-        args = []
+        args = [
+            # ALPS's cache variable is ALPS_ENABLE_MPI and defaults to ON,
+            # so it must be set OFF explicitly for ~mpi
+            self.define_from_variant("ALPS_ENABLE_MPI", "mpi"),
+            # Explicit rather than relying on the double-negative
+            # NOT_ALPS_BUILD_PYTHON default in ALPS's CMakeLists
+            self.define("ALPS_BUILD_PYTHON", True),
+            self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True),
+            self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", True),
+            self.define("HDF5_DIR", self.spec["hdf5"].prefix),
+            # HDF5 supplies its own compression dependencies. ALPS does not
+            # call SZIP directly, and probing it can add unrelated host headers.
+            self.define("CMAKE_DISABLE_FIND_PACKAGE_SZIP", True),
+            # Hand the concretized BLAS/LAPACK to ALPS explicitly.  Its
+            # FindLapack.cmake otherwise probes the host first (MKLROOT in the
+            # environment, Accelerate on macOS) and links whatever it finds
+            # there instead of the Spack-built provider.
+            self.define("BLAS_LIBRARY", self.spec["blas"].libs.joined(";")),
+            self.define("LAPACK_LIBRARY", self.spec["lapack"].libs.joined(";")),
+        ]
 
-        # Platform-specific C++ flags (e.g., -stdlib=libc++ on macOS)
-        cstdlibstr = ""
-        if self.spec.satisfies("platform=darwin"):
-            cstdlibstr = " -stdlib=libc++"
-
-        # Assemble the full C++ flags string
-        cxx_flags = (
-            self.compiler.cxx14_flag
-            + " -fpermissive -DBOOST_NO_AUTO_PTR -DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF"
-            + " -DBOOST_TIMER_ENABLE_DEPRECATED"
-            + cstdlibstr
-        )
-
-        args.append(self.define("CMAKE_CXX_FLAGS", cxx_flags))
-
-        # Boost source directory
-        boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
-        args.append(self.define("Boost_SRC_DIR", boost_src_dir))
-
-        # Boost linking options
-        args.append(self.define("Boost_USE_STATIC_LIBS", True))  # → -DBoost_USE_STATIC_LIBS=ON
-        args.append(
-            self.define("Boost_USE_STATIC_RUNTIME", False)
-        )  # → -DBoost_USE_STATIC_RUNTIME=OFF
-
-        # MPI support
         if self.spec.satisfies("+mpi"):
-            args.append(self.define("MPI_CXX_COMPILER", self.spec["mpi"].mpicxx))
-            args.append(self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc))
+            args += [
+                self.define("MPI_CXX_COMPILER", self.spec["mpi"].mpicxx),
+                self.define("MPI_C_COMPILER", self.spec["mpi"].mpicc),
+            ]
+
+        if self.spec.satisfies("@3:"):
+            # Consume the Spack-built Boost directly
+            args += [
+                self.define("ALPS_USE_SYSTEM_BOOST", True),
+                self.define("BOOST_ROOT", self.spec["boost"].prefix),
+                self.define("Boost_USE_STATIC_LIBS", self.spec["boost"].satisfies("~shared")),
+            ]
         else:
-            args.append(self.define("ENABLE_MPI", False))
+            # Legacy 2.x releases build Boost from the staged source tree.
+            # Platform-specific C++ flags: -stdlib=libc++ defeats ALPS's
+            # obsolete clang logic that would otherwise force libstdc++
+            cstdlibstr = ""
+            if self.spec.satisfies("platform=darwin"):
+                cstdlibstr = " -stdlib=libc++"
 
-        # RPATH settings
-        args.append(self.define("CMAKE_INSTALL_RPATH_USE_LINK_PATH", True))
-        args.append(self.define("CMAKE_BUILD_WITH_INSTALL_RPATH", True))
+            cxx_flags = (
+                self.compiler.cxx14_flag
+                + " -fpermissive -DBOOST_NO_AUTO_PTR -DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF"
+                + " -DBOOST_TIMER_ENABLE_DEPRECATED"
+                + cstdlibstr
+            )
 
-        # Point to Spack's HDF5
-        args.append(self.define("HDF5_DIR", self.spec["hdf5"].prefix))
+            args += [
+                self.define("CMAKE_CXX_FLAGS", cxx_flags),
+                self.define(
+                    "Boost_SRC_DIR", os.path.join(self.stage.source_path, "boost_source_files")
+                ),
+                self.define("Boost_USE_STATIC_LIBS", True),
+                self.define("Boost_USE_STATIC_RUNTIME", False),
+            ]
 
         return args
 
     def setup_build_environment(self, env):
-        # Set up environment for boost source compilation
-        boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
-        env.set("BOOST_ROOT", boost_src_dir)
-        env.set("Boost_SRC_DIR", boost_src_dir)
-
-        # Include paths for compilation
+        # Python headers for ALPS C extension compilation
         env.append_path("CPLUS_INCLUDE_PATH", self.spec["python"].headers.directories[0])
 
         # For MPI - set compiler wrappers
@@ -186,17 +239,17 @@ class Alps(CMakePackage):
             env.set("MPI_CXX", self.spec["mpi"].mpicxx)
             env.set("MPI_CC", self.spec["mpi"].mpicc)
             env.set("MPICXX", self.spec["mpi"].mpicxx)
+            if hasattr(self.spec["mpi"], "headers"):
+                env.append_path("CPLUS_INCLUDE_PATH", self.spec["mpi"].headers.directories[0])
 
-        # Add MPI include path if available
-        if hasattr(self.spec["mpi"], "headers"):
-            env.append_path("CPLUS_INCLUDE_PATH", self.spec["mpi"].headers.directories[0])
+        if self.spec.satisfies("@3:"):
+            # BOOST_ROOT as env var for FindBoost module-mode detection
+            env.set("BOOST_ROOT", self.spec["boost"].prefix)
+        else:
+            # Set up environment for boost source compilation
+            boost_src_dir = os.path.join(self.stage.source_path, "boost_source_files")
+            env.set("BOOST_ROOT", boost_src_dir)
+            env.set("Boost_SRC_DIR", boost_src_dir)
 
-        # For Python
-        env.set("PYTHON", self.spec["python"].command.path)
-
-        # Compiler flags
-        env.append_flags("CXXFLAGS", "-fpermissive")
-        env.append_flags("CXXFLAGS", "-DBOOST_NO_AUTO_PTR")
-        env.append_flags("CXXFLAGS", "-DBOOST_FILESYSTEM_NO_CXX20_ATOMIC_REF")
-        env.append_flags("CXXFLAGS", "-DBOOST_TIMER_ENABLE_DEPRECATED")
-        env.append_flags("CXXFLAGS", self.compiler.cxx14_flag)
+            # For Python
+            env.set("PYTHON", self.spec["python"].command.path)

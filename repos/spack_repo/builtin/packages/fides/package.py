@@ -2,12 +2,13 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cmake import CMakeBuilder, CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Fides(CMakePackage):
+class Fides(CMakePackage, CudaPackage):
     """A library that provides a schema for ADIOS2 streams."""
 
     homepage = "https://gitlab.kitware.com/vtk/fides"
@@ -17,6 +18,7 @@ class Fides(CMakePackage):
     maintainers("caitlinross", "dpugmire")
 
     version("master", branch="master")
+    version("1.3.0", sha256="1ba00efd68a1dde418dbc774b19b6c6a02d56c0ee696bdcaeb8c9e54697c6ae0")
     version("1.2.0", sha256="12be939d75c765dab9241f9ed2b64af01cce2b10281de402f64fb685e6ccd7df")
     version("1.1.0", sha256="40d2e08b8d5cfdfc809eae6ed2ae0731108ce3b1383485f4934a5ec8aaa9425e")
     version("1.0.0", sha256="c355fdb4ca3790c1fa9a4491a0d294b8f883b6946c540ad9e5633c9fd8c8c3aa")
@@ -25,6 +27,8 @@ class Fides(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+
+    conflicts("+cuda", when="@:1.1")
 
     # Certain CMake versions have been found to break for our use cases
     depends_on("cmake@3.14.1:3.14,3.18.2:", type="build")
@@ -55,5 +59,7 @@ class Fides(CMakePackage):
 
         if spec.satisfies("^vtk-m"):
             options.append(self.define("VTKm_DIR", spec["vtk-m"].prefix))
+
+        options.append(CMakeBuilder.define_cuda_architectures(self))
 
         return options

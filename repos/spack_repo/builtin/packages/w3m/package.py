@@ -26,7 +26,7 @@ class W3m(AutotoolsPackage):
     url = "https://salsa.debian.org/debian/w3m/-/archive/upstream/0.5.3+git20230121/w3m-upstream-0.5.3+git20230121.tar.gz"
     git = "https://salsa.debian.org/debian/w3m.git"
 
-    maintainers("ronin_gw")
+    maintainers("ronin-gw")
 
     license("MIT")
 

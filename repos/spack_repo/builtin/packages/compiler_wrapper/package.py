@@ -27,7 +27,7 @@ class CompilerWrapper(Package):
     """
 
     homepage = "https://github.com/spack/spack"
-    url = f"file:///{pathlib.PurePath(__file__).parent}/cc.sh"
+    url = "https://github.com/spack/compiler-wrapper/releases/download/v1.0/compiler-wrapper-1.0.tar.gz"
 
     # FIXME (compiler as nodes): use a different tag, since this is only to exclude
     # this node from auto-generated rules
@@ -38,11 +38,8 @@ class CompilerWrapper(Package):
     license("Apache-2.0 OR MIT")
 
     if sys.platform != "win32":
-        version(
-            "1.0",
-            sha256="c7b816479554fd32f677db15ceec6627b91c86074a5d65498688afcbe2796188",
-            expand=False,
-        )
+        version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
+        version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
     else:
         version("1.0")
         has_code = False
@@ -175,6 +172,10 @@ class CompilerWrapper(Package):
             compiler = getattr(compiler_pkg, attr_name)
             env.set(spack_var_name, compiler)
 
+            # -frandom-seed= is needed for deterministic builds with GCC
+            if compiler_pkg.name == "gcc" and self.spec.satisfies("@1.1:"):
+                env.set(f"SPACK_{wrapper_var_name}_HAS_FRANDOM_SEED", "1")
+
             if language not in compiler_pkg.compiler_wrapper_link_paths:
                 continue
 
@@ -217,6 +218,13 @@ class CompilerWrapper(Package):
             extra_rpaths.extend(
                 getattr(compiler_pkg.spec, "extra_attributes", {}).get("extra_rpaths", [])
             )
+
+        # Keep string literals over 255 bytes intact with GCC on x86_64, for relocation
+        for language, flags in (("c", "CFLAGS"), ("cxx", "CXXFLAGS"), ("fortran", "FFLAGS")):
+            if dependent_spec.satisfies(f"%{language}=gcc@16: target=x86_64:"):
+                env.append_flags(f"SPACK_ALWAYS_{flags}", "-mmove-max=128")
+            elif dependent_spec.satisfies(f"%{language}=gcc@12: target=x86_64:"):
+                env.append_flags(f"SPACK_ALWAYS_{flags}", "-mstore-max=128")
 
         if implicit_rpaths:
             # Implicit rpaths are accumulated across all compilers so, whenever they are mixed,

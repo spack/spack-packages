@@ -12,7 +12,7 @@ class FairsoftConfig(CMakePackage):
 
     homepage = "https://github.com/FairRootGroup/fairsoft-config"
     git = "https://github.com/FairRootGroup/fairsoft-config"
-    maintainers("dennisklein", "fuhlig1", "jezwilkinson")
+    maintainers("fuhlig1", "jezwilkinson")
 
     version("master")
 

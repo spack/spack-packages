@@ -17,6 +17,7 @@ class RFansi(RPackage):
 
     license("GPL-2.0-only OR GPL-3.0-only")
 
+    version("1.0.7", sha256="32a43f073aeb5c1d31c804014b95c2cb644bb4132119fcea313838b7ea4eb792")
     version("1.0.6", sha256="ea9dc690dfe50a7fad7c5eb863c157d70385512173574c56f4253b6dfe431863")
     version("1.0.4", sha256="3163214e6c40922bbb495229259ed8ce1bebd98b77098a6936d234e43da9c49f")
     version("1.0.3", sha256="86a7b83d8c9d28baebbde310cd0b459d0950a9c7ff1a6276ce5858f6a89bc06a")

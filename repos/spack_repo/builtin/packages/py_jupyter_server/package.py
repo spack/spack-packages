@@ -18,6 +18,7 @@ class PyJupyterServer(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("2.21.1", sha256="a8960aa29263f6041283e97d4756b099fb49b767baab6371891ecb1bd40a63df")
     version("2.17.0", sha256="c38ea898566964c888b4772ae1ed58eca84592e88251d2cfc4d171f81f7e99d5")
     version("2.14.2", sha256="66095021aa9638ced276c248b1d81862e4c50f292d575920bbe960de1c56b12b")
     version("2.6.0", sha256="ae4af349f030ed08dd78cb7ac1a03a92d886000380c9ea6283f3c542a81f4b06")
@@ -29,56 +30,61 @@ class PyJupyterServer(PythonPackage):
     # https://github.com/spack/spack/issues/41899
     patch("no_npm_node.patch", when="@1.10.2:1 ~typescript")
 
-    depends_on("python@3.9:", when="@2.15:", type=("build", "run"))
-    depends_on("python@3.8:", when="@2:", type=("build", "run"))
-    depends_on("py-hatchling@1.11:", when="@2:", type="build")
-    # under [tool.hatch.build.hooks.jupyter-builder] in pyproject.toml
-    depends_on("py-hatch-jupyter-builder@0.8.1:", when="@2:", type="build")
+    with default_args(type="build"):
+        depends_on("py-hatchling@1.11:", when="@2:")
+        # under [tool.hatch.build.hooks.jupyter-builder] in pyproject.toml
+        depends_on("py-hatch-jupyter-builder@0.8.1:", when="@2:")
 
-    depends_on("npm", type="build", when="+typescript")
-    depends_on("py-anyio@3.1.0:", when="@2.2.1:", type=("build", "run"))
-    depends_on("py-anyio@3.1.0:3", when="@:2.2.0", type=("build", "run"))
-    depends_on("py-argon2-cffi@21.1:", when="@2.14:", type=("build", "run"))
-    depends_on("py-argon2-cffi", type=("build", "run"))
-    depends_on("py-jinja2@3.0.3:", when="@2.14:", type=("build", "run"))
-    depends_on("py-jinja2", type=("build", "run"))
-    depends_on("py-jupyter-client@7.4.4:", when="@2:", type=("build", "run"))
-    depends_on("py-jupyter-client@6.1.12:", when="@1.16:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.12:4,5.1:", when="@1.23.5:", type=("build", "run"))
-    depends_on("py-jupyter-core@4.7:", when="@1.16:", type=("build", "run"))
-    depends_on("py-jupyter-server-terminals@0.4.4:", when="@2.14:", type=("build", "run"))
-    depends_on("py-jupyter-server-terminals", when="@2:", type=("build", "run"))
-    depends_on("py-nbconvert@6.4.4:", when="@1.16:", type=("build", "run"))
-    depends_on("py-nbformat@5.3:", when="@2:", type=("build", "run"))
-    depends_on("py-nbformat@5.2:", when="@1.15:", type=("build", "run"))
-    depends_on("py-packaging@22.0:", when="@2.14:", type=("build", "run"))
-    depends_on("py-packaging", when="@1.13.2:", type=("build", "run"))
-    depends_on("py-prometheus-client@0.9:", when="@2.14:", type=("build", "run"))
-    depends_on("py-prometheus-client", type=("build", "run"))
-    # for windows depends_on pywinpty@2.0.1:, when='@2.14:'
-    # for windows depends_on pywinpty, when='@1.13.2:'
-    # py-pywinpty is not in spack and requires the build system maturin
-    depends_on("py-pyzmq@24:", when="@2:", type=("build", "run"))
-    depends_on("py-pyzmq@17:", type=("build", "run"))
-    depends_on("py-send2trash@1.8.2:", when="@2.7.1:", type=("build", "run"))
-    depends_on("py-send2trash", type=("build", "run"))
-    depends_on("py-terminado@0.8.3:", type=("build", "run"))
-    depends_on("py-tornado@6.2:", when="@2:", type=("build", "run"))
-    depends_on("py-tornado@6.1:", type=("build", "run"))
-    depends_on("py-traitlets@5.6:", when="@2.0.1:", type=("build", "run"))
-    depends_on("py-traitlets@5.1:", when="@1.16:", type=("build", "run"))
-    depends_on("py-traitlets@5:", when="@1.13.3:", type=("build", "run"))
-    depends_on("py-websocket-client@1.7:", when="@2.14:", type=("build", "run"))
-    depends_on("py-websocket-client", type=("build", "run"))
-    depends_on("py-jupyter-events@0.11:", when="@2.10.1:", type=("build", "run"))
-    depends_on("py-jupyter-events@0.9:", when="@2.10.1:", type=("build", "run"))
-    depends_on("py-jupyter-events@0.6:", when="@2.6:", type=("build", "run"))
-    depends_on("py-overrides@5.0:", when="@2.17: ^python@:3.11", type=("build", "run"))
-    depends_on("py-overrides@5.0:", when="@2.14:2.16 ", type=("build", "run"))
-    depends_on("py-overrides", when="@2.6:2.16", type=("build", "run"))
+        depends_on("npm", when="+typescript")
 
-    # Historical dependencies
-    with when("@:1"):
-        depends_on("py-jupyter-packaging@0.9:0", when="@1.6.2:", type="build")
-        depends_on("py-pre-commit", when="@1.16:", type="build")
-        depends_on("py-setuptools", type="build")
+        # Historical dependencies
+        with when("@:1"):
+            depends_on("py-jupyter-packaging@0.9:0", when="@1.6.2:")
+            depends_on("py-pre-commit", when="@1.16:")
+            depends_on("py-setuptools")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@2.19:")
+        depends_on("python@3.9:", when="@2.15:")
+        depends_on("python@3.8:", when="@2:")
+
+        depends_on("py-anyio@3.1.0:", when="@2.2.1:")
+        depends_on("py-anyio@3.1.0:3", when="@:2.2.0")
+        depends_on("py-argon2-cffi@21.1:", when="@2.14:")
+        depends_on("py-argon2-cffi")
+        depends_on("py-jinja2@3.0.3:", when="@2.14:")
+        depends_on("py-jinja2")
+        depends_on("py-jupyter-client@7.4.4:", when="@2:")
+        depends_on("py-jupyter-client@6.1.12:", when="@1.16:")
+        depends_on("py-jupyter-core@4.12:4,5.1:", when="@1.23.5:")
+        depends_on("py-jupyter-core@4.7:", when="@1.16:")
+        depends_on("py-jupyter-server-terminals@0.4.4:", when="@2.14:")
+        depends_on("py-jupyter-server-terminals", when="@2:")
+        depends_on("py-nbconvert@6.4.4:", when="@1.16:")
+        depends_on("py-nbformat@5.3:", when="@2:")
+        depends_on("py-nbformat@5.2:", when="@1.15:")
+        depends_on("py-packaging@22.0:", when="@2.14:")
+        depends_on("py-packaging", when="@1.13.2:")
+        depends_on("py-prometheus-client@0.9:", when="@2.14:")
+        depends_on("py-prometheus-client")
+        # for windows depends_on pywinpty@2.0.1:, when='@2.14:'
+        # for windows depends_on pywinpty, when='@1.13.2:'
+        # py-pywinpty is not in spack and requires the build system maturin
+        depends_on("py-pyzmq@24:", when="@2:")
+        depends_on("py-pyzmq@17:")
+        depends_on("py-send2trash@1.8.2:", when="@2.7.1:")
+        depends_on("py-send2trash")
+        depends_on("py-terminado@0.8.3:")
+        depends_on("py-tornado@6.2:", when="@2:")
+        depends_on("py-tornado@6.1:")
+        depends_on("py-traitlets@5.6:", when="@2.0.1:")
+        depends_on("py-traitlets@5.1:", when="@1.16:")
+        depends_on("py-traitlets@5:", when="@1.13.3:")
+        depends_on("py-websocket-client@1.7:", when="@2.14:")
+        depends_on("py-websocket-client")
+        depends_on("py-jupyter-events@0.11:", when="@2.10.1:")
+        depends_on("py-jupyter-events@0.9:", when="@2.10.1:")
+        depends_on("py-jupyter-events@0.6:", when="@2.6:")
+        depends_on("py-overrides@5.0:", when="@2.17: ^python@:3.11")
+        depends_on("py-overrides@5.0:", when="@2.14:2.16")
+        depends_on("py-overrides", when="@2.6:2.16")

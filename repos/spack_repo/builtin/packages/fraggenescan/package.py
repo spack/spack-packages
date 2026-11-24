@@ -15,6 +15,7 @@ class Fraggenescan(MakefilePackage):
     homepage = "https://sourceforge.net/projects/fraggenescan/"
     url = "https://downloads.sourceforge.net/project/fraggenescan/FragGeneScan1.31.tar.gz"
 
+    version("1.32", sha256="54db8dab643f791aae7b05c310fe0d88ecb07db306211185c4c8524734f334c4")
     version("1.31", sha256="cd3212d0f148218eb3b17d24fcd1fc897fb9fee9b2c902682edde29f895f426c")
     version("1.30", sha256="f2d7f0dfa4a5f4bbea295ed865dcbfedf16c954ea1534c2a879ebdcfb8650d95")
 

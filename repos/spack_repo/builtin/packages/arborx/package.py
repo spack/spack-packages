@@ -14,7 +14,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     """ArborX is a performance-portable library for geometric search"""
 
     homepage = "https://github.com/arborx/arborx"
-    url = "https://github.com/arborx/arborx/archive/v1.1.tar.gz"
+    url = "https://github.com/arborx/arborx/archive/v2.1.tar.gz"
     git = "https://github.com/arborx/arborx.git"
 
     tags = ["e4s", "ecp"]
@@ -26,6 +26,7 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.1", sha256="7a8aa554304a31a598c357c0b5c8b562343c40a1336d716255e75e863a7d288c")
     version("2.0.1", sha256="9a831c5086a4fedf312fc88eec24e1382cac7520516aa56f743ef7769638ce37")
     version("2.0", sha256="5ea6d8f832a69aac77d66c1ae55f96c2ff227272b8a6ba694c7ebcdf3a2413d5")
     version("1.7", sha256="e3d9a57a1d7c1ad62f6bbb43fd29a366506f3a16cbbe801c04d10f5fb0dec201")

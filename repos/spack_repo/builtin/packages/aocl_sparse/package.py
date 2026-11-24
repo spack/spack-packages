@@ -31,6 +31,7 @@ class AoclSparse(CMakePackage):
 
     license("MIT")
 
+    version("5.3", sha256="54121bef989f14f5ffb95470bbd697c7f71c836f2f92be3983ce6e6ecda5b26f")
     version("5.2", sha256="7de4ccb22b9bdf4733e621b44ebde1951dae5333841b02148fae382a8859f550")
     version("5.1", sha256="a5fff94f9144cb5e5e0f4702cc0d48a20215ccccd06cbed915e566e5d901fa0a")
     version("5.0", sha256="7528970f41ae60563df9fe1f8cc74a435be1566c01868a603ab894e9956c3c94")
@@ -60,15 +61,15 @@ class AoclSparse(CMakePackage):
 
     for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
         with when(f"@={vers}"):
-            depends_on(f"amdblis@={vers}")
-            depends_on(f"amdlibflame@={vers}")
+            depends_on(f"aocl-blas@={vers}")
+            depends_on(f"aocl-lapack@={vers}")
             if Version(vers) >= Version("4.2"):
                 depends_on(f"aocl-utils@={vers}")
 
-    depends_on("amdblis threads=openmp", when="+openmp")
-    depends_on("amdlibflame threads=openmp", when="+openmp")
-    depends_on("amdblis threads=none", when="~openmp")
-    depends_on("amdlibflame threads=none", when="~openmp")
+    depends_on("aocl-blas threads=openmp", when="+openmp")
+    depends_on("aocl-lapack threads=openmp", when="+openmp")
+    depends_on("aocl-blas threads=none", when="~openmp")
+    depends_on("aocl-lapack threads=none", when="~openmp")
     depends_on("boost", when="+benchmarks")
     depends_on("boost", when="@2.2")
     depends_on("cmake@3.22:", when="@:5.0", type="build")
@@ -112,11 +113,13 @@ class AoclSparse(CMakePackage):
             args.append(self.define_from_variant("BUILD_ILP64", "ilp64"))
 
         if spec.satisfies("@4.0:"):
-            args.append(f"-DAOCL_BLIS_LIB={self.spec['amdblis'].libs}")
-            args.append("-DAOCL_BLIS_INCLUDE_DIR={0}/blis".format(spec["amdblis"].prefix.include))
-            args.append(f"-DAOCL_LIBFLAME={spec['amdlibflame'].libs}")
+            args.append(f"-DAOCL_BLIS_LIB={self.spec['aocl-blas'].libs}")
             args.append(
-                "-DAOCL_LIBFLAME_INCLUDE_DIR={0}".format(spec["amdlibflame"].prefix.include)
+                "-DAOCL_BLIS_INCLUDE_DIR={0}/blis".format(spec["aocl-blas"].prefix.include)
+            )
+            args.append(f"-DAOCL_LIBFLAME={spec['aocl-lapack'].libs}")
+            args.append(
+                "-DAOCL_LIBFLAME_INCLUDE_DIR={0}".format(spec["aocl-lapack"].prefix.include)
             )
 
         if spec.satisfies("@4.2:"):

@@ -22,6 +22,7 @@ class Libcatalyst(CMakePackage):
 
     maintainers("mathstuf", "ayenpure")
     version("master", branch="master")
+    version("2.1.0", sha256="1db07593c2f0203f53dfa39445d6f9d7a7fff78e0ce024b17af66ca7bce78abc")
     version("2.0.0", sha256="5842b690bd8afa635414da9b9c5e5d79fa37879b0d382428d0d8e26ba5374828")
 
     variant("mpi", default=False, description="Enable MPI support")

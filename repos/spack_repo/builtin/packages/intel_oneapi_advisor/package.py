@@ -22,12 +22,30 @@ class IntelOneapiAdvisor(IntelOneApiLibraryPackageWithSdk):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/advisor.html"
     )
 
+    version(
+        "2026.0.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/766bc168-4208-4388-821b-0e589fd449d9/intel-advisor-2026.0.1.62_offline.sh",
+        sha256="e17281717e704612755b9332e2216b131ec8a0d339fa9d4c55cc557aa2c43010",
+        expand=False,
+    )
+    version(
+        "2026.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/68057580-a03d-4490-87e2-b2a6092b6675/intel-advisor-2026.0.0.266_offline.sh",
+        sha256="b3dfc02ee5a22c0ac2ba163181ebd8f185cd39e14ed767e63fa8d66f5d945bdb",
+        expand=False,
+    )
+    version(
+        "2025.5.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/a8122a03-4318-422a-a973-51f2e68fd95e/intel-advisor-2025.5.0.81_offline.sh",
+        sha256="7c28e57963243f45a5b2724301b764d09756962a48277339d938011429725d2d",
+        expand=False,
+    )
     version(
         "2025.4.1",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/093b261b-0f17-4568-abce-ac68c3096192/intel-advisor-2025.4.1.9_offline.sh",

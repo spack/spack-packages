@@ -14,7 +14,7 @@ class Flap(CMakePackage):
     url = "https://github.com/szaghi/FLAP.git"
     git = "https://github.com/szaghi/FLAP.git"
 
-    maintainers("fluidnumerics-joe")
+    maintainers("fluidnumericsJoe")
 
     license("GPL-3.0-only")
 

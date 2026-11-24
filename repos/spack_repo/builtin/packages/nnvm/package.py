@@ -21,7 +21,8 @@ class Nnvm(CMakePackage):
 
     variant("shared", default=True, description="Build a shared NNVM lib.")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("dmlc-core")
 

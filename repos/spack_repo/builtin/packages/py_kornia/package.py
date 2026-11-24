@@ -24,6 +24,10 @@ class PyKornia(PythonPackage):
         "adamjstewart",
     )
 
+    version("0.9.2", sha256="d94362a4f57d4d86eb4ae656c6cef4911f577bfe09b098e8c3c69da43b45445b")
+    version("0.9.1", sha256="eafd7171319c28a9adca242df0f7d77853ca989bde3ba77cda9e26e89c450936")
+    version("0.9.0", sha256="65e82219b10e73289fb8cb3c739879d917e6908c0a977b1d65f388cba1741f71")
+    version("0.8.3", sha256="c06887374eaf39fb614a77ca054383e6cc2092cb7225e45437111b4984d0f866")
     version("0.8.2", sha256="5411b2ce0dd909d1608016308cd68faeef90f88c47f47e8ecd40553fd4d8b937")
     version("0.8.1", sha256="9ce5a54a11df661794934a293f89f8b8d49e83dd09b0b9419f6082ab07afe433")
     version("0.8.0", sha256="a0ffc31106e8d777a8df693572ad5ea11f7236b8bc1d452754f5e57de012ea9a")
@@ -47,17 +51,23 @@ class PyKornia(PythonPackage):
     version("0.5.10", sha256="428b4b934a2ba7360cc6cba051ed8fd96c2d0f66611fdca0834e82845f14f65d")
 
     with default_args(type="build"):
-        depends_on("py-setuptools@61.2:", when="@0.6.11:")
-        depends_on("py-setuptools")
+        depends_on("py-hatchling", when="@0.8.3:")
 
         # Historical dependencies
         depends_on("py-pytest-runner", when="@:0.6.10")
+        depends_on("py-setuptools@61.2:", when="@0.6.11:0.8.2")
+        depends_on("py-setuptools", when="@:0.6.10")
 
     with default_args(type=("build", "run")):
+        depends_on("py-kornia-rs@0.2.0:", when="@0.9.0:")
         depends_on("py-kornia-rs@0.1.9:", when="@0.8.1:")
-        depends_on("py-kornia-rs@0.1:", when="@0.7.2:")
-        depends_on("py-packaging", when="@0.6:")
-        depends_on("py-torch@2:", when="@0.8.2:")
+        depends_on("py-kornia-rs@0.1.0:", when="@0.7.2:")
+        depends_on("py-numpy@1.21:", when="@0.9.0:")
+        depends_on("py-torch@2.5.1:", when="@0.9.0:")
+        depends_on("py-torch@2.0.0:", when="@0.8.2:")
         depends_on("py-torch@1.9.1:", when="@0.6.9:")
-        depends_on("py-torch@1.8.1:", when="@0.6:")
+        depends_on("py-torch@1.8.1:", when="@0.6.0:")
         depends_on("py-torch@1.6.0:")
+
+        # Historical requirements
+        depends_on("py-packaging", when="@0.6:0.8")

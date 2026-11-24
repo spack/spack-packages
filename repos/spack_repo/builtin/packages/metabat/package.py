@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -21,19 +20,31 @@ class Metabat(CMakePackage):
     version("2.14", sha256="d43d5e91afa8f2d211a913739127884669516bfbed870760597fcee2b513abe2")
     version("2.13", sha256="aa75a2b62ec9588add4c288993821bab5312a83b1259ff0d508c215133492d74")
 
+    depends_on("c", type="build")
     depends_on("cxx", type="build")  # generated
 
     depends_on("autoconf", type="build")
     depends_on("cmake", type="build")
-    depends_on("boost@1.55.0:", type=("build", "run"))
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, type=("build", "run"))
+    depends_on(
+        "boost@1.55:1.82+program_options+filesystem+system+graph+serialization+iostreams\
+                cxxstd=11",
+        type=("build", "run"),
+    )
     depends_on("perl", type="run")
     depends_on("zlib-api", type="link")
     depends_on("ncurses", type="link")
+
+    def patch(self):
+        filter_file(r"(autoconf)", r"autoreconf -i && \1", join_path("cmake", "htslib.cmake"))
+        filter_file(
+            "./configure",
+            (
+                f"./configure --host={self.spec.build_spec.target.family.name}-linux-gnu"
+                f" --without-libdeflate "
+            ),
+            join_path("cmake", "htslib.cmake"),
+        )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         env.set("BOOST_ROOT", self.spec["boost"].prefix)

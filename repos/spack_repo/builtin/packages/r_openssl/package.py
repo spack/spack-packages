@@ -25,6 +25,7 @@ class ROpenssl(RPackage):
 
     license("MIT")
 
+    version("2.4.0", sha256="75ccbde2e52fc3f13c146eab3d30aa3d3a80ab66fa203b9b40d09b1f2a0fcd85")
     version("2.2.1", sha256="25a12328d584212d8d4c095b3d2a71152c5d2bc4adda7a9addb25da01136f78d")
     version("2.0.6", sha256="77f3032a16270f0d1734f269b8d348eedc75b277812854386091143082c1b3f3")
     version("2.0.4", sha256="a1a5c65127c20c0ca3b46f2c4f4d3817276a887a231569537c1373e7740a5cec")

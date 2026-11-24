@@ -76,8 +76,9 @@ class Aml(AutotoolsPackage):
     depends_on("ocl-icd@2.1:", when="+opencl")
     # Required on master for autoconf pull the right pkg.m4 macros,
     # and on other builds to detect dependencies
+    depends_on("pkgconfig", type="build")
     # Note: This does NOT work with pkg-config but requires pkgconf!
-    depends_on("pkgconf", type="build")
+    requires("%pkgconfig=pkgconf", msg="does not work with pkg-config")
 
     # when on master, we need all the autotools and extras to generate files.
     with when("@master"):

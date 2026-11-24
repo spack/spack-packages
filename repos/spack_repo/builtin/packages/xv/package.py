@@ -8,10 +8,10 @@ from spack.package import *
 
 
 class Xv(CMakePackage):
-    """
-    XV image viewer.
-    The XV software was originally written by John Bradley. John Bradley's web site for the XV software can be found at:
-    http://www.trilon.com/xv
+    """XV image viewer.
+
+    The XV software was originally written by John Bradley. John Bradley's web site for the XV
+    software can be found at: http://www.trilon.com/xv
     """
 
     homepage = "https://github.com/jasper-software/xv"

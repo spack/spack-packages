@@ -17,6 +17,7 @@ class RPs(RPackage):
 
     license("MIT")
 
+    version("1.9.3", sha256="7b227f0627709a2073daf960ac612a0b87d03e18f7dd5c1938048ed440ef2e68")
     version("1.7.7", sha256="46fedcb2b8faa94ea1451e48e6f31a1e4ed3b12f529e645f9efcfca1003d22f2")
     version("1.7.5", sha256="1abc3ae3c55797b994973f7e43bf5c7bbb4da649a0dcfad36675e196dba4cb4e")
     version("1.7.2", sha256="9225ebdedb5c1b245bb38b01ce88084c0fc7eafcff6c4fda2e299003ace6b21a")
@@ -31,5 +32,6 @@ class RPs(RPackage):
 
     depends_on("c", type="build")
 
-    depends_on("r@3.1:", type=("build", "run"))
-    depends_on("r@3.4:", type=("build", "run"), when="@1.7.0:")
+    with default_args(type=("build", "run")):
+        depends_on("r@3.4:", when="@1.7.0:")
+        depends_on("r@3.1:")

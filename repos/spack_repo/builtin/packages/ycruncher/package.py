@@ -14,8 +14,10 @@ class Ycruncher(Package):
     and scalable to multi-core systems
     """
 
-    homepage = "http://www.numberworld.org/y-cruncher/"
-    url = "http://www.numberworld.org/y-cruncher/y-cruncher%20v0.7.10.9513-static.tar.xz"
+    homepage = "https://www.numberworld.org/y-cruncher/"
+    url = (
+        "https://cdn.numberworld.org/y-cruncher-downloads/y-cruncher%20v0.7.10.9513-static.tar.xz"
+    )
     maintainers("saqibkh")
 
     version(

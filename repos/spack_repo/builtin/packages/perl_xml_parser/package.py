@@ -15,6 +15,7 @@ class PerlXmlParser(PerlPackage):
 
     license("GPL-1.0-or-later OR Artistic-1.0-Perl")
 
+    version("2.59", sha256="a358fd7c49f5e27717a644a9102bd21dc7fc25a415983279c59b1580e2b62a58")
     version("2.47", sha256="ad4aae643ec784f489b956abe952432871a622d4e2b5c619e8855accbfc4d1d8")
     version("2.46", sha256="d331332491c51cccfb4cb94ffc44f9cd73378e618498d4a37df9e043661c515d")
     version("2.44", sha256="1ae9d07ee9c35326b3d9aad56eae71a6730a73a116b9fe9e8a4758b7cc033216")
@@ -22,7 +23,13 @@ class PerlXmlParser(PerlPackage):
     depends_on("c", type="build")
 
     depends_on("expat")
-    depends_on("perl-libwww-perl", type=("build", "run"))
+
+    with default_args(type=("build", "run")):
+        depends_on("perl-file-sharedir", when="@2.55:")
+
+        # Historical dependencies
+        # provides LWP::UserAgent
+        depends_on("perl-libwww-perl", when="@:2.47")
 
     def configure_args(self):
         args = []

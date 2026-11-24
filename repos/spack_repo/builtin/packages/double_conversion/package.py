@@ -24,6 +24,7 @@ class DoubleConversion(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("3.4.0", sha256="effee857e20e86e32f125205c2be1374e748f5516a5519434bece0db56d6e581")
     version("3.3.0", sha256="4080014235f90854ffade6d1c423940b314bbca273a338235f049da296e47183")
     version("3.2.1", sha256="55aa41b463346b1032585c04fe7d0adec9db56598d8d699841cdadeb3597e909")
     version("3.1.5", sha256="72c0e3925a1214095afc6f1c214faecbec20e8526cf6b8a541cf72195a11887f")
@@ -34,8 +35,14 @@ class DoubleConversion(CMakePackage):
     version("1.1.4", sha256="24b5edce8c88f0f632c83e60e0bde11252656dc3b714ba195619c1798ff28834")
     version("1.1.3", sha256="f0d1b8621592a3cf010c04c3e1c0f08455fc0fc7ee22e1583e2a63dc6d3e3871")
 
-    depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("cxx")
+
+        # ignore upper limit restriction since it builts fine with newer version as well
+        depends_on("cmake@3.29:", when="@3.4:")
+        depends_on("cmake@3:", when="@3.1:3.2")
+        depends_on("cmake@2.8:")
 
     def cmake_args(self):
         return ["-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true"]

@@ -8,7 +8,9 @@ from spack.package import *
 
 
 class RubyGist(RubyPackage):
-    """The gist gem provides a gist command that you can use from your terminal to upload content to https://gist.github.com/."""
+    """The gist gem provides a gist command that you can use from your terminal to upload content
+    to https://gist.github.com/.
+    """
 
     homepage = "https://github.com/defunkt/gist"
     url = "https://rubygems.org/downloads/gist-6.0.0.gem"

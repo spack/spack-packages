@@ -131,6 +131,7 @@ class CMakeBuilder(CMakeBuilder):
             self.define_from_variant("WITH_NODEJS", "nodejs"),
             self.define_from_variant("WITH_PYTHON", "python"),
             self.define_from_variant("WITH_ZLIB", "zlib"),
+            self.define_from_variant("WITH_OPENSSL", "openssl"),
         ]
 
 

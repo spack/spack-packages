@@ -21,12 +21,31 @@ class IntelOneapiDnn(IntelOneApiLibraryPackage):
 
     """
 
-    maintainers("rscohn2")
+    maintainers("lukaszstolarczuk", "rbanka1", "rscohn2")
 
     homepage = (
         "https://software.intel.com/content/www/us/en/develop/tools/oneapi/components/onednn.html"
     )
+    version(
+        "2026.1.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/46452a4a-7b7f-49f2-be4c-602a900180bb/intel-onednn-2026.1.0.625_offline.sh",
+        sha256="38c2585bc01b62e011cc1678e090be68ed1574c7a9fc9d775b09cb6ebd041427",
+        expand=False,
+    )
 
+    version(
+        "2026.0.1",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/0451dc19-00a2-4236-bace-dc0b4aec0680/intel-onednn-2026.0.1.64_offline.sh",
+        sha256="838feeccb8332934bb3a801603ccdf617c8dce3a9728f5e2e3809dc379fd2142",
+        expand=False,
+    )
+
+    version(
+        "2026.0.0",
+        url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/964163c0-9651-4e14-8ebf-3cc27e2519e4/intel-onednn-2026.0.0.689_offline.sh",
+        sha256="63d7c1dbe27ccc54731b4aeb166c37322d0cbf41ece8e95705902dbb6d40a014",
+        expand=False,
+    )
     version(
         "2025.3.0",
         url="https://registrationcenter-download.intel.com/akdlm/IRC_NAS/784671be-a9aa-4264-b1f8-3dd44d5f972d/intel-onednn-2025.3.0.410_offline.sh",

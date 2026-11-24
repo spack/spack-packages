@@ -33,7 +33,11 @@ class Survey(CMakePackage):
 
     maintainers("jgalarowicz")
 
-    version("1.1.3", branch="1.1.3")
+    version("2.0.1", branch="2.0.1")
+    version("2.0.0", branch="2.0.0")
+    version("1.2.0", branch="1.2.0")
+    version("1.1.4", branch="1.1.4")
+    version("1.1.3", tag="1.1.3")
     version("1.1.2", tag="1.1.2")
     version("1.1.1", tag="1.1.1")
     version("1.1.0", tag="1.1.0")
@@ -78,6 +82,8 @@ class Survey(CMakePackage):
 
     depends_on("python@3:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    # 9.x has bootstrap issues with --no-build-isolation
+    depends_on("py-setuptools-scm@:8", type="build")
     depends_on("py-pip", type="build")
     depends_on("py-pandas", type=("build", "run"))
     depends_on("py-psutil", type=("build", "run"))
@@ -101,6 +107,8 @@ class Survey(CMakePackage):
     depends_on("py-pillow", type=("build", "run"), when="@1.0.9:")
     depends_on("py-cycler", type=("build", "run"), when="@1.0.9:")
     depends_on("py-kiwisolver", type=("build", "run"), when="@1.0.9:")
+    depends_on("py-typing-extensions", type=("build", "run"), when="@2.0.0:")
+    depends_on("py-reportlab", type=("build", "run"), when="@2.0.0:")
 
     extends("python")
 
@@ -254,4 +262,11 @@ class Survey(CMakePackage):
         )
         env.prepend_path(
             "PYTHONPATH", join_path(self.spec["py-kiwisolver"].prefix, self.site_packages_dir)
+        )
+        env.prepend_path(
+            "PYTHONPATH",
+            join_path(self.spec["py-typing-extensions"].prefix, self.site_packages_dir),
+        )
+        env.prepend_path(
+            "PYTHONPATH", join_path(self.spec["py-reportlab"].prefix, self.site_packages_dir)
         )

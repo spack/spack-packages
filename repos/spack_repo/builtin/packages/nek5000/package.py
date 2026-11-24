@@ -72,45 +72,41 @@ class Nek5000(Package):
     def install(self, spec, prefix):
         bin_dir = "bin"
 
-        # Do not use the Spack compiler wrappers.
-        # Use directly the compilers:
-        fc = self.compiler.f77
-        cc = self.compiler.cc
+        # The installed 'makenek' runs outside a Spack build environment, where wrappers fail.
+        fc = spec["fortran"].package.fortran
+        cc = spec["c"].package.cc
 
-        fflags = spec.compiler_flags["fflags"]
-        cflags = spec.compiler_flags["cflags"]
+        # the flag lists stored on the spec must not be modified in place
+        fflags = list(spec.compiler_flags["fflags"])
+        cflags = list(spec.compiler_flags["cflags"])
 
-        if self.compiler.name in ["xl", "xl_r"]:
+        if spec.satisfies("%fortran=xl"):
             # Use '-qextname' to add underscores.
             # Use '-WF,-qnotrigraph' to fix an error about a string: '... ??'
             fflags += ["-qextname", "-WF,-qnotrigraph"]
 
-        error = Executable(fc)("empty.f", output=str, error=str, fail_on_error=False)
-
-        if "gfortran" in error or "GNU" in error or "gfortran" in fc:
-            # Use '-std=legacy' to suppress an error that used to be a
-            # warning in previous versions of gfortran.
+        if spec.satisfies("%fortran=gcc"):
+            # Use '-std=legacy' to suppress an error that was a warning in older gfortran.
             fflags += ["-std=legacy"]
 
         fflags = " ".join(fflags)
         cflags = " ".join(cflags)
 
         with working_dir(bin_dir):
-            if "+mpi" in spec:
+            if spec.satisfies("+mpi"):
                 fc = spec["mpi"].mpif77
                 cc = spec["mpi"].mpicc
             else:
                 filter_file(r"^#MPI=0", "MPI=0", "makenek")
 
-            # Make sure nekmpi wrapper uses srun when we know OpenMPI
-            # is not built with mpiexec
-            if "^openmpi~legacylaunchers" in spec:
+            # The nekmpi wrapper uses srun when OpenMPI is not built with mpiexec
+            if spec.satisfies("^openmpi~legacylaunchers"):
                 filter_file(r"mpiexec -np", "srun -n", "nekmpi")
 
-            if "+profiling" not in spec:
+            if not spec.satisfies("+profiling"):
                 filter_file(r"^#PROFILING=0", "PROFILING=0", "makenek")
 
-            if "+visit" in spec:
+            if spec.satisfies("+visit"):
                 filter_file(r"^#VISIT=1", "VISIT=1", "makenek")
                 filter_file(
                     r"^#VISIT_INSTALL=.*",
@@ -141,10 +137,8 @@ class Nek5000(Package):
                 filter_file(r"^#CFLAGS=.*", 'CFLAGS+=" {0}"'.format(cflags), "makenek")
 
         with working_dir("core"):
-            if self.compiler.name in ["xl", "xl_r"]:
-                # Patch 'core/makenek.inc' and 'makefile.template' to use
-                # '-qextname' when checking for underscore becasue 'xl'/'xl_r'
-                # use this option to enable the addition of the underscore.
+            if spec.satisfies("%fortran=xl"):
+                # 'xl' adds underscores with '-qextname', so patch the underscore check.
                 filter_file(r"^\$FCcomp -c ", "$FCcomp -qextname -c ", "makenek.inc")
                 filter_file(
                     r"\$\(FC\) -c \$\(L0\)", "$(FC) -c -qextname $(L0)", "makefile.template"

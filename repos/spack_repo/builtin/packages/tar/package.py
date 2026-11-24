@@ -44,6 +44,9 @@ class Tar(AutotoolsPackage, GNUMirrorPackage):
     depends_on("xz", type="run")  # for xz/lzma
     depends_on("bzip2", type="run")
 
+    patch("tar-1.35-avoid-acl-prefix.patch", when="@1.35")
+    patch("tar-1.34-avoid-acl-prefix.patch", when="@1.34")
+
     # The NVIDIA compilers do not currently support some GNU builtins.
     # Detect this case and use the fallback path.
     with when("%nvhpc"):

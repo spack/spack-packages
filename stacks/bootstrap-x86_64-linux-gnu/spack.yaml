@@ -12,6 +12,7 @@ spack:
     deprecated: true  # allow old python versions
 
   specs:
+  - clingo-bootstrap +optimized ^python@3.14
   - clingo-bootstrap +optimized ^python@3.13
   - clingo-bootstrap +optimized ^python@3.12
   - clingo-bootstrap +optimized ^python@3.11
@@ -21,6 +22,7 @@ spack:
   - clingo-bootstrap +optimized ^python@3.7
   - clingo-bootstrap +optimized ^python@3.6
 
+  - clingo-bootstrap@spack +optimized ^python@3.14
   - clingo-bootstrap@spack +optimized ^python@3.13
   - clingo-bootstrap@spack +optimized ^python@3.12
   - clingo-bootstrap@spack +optimized ^python@3.11
@@ -34,5 +36,5 @@ spack:
     pipeline-gen:
     - build-job:
         image:
-          name: ghcr.io/spack/ubuntu-24.04:v2024-09-05-v2
+          name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
           entrypoint: ['']

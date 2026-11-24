@@ -17,6 +17,8 @@ class PyLxml(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("6.1.1", sha256="ba96ae44888e0185281e937633a743ea90d5a196c6000f82565ebb0580012d40")
+    version("6.1.0", sha256="bfd57d8008c4965709a919c3e9a98f76c2c7cb319086b3d26858250620023b13")
     version("6.0.2", sha256="cd79f3367bd74b317dda655dc8fcfa304d9eb6e4fb06b7168c5cf27f96e0cd62")
     version("6.0.1", sha256="2b3a882ebf27dd026df3801a87cf49ff791336e0f94b0fad195db77e01240690")
     version("5.3.0", sha256="4e109ca30d1edec1ac60cdbe341905dc3b8f55b16855e03a54aaf59e51ec8c6f")
@@ -57,6 +59,7 @@ class PyLxml(PythonPackage):
     depends_on("py-html5lib", when="+html5", type=("build", "run"))
     depends_on("py-beautifulsoup4", when="+htmlsoup", type=("build", "run"))
     depends_on("py-cssselect@0.7:", when="+cssselect", type=("build", "run"))
+    depends_on("py-cython@3.2.4:", type="build", when="@6.1.0:")
     depends_on("py-cython@3.1.4:", type="build", when="@6.0.2:")
     depends_on("py-cython@3.1.2:", type="build", when="@6:")
     depends_on("py-cython@3.0.11:", type="build", when="@5.3:")
@@ -64,3 +67,11 @@ class PyLxml(PythonPackage):
     depends_on("py-cython@3.0.9:", type="build", when="@5.1.1:")
     depends_on("py-cython@3.0.8:", type="build", when="@5:")
     depends_on("py-cython@0.29.7:", type="build")
+
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("@:5") and (
+                self.spec.satisfies("%gcc@14:") or self.spec.satisfies("%oneapi@2026:")
+            ):
+                flags.append("-Wno-error=incompatible-pointer-types")
+        return (flags, None, None)

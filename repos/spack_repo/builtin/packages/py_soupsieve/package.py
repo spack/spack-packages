@@ -18,15 +18,20 @@ class PySoupsieve(PythonPackage):
     # Circular dependency on beautifulsoup4
     skip_modules = ["soupsieve"]
 
-    version("2.8.3", sha256="3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349")
-    version("2.8", sha256="e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f")
-    version("2.4.1", sha256="89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea")
-    version(
-        "2.3.2.post1", sha256="fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d"
-    )
-    version("2.2.1", sha256="052774848f448cf19c7e959adf5566904d525f33a3f8b6ba6f6f8f26ec7de0cc")
-    version("1.9.6", sha256="7985bacc98c34923a439967c1a602dc4f1e15f923b6fcf02344184f86cc7efaa")
-    version("1.9.3", sha256="8662843366b8d8779dec4e2f921bebec9afd856a5ff2e82cd419acc5054a1a92")
+    version("2.8.4", sha256="e121fd02e975c695e4e9e8774a5ee35d74714b59307868dcc5319ad2d9e3328e")
+    with default_args(deprecated=True):
+        # https://github.com/facelessuser/soupsieve/security/advisories/GHSA-836r-79rf-4m37
+        # https://github.com/facelessuser/soupsieve/security/advisories/GHSA-2wc2-fm75-p42x
+        version("2.8.3", sha256="3267f1eeea4251fb42728b6dfb746edc9acaffc4a45b27e19450b676586e8349")
+        version("2.8", sha256="e2dd4a40a628cb5f28f6d4b0db8800b8f581b65bb380b97de22ba5ca8d72572f")
+        version("2.4.1", sha256="89d12b2d5dfcd2c9e8c22326da9d9aa9cb3dfab0a83a024f05704076ee8d35ea")
+        version(
+            "2.3.2.post1",
+            sha256="fc53893b3da2c33de295667a0e19f078c14bf86544af307354de5fcf12a3f30d",
+        )
+        version("2.2.1", sha256="052774848f448cf19c7e959adf5566904d525f33a3f8b6ba6f6f8f26ec7de0cc")
+        version("1.9.6", sha256="7985bacc98c34923a439967c1a602dc4f1e15f923b6fcf02344184f86cc7efaa")
+        version("1.9.3", sha256="8662843366b8d8779dec4e2f921bebec9afd856a5ff2e82cd419acc5054a1a92")
 
     depends_on("python@3.9:", when="@2.8:", type=("build", "run"))
     depends_on("python@3.8:", when="@2.5:", type=("build", "run"))

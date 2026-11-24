@@ -46,7 +46,7 @@ spack:
     libllvm:
       require: ["llvm"]
     visit:
-      require: ["@3.4.1:"]
+      require: ["@3.5:"]
 
   concretizer:
     unify: when_possible
@@ -58,12 +58,17 @@ spack:
       - - paraview
       - - +qt
         - ~qt
+  - vtk_specs:
+    - matrix:
+      - - vtk
+      - - +qt
+        - ~qt
   - visit_specs:
     - matrix:
       - - visit
-      - - ~gui ^[virtuals=gl] glx
-        - ~gui ^[virtuals=gl] osmesa
-        - +gui ^[virtuals=gl] glx # GUI Support w/ GLX Rendering
+      - - ~gui %[virtuals=gl] glx
+        - ~gui %[virtuals=gl] osmesa
+        - +gui %[virtuals=gl] glx # GUI Support w/ GLX Rendering
 
   - hdf5_specs:
     - hdf5
@@ -85,6 +90,7 @@ spack:
   - ascent
   - $paraview_specs
   - $visit_specs
+  - $vtk_specs
   - vtk-m
 
   ci:

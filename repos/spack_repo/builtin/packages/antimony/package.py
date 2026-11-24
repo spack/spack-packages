@@ -11,7 +11,7 @@ class Antimony(CMakePackage):
     """Human readable language for modifying sbml"""
 
     homepage = "https://antimony.sourceforge.net/"
-    url = "antimony"
+    url = "https://downloads.sourceforge.net/project/antimony/Antimony source/2.8/antimony_src_v2.8.tar.gz"  # noqa: E501
 
     maintainers("rblake-llnl")
 
@@ -24,12 +24,6 @@ class Antimony(CMakePackage):
     version("2.4", sha256="1597efa823f9a48f5a40373cbd40386207764807fbc0b79cf20d0f8570a7e54b")
     version("2.2", sha256="795c777dd90c28fd8c3f4f8896702744b7389cff2fcf40e797b4bfafbb6f7251")
     version("2.0", sha256="778146206e5f420d0e3d30dc25eabc9bad2759bfaf6b4b355bb1f72c5bc9593f")
-
-    def url_for_version(self, version):
-        url = "https://downloads.sourceforge.net/project/antimony/Antimony source/{0}/antimony_src_v{1}.tar.gz".format(
-            version, version
-        )
-        return url
 
     variant("qt", default=False, description="Build the QT editor.")
     variant("python", default=False, description="Build python bindings.")

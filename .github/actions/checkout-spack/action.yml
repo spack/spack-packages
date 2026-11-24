@@ -5,6 +5,10 @@ inputs:
     description: Path to checkout Spack repository
     required: false
     default: spack-core
+  ref:
+    description: 'Spack ref to checkout, defaults to SPACK_CHECKOUT_VERSION from .ci/env'
+    required: false
+    default: ""
   fetch-depth:
     description: Number of commits to fetch
     required: false
@@ -21,7 +25,8 @@ runs:
       shell: bash
       run: |
         source .ci/env
-        echo "version=${SPACK_CHECKOUT_VERSION}" >> $GITHUB_OUTPUT
+        REF="${{ inputs.ref }}"
+        echo "version=${REF:-$SPACK_CHECKOUT_VERSION}" >> $GITHUB_OUTPUT
         echo "gh-repo=${SPACK_CHECKOUT_REPO}" >> $GITHUB_OUTPUT
     - name: Checkout Spack
       uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683

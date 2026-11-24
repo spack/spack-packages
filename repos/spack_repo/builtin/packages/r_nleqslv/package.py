@@ -20,6 +20,7 @@ class RNleqslv(RPackage):
 
     license("GPL-2.0-or-later")
 
+    version("3.3.7", sha256="6f29ad65049338006a52e457dbbeba529813b6dd952c4d774ef8b9c42193ef75")
     version("3.3.5", sha256="1298172d2fe67d8d6b742ce7e792f6b897f081da5c94d34f14970ab531f04b3a")
     version("3.3.4", sha256="2783e7525bcd155dd8cedf5a41b7db65cd1fa0e095cd937371448316f3930fcf")
     version("3.3.3", sha256="2e46dfce95ddfd7ed5208413ee41f6bdf1ae18414fb1d0c146d9da3af12ac633")

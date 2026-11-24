@@ -34,6 +34,7 @@ class Fio(AutotoolsPackage):
     variant("gui", default=False, description="Enable building of gtk gfio")
     variant("doc", default=False, description="Generate documentation")
     variant("libaio", default=False, description="Enable libaio engine")
+    variant("daos", default=False, description="Enable the DAOS File System (dfs) engine")
 
     depends_on("c", type="build")
     depends_on("pkgconfig", type="build")
@@ -42,10 +43,23 @@ class Fio(AutotoolsPackage):
     depends_on("cairo", when="+gui")
     depends_on("libaio", when="+libaio")
     depends_on("py-sphinx", type="build", when="+doc")
+    depends_on("daos@2.2.0:", when="+daos")
 
     conflicts("+libaio", when="platform=darwin", msg="libaio does not support Darwin")
     conflicts("+libaio", when="platform=windows", msg="libaio does not support Windows")
+    conflicts("+daos", when="platform=darwin", msg="DAOS does not support Darwin")
+    conflicts("+daos", when="platform=windows", msg="DAOS does not support Windows")
     conflicts("@:3.18", when="%gcc@10:", msg="gcc@10: sets -fno-common by default")
+
+    def flag_handler(self, name: str, flags: List[str]):
+        if self.spec.satisfies("+daos"):
+            daos = self.spec["daos"].prefix
+            if name in ("cflags", "cxxflags"):
+                flags.append("-I{0}".format(daos.include))
+            if name == "ldflags":
+                flags.append("-L{0}".format(daos.lib64))
+                flags.append("-L{0}".format(daos.lib))
+        return (flags, None, None)
 
     def configure_args(self):
         config_args = ["--disable-native"]

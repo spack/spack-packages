@@ -16,6 +16,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
     variant("openmp", default=True, description="build OpenMP backend")
     variant("cuda", default=False, description="build CUDA backend")
     variant("rocm", default=False, description="build HIP backend")
+    variant("rccl", default=False, description="Use ROCm Collective Comm. Library", when="+rocm")
     variant("metal", default=True, description="build Metal backend", when="platform=darwin")
     variant("rpc", default=False, description="build with RPC support")
 
@@ -29,6 +30,9 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hipblas", when="+rocm")
     depends_on("rocblas", when="+rocm")
+    depends_on("rccl", when="+rocm")
+
+    depends_on("nccl", when="+cuda")
 
     def cmake_args(self):
         args = [
@@ -55,6 +59,8 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
 
         if self.spec.satisfies("+cuda"):
             args.append(self.define("CMAKE_CUDA_COMPILER", f"{self.spec['cuda'].prefix}/bin/nvcc"))
+            args.append(self.define("GGML_CUDA_GRAPHS", "ON"))
+            args.append(self.define("GGML_CUDA_NCCL", "ON"))
             if not self.spec.satisfies("cuda_arch=none"):
                 archs = self.spec.variants["cuda_arch"].value
                 arch_str = ";".join(archs)
@@ -66,6 +72,7 @@ class GGMLPackageBase(CMakePackage, CudaPackage, ROCmPackage):
                     "CMAKE_HIP_COMPILER", f"{self.spec['llvm-amdgpu'].prefix}/bin/amdclang++"
                 )
             )
+            args.append(self.define("GGML_HIP_RCCL", "ON"))
             if not self.spec.satisfies("amdgpu_target=none"):
                 archs = self.spec.variants["amdgpu_target"].value
                 arch_str = ";".join(archs)
@@ -84,4 +91,7 @@ class Ggml(GGMLPackageBase):
     license("MIT")
 
     version("master", branch="master")
+    version(
+        "0.22.0", tag="v0.22.0", commit="34dc0e5589504286cb40e13cbdae4bf2b5b4071b", preferred=True
+    )
     version("0.9.4", tag="v0.9.4", commit="72632094336524a9c809e129e8b1c52154543a5a")

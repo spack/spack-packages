@@ -19,6 +19,9 @@ class Mumps(Package):
 
     maintainers("jcortial-safran")
 
+    version("5.9.2", sha256="652d28a91c7ff886b4a5ea122df4e5d014bdb2eba0545e581be4d8fa50c0ff19")
+    version("5.9.1", sha256="659c9b57646b5a003ac618baa1faf9dd2044e46c732b3daaccbc7158003e1b46")
+    version("5.9.0", sha256="02c6efdb91749ec0f82351d40f3f860547272a1eb1d899126a4265b4d6bcc4ca")
     version("5.8.2", sha256="eb515aa688e6dbab414bb6e889ff4c8b23f1691a843c68da5230a33ac4db7039")
     version("5.8.1", sha256="e91b6dcd93597a34c0d433b862cf303835e1ea05f12af073b06c32f652f3edd8")
     version("5.8.0", sha256="d762eb8b1d9843a0993b8cfc137d043d04c7c51877ad37c94560433a474340a0")
@@ -42,6 +45,12 @@ class Mumps(Package):
         version("5.0.1", sha256="50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0")
 
     variant("mpi", default=True, description="Compile MUMPS with MPI support")
+    variant(
+        "mpi_in_place",
+        default=True,
+        description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
+        when="@5.6.2: +mpi",
+    )
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")
     variant(
         "ptscotch", default=False, description="Activate PT-Scotch as a possible ordering library"
@@ -65,6 +74,7 @@ class Mumps(Package):
         description="Allow BLAS calls in OpenMP regions "
         + "(warning: might not be supported by all multithread BLAS)",
     )
+    variant("pkgconfig", default=False, description="Create unofficial pkgconfig files")
 
     depends_on("c", type="build")  # generated
     depends_on("fortran", type="build")  # generated
@@ -92,6 +102,11 @@ class Mumps(Package):
     conflicts("+parmetis", when="~metis", msg="You cannot use the parmetis variant without metis")
     conflicts("+ptscotch", when="~mpi", msg="You cannot use the ptscotch variant without mpi")
     conflicts("+blr_mt", when="~openmp", msg="You cannot use the blr_mt variant without openmp")
+    conflicts(
+        "^[virtuals=blas] openblas+ilp64",
+        when="~int64",
+        msg="mumps~int64 calls BLAS with 32-bit integers",
+    )
 
     @when("+incfort")
     def patch(self):
@@ -174,7 +189,9 @@ class Mumps(Package):
             )
 
             orderings.append("-Dmetis")
-
+        if "+pkgconfig" in self.spec:
+            # Keeping orderings in case we have to create pkg_config files
+            self.orderings = orderings
         makefile_conf.append("ORDERINGSF = %s" % (" ".join(orderings)))
 
         # Determine which compiler suite we are using
@@ -239,14 +256,14 @@ class Mumps(Package):
                 optf.append("-fallow-argument-mismatch")
 
         # As of version 5.2.0, MUMPS is able to take advantage
-        # of the GEMMT BLAS extension. MKL and amdblis are the only
-        # known BLAS implementation supported.
+        # of the GEMMT BLAS extension. MKL, aocl-blas and its deprecated
+        # amdblis alias are the only known BLAS implementations supported.
         if self.spec.satisfies("^[virtuals=blas] intel-oneapi-mkl") and self.spec.satisfies(
             "@5.2.0:"
         ):
             optf.append("-DGEMMT_AVAILABLE")
 
-        if "@5.2.0: ^amdblis@3.0:" in self.spec:
+        if "@5.2.0: ^amdblis@3.0:" in self.spec or "@5.2.0: ^aocl-blas@3.0:" in self.spec:
             optf.append("-DGEMMT_AVAILABLE")
 
         if "+openmp" in self.spec:
@@ -266,6 +283,15 @@ class Mumps(Package):
         # prevents this.
         if using_intel or using_oneapi:
             optl.append("-nofor-main")
+
+        # MUMPS uses MPI_IN_PLACE in some collective MPI operations. In case of
+        # MPI environments where MPI_IN_PLACE is failing, it is possible to
+        # avoid the use of MPI_IN_PLACE at the cost of more temporary memory
+        # allocation and possibly less efficient code.
+        if self.spec.satisfies("~mpi_in_place"):
+            avoid_mpi_in_place_flag = "-DAVOID_MPI_IN_PLACE"
+            optf.append(avoid_mpi_in_place_flag)
+            optc.append(avoid_mpi_in_place_flag)
 
         makefile_conf.extend(
             [
@@ -313,6 +339,8 @@ class Mumps(Package):
         if "+shared" in self.spec:
             # All Mumps libraries will be linked with 'inject_libs'.
             inject_libs = []
+            if "+openmp" in self.spec:
+                inject_libs += [self.compiler.openmp_flag]
             if "+mpi" in self.spec:
                 inject_libs += [self.spec["scalapack"].libs.ld_flags]
             if "+ptscotch" in self.spec or "+scotch" in self.spec:
@@ -439,6 +467,56 @@ class Mumps(Package):
                     if "+complex" in spec:
                         zsimpletest = Executable("./zsimpletest")
                         zsimpletest(input="input_simpletest_cmplx")
+
+    @run_after("install", when="+pkgconfig")
+    def create_pkgconfig(self):
+        """Create unofficial pkgconfig files for mumps libraries"""
+        libdir = join_path(self.prefix, "lib")
+        pkg_path = join_path(libdir, "pkgconfig")
+        mkdirp(pkg_path)
+        precision_desc = {
+            "s": "single",
+            "d": "double",
+            "c": "complex single",
+            "z": "complex double",
+        }
+        orderings = [ordering[2:] for ordering in self.orderings]
+        if len(orderings) > 1:
+            ord_desc = "with the following orderings available: "
+            ord_desc += ", ".join(orderings[:-1])
+            ord_desc += f" and {orderings[-1]}"
+        else:
+            ord_desc = f"with the {orderings[0]} ordering available"
+
+        if "+mpi" in self.spec:
+            parallel_desc = "parallel"
+        else:
+            parallel_desc = "sequential"
+        for char in "zscd":
+            if (
+                ("+float" in self.spec and char == "s")
+                or ("+double" in self.spec and char == "d")
+                or ("+complex" in self.spec and "+float" in self.spec and char == "c")
+                or ("+complex" in self.spec and "+double" in self.spec and char == "z")
+            ):
+                with open(join_path(pkg_path, f"{char}mumps.pc"), "w") as f:
+                    desc = f"The {parallel_desc} {precision_desc[char]} MUMPS library {ord_desc}"
+                    f.write(
+                        "\n".join(
+                            [
+                                f"prefix={self.prefix}",
+                                "exec_prefix=${prefix}",
+                                "includedir=${prefix}/include",
+                                "libdir=${exec_prefix}/lib",
+                                "",
+                                f"Name: {char}mumps",
+                                f"Description: {desc}",
+                                f"Version: {self.version}",
+                                "Cflags: -I${includedir}",
+                                f"Libs: -L${{libdir}} -l{char}mumps",
+                            ]
+                        )
+                    )
 
     @property
     def libs(self):

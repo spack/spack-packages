@@ -16,6 +16,7 @@ class PyYarl(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.25.1", sha256="03dd38de09bc213e9a8b29761eec33ee1d5318dac0e49d8af36e4d27830e23a7")
     version("1.22.0", sha256="bebf8557577d4401ba8bd9ff33906f1376c877aa78d1fe216ad01b4d6745af71")
     version("1.18.3", sha256="ac1801c45cbf77b6c99242eeff4fffb5e4e73a800b5c4ad4fc0be5def634d2e1")
     version("1.9.2", sha256="04ab9d4b9f587c06d801c2abfe9317b77cdf996c65a90d5e84ecc45010823571")
@@ -47,6 +48,7 @@ class PyYarl(PythonPackage):
         depends_on("py-cython")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@1.23:")
         depends_on("python@3.9:", when="@1.15.3:")
         depends_on("python@3.8:", when="@1.9.5:")
         depends_on("python@3.7:", when="@1.8:")

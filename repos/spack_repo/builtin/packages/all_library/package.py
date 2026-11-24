@@ -14,7 +14,7 @@ class AllLibrary(CMakePackage):
     load balancing into particle based simulation codes.
     """
 
-    homepage = "http://slms.pages.jsc.fz-juelich.de/websites/all-website/"
+    homepage = "https://slms.pages.jsc.fz-juelich.de/websites/all-website/"
     url = "https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing/-/archive/v0.9.2/loadbalancing-v0.9.2.tar.gz"
     git = "https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing.git"
 

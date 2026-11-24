@@ -16,6 +16,8 @@ class PyPathspec(PythonPackage):
 
     license("MPL-2.0")
 
+    version("1.1.1", sha256="17db5ecd524104a120e173814c90367a96a98d07c45b2e10c2f3919fff91bf5a")
+    version("1.0.4", sha256="0210e2ae8a21a9137c0d470578cb0e595af87edaa6ebf12ff176f14a02e0e645")
     version("0.12.1", sha256="a482d51503a1ab33b1c67a6c3813a26953dbdc71c31dacaef9a838c4e29f5712")
     version("0.12.0", sha256="c57e16065a97b7beb175f13c84d27cb05f7b7315741c2fbd5de541042f4ea6e1")
     version("0.11.2", sha256="e0d8d0ac2f12da61956eb2306b69f9469b42f4deb0f3cb6ed47b9cce9996ced3")
@@ -29,10 +31,16 @@ class PyPathspec(PythonPackage):
     version("0.5.5", sha256="72c495d1bbe76674219e307f6d1c6062f2e1b0b483a5e4886435127d0df3d0d3")
     version("0.3.4", sha256="7605ca5c26f554766afe1d177164a2275a85bb803b76eba3428f422972f66728")
 
-    depends_on("python@3.8:", when="@0.12:", type=("build", "run"))
-    depends_on("python@3.7:", when="@0.10:0.11", type=("build", "run"))
-    depends_on("python@2.7:2.8,3.5:", type=("build", "run"))
-    depends_on("py-flit-core@3.2:3", when="@0.11:", type="build")
-    depends_on("py-setuptools@40.8:", when="@0.10:", type="build")
-    depends_on("py-setuptools@39.2:", when="@0.9", type="build")
-    depends_on("py-setuptools", when="@:0.10", type="build")
+    with default_args(type="build"):
+        depends_on("py-flit-core@3.2:4", when="@1:")
+        depends_on("py-flit-core@3.2:3", when="@0.11:0")
+
+        # Historical dependencies
+        depends_on("py-setuptools@40.8:", when="@0.10")
+        depends_on("py-setuptools@39.2:", when="@0.9")
+        depends_on("py-setuptools", when="@:0.10")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.9:", when="@1:")
+        depends_on("python@3.8:", when="@0.12:")
+        depends_on("python@3.7:", when="@0.10:0.11")

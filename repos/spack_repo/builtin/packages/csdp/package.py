@@ -26,6 +26,51 @@ class Csdp(MakefilePackage):
     depends_on("blas")
     depends_on("lapack")
 
+    with when("@6.2.0"):
+        variant("openmp", default=True, description="Build with OpenMP Support")
+        depends_on("llvm-openmp", when="+openmp %apple-clang")
+
+        # include <stdio.h> to avoid declaring printf implicitly
+        patch(
+            "https://salsa.debian.org/math-team/csdp/-/raw/d95bdd34978926971e8b3fcf6622f3086d3b2401/debian/patches/include-stdio.patch",
+            sha256="fcd9b1ba04d20a6f150fc56a918f9bcd6ee1681203a9a0bc2aace385694fd54f",
+        )
+        # more configurable makefile
+        patch(
+            "https://salsa.debian.org/math-team/csdp/-/raw/d95bdd34978926971e8b3fcf6622f3086d3b2401/debian/patches/makefile.patch",
+            sha256="8d51be78e50708085a8749fcac1b23a5dd24d404cee32a388d7c0c40ba474d5c",
+        )
+
+    @property
+    def build_targets(self):
+        if self.spec.satisfies("@6.2.0"):
+            blas_libs = (self.spec["lapack"].libs + self.spec["blas"].libs).ld_flags
+            if self.spec.satisfies("+openmp"):
+                openmp_cflags = self.spec["c"].package.openmp_flag
+                if self.spec.satisfies("%apple-clang"):
+                    openmp_cflags += f" {self.spec['llvm-openmp'].headers.include_flags}"
+                    openmp_libs = self.spec["llvm-openmp"].libs.ld_flags
+                else:
+                    openmp_libs = ""
+            else:
+                openmp_cflags = ""
+                openmp_libs = ""
+            return [
+                f"BLAS_LIBS={blas_libs}",
+                f"OPENMP_CFLAGS={openmp_cflags}",
+                f"OPENMP_LIBS={openmp_libs}",
+            ]
+        else:
+            return []
+
+    @property
+    def install_targets(self):
+        if self.spec.satisfies("@6.2.0"):
+            return ["install", f"prefix={self.prefix}"]
+        else:
+            return ["install"]
+
+    @when("@6.1.1")
     def edit(self, spec, prefix):
         mkdirp(prefix.bin)
         makefile = FileFilter("Makefile")
@@ -33,7 +78,7 @@ class Csdp(MakefilePackage):
         makefile.filter(r"^export LIBS.*$", "")  # use flag_handler instead
 
     def flag_handler(self, name: str, flags: List[str]):
-        if name == "ldflags":
+        if name == "ldflags" and self.spec.satisfies("@6.1.1"):
             flags.extend(
                 [
                     f"-L{self.stage.source_path}/lib -lsdp",

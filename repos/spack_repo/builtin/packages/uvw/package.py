@@ -24,7 +24,8 @@ class Uvw(CMakePackage):
 
     variant("docs", default=False, description="Builds and install the documentation")
 
-    depends_on("cxx", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("libuv", type="link")
     depends_on("doxygen", type="build", when="+docs")

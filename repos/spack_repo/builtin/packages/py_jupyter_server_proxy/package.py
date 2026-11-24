@@ -47,4 +47,4 @@ class PyJupyterServerProxy(PythonPackage):
             name = "jupyter_server_proxy"
         else:
             name = "jupyter-server-proxy"
-        return f"https://files.pythonhosted.org/packages/source/j/jupyter-server-proxy/{name}-{version}.tar.gz"
+        return f"https://files.pythonhosted.org/packages/source/j/{name}/{name}-{version}.tar.gz"

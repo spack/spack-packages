@@ -52,8 +52,8 @@ class Upcxx(Package, CudaPackage, ROCmPackage):
 
     homepage = "https://upcxx.lbl.gov"
     maintainers("bonachea")
-    url = "https://bitbucket.org/berkeleylab/upcxx/downloads/upcxx-2021.3.0.tar.gz"
-    git = "https://bitbucket.org/berkeleylab/upcxx.git"
+    url = "https://github.com/BerkeleyLab/upcxx/releases/download/upcxx-2025.10.0/upcxx-2025.10.0.tar.gz"
+    git = "https://github.com/BerkeleyLab/upcxx.git"
 
     tags = ["e4s", "ecp"]
 

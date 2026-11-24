@@ -24,7 +24,10 @@ class Xrootd(CMakePackage):
 
     license("LGPL-3.0-only")
 
+    version("6.1.0", sha256="f50a835def0c5b2ff65d377ebbeed42cf1efe243ecd599218ff441a67854859e")
+    version("6.0.3", sha256="4b02d60bdfd67177f55df2252f2463d5304fc22ae1fc33223d36f2a836d0f44e")
     version("6.0.0", sha256="bc8d00b6c0b48f9186e3ad09e8e4e6eedf1067fad68f6d6a4f4e939bcf87007c")
+    version("5.9.6", sha256="84116cfd5bc6b17381031e70220d6dedbe251fe1a3ab0a4de084a3a6bcf31353")
     version("5.9.2", sha256="e29edb755d5f728eff0c74f7bd8cec35c954239ea747975eebd9c1e2bd61edb5")
     version("5.9.1", sha256="39946509a50e790ab3fcc77ba0f4c9b66abef221262756aa8bb2494f00a0e321")
     version("5.8.4", sha256="d8716bf764a7e8103aab83fbf4906ea2cc157646b1a633d99f91edbf204ff632")
@@ -80,7 +83,7 @@ class Xrootd(CMakePackage):
     variant(
         "cxxstd",
         default="20",
-        values=("11", "14", "17", "20"),
+        values=("11", "14", "17", "20", "23"),
         multi=False,
         description="Use the specified C++ standard when building",
         when="@6:",
@@ -115,8 +118,10 @@ class Xrootd(CMakePackage):
     depends_on("pkgconfig", type="build", when="+davix")
     depends_on("libxml2", when="+http")
     depends_on("uuid", when="@4.11.0:")
-    depends_on("openssl")
     depends_on("openssl@1.1.1:", when="@6:")
+    # openssl@4 support was added in
+    # https://github.com/xrootd/xrootd/pull/2802 released in 6.1
+    depends_on("openssl@:3", when="@:6.0")
     depends_on("python", when="+python")
     depends_on("py-setuptools", type="build", when="@:5.5 +python")
     depends_on("py-pip", type="build", when="@5.6: +python")

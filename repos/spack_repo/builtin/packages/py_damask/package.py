@@ -18,6 +18,7 @@ class PyDamask(PythonPackage):
 
     license("AGPL-3.0-or-later")
 
+    version("3.1.0", sha256="d1ba65a167aab221c13f003507aba17f663c53af94fc1cd4a47408008329def1")
     version("3.0.2", sha256="82f9b3aefde87193c12a7c908f42b711b278438f6cad650918989e37fb6dbde4")
     version("3.0.1", sha256="3db1231f6763356e71b3bb91f66f1abb4fdae2721ce85754fc468446f3d74882")
     version("3.0.0", sha256="aaebc65b3b10e6c313132ee97cfed427c115079b7e438cc0727c5207e159019f")
@@ -43,6 +44,14 @@ class PyDamask(PythonPackage):
         "3.0.0-alpha4", sha256="0bb8bde43b27d852b1fb6e359a7157354544557ad83d87987b03f5d629ce5493"
     )
 
+    depends_on("py-pandas@1.3:", type=("build", "run"), when="@3.1.0")
+    depends_on("py-numpy@1.21:", type=("build", "run"), when="@3.1.0")
+    depends_on("py-scipy@1.8:", type=("build", "run"), when="@3.1.0")
+    depends_on("py-h5py@3.6:", type=("build", "run"), when="@3.1.0")
+    depends_on("vtk+python@9.1:", type=("build", "run"), when="@3.1.0")
+    depends_on("py-matplotlib@3.5:", type=("build", "run"), when="@3.1.0")
+    depends_on("py-pyyaml@5.4:", type=("build", "run"), when="@3.1.0")
+    depends_on("python@3.10:", type=("build", "run"), when="@3.1.0")
     depends_on("py-pandas@0.24:", type=("build", "run"), when="@3.0.0-alpha8:")
     depends_on("py-numpy@1.17:", type=("build", "run"), when="@3.0.0-alpha8:")
     depends_on("py-scipy@1.2:", type=("build", "run"), when="@3.0.0-alpha8:")

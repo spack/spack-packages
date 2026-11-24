@@ -16,6 +16,7 @@ class Libseccomp(AutotoolsPackage, PythonExtension):
 
     license("LGPL-2.1-or-later")
 
+    version("2.6.1", sha256="501f66c667225d53791b97e1d7cf85ab764c297d04881f60f38f451c4b0ee1be")
     version("2.6.0", sha256="83b6085232d1588c379dc9b9cae47bb37407cf262e6e74993c61ba72d2a784dc")
     version("2.5.6", sha256="04c37d72965dce218a0c94519b056e1775cf786b5260ee2b7992956c4ee38633")
     version("2.5.5", sha256="248a2c8a4d9b9858aa6baf52712c34afefcf9c9e94b76dce02c1c9aa25fb3375")
@@ -36,7 +37,7 @@ class Libseccomp(AutotoolsPackage, PythonExtension):
         depends_on("python@:3.11", type=("run", "link", "build"), when="@:2.5")
         depends_on("py-setuptools", type="build", when="@2.6:")
         # upstream PR: https://github.com/seccomp/libseccomp/pull/482
-        patch("fix-pyx-copy.patch", when="@2.6")
+        patch("fix-pyx-copy.patch", when="@2.6.0")
 
     def configure_args(self):
         return self.enable_or_disable("python", variant="python")

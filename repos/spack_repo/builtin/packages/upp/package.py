@@ -78,3 +78,8 @@ class Upp(CMakePackage):
         ]
 
         return args
+
+    def patch(self):
+        if self.spec.satisfies("^[virtuals=fortran] intel-oneapi-compilers"):
+            filter_file("Intel", "Intel|IntelLLVM", "CMakeLists.txt")
+            filter_file("Intel", "Intel|IntelLLVM", "sorc/ncep_post.fd/CMakeLists.txt")

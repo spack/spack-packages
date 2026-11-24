@@ -61,10 +61,12 @@ class Kentutils(MakefilePackage):
     conflicts("mariadb-c-client")
 
     # MySQL pointer/integer conversion issue (https://github.com/ucscGenomeBrowser/kent/pull/87)
-    patch("fix-mysql-options-gcc13.patch", when="%gcc@13: ^mysql")
+    patch("fix-mysql-options-gcc13.patch", when="%gcc@13.0:13.2 ^mysql")
     # MySQL build flags from `mysql_config` are not compatible with Spack's method of building
     # and includes zlib when it's not needed/available, leading to a linking failure.
     patch("mysql-zlib-workaround.patch", when="%gcc ^mysql")
+    # straw.cpp uses uint16_t/uint64_t without including <cstdint>, which GCC 13+ requires
+    patch("fix-straw-cstdint.patch", when="%gcc@13:")
 
     def flag_handler(self, name, flags):
         if name == "cflags":
