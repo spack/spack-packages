@@ -271,7 +271,10 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx908": ("vega908", None),
         "gfx90a": ("vega90A", None),
         "gfx940": ("amd_gfx940", "@4.3.00:"),
-        "gfx942": (lambda spec: "amd_gfx942_apu" if spec.satisfies("+apu") else "amd_gfx942", "@4.2.00:"),
+        "gfx942": (
+            lambda spec: "amd_gfx942_apu" if spec.satisfies("+apu") else "amd_gfx942",
+            "@4.2.00:",
+        ),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": ("navi1030", None),
         "gfx1100": ("navi1100", "@4.1.00:"),
@@ -449,7 +452,11 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
                 if cond and not kokkos_spec.satisfies(cond):
                     raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
 
-                return arch_name_or_fun(kokkos_spec) if callable(arch_name_or_fun) else arch_name_or_fun
+                return (
+                    arch_name_or_fun(kokkos_spec)
+                    if callable(arch_name_or_fun)
+                    else arch_name_or_fun
+                )
             else:
                 # Note that conflict declarations should prevent
                 # choosing an unsupported AMD GPU target
