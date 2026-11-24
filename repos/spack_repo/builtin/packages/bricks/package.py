@@ -53,6 +53,9 @@ class Bricks(CMakePackage):
         args = [self.define_from_variant("BRICK_USE_OPENCL", "cuda")]
         if self.spec.satisfies("+cuda"):
             args.append(f"-DOCL_ROOT:STRING={self.spec['opencl-clhpp'].prefix}")
+        else:
+            # Skip check_language(CUDA), which otherwise picks up a system CUDA compiler.
+            args.append(self.define("CMAKE_CUDA_COMPILER", "NOTFOUND"))
         return args
 
     def flag_handler(self, name, flags):
@@ -90,7 +93,7 @@ class Bricks(CMakePackage):
 
         with working_dir(source_dir):
             cmake = which(self.spec["cmake"].prefix.bin.cmake, required=True)
-            cmake(".")
+            cmake(".", self.define("CMAKE_PREFIX_PATH", self.prefix))
 
             cmake("--build", ".")
 

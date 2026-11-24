@@ -15,6 +15,7 @@ class PyIpywidgets(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.1.9", sha256="bcccba38a6ec3253f7a39c943cea5b9ad01999ce071396171adbc51c6a6a8613")
     version("8.0.2", sha256="08cb75c6e0a96836147cbfdc55580ae04d13e05d26ffbc377b4e1c68baa28b1f")
     version("7.7.0", sha256="ab4a5596855a88b83761921c768707d65e5847068139bc1729ddfe834703542a")
     version("7.6.5", sha256="00974f7cb4d5f8d494c19810fedb9fa9b64bffd3cda7c2be23c133a1ad3c99c5")
@@ -23,23 +24,36 @@ class PyIpywidgets(PythonPackage):
     version("7.4.2", sha256="a3e224f430163f767047ab9a042fc55adbcab0c24bbe6cf9f306c4f89fdf0ba3")
     version("5.2.2", sha256="baf6098f054dd5eacc2934b8ea3bef908b81ca8660d839f1f940255a72c660d2")
 
-    depends_on("python@2.7:2.8,3.3:", type=("build", "run"))
-    depends_on("python@3.7:", when="@8.0.2:", type=("build", "run"))
-    # pip silently replaces distutils with setuptools
-    depends_on("py-setuptools", type="build")
-    depends_on("py-setuptools@40.8.0:", when="@8.0.2:", type="build")
-    depends_on("py-ipython@4:", type=("build", "run"))
-    depends_on("py-ipython@6.1.0:", when="@8.0.2:", type=("build", "run"))
-    depends_on("py-ipykernel@4.2.2:", type=("build", "run"))
-    depends_on("py-ipykernel@4.5.1:", when="@6:", type=("build", "run"))
-    depends_on("py-traitlets@4.2.1:", type=("build", "run"))
-    depends_on("py-traitlets@4.3.1:", when="@6:", type=("build", "run"))
-    depends_on("py-widgetsnbextension@1.2.6:1.9", when="@5.2.2", type=("build", "run"))
-    depends_on("py-widgetsnbextension@3.4.0:3.4", when="@7.4.2", type=("build", "run"))
-    depends_on("py-widgetsnbextension@3.5.0:3.5", when="@7.5.1:7.6.5", type=("build", "run"))
-    depends_on("py-widgetsnbextension@3.6", when="@7.7:7", type=("build", "run"))
-    depends_on("py-widgetsnbextension@4.0:4", when="@8.0.2:", type=("build", "run"))
-    depends_on("py-jupyterlab-widgets@1.0.0:", when="@:7", type=("build", "run"))
-    depends_on("py-jupyterlab-widgets@3.0:3", when="@8.0.2:", type=("build", "run"))
-    depends_on("py-ipython-genutils@0.2.0:0.2", when="@7.6.4:7", type=("build", "run"))
-    depends_on("py-nbformat@4.2.0:", when="@6:7", type=("build", "run"))
+    with default_args(type="build"):
+        # pip silently replaces distutils with setuptools
+        depends_on("py-setuptools@40.8.0:", when="@8:")
+        depends_on("py-setuptools")
+
+    with default_args(type=("build", "run")):
+        depends_on("python@3.7:", when="@8:")
+        depends_on("python@2.7:2.8,3.3:")
+
+        depends_on("py-comm@0.1.3:", when="@7.8:")
+
+        depends_on("py-ipython@6.1.0:", when="@8:")
+        depends_on("py-ipython@4:")
+
+        depends_on("py-traitlets@4.3.1:", when="@6:")
+        depends_on("py-traitlets@4.2.1:")
+
+        depends_on("py-widgetsnbextension@4.0.16:4.1", when="@8.0.6:")
+        depends_on("py-widgetsnbextension@4.0:4", when="@8:8.0.5")
+        depends_on("py-widgetsnbextension@3.6", when="@7.7:7")
+        depends_on("py-widgetsnbextension@3.5.0:3.5", when="@7.5.1:7.6.5")
+        depends_on("py-widgetsnbextension@3.4.0:3.4", when="@7.4.2")
+        depends_on("py-widgetsnbextension@1.2.6:1.9", when="@5.2.2")
+
+        depends_on("py-jupyterlab-widgets@3.0.17:3.1", when="@8.1.9:")
+        depends_on("py-jupyterlab-widgets@3.0:3", when="@8:8.0.5")
+        depends_on("py-jupyterlab-widgets@1.0.0:", when="@:7")
+
+        # Historical dependencies
+        depends_on("py-ipykernel@4.5.1:", when="@6:8.0")
+        depends_on("py-ipykernel@4.2.2:", when="@:8.0")
+        depends_on("py-ipython-genutils@0.2.0:0.2", when="@7.6.4:7")
+        depends_on("py-nbformat@4.2.0:", when="@6:7")

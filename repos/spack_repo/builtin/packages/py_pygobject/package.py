@@ -15,6 +15,7 @@ class PyPygobject(MesonPackage, PythonPackage):
 
     license("LGPL-2.1-or-later")
 
+    version("3.58.1", sha256="4c80598ade17fbaa7798e01a25d0bf29ce109740786026a074c5c62bb3e79d23")
     version("3.54.3", sha256="a8da09134a0f7d56491cf2412145e35aa74e91d760e8f337096a1cda0b92bae7")
     version("3.54.5", sha256="b6656f6348f5245606cf15ea48c384c7f05156c75ead206c1b246c80a22fb585")
     version(

@@ -523,6 +523,8 @@ class GenericBuilder(generic.GenericBuilder):
         # Thus, due to 2. and 3. the F90 variable is not explictly set
         # because it would be mostly pointless and could lead to erroneous
         # behaviour.
+        # An absolute F90 also hides the compiler name from configure's MKL
+        # detection (x_ac_qe_blas.m4), which then falls back to internal BLAS.
         if "+mpi" in spec:
             mpi = spec["mpi"]
             options.append("--enable-parallel=yes")
@@ -533,7 +535,6 @@ class GenericBuilder(generic.GenericBuilder):
             options.append("CC={0}".format(env["SPACK_CC"]))
 
         options.append("F77={0}".format(env["SPACK_F77"]))
-        options.append("F90={0}".format(env["SPACK_FC"]))
 
         if "+openmp" in spec:
             options.append("--enable-openmp")

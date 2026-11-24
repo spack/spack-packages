@@ -19,6 +19,7 @@ class RdmaCore(CMakePackage):
 
     license("GPL-2.0-only OR BSD-2-Clause")
 
+    version("66.0", sha256="a03fadbb2b523505743ff00f4e0f86d3bfd6e0beacf330357b1dfa8fbd9d246b")
     version("60.1", sha256="3c83b75d952e96461338ed6320360580660ff897c62c773bc52c36c481ed8304")
     version("59.1", sha256="4491a89a721f016fac54bbfdead68cef60f1f18f5711a6844a9e2c804cd4cad6")
     version("59.0", sha256="e2c169b13b318cdc3b5ff957cd8b6dcc8bdf96dd9c5d42324129c163bb057ce5")
@@ -137,6 +138,11 @@ class RdmaCore(CMakePackage):
         ]
 
         cmake_args.append(self.define_from_variant("ENABLE_STATIC", "static"))
+
+        if self.spec.satisfies("@64:"):
+            # since v63 a sysusers.d file is installed to systemd's sysusersdir (or
+            # /usr/lib/sysusers.d); v64 allows installing it into the prefix instead
+            cmake_args.append(self.define("SYSUSERS_DIR", self.prefix.lib.join("sysusers.d")))
 
         if self.spec.satisfies("+pyverbs"):
             cmake_args.append(self.define("CMAKE_INSTALL_PYTHON_ARCH_LIB", python_platlib))

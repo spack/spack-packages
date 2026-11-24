@@ -22,6 +22,7 @@ class Srcml(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("1.1.0", sha256="855d2ec46921546fa6e083cf67e41bcd78e4af2b037417930adcfbbaf1ee1327")
     version("1.0.0", sha256="3ddf33271c3b3953d5e3ecbb14c4f925fc0e609a81250d921d3516537dcffae2")
 
     depends_on("c", type="build")  # generated
