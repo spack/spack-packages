@@ -217,10 +217,5 @@ class Zoltan(AutotoolsPackage):
         for lib_path in find(self.spec.prefix.lib, "lib*.a"):
             lib_shared_name = re.sub(r"\.a$", f".{dso_suffix}", lib_path)
             move(lib_path, lib_shared_name)
-            if dso_suffix == "dylib":
-                install_name_tool = which("install_name_tool", required=True)
-                install_name_tool(
-                    "-id",
-                    "@rpath/" + os.path.basename(lib_shared_name),
-                    lib_shared_name,
-                )
+        if self.spec.satisfies("platform=darwin"):
+            fix_darwin_install_name(self.prefix.lib)

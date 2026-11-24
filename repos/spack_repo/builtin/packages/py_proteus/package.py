@@ -14,7 +14,7 @@ class PyProteus(PythonPackage):
     """Proteus: Computational Methods and Simulation Toolkit. Python tools
     for rapidly developing computer models and numerical methods"""
 
-    homepage = "http://proteustoolkit.org"
+    homepage = "https://proteustoolkit.org"
     git = "https://github.com/proteustoolkit/proteus.git"
 
     maintainers("cekees")
@@ -36,6 +36,7 @@ class PyProteus(PythonPackage):
     depends_on("py-pybind11@2.11:2", type="build")  # xtensor@0.27.1 *= overload issue
     depends_on("py-numpy@1.25:2", type=("build", "run"))
     depends_on("py-scipy", type="run")  # runtime only: not in [build-system] requires
+    depends_on("mpi")
     depends_on("py-mpi4py", type=("build", "run"))
     depends_on("py-petsc4py", type=("build", "run"))
     depends_on("py-h5py+mpi", type=("build", "run"))
@@ -52,7 +53,7 @@ class PyProteus(PythonPackage):
     depends_on("chrono+python", when="+chrono", type=("build", "link", "run"))
     depends_on("pumi@4.2.1:+zoltan+shared", when="+pumi")  # <4.2.1 requires patch
     depends_on("zoltan+parmetis~fortran", when="+pumi")
-    depends_on("parmetis")
+    depends_on("parmetis", when="+pumi")
     depends_on("xtensor@0.26.0")
     depends_on("xtensor-python@0.28.0:")
     depends_on("xtl")
