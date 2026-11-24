@@ -445,6 +445,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("%clang@:15", when="@2.18:")
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
+    requires(
+        "%cxx=llvm",
+        "%cxx=apple-clang",
+        policy="one_of",
+        when="@2.21: ~rocm",
+        msg="XLA compiles C++ to LLVM IR, which requires clang",
+    )
 
     # https://github.com/bazelbuild/bazel/issues/31381
     # https://github.com/llvm/llvm-project/pull/223362
@@ -954,22 +961,22 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             after = spec["llvm-amdgpu"].prefix.bin.clang
             filter_file(before, after, ".bazelrc")
 
-            # https://github.com/google/highway/issues/2705
-            # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
-            # Disable targets that require instructions newer than the selected CPU.
-            if spec.satisfies("@2.21 ^llvm-amdgpu@7.2:"):
-                if spec.satisfies("target=zen2"):
-                    disabled_targets = (
-                        "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
-                    )
-                elif spec.satisfies("target=skylake_avx512"):
-                    disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
-                else:
-                    disabled_targets = None
+        # https://github.com/google/highway/issues/2705
+        # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
+        # Disable targets that require instructions newer than the selected CPU.
+        if spec.satisfies("@2.21 target=x86_64:") and (
+            spec.satisfies("+rocm ^llvm-amdgpu@7.2:") or spec.satisfies("~rocm %cxx=llvm@22:")
+        ):
+            if "avx512f" not in spec.target:
+                disabled_targets = "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
+            elif spec.satisfies("target=skylake_avx512"):
+                disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
+            else:
+                disabled_targets = None
 
-                if disabled_targets:
-                    with open(".tf_configure.bazelrc", mode="a") as f:
-                        f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
+            if disabled_targets:
+                with open(".tf_configure.bazelrc", mode="a") as f:
+                    f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
 
     def write_python_toolchain(self):
         # Shebangs are limited to 256 bytes, the python prefix can be longer.
