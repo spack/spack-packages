@@ -32,9 +32,10 @@ class PyKorniaRs(PythonPackage):
     version("0.1.1", sha256="b9ac327fae6e982e6d7df9faeadd1d4f6453e65521819ae9ae5b90e9da0ed1a5")
     version("0.1.0", sha256="0fca64f901dddff49b72e51fc92a25f0a7606e9a1a72ef283606245ea6b4f90d")
 
+    depends_on("c", type="build")
+
     # PyO3 has tight coupling with CPython version
     # Assume Python versions aren't supported until wheels are available on PyPI
-    depends_on("c", type="build")
     with default_args(type=("build", "run")):
         depends_on("python@:3.15")
         depends_on("python@:3.14", when="@:0.2.0")
