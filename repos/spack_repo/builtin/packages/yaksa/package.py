@@ -38,6 +38,7 @@ class Yaksa(AutotoolsPackage, CudaPackage, ROCmPackage):
     depends_on("c", type="build")
 
     depends_on("autoconf", type="build")
+    depends_on("diffutils", type="build")
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")

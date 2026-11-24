@@ -319,6 +319,7 @@ supported, and netmod is ignored if device is ch3:sock.""",
         # Apply the changes to the configure script to skip the autoreconf stage if possible:
         patch("mpich32_411_CFI_configure.patch")
 
+    depends_on("diffutils", type="build")
     depends_on("findutils", type="build")
     depends_on("pkgconfig", type="build")
 
