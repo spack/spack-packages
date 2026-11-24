@@ -20,6 +20,7 @@ class PyTensorflowDatasets(PythonPackage):
 
     depends_on("python@3.6:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
+    depends_on("py-setuptools@:81", when="@:4.4.0", type="build")
     depends_on("py-absl-py", type=("build", "run"))
     depends_on("py-attrs@18.1.0:", type=("build", "run"))
     depends_on("py-dill", type=("build", "run"))
