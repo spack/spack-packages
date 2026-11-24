@@ -26,9 +26,8 @@ class Cdi(AutotoolsPackage):
     version("2.4.3", sha256="b54e110feff209855cebf00751d5bb912ddf6f177bc1471a48a53ea751b982ab")
     version("2.4.0", sha256="f7e27fa067177d89ff95080705863025b9e8d2c5e660352c1e193a42bf3c6683")
 
-    variant(
-        "netcdf", default=True, description="This is needed to read/write NetCDF files with CDI"
-    )
+    variant("netcdf", default=True, description="Support for NetCDF files")
+    variant("eccodes", default=True, description="Support for GRIB2 files")
 
     with default_args(type="build"):
         depends_on("c")
@@ -38,6 +37,7 @@ class Cdi(AutotoolsPackage):
         depends_on("libtool")
 
     depends_on("netcdf-c", when="+netcdf")
+    depends_on("eccodes", when="+eccodes")
 
     # note:
     # starting from 2.5.1 the provided cmake config file looks for `cdi` instead of `libcdi`,
@@ -49,4 +49,6 @@ class Cdi(AutotoolsPackage):
         args = []
         if "+netcdf" in self.spec:
             args.append("--with-netcdf=" + self.spec["netcdf-c"].prefix)
+        if "+eccodes" in self.spec:
+            args.append("--with-eccodes=" + self.spec["eccodes"].prefix)
         return args
