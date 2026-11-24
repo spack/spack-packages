@@ -2,8 +2,6 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-import tempfile
-
 from spack_repo.builtin.build_systems.python import PythonPackage
 
 from spack.package import *
@@ -68,7 +66,7 @@ register_toolchains("@spack_python_toolchains//:all")
         bazel(
             "--nohome_rc",
             "--nosystem_rc",
-            f"--output_user_root={tempfile.mkdtemp(prefix='spack-bazel-')}",
+            f"--output_user_root={join_path(self.stage.source_path, 'spack-bazel')}",
             # The JVM and Bazel size their thread pools by the number of CPUs
             f"--host_jvm_args=-XX:ActiveProcessorCount={make_jobs}",
             # Don't keep the server running for hours after the build
