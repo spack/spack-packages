@@ -21,6 +21,10 @@ class RubyCharlockHolmes(RubyPackage):
         expand=False,
     )
 
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    depends_on("gmake", type="build")
+
     depends_on("icu4c@74.2", type=("build", "link", "run"))
 
     def install(self, spec, prefix):

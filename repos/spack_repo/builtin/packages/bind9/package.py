@@ -28,7 +28,7 @@ class Bind9(AutotoolsPackage):
     depends_on("libuv@1.34,1.37:", type="link")
     depends_on("openssl@1.1.1:", type="link")
     depends_on("libcap", type="link")
-    depends_on("liburcu@0.14:", type="link", when="@9.20:")
+    depends_on("userspace-rcu@0.14:", type="link", when="@9.20:")
 
     def configure_args(self):
         args = ["--without-python", "--disable-doh"]

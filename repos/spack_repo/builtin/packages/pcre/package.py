@@ -98,4 +98,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
         args.append(self.define_from_variant("PCRE_SUPPORT_UTF", "utf"))
         args.append(self.define_from_variant("PCRE_SUPPORT_UNICODE_PROPERTIES", "utf"))
 
+        args.append(self.define("PCRE_BUILD_TESTS", self.pkg.run_tests))
+
         return args
