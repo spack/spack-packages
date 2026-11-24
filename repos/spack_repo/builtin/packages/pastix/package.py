@@ -57,6 +57,7 @@ class Pastix(CMakePackage, CudaPackage):
     with when("+metis"):
         depends_on("metis@5.1:")
         depends_on("metis@5.1:+int64", when="+int64")
+    depends_on("scotch~int64", when="@=6.4.0~int64+scotch+cuda runtime=starpu")
     with when("+scotch"):
         depends_on("scotch~metis")
         depends_on("scotch~metis+int64", when="+int64")
@@ -105,4 +106,23 @@ class Pastix(CMakePackage, CudaPackage):
                 ]
             )
 
+        if spec.satisfies("@=6.4.0~int64+cuda runtime=starpu ^openblas~ilp64"):
+            blas = spec["openblas"].prefix
+            args.extend(
+                [
+                    self.define("BLA_SIZEOF_INTEGER", 4),
+                    self.define("BLA_PREFER_PKGCONFIG", True),
+                    self.define("BLA_PKGCONFIG_BLAS", "openblas"),
+                    self.define("BLA_PKGCONFIG_LAPACK", "openblas"),
+                    self.define("CBLAS_DIR", blas),
+                    self.define("LAPACKE_DIR", blas),
+                ]
+            )
+            flags = [
+                f"-gencode=arch=compute_{arch},code=sm_{arch}"
+                for arch in spec.variants["cuda_arch"].value
+                if arch != "none"
+            ]
+            # FindCUDA's separate device link also produces a shared-library host object.
+            args.append(self.define("CUDA_NVCC_FLAGS", flags + ["-Xcompiler=-fPIC"]))
         return args

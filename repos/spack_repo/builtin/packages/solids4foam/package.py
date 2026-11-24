@@ -44,6 +44,7 @@ class Solids4foam(Package):
     depends_on("petsc@3.15:+double+mpi+mumps+hypre~complex~int64", when="+petsc")
 
     # https://github.com/solids4foam/solids4foam/pull/380
+    patch("neo-hookean-rest-stress.patch", when="@=2.4")
     patch("flux-corrected-velocity-restart-history.patch", when="@=2.4")
 
     build_script = "./spack-derived-Allwmake"

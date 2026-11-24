@@ -22,8 +22,13 @@ class Svmultiphysics(CMakePackage):
         "1.0.0.2",
         tag="v1.0.0.2",
         commit="fba504ea45cb9f8b06d85201df79d1b21a016840",
+        preferred=True,
     )
-
+    version(
+        "1.0.0.3",
+        tag="v1.0.0.3",
+        commit="88f85b97608aac4e1e76204c44ad4c0a1a34a312",
+    )
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.22:", type="build")

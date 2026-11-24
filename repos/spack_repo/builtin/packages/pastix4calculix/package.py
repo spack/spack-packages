@@ -22,9 +22,6 @@ class Pastix4calculix(CMakePackage, CudaPackage):
     version("2.18", tag="ccx_2.18", commit="d6b493bc431ecf860b3578a2ee6a25f392eb44be")
 
     variant("cuda", default=True, description="GPU acceleration (required)")
-    for arch in CudaPackage.cuda_arch_values:
-        if arch not in ("70", "72", "75", "80", "86", "89", "90"):
-            conflicts(f"cuda_arch={arch}", when="+cuda", msg="Architecture unsupported by PaRSEC")
     conflicts("~cuda", msg="PaStiX4CalculiX requires CUDA")
     conflicts(
         "cuda_arch=none",
@@ -56,6 +53,12 @@ class Pastix4calculix(CMakePackage, CudaPackage):
     # A failed precision generation leaves undefined bvec_* symbols at link time.
     patch("pastix4calculix-py3.patch", when="@=2.18")
 
+    def patch(self):
+        # The bundled CBLAS headers declare 32-bit arguments for the ILP64 library.
+        cblas = join_path(self.spec["openblas"].prefix.include, "cblas.h")
+        for header in ("include/cblas.h", "spm/include/cblas.h"):
+            install(cblas, join_path(self.stage.source_path, header))
+
     @run_before("cmake")
     def disable_examples_and_tests(self):
         # example/ and test/ are added unconditionally and fail to link; we only
@@ -82,6 +85,7 @@ class Pastix4calculix(CMakePackage, CudaPackage):
             "-DCMAKE_POLICY_DEFAULT_CMP0146=OLD",
             "-DCMAKE_POLICY_DEFAULT_CMP0148=OLD",
             self.define("BLAS_DIR", spec["openblas"].prefix),
+            self.define("CBLAS_DIR", spec["openblas"].prefix),
             self.define("LAPACKE_DIR", spec["openblas"].prefix),
             self.define("HWLOC_DIR", spec["hwloc"].prefix),
             self.define("SCOTCH_DIR", spec["scotch"].prefix),

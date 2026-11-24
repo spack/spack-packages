@@ -460,6 +460,8 @@ class Openfoam(Package):
         sha256="531146be868dd0cda70c1cf12a22110a38a30fd93b5ada6234be3d6c9256c6cf",
     )
     # Backport https://gitlab.com/openfoam/core/openfoam/-/merge_requests/882.
+    patch("lagrangian-fp-contract.patch", when="@=2606")
+    patch("foam-format-convert-compact-fields.patch", when="@=2606")
     patch("pair-gamg-direction-v2512.patch", when="@=2512")
     patch("pair-gamg-direction-v2606.patch", when="@=2606")
 

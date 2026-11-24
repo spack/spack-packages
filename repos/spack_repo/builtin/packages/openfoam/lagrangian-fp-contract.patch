@@ -1,0 +1,15 @@
+diff --git a/src/lagrangian/basic/Make/options b/src/lagrangian/basic/Make/options
+--- a/src/lagrangian/basic/Make/options
++++ b/src/lagrangian/basic/Make/options
+@@ -1,5 +1,11 @@
+ EXE_INC = \
+     -I$(LIB_SRC)/meshTools/lnInclude
+ 
++# Keep separate multiply and add rounding in barycentric particle tracking.
++# Contraction can leave a track without progress at a cell face.
++ifneq (,$(filter Gcc%,$(WM_COMPILER)))
++    EXE_INC += -ffp-contract=off
++endif
++
+ LIB_LIBS = \
+     -lmeshTools

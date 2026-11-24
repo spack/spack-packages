@@ -27,7 +27,7 @@ class ParsecPastix(CMakePackage, CudaPackage):
         description="GPU acceleration (required by PaStiX4CalculiX)",
     )
     for arch in CudaPackage.cuda_arch_values:
-        if arch not in ("70", "72", "75", "80", "86", "89", "90"):
+        if arch not in ("70", "72", "75", "80", "86", "89", "90", "100", "121"):
             conflicts(f"cuda_arch={arch}", when="+cuda", msg="Unsupported by this PaRSEC fork")
     conflicts("~cuda", msg="PaStiX4CalculiX needs the CUDA-enabled PaRSEC; build +cuda")
     conflicts(

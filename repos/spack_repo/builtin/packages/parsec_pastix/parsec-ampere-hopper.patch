@@ -1,5 +1,5 @@
 diff --git a/parsec/devices/cuda/dev_cuda.c b/parsec/devices/cuda/dev_cuda.c
-index 3341e59..1c3d34d 100644
+index 3341e59..33039dc 100644
 --- a/parsec/devices/cuda/dev_cuda.c
 +++ b/parsec/devices/cuda/dev_cuda.c
 @@ -71,7 +71,7 @@ parsec_cuda_memory_reserve( gpu_device_t* gpu_device,
@@ -7,11 +7,11 @@ index 3341e59..1c3d34d 100644
  parsec_cuda_memory_release( gpu_device_t* gpu_device );
  
 -static int cuda_legal_compute_capabilitites[] = {10, 11, 12, 13, 20, 21, 30, 32, 35, 37, 50, 52, 53, 60, 61, 62, 70};
-+static int cuda_legal_compute_capabilitites[] = {10, 11, 12, 13, 20, 21, 30, 32, 35, 37, 50, 52, 53, 60, 61, 62, 70, 72, 75, 80, 86, 89, 90};
++static int cuda_legal_compute_capabilitites[] = {10, 11, 12, 13, 20, 21, 30, 32, 35, 37, 50, 52, 53, 60, 61, 62, 70, 72, 75, 80, 86, 89, 90, 100, 121};
  
  /* look up how many FMA per cycle in single/double, per cuda MP
   * precision.
-@@ -121,6 +121,21 @@ static int parsec_cuda_device_lookup_cudamp_floprate(int major, int minor, int *
+@@ -121,6 +121,26 @@ static int parsec_cuda_device_lookup_cudamp_floprate(int major, int minor, int *
          *trate = 512;
          *srate = 64;
          *drate = 32;
@@ -25,7 +25,12 @@ index 3341e59..1c3d34d 100644
 +        *trate = 512;
 +        *srate = 64;
 +        *drate = 32;
-+    } else if (major >= 9) {            /* 9.0 Hopper (H100) and newer */
++    } else if (major == 12 && minor == 1) { /* 12.1 GB10 */
++        *hrate = 128;
++        *trate = 512;
++        *srate = 128;
++        *drate = 2;
++    } else if (major >= 9) {            /* 9.0 Hopper, 10.0 Blackwell datacenter */
 +        *hrate = 512;
 +        *trate = 1024;
 +        *srate = 128;
