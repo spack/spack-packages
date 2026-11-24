@@ -1,0 +1,11 @@
+--- a/applications/utilities/miscellaneous/foamFormatConvert/foamFormatConvert.C
++++ b/applications/utilities/miscellaneous/foamFormatConvert/foamFormatConvert.C
+@@ -518,6 +518,8 @@
+ 
+                     doLocalCode(labelFieldIOField);
+                     doLocalCode(vectorFieldIOField);
++                    doLocalCode(labelFieldCompactIOField);
++                    doLocalCode(vectorFieldCompactIOField);
+ 
+                     #undef doLocalCode
+ 
