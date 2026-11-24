@@ -55,6 +55,7 @@ jobs:
           LABELS_CONFIG: .github/labels.yml
 
       - name: Tag Maintainers on PR
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dont-ping-maintainers') }}
         run: |
           . spack-core/share/spack/setup-env.sh
           spack-python .github/workflows/bin/spack-reviewers.py
