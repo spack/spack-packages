@@ -39,39 +39,20 @@ class Chrono(CMakePackage):
     depends_on("cxx", type="build")
     depends_on("cmake@3.18:", type="build")
 
-    # Chrono's core headers include Eigen directly, so it is a link-time
-    # dependency of every consumer, not just a build-time one.
+    # Chrono's public headers include Eigen, so consumers need it too
     depends_on("eigen@3.3.0:")
 
-    # The Python module is generated with SWIG at build time
-    # (src/chrono_swig/chrono_python/CMakeLists.txt does find_package(SWIG)).
+    # pychrono is generated with SWIG at build time
     with when("+python"):
-        # NOT extends("python"): Chrono installs pychrono into
-        # share/chrono/python, never into site-packages -- verified on an actual
-        # install, whose prefix contains only include/ lib/ share/
-        # importer_blender/. extends() would promise spack a layout that does not
-        # exist. PYTHONPATH is set for this package and its dependents below,
-        # which is the same thing PETSc's own proteus build does
-        # (PYTHONPATH="$PREFIX/share/chrono/python").
+        # Not extends("python"): pychrono installs into share/chrono/python, not site-packages.
+        # PYTHONPATH is set below for this package and its dependents.
         depends_on("python@3.8:", type=("build", "run"))
         depends_on("swig@4:", type="build")
 
     depends_on("llvm-openmp", when="+openmp platform=darwin")
 
-    # ------------------------------------------------------------------
-    # ChClassFactory.h uses std::enable_if, std::is_polymorphic and
-    # std::is_abstract but includes only <cstdio> <string> <functional>
-    # <typeindex> <unordered_map> <memory>, relying on one of those to pull in
-    # <type_traits> transitively. libstdc++ and Apple's libc++ still do;
-    # newer libc++ (e.g. conda-forge's) does not, and Chrono_core then fails
-    # with 14 errors of the form
-    #
-    #   ChClassFactory.h:48:53: error: no member named 'is_polymorphic' in
-    #                                  namespace 'std'
-    #
-    # Belongs upstream in projectchrono/chrono; done here as a filter_file
-    # rather than a patch so it stays a no-op once upstream adds the include.
-    # ------------------------------------------------------------------
+    # ChClassFactory.h uses std::is_polymorphic etc. without including <type_traits>;
+    # newer libc++ no longer provides it transitively. Remove once fixed upstream.
     @run_before("cmake")
     def add_missing_type_traits_include(self):
         header = join_path(self.stage.source_path, "src", "chrono", "core", "ChClassFactory.h")
@@ -84,9 +65,7 @@ class Chrono(CMakePackage):
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define("BUILD_TESTING", False),
             self.define("BUILD_DEMOS", False),
-            # Optional modules, each pulling dependencies Chrono does not need
-            # for multibody dynamics. Option names carry the CH_ prefix as of
-            # 10.0.0 (confirmed against the tag's own CMakeLists.txt).
+            # Optional modules that pull dependencies multibody dynamics does not need
             self.define("CH_ENABLE_MODULE_CASCADE", False),
             self.define("CH_ENABLE_MODULE_IRRLICHT", False),
             self.define("CH_ENABLE_MODULE_MATLAB", False),
@@ -96,17 +75,12 @@ class Chrono(CMakePackage):
             self.define_from_variant("CH_ENABLE_MODULE_PYTHON", "python"),
             self.define_from_variant("CH_ENABLE_OPENMP", "openmp"),
             self.define_from_variant("CH_USE_SIMD", "simd"),
-            # Chrono appends CH_DEBUG_POSTFIX ("_d") to every library name in a
-            # Debug build, but consumers link the unsuffixed name. Force it
-            # empty so a Debug build keeps -g without renaming the libraries.
+            # Debug builds append "_d" to library names, but consumers link the unsuffixed name
             self.define("CH_DEBUG_POSTFIX", ""),
         ]
 
         if self.spec.satisfies("+python"):
-            # Chrono's find_package(Python3 ... COMPONENTS Development) has been
-            # observed to populate only Python3_EXECUTABLE, after which the SWIG
-            # module links without libpython and fails on every CPython symbol.
-            # Point CMake at the library and headers directly.
+            # CMake's FindPython3 may find only the executable; pass library and headers explicitly
             python = self.spec["python"]
             args += [
                 self.define("Python3_EXECUTABLE", python.command.path),
@@ -114,18 +88,12 @@ class Chrono(CMakePackage):
                 self.define("Python3_LIBRARY", python.libs[0]),
             ]
             if self.spec.satisfies("platform=darwin"):
-                # chrono_python's _core module target neither links -lpython nor
-                # passes -undefined dynamic_lookup. Unresolved symbols in a
-                # shared object are fine on Linux and resolve at dlopen time,
-                # but are a hard link error for a macOS bundle.
+                # the _core bundle does not link libpython; macOS needs -undefined dynamic_lookup
                 args.append(self.define("CMAKE_MODULE_LINKER_FLAGS", "-undefined dynamic_lookup"))
 
         return args
 
-    # pychrono lives in share/chrono/python, so nothing finds it by default.
-    # Setting CH_INSTALL_PYTHON does not move it (tried against 10.0.0: the
-    # module still installed to share/chrono/python), so expose it explicitly --
-    # for this package's own run environment and for anything depending on it.
+    # pychrono lives in share/chrono/python (CH_INSTALL_PYTHON does not move it), so expose it
     @property
     def _pychrono_dir(self):
         return join_path(self.prefix, "share", "chrono", "python")
