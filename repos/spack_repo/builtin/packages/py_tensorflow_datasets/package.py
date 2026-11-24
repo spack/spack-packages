@@ -12,7 +12,7 @@ class PyTensorflowDatasets(PythonPackage):
     TensorFlow."""
 
     homepage = "https://github.com/tensorflow/datasets"
-    pypi = "tensorflow-datasets/tensorflow-datasets-4.4.0.tar.gz"
+    pypi = "tensorflow-datasets/tensorflow_datasets-4.9.10.tar.gz"
 
     license("Apache-2.0")
 
@@ -55,3 +55,11 @@ class PyTensorflowDatasets(PythonPackage):
         depends_on("py-six", when="@:4.4")
         depends_on("py-typing-extensions", when="@:4.4 %python@:3.7")
         depends_on("py-importlib-resources", when="@:4.4 %python@:3.8")
+
+    def url_for_version(self, version):
+        url = "https://files.pythonhosted.org/packages/source/t/tensorflow-datasets/{0}-{1}.tar.gz"
+        if version >= Version("4.9.5"):
+            name = "tensorflow_datasets"
+        else:
+            name = "tensorflow-datasets"
+        return url.format(name, version)
