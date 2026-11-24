@@ -128,7 +128,9 @@ class Qgis(CMakePackage):
     # GDAL 3.13 makes GDALGetMetadata() const-correct by changing its return type to CSLConstList
     # invalid conversion from 'CSLConstList' {aka 'const char* const*'} to 'char**'
     # https://gdal.org/en/stable/user/migration_guide.html#from-gdal-3-12-to-gdal-3-13
-    depends_on("gdal@3.2.0:3.12 +python", type=("build", "link", "run"), when="@3.28:")
+    # resolved in as a 4.2 milestone
+    # https://github.com/qgis/QGIS/pull/66615
+    depends_on("gdal@3.2.0:3.12 +python", type=("build", "link", "run"), when="@3.28:4.1")
 
     depends_on("geos@3.4.0:")
 
