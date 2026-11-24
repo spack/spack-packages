@@ -265,13 +265,13 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     )
 
     # amdgpu_target : (cmake_arch_option, condition)
-    amdgpu_arch_map = {
+    _amdgpu_arch_map = {
         "gfx900": ("vega900", None),
         "gfx906": ("vega906", None),
         "gfx908": ("vega908", None),
         "gfx90a": ("vega90A", None),
         "gfx940": ("amd_gfx940", "@4.3.00:"),
-        "gfx942": ("amd_gfx942", "@4.2.00:"),
+        "gfx942": (lambda spec: "amd_gfx942_apu" if spec.satisfies("+apu") else "amd_gfx942", "@4.2.00:"),
         "gfx950": ("amd_gfx950", "@5.1.0:"),
         "gfx1030": ("navi1030", None),
         "gfx1100": ("navi1100", "@4.1.00:"),
@@ -281,24 +281,24 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
         "gfx1152": ("amd_gfx1152", "@5.2.0:"),
         "gfx1201": ("amd_gfx1201", "@5.0.0:"),
     }
-    amdgpu_apu_arch_map = {"gfx942": ("amd_gfx942_apu", "@4.5.00:")}
+    _supported_amdgpu_apu_archs = ["gfx942"]
     amd_support_conflict_msg = (
         "{0} is not supported; "
-        "Kokkos supports the following AMD GPU targets: " + ", ".join(amdgpu_arch_map.keys())
+        "Kokkos supports the following AMD GPU targets: " + ", ".join(_amdgpu_arch_map.keys())
     )
     # FIXME we should revisit this. More archs have unified memory via HMM,
     # only the APU has unified physical memory
     amd_apu_support_conflict_msg = (
         "{0} is not supported; "
         "Kokkos supports the following AMD GPU targets with unified memory: "
-        + ", ".join(amdgpu_apu_arch_map.keys())
+        + ", ".join(_supported_amdgpu_apu_archs)
     )
     for arch in ROCmPackage.amdgpu_targets:
-        if arch not in amdgpu_arch_map:
+        if arch not in _amdgpu_arch_map:
             conflicts(
                 "+rocm", when=f"amdgpu_target={arch}", msg=amd_support_conflict_msg.format(arch)
             )
-        if arch not in amdgpu_apu_arch_map:
+        if arch not in _supported_amdgpu_apu_archs:
             conflicts(
                 "+rocm+apu",
                 when=f"amdgpu_target={arch}",
@@ -439,6 +439,22 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
             return None
         return microarch
 
+    @classmethod
+    def get_amd_arch_name(cls, amdgpu_target, kokkos_spec):
+        """Get the Kokkos arch name for a Spack amdgpu_target"""
+        if amdgpu_target != "none":
+            if amdgpu_target in cls._amdgpu_arch_map:
+                arch_name_or_fun, cond = cls._amdgpu_arch_map[amdgpu_target]
+
+                if cond and not kokkos_spec.satisfies(cond):
+                    raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
+
+                return arch_name_or_fun(kokkos_spec) if callable(arch_name_or_fun) else arch_name_or_fun
+            else:
+                # Note that conflict declarations should prevent
+                # choosing an unsupported AMD GPU target
+                raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
+
     def append_args(self, cmake_prefix, cmake_options, spack_options):
         variant_to_cmake_option = {"rocm": "hip"}
         for variant_name in cmake_options:
@@ -494,21 +510,9 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
         if spec.satisfies("+rocm"):
             amdgpu_target = spec.variants["amdgpu_target"].value
-            if amdgpu_target != "none":
-                if amdgpu_target in self.amdgpu_arch_map:
-                    if spec.satisfies("+apu") and amdgpu_target in self.amdgpu_apu_arch_map:
-                        kokkos_arch_name, cond = self.amdgpu_apu_arch_map[amdgpu_target]
-                    else:
-                        kokkos_arch_name, cond = self.amdgpu_arch_map[amdgpu_target]
-
-                    if cond and not self.spec.satisfies(cond):
-                        raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
-
-                    spack_microarches.append(kokkos_arch_name)
-                else:
-                    # Note that conflict declarations should prevent
-                    # choosing an unsupported AMD GPU target
-                    raise SpackError(f"Unsupported AMD GPU target: {amdgpu_target}")
+            amd_arch_name = self.get_amd_arch_name(amdgpu_target, spec)
+            if amd_arch_name:
+                spack_microarches.append(amd_arch_name)
 
         if self.spec.variants["intel_gpu_arch"].value != "none":
             intel_gpu_arch = self.spec.variants["intel_gpu_arch"].value
