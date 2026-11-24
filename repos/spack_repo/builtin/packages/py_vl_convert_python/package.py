@@ -17,6 +17,7 @@ class PyVlConvertPython(PythonPackage):
     version("1.4.0", sha256="264d6f2338c7d3474e60c6907cca016b880b0c1c9be302bb84abc6690188a7e9")
 
     # TODO: This package currently requires internet access to install.
+    depends_on("c", type="build")
     depends_on("py-maturin@1.1:1", type="build")
     depends_on("rust", type="build")
 

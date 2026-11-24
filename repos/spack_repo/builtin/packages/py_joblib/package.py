@@ -20,6 +20,7 @@ class PyJoblib(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("1.6.0", sha256="2ccc96785b12046c08fd6d55839c12857831b54a3c1673ffadd2f04bfc4eda03")
     version("1.5.3", sha256="8561a3269e6801106863fd0d6d84bb737be9e7631e33aaed3fb9ce5953688da3")
     version("1.5.2", sha256="3faa5c39054b2f03ca547da9b2f52fde67c06240c31853f306aea97f13647b55")
     version("1.4.2", sha256="2382c5816b2636fbd20a09e0f4e9dad4736765fdfb7dca582943b9c1366b3f0e")
@@ -40,12 +41,15 @@ class PyJoblib(PythonPackage):
     version("0.10.0", sha256="49b3a0ba956eaa2f077e1ebd230b3c8d7b98afc67520207ada20a4d8b8efd071")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@1.6:")
         depends_on("python@3.9:", when="@1.5:")
         depends_on("python@3.8:", when="@1.4:")
         depends_on("python@3.7:", when="@1.2:")
         depends_on("python@3.6:", when="@0.15:")
         # https://github.com/joblib/joblib/pull/1361
         depends_on("python@:3.11", when="@:1.2")
+
+        depends_on("py-cloudpickle@3:", when="@1.6:")
 
     with default_args(type="build"):
         depends_on("py-setuptools@77.0.3:", when="@1.5.3:")
