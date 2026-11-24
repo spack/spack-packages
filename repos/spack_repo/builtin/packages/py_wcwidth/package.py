@@ -27,7 +27,5 @@ class PyWcwidth(PythonPackage):
     version("0.1.7", sha256="3df37372226d6e63e1b1e1eda15c594bca98a22d33a23832a90998faa96bc65e")
 
     with default_args(type="build"):
-        depends_on("py-hatchling", when="@0.3:0.8")
-
-        # Historical dependencies
+        depends_on("py-hatchling", when="@0.3:0.8.5")
         depends_on("py-setuptools", when="@:0.2,0.9:")

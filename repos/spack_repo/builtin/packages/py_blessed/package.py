@@ -36,8 +36,8 @@ class PyBlessed(PythonPackage):
     version("1.16.0", sha256="34b78e9b56c2ba2f6a9a625cc989d6cf4ae8ae87dcc4ed8ad144660ae4cf7784")
     version("1.15.0", sha256="777b0b6b5ce51f3832e498c22bc6a093b6b5f99148c7cbf866d26e2dec51ef21")
 
-    depends_on("py-setuptools", when="@:1.50.0", type="build")
-    depends_on("py-flit-core@3.11:4", when="@1.50.0:", type="build")
+    depends_on("py-setuptools", when="@:1.22.0", type="build")
+    depends_on("py-flit-core@3.11:4", when="@1.23.0:", type="build")
     depends_on("py-jinxed@2.1:3", when="@1.50.0:", type=("build", "run"))
     depends_on("py-wcwidth@0.8.3:", when="@1.50.0:", type=("build", "run"))
     depends_on("py-wcwidth@0.1.4:", when="@:1.49", type=("build", "run"))
