@@ -5,6 +5,7 @@
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.rocm import ROCmPackage
+from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -28,7 +29,7 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
 
     version(
         "0.90",
-        sha256="6a710f546b4d954e93db689b63fd5edcf52a57b01f3b72dcc4c90951cc4150dd",
+        sha256="e2a3bccc291caf136739f31e4908e41ca46b12561f362030a02d2f06ab1d89c8",
         preferred=True,
     )
     version(
@@ -38,18 +39,30 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
     version("0.81", sha256="493f720904791f06b49ff48c17a681532c6a4d9fa59636522cf3f9700e77efe4")
     version("0.8", sha256="85ffee110f89be00c37798700508b66b0d15de1d98c54328b6d02a9eb2cf1cb8")
 
-    depends_on("c", type="build")
+    def url_for_version(self, version):
+        tag = f"v{version}" if version == Version("0.8") else version
+        return f"https://github.com/lanl/branson/archive/refs/tags/{tag}.tar.gz"
+
     depends_on("cxx", type="build")
 
-    variant("metis", default=True, description="Enable METIS support")
+    variant("metis", default=True, when="@0.90:", description="Enable METIS support")
     variant("openmp", default=False, description="Enable OpenMP support")
     variant("caliper", default=False, description="Enable Caliper monitoring")
     variant("n_groups", default="30", values=int, description="Number of groups")
-    variant("umpire", default=False, description="Use umpire memory pool")
+    variant("tests", default=False, when="@0.90:", description="Build tests")
+    variant(
+        "umpire",
+        default=False,
+        when="@0.90:",
+        description="Use umpire memory pool",
+    )
+
+    conflicts("+caliper", when="@:0.82", msg="Caliper support requires Branson 0.90 or later")
+    conflicts("+cuda", when="@:0.82", msg="CUDA support requires Branson 0.90 or later")
+    conflicts("+rocm", when="@:0.82", msg="ROCm support requires Branson 0.90 or later")
 
     with when("+umpire"):
-        depends_on("umpire@2026.07.2:", when="@develop")
-        depends_on("umpire@2026.07.2", when="@0.90")
+        depends_on("umpire@2026.07.2:", when="@0.90:")
 
         depends_on("umpire+cuda", when="+cuda")
         for sm_ in CudaPackage.cuda_arch_values:
@@ -65,9 +78,11 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("mpi@2:")
 
-    depends_on("metis", when="+metis")
+    depends_on(Boost.with_default_variants, when="@:0.81")
+    depends_on("metis", when="@:0.89")
+    depends_on("metis", when="@0.90: +metis")
+    depends_on("parmetis", when="@:0.81")
     depends_on("caliper", when="+caliper")
-    depends_on("adiak", when="+caliper")
 
     root_cmakelists_dir = "src"
 
@@ -80,9 +95,10 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
         args.append(f"-DCMAKE_C_COMPILER={spec['mpi'].mpicc}")
         args.append(f"-DCMAKE_CXX_COMPILER={spec['mpi'].mpicxx}")
         args.append(f"-DCMAKE_Fortran_COMPILER={spec['mpi'].mpifc}")
-        args.append("-DCMAKE_CXX_STANDARD=17")
-        args.append(f"-DMPI_C_COMPILER={spec['mpi'].mpicc}")
         args.append(f"-DMPI_CXX_COMPILER={spec['mpi'].mpicxx}")
+
+        if spec.satisfies("@0.90:"):
+            args.append("-DCMAKE_CXX_STANDARD=17")
 
         if spec.satisfies("+metis"):
             args.append(f"-DMETIS_ROOT_DIR={spec['metis'].prefix}")
@@ -122,7 +138,9 @@ class Branson(CMakePackage, CudaPackage, ROCmPackage):
             args.append(self.define_from_variant("USE_CALIPER", "caliper"))
             args.append(f"-Dcaliper_DIR={spec['caliper'].prefix}")
 
-        args.append("-DBUILD_TESTING=OFF")
+        if spec.satisfies("@0.90:"):
+            args.append(self.define_from_variant("BUILD_TESTING", "tests"))
+
         args.append(f"-DN_GROUPS={self.spec.variants['n_groups'].value}")
 
         args.append(f"-DMPI_CXX_LINK_FLAGS={spec['mpi'].libs.ld_flags}")
