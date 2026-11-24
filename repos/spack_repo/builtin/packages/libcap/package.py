@@ -27,6 +27,7 @@ class Libcap(MakefilePackage):
     version("2.25", sha256="4ca80dc6f9f23d14747e4b619fd9784434c570e24a7346f326c692784ed83a86")
 
     depends_on("c", type="build")  # generated
+    depends_on("diffutils", type="build", when="@2.50:")
 
     patch("libcap-fix-the-libcap-native-building-failure-on-CentOS-6.7.patch", when="@2.25")
 
