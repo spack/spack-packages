@@ -21,14 +21,17 @@ class AoclDlp(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("6.0.0", sha256="41abeb63eb182b1b2a17274f4b10a30d7752dad039439d2aa43f90fda7b3a0b4")
     version("5.3", sha256="103607ba75a84f623d8ad1a2164ea100a0ce925f75c9dfdb65933cf3982ecb29")
     version("5.2", sha256="1eec26eeaf427cb2377ec21415ddce6e1bc62d4eab8ec51630a9c02711019c1c")
 
-    # Feature toggles mapping directly to AOCL-DLP CMake options
-    variant("benchmarks", default=True, description="Build benchmarks")
-    variant("tests", default=True, description="Enable tests")
+    # Feature toggles mapping directly to AOCL-DLP CMake options.
+    # Defaults match upstream CMake (OFF): +tests/+benchmarks use FetchContent
+    # to clone googletest/yaml-cpp/google-benchmark at configure time.
+    variant("benchmarks", default=False, description="Build benchmarks")
+    variant("tests", default=False, description="Enable tests")
     variant("ctest", default=False, description="Enable ctest")
-    variant("examples", default=True, description="Build examples")
+    variant("examples", default=False, description="Build examples")
     variant("shared", default=True, description="Build shared libraries")
 
     # Threading model selection (maps to DLP_THREADING_MODEL)

@@ -34,6 +34,7 @@ class AoclDa(CMakePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("6.0.0", sha256="b8f823768ee4a0caaa89b6c50aaef2078b4854357d71293912d9c723349af18c")
     version("5.3", sha256="d74a51017f2a22238f972e1b4432e63a8a09488ee95228a817e44437437ae049")
     version("5.2", sha256="faaa250de44d0b7d15a75b26121d457ac895b5cddd87ae1d81882a685ca81eb9")
     version("5.1", sha256="93cdb789c948bf750e531f95618bae4370d53eddc88960744ff02c9acbfe9ef5")
@@ -63,7 +64,7 @@ class AoclDa(CMakePackage):
     depends_on("cmake@3.22:", when="@:5.0", type="build")
     depends_on("cmake@3.26:", when="@5.1:", type="build")
     depends_on("boost@1.66.0:", when="@5.1:", type="build")
-    for vers in ["5.0", "5.1", "5.2"]:
+    for vers in ["5.0", "5.1", "5.2", "5.3", "6.0.0"]:
         with when(f"@={vers}"):
             depends_on(f"aocl-utils@={vers} +shared", when="+shared")
             depends_on(f"aocl-utils@={vers} ~shared", when="~shared")
@@ -73,11 +74,17 @@ class AoclDa(CMakePackage):
             depends_on(f"aocl-lapack@={vers} ~shared", when="~shared")
             depends_on(f"aocl-sparse@={vers} +shared", when="+shared")
             depends_on(f"aocl-sparse@={vers} ~shared", when="~shared")
+            # AOCL-DA links against AOCL-DLP from 6.0 onwards
+            if Version(vers) >= Version("6.0.0"):
+                depends_on(f"aocl-dlp@={vers} +shared", when="+shared")
+                depends_on(f"aocl-dlp@={vers} ~shared", when="~shared")
 
     depends_on("aocl-blas threads=openmp", when="+openmp")
     depends_on("aocl-lapack threads=openmp", when="+openmp")
+    depends_on("aocl-dlp threads=openmp", when="@6: +openmp")
     depends_on("aocl-blas threads=none", when="~openmp")
     depends_on("aocl-lapack threads=none", when="~openmp")
+    depends_on("aocl-dlp threads=none", when="@6: ~openmp")
     depends_on("aocl-sparse +openmp", when="+openmp")
     depends_on("aocl-sparse ~openmp", when="~openmp")
 
@@ -122,6 +129,10 @@ class AoclDa(CMakePackage):
         args.append(self.define_from_variant("BUILD_PYTHON", "python"))
         if self.spec.satisfies("@5.1:"):
             args.append(self.define("Boost_INCLUDE_DIRS", self.spec["boost"].prefix.include))
+        # From 6.0 onwards AOCL-DA links against AOCL-DLP via DLP_LIB/DLP_INCLUDE_DIR.
+        if self.spec.satisfies("@6:"):
+            args.append(self.define("DLP_LIB", self.spec["aocl-dlp"].libs))
+            args.append(self.define("DLP_INCLUDE_DIR", self.spec["aocl-dlp"].prefix.include))
 
         return args
 
