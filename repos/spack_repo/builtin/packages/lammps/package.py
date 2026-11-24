@@ -35,11 +35,12 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     version("develop", branch="develop")
 
     # patch releases since last stable
+    version("20261113", sha256="069aad4681f6a7b756e8aace2a6f4cf46f266eb4e51057ea021687a41049144d")
 
     # current stable release
     version(
-        "20260930",
-        sha256="56e6670161cc0e4c5a4816a95edc80c00c9507a98445d0756b9ad8b5eb29748e",
+        "20260930.1",
+        sha256="fbaaba35ff3334b1b7e4f7434aeadbfd4572111a0dfc553dcbf4abf65eb00a49",
         preferred=True,
     )
 
@@ -82,6 +83,9 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         )
 
         # deprecated stable versions
+        version(
+            "20260930", sha256="56e6670161cc0e4c5a4816a95edc80c00c9507a98445d0756b9ad8b5eb29748e"
+        )
         version(
             "20250722.5", sha256="9d1eb62c47b8bb1c2003dfe5b5e82b3ebef4223b51593f9aec2410c5ec983977"
         )
@@ -126,6 +130,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         depends_on("fortran", type="build", when=f"+{fc_pkg}")
 
     stable_versions = {
+        "20260930.1",
         "20260930",
         "20250722.6",
         "20250722.5",
@@ -221,7 +226,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         "ml-iap": {"when": "@20210702:"},
         "ml-pace": {"when": "@20210702:"},
         "ml-pod": {"when": "@20221222:"},
-        "ml-rann": {"when": "@20210702:"},
+        "ml-rann": {"when": "@20210702:20260704"},
         "ml-snap": {"when": "@20210702:"},
         "ml-uf3": {"when": "@20240627:"},
         "mliap": {"when": "@20200630:20210527"},
@@ -445,6 +450,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("kokkos@4.7.01:", when="@20251210: +kokkos")
     depends_on("kokkos@5.0.2:", when="@20260211: +kokkos")
     depends_on("kokkos@5.1.0:", when="@20260704: +kokkos")
+    depends_on("kokkos@5.2.1:", when="@20260902: +kokkos")
     depends_on("adios2", when="+user-adios")
     depends_on("adios2", when="+adios")
     depends_on("plumed", when="+user-plumed")
@@ -470,7 +476,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
     depends_on("vtk", when="+user-vtk")
     depends_on("vtk", when="+vtk")
     depends_on("hipcub", when="~kokkos +rocm")
-    depends_on("hipcub@:6", when="@:20250722 ~kokkos +rocm")
+    depends_on("hipcub@:6", when="@:20260704 ~kokkos +rocm")
     depends_on("llvm-amdgpu ", when="+rocm", type="build")
     # Only needed for llvm-amdgpu@:7.2; later versions build OpenMP.
     depends_on("rocm-openmp-extras", when="+rocm +openmp ^llvm-amdgpu@:7.2", type="build")
