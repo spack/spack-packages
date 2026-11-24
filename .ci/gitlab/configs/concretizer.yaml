@@ -3,3 +3,6 @@ concretizer:
   unify: false
   concretization_cache:
     enable: false
+  duplicates:
+    max_dupes:
+      bazel: 2
