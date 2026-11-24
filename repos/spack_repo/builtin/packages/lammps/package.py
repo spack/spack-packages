@@ -581,7 +581,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
         for pkg, params in self.supported_packages.items():
             if "when" not in params or spec.satisfies(params["when"]):
                 opt = "PKG_{0}".format(pkg.replace("-package", "").upper())
-                args.append(self.define(opt, "+{0}".format(pkg) in spec))
+                args.append(self.define(opt, spec.satisfies("+{0}".format(pkg))))
 
         if spec.satisfies("+kspace"):
             args.append(self.define_from_variant("FFT", "fft"))
@@ -600,7 +600,7 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             args.append(self.define("ADIOS2_DIR", self.spec["adios2"].prefix))
         if spec.satisfies("+plumed"):
             args.append(self.define("DOWNLOAD_PLUMED", False))
-            if "+shared" in self.spec["plumed"]:
+            if spec.satisfies("^plumed+shared"):
                 args.append(self.define("PLUMED_MODE", "shared"))
             else:
                 args.append(self.define("PLUMED_MODE", "static"))
