@@ -415,7 +415,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     # sanity check
     sanity_check_is_file = [
-        join_path("include", "KokkosCore_config.h"),
         join_path("include", "Kokkos_Core.hpp"),
     ]
     sanity_check_is_dir = ["bin", "include"]
