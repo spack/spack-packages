@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -132,9 +131,10 @@ class Dakota(CMakePackage):
     depends_on("py-numpy", when="+python-direct-interface")
     depends_on("perl-data-dumper", type="build", when="@6.12:")
 
-    depends_on("boost +program_options +regex +serialization +system")
+    depends_on("boost+program_options+regex+serialization+system")
+    depends_on("boost+filesystem", when="@:6.22")
+    depends_on("boost+signals", when="@:6.9")
     with when("@:6.12"):
-        depends_on(Boost.with_default_variants)
         depends_on("boost@:1.68.0")
 
     with when("@:6.20"):

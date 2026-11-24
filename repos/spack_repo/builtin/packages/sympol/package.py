@@ -4,7 +4,6 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -25,8 +24,7 @@ class Sympol(CMakePackage):
     depends_on("cmake@2.6:", type="build")
 
     depends_on("bliss")
-    depends_on("boost+math+program_options+test")
-    depends_on(Boost.with_default_variants)
+    depends_on("boost+program_options+test")
     depends_on("gmp")
     depends_on("lrslib")
 

@@ -5,7 +5,6 @@
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -91,8 +90,7 @@ class RocmTensile(ROCmLibrary, CMakePackage):
 
     depends_on("cmake@3:", type="build")
     depends_on("msgpack-c@3:")
-    depends_on("boost", type=("build", "link"))
-    depends_on(Boost.with_default_variants)
+    depends_on("boost+program_options", type=("build", "link"), when="@:7.2")
 
     for ver in [
         "5.7.0",

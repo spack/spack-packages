@@ -69,7 +69,7 @@ class Libint(AutotoolsPackage):
     # Libint2 dependencies
     # Boost is only needed if the Fortran interface is built
     # A header-only installation (with no specific libraries)
-    # is sufficient (Boost.with_default_variants not needed)
+    # is sufficient
     depends_on("boost", when="@2: +fortran")
     # Eigen is optional and not strictly necessary
     depends_on("eigen", when="@2.7.0: +cxx")

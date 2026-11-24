@@ -9,7 +9,6 @@ import getpass
 import socket
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -63,12 +62,7 @@ class Povray(AutotoolsPackage):
     depends_on("automake@1.9:", type="build")
     depends_on("perl", type="build")
     depends_on("m4", type="build")
-    depends_on("boost@1.37:", when="+boost")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="+boost")
+    depends_on("boost@1.37:+system+thread", when="+boost")
     depends_on("zlib-api", when="+zlib")
     depends_on("libpng@1.2.5:", when="+libpng")
     depends_on("jpeg", when="+jpeg")

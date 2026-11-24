@@ -6,7 +6,6 @@ import sys
 
 from spack_repo.builtin.build_systems.python import PythonPipBuilder
 from spack_repo.builtin.build_systems.scons import SConsPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -119,10 +118,9 @@ class Sgpp(SConsPackage):
     # MPI dependency
     depends_on("mpi", when="+mpi", type=("build", "run"))
 
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, type=("build", "run", "test"))
+    depends_on("boost+test", type=("build", "run", "test"))
+    depends_on("boost+filesystem+system", when="+datadriven", type=("build", "run", "test"))
+    depends_on("boost+program_options", when="+opencl", type=("build", "run", "test"))
 
     # Compiler with C++11 support is required
     conflicts("%gcc@:4.8.4", msg="Compiler with c++11 support is required!")

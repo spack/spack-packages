@@ -13,7 +13,6 @@ from spack_repo.builtin.build_systems.cached_cmake import (
     cmake_cache_string,
 )
 from spack_repo.builtin.build_systems.cuda import CudaPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -131,10 +130,6 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
         depends_on("mpi")
         depends_on("zlib-api")
         depends_on("hdf5+mpi")
-        # TODO: replace this with an explicit list of components of Boost,
-        # for instance depends_on('boost +filesystem')
-        # See https://github.com/spack/spack/pull/22303 for reference
-        depends_on(Boost.with_default_variants, when="@3.0.0:3.11.99", type="build")
 
     # don't build SAMRAI 3+ with tools with gcc
     # 23/01/12: this causes issues with out version+gcc

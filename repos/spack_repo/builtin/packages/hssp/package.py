@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -41,8 +40,9 @@ class Hssp(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("boost@1.48:")
-    depends_on(Boost.with_default_variants)
+    depends_on(
+        "boost@1.48:+date_time+filesystem+iostreams+program_options+regex+system+test+thread+timer"
+    )
 
     def configure_args(self):
         args = ["--with-boost=%s" % self.spec["boost"].prefix]

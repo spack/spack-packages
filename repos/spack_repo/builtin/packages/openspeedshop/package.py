@@ -5,7 +5,6 @@
 import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -96,12 +95,7 @@ class Openspeedshop(CMakePackage):
 
     depends_on("sqlite")
 
-    # For boost
-    depends_on("boost@1.70.0:")
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost@1.70.0:+date_time+filesystem+program_options+system+thread")
 
     depends_on("dyninst@10:", when="@2.4.0:9999")
 

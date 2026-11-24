@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -51,12 +50,7 @@ class CbtfArgonavis(CMakePackage):
     depends_on("elfutils", type="link")
 
     # For boost
-    depends_on("boost@1.70.0:")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on("boost@1.70.0:+filesystem+program_options+regex+system+test")
 
     # For MRNet
     depends_on("mrnet@5.0.1-3:+lwthreads", when="@develop", type=("build", "link", "run"))

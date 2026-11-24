@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -41,11 +40,6 @@ class YamlCpp(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("boost@:1.66", when="@0.5.0:0.5.3")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants, when="@0.5.0:0.5.3")
 
     # Explicitly include <cstdint>
     # See https://github.com/jbeder/yaml-cpp/pull/1310

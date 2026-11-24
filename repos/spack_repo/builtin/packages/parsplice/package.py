@@ -4,7 +4,6 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.packages.boost.package import Boost
 
 from spack.package import *
 
@@ -32,11 +31,10 @@ class Parsplice(CMakePackage):
     depends_on("berkeley-db")
     depends_on("nauty")
     depends_on("boost cxxstd=11")
-
-    # TODO: replace this with an explicit list of components of Boost,
-    # for instance depends_on('boost +filesystem')
-    # See https://github.com/spack/spack/pull/22303 for reference
-    depends_on(Boost.with_default_variants)
+    depends_on(
+        "boost+atomic+chrono+date_time+filesystem+log+random+regex+serialization+system+thread"
+    )
+    depends_on("boost+program_options", when="@develop,multisplice")
     depends_on("mpi")
     depends_on("eigen@3:")
     depends_on("lammps+lib@20170901:")
