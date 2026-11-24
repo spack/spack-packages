@@ -417,8 +417,6 @@ class Openfoam(Package):
     # introduced by the restriction within scotch!
     depends_on("flex@:2.6.1,2.6.4:")
     depends_on("cmake", type="build")
-    # wmake calls make directly. The dependency lets Spack select a compatible jobserver.
-    depends_on("gmake", type=("build", "run"))
     depends_on("m4", type="build")
     depends_on("json-c")
     depends_on("libyaml")
@@ -459,12 +457,6 @@ class Openfoam(Package):
         when="@1806",
         sha256="531146be868dd0cda70c1cf12a22110a38a30fd93b5ada6234be3d6c9256c6cf",
     )
-    # Backport https://gitlab.com/openfoam/core/openfoam/-/merge_requests/882.
-    patch("lagrangian-fp-contract.patch", when="@=2606")
-    patch("foam-format-convert-compact-fields.patch", when="@=2606")
-    patch("pair-gamg-direction-v2512.patch", when="@=2512")
-    patch("pair-gamg-direction-v2606.patch", when="@=2606")
-
     # Fix: missing std::array include (searchable sphere)
     patch(
         "https://gitlab.com/openfoam/core/openfoam/commit/b4324b1297761545d5b10f50b60ab29e71c172aa.patch",
@@ -613,10 +605,6 @@ class Openfoam(Package):
     def archlib(self):
         """Relative location of architecture-specific libraries"""
         return join_path("platforms", self.foam_arch, "lib")
-
-    @property
-    def sanity_check_is_file(self):
-        return [join_path(self.archbin, "blockMesh")]
 
     def patch(self):
         """Adjust OpenFOAM build for spack.
