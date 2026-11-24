@@ -20,6 +20,9 @@ class OpenclClhpp(CMakePackage):
     license("Apache-2.0")
 
     version(
+        "2026.05.29", sha256="fafb4fd202d113992c009d46e6358e70076167e62a5baeb377fe813033a2655e"
+    )
+    version(
         "2025.07.22", sha256="c1031afde6e9eb042e6fcfbc17078f4b437a7e8d55482a1ca6e0fa762d262a89"
     )
     version(
@@ -58,6 +61,8 @@ class OpenclClhpp(CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("opencl-c-headers", when="@2022.05.18:")
+    # OpenCL 3.1 (default target) needs the 3.1 C headers
+    depends_on("opencl-c-headers@2026.05.29:", when="@2026.05.29:")
     depends_on("cmake@3.16:", type="build", when="@2024.10.24:")
 
     def cmake_args(self):
