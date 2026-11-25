@@ -160,7 +160,7 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
 
-    for v in Kokkos.versions:
+    for v in set(v.up_to(2) for v in Kokkos.versions):
         depends_on(f"kokkos@{v}", when=f"@{v}")
 
     tpls = {
