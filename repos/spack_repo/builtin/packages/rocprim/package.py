@@ -117,8 +117,14 @@ class Rocprim(ROCmLibrary, CMakePackage):
         else:
             return "."
 
+    @property
+    def _use_hipcxx(self):
+        # The tests do not compile with USE_HIPCXX, which compiles them as C++14
+        return self.spec.satisfies("@6.4:") and not self.run_tests
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if not self._use_hipcxx:
+            env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
@@ -136,7 +142,11 @@ class Rocprim(ROCmLibrary, CMakePackage):
             self.define("CMAKE_MODULE_PATH", self.spec["hip"].prefix.lib.cmake.hip),
         ]
 
-        if "auto" not in self.spec.variants["amdgpu_target"]:
+        if self._use_hipcxx:
+            args.append(self.define("USE_HIPCXX", True))
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
+        elif "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
