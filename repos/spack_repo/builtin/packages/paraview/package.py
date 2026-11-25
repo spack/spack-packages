@@ -680,7 +680,6 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
             if "none" not in archs:
                 cmake_args.append(self.define("CMAKE_HIP_ARCHITECTURES", archs))
-            cmake_args.append("-DKokkos_CXX_COMPILER=%s" % spec["hip"].hipcc)
 
         if "+catalyst" in spec:
             cmake_args.append("-DVTK_MODULE_ENABLE_ParaView_Catalyst=YES")
