@@ -196,7 +196,7 @@ class Babelstream(CMakePackage, CudaPackage, ROCmPackage, MakefilePackage):
     )
 
     # Thrust Conflict
-    depends_on("thrust", when="+thrust")
+    depends_on("thrust", when="thrust_submodel=cuda")
     depends_on("cuda", when="thrust_submodel=cuda")
     depends_on("cuda", when="+raja raja_offload=nvidia")
     depends_on("hip", when="+hip")
