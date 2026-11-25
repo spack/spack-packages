@@ -34,12 +34,13 @@ class Lowfive(CMakePackage):
     depends_on('caliper~adiak', when="+caliper")
 
     def cmake_args(self):
-        args = ['-DCMAKE_C_COMPILER=%s' % self.spec['mpi'].mpicc,
-                '-DCMAKE_CXX_COMPILER=%s' % self.spec['mpi'].mpicxx,
-                '-DBUILD_SHARED_LIBS=false',
-                self.define_from_variant('lowfive_install_examples', 'examples'),
-                self.define_from_variant('lowfive_python', 'python'),
-                self.define_from_variant('lowfive_caliper', 'caliper'),
+        args = [
+            self.define("CMAKE_C_COMPILER", self.spec['mpi'].mpicc),
+            self.define("CMAKE_CXX_COMPILER", self.spec['mpi'].mpicxx),
+            self.define("BUILD_SHARED_LIBS", False),
+            self.define_from_variant('lowfive_install_examples', 'examples'),
+            self.define_from_variant('lowfive_python', 'python'),
+            self.define_from_variant('lowfive_caliper', 'caliper'),
         ]
 
         if self.spec.satisfies("+python"):
@@ -49,6 +50,6 @@ class Lowfive(CMakePackage):
 
 
     def setup_run_environment(self, env):
-        if "+auto_load" in self.spec:
+        if self.spec.satisfies("+auto_load"):
             env.set('HDF5_VOL_CONNECTOR', "lowfive under_vol=0;under_info={};")
             env.set('HDF5_PLUGIN_PATH', self.prefix.lib)
