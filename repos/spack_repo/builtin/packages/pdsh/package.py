@@ -32,6 +32,7 @@ class Pdsh(AutotoolsPackage):
         when="@2.33:",
         # when="@8c173e645dfc5cb6619c4d0647f3fe495ad4ce7f:",
     )  # first commit after 2924dd8ff07b31a81c4a81254ae1e1f81b39595e (shortly after pdsh-2.32)
+    # https://github.com/chaos/pdsh/pull/184
     patch("c23-provisional-stdc-version.patch", when="@2.33:")
 
     # ## conflict when patch cannot be applied before and at
