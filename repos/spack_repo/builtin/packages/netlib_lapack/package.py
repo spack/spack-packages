@@ -243,6 +243,10 @@ class NetlibLapack(CMakePackage):
         lapacke_h = join_path(include_dir, "lapacke.h")
         return HeaderList([cblas_h, lapacke_h])
 
+    def flag_handler(self, name, flags):
+        if name == "fflags":
+            return build_system_flags(name, flags)
+        return inject_flags(name, flags)
 
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
@@ -270,13 +274,6 @@ class CMakeBuilder(cmake.CMakeBuilder):
                     ),
                 ]
             )
-
-        if self.spec.satisfies("%cce"):
-            # Apply compiler flags for Cray Compiler Environment
-            # Use flags from spec if provided, otherwise use defaults for CCE
-            fflags = self.spec.compiler_flags.get("fflags", [])
-            if fflags:
-                args.append(self.define("CMAKE_Fortran_FLAGS", " ".join(fflags)))
 
         # deprecated routines are commonly needed by, for example, suitesparse
         # Note that OpenBLAS spack is built with deprecated routines
