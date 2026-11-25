@@ -11,13 +11,18 @@ spack:
   packages:
     all:
       require:
-      - "%gcc"
       - target=neoverse_v2
       target: ["neoverse_v2"]
       providers:
         blas: [openblas]
         mpi: [mpich]
       variants: +mpi
+    c:
+      require: gcc
+    cxx:
+      require: gcc
+    fortran:
+      require: gcc
     binutils:
       variants: +ld +gold +headers +libiberty ~nls
     blas:

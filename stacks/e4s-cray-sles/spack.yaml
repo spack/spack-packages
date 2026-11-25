@@ -14,7 +14,6 @@ spack:
 
   packages:
     all:
-      require: '%gcc'
       providers:
         blas: [cray-libsci]
         lapack: [cray-libsci]
@@ -23,6 +22,12 @@ spack:
         scalapack: [netlib-scalapack]
       target: [zen4]
       variants: +mpi
+    c:
+      require: gcc
+    cxx:
+      require: gcc
+    fortran:
+      require: gcc
 
     tbb:
       require: "intel-tbb"

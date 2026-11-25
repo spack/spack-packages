@@ -10,8 +10,15 @@ spack:
       - target=x86_64_v3
       - ~cuda
       - ~rocm
+    c:
       prefer:
-        - "%gcc"
+      - gcc
+    cxx:
+      prefer:
+      - gcc
+    fortran:
+      prefer:
+      - gcc
   concretizer:
     unify: true
     reuse: false
