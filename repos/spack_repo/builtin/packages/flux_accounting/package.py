@@ -37,8 +37,8 @@ class FluxAccounting(AutotoolsPackage):
     depends_on("automake", type="build", when="@master")
     depends_on("libtool", type="build", when="@master")
 
-    depends_on("flux-core +security")
-    depends_on("flux-core@0.81: +security", when="@0.54.0:")
+    depends_on("flux-core")
+    depends_on("flux-core@0.81:", when="@0.54.0:")
     depends_on("jansson@2.10:")
     depends_on("sqlite")
 
@@ -47,6 +47,7 @@ class FluxAccounting(AutotoolsPackage):
     depends_on("py-sphinx-rtd-theme", type="build", when="+docs")
 
     # Testing Dependencies
+    depends_on("flux-security", type="test")
     depends_on("jq", type="test")
     depends_on("lua", type="test")
     depends_on("valgrind", type="test")
