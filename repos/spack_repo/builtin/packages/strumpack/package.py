@@ -77,6 +77,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.11:", when="@:6.2.9", type="build")
     depends_on("cmake@3.17:", when="@6.3.0:", type="build")
+    depends_on("cmake@3.21:", when="@7.2.0:", type="build")
     # CMake 3.18 initializes target CUDA_ARCHITECTURES.
     depends_on("cmake@3.18:", when="@5:+cuda", type="build")
     depends_on("mpi", when="+mpi")
