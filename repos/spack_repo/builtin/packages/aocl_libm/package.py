@@ -63,7 +63,8 @@ class AoclLibm(SConsPackage, CMakePackage):
 
     depends_on("python@3.6.1:", type=("build", "run"))
     depends_on("scons@3.1.2:4.8.1", type="build", when="build_system=scons")
-    depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
+    depends_on("cmake@3.26:3.30.6", type="build", when="@:5 build_system=cmake")
+    depends_on("cmake@3.26:", type="build", when="@6: build_system=cmake")
     depends_on("mpfr", type=("link"))
     # @6+: built-in CPU detection; aocl-utils is no longer a dependency
     # (upstream README / InternalUtilsDesign.md).
