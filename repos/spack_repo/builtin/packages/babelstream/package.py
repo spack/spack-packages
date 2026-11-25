@@ -614,7 +614,7 @@ register_flag_optional(TARGET_PROCESSOR
             if "cuda" in self.spec.variants["thrust_submodel"].value:
                 args.append("-DTHRUST_IMPL=" + self.spec.variants["thrust_submodel"].value.upper())
 
-                args.append("-SDK_DIR=" + self.spec["thrust"].prefix + "/include")
+                args.append(self.define("SDK_DIR", self.spec["thrust"].prefix.include))
                 # this model uses CMAKE_CUDA_ARCHITECTURES which only requires number of cuda_arch
                 # no need to append sm_ or cc_
                 args.append("-DCUDA_ARCH=" + self.spec.variants["cuda_arch"].value[0])
@@ -631,7 +631,7 @@ register_flag_optional(TARGET_PROCESSOR
             if "rocm" in self.spec.variants["thrust_submodel"].value:
                 args.append("-DCMAKE_CXX_COMPILER=" + self.spec["hip"].hipcc)
                 args.append("-DTHRUST_IMPL=" + self.spec.variants["thrust_submodel"].value.upper())
-                args.append("-SDK_DIR=" + self.spec["rocthrust"].prefix)
+                args.append(self.define("SDK_DIR", self.spec["rocthrust"].prefix))
 
         # ===================================
         #             kokkos
