@@ -610,7 +610,8 @@ class Lammps(CMakePackage, CudaPackage, ROCmPackage, PythonExtension):
             args.append(self.define("N2P2_DIR", self.spec["n2p2"].prefix))
 
         if spec.satisfies("+rocm"):
-            args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
+            if spec.satisfies("+kokkos") or not spec.satisfies("@20261113:"):
+                args.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
             args.append(self.define("HIP_PATH", spec["hip"].prefix))
 
         return args
