@@ -3,13 +3,14 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.cuda import CudaPackage
 
 from spack.package import *
 
 
-class Libddla(CMakePackage):
-    """Distributed dense linear algebra with a CPU backend and an MPI-based
-    block-cyclic data distribution."""
+class Libddla(CMakePackage, CudaPackage):
+    """Distributed dense linear algebra with CPU and optional CUDA backends
+    and an MPI-based block-cyclic data distribution."""
 
     homepage = "https://github.com/userchba/LibDDLA"
     url = "https://github.com/userchba/LibDDLA/archive/refs/tags/v0.0.7.tar.gz"
@@ -27,6 +28,10 @@ class Libddla(CMakePackage):
     depends_on("blas")
     depends_on("lapack")
     depends_on("llvm-openmp", when="+openmp %apple-clang")
+    # GPU allocations use cudaMallocAsync/cudaFreeAsync without a fallback.
+    depends_on("cuda@11.2:", when="+cuda")
+
+    conflicts("cuda_arch=none", when="+cuda", msg="Select a CUDA architecture for LibDDLA")
 
     # The public API and calls to BLAS/LAPACK use 32-bit integers.
     conflicts("^openblas +ilp64")
@@ -49,8 +54,8 @@ class Libddla(CMakePackage):
         blas = self.spec["blas:c,fortran"].libs
         # Retain BLAS after LAPACK for providers with separate static archives.
         lapack = self.spec["lapack"].libs + blas
-        return [
-            self.define("DDLA_USE_CUDA", False),
+        args = [
+            self.define_from_variant("DDLA_USE_CUDA", "cuda"),
             self.define("DDLA_USE_HIP", False),
             self.define("DDLA_USE_CCL", False),
             self.define_from_variant("DDLA_USE_OPENMP", "openmp"),
@@ -64,3 +69,14 @@ class Libddla(CMakePackage):
             self.define("BLAS_LIBRARIES", blas),
             self.define("LAPACK_LIBRARIES", lapack),
         ]
+        if "+cuda" in self.spec:
+            cuda = self.spec["cuda"].prefix
+            args.extend(
+                [
+                    self.define("CMAKE_CUDA_COMPILER", cuda.bin.nvcc),
+                    self.define("CMAKE_CUDA_HOST_COMPILER", self.spec["cxx"].package.cxx),
+                    self.define("CUDAToolkit_ROOT", cuda),
+                    self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
+                ]
+            )
+        return args
