@@ -19,6 +19,7 @@ class Lfortran(CMakePackage):
 
     # The build process uses 'git describe --tags' to get the package version
     version("main", branch="main", get_full_repo=True)
+    version("0.69.0", sha256="d403dd190819f03b53ee2a2d0f1bc39e33a95f220fe43eaaa466ecdb5a2f060d")
     version("0.68.0", sha256="0fdb58f9e0f442530b274d001c7fcdf53a62ee65fa87b7ca26b96c56dd3c7d64")
     version("0.67.0", sha256="d9d9fa328c396e31707896cc1e2a4f80ffc70227ed7662b961a86c8c91547381")
     version("0.66.0", sha256="961d84f49d07951a279b7835e0f9864489a167a80a8c3c502a797fb6c61669c7")
@@ -40,9 +41,8 @@ class Lfortran(CMakePackage):
     variant("llvm", default=True, description="Build with LLVM support")
     variant("stacktrace", default=True, description="Build with stacktrace support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
 
     depends_on("python@3:", type="build", when="@main")
     depends_on("cmake", type="build")
