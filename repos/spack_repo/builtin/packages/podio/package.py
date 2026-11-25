@@ -71,7 +71,6 @@ class Podio(CMakePackage):
         "root",
         default=True,
         description="Build the ROOT based backend and python bindings",
-        when="@1.10:",
     )
     variant("rntuple", default=False, description="Build the RNTuple backend", when="+root")
     variant(
@@ -123,6 +122,7 @@ class Podio(CMakePackage):
 
     conflicts("+rntuple ^root@6.32:", when="@:0.99", msg="rntuple API change requires podio@1:")
     conflicts("+rntuple ^root@6.34:", when="@:1.1", msg="rntuple API change requires podio@1.2:")
+    conflicts("~root", when="@:1.9", msg="Disabling root requires podio@1.10:")
     conflicts(
         "^python +freethreading", when="@:1.6", msg="python free-threading requires podio@1.7:"
     )
