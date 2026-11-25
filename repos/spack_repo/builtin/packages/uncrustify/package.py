@@ -49,4 +49,9 @@ class Uncrustify(CMakePackage, AutotoolsPackage):
         depends_on("autoconf", type="build")
         depends_on("libtool", type="build", when="@0.63")
 
+    patch(
+        "https://github.com/uncrustify/uncrustify/commit/253d4ad8542df8168206d5849ee689ebe187d3d7.patch?full_index=1",
+        sha256="a724dd4a4f76a81a69e719f6159a7673eb942307e826de7648bac3ba55e913f2",
+        when="@:0.64",
+    )
     patch("uncrustify-includes.patch", when="@0.73")
