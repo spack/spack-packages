@@ -414,7 +414,8 @@ class CMakeBuilder(CMakeBuilder):
 
         if "+umpire" in self.spec:
             args.append(self.define("TPL_UMPIRE_INCLUDE_DIRS", self.spec["umpire"].prefix.include))
-            args.append(self.define("TPL_UMPIRE_LIBRARIES", self.spec["umpire"].libs))
+            umpire_libs = self.spec["umpire"].libs + self.spec["camp"].libs + self.spec["fmt"].libs
+            args.append(self.define("TPL_UMPIRE_LIBRARIES", umpire_libs))
 
         # GPU architectures
         cuda_arch_vals = spec.variants.get("cuda_arch", None)
