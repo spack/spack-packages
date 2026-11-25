@@ -216,7 +216,9 @@ class KokkosKernels(CMakePackage, CudaPackage):
             options.append(self.define("HIP_RELOCATABLE_DEVICE_CODE", True))
 
         options.append(self.define("Kokkos_ROOT", spec["kokkos"].prefix))
-        if spec.satisfies("^kokkos+rocm") and not (
+        if spec.satisfies("@4.4: %kokkos+rocm+cmake_lang"):
+            pass  # compiled with CMake's HIP language
+        elif spec.satisfies("^kokkos+rocm") and not (
             spec.satisfies("^kokkos %cxx=clang") or spec.satisfies("^kokkos %cxx=rocmcc")
         ):
             options.append(self.define("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
