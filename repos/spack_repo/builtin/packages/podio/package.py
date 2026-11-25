@@ -56,7 +56,7 @@ class Podio(CMakePackage):
         values=_cxxstd_values,
         multi=False,
         description="Use the specified C++ standard when building.",
-        when="@1.2:",
+        when="@1.2:1.9",
     )
     variant(
         "cxxstd",
