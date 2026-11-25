@@ -17,6 +17,7 @@ class PyJsonschemaRs(PythonPackage):
 
     license("MIT")
 
+    version("0.63.1", sha256="e4f96dea00aea944636d77fb8d624a73bcfda541c4f068089724199d1d0e5f32")
     version("0.61.2", sha256="8ea236493450c013f095d5d4d9d3b8e56fa0153fb305107f9a7134ea16bcf56b")
 
     with default_args(type="build"):
