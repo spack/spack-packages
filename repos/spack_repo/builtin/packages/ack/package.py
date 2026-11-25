@@ -20,6 +20,12 @@ class Ack(Package):
     license("Artistic-2.0")
 
     version(
+        "3.10.0",
+        sha256="28a740de59bdb52000a281aa89dc9d44a24a1f144cdfe4bc24b7d0582b40e90e",
+        url="https://beyondgrep.com/ack-v3.10.0",
+        expand=False,
+    )
+    version(
         "3.9.0",
         sha256="b8916abc9d42ebe8cc82264e047ccff5cbc976401e32a3dc6fc01c551c0cb5f8",
         url="https://beyondgrep.com/ack-v3.9.0",
