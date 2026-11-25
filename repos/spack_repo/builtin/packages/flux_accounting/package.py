@@ -21,6 +21,8 @@ class FluxAccounting(AutotoolsPackage):
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.63.0", sha256="2b57b4617ea6c1d4a2bf9f4f841c9d776eb0c2ca759398a4b7e7d6b56484cf3e")
+    version("0.62.0", sha256="b6aefc830123d7b69d96b93fef475e77020764bd762dab9d5ca7ac3754f39532")
     version("0.61.0", sha256="e542871141ed7f63c513bbec6ee7e1f3521cb82f8cb796cf022c5d60f41a3c36")
 
     variant("docs", default=False, description="Build flux manpages and docs")
