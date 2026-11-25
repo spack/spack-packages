@@ -47,8 +47,10 @@ class Cdi(AutotoolsPackage):
 
     def configure_args(self):
         args = []
-        if "+netcdf" in self.spec:
-            args.append("--with-netcdf=" + self.spec["netcdf-c"].prefix)
-        if "+eccodes" in self.spec:
-            args.append("--with-eccodes=" + self.spec["eccodes"].prefix)
+
+        args += self.with_or_without(
+            "netcdf", activation_value=lambda v: self.spec["netcdf-c"].prefix
+        )
+        args += self.with_or_without("eccodes", activation_value="prefix")
+
         return args
