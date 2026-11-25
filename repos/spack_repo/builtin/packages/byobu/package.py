@@ -17,6 +17,7 @@ class Byobu(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("7.24", sha256="84151a9034070cb43de07642eeb37c2f60f8952c3b83526a9e1af1ec86dd4d39")
     version("6.16", sha256="ce294bbc2c04c2b2dd79e2d0ec336812d8e9bd4d9a7f696e2ba335ecbc17fe68")
     version("6.13", sha256="9690c629588e8f95d16b2461950d39934faaf8005dd2a283886d4e3bd6c86df6")
     version("5.131", sha256="77ac751ae79d8e3f0377ac64b64bc9738fa68d68466b8d2ff652b63b1d985e52")
@@ -26,27 +27,35 @@ class Byobu(AutotoolsPackage):
 
     variant("python", default=True, description="Python support for byobu-config")
 
-    # byobu 6 source is not pre-autoconfigured
-    depends_on("autoconf", when="@6:", type="build")
-    depends_on("automake", when="@6:", type="build")
-    depends_on("libtool", when="@6:", type="build")
+    with default_args(type="build"):
+        # byobu 6+ source is not pre-autoconfigured
+        depends_on("autoconf@2.61:", when="@6:")
+        depends_on("automake", when="@6:")
+        depends_on("libtool", when="@6:")
 
-    depends_on("coreutils", type=("build", "run"))
-    depends_on("findutils", type=("build", "run"))
-    depends_on("gawk", type=("build", "run"))
-    depends_on("grep", type=("build", "run"))
-    depends_on("sed", type=("build", "run"))
+        # With 7.20, byobu's build uses gettext's msgfmt utility to compile translation catalogs
+        depends_on("gettext", when="@7.20:")
 
-    # The `-h` argument to byobu commands invokes man
-    depends_on("man-db", type="run")
-    depends_on("screen", type="run")
-    depends_on("tmux", type="run")
+    with default_args(type=("build", "run")):
+        depends_on("coreutils")
+        depends_on("findutils")
+        depends_on("gawk")
+        depends_on("grep")
+        depends_on("sed")
 
-    # newt and its snack Python module are needed for byobu-config. If the user
-    # does not want byobu@6 with a python in its spec, they can disable the
-    # python variant, but sacrifice the byobu-config functionality.
-    depends_on("newt+python", when="+python", type="run")
-    depends_on("python", when="+python", type="run")
+    with default_args(type="run"):
+        depends_on("bc")
+
+        # The `-h` argument to byobu commands invokes man
+        depends_on("man-db")
+        depends_on("screen")
+        depends_on("tmux")
+
+        # newt and its snack Python module are needed for byobu-config. If the user does not
+        # want byobu@6: with a python in its spec, they can disable the python variant, but
+        # sacrifice the byobu-config functionality.
+        depends_on("newt+python", when="+python")
+        depends_on("python", when="+python")
 
     def url_for_version(self, version):
         # byobu 6+ are released on GitHub
@@ -59,6 +68,17 @@ class Byobu(AutotoolsPackage):
         else:
             return f"https://github.com/dustinkirkland/byobu/archive/refs/tags/{version}.tar.gz"
 
-    @when("+python")
+    def configure_args(self):
+        args = set()
+
+        if self.version >= Version("7.6"):
+            # Trustmux, built by default in byobu 7.7+, is a mobile daemon for Tailscale
+            # connections. As I have no practical way to test this nor assess its security,
+            # I am forcing it to be disabled.
+            args.add("--disable-trustmux")
+
+        return list(args)
+
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
-        env.set("BYOBU_PYTHON", f"{self.spec['python'].command}")
+        if self.spec.satisfies("+python"):
+            env.set("BYOBU_PYTHON", f"{self.spec['python'].command}")
