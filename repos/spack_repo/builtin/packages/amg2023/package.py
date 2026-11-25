@@ -84,6 +84,8 @@ class Amg2023(CMakePackage, CudaPackage, ROCmPackage):
             )
 
     depends_on("hypre+gpu-aware-mpi", when="+mpi+gpu-aware-mpi")
+    conflicts("+gpu-aware-mpi", when="~mpi")
+    conflicts("+gpu-aware-mpi", when="~cuda~rocm")
 
     def cmake_args(self):
         cmake_options = []
