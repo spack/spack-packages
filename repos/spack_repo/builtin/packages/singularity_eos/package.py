@@ -258,11 +258,6 @@ class SingularityEos(CMakePackage, CudaPackage, ROCmPackage):
 
             variant_path = self.spec.variants["variant"].value
             if variant_path != "default":
-                parts = os.path.normpath("variant_path").split(os.sep)
-                if parts[0] in self.plugins.keys():
-                    spackage, path = self.plugins[parts[0]]
-                    parts[0] = self.spec[spackage].prefix
-                    variant_path = join_path(*parts)
                 args.append(self.define("SINGULARITY_VARIANT", variant_path))
 
         if "+rocm" in self.spec and not self.spec.satisfies("^kokkos %cxx=llvm-amdgpu"):
