@@ -149,7 +149,12 @@ class Cabana(CMakePackage, CudaPackage, ROCmPackage):
                 options.append(self.define("CMAKE_DISABLE_FIND_PACKAGE_" + var, "ON"))
 
         # Use hipcc for HIP.
-        if self.spec.satisfies("+rocm"):
+        if self.spec.satisfies("+rocm") and (
+            self.spec.satisfies("@:0.3")
+            or self.spec.satisfies("+testing")
+            or self.spec.satisfies("+examples")
+            or self.spec.satisfies("+performance_testing")
+        ):
             options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
 
         return options
