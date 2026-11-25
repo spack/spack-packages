@@ -13,7 +13,7 @@ class Libddla(CMakePackage, CudaPackage):
     and an MPI-based block-cyclic data distribution."""
 
     homepage = "https://github.com/userchba/LibDDLA"
-    url = "https://github.com/userchba/LibDDLA/archive/refs/tags/v0.0.7.tar.gz"
+    url = "https://github.com/userchba/LibDDLA/archive/refs/tags/v0.0.0.tar.gz"
     git = "https://github.com/userchba/LibDDLA.git"
 
     license("LGPL-3.0-only")

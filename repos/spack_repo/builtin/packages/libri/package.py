@@ -16,8 +16,7 @@ class Libri(Package):
 
     version("master", branch="master")
     version("0.3.0.0", sha256="c6910c2cef38dbb93df59576e332b8f28a9f624db1dc46e3d374004ecfdca193")
-    # Retain the snapshot for existing environments.
-    version("0.2.1.2-202609", commit="6ce3c8480ae38a085746dc81cc4dbb59b8074430")
+    version("0.2.1.2-202609", commit="6ce3c8480ae38a085746dc81cc4dbb59b8074430", deprecated=True)
     version("0.2.1.1", sha256="cd33fd5428400ea696b82c9132878c07bf785847b3f56b1979e25a3a5fc0b311")
 
     depends_on("mpi")
