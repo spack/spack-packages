@@ -155,11 +155,12 @@ class Rocsolver(ROCmLibrary, CMakePackage):
         ]
 
         tgt = self.spec.variants["amdgpu_target"]
-        if "auto" not in tgt:
-            if self.spec.satisfies("@7.1:"):
-                args.append(self.define_from_variant("GPU_TARGETS", "amdgpu_target"))
-            else:
-                args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
+        if self.spec.satisfies("@7:"):
+            args.append(self.define("USE_HIPCXX", True))
+            if "auto" not in tgt:
+                args.append(self.define_from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
+        elif "auto" not in tgt:
+            args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
             args.append(self.define("__skip_rocmclang", "ON"))
@@ -170,7 +171,8 @@ class Rocsolver(ROCmLibrary, CMakePackage):
         return args
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@:6"):
+            env.set("CXX", self.spec["hip"].hipcc)
         if self.spec.satisfies("+asan"):
             env.set("CC", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang")
             env.set("CXX", f"{self.spec['llvm-amdgpu'].prefix}/bin/clang++")
