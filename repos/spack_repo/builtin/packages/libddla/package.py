@@ -37,9 +37,6 @@ class Libddla(CMakePackage, CudaPackage):
     conflicts("^aocl-lapack +ilp64")
     conflicts("^amdlibflame +ilp64")
     conflicts("^armpl-gcc +ilp64")
-    conflicts("^blis ~cblas")
-    conflicts("^aocl-blas ~cblas")
-    conflicts("^amdblis ~cblas")
 
     def cmake_args(self):
         blas = self.spec["blas:c,fortran"].libs
