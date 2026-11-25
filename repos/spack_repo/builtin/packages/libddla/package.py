@@ -41,10 +41,6 @@ class Libddla(CMakePackage, CudaPackage):
     conflicts("^aocl-blas ~cblas")
     conflicts("^amdblis ~cblas")
 
-    def setup_build_environment(self, env):
-        # Upstream treats OPENBLAS as an override for both library providers.
-        env.unset("OPENBLAS")
-
     def cmake_args(self):
         blas = self.spec["blas:c,fortran"].libs
         args = [
