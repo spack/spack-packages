@@ -461,14 +461,8 @@ class Raja(CachedCMakePackage, CudaPackage, ROCmPackage):
                     )
                 )
 
-            hipcc_flags = []
-            if self.spec.satisfies("^rocprim@7.0"):
-                hipcc_flags.append("-std=c++17")
-            if self.spec.satisfies("@2025.09.0:"):
-                hipcc_flags.append("-std=c++17")
-            elif self.spec.satisfies("@0.14.0:2025.09.0"):
-                hipcc_flags.append("-std=c++14")
-            entries.append(cmake_cache_string("HIP_HIPCC_FLAGS", " ".join(hipcc_flags)))
+            if self.spec.satisfies("@0.14.0: %blt@:0.4"):
+                entries.append(cmake_cache_string("HIP_HIPCC_FLAGS", "-std=c++14"))
         else:
             entries.append(cmake_cache_option("ENABLE_HIP", False))
 
