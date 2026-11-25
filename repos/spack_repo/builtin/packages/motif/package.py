@@ -59,7 +59,7 @@ class Motif(AutotoolsPackage):
 
     def flag_handler(self, name, flags):
         # GCC 15 defaults to C23, which the package does not support yet
-        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+        if name == "cflags" and self.spec.satisfies("%c=gcc@15:"):
             flags.append("-std=gnu17")
         if name == "cflags" and self.spec.satisfies("%oneapi"):
             flags.append("-Wno-incompatible-function-pointer-types")
