@@ -2,26 +2,23 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
-from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
+from spack_repo.builtin.packages.userspace_rcu.package import UserspaceRcu
 
 from spack.package import *
 
 
-class Liburcu(AutotoolsPackage):
-    """liburcu is a LGPLv2.1 userspace RCU (read-copy-update) library.
-    This data synchronization library provides read-side access which
-    scales linearly with the number of cores."""
+class Liburcu(UserspaceRcu):
+    __doc__ = f"""{UserspaceRcu.__doc__}
 
-    homepage = "https://liburcu.org"
-    url = "https://lttng.org/files/urcu/userspace-rcu-0.14.0.tar.bz2"
-    git = "https://git.lttng.org/userspace-rcu.git"
+    This package is a duplicate of ``userspace-rcu``, the upstream project name.
+    It is kept as a thin, fully deprecated alias so existing specs that
+    reference ``liburcu`` continue to resolve. Build logic is inherited from
+    :class:`UserspaceRcu`; use ``userspace-rcu`` for new work.
+    """
 
-    license("LGPL-2.1", checked_by="wdconinc")
+    _name = "liburcu"
 
-    version("0.14.0", sha256="ca43bf261d4d392cff20dfae440836603bf009fce24fdc9b2697d837a2239d4f")
-
-    depends_on("autoconf@2.69:", type="build")
-    depends_on("automake@1.12:", type="build")
-
-    def patch(self):
-        filter_file("-Wl,-rpath ", "-Wl,-rpath,", "doc/examples/Makefile.in")
+    # Redeclare every UserspaceRcu version as deprecated, so a version added
+    # only to the canonical package cannot appear here without deprecated=True.
+    for v, vargs in UserspaceRcu.versions.items():
+        version(str(v), **dict(vargs, deprecated=True))

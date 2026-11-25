@@ -16,6 +16,7 @@ class PyJupyterClient(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("8.10.0", sha256="9f7116294dca55f1785be880057d44544db9b1567718d92cb33c58886afb9497")
     version("8.9.1", sha256="a58f730dd9e728ba16ba1d62ebccf7ffe1ebbdbce4e95cfae941b7321ae1f4fa")
     version("8.8.0", sha256="d556811419a4f2d96c869af34e854e3f059b7cc2d6d01a9cd9c85c267691be3e")
     version("8.6.3", sha256="35b3a0947c4a6e9d589eb97d7d4cd5e90f910ee73101611f01283732bd6d9419")
@@ -58,9 +59,9 @@ class PyJupyterClient(PythonPackage):
         depends_on("py-tornado@6.4.1:", when="@8.7:")
         depends_on("py-tornado@6.2:", when="@7.3.5:")
         depends_on("py-tornado@4.1:", when="@5:")
+        depends_on("py-typing-extensions@4.13:", when="@8.9:")
         depends_on("py-traitlets@5.3:", when="@8:")
         depends_on("py-traitlets")
-        depends_on("py-typing-extensions@4.13:", when="@8.9:")
 
         # Historical dependencies
         depends_on("py-importlib-metadata@4.8.3:", when="@8:8.6 ^python@:3.9")

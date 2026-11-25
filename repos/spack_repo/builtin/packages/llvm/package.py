@@ -56,6 +56,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
     # Note: remember to update `provides("libllvm")` according to major versions listed
 
     # Latest stable
+    version("23.1.6", sha256="66b37a51976c46ad86f49a2304c4dfd64be971f858846dfffaa8a32632474bb8")
     version("23.1.5", sha256="70642a7e44e63c0ceff6624e5fd077b87766e4ed0bcd4a3ea8e3ffa3827ba538")
     version("23.1.4", sha256="3e1c70b30f623976c2046d94b8eeab6cac536f107914cb4ed7bac572a03131db")
     version("23.1.3", sha256="791b560dee8f65fdf7b19ad5db0b4ac627467824d8b687957d8a437b806103f0")
@@ -531,6 +532,12 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             # fix sanitizer-common build with glibc 2.31
             # see https://reviews.llvm.org/D70662
             patch("sanitizer-ipc_perm_mode.patch", when="@5:9")
+            # glibc 2.42 removed struct termio; fixed upstream in LLVM 20.1.6.
+            patch(
+                "https://github.com/llvm/llvm-project/commit/59978b21ad9c65276ee8e14f26759691b8a65763.patch?full_index=1",
+                sha256="1a66127a4b148b5387ef37322beb2be07d10f67b9748f2b7dd5e1fcf08f08195",
+                when="@19:20.1.5 %glibc@2.42:",
+            )
     del compiler_rt_as
 
     # Backport from llvm upstream gcc ppc const expr long double issue

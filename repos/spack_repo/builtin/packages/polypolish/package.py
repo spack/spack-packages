@@ -22,6 +22,7 @@ class Polypolish(Package):
 
     version("0.5.0", sha256="183156093c03094290951f140010b3aef6222a672bf538e9136914178775fb1f")
 
+    depends_on("c", type="build")
     depends_on("rust")
     depends_on("python@3.6:", type="run")
     depends_on("bwa", type="run")

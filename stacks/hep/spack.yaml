@@ -33,7 +33,8 @@ spack:
       - gcc
     acts:
       require:
-      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 +onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
+      # FIXME: ~onnx due to microsoft/onnxruntime repository private 2026-11-22
+      - +analysis +dd4hep +edm4hep +examples +fatras +geant4 +hepmc3 ~onnx +podio +pythia8 +python +svg +tgeo cxxstd=20
       - target=x86_64_v3
     celeritas:
       require:

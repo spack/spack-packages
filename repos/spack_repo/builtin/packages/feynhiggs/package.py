@@ -27,5 +27,8 @@ class Feynhiggs(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    # GCC PR125383: undefined reference to f_ in ODESolve, fixed on trunk but not yet released
+    patch("ODESolve-interface.patch", when="@2.18.1 %fortran=gcc@14.4:14,15.3:15,16")
+
     def configure_args(self):
         return ["FFLAGS=-fPIC", "CFLAGS=-fPIC"]

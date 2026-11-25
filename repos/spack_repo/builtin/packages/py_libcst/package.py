@@ -18,6 +18,7 @@ class PyLibcst(PythonPackage):
     version("1.8.6", sha256="f729c37c9317126da9475bdd06a7208eb52fcbd180a6341648b45a56b4ba708b")
     version("0.4.9", sha256="01786c403348f76f274dbaf3888ae237ffb73e6ed6973e65eba5c1fc389861dd")
 
+    depends_on("c", type="build")
     depends_on("python@3.9:", type=("build", "run"), when="@1.2.0:")
 
     with default_args(type="build"):

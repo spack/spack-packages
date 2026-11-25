@@ -24,6 +24,7 @@ class PyPolars(PythonPackage):
     )
 
     # README.md
+    depends_on("c", type="build")
     depends_on("rust@1.71:", type="build", when="@0.20")
     depends_on("rust@1.80:", type="build", when="@1.29:")
 
