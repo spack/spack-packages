@@ -20,6 +20,8 @@ class Rivet(AutotoolsPackage):
 
     license("GPL-3.0-or-later")
 
+    version("4.1.5", sha256="4fcb82f6dfe1572d3afdc9e87aad0e5f624d416b33e6aca6af9385503b38c1d0")
+    version("4.1.3", sha256="b7adc9b0874021215df026ee16fe41e4482874c8cd5b1f5af33cd69674599d99")
     version("4.1.2", sha256="61247fbc3d6a48a35ca01a2f2af9f626c4ce2a1401a50df46b6078cb20ecde46")
     version("4.1.1", sha256="bd1d513355c3f72f0f88a972f39dd9f1144ceae2cb472542e5d3060feab4f1cc")
     version("4.1.0", sha256="6548a351a44e5a4303fb2277e7521690a9d84195df96d92c707b816f3b40c843")
