@@ -134,7 +134,7 @@ class Nektar(CMakePackage):
     depends_on("hdf5 +mpi +hl", when="+mpi+hdf5")
     depends_on("scotch ~mpi ~metis", when="~mpi+scotch")
     depends_on("scotch +mpi ~metis", when="+mpi+scotch")
-    depends_on("scotch@7: +mpi ~metis", when="@5.6.0: +mpi+scotch")
+    depends_on("scotch@7:", when="@5.6.0: +scotch")
 
     extends("python@3:", when="+python")
 
