@@ -252,6 +252,16 @@ class Bazel(Package):
 
         env.set("EXTRA_BAZEL_ARGS", " ".join(args))
 
+    @when("@5:7")
+    def patch(self):
+        # The autoconfigured C++ toolchain prefers lld, then gold, over the default linker. Gold is
+        # deprecated, and fails to link large shared libraries on aarch64 ("Stub is too far away").
+        filter_file(
+            r'_find_linker_path\(repository_ctx, cc, "gold", is_clang\)',
+            "None",
+            "tools/cpp/unix_cc_configure.bzl",
+        )
+
     @run_before("install")
     def bootstrap(self):
         bash = which("bash", required=True)
