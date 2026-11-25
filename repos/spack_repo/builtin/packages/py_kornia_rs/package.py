@@ -68,6 +68,7 @@ class PyKorniaRs(PythonPackage):
     patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
     patch("py-kornia-rs-pin-circular_buffer.patch", when="@0.1.9")
 
+    # Remove once https://github.com/kornia/kornia-rs/pull/1404 is in a release
     @when("@0.2.0:")
     def patch(self):
         filter_file(r'^linker = "x86_64-linux-gnu-gcc"$', "", ".cargo/config.toml")
