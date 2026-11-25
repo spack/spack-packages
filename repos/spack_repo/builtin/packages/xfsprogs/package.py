@@ -43,7 +43,7 @@ class Xfsprogs(AutotoolsPackage):
     depends_on("gettext@:0.21.1", when="@:6.3")
     depends_on("uuid")
     depends_on("util-linux")
-    depends_on("liburcu", when="@6:")
+    depends_on("userspace-rcu", when="@6:")
 
     def flag_handler(self, name, flags):
         if name == "cflags":

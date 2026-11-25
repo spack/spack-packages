@@ -22,6 +22,7 @@ class Adlbx(AutotoolsPackage):
     version("0.9.1", sha256="8913493fe0c097ff13c721ab057514e5bdb55f6318d4e3512692ab739c3190b3")
 
     depends_on("c", type="build")  # generated
+    depends_on("gnuconfig", type="build")
 
     depends_on("exmcutils@master", when="@master")
     depends_on("exmcutils@:0.5.7", when="@:0.9.2")
@@ -45,6 +46,11 @@ class Adlbx(AutotoolsPackage):
         else:
             return "."
 
+    def autoreconf(self, spec, prefix):
+        for f in ("config.guess", "config.sub"):
+            copy(join_path(spec["gnuconfig"].prefix, f), f)
+
+    @when("@master")
     def autoreconf(self, spec, prefix):
         which("bash", required=True)("bootstrap")
 

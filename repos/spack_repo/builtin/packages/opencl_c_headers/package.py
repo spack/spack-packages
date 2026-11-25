@@ -18,6 +18,9 @@ class OpenclCHeaders(CMakePackage):
     license("Apache-2.0")
 
     version(
+        "2026.05.29", sha256="d9e6c48357de5002da11ce45de600e0c3ffe6ab4f628a3b9fe2b38603161658a"
+    )
+    version(
         "2025.07.22", sha256="98f0a3ea26b4aec051e533cb1750db2998ab8e82eda97269ed6efe66ec94a240"
     )
     version(

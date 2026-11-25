@@ -985,6 +985,16 @@ class Cuda(Package):
         except OSError:
             pass
 
+    # clang@22: rejects host-only deduction guides in CUDA mode. Backport
+    # https://github.com/NVIDIA/cccl/pull/7904 (fixed in cuda@13.4).
+    @run_after("install", when="@13.1:13.3")
+    def fix_cccl_string_view_deduction_guides(self):
+        filter_file(
+            r"^_CCCL_HOST (basic_string_view\(::std::)",
+            r"\1",
+            join_path(self.prefix.include, "cccl", "cuda", "std", "string_view"),
+        )
+
     @property
     def libs(self):
         libs = find_libraries("libcudart", root=self.prefix, shared=True, recursive=True)

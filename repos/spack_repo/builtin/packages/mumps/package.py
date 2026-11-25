@@ -45,6 +45,12 @@ class Mumps(Package):
         version("5.0.1", sha256="50355b2e67873e2239b4998a46f2bbf83f70cdad6517730ab287ae3aae9340a0")
 
     variant("mpi", default=True, description="Compile MUMPS with MPI support")
+    variant(
+        "mpi_in_place",
+        default=True,
+        description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
+        when="@5.6.2: +mpi",
+    )
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")
     variant(
         "ptscotch", default=False, description="Activate PT-Scotch as a possible ordering library"
@@ -278,6 +284,15 @@ class Mumps(Package):
         if using_intel or using_oneapi:
             optl.append("-nofor-main")
 
+        # MUMPS uses MPI_IN_PLACE in some collective MPI operations. In case of
+        # MPI environments where MPI_IN_PLACE is failing, it is possible to
+        # avoid the use of MPI_IN_PLACE at the cost of more temporary memory
+        # allocation and possibly less efficient code.
+        if self.spec.satisfies("~mpi_in_place"):
+            avoid_mpi_in_place_flag = "-DAVOID_MPI_IN_PLACE"
+            optf.append(avoid_mpi_in_place_flag)
+            optc.append(avoid_mpi_in_place_flag)
+
         makefile_conf.extend(
             [
                 "OPTC = {0}".format(" ".join(optc)),
@@ -324,6 +339,8 @@ class Mumps(Package):
         if "+shared" in self.spec:
             # All Mumps libraries will be linked with 'inject_libs'.
             inject_libs = []
+            if "+openmp" in self.spec:
+                inject_libs += [self.compiler.openmp_flag]
             if "+mpi" in self.spec:
                 inject_libs += [self.spec["scalapack"].libs.ld_flags]
             if "+ptscotch" in self.spec or "+scotch" in self.spec:
