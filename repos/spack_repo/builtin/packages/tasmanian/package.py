@@ -94,7 +94,7 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # needed for the hipcc compiler
-        if "+rocm" in self.spec:
+        if self.spec.satisfies("@:7.9 +rocm"):
             env.set("CXX", self.spec["hip"].hipcc)
 
     def cmake_args(self):
@@ -114,6 +114,11 @@ class Tasmanian(CMakePackage, CudaPackage, ROCmPackage):
         if spec.satisfies("+blas"):
             args.append("-DBLAS_LIBRARIES={0}".format(spec["blas"].libs.joined(";")))
             args.append("-DLAPACK_LIBRARIES={0}".format(spec["lapack"].libs.joined(";")))
+
+        if spec.satisfies("@8: +rocm"):
+            rocm_archs = spec.variants["amdgpu_target"].value
+            if "none" not in rocm_archs:
+                args.append(self.define("CMAKE_HIP_ARCHITECTURES", rocm_archs))
 
         return args
 
