@@ -201,6 +201,8 @@ class Babelstream(CMakePackage, CudaPackage, ROCmPackage, MakefilePackage):
     depends_on("cuda", when="+raja raja_offload=nvidia")
     depends_on("hip", when="+hip")
     depends_on("rocthrust", when="thrust_submodel=rocm")
+    requires("+cuda", when="thrust_submodel=cuda")
+    requires("+rocm", when="thrust_submodel=rocm")
     depends_on("intel-tbb", when="+std +std_use_tbb")
     depends_on("intel-oneapi-dpl", when="+std +std_use_onedpl")
     depends_on("intel-tbb", when="+std +std_use_onedpl")
@@ -632,6 +634,8 @@ register_flag_optional(TARGET_PROCESSOR
                 args.append("-DCMAKE_CXX_COMPILER=" + self.spec["hip"].hipcc)
                 args.append("-DTHRUST_IMPL=" + self.spec.variants["thrust_submodel"].value.upper())
                 args.append(self.define("SDK_DIR", self.spec["rocthrust"].prefix))
+                if "none" not in self.spec.variants["amdgpu_target"].value:
+                    args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # ===================================
         #             kokkos
