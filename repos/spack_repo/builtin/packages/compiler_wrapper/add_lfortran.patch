@@ -1,0 +1,11 @@
+--- a/cc.sh	2026-11-25 10:49:57.625812054 -0800
++++ b/cc.sh	2026-11-25 10:50:21.809650812 -0800
+@@ -345,7 +345,7 @@
+         debug_flags="-g"
+         vcheck_flags="${SPACK_ALWAYS_CXXFLAGS}"
+         ;;
+-    ftn|f90|fc|f95|gfortran|flang|armflang|ifort|ifx|pgfortran|nvfortran|xlf90|xlf90_r|nagfor|frt|amdflang|crayftn)
++    ftn|f90|fc|f95|gfortran|flang|armflang|ifort|ifx|pgfortran|nvfortran|xlf90|xlf90_r|lfortran|nagfor|frt|amdflang|crayftn)
+         command="$SPACK_FC"
+         vdep=fortran
+         comp="FC"

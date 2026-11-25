@@ -1,13 +1,15 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.compiler import CompilerPackage
 
 from spack.package import *
 
 
-class Lfortran(CMakePackage):
+class Lfortran(CMakePackage, CompilerPackage):
     """Modern interactive LLVM-based Fortran compiler"""
 
     homepage = "https://lfortran.org"
@@ -16,6 +18,7 @@ class Lfortran(CMakePackage):
 
     maintainers("certik", "bonachea")
     license("BSD-3-Clause")
+    provides("fortran")
 
     # The build process uses 'git describe --tags' to get the package version
     version("main", branch="main", get_full_repo=True)
@@ -70,3 +73,21 @@ class Lfortran(CMakePackage):
             args.append("-DLFORTRAN_BUILD_ALL=yes")
 
         return args
+
+    # Use CompilerPackage to register this compiler class with Spack
+    compiler_languages = ["fortran"]
+    fortran_names = ["lfortran"]
+    compiler_version_argument = "--version"
+    compiler_version_regex = r"version:\s*([0-9.]+)"
+    opt_flags = ["--fast"]  # -O<n> currently ignored
+    debug_flags = ["-g"]
+    rpath_arg = "-Wl,-rpath,"
+    linker_arg = "-Wl,"
+    pic_flag = "-fPIC"
+    openmp_flag = "--openmp"
+    verbose_flag = "-v"
+    implicit_rpath_libs = ["liblfortran_runtime"]
+    compiler_wrapper_link_paths = {"fortran": os.path.join("lfortran", "lfortran")}
+
+    def _fortran_path(self):
+        return str(self.spec.prefix.bin.lfortran)

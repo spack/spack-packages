@@ -40,6 +40,8 @@ class CompilerWrapper(Package):
     if sys.platform != "win32":
         version("1.1.0", sha256="a07b35081d14b0729090bc1e5790a5dda2d5b997e064c62da39a1224ee249b2a")
         version("1.0", sha256="ac876f7600fa6cb0c74ae172ef1c61661aacff03a6befbc7d87e092e2f2233f9")
+
+        patch("add_lfortran.patch", when="@1.1")
     else:
         version("1.0")
         has_code = False
@@ -107,6 +109,7 @@ class CompilerWrapper(Package):
             ("intel", "icc"),
             ("intel", "icpc"),
             ("intel", "ifort"),
+            ("lfortran", "lfortran"),
             ("nag", "nagfor"),
             ("nvhpc", "nvc"),
             ("nvhpc", "nvc++"),
