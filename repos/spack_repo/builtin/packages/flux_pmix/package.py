@@ -15,6 +15,7 @@ class FluxPmix(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-pmix"
     url = "https://github.com/flux-framework/flux-pmix/releases/download/v0.1.0/flux-pmix-0.1.0.tar.gz"
     git = "https://github.com/flux-framework/flux-pmix.git"
+    get_full_repo = True
 
     maintainers("grondo")
 

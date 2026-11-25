@@ -15,6 +15,7 @@ class FluxCore(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-core"
     url = "https://github.com/flux-framework/flux-core/releases/download/v0.8.0/flux-core-0.8.0.tar.gz"
     git = "https://github.com/flux-framework/flux-core.git"
+    get_full_repo = True
     tags = ["radiuss", "e4s"]
 
     maintainers("grondo")
@@ -180,24 +181,7 @@ class FluxCore(AutotoolsPackage):
             url = "https://github.com/flux-framework/flux-core-v{1}/releases/download/v{0}/flux-core-{0}.tar.gz"
         return url.format(version.up_to(3), version.up_to(2))
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if not os.path.exists("configure"):
             # Bootstrap with autotools
             bash = which("bash", required=True)

@@ -15,6 +15,7 @@ class FluxAccounting(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-accounting"
     url = "https://github.com/flux-framework/flux-accounting/releases/download/v0.1.0/flux-accounting-0.1.0.tar.gz"
     git = "https://github.com/flux-framework/flux-accounting.git"
+    get_full_repo = True
 
     maintainers("sam-maloney")
 
@@ -53,24 +54,7 @@ class FluxAccounting(AutotoolsPackage):
     depends_on("valgrind", type="test")
     depends_on("which", type="test")
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if not os.path.exists("configure"):
             # Bootstrap with autotools
             bash = which("bash", required=True)
