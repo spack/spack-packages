@@ -185,8 +185,9 @@ class Quda(CMakePackage, CudaPackage, ROCmPackage):
         if self.spec.satisfies("+cuda"):
             args.append(self.define("QUDA_GPU_ARCH_SUFFIX", "real"))  # real or virtual
         elif self.spec.satisfies("+rocm"):
-            args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
-            args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
+            if self.spec.satisfies("@=1.1.0"):
+                args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
+                args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             # args.append(self.define("ROCM_PATH", self.spec["hip"].prefix))
 
             # required when building on a machine with no AMD GPU present
