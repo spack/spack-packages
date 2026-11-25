@@ -132,8 +132,9 @@ class NMakeBuilder(nmake.NMakeBuilder):
 
     def install(self, pkg, spec, prefix):
         """7Zip exports no install target so we must hand install"""
+        mkdirp(prefix.bin)
         with working_dir(self.build_directory):
             for root in ("Bundles", "UI"):
-                for ext in ("*.exe", "*.dll"):
+                for ext in ("*.exe", "*.dll", "*.sfx"):
                     for x in glob.glob(os.path.join(root, "*", self.plat_arch, ext)):
-                        install(x, os.path.join(prefix, os.path.basename(x)))
+                        install(x, os.path.join(prefix.bin, os.path.basename(x)))
