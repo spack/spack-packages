@@ -248,6 +248,7 @@ class NetlibLapack(CMakePackage):
             return build_system_flags(name, flags)
         return inject_flags(name, flags)
 
+
 class CMakeBuilder(cmake.CMakeBuilder):
     def cmake_args(self):
         args = [
