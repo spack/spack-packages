@@ -97,7 +97,9 @@ class KokkosFft(CMakePackage):
             self.define("KokkosFFT_ENABLE_ONEMKL", self.spec.satisfies("device_backend=onemkl")),
         ]
 
-        if self.spec.satisfies("^kokkos+rocm") and not (
+        if self.spec.satisfies("%kokkos+rocm") and not self.run_tests:
+            pass  # header-only
+        elif self.spec.satisfies("^kokkos+rocm") and not (
             self.spec.satisfies("^kokkos %cxx=clang") or self.spec.satisfies("^kokkos %cxx=rocmcc")
         ):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
