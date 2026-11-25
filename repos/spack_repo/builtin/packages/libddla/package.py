@@ -20,18 +20,13 @@ class Libddla(CMakePackage, CudaPackage):
 
     version("0.0.7", sha256="8991797705b0854dfcd83f6e2b3b1d68fad1a8f704b6ed2a4450eef2234353c6")
 
-    variant("openmp", default=True, description="Enable OpenMP in the host kernels")
-
     depends_on("cxx", type="build")
     depends_on("cmake@3.18:", type="build")
     depends_on("mpi")
     depends_on("blas")
     depends_on("lapack")
-    depends_on("llvm-openmp", when="+openmp %apple-clang")
     # GPU allocations use cudaMallocAsync/cudaFreeAsync without a fallback.
     depends_on("cuda@11.2:", when="+cuda")
-
-    conflicts("cuda_arch=none", when="+cuda", msg="Select a CUDA architecture for LibDDLA")
 
     # The public API and calls to BLAS/LAPACK use 32-bit integers.
     conflicts("^openblas +ilp64")
@@ -52,31 +47,16 @@ class Libddla(CMakePackage, CudaPackage):
 
     def cmake_args(self):
         blas = self.spec["blas:c,fortran"].libs
-        # Retain BLAS after LAPACK for providers with separate static archives.
-        lapack = self.spec["lapack"].libs + blas
         args = [
             self.define_from_variant("DDLA_USE_CUDA", "cuda"),
-            self.define("DDLA_USE_HIP", False),
-            self.define("DDLA_USE_CCL", False),
-            self.define_from_variant("DDLA_USE_OPENMP", "openmp"),
-            self.define("DDLA_ENABLE_FORTRAN", False),
-            self.define("DDLA_ENABLE_PYTHON", False),
             self.define("BUILD_TESTS", self.run_tests),
-            # Use library lists instead of upstream's single-file overrides.
-            self.define("DDLA_CPU_BLAS_LIBRARY", ""),
-            self.define("DDLA_LAPACK_LIBRARY", ""),
             # Complex dot products require CBLAS in addition to Fortran BLAS.
             self.define("BLAS_LIBRARIES", blas),
-            self.define("LAPACK_LIBRARIES", lapack),
+            # Retain BLAS after LAPACK for providers with separate static archives.
+            self.define("LAPACK_LIBRARIES", self.spec["lapack"].libs + blas),
         ]
         if "+cuda" in self.spec:
-            cuda = self.spec["cuda"].prefix
-            args.extend(
-                [
-                    self.define("CMAKE_CUDA_COMPILER", cuda.bin.nvcc),
-                    self.define("CMAKE_CUDA_HOST_COMPILER", self.spec["cxx"].package.cxx),
-                    self.define("CUDAToolkit_ROOT", cuda),
-                    self.define("CMAKE_CUDA_ARCHITECTURES", self.spec.variants["cuda_arch"].value),
-                ]
-            )
+            args.append(self.define("CMAKE_CUDA_COMPILER", self.spec["cuda"].prefix.bin.nvcc))
+            if "cuda_arch=none" not in self.spec:
+                args.append(self.define_from_variant("CMAKE_CUDA_ARCHITECTURES", "cuda_arch"))
         return args

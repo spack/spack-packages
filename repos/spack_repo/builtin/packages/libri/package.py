@@ -1,10 +1,9 @@
-from spack_repo.builtin.build_systems.cuda import CudaPackage
 from spack_repo.builtin.build_systems.generic import Package
 
 from spack.package import *
 
 
-class Libri(Package, CudaPackage):
+class Libri(Package):
     """Header-only resolution-of-identity library."""
 
     homepage = "https://github.com/deepmodeling/LibRI"
@@ -29,9 +28,7 @@ class Libri(Package, CudaPackage):
 
     variant("cuda", default=False, when="@0.3:", description="Enable CUDA support through LibDDLA")
 
-    depends_on("libddla@0.0.7: +cuda", when="+cuda")
-    for arch in CudaPackage.cuda_arch_values:
-        depends_on(f"libddla cuda_arch={arch}", when=f"+cuda cuda_arch={arch}")
+    depends_on("libddla@0.0.7:+cuda", when="+cuda")
 
     def install(self, spec, prefix):
         install_tree("include", prefix.include)
