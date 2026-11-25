@@ -71,7 +71,7 @@ class Byobu(AutotoolsPackage):
     def configure_args(self):
         args = set()
 
-        if self.version >= Version("7.6"):
+        if self.version >= Version("7.7"):
             # Trustmux, built by default in byobu 7.7+, is a mobile daemon for Tailscale
             # connections. As I have no practical way to test this nor assess its security,
             # I am forcing it to be disabled.
