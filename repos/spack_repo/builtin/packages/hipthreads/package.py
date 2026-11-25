@@ -4,21 +4,20 @@
 
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
-from spack_repo.builtin.build_systems.rocm import ROCmLibrary, ROCmPackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
 class Hipthreads(ROCmLibrary, CMakePackage):
     """hipthreads is a library that provides thread-level parallelism
-primitives for HIP applications on AMD GPUs."""
+    primitives for HIP applications on AMD GPUs."""
 
     homepage = "https://github.com/ROCm/hipthreads"
     git = "https://github.com/ROCm/rocm-libraries.git"
 
     tags = ["rocm"]
     maintainers("srekolam", "renjithravindrankannath", "afzpatel")
-    libraries = ["libhipthreads"]
     license("Apache-2.0")
 
     rocm_url_map = [
@@ -30,7 +29,6 @@ primitives for HIP applications on AMD GPUs."""
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build")
 
     depends_on("cmake@3.31:", type="build")
 
@@ -42,15 +40,6 @@ primitives for HIP applications on AMD GPUs."""
     @property
     def root_cmakelists_dir(self):
         return "projects/hipthreads"
-
-    @classmethod
-    def determine_version(cls, lib):
-        match = re.search(r"lib\S*\.a\.\d+\.\d+\.(\d)(\d\d)(\d\d)", lib)
-        if match:
-            return "{0}.{1}.{2}".format(
-                int(match.group(1)), int(match.group(2)), int(match.group(3))
-            )
-        return super().determine_version(lib)
 
     def cmake_args(self):
         args = [
