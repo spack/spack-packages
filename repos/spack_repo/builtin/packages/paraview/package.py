@@ -678,9 +678,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
             archs = spec.variants["amdgpu_target"].value
 
-            if archs != "none":
-                arch_str = ",".join(archs)
-                cmake_args.append("-DCMAKE_HIP_ARCHITECTURES=%s" % arch_str)
+            if "none" not in archs:
+                cmake_args.append(self.define("CMAKE_HIP_ARCHITECTURES", archs))
             cmake_args.append("-DKokkos_CXX_COMPILER=%s" % spec["hip"].hipcc)
 
         if "+catalyst" in spec:
