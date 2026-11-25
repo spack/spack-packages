@@ -40,19 +40,21 @@ class _7zip(MakefilePackage, NMakePackage):
     # The makefiles for Linux and macOS are only tested from 26.05 on
     conflicts("build_system=makefile", when="@:21")
 
-    with when("build_system=nmake"):
+    with when("platform=windows"):
         variant(
             "link_type",
             default="shared",
-            description="build shared and/or static libraries",
+            description="link the MSVC runtime dynamically (/MD) or statically (/MT)",
             values=("static", "shared"),
-            multi=True,
+            multi=False,
         )
+
+        depends_on("win-sdk")
 
         # TODO: Patch on WinSDK version 10.0.20348.0 when SDK is introduced to Spack
         # This patch solves a known bug in that SDK version on the 7zip side
         # right now patch for all versions to prevent build errors
-        patch("noexcept_typedef.patch")
+        patch("noexcept_typedef.patch", when="@21.07 %win-sdk@10.0.20348")
 
     @classmethod
     def determine_version(cls, exe):
@@ -116,12 +118,10 @@ class NMakeBuilder(nmake.NMakeBuilder):
         return {"x86_64": "x64", "aarch64": "arm64", "x86": "x86"}[str(self.spec.target.family)]
 
     def nmake_args(self):
-        link_type = "1" if "static" in self.spec.variants["link_type"].value else "0"
-        return [
-            self.define("PLATFORM", self.plat_arch),
-            self.define("MY_STATIC_LINK", link_type),
-            self.define("NEW_COMPILER", "1"),
-        ]
+        args = [self.define("PLATFORM", self.plat_arch), self.define("NEW_COMPILER", "1")]
+        if self.spec.satisfies("link_type=shared"):
+            args.append(self.define("MY_DYNAMIC_LINK", "1"))
+        return args
 
     def build(self, pkg, spec, prefix):
         # 7zips makefile is configured in such as way that if this value is set
