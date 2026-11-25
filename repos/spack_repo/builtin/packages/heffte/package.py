@@ -116,9 +116,10 @@ class Heffte(CMakePackage, CudaPackage, ROCmPackage):
                     args.append("-DCUDA_NVCC_FLAGS={0}".format(nvcc_flags))
                 args.append(CMakeBuilder.define_cuda_architectures(self))
 
-        if self.spec.satisfies("+rocm"):
+        if self.spec.satisfies("@:2.3 +rocm"):
             args.append("-DCMAKE_CXX_COMPILER={0}".format(self.spec["hip"].hipcc))
 
+        if self.spec.satisfies("+rocm"):
             rocm_arch = self.spec.variants["amdgpu_target"].value
             if "none" not in rocm_arch:
                 if self.spec.satisfies("@2.4:"):
