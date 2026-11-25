@@ -44,6 +44,7 @@ class Mpifileutils(CMakePackage):
     variant("daos", default=False, description="Enable DAOS support", when="@0.11:")
 
     patch("nosys_getdents.patch", when="@:0.10.1 target=aarch64:")
+    # https://github.com/hpc/mpifileutils/pull/702
     patch("archive-guard-xattrs.patch", when="@0.11:0.12.1 ~xattr")
 
     conflicts("platform=darwin")
