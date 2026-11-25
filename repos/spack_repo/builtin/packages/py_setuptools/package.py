@@ -113,6 +113,7 @@ class PySetuptools(Package, PythonExtension):
     conflicts("py-packaging@:23", when="@75.3.3")
     conflicts("py-packaging@:24.1", when="@75.3.2")
     conflicts("py-packaging@:23", when="@71:")
+    conflicts("py-packaging@:26.2", when="84.2.1:")
 
     conflicts("py-platformdirs@:4.2.1", when="@75.3:82.0.0")
     conflicts("py-platformdirs@:2.6.1", when="@71:75.2")
