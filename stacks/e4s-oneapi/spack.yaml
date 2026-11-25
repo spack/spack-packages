@@ -152,7 +152,6 @@ spack:
   - qthreads scheduler=distrib
   - quantum-espresso
   - raja
-  - rempi
   - scr
   - slate ~cuda
   - slepc
