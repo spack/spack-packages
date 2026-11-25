@@ -432,7 +432,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("+rocm", when=f"@{','.join(rocm_conflicts)}")
 
     # wheel 0.40 upgrades vendored packaging, trips over tensorflow-io-gcs-filesystem identifier
-    conflicts("^py-wheel@0.40:", when="@2.11:2.13")
+    conflicts("%py-wheel@0.40:", when="@2.11:2.13")
 
     # https://www.tensorflow.org/install/source#tested_build_configurations
     # https://github.com/tensorflow/tensorflow/issues/70199
@@ -965,7 +965,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
         # Disable targets that require instructions newer than the selected CPU.
         if spec.satisfies("@2.21 target=x86_64:") and (
-            spec.satisfies("+rocm ^llvm-amdgpu@7.2:") or spec.satisfies("~rocm %cxx=llvm@22:")
+            spec.satisfies("+rocm %llvm-amdgpu@7.2:") or spec.satisfies("~rocm %cxx=llvm@22:")
         ):
             if "avx512f" not in spec.target:
                 disabled_targets = "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
@@ -1028,7 +1028,7 @@ toolchain(
             "--verbose_failures",
         ]
 
-        if spec.satisfies("^bazel@:3.5"):
+        if spec.satisfies("%bazel@:3.5"):
             # removed in bazel 3.6
             args.append("--incompatible_no_support_tools_in_action_inputs=false")
 
