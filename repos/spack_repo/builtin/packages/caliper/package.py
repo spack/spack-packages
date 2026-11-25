@@ -139,7 +139,7 @@ class Caliper(CachedCMakePackage, CudaPackage, ROCmPackage):
         spec = self.spec
         entries = super().initconfig_compiler_entries()
 
-        if spec.satisfies("+rocm"):
+        if spec.satisfies("@:2.13 +rocm"):
             entries.insert(0, cmake_cache_path("CMAKE_CXX_COMPILER", spec["hip"].hipcc))
 
         entries.append(cmake_cache_option("WITH_FORTRAN", spec.satisfies("+fortran")))
