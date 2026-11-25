@@ -115,7 +115,8 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cmake@3.28", when="@:4.2.01 +cuda")
     conflicts("^cuda@13:", when="@:4.7.0")
 
-    depends_on("googletest@1.14:1 +gmock", type="test", when="@5:")
+    depends_on("googletest@1.14:1", type="test", when="@5:")
+    depends_on("googletest +gmock", type="test", when="@5.4:")
 
     # device : (default value, when clause, description)
     devices_variants = {
