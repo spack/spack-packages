@@ -203,6 +203,8 @@ class Babelstream(CMakePackage, CudaPackage, ROCmPackage, MakefilePackage):
     depends_on("rocthrust", when="thrust_submodel=rocm")
     requires("+cuda", when="thrust_submodel=cuda")
     requires("+rocm", when="thrust_submodel=rocm")
+    # The Thrust model uses C++14, rocPRIM 6.4 and later require C++17
+    conflicts("^rocprim@6.4:", when="@:5.0 thrust_submodel=rocm")
     depends_on("intel-tbb", when="+std +std_use_tbb")
     depends_on("intel-oneapi-dpl", when="+std +std_use_onedpl")
     depends_on("intel-tbb", when="+std +std_use_onedpl")
