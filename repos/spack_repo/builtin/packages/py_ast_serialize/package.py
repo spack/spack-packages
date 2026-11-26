@@ -18,4 +18,7 @@ class PyAstSerialize(PythonPackage):
     version("0.6.0", sha256="aadd3ffcf4858c9726bf3515f7b199c7eadbe504f96028e4a87172c0da65a8fe")
     version("0.5.0", sha256="5880091bfe6f4f986f22866375c2e884843e7a0b6343ae41aeea659613d879b6")
 
-    depends_on("py-maturin@1.9", type="build")
+    with default_args(type="build"):
+        depends_on("c")
+        depends_on("py-maturin@1.9:1")
+        depends_on("rust@1.80:")

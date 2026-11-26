@@ -58,13 +58,16 @@ class Motif(AutotoolsPackage):
         )
 
     def flag_handler(self, name, flags):
-        # The package does not build with C dialects newer than gnu17, so set gnu17
-        # for GCC 15 and newer which default to gnu23
-        if name == "cflags" and self.spec.satisfies("%gcc@15:"):
+        # GCC 15 defaults to C23, which the package does not support yet
+        if name == "cflags" and self.spec.satisfies("%c=gcc@15:"):
             flags.append("-std=gnu17")
         if name == "cflags" and self.spec.satisfies("%oneapi"):
             flags.append("-Wno-incompatible-function-pointer-types")
         return (flags, None, None)
+
+    def configure_args(self):
+        # Keep autoconf 2.73 from adding -std=gnu23
+        return ["ac_cv_prog_cc_c23=no"]
 
     def autoreconf(self, spec, prefix):
         autoreconf = which("autoreconf", required=True)

@@ -31,6 +31,7 @@ class Hyperqueue(Package):
     version("0.10.0", sha256="dc022170bf45479cb03edfe55a2fde066e7bf69542f644a8e78db604e8c6d67f")
     version("0.9.0", sha256="49be05b3a042382ee31dddea9a5de64d3e3ff747cb2c47fa170b407fa8fdd2e1")
 
+    depends_on("c", type="build")
     depends_on("rust@1.59:")
 
     def install(self, spec, prefix):

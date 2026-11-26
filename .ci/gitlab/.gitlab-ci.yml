@@ -14,7 +14,10 @@ variables:
   #   expand: false
   # SPACK_CI_ENABLE_STACKS:
   #   value: /^.*(cray).*$/
-  #   expand: false
+  #   expand: falses
+  SPACK_CI_DISABLE_STACKS:
+    value: /^.*(darwin).*$/
+    expand: false
 
 default:
   image: { "name": "ghcr.io/spack/e4s-ubuntu-18.04:v2021-10-18", "entrypoint": [""] }

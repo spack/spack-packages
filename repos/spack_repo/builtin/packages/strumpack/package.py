@@ -77,6 +77,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("cmake@3.11:", when="@:6.2.9", type="build")
     depends_on("cmake@3.17:", when="@6.3.0:", type="build")
+    depends_on("cmake@3.21:", when="@7.2.0:", type="build")
     # CMake 3.18 initializes target CUDA_ARCHITECTURES.
     depends_on("cmake@3.18:", when="@5:+cuda", type="build")
     depends_on("mpi", when="+mpi")
@@ -100,7 +101,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("zfp", when="@7.0.2: +zfp")
     depends_on("hipblas", when="+rocm")
     depends_on("hipblas@:6", when="@:8.0.0 +rocm")
-    depends_on("hipsparse", type="link", when="@7.0.1: +rocm")
+    depends_on("hipsparse", type="link", when="+rocm")
     depends_on("rocsolver", when="+rocm")
     depends_on("rocthrust", when="+rocm")
     depends_on("rocprim", when="@8.1.0: +rocm")
@@ -119,7 +120,7 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+butterflypack", when="@:3.2.0")
     conflicts("+zfp", when="@:3.9")
     conflicts("+cuda", when="@:3.9")
-    conflicts("+rocm", when="@:5.0")
+    conflicts("+rocm", when="@:7.1")
     conflicts("+rocm", when="+cuda")
     conflicts("+slate", when="@:5.1.1")
     conflicts("+slate", when="~mpi")
@@ -128,10 +129,6 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("+magma", when="~rocm~cuda")
 
     patch("intel-19-compile.patch", when="@3.1.1")
-    patch("shared-rocm.patch", when="@5.1.1")
-
-    # https://github.com/pghysels/STRUMPACK/commit/e4b110b2d823c51a90575b77ec1531c699097a9f
-    patch("strumpack-7.0.1-mpich-hipcc.patch", when="@7.0.1 +rocm ^mpich")
 
     # https://github.com/pghysels/STRUMPACK/pull/142
     patch(
@@ -200,15 +197,9 @@ class Strumpack(CMakePackage, CudaPackage, ROCmPackage):
                     args.append(f"-DCUDA_NVCC_FLAGS={' '.join(self.cuda_flags(cuda_archs))}")
 
         if "+rocm" in spec:
-            args.append(f"-DCMAKE_CXX_COMPILER={spec['hip'].hipcc}")
-            args.append(f"-DHIP_ROOT_DIR={spec['hip'].prefix}")
             rocm_archs = spec.variants["amdgpu_target"].value
-            hipcc_flags = []
-            if spec.satisfies("@7.0.1: +rocm"):
-                hipcc_flags.append("-std=c++14")
             if "none" not in rocm_archs:
-                hipcc_flags.append(f"--amdgpu-target={','.join(rocm_archs)}")
-            args.append(f"-DHIP_HIPCC_FLAGS={' '.join(hipcc_flags)}")
+                args.append(self.define("CMAKE_HIP_ARCHITECTURES", rocm_archs))
             if spec.satisfies("@8.1.0:"):
                 # https://github.com/pghysels/STRUMPACK/pull/143 stopped linking
                 # roc::rocthrust, so its (header-only) include paths are no longer
