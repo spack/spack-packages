@@ -34,6 +34,9 @@ class Libevpath(CMakePackage):
 
     variant("enet_transport", default=False, description="Build an ENET transport for EVpath")
     variant("shared", default=True, when="@5:", description="Build shared libraries")
+    variant(
+        "libfabric", default=False, when="@5:", description="Build the libfabric (RDMA) transport"
+    )
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
@@ -41,6 +44,7 @@ class Libevpath(CMakePackage):
     depends_on("gtkorvo-enet", when="@4.4.0: +enet_transport")
     depends_on("gtkorvo-enet@1.3.13", when="@:4.2.4 +enet_transport")
     depends_on("libffs")
+    depends_on("libfabric", when="+libfabric")
     # 5.0 requires dill 3.x when FFS has code generation, so it fails to configure with dill 4
     depends_on("gtkorvo-dill@:3", when="@:5.0")
 
@@ -48,6 +52,7 @@ class Libevpath(CMakePackage):
         args = ["-DTARGET_CNL=1"]
         if self.spec.satisfies("@5:"):
             args.append(self.define_from_variant("BUILD_SHARED_LIBS", "shared"))
+            args.append(self.define_from_variant("EVPATH_USE_LIBFABRIC", "libfabric"))
         elif self.spec.satisfies("@4.4.0"):
             args.append("-DBUILD_SHARED_LIBS=OFF")
         else:
