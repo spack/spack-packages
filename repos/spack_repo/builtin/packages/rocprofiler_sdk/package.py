@@ -50,6 +50,12 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
     license("MIT")
 
     version(
+        "10.2.0",
+        tag="therock-10.2",
+        commit="43fa692e568e65a1fb84f2d1c74415b042839f10",
+        submodules=submodules,
+    )
+    version(
         "10.1.0",
         tag="therock-10.1",
         commit="7da43026e4f2ef7600433c38c820732f7a205d22",
@@ -223,6 +229,7 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hsa-amd-aqlprofile@{ver}", when=f"@{ver}")
 
@@ -247,6 +254,7 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
@@ -271,13 +279,14 @@ class RocprofilerSdk(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"rocdecode@{ver}", when=f"@{ver}")
     for tgt in itertools.chain(["auto"], amdgpu_targets):
         depends_on(f"rocdecode amdgpu_target={tgt}", when=f"@6.4.0: amdgpu_target={tgt}")
 
     # rocprof-trace-decoder dependency from version 10.0.0
-    for ver in ["10.0.0", "10.1.0"]:
+    for ver in ["10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"rocprof-trace-decoder@{ver}", when=f"@{ver}")
 
     resource(

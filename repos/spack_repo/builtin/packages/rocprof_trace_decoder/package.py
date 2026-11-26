@@ -24,6 +24,7 @@ class RocprofTraceDecoder(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+    version("10.2.0", sha256="8559e088a7ac9f9c28399c714f6c18afc5fdd443f1da0ba209c6aa195196afb1")
     version(
         "10.1.0",
         sha256="31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19",
@@ -38,7 +39,7 @@ class RocprofTraceDecoder(ROCmLibrary, CMakePackage):
 
     depends_on("cmake@3.16:", type="build")
     # rocprof-trace-decoder dependency for newer versions
-    for ver in ["10.0.0", "10.1.0"]:
+    for ver in ["10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"rocm-cmake@{ver}", when=f"@{ver}")
 
     @property

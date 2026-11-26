@@ -27,6 +27,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.2.0", sha256="60d38a107c19bc231e34586103e7ec5f194c1ca55eeb2091f0bda277802f6e6e")
     version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
     version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
@@ -104,7 +105,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
     ]:
         depends_on(f"rocm-smi-lib@{ver}", type="test", when=f"@{ver}")
 
-    for ver in ["7.13.0", "7.14.0", "10.0.0", "10.1.0"]:
+    for ver in ["7.13.0", "7.14.0", "10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"amdsmi@{ver}", type="test", when=f"@{ver}")
 
     for ver in [
@@ -163,6 +164,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", type="build", when=f"@{ver}")
@@ -189,6 +191,7 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver} +hipblaslt")
     for tgt in itertools.chain(["auto"], amdgpu_targets):
@@ -212,10 +215,11 @@ class Rocblas(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"rocm-tensile@{ver}", type="build", when=f"@{ver} +tensile")
 
     depends_on("python@3.6:", type="build")

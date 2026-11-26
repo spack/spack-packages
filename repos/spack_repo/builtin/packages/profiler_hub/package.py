@@ -25,6 +25,7 @@ class ProfilerHub(ROCmLibrary, CMakePackage):
 
     license("MIT")
 
+    version("10.2.0", sha256="8559e088a7ac9f9c28399c714f6c18afc5fdd443f1da0ba209c6aa195196afb1")
     version(
         "10.1.0",
         sha256="31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19",
@@ -42,7 +43,7 @@ class ProfilerHub(ROCmLibrary, CMakePackage):
         sha256="a9502b2794ccf24685e6c4964df08944eed7d76aa0715870b3b62709b13a3fcb",
         destination="deps",
         placement="sqlite3",
-        when="@10.0:",
+        when="@10.0:10.1",
     )
     # Matches NLOHMANN_JSON_VERSION in profilers/profiler-hub/cmake/nlohmann_json.cmake
     resource(
@@ -51,16 +52,18 @@ class ProfilerHub(ROCmLibrary, CMakePackage):
         sha256="0d8ef5af7f9794e3263480193c491549b2ba6cc74bb018906202ada498a79406",
         destination="deps",
         placement="nlohmann_json",
-        when="@10.0:",
+        when="@10.0:10.1",
     )
 
     depends_on("tcl")
+    depends_on("sqlite@3.38:", when="@10.2:")
+    depends_on("nlohmann-json@3.11.3:", when="@10.2:")
     depends_on("fmt@11.2:")
     depends_on("spdlog@1.15.3:")
     depends_on("googletest@1.14.0:")
     depends_on("benchmark@1.8.3:")
 
-    for ver in ["10.0.0", "10.1.0"]:
+    for ver in ["10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"rocprof-trace-decoder@{ver}", when=f"@{ver}")
 
     @property
@@ -70,13 +73,14 @@ class ProfilerHub(ROCmLibrary, CMakePackage):
     def patch(self):
         # Use the staged SQLite source instead of cloning at configure time.
         # https://github.com/ROCm/rocm-systems/blob/therock-10.0/profilers/profiler-hub/cmake/sqlite3.cmake
-        sqlite_src = join_path(self.stage.source_path, "deps", "sqlite3")
-        filter_file(
-            'set(SQLITE3_SOURCE_DIR "${PROJECT_BINARY_DIR}/external/sqlite3")',
-            f'set(SQLITE3_SOURCE_DIR "{sqlite_src}")',
-            "profilers/profiler-hub/cmake/sqlite3.cmake",
-            string=True,
-        )
+        if self.spec.satisfies("@:10.1"):
+            sqlite_src = join_path(self.stage.source_path, "deps", "sqlite3")
+            filter_file(
+                'set(SQLITE3_SOURCE_DIR "${PROJECT_BINARY_DIR}/external/sqlite3")',
+                f'set(SQLITE3_SOURCE_DIR "{sqlite_src}")',
+                "profilers/profiler-hub/cmake/sqlite3.cmake",
+                string=True,
+            )
 
         # Use the rocpd schema files shipped in the rocm-systems tarball instead of
         # cloning rocm-systems at configure time.
@@ -98,7 +102,7 @@ class ProfilerHub(ROCmLibrary, CMakePackage):
 
     def cmake_args(self):
         args = []
-        if self.spec.satisfies("@10.0:"):
+        if self.spec.satisfies("@10.0:10.1"):
             args.append(
                 self.define(
                     "FETCHCONTENT_SOURCE_DIR_NLOHMANN_JSON",

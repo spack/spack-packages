@@ -22,6 +22,12 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     url = "https://github.com/ROCm/ROCmValidationSuite/archive/rocm-6.4.3.tar.gz"
     tags = ["rocm"]
 
+    version(
+        "10.2.0",
+        tag="v1.8.0",
+        commit="450cdcf22f0905191ef5448fc6a7a57c9fdbeda6",
+        submodules=True,
+    )
     # Version 10.1.0 uses v1.7.0 tag. TransferBench is a submodule at
     # external/TransferBench; a GitHub tarball does not include it.
     version(
@@ -118,6 +124,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     patch("011_add_inc_and_lib_path_for_pciutils-7.13.patch", when="@7.13:7.14")
     patch("011_add_inc_and_lib_path_for_pciutils-10.0.patch", when="@10.0")
     patch("011_add_inc_and_lib_path_for_pciutils-10.1.patch", when="@10.1")
+    patch("011_add_inc_and_lib_path_for_pciutils-10.2.patch", when="@10.2")
     patch("012-hipblaslt-libdir-lib64.patch", when="@7.0:")
     patch("013-add-hiprand-includes-7.13.patch", when="@7.13:10.0")
     patch("013-add-hiprand-includes-10.1.patch", when="@10.1:")
@@ -125,7 +132,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
     patch(
         "https://github.com/ROCm/ROCmValidationSuite/commit/fcbc022fdc9785e42325557fac3f5ab995a36c12.patch?full_index=1",
         sha256="bda8587f1fe0effc24e918bd2a21287020974a935b8caac7e08e22af39269ada",
-        when="@10.1:",
+        when="@10.1",
     )
     depends_on("cmake@3.5:", type="build")
     depends_on("zlib-api", type="link")
@@ -234,6 +241,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"rocminfo@{ver}", when=f"@{ver}")
@@ -262,6 +270,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hiprand@{ver}", when=f"@{ver}")
         depends_on(f"rocrand@{ver}", when=f"@{ver}")
@@ -286,6 +295,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hipblaslt@{ver}", when=f"@{ver}")
 
@@ -304,6 +314,7 @@ class RocmValidationSuite(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 

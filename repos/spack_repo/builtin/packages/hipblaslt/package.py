@@ -29,6 +29,7 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-libraries/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-libraries/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.2.0", sha256="60d38a107c19bc231e34586103e7ec5f194c1ca55eeb2091f0bda277802f6e6e")
     version("10.1.0", sha256="70e9a7e2118e44328fc2fb2d20f7d414cca6a8f7cbcefc0af245db1982129bf5")
     version("10.0.0", sha256="eb7f255d6627d3cfb312a7bcf41d701517ecaeac88382b56f2bde8d4947ea592")
     version("7.14.0", sha256="7bd30a64e1ac823861db07d9fe115256a16f02c527de49a6ecbdbbcb4018c0d8")
@@ -127,6 +128,7 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
@@ -155,6 +157,7 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hipblas-common@{ver}", when=f"@{ver}")
         depends_on(f"rocm-smi-lib@{ver}", when=f"@{ver}")
@@ -175,6 +178,7 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"roctracer-dev@{ver}", when=f"@{ver}")
 
@@ -324,14 +328,20 @@ class Hipblaslt(ROCmLibrary, CMakePackage):
             yaml_path = os.path.join(self.spec["py-pyyaml"].prefix, purelib)
             packaging_path = os.path.join(self.spec["py-packaging"].prefix, purelib)
             msgpack_path = os.path.join(self.spec["py-msgpack"].prefix, purelib)
+            python_paths = ":".join([joblib_path, yaml_path, packaging_path, msgpack_path])
             filter_file(
                 "${_python_path}",
-                ":".join(
-                    ["${_python_path}", joblib_path, yaml_path, packaging_path, msgpack_path]
-                ),
+                ":".join(["${_python_path}", python_paths]),
                 "projects/hipblaslt/cmake/hipblaslt_python.cmake",
                 string=True,
             )
+            if self.spec.satisfies("@10.2.0:"):
+                filter_file(
+                    'list(APPEND environment "PYTHONPATH=${python_path}")',
+                    'list(APPEND environment "PYTHONPATH=${python_path}:' + python_paths + '")',
+                    "projects/hipblaslt/cmake/hipblaslt_codegen.cmake",
+                    string=True,
+                )
             if self.spec.satisfies("@:7.14"):
                 filter_file(
                     "${PROJECT_BINARY_DIR}/lib",
