@@ -21,6 +21,7 @@ class Libevpath(CMakePackage):
     maintainers("eisenhauer", "vicentebolea")
 
     version("develop", branch="master")
+    version("5.1.5", sha256="b3974ba393bc934bca898190cfc11f66cc3f3b8ac1d9bda18879bb19ae968217")
     version("5.1.4", sha256="4ab8fbf33668f7e9fb171e3eb4b915a080ab053611ffd4c4404b4200f39fde8c")
     version("5.1.3", sha256="d3f585542bc579a3746700def094b3161134d447b44eaf895bf0d5332dfa903e")
     version("5.0.0", sha256="e55a3f888352b5deeb1a56e3e1b524cf5dc1226c3172163e418626d75a0ee297")
