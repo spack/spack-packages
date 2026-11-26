@@ -1,7 +1,6 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-import glob
 import os
 import re
 
@@ -943,15 +942,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
 
     @classmethod
     def runtime_constraints(cls, *, spec, pkg):
-        # Very old spec files do not have a gcc dependency node
-        for gcc in spec.dependencies("gcc", deptype="build"):
-            for language in ("c", "cxx", "fortran"):
-                pkg("*").depends_on(
-                    f"gcc-runtime@{gcc.version}:",
-                    when=f"%[deptypes=build virtuals={language}] {spec.name}/{spec.dag_hash()}",
-                    type="link",
-                    description=f"Inject gcc-runtime when llvm is used as a {language} compiler",
-                )
+        inject_gcc_runtime(spec=spec, pkg=pkg)
 
     root_cmakelists_dir = "llvm"
 
@@ -1259,7 +1250,7 @@ class Llvm(CMakePackage, CudaPackage, LlvmDetection, CompilerPackage):
             cfg_files.append("flang.cfg")
         gcc_install_dir_flag = get_gcc_install_dir_flag(spec, self.compiler)
         if gcc_install_dir_flag:
-            gcc_rpath_flag = get_gcc_rpath_flag(spec)
+            gcc_rpath_flag = get_gcc_rpath_flag(spec) if spec.satisfies("@20:") else None
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
@@ -1305,16 +1296,24 @@ def get_gcc_install_dir_flag(spec: Spec, compiler) -> Optional[str]:
 
 
 def get_gcc_rpath_flag(spec: Spec) -> Optional[str]:
-    """Get the linker-only $-Wl,-rpath,... flag for the runtime libraries of a Spack-built GCC."""
-    if not spec.satisfies("@20: %cxx=gcc"):
+    """Get the linker-only $-Wl,-rpath,... flag for the GCC runtime libraries."""
+    if not spec.satisfies("%cxx=gcc %gcc-runtime"):
         return None
-    gcc = spec["cxx"]
-    if gcc.external:
-        return None
-    for libdir in (gcc.prefix.lib64, gcc.prefix.lib):
-        if glob.glob(os.path.join(libdir, "libgcc_s.*")):
-            return f"$-Wl,-rpath,{libdir}"
-    return None
+    return f"$-Wl,-rpath,{spec['gcc-runtime'].prefix.lib}"
+
+
+def inject_gcc_runtime(*, spec: Spec, pkg) -> None:
+    """Make packages compiled by this clang depend on the gcc-runtime of the GCC it was built
+    with, since clang links its runtime libraries."""
+    # Very old spec files do not have a gcc dependency node
+    for gcc in spec.dependencies("gcc", deptype="build"):
+        for language in ("c", "cxx", "fortran"):
+            pkg("*").depends_on(
+                f"gcc-runtime@{gcc.version}:",
+                when=f"%[deptypes=build virtuals={language}] {spec.name}/{spec.dag_hash()}",
+                type="link",
+                description=f"Inject gcc-runtime when {spec.name} is the {language} compiler",
+            )
 
 
 def get_llvm_targets_to_build(spec):
