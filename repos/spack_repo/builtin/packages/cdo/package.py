@@ -243,8 +243,14 @@ class Cdo(AutotoolsPackage):
         when="@2.2.2:2.3.0 %gcc@14:",
         sha256="db0d9bd32bbee01d914c1dbebd751403e9c918fafd540fd6ecc6a2f27e0900cf",
     )
+    patch(
+        "disable-fortran-configure-ac.patch",
+        when="@2.2.0: ~fortran",
+        sha256="4efbb6d134fb824a45d3c696cac058ebe4c51c0b6ec16e95b573cd7b9fe43321",
+    )
     conflicts("%gcc@14:", when="@:2.2.0", msg="Compilation with gcc@14: requires cdo@2.2.2:")
 
+    variant("fortran", when="@2.2.0:", default=True, description="Enable Fortran interfaces")
     variant("netcdf", default=True, description="Enable NetCDF support")
     variant(
         "grib2", default="eccodes", values=("eccodes", "none"), description="Specify GRIB2 backend"
@@ -266,9 +272,12 @@ class Cdo(AutotoolsPackage):
     variant("magics", default=False, description="Enable Magics library support")
     variant("openmp", default=True, description="Enable OpenMP support")
 
-    depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
-    depends_on("fortran", type="build")  # generated
+    depends_on("c", type="build")
+    depends_on("cxx", type="build")
+    # Below 2.2.0 the fortran variant does not exist and the F77 interface is
+    # always built, so a Fortran compiler is required there.
+    depends_on("fortran", type="build", when="@:2.1.99")
+    depends_on("fortran", type="build", when="@2.2.0: +fortran")
 
     depends_on("pkgconfig", type="build")
 
@@ -299,8 +308,36 @@ class Cdo(AutotoolsPackage):
     )
     conflicts("%gcc@9:", when="@:1.9.6", msg="GCC 9 changed OpenMP data sharing behavior")
 
+    # The --disable-fortran support is added by patching configure.ac, so the
+    # configure scripts must be regenerated from the patched templates.
+    with when("@2.2.0: ~fortran"):
+        depends_on("autoconf", type="build")
+        depends_on("automake", type="build")
+        depends_on("libtool", type="build")
+        depends_on("m4", type="build")
+
+    @property
+    def force_autoreconf(self):
+        return self.spec.satisfies("@2.2.0: ~fortran")
+
+    # The patch for ~fortran also modifies libcdi/configure.ac (libcdi is a
+    # nested autotools project with its own generated configure script), so
+    # its autotools files must be regenerated as well; otherwise make's
+    # maintainer-mode rules try to rerun aclocal and the forwarded
+    # --disable-fortran option is unknown to the stale libcdi configure.
+    @run_after("autoreconf")
+    def autoreconf_libcdi(self):
+        if self.spec.satisfies("@2.2.0: ~fortran"):
+            with working_dir(join_path(self.stage.source_path, "libcdi")):
+                which("autoreconf", required=True)("-fi")
+
     def configure_args(self):
         config_args = []
+
+        if self.spec.satisfies("@2.2.0:"):
+            config_args.append(
+                "--enable-fortran" if self.spec.satisfies("+fortran") else "--disable-fortran"
+            )
 
         flags = defaultdict(list)
 
