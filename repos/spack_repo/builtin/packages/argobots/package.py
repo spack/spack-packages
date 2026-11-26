@@ -44,6 +44,7 @@ class Argobots(AutotoolsPackage):
     variant("affinity", default=False, description="Enable affinity setting")
 
     depends_on("c", type="build")  # generated
+    depends_on("diffutils", type="build")
 
     depends_on("m4", type=("build"), when="@main")
     depends_on("autoconf", type=("build"), when="@main")

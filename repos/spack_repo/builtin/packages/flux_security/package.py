@@ -15,6 +15,7 @@ class FluxSecurity(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-security"
     url = "https://github.com/flux-framework/flux-security/releases/download/v0.8.0/flux-security-0.8.0.tar.gz"
     git = "https://github.com/flux-framework/flux-security.git"
+    get_full_repo = True
     tags = ["radiuss", "e4s"]
 
     maintainers("grondo")
@@ -22,6 +23,8 @@ class FluxSecurity(AutotoolsPackage):
     license("LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("0.17.0", sha256="f2e58073f9580c2299626200d381d6828e98bfb15a048b7d2876c6963e36f55e")
+    version("0.16.0", sha256="45a0d3b7165373949e58a9c5e2d4be5cb64af488bf3b8754d8f9a1d90e3c08ad")
     version("0.15.0", sha256="972e4060bfae937573bbcf1704ea706b58c479eb9891d73e65a5a8dc6142951f")
     version("0.14.0", sha256="fae93bdaf94110a614d2806dfddf8b70bb43f73d89a7cb6856f26ab9055afc70")
     version("0.13.0", sha256="d61b8d0e6d6c8d7497e9542eadc110c496cbd57ba6a33bfd26271d805bda9869")
@@ -45,24 +48,7 @@ class FluxSecurity(AutotoolsPackage):
     depends_on("munge")
     depends_on("libpam")
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if os.path.exists(self.configure_abs_path):
             return
         # make sure configure doesn't get confused by the staging symlink

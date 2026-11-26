@@ -15,10 +15,13 @@ class FluxPmix(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-pmix"
     url = "https://github.com/flux-framework/flux-pmix/releases/download/v0.1.0/flux-pmix-0.1.0.tar.gz"
     git = "https://github.com/flux-framework/flux-pmix.git"
+    get_full_repo = True
 
     maintainers("grondo")
 
     version("main", branch="main")
+    version("0.9.0", sha256="7beeab7fb3b1f9d883cfa4dabdfae02474a6eab775dd58c8d3b1f7124c8aa62f")
+    version("0.8.0", sha256="b8aac606b91f141e68bd1cc086cb0fecb1e318f1e92d5c4aa7402847f4beceb2")
     version("0.7.1", sha256="0530d203370b13b63263ee48ecc829ab6bddadabf4e66ea470983f6f530a410f")
     version("0.7.0", sha256="0ad9fa0d76e8ffeaa4aa45bd39760b623219e8d3d2a66eb62e8832c2f7e3f47b")
     version("0.6.0", sha256="31f9d9b99f8a75c05e2fd183a35998f104d8e80bd819c57252aca477be0d4c6e")

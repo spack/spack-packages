@@ -236,6 +236,9 @@ class Dihydrogen(CachedCMakePackage, CudaPackage, ROCmPackage):
         # Technically it's not used in the build, but CMake sets up a
         # target, so it needs to be found.
 
+    # https://github.com/LBANN/DiHydrogen/pull/208
+    patch("include-algorithm.patch", when="@0.3.0")
+
     @property
     def libs(self):
         shared = True if "+shared" in self.spec else False

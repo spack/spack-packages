@@ -20,6 +20,8 @@ class RapidsCmake(Package):
 
     version("26.10.00", tag="v26.10.00", commit="c47d47dbe2a60a71c2b5de300f4c2b09cc809bff")
 
+    depends_on("cmake@4.0:", when="@26.10:")
+
     def install(self, spec, prefix):
         install_dir = join_path(prefix.lib.cmake, "rapids-cmake")
         mkdirp(install_dir)

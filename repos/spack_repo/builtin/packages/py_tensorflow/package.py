@@ -476,6 +476,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
         when="@2.20",
     )
 
+    # https://github.com/tensorflow/tensorflow/pull/125229
+    patch(
+        "https://github.com/tensorflow/tensorflow/commit/4a8dbbe3ae35c2ad269642bf38c3eb3719e34b7b.patch?full_index=1",
+        sha256="93ba3cc8963694924078317e28b7a41d388abf51047b7d2e54c45d3f61a8ba4d",
+        when="@2.20 %cxx=gcc",
+    )
+
     # https://github.com/spack/spack/issues/49958
     patch(
         "https://github.com/tensorflow/tensorflow/pull/90563.patch?full_index=1",

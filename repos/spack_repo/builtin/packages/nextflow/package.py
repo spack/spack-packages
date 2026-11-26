@@ -48,6 +48,14 @@ class Nextflow(Package):
     #         },
     #     },
     nf_versions = {
+        "26.10.7": {
+            "release": {
+                "sha256": "f2fadde7c443d5e45d6a8433bc39d9e8d2e7861e67ba5c4badd1c17001292af3"
+            },
+            "standalone": {
+                "sha256": "c54cd4b7be058e8954180b378a8efa6d61085bc433d7d9b06ec2cad2ad6580a6"
+            },
+        },
         "26.10.2": {
             "release": {
                 "sha256": "abbc977c3903c7226da552f21446a4ab5430629652d5bd975f1ab9240ac5e4dd"

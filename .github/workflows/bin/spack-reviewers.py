@@ -95,7 +95,10 @@ def main():
         msg("skipping draft pull request")
         return
 
-    existing_reviewers = {reviewer["login"] for reviewer in pull_request["requested_reviewers"]}
+    # GitHub logins are case-insensitive, so compare them in lowercase throughout
+    existing_reviewers = {
+        reviewer["login"].lower() for reviewer in pull_request["requested_reviewers"]
+    }
     if existing_reviewers:
         msg("existing reviewers:", existing_reviewers)
     else:
@@ -123,7 +126,7 @@ def main():
     for package in changed_packages:
         try:
             for maintainer in spack.repo.PATH.get_pkg_class(package).maintainers:
-                maintainer_packages.setdefault(maintainer, set()).add(package)
+                maintainer_packages.setdefault(maintainer.lower(), set()).add(package)
         except spack.repo.UnknownPackageError as e:
             msg(f"warning: {e}")
     maintainers = set(maintainer_packages)
@@ -148,7 +151,7 @@ def main():
             sorted(non_collaborators),
         )
 
-    author = pull_request["user"]["login"]
+    author = pull_request["user"]["login"].lower()
 
     # non-collaborators can't be requested as reviewers, so tag them in a comment instead
     non_collaborators.discard(author)
