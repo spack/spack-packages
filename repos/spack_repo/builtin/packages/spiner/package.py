@@ -79,8 +79,10 @@ class Spiner(CMakePackage):
                     "CMAKE_CUDA_ARCHITECTURES", self.spec["kokkos"].variants["cuda_arch"].value
                 )
             )
-        if self.spec.satisfies("^kokkos+rocm") and not self.spec.satisfies(
-            "^kokkos+rocm %cxx=llvm-amdgpu"
+        if (
+            self.run_tests
+            and self.spec.satisfies("%kokkos+rocm")
+            and not self.spec["kokkos"].satisfies("%cxx=llvm-amdgpu")
         ):
             args.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
             args.append(self.define("CMAKE_C_COMPILER", self.spec["hip"].hipcc))
