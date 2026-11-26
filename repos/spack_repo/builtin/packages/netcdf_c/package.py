@@ -179,6 +179,16 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
                 "ncgen/CMakeLists.txt",
                 string=True,
             )
+        # Needed due to the patch applied to fix CVE-2025-14933.
+        # A `#include <stdint.h>` is introduced in version 4.8.1.
+        # Refer to https://github.com/spack/spack-packages/issues/5524
+        if self.spec.satisfies("@:4.8.0"):
+            filter_file(
+                "#define NCCONFIGURE_H 1",
+                "#define NCCONFIGURE_H 1\n\n#ifdef HAVE_STDINT_H\n#include <stdint.h>\n#endif",
+                "include/ncconfigure.h",
+                string=True,
+            )
 
     variant("mpi", default=True, description="Enable parallel I/O for netcdf-4")
     variant("parallel-netcdf", default=False, description="Enable parallel I/O for classic files")
@@ -369,18 +379,6 @@ class NetcdfC(CMakePackage, AutotoolsPackage):
                 if "+optimize" in self.spec:
                     flags.append("-O2")
         return flags, None, None
-
-    def patch(self):
-        # Needed due to the patch applied to fix CVE-2025-14933.
-        # A `#include <stdint.h>` is introduced in version 4.8.1.
-        # Refer to https://github.com/spack/spack-packages/issues/5524
-        if self.spec.satisfies("@:4.8.0"):
-            filter_file(
-                "#define NCCONFIGURE_H 1",
-                "#define NCCONFIGURE_H 1\n\n#ifdef HAVE_STDINT_H\n#include <stdint.h>\n#endif",
-                "include/ncconfigure.h",
-                string=True,
-            )
 
     @property
     def libs(self):
