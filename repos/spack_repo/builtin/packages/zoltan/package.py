@@ -120,7 +120,7 @@ class Zoltan(AutotoolsPackage):
                 # Although adding to config_libs _should_ suffice, it does not
                 # Add to ldflags as well
                 config_ldflags.append("-lgfortran")
-                gfortran_lib = Executable(self.compiler.fc)(
+                gfortran_lib = Executable(spec["fortran"].package.fortran)(
                     "-print-file-name=libgfortran." + dso_suffix, output=str
                 ).strip()
                 if gfortran_lib and gfortran_lib != "libgfortran." + dso_suffix:
