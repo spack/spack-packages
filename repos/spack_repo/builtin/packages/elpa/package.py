@@ -111,6 +111,7 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
     # https://github.com/marekandreas/elpa/commit/de90ce3d634be468e71c2827d788de52ceb606bf#diff-49473dca262eeab3b4a43002adb08b4db31020d190caaad1594b47f1d5daa810R2635-R2638
     depends_on("rocsolver", when="+rocm @2024.05.001:")
     depends_on("libtool", type="build")
+    depends_on("perl", type="build")
     depends_on("python@3:", type="build")
     depends_on("scalapack", when="+autotune")
 
@@ -134,6 +135,11 @@ class Elpa(AutotoolsPackage, CudaPackage, ROCmPackage):
         when="@:2023.11.001-patched +openmp",
         msg="GPU streams currently not supported in combination with OpenMP",
     )
+
+    def patch(self):
+        # The build runs this script directly, and /usr/bin/perl may not exist.
+        # https://github.com/marekandreas/elpa/pull/91
+        filter_file(r"^#!/usr/bin/perl -w$", "#!/usr/bin/env perl", "fdep/fortran_dependencies.pl")
 
     def url_for_version(self, version):
         return "https://elpa.mpcdf.mpg.de/software/tarball-archive/Releases/{0}/elpa-{0}.tar.gz".format(
