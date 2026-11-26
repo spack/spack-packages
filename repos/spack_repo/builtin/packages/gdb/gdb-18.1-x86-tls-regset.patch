@@ -1,0 +1,57 @@
+Backport of https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=cf84c9d4805b59eac83c93ca5ca95d591ddb3335
+(gdb-18-branch cherry-pick of ebe0d2663a1cb739e797cdbb1d102151a089fa0f), limited to gdb/nat/x86-linux.c.
+gdb: use NT_386_TLS regset to access TLS GDT entries on i386 Linux
+
+diff --git a/gdb/nat/x86-linux.c b/gdb/nat/x86-linux.c
+index 16391dcde24..838ca70fb9d 100644
+--- a/gdb/nat/x86-linux.c
++++ b/gdb/nat/x86-linux.c
+@@ -27,12 +27,6 @@
+ #include "nat/gdb_ptrace.h"
+ #include <sys/user.h>
+ 
+-#ifndef __x86_64__
+-#include "nat/i386-linux.h"
+-#else
+-#include "nat/amd64-linux.h"
+-#endif
+-
+ /* Per-thread arch-specific data we want to keep.  */
+ 
+ struct arch_lwp_info
+@@ -198,16 +192,9 @@ i386_ptrace_get_tls_data (int pid, gdb::array_view<user_desc> buffer)
+ {
+   gdb_assert (buffer.size () == 3);
+ 
+-  for (int i = 0; i < 3; ++i)
+-    {
+-      void *addr = (void *) (uintptr_t) (i386_initial_tls_gdt + i);
+-      void *data = buffer.slice (i, 1).data ();
+-
+-      if (ptrace (PTRACE_GET_THREAD_AREA, pid, addr, data) < 0)
+-	return false;
+-    }
++  iovec iov { buffer.data (), buffer.size () * sizeof (user_desc) };
+ 
+-  return true;
++  return ptrace (PTRACE_GETREGSET, pid, NT_386_TLS, &iov) == 0;
+ }
+ 
+ /* See nat/x86-linux.h.  */
+@@ -217,14 +204,7 @@ i386_ptrace_set_tls_data (int pid, gdb::array_view<user_desc> buffer)
+ {
+   gdb_assert (buffer.size () == 3);
+ 
+-  for (int i = 0; i < 3; ++i)
+-    {
+-      void *addr = (void *) (uintptr_t) (i386_initial_tls_gdt + i);
+-      void *data = buffer.slice (i, 1).data ();
++  iovec iov { buffer.data (), buffer.size () * sizeof (user_desc) };
+ 
+-      if (ptrace (PTRACE_SET_THREAD_AREA, pid, addr, data) < 0)
+-       return false;
+-    }
+-
+-  return true;
++  return ptrace (PTRACE_SETREGSET, pid, NT_386_TLS, &iov) == 0;
+ }
