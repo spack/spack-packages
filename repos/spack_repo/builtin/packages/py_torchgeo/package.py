@@ -21,7 +21,7 @@ class PyTorchgeo(PythonPackage):
     version("0.10.1", sha256="9dfb36737e1ddb4156cd51244bf4247c4a2bafd0d177e7b6d59288ca8ae848b7")
     version("0.10.0", sha256="fc0357a4d6847cbd7cd5baa0f6a48b61c9a7b83f11d2d1a4c8c9d35de9f0bc26")
     with default_args(deprecated=True):
-        # CVE coming soon
+        # https://github.com/torchgeo/torchgeo/security/advisories
         version("0.9.0", sha256="93858ccd1cd9cc25b022572dabcd94a024160529a3bd7fc75dc28e995240ca6c")
         version("0.8.1", sha256="2de05fd510264569f28a8d92737cac85d34dd3c14e01aec99e6f2edb7d297248")
         version("0.8.0", sha256="a367127b8a6b6f94cff979972169271c70ca9d8237d68576c5ec38de34e5cbe7")
@@ -217,13 +217,21 @@ class PyTorchgeo(PythonPackage):
         depends_on("py-pytest-xdist@3.0.2:", when="@0.10.1:")
         depends_on("py-pytest-socket@0.3.4:", when="@0.9:")
 
+    # https://github.com/torchgeo/torchgeo/pull/4274
+    conflicts("py-kornia@0.9:", when="@:0.10")
+    # https://github.com/torchgeo/torchgeo/pull/4291
+    conflicts("py-lightly@1.7:", when="@:0.10.1")
     # https://github.com/torchgeo/torchgeo/pull/3052
     conflicts("py-lightning@2.5.5:2.5")
     # https://github.com/microsoft/torchgeo/pull/2484
     conflicts("py-lightning@=2.5.0")
     # https://github.com/Lightning-AI/pytorch-lightning/issues/19977
     conflicts("py-lightning@2.3")
+    # https://github.com/torchgeo/torchgeo/pull/4288
+    conflicts("py-pandas@4:", when="@:0.10.1")
     # https://github.com/torchgeo/torchgeo/pull/3311
     conflicts("py-pandas@3:", when="@:0.8.0")
     # https://github.com/rasterio/rasterio/issues/3196
     conflicts("py-rasterio@1.4.0:1.4.2")
+    # https://github.com/torchgeo/torchgeo/pull/4290
+    conflicts("py-shapely@3:", when="@:0.10.1")
