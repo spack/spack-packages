@@ -22,6 +22,7 @@ class Libffs(CMakePackage):
     maintainers("eisenhauer", "vicentebolea")
 
     version("develop", branch="master")
+    version("3.3.2", sha256="83f6eb33bb3a948d82e1afacc7de38878a90650f2defa448916e41b85a3a799b")
     version("3.3.1", sha256="8912df79b417b2bb3bd9801d84b3395fa90e26a17ee45776dbef4c03e49a985b")
     version("3.2.0", sha256="885578babae52394c3cabb4479b7a87053443d61b1c0975f777a22c3fd104d8c")
 
