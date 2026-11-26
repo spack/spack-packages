@@ -109,14 +109,6 @@ class Conduit(CachedCMakePackage):
     # set to false for systems that implicitly link mpi
     variant("blt_find_mpi", default=True, description="Use BLT CMake Find MPI logic")
     variant("hdf5", default=True, description="Build Conduit HDF5 support")
-    # TODO: remove 'compat' variant when VisIt starts distributing HDF5
-    # binaries
-    variant(
-        "hdf5_compat",
-        default=True,
-        when="+hdf5",
-        description="Build Conduit with HDF5 1.8.x (compatibility mode)",
-    )
     variant("silo", default=False, description="Build Conduit Silo support")
     variant("adios", default=False, description="Build Conduit ADIOS support")
     variant("parmetis", default=True, description="Build Conduit Parmetis support")
@@ -176,8 +168,6 @@ class Conduit(CachedCMakePackage):
     ###############
     depends_on("hdf5", when="+hdf5")
     depends_on("hdf5~shared", when="+hdf5~shared")
-    # Require older HDF5 to ensure compatibility with VisIt: see #29132
-    depends_on("hdf5@1.8.0:1.8", when="+hdf5+hdf5_compat")
 
     ###############
     # Silo
