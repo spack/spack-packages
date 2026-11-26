@@ -131,6 +131,7 @@ builtins = [
     "copy_tree",
     "copy",
     "default_args",
+    "deprecated",
     "depends_on",
     "determine_number_of_jobs",
     "disjoint_sets",
