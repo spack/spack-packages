@@ -23,6 +23,10 @@ spack:
     cmake:
       variants: ~ownlibs
 
+    conduit:
+      # The included DAV-SDK config requires ~hdf5_compat, which conduit no longer has
+      require:: []
+
     mesa:
       require:
       - +glx +osmesa +opengl ~opengles +llvm
@@ -46,7 +50,7 @@ spack:
     libllvm:
       require: ["llvm"]
     visit:
-      require: ["@3.4.1:"]
+      require: ["@3.5:"]
 
   concretizer:
     unify: when_possible

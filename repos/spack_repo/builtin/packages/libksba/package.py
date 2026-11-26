@@ -18,6 +18,7 @@ class Libksba(AutotoolsPackage):
 
     license("LGPL-3.0-only AND GPL-2.0-only AND GPL-3.0-only")
 
+    version("1.8.1", sha256="c2f84393011827219ae117131dba8e7684c2bed0961eed11b0642c2acba440b5")
     version("1.8.0", sha256="296b9db9095749f2aa104202d7ab7fd09ad10710e00780a709c9754b1a1d9292")
     version("1.7.0", sha256="e1d3a5745911f5a663fddecf526541c4241052a9e4cafbc92dc7f4096c7efdac")
     version("1.6.8", sha256="0f4510f1c7a679c3545990a31479f391ad45d84e039176309d42f80cf41743f5")

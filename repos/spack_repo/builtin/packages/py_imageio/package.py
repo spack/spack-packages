@@ -20,6 +20,7 @@ class PyImageio(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("2.38.2", sha256="62e338ea5c19a5547521b3b590a8a9ed1177e5d6c3fd1df076029053eacc73ca")
     version("2.37.3", sha256="bbb37efbfc4c400fcd534b367b91fcd66d5da639aaa138034431a1c5e0a41451")
     version("2.37.0", sha256="71b57b3669666272c818497aebba2b4c5f20d5b37c81720e5e1a56d59c492996")
     version("2.35.1", sha256="4952dfeef3c3947957f6d5dedb1f4ca31c6e509a476891062396834048aeed2a")
@@ -38,6 +39,7 @@ class PyImageio(PythonPackage):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@2.38.1:")
         depends_on("python@3.10:", when="@2.37.3:")
         depends_on("python@3.9:", when="@2.36:")
         depends_on("python@3.8:", when="@2.31.2:")

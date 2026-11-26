@@ -32,6 +32,7 @@ class Libxml2(AutotoolsPackage, CMakePackage, NMakePackage):
 
     license("MIT")
 
+    version("2.15.4", sha256="98087fd181d9070724f3fbc65c7377db03038eb92bd882374daff44940138821")
     version("2.15.3", sha256="78262a6e7ac170d6528ebfe2efccdf220191a5af6a6cd61ea4a9a9a5042c7a07")
     version("2.15.1", sha256="c008bac08fd5c7b4a87f7b8a71f283fa581d80d80ff8d2efd3b26224c39bc54c")
     version("2.13.9", sha256="a2c9ae7b770da34860050c309f903221c67830c86e4a7e760692b803df95143a")

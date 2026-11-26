@@ -24,6 +24,7 @@ class Libfci(CMakePackage):
     license("LicenseRef-Knizia-Permissive", checked_by="mkrack")
 
     version("main", branch="main")
+    version("0.1.1", sha256="4364282dc8043817e7404541a347350c6d5089ea91a70ad993a7b73ca7924577")
     version("0.1.0", sha256="63e8bd632e55f4b99dbaa3e905cdcd3c5dbc17aefdca1391b855f34a792bb29a")
 
     variant("openmp", default=True, description="Build with OpenMP parallelisation support")

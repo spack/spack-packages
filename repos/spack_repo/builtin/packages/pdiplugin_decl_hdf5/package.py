@@ -33,27 +33,26 @@ class PdipluginDeclHdf5(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
-    depends_on("fortran", type="build", when="+fortran")
+    depends_on("fortran", type="build", when="+fortran +tests")
 
     depends_on("cmake@3.22.1:", type=("build"), when="@1.10.0:")
     depends_on("cmake@3.16.3:", type=("build"))
-    depends_on("hdf5@1.10.7:1 +shared", type=("build", "link", "run"), when="@1.10.0:")
-    depends_on("hdf5@1.10.4:1 +shared", type=("build", "link", "run"))
+    depends_on("hdf5@1.10.7:2 +shared", type=("build", "link", "run"), when="@1.10.0:")
+    depends_on("hdf5@1.10.4:2 +shared", type=("build", "link", "run"))
     depends_on("hdf5 +mpi", type=("build", "link", "run"), when="+mpi")
     depends_on("mpi", when="+mpi")
     for v in Pdi.versions:
         depends_on("pdi@" + str(v), type=("link", "run"), when="@" + str(v))
     depends_on("pkgconfig", type=("build"))
+    depends_on("pdi +fortran", type=("link", "run"), when="+fortran +tests")
 
     root_cmakelists_dir = "plugins/decl_hdf5"
-
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
 
     def cmake_args(self):
         return [
             "-DINSTALL_PDIPLUGINDIR:PATH={:s}".format(self.prefix.lib),
             self.define_from_variant("BUILD_BENCHMARKING", "benchs"),
+            self.define_from_variant("BUILD_FORTRAN", "fortran"),
             self.define_from_variant("BUILD_HDF5_PARALLEL", "mpi"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]

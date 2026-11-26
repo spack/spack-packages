@@ -18,6 +18,7 @@ class PyOutlinesCore(PythonPackage):
     version("0.2.14", sha256="64808deed1591ca3029ff64346ceb974cd5d780c916ea82504951fe83523039e")
     version("0.2.11", sha256="dfce56f717ff5083e54cbcfdb66cad243365437fccbb5509adaa7e31e030f1d8")
 
+    depends_on("c", type="build")
     depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-maturin@1", type="build")
     depends_on("rust@1.85:", type="build")

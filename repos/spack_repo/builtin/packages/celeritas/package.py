@@ -48,7 +48,7 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         deprecated=True,
     )
 
-    _cxxstd_values = ("17", "20")
+    _cxxstd_values = ("17", "20", "23")
 
     # Note: cuda and rocm variants are defined by mixin classes
     variant("covfie", default=True, when="@0.6:", description="Enable covfie magnetic fields")
@@ -147,6 +147,10 @@ class Celeritas(CMakePackage, CudaPackage, ROCmPackage):
         depends_on(f"{_pkg} +cuda", when=f"+{_pkg} +cuda")
         for _arch in CudaPackage.cuda_arch_values:
             depends_on(f"{_pkg} cuda_arch={_arch}", when=f"+{_pkg} cuda_arch={_arch}")
+
+    # Underlying CUDA/C++ compatibility requirements
+    depends_on("cuda@12:", when="+cuda cxxstd=20")
+    depends_on("cuda@13.3:", when="+cuda cxxstd=23")
 
     conflicts("+rocm", when="+cuda", msg="AMD and NVIDIA accelerators are incompatible")
     conflicts("+rocm", when="+vecgeom", msg="HIP support is only available with ORANGE")

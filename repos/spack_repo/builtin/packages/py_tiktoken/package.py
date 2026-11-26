@@ -24,6 +24,7 @@ class PyTiktoken(PythonPackage):
     version("0.3.1", sha256="8295912429374f5f3c6c6bf053a091ce1de8c1792a62e3b30d4ad36f47fa8b52")
 
     # From pyproject.toml
+    depends_on("c", type="build")
     depends_on("py-setuptools@62.4:", type="build")
     depends_on("py-setuptools-rust@1.5.2:", type="build")
     depends_on("py-wheel", type="build")

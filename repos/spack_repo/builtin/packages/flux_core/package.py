@@ -15,6 +15,7 @@ class FluxCore(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-core"
     url = "https://github.com/flux-framework/flux-core/releases/download/v0.8.0/flux-core-0.8.0.tar.gz"
     git = "https://github.com/flux-framework/flux-core.git"
+    get_full_repo = True
     tags = ["radiuss", "e4s"]
 
     maintainers("grondo")
@@ -22,6 +23,8 @@ class FluxCore(AutotoolsPackage):
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.91.0", sha256="71e291d7fb75d6ab73539cac379371844e9278afeeafb174a7a12dd691e72cf9")
+    version("0.90.0", sha256="5bd9d9a25524c7a8638046464daa6fff35548a5681a1c3600a6a0745b47f26ce")
     version("0.89.0", sha256="322cb1f7460cf3844d0c974bbfd6c93aee07761f799f1745f15b2214ba10cb24")
     version("0.88.0", sha256="e7c5a48045a0574aa330f9bf94cad0a5de47f88c206f66387bfe8fd062c21a1c")
     version("0.87.0", sha256="7a91d222c00cc559c21dbc66312967974a01b17d00778dc549830c6f416831e7")
@@ -178,24 +181,7 @@ class FluxCore(AutotoolsPackage):
             url = "https://github.com/flux-framework/flux-core-v{1}/releases/download/v{0}/flux-core-{0}.tar.gz"
         return url.format(version.up_to(3), version.up_to(2))
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if not os.path.exists("configure"):
             # Bootstrap with autotools
             bash = which("bash", required=True)

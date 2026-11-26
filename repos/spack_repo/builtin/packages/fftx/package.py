@@ -44,6 +44,17 @@ class Fftx(CMakePackage, CudaPackage, ROCmPackage):
     # https://github.com/spack/spack-packages/pull/2059#issuecomment-3443184517
     conflicts("^cuda@13:", when="+cuda")
 
+    def patch(self):
+        # FFTX builds the non-SYCL backends as C++11. libstdc++ as of GCC 14.3 uses variable
+        # templates in C++11 mode (PR108619), which g++ accepts as an extension but nvcc rejects.
+        if self.spec.satisfies("+cuda"):
+            filter_file(
+                "CMAKE_CXX_STANDARD 11)",
+                "CMAKE_CXX_STANDARD 14)",
+                "CMakeIncludes/FFTXSetup.cmake",
+                string=True,
+            )
+
     @run_before("cmake")
     def create_lib_source_code(self):
         #  What config should be built -- driven by spec

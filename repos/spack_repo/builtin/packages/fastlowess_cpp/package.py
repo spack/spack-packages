@@ -1,13 +1,13 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-# isort: skip_file
 
 import os
 import textwrap
 
-from spack.package import *
 from spack_repo.builtin.build_systems.cargo import CargoPackage
+
+from spack.package import *
 
 
 class FastlowessCpp(CargoPackage):
@@ -18,7 +18,7 @@ class FastlowessCpp(CargoPackage):
     libraries with an owning C++ interface and a C-compatible API."""
 
     homepage = "https://thisisamirv.github.io/lowess-project/cpp/"
-    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v4.1.0.tar.gz"
+    url = "https://github.com/thisisamirv/lowess-project/archive/refs/tags/v5.1.0.tar.gz"
     git = "https://github.com/thisisamirv/lowess-project.git"
 
     test_requires_compiler = True
@@ -34,7 +34,11 @@ class FastlowessCpp(CargoPackage):
 
     # version() lines below are appended/updated by release-cpp.yml's
     # spack-release job on every release; keep newest first.
-    version("5.0.0", sha256="5aaddb050b08d9efa5493c4181dc2d59d02c5a87320dd95b415b726df1884007")
+    version("5.1.0", sha256="83fa88b80b065cbb8e907808e0a9969258cffa6dc4edea78180e13e9cfcd5a2b")
+    version(
+        "5.0.0",
+        sha256="5aaddb050b08d9efa5493c4181dc2d59d02c5a87320dd95b415b726df1884007",
+    )
     version(
         "4.1.0",
         sha256="ec0e99ac8f53ad80105eb47891569298e1e02d4068b6be89ab248e56cddbc8fa",
