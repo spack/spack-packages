@@ -3,7 +3,3 @@ concretizer:
   unify: false
   concretization_cache:
     enable: false
-  duplicates:
-    max_dupes:
-      # Remove when the Spack version is bumped
-      bazel: 2
