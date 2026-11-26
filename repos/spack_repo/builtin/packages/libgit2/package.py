@@ -103,7 +103,7 @@ class Libgit2(CMakePackage):
     # avoid using the vendored pcre for both shared and static builds
     depends_on("pcre +shared", when="@0.99: +shared")
     depends_on("pcre +static", when="@0.99: ~shared")
-    
+
     conflicts("+curl", when="@0.28:")
     # ~shared selects static or bundled copies of the other dependencies, but not of libssh2
     conflicts("+ssh", when="~shared", msg="~shared cannot link libssh2 statically; use ~ssh")
