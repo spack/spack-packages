@@ -51,7 +51,7 @@ class Macaulay2(AutotoolsPackage):
     depends_on("jansson", when="@1.26.05:")
     depends_on("lapack")
     depends_on("mathic")
-    depends_on("mathicgb")
+    depends_on("mathicgb+tbb")
     depends_on("memtailor")
     depends_on("mpfi")
     depends_on("mpfr")

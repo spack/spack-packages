@@ -17,12 +17,15 @@ class FluxSched(CMakePackage, AutotoolsPackage):
     url = "https://github.com/flux-framework/flux-sched/releases/download/v0.5.0/flux-sched-0.5.0.tar.gz"
     git = "https://github.com/flux-framework/flux-sched.git"
     tags = ["radiuss", "e4s"]
+    get_full_repo = True
 
     maintainers("grondo")
 
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.57.0", sha256="d2f91e108554200f51e8972c4cf100efb27289a0ec55ee6f21cab1df48daa647")
+    version("0.56.0", sha256="c6f7fb322fb0f27399f4f7ae190fdbccaffd101b92002ace45f0c6da39d89c18")
     version("0.55.0", sha256="28fdc059b1750438481c551d07f011d7c85ada4395e0e244d06dc07f8bd3f89b")
     version("0.54.0", sha256="de8edcc3b3cb637939bd0fe7b25870fae2bcb0326629e2e3ad4efcb9da77b96a")
     version("0.53.0", sha256="21726fcaf589cbc2f13b3339e04f668a197e2642d1a8484e5c45819864cc712d")
@@ -151,24 +154,7 @@ class FluxSched(CMakePackage, AutotoolsPackage):
             url = "https://github.com/flux-framework/flux-sched-v{1}/releases/download/v{0}/flux-sched-{0}.tar.gz"
         return url.format(version.up_to(3), version.up_to(2))
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if os.path.exists(self.configure_abs_path):
             return
         # make sure configure doesn't get confused by the staging symlink

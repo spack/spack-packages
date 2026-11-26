@@ -33,7 +33,7 @@ jobs:
         with:
           ref: develop # DO NOT CHANGE
 
-      - uses: actions/create-github-app-token@64ab729a6294000f5aa4a4bc0b73d1f32bc45510  # v3.3.0
+      - uses: actions/create-github-app-token@f418cff399f7aef4c2f0ad47e25ca7a6abbdd6fc  # v3.4.0
         id: generate-spackbot-token
         with:
           client-id: ${{ secrets.SPACKBOT_TRIAGE_CLIENT_ID }}
@@ -55,6 +55,7 @@ jobs:
           LABELS_CONFIG: .github/labels.yml
 
       - name: Tag Maintainers on PR
+        if: ${{ !contains(github.event.pull_request.labels.*.name, 'dont-ping-maintainers') }}
         run: |
           . spack-core/share/spack/setup-env.sh
           spack-python .github/workflows/bin/spack-reviewers.py

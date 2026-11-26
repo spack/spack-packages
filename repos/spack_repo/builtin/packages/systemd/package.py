@@ -26,6 +26,7 @@ class Systemd(MesonPackage):
 
     depends_on("meson@0.60.0:", type="build")
     depends_on("ninja", type="build")
+    depends_on("diffutils", type="build")
     depends_on("py-jinja2", type="build")
     depends_on("util-linux@2.30:")  # libmount
     depends_on("gperf")

@@ -119,7 +119,7 @@ ci:
 
   - reindex-job:
       tags: ["service", "x86_64"]
-      image: "ghcr.io/spack/ubuntu-24.04:v2025-09-15"
+      image: "ghcr.io/spack/ubuntu-24.04:v2026-11-09"
       variables:
         CI_JOB_SIZE: "medium"
         KUBERNETES_CPU_REQUEST: "4000m"

@@ -49,6 +49,10 @@ class Zlib(MakefilePackage, Package):
 
     license("Zlib")
 
+    def patch(self):
+        if self.spec.satisfies("platform=windows target=aarch64:"):
+            filter_file(r"-base:0x5A4C0000", "", "win32\\Makefile.msc")
+
     @classmethod
     def determine_version(cls, lib):
         for library in cls.libraries:

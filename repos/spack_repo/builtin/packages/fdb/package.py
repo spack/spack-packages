@@ -22,6 +22,8 @@ class Fdb(CMakePackage):
 
     version("master", branch="master")
 
+    version("5.25.0", sha256="edfce1a61b7e304c02fb1212e2e4701f6885c1bf2fcedaa11a5c7cc71e9f78ee")
+    version("5.21.4", sha256="9751a5a9a3e1b29a8237fc1ae716b11e7e12f70fe73a8e343587e54247caf251")
     version("5.19.2", sha256="7dfffd7279a53431fe11a82b5c6dcc94f42bc5100a0ff925fe0b54de94d1cfe2")
     version("5.19.1", sha256="de5edddd4c17cb4ddfe61bfed60a6b37408d5ed92a2d19a493592e1abfe65a8d")
     version("5.19.0", sha256="1275c4b89dcdfcb342a255e22a7d500070d5d32251910c4c2a10d5734c0590eb")

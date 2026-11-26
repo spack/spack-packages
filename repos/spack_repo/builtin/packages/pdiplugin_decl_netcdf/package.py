@@ -10,8 +10,8 @@ from ..pdi.package import Pdi
 
 
 class PdipluginDeclNetcdf(CMakePackage):
-    """The trace plugin is intended to generate a trace of  what happens in PDI
-    "data store"."""
+    """The Decl'NetCDF plugin for the PDI library reads from and writes to NetCDF
+    files in a declarative way."""
 
     homepage = "https://pdi.dev"
     git = "https://github.com/pdidev/pdi.git"
@@ -42,13 +42,9 @@ class PdipluginDeclNetcdf(CMakePackage):
 
     root_cmakelists_dir = "plugins/decl_netcdf"
 
-    def url_for_version(self, version):
-        return Pdi.version_url(version)
-
     def cmake_args(self):
         return [
             "-DINSTALL_PDIPLUGINDIR:PATH={:s}".format(self.prefix.lib),
-            self.define_from_variant("BUILD_HDF5_PARALLEL", "mpi"),
             self.define_from_variant("BUILD_NETCDF_PARALLEL", "mpi"),
             self.define_from_variant("BUILD_TESTING", "tests"),
         ]

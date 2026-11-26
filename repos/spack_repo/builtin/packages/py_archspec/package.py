@@ -18,6 +18,7 @@ class PyArchspec(PythonPackage):
 
     license("Apache-2.0 AND MIT", checked_by="wdconinc")
 
+    version("0.2.7", sha256="87bd0f5664e641333c8878352987a7e7fadd225252279ac9f37c0ca185de3147")
     version("0.2.6", sha256="2ea980955530499865225eff917b649b39fd014b53f8c6461b6348c1d8b866f1")
     version("0.2.5", sha256="5bec8dfc5366ff299071200466dc9572d56db4e43abca3c66bdd62bc2b731a2a")
     version("0.2.4", sha256="eabbae22f315d24cc2ce786a092478ec8e245208c9877fb213c2172a6ecb9302")

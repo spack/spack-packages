@@ -34,6 +34,8 @@ class Nasm(AutotoolsPackage, Package):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("zlib-api")
+
     # Fix compilation with GCC 8
     # https://bugzilla.nasm.us/show_bug.cgi?id=3392461
     patch(
@@ -44,7 +46,6 @@ class Nasm(AutotoolsPackage, Package):
     )
 
     with when("platform=windows"):
-        depends_on("perl")
         patch("msvc.mak.patch", when="@2.15.05")
 
     conflicts("%intel@:14", when="@2.14:", msg="Intel <= 14 lacks support for C11")

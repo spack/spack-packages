@@ -23,6 +23,7 @@ class EcmwfAtlas(CMakePackage):
 
     version("master", branch="master")
     version("develop", branch="develop")
+    version("0.47.0", sha256="9f8bf097cedc3165be99bbef5cbb6c49b99c20baa2e349b7c77e96ce738595fb")
     version("0.46.0", sha256="482d92e0dd0c2cffe5af9aeffd9681f64e21f3dbf2b34d51fa3aa805de0a7370")
     version("0.44.1", sha256="d7235ddb0ff827a9942a0c1051e35516778f343a52f70f3efb079d2f087b1c9d")
     version("0.43.1", sha256="f7dadb40c6f4a6408a0d7932967610f0c6d3d26d3de15b619f6d5b0598ad7e90")
@@ -50,8 +51,9 @@ class EcmwfAtlas(CMakePackage):
     depends_on("ecbuild@3.8:", type=("build"), when="@0.41.0:")
     depends_on("eckit@:1.23", when="@:0.33")
     depends_on("eckit@1.24:", when="@0.34:")
+    # boost is only needed by CGAL (up to 0.34)
     depends_on("boost cxxstd=14 visibility=hidden", when="@0.26.0:0.33.99", type=("build", "run"))
-    depends_on("boost cxxstd=17 visibility=hidden", when="@0.34.0:", type=("build", "run"))
+    depends_on("boost cxxstd=17 visibility=hidden", when="@0.34", type=("build", "run"))
     variant("fckit", default=True, description="Enable fckit")
     depends_on("fckit@:0.10", when="@:0.33 +fckit")
     depends_on("fckit@0.11:", when="@0.34: +fckit")

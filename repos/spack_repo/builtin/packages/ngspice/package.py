@@ -78,6 +78,7 @@ class Ngspice(AutotoolsPackage):
     with when("+fft+openmp"):
         depends_on("acfl threads=openmp", when="^[virtuals=fftw-api] acfl")
         depends_on("amdfftw+openmp", when="^[virtuals=fftw-api] amdfftw")
+        depends_on("aocl-fftw+openmp", when="^[virtuals=fftw-api] aocl-fftw")
         depends_on("armpl-gcc threads=openmp", when="^[virtuals=fftw-api] armpl-gcc")
         depends_on("cray-fftw+openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("fftw+openmp", when="^[virtuals=fftw-api] fftw")
@@ -87,6 +88,7 @@ class Ngspice(AutotoolsPackage):
     with when("+fft~openmp"):
         depends_on("acfl threads=none", when="^[virtuals=fftw-api] acfl")
         depends_on("amdfftw~openmp", when="^[virtuals=fftw-api] amdfftw")
+        depends_on("aocl-fftw~openmp", when="^[virtuals=fftw-api] aocl-fftw")
         depends_on("armpl-gcc threads=none", when="^[virtuals=fftw-api] armpl-gcc")
         depends_on("cray-fftw~openmp", when="^[virtuals=fftw-api] cray-fftw")
         depends_on("fftw~openmp", when="^[virtuals=fftw-api] fftw")

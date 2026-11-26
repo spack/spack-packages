@@ -15,6 +15,7 @@ class PyIdna(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.20", sha256="a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44")
     version("3.15", sha256="ca962446ea538f7092a95e057da437618e886f4d349216d2b1e294abfdb65fdc")
     with default_args(deprecated=True):
         # https://github.com/kjd/idna/security/advisories/GHSA-65pc-fj4g-8rjx
@@ -29,6 +30,8 @@ class PyIdna(PythonPackage):
         version("2.5", sha256="3cb5ce08046c4e3a560fc02f138d0ac63e00f8ce5901a56b32ec8b7994082aab")
 
     with default_args(type="build"):
+        depends_on("python@3.9:", when="@3.16:")
+
         depends_on("py-flit-core@3.11:4", when="@3.15:")
         depends_on("py-flit-core@3.11:3", when="@3.11")
         depends_on("py-flit-core@3.2:3", when="@3.4:3.10")

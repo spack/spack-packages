@@ -101,6 +101,12 @@ class Herwig3(AutotoolsPackage):
         if self.spec.satisfies("+vbfnlo"):
             args.append("--with-vbfnlo=" + self.spec["vbfnlo"].prefix)
 
+        # Pythia8 is auto-detected even if not where Herwig3 uses it
+        if self.spec.satisfies("^evtgen+pythia8"):
+            args.append("--with-pythia=" + self.spec["pythia8"].prefix)
+        else:
+            args.append("--without-pythia")
+
         return args
 
     def flag_handler(self, name, flags):

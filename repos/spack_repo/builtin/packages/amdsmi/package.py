@@ -5,11 +5,12 @@
 import re
 
 from spack_repo.builtin.build_systems.cmake import CMakePackage
+from spack_repo.builtin.build_systems.rocm import ROCmLibrary
 
 from spack.package import *
 
 
-class Amdsmi(CMakePackage):
+class Amdsmi(ROCmLibrary, CMakePackage):
     """The AMD System Management Interface Library, or AMD SMI library,
     is a C library for Linux that provides a user space interface for
     applications to monitor and control AMD device."""
@@ -22,18 +23,12 @@ class Amdsmi(CMakePackage):
     executables = ["amd-smi"]
     license("MIT")
 
-    def url_for_version(self, version):
-        if version <= Version("7.1.1"):
-            url = "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        elif version <= Version("7.2.3"):
-            url = "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"
-            return url.format(version)
-        else:
-            # For versions >= 7.13, use therock-{major}.{minor} tag format
-            url = "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{0}.{1}.tar.gz"
-            return url.format(version[0], version[1])
-
+    rocm_url_map = [
+        ("7.1.1", "https://github.com/ROCm/amdsmi/archive/rocm-{0}.tar.gz"),
+        ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
+        (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
+    ]
+    version("10.1.0", sha256="31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19")
     version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
     version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
     version("7.13.0", sha256="86162d975c59c2f43eb79187378a9b10615db5c1d73441e7e0b7621a7ef8962c")

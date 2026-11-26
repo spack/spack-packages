@@ -82,6 +82,10 @@ class Gdb(AutotoolsPackage, GNUMirrorPackage):
     # https://sourceware.org/pipermail/gdb-patches/2021-February/176622.html
     patch("importlib.patch", when="@8.3.1:10.2 ^python@3.4:")
 
+    # Fix build with glibc that does not define PTRACE_GET_THREAD_AREA (e.g. glibc 2.17)
+    # https://sourceware.org/git/?p=binutils-gdb.git;a=commit;h=cf84c9d4805b59eac83c93ca5ca95d591ddb3335
+    patch("gdb-18.1-x86-tls-regset.patch", when="@18.1 target=x86_64:")
+
     # Required dependency
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated

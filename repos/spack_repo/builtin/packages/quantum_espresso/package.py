@@ -1,6 +1,8 @@
 # Copyright Spack Project Developers. See COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
+import os
+
 from spack_repo.builtin.build_systems import cmake, generic
 from spack_repo.builtin.build_systems.cmake import CMakePackage
 from spack_repo.builtin.build_systems.generic import Package
@@ -87,8 +89,10 @@ class QuantumEspresso(CMakePackage, Package):
     with when("+openmp"):
         requires("^fftw+openmp", when="^[virtuals=fftw-api] fftw")
         requires("^amdfftw+openmp", when="^[virtuals=fftw-api] amdfftw")
+        requires("^aocl-fftw+openmp", when="^[virtuals=fftw-api] aocl-fftw")
         requires("^openblas threads=openmp", when="^[virtuals=blas] openblas")
         requires("^amdblis threads=openmp", when="^[virtuals=blas] amdblis")
+        requires("^aocl-blas threads=openmp", when="^[virtuals=blas] aocl-blas")
         requires("^intel-oneapi-mkl threads=openmp", when="^[virtuals=blas] intel-oneapi-mkl")
         requires("^armpl-gcc threads=openmp", when="^[virtuals=blas] armpl-gcc")
         requires("^acfl threads=openmp", when="^[virtuals=blas] acfl")
@@ -286,6 +290,7 @@ class QuantumEspresso(CMakePackage, Package):
     )
 
     conflicts("~openmp", when="^amdlibflame", msg="amdlibflame requires OpenMP")
+    conflicts("~openmp", when="^aocl-lapack", msg="aocl-lapack requires OpenMP")
 
     # QMCPACK converter patches for QE 6.8, 6.7, 6.4.1, 6.4, and 6.3
     conflicts(
@@ -520,6 +525,8 @@ class GenericBuilder(generic.GenericBuilder):
         # Thus, due to 2. and 3. the F90 variable is not explictly set
         # because it would be mostly pointless and could lead to erroneous
         # behaviour.
+        # An absolute F90 also hides the compiler name from configure's MKL
+        # detection (x_ac_qe_blas.m4), which then falls back to internal BLAS.
         if "+mpi" in spec:
             mpi = spec["mpi"]
             options.append("--enable-parallel=yes")
@@ -528,9 +535,10 @@ class GenericBuilder(generic.GenericBuilder):
         else:
             options.append("--enable-parallel=no")
             options.append("CC={0}".format(env["SPACK_CC"]))
+            # Bare name, so configure doesn't take the first Fortran compiler on PATH.
+            options.append("F90={0}".format(os.path.basename(env["SPACK_FC"])))
 
         options.append("F77={0}".format(env["SPACK_F77"]))
-        options.append("F90={0}".format(env["SPACK_FC"]))
 
         if "+openmp" in spec:
             options.append("--enable-openmp")
@@ -561,13 +569,14 @@ class GenericBuilder(generic.GenericBuilder):
                 fftw_ld_flags = spec["fftw"].libs.ld_flags
             options.append("FFT_LIBS={0}".format(fftw_ld_flags))
 
-        if "^amdfftw" in spec:
-            fftw_prefix = spec["amdfftw"].prefix
+        if "^amdfftw" in spec or "^aocl-fftw" in spec:
+            fftw = spec["fftw-api"]
+            fftw_prefix = fftw.prefix
             options.append("FFTW_INCLUDE={0}".format(fftw_prefix.include))
             if "+openmp" in spec:
-                fftw_ld_flags = spec["amdfftw:openmp"].libs.ld_flags
+                fftw_ld_flags = spec["{0}:openmp".format(fftw.name)].libs.ld_flags
             else:
-                fftw_ld_flags = spec["amdfftw"].libs.ld_flags
+                fftw_ld_flags = fftw.libs.ld_flags
             options.append("FFT_LIBS={0}".format(fftw_ld_flags))
 
         # External BLAS and LAPACK requires the correct link line into
