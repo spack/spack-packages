@@ -23,6 +23,7 @@ class Pfunit(CMakePackage):
     license("NASA-1.3", checked_by="mathomp4", when="@:4.16")
     license("Apache-2.0", checked_by="mathomp4", when="@4.17:")
 
+    version("4.22.0", sha256="8ef0d95690a2d4f376a2c6e741ae5f833adceb49093ed54dcaa9917d427bfc44")
     version("4.21.0", sha256="8e4f9d55289cc0cf01a49a948131106ecbf2c4c94c419de29d3b9fe02f081553")
     version("4.20.2", sha256="cbcce26ffc0574447b4740728943ae380db70c591230d32e12d087805114d802")
     version("4.20.1", sha256="3d1789f08c71748e9c5cd4822217e7cbe8a3c7df81d166b3a862b536a281fcb9")
@@ -115,9 +116,8 @@ class Pfunit(CMakePackage):
     depends_on("fargparse@1.8.0:", when="@4.10.0:")
     depends_on("fargparse")
 
-    depends_on("cmake@3.12:3", type="build", when="@:4.11")
-    depends_on("cmake@3.12:", type="build", when="@4.12")
-    depends_on("cmake@3.24:", type="build", when="@4.13:")
+    depends_on("cmake@3.24:", type="build")
+    depends_on("cmake@:3", type="build", when="@:4.11")
 
     # CMake 3.25.0 has an issue with pFUnit
     # https://gitlab.kitware.com/cmake/cmake/-/issues/24203
@@ -139,6 +139,17 @@ class Pfunit(CMakePackage):
         # spack needs to put them in a standard location:
         for file in glob.glob("*/CMakeLists.txt"):
             filter_file(r".*/mod($|[^\w].*)", "", file)
+
+        if self.spec.satisfies("@:4.20 platform=darwin %fortran=clang"):
+            # pFUnit's macOS override passes a ranlib option that LLVM ranlib
+            # rejects (https://github.com/Goddard-Fortran-Ecosystem/pFUnit/issues/581).
+            # CMake's default archive rule is valid. Fixed upstream in 4.21.0.
+            filter_file(
+                "if (APPLE)",
+                'if (APPLE AND NOT CMAKE_Fortran_COMPILER_ID STREQUAL "LLVMFlang")',
+                "CMakeLists.txt",
+                string=True,
+            )
 
     def url_for_version(self, version):
         url_base = "https://github.com/Goddard-Fortran-Ecosystem/pFUnit"

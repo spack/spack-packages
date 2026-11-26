@@ -15,12 +15,15 @@ class FluxAccounting(AutotoolsPackage):
     homepage = "https://github.com/flux-framework/flux-accounting"
     url = "https://github.com/flux-framework/flux-accounting/releases/download/v0.1.0/flux-accounting-0.1.0.tar.gz"
     git = "https://github.com/flux-framework/flux-accounting.git"
+    get_full_repo = True
 
     maintainers("sam-maloney")
 
     license("LGPL-3.0-only")
 
     version("master", branch="master")
+    version("0.63.0", sha256="2b57b4617ea6c1d4a2bf9f4f841c9d776eb0c2ca759398a4b7e7d6b56484cf3e")
+    version("0.62.0", sha256="b6aefc830123d7b69d96b93fef475e77020764bd762dab9d5ca7ac3754f39532")
     version("0.61.0", sha256="e542871141ed7f63c513bbec6ee7e1f3521cb82f8cb796cf022c5d60f41a3c36")
 
     variant("docs", default=False, description="Build flux manpages and docs")
@@ -35,8 +38,8 @@ class FluxAccounting(AutotoolsPackage):
     depends_on("automake", type="build", when="@master")
     depends_on("libtool", type="build", when="@master")
 
-    depends_on("flux-core +security")
-    depends_on("flux-core@0.81: +security", when="@0.54.0:")
+    depends_on("flux-core")
+    depends_on("flux-core@0.81:", when="@0.54.0:")
     depends_on("jansson@2.10:")
     depends_on("sqlite")
 
@@ -45,29 +48,13 @@ class FluxAccounting(AutotoolsPackage):
     depends_on("py-sphinx-rtd-theme", type="build", when="+docs")
 
     # Testing Dependencies
+    depends_on("flux-security", type="test")
     depends_on("jq", type="test")
     depends_on("lua", type="test")
     depends_on("valgrind", type="test")
     depends_on("which", type="test")
 
-    def setup(self):
-        pass
-
-    @when("@master")
-    def setup(self):
-        with working_dir(self.stage.source_path):
-            # Allow git-describe to get last tag so flux-version works:
-            git = which("git", required=True)
-            # When using spack develop, this will already be unshallow
-            try:
-                git("fetch", "--unshallow")
-                git("config", "remote.origin.fetch", "+refs/heads/*:refs/remotes/origin/*")
-                git("fetch", "origin")
-            except ProcessError:
-                git("fetch")
-
     def autoreconf(self, spec, prefix):
-        self.setup()
         if not os.path.exists("configure"):
             # Bootstrap with autotools
             bash = which("bash", required=True)

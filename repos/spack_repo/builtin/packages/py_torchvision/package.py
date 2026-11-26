@@ -92,6 +92,12 @@ class PyTorchvision(PythonPackage):
 
     # Fix duplicate symbol error when building with ROCm
     patch("torchvision-0.26.0-rocm-vision-duplicate-symbol.patch", when="@0.26.0 ^py-torch+rocm")
+    # https://github.com/pytorch/vision/issues/9740
+    # Exclude vision_stable.cpp from hipification
+    patch(
+        "torchvision-0.29-rocm-vision-stable-duplicate-symbol.patch",
+        when="@0.29: ^py-torch+rocm",
+    )
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         # The only documentation on building is what is found in setup.py and:

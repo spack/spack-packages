@@ -846,7 +846,7 @@ class Cuda(Package):
     conflicts("glibc@:2.26", when="@12.8:")
 
     conflicts(
-        "glibc@2.42:",
+        "glibc@2.41:",
         when="@:13.0",
         msg="Incompatible exception specification of some C23 functions (cospi, "
         "sinpi, rsqrt, cospif, sinpif, rsqrtf) added in glibc@2.41. Fixed in"
@@ -984,6 +984,16 @@ class Cuda(Package):
             os.remove("/tmp/cuda-installer.log")
         except OSError:
             pass
+
+    # clang@22: rejects host-only deduction guides in CUDA mode. Backport
+    # https://github.com/NVIDIA/cccl/pull/7904 (fixed in cuda@13.4).
+    @run_after("install", when="@13.1:13.3")
+    def fix_cccl_string_view_deduction_guides(self):
+        filter_file(
+            r"^_CCCL_HOST (basic_string_view\(::std::)",
+            r"\1",
+            join_path(self.prefix.include, "cccl", "cuda", "std", "string_view"),
+        )
 
     @property
     def libs(self):

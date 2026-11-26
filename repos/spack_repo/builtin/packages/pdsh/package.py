@@ -26,17 +26,6 @@ class Pdsh(AutotoolsPackage):
     # configure.ac update in source repo: now uses 'git describe --always' to get the version
     version("2.31", sha256="0ee066ce395703285cf4f6cf00b54b7097d12457a4b1c146bc6f33d8ba73caa7")
 
-    patch(
-        "https://github.com/chaos/pdsh/commit/01b1a2150e5d2c1a065aeb05a504f1f92b2cc147.patch?full_index=1",
-        sha256="3effcc73c7b5efbe73d12579eb09982c160a116edf86f0bdb315daeebce0802e",
-        when="@2.33:",
-        # when="@8c173e645dfc5cb6619c4d0647f3fe495ad4ce7f:",
-    )  # first commit after 2924dd8ff07b31a81c4a81254ae1e1f81b39595e (shortly after pdsh-2.32)
-
-    # ## conflict when patch cannot be applied before and at
-    # ## commit 2924dd8ff07b31a81c4a81254ae1e1f81b39595e
-    conflicts("%gcc@15:", when="@:2.32")
-
     variant("ssh", default=True, description="Build with ssh module")
     variant("static_modules", default=True, description="Build with static modules")
 
@@ -49,8 +38,15 @@ class Pdsh(AutotoolsPackage):
     def autoreconf(self, spec, prefix):
         autoreconf("--install", "--verbose", "--force")
 
+    def flag_handler(self, name, flags):
+        # GCC 15 defaults to C23, which the package does not support yet
+        if name == "cflags" and self.spec.satisfies("%c=gcc@15:"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
+
     def configure_args(self):
-        args = []
+        # Keep autoconf 2.73 from adding -std=gnu23
+        args = ["ac_cv_prog_cc_c23=no"]
         if "+ssh" in self.spec:
             args.append("--with-ssh")
         if "+static_modules" in self.spec:

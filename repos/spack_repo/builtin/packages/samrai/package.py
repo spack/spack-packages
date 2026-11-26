@@ -28,11 +28,13 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     """
 
     homepage = "https://computing.llnl.gov/projects/samrai"
-    url = "https://github.com/llnl/SAMRAI/releases/download/v-4-5-0/SAMRAI-v4.5.0.tar.gz"
+    url = "https://github.com/llnl/SAMRAI/releases/download/v-4-6-1/SAMRAI-v4.6.1.tar.gz"
     list_url = homepage
     git = "https://github.com/LLNL/SAMRAI.git"
 
-    # using build_system 'cached_cmake' -- assets SAMRAI-v4.5.0.tar.gz
+    # using build_system 'cached_cmake' -- assets SAMRAI-v4.6.1.tar.gz
+    version("4.6.1", sha256="0ad6f49672f09d01c1d6c500af09613b25519185f01ac4fa406c13b530c5b106")
+    version("4.6.0", sha256="4dd69d648d9fd1d948fa33d9be1ea29d40e3df04ac3ff6f485501a9d19ec32f2")
     version("4.5.0", sha256="1209a5be43d4aecfc2761f821f311cd54c9def45286edca3f4f0cc19dd8ba2ee")
     version("4.3.0", sha256="b124f5a44cbdf44e21341de47161357684a67aaca39b2ab2cf68b6edb794149b")
     version("4.2.1", sha256="dbd0b1f2c7f6c8eba2dc7e3535a73c97cbde929e8c08cecdbca8a98e2edf3bc1")
@@ -85,7 +87,10 @@ class Samrai(AutotoolsPackage, CachedCMakePackage, CudaPackage):
     variant(
         "cxxstd",
         default="20",
-        values=("11", "14", "17", "20"),
+        values=(
+            conditional("11", "14", "17", when="@:4.5"),
+            "20",
+        ),
         multi=False,
         description="C++ standard",
         when="@4:",

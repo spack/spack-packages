@@ -21,6 +21,7 @@ class Doxygen(CMakePackage):
 
     license("GPL-2.0", checked_by="mcmehrtens")
 
+    version("1.18.0", sha256="b32a3def78b0b75a2fd74ee6a63fb4a79cb6273fe31a570362e4e1871fa446da")
     version("1.17.0", sha256="28199ea88989fc56e302c927ef979596fe9247dd231e767ba6edcdbaa49f78aa")
     version("1.16.1", sha256="cdf9d614ee8ed6a939ad12ab31a6aaa1b0c089dff2a4ce20aa008893b686d636")
     version("1.16.0", sha256="329ece14a718852e22bf9e9cc5cf0b2df20b70a6853417e818e80a6ea78ea6ac")
@@ -59,6 +60,10 @@ class Doxygen(CMakePackage):
 
     variant("mscgen", default=False, description="Build with support for code graphs from mscgen.")
 
+    variant(
+        "libclang", default=False, description="Build with support for clang-assisted parsing."
+    )
+
     tags = ["build-tools"]
 
     executables = ["doxygen"]
@@ -88,6 +93,11 @@ class Doxygen(CMakePackage):
         else:
             variants += "~mscgen"
 
+        if "clang support" in Executable(exes[0])("-V", output=str, error=str):
+            variants += "+libclang"
+        else:
+            variants += "~libclang"
+
         return variants
 
     depends_on("cmake@2.8.12:", type="build")
@@ -112,6 +122,7 @@ class Doxygen(CMakePackage):
     # optional dependencies
     depends_on("graphviz", when="+graphviz", type="run")
     depends_on("mscgen", when="+mscgen", type="run")
+    depends_on("llvm+clang", when="+libclang")
 
     # Support C++14's std::shared_ptr. For details about this patch, see
     # https://github.com/Sleepyowl/doxygen/commit/6c380ba91ae41c6d5c409a5163119318932ae2a3?diff=unified
@@ -141,7 +152,7 @@ class Doxygen(CMakePackage):
 
     # Doxygen fails to compile if newer version of LLVM are used
     # https://github.com/doxygen/doxygen/issues/10928
-    conflicts("%llvm@19:", when="@:1.13.2")
+    conflicts("%cxx=llvm@19:", when="@:1.13.2")
 
     # Some GCC 7.x get stuck in an infinite loop
     conflicts("%gcc@7.0:7.9", when="@1.9:")
@@ -164,7 +175,10 @@ class Doxygen(CMakePackage):
 
     def cmake_args(self):
         return [
+            self.define("BISON_EXECUTABLE", self.spec["bison"].prefix.bin.bison),
             self.define("use_sys_spdlog", self.spec.satisfies("@1.9.8:")),
             self.define("use_sys_sqlite3", self.spec.satisfies("@1.10:")),
             self.define("use_sys_fmt", self.spec.satisfies("@1.14:")),
+            self.define_from_variant("use_libclang", "libclang"),
+            self.define("use_libc++", False),
         ]

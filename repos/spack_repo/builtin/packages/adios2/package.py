@@ -225,7 +225,8 @@ class Adios2(CMakePackage, CudaPackage, ROCmPackage):
     depends_on("aws-sdk-cpp", when="+aws")
     depends_on("libcatalyst@2", when="+libcatalyst")
 
-    depends_on("xrootd~davix", when="+xrootd")
+    depends_on("xrootd", when="+xrootd")
+    conflicts("%xrootd+davix")
 
     # error: invalid use of incomplete type 'PyFrameObject' {aka 'struct _frame'}
     conflicts("^python@3.11:", when="@:2.7")

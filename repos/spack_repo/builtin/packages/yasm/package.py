@@ -27,6 +27,13 @@ class Yasm(AutotoolsPackage, CMakePackage):
 
     requires("build_system=cmake", when="platform=windows")
 
+    # cmake: support CMake 4.0 and cross building
+    patch(
+        "https://github.com/yasm/yasm/commit/7a7762c3378b277c90c7868e2361644d80083740.patch?full_index=1",
+        sha256="535ccd6ccca1ec927a5a8a30f6dba51e8a11eda305e6a45bb0d5a2701723f31b",
+        when="@1.3.0 build_system=cmake",
+    )
+
     # Ensure C23 compliance in boolean enum
     # https://github.com/yasm/yasm/pull/287
     patch("libyasm_bitvect_c23_bool.patch")

@@ -97,6 +97,10 @@ class Thepeg(AutotoolsPackage):
 
     install_targets = ["install-strip"]
 
+    @property
+    def libs(self):
+        return find_libraries("libThePEG*", root=self.prefix, recursive=True)
+
     def flag_handler(self, name, flags):
         if name in ("cxxflags", "cflags", "fflags", "cppflags"):
             flags.append("-O2")

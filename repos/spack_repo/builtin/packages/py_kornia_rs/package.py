@@ -26,25 +26,32 @@ class PyKorniaRs(PythonPackage):
     )
 
     version("main", branch="main")
+    version("0.2.0", sha256="9d0bed5a89db74c5faf3cfc191427f40c71bb27973c8e8dac60662253cd0b422")
     version("0.1.10", sha256="b6f5dd6e1e25e2163648953476a5dada2f6a9e5d8e524f78d1680977152bb179")
     version("0.1.9", sha256="a9b8a6afa00d80c9b1b1e3e5ff650762dac9605829a4f768ff5aedf47649efc2")
     version("0.1.1", sha256="b9ac327fae6e982e6d7df9faeadd1d4f6453e65521819ae9ae5b90e9da0ed1a5")
     version("0.1.0", sha256="0fca64f901dddff49b72e51fc92a25f0a7606e9a1a72ef283606245ea6b4f90d")
 
+    depends_on("c", type="build")
+
     # PyO3 has tight coupling with CPython version
     # Assume Python versions aren't supported until wheels are available on PyPI
     with default_args(type=("build", "run")):
-        depends_on("python@:3.14")
+        depends_on("python@:3.15")
+        depends_on("python@:3.14", when="@:0.2.0")
         depends_on("python@:3.13", when="@:0.1.9")
         depends_on("python@:3.12", when="@:0.1.7")
         depends_on("python@:3.11", when="@:0.1.0")
 
     with default_args(type="build"):
         # kornia-py/pyproject.toml
+        depends_on("py-maturin@1.9:1", when="@0.1.11:")
         depends_on("py-maturin@1", when="@0.1.6:")
         depends_on("py-maturin@1.3.2:", when="@:0.1.5")
 
-        # kornia-py/Cargo.toml
+        # Cargo.toml
+        depends_on("rust@1.89:", when="@0.1.15:")
+        depends_on("rust@1.82:", when="@0.1.11:")
         depends_on("rust@1.76:", when="@0.1.7:")
 
         # rav1e needs rustdoc
@@ -62,6 +69,11 @@ class PyKorniaRs(PythonPackage):
     # See https://github.com/kornia/kornia-rs/commit/93f768137814709b60767f7fc24a9b0184002aee
     patch("py-kornia-rs-pin-fast_image_resize.patch", when="@0.1.9")
     patch("py-kornia-rs-pin-circular_buffer.patch", when="@0.1.9")
+
+    # Remove once https://github.com/kornia/kornia-rs/pull/1404 is in a release
+    @when("@0.2.0:")
+    def patch(self):
+        filter_file(r'^linker = "x86_64-linux-gnu-gcc"$', "", ".cargo/config.toml")
 
     @property
     def build_directory(self):

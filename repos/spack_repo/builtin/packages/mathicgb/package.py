@@ -21,6 +21,7 @@ class Mathicgb(AutotoolsPackage):
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.6", sha256="722fd1c13e0643e2e68ac04bfeec07926ed479f8c32652d4992ac5aeef3157cf")
     version("1.5", sha256="07fc9683153430d137c239d57120e1dc8a2288e100002440298093dc12984624")
     version("1.4", sha256="3c13033762fc8e26c6c47e8e2e8557fcbae030f7514372dc47b0c71272b7304e")
     version("1.3", sha256="d700c6d6d65f6d8c5c40d79e1012f1e60e6e2114100ce73a719be93770bd23d9")
