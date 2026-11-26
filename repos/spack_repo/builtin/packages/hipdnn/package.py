@@ -60,7 +60,17 @@ class Hipdnn(ROCmLibrary, CMakePackage):
     depends_on("spdlog")
     depends_on("googletest")
 
-    for ver in ["7.1.1", "7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0", "10.2.0"]:
+    for ver in [
+        "7.1.1",
+        "7.2.0",
+        "7.2.1",
+        "7.2.3",
+        "7.13.0",
+        "7.14.0",
+        "10.0.0",
+        "10.1.0",
+        "10.2.0",
+    ]:
         depends_on(f"rocm-cmake@{ver}:", type="build", when=f"@{ver}")
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"llvm-amdgpu@{ver}", when=f"@{ver}")
