@@ -16,6 +16,8 @@ class Libddla(CMakePackage, CudaPackage):
     url = "https://github.com/userchba/LibDDLA/archive/refs/tags/v0.0.0.tar.gz"
     git = "https://github.com/userchba/LibDDLA.git"
 
+    maintainers("Stardust0831")
+
     license("LGPL-3.0-only")
 
     version("0.0.7", sha256="8991797705b0854dfcd83f6e2b3b1d68fad1a8f704b6ed2a4450eef2234353c6")
@@ -25,7 +27,6 @@ class Libddla(CMakePackage, CudaPackage):
     depends_on("mpi")
     depends_on("blas")
     depends_on("lapack")
-    # GPU allocations use cudaMallocAsync/cudaFreeAsync without a fallback.
     depends_on("cuda@11.2:", when="+cuda")
 
     # The public API and calls to BLAS/LAPACK use 32-bit integers.
@@ -39,11 +40,11 @@ class Libddla(CMakePackage, CudaPackage):
     conflicts("^armpl-gcc +ilp64")
 
     def cmake_args(self):
+        # Complex dot products require CBLAS in addition to Fortran BLAS.
         blas = self.spec["blas:c,fortran"].libs
         args = [
             self.define_from_variant("DDLA_USE_CUDA", "cuda"),
             self.define("BUILD_TESTS", self.run_tests),
-            # Complex dot products require CBLAS in addition to Fortran BLAS.
             self.define("BLAS_LIBRARIES", blas),
             # Retain BLAS after LAPACK for providers with separate static archives.
             self.define("LAPACK_LIBRARIES", self.spec["lapack"].libs + blas),
