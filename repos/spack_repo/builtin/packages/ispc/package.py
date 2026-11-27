@@ -116,6 +116,13 @@ class Ispc(CMakePackage):
         sha256="c4621feaa73c8cb6ee2bbcebe218bc0275517aaa5f8fc4a45a962c60a8168c95",
     )
 
+    # Fix a race in parallel builds generating the stdlib header sources
+    patch(
+        "https://github.com/ispc/ispc/commit/1f99ff7d1e5fcad578d487790bf1b465a847efbf.patch?full_index=1",
+        when="@1.25:1.32",
+        sha256="3aad6cbaf539b47d180021ce488c5a449bb82b20419c93df8328d9192a4ae947",
+    )
+
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("@1.18:1.24"):
             env.append_flags("LDFLAGS", "-lz")
