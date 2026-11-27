@@ -34,8 +34,6 @@ class Libzip(CMakePackage):
         )
 
     def url_for_version(self, version):
-        if version < Version("1.6"):
-            return f"https://libzip.org/download/libzip-{version}.tar.gz"
         return f"https://github.com/nih-at/libzip/releases/download/v{version}/libzip-{version}.tar.gz"
 
     depends_on("zlib-api")
