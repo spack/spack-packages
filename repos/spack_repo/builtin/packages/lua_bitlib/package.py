@@ -20,6 +20,8 @@ class LuaBitlib(LuaPackage):
         expand=False,
     )
 
+    depends_on("lua-lang@:5.1")
+
     def preprocess(self, spec, prefix):
         m = FileFilter("lbitlib.c")
         m.filter("luaL_reg", "luaL_Reg")
