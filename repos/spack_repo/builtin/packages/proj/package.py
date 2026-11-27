@@ -26,6 +26,7 @@ class Proj(CMakePackage, AutotoolsPackage):
 
     license("MIT")
 
+    version("9.9.0", sha256="791a0610547eeabb17006cfd49cdbd2034f3240f47ed5e88a1031811f4e2bcf3")
     version("9.7.1", sha256="6c097dc803c561929cdfcc46e4bf9945ea977611fb31493ad14e88edaeae260f")
     version("9.7.0", sha256="65705ecd987b50bf63e15820ce6bd17c042feaabda981249831bd230f6689709")
     version("9.4.1", sha256="ffe20170ee2b952207adf8a195e2141eab12cda181e49fdeb54425d98c7171d7")
@@ -127,6 +128,7 @@ class Proj(CMakePackage, AutotoolsPackage):
         # fixed in upstream proj as of 9
         patch("proj_8_curl_libraries.patch", when="@8")
 
+        depends_on("cmake@3.22.1:", when="@9.9:", type="build")
         depends_on("cmake@3.16:", when="@9.4:", type="build")
         depends_on("cmake@3.9:", when="@6:", type="build")
         depends_on("cmake@3.5:", when="@5", type="build")
