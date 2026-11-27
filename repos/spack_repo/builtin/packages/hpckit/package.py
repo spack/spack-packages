@@ -28,5 +28,7 @@ class Hpckit(Package):
     )
 
     def install(self, spec, prefix):
-        sh = which("sh")
-        sh("./install.sh", "-y", "--prefix=" + prefix)
+        # install.sh uses bash-only constructs (e.g. `set -o posix`), which
+        # fail when /bin/sh is a minimal shell such as dash.
+        bash = which("bash", required=True)
+        bash("./install.sh", "-y", "--prefix=" + prefix)
