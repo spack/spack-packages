@@ -167,8 +167,8 @@ class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = [
             self.enable_or_disable("dwrite"),
-            self.enable_or_disable("fontconfig", variant="ft"),
-            self.enable_or_disable("freetype", variant="fc"),
+            self.enable_or_disable("fontconfig", variant="fc"),
+            self.enable_or_disable("freetype", variant="ft"),
             self.enable_or_disable("png"),
             self.enable_or_disable("quartz"),
             self.enable_or_disable("tee"),
