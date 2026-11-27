@@ -76,6 +76,7 @@ class Nccl(MakefilePackage, CudaPackage):
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
+    depends_on("python@3:", type="build", when="@2.19:")
 
     # Make verbs default but packages like aws-ofi-nccl can be used instead which loads
     # another library to use instead at runtime.
