@@ -22,7 +22,7 @@ class Grpc(CMakePackage):
     version("1.80.1", sha256="96041a694ba3ec445059a95bf2b9c805b6763c255e669a30e1156e8e2ea24fc9")
 
     with default_args(deprecated=True):
-       version(
+        version(
             "1.85.0", sha256="78d933f81e66d88c9f7a5ac419aa929691ef62b61d32a92f69c16aabf21ffabe"
         )
         version(
