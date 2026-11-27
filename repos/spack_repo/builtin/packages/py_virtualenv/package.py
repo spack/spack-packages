@@ -103,8 +103,6 @@ class PyVirtualenv(PythonPackage):
         )
 
     with default_args(type="build"):
-        depends_on("c")
-
         depends_on("py-hatch-fancy-pypi-readme@25.1:", when="@21.15:")
 
         depends_on("py-hatch-vcs@0.5:", when="@21.14.6:")
