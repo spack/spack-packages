@@ -40,11 +40,6 @@ class PyMsgpack(PythonPackage):
         depends_on("py-setuptools@75.3:", when="@1.1.1:")
         depends_on("py-setuptools@35.0.2:", when="@1.0.4:")
         depends_on("py-setuptools")
-        # in requirements.txt
-        # ignore upper version limit, because it builds fine with newer
-        # versions of py-cython
-        depends_on("py-cython@3.1.4:", when="@1.1.2")
-        depends_on("py-cython@3.1.1:3.1", when="@1.1.1")
         depends_on("py-cython@0.29.30:0.29", when="@1.0.4:1.0.5")
 
     with default_args(type=("build", "run")):
