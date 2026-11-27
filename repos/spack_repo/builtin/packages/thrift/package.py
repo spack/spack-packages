@@ -130,6 +130,11 @@ class Thrift(CMakePackage, AutotoolsPackage):
         msg="+openssl required with build_system=autotools",
     )
 
+    def patch(self):
+        # Python 3.12 removed distutils
+        if self.spec.satisfies("+python %python@3.12:"):
+            filter_file(r"^optimize = 1$", "optimize = 0", join_path("lib", "py", "setup.cfg"))
+
 
 class CMakeBuilder(CMakeBuilder):
     def setup_build_environment(self, env: EnvironmentModifications):
