@@ -22,6 +22,11 @@ class Libsndfile(AutotoolsPackage):
 
     version("1.2.2", sha256="3799ca9924d3125038880367bf1468e53a1b7e3686a934f098b7e1d286cdb80e")
 
+    # GCC 15+ defaults to C23 where bool/true/false are keywords; use <stdbool.h>
+    # like upstream instead of the local enum typedef.
+    patch("c23-bool.patch", when="@1.2.2")
+    patch("c23-bool-encoder.patch", when="@1.2.2")
+
     variant("alsa", default=False, description="Use alsa in example programs")
     variant(
         "external-libs", default=False, description="Build with support for FLAC, Ogg and Vorbis"
