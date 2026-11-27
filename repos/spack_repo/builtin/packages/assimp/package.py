@@ -70,7 +70,7 @@ class Assimp(CMakePackage):
 
     def flag_handler(self, name, flags):
         flags = list(flags)
-        if name == "cxxflags":
+        if name == "cxxflags" and self.spec.satisfies("@:5.1.3"):
             flags.append(self.compiler.cxx11_flag)
         return (None, None, flags)
 
