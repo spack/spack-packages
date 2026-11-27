@@ -48,8 +48,9 @@ class IsaL(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("m4", type="build")
-    depends_on("yasm@1.2.0:", type="build")
-    depends_on("nasm@2.13:", type="build")
+    depends_on("yasm@1.2.0:", type="build", when="@:2.31")
+    depends_on("nasm@2.13:", type="build", when="@:2.31")
+    depends_on("nasm@2.14:", type="build", when="@2.32:")
 
     def configure_args(self):
         config_args = ["--enable-shared"]
