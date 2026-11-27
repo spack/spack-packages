@@ -42,7 +42,7 @@ class PyRegex(PythonPackage):
     patch("fix-empty-setup.py.patch", when="@2025.10.22")
 
     depends_on("c", type="build")
-    depends_on("py-setuptools@77.0.3:", type="build", when="@2025.7.32:")
+    depends_on("py-setuptools@77.0.4:", type="build", when="@2025.7.32:")
     depends_on("py-setuptools@62:", type="build", when="@2024.11.7:")
     depends_on("py-setuptools", type="build")
 
