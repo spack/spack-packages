@@ -20,6 +20,7 @@ class Uncrustify(CMakePackage, AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("master", branch="master")
+    version("0.83.0", commit="1cfbe058d6a226b44a6b8c841598699e98598e77")
     version("0.74", commit="62048b01507304653ea98a74b31e0edbadaf7496")
     version("0.73", commit="25b765b4ccf1fc50302df3779188ccd402962ee0")
     version("0.72", commit="1d3d8fa5e81bece0fac4b81316b0844f7cc35926")
@@ -44,6 +45,7 @@ class Uncrustify(CMakePackage, AutotoolsPackage):
         default="cmake",
     )
 
+    depends_on("cmake@3.10:", type="build", when="@0.80.1:")
     depends_on("python", type="build", when="@0.68:")
 
     with when("build_system=autotools"):
