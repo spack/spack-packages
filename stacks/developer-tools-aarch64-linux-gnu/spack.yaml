@@ -7,8 +7,15 @@ spack:
     all:
       require:
       - target=aarch64
+    c:
       prefer:
-      - '%gcc'
+      - gcc
+    cxx:
+      prefer:
+      - gcc
+    fortran:
+      prefer:
+      - gcc
 
   concretizer:
     unify: true
