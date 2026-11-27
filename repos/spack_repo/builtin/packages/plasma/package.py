@@ -60,6 +60,7 @@ class Plasma(CMakePackage):
     depends_on("python", when="@develop", type="build")
 
     depends_on("lua", when="+lua")
+    depends_on("cmake@4.3:", type="build", when="build_system=cmake +lua ^lua@5.5:")
 
     depends_on("blas")
     depends_on("lapack")
