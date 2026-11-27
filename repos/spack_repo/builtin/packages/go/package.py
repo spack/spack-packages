@@ -248,6 +248,7 @@ class Go(Package):
         env.set("CC_FOR_TARGET", self["c"].cc)
         env.set("CXX_FOR_TARGET", self["cxx"].cxx)
         env.set("GOMAXPROCS", str(make_jobs))
+        env.set("GOCACHE", join_path(self.stage.path, "go-build"))
 
     def build(self, spec, prefix):
         # Build script depend on bash
