@@ -15,6 +15,7 @@ class PyBottleneck(PythonPackage):
 
     license("BSD-2-Clause")
 
+    version("1.6.1", sha256="d87fd88e01132b7211131c3d12c242e6f30e36fc95786c97d97c74ae26d4c421")
     version("1.6.0", sha256="028d46ee4b025ad9ab4d79924113816f825f62b17b87c9e1d0d8ce144a4a0e31")
     version("1.5.0", sha256="c860242cf20e69d5aab2ec3c5d6c8c2a15f19e4b25b28b8fca2c2a12cefae9d8")
     version("1.3.8", sha256="6780d896969ba7f53c8995ba90c87c548beb3db435dc90c60b9a10ed1ab4d868")
@@ -28,11 +29,15 @@ class PyBottleneck(PythonPackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("python@3.11:", type=("build", "run"), when="@1.6.1:")
     depends_on("python@3.10:", type=("build", "run"), when="@1.6:")
     depends_on("python@3.9:", type=("build", "run"), when="@1.4.2:")
 
+    depends_on("py-setuptools@77.0.1:", when="@1.6.1:", type="build")
     depends_on("py-setuptools", type="build")
+    depends_on("py-versioneer@0.29:", when="@1.6.1:", type="build")
     depends_on("py-versioneer", when="@1.3.3:", type="build")
+    depends_on("py-numpy@2:", when="@1.6.1:", type=("build", "run"))
     depends_on("py-numpy", type=("build", "run"))
 
     def url_for_version(self, version):
