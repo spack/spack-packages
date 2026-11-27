@@ -74,9 +74,9 @@ class Mbedtls(CMakePackage, MakefilePackage):
     patch("fix-dt-needed-shared-libs.patch", when="@2.7:2.27,3.0.0")
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@:2.28.7,3:3.5"):
+        if version.satisfies(ver(":2.28.7,3:3.5")):
             return f"https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v{version}.tar.gz"
-        if self.spec.satisfies("@2.28.8,3.6.0"):
+        if version.satisfies(ver("2.28.8,3.6.0")):
             return f"https://github.com/Mbed-TLS/mbedtls/releases/download/v{version}/mbedtls-{version}.tar.bz2"
         # release tags for @2.28.9:2,3.6.1:
         return f"https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-{version}/mbedtls-{version}.tar.bz2"
