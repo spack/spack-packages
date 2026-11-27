@@ -26,3 +26,4 @@ class Irep(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("lua-lang")
+    depends_on("cmake@4.3:", type="build", when="^lua-lang@5.5:")
