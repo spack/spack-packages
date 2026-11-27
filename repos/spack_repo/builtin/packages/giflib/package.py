@@ -51,13 +51,9 @@ class Giflib(MakefilePackage, SourceforgePackage):
     def prefix_and_libversion_args(self):
         args = []
         if self.spec.satisfies("@5.2.0:"):
-            args.extend(
-                [
-                    "PREFIX={0}".format(self.spec.prefix),
-                    "LIBMAJOR={0}".format(self.spec.version.up_to(1)),
-                    "LIBVER={0}".format(self.spec.version),
-                ]
-            )
+            args.append("PREFIX={0}".format(self.spec.prefix))
+        if self.spec.satisfies("@5.2.0"):
+            args.extend(["LIBMAJOR=7", "LIBVER=7.2.0"])
         return args
 
     @property
