@@ -27,10 +27,6 @@ class Fribidi(AutotoolsPackage):
 
     depends_on("c", type="build")  # generated
 
-    depends_on("m4", type="build")
-    depends_on("autoconf", type="build")
-    depends_on("automake", type="build")
-    depends_on("libtool", type="build")
     depends_on("help2man", type="build", when="@1.0.17:")
 
     def url_for_version(self, version):
