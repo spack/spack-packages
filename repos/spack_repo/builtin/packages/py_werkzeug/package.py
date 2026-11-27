@@ -23,6 +23,8 @@ class PyWerkzeug(PythonPackage):
         version("3.0.4", sha256="34f2371506b250df4d4f84bfe7b0921e4762525762bbd936614909fe25cd7306")
         version("3.0.0", sha256="3ffff4dcc32db52ef3cc94dff3000a3c2846890f3a5a51800a27b909c5e770f0")
 
+    depends_on("python@3.9:", when="@3.1:", type=("build", "run"))
+    depends_on("python@3.8:", type=("build", "run"))
     depends_on("py-flit-core@3.11:4", when="@3.1.9:", type="build")
     depends_on("py-flit-core@:3", when="@:3.1.8", type="build")
     depends_on("py-markupsafe@2.1.1:", type=("build", "run"))
