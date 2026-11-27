@@ -18,15 +18,17 @@ class Libffi(AutotoolsPackage):
 
     license("MIT")
 
-    version("3.8.0", sha256="7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4")
-    version("3.5.2", sha256="f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc")
-    version("3.4.8", sha256="bc9842a18898bfacb0ed1252c4febcc7e78fa139fd27fdc7a3e30d9d9356119b")
-    version("3.4.7", sha256="138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d")
-    version("3.4.6", sha256="b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e")
-    version("3.4.5", sha256="96fff4e589e3b239d888d9aa44b3ff30693c2ba1617f953925a70ddebcc102b2")
-    version("3.4.4", sha256="d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676")
-    version("3.4.3", sha256="4416dd92b6ae8fcb5b10421e711c4d3cb31203d77521a77d85d0102311e6c3b8")
-    version("3.4.2", sha256="540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620")
+    version("3.8.2", sha256="a699fda2b090c4b46cb79cf60c4dacfce480eb05742c0de66acf3af174a47f92")
+    with default_args(deprecated=True):
+        version("3.8.0", sha256="7da3e2d9a171eb0a038f592ecad3ff2bb2550f3496d87b3b29ad0cf4430c0db4")
+        version("3.5.2", sha256="f3a3082a23b37c293a4fcd1053147b371f2ff91fa7ea1b2a52e335676bac82dc")
+        version("3.4.8", sha256="bc9842a18898bfacb0ed1252c4febcc7e78fa139fd27fdc7a3e30d9d9356119b")
+        version("3.4.7", sha256="138607dee268bdecf374adf9144c00e839e38541f75f24a1fcf18b78fda48b2d")
+        version("3.4.6", sha256="b0dea9df23c863a7a50e825440f3ebffabd65df1497108e5d437747843895a4e")
+        version("3.4.5", sha256="96fff4e589e3b239d888d9aa44b3ff30693c2ba1617f953925a70ddebcc102b2")
+        version("3.4.4", sha256="d66c56ad259a82cf2a9dfc408b32bf5da52371500b84745f7fb8b645712df676")
+        version("3.4.3", sha256="4416dd92b6ae8fcb5b10421e711c4d3cb31203d77521a77d85d0102311e6c3b8")
+        version("3.4.2", sha256="540fb721619a6aba3bdeef7d940d8e9e0e6d2c193595bc243241b77ff9e93620")
     version(
         "3.3",
         url="https://sourceware.org/pub/libffi/libffi-3.3.tar.gz",
