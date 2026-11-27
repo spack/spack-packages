@@ -141,7 +141,9 @@ class Blis(BlisBase):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version("2.1", sha256="901752ec596cd63421ea45a6a06a9f34491cf5ae01cea412ece05f97a2690a96")
     version("2.0", sha256="08bbebd77914a6d1a43874ae5ec2f54fe6a77cba745f2532df28361b0f1ad1b3")
+    version("1.3", sha256="8361a733756f556f37f588e3435c05a0c62d138b7c07d101a5d3f8d5a9a6ba90")
     version("1.2", sha256="c36f2bd7580f1d30c2d81c5081b76da1058db888d303d7f5a3a41e0cb09bea94")
     version("1.0", sha256="9c12972aa1e50f64ca61684eba6828f2f3dd509384b1e41a1e8a9aedea4b16a6")
     version("0.9.0", sha256="1135f664be7355427b91025075562805cdc6cc730d3173f83533b2c5dcc2f308")
