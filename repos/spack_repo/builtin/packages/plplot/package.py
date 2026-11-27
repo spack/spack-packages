@@ -38,6 +38,7 @@ class Plplot(CMakePackage):
 
     depends_on("java", when="+java")
     depends_on("lua", when="+lua")
+    depends_on("lua@:5.3", when="@5.14: +lua")
     depends_on("pango", when="+pango")
     depends_on("qt", when="+qt")
     depends_on("tcl", when="+tcl")
