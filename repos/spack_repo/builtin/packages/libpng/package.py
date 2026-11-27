@@ -52,7 +52,6 @@ class Libpng(CMakePackage):
     version("1.2.57", sha256="0f4620e11fa283fedafb474427c8e96bf149511a1804bdc47350963ae5cf54d8")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")
 
     depends_on("cmake@3.14:", type="build", when="@1.6.47:")
     depends_on("cmake@3.1:", type="build", when="@1.6.37:")
@@ -88,7 +87,6 @@ class Libpng(CMakePackage):
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
         args = [
-            self.define("CMAKE_CXX_FLAGS", self.spec["zlib-api"].headers.include_flags),
             self.define("ZLIB_ROOT", self.spec["zlib-api"].prefix),
             self.define("PNG_SHARED", "shared" in self.spec.variants["libs"].value),
             self.define("PNG_STATIC", "static" in self.spec.variants["libs"].value),
