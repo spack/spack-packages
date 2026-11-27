@@ -125,7 +125,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
         make("no_test", "GEN_FILES=")
 
     def install(self, pkg, spec, prefix):
-        make("install", "DESTDIR={0}".format(prefix))
+        make("install", "DESTDIR={0}".format(prefix), "GEN_FILES=")
 
     @run_after("install")
     def darwin_fix(self):
