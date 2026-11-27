@@ -237,7 +237,7 @@ class Axom(CachedCMakePackage, CudaPackage, ROCmPackage):
 
     depends_on("hdf5", when="+hdf5")
 
-    depends_on("lua", when="+lua")
+    depends_on("lua@:5.4", when="+lua")
 
     depends_on("scr", when="+scr")
     depends_on("scr~fortran", when="+scr~fortran")
