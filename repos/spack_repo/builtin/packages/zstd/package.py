@@ -60,7 +60,7 @@ class Zstd(CMakePackage, MakefilePackage):
     )
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build", when="build_system=cmake @:1.5")
 
     depends_on("cmake@3.10:", type="build", when="build_system=cmake @1.5.7:")
     depends_on("cmake@3.5:", type="build", when="build_system=cmake @1.5.6:")
