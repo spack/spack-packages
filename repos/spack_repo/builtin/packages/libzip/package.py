@@ -52,7 +52,7 @@ class Libzip(CMakePackage):
 
     depends_on("gnutls", when="+gnutls")
     depends_on("bzip2", when="+bzip2")
-    depends_on("lzma", when="+lzma")
+    depends_on("xz", when="+lzma")
     depends_on("openssl", when="+openssl")
     depends_on("mbedtls", when="+mbedtls")
     depends_on("zstd", when="+zstd")
