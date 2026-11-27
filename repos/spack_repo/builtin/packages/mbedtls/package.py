@@ -109,7 +109,7 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("WARNING_CFLAGS", "-Wall -Wextra -Wformat=2")
 
     def build(self, pkg, spec, prefix):
-        make("no_test")
+        make("no_test", "GEN_FILES=")
 
     def install(self, pkg, spec, prefix):
         make("install", "DESTDIR={0}".format(prefix))
