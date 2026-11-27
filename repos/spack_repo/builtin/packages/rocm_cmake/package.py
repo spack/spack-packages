@@ -26,6 +26,7 @@ class RocmCmake(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-cmake/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-cmake/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
+    version("10.2.0", sha256="b20a5bece96054cb3dfc46365624f26ed21858c1accfebae706adb58d6de1e92")
     version("10.1.0", sha256="41b034780028684a3ee281fcc2b8ed0573a64b55a5ef38d10bb59deddd3d9710")
     version("10.0.0", sha256="f832a52ead9788c9cc6d40e2fb84818c3e8e82b06079f26623a719cd891efd61")
     version("7.14.0", sha256="458201284c5089a47f3ca17584dfc2b166a21a8f4b6f2502fbd258d07620f3c3")
@@ -90,6 +91,7 @@ class RocmCmake(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
 

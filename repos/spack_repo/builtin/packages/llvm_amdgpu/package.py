@@ -49,6 +49,7 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
         (None, "https://github.com/ROCm/llvm-project/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
 
+    version("10.2.0", sha256="a1955ec80de8cb48dc6302a88b57e50d6af944e0715afc794d266c7660e321a6")
     version("10.1.0", sha256="db317aadb90366b61af0fd93b0ccf3cefe70a18e4e37c23744d968ea6f900654")
     version("10.0.0", sha256="92dcfe3d2e1ca52b460c7f168d8d74e47cd17370fa8bdffb919174115f94ab0f")
     version("7.14.0", sha256="db365c1f0ab500eeee04a990d29d79a6bb667874f8069f7b69920ca62c352d2f")
@@ -126,6 +127,7 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
     depends_on("libelf", when="@7.1:")
     depends_on("xxd", when="@7.1:")
     depends_on("py-pyaml", when="@7.13:")
+    depends_on("googletest", when="@10.2:")
 
     # This flavour of LLVM doesn't work on MacOS, so we should ensure that it
     # isn't used to satisfy any of the libllvm dependencies on the Darwin
@@ -253,6 +255,7 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
         ("7.14", "8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330"),
         ("10.0", "f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec"),
         ("10.1", "31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19"),
+        ("10.2", "8559e088a7ac9f9c28399c714f6c18afc5fdd443f1da0ba209c6aa195196afb1"),
     ]:
         resource(
             name="rocm-systems",
@@ -289,6 +292,7 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
         ("7.14.0", "4015a331f5ffd6fc5c6fa7b03e08fb4a692491d7"),
         ("10.0.0", "5c50cbd25a40f8b60e44a2ccc2f1ba3c9e0d0299"),
         ("10.1.0", "575b6512579ebde466ed3dfc04e413439d14d95d"),
+        ("10.2.0", "575b6512579ebde466ed3dfc04e413439d14d95d"),
     ]:
         resource(
             name="spirv-headers",
@@ -303,6 +307,7 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
         ("7.14", "dda1d2bf71c73b840b1a51f44f1bce6884ac0cd3aeee9269800cba533b92c2ee"),
         ("10.0", "1c9c8caf29b60c75422736b31f0d0527a25a9da6d8d8b28e6491a44b4761a224"),
         ("10.1", "35cbde9f605d0b50dedea4d6915eb19df4c0174a0cb6c0da21c2499c9c684b59"),
+        ("10.2", "9e16add8d00e85cfed85b3f49f7a0e0859a955098e13c75df98eba1c25773b87"),
     ]:
         resource(
             name="spirv-llvm-translator",
@@ -480,15 +485,20 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
             external_projects = ["spirv-llvm-translator"]
             if self.spec.satisfies("+rocm-device-libs"):
                 external_projects.insert(0, "rocm-device-libs")
+            if self.spec.satisfies("@10.2:"):
+                external_projects.append("sqtt-marker")
+                args.append(
+                    self.define(
+                        "LLVM_EXTERNAL_SQTT_MARKER_SOURCE_DIR",
+                        os.path.join(self.stage.source_path, "amd/sqtt-marker"),
+                    )
+                )
             args.extend(
                 [
                     self.define("LIBOMP_COPY_EXPORTS", "OFF"),
                     self.define("LLVM_EXTERNAL_SPIRV_LLVM_TRANSLATOR_SOURCE_DIR", spirv_dir),
                     self.define("LLVM_EXTERNAL_PROJECTS", ";".join(external_projects)),
                     self.define("LLVM_RUNTIME_TARGETS", "default;amdgcn-amd-amdhsa"),
-                    self.define(
-                        "RUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR", "ON"
-                    ),
                     self.define(
                         "RUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_RUNTIMES",
                         "compiler-rt;libc;libcxx;libcxxabi;flang-rt;openmp",
@@ -497,8 +507,18 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
                     self.define("RUNTIMES_amdgcn-amd-amdhsa_FLANG_RT_LIBCXX_PROVIDER", "llvm"),
                 ]
             )
+            if self.spec.satisfies("@7.13:10.1"):
+                args.append(
+                    self.define(
+                        "RUNTIMES_amdgcn-amd-amdhsa_LLVM_ENABLE_PER_TARGET_RUNTIME_DIR", "ON"
+                    )
+                )
+            if self.spec.satisfies("@10.2:"):
+                compiler_rt_cache_name = "AMDGPU.cmake"
+            else:
+                compiler_rt_cache_name = "GPU.cmake"
             compiler_rt_cache = os.path.join(
-                self.stage.source_path, "compiler-rt/cmake/caches/GPU.cmake"
+                self.stage.source_path, "compiler-rt", "cmake", "caches", compiler_rt_cache_name
             )
             libcxx_cache = os.path.join(self.stage.source_path, "libcxx/cmake/caches/AMDGPU.cmake")
             if os.path.isfile(compiler_rt_cache) and os.path.isfile(libcxx_cache):

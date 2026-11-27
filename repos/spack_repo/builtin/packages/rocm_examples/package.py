@@ -24,6 +24,9 @@ class RocmExamples(CMakePackage):
     license("MIT")
 
     version(
+        "10.2.0", branch="release/therock-10.2", commit="ebff63c5c67b5ce56a5f50d154102e3474c94726"
+    )
+    version(
         "10.1.0", branch="release/therock-10.1", commit="fa0d558d6f92107f54e242dd473f675bcf613e2a"
     )
     version(
@@ -102,6 +105,7 @@ class RocmExamples(CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", when=f"@{ver}")
         depends_on(f"hipify-clang@{ver}", when=f"@{ver}")
@@ -143,6 +147,7 @@ class RocmExamples(CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hipfft@{ver}", when=f"@{ver}")
         depends_on(f"rocfft@{ver}", when=f"@{ver} +rocm")
@@ -150,7 +155,7 @@ class RocmExamples(CMakePackage):
         depends_on(f"hipfft amdgpu_target={tgt}", when=f"@6.3.0: amdgpu_target={tgt}")
         depends_on(f"rocfft amdgpu_target={tgt}", when=f"@6.3.0: +rocm amdgpu_target={tgt}")
 
-    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0"]:
+    for ver in ["7.2.0", "7.2.1", "7.2.3", "7.13.0", "7.14.0", "10.0.0", "10.1.0", "10.2.0"]:
         depends_on(f"hipsparse@{ver}", when=f"@{ver}")
         depends_on(f"hip-tensor@{ver}", when=f"@{ver}")
         depends_on(f"rocwmma@{ver}", when=f"@{ver}")

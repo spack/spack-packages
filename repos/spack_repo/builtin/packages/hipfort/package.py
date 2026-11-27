@@ -23,6 +23,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
 
     rocm_url_map = [(None, "https://github.com/ROCm/hipfort/archive/rocm-{0}.tar.gz")]
 
+    version("10.2.0", sha256="a7d5d3a72106f27b33393bad34b0b7895ebd63db99cb7c6b6ce23b94017ce284")
     version("10.1.0", sha256="13ab80ea91183f36d37c16ca21a5bf685bec7bfa9912212778e5558ca8a86310")
     version("10.0.0", sha256="ba79c33ba7d22c97e39d57ef3839c0fada164d8d6dd936fd9ddb35a5909d4d81")
     version("7.14.0", sha256="1e062c9899ec8cdb7e8a889f4d043871d843449f938985f22ed92933afd54c31")
@@ -92,6 +93,7 @@ class Hipfort(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
+        "10.2.0",
     ]:
         depends_on(f"hip@{ver}", type="build", when=f"@{ver}")
 
