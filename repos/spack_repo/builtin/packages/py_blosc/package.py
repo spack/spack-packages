@@ -39,7 +39,7 @@ class PyBlosc(PythonPackage):
     # c-blosc is internally vendored but 1.11.2 doesn't correctly ship the
     # c-blosc in the tarball https://github.com/Blosc/python-blosc/issues/337
     # so use an external c-blosc, at least the vendored version
-    depends_on("c-blosc@1.21.6:", type=("build", "run"), when="@1.11.2 ^python@3.12:")
+    depends_on("c-blosc@1.21.6:", type=("build", "run"), when="@1.11.2")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
         if self.spec.satisfies("^c-blosc"):
