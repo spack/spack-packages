@@ -40,6 +40,7 @@ class Clblast(CMakePackage):
     depends_on("c", type="build")
     depends_on("cxx", type="build")
     depends_on("cmake@3.10:", type="build", when="@1.7:")
+    depends_on("cmake@:3", type="build", when="@:1.6")
 
     depends_on("opencl")
     depends_on("pocl+icd", when="^[virtuals=opencl] pocl")
