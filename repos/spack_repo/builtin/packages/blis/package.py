@@ -160,6 +160,7 @@ class Blis(BlisBase):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("perl", type="build", when="@0.3:")
 
     # Override base class variant and adds conditional values
     variant(
