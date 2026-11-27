@@ -29,6 +29,8 @@ class Aspell(AutotoolsPackage, GNUMirrorPackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+    depends_on("diffutils", type="build")
+    depends_on("perl", type="build")
     depends_on("ncurses", type="link")
 
     patch("fix_cpp.patch")
