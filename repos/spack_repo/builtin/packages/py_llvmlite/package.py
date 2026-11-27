@@ -80,6 +80,8 @@ class PyLlvmlite(PythonPackage):
     requires("%libllvm=llvm libcxx=none libunwind=none", when="platform=darwin")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
+        # Used to specify the path to the llvm-config executable for the build process
+        env.set("LLVM_CONFIG", self.spec["llvm"].llvm_config)
         if self.spec.satisfies("%fj"):
             env.set("CXX_FLTO_FLAGS", "{0}".format(self.compiler.cxx_pic_flag))
             env.set("LD_FLTO_FLAGS", "-Wl,--exclude-libs=ALL")
