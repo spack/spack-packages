@@ -17,14 +17,17 @@ class Giflib(MakefilePackage, SourceforgePackage):
 
     license("MIT")
 
-    version("5.2.2", sha256="be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb")
-    version("5.2.1", sha256="31da5562f44c5f15d63340a09a4fd62b48c45620cd302f77a6d9acf0077879bd")
-    version("5.2.0", sha256="dc7257487c767137602d86c17098ec97065a718ff568a61cfcf1a9466f197b1f")
-    version(
-        "5.1.4",
-        sha256="df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5",
-        extension="tar.bz2",
-    )
+    version("6.1.3", sha256="b65b66b99f0424b93525f987386f22fc5efb9da2bfc92ad4a532249aaffbab0e")
+
+    with default_args(deprecated=True):
+        version("5.2.2", sha256="be7ffbd057cadebe2aa144542fd90c6838c6a083b5e8a9048b8ee3b66b29d5fb")
+        version("5.2.1", sha256="31da5562f44c5f15d63340a09a4fd62b48c45620cd302f77a6d9acf0077879bd")
+        version("5.2.0", sha256="dc7257487c767137602d86c17098ec97065a718ff568a61cfcf1a9466f197b1f")
+        version(
+            "5.1.4",
+            sha256="df27ec3ff24671f80b29e6ab1c4971059c14ac3db95406884fc26574631ba8d5",
+            extension="tar.bz2",
+        )
 
     depends_on("c", type="build")
 
