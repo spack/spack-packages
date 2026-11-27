@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+import os
 import re
 
 from spack_repo.builtin.build_systems.autotools import AutotoolsPackage
@@ -119,6 +120,11 @@ class Zoltan(AutotoolsPackage):
                 # Although adding to config_libs _should_ suffice, it does not
                 # Add to ldflags as well
                 config_ldflags.append("-lgfortran")
+                gfortran_lib = Executable(spec["fortran"].package.fortran)(
+                    "-print-file-name=libgfortran." + dso_suffix, output=str
+                ).strip()
+                if gfortran_lib and gfortran_lib != "libgfortran." + dso_suffix:
+                    config_ldflags.append("-L" + os.path.dirname(gfortran_lib))
             if spec.satisfies("%intel") or spec.satisfies("%oneapi"):
                 config_libs.append("-lifcore")
 
@@ -211,3 +217,5 @@ class Zoltan(AutotoolsPackage):
         for lib_path in find(self.spec.prefix.lib, "lib*.a"):
             lib_shared_name = re.sub(r"\.a$", f".{dso_suffix}", lib_path)
             move(lib_path, lib_shared_name)
+        if self.spec.satisfies("platform=darwin"):
+            fix_darwin_install_name(self.prefix.lib)
