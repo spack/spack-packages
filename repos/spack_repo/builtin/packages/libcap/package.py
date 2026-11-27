@@ -39,6 +39,7 @@ class Libcap(MakefilePackage):
             "RAISE_SETFCAP=no",
             "GOLANG=no",
             "USE_GPERF=no",
+            "PAM_CAP=no",
             "SHARED=yes",
             "lib=lib",
             f"prefix={prefix}",
