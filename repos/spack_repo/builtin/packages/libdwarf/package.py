@@ -25,6 +25,7 @@ class Libdwarf(CMakePackage):
 
     license("LGPL-2.1-only")
 
+    version("2.3.3", sha256="bde13d1c49be6f2467326a6e0b3919247471455d16eefc3c6be26c7d4baca36a")
     version("2.3.0", sha256="a153e8101828a478f88d18341267b59c19a3fc794bea47388347ce994ba90c17")
     version("2.1.0", sha256="461bd29cbb9a41c26a25b0e527c3736c772bb7a89f6260d1edb39ab105226e06")
     version("2.0.0", sha256="c3d1db72a979e14ee60b93010f0698d30fc1bca4eb1341006783d4e9c9ec7e72")
@@ -32,7 +33,7 @@ class Libdwarf(CMakePackage):
     version("0.11.0", sha256="846071fb220ac1952f9f15ebbac6c7831ef50d0369b772c07a8a8139a42e07d2")
     version("0.10.1", sha256="b511a2dc78b98786064889deaa2c1bc48a0c70115c187900dd838474ded1cc19")
 
-    variant("shared", default=True, description="Build shared libs")
+    variant("shared", default=True, description="Build shared libs", when="@:2.3.2")
     variant("examples", default=False, description="Build examples")
     variant("pic", default=True, description="Build with position independent code")
     variant("dwarfdump", default=True, description="Build dwarfdump")
@@ -44,10 +45,12 @@ class Libdwarf(CMakePackage):
     conflicts("+shared ~pic")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")
+    depends_on("cxx", type="build", when="@:2.3.2")
+    depends_on("cxx", type="build", when="+dwarfgen")
 
     depends_on("cmake@3.5:", type="build", when="@0.10:")
     depends_on("cmake@3.10:", type="build", when="@0.12:")
+    depends_on("cmake@3.12:", type="build", when="@2.3.2:")
 
     with when("+decompression"):
         depends_on("zlib-api")
@@ -55,14 +58,16 @@ class Libdwarf(CMakePackage):
 
     def cmake_args(self):
         args = [
-            self.define_from_variant("BUILD_SHARED", "shared"),
             self.define_from_variant("BUILD_DWARFEXAMPLE", "examples"),
             self.define_from_variant("PIC_ALWAYS", "pic"),
             self.define_from_variant("BUILD_DWARFDUMP", "dwarfdump"),
             self.define_from_variant("BUILD_DWARFGEN", "dwarfgen"),
             self.define_from_variant("ENABLE_DECOMPRESSION", "decompression"),
-            self.define("BUILD_NON_SHARED", self.spec.satisfies("~shared")),
             self.define("DO_TESTING", self.run_tests),
         ]
+
+        if self.spec.satisfies("@:2.3.2"):
+            args.append(self.define_from_variant("BUILD_SHARED", "shared"))
+            args.append(self.define("BUILD_NON_SHARED", self.spec.satisfies("~shared")))
 
         return args
