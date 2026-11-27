@@ -110,7 +110,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
         depends_on("py-setuptools@69:", type="build", when="@0.25:")
         depends_on("py-setuptools", type="build")
         depends_on("py-wheel", type="build", when="@0.23:")
-        depends_on("py-six@1.7.2:", type=("build", "run"))
+        depends_on("py-six@1.7.2:", type=("build", "run"), when="@:0.21")
 
     patch(
         "https://github.com/apache/thrift/commit/69b66a51f2d86746b78300fdf43dd098d6eac7cb.patch?full_index=1",
