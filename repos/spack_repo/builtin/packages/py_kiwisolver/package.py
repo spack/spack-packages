@@ -13,6 +13,7 @@ class PyKiwisolver(PythonPackage):
     homepage = "https://github.com/nucleic/kiwi"
     pypi = "kiwisolver/kiwisolver-1.1.0.tar.gz"
 
+    version("1.5.1", sha256="f1303ef2eec81262a4b708c3e858afe58d7c75ad91c1c05266eda7673369859a")
     version("1.5.0", sha256="d4193f3d9dc3f6f79aaed0e5637f45d98850ebf01f7ca20e69457f3e8946b66a")
     version("1.4.8", sha256="23d5f023bdc8c7e54eb65f03ca5d5bb25b601eac4d7f1a042888a1f45237987e")
     version("1.4.7", sha256="9893ff81bd7107f7b685d3017cc6583daadb4fc26e4a888350df530e41980a60")
