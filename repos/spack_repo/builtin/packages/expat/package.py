@@ -132,8 +132,8 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args = ["--without-docbook", "--enable-static"]
         if spec.satisfies("+libbsd"):
             args.append("--with-libbsd")
-        return args
         args.append("--with-pic" if "+pic" in spec else "--without-pic")
+        return args
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
