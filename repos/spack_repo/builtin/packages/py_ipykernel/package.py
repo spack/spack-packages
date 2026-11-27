@@ -121,4 +121,10 @@ class PyIpykernel(PythonPackage):
     @run_after("install")
     def install_data(self):
         """install the Jupyter kernel spec"""
-        python("-m", "ipykernel", "install", "--prefix=" + self.prefix)
+        python(
+            "-m",
+            "ipykernel",
+            "install",
+            "--prefix=" + self.prefix,
+            extra_env={"IPYTHONDIR": join_path(self.stage.path, "ipython")},
+        )
