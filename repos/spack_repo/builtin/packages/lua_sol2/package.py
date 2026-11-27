@@ -34,7 +34,7 @@ class LuaSol2(CMakePackage):
     depends_on("cmake@3.26.0:", when="@3.5.0:", type="build")
 
     # Lua is not needed when building, since sol2 is headers-only
-    depends_on("lua", type=("link", "run"))
+    depends_on("lua@:5.4", type=("link", "run"))
 
     patch(
         "https://github.com/ThePhD/sol2/commit/d805d027e0a0a7222e936926139f06e23828ce9f.patch?full_index=1",
