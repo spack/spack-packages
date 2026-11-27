@@ -8,7 +8,7 @@ from spack.package import *
 
 
 class Snappy(CMakePackage):
-    """A fast compressor/decompressor: https://code.google.com/p/snappy"""
+    """A fast compressor/decompressor."""
 
     homepage = "https://github.com/google/snappy"
     url = "https://github.com/google/snappy/archive/1.1.8.tar.gz"
