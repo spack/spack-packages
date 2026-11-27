@@ -41,6 +41,7 @@ class PyPyyaml(PythonPackage):
     with when("+libyaml"):
         depends_on("c", type="build")
         depends_on("libyaml", type="link")
+        depends_on("py-cython@3:", when="@6.0.2: ^python@3.13:", type="build")
         depends_on("py-cython", when="@6:", type="build")
 
     depends_on("python@2.7,3.5:", type=("build", "link", "run"))
