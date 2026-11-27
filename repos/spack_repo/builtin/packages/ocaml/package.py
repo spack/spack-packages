@@ -96,6 +96,9 @@ class Ocaml(Package):
         if self.spec.satisfies("~force-safe-string"):
             base_args += ["--disable-force-safe-string"]
 
+        if self.spec.satisfies("@5.1:"):
+            base_args += ["--without-zstd"]
+
         # This patch is aarch64-linux-fj only.
         # However, similar patch is needed for other arch/OS/compiler
         # to use correct assembler. (See #17918)
