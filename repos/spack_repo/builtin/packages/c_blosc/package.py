@@ -19,8 +19,10 @@ class CBlosc(CMakePackage):
     license("BSD-3-Clause")
 
     version("1.21.7", sha256="3c81252accfeeabd236fa219a8bf564c4feed9feb7a3291c227b03a00adb976f")
-    version("1.21.6", sha256="9fcd60301aae28f97f1301b735f966cc19e7c49b6b4321b839b4579a0c156f38")
     with default_args(deprecated=True):
+        version(
+            "1.21.6", sha256="9fcd60301aae28f97f1301b735f966cc19e7c49b6b4321b839b4579a0c156f38"
+        )
         version(
             "1.21.5", sha256="32e61961bbf81ffea6ff30e9d70fca36c86178afd3e3cfa13376adec8c687509"
         )
