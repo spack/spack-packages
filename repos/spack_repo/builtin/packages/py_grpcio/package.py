@@ -109,8 +109,7 @@ class PyGrpcio(PythonPackage):
         depends_on("py-six@1.5.2:", when="@:1.48")
 
     depends_on("openssl+shared", when="@1.33.1:")
-    # OpenSSL 4 support: https://github.com/grpc/grpc/pull/43842
-    depends_on("openssl@:3", when="@1.33.1:")
+    depends_on("openssl@:3", when="@1.33.1:1.84")
     depends_on("zlib-api", when="@1.33.1:")
     depends_on("c-ares", when="@1.33.1:")
     depends_on("re2+shared", when="@1.34:")
