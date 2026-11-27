@@ -41,7 +41,7 @@ class Libaec(CMakePackage):
         version("1.0.0", sha256="849f08b08ddaaffe543d06d0ced5e4ee3e526b13a67c5f422d126b1c9cf1b546")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build", when="@:1.0.2")
 
     # CMake v3 is meant to be backwards compatible.
     # CMake v4 removes compatibility with versions older than v3.5.
