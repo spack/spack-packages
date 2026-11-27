@@ -15,6 +15,7 @@ class PyPythonDateutil(PythonPackage):
 
     license("Apache-2.0")
 
+    version("4.0.0", sha256="d7295ff14fdc0f92f662100bfb6c551d160ca090f2939f1ec5b9794265c03f06")
     version(
         "2.9.0.post0", sha256="37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"
     )
@@ -28,15 +29,27 @@ class PyPythonDateutil(PythonPackage):
         version("2.4.0", sha256="439df33ce47ef1478a4f4765f3390eab0ed3ec4ae10be32f2930000c8d19f417")
         version("2.2", sha256="eec865307ebe7f329a6a9945c15453265a449cdaaf3710340828a1934d53e468")
 
+    depends_on("python@3.11:", when="@4:", type=("build", "run"))
     # parser.py uses collections.Callable, removed in Python 3.10; fixed in 2.7.0
     depends_on("python@:3.9", when="@:2.6", type=("build", "run"))
 
     with default_args(type="build"):
-        depends_on("py-setuptools@24.3:")
+        depends_on("py-hatchling@1.27:", when="@4:")
+        depends_on("py-hatch-vcs@0.4:", when="@4:")
+        depends_on("py-hatch-fancy-pypi-readme@24.1:", when="@4:")
+        depends_on("py-setuptools@24.3:", when="@:3")
         # the pyproject.toml was pinned to <8 for python 2.x support, but >7 is fine to use
         # https://github.com/dateutil/dateutil/pull/1346#issuecomment-1978841433
-        depends_on("py-setuptools-scm", when="@2.7:")
-        depends_on("py-wheel", when="@2.8.0:")
+        depends_on("py-setuptools-scm", when="@2.7:3")
+        depends_on("py-wheel", when="@2.8.0:2")
 
     with default_args(type=("build", "run")):
-        depends_on("py-six@1.5:")
+        depends_on("py-six@1.5:", when="@:3")
+        depends_on("py-tzdata", when="@3:")
+
+    def url_for_version(self, version):
+        if version >= Version("3"):
+            name = "python_dateutil"
+        else:
+            name = "python-dateutil"
+        return f"https://files.pythonhosted.org/packages/source/p/python-dateutil/{name}-{version}.tar.gz"
