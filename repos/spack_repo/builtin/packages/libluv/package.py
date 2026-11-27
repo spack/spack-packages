@@ -37,6 +37,7 @@ class Libluv(CMakePackage):
     depends_on("cmake@3:", type="build")
 
     depends_on("lua-lang", type="link")
+    depends_on("lua-lang@:5.4", when="@:1.51", type="link")
     depends_on("libuv", type="link")
 
     def cmake_args(self):
