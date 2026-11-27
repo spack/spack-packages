@@ -338,6 +338,9 @@ class Hip(ROCmLibrary, CMakePackage):
         when="@:5.7",
     )
 
+    # https://github.com/ROCm/rocm-systems/pull/16099
+    patch("0019-clr-over-aligned-refcounted-new.patch", when="@10.0:10.2")
+
     @property
     def root_cmakelists_dir(self):
         if self.spec.satisfies("@7.13:"):

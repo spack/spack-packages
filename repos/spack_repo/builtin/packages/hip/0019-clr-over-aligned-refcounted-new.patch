@@ -1,0 +1,55 @@
+diff --git a/projects/clr/rocclr/device/rocm/rocvirtual.hpp b/projects/clr/rocclr/device/rocm/rocvirtual.hpp
+index b3c69a4b34fd..4887cd749fa4 100644
+--- a/projects/clr/rocclr/device/rocm/rocvirtual.hpp
++++ b/projects/clr/rocclr/device/rocm/rocvirtual.hpp
+@@ -24,6 +24,7 @@
+ #include <stack>
+ #include <string>
+ #include <thread>
++#include <type_traits>
+ #include <vector>
+ 
+ namespace amd::roc {
+@@ -1365,4 +1366,16 @@ class VirtualGPU : public device::VirtualDevice {
+ 
+   using KernelArgImpl = device::Settings::KernelArgImpl;
+ };
++
++// VirtualGPU has 64-byte aligned members. A class-scope operator new(size_t) in a base class hides
++// the aligned global operator new, so the class hierarchy must provide the aligned form, or new
++// VirtualGPU gets only the default heap alignment (ROCm/TheRock#10048).
++template <class T, class = void> struct HasAlignedClassNew : std::false_type {};
++template <class T>
++struct HasAlignedClassNew<T,
++                          std::void_t<decltype(T::operator new(std::size_t{}, std::align_val_t{}))>>
++    : std::true_type {};
++static_assert(alignof(VirtualGPU) <= __STDCPP_DEFAULT_NEW_ALIGNMENT__ ||
++                  HasAlignedClassNew<VirtualGPU>::value,
++              "new VirtualGPU must get the class alignment");
+ }  // namespace amd::roc
+diff --git a/projects/clr/rocclr/include/top.hpp b/projects/clr/rocclr/include/top.hpp
+index 277dd3e78eab..71c4598b827a 100644
+--- a/projects/clr/rocclr/include/top.hpp
++++ b/projects/clr/rocclr/include/top.hpp
+@@ -164,10 +164,21 @@ class ReferenceCountedObject {
+ 
+   void* operator new(size_t size) { return ::operator new(size); }
+   void operator delete(void* p) { return ::operator delete(p); }
++  // Over-aligned subclasses (for example roc::VirtualGPU with alignas(64) members) need the
++  // aligned forms. Without them new picks operator new(size_t) above and gets only the default
++  // heap alignment, and the compiler's aligned vector stores into the object can fault.
++  void* operator new(size_t size, std::align_val_t align) { return ::operator new(size, align); }
++  void operator delete(void* p, std::align_val_t align) { ::operator delete(p, align); }
+   void* operator new(size_t size, size_t extSize) {
+     return ReferenceCountedObject::operator new(size + extSize);
+   };
+   void operator delete(void* obj, size_t extSize) { ReferenceCountedObject::operator delete(obj); }
++  void* operator new(size_t size, std::align_val_t align, size_t extSize) {
++    return ::operator new(size + extSize, align);
++  }
++  void operator delete(void* p, std::align_val_t align, size_t extSize) {
++    ::operator delete(p, align);
++  }
+ 
+   uint referenceCount() const { return referenceCount_.load(std::memory_order_relaxed); }
+ 
