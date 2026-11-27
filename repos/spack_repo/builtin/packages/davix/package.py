@@ -54,6 +54,8 @@ class Davix(CMakePackage):
     depends_on("libxml2")
     depends_on("uuid")
     depends_on("openssl")
+    # The bundled libneon does not build with openssl@4
+    depends_on("openssl@:3", when="@:0.9.0")
     depends_on("curl", when="@0.8.1:")
     depends_on("rapidjson", when="@0.8.7:")
 
