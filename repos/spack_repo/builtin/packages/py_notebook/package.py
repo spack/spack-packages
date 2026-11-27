@@ -52,9 +52,11 @@ class PyNotebook(PythonPackage):
         depends_on("python@:3.12", when="@:6")
 
     depends_on("py-hatchling@1.11:", type="build", when="@7:")
+    depends_on("py-hatch-jupyter-builder@0.5:", type="build", when="@7.0.4:")
+    depends_on("py-hatch-jupyter-builder@0.2:", type="build", when="@7:")
     depends_on("py-httpx@0.25:0", type="build", when="@7.4.5:")
 
-    depends_on("py-jupyter-server@2.4:2", type="build", when="@7:")
+    depends_on("py-jupyter-server@2.4:2", type=("build", "run"), when="@7:")
     depends_on("py-jupyterlab@4.4.5:4.4", type=("build", "run"), when="@7.4.5:")
     depends_on("py-jupyterlab-server@2.27.1:2", type=("build", "run"), when="@7.2:")
     depends_on("py-notebook-shim@0.2", type=("build", "run"), when="@7:")
