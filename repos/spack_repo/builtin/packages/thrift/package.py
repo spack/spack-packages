@@ -86,6 +86,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
             depends_on("autoconf")
             depends_on("automake")
             depends_on("libtool")
+            depends_on("diffutils")
 
     # min ver in build/cmake/BoostMacros.cmake
     depends_on("boost@1.56:", when="@0.13:")
@@ -108,6 +109,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
         depends_on("py-pip", type="build")
         depends_on("py-setuptools@69:", type="build", when="@0.25:")
         depends_on("py-setuptools", type="build")
+        depends_on("py-wheel", type="build", when="@0.23:")
         depends_on("py-six@1.7.2:", type=("build", "run"))
 
     patch(
@@ -158,6 +160,8 @@ class AutotoolsBuilder(AutotoolsBuilder):
         # Don't install extensions to /usr
         env.set("PY_PREFIX", self.prefix)
         env.set("JAVA_PREFIX", self.prefix)
+        if self.spec.satisfies("@0.21: +python"):
+            env.set("PYTHON_SETUPUTIL_ARGS", "--no-build-isolation")
 
     def configure_args(self):
         return [
