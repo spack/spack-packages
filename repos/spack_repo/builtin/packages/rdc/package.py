@@ -27,7 +27,6 @@ class Rdc(ROCmLibrary, CMakePackage):
         ("7.2.3", "https://github.com/ROCm/rocm-systems/archive/rocm-{0}.tar.gz"),
         (None, "https://github.com/ROCm/rocm-systems/archive/refs/tags/therock-{1}.{2}.tar.gz"),
     ]
-    version("10.2.0", sha256="8559e088a7ac9f9c28399c714f6c18afc5fdd443f1da0ba209c6aa195196afb1")
     version("10.1.0", sha256="31dc4296cb15c3eada729743731d236ee4a52e4a2a301b9da9075b94c012be19")
     version("10.0.0", sha256="f30517ed6d9e18cde104eb487f173e62fed0175083a9498ca383f8136a9f4eec")
     version("7.14.0", sha256="8cadf0d5c0f53f334b7b940a78619d1746c913b26ae719e2a09e20a6f7128330")
@@ -66,10 +65,7 @@ class Rdc(ROCmLibrary, CMakePackage):
     depends_on("grpc@1.59.1+shared", when="@6.1")
     depends_on("grpc@1.61.2+shared", when="@6.2:6.4")
     depends_on("grpc@1.67.1 cxxstd=17 +shared", when="@7.0:7.13")
-    depends_on("grpc@1.78.1+shared", when="@7.14:10.1")
-    # desired version is still 1.78.1 but that version is now deprecated in spack
-    # https://github.com/spack/spack-packages/pull/7400
-    depends_on("grpc@1.80.1+shared", when="@10.2:")
+    depends_on("grpc@1.78.1+shared", when="@7.14:")
     depends_on("protobuf")
     depends_on("libcap")
     for ver in ["5.7.0", "5.7.1", "6.0.0", "6.0.2", "6.1.0", "6.1.1", "6.1.2"]:
@@ -105,7 +101,6 @@ class Rdc(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
-        "10.2.0",
     ]:
         depends_on(f"rocm-core@{ver}", when=f"@{ver}")
         depends_on(f"hsa-rocr-dev@{ver}", when=f"@{ver}")
@@ -133,7 +128,6 @@ class Rdc(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
-        "10.2.0",
     ]:
         depends_on(f"amdsmi@{ver}", when=f"@{ver}")
 
@@ -153,7 +147,6 @@ class Rdc(ROCmLibrary, CMakePackage):
         "7.14.0",
         "10.0.0",
         "10.1.0",
-        "10.2.0",
     ]:
         depends_on(f"rocm-validation-suite@{ver}", when=f"@{ver}")
 
