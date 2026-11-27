@@ -98,8 +98,6 @@ class Bzip2(Package, SourcewarePackage):
             v = self.spec.version
             v1, v2, v3 = (v.up_to(i) for i in (1, 2, 3))
 
-            kwargs = {"ignore_absent": False, "backup": False, "string": True}
-
             mf = FileFilter("Makefile-libbz2_so")
             mf.filter(
                 "$(CC) -shared -Wl,-soname -Wl,libbz2.so.{0} -o libbz2.so.{1} $(OBJS)".format(
@@ -109,21 +107,21 @@ class Bzip2(Package, SourcewarePackage):
                     "$(CC) -dynamiclib -Wl,-install_name -Wl,@rpath/libbz2.{0}.dylib "
                     "-current_version {1} -compatibility_version {2} -o libbz2.{3}.dylib $(OBJS)"
                 ).format(v1, v2, v3, v3),
-                **kwargs,
+                string=True,
             )
 
             mf.filter(
                 "$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.{0}".format(v3),
                 "$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.{0}.dylib".format(v3),
-                **kwargs,
+                string=True,
             )
             mf.filter(
-                "rm -f libbz2.so.{0}".format(v2), "rm -f libbz2.{0}.dylib".format(v2), **kwargs
+                "rm -f libbz2.so.{0}".format(v2), "rm -f libbz2.{0}.dylib".format(v2), string=True
             )
             mf.filter(
                 "ln -s libbz2.so.{0} libbz2.so.{1}".format(v3, v2),
                 "ln -s libbz2.{0}.dylib libbz2.{1}.dylib".format(v3, v2),
-                **kwargs,
+                string=True,
             )
 
     def install(self, spec, prefix):
