@@ -48,7 +48,7 @@ class Cfitsio(AutotoolsPackage):
     depends_on("bzip2", when="+bzip2")
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@3.47:"):
+        if version.satisfies(ver("3.47:")):
             return super().url_for_version(version)
 
         url = "http://heasarc.gsfc.nasa.gov/FTP/software/fitsio/c/cfitsio{0}0.tar.gz"
