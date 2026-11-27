@@ -55,6 +55,7 @@ class AoclBlas(BlisBase):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("perl", type="build")
 
     variant("ilp64", default=False, when="@3.0.1:", description="ILP64 support")
     variant("aocl_gemm", default=False, when="@4.1:", description="aocl_gemm support")
