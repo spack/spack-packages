@@ -20,6 +20,7 @@ class Libunistring(AutotoolsPackage, GNUMirrorPackage):
     license("GPL-2.0-or-later OR LGPL-3.0-or-later")
 
     version("master", branch="master")
+    version("1.5", sha256="fe89007a8a414ae4790b816b86859e877d3ab135db3c37f06541ff7e85ac344b")
     version("1.4.2", sha256="5b46e74377ed7409c5b75e7a96f95377b095623b689d8522620927964a41499c")
     version("1.4.1", sha256="67d88430892527861903788868c77802a217b0959990f7449f2976126a307763")
     version("1.2", sha256="632bd65ed74a881ca8a0309a1001c428bd1cbd5cd7ddbf8cedcd2e65f4dcdc44")
