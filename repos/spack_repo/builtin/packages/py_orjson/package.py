@@ -52,7 +52,7 @@ class PyOrjson(PythonPackage):
     with default_args(type="build"):
         depends_on("c")
         depends_on("rust@1.95:", when="@3.11.9:")
-        depends_on("rust@1.85:", when="@:3.11.5")
+        depends_on("rust@1.85:", when="@3.11.2:")
         # Error during the build of version 3.11.1
         # due to feature avx512_target_feature
         # cf. https://github.com/spack/spack-packages/pull/3281
