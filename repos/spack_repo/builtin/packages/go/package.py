@@ -266,6 +266,7 @@ class Go(Package):
         env.set("GOTOOLCHAIN", "local")
         env.set("GOMAXPROCS", str(make_jobs))
         env.set("GOPATH", join_path(dependent_spec.package.stage.path, "go"))
+        env.set("GOCACHE", join_path(dependent_spec.package.stage.path, "go-build"))
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before go modules' build(), install() methods.
