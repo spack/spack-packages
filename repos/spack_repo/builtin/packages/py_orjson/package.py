@@ -13,7 +13,8 @@ class PyOrjson(PythonPackage):
     homepage = "https://github.com/ijl/orjson"
     pypi = "orjson/orjson-3.8.7.tar.gz"
 
-    license("Apache-2.0")
+    license("MPL-2.0 AND (Apache-2.0 OR MIT)", when="@3.11.6:")
+    license("Apache-2.0 OR MIT", when="@:3.11.5")
     maintainers("LydDeb")
 
     version("3.13.0", sha256="d1de5eb04485110c5da4c657e49168995d55e076b1ce60f1a042e254f4186c4f")
