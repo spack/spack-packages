@@ -66,10 +66,12 @@ class PyHuggingfaceHub(PythonPackage):
         depends_on("py-typing-extensions@4.1:", when="@1.2.4:")
         depends_on("py-typing-extensions@3.7.4.3:", when="@0.10:")
         depends_on("py-typing-extensions", when="@0.0.10:")
-        depends_on("py-hf-xet@1.6:1", when="@1.33:")
-        depends_on("py-hf-xet@1.5.2:1", when="@1.27:")
-        depends_on("py-hf-xet@1.1.3:1", when="@0.34:")
-        depends_on("py-hf-xet@1.1.2:1", when="@0.32:")
+
+        with when("target=x86_64:,aarch64:"):
+            depends_on("py-hf-xet@1.6:1", when="@1.33:")
+            depends_on("py-hf-xet@1.5.2:1", when="@1.27:")
+            depends_on("py-hf-xet@1.1.3:1", when="@0.34:")
+            depends_on("py-hf-xet@1.1.2:1", when="@0.32:")
 
         with when("+cli"):
             depends_on("py-inquirerpy@0.3.4")
