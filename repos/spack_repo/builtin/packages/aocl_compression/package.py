@@ -45,6 +45,7 @@ class AoclCompression(CMakePackage, MakefilePackage):
 
     maintainers("amd-toolchain-support")
 
+    version("6.0.0", sha256="1a0057f06f00a178f7e58ea1eb9f2bd114f0b7c0a91f08ee1927e046fba35800")
     version("5.3", sha256="fdc58c1f42933290b8c127102c28d8a8f93102eab251046d8ed01a69a0abdbcb")
     version("5.2", sha256="93a4eddd0a70e6d8701ecf2c55a06ab341d987ccd2e87c50a5c7e1efb37e033e")
     version("5.1", sha256="9462c6898350d66a5d9ce0236c432c94b4c9393b638ddf6511628b784eb02720")
@@ -79,7 +80,7 @@ class AoclCompression(CMakePackage, MakefilePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("cmake@3.22:", when="build_system=cmake @:5.0", type="build")
-    depends_on("cmake@3.26:", when="build_system=cmake @5.1:5.2", type="build")
+    depends_on("cmake@3.26:", when="build_system=cmake @5.1:", type="build")
 
 
 class CMakeBuilder(CMakeBuilder):

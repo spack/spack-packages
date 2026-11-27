@@ -34,6 +34,7 @@ class AoclScalapack(ScalapackBase):
 
     license("BSD-3-Clause-Open-MPI")
 
+    version("6.0.0", sha256="7e30555b9049cb41a4db00764ec9afb127ba2ce2e81c1967514e7a4cf1f3b0fa")
     version("5.3", sha256="2bd0ef1d8bbd9990a8bc7b33ad7c32db788f39b9730b110d15737837111eacff")
     version("5.2", sha256="ff01f0f39c9e6d44fa493e1c68d9862d2600f425e9caaec1fe5179c10debf1d9")
     version("5.1", sha256="92f6f6b2081e27731c8b9e96c742203777cc7f2a848b96ca7511f4d259142b37")

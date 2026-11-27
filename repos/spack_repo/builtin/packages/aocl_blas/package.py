@@ -37,6 +37,7 @@ class AoclBlas(BlisBase):
 
     license("BSD-3-Clause")
 
+    version("6.0.0", sha256="d557b648dcd0623e18e8266e9ae1b06b7af542aad5d5238a36d841295a144b3a")
     version("5.3", sha256="0d456548174a5a71df1225b5648d802d53d0351187ae2f829ecf5122f3aeab9e")
     version("5.2", sha256="c553bd543eedc87920df9b82634ae4c02662145ed737f51fdf4c9bca5e588028")
     version("5.1", sha256="4ab210cea8753f4be9646a3ad8e6b42c7d19380084a66312497c97278b8c76a4")

@@ -1,0 +1,24 @@
+diff --git a/docs/CMakeLists.txt b/docs/CMakeLists.txt
+--- a/docs/CMakeLists.txt
++++ b/docs/CMakeLists.txt
+@@ -1,8 +1,5 @@
+ find_package(Doxygen REQUIRED)
+ 
+-# Doxygen requires latex for parsing math environments.
+-find_package(LATEX REQUIRED)
+-
+ configure_file(${CMAKE_SOURCE_DIR}/docs/Doxyfile.in Doxyfile @ONLY)
+ 
+ add_custom_target(html
+diff --git a/docs/Doxyfile.in b/docs/Doxyfile.in
+--- a/docs/Doxyfile.in
++++ b/docs/Doxyfile.in
+@@ -1485,7 +1485,7 @@
+ # The default value is: NO.
+ # This tag requires that the tag GENERATE_HTML is set to YES.
+ 
+-USE_MATHJAX            = NO
++USE_MATHJAX            = YES
+ 
+ # When MathJax is enabled you can set the default output format to be used for
+ # the MathJax output. See the MathJax site (see:

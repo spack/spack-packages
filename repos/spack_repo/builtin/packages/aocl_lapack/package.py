@@ -50,6 +50,7 @@ class AoclLapack(CMakePackage, LibflameBase):
 
     license("BSD-3-Clause")
 
+    version("6.0.0", sha256="06af568011d8fe6bc84728cd0ba4f35ed8a2ac506adaec0820fd6dfbab931f50")
     version("5.3", sha256="ecb74c879b4d6bb33e159300304a9b48206d2c2b546dceb7d097b339eb127b9c")
     version("5.2", sha256="fb5fe5128f718050c9911443fcf7ed91b60538a40d57084ed0124bb91afabb9b")
     version("5.1", sha256="25524ba78b5952303369fa0859d217e44071144fd122a9dc3f72ed0bd73e3b2d")
@@ -118,7 +119,7 @@ class AoclLapack(CMakePackage, LibflameBase):
     depends_on("python+pythoncmd", type="build")
     depends_on("gmake@4:", when="@3.0.1,3.1:", type="build")
 
-    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3", "6.0.0"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
 

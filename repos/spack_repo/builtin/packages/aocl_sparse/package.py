@@ -31,6 +31,7 @@ class AoclSparse(CMakePackage):
 
     license("MIT")
 
+    version("6.0.0", sha256="e658cfe81d6e3c6f225b74d8dd507c790697e7a3c9639666fa4adff6dbe351ce")
     version("5.3", sha256="54121bef989f14f5ffb95470bbd697c7f71c836f2f92be3983ce6e6ecda5b26f")
     version("5.2", sha256="7de4ccb22b9bdf4733e621b44ebde1951dae5333841b02148fae382a8859f550")
     version("5.1", sha256="a5fff94f9144cb5e5e0f4702cc0d48a20215ccccd06cbed915e566e5d901fa0a")
@@ -59,7 +60,7 @@ class AoclSparse(CMakePackage):
     )
     variant("openmp", default=True, when="@4.2:", description="Enable OpenMP support")
 
-    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2"]:
+    for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3", "6.0.0"]:
         with when(f"@={vers}"):
             depends_on(f"aocl-blas@={vers}")
             depends_on(f"aocl-lapack@={vers}")

@@ -32,6 +32,7 @@ class AoclLibm(SConsPackage, CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("6.0.0", sha256="a2697941e6bd264f666eb0e7e81180f37aa348bdf16818a1d6411153acc5e009")
     version("5.3", sha256="bbd97cbb3745afbeb203f6cdddadb410ea32f2fbcac807bcd0c27e6b7d1133e4")
     version("5.2", sha256="5cec8d30dc1083923c332c80808eda637ebd385b02a0cebf65ce72b5c8cbc029")
     version("5.1", sha256="7acf2c98469353b60a59fad167a98e1ae689055a3faf8352a254832145c9d59e")
@@ -61,9 +62,12 @@ class AoclLibm(SConsPackage, CMakePackage):
     depends_on("cxx", type="build")
 
     depends_on("python@3.6.1:", type=("build", "run"))
-    depends_on("scons@3.1.2:4.8.1", type=("build"))
-    depends_on("cmake@3.26:3.30.6", type="build", when="build_system=cmake")
+    depends_on("scons@3.1.2:4.8.1", type="build", when="build_system=scons")
+    depends_on("cmake@3.26:3.30.6", type="build", when="@:5 build_system=cmake")
+    depends_on("cmake@3.26:", type="build", when="@6: build_system=cmake")
     depends_on("mpfr", type=("link"))
+    # @6+: built-in CPU detection; aocl-utils is no longer a dependency
+    # (upstream README / InternalUtilsDesign.md).
     for vers in ["4.1", "4.2", "5.0", "5.1", "5.2", "5.3"]:
         with when(f"@{vers}"):
             depends_on(f"aocl-utils@{vers}")
@@ -95,7 +99,7 @@ class AoclLibm(SConsPackage, CMakePackage):
         """Setting build arguments for aocl-libm"""
         args = [f"-j{determine_number_of_jobs(parallel=True)}", f"--prefix={prefix}"]
 
-        if self.spec.satisfies("@4.1:"):
+        if self.spec.satisfies("@4.1:5"):
             args.append("--aocl_utils_install_path={0}".format(self.spec["aocl-utils"].prefix))
 
         # we are circumventing the use of
@@ -119,11 +123,14 @@ class AoclLibm(SConsPackage, CMakePackage):
     def cmake_args(self):
         """Setting build arguments for aocl-libm when using CMake"""
         spec = self.spec
-
-        args = [
-            self.define("AOCL_UTILS_INCLUDE_DIR", spec["aocl-utils"].prefix.include),
-            f"-DAOCL_UTILS_LIB={spec['aocl-utils'].libs}",
-        ]
+        args = []
+        if spec.satisfies("@:5"):
+            args.extend(
+                [
+                    self.define("AOCL_UTILS_INCLUDE_DIR", spec["aocl-utils"].prefix.include),
+                    f"-DAOCL_UTILS_LIB={spec['aocl-utils'].libs}",
+                ]
+            )
         return args
 
     @run_after("install")

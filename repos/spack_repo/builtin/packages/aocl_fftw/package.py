@@ -39,6 +39,7 @@ class AoclFftw(FftwBase):
 
     license("GPL-2.0-only")
 
+    version("6.0.0", sha256="b3d154f79c7937792a2dc1c2fd0180641ba6531c0c10591dc7fc6dfc7e2f3c4c")
     version("5.3", sha256="175a426dbbe9ba332416adeead59af364177016c7c3057c597a26c0159c83c43")
     version("5.2", sha256="143c7a936fd197a94551aa1c67d7ae7cbf7d96338947aa21d3007df7aea46c78")
     version("5.1", sha256="4cc0d6985afc5ce14cafc195ad46d9876ac4f35b959861b41a3b681385d7320d")
