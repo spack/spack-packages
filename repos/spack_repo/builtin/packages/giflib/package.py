@@ -40,7 +40,7 @@ class Giflib(MakefilePackage, SourceforgePackage):
         level=0,
         when="@5.2.0:5.2.1 platform=darwin",
     )
-    patch("bsd-head.patch")
+    patch("bsd-head.patch", when="@:5")
 
     # error: no such file or directory: 'dgif_lib.o'
     parallel = False
