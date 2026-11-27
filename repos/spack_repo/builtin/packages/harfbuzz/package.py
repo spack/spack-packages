@@ -164,8 +164,6 @@ class Harfbuzz(MesonPackage, AutotoolsPackage, CMakePackage):
     # Function borrowed from superlu
     def flag_handler(self, name, flags):
         flags = list(flags)
-        if name == "cxxflags":
-            flags.append(self.compiler.cxx11_flag)
         if name == "cflags":
             if self.spec.satisfies("%gcc@:5.1"):
                 flags.append("-std=gnu99")
