@@ -32,6 +32,7 @@ class PyParamiko(PythonPackage):
 
     variant("invoke", default=False, description="Enable invoke support")
 
+    depends_on("python@3.9:", when="@4:", type=("build", "run"))
     depends_on("py-setuptools", type="build")
     depends_on("py-setuptools@77:", when="@4:", type="build")
     depends_on("py-bcrypt@3.1.3:", when="@2.7:", type=("build", "run"))
@@ -41,6 +42,7 @@ class PyParamiko(PythonPackage):
     depends_on("py-pynacl@1.0.1:", when="@2.7:", type=("build", "run"))
     depends_on("py-pynacl@1.5:", when="@3:", type=("build", "run"))
     depends_on("py-six", when="@2.9.3:2", type=("build", "run"))
+    depends_on("py-invoke@2:", when="@4:", type=("build", "run"))
 
     depends_on("py-invoke@1.3:", when="+invoke", type=("build", "run"))
     depends_on("py-invoke@2:", when="@3: +invoke", type=("build", "run"))
