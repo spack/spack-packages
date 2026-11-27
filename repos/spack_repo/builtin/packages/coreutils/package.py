@@ -26,12 +26,7 @@ class Coreutils(AutotoolsPackage, GNUMirrorPackage):
 
     license("GPL-3.0-or-later")
 
-    version("9.10", sha256="16535a9adf0b10037364e2d612aad3d9f4eca3a344949ced74d12faf4bd51d25")
-    version("9.7", sha256="e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf")
-    version("9.5", sha256="cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f7100469470a1b8a")
-    version("9.4", sha256="ea613a4cf44612326e917201bbbcdfbd301de21ffc3b59b6e5c07e040b275e52")
-    version("9.3", sha256="adbcfcfe899235b71e8768dcf07cd532520b7f54f9a8064843f8d199a904bbaa")
-    version("9.2", sha256="6885ff47b9cdb211de47d368c17853f406daaf98b148aaecdf10de29cc04b0b3")
+    version("9.12", sha256="a480198559733e9b3da999e90543ac6f888a2caa544d8d664c5a1f17e528e210")
     version("9.1", sha256="61a1f410d78ba7e7f37a5a4f50e6d1320aca33375484a3255eddf17a38580423")
     version("9.0", sha256="ce30acdf4a41bc5bb30dd955e9eaa75fa216b4e3deb08889ed32433c7b3b97ce")
     version("8.32", sha256="4458d8de7849df44ccab15e16b1548b285224dbba5f08fac070c1c0e0bcc4cfa")
@@ -40,6 +35,14 @@ class Coreutils(AutotoolsPackage, GNUMirrorPackage):
     version("8.29", sha256="92d0fa1c311cacefa89853bdb53c62f4110cdfda3820346b59cbd098f40f955e")
     version("8.26", sha256="155e94d748f8e2bc327c66e0cbebdb8d6ab265d2f37c3c928f7bf6c3beba9a8e")
     version("8.23", sha256="ec43ca5bcfc62242accb46b7f121f6b684ee21ecd7d075059bf650ff9e37b82d")
+
+    with default_args(deprecated=True):
+        version("9.10", sha256="16535a9adf0b10037364e2d612aad3d9f4eca3a344949ced74d12faf4bd51d25")
+        version("9.7", sha256="e8bb26ad0293f9b5a1fc43fb42ba970e312c66ce92c1b0b16713d7500db251bf")
+        version("9.5", sha256="cd328edeac92f6a665de9f323c93b712af1858bc2e0d88f3f7100469470a1b8a")
+        version("9.4", sha256="ea613a4cf44612326e917201bbbcdfbd301de21ffc3b59b6e5c07e040b275e52")
+        version("9.3", sha256="adbcfcfe899235b71e8768dcf07cd532520b7f54f9a8064843f8d199a904bbaa")
+        version("9.2", sha256="6885ff47b9cdb211de47d368c17853f406daaf98b148aaecdf10de29cc04b0b3")
 
     depends_on("c", type="build")
 
