@@ -43,8 +43,6 @@ class Motif(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     patch("add_xbitmaps_dependency.patch")
-    # ensure tools/wml/wmluiltok.c has a main function
-    patch("add_wmluiltok_option_main.patch")
     # Fix build with GCC 14 and newer
     patch("fix_build_with_gcc14.patch", level=0)
 
