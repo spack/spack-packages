@@ -40,12 +40,12 @@ class Libzip(CMakePackage):
 
     depends_on("zlib-api")
 
-    variant("gnutls", default=True, description="Enable gnutls support")
+    variant("gnutls", default=False, description="Enable gnutls support")
     variant("bzip2", default=True, description="Enable bzip2 support")
     variant("lzma", default=True, description="Enable lzma support")
     variant("openssl", default=True, description="Enable openssl support")
     variant("zstd", default=True, description="Enable zstd support", when="@1.8:")
-    variant("mbedtls", default=True, description="Enable mbedtls support", when="@:1.11")
+    variant("mbedtls", default=False, description="Enable mbedtls support", when="@:1.11")
 
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
