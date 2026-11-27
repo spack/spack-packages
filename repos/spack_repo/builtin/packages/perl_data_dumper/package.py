@@ -14,3 +14,5 @@ class PerlDataDumper(PerlPackage):
     url = "https://cpan.metacpan.org/authors/id/X/XS/XSAWYERX/Data-Dumper-2.173.tar.gz"
 
     version("2.173", sha256="697608b39330988e519131be667ff47168aaaaf99f06bd2095d5b46ad05d76fa")
+
+    depends_on("c", type="build")
