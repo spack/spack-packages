@@ -30,7 +30,7 @@ class Snappy(CMakePackage):
 
     depends_on("cmake@3.10:", type="build", when="@1.2.2:")
 
-    depends_on("googletest", type="test")
+    depends_on("googletest", type="test", when="@:1.1.8")
 
     patch("link_gtest.patch", when="@:1.1.8")
 
@@ -53,7 +53,7 @@ class Snappy(CMakePackage):
         return [
             self.define("CMAKE_INSTALL_LIBDIR", self.prefix.lib),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
-            self.define("SNAPPY_BUILD_TESTS", self.run_tests),
+            self.define("SNAPPY_BUILD_TESTS", self.run_tests and self.spec.satisfies("@:1.1.8")),
             self.define("SNAPPY_BUILD_BENCHMARKS", "OFF"),
         ]
 
