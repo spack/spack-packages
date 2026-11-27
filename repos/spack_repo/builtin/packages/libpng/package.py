@@ -39,11 +39,6 @@ class Libpng(CMakePackage):
         version(
             "1.6.37", sha256="505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca"
         )
-        # From http://www.libpng.org/pub/png/libpng.html (2019-04-15)
-        #     libpng versions 1.6.36 and earlier have a use-after-free bug in the
-        #     simplified libpng API png_image_free(). It has been assigned ID
-        #     CVE-2019-7317. The vulnerability is fixed in version 1.6.37,
-        #     released on 15 April 2019.
         version(
             "1.5.30", sha256="7d76275fad2ede4b7d87c5fd46e6f488d2a16b5a69dc968ffa840ab39ba756ed"
         )
