@@ -37,7 +37,6 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
     version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
     version("3.5.9", sha256="603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a")
     version("3.4.8", sha256="9de9ce2f29e584044ae07ab93fc601637be01fdc91d109c5a655ec7419e6022b")
-    version("3.0.22", sha256="67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81")
 
     with default_args(deprecated=True):
         version("3.6.0", sha256="b6a5f44b7eb69e3fa35dbf15524405b44837a481d43d81daddde3ff21fcbb8e9")
@@ -53,6 +52,9 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
         version("3.2.6", sha256="89681a9ddaa9ed7cf25ea8ef61338db805200bae47d00510490623547380c148")
         version("3.2.4", sha256="b23ad7fd9f73e43ad1767e636040e88ba7c9e5775bfa5618436a0dd2c17c3716")
         version("3.1.8", sha256="d319da6aecde3aa6f426b44bbf997406d95275c5c59ab6f6ef53caaa079f456f")
+        version(
+            "3.0.22", sha256="67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81"
+        )
         version(
             "3.0.19", sha256="fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072"
         )
