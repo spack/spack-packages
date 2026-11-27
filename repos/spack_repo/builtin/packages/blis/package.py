@@ -61,8 +61,6 @@ class BlisBase(MakefilePackage):
     provides("blas", when="+blas")
     provides("blas", when="+cblas")
 
-    conflicts("%nvhpc")
-
     def configure_args(self):
         spec = self.spec
         config_args = ["--enable-threading={0}".format(spec.variants["threads"].value)]
@@ -173,6 +171,10 @@ class Blis(BlisBase):
     )
 
     variant("scalapack", default=False, description="ScaLAPACK compatibility", when="@2.0:")
+
+    conflicts("%nvhpc", when="@:2.0")
+    conflicts("%nvhpc", when="target=aarch64:", msg="nvc is supported on x86_64 only")
+    conflicts("%nvhpc", when="target=ppc64le:", msg="nvc is supported on x86_64 only")
 
     # Problems with permissions on installed libraries:
     # https://github.com/flame/blis/issues/343
