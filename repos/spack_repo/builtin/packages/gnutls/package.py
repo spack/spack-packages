@@ -98,6 +98,7 @@ class Gnutls(AutotoolsPackage):
 
     # Required dependencies
     depends_on("gettext")
+    depends_on("gmp")
     # backward compat
     depends_on("libidn2")
     depends_on("libidn2@2.0:", when="@3.6.14:")
