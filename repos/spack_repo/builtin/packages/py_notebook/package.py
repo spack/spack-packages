@@ -16,7 +16,12 @@ class PyNotebook(PythonPackage):
 
     license("BSD-3-Clause")
 
-    version("7.4.5", sha256="7c2c4ea245913c3ad8ab3e5d36b34a842c06e524556f5c2e1f5d7d08c986615e")
+    version("7.6.5", sha256="5e3445616fb2c590015434045f5b297566c2e09c636d1837efc62bef85892c9f")
+    version(
+        "7.4.5",
+        sha256="7c2c4ea245913c3ad8ab3e5d36b34a842c06e524556f5c2e1f5d7d08c986615e",
+        deprecated=True,
+    )
     version("6.5.7", sha256="04eb9011dfac634fbd4442adaf0a8c27cd26beef831fe1d19faf930c327768e4")
     version("6.5.6", sha256="b4625a4b7a597839dd3156b140d5ba2c7123761f98245a3290f67a8b8ee048d9")
     version("6.5.4", sha256="517209568bd47261e2def27a140e97d49070602eea0d226a696f42a7f16c9a4e")
@@ -45,6 +50,7 @@ class PyNotebook(PythonPackage):
     version("4.0.2", sha256="8478d7e2ab474855b0ff841f693983388af8662d3af1adcb861acb900274f22a")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.10:", when="@7.6:")
         depends_on("python@3.8:", when="@7:")
         depends_on("python@3.7:", when="@6.4:")
         depends_on("python@3.6:", when="@6.3:")
@@ -54,10 +60,14 @@ class PyNotebook(PythonPackage):
     depends_on("py-hatchling@1.11:", type="build", when="@7:")
     depends_on("py-hatch-jupyter-builder@0.5:", type="build", when="@7.0.4:")
     depends_on("py-hatch-jupyter-builder@0.2:", type="build", when="@7:")
-    depends_on("py-httpx@0.25:0", type="build", when="@7.4.5:")
+    depends_on("py-httpx@0.25:0", type="build", when="@7.4.5:7.4")
 
+    depends_on("py-jupyter-builder@1.0.2:1", type=("build", "run"), when="@7.6:")
+    depends_on("py-jupyter-server@2.19:2", type=("build", "run"), when="@7.6:")
     depends_on("py-jupyter-server@2.4:2", type=("build", "run"), when="@7:")
-    depends_on("py-jupyterlab@4.4.5:4.4", type=("build", "run"), when="@7.4.5:")
+    depends_on("py-jupyterlab@4.6.6:4.6", type=("build", "run"), when="@7.6.5:")
+    depends_on("py-jupyterlab@4.4.5:4.4", type=("build", "run"), when="@7.4.5:7.4")
+    depends_on("py-jupyterlab-server@2.28:2", type=("build", "run"), when="@7.5:")
     depends_on("py-jupyterlab-server@2.27.1:2", type=("build", "run"), when="@7.2:")
     depends_on("py-notebook-shim@0.2", type=("build", "run"), when="@7:")
     depends_on("py-tornado@6.2:", type=("build", "run"), when="@7:")
