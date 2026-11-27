@@ -44,6 +44,8 @@ class Uncrustify(CMakePackage, AutotoolsPackage):
         default="cmake",
     )
 
+    depends_on("python", type="build", when="@0.68:")
+
     with when("build_system=autotools"):
         depends_on("automake", type="build")
         depends_on("autoconf", type="build")
