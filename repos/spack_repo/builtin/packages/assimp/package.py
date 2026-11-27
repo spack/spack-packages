@@ -62,7 +62,7 @@ class Assimp(CMakePackage):
         args = [
             self.define("ASSIMP_HUNTER_ENABLED", False),
             self.define("ASSIMP_BUILD_ZLIB", False),
-            self.define("ASSIMP_BUILD_MINIZIP", False),
+            self.define("ASSIMP_BUILD_MINIZIP", True),
             self.define("ASSIMP_BUILD_TESTS", self.run_tests),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
         ]
