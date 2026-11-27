@@ -31,9 +31,9 @@ class PyMako(PythonPackage):
         version("1.0.4", sha256="fed99dbe4d0ddb27a33ee4910d8708aca9ef1fe854e668387a9ab9a90cbf9059")
         version("1.0.1", sha256="45f0869febea59dab7efd256fb451c377cbb7947bef386ff0bb44627c31a8d1c")
 
-    depends_on("python@3.10:", when="@1.4:", type="build")
-    depends_on("python@3.8:", when="@1.3:", type="build")
-    depends_on("python@3.7:", when="@1.2:", type="build")
+    depends_on("python@3.10:", when="@1.4:", type=("build", "run"))
+    depends_on("python@3.8:", when="@1.3:", type=("build", "run"))
+    depends_on("python@3.7:", when="@1.2:", type=("build", "run"))
     depends_on("py-setuptools@77:", when="@1.4:", type="build")
     depends_on("py-setuptools@47:", when="@1.2.2:", type="build")
     depends_on("py-setuptools", type="build")
