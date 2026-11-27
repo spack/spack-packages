@@ -1,0 +1,13 @@
+diff --git a/prov/util/src/import_mem_monitor.c b/prov/util/src/import_mem_monitor.c
+index e7be581526f0..1f1f4a971099 100644
+--- a/prov/util/src/import_mem_monitor.c
++++ b/prov/util/src/import_mem_monitor.c
+@@ -111,7 +111,7 @@ static void ofi_import_monitor_unsubscribe(struct ofi_mem_monitor *notifier,
+ 					   const void *addr, size_t len,
+ 					   union ofi_mr_hmem_info *hmem_info)
+ {
+-	assert(impmon.impfid);
++	if (!impmon.impfid) return;
+ 	impmon.impfid->export_ops->unsubscribe(impmon.impfid, addr, len);
+ }
+ 
