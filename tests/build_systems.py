@@ -468,3 +468,26 @@ def test_autoreconf_search_path_dont_repeat(default_mock_concretization, tmp_pat
     build_dep_one.external_path = str(tmp_path / "prefix")
     build_dep_two.external_path = str(tmp_path / "prefix")
     assert autotools._autoreconf_search_path_args(spec) == ["-I", str(aclocal)]
+
+
+@pytest.mark.parametrize("features", ["+vtk~python", "~vtk+python"])
+@pytest.mark.parametrize(
+    "version,expected",
+    [("23.1.9", False), ("23.2.0", True), ("24.1.7", True), ("25.2.6", True), ("25.2.7", False)],
+)
+def test_4c_mesa_c11_patch_selection(features, version, expected):
+    from spack_repo.builtin.packages._4c_multiphysics.package import _4cMultiphysics
+
+    from spack.spec import Spec
+
+    root = Spec(f"4c-multiphysics@2026.3.0{features} platform=linux")
+    mesa = Spec(f"mesa@{version}~llvm")
+    patches = {
+        pathlib.Path(patch.path).name
+        for condition, dependencies in _4cMultiphysics.dependencies.items()
+        if root.satisfies(condition) and "mesa" in dependencies
+        for patch_condition, patch_list in dependencies["mesa"].patches.items()
+        if mesa.satisfies(patch_condition)
+        for patch in patch_list
+    }
+    assert ("mesa-25.0.5-linux-c11-threads.patch" in patches) == expected

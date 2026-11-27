@@ -8,11 +8,13 @@ from spack.package import *
 
 
 class _4cMultiphysics(CMakePackage):
-    """4C is a parallel multiphysics research code."""
+    """4C is a parallel multiphysics research code.
+
+    This recipe supports releases; use 4C's in-tree recipe for development builds.
+    """
 
     homepage = "https://www.4c-multiphysics.org/"
-    url = "https://github.com/4C-multiphysics/4C/archive/refs/tags/v2025.3.0.tar.gz"
-    git = "https://github.com/4C-multiphysics/4C.git"
+    url = "https://github.com/4C-multiphysics/4C/archive/refs/tags/v2026.3.0.tar.gz"
 
     maintainers(
         "bgoderbauer",
@@ -25,7 +27,6 @@ class _4cMultiphysics(CMakePackage):
     )
     license("LGPL-3.0-or-later")
 
-    version("main", branch="main")
     version("2026.3.0", sha256="d8fa2ca8a3815f8050f6d7f1c428ed65c4e4fea83a7079beffe4d6e11eddfb84")
     version("2026.2.0", sha256="57e05128934e06b67d5ae3c2d3402f80d1ddfc3975b1557670e5b1d3399a6c0b")
     version("2026.1.0", sha256="9d95607a0b7668c9712392c81863b6327b8922745705b62e07f605f1d6932646")
@@ -41,11 +42,27 @@ class _4cMultiphysics(CMakePackage):
     )
     resource(
         name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/84d9fa94b3cd2d358f9c498e716d50181ba626f2.tar.gz",
+        sha256="12bee3bba30e8e8a7965e961cb4924a5f11b8f173b74094ed7c66a7e38d98cb7",
+        destination="spack-resources",
+        placement="mirco",
+        when="@2026.1.0+mirco",
+    )
+    resource(
+        name="mirco",
         url="https://github.com/imcs-compsim/MIRCO/archive/b9d0c4ba27ff8463a3d2b17163fead8800b2650c.tar.gz",
         sha256="b3a16a0aeed5fcd778c8757d81af9070ec4964a5206f87b6257a402aa3fc4bfd",
         destination="spack-resources",
         placement="mirco",
-        when="+mirco",
+        when="@2026.2.0+mirco",
+    )
+    resource(
+        name="mirco",
+        url="https://github.com/imcs-compsim/MIRCO/archive/8b049a6462eba5809d7cffe039a77f3bc5593767.tar.gz",
+        sha256="8b051f040b5151307d9007574690adf0194bc0a94a6bb81a6e1bc6286914ba63",
+        destination="spack-resources",
+        placement="mirco",
+        when="@2026.3.0+mirco",
     )
 
     variant("shared", default=True, description="Build shared libraries")
@@ -61,6 +78,17 @@ class _4cMultiphysics(CMakePackage):
     variant("pybind11", default=False, description="Build the py4C Python bindings")
 
     conflicts("~python", when="+pybind11", msg="+pybind11 requires +python")
+    conflicts(
+        "%cxx=clang",
+        when="+dealii",
+        msg="The deal.II dependency is not supported with Clang; disable +dealii or use GCC.",
+    )
+    conflicts(
+        "%cxx=oneapi",
+        when="+dealii",
+        msg="The deal.II dependency is not supported with Intel oneAPI; "
+        "disable +dealii or use GCC.",
+    )
 
     conflicts("platform=windows", msg="4C Multiphysics does not support Windows")
     conflicts("platform=darwin", when="@2026.1.0:2026.3.0", msg="macOS support is not available")
@@ -68,10 +96,8 @@ class _4cMultiphysics(CMakePackage):
     patch("identify-release-dealii.patch", when="+dealii")
     patch("link-installed-arborx.patch", when="+arborx")
     patch("use-installed-googletest.patch", when="@2026.1.0:2026.3.0")
-    patch("use-installed-googletest.patch", when="@main")
     patch("python-venv-no-downloads-2026.2.patch", when="@2026.1.0:2026.2.0+python")
     patch("python-venv-no-downloads-2026.3.patch", when="@2026.3.0+python")
-    patch("python-venv-no-downloads-2026.3.patch", when="@main+python")
 
     # GCC 14.2.0 hits an internal compiler error (ICE) in
     # cxx_eval_indirect_ref (cp/constexpr.cc) while instantiating
@@ -97,9 +123,30 @@ class _4cMultiphysics(CMakePackage):
         "trilinos@16.2+mpi+amesos+amesos2+belos+epetra+epetraext"
         "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
         "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
-        "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
-        patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
+        "+mumps+superlu-dist+suite-sparse+exodus+hdf5 gotype=int",
+        patches=[
+            patch("trilinos-iocgns-extern-c-linkage.patch", when="@:16.2.2"),
+            patch("trilinos-16.2-deprecation-warnings.patch", when="@16.2"),
+        ],
     )
+    depends_on("trilinos~cuda")
+    depends_on("kokkos~cuda")
+    depends_on("kokkos-kernels~cuda")
+    # Trilinos 16.2's BLAS wrappers require 32-bit integers.
+    for blas_provider in ("openblas", "intel-oneapi-mkl"):
+        requires(
+            f"^{blas_provider}~ilp64",
+            when=f"^{blas_provider}",
+            msg="4C's Trilinos stack requires LP64 BLAS/LAPACK (32-bit integers)",
+        )
+    # Trilinos exposes MPI types in its C++ ABI, so oneAPI builds require
+    # Intel MPI regardless of 4C's compiler.
+    requires(
+        "^intel-oneapi-mpi",
+        when="^trilinos %c,cxx=oneapi",
+        msg="Trilinos built with oneAPI requires Intel MPI for a consistent MPI C++ ABI",
+    )
+
     # deal.II 9.6.2 uses bundled Boost 1.84. Keep 4C's compiled Boost.Graph
     # library and headers ABI-compatible with the deal.II headers.
     depends_on("boost@1.84.0+graph")
@@ -108,17 +155,28 @@ class _4cMultiphysics(CMakePackage):
     depends_on("cli11@2.6.1")
     depends_on("magic-enum@0.9.7")
     depends_on("googletest@1.15.2+gmock", when="@2026.1.0:2026.3.0")
-    depends_on("googletest@1.15.2+gmock", when="@main")
 
     # 4C uses Qhull's deprecated non-reentrant libqhull API.
     depends_on("qhull@2019.1", when="+qhull")
     depends_on("vtk@9:+shared", when="+vtk")
     # VTK only needs Mesa as an OpenGL provider. Avoid Mesa's optional LLVM
     # backend, which is particularly prone to unusable auto-detected externals.
-    depends_on("mesa~llvm", when="+vtk platform=linux")
+    depends_on(
+        "mesa~llvm",
+        patches=[patch("mesa-25.0.5-linux-c11-threads.patch", when="@23.2:25.2.6")],
+        when="+vtk platform=linux",
+    )
+    depends_on(
+        "mesa~llvm",
+        patches=[patch("mesa-25.0.5-linux-c11-threads.patch", when="@23.2:25.2.6")],
+        when="+python platform=linux",
+    )
     depends_on("gmsh@4.15.1+shared~cgns~fltk~med", when="+gmsh")
     depends_on(
-        "dealii@9.6.2+trilinos+mpi~adol-c",
+        "dealii@9.6.2~examples~examples_compile+hdf5+mpi+p4est+taskflow+threads+trilinos"
+        "~adol-c~arborx~arpack~assimp~cgal~ginkgo~gmsh~gsl~kokkos~metis~muparser"
+        "~netcdf~opencascade~petsc~scalapack~slepc~sundials~symengine~vtk"
+        " build_type=Release",
         patches=[
             patch("dealii-force-bundled-boost.patch"),
             patch("dealii-use-cxx20.patch"),
@@ -126,9 +184,26 @@ class _4cMultiphysics(CMakePackage):
         ],
         when="+dealii",
     )
+    requires(
+        "^intel-oneapi-mpi",
+        when="+dealii %c,cxx=oneapi",
+        msg="deal.II and Trilinos must use Intel MPI with oneAPI to preserve their MPI C++ ABI",
+    )
+    requires(
+        "^dealii~cgal",
+        when="+dealii",
+        msg="deal.II must disable CGAL when using the bundled Boost required by 4C",
+    )
+    # Taskflow 4.1 documents IntelLLVM support but omits it from its compiler
+    # dispatch. Add the missing branch without constraining GCC or Clang.
+    depends_on(
+        "taskflow@4.1.0",
+        patches=[patch("taskflow-4.1-intelllvm.patch")],
+        when="+dealii",
+    )
     depends_on("arborx@2.0.1+mpi", when="+arborx")
     depends_on("fftw", when="+fftw")
-    depends_on("libbacktrace", when="+backtrace")
+    depends_on("libbacktrace+shared", when="+backtrace")
     depends_on("python@3.12:", type=("build", "link", "run"), when="+python")
     depends_on("python-venv", type=("build", "run"), when="+python")
     depends_on("py-pip", type="build", when="+python")
