@@ -46,7 +46,7 @@ class Weechat(CMakePackage):
 
     def cmake_args(self):
         spec = self.spec
-        cmake_args = []
+        cmake_args = [self.define("ENABLE_NLS", False)]
         if "~ruby" in spec:
             cmake_args.append("-DENABLE_RUBY=OFF")
         if "~tcl" in spec:
