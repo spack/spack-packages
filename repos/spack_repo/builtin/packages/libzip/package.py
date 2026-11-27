@@ -46,7 +46,6 @@ class Libzip(CMakePackage):
     variant("mbedtls", default=False, description="Enable mbedtls support", when="@:1.11")
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
 
     depends_on("gnutls", when="+gnutls")
     depends_on("nettle", when="+gnutls")
