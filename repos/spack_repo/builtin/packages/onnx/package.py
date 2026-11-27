@@ -24,6 +24,7 @@ class Onnx(CMakePackage):
 
     version("main", branch="main")
     version("master", branch="master", deprecated=True)
+    version("1.21.0", sha256="42ffedcd8c9b6363694300c6ffec1ada77f9620176465719acb27b13a4d6f2de")
     version("1.20.0", sha256="e9e9273cd39d460348aa3e2eb370a444b510e138c5f45dfa86ce50461901257b")
     version("1.19.1", sha256="ce9d2569a61d64e8a3d05b92194f60ffb7c868dbb754a71f5b4d992273a9413d")
     version("1.19.0", sha256="2c2ac5a078b0350a0723fac606be8cd9e9e8cbd4c99bab1bffe2623b188fd236")
