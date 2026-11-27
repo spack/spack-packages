@@ -45,6 +45,7 @@ class PyOrjson(PythonPackage):
         depends_on("python@:3.14", when="@:3.12")
         depends_on("python@:3.12", when="@:3.10.3")
         depends_on("python@3.10:", when="@3.11.6:")
+        depends_on("python@3.9:", when="@3.10.16:")
         depends_on("python@3.8:", when="@3.9:")
         depends_on("python@3.7:", when="@3.8")
 
