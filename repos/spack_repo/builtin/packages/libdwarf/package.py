@@ -26,12 +26,20 @@ class Libdwarf(CMakePackage):
     license("LGPL-2.1-only")
 
     version("2.3.3", sha256="bde13d1c49be6f2467326a6e0b3919247471455d16eefc3c6be26c7d4baca36a")
-    version("2.3.0", sha256="a153e8101828a478f88d18341267b59c19a3fc794bea47388347ce994ba90c17")
-    version("2.1.0", sha256="461bd29cbb9a41c26a25b0e527c3736c772bb7a89f6260d1edb39ab105226e06")
-    version("2.0.0", sha256="c3d1db72a979e14ee60b93010f0698d30fc1bca4eb1341006783d4e9c9ec7e72")
-    version("0.12.0", sha256="444dc1c5176f04d3ebc50341552a8b2ea6c334f8f1868a023a740ace0e6eae9f")
-    version("0.11.0", sha256="846071fb220ac1952f9f15ebbac6c7831ef50d0369b772c07a8a8139a42e07d2")
-    version("0.10.1", sha256="b511a2dc78b98786064889deaa2c1bc48a0c70115c187900dd838474ded1cc19")
+
+    with default_args(deprecated=True):
+        version("2.3.0", sha256="a153e8101828a478f88d18341267b59c19a3fc794bea47388347ce994ba90c17")
+        version("2.1.0", sha256="461bd29cbb9a41c26a25b0e527c3736c772bb7a89f6260d1edb39ab105226e06")
+        version("2.0.0", sha256="c3d1db72a979e14ee60b93010f0698d30fc1bca4eb1341006783d4e9c9ec7e72")
+        version(
+            "0.12.0", sha256="444dc1c5176f04d3ebc50341552a8b2ea6c334f8f1868a023a740ace0e6eae9f"
+        )
+        version(
+            "0.11.0", sha256="846071fb220ac1952f9f15ebbac6c7831ef50d0369b772c07a8a8139a42e07d2"
+        )
+        version(
+            "0.10.1", sha256="b511a2dc78b98786064889deaa2c1bc48a0c70115c187900dd838474ded1cc19"
+        )
 
     variant("shared", default=True, description="Build shared libs", when="@:2.3.2")
     variant("examples", default=False, description="Build examples")
