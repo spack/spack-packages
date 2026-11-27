@@ -88,7 +88,7 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
             self.define("CMAKE_CXX_COMPILER", cxx),
             self.define_from_variant("BUILD_PYTHON_INTERFACE", "python"),
             self.define_from_variant("BUILD_FORTRAN_INTERFACE", "fortran"),
-            self.define("BUILD_TESTS", self.run_tests)
+            self.define("BUILD_TESTS", self.run_tests),
         ]
 
         if self.spec.satisfies("+python"):
@@ -114,4 +114,3 @@ class Pacman(CMakePackage, CudaPackage, ROCmPackage):
                 args.append(self.define(f"CMAKE_{kind}_LINKER_FLAGS", rpath))
 
         return args
-
