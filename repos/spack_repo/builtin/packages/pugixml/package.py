@@ -27,6 +27,7 @@ class Pugixml(CMakePackage):
 
     depends_on("c", type="build", when="@:1.10")
     depends_on("cxx", type="build")
+    depends_on("cmake@:3", type="build", when="@:1.13")
 
     variant("pic", default=True, description="Build position-independent code")
     variant("shared", default=True, description="Build shared libraries")
