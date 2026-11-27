@@ -51,6 +51,8 @@ class Libzip(CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("gnutls", when="+gnutls")
+    depends_on("nettle", when="+gnutls")
+    depends_on("nettle@3:", when="@1.7.2:+gnutls")
     depends_on("bzip2", when="+bzip2")
     depends_on("xz", when="+lzma")
     depends_on("openssl", when="+openssl")
