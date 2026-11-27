@@ -28,6 +28,8 @@ class Utf8proc(CMakePackage):
 
     depends_on("c", type="build")  # generated
 
+    depends_on("cmake@3.10:", type="build", when="@2.10:")
+    depends_on("cmake@3:", type="build", when="@2.7:")
     depends_on("cmake@2.8.12:", type="build")
 
     def cmake_args(self):
