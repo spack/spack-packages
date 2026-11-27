@@ -29,6 +29,7 @@ class Flexiblas(CMakePackage):
     depends_on("fortran", type="build")  # generated
 
     depends_on("cmake@3.10:", type="build", when="@3.4.5:")
+    depends_on("cmake@:3", type="build", when="@:3.3.0")
 
     # virtual dependency
     provides("blas")
