@@ -41,7 +41,7 @@ class RMatrix(RPackage):
     with default_args(type=("build", "run")):
         depends_on("r@4.4.0:", when="@1.7-0:")
         depends_on("r@3.5.0:", when="@1.3-3:")
-        depends_on("r@3.6.0:", when="@1.3-2:")
+        depends_on("r@3.6.0:", when="@1.3-0:1.3-2")
         depends_on("r@3.2.0:", when="@1.2-13:")
         depends_on("r@3.0.1:")
 
