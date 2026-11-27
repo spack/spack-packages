@@ -34,8 +34,12 @@ class Pugixml(CMakePackage):
     conflicts("+shared", when="~pic")
 
     def cmake_args(self):
+        if self.spec.satisfies("@1.12:"):
+            shared_and_static = "PUGIXML_BUILD_SHARED_AND_STATIC_LIBS"
+        else:
+            shared_and_static = "BUILD_SHARED_AND_STATIC_LIBS"
         return [
-            self.define("BUILD_SHARED_AND_STATIC_LIBS", False),
+            self.define(shared_and_static, False),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]
