@@ -171,7 +171,7 @@ class Chapel(AutotoolsPackage, CudaPackage, ROCmPackage):
         "libevent": "libevent",
         "protobuf": "protobuf",
         "ssl": "openssl",
-        "yaml": "libyaml@0.1",
+        "yaml": "libyaml",
         "zmq": "libzmq",
     }
 
