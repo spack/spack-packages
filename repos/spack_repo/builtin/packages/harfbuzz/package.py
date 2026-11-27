@@ -203,9 +203,14 @@ class MesonBuilder(meson.MesonBuilder, SetupEnvironment):
             f"-Dgraphite2={graphite2}",
             f"-Dcoretext={coretext}",
             f"-Dintrospection={introspection}",
+            f"-Dglib={introspection}",
+            f"-Dgobject={introspection}",
+            "-Dchafa=disabled",
         ]
+        if self.spec.satisfies("@14:"):
+            config_args.append("-Dgpu_demo=disabled")
         if IS_WINDOWS:
-            config_args.extend(["-Dcairo=disabled", "-Dglib=disabled"])
+            config_args.append("-Dcairo=disabled")
         return config_args
 
 
