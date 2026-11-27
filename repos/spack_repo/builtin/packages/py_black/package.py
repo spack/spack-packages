@@ -18,6 +18,7 @@ class PyBlack(PythonPackage):
 
     license("MIT", checked_by="tgamblin")
 
+    version("26.10.1", sha256="5f9f83beae62437e060dafd53d7f1fc327e3d3494f74d72ee5c2b73eb90fc4e7")
     version("26.3.1", sha256="2c50f5063a9641c7eed7795014ba37b0f5fa227f3d408b968936e24bc0566b07")
     with default_args(deprecated=True):
         # https://nvd.nist.gov/vuln/detail/CVE-2026-31900
