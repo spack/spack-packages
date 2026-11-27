@@ -45,6 +45,10 @@ spack:
       - target=x86_64_v3
     libunwind:
       variants: +pic +xz
+    llvm:
+      require:
+      - ~cuda
+      - target=x86_64_v3
     openblas:
       variants: threads=openmp
     rccl:
