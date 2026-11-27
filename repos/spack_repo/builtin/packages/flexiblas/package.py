@@ -35,4 +35,7 @@ class Flexiblas(CMakePackage):
     provides("lapack")
 
     def cmake_args(self):
-        return [self.define("SYSCONFDIR", self.prefix.etc)]
+        return [
+            self.define("SYSCONFDIR", self.prefix.etc),
+            self.define("BLAS_AUTO_DETECT", False),
+        ]
