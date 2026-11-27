@@ -66,8 +66,12 @@ class Motif(AutotoolsPackage):
         return (flags, None, None)
 
     def configure_args(self):
-        # Keep autoconf 2.73 from adding -std=gnu23
-        return ["ac_cv_prog_cc_c23=no"]
+        return [
+            # Keep autoconf 2.73 from adding -std=gnu23
+            "ac_cv_prog_cc_c23=no",
+            # tools/wml/wmluiltok takes main() from libfl
+            "LEXLIB=-lfl",
+        ]
 
     def autoreconf(self, spec, prefix):
         autoreconf = which("autoreconf", required=True)
