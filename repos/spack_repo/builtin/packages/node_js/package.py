@@ -180,8 +180,7 @@ class NodeJs(Package):
     depends_on("python@3.9:3.13", when="@24.0.0:24.13.0", type="build")
     depends_on("python@3.9:3.14", when="@24.13.1:24", type="build")
     depends_on("python@3.9:3.14", when="@25", type="build")
-    depends_on("python@3.10:3.14", when="@26.0.0:26.11", type="build")
-    depends_on("python@3.10:3.15", when="@26.12:26", type="build")
+    depends_on("python@3.10:3.15", when="@26", type="build")
 
     depends_on("libtool", type="build", when=sys.platform != "darwin")
     depends_on("pkgconfig", type="build")
