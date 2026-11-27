@@ -20,20 +20,23 @@ class Assimp(CMakePackage):
     license("BSD-3-Clause", checked_by="wdconinc")
 
     version("master", branch="master")
-    version("6.0.2", sha256="d1822d9a19c9205d6e8bc533bf897174ddb360ce504680f294170cc1d6319751")
+    version("6.0.6", sha256="5f7ed412b76575621df0525a762b31da5874afff352b3a890c6308db4ac7204c")
     version("5.4.3", sha256="66dfbaee288f2bc43172440a55d0235dfc7bf885dda6435c038e8000e79582cb")
-    version("5.4.2", sha256="7414861a7b038e407b510e8b8c9e58d5bf8ca76c9dfe07a01d20af388ec5086a")
-    version("5.4.0", sha256="a90f77b0269addb2f381b00c09ad47710f2aab6b1d904f5e9a29953c30104d3f")
-    version("5.3.1", sha256="a07666be71afe1ad4bc008c2336b7c688aca391271188eb9108d0c6db1be53f1")
-    version("5.2.5", sha256="b5219e63ae31d895d60d98001ee5bb809fb2c7b2de1e7f78ceeb600063641e1a")
-    version("5.2.4", sha256="6a4ff75dc727821f75ef529cea1c4fc0a7b5fc2e0a0b2ff2f6b7993fe6cb54ba")
-    version("5.2.3", sha256="b20fc41af171f6d8f1f45d4621f18e6934ab7264e71c37cd72fd9832509af2a8")
-    version("5.2.2", sha256="ad76c5d86c380af65a9d9f64e8fc57af692ffd80a90f613dfc6bd945d0b80bb4")
-    version("5.2.1", sha256="c9cbbc8589639cd8c13f65e94a90422a70454e8fa150cf899b6038ba86e9ecff")
-    version("5.1.4", sha256="bd32cdc27e1f8b7ac09d914ab92dd81d799c97e9e47315c1f40dcb7c6f7938c6")
-    version("5.1.3", sha256="50a7bd2c8009945e1833c591d16f4f7c491a3c6190f69d9d007167aadb175c35")
-    version("5.0.1", sha256="11310ec1f2ad2cd46b95ba88faca8f7aaa1efe9aa12605c55e3de2b977b3dbfc")
-    version("4.0.1", sha256="60080d8ab4daaab309f65b3cffd99f19eb1af8d05623fff469b9b652818e286e")
+
+    with default_args(deprecated=True):
+        version("6.0.2", sha256="d1822d9a19c9205d6e8bc533bf897174ddb360ce504680f294170cc1d6319751")
+        version("5.4.2", sha256="7414861a7b038e407b510e8b8c9e58d5bf8ca76c9dfe07a01d20af388ec5086a")
+        version("5.4.0", sha256="a90f77b0269addb2f381b00c09ad47710f2aab6b1d904f5e9a29953c30104d3f")
+        version("5.3.1", sha256="a07666be71afe1ad4bc008c2336b7c688aca391271188eb9108d0c6db1be53f1")
+        version("5.2.5", sha256="b5219e63ae31d895d60d98001ee5bb809fb2c7b2de1e7f78ceeb600063641e1a")
+        version("5.2.4", sha256="6a4ff75dc727821f75ef529cea1c4fc0a7b5fc2e0a0b2ff2f6b7993fe6cb54ba")
+        version("5.2.3", sha256="b20fc41af171f6d8f1f45d4621f18e6934ab7264e71c37cd72fd9832509af2a8")
+        version("5.2.2", sha256="ad76c5d86c380af65a9d9f64e8fc57af692ffd80a90f613dfc6bd945d0b80bb4")
+        version("5.2.1", sha256="c9cbbc8589639cd8c13f65e94a90422a70454e8fa150cf899b6038ba86e9ecff")
+        version("5.1.4", sha256="bd32cdc27e1f8b7ac09d914ab92dd81d799c97e9e47315c1f40dcb7c6f7938c6")
+        version("5.1.3", sha256="50a7bd2c8009945e1833c591d16f4f7c491a3c6190f69d9d007167aadb175c35")
+        version("5.0.1", sha256="11310ec1f2ad2cd46b95ba88faca8f7aaa1efe9aa12605c55e3de2b977b3dbfc")
+        version("4.0.1", sha256="60080d8ab4daaab309f65b3cffd99f19eb1af8d05623fff469b9b652818e286e")
 
     patch(
         "https://github.com/assimp/assimp/commit/92b5c284ce58fb64af2ee1f11e86aa8a65c78d03.patch?full_index=1",
