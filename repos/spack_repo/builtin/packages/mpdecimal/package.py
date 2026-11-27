@@ -41,8 +41,10 @@ class Mpdecimal(AutotoolsPackage, NMakePackage):
             # only an import library is generated for Windows
             # due to symbol visibility
             return find_libraries("libmpdec*", root=self.prefix.lib, runtime=False)
-        # Suffix is .so, even on macOS
-        return LibraryList(find(self.prefix.lib, "libmpdec.so"))
+        if self.spec.satisfies("@:2.4"):
+            # Suffix is .so, even on macOS
+            return LibraryList(find(self.prefix.lib, "libmpdec.so"))
+        return find_libraries("libmpdec", root=self.prefix.lib, recursive=False)
 
 
 class NMakeBuilder(nmake.NMakeBuilder):
