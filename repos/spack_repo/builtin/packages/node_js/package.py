@@ -107,7 +107,7 @@ class NodeJs(Package):
 
     conflicts(
         "~openssl",
-        when="@20:22.23.3,24:24.22.0,26:26.22.0",
+        when="@20:22.23.3,24:24.22.0,26:26.12.0",
         msg="node-js~openssl bundles compromised eMudhra certs. Us node-js+openssl instead.",
     )
 
