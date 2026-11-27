@@ -15,6 +15,7 @@ class Snappy(CMakePackage):
 
     license("BSD-3-Clause")
 
+    version("1.3.1", sha256="893f708a0bf4b5529d555ffcee390e940e932fcf90261f682604475a76cd0247")
     version("1.2.1", sha256="736aeb64d86566d2236ddffa2865ee5d7a82d26c9016b36218fcc27ea4f09f86")
     version("1.1.10", sha256="49d831bffcc5f3d01482340fe5af59852ca2fe76c3e05df0e67203ebbe0f1d90")
     version("1.1.9", sha256="75c1fbb3d618dd3a0483bff0e26d0a92b495bbe5059c8b4f1c962b478b6e06e7")
@@ -26,6 +27,8 @@ class Snappy(CMakePackage):
 
     depends_on("c", type="build")
     depends_on("cxx", type="build")
+
+    depends_on("cmake@3.10:", type="build", when="@1.2.2:")
 
     depends_on("googletest", type="test")
 
