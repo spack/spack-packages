@@ -126,7 +126,8 @@ class Xrootd(CMakePackage):
     # https://github.com/xrootd/xrootd/pull/2802 released in 6.1
     depends_on("openssl@:3", when="@:6.0")
     depends_on("python", when="+python")
-    depends_on("py-setuptools", type="build", when="@:5.5 +python")
+    depends_on("py-setuptools", type="build", when="@:6.1 +python")
+    depends_on("py-wheel", type="build", when="@:6.1 +python")
     depends_on("py-pip", type="build", when="@5.6: +python")
     depends_on("py-setuptools@70.1:", type="build", when="@6.2: +python")
     depends_on("readline", when="+readline")
@@ -211,6 +212,9 @@ class Xrootd(CMakePackage):
         # see https://github.com/spack/spack/pull/11581
         if "+python" in self.spec:
             options.append(define("XRD_PYTHON_REQ_VERSION", spec["python"].version.up_to(2)))
+
+        if spec.satisfies("@:6.1 +python"):
+            options.append(define("PIP_OPTIONS", "--no-build-isolation"))
 
         if "+scitokens-cpp" in self.spec:
             options.append("-DSCITOKENS_CPP_DIR=%s" % spec["scitokens-cpp"].prefix)
