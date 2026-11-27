@@ -1,0 +1,11 @@
+--- spack-src/nauty-h.in
++++ spack-src/nauty-h.in
+@@ -41,7 +41,7 @@
+                           /* whether --enable-ansicontrols is used */
+ 
+ #define _FILE_OFFSET_BITS @ac_cv_sys_file_offset_bits@
+-#if _FILE_OFFSET_BITS == 64
++#if defined(_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS + 0 == 64)
+ #define _LARGEFILE_SOURCE
+ #else
+ #undef _FILE_OFFSET_BITS
