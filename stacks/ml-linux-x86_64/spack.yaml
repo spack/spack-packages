@@ -8,6 +8,18 @@ spack:
       target: ["x86_64_v3"]
       require:
       - target=x86_64_v3
+    llvm:
+      externals:
+      - spec: llvm@23.1.5+clang~flang+lld~lldb
+        prefix: /opt/view/llvm
+        dependencies:
+        - spec: gcc@14.4.0
+          deptypes: build
+          virtuals: c,cxx
+        extra_attributes:
+          compilers:
+            c: /opt/view/llvm/bin/clang
+            cxx: /opt/view/llvm/bin/clang++
     mpi:
       require: openmpi
     python:
@@ -146,13 +158,6 @@ spack:
         hwloc:
           require:
             - ~rocm
-
-  ci:
-    pipeline-gen:
-    - build-job:
-        image:
-          name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-          entrypoint: ['']
 
   cdash:
     build-group: Machine Learning

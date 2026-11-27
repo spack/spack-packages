@@ -110,7 +110,7 @@ default:
     - spack --version
     - spack env activate --without-view ${SPACK_CI_PACKAGES_ROOT}/stacks/${SPACK_CI_STACK_NAME}
     - spack repo list
-    - spack compiler find
+    - spack compiler find ${SPACK_CI_COMPILER_PATHS}
     - spack audit configs
     - spack python ${SPACK_CI_SCRIPTS_ROOT}/common/expand_vars.py
       "${SPACK_CI_CONFIG_ROOT}/${PIPELINE_MIRROR_TEMPLATE}"
@@ -209,6 +209,12 @@ default:
     SPACK_CI_TARGET: "neoverse_v2"
   extends: [ ".generate-base" ]
   tags: ["spack", "public", "medium", "neoverse_v2"]
+
+# Image for linux stacks. Only compilers in SPACK_CI_COMPILER_PATHS are registered.
+.linux-gnu:
+  image: ghcr.io/spack/linux-gnu:2026-11-26-45857315229
+  variables:
+    SPACK_CI_COMPILER_PATHS: /opt/view/gcc/bin
 
 .generate-win64:
   extends: [ ".base-job", ".generate-common" ]
@@ -333,8 +339,7 @@ force_pipeline_status:
     SPACK_CI_STACK_NAME: e4s
 
 e4s-generate:
-  extends: [ ".e4s", ".generate-x86_64"]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-amd64-gcc-11.4:2024.03.01
+  extends: [ ".e4s", ".generate-x86_64", ".linux-gnu" ]
 
 e4s-build:
   extends: [ ".e4s", ".build" ]
@@ -355,8 +360,7 @@ e4s-build:
     SPACK_CI_STACK_NAME: e4s-neoverse-v2
 
 e4s-neoverse-v2-generate:
-  extends: [ ".e4s-neoverse-v2", ".generate-neoverse-v2" ]
-  image: ghcr.io/spack/spack/ubuntu22.04-runner-arm64-gcc-11.4:2024.03.01
+  extends: [ ".e4s-neoverse-v2", ".generate-neoverse-v2", ".linux-gnu" ]
 
 e4s-neoverse-v2-build:
   extends: [ ".e4s-neoverse-v2", ".build" ]
@@ -421,7 +425,7 @@ e4s-oneapi-build:
     SPACK_CI_STACK_NAME: build_systems
 
 build_systems-generate:
-  extends: [ ".build_systems", ".generate-x86_64"]
+  extends: [ ".build_systems", ".generate-x86_64", ".linux-gnu" ]
 
 build_systems-build:
   extends: [ ".build_systems", ".build" ]
@@ -442,8 +446,7 @@ build_systems-build:
     SPACK_CI_STACK_NAME: developer-tools-x86_64_v3-linux-gnu
 
 developer-tools-x86_64_v3-linux-gnu-generate:
-  extends: [ ".developer-tools-x86_64_v3-linux-gnu", ".generate-x86_64"]
-  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+  extends: [ ".developer-tools-x86_64_v3-linux-gnu", ".generate-x86_64", ".linux-gnu" ]
 
 developer-tools-x86_64_v3-linux-gnu-build:
   extends: [ ".developer-tools-x86_64_v3-linux-gnu", ".build" ]
@@ -465,8 +468,7 @@ developer-tools-x86_64_v3-linux-gnu-build:
     SPACK_CI_STACK_NAME: developer-tools-aarch64-linux-gnu
 
 developer-tools-aarch64-linux-gnu-generate:
-  extends: [ ".developer-tools-aarch64-linux-gnu", ".generate-aarch64"]
-  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+  extends: [ ".developer-tools-aarch64-linux-gnu", ".generate-aarch64", ".linux-gnu" ]
 
 developer-tools-aarch64-linux-gnu-build:
   extends: [ ".developer-tools-aarch64-linux-gnu", ".build" ]
@@ -511,8 +513,7 @@ developer-tools-darwin-build:
     SPACK_CI_STACK_NAME: developer-bootstrap-aarch64-linux-gnu
 
 developer-bootstrap-aarch64-linux-gnu-generate:
-  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64"]
-  image:  ghcr.io/spack/aarch64-linux-gnu:v2024-12-18
+  extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".generate-aarch64", ".linux-gnu" ]
 
 developer-bootstrap-aarch64-linux-gnu-build:
   extends: [ ".developer-bootstrap-aarch64-linux-gnu", ".build" ]
@@ -534,8 +535,7 @@ developer-bootstrap-aarch64-linux-gnu-build:
     SPACK_CI_STACK_NAME: developer-bootstrap-x86_64_v3-linux-gnu
 
 developer-bootstrap-x86_64_v3-linux-gnu-generate:
-  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64"]
-  image:  ghcr.io/spack/x86_64_v3-linux-gnu:2024-12-12
+  extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".generate-x86_64", ".linux-gnu" ]
 
 developer-bootstrap-x86_64_v3-linux-gnu-build:
   extends: [ ".developer-bootstrap-x86_64_v3-linux-gnu", ".build" ]
@@ -579,10 +579,7 @@ developer-bootstrap-darwin-build:
     SPACK_CI_STACK_NAME: radiuss
 
 radiuss-generate:
-  extends: [ ".radiuss", ".generate-x86_64" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-    entrypoint: ['']
+  extends: [ ".radiuss", ".generate-x86_64", ".linux-gnu" ]
 
 radiuss-build:
   extends: [ ".radiuss", ".build" ]
@@ -611,10 +608,7 @@ radiuss-build:
     SPACK_CI_STACK_NAME: radiuss-aarch64
 
 radiuss-aarch64-generate:
-  extends: [ ".radiuss-aarch64", ".generate-aarch64" ]
-  image:
-    name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-    entrypoint: ['']
+  extends: [ ".radiuss-aarch64", ".generate-aarch64", ".linux-gnu" ]
 
 radiuss-aarch64-build:
   extends: [ ".radiuss-aarch64", ".build" ]
@@ -635,11 +629,10 @@ radiuss-aarch64-build:
     SPACK_CI_STACK_NAME: data-vis-sdk
 
 data-vis-sdk-generate:
-  extends: [ ".data-vis-sdk", ".generate-x86_64"]
+  extends: [ ".data-vis-sdk", ".generate-x86_64", ".linux-gnu" ]
   variables:
     # Override concretization pool because of memory requests
     SPACK_CONCRETIZE_JOBS: 3
-  image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
 
 data-vis-sdk-build:
   extends: [ ".data-vis-sdk", ".build" ]
@@ -660,8 +653,7 @@ data-vis-sdk-build:
     SPACK_CI_STACK_NAME: tools-sdk
 
 tools-sdk-generate:
-  extends: [ ".tools-sdk", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
+  extends: [ ".tools-sdk", ".generate-x86_64", ".linux-gnu" ]
 
 tools-sdk-build:
   extends: [ ".tools-sdk", ".build" ]
@@ -682,8 +674,7 @@ tools-sdk-build:
     SPACK_CI_STACK_NAME: tutorial
 
 tutorial-generate:
-  extends: [ ".tutorial", ".generate-x86_64"]
-  image: ghcr.io/spack/tutorial-ubuntu-26.04:v2026-06-09
+  extends: [ ".tutorial", ".generate-x86_64", ".linux-gnu" ]
 
 tutorial-build:
   extends: [ ".tutorial", ".build" ]
@@ -704,8 +695,7 @@ tutorial-build:
     SPACK_CI_STACK_NAME: ml-linux-x86_64
 
 ml-linux-x86_64-generate:
-  extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4" ]
-  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
+  extends: [ ".generate-x86_64", .ml-linux-x86_64, ".tags-x86_64_v4", ".linux-gnu" ]
 
 ml-linux-x86_64-build:
   extends: [ ".build", ".ml-linux-x86_64" ]
@@ -726,8 +716,7 @@ ml-linux-x86_64-build:
     SPACK_CI_STACK_NAME: ml-linux-aarch64
 
 ml-linux-aarch64-generate:
-  extends: [ ".generate-aarch64", .ml-linux-aarch64 ]
-  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
+  extends: [ ".generate-aarch64", .ml-linux-aarch64, ".linux-gnu" ]
 
 ml-linux-aarch64-build:
   extends: [ ".build", ".ml-linux-aarch64" ]
@@ -770,8 +759,7 @@ ml-darwin-aarch64-mps-build:
     SPACK_CI_STACK_NAME: hep
 
 hep-generate:
-  extends: [ ".hep", ".generate-x86_64"]
-  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
+  extends: [ ".hep", ".generate-x86_64", ".linux-gnu" ]
 
 hep-build:
   extends: [ ".hep", ".build" ]
@@ -891,8 +879,7 @@ windows-vis-build:
     SPACK_CI_STACK_NAME: bootstrap-x86_64-linux-gnu
 
 bootstrap-x86_64-linux-gnu-generate:
-  extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu ]
-  image: ghcr.io/spack/ubuntu-24.04:v2026-11-09
+  extends: [ .generate-x86_64, .bootstrap-x86_64-linux-gnu, .linux-gnu ]
 
 bootstrap-x86_64-linux-gnu-build:
   extends: [ .build, .bootstrap-x86_64-linux-gnu ]

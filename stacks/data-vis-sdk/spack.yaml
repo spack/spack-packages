@@ -12,13 +12,13 @@ spack:
       - target=x86_64_v3
     c:
       require:
-      - gcc@11
+      - gcc
     cxx:
       require:
-      - gcc@11
+      - gcc
     fortran:
       require:
-        - gcc@11
+        - gcc
 
     cmake:
       variants: ~ownlibs
@@ -96,11 +96,6 @@ spack:
   - $visit_specs
   - $vtk_specs
   - vtk-m
-
-  ci:
-    pipeline-gen:
-    - build-job:
-        image: {name: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01, entrypoint: [""]}
 
   cdash:
     "build-group:": Data and Vis SDK

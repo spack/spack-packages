@@ -27,11 +27,6 @@ spack:
   - papi
   - tau
 
-  ci:
-    pipeline-gen:
-    - build-job:
-        image: ghcr.io/spack/ubuntu20.04-runner-x86_64:2023-01-01
-
   cdash:
     'build-group:': TOOLS SDK
 

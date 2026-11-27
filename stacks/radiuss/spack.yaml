@@ -29,7 +29,7 @@ spack:
     - conduit
     - flux-core
     - hypre
-    - lbann
+    - lbann ~pfe  # +pfe: py-protobuf@:4.21 conflicts with %gcc@14:
     # - lvarray@develop ~tests #concretization fails for some reason
     - mfem
     - py-hatchet
@@ -78,13 +78,6 @@ spack:
           require: [openblas]
         mkl:
           require: [intel-oneapi-mkl]
-
-  ci:
-    pipeline-gen:
-    - build-job:
-        image:
-          name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-          entrypoint: ['']
 
   cdash:
     build-group: RADIUSS

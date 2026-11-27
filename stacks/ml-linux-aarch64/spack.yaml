@@ -9,6 +9,18 @@ spack:
       target: ["aarch64"]
       require:
       - target=aarch64
+    llvm:
+      externals:
+      - spec: llvm@23.1.5+clang~flang+lld~lldb
+        prefix: /opt/view/llvm
+        dependencies:
+        - spec: gcc@14.4.0
+          deptypes: build
+          virtuals: c,cxx
+        extra_attributes:
+          compilers:
+            c: /opt/view/llvm/bin/clang
+            cxx: /opt/view/llvm/bin/clang++
     mpi:
       require: openmpi
     python:
@@ -110,13 +122,6 @@ spack:
               - +cuda
               - cuda_arch=80
               - ~flash_attention
-
-  ci:
-    pipeline-gen:
-    - build-job:
-        image:
-          name: ghcr.io/spack/ubuntu-24.04:v2026-11-09
-          entrypoint: ['']
 
   cdash:
     build-group: Machine Learning
