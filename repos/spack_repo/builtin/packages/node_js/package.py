@@ -61,7 +61,6 @@ class NodeJs(Package):
         version(
             "26.12.1",
             sha256="717244a8d757672ec86aae5077fca31e50f84b094441ec51bdf397aab12c304e",
-            preferred=True,
         )
         version(
             "26.3.0",
