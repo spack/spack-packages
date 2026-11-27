@@ -42,6 +42,7 @@ class Flex(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("bison", type="build")
+    depends_on("m4", type=("build", "run"))
     depends_on("gettext@0.19:", type="build", when="+nls")
     depends_on("gettext@0.19:", type="build", when="@:2.6.0,2.6.4")
     depends_on("help2man", type="build", when="@:2.6.0,2.6.4")
@@ -50,7 +51,6 @@ class Flex(AutotoolsPackage):
 
     # Older tarballs don't come with a configure script and the patch for
     # 2.6.4 touches configure
-    depends_on("m4", type="build")
     depends_on("autoconf", type="build", when="@:2.6.0,2.6.4")
     depends_on("automake", type="build", when="@:2.6.0,2.6.4")
     depends_on("libtool", type="build", when="@:2.6.0,2.6.4")
