@@ -39,7 +39,8 @@ class ClingoBootstrap(Clingo):
         depends_on("mimalloc +ipo libs=static ~override", type="build")
         conflicts("~static_libstdcpp", msg="Custom allocator requires static libstdc++")
         # Override new/delete with mimalloc.
-        patch("mimalloc.patch", when="@5.5.0:")
+        patch("mimalloc-6.patch", when="@6:")
+        patch("mimalloc.patch", when="@5.5.0:5")
         patch("mimalloc-pre-5.5.0.patch", when="@:5.4")
         # ensure we hide libstdc++ with custom operator new/delete symbols
         patch("version-script.patch", when="@spack,5.5:5.6")
@@ -56,7 +57,7 @@ class ClingoBootstrap(Clingo):
         "https://github.com/haampie/clasp/commit/208972863506ecbd85ed0bd78fac580b5e9c9c90.patch?full_index=1",
         sha256="c569fb439a99b709b6e6ac05253b344e4f3055d52223265baa55946db6d44e8b",
         working_dir="clasp",
-        when="@5.8: +optimized",
+        when="@5.8:5 +optimized",
     )
 
     # CMake at version 3.16.0 or higher has the possibility to force the
@@ -64,6 +65,7 @@ class ClingoBootstrap(Clingo):
     # in environment where more than one interpreter is in the same prefix
     depends_on("cmake@3.16.0:", type="build")
     depends_on("clingo-bootstrap-pgo", type="build", when="+optimized")
+    depends_on("clingo-bootstrap-pgo@1.1:", type="build", when="@6: +optimized")
 
     # On Linux we bootstrap with GCC or clang
     requires(
