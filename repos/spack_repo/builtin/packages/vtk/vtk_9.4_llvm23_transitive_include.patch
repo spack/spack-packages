@@ -1,0 +1,119 @@
+diff --git a/Charts/Core/vtkChartXY.cxx b/Charts/Core/vtkChartXY.cxx
+index 61a88bc044..ab2748a297 100644
+--- a/Charts/Core/vtkChartXY.cxx
++++ b/Charts/Core/vtkChartXY.cxx
+@@ -50,6 +50,7 @@
+ #include <unordered_map>
+ #include <utility>
+ #include <vector>
++#include <iterator>
+ 
+ //------------------------------------------------------------------------------
+ VTK_ABI_NAMESPACE_BEGIN
+diff --git a/Common/DataModel/vtkDataAssemblyUtilities.cxx b/Common/DataModel/vtkDataAssemblyUtilities.cxx
+index 82729b03b5..5c61f10d44 100644
+--- a/Common/DataModel/vtkDataAssemblyUtilities.cxx
++++ b/Common/DataModel/vtkDataAssemblyUtilities.cxx
+@@ -19,6 +19,7 @@
+ #include <functional>
+ #include <set>
+ #include <tuple>
++#include <iterator>
+ 
+ VTK_ABI_NAMESPACE_BEGIN
+ namespace
+diff --git a/Common/DataModel/vtkDataSetAttributesFieldList.cxx b/Common/DataModel/vtkDataSetAttributesFieldList.cxx
+index 11c3a7845c..f0af9a3ded 100644
+--- a/Common/DataModel/vtkDataSetAttributesFieldList.cxx
++++ b/Common/DataModel/vtkDataSetAttributesFieldList.cxx
+@@ -13,6 +13,7 @@
+ #include <algorithm>
+ #include <array>
+ #include <functional>
++#include <iterator>
+ #include <map>
+ #include <set>
+ #include <string>
+diff --git a/Filters/ParallelDIY2/vtkOverlappingCellsDetector.cxx b/Filters/ParallelDIY2/vtkOverlappingCellsDetector.cxx
+index 8f1b366a74..72818363a5 100644
+--- a/Filters/ParallelDIY2/vtkOverlappingCellsDetector.cxx
++++ b/Filters/ParallelDIY2/vtkOverlappingCellsDetector.cxx
+@@ -42,6 +42,7 @@
+ #include <tuple>
+ #include <unordered_map>
+ #include <vector>
++#include <iterator>
+ 
+ // clang-format off
+ #include "vtk_diy2.h"
+diff --git a/IO/EnSight/core/EnSightFile.cxx b/IO/EnSight/core/EnSightFile.cxx
+index 42cee83e91..59a06c6042 100644
+--- a/IO/EnSight/core/EnSightFile.cxx
++++ b/IO/EnSight/core/EnSightFile.cxx
+@@ -5,6 +5,7 @@
+ 
+ #include <cctype> // for std::tolower
+ #include <regex>
++#include <algorithm>
+ 
+ #include <vtk_fmt.h>
+ // clang-format off
+diff --git a/IO/IOSS/vtkIOSSModel.cxx b/IO/IOSS/vtkIOSSModel.cxx
+index 041538e229..269d4898bc 100644
+--- a/IO/IOSS/vtkIOSSModel.cxx
++++ b/IO/IOSS/vtkIOSSModel.cxx
+@@ -52,6 +52,7 @@
+ #include <numeric>
+ #include <set>
+ #include <unordered_map>
++#include <iterator>
+ 
+ namespace
+ {
+diff --git a/IO/IOSS/vtkIOSSReaderInternal.cxx b/IO/IOSS/vtkIOSSReaderInternal.cxx
+index dfd3294d59..e469e63577 100644
+--- a/IO/IOSS/vtkIOSSReaderInternal.cxx
++++ b/IO/IOSS/vtkIOSSReaderInternal.cxx
+@@ -44,6 +44,7 @@
+ // clang-format on
+ 
+ #include <algorithm>
++#include <iterator>
+ 
+ VTK_ABI_NAMESPACE_BEGIN
+ 
+diff --git a/IO/IOSS/vtkIOSSUtilities.h b/IO/IOSS/vtkIOSSUtilities.h
+index 1883cb0b80..0688bb2306 100644
+--- a/IO/IOSS/vtkIOSSUtilities.h
++++ b/IO/IOSS/vtkIOSSUtilities.h
+@@ -39,6 +39,7 @@
+ 
+ #include <cassert>
+ #include <set>
++#include <iterator>
+ 
+ VTK_ABI_NAMESPACE_BEGIN
+ class vtkCellArray;
+diff --git a/Rendering/Core/vtkCompositePolyDataMapperDelegator.cxx b/Rendering/Core/vtkCompositePolyDataMapperDelegator.cxx
+index 1bbccefe0c..0465ca297f 100644
+--- a/Rendering/Core/vtkCompositePolyDataMapperDelegator.cxx
++++ b/Rendering/Core/vtkCompositePolyDataMapperDelegator.cxx
+@@ -4,6 +4,7 @@
+ #include "vtkCompositePolyDataMapperDelegator.h"
+ #include "vtkCompositePolyDataMapper.h"
+ #include "vtkObjectFactory.h"
++#include <exception>
+ 
+ VTK_ABI_NAMESPACE_BEGIN
+ //------------------------------------------------------------------------------
+diff --git a/ThirdParty/ioss/vtkioss/Ioss_Map.C b/ThirdParty/ioss/vtkioss/Ioss_Map.C
+index 1445070306..b23983904d 100644
+--- a/ThirdParty/ioss/vtkioss/Ioss_Map.C
++++ b/ThirdParty/ioss/vtkioss/Ioss_Map.C
+@@ -14,6 +14,7 @@
+ #include <numeric>
+ #include <sstream>
+ #include <vector> // for vector, vector<>::iterator, etc
++#include <iterator>
+ 
+ #include "Ioss_CodeTypes.h"
