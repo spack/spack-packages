@@ -18,7 +18,7 @@ class VepCache(Package):
 
     license("Apache-2.0", checked_by="teaguesterling")
 
-    vep_versions = ["113", "112", "111", "110"]
+    vep_versions = ["116", "113", "112", "111", "110"]
     depends_on("vep", type="build")
     for major in vep_versions:
         version(major)
