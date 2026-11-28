@@ -23,6 +23,7 @@ class Glow(GoPackage):
 
     license("MIT")
 
+    version("3.0.0", sha256="18df6f3c09157021366b8c702b5badba405d37dbb42f132353eb50c1b0d3f464")
     version("2.1.1", sha256="f13e1d6be1ab4baf725a7fedc4cd240fc7e5c7276af2d92f199e590e1ef33967")
     version("1.5.1", sha256="b4ecf269b7c6447e19591b1d23f398ef2b38a6a75be68458390b42d3efc44b92")
     version("1.5.0", sha256="66f2a876eba15d71cfd08b56667fb07e1d49d383aa17d31696a39e794e23ba92")
