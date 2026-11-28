@@ -196,11 +196,15 @@ class Babelstream(CMakePackage, CudaPackage, ROCmPackage, MakefilePackage):
     )
 
     # Thrust Conflict
-    depends_on("thrust", when="+thrust")
+    depends_on("thrust", when="thrust_submodel=cuda")
     depends_on("cuda", when="thrust_submodel=cuda")
     depends_on("cuda", when="+raja raja_offload=nvidia")
     depends_on("hip", when="+hip")
     depends_on("rocthrust", when="thrust_submodel=rocm")
+    requires("+cuda", when="thrust_submodel=cuda")
+    requires("+rocm", when="thrust_submodel=rocm")
+    # The Thrust model uses C++14, rocPRIM 6.4 and later require C++17
+    conflicts("^rocprim@6.4:", when="@:5.0 thrust_submodel=rocm")
     depends_on("intel-tbb", when="+std +std_use_tbb")
     depends_on("intel-oneapi-dpl", when="+std +std_use_onedpl")
     depends_on("intel-tbb", when="+std +std_use_onedpl")
@@ -614,7 +618,7 @@ register_flag_optional(TARGET_PROCESSOR
             if "cuda" in self.spec.variants["thrust_submodel"].value:
                 args.append("-DTHRUST_IMPL=" + self.spec.variants["thrust_submodel"].value.upper())
 
-                args.append("-SDK_DIR=" + self.spec["thrust"].prefix + "/include")
+                args.append(self.define("SDK_DIR", self.spec["thrust"].prefix.include))
                 # this model uses CMAKE_CUDA_ARCHITECTURES which only requires number of cuda_arch
                 # no need to append sm_ or cc_
                 args.append("-DCUDA_ARCH=" + self.spec.variants["cuda_arch"].value[0])
@@ -631,7 +635,9 @@ register_flag_optional(TARGET_PROCESSOR
             if "rocm" in self.spec.variants["thrust_submodel"].value:
                 args.append("-DCMAKE_CXX_COMPILER=" + self.spec["hip"].hipcc)
                 args.append("-DTHRUST_IMPL=" + self.spec.variants["thrust_submodel"].value.upper())
-                args.append("-SDK_DIR=" + self.spec["rocthrust"].prefix)
+                args.append(self.define("SDK_DIR", self.spec["rocthrust"].prefix))
+                if "none" not in self.spec.variants["amdgpu_target"].value:
+                    args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         # ===================================
         #             kokkos
