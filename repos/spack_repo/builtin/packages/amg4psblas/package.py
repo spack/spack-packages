@@ -17,7 +17,7 @@ class Amg4psblas(AutotoolsPackage):
 
     homepage = "https://psctoolkit.github.io/"
     git = "https://github.com/sfilippone/amg4psblas.git"
-    url = "https://github.com/sfilippone/amg4psblas/archive/refs/tags/v1.2.0.tar.gz"
+    url = "https://github.com/sfilippone/amg4psblas/archive/refs/tags/v1.2.0-1.tar.gz"
 
     # List of GitHub accounts to notify when the package is updated.
     maintainers("pasquadambra", "cirdans-home", "sfilippone")
@@ -26,6 +26,7 @@ class Amg4psblas(AutotoolsPackage):
     license("BSD-3-Clause", checked_by="cirdans-home")
 
     version("develop", branch="development")
+    version("1.2.0-1", sha256="a3fbe201d43069f2472a5e94dd6629fb68002ab01d5752332fb73a316dea8bfd")
     version("1.2.0", sha256="971cac9917a84dad97eccef76feb89b5ea66afa0b80d13f45a62dd5685c01878")
     version("1.2.0-rc3", sha256="589e23829ea569b984db964b0c40fdf2ae7165290c9118da45b0418514b5cf3a")
 
@@ -57,6 +58,7 @@ class Amg4psblas(AutotoolsPackage):
     depends_on("fortran", type="build")
     # psblas
     depends_on("psblas@develop", when="@develop")
+    depends_on("psblas@3.9.0-1", when="@1.2.0-1")
     depends_on("psblas@3.9.0", when="@1.2.0")
     depends_on("psblas@3.9.0-rc3", when="@1.2.0-rc3")
     depends_on("psblas+mpi", when="+mpi")
@@ -107,8 +109,8 @@ class Amg4psblas(AutotoolsPackage):
         return args
 
     @run_after("install")
-    def samples(self, spec, prefix):
-        with working_dir(prefix.samples.advanced.fileread):
+    def samples(self):
+        with working_dir(self.prefix.samples.advanced.fileread):
             make()
-        with working_dir(prefix.samples.advanced.pdegen):
+        with working_dir(self.prefix.samples.advanced.pdegen):
             make()
