@@ -92,7 +92,11 @@ class Patchelf(AutotoolsPackage):
     def test_rpath_change(self):
         """ensure patchelf can change rpath"""
         currdir = os.getcwd()
-        hello_file = self.test_suite.current_test_data_dir.join("hello")
+        hello_source = join_path(self.test_suite.current_test_data_dir, "hello.c")
+        hello_file = join_path(currdir, "hello")
+
+        cc = which("cc", required=True)
+        cc("-o", hello_file, hello_source)
 
         patchelf = which(self.prefix.bin.patchelf, required=True)
         patchelf("--set-rpath", currdir, hello_file)
