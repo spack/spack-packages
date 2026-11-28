@@ -21,6 +21,7 @@ class KokkosTools(CMakePackage):
 
     version("develop", branch="develop")
 
+    version("5.3.0", sha256="9893057125cd1bada61b90717dc536360d617b40aa6a2a599e685b89f73548f9")
     version("5.2.0", sha256="545169f76709a7e8391b3c8bbf3cc1b03844095fe54a85946e840eab4cbfc513")
 
     variant("mpi", default=False, description="Enable MPI support")
