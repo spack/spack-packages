@@ -1,0 +1,13 @@
+--- a/adapter/PreciceInterface.h
++++ b/adapter/PreciceInterface.h
+@@ -36,8 +36,8 @@
+ 
+   // Interface face elements
+   int     numElements;
+-  int *   elementIDs;
+-  int *   faceIDs;
++  ITG *   elementIDs;
++  ITG *   faceIDs;
+   double *faceCenterCoordinates;
+   int     faceSetID;
+   char *  faceCentersMeshName;

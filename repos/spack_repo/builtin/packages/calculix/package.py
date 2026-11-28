@@ -13,12 +13,14 @@ class Calculix(MakefilePackage):
     relies on the SPOOLES sparse solver and the ARPACK eigensolver."""
 
     homepage = "http://www.calculix.de/"
-    url = "http://www.dhondt.de/ccx_2.20.src.tar.bz2"
+    url = "https://www.dhondt.de/ccx_2.20.src.tar.bz2"
 
     license("GPL-2.0-or-later")
 
     maintainers("failed33")
 
+    version("2.24", sha256="99fb4f9b0ec19b100a914c3a097ea1e7f0c22f715b96338acc4a66b63306a2e2")
+    version("2.23", sha256="9c88385c10fb04f5dc6c4e98027a51bebdd8aee3920e05190d6c1dd08357d6e7")
     version("2.20", sha256="63bf6ea09e7edcae93e0145b1bb0579ea7ae82e046f6075a27c8145b72761bcf")
 
     depends_on("c", type="build")
@@ -30,10 +32,17 @@ class Calculix(MakefilePackage):
     depends_on("arpack-ng~mpi")
     depends_on("blas")
     depends_on("lapack")
+    requires("^openblas~ilp64", when="^[virtuals=blas,lapack] openblas")
 
     # Spack strips the archive's single top-level CalculiX/ dir, so the source
     # root is already inside it.
-    build_directory = "ccx_2.20/src"
+    @property
+    def executable(self):
+        return f"ccx_{self.version}"
+
+    @property
+    def build_directory(self):
+        return join_path(self.executable, "src")
 
     @property
     def build_targets(self):
@@ -42,17 +51,17 @@ class Calculix(MakefilePackage):
         # promoting int-conversion etc. to hard errors (no-ops on gcc 11).
         legacy = (
             "-Wno-error=int-conversion -Wno-error=implicit-function-declaration "
-            "-Wno-error=implicit-int"
+            "-Wno-error=implicit-int -Wno-error=incompatible-pointer-types"
         )
         cflags = (
-            "-Wall -O2 -fopenmp {1} -I{0} -DARCH=Linux -DSPOOLES -DARPACK "
-            "-DMATRIXSTORAGE -DNETWORKOUT".format(spec["spooles"].prefix.include, legacy)
+            f"-Wall -O2 -fopenmp {legacy} -I{spec['spooles'].prefix.include} "
+            "-DARCH=Linux -DSPOOLES -DARPACK -DMATRIXSTORAGE -DNETWORKOUT"
         )
-        fflags = "-Wall -O2 -fopenmp"
+        fflags = "-Wall -O2 -fopenmp -cpp"
         if spec.satisfies("%gcc@10:"):
             # gfortran 10+ rejects CalculiX's legacy argument-mismatch patterns.
             fflags += " -fallow-argument-mismatch"
-        libs = "{0} {1} {2} -lpthread -lm -lc".format(
+        libs = "{} {} {} -lpthread -lm -lc".format(
             spec["arpack-ng"].libs.ld_flags,
             spec["lapack"].libs.ld_flags,
             spec["blas"].libs.ld_flags,
@@ -68,37 +77,40 @@ class Calculix(MakefilePackage):
     def edit(self, spec, prefix):
         spooles_a = join_path(spec["spooles"].prefix.lib, "libspooles.a")
 
-        # An overridden edit()/install() runs from the stage root, not the
-        # build_directory, so patch the Makefile inside the CalculiX source dir.
         with working_dir(self.build_directory):
-            # $(LIBS) is overridden on the make command line to ARPACK/LAPACK/BLAS
-            # linker flags; drop it from the ccx_2.20 prerequisites so Make does
-            # not try to build "-lpthread" and friends as files.
-            # NB: no trailing \s* — filter_file is line-based with the newline
-            # included, so \s*$ would eat it and fuse this line into its recipe.
+            # LIBS contains linker flags. Do not treat them as prerequisites.
             filter_file(
-                r"^ccx_2\.20:.*\$\(LIBS\)$",
-                "ccx_2.20: $(OCCXMAIN) ccx_2.20.a",
+                rf"^{self.executable.replace('.', r'[.]')}:.*\$\(LIBS\)$",
+                f"{self.executable}: $(OCCXMAIN) {self.executable}.a",
                 "Makefile",
             )
 
-            # SPOOLES is no longer carried in $(LIBS); link its static archive
-            # explicitly, wrapping the archives in --start-group so the cyclic
-            # C/Fortran symbol references between them resolve.
+            # Avoid stamping build time into the shipped sources and executable.
+            if spec.satisfies("@2.24:"):
+                filter_file('__DATE__ " " __TIME__', '"unknown"', "buildinfo.c", string=True)
+            else:
+                filter_file(
+                    f"./date.pl; $(CC) $(CFLAGS) -c {self.executable}.c; ",
+                    "",
+                    "Makefile",
+                    string=True,
+                )
             filter_file(
-                "$(OCCXMAIN) ccx_2.20.a $(LIBS) -fopenmp",
-                "$(OCCXMAIN) -Wl,--start-group ccx_2.20.a {0} -Wl,--end-group "
-                "$(LIBS) -fopenmp".format(spooles_a),
+                rf"\$\(OCCXMAIN\) {self.executable.replace('.', r'[.]')}\.a +\$\(LIBS\) -fopenmp",
+                f"$(OCCXMAIN) -Wl,--start-group {self.executable}.a {spooles_a} "
+                "-Wl,--end-group $(LIBS) -fopenmp",
                 "Makefile",
-                string=True,
             )
 
     def install(self, spec, prefix):
         mkdirp(prefix.bin)
         with working_dir(self.build_directory):
-            install("ccx_2.20", join_path(prefix.bin, "ccx"))
-
-            # Publish the CalculiX sources, headers and Makefile.inc so that the
-            # calculix-adapter package can compile ccx_preCICE against them
-            # ($(CCX) in the adapter Makefile points here).
-            install_tree(".", join_path(prefix, "share", "CalculiX", "ccx_2.20", "src"))
+            install(self.executable, join_path(prefix.bin, "ccx"))
+            # Keep the installed sources for consumers of the existing package layout.
+            install_tree(
+                ".",
+                join_path(prefix, "share", "CalculiX", self.build_directory),
+                ignore=lambda filename: (
+                    filename == self.executable or filename.endswith((".o", ".a"))
+                ),
+            )

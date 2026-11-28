@@ -1,0 +1,11 @@
+--- a/sopalin/pastix_task_sopalin.c
++++ b/sopalin/pastix_task_sopalin.c
+@@ -364,7 +364,7 @@
+                                    mtxtype,
+                                    pastix_data->inter_node_procnbr,
+                                    pastix_data->inter_node_procnum,
+-                                   pastix_data->bcsc->flttype );
++                                   pastix_data->solvmatr->flttype );
+     }
+ #endif
+ 
