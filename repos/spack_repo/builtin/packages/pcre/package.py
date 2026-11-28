@@ -29,7 +29,9 @@ class Pcre(AutotoolsPackage, CMakePackage):
     version("8.38", sha256="b9e02d36e23024d6c02a2e5b25204b3a4fa6ade43e0a5f869f254f49535079df")
 
     maintainers("drkennetz")
+
     patch("intel.patch", when="@8.38")
+    patch("cmake-4.2.patch")
 
     build_system("autotools", "cmake", default="autotools")
 
@@ -59,8 +61,13 @@ class Pcre(AutotoolsPackage, CMakePackage):
     depends_on("cxx", type="build")  # generated
 
     with when("build_system=cmake"):
+        depends_on("cmake@:3", type="test")
         depends_on("zlib")
         depends_on("bzip2")
+
+    @when("build_system=cmake")
+    def patch(self):
+        filter_file("CMAKE_POLICY(SET CMP0026 OLD)", "", "CMakeLists.txt", string=True)
 
 
 class AutotoolsBuilder(autotools.AutotoolsBuilder):
