@@ -18,6 +18,7 @@ class Pdsh(AutotoolsPackage):
 
     license("GPL-2.0")
 
+    version("2.36", tag="pdsh-2.36", commit="63e2a77a57631f44527ebc65055ce8495c724632")
     version("2.35", tag="pdsh-2.35", commit="64a7d3771e0298bbfa1edc25364700a680c183cd")
     version("2.34", tag="pdsh-2.34", commit="3f7e40f5d287cff388031388071c87b52d3ebe44")
     version("2.33", tag="pdsh-2.33", commit="79aa5a45475abce5ec88d7566b39a4a2d87d2f64")

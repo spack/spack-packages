@@ -27,6 +27,7 @@ class R(AutotoolsPackage):
     license("GPL-2.0-or-later")
 
     version("trunk", svn="https://svn.r-project.org/R/trunk")
+    version("4.6.2", sha256="c297040f6392b1dac6e5c0eb398422cfdaedf540ae2205edb9ad0d10cb10ee00")
     version("4.6.1", sha256="4da6e61d2c0aac5f14a2e7e432cb5fcc269efe83da4293050ba7f03dff4e2cf4")
     version("4.6.0", sha256="b8dc9b4543660c7b596b87938df532394350360976527d344228ee0ed12e45ec")
     version(

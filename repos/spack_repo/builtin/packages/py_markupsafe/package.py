@@ -19,6 +19,7 @@ class PyMarkupsafe(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("3.0.4", sha256="2e9ad7dd851bf45fab9f75cbff4cb493fee9979e8d8c7c9c3ee119022518edd6")
     version("3.0.3", sha256="722695808f4b6457b320fdc131280796bdceb04ab50fe1795cd540799ebe1698")
     version("3.0.2", sha256="ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0")
     version("2.1.5", sha256="d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b")

@@ -35,6 +35,8 @@ class AoclBlas(BlisBase):
 
     requires("target=x86_64:", msg="AMD blis available only on x86_64")
 
+    conflicts("%nvhpc")
+
     license("BSD-3-Clause")
 
     version("5.3", sha256="0d456548174a5a71df1225b5648d802d53d0351187ae2f829ecf5122f3aeab9e")
@@ -53,6 +55,7 @@ class AoclBlas(BlisBase):
     depends_on("c", type="build")  # generated
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
+    depends_on("perl", type="build")
 
     variant("ilp64", default=False, when="@3.0.1:", description="ILP64 support")
     variant("aocl_gemm", default=False, when="@4.1:", description="aocl_gemm support")

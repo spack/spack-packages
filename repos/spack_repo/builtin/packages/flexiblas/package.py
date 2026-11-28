@@ -15,6 +15,7 @@ class Flexiblas(CMakePackage):
 
     license("GPL-3.0-or-later")
 
+    version("3.5.0", sha256="4f135fd3d4d844f221624b13734acd0d221a4347a19fa78604a6cbcaa3f477ea")
     version("3.4.2", sha256="be4bc95461ab4970aba39a0a2bbd0d03bcf802180f63be8eefc189eb2380227c")
     version("3.3.0", sha256="2696cd63d69b9a007f40f1f4a1ed83ad2fc46f6a930a22753bd221758c503ea2")
     version("3.2.1", sha256="5be7e508e2dbb751b3bf372639d8e82a11f79e9ef6cbf243b64981c24a5703cf")
@@ -27,9 +28,15 @@ class Flexiblas(CMakePackage):
     depends_on("cxx", type="build")  # generated
     depends_on("fortran", type="build")  # generated
 
+    depends_on("cmake@3.10:", type="build", when="@3.4.5:")
+    depends_on("cmake@:3", type="build", when="@:3.3.0")
+
     # virtual dependency
     provides("blas")
     provides("lapack")
 
     def cmake_args(self):
-        return [self.define("SYSCONFDIR", self.prefix.etc)]
+        return [
+            self.define("SYSCONFDIR", self.prefix.etc),
+            self.define("BLAS_AUTO_DETECT", False),
+        ]

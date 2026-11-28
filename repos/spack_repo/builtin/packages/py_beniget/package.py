@@ -15,6 +15,7 @@ class PyBeniget(PythonPackage):
 
     license("BSD-3-Clause")
 
+    version("0.5.1", sha256="976d40c6f22650d133b00291e6fe3ab8e9850a83ba121d834ea5c74db7f66c0d")
     version("0.5.0", sha256="e7af11fa8ec7de3d3eb3d98b1e722d15d44017d8b35d8aa11d54f6719b312f22")
     version(
         "0.4.2.post1", sha256="a0258537e65e7e14ec33a86802f865a667f949bb6c73646d55e42f7c45a052ae"

@@ -130,6 +130,7 @@ class PyPandas(PythonPackage):
         depends_on("py-python-dateutil@2.8.1:", when="@1.4:")
         depends_on("py-python-dateutil@2.7.3:", when="@1.1:")
         depends_on("py-python-dateutil")
+        depends_on("py-python-dateutil@:2", when="@:3.1.0")
         depends_on("py-tzdata", when="@3: platform=windows")
         depends_on("py-tzdata@2022.7:", when="@2.2:2")
         depends_on("py-tzdata@2022.1:", when="@2")

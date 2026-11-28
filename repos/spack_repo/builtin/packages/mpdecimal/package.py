@@ -23,6 +23,7 @@ class Mpdecimal(AutotoolsPackage, NMakePackage):
 
     license("BSD-2-Clause")
 
+    version("4.0.1", sha256="96d33abb4bb0070c7be0fed4246cd38416188325f820468214471938545b1ac8")
     version("4.0.0", sha256="942445c3245b22730fd41a67a7c5c231d11cb1b9936b9c0f76334fb7d0b4468c")
     version("2.5.1", sha256="9f9cd4c041f99b5c49ffb7b59d9f12d95b683d88585608aa56a6307667b2b21f")
     version("2.4.2", sha256="83c628b90f009470981cf084c5418329c88b19835d8af3691b930afccb7d79c7")
@@ -40,8 +41,10 @@ class Mpdecimal(AutotoolsPackage, NMakePackage):
             # only an import library is generated for Windows
             # due to symbol visibility
             return find_libraries("libmpdec*", root=self.prefix.lib, runtime=False)
-        # Suffix is .so, even on macOS
-        return LibraryList(find(self.prefix.lib, "libmpdec.so"))
+        if self.spec.satisfies("@:2.4"):
+            # Suffix is .so, even on macOS
+            return LibraryList(find(self.prefix.lib, "libmpdec.so"))
+        return find_libraries("libmpdec", root=self.prefix.lib, recursive=False)
 
 
 class NMakeBuilder(nmake.NMakeBuilder):

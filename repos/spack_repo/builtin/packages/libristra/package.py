@@ -31,6 +31,7 @@ class Libristra(CMakePackage):
     depends_on("boost@1.70.0: cxxstd=17 +program_options")
     depends_on("lua@5.3.5:~shared", when="~shared_lua")
     depends_on("lua@5.3.5:+shared", when="+shared_lua")
+    depends_on("cmake@4.3:", type="build", when="^lua@5.5:")
     # TODO: might want to move paraview out of libristra
     depends_on("paraview", when="+paraview")
     # We explicitly depend on gtest and can no longer rely on others for it

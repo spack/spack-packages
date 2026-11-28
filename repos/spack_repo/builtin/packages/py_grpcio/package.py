@@ -15,6 +15,7 @@ class PyGrpcio(PythonPackage):
 
     license("Apache-2.0")
 
+    version("1.85.4", sha256="45c4efd77dbfbb92cfebe493518c7e2a97ef3f4da2673508f81214b7493d7cca")
     version("1.81.1", sha256="6fa10a767143a5e82e8eaab53918af0cd8909a57a27f8cb2288b80a613ac671b")
     version("1.78.1", sha256="27c625532d33ace45d57e775edf1982e183ff8641c72e4e91ef7ba667a149d72")
     version("1.78.0", sha256="7382b95189546f375c174f53a5fa873cef91c4b8005faa05cc5b3beea9c4f1c5")
@@ -96,6 +97,7 @@ class PyGrpcio(PythonPackage):
     with default_args(type="build"):
         depends_on("py-setuptools")
         depends_on("py-setuptools@77.0.1:", when="@1.78:")
+        depends_on("py-cython@3.2:3", when="@1.85:")
         depends_on("py-cython@3.1.1:", when="@1.75:")
         depends_on("py-cython@3.0.0:", when="@1.63:1.71")
         depends_on("py-cython@0.23:2", when="@:1.62")
@@ -107,8 +109,7 @@ class PyGrpcio(PythonPackage):
         depends_on("py-six@1.5.2:", when="@:1.48")
 
     depends_on("openssl+shared", when="@1.33.1:")
-    # OpenSSL 4 support: https://github.com/grpc/grpc/pull/43842
-    depends_on("openssl@:3", when="@1.33.1:")
+    depends_on("openssl@:3", when="@1.33.1:1.84")
     depends_on("zlib-api", when="@1.33.1:")
     depends_on("c-ares", when="@1.33.1:")
     depends_on("re2+shared", when="@1.34:")

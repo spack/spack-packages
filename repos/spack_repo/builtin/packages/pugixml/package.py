@@ -16,6 +16,7 @@ class Pugixml(CMakePackage):
 
     license("MIT")
 
+    version("1.16", sha256="4cee1ca4aad395170f4c7a07824f3bdd41f28316c6e1e1090a1425b278ec0b4b")
     version("1.15", sha256="655ade57fa703fb421c2eb9a0113b5064bddb145d415dd1f88c79353d90d511a")
     version("1.14", sha256="2f10e276870c64b1db6809050a75e11a897a8d7456c4be5c6b2e35a11168a015")
     version("1.13", sha256="40c0b3914ec131485640fa57e55bf1136446026b41db91c1bef678186a12abbe")
@@ -24,8 +25,9 @@ class Pugixml(CMakePackage):
     version("1.10", sha256="55f399fbb470942410d348584dc953bcaec926415d3462f471ef350f29b5870a")
     version("1.8.1", sha256="929c4657c207260f8cc28e5b788b7499dffdba60d83d59f55ea33d873d729cd4")
 
-    depends_on("c", type="build")
+    depends_on("c", type="build", when="@:1.10")
     depends_on("cxx", type="build")
+    depends_on("cmake@:3", type="build", when="@:1.13")
 
     variant("pic", default=True, description="Build position-independent code")
     variant("shared", default=True, description="Build shared libraries")
@@ -33,8 +35,12 @@ class Pugixml(CMakePackage):
     conflicts("+shared", when="~pic")
 
     def cmake_args(self):
+        if self.spec.satisfies("@1.12:"):
+            shared_and_static = "PUGIXML_BUILD_SHARED_AND_STATIC_LIBS"
+        else:
+            shared_and_static = "BUILD_SHARED_AND_STATIC_LIBS"
         return [
-            self.define("BUILD_SHARED_AND_STATIC_LIBS", False),
+            self.define(shared_and_static, False),
             self.define_from_variant("BUILD_SHARED_LIBS", "shared"),
             self.define_from_variant("CMAKE_POSITION_INDEPENDENT_CODE", "pic"),
         ]

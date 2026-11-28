@@ -18,6 +18,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
 
     license("LGPL-2.1-or-later OR MPL-1.1", checked_by="tgamblin")
 
+    version("1.18.6", sha256="1c767308174337a74694da0f3ec069c271452163a1ef4540964c50c301f157d4")
     version("1.18.4", sha256="445ed8208a6e4823de1226a74ca319d3600e83f6369f99b14265006599c32ccb")
     version("1.18.2", sha256="a62b9bb42425e844cc3d6ddde043ff39dbabedd1542eba57a2eb79f85889d45a")
     version("1.18.0", sha256="243a0736b978a33dee29f9cca7521733b78a65b5418206fef7bd1c3d4cf10b64")
@@ -123,9 +124,7 @@ class Cairo(AutotoolsPackage, MesonPackage):
         depends_on("pixman@0.40.0:")
         depends_on("fontconfig@2.13.0:", when="+fc")
 
-        # lzo is not strictly required, but cannot be disabled and may be pulled in accidentally
-        # https://github.com/mesonbuild/meson/issues/8224
-        # https://github.com/microsoft/vcpkg/pull/38313
+        # lzo is optional, but cannot be disabled before 1.18.4
         depends_on("lzo")
 
     # needed for both meson and autotools builds when including X
@@ -166,8 +165,8 @@ class MesonBuilder(meson.MesonBuilder):
     def meson_args(self):
         args = [
             self.enable_or_disable("dwrite"),
-            self.enable_or_disable("fontconfig", variant="ft"),
-            self.enable_or_disable("freetype", variant="fc"),
+            self.enable_or_disable("fontconfig", variant="fc"),
+            self.enable_or_disable("freetype", variant="ft"),
             self.enable_or_disable("png"),
             self.enable_or_disable("quartz"),
             self.enable_or_disable("tee"),
@@ -182,6 +181,8 @@ class MesonBuilder(meson.MesonBuilder):
             # system gtk+-2.0 regardless of -Dgtk2-utils, which fails to link when ~X
             "-Dtests=disabled",
         ]
+        if self.spec.satisfies("@1.18.4:"):
+            args.append("-Dlzo=enabled")
         return args
 
 

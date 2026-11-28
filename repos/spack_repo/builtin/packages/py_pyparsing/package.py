@@ -15,6 +15,7 @@ class PyPyparsing(PythonPackage):
 
     license("MIT")
 
+    version("3.3.3", sha256="928ae7e20211f3b6f3915a72f06a0cfd29ab9d24279dd6346b6b1a7146397d36")
     version("3.3.2", sha256="c777f4d763f140633dcb6d8a3eda953bf7a214dc4eff598413c070bcdc117cbc")
     version("3.2.5", sha256="2df8d5b7b2802ef88e8d016a2eb9c7aeaa923529cd251ed0fe4608275d4105b6")
     version("3.1.2", sha256="a1bac0ce561155ecc3ed78ca94d3c9378656ad4c94c1270de543f621420f94ad")
@@ -34,7 +35,9 @@ class PyPyparsing(PythonPackage):
     depends_on("python@3.6.8:", when="@3.0.9:", type=("build", "run"))
     depends_on("python@3.6:", when="@3:", type=("build", "run"))
     depends_on("python@2.6:2.8,3.3:", type=("build", "run"))
-    depends_on("py-flit-core@3.2:3", when="@3.0.9:", type="build")
+    depends_on("py-flit-core@3.12:", when="@3.3.1:", type="build")
+    depends_on("py-flit-core@:4", when="@3.3.3:", type="build")
+    depends_on("py-flit-core@3.2:3", when="@3.0.9:3.3.2", type="build")
 
     import_modules = ["pyparsing"]
 
