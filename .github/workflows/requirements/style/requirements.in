@@ -1,0 +1,6 @@
+clingo==5.8.0
+mypy==1.15.0
+pylint==4.0.9
+ruff==0.15.11
+types-six==1.17.0.20250515
+vermin==1.8.0

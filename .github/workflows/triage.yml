@@ -43,7 +43,7 @@ jobs:
       - uses: ./.github/actions/checkout-spack
 
       - name: Install Python dependencies
-        run: pip install -r .github/workflows/requirements/triage/requirements.txt
+        run: pip install --require-hashes -r .github/workflows/requirements/triage/requirements.txt
 
       - name: Label PR
         run: |

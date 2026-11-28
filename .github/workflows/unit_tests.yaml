@@ -60,7 +60,11 @@ jobs:
               coreutils cvs gfortran graphviz gnupg2 mercurial ninja-build \
               cmake bison libbison-dev subversion
     - name: Install Python packages
-      run: pip install --upgrade pytest clingo
+      if: ${{ !contains(fromJSON('["3.7", "3.8", "3.9"]'), matrix.python-version) }}
+      run: pip install --require-hashes -r .github/workflows/requirements/unit_tests/requirements.txt
+    - name: Install Python packages (legacy)
+      if: ${{ contains(fromJSON('["3.7", "3.8", "3.9"]'), matrix.python-version) }}
+      run: pip install --require-hashes -r .github/workflows/requirements/legacy_tests/requirements.txt
     - uses: ./.github/actions/checkout-spack
     - name: Run unit tests
       run: PYTHONPATH="$PWD/spack-core/lib/spack" python3 -m pytest -v --exitfirst
@@ -78,7 +82,7 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
     - name: Install Python packages
-      run: pip install --upgrade pytest clingo
+      run: pip install --require-hashes -r .github/workflows/requirements/unit_tests/requirements.txt
     - name: Setup Homebrew packages
       run: brew install dash fish gcc gnupg
     - uses: ./.github/actions/checkout-spack
