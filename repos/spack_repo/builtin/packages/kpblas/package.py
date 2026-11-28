@@ -16,11 +16,14 @@ class Kpblas(Package):
 
     license("UNKNOWN", checked_by="wjunLu")
 
-    version(
-        "25.1.0",
-        url="https://mirrors.huaweicloud.com/kunpeng/archive/HPC/HPCKit/HPCKit_25.1.0_Linux-aarch64.tar.gz",
-        sha256="e58a43cebf0cea071ee69c0106a7edaaec9a6fb7022f13d091a0bd43bf85e2d5",
-    )
+    # Wrapper package: all KML content is installed by the hpckit
+    # dependency, so there is nothing to fetch for kpblas itself.
+    has_code = False
+
+    version("25.1.0")
+
+    requires("platform=linux", msg="KML is only available on Linux")
+    requires("target=aarch64:", msg="KML is only available on AArch64")
 
     depends_on("hpckit@25.1.0", when="@25.1.0:")
 
@@ -104,6 +107,10 @@ class Kpblas(Package):
         return LibraryList([])
 
     @property
+    def blas_libs(self):
+        return self.libs
+
+    @property
     def headers(self):
         include_dir = os.path.join(self._get_kml_prefix(), "include")
         return find_headers(["kblas"], include_dir, recursive=False)
@@ -117,9 +124,6 @@ class Kpblas(Package):
         if os.path.isdir(include_dir):
             env.prepend_path("CPATH", include_dir)
             env.prepend_path("INCLUDE", include_dir)
-
-    def setup_dependent_package(self, module, dependent_spec):
-        self.spec.blas_libs = self.libs
 
     def setup_dependent_build_environment(self, env, dependent_spec):
         for lib_dir in self._lib_dirs():
