@@ -159,6 +159,13 @@ class KokkosKernels(CMakePackage, CudaPackage):
     depends_on("kokkos+threads", when="+threads")
     depends_on("kokkos+cuda_lambda", when="@4+cuda")
     depends_on("cmake@3.16:", type="build")
+    # With kokkos+cuda, all sources are compiled as CUDA code. +cuda adds the cuda dependency,
+    # which makes clang (kokkos~wrapper) find the CUDA installation.
+    requires(
+        "+cuda",
+        when="%kokkos+cuda",
+        msg="kokkos-kernels compiles CUDA code when kokkos has CUDA enabled",
+    )
 
     for v in Kokkos.versions:
         depends_on(f"kokkos@{v}", when=f"@{v}")
