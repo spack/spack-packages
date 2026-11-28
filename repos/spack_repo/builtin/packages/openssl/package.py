@@ -29,6 +29,7 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
 
     license("Apache-2.0")
 
+    version("4.1.0", sha256="50c17baf54cb008f6ce42d50deb4b28050a1aad711636cabd4b241c7e90cc2fd")
     version("4.0.3", sha256="325b5c806167c13b40b1ffeadfe0248197c00eccc4cf123ec1e28d2d2fd216d9")
     version("3.6.5", sha256="a2157c2830efdec3788939b00c9b0638306d3f0bbb76dc4832ee503bb397df98")
     # spack bootstrap builds from prebuild dev tools (built on python@3.14.3 ^openssl@3.6.1)
@@ -36,9 +37,6 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
     version("3.6.1", sha256="b1bfedcd5b289ff22aee87c9d600f515767ebf45f77168cb6d64f231f518a82e")
     version("3.5.9", sha256="603f5602e2eef00d77fbd429d34dcd5822bb301757a1bc9cdb24c670f1eb859a")
     version("3.4.8", sha256="9de9ce2f29e584044ae07ab93fc601637be01fdc91d109c5a655ec7419e6022b")
-    version("3.3.6", sha256="22db04f3c8f9a808c9795dcf7d2713ff40c12c410ea2d1f6435c6c9c8558958b")
-    version("3.2.6", sha256="89681a9ddaa9ed7cf25ea8ef61338db805200bae47d00510490623547380c148")
-    version("3.0.19", sha256="fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072")
 
     with default_args(deprecated=True):
         version("3.6.0", sha256="b6a5f44b7eb69e3fa35dbf15524405b44837a481d43d81daddde3ff21fcbb8e9")
@@ -47,10 +45,19 @@ class Openssl(Package):  # Uses Fake Autotools, should subclass Package
         version("3.4.4", sha256="7bdf55ac20f2779e99e5eca306f824fad2b37dee5a06cc35ed5a8b85a6060010")
         version("3.4.3", sha256="fa727ed1399a64e754030a033435003991aee36bda9a5b080995cb2ac5cf7f37")
         version("3.4.1", sha256="002a2d6b30b58bf4bea46c43bdd96365aaf8daa6c428782aa4feee06da197df3")
+        version("3.3.7", sha256="4900be54e81c4dfe00bb1a10dad33fd8414833573c40d0e9e3274d4ed32e53a2")
+        version("3.3.6", sha256="22db04f3c8f9a808c9795dcf7d2713ff40c12c410ea2d1f6435c6c9c8558958b")
         version("3.3.5", sha256="9d62c00a5a6903740c8703f0e006257f429d565d3b91ac1a9bd4a4c700002e01")
         version("3.3.3", sha256="712590fd20aaa60ec75d778fe5b810d6b829ca7fb1e530577917a131f9105539")
+        version("3.2.6", sha256="89681a9ddaa9ed7cf25ea8ef61338db805200bae47d00510490623547380c148")
         version("3.2.4", sha256="b23ad7fd9f73e43ad1767e636040e88ba7c9e5775bfa5618436a0dd2c17c3716")
         version("3.1.8", sha256="d319da6aecde3aa6f426b44bbf997406d95275c5c59ab6f6ef53caaa079f456f")
+        version(
+            "3.0.22", sha256="67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81"
+        )
+        version(
+            "3.0.19", sha256="fa5a4143b8aae18be53ef2f3caf29a2e0747430b8bc74d32d88335b94ab63072"
+        )
         version(
             "3.0.18", sha256="d80c34f5cf902dccf1f1b5df5ebb86d0392e37049e5d73df1b3abae72e4ffe8b"
         )

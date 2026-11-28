@@ -24,11 +24,13 @@ class Zstd(CMakePackage, MakefilePackage):
     license("BSD-3-Clause OR GPL-2.0-or-later")
 
     version("develop", branch="dev")
-    version("1.5.7", sha256="37d7284556b20954e56e1ca85b80226768902e2edabd3b649e9e72c0c9012ee3")
-    version("1.5.6", sha256="30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7")
-    version("1.5.5", sha256="98e9c3d949d1b924e28e01eccb7deed865eefebf25c2f21c702e5cd5b63b85e1")
-    version("1.5.4", sha256="35ad983197f8f8eb0c963877bf8be50490a0b3df54b4edeb8399ba8a8b2f60a4")
-    version("1.5.2", sha256="f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
+    version("1.6.0", sha256="289bb207935e5b4f241239f9832e665fa6b9636c3f87f479e125371e13842b8e")
+    with default_args(deprecated=True):
+        version("1.5.7", sha256="37d7284556b20954e56e1ca85b80226768902e2edabd3b649e9e72c0c9012ee3")
+        version("1.5.6", sha256="30f35f71c1203369dc979ecde0400ffea93c27391bfd2ac5a9715d2173d92ff7")
+        version("1.5.5", sha256="98e9c3d949d1b924e28e01eccb7deed865eefebf25c2f21c702e5cd5b63b85e1")
+        version("1.5.4", sha256="35ad983197f8f8eb0c963877bf8be50490a0b3df54b4edeb8399ba8a8b2f60a4")
+        version("1.5.2", sha256="f7de13462f7a82c29ab865820149e778cbfe01087b3a55b5332707abf9db4a6e")
     version("1.5.0", sha256="0d9ade222c64e912d6957b11c923e214e2e010a18f39bec102f572e693ba2867")
     version("1.4.9", sha256="acf714d98e3db7b876e5b540cbf6dee298f60eb3c0723104f6d3f065cd60d6a8")
     version("1.4.8", sha256="f176f0626cb797022fbf257c3c644d71c1c747bb74c32201f9203654da35e9fa")
@@ -58,8 +60,9 @@ class Zstd(CMakePackage, MakefilePackage):
     )
 
     depends_on("c", type="build")  # generated
-    depends_on("cxx", type="build")  # generated
+    depends_on("cxx", type="build", when="build_system=cmake @:1.5")
 
+    depends_on("cmake@3.10:", type="build", when="build_system=cmake @1.5.7:")
     depends_on("cmake@3.5:", type="build", when="build_system=cmake @1.5.6:")
 
     depends_on("zlib-api", when="compression=zlib")

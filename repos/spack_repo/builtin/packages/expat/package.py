@@ -18,8 +18,13 @@ class Expat(AutotoolsPackage, CMakePackage):
     url = "https://github.com/libexpat/libexpat/releases/download/R_2_2_9/expat-2.2.9.tar.bz2"
 
     license("MIT")
-    version("2.10.0", sha256="44e0139015f1c9908d0876b5516235136f16b14932d8f6634a16737a12742f53")
-    # deprecate all releases before 2.10.0 because of various security issues
+    version("2.11.0", sha256="e4fad0deffe151dbb4ba23226211a4c607765bebfbe02772db3644a928482777")
+    # deprecate all releases before 2.11.0 because of various security issues
+    version(
+        "2.10.0",
+        sha256="44e0139015f1c9908d0876b5516235136f16b14932d8f6634a16737a12742f53",
+        deprecated=True,
+    )
     version(
         "2.9.0",
         sha256="775e8a68f81a748a401dc3168318d4a39484eb4f954726f21517c8f42c0ba984",
@@ -127,8 +132,8 @@ class AutotoolsBuilder(autotools.AutotoolsBuilder):
         args = ["--without-docbook", "--enable-static"]
         if spec.satisfies("+libbsd"):
             args.append("--with-libbsd")
-        return args
         args.append("--with-pic" if "+pic" in spec else "--without-pic")
+        return args
 
 
 class CMakeBuilder(cmake.CMakeBuilder):

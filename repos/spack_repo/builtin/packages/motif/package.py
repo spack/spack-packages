@@ -43,8 +43,6 @@ class Motif(AutotoolsPackage):
     depends_on("pkgconfig", type="build")
 
     patch("add_xbitmaps_dependency.patch")
-    # ensure tools/wml/wmluiltok.c has a main function
-    patch("add_wmluiltok_option_main.patch")
     # Fix build with GCC 14 and newer
     patch("fix_build_with_gcc14.patch", level=0)
 
@@ -66,8 +64,12 @@ class Motif(AutotoolsPackage):
         return (flags, None, None)
 
     def configure_args(self):
-        # Keep autoconf 2.73 from adding -std=gnu23
-        return ["ac_cv_prog_cc_c23=no"]
+        return [
+            # Keep autoconf 2.73 from adding -std=gnu23
+            "ac_cv_prog_cc_c23=no",
+            # tools/wml/wmluiltok takes main() from libfl
+            "LEXLIB=-lfl",
+        ]
 
     def autoreconf(self, spec, prefix):
         autoreconf = which("autoreconf", required=True)

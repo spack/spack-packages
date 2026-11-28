@@ -27,34 +27,93 @@ class Fzf(GoPackage):
 
     # Versions from newest to oldest
     version("master", branch="master")
-    version("0.74.3", sha256="5b142217c3068647a7d8faa9c678cffada100b5f11a48609aa79c94ce04b28ef")
-    version("0.74.2", sha256="3ce36bd4fb0cde458a7f93c11ef534408d92c3bf19e6acc90e112f3e9e2acc60")
-    version("0.74.1", sha256="ba37120bbe45966c6eba6a00c8ea64b86c3c57e349cb55b1c3e0f522976fd978")
-    version("0.74.0", sha256="55ab5f2256edd8890f81d407b63d3a3e81cffe10e318cd196031dc85efdeb079")
-    version("0.73.1", sha256="ae4f49f8606a7d28498208fa1b93c5d3b890719eea97e02559e66160138b750c")
-    version("0.67.0", sha256="da72936dd23045346769dbf233a7a1fa6b4cfe4f0e856b279821598ce8f692af")
-    version("0.66.0", sha256="576659beee244b4ecccf45f1c576340143d8ce6d97fa053e6cbdd3f75c66b351")
-    version("0.65.2", sha256="53b7e0077833f96ae04fd1e312ed65b2d5c427422b652dd3ce6c2d1702f8ce56")
-    version("0.65.1", sha256="82fa35dc3ba5d716db26a507f90bb0e724f586123c28ad3fb376bd8384669abf")
-    version("0.64.0", sha256="e990529375a75e9be03b58b6a136573b9fd1189c1223aaa760e47fcb94812172")
-    version("0.62.0", sha256="e5beae86a3d026b2c2cfc165715d45b831b9f337a9e96f711ba3bc3d15e50900")
-    version("0.61.0", sha256="5d72cdf708c6adc240b3b43dfecd218cf4703ea609422fb4d62812e9f79f0a12")
-    version("0.60.3", sha256="bdef337774050c26c6c4a6f38bc4ccb0901450854cd7f667cb3a330166a9ada5")
-    version("0.60.0", sha256="69255fd9301e491b6ac6788bf1caf5d4f70d9209b4b8ab70ceb1caf6a69b5c16")
-    version("0.57.0", sha256="d4e8e25fad2d3f75943b403c40b61326db74b705bf629c279978fdd0ceb1f97c")
-    version("0.56.2", sha256="1d67edb3e3ffbb14fcbf786bfcc0b5b8d87db6a0685135677b8ef4c114d2b864")
-    version("0.55.0", sha256="805383f71bca7f8fb271ecd716852aea88fd898d5027d58add9e43df6ea766da")
-    version("0.54.3", sha256="6413f3916f8058b396820f9078b1336d94c72cbae39c593b1d16b83fcc4fdf74")
-    version("0.53.0", sha256="d45abbfb64f21913c633d46818d9d3eb3d7ebc7e94bd16f45941958aa5480e1d")
-    version("0.52.1", sha256="96848746ca78249c1fdd16f170776ce2f667097b60e4ffbd5ecdbd7dfac72ef9")
-    version("0.48.1", sha256="c8dbb545d651808ef4e1f51edba177fa918ea56ac53376c690dc6f2dd0156a71")
-    version("0.47.0", sha256="bc566cb4630418bc9981898d3350dbfddc114637a896acaa8d818a51945bdf30")
-    version("0.46.1", sha256="b0d640be3ae79980fdf461096f7d9d36d38ec752e25f8c4d2ca3ca6c041c2491")
-    version("0.45.0", sha256="f0dd5548f80fe7f80d9277bb8fe252ac6e42a41e76fc85ce0f3af702cd987600")
-    version("0.44.1", sha256="295f3aec9519f0cf2dce67a14e94d8a743d82c19520e5671f39c71c9ea04f90c")
-    version("0.42.0", sha256="743c1bfc7851b0796ab73c6da7db09d915c2b54c0dd3e8611308985af8ed3df2")
-    version("0.41.1", sha256="982682eaac377c8a55ae8d7491fcd0e888d6c13915d01da9ebb6b7c434d7f4b5")
-    version("0.40.0", sha256="9597f297a6811d300f619fff5aadab8003adbcc1566199a43886d2ea09109a65")
+    version("0.75.0", sha256="165f6e0c1b9ba082346233681e3f1d1374e37f9fd3c1d7b6dfe09659ab893faa")
+
+    with default_args(deprecated=True):
+        version(
+            "0.74.3", sha256="5b142217c3068647a7d8faa9c678cffada100b5f11a48609aa79c94ce04b28ef"
+        )
+        version(
+            "0.74.2", sha256="3ce36bd4fb0cde458a7f93c11ef534408d92c3bf19e6acc90e112f3e9e2acc60"
+        )
+        version(
+            "0.74.1", sha256="ba37120bbe45966c6eba6a00c8ea64b86c3c57e349cb55b1c3e0f522976fd978"
+        )
+        version(
+            "0.74.0", sha256="55ab5f2256edd8890f81d407b63d3a3e81cffe10e318cd196031dc85efdeb079"
+        )
+        version(
+            "0.73.1", sha256="ae4f49f8606a7d28498208fa1b93c5d3b890719eea97e02559e66160138b750c"
+        )
+        version(
+            "0.67.0", sha256="da72936dd23045346769dbf233a7a1fa6b4cfe4f0e856b279821598ce8f692af"
+        )
+        version(
+            "0.66.0", sha256="576659beee244b4ecccf45f1c576340143d8ce6d97fa053e6cbdd3f75c66b351"
+        )
+        version(
+            "0.65.2", sha256="53b7e0077833f96ae04fd1e312ed65b2d5c427422b652dd3ce6c2d1702f8ce56"
+        )
+        version(
+            "0.65.1", sha256="82fa35dc3ba5d716db26a507f90bb0e724f586123c28ad3fb376bd8384669abf"
+        )
+        version(
+            "0.64.0", sha256="e990529375a75e9be03b58b6a136573b9fd1189c1223aaa760e47fcb94812172"
+        )
+        version(
+            "0.62.0", sha256="e5beae86a3d026b2c2cfc165715d45b831b9f337a9e96f711ba3bc3d15e50900"
+        )
+        version(
+            "0.61.0", sha256="5d72cdf708c6adc240b3b43dfecd218cf4703ea609422fb4d62812e9f79f0a12"
+        )
+        version(
+            "0.60.3", sha256="bdef337774050c26c6c4a6f38bc4ccb0901450854cd7f667cb3a330166a9ada5"
+        )
+        version(
+            "0.60.0", sha256="69255fd9301e491b6ac6788bf1caf5d4f70d9209b4b8ab70ceb1caf6a69b5c16"
+        )
+        version(
+            "0.57.0", sha256="d4e8e25fad2d3f75943b403c40b61326db74b705bf629c279978fdd0ceb1f97c"
+        )
+        version(
+            "0.56.2", sha256="1d67edb3e3ffbb14fcbf786bfcc0b5b8d87db6a0685135677b8ef4c114d2b864"
+        )
+        version(
+            "0.55.0", sha256="805383f71bca7f8fb271ecd716852aea88fd898d5027d58add9e43df6ea766da"
+        )
+        version(
+            "0.54.3", sha256="6413f3916f8058b396820f9078b1336d94c72cbae39c593b1d16b83fcc4fdf74"
+        )
+        version(
+            "0.53.0", sha256="d45abbfb64f21913c633d46818d9d3eb3d7ebc7e94bd16f45941958aa5480e1d"
+        )
+        version(
+            "0.52.1", sha256="96848746ca78249c1fdd16f170776ce2f667097b60e4ffbd5ecdbd7dfac72ef9"
+        )
+        version(
+            "0.48.1", sha256="c8dbb545d651808ef4e1f51edba177fa918ea56ac53376c690dc6f2dd0156a71"
+        )
+        version(
+            "0.47.0", sha256="bc566cb4630418bc9981898d3350dbfddc114637a896acaa8d818a51945bdf30"
+        )
+        version(
+            "0.46.1", sha256="b0d640be3ae79980fdf461096f7d9d36d38ec752e25f8c4d2ca3ca6c041c2491"
+        )
+        version(
+            "0.45.0", sha256="f0dd5548f80fe7f80d9277bb8fe252ac6e42a41e76fc85ce0f3af702cd987600"
+        )
+        version(
+            "0.44.1", sha256="295f3aec9519f0cf2dce67a14e94d8a743d82c19520e5671f39c71c9ea04f90c"
+        )
+        version(
+            "0.42.0", sha256="743c1bfc7851b0796ab73c6da7db09d915c2b54c0dd3e8611308985af8ed3df2"
+        )
+        version(
+            "0.41.1", sha256="982682eaac377c8a55ae8d7491fcd0e888d6c13915d01da9ebb6b7c434d7f4b5"
+        )
+        version(
+            "0.40.0", sha256="9597f297a6811d300f619fff5aadab8003adbcc1566199a43886d2ea09109a65"
+        )
 
     # Variants
     variant("vim", default=False, description="Install vim plugins for fzf")

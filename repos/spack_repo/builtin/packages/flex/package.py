@@ -22,16 +22,17 @@ class Flex(AutotoolsPackage):
 
     license("BSD-2-Clause")
 
+    version("2.7.11", sha256="99a3ede5f61b63bef3136c5cae16d0f453e8d887c18ddc9e50bb01a4db561ace")
     version("2.6.4", sha256="e87aae032bf07c26f85ac0ed3250998c37621d95f8bd748b31f15b33c45ee995")
-    version(
-        "2.6.3",
-        sha256="68b2742233e747c462f781462a2a1e299dc6207401dac8f0bbb316f48565c2aa",
-        preferred=True,
-    )
+    version("2.6.3", sha256="68b2742233e747c462f781462a2a1e299dc6207401dac8f0bbb316f48565c2aa")
     # Avoid flex '2.6.2' (major bug)
     # See issue #2554; https://github.com/westes/flex/issues/113
     version("2.6.1", sha256="3c43f9e658e45e8aae3cf69fa11803d60550865f023852830d557c5f0623c13b")
-    version("2.6.0", sha256="cde6e46064a941a3810f7bbc612a2c39cb3aa29ce7eb775089c2515d0adfa7e9")
+    version(
+        "2.6.0",
+        sha256="cde6e46064a941a3810f7bbc612a2c39cb3aa29ce7eb775089c2515d0adfa7e9",
+        deprecated=True,
+    )
     version("2.5.39", sha256="258d3c9c38cae05932fb470db58b6a288a361c448399e6bda2694ef72a76e7cd")
 
     variant("nls", default=False, description="Enable native language support")
@@ -41,7 +42,8 @@ class Flex(AutotoolsPackage):
     depends_on("cxx", type="build")  # generated
 
     depends_on("bison", type="build")
-    depends_on("gettext@0.19:", type="build", when="+nls")
+    depends_on("m4", type=("build", "run"))
+    depends_on("gettext@0.19:", type=("build", "link"), when="+nls")
     depends_on("gettext@0.19:", type="build", when="@:2.6.0,2.6.4")
     depends_on("help2man", type="build", when="@:2.6.0,2.6.4")
     depends_on("findutils", type="build")
@@ -49,7 +51,6 @@ class Flex(AutotoolsPackage):
 
     # Older tarballs don't come with a configure script and the patch for
     # 2.6.4 touches configure
-    depends_on("m4", type="build")
     depends_on("autoconf", type="build", when="@:2.6.0,2.6.4")
     depends_on("automake", type="build", when="@:2.6.0,2.6.4")
     depends_on("libtool", type="build", when="@:2.6.0,2.6.4")

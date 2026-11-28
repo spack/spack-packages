@@ -16,6 +16,9 @@ class PyRegex(PythonPackage):
     license("Apache-2.0")
 
     version(
+        "2026.11.25", sha256="d3ea8d9698f13f3fd08c65f9bed0bb07bcfff80b61dfa14d86b8cc398f886588"
+    )
+    version(
         "2025.10.22", sha256="cc50db098b9d678ace33176a3ab4099616726ae4680fee6ac292302e8950fc4c"
     )
     version("2024.11.6", sha256="7ab159b063c52a0333c884e4679f8d7a85112ee3078fe3d9004b2dd875585519")
@@ -39,10 +42,11 @@ class PyRegex(PythonPackage):
     patch("fix-empty-setup.py.patch", when="@2025.10.22")
 
     depends_on("c", type="build")
-    depends_on("py-setuptools@77.0.3:", type="build", when="@2025.7.32:")
+    depends_on("py-setuptools@77.0.4:", type="build", when="@2025.7.32:")
     depends_on("py-setuptools@62:", type="build", when="@2024.11.7:")
     depends_on("py-setuptools", type="build")
 
+    depends_on("python@3.11:", type=("build", "run"), when="@2026.11.6:")
     depends_on("python@3.9:", type=("build", "run"), when="@2025.5.18:")
     depends_on("python@3.8:", type=("build", "run"), when="@2024.11.6:")
     depends_on("python@3.6:", type=("build", "run"), when="@2022.8.17:")

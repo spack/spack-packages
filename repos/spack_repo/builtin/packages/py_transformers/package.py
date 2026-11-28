@@ -19,52 +19,78 @@ class PyTransformers(PythonPackage):
 
     license("Apache-2.0")
 
+    version("5.24.1", sha256="71fae247d9ad61f553fb84de2089f427f5ff2c080686f9deb51e660487e8c270")
     version("4.57.0", sha256="d045753f3d93f9216e693cdb168698dfd2e9d3aad1bb72579a5d60ebf1545a8b")
-    version("4.48.3", sha256="a5e8f1e9a6430aa78215836be70cecd3f872d99eeda300f41ad6cc841724afdb")
-    version("4.46.3", sha256="8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc")
-    version("4.44.2", sha256="36aa17cc92ee154058e426d951684a2dab48751b35b49437896f898931270826")
-    version("4.42.4", sha256="f956e25e24df851f650cb2c158b6f4352dfae9d702f04c113ed24fc36ce7ae2d")
-    version("4.42.3", sha256="7539873ff45809145265cbc94ea4619d2713c41ceaa277b692d8b0be3430f7eb")
-    version("4.38.1", sha256="86dc84ccbe36123647e84cbd50fc31618c109a41e6be92514b064ab55bf1304c")
-    version("4.35.2", sha256="2d125e197d77b0cdb6c9201df9fa7e2101493272e448b9fba9341c695bee2f52")
-    version("4.31.0", sha256="4302fba920a1c24d3a429a29efff6a63eac03f3f3cf55b55927fc795d01cb273")
-    version("4.24.0", sha256="486f353a8e594002e48be0e2aba723d96eda839e63bfe274702a4b5eda85559b")
-    version("4.6.1", sha256="83dbff763b7e7dc57cbef1a6b849655d4fcab6bffdd955c5e8bea12a4f76dc10")
 
-    depends_on("cxx", type="build")  # generated
+    with default_args(deprecated=True):
+        version(
+            "4.48.3", sha256="a5e8f1e9a6430aa78215836be70cecd3f872d99eeda300f41ad6cc841724afdb"
+        )
+        version(
+            "4.46.3", sha256="8ee4b3ae943fe33e82afff8e837f4b052058b07ca9be3cb5b729ed31295f72cc"
+        )
+        version(
+            "4.44.2", sha256="36aa17cc92ee154058e426d951684a2dab48751b35b49437896f898931270826"
+        )
+        version(
+            "4.42.4", sha256="f956e25e24df851f650cb2c158b6f4352dfae9d702f04c113ed24fc36ce7ae2d"
+        )
+        version(
+            "4.42.3", sha256="7539873ff45809145265cbc94ea4619d2713c41ceaa277b692d8b0be3430f7eb"
+        )
+        version(
+            "4.38.1", sha256="86dc84ccbe36123647e84cbd50fc31618c109a41e6be92514b064ab55bf1304c"
+        )
+        version(
+            "4.35.2", sha256="2d125e197d77b0cdb6c9201df9fa7e2101493272e448b9fba9341c695bee2f52"
+        )
+        version(
+            "4.31.0", sha256="4302fba920a1c24d3a429a29efff6a63eac03f3f3cf55b55927fc795d01cb273"
+        )
+        version(
+            "4.24.0", sha256="486f353a8e594002e48be0e2aba723d96eda839e63bfe274702a4b5eda85559b"
+        )
+        version("4.6.1", sha256="83dbff763b7e7dc57cbef1a6b849655d4fcab6bffdd955c5e8bea12a4f76dc10")
 
     with default_args(type="build"):
         depends_on("py-setuptools")
 
     with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@5.21:")
         depends_on("python@3.9:", when="@4.47:")
-        depends_on("py-filelock")
-        depends_on("py-huggingface-hub@0.34:0", when="@4.57:")
-        depends_on("py-huggingface-hub@0.24:0", when="@4.47:")
+        depends_on("py-filelock", when="@:5.0")
+        depends_on("py-huggingface-hub@1.31:2", when="@5.18:")
+        depends_on("py-huggingface-hub@0.34:0", when="@4.57:4")
+        depends_on("py-huggingface-hub@0.24:0", when="@4.47:4")
         depends_on("py-huggingface-hub@0.23.2:", when="@4.42.3:")
         depends_on("py-huggingface-hub@0.19.3:", when="@4.38.1:")
-        depends_on("py-huggingface-hub@0.16.4:0", when="@4.34:")
-        depends_on("py-huggingface-hub@0.14.1:0", when="@4.26:")
-        depends_on("py-huggingface-hub@0.10:0", when="@4.24:")
+        depends_on("py-huggingface-hub@0.16.4:0", when="@4.34:4")
+        depends_on("py-huggingface-hub@0.14.1:0", when="@4.26:4")
+        depends_on("py-huggingface-hub@0.10:0", when="@4.24:4")
         depends_on("py-huggingface-hub@0.0.8", when="@4.6.1")
         depends_on("py-numpy@1.17:", when="@4.6:")
         depends_on("py-numpy@:1", when="@:4.42")
         depends_on("py-packaging@20:", when="@4.24:")
         depends_on("py-packaging", when="@4.6.1")
         depends_on("py-pyyaml@5.1:", when="@4.24:")
+        depends_on("py-regex@2025.10.22:", when="@5.4:")
         depends_on("py-regex@:2019.12.16,2019.12.18:")
-        depends_on("py-requests")
+        depends_on("py-requests", when="@:4")
+        depends_on("py-safetensors@0.8:", when="@5.13:")
         depends_on("py-safetensors@0.4.3:", when="@4.57:")
         depends_on("py-safetensors@0.4.1:", when="@4.38.1:")
         depends_on("py-safetensors@0.3.1:", when="@4.31:")
-        depends_on("py-tokenizers@0.22:0.23.0", when="@4.57:")
+        depends_on("py-tokenizers@0.23.1:0.23", when="@5.16:")
+        depends_on("py-tokenizers@0.22:0.23.0", when="@4.57:5.15")
         depends_on("py-tokenizers@0.21", when="@4.47:4.48.3")
         depends_on("py-tokenizers@0.20", when="@4.45:4.46")
         depends_on("py-tokenizers@0.19", when="@4.40:4.44")
         depends_on("py-tokenizers@0.14:0.18", when="@4.35:4.39.3")
         depends_on("py-tokenizers@0.11.1:0.11.2,0.11.4:0.13", when="@4.24:4.33")
         depends_on("py-tokenizers@0.10.1:0.10", when="@4.6.1")
+        depends_on("py-tqdm@4.60:", when="@5.11:")
         depends_on("py-tqdm@4.27:")
+        depends_on("py-typer", when="@5.3:")
 
         # Historical requirements
         depends_on("py-sacremoses", when="@:4.6")

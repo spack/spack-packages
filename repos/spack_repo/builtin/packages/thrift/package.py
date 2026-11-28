@@ -26,16 +26,33 @@ class Thrift(CMakePackage, AutotoolsPackage):
 
     license("Apache-2.0")
 
-    version("0.22.0", sha256="794a0e455787960d9f27ab92c38e34da27e8deeda7a5db0e59dc64a00df8a1e5")
+    version("0.25.0", sha256="66da4707214c54c94bac082103dc67adaf9e08925662700f269170a7b534b214")
     version("0.21.0", sha256="9a24f3eba9a4ca493602226c16d8c228037db3b9291c6fc4019bfe3bd39fc67c")
-    version("0.18.1", sha256="04c6f10e5d788ca78e13ee2ef0d2152c7b070c0af55483d6b942e29cff296726")
-    version("0.17.0", sha256="b272c1788bb165d99521a2599b31b97fa69e5931d099015d91ae107a0b0cc58f")
-    version("0.16.0", sha256="f460b5c1ca30d8918ff95ea3eb6291b3951cf518553566088f3f2be8981f6209")
-    version("0.13.0", sha256="7ad348b88033af46ce49148097afe354d513c1fca7c607b59c33ebb6064b5179")
     version("0.12.0", sha256="c336099532b765a6815173f62df0ed897528a9d551837d627c1f87fadad90428")
-    version("0.11.0", sha256="c4ad38b6cb4a3498310d405a91fef37b9a8e79a50cd0968148ee2524d2fa60c2")
-    version("0.10.0", sha256="2289d02de6e8db04cbbabb921aeb62bfe3098c4c83f36eec6c31194301efa10b")
-    version("0.9.3", sha256="b0740a070ac09adde04d43e852ce4c320564a292f26521c46b78e0641564969e")
+
+    with default_args(deprecated=True):
+        version(
+            "0.22.0", sha256="794a0e455787960d9f27ab92c38e34da27e8deeda7a5db0e59dc64a00df8a1e5"
+        )
+        version(
+            "0.18.1", sha256="04c6f10e5d788ca78e13ee2ef0d2152c7b070c0af55483d6b942e29cff296726"
+        )
+        version(
+            "0.17.0", sha256="b272c1788bb165d99521a2599b31b97fa69e5931d099015d91ae107a0b0cc58f"
+        )
+        version(
+            "0.16.0", sha256="f460b5c1ca30d8918ff95ea3eb6291b3951cf518553566088f3f2be8981f6209"
+        )
+        version(
+            "0.13.0", sha256="7ad348b88033af46ce49148097afe354d513c1fca7c607b59c33ebb6064b5179"
+        )
+        version(
+            "0.11.0", sha256="c4ad38b6cb4a3498310d405a91fef37b9a8e79a50cd0968148ee2524d2fa60c2"
+        )
+        version(
+            "0.10.0", sha256="2289d02de6e8db04cbbabb921aeb62bfe3098c4c83f36eec6c31194301efa10b"
+        )
+        version("0.9.3", sha256="b0740a070ac09adde04d43e852ce4c320564a292f26521c46b78e0641564969e")
 
     variant("openssl", default=False, description="Build with OpenSSL")
     variant("cpp", default=True, description="Build C++ library")
@@ -69,6 +86,7 @@ class Thrift(CMakePackage, AutotoolsPackage):
             depends_on("autoconf")
             depends_on("automake")
             depends_on("libtool")
+            depends_on("diffutils")
 
     # min ver in build/cmake/BoostMacros.cmake
     depends_on("boost@1.56:", when="@0.13:")
@@ -89,8 +107,10 @@ class Thrift(CMakePackage, AutotoolsPackage):
     with when("+python"):
         extends("python", type=("build", "link", "run"))
         depends_on("py-pip", type="build")
+        depends_on("py-setuptools@69:", type="build", when="@0.25:")
         depends_on("py-setuptools", type="build")
-        depends_on("py-six@1.7.2:", type=("build", "run"))
+        depends_on("py-wheel", type="build", when="@0.23:")
+        depends_on("py-six@1.7.2:", type=("build", "run"), when="@:0.21")
 
     patch(
         "https://github.com/apache/thrift/commit/69b66a51f2d86746b78300fdf43dd098d6eac7cb.patch?full_index=1",
@@ -109,6 +129,11 @@ class Thrift(CMakePackage, AutotoolsPackage):
         when="build_system=autotools",
         msg="+openssl required with build_system=autotools",
     )
+
+    def patch(self):
+        # Python 3.12 removed distutils
+        if self.spec.satisfies("+python %python@3.12:"):
+            filter_file(r"^optimize = 1$", "optimize = 0", join_path("lib", "py", "setup.cfg"))
 
 
 class CMakeBuilder(CMakeBuilder):
@@ -140,6 +165,8 @@ class AutotoolsBuilder(AutotoolsBuilder):
         # Don't install extensions to /usr
         env.set("PY_PREFIX", self.prefix)
         env.set("JAVA_PREFIX", self.prefix)
+        if self.spec.satisfies("@0.21: +python"):
+            env.set("PYTHON_SETUPUTIL_ARGS", "--no-build-isolation")
 
     def configure_args(self):
         return [

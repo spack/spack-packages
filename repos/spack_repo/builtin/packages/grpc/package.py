@@ -156,6 +156,7 @@ class Grpc(CMakePackage):
     depends_on("protobuf@:29", when="@:1.68")
 
     depends_on("openssl")
+    depends_on("openssl@:3", when="@:1.84")
     depends_on("zlib-api")
     depends_on("c-ares")
 

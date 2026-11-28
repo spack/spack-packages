@@ -17,20 +17,28 @@ class PyMako(PythonPackage):
 
     license("MIT")
 
-    version("1.3.10", sha256="99579a6f39583fa7e5630a28c3c1f440e4e97a414b80372649c0ce338da2ea28")
-    version("1.2.4", sha256="d60a3903dc3bb01a18ad6a89cdbe2e4eadc69c0bc8ef1e3773ba53d44c3f7a34")
-    version("1.2.2", sha256="3724869b363ba630a272a5f89f68c070352137b8fd1757650017b7e06fda163f")
-    version("1.1.6", sha256="4e9e345a41924a954251b95b4b28e14a301145b544901332e658907a7464b6b2")
-    version("1.1.5", sha256="169fa52af22a91900d852e937400e79f535496191c63712e3b9fda5a9bed6fc3")
-    version("1.1.4", sha256="17831f0b7087c313c0ffae2bcbbd3c1d5ba9eeac9c38f2eb7b50e8c99fe9d5ab")
-    version("1.0.4", sha256="fed99dbe4d0ddb27a33ee4910d8708aca9ef1fe854e668387a9ab9a90cbf9059")
-    version("1.0.1", sha256="45f0869febea59dab7efd256fb451c377cbb7947bef386ff0bb44627c31a8d1c")
+    version("1.4.3", sha256="cd6537fe88d5fec315c55c2f8529bc4ce7a9a352ad7db3eeaa6a66e2dd4ec37a")
 
-    depends_on("python@3.8:", when="@1.3:", type="build")
-    depends_on("python@3.7:", when="@1.2:", type="build")
+    with default_args(deprecated=True):
+        version(
+            "1.3.10", sha256="99579a6f39583fa7e5630a28c3c1f440e4e97a414b80372649c0ce338da2ea28"
+        )
+        version("1.2.4", sha256="d60a3903dc3bb01a18ad6a89cdbe2e4eadc69c0bc8ef1e3773ba53d44c3f7a34")
+        version("1.2.2", sha256="3724869b363ba630a272a5f89f68c070352137b8fd1757650017b7e06fda163f")
+        version("1.1.6", sha256="4e9e345a41924a954251b95b4b28e14a301145b544901332e658907a7464b6b2")
+        version("1.1.5", sha256="169fa52af22a91900d852e937400e79f535496191c63712e3b9fda5a9bed6fc3")
+        version("1.1.4", sha256="17831f0b7087c313c0ffae2bcbbd3c1d5ba9eeac9c38f2eb7b50e8c99fe9d5ab")
+        version("1.0.4", sha256="fed99dbe4d0ddb27a33ee4910d8708aca9ef1fe854e668387a9ab9a90cbf9059")
+        version("1.0.1", sha256="45f0869febea59dab7efd256fb451c377cbb7947bef386ff0bb44627c31a8d1c")
+
+    depends_on("python@3.10:", when="@1.4:", type=("build", "run"))
+    depends_on("python@3.8:", when="@1.3:", type=("build", "run"))
+    depends_on("python@3.7:", when="@1.2:", type=("build", "run"))
+    depends_on("py-setuptools@77:", when="@1.4:", type="build")
     depends_on("py-setuptools@47:", when="@1.2.2:", type="build")
     depends_on("py-setuptools", type="build")
 
+    depends_on("py-markupsafe@2:", when="@1.4:", type=("build", "run"))
     depends_on("py-markupsafe@0.9.2:", type=("build", "run"))
 
     # Historical dependencies

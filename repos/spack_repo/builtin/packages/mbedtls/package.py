@@ -23,12 +23,25 @@ class Mbedtls(CMakePackage, MakefilePackage):
 
     license("Apache-2.0 OR GPL-2.0-or-later", checked_by="wdconinc")
 
-    version("4.0.0", sha256="2f3a47f7b3a541ddef450e4867eeecb7ce2ef7776093f3a11d6d43ead6bf2827")
-    version("3.6.2", sha256="8b54fb9bcf4d5a7078028e0520acddefb7900b3e66fec7f7175bb5b7d85ccdca")
-    version("2.28.9", sha256="e85ea97aaf78dd6c0a5ba2e54dd5932ffa15f39abfc189c26beef7684630c02b")
-    version("2.28.8", sha256="241c68402cef653e586be3ce28d57da24598eb0df13fcdea9d99bfce58717132")
-    version("2.28.2", sha256="1db6d4196178fa9f8264bef5940611cd9febcd5d54ec05f52f1e8400f792b5a4")
-    version("2.7.19", sha256="3da12b1cebe1a25da8365d5349f67db514aefcaa75e26082d7cb2fa3ce9608aa")
+    version("4.3.0", sha256="1c87cba094cb40f097ebe0eba440a74939b71dab4e1d0d566bc90749ff381d18")
+    version("3.6.8", sha256="bc54b818e87f49c0b3281dd85d24adaede0e63b4e822e3fbd49c005a38b9595b")
+    version("2.28.10", sha256="19e5b81fdac0fe22009b9e2bdcd52d7dcafbf62bc67fc59cf0a76b5b5540d149")
+
+    with default_args(deprecated=True):
+        version("4.0.0", sha256="2f3a47f7b3a541ddef450e4867eeecb7ce2ef7776093f3a11d6d43ead6bf2827")
+        version("3.6.2", sha256="8b54fb9bcf4d5a7078028e0520acddefb7900b3e66fec7f7175bb5b7d85ccdca")
+        version(
+            "2.28.9", sha256="e85ea97aaf78dd6c0a5ba2e54dd5932ffa15f39abfc189c26beef7684630c02b"
+        )
+        version(
+            "2.28.8", sha256="241c68402cef653e586be3ce28d57da24598eb0df13fcdea9d99bfce58717132"
+        )
+        version(
+            "2.28.2", sha256="1db6d4196178fa9f8264bef5940611cd9febcd5d54ec05f52f1e8400f792b5a4"
+        )
+        version(
+            "2.7.19", sha256="3da12b1cebe1a25da8365d5349f67db514aefcaa75e26082d7cb2fa3ce9608aa"
+        )
 
     build_system(
         conditional("cmake", when="@4:"), conditional("makefile", when="@:3"), default="cmake"
@@ -61,9 +74,9 @@ class Mbedtls(CMakePackage, MakefilePackage):
     patch("fix-dt-needed-shared-libs.patch", when="@2.7:2.27,3.0.0")
 
     def url_for_version(self, version):
-        if self.spec.satisfies("@:2.28.7,3:3.5"):
+        if version.satisfies(ver(":2.28.7,3:3.5")):
             return f"https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/v{version}.tar.gz"
-        if self.spec.satisfies("@2.28.8,3.6.0"):
+        if version.satisfies(ver("2.28.8,3.6.0")):
             return f"https://github.com/Mbed-TLS/mbedtls/releases/download/v{version}/mbedtls-{version}.tar.bz2"
         # release tags for @2.28.9:2,3.6.1:
         return f"https://github.com/Mbed-TLS/mbedtls/releases/download/mbedtls-{version}/mbedtls-{version}.tar.bz2"
@@ -109,10 +122,10 @@ class MakefileBuilder(makefile.MakefileBuilder):
             env.set("WARNING_CFLAGS", "-Wall -Wextra -Wformat=2")
 
     def build(self, pkg, spec, prefix):
-        make("no_test")
+        make("no_test", "GEN_FILES=")
 
     def install(self, pkg, spec, prefix):
-        make("install", "DESTDIR={0}".format(prefix))
+        make("install", "DESTDIR={0}".format(prefix), "GEN_FILES=")
 
     @run_after("install")
     def darwin_fix(self):

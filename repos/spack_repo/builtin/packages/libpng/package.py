@@ -18,24 +18,35 @@ class Libpng(CMakePackage):
 
     license("Libpng")
 
-    version("1.6.58", sha256="28eb403f51f0f7405249132cecfe82ea5c0ef97f1b32c5a65828814ae0d34775")
-    version("1.6.55", sha256="d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d")
-    version("1.6.54", sha256="01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805")
-    version("1.6.47", sha256="b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631")
-    version("1.6.39", sha256="1f4696ce70b4ee5f85f1e1623dc1229b210029fa4b7aee573df3e2ba7b036937")
-    version("1.6.37", sha256="505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca")
-    # From http://www.libpng.org/pub/png/libpng.html (2019-04-15)
-    #     libpng versions 1.6.36 and earlier have a use-after-free bug in the
-    #     simplified libpng API png_image_free(). It has been assigned ID
-    #     CVE-2019-7317. The vulnerability is fixed in version 1.6.37,
-    #     released on 15 April 2019.
+    version("1.6.59", sha256="d80dd2a38a37f803cb9b6ac7b14bd6e74ddc3b654780a8380bdf93523fdb4389")
+
+    with default_args(deprecated=True):
+        version(
+            "1.6.58", sha256="28eb403f51f0f7405249132cecfe82ea5c0ef97f1b32c5a65828814ae0d34775"
+        )
+        version(
+            "1.6.55", sha256="d925722864837ad5ae2a82070d4b2e0603dc72af44bd457c3962298258b8e82d"
+        )
+        version(
+            "1.6.54", sha256="01c9d8a303c941ec2c511c14312a3b1d36cedb41e2f5168ccdaa85d53b887805"
+        )
+        version(
+            "1.6.47", sha256="b213cb381fbb1175327bd708a77aab708a05adde7b471bc267bd15ac99893631"
+        )
+        version(
+            "1.6.39", sha256="1f4696ce70b4ee5f85f1e1623dc1229b210029fa4b7aee573df3e2ba7b036937"
+        )
+        version(
+            "1.6.37", sha256="505e70834d35383537b6491e7ae8641f1a4bed1876dbfe361201fc80868d88ca"
+        )
+        version(
+            "1.5.30", sha256="7d76275fad2ede4b7d87c5fd46e6f488d2a16b5a69dc968ffa840ab39ba756ed"
+        )
 
     # Required for qt@3
-    version("1.5.30", sha256="7d76275fad2ede4b7d87c5fd46e6f488d2a16b5a69dc968ffa840ab39ba756ed")
     version("1.2.57", sha256="0f4620e11fa283fedafb474427c8e96bf149511a1804bdc47350963ae5cf54d8")
 
     depends_on("c", type="build")
-    depends_on("cxx", type="build")
 
     depends_on("cmake@3.14:", type="build", when="@1.6.47:")
     depends_on("cmake@3.1:", type="build", when="@1.6.37:")
@@ -71,7 +82,6 @@ class Libpng(CMakePackage):
 class CMakeBuilder(CMakeBuilder):
     def cmake_args(self):
         args = [
-            self.define("CMAKE_CXX_FLAGS", self.spec["zlib-api"].headers.include_flags),
             self.define("ZLIB_ROOT", self.spec["zlib-api"].prefix),
             self.define("PNG_SHARED", "shared" in self.spec.variants["libs"].value),
             self.define("PNG_STATIC", "static" in self.spec.variants["libs"].value),
