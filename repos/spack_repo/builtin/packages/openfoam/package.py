@@ -417,6 +417,8 @@ class Openfoam(Package):
     # introduced by the restriction within scotch!
     depends_on("flex@:2.6.1,2.6.4:")
     depends_on("cmake", type="build")
+    # wmake calls make directly. The dependency lets Spack select a compatible jobserver.
+    depends_on("gmake", type=("build", "run"))
     depends_on("m4", type="build")
     depends_on("json-c")
     depends_on("libyaml")
@@ -605,6 +607,10 @@ class Openfoam(Package):
     def archlib(self):
         """Relative location of architecture-specific libraries"""
         return join_path("platforms", self.foam_arch, "lib")
+
+    @property
+    def sanity_check_is_file(self):
+        return [join_path(self.archbin, "blockMesh")]
 
     def patch(self):
         """Adjust OpenFOAM build for spack.
