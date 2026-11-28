@@ -31,6 +31,6 @@ class PyOkadaWrapper(PythonPackage):
     depends_on("python@3:3.11", type=("build", "run"), when="@18.12.07.3")
     depends_on("python@3.8:", type=("build", "run"), when="@24.6.15")
 
-    depends_on("py-setuptools", type="build", when="@18.12.07.3")
+    depends_on("py-setuptools@:73", type="build", when="@18.12.07.3")
 
     depends_on("py-numpy", type=("build", "run"))
