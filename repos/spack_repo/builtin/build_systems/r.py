@@ -3,7 +3,15 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 from typing import List, Optional, Tuple
 
-from spack.package import ClassProperty, classproperty, depends_on, extends, mkdirp
+from spack.package import (
+    ClassProperty,
+    classproperty,
+    depends_on,
+    extends,
+    find_compilers,
+    mkdirp,
+    requires,
+)
 
 from .generic import GenericBuilder, Package
 
@@ -107,6 +115,12 @@ class RPackage(Package):
     depends_on("gmake", type="build", when="%c")
     depends_on("gmake", type="build", when="%cxx")
     depends_on("gmake", type="build", when="%fortran")
+
+    # Consistent ABI for CXX extensions
+    # concretize based on the discoverable compilers
+    for compiler in find_compilers():
+        compiler_req = "%cxx={}".format(compiler)
+        requires(compiler_req, when="^r" + compiler_req)
 
     homepage: ClassProperty[Optional[str]] = classproperty(_homepage)
     urls: ClassProperty[List[str]] = classproperty(_urls)
