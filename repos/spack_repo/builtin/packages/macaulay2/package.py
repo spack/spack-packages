@@ -23,6 +23,7 @@ class Macaulay2(AutotoolsPackage):
 
     license("GPL-2.0-or-later", checked_by="d-torrance")
 
+    version("1.26.11", sha256="2a79d8d01a200a122659142b4ffeff70fc54951aab27fe112b3633679957a972")
     version("1.26.06", sha256="9ba54041626f6364036f84b4168704d74136d1bec2dbe08d9d0fb3fef2a0c854")
     version("1.26.05", sha256="a76213b4a23542abe5742a4d2b782e26ee5f3f9b1f6a2fc3a992615cc3aa3431")
     version("1.25.11", sha256="ecee06ea456f87d8182bdaf59f9e2f4a330d861516ab7d00faf9f37699ddeb58")
@@ -66,7 +67,9 @@ class Macaulay2(AutotoolsPackage):
     depends_on("bison", type="build")
     depends_on("diffutils", type="build")
     depends_on("flex", type="build")
+    depends_on("gmake@4:", type="build")
     depends_on("pkgconfig", type="build")
+    depends_on("tar", type="build")
     depends_on("texinfo", type="build")
 
     # programs
@@ -77,24 +80,27 @@ class Macaulay2(AutotoolsPackage):
     depends_on("lrslib", type=("build", "run"))
     depends_on("msolve", type=("build", "run"))
     depends_on("nauty", type=("build", "run"))
+    depends_on("palp", type=("build", "run"), when="@1.26.11:")
     depends_on("topcom", type=("build", "run"))
 
     # drop minimum version of gfan (0.8 can't be built w/ older compilers)
-    patch("allow-older-gfan.patch", when="@1.26.06")
+    patch("allow-older-gfan.patch", when="@1.26.06:")
 
     configure_directory = "M2"
 
     def configure_args(self) -> List[str]:
-        # workaround for https://github.com/Macaulay2/M2/issues/4074
-        flibs = "-lgfortran -lm"
-
-        return [
+        args = [
             "--with-system-libs",
             "--with-fplll",
             "--enable-documentation=download",
             f"--with-boost-libdir={self.spec['boost'].prefix.lib}",
             f"CPPFLAGS=-I{self.spec['cddlib'].prefix.include}/cddlib",
             f"F77={spack_f77}",
-            f"FLIBS={flibs}",
-            f"FCLIBS={flibs}",
         ]
+
+        # workaround for https://github.com/Macaulay2/M2/issues/4074
+        if self.spec.satisfies("@:1.26.06"):
+            flibs = "-lgfortran -lm"
+            args.extend([f"FLIBS={flibs}", f"FCLIBS={flibs}"])
+
+        return args
