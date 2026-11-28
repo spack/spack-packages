@@ -17,6 +17,9 @@ on:
     branches:
       - develop
 
+# Deny all by default; each job below declares the permissions it needs.
+permissions: {}
+
 jobs:
   find-maintainers:
     if: github.event.pull_request.merged == true
