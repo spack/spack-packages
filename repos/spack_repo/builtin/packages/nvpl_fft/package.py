@@ -57,12 +57,33 @@ class NvplFft(Package):
     def libs(self):
         return find_libraries("libnvpl_fftw", self.spec.prefix.lib, shared=True, recursive=True)
 
-    @run_after("install", when="@0.4:")
+    @run_after("install", when="@0.6:")
     def fix_include(self):
+        # 0.6 moved the FFTW3-compat headers to include/nvpl_compat/ and
+        # deprecated include/nvpl_fftw/. Both fftw3.h copies are shims doing
+        # '#include "../nvpl_fftw.h"', which resolves relative to the path the
+        # header is opened as: exposing one as include/fftw3.h (symlink or not)
+        # would resolve it to <prefix>/nvpl_fftw.h (missing). NVIDIA's own
+        # pkg-config/CMake export both include and include/nvpl_compat; the
+        # wrapper reproduces that within Spack's single-include-dir contract.
+        subdir = os.path.join(self.prefix.include, "nvpl_compat")
+
+        for file in os.listdir(subdir):
+            file_symlink = os.path.join(self.prefix.include, file)
+            if file.endswith(".h"):
+                with open(file_symlink, "w") as f:
+                    f.write('#include "nvpl_compat/{0}"\n'.format(file))
+            elif not os.path.exists(file_symlink):
+                symlink(os.path.join(subdir, file), file_symlink)
+
+    @run_after("install", when="@0.4:0.5")
+    def fix_include_compat(self):
+        # Before 0.6 the only fftw3.h lives in include/nvpl_fftw/ and is the
+        # full API; its sole relative include (nvpl_fft_version.h, duplicated
+        # at top level) resolves fine from include/, so symlink everything.
         subdir = os.path.join(self.prefix.include, "nvpl_fftw")  # include/nvpl_fftw/
 
         for file in os.listdir(subdir):
-            file_symlink = os.path.join(self.prefix.include, os.path.basename(file))
-            # nvpl_fft_version.h is duplicated in include/ and include/nvpl_fftw/
+            file_symlink = os.path.join(self.prefix.include, file)
             if not os.path.exists(file_symlink):
                 symlink(os.path.join(subdir, file), file_symlink)
