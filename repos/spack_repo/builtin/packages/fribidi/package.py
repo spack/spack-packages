@@ -28,6 +28,7 @@ class Fribidi(AutotoolsPackage):
     depends_on("c", type="build")  # generated
 
     depends_on("help2man", type="build", when="@1.0.17:")
+    depends_on("pkgconfig", type="build", when="@1.0.17:")
 
     def url_for_version(self, version):
         url = "https://github.com/fribidi/fribidi/releases/download/"
