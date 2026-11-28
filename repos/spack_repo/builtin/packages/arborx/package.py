@@ -121,8 +121,6 @@ class Arborx(CMakePackage, CudaPackage, ROCmPackage):
         ]
         if self.spec.satisfies("+cuda"):
             options.append(self.define("CMAKE_CXX_COMPILER", kokkos_pkg.kokkos_cxx))
-        if self.spec.satisfies("+rocm"):
-            options.append(self.define("CMAKE_CXX_COMPILER", self.spec["hip"].hipcc))
 
         return options
 
