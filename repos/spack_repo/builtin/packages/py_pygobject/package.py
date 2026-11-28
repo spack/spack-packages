@@ -2,6 +2,7 @@
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
+from spack_repo.builtin.build_systems import meson
 from spack_repo.builtin.build_systems.meson import MesonPackage
 from spack_repo.builtin.build_systems.python import PythonPackage
 
@@ -46,12 +47,26 @@ class PyPygobject(MesonPackage, PythonPackage):
     depends_on("libffi@3.0.0:", when="@3.46.0:")
 
     depends_on("glib", when="@:3.46.0")
-    depends_on("gobject-introspection", when="@:3.46.0")
+    depends_on("gobject-introspection", when="@:3.50")
     depends_on("py-pycairo", type=("build", "run"), when="@:3.46.0")
     depends_on("libffi", when="@:3.46.0")
+
+    # Test dependencies
+    with default_args(type="test"):
+        depends_on("gobject-introspection", when="@3.51:")
+        depends_on("py-pytest@:8,9.0.1:", when="@3.47:")
+        depends_on("py-pytest-cov", when="@3.47:")
 
     def url_for_version(self, version):
         return f"https://download.gnome.org/sources/pygobject/{version.up_to(2)}/pygobject-{version}.tar.gz"
 
     def patch(self):
         filter_file(r"Pycairo_IMPORT", r"//Pycairo_IMPORT", "gi/pygi-foreign-cairo.c")
+
+
+class MesonBuilder(meson.MesonBuilder):
+    def meson_args(self):
+        args = super().meson_args()
+        perform_tests = "true" if self.run_tests else "false"
+        args.append(f"-Dtests={perform_tests}")
+        return args
