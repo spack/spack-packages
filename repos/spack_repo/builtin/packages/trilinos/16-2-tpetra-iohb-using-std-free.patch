@@ -1,0 +1,12 @@
+--- a/packages/tpetra/core/inout/Tpetra_Util_iohb.cpp
++++ b/packages/tpetra/core/inout/Tpetra_Util_iohb.cpp
+@@ -219,8 +219,7 @@
+ #include <cstring>
+ #include <cmath>
+ #include <cstdlib>
+-using std::free;
+-using std::malloc;
++#include <stdlib.h>
+ using std::size_t;
+ 
+ char* substr(const char* S, const int pos, const int len);

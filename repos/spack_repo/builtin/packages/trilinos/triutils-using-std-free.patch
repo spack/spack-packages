@@ -1,0 +1,29 @@
+--- a/packages/triutils/src/Trilinos_Util.h
++++ b/packages/triutils/src/Trilinos_Util.h
+@@ -96,13 +96,11 @@
+ #ifndef JANUS_STLPORT
+ #ifdef HAVE_CSTDLIB
+ #include <cstdlib>
++#include <stdlib.h>
+ using std::calloc;
+-using std::free;
+ using std::exit;
+ using std::rand;
+ using std::abort;
+-using std::malloc;
+-using std::free;
+ #else /* HAVE_STDLIB_H */
+ #include <stdlib.h>
+ #endif
+--- a/packages/triutils/src/Trilinos_Util_iohb.cpp
++++ b/packages/triutils/src/Trilinos_Util_iohb.cpp
+@@ -219,8 +219,7 @@
+ #include<cstring>
+ #include<cmath>
+ #include <cstdlib>
+-using std::malloc;
+-using std::free;
++#include <stdlib.h>
+ using std::size_t;
+ 
+ char* substr(const char* S, const int pos, const int len);
