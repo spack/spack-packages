@@ -132,6 +132,9 @@ class Mgard(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("protobuf@22:", when="+cuda target=aarch64:", msg="nvcc fails on ARM SIMD headers")
     # https://github.com/abseil/abseil-cpp/issues/1629
     conflicts("abseil-cpp@20240116.1", when="+cuda", msg="triggers nvcc parser bug")
+    conflicts("abseil-cpp cxxstd=20", when="@compat-2023-12-09 %gcc", 
+            msg="mgard compiles with --std=gnu++17 which does not like cxxstd=20 header files")
+
 
     patch("hip-pointer-attribute-struct-fix.patch", when="@=1.5.2")
     patch("hip-cub-configure.patch", when="@=1.5.2")
