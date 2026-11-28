@@ -1,7 +1,30 @@
 version: 2
 updates:
+  # Maintain Python dependencies for CI requirement lock files
+  - package-ecosystem: "pip"
+    directories:
+      - "/.github/workflows/requirements/invite"
+      - "/.github/workflows/requirements/style"
+      - "/.github/workflows/requirements/triage"
+      - "/.github/workflows/requirements/unit_tests"
+    schedule:
+      interval: "weekly"
+    groups:
+      python-version-updates:
+        patterns:
+          - "*"
+        group-by: dependency-name
+      python-security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
   # Maintain dependencies for GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "daily"
+    groups:
+      github-actions:
+        patterns:
+          - "*"

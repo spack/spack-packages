@@ -26,7 +26,7 @@ jobs:
         python-version: '3.13'
     - name: Install Python Packages
       run: |
-        pip install -r .github/workflows/requirements/style/requirements.txt
+        pip install --require-hashes -r .github/workflows/requirements/style/requirements.txt
     - name: vermin (Repositories)
       run: |
         vermin --backport importlib --backport argparse --violations --backport typing --eval-annotations -t=3.6- -vvv repos tests
@@ -43,7 +43,7 @@ jobs:
         python-version: '3.13'
     - name: Install Python packages
       run: |
-        pip install -r .github/workflows/requirements/style/requirements.txt
+        pip install --require-hashes -r .github/workflows/requirements/style/requirements.txt
     - name: Run style tests
       run: .ci/style_check.sh HEAD^
     # todo: license check
