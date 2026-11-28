@@ -20,3 +20,4 @@ class PyCramjam(PythonPackage):
     depends_on("c", type="build")
     depends_on("rust", type="build")
     depends_on("py-maturin@0.14:", type="build")
+    depends_on("python@:3.14", when="@:2.11", type=("build", "run"))
