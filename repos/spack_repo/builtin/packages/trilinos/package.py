@@ -1224,13 +1224,9 @@ class Trilinos(CMakePackage, CudaPackage, ROCmPackage):
                 )
                 if "+tpetra" in spec:
                     options.append(define("Tpetra_INST_HIP", True))
-                amdgpu_arch_map = Kokkos.amdgpu_arch_map
                 for amd_target in spec.variants["amdgpu_target"].value:
-                    try:
-                        arch = amdgpu_arch_map[amd_target][0]
-                    except KeyError:
-                        pass
-                    else:
+                    arch = Kokkos.get_amd_arch_name(amd_target, spec["kokkos"])
+                    if arch:
                         options.append(define("Kokkos_ARCH_" + arch.upper(), True))
 
         # ################# System-specific ######################
