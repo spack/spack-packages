@@ -1,0 +1,48 @@
+--- a/configure.ac
++++ b/configure.ac
+@@ -107,8 +107,8 @@
+ if test -z "$C_VERSION" ; then C_VERSION="unknown"; fi;
+ AC_DEFINE_UNQUOTED(C_VERSION, ["$C_VERSION"], [C Compiler version])
+
+-if test -n "$F77" ; then
++if test "x$enable_fortran" = xyes -a -n "$F77" ; then
+ if test -z "$F77_VERSION" ; then F77_VERSION="unknown"; fi;
+ AC_DEFINE_UNQUOTED(F77_VERSION, ["$F77_VERSION"], [F77 Compiler version])
+ fi
+
+@@ -151,7 +151,7 @@
+ AS_IF([test x$enable_fortran = 'xno'],[AC_SUBST([ENABLE_FORTRAN],[false])],[AC_SUBST([ENABLE_FORTRAN],[true])])
+ #
+ AM_CONDITIONAL([USE_F77],[test -n "$F77" -a X"$F77" != Xno -a x"$acx_cv_cfortran_works" = xyes])
+-AS_IF([test x$acx_cv_cfortran_works = 'xno'],[AC_SUBST([FORTRAN_WORKS],[no])],[AC_SUBST([FORTRAN_WORKS],[yes])])
++AS_IF([test x$enable_fortran = 'xno' -o x$acx_cv_cfortran_works = 'xno'],[AC_SUBST([FORTRAN_WORKS],[no])],[AC_SUBST([FORTRAN_WORKS],[yes])])
+ #  ----------------------------------------------------------------------
+ CFLAGS="$CFLAGS ${OPENMP_CFLAGS}"
+ CXXFLAGS="$CXXFLAGS ${OPENMP_CFLAGS}"
+@@ -174,8 +174,9 @@
+ AC_DEFINE_UNQUOTED(C_COMPILER, ["$C_COMPILER"], [C Compiler])
+ CXX_COMPILER="$CXX $CXXFLAGS"
+ AC_DEFINE_UNQUOTED(CXX_COMPILER, ["$CXX_COMPILER"], [CXX Compiler])
+-F77_COMPILER="$F77 $FFLAGS"
+-AC_DEFINE_UNQUOTED(F77_COMPILER, ["$F77_COMPILER"], [F77 Compiler])
++AS_IF([test "x$enable_fortran" = xyes -a -n "$F77" -a X"$F77" != Xno],
++  [F77_COMPILER="$F77 $FFLAGS"
++   AC_DEFINE_UNQUOTED(F77_COMPILER, ["$F77_COMPILER"], [F77 Compiler])])
+
+ AC_REQUIRE_AUX_FILE([tap-driver.sh])
+ AC_PROG_AWK
+--- a/libcdi/configure.ac
++++ b/libcdi/configure.ac
+@@ -70,6 +70,12 @@
+ AS_IF([test "x${enable_mpi}${enable_cf_interface}" = xnoauto],
+   [enable_cf_interface=no])
+
++AC_ARG_ENABLE([fortran],
++  [AS_HELP_STRING([--disable-fortran],
++     [disable all Fortran interfaces; forwarded by the parent CDO configure])],
++  [AS_IF([test "x$enableval" = xno && test "x$enable_cf_interface" = xauto],
++     [enable_cf_interface=no])])
++
+ dnl We need FC for the Fortran 90 and for the Fortran 77 interfaces. In the
+ dnl latter case, the compiler is used for testing. Note that we use neither
+ dnl AS_IF nor AS_VAR_IF here to prevent checking for FC when we do not need it:
