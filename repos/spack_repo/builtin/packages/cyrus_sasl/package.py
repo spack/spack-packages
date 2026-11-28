@@ -18,36 +18,14 @@ class CyrusSasl(AutotoolsPackage):
 
     license("custom")
 
-    # Since the latest release of cyrus-sasl is old and not supported on gcc-15,
-    # we add a newer version on the master branch.
-    # As 2.1.28 was not tagged on the master branch, we identify as equivalent
-    # commit fdcd13ceaef8de684dc69008011fa865c5b4a3ac, and describe from there.
-    version("2.1.28-148-ge256dd0c", commit="e256dd0cc61d60cbb905b601241077f0a2ba0907")
+    version("2.1.28", sha256="3e38933a30b9ce183a5488b4f6a5937a702549cde0d3287903d80968ad4ec341")
 
-    # Official releases are preferred
+    # master snapshot once needed for gcc@15; superseded by -std=gnu17 in flag_handler
     version(
-        "2.1.28",
-        sha256="3e38933a30b9ce183a5488b4f6a5937a702549cde0d3287903d80968ad4ec341",
-        preferred=True,
+        "2.1.28-148-ge256dd0c",
+        commit="e256dd0cc61d60cbb905b601241077f0a2ba0907",
+        deprecated=True,
     )
-
-    # CVE-2022-24407
-    with default_args(deprecated=True):
-        version(
-            "2.1.27", sha256="b564d773803dc4cff42d2bdc04c80f2b105897a724c247817d4e4a99dd6b9976"
-        )
-        version(
-            "2.1.26", sha256="7c14d1b5bd1434adf2dd79f70538617e6aa2a7bde447454b90b84ac5c4d034ba"
-        )
-        version(
-            "2.1.25", sha256="8bfd4fa4def54c760e5061f2a74c278384c3b9807f02c4b07dab68b5894cc7c1"
-        )
-        version(
-            "2.1.24", sha256="1df15c492f7ecb90be49531a347b3df21b041c2e0325dcc4fc5a6e98384c40dd"
-        )
-        version(
-            "2.1.23", sha256="b1ec43f62d68446a6a5879925c63d94e26089c5a46cd83e061dd685d014c7d1f"
-        )
 
     # ensure include time.h, https://github.com/cyrusimap/cyrus-sasl/pull/709
     patch(
@@ -55,8 +33,6 @@ class CyrusSasl(AutotoolsPackage):
         sha256="819342fe68475ac1690136ff4ce9b73c028f433ae150898add36f724a8e2274b",
         when="@2.1.27:2.1.28-0",
     )
-    conflicts("%gcc@14:", when="@:2.1.26")
-    conflicts("%gcc@15:", when="@:2.1.28-147")
 
     depends_on("c", type="build")
 
@@ -65,9 +41,16 @@ class CyrusSasl(AutotoolsPackage):
     depends_on("automake", type="build")
     depends_on("libtool", type="build")
     depends_on("groff", type="build")
+
     depends_on("openssl", type="link")
     depends_on("libxcrypt", type="link")
     depends_on("krb5", type="link")
+
+    def flag_handler(self, name, flags):
+        # md5.c uses K&R definitions, rejected by C23
+        if name == "cflags" and self.spec.satisfies("@:2.1.28-147"):
+            flags.append("-std=gnu17")
+        return (flags, None, None)
 
     @when("platform=darwin")
     def configure_args(self):
