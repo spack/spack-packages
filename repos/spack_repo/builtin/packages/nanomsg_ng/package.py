@@ -27,10 +27,7 @@ class NanomsgNg(CMakePackage):
 
     # note: wolfssl is also supported, but there isn't a recipe for it
     variant(
-        "tls_engine",
-        default="none",
-        values=("openssl", "mbed", "none"),
-        description="TLS support"
+        "tls_engine", default="none", values=("openssl", "mbed", "none"), description="TLS support"
     )
 
     depends_on("c", type="build")
