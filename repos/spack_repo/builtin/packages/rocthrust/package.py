@@ -120,7 +120,8 @@ class Rocthrust(ROCmLibrary, CMakePackage):
             make("test")
 
     def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
+        if self.spec.satisfies("@:6.3"):
+            env.set("CXX", self.spec["hip"].hipcc)
 
     def cmake_args(self):
         args = [
@@ -128,7 +129,11 @@ class Rocthrust(ROCmLibrary, CMakePackage):
             self.define("BUILD_TEST", self.run_tests),
         ]
 
-        if "auto" not in self.spec.variants["amdgpu_target"]:
+        if self.spec.satisfies("@6.4:"):
+            args.append(self.define("USE_HIPCXX", True))
+            if "auto" not in self.spec.variants["amdgpu_target"]:
+                args.append(self.define_from_variant("CMAKE_HIP_ARCHITECTURES", "amdgpu_target"))
+        elif "auto" not in self.spec.variants["amdgpu_target"]:
             args.append(self.define_from_variant("AMDGPU_TARGETS", "amdgpu_target"))
 
         if self.spec.satisfies("^cmake@3.21.0:3.21.2"):
