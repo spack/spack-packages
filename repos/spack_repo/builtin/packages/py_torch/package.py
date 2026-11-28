@@ -374,8 +374,13 @@ class PyTorch(PythonPackage, CudaPackage, ROCmPackage):
             elif "~" + variant in self.spec:
                 env.set(keyword + "_" + var, "OFF")
 
-        # Build in parallel to speed up build times
-        env.set("MAX_JOBS", str(make_jobs))
+        # Build in parallel to speed up build times. From 2.14, MAX_JOBS only sets
+        # CMAKE_BUILD_PARALLEL_LEVEL; without it, make joins an inherited jobserver.
+        jobs = make_jobs
+        if self.spec.satisfies("@2.14:"):
+            jobs = get_effective_jobs(make_jobs, parallel=self.parallel, supports_jobserver=True)
+        if jobs is not None:
+            env.set("MAX_JOBS", str(jobs))
 
         # Spack logs have trouble handling colored output
         env.set("COLORIZE_OUTPUT", "OFF")
