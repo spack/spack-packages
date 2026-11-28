@@ -51,6 +51,14 @@ class Mumps(Package):
         description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
         when="@5.6.2: +mpi",
     )
+    # Off by default where it conflicts (see below): otherwise the concretizer avoids the
+    # conflict by turning off shared or mpi instead.
+    variant(
+        "mpi_in_place",
+        default=False,
+        description="Enable MPI_IN_PLACE optimization (Not supported by some MPI environments)",
+        when="@5.6.2: +mpi +shared platform=darwin",
+    )
     variant("scotch", default=False, description="Activate Scotch as a possible ordering library")
     variant(
         "ptscotch", default=False, description="Activate PT-Scotch as a possible ordering library"
@@ -106,6 +114,14 @@ class Mumps(Package):
         "^[virtuals=blas] openblas+ilp64",
         when="~int64",
         msg="mumps~int64 calls BLAS with 32-bit integers",
+    )
+    # Avoid MPI_IN_PLACE for shared libraries on macOS: they are linked without MPI, so each has
+    # its own copy of the Fortran MPI_IN_PLACE sentinel (a COMMON block), and MPI recognizes only
+    # one copy per process.
+    conflicts(
+        "+mpi_in_place",
+        when="@5.6.2: +mpi +shared platform=darwin",
+        msg="MPI_IN_PLACE does not work with shared libraries on macOS",
     )
 
     @when("+incfort")
