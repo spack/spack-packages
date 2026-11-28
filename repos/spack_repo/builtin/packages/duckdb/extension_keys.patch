@@ -1,0 +1,65 @@
+--- a/src/main/extension/extension_helper.cpp
++++ b/src/main/extension/extension_helper.cpp
+@@ -848,15 +848,35 @@
+ )", nullptr};
+ 
+ // typos:on
+-const vector<string> ExtensionHelper::GetPublicKeys(bool allow_community_extensions) {
+-	vector<string> keys;
++// Spack writes this header, from the extension_keys variant
++#include "duckdb/main/extension_keys.hpp"
++
++//! Adds the keys that this build trusts for extensions from core, and for extensions of an unknown origin
++static void AddCoreOriginKeys(vector<string> &keys) {
++#if DUCKDB_EXTENSION_KEYS_CORE
+ 	for (idx_t i = 0; public_keys[i]; i++) {
+ 		keys.emplace_back(public_keys[i]);
+ 	}
++#endif
++#ifdef DUCKDB_EXTENSION_KEYS_SITE
++	keys.emplace_back(DUCKDB_EXTENSION_KEYS_SITE);
++#endif
++}
++
++//! Adds the keys that this build trusts for extensions from community
++static void AddCommunityOriginKeys(vector<string> &keys) {
++#if DUCKDB_EXTENSION_KEYS_COMMUNITY
++	for (idx_t i = 0; community_public_keys[i]; i++) {
++		keys.emplace_back(community_public_keys[i]);
++	}
++#endif
++}
++
++const vector<string> ExtensionHelper::GetPublicKeys(bool allow_community_extensions) {
++	vector<string> keys;
++	AddCoreOriginKeys(keys);
+ 	if (allow_community_extensions) {
+-		for (idx_t i = 0; community_public_keys[i]; i++) {
+-			keys.emplace_back(community_public_keys[i]);
+-		}
++		AddCommunityOriginKeys(keys);
+ 	}
+ 	return keys;
+ }
+@@ -869,9 +889,7 @@
+ 		if (!Settings::Get<AllowCommunityExtensionsSetting>(db)) {
+ 			return keys;
+ 		}
+-		for (idx_t i = 0; community_public_keys[i]; i++) {
+-			keys.emplace_back(community_public_keys[i]);
+-		}
++		AddCommunityOriginKeys(keys);
+ 		return keys;
+ 	case ExtensionRepositoryType::USER_PROVIDED: {
+ 		// when adding repositories has been forbidden, the user repositories are distrusted entirely: their keys are
+@@ -893,9 +911,7 @@
+ 	default:
+ 		// the core signing keys - note that these are the only keys that are ever trusted for extensions that come
+ 		// from the repositories maintained by DuckDB, or from any other origin we don't know
+-		for (idx_t i = 0; public_keys[i]; i++) {
+-			keys.emplace_back(public_keys[i]);
+-		}
++		AddCoreOriginKeys(keys);
+ 		return keys;
+ 	}
+ }
