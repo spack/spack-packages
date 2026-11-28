@@ -15,6 +15,7 @@ class Tomlplusplus(CMakePackage):
 
     license("MIT", checked_by="pranav-sivaraman")
 
+    version("3.5.1", sha256="4821c769370a6489b6a37814f16f3769eee0f2e733a5c129d5d99e2515a95c2b")
     version("3.4.0", sha256="8517f65938a4faae9ccf8ebb36631a38c1cadfb5efa85d9a72e15b9e97d25155")
 
     depends_on("cxx", type="build")
