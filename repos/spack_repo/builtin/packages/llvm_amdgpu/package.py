@@ -8,7 +8,11 @@ import shutil
 from spack_repo.builtin.build_systems.cmake import CMakePackage, generator
 from spack_repo.builtin.build_systems.compiler import CompilerPackage
 from spack_repo.builtin.build_systems.rocm import ROCmLibrary
-from spack_repo.builtin.packages.llvm.package import LlvmDetection
+from spack_repo.builtin.packages.llvm.package import (
+    LlvmDetection,
+    get_gcc_rpath_flag,
+    inject_gcc_runtime,
+)
 
 from spack.package import *
 
@@ -527,6 +531,13 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
                 ]
             )
 
+        if self.spec.satisfies("%gcc-runtime"):
+            rpath = f"-Wl,-rpath,{self.spec['gcc-runtime'].prefix.lib}"
+            runtime_cmake_args.extend(
+                self.define(f"CMAKE_{kind}_LINKER_FLAGS", rpath)
+                for kind in ("EXE", "SHARED", "MODULE")
+            )
+
         args.append(self.define("RUNTIMES_CMAKE_ARGS", runtime_cmake_args))
         return args
 
@@ -540,6 +551,10 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
     # ROCm 7.13 and later no longer report roc-<version> in --version output.
     # Fall back to /opt/rocm-<ver>/ or /opt/rocm/core-<ver>/
     path_version_regex = r"/opt/rocm(?:/core)?-(\d+\.\d+(?:\.\d+)?)"
+
+    @classmethod
+    def runtime_constraints(cls, *, spec, pkg):
+        inject_gcc_runtime(spec=spec, pkg=pkg)
 
     @classmethod
     def determine_version(cls, exe):
@@ -614,9 +629,13 @@ class LlvmAmdgpu(ROCmLibrary, CMakePackage, LlvmDetection, CompilerPackage):
             cfg_files.append("flang.cfg")
         gcc_install_dir_flag = get_gcc_install_dir_flag(self.spec, self.compiler)
         if gcc_install_dir_flag:
+            gcc_rpath_flag = get_gcc_rpath_flag(self.spec) if self.spec.satisfies("@7:") else None
             for cfg in cfg_files:
                 with open(os.path.join(self.prefix.bin, cfg), "w") as f:
                     print(gcc_install_dir_flag, file=f)
+                    # rpath the GCC runtime libraries, like gcc's own specs file does
+                    if gcc_rpath_flag:
+                        print(gcc_rpath_flag, file=f)
                     # make sure LLVM prefers binutils prefix over system default
                     if self.spec.satisfies("^binutils"):
                         print(f"-B{self.spec['binutils'].prefix.bin}", file=f)

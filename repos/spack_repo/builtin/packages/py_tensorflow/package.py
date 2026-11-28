@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 import glob
+import os
 import subprocess
 import sys
 import tempfile
@@ -211,6 +212,8 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
 
         # tensorflow/tools/pip_package/build_pip_package.sh
         depends_on("patchelf", when="@2.13: platform=linux")
+        # tensorflow/lite/acceleration/configuration/BUILD
+        depends_on("perl", when="@2.13:")
         # https://github.com/tensorflow/tensorflow/issues/60179#issuecomment-1491238631
         depends_on("coreutils", when="@2.13: platform=darwin")
         # XLA requires xxd now
@@ -429,7 +432,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("+rocm", when=f"@{','.join(rocm_conflicts)}")
 
     # wheel 0.40 upgrades vendored packaging, trips over tensorflow-io-gcs-filesystem identifier
-    conflicts("^py-wheel@0.40:", when="@2.11:2.13")
+    conflicts("%py-wheel@0.40:", when="@2.11:2.13")
 
     # https://www.tensorflow.org/install/source#tested_build_configurations
     # https://github.com/tensorflow/tensorflow/issues/70199
@@ -442,6 +445,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
     conflicts("%clang@:15", when="@2.18:")
     # https://github.com/tensorflow/tensorflow/issues/62416
     conflicts("%clang@17:", when="@:2.14")
+    requires(
+        "%cxx=llvm",
+        "%cxx=apple-clang",
+        policy="one_of",
+        when="@2.21: ~rocm",
+        msg="XLA compiles C++ to LLVM IR, which requires clang",
+    )
 
     # https://github.com/bazelbuild/bazel/issues/31381
     # https://github.com/llvm/llvm-project/pull/223362
@@ -951,22 +961,51 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             after = spec["llvm-amdgpu"].prefix.bin.clang
             filter_file(before, after, ".bazelrc")
 
-            # https://github.com/google/highway/issues/2705
-            # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
-            # Disable targets that require instructions newer than the selected CPU.
-            if spec.satisfies("@2.21 ^llvm-amdgpu@7.2:"):
-                if spec.satisfies("target=zen2"):
-                    disabled_targets = (
-                        "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
-                    )
-                elif spec.satisfies("target=skylake_avx512"):
-                    disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
-                else:
-                    disabled_targets = None
+        # https://github.com/google/highway/issues/2705
+        # Highway 1.3.0 cannot compile newer CPU targets correctly with Clang 22+.
+        # Disable targets that require instructions newer than the selected CPU.
+        if spec.satisfies("@2.21 target=x86_64:") and (
+            spec.satisfies("+rocm %llvm-amdgpu@7.2:") or spec.satisfies("~rocm %cxx=llvm@22:")
+        ):
+            if "avx512f" not in spec.target:
+                disabled_targets = "HWY_AVX3|HWY_AVX3_DL|HWY_AVX3_ZEN4|HWY_AVX3_SPR|HWY_AVX10_2"
+            elif spec.satisfies("target=skylake_avx512"):
+                disabled_targets = "HWY_AVX3_SPR|HWY_AVX10_2"
+            else:
+                disabled_targets = None
 
-                if disabled_targets:
-                    with open(".tf_configure.bazelrc", mode="a") as f:
-                        f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
+            if disabled_targets:
+                with open(".tf_configure.bazelrc", mode="a") as f:
+                    f.write(f"build --copt=-DHWY_DISABLED_TARGETS=({disabled_targets})\n")
+
+    def write_python_toolchain(self):
+        # Shebangs are limited to 256 bytes, the python prefix can be longer.
+        shebang = join_path(self.stage.path, "python3")
+        if not os.path.lexists(shebang):
+            symlink(python.path, shebang)
+        mkdirp("spack_python")
+        with open(join_path("spack_python", "BUILD"), "w") as f:
+            f.write(
+                f"""\
+load("@rules_python//python:py_runtime.bzl", "py_runtime")
+load("@rules_python//python:py_runtime_pair.bzl", "py_runtime_pair")
+
+py_runtime(
+    name = "py3",
+    interpreter_path = "{python.path}",
+    python_version = "PY3",
+    stub_shebang = "#!{shebang}",
+)
+
+py_runtime_pair(name = "pair", py3_runtime = ":py3")
+
+toolchain(
+    name = "toolchain",
+    toolchain = ":pair",
+    toolchain_type = "@bazel_tools//tools/python:toolchain_type",
+)
+"""
+            )
 
     def build(self, spec, prefix):
         # Bazel needs the directory to exist on install
@@ -989,7 +1028,7 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
             "--verbose_failures",
         ]
 
-        if spec.satisfies("^bazel@:3.5"):
+        if spec.satisfies("%bazel@:3.5"):
             # removed in bazel 3.6
             args.append("--incompatible_no_support_tools_in_action_inputs=false")
 
@@ -1040,6 +1079,13 @@ class PyTensorflow(Package, CudaPackage, ROCmPackage, PythonExtension):
                 args.append("--config=numa")
 
         args.append("--config=v2")
+
+        if spec.satisfies("@2.17:"):
+            self.write_python_toolchain()
+            args.append("--extra_toolchains=//spack_python:toolchain")
+
+        if spec.satisfies("@2.21:"):
+            args.append("--config=clang_local")
 
         if self.spec.satisfies("@2.18.0-rocm-enhanced: +rocm"):
             buildpath = join_path(
