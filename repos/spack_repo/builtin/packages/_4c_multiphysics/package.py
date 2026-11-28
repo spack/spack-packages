@@ -97,8 +97,7 @@ class _4cMultiphysics(CMakePackage):
         "trilinos@16.2+mpi+amesos+amesos2+belos+epetra+epetraext"
         "+ifpack+ifpack2+intrepid2+isorropia+ml+muelu+nox+sacado+shards+stratimikos"
         "+teko+thyra+tpetra+zoltan+zoltan2+explicit_template_instantiation"
-        "+mumps+superlu-dist+suite-sparse+exodus gotype=int",
-        patches=[patch("trilinos-iocgns-extern-c-linkage.patch")],
+        "+mumps+superlu-dist+suite-sparse+exodus gotype=int"
     )
     # deal.II 9.6.2 uses bundled Boost 1.84. Keep 4C's compiled Boost.Graph
     # library and headers ABI-compatible with the deal.II headers.
