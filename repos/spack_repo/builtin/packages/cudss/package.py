@@ -11,6 +11,26 @@ from spack.package import *
 
 _versions = {
     # Versions 0.7.0+ have both CUDA 12 and CUDA 13 precompiled binary versions
+    "1.0.0-13": {
+        "Linux-x86_64": (
+            "0a155540d7b90d42105d38886fa630f1ec91d7b05580a28bd1fa04fa16e19ffe",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-1.0.0.35_cuda13-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "bd40403a984ab25ad7ac96d54d14863645256c7dca449fdf9836309d7b80e308",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-sbsa/libcudss-linux-sbsa-1.0.0.35_cuda13-archive.tar.xz",
+        ),
+    },
+    "1.0.0-12": {
+        "Linux-x86_64": (
+            "b8c882c3ebc8b319886f5a06e74311c5eea09846925ba5a19892de4921201746",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-x86_64/libcudss-linux-x86_64-1.0.0.35_cuda12-archive.tar.xz",
+        ),
+        "Linux-aarch64": (
+            "01e0008823e2980b197fed1102a1fe85b4bf0eef60bdf516c9052745804619e8",
+            "https://developer.download.nvidia.com/compute/cudss/redist/libcudss/linux-sbsa/libcudss-linux-sbsa-1.0.0.35_cuda12-archive.tar.xz",
+        ),
+    },
     "0.8.0-13": {
         "Linux-x86_64": (
             "ba18f5fd80dcbbe905d158caac5b3061d848442bb5abd477b5f296b4257a4937",
@@ -126,6 +146,9 @@ class Cudss(Package):
 
     depends_on("mpi", when="+mpi")
 
+    # patchelf --add-rpath requires 0.14+ (see add_cuda_rpath)
+    depends_on("patchelf@0.14:", type="build")
+
     conflicts(
         "+mpi",
         when="@:0.6 target=aarch64:",
@@ -157,3 +180,17 @@ class Cudss(Package):
                         "cuDSS did not produce the requested MPI communication layer"
                     )
                 install(comm_layer, join_path(prefix.lib, "libcudss_commlayer_mpi.so"))
+
+    # The prebuilt libcudss.so needs libcublas and libnvrtc, but its RUNPATH is
+    # only $ORIGIN, so linking or running fails unless LD_LIBRARY_PATH is set.
+    # Append the CUDA lib dir with --add-rpath (not --set-rpath) to keep $ORIGIN,
+    # which libcudss.so needs to find its own mtlayer/commlayer libraries.
+    @run_after("install")
+    def add_cuda_rpath(self):
+        patchelf = which("patchelf", required=True)
+        cuda_libdirs = self.spec["cuda"].libs.directories
+        for lib in find(self.prefix.lib, "libcudss.so*", recursive=False):
+            if os.path.islink(lib):
+                continue
+            for d in cuda_libdirs:
+                patchelf("--add-rpath", d, lib)
