@@ -132,9 +132,6 @@ class ComposableKernel(ROCmLibrary, CMakePackage):
         else:
             return "."
 
-    def setup_build_environment(self, env: EnvironmentModifications) -> None:
-        env.set("CXX", self.spec["hip"].hipcc)
-
     def cmake_args(self):
         spec = self.spec
         args = [
