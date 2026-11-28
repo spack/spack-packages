@@ -46,6 +46,7 @@ class NanomsgNg(CMakePackage):
         return args
 
     def test_nngcat(self):
+        """ensure nngcat can run"""
         nngcat = which(self.prefix.bin.nngcat)
         if nngcat is None:
             raise SkipTest("nngcat was not built or installed")
