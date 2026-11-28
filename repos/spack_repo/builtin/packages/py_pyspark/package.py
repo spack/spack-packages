@@ -15,6 +15,7 @@ class PyPyspark(PythonPackage):
 
     maintainers("teaguesterling")
 
+    version("4.3.0", sha256="e8c517948eff7088a7aa07449aa8eafa4a15a8d50319de2525a6fd26622476c6")
     version("3.5.1", sha256="dd6569e547365eadc4f887bf57f153e4d582a68c4b490de475d55b9981664910")
     version("3.4.3", sha256="8d7025fa274830cb6c3bd592228be3d9345cb3b8b1e324018c2aa6e75f48a208")
     version("3.3.4", sha256="1f866be47130a522355240949ed50d9812a8f327bd7619f043ffe07fbcf7f7b6")
@@ -29,8 +30,23 @@ class PyPyspark(PythonPackage):
     variant("pandas", default=True, description="Include Pandas support")
     variant("connect", default=True, description="Include SparkConnect support", when="@3.4:")
 
+    with default_args(type=("build", "run")):
+        depends_on("python@3.11:", when="@4.3:")
+        depends_on("python@3.10:", when="@4:")
+    # Spark 4 runs on Java 17 or newer
+    depends_on("java@17:", type="run", when="@4: +java")
+
     # Noted on https://spark.apache.org/docs/latest/api/python/getting_started/install.html#dependencies
     with default_args(type="run"):
+        with when("@4.3:"):
+            depends_on("py-pyarrow@18:", when="+pandas")
+            depends_on("py-pandas@2.2:", when="+pandas")
+            depends_on("py-numpy@1.23.2:", when="+pandas")
+            depends_on("py-grpcio@1.76:", when="+connect")
+            depends_on("py-grpcio-status@1.76:", when="+connect")
+            depends_on("py-googleapis-common-protos@1.71:", when="+connect")
+            depends_on("py-zstandard@0.25:", when="+connect")
+
         depends_on("py-pyarrow@4:", when="+pandas@3.5:")
         depends_on("py-pyarrow@1:", when="+pandas@:3.4")
         depends_on("py-pandas@1.0.5:", when="+pandas")
@@ -56,6 +72,7 @@ class PyPyspark(PythonPackage):
             ("0.10.9", "3.0.1:3.1.3"),
         ]:
             depends_on(f"py-py4j@{py4j_version}:", when=f"@{pyspark_version}")
+        depends_on("py-py4j@:0.10.9.9", when="@4:")
 
     def setup_run_environment(self, env: EnvironmentModifications) -> None:
         env.set("PYSPARK_PYTHON", python.path)
