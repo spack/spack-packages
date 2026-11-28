@@ -1,0 +1,63 @@
+From 962ff5105e9b685679b6b8b1b5855dc374eabe47 Mon Sep 17 00:00:00 2001
+From: Victor Mateevitsi <vmateevitsi@anl.gov>
+Date: Wed, 28 Oct 2026 21:26:40 +0000
+Subject: [PATCH] t_ascent_mpi_relay_load: sync ranks before image check, sane
+ tolerance
+
+Two flakiness sources when the render executes on a gpu:
+
+1. Only rank zero writes the rendered png, but every rank checks for
+   its existence immediately after close(), so non-zero ranks could
+   race ahead of rank zero's file write and fail with
+   'exists: false'. Add an MPI_Barrier before the check.
+
+2. The 1e-7 tolerance is bitwise equality on 8-bit png output, which
+   cannot tolerate a single silhouette pixel flipping when a ray
+   lands exactly on a triangle boundary (observed ~1 pixel in 1M,
+   run to run). Relax to 1e-5, still 100x stricter than the 1e-3
+   default used by the rest of the image tests.
+---
+ src/tests/ascent/t_ascent_mpi_relay_load.cpp | 18 ++++++++++++++++--
+ 1 file changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/src/tests/ascent/t_ascent_mpi_relay_load.cpp b/src/tests/ascent/t_ascent_mpi_relay_load.cpp
+index 0ee6699b..b23c849d 100644
+--- a/src/tests/ascent/t_ascent_mpi_relay_load.cpp
++++ b/src/tests/ascent/t_ascent_mpi_relay_load.cpp
+@@ -146,8 +146,15 @@ TEST(ascent_mpi_relay_load, test_load)
+     ascent.execute(actions);
+     ascent.close();
+ 
++    // only rank zero writes the render, so sync before checking
++    // for the existence of the output image
++    MPI_Barrier(comm);
++
+     // check that we created an image
+-    EXPECT_TRUE(check_test_image(output_render_file,1e-7,""));
++    // Note: 1e-7 (bitwise on 8-bit images) is too strict for gpu renders;
++    // silhouette pixels can flip when a ray lands exactly on a triangle
++    // boundary. 1e-5 tolerates a handful of flipped pixels out of 1M.
++    EXPECT_TRUE(check_test_image(output_render_file,1e-5,""));
+     std::string msg = "An mpi example of loading and plotting an addional blueprint mesh from the file system.";
+     ASCENT_ACTIONS_DUMP(actions,output_render_file,msg);
+ }
+@@ -280,8 +287,15 @@ TEST(ascent_mpi_relay_load, test_load_cache)
+     ascent.execute(actions);
+     ascent.close();
+ 
++    // only rank zero writes the render, so sync before checking
++    // for the existence of the output image
++    MPI_Barrier(comm);
++
+     // check that we created an image
+-    EXPECT_TRUE(check_test_image(output_render_file,1e-7,""));
++    // Note: 1e-7 (bitwise on 8-bit images) is too strict for gpu renders;
++    // silhouette pixels can flip when a ray lands exactly on a triangle
++    // boundary. 1e-5 tolerates a handful of flipped pixels out of 1M.
++    EXPECT_TRUE(check_test_image(output_render_file,1e-5,""));
+     std::string msg = "An mpi example of loading and plotting an addional blueprint mesh from the file system.";
+     ASCENT_ACTIONS_DUMP(actions,output_render_file,msg);
+ }
+-- 
+2.43.0
+
