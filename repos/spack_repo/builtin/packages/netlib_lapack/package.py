@@ -121,6 +121,11 @@ class NetlibLapack(CMakePackage):
     patch("ibm-xl-3.9.1.patch", when="@3.9.1 %xl_r")
     patch("ibm-xl-3.9.1.patch", when="@3.9.1 %cce@13:")
 
+    # Fix for Cray CCE build:
+    #   Correct path to mangling config.
+    #   Patches version 3.9.0.
+    patch("cblas-mangling-3.9.0-cce.patch", when="@3.9.0 %cce@13:")
+
     # https://github.com/Reference-LAPACK/lapack/issues/228
     patch("undefined_declarations.patch", when="@3.8.0:3.8")
 
@@ -237,6 +242,11 @@ class NetlibLapack(CMakePackage):
         cblas_h = join_path(include_dir, "cblas.h")
         lapacke_h = join_path(include_dir, "lapacke.h")
         return HeaderList([cblas_h, lapacke_h])
+
+    def flag_handler(self, name, flags):
+        if name == "fflags":
+            return build_system_flags(name, flags)
+        return inject_flags(name, flags)
 
 
 class CMakeBuilder(cmake.CMakeBuilder):
