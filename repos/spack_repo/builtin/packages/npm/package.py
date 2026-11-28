@@ -122,6 +122,7 @@ class Npm(Package):
             "--install-links",
             "--global",
             f"--prefix={prefix}",
+            f"--cache={join_path(self.stage.path, 'npm-cache')}",
             ".",
         )
 
