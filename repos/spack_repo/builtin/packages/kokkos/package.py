@@ -116,6 +116,7 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
     conflicts("^cuda@13:", when="@:4.7.0")
 
     depends_on("googletest@1.14:1", type="test", when="@5:")
+    depends_on("googletest +gmock", type="test", when="@5.4:")
 
     # device : (default value, when clause, description)
     devices_variants = {
@@ -415,7 +416,6 @@ class Kokkos(CMakePackage, CudaPackage, ROCmPackage):
 
     # sanity check
     sanity_check_is_file = [
-        join_path("include", "KokkosCore_config.h"),
         join_path("include", "Kokkos_Core.hpp"),
     ]
     sanity_check_is_dir = ["bin", "include"]
