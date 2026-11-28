@@ -678,10 +678,8 @@ class Paraview(CMakePackage, CudaPackage, ROCmPackage):
 
             archs = spec.variants["amdgpu_target"].value
 
-            if archs != "none":
-                arch_str = ",".join(archs)
-                cmake_args.append("-DCMAKE_HIP_ARCHITECTURES=%s" % arch_str)
-            cmake_args.append("-DKokkos_CXX_COMPILER=%s" % spec["hip"].hipcc)
+            if "none" not in archs:
+                cmake_args.append(self.define("CMAKE_HIP_ARCHITECTURES", archs))
 
         if "+catalyst" in spec:
             cmake_args.append("-DVTK_MODULE_ENABLE_ParaView_Catalyst=YES")
