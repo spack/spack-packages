@@ -43,7 +43,7 @@ class Ceed(BundlePackage, CudaPackage, ROCmPackage):
     # LibCEED
     # ceed 5.0
     with when("@5.0.0"):
-        depends_on("libceed@0.10~occa")
+        depends_on("libceed@0.10")
         depends_on("libceed~cuda", when="~cuda")
         for arch in CudaPackage.cuda_arch_values:
             depends_on(
